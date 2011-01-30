@@ -1,0 +1,57 @@
+# BibleBooksCodes.rnc           Relax NG Compact Syntax schema file
+#   Version 0.50
+#   Last modified: 2010-12-16
+#
+# On Linux, to convert to RNG, use
+#       trang BibleBooksCodes.rnc ../DerivedFiles/BibleBooksCodes.rng
+# On Linux, to validate against the .rng file, use
+#       xmllint --noout --relaxng ../DerivedFiles/BibleBooksCodes.rng BibleBooksCodes.xml
+# or to validate against both this and the internal DTD, use
+#       xmllint --noout --relaxng ../DerivedFiles/BibleBooksCodes.rng --valid BibleBooksCodes.xml
+#
+# See the supplied ReadMe.txt file for more information.
+#
+
+# The root element
+start = BibleBooksCodes
+
+# A single header, then multiple BibleBookCodes entries
+BibleBooksCodes = element BibleBooksCodes
+{   header,
+    BibleBookCodes+
+}
+
+header  = element header
+{   revisionDesc*,
+    work
+}
+
+revisionDesc = element revisionDesc
+{   element date { xsd:date },
+    element p { xsd:string }+
+}
+
+work = element work
+{   element version { xsd:decimal { fractionDigits="2" totalDigits="2" } },
+    element date { xsd:date },
+    element title { xsd:string },
+    element contributor { attribute role {"com"|"edt"}, xsd:string }+,
+    element identifier { attribute type {"URL"}, xsd:anyURI }+,
+    element rights { xsd:string }
+}
+
+BibleBookCodes = element BibleBookCodes
+{   element nameEnglish { xsd:string { minLength="3" maxLength="140" } },
+    element referenceAbbreviation { xsd:string { length="3" } },
+    element referenceNumber { xsd:positiveInteger { totalDigits="3" minInclusive="1" maxExclusive="245" } },
+    element expectedChapters { xsd:string { minLength="1" maxLength="7" } }?,
+    element SBLAbbreviation { xsd:string { minLength="2" maxLength="8" } }?,
+    element OSISAbbreviation { xsd:string { minLength="2" maxLength="7" } }?,
+    element SwordAbbreviation { xsd:string { minLength="2" maxLength="7" } }?,
+    element CCELNumber { xsd:positiveInteger { totalDigits="2" minInclusive="1" maxInclusive="95" } }?,
+    element ParatextAbbreviation { xsd:string { length="3" } }?,
+    element ParatextNumber { xsd:string { length="2" } }?,
+    element NETBibleAbbreviation { xsd:string { length="3" } }?,
+    element ByzantineAbbreviation { xsd:string { minLength="2" maxLength="4" } }?,
+    element possibleAlternativeBooks { xsd:string { minLength="3" maxLength="19" } }?
+}

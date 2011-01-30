@@ -1,0 +1,27 @@
+*Bible Organisational System*
+
+Most people I know think of the Bible as 66 books broken into the Old Testament of 39 books (Genesis to Malachi) and the New Testament of 27 books (Matthew to Revelation). If only life were so simple! Actually, most of us do actually know that published Bibles don't always fit into that pattern because the Gideons (here in New Zealand, at least) distribute small pocket-sized Bibles containing the New Testament along with Psalms and Proverbs, so that's a different combination of books.
+
+But oh, that doesn't even scratch the surface about how Bibles may be packaged! Luther considered the letter of James to be the “epistle of straw” so he placed it nearer the back of his Bible. So the book order is not consistent. Anyway, the book should really be called Jacob, not James. (It's Greek ἰάκωβος = Iakobos and German Jakobus.) And by the way, Germans don't use the names Genesis, Exodus, Leviticus, Numbers, and Deuteronomy (or even the German equivalent of those words)—they call them the first to fifth books of Moses. (And the Hebrews have quite different names for them again derived from the first word(s) in each of the five books.)
+
+Roman Catholic Bibles include a Deutero-canon (or “secondary canon”, called the Apocrypha by most Protestants) which contains several more books beyond the sixty-six mentioned above.
+
+Some traditions (e.g., John Wycliffe's English Bible) include the Letter to the Laodiceans in their New Testament.
+
+Older Hebrew Scriptures may contain as few as 22 books, even though it effectively has the same content as the 39 book Old Testament, because they combine things like 1 and 2 Samuel, and the twelve minor prophets, into single books.
+
+Some Bibles omit verses that they say are not in the most ancient manuscripts so they might go directly from verse 20 to verse 22 in a certain chapter. (See if your Bible contains Matthew 17:21, for example.) Other Bibles add extra chapters and verses which they get from the ancient Greek translations of the Hebrew books. And some of those chapters may be labelled with letters (like A, B, and C) rather than numbers.
+
+And talking about chapter and verse numbers, they are not found in the original manuscripts but were added at different points in history. And different people in different cultures divided the texts in different ways. So, for example, in the Psalms in a Hebrew Bible, the text A Psalm of David might be considered verse 1 and what I've always thought of as verse 1 is called verse 2.
+
+Modern translations tend to divide the texts into paragraphs, and these breaks (and their corresponding section headings) also might be placed in different locations according to the best judgement of the various translators.
+
+Many modern Bibles contain cross-references, e.g., a quote in John 1 might refer back to Genesis 1. But the code “Gen. 1:1” might look different in another language where they use a different name for the first book of the Hebrew Scriptures, and a different punctuation character for the chapter/verse separator, so it might have “1 Mos. 1.1” in the cross-reference instead. Also, letter suffixes may sometimes be used in Scripture references, like “Mat. 28:3a”.
+
+Most of the hundreds of available Bible software applications have had to address these issues, and most of them have developed their own unique in-house systems to handle them. In many cases, especially for those of us in the often monolingual English-speaking world, the cross-cultural ramifications weren't really understood at the beginning and so extensions were tacked on later to try to handle these international complications, sometimes leading to systems lacking in elegance or universal application.
+
+I am going to slowly feed my work into the Open Scriptures BibleOrgSys repository over the next few weeks. The essence of my work can be found in XML data files, but I've also produced Python scripts that test and exercise (and even export) the XML data to demonstrate how an application might use the data files.
+
+So this work is my attempt to develop a system that is multilingual, multinational, and multicultural from the beginning—to pull all of these various Bible organisational systems into one place. And although I'm an English-speaking Protestant Christian, it tries not to assume that every Bible-related publication in the world is based on any of those particular characteristics. And then it is made freely available to be used by others, and even to be extended by others when areas I didn't cover adequately are discovered.
+
+For those with experience in this area, I look forward to your comments, and even better still, suggested improvements. I will label the submitted files V0.5 to suggest that I might have done half of the research and work in setting this up, but there's plenty of room for your input and wider experience to take us to V1.0.
