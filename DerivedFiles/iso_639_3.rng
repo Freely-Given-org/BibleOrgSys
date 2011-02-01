@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+  <!--
+    iso_639_3.rnc           Relax NG Compact Syntax schema file
+      Version 1.00
+      Last modified: 2011-02-02
+    
+    On Linux, to convert to RNG, use
+          trang iso_639_3.rnc ../DerivedFiles/iso_639_3.rng
+    On Linux, to validate against the .rng file, use
+          xmllint - -noout - -relaxng ../DerivedFiles/iso_639_3.rng iso_639_3.xml
+    or to validate against both this and the internal DTD, use
+          xmllint - -noout - -relaxng ../DerivedFiles/iso_639_3.rng - -valid iso_639_3.xml
+    
+    See the supplied ReadMe.txt for more information.
+    
+  -->
+  <!-- The root element -->
+  <start>
+    <ref name="iso_639_3_entries"/>
+  </start>
+  <define name="iso_639_3_entries">
+    <element name="iso_639_3_entries">
+      <oneOrMore>
+        <ref name="iso_639_3_entry"/>
+      </oneOrMore>
+    </element>
+  </define>
+  <define name="iso_639_3_entry">
+    <element name="iso_639_3_entry">
+      <attribute name="id">
+        <data type="string">
+          <param name="length">3</param>
+        </data>
+      </attribute>
+      <attribute name="scope">
+        <choice>
+          <value>I</value>
+          <value>M</value>
+          <value>S</value>
+        </choice>
+      </attribute>
+      <attribute name="type">
+        <choice>
+          <value>A</value>
+          <value>C</value>
+          <value>E</value>
+          <value>H</value>
+          <value>L</value>
+          <value>S</value>
+        </choice>
+      </attribute>
+      <attribute name="name">
+        <data type="string"/>
+      </attribute>
+      <optional>
+        <attribute name="part1_code">
+          <data type="string">
+            <param name="length">2</param>
+          </data>
+        </attribute>
+      </optional>
+      <optional>
+        <attribute name="part2_code">
+          <data type="string">
+            <param name="length">3</param>
+          </data>
+        </attribute>
+      </optional>
+    </element>
+  </define>
+</grammar>

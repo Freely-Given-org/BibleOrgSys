@@ -1,7 +1,8 @@
 # BibleBooksCodes.ReadMe.txt
 #   ReadMe.txt for Bible Books Codes
-#   Version 0.51
-#   Last modified: 2011-01-31
+#   Version 0.52
+#   Last modified: 2011-02-02
+#
 #
 # Abbreviations:
 #   XML = eXtensible Markup Language -- see http://en.wikipedia.org/wiki/XML
@@ -38,7 +39,6 @@
 #       The data comes from the SBL Manual of Style, the OSIS 2.1.1 users' manual and from the VERY HELPFUL http://lc.bfbs.org.uk/request.php?canonicalissuesinparatext.pdf.
 #       While it is a derived work, I don't expect anyone to object to the use of this data. I think it is fair use to offer it as a public domain compilation.
 #
-#
 #   DataFiles/BibleBooksCodes.rnc
 #       A RelaxNG Compact Syntax schema file
 #       On Linux, to convert to RNG, use
@@ -47,7 +47,6 @@
 #           xmllint --noout --relaxng DerivedFiles/BibleBooksCodes.rng DataFiles/BibleBooksCodes.xml
 #       or better still, to validate against both this and the internal DTD, use
 #           xmllint --noout --relaxng DerivedFiles/BibleBooksCodes.rng --valid DataFiles/BibleBooksCodes.xml
-#
 #
 #   BibleBooksCodes.py (for Python 3)
 #       This small program will load and do some very basic checking of the XML data file.
@@ -67,8 +66,10 @@
 #       Running this program from the command line will automatically run tests on the above module, listing tests which fail.
 #           A result of OK indicates that the tests have all passed.
 #       If you have Python3 installed on Linux, run the program with Tests/BibleBooksCodesTest.py --help (once you have made the program file "executable").
-#               (Alternatively, try: python3 BibleBooksCodes.py --help)
+#               (Alternatively, try: python3 Tests/BibleBooksCodesTest.py --help)
+#       Normally, running the program with Tests/BibleBooksCodesTest.py should do everything you need.
+#
 #
 # Robert Hunt
 # Hunt.Robert@gmail.com
-# November 2010--January 2011.
+# October 2010--February 2011.
