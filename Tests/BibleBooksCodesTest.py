@@ -4,7 +4,7 @@
 # BibleBooksCodesTest.py
 #
 # Module testing BibleBooksCodes.py
-#   Last modified: 2011-01-21 (also update versionString below)
+#   Last modified: 2011-02-03 (also update versionString below)
 #
 # Copyright (C) 2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -31,20 +31,58 @@ progName = "Bible Books Codes tests"
 versionString = "0.96"
 
 
-import sys, os.path
-import unittest
+import sys, unittest
 
 sourceFolder = "."
 sys.path.append( sourceFolder )
 import Globals, BibleBooksCodes
 
 
-class BibleBooksCodesTests(unittest.TestCase):
+class BibleBooksCodesConverterTests( unittest.TestCase ):
+    """ Unit tests for the _BibleBooksCodesConverter object. """
+
+    def setUp( self ):
+        # Create the BibleBooksCodesConvertor object
+        self.bbcsc = BibleBooksCodes._BibleBooksCodesConverter().loadAndValidate() # Doesn't reload the XML unnecessarily :)
+
+    def test_010_len( self ):
+        """ Test the __len__ function. """
+        self.assert_( 100 < len(self.bbcsc) < 255 ) # The number of loaded books codes
+    # end of test_010_len
+
+    def test_020_importDataToPython( self ):
+        """ Test the importDataToPython function. """
+        result = self.bbcsc.importDataToPython()
+        self.assert_( isinstance( result, dict ) )
+        self.assertEqual( len(result), 11 )
+        for dictName in ("referenceNumberDict","referenceAbbreviationDict","SBLDict","OSISAbbreviationDict","SwordAbbreviationDict","CCELDict","ParatextAbbreviationDict","ParatextNumberDict","NETBibleAbbreviationDict","ByzantineAbbreviationDict","EnglishNameDict",):
+            self.assert_( dictName in result )
+            self.assert_( 10 < len(result[dictName]) < 255 )
+    # end of test_020_importDataToPython
+
+    def test_030_exportDataToPython( self ):
+        """ Test the exportDataToPython function. """
+        self.assertEqual( self.bbcsc.exportDataToPython(), None ) # Basically just make sure that it runs
+    # end of test_020_importDataToPython
+
+    def test_040_exportDataToJSON( self ):
+        """ Test the exportDataToJSON function. """
+        self.assertEqual( self.bbcsc.exportDataToJSON(), None ) # Basically just make sure that it runs
+    # end of test_040_exportDataToJSON
+
+    def test_050_exportDataToC( self ):
+        """ Test the exportDataToC function. """
+        self.assertEqual( self.bbcsc.exportDataToC(), None ) # Basically just make sure that it runs
+    # end of test_050_exportDataToC
+# end of BibleBooksCodesConverterTests class
+
+
+class BibleBooksCodesTests( unittest.TestCase ):
     """ Unit tests for the BibleBooksCodes object. """
 
     def setUp( self ):
         # Create the BibleBooksCodes object
-        self.bbc = BibleBooksCodes.BibleBooksCodes().loadData( os.path.join( sourceFolder, "DataFiles/BibleBooksCodes.xml" ) ) # Doesn't reload the XML unnecessarily :)
+        self.bbc = BibleBooksCodes.BibleBooksCodes().loadData() # Doesn't reload the XML unnecessarily :)
 
     def test_010_len( self ):
         """ Test the __len__ function. """

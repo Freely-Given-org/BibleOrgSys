@@ -1,0 +1,15 @@
+Language Codes
+
+Any Bible organisational system has to have a way to define languages. We'll be dealing with Biblical languages like Hebrew, Aramaic, and Greek, as well as the many languages of translations.
+
+Many systems have used 2-letter codes like 'en' or 'fr' for naming languages. But 2-letter codes have a maximum of 26 squared possibilities, which equals 676 -- a whole order of magnitude short of being able to represent the some 7,000 languages of the world. And since we want the Bible to reach all peoples of the world, we want to include their languages from the beginning.
+
+So in a truly international system, we'll need to use codes of at least 3-letters. (Yes, 17,576 codes should be enough!) And the ISO 639-3 standard (http://en.wikipedia.org/wiki/ISO_639-3), which came originally from the Ethnologue (http://www.ethnologue.com/) and is currently still administered by SIL (http://www.sil.org/iso639-3/) gives us that.
+
+Today I committed Python code to access the ISO 639-3 information. It's just a little foundational step that'll be needed later on.
+
+[I'm not sure yet that it handles everything we need -- for example Americans and New Zealanders both speak English (code 'eng') but we choose, pronounce, and spell many words differently. So we might be needing to extend this language code system sometime when we get into spell-checking and such.]
+
+Robert Hunt.
+Hunt.RobertJ@gmail.com
+February 2011.

@@ -4,7 +4,7 @@
 # ISO_639_3_Languages.py
 #
 # Module handling ISO_639_3.xml to produce C and Python data tables
-#   Last modified: 2011-02-02 (also update versionString below)
+#   Last modified: 2011-02-03 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -24,11 +24,11 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module handling ISO_639_3_Languages.xml to produce C and Python data tables.
+Module handling ISO_639_3_Languages.xml and to export to JSON, C and Python data tables.
 """
 
 progName = "ISO 639_3_Languages handler"
-versionString = "0.80"
+versionString = "0.81"
 
 import logging, os.path
 from collections import OrderedDict
@@ -39,7 +39,7 @@ import Globals
 
 
 @singleton # Can only ever have one instance
-class _ISO_639_3_Languages_Converter:
+class _ISO_639_3_LanguagesConverter:
     """
     Class for handling and converting ISO 639-3 language codes.
     """
@@ -159,6 +159,11 @@ class _ISO_639_3_Languages_Converter:
         result += ('\n' if result else '') + "  Num entries = " + str(len(self._XMLtree))
         return result
     # end of __str__
+
+    def __len__( self ):
+        """ Returns the number of languages loaded. """
+        return len( self._XMLtree )
+    # end of __len__
 
     def importDataToPython( self ):
         """
@@ -326,7 +331,7 @@ class _ISO_639_3_Languages_Converter:
             myHFile.write( "// end of {}".format( os.path.basename(hFilepath) ) )
             myCFile.write( "// end of {}".format( os.path.basename(cFilepath) ) )
     # end of exportDataToC
-# end of _ISO_639_3_Languages_Converter class
+# end of _ISO_639_3_LanguagesConverter class
 
 
 @singleton # Can only ever have one instance
@@ -343,7 +348,7 @@ class ISO_639_3_Languages:
         """
         Constructor: 
         """
-        self.lgC = _ISO_639_3_Languages_Converter()
+        self.lgC = _ISO_639_3_LanguagesConverter()
         self.__IDDict = self.__NameDict = None # We'll import into this in loadData
     # end of __init__
 
@@ -444,7 +449,7 @@ def main():
 
     else: # Must be demo mode
         # Demo the converter object
-        lgC = _ISO_639_3_Languages_Converter().loadAndValidate() # Load the XML
+        lgC = _ISO_639_3_LanguagesConverter().loadAndValidate() # Load the XML
         print( lgC ) # Just print a summary
 
         # Demo the languages object

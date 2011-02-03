@@ -1,7 +1,7 @@
 # BibleBooksCodes.ReadMe.txt
 #   ReadMe.txt for Bible Books Codes
-#   Version 0.52
-#   Last modified: 2011-02-02
+#   Version 0.53
+#   Last modified: 2011-02-03
 #
 #
 # Abbreviations:
@@ -65,11 +65,11 @@
 #   Tests/BibleBooksCodesTest.py (for Python 3)
 #       Running this program from the command line will automatically run tests on the above module, listing tests which fail.
 #           A result of OK indicates that the tests have all passed.
-#       If you have Python3 installed on Linux, run the program with Tests/BibleBooksCodesTest.py --help (once you have made the program file "executable").
-#               (Alternatively, try: python3 Tests/BibleBooksCodesTest.py --help)
-#       Normally, running the program with Tests/BibleBooksCodesTest.py should do everything you need.
+#       If you have Python3 installed on Linux, run the program with Tests/BibleBooksCodesTest.py (once you have made the program file "executable").
+#               (Alternatively, try: python3 Tests/BibleBooksCodesTest.py)
+#       Note that although the --help switch works, most of the other displayed options are included for compatibility reasons only, and do function correctly.
 #
 #
 # Robert Hunt
-# Hunt.Robert@gmail.com
+# Hunt.RobertJ@gmail.com
 # October 2010--February 2011.

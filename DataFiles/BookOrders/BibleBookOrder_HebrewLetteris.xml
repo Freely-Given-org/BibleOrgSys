@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+This file gives a table of Bible book reference abbreviations in the order that they are included in the given publication.
+    The list of the available 3-character book reference abbreviations can be found in BibleBooksCodes.xml
+    An ascending id number is also included as an attribute for convenience.
+
+It must contain entries only for the books actually included in a given publication.
+This file can be copied, renamed, and edited if your publication contains different books or in a different order.
+
+The data entries in this file are language agnostic, i.e., the information can apply to a publication in any language.
+
+The data is preceded by a header of the same format as an OSIS header.
+
+Although an internal DTD is included, a Relax NG (RNC) schema is also supplied for better validation.
+
+See the supplied ReadMe.txt for more details.
+-->
+
+<!DOCTYPE BibleBookOrderSystem [
+    <!ELEMENT BibleBookOrderSystem (header,book+)>
+        <!ELEMENT header (revisionDesc*,work)>
+            <!ELEMENT revisionDesc (date,p+)>
+                <!ELEMENT date (#PCDATA)>
+                <!ELEMENT p (#PCDATA)>
+            <!ELEMENT work (version,date,title,contributor+,identifier*,rights)>
+                <!ELEMENT version (#PCDATA)>
+                <!ELEMENT title (#PCDATA)>
+                <!ELEMENT contributor (#PCDATA)>
+                    <!ATTLIST contributor role (com|cre|edt) #REQUIRED>
+                <!ELEMENT identifier (#PCDATA)>
+                    <!ATTLIST identifier type (URL) #REQUIRED>
+                <!ELEMENT rights (#PCDATA)>
+        <!ELEMENT book (#PCDATA)>
+            <!ATTLIST book id CDATA #REQUIRED>
+]>
+
+<BibleBookOrderSystem>
+
+  <header>
+    <work>
+      <version>0.20</version>
+      <date>2010-11-10</date>
+      <title>Hebrew Letteris book order</title>
+      <contributor role="com">Robert Hunt</contributor>
+      <identifier type="URL">http://lc.bfbs.org.uk/request.php?canonicalissuesinparatext.pdf</identifier>
+      <rights>Public Domain</rights>
+    </work>
+  </header>
+
+  <book id="1">GEN</book>
+  <book id="2">EXO</book>
+  <book id="3">LEV</book>
+  <book id="4">NUM</book>
+  <book id="5">DEU</book>
+  <book id="6">JOS</book>
+  <book id="7">JDG</book>
+  <book id="8">SAM</book>
+  <book id="9">KGS</book>
+  <book id="10">ISA</book>
+  <book id="11">JER</book>
+  <book id="12">EZK</book>
+  <book id="13">P12</book>
+  <book id="14">PSA</book>
+  <book id="15">PRO</book>
+  <book id="16">JOB</book>
+  <book id="17">SNG</book>
+  <book id="18">RUT</book>
+  <book id="19">LAM</book>
+  <book id="20">ECC</book>
+  <book id="21">EST</book>
+  <book id="22">DAN</book>
+  <book id="23">EZN</book>
+  <book id="24">CHR</book>
+</BibleBookOrderSystem>

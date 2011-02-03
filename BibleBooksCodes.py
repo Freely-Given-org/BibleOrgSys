@@ -4,7 +4,7 @@
 # BibleBooksCodes.py
 #
 # Module handling BibleBooksCodes.xml to produce C and Python data tables
-#   Last modified: 2011-02-02 (also update versionString below)
+#   Last modified: 2011-02-03 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -24,11 +24,11 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module handling BibleBooksCodes.xml to produce C and Python data tables.
+Module handling BibleBooksCodes.xml and to export to JSON, C and Python data tables.
 """
 
 progName = "Bible Books Codes handler"
-versionString = "0.50"
+versionString = "0.51"
 
 
 import logging, os.path
@@ -219,6 +219,11 @@ class _BibleBooksCodesConverter:
         if self._XMLtree is not None: result += ('\n' if result else '') + ' '*indent + _("Num entries = {}").format( len(self._XMLtree) )
         return result
     # end of __str__
+
+    def __len__( self ):
+        """ Returns the number of books codes loaded. """
+        return len( self._XMLtree )
+    # end of __len__
 
     def importDataToPython( self ):
         """

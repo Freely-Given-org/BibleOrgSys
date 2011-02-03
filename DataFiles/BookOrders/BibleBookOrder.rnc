@@ -1,0 +1,41 @@
+# BibleBookOrder.rnc           Relax NG Compact Syntax schema file
+#   Version 0.80
+#   Last modified: 2011-02-03
+#
+# On Linux, to convert to RNG, use
+#       trang BibleBookOrder.rnc ../../DerivedFiles/BibleBookOrder.rng
+# On Linux, to validate against the .rng file, use (with the proper suffix instead of XXX)
+#       xmllint --noout --relaxng ../../DerivedFiles/BibleBookOrder.rng BibleBookOrder_XXX.xml
+# or to validate against both this and the internal DTD, use (with the proper suffix instead of XXX)
+#       xmllint --noout --relaxng ../../DerivedFiles/BibleBookOrder.rng --valid BibleBookOrder_XXX.xml
+#
+# See the supplied ReadMe.txt file for more information.
+#
+
+# The root element
+start = BibleBookOrderSystem
+
+# A single header, then books
+BibleBookOrderSystem = element BibleBookOrderSystem
+{   header,
+    element book { attribute id {xsd:positiveInteger { minInclusive="1" maxInclusive="120" } }, xsd:string { length="3" } }+
+}
+
+header  = element header
+{   revisionDesc*,
+    work
+}
+
+revisionDesc = element revisionDesc
+{   element date { xsd:date },
+    element p { xsd:string }+
+}
+
+work = element work
+{   element version { xsd:decimal { totalDigits="2" } },
+    element date { xsd:date },
+    element title { xsd:string },
+    element contributor { attribute role {"com"|"edt"}, xsd:string }+,
+    element identifier { attribute type {"URL"}, xsd:anyURI }*,
+    element rights { xsd:string }
+}

@@ -25,3 +25,7 @@ I am going to slowly feed my work into the Open Scriptures BibleOrgSys repositor
 So this work is my attempt to develop a system that is multilingual, multinational, and multicultural from the beginning—to pull all of these various Bible organisational systems into one place. And although I'm an English-speaking Protestant Christian, it tries not to assume that every Bible-related publication in the world is based on any of those particular characteristics. And then it is made freely available to be used by others, and even to be extended by others when areas I didn't cover adequately are discovered.
 
 For those with experience in this area, I look forward to your comments, and even better still, suggested improvements. I will label the submitted files V0.5 to suggest that I might have done half of the research and work in setting this up, but there's plenty of room for your input and wider experience to take us to V1.0.
+
+Robert Hunt.
+Hunt.RobertJ@gmail.com
+January 2011.
