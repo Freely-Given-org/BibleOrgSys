@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+This file gives a table of punctuation rules to be used for checking, or maybe even parsing, a certain publication.
+The (compulsory) fields are:
+    sentenceCapitalisation: Y=yes, N=no
+        Tells if sentences begin with a capitalised work in this language
+    properNounCapitalisation: Y=yes, N=no
+        Tells if proper nouns are capitalised in this language
+    statementTerminator: the character used to terminate a statement
+        e.g., the period in "Jesus wept."
+    questionTerminator: the character used to terminate a question
+        e.g., the question mark in "Who are you?"
+    exclamationTerminator: the character used to terminate an exclamatory sentence
+        e.g., the exclamation mark in "Get up!"
+    commaPauseCharacter: the character used for a short pause
+        e.g., the comma in "Therefore I tell you, do not worry..."
+    startQuoteLevelx, endQuoteLevelx: the appropriate start and end quote characters for the nested level
+        An empty field can also be used.
+    booknameCase: U=UPPER L=lower M=Mixed E=Either
+        affects Job 1:2 vs JOB 1:2
+    booknameLength: the preferred length of a bookname abbreviation
+        affects Job 1:2 vs Jb 1:2
+    punctuationAfterBookAbbreviation: the character after an abbreviation
+        e.g., the period in Gen. 1:1 vs Gen 1:1 (but doesn't affect Job 1:1)
+    bookChapterSeparator: the character between a book name/abbreviation and a chapter number
+        e.g., the space in Gen. 1:1
+    spaceAllowedAfterBCS: Y=yes N=no E=either
+        affects Gen.1:1 vs. Gen. 1:1
+    chapterBridgeCharacter: the character in a chapter range
+        e.g., the hyphen in Gen. 1-2
+    chapterVerseSeparator: the character between a chapter number and a verse number
+        e.g., the colon in John 3:16
+    verseSeparator: the character between successive verse numbers
+        e.,g the commas in Gen. 1:10,12,18,21,25
+    verseBridgeCharacter: the character in a verse range
+        e.g., the hyphen in Gen. 1:1-5
+    chapterSeparator: the character between two references in different chapters
+        e.g., the semi-colon in John 3:16; 4:23.
+    bookSeparator: the character between two references in different books
+        e.g., the semi-colon in John 3:16; Romans 3:32.
+
+Where multiple values are provided, this means that the software should not
+    give errors or warnings as long as any one of the alternatives was found.
+Note that the preferred value is always given first.
+    This is the one used by the software when it creates a reference.
+
+Since this data is UTF-8 Unicode, special characters can be used including
+    en-dash –
+    em-dash —
+
+The system currently has no way to express multi-character sequences.
+
+The data is preceded by a header of the same format as an OSIS header.
+
+Note that the data is supplied as XML elements, not attributes.
+
+Although an internal DTD is included, a Relax NG (RNC) schema is also supplied for better validation.
+-->
+
+<!DOCTYPE BiblePunctuationSystem [
+    <!ELEMENT BiblePunctuationSystem (header, sentenceCapitalisation,properNounCapitalisation,statementTerminator,questionTerminator,exclamationTerminator,commaPauseCharacter,
+                startQuoteLevel1, endQuoteLevel1, startQuoteLevel2, endQuoteLevel2, startQuoteLevel3, endQuoteLevel3, startQuoteLevel4, endQuoteLevel4,
+                booknameCase,booknameLength,punctuationAfterBookAbbreviation,bookChapterSeparator,spaceAllowedAfterBCS,chapterVerseSeparator,verseSeparator,bookBridgeCharacter,chapterBridgeCharacter,verseBridgeCharacter,chapterSeparator,bookSeparator,allowedVerseSuffixes)>
+        <!ELEMENT header (revisionDesc*,work)>
+            <!ELEMENT revisionDesc (date,p+)>
+                <!ELEMENT date (#PCDATA)>
+                <!ELEMENT p (#PCDATA)>
+            <!ELEMENT work (version,date,title,contributor+,identifier*,rights)>
+                <!ELEMENT version (#PCDATA)>
+                <!ELEMENT title (#PCDATA)>
+                <!ELEMENT contributor (#PCDATA)>
+                    <!ATTLIST contributor role (com|cre|edt) #REQUIRED>
+                <!ELEMENT identifier (#PCDATA)>
+                    <!ATTLIST identifier type (URL) #REQUIRED>
+                <!ELEMENT rights (#PCDATA)>
+        <!ELEMENT sentenceCapitalisation (#PCDATA)>
+        <!ELEMENT properNounCapitalisation (#PCDATA)>
+        <!ELEMENT statementTerminator (#PCDATA)>
+        <!ELEMENT questionTerminator (#PCDATA)>
+        <!ELEMENT exclamationTerminator (#PCDATA)>
+        <!ELEMENT commaPauseCharacter (#PCDATA)>
+        <!ELEMENT startQuoteLevel1 (#PCDATA)>   <!ELEMENT endQuoteLevel1 (#PCDATA)>
+        <!ELEMENT startQuoteLevel2 (#PCDATA)>   <!ELEMENT endQuoteLevel2 (#PCDATA)>
+        <!ELEMENT startQuoteLevel3 (#PCDATA)>   <!ELEMENT endQuoteLevel3 (#PCDATA)>
+        <!ELEMENT startQuoteLevel4 (#PCDATA)>   <!ELEMENT endQuoteLevel4 (#PCDATA)>
+        <!ELEMENT booknameCase (#PCDATA)>
+        <!ELEMENT booknameLength (#PCDATA)>
+        <!ELEMENT punctuationAfterBookAbbreviation (#PCDATA)>
+        <!ELEMENT bookChapterSeparator (#PCDATA)>
+        <!ELEMENT spaceAllowedAfterBCS (#PCDATA)>
+        <!ELEMENT chapterVerseSeparator (#PCDATA)>
+        <!ELEMENT verseSeparator (#PCDATA)>
+        <!ELEMENT bookBridgeCharacter (#PCDATA)>
+        <!ELEMENT chapterBridgeCharacter (#PCDATA)>
+        <!ELEMENT verseBridgeCharacter (#PCDATA)>
+        <!ELEMENT chapterSeparator (#PCDATA)>
+        <!ELEMENT bookSeparator (#PCDATA)>
+        <!ELEMENT allowedVerseSuffixes (#PCDATA)>
+]>
+
+<BiblePunctuationSystem>
+
+  <header>
+    <work>
+      <version>0.13</version>
+      <date>2011-02-15</date>
+      <title>English Bible brief punctuation system</title>
+      <contributor role="cre">Robert Hunt</contributor>
+      <rights>Public Domain</rights>
+    </work>
+  </header>
+
+  <sentenceCapitalisation>Y</sentenceCapitalisation>
+  <properNounCapitalisation>Y</properNounCapitalisation>
+  <statementTerminator>.</statementTerminator>
+  <questionTerminator>?</questionTerminator>
+  <exclamationTerminator>!</exclamationTerminator>
+
+  <commaPauseCharacter>,</commaPauseCharacter>
+
+  <startQuoteLevel1>“</startQuoteLevel1>
+  <endQuoteLevel1>”</endQuoteLevel1>
+  <startQuoteLevel2>‘</startQuoteLevel2>
+  <endQuoteLevel2>’</endQuoteLevel2>
+  <startQuoteLevel3>“</startQuoteLevel3>
+  <endQuoteLevel3>”</endQuoteLevel3>
+  <startQuoteLevel4></startQuoteLevel4>
+  <endQuoteLevel4></endQuoteLevel4>
+
+  <booknameCase>ME</booknameCase>
+  <booknameLength>3</booknameLength>
+  <punctuationAfterBookAbbreviation></punctuationAfterBookAbbreviation>
+  <bookChapterSeparator> </bookChapterSeparator>
+  <spaceAllowedAfterBCS>E</spaceAllowedAfterBCS>
+  <chapterVerseSeparator>:</chapterVerseSeparator>
+  <verseSeparator>,</verseSeparator>
+
+  <bookBridgeCharacter>-</bookBridgeCharacter>
+  <chapterBridgeCharacter>-</chapterBridgeCharacter>
+  <verseBridgeCharacter>-</verseBridgeCharacter>
+
+  <chapterSeparator>;</chapterSeparator>
+  <bookSeparator>;</bookSeparator>
+
+  <allowedVerseSuffixes>abcdef</allowedVerseSuffixes>
+</BiblePunctuationSystem>

@@ -4,7 +4,7 @@
 # ISO_639_3_Languages.py
 #
 # Module handling ISO_639_3.xml to produce C and Python data tables
-#   Last modified: 2011-02-03 (also update versionString below)
+#   Last modified: 2011-02-15 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -24,7 +24,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module handling ISO_639_3_Languages.xml and to export to JSON, C and Python data tables.
+Module handling ISO_639_3_Languages.xml and to export to JSON, C, and Python data tables.
 """
 
 progName = "ISO 639_3_Languages handler"
@@ -156,7 +156,7 @@ class _ISO_639_3_LanguagesConverter:
         """
         result = "_ISO_639_3_Languages_Converter object"
         if self.title: result += ('\n' if result else '') + self.title
-        result += ('\n' if result else '') + "  Num entries = " + str(len(self._XMLtree))
+        result += ('\n' if result else '') + "  Number of entries = " + str(len(self._XMLtree))
         return result
     # end of __str__
 
@@ -361,7 +361,7 @@ class ISO_639_3_Languages:
         """
         result = "ISO_639_3_Languages object"
         assert( len(self.__IDDict) == len(self.__NameDict) )
-        result += ('\n' if result else '') + "  Num entries = {}".format( len(self.__IDDict) )
+        result += ('\n' if result else '') + "  Number of entries = {}".format( len(self.__IDDict) )
         return result
     # end of __str__
 

@@ -4,8 +4,8 @@ The test modules in this folder are intended to be run from the containing folde
 
 In other words, from the BibleOrgSys folder, run a test module like:
     cd ..
-    Tests/BibleBooksCodesTest.py
-        or      python3 Tests/BibleBooksCodesTest.py
+    Tests/BibleBooksCodesTests.py
+        or      python3 Tests/BibleBooksCodesTests.py
 
 or to run all tests
     cd ..

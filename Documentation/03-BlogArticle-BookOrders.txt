@@ -1,10 +1,10 @@
-Book Orders
+Bible Book Orders
 
 At some point, a Bible organisational system has to define both the actual books which are included in the publication, and the order in which they are presented. (As I pointed out in my introductory blog, both of these factors can vary considerably across cultures.)
 
-I have found it better to separate this information from the versification information (about where chapter and verse breaks come). So the book order files are very simple -- basically just an ordered list of book codes, e.g., GEN, EXO, ... REV. Of course, many publications will have the same book contents and book order, so it makes reasonable sense to separate this information out so it can be easily reused.
+I have found it better to separate this information from the versification information (about where chapter and verse breaks come). So the book order files are very simple -- basically just an ordered list of book codes, e.g., GEN, EXO, ... REV or whatever. Of course, many publications will have the same list of book contents and in the same order, so it makes reasonable sense to separate this information out so it can be easily reused.
 
-Today I committed some book order data (XML) files which I'm aware of, although they haven't been tested out against real publications as well as I would like. Also, there might be reason to name some of the systems better before we take it to V1.0. And, of course, it is easy to add systems which I wasn't aware of with this initial commit.
+Today I committed some book order data (XML) files which I'm aware of, although they haven't been tested out against real publications as well as I would like. Also, there might be reason to name some of the systems better before we take it to V1.0. And, of course, it is easy to add systems which I wasn't aware of with this initial commit. So there's plenty of room for other people to help with their expertise here.
 
 This is the end of the easy stuff -- everything gets a lot more complex from here on in, so my blogs and code additions are likely to become much more sparse.
 

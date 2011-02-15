@@ -38,8 +38,8 @@ sourceFolder = "."
 sys.path.append( sourceFolder )
 
 import Globals
-import BibleBooksCodesTest, BibleBookOrdersTest
-import ISO_639_3_LanguagesTest
+import BibleBooksCodesTests, BibleBookOrdersTests
+import ISO_639_3_LanguagesTests, BiblePunctuationSystemsTests
 
 
 # Handle command line parameters (for compatibility)
@@ -54,15 +54,19 @@ if Globals.verbosityLevel > 1: print( "{} V{}".format( progName, versionString )
 # Create the test suite
 suiteList = []
 
-suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleBooksCodesTest.BibleBooksCodesConverterTests ) )
-suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleBooksCodesTest.BibleBooksCodesTests ) )
+suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleBooksCodesTests.BibleBooksCodesConverterTests ) )
+suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleBooksCodesTests.BibleBooksCodesTests ) )
 
-suiteList.append( unittest.TestLoader().loadTestsFromTestCase( ISO_639_3_LanguagesTest.ISO_639_3_LanguagesConverterTests ) )
-suiteList.append( unittest.TestLoader().loadTestsFromTestCase( ISO_639_3_LanguagesTest.ISO_639_3_LanguagesTests ) )
+suiteList.append( unittest.TestLoader().loadTestsFromTestCase( ISO_639_3_LanguagesTests.ISO_639_3_LanguagesConverterTests ) )
+suiteList.append( unittest.TestLoader().loadTestsFromTestCase( ISO_639_3_LanguagesTests.ISO_639_3_LanguagesTests ) )
 
-suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleBookOrdersTest.BibleBookOrdersConverterTests ) )
-suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleBookOrdersTest.BibleBookOrderSystemsTests ) )
-suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleBookOrdersTest.BibleBookOrderSystemTests ) )
+suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleBookOrdersTests.BibleBookOrdersConverterTests ) )
+suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleBookOrdersTests.BibleBookOrderSystemsTests ) )
+suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleBookOrdersTests.BibleBookOrderSystemTests ) )
+
+suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BiblePunctuationSystemsTests.BiblePunctuationSystemsConverterTests ) )
+suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BiblePunctuationSystemsTests.BiblePunctuationSystemsTests ) )
+suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BiblePunctuationSystemsTests.BiblePunctuationSystemTests ) )
 
 
 # Now run all the tests in the suite

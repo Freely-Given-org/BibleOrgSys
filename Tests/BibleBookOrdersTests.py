@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# BibleBookOrdersTest.py
+# BibleBookOrdersTests.py
 #
 # Module testing BibleBookOrders.py
 #   Last modified: 2011-02-03 (also update versionString below)
@@ -287,4 +287,4 @@ if __name__ == '__main__':
     if Globals.verbosityLevel > 1: print( "{} V{}".format( progName, versionString ) )
 
     unittest.main() # Automatically runs all of the above tests
-# end of BibleBookOrdersTest.py
+# end of BibleBookOrdersTests.py

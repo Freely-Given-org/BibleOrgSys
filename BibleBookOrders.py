@@ -4,7 +4,7 @@
 # BibleBookOrders.py
 #
 # Module handling BibleBookOrderSystem_*.xml to produce C and Python data tables
-#   Last modified: 2011-02-03 (also update versionString below)
+#   Last modified: 2011-02-15 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -24,7 +24,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module handling BibleBookOrder_*.xml files and to export to JSON, C and Python data tables.
+Module handling BibleBookOrder_*.xml files and to export to JSON, C, and Python data tables.
 """
 
 progName = "Bible Book Order Systems handler"
@@ -68,7 +68,7 @@ class _BibleBookOrdersConverter:
 
 
         # These are fields that we will fill later
-        self.XMLSystems = {}
+        self._XMLSystems = {}
         self.__DataDicts, self.__DataLists = {}, {} # Used for import
 
         # Make sure we have the Bible books codes data loaded and available
@@ -79,7 +79,7 @@ class _BibleBookOrdersConverter:
         """
         Load and pre-process the specified book order systems.
         """
-        if not self.XMLSystems: # Only ever do this once
+        if not self._XMLSystems: # Only ever do this once
             if XMLFolder==None: XMLFolder = "DataFiles/BookOrders"
             self.__XMLFolder = XMLFolder
             if Globals.verbosityLevel > 2: print( _("Loading book order systems from {}...").format( self.__XMLFolder ) )
@@ -89,16 +89,16 @@ class _BibleBookOrdersConverter:
                 if extension.upper() == '.XML' and filepart.upper().startswith(filenamePrefix):
                     bookOrderSystemCode = filepart[len(filenamePrefix):]
                     if Globals.verbosityLevel > 3: print( _("  Loading{} book order system from {}...").format( bookOrderSystemCode, filename ) )
-                    self.XMLSystems[bookOrderSystemCode] = {}
-                    self.XMLSystems[bookOrderSystemCode]["tree"] = ElementTree().parse( os.path.join( XMLFolder, filename ) )
-                    assert( self.XMLSystems[bookOrderSystemCode]["tree"] ) # Fail here if we didn't load anything at all
+                    self._XMLSystems[bookOrderSystemCode] = {}
+                    self._XMLSystems[bookOrderSystemCode]["tree"] = ElementTree().parse( os.path.join( XMLFolder, filename ) )
+                    assert( self._XMLSystems[bookOrderSystemCode]["tree"] ) # Fail here if we didn't load anything at all
 
                     # Check and remove the header element
-                    if self.XMLSystems[bookOrderSystemCode]["tree"].tag  == self.treeTag:
-                        header = self.XMLSystems[bookOrderSystemCode]["tree"][0]
+                    if self._XMLSystems[bookOrderSystemCode]["tree"].tag  == self.treeTag:
+                        header = self._XMLSystems[bookOrderSystemCode]["tree"][0]
                         if header.tag == self.headerTag:
-                            self.XMLSystems[bookOrderSystemCode]["header"] = header
-                            self.XMLSystems[bookOrderSystemCode]["tree"].remove( header )
+                            self._XMLSystems[bookOrderSystemCode]["header"] = header
+                            self._XMLSystems[bookOrderSystemCode]["tree"].remove( header )
                             if len(header)>1:
                                 logging.info( _("Unexpected elements in header") )
                             elif len(header)==0:
@@ -106,22 +106,22 @@ class _BibleBookOrdersConverter:
                             else:
                                 work = header[0]
                                 if work.tag == "work":
-                                    self.XMLSystems[bookOrderSystemCode]["version"] = work.find("version").text
-                                    self.XMLSystems[bookOrderSystemCode]["date"] = work.find("date").text
-                                    self.XMLSystems[bookOrderSystemCode]["title"] = work.find("title").text
+                                    self._XMLSystems[bookOrderSystemCode]["version"] = work.find("version").text
+                                    self._XMLSystems[bookOrderSystemCode]["date"] = work.find("date").text
+                                    self._XMLSystems[bookOrderSystemCode]["title"] = work.find("title").text
                                 else:
                                     logging.warning( _("Missing work element in header") )
                         else:
                             logging.warning( _("Missing header element (looking for '{}' tag)").format( headerTag ) )
                     else:
-                        logging.error( _("Expected to load '{}' but got '{}'").format( treeTag, self.XMLSystems[bookOrderSystemCode]["tree"].tag ) )
+                        logging.error( _("Expected to load '{}' but got '{}'").format( treeTag, self._XMLSystems[bookOrderSystemCode]["tree"].tag ) )
                     bookCount = 0 # There must be an easier way to do this
-                    for subelement in self.XMLSystems[bookOrderSystemCode]["tree"]:
+                    for subelement in self._XMLSystems[bookOrderSystemCode]["tree"]:
                         bookCount += 1
                     logging.info( _("    Loaded {} books").format( bookCount ) )
 
                 if Globals.strictCheckingFlag:
-                    self.__validateSystem( self.XMLSystems[bookOrderSystemCode]["tree"], bookOrderSystemCode )
+                    self.__validateSystem( self._XMLSystems[bookOrderSystemCode]["tree"], bookOrderSystemCode )
         else: # The data must have been already loaded
             if XMLFolder is not None and XMLFolder!=self.__XMLFolder: logging.error( _("Bible book order systems are already loaded -- your different folder of '{}' was ignored").format( XMLFolder ) )
         return self
@@ -217,39 +217,39 @@ class _BibleBookOrdersConverter:
         @rtype: string
         """
         result = "_BibleBookOrdersConverter object"
-        result += ('\n' if result else '') + "  Num book order systems loaded ={}".format( len(self.XMLSystems) )
+        result += ('\n' if result else '') + "  Number of book order systems loaded ={}".format( len(self._XMLSystems) )
         if 0: # Make it verbose
-            for x in self.XMLSystems:
+            for x in self._XMLSystems:
                 result += ('\n' if result else '') + " {}".format( x )
-                title = self.XMLSystems[x]["title"]
+                title = self._XMLSystems[x]["title"]
                 if title: result += ('\n' if result else '') + "   {}".format( title )
-                version = self.XMLSystems[x]["version"]
+                version = self._XMLSystems[x]["version"]
                 if version: result += ('\n' if result else '') + "    Version:{}".format( version )
-                date = self.XMLSystems[x]["date"]
+                date = self._XMLSystems[x]["date"]
                 if date: result += ('\n' if result else '') + "    Last updated:{}".format( date )
-                result += ('\n' if result else '') + "    Num books ={}".format( len(self.XMLSystems[x]["tree"]) )
+                result += ('\n' if result else '') + "    Number of books ={}".format( len(self._XMLSystems[x]["tree"]) )
         return result
     # end of __str__
 
     def __len__( self ):
         """ Returns the number of systems loaded. """
-        return len( self.XMLSystems )
+        return len( self._XMLSystems )
     # end of __len__
 
     def importDataToPython( self ):
         """
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
         """
-        assert( self.XMLSystems )
+        assert( self._XMLSystems )
         if self.__DataDicts and self.__DataLists: # We've already done an import/restructuring -- no need to repeat it
             return self.__DataDicts, self.__DataLists
 
         # We'll create a number of dictionaries
-        for bookOrderSystemCode in self.XMLSystems.keys():
+        for bookOrderSystemCode in self._XMLSystems.keys():
             #print( bookOrderSystemCode )
             # Make the data dictionary for this book order system
             bookDataDict, idDataDict, BBBList = OrderedDict(), OrderedDict(), []
-            for bookElement in self.XMLSystems[bookOrderSystemCode]["tree"]:
+            for bookElement in self._XMLSystems[bookOrderSystemCode]["tree"]:
                 bookRA = bookElement.text
                 ID = bookElement.get( "id" )
                 intID = int( ID )
@@ -289,7 +289,7 @@ class _BibleBookOrdersConverter:
 
         from datetime import datetime
 
-        assert( self.XMLSystems )
+        assert( self._XMLSystems )
         self.importDataToPython()
         assert( self.__DataDicts and self.__DataLists )
 
@@ -304,7 +304,7 @@ class _BibleBookOrdersConverter:
             #if self.version: myFile.write( "#  Version:{}\n".format( self.version ) )
             #if self.date: myFile.write( "#  Date:{}\n#\n".format( self.date ) )
             #myFile.write( "#  {}{} entries loaded from the original XML file.\n".format( len(self.namesTree), self.treeTag ) )
-            myFile.write( "#  {}{} loaded from the original XML files.\n#\n\n".format( len(self.XMLSystems), self.treeTag ) )
+            myFile.write( "#  {}{} loaded from the original XML files.\n#\n\n".format( len(self._XMLSystems), self.treeTag ) )
             myFile.write( "from collections import OrderedDict\n\n\n" )
             myFile.write( "bookDataDict = {\n  # Key is versificationSystemName\n  # Fields are omittedVersesSystem\n\n" )
             for systemName in self.__DataDicts:
@@ -328,7 +328,7 @@ class _BibleBookOrdersConverter:
         from datetime import datetime
         import json
 
-        assert( self.XMLSystems )
+        assert( self._XMLSystems )
         self.importDataToPython()
         assert( self.__DataDicts and self.__DataLists )
 
@@ -386,7 +386,7 @@ class _BibleBookOrdersConverter:
 
         from datetime import datetime
 
-        assert( self.XMLSystems )
+        assert( self._XMLSystems )
         self.importDataToPython()
         assert( self.__DataDicts and self.__DataLists )
 
@@ -401,7 +401,7 @@ class _BibleBookOrdersConverter:
             myCFile.write( "//{}\n//\n".format( cFilepath ) )
             lines = "// This UTF-8 file was automatically generated by BibleBookOrders.py V{} on {}\n//\n".format( versionString, datetime.now() )
             myHFile.write( lines ); myCFile.write( lines )
-            myCFile.write( "//  {}{} loaded from the original XML file.\n//\n\n".format( len(self.XMLSystems), self.treeTag ) )
+            myCFile.write( "//  {}{} loaded from the original XML file.\n//\n\n".format( len(self._XMLSystems), self.treeTag ) )
             myHFile.write( "\n#ifndef{}\n#define{}\n\n".format( ifdefName, ifdefName ) )
             myCFile.write( '#include "{}"\n\n'.format( os.path.basename(hFilepath) ) )
 
@@ -519,7 +519,7 @@ class BibleBookOrderSystems:
         @rtype: string
         """
         result = "BibleBooksOrders object"
-        result += ('\n' if result else '') + "  Num systems ={}".format( len(self.__DataDicts) )
+        result += ('\n' if result else '') + "  Number of systems ={}".format( len(self.__DataDicts) )
         return result
     # end of __str__
 
@@ -642,7 +642,7 @@ class BibleBookOrderSystem:
         """
         result = "BibleBooksOrder object"
         result += ('\n' if result else '') + " {} book order system".format( self.__systemName )
-        result += ('\n' if result else '') + "  Num books = {}".format( self.numBooks() )
+        result += ('\n' if result else '') + "  Number of books = {}".format( self.numBooks() )
         return result
     # end of __str__
 
@@ -745,7 +745,7 @@ def main():
         bbos = BibleBookOrderSystem( "EuropeanProtestantBible" )
         if bbos is not None:
             print( bbos ) # Just print a summary
-            print( "Num books is {} or {}".format(len(bbos), bbos.numBooks()) )
+            print( "Number of books is {} or {}".format(len(bbos), bbos.numBooks()) )
             print( "The 3rd book is {}".format( bbos.getBookAtPosition(3) ) )
             print( "Contains Psalms: {}".format( bbos.containsBook("PSA") ) )
             print( "Contains Judith: {}".format( bbos.containsBook("JDT") ) )

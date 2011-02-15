@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# ISO_639_3_LanguagesTest.py
+# ISO_639_3_LanguagesTests.py
 #
 # Module testing ISO_639_3_Languages.py
 #   Last modified: 2011-02-03 (also update versionString below)
@@ -222,4 +222,4 @@ if __name__ == '__main__':
     if Globals.verbosityLevel > 1: print( "{} V{}".format( progName, versionString ) )
 
     unittest.main() # Automatically runs all of the above tests
-# end of ISO_639_3_LanguagesTest.py
+# end of ISO_639_3_LanguagesTests.py

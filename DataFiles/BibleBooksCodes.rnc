@@ -1,6 +1,6 @@
 # BibleBooksCodes.rnc           Relax NG Compact Syntax schema file
 #   Version 0.50
-#   Last modified: 2010-12-16
+#   Last modified: 2011-02-15
 #
 # On Linux, to convert to RNG, use
 #       trang BibleBooksCodes.rnc ../DerivedFiles/BibleBooksCodes.rng
@@ -8,8 +8,6 @@
 #       xmllint --noout --relaxng ../DerivedFiles/BibleBooksCodes.rng BibleBooksCodes.xml
 # or to validate against both this and the internal DTD, use
 #       xmllint --noout --relaxng ../DerivedFiles/BibleBooksCodes.rng --valid BibleBooksCodes.xml
-#
-# See the supplied ReadMe.txt file for more information.
 #
 
 # The root element

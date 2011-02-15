@@ -1,0 +1,69 @@
+# BiblePunctuationSystem.rnc           Relax NG Compact Syntax schema file
+#   Version 0.13
+#   Last modified: 2011-02-15
+#
+# On Linux, to convert to RNG, use
+#       trang BiblePunctuationSystem.rnc ../../DerivedFiles/BiblePunctuationSystem.rng
+# On Linux, to validate against the .rng file, use (with the proper suffix instead of XXX)
+#       xmllint --noout --relaxng ../../DerivedFiles/BiblePunctuationSystem.rng BiblePunctuationSystem_XXX.xml
+# or to validate against both this and the internal DTD, use (with the proper suffix instead of XXX)
+#       xmllint --noout --relaxng ../../DerivedFiles/BiblePunctuationSystem.rng --valid BiblePunctuationSystem_XXX.xml
+#
+
+# The root element
+start = BiblePunctuationSystem
+
+# A single header, then books
+BiblePunctuationSystem = element BiblePunctuationSystem
+{   header,
+
+    element sentenceCapitalisation { xsd:string { maxLength="2" } },
+    element properNounCapitalisation { xsd:string { maxLength="2" } },
+    element statementTerminator { xsd:string { maxLength="2" } },
+    element questionTerminator { xsd:string { maxLength="2" } },
+    element exclamationTerminator { xsd:string { maxLength="2" } },
+
+    element commaPauseCharacter { xsd:string { maxLength="2" } },
+
+    element startQuoteLevel1 { xsd:string { maxLength="2" } },
+    element endQuoteLevel1 { xsd:string { maxLength="2" } },
+    element startQuoteLevel2 { xsd:string { maxLength="2" } },
+    element endQuoteLevel2 { xsd:string { maxLength="2" } },
+    element startQuoteLevel3 { xsd:string { maxLength="2" } },
+    element endQuoteLevel3 { xsd:string { maxLength="2" } },
+    element startQuoteLevel4 { xsd:string { maxLength="2" } },
+    element endQuoteLevel4 { xsd:string { maxLength="2" } },
+
+    element booknameCase { xsd:string { maxLength="2" } },
+    element booknameLength { xsd:string { maxLength="6" } },
+    element punctuationAfterBookAbbreviation { xsd:string { maxLength="2" } },
+    element bookChapterSeparator { xsd:string { maxLength="2" } },
+    element spaceAllowedAfterBCS { xsd:string { maxLength="2" } },
+    element chapterVerseSeparator { xsd:string { maxLength="2" } },
+    element verseSeparator { xsd:string { maxLength="2" } },
+    element bookBridgeCharacter { xsd:string { maxLength="2" } },
+    element chapterBridgeCharacter { xsd:string { maxLength="2" } },
+    element verseBridgeCharacter { xsd:string { maxLength="2" } },
+    element chapterSeparator { xsd:string { maxLength="2" } },
+    element bookSeparator { xsd:string { maxLength="2" } },
+    element allowedVerseSuffixes { xsd:string { maxLength="6" } }
+}
+
+header  = element header
+{   revisionDesc*,
+    work
+}
+
+revisionDesc = element revisionDesc
+{   element date { xsd:date },
+    element p { xsd:string }+
+}
+
+work = element work
+{   element version { xsd:decimal { totalDigits="2" } },
+    element date { xsd:date },
+    element title { xsd:string },
+    element contributor { attribute role {"com"|"cre"|"edt"}, xsd:string }+,
+    element identifier { attribute type {"URL"}, xsd:anyURI }*,
+    element rights { xsd:string }
+}
