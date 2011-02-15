@@ -28,7 +28,7 @@ Module handling BiblePunctuation_*.xml and to export to JSON, C, and Python data
 """
 
 progName = "Bible Punctuation Systems handler"
-versionString = "0.40"
+versionString = "0.41"
 
 
 import os, logging
@@ -56,7 +56,7 @@ class _BiblePunctuationSystemsConverter:
         self.treeTag = "BiblePunctuationSystem"
         self.headerTag = "header"
         self.mainElementTags = ( "sentenceCapitalisation", "properNounCapitalisation", "statementTerminator", "questionTerminator", "exclamationTerminator", "commaPauseCharacter",
-                    "startQuoteLevel1", "endQuoteLevel1", "startQuoteLevel2", "endQuoteLevel2", "startQuoteLevel3", "endQuoteLevel3",
+                    "startQuoteLevel1", "endQuoteLevel1", "startQuoteLevel2", "endQuoteLevel2", "startQuoteLevel3", "endQuoteLevel3", "startQuoteLevel4", "endQuoteLevel4",
                     "booknameCase", "booknameLength", "punctuationAfterBookAbbreviation", "bookChapterSeparator", "spaceAllowedAfterBCS",
                     "chapterVerseSeparator", "verseSeparator", "bookBridgeCharacter", "chapterBridgeCharacter", "verseBridgeCharacter", "chapterSeparator", "bookSeparator", "allowedVerseSuffixes" )
 

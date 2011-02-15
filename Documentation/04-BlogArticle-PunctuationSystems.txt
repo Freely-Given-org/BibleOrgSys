@@ -1,6 +1,18 @@
 Bible Punctuation Systems
 
-xxx
+Why do we need to specify the punctuation system for a Bible? Isn't that sort of information already set on my computer in my locale? Well yes, the common punctuation conventions for your language might be defined in your locale, but there's three good reasons why we need to define our own system here:
+
+1/ We want to handle not just our own language here, but also the languages of the original texts, perhaps including Hebrew, Aramaic and Greek, plus the languages of other translations, e.g., Latin.
+
+2/ Even within one language, there might be differences. For example, many of the original texts didn't have ANY punctuation (or even word breaks). So we want to be able to specify the punctuation for any publication.
+
+3/ Our standard computer locales are not likely to include the punctuation standard for Bible references and other Bible-specific uses.
+
+Today I've committed the first attempt at a simple XML file for specifying the punctuation for a Bible publication. I've labelled my attempts as V0.40 because I'm sure that there's going to be many more fields that we'll need to add. And for that reason also, I haven't yet tried to make data files for a large range of languages.
+
+As we develop the system further, we'll be needing ways to tell a computer program how to parse a digital text, i.e., how to determine all the different parts of the text. Another of my specific interests is also CHECKING Bible files to make sure they are consistent ready for online or print publishing. So that requires specifying even more punctuation and formatting type details.
+
+So as already mentioned, the current files at https://github.com/openscriptures/BibleOrgSys/tree/master/DataFiles/PunctuationSystems are really only just a starting point to work from. Let me know what else we'll need to add.
 
 Robert Hunt.
 Hunt.RobertJ@gmail.com
