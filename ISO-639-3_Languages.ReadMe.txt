@@ -1,7 +1,7 @@
 # ISO-639-9.ReadMe.txt
 #   ReadMe.txt for ISO 639-3 language codes
 #   Version 0.81
-#   Last modified: 2011-02-07
+#   Last modified: 2011-02-15
 #
 #
 # Abbreviations:
@@ -57,11 +57,11 @@
 #           This should load and check the XML file and create ISO_639_3_Languages_Tables.* files in the DerivedFiles folder, suitable for including in other programs.
 #       If the program is run without any additional parameters, it runs in a demo mode which should show the use of some of the available routines.
 #
-#   Tests/ISO_639_3_LanguagesTest.py (for Python 3)
+#   Tests/ISO_639_3_LanguagesTests.py (for Python 3)
 #       Running this program from the command line will automatically run tests on the above module, listing tests which fail.
 #           A result of OK indicates that the tests have all passed.
-#       If you have Python3 installed on Linux, run the program with Tests/ISO_639_3_LanguagesTest.py (once you have made the program file "executable").
-#               (Alternatively, try: python3 Tests/ISO_639_3_LanguagesTest.py)
+#       If you have Python3 installed on Linux, run the program with Tests/ISO_639_3_LanguagesTests.py (once you have made the program file "executable").
+#               (Alternatively, try: python3 Tests/ISO_639_3_LanguagesTests.py)
 #       Note that although the --help switch works, most of the other displayed options are included for compatibility reasons only, and do not function correctly.
 #
 #

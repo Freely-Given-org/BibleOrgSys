@@ -1,0 +1,65 @@
+# BibleBooksNames.rnc           Relax NG Compact Syntax schema file
+#   Version 0.22
+#   Last modified: 2011-02-23
+#
+# On Linux, to convert to RNG, use
+#       trang BibleBooksNames.rnc ../../DerivedFiles/BibleBooksNames.rng
+# On Linux, to validate against the .rng file, use
+#       xmllint --noout --relaxng ../../DerivedFiles/BibleBooksNames.rng BibleBooksNames.xml
+# or to validate against both this and the internal DTD, use
+#       xmllint --noout --relaxng ../../DerivedFiles/BibleBooksNames.rng --valid BibleBooksNames.xml
+#
+# See the supplied ReadMe.txt file for more information.
+#
+# Note: ? = optional (zero or one), * = zero or more, + = one or more
+#
+
+# The root element
+start = BibleBooksNames
+
+# A single header, then multiple BibleBookNames entries
+BibleBooksNames = element BibleBooksNames
+{   header,
+    BibleDivisionNames+,
+    BibleBooknameLeaders+,
+    BibleBookNames+
+}
+
+header  = element header
+{   revisionDesc*,
+    work
+}
+
+revisionDesc = element revisionDesc
+{   element date { xsd:date },
+    element p { xsd:string }+
+}
+
+work = element work
+{   element version { xsd:decimal { totalDigits="2" } },
+    element date { xsd:date },
+    element title { xsd:string },
+    element contributor { attribute role {"com"|"edt"}, xsd:string }+,
+    element identifier { attribute type {"URL"}, xsd:anyURI }*,
+    element rights { xsd:string }
+}
+
+BibleDivisionNames = element BibleDivisionNames
+{   attribute standardAbbreviation { xsd:string { length="2" } },
+    element defaultName { xsd:string { minLength="3" maxLength="22" } },
+    element defaultAbbreviation { xsd:string { minLength="2" maxLength="9" } },
+    element inputAbbreviation { xsd:string { minLength="3" maxLength="22" } }*,
+    element includesBook { xsd:string { length="3" } }*
+}
+
+BibleBooknameLeaders = element BibleBooknameLeaders
+{   attribute standardLeader { xsd:string { minLength="1" maxLength="5" } },
+    element inputAbbreviation { xsd:string { minLength="1" maxLength="15" } }*
+}
+
+BibleBookNames = element BibleBookNames
+{   attribute referenceAbbreviation { xsd:string { length="3" } },
+    element defaultName { xsd:string { minLength="3" maxLength="35" } },
+    element defaultAbbreviation { xsd:string { minLength="2" maxLength="7" } },
+    element inputAbbreviation { xsd:string { minLength="2" maxLength="25" } }*
+}

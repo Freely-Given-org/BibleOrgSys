@@ -4,7 +4,7 @@
 # BibleBookOrdersTests.py
 #
 # Module testing BibleBookOrders.py
-#   Last modified: 2011-02-03 (also update versionString below)
+#   Last modified: 2011-02-22 (also update versionString below)
 #
 # Copyright (C) 2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -47,15 +47,22 @@ class BibleBookOrdersConverterTests( unittest.TestCase ):
         # Create the BibleBookOrdersConvertor object
         self.bbosc = BibleBookOrders._BibleBookOrdersConverter().loadSystems() # Doesn't reload the XML unnecessarily :)
 
+    def test_005_str( self ):
+        """ Test the __str__ function. """
+        result = str( self.bbosc )
+        self.assertTrue( isinstance( result, str ) )
+        self.assertTrue( len(result) > 20 )
+    # end of test_005_str
+
     def test_010_len( self ):
         """ Test the __len__ function. """
-        self.assert_( 10 < len(self.bbosc) < 50 ) # The number of loaded systems
+        self.assertTrue( 10 < len(self.bbosc) < 50 ) # The number of loaded systems
     # end of test_010_len
 
     def test_020_importDataToPython( self ):
         """ Test the importDataToPython function. """
         result = self.bbosc.importDataToPython()
-        self.assert_( isinstance( result, tuple ) )
+        self.assertTrue( isinstance( result, tuple ) )
         self.assertEqual( len(result), 2 )
     # end of test_020_importDataToPython
 
@@ -83,9 +90,16 @@ class BibleBookOrderSystemsTests( unittest.TestCase ):
         # Create the BibleBookOrderSystems object
         self.bboss = BibleBookOrders.BibleBookOrderSystems().loadData() # Doesn't reload the XML unnecessarily :)
 
+    def test_005_str( self ):
+        """ Test the __str__ function. """
+        result = str( self.bboss )
+        self.assertTrue( isinstance( result, str ) )
+        self.assertTrue( len(result) > 20 )
+    # end of test_005_str
+
     def test_010_len( self ):
         """ Test the __len__ function. """
-        self.assert_( 10 < len(self.bboss) < 50 ) # The number of loaded systems
+        self.assertTrue( 10 < len(self.bboss) < 50 ) # The number of loaded systems
     # end of test_010_len
 
     def test_020_contains( self ):
@@ -99,22 +113,22 @@ class BibleBookOrderSystemsTests( unittest.TestCase ):
     def test_030_getAvailableBookOrderSystemNames( self ):
         """ Test the getAvailableBookOrderSystemNames function. """
         results = self.bboss.getAvailableBookOrderSystemNames()
-        self.assert_( isinstance( results, list ) )
-        self.assert_( 10 < len(results) < 50 ) # The number of loaded systems
+        self.assertTrue( isinstance( results, list ) )
+        self.assertTrue( 10 < len(results) < 50 ) # The number of loaded systems
         self.assertEqual( len(results), len(self.bboss) )
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
-        for name in ("EuropeanProtestantBible",): self.assert_( name in results )
+        for name in ("EuropeanProtestantBible",): self.assertTrue( name in results )
     # end of test_030_getAvailableBookOrderSystemNames
 
     def test_040_getBookOrderSystem( self ):
         """ Test the getBookOrderSystem function. """
         results = self.bboss.getBookOrderSystem( "EuropeanProtestantBible" )
-        self.assert_( isinstance( results, tuple ) )
+        self.assertTrue( isinstance( results, tuple ) )
         self.assertEqual( len(results), 3 ) # The dictionaries
-        self.assert_( isinstance( results[0], OrderedDict ) )
-        self.assert_( isinstance( results[1], OrderedDict ) )
-        self.assert_( isinstance( results[2], list ) )
+        self.assertTrue( isinstance( results[0], OrderedDict ) )
+        self.assertTrue( isinstance( results[1], OrderedDict ) )
+        self.assertTrue( isinstance( results[2], list ) )
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
         self.assertEqual( self.bboss.getBookOrderSystem('SomeName'), None )
@@ -157,11 +171,11 @@ class BibleBookOrderSystemsTests( unittest.TestCase ):
         """ Test the getBookList function. """
         for (name, count, books,) in ( ("EuropeanProtestantBible",66,('GEN','MAL','MAT','REV',)), ("EuropeanProtestantOldTestament",39,('GEN','MAL',)), ("EuropeanProtestantNewTestament",27,('MAT','REV',)), ):
             results = self.bboss.getBookList( name )
-            self.assert_( isinstance( results, list ) )
+            self.assertTrue( isinstance( results, list ) )
             self.assertEqual( len(results), count ) # The number of books
             self.assertFalse( None in results )
             self.assertFalse( '' in results )
-            for BBB in books: self.assert_( BBB in results )
+            for BBB in books: self.assertTrue( BBB in results )
     # end of test_070_getBookList
 
     def test_080_checkBookOrderSystem( self ):
@@ -181,6 +195,13 @@ class BibleBookOrderSystemTests( unittest.TestCase ):
         # Create a BibleBookOrderSystem object
         self.systemName = "EuropeanProtestantBible"
         self.bbos = BibleBookOrders.BibleBookOrderSystem( self.systemName ) # Doesn't reload the XML unnecessarily :)
+
+    def test_005_str( self ):
+        """ Test the __str__ function. """
+        result = str( self.bbos )
+        self.assertTrue( isinstance( result, str ) )
+        self.assertTrue( len(result) > 20 )
+    # end of test_005_str
 
     def test_010_numBooks( self ):
         """ Test the __len__ and numBooks functions. """
@@ -221,8 +242,8 @@ class BibleBookOrderSystemTests( unittest.TestCase ):
         self.assertEqual( self.bbos.getBookPosition('MAT'), 40 )
         self.assertEqual( self.bbos.getBookPosition('CO1'), 46 )
         self.assertEqual( self.bbos.getBookPosition('REV'), 66 )
-        self.assertRaises( KeyError, self.bbos.getBookPosition, 'XYZ' )
-        self.assertRaises( KeyError, self.bbos.getBookPosition, 'Gen' )
+        for badBBB in ('XYZ','Gen',):
+            self.assertRaises( KeyError, self.bbos.getBookPosition, badBBB )
     # end of test_050_getBookPosition
 
     def test_060_getBookAtPosition( self ):
@@ -232,18 +253,18 @@ class BibleBookOrderSystemTests( unittest.TestCase ):
         self.assertEqual( self.bbos.getBookAtPosition(40), 'MAT' )
         self.assertEqual( self.bbos.getBookAtPosition(46), 'CO1' )
         self.assertEqual( self.bbos.getBookAtPosition(66), 'REV' )
-        self.assertRaises( KeyError, self.bbos.getBookAtPosition, 0 )
-        self.assertRaises( KeyError, self.bbos.getBookAtPosition, 67 )
+        for position in (0,67,):
+            self.assertRaises( KeyError, self.bbos.getBookAtPosition, position )
     # end of test_060_getBookAtPosition
 
     def test_070_getBookList( self ):
         """ Test the getSingleChapterBooksList function. """
         results = self.bbos.getBookList()
-        self.assert_( isinstance( results, list ) )
-        self.assert_( len(results) == 66 )
+        self.assertTrue( isinstance( results, list ) )
+        self.assertTrue( len(results) == 66 )
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
-        for BBB in ('OBA','PHM','JN2','JN3','JDE',): self.assert_( BBB in results )
+        for BBB in ('OBA','PHM','JN2','JN3','JDE',): self.assertTrue( BBB in results )
     # end of test_070_getBookList
 
     def test_080_getNextBook( self ):

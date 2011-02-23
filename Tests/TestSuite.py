@@ -4,7 +4,7 @@
 # TestSuite.py
 #
 # Suite for testing BibleOrgSys
-#   Last modified: 2011-02-03 (also update versionString below)
+#   Last modified: 2011-02-15 (also update versionString below)
 #
 # Copyright (C) 2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Suite testing BibleOrgSys.
 """
 
 progName = "Bible Organisational System test suite"
-versionString = "0.05"
+versionString = "0.06"
 
 
 import sys, unittest
@@ -40,6 +40,7 @@ sys.path.append( sourceFolder )
 import Globals
 import BibleBooksCodesTests, BibleBookOrdersTests
 import ISO_639_3_LanguagesTests, BiblePunctuationSystemsTests
+import BibleBooksNamesTests
 
 
 # Handle command line parameters (for compatibility)
@@ -67,6 +68,10 @@ suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleBookOrdersTe
 suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BiblePunctuationSystemsTests.BiblePunctuationSystemsConverterTests ) )
 suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BiblePunctuationSystemsTests.BiblePunctuationSystemsTests ) )
 suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BiblePunctuationSystemsTests.BiblePunctuationSystemTests ) )
+
+suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleBooksNamesTests.BibleBooksNamesConverterTests ) )
+suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleBooksNamesTests.BibleBooksNamesSystemsTests ) )
+suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleBooksNamesTests.BibleBooksNamesSystemTests ) )
 
 
 # Now run all the tests in the suite

@@ -4,7 +4,7 @@
 # BibleBooksCodesTests.py
 #
 # Module testing BibleBooksCodes.py
-#   Last modified: 2011-02-03 (also update versionString below)
+#   Last modified: 2011-02-22 (also update versionString below)
 #
 # Copyright (C) 2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -45,19 +45,26 @@ class BibleBooksCodesConverterTests( unittest.TestCase ):
         # Create the BibleBooksCodesConvertor object
         self.bbcsc = BibleBooksCodes._BibleBooksCodesConverter().loadAndValidate() # Doesn't reload the XML unnecessarily :)
 
+    def test_005_str( self ):
+        """ Test the __str__ function. """
+        result = str( self.bbcsc )
+        self.assertTrue( isinstance( result, str ) )
+        self.assertTrue( len(result) > 20 )
+    # end of test_005_str
+
     def test_010_len( self ):
         """ Test the __len__ function. """
-        self.assert_( 100 < len(self.bbcsc) < 255 ) # The number of loaded books codes
+        self.assertTrue( 100 < len(self.bbcsc) < 255 ) # The number of loaded books codes
     # end of test_010_len
 
     def test_020_importDataToPython( self ):
         """ Test the importDataToPython function. """
         result = self.bbcsc.importDataToPython()
-        self.assert_( isinstance( result, dict ) )
+        self.assertTrue( isinstance( result, dict ) )
         self.assertEqual( len(result), 11 )
         for dictName in ("referenceNumberDict","referenceAbbreviationDict","SBLDict","OSISAbbreviationDict","SwordAbbreviationDict","CCELDict","ParatextAbbreviationDict","ParatextNumberDict","NETBibleAbbreviationDict","ByzantineAbbreviationDict","EnglishNameDict",):
-            self.assert_( dictName in result )
-            self.assert_( 10 < len(result[dictName]) < 255 )
+            self.assertTrue( dictName in result )
+            self.assertTrue( 10 < len(result[dictName]) < 255 )
     # end of test_020_importDataToPython
 
     def test_030_exportDataToPython( self ):
@@ -84,9 +91,16 @@ class BibleBooksCodesTests( unittest.TestCase ):
         # Create the BibleBooksCodes object
         self.bbc = BibleBooksCodes.BibleBooksCodes().loadData() # Doesn't reload the XML unnecessarily :)
 
+    def test_005_str( self ):
+        """ Test the __str__ function. """
+        result = str( self.bbc )
+        self.assertTrue( isinstance( result, str ) )
+        self.assertTrue( len(result) > 20 )
+    # end of test_005_str
+
     def test_010_len( self ):
         """ Test the __len__ function. """
-        self.assert_( len(self.bbc) > 150 ) # includes apocryphal books, etc.
+        self.assertTrue( len(self.bbc) > 150 ) # includes apocryphal books, etc.
     # end of test_010_len
 
     def test_020_getBBB( self ):
@@ -117,10 +131,10 @@ class BibleBooksCodesTests( unittest.TestCase ):
     def test_040_getAllReferenceAbbreviations( self ):
         """ Test the getAllReferenceAbbreviations function. """
         results = self.bbc.getAllReferenceAbbreviations()
-        self.assert_( isinstance( results, list ) )
-        self.assert_( len(results) > 66 )
+        self.assertTrue( isinstance( results, list ) )
+        self.assertTrue( len(results) > 66 )
         self.assertFalse( None in results )
-        for result in results: self.assert_( len(result)==3 )
+        for result in results: self.assertTrue( len(result)==3 )
     # end of test_040_getAllReferenceAbbreviations
 
     def test_050_getReferenceNumber( self ):
@@ -242,52 +256,52 @@ class BibleBooksCodesTests( unittest.TestCase ):
     def test_310_getSingleChapterBooksList( self ):
         """ Test the getSingleChapterBooksList function. """
         results = self.bbc.getSingleChapterBooksList()
-        self.assert_( isinstance( results, list ) )
-        self.assert_( 10 < len(results) < 20 ) # Remember it includes many non-canonical books
+        self.assertTrue( isinstance( results, list ) )
+        self.assertTrue( 10 < len(results) < 20 ) # Remember it includes many non-canonical books
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
-        for BBB in ('OBA','PHM','JN2','JN3','JDE',): self.assert_( BBB in results )
+        for BBB in ('OBA','PHM','JN2','JN3','JDE',): self.assertTrue( BBB in results )
     # end of test_310_getSingleChapterBooksList
 
     def test_320_getOSISSingleChapterBooksList( self ):
         """ Test the getOSISSingleChapterBooksList function. """
         results = self.bbc.getOSISSingleChapterBooksList()
-        self.assert_( isinstance( results, list ) )
-        self.assert_( 10 < len(results) < 20 ) # Remember it includes many non-canonical books
+        self.assertTrue( isinstance( results, list ) )
+        self.assertTrue( 10 < len(results) < 20 ) # Remember it includes many non-canonical books
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
-        for BBB in ('Obad','Phlm','2John','3John','Jude',): self.assert_( BBB in results )
+        for BBB in ('Obad','Phlm','2John','3John','Jude',): self.assertTrue( BBB in results )
     # end of test_320_getOSISSingleChapterBooksList
 
     def test_330_getAllOSISBooksCodes( self ):
         """ Test the getAllOSISBooksCodes function. """
         results = self.bbc.getAllOSISBooksCodes()
-        self.assert_( isinstance( results, list ) )
-        self.assert_( 66 <= len(results) < 120 ) # Remember it includes many non-canonical books
+        self.assertTrue( isinstance( results, list ) )
+        self.assertTrue( 66 <= len(results) < 120 ) # Remember it includes many non-canonical books
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
-        self.assert_( 'Gen' in results )
-        self.assert_( 'Mal' in results )
-        self.assert_( 'Matt' in results )
-        self.assert_( 'Rev' in results )
-        self.assert_( '2Macc' in results )
+        self.assertTrue( 'Gen' in results )
+        self.assertTrue( 'Mal' in results )
+        self.assertTrue( 'Matt' in results )
+        self.assertTrue( 'Rev' in results )
+        self.assertTrue( '2Macc' in results )
         for result in results:
-            self.assert_( 2 <= len(result) <= 7 )
+            self.assertTrue( 2 <= len(result) <= 7 )
     # end of test_330_getAllOSISBooksCodes
 
     def test_340_getAllParatextBooksCodeNumberTriples( self ):
         """ Test the getAllParatextBooksCodeNumberTriples function. """
         results = self.bbc.getAllParatextBooksCodeNumberTriples()
-        self.assert_( isinstance( results, list ) )
-        self.assert_( 66 <= len(results) < 120 ) # Remember it includes many non-canonical books
+        self.assertTrue( isinstance( results, list ) )
+        self.assertTrue( 66 <= len(results) < 120 ) # Remember it includes many non-canonical books
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
         for resultTuple in results:
-            self.assert_( len(resultTuple)== 3 )
-            self.assert_( len(resultTuple[0]) == 3 )
-            self.assert_( len(resultTuple[1]) == 2 )
-            self.assert_( len(resultTuple[2]) == 3 )
-        for BBB in (('Gen','01','GEN'),): self.assert_( BBB in results )
+            self.assertTrue( len(resultTuple)== 3 )
+            self.assertTrue( len(resultTuple[0]) == 3 )
+            self.assertTrue( len(resultTuple[1]) == 2 )
+            self.assertTrue( len(resultTuple[2]) == 3 )
+        for BBB in (('Gen','01','GEN'),): self.assertTrue( BBB in results )
     # end of test_340_getAllParatextBooksCodeNumberTriples
 # end of BibleBooksCodesTests class
 

@@ -4,7 +4,7 @@
 # ISO_639_3_LanguagesTests.py
 #
 # Module testing ISO_639_3_Languages.py
-#   Last modified: 2011-02-03 (also update versionString below)
+#   Last modified: 2011-02-22 (also update versionString below)
 #
 # Copyright (C) 2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -47,13 +47,13 @@ class ISO_639_3_LanguagesConverterTests( unittest.TestCase ):
 
     def test_010_len( self ):
         """ Test the __len__ function. """
-        self.assert_( 6000 < len(self.isoLgC) < 8000 ) # The number of loaded systems
+        self.assertTrue( 6000 < len(self.isoLgC) < 8000 ) # The number of loaded systems
     # end of test_010_len
 
     def test_020_importDataToPython( self ):
         """ Test the importDataToPython function. """
         result = self.isoLgC.importDataToPython()
-        self.assert_( isinstance( result, tuple ) )
+        self.assertTrue( isinstance( result, tuple ) )
         self.assertEqual( len(result), 2 )
     # end of test_020_importDataToPython
 
@@ -86,7 +86,7 @@ class ISO_639_3_LanguagesTests( unittest.TestCase ):
 
     def test_010_len( self ):
         """ Test the __len__ function. """
-        self.assert_( len(self.isoLgs) > 7000 )
+        self.assertTrue( len(self.isoLgs) > 7000 )
     # end of test_010_len
 
     def test_020_isValidLanguageCode( self ):
@@ -101,8 +101,8 @@ class ISO_639_3_LanguagesTests( unittest.TestCase ):
         """ Test the getLanguageName function. """
         for goodCode in ISO_639_3_LanguagesTests.goodCodes:
             result = self.isoLgs.getLanguageName( goodCode )
-            self.assert_( isinstance( result, str ) )
-            self.assert_( len(result) > 2 )
+            self.assertTrue( isinstance( result, str ) )
+            self.assertTrue( len(result) > 2 )
         self.assertEqual( self.isoLgs.getLanguageName( 'eng' ), 'English' )
         self.assertEqual( self.isoLgs.getLanguageName( 'deu' ), 'German' )
         self.assertEqual( self.isoLgs.getLanguageName( 'mqk' ), 'Manobo, Rajah Kabunsuwan' )
@@ -114,9 +114,9 @@ class ISO_639_3_LanguagesTests( unittest.TestCase ):
         """ Test the getScope function. """
         for goodCode in ISO_639_3_LanguagesTests.goodCodes:
             result = self.isoLgs.getScope( goodCode )
-            self.assert_( isinstance( result, str ) )
-            self.assert_( len(result) == 1 )
-            self.assert_( result in ('I','M','S',) )
+            self.assertTrue( isinstance( result, str ) )
+            self.assertTrue( len(result) == 1 )
+            self.assertTrue( result in ('I','M','S',) )
         self.assertEqual( self.isoLgs.getScope( 'eng' ), 'I' )
         self.assertEqual( self.isoLgs.getScope( 'deu' ), 'I' )
         self.assertEqual( self.isoLgs.getScope( 'mqk' ), 'I' )
@@ -130,9 +130,9 @@ class ISO_639_3_LanguagesTests( unittest.TestCase ):
         """ Test the getType function. """
         for goodCode in ISO_639_3_LanguagesTests.goodCodes:
             result = self.isoLgs.getType( goodCode )
-            self.assert_( isinstance( result, str ) )
-            self.assert_( len(result) == 1 )
-            self.assert_( result in ('A','C','E','H','L','S',) )
+            self.assertTrue( isinstance( result, str ) )
+            self.assertTrue( len(result) == 1 )
+            self.assertTrue( result in ('A','C','E','H','L','S',) )
         self.assertEqual( self.isoLgs.getType( 'eng' ), 'L' )
         self.assertEqual( self.isoLgs.getType( 'deu' ), 'L' )
         self.assertEqual( self.isoLgs.getType( 'mqk' ), 'L' )
@@ -151,8 +151,8 @@ class ISO_639_3_LanguagesTests( unittest.TestCase ):
         for goodCode in ISO_639_3_LanguagesTests.goodCodes:
             result = self.isoLgs.getPart1Code( goodCode )
             if result is not None:
-                self.assert_( isinstance( result, str ) )
-                self.assert_( len(result) == 2 )
+                self.assertTrue( isinstance( result, str ) )
+                self.assertTrue( len(result) == 2 )
         self.assertEqual( self.isoLgs.getPart1Code( 'eng' ), 'en' )
         self.assertEqual( self.isoLgs.getPart1Code( 'deu' ), 'de' )
         self.assertEqual( self.isoLgs.getPart1Code( 'mqk' ), None )
@@ -171,8 +171,8 @@ class ISO_639_3_LanguagesTests( unittest.TestCase ):
         for goodCode in ISO_639_3_LanguagesTests.goodCodes:
             result = self.isoLgs.getPart2Code( goodCode )
             if result is not None:
-                self.assert_( isinstance( result, str ) )
-                self.assert_( len(result) == 3 )
+                self.assertTrue( isinstance( result, str ) )
+                self.assertTrue( len(result) == 3 )
         self.assertEqual( self.isoLgs.getPart2Code( 'eng' ), 'eng' )
         self.assertEqual( self.isoLgs.getPart2Code( 'deu' ), 'ger' )
         self.assertEqual( self.isoLgs.getPart2Code( 'mqk' ), None )
@@ -190,8 +190,8 @@ class ISO_639_3_LanguagesTests( unittest.TestCase ):
         """ Test the getLanguageCode function. """
         for goodName in ('English','english','ENGLISH','French','German','Manobo, Matigsalug',):
             result = self.isoLgs.getLanguageCode( goodName )
-            self.assert_( isinstance( result, str ) )
-            self.assert_( len(result) == 3 )
+            self.assertTrue( isinstance( result, str ) )
+            self.assertTrue( len(result) == 3 )
         self.assertEqual( self.isoLgs.getLanguageCode( 'eng' ), None )
         self.assertEqual( self.isoLgs.getLanguageCode( 'English' ), 'eng' )
         self.assertEqual( self.isoLgs.getLanguageCode( 'German' ), 'deu' )
@@ -203,9 +203,9 @@ class ISO_639_3_LanguagesTests( unittest.TestCase ):
         """ Test the getNameMatches function. """
         for goodName in ('English','english','ENGLISH','French','German','Manobo, Matigsalug',):
             result = self.isoLgs.getNameMatches( goodName )
-            self.assert_( isinstance( result, list ) )
-        self.assert_( len(self.isoLgs.getNameMatches( 'eng' )) > 20 )
-        self.assert_( len(self.isoLgs.getNameMatches( 'English' )) > 20 )
+            self.assertTrue( isinstance( result, list ) )
+        self.assertTrue( len(self.isoLgs.getNameMatches( 'eng' )) > 20 )
+        self.assertTrue( len(self.isoLgs.getNameMatches( 'English' )) > 20 )
         self.assertEqual( self.isoLgs.getNameMatches( 'stupid' ), [] )
         for badName in ('Deutschen','Francais','SomeName',):
             self.assertEqual( self.isoLgs.getNameMatches(badName), [] )
