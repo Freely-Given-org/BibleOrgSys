@@ -5,8 +5,7 @@ This file gives a table of Bible book reference abbreviations in the order that 
     The list of the available 3-character book reference abbreviations can be found in BibleBooksCodes.xml
     An ascending id number is also included as an attribute for convenience.
 
-It must contain entries only for the books actually included in a given publication.
-This file can be copied, renamed, and edited if your publication contains different books or in a different order.
+Only the ORDER of books is important. Not all books listed here are necessarily included in any one publication.
 
 The data entries in this file are language agnostic, i.e., the information can apply to a publication in any language.
 

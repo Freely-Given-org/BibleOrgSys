@@ -2550,389 +2550,389 @@
     }
   }, 
   "SwordAbbreviationDict": {
-    "Matt": [
-      40, 
-      "MAT"
-    ], 
-    "1Sam": [
-      9, 
-      "SA1"
-    ], 
-    "Acts": [
-      44, 
-      "ACT"
-    ], 
-    "Jas": [
-      59, 
-      "JAM"
-    ], 
-    "Hag": [
-      37, 
-      "HAG"
-    ], 
-    "2Pet": [
-      61, 
-      "PE2"
-    ], 
-    "1En": [
-      141, 
-      "ENO"
-    ], 
-    "Dan": [
-      27, 
-      "DAN"
-    ], 
-    "Gal": [
-      48, 
-      "GAL"
-    ], 
-    "EpJer": [
-      102, 
-      "LJB"
-    ], 
-    "Hab": [
-      35, 
-      "HAB"
-    ], 
-    "Bar": [
-      101, 
-      "BAR"
-    ], 
-    "Zech": [
-      38, 
-      "ZEC"
-    ], 
-    "1Macc": [
-      110, 
-      "MA1"
-    ], 
-    "Nah": [
-      34, 
-      "NAH"
-    ], 
-    "AddPs": [
-      127, 
-      "PS3"
-    ], 
-    "2Bar": [
-      103, 
-      "BA2"
-    ], 
-    "AddDan": [
-      75, 
-      "DAC"
-    ], 
-    "2Meq": [
-      116, 
-      "MQ2"
-    ], 
-    "1Pet": [
-      60, 
-      "PE1"
-    ], 
-    "3Meq": [
-      117, 
-      "MQ3"
-    ], 
-    "3Macc": [
-      112, 
-      "MA3"
-    ], 
-    "1Chr": [
-      13, 
-      "CH1"
-    ], 
-    "Zeph": [
-      36, 
-      "ZEP"
-    ], 
-    "Ps": [
-      19, 
-      "PSA"
-    ], 
-    "Neh": [
-      16, 
-      "NEH"
-    ], 
-    "Rev": [
-      66, 
-      "REV"
-    ], 
-    "2Thess": [
-      53, 
-      "TH2"
-    ], 
-    "Sus": [
-      81, 
-      "SUS"
-    ], 
-    "John": [
-      43, 
-      "JHN"
-    ], 
-    "2Sam": [
-      10, 
-      "SA2"
-    ], 
-    "Song": [
-      22, 
-      "SNG"
-    ], 
-    "Jonah": [
-      32, 
-      "JNA"
-    ], 
-    "Job": [
-      18, 
-      "JOB"
-    ], 
-    "2Chr": [
-      14, 
-      "CH2"
-    ], 
-    "Lev": [
-      3, 
-      "LEV"
-    ], 
-    "EpLao": [
-      130, 
-      "LAO"
-    ], 
-    "Exod": [
-      2, 
-      "EXO"
-    ], 
-    "Jub": [
-      140, 
-      "JUB"
-    ], 
-    "EsthGr": [
-      70, 
-      "ESG"
-    ], 
-    "Judg": [
-      7, 
-      "JDG"
-    ], 
-    "Jude": [
-      65, 
-      "JDE"
-    ], 
-    "Eph": [
-      49, 
-      "EPH"
-    ], 
-    "Amos": [
-      30, 
-      "AMO"
-    ], 
-    "Eccl": [
-      21, 
-      "ECC"
-    ], 
-    "Ezra": [
-      224, 
-      "EZN"
-    ], 
-    "Rom": [
-      45, 
-      "ROM"
-    ], 
-    "2Kgs": [
-      12, 
-      "KI2"
-    ], 
-    "Esth": [
-      17, 
-      "EST"
-    ], 
-    "AddEsth": [
-      72, 
-      "ESC"
-    ], 
-    "Jer": [
-      24, 
-      "JER"
-    ], 
-    "Obad": [
-      31, 
-      "OBA"
-    ], 
-    "Sir": [
+    "SIR": [
       84, 
       "SIR"
     ], 
-    "Prov": [
-      20, 
-      "PRO"
-    ], 
-    "3John": [
-      64, 
-      "JN3"
-    ], 
-    "Heb": [
-      58, 
-      "HEB"
-    ], 
-    "Tob": [
-      85, 
-      "TOB"
-    ], 
-    "Deut": [
-      5, 
-      "DEU"
-    ], 
-    "Ruth": [
-      8, 
-      "RUT"
-    ], 
-    "2John": [
-      63, 
-      "JN2"
-    ], 
-    "2Tim": [
-      55, 
-      "TI2"
-    ], 
-    "2Cor": [
-      47, 
-      "CO2"
-    ], 
-    "1John": [
-      62, 
-      "JN1"
-    ], 
-    "PrMan": [
-      83, 
-      "MAN"
-    ], 
-    "1Esd": [
-      90, 
-      "GES"
-    ], 
-    "1Kgs": [
-      11, 
-      "KI1"
-    ], 
-    "Gen": [
-      1, 
-      "GEN"
-    ], 
-    "Bel": [
-      80, 
-      "BEL"
-    ], 
-    "4Bar": [
-      107, 
-      "BA4"
-    ], 
-    "Phil": [
-      50, 
-      "PHP"
-    ], 
-    "Jdt": [
-      82, 
-      "JDT"
-    ], 
-    "Mark": [
-      41, 
-      "MRK"
-    ], 
-    "1Tim": [
-      54, 
-      "TI1"
-    ], 
-    "Num": [
-      4, 
-      "NUM"
-    ], 
-    "2Macc": [
-      111, 
-      "MA2"
-    ], 
-    "Ezek": [
-      26, 
-      "EZK"
-    ], 
-    "DanGr": [
-      73, 
-      "DAG"
-    ], 
-    "Phlm": [
-      57, 
-      "PHM"
-    ], 
-    "1Meq": [
-      115, 
-      "MQ1"
-    ], 
-    "Mic": [
+    "MIC": [
       33, 
       "MIC"
     ], 
-    "Josh": [
+    "EPH": [
+      49, 
+      "EPH"
+    ], 
+    "3MACC": [
+      112, 
+      "MA3"
+    ], 
+    "2BAR": [
+      103, 
+      "BA2"
+    ], 
+    "2SAM": [
+      10, 
+      "SA2"
+    ], 
+    "2COR": [
+      47, 
+      "CO2"
+    ], 
+    "JOSH": [
       6, 
       "JOS"
     ], 
-    "Odes": [
-      131, 
-      "ODE"
+    "JOB": [
+      18, 
+      "JOB"
     ], 
-    "Hos": [
-      28, 
-      "HOS"
+    "GAL": [
+      48, 
+      "GAL"
     ], 
-    "4Macc": [
-      113, 
-      "MA4"
+    "NAH": [
+      34, 
+      "NAH"
     ], 
-    "1Thess": [
-      52, 
-      "TH1"
+    "1CHR": [
+      13, 
+      "CH1"
     ], 
-    "Lam": [
+    "1MACC": [
+      110, 
+      "MA1"
+    ], 
+    "SONG": [
+      22, 
+      "SNG"
+    ], 
+    "REV": [
+      66, 
+      "REV"
+    ], 
+    "HAB": [
+      35, 
+      "HAB"
+    ], 
+    "JAS": [
+      59, 
+      "JAM"
+    ], 
+    "HAG": [
+      37, 
+      "HAG"
+    ], 
+    "2PET": [
+      61, 
+      "PE2"
+    ], 
+    "LAM": [
       25, 
       "LAM"
     ], 
-    "Luke": [
-      42, 
-      "LUK"
-    ], 
-    "1Cor": [
-      46, 
-      "CO1"
-    ], 
-    "PrAzar": [
-      87, 
-      "PAZ"
-    ], 
-    "Titus": [
-      56, 
-      "TIT"
-    ], 
-    "Mal": [
-      39, 
-      "MAL"
-    ], 
-    "2Esd": [
-      91, 
-      "LES"
-    ], 
-    "Isa": [
-      23, 
-      "ISA"
-    ], 
-    "Col": [
-      51, 
-      "COL"
-    ], 
-    "PssSol": [
+    "PSSSOL": [
       128, 
       "PSS"
     ], 
-    "Wis": [
+    "PHLM": [
+      57, 
+      "PHM"
+    ], 
+    "2KGS": [
+      12, 
+      "KI2"
+    ], 
+    "1COR": [
+      46, 
+      "CO1"
+    ], 
+    "MAL": [
+      39, 
+      "MAL"
+    ], 
+    "2ESD": [
+      91, 
+      "LES"
+    ], 
+    "ACTS": [
+      44, 
+      "ACT"
+    ], 
+    "BEL": [
+      80, 
+      "BEL"
+    ], 
+    "4BAR": [
+      107, 
+      "BA4"
+    ], 
+    "1EN": [
+      141, 
+      "ENO"
+    ], 
+    "EPJER": [
+      102, 
+      "LJB"
+    ], 
+    "JDT": [
+      82, 
+      "JDT"
+    ], 
+    "1TIM": [
+      54, 
+      "TI1"
+    ], 
+    "JUB": [
+      140, 
+      "JUB"
+    ], 
+    "PS": [
+      19, 
+      "PSA"
+    ], 
+    "OBAD": [
+      31, 
+      "OBA"
+    ], 
+    "ROM": [
+      45, 
+      "ROM"
+    ], 
+    "PRAZAR": [
+      87, 
+      "PAZ"
+    ], 
+    "1KGS": [
+      11, 
+      "KI1"
+    ], 
+    "GEN": [
+      1, 
+      "GEN"
+    ], 
+    "EZEK": [
+      26, 
+      "EZK"
+    ], 
+    "EXOD": [
+      2, 
+      "EXO"
+    ], 
+    "ZEPH": [
+      36, 
+      "ZEP"
+    ], 
+    "MATT": [
+      40, 
+      "MAT"
+    ], 
+    "PROV": [
+      20, 
+      "PRO"
+    ], 
+    "ZECH": [
+      38, 
+      "ZEC"
+    ], 
+    "JONAH": [
+      32, 
+      "JNA"
+    ], 
+    "NEH": [
+      16, 
+      "NEH"
+    ], 
+    "LUKE": [
+      42, 
+      "LUK"
+    ], 
+    "ESTH": [
+      17, 
+      "EST"
+    ], 
+    "SUS": [
+      81, 
+      "SUS"
+    ], 
+    "ISA": [
+      23, 
+      "ISA"
+    ], 
+    "COL": [
+      51, 
+      "COL"
+    ], 
+    "DANGR": [
+      73, 
+      "DAG"
+    ], 
+    "PHIL": [
+      50, 
+      "PHP"
+    ], 
+    "NUM": [
+      4, 
+      "NUM"
+    ], 
+    "4MACC": [
+      113, 
+      "MA4"
+    ], 
+    "JOHN": [
+      43, 
+      "JHN"
+    ], 
+    "2JOHN": [
+      63, 
+      "JN2"
+    ], 
+    "EZRA": [
+      224, 
+      "EZN"
+    ], 
+    "1JOHN": [
+      62, 
+      "JN1"
+    ], 
+    "TITUS": [
+      56, 
+      "TIT"
+    ], 
+    "PRMAN": [
+      83, 
+      "MAN"
+    ], 
+    "HEB": [
+      58, 
+      "HEB"
+    ], 
+    "EPLAO": [
+      130, 
+      "LAO"
+    ], 
+    "ADDDAN": [
+      75, 
+      "DAC"
+    ], 
+    "JUDG": [
+      7, 
+      "JDG"
+    ], 
+    "ODES": [
+      131, 
+      "ODE"
+    ], 
+    "JUDE": [
+      65, 
+      "JDE"
+    ], 
+    "MARK": [
+      41, 
+      "MRK"
+    ], 
+    "2CHR": [
+      14, 
+      "CH2"
+    ], 
+    "WIS": [
       86, 
       "WIS"
+    ], 
+    "LEV": [
+      3, 
+      "LEV"
+    ], 
+    "AMOS": [
+      30, 
+      "AMO"
+    ], 
+    "DEUT": [
+      5, 
+      "DEU"
+    ], 
+    "ECCL": [
+      21, 
+      "ECC"
+    ], 
+    "3MEQ": [
+      117, 
+      "MQ3"
+    ], 
+    "JER": [
+      24, 
+      "JER"
+    ], 
+    "BAR": [
+      101, 
+      "BAR"
+    ], 
+    "ESTHGR": [
+      70, 
+      "ESG"
+    ], 
+    "TOB": [
+      85, 
+      "TOB"
+    ], 
+    "ADDESTH": [
+      72, 
+      "ESC"
+    ], 
+    "DAN": [
+      27, 
+      "DAN"
+    ], 
+    "1ESD": [
+      90, 
+      "GES"
+    ], 
+    "1SAM": [
+      9, 
+      "SA1"
+    ], 
+    "ADDPS": [
+      127, 
+      "PS3"
+    ], 
+    "1MEQ": [
+      115, 
+      "MQ1"
+    ], 
+    "HOS": [
+      28, 
+      "HOS"
+    ], 
+    "2TIM": [
+      55, 
+      "TI2"
+    ], 
+    "2THESS": [
+      53, 
+      "TH2"
+    ], 
+    "2MACC": [
+      111, 
+      "MA2"
+    ], 
+    "2MEQ": [
+      116, 
+      "MQ2"
+    ], 
+    "1PET": [
+      60, 
+      "PE1"
+    ], 
+    "3JOHN": [
+      64, 
+      "JN3"
+    ], 
+    "1THESS": [
+      52, 
+      "TH1"
+    ], 
+    "RUTH": [
+      8, 
+      "RUT"
     ]
   }, 
   "ParatextNumberDict": {
@@ -5998,600 +5998,600 @@
     }
   }, 
   "ParatextAbbreviationDict": {
-    "DaG": [
-      75, 
-      "DAC", 
-      "B2"
+    "SIR": [
+      84, 
+      "SIR", 
+      "72"
     ], 
-    "PsB": [
-      125, 
-      "PSB", 
-      "88"
-    ], 
-    "Hab": [
-      35, 
-      "HAB", 
-      "35"
-    ], 
-    "Jas": [
-      59, 
-      "JAM", 
-      "60"
-    ], 
-    "Hag": [
-      37, 
-      "HAG", 
-      "37"
-    ], 
-    "LBa": [
-      104, 
-      "LBA", 
-      "B5"
-    ], 
-    "3Jn": [
-      64, 
-      "JN3", 
-      "65"
-    ], 
-    "PsS": [
-      128, 
-      "PSS", 
-      "87"
-    ], 
-    "3Co": [
+    "3CO": [
       136, 
       "CO3", 
       null
     ], 
-    "Dan": [
-      27, 
-      "DAN", 
-      "27"
+    "TIT": [
+      56, 
+      "TIT", 
+      "57"
     ], 
-    "Psa": [
-      19, 
-      "PSA", 
-      "19"
-    ], 
-    "1Es": [
-      90, 
-      "GES", 
-      "82"
-    ], 
-    "Bak": [
-      242, 
-      "BAK", 
-      null
-    ], 
-    "Gal": [
-      48, 
-      "GAL", 
-      "49"
-    ], 
-    "2Pe": [
-      61, 
-      "PE2", 
-      "62"
-    ], 
-    "1Cl": [
-      150, 
-      "CL1", 
-      null
-    ], 
-    "2Ki": [
-      12, 
-      "KI2", 
-      "12"
-    ], 
-    "Bar": [
-      101, 
-      "BAR", 
-      "73"
-    ], 
-    "Did": [
-      153, 
-      "DID", 
-      null
-    ], 
-    "Jhn": [
-      43, 
-      "JHN", 
-      "44"
-    ], 
-    "2Cl": [
-      151, 
-      "CL2", 
-      null
-    ], 
-    "2Co": [
-      47, 
-      "CO2", 
-      "48"
-    ], 
-    "2Ch": [
-      14, 
-      "CH2", 
-      "14"
-    ], 
-    "She": [
-      152, 
-      "SHE", 
-      null
-    ], 
-    "EzA": [
-      92, 
-      "EZA", 
-      "A4"
-    ], 
-    "Pro": [
-      20, 
-      "PRO", 
-      "20"
-    ], 
-    "2Sa": [
-      10, 
-      "SA2", 
-      "10"
-    ], 
-    "Ezr": [
-      224, 
-      "EZN", 
-      "15"
-    ], 
-    "Rut": [
-      8, 
-      "RUT", 
-      "08"
-    ], 
-    "Ezk": [
-      26, 
-      "EZK", 
-      "26"
-    ], 
-    "Ps2": [
-      126, 
-      "PS2", 
-      "85"
-    ], 
-    "2Jn": [
-      63, 
-      "JN2", 
-      "64"
-    ], 
-    "Neh": [
-      16, 
-      "NEH", 
-      "16"
-    ], 
-    "Rep": [
-      143, 
-      "REP", 
-      "C1"
-    ], 
-    "Rev": [
-      66, 
-      "REV", 
-      "67"
-    ], 
-    "Eno": [
-      141, 
-      "ENO", 
-      "B7"
-    ], 
-    "Sus": [
-      81, 
-      "SUS", 
-      "76"
-    ], 
-    "Luk": [
-      42, 
-      "LUK", 
-      "43"
-    ], 
-    "Jon": [
-      32, 
-      "JNA", 
-      "32"
-    ], 
-    "Jos": [
-      6, 
-      "JOS", 
-      "06"
-    ], 
-    "1Mq": [
-      115, 
-      "MQ1", 
-      "B8"
-    ], 
-    "Glo": [
-      235, 
-      "GLS", 
-      null
-    ], 
-    "Job": [
-      18, 
-      "JOB", 
-      "18"
-    ], 
-    "TDX": [
-      241, 
-      "IXT", 
-      null
-    ], 
-    "Lev": [
-      3, 
-      "LEV", 
-      "03"
-    ], 
-    "5Ez": [
-      93, 
-      "EZ5", 
-      "A5"
-    ], 
-    "1Ma": [
-      110, 
-      "MA1", 
-      "78"
-    ], 
-    "Jol": [
-      29, 
-      "JOL", 
-      "29"
-    ], 
-    "1Th": [
-      52, 
-      "TH1", 
-      "53"
-    ], 
-    "1Ti": [
-      54, 
-      "TI1", 
-      "55"
-    ], 
-    "PSo": [
-      132, 
-      "PSO", 
-      null
-    ], 
-    "PJe": [
-      133, 
-      "PJE", 
-      null
-    ], 
-    "Exo": [
+    "EXO": [
       2, 
       "EXO", 
       "02"
     ], 
-    "3Mq": [
-      117, 
-      "MQ3", 
-      "C0"
+    "MIC": [
+      33, 
+      "MIC", 
+      "33"
     ], 
-    "Oba": [
-      31, 
-      "OBA", 
-      "31"
+    "NAM": [
+      34, 
+      "NAH", 
+      "34"
     ], 
-    "Eph": [
+    "2PE": [
+      61, 
+      "PE2", 
+      "62"
+    ], 
+    "EPH": [
       49, 
       "EPH", 
       "50"
     ], 
-    "Ps3": [
-      127, 
-      "PS3", 
-      "B3"
+    "2KI": [
+      12, 
+      "KI2", 
+      "12"
     ], 
-    "3Ma": [
-      112, 
-      "MA3", 
-      "80"
+    "JOS": [
+      6, 
+      "JOS", 
+      "06"
     ], 
-    "Jud": [
-      65, 
-      "JDE", 
-      "66"
+    "PRO": [
+      20, 
+      "PRO", 
+      "20"
     ], 
-    "LJe": [
-      102, 
-      "LJB", 
-      "74"
+    "LBA": [
+      104, 
+      "LBA", 
+      "B5"
     ], 
-    "Jer": [
-      24, 
-      "JER", 
-      "24"
+    "JOB": [
+      18, 
+      "JOB", 
+      "18"
     ], 
-    "Mrk": [
+    "3JN": [
+      64, 
+      "JN3", 
+      "65"
+    ], 
+    "JOL": [
+      29, 
+      "JOL", 
+      "29"
+    ], 
+    "JON": [
+      32, 
+      "JNA", 
+      "32"
+    ], 
+    "SNG": [
+      22, 
+      "SNG", 
+      "22"
+    ], 
+    "REV": [
+      66, 
+      "REV", 
+      "67"
+    ], 
+    "HAB": [
+      35, 
+      "HAB", 
+      "35"
+    ], 
+    "JAS": [
+      59, 
+      "JAM", 
+      "60"
+    ], 
+    "HAG": [
+      37, 
+      "HAG", 
+      "37"
+    ], 
+    "MRK": [
       41, 
       "MRK", 
       "42"
     ], 
-    "Heb": [
-      58, 
-      "HEB", 
-      "59"
+    "2JN": [
+      63, 
+      "JN2", 
+      "64"
     ], 
-    "Frt": [
-      230, 
-      "FRT", 
+    "LAM": [
+      25, 
+      "LAM", 
+      "25"
+    ], 
+    "LAO": [
+      130, 
+      "LAO", 
+      "C3"
+    ], 
+    "MAT": [
+      40, 
+      "MAT", 
+      "41"
+    ], 
+    "PHM": [
+      57, 
+      "PHM", 
+      "58"
+    ], 
+    "2CL": [
+      151, 
+      "CL2", 
       null
     ], 
-    "Tob": [
-      85, 
-      "TOB", 
-      "68"
+    "2CO": [
+      47, 
+      "CO2", 
+      "48"
     ], 
-    "Eut": [
-      137, 
-      "EUT", 
-      null
+    "2CH": [
+      14, 
+      "CH2", 
+      "14"
     ], 
-    "Jub": [
-      140, 
-      "JUB", 
-      "B6"
+    "PHP": [
+      50, 
+      "PHP", 
+      "51"
     ], 
-    "1Ki": [
-      11, 
-      "KI1", 
-      "11"
+    "MAL": [
+      39, 
+      "MAL", 
+      "39"
     ], 
-    "Amo": [
-      30, 
-      "AMO", 
-      "30"
+    "MAN": [
+      83, 
+      "MAN", 
+      "84"
     ], 
-    "2Ti": [
-      55, 
-      "TI2", 
-      "56"
-    ], 
-    "2Th": [
-      53, 
-      "TH2", 
-      "54"
-    ], 
-    "Gen": [
-      1, 
-      "GEN", 
-      "01"
-    ], 
-    "Bel": [
+    "BEL": [
       80, 
       "BEL", 
       "77"
     ], 
-    "CoP": [
-      135, 
-      "COP", 
-      null
+    "1MQ": [
+      115, 
+      "MQ1", 
+      "B8"
     ], 
-    "Jdg": [
+    "JDG": [
       7, 
       "JDG", 
       "07"
     ], 
-    "Deu": [
+    "DEU": [
       5, 
       "DEU", 
       "05"
+    ], 
+    "1ES": [
+      90, 
+      "GES", 
+      "82"
+    ], 
+    "5EZ": [
+      93, 
+      "EZ5", 
+      "A5"
+    ], 
+    "1MA": [
+      110, 
+      "MA1", 
+      "78"
+    ], 
+    "JDT": [
+      82, 
+      "JDT", 
+      "69"
+    ], 
+    "1TH": [
+      52, 
+      "TH1", 
+      "53"
+    ], 
+    "1TI": [
+      54, 
+      "TI1", 
+      "55"
+    ], 
+    "JUB": [
+      140, 
+      "JUB", 
+      "B6"
+    ], 
+    "ROM": [
+      45, 
+      "ROM", 
+      "46"
+    ], 
+    "AMO": [
+      30, 
+      "AMO", 
+      "30"
+    ], 
+    "GEN": [
+      1, 
+      "GEN", 
+      "01"
+    ], 
+    "LJE": [
+      102, 
+      "LJB", 
+      "74"
+    ], 
+    "ENO": [
+      141, 
+      "ENO", 
+      "B7"
+    ], 
+    "SHE": [
+      152, 
+      "SHE", 
+      null
+    ], 
+    "PSO": [
+      132, 
+      "PSO", 
+      null
+    ], 
+    "PSB": [
+      125, 
+      "PSB", 
+      "88"
+    ], 
+    "PSA": [
+      19, 
+      "PSA", 
+      "19"
+    ], 
+    "3MQ": [
+      117, 
+      "MQ3", 
+      "C0"
+    ], 
+    "PSS": [
+      128, 
+      "PSS", 
+      "87"
+    ], 
+    "3MA": [
+      112, 
+      "MA3", 
+      "80"
+    ], 
+    "CNC": [
+      236, 
+      "CNC", 
+      null
+    ], 
+    "DOJ": [
+      138, 
+      "DOJ", 
+      null
+    ], 
+    "COP": [
+      135, 
+      "COP", 
+      null
+    ], 
+    "1KI": [
+      11, 
+      "KI1", 
+      "11"
+    ], 
+    "NEH": [
+      16, 
+      "NEH", 
+      "16"
+    ], 
+    "GLO": [
+      235, 
+      "GLS", 
+      null
+    ], 
+    "REP": [
+      143, 
+      "REP", 
+      "C1"
+    ], 
+    "2TI": [
+      55, 
+      "TI2", 
+      "56"
+    ], 
+    "2TH": [
+      53, 
+      "TH2", 
+      "54"
+    ], 
+    "SUS": [
+      81, 
+      "SUS", 
+      "76"
+    ], 
+    "ACT": [
+      44, 
+      "ACT", 
+      "45"
+    ], 
+    "ISA": [
+      23, 
+      "ISA", 
+      "23"
+    ], 
+    "LUK": [
+      42, 
+      "LUK", 
+      "43"
+    ], 
+    "COL": [
+      51, 
+      "COL", 
+      "52"
+    ], 
+    "ECC": [
+      21, 
+      "ECC", 
+      "21"
+    ], 
+    "DID": [
+      153, 
+      "DID", 
+      null
+    ], 
+    "NUM": [
+      4, 
+      "NUM", 
+      "04"
+    ], 
+    "ODE": [
+      131, 
+      "ODE", 
+      "86"
+    ], 
+    "JER": [
+      24, 
+      "JER", 
+      "24"
+    ], 
+    "1SA": [
+      9, 
+      "SA1", 
+      "09"
+    ], 
+    "OBA": [
+      31, 
+      "OBA", 
+      "31"
     ], 
     "NDX": [
       238, 
       "IXN", 
       null
     ], 
-    "Jdt": [
-      82, 
-      "JDT", 
-      "69"
+    "HEB": [
+      58, 
+      "HEB", 
+      "59"
     ], 
-    "1Ch": [
-      13, 
-      "CH1", 
-      "13"
+    "FRT": [
+      230, 
+      "FRT", 
+      null
     ], 
-    "1Co": [
-      46, 
-      "CO1", 
-      "47"
-    ], 
-    "Rom": [
-      45, 
-      "ROM", 
-      "46"
-    ], 
-    "1Sa": [
-      9, 
-      "SA1", 
-      "09"
-    ], 
-    "Num": [
-      4, 
-      "NUM", 
-      "04"
-    ], 
-    "4Ba": [
+    "4BA": [
       107, 
       "BA4", 
       "C2"
     ], 
-    "Ode": [
-      131, 
-      "ODE", 
-      "86"
-    ], 
-    "Cnc": [
-      236, 
-      "CNC", 
+    "EUT": [
+      137, 
+      "EUT", 
       null
     ], 
-    "Sir": [
-      84, 
-      "SIR", 
-      "72"
+    "JHN": [
+      43, 
+      "JHN", 
+      "44"
     ], 
-    "Est": [
-      17, 
-      "EST", 
-      "17"
+    "ZEC": [
+      38, 
+      "ZEC", 
+      "38"
     ], 
-    "Tit": [
-      56, 
-      "TIT", 
-      "57"
+    "PJE": [
+      133, 
+      "PJE", 
+      null
     ], 
-    "Mic": [
-      33, 
-      "MIC", 
-      "33"
+    "ZEP": [
+      36, 
+      "ZEP", 
+      "36"
     ], 
-    "6Ez": [
-      94, 
-      "EZ6", 
-      "A6"
+    "TDX": [
+      241, 
+      "IXT", 
+      null
     ], 
-    "Nam": [
-      34, 
-      "NAH", 
-      "34"
+    "WIS": [
+      86, 
+      "WIS", 
+      "71"
     ], 
-    "Hos": [
-      28, 
-      "HOS", 
-      "28"
+    "LEV": [
+      3, 
+      "LEV", 
+      "03"
     ], 
-    "2Ba": [
-      105, 
-      "LB2", 
-      "B4"
+    "1CH": [
+      13, 
+      "CH1", 
+      "13"
     ], 
-    "Sng": [
-      22, 
-      "SNG", 
-      "22"
+    "1CO": [
+      46, 
+      "CO1", 
+      "47"
     ], 
-    "2Mq": [
+    "RUT": [
+      8, 
+      "RUT", 
+      "08"
+    ], 
+    "1CL": [
+      150, 
+      "CL1", 
+      null
+    ], 
+    "2MQ": [
       116, 
       "MQ2", 
       "B9"
     ], 
-    "Ecc": [
-      21, 
-      "ECC", 
-      "21"
+    "BAR": [
+      101, 
+      "BAR", 
+      "73"
     ], 
-    "Mat": [
-      40, 
-      "MAT", 
-      "41"
-    ], 
-    "Phm": [
-      57, 
-      "PHM", 
-      "58"
-    ], 
-    "WSi": [
+    "WSI": [
       134, 
       "WSI", 
       null
     ], 
-    "1Pe": [
+    "1PE": [
       60, 
       "PE1", 
       "61"
     ], 
-    "EsG": [
-      72, 
-      "ESC", 
-      "70"
+    "PS2": [
+      126, 
+      "PS2", 
+      "85"
     ], 
-    "2Ma": [
+    "2MA": [
       111, 
       "MA2", 
       "79"
     ], 
-    "Php": [
-      50, 
-      "PHP", 
-      "51"
+    "PS3": [
+      127, 
+      "PS3", 
+      "B3"
     ], 
-    "Mal": [
-      39, 
-      "MAL", 
-      "39"
+    "TOB": [
+      85, 
+      "TOB", 
+      "68"
     ], 
-    "Man": [
-      83, 
-      "MAN", 
-      "84"
+    "BAK": [
+      242, 
+      "BAK", 
+      null
+    ], 
+    "DAG": [
+      75, 
+      "DAC", 
+      "B2"
+    ], 
+    "DAN": [
+      27, 
+      "DAN", 
+      "27"
+    ], 
+    "6EZ": [
+      94, 
+      "EZ6", 
+      "A6"
+    ], 
+    "GAL": [
+      48, 
+      "GAL", 
+      "49"
+    ], 
+    "2BA": [
+      105, 
+      "LB2", 
+      "B4"
+    ], 
+    "EST": [
+      17, 
+      "EST", 
+      "17"
     ], 
     "S3Y": [
       87, 
       "PAZ", 
       "75"
     ], 
-    "Lam": [
-      25, 
-      "LAM", 
-      "25"
-    ], 
-    "2Es": [
-      91, 
-      "LES", 
-      "83"
-    ], 
-    "4Ma": [
-      113, 
-      "MA4", 
-      "81"
-    ], 
-    "Lao": [
-      130, 
-      "LAO", 
-      "C3"
-    ], 
-    "Act": [
-      44, 
-      "ACT", 
-      "45"
-    ], 
-    "Isa": [
-      23, 
-      "ISA", 
-      "23"
-    ], 
-    "Col": [
-      51, 
-      "COL", 
-      "52"
-    ], 
-    "DoJ": [
-      138, 
-      "DOJ", 
-      null
-    ], 
-    "Zec": [
-      38, 
-      "ZEC", 
-      "38"
-    ], 
-    "1Jn": [
+    "1JN": [
       62, 
       "JN1", 
       "63"
     ], 
-    "Zep": [
-      36, 
-      "ZEP", 
-      "36"
+    "2SA": [
+      10, 
+      "SA2", 
+      "10"
     ], 
-    "Wis": [
-      86, 
-      "WIS", 
-      "71"
+    "ESG": [
+      72, 
+      "ESC", 
+      "70"
+    ], 
+    "HOS": [
+      28, 
+      "HOS", 
+      "28"
+    ], 
+    "JUD": [
+      65, 
+      "JDE", 
+      "66"
+    ], 
+    "2ES": [
+      91, 
+      "LES", 
+      "83"
+    ], 
+    "EZR": [
+      224, 
+      "EZN", 
+      "15"
+    ], 
+    "4MA": [
+      113, 
+      "MA4", 
+      "81"
+    ], 
+    "EZK": [
+      26, 
+      "EZK", 
+      "26"
+    ], 
+    "EZA": [
+      92, 
+      "EZA", 
+      "A4"
     ]
   }, 
   "ByzantineAbbreviationDict": {
@@ -6705,1083 +6705,1083 @@
     ]
   }, 
   "SBLDict": {
-    "Matt": [
-      40, 
-      "MAT"
-    ], 
-    "1 Kgs": [
-      11, 
-      "KI1"
-    ], 
-    "2 Tim": [
-      55, 
-      "TI2"
-    ], 
-    "Hab": [
-      35, 
-      "HAB"
-    ], 
-    "Acts": [
-      44, 
-      "ACT"
-    ], 
-    "Jas": [
-      59, 
-      "JAM"
-    ], 
-    "Hag": [
-      37, 
-      "HAG"
-    ], 
-    "4 Macc": [
-      113, 
-      "MA4"
-    ], 
-    "1 Sam": [
-      9, 
-      "SA1"
-    ], 
-    "2 Kgs": [
-      12, 
-      "KI2"
-    ], 
-    "Dan": [
-      27, 
-      "DAN"
-    ], 
-    "2 John": [
-      63, 
-      "JN2"
-    ], 
-    "Gal": [
-      48, 
-      "GAL"
-    ], 
-    "1 Thess": [
-      52, 
-      "TH1"
-    ], 
-    "2 Sam": [
-      10, 
-      "SA2"
-    ], 
-    "Bar": [
-      101, 
-      "BAR"
-    ], 
-    "1 Chr": [
-      13, 
-      "CH1"
-    ], 
-    "Titus": [
-      56, 
-      "TIT"
-    ], 
-    "2 Cor": [
-      47, 
-      "CO2"
-    ], 
-    "Ep Jer": [
-      102, 
-      "LJB"
-    ], 
-    "6 Ezra": [
-      94, 
-      "EZ6"
-    ], 
-    "4 Ezra": [
-      92, 
-      "EZA"
-    ], 
-    "Zeph": [
-      36, 
-      "ZEP"
-    ], 
-    "Ps": [
-      19, 
-      "PSA"
-    ], 
-    "Neh": [
-      16, 
-      "NEH"
-    ], 
-    "1 Pet": [
-      60, 
-      "PE1"
-    ], 
-    "Rev": [
-      66, 
-      "REV"
-    ], 
-    "Mark": [
-      41, 
-      "MRK"
-    ], 
-    "1 Cor": [
-      46, 
-      "CO1"
-    ], 
-    "John": [
-      43, 
-      "JHN"
-    ], 
-    "Song": [
-      22, 
-      "SNG"
-    ], 
-    "Jonah": [
-      32, 
-      "JNA"
-    ], 
-    "Job": [
-      18, 
-      "JOB"
-    ], 
-    "Num": [
-      4, 
-      "NUM"
-    ], 
-    "Lev": [
-      3, 
-      "LEV"
-    ], 
-    "Pr Man": [
-      83, 
-      "MAN"
-    ], 
-    "Exod": [
-      2, 
-      "EXO"
-    ], 
-    "Add Esth": [
-      72, 
-      "ESC"
-    ], 
-    "Judg": [
-      7, 
-      "JDG"
-    ], 
-    "Jude": [
-      65, 
-      "JDE"
-    ], 
-    "Eph": [
-      49, 
-      "EPH"
-    ], 
-    "Amos": [
-      30, 
-      "AMO"
-    ], 
-    "Eccl": [
-      21, 
-      "ECC"
-    ], 
-    "Ezra": [
-      224, 
-      "EZN"
-    ], 
-    "Rom": [
-      45, 
-      "ROM"
-    ], 
-    "Add Dan": [
-      75, 
-      "DAC"
-    ], 
-    "Esth": [
-      17, 
-      "EST"
-    ], 
-    "Jer": [
-      24, 
-      "JER"
-    ], 
-    "1 Tim": [
-      54, 
-      "TI1"
-    ], 
-    "Obad": [
-      31, 
-      "OBA"
-    ], 
-    "Sir": [
+    "SIR": [
       84, 
       "SIR"
     ], 
-    "Prov": [
-      20, 
-      "PRO"
-    ], 
-    "Heb": [
-      58, 
-      "HEB"
-    ], 
-    "Tob": [
-      85, 
-      "TOB"
-    ], 
-    "Deut": [
-      5, 
-      "DEU"
-    ], 
-    "Ruth": [
-      8, 
-      "RUT"
-    ], 
-    "5 Ezra": [
-      93, 
-      "EZ5"
-    ], 
-    "Pr Azar": [
-      87, 
-      "PAZ"
-    ], 
-    "2 Thess": [
-      53, 
-      "TH2"
-    ], 
-    "1 Macc": [
-      110, 
-      "MA1"
-    ], 
-    "Gen": [
-      1, 
-      "GEN"
-    ], 
-    "Bel": [
-      80, 
-      "BEL"
-    ], 
-    "3 John": [
-      64, 
-      "JN3"
-    ], 
-    "Phil": [
-      50, 
-      "PHP"
-    ], 
-    "2 Macc": [
-      111, 
-      "MA2"
-    ], 
-    "Jdt": [
-      82, 
-      "JDT"
-    ], 
-    "2 Esd": [
-      91, 
-      "LES"
-    ], 
-    "Zech": [
-      38, 
-      "ZEC"
-    ], 
-    "Sus": [
-      81, 
-      "SUS"
-    ], 
-    "Ezek": [
-      26, 
-      "EZK"
-    ], 
-    "Phlm": [
-      57, 
-      "PHM"
-    ], 
-    "Nah": [
+    "NAH": [
       34, 
       "NAH"
     ], 
-    "Josh": [
-      6, 
-      "JOS"
-    ], 
-    "1 Esd": [
-      90, 
-      "GES"
-    ], 
-    "Hos": [
-      28, 
-      "HOS"
-    ], 
-    "2 Chr": [
+    "2 CHR": [
       14, 
       "CH2"
     ], 
-    "Lam": [
+    "EZEK": [
+      26, 
+      "EZK"
+    ], 
+    "3 JOHN": [
+      64, 
+      "JN3"
+    ], 
+    "JOB": [
+      18, 
+      "JOB"
+    ], 
+    "1 THESS": [
+      52, 
+      "TH1"
+    ], 
+    "SONG": [
+      22, 
+      "SNG"
+    ], 
+    "REV": [
+      66, 
+      "REV"
+    ], 
+    "HAB": [
+      35, 
+      "HAB"
+    ], 
+    "JAS": [
+      59, 
+      "JAM"
+    ], 
+    "HAG": [
+      37, 
+      "HAG"
+    ], 
+    "1 SAM": [
+      9, 
+      "SA1"
+    ], 
+    "PR MAN": [
+      83, 
+      "MAN"
+    ], 
+    "LAM": [
       25, 
       "LAM"
     ], 
-    "2 Pet": [
-      61, 
-      "PE2"
+    "PHLM": [
+      57, 
+      "PHM"
     ], 
-    "Nic": [
+    "NIC": [
       33, 
       "MIC"
     ], 
-    "Mal": [
-      39, 
-      "MAL"
-    ], 
-    "Joel": [
+    "JOEL": [
       29, 
       "JOL"
     ], 
-    "1 John": [
+    "ACTS": [
+      44, 
+      "ACT"
+    ], 
+    "MAL": [
+      39, 
+      "MAL"
+    ], 
+    "1 KGS": [
+      11, 
+      "KI1"
+    ], 
+    "BEL": [
+      80, 
+      "BEL"
+    ], 
+    "2 TIM": [
+      55, 
+      "TI2"
+    ], 
+    "5 EZRA": [
+      93, 
+      "EZ5"
+    ], 
+    "JDT": [
+      82, 
+      "JDT"
+    ], 
+    "PS": [
+      19, 
+      "PSA"
+    ], 
+    "OBAD": [
+      31, 
+      "OBA"
+    ], 
+    "ROM": [
+      45, 
+      "ROM"
+    ], 
+    "1 JOHN": [
       62, 
       "JN1"
     ], 
-    "Isa": [
+    "GEN": [
+      1, 
+      "GEN"
+    ], 
+    "6 EZRA": [
+      94, 
+      "EZ6"
+    ], 
+    "1 PET": [
+      60, 
+      "PE1"
+    ], 
+    "2 JOHN": [
+      63, 
+      "JN2"
+    ], 
+    "2 COR": [
+      47, 
+      "CO2"
+    ], 
+    "1 COR": [
+      46, 
+      "CO1"
+    ], 
+    "1 MACC": [
+      110, 
+      "MA1"
+    ], 
+    "EXOD": [
+      2, 
+      "EXO"
+    ], 
+    "ZEPH": [
+      36, 
+      "ZEP"
+    ], 
+    "MATT": [
+      40, 
+      "MAT"
+    ], 
+    "PROV": [
+      20, 
+      "PRO"
+    ], 
+    "ZECH": [
+      38, 
+      "ZEC"
+    ], 
+    "PR AZAR": [
+      87, 
+      "PAZ"
+    ], 
+    "JONAH": [
+      32, 
+      "JNA"
+    ], 
+    "4 MACC": [
+      113, 
+      "MA4"
+    ], 
+    "NEH": [
+      16, 
+      "NEH"
+    ], 
+    "LUKE": [
+      42, 
+      "LUK"
+    ], 
+    "ESTH": [
+      17, 
+      "EST"
+    ], 
+    "EP JER": [
+      102, 
+      "LJB"
+    ], 
+    "SUS": [
+      81, 
+      "SUS"
+    ], 
+    "ISA": [
       23, 
       "ISA"
     ], 
-    "Col": [
+    "COL": [
       51, 
       "COL"
     ], 
-    "3 Macc": [
+    "2 PET": [
+      61, 
+      "PE2"
+    ], 
+    "PHIL": [
+      50, 
+      "PHP"
+    ], 
+    "EPH": [
+      49, 
+      "EPH"
+    ], 
+    "2 ESD": [
+      91, 
+      "LES"
+    ], 
+    "JOHN": [
+      43, 
+      "JHN"
+    ], 
+    "JER": [
+      24, 
+      "JER"
+    ], 
+    "EZRA": [
+      224, 
+      "EZN"
+    ], 
+    "TITUS": [
+      56, 
+      "TIT"
+    ], 
+    "3 MACC": [
       112, 
       "MA3"
     ], 
-    "Wis": [
+    "2 KGS": [
+      12, 
+      "KI2"
+    ], 
+    "HEB": [
+      58, 
+      "HEB"
+    ], 
+    "ADD ESTH": [
+      72, 
+      "ESC"
+    ], 
+    "ADD DAN": [
+      75, 
+      "DAC"
+    ], 
+    "JUDG": [
+      7, 
+      "JDG"
+    ], 
+    "JUDE": [
+      65, 
+      "JDE"
+    ], 
+    "MARK": [
+      41, 
+      "MRK"
+    ], 
+    "WIS": [
       86, 
       "WIS"
     ], 
-    "Luke": [
-      42, 
-      "LUK"
+    "LEV": [
+      3, 
+      "LEV"
+    ], 
+    "AMOS": [
+      30, 
+      "AMO"
+    ], 
+    "DEUT": [
+      5, 
+      "DEU"
+    ], 
+    "ECCL": [
+      21, 
+      "ECC"
+    ], 
+    "1 TIM": [
+      54, 
+      "TI1"
+    ], 
+    "BAR": [
+      101, 
+      "BAR"
+    ], 
+    "1 CHR": [
+      13, 
+      "CH1"
+    ], 
+    "TOB": [
+      85, 
+      "TOB"
+    ], 
+    "JOSH": [
+      6, 
+      "JOS"
+    ], 
+    "DAN": [
+      27, 
+      "DAN"
+    ], 
+    "2 THESS": [
+      53, 
+      "TH2"
+    ], 
+    "GAL": [
+      48, 
+      "GAL"
+    ], 
+    "2 SAM": [
+      10, 
+      "SA2"
+    ], 
+    "1 ESD": [
+      90, 
+      "GES"
+    ], 
+    "HOS": [
+      28, 
+      "HOS"
+    ], 
+    "NUM": [
+      4, 
+      "NUM"
+    ], 
+    "4 EZRA": [
+      92, 
+      "EZA"
+    ], 
+    "2 MACC": [
+      111, 
+      "MA2"
+    ], 
+    "RUTH": [
+      8, 
+      "RUT"
     ]
   }, 
   "EnglishNameDict": {
-    "Life of Adam and Eve": [
-      181, 
-      "LAE"
-    ], 
-    "Apocrypha of Ezekiel / Apocryphon of Ezekiel": [
-      186, 
-      "AEZ"
-    ], 
-    "Gospel of Judas": [
-      167, 
-      "GJU"
-    ], 
-    "Acts": [
-      44, 
-      "ACT"
-    ], 
-    "Genesis / 1 Moses": [
-      1, 
-      "GEN"
-    ], 
-    "Lamentations of Jeremiah": [
-      25, 
-      "LAM"
-    ], 
-    "Reproof": [
-      143, 
-      "REP"
-    ], 
-    "Judith": [
-      82, 
-      "JDT"
-    ], 
-    "Bel and the dragon": [
-      80, 
-      "BEL"
-    ], 
-    "Letter of Baruch": [
-      104, 
-      "LBA"
-    ], 
-    "Gospel of Mary": [
-      162, 
-      "GMA"
-    ], 
-    "1 Samuel / 1 Kingdoms / 1 Kings": [
-      9, 
-      "SA1"
-    ], 
-    "Habakkuk": [
-      35, 
-      "HAB"
-    ], 
-    "Odes / Odae": [
-      131, 
-      "ODE"
-    ], 
-    "2 John": [
-      63, 
-      "JN2"
-    ], 
-    "Psalms Book 2": [
-      121, 
-      "PB2"
-    ], 
-    "Psalms Book 3": [
-      122, 
-      "PB3"
-    ], 
-    "2 Baruch with the Letter of Baruch": [
-      105, 
-      "LB2"
-    ], 
-    "Psalms Book 1": [
-      120, 
-      "PB1"
-    ], 
-    "Psalms Book 4": [
-      123, 
-      "PB4"
-    ], 
-    "Psalms Book 5": [
-      124, 
-      "PB5"
-    ], 
-    "Acknowledgements": [
-      232, 
-      "ACK"
-    ], 
-    "Psalms / Gallicanum / Psalms A": [
-      19, 
-      "PSA"
-    ], 
-    "Malachi": [
-      39, 
-      "MAL"
-    ], 
-    "Letter to the Laodiceans": [
-      130, 
-      "LAO"
-    ], 
-    "Titus": [
-      56, 
-      "TIT"
-    ], 
-    "1 Clement": [
-      150, 
-      "CL1"
-    ], 
-    "Assumption of Moses / Testament of Moses": [
-      182, 
-      "ASS"
-    ], 
-    "Hosea": [
-      28, 
-      "HOS"
-    ], 
-    "3 Corinthians": [
-      136, 
-      "CO3"
-    ], 
-    "Philo the Epic Poet": [
-      199, 
-      "EPL"
-    ], 
-    "Revelation of John / Apocalypse of St. John": [
-      66, 
-      "REV"
-    ], 
-    "Numbers / 4 Moses": [
-      4, 
-      "NUM"
-    ], 
-    "Generic front matter": [
-      230, 
-      "FRT"
-    ], 
-    "Hebrews": [
-      58, 
-      "HEB"
-    ], 
-    "Aristeas the Exegete": [
-      192, 
-      "ARI"
-    ], 
-    "Wisdom of Jesus Christ": [
-      170, 
-      "WJC"
-    ], 
-    "Ezekiel": [
-      26, 
-      "EZK"
-    ], 
-    "Books of Moses": [
-      220, 
-      "MOS"
-    ], 
-    "Daniel": [
-      27, 
-      "DAN"
-    ], 
-    "Greek Esdras / Greek Ezra / 1 Esdras / 1 Ezra / 2 Ezra / 3 Ezra / 3 Esdras": [
-      90, 
-      "GES"
-    ], 
-    "Wisdom / Wisdom of Solomon": [
-      86, 
-      "WIS"
-    ], 
-    "Philemon": [
-      57, 
-      "PHM"
-    ], 
-    "Artapanus": [
-      194, 
-      "ART"
-    ], 
-    "Letter of Aristeas / Epistle of Aristeas": [
-      191, 
-      "LAR"
-    ], 
-    "2 Maccabees": [
-      111, 
-      "MA2"
-    ], 
-    "Gospel of the Twelve": [
-      164, 
-      "GTW"
-    ], 
-    "Song of Solomon / Song of Songs / Canticles / Canticle of Canticles": [
-      22, 
-      "SNG"
-    ], 
-    "3 John": [
-      64, 
-      "JN3"
-    ], 
-    "Gospel of Thomas": [
-      166, 
-      "GTH"
-    ], 
-    "Mark": [
-      41, 
-      "MRK"
-    ], 
-    "Matthew": [
-      40, 
-      "MAT"
-    ], 
-    "1 Thessalonians": [
-      52, 
-      "TH1"
-    ], 
-    "2 Peter": [
-      61, 
-      "PE2"
-    ], 
-    "Exodus / 2 Moses": [
-      2, 
-      "EXO"
-    ], 
-    "Colossians": [
-      51, 
-      "COL"
-    ], 
-    "John": [
-      43, 
-      "JHN"
-    ], 
-    "Greek Esther / Esther (Greek)": [
-      70, 
-      "ESG"
-    ], 
-    "Obadiah": [
-      31, 
-      "OBA"
-    ], 
-    "Cleodemus Malchus": [
-      195, 
-      "CLM"
-    ], 
-    "Ephesians": [
-      49, 
-      "EPH"
-    ], 
-    "1 Maccabees": [
-      110, 
-      "MA1"
-    ], 
-    "Galatians": [
-      48, 
-      "GAL"
-    ], 
-    "Greek additions to Daniel / Daniel (additions)": [
-      74, 
-      "DAA"
-    ], 
-    "Jonah": [
-      32, 
-      "JNA"
-    ], 
-    "Dormition of John": [
-      138, 
-      "DOJ"
-    ], 
-    "Glossary": [
-      235, 
-      "GLS"
-    ], 
-    "Job": [
-      18, 
-      "JOB"
-    ], 
-    "Testament of Job": [
-      184, 
-      "TJB"
-    ], 
-    "3 Maccabees": [
-      112, 
-      "MA3"
-    ], 
-    "2 Meqabyan / 2 Makabian / Mekabis of Moab": [
-      116, 
-      "MQ2"
-    ], 
-    "Generic back matter": [
-      242, 
-      "BAK"
-    ], 
-    "Ecclesiastes / Qoholeth": [
-      21, 
-      "ECC"
-    ], 
-    "Isaiah": [
-      23, 
-      "ISA"
-    ], 
-    "Psalm 151": [
-      126, 
-      "PS2"
-    ], 
-    "Eupolemus": [
-      188, 
-      "EUP"
-    ], 
-    "Proverbs": [
-      20, 
-      "PRO"
-    ], 
-    "Concordance": [
-      236, 
-      "CNC"
-    ], 
-    "Micah": [
-      33, 
-      "MIC"
-    ], 
-    "Joshua / Joshua son of Nun": [
-      6, 
-      "JOS"
-    ], 
-    "Zephaniah": [
-      36, 
-      "ZEP"
-    ], 
-    "Epistle of Jeremiah / Letter of Jeremiah": [
-      100, 
-      "LJE"
-    ], 
-    "Jude": [
-      65, 
-      "JDE"
-    ], 
-    "Haggai": [
-      37, 
-      "HAG"
-    ], 
-    "Amos": [
-      30, 
-      "AMO"
-    ], 
-    "Topical Concordance": [
-      237, 
-      "TPC"
-    ], 
-    "James / Jacob": [
-      59, 
-      "JAM"
-    ], 
-    "4 Baruch / Paralipomenon of Jeremiah / Paraleipomena Ieremiou / Rest of the Words of Baruch": [
-      107, 
-      "BA4"
-    ], 
-    "Revelation of Ezra / Vison of Ezra": [
-      95, 
-      "RVE"
-    ], 
-    "2 Enoch": [
-      142, 
-      "EN2"
-    ], 
-    "Testaments of the Twelve Patriarchs": [
-      139, 
-      "TTP"
-    ], 
-    "Visions of Amram": [
-      190, 
-      "VAM"
-    ], 
-    "Prayer of Azariah and the Song of the Three Young Men / Prayer of Azariah / Song of the Three Young Men / Song of the Three Children": [
-      87, 
-      "PAZ"
-    ], 
-    "Places Index": [
-      239, 
-      "IXP"
-    ], 
-    "Philippians": [
-      50, 
-      "PHP"
-    ], 
-    "Shepherd of Hermas": [
-      152, 
-      "SHE"
-    ], 
-    "Gospel of Philip": [
-      165, 
-      "GPH"
-    ], 
-    "1 Kings / 3 Kingdoms / 3 Kings": [
-      11, 
-      "KI1"
-    ], 
-    "5 Maccabees": [
-      114, 
-      "MA5"
-    ], 
-    "Psalms B / Liturgical Psalms / Metrical Psalms / Alternative Psalms / Grail Psalms": [
-      125, 
-      "PSB"
-    ], 
-    "Greek Daniel / Daniel (Greek)": [
-      73, 
-      "DAG"
-    ], 
-    "Aristobulus": [
-      193, 
-      "ABL"
-    ], 
-    "Deuteronomy / 5 Moses": [
-      5, 
-      "DEU"
-    ], 
-    "Sirach / Ecclesiasticus / Wisdom of Ben Sira / Wisdom of Jesus son of Sirach": [
-      84, 
-      "SIR"
-    ], 
-    "Maps": [
-      240, 
-      "MAP"
-    ], 
-    "Combined Hebrew/Greek Daniel / Daniel (combined)": [
-      75, 
-      "DAC"
-    ], 
-    "Twelve Prophets": [
-      225, 
-      "P12"
-    ], 
-    "Greek additions to Esther / Esther (additions)": [
-      71, 
-      "ESA"
-    ], 
-    "Ruth": [
-      8, 
-      "RUT"
-    ], 
-    "Gospel of Marcion": [
-      163, 
-      "GMC"
-    ], 
-    "Nehemiah / 2 Ezra / 2 Esdras": [
-      16, 
-      "NEH"
-    ], 
-    "Tobit / Tobias": [
-      85, 
-      "TOB"
-    ], 
-    "Prayer of Solomon": [
-      132, 
-      "PSO"
-    ], 
-    "6 Ezra / 5 Esdras / 6 Esdras": [
-      94, 
-      "EZ6"
-    ], 
-    "Romans": [
-      45, 
-      "ROM"
-    ], 
-    "2 Timothy": [
-      55, 
-      "TI2"
-    ], 
-    "2 Baruch / Apocalypse of Baruch": [
-      103, 
-      "BA2"
-    ], 
-    "Baruch / 1 Baruch": [
-      101, 
-      "BAR"
-    ], 
-    "Ezra / 1 Ezra / 1 Esdras": [
-      15, 
-      "EZR"
-    ], 
-    "Letter of Barnabas / Epistle of Barnabas": [
-      144, 
-      "LBB"
-    ], 
-    "3 Baruch": [
-      106, 
-      "BA3"
-    ], 
-    "Letter of the Corinthians to Paul": [
-      135, 
-      "COP"
-    ], 
-    "Apocrypha of James / Apocryphal James": [
-      169, 
-      "AJA"
-    ], 
-    "Prayer of Manasses / Prayer of Manasseh": [
-      83, 
-      "MAN"
-    ], 
-    "Gospel of Bartholomew": [
-      168, 
-      "GBA"
-    ], 
-    "1 Corinthians": [
-      46, 
-      "CO1"
-    ], 
-    "Gospel of Truth": [
-      161, 
-      "GTR"
-    ], 
-    "2 Kings / 4 Kingdoms / 4 Kings": [
-      12, 
-      "KI2"
-    ], 
-    "Zechariah": [
-      38, 
-      "ZEC"
-    ], 
-    "Chronicles": [
-      223, 
-      "CHR"
-    ], 
-    "Eldad and Modad": [
-      196, 
-      "ELM"
-    ], 
-    "Ezekiel the Tragedian": [
-      187, 
-      "EZT"
-    ], 
-    "4 Maccabees": [
-      113, 
-      "MA4"
-    ], 
-    "2 Chronicles / 2 Paralipomenon": [
-      14, 
-      "CH2"
-    ], 
-    "Didache": [
-      153, 
-      "DID"
-    ], 
-    "Leviticus / 3 Moses": [
-      3, 
-      "LEV"
-    ], 
-    "Thematic Index": [
+    "THEMATIC INDEX": [
       241, 
       "IXT"
     ], 
-    "Ezra-Nehemiah / 1 Esdras": [
-      224, 
-      "EZN"
+    "NEHEMIAH / 2 EZRA / 2 ESDRAS": [
+      16, 
+      "NEH"
     ], 
-    "Lives of the Prophets": [
-      198, 
-      "LPR"
-    ], 
-    "Pseudo of Eupolemus / Pseudo-Eupolemus": [
-      189, 
-      "PEU"
-    ], 
-    "Prayer of Euthalius": [
-      137, 
-      "EUT"
-    ], 
-    "2 Corinthians": [
-      47, 
-      "CO2"
-    ], 
-    "History of the Rechabites": [
-      197, 
-      "HRE"
-    ], 
-    "Judges": [
-      7, 
-      "JDG"
-    ], 
-    "Words of Sirach": [
+    "WORDS OF SIRACH": [
       134, 
       "WSI"
     ], 
-    "Introduction": [
-      233, 
-      "INT"
+    "REVELATION OF EZRA / VISON OF EZRA": [
+      95, 
+      "RVE"
     ], 
-    "1 Meqabyan / 1 Makabian / Mekabis of Benjamin": [
-      115, 
-      "MQ1"
+    "PHILEMON": [
+      57, 
+      "PHM"
     ], 
-    "Latin Esdras / 2 Esdras / 3 Esdras / 4 Esdras / 4 Ezra": [
-      91, 
-      "LES"
+    "ISAIAH": [
+      23, 
+      "ISA"
     ], 
-    "Combined Hebrew/Greek Esther / Esther (combined)": [
+    "JAMES / JACOB": [
+      59, 
+      "JAM"
+    ], 
+    "LETTER OF BARUCH": [
+      104, 
+      "LBA"
+    ], 
+    "1 KINGS / 3 KINGDOMS / 3 KINGS": [
+      11, 
+      "KI1"
+    ], 
+    "JOSHUA / JOSHUA SON OF NUN": [
+      6, 
+      "JOS"
+    ], 
+    "COMBINED HEBREW/GREEK ESTHER / ESTHER (COMBINED)": [
       72, 
       "ESC"
     ], 
-    "Gospel of the Hebrews": [
-      160, 
-      "GHE"
+    "3 JOHN": [
+      64, 
+      "JN3"
     ], 
-    "Susanna": [
-      81, 
-      "SUS"
+    "2 BARUCH WITH THE LETTER OF BARUCH": [
+      105, 
+      "LB2"
     ], 
-    "Esther": [
-      17, 
-      "EST"
+    "GOSPEL OF TRUTH": [
+      161, 
+      "GTR"
     ], 
-    "Samuel": [
+    "PSALMS BOOK 2": [
+      121, 
+      "PB2"
+    ], 
+    "PSALMS BOOK 3": [
+      122, 
+      "PB3"
+    ], 
+    "JOB": [
+      18, 
+      "JOB"
+    ], 
+    "DANIEL": [
+      27, 
+      "DAN"
+    ], 
+    "GENERIC BACK MATTER": [
+      242, 
+      "BAK"
+    ], 
+    "PSALMS BOOK 4": [
+      123, 
+      "PB4"
+    ], 
+    "PSALMS BOOK 5": [
+      124, 
+      "PB5"
+    ], 
+    "GOSPEL OF PHILIP": [
+      165, 
+      "GPH"
+    ], 
+    "SAMUEL": [
       221, 
       "SAM"
     ], 
-    "Theodotus": [
-      200, 
-      "TEO"
-    ], 
-    "Luke": [
-      42, 
-      "LUK"
-    ], 
-    "Luke-Acts": [
-      226, 
-      "LKA"
-    ], 
-    "2 Samuel / 2 Kingdoms / 2 Kings": [
-      10, 
-      "SA2"
-    ], 
-    "Apocalypse of Ezra / Ezra Apocalypse / 4 Ezra / Ezra Shealtiel": [
-      92, 
-      "EZA"
-    ], 
-    "Testament of Adam": [
-      180, 
-      "TAD"
-    ], 
-    "2 Thessalonians": [
-      53, 
-      "TH2"
-    ], 
-    "Letter/Epistle of Jeremiah with Baruch": [
-      102, 
-      "LJB"
-    ], 
-    "1 Timothy": [
-      54, 
-      "TI1"
-    ], 
-    "Prayer of Jeremiah": [
-      133, 
-      "PJE"
-    ], 
-    "Martyrdom and Ascension of Isaiah": [
-      185, 
-      "MAI"
-    ], 
-    "Joel": [
-      29, 
-      "JOL"
-    ], 
-    "Testament of Solomon": [
-      183, 
-      "TSO"
-    ], 
-    "1 Chronicles / 1 Paralipomenon": [
-      13, 
-      "CH1"
-    ], 
-    "1 John": [
-      62, 
-      "JN1"
-    ], 
-    "1 Peter": [
-      60, 
-      "PE1"
-    ], 
-    "Additional Psalms of Solomon": [
-      128, 
-      "PSS"
-    ], 
-    "Nahum": [
-      34, 
-      "NAH"
-    ], 
-    "3 Meqabyan / 3 Makabian": [
-      117, 
-      "MQ3"
-    ], 
-    "5 Ezra / 3 Esdras / 5 Esdras": [
-      93, 
-      "EZ5"
-    ], 
-    "Jubilees": [
-      140, 
-      "JUB"
-    ], 
-    "Syriac Psalms 152-155 / Five apocryphal Syriac Psalms": [
-      127, 
-      "PS3"
-    ], 
-    "Table of Contents": [
-      234, 
-      "TOC"
-    ], 
-    "Jeremiah": [
+    "JEREMIAH": [
       24, 
       "JER"
     ], 
-    "Preface": [
-      231, 
-      "PRF"
+    "SYRIAC PSALMS 152-155 / FIVE APOCRYPHAL SYRIAC PSALMS": [
+      127, 
+      "PS3"
     ], 
-    "Kings": [
+    "6 EZRA / 5 ESDRAS / 6 ESDRAS": [
+      94, 
+      "EZ6"
+    ], 
+    "1 CLEMENT": [
+      150, 
+      "CL1"
+    ], 
+    "ROMANS": [
+      45, 
+      "ROM"
+    ], 
+    "ZECHARIAH": [
+      38, 
+      "ZEC"
+    ], 
+    "2 PETER": [
+      61, 
+      "PE2"
+    ], 
+    "MALACHI": [
+      39, 
+      "MAL"
+    ], 
+    "REPROOF": [
+      143, 
+      "REP"
+    ], 
+    "1 CORINTHIANS": [
+      46, 
+      "CO1"
+    ], 
+    "NUMBERS / 4 MOSES": [
+      4, 
+      "NUM"
+    ], 
+    "2 ENOCH": [
+      142, 
+      "EN2"
+    ], 
+    "APOCRYPHA OF EZEKIEL / APOCRYPHON OF EZEKIEL": [
+      186, 
+      "AEZ"
+    ], 
+    "1 SAMUEL / 1 KINGDOMS / 1 KINGS": [
+      9, 
+      "SA1"
+    ], 
+    "JOEL": [
+      29, 
+      "JOL"
+    ], 
+    "ACTS": [
+      44, 
+      "ACT"
+    ], 
+    "GENERIC FRONT MATTER": [
+      230, 
+      "FRT"
+    ], 
+    "LATIN ESDRAS / 2 ESDRAS / 3 ESDRAS / 4 ESDRAS / 4 EZRA": [
+      91, 
+      "LES"
+    ], 
+    "EZEKIEL": [
+      26, 
+      "EZK"
+    ], 
+    "ASSUMPTION OF MOSES / TESTAMENT OF MOSES": [
+      182, 
+      "ASS"
+    ], 
+    "THEODOTUS": [
+      200, 
+      "TEO"
+    ], 
+    "PHILIPPIANS": [
+      50, 
+      "PHP"
+    ], 
+    "PSEUDO OF EUPOLEMUS / PSEUDO-EUPOLEMUS": [
+      189, 
+      "PEU"
+    ], 
+    "APOCALYPSE OF EZRA / EZRA APOCALYPSE / 4 EZRA / EZRA SHEALTIEL": [
+      92, 
+      "EZA"
+    ], 
+    "COLOSSIANS": [
+      51, 
+      "COL"
+    ], 
+    "MICAH": [
+      33, 
+      "MIC"
+    ], 
+    "2 BARUCH / APOCALYPSE OF BARUCH": [
+      103, 
+      "BA2"
+    ], 
+    "5 EZRA / 3 ESDRAS / 5 ESDRAS": [
+      93, 
+      "EZ5"
+    ], 
+    "PRAYER OF SOLOMON": [
+      132, 
+      "PSO"
+    ], 
+    "ZEPHANIAH": [
+      36, 
+      "ZEP"
+    ], 
+    "GOSPEL OF MARY": [
+      162, 
+      "GMA"
+    ], 
+    "TESTAMENT OF SOLOMON": [
+      183, 
+      "TSO"
+    ], 
+    "MAPS": [
+      240, 
+      "MAP"
+    ], 
+    "COMBINED HEBREW/GREEK DANIEL / DANIEL (COMBINED)": [
+      75, 
+      "DAC"
+    ], 
+    "JUDE": [
+      65, 
+      "JDE"
+    ], 
+    "1 PETER": [
+      60, 
+      "PE1"
+    ], 
+    "ADDITIONAL PSALMS OF SOLOMON": [
+      128, 
+      "PSS"
+    ], 
+    "TESTAMENT OF ADAM": [
+      180, 
+      "TAD"
+    ], 
+    "BEL AND THE DRAGON": [
+      80, 
+      "BEL"
+    ], 
+    "PROVERBS": [
+      20, 
+      "PRO"
+    ], 
+    "GOSPEL OF THE TWELVE": [
+      164, 
+      "GTW"
+    ], 
+    "HEBREWS": [
+      58, 
+      "HEB"
+    ], 
+    "BOOKS OF MOSES": [
+      220, 
+      "MOS"
+    ], 
+    "SONG OF SOLOMON / SONG OF SONGS / CANTICLES / CANTICLE OF CANTICLES": [
+      22, 
+      "SNG"
+    ], 
+    "GREEK ADDITIONS TO DANIEL / DANIEL (ADDITIONS)": [
+      74, 
+      "DAA"
+    ], 
+    "EPISTLE OF JEREMIAH / LETTER OF JEREMIAH": [
+      100, 
+      "LJE"
+    ], 
+    "SIRACH / ECCLESIASTICUS / WISDOM OF BEN SIRA / WISDOM OF JESUS SON OF SIRACH": [
+      84, 
+      "SIR"
+    ], 
+    "LUKE-ACTS": [
+      226, 
+      "LKA"
+    ], 
+    "2 SAMUEL / 2 KINGDOMS / 2 KINGS": [
+      10, 
+      "SA2"
+    ], 
+    "CHRONICLES": [
+      223, 
+      "CHR"
+    ], 
+    "WISDOM / WISDOM OF SOLOMON": [
+      86, 
+      "WIS"
+    ], 
+    "1 JOHN": [
+      62, 
+      "JN1"
+    ], 
+    "LETTER OF ARISTEAS / EPISTLE OF ARISTEAS": [
+      191, 
+      "LAR"
+    ], 
+    "REVELATION OF JOHN / APOCALYPSE OF ST. JOHN": [
+      66, 
+      "REV"
+    ], 
+    "NAMES INDEX": [
+      238, 
+      "IXN"
+    ], 
+    "4 BARUCH / PARALIPOMENON OF JEREMIAH / PARALEIPOMENA IEREMIOU / REST OF THE WORDS OF BARUCH": [
+      107, 
+      "BA4"
+    ], 
+    "TWELVE PROPHETS": [
+      225, 
+      "P12"
+    ], 
+    "HABAKKUK": [
+      35, 
+      "HAB"
+    ], 
+    "DEUTERONOMY / 5 MOSES": [
+      5, 
+      "DEU"
+    ], 
+    "2 JOHN": [
+      63, 
+      "JN2"
+    ], 
+    "DORMITION OF JOHN": [
+      138, 
+      "DOJ"
+    ], 
+    "1 THESSALONIANS": [
+      52, 
+      "TH1"
+    ], 
+    "GREEK ESDRAS / GREEK EZRA / 1 ESDRAS / 1 EZRA / 2 EZRA / 3 EZRA / 3 ESDRAS": [
+      90, 
+      "GES"
+    ], 
+    "2 CORINTHIANS": [
+      47, 
+      "CO2"
+    ], 
+    "EZRA / 1 EZRA / 1 ESDRAS": [
+      15, 
+      "EZR"
+    ], 
+    "JUDGES": [
+      7, 
+      "JDG"
+    ], 
+    "GLOSSARY": [
+      235, 
+      "GLS"
+    ], 
+    "2 MEQABYAN / 2 MAKABIAN / MEKABIS OF MOAB": [
+      116, 
+      "MQ2"
+    ], 
+    "GENESIS / 1 MOSES": [
+      1, 
+      "GEN"
+    ], 
+    "JONAH": [
+      32, 
+      "JNA"
+    ], 
+    "2 TIMOTHY": [
+      55, 
+      "TI2"
+    ], 
+    "LIVES OF THE PROPHETS": [
+      198, 
+      "LPR"
+    ], 
+    "ECCLESIASTES / QOHOLETH": [
+      21, 
+      "ECC"
+    ], 
+    "BARUCH / 1 BARUCH": [
+      101, 
+      "BAR"
+    ], 
+    "PSALM 151": [
+      126, 
+      "PS2"
+    ], 
+    "EUPOLEMUS": [
+      188, 
+      "EUP"
+    ], 
+    "ESTHER": [
+      17, 
+      "EST"
+    ], 
+    "LUKE": [
+      42, 
+      "LUK"
+    ], 
+    "GREEK DANIEL / DANIEL (GREEK)": [
+      73, 
+      "DAG"
+    ], 
+    "PRAYER OF AZARIAH AND THE SONG OF THE THREE YOUNG MEN / PRAYER OF AZARIAH / SONG OF THE THREE YOUNG MEN / SONG OF THE THREE CHILDREN": [
+      87, 
+      "PAZ"
+    ], 
+    "TABLE OF CONTENTS": [
+      234, 
+      "TOC"
+    ], 
+    "2 MACCABEES": [
+      111, 
+      "MA2"
+    ], 
+    "TOPICAL CONCORDANCE": [
+      237, 
+      "TPC"
+    ], 
+    "LETTER OF BARNABAS / EPISTLE OF BARNABAS": [
+      144, 
+      "LBB"
+    ], 
+    "DIDACHE": [
+      153, 
+      "DID"
+    ], 
+    "PSALMS B / LITURGICAL PSALMS / METRICAL PSALMS / ALTERNATIVE PSALMS / GRAIL PSALMS": [
+      125, 
+      "PSB"
+    ], 
+    "LETTER OF THE CORINTHIANS TO PAUL": [
+      135, 
+      "COP"
+    ], 
+    "EPHESIANS": [
+      49, 
+      "EPH"
+    ], 
+    "ARISTEAS THE EXEGETE": [
+      192, 
+      "ARI"
+    ], 
+    "GOSPEL OF JUDAS": [
+      167, 
+      "GJU"
+    ], 
+    "PLACES INDEX": [
+      239, 
+      "IXP"
+    ], 
+    "PSALMS BOOK 1": [
+      120, 
+      "PB1"
+    ], 
+    "EXODUS / 2 MOSES": [
+      2, 
+      "EXO"
+    ], 
+    "ELDAD AND MODAD": [
+      196, 
+      "ELM"
+    ], 
+    "SHEPHERD OF HERMAS": [
+      152, 
+      "SHE"
+    ], 
+    "PHILO THE EPIC POET": [
+      199, 
+      "EPL"
+    ], 
+    "JOHN": [
+      43, 
+      "JHN"
+    ], 
+    "2 CHRONICLES / 2 PARALIPOMENON": [
+      14, 
+      "CH2"
+    ], 
+    "HISTORY OF THE RECHABITES": [
+      197, 
+      "HRE"
+    ], 
+    "LAMENTATIONS OF JEREMIAH": [
+      25, 
+      "LAM"
+    ], 
+    "5 MACCABEES": [
+      114, 
+      "MA5"
+    ], 
+    "TOBIT / TOBIAS": [
+      85, 
+      "TOB"
+    ], 
+    "MARTYRDOM AND ASCENSION OF ISAIAH": [
+      185, 
+      "MAI"
+    ], 
+    "JUBILEES": [
+      140, 
+      "JUB"
+    ], 
+    "TITUS": [
+      56, 
+      "TIT"
+    ], 
+    "PRAYER OF MANASSES / PRAYER OF MANASSEH": [
+      83, 
+      "MAN"
+    ], 
+    "GREEK ADDITIONS TO ESTHER / ESTHER (ADDITIONS)": [
+      71, 
+      "ESA"
+    ], 
+    "PSALMS / GALLICANUM / PSALMS A": [
+      19, 
+      "PSA"
+    ], 
+    "LETTER/EPISTLE OF JEREMIAH WITH BARUCH": [
+      102, 
+      "LJB"
+    ], 
+    "LEVITICUS / 3 MOSES": [
+      3, 
+      "LEV"
+    ], 
+    "3 MEQABYAN / 3 MAKABIAN": [
+      117, 
+      "MQ3"
+    ], 
+    "PRAYER OF EUTHALIUS": [
+      137, 
+      "EUT"
+    ], 
+    "1 MACCABEES": [
+      110, 
+      "MA1"
+    ], 
+    "1 CHRONICLES / 1 PARALIPOMENON": [
+      13, 
+      "CH1"
+    ], 
+    "MARK": [
+      41, 
+      "MRK"
+    ], 
+    "CONCORDANCE": [
+      236, 
+      "CNC"
+    ], 
+    "LETTER TO THE LAODICEANS": [
+      130, 
+      "LAO"
+    ], 
+    "AMOS": [
+      30, 
+      "AMO"
+    ], 
+    "KINGS": [
       222, 
       "KGS"
     ], 
-    "Enoch / 1 Enoch / Ethiopic Apocalypse of Enoch": [
+    "JUDITH": [
+      82, 
+      "JDT"
+    ], 
+    "APOCRYPHA OF JAMES / APOCRYPHAL JAMES": [
+      169, 
+      "AJA"
+    ], 
+    "LIFE OF ADAM AND EVE": [
+      181, 
+      "LAE"
+    ], 
+    "ARISTOBULUS": [
+      193, 
+      "ABL"
+    ], 
+    "MATTHEW": [
+      40, 
+      "MAT"
+    ], 
+    "PRAYER OF JEREMIAH": [
+      133, 
+      "PJE"
+    ], 
+    "4 MACCABEES": [
+      113, 
+      "MA4"
+    ], 
+    "ACKNOWLEDGEMENTS": [
+      232, 
+      "ACK"
+    ], 
+    "TESTAMENTS OF THE TWELVE PATRIARCHS": [
+      139, 
+      "TTP"
+    ], 
+    "1 MEQABYAN / 1 MAKABIAN / MEKABIS OF BENJAMIN": [
+      115, 
+      "MQ1"
+    ], 
+    "GOSPEL OF THE HEBREWS": [
+      160, 
+      "GHE"
+    ], 
+    "2 KINGS / 4 KINGDOMS / 4 KINGS": [
+      12, 
+      "KI2"
+    ], 
+    "ODES / ODAE": [
+      131, 
+      "ODE"
+    ], 
+    "SUSANNA": [
+      81, 
+      "SUS"
+    ], 
+    "EZEKIEL THE TRAGEDIAN": [
+      187, 
+      "EZT"
+    ], 
+    "ENOCH / 1 ENOCH / ETHIOPIC APOCALYPSE OF ENOCH": [
       141, 
       "ENO"
     ], 
-    "2 Clement": [
+    "2 CLEMENT": [
       151, 
       "CL2"
     ], 
-    "Names Index": [
-      238, 
-      "IXN"
+    "1 TIMOTHY": [
+      54, 
+      "TI1"
+    ], 
+    "EZRA-NEHEMIAH / 1 ESDRAS": [
+      224, 
+      "EZN"
+    ], 
+    "OBADIAH": [
+      31, 
+      "OBA"
+    ], 
+    "PREFACE": [
+      231, 
+      "PRF"
+    ], 
+    "GOSPEL OF THOMAS": [
+      166, 
+      "GTH"
+    ], 
+    "HOSEA": [
+      28, 
+      "HOS"
+    ], 
+    "3 CORINTHIANS": [
+      136, 
+      "CO3"
+    ], 
+    "CLEODEMUS MALCHUS": [
+      195, 
+      "CLM"
+    ], 
+    "TESTAMENT OF JOB": [
+      184, 
+      "TJB"
+    ], 
+    "GREEK ESTHER / ESTHER (GREEK)": [
+      70, 
+      "ESG"
+    ], 
+    "3 BARUCH": [
+      106, 
+      "BA3"
+    ], 
+    "NAHUM": [
+      34, 
+      "NAH"
+    ], 
+    "GALATIANS": [
+      48, 
+      "GAL"
+    ], 
+    "WISDOM OF JESUS CHRIST": [
+      170, 
+      "WJC"
+    ], 
+    "GOSPEL OF BARTHOLOMEW": [
+      168, 
+      "GBA"
+    ], 
+    "GOSPEL OF MARCION": [
+      163, 
+      "GMC"
+    ], 
+    "INTRODUCTION": [
+      233, 
+      "INT"
+    ], 
+    "3 MACCABEES": [
+      112, 
+      "MA3"
+    ], 
+    "HAGGAI": [
+      37, 
+      "HAG"
+    ], 
+    "ARTAPANUS": [
+      194, 
+      "ART"
+    ], 
+    "RUTH": [
+      8, 
+      "RUT"
+    ], 
+    "2 THESSALONIANS": [
+      53, 
+      "TH2"
+    ], 
+    "VISIONS OF AMRAM": [
+      190, 
+      "VAM"
     ]
   }, 
   "CCELDict": {
@@ -8123,611 +8123,611 @@
     ]
   }, 
   "OSISAbbreviationDict": {
-    "Jer": [
-      24, 
-      "JER"
+    "2JOHN": [
+      63, 
+      "JN2"
     ], 
-    "Ps": [
-      19, 
-      "PSA"
-    ], 
-    "Matt": [
-      40, 
-      "MAT"
-    ], 
-    "PrMan": [
-      83, 
-      "MAN"
-    ], 
-    "Obad": [
-      31, 
-      "OBA"
-    ], 
-    "Phlm": [
-      57, 
-      "PHM"
-    ], 
-    "Neh": [
-      16, 
-      "NEH"
-    ], 
-    "Ezek": [
-      26, 
-      "EZK"
-    ], 
-    "Prov": [
-      20, 
-      "PRO"
-    ], 
-    "1Sam": [
-      9, 
-      "SA1"
-    ], 
-    "Acts": [
-      44, 
-      "ACT"
-    ], 
-    "Josh": [
-      6, 
-      "JOS"
-    ], 
-    "Jas": [
-      59, 
-      "JAM"
-    ], 
-    "Hag": [
-      37, 
-      "HAG"
-    ], 
-    "Sus": [
-      81, 
-      "SUS"
-    ], 
-    "Hos": [
-      28, 
-      "HOS"
-    ], 
-    "Heb": [
-      58, 
-      "HEB"
-    ], 
-    "Jdt": [
-      82, 
-      "JDT"
-    ], 
-    "Tob": [
-      85, 
-      "TOB"
-    ], 
-    "4Macc": [
-      113, 
-      "MA4"
-    ], 
-    "Deut": [
-      5, 
-      "DEU"
-    ], 
-    "Ruth": [
-      8, 
-      "RUT"
-    ], 
-    "Titus": [
-      56, 
-      "TIT"
-    ], 
-    "Lam": [
-      25, 
-      "LAM"
-    ], 
-    "2Sam": [
-      10, 
-      "SA2"
-    ], 
-    "2Tim": [
-      55, 
-      "TI2"
-    ], 
-    "2Cor": [
-      47, 
-      "CO2"
-    ], 
-    "Song": [
-      22, 
-      "SNG"
-    ], 
-    "Luke": [
-      42, 
-      "LUK"
-    ], 
-    "Dan": [
-      27, 
-      "DAN"
-    ], 
-    "1Cor": [
+    "1COR": [
       46, 
       "CO1"
     ], 
-    "Jonah": [
-      32, 
-      "JNA"
-    ], 
-    "PrAzar": [
-      87, 
-      "PAZ"
-    ], 
-    "Gal": [
-      48, 
-      "GAL"
-    ], 
-    "Job": [
-      18, 
-      "JOB"
-    ], 
-    "2Chr": [
-      14, 
-      "CH2"
-    ], 
-    "3John": [
-      64, 
-      "JN3"
-    ], 
-    "Lev": [
-      3, 
-      "LEV"
-    ], 
-    "EpJer": [
-      102, 
-      "LJB"
-    ], 
-    "1Pet": [
-      60, 
-      "PE1"
-    ], 
-    "1Kgs": [
-      11, 
-      "KI1"
-    ], 
-    "2Thess": [
-      53, 
-      "TH2"
-    ], 
-    "Gen": [
-      1, 
-      "GEN"
-    ], 
-    "Exod": [
-      2, 
-      "EXO"
-    ], 
-    "1Esd": [
-      90, 
-      "GES"
-    ], 
-    "Col": [
-      51, 
-      "COL"
-    ], 
-    "1John": [
-      62, 
-      "JN1"
-    ], 
-    "Bar": [
+    "BAR": [
       101, 
       "BAR"
     ], 
-    "Bel": [
-      80, 
-      "BEL"
-    ], 
-    "Rev": [
-      66, 
-      "REV"
-    ], 
-    "Joel": [
-      29, 
-      "JOL"
-    ], 
-    "Phil": [
-      50, 
-      "PHP"
-    ], 
-    "Judg": [
-      7, 
-      "JDG"
-    ], 
-    "1Tim": [
-      54, 
-      "TI1"
-    ], 
-    "Jude": [
-      65, 
-      "JDE"
-    ], 
-    "2John": [
-      63, 
-      "JN2"
-    ], 
-    "1Macc": [
-      110, 
-      "MA1"
-    ], 
-    "Mic": [
-      33, 
-      "MIC"
-    ], 
-    "Hab": [
-      35, 
-      "HAB"
-    ], 
-    "Ps151": [
-      126, 
-      "PS2"
-    ], 
-    "John": [
-      43, 
-      "JHN"
-    ], 
-    "Eph": [
-      49, 
-      "EPH"
-    ], 
-    "Amos": [
-      30, 
-      "AMO"
-    ], 
-    "AddEsth": [
-      72, 
-      "ESC"
-    ], 
-    "Isa": [
-      23, 
-      "ISA"
-    ], 
-    "Mark": [
-      41, 
-      "MRK"
-    ], 
-    "Eccl": [
-      21, 
-      "ECC"
-    ], 
-    "Nah": [
-      34, 
-      "NAH"
-    ], 
-    "Sir": [
-      84, 
-      "SIR"
-    ], 
-    "Ezra": [
-      224, 
-      "EZN"
-    ], 
-    "3Macc": [
-      112, 
-      "MA3"
-    ], 
-    "AddDan": [
-      75, 
-      "DAC"
-    ], 
-    "Rom": [
-      45, 
-      "ROM"
-    ], 
-    "2Kgs": [
-      12, 
-      "KI2"
-    ], 
-    "Wis": [
-      86, 
-      "WIS"
-    ], 
-    "2Pet": [
-      61, 
-      "PE2"
-    ], 
-    "Esth": [
-      17, 
-      "EST"
-    ], 
-    "Mal": [
-      39, 
-      "MAL"
-    ], 
-    "Num": [
-      4, 
-      "NUM"
-    ], 
-    "Zech": [
-      38, 
-      "ZEC"
-    ], 
-    "2Esd": [
-      91, 
-      "LES"
-    ], 
-    "1Thess": [
-      52, 
-      "TH1"
-    ], 
-    "2Macc": [
-      111, 
-      "MA2"
-    ], 
-    "1Chr": [
-      13, 
-      "CH1"
-    ], 
-    "Zeph": [
-      36, 
-      "ZEP"
-    ]
-  }, 
-  "NETBibleAbbreviationDict": {
-    "Jer": [
-      24, 
-      "JER"
-    ], 
-    "Est": [
-      17, 
-      "EST"
-    ], 
-    "Neh": [
+    "NEH": [
       16, 
       "NEH"
     ], 
-    "Tit": [
-      56, 
-      "TIT"
+    "SIR": [
+      84, 
+      "SIR"
     ], 
-    "Mic": [
-      33, 
-      "MIC"
-    ], 
-    "Rev": [
-      66, 
-      "REV"
-    ], 
-    "Hag": [
-      37, 
-      "HAG"
-    ], 
-    "Jam": [
-      59, 
-      "JAM"
-    ], 
-    "Hos": [
-      28, 
-      "HOS"
-    ], 
-    "Heb": [
-      58, 
-      "HEB"
-    ], 
-    "2Co": [
-      47, 
-      "CO2"
-    ], 
-    "Luk": [
+    "LUKE": [
       42, 
       "LUK"
     ], 
-    "2Th": [
-      53, 
-      "TH2"
+    "MIC": [
+      33, 
+      "MIC"
     ], 
-    "Lam": [
-      25, 
-      "LAM"
+    "2ESD": [
+      91, 
+      "LES"
     ], 
-    "1Ki": [
-      11, 
-      "KI1"
+    "ESTH": [
+      17, 
+      "EST"
     ], 
-    "Jos": [
-      6, 
-      "JOS"
+    "PRAZAR": [
+      87, 
+      "PAZ"
     ], 
-    "Ecc": [
-      21, 
-      "ECC"
-    ], 
-    "Mat": [
-      40, 
-      "MAT"
-    ], 
-    "Amo": [
-      30, 
-      "AMO"
-    ], 
-    "Dan": [
-      27, 
-      "DAN"
-    ], 
-    "Psa": [
-      19, 
-      "PSA"
-    ], 
-    "2Ti": [
-      55, 
-      "TI2"
-    ], 
-    "Zep": [
-      36, 
-      "ZEP"
-    ], 
-    "1Pe": [
-      60, 
-      "PE1"
-    ], 
-    "Job": [
-      18, 
-      "JOB"
-    ], 
-    "Gal": [
-      48, 
-      "GAL"
-    ], 
-    "2Pe": [
-      61, 
-      "PE2"
-    ], 
-    "Joe": [
-      29, 
-      "JOL"
-    ], 
-    "Lev": [
-      3, 
-      "LEV"
-    ], 
-    "Joh": [
-      43, 
-      "JHN"
-    ], 
-    "2Ki": [
-      12, 
-      "KI2"
-    ], 
-    "Rut": [
-      8, 
-      "RUT"
-    ], 
-    "1Ti": [
-      54, 
-      "TI1"
-    ], 
-    "Phm": [
-      57, 
-      "PHM"
-    ], 
-    "Exo": [
-      2, 
-      "EXO"
-    ], 
-    "Jdg": [
-      7, 
-      "JDG"
-    ], 
-    "Deu": [
-      5, 
-      "DEU"
-    ], 
-    "Oba": [
-      31, 
-      "OBA"
-    ], 
-    "Hab": [
-      35, 
-      "HAB"
-    ], 
-    "Mar": [
-      41, 
-      "MRK"
-    ], 
-    "2Ch": [
-      14, 
-      "CH2"
-    ], 
-    "Eph": [
-      49, 
-      "EPH"
-    ], 
-    "Act": [
-      44, 
-      "ACT"
-    ], 
-    "Isa": [
-      23, 
-      "ISA"
-    ], 
-    "1Ch": [
-      13, 
-      "CH1"
-    ], 
-    "1Co": [
-      46, 
-      "CO1"
-    ], 
-    "Col": [
-      51, 
-      "COL"
-    ], 
-    "Nah": [
-      34, 
-      "NAH"
-    ], 
-    "Phi": [
-      50, 
-      "PHP"
-    ], 
-    "Zec": [
-      38, 
-      "ZEC"
-    ], 
-    "1Sa": [
-      9, 
-      "SA1"
-    ], 
-    "Jud": [
-      65, 
-      "JDE"
-    ], 
-    "Rom": [
-      45, 
-      "ROM"
-    ], 
-    "1Jo": [
+    "1JOHN": [
       62, 
       "JN1"
     ], 
-    "1Th": [
-      52, 
-      "TH1"
+    "3MACC": [
+      112, 
+      "MA3"
     ], 
-    "Mal": [
-      39, 
-      "MAL"
+    "PS151": [
+      126, 
+      "PS2"
     ], 
-    "Pro": [
-      20, 
-      "PRO"
+    "HAB": [
+      35, 
+      "HAB"
     ], 
-    "2Sa": [
+    "ZECH": [
+      38, 
+      "ZEC"
+    ], 
+    "EPH": [
+      49, 
+      "EPH"
+    ], 
+    "EPJER": [
+      102, 
+      "LJB"
+    ], 
+    "TOB": [
+      85, 
+      "TOB"
+    ], 
+    "JDT": [
+      82, 
+      "JDT"
+    ], 
+    "ISA": [
+      23, 
+      "ISA"
+    ], 
+    "MARK": [
+      41, 
+      "MRK"
+    ], 
+    "TITUS": [
+      56, 
+      "TIT"
+    ], 
+    "COL": [
+      51, 
+      "COL"
+    ], 
+    "4MACC": [
+      113, 
+      "MA4"
+    ], 
+    "PS": [
+      19, 
+      "PSA"
+    ], 
+    "NAH": [
+      34, 
+      "NAH"
+    ], 
+    "2SAM": [
       10, 
       "SA2"
     ], 
-    "Ezr": [
-      224, 
-      "EZN"
+    "OBAD": [
+      31, 
+      "OBA"
     ], 
-    "Gen": [
-      1, 
-      "GEN"
+    "ROM": [
+      45, 
+      "ROM"
     ], 
-    "Sos": [
-      22, 
-      "SNG"
+    "2MACC": [
+      111, 
+      "MA2"
     ], 
-    "Num": [
+    "DAN": [
+      27, 
+      "DAN"
+    ], 
+    "PHIL": [
+      50, 
+      "PHP"
+    ], 
+    "JOSH": [
+      6, 
+      "JOS"
+    ], 
+    "MAL": [
+      39, 
+      "MAL"
+    ], 
+    "2COR": [
+      47, 
+      "CO2"
+    ], 
+    "JOB": [
+      18, 
+      "JOB"
+    ], 
+    "NUM": [
       4, 
       "NUM"
     ], 
-    "Jon": [
-      32, 
-      "JNA"
-    ], 
-    "2Jo": [
-      63, 
-      "JN2"
-    ], 
-    "Eze": [
+    "EZEK": [
       26, 
       "EZK"
     ], 
-    "3Jo": [
+    "WIS": [
+      86, 
+      "WIS"
+    ], 
+    "1KGS": [
+      11, 
+      "KI1"
+    ], 
+    "JOHN": [
+      43, 
+      "JHN"
+    ], 
+    "GEN": [
+      1, 
+      "GEN"
+    ], 
+    "1CHR": [
+      13, 
+      "CH1"
+    ], 
+    "JER": [
+      24, 
+      "JER"
+    ], 
+    "EZRA": [
+      224, 
+      "EZN"
+    ], 
+    "1MACC": [
+      110, 
+      "MA1"
+    ], 
+    "SONG": [
+      22, 
+      "SNG"
+    ], 
+    "REV": [
+      66, 
+      "REV"
+    ], 
+    "1SAM": [
+      9, 
+      "SA1"
+    ], 
+    "PRMAN": [
+      83, 
+      "MAN"
+    ], 
+    "JAS": [
+      59, 
+      "JAM"
+    ], 
+    "HAG": [
+      37, 
+      "HAG"
+    ], 
+    "HOS": [
+      28, 
+      "HOS"
+    ], 
+    "HEB": [
+      58, 
+      "HEB"
+    ], 
+    "BEL": [
+      80, 
+      "BEL"
+    ], 
+    "2TIM": [
+      55, 
+      "TI2"
+    ], 
+    "2THESS": [
+      53, 
+      "TH2"
+    ], 
+    "1THESS": [
+      52, 
+      "TH1"
+    ], 
+    "EXOD": [
+      2, 
+      "EXO"
+    ], 
+    "ZEPH": [
+      36, 
+      "ZEP"
+    ], 
+    "LAM": [
+      25, 
+      "LAM"
+    ], 
+    "MATT": [
+      40, 
+      "MAT"
+    ], 
+    "ADDDAN": [
+      75, 
+      "DAC"
+    ], 
+    "PHLM": [
+      57, 
+      "PHM"
+    ], 
+    "2KGS": [
+      12, 
+      "KI2"
+    ], 
+    "1ESD": [
+      90, 
+      "GES"
+    ], 
+    "PROV": [
+      20, 
+      "PRO"
+    ], 
+    "JOEL": [
+      29, 
+      "JOL"
+    ], 
+    "ACTS": [
+      44, 
+      "ACT"
+    ], 
+    "JUDG": [
+      7, 
+      "JDG"
+    ], 
+    "GAL": [
+      48, 
+      "GAL"
+    ], 
+    "JUDE": [
+      65, 
+      "JDE"
+    ], 
+    "JONAH": [
+      32, 
+      "JNA"
+    ], 
+    "1TIM": [
+      54, 
+      "TI1"
+    ], 
+    "2CHR": [
+      14, 
+      "CH2"
+    ], 
+    "1PET": [
+      60, 
+      "PE1"
+    ], 
+    "3JOHN": [
       64, 
       "JN3"
+    ], 
+    "LEV": [
+      3, 
+      "LEV"
+    ], 
+    "AMOS": [
+      30, 
+      "AMO"
+    ], 
+    "SUS": [
+      81, 
+      "SUS"
+    ], 
+    "DEUT": [
+      5, 
+      "DEU"
+    ], 
+    "RUTH": [
+      8, 
+      "RUT"
+    ], 
+    "ECCL": [
+      21, 
+      "ECC"
+    ], 
+    "ADDESTH": [
+      72, 
+      "ESC"
+    ], 
+    "2PET": [
+      61, 
+      "PE2"
+    ]
+  }, 
+  "NETBibleAbbreviationDict": {
+    "1KI": [
+      11, 
+      "KI1"
+    ], 
+    "NEH": [
+      16, 
+      "NEH"
+    ], 
+    "TIT": [
+      56, 
+      "TIT"
+    ], 
+    "EXO": [
+      2, 
+      "EXO"
+    ], 
+    "JDG": [
+      7, 
+      "JDG"
+    ], 
+    "2TI": [
+      55, 
+      "TI2"
+    ], 
+    "DEU": [
+      5, 
+      "DEU"
+    ], 
+    "REV": [
+      66, 
+      "REV"
+    ], 
+    "1PE": [
+      60, 
+      "PE1"
+    ], 
+    "2PE": [
+      61, 
+      "PE2"
+    ], 
+    "EPH": [
+      49, 
+      "EPH"
+    ], 
+    "ACT": [
+      44, 
+      "ACT"
+    ], 
+    "ISA": [
+      23, 
+      "ISA"
+    ], 
+    "LUK": [
+      42, 
+      "LUK"
+    ], 
+    "2KI": [
+      12, 
+      "KI2"
+    ], 
+    "1TH": [
+      52, 
+      "TH1"
+    ], 
+    "1TI": [
+      54, 
+      "TI1"
+    ], 
+    "NAH": [
+      34, 
+      "NAH"
+    ], 
+    "JOS": [
+      6, 
+      "JOS"
+    ], 
+    "ECC": [
+      21, 
+      "ECC"
+    ], 
+    "ROM": [
+      45, 
+      "ROM"
+    ], 
+    "AMO": [
+      30, 
+      "AMO"
+    ], 
+    "PRO": [
+      20, 
+      "PRO"
+    ], 
+    "1JO": [
+      62, 
+      "JN1"
+    ], 
+    "JOB": [
+      18, 
+      "JOB"
+    ], 
+    "COL": [
+      51, 
+      "COL"
+    ], 
+    "SOS": [
+      22, 
+      "SNG"
+    ], 
+    "NUM": [
+      4, 
+      "NUM"
+    ], 
+    "JOE": [
+      29, 
+      "JOL"
+    ], 
+    "MIC": [
+      33, 
+      "MIC"
+    ], 
+    "JOH": [
+      43, 
+      "JHN"
+    ], 
+    "GEN": [
+      1, 
+      "GEN"
+    ], 
+    "JON": [
+      32, 
+      "JNA"
+    ], 
+    "3JO": [
+      64, 
+      "JN3"
+    ], 
+    "JER": [
+      24, 
+      "JER"
+    ], 
+    "1SA": [
+      9, 
+      "SA1"
+    ], 
+    "EST": [
+      17, 
+      "EST"
+    ], 
+    "ZEC": [
+      38, 
+      "ZEC"
+    ], 
+    "JUD": [
+      65, 
+      "JDE"
+    ], 
+    "HAB": [
+      35, 
+      "HAB"
+    ], 
+    "2SA": [
+      10, 
+      "SA2"
+    ], 
+    "OBA": [
+      31, 
+      "OBA"
+    ], 
+    "JAM": [
+      59, 
+      "JAM"
+    ], 
+    "HOS": [
+      28, 
+      "HOS"
+    ], 
+    "HEB": [
+      58, 
+      "HEB"
+    ], 
+    "2JO": [
+      63, 
+      "JN2"
+    ], 
+    "HAG": [
+      37, 
+      "HAG"
+    ], 
+    "LAM": [
+      25, 
+      "LAM"
+    ], 
+    "PHI": [
+      50, 
+      "PHP"
+    ], 
+    "MAR": [
+      41, 
+      "MRK"
+    ], 
+    "2TH": [
+      53, 
+      "TH2"
+    ], 
+    "MAT": [
+      40, 
+      "MAT"
+    ], 
+    "PHM": [
+      57, 
+      "PHM"
+    ], 
+    "PSA": [
+      19, 
+      "PSA"
+    ], 
+    "GAL": [
+      48, 
+      "GAL"
+    ], 
+    "EZR": [
+      224, 
+      "EZN"
+    ], 
+    "MAL": [
+      39, 
+      "MAL"
+    ], 
+    "ZEP": [
+      36, 
+      "ZEP"
+    ], 
+    "2CO": [
+      47, 
+      "CO2"
+    ], 
+    "2CH": [
+      14, 
+      "CH2"
+    ], 
+    "LEV": [
+      3, 
+      "LEV"
+    ], 
+    "EZE": [
+      26, 
+      "EZK"
+    ], 
+    "1CH": [
+      13, 
+      "CH1"
+    ], 
+    "1CO": [
+      46, 
+      "CO1"
+    ], 
+    "DAN": [
+      27, 
+      "DAN"
+    ], 
+    "RUT": [
+      8, 
+      "RUT"
     ]
   }
 }

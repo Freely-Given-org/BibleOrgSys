@@ -4,7 +4,7 @@
 # BibleBooksCodesTests.py
 #
 # Module testing BibleBooksCodes.py
-#   Last modified: 2011-02-22 (also update versionString below)
+#   Last modified: 2011-03-03 (also update versionString below)
 #
 # Copyright (C) 2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module testing BibleBooksCodes.py.
 """
 
 progName = "Bible Books Codes tests"
-versionString = "0.96"
+versionString = "0.52"
 
 
 import sys, unittest
@@ -240,9 +240,20 @@ class BibleBooksCodesTests( unittest.TestCase ):
         self.assertEqual( self.bbc.getBBBFromOSIS('Gen'), 'GEN' )
         self.assertEqual( self.bbc.getBBBFromOSIS('1Cor'), 'CO1' )
         self.assertEqual( self.bbc.getBBBFromOSIS('Rev'), 'REV' )
-        self.assertRaises( KeyError, self.bbc.getBBBFromOSIS, 'XYZ' )
-        self.assertRaises( KeyError, self.bbc.getBBBFromOSIS, 'Genesis' )
+        for badCode in ('XYZ','Genesis',):
+            self.assertRaises( KeyError, self.bbc.getBBBFromOSIS, badCode )
     # end of test_200_getBBBFromOSIS
+
+    def test_210_getBBBFromParatext( self ):
+        """ Test the getBBBFromParatext function. """
+        self.assertEqual( self.bbc.getBBBFromParatext('Gen'), 'GEN' )
+        self.assertEqual( self.bbc.getBBBFromParatext('1Co'), 'CO1' )
+        self.assertEqual( self.bbc.getBBBFromParatext('Rev'), 'REV' )
+        for badCode in ('XYZ','Abc',): # Must be three characters
+            self.assertRaises( KeyError, self.bbc.getBBBFromParatext, badCode )
+        for badCode in (':)','WXYZ','Genesis',): # Must not be three characters
+            self.assertRaises( AssertionError, self.bbc.getBBBFromParatext, badCode )
+    # end of test_210_getBBBFromParatext
 
     def test_300_getExpectedChaptersList( self ):
         """ Test the getSingleChapterBooksList function. """
@@ -280,11 +291,11 @@ class BibleBooksCodesTests( unittest.TestCase ):
         self.assertTrue( 66 <= len(results) < 120 ) # Remember it includes many non-canonical books
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
-        self.assertTrue( 'Gen' in results )
-        self.assertTrue( 'Mal' in results )
-        self.assertTrue( 'Matt' in results )
-        self.assertTrue( 'Rev' in results )
-        self.assertTrue( '2Macc' in results )
+        self.assertTrue( 'GEN' in results )
+        self.assertTrue( 'MAL' in results )
+        self.assertTrue( 'MATT' in results )
+        self.assertTrue( 'REV' in results )
+        self.assertTrue( '2MACC' in results )
         for result in results:
             self.assertTrue( 2 <= len(result) <= 7 )
     # end of test_330_getAllOSISBooksCodes

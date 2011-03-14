@@ -3,7 +3,7 @@
 #
 # BibleBooksNames.py
 #
-# Module handling BibleBooksNamesSystem_*.xml to produce C and Python data tables
+# Module handling BibleBooksNames_*.xml to produce C and Python data tables
 #   Last modified: 2011-02-23 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
@@ -24,7 +24,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module handling BibleBooksNamesSystem_*.xml to produce C and Python data tables.
+Module handling BibleBooksNames_*.xml to produce C and Python data tables.
 """
 
 progName = "Bible Books Names Systems handler"

@@ -4,7 +4,7 @@
 # BibleBookOrders.py
 #
 # Module handling BibleBookOrderSystem_*.xml to produce C and Python data tables
-#   Last modified: 2011-02-15 (also update versionString below)
+#   Last modified: 2011-03-14 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling BibleBookOrder_*.xml files and to export to JSON, C, and Python 
 """
 
 progName = "Bible Book Order Systems handler"
-versionString = "0.80"
+versionString = "0.81"
 
 
 import os, logging
@@ -217,7 +217,7 @@ class _BibleBookOrdersConverter:
         @rtype: string
         """
         result = "_BibleBookOrdersConverter object"
-        result += ('\n' if result else '') + "  Number of book order systems loaded ={}".format( len(self._XMLSystems) )
+        result += ('\n' if result else '') + "  Number of book order systems loaded = {}".format( len(self._XMLSystems) )
         if 0: # Make it verbose
             for x in self._XMLSystems:
                 result += ('\n' if result else '') + " {}".format( x )
@@ -227,7 +227,7 @@ class _BibleBookOrdersConverter:
                 if version: result += ('\n' if result else '') + "    Version:{}".format( version )
                 date = self._XMLSystems[x]["date"]
                 if date: result += ('\n' if result else '') + "    Last updated:{}".format( date )
-                result += ('\n' if result else '') + "    Number of books ={}".format( len(self._XMLSystems[x]["tree"]) )
+                result += ('\n' if result else '') + "    Number of books = {}".format( len(self._XMLSystems[x]["tree"]) )
         return result
     # end of __str__
 
@@ -263,6 +263,8 @@ class _BibleBookOrdersConverter:
                     logging.error( _("Duplicate {} ID (book index) numbers in '{}' book order system").format( intID, bookOrderSystemCode ) )
                 idDataDict[intID] = bookRA
                 BBBList.append( bookRA )
+            assert( len(bookDataDict) == len(idDataDict) )
+            assert( len(bookDataDict) == len(BBBList) )
 
             if Globals.strictCheckingFlag: # check for duplicates
                 for checkSystemCode in self.__DataLists:
@@ -272,6 +274,20 @@ class _BibleBookOrdersConverter:
             # Now put it into my dictionaries for easy access
             self.__DataDicts[bookOrderSystemCode] = bookDataDict, idDataDict
             self.__DataLists[bookOrderSystemCode] = BBBList # Don't explicitly include the book index numbers, but otherwise the same information in a different form
+
+        if Globals.strictCheckingFlag: # check for subsets
+            for checkSystemCode in self.__DataLists:
+                for otherSystemCode in self.__DataLists:
+                    if checkSystemCode != otherSystemCode:
+                        lastIndex, isSubset = -1, True
+                        for BBB in self.__DataLists[checkSystemCode]:
+                            if not BBB in self.__DataLists[otherSystemCode]: isSubset=False; break # This book isn't even in the other system
+                            index = self.__DataLists[otherSystemCode].index( BBB )
+                            #print( BBB, index, lastIndex )
+                            if index < lastIndex: isSubset=False; break # they must be in a different order
+                            lastIndex = index
+                        if isSubset: logging.error( _("{} ({} books) is a subset of {} book order system ({} books)").format( checkSystemCode, len(self.__DataLists[checkSystemCode]), otherSystemCode, len(self.__DataLists[otherSystemCode]) ) )
+
         return self.__DataDicts, self.__DataLists
     # end of importDataToPython
 
@@ -499,6 +515,9 @@ class BibleBookOrderSystems:
         """
         self.__bboc = _BibleBookOrdersConverter()
         self.__DataDicts = self.__DataLists = None # We'll import into these in loadData
+
+        # Make sure we have the Bible books codes data loaded and available
+        self.BibleBooksCodes = BibleBooksCodes().loadData()
     # end of __init__
 
     def loadData( self, XMLFolder=None ):
@@ -519,7 +538,7 @@ class BibleBookOrderSystems:
         @rtype: string
         """
         result = "BibleBooksOrders object"
-        result += ('\n' if result else '') + "  Number of systems ={}".format( len(self.__DataDicts) )
+        result += ('\n' if result else '') + "  Number of systems = {}".format( len(self.__DataDicts) )
         return result
     # end of __str__
 
@@ -558,10 +577,10 @@ class BibleBookOrderSystems:
         return BBB in self.__DataLists[systemName]
     # end of containsBook
 
-    def getBookList( self, systemName ):
+    def getBookOrderList( self, systemName ):
         """ Returns the list of BBB book reference abbreviations in the correct order. """
         return self.__DataLists[systemName]
-    # end of getBookList
+    # end of getBookOrderList
 
     def checkBookOrderSystem( self, thisSystemName, bookOrderSchemeToCheck ):
         """
@@ -573,25 +592,49 @@ class BibleBookOrderSystems:
         assert( bookOrderSchemeToCheck )
         assert( self.__DataLists )
         #print( thisSystemName, bookOrderSchemeToCheck )
+        for BBB in bookOrderSchemeToCheck:
+            if not self.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): logging.error( "Invalid '{}' book code".format( BBB ) )
 
         matchedBookOrderSystemCodes = []
-        systemMatchCount, systemMismatchCount, allErrors, errorSummary = 0, 0, '', ''
+        exactMatchCount, subsetMatchCount, systemMismatchCount, allErrors, errorSummary = 0, 0, 0, '', ''
         for bookOrderSystemCode in self.__DataLists: # Step through the various reference schemes
             if self.__DataLists[bookOrderSystemCode] == bookOrderSchemeToCheck:
-                #print( "  {} matches '{}' book order system".format( thisSystemName, bookOrderSystemCode ) )
-                systemMatchCount += 1
+                #print( "  {} exactly matches '{}' book order system".format( thisSystemName, bookOrderSystemCode ) )
+                exactMatchCount += 1
                 matchedBookOrderSystemCodes.append( bookOrderSystemCode )
-            else:
-                if len(self.__DataLists[bookOrderSystemCode]) == len(bookOrderSchemeToCheck):
+            else: # it's not an exact match
+                if len(self.__DataLists[bookOrderSystemCode]) == len(bookOrderSchemeToCheck): # They're both contain the same NUMBER of books
                     for BBB1,BBB2 in zip(self.__DataLists[bookOrderSystemCode],bookOrderSchemeToCheck):
                         if BBB1 != BBB2: break
                     thisError = "    " + _("Doesn't match '{0}' system (Both have {1} books, but {0} has {2} where {3} has {4})").format( bookOrderSystemCode, len(bookOrderSchemeToCheck), BBB1, thisSystemName, BBB2 )
                     errorSummary += ("\n" if errorSummary else "") + thisError
                 else:
-                    thisError = "    " + _("Doesn't match '{0}' system ({0} has {1} books whereas {2} has {3})").format( bookOrderSystemCode, len(self.__DataLists[bookOrderSystemCode]), thisSystemName, len(bookOrderSchemeToCheck) )
-                allErrors += ("\n" if allErrors else "") + thisError
-                systemMismatchCount += 1
+                    thisError = "    " + _("Doesn't exactly match '{0}' system ({0} has {1} books whereas {2} has {3})").format( bookOrderSystemCode, len(self.__DataLists[bookOrderSystemCode]), thisSystemName, len(bookOrderSchemeToCheck) )
+                    allErrors += ("\n" if allErrors else "") + thisError
+                    #systemMismatchCount += 1
+                # look for a subset
+                lastIndex, isSubset = -1, True
+                for BBB in bookOrderSchemeToCheck:
+                    if not BBB in self.__DataLists[bookOrderSystemCode]: # This book isn't even in the other system
+                        thisError = "    " + _("Can't match '{0}' system ({0} doesn't even have {1})").format( bookOrderSystemCode, BBB )
+                        allErrors += ("\n" if allErrors else "") + thisError
+                        isSubset=False;
+                        break
+                    index = self.__DataLists[bookOrderSystemCode].index( BBB )
+                    #print( BBB, index, lastIndex )
+                    if index < lastIndex: # they must be in a different order
+                        thisError = "    " + _("Can't match '{0}' system ({0} has {1} in a different place)").format( bookOrderSystemCode, BBB )
+                        allErrors += ("\n" if allErrors else "") + thisError
+                        isSubset=False;
+                        break
+                    lastIndex = index
+                if isSubset:
+                    #print( "  {} is a subset of '{}' book order system".format( thisSystemName, bookOrderSystemCode ) )
+                    subsetMatchCount += 1
+                    matchedBookOrderSystemCodes.append( bookOrderSystemCode )
 
+        systemMatchCount = exactMatchCount + subsetMatchCount # seems like we could improve this whole section of code
+        systemMismatchCount = len(self.__DataLists) - systemMatchCount
         if systemMatchCount == 1: # What we hope for
             print("  " + _("{} matched {} book order (with these {} books)").format( thisSystemName, matchedBookOrderSystemCodes[0], len(bookOrderSchemeToCheck) ) )
             if Globals.commandLineOptions.debug: print( errorSummary )
@@ -673,21 +716,21 @@ class BibleBookOrderSystem:
         return self.__systemName
     # end of getBookOrderSystemName
 
-    def getBookPosition( self, BBB ):
+    def getBookOrderPosition( self, BBB ):
         """ Returns the book position number (1..n). """
         assert( len(BBB) == 3 )
         return self.__BookOrderBookDict[BBB]
-    # end of getBookPosition
+    # end of getBookOrderPosition
 
-    def getBookAtPosition( self, n ):
+    def getBookAtOrderPosition( self, n ):
         """ Returns the BBB book reference abbreviation for the position number (1..n). """
         return self.__BookOrderNumberDict[n]
-    # end of getBookAtPosition
+    # end of getBookAtOrderPosition
 
-    def getBookList( self ):
+    def getBookOrderList( self ):
         """ Returns the list of BBB book reference abbreviations in the correct order. """
         return self.__BookOrderList
-    # end of getBookList
+    # end of getBookOrderList
 
     def getNextBook( self, BBB ):
         """ Returns the book (if any) after the given one. """
@@ -737,12 +780,13 @@ def main():
         print( "Number of books in {} is {}".format( systemName, bboss.numBooks(systemName) ) )
         systemName = "Septuagint"; BBB="ROM"
         print( "{} is in {}:{}".format( BBB, systemName, bboss.containsBook(systemName,BBB) ) )
-        for systemName in ("ModernJewish", "EuropeanProtestantNewTestament", ):
+        for systemName in ("ModernJewish", "EuropeanBible", ):
             print( "Booklist for {} is {}".format( systemName, bboss.getBookList(systemName) ) )
-        bboss.checkBookOrderSystem( "myTest", ['MAT', 'MRK', 'LUK', 'JHN', 'ACT', 'ROM', 'CO1', 'CO2', 'GAL', 'EPH', 'PHP', 'COL', 'TH1', 'TH2', 'TI1', 'TI2', 'TIT', 'PHM', 'HEB', 'JAM', 'PE1', 'PE2', 'JN1', 'JN2', 'JN3', 'JDE', 'ReV'] )
+        bboss.checkBookOrderSystem( "myTest1", ['MAT', 'MRK', 'LUK', 'JHN', 'ACT'] )
+        bboss.checkBookOrderSystem( "myTest2", ['MAT', 'MRK', 'LUK', 'JHN', 'ACT', 'ROM', 'CO1', 'CO2', 'GAL', 'EPH', 'PHP', 'COL', 'TH1', 'TH2', 'TI1', 'TI2', 'TIT', 'PHM', 'HEB', 'JAM', 'PE1', 'PE2', 'JN1', 'JN2', 'JN3', 'JDE', 'REV'] )
 
         # Demo a BibleBookOrder object -- this is the one most likely to be wanted by a user
-        bbos = BibleBookOrderSystem( "EuropeanProtestantBible" )
+        bbos = BibleBookOrderSystem( "EuropeanBible" )
         if bbos is not None:
             print( bbos ) # Just print a summary
             print( "Number of books is {} or {}".format(len(bbos), bbos.numBooks()) )

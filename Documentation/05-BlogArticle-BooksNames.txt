@@ -1,0 +1,21 @@
+Bible Books Names
+
+Well now we're into a little bit of fun stuff -- trying to work out how to handle the user inputs to select a certain book out of a certain publication. For each language, we have a XML data file which specifies the defaultName and defaultAbbreviation for all the books, e.g., Genesis (Gen), Jude (Jde), etc.
+
+We can use those fields for display and for keyboard input, and we have included a simple routine to create a list of all unambiguous shortcuts, e.g., we could accept Ge and also know that the user meant Genesis because no other (English) Bible book starts with Ge. But we also would like to accept Gn. So we add an extra inputAbbreviation field, where we can add things like Gnss. Again, the program will create a list of unambiguous shortcuts from this information (which would include Gns and Gn).
+
+But why not also automatically include G as a shortcut for Genesis? Well, the problem is that G could equally stand for Galatians. But if we specified that our particular publication only contains Old Testament books, then this additional piece of information would allow the software to automatically include G as an unambiguous shortcut for Genesis. And of course, you could override by entering G as an inputAbbreviation for Genesis anyway if you desire, even for a complete Bible publication.
+
+Ok, that's fairly simple then. But what about 1 Timothy? It would be nice to accept 1Tim (without a space), or I Tim (using Roman numerals), 1st Tim, etc. Well the information to do this is also put in the XML file under the section BibleBooknameLeaders. This specifies everything that you will accept instead of the 1, e.g., I, First, One, etc. The software automatically handles all the various combinations for you -- with and without the intervening spaces.
+
+And then the third and final (but first in the file) section of the XML file is for BibleDivisionNames. You might want to limit a search, for example, to the Old Testament or the Pentateuch. So in this section we can specify our division names and abbreviations, and a list of the books which would be included in each division.
+
+The XML filename includes the ISO 639-3 language code. But it also includes a qualifier, so you could have something like eng_traditional and eng_modern. Why? Well, what if you wanted to call the final book of your publication Vision instead of Revelation? It's still English but a different system and we would need to know how you want that different bookname displayed. (Although that example is fictitious, in the Philippines where I worked it's actually common to nickname Bible versions by the different names that the translators gave to the book of Revelation.)
+
+So look through the data files at https://github.com/openscriptures/BibleOrgSys/tree/master/DataFiles/BookNames and tell me what other pieces of information I should still have in there. Note that I didn't include extended book names (like The Second Epistle of the Apostle Paul to the Church at Corinth) as it seems to me that they only need to be specified in the actual Biblical material itself. I took a stab at creating basic files for French and German also, even though I don't speak those languages, so I'm sure they'll need some fixing. Note also that specifying the books included in a division (such as Old Testament or Pauline Letters) here does seem a little out of place (maybe it would seem more logical in the book orders data files), but since that kind of division information often relates to the cultural heritage, I've accepted it for now as a reasonable compromise.
+
+There's also some basic Python3 code to handle these data files at https://github.com/openscriptures/BibleOrgSys/tree/master/BibleBooksNames.py. It runs a brief demo so check it out and send me your suggestions and improvements.
+
+Robert Hunt.
+Hunt.RobertJ@gmail.com
+February 2011.

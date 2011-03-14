@@ -373,10 +373,11 @@
       }, 
       "JOS": {
         "defaultAbbreviation": "Jos", 
-        "defaultName": "Josue", 
+        "defaultName": "Josu\u00e9", 
         "inputFields": [
-          "Josue", 
+          "Josu\u00e9", 
           "Jos", 
+          "Josue", 
           "Jsue"
         ]
       }, 
@@ -472,8 +473,9 @@
       }, 
       "JOL": {
         "defaultAbbreviation": "Joel", 
-        "defaultName": "Joel", 
+        "defaultName": "Jo\u00ebl", 
         "inputFields": [
+          "Jo\u00ebl", 
           "Joel", 
           "Jl"
         ]
@@ -504,6 +506,7 @@
         "inputFields": [
           "Habacuc", 
           "Hab", 
+          "Habakuk", 
           "Hbcc"
         ]
       }, 
@@ -669,7 +672,10 @@
           "Philippiens", 
           "Php", 
           "Phlppns", 
-          "Phlpns"
+          "Phlpns", 
+          "Phillipiens", 
+          "Philipiens", 
+          "Phillippiens"
         ]
       }, 
       "MAL": {
@@ -718,6 +724,7 @@
         "inputFields": [
           "Juges", 
           "Jug", 
+          "Jges", 
           "Jgs"
         ]
       }, 
@@ -807,10 +814,11 @@
       }, 
       "GEN": {
         "defaultAbbreviation": "Gen", 
-        "defaultName": "Genese", 
+        "defaultName": "Gen\u00e8se", 
         "inputFields": [
-          "Genese", 
+          "Gen\u00e8se", 
           "Gen", 
+          "Genese", 
           "Gns", 
           "1 Moses", 
           "1 Mss"
@@ -1000,6 +1008,7 @@
         "inputFields": [
           "\u00c9saie", 
           "\u00c9sa", 
+          "Esa\u00efe", 
           "Esaie"
         ]
       }, 
@@ -1248,10 +1257,11 @@
       }, 
       "LEV": {
         "defaultAbbreviation": "Lev", 
-        "defaultName": "Levitique", 
+        "defaultName": "L\u00e9vitique", 
         "inputFields": [
-          "Levitique", 
+          "L\u00e9vitique", 
           "Lev", 
+          "Levitique", 
           "Lvtque", 
           "3 Moses", 
           "3 Mss"
@@ -1375,6 +1385,7 @@
         "inputFields": [
           "Ester", 
           "Est", 
+          "Esther", 
           "Estr"
         ]
       }, 
@@ -1393,6 +1404,7 @@
         "inputFields": [
           "Os\u00e8e", 
           "Os\u00e8", 
+          "Os\u00e9e", 
           "Osee"
         ]
       }, 

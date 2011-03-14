@@ -4,7 +4,7 @@
 # BibleBooksCodes.py
 #
 # Module handling BibleBooksCodes.xml to produce C and Python data tables
-#   Last modified: 2011-02-15 (also update versionString below)
+#   Last modified: 2011-03-03 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling BibleBooksCodes.xml and to export to JSON, C, and Python data ta
 """
 
 progName = "Bible Books Codes handler"
-versionString = "0.51"
+versionString = "0.52"
 
 
 import logging, os.path
@@ -281,31 +281,31 @@ class _BibleBooksCodesConverter:
                                     "numExpectedChapters":expectedChapters, "possibleAlternativeBooks":possibleAlternativeBooks, "nameEnglish":nameEnglish }
             if "SBLAbbreviation" in self._compulsoryElements or SBLAbbreviation:
                 if "SBLAbbreviation" in self._uniqueElements: ssert( SBLAbbreviation not in myOADict ) # Shouldn't be any duplicates 
-                mySBLDict[SBLAbbreviation] = ( intID, referenceAbbreviation, )
+                mySBLDict[SBLAbbreviation.upper()] = ( intID, referenceAbbreviation, )
             if "OSISAbbreviation" in self._compulsoryElements or OSISAbbreviation:
                 if "OSISAbbreviation" in self._uniqueElements: assert( OSISAbbreviation not in myOADict ) # Shouldn't be any duplicates 
-                myOADict[OSISAbbreviation] = ( intID, referenceAbbreviation )
+                myOADict[OSISAbbreviation.upper()] = ( intID, referenceAbbreviation )
             if "SwordAbbreviation" in self._compulsoryElements or SwordAbbreviation:
                 if "SwordAbbreviation" in self._uniqueElements: assert( SwordAbbreviation not in mySwDict ) # Shouldn't be any duplicates
-                mySwDict[SwordAbbreviation] = ( intID, referenceAbbreviation, )
+                mySwDict[SwordAbbreviation.upper()] = ( intID, referenceAbbreviation, )
             if "CCELNumberString" in self._compulsoryElements or CCELNumberString:
                 if "CCELNumberString" in self._uniqueElements: assert( CCELNumberString not in myCCELDict ) # Shouldn't be any duplicates
-                myCCELDict[CCELNumberString] = ( intID, referenceAbbreviation, )
+                myCCELDict[CCELNumberString.upper()] = ( intID, referenceAbbreviation, )
             if "ParatextAbbreviation" in self._compulsoryElements or ParatextAbbreviation:
                 if "ParatextAbbreviation" in self._uniqueElements: assert( ParatextAbbreviation not in myPADict ) # Shouldn't be any duplicates
-                myPADict[ParatextAbbreviation] = ( intID, referenceAbbreviation, ParatextNumberString, )
+                myPADict[ParatextAbbreviation.upper()] = ( intID, referenceAbbreviation, ParatextNumberString, )
             if "ParatextNumberString" in self._compulsoryElements or ParatextNumberString:
                 if "ParatextNumberString" in self._uniqueElements: assert( ParatextNumberString not in myPNDict ) # Shouldn't be any duplicates
-                myPNDict[ParatextNumberString] = ( intID, referenceAbbreviation, ParatextAbbreviation, )
+                myPNDict[ParatextNumberString.upper()] = ( intID, referenceAbbreviation, ParatextAbbreviation, )
             if "NETBibleAbbreviation" in self._compulsoryElements or NETBibleAbbreviation:
                 if "NETBibleAbbreviation" in self._uniqueElements: assert( NETBibleAbbreviation not in myBzDict ) # Shouldn't be any duplicates
-                myNETDict[NETBibleAbbreviation] = ( intID, referenceAbbreviation, )
+                myNETDict[NETBibleAbbreviation.upper()] = ( intID, referenceAbbreviation, )
             if "ByzantineAbbreviation" in self._compulsoryElements or ByzantineAbbreviation:
                 if "ByzantineAbbreviation" in self._uniqueElements: assert( ByzantineAbbreviation not in myBzDict ) # Shouldn't be any duplicates
-                myBzDict[ByzantineAbbreviation] = ( intID, referenceAbbreviation, )
+                myBzDict[ByzantineAbbreviation.upper()] = ( intID, referenceAbbreviation, )
             if "nameEnglish" in self._compulsoryElements or ParatextNumberString:
                 if "nameEnglish" in self._uniqueElements: assert( nameEnglish not in myENDict ) # Shouldn't be any duplicates
-                myENDict[nameEnglish] = ( intID, referenceAbbreviation )
+                myENDict[nameEnglish.upper()] = ( intID, referenceAbbreviation )
         self.__DataDicts = { "referenceNumberDict":myIDDict, "referenceAbbreviationDict":myRADict, "SBLDict":mySBLDict, "OSISAbbreviationDict":myOADict, "SwordAbbreviationDict":mySwDict,
                         "CCELDict":myCCELDict, "ParatextAbbreviationDict":myPADict, "ParatextNumberDict":myPNDict, "NETBibleAbbreviationDict":myNETDict,
                         "ByzantineAbbreviationDict":myBzDict, "EnglishNameDict":myENDict }
@@ -580,8 +580,13 @@ class BibleBooksCodes:
         return self.__DataDicts["referenceAbbreviationDict"][BBB]["ByzantineAbbreviation"]
 
     def getBBBFromOSIS( self, osisAbbreviation ):
-        """ Return the reference abbreviation strin for the given OSIS book code string. """
-        return self.__DataDicts["OSISAbbreviationDict"][osisAbbreviation][1]
+        """ Return the reference abbreviation string for the given OSIS book code string. """
+        return self.__DataDicts["OSISAbbreviationDict"][osisAbbreviation.upper()][1]
+
+    def getBBBFromParatext( self, paratextAbbreviation ):
+        """ Return the reference abbreviation string for the given Paratext book code string. """
+        assert( len(paratextAbbreviation) == 3 )
+        return self.__DataDicts["ParatextAbbreviationDict"][paratextAbbreviation.upper()][1]
 
     def getExpectedChaptersList( self, BBB ):
         """
