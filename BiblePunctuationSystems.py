@@ -4,7 +4,7 @@
 # BiblePunctuationSystems.py
 #
 # Module handling BiblePunctuationSystem_*.xml to produce C and Python data tables
-#   Last modified: 2011-02-15 (also update versionString below)
+#   Last modified: 2011-03-17 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -535,7 +535,7 @@ class BiblePunctuationSystems:
             return self.__DataDict[systemName]
         # else
         logging.error( _("No '{}' system in Bible Punctuation Systems").format(systemName) )
-        if Globals.verbosityLevel>2: logging.error( "  " + _("Available systems are {}").format(self.getAvailableSystemNames()) )
+        if Globals.verbosityLevel>2: logging.error( "  " + _("Available systems are {}").format(self.getAvailablePunctuationSystemNames()) )
     # end of getPunctuationSystem
 # end of BiblePunctuationSystems class
 

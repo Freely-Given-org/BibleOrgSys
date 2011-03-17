@@ -4,7 +4,7 @@
 # BibleBookOrders.py
 #
 # Module handling BibleBookOrderSystem_*.xml to produce C and Python data tables
-#   Last modified: 2011-03-14 (also update versionString below)
+#   Last modified: 2011-03-17 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -564,7 +564,7 @@ class BibleBookOrderSystems:
             return self.__DataDicts[systemName][0], self.__DataDicts[systemName][1], self.__DataLists[systemName]
         # else
         logging.error( _("No '{}' system in Bible Book Orders").format( systemName ) )
-        if Globals.verbosityLevel > 2: logging.error( _("Available systems are {}").format( self.getAvailableSystemNames() ) )
+        if Globals.verbosityLevel > 2: logging.error( _("Available systems are {}").format( self.getAvailableBookOrderSystemNames() ) )
     # end of getBookOrderSystem
 
     def numBooks( self, systemName ):
@@ -781,7 +781,7 @@ def main():
         systemName = "Septuagint"; BBB="ROM"
         print( "{} is in {}:{}".format( BBB, systemName, bboss.containsBook(systemName,BBB) ) )
         for systemName in ("ModernJewish", "EuropeanBible", ):
-            print( "Booklist for {} is {}".format( systemName, bboss.getBookList(systemName) ) )
+            print( "Booklist for {} is {}".format( systemName, bboss.getBookOrderList(systemName) ) )
         bboss.checkBookOrderSystem( "myTest1", ['MAT', 'MRK', 'LUK', 'JHN', 'ACT'] )
         bboss.checkBookOrderSystem( "myTest2", ['MAT', 'MRK', 'LUK', 'JHN', 'ACT', 'ROM', 'CO1', 'CO2', 'GAL', 'EPH', 'PHP', 'COL', 'TH1', 'TH2', 'TI1', 'TI2', 'TIT', 'PHM', 'HEB', 'JAM', 'PE1', 'PE2', 'JN1', 'JN2', 'JN3', 'JDE', 'REV'] )
 
@@ -790,11 +790,11 @@ def main():
         if bbos is not None:
             print( bbos ) # Just print a summary
             print( "Number of books is {} or {}".format(len(bbos), bbos.numBooks()) )
-            print( "The 3rd book is {}".format( bbos.getBookAtPosition(3) ) )
+            print( "The 3rd book is {}".format( bbos.getBookAtOrderPosition(3) ) )
             print( "Contains Psalms: {}".format( bbos.containsBook("PSA") ) )
             print( "Contains Judith: {}".format( bbos.containsBook("JDT") ) )
-            print( "Luke is book #{}".format( bbos.getBookPosition("LUK") ) )
-            print( "Book list is: {}".format( bbos.getBookList() ) )
+            print( "Luke is book #{}".format( bbos.getBookOrderPosition("LUK") ) )
+            print( "Book order list is: {}".format( bbos.getBookOrderList() ) )
             BBB = "TI1"
             while True: # Step through the next books until the end of the publication
                 BBB2 = bbos.getNextBook( BBB )

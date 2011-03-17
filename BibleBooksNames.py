@@ -791,7 +791,7 @@ class BibleBooksNamesSystems:
 
         # else we couldn't find the requested system name
         logging.error( _("No '{}' system in Bible Books Names Systems").format(systemName) )
-        if Globals.verbosityLevel > 2: logging.error( _("Available systems are {}").format(self.getAvailableSystemNames()) )
+        if Globals.verbosityLevel > 2: logging.error( _("Available systems are {}").format(self.getAvailableBooksNamesSystemNames()) )
     # end of getBooksNamesSystem
 # end of BibleBooksNamesSystems class
 
