@@ -1,0 +1,10 @@
+USFM Codes
+
+Unified Standard Format (http://paratext.ubs-translations.org/usfm) is a system of short alphanumeric markers (which follow backslashes) used by UBS (http://www.biblesociety.org/) and SIL (http://sil.org/) to encode Bible translations. Each book is usually stored in a separate file (in floppy disk days, it was each chapter). USFM is mostly used by the Paratext editor (http://paratext.ubs-translations.org/about/pt) for Bible translations in progress.
+
+The XML data file and scripts uploaded today are the simple beginnings of a framework to allow access to folders containing USFM texts. USFMMarkers.py loads and converts the XML file and provides some simple look-up functions. USFMFilenames.py accepts a folder name and searches for USFM files in that folder. All very simple, but hopefully another small step forwards.
+
+
+Robert Hunt.
+Hunt.RobertJ@gmail.com
+March 2011.

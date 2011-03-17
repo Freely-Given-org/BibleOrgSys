@@ -4,7 +4,7 @@
 # BibleBooksNames.py
 #
 # Module handling BibleBooksNames_*.xml to produce C and Python data tables
-#   Last modified: 2011-02-23 (also update versionString below)
+#   Last modified: 2011-03-17 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling BibleBooksNames_*.xml to produce C and Python data tables.
 """
 
 progName = "Bible Books Names Systems handler"
-versionString = "0.30"
+versionString = "0.31"
 
 
 import os, logging
@@ -359,7 +359,11 @@ class _BibleBooksNamesConverter:
         """
         def exportPythonDict( theFile, theDict, dictName, keyComment, fieldsComment ):
             """Exports theDict to theFile."""
-            theFile.write( '  "{}": {{\n    # Key is {}\n    # Fields are: {}\n'.format( dictName, keyComment, fieldsComment ) )
+            assert( isinstance( theDict, dict ) )
+            for dictKey in theDict.keys(): # Have to iterate this :(
+                fieldsCount = len( theDict[dictKey] ) if isinstance( theDict[dictKey], (tuple,dict,list) ) else 1
+                break # We only check the first (random) entry we get
+            theFile.write( '  "{}": {{\n    # Key is {}\n    # Fields ({}) are: {}\n'.format( dictName, keyComment, fieldsCount, fieldsComment ) )
             for dictKey in theDict.keys():
                 theFile.write( '    {}: {},\n'.format( repr(dictKey), repr(theDict[dictKey]) ) )
             theFile.write( "  }}, # end of {} ({} entries)\n\n".format( dictName, len(theDict) ) )
@@ -367,7 +371,11 @@ class _BibleBooksNamesConverter:
 
         def exportPythonOrderedDict( theFile, theDict, dictName, keyComment, fieldsComment ):
             """Exports theDict to theFile."""
-            theFile.write( '  "{}": OrderedDict([\n    # Key is {}\n    # Fields are: {}\n'.format( dictName, keyComment, fieldsComment ) )
+            assert( isinstance( theDict, OrderedDict ) )
+            for dictKey in theDict.keys(): # Have to iterate this :(
+                fieldsCount = len( theDict[dictKey] ) if isinstance( theDict[dictKey], (tuple,dict,list) ) else 1
+                break # We only check the first (random) entry we get
+            theFile.write( '  "{}": OrderedDict([\n    # Key is {}\n    # Fields ({}) are: {}\n'.format( dictName, keyComment, fieldsCount, fieldsComment ) )
             for dictKey in theDict.keys():
                 theFile.write( '    ({}, {}),\n'.format( repr(dictKey), repr(theDict[dictKey]) ) )
             theFile.write( "  ]), # end of {} ({} entries)\n\n".format( dictName, len(theDict) ) )
@@ -375,7 +383,9 @@ class _BibleBooksNamesConverter:
 
         def exportPythonList( theFile, theList, listName, fieldsComment ):
             """Exports theList to theFile."""
-            theFile.write( '  "{}": [\n    # Fields are: {}\n'.format( listName, fieldsComment ) )
+            assert( isinstance( theList, list ) )
+            fieldsCount = len( theList[0] ) if isinstance( theList[0], (tuple,dict,list) ) else 1
+            theFile.write( '  "{}": [\n    # Fields ({}) are: {}\n'.format( listName, fieldsCount, fieldsComment ) )
             for j,entry in enumerate(theList):
                 theFile.write( '    {}, # {}\n'.format( repr(entry), j ) )
             theFile.write( "  ], # end of {} ({} entries)\n\n".format( listName, len(theList) ) )
@@ -387,6 +397,7 @@ class _BibleBooksNamesConverter:
         self.importDataToPython()
         assert( self.__BookNamesSystemsDict )
 
+        raise Exception( "Python export not working properly yet" )
         if not filepath: filepath = os.path.join( "DerivedFiles", self.filenameBase + "_Tables.py" )
         if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
         # Split into three lists/dictionaries

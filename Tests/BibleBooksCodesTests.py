@@ -4,7 +4,7 @@
 # BibleBooksCodesTests.py
 #
 # Module testing BibleBooksCodes.py
-#   Last modified: 2011-03-03 (also update versionString below)
+#   Last modified: 2011-03-17 (also update versionString below)
 #
 # Copyright (C) 2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module testing BibleBooksCodes.py.
 """
 
 progName = "Bible Books Codes tests"
-versionString = "0.52"
+versionString = "0.53"
 
 
 import sys, unittest
@@ -45,19 +45,19 @@ class BibleBooksCodesConverterTests( unittest.TestCase ):
         # Create the BibleBooksCodesConvertor object
         self.bbcsc = BibleBooksCodes._BibleBooksCodesConverter().loadAndValidate() # Doesn't reload the XML unnecessarily :)
 
-    def test_005_str( self ):
+    def test_010_str( self ):
         """ Test the __str__ function. """
         result = str( self.bbcsc )
         self.assertTrue( isinstance( result, str ) )
         self.assertTrue( len(result) > 20 )
-    # end of test_005_str
+    # end of test_010_str
 
-    def test_010_len( self ):
+    def test_020_len( self ):
         """ Test the __len__ function. """
         self.assertTrue( 100 < len(self.bbcsc) < 255 ) # The number of loaded books codes
-    # end of test_010_len
+    # end of test_020_len
 
-    def test_020_importDataToPython( self ):
+    def test_030_importDataToPython( self ):
         """ Test the importDataToPython function. """
         result = self.bbcsc.importDataToPython()
         self.assertTrue( isinstance( result, dict ) )
@@ -65,22 +65,22 @@ class BibleBooksCodesConverterTests( unittest.TestCase ):
         for dictName in ("referenceNumberDict","referenceAbbreviationDict","SBLDict","OSISAbbreviationDict","SwordAbbreviationDict","CCELDict","ParatextAbbreviationDict","ParatextNumberDict","NETBibleAbbreviationDict","ByzantineAbbreviationDict","EnglishNameDict",):
             self.assertTrue( dictName in result )
             self.assertTrue( 10 < len(result[dictName]) < 255 )
-    # end of test_020_importDataToPython
+    # end of test_030_importDataToPython
 
-    def test_030_exportDataToPython( self ):
+    def test_040_exportDataToPython( self ):
         """ Test the exportDataToPython function. """
         self.assertEqual( self.bbcsc.exportDataToPython(), None ) # Basically just make sure that it runs
-    # end of test_020_importDataToPython
+    # end of test_040_importDataToPython
 
-    def test_040_exportDataToJSON( self ):
+    def test_050_exportDataToJSON( self ):
         """ Test the exportDataToJSON function. """
         self.assertEqual( self.bbcsc.exportDataToJSON(), None ) # Basically just make sure that it runs
-    # end of test_040_exportDataToJSON
+    # end of test_050_exportDataToJSON
 
-    def test_050_exportDataToC( self ):
+    def test_060_exportDataToC( self ):
         """ Test the exportDataToC function. """
         self.assertEqual( self.bbcsc.exportDataToC(), None ) # Basically just make sure that it runs
-    # end of test_050_exportDataToC
+    # end of test_060_exportDataToC
 # end of BibleBooksCodesConverterTests class
 
 
@@ -91,19 +91,19 @@ class BibleBooksCodesTests( unittest.TestCase ):
         # Create the BibleBooksCodes object
         self.bbc = BibleBooksCodes.BibleBooksCodes().loadData() # Doesn't reload the XML unnecessarily :)
 
-    def test_005_str( self ):
+    def test_010_str( self ):
         """ Test the __str__ function. """
         result = str( self.bbc )
         self.assertTrue( isinstance( result, str ) )
         self.assertTrue( len(result) > 20 )
-    # end of test_005_str
+    # end of test_010_str
 
-    def test_010_len( self ):
+    def test_020_len( self ):
         """ Test the __len__ function. """
         self.assertTrue( len(self.bbc) > 150 ) # includes apocryphal books, etc.
-    # end of test_010_len
+    # end of test_020_len
 
-    def test_020_getBBB( self ):
+    def test_030_getBBB( self ):
         """ Test the getBBB function. """
         self.assertEqual( self.bbc.getBBB(1), 'GEN' )
         self.assertEqual( self.bbc.getBBB(39), 'MAL' )
@@ -115,29 +115,26 @@ class BibleBooksCodesTests( unittest.TestCase ):
         self.assertRaises( ValueError, self.bbc.getBBB, 256 )
         self.assertRaises( ValueError, self.bbc.getBBB, 1234 )
         self.assertRaises( KeyError, self.bbc.getBBB, 255 )
-    # end of test_020_getBBB
+    # end of test_030_getBBB
 
-    def test_030_isValidReferenceAbbreviation( self ):
+    def test_040_isValidReferenceAbbreviation( self ):
         """ Test the isValidReferenceAbbreviation function. """
-        self.assertTrue( self.bbc.isValidReferenceAbbreviation('GEN') )
-        self.assertTrue( self.bbc.isValidReferenceAbbreviation('MAL') )
-        self.assertTrue( self.bbc.isValidReferenceAbbreviation('MAT') )
-        self.assertTrue( self.bbc.isValidReferenceAbbreviation('CO1') )
-        self.assertTrue( self.bbc.isValidReferenceAbbreviation('REV') )
-        self.assertFalse( self.bbc.isValidReferenceAbbreviation('XYZ') )
-        self.assertFalse( self.bbc.isValidReferenceAbbreviation('Gen') )
-    # end of test_030_isValidReferenceAbbreviation
+        for goodBBB in ( 'GEN', 'MAL', 'MAT', 'CO1', 'REV', ):
+            self.assertTrue( self.bbc.isValidReferenceAbbreviation(goodBBB) )
+        for badBBB in ( 'XYZ', 'Gen', 'CO4', ):
+            self.assertFalse( self.bbc.isValidReferenceAbbreviation(badBBB) )
+    # end of test_040_isValidReferenceAbbreviation
 
-    def test_040_getAllReferenceAbbreviations( self ):
+    def test_060_getAllReferenceAbbreviations( self ):
         """ Test the getAllReferenceAbbreviations function. """
         results = self.bbc.getAllReferenceAbbreviations()
         self.assertTrue( isinstance( results, list ) )
         self.assertTrue( len(results) > 66 )
         self.assertFalse( None in results )
         for result in results: self.assertTrue( len(result)==3 )
-    # end of test_040_getAllReferenceAbbreviations
+    # end of test_060_getAllReferenceAbbreviations
 
-    def test_050_getReferenceNumber( self ):
+    def test_070_getReferenceNumber( self ):
         """ Test the getReferenceNumber function. """
         self.assertEqual( self.bbc.getReferenceNumber('GEN'), 1 )
         self.assertEqual( self.bbc.getReferenceNumber('MAL'), 39 )
@@ -146,9 +143,9 @@ class BibleBooksCodesTests( unittest.TestCase ):
         self.assertEqual( self.bbc.getReferenceNumber('REV'), 66 )
         self.assertRaises( KeyError, self.bbc.getReferenceNumber, 'XYZ' )
         self.assertRaises( KeyError, self.bbc.getReferenceNumber, 'Gen' )
-    # end of test_050_getReferenceNumber
+    # end of test_070_getReferenceNumber
 
-    def test_060_getCCELNumber( self ):
+    def test_080_getCCELNumber( self ):
         """ Test the getCCELNumber function. """
         self.assertEqual( self.bbc.getCCELNumber('GEN'), '1' )
         self.assertEqual( self.bbc.getCCELNumber('MAL'), '39' )
@@ -157,9 +154,9 @@ class BibleBooksCodesTests( unittest.TestCase ):
         self.assertEqual( self.bbc.getCCELNumber('REV'), '66' )
         self.assertRaises( KeyError, self.bbc.getCCELNumber, 'XYZ' )
         self.assertRaises( KeyError, self.bbc.getCCELNumber, 'Gen' )
-    # end of test_060_getCCELNumber
+    # end of test_080_getCCELNumber
 
-    def test_070_getSBLAbbreviation( self ):
+    def test_090_getSBLAbbreviation( self ):
         """ Test the getSBLAbbreviation function. """
         self.assertEqual( self.bbc.getSBLAbbreviation('GEN'), 'Gen' )
         self.assertEqual( self.bbc.getSBLAbbreviation('MAL'), 'Mal' )
@@ -168,9 +165,9 @@ class BibleBooksCodesTests( unittest.TestCase ):
         self.assertEqual( self.bbc.getSBLAbbreviation('REV'), 'Rev' )
         self.assertRaises( KeyError, self.bbc.getSBLAbbreviation, 'XYZ' )
         self.assertRaises( KeyError, self.bbc.getSBLAbbreviation, 'Gen' )
-    # end of test_070_getSBLAbbreviation
+    # end of test_090_getSBLAbbreviation
 
-    def test_080_getOSISAbbreviation( self ):
+    def test_100_getOSISAbbreviation( self ):
         """ Test the getOSISAbbreviation function. """
         self.assertEqual( self.bbc.getOSISAbbreviation('GEN'), 'Gen' )
         self.assertEqual( self.bbc.getOSISAbbreviation('MAL'), 'Mal' )
@@ -179,9 +176,9 @@ class BibleBooksCodesTests( unittest.TestCase ):
         self.assertEqual( self.bbc.getOSISAbbreviation('REV'), 'Rev' )
         self.assertRaises( KeyError, self.bbc.getOSISAbbreviation, 'XYZ' )
         self.assertRaises( KeyError, self.bbc.getOSISAbbreviation, 'Gen' )
-    # end of test_080_getOSISAbbreviation
+    # end of test_100_getOSISAbbreviation
 
-    def test_090_getSwordAbbreviation( self ):
+    def test_110_getSwordAbbreviation( self ):
         """ Test the getSwordAbbreviation function. """
         self.assertEqual( self.bbc.getSwordAbbreviation('GEN'), 'Gen' )
         self.assertEqual( self.bbc.getSwordAbbreviation('MAL'), 'Mal' )
@@ -190,9 +187,9 @@ class BibleBooksCodesTests( unittest.TestCase ):
         self.assertEqual( self.bbc.getSwordAbbreviation('REV'), 'Rev' )
         self.assertRaises( KeyError, self.bbc.getSwordAbbreviation, 'XYZ' )
         self.assertRaises( KeyError, self.bbc.getSwordAbbreviation, 'Gen' )
-    # end of test_090_getSwordAbbreviation
+    # end of test_110_getSwordAbbreviation
 
-    def test_100_getParatextAbbreviation( self ):
+    def test_120_getParatextAbbreviation( self ):
         """ Test the getParatextAbbreviation function. """
         self.assertEqual( self.bbc.getParatextAbbreviation('GEN'), 'Gen' )
         self.assertEqual( self.bbc.getParatextAbbreviation('MAL'), 'Mal' )
@@ -201,9 +198,9 @@ class BibleBooksCodesTests( unittest.TestCase ):
         self.assertEqual( self.bbc.getParatextAbbreviation('REV'), 'Rev' )
         self.assertRaises( KeyError, self.bbc.getParatextAbbreviation, 'XYZ' )
         self.assertRaises( KeyError, self.bbc.getParatextAbbreviation, 'Gen' )
-    # end of test_100_getParatextAbbreviation
+    # end of test_120_getParatextAbbreviation
 
-    def test_110_getParatextNumber( self ):
+    def test_130_getParatextNumber( self ):
         """ Test the getParatextNumber function. """
         self.assertEqual( self.bbc.getParatextNumber('GEN'), '01' )
         self.assertEqual( self.bbc.getParatextNumber('MAL'), '39' )
@@ -212,9 +209,9 @@ class BibleBooksCodesTests( unittest.TestCase ):
         self.assertEqual( self.bbc.getParatextNumber('REV'), '67' )
         self.assertRaises( KeyError, self.bbc.getParatextNumber, 'XYZ' )
         self.assertRaises( KeyError, self.bbc.getParatextNumber, 'Gen' )
-    # end of test_110_getParatextNumber
+    # end of test_130_getParatextNumber
 
-    def test_120_getNETBibleAbbreviation( self ):
+    def test_140_getNETBibleAbbreviation( self ):
         """ Test the getNETBibleAbbreviation function. """
         self.assertEqual( self.bbc.getNETBibleAbbreviation('GEN'), 'Gen' )
         self.assertEqual( self.bbc.getNETBibleAbbreviation('MAL'), 'Mal' )
@@ -223,9 +220,9 @@ class BibleBooksCodesTests( unittest.TestCase ):
         self.assertEqual( self.bbc.getNETBibleAbbreviation('REV'), 'Rev' )
         self.assertRaises( KeyError, self.bbc.getNETBibleAbbreviation, 'XYZ' )
         self.assertRaises( KeyError, self.bbc.getNETBibleAbbreviation, 'Gen' )
-    # end of test_120_getNETBibleAbbreviation
+    # end of test_140_getNETBibleAbbreviation
 
-    def test_130_getByzantineAbbreviation( self ):
+    def test_150_getByzantineAbbreviation( self ):
         """ Test the getByzantineAbbreviation function. """
         self.assertEqual( self.bbc.getByzantineAbbreviation('GEN'), None )
         self.assertEqual( self.bbc.getByzantineAbbreviation('MAT'), 'MT' )
@@ -233,7 +230,7 @@ class BibleBooksCodesTests( unittest.TestCase ):
         self.assertEqual( self.bbc.getByzantineAbbreviation('REV'), 'RE' )
         self.assertRaises( KeyError, self.bbc.getByzantineAbbreviation, 'XYZ' )
         self.assertRaises( KeyError, self.bbc.getByzantineAbbreviation, 'Mat' )
-    # end of test_130_getByzantineAbbreviation
+    # end of test_150_getByzantineAbbreviation
 
     def test_200_getBBBFromOSIS( self ):
         """ Test the getBBBFromOSIS function. """

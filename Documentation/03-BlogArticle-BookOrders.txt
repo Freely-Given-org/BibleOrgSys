@@ -8,6 +8,8 @@ Today I committed some book order data (XML) files which I'm aware of, although 
 
 This is the end of the easy stuff -- everything gets a lot more complex from here on in, so my blogs and code additions are likely to become much more sparse.
 
+Addendum: I've decided to change the Bible book order subsystem to not be authoritative about which books are included in a particular publication. This means 1/ that book orders are now more generic (hence less files required), and 2/ that the actual book contents have to be specified elsewhere.
+
 Robert Hunt.
 Hunt.RobertJ@gmail.com
-February 2011.
+February-March 2011.
