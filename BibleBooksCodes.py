@@ -4,7 +4,7 @@
 # BibleBooksCodes.py
 #
 # Module handling BibleBooksCodes.xml to produce C and Python data tables
-#   Last modified: 2011-03-03 (also update versionString below)
+#   Last modified: 2011-04-20 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling BibleBooksCodes.xml and to export to JSON, C, and Python data ta
 """
 
 progName = "Bible Books Codes handler"
-versionString = "0.52"
+versionString = "0.53"
 
 
 import logging, os.path
@@ -82,7 +82,7 @@ class _BibleBooksCodesConverter:
         """
         if self._XMLtree is None: # We mustn't have already have loaded the data
             if XMLFilepath is None:
-                XMLFilepath = os.path.join( "DataFiles", self._filenameBase + ".xml" )
+                XMLFilepath = os.path.join( os.path.dirname(__file__), "DataFiles", self._filenameBase + ".xml" ) # Relative to module, not cwd
             self.__load( XMLFilepath )
             if Globals.strictCheckingFlag:
                 self.__validate()

@@ -4,7 +4,7 @@
 # BibleBookOrders.py
 #
 # Module handling BibleBookOrderSystem_*.xml to produce C and Python data tables
-#   Last modified: 2011-03-17 (also update versionString below)
+#   Last modified: 2011-04-20 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling BibleBookOrder_*.xml files and to export to JSON, C, and Python 
 """
 
 progName = "Bible Book Order Systems handler"
-versionString = "0.81"
+versionString = "0.82"
 
 
 import os, logging
@@ -80,7 +80,7 @@ class _BibleBookOrdersConverter:
         Load and pre-process the specified book order systems.
         """
         if not self._XMLSystems: # Only ever do this once
-            if XMLFolder==None: XMLFolder = "DataFiles/BookOrders"
+            if XMLFolder==None: XMLFolder = os.path.join( os.path.dirname(__file__), "DataFiles", "BookOrders" ) # Relative to module, not cwd
             self.__XMLFolder = XMLFolder
             if Globals.verbosityLevel > 2: print( _("Loading book order systems from {}...").format( self.__XMLFolder ) )
             filenamePrefix = "BIBLEBOOKORDER_"

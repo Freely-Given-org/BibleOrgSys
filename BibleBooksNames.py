@@ -4,7 +4,7 @@
 # BibleBooksNames.py
 #
 # Module handling BibleBooksNames_*.xml to produce C and Python data tables
-#   Last modified: 2011-03-17 (also update versionString below)
+#   Last modified: 2011-04-20 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling BibleBooksNames_*.xml to produce C and Python data tables.
 """
 
 progName = "Bible Books Names Systems handler"
-versionString = "0.31"
+versionString = "0.32"
 
 
 import os, logging
@@ -84,7 +84,7 @@ class _BibleBooksNamesConverter:
         Load and pre-process the specified booksNames systems.
         """
         if not self.__XMLSystems: # Only ever do this once
-            if folder==None: folder = "DataFiles/BookNames"
+            if folder==None: folder = os.path.join( os.path.dirname(__file__), "DataFiles", "BookNames" ) # Relative to module, not cwd
             if Globals.verbosityLevel > 2: print( _("Loading book names systems from {}...").format( folder ) )
             for filename in os.listdir( folder ):
                 filepart, extension = os.path.splitext( filename )

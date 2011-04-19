@@ -4,7 +4,7 @@
 # BiblePunctuationSystems.py
 #
 # Module handling BiblePunctuationSystem_*.xml to produce C and Python data tables
-#   Last modified: 2011-03-17 (also update versionString below)
+#   Last modified: 2011-04-20 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling BiblePunctuation_*.xml and to export to JSON, C, and Python data
 """
 
 progName = "Bible Punctuation Systems handler"
-versionString = "0.41"
+versionString = "0.42"
 
 
 import os, logging
@@ -79,7 +79,7 @@ class _BiblePunctuationSystemsConverter:
         Load and pre-process the specified punctuation systems.
         """
         if not self._XMLSystems: # Only ever do this once
-            if XMLFolder==None: XMLFolder = "DataFiles/PunctuationSystems"
+            if XMLFolder==None: XMLFolder = os.path.join( os.path.dirname(__file__), "DataFiles", "PunctuationSystems" ) # Relative to module, not cwd
             self.XMLFolder = XMLFolder
             if Globals.verbosityLevel > 2: print( _("Loading punctuations systems from {}...").format( self.XMLFolder ) )
             filenamePrefix = "BIBLEPUNCTUATIONSYSTEM_"

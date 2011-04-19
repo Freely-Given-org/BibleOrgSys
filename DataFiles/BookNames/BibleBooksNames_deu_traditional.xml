@@ -6,7 +6,7 @@ If necessary, this case be followed by another underscore and a description, e.g
 
 This file contains three tables:
     BibleDivisionNames
-        The standardAbbreviation attribute may be recognisable to the software, e.g., OT, NT, DC.
+        The standardAbbreviation attribute may be recognisable to the software, e.g., PT, OT, NT, DC, etc.
             Use forms like D1, D2, etc. if you need different divisions for the given language
         The defaultName element for this division
         The defaultAbbreviation element for this division (if we need to display it in a confined space)

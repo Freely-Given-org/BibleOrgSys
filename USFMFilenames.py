@@ -3,7 +3,7 @@
 # USFMFilenames.py
 #
 # Module handling USFM Bible filenames
-#   Last modified: 2011-03-17 (also update versionString below)
+#   Last modified: 2011-04-20 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -44,9 +44,7 @@ class USFMFilenames:
     """
 
     def __init__( self, folder ):
-        """
-        Create the object.
-        """
+        """Create the object by inspecting files in the given folder."""
         # Get the data tables that we need for proper checking
         self.BibleBooksCodes = BibleBooksCodes().loadData()
 
@@ -113,7 +111,7 @@ class USFMFilenames:
 
 
     def getPossibleFilenames( self ):
-        """Return a list of valid USFM filenames"""
+        """Return a list of valid USFM filenames that match our filename template."""
         filelist = []
         for paratextBookCode,paratextDigits,bookReferenceCode in self.BibleBooksCodes.getAllParatextBooksCodeNumberTriples():
             filename = "--------" # Eight characters
@@ -128,7 +126,7 @@ class USFMFilenames:
 
 
     def getActualFilenames( self ):
-        """Return a list of tuples of UPPER CASE book codes with actual (present) USFM filenames"""
+        """Return a list of tuples of UPPER CASE book codes with actual (present and readable) USFM filenames."""
         filelist = []
         for bookReferenceCode,possibleFilename in self.getPossibleFilenames():
             possibleFilepath = os.path.join( self.folder, possibleFilename )

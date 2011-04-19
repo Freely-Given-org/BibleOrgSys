@@ -4,7 +4,7 @@
 # ISO_639_3_Languages.py
 #
 # Module handling ISO_639_3.xml to produce C and Python data tables
-#   Last modified: 2011-02-15 (also update versionString below)
+#   Last modified: 2011-04-20 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling ISO_639_3_Languages.xml and to export to JSON, C, and Python dat
 """
 
 progName = "ISO 639_3_Languages handler"
-versionString = "0.81"
+versionString = "0.82"
 
 import logging, os.path
 from collections import OrderedDict
@@ -76,7 +76,7 @@ class _ISO_639_3_LanguagesConverter:
         """
         if self._XMLtree is None: # We mustn't have already have loaded the data
             if XMLFilepath is None:
-                XMLFilepath = os.path.join( "DataFiles", self._filenameBase + ".xml" )
+                XMLFilepath = os.path.join( os.path.dirname(__file__), "DataFiles", self._filenameBase + ".xml" ) # Relative to module, not cwd
 
             self._load( XMLFilepath )
             if Globals.strictCheckingFlag:
