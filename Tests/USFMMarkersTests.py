@@ -4,7 +4,7 @@
 # USFMMarkersTests.py
 #
 # Module testing USFMMarkers.py
-#   Last modified: 2011-03-17 (also update versionString below)
+#   Last modified: 2011-05-09 (also update versionString below)
 #
 # Copyright (C) 2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module testing USFMMarkers.py.
 """
 
 progName = "USFM Markers tests"
-versionString = "0.50"
+versionString = "0.51"
 
 
 import sys, unittest
@@ -61,8 +61,8 @@ class USFMMarkersConverterTests( unittest.TestCase ):
         """ Test the importDataToPython function. """
         result = self.UMc.importDataToPython()
         self.assertTrue( isinstance( result, dict ) )
-        self.assertEqual( len(result), 6 )
-        for dictName in ("rawMarkerDict","adjustedMarkerDict","conversionDict","backConversionDict","paragraphMarkersList","characterMarkersList",):
+        self.assertEqual( len(result), 9 )
+        for dictName in ("rawMarkerDict","numberedMarkerList","combinedMarkerDict","conversionDict","backConversionDict","newlineMarkersList","numberedNewlineMarkersList","combinedNewlineMarkersList","internalMarkersList",):
             self.assertTrue( dictName in result )
             self.assertTrue( 10 < len(result[dictName]) < 255 )
     # end of test_030_importDataToPython
@@ -103,63 +103,49 @@ class USFMMarkersTests( unittest.TestCase ):
         self.assertTrue( len(self.UMs) > 110 )
     # end of test_020_len
 
-    def test_030_isValidMarker( self ):
+    def test_030_contains( self ):
+        """ Test the __contains__ function. """
+        for goodMarker in ( 'h', 'q', 'p', 'c', 'v', 'q1', 'q2', 'q3', 'em', ):
+            self.assertTrue( goodMarker in self.UMs )
+        for badMarker in ( 'H', 'y', 'Q1', 'q5', 'toc4', 'x*', '\\p', ):
+            self.assertFalse( badMarker in self.UMs )
+    # end of test_030_contains
+
+    def test_040_isValidMarker( self ):
         """ Test the isValidMarker function. """
         for goodMarker in ( 'h', 'q', 'p', 'c', 'v', 'q1', 'q2', 'q3', 'em', ):
             self.assertTrue( self.UMs.isValidMarker(goodMarker) )
-        for badMarker in ( 'H', 'y', 'Q1', 'q5', 'toc4', 'x*', ):
+        for badMarker in ( 'H', 'y', 'Q1', 'q5', 'toc4', 'x*', '\\p', ):
             self.assertFalse( self.UMs.isValidMarker(badMarker) )
-    # end of test_030_isValidMarker
+    # end of test_040_isValidMarker
 
-    def test_040_getRawMarker( self ):
-        """ Test the getRawMarker function. """
-        for simpleMarker in ( 'h', 'q', 'p', 'c', 'b', 'v', 'toc1', 'em', ):
-            self.assertEqual( self.UMs.getRawMarker(simpleMarker), simpleMarker )
-        for numberedMarker in ( 'h1', 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', ):
-            self.assertEqual( self.UMs.getRawMarker(numberedMarker), numberedMarker[:-1] )
-        for badMarker in ( 'H', 'y', 'Q1', 'q5', 'toc4', 'x*', ):
-            self.assertRaises( KeyError, self.UMs.getRawMarker, badMarker )
-    # end of test_040_getRawMarker
-
-    def test_050_getStandardMarker( self ):
-        """ Test the getStandardMarker function. """
-        for simpleMarker in ( 'p', 'c', 'b', 'v', 'toc1', 'em', ):
-            self.assertEqual( self.UMs.getStandardMarker(simpleMarker), simpleMarker )
-        for numberableMarker in ( 'h', 'q', 'ili', ):
-            self.assertEqual( self.UMs.getStandardMarker(numberableMarker), numberableMarker+'1' )
-        for numberedMarker in ( 'h1', 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', ):
-            self.assertEqual( self.UMs.getStandardMarker(numberedMarker), numberedMarker )
-        for badMarker in ( 'H', 'y', 'Q1', 'q5', 'toc4', 'x*', ):
-            self.assertRaises( KeyError, self.UMs.getStandardMarker, badMarker )
-    # end of test_050_getStandardMarker
-
-    def test_060_isParagraphMarker( self ):
-        """ Test the isParagraphMarker function. """
+    def test_050_isNewlineMarker( self ):
+        """ Test the isNewlineMarker function. """
         for simpleMarker in ( 'p', 'c', 'b', 'v', 'toc1', ):
-            self.assertTrue( self.UMs.isParagraphMarker(simpleMarker) )
+            self.assertTrue( self.UMs.isNewlineMarker(simpleMarker) )
         for numberableMarker in ( 'h', 'q', 'ili', ):
-            self.assertTrue( self.UMs.isParagraphMarker(numberableMarker) )
+            self.assertTrue( self.UMs.isNewlineMarker(numberableMarker) )
         for numberedMarker in ( 'h1', 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', ):
-            self.assertTrue( self.UMs.isParagraphMarker(numberedMarker) )
+            self.assertTrue( self.UMs.isNewlineMarker(numberedMarker) )
         for simpleMarker in ( 'f', 'ft', 'x', 'xq', 'em', ):
-            self.assertFalse( self.UMs.isParagraphMarker(simpleMarker) )
-        for badMarker in ( 'H', 'y', 'Q1', 'q5', 'toc4', 'x*', ):
-            self.assertRaises( KeyError, self.UMs.isParagraphMarker, badMarker )
-    # end of test_050_isParagraphMarker
+            self.assertFalse( self.UMs.isNewlineMarker(simpleMarker) )
+        for badMarker in ( 'H', 'y', 'Q1', 'q5', 'toc4', 'x*', '\\p', ):
+            self.assertFalse( self.UMs.isNewlineMarker(badMarker) )
+    # end of test_050_isNewlineMarker
 
-    def test_070_isCharacterMarker( self ):
-        """ Test the isCharacterMarker function. """
+    def test_060_isInternalMarker( self ):
+        """ Test the isInternalMarker function. """
         for simpleMarker in ( 'f', 'ft', 'x', 'xq', 'em', ):
-            self.assertTrue( self.UMs.isCharacterMarker(simpleMarker) )
+            self.assertTrue( self.UMs.isInternalMarker(simpleMarker) )
         for simpleMarker in ( 'p', 'c', 'b', 'v', 'toc1', ):
-            self.assertFalse( self.UMs.isCharacterMarker(simpleMarker) )
+            self.assertFalse( self.UMs.isInternalMarker(simpleMarker) )
         for numberableMarker in ( 'h', 'q', 'ili', ):
-            self.assertFalse( self.UMs.isCharacterMarker(numberableMarker) )
+            self.assertFalse( self.UMs.isInternalMarker(numberableMarker) )
         for numberedMarker in ( 'h1', 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', ):
-            self.assertFalse( self.UMs.isCharacterMarker(numberedMarker) )
-        for badMarker in ( 'H', 'y', 'Q1', 'q5', 'toc4', 'x*', ):
-            self.assertRaises( KeyError, self.UMs.isCharacterMarker, badMarker )
-    # end of test_070_isParagraphMarker
+            self.assertFalse( self.UMs.isInternalMarker(numberedMarker) )
+        for badMarker in ( 'H', 'y', 'Q1', 'q5', 'toc4', 'x*', '\\p', ):
+            self.assertFalse( self.UMs.isInternalMarker(badMarker) )
+    # end of test_060_isNewlineMarker
 
     def test_070_isCompulsoryMarker( self ):
         """ Test the isCompulsoryMarker function. """
@@ -171,8 +157,8 @@ class USFMMarkersTests( unittest.TestCase ):
             self.assertFalse( self.UMs.isCompulsoryMarker(simpleMarker) )
         for numberedMarker in ( 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', ):
             self.assertFalse( self.UMs.isCompulsoryMarker(numberedMarker) )
-        for badMarker in ( 'H', 'y', 'Q1', 'q5', 'toc4', 'x*', ):
-            self.assertRaises( KeyError, self.UMs.isCompulsoryMarker, badMarker )
+        for badMarker in ( 'H', 'y', 'Q1', 'q5', 'toc4', 'x*', '\\p', ):
+            self.assertFalse( self.UMs.isCompulsoryMarker(badMarker) )
     # end of test_070_isCompulsoryMarker
 
     def test_080_isNumberableMarker( self ):
@@ -183,39 +169,137 @@ class USFMMarkersTests( unittest.TestCase ):
             self.assertTrue( self.UMs.isNumberableMarker(numberedMarker) )
         for simpleMarker in ( 'p', 'b', 'toc1', 'f', 'ft', 'x', 'xq', 'em', ):
             self.assertFalse( self.UMs.isNumberableMarker(simpleMarker) )
-        for badMarker in ( 'H', 'y', 'Q1', 'q5', 'toc4', 'x*', ):
-            self.assertRaises( KeyError, self.UMs.isNumberableMarker, badMarker )
+        for badMarker in ( 'H', 'y', 'Q1', 'q5', 'toc4', 'x*', '\\p', ):
+            self.assertFalse( self.UMs.isNumberableMarker(badMarker) )
     # end of test_080_isNumberableMarker
 
-    def test_090_markerOccursIn( self ):
+    def test_090_isPrinted( self ):
+        """ Test the isPrinted function. """
+        for numberedMarker in ( 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', ):
+            self.assertTrue( self.UMs.isPrinted(numberedMarker) )
+        for simpleMarker in ( 'p', 'b', 'toc1', 'f', 'ft', 'x', 'xq', 'em', ):
+            self.assertTrue( self.UMs.isPrinted(simpleMarker) )
+        for simpleMarker in ( 'id', 'ide', 'sts', 'rem', 'fig', 'ndx', ):
+            self.assertFalse( self.UMs.isPrinted(simpleMarker) )
+        for badMarker in ( 'H', 'y', 'Q1', 'q5', 'toc4', 'x*', '\\p', ):
+            self.assertFalse( self.UMs.isPrinted(badMarker) )
+    # end of test_090_isPrinted
+
+    def test_100_markerShouldBeClosed( self ):
+        """ Test the markerShouldBeClosed function. """
+        for simpleMarker in ( 'f', 'ft', 'x', 'xq', 'em', 'wj', 'ndx', ):
+            self.assertTrue( self.UMs.markerShouldBeClosed(simpleMarker) in ('A','S',) )
+        for numberedMarker in ( 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', ):
+            self.assertTrue( self.UMs.markerShouldBeClosed(numberedMarker) == 'N' )
+        for simpleMarker in ( 'id', 'ide', 'sts', 'rem', 'fig', ):
+            self.assertTrue( self.UMs.markerShouldBeClosed(simpleMarker) == 'N' )
+        for badMarker in ( 'H', 'y', 'wd', 'Q1', 'q5', 'toc4', 'x*', '\\p', ):
+            self.assertFalse( self.UMs.markerShouldBeClosed(badMarker) )
+    # end of test_100_markerShouldBeClosed
+
+    def test_110_toRawMarker( self ):
+        """ Test the toRawMarker function. """
+        for simpleMarker in ( 'h', 'q', 'p', 'c', 'b', 'v', 'toc1', 'em', ):
+            self.assertEqual( self.UMs.toRawMarker(simpleMarker), simpleMarker )
+        for numberedMarker in ( 'h1', 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', ):
+            self.assertEqual( self.UMs.toRawMarker(numberedMarker), numberedMarker[:-1] )
+        for badMarker in ( 'H', 'y', 'Q1', 'q5', 'toc4', 'x*', '\\p', ):
+            self.assertRaises( KeyError, self.UMs.toRawMarker, badMarker )
+    # end of test_110_toRawMarker
+
+    def test_120_toStandardMarker( self ):
+        """ Test the toStandardMarker function. """
+        for simpleMarker in ( 'p', 'c', 'b', 'v', 'toc1', 'em', ):
+            self.assertEqual( self.UMs.toStandardMarker(simpleMarker), simpleMarker )
+        for numberableMarker in ( 'h', 'q', 'ili', ):
+            self.assertEqual( self.UMs.toStandardMarker(numberableMarker), numberableMarker+'1' )
+        for numberedMarker in ( 'h1', 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', ):
+            self.assertEqual( self.UMs.toStandardMarker(numberedMarker), numberedMarker )
+        for badMarker in ( 'H', 'y', 'Q1', 'q5', 'toc4', 'x*', '\\p', ):
+            self.assertRaises( KeyError, self.UMs.toStandardMarker, badMarker )
+    # end of test_120_toStandardMarker
+
+    def test_130_markerOccursIn( self ):
         """ Test the markerOccursIn function. """
         for marker in ( 'h', 's', 'q', 'ili', 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', 'p', 'b', 'toc1', 'f', 'ft', 'x', 'xq', 'em', ):
             result = self.UMs.markerOccursIn( marker )
             self.assertTrue( isinstance( result , str ) )
-        for badMarker in ( 'H', 'y', 'Q1', 'q5', 'toc4', 'x*', ):
+        for badMarker in ( 'H', 'y', 'Q1', 'q5', 'toc4', 'x*', '\\p', ):
             self.assertRaises( KeyError, self.UMs.markerOccursIn, badMarker )
-    # end of test_090_markerOccursIn
+    # end of test_130_markerOccursIn
 
-    def test_100_getMarkerEnglishName( self ):
+    def test_140_getMarkerEnglishName( self ):
         """ Test the getMarkerEnglishName function. """
         for marker in ( 'h', 's', 'q', 'ili', 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', 'p', 'b', 'toc1', 'f', 'ft', 'x', 'xq', 'em', ):
             result = self.UMs.getMarkerEnglishName( marker )
             self.assertTrue( isinstance( result , str ) )
             self.assertTrue( result ) # Mustn't be blank
-        for badMarker in ( 'H', 'y', 'Q1', 'q5', 'toc4', 'x*', ):
+        for badMarker in ( 'H', 'y', 'Q1', 'q5', 'toc4', 'x*', '\\p', ):
             self.assertRaises( KeyError, self.UMs.getMarkerEnglishName, badMarker )
-    # end of test_100_getMarkerEnglishName
+    # end of test_140_getMarkerEnglishName
 
-    def test_110_getMarkerDescription( self ):
-        """ Test the getMarkerEnglishName function. """
+    def test_150_getMarkerDescription( self ):
+        """ Test the getMarkerDescription function. """
         for marker in ( 'h', 's', 'q', 'ili', 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', 'p', 'b', 'toc1', 'f', 'ft', 'x', 'xq', 'em', ):
             result = self.UMs.getMarkerDescription( marker )
             if result is not None:
                 self.assertTrue( isinstance( result , str ) )
                 self.assertTrue( result ) # Mustn't be blank
-        for badMarker in ( 'H', 'y', 'Q1', 'q5', 'toc4', 'x*', ):
+        for badMarker in ( 'H', 'y', 'Q1', 'q5', 'toc4', 'x*', '\\p', ):
             self.assertRaises( KeyError, self.UMs.getMarkerDescription, badMarker )
-    # end of test_110_getMarkerEnglishName
+    # end of test_150_getMarkerDescription
+
+    def test_160_getOccursInList( self ):
+        """ Test the getOccursInList function. """
+        result = self.UMs.getOccursInList()
+        self.assertTrue( isinstance( result , list ) )
+        self.assertGreater( len(result), 8 )
+        for something in result:
+            self.assertTrue( isinstance( something , str ) )
+            self.assertTrue( something )
+        for name in ( 'Introduction', 'Text', ):
+            self.assertTrue( name in result )
+    #end of test_160_getOccursInList
+
+    def test_170_getNewlineMarkersList( self ):
+        """ Test the getNewlineMarkersList function. """
+        result = self.UMs.getNewlineMarkersList()
+        self.assertTrue( isinstance( result , list ) )
+        self.assertGreater( len(result), 30 )
+        for something in result:
+            self.assertTrue( isinstance( something , str ) )
+            self.assertTrue( something )
+            self.assertLess( len(something), 7 )
+        for goodMarker in ( 'p', 'q', 'q1', ):
+            self.assertTrue( goodMarker in result )
+        for goodMarker in ( 'x', 'f', 'wj', ):
+            self.assertFalse( goodMarker in result )
+        for badMarker in ( 'H', 'xyz', 'q9', 'wj*', ):
+            self.assertFalse( badMarker in result )
+    #end of test_170_getNewlineMarkersList
+
+    def test_180_getInternalMarkersList( self ):
+        """ Test the getInternalMarkersList function. """
+        result = self.UMs.getInternalMarkersList()
+        self.assertTrue( isinstance( result , list ) )
+        self.assertGreater( len(result), 10 )
+        for something in result:
+            self.assertTrue( isinstance( something , str ) )
+            self.assertTrue( something )
+            self.assertLess( len(something), 7 )
+        for goodMarker in ( 'x', 'f', 'ft', 'em', 'bk', 'wj', ):
+            self.assertTrue( goodMarker in result )
+        for goodMarker in ( 'p', 'q', 'q1', ):
+            self.assertFalse( goodMarker in result )
+        for badMarker in ( 'H', 'xyz', 'q9', 'bk*', ):
+            self.assertFalse( badMarker in result )
+    #end of test_180_getInternalMarkersList
+
+    def test_200_getMarkerListFromText( self ):
+        """ Test the getMarkerListFromText function. """
+        self.assertEqual( self.UMs.getMarkerListFromText(''), [] )
+        self.assertEqual( self.UMs.getMarkerListFromText('This \\bk book\\bk* is good'), [('bk',' ',5), ('bk','*',13)] )
+    #end of test_200_getMarkerListFromText
 # end of USFMMarkersTests class
 
 

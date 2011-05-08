@@ -6,7 +6,7 @@ This file gives a table of USFM markers:
     marker: the actual (lowercase) SFM code (without the backslash)
         and without suffixed digits for generic numbered fields like q1, q2, q3 (only listed as q)
     compulsory: Yes or No
-    level: Paragraph or Character type field
+    level: Newline or Internal (within a line) type field
     numberable: Yes or No
     hasContent (on the same line after a space): Sometimes, Always or Never
     closed (for character fields only): Always or Optional
@@ -36,13 +36,14 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
                 <!ELEMENT identifier (#PCDATA)>
                     <!ATTLIST identifier type (URL) #REQUIRED>
                 <!ELEMENT rights (#PCDATA)>
-        <!ELEMENT USFMMarker (nameEnglish,marker,compulsory,level,numberable,hasContent,closed?,occursIn,description?)>
+        <!ELEMENT USFMMarker (nameEnglish,marker,compulsory,level,numberable,hasContent,printed,closed,occursIn,description?)>
             <!ELEMENT nameEnglish (#PCDATA)>
             <!ELEMENT marker (#PCDATA)>
             <!ELEMENT compulsory (#PCDATA)>
             <!ELEMENT level (#PCDATA)>
             <!ELEMENT numberable (#PCDATA)>
             <!ELEMENT hasContent (#PCDATA)>
+            <!ELEMENT printed (#PCDATA)>
             <!ELEMENT closed (#PCDATA)>
             <!ELEMENT occursIn (#PCDATA)>
             <!ELEMENT description (#PCDATA)>
@@ -52,8 +53,8 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
 
   <header>
     <work>
-      <version>0.50</version>
-      <date>2011-03-17</date>
+      <version>0.51</version>
+      <date>2011-05-09</date>
       <title>USFM 2.3 markers list</title>
       <contributor role="com">Robert Hunt</contributor>
       <identifier type="URL">http://paratext.ubs-translations.org/usfm</identifier>
@@ -67,9 +68,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>File identification</nameEnglish>
     <marker>id</marker>
     <compulsory>Yes</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>No</printed>
+    <closed>No</closed>
     <occursIn>Header</occursIn>
     <description>This is the initial USFM marker in any scripture text file</description>
   </USFMMarker>
@@ -78,9 +81,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>An optional character encoding specification</nameEnglish>
     <marker>ide</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>No</printed>
+    <closed>No</closed>
     <occursIn>Header</occursIn>
     <description>This marker should be used to specify the character encoding of the text within the file</description>
   </USFMMarker>
@@ -89,9 +94,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Project status tracking</nameEnglish>
     <marker>sts</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>No</printed>
+    <closed>No</closed>
     <occursIn>Header</occursIn>
     <description>The contents of the status marker can be defined by the downstream system being used to track project status</description>
   </USFMMarker>
@@ -100,9 +107,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Remark/Comment</nameEnglish>
     <marker>rem</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>No</printed>
+    <closed>No</closed>
     <occursIn>Header</occursIn>
     <description>Used for adding brief comments by a translator, consultant, or support person</description>
   </USFMMarker>
@@ -111,9 +120,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Running header text</nameEnglish>
     <marker>h</marker>
     <compulsory>Yes</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>Yes</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Header</occursIn>
   </USFMMarker>
 
@@ -122,9 +133,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Long table of contents text</nameEnglish>
     <marker>toc1</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Header</occursIn>
     <description>Not for use directly within the front matter (FRT) peripheral file</description>
   </USFMMarker>
@@ -133,9 +146,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Short table of contents text</nameEnglish>
     <marker>toc2</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Header</occursIn>
     <description>Not for use directly within the front matter (FRT) peripheral file</description>
   </USFMMarker>
@@ -144,9 +159,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Book abbreviation</nameEnglish>
     <marker>toc3</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Header</occursIn>
     <description>Not for use directly within the front matter (FRT) peripheral file</description>
   </USFMMarker>
@@ -157,9 +174,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Introduction main title</nameEnglish>
     <marker>imt</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>Yes</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Introduction</occursIn>
     <description>May be used for the introduction title or other major introduction division (rather than \is) when the introduction text contains numerous additional sub-divisions.</description>
   </USFMMarker>
@@ -168,9 +187,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Introduction section heading</nameEnglish>
     <marker>is</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>Yes</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Introduction</occursIn>
   </USFMMarker>
 
@@ -178,9 +199,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Introduction paragraph</nameEnglish>
     <marker>ip</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Introduction</occursIn>
   </USFMMarker>
 
@@ -188,9 +211,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Indented introduction paragraph</nameEnglish>
     <marker>ipi</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Introduction</occursIn>
   </USFMMarker>
 
@@ -198,9 +223,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Introduction flush left (margin) paragraph</nameEnglish>
     <marker>im</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Introduction</occursIn>
   </USFMMarker>
 
@@ -208,9 +235,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Introduction flush left (margin) indented paragraph</nameEnglish>
     <marker>imi</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Introduction</occursIn>
   </USFMMarker>
 
@@ -218,9 +247,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Introduction quote from text paragraph</nameEnglish>
     <marker>ipq</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Introduction</occursIn>
   </USFMMarker>
 
@@ -228,9 +259,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Introduction flush left (margin) quote from text paragraph</nameEnglish>
     <marker>imq</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Introduction</occursIn>
   </USFMMarker>
 
@@ -238,9 +271,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Introduction right-aligned paragraph</nameEnglish>
     <marker>ipr</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Introduction</occursIn>
     <description>Typically used for a quote from text reference</description>
   </USFMMarker>
@@ -249,9 +284,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Introduction poetic line</nameEnglish>
     <marker>iq</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>Yes</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Introduction</occursIn>
   </USFMMarker>
 
@@ -259,9 +296,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Introduction blank line</nameEnglish>
     <marker>ib</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Never</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Introduction</occursIn>
     <description>May be used to explicitly indicate additional white space between paragraphs</description>
   </USFMMarker>
@@ -270,9 +309,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Introduction list item</nameEnglish>
     <marker>ili</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>Yes</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Introduction</occursIn>
   </USFMMarker>
 
@@ -280,9 +321,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Introduction outline title</nameEnglish>
     <marker>iot</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Introduction</occursIn>
   </USFMMarker>
 
@@ -290,9 +333,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Introduction outline entry</nameEnglish>
     <marker>io</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>Yes</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Introduction</occursIn>
     <description>The outline entry typically ends with a range of references in parentheses</description>
   </USFMMarker>
@@ -301,9 +346,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Introduction outline reference range</nameEnglish>
     <marker>ior</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <closed>Always</closed>
     <occursIn>Introduction</occursIn>
     <description>An outline entry typically ends with a range of references in parentheses. This is an optional character style for marking (and potentially formatting) these references separately</description>
@@ -313,9 +360,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Introduction explanatory or bridge text</nameEnglish>
     <marker>iex</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Introduction</occursIn>
     <description>e.g. explanation of missing book in a short Old Testament</description>
   </USFMMarker>
@@ -324,9 +373,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Introduction quoted text</nameEnglish>
     <marker>iqt</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Always</closed>
     <occursIn>Introduction</occursIn>
     <description>Scripture quotations, or other quoted text, appearing in the introduction</description>
@@ -336,9 +386,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Introduction major title ending</nameEnglish>
     <marker>imte</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>Yes</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Introduction</occursIn>
     <description>Used to mark a major title indicating the end of the introduction</description>
   </USFMMarker>
@@ -347,9 +399,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Introduction end</nameEnglish>
     <marker>ie</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Introduction</occursIn>
     <description>Optionally included to explicitly indicate the end of the introduction material</description>
   </USFMMarker>
@@ -360,10 +414,12 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Major title</nameEnglish>
     <marker>mt</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>Yes</numberable>
     <hasContent>Always</hasContent>
-    <occursIn>Text</occursIn>
+    <printed>Yes</printed>
+    <closed>No</closed>
+    <occursIn>Header</occursIn>
     <description>The key components in the title of a biblical book</description>
   </USFMMarker>
 
@@ -371,9 +427,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Major title at ending</nameEnglish>
     <marker>mte</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>Yes</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
     <description>May be used in texts which repeat the main title at the end of the introduction, or to mark a major title indicating the end of the introduction. The content is not typically identical to \mt#.</description>
   </USFMMarker>
@@ -382,9 +440,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Major section heading</nameEnglish>
     <marker>ms</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>Yes</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
     <description>These are headings before larger text divisions than what is typically considered a "section" division (see \s#)</description>
   </USFMMarker>
@@ -393,9 +453,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Major section reference range</nameEnglish>
     <marker>mr</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
     <description>The text reference range listed under a major section heading</description>
   </USFMMarker>
@@ -404,9 +466,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Section heading</nameEnglish>
     <marker>s</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>Yes</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
     <description>The typical (common) section division heading</description>
   </USFMMarker>
@@ -415,9 +479,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Section reference range</nameEnglish>
     <marker>sr</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
     <description>The text reference range listed under a section heading. \sr is not equivalent to \r which is used for marking parallel references.</description>
   </USFMMarker>
@@ -426,9 +492,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Parallel passage reference(s)</nameEnglish>
     <marker>r</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
     <description>A reference to a parallel passage usually located under a section heading \s#</description>
   </USFMMarker>
@@ -437,9 +505,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Inline quotation reference(s)</nameEnglish>
     <marker>rq</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <closed>Always</closed>
     <occursIn>Text</occursIn>
     <description>A (cross) reference indicating the source text for the preceding quotation (usually an Old Testament quote). The reference(s) are intended to be formatted (typeset) within the scripture body text column, and not extracted from the text as are regular cross references (\x...\x*). They are also typically separated from the main text of Scripture using a different type style and alignment.</description>
@@ -449,9 +519,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Descriptive title (or "Hebrew subtitle")</nameEnglish>
     <marker>d</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
     <description>Sometimes used in Psalms under the section title (e.g. "For the director of Music")</description>
   </USFMMarker>
@@ -460,9 +532,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Speaker Identification</nameEnglish>
     <marker>sp</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>No</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
     <description>(e.g. Job and Song of Songs)</description>
   </USFMMarker>
@@ -473,9 +547,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Chapter number</nameEnglish>
     <marker>c</marker>
     <compulsory>Yes</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
     <description>No text should follow this marker (i.e., after the chapter number? But some versions have footnotes here!</description>
   </USFMMarker>
@@ -484,9 +560,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Alternate (second) chapter number</nameEnglish>
     <marker>ca</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
     <description>Used for marking the chapter number used in an alternate versification scheme. Required when different versification traditions need to be supported in the same translation text.</description>
   </USFMMarker>
@@ -495,8 +573,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Chapter label</nameEnglish>
     <marker>cl</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <hasContent>Always</hasContent>
     <occursIn>Text</occursIn>
     <description>Used when the chosen publishing presentation will render chapter divisions as headings, and not drop cap numerals. Usage note: If \cl is entered once before chapter 1 (\c 1) it represents the text for "chapter" to be used throughout the current book. If \cl is used after each individual chapter marker, it represents the particular text to be used for the display of the current chapter heading (usually done if numbers are being presented as words, not numerals).</description>
@@ -506,9 +586,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Published chapter character</nameEnglish>
     <marker>cp</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
     <description>This is a chapter marker (number, letter) which would be displayed in the published text (where the published marker is different than the \c # used within the translation editing environment)</description>
   </USFMMarker>
@@ -517,9 +599,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Chapter description</nameEnglish>
     <marker>cd</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
     <description>A brief description of chapter content (similar to \d - descriptive heading, or \iex - )</description>
   </USFMMarker>
@@ -528,9 +612,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Verse number</nameEnglish>
     <marker>v</marker>
     <compulsory>Yes</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
     <description>Marker is followed by the verse number #, and the text of the verse</description>
   </USFMMarker>
@@ -539,9 +625,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Alternate (second) verse number</nameEnglish>
     <marker>va</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
     <description>Used for marking verse numbers used in an alternate versification scheme. Required when different versification traditions need to be supported in the same translation text.</description>
   </USFMMarker>
@@ -550,9 +638,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Published verse character</nameEnglish>
     <marker>vp</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
     <description>This is a verse marker (number, letter) which would be displayed in the published text (where the published marker is different than the \v # used within the translation editing environment)</description>
   </USFMMarker>
@@ -563,9 +653,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Normal paragraph</nameEnglish>
     <marker>p</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Sometimes</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
     <description>Followed immediately by a space and paragraph text, or by a new line and a verse marker</description>
   </USFMMarker>
@@ -574,9 +666,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Flush left (margin) paragraph</nameEnglish>
     <marker>m</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Sometimes</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
     <description>No first line indent. Followed immediately by a space and paragraph text, or by a new line and a verse marker. Usually used to resume prose at the margin (without indent) after poetry or OT quotation (i.e. continuation of the previous paragraph).</description>
   </USFMMarker>
@@ -585,9 +679,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Embedded text opening</nameEnglish>
     <marker>pmo</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
   </USFMMarker>
 
@@ -595,9 +691,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Embedded text paragraph</nameEnglish>
     <marker>pm</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Sometimes</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
   </USFMMarker>
 
@@ -605,9 +703,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Embedded text closing</nameEnglish>
     <marker>pmc</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
   </USFMMarker>
 
@@ -615,9 +715,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Embedded text refrain</nameEnglish>
     <marker>pmr</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
   </USFMMarker>
 
@@ -625,9 +727,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Indented paragraph</nameEnglish>
     <marker>pi</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>Yes</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
     <description>Used in some texts for discourse sections. The variable # represents the level of indent. See also \pm.</description>
   </USFMMarker>
@@ -636,9 +740,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Indented flush left paragraph</nameEnglish>
     <marker>mi</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Sometimes</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
     <description>No first line indent</description>
   </USFMMarker>
@@ -647,9 +753,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>No-break paragraph continuation</nameEnglish>
     <marker>nb</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Never</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
     <description>Indicates "no-break" with previous paragraph (regardless of previous paragraph type). Commonly used in cases where the previous paragraph spans the chapter boundary. No-break markup within poetry: Some translations have a publishing tradition of inserting a small amount of additional white-space at chapter boundaries. It is important in these texts to use the \nb marker within any specific poetic contexts where no visible break in the flow of the the text is intended at a particular chapter boundary.</description>
   </USFMMarker>
@@ -658,9 +766,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Closure of an epistle/letter</nameEnglish>
     <marker>cls</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
     <description>Similar to "With love," or "Sincerely yours,"</description>
   </USFMMarker>
@@ -669,9 +779,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>List item</nameEnglish>
     <marker>li</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>Yes</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
     <description>An out-dented paragraph meant to highlight the items of a list. Lists may be used to markup the elements of a recurrent structure, such as the days within the creation account, or the Decalogue (10 commandments). The variable # represents the level of indent.</description>
   </USFMMarker>
@@ -680,9 +792,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Centered paragraph</nameEnglish>
     <marker>pc</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
     <description>Recommended for inscriptions</description>
   </USFMMarker>
@@ -691,9 +805,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Right-aligned paragraph</nameEnglish>
     <marker>pr</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
     <description>"Deprecated" (i.e. use is strongly discouraged). Recommended alternate: \pmr</description>
   </USFMMarker>
@@ -702,9 +818,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Indented paragraph with hanging indent</nameEnglish>
     <marker>ph</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>Yes</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
     <description>"Deprecated" (i.e. use is strongly discouraged). The variable # represents the level of overall paragraph indent.</description>
   </USFMMarker>
@@ -713,9 +831,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Blank line</nameEnglish>
     <marker>b</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Never</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text, Poetry</occursIn>
     <description>May be used to explicitly indicate additional white space between paragraphs. No text should follow this marker, and it should not be used before or after titles to indicate white-space. Also use for stanza breaks in poetry, or between poetry and prose.</description>
   </USFMMarker>
@@ -726,9 +846,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Poetic line</nameEnglish>
     <marker>q</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>Yes</numberable>
     <hasContent>Sometimes</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
     <description>The variable # represents the level of indent (i.e. \q1, \q2, \q3 etc.)</description>
   </USFMMarker>
@@ -737,9 +859,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Right-aligned poetic line</nameEnglish>
     <marker>qr</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
     <description>Common use: Poetic refrain</description>
   </USFMMarker>
@@ -748,9 +872,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Centered poetic line</nameEnglish>
     <marker>qc</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
   </USFMMarker>
 
@@ -758,9 +884,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Selah field</nameEnglish>
     <marker>qs</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Always</closed>
     <occursIn>Poetry</occursIn>
     <description>Used for the expression "Selah" commonly found in Psalms and Habakkuk. This text is frequently right aligned, and rendered on the same line as the previous poetic text, if space allows.</description>
@@ -770,9 +897,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Acrostic heading</nameEnglish>
     <marker>qa</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
   </USFMMarker>
 
@@ -780,9 +909,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Acrostic letter</nameEnglish>
     <marker>qac</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Always</closed>
     <occursIn>Acrostic verse</occursIn>
     <description>Marker to indicate the acrostic letter within a poetic line</description>
@@ -792,9 +922,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Embedded text poetic line</nameEnglish>
     <marker>qm</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>Yes</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
     <description>The variable # represents the level of indent (i.e. \qm1, \qm2 etc.)</description>
   </USFMMarker>
@@ -805,9 +937,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Table row start</nameEnglish>
     <marker>tr</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
     <description>The first \tr initiates a new table. Rows contain column headings or cells</description>
   </USFMMarker>
@@ -816,9 +950,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Table column heading</nameEnglish>
     <marker>th</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>Yes</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
     <description>The variable # represents the table column number</description>
   </USFMMarker>
@@ -827,9 +963,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Right-aligned table column heading</nameEnglish>
     <marker>thr</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>Yes</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Table row</occursIn>
     <description>The variable # represents the table column number</description>
   </USFMMarker>
@@ -838,9 +976,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Table cell</nameEnglish>
     <marker>tc</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>Yes</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Table row</occursIn>
     <description>The variable # represents the table column number. An empty table cell still requires a corresponding marker in the table text.</description>
   </USFMMarker>
@@ -849,9 +989,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Right-aligned table cell</nameEnglish>
     <marker>tcr</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>Yes</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Table row</occursIn>
     <description>The variable # represents the table column number. An empty table cell still requires a corresponding marker in the table text.</description>
   </USFMMarker>
@@ -862,9 +1004,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Footnote</nameEnglish>
     <marker>f</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Always</closed>
     <occursIn>Text</occursIn>
     <description>Footnotes are entered inline within the main scripture body text. The boundaries of the footnote text are defined by an opening and closing marker.</description>
@@ -874,9 +1017,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Endnote</nameEnglish>
     <marker>e</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Always</closed>
     <occursIn>Text</occursIn>
     <description>Endnotes are entered inline within the main scripture body text. The boundaries of the endnote text are defined by an opening and closing marker.</description>
@@ -886,9 +1030,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Footnote "origin" reference</nameEnglish>
     <marker>fr</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Optional</closed>
     <occursIn>Footnote</occursIn>
     <description>This is the chapter and verse(s) that note refers to. Chapter and verse numbers must have a separator between them.</description>
@@ -898,9 +1043,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Footnote keyword</nameEnglish>
     <marker>fk</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Optional</closed>
     <occursIn>Footnote</occursIn>
     <description>The specific keyword/term from the text for which the footnote is being provided</description>
@@ -910,9 +1056,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Footnote translation quotation</nameEnglish>
     <marker>fq</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Optional</closed>
     <occursIn>Footnote</occursIn>
     <description>A quotation from the current scripture text translation for which the note is being provided. Longer quotations are sometimes shortened using an ellipsis (i.e. suspension dots "..."). Many existing translation texts have marked both quotations from the existing translation text, as well as alternative translations, using \fq. An additional marker – \fqa – is provided for marking alternative translations, and can be used to distinguish between quotations and alternatives.</description>
@@ -922,9 +1069,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Footnote alternate translation</nameEnglish>
     <marker>fqa</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Optional</closed>
     <occursIn>Footnote</occursIn>
     <description>Used to distinguish between a quotation of the current scripture text translation, and an alternate translation</description>
@@ -934,9 +1082,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Footnote "label" text</nameEnglish>
     <marker>fl</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Optional</closed>
     <occursIn>Footnote</occursIn>
     <description>Can be used for marking or "labeling" a word or words which are used consistently across certain types of translation notes (such as the words "Or" in an alternative translation note, "Others", "Heb.", "LXX" etc.)</description>
@@ -946,9 +1095,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Footnote additional paragraph</nameEnglish>
     <marker>fp</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Optional</closed>
     <occursIn>Footnote</occursIn>
     <description>Use this marker to if you need to indicate the start of a new paragraph within a footnote (uncommon in standard Bible notes)</description>
@@ -958,9 +1108,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Footnote verse number</nameEnglish>
     <marker>fv</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Optional</closed>
     <occursIn>Footnote</occursIn>
     <description>To mark the location of a verse number in the the text quotation or alternative translation</description>
@@ -970,9 +1121,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Footnote text</nameEnglish>
     <marker>ft</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Optional</closed>
     <occursIn>Footnote</occursIn>
     <description>The essential (explanatory) text of the footnote</description>
@@ -982,9 +1134,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Deuterocanon footnote text</nameEnglish>
     <marker>fdc</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Always</closed>
     <occursIn>Footnote</occursIn>
     <description>Text between these markers is material to be included only in published editions that contain the Deuterocanonical books.</description>
@@ -994,9 +1147,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Footnote reference mark</nameEnglish>
     <marker>fm</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Always</closed>
     <occursIn>Footnote</occursIn>
     <description>Used where two or more locations in the scripture text should ideally refer the reader to the same footnote text (as seen in identical footnote text which is referred to at Gen 2.9 and Gen 2.17 in some English translations). Because the nature of this marker is related directly to the published form of the text, it is not intended for use in scripture authoring. It may be used during the publishing process to connect two callers to the same footnote text.</description>
@@ -1008,9 +1162,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Cross reference</nameEnglish>
     <marker>x</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Always</closed>
     <occursIn>Text</occursIn>
     <description>Cross references are entered inline within the main scripture body text. The boundaries of the cross reference text are defined by an opening and closing marker.</description>
@@ -1020,9 +1175,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Cross reference "origin" reference</nameEnglish>
     <marker>xo</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Optional</closed>
     <occursIn>Cross reference</occursIn>
     <description>This is the chapter and verse(s) that note refers to. Chapter and verse numbers must have a separator between them.</description>
@@ -1032,9 +1188,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Cross reference keyword</nameEnglish>
     <marker>xk</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Optional</closed>
     <occursIn>Cross reference</occursIn>
     <description>A keyword from the scripture translation text which the target reference(s) also refer to</description>
@@ -1044,9 +1201,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Cross reference quotation</nameEnglish>
     <marker>xq</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Optional</closed>
     <occursIn>Cross reference</occursIn>
     <description>A quotation from the scripture text. Use of a quotation would be intended to help the reader to understand the portion of text (or concept) for which the target reference(s) are being supplied.</description>
@@ -1056,9 +1214,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Target reference(s)</nameEnglish>
     <marker>xt</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Optional</closed>
     <occursIn>Cross reference</occursIn>
     <description>The list of target scripture locations being provided as alternate references to the text (or concept) of the origin reference. This is a list of book name abbreviations and chapter + verse references, separated by semicolons (though there may be an alternate references format for this list in different areas and countries).</description>
@@ -1068,9 +1227,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Old Testament reference(s)</nameEnglish>
     <marker>xot</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Always</closed>
     <occursIn>Cross reference</occursIn>
     <description>References (or other text) between these markers is material to be included only in published editions that contain the Old Testament books. (optional)</description>
@@ -1080,9 +1240,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>New Testament reference(s)</nameEnglish>
     <marker>xnt</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Always</closed>
     <occursIn>Cross reference</occursIn>
     <description>References (or other text) between these markers is material to be included only in published editions that contain the New Testament books. (optional)</description>
@@ -1092,9 +1253,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Deuterocanon reference(s)</nameEnglish>
     <marker>xdc</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Always</closed>
     <occursIn>Cross reference</occursIn>
     <description>References (or other text) between these markers is material to be included only in published editions that contain the Deuterocanonical books. (optional)</description>
@@ -1106,9 +1268,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Translator's addition</nameEnglish>
     <marker>add</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Always</closed>
     <occursIn>Text</occursIn>
     <description>A translator's explanation; words added by the translator for clarity – text which is not literally a part of the original language, but which was supplied to make the meaning of the original clear</description>
@@ -1118,9 +1281,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Quoted book title</nameEnglish>
     <marker>bk</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Always</closed>
     <occursIn>Text</occursIn>
   </USFMMarker>
@@ -1129,9 +1293,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Deuterocanonical addition</nameEnglish>
     <marker>dc</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Always</closed>
     <occursIn>Text</occursIn>
     <description>Deuterocanonical/LXX additions or insertions in the Protocanonical text</description>
@@ -1141,9 +1306,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Keyword/keyterm</nameEnglish>
     <marker>k</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Always</closed>
     <occursIn>Text</occursIn>
   </USFMMarker>
@@ -1152,9 +1318,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Liturgical note/comment</nameEnglish>
     <marker>lit</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
     <description>e.g. a guide which tells the reader/worshipper that he should recite a prayer or recitation etc.</description>
   </USFMMarker>
@@ -1163,9 +1331,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Name of God/Deity</nameEnglish>
     <marker>nd</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Always</closed>
     <occursIn>Text</occursIn>
   </USFMMarker>
@@ -1174,9 +1343,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Ordinal number ending</nameEnglish>
     <marker>ord</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Always</closed>
     <occursIn>Text</occursIn>
     <description>i.e. in "1st"</description>
@@ -1186,9 +1356,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Proper name</nameEnglish>
     <marker>pn</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Always</closed>
     <occursIn>Text</occursIn>
   </USFMMarker>
@@ -1197,9 +1368,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Quoted text</nameEnglish>
     <marker>qt</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Always</closed>
     <occursIn>Text</occursIn>
     <description>Old Testament quotations in the New Testament, or other quotations</description>
@@ -1209,9 +1381,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Signature</nameEnglish>
     <marker>sig</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Always</closed>
     <occursIn>Text</occursIn>
     <description>of the author of an epistle/letter</description>
@@ -1221,9 +1394,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Secondary language source</nameEnglish>
     <marker>sls</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Always</closed>
     <occursIn>Text</occursIn>
     <description>Passage of text based on a secondary language or alternate text source. E.g. The NBS02 has large sections of text in EZR and DAN in italics, to represent where the original text is in Aramaic, not Hebrew.</description>
@@ -1233,9 +1407,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Transliterated word(s)</nameEnglish>
     <marker>tl</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Always</closed>
     <occursIn>Text</occursIn>
     <description>Or foreign words</description>
@@ -1245,9 +1420,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Words of Jesus</nameEnglish>
     <marker>wj</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Always</closed>
     <occursIn>Text</occursIn>
   </USFMMarker>
@@ -1257,9 +1433,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Emphasis text</nameEnglish>
     <marker>em</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Always</closed>
     <occursIn>Text</occursIn>
   </USFMMarker>
@@ -1268,9 +1445,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Bold text</nameEnglish>
     <marker>bd</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Always</closed>
     <occursIn>Text</occursIn>
   </USFMMarker>
@@ -1279,9 +1457,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Italic text</nameEnglish>
     <marker>it</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Always</closed>
     <occursIn>Text</occursIn>
   </USFMMarker>
@@ -1290,9 +1469,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Bold-italic text</nameEnglish>
     <marker>bdit</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Always</closed>
     <occursIn>Text</occursIn>
   </USFMMarker>
@@ -1301,9 +1481,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Normal text</nameEnglish>
     <marker>no</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Always</closed>
     <occursIn>Text</occursIn>
   </USFMMarker>
@@ -1312,9 +1493,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Small-caps text</nameEnglish>
     <marker>sc</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Always</closed>
     <occursIn>Text</occursIn>
   </USFMMarker>
@@ -1324,9 +1506,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Page break</nameEnglish>
     <marker>pb</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Never</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
   </USFMMarker>
 
@@ -1335,9 +1519,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Figure</nameEnglish>
     <marker>fig</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>No</printed>
+    <closed>No</closed>
     <closed>Always</closed>
     <occursIn>Text</occursIn>
   </USFMMarker>
@@ -1346,9 +1532,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Subject index entry</nameEnglish>
     <marker>ndx</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>No</printed>
     <closed>Always</closed>
     <occursIn>Text</occursIn>
     <description>Surround word(s) with this markup to indicate that it should appear in the subject index</description>
@@ -1358,9 +1545,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Pronunciation information</nameEnglish>
     <marker>pro</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>No</printed>
     <closed>Always</closed>
     <occursIn>Text</occursIn>
     <description>Used for Chinese/Japanese/Korean texts</description>
@@ -1370,9 +1558,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Wordlist/glossary/dictionary entry</nameEnglish>
     <marker>w</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
     <closed>Always</closed>
     <occursIn>Text</occursIn>
     <description>Surround word(s) with this markup to indicate that it should appear in the word list</description>
@@ -1382,9 +1571,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Greek wordlist entry</nameEnglish>
     <marker>wg</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>No</printed>
     <closed>Always</closed>
     <occursIn>Text</occursIn>
     <description>Surround word(s) with this markup to indicate that it should appear in the Greek word list</description>
@@ -1394,9 +1584,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Hebrew wordlist entry</nameEnglish>
     <marker>wh</marker>
     <compulsory>No</compulsory>
-    <level>Character</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>No</printed>
     <closed>Always</closed>
     <occursIn>Text</occursIn>
     <description>Surround word(s) with this markup to indicate that it should appear in the Hebrew word list</description>
@@ -1408,9 +1599,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Peripheral content</nameEnglish>
     <marker>periph</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Always</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Front and back matter</occursIn>
   </USFMMarker>
 
@@ -1418,9 +1611,11 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Sidebar content</nameEnglish>
     <marker>esb</marker>
     <compulsory>No</compulsory>
-    <level>Paragraph</level>
+    <level>Newline</level>
     <numberable>No</numberable>
     <hasContent>Never</hasContent>
+    <printed>Yes</printed>
+    <closed>No</closed>
     <occursIn>Text</occursIn>
     <description>In study Bibles. Finishes at next \esb marker or at end of chapter.</description>
   </USFMMarker>

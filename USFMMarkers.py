@@ -4,7 +4,7 @@
 # USFMMarkers.py
 #
 # Module handling USFMMarkers.xml to produce C and Python data tables
-#   Last modified: 2011-04-20 (also update versionString below)
+#   Last modified: 2011-05-09 (also update versionString below)
 #
 # Copyright (C) 2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -64,8 +64,8 @@ class _USFMMarkersConverter:
         self._compulsoryAttributes = ()
         self._optionalAttributes = ()
         self._uniqueAttributes = self._compulsoryAttributes + self._optionalAttributes
-        self._compulsoryElements = ( "nameEnglish", "marker", "compulsory", "level", "numberable", "hasContent", "occursIn", )
-        self._optionalElements = ( "closed", "description", )
+        self._compulsoryElements = ( "nameEnglish", "marker", "compulsory", "level", "numberable", "hasContent", "printed", "closed", "occursIn", )
+        self._optionalElements = ( "description", )
         #self._uniqueElements = self._compulsoryElements + self.optionalElements
         self._uniqueElements = ( "nameEnglish", "marker", )
 
@@ -221,7 +221,7 @@ class _USFMMarkersConverter:
     # end of __str__
 
     def __len__( self ):
-        """ Returns the number of books codes loaded. """
+        """ Returns the number of SFM markers loaded. """
         return len( self._XMLtree )
     # end of __len__
 
@@ -234,8 +234,12 @@ class _USFMMarkersConverter:
         if self.__DataDicts: # We've already done an import/restructuring -- no need to repeat it
             return self.__DataDicts
 
-        # Load and validate entries and create a dictionary
-        myMarkerDict, adjMarkerDict, conversionDict, backConversionDict, paragraphMarkersList, characterMarkersList = OrderedDict(), {}, {}, {}, [], []
+        # Load and validate entries and create the dictionaries and lists
+        # Note that the combined lists include the numbered markers, e.g., s as well as s1, s2, ...
+        rawMarkerDict, numberedMarkerList, combinedMarkerDict, = OrderedDict(), [], {}
+        conversionDict, backConversionDict = {}, {}
+        newlineMarkersList, numberedNewlineMarkersList, combinedNewlineMarkersList = [], [], []
+        internalMarkersList = []
         for element in self._XMLtree:
             # Get the required information out of the tree for this element
             # Start with the compulsory elements
@@ -247,42 +251,59 @@ class _USFMMarkersConverter:
             if  compulsory not in ( "Yes", "No" ): logging.error( _("Unexpected '{}' compulsory field for marker '{}'").format( compulsory, marker ) )
             level = element.find("level").text
             compulsoryFlag = compulsory == "Yes"
-            if  level == "Paragraph": paragraphMarkersList.append( marker )
-            elif level == "Character": characterMarkersList.append( marker )
+            if  level == "Newline": newlineMarkersList.append( marker ); combinedNewlineMarkersList.append( marker )
+            elif level == "Internal": internalMarkersList.append( marker )
             else: logging.error( _("Unexpected '{}' level field for marker '{}'").format( level, marker ) )
             numberable = element.find("numberable").text
             if  numberable not in ( "Yes", "No" ): logging.error( _("Unexpected '{}' numberable field for marker '{}'").format( numberable, marker ) )
             numberableFlag = numberable == "Yes"
+            if numberableFlag and level == "Character": logging.error( _("Unexpected '{}' numberable field for character marker '{}'").format( numberable, marker ) )
             hasContent = element.find("hasContent").text
             if  hasContent not in ( "Always", "Never", "Sometimes" ): logging.error( _("Unexpected '{}' hasContent field for marker '{}'").format( hasContent, marker ) )
+            printed = element.find("printed").text
+            if  printed not in ( "Yes", "No" ): logging.error( _("Unexpected '{}' printed field for marker '{}'").format( printed, marker ) )
+            printedFlag = printed == "Yes"
+            closed = element.find("closed").text
+            if  closed not in ( "No", "Always", "Optional" ): logging.error( _("Unexpected '{}' closed field for marker '{}'").format( closed, marker ) )
             occursIn = element.find("occursIn").text
             if  occursIn not in ( "Header", "Introduction", "Text", "Poetry", "Text, Poetry", "Acrostic verse", "Table row", "Footnote", "Cross reference", "Front and back matter" ):
                 logging.error( _("Unexpected '{}' occursIn field for marker '{}'").format( occursIn, marker ) )
 
             # The optional elements are set to None if they don't exist
-            closed = None if element.find("closed") is None else element.find("closed").text
-            if closed is not None and closed not in ( "Always", "Optional" ): logging.error( _("Unexpected '{}' closed field for marker '{}'").format( closed, marker ) )
-            if level=="Character" and closed is None: logging.error( _("Entry for character marker '{}' doesn't have a \"closed\" field").format( marker ) )
+            #closed = None if element.find("closed") is None else element.find("closed").text
+            #if closed is not None and closed not in ( "No", "Always", "Optional" ): logging.error( _("Unexpected '{}' closed field for marker '{}'").format( closed, marker ) )
+            #if level=="Character" and closed is None: logging.error( _("Entry for character marker '{}' doesn't have a \"closed\" field").format( marker ) )
             description = None if element.find("description") is None else element.find("description").text
             if description is not None: assert( description )
 
             # Now put it into my dictionaries and lists for easy access
             #   The marker is lowercase by definition
-            if "marker" in self._uniqueElements: assert( marker not in myMarkerDict ) # Shouldn't be any duplicates
-            myMarkerDict[marker] = { "compulsoryFlag":compulsoryFlag, "level":level, "numberableFlag":numberableFlag,
-                                        "hasContent":hasContent, "occursIn":occursIn, "closed":closed, "description":description, "nameEnglish":nameEnglish }
-            adjMarkerDict[marker] = marker
+            if "marker" in self._uniqueElements: assert( marker not in rawMarkerDict ) # Shouldn't be any duplicates
+            rawMarkerDict[marker] = { "compulsoryFlag":compulsoryFlag, "level":level, "numberableFlag":numberableFlag,
+                                        "hasContent":hasContent, "occursIn":occursIn, "printedFlag":printedFlag, "closed":closed, "description":description, "nameEnglish":nameEnglish }
+            combinedMarkerDict[marker] = marker
             if numberableFlag: # We have some extra work to do
                 conversionDict[marker] = marker + '1'
                 for suffix in ( '123' ): # These are the suffix digits that we allow
-                    backConversionDict[marker+suffix] = marker
-                    adjMarkerDict[marker+suffix] = marker
+                    numberedMarker = marker + suffix
+                    backConversionDict[numberedMarker] = marker
+                    numberedMarkerList.append( numberedMarker )
+                    combinedMarkerDict[numberedMarker] = marker
+                    if marker in newlineMarkersList: numberedNewlineMarkersList.append( numberedMarker ); combinedNewlineMarkersList.append( numberedMarker )
+                    else: assert( False ) # programming error
+            else: # it's not numberable
+                numberedMarkerList.append( marker )
+                if marker in newlineMarkersList: numberedNewlineMarkersList.append( marker )
 
-        #print( paragraphMarkersList ); print( characterMarkersList )
         #print( conversionDict ); print( backConversionDict )
-        self.__DataDicts = { "rawMarkerDict":myMarkerDict, "adjustedMarkerDict":adjMarkerDict,
+        #print( "newlineMarkersList", len(newlineMarkersList), newlineMarkersList )
+        #print( "numberedNewlineMarkersList", len(numberedNewlineMarkersList), numberedNewlineMarkersList )
+        #print( "combinedNewlineMarkersList", len(combinedNewlineMarkersList), combinedNewlineMarkersList )
+        #print( "internalMarkersList", len(internalMarkersList), internalMarkersList )
+        self.__DataDicts = { "rawMarkerDict":rawMarkerDict, "numberedMarkerList":numberedMarkerList, "combinedMarkerDict":combinedMarkerDict,
                                 "conversionDict":conversionDict, "backConversionDict":backConversionDict,
-                                "paragraphMarkersList":paragraphMarkersList, "characterMarkersList":characterMarkersList }
+                                "newlineMarkersList":newlineMarkersList, "numberedNewlineMarkersList":numberedNewlineMarkersList, "combinedNewlineMarkersList":combinedNewlineMarkersList,
+                                "internalMarkersList":internalMarkersList }
         return self.__DataDicts # Just delete any of the dictionaries that you don't need
     # end of importDataToPython
 
@@ -341,11 +362,14 @@ class _USFMMarkersConverter:
             myFile.write( "#   {} {} loaded from the original XML file.\n#\n\n".format( len(self._XMLtree), self._treeTag ) )
             myFile.write( "from collections import OrderedDict\n\n" )
             dictInfo = { "rawMarkerDict":(exportPythonOrderedDict, "rawMarker (in the original XML order)","specified"),
-                            "adjustedMarkerDict":(exportPythonDict, "marker","rawMarker"),
+                            "numberedMarkerList":(exportPythonList, "marker","rawMarker"),
+                            "combinedMarkerDict":(exportPythonDict, "marker","rawMarker"),
                             "conversionDict":(exportPythonDict, "rawMarker","numberedMarker"),
                             "backConversionDict":(exportPythonDict, "numberedMarker","rawMarker"),
-                            "paragraphMarkersList":(exportPythonList, "","rawMarker"),
-                            "characterMarkersList":(exportPythonList, "","rawMarker") }
+                            "newlineMarkersList":(exportPythonList, "","rawMarker"),
+                            "numberedNewlineMarkersList":(exportPythonList, "","rawMarker"),
+                            "combinedNewlineMarkersList":(exportPythonList, "","rawMarker"),
+                            "internalMarkersList":(exportPythonList, "","rawMarker") }
             for dictName in self.__DataDicts:
                 exportFunction, keyComment, fieldsComment = dictInfo[dictName]
                 exportFunction( myFile, self.__DataDicts[dictName], dictName, keyComment, fieldsComment )
@@ -523,58 +547,139 @@ class USFMMarkers:
         result += ('\n' if result else '') + ' '*indent + _("Number of entries = {}").format( len(self.__DataDicts["rawMarkerDict"]) )
         if Globals.verbosityLevel > 2:
             indent = 4
-            result += ('\n' if result else '') + ' '*indent + _("Number of paragraph markers = {}").format( len(self.__DataDicts["paragraphMarkersList"]) )
-            result += ('\n' if result else '') + ' '*indent + _("Number of character markers = {}").format( len(self.__DataDicts["characterMarkersList"]) )
+            result += ('\n' if result else '') + ' '*indent + _("Number of raw new line markers = {}").format( len(self.__DataDicts["newlineMarkersList"]) )
+            result += ('\n' if result else '') + ' '*indent + _("Number of internal markers = {}").format( len(self.__DataDicts["internalMarkersList"]) )
         return result
     # end of __str__
 
     def __len__( self ):
         """ Return the number of available markers. """
-        return len(self.__DataDicts["rawMarkerDict"])
+        return len(self.__DataDicts["combinedMarkerDict"])
+
+    def __contains__( self, marker ):
+        """ Returns True or False. """
+        return marker in self.__DataDicts["combinedMarkerDict"]
 
     def isValidMarker( self, marker ):
         """ Returns True or False. """
-        return marker in self.__DataDicts["adjustedMarkerDict"]
+        return marker in self.__DataDicts["combinedMarkerDict"]
 
-    def getRawMarker( self, marker ):
-        """ Returns a marker without numerical suffixes, i.e., s1->s, q1->q, etc. """
-        return self.__DataDicts["adjustedMarkerDict"][marker]
-
-    def getStandardMarker( self, marker ):
-        """ Returns a standard marker, i.e., s->s1, q->q1, etc. """
-        if marker in self.__DataDicts["conversionDict"]: return self.__DataDicts["conversionDict"][marker]
-        #else
-        if marker in self.__DataDicts["adjustedMarkerDict"]: return marker
-        #else must be something wrong
-        raise KeyError
-
-    def isParagraphMarker( self, marker ):
+    def isNewlineMarker( self, marker ):
         """ Return True or False. """
-        return self.getRawMarker(marker) in self.__DataDicts["paragraphMarkersList"]
+        if marker not in self.__DataDicts["combinedMarkerDict"]: return False
+        return self.toRawMarker(marker) in self.__DataDicts["combinedNewlineMarkersList"]
 
-    def isCharacterMarker( self, marker ):
+    def isInternalMarker( self, marker ):
         """ Return True or False. """
-        return self.getRawMarker(marker) in self.__DataDicts["characterMarkersList"]
+        if marker not in self.__DataDicts["combinedMarkerDict"]: return False
+        return self.toRawMarker(marker) in self.__DataDicts["internalMarkersList"]
 
     def isCompulsoryMarker( self, marker ):
         """ Return True or False. """
-        return self.__DataDicts["rawMarkerDict"][self.getRawMarker(marker)]["compulsoryFlag"]
+        if marker not in self.__DataDicts["combinedMarkerDict"]: return False
+        return self.__DataDicts["rawMarkerDict"][self.toRawMarker(marker)]["compulsoryFlag"]
 
     def isNumberableMarker( self, marker ):
         """ Return True or False. """
-        return self.__DataDicts["rawMarkerDict"][self.getRawMarker(marker)]["numberableFlag"]
+        if marker not in self.__DataDicts["combinedMarkerDict"]: return False
+        return self.__DataDicts["rawMarkerDict"][self.toRawMarker(marker)]["numberableFlag"]
+
+    def isPrinted( self, marker ):
+        """ Return True or False. """
+        if marker not in self.__DataDicts["combinedMarkerDict"]: return False
+        return self.__DataDicts["rawMarkerDict"][self.toRawMarker(marker)]["printedFlag"]
+
+    def markerShouldBeClosed( self, marker ):
+        """ Return "N", "S", "A" for "never", "sometimes", "always".
+            Returns False for an invalid marker. """
+        if marker not in self.__DataDicts["combinedMarkerDict"]: return False
+        closed = self.__DataDicts["rawMarkerDict"][self.toRawMarker(marker)]["closed"]
+        #if closed is None: return "N"
+        if closed == "No": return "N"
+        if closed == "Always": return "A"
+        if closed == "Optional": return "S"
+        print( 'mcbc {}'.format( closed ))
+        raise KeyError # Should be something better here
+
+    def toRawMarker( self, marker ):
+        """ Returns a marker without numerical suffixes, i.e., s1->s, q1->q, etc. """
+        return self.__DataDicts["combinedMarkerDict"][marker]
+
+    def toStandardMarker( self, marker ):
+        """ Returns a standard marker, i.e., s->s1, q->q1, etc. """
+        if marker in self.__DataDicts["conversionDict"]: return self.__DataDicts["conversionDict"][marker]
+        #else
+        if marker in self.__DataDicts["combinedMarkerDict"]: return marker
+        #else must be something wrong
+        raise KeyError
+    # end of toStandardMarker
 
     def markerOccursIn( self, marker ):
-        """ Return a short string. """
-        return self.__DataDicts["rawMarkerDict"][self.getRawMarker(marker)]["occursIn"]
+        """ Return a short string, e.g. "Introduction", "Text". """
+        return self.__DataDicts["rawMarkerDict"][self.toRawMarker(marker)]["occursIn"]
 
     def getMarkerEnglishName( self, marker ):
-        """ Returns the English name for a marker. """
-        return self.__DataDicts["rawMarkerDict"][self.getRawMarker(marker)]["nameEnglish"]
+        """ Returns the English name for a marker.
+                Use getOccursInList() to get a list of all possibilities. """
+        return self.__DataDicts["rawMarkerDict"][self.toRawMarker(marker)]["nameEnglish"]
 
     def getMarkerDescription( self, marker ):
         """ Returns the description for a marker (or None). """
-        return self.__DataDicts["rawMarkerDict"][self.getRawMarker(marker)]["description"]
+        return self.__DataDicts["rawMarkerDict"][self.toRawMarker(marker)]["description"]
+
+    def getOccursInList( self ):
+        """ Returns a list of strings which markerOccursIn can return. """
+        oiList = []
+        for marker in self.__DataDicts["rawMarkerDict"]:
+            occursIn = self.__DataDicts["rawMarkerDict"][marker]['occursIn']
+            if occursIn not in oiList: oiList.append( occursIn )
+        return oiList
+    # end of getOccursInList
+
+    def getNewlineMarkersList( self, option='Combined' ):
+        """ Returns a list of all new line markers. """
+        assert( option in ('Raw','Numbered','Combined') )
+        if option=='Combined': return self.__DataDicts["combinedNewlineMarkersList"]
+        elif option=='Raw': return self.__DataDicts["numberedNewlineMarkersList"]
+        elif option=='Numbered': return self.__DataDicts["newlineMarkersList"]
+    # end of getNewlineMarkersList
+
+    def getInternalMarkersList( self ):
+        """ Returns a list of all character markers. """
+        return self.__DataDicts["internalMarkersList"]
+
+    def getMarkerListFromText( self, text ):
+        """Given a text, return a list of the markers (along with their positions).
+            Returns a list of three-tuple containing (marker, nextSignificantChar, indexOfBackslashCharacter).
+                nextSignificantChar is ' ', '*' (for closing marker) or '' (for end of line)."""
+        result = []
+        textLength = len( text )
+        ix = text.find( '\\' )
+        while( ix != -1 ): # Find backslashes
+            marker = ''
+            iy = ix + 1
+            if iy<textLength:
+                c1 = text[iy]
+                if c1==' ': logging.error( _("USFMMarkers.getMarkerListFromText found invalid '\\' in '{}'").format( text ) )
+                elif c1=='*': logging.error( _("USFMMarkers.getMarkerListFromText found invalid '\\*' in '{}'").format( text ) )
+                else: # it's probably ok
+                    marker += c1
+                    iy += 1
+                    while ( iy < textLength ):
+                        c = text[iy]
+                        if c==' ': result.append( (marker,' ',ix,) ); break
+                        elif c=='*': result.append( (marker,'*',ix,) ); break
+                        else: # it's probably ok
+                            marker += c
+                        iy += 1
+                    else: result.append( (marker,'',ix,) )
+            else: # it was a backslash at the end of the line
+                result.append( ('\\','',ix,) )
+                logging.error( _("USFMMarkers.getMarkerListFromText found invalid '\\' at end of '{}'").format( text ) )
+            ix = text.find( '\\', ix+1 )
+        #if result: print( result )
+        return result
+    # end of getMarkerListFromText
 # end of USFMMarkers class
 
 
@@ -604,14 +709,19 @@ def main():
         # Demo the USFMMarkers object
         um = USFMMarkers().loadData() # Doesn't reload the XML unnecessarily :)
         print( um ) # Just print a summary
+        print( "Markers can occurs in", um.getOccursInList() )
+        pm = um.getNewlineMarkersList()
+        print( "New line markers are", len(pm), pm )
+        cm = um.getInternalMarkersList()
+        print( "Internal (character) markers are", len(cm), cm )
         for m in ('ab', 'h', 'toc1', 'toc4', 'q', 'q1', 'q2', 'q3', 'q4', 'p', 'P', 'f', 'f*' ):
             print( _("{} is {}a valid marker").format( m, "" if um.isValidMarker(m) else _("not")+' ' ) )
             if um.isValidMarker(m):
                 print( '  ' + "{}: {}".format( um.getMarkerEnglishName(m), um.getMarkerDescription(m) ) )
                 if Globals.verbosityLevel > 2:
                     print( '  ' + _("Compulsory:{}, Numberable:{}, Occurs in: {}").format( um.isCompulsoryMarker(m), um.isNumberableMarker(m), um.markerOccursIn(m) ) )
-                    print( '  ' + _("{} is {}a paragraph marker").format( m, "" if um.isParagraphMarker(m) else _("not")+' ' ) )
-                    print( '  ' + _("{} is {}a character marker").format( m, "" if um.isCharacterMarker(m) else _("not")+' ' ) )
+                    print( '  ' + _("{} is {}a new line marker").format( m, "" if um.isNewlineMarker(m) else _("not")+' ' ) )
+                    print( '  ' + _("{} is {}an internal (character) marker").format( m, "" if um.isInternalMarker(m) else _("not")+' ' ) )
 # end of main
 
 if __name__ == '__main__':

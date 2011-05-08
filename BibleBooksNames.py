@@ -4,7 +4,7 @@
 # BibleBooksNames.py
 #
 # Module handling BibleBooksNames_*.xml to produce C and Python data tables
-#   Last modified: 2011-04-20 (also update versionString below)
+#   Last modified: 2011-04-25 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling BibleBooksNames_*.xml to produce C and Python data tables.
 """
 
 progName = "Bible Books Names Systems handler"
-versionString = "0.32"
+versionString = "0.33"
 
 
 import os, logging
