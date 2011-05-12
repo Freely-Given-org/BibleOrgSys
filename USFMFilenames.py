@@ -3,7 +3,7 @@
 # USFMFilenames.py
 #
 # Module handling USFM Bible filenames
-#   Last modified: 2011-04-20 (also update versionString below)
+#   Last modified: 2011-05-12 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -27,10 +27,10 @@ Module for creating and manipulating USFM filenames.
 """
 
 progName = "USFM Bible filenames handler"
-versionString = "0.50"
+versionString = "0.51"
 
 
-import os
+import os, logging
 from gettext import gettext as _
 
 
@@ -50,9 +50,9 @@ class USFMFilenames:
 
         self.folder = folder
         files = os.listdir( self.folder )
-        if not files: raise IOError( _("No files in given folder: ") + self.folder)
+        if not files: logging.error( _("No files in given folder: '{}'").format( self.folder) ); return
         for foundFilename in files:
-            if not foundFilename.endswith('~'):
+            if not foundFilename.endswith('~'): # Ignore backup files
                 foundFileBit, foundExtBit = os.path.splitext( foundFilename )
                 foundLength = len( foundFileBit )
                 #print( foundFileBit, foundExtBit )
@@ -81,15 +81,14 @@ class USFMFilenames:
                                 self.digitsIndex = digitsIndex
                                 self.paratextBookCodeIndex = paratextBookCodeIndex
                                 self.pattern = "nnnddbbb"
-                            else: raise ValueError( _("Unrecognized USFM filename template at ")+foundFileBit )
+                            else: logging.error( _("Unrecognized USFM filename template at ")+foundFileBit ); return
                             if self.languageCode.isupper(): self.pattern = self.pattern.replace( 'n', 'N' )
                             if paratextBookCode.isupper(): self.pattern = self.pattern.replace( 'bbb', 'BBB' )
                             self.fileExtension = foundExtBit[1:]
                             matched = True
                             break
                 if matched: break
-        if not matched:
-            raise ValueError( _("Unable to recognize valid USFM files in ") + folder )
+        if not matched: logging.error( _("Unable to recognize valid USFM files in ") + folder )
         #print( self.pattern, self.fileExtension )
     # end of __init__
         
@@ -136,6 +135,41 @@ class USFMFilenames:
                 filelist.append( (bookReferenceCode, possibleFilename,) )
         return filelist
     # end of getActualFilenames
+
+
+    def getSSFFilenames( self, searchAbove=False, auto=True ):
+        """Return a list of full pathnames of .ssf files in the folder.
+            NOTE: Paratext projects don't usually have the .ssf files in the project folder,
+                but 'backed-up' projects often do.
+            If searchAbove is set to True and no ssf files are found in the given folder,
+                this routine will attempt to search the next folder up the file hierarchy.
+                Furthermore, unless auto is set to False,
+                    it will try to find the correct one from multiple SSFs."""
+        def getSSFFilenamesHelper( folder ):
+            filelist = []
+            files = os.listdir( folder )
+            for foundFilename in files:
+                if not foundFilename.endswith('~'): # Ignore backup files
+                    foundFileBit, foundExtBit = os.path.splitext( foundFilename )
+                    if foundExtBit.lower()=='.ssf':
+                        filelist.append( os.path.join( folder, foundFilename ) )
+            return filelist
+        # end of getSSFFilenamesHelper
+
+        filelist = getSSFFilenamesHelper( self.folder )
+        if not filelist and searchAbove: # try the next level up
+            filelist = getSSFFilenamesHelper( os.path.join( self.folder, '../' ) )
+            if auto and len(filelist)>1: # See if we can help them by automatically choosing the right one
+                count, index = 0, -1
+                for j, filepath in enumerate(filelist): # Check if we can find a single matching ssf file
+                    foundPathBit, foundExtBit = os.path.splitext( filepath )
+                    foundPathBit, foundFileBit = os.path.split( foundPathBit )
+                    #print( foundPathBit, foundFileBit, foundExtBit, self.folder )
+                    if foundFileBit in self.folder: index = j; count += 1 # Take a guess that this might be the right one
+                #print( count, index )
+                if count==1 and index!=-1: filelist = [ filelist[index] ] # Found exactly one so reduce the list down to this one filepath
+        return filelist
+    # end of getSSFFilenames
 # end of class USFMFiles
 
 
@@ -148,7 +182,7 @@ def demo():
 
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
-    testFolder = '/mnt/Data/Matigsalug/Scripture/MBTV' # You can put your test folder here
+    testFolder = '/mnt/Data/Matigsalug/Scripture/MBTV/' # You can put your test folder here
     if os.access( testFolder, os.R_OK ):
         UFns = USFMFilenames( testFolder )
         print( UFns )

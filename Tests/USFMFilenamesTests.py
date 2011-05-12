@@ -4,7 +4,7 @@
 # USFMFilenamesTests.py
 #
 # Module testing USFMFilenames.py
-#   Last modified: 2011-03-03 (also update versionString below)
+#   Last modified: 2011-05-12 (also update versionString below)
 #
 # Copyright (C) 2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module testing USFMFilenames.py.
 """
 
 progName = "USFM Filenames tests"
-versionString = "0.50"
+versionString = "0.51"
 
 
 import sys, os, unittest
@@ -42,7 +42,7 @@ class USFMFilenamesTests( unittest.TestCase ):
     """ Unit tests for the USFMFilenames object. """
 
     def setUp( self ):
-        testFolder = '/mnt/Data/Matigsalug/Scripture/MBTV' # You can put your test folder here
+        testFolder = '/mnt/Data/Matigsalug/Scripture/MBTV/' # You can put your test folder here
         if os.access( testFolder, os.R_OK ): # Create the USFMFilenames object
             self.UFns = USFMFilenames.USFMFilenames( testFolder )
         else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
@@ -60,6 +60,7 @@ class USFMFilenamesTests( unittest.TestCase ):
         self.assertTrue( isinstance( results, list ) )
         self.assertTrue( len(results) > 66 )
         self.assertFalse( None in results )
+        self.assertFalse( '' in results )
         for result in results:
             self.assertTrue( isinstance( result, tuple ) )
             self.assertTrue( len(result)==2 )
@@ -73,12 +74,32 @@ class USFMFilenamesTests( unittest.TestCase ):
         self.assertTrue( isinstance( results, list ) )
         self.assertTrue( len(results) > 10 ) # Number of actual files found
         self.assertFalse( None in results )
+        self.assertFalse( '' in results )
         for result in results:
             self.assertTrue( isinstance( result, tuple ) )
             self.assertTrue( len(result)==2 )
             self.assertTrue( len(result[0])==3 ) # BBB
             self.assertTrue( len(result[1])>10 ) # Filename, e.g., nnn08RUT.SCP
     # end of test_030_getActualFilenames
+
+    def test_040_getSSFFilenames( self ):
+        """ Test the getSSFFilenames function. """
+        results = self.UFns.getSSFFilenames()
+        self.assertTrue( isinstance( results, list ) )
+        self.assertEqual( results, [] ) # Should be no SSF files in a standard Paratext project folder
+
+        results = self.UFns.getSSFFilenames( False ) # Should give exactly the same result as above
+        self.assertTrue( isinstance( results, list ) )
+        self.assertEqual( results, [] ) # Should be no SSF files in a standard Paratext project folder
+
+        results = self.UFns.getSSFFilenames( True )
+        self.assertTrue( isinstance( results, list ) )
+        self.assertGreater( len(results), 0 ) # Should be at least one SSF file in a standard Paratext project folder
+        self.assertFalse( None in results )
+        self.assertFalse( '' in results )
+        for result in results:
+            self.assertTrue( isinstance( result, str ) )
+    # end of test_040_getSSFFilenames
 # end of USFMFilenamesTests class
 
 
@@ -90,5 +111,6 @@ if __name__ == '__main__':
 
     if Globals.verbosityLevel > 1: print( "{} V{}".format( progName, versionString ) )
 
+    # Make sure you set the testFolder in setUp above
     unittest.main() # Automatically runs all of the above tests
 # end of USFMFilenamesTests.py

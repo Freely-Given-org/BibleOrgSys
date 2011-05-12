@@ -4,7 +4,7 @@
 # BibleBooksCodes.py
 #
 # Module handling BibleBooksCodes.xml to produce C and Python data tables
-#   Last modified: 2011-04-20 (also update versionString below)
+#   Last modified: 2011-05-09 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -529,14 +529,18 @@ class BibleBooksCodes:
         assert( len(self.__DataDicts["referenceAbbreviationDict"]) == len(self.__DataDicts["referenceNumberDict"]) ) 
         return len(self.__DataDicts["referenceAbbreviationDict"])
 
-    def getBBB( self, referenceNumber ):
-        """ Return the referenceAbbreviation for the given book number (referenceNumber). """
-        if not 1 <= referenceNumber <= 255: raise ValueError
-        return self.__DataDicts["referenceNumberDict"][referenceNumber]["referenceAbbreviation"]
+    def __contains__( self, BBB ):
+        """ Returns True or False. """
+        return BBB in self.__DataDicts["referenceAbbreviationDict"]
 
     def isValidReferenceAbbreviation( self, BBB ):
         """ Returns True or False. """
         return BBB in self.__DataDicts["referenceAbbreviationDict"]
+
+    def getBBB( self, referenceNumber ):
+        """ Return the referenceAbbreviation for the given book number (referenceNumber). """
+        if not 1 <= referenceNumber <= 255: raise ValueError
+        return self.__DataDicts["referenceNumberDict"][referenceNumber]["referenceAbbreviation"]
 
     def getAllReferenceAbbreviations( self ):
         """ Returns a list of all possible BBB codes. """
