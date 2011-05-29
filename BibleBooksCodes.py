@@ -4,7 +4,7 @@
 # BibleBooksCodes.py
 #
 # Module handling BibleBooksCodes functions
-#   Last modified: 2011-05-29 (also update versionString below)
+#   Last modified: 2011-05-30 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -63,9 +63,9 @@ class BibleBooksCodes:
             standardXMLFilepath = os.path.join( "DataFiles", "BibleBooksCodes.xml" )
             standardPickleFilepath = os.path.join( "DataFiles", "DerivedFiles", "BibleBooksCodes_Tables.pickle" )
             if XMLFilepath is None \
-              and os.access( standardPickleFilepath, os.R_OK ) \
-              and os.stat(standardPickleFilepath)[8] > os.stat(standardXMLFilepath)[8] \
-              and os.stat(standardPickleFilepath)[9] > os.stat(standardXMLFilepath)[9]: # There's a newer pickle file
+            and os.access( standardPickleFilepath, os.R_OK ) \
+            and os.stat(standardPickleFilepath)[8] > os.stat(standardXMLFilepath)[8] \
+            and os.stat(standardPickleFilepath)[9] > os.stat(standardXMLFilepath)[9]: # There's a newer pickle file
                 import pickle
                 if Globals.verbosityLevel > 2: print( "Loading pickle file {}...".format( standardPickleFilepath ) )
                 with open( standardPickleFilepath, 'rb') as pickleFile:

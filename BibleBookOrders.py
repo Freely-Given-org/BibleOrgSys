@@ -4,7 +4,7 @@
 # BibleBookOrders.py
 #
 # Module handling BibleBookOrderSystems
-#   Last modified: 2011-05-29 (also update versionString below)
+#   Last modified: 2011-05-30 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -64,19 +64,18 @@ class BibleBookOrderSystems:
         """ Loads the XML data file and imports it to dictionary format (if not done already). """
         if not self.__DataDicts or not self.__DataLists: # Don't do this unnecessarily
             # See if we can load from the pickle file (faster than loading from the XML)
-            standardPickleFilepath = os.path.join( "DataFiles", "DerivedFiles", "BibleBookOrders_Tables.pickle" )
             picklesGood = False
-            if XMLFolder is None:
+            standardPickleFilepath = os.path.join( "DataFiles", "DerivedFiles", "BibleBookOrders_Tables.pickle" )
+            if XMLFolder is None and os.access( standardPickleFilepath, os.R_OK ):
                 standardXMLFolder = os.path.join( "DataFiles", "BookOrders/" )
                 pickle8, pickle9 = os.stat(standardPickleFilepath)[8:10]
                 picklesGood = True
                 for filename in os.listdir( standardXMLFolder ):
                     filepart, extension = os.path.splitext( filename )
-                    filepath = os.path.join( standardXMLFolder, filename )
+                    XMLfilepath = os.path.join( standardXMLFolder, filename )
                     if extension.upper() == '.XML' and filepart.upper().startswith("BIBLEBOOKORDERS_"):
-                      if not os.access( standardPickleFilepath, os.R_OK ) \
-                      or pickle8 <= os.stat( filepath )[8] \
-                      or pickle9 <= os.stat( filepath )[9]: # The pickle file is older
+                      if pickle8 <= os.stat( XMLfilepath )[8] \
+                      or pickle9 <= os.stat( XMLfilepath )[9]: # The pickle file is older
                         picklesGood = False; break
             if picklesGood:
                 import pickle
