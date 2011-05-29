@@ -1,30 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <grammar xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
   <!--
-    BibleBooksCodes.rnc           Relax NG Compact Syntax schema file
-      Version 0.50
-      Last modified: 2010-12-16
+    BibleOrganizationalSystems.rnc           Relax NG Compact Syntax schema file
+      Version 0.21
+      Last modified: 2011-02-15
     
     On Linux, to convert to RNG, use
-          trang BibleBooksCodes.rnc ../DerivedFiles/BibleBooksCodes.rng
+          trang BibleOrganizationalSystems.rnc ../DerivedFiles/BibleOrganizationalSystems.rng
     On Linux, to validate against the .rng file, use
-          xmllint - -noout - -relaxng ../DerivedFiles/BibleBooksCodes.rng BibleBooksCodes.xml
+          xmllint - -noout - -relaxng ../DerivedFiles/BibleOrganizationalSystems.rng BibleOrganizationalSystems.xml
     or to validate against both this and the internal DTD, use
-          xmllint - -noout - -relaxng ../DerivedFiles/BibleBooksCodes.rng - -valid BibleBooksCodes.xml
-    
-    See the supplied ReadMe.txt file for more information.
+          xmllint - -noout - -relaxng ../DerivedFiles/BibleOrganizationalSystems.rng - -valid BibleOrganizationalSystems.xml
     
   -->
   <!-- The root element -->
   <start>
-    <ref name="BibleBooksCodes"/>
+    <ref name="BibleOrganizationalSystems"/>
   </start>
-  <!-- A single header, then multiple BibleBookCodes entries -->
-  <define name="BibleBooksCodes">
-    <element name="BibleBooksCodes">
+  <!-- A single header, then multiple BibleOrganizationalSystem entries -->
+  <define name="BibleOrganizationalSystems">
+    <element name="BibleOrganizationalSystems">
       <ref name="header"/>
       <oneOrMore>
-        <ref name="BibleBookCodes"/>
+        <ref name="BibleOrganizationalSystem"/>
       </oneOrMore>
     </element>
   </define>
@@ -52,7 +50,6 @@
     <element name="work">
       <element name="version">
         <data type="decimal">
-          <param name="fractionDigits">2</param>
           <param name="totalDigits">2</param>
         </data>
       </element>
@@ -67,123 +64,102 @@
           <attribute name="role">
             <choice>
               <value>com</value>
+              <value>cre</value>
               <value>edt</value>
             </choice>
           </attribute>
           <data type="string"/>
         </element>
       </oneOrMore>
-      <oneOrMore>
+      <zeroOrMore>
         <element name="identifier">
           <attribute name="type">
             <value>URL</value>
           </attribute>
           <data type="anyURI"/>
         </element>
-      </oneOrMore>
+      </zeroOrMore>
       <element name="rights">
         <data type="string"/>
       </element>
     </element>
   </define>
-  <define name="BibleBookCodes">
-    <element name="BibleBookCodes">
-      <element name="nameEnglish">
+  <define name="BibleOrganizationalSystem">
+    <element name="BibleOrganizationalSystem">
+      <attribute name="type">
+        <choice>
+          <value>original</value>
+          <value>translation</value>
+          <value>revision</value>
+          <value>edition</value>
+        </choice>
+      </attribute>
+      <element name="referenceAbbreviation">
         <data type="string">
           <param name="minLength">3</param>
-          <param name="maxLength">140</param>
         </data>
       </element>
-      <element name="referenceAbbreviation">
+      <element name="languageCode">
         <data type="string">
           <param name="length">3</param>
         </data>
       </element>
-      <element name="referenceNumber">
-        <data type="positiveInteger">
-          <param name="totalDigits">3</param>
-          <param name="minInclusive">1</param>
-          <param name="maxExclusive">245</param>
-        </data>
-      </element>
-      <optional>
-        <element name="expectedChapters">
-          <data type="string">
-            <param name="minLength">1</param>
-            <param name="maxLength">7</param>
-          </data>
-        </element>
-      </optional>
-      <optional>
-        <element name="SBLAbbreviation">
-          <data type="string">
-            <param name="minLength">2</param>
-            <param name="maxLength">8</param>
-          </data>
-        </element>
-      </optional>
-      <optional>
-        <element name="OSISAbbreviation">
-          <data type="string">
-            <param name="minLength">2</param>
-            <param name="maxLength">7</param>
-          </data>
-        </element>
-      </optional>
-      <optional>
-        <element name="SwordAbbreviation">
-          <data type="string">
-            <param name="minLength">2</param>
-            <param name="maxLength">7</param>
-          </data>
-        </element>
-      </optional>
-      <optional>
-        <element name="CCELNumber">
-          <data type="positiveInteger">
-            <param name="totalDigits">2</param>
-            <param name="minInclusive">1</param>
-            <param name="maxInclusive">95</param>
-          </data>
-        </element>
-      </optional>
-      <optional>
-        <element name="ParatextAbbreviation">
-          <data type="string">
-            <param name="length">3</param>
-          </data>
-        </element>
-      </optional>
-      <optional>
-        <element name="ParatextNumber">
-          <data type="string">
-            <param name="length">2</param>
-          </data>
-        </element>
-      </optional>
-      <optional>
-        <element name="NETBibleAbbreviation">
-          <data type="string">
-            <param name="length">3</param>
-          </data>
-        </element>
-      </optional>
-      <optional>
-        <element name="ByzantineAbbreviation">
-          <data type="string">
-            <param name="minLength">2</param>
-            <param name="maxLength">4</param>
-          </data>
-        </element>
-      </optional>
-      <optional>
-        <element name="possibleAlternativeBooks">
+      <oneOrMore>
+        <element name="name">
           <data type="string">
             <param name="minLength">3</param>
-            <param name="maxLength">19</param>
           </data>
         </element>
-      </optional>
+      </oneOrMore>
+      <zeroOrMore>
+        <element name="publicationDate">
+          <data type="string">
+            <param name="minLength">2</param>
+          </data>
+        </element>
+      </zeroOrMore>
+      <zeroOrMore>
+        <element name="versificationSystem">
+          <data type="string">
+            <param name="minLength">2</param>
+          </data>
+        </element>
+      </zeroOrMore>
+      <zeroOrMore>
+        <element name="punctuationSystem">
+          <data type="string">
+            <param name="minLength">2</param>
+          </data>
+        </element>
+      </zeroOrMore>
+      <zeroOrMore>
+        <element name="bookOrderSystem">
+          <data type="string">
+            <param name="minLength">2</param>
+          </data>
+        </element>
+      </zeroOrMore>
+      <zeroOrMore>
+        <element name="booksNamesSystem">
+          <data type="string">
+            <param name="minLength">2</param>
+          </data>
+        </element>
+      </zeroOrMore>
+      <zeroOrMore>
+        <element name="derivedFrom">
+          <data type="string">
+            <param name="minLength">2</param>
+          </data>
+        </element>
+      </zeroOrMore>
+      <zeroOrMore>
+        <element name="usesText">
+          <data type="string">
+            <param name="minLength">2</param>
+          </data>
+        </element>
+      </zeroOrMore>
     </element>
   </define>
 </grammar>

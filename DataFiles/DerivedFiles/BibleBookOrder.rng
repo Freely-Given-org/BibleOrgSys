@@ -3,7 +3,7 @@
   <!--
     BibleBookOrder.rnc           Relax NG Compact Syntax schema file
       Version 0.80
-      Last modified: 2011-02-03
+      Last modified: 2011-02-15
     
     On Linux, to convert to RNG, use
           trang BibleBookOrder.rnc ../../DerivedFiles/BibleBookOrder.rng
@@ -11,8 +11,6 @@
           xmllint - -noout - -relaxng ../../DerivedFiles/BibleBookOrder.rng BibleBookOrder_XXX.xml
     or to validate against both this and the internal DTD, use (with the proper suffix instead of XXX)
           xmllint - -noout - -relaxng ../../DerivedFiles/BibleBookOrder.rng - -valid BibleBookOrder_XXX.xml
-    
-    See the supplied ReadMe.txt file for more information.
     
   -->
   <!-- The root element -->

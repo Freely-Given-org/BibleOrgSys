@@ -3,7 +3,7 @@
 # USFMFilenames.py
 #
 # Module handling USFM Bible filenames
-#   Last modified: 2011-05-12 (also update versionString below)
+#   Last modified: 2011-05-17 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -49,6 +49,7 @@ class USFMFilenames:
         self.BibleBooksCodes = BibleBooksCodes().loadData()
 
         self.folder = folder
+        self.pattern, self.fileExtension = '', ''
         files = os.listdir( self.folder )
         if not files: logging.error( _("No files in given folder: '{}'").format( self.folder) ); return
         for foundFilename in files:
@@ -112,14 +113,15 @@ class USFMFilenames:
     def getPossibleFilenames( self ):
         """Return a list of valid USFM filenames that match our filename template."""
         filelist = []
-        for paratextBookCode,paratextDigits,bookReferenceCode in self.BibleBooksCodes.getAllParatextBooksCodeNumberTriples():
-            filename = "--------" # Eight characters
-            filename = filename[:self.digitsIndex] + paratextDigits + filename[self.digitsIndex+len(paratextDigits):]
-            filename = filename[:self.paratextBookCodeIndex] + paratextBookCode.upper() if 'BBB' in self.pattern else paratextBookCode + filename[self.paratextBookCodeIndex+len(paratextBookCode):]
-            filename = filename[:self.languageIndex] + self.languageCode + filename[self.languageIndex+len(self.languageCode):]
-            filename += '.' + self.fileExtension
-            #print( filename )
-            filelist.append( (bookReferenceCode,filename,) )
+        if self.pattern:
+            for paratextBookCode,paratextDigits,bookReferenceCode in self.BibleBooksCodes.getAllParatextBooksCodeNumberTriples():
+                filename = "--------" # Eight characters
+                filename = filename[:self.digitsIndex] + paratextDigits + filename[self.digitsIndex+len(paratextDigits):]
+                filename = filename[:self.paratextBookCodeIndex] + paratextBookCode.upper() if 'BBB' in self.pattern else paratextBookCode + filename[self.paratextBookCodeIndex+len(paratextBookCode):]
+                filename = filename[:self.languageIndex] + self.languageCode + filename[self.languageIndex+len(self.languageCode):]
+                filename += '.' + self.fileExtension
+                #print( filename )
+                filelist.append( (bookReferenceCode,filename,) )
         return filelist
     # end of getPossibleFilenames
 

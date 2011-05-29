@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+  <!--
+    BibleVersificationSystem.rnc           Relax NG Compact Syntax schema file
+      Version 0.60
+      Last modified: 2011-03-03
+    
+    On Linux, to convert to RNG, use
+          trang BibleVersificationSystem.rnc ../../DerivedFiles/BibleVersificationSystem.rng
+    On Linux, to validate against the .rng file, use (with the proper suffix instead of XXX)
+          xmllint - -noout - -relaxng ../../DerivedFiles/BibleVersificationSystem.rng BibleVersificationSystem_XXX.xml
+    or to validate against both this and the internal DTD, use (with the proper suffix instead of XXX)
+          xmllint - -noout - -relaxng ../../DerivedFiles/BibleVersificationSystem.rng - -valid BibleVersificationSystem_XXX.xml
+    
+    See the supplied ReadMe.txt file for more information.
+    
+  -->
+  <!-- The root element -->
+  <start>
+    <ref name="BibleVersificationSystem"/>
+  </start>
+  <!-- A single header, then multiple BibleBookCodes entries -->
+  <define name="BibleVersificationSystem">
+    <element name="BibleVersificationSystem">
+      <ref name="header"/>
+      <oneOrMore>
+        <ref name="BibleBookVersification"/>
+      </oneOrMore>
+    </element>
+  </define>
+  <define name="header">
+    <element name="header">
+      <zeroOrMore>
+        <ref name="revisionDesc"/>
+      </zeroOrMore>
+      <ref name="work"/>
+    </element>
+  </define>
+  <define name="revisionDesc">
+    <element name="revisionDesc">
+      <element name="date">
+        <data type="date"/>
+      </element>
+      <oneOrMore>
+        <element name="p">
+          <data type="string"/>
+        </element>
+      </oneOrMore>
+    </element>
+  </define>
+  <define name="work">
+    <element name="work">
+      <element name="version">
+        <data type="decimal">
+          <param name="totalDigits">2</param>
+        </data>
+      </element>
+      <element name="date">
+        <data type="date"/>
+      </element>
+      <element name="title">
+        <data type="string"/>
+      </element>
+      <oneOrMore>
+        <element name="contributor">
+          <attribute name="role">
+            <choice>
+              <value>com</value>
+              <value>edt</value>
+            </choice>
+          </attribute>
+          <data type="string"/>
+        </element>
+      </oneOrMore>
+      <zeroOrMore>
+        <element name="identifier">
+          <attribute name="type">
+            <value>URL</value>
+          </attribute>
+          <data type="anyURI"/>
+        </element>
+      </zeroOrMore>
+      <element name="rights">
+        <data type="string"/>
+      </element>
+    </element>
+  </define>
+  <define name="BibleBookVersification">
+    <element name="BibleBookVersification">
+      <element name="nameEnglish">
+        <data type="string">
+          <param name="minLength">3</param>
+          <param name="maxLength">80</param>
+        </data>
+      </element>
+      <element name="referenceAbbreviation">
+        <data type="string">
+          <param name="length">3</param>
+        </data>
+      </element>
+      <element name="numChapters">
+        <data type="positiveInteger">
+          <param name="minInclusive">1</param>
+          <param name="maxInclusive">151</param>
+        </data>
+      </element>
+      <oneOrMore>
+        <element name="numVerses">
+          <attribute name="chapter">
+            <data type="positiveInteger">
+              <param name="minInclusive">1</param>
+              <param name="maxInclusive">151</param>
+            </data>
+          </attribute>
+          <optional>
+            <attribute name="omittedVerses">
+              <data type="string"/>
+            </attribute>
+          </optional>
+          <optional>
+            <attribute name="combinedVerses">
+              <data type="string"/>
+            </attribute>
+          </optional>
+          <optional>
+            <attribute name="reorderedVerses">
+              <data type="string"/>
+            </attribute>
+          </optional>
+          <data type="positiveInteger">
+            <param name="minInclusive">1</param>
+            <param name="maxInclusive">176</param>
+          </data>
+        </element>
+      </oneOrMore>
+    </element>
+  </define>
+</grammar>

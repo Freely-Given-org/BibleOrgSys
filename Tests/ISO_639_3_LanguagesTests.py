@@ -35,7 +35,7 @@ import sys, unittest
 
 sourceFolder = "."
 sys.path.append( sourceFolder )
-import Globals, ISO_639_3_Languages
+import Globals, ISO_639_3_LanguagesConverter, ISO_639_3_Languages
 
 
 class ISO_639_3_LanguagesConverterTests( unittest.TestCase ):
@@ -43,7 +43,7 @@ class ISO_639_3_LanguagesConverterTests( unittest.TestCase ):
 
     def setUp( self ):
         # Create the ISO_639_3_LanguagesConverter object
-        self.isoLgC = ISO_639_3_Languages._ISO_639_3_LanguagesConverter().loadAndValidate() # Doesn't reload the XML unnecessarily :)
+        self.isoLgC = ISO_639_3_LanguagesConverter.ISO_639_3_LanguagesConverter().loadAndValidate() # Doesn't reload the XML unnecessarily :)
 
     def test_010_len( self ):
         """ Test the __len__ function. """
@@ -57,20 +57,25 @@ class ISO_639_3_LanguagesConverterTests( unittest.TestCase ):
         self.assertEqual( len(result), 2 )
     # end of test_020_importDataToPython
 
-    def test_030_exportDataToPython( self ):
+    def test_030_pickle( self ):
+        """ Test the pickle function. """
+        self.assertEqual( self.isoLgC.pickle(), None ) # Basically just make sure that it runs
+    # end of test_030_pickle
+
+    def test_040_exportDataToPython( self ):
         """ Test the exportDataToPython function. """
         self.assertEqual( self.isoLgC.exportDataToPython(), None ) # Basically just make sure that it runs
-    # end of test_020_importDataToPython
+    # end of test_040_importDataToPython
 
-    def test_040_exportDataToJSON( self ):
+    def test_050_exportDataToJSON( self ):
         """ Test the exportDataToJSON function. """
         self.assertEqual( self.isoLgC.exportDataToJSON(), None ) # Basically just make sure that it runs
-    # end of test_040_exportDataToJSON
+    # end of test_050_exportDataToJSON
 
-    def test_050_exportDataToC( self ):
+    def test_060_exportDataToC( self ):
         """ Test the exportDataToC function. """
         self.assertEqual( self.isoLgC.exportDataToC(), None ) # Basically just make sure that it runs
-    # end of test_050_exportDataToC
+    # end of test_060_exportDataToC
 # end of ISO_639_3_LanguagesConverterTests class
 
 

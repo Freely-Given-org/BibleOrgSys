@@ -4,7 +4,7 @@
 # BiblePunctuationSystemsTests.py
 #
 # Module testing BiblePunctuationSystems.py
-#   Last modified: 2011-02-22 (also update versionString below)
+#   Last modified: 2011-05-28 (also update versionString below)
 #
 # Copyright (C) 2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module testing BiblePunctuationSystems.py.
 """
 
 progName = "Bible Punctuation Systems tests"
-versionString = "0.40"
+versionString = "0.41"
 
 
 import sys, unittest
@@ -37,7 +37,7 @@ from collections import OrderedDict
 
 sourceFolder = "."
 sys.path.append( sourceFolder )
-import Globals, BiblePunctuationSystems
+import Globals, BiblePunctuationSystemsConverter, BiblePunctuationSystems
 
 
 class BiblePunctuationSystemsConverterTests( unittest.TestCase ):
@@ -45,7 +45,7 @@ class BiblePunctuationSystemsConverterTests( unittest.TestCase ):
 
     def setUp( self ):
         # Create the BiblePunctuationSystemsConvertor object
-        self.bpssc = BiblePunctuationSystems._BiblePunctuationSystemsConverter().loadSystems() # Doesn't reload the XML unnecessarily :)
+        self.bpssc = BiblePunctuationSystemsConverter.BiblePunctuationSystemsConverter().loadSystems() # Doesn't reload the XML unnecessarily :)
 
     def test_005_str( self ):
         """ Test the __str__ function. """
@@ -66,20 +66,25 @@ class BiblePunctuationSystemsConverterTests( unittest.TestCase ):
         self.assertEqual( len(result), 3 )
     # end of test_020_importDataToPython
 
-    def test_030_exportDataToPython( self ):
+    def test_030_pickle( self ):
+        """ Test the pickle function. """
+        self.assertEqual( self.bpssc.pickle(), None ) # Basically just make sure that it runs
+    # end of test_030_pickle
+
+    def test_040_exportDataToPython( self ):
         """ Test the exportDataToPython function. """
         self.assertEqual( self.bpssc.exportDataToPython(), None ) # Basically just make sure that it runs
-    # end of test_020_importDataToPython
+    # end of test_040_exportDataToPython
 
-    def test_040_exportDataToJSON( self ):
+    def test_050_exportDataToJSON( self ):
         """ Test the exportDataToJSON function. """
         self.assertEqual( self.bpssc.exportDataToJSON(), None ) # Basically just make sure that it runs
-    # end of test_040_exportDataToJSON
+    # end of test_050_exportDataToJSON
 
-    def test_050_exportDataToC( self ):
+    def test_060_exportDataToC( self ):
         """ Test the exportDataToC function. """
         self.assertEqual( self.bpssc.exportDataToC(), None ) # Basically just make sure that it runs
-    # end of test_050_exportDataToC
+    # end of test_060_exportDataToC
 # end of BiblePunctuationSystemsConverterTests class
 
 

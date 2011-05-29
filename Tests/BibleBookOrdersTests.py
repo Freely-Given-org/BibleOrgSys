@@ -4,7 +4,7 @@
 # BibleBookOrdersTests.py
 #
 # Module testing BibleBookOrders.py
-#   Last modified: 2011-03-14 (also update versionString below)
+#   Last modified: 2011-05-29 (also update versionString below)
 #
 # Copyright (C) 2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module testing BibleBookOrders.py.
 """
 
 progName = "Bible Book Orders tests"
-versionString = "0.81"
+versionString = "0.82"
 
 
 import sys, unittest
@@ -37,7 +37,7 @@ from collections import OrderedDict
 
 sourceFolder = "."
 sys.path.append( sourceFolder )
-import Globals, BibleBookOrders
+import Globals, BibleBookOrdersConverter, BibleBookOrders
 
 
 class BibleBookOrdersConverterTests( unittest.TestCase ):
@@ -45,7 +45,7 @@ class BibleBookOrdersConverterTests( unittest.TestCase ):
 
     def setUp( self ):
         # Create the BibleBookOrdersConvertor object
-        self.bbosc = BibleBookOrders._BibleBookOrdersConverter().loadSystems() # Doesn't reload the XML unnecessarily :)
+        self.bbosc = BibleBookOrdersConverter.BibleBookOrdersConverter().loadSystems() # Doesn't reload the XML unnecessarily :)
 
     def test_005_str( self ):
         """ Test the __str__ function. """
@@ -66,20 +66,25 @@ class BibleBookOrdersConverterTests( unittest.TestCase ):
         self.assertEqual( len(result), 2 )
     # end of test_020_importDataToPython
 
-    def test_030_exportDataToPython( self ):
+    def test_030_pickle( self ):
+        """ Test the pickle function. """
+        self.assertEqual( self.bbosc.pickle(), None ) # Basically just make sure that it runs
+    # end of test_020_pickle
+
+    def test_040_exportDataToPython( self ):
         """ Test the exportDataToPython function. """
         self.assertEqual( self.bbosc.exportDataToPython(), None ) # Basically just make sure that it runs
-    # end of test_020_importDataToPython
+    # end of test_040_exportDataToPython
 
-    def test_040_exportDataToJSON( self ):
+    def test_050_exportDataToJSON( self ):
         """ Test the exportDataToJSON function. """
         self.assertEqual( self.bbosc.exportDataToJSON(), None ) # Basically just make sure that it runs
-    # end of test_040_exportDataToJSON
+    # end of test_050_exportDataToJSON
 
-    def test_050_exportDataToC( self ):
+    def test_060_exportDataToC( self ):
         """ Test the exportDataToC function. """
         self.assertEqual( self.bbosc.exportDataToC(), None ) # Basically just make sure that it runs
-    # end of test_050_exportDataToC
+    # end of test_060_exportDataToC
 # end of BibleBookOrdersConverterTests class
 
 

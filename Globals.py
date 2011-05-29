@@ -4,7 +4,7 @@
 # Globals.py
 #
 # Module handling Global variables for our Bible Organisational System
-#   Last modified: 2011-01-13 (also update versionString below)
+#   Last modified: 2011-05-26 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,10 +28,15 @@ Module handling global variables.
 """
 
 progName = "Globals"
-versionString = "0.06"
+versionString = "0.07"
 
 import logging, os.path
 
+
+##########################################################################################################
+#
+# Handling logging
+#
 
 #def function_with_a_bug(params):
 #    """Just sitting here to remind me how to do it"""
@@ -120,6 +125,33 @@ def remove_logfile( projectHandler ):
     root.removeHandler( projectHandler )
 # end of remove_logfile
 
+
+##########################################################################################################
+#
+# Validating XML fields (from element tree)
+#
+
+def checkXMLNoText( element, locationString):
+    """ Give a warning if the element text contains anything other than whitespace. """
+    if element.text and element.text.strip(): logging.warning( "Unprocessed '{}' element text in {}".format( element.text, locationString ) )
+
+def checkXMLNoTail( element, locationString):
+    """ Give a warning if the element tail contains anything other than whitespace. """
+    if element.tail and element.tail.strip(): logging.warning( "Unprocessed '{}' element tail in {}".format( element.tail, locationString ) )
+
+def checkXMLNoAttributes( element, locationString ):
+    for attrib,value in element.items():
+        logging.warning( "Unprocessed '{}' attribute ({}) in {}".format( attrib, value, locationString ) )
+
+def checkXMLNoSubelements( element, locationString ):
+    for subelement in element.getchildren():
+        logging.warning( "Unprocessed '{}' sub-element ({}) in {}".format( subelement.tag, subelement.text, locationString ) )
+
+
+##########################################################################################################
+#
+# Verbosity and debug settings
+#
 
 def setVerbosity( verbosityLevelParameter ):
     """Sets the VerbosityLevel global variable to an integer value depending on the Verbosity control."""
