@@ -288,8 +288,22 @@ class USFMMarkers:
     # end of getNewlineMarkersList
 
     def getInternalMarkersList( self ):
-        """ Returns a list of all character markers. """
+        """ Returns a list of all internal markers.
+            This includes character, footnote and xref markers. """
         return self.__DataDicts["internalMarkersList"]
+
+    def getCharacterMarkersList( self, includeBackslash=False, includeEndMarkers=False ):
+        """ Returns a list of all character markers.
+            This excludes footnote and xref markers. """
+        result = []
+        for marker in self.__DataDicts["internalMarkersList"]:
+            if marker!='f' and marker!='x' and self.markerOccursIn(marker)=="Text":
+                adjMarker = '\\'+marker if includeBackslash else marker
+                result.append( adjMarker )
+                if includeEndMarkers:
+                    assert( self.markerShouldBeClosed( marker ) == 'A' )
+                    result.append( adjMarker + '*' )
+        return result
 
     def getTypicalNoteSets( self, select='All' ):
         """ Returns a container of typical footnote and xref sets. """

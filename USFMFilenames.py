@@ -3,7 +3,7 @@
 # USFMFilenames.py
 #
 # Module handling USFM Bible filenames
-#   Last modified: 2011-05-17 (also update versionString below)
+#   Last modified: 2011-05-30 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -51,7 +51,7 @@ class USFMFilenames:
         self.folder = folder
         self.pattern, self.fileExtension = '', ''
         files = os.listdir( self.folder )
-        if not files: logging.error( _("No files in given folder: '{}'").format( self.folder) ); return
+        if not files: logging.error( _("No files at all in given folder: '{}'").format( self.folder) ); return
         for foundFilename in files:
             if not foundFilename.endswith('~'): # Ignore backup files
                 foundFileBit, foundExtBit = os.path.splitext( foundFilename )
@@ -70,13 +70,13 @@ class USFMFilenames:
                             paratextBookCodeIndex = foundFileBit.index(paratextBookCode) if paratextBookCode in foundFileBit else foundFileBit.index(paratextBookCode.upper())
                             paratextBookCode = foundFileBit[paratextBookCodeIndex:paratextBookCodeIndex+3]
                             #print( digitsIndex, paratextBookCodeIndex, paratextBookCode )
-                            if digitsIndex==0 and paratextBookCodeIndex==2:
+                            if digitsIndex==0 and paratextBookCodeIndex==2: # Found a form like 01GENlanguage.xyz
                                 self.languageIndex = 5
                                 self.languageCode = foundFileBit[self.languageIndex:self.languageIndex+foundLength-5]
                                 self.digitsIndex = digitsIndex
                                 self.paratextBookCodeIndex = paratextBookCodeIndex
                                 self.pattern = "ddbbb" + 'n'*(foundLength-5)
-                            elif foundLength==8 and digitsIndex==3 and paratextBookCodeIndex==5:
+                            elif foundLength==8 and digitsIndex==3 and paratextBookCodeIndex==5: # Found a form like lng01GEN.xyz
                                 self.languageIndex = 0
                                 self.languageCode = foundFileBit[self.languageIndex:self.languageIndex+foundLength-5]
                                 self.digitsIndex = digitsIndex
@@ -89,7 +89,7 @@ class USFMFilenames:
                             matched = True
                             break
                 if matched: break
-        if not matched: logging.error( _("Unable to recognize valid USFM files in ") + folder )
+        if not matched: logging.info( _("Unable to recognize valid USFM files in ") + folder )
         #print( self.pattern, self.fileExtension )
     # end of __init__
         

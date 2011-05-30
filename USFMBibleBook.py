@@ -3,7 +3,7 @@
 # USFMBibleBook.py
 #
 # Module handling the USFM markers for Bible books
-#   Last modified: 2011-05-27 by RJH (also update versionString below)
+#   Last modified: 2011-05-30 by RJH (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -387,7 +387,7 @@ class USFMBibleBook:
                             doneWarning = True
                         verseText = verseText.replace( char, '' )
                 if '-' in verseText or '–' in verseText: # we have a range like 7-9 with hyphen or en-dash
-                    versificationErrors.append( _("{} {}:{} Encountered combined verses field {}").format( self.bookReferenceCode, chapterNumber, lastVerseNumberString, verseText ) )
+                    #versificationErrors.append( _("{} {}:{} Encountered combined verses field {}").format( self.bookReferenceCode, chapterNumber, lastVerseNumberString, verseText ) )
                     if logErrors: logging.info( _("Encountered combined verses field {} after {}:{} of {}").format( verseText, chapterNumber, lastVerseNumberString, self.bookReferenceCode ) )
                     bits = verseText.replace('–','-').split( '-', 1 ) # Make sure that it's a hyphen then split once
                     verseNumberString, verseNumber = bits[0], 0
@@ -470,6 +470,7 @@ class USFMBibleBook:
     def checkSFMs( self ):
         """Runs a number of checks on the USFM codes in this Bible book."""
         allAvailableNewlineMarkers = self.USFMMarkers.getNewlineMarkersList()
+        allAvailableCharacterMarkers = self.USFMMarkers.getCharacterMarkersList( includeEndMarkers=True )
 
         newlineMarkerCounts, internalMarkerCounts, noteMarkerCounts = OrderedDict(), OrderedDict(), OrderedDict()
         #newlineMarkerCounts['Total'], internalMarkerCounts['Total'], noteMarkerCounts['Total'] = 0, 0, 0 # Put these first in the ordered dict
@@ -604,7 +605,7 @@ class USFMBibleBook:
                             #print( "here with remaining", extraType, extraText, thisExtraMarkers, hierarchy )
                             noteMarkerErrors.append( _("{} {}:{} These {} markers {} appear not to be closed in {}").format( self.bookReferenceCode, c, v, extraName, hierarchy, extraText ) )
                     adjExtraMarkers = thisExtraMarkers
-                    for uninterestingMarker in ('it*','it','nd*','nd','sc*','sc','bk*','bk'): # Remove character formatting markers so we can check the footnote/xref hierarchy
+                    for uninterestingMarker in allAvailableCharacterMarkers: # Remove character formatting markers so we can check the footnote/xref hierarchy
                         while uninterestingMarker in adjExtraMarkers: adjExtraMarkers.remove( uninterestingMarker )
                     if adjExtraMarkers not in self.USFMMarkers.getTypicalNoteSets( extraType ):
                         #print( "Got", extraType, extraText, thisExtraMarkers )
@@ -709,7 +710,8 @@ class USFMBibleBook:
             elif marker=='v' and text: v = text.split()[0]
 
             adjText = text
-            internalSFMsToRemove = ('\\bk*','\\bk','\\it*','\\it','\\wd*','\\wd') # List longest first
+            internalSFMsToRemove = self.USFMMarkers.getCharacterMarkersList( includeBackslash=True, includeEndMarkers=True )
+            internalSFMsToRemove = sorted( internalSFMsToRemove, key=len, reverse=True ) # List longest first
             for internalMarker in internalSFMsToRemove: adjText = adjText.replace( internalMarker, '' )
             if adjText: countCharacters( adjText )
 
@@ -767,7 +769,8 @@ class USFMBibleBook:
             # end of stripWordPunctuation
 
             allowedWordPunctuation = '-'
-            internalSFMsToRemove = ('\\bk*','\\bk','\\it*','\\it','\\wd*','\\wd') # List longest first
+            internalSFMsToRemove = self.USFMMarkers.getCharacterMarkersList( includeBackslash=True, includeEndMarkers=True )
+            internalSFMsToRemove = sorted( internalSFMsToRemove, key=len, reverse=True ) # List longest first
 
             words = segment.replace('—',' ').replace('–',' ').split() # Treat em-dash and en-dash as word break characters
             if lastWordTuple is None: ourLastWord, ourLastRawWord = '', '' # No need to check words repeated across segment boundaries
@@ -893,6 +896,8 @@ class USFMBibleBook:
 
     def checkNotes( self ):
         """Runs a number of checks on footnotes and cross-references."""
+        allAvailableCharacterMarkers = self.USFMMarkers.getCharacterMarkersList( includeBackslash=True )
+
         footnoteList, xrefList = [], []
         footnoteLeaderList, xrefLeaderList, CVSeparatorList = [], [], []
         footnoteErrors, xrefErrors, noteMarkerErrors = [], [], []
@@ -921,7 +926,9 @@ class USFMBibleBook:
                 # Get a list of markers and their contents
                 status, myString, lastCode, lastString, extraList = 0, '', '', '', []
                 #print( extraText )
-                for char in extraText.replace('\\it','__IT__').replace('\\nd','__ND__'): # Change character formatting
+                adjExtraText = extraText
+                for chMarker in allAvailableCharacterMarkers: adjExtraText = adjExtraText.replace( chMarker, '__' + chMarker[1:].upper() + '__' ) # Change character formatting
+                for char in adjExtraText:
                     if status==0: # waiting for leader char
                         if char==' ' and myString:
                             extraList.append( ('leader',myString,) )
