@@ -4,7 +4,7 @@
 # BibleBookOrdersConverter.py
 #
 # Module handling BibleBookOrderSystem_*.xml to produce C and Python data tables
-#   Last modified: 2011-05-29 (also update versionString below)
+#   Last modified: 2011-05-30 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -316,9 +316,9 @@ class BibleBookOrdersConverter:
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self.__filenameBase + "_Tables.pickle" )
         if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
-        with open( filepath, 'wb' ) as myFile:
-            pickle.dump( self.__DataDicts, myFile )
-            pickle.dump( self.__DataLists, myFile )
+        with open( filepath, 'wb' ) as pickleFile:
+            pickle.dump( self.__DataDicts, pickleFile )
+            pickle.dump( self.__DataLists, pickleFile )
     # end of pickle
 
     def exportDataToPython( self, filepath=None ):

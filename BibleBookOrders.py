@@ -73,7 +73,7 @@ class BibleBookOrderSystems:
                 for filename in os.listdir( standardXMLFolder ):
                     filepart, extension = os.path.splitext( filename )
                     XMLfilepath = os.path.join( standardXMLFolder, filename )
-                    if extension.upper() == '.XML' and filepart.upper().startswith("BIBLEBOOKORDERS_"):
+                    if extension.upper() == '.XML' and filepart.upper().startswith("BIBLEBOOKORDER_"):
                       if pickle8 <= os.stat( XMLfilepath )[8] \
                       or pickle9 <= os.stat( XMLfilepath )[9]: # The pickle file is older
                         picklesGood = False; break
@@ -84,9 +84,9 @@ class BibleBookOrderSystems:
                     self.__DataDicts = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
                     self.__DataLists = pickle.load( pickleFile )
             else: # We have to load the XML (much slower)
-                from BibleBooksNamesConverter import BibleBooksNamesConverter
+                from BibleBookOrdersConverter import BibleBookOrdersConverter
                 if XMLFolder is not None: logging.warning( _("Bible book orders are already loaded -- your given folder of '{}' was ignored").format(XMLFolder) )
-                bboc = BibleBooksNamesConverter()
+                bboc = BibleBookOrdersConverter()
                 bboc.loadSystems( XMLFolder ) # Load the XML (if not done already)
                 self.__DataDicts, self.__DataLists = bboc.importDataToPython() # Get the various dictionaries organised for quick lookup
         assert( len(self.__DataDicts) == len(self.__DataLists) )
