@@ -4,7 +4,7 @@
 # USFMMarkersTests.py
 #
 # Module testing USFMMarkers.py
-#   Last modified: 2011-05-29 (also update versionString below)
+#   Last modified: 2011-06-01 (also update versionString below)
 #
 # Copyright (C) 2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -196,7 +196,7 @@ class USFMMarkersTests( unittest.TestCase ):
             self.assertTrue( self.UMs.markerShouldBeClosed(simpleMarker) in ('A','S',) )
         for numberedMarker in ( 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', ):
             self.assertTrue( self.UMs.markerShouldBeClosed(numberedMarker) == 'N' )
-        for simpleMarker in ( 'id', 'ide', 'sts', 'rem', 'fig', ):
+        for simpleMarker in ( 'id', 'ide', 'sts', 'rem', 'periph', ):
             self.assertTrue( self.UMs.markerShouldBeClosed(simpleMarker) == 'N' )
         for badMarker in ( 'H', 'y', 'wd', 'Q1', 'q5', 'toc4', 'x*', '\\p', ):
             self.assertFalse( self.UMs.markerShouldBeClosed(badMarker) )
@@ -300,11 +300,92 @@ class USFMMarkersTests( unittest.TestCase ):
             self.assertFalse( badMarker in result )
     #end of test_180_getInternalMarkersList
 
-    def test_200_getMarkerListFromText( self ):
+    def test_190_getCharacterMarkersList( self ):
+        """ Test the getCharacterMarkersList function. """
+        result = self.UMs.getCharacterMarkersList()
+        self.assertTrue( isinstance( result, list ) )
+        self.assertGreater( len(result), 20 )
+        for something in result:
+            self.assertTrue( isinstance( something , str ) )
+            self.assertTrue( something )
+            self.assertFalse( '\\' in something )
+            self.assertFalse( '*' in something )
+            self.assertLess( len(something), 7 )
+        for goodMarker in ( 'em', 'nd', 'fig', 'sig', 'bk', 'wj', ):
+            self.assertTrue( goodMarker in result )
+        for goodMarker in ( 'x', 'xo', 'f', 'fr', 'ft', 'p', 'q', 'q1', ):
+            self.assertFalse( goodMarker in result )
+        for badMarker in ( 'H', 'xyz', 'q9', 'bk*', ):
+            self.assertFalse( badMarker in result )
+        result2 = self.UMs.getCharacterMarkersList( includeBackslash=True )
+        self.assertTrue( isinstance( result2, list ) )
+        self.assertEqual( len(result2), len(result) )
+        for something in result2:
+            self.assertTrue( isinstance( something , str ) )
+            self.assertTrue( something )
+            self.assertEqual( something[0], '\\' )
+            self.assertFalse( something[-1] == '\\' )
+            self.assertFalse( '*' in something )
+            self.assertLess( len(something), 7 )
+        for testCase in ('\\nd', '\\em'):
+            self.assertTrue( testCase in result2 )
+        result3 = self.UMs.getCharacterMarkersList( includeEndMarkers=True )
+        self.assertTrue( isinstance( result3, list ) )
+        self.assertEqual( len(result3), len(result)*2 )
+        for something in result3:
+            self.assertTrue( isinstance( something , str ) )
+            self.assertTrue( something )
+            self.assertFalse( '\\' in something )
+            self.assertLess( len(something), 7 )
+        for testCase in ('nd', 'nd*'):
+            self.assertTrue( testCase in result3 )
+        result4 = self.UMs.getCharacterMarkersList( includeBackslash=True, includeEndMarkers=True )
+        self.assertTrue( isinstance( result4, list ) )
+        self.assertEqual( len(result4), len(result)*2 )
+        for something in result4:
+            self.assertTrue( isinstance( something , str ) )
+            self.assertTrue( something )
+            self.assertEqual( something[0], '\\' )
+            self.assertFalse( something[-1] == '\\' )
+            self.assertLess( len(something), 7 )
+        for testCase in ('\\nd', '\\nd*'):
+            self.assertTrue( testCase in result4 )
+    #end of test_190_getCharacterMarkersList
+
+    def test_200_getTypicalNoteSets( self ):
+        """ Test the getTypicalNoteSets function. """
+        result1 = self.UMs.getTypicalNoteSets()
+        result2 = self.UMs.getTypicalNoteSets( 'All' )
+        self.assertTrue( isinstance( result1, tuple ) )
+        self.assertTrue( result1 == result2 )
+        self.assertGreater( len(result1), 20 )
+        for something in result1:
+            self.assertTrue( isinstance( something , list ) )
+            self.assertTrue( something )
+            self.assertGreater( len(something), 1 )
+        result3 = self.UMs.getTypicalNoteSets( 'fn' )
+        self.assertTrue( isinstance( result3, tuple ) )
+        self.assertLess( len(result3), len(result1) )
+        for something in result3:
+            self.assertTrue( isinstance( something , list ) )
+            self.assertTrue( something )
+            self.assertGreater( len(something), 1 )
+        result4 = self.UMs.getTypicalNoteSets( 'xr' )
+        self.assertTrue( isinstance( result4, tuple ) )
+        self.assertLess( len(result4), len(result1) )
+        for something in result4:
+            self.assertTrue( isinstance( something , list ) )
+            self.assertTrue( something )
+            self.assertGreater( len(something), 1 )
+        result5 = self.UMs.getTypicalNoteSets( 'pq' )
+        self.assertEqual( result5, None )
+    #end of test_200_getTypicalNoteSets
+
+    def test_210_getMarkerListFromText( self ):
         """ Test the getMarkerListFromText function. """
         self.assertEqual( self.UMs.getMarkerListFromText(''), [] )
         self.assertEqual( self.UMs.getMarkerListFromText('This \\bk book\\bk* is good'), [('bk',' ',5), ('bk','*',13)] )
-    #end of test_200_getMarkerListFromText
+    #end of test_210_getMarkerListFromText
 # end of USFMMarkersTests class
 
 

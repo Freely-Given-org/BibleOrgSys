@@ -109,15 +109,15 @@ class USFMBibleBook:
 
             # Fix up quote marks
             if '<' in adjText or '>' in adjText:
-                if not self.givenAngleBracketWarning: # Just give the warning once
-                    fixErrors.append( _("{} {}:{} Found angle brackets in {}: {}").format( bookReferenceCode, c, v, marker, text ) )
-                    if logErrors: logging.warning( _("Found angle bracket(s) after {} {}:{} in {}: {}").format( bookReferenceCode, c, v, marker, text ) )
+                if not self.givenAngleBracketWarning: # Just give the warning once (per book)
+                    fixErrors.append( _("{} {}:{} Replaced angle brackets in {}: {}").format( bookReferenceCode, c, v, marker, text ) )
+                    if logErrors: logging.info( _("Replaced angle bracket(s) after {} {}:{} in {}: {}").format( bookReferenceCode, c, v, marker, text ) )
                     self.givenAngleBracketWarning = True
                 adjText = adjText.replace('<<','“').replace('>>','”').replace('<','‘').replace('>','’') # Replace angle brackets with the proper opening and close quote marks
             if '"' in adjText:
-                if not self.givenDoubleQuoteWarning: # Just give the warning once
-                    fixErrors.append( _("{} {}:{} Found \" in {}: {}").format( bookReferenceCode, c, v, marker, adjText ) )
-                    if logErrors: logging.warning( _("Found \" after {} {}:{} in {}: {}").format( bookReferenceCode, c, v, marker, adjText ) )
+                if not self.givenDoubleQuoteWarning: # Just give the warning once (per book)
+                    fixErrors.append( _("{} {}:{} Replaced \" in {}: {}").format( bookReferenceCode, c, v, marker, adjText ) )
+                    if logErrors: logging.info( _("Replaced \" after {} {}:{} in {}: {}").format( bookReferenceCode, c, v, marker, adjText ) )
                     self.givenDoubleQuoteWarning = True
                 adjText = adjText.replace(' "',' “').replace('"','”') # Try to replace double-quote marks with the proper opening and closing quote marks
 
@@ -725,7 +725,7 @@ class USFMBibleBook:
                 cleanText = extraText
                 for sign in ('- ', '+ '): # Remove common leader characters (and the following space)
                     cleanText = cleanText.replace( sign, '' )
-                for marker in ('\\xo*','\\xo ','\\xt*','\\xt ','\\xdc*','\\xdc ','\\fr*','\\fr ','\\ft*','\\ft ','\\fq*','\\fq ','\\fv*','\\fv ','\\fk*','\\fk ',) + internalSFMsToRemove:
+                for marker in ['\\xo*','\\xo ','\\xt*','\\xt ','\\xdc*','\\xdc ','\\fr*','\\fr ','\\ft*','\\ft ','\\fq*','\\fq ','\\fv*','\\fv ','\\fk*','\\fk ',] + internalSFMsToRemove:
                     cleanText = cleanText.replace( marker, '' )
                 if cleanText: countCharacters( cleanText )
 
