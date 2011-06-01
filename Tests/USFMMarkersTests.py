@@ -4,7 +4,7 @@
 # USFMMarkersTests.py
 #
 # Module testing USFMMarkers.py
-#   Last modified: 2011-06-01 (also update versionString below)
+#   Last modified: 2011-06-02 (also update versionString below)
 #
 # Copyright (C) 2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module testing USFMMarkers.py.
 """
 
 progName = "USFM Markers tests"
-versionString = "0.52"
+versionString = "0.53"
 
 
 import sys, unittest
@@ -61,10 +61,12 @@ class USFMMarkersConverterTests( unittest.TestCase ):
         """ Test the importDataToPython function. """
         result = self.UMc.importDataToPython()
         self.assertTrue( isinstance( result, dict ) )
-        self.assertEqual( len(result), 9 )
-        for dictName in ("rawMarkerDict","numberedMarkerList","combinedMarkerDict","conversionDict","backConversionDict","newlineMarkersList","numberedNewlineMarkersList","combinedNewlineMarkersList","internalMarkersList",):
+        self.assertEqual( len(result), 11 )
+        for dictName in ( "rawMarkerDict", "numberedMarkerList", "combinedMarkerDict", "conversionDict", "backConversionDict", \
+                            "newlineMarkersList", "numberedNewlineMarkersList", "combinedNewlineMarkersList", \
+                            "internalMarkersList", "numberedInternalMarkersList", "combinedInternalMarkersList", ):
             self.assertTrue( dictName in result )
-            self.assertTrue( 10 < len(result[dictName]) < 255 )
+            self.assertTrue( 5 < len(result[dictName]) < 255 )
     # end of test_030_importDataToPython
 
     def test_040_pickle( self ):
@@ -201,6 +203,22 @@ class USFMMarkersTests( unittest.TestCase ):
         for badMarker in ( 'H', 'y', 'wd', 'Q1', 'q5', 'toc4', 'x*', '\\p', ):
             self.assertFalse( self.UMs.markerShouldBeClosed(badMarker) )
     # end of test_100_markerShouldBeClosed
+
+    def test_105_markerShouldHaveContent( self ):
+        """ Test the markerShouldHaveContent function. """
+        for simpleMarker in ( 'c', 'v', 'f', 'ft', 'x', 'xq', 'em', 'wj', 'ndx', ):
+            self.assertTrue( self.UMs.markerShouldHaveContent(simpleMarker) == 'A' )
+        for simpleMarker in ( 'p', ):
+            self.assertTrue( self.UMs.markerShouldHaveContent(simpleMarker) == 'S' )
+        for numberedMarker in ( 's1', 'ili1', 'ili2', 'ili3', ):
+            self.assertTrue( self.UMs.markerShouldHaveContent(numberedMarker) == 'A' )
+        for numberedMarker in ( 'q1', 'q2', 'q3', ):
+            self.assertTrue( self.UMs.markerShouldHaveContent(numberedMarker) == 'S' )
+        for simpleMarker in ( 'b', 'nb', 'pb', 'esb', 'ib', ):
+            self.assertTrue( self.UMs.markerShouldHaveContent(simpleMarker) == 'N' )
+        for badMarker in ( 'H', 'y', 'wd', 'Q1', 'q5', 'toc4', 'x*', '\\p', ):
+            self.assertFalse( self.UMs.markerShouldHaveContent(badMarker) )
+    # end of test_105_markerShouldHaveContent
 
     def test_110_toRawMarker( self ):
         """ Test the toRawMarker function. """

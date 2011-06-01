@@ -4,7 +4,7 @@
 # USFMMarkersConverter.py
 #
 # Module handling USFMMarkers.xml to produce C and Python data tables
-#   Last modified: 2011-05-29 (also update versionString below)
+#   Last modified: 2011-06-02 (also update versionString below)
 #
 # Copyright (C) 2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling USFMMarkers.xml and to export to JSON, C, and Python data tables
 """
 
 progName = "USFM Markers converter"
-versionString = "0.52"
+versionString = "0.53"
 
 
 import logging, os.path
@@ -250,7 +250,7 @@ class USFMMarkersConverter:
         rawMarkerDict, numberedMarkerList, combinedMarkerDict, = OrderedDict(), [], {}
         conversionDict, backConversionDict = {}, {}
         newlineMarkersList, numberedNewlineMarkersList, combinedNewlineMarkersList = [], [], []
-        internalMarkersList = []
+        internalMarkersList, numberedInternalMarkersList, combinedInternalMarkersList = [], [], []
         for element in self._XMLtree:
             # Get the required information out of the tree for this element
             # Start with the compulsory elements
@@ -301,10 +301,11 @@ class USFMMarkersConverter:
                     numberedMarkerList.append( numberedMarker )
                     combinedMarkerDict[numberedMarker] = marker
                     if marker in newlineMarkersList: numberedNewlineMarkersList.append( numberedMarker ); combinedNewlineMarkersList.append( numberedMarker )
-                    else: assert( False ) # programming error
+                    else: numberedInternalMarkersList.append( numberedMarker ); combinedInternalMarkersList.append( numberedMarker )
             else: # it's not numberable
                 numberedMarkerList.append( marker )
                 if marker in newlineMarkersList: numberedNewlineMarkersList.append( marker )
+                else: numberedInternalMarkersList.append( marker )
 
         #print( conversionDict ); print( backConversionDict )
         #print( "newlineMarkersList", len(newlineMarkersList), newlineMarkersList )
@@ -314,7 +315,7 @@ class USFMMarkersConverter:
         self.__DataDicts = { "rawMarkerDict":rawMarkerDict, "numberedMarkerList":numberedMarkerList, "combinedMarkerDict":combinedMarkerDict,
                                 "conversionDict":conversionDict, "backConversionDict":backConversionDict,
                                 "newlineMarkersList":newlineMarkersList, "numberedNewlineMarkersList":numberedNewlineMarkersList, "combinedNewlineMarkersList":combinedNewlineMarkersList,
-                                "internalMarkersList":internalMarkersList }
+                                "internalMarkersList":internalMarkersList, "numberedInternalMarkersList":numberedInternalMarkersList, "combinedInternalMarkersList":combinedInternalMarkersList, }
         return self.__DataDicts # Just delete any of the dictionaries that you don't need
     # end of importDataToPython
 
@@ -399,7 +400,9 @@ class USFMMarkersConverter:
                             "newlineMarkersList":(exportPythonList, "","rawMarker"),
                             "numberedNewlineMarkersList":(exportPythonList, "","rawMarker"),
                             "combinedNewlineMarkersList":(exportPythonList, "","rawMarker"),
-                            "internalMarkersList":(exportPythonList, "","rawMarker") }
+                            "internalMarkersList":(exportPythonList, "","rawMarker"),
+                            "numberedInternalMarkersList":(exportPythonList, "","rawMarker"),
+                            "combinedInternalMarkersList":(exportPythonList, "","rawMarker") }
             for dictName in self.__DataDicts:
                 exportFunction, keyComment, fieldsComment = dictInfo[dictName]
                 exportFunction( myFile, self.__DataDicts[dictName], dictName, keyComment, fieldsComment )

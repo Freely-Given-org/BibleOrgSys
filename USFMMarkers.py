@@ -4,7 +4,7 @@
 # USFMMarkers.py
 #
 # Module handling USFMMarkers
-#   Last modified: 2011-05-30 (also update versionString below)
+#   Last modified: 2011-06-02 (also update versionString below)
 #
 # Copyright (C) 2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling USFMMarkers.
 """
 
 progName = "USFM Markers handler"
-versionString = "0.52"
+versionString = "0.53"
 
 
 import logging, os.path
@@ -241,8 +241,22 @@ class USFMMarkers:
         if closed == "No": return "N"
         if closed == "Always": return "A"
         if closed == "Optional": return "S"
-        print( 'mcbc {}'.format( closed ))
+        print( 'msbc {}'.format( closed ))
         raise KeyError # Should be something better here
+    # end of markerShouldBeClosed
+
+    def markerShouldHaveContent( self, marker ):
+        """ Return "N", "S", "A" for "never", "sometimes", "always".
+            Returns False for an invalid marker. """
+        if marker not in self.__DataDicts["combinedMarkerDict"]: return False
+        hasContent = self.__DataDicts["rawMarkerDict"][self.toRawMarker(marker)]["hasContent"]
+        #if hasContent is None: return "N"
+        if hasContent == "Never": return "N"
+        if hasContent == "Always": return "A"
+        if hasContent == "Sometimes": return "S"
+        print( 'mshc {}'.format( hasContent ))
+        raise KeyError # Should be something better here
+    # end of markerShouldHaveContent
 
     def toRawMarker( self, marker ):
         """ Returns a marker without numerical suffixes, i.e., s1->s, q1->q, etc. """
