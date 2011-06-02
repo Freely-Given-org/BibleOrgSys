@@ -3,11 +3,11 @@
 #   Last modified: 2011-02-15
 #
 # On Linux, to convert to RNG, use
-#       trang BibleBooksCodes.rnc ../DerivedFiles/BibleBooksCodes.rng
+#       trang BibleBooksCodes.rnc DerivedFiles/BibleBooksCodes.rng
 # On Linux, to validate against the .rng file, use
-#       xmllint --noout --relaxng ../DerivedFiles/BibleBooksCodes.rng BibleBooksCodes.xml
+#       xmllint --noout --relaxng DerivedFiles/BibleBooksCodes.rng BibleBooksCodes.xml
 # or to validate against both this and the internal DTD, use
-#       xmllint --noout --relaxng ../DerivedFiles/BibleBooksCodes.rng --valid BibleBooksCodes.xml
+#       xmllint --noout --relaxng DerivedFiles/BibleBooksCodes.rng --valid BibleBooksCodes.xml
 #
 
 # The root element

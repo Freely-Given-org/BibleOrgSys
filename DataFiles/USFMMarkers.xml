@@ -781,7 +781,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <level>Newline</level>
     <numberable>Yes</numberable>
     <nests>No</nests>
-    <hasContent>Always</hasContent>
+    <hasContent>Sometimes</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
     <occursIn>Text</occursIn>

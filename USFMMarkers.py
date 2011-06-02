@@ -41,6 +41,7 @@ import Globals
 
 # Define commonly used sets of footnote and xref markers
 footnoteSets = (
+    ['fr', 'fr*'],
     ['fr', 'ft'], ['fr', 'ft', 'ft*'],
     ['fr', 'fq'], ['fr', 'fq', 'fq*'], \
     ['fr', 'ft', 'fq'], ['fr', 'ft', 'fq', 'fq*'], \

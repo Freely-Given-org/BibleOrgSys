@@ -1136,7 +1136,7 @@
       "printedFlag": true, 
       "nameEnglish": "Indented paragraph", 
       "compulsoryFlag": false, 
-      "hasContent": "Always", 
+      "hasContent": "Sometimes", 
       "closed": "No", 
       "level": "Newline", 
       "numberableFlag": true, 
