@@ -180,6 +180,18 @@ class USFMMarkersTests( unittest.TestCase ):
             self.assertFalse( self.UMs.isNumberableMarker(badMarker) )
     # end of test_080_isNumberableMarker
 
+    def test_085_isNestingMarker( self ):
+        """ Test the isNestingMarker function. """
+        for simpleMarker in ( 'it', 'nd', 'bk', 'em', 'wj', ):
+            self.assertTrue( self.UMs.isNestingMarker(simpleMarker) )
+        for numberedMarker in ( 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', ):
+            self.assertFalse( self.UMs.isNestingMarker(numberedMarker) )
+        for simpleMarker in ( 'h', 's', 'q', 'ili', 'p', 'b', 'toc1', 'f', 'ft', 'x', 'xq', ):
+            self.assertFalse( self.UMs.isNestingMarker(simpleMarker) )
+        for badMarker in ( 'H', 'y', 'Q1', 'q5', 'toc4', 'x*', '\\p', ):
+            self.assertFalse( self.UMs.isNestingMarker(badMarker) )
+    # end of test_085_isNestingMarker
+
     def test_090_isPrinted( self ):
         """ Test the isPrinted function. """
         for numberedMarker in ( 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', ):

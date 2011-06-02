@@ -8,6 +8,7 @@ This file gives a table of USFM markers:
     compulsory: Yes or No
     level: Newline or Internal (within a line) type field
     numberable: Yes or No
+    nests: Yes or No
     hasContent (on the same line after a space): Sometimes, Always or Never
     closed (for character fields only): Always or Optional
     occursIn: a brief description of the context where this SFM can be used
@@ -36,12 +37,13 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
                 <!ELEMENT identifier (#PCDATA)>
                     <!ATTLIST identifier type (URL) #REQUIRED>
                 <!ELEMENT rights (#PCDATA)>
-        <!ELEMENT USFMMarker (nameEnglish,marker,compulsory,level,numberable,hasContent,printed,closed,occursIn,description?)>
+        <!ELEMENT USFMMarker (nameEnglish,marker,compulsory,level,numberable,nests,hasContent,printed,closed,occursIn,description?)>
             <!ELEMENT nameEnglish (#PCDATA)>
             <!ELEMENT marker (#PCDATA)>
             <!ELEMENT compulsory (#PCDATA)>
             <!ELEMENT level (#PCDATA)>
             <!ELEMENT numberable (#PCDATA)>
+            <!ELEMENT nests (#PCDATA)>
             <!ELEMENT hasContent (#PCDATA)>
             <!ELEMENT printed (#PCDATA)>
             <!ELEMENT closed (#PCDATA)>
@@ -70,6 +72,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>Yes</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>No</printed>
     <closed>No</closed>
@@ -83,6 +86,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>No</printed>
     <closed>No</closed>
@@ -96,6 +100,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>No</printed>
     <closed>No</closed>
@@ -109,6 +114,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>No</printed>
     <closed>No</closed>
@@ -122,6 +128,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>Yes</compulsory>
     <level>Newline</level>
     <numberable>Yes</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -135,6 +142,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -148,6 +156,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -161,6 +170,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -176,6 +186,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>Yes</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -189,6 +200,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>Yes</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -201,6 +213,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -213,6 +226,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -225,6 +239,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -237,6 +252,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -249,6 +265,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -261,6 +278,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -273,6 +291,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -286,6 +305,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>Yes</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -298,6 +318,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Never</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -311,6 +332,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>Yes</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -323,6 +345,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -335,6 +358,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>Yes</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -348,6 +372,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Always</closed>
@@ -361,6 +386,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -374,6 +400,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Always</closed>
@@ -387,6 +414,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>Yes</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -400,6 +428,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -415,6 +444,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>Yes</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -428,6 +458,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>Yes</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -441,6 +472,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>Yes</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -454,6 +486,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -467,6 +500,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>Yes</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -480,6 +514,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -493,6 +528,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -506,6 +542,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Always</closed>
@@ -519,6 +556,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -532,6 +570,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>No</printed>
     <closed>No</closed>
@@ -547,6 +586,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>Yes</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -560,6 +600,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -573,9 +614,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
+    <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
-    <hasContent>Always</hasContent>
     <occursIn>Text</occursIn>
     <description>Used when the chosen publishing presentation will render chapter divisions as headings, and not drop cap numerals. Usage note: If \cl is entered once before chapter 1 (\c 1) it represents the text for "chapter" to be used throughout the current book. If \cl is used after each individual chapter marker, it represents the particular text to be used for the display of the current chapter heading (usually done if numbers are being presented as words, not numerals).</description>
   </USFMMarker>
@@ -586,6 +628,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -599,6 +642,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -612,6 +656,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>Yes</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -625,6 +670,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -638,6 +684,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -653,6 +700,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Sometimes</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -666,6 +714,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Sometimes</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -679,6 +728,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -691,6 +741,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Sometimes</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -703,6 +754,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -715,6 +767,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -727,6 +780,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>Yes</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -740,6 +794,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Sometimes</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -753,6 +808,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Never</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -766,6 +822,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -779,6 +836,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>Yes</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -792,6 +850,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -805,6 +864,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -818,6 +878,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>Yes</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -831,6 +892,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Never</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -846,6 +908,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>Yes</numberable>
+    <nests>No</nests>
     <hasContent>Sometimes</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -859,6 +922,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -872,6 +936,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -884,6 +949,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Always</closed>
@@ -897,6 +963,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -909,6 +976,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Always</closed>
@@ -922,6 +990,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>Yes</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -937,6 +1006,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -950,6 +1020,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>Yes</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -963,6 +1034,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>Yes</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -976,6 +1048,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>Yes</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -989,6 +1062,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>Yes</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -1004,6 +1078,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Always</closed>
@@ -1017,6 +1092,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Always</closed>
@@ -1030,6 +1106,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Optional</closed>
@@ -1043,6 +1120,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Optional</closed>
@@ -1056,6 +1134,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Optional</closed>
@@ -1069,6 +1148,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Optional</closed>
@@ -1082,6 +1162,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Optional</closed>
@@ -1095,6 +1176,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Optional</closed>
@@ -1108,6 +1190,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Optional</closed>
@@ -1121,6 +1204,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Optional</closed>
@@ -1134,6 +1218,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Always</closed>
@@ -1147,6 +1232,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Always</closed>
@@ -1162,6 +1248,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Always</closed>
@@ -1175,6 +1262,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Optional</closed>
@@ -1188,6 +1276,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Optional</closed>
@@ -1201,6 +1290,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Optional</closed>
@@ -1214,6 +1304,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Optional</closed>
@@ -1227,6 +1318,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Always</closed>
@@ -1240,6 +1332,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Always</closed>
@@ -1253,6 +1346,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Always</closed>
@@ -1268,6 +1362,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>Yes</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Always</closed>
@@ -1281,6 +1376,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>Yes</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Always</closed>
@@ -1293,6 +1389,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Always</closed>
@@ -1306,6 +1403,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Always</closed>
@@ -1318,6 +1416,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -1331,6 +1430,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>Yes</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Always</closed>
@@ -1343,6 +1443,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>Yes</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Always</closed>
@@ -1356,6 +1457,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>Yes</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Always</closed>
@@ -1368,6 +1470,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>Yes</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Always</closed>
@@ -1381,6 +1484,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>Yes</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Always</closed>
@@ -1394,6 +1498,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Always</closed>
@@ -1407,6 +1512,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>Yes</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Always</closed>
@@ -1420,6 +1526,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>Yes</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Always</closed>
@@ -1433,6 +1540,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>Yes</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Always</closed>
@@ -1445,6 +1553,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>Yes</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Always</closed>
@@ -1457,6 +1566,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>Yes</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Always</closed>
@@ -1469,6 +1579,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Always</closed>
@@ -1481,6 +1592,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>Yes</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Always</closed>
@@ -1493,6 +1605,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>Yes</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Always</closed>
@@ -1506,6 +1619,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Never</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -1519,6 +1633,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>No</printed>
     <closed>Always</closed>
@@ -1531,6 +1646,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>No</printed>
     <closed>Always</closed>
@@ -1544,6 +1660,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>No</printed>
     <closed>Always</closed>
@@ -1557,6 +1674,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Always</closed>
@@ -1570,6 +1688,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>No</printed>
     <closed>Always</closed>
@@ -1583,6 +1702,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Internal</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>No</printed>
     <closed>Always</closed>
@@ -1598,6 +1718,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
@@ -1610,6 +1731,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <compulsory>No</compulsory>
     <level>Newline</level>
     <numberable>No</numberable>
+    <nests>No</nests>
     <hasContent>Never</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>

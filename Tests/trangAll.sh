@@ -2,7 +2,7 @@
 #
 # trangAll.sh
 #
-#   Last modified: 2011-05-28 by RJH
+#   Last modified: 2011-06-02 by RJH
 #
 # Create the rng files for the RNC schema files in the DataFiles folder
 # This should be run from the BibleOrgSys folder
@@ -33,6 +33,7 @@ echo "Creating RelaxNG files from rnc files..."
 # In the main data files folder
 trang $dataFolder/iso_639_3.rnc $outputFolder/iso_639_3.rng
 trang $dataFolder/BibleBooksCodes.rnc $outputFolder/BibleBooksCodes.rng
+trang $dataFolder/USFMMarkers.rnc $outputFolder/USFMMarkers.rng
 trang $dataFolder/BibleOrganizationalSystems.rnc $outputFolder/BibleOrganizationalSystems.rng
 
 # In data files subfolders

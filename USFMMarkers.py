@@ -227,6 +227,11 @@ class USFMMarkers:
         if marker not in self.__DataDicts["combinedMarkerDict"]: return False
         return self.__DataDicts["rawMarkerDict"][self.toRawMarker(marker)]["numberableFlag"]
 
+    def isNestingMarker( self, marker ):
+        """ Return True or False. """
+        if marker not in self.__DataDicts["combinedMarkerDict"]: return False
+        return self.__DataDicts["rawMarkerDict"][self.toRawMarker(marker)]["nestsFlag"]
+
     def isPrinted( self, marker ):
         """ Return True or False. """
         if marker not in self.__DataDicts["combinedMarkerDict"]: return False

@@ -525,6 +525,9 @@ class USFMBibleBook:
                 elif section!='' and newSection=='Header': newlineMarkerErrors.append( _("{} {}:{} Didn't expect Header section after {} section (with {} marker)").format( self.bookReferenceCode, c, v, section, marker ) )
                 if section=='Header' and newSection!='Introduction': newlineMarkerErrors.append( _("{} {}:{} Missing Introduction section (went straight to {} section with {} marker)").format( self.bookReferenceCode, c, v, newSection, marker ) )
                 elif section!='Header' and newSection=='Introduction': newlineMarkerErrors.append( _("{} {}:{} Didn't expect Introduction section after {} section (with {} marker)").format( self.bookReferenceCode, c, v, section, marker ) )
+                if section=='Introduction' and newSection!='Text': newlineMarkerErrors.append( _("{} {}:{} Missing Text section (went straight to {} section with {} marker)").format( self.bookReferenceCode, c, v, newSection, marker ) )
+                elif section!='Introduction' and newSection=='Text': newlineMarkerErrors.append( _("{} {}:{} Didn't expect Text section after {} section (with {} marker)").format( self.bookReferenceCode, c, v, section, marker ) )
+                print( "section", newSection )
                 section = newSection
 
             # Note the newline SFM order -- create a list of markers in order (with duplicates combined, e.g., \v \v -> \v)

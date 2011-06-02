@@ -1,13 +1,13 @@
 # USFMMarkers.rnc           Relax NG Compact Syntax schema file
-#   Version 0.50
-#   Last modified: 2011-05-09
+#   Version 0.53
+#   Last modified: 2011-06-02
 #
 # On Linux, to convert to RNG, use
-#       trang USFMMarkers.rnc ../DerivedFiles/USFMMarkers.rng
+#       trang USFMMarkers.rnc DerivedFiles/USFMMarkers.rng
 # On Linux, to validate against the .rng file, use
-#       xmllint --noout --relaxng ../DerivedFiles/USFMMarkers.rng USFMMarkers.xml
+#       xmllint --noout --relaxng DerivedFiles/USFMMarkers.rng USFMMarkers.xml
 # or to validate against both this and the internal DTD, use
-#       xmllint --noout --relaxng ../DerivedFiles/USFMMarkers.rng --valid USFMMarkers.xml
+#       xmllint --noout --relaxng DerivedFiles/USFMMarkers.rng --valid USFMMarkers.xml
 #
 
 # The root element
@@ -44,6 +44,7 @@ USFMMarker = element USFMMarker
     element compulsory { "Yes"|"No" },
     element level { "Newline"|"Internal" },
     element numberable { "Yes"|"No" },
+    element nests { "Yes"|"No" },
     element hasContent { "Always"|"Sometimes"|"Never" },
     element printed { "Yes"|"No" },
     element closed { "No"|"Always"|"Optional" },

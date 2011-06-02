@@ -64,7 +64,7 @@ class USFMMarkersConverter:
         self._compulsoryAttributes = ()
         self._optionalAttributes = ()
         self._uniqueAttributes = self._compulsoryAttributes + self._optionalAttributes
-        self._compulsoryElements = ( "nameEnglish", "marker", "compulsory", "level", "numberable", "hasContent", "printed", "closed", "occursIn", )
+        self._compulsoryElements = ( "nameEnglish", "marker", "compulsory", "level", "numberable", "nests", "hasContent", "printed", "closed", "occursIn", )
         self._optionalElements = ( "description", )
         #self._uniqueElements = self._compulsoryElements + self.optionalElements
         self._uniqueElements = ( "nameEnglish", "marker", )
@@ -269,6 +269,9 @@ class USFMMarkersConverter:
             if  numberable not in ( "Yes", "No" ): logging.error( _("Unexpected '{}' numberable field for marker '{}'").format( numberable, marker ) )
             numberableFlag = numberable == "Yes"
             if numberableFlag and level == "Character": logging.error( _("Unexpected '{}' numberable field for character marker '{}'").format( numberable, marker ) )
+            nests = element.find("nests").text
+            if  nests not in ( "Yes", "No" ): logging.error( _("Unexpected '{}' nests field for marker '{}'").format( nests, marker ) )
+            nestsFlag = nests == "Yes"
             hasContent = element.find("hasContent").text
             if  hasContent not in ( "Always", "Never", "Sometimes" ): logging.error( _("Unexpected '{}' hasContent field for marker '{}'").format( hasContent, marker ) )
             printed = element.find("printed").text
@@ -290,7 +293,7 @@ class USFMMarkersConverter:
             # Now put it into my dictionaries and lists for easy access
             #   The marker is lowercase by definition
             if "marker" in self._uniqueElements: assert( marker not in rawMarkerDict ) # Shouldn't be any duplicates
-            rawMarkerDict[marker] = { "compulsoryFlag":compulsoryFlag, "level":level, "numberableFlag":numberableFlag,
+            rawMarkerDict[marker] = { "compulsoryFlag":compulsoryFlag, "level":level, "numberableFlag":numberableFlag, "nestsFlag":nestsFlag,
                                         "hasContent":hasContent, "occursIn":occursIn, "printedFlag":printedFlag, "closed":closed, "description":description, "nameEnglish":nameEnglish }
             combinedMarkerDict[marker] = marker
             if numberableFlag: # We have some extra work to do
