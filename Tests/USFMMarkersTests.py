@@ -61,12 +61,13 @@ class USFMMarkersConverterTests( unittest.TestCase ):
         """ Test the importDataToPython function. """
         result = self.UMc.importDataToPython()
         self.assertTrue( isinstance( result, dict ) )
-        self.assertEqual( len(result), 11 )
+        self.assertEqual( len(result), 12 )
         for dictName in ( "rawMarkerDict", "numberedMarkerList", "combinedMarkerDict", "conversionDict", "backConversionDict", \
                             "newlineMarkersList", "numberedNewlineMarkersList", "combinedNewlineMarkersList", \
-                            "internalMarkersList", "numberedInternalMarkersList", "combinedInternalMarkersList", ):
+                            "internalMarkersList", "numberedInternalMarkersList", "combinedInternalMarkersList", \
+                            "deprecatedMarkersList", ):
             self.assertTrue( dictName in result )
-            self.assertTrue( 5 < len(result[dictName]) < 255 )
+            self.assertTrue( 3 < len(result[dictName]) < 200 )
     # end of test_030_importDataToPython
 
     def test_040_pickle( self ):
@@ -153,6 +154,20 @@ class USFMMarkersTests( unittest.TestCase ):
         for badMarker in ( 'H', 'y', 'Q1', 'q5', 'toc4', 'x*', '\\p', ):
             self.assertFalse( self.UMs.isInternalMarker(badMarker) )
     # end of test_060_isNewlineMarker
+
+    def test_065_isDeprecatedMarker( self ):
+        """ Test the isDeprecatedMarker function. """
+        for simpleMarker in ( 'pdi', 'pde', 'wr', 'ps', ):
+            self.assertTrue( self.UMs.isDeprecatedMarker(simpleMarker) )
+        for simpleMarker in ( 'p', 'c', 'b', 'v', 'toc1', ):
+            self.assertFalse( self.UMs.isDeprecatedMarker(simpleMarker) )
+        for numberableMarker in ( 'h', 'q', 'ili', ):
+            self.assertFalse( self.UMs.isDeprecatedMarker(numberableMarker) )
+        for numberedMarker in ( 'h1', 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', ):
+            self.assertFalse( self.UMs.isDeprecatedMarker(numberedMarker) )
+        for badMarker in ( 'H', 'y', 'Q1', 'q5', 'toc4', 'x*', '\\p', ):
+            self.assertFalse( self.UMs.isDeprecatedMarker(badMarker) )
+    # end of test_065_isDeprecatedMarker
 
     def test_070_isCompulsoryMarker( self ):
         """ Test the isCompulsoryMarker function. """

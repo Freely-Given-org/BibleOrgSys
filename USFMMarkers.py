@@ -152,12 +152,12 @@ class USFMMarkers:
         """
         Constructor: 
         """
-        self.__DataDicts = None # We'll import into this in loadData
+        self.__DataDict = None # We'll import into this in loadData
     # end of __init__
 
     def loadData( self, XMLFilepath=None ):
         """ Loads the XML data file and imports it to dictionary format (if not done already). """
-        if not self.__DataDicts: # We need to load them once -- don't do this unnecessarily
+        if not self.__DataDict: # We need to load them once -- don't do this unnecessarily
             # See if we can load from the pickle file (faster than loading from the XML)
             standardXMLFilepath = os.path.join( "DataFiles", "USFMMarkers.xml" )
             standardPickleFilepath = os.path.join( "DataFiles", "DerivedFiles", "USFMMarkers_Tables.pickle" )
@@ -168,13 +168,13 @@ class USFMMarkers:
                 import pickle
                 if Globals.verbosityLevel > 2: print( "Loading pickle file {}...".format( standardPickleFilepath ) )
                 with open( standardPickleFilepath, 'rb') as pickleFile:
-                    self.__DataDicts = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
+                    self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
             else: # We have to load the XML (much slower)
                 from USFMMarkersConverter import USFMMarkersConverter
                 if XMLFilepath is not None: logging.warning( _("USFM markers are already loaded -- your given filepath of '{}' was ignored").format(XMLFilepath) )
                 umc = USFMMarkersConverter()
                 umc.loadAndValidate( XMLFilepath ) # Load the XML (if not done already)
-                self.__DataDicts = umc.importDataToPython() # Get the various dictionaries organised for quick lookup
+                self.__DataDict = umc.importDataToPython() # Get the various dictionaries organised for quick lookup
         return self
     # end of loadData
 
@@ -187,61 +187,65 @@ class USFMMarkers:
         """
         indent = 2
         result = "USFM Markers object"
-        result += ('\n' if result else '') + ' '*indent + _("Number of entries = {}").format( len(self.__DataDicts["rawMarkerDict"]) )
+        result += ('\n' if result else '') + ' '*indent + _("Number of entries = {}").format( len(self.__DataDict["rawMarkerDict"]) )
         if Globals.verbosityLevel > 2:
             indent = 4
-            result += ('\n' if result else '') + ' '*indent + _("Number of raw new line markers = {}").format( len(self.__DataDicts["newlineMarkersList"]) )
-            result += ('\n' if result else '') + ' '*indent + _("Number of internal markers = {}").format( len(self.__DataDicts["internalMarkersList"]) )
+            result += ('\n' if result else '') + ' '*indent + _("Number of raw new line markers = {}").format( len(self.__DataDict["newlineMarkersList"]) )
+            result += ('\n' if result else '') + ' '*indent + _("Number of internal markers = {}").format( len(self.__DataDict["internalMarkersList"]) )
         return result
     # end of __str__
 
     def __len__( self ):
         """ Return the number of available markers. """
-        return len(self.__DataDicts["combinedMarkerDict"])
+        return len(self.__DataDict["combinedMarkerDict"])
 
     def __contains__( self, marker ):
         """ Returns True or False. """
-        return marker in self.__DataDicts["combinedMarkerDict"]
+        return marker in self.__DataDict["combinedMarkerDict"]
 
     def isValidMarker( self, marker ):
         """ Returns True or False. """
-        return marker in self.__DataDicts["combinedMarkerDict"]
+        return marker in self.__DataDict["combinedMarkerDict"]
 
     def isNewlineMarker( self, marker ):
         """ Return True or False. """
-        if marker not in self.__DataDicts["combinedMarkerDict"]: return False
-        return self.toRawMarker(marker) in self.__DataDicts["combinedNewlineMarkersList"]
+        if marker not in self.__DataDict["combinedMarkerDict"]: return False
+        return self.toRawMarker(marker) in self.__DataDict["combinedNewlineMarkersList"]
 
     def isInternalMarker( self, marker ):
         """ Return True or False. """
-        if marker not in self.__DataDicts["combinedMarkerDict"]: return False
-        return self.toRawMarker(marker) in self.__DataDicts["internalMarkersList"]
+        if marker not in self.__DataDict["combinedMarkerDict"]: return False
+        return self.toRawMarker(marker) in self.__DataDict["internalMarkersList"]
+
+    def isDeprecatedMarker( self, marker ):
+        """ Return True or False. """
+        return marker in self.__DataDict["deprecatedMarkersList"]
 
     def isCompulsoryMarker( self, marker ):
         """ Return True or False. """
-        if marker not in self.__DataDicts["combinedMarkerDict"]: return False
-        return self.__DataDicts["rawMarkerDict"][self.toRawMarker(marker)]["compulsoryFlag"]
+        if marker not in self.__DataDict["combinedMarkerDict"]: return False
+        return self.__DataDict["rawMarkerDict"][self.toRawMarker(marker)]["compulsoryFlag"]
 
     def isNumberableMarker( self, marker ):
         """ Return True or False. """
-        if marker not in self.__DataDicts["combinedMarkerDict"]: return False
-        return self.__DataDicts["rawMarkerDict"][self.toRawMarker(marker)]["numberableFlag"]
+        if marker not in self.__DataDict["combinedMarkerDict"]: return False
+        return self.__DataDict["rawMarkerDict"][self.toRawMarker(marker)]["numberableFlag"]
 
     def isNestingMarker( self, marker ):
         """ Return True or False. """
-        if marker not in self.__DataDicts["combinedMarkerDict"]: return False
-        return self.__DataDicts["rawMarkerDict"][self.toRawMarker(marker)]["nestsFlag"]
+        if marker not in self.__DataDict["combinedMarkerDict"]: return False
+        return self.__DataDict["rawMarkerDict"][self.toRawMarker(marker)]["nestsFlag"]
 
     def isPrinted( self, marker ):
         """ Return True or False. """
-        if marker not in self.__DataDicts["combinedMarkerDict"]: return False
-        return self.__DataDicts["rawMarkerDict"][self.toRawMarker(marker)]["printedFlag"]
+        if marker not in self.__DataDict["combinedMarkerDict"]: return False
+        return self.__DataDict["rawMarkerDict"][self.toRawMarker(marker)]["printedFlag"]
 
     def markerShouldBeClosed( self, marker ):
         """ Return "N", "S", "A" for "never", "sometimes", "always".
             Returns False for an invalid marker. """
-        if marker not in self.__DataDicts["combinedMarkerDict"]: return False
-        closed = self.__DataDicts["rawMarkerDict"][self.toRawMarker(marker)]["closed"]
+        if marker not in self.__DataDict["combinedMarkerDict"]: return False
+        closed = self.__DataDict["rawMarkerDict"][self.toRawMarker(marker)]["closed"]
         #if closed is None: return "N"
         if closed == "No": return "N"
         if closed == "Always": return "A"
@@ -253,8 +257,8 @@ class USFMMarkers:
     def markerShouldHaveContent( self, marker ):
         """ Return "N", "S", "A" for "never", "sometimes", "always".
             Returns False for an invalid marker. """
-        if marker not in self.__DataDicts["combinedMarkerDict"]: return False
-        hasContent = self.__DataDicts["rawMarkerDict"][self.toRawMarker(marker)]["hasContent"]
+        if marker not in self.__DataDict["combinedMarkerDict"]: return False
+        hasContent = self.__DataDict["rawMarkerDict"][self.toRawMarker(marker)]["hasContent"]
         #if hasContent is None: return "N"
         if hasContent == "Never": return "N"
         if hasContent == "Always": return "A"
@@ -265,35 +269,35 @@ class USFMMarkers:
 
     def toRawMarker( self, marker ):
         """ Returns a marker without numerical suffixes, i.e., s1->s, q1->q, etc. """
-        return self.__DataDicts["combinedMarkerDict"][marker]
+        return self.__DataDict["combinedMarkerDict"][marker]
 
     def toStandardMarker( self, marker ):
         """ Returns a standard marker, i.e., s->s1, q->q1, etc. """
-        if marker in self.__DataDicts["conversionDict"]: return self.__DataDicts["conversionDict"][marker]
+        if marker in self.__DataDict["conversionDict"]: return self.__DataDict["conversionDict"][marker]
         #else
-        if marker in self.__DataDicts["combinedMarkerDict"]: return marker
+        if marker in self.__DataDict["combinedMarkerDict"]: return marker
         #else must be something wrong
         raise KeyError
     # end of toStandardMarker
 
     def markerOccursIn( self, marker ):
         """ Return a short string, e.g. "Introduction", "Text". """
-        return self.__DataDicts["rawMarkerDict"][self.toRawMarker(marker)]["occursIn"]
+        return self.__DataDict["rawMarkerDict"][self.toRawMarker(marker)]["occursIn"]
 
     def getMarkerEnglishName( self, marker ):
         """ Returns the English name for a marker.
                 Use getOccursInList() to get a list of all possibilities. """
-        return self.__DataDicts["rawMarkerDict"][self.toRawMarker(marker)]["nameEnglish"]
+        return self.__DataDict["rawMarkerDict"][self.toRawMarker(marker)]["nameEnglish"]
 
     def getMarkerDescription( self, marker ):
         """ Returns the description for a marker (or None). """
-        return self.__DataDicts["rawMarkerDict"][self.toRawMarker(marker)]["description"]
+        return self.__DataDict["rawMarkerDict"][self.toRawMarker(marker)]["description"]
 
     def getOccursInList( self ):
         """ Returns a list of strings which markerOccursIn can return. """
         oiList = []
-        for marker in self.__DataDicts["rawMarkerDict"]:
-            occursIn = self.__DataDicts["rawMarkerDict"][marker]['occursIn']
+        for marker in self.__DataDict["rawMarkerDict"]:
+            occursIn = self.__DataDict["rawMarkerDict"][marker]['occursIn']
             if occursIn not in oiList: oiList.append( occursIn )
         return oiList
     # end of getOccursInList
@@ -301,21 +305,21 @@ class USFMMarkers:
     def getNewlineMarkersList( self, option='Combined' ):
         """ Returns a list of all new line markers. """
         assert( option in ('Raw','Numbered','Combined') )
-        if option=='Combined': return self.__DataDicts["combinedNewlineMarkersList"]
-        elif option=='Raw': return self.__DataDicts["numberedNewlineMarkersList"]
-        elif option=='Numbered': return self.__DataDicts["newlineMarkersList"]
+        if option=='Combined': return self.__DataDict["combinedNewlineMarkersList"]
+        elif option=='Raw': return self.__DataDict["numberedNewlineMarkersList"]
+        elif option=='Numbered': return self.__DataDict["newlineMarkersList"]
     # end of getNewlineMarkersList
 
     def getInternalMarkersList( self ):
         """ Returns a list of all internal markers.
             This includes character, footnote and xref markers. """
-        return self.__DataDicts["internalMarkersList"]
+        return self.__DataDict["internalMarkersList"]
 
     def getCharacterMarkersList( self, includeBackslash=False, includeEndMarkers=False ):
         """ Returns a list of all character markers.
             This excludes footnote and xref markers. """
         result = []
-        for marker in self.__DataDicts["internalMarkersList"]:
+        for marker in self.__DataDict["internalMarkersList"]:
             if marker!='f' and marker!='x' and self.markerOccursIn(marker)=="Text":
                 adjMarker = '\\'+marker if includeBackslash else marker
                 result.append( adjMarker )

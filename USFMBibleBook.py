@@ -187,15 +187,26 @@ class USFMBibleBook:
                 # Check markers inside the lines
                 markerList = self.USFMMarkers.getMarkerListFromText( text )
                 #if markerList: print( "\nText {} {}:{} = {}:'{}'".format(self.bookReferenceCode, c, v, marker, text)); print( markerList )
-                closed = True
+                openList = []
                 for insideMarker, nextSignificantChar, iMIndex in markerList: # check character markers
-                    if self.USFMMarkers.isInternalMarker(insideMarker) and closed==True and nextSignificantChar in ('',' '): closed = insideMarker
-                    if closed!=True and nextSignificantChar=='*' and insideMarker==closed: closed = True
-                if closed!=True:
-                    loadErrors.append( _("{} {}:{} Marker '{}' doesn't appear to be closed in {}: {}").format( self.bookReferenceCode, c, v, closed, marker, text ) )
-                    if logErrors: logging.warning( _("Marker '{}' doesn't appear to be closed after {} {}:{} in {}: {}").format( closed, self.bookReferenceCode, c, v, marker, text ) )
-                    self.addPriorityError( 36, self.bookReferenceCode, c, v, _("Marker {} should be closed").format( closed ) )
-                    text += '\\' + closed + '*' # Try closing it for them
+                    if not openList: # no open markers
+                        if self.USFMMarkers.isInternalMarker(insideMarker) and nextSignificantChar in ('',' '): openList.append( insideMarker ) # Got a new marker
+                    else: # have at least one open marker
+                        if nextSignificantChar=='*':
+                            if insideMarker==openList[-1]: openList.pop() # We got the correct closing marker
+                            else:
+                                loadErrors.append( _("{} {}:{} Wrong {}* closing marker for {} in {}: {}").format( self.bookReferenceCode, c, v, insideMarker, openList[-1], marker, text ) )
+                                if logErrors: logging.warning( _("Wrong {}* closing marker for {} after {} {}:{} in {}: {}").format( insideMarker, openList[-1], self.bookReferenceCode, c, v, marker, text ) )
+                                self.addPriorityError( 66, self.bookReferenceCode, c, v, _("Wrong {}* closing marker for {}").format( insideMarker, openList[-1] ) )
+                        elif self.USFMMarkers.isInternalMarker(insideMarker): # it's not an asterisk so appears to be another marker
+                            if self.USFMMarkers.isNestingMarker( openList[-1] ): openList.pop() # Let this marker close the last one
+                            openList.append( insideMarker ) # Now have multiple entries in the openList
+                        else: raise ValueError("Haven't handled this case yet {}: {}".format( marker, text ) )
+                if openList:
+                    loadErrors.append( _("{} {}:{} Marker(s) {} don't appear to be closed in {}: {}").format( self.bookReferenceCode, c, v, openList, marker, text ) )
+                    if logErrors: logging.warning( _("Marker(s) {} don't appear to be closed after {} {}:{} in {}: {}").format( openList, self.bookReferenceCode, c, v, marker, text ) )
+                    self.addPriorityError( 36, self.bookReferenceCode, c, v, _("Marker(s) {} should be closed").format( openList ) )
+                    if len(openList) == 1: text += '\\' + openList[-1] + '*' # Try closing the last one for them
                 ix = 0
                 for insideMarker, nextSignificantChar, iMIndex in markerList: # check paragraph markers
                     if self.USFMMarkers.isNewlineMarker(insideMarker): # Need to split the line for everything else to work properly
@@ -290,12 +301,18 @@ class USFMBibleBook:
                 validationErrors.append( _("{} {}:{} Marker 'id' should only appear as the first marker in a book but found on line {} in {}: {}").format( self.bookReferenceCode, c, v, j, marker, text ) )
                 if logErrors: logging.error( _("Marker 'id' should only appear as the first marker in a book but found on line {} after {} {}:{} in {}: {}").format( j, self.bookReferenceCode, c, v, marker, text ) )
             if not self.USFMMarkers.isNewlineMarker( marker ):
-                validationErrors.append( _("{} {}:{} Unexpected '{}' new line marker in Bible book (Text is '{}')").format( self.bookReferenceCode, c, v, marker, text ) )
-                if logErrors: logging.warning( _("Unexpected '{}' paragraph marker in Bible book after {} {}:{} (Text is '{}')").format( marker, self.bookReferenceCode, c, v, text ) )
+                validationErrors.append( _("{} {}:{} Unexpected '{}' newline marker in Bible book (Text is '{}')").format( self.bookReferenceCode, c, v, marker, text ) )
+                if logErrors: logging.warning( _("Unexpected '{}' newline marker in Bible book after {} {}:{} (Text is '{}')").format( marker, self.bookReferenceCode, c, v, text ) )
+            if self.USFMMarkers.isDeprecatedMarker( marker ):
+                validationErrors.append( _("{} {}:{} Deprecated '{}' newline marker in Bible book (Text is '{}')").format( self.bookReferenceCode, c, v, marker, text ) )
+                if logErrors: logging.warning( _("Deprecated '{}' newline marker in Bible book after {} {}:{} (Text is '{}')").format( marker, self.bookReferenceCode, c, v, text ) )
             markerList = self.USFMMarkers.getMarkerListFromText( text )
             #if markerList: print( "\nText = {}:'{}'".format(marker,text)); print( markerList )
             closed = True
             for insideMarker, nextSignificantChar, iMIndex in markerList: # check character markers
+                if self.USFMMarkers.isDeprecatedMarker( insideMarker ):
+                    validationErrors.append( _("{} {}:{} Deprecated '{}' internal marker in Bible book (Text is '{}')").format( self.bookReferenceCode, c, v, insideMarker, text ) )
+                    if logErrors: logging.warning( _("Deprecated '{}' internal marker in Bible book after {} {}:{} (Text is '{}')").format( insideMarker, self.bookReferenceCode, c, v, text ) )
                 if self.USFMMarkers.isInternalMarker(insideMarker) and closed==True and nextSignificantChar in ('',' '): closed = insideMarker
                 if closed!=True and nextSignificantChar=='*' and insideMarker==closed: closed = True
             if closed!=True:
@@ -522,12 +539,14 @@ class USFMBibleBook:
             if newSection != section: # Check changes into new sections
                 #print( section, marker, newSection )
                 if section=='' and newSection!='Header': newlineMarkerErrors.append( _("{} {}:{} Missing Header section (went straight to {} section with {} marker)").format( self.bookReferenceCode, c, v, newSection, marker ) )
-                elif section!='' and newSection=='Header': newlineMarkerErrors.append( _("{} {}:{} Didn't expect Header section after {} section (with {} marker)").format( self.bookReferenceCode, c, v, section, marker ) )
+                elif section!='' and newSection=='Header': newlineMarkerErrors.append( _("{} {}:{} Didn't expect {} section after {} section (with {} marker)").format( self.bookReferenceCode, c, v, newSection, section, marker ) )
                 if section=='Header' and newSection!='Introduction': newlineMarkerErrors.append( _("{} {}:{} Missing Introduction section (went straight to {} section with {} marker)").format( self.bookReferenceCode, c, v, newSection, marker ) )
-                elif section!='Header' and newSection=='Introduction': newlineMarkerErrors.append( _("{} {}:{} Didn't expect Introduction section after {} section (with {} marker)").format( self.bookReferenceCode, c, v, section, marker ) )
+                elif section!='Header' and newSection=='Introduction': newlineMarkerErrors.append( _("{} {}:{} Didn't expect {} section after {} section (with {} marker)").format( self.bookReferenceCode, c, v, newSection, section, marker ) )
                 if section=='Introduction' and newSection!='Text': newlineMarkerErrors.append( _("{} {}:{} Missing Text section (went straight to {} section with {} marker)").format( self.bookReferenceCode, c, v, newSection, marker ) )
-                elif section!='Introduction' and newSection=='Text': newlineMarkerErrors.append( _("{} {}:{} Didn't expect Text section after {} section (with {} marker)").format( self.bookReferenceCode, c, v, section, marker ) )
-                print( "section", newSection )
+                elif section!='Introduction' and newSection=='Text': newlineMarkerErrors.append( _("{} {}:{} Didn't expect {} section after {} section (with {} marker)").format( self.bookReferenceCode, c, v, newSection, section, marker ) )
+                if section=='Text' and newSection!='Text, Poetry': newlineMarkerErrors.append( _("{} {}:{} Unexpected section after {} section (went to {} section with {} marker)").format( self.bookReferenceCode, c, v, section, newSection, marker ) )
+                elif section!='Text' and newSection=='Text, Poetry': newlineMarkerErrors.append( _("{} {}:{} Didn't expect {} section after {} section (with {} marker)").format( self.bookReferenceCode, c, v, newSection, section, marker ) )
+                #print( "section", newSection )
                 section = newSection
 
             # Note the newline SFM order -- create a list of markers in order (with duplicates combined, e.g., \v \v -> \v)

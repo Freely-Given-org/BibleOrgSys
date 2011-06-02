@@ -40,6 +40,9 @@ from singleton import singleton
 import Globals
 
 
+deprecatedUSFMMarkers = [ 'pdi', 'pde', 'wr', 'ps' ] # These aren't listed in the XML file
+
+
 @singleton # Can only ever have one instance
 class USFMMarkersConverter:
     """
@@ -256,6 +259,7 @@ class USFMMarkersConverter:
             # Start with the compulsory elements
             nameEnglish = element.find("nameEnglish").text # This name is really just a comment element
             marker = element.find("marker").text
+            assert( marker not in deprecatedUSFMMarkers )
             if marker.lower() != marker:
                 logging.error( _("Marker '{}' should be lower case").format( marker ) )
             compulsory = element.find("compulsory").text
@@ -318,7 +322,8 @@ class USFMMarkersConverter:
         self.__DataDicts = { "rawMarkerDict":rawMarkerDict, "numberedMarkerList":numberedMarkerList, "combinedMarkerDict":combinedMarkerDict,
                                 "conversionDict":conversionDict, "backConversionDict":backConversionDict,
                                 "newlineMarkersList":newlineMarkersList, "numberedNewlineMarkersList":numberedNewlineMarkersList, "combinedNewlineMarkersList":combinedNewlineMarkersList,
-                                "internalMarkersList":internalMarkersList, "numberedInternalMarkersList":numberedInternalMarkersList, "combinedInternalMarkersList":combinedInternalMarkersList, }
+                                "internalMarkersList":internalMarkersList, "numberedInternalMarkersList":numberedInternalMarkersList, "combinedInternalMarkersList":combinedInternalMarkersList,
+                                "deprecatedMarkersList":deprecatedUSFMMarkers, }
         return self.__DataDicts # Just delete any of the dictionaries that you don't need
     # end of importDataToPython
 
@@ -405,7 +410,8 @@ class USFMMarkersConverter:
                             "combinedNewlineMarkersList":(exportPythonList, "","rawMarker"),
                             "internalMarkersList":(exportPythonList, "","rawMarker"),
                             "numberedInternalMarkersList":(exportPythonList, "","rawMarker"),
-                            "combinedInternalMarkersList":(exportPythonList, "","rawMarker") }
+                            "combinedInternalMarkersList":(exportPythonList, "","rawMarker"),
+                            "deprecatedMarkersList":(exportPythonList, "","rawMarker") }
             for dictName in self.__DataDicts:
                 exportFunction, keyComment, fieldsComment = dictInfo[dictName]
                 exportFunction( myFile, self.__DataDicts[dictName], dictName, keyComment, fieldsComment )

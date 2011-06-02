@@ -598,12 +598,12 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <nameEnglish>Alternate (second) chapter number</nameEnglish>
     <marker>ca</marker>
     <compulsory>No</compulsory>
-    <level>Newline</level>
+    <level>Internal</level>
     <numberable>No</numberable>
     <nests>No</nests>
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
-    <closed>No</closed>
+    <closed>Always</closed>
     <occursIn>Text</occursIn>
     <description>Used for marking the chapter number used in an alternate versification scheme. Required when different versification traditions need to be supported in the same translation text.</description>
   </USFMMarker>
