@@ -4,7 +4,7 @@
 # BibleBooksCodes.py
 #
 # Module handling BibleBooksCodes functions
-#   Last modified: 2011-05-30 (also update versionString below)
+#   Last modified: 2011-06-13 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -31,7 +31,7 @@ progName = "Bible Books Codes handler"
 versionString = "0.55"
 
 
-import os
+import os, logging
 from gettext import gettext as _
 from collections import OrderedDict
 

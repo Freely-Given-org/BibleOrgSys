@@ -3,7 +3,7 @@
 # USFMBibleBook.py
 #
 # Module handling the USFM markers for Bible books
-#   Last modified: 2011-06-02 by RJH (also update versionString below)
+#   Last modified: 2011-06-13 by RJH (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -60,7 +60,7 @@ class USFMBibleBook:
         self.USFMMarkers = USFMMarkers().loadData()
         self.errorDictionary = OrderedDict()
         self.errorDictionary['Priority Errors'] = [] # Put this one first in the ordered dictionary
-        self.givenAngleBracketWarning, self.givenDoubleQuoteWarning = False, False
+        self.givenAngleBracketWarning = self.givenDoubleQuoteWarning = False
 
         # Set up filled containers for the object
         self.BibleBooksCodes = BibleBooksCodes().loadData()
@@ -152,6 +152,20 @@ class USFMBibleBook:
                 # Remove the footnote or xref
                 #print( "Found {} at {} {} in '{}'".format( thisOne, ix1, ix2, adjText ) )
                 note = adjText[ix1+3:ix2] # Get the note text (without the beginning and end markers)
+                if not note:
+                    fixErrors.append( _("{} {}:{} Found empty {} in {}: {}").format( bookReferenceCode, c, v, thisOne, marker, adjText ) )
+                    if logErrors: logging.error( _("Found empty {} after {} {}:{} in {}: {}").format( thisOne, bookReferenceCode, c, v, marker, adjText ) )
+                    self.addPriorityError( 53, self.bookReferenceCode, c, v, _("Empty {}").format( thisOne ) )
+                elif note[0].isspace():
+                    fixErrors.append( _("{} {}:{} Found {} starting with space in {}: {}").format( bookReferenceCode, c, v, thisOne, marker, adjText ) )
+                    if logErrors: logging.error( _("Found {} starting with space after {} {}:{} in {}: {}").format( thisOne, bookReferenceCode, c, v, marker, adjText ) )
+                    self.addPriorityError( 12, self.bookReferenceCode, c, v, _("{} starts with space").format( thisOne.title() ) )
+                    note = note.lstrip()
+                elif note[-1].isspace():
+                    fixErrors.append( _("{} {}:{} Found {} ending with space in {}: {}").format( bookReferenceCode, c, v, thisOne, marker, adjText ) )
+                    if logErrors: logging.error( _("Found {} ending with space after {} {}:{} in {}: {}").format( thisOne, bookReferenceCode, c, v, marker, adjText ) )
+                    self.addPriorityError( 11, self.bookReferenceCode, c, v, _("{} ends with space").format( thisOne.title() ) )
+                    note = note.rstrip()
                 adjText = adjText[:ix1] + adjText[ix2+3:] # Remove the note completely from the text
                 extras.append( (this1,ix1,note,) ) # Saves a 3-tuple: type ('fn' or 'xr'), index into the main text line, the actual fn or xref contents
                 ixFN = adjText.find( '\\f ' )
@@ -210,8 +224,8 @@ class USFMBibleBook:
         originalBook.read( self.sourceFilepath, encoding=encoding )
 
         # Do some important cleaning up before we save the data
-        c, v = '0', '0'
-        lastMarker, lastText = '', ''
+        c = v = '0'
+        lastMarker = lastText = ''
         loadErrors, fixErrors = [], []
         for marker,text in originalBook.lines: # Always process a line behind in case we have to combine lines
             # Keep track of where we are for more helpful error messages
@@ -262,7 +276,7 @@ class USFMBibleBook:
         assert( self.lines )
         validationErrors = []
 
-        c, v = '0', '0'
+        c = v = '0'
         for j, (marker,text,extras) in enumerate(self.lines):
             #print( marker, text[:40] )
 
@@ -361,7 +375,7 @@ class USFMBibleBook:
 
         versification, omittedVerses, combinedVerses, reorderedVerses = [], [], [], []
         chapterText, chapterNumber, lastChapterNumber = '0', 0, 0
-        verseText, verseNumberString, lastVerseNumberString = '0', '0', '0'
+        verseText = verseNumberString = lastVerseNumberString = '0'
         for marker,text,extras in self.lines:
             #print( marker, text )
             if marker == 'c':
@@ -378,7 +392,7 @@ class USFMBibleBook:
                     versificationErrors.append( _("{} ({} after {}) USFM chapter numbers out of sequence in Bible book").format( self.bookReferenceCode, chapterNumber, lastChapterNumber ) )
                     if logErrors: logging.error( _("USFM chapter numbers out of sequence in Bible book {} ({} after {})").format( self.bookReferenceCode, chapterNumber, lastChapterNumber ) )
                 lastChapterNumber = chapterNumber
-                verseText, verseNumberString, lastVerseNumberString = '0', '0', '0'
+                verseText = verseNumberString = lastVerseNumberString = '0'
             elif marker == 'cp':
                 versificationErrors.append( _("{} {}:{} Encountered cp field {}").format( self.bookReferenceCode, chapterNumber, lastVerseNumberString, text ) )
                 if logErrors: logging.warning( _("Encountered cp field {} after {}:{} of {}").format( text, chapterNumber, lastVerseNumberString, self.bookReferenceCode ) )
@@ -491,7 +505,8 @@ class USFMBibleBook:
         newlineMarkerErrors, internalMarkerErrors, noteMarkerErrors = [], [], []
         functionalCounts = {}
         modifiedMarkerList = []
-        c, v, section = '0', '0', ''
+        c = v = '0'
+        section = ''
         for marker,text,extras in self.lines:
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text:
@@ -584,7 +599,7 @@ class USFMBibleBook:
                             else:
                                 internalMarkerErrors.append( _("{} {}:{} Unexpected {}{} marker in {}: {}").format( self.bookReferenceCode, c, v, insideMarker, nextSignificantChar, marker, text ) )
                                 if logErrors: logging.warning( _("Unexpected {}{} marker after {} {}:{} in {}: {}").format( insideMarker, nextSignificantChar, self.bookReferenceCode, c, v, marker, text ) )
-                                self.addPriorityError( 66, self.bookReferenceCode, c, v, _("Unexpecte {}{} marker").format( insideMarker, nextSignificantChar ) )
+                                self.addPriorityError( 66, self.bookReferenceCode, c, v, _("Unexpected {}{} marker").format( insideMarker, nextSignificantChar ) )
                         else: # have at least one open marker
                             if nextSignificantChar=='*':
                                 if insideMarker==openList[-1]: openList.pop() # We got the correct closing marker
@@ -704,7 +719,7 @@ class USFMBibleBook:
             if (ix==0 or modifiedMarkerList[ix-1]!='mt1') and (ix==len(modifiedMarkerList)-1 or modifiedMarkerList[ix+1]!='mt1'):
                 newlineMarkerErrors.append( _("{} Expected mt2 marker to be next to an mt1 marker in {}...").format( self.bookReferenceCode, modifiedMarkerList[:10] ) )
 
-        if 'SFMs' not in self.errorDictionary: self.errorDictionary['SFMs'] = OrderedDict()
+        if 'SFMs' not in self.errorDictionary: self.errorDictionary['SFMs'] = OrderedDict() # So we hopefully get the errors first
         if newlineMarkerErrors: self.errorDictionary['SFMs']['Newline Marker Errors'] = newlineMarkerErrors
         if internalMarkerErrors: self.errorDictionary['SFMs']['Internal Marker Errors'] = internalMarkerErrors
         if noteMarkerErrors: self.errorDictionary['SFMs']['Footnote and Cross-Reference Marker Errors'] = noteMarkerErrors
@@ -732,6 +747,7 @@ class USFMBibleBook:
 
     def checkCharacters( self ):
         """Runs a number of checks on the characters used."""
+        if Globals.verbosityLevel > 2: import unicodedata
 
         def countCharacters( adjText ):
             """ Counts the characters for the given text (with internal markers already removed). """
@@ -744,27 +760,34 @@ class USFMBibleBook:
             if self.USFMMarkers.isPrinted( marker ): # Only do character counts on lines that will be printed
                 for char in adjText:
                     lcChar = char.lower()
-                    characterCounts[char] = 1 if char not in characterCounts else characterCounts[char] + 1
+                    if Globals.verbosityLevel > 2:
+                        charName = unicodedata.name( char )
+                        lcCharName = unicodedata.name( lcChar )
+                    else: # normal verbosity
+                        if char==' ': charName = lcCharName = 'Space'
+                        elif char==chr(0): charName = lcCharName = 'Null'
+                        else: charName, lcCharName = char, lcChar
+                    characterCounts[charName] = 1 if charName not in characterCounts else characterCounts[charName] + 1
                     if char==' ' or char =='-' or char.isalpha():
-                        letterCounts[lcChar] = 1 if lcChar not in letterCounts else letterCounts[lcChar] + 1
+                        letterCounts[lcCharName] = 1 if lcCharName not in letterCounts else letterCounts[lcCharName] + 1
                     elif not char.isalnum(): # Assume it's punctuation
-                        punctuationCounts[char] = 1 if char not in punctuationCounts else punctuationCounts[char] + 1
+                        punctuationCounts[charName] = 1 if charName not in punctuationCounts else punctuationCounts[charName] + 1
                         if char not in allWordPunctChars:
-                            characterErrors.append( _("{} {}:{} Invalid '{}' word-building character").format( self.bookReferenceCode, c, v, char ) )
-                            self.addPriorityError( 10, self.bookReferenceCode, c, v, _("Invalid '{}' word-building character").format( char ) )
+                            characterErrors.append( _("{} {}:{} Invalid '{}' word-building character").format( self.bookReferenceCode, c, v, charName ) )
+                            self.addPriorityError( 10, self.bookReferenceCode, c, v, _("Invalid '{}' word-building character").format( charName ) )
                 for char in leadingWordPunctChars:
                     if adjText[-1]==char or char+' ' in adjText:
-                            characterErrors.append( _("{} {}:{} Misplaced '{}' word leading character").format( self.bookReferenceCode, c, v, char ) )
-                            self.addPriorityError( 21, self.bookReferenceCode, c, v, _("Misplaced '{}' word leading character").format( char ) )
+                            characterErrors.append( _("{} {}:{} Misplaced '{}' word leading character").format( self.bookReferenceCode, c, v, charName ) )
+                            self.addPriorityError( 21, self.bookReferenceCode, c, v, _("Misplaced '{}' word leading character").format( charName ) )
                 for char in trailingWordPunctChars:
                     if adjText[0]==char or ' '+char in adjText:
-                            characterErrors.append( _("{} {}:{} Misplaced '{}' word trailing character").format( self.bookReferenceCode, c, v, char ) )
-                            self.addPriorityError( 20, self.bookReferenceCode, c, v, _("Misplaced '{}' word trailing character").format( char ) )
+                            characterErrors.append( _("{} {}:{} Misplaced '{}' word trailing character").format( self.bookReferenceCode, c, v, charName ) )
+                            self.addPriorityError( 20, self.bookReferenceCode, c, v, _("Misplaced '{}' word trailing character").format( charName ) )
         # end of countCharacters
 
         characterCounts, letterCounts, punctuationCounts = {}, {}, {} # We don't care about the order in which they appeared
         characterErrors = []
-        c, v = '0', '0'
+        c = v = '0'
         for marker,text,extras in self.lines:
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text: c = text.split()[0]; v = '0'
@@ -834,7 +857,7 @@ class USFMBibleBook:
             internalSFMsToRemove = sorted( internalSFMsToRemove, key=len, reverse=True ) # List longest first
 
             words = segment.replace('—',' ').replace('–',' ').split() # Treat em-dash and en-dash as word break characters
-            if lastWordTuple is None: ourLastWord, ourLastRawWord = '', '' # No need to check words repeated across segment boundaries
+            if lastWordTuple is None: ourLastWord = ourLastRawWord = '' # No need to check words repeated across segment boundaries
             else: # Check in case a word has been repeated (e.g., at the end of one verse and then again at the beginning of the next verse)
                 assert( isinstance( lastWordTuple, tuple ) )
                 assert( len(lastWordTuple) == 2)
@@ -873,7 +896,7 @@ class USFMBibleBook:
         wordCounts, caseInsensitiveWordCounts = {}, {}
         wordErrors, repeatedWordErrors = [], []
         lastTextWordTuple = ('','')
-        c, v = '0', '0'
+        c = v = '0'
         for marker,text,extras in self.lines:
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text: c = text.split()[0]; v = '0'
@@ -897,7 +920,7 @@ class USFMBibleBook:
                 countWords( extraType, cleanText )
 
         # Add up the totals
-        if (wordErrors or wordCounts or caseInsensitiveWordCounts) and 'Words' not in self.errorDictionary: self.errorDictionary['Words'] = {} # Don't think it needs to be OrderedDict()
+        if (wordErrors or wordCounts or caseInsensitiveWordCounts) and 'Words' not in self.errorDictionary: self.errorDictionary['Words'] = OrderedDict() # So we hopefully get the errors first
         if wordErrors: self.errorDictionary['Words']['Possible Word Errors'] = wordErrors
         if wordCounts:
             total = 0
@@ -915,7 +938,7 @@ class USFMBibleBook:
     def checkHeadings( self ):
         """Runs a number of checks on headings and section cross-references."""
         titleList, headingList, sectionReferenceList, headingErrors = [], [], [], []
-        c, v = '0', '0'
+        c = v = '0'
         for marker,text,extras in self.lines:
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text: c = text.split()[0]; v = '0'
@@ -947,12 +970,74 @@ class USFMBibleBook:
                     headingErrors.append( _("{} {}:{} Section cross-reference not in parenthesis: {}").format( self.bookReferenceCode, c, v, text ) )
                     self.addPriorityError( 67, self.bookReferenceCode, c, v, _("Section cross-reference not in parenthesis") )
 
-        if (headingErrors or titleList or headingList or sectionReferenceList) and 'Headings' not in self.errorDictionary: self.errorDictionary['Headings'] = {} # Don't think it needs to be OrderedDict()
+        if (headingErrors or titleList or headingList or sectionReferenceList) and 'Headings' not in self.errorDictionary: self.errorDictionary['Headings'] = OrderedDict() # So we hopefully get the errors first
         if headingErrors: self.errorDictionary['Headings']['Possible Heading Errors'] = headingErrors
         if titleList: self.errorDictionary['Headings']['Title Lines'] = titleList
         if headingList: self.errorDictionary['Headings']['Section Heading Lines'] = headingList
         if sectionReferenceList: self.errorDictionary['Headings']['Section Cross-reference Lines'] = sectionReferenceList
     # end of checkHeadings
+
+
+    def checkIntroduction( self ):
+        """Runs a number of checks on introductory parts."""
+        mainTitleList, headingList, titleList, outlineList, introductionErrors = [], [], [], [], []
+        c = v = '0'
+        for marker,text,extras in self.lines:
+            # Keep track of where we are for more helpful error messages
+            if marker=='c' and text: c = text.split()[0]; v = '0'
+            elif marker=='v' and text: v = text.split()[0]
+
+            if marker in ('imt1','imt2','imt3','imt4',):
+                if marker=='imt1': mainTitleList.append( "{} {}:{} '{}'".format( self.bookReferenceCode, c, v, text ) )
+                else: mainTitleList.append( "{} {}:{} ({}) '{}'".format( self.bookReferenceCode, c, v, marker, text ) )
+                if not text:
+                    introductionErrors.append( _("{} {}:{} Missing heading text for marker {}").format( self.bookReferenceCode, c, v, marker ) )
+                    self.addPriorityError( 39, self.bookReferenceCode, c, v, _("Missing heading text") )
+                elif text[-1]=='.':
+                    introductionErrors.append( _("{} {}:{} {} heading ends with a period: {}").format( self.bookReferenceCode, c, v, marker, text ) )
+                    self.addPriorityError( 49, self.bookReferenceCode, c, v, _("Heading ends with a period") )
+            elif marker in ('is1','is2','is3','is4',):
+                if marker=='is1': headingList.append( "{} {}:{} '{}'".format( self.bookReferenceCode, c, v, text ) )
+                else: headingList.append( "{} {}:{} ({}) '{}'".format( self.bookReferenceCode, c, v, marker, text ) )
+                if not text:
+                    introductionErrors.append( _("{} {}:{} Missing heading text for marker {}").format( self.bookReferenceCode, c, v, marker ) )
+                    self.addPriorityError( 39, self.bookReferenceCode, c, v, _("Missing heading text") )
+                elif text[-1]=='.':
+                    introductionErrors.append( _("{} {}:{} {} heading ends with a period: {}").format( self.bookReferenceCode, c, v, marker, text ) )
+                    self.addPriorityError( 49, self.bookReferenceCode, c, v, _("Heading ends with a period") )
+            elif marker=='iot':
+                titleList.append( "{} {}:{} '{}'".format( self.bookReferenceCode, c, v, text ) )
+                if not text:
+                    introductionErrors.append( _("{} {}:{} Missing outline title text for marker {}").format( self.bookReferenceCode, c, v, marker ) )
+                    self.addPriorityError( 38, self.bookReferenceCode, c, v, _("Missing outline title text") )
+                elif text[-1]=='.':
+                    introductionErrors.append( _("{} {}:{} {} heading ends with a period: {}").format( self.bookReferenceCode, c, v, marker, text ) )
+                    self.addPriorityError( 48, self.bookReferenceCode, c, v, _("Heading ends with a period") )
+            elif marker in ('io1','io2','io3','io4',):
+                if marker=='io1': outlineList.append( "{} {}:{} '{}'".format( self.bookReferenceCode, c, v, text ) )
+                else: outlineList.append( "{} {}:{} ({}) '{}'".format( self.bookReferenceCode, c, v, marker, text ) )
+                if not text:
+                    introductionErrors.append( _("{} {}:{} Missing outline text for marker {}").format( self.bookReferenceCode, c, v, marker ) )
+                    self.addPriorityError( 37, self.bookReferenceCode, c, v, _("Missing outline text") )
+                elif text[-1]=='.':
+                    introductionErrors.append( _("{} {}:{} {} outline entry ends with a period: {}").format( self.bookReferenceCode, c, v, marker, text ) )
+                    self.addPriorityError( 47, self.bookReferenceCode, c, v, _("Outline entry ends with a period") )
+            elif marker in ('ip','ipi','im','imi',):
+                if not text:
+                    introductionErrors.append( _("{} {}:{} Missing introduction text for marker {}").format( self.bookReferenceCode, c, v, marker ) )
+                    self.addPriorityError( 36, self.bookReferenceCode, c, v, _("Missing introduction text") )
+                elif not text.endswith('.') and not text.endswith('.)') and not text.endswith('.”') and not text.endswith('.’') and not text.endswith('.\\it*'):
+                    introductionErrors.append( _("{} {}:{} {} introduction text does not end with a period: {}").format( self.bookReferenceCode, c, v, marker, text ) )
+                    self.addPriorityError( 46, self.bookReferenceCode, c, v, _("Introduction text ends without a period") )
+
+        if (introductionErrors or mainTitleList or headingList or titleList or outlineList) and 'Introduction' not in self.errorDictionary:
+            self.errorDictionary['Introduction'] = OrderedDict() # So we hopefully get the errors first
+        if introductionErrors: self.errorDictionary['Introduction']['Possible Introduction Errors'] = introductionErrors
+        if mainTitleList: self.errorDictionary['Introduction']['Main Title Lines'] = mainTitleList
+        if headingList: self.errorDictionary['Introduction']['Section Heading Lines'] = headingList
+        if titleList: self.errorDictionary['Introduction']['Outline Title Lines'] = titleList
+        if outlineList: self.errorDictionary['Introduction']['Outline Entry Lines'] = outlineList
+    # end of checkIntroduction
 
 
     def checkNotes( self ):
@@ -963,7 +1048,7 @@ class USFMBibleBook:
         footnoteLeaderList, xrefLeaderList, CVSeparatorList = [], [], []
         footnoteErrors, xrefErrors, noteMarkerErrors = [], [], []
         leaderCounts = {}
-        c, v = '0', '0'
+        c = v = '0'
         for marker,text,extras in self.lines:
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text: c = text.split()[0]; v = '0'
@@ -1025,7 +1110,14 @@ class USFMBibleBook:
                             if myString==lastCode: # closed the last one
                                 status, myString, lastCode = 1, '', ''
                             else:
-                                print( "error with", lastCode, extraList, myString ); halt
+                                if extraType == 'fn':
+                                    footnoteErrors.append( _("{} {}:{} Footnote markers don't match: '{}' and '{}'").format( self.bookReferenceCode, c, v, lastCode, myString+'*' ) )
+                                    self.addPriorityError( 32, self.bookReferenceCode, c, v, _("Mismatching footnote markers") )
+                                elif extraType == 'xr':
+                                    xrefErrors.append( _("{} {}:{} Cross-reference don't match: '{}' and '{}'").format( self.bookReferenceCode, c, v, lastCode, myString+'*' ) )
+                                    self.addPriorityError( 31, self.bookReferenceCode, c, v, _("Mismatching cross-reference markers") )
+                                #print( "checkNotes: error with", lastCode, extraList, myString, self.bookReferenceCode, c, v, ); halt
+                                status, myString, lastCode = 1, '', '' # Treat the last one as closed
                         elif char==' ' and myString:
                             lastCode = myString
                             status, myString = 3, ''
@@ -1071,7 +1163,7 @@ class USFMBibleBook:
 
                 # Find, count and check CVSeparators
                 #  and also check that the references match
-                fnCVSeparator, xrCVSeparator, fnTrailer, xfTrailer = '', '', '', ''
+                fnCVSeparator = xrCVSeparator = fnTrailer = xrTrailer = ''
                 for noteMarker,noteText in extraList:
                     if noteMarker=='fr':
                         for j,char in enumerate(noteText):
@@ -1099,21 +1191,25 @@ class USFMBibleBook:
                                 leaderCounts[leaderName] = 1 if leaderName not in leaderCounts else (leaderCounts[leaderName] + 1)
                                 if char not in CVSeparatorList: CVSeparatorList.append( char )
                                 break
-                        if not noteText[-1].isdigit(): xrTrailer = noteText[-1] # Sometimes these references end with a trailer character like a colon
+                        if not noteText[-1].isalnum(): xrTrailer = noteText[-1] # Sometimes these references end with a trailer character like a colon
                         CV1 = v if self.isOneChapterBook else (c + xrCVSeparator + v) # Make up our own reference string
                         CV2 = CV1 + xrTrailer # Make up our own reference string
                         if CV2 != noteText:
+                            #print( "v='{}'  xrT='{}'  CV1='{}'  CV2='{}'  NT='{}'".format( v, xrTrailer, CV1, CV2, noteText ) )
                             if CV1 not in noteText:
                                 #print( 'xr', CV1, noteText )
                                 xrefErrors.append( _("{} {}:{} Cross-reference anchor reference seems not to match: '{}'").format( self.bookReferenceCode, c, v, noteText ) )
                                 self.addPriorityError( 41, self.bookReferenceCode, c, v, _("Cross-reference anchor reference mismatch") )
+                            elif noteText.startswith(CV2) or noteText.startswith(CV1+',') or noteText.startswith(CV1+'-'):
+                                #print( "  ok" )
+                                pass # it seems that the reference is contained there in the anchor
                             else: xrefErrors.append( _("{} {}:{} Cross-reference anchor reference possibly does not match: '{}'").format( self.bookReferenceCode, c, v, noteText ) )
                         break # Only process the first xo field
                                 
                 # much more yet to be written ................
 
         if (footnoteErrors or xrefErrors or noteMarkerErrors or footnoteList or xrefList or leaderCounts) and 'Notes' not in self.errorDictionary:
-            self.errorDictionary['Notes'] = {} # Don't think it needs to be OrderedDict()
+            self.errorDictionary['Notes'] = OrderedDict() # So we hopefully get the errors first
         if footnoteErrors: self.errorDictionary['Notes']['Footnote Errors'] = footnoteErrors
         if xrefErrors: self.errorDictionary['Notes']['Cross-reference Errors'] = xrefErrors
         if noteMarkerErrors: self.errorDictionary['Notes']['Note Marker Errors'] = noteMarkerErrors
@@ -1125,68 +1221,6 @@ class USFMBibleBook:
             if len(xrefLeaderList) > 1: self.addPriorityError( 25, self.bookReferenceCode, '-', '-', _("Mutiple different cross-reference leader characters: {}").format( xrefLeaderList ) )
             if len(CVSeparatorList) > 1: self.addPriorityError( 27, self.bookReferenceCode, '-', '-', _("Mutiple different chapter/verse separator characters: {}").format( CVSeparatorList ) )
     # end of checkNotes
-
-
-    def checkIntroduction( self ):
-        """Runs a number of checks on introductory parts."""
-        mainTitleList, headingList, titleList, outlineList, introductionErrors = [], [], [], [], []
-        c, v = '0', '0'
-        for marker,text,extras in self.lines:
-            # Keep track of where we are for more helpful error messages
-            if marker=='c' and text: c = text.split()[0]; v = '0'
-            elif marker=='v' and text: v = text.split()[0]
-
-            if marker in ('imt1','imt2','imt3','imt4',):
-                if marker=='imt1': mainTitleList.append( "{} {}:{} '{}'".format( self.bookReferenceCode, c, v, text ) )
-                else: mainTitleList.append( "{} {}:{} ({}) '{}'".format( self.bookReferenceCode, c, v, marker, text ) )
-                if not text:
-                    introductionErrors.append( _("{} {}:{} Missing heading text for marker {}").format( self.bookReferenceCode, c, v, marker ) )
-                    self.addPriorityError( 39, self.bookReferenceCode, c, v, _("Missing heading text") )
-                elif text[-1]=='.':
-                    introductionErrors.append( _("{} {}:{} {} heading ends with a period: {}").format( self.bookReferenceCode, c, v, marker, text ) )
-                    self.addPriorityError( 49, self.bookReferenceCode, c, v, _("Heading ends with a period") )
-            elif marker in ('is1','is2','is3','is4',):
-                if marker=='is1': headingList.append( "{} {}:{} '{}'".format( self.bookReferenceCode, c, v, text ) )
-                else: headingList.append( "{} {}:{} ({}) '{}'".format( self.bookReferenceCode, c, v, marker, text ) )
-                if not text:
-                    introductionErrors.append( _("{} {}:{} Missing heading text for marker {}").format( self.bookReferenceCode, c, v, marker ) )
-                    self.addPriorityError( 39, self.bookReferenceCode, c, v, _("Missing heading text") )
-                elif text[-1]=='.':
-                    introductionErrors.append( _("{} {}:{} {} heading ends with a period: {}").format( self.bookReferenceCode, c, v, marker, text ) )
-                    self.addPriorityError( 49, self.bookReferenceCode, c, v, _("Heading ends with a period") )
-            elif marker=='iot':
-                titleList.append( "{} {}:{} '{}'".format( self.bookReferenceCode, c, v, text ) )
-                if not text:
-                    introductionErrors.append( _("{} {}:{} Missing outline title text for marker {}").format( self.bookReferenceCode, c, v, marker ) )
-                    self.addPriorityError( 38, self.bookReferenceCode, c, v, _("Missing outline title text") )
-                elif text[-1]=='.':
-                    introductionErrors.append( _("{} {}:{} {} heading ends with a period: {}").format( self.bookReferenceCode, c, v, marker, text ) )
-                    self.addPriorityError( 48, self.bookReferenceCode, c, v, _("Heading ends with a period") )
-            elif marker in ('io1','io2','io3','io4',):
-                if marker=='io1': outlineList.append( "{} {}:{} '{}'".format( self.bookReferenceCode, c, v, text ) )
-                else: outlineList.append( "{} {}:{} ({}) '{}'".format( self.bookReferenceCode, c, v, marker, text ) )
-                if not text:
-                    introductionErrors.append( _("{} {}:{} Missing outline text for marker {}").format( self.bookReferenceCode, c, v, marker ) )
-                    self.addPriorityError( 37, self.bookReferenceCode, c, v, _("Missing outline text") )
-                elif text[-1]=='.':
-                    introductionErrors.append( _("{} {}:{} {} outline entry ends with a period: {}").format( self.bookReferenceCode, c, v, marker, text ) )
-                    self.addPriorityError( 47, self.bookReferenceCode, c, v, _("Outline entry ends with a period") )
-            elif marker in ('ip','ipi','im','imi',):
-                if not text:
-                    introductionErrors.append( _("{} {}:{} Missing introduction text for marker {}").format( self.bookReferenceCode, c, v, marker ) )
-                    self.addPriorityError( 36, self.bookReferenceCode, c, v, _("Missing introduction text") )
-                elif not text.endswith('.') and not text.endswith('.)') and not text.endswith('.\\it*'):
-                    introductionErrors.append( _("{} {}:{} {} introduction text does not end with a period: {}").format( self.bookReferenceCode, c, v, marker, text ) )
-                    self.addPriorityError( 46, self.bookReferenceCode, c, v, _("Introduction text ends without a period") )
-
-        if (introductionErrors or mainTitleList or headingList or titleList or outlineList) and 'Introduction' not in self.errorDictionary:
-            self.errorDictionary['Introduction'] = {} # Don't think it needs to be OrderedDict()
-        if introductionErrors: self.errorDictionary['Introduction']['Possible Introduction Errors'] = introductionErrors
-        if mainTitleList: self.errorDictionary['Introduction']['Main Title Lines'] = mainTitleList
-        if headingList: self.errorDictionary['Introduction']['Section Heading Lines'] = headingList
-        if titleList: self.errorDictionary['Introduction']['Outline Title Lines'] = titleList
-        if outlineList: self.errorDictionary['Introduction']['Outline Entry Lines'] = outlineList
-    # end of checkIntroduction
 
 
     def check( self ):

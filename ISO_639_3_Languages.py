@@ -4,7 +4,7 @@
 # ISO_639_3_Languages.py
 #
 # Module handling ISO_639_3
-#   Last modified: 2011-05-30 (also update versionString below)
+#   Last modified: 2011-06-13 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -30,7 +30,7 @@ Module handling ISO_639_3_Languages.
 progName = "ISO 639_3_Languages handler"
 versionString = "0.83"
 
-import logging, os.path
+import os, logging
 from gettext import gettext as _
 from collections import OrderedDict
 

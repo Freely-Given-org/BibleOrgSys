@@ -4,7 +4,7 @@
 # USFMMarkersConverter.py
 #
 # Module handling USFMMarkers.xml to produce C and Python data tables
-#   Last modified: 2011-06-02 (also update versionString below)
+#   Last modified: 2011-06-13 (also update versionString below)
 #
 # Copyright (C) 2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -390,7 +390,7 @@ class USFMMarkersConverter:
         self.importDataToPython()
         assert( self.__DataDicts )
 
-        if not filepath: filepath = os.path.join( "DataFiles", "DerivedFiles", self._filenameBase + "_Tables.py" )
+        if not filepath: filepath = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles", self._filenameBase + "_Tables.py" )
         if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
         with open( filepath, 'wt' ) as myFile:
             myFile.write( "# {}\n#\n".format( filepath ) )
@@ -431,7 +431,7 @@ class USFMMarkersConverter:
         self.importDataToPython()
         assert( self.__DataDicts )
 
-        if not filepath: filepath = os.path.join( "DataFiles", "DerivedFiles", self._filenameBase + "_Tables.json" )
+        if not filepath: filepath = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles", self._filenameBase + "_Tables.json" )
         if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
         with open( filepath, 'wt' ) as myFile:
             json.dump( self.__DataDicts, myFile, indent=2 )
@@ -497,7 +497,7 @@ class USFMMarkersConverter:
         assert( self.__DataDicts )
 
         raise Exception( "C export not written yet, sorry." )
-        if not filepath: filepath = os.path.join( "DataFiles", "DerivedFiles", self._filenameBase + "_Tables" )
+        if not filepath: filepath = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles", self._filenameBase + "_Tables" )
         hFilepath = filepath + '.h'
         cFilepath = filepath + '.c'
         if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( cFilepath ) ) # Don't bother telling them about the .h file

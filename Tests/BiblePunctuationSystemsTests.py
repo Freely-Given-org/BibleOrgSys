@@ -4,7 +4,7 @@
 # BiblePunctuationSystemsTests.py
 #
 # Module testing BiblePunctuationSystems.py
-#   Last modified: 2011-05-28 (also update versionString below)
+#   Last modified: 2011-06-13 (also update versionString below)
 #
 # Copyright (C) 2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -63,7 +63,7 @@ class BiblePunctuationSystemsConverterTests( unittest.TestCase ):
         """ Test the importDataToPython function. """
         result = self.bpssc.importDataToPython()
         self.assertTrue( isinstance( result, dict ) )
-        self.assertEqual( len(result), 3 )
+        self.assertGreater( len(result), 3 ) # Number of punctuation systems
     # end of test_020_importDataToPython
 
     def test_030_pickle( self ):

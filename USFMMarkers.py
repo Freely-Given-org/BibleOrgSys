@@ -4,7 +4,7 @@
 # USFMMarkers.py
 #
 # Module handling USFMMarkers
-#   Last modified: 2011-06-02 (also update versionString below)
+#   Last modified: 2011-06-13 (also update versionString below)
 #
 # Copyright (C) 2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -31,7 +31,7 @@ progName = "USFM Markers handler"
 versionString = "0.53"
 
 
-import logging, os.path
+import os, logging
 from gettext import gettext as _
 from collections import OrderedDict
 
