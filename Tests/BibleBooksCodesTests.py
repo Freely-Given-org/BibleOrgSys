@@ -4,7 +4,7 @@
 # BibleBooksCodesTests.py
 #
 # Module testing BibleBooksCodes.py
-#   Last modified: 2011-05-26 (also update versionString below)
+#   Last modified: 2011-06-15 (also update versionString below)
 #
 # Copyright (C) 2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module testing BibleBooksCodes.py.
 """
 
 progName = "Bible Books Codes tests"
-versionString = "0.55"
+versionString = "0.56"
 
 
 import sys, unittest
@@ -61,9 +61,9 @@ class BibleBooksCodesConverterTests( unittest.TestCase ):
         """ Test the importDataToPython function. """
         result = self.bbcsc.importDataToPython()
         self.assertTrue( isinstance( result, dict ) )
-        self.assertEqual( len(result), 11 )
-        for dictName in ("referenceNumberDict","referenceAbbreviationDict","SBLDict","OSISAbbreviationDict","SwordAbbreviationDict","CCELDict", \
-                        "ParatextAbbreviationDict","ParatextNumberDict","NETBibleAbbreviationDict","ByzantineAbbreviationDict","EnglishNameDict",):
+        self.assertEqual( len(result), 12 )
+        for dictName in ("referenceNumberDict","referenceAbbreviationDict","SBLAbbreviationDict","OSISAbbreviationDict","SwordAbbreviationDict","CCELDict", \
+                        "ParatextAbbreviationDict","ParatextNumberDict","NETBibleAbbreviationDict","ByzantineAbbreviationDict","EnglishNameDict","allAbbreviationsDict",):
             self.assertTrue( dictName in result )
             self.assertTrue( 10 < len(result[dictName]) < 255 )
     # end of test_030_importDataToPython
@@ -109,19 +109,19 @@ class BibleBooksCodesTests( unittest.TestCase ):
         self.assertTrue( len(self.bbc) > 150 ) # includes apocryphal books, etc.
     # end of test_020_len
 
-    def test_030_getBBB( self ):
-        """ Test the getBBB function. """
-        self.assertEqual( self.bbc.getBBB(1), 'GEN' )
-        self.assertEqual( self.bbc.getBBB(39), 'MAL' )
-        self.assertEqual( self.bbc.getBBB(40), 'MAT' )
-        self.assertEqual( self.bbc.getBBB(46), 'CO1' )
-        self.assertEqual( self.bbc.getBBB(66), 'REV' )
-        self.assertRaises( ValueError, self.bbc.getBBB, -1 )
-        self.assertRaises( ValueError, self.bbc.getBBB, 0 )
-        self.assertRaises( ValueError, self.bbc.getBBB, 256 )
-        self.assertRaises( ValueError, self.bbc.getBBB, 1234 )
-        self.assertRaises( KeyError, self.bbc.getBBB, 255 )
-    # end of test_030_getBBB
+    def test_030_getBBBFromReferenceNumber( self ):
+        """ Test the getBBBFromReferenceNumber function. """
+        self.assertEqual( self.bbc.getBBBFromReferenceNumber(1), 'GEN' )
+        self.assertEqual( self.bbc.getBBBFromReferenceNumber(39), 'MAL' )
+        self.assertEqual( self.bbc.getBBBFromReferenceNumber(40), 'MAT' )
+        self.assertEqual( self.bbc.getBBBFromReferenceNumber(46), 'CO1' )
+        self.assertEqual( self.bbc.getBBBFromReferenceNumber(66), 'REV' )
+        self.assertRaises( ValueError, self.bbc.getBBBFromReferenceNumber, -1 )
+        self.assertRaises( ValueError, self.bbc.getBBBFromReferenceNumber, 0 )
+        self.assertRaises( ValueError, self.bbc.getBBBFromReferenceNumber, 256 )
+        self.assertRaises( ValueError, self.bbc.getBBBFromReferenceNumber, 1234 )
+        self.assertRaises( KeyError, self.bbc.getBBBFromReferenceNumber, 255 )
+    # end of test_030_getBBBFromReferenceNumber
 
     def test_040_isValidReferenceAbbreviation( self ):
         """ Test the isValidReferenceAbbreviation function. """
@@ -257,6 +257,15 @@ class BibleBooksCodesTests( unittest.TestCase ):
         for badCode in (':)','WXYZ','Genesis',): # Must not be three characters
             self.assertRaises( AssertionError, self.bbc.getBBBFromParatext, badCode )
     # end of test_210_getBBBFromParatext
+
+    def test_220_getBBB( self ):
+        """ Test the getBBB function. """
+        self.assertEqual( self.bbc.getBBB('Gen'), 'GEN' )
+        self.assertEqual( self.bbc.getBBB('1Co'), 'CO1' )
+        self.assertEqual( self.bbc.getBBB('Rev'), 'REV' )
+        for badCode in ('XYZ','Abc',':)','WXYZ','Genesis',):
+            self.assertEqual( self.bbc.getBBB( badCode ), None )
+    # end of test_220_getBBB
 
     def test_300_getExpectedChaptersList( self ):
         """ Test the getSingleChapterBooksList function. """

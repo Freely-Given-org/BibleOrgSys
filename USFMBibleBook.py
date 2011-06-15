@@ -3,7 +3,7 @@
 # USFMBibleBook.py
 #
 # Module handling the USFM markers for Bible books
-#   Last modified: 2011-06-13 by RJH (also update versionString below)
+#   Last modified: 2011-06-15 by RJH (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -125,19 +125,20 @@ class USFMBibleBook:
 
             # Move footnotes and crossreferences out to extras
             extras = []
-            ixFN = adjText.find( '\\f ' )
-            ixXR = adjText.find( '\\x ' )
+            lcAdjText = adjText.lower()
+            ixFN = lcAdjText.find( '\\f ' )
+            ixXR = lcAdjText.find( '\\x ' )
             while ixFN!=-1 or ixXR!=-1: # We have one or the other
                 if ixFN!=-1 and ixXR!=-1: # We have both
                     assert( ixFN != ixXR )
                     ix1 = min( ixFN, ixXR ) # Process the first one
                 else: ix1 = ixFN if ixXR==-1 else ixXR
                 if ix1 == ixFN:
-                    ix2 = adjText.find( '\\f*' )
+                    ix2 = lcAdjText.find( '\\f*' )
                     thisOne, this1 = "footnote", "fn"
                 else:
                     assert( ix1 == ixXR )
-                    ix2 = adjText.find( '\\x*' )
+                    ix2 = lcAdjText.find( '\\x*' )
                     thisOne, this1 = "cross-reference", "xr"
                 if ix2 == -1: # no closing marker
                     fixErrors.append( _("{} {}:{} Found unmatched {} open in {}: {}").format( bookReferenceCode, c, v, thisOne, marker, adjText ) )
@@ -167,13 +168,14 @@ class USFMBibleBook:
                     self.addPriorityError( 11, self.bookReferenceCode, c, v, _("{} ends with space").format( thisOne.title() ) )
                     note = note.rstrip()
                 adjText = adjText[:ix1] + adjText[ix2+3:] # Remove the note completely from the text
+                lcAdjText = adjText.lower()
                 extras.append( (this1,ix1,note,) ) # Saves a 3-tuple: type ('fn' or 'xr'), index into the main text line, the actual fn or xref contents
-                ixFN = adjText.find( '\\f ' )
-                ixXR = adjText.find( '\\x ' )
+                ixFN = lcAdjText.find( '\\f ' )
+                ixXR = lcAdjText.find( '\\x ' )
             #if extras: print( "Fix gave '{}' and '{}'".format( adjText, extras ) )
             #if len(extras)>1: print( "Mutiple fix gave '{}' and '{}'".format( adjText, extras ) )
 
-            if '\\f' in adjText or '\\x' in adjText:
+            if '\\f' in lcAdjText or '\\x' in lcAdjText:
                 fixErrors.append( _("{} {}:{} Unable to properly process footnotes and cross-references in {}: {}").format( bookReferenceCode, c, v, marker, adjText ) )
                 if logErrors: logging.error( _("Unable to properly process footnotes and cross-references {} {}:{} in {}: {}").format( bookReferenceCode, c, v, marker, adjText ) )
                 self.addPriorityError( 82, self.bookReferenceCode, c, v, _("Invalid footnotes or cross-refernces") )
@@ -334,33 +336,41 @@ class USFMBibleBook:
     # end of getField
 
 
-    def getBookName( self ):
+    def getAssumedBookNames( self ):
         """
         Attempts to deduce a bookname from the loaded book.
-        Use the English name as a last resort
+        Use the English name as a last resort.
+        Returns a list with the best guess first.
         """
         from BibleBooksCodes import BibleBooksCodes
         assert( self.lines )
+        results = []
 
         header = self.getField( 'h' )
-        if header is not None and header.isupper(): header = header.title()
-        mt1 = self.getField( 'mt1' )
-        if mt1 is not None and mt1.isupper(): mt1 = mt1.title()
+        if header is not None:
+            if header.isupper(): header = header.title()
+            results.append( header )
 
-        if header is not None: bookName = header
-        elif mt1 is not None: bookName = mt1
-        else: # no helpful fields in file
+        if (len(header)<4 or not header[0].isdigit() or header[1]!=' ') and self.getField('mt2') is not None: # Ignore the main title if it's a book like "Corinthians" and there's a mt2 (like "First")
+            mt1 = self.getField( 'mt1' )
+            if mt1 is not None:
+                if mt1.isupper(): mt1 = mt1.title()
+                if mt1 not in results: results.append( mt1 )
+        
+        if not results: # no helpful fields in file
             bbc = BibleBooksCodes().loadData()
-            bookName = bbc.getEnglishName_NR( self.bookReferenceCode )
+            results.append( bbc.getEnglishName_NR( self.bookReferenceCode ) )
 
+        #if Globals.debugFlag or Globals.verbosityLevel > 3: # Print our level of confidence
+        #    if header is not None and header==mt1: assert( bookName == header ); print( "getBookName: header and main title are both '{}'".format( bookName ) )
+        #    elif header is not None and mt1 is not None: print( "getBookName: header '{}' and main title '{}' are both different so selected '{}'".format( header, mt1, bookName ) )
+        #    elif header is not None or mt1 is not None: print( "getBookName: only have one of header '{}' or main title '{}'".format( header, mt1 ) )
+        #    else: print( "getBookName: no header or main title so used English book name '{}'".format( bookName ) )
         if Globals.debugFlag or Globals.verbosityLevel > 3: # Print our level of confidence
-            if header is not None and header==mt1: assert( bookName == header ); print( "getBookName: header and main title are both '{}'".format( bookName ) )
-            elif header is not None and mt1 is not None: print( "getBookName: header '{}' and main title '{}' are both different so selected '{}'".format( header, mt1, bookName ) )
-            elif header is not None or mt1 is not None: print( "getBookName: only have one of header '{}' or main title '{}'".format( header, mt1 ) )
-            else: print( "getBookName: no header or main title so used English book name '{}'".format( bookName ) )
+            print( "Assumed bookname(s) of {} for {}".format( results, self.bookReferenceCode ) )
 
-        return bookName
-    # end of getBookName
+        return results
+    # end of getAssumedBookNames
 
 
     def getVersification( self, logErrors=False ):

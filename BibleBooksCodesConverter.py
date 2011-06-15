@@ -4,7 +4,7 @@
 # BibleBooksCodesConverter.py
 #
 # Module handling BibleBooksCodes.xml to produce C and Python data tables
-#   Last modified: 2011-05-28 (also update versionString below)
+#   Last modified: 2011-06-15 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling BibleBooksCodes.xml and to export to JSON, C, and Python data ta
 """
 
 progName = "Bible Books Codes converter"
-versionString = "0.55"
+versionString = "0.56"
 
 
 import logging, os.path
@@ -255,7 +255,7 @@ class BibleBooksCodesConverter:
             return self.__DataDicts
 
         # We'll create a number of dictionaries with different elements as the key
-        myIDDict,myRADict, mySBLDict,myOADict,mySwDict,myCCELDict,myPADict,myPNDict,myNETDict,myBzDict, myENDict = OrderedDict(),OrderedDict(), {},{},{},{},{},{},{},{}, {}
+        myIDDict,myRADict, mySBLDict,myOADict,mySwDict,myCCELDict,myPADict,myPNDict,myNETDict,myBzDict, myENDict, allAbbreviationsDict = OrderedDict(),OrderedDict(), {},{},{},{},{},{},{},{}, {}, {}
         for element in self._XMLtree:
             # Get the required information out of the tree for this element
             # Start with the compulsory elements
@@ -300,35 +300,68 @@ class BibleBooksCodesConverter:
                                     "NETBibleAbbreviation":NETBibleAbbreviation, "ByzantineAbbreviation":ByzantineAbbreviation,
                                     "numExpectedChapters":expectedChapters, "possibleAlternativeBooks":possibleAlternativeBooks, "nameEnglish":nameEnglish }
             if "SBLAbbreviation" in self._compulsoryElements or SBLAbbreviation:
-                if "SBLAbbreviation" in self._uniqueElements: ssert( SBLAbbreviation not in myOADict ) # Shouldn't be any duplicates 
-                mySBLDict[SBLAbbreviation.upper()] = ( intID, referenceAbbreviation, )
+                if "SBLAbbreviation" in self._uniqueElements: ssert( SBLAbbreviation not in myOADict ) # Shouldn't be any duplicates
+                UCAbbreviation = SBLAbbreviation.upper()
+                mySBLDict[UCAbbreviation] = ( intID, referenceAbbreviation, )
+                if UCAbbreviation in allAbbreviationsDict and allAbbreviationsDict[UCAbbreviation] != referenceAbbreviation:
+                    logging.warning( _("This SBL '{}' abbreviation ({}) already assigned to '{}'").format( UCAbbreviation, referenceAbbreviation, allAbbreviationsDict[UCAbbreviation] ) )
+                    allAbbreviationsDict[UCAbbreviation] = "MultipleValues"
+                else: allAbbreviationsDict[UCAbbreviation] = referenceAbbreviation
             if "OSISAbbreviation" in self._compulsoryElements or OSISAbbreviation:
-                if "OSISAbbreviation" in self._uniqueElements: assert( OSISAbbreviation not in myOADict ) # Shouldn't be any duplicates 
-                myOADict[OSISAbbreviation.upper()] = ( intID, referenceAbbreviation )
+                if "OSISAbbreviation" in self._uniqueElements: assert( OSISAbbreviation not in myOADict ) # Shouldn't be any duplicates
+                UCAbbreviation = OSISAbbreviation.upper()
+                myOADict[UCAbbreviation] = ( intID, referenceAbbreviation )
+                if UCAbbreviation in allAbbreviationsDict and allAbbreviationsDict[UCAbbreviation] != referenceAbbreviation:
+                    logging.warning( _("This OSIS '{}' abbreviation ({}) already assigned to '{}'").format( UCAbbreviation, referenceAbbreviation, allAbbreviationsDict[UCAbbreviation] ) )
+                    allAbbreviationsDict[UCAbbreviation] = "MultipleValues"
+                else: allAbbreviationsDict[UCAbbreviation] = referenceAbbreviation
             if "SwordAbbreviation" in self._compulsoryElements or SwordAbbreviation:
                 if "SwordAbbreviation" in self._uniqueElements: assert( SwordAbbreviation not in mySwDict ) # Shouldn't be any duplicates
-                mySwDict[SwordAbbreviation.upper()] = ( intID, referenceAbbreviation, )
+                UCAbbreviation = SwordAbbreviation.upper()
+                mySwDict[UCAbbreviation] = ( intID, referenceAbbreviation, )
+                if UCAbbreviation in allAbbreviationsDict and allAbbreviationsDict[UCAbbreviation] != referenceAbbreviation:
+                    logging.warning( _("This Sword '{}' abbreviation ({}) already assigned to '{}'").format( UCAbbreviation, referenceAbbreviation, allAbbreviationsDict[UCAbbreviation] ) )
+                    allAbbreviationsDict[UCAbbreviation] = "MultipleValues"
+                else: allAbbreviationsDict[UCAbbreviation] = referenceAbbreviation
             if "CCELNumberString" in self._compulsoryElements or CCELNumberString:
                 if "CCELNumberString" in self._uniqueElements: assert( CCELNumberString not in myCCELDict ) # Shouldn't be any duplicates
                 myCCELDict[CCELNumberString.upper()] = ( intID, referenceAbbreviation, )
             if "ParatextAbbreviation" in self._compulsoryElements or ParatextAbbreviation:
                 if "ParatextAbbreviation" in self._uniqueElements: assert( ParatextAbbreviation not in myPADict ) # Shouldn't be any duplicates
-                myPADict[ParatextAbbreviation.upper()] = ( intID, referenceAbbreviation, ParatextNumberString, )
+                UCAbbreviation = ParatextAbbreviation.upper()
+                myPADict[UCAbbreviation] = ( intID, referenceAbbreviation, ParatextNumberString, )
+                if UCAbbreviation in allAbbreviationsDict and allAbbreviationsDict[UCAbbreviation] != referenceAbbreviation:
+                    logging.warning( _("This Paratext '{}' abbreviation ({}) already assigned to '{}'").format( UCAbbreviation, referenceAbbreviation, allAbbreviationsDict[UCAbbreviation] ) )
+                    allAbbreviationsDict[UCAbbreviation] = "MultipleValues"
+                else: allAbbreviationsDict[UCAbbreviation] = referenceAbbreviation
             if "ParatextNumberString" in self._compulsoryElements or ParatextNumberString:
                 if "ParatextNumberString" in self._uniqueElements: assert( ParatextNumberString not in myPNDict ) # Shouldn't be any duplicates
                 myPNDict[ParatextNumberString.upper()] = ( intID, referenceAbbreviation, ParatextAbbreviation, )
             if "NETBibleAbbreviation" in self._compulsoryElements or NETBibleAbbreviation:
                 if "NETBibleAbbreviation" in self._uniqueElements: assert( NETBibleAbbreviation not in myBzDict ) # Shouldn't be any duplicates
-                myNETDict[NETBibleAbbreviation.upper()] = ( intID, referenceAbbreviation, )
+                UCAbbreviation = NETBibleAbbreviation.upper()
+                myNETDict[UCAbbreviation] = ( intID, referenceAbbreviation, )
+                if UCAbbreviation in allAbbreviationsDict and allAbbreviationsDict[UCAbbreviation] != referenceAbbreviation:
+                    logging.warning( _("This NET Bible '{}' abbreviation ({}) already assigned to '{}'").format( UCAbbreviation, referenceAbbreviation, allAbbreviationsDict[UCAbbreviation] ) )
+                    allAbbreviationsDict[UCAbbreviation] = "MultipleValues"
+                else: allAbbreviationsDict[UCAbbreviation] = referenceAbbreviation
             if "ByzantineAbbreviation" in self._compulsoryElements or ByzantineAbbreviation:
                 if "ByzantineAbbreviation" in self._uniqueElements: assert( ByzantineAbbreviation not in myBzDict ) # Shouldn't be any duplicates
-                myBzDict[ByzantineAbbreviation.upper()] = ( intID, referenceAbbreviation, )
+                UCAbbreviation = ByzantineAbbreviation.upper()
+                myBzDict[UCAbbreviation] = ( intID, referenceAbbreviation, )
+                if UCAbbreviation in allAbbreviationsDict and allAbbreviationsDict[UCAbbreviation] != referenceAbbreviation:
+                    logging.warning( _("This Byzantine '{}' abbreviation ({}) already assigned to '{}'").format( UCAbbreviation, referenceAbbreviation, allAbbreviationsDict[UCAbbreviation] ) )
+                    allAbbreviationsDict[UCAbbreviation] = "MultipleValues"
+                else: allAbbreviationsDict[UCAbbreviation] = referenceAbbreviation
             if "nameEnglish" in self._compulsoryElements or ParatextNumberString:
                 if "nameEnglish" in self._uniqueElements: assert( nameEnglish not in myENDict ) # Shouldn't be any duplicates
                 myENDict[nameEnglish.upper()] = ( intID, referenceAbbreviation )
-        self.__DataDicts = { "referenceNumberDict":myIDDict, "referenceAbbreviationDict":myRADict, "SBLDict":mySBLDict, "OSISAbbreviationDict":myOADict, "SwordAbbreviationDict":mySwDict,
+        adjAllAbbreviationsDict = {}
+        for abbreviation, value in allAbbreviationsDict.items(): # Remove useless entries
+            if value != "MultipleValues": adjAllAbbreviationsDict[abbreviation] = value
+        self.__DataDicts = { "referenceNumberDict":myIDDict, "referenceAbbreviationDict":myRADict, "SBLAbbreviationDict":mySBLDict, "OSISAbbreviationDict":myOADict, "SwordAbbreviationDict":mySwDict,
                         "CCELDict":myCCELDict, "ParatextAbbreviationDict":myPADict, "ParatextNumberDict":myPNDict, "NETBibleAbbreviationDict":myNETDict,
-                        "ByzantineAbbreviationDict":myBzDict, "EnglishNameDict":myENDict }
+                        "ByzantineAbbreviationDict":myBzDict, "EnglishNameDict":myENDict, "allAbbreviationsDict":adjAllAbbreviationsDict }
         return self.__DataDicts # Just delete any of the dictionaries that you don't need
     # end of importDataToPython
 
@@ -386,10 +419,11 @@ class BibleBooksCodesConverter:
             myFile.write( "#   {} {} loaded from the original XML file.\n#\n\n".format( len(self._XMLtree), self._treeTag ) )
             mostEntries = "0=referenceNumber (integer 1..255), 1=referenceAbbreviation/BBB (3-uppercase characters)"
             dictInfo = { "referenceNumberDict":("referenceNumber (integer 1..255)","specified"), "referenceAbbreviationDict":("referenceAbbreviation","specified"),
-                            "CCELDict":("CCELNumberString", mostEntries), "SBLDict":("SBLAbbreviation", mostEntries), "OSISAbbreviationDict":("OSISAbbreviation", mostEntries), "SwordAbbreviationDict":("SwordAbbreviation", mostEntries),
+                            "CCELDict":("CCELNumberString", mostEntries), "SBLAbbreviationDict":("SBLAbbreviation", mostEntries), "OSISAbbreviationDict":("OSISAbbreviation", mostEntries), "SwordAbbreviationDict":("SwordAbbreviation", mostEntries),
                             "ParatextAbbreviationDict":("ParatextAbbreviation", "0=referenceNumber (integer 1..255), 1=referenceAbbreviation/BBB (3-uppercase characters), 2=ParatextNumberString (2-characters)"),
                             "ParatextNumberDict":("ParatextNumberString", "0=referenceNumber (integer 1..255), 1=referenceAbbreviation/BBB (3-uppercase characters), 2=ParatextAbbreviationString (3-characters)"),
-                            "NETBibleAbbreviationDict":("NETBibleAbbreviation", mostEntries), "ByzantineAbbreviationDict":("ByzantineAbbreviation", mostEntries), "EnglishNameDict":("nameEnglish", mostEntries) }
+                            "NETBibleAbbreviationDict":("NETBibleAbbreviation", mostEntries), "ByzantineAbbreviationDict":("ByzantineAbbreviation", mostEntries),
+                            "EnglishNameDict":("nameEnglish", mostEntries), "allAbbreviationsDict":("allAbbreviations", mostEntries) }
             for dictName,dictData in self.__DataDicts.items():
                 exportPythonDict( myFile, dictData, dictName, dictInfo[dictName][0], dictInfo[dictName][1] )
             myFile.write( "# end of {}".format( os.path.basename(filepath) ) )
@@ -427,7 +461,9 @@ class BibleBooksCodesConverter:
             def convertEntry( entry ):
                 """ Convert special characters in an entry... """
                 result = ""
-                if isinstance( entry, tuple ):
+                if isinstance( entry, str ):
+                    result = entry
+                elif isinstance( entry, tuple ):
                     for field in entry:
                         if result: result += ", " # Separate the fields
                         if field is None: result += '""'
@@ -512,14 +548,15 @@ class BibleBooksCodesConverter:
                     "{} referenceAbbreviation[3+1]; {}* ByzantineAbbreviation; {}* CCELNumberString; {} referenceNumber; {}* NETBibleAbbreviation; {}* OSISAbbreviation; {} ParatextAbbreviation[3+1]; {} ParatextNumberString[2+1]; {}* SBLAbbreviation; {}* SwordAbbreviation; {}* nameEnglish; {}* numExpectedChapters; {}* possibleAlternativeBooks;"
                    .format(CHAR, CHAR, CHAR, BYTE, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR ) ),
                 "CCELDict":("CCELNumberString", "{}* CCELNumberString; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
-                "SBLDict":("SBLAbbreviation", "{}* SBLAbbreviation; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
+                "SBLAbbreviationDict":("SBLAbbreviation", "{}* SBLAbbreviation; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
                 "OSISAbbreviationDict":("OSISAbbreviation", "{}* OSISAbbreviation; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
                 "SwordAbbreviationDict":("SwordAbbreviation", "{}* SwordAbbreviation; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
                 "ParatextAbbreviationDict":("ParatextAbbreviation", "{} ParatextAbbreviation[3+1]; {} referenceNumber; {} referenceAbbreviation[3+1]; {} ParatextNumberString[2+1];".format(CHAR,BYTE,CHAR,CHAR) ),
                 "ParatextNumberDict":("ParatextNumberString", "{} ParatextNumberString[2+1]; {} referenceNumber; {} referenceAbbreviation[3+1]; {} ParatextAbbreviation[3+1];".format(CHAR,BYTE,CHAR,CHAR) ),
                 "NETBibleAbbreviationDict":("NETBibleAbbreviation", "{}* NETBibleAbbreviation; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
                 "ByzantineAbbreviationDict":("ByzantineAbbreviation", "{}* ByzantineAbbreviation; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
-                "EnglishNameDict":("nameEnglish", "{}* nameEnglish; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ) }
+                "EnglishNameDict":("nameEnglish", "{}* nameEnglish; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
+                "allAbbreviationsDict":("abbreviation", "{}* abbreviation; {} referenceAbbreviation[3+1];".format(CHAR,CHAR) ) }
 
             for dictName,dictData in self.__DataDicts.items():
                 exportPythonDict( myHFile, myCFile, dictData, dictName, dictInfo[dictName][0], dictInfo[dictName][1] )

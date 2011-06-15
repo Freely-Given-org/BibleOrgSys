@@ -4,7 +4,7 @@
 # BibleBooksCodes.py
 #
 # Module handling BibleBooksCodes functions
-#   Last modified: 2011-06-13 (also update versionString below)
+#   Last modified: 2011-06-15 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling BibleBooksCodes functions.
 """
 
 progName = "Bible Books Codes handler"
-versionString = "0.55"
+versionString = "0.56"
 
 
 import os, logging
@@ -105,7 +105,7 @@ class BibleBooksCodes:
         """ Returns True or False. """
         return BBB in self.__DataDicts["referenceAbbreviationDict"]
 
-    def getBBB( self, referenceNumber ):
+    def getBBBFromReferenceNumber( self, referenceNumber ):
         """ Return the referenceAbbreviation for the given book number (referenceNumber). """
         if not 1 <= referenceNumber <= 255: raise ValueError
         return self.__DataDicts["referenceNumberDict"][referenceNumber]["referenceAbbreviation"]
@@ -159,6 +159,16 @@ class BibleBooksCodes:
         """ Return the reference abbreviation string for the given Paratext book code string. """
         assert( len(paratextAbbreviation) == 3 )
         return self.__DataDicts["ParatextAbbreviationDict"][paratextAbbreviation.upper()][1]
+
+    def getBBB( self, something ):
+        """ Attempt to return the reference abbreviation string for the given book number or code.
+            Returns BBB or None. """
+        assert( something )
+        UCSomething = something.upper()
+        if UCSomething in self.__DataDicts["referenceAbbreviationDict"]: return UCSomething # it's already a BBB code
+        if something.isdigit() and 1 <= something <= 255: return self.__DataDicts["referenceNumberDict"][something]["referenceAbbreviation"]
+        if UCSomething in self.__DataDicts["allAbbreviationsDict"]: return self.__DataDicts["allAbbreviationsDict"][UCSomething]
+    # end of getBBB
 
     def getExpectedChaptersList( self, BBB ):
         """
@@ -222,6 +232,10 @@ class BibleBooksCodes:
         return result
     # end of getAllParatextBooksCodeNumberTriples
 
+    # NOTE: The following functions are all not recommended (NR) because they rely on assumed information that may be incorrect
+    #           i.e., they assume English language or European book order conventions
+    #       They are included because they might be necessary for error messages or similar uses
+    #           (where the correct information is unknown)
     def getEnglishName_NR( self, BBB ): # NR = not recommended
         """
         Returns the first English name for a book.
@@ -281,6 +295,8 @@ def main():
     print( "All BBBs:", bbc.getAllReferenceAbbreviations() )
     print( "PT triples:", bbc.getAllParatextBooksCodeNumberTriples() )
     print( "Single chapter books (and OSIS):\n  {}\n  {}".format(bbc.getSingleChapterBooksList(), bbc.getOSISSingleChapterBooksList()) )
+    for something in ('PE2', '2Pe', '2 Pet', '2Pet', 'Job', ):
+        print( something, bbc.getBBB( something ) )
 # end of main
 
 if __name__ == '__main__':

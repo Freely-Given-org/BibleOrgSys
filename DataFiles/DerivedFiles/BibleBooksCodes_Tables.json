@@ -2563,6 +2563,356 @@
       "numExpectedChapters": null
     }
   }, 
+  "SBLAbbreviationDict": {
+    "SIR": [
+      84, 
+      "SIR"
+    ], 
+    "NAH": [
+      34, 
+      "NAH"
+    ], 
+    "2 CHR": [
+      14, 
+      "CH2"
+    ], 
+    "EZEK": [
+      26, 
+      "EZK"
+    ], 
+    "3 JOHN": [
+      64, 
+      "JN3"
+    ], 
+    "JOB": [
+      18, 
+      "JOB"
+    ], 
+    "1 THESS": [
+      52, 
+      "TH1"
+    ], 
+    "SONG": [
+      22, 
+      "SNG"
+    ], 
+    "REV": [
+      66, 
+      "REV"
+    ], 
+    "HAB": [
+      35, 
+      "HAB"
+    ], 
+    "JAS": [
+      59, 
+      "JAM"
+    ], 
+    "HAG": [
+      37, 
+      "HAG"
+    ], 
+    "1 SAM": [
+      9, 
+      "SA1"
+    ], 
+    "PR MAN": [
+      83, 
+      "MAN"
+    ], 
+    "LAM": [
+      25, 
+      "LAM"
+    ], 
+    "PHLM": [
+      57, 
+      "PHM"
+    ], 
+    "NIC": [
+      33, 
+      "MIC"
+    ], 
+    "JOEL": [
+      29, 
+      "JOL"
+    ], 
+    "ACTS": [
+      44, 
+      "ACT"
+    ], 
+    "MAL": [
+      39, 
+      "MAL"
+    ], 
+    "1 KGS": [
+      11, 
+      "KI1"
+    ], 
+    "BEL": [
+      80, 
+      "BEL"
+    ], 
+    "2 TIM": [
+      55, 
+      "TI2"
+    ], 
+    "5 EZRA": [
+      93, 
+      "EZ5"
+    ], 
+    "JDT": [
+      82, 
+      "JDT"
+    ], 
+    "PS": [
+      19, 
+      "PSA"
+    ], 
+    "OBAD": [
+      31, 
+      "OBA"
+    ], 
+    "ROM": [
+      45, 
+      "ROM"
+    ], 
+    "1 JOHN": [
+      62, 
+      "JN1"
+    ], 
+    "GEN": [
+      1, 
+      "GEN"
+    ], 
+    "6 EZRA": [
+      94, 
+      "EZ6"
+    ], 
+    "1 PET": [
+      60, 
+      "PE1"
+    ], 
+    "2 JOHN": [
+      63, 
+      "JN2"
+    ], 
+    "2 COR": [
+      47, 
+      "CO2"
+    ], 
+    "1 COR": [
+      46, 
+      "CO1"
+    ], 
+    "1 MACC": [
+      111, 
+      "MA1"
+    ], 
+    "EXOD": [
+      2, 
+      "EXO"
+    ], 
+    "ZEPH": [
+      36, 
+      "ZEP"
+    ], 
+    "MATT": [
+      40, 
+      "MAT"
+    ], 
+    "PROV": [
+      20, 
+      "PRO"
+    ], 
+    "ZECH": [
+      38, 
+      "ZEC"
+    ], 
+    "PR AZAR": [
+      87, 
+      "PAZ"
+    ], 
+    "JONAH": [
+      32, 
+      "JNA"
+    ], 
+    "4 MACC": [
+      114, 
+      "MA4"
+    ], 
+    "NEH": [
+      16, 
+      "NEH"
+    ], 
+    "LUKE": [
+      42, 
+      "LUK"
+    ], 
+    "ESTH": [
+      17, 
+      "EST"
+    ], 
+    "EP JER": [
+      102, 
+      "LJB"
+    ], 
+    "SUS": [
+      81, 
+      "SUS"
+    ], 
+    "ISA": [
+      23, 
+      "ISA"
+    ], 
+    "COL": [
+      51, 
+      "COL"
+    ], 
+    "2 PET": [
+      61, 
+      "PE2"
+    ], 
+    "PHIL": [
+      50, 
+      "PHP"
+    ], 
+    "EPH": [
+      49, 
+      "EPH"
+    ], 
+    "2 ESD": [
+      91, 
+      "LES"
+    ], 
+    "JOHN": [
+      43, 
+      "JHN"
+    ], 
+    "JER": [
+      24, 
+      "JER"
+    ], 
+    "EZRA": [
+      224, 
+      "EZN"
+    ], 
+    "TITUS": [
+      56, 
+      "TIT"
+    ], 
+    "3 MACC": [
+      113, 
+      "MA3"
+    ], 
+    "2 KGS": [
+      12, 
+      "KI2"
+    ], 
+    "HEB": [
+      58, 
+      "HEB"
+    ], 
+    "ADD ESTH": [
+      72, 
+      "ESC"
+    ], 
+    "ADD DAN": [
+      75, 
+      "DAC"
+    ], 
+    "JUDG": [
+      7, 
+      "JDG"
+    ], 
+    "JUDE": [
+      65, 
+      "JDE"
+    ], 
+    "MARK": [
+      41, 
+      "MRK"
+    ], 
+    "WIS": [
+      86, 
+      "WIS"
+    ], 
+    "LEV": [
+      3, 
+      "LEV"
+    ], 
+    "AMOS": [
+      30, 
+      "AMO"
+    ], 
+    "DEUT": [
+      5, 
+      "DEU"
+    ], 
+    "ECCL": [
+      21, 
+      "ECC"
+    ], 
+    "1 TIM": [
+      54, 
+      "TI1"
+    ], 
+    "BAR": [
+      101, 
+      "BAR"
+    ], 
+    "1 CHR": [
+      13, 
+      "CH1"
+    ], 
+    "TOB": [
+      85, 
+      "TOB"
+    ], 
+    "JOSH": [
+      6, 
+      "JOS"
+    ], 
+    "DAN": [
+      27, 
+      "DAN"
+    ], 
+    "2 THESS": [
+      53, 
+      "TH2"
+    ], 
+    "GAL": [
+      48, 
+      "GAL"
+    ], 
+    "2 SAM": [
+      10, 
+      "SA2"
+    ], 
+    "1 ESD": [
+      90, 
+      "GES"
+    ], 
+    "HOS": [
+      28, 
+      "HOS"
+    ], 
+    "NUM": [
+      4, 
+      "NUM"
+    ], 
+    "4 EZRA": [
+      92, 
+      "EZA"
+    ], 
+    "2 MACC": [
+      112, 
+      "MA2"
+    ], 
+    "RUTH": [
+      8, 
+      "RUT"
+    ]
+  }, 
   "SwordAbbreviationDict": {
     "SIR": [
       84, 
@@ -6622,6 +6972,233 @@
       "A4"
     ]
   }, 
+  "allAbbreviationsDict": {
+    "SIR": "SIR", 
+    "3CO": "CO3", 
+    "TIT": "TIT", 
+    "EXO": "EXO", 
+    "NAH": "NAH", 
+    "NAM": "NAH", 
+    "2PE": "PE2", 
+    "2 CHR": "CH2", 
+    "3MACC": "MA3", 
+    "2KI": "KI2", 
+    "EZEK": "EZK", 
+    "JOS": "JOS", 
+    "NEH": "NEH", 
+    "PRO": "PRO", 
+    "JOSH": "JOS", 
+    "SOS": "SNG", 
+    "LBA": "LBA", 
+    "RE": "REV", 
+    "JOB": "JOB", 
+    "1ESD": "GES", 
+    "3JN": "JN3", 
+    "JOE": "JOL", 
+    "LUKE": "LUK", 
+    "JOH": "JHN", 
+    "RO": "ROM", 
+    "JOL": "JOL", 
+    "MIC": "MIC", 
+    "JON": "JNA", 
+    "1 THESS": "TH1", 
+    "1MACC": "MA1", 
+    "SONG": "SNG", 
+    "REV": "REV", 
+    "HAB": "HAB", 
+    "2SA": "SA2", 
+    "HAG": "HAG", 
+    "JAM": "JAM", 
+    "1 SAM": "SA1", 
+    "GA": "GAL", 
+    "MRK": "MRK", 
+    "2JO": "JN2", 
+    "2JN": "JN2", 
+    "PR MAN": "MAN", 
+    "PHLM": "PHM", 
+    "LAM": "LAM", 
+    "PHI": "PHP", 
+    "MAR": "MRK", 
+    "MAT": "MAT", 
+    "PHM": "PHM", 
+    "SNG": "SNG", 
+    "NIC": "MIC", 
+    "JOEL": "JOL", 
+    "ACTS": "ACT", 
+    "2CL": "CL2", 
+    "2CO": "CO2", 
+    "2CH": "CH2", 
+    "PHP": "PHP", 
+    "MAL": "MAL", 
+    "2ESD": "LES", 
+    "MAN": "MAN", 
+    "AC": "ACT", 
+    "1COR": "CO1", 
+    "1 KGS": "KI1", 
+    "BEL": "BEL", 
+    "4BAR": "BA4", 
+    "1MQ": "MQ1", 
+    "2 TIM": "TI2", 
+    "JDG": "JDG", 
+    "5 EZRA": "EZ5", 
+    "DEU": "DEU", 
+    "1EN": "ENO", 
+    "1ES": "GES", 
+    "EST": "EST", 
+    "5EZ": "EZ5", 
+    "1MA": "MA1", 
+    "JDT": "JDT", 
+    "1TIM": "TI1", 
+    "1TH": "TH1", 
+    "1TI": "TI1", 
+    "JUB": "JUB", 
+    "PS": "PSA", 
+    "OBAD": "OBA", 
+    "ROM": "ROM", 
+    "AMO": "AMO", 
+    "PRAZAR": "PAZ", 
+    "2CHR": "CH2", 
+    "1 JOHN": "JN1", 
+    "1KGS": "KI1", 
+    "GEN": "GEN", 
+    "6 EZRA": "EZ6", 
+    "2BAR": "BA2", 
+    "1 PET": "PE1", 
+    "2 JOHN": "JN2", 
+    "2SAM": "SA2", 
+    "1 COR": "CO1", 
+    "SHE": "SHE", 
+    "1 MACC": "MA1", 
+    "ENO": "ENO", 
+    "EXOD": "EXO", 
+    "ZEPH": "ZEP", 
+    "MATT": "MAT", 
+    "PSO": "PSO", 
+    "PSB": "PSB", 
+    "PROV": "PRO", 
+    "ZECH": "ZEC", 
+    "PSA": "PSA", 
+    "PR AZAR": "PAZ", 
+    "3MQ": "MQ3", 
+    "JONAH": "JNA", 
+    "MT": "MAT", 
+    "4 MACC": "MA4", 
+    "2 COR": "CO2", 
+    "RUT": "RUT", 
+    "MR": "MRK", 
+    "PSS": "PSS", 
+    "3MA": "MA3", 
+    "HOS": "HOS", 
+    "DOJ": "DOJ", 
+    "COP": "COP", 
+    "1KI": "KI1", 
+    "PS151": "PS2", 
+    "2COR": "CO2", 
+    "GLO": "GLS", 
+    "3 JOHN": "JN3", 
+    "REP": "REP", 
+    "2TI": "TI2", 
+    "2TH": "TH2", 
+    "SUS": "SUS", 
+    "ACT": "ACT", 
+    "ISA": "ISA", 
+    "LUK": "LUK", 
+    "COL": "COL", 
+    "DANGR": "DAG", 
+    "ECC": "ECC", 
+    "2 PET": "PE2", 
+    "PHIL": "PHP", 
+    "EPH": "EPH", 
+    "WSI": "WSI", 
+    "2 ESD": "LES", 
+    "4MACC": "MA4", 
+    "JOHN": "JHN", 
+    "ODE": "ODE", 
+    "3JO": "JN3", 
+    "JER": "JER", 
+    "1SA": "SA1", 
+    "1JOHN": "JN1", 
+    "ESTH": "EST", 
+    "TITUS": "TIT", 
+    "3 MACC": "MA3", 
+    "2 KGS": "KI2", 
+    "OBA": "OBA", 
+    "NDX": "IXN", 
+    "2TIM": "TI2", 
+    "HEB": "HEB", 
+    "FRT": "FRT", 
+    "4BA": "BA4", 
+    "EUT": "EUT", 
+    "JHN": "JHN", 
+    "EPLAO": "LAO", 
+    "ZEC": "ZEC", 
+    "LAO": "LAO", 
+    "JUDG": "JDG", 
+    "ODES": "ODE", 
+    "JUDE": "JDE", 
+    "MARK": "MRK", 
+    "PJE": "PJE", 
+    "ZEP": "ZEP", 
+    "TDX": "IXT", 
+    "WIS": "WIS", 
+    "1CHR": "CH1", 
+    "LEV": "LEV", 
+    "2ES": "LES", 
+    "AMOS": "AMO", 
+    "DEUT": "DEU", 
+    "1CH": "CH1", 
+    "1CO": "CO1", 
+    "ECCL": "ECC", 
+    "3MEQ": "MQ3", 
+    "1CL": "CL1", 
+    "2JOHN": "JN2", 
+    "1 TIM": "TI1", 
+    "2MQ": "MQ2", 
+    "BAR": "BAR", 
+    "1 CHR": "CH1", 
+    "DID": "DID", 
+    "ESTHGR": "ESG", 
+    "1PE": "PE1", 
+    "PS2": "PS2", 
+    "2MA": "MA2", 
+    "PS3": "PS3", 
+    "TOB": "TOB", 
+    "BAK": "BAK", 
+    "PSSSOL": "PSS", 
+    "DAN": "DAN", 
+    "6EZ": "EZ6", 
+    "2 THESS": "TH2", 
+    "GAL": "GAL", 
+    "1SAM": "SA1", 
+    "2 SAM": "SA2", 
+    "ADDPS": "PS3", 
+    "LU": "LUK", 
+    "PRMAN": "MAN", 
+    "S3Y": "PAZ", 
+    "1JN": "JN1", 
+    "1JO": "JN1", 
+    "1MEQ": "MQ1", 
+    "JAS": "JAM", 
+    "1 ESD": "GES", 
+    "CNC": "CNC", 
+    "NUM": "NUM", 
+    "2THESS": "TH2", 
+    "4 EZRA": "EZA", 
+    "2MACC": "MA2", 
+    "RUTH": "RUT", 
+    "JUD": "JDE", 
+    "2MEQ": "MQ2", 
+    "2 MACC": "MA2", 
+    "4MA": "MA4", 
+    "1PET": "PE1", 
+    "3JOHN": "JN3", 
+    "EZK": "EZK", 
+    "EZE": "EZK", 
+    "1THESS": "TH1", 
+    "2KGS": "KI2", 
+    "EZA": "EZA", 
+    "2PET": "PE2"
+  }, 
   "ByzantineAbbreviationDict": {
     "GA": [
       48, 
@@ -6730,356 +7307,6 @@
     "1CO": [
       46, 
       "CO1"
-    ]
-  }, 
-  "SBLDict": {
-    "SIR": [
-      84, 
-      "SIR"
-    ], 
-    "NAH": [
-      34, 
-      "NAH"
-    ], 
-    "2 CHR": [
-      14, 
-      "CH2"
-    ], 
-    "EZEK": [
-      26, 
-      "EZK"
-    ], 
-    "3 JOHN": [
-      64, 
-      "JN3"
-    ], 
-    "JOB": [
-      18, 
-      "JOB"
-    ], 
-    "1 THESS": [
-      52, 
-      "TH1"
-    ], 
-    "SONG": [
-      22, 
-      "SNG"
-    ], 
-    "REV": [
-      66, 
-      "REV"
-    ], 
-    "HAB": [
-      35, 
-      "HAB"
-    ], 
-    "JAS": [
-      59, 
-      "JAM"
-    ], 
-    "HAG": [
-      37, 
-      "HAG"
-    ], 
-    "1 SAM": [
-      9, 
-      "SA1"
-    ], 
-    "PR MAN": [
-      83, 
-      "MAN"
-    ], 
-    "LAM": [
-      25, 
-      "LAM"
-    ], 
-    "PHLM": [
-      57, 
-      "PHM"
-    ], 
-    "NIC": [
-      33, 
-      "MIC"
-    ], 
-    "JOEL": [
-      29, 
-      "JOL"
-    ], 
-    "ACTS": [
-      44, 
-      "ACT"
-    ], 
-    "MAL": [
-      39, 
-      "MAL"
-    ], 
-    "1 KGS": [
-      11, 
-      "KI1"
-    ], 
-    "BEL": [
-      80, 
-      "BEL"
-    ], 
-    "2 TIM": [
-      55, 
-      "TI2"
-    ], 
-    "5 EZRA": [
-      93, 
-      "EZ5"
-    ], 
-    "JDT": [
-      82, 
-      "JDT"
-    ], 
-    "PS": [
-      19, 
-      "PSA"
-    ], 
-    "OBAD": [
-      31, 
-      "OBA"
-    ], 
-    "ROM": [
-      45, 
-      "ROM"
-    ], 
-    "1 JOHN": [
-      62, 
-      "JN1"
-    ], 
-    "GEN": [
-      1, 
-      "GEN"
-    ], 
-    "6 EZRA": [
-      94, 
-      "EZ6"
-    ], 
-    "1 PET": [
-      60, 
-      "PE1"
-    ], 
-    "2 JOHN": [
-      63, 
-      "JN2"
-    ], 
-    "2 COR": [
-      47, 
-      "CO2"
-    ], 
-    "1 COR": [
-      46, 
-      "CO1"
-    ], 
-    "1 MACC": [
-      111, 
-      "MA1"
-    ], 
-    "EXOD": [
-      2, 
-      "EXO"
-    ], 
-    "ZEPH": [
-      36, 
-      "ZEP"
-    ], 
-    "MATT": [
-      40, 
-      "MAT"
-    ], 
-    "PROV": [
-      20, 
-      "PRO"
-    ], 
-    "ZECH": [
-      38, 
-      "ZEC"
-    ], 
-    "PR AZAR": [
-      87, 
-      "PAZ"
-    ], 
-    "JONAH": [
-      32, 
-      "JNA"
-    ], 
-    "4 MACC": [
-      114, 
-      "MA4"
-    ], 
-    "NEH": [
-      16, 
-      "NEH"
-    ], 
-    "LUKE": [
-      42, 
-      "LUK"
-    ], 
-    "ESTH": [
-      17, 
-      "EST"
-    ], 
-    "EP JER": [
-      102, 
-      "LJB"
-    ], 
-    "SUS": [
-      81, 
-      "SUS"
-    ], 
-    "ISA": [
-      23, 
-      "ISA"
-    ], 
-    "COL": [
-      51, 
-      "COL"
-    ], 
-    "2 PET": [
-      61, 
-      "PE2"
-    ], 
-    "PHIL": [
-      50, 
-      "PHP"
-    ], 
-    "EPH": [
-      49, 
-      "EPH"
-    ], 
-    "2 ESD": [
-      91, 
-      "LES"
-    ], 
-    "JOHN": [
-      43, 
-      "JHN"
-    ], 
-    "JER": [
-      24, 
-      "JER"
-    ], 
-    "EZRA": [
-      224, 
-      "EZN"
-    ], 
-    "TITUS": [
-      56, 
-      "TIT"
-    ], 
-    "3 MACC": [
-      113, 
-      "MA3"
-    ], 
-    "2 KGS": [
-      12, 
-      "KI2"
-    ], 
-    "HEB": [
-      58, 
-      "HEB"
-    ], 
-    "ADD ESTH": [
-      72, 
-      "ESC"
-    ], 
-    "ADD DAN": [
-      75, 
-      "DAC"
-    ], 
-    "JUDG": [
-      7, 
-      "JDG"
-    ], 
-    "JUDE": [
-      65, 
-      "JDE"
-    ], 
-    "MARK": [
-      41, 
-      "MRK"
-    ], 
-    "WIS": [
-      86, 
-      "WIS"
-    ], 
-    "LEV": [
-      3, 
-      "LEV"
-    ], 
-    "AMOS": [
-      30, 
-      "AMO"
-    ], 
-    "DEUT": [
-      5, 
-      "DEU"
-    ], 
-    "ECCL": [
-      21, 
-      "ECC"
-    ], 
-    "1 TIM": [
-      54, 
-      "TI1"
-    ], 
-    "BAR": [
-      101, 
-      "BAR"
-    ], 
-    "1 CHR": [
-      13, 
-      "CH1"
-    ], 
-    "TOB": [
-      85, 
-      "TOB"
-    ], 
-    "JOSH": [
-      6, 
-      "JOS"
-    ], 
-    "DAN": [
-      27, 
-      "DAN"
-    ], 
-    "2 THESS": [
-      53, 
-      "TH2"
-    ], 
-    "GAL": [
-      48, 
-      "GAL"
-    ], 
-    "2 SAM": [
-      10, 
-      "SA2"
-    ], 
-    "1 ESD": [
-      90, 
-      "GES"
-    ], 
-    "HOS": [
-      28, 
-      "HOS"
-    ], 
-    "NUM": [
-      4, 
-      "NUM"
-    ], 
-    "4 EZRA": [
-      92, 
-      "EZA"
-    ], 
-    "2 MACC": [
-      112, 
-      "MA2"
-    ], 
-    "RUTH": [
-      8, 
-      "RUT"
     ]
   }, 
   "EnglishNameDict": {
