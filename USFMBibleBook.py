@@ -3,7 +3,7 @@
 # USFMBibleBook.py
 #
 # Module handling the USFM markers for Bible books
-#   Last modified: 2011-06-15 by RJH (also update versionString below)
+#   Last modified: 2011-06-16 by RJH (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -347,13 +347,13 @@ class USFMBibleBook:
         results = []
 
         header = self.getField( 'h' )
-        if header is not None:
+        if header:
             if header.isupper(): header = header.title()
             results.append( header )
 
-        if (header is None or len(header)<4 or not header[0].isdigit() or header[1]!=' ') and self.getField('mt2') is not None: # Ignore the main title if it's a book like "Corinthians" and there's a mt2 (like "First")
+        if (not header or len(header)<4 or not header[0].isdigit() or header[1]!=' ') and self.getField('mt2') is not None: # Ignore the main title if it's a book like "Corinthians" and there's a mt2 (like "First")
             mt1 = self.getField( 'mt1' )
-            if mt1 is not None:
+            if mt1:
                 if mt1.isupper(): mt1 = mt1.title()
                 if mt1 not in results: results.append( mt1 )
         

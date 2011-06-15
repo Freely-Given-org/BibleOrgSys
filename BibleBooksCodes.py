@@ -4,7 +4,7 @@
 # BibleBooksCodes.py
 #
 # Module handling BibleBooksCodes functions
-#   Last modified: 2011-06-15 (also update versionString below)
+#   Last modified: 2011-06-16 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -162,12 +162,12 @@ class BibleBooksCodes:
         return self.__DataDicts["ParatextAbbreviationDict"][paratextAbbreviation.upper()][1]
 
     def getBBB( self, something ):
-        """ Attempt to return the reference abbreviation string for the given book number or code.
+        """ Attempt to return the BBB reference abbreviation string for the given book information.
             Returns BBB or None. """
         assert( something )
         UCSomething = something.upper()
         if UCSomething in self.__DataDicts["referenceAbbreviationDict"]: return UCSomething # it's already a BBB code
-        if something.isdigit() and 1 <= something <= 255: return self.__DataDicts["referenceNumberDict"][something]["referenceAbbreviation"]
+        #if something.isdigit() and 1 <= int(something) <= 255: return self.__DataDicts["referenceNumberDict"][int(something)]["referenceAbbreviation"]
         if UCSomething in self.__DataDicts["allAbbreviationsDict"]: return self.__DataDicts["allAbbreviationsDict"][UCSomething]
     # end of getBBB
 
