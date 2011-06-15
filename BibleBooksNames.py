@@ -4,7 +4,7 @@
 # BibleBooksNames.py
 #
 # Module handling BibleBooksNames
-#   Last modified: 2011-05-30 (also update versionString below)
+#   Last modified: 2011-06-15 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -211,9 +211,10 @@ class BibleBooksNamesSystems:
         if not self.__DataDicts: # Don't do this unnecessarily
             # See if we can load from the pickle file (faster than loading from the XML)
             picklesGood = False
-            standardPickleFilepath = os.path.join( "DataFiles", "DerivedFiles", "BibleBooksNames_Tables.pickle" )
+            dataFilepath = os.path.join( os.path.dirname(__file__), "DataFiles/" )
+            standardPickleFilepath = os.path.join( dataFilepath, "DerivedFiles", "BibleBooksNames_Tables.pickle" )
             if XMLFolder is None and os.access( standardPickleFilepath, os.R_OK ):
-                standardXMLFolder = os.path.join( "DataFiles", "BookNames/" )
+                standardXMLFolder = os.path.join( dataFilepath, "BookNames/" )
                 pickle8, pickle9 = os.stat(standardPickleFilepath)[8:10]
                 picklesGood = True
                 for filename in os.listdir( standardXMLFolder ):

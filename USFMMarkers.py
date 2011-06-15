@@ -4,7 +4,7 @@
 # USFMMarkers.py
 #
 # Module handling USFMMarkers
-#   Last modified: 2011-06-13 (also update versionString below)
+#   Last modified: 2011-06-15 (also update versionString below)
 #
 # Copyright (C) 2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -160,8 +160,9 @@ class USFMMarkers:
         """ Loads the XML data file and imports it to dictionary format (if not done already). """
         if not self.__DataDict: # We need to load them once -- don't do this unnecessarily
             # See if we can load from the pickle file (faster than loading from the XML)
-            standardXMLFilepath = os.path.join( "DataFiles", "USFMMarkers.xml" )
-            standardPickleFilepath = os.path.join( "DataFiles", "DerivedFiles", "USFMMarkers_Tables.pickle" )
+            dataFilepath = os.path.join( os.path.dirname(__file__), "DataFiles/" )
+            standardXMLFilepath = os.path.join( dataFilepath, "USFMMarkers.xml" )
+            standardPickleFilepath = os.path.join( dataFilepath, "DerivedFiles", "USFMMarkers_Tables.pickle" )
             if XMLFilepath is None \
             and os.access( standardPickleFilepath, os.R_OK ) \
             and os.stat(standardPickleFilepath)[8] > os.stat(standardXMLFilepath)[8] \

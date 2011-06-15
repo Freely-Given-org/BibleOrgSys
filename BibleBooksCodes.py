@@ -60,8 +60,9 @@ class BibleBooksCodes:
         """ Loads the pickle or XML data file and imports it to dictionary format (if not done already). """
         if not self.__DataDicts: # We need to load them once -- don't do this unnecessarily
             # See if we can load from the pickle file (faster than loading from the XML)
-            standardXMLFilepath = os.path.join( "DataFiles", "BibleBooksCodes.xml" )
-            standardPickleFilepath = os.path.join( "DataFiles", "DerivedFiles", "BibleBooksCodes_Tables.pickle" )
+            dataFilepath = os.path.join( os.path.dirname(__file__), "DataFiles" )
+            standardXMLFilepath = os.path.join( dataFilepath, "BibleBooksCodes.xml" )
+            standardPickleFilepath = os.path.join( dataFilepath, "DerivedFiles", "BibleBooksCodes_Tables.pickle" )
             if XMLFilepath is None \
             and os.access( standardPickleFilepath, os.R_OK ) \
             and os.stat(standardPickleFilepath)[8] > os.stat(standardXMLFilepath)[8] \
