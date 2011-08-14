@@ -4,7 +4,7 @@
 # BiblePunctuationSystems.py
 #
 # Module handling BiblePunctuationSystem_*.xml to produce C and Python data tables
-#   Last modified: 2011-06-15 (also update versionString below)
+#   Last modified: 2011-06-30 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -132,6 +132,56 @@ class BiblePunctuationSystems:
         logging.error( _("No '{}' system in Bible Punctuation Systems").format(systemName) )
         if Globals.verbosityLevel>2: logging.error( "  " + _("Available systems are {}").format(self.getAvailablePunctuationSystemNames()) )
     # end of getPunctuationSystem
+
+    def checkPunctuationSystem( self, systemName, punctuationSchemeToCheck, exportFlag=False, debugFlag=False ):
+        """
+        Check the given punctuation scheme against all the loaded systems.
+        Create a new punctuation file if it doesn't match any.
+        """
+        assert( systemName )
+        assert( punctuationSchemeToCheck )
+        assert( self.Lists )
+        #print( systemName, punctuationSchemeToCheck )
+
+        matchedPunctuationSystemCodes = []
+        systemMatchCount, systemMismatchCount, allErrors, errorSummary = 0, 0, '', ''
+        for punctuationSystemCode in self.Lists: # Step through the various reference schemes
+            theseErrors = ''
+            if self.Lists[punctuationSystemCode] == punctuationSchemeToCheck:
+                #print( "  Matches '{}' punctuation system".format( punctuationSystemCode ) )
+                systemMatchCount += 1
+                matchedPunctuationSystemCodes.append( punctuationSystemCode )
+            else:
+                if len(self.Lists[punctuationSystemCode]) == len(punctuationSchemeToCheck):
+                    for BBB1,BBB2 in zip(self.Lists[punctuationSystemCode],punctuationSchemeToCheck):
+                        if BBB1 != BBB2: break
+                    thisError = "    Doesn't match '{}' system (Both have {} books, but {} instead of {})".format( punctuationSystemCode, len(punctuationSchemeToCheck), BBB1, BBB2 )
+                else:
+                    thisError = "    Doesn't match '{}' system ({} books instead of {})".format( punctuationSystemCode, len(punctuationSchemeToCheck), len(self.Lists[punctuationSystemCode]) )
+                theseErrors += ("\n" if theseErrors else "") + thisError
+                errorSummary += ("\n" if errorSummary else "") + thisError
+                systemMismatchCount += 1
+
+        if systemMatchCount:
+            if systemMatchCount == 1: # What we hope for
+                print( "  Matched {} punctuation (with these {} books)".format( matchedPunctuationSystemCodes[0], len(punctuationSchemeToCheck) ) )
+                if debugFlag: print( errorSummary )
+            else:
+                print( "  Matched {} punctuation system(s): {} (with these {} books)".format( systemMatchCount, matchedPunctuationSystemCodes, len(punctuationSchemeToCheck) ) )
+                if debugFlag: print( errorSummary )
+        else:
+            print( "  Mismatched {} punctuation systems (with these {} books)".format( systemMismatchCount, len(punctuationSchemeToCheck) ) )
+            if debugFlag: print( allErrors )
+            else: print( errorSummary)
+
+        if exportFlag and not systemMatchCount: # Write a new file
+            outputFilepath = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/", "BiblePunctuation_"+systemName + ".xml" )
+            if Globals.verbosityLevel > 1: print( _("Writing {} books to {}...").format( len(punctuationSchemeToCheck), outputFilepath ) )
+            with open( outputFilepath, 'wt' ) as myFile:
+                for n,BBB in enumerate(punctuationSchemeToCheck):
+                    myFile.write( '  <book id="{}">{}</book>\n'.format( n+1,BBB ) )
+                myFile.write( "</BiblePunctuationSystem>" )
+    # end of checkPunctuationSystem
 # end of BiblePunctuationSystems class
 
 

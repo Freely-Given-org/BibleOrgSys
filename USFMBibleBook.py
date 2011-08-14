@@ -3,7 +3,7 @@
 # USFMBibleBook.py
 #
 # Module handling the USFM markers for Bible books
-#   Last modified: 2011-06-16 by RJH (also update versionString below)
+#   Last modified: 2011-07-01 by RJH (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -77,7 +77,7 @@ class USFMBibleBook:
         if self.bookReferenceCode: result += ('\n' if result else '') + "  " + self.bookReferenceCode
         if self.sourceFilepath: result += ('\n' if result else '') + "  " + _("From: ") + self.sourceFilepath
         result += ('\n' if result else '') + "  " + _("Number of lines = ") + str(len(self.lines))
-        if Globals.verbosityLevel > 1: result += ('\n' if result else '') + "  " + _("Deduced short book name is '{}'").format( self.getBookName() )
+        if Globals.verbosityLevel > 1: result += ('\n' if result else '') + "  " + _("Deduced short book name(s) are {}").format( self.getAssumedBookNames() )
         return result
     # end of __str__
 
@@ -106,6 +106,14 @@ class USFMBibleBook:
         def processLineFix( marker, text ):
             """ Does character fixes on a specific line and moves footnotes and cross-references out of the main text. """
             adjText = text
+
+            # Remove trailing spaces
+            if adjText and adjText[-1].isspace():
+                #print( 10, self.bookReferenceCode, c, v, _("Trailing space at end of line") )
+                if logErrors: logging.warning( _("Removed trailing space after {} {}:{} in {}: '{}'").format( bookReferenceCode, c, v, marker, text ) )
+                self.addPriorityError( 10, self.bookReferenceCode, c, v, _("Trailing space at end of line") )
+                adjText = adjText.rstrip()
+                #print( marker, "'"+text+"'", "'"+adjText+"'" )
 
             # Fix up quote marks
             if '<' in adjText or '>' in adjText:
@@ -157,16 +165,17 @@ class USFMBibleBook:
                     fixErrors.append( _("{} {}:{} Found empty {} in {}: {}").format( bookReferenceCode, c, v, thisOne, marker, adjText ) )
                     if logErrors: logging.error( _("Found empty {} after {} {}:{} in {}: {}").format( thisOne, bookReferenceCode, c, v, marker, adjText ) )
                     self.addPriorityError( 53, self.bookReferenceCode, c, v, _("Empty {}").format( thisOne ) )
-                elif note[0].isspace():
-                    fixErrors.append( _("{} {}:{} Found {} starting with space in {}: {}").format( bookReferenceCode, c, v, thisOne, marker, adjText ) )
-                    if logErrors: logging.error( _("Found {} starting with space after {} {}:{} in {}: {}").format( thisOne, bookReferenceCode, c, v, marker, adjText ) )
-                    self.addPriorityError( 12, self.bookReferenceCode, c, v, _("{} starts with space").format( thisOne.title() ) )
-                    note = note.lstrip()
-                elif note[-1].isspace():
-                    fixErrors.append( _("{} {}:{} Found {} ending with space in {}: {}").format( bookReferenceCode, c, v, thisOne, marker, adjText ) )
-                    if logErrors: logging.error( _("Found {} ending with space after {} {}:{} in {}: {}").format( thisOne, bookReferenceCode, c, v, marker, adjText ) )
-                    self.addPriorityError( 11, self.bookReferenceCode, c, v, _("{} ends with space").format( thisOne.title() ) )
-                    note = note.rstrip()
+                else: # there is a note
+                    if note[0].isspace():
+                        fixErrors.append( _("{} {}:{} Found {} starting with space in {}: {}").format( bookReferenceCode, c, v, thisOne, marker, adjText ) )
+                        if logErrors: logging.error( _("Found {} starting with space after {} {}:{} in {}: {}").format( thisOne, bookReferenceCode, c, v, marker, adjText ) )
+                        self.addPriorityError( 12, self.bookReferenceCode, c, v, _("{} starts with space").format( thisOne.title() ) )
+                        note = note.lstrip()
+                    if note and note[-1].isspace():
+                        fixErrors.append( _("{} {}:{} Found {} ending with space in {}: {}").format( bookReferenceCode, c, v, thisOne, marker, adjText ) )
+                        if logErrors: logging.error( _("Found {} ending with space after {} {}:{} in {}: {}").format( thisOne, bookReferenceCode, c, v, marker, adjText ) )
+                        self.addPriorityError( 11, self.bookReferenceCode, c, v, _("{} ends with space").format( thisOne.title() ) )
+                        note = note.rstrip()
                 adjText = adjText[:ix1] + adjText[ix2+3:] # Remove the note completely from the text
                 lcAdjText = adjText.lower()
                 extras.append( (this1,ix1,note,) ) # Saves a 3-tuple: type ('fn' or 'xr'), index into the main text line, the actual fn or xref contents
@@ -179,6 +188,14 @@ class USFMBibleBook:
                 fixErrors.append( _("{} {}:{} Unable to properly process footnotes and cross-references in {}: {}").format( bookReferenceCode, c, v, marker, adjText ) )
                 if logErrors: logging.error( _("Unable to properly process footnotes and cross-references {} {}:{} in {}: {}").format( bookReferenceCode, c, v, marker, adjText ) )
                 self.addPriorityError( 82, self.bookReferenceCode, c, v, _("Invalid footnotes or cross-refernces") )
+
+            # Check trailing spaces again now
+            if adjText and adjText[-1].isspace():
+                #print( 10, self.bookReferenceCode, c, v, _("Trailing space before note at end of line") )
+                if logErrors: logging.warning( _("Removed trailing space before note after {} {}:{} in {}: '{}'").format( bookReferenceCode, c, v, marker, text ) )
+                self.addPriorityError( 10, self.bookReferenceCode, c, v, _("Trailing space before note at end of line") )
+                adjText = adjText.rstrip()
+                #print( marker, "'"+text+"'", "'"+adjText+"'" )
 
             if '<' in adjText or '>' in adjText or '"' in adjText: print( marker, adjText ); halt
             return marker, adjText, extras
@@ -233,6 +250,7 @@ class USFMBibleBook:
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text: c = text.split()[0]; v = '0'
             elif marker=='v' and text: v = text.split()[0]
+            elif marker=='restore': continue # Ignore these lines completely
 
             if self.USFMMarkers.isNewlineMarker( marker ):
                 if lastMarker: processLine( lastMarker, lastText )
@@ -407,6 +425,9 @@ class USFMBibleBook:
                 versificationErrors.append( _("{} {}:{} Encountered cp field {}").format( self.bookReferenceCode, chapterNumber, lastVerseNumberString, text ) )
                 if logErrors: logging.warning( _("Encountered cp field {} after {}:{} of {}").format( text, chapterNumber, lastVerseNumberString, self.bookReferenceCode ) )
             elif marker == 'v':
+                if chapterText == '0':
+                    versificationErrors.append( _("{} {} Missing chapter number field before verse {}").format( self.bookReferenceCode, chapterText, text ) )
+                    if logErrors: logging.warning( _("Missing chapter number field before verse {} in chapter {} of {}").format( text, chapterText, self.bookReferenceCode ) )
                 if not text:
                     versificationErrors.append( _("{} {} Missing USFM verse number after {}").format( self.bookReferenceCode, chapterNumber, lastVerseNumberString ) )
                     if logErrors: logging.warning( _("Missing USFM verse number after {} in chapter {} of {}").format( lastVerseNumberString, chapterNumber, self.bookReferenceCode ) )
@@ -503,6 +524,248 @@ class USFMBibleBook:
         if versificationErrors: self.errorDictionary['Versification Errors'] = versificationErrors
         return versification, omittedVerses, combinedVerses, reorderedVerses
     # end of getVersification
+
+
+    def getAddedUnits( self, logErrors=False ):
+        """
+        Get the units added to the text of the book including paragraph breaks, section headings, and section references.
+        Note that all chapter and verse values are returned as strings not integers.
+        """
+        assert( self.lines )
+        addedUnitErrors = []
+
+        paragraphReferences, qReferences, sectionHeadingReferences, sectionHeadings, sectionReferenceReferences, sectionReferences = [], [], [], [], [], []
+        verseText = chapterText = '0'
+        for marker,text,extras in self.lines:
+            #print( marker, text )
+            if marker == 'c':
+                chapterText = text.split( None, 1 )[0]
+                verseText = '0'
+            elif marker == 'cp':
+                cpChapterText = text.split( None, 1 )[0]
+                if Globals.verbosityLevel > 2: print( "In {}, chapter text went from '{}' to '{}' with cp marker".format( self.bookReferenceCode, chapterText, cpChapterText ) )
+                chapterText = cpChapterText
+                if len(chapterText)>2 and chapterText[0]=='(' and chapterText[-1]==')': chapterText = chapterText[1:-1] # Remove parenthesis -- NOT SURE IF WE REALLY WANT TO DO THIS OR NOT ???
+                verseText = '0'
+            elif marker == 'v':
+                #print( self.bookReferenceCode, chapterText, marker, text )
+                if not text:
+                    addedUnitErrors.append( _("{} {} Missing USFM verse number after {}").format( self.bookReferenceCode, chapterText, verseText ) )
+                    if logErrors: logging.warning( _("Missing USFM verse number after {} in chapter {} of {}").format( verseText, chapterText, self.bookReferenceCode ) )
+                    self.addPriorityError( 86, self.bookReferenceCode, chapterText, verseText, _("Missing verse number") )
+                    continue
+                try:
+                    verseText = text.split( None, 1 )[0]
+                except:
+                    print( "verseText is '{}'".format(verseText) )
+                    halt
+            elif marker == 'p':
+                reference = primeReference = (chapterText,verseText,)
+                while reference in paragraphReferences: # Must be a single verse broken into multiple paragraphs
+                    assert( primeReference in paragraphReferences )
+                    if reference == primeReference: reference = (chapterText,verseText,'a',) # Append a suffix
+                    else: # Already have a suffix
+                        reference = (chapterText,verseText,chr(ord(reference[2])+1),) # Just increment the suffix
+                paragraphReferences.append( reference )
+            elif len(marker)==2 and marker[0]=='q' and marker[1].isdigit():# q1, q2, etc.
+                reference = primeReference = (chapterText,verseText,)
+                while reference in qReferences: # Must be a single verse broken into multiple segments
+                    assert( primeReference in qReferences )
+                    if reference == primeReference: reference = (chapterText,verseText,'a',) # Append a suffix
+                    else: # Already have a suffix
+                        reference = (chapterText,verseText,chr(ord(reference[2])+1),) # Just increment the suffix
+                level = int( marker[1] ) # 1, 2, etc.
+                qReferences.append( (reference,level,) )
+            elif len(marker)==2 and marker[0]=='s' and marker[1].isdigit():# s1, s2, etc.
+                if text and text[-1].isspace(): print( self.bookReferenceCode, chapterText, verseText, marker, "'"+text+"'" )
+                reference = (chapterText,verseText,)
+                level = int( marker[1] ) # 1, 2, etc.
+                #levelReference = (level,reference,)
+                adjText = text.strip().replace('\\nd ','').replace('\\nd*','')
+                #print( self.bookReferenceCode, reference, levelReference, marker, text )
+                #assert( levelReference not in sectionHeadingReferences ) # Ezra 10:24 can have two s3's in one verse (first one is blank so it uses the actual verse text)
+                #sectionHeadingReferences.append( levelReference ) # Just for checking
+                sectionHeadings.append( (reference,level,adjText,) ) # This is the real data
+            elif marker == 'r':
+                reference = (chapterText,verseText,)
+                assert( reference not in sectionReferenceReferences ) # Shouldn't be any cases of two lots of section references within one verse boundary
+                sectionReferenceReferences.append( reference ) # Just for checking
+                sectionReferenceText = text
+                if sectionReferenceText[0]=='(' and sectionReferenceText[-1]==')': sectionReferenceText = sectionReferenceText[1:-1] # Remove parenthesis
+                sectionReferences.append( (reference,sectionReferenceText,) ) # This is the real data
+        if addedUnitErrors: self.errorDictionary['Added Unit Errors'] = addedUnitErrors
+        assert( len(paragraphReferences) == len(set(paragraphReferences)) ) # No duplicates
+        return paragraphReferences, qReferences, sectionHeadings, sectionReferences
+    # end of getAddedUnits
+
+
+    def checkAddedUnits( self, typicalAddedUnitData, severe=False, logErrors=False ):
+        """
+        Get the units added to the text of the book including paragraph breaks, section headings, and section references.
+        Note that all chapter and verse values are returned as strings not integers.
+        """
+        typicalParagraphs, typicalQParagraphs, typicalSectionHeadings, typicalSectionReferences = typicalAddedUnitData
+        paragraphReferences, qReferences, sectionHeadings, sectionReferences = self.getAddedUnits()
+
+        addedUnitNotices = []
+        for reference in typicalParagraphs[self.bookReferenceCode]:
+            assert( 2 <= len(reference) <= 3 )
+            c, v = reference[0], reference[1]
+            if len(reference)==3: v += reference[2] # append the suffix
+            typical = typicalParagraphs[self.bookReferenceCode][reference]
+            assert( typical in ('A','S','M','F') )
+            if reference in paragraphReferences:
+                if typical == 'F':
+                    addedUnitNotices.append( _("{} {} Paragraph break is less common after {}").format( self.bookReferenceCode, c, v ) )
+                    if logErrors: logging.info( _("Paragraph break is less common after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                    self.addPriorityError( 17, self.bookReferenceCode, c, v, _("Less common to have a paragraph break after") )
+                    #print( "Surprise", self.bookReferenceCode, reference, typical, present )
+                elif typical == 'S' and severe:
+                    self.addPriorityError( 3, self.bookReferenceCode, c, v, _("Less common to have a paragraph break after") )
+                    #print( "Yeah", self.bookReferenceCode, reference, typical, present )
+            else: # we didn't have it
+                if typical == 'A':
+                    addedUnitNotices.append( _("{} {} Paragraph break normally inserted after {}").format( self.bookReferenceCode, c, v ) )
+                    if logErrors: logging.info( _("Paragraph break normally inserted after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                    self.addPriorityError( 27, self.bookReferenceCode, c, v, _("Paragraph break normally inserted after") )
+                    #print( "All", self.bookReferenceCode, reference, typical, present )
+                elif typical == 'M' and severe:
+                    self.addPriorityError( 15, self.bookReferenceCode, c, v, _("Paragraph break often inserted after") )
+                    #print( "Most", self.bookReferenceCode, reference, typical, present )
+        for reference in paragraphReferences: # now check for ones in this book but not typically there
+            assert( 2 <= len(reference) <= 3 )
+            if reference not in typicalParagraphs[self.bookReferenceCode]:
+                c, v = reference[0], reference[1]
+                if len(reference)==3: v += reference[2] # append the suffix
+                addedUnitNotices.append( _("{} {} Paragraph break is unusual after {}").format( self.bookReferenceCode, c, v ) )
+                if logErrors: logging.info( _("Paragraph break is unusual after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                self.addPriorityError( 37, self.bookReferenceCode, c, v, _("Unusual to have a paragraph break after") )
+                #print( "Weird paragraph after", self.bookReferenceCode, reference )
+        if addedUnitNotices:
+            if 'Added Formatting' not in self.errorDictionary: self.errorDictionary['Added Formatting'] = OrderedDict() # So we hopefully get the most important errors first
+            self.errorDictionary['Added Formatting']['Possible Paragraphing Errors'] = addedUnitNotices
+
+        addedUnitNotices = []
+        for entry in typicalQParagraphs[self.bookReferenceCode]:
+            reference, level = entry
+            assert( 2 <= len(reference) <= 3 )
+            c, v = reference[0], reference[1]
+            if len(reference)==3: v += reference[2] # append the suffix
+            typical = typicalQParagraphs[self.bookReferenceCode][entry]
+            #print( reference, c, v, level, typical )
+            assert( typical in ('A','S','M','F') )
+            if reference in qReferences:
+                if typical == 'F':
+                    addedUnitNotices.append( _("{} {} Quote Paragraph is less common after {}").format( self.bookReferenceCode, c, v ) )
+                    if logErrors: logging.info( _("Quote Paragraph is less common after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                    self.addPriorityError( 17, self.bookReferenceCode, c, v, _("Less common to have a Quote Paragraph after") )
+                    #print( "Surprise", self.bookReferenceCode, reference, typical, present )
+                elif typical == 'S' and severe:
+                    self.addPriorityError( 3, self.bookReferenceCode, c, v, _("Less common to have a Quote Paragraph after") )
+                    #print( "Yeah", self.bookReferenceCode, reference, typical, present )
+            else: # we didn't have it
+                if typical == 'A':
+                    addedUnitNotices.append( _("{} {} Quote Paragraph normally inserted after {}").format( self.bookReferenceCode, c, v ) )
+                    if logErrors: logging.info( _("Quote Paragraph normally inserted after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                    self.addPriorityError( 27, self.bookReferenceCode, c, v, _("Quote Paragraph normally inserted after") )
+                    #print( "All", self.bookReferenceCode, reference, typical, present )
+                elif typical == 'M' and severe:
+                    self.addPriorityError( 15, self.bookReferenceCode, c, v, _("Quote Paragraph often inserted after") )
+                    #print( "Most", self.bookReferenceCode, reference, typical, present )
+        for reference in qReferences: # now check for ones in this book but not typically there
+            assert( 2 <= len(reference) <= 3 )
+            if reference not in typicalQParagraphs[self.bookReferenceCode]:
+                c, v = reference[0], reference[1]
+                if len(reference)==3: v += reference[2] # append the suffix
+                addedUnitNotices.append( _("{} {} Quote Paragraph is unusual after {}").format( self.bookReferenceCode, c, v ) )
+                if logErrors: logging.info( _("Quote Paragraph is unusual after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                self.addPriorityError( 37, self.bookReferenceCode, c, v, _("Unusual to have a Quote Paragraph after") )
+                #print( "Weird qParagraph after", self.bookReferenceCode, reference )
+        if addedUnitNotices:
+            if 'Added Formatting' not in self.errorDictionary: self.errorDictionary['Added Formatting'] = OrderedDict() # So we hopefully get the most important errors first
+            self.errorDictionary['Added Formatting']['Possible Indenting Errors'] = addedUnitNotices
+
+        addedUnitNotices = []
+        for entry in typicalSectionHeadings[self.bookReferenceCode]:
+            reference, level = entry
+            assert( 2 <= len(reference) <= 3 )
+            c, v = reference[0], reference[1]
+            if len(reference)==3: v += reference[2] # append the suffix
+            typical = typicalSectionHeadings[self.bookReferenceCode][entry]
+            #print( reference, c, v, level, typical )
+            assert( typical in ('A','S','M','F') )
+            if reference in sectionHeadings:
+                if typical == 'F':
+                    addedUnitNotices.append( _("{} {} Section Heading is less common after {}").format( self.bookReferenceCode, c, v ) )
+                    if logErrors: logging.info( _("Section Heading is less common after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                    self.addPriorityError( 17, self.bookReferenceCode, c, v, _("Less common to have a Section Heading after") )
+                    #print( "Surprise", self.bookReferenceCode, reference, typical, present )
+                elif typical == 'S' and severe:
+                    self.addPriorityError( 3, self.bookReferenceCode, c, v, _("Less common to have a Section Heading after") )
+                    #print( "Yeah", self.bookReferenceCode, reference, typical, present )
+            else: # we didn't have it
+                if typical == 'A':
+                    addedUnitNotices.append( _("{} {} Section Heading normally inserted after {}").format( self.bookReferenceCode, c, v ) )
+                    if logErrors: logging.info( _("Section Heading normally inserted after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                    self.addPriorityError( 27, self.bookReferenceCode, c, v, _("Section Heading normally inserted after") )
+                    #print( "All", self.bookReferenceCode, reference, typical, present )
+                elif typical == 'M' and severe:
+                    self.addPriorityError( 15, self.bookReferenceCode, c, v, _("Section Heading often inserted after") )
+                    #print( "Most", self.bookReferenceCode, reference, typical, present )
+        for entry in sectionHeadings: # now check for ones in this book but not typically there
+            reference, level, text = entry
+            assert( 2 <= len(reference) <= 3 )
+            if (reference,level) not in typicalSectionHeadings[self.bookReferenceCode]:
+                c, v = reference[0], reference[1]
+                if len(reference)==3: v += reference[2] # append the suffix
+                addedUnitNotices.append( _("{} {} Section Heading is unusual after {}").format( self.bookReferenceCode, c, v ) )
+                if logErrors: logging.info( _("Section Heading is unusual after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                self.addPriorityError( 37, self.bookReferenceCode, c, v, _("Unusual to have a Section Heading after") )
+                #print( "Weird section heading after", self.bookReferenceCode, reference )
+        if addedUnitNotices:
+            if 'Added Formatting' not in self.errorDictionary: self.errorDictionary['Added Formatting'] = OrderedDict() # So we hopefully get the most important errors first
+            self.errorDictionary['Added Formatting']['Possible Section Heading Errors'] = addedUnitNotices
+
+        addedUnitNotices = []
+        for reference in typicalSectionReferences[self.bookReferenceCode]:
+            assert( 2 <= len(reference) <= 3 )
+            c, v = reference[0], reference[1]
+            if len(reference)==3: v += reference[2] # append the suffix
+            typical = typicalSectionReferences[self.bookReferenceCode][reference]
+            #print( reference, c, v, typical )
+            assert( typical in ('A','S','M','F') )
+            if reference in sectionReferences:
+                if typical == 'F':
+                    addedUnitNotices.append( _("{} {} Section Reference is less common after {}").format( self.bookReferenceCode, c, v ) )
+                    if logErrors: logging.info( _("Section Reference is less common after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                    self.addPriorityError( 17, self.bookReferenceCode, c, v, _("Less common to have a Section Reference after") )
+                    #print( "Surprise", self.bookReferenceCode, reference, typical, present )
+                elif typical == 'S' and severe:
+                    self.addPriorityError( 3, self.bookReferenceCode, c, v, _("Less common to have a Section Reference after") )
+                    #print( "Yeah", self.bookReferenceCode, reference, typical, present )
+            else: # we didn't have it
+                if typical == 'A':
+                    addedUnitNotices.append( _("{} {} Section Reference normally inserted after {}").format( self.bookReferenceCode, c, v ) )
+                    if logErrors: logging.info( _("Section Reference normally inserted after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                    self.addPriorityError( 27, self.bookReferenceCode, c, v, _("Section Reference normally inserted after") )
+                    #print( "All", self.bookReferenceCode, reference, typical, present )
+                elif typical == 'M' and severe:
+                    self.addPriorityError( 15, self.bookReferenceCode, c, v, _("Section Reference often inserted after") )
+                    #print( "Most", self.bookReferenceCode, reference, typical, present )
+        for entry in sectionReferences: # now check for ones in this book but not typically there
+            reference, text = entry
+            assert( 2 <= len(reference) <= 3 )
+            if reference not in typicalSectionReferences[self.bookReferenceCode]:
+                c, v = reference[0], reference[1]
+                if len(reference)==3: v += reference[2] # append the suffix
+                addedUnitNotices.append( _("{} {} Section Reference is unusual after {}").format( self.bookReferenceCode, c, v ) )
+                if logErrors: logging.info( _("Section Reference is unusual after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                self.addPriorityError( 37, self.bookReferenceCode, c, v, _("Unusual to have a Section Reference after") )
+                #print( "Weird Section Reference after", self.bookReferenceCode, reference )
+        if addedUnitNotices:
+            if 'Added Formatting' not in self.errorDictionary: self.errorDictionary['Added Formatting'] = OrderedDict() # So we hopefully get the most important errors first
+            self.errorDictionary['Added Formatting']['Possible Section Reference Errors'] = addedUnitNotices
+    # end of checkAddedUnits
 
 
     def checkSFMs( self, logErrors=False ):
@@ -764,9 +1027,10 @@ class USFMBibleBook:
             if '  ' in adjText:
                 characterErrors.append( _("{} {}:{} Multiple spaces in '{}'").format( self.bookReferenceCode, c, v, adjText ) )
                 self.addPriorityError( 7, self.bookReferenceCode, c, v, _("Multiple spaces in text line") )
-            if adjText[-1] == ' ':
+            if adjText[-1].isspace(): # Most trailing spaces have already been removed, but this can happen in a note after the markers have been removed
                 characterErrors.append( _("{} {}:{} Trailing space in '{}'").format( self.bookReferenceCode, c, v, adjText ) )
                 self.addPriorityError( 5, self.bookReferenceCode, c, v, _("Trailing space in text line") )
+                #print( _("{} {}:{} Trailing space in {} '{}'").format( self.bookReferenceCode, c, v, marker, adjText ) )
             if self.USFMMarkers.isPrinted( marker ): # Only do character counts on lines that will be printed
                 for char in adjText:
                     lcChar = char.lower()
@@ -1233,15 +1497,18 @@ class USFMBibleBook:
     # end of checkNotes
 
 
-    def check( self ):
+    def check( self, typicalAddedUnitData ):
         """Runs a number of checks on the book and returns the error dictionary."""
-        self.getVersification() # This checks CV ordering, etc.
+        # Ignore the result of these next ones -- just use any errors collected
+        self.getVersification() # This checks CV ordering, etc. at the same time
+        # Further checks
         self.checkSFMs()
         self.checkCharacters()
         self.checkWords()
         self.checkHeadings()
         self.checkIntroduction()
         self.checkNotes() # footnotes and cross-references
+        self.checkAddedUnits( typicalAddedUnitData )
     # end of check
 
 
@@ -1283,6 +1550,8 @@ def main():
             print( UBB )
             UBB.validateUSFM()
             result = UBB.getVersification ()
+            #print( result )
+            result = UBB.getAddedUnits ()
             #print( result )
             UBB.check()
             UBErrors = UBB.getErrors()

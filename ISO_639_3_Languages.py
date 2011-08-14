@@ -4,7 +4,7 @@
 # ISO_639_3_Languages.py
 #
 # Module handling ISO_639_3
-#   Last modified: 2011-06-15 (also update versionString below)
+#   Last modified: 2011-07-24 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -136,7 +136,9 @@ class ISO_639_3_Languages:
         if UCName in self.__NameDict: return self.__NameDict[UCName]
 
     def getNameMatches( self, namePortion ):
-        """ Return a list of matching names for the given part of a name. """
+        """ Return a list of matching names for the given part of a name.
+            This is slow because it is a brute-force search.
+        """
         UCNamePortion = namePortion.upper()
         results = []
         for UCName in self.__NameDict:

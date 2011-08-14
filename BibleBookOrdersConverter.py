@@ -519,7 +519,7 @@ class BibleBookOrdersConverter:
             print( allErrors if Globals.commandLineOptions.debug else errorSummary )
 
         if Globals.commandLineOptions.export and not systemMatchCount: # Write a new file
-            outputFilepath = os.path.join( "ScrapedFiles", "BibleBookOrder_"+systemName + ".xml" )
+            outputFilepath = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/", "BibleBookOrder_"+systemName + ".xml" )
             print( _("Writing {} {} books to {}...").format( len(bookOrderSchemeToCheck), systemName, outputFilepath ) )
             with open( outputFilepath, 'wt' ) as myFile:
                 for n,BBB in enumerate(bookOrderSchemeToCheck):

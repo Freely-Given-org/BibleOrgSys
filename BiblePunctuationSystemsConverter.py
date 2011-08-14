@@ -4,7 +4,7 @@
 # BiblePunctuationSystemsConverter.py
 #
 # Module handling BiblePunctuationSystem_*.xml to produce C and Python data tables
-#   Last modified: 2011-05-29 (also update versionString below)
+#   Last modified: 2011-06-30 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -442,7 +442,7 @@ class BiblePunctuationSystemsConverter:
             myCFile.write( "// end of {}".format(os.path.basename(cFilepath)) )
     # end of exportDataToC
 
-    def checkPunctuationSystem( self, systemName, punctuationSchemeToCheck, exportFlag=False, debugFlag=False ):
+    def obsoleteCheckPunctuationSystem( self, systemName, punctuationSchemeToCheck, exportFlag=False, debugFlag=False ):
         """
         Check the given punctuation scheme against all the loaded systems.
         Create a new punctuation file if it doesn't match any.
@@ -484,13 +484,13 @@ class BiblePunctuationSystemsConverter:
             else: print( errorSummary)
 
         if exportFlag and not systemMatchCount: # Write a new file
-            outputFilepath = os.path.join( "ScrapedFiles", "BiblePunctuation_"+systemName + ".xml" )
+            outputFilepath = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/", "BiblePunctuation_"+systemName + ".xml" )
             if Globals.verbosityLevel > 1: print( _("Writing {} books to {}...").format( len(punctuationSchemeToCheck), outputFilepath ) )
             with open( outputFilepath, 'wt' ) as myFile:
                 for n,BBB in enumerate(punctuationSchemeToCheck):
                     myFile.write( '  <book id="{}">{}</book>\n'.format( n+1,BBB ) )
                 myFile.write( "</BiblePunctuationSystem>" )
-    # end of checkPunctuationSystem
+    # end of obsoleteCheckPunctuationSystem
 # end of BiblePunctuationSystemsConverter class
 
 

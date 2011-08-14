@@ -4,7 +4,7 @@
 # BibleBookOrders.py
 #
 # Module handling BibleBookOrderSystems
-#   Last modified: 2011-06-15 (also update versionString below)
+#   Last modified: 2011-06-30 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -33,7 +33,6 @@ versionString = "0.83"
 
 import os, logging
 from gettext import gettext as _
-from collections import OrderedDict
 
 from singleton import singleton
 import Globals
@@ -210,7 +209,7 @@ class BibleBookOrderSystems:
             if Globals.commandLineOptions.debug: print( errorSummary )
 
         if Globals.commandLineOptions.export and not systemMatchCount: # Write a new file
-            outputFilepath = os.path.join( "ScrapedFiles", "BibleBookOrder_"+thisSystemName + ".xml" )
+            outputFilepath = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/", "BibleBookOrder_"+thisSystemName + ".xml" )
             print( _("Writing {} {} books to {}...").format( len(bookOrderSchemeToCheck), thisSystemName, outputFilepath ) )
             with open( outputFilepath, 'wt' ) as myFile:
                 for n,BBB in enumerate(bookOrderSchemeToCheck):
