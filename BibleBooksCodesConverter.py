@@ -4,7 +4,7 @@
 # BibleBooksCodesConverter.py
 #
 # Module handling BibleBooksCodes.xml to produce C and Python data tables
-#   Last modified: 2011-06-15 (also update versionString below)
+#   Last modified: 2011-08-22 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling BibleBooksCodes.xml and to export to JSON, C, and Python data ta
 """
 
 progName = "Bible Books Codes converter"
-versionString = "0.56"
+versionString = "0.57"
 
 
 import logging, os.path
@@ -65,7 +65,7 @@ class BibleBooksCodesConverter:
         self._optionalAttributes = ()
         self._uniqueAttributes = self._compulsoryAttributes + self._optionalAttributes
         self._compulsoryElements = ( "nameEnglish", "referenceAbbreviation", "referenceNumber" )
-        self._optionalElements = ( "expectedChapters", "SBLAbbreviation", "OSISAbbreviation", "SwordAbbreviation", "CCELNumber", "ParatextAbbreviation", "ParatextNumber", "NETBibleAbbreviation", "ByzantineAbbreviation", "possibleAlternativeBooks" )
+        self._optionalElements = ( "expectedChapters", "SBLAbbreviation", "OSISAbbreviation", "SwordAbbreviation", "CCELNumber", "USFMAbbreviation", "USFMNumber", "NETBibleAbbreviation", "ByzantineAbbreviation", "possibleAlternativeBooks" )
         #self._uniqueElements = self._compulsoryElements + self.optionalElements
         self._uniqueElements = self._compulsoryElements # Relax the checking
 
@@ -272,9 +272,9 @@ class BibleBooksCodesConverter:
             SwordAbbreviation = None if element.find("SwordAbbreviation") is None else element.find("SwordAbbreviation").text
             CCELNumberString = None if element.find("CCELNumber") is None else element.find("CCELNumber").text
             #CCELNumber = int( CCELNumberString ) if CCELNumberString else -1
-            ParatextAbbreviation = None if element.find("ParatextAbbreviation") is None else element.find("ParatextAbbreviation").text
-            ParatextNumberString = None if element.find("ParatextNumber") is None else element.find("ParatextNumber").text
-            #ParatextNumber = int( ParatextNumberString ) if ParatextNumberString else -1
+            USFMAbbreviation = None if element.find("USFMAbbreviation") is None else element.find("USFMAbbreviation").text
+            USFMNumberString = None if element.find("USFMNumber") is None else element.find("USFMNumber").text
+            #USFMNumber = int( USFMNumberString ) if USFMNumberString else -1
             NETBibleAbbreviation = None if element.find("NETBibleAbbreviation") is None else element.find("NETBibleAbbreviation").text
             ByzantineAbbreviation = None if element.find("ByzantineAbbreviation") is None else element.find("ByzantineAbbreviation").text
             possibleAlternativeBooks = None if element.find("possibleAlternativeBooks") is None else element.find("possibleAlternativeBooks").text
@@ -285,18 +285,18 @@ class BibleBooksCodesConverter:
             #   The referenceAbbreviation is UPPER CASE by definition
             if "referenceAbbreviation" in self._compulsoryElements or referenceAbbreviation:
                 if "referenceAbbreviation" in self._uniqueElements: assert( referenceAbbreviation not in myRADict ) # Shouldn't be any duplicates
-                #myRADict[referenceAbbreviation] = ( intID, SBLAbbreviation, OSISAbbreviation, SwordAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, NETBibleAbbreviation, ByzantineAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish, )
+                #myRADict[referenceAbbreviation] = ( intID, SBLAbbreviation, OSISAbbreviation, SwordAbbreviation, CCELNumberString, USFMAbbreviation, USFMNumberString, NETBibleAbbreviation, ByzantineAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish, )
                 myRADict[referenceAbbreviation] = { "referenceNumber":intID, "SBLAbbreviation":SBLAbbreviation, "OSISAbbreviation":OSISAbbreviation,
                                                     "SwordAbbreviation":SwordAbbreviation, "CCELNumberString":CCELNumberString,
-                                                    "ParatextAbbreviation":ParatextAbbreviation, "ParatextNumberString":ParatextNumberString,
+                                                    "USFMAbbreviation":USFMAbbreviation, "USFMNumberString":USFMNumberString,
                                                     "NETBibleAbbreviation":NETBibleAbbreviation, "ByzantineAbbreviation":ByzantineAbbreviation,
                                                     "numExpectedChapters":expectedChapters, "possibleAlternativeBooks":possibleAlternativeBooks, "nameEnglish":nameEnglish }
             if "referenceNumber" in self._compulsoryElements or ID:
                 if "referenceNumber" in self._uniqueElements: assert( intID not in myIDDict ) # Shouldn't be any duplicates
-                #myIDDict[intID] = ( referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, SwordAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, NETBibleAbbreviation, ByzantineAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish, )
+                #myIDDict[intID] = ( referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, SwordAbbreviation, CCELNumberString, USFMAbbreviation, USFMNumberString, NETBibleAbbreviation, ByzantineAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish, )
                 myIDDict[intID] = { "referenceAbbreviation":referenceAbbreviation, "SBLAbbreviation":SBLAbbreviation, "OSISAbbreviation":OSISAbbreviation,
                                     "SwordAbbreviation":SwordAbbreviation, "CCELNumberString":CCELNumberString,
-                                    "ParatextAbbreviation":ParatextAbbreviation, "ParatextNumberString":ParatextNumberString,
+                                    "USFMAbbreviation":USFMAbbreviation, "USFMNumberString":USFMNumberString,
                                     "NETBibleAbbreviation":NETBibleAbbreviation, "ByzantineAbbreviation":ByzantineAbbreviation,
                                     "numExpectedChapters":expectedChapters, "possibleAlternativeBooks":possibleAlternativeBooks, "nameEnglish":nameEnglish }
             if "SBLAbbreviation" in self._compulsoryElements or SBLAbbreviation:
@@ -326,17 +326,17 @@ class BibleBooksCodesConverter:
             if "CCELNumberString" in self._compulsoryElements or CCELNumberString:
                 if "CCELNumberString" in self._uniqueElements: assert( CCELNumberString not in myCCELDict ) # Shouldn't be any duplicates
                 myCCELDict[CCELNumberString.upper()] = ( intID, referenceAbbreviation, )
-            if "ParatextAbbreviation" in self._compulsoryElements or ParatextAbbreviation:
-                if "ParatextAbbreviation" in self._uniqueElements: assert( ParatextAbbreviation not in myPADict ) # Shouldn't be any duplicates
-                UCAbbreviation = ParatextAbbreviation.upper()
-                myPADict[UCAbbreviation] = ( intID, referenceAbbreviation, ParatextNumberString, )
+            if "USFMAbbreviation" in self._compulsoryElements or USFMAbbreviation:
+                if "USFMAbbreviation" in self._uniqueElements: assert( USFMAbbreviation not in myPADict ) # Shouldn't be any duplicates
+                UCAbbreviation = USFMAbbreviation.upper()
+                myPADict[UCAbbreviation] = ( intID, referenceAbbreviation, USFMNumberString, )
                 if UCAbbreviation in allAbbreviationsDict and allAbbreviationsDict[UCAbbreviation] != referenceAbbreviation:
-                    logging.warning( _("This Paratext '{}' abbreviation ({}) already assigned to '{}'").format( UCAbbreviation, referenceAbbreviation, allAbbreviationsDict[UCAbbreviation] ) )
+                    logging.warning( _("This USFM '{}' abbreviation ({}) already assigned to '{}'").format( UCAbbreviation, referenceAbbreviation, allAbbreviationsDict[UCAbbreviation] ) )
                     allAbbreviationsDict[UCAbbreviation] = "MultipleValues"
                 else: allAbbreviationsDict[UCAbbreviation] = referenceAbbreviation
-            if "ParatextNumberString" in self._compulsoryElements or ParatextNumberString:
-                if "ParatextNumberString" in self._uniqueElements: assert( ParatextNumberString not in myPNDict ) # Shouldn't be any duplicates
-                myPNDict[ParatextNumberString.upper()] = ( intID, referenceAbbreviation, ParatextAbbreviation, )
+            if "USFMNumberString" in self._compulsoryElements or USFMNumberString:
+                if "USFMNumberString" in self._uniqueElements: assert( USFMNumberString not in myPNDict ) # Shouldn't be any duplicates
+                myPNDict[USFMNumberString.upper()] = ( intID, referenceAbbreviation, USFMAbbreviation, )
             if "NETBibleAbbreviation" in self._compulsoryElements or NETBibleAbbreviation:
                 if "NETBibleAbbreviation" in self._uniqueElements: assert( NETBibleAbbreviation not in myBzDict ) # Shouldn't be any duplicates
                 UCAbbreviation = NETBibleAbbreviation.upper()
@@ -353,14 +353,14 @@ class BibleBooksCodesConverter:
                     logging.warning( _("This Byzantine '{}' abbreviation ({}) already assigned to '{}'").format( UCAbbreviation, referenceAbbreviation, allAbbreviationsDict[UCAbbreviation] ) )
                     allAbbreviationsDict[UCAbbreviation] = "MultipleValues"
                 else: allAbbreviationsDict[UCAbbreviation] = referenceAbbreviation
-            if "nameEnglish" in self._compulsoryElements or ParatextNumberString:
+            if "nameEnglish" in self._compulsoryElements or USFMNumberString:
                 if "nameEnglish" in self._uniqueElements: assert( nameEnglish not in myENDict ) # Shouldn't be any duplicates
                 myENDict[nameEnglish.upper()] = ( intID, referenceAbbreviation )
         adjAllAbbreviationsDict = {}
         for abbreviation, value in allAbbreviationsDict.items(): # Remove useless entries
             if value != "MultipleValues": adjAllAbbreviationsDict[abbreviation] = value
         self.__DataDicts = { "referenceNumberDict":myIDDict, "referenceAbbreviationDict":myRADict, "SBLAbbreviationDict":mySBLDict, "OSISAbbreviationDict":myOADict, "SwordAbbreviationDict":mySwDict,
-                        "CCELDict":myCCELDict, "ParatextAbbreviationDict":myPADict, "ParatextNumberDict":myPNDict, "NETBibleAbbreviationDict":myNETDict,
+                        "CCELDict":myCCELDict, "USFMAbbreviationDict":myPADict, "USFMNumberDict":myPNDict, "NETBibleAbbreviationDict":myNETDict,
                         "ByzantineAbbreviationDict":myBzDict, "EnglishNameDict":myENDict, "allAbbreviationsDict":adjAllAbbreviationsDict }
         return self.__DataDicts # Just delete any of the dictionaries that you don't need
     # end of importDataToPython
@@ -390,6 +390,7 @@ class BibleBooksCodesConverter:
         """
         def exportPythonDict( theFile, theDict, dictName, keyComment, fieldsComment ):
             """Exports theDict to theFile."""
+            assert( theDict )
             for dictKey in theDict.keys(): # Have to iterate this :(
                 fieldsCount = len( theDict[dictKey] )
                 break # We only check the first (random) entry we get
@@ -420,8 +421,8 @@ class BibleBooksCodesConverter:
             mostEntries = "0=referenceNumber (integer 1..255), 1=referenceAbbreviation/BBB (3-uppercase characters)"
             dictInfo = { "referenceNumberDict":("referenceNumber (integer 1..255)","specified"), "referenceAbbreviationDict":("referenceAbbreviation","specified"),
                             "CCELDict":("CCELNumberString", mostEntries), "SBLAbbreviationDict":("SBLAbbreviation", mostEntries), "OSISAbbreviationDict":("OSISAbbreviation", mostEntries), "SwordAbbreviationDict":("SwordAbbreviation", mostEntries),
-                            "ParatextAbbreviationDict":("ParatextAbbreviation", "0=referenceNumber (integer 1..255), 1=referenceAbbreviation/BBB (3-uppercase characters), 2=ParatextNumberString (2-characters)"),
-                            "ParatextNumberDict":("ParatextNumberString", "0=referenceNumber (integer 1..255), 1=referenceAbbreviation/BBB (3-uppercase characters), 2=ParatextAbbreviationString (3-characters)"),
+                            "USFMAbbreviationDict":("USFMAbbreviation", "0=referenceNumber (integer 1..255), 1=referenceAbbreviation/BBB (3-uppercase characters), 2=USFMNumberString (2-characters)"),
+                            "USFMNumberDict":("USFMNumberString", "0=referenceNumber (integer 1..255), 1=referenceAbbreviation/BBB (3-uppercase characters), 2=USFMAbbreviationString (3-characters)"),
                             "NETBibleAbbreviationDict":("NETBibleAbbreviation", mostEntries), "ByzantineAbbreviationDict":("ByzantineAbbreviation", mostEntries),
                             "EnglishNameDict":("nameEnglish", mostEntries), "allAbbreviationsDict":("allAbbreviations", mostEntries) }
             for dictName,dictData in self.__DataDicts.items():
@@ -542,17 +543,17 @@ class BibleBooksCodesConverter:
             BYTE = "const int"
             dictInfo = {
                 "referenceNumberDict":("referenceNumber (integer 1..255)",
-                    "{} referenceNumber; {}* ByzantineAbbreviation; {}* CCELNumberString; {}* NETBibleAbbreviation; {}* OSISAbbreviation; {} ParatextAbbreviation[3+1]; {} ParatextNumberString[2+1]; {}* SBLAbbreviation; {}* SwordAbbreviation; {}* nameEnglish; {}* numExpectedChapters; {}* possibleAlternativeBooks; {} referenceAbbreviation[3+1];"
+                    "{} referenceNumber; {}* ByzantineAbbreviation; {}* CCELNumberString; {}* NETBibleAbbreviation; {}* OSISAbbreviation; {} USFMAbbreviation[3+1]; {} USFMNumberString[2+1]; {}* SBLAbbreviation; {}* SwordAbbreviation; {}* nameEnglish; {}* numExpectedChapters; {}* possibleAlternativeBooks; {} referenceAbbreviation[3+1];"
                    .format(BYTE, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR ) ),
                 "referenceAbbreviationDict":("referenceAbbreviation",
-                    "{} referenceAbbreviation[3+1]; {}* ByzantineAbbreviation; {}* CCELNumberString; {} referenceNumber; {}* NETBibleAbbreviation; {}* OSISAbbreviation; {} ParatextAbbreviation[3+1]; {} ParatextNumberString[2+1]; {}* SBLAbbreviation; {}* SwordAbbreviation; {}* nameEnglish; {}* numExpectedChapters; {}* possibleAlternativeBooks;"
+                    "{} referenceAbbreviation[3+1]; {}* ByzantineAbbreviation; {}* CCELNumberString; {} referenceNumber; {}* NETBibleAbbreviation; {}* OSISAbbreviation; {} USFMAbbreviation[3+1]; {} USFMNumberString[2+1]; {}* SBLAbbreviation; {}* SwordAbbreviation; {}* nameEnglish; {}* numExpectedChapters; {}* possibleAlternativeBooks;"
                    .format(CHAR, CHAR, CHAR, BYTE, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR ) ),
                 "CCELDict":("CCELNumberString", "{}* CCELNumberString; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
                 "SBLAbbreviationDict":("SBLAbbreviation", "{}* SBLAbbreviation; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
                 "OSISAbbreviationDict":("OSISAbbreviation", "{}* OSISAbbreviation; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
                 "SwordAbbreviationDict":("SwordAbbreviation", "{}* SwordAbbreviation; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
-                "ParatextAbbreviationDict":("ParatextAbbreviation", "{} ParatextAbbreviation[3+1]; {} referenceNumber; {} referenceAbbreviation[3+1]; {} ParatextNumberString[2+1];".format(CHAR,BYTE,CHAR,CHAR) ),
-                "ParatextNumberDict":("ParatextNumberString", "{} ParatextNumberString[2+1]; {} referenceNumber; {} referenceAbbreviation[3+1]; {} ParatextAbbreviation[3+1];".format(CHAR,BYTE,CHAR,CHAR) ),
+                "USFMAbbreviationDict":("USFMAbbreviation", "{} USFMAbbreviation[3+1]; {} referenceNumber; {} referenceAbbreviation[3+1]; {} USFMNumberString[2+1];".format(CHAR,BYTE,CHAR,CHAR) ),
+                "USFMNumberDict":("USFMNumberString", "{} USFMNumberString[2+1]; {} referenceNumber; {} referenceAbbreviation[3+1]; {} USFMAbbreviation[3+1];".format(CHAR,BYTE,CHAR,CHAR) ),
                 "NETBibleAbbreviationDict":("NETBibleAbbreviation", "{}* NETBibleAbbreviation; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
                 "ByzantineAbbreviationDict":("ByzantineAbbreviation", "{}* ByzantineAbbreviation; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
                 "EnglishNameDict":("nameEnglish", "{}* nameEnglish; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),

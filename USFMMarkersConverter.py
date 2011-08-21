@@ -4,7 +4,7 @@
 # USFMMarkersConverter.py
 #
 # Module handling USFMMarkers.xml to produce C and Python data tables
-#   Last modified: 2011-06-13 (also update versionString below)
+#   Last modified: 2011-08-22 (also update versionString below)
 #
 # Copyright (C) 2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -532,12 +532,6 @@ class USFMMarkersConverter:
                    .format(CHAR, CHAR, CHAR, BYTE, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR ) ),
                 "CCELDict":("CCELNumberString", "{}* CCELNumberString; {} referenceNumber; {} marker[3+1];".format(CHAR,BYTE,CHAR) ),
                 "SBLDict":("SBLAbbreviation", "{}* SBLAbbreviation; {} referenceNumber; {} marker[3+1];".format(CHAR,BYTE,CHAR) ),
-                "OSISAbbreviationDict":("OSISAbbreviation", "{}* OSISAbbreviation; {} referenceNumber; {} marker[3+1];".format(CHAR,BYTE,CHAR) ),
-                "SwordAbbreviationDict":("SwordAbbreviation", "{}* SwordAbbreviation; {} referenceNumber; {} marker[3+1];".format(CHAR,BYTE,CHAR) ),
-                "ParatextAbbreviationDict":("ParatextAbbreviation", "{} ParatextAbbreviation[3+1]; {} referenceNumber; {} marker[3+1]; {} ParatextNumberString[2+1];".format(CHAR,BYTE,CHAR,CHAR) ),
-                "ParatextNumberDict":("ParatextNumberString", "{} ParatextNumberString[2+1]; {} referenceNumber; {} marker[3+1]; {} ParatextAbbreviation[3+1];".format(CHAR,BYTE,CHAR,CHAR) ),
-                "NETBibleAbbreviationDict":("NETBibleAbbreviation", "{}* NETBibleAbbreviation; {} referenceNumber; {} marker[3+1];".format(CHAR,BYTE,CHAR) ),
-                "ByzantineAbbreviationDict":("ByzantineAbbreviation", "{}* ByzantineAbbreviation; {} referenceNumber; {} marker[3+1];".format(CHAR,BYTE,CHAR) ),
                 "EnglishNameDict":("nameEnglish", "{}* nameEnglish; {} referenceNumber; {} marker[3+1];".format(CHAR,BYTE,CHAR) ) }
 
             for dictName,dictData in self.__DataDicts.items():

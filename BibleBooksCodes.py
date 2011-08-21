@@ -4,7 +4,7 @@
 # BibleBooksCodes.py
 #
 # Module handling BibleBooksCodes functions
-#   Last modified: 2011-06-16 (also update versionString below)
+#   Last modified: 2011-08-22 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling BibleBooksCodes functions.
 """
 
 progName = "Bible Books Codes handler"
-versionString = "0.56"
+versionString = "0.57"
 
 
 import os, logging
@@ -136,13 +136,13 @@ class BibleBooksCodes:
         """ Return the Sword abbreviation string for the given book code (referenceAbbreviation). """
         return self.__DataDicts["referenceAbbreviationDict"][BBB]["SwordAbbreviation"]
 
-    def getParatextAbbreviation( self, BBB ):
-        """ Return the Paratext abbreviation string for the given book code (referenceAbbreviation). """
-        return self.__DataDicts["referenceAbbreviationDict"][BBB]["ParatextAbbreviation"]
+    def getUSFMAbbreviation( self, BBB ):
+        """ Return the USFM abbreviation string for the given book code (referenceAbbreviation). """
+        return self.__DataDicts["referenceAbbreviationDict"][BBB]["USFMAbbreviation"]
 
-    def getParatextNumber( self, BBB ):
-        """ Return the Paratext number string for the given book code (referenceAbbreviation). """
-        return self.__DataDicts["referenceAbbreviationDict"][BBB]["ParatextNumberString"]
+    def getUSFMNumber( self, BBB ):
+        """ Return the USFM number string for the given book code (referenceAbbreviation). """
+        return self.__DataDicts["referenceAbbreviationDict"][BBB]["USFMNumberString"]
 
     def getNETBibleAbbreviation( self, BBB ):
         """ Return the NET Bible abbreviation string for the given book code (referenceAbbreviation). """
@@ -156,10 +156,10 @@ class BibleBooksCodes:
         """ Return the reference abbreviation string for the given OSIS book code string. """
         return self.__DataDicts["OSISAbbreviationDict"][osisAbbreviation.upper()][1]
 
-    def getBBBFromParatext( self, paratextAbbreviation ):
-        """ Return the reference abbreviation string for the given Paratext book code string. """
-        assert( len(paratextAbbreviation) == 3 )
-        return self.__DataDicts["ParatextAbbreviationDict"][paratextAbbreviation.upper()][1]
+    def getBBBFromUSFM( self, USFMAbbreviation ):
+        """ Return the reference abbreviation string for the given USFM book code string. """
+        assert( len(USFMAbbreviation) == 3 )
+        return self.__DataDicts["USFMAbbreviationDict"][USFMAbbreviation.upper()][1]
 
     def getBBB( self, something ):
         """ Attempt to return the BBB reference abbreviation string for the given book information.
@@ -216,22 +216,22 @@ class BibleBooksCodes:
         return [bk for bk in self.__DataDicts["OSISAbbreviationDict"]]
     #end of getAllOSISBooksCodes
 
-    def getAllParatextBooksCodeNumberTriples( self ):
+    def getAllUSFMBooksCodeNumberTriples( self ):
         """
-        Return a list of all available Paratext book codes.
+        Return a list of all available USFM book codes.
 
-        The list contains tuples of: paratextAbbreviation, paratextNumber, referenceAbbreviation
+        The list contains tuples of: USFMAbbreviation, USFMNumber, referenceAbbreviation
         """
         found, result = [], []
         for BBB, values in self.__DataDicts["referenceAbbreviationDict"].items():
-            pA = values["ParatextAbbreviation"]
-            pN = values["ParatextNumberString"]
+            pA = values["USFMAbbreviation"]
+            pN = values["USFMNumberString"]
             if pA is not None and pN is not None:
-                if pA not in found: # Don't want duplicates (where more than one book maps to a single paratextAbbreviation)
+                if pA not in found: # Don't want duplicates (where more than one book maps to a single USFMAbbreviation)
                     result.append( (pA, pN, BBB,) )
                     found.append( pA )
         return result
-    # end of getAllParatextBooksCodeNumberTriples
+    # end of getAllUSFMBooksCodeNumberTriples
 
     # NOTE: The following functions are all not recommended (NR) because they rely on assumed information that may be incorrect
     #           i.e., they assume English language or European book order conventions
@@ -294,7 +294,7 @@ def main():
     print( "Names for Genesis are:", bbc.getEnglishNameList_NR("GEN") )
     print( "Names for Sirach are:", bbc.getEnglishNameList_NR('SIR') )
     print( "All BBBs:", bbc.getAllReferenceAbbreviations() )
-    print( "PT triples:", bbc.getAllParatextBooksCodeNumberTriples() )
+    print( "PT triples:", bbc.getAllUSFMBooksCodeNumberTriples() )
     print( "Single chapter books (and OSIS):\n  {}\n  {}".format(bbc.getSingleChapterBooksList(), bbc.getOSISSingleChapterBooksList()) )
     for something in ('PE2', '2Pe', '2 Pet', '2Pet', 'Job', ):
         print( something, bbc.getBBB( something ) )

@@ -4,7 +4,7 @@
 # BibleBooksCodesTests.py
 #
 # Module testing BibleBooksCodes.py
-#   Last modified: 2011-06-15 (also update versionString below)
+#   Last modified: 2011-08-22 (also update versionString below)
 #
 # Copyright (C) 2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module testing BibleBooksCodes.py.
 """
 
 progName = "Bible Books Codes tests"
-versionString = "0.56"
+versionString = "0.57"
 
 
 import sys, unittest
@@ -49,12 +49,13 @@ class BibleBooksCodesConverterTests( unittest.TestCase ):
         """ Test the __str__ function. """
         result = str( self.bbcsc )
         self.assertTrue( isinstance( result, str ) )
-        self.assertTrue( len(result) > 20 )
+        self.assertGreater( len(result), 20 )
     # end of test_010_str
 
     def test_020_len( self ):
         """ Test the __len__ function. """
-        self.assertTrue( 100 < len(self.bbcsc) < 255 ) # The number of loaded books codes
+        self.assertGreater( len(self.bbcsc), 100 ) # The number of loaded books codes
+        self.assertLess( 100 < len(self.bbcsc), 255 ) # The number of loaded books codes
     # end of test_020_len
 
     def test_030_importDataToPython( self ):
@@ -63,9 +64,10 @@ class BibleBooksCodesConverterTests( unittest.TestCase ):
         self.assertTrue( isinstance( result, dict ) )
         self.assertEqual( len(result), 12 )
         for dictName in ("referenceNumberDict","referenceAbbreviationDict","SBLAbbreviationDict","OSISAbbreviationDict","SwordAbbreviationDict","CCELDict", \
-                        "ParatextAbbreviationDict","ParatextNumberDict","NETBibleAbbreviationDict","ByzantineAbbreviationDict","EnglishNameDict","allAbbreviationsDict",):
+                        "USFMAbbreviationDict","USFMNumberDict","NETBibleAbbreviationDict","ByzantineAbbreviationDict","EnglishNameDict","allAbbreviationsDict",):
             self.assertTrue( dictName in result )
-            self.assertTrue( 10 < len(result[dictName]) < 255 )
+            self.assertGreater( len(result[dictName]), 10 )
+            self.assertLess( len(result[dictName]), 255 )
     # end of test_030_importDataToPython
 
     def test_040_pickle( self ):
@@ -195,27 +197,27 @@ class BibleBooksCodesTests( unittest.TestCase ):
         self.assertRaises( KeyError, self.bbc.getSwordAbbreviation, 'Gen' )
     # end of test_110_getSwordAbbreviation
 
-    def test_120_getParatextAbbreviation( self ):
-        """ Test the getParatextAbbreviation function. """
-        self.assertEqual( self.bbc.getParatextAbbreviation('GEN'), 'Gen' )
-        self.assertEqual( self.bbc.getParatextAbbreviation('MAL'), 'Mal' )
-        self.assertEqual( self.bbc.getParatextAbbreviation('MAT'), 'Mat' )
-        self.assertEqual( self.bbc.getParatextAbbreviation('CO1'), '1Co' )
-        self.assertEqual( self.bbc.getParatextAbbreviation('REV'), 'Rev' )
-        self.assertRaises( KeyError, self.bbc.getParatextAbbreviation, 'XYZ' )
-        self.assertRaises( KeyError, self.bbc.getParatextAbbreviation, 'Gen' )
-    # end of test_120_getParatextAbbreviation
+    def test_120_getUSFMAbbreviation( self ):
+        """ Test the getUSFMAbbreviation function. """
+        self.assertEqual( self.bbc.getUSFMAbbreviation('GEN'), 'Gen' )
+        self.assertEqual( self.bbc.getUSFMAbbreviation('MAL'), 'Mal' )
+        self.assertEqual( self.bbc.getUSFMAbbreviation('MAT'), 'Mat' )
+        self.assertEqual( self.bbc.getUSFMAbbreviation('CO1'), '1Co' )
+        self.assertEqual( self.bbc.getUSFMAbbreviation('REV'), 'Rev' )
+        self.assertRaises( KeyError, self.bbc.getUSFMAbbreviation, 'XYZ' )
+        self.assertRaises( KeyError, self.bbc.getUSFMAbbreviation, 'Gen' )
+    # end of test_120_getUSFMAbbreviation
 
-    def test_130_getParatextNumber( self ):
-        """ Test the getParatextNumber function. """
-        self.assertEqual( self.bbc.getParatextNumber('GEN'), '01' )
-        self.assertEqual( self.bbc.getParatextNumber('MAL'), '39' )
-        self.assertEqual( self.bbc.getParatextNumber('MAT'), '41' )
-        self.assertEqual( self.bbc.getParatextNumber('CO1'), '47' )
-        self.assertEqual( self.bbc.getParatextNumber('REV'), '67' )
-        self.assertRaises( KeyError, self.bbc.getParatextNumber, 'XYZ' )
-        self.assertRaises( KeyError, self.bbc.getParatextNumber, 'Gen' )
-    # end of test_130_getParatextNumber
+    def test_130_getUSFMNumber( self ):
+        """ Test the getUSFMNumber function. """
+        self.assertEqual( self.bbc.getUSFMNumber('GEN'), '01' )
+        self.assertEqual( self.bbc.getUSFMNumber('MAL'), '39' )
+        self.assertEqual( self.bbc.getUSFMNumber('MAT'), '41' )
+        self.assertEqual( self.bbc.getUSFMNumber('CO1'), '47' )
+        self.assertEqual( self.bbc.getUSFMNumber('REV'), '67' )
+        self.assertRaises( KeyError, self.bbc.getUSFMNumber, 'XYZ' )
+        self.assertRaises( KeyError, self.bbc.getUSFMNumber, 'Gen' )
+    # end of test_130_getUSFMNumber
 
     def test_140_getNETBibleAbbreviation( self ):
         """ Test the getNETBibleAbbreviation function. """
@@ -247,16 +249,16 @@ class BibleBooksCodesTests( unittest.TestCase ):
             self.assertRaises( KeyError, self.bbc.getBBBFromOSIS, badCode )
     # end of test_200_getBBBFromOSIS
 
-    def test_210_getBBBFromParatext( self ):
-        """ Test the getBBBFromParatext function. """
-        self.assertEqual( self.bbc.getBBBFromParatext('Gen'), 'GEN' )
-        self.assertEqual( self.bbc.getBBBFromParatext('1Co'), 'CO1' )
-        self.assertEqual( self.bbc.getBBBFromParatext('Rev'), 'REV' )
+    def test_210_getBBBFromUSFM( self ):
+        """ Test the getBBBFromUSFM function. """
+        self.assertEqual( self.bbc.getBBBFromUSFM('Gen'), 'GEN' )
+        self.assertEqual( self.bbc.getBBBFromUSFM('1Co'), 'CO1' )
+        self.assertEqual( self.bbc.getBBBFromUSFM('Rev'), 'REV' )
         for badCode in ('XYZ','Abc',): # Must be three characters
-            self.assertRaises( KeyError, self.bbc.getBBBFromParatext, badCode )
+            self.assertRaises( KeyError, self.bbc.getBBBFromUSFM, badCode )
         for badCode in (':)','WXYZ','Genesis',): # Must not be three characters
-            self.assertRaises( AssertionError, self.bbc.getBBBFromParatext, badCode )
-    # end of test_210_getBBBFromParatext
+            self.assertRaises( AssertionError, self.bbc.getBBBFromUSFM, badCode )
+    # end of test_210_getBBBFromUSFM
 
     def test_220_getBBB( self ):
         """ Test the getBBB function. """
@@ -280,7 +282,8 @@ class BibleBooksCodesTests( unittest.TestCase ):
         """ Test the getSingleChapterBooksList function. """
         results = self.bbc.getSingleChapterBooksList()
         self.assertTrue( isinstance( results, list ) )
-        self.assertTrue( 10 < len(results) < 20 ) # Remember it includes many non-canonical books
+        self.assertGreater( len(results), 10 ) # Remember it includes many non-canonical books
+        self.assertLess( len(results), 20 )
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
         for BBB in ('OBA','PHM','JN2','JN3','JDE',): self.assertTrue( BBB in results )
@@ -290,7 +293,8 @@ class BibleBooksCodesTests( unittest.TestCase ):
         """ Test the getOSISSingleChapterBooksList function. """
         results = self.bbc.getOSISSingleChapterBooksList()
         self.assertTrue( isinstance( results, list ) )
-        self.assertTrue( 10 < len(results) < 20 ) # Remember it includes many non-canonical books
+        self.assertGreater( len(results), 10 ) # Remember it includes many non-canonical books
+        self.assertLess( len(results), 20 )
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
         for BBB in ('Obad','Phlm','2John','3John','Jude',): self.assertTrue( BBB in results )
@@ -300,7 +304,8 @@ class BibleBooksCodesTests( unittest.TestCase ):
         """ Test the getAllOSISBooksCodes function. """
         results = self.bbc.getAllOSISBooksCodes()
         self.assertTrue( isinstance( results, list ) )
-        self.assertTrue( 66 <= len(results) < 120 ) # Remember it includes many non-canonical books
+        self.assertGreater( len(results), 65 ) # Remember it includes many non-canonical books
+        self.assertLess( len(results), 120 )
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
         self.assertTrue( 'GEN' in results )
@@ -309,23 +314,25 @@ class BibleBooksCodesTests( unittest.TestCase ):
         self.assertTrue( 'REV' in results )
         self.assertTrue( '2MACC' in results )
         for result in results:
-            self.assertTrue( 2 <= len(result) <= 7 )
+            self.assertGreater( len(result), 1 )
+            self.assertLess( len(result), 8 )
     # end of test_330_getAllOSISBooksCodes
 
-    def test_340_getAllParatextBooksCodeNumberTriples( self ):
-        """ Test the getAllParatextBooksCodeNumberTriples function. """
-        results = self.bbc.getAllParatextBooksCodeNumberTriples()
+    def test_340_getAllUSFMBooksCodeNumberTriples( self ):
+        """ Test the getAllUSFMBooksCodeNumberTriples function. """
+        results = self.bbc.getAllUSFMBooksCodeNumberTriples()
         self.assertTrue( isinstance( results, list ) )
-        self.assertTrue( 66 <= len(results) < 120 ) # Remember it includes many non-canonical books
+        self.assertGreater( len(results), 65 ) # Remember it includes many non-canonical books
+        self.assertLess( len(results), 120 )
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
         for resultTuple in results:
-            self.assertTrue( len(resultTuple)== 3 )
-            self.assertTrue( len(resultTuple[0]) == 3 )
-            self.assertTrue( len(resultTuple[1]) == 2 )
-            self.assertTrue( len(resultTuple[2]) == 3 )
+            self.assertEqual( len(resultTuple), 3 )
+            self.assertEqual( len(resultTuple[0]), 3 )
+            self.assertEqual( len(resultTuple[1]), 2 )
+            self.assertEqual( len(resultTuple[2]), 3 )
         for BBB in (('Gen','01','GEN'),): self.assertTrue( BBB in results )
-    # end of test_340_getAllParatextBooksCodeNumberTriples
+    # end of test_340_getAllUSFMBooksCodeNumberTriples
 # end of BibleBooksCodesTests class
 
 

@@ -24,7 +24,7 @@
 # Enclosed are four files:
 #
 #   DataFiles/BibleBooksCodes.xml
-#       A UTF-8 XML file encoding SBL, OSIS, UBS Paratext/USFM/OXES, CCEL, NETBible, and Sword Bible books codes
+#       A UTF-8 XML file encoding SBL, OSIS, USFM/OXES/UBS-Paratext, CCEL, NETBible, and Sword Bible books codes
 #           The data also includes a new 3-letter UPPER CASE referenceAbbreviation which always starts with a letter and so can be used directly as an XML ID (unlike most of the other fields).
 #               These referenceAbbreviation fields are often put in a variable called BBB (BiBle Book 3-character code) in program code.
 #           The unique 1..255 referenceNumber values are for processing and error messages -- numbers 1..66 are guaranteed to match the normal Protestant Bible.

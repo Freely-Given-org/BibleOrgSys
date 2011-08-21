@@ -3,7 +3,7 @@
 # USFMFilenames.py
 #
 # Module handling USFM Bible filenames
-#   Last modified: 2011-05-30 (also update versionString below)
+#   Last modified: 2011-08-22 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -64,27 +64,27 @@ class USFMFilenames:
                         break
                 matched = False
                 if foundLength>=8 and containsDigits and foundExtBit and foundExtBit[0]=='.':
-                    for paratextBookCode,paratextDigits,bookReferenceCode in self.BibleBooksCodes.getAllParatextBooksCodeNumberTriples():
-                        if paratextDigits in foundFileBit and (paratextBookCode in foundFileBit or paratextBookCode.upper() in foundFileBit):
-                            digitsIndex = foundFileBit.index( paratextDigits )
-                            paratextBookCodeIndex = foundFileBit.index(paratextBookCode) if paratextBookCode in foundFileBit else foundFileBit.index(paratextBookCode.upper())
-                            paratextBookCode = foundFileBit[paratextBookCodeIndex:paratextBookCodeIndex+3]
-                            #print( digitsIndex, paratextBookCodeIndex, paratextBookCode )
-                            if digitsIndex==0 and paratextBookCodeIndex==2: # Found a form like 01GENlanguage.xyz
+                    for USFMBookCode,USFMDigits,bookReferenceCode in self.BibleBooksCodes.getAllUSFMBooksCodeNumberTriples():
+                        if USFMDigits in foundFileBit and (USFMBookCode in foundFileBit or USFMBookCode.upper() in foundFileBit):
+                            digitsIndex = foundFileBit.index( USFMDigits )
+                            USFMBookCodeIndex = foundFileBit.index(USFMBookCode) if USFMBookCode in foundFileBit else foundFileBit.index(USFMBookCode.upper())
+                            USFMBookCode = foundFileBit[USFMBookCodeIndex:USFMBookCodeIndex+3]
+                            #print( digitsIndex, USFMBookCodeIndex, USFMBookCode )
+                            if digitsIndex==0 and USFMBookCodeIndex==2: # Found a form like 01GENlanguage.xyz
                                 self.languageIndex = 5
                                 self.languageCode = foundFileBit[self.languageIndex:self.languageIndex+foundLength-5]
                                 self.digitsIndex = digitsIndex
-                                self.paratextBookCodeIndex = paratextBookCodeIndex
+                                self.USFMBookCodeIndex = USFMBookCodeIndex
                                 self.pattern = "ddbbb" + 'n'*(foundLength-5)
-                            elif foundLength==8 and digitsIndex==3 and paratextBookCodeIndex==5: # Found a form like lng01GEN.xyz
+                            elif foundLength==8 and digitsIndex==3 and USFMBookCodeIndex==5: # Found a form like lng01GEN.xyz
                                 self.languageIndex = 0
                                 self.languageCode = foundFileBit[self.languageIndex:self.languageIndex+foundLength-5]
                                 self.digitsIndex = digitsIndex
-                                self.paratextBookCodeIndex = paratextBookCodeIndex
+                                self.USFMBookCodeIndex = USFMBookCodeIndex
                                 self.pattern = "nnnddbbb"
                             else: logging.error( _("Unrecognized USFM filename template at ")+foundFileBit ); return
                             if self.languageCode.isupper(): self.pattern = self.pattern.replace( 'n', 'N' )
-                            if paratextBookCode.isupper(): self.pattern = self.pattern.replace( 'bbb', 'BBB' )
+                            if USFMBookCode.isupper(): self.pattern = self.pattern.replace( 'bbb', 'BBB' )
                             self.fileExtension = foundExtBit[1:]
                             matched = True
                             break
@@ -114,10 +114,10 @@ class USFMFilenames:
         """Return a list of valid USFM filenames that match our filename template."""
         filelist = []
         if self.pattern:
-            for paratextBookCode,paratextDigits,bookReferenceCode in self.BibleBooksCodes.getAllParatextBooksCodeNumberTriples():
+            for USFMBookCode,USFMDigits,bookReferenceCode in self.BibleBooksCodes.getAllUSFMBooksCodeNumberTriples():
                 filename = "--------" # Eight characters
-                filename = filename[:self.digitsIndex] + paratextDigits + filename[self.digitsIndex+len(paratextDigits):]
-                filename = filename[:self.paratextBookCodeIndex] + paratextBookCode.upper() if 'BBB' in self.pattern else paratextBookCode + filename[self.paratextBookCodeIndex+len(paratextBookCode):]
+                filename = filename[:self.digitsIndex] + USFMDigits + filename[self.digitsIndex+len(USFMDigits):]
+                filename = filename[:self.USFMBookCodeIndex] + USFMBookCode.upper() if 'BBB' in self.pattern else USFMBookCode + filename[self.USFMBookCodeIndex+len(USFMBookCode):]
                 filename = filename[:self.languageIndex] + self.languageCode + filename[self.languageIndex+len(self.languageCode):]
                 filename += '.' + self.fileExtension
                 #print( filename )
@@ -133,7 +133,7 @@ class USFMFilenames:
             possibleFilepath = os.path.join( self.folder, possibleFilename )
             #print( '  Looking for: ' + possibleFilename )
             if os.access( possibleFilepath, os.R_OK ):
-                #paratextBookCode = possibleFilename[self.paratextBookCodeIndex:self.paratextBookCodeIndex+3].upper()
+                #USFMBookCode = possibleFilename[self.USFMBookCodeIndex:self.USFMBookCodeIndex+3].upper()
                 filelist.append( (bookReferenceCode, possibleFilename,) )
         return filelist
     # end of getActualFilenames
@@ -141,7 +141,7 @@ class USFMFilenames:
 
     def getSSFFilenames( self, searchAbove=False, auto=True ):
         """Return a list of full pathnames of .ssf files in the folder.
-            NOTE: Paratext projects don't usually have the .ssf files in the project folder,
+            NOTE: USFM projects don't usually have the .ssf files in the project folder,
                 but 'backed-up' projects often do.
             If searchAbove is set to True and no ssf files are found in the given folder,
                 this routine will attempt to search the next folder up the file hierarchy.

@@ -4,7 +4,7 @@
 # USFMFilenamesTests.py
 #
 # Module testing USFMFilenames.py
-#   Last modified: 2011-05-12 (also update versionString below)
+#   Last modified: 2011-08-22 (also update versionString below)
 #
 # Copyright (C) 2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -51,50 +51,50 @@ class USFMFilenamesTests( unittest.TestCase ):
         """ Test the __str__ function. """
         result = str( self.UFns )
         self.assertTrue( isinstance( result, str ) )
-        self.assertTrue( len(result) > 20 )
+        self.assertGreater( len(result), 20 )
     # end of test_010_str
 
     def test_020_getPossibleFilenames( self ):
         """ Test the getPossibleFilenames function. """
         results = self.UFns.getPossibleFilenames()
         self.assertTrue( isinstance( results, list ) )
-        self.assertTrue( len(results) > 66 )
+        self.assertGreater( len(results), 66 )
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
         for result in results:
             self.assertTrue( isinstance( result, tuple ) )
-            self.assertTrue( len(result)==2 )
-            self.assertTrue( len(result[0])==3 ) # BBB
-            self.assertTrue( len(result[1])>10 ) # Filename, e.g., nnn08RUT.SCP
+            self.assertEqual( len(result), 2 )
+            self.assertEqual( len(result[0]), 3 ) # BBB
+            self.assertGreater( len(result[1]), 10 ) # Filename, e.g., nnn08RUT.SCP
     # end of test_020_getPossibleFilenames
 
     def test_030_getActualFilenames( self ):
         """ Test the getActualFilenames function. """
         results = self.UFns.getActualFilenames()
         self.assertTrue( isinstance( results, list ) )
-        self.assertTrue( len(results) > 10 ) # Number of actual files found
+        self.assertGreater( len(results), 10 ) # Number of actual files found
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
         for result in results:
             self.assertTrue( isinstance( result, tuple ) )
-            self.assertTrue( len(result)==2 )
-            self.assertTrue( len(result[0])==3 ) # BBB
-            self.assertTrue( len(result[1])>10 ) # Filename, e.g., nnn08RUT.SCP
+            self.assertEqual( len(result), 2 )
+            self.assertEqual( len(result[0]), 3 ) # BBB
+            self.assertGreater( len(result[1]), 10 ) # Filename, e.g., nnn08RUT.SCP
     # end of test_030_getActualFilenames
 
     def test_040_getSSFFilenames( self ):
         """ Test the getSSFFilenames function. """
         results = self.UFns.getSSFFilenames()
         self.assertTrue( isinstance( results, list ) )
-        self.assertEqual( results, [] ) # Should be no SSF files in a standard Paratext project folder
+        self.assertEqual( results, [] ) # Should be no SSF files in a standard USFM project folder
 
         results = self.UFns.getSSFFilenames( False ) # Should give exactly the same result as above
         self.assertTrue( isinstance( results, list ) )
-        self.assertEqual( results, [] ) # Should be no SSF files in a standard Paratext project folder
+        self.assertEqual( results, [] ) # Should be no SSF files in a standard USFM project folder
 
         results = self.UFns.getSSFFilenames( True )
         self.assertTrue( isinstance( results, list ) )
-        self.assertGreater( len(results), 0 ) # Should be at least one SSF file in a standard Paratext project folder
+        self.assertGreater( len(results), 0 ) # Should be at least one SSF file in a standard USFM project folder
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
         for result in results:
