@@ -4,7 +4,7 @@
 # TestSuite.py
 #
 # Suite for testing BibleOrgSys
-#   Last modified: 2011-03-17 (also update versionString below)
+#   Last modified: 2011-12-06 (also update versionString below)
 #
 # Copyright (C) 2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Suite testing BibleOrgSys.
 """
 
 progName = "Bible Organisational System test suite"
-versionString = "0.07"
+versionString = "0.08"
 
 
 import sys, unittest
@@ -40,7 +40,7 @@ sys.path.append( sourceFolder )
 import Globals
 import BibleBooksCodesTests, BibleBookOrdersTests
 import ISO_639_3_LanguagesTests, BiblePunctuationSystemsTests
-import BibleBooksNamesTests
+import BibleBooksNamesTests, BibleVersificationSystemsTests
 import USFMMarkersTests, USFMFilenamesTests
 
 
@@ -73,6 +73,10 @@ suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BiblePunctuationS
 suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleBooksNamesTests.BibleBooksNamesConverterTests ) )
 suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleBooksNamesTests.BibleBooksNamesSystemsTests ) )
 suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleBooksNamesTests.BibleBooksNamesSystemTests ) )
+
+suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleVersificationSystemsTests.BibleVersificationSystemsConverterTests ) )
+suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleVersificationSystemsTests.BibleVersificationSystemsTests ) )
+suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleVersificationSystemsTests.BibleVersificationSystemTests ) )
 
 suiteList.append( unittest.TestLoader().loadTestsFromTestCase( USFMMarkersTests.USFMMarkersConverterTests ) )
 suiteList.append( unittest.TestLoader().loadTestsFromTestCase( USFMMarkersTests.USFMMarkersTests ) )

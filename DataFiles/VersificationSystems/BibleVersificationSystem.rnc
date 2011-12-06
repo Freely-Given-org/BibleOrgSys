@@ -1,0 +1,53 @@
+# BibleVersificationSystem.rnc           Relax NG Compact Syntax schema file
+#   Version 0.60
+#   Last modified: 2011-03-03
+#
+# On Linux, to convert to RNG, use
+#       trang BibleVersificationSystem.rnc ../../DerivedFiles/BibleVersificationSystem.rng
+# On Linux, to validate against the .rng file, use (with the proper suffix instead of XXX)
+#       xmllint --noout --relaxng ../../DerivedFiles/BibleVersificationSystem.rng BibleVersificationSystem_XXX.xml
+# or to validate against both this and the internal DTD, use (with the proper suffix instead of XXX)
+#       xmllint --noout --relaxng ../../DerivedFiles/BibleVersificationSystem.rng --valid BibleVersificationSystem_XXX.xml
+#
+# See the supplied ReadMe.txt file for more information.
+#
+
+# The root element
+start = BibleVersificationSystem
+
+# A single header, then multiple BibleBookCodes entries
+BibleVersificationSystem = element BibleVersificationSystem
+{   header,
+    BibleBookVersification+
+}
+
+header  = element header
+{   revisionDesc*,
+    work
+}
+
+revisionDesc = element revisionDesc
+{   element date { xsd:date },
+    element p { xsd:string }+
+}
+
+work = element work
+{   element version { xsd:decimal { totalDigits="2" } },
+    element date { xsd:date },
+    element title { xsd:string },
+    element contributor { attribute role {"com"|"edt"}, xsd:string }+,
+    element identifier { attribute type {"URL"}, xsd:anyURI }*,
+    element rights { xsd:string }
+}
+
+BibleBookVersification = element BibleBookVersification
+{   element nameEnglish { xsd:string { minLength="3" maxLength="80" } },
+    element referenceAbbreviation { xsd:string { length="3" } },
+    element numChapters { xsd:positiveInteger { minInclusive="1" maxInclusive="151" } },
+    element numVerses
+        {   attribute chapter {xsd:positiveInteger { minInclusive="1" maxInclusive="151" } },
+            attribute omittedVerses { xsd:string }?,
+            attribute combinedVerses { xsd:string }?,
+            attribute reorderedVerses { xsd:string }?,
+            xsd:positiveInteger { minInclusive="1" maxInclusive="176" } }+
+}

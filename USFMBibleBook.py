@@ -3,7 +3,7 @@
 # USFMBibleBook.py
 #
 # Module handling the USFM markers for Bible books
-#   Last modified: 2011-07-01 by RJH (also update versionString below)
+#   Last modified: 2011-10-26 by RJH (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -110,7 +110,7 @@ class USFMBibleBook:
             # Remove trailing spaces
             if adjText and adjText[-1].isspace():
                 #print( 10, self.bookReferenceCode, c, v, _("Trailing space at end of line") )
-                if logErrors: logging.warning( _("Removed trailing space after {} {}:{} in {}: '{}'").format( bookReferenceCode, c, v, marker, text ) )
+                if logErrors: logging.warning( _("Removed trailing space after {} {}:{} in \\{}: '{}'").format( bookReferenceCode, c, v, marker, text ) )
                 self.addPriorityError( 10, self.bookReferenceCode, c, v, _("Trailing space at end of line") )
                 adjText = adjText.rstrip()
                 #print( marker, "'"+text+"'", "'"+adjText+"'" )
@@ -119,14 +119,14 @@ class USFMBibleBook:
             if '<' in adjText or '>' in adjText:
                 if not self.givenAngleBracketWarning: # Just give the warning once (per book)
                     #fixErrors.append( _("{} {}:{} Replaced angle brackets in {}: {}").format( bookReferenceCode, c, v, marker, text ) )
-                    if logErrors: logging.info( _("Replaced angle bracket(s) after {} {}:{} in {}: {}").format( bookReferenceCode, c, v, marker, text ) )
+                    if logErrors: logging.info( _("Replaced angle bracket(s) after {} {}:{} in \\{}: {}").format( bookReferenceCode, c, v, marker, text ) )
                     self.addPriorityError( 3, self.bookReferenceCode, '', '', _("Book contains angle brackets") )
                     self.givenAngleBracketWarning = True
                 adjText = adjText.replace('<<','“').replace('>>','”').replace('<','‘').replace('>','’') # Replace angle brackets with the proper opening and close quote marks
             if '"' in adjText:
                 if not self.givenDoubleQuoteWarning: # Just give the warning once (per book)
-                    fixErrors.append( _("{} {}:{} Replaced \" in {}: {}").format( bookReferenceCode, c, v, marker, adjText ) )
-                    if logErrors: logging.info( _("Replaced \" after {} {}:{} in {}: {}").format( bookReferenceCode, c, v, marker, adjText ) )
+                    fixErrors.append( _("{} {}:{} Replaced \" in \\{}: {}").format( bookReferenceCode, c, v, marker, adjText ) )
+                    if logErrors: logging.info( _("Replaced \" after {} {}:{} in \\{}: {}").format( bookReferenceCode, c, v, marker, adjText ) )
                     self.addPriorityError( 8, self.bookReferenceCode, '', '', _("Book contains straight quote signs") )
                     self.givenDoubleQuoteWarning = True
                 adjText = adjText.replace(' "',' “').replace('"','”') # Try to replace double-quote marks with the proper opening and closing quote marks
@@ -149,31 +149,31 @@ class USFMBibleBook:
                     ix2 = lcAdjText.find( '\\x*' )
                     thisOne, this1 = "cross-reference", "xr"
                 if ix2 == -1: # no closing marker
-                    fixErrors.append( _("{} {}:{} Found unmatched {} open in {}: {}").format( bookReferenceCode, c, v, thisOne, marker, adjText ) )
-                    if logErrors: logging.error( _("Found unmatched {} open after {} {}:{} in {}: {}").format( thisOne, bookReferenceCode, c, v, marker, adjText ) )
+                    fixErrors.append( _("{} {}:{} Found unmatched {} open in \\{}: {}").format( bookReferenceCode, c, v, thisOne, marker, adjText ) )
+                    if logErrors: logging.error( _("Found unmatched {} open after {} {}:{} in \\{}: {}").format( thisOne, bookReferenceCode, c, v, marker, adjText ) )
                     self.addPriorityError( 84, self.bookReferenceCode, c, v, _("Marker {} is unmatched").format( thisOne ) )
                     ix2 = 99999 # Go to the end
                 elif ix2 < ix1: # closing marker is before opening marker
-                    fixErrors.append( _("{} {}:{} Found unmatched {} in {}: {}").format( bookReferenceCode, c, v, marker, adjText ) )
-                    if logErrors: logging.error( _("Found unmatched {} after {} {}:{} in {}: {}").format( thisOne, bookReferenceCode, c, v, thisOne, marker, adjText ) )
+                    fixErrors.append( _("{} {}:{} Found unmatched {} in \\{}: {}").format( bookReferenceCode, c, v, marker, adjText ) )
+                    if logErrors: logging.error( _("Found unmatched {} after {} {}:{} in \\{}: {}").format( thisOne, bookReferenceCode, c, v, thisOne, marker, adjText ) )
                     self.addPriorityError( 84, self.bookReferenceCode, c, v, _("Marker {} is unmatched").format( thisOne ) )
                     ix1, ix2 = ix2, ix1 # swap them then
                 # Remove the footnote or xref
                 #print( "Found {} at {} {} in '{}'".format( thisOne, ix1, ix2, adjText ) )
                 note = adjText[ix1+3:ix2] # Get the note text (without the beginning and end markers)
                 if not note:
-                    fixErrors.append( _("{} {}:{} Found empty {} in {}: {}").format( bookReferenceCode, c, v, thisOne, marker, adjText ) )
-                    if logErrors: logging.error( _("Found empty {} after {} {}:{} in {}: {}").format( thisOne, bookReferenceCode, c, v, marker, adjText ) )
+                    fixErrors.append( _("{} {}:{} Found empty {} in \\{}: {}").format( bookReferenceCode, c, v, thisOne, marker, adjText ) )
+                    if logErrors: logging.error( _("Found empty {} after {} {}:{} in \\{}: {}").format( thisOne, bookReferenceCode, c, v, marker, adjText ) )
                     self.addPriorityError( 53, self.bookReferenceCode, c, v, _("Empty {}").format( thisOne ) )
                 else: # there is a note
                     if note[0].isspace():
-                        fixErrors.append( _("{} {}:{} Found {} starting with space in {}: {}").format( bookReferenceCode, c, v, thisOne, marker, adjText ) )
-                        if logErrors: logging.error( _("Found {} starting with space after {} {}:{} in {}: {}").format( thisOne, bookReferenceCode, c, v, marker, adjText ) )
+                        fixErrors.append( _("{} {}:{} Found {} starting with space in \\{}: {}").format( bookReferenceCode, c, v, thisOne, marker, adjText ) )
+                        if logErrors: logging.error( _("Found {} starting with space after {} {}:{} in \\{}: {}").format( thisOne, bookReferenceCode, c, v, marker, adjText ) )
                         self.addPriorityError( 12, self.bookReferenceCode, c, v, _("{} starts with space").format( thisOne.title() ) )
                         note = note.lstrip()
                     if note and note[-1].isspace():
-                        fixErrors.append( _("{} {}:{} Found {} ending with space in {}: {}").format( bookReferenceCode, c, v, thisOne, marker, adjText ) )
-                        if logErrors: logging.error( _("Found {} ending with space after {} {}:{} in {}: {}").format( thisOne, bookReferenceCode, c, v, marker, adjText ) )
+                        fixErrors.append( _("{} {}:{} Found {} ending with space in \\{}: {}").format( bookReferenceCode, c, v, thisOne, marker, adjText ) )
+                        if logErrors: logging.error( _("Found {} ending with space after {} {}:{} in \\{}: {}").format( thisOne, bookReferenceCode, c, v, marker, adjText ) )
                         self.addPriorityError( 11, self.bookReferenceCode, c, v, _("{} ends with space").format( thisOne.title() ) )
                         note = note.rstrip()
                 adjText = adjText[:ix1] + adjText[ix2+3:] # Remove the note completely from the text
@@ -185,14 +185,14 @@ class USFMBibleBook:
             #if len(extras)>1: print( "Mutiple fix gave '{}' and '{}'".format( adjText, extras ) )
 
             if '\\f' in lcAdjText or '\\x' in lcAdjText:
-                fixErrors.append( _("{} {}:{} Unable to properly process footnotes and cross-references in {}: {}").format( bookReferenceCode, c, v, marker, adjText ) )
-                if logErrors: logging.error( _("Unable to properly process footnotes and cross-references {} {}:{} in {}: {}").format( bookReferenceCode, c, v, marker, adjText ) )
+                fixErrors.append( _("{} {}:{} Unable to properly process footnotes and cross-references in \\{}: {}").format( bookReferenceCode, c, v, marker, adjText ) )
+                if logErrors: logging.error( _("Unable to properly process footnotes and cross-references {} {}:{} in \\{}: {}").format( bookReferenceCode, c, v, marker, adjText ) )
                 self.addPriorityError( 82, self.bookReferenceCode, c, v, _("Invalid footnotes or cross-refernces") )
 
             # Check trailing spaces again now
             if adjText and adjText[-1].isspace():
                 #print( 10, self.bookReferenceCode, c, v, _("Trailing space before note at end of line") )
-                if logErrors: logging.warning( _("Removed trailing space before note after {} {}:{} in {}: '{}'").format( bookReferenceCode, c, v, marker, text ) )
+                if logErrors: logging.warning( _("Removed trailing space before note after {} {}:{} in \\{}: '{}'").format( bookReferenceCode, c, v, marker, text ) )
                 self.addPriorityError( 10, self.bookReferenceCode, c, v, _("Trailing space before note at end of line") )
                 adjText = adjText.rstrip()
                 #print( marker, "'"+text+"'", "'"+adjText+"'" )
@@ -216,9 +216,9 @@ class USFMBibleBook:
                 for insideMarker, nextSignificantChar, iMIndex in markerList: # check paragraph markers
                     if self.USFMMarkers.isNewlineMarker(insideMarker): # Need to split the line for everything else to work properly
                         if ix==0:
-                            loadErrors.append( _("{} {}:{} Marker '{}' shouldn't appear within line in {}: '{}'").format( self.bookReferenceCode, c, v, insideMarker, marker, text ) )
-                            if logErrors: logging.error( _("Marker '{}' shouldn't appear within line after {} {}:{} in {}: '{}'").format( insideMarker, self.bookReferenceCode, c, v, marker, text ) ) # Only log the first error in the line
-                            self.addPriorityError( 96, self.bookReferenceCode, c, v, _("Marker {} shouldn't be inside a line").format( insideMarker ) )
+                            loadErrors.append( _("{} {}:{} Marker '{}' shouldn't appear within line in \\{}: '{}'").format( self.bookReferenceCode, c, v, insideMarker, marker, text ) )
+                            if logErrors: logging.error( _("Marker '{}' shouldn't appear within line after {} {}:{} in \\{}: '{}'").format( insideMarker, self.bookReferenceCode, c, v, marker, text ) ) # Only log the first error in the line
+                            self.addPriorityError( 96, self.bookReferenceCode, c, v, _("Marker \\{} shouldn't be inside a line").format( insideMarker ) )
                         thisText = text[ix:iMIndex].rstrip()
                         self.lines.append( processLineFix( adjMarker, thisText ) )
                         ix = iMIndex + 1 + len(insideMarker) + len(nextSignificantChar) # Get the start of the next text -- the 1 is for the backslash
@@ -257,29 +257,29 @@ class USFMBibleBook:
                 lastMarker, lastText = marker, text
             elif self.USFMMarkers.isInternalMarker( marker ): # the line begins with an internal marker -- append it to the previous line
                 if text:
-                    loadErrors.append( _("{} {}:{} Found '{}' internal marker at beginning of line with text: {}").format( self.bookReferenceCode, c, v, marker, text ) )
-                    if logErrors: logging.warning( _("Found '{}' internal marker after {} {}:{} at beginning of line with text: {}").format( marker, self.bookReferenceCode, c, v, text ) )
+                    loadErrors.append( _("{} {}:{} Found '\\{}' internal marker at beginning of line with text: {}").format( self.bookReferenceCode, c, v, marker, text ) )
+                    if logErrors: logging.warning( _("Found '\\{}' internal marker after {} {}:{} at beginning of line with text: {}").format( marker, self.bookReferenceCode, c, v, text ) )
                 else: # no text
-                    loadErrors.append( _("{} {}:{} Found '{}' internal marker at beginning of line (with no text)").format( self.bookReferenceCode, c, v, marker ) )
-                    if logErrors: logging.warning( _("Found '{}' internal marker after {} {}:{} at beginning of line (with no text)").format( marker, self.bookReferenceCode, c, v ) )
-                self.addPriorityError( 97, self.bookReferenceCode, c, v, _("Found {} internal marker on new line in file").format( marker ) )
+                    loadErrors.append( _("{} {}:{} Found '\\{}' internal marker at beginning of line (with no text)").format( self.bookReferenceCode, c, v, marker ) )
+                    if logErrors: logging.warning( _("Found '\\{}' internal marker after {} {}:{} at beginning of line (with no text)").format( marker, self.bookReferenceCode, c, v ) )
+                self.addPriorityError( 97, self.bookReferenceCode, c, v, _("Found \\{} internal marker on new line in file").format( marker ) )
                 #lastText += '' if lastText.endswith(' ') else ' ' # Not always good to add a space, but it's their fault!
                 lastText +=  '\\' + marker + ' ' + text
                 #print( "{} {} {} Now have {}:'{}'".format( self.bookReferenceCode, c, v, lastMarker, lastText ) )
             else: # the line begins with an unknown marker
                 if text:
-                    loadErrors.append( _("{} {}:{} Found '{}' unknown marker at beginning of line with text: {}").format( self.bookReferenceCode, c, v, marker, text ) )
-                    if logErrors: logging.error( _("Found '{}' unknown marker after {} {}:{} at beginning of line with text: {}").format( marker, self.bookReferenceCode, c, v, text ) )
+                    loadErrors.append( _("{} {}:{} Found '\\{}' unknown marker at beginning of line with text: {}").format( self.bookReferenceCode, c, v, marker, text ) )
+                    if logErrors: logging.error( _("Found '\\{}' unknown marker after {} {}:{} at beginning of line with text: {}").format( marker, self.bookReferenceCode, c, v, text ) )
                 else: # no text
-                    loadErrors.append( _("{} {}:{} Found '{}' unknown marker at beginning of line (with no text").format( self.bookReferenceCode, c, v, marker ) )
-                    if logErrors: logging.error( _("Found '{}' unknown marker after {} {}:{} at beginning of line (with no text)").format( marker, self.bookReferenceCode, c, v ) )
-                self.addPriorityError( 100, self.bookReferenceCode, c, v, _("Found {} unknown marker on new line in file").format( marker ) )
+                    loadErrors.append( _("{} {}:{} Found '\\{}' unknown marker at beginning of line (with no text").format( self.bookReferenceCode, c, v, marker ) )
+                    if logErrors: logging.error( _("Found '\\{}' unknown marker after {} {}:{} at beginning of line (with no text)").format( marker, self.bookReferenceCode, c, v ) )
+                self.addPriorityError( 100, self.bookReferenceCode, c, v, _("Found \\{} unknown marker on new line in file").format( marker ) )
                 for tryMarker in sorted( self.USFMMarkers.getNewlineMarkersList(), key=len, reverse=True ): # Try to do something intelligent here -- it might be just a missing space
                     if marker.startswith( tryMarker ): # Let's try changing it
                         if lastMarker: processLine( lastMarker, lastText )
                         lastMarker, lastText = tryMarker, marker[len(tryMarker):] + ' ' + text
-                        loadErrors.append( _("{} {}:{} Changed '{}' unknown marker to '{}' at beginning of line: {}").format( self.bookReferenceCode, c, v, marker, tryMarker, text ) )
-                        if logErrors: logging.warning( _("Changed '{}' unknown marker to '{}' after {} {}:{} at beginning of line: {}").format( marker, tryMarker, self.bookReferenceCode, c, v, text ) )
+                        loadErrors.append( _("{} {}:{} Changed '\\{}' unknown marker to '{}' at beginning of line: {}").format( self.bookReferenceCode, c, v, marker, tryMarker, text ) )
+                        if logErrors: logging.warning( _("Changed '\\{}' unknown marker to '{}' after {} {}:{} at beginning of line: {}").format( marker, tryMarker, self.bookReferenceCode, c, v, text ) )
                         break
                 # Otherwise, don't bother processing this line -- it'll just cause more problems later on
         if lastMarker: processLine( lastMarker, lastText ) # Process the final line
@@ -318,22 +318,22 @@ class USFMBibleBook:
                 validationErrors.append( _("{} {}:{} Marker 'id' should only appear as the first marker in a book but found on line {} in {}: {}").format( self.bookReferenceCode, c, v, j, marker, text ) )
                 if logErrors: logging.error( _("Marker 'id' should only appear as the first marker in a book but found on line {} after {} {}:{} in {}: {}").format( j, self.bookReferenceCode, c, v, marker, text ) )
             if not self.USFMMarkers.isNewlineMarker( marker ):
-                validationErrors.append( _("{} {}:{} Unexpected '{}' newline marker in Bible book (Text is '{}')").format( self.bookReferenceCode, c, v, marker, text ) )
-                if logErrors: logging.warning( _("Unexpected '{}' newline marker in Bible book after {} {}:{} (Text is '{}')").format( marker, self.bookReferenceCode, c, v, text ) )
+                validationErrors.append( _("{} {}:{} Unexpected '\\{}' newline marker in Bible book (Text is '{}')").format( self.bookReferenceCode, c, v, marker, text ) )
+                if logErrors: logging.warning( _("Unexpected '\\{}' newline marker in Bible book after {} {}:{} (Text is '{}')").format( marker, self.bookReferenceCode, c, v, text ) )
             if self.USFMMarkers.isDeprecatedMarker( marker ):
-                validationErrors.append( _("{} {}:{} Deprecated '{}' newline marker in Bible book (Text is '{}')").format( self.bookReferenceCode, c, v, marker, text ) )
-                if logErrors: logging.warning( _("Deprecated '{}' newline marker in Bible book after {} {}:{} (Text is '{}')").format( marker, self.bookReferenceCode, c, v, text ) )
+                validationErrors.append( _("{} {}:{} Deprecated '\\{}' newline marker in Bible book (Text is '{}')").format( self.bookReferenceCode, c, v, marker, text ) )
+                if logErrors: logging.warning( _("Deprecated '\\{}' newline marker in Bible book after {} {}:{} (Text is '{}')").format( marker, self.bookReferenceCode, c, v, text ) )
             markerList = self.USFMMarkers.getMarkerListFromText( text )
             #if markerList: print( "\nText = {}:'{}'".format(marker,text)); print( markerList )
             for insideMarker, nextSignificantChar, iMIndex in markerList: # check character markers
                 if self.USFMMarkers.isDeprecatedMarker( insideMarker ):
-                    validationErrors.append( _("{} {}:{} Deprecated '{}' internal marker in Bible book (Text is '{}')").format( self.bookReferenceCode, c, v, insideMarker, text ) )
-                    if logErrors: logging.warning( _("Deprecated '{}' internal marker in Bible book after {} {}:{} (Text is '{}')").format( insideMarker, self.bookReferenceCode, c, v, text ) )
+                    validationErrors.append( _("{} {}:{} Deprecated '\\{}' internal marker in Bible book (Text is '{}')").format( self.bookReferenceCode, c, v, insideMarker, text ) )
+                    if logErrors: logging.warning( _("Deprecated '\\{}' internal marker in Bible book after {} {}:{} (Text is '{}')").format( insideMarker, self.bookReferenceCode, c, v, text ) )
             ix = 0
             for insideMarker, nextSignificantChar, iMIndex in markerList: # check newline markers
                 if self.USFMMarkers.isNewlineMarker(insideMarker):
-                    validationErrors.append( _("{} {}:{} Marker '{}' shouldn't appear within line in {}: {}").format( self.bookReferenceCode, c, v, insideMarker, marker, text ) )
-                    if logErrors: logging.error( _("Marker '{}' shouldn't appear within line after {} {}:{} in {}: {}").format( insideMarker, self.bookReferenceCode, c, v, marker, text ) )
+                    validationErrors.append( _("{} {}:{} Marker '\\{}' shouldn't appear within line in {}: {}").format( self.bookReferenceCode, c, v, insideMarker, marker, text ) )
+                    if logErrors: logging.error( _("Marker '\\{}' shouldn't appear within line after {} {}:{} in {}: {}").format( insideMarker, self.bookReferenceCode, c, v, marker, text ) )
 
         if validationErrors: self.errorDictionary['Validation Errors'] = validationErrors
     # end of validateUSFM
@@ -1334,7 +1334,7 @@ class USFMBibleBook:
                 assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
                 ( 0 <= extraIndex <= len(text) )
                 assert( extraType in ('fn','xr',) )
-                assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
+                assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the CONTENTS of these fields should be in extras
 
                 # Get a copy of the note text without any formatting
                 cleanText = extraText
@@ -1407,12 +1407,18 @@ class USFMBibleBook:
                 line = "{} {}:{} '{}'".format( self.bookReferenceCode, c, v, extract )
                 if extraType == 'fn':
                     footnoteList.append( line )
-                    if not cleanText.endswith('.') and not cleanText.endswith('?') and not cleanText.endswith('.)') and not cleanText.endswith('.”') and not cleanText.endswith('.’'):
+                    if cleanText.endswith(' '):
+                        footnoteErrors.append( _("{} {}:{} Footnote seems to have an extra space at end: '{}'").format( self.bookReferenceCode, c, v, extraText ) )
+                        self.addPriorityError( 32, self.bookReferenceCode, c, v, _("Extra space at end of footnote") )
+                    elif not cleanText.endswith('.') and not cleanText.endswith('?') and not cleanText.endswith('.)') and not cleanText.endswith('.”') and not cleanText.endswith('.’'):
                         footnoteErrors.append( _("{} {}:{} Footnote seems to be missing a final period: '{}'").format( self.bookReferenceCode, c, v, extraText ) )
-                        self.addPriorityError( 32, self.bookReferenceCode, c, v, _("Missing period at end of footnote") )
+                        self.addPriorityError( 33, self.bookReferenceCode, c, v, _("Missing period at end of footnote") )
                 elif extraType == 'xr':
                     xrefList.append( line )
-                    if not cleanText.endswith('.') and not cleanText.endswith('.)') and not cleanText.endswith('.”'):
+                    if cleanText.endswith(' '):
+                        xrefErrors.append( _("{} {}:{} Cross-reference seems to have an extra space at end: '{}'").format( self.bookReferenceCode, c, v, extraText ) )
+                        self.addPriorityError( 30, self.bookReferenceCode, c, v, _("Extra space at end of cross-reference") )
+                    elif not cleanText.endswith('.') and not cleanText.endswith('.)') and not cleanText.endswith('.”'):
                         xrefErrors.append( _("{} {}:{} Cross-reference seems to be missing a final period: '{}'").format( self.bookReferenceCode, c, v, extraText ) )
                         self.addPriorityError( 31, self.bookReferenceCode, c, v, _("Missing period at end of cross-reference") )
 

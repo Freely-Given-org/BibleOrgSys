@@ -3,7 +3,7 @@
 # SFMFile.py
 #
 # SFM (Standard Format Marker) data file reader
-#   Last modified: 2011-05-28 (also update versionString below)
+#   Last modified: 2011-09-23 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -39,7 +39,7 @@ There are three kinds of SFM encoded files which can be loaded:
 
 
 progName = "SFM Files loader"
-versionString = "0.80"
+versionString = "0.81"
 
 
 import logging
@@ -86,13 +86,13 @@ class SFMLines:
         with open( sfm_filename, encoding=encoding ) as myFile: # Automatically closes the file when done
             try:
                 for line in myFile:
-                    if lineCount==0 and encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF
+                    lineCount += 1
+                    if lineCount==1 and encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF
                         print( "      Detected UTF-16 Byte Order Marker" )
                         line = line[1:] # Remove the UTF-8 Byte Order Marker
                     if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines
                     lastLine = line
-                    lineCount += 1
                     #print ( 'SFM file line is "' + line + '"' )
                     #if line[0:2]=='\\_': continue # Just discard Toolbox header lines
                     if line[0]=='#': continue # Just discard comment lines
@@ -128,7 +128,7 @@ class SFMLines:
                         result.append( (marker, text) )
             except:
                 logging.critical( "Invalid line in " + sfm_filename + " -- line ignored at " + str(lineCount) )
-                if lineCount: print( 'Previous line was: ', lastLine )
+                if lineCount > 1: print( 'Previous line was: ', lastLine )
                 print( line )
                 #raise
 
@@ -244,7 +244,7 @@ class SFMRecords:
                     record.append( (marker, text) )
             except:
                 logging.critical( "Invalid line in " + sfm_filename + " -- line ignored at " + str(lineCount) )
-                if lineCount: print( 'Previous line was: ', lastLine )
+                if lineCount > 1: print( 'Previous line was: ', lastLine )
                 else: print( 'Possible encoding error -- expected', encoding )
                 #raise
 

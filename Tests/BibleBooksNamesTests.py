@@ -44,7 +44,7 @@ class BibleBooksNamesConverterTests( unittest.TestCase ):
     """ Unit tests for the BibleBooksNamesConverter object. """
 
     def setUp( self ):
-        # Create the BibleBooksNamesConvertor object
+        # Create the BibleBooksNamesConverter object
         self.bbnsc = BibleBooksNamesConverter.BibleBooksNamesConverter().loadSystems() # Doesn't reload the XML unnecessarily :)
 
     def test_010_str( self ):
