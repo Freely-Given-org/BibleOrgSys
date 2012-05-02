@@ -3,9 +3,9 @@
 # USFMBibleBook.py
 #
 # Module handling the USFM markers for Bible books
-#   Last modified: 2011-10-26 by RJH (also update versionString below)
+#   Last modified: 2012-05-01 by RJH (also update versionString below)
 #
-# Copyright (C) 2010-2011 Robert Hunt
+# Copyright (C) 2010-2012 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -27,7 +27,7 @@ Module for defining and manipulating USFM Bible books.
 """
 
 progName = "USFM Bible book handler"
-versionString = "0.20"
+versionString = "0.21"
 
 
 import os, logging
@@ -292,6 +292,8 @@ class USFMBibleBook:
     def validateUSFM( self, logErrors=False ):
         """
         Validate the loaded book.
+
+        This does a quick check for major SFM errors. It is not as thorough as checkSFMs below.
         """
         assert( self.lines )
         validationErrors = []
@@ -769,7 +771,7 @@ class USFMBibleBook:
 
 
     def checkSFMs( self, logErrors=False ):
-        """Runs a number of checks on the USFM codes in this Bible book."""
+        """Runs a number of comprehensive checks on the USFM codes in this Bible book."""
         allAvailableNewlineMarkers = self.USFMMarkers.getNewlineMarkersList()
         allAvailableCharacterMarkers = self.USFMMarkers.getCharacterMarkersList( includeEndMarkers=True )
 
@@ -779,8 +781,10 @@ class USFMBibleBook:
         functionalCounts = {}
         modifiedMarkerList = []
         c = v = '0'
-        section = ''
+        section, lastMarker = '', ''
+        lastMarkerEmpty = True
         for marker,text,extras in self.lines:
+            markerEmpty = len(text) == 0
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text:
                 c = text.split()[0]; v = '0'
@@ -816,6 +820,72 @@ class USFMBibleBook:
 
             # Note the newline SFM order -- create a list of markers in order (with duplicates combined, e.g., \v \v -> \v)
             if not modifiedMarkerList or modifiedMarkerList[-1] != marker: modifiedMarkerList.append( marker )
+            # Check for known bad combinations
+            if marker=='nb' and lastMarker in ('s','s1','s2','s3','s4','s5'):
+                newlineMarkerErrors.append( _("{} {}:{} 'nb' not allowed immediately after '{}' section heading").format( self.bookReferenceCode, c, v, marker ) )
+            # Check for known good combinations
+            commonGoodNewlineMarkerCombinations = (
+                # If a marker has nothing after it, it must contain data
+                # If a marker has =E after it, it must NOT contain data
+                # (If data is optional, enter both sets)
+                # Heading stuff (in order of occurrence)
+                ('=E','id'), ('id','h1'),('id','ide'), ('ide','h1'), ('h1','toc1'),('h1','mt1'),('h1','mt2'), ('toc1','toc2'), ('toc2','toc3'),('toc2','mt1'),('toc2','mt2'), ('toc3','mt1'),('toc3','mt2'),
+                ('mt1','mt2'),('mt1','imt1'),('mt1','is1'), ('mt2','mt1'),('mt2','imt1'),('mt2','is1'),
+                ('imt1','ip'),('is1','ip'), ('ip','ip'),('ip','iot'), ('imt','iot'), ('iot','io1'), ('io1','io1'),('io1','io2'),('io1','c'), ('io2','io1'),('io2','io2'),('io2','c'),
+                # Regular chapter stuff (in alphabetical order)
+                ('b=E','q1'),('b=E','q1=E'),
+                ('c','p=E'),('c','q1=E'),('c','s1'),('c','s2'),('c','s3'),
+                ('li1','li1'),('li1','v'),
+                ('m=E','p'),('m=E','v'),
+                ('p','c'),('p','p=E'),('p=E','q1'),('p','s1'),('p','v'),('p=E','v'),
+                ('q1','b=E'),('q1','c'),('q1','m=E'),('q1','p=E'),('q1','q1'),('q1','q1=E'),('q1','q2'),('q1','q2=E'),('q1','s1'),('q1=E','v'),
+                ('q2','b=E'),('q2','c'),('q2','m=E'),('q2','p=E'),('q2','q1'),('q2','q1=E'),('q2','q2'),('q2','q2=E'),('q2','q3'),('q2','s1'),('q2','v'),('q2=E','v'),
+                ('q3','b=E'),('q3','c'),('q3','m=E'),('q3','p=E'),('q3','q2'),('q3','q3'),('q3','s1'),('q3','v'),('q3=E','v'),
+                ('r','p=E'),
+                ('s1','p=E'),('s1','q1=E'),('s1','r'),
+                ('s2','p=E'),('s2','q1=E'),('s2','r'),
+                ('s3','p=E'),('s3','q1=E'),('s3','r'),
+                ('v','c'),('v','li1'),('v','m'),('v','p'),('v','p=E'),('v','q1'),('v','q1=E'),('v','q2'),('v','q2=E'),('v','q3'),('v','q3=E'),('v','s1'),('v','s2'),('v','s3'),('v','v'), )
+            rarerGoodNewlineMarkerCombinations = (
+                ('mt2','mt3'), ('mt3','mt1'), ('io1','cl'), ('io2','cl'),
+                ('c','cl'), ('cl','c'),('cl','p=E'),('cl','q1=E'),('cl','s1'),('cl','s2'),('cl','s3'),
+                ('m','c'),('m','p=E'),('m','q1'),('m','v'),
+                ('p','p'),('p','q1'), ('pi1','v'),('pi1=E','v'),
+                ('q1','m'),('q1','q3'), ('q2','m'), ('q3','q1'),
+                ('r','p'), ('s1','p'),('s1','pi1=E'), ('v','b=E'),('v','m=E'),('v','pi1'),('v','pi1=E'), )
+            # We allow rem (remark) markers to be anywhere without a warning
+            if lastMarkerEmpty and markerEmpty:
+                if (lastMarker+'=E',marker+'=E') not in commonGoodNewlineMarkerCombinations:
+                    if (lastMarker+'=E',marker+'=E') in rarerGoodNewlineMarkerCombinations:
+                        newlineMarkerErrors.append( _("{} {}:{} (Warning only) Empty '{}' not commonly used following empty '{}' marker").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
+                        #print( _("{} {}:{} (Warning only) Empty '{}' not commonly used following empty '{}' marker").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
+                    else:
+                        newlineMarkerErrors.append( _("{} {}:{} Empty '{}' not normally used following empty '{}' marker").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
+                        #print( _("{} {}:{} Empty '{}' not normally used following empty '{}' marker").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
+            elif lastMarkerEmpty and not markerEmpty and marker!='rem':
+                if (lastMarker+'=E',marker) not in commonGoodNewlineMarkerCombinations:
+                    if (lastMarker+'=E',marker) in rarerGoodNewlineMarkerCombinations:
+                        newlineMarkerErrors.append( _("{} {}:{} (Warning only) '{}' with text not commonly used following empty '{}' marker").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
+                        #print( _("{} {}:{} (Warning only) '{}' with text not commonly used following empty '{}' marker").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
+                    else:
+                        newlineMarkerErrors.append( _("{} {}:{} '{}' with text not normally used following empty '{}' marker").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
+                        #print( _("{} {}:{} '{}' with text not normally used following empty '{}' marker").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
+            elif not lastMarkerEmpty and markerEmpty and lastMarker!='rem':
+                if (lastMarker,marker+'=E') not in commonGoodNewlineMarkerCombinations:
+                    if (lastMarker,marker+'=E') in rarerGoodNewlineMarkerCombinations:
+                        newlineMarkerErrors.append( _("{} {}:{} (Warning only) Empty '{}' not commonly used following '{}' with text").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
+                        #print( _("{} {}:{} (Warning only) Empty '{}' not commonly used following '{}' with text").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
+                    else:
+                        newlineMarkerErrors.append( _("{} {}:{} Empty '{}' not normally used following '{}' with text").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
+                        #print( _("{} {}:{} Empty '{}' not normally used following '{}' with text").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
+            elif lastMarker!='rem' and marker!='rem': # both not empty
+                if (lastMarker,marker) not in commonGoodNewlineMarkerCombinations:
+                    if (lastMarker,marker) in rarerGoodNewlineMarkerCombinations:
+                        newlineMarkerErrors.append( _("{} {}:{} (Warning only) '{}' with text not commonly used following '{}' with text").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
+                        #print( _("{} {}:{} (Warning only) '{}' with text not commonly used following '{}' with text").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
+                    else:
+                        newlineMarkerErrors.append( _("{} {}:{} '{}' with text not normally used following '{}' with text").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
+                        #print( _("{} {}:{} '{}' with text not normally used following '{}' with text").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
 
             markerShouldHaveContent = self.USFMMarkers.markerShouldHaveContent( marker )
             if text:
@@ -977,6 +1047,7 @@ class USFMBibleBook:
                         functionalCounts['Footnotes'] = 1 if 'Footnotes' not in functionalCounts else (functionalCounts['Footnotes'] + 1)
                     elif extraType == 'xr':
                         functionalCounts['Cross-References'] = 1 if 'Cross-References' not in functionalCounts else (functionalCounts['Cross-References'] + 1)
+            lastMarker, lastMarkerEmpty = marker, markerEmpty
 
 
         # Check the relative ordering of newline markers
@@ -1503,7 +1574,7 @@ class USFMBibleBook:
     # end of checkNotes
 
 
-    def check( self, typicalAddedUnitData ):
+    def check( self, typicalAddedUnitData=None ):
         """Runs a number of checks on the book and returns the error dictionary."""
         # Ignore the result of these next ones -- just use any errors collected
         self.getVersification() # This checks CV ordering, etc. at the same time
@@ -1514,6 +1585,14 @@ class USFMBibleBook:
         self.checkHeadings()
         self.checkIntroduction()
         self.checkNotes() # footnotes and cross-references
+
+        if typicalAddedUnitData is None: # Get our recommendations for added units
+            import pickle
+            folder = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/" ) # Relative to module, not cwd
+            filepath = os.path.join( folder, "AddedUnitData.pickle" )
+            if Globals.verbosityLevel > 1: print( _("Importing from {}...").format( filepath ) )
+            with open( filepath, 'rb' ) as pickleFile:
+                typicalAddedUnitData = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
         self.checkAddedUnits( typicalAddedUnitData )
     # end of check
 
@@ -1542,6 +1621,13 @@ def main():
 
     logErrors = False
 
+    import pickle
+    folder = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/" ) # Relative to module, not cwd
+    filepath = os.path.join( folder, "AddedUnitData.pickle" )
+    if Globals.verbosityLevel > 1: print( _("Importing from {}...").format( filepath ) )
+    with open( filepath, 'rb' ) as pickleFile:
+        typicalAddedUnitData = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
+
     name, encoding, testFolder = "Matigsalug", "utf-8", "/mnt/Data/Matigsalug/Scripture/MBTV/" # You can put your test folder here
     if os.access( testFolder, os.R_OK ):
         if Globals.verbosityLevel > 1: print( _("Loading {} from {}...").format( name, testFolder ) )
@@ -1559,7 +1645,7 @@ def main():
             #print( result )
             result = UBB.getAddedUnits ()
             #print( result )
-            UBB.check()
+            UBB.check( typicalAddedUnitData )
             UBErrors = UBB.getErrors()
             #print( UBErrors )
     else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
