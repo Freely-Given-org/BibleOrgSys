@@ -190,29 +190,15 @@ def demo():
 
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
-    testFolder = '/mnt/Work/VirtualBox_Shared_Folder/USX exports/Projects/MBTV/' # You can put your test folder here
+    testFolder = 'Tests/TestDataFiles/USXTest/' # This is a RELATIVE path
+    #testFolder = '/mnt/Work/VirtualBox_Shared_Folder/USXExports/Projects/MBTV/' # You can put your test folder here
     if os.access( testFolder, os.R_OK ):
         UFns = USXFilenames( testFolder )
         print( UFns )
         result = UFns.getPossibleFilenames(); print( "Possible:", len(result), result )
         result = UFns.getActualFilenames(); print( "\nActual:", len(result), result )
-        result = UFns.getUnusedFilenames(); print( "\Other:", len(result), result )
+        result = UFns.getUnusedFilenames(); print( "\nOther:", len(result), result )
     else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
-
-    baseFolder = '/mnt/Work/VirtualBox_Shared_Folder/USX exports'
-    for thisGroup in ( 'Versions', 'Projects', 'Notes' ):
-        groupFolders = os.listdir( os.path.join( baseFolder, thisGroup ) )
-        for thisFolder in groupFolders:
-            testFolder = os.path.join( baseFolder, thisGroup, thisFolder )
-            if os.access( testFolder, os.R_OK ):
-                UFns = USXFilenames( testFolder )
-                #result = UFns.getPossibleFilenames(); print( "Possible:", len(result), result )
-                #result = UFns.getActualFilenames(); print( "\nActual:", len(result), result )
-                result = UFns.getUnusedFilenames();
-                if result:
-                    print( UFns )
-                    print( "Unused:", len(result), result )
-            else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
 
 if __name__ == '__main__':
     demo()

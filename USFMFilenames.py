@@ -201,13 +201,14 @@ def demo():
 
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
-    testFolder = '/mnt/Data/Matigsalug/Scripture/MBTV/' # You can put your test folder here
+    testFolder = 'Tests/TestDataFiles/USFMTest/' # This is a RELATIVE path
+    #testFolder = '/mnt/Data/Matigsalug/Scripture/MBTV/' # You can put your test folder here
     if os.access( testFolder, os.R_OK ):
         UFns = USFMFilenames( testFolder )
         print( UFns )
         result = UFns.getPossibleFilenames(); print( "Possible:", len(result), result )
         result = UFns.getActualFilenames(); print( "\nActual:", len(result), result )
-        result = UFns.getUnusedFilenames(); print( "\Other:", len(result), result )
+        result = UFns.getUnusedFilenames(); print( "\nOther:", len(result), result )
     else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
 
 if __name__ == '__main__':
