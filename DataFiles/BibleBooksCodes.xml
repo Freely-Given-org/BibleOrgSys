@@ -24,6 +24,8 @@ and then these optional fields (optional because not all systems handle the less
     The three-character USFM abbreviation (no spaces but may begin with a digit)
     The two-digit USFM number
         UBS Paratext and Bibledit use the same codes (above) and USFM format
+    The three-digit USX number
+        UBS Paratext can export to USX files
     The three-character NET Bible abbreviation
     The 2-4 character Bible abbreviation used for the Robinson-Pierpont Byzantine Greek text
     Alternative book codes (separated by commas)
@@ -81,7 +83,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
                     <!ATTLIST identifier type (URL) #REQUIRED>
                 <!ELEMENT rights (#PCDATA)>
         <!ELEMENT BibleBookCodes (nameEnglish,referenceAbbreviation,referenceNumber,expectedChapters?,SBLAbbreviation?,OSISAbbreviation?,SwordAbbreviation?,CCELNumber?,
-                                    USFMAbbreviation?,USFMNumber?,NETBibleAbbreviation?,ByzantineAbbreviation?,possibleAlternativeBooks?)>
+                                    USFMAbbreviation?,USFMNumber?,USXNumber?,NETBibleAbbreviation?,ByzantineAbbreviation?,possibleAlternativeBooks?)>
             <!ELEMENT nameEnglish (#PCDATA)>
             <!ELEMENT referenceAbbreviation (#PCDATA)>
             <!ELEMENT referenceNumber (#PCDATA)>
@@ -92,6 +94,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
             <!ELEMENT CCELNumber (#PCDATA)>
             <!ELEMENT USFMAbbreviation (#PCDATA)>
             <!ELEMENT USFMNumber (#PCDATA)>
+            <!ELEMENT USXNumber (#PCDATA)>
             <!ELEMENT NETBibleAbbreviation (#PCDATA)>
             <!ELEMENT ByzantineAbbreviation (#PCDATA)>
             <!ELEMENT possibleAlternativeBooks (#PCDATA)>
@@ -101,8 +104,8 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
 
   <header>
     <work>
-      <version>0.52</version>
-      <date>2011-08-22</date>
+      <version>0.60</version>
+      <date>2012-05-25</date>
       <title>Bible books codes list</title>
       <contributor role="com">Robert Hunt</contributor>
       <identifier type="URL">http://www.sbl-site.org/publications/publishingwithsbl.aspx</identifier>
@@ -125,6 +128,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>1</CCELNumber>
     <USFMAbbreviation>Gen</USFMAbbreviation>
     <USFMNumber>01</USFMNumber>
+    <USXNumber>001</USXNumber>
     <NETBibleAbbreviation>Gen</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -138,6 +142,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>2</CCELNumber>
     <USFMAbbreviation>Exo</USFMAbbreviation>
     <USFMNumber>02</USFMNumber>
+    <USXNumber>002</USXNumber>
     <NETBibleAbbreviation>Exo</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -151,6 +156,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>3</CCELNumber>
     <USFMAbbreviation>Lev</USFMAbbreviation>
     <USFMNumber>03</USFMNumber>
+    <USXNumber>003</USXNumber>
     <NETBibleAbbreviation>Lev</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -164,6 +170,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>4</CCELNumber>
     <USFMAbbreviation>Num</USFMAbbreviation>
     <USFMNumber>04</USFMNumber>
+    <USXNumber>004</USXNumber>
     <NETBibleAbbreviation>Num</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -177,6 +184,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>5</CCELNumber>
     <USFMAbbreviation>Deu</USFMAbbreviation>
     <USFMNumber>05</USFMNumber>
+    <USXNumber>005</USXNumber>
     <NETBibleAbbreviation>Deu</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -190,6 +198,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>6</CCELNumber>
     <USFMAbbreviation>Jos</USFMAbbreviation>
     <USFMNumber>06</USFMNumber>
+    <USXNumber>006</USXNumber>
     <NETBibleAbbreviation>Jos</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -203,6 +212,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>7</CCELNumber>
     <USFMAbbreviation>Jdg</USFMAbbreviation>
     <USFMNumber>07</USFMNumber>
+    <USXNumber>007</USXNumber>
     <NETBibleAbbreviation>Jdg</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -216,6 +226,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>8</CCELNumber>
     <USFMAbbreviation>Rut</USFMAbbreviation>
     <USFMNumber>08</USFMNumber>
+    <USXNumber>008</USXNumber>
     <NETBibleAbbreviation>Rut</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -229,6 +240,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>9</CCELNumber>
     <USFMAbbreviation>1Sa</USFMAbbreviation>
     <USFMNumber>09</USFMNumber>
+    <USXNumber>009</USXNumber>
     <NETBibleAbbreviation>1Sa</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -242,6 +254,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>10</CCELNumber>
     <USFMAbbreviation>2Sa</USFMAbbreviation>
     <USFMNumber>10</USFMNumber>
+    <USXNumber>010</USXNumber>
     <NETBibleAbbreviation>2Sa</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -255,6 +268,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>11</CCELNumber>
     <USFMAbbreviation>1Ki</USFMAbbreviation>
     <USFMNumber>11</USFMNumber>
+    <USXNumber>011</USXNumber>
     <NETBibleAbbreviation>1Ki</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -268,6 +282,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>12</CCELNumber>
     <USFMAbbreviation>2Ki</USFMAbbreviation>
     <USFMNumber>12</USFMNumber>
+    <USXNumber>012</USXNumber>
     <NETBibleAbbreviation>2Ki</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -281,6 +296,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>13</CCELNumber>
     <USFMAbbreviation>1Ch</USFMAbbreviation>
     <USFMNumber>13</USFMNumber>
+    <USXNumber>013</USXNumber>
     <NETBibleAbbreviation>1Ch</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -294,6 +310,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>14</CCELNumber>
     <USFMAbbreviation>2Ch</USFMAbbreviation>
     <USFMNumber>14</USFMNumber>
+    <USXNumber>014</USXNumber>
     <NETBibleAbbreviation>2Ch</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -308,6 +325,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>15</CCELNumber>
     <USFMAbbreviation>Ezr</USFMAbbreviation>
     <USFMNumber>15</USFMNumber>
+    <USXNumber>015</USXNumber>
     <NETBibleAbbreviation>Ezr</NETBibleAbbreviation>
     <possibleAlternativeBooks>EZN</possibleAlternativeBooks>
   </BibleBookCodes>
@@ -322,6 +340,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>16</CCELNumber>
     <USFMAbbreviation>Neh</USFMAbbreviation>
     <USFMNumber>16</USFMNumber>
+    <USXNumber>016</USXNumber>
     <NETBibleAbbreviation>Neh</NETBibleAbbreviation>
     <possibleAlternativeBooks>EZN</possibleAlternativeBooks>
   </BibleBookCodes>
@@ -336,6 +355,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>17</CCELNumber>
     <USFMAbbreviation>Est</USFMAbbreviation>
     <USFMNumber>17</USFMNumber>
+    <USXNumber>017</USXNumber>
     <NETBibleAbbreviation>Est</NETBibleAbbreviation>
     <possibleAlternativeBooks>ESG,ESA,ESC</possibleAlternativeBooks>
   </BibleBookCodes>
@@ -350,6 +370,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>18</CCELNumber>
     <USFMAbbreviation>Job</USFMAbbreviation>
     <USFMNumber>18</USFMNumber>
+    <USXNumber>018</USXNumber>
     <NETBibleAbbreviation>Job</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -363,6 +384,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>19</CCELNumber>
     <USFMAbbreviation>Psa</USFMAbbreviation>
     <USFMNumber>19</USFMNumber>
+    <USXNumber>019</USXNumber>
     <NETBibleAbbreviation>Psa</NETBibleAbbreviation>
     <possibleAlternativeBooks>PB1,PB2,PB3,PB4,PB5</possibleAlternativeBooks>
   </BibleBookCodes>
@@ -378,6 +400,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>20</CCELNumber>
     <USFMAbbreviation>Pro</USFMAbbreviation>
     <USFMNumber>20</USFMNumber>
+    <USXNumber>020</USXNumber>
     <NETBibleAbbreviation>Pro</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -392,6 +415,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>21</CCELNumber>
     <USFMAbbreviation>Ecc</USFMAbbreviation>
     <USFMNumber>21</USFMNumber>
+    <USXNumber>021</USXNumber>
     <NETBibleAbbreviation>Ecc</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -405,6 +429,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>22</CCELNumber>
     <USFMAbbreviation>Sng</USFMAbbreviation>
     <USFMNumber>22</USFMNumber>
+    <USXNumber>022</USXNumber>
     <NETBibleAbbreviation>Sos</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -418,6 +443,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>23</CCELNumber>
     <USFMAbbreviation>Isa</USFMAbbreviation>
     <USFMNumber>23</USFMNumber>
+    <USXNumber>023</USXNumber>
     <NETBibleAbbreviation>Isa</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -431,6 +457,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>24</CCELNumber>
     <USFMAbbreviation>Jer</USFMAbbreviation>
     <USFMNumber>24</USFMNumber>
+    <USXNumber>024</USXNumber>
     <NETBibleAbbreviation>Jer</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -444,6 +471,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>25</CCELNumber>
     <USFMAbbreviation>Lam</USFMAbbreviation>
     <USFMNumber>25</USFMNumber>
+    <USXNumber>025</USXNumber>
     <NETBibleAbbreviation>Lam</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -457,6 +485,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>26</CCELNumber>
     <USFMAbbreviation>Ezk</USFMAbbreviation>
     <USFMNumber>26</USFMNumber>
+    <USXNumber>026</USXNumber>
     <NETBibleAbbreviation>Eze</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -470,6 +499,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>27</CCELNumber>
     <USFMAbbreviation>Dan</USFMAbbreviation>
     <USFMNumber>27</USFMNumber>
+    <USXNumber>027</USXNumber>
     <NETBibleAbbreviation>Dan</NETBibleAbbreviation>
     <possibleAlternativeBooks>DAG,DAA,DAC</possibleAlternativeBooks>
   </BibleBookCodes>
@@ -484,6 +514,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>28</CCELNumber>
     <USFMAbbreviation>Hos</USFMAbbreviation>
     <USFMNumber>28</USFMNumber>
+    <USXNumber>028</USXNumber>
     <NETBibleAbbreviation>Hos</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -496,6 +527,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>29</CCELNumber>
     <USFMAbbreviation>Jol</USFMAbbreviation>
     <USFMNumber>29</USFMNumber>
+    <USXNumber>029</USXNumber>
     <NETBibleAbbreviation>Joe</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -509,6 +541,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>30</CCELNumber>
     <USFMAbbreviation>Amo</USFMAbbreviation>
     <USFMNumber>30</USFMNumber>
+    <USXNumber>030</USXNumber>
     <NETBibleAbbreviation>Amo</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -522,6 +555,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>31</CCELNumber>
     <USFMAbbreviation>Oba</USFMAbbreviation>
     <USFMNumber>31</USFMNumber>
+    <USXNumber>031</USXNumber>
     <NETBibleAbbreviation>Oba</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -535,6 +569,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>32</CCELNumber>
     <USFMAbbreviation>Jon</USFMAbbreviation>
     <USFMNumber>32</USFMNumber>
+    <USXNumber>032</USXNumber>
     <NETBibleAbbreviation>Jon</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -548,6 +583,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>33</CCELNumber>
     <USFMAbbreviation>Mic</USFMAbbreviation>
     <USFMNumber>33</USFMNumber>
+    <USXNumber>033</USXNumber>
     <NETBibleAbbreviation>Mic</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -561,6 +597,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>34</CCELNumber>
     <USFMAbbreviation>Nam</USFMAbbreviation>
     <USFMNumber>34</USFMNumber>
+    <USXNumber>034</USXNumber>
     <NETBibleAbbreviation>Nah</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -574,6 +611,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>35</CCELNumber>
     <USFMAbbreviation>Hab</USFMAbbreviation>
     <USFMNumber>35</USFMNumber>
+    <USXNumber>035</USXNumber>
     <NETBibleAbbreviation>Hab</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -587,6 +625,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>36</CCELNumber>
     <USFMAbbreviation>Zep</USFMAbbreviation>
     <USFMNumber>36</USFMNumber>
+    <USXNumber>036</USXNumber>
     <NETBibleAbbreviation>Zep</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -600,6 +639,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>37</CCELNumber>
     <USFMAbbreviation>Hag</USFMAbbreviation>
     <USFMNumber>37</USFMNumber>
+    <USXNumber>037</USXNumber>
     <NETBibleAbbreviation>Hag</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -613,6 +653,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>38</CCELNumber>
     <USFMAbbreviation>Zec</USFMAbbreviation>
     <USFMNumber>38</USFMNumber>
+    <USXNumber>038</USXNumber>
     <NETBibleAbbreviation>Zec</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -626,6 +667,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>39</CCELNumber>
     <USFMAbbreviation>Mal</USFMAbbreviation>
     <USFMNumber>39</USFMNumber>
+    <USXNumber>039</USXNumber>
     <NETBibleAbbreviation>Mal</NETBibleAbbreviation>
   </BibleBookCodes>
 
@@ -641,6 +683,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>40</CCELNumber>
     <USFMAbbreviation>Mat</USFMAbbreviation>
     <USFMNumber>41</USFMNumber>
+    <USXNumber>040</USXNumber>
     <NETBibleAbbreviation>Mat</NETBibleAbbreviation>
     <ByzantineAbbreviation>MT</ByzantineAbbreviation>
   </BibleBookCodes>
@@ -655,6 +698,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>41</CCELNumber>
     <USFMAbbreviation>Mrk</USFMAbbreviation>
     <USFMNumber>42</USFMNumber>
+    <USXNumber>041</USXNumber>
     <NETBibleAbbreviation>Mar</NETBibleAbbreviation>
     <ByzantineAbbreviation>MR</ByzantineAbbreviation>
   </BibleBookCodes>
@@ -669,6 +713,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>42</CCELNumber>
     <USFMAbbreviation>Luk</USFMAbbreviation>
     <USFMNumber>43</USFMNumber>
+    <USXNumber>042</USXNumber>
     <NETBibleAbbreviation>Luk</NETBibleAbbreviation>
     <ByzantineAbbreviation>LU</ByzantineAbbreviation>
     <possibleAlternativeBooks>LKA</possibleAlternativeBooks>
@@ -684,6 +729,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>43</CCELNumber>
     <USFMAbbreviation>Jhn</USFMAbbreviation>
     <USFMNumber>44</USFMNumber>
+    <USXNumber>043</USXNumber>
     <NETBibleAbbreviation>Joh</NETBibleAbbreviation>
     <ByzantineAbbreviation>JOH</ByzantineAbbreviation>
   </BibleBookCodes>
@@ -698,6 +744,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>44</CCELNumber>
     <USFMAbbreviation>Act</USFMAbbreviation>
     <USFMNumber>45</USFMNumber>
+    <USXNumber>044</USXNumber>
     <NETBibleAbbreviation>Act</NETBibleAbbreviation>
     <ByzantineAbbreviation>AC</ByzantineAbbreviation>
     <possibleAlternativeBooks>LKA</possibleAlternativeBooks>
@@ -713,6 +760,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>45</CCELNumber>
     <USFMAbbreviation>Rom</USFMAbbreviation>
     <USFMNumber>46</USFMNumber>
+    <USXNumber>045</USXNumber>
     <NETBibleAbbreviation>Rom</NETBibleAbbreviation>
     <ByzantineAbbreviation>RO</ByzantineAbbreviation>
   </BibleBookCodes>
@@ -727,6 +775,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>46</CCELNumber>
     <USFMAbbreviation>1Co</USFMAbbreviation>
     <USFMNumber>47</USFMNumber>
+    <USXNumber>046</USXNumber>
     <NETBibleAbbreviation>1Co</NETBibleAbbreviation>
     <ByzantineAbbreviation>1CO</ByzantineAbbreviation>
   </BibleBookCodes>
@@ -741,6 +790,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>47</CCELNumber>
     <USFMAbbreviation>2Co</USFMAbbreviation>
     <USFMNumber>48</USFMNumber>
+    <USXNumber>047</USXNumber>
     <NETBibleAbbreviation>2Co</NETBibleAbbreviation>
     <ByzantineAbbreviation>2CO</ByzantineAbbreviation>
   </BibleBookCodes>
@@ -755,6 +805,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>48</CCELNumber>
     <USFMAbbreviation>Gal</USFMAbbreviation>
     <USFMNumber>49</USFMNumber>
+    <USXNumber>048</USXNumber>
     <NETBibleAbbreviation>Gal</NETBibleAbbreviation>
     <ByzantineAbbreviation>GA</ByzantineAbbreviation>
   </BibleBookCodes>
@@ -769,6 +820,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>49</CCELNumber>
     <USFMAbbreviation>Eph</USFMAbbreviation>
     <USFMNumber>50</USFMNumber>
+    <USXNumber>049</USXNumber>
     <NETBibleAbbreviation>Eph</NETBibleAbbreviation>
     <ByzantineAbbreviation>EPH</ByzantineAbbreviation>
   </BibleBookCodes>
@@ -783,6 +835,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>50</CCELNumber>
     <USFMAbbreviation>Php</USFMAbbreviation>
     <USFMNumber>51</USFMNumber>
+    <USXNumber>050</USXNumber>
     <NETBibleAbbreviation>Phi</NETBibleAbbreviation>
     <ByzantineAbbreviation>PHP</ByzantineAbbreviation>
   </BibleBookCodes>
@@ -797,6 +850,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>51</CCELNumber>
     <USFMAbbreviation>Col</USFMAbbreviation>
     <USFMNumber>52</USFMNumber>
+    <USXNumber>051</USXNumber>
     <NETBibleAbbreviation>Col</NETBibleAbbreviation>
     <ByzantineAbbreviation>COL</ByzantineAbbreviation>
   </BibleBookCodes>
@@ -811,6 +865,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>52</CCELNumber>
     <USFMAbbreviation>1Th</USFMAbbreviation>
     <USFMNumber>53</USFMNumber>
+    <USXNumber>052</USXNumber>
     <NETBibleAbbreviation>1Th</NETBibleAbbreviation>
     <ByzantineAbbreviation>1TH</ByzantineAbbreviation>
   </BibleBookCodes>
@@ -825,6 +880,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>53</CCELNumber>
     <USFMAbbreviation>2Th</USFMAbbreviation>
     <USFMNumber>54</USFMNumber>
+    <USXNumber>053</USXNumber>
     <NETBibleAbbreviation>2Th</NETBibleAbbreviation>
     <ByzantineAbbreviation>2TH</ByzantineAbbreviation>
   </BibleBookCodes>
@@ -839,6 +895,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>54</CCELNumber>
     <USFMAbbreviation>1Ti</USFMAbbreviation>
     <USFMNumber>55</USFMNumber>
+    <USXNumber>054</USXNumber>
     <NETBibleAbbreviation>1Ti</NETBibleAbbreviation>
     <ByzantineAbbreviation>1TI</ByzantineAbbreviation>
   </BibleBookCodes>
@@ -853,6 +910,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>55</CCELNumber>
     <USFMAbbreviation>2Ti</USFMAbbreviation>
     <USFMNumber>56</USFMNumber>
+    <USXNumber>055</USXNumber>
     <NETBibleAbbreviation>2Ti</NETBibleAbbreviation>
     <ByzantineAbbreviation>2TI</ByzantineAbbreviation>
   </BibleBookCodes>
@@ -867,6 +925,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>56</CCELNumber>
     <USFMAbbreviation>Tit</USFMAbbreviation>
     <USFMNumber>57</USFMNumber>
+    <USXNumber>056</USXNumber>
     <NETBibleAbbreviation>Tit</NETBibleAbbreviation>
     <ByzantineAbbreviation>TIT</ByzantineAbbreviation>
   </BibleBookCodes>
@@ -881,6 +940,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>57</CCELNumber>
     <USFMAbbreviation>Phm</USFMAbbreviation>
     <USFMNumber>58</USFMNumber>
+    <USXNumber>057</USXNumber>
     <NETBibleAbbreviation>Phm</NETBibleAbbreviation>
     <ByzantineAbbreviation>PHM</ByzantineAbbreviation>
   </BibleBookCodes>
@@ -895,6 +955,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>58</CCELNumber>
     <USFMAbbreviation>Heb</USFMAbbreviation>
     <USFMNumber>59</USFMNumber>
+    <USXNumber>058</USXNumber>
     <NETBibleAbbreviation>Heb</NETBibleAbbreviation>
     <ByzantineAbbreviation>HEB</ByzantineAbbreviation>
   </BibleBookCodes>
@@ -909,6 +970,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>59</CCELNumber>
     <USFMAbbreviation>Jas</USFMAbbreviation>
     <USFMNumber>60</USFMNumber>
+    <USXNumber>059</USXNumber>
     <NETBibleAbbreviation>Jam</NETBibleAbbreviation>
     <ByzantineAbbreviation>JAS</ByzantineAbbreviation>
   </BibleBookCodes>
@@ -923,6 +985,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>60</CCELNumber>
     <USFMAbbreviation>1Pe</USFMAbbreviation>
     <USFMNumber>61</USFMNumber>
+    <USXNumber>060</USXNumber>
     <NETBibleAbbreviation>1Pe</NETBibleAbbreviation>
     <ByzantineAbbreviation>1PE</ByzantineAbbreviation>
   </BibleBookCodes>
@@ -937,6 +1000,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>61</CCELNumber>
     <USFMAbbreviation>2Pe</USFMAbbreviation>
     <USFMNumber>62</USFMNumber>
+    <USXNumber>061</USXNumber>
     <NETBibleAbbreviation>2Pe</NETBibleAbbreviation>
     <ByzantineAbbreviation>2PE</ByzantineAbbreviation>
   </BibleBookCodes>
@@ -951,6 +1015,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>62</CCELNumber>
     <USFMAbbreviation>1Jn</USFMAbbreviation>
     <USFMNumber>63</USFMNumber>
+    <USXNumber>062</USXNumber>
     <NETBibleAbbreviation>1Jo</NETBibleAbbreviation>
     <ByzantineAbbreviation>1JO</ByzantineAbbreviation>
   </BibleBookCodes>
@@ -965,6 +1030,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>63</CCELNumber>
     <USFMAbbreviation>2Jn</USFMAbbreviation>
     <USFMNumber>64</USFMNumber>
+    <USXNumber>063</USXNumber>
     <NETBibleAbbreviation>2Jo</NETBibleAbbreviation>
     <ByzantineAbbreviation>2JO</ByzantineAbbreviation>
   </BibleBookCodes>
@@ -979,6 +1045,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>64</CCELNumber>
     <USFMAbbreviation>3Jn</USFMAbbreviation>
     <USFMNumber>65</USFMNumber>
+    <USXNumber>064</USXNumber>
     <NETBibleAbbreviation>3Jo</NETBibleAbbreviation>
     <ByzantineAbbreviation>3JO</ByzantineAbbreviation>
   </BibleBookCodes>
@@ -993,6 +1060,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>65</CCELNumber>
     <USFMAbbreviation>Jud</USFMAbbreviation>
     <USFMNumber>66</USFMNumber>
+    <USXNumber>065</USXNumber>
     <NETBibleAbbreviation>Jud</NETBibleAbbreviation>
     <ByzantineAbbreviation>JUDE</ByzantineAbbreviation>
   </BibleBookCodes>
@@ -1007,6 +1075,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>66</CCELNumber>
     <USFMAbbreviation>Rev</USFMAbbreviation>
     <USFMNumber>67</USFMNumber>
+    <USXNumber>066</USXNumber>
     <NETBibleAbbreviation>Rev</NETBibleAbbreviation>
     <ByzantineAbbreviation>RE</ByzantineAbbreviation>
   </BibleBookCodes>
@@ -1023,6 +1092,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>95</CCELNumber>
     <USFMAbbreviation>EsG</USFMAbbreviation>
     <USFMNumber>70</USFMNumber>
+    <USXNumber>069</USXNumber>
     <possibleAlternativeBooks>EST,ESA,ESC</possibleAlternativeBooks>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -1061,6 +1131,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <SwordAbbreviation>DanGr</SwordAbbreviation>
     <USFMAbbreviation>DaG</USFMAbbreviation>
     <USFMNumber>B2</USFMNumber>
+    <USXNumber>112</USXNumber>
     <possibleAlternativeBooks>DAN,DAA,DAC</possibleAlternativeBooks>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -1100,6 +1171,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>78</CCELNumber>
     <USFMAbbreviation>Bel</USFMAbbreviation>
     <USFMNumber>77</USFMNumber>
+    <USXNumber>076</USXNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Susanna</nameEnglish>
@@ -1112,6 +1184,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>77</CCELNumber>
     <USFMAbbreviation>Sus</USFMAbbreviation>
     <USFMNumber>76</USFMNumber>
+    <USXNumber>075</USXNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Judith</nameEnglish>
@@ -1124,6 +1197,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>70</CCELNumber>
     <USFMAbbreviation>Jdt</USFMAbbreviation>
     <USFMNumber>69</USFMNumber>
+    <USXNumber>068</USXNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Prayer of Manasses / Prayer of Manasseh</nameEnglish>
@@ -1137,6 +1211,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>82</CCELNumber>
     <USFMAbbreviation>Man</USFMAbbreviation>
     <USFMNumber>84</USFMNumber>
+    <USXNumber>083</USXNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Sirach / Ecclesiasticus / Wisdom of Ben Sira / Wisdom of Jesus son of Sirach</nameEnglish>
@@ -1149,6 +1224,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>94</CCELNumber>
     <USFMAbbreviation>Sir</USFMAbbreviation>
     <USFMNumber>72</USFMNumber>
+    <USXNumber>071</USXNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Tobit / Tobias</nameEnglish>
@@ -1161,6 +1237,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>69</CCELNumber>
     <USFMAbbreviation>Tob</USFMAbbreviation>
     <USFMNumber>68</USFMNumber>
+    <USXNumber>067</USXNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Wisdom / Wisdom of Solomon</nameEnglish>
@@ -1173,6 +1250,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>72</CCELNumber>
     <USFMAbbreviation>Wis</USFMAbbreviation>
     <USFMNumber>71</USFMNumber>
+    <USXNumber>070</USXNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Prayer of Azariah and the Song of the Three Young Men / Prayer of Azariah / Song of the Three Young Men / Song of the Three Children</nameEnglish>
@@ -1188,6 +1266,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>76</CCELNumber>
     <USFMAbbreviation>S3Y</USFMAbbreviation>
     <USFMNumber>75</USFMNumber>
+    <USXNumber>074</USXNumber>
   </BibleBookCodes>
 
 <!-- Ezra / Esdras -->
@@ -1203,6 +1282,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>81</CCELNumber>
     <USFMAbbreviation>1Es</USFMAbbreviation>
     <USFMNumber>82</USFMNumber>
+    <USXNumber>081</USXNumber>
     <possibleAlternativeBooks>LES</possibleAlternativeBooks>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -1217,6 +1297,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>83</CCELNumber>
     <USFMAbbreviation>2Es</USFMAbbreviation>
     <USFMNumber>83</USFMNumber>
+    <USXNumber>082</USXNumber>
     <possibleAlternativeBooks>GES</possibleAlternativeBooks>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -1228,6 +1309,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <SBLAbbreviation>4 Ezra</SBLAbbreviation>
     <USFMAbbreviation>EzA</USFMAbbreviation>
     <USFMNumber>A4</USFMNumber>
+    <USXNumber>104</USXNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>5 Ezra / 3 Esdras / 5 Esdras</nameEnglish>
@@ -1268,6 +1350,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>75</CCELNumber>
     <USFMAbbreviation>LJe</USFMAbbreviation>
     <USFMNumber>74</USFMNumber>
+    <USXNumber>073</USXNumber>
     <possibleAlternativeBooks>LJB</possibleAlternativeBooks>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -1282,6 +1365,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>74</CCELNumber>
     <USFMAbbreviation>Bar</USFMAbbreviation>
     <USFMNumber>73</USFMNumber>
+    <USXNumber>072</USXNumber>
     <possibleAlternativeBooks>LJB</possibleAlternativeBooks>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -1305,6 +1389,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <SwordAbbreviation>2Bar</SwordAbbreviation>
     <USFMAbbreviation>2Ba</USFMAbbreviation>
     <USFMNumber>B4</USFMNumber>
+    <USXNumber>114</USXNumber>
     <possibleAlternativeBooks>LB2</possibleAlternativeBooks>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -1315,6 +1400,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <expectedChapters>9</expectedChapters>
     <USFMAbbreviation>LBa</USFMAbbreviation>
     <USFMNumber>B5</USFMNumber>
+    <USXNumber>115</USXNumber>
     <possibleAlternativeBooks>LB2</possibleAlternativeBooks>
   </BibleBookCodes>
   <BibleBookCodes>
@@ -1363,6 +1449,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>79</CCELNumber>
     <USFMAbbreviation>1Ma</USFMAbbreviation>
     <USFMNumber>78</USFMNumber>
+    <USXNumber>077</USXNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>2 Maccabees</nameEnglish>
@@ -1375,6 +1462,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>80</CCELNumber>
     <USFMAbbreviation>2Ma</USFMAbbreviation>
     <USFMNumber>79</USFMNumber>
+    <USXNumber>078</USXNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>3 Maccabees</nameEnglish>
@@ -1388,6 +1476,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>84</CCELNumber>
     <USFMAbbreviation>3Ma</USFMAbbreviation>
     <USFMNumber>80</USFMNumber>
+    <USXNumber>079</USXNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>4 Maccabees</nameEnglish>
@@ -1401,6 +1490,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>85</CCELNumber>
     <USFMAbbreviation>4Ma</USFMAbbreviation>
     <USFMNumber>81</USFMNumber>
+    <USXNumber>080</USXNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>5 Maccabees</nameEnglish>
@@ -1495,6 +1585,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <CCELNumber>86</CCELNumber>
     <USFMAbbreviation>Ps2</USFMAbbreviation>
     <USFMNumber>85</USFMNumber>
+    <USXNumber>084</USXNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Syriac Psalms 152-155 / Five apocryphal Syriac Psalms</nameEnglish>
@@ -1505,6 +1596,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <SwordAbbreviation>AddPs</SwordAbbreviation>
     <USFMAbbreviation>Ps3</USFMAbbreviation>
     <USFMNumber>B3</USFMNumber>
+    <USXNumber>113</USXNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Additional Psalms of Solomon</nameEnglish>
@@ -1515,6 +1607,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <SwordAbbreviation>PssSol</SwordAbbreviation>
     <USFMAbbreviation>PsS</USFMAbbreviation>
     <USFMNumber>87</USFMNumber>
+    <USXNumber>086</USXNumber>
   </BibleBookCodes>
 
   <BibleBookCodes>
@@ -1526,6 +1619,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <SwordAbbreviation>EpLao</SwordAbbreviation>
     <USFMAbbreviation>Lao</USFMAbbreviation>
     <USFMNumber>C3</USFMNumber>
+    <USXNumber>123</USXNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <!-- At this stage, we use a single code for the Greek, Russian or Syriac Odes -->
@@ -1537,6 +1631,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <!-- USFMAbbreviation used to be Oda -->
     <USFMAbbreviation>Ode</USFMAbbreviation>
     <USFMNumber>86</USFMNumber>
+    <USXNumber>085</USXNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Prayer of Solomon</nameEnglish>
@@ -1902,6 +1997,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <referenceAbbreviation>FRT</referenceAbbreviation>
     <referenceNumber>230</referenceNumber>
     <USFMAbbreviation>Frt</USFMAbbreviation>
+    <USXNumber>100</USXNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Preface</nameEnglish>
@@ -1917,6 +2013,8 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <nameEnglish>Introduction</nameEnglish>
     <referenceAbbreviation>INT</referenceAbbreviation>
     <referenceNumber>233</referenceNumber>
+    <!-- <USFMNumber>108</USFMNumber> Is this for real? A 3-digit USFM number? -->
+    <USXNumber>107</USXNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Table of Contents</nameEnglish>
@@ -1928,6 +2026,8 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <referenceAbbreviation>GLS</referenceAbbreviation>
     <referenceNumber>235</referenceNumber>
     <USFMAbbreviation>Glo</USFMAbbreviation>
+    <!-- <USFMNumber>110</USFMNumber> Is this for real? A 3-digit USFM number? -->
+    <USXNumber>109</USXNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Concordance</nameEnglish>
@@ -1945,6 +2045,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <referenceAbbreviation>IXN</referenceAbbreviation>
     <referenceNumber>238</referenceNumber>
     <USFMAbbreviation>NDX</USFMAbbreviation>
+    <USXNumber>111</USXNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Places Index</nameEnglish>
@@ -1962,19 +2063,71 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <referenceAbbreviation>IXT</referenceAbbreviation>
     <referenceNumber>241</referenceNumber>
     <USFMAbbreviation>TDX</USFMAbbreviation>
+    <!-- <USFMNumber>111</USFMNumber> Is this for real? A 3-digit USFM number? -->
+    <USXNumber>110</USXNumber>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Generic back matter</nameEnglish>
     <referenceAbbreviation>BAK</referenceAbbreviation>
     <referenceNumber>242</referenceNumber>
     <USFMAbbreviation>Bak</USFMAbbreviation>
+    <USXNumber>101</USXNumber>
   </BibleBookCodes>
-  <!-- We haven't mapped the Paratext XXA-XXG codes.
-     Hopefully, we have a better code already defined here.
-     If not, they can be created as user defined books,
-       however, it's probably better to define some more sensible generic titles
-       in here to meet your needs and then everyone can take advantage of them. -->
 
-<!-- referenceNumbers 245..255 are reserved for user defined books -->
+  <!-- Paratext USFM XXA-XXG codes.
+     It would be preferable to use the labelled codes above,
+        rather than these generic, undefined codes
+        which give no indication of what they contain. -->
+  <BibleBookCodes>
+    <nameEnglish>Unspecified extra XXA</nameEnglish>
+    <referenceAbbreviation>XXA</referenceAbbreviation>
+    <referenceNumber>243</referenceNumber>
+    <USFMAbbreviation>XXA</USFMAbbreviation>
+    <USXNumber>093</USXNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Unspecified extra XXB</nameEnglish>
+    <referenceAbbreviation>XXB</referenceAbbreviation>
+    <referenceNumber>244</referenceNumber>
+    <USFMAbbreviation>XXB</USFMAbbreviation>
+    <USXNumber>094</USXNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Unspecified extra XXC</nameEnglish>
+    <referenceAbbreviation>XXC</referenceAbbreviation>
+    <referenceNumber>245</referenceNumber>
+    <USFMAbbreviation>XXC</USFMAbbreviation>
+    <USXNumber>095</USXNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Unspecified extra XXD</nameEnglish>
+    <referenceAbbreviation>XXD</referenceAbbreviation>
+    <referenceNumber>246</referenceNumber>
+    <USFMAbbreviation>XXD</USFMAbbreviation>
+    <USXNumber>096</USXNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Unspecified extra XXE</nameEnglish>
+    <referenceAbbreviation>XXE</referenceAbbreviation>
+    <referenceNumber>247</referenceNumber>
+    <USFMAbbreviation>XXE</USFMAbbreviation>
+    <USXNumber>097</USXNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Unspecified extra XXF</nameEnglish>
+    <referenceAbbreviation>XXF</referenceAbbreviation>
+    <referenceNumber>248</referenceNumber>
+    <USFMAbbreviation>XXF</USFMAbbreviation>
+    <USXNumber>098</USXNumber>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Unspecified extra XXG</nameEnglish>
+    <referenceAbbreviation>XXG</referenceAbbreviation>
+    <referenceNumber>249</referenceNumber>
+    <USFMAbbreviation>XXG</USFMAbbreviation>
+    <USXNumber>099</USXNumber>
+  </BibleBookCodes>
+
+<!-- referenceNumbers 250..255 are reserved for user defined books -->
 
 </BibleBooksCodes>

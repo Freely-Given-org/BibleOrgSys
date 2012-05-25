@@ -1,7 +1,7 @@
 # BibleBooksCodes.ReadMe.txt
 #   ReadMe.txt for Bible Books Codes
-#   Version 0.53
-#   Last modified: 2011-02-15
+#   Version 0.60
+#   Last modified: 2012-05-23
 #
 #
 # Abbreviations:
@@ -19,6 +19,7 @@
 #   UBS = United Bible Societies -- see http://paratext.ubs-translations.org
 #   SFM = Standard Format Markers used widely within SIL -- see http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=Glossary#sfm
 #   USFM = UBS Unified Standard Format Markers -- see http://paratext.ubs-translations.org/about/usfm
+#   USX = UBS Unified Standard XML -- see http://paratext.ubs-translations.org/about/usfm
 #
 #
 # Enclosed are four files:
@@ -72,4 +73,4 @@
 #
 # Robert Hunt
 # Hunt.RobertJ@gmail.com
-# October 2010--February 2011.
+# October 2010--May 2012.

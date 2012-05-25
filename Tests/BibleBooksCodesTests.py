@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodesTests.py
+#   Last modified: 2012-05-25 (also update versionString below)
 #
 # Module testing BibleBooksCodes.py
-#   Last modified: 2011-08-22 (also update versionString below)
 #
-# Copyright (C) 2011 Robert Hunt
+# Copyright (C) 2011-2012 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module testing BibleBooksCodes.py.
 """
 
 progName = "Bible Books Codes tests"
-versionString = "0.57"
+versionString = "0.60"
 
 
 import sys, unittest
@@ -62,9 +62,9 @@ class BibleBooksCodesConverterTests( unittest.TestCase ):
         """ Test the importDataToPython function. """
         result = self.bbcsc.importDataToPython()
         self.assertTrue( isinstance( result, dict ) )
-        self.assertEqual( len(result), 12 )
+        self.assertEqual( len(result), 13 )
         for dictName in ("referenceNumberDict","referenceAbbreviationDict","SBLAbbreviationDict","OSISAbbreviationDict","SwordAbbreviationDict","CCELDict", \
-                        "USFMAbbreviationDict","USFMNumberDict","NETBibleAbbreviationDict","ByzantineAbbreviationDict","EnglishNameDict","allAbbreviationsDict",):
+                        "USFMAbbreviationDict","USFMNumberDict","USXNumberDict","NETBibleAbbreviationDict","ByzantineAbbreviationDict","EnglishNameDict","allAbbreviationsDict",):
             self.assertTrue( dictName in result )
             self.assertGreater( len(result[dictName]), 10 )
             self.assertLess( len(result[dictName]), 255 )
@@ -137,13 +137,18 @@ class BibleBooksCodesTests( unittest.TestCase ):
         """ Test the getAllReferenceAbbreviations function. """
         results = self.bbc.getAllReferenceAbbreviations()
         self.assertTrue( isinstance( results, list ) )
-        self.assertTrue( len(results) > 66 )
+        self.assertTrue( 66 < len(results) < 250 )
         self.assertFalse( None in results )
-        for result in results: self.assertTrue( len(result)==3 )
+        for result in results:
+            self.assertTrue( len(result)==3 )
     # end of test_060_getAllReferenceAbbreviations
 
     def test_070_getReferenceNumber( self ):
         """ Test the getReferenceNumber function. """
+        for BBB in self.bbc.getAllReferenceAbbreviations():
+            RefN = self.bbc.getReferenceNumber( BBB )
+            if RefN is not None:
+                self.assertTrue( 1 <= RefN <= 249 )
         self.assertEqual( self.bbc.getReferenceNumber('GEN'), 1 )
         self.assertEqual( self.bbc.getReferenceNumber('MAL'), 39 )
         self.assertEqual( self.bbc.getReferenceNumber('MAT'), 40 )
@@ -155,6 +160,13 @@ class BibleBooksCodesTests( unittest.TestCase ):
 
     def test_080_getCCELNumber( self ):
         """ Test the getCCELNumber function. """
+        for BBB in self.bbc.getAllReferenceAbbreviations():
+            CCELN = self.bbc.getCCELNumber( BBB )
+            if CCELN is not None:
+                self.assertTrue( ' ' not in CCELN )
+                self.assertTrue( 1 <= len(CCELN) <= 2 )
+                CCELNint = int( CCELN )
+                self.assertTrue( 1 <= CCELNint <= 95 )
         self.assertEqual( self.bbc.getCCELNumber('GEN'), '1' )
         self.assertEqual( self.bbc.getCCELNumber('MAL'), '39' )
         self.assertEqual( self.bbc.getCCELNumber('MAT'), '40' )
@@ -166,10 +178,16 @@ class BibleBooksCodesTests( unittest.TestCase ):
 
     def test_090_getSBLAbbreviation( self ):
         """ Test the getSBLAbbreviation function. """
+        for BBB in self.bbc.getAllReferenceAbbreviations():
+            SBLAbbrev = self.bbc.getSBLAbbreviation( BBB )
+            if SBLAbbrev is not None:
+                self.assertTrue( 2 <= len(SBLAbbrev) <= 8 )
         self.assertEqual( self.bbc.getSBLAbbreviation('GEN'), 'Gen' )
+        self.assertEqual( self.bbc.getSBLAbbreviation('PSA'), 'Ps' )
         self.assertEqual( self.bbc.getSBLAbbreviation('MAL'), 'Mal' )
         self.assertEqual( self.bbc.getSBLAbbreviation('MAT'), 'Matt' )
         self.assertEqual( self.bbc.getSBLAbbreviation('CO1'), '1 Cor' )
+        self.assertEqual( self.bbc.getSBLAbbreviation('TH1'), '1 Thess' )
         self.assertEqual( self.bbc.getSBLAbbreviation('REV'), 'Rev' )
         self.assertRaises( KeyError, self.bbc.getSBLAbbreviation, 'XYZ' )
         self.assertRaises( KeyError, self.bbc.getSBLAbbreviation, 'Gen' )
@@ -177,6 +195,11 @@ class BibleBooksCodesTests( unittest.TestCase ):
 
     def test_100_getOSISAbbreviation( self ):
         """ Test the getOSISAbbreviation function. """
+        for BBB in self.bbc.getAllReferenceAbbreviations():
+            OSISAbbrev = self.bbc.getOSISAbbreviation( BBB )
+            if OSISAbbrev is not None:
+                self.assertTrue( ' ' not in OSISAbbrev )
+                self.assertTrue( 2 <= len(OSISAbbrev) <= 7 )
         self.assertEqual( self.bbc.getOSISAbbreviation('GEN'), 'Gen' )
         self.assertEqual( self.bbc.getOSISAbbreviation('MAL'), 'Mal' )
         self.assertEqual( self.bbc.getOSISAbbreviation('MAT'), 'Matt' )
@@ -188,6 +211,11 @@ class BibleBooksCodesTests( unittest.TestCase ):
 
     def test_110_getSwordAbbreviation( self ):
         """ Test the getSwordAbbreviation function. """
+        for BBB in self.bbc.getAllReferenceAbbreviations():
+            SwordAbbrev = self.bbc.getSwordAbbreviation( BBB )
+            if SwordAbbrev is not None:
+                self.assertTrue( ' ' not in SwordAbbrev )
+                self.assertTrue( 2 <= len(SwordAbbrev) <= 7 )
         self.assertEqual( self.bbc.getSwordAbbreviation('GEN'), 'Gen' )
         self.assertEqual( self.bbc.getSwordAbbreviation('MAL'), 'Mal' )
         self.assertEqual( self.bbc.getSwordAbbreviation('MAT'), 'Matt' )
@@ -199,6 +227,11 @@ class BibleBooksCodesTests( unittest.TestCase ):
 
     def test_120_getUSFMAbbreviation( self ):
         """ Test the getUSFMAbbreviation function. """
+        for BBB in self.bbc.getAllReferenceAbbreviations():
+            USFMAbbrev = self.bbc.getUSFMAbbreviation( BBB )
+            if USFMAbbrev is not None:
+                self.assertTrue( ' ' not in USFMAbbrev )
+                self.assertEqual( len(USFMAbbrev), 3 )
         self.assertEqual( self.bbc.getUSFMAbbreviation('GEN'), 'Gen' )
         self.assertEqual( self.bbc.getUSFMAbbreviation('MAL'), 'Mal' )
         self.assertEqual( self.bbc.getUSFMAbbreviation('MAT'), 'Mat' )
@@ -210,6 +243,11 @@ class BibleBooksCodesTests( unittest.TestCase ):
 
     def test_130_getUSFMNumber( self ):
         """ Test the getUSFMNumber function. """
+        for BBB in self.bbc.getAllReferenceAbbreviations():
+            USFMN = self.bbc.getUSFMNumber( BBB )
+            if USFMN is not None:
+                self.assertTrue( ' ' not in USFMN )
+                self.assertEqual( len(USFMN), 2 )
         self.assertEqual( self.bbc.getUSFMNumber('GEN'), '01' )
         self.assertEqual( self.bbc.getUSFMNumber('MAL'), '39' )
         self.assertEqual( self.bbc.getUSFMNumber('MAT'), '41' )
@@ -219,8 +257,32 @@ class BibleBooksCodesTests( unittest.TestCase ):
         self.assertRaises( KeyError, self.bbc.getUSFMNumber, 'Gen' )
     # end of test_130_getUSFMNumber
 
-    def test_140_getNETBibleAbbreviation( self ):
+    def test_140_getUSXNumber( self ):
+        """ Test the getUSXNumber function. """
+        for BBB in self.bbc.getAllReferenceAbbreviations():
+            USXN = self.bbc.getUSXNumber( BBB )
+            if USXN is not None:
+                self.assertTrue( ' ' not in USXN )
+                self.assertEqual( len(USXN), 3 )
+                USXNint = int( USXN )
+                self.assertTrue( 1 <= USXNint <= 123 )
+        self.assertEqual( self.bbc.getUSXNumber('GEN'), '001' )
+        self.assertEqual( self.bbc.getUSXNumber('MAL'), '039' )
+        self.assertEqual( self.bbc.getUSXNumber('MAT'), '040' )
+        self.assertEqual( self.bbc.getUSXNumber('CO1'), '046' )
+        self.assertEqual( self.bbc.getUSXNumber('REV'), '066' )
+        self.assertEqual( self.bbc.getUSXNumber('LBA'), '115' )
+        self.assertRaises( KeyError, self.bbc.getUSXNumber, 'XYZ' )
+        self.assertRaises( KeyError, self.bbc.getUSXNumber, 'Gen' )
+    # end of test_140_getUSXNumber
+
+    def test_150_getNETBibleAbbreviation( self ):
         """ Test the getNETBibleAbbreviation function. """
+        for BBB in self.bbc.getAllReferenceAbbreviations():
+            NetAbbrev = self.bbc.getNETBibleAbbreviation( BBB )
+            if NetAbbrev is not None:
+                self.assertTrue( ' ' not in NetAbbrev )
+                self.assertEqual( len(NetAbbrev), 3 )
         self.assertEqual( self.bbc.getNETBibleAbbreviation('GEN'), 'Gen' )
         self.assertEqual( self.bbc.getNETBibleAbbreviation('MAL'), 'Mal' )
         self.assertEqual( self.bbc.getNETBibleAbbreviation('MAT'), 'Mat' )
@@ -228,17 +290,22 @@ class BibleBooksCodesTests( unittest.TestCase ):
         self.assertEqual( self.bbc.getNETBibleAbbreviation('REV'), 'Rev' )
         self.assertRaises( KeyError, self.bbc.getNETBibleAbbreviation, 'XYZ' )
         self.assertRaises( KeyError, self.bbc.getNETBibleAbbreviation, 'Gen' )
-    # end of test_140_getNETBibleAbbreviation
+    # end of test_150_getNETBibleAbbreviation
 
-    def test_150_getByzantineAbbreviation( self ):
+    def test_160_getByzantineAbbreviation( self ):
         """ Test the getByzantineAbbreviation function. """
+        for BBB in self.bbc.getAllReferenceAbbreviations():
+            BzAbbrev = self.bbc.getByzantineAbbreviation( BBB )
+            if BzAbbrev is not None:
+                self.assertTrue( ' ' not in BzAbbrev )
+                self.assertTrue( 2 <= len(BzAbbrev) <= 4 )
         self.assertEqual( self.bbc.getByzantineAbbreviation('GEN'), None )
         self.assertEqual( self.bbc.getByzantineAbbreviation('MAT'), 'MT' )
         self.assertEqual( self.bbc.getByzantineAbbreviation('CO1'), '1CO' )
         self.assertEqual( self.bbc.getByzantineAbbreviation('REV'), 'RE' )
         self.assertRaises( KeyError, self.bbc.getByzantineAbbreviation, 'XYZ' )
         self.assertRaises( KeyError, self.bbc.getByzantineAbbreviation, 'Mat' )
-    # end of test_150_getByzantineAbbreviation
+    # end of test_160_getByzantineAbbreviation
 
     def test_200_getBBBFromOSIS( self ):
         """ Test the getBBBFromOSIS function. """

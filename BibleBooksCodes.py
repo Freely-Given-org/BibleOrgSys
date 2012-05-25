@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodes.py
+#   Last modified: 2012-05-23 (also update versionString below)
 #
 # Module handling BibleBooksCodes functions
-#   Last modified: 2011-08-22 (also update versionString below)
 #
-# Copyright (C) 2010-2011 Robert Hunt
+# Copyright (C) 2010-2012 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling BibleBooksCodes functions.
 """
 
 progName = "Bible Books Codes handler"
-versionString = "0.57"
+versionString = "0.60"
 
 
 import os, logging
@@ -141,8 +141,12 @@ class BibleBooksCodes:
         return self.__DataDicts["referenceAbbreviationDict"][BBB]["USFMAbbreviation"]
 
     def getUSFMNumber( self, BBB ):
-        """ Return the USFM number string for the given book code (referenceAbbreviation). """
+        """ Return the two-digit USFM number string for the given book code (referenceAbbreviation). """
         return self.__DataDicts["referenceAbbreviationDict"][BBB]["USFMNumberString"]
+
+    def getUSXNumber( self, BBB ):
+        """ Return the three-digit USX number string for the given book code (referenceAbbreviation). """
+        return self.__DataDicts["referenceAbbreviationDict"][BBB]["USXNumberString"]
 
     def getNETBibleAbbreviation( self, BBB ):
         """ Return the NET Bible abbreviation string for the given book code (referenceAbbreviation). """
@@ -233,6 +237,23 @@ class BibleBooksCodes:
         return result
     # end of getAllUSFMBooksCodeNumberTriples
 
+    def getAllUSXBooksCodeNumberTriples( self ):
+        """
+        Return a list of all available USX book codes.
+
+        The list contains tuples of: USFMAbbreviation, USXNumber, referenceAbbreviation
+        """
+        found, result = [], []
+        for BBB, values in self.__DataDicts["referenceAbbreviationDict"].items():
+            pA = values["USFMAbbreviation"]
+            pN = values["USXNumberString"]
+            if pA is not None and pN is not None:
+                if pA not in found: # Don't want duplicates (where more than one book maps to a single USFMAbbreviation)
+                    result.append( (pA, pN, BBB,) )
+                    found.append( pA )
+        return result
+    # end of getAllUSXBooksCodeNumberTriples
+
     # NOTE: The following functions are all not recommended (NR) because they rely on assumed information that may be incorrect
     #           i.e., they assume English language or European book order conventions
     #       They are included because they might be necessary for error messages or similar uses
@@ -293,8 +314,9 @@ def main():
     print( "Apocalypse of Ezra has {} expected chapters".format(bbc.getExpectedChaptersList("EZA")) )
     print( "Names for Genesis are:", bbc.getEnglishNameList_NR("GEN") )
     print( "Names for Sirach are:", bbc.getEnglishNameList_NR('SIR') )
-    print( "All BBBs:", bbc.getAllReferenceAbbreviations() )
-    print( "PT triples:", bbc.getAllUSFMBooksCodeNumberTriples() )
+    print( "All BBBs:", len(bbc.getAllReferenceAbbreviations()), bbc.getAllReferenceAbbreviations() )
+    print( "USFM triples:", len(bbc.getAllUSFMBooksCodeNumberTriples()), bbc.getAllUSFMBooksCodeNumberTriples() )
+    print( "USX triples:", len(bbc.getAllUSXBooksCodeNumberTriples()), bbc.getAllUSXBooksCodeNumberTriples() )
     print( "Single chapter books (and OSIS):\n  {}\n  {}".format(bbc.getSingleChapterBooksList(), bbc.getOSISSingleChapterBooksList()) )
     for something in ('PE2', '2Pe', '2 Pet', '2Pet', 'Job', ):
         print( something, bbc.getBBB( something ) )

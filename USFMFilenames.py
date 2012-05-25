@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 #
 # USFMFilenames.py
+#   Last modified: 2012-05-24 (also update versionString below)
 #
 # Module handling USFM Bible filenames
-#   Last modified: 2011-08-22 (also update versionString below)
 #
-# Copyright (C) 2010-2011 Robert Hunt
+# Copyright (C) 2010-2012 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -27,7 +27,7 @@ Module for creating and manipulating USFM filenames.
 """
 
 progName = "USFM Bible filenames handler"
-versionString = "0.51"
+versionString = "0.52"
 
 
 import os, logging
@@ -44,7 +44,13 @@ class USFMFilenames:
     """
 
     def __init__( self, folder ):
-        """Create the object by inspecting files in the given folder."""
+        """Create the object by inspecting files in the given folder.
+
+            Creates a self.pattern (template) for USFM filenames where
+                nnn = language code (lower case) or NNN = language code (UPPER CASE)
+                bbb = book code (lower case) or BBB = book code (UPPER CASE)
+                dd = digits
+        """
         # Get the data tables that we need for proper checking
         self.BibleBooksCodes = BibleBooksCodes().loadData()
 
@@ -90,7 +96,7 @@ class USFMFilenames:
                             break
                 if matched: break
         if not matched: logging.info( _("Unable to recognize valid USFM files in ") + folder )
-        #print( self.pattern, self.fileExtension )
+        #print( "USFMFilenames: pattern='{}' fileExtension='{}'".format( self.pattern, self.fileExtension ) )
     # end of __init__
         
 
@@ -117,7 +123,7 @@ class USFMFilenames:
             for USFMBookCode,USFMDigits,bookReferenceCode in self.BibleBooksCodes.getAllUSFMBooksCodeNumberTriples():
                 filename = "--------" # Eight characters
                 filename = filename[:self.digitsIndex] + USFMDigits + filename[self.digitsIndex+len(USFMDigits):]
-                filename = filename[:self.USFMBookCodeIndex] + USFMBookCode.upper() if 'BBB' in self.pattern else USFMBookCode + filename[self.USFMBookCodeIndex+len(USFMBookCode):]
+                filename = filename[:self.USFMBookCodeIndex] + ( USFMBookCode.upper() if 'BBB' in self.pattern else USFMBookCode ) + filename[self.USFMBookCodeIndex+len(USFMBookCode):]
                 filename = filename[:self.languageIndex] + self.languageCode + filename[self.languageIndex+len(self.languageCode):]
                 filename += '.' + self.fileExtension
                 #print( filename )
@@ -137,6 +143,17 @@ class USFMFilenames:
                 filelist.append( (bookReferenceCode, possibleFilename,) )
         return filelist
     # end of getActualFilenames
+
+
+    def getUnusedFilenames( self ):
+        """Return a list of filenames which didn't match the USFM template."""
+        folderFilenames = os.listdir( self.folder )
+        actualFilenames = self.getActualFilenames()
+        filelist = []
+        for bookReferenceCode,actualFilename in actualFilenames:
+            folderFilenames.remove( actualFilename )
+        return folderFilenames
+    # end of getUnusedFilenames
 
 
     def getSSFFilenames( self, searchAbove=False, auto=True ):
@@ -189,7 +206,8 @@ def demo():
         UFns = USFMFilenames( testFolder )
         print( UFns )
         result = UFns.getPossibleFilenames(); print( "Possible:", len(result), result )
-        result = UFns.getActualFilenames(); print( "Actual:", len(result), result )
+        result = UFns.getActualFilenames(); print( "\nActual:", len(result), result )
+        result = UFns.getUnusedFilenames(); print( "\Other:", len(result), result )
     else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
 
 if __name__ == '__main__':

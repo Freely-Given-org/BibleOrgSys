@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # TestSuite.py
+#   Last modified: 2012-05-25 (also update versionString below)
 #
 # Suite for testing BibleOrgSys
-#   Last modified: 2011-12-06 (also update versionString below)
 #
-# Copyright (C) 2011 Robert Hunt
+# Copyright (C) 2011-2012 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Suite testing BibleOrgSys.
 """
 
 progName = "Bible Organisational System test suite"
-versionString = "0.08"
+versionString = "0.09"
 
 
 import sys, unittest
@@ -41,7 +41,7 @@ import Globals
 import BibleBooksCodesTests, BibleBookOrdersTests
 import ISO_639_3_LanguagesTests, BiblePunctuationSystemsTests
 import BibleBooksNamesTests, BibleVersificationSystemsTests
-import USFMMarkersTests, USFMFilenamesTests
+import USFMMarkersTests, USFMFilenamesTests, USXFilenamesTests
 
 
 # Handle command line parameters (for compatibility)
@@ -82,6 +82,7 @@ suiteList.append( unittest.TestLoader().loadTestsFromTestCase( USFMMarkersTests.
 suiteList.append( unittest.TestLoader().loadTestsFromTestCase( USFMMarkersTests.USFMMarkersTests ) )
 
 suiteList.append( unittest.TestLoader().loadTestsFromTestCase( USFMFilenamesTests.USFMFilenamesTests ) )
+suiteList.append( unittest.TestLoader().loadTestsFromTestCase( USXFilenamesTests.USXFilenamesTests ) )
 
 
 # Now run all the tests in the suite

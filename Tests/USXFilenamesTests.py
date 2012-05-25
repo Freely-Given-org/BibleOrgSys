@@ -1,12 +1,12 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# USFMFilenamesTests.py
+# USXFilenamesTests.py
 #   Last modified: 2012-05-25 (also update versionString below)
 #
-# Module testing USFMFilenames.py
+# Module testing USXFilenames.py
 #
-# Copyright (C) 2011-2012 Robert Hunt
+# Copyright (C) 2012 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -24,27 +24,27 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module testing USFMFilenames.py.
+Module testing USXFilenames.py.
 """
 
-progName = "USFM Filenames tests"
-versionString = "0.52"
+progName = "USX Filenames tests"
+versionString = "0.50"
 
 
 import sys, os, unittest
 
 sourceFolder = "."
 sys.path.append( sourceFolder )
-import Globals, USFMFilenames
+import Globals, USXFilenames
 
 
-class USFMFilenamesTests( unittest.TestCase ):
-    """ Unit tests for the USFMFilenames object. """
+class USXFilenamesTests( unittest.TestCase ):
+    """ Unit tests for the USXFilenames object. """
 
     def setUp( self ):
-        testFolder = 'Tests/TestDataFiles/USFMTest/' # This is a RELATIVE path
-        if os.access( testFolder, os.R_OK ): # Create the USFMFilenames object
-            self.UFns = USFMFilenames.USFMFilenames( testFolder )
+        testFolder = 'Tests/TestDataFiles/USXTest/' # This is a RELATIVE path
+        if os.access( testFolder, os.R_OK ): # Create the USXFilenames object
+            self.UFns = USXFilenames.USXFilenames( testFolder )
         else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
 
     def test_010_str( self ):
@@ -58,28 +58,28 @@ class USFMFilenamesTests( unittest.TestCase ):
         """ Test the getPossibleFilenames function. """
         results = self.UFns.getPossibleFilenames()
         self.assertTrue( isinstance( results, list ) )
-        self.assertGreater( len(results), 3 )
+        self.assertGreater( len(results), 66 )
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
         for result in results:
             self.assertTrue( isinstance( result, tuple ) )
             self.assertEqual( len(result), 2 )
             self.assertEqual( len(result[0]), 3 ) # BBB
-            self.assertGreater( len(result[1]), 10 ) # Filename, e.g., nnn08RUT.SCP
+            self.assertEqual( len(result[1]), 10 ) # Filename, e.g., 008RUT.usx
     # end of test_020_getPossibleFilenames
 
     def test_030_getActualFilenames( self ):
         """ Test the getActualFilenames function. """
         results = self.UFns.getActualFilenames()
         self.assertTrue( isinstance( results, list ) )
-        self.assertGreater( len(results), 2 ) # Number of actual files found
+        self.assertEqual( len(results), 3 ) # Number of actual files found
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
         for result in results:
             self.assertTrue( isinstance( result, tuple ) )
             self.assertEqual( len(result), 2 )
             self.assertEqual( len(result[0]), 3 ) # BBB
-            self.assertGreater( len(result[1]), 10 ) # Filename, e.g., nnn08RUT.SCP
+            self.assertEqual( len(result[1]), 10 ) # Filename, e.g., 08RUT.usx
     # end of test_030_getActualFilenames
 
     def test_040_getUnusedFilenames( self ):
@@ -93,25 +93,25 @@ class USFMFilenamesTests( unittest.TestCase ):
             self.assertTrue( isinstance( result, str ) )
     # end of test_040_getUnusedFilenames
 
-    def test_050_getSSFFilenames( self ):
-        """ Test the getSSFFilenames function. """
-        results = self.UFns.getSSFFilenames()
-        self.assertTrue( isinstance( results, list ) )
-        self.assertEqual( results, [] ) # Should be no SSF files in a standard USFM project folder
+    #def test_050_getSSFFilenames( self ):
+    #    """ Test the getSSFFilenames function. """
+    #    results = self.UFns.getSSFFilenames()
+    #    self.assertTrue( isinstance( results, list ) )
+    #    self.assertEqual( results, [] ) # Should be no SSF files in a standard USX project folder
 
-        results = self.UFns.getSSFFilenames( False ) # Should give exactly the same result as above
-        self.assertTrue( isinstance( results, list ) )
-        self.assertEqual( results, [] ) # Should be no SSF files in a standard USFM project folder
+    #    results = self.UFns.getSSFFilenames( False ) # Should give exactly the same result as above
+    #    self.assertTrue( isinstance( results, list ) )
+    #    self.assertEqual( results, [] ) # Should be no SSF files in a standard USX project folder
 
-        results = self.UFns.getSSFFilenames( True )
-        self.assertTrue( isinstance( results, list ) )
-        self.assertGreater( len(results), 0 ) # Should be at least one SSF file in a standard USFM project folder
-        self.assertFalse( None in results )
-        self.assertFalse( '' in results )
-        for result in results:
-            self.assertTrue( isinstance( result, str ) )
-    # end of test_050_getSSFFilenames
-# end of USFMFilenamesTests class
+    #    results = self.UFns.getSSFFilenames( True )
+    #    self.assertTrue( isinstance( results, list ) )
+    #    self.assertGreater( len(results), 0 ) # Should be at least one SSF file in a standard USX project folder
+    #    self.assertFalse( None in results )
+    #    self.assertFalse( '' in results )
+    #    for result in results:
+    #        self.assertTrue( isinstance( result, str ) )
+    ## end of test_050_getSSFFilenames
+# end of USXFilenamesTests class
 
 
 if __name__ == '__main__':
@@ -124,4 +124,4 @@ if __name__ == '__main__':
 
     # Make sure you set the testFolder in setUp above
     unittest.main() # Automatically runs all of the above tests
-# end of USFMFilenamesTests.py
+# end of USXFilenamesTests.py

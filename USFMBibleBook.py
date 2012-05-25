@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 #
 # USFMBibleBook.py
+#   Last modified: 2012-05-23 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
-#   Last modified: 2012-05-01 by RJH (also update versionString below)
 #
 # Copyright (C) 2010-2012 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -54,7 +54,7 @@ class USFMBibleBook:
 
     def __init__( self ):
         """
-        Create the object.
+        Create the USFM Bible book object.
         """
         self.lines = []
         self.USFMMarkers = USFMMarkers().loadData()
@@ -64,16 +64,16 @@ class USFMBibleBook:
 
         # Set up filled containers for the object
         self.BibleBooksCodes = BibleBooksCodes().loadData()
-    # end of __init_
+    # end of __init__
 
     def __str__( self ):
         """
-        This method returns the string representation of a Bible book.
+        This method returns the string representation of a USFM Bible book object.
         
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
-        result = _("USFM Bible Book object")
+        result = "USFM Bible Book object"
         if self.bookReferenceCode: result += ('\n' if result else '') + "  " + self.bookReferenceCode
         if self.sourceFilepath: result += ('\n' if result else '') + "  " + _("From: ") + self.sourceFilepath
         result += ('\n' if result else '') + "  " + _("Number of lines = ") + str(len(self.lines))

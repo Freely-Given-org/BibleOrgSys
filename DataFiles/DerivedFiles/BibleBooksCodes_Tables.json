@@ -12,6 +12,7 @@
       "USFMNumberString": "01", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Gen", 
+      "USXNumberString": "001", 
       "numExpectedChapters": "50"
     }, 
     "EXO": {
@@ -26,6 +27,7 @@
       "USFMNumberString": "02", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Exod", 
+      "USXNumberString": "002", 
       "numExpectedChapters": "40"
     }, 
     "LEV": {
@@ -40,6 +42,7 @@
       "USFMNumberString": "03", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Lev", 
+      "USXNumberString": "003", 
       "numExpectedChapters": "27"
     }, 
     "NUM": {
@@ -54,6 +57,7 @@
       "USFMNumberString": "04", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Num", 
+      "USXNumberString": "004", 
       "numExpectedChapters": "36"
     }, 
     "DEU": {
@@ -68,6 +72,7 @@
       "USFMNumberString": "05", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Deut", 
+      "USXNumberString": "005", 
       "numExpectedChapters": "34"
     }, 
     "JOS": {
@@ -82,6 +87,7 @@
       "USFMNumberString": "06", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Josh", 
+      "USXNumberString": "006", 
       "numExpectedChapters": "24"
     }, 
     "JDG": {
@@ -96,6 +102,7 @@
       "USFMNumberString": "07", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Judg", 
+      "USXNumberString": "007", 
       "numExpectedChapters": "21"
     }, 
     "RUT": {
@@ -110,6 +117,7 @@
       "USFMNumberString": "08", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Ruth", 
+      "USXNumberString": "008", 
       "numExpectedChapters": "4"
     }, 
     "SA1": {
@@ -124,6 +132,7 @@
       "USFMNumberString": "09", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "1 Sam", 
+      "USXNumberString": "009", 
       "numExpectedChapters": "31"
     }, 
     "SA2": {
@@ -138,6 +147,7 @@
       "USFMNumberString": "10", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "2 Sam", 
+      "USXNumberString": "010", 
       "numExpectedChapters": "24"
     }, 
     "KI1": {
@@ -152,6 +162,7 @@
       "USFMNumberString": "11", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "1 Kgs", 
+      "USXNumberString": "011", 
       "numExpectedChapters": "22"
     }, 
     "KI2": {
@@ -166,6 +177,7 @@
       "USFMNumberString": "12", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "2 Kgs", 
+      "USXNumberString": "012", 
       "numExpectedChapters": "25"
     }, 
     "CH1": {
@@ -180,6 +192,7 @@
       "USFMNumberString": "13", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "1 Chr", 
+      "USXNumberString": "013", 
       "numExpectedChapters": "29"
     }, 
     "CH2": {
@@ -194,6 +207,7 @@
       "USFMNumberString": "14", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "2 Chr", 
+      "USXNumberString": "014", 
       "numExpectedChapters": "36,37"
     }, 
     "EZR": {
@@ -208,6 +222,7 @@
       "USFMNumberString": "15", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Ezra", 
+      "USXNumberString": "015", 
       "numExpectedChapters": "10"
     }, 
     "NEH": {
@@ -222,6 +237,7 @@
       "USFMNumberString": "16", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Neh", 
+      "USXNumberString": "016", 
       "numExpectedChapters": "13"
     }, 
     "EST": {
@@ -236,6 +252,7 @@
       "USFMNumberString": "17", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Esth", 
+      "USXNumberString": "017", 
       "numExpectedChapters": "10"
     }, 
     "JOB": {
@@ -250,6 +267,7 @@
       "USFMNumberString": "18", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Job", 
+      "USXNumberString": "018", 
       "numExpectedChapters": "42"
     }, 
     "PSA": {
@@ -264,6 +282,7 @@
       "USFMNumberString": "19", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Ps", 
+      "USXNumberString": "019", 
       "numExpectedChapters": "150,151"
     }, 
     "PRO": {
@@ -278,6 +297,7 @@
       "USFMNumberString": "20", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Prov", 
+      "USXNumberString": "020", 
       "numExpectedChapters": "31"
     }, 
     "ECC": {
@@ -292,6 +312,7 @@
       "USFMNumberString": "21", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Eccl", 
+      "USXNumberString": "021", 
       "numExpectedChapters": "12"
     }, 
     "SNG": {
@@ -306,6 +327,7 @@
       "USFMNumberString": "22", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Song", 
+      "USXNumberString": "022", 
       "numExpectedChapters": "8"
     }, 
     "ISA": {
@@ -320,6 +342,7 @@
       "USFMNumberString": "23", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Isa", 
+      "USXNumberString": "023", 
       "numExpectedChapters": "66"
     }, 
     "JER": {
@@ -334,6 +357,7 @@
       "USFMNumberString": "24", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Jer", 
+      "USXNumberString": "024", 
       "numExpectedChapters": "52"
     }, 
     "LAM": {
@@ -348,6 +372,7 @@
       "USFMNumberString": "25", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Lam", 
+      "USXNumberString": "025", 
       "numExpectedChapters": "5"
     }, 
     "EZK": {
@@ -362,6 +387,7 @@
       "USFMNumberString": "26", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Ezek", 
+      "USXNumberString": "026", 
       "numExpectedChapters": "48"
     }, 
     "DAN": {
@@ -376,6 +402,7 @@
       "USFMNumberString": "27", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Dan", 
+      "USXNumberString": "027", 
       "numExpectedChapters": "12,14"
     }, 
     "HOS": {
@@ -390,6 +417,7 @@
       "USFMNumberString": "28", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Hos", 
+      "USXNumberString": "028", 
       "numExpectedChapters": "14"
     }, 
     "JOL": {
@@ -404,6 +432,7 @@
       "USFMNumberString": "29", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Joel", 
+      "USXNumberString": "029", 
       "numExpectedChapters": "3,4"
     }, 
     "AMO": {
@@ -418,6 +447,7 @@
       "USFMNumberString": "30", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Amos", 
+      "USXNumberString": "030", 
       "numExpectedChapters": "9"
     }, 
     "OBA": {
@@ -432,6 +462,7 @@
       "USFMNumberString": "31", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Obad", 
+      "USXNumberString": "031", 
       "numExpectedChapters": "1"
     }, 
     "JNA": {
@@ -446,6 +477,7 @@
       "USFMNumberString": "32", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Jonah", 
+      "USXNumberString": "032", 
       "numExpectedChapters": "4"
     }, 
     "MIC": {
@@ -460,6 +492,7 @@
       "USFMNumberString": "33", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Nic", 
+      "USXNumberString": "033", 
       "numExpectedChapters": "7"
     }, 
     "NAH": {
@@ -474,6 +507,7 @@
       "USFMNumberString": "34", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Nah", 
+      "USXNumberString": "034", 
       "numExpectedChapters": "3"
     }, 
     "HAB": {
@@ -488,6 +522,7 @@
       "USFMNumberString": "35", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Hab", 
+      "USXNumberString": "035", 
       "numExpectedChapters": "3"
     }, 
     "ZEP": {
@@ -502,6 +537,7 @@
       "USFMNumberString": "36", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Zeph", 
+      "USXNumberString": "036", 
       "numExpectedChapters": "3"
     }, 
     "HAG": {
@@ -516,6 +552,7 @@
       "USFMNumberString": "37", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Hag", 
+      "USXNumberString": "037", 
       "numExpectedChapters": "2"
     }, 
     "ZEC": {
@@ -530,6 +567,7 @@
       "USFMNumberString": "38", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Zech", 
+      "USXNumberString": "038", 
       "numExpectedChapters": "14"
     }, 
     "MAL": {
@@ -544,6 +582,7 @@
       "USFMNumberString": "39", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Mal", 
+      "USXNumberString": "039", 
       "numExpectedChapters": "4,3"
     }, 
     "MAT": {
@@ -558,6 +597,7 @@
       "USFMNumberString": "41", 
       "ByzantineAbbreviation": "MT", 
       "SBLAbbreviation": "Matt", 
+      "USXNumberString": "040", 
       "numExpectedChapters": "28"
     }, 
     "MRK": {
@@ -572,6 +612,7 @@
       "USFMNumberString": "42", 
       "ByzantineAbbreviation": "MR", 
       "SBLAbbreviation": "Mark", 
+      "USXNumberString": "041", 
       "numExpectedChapters": "16"
     }, 
     "LUK": {
@@ -586,6 +627,7 @@
       "USFMNumberString": "43", 
       "ByzantineAbbreviation": "LU", 
       "SBLAbbreviation": "Luke", 
+      "USXNumberString": "042", 
       "numExpectedChapters": "24"
     }, 
     "JHN": {
@@ -600,6 +642,7 @@
       "USFMNumberString": "44", 
       "ByzantineAbbreviation": "JOH", 
       "SBLAbbreviation": "John", 
+      "USXNumberString": "043", 
       "numExpectedChapters": "21"
     }, 
     "ACT": {
@@ -614,6 +657,7 @@
       "USFMNumberString": "45", 
       "ByzantineAbbreviation": "AC", 
       "SBLAbbreviation": "Acts", 
+      "USXNumberString": "044", 
       "numExpectedChapters": "28"
     }, 
     "ROM": {
@@ -628,6 +672,7 @@
       "USFMNumberString": "46", 
       "ByzantineAbbreviation": "RO", 
       "SBLAbbreviation": "Rom", 
+      "USXNumberString": "045", 
       "numExpectedChapters": "16"
     }, 
     "CO1": {
@@ -642,6 +687,7 @@
       "USFMNumberString": "47", 
       "ByzantineAbbreviation": "1CO", 
       "SBLAbbreviation": "1 Cor", 
+      "USXNumberString": "046", 
       "numExpectedChapters": "16"
     }, 
     "CO2": {
@@ -656,6 +702,7 @@
       "USFMNumberString": "48", 
       "ByzantineAbbreviation": "2CO", 
       "SBLAbbreviation": "2 Cor", 
+      "USXNumberString": "047", 
       "numExpectedChapters": "13"
     }, 
     "GAL": {
@@ -670,6 +717,7 @@
       "USFMNumberString": "49", 
       "ByzantineAbbreviation": "GA", 
       "SBLAbbreviation": "Gal", 
+      "USXNumberString": "048", 
       "numExpectedChapters": "6"
     }, 
     "EPH": {
@@ -684,6 +732,7 @@
       "USFMNumberString": "50", 
       "ByzantineAbbreviation": "EPH", 
       "SBLAbbreviation": "Eph", 
+      "USXNumberString": "049", 
       "numExpectedChapters": "6"
     }, 
     "PHP": {
@@ -698,6 +747,7 @@
       "USFMNumberString": "51", 
       "ByzantineAbbreviation": "PHP", 
       "SBLAbbreviation": "Phil", 
+      "USXNumberString": "050", 
       "numExpectedChapters": "4"
     }, 
     "COL": {
@@ -712,6 +762,7 @@
       "USFMNumberString": "52", 
       "ByzantineAbbreviation": "COL", 
       "SBLAbbreviation": "Col", 
+      "USXNumberString": "051", 
       "numExpectedChapters": "4"
     }, 
     "TH1": {
@@ -726,6 +777,7 @@
       "USFMNumberString": "53", 
       "ByzantineAbbreviation": "1TH", 
       "SBLAbbreviation": "1 Thess", 
+      "USXNumberString": "052", 
       "numExpectedChapters": "5"
     }, 
     "TH2": {
@@ -740,6 +792,7 @@
       "USFMNumberString": "54", 
       "ByzantineAbbreviation": "2TH", 
       "SBLAbbreviation": "2 Thess", 
+      "USXNumberString": "053", 
       "numExpectedChapters": "3"
     }, 
     "TI1": {
@@ -754,6 +807,7 @@
       "USFMNumberString": "55", 
       "ByzantineAbbreviation": "1TI", 
       "SBLAbbreviation": "1 Tim", 
+      "USXNumberString": "054", 
       "numExpectedChapters": "6"
     }, 
     "TI2": {
@@ -768,6 +822,7 @@
       "USFMNumberString": "56", 
       "ByzantineAbbreviation": "2TI", 
       "SBLAbbreviation": "2 Tim", 
+      "USXNumberString": "055", 
       "numExpectedChapters": "4"
     }, 
     "TIT": {
@@ -782,6 +837,7 @@
       "USFMNumberString": "57", 
       "ByzantineAbbreviation": "TIT", 
       "SBLAbbreviation": "Titus", 
+      "USXNumberString": "056", 
       "numExpectedChapters": "3"
     }, 
     "PHM": {
@@ -796,6 +852,7 @@
       "USFMNumberString": "58", 
       "ByzantineAbbreviation": "PHM", 
       "SBLAbbreviation": "Phlm", 
+      "USXNumberString": "057", 
       "numExpectedChapters": "1"
     }, 
     "HEB": {
@@ -810,6 +867,7 @@
       "USFMNumberString": "59", 
       "ByzantineAbbreviation": "HEB", 
       "SBLAbbreviation": "Heb", 
+      "USXNumberString": "058", 
       "numExpectedChapters": "13"
     }, 
     "JAM": {
@@ -824,6 +882,7 @@
       "USFMNumberString": "60", 
       "ByzantineAbbreviation": "JAS", 
       "SBLAbbreviation": "Jas", 
+      "USXNumberString": "059", 
       "numExpectedChapters": "5"
     }, 
     "PE1": {
@@ -838,6 +897,7 @@
       "USFMNumberString": "61", 
       "ByzantineAbbreviation": "1PE", 
       "SBLAbbreviation": "1 Pet", 
+      "USXNumberString": "060", 
       "numExpectedChapters": "5"
     }, 
     "PE2": {
@@ -852,6 +912,7 @@
       "USFMNumberString": "62", 
       "ByzantineAbbreviation": "2PE", 
       "SBLAbbreviation": "2 Pet", 
+      "USXNumberString": "061", 
       "numExpectedChapters": "3"
     }, 
     "JN1": {
@@ -866,6 +927,7 @@
       "USFMNumberString": "63", 
       "ByzantineAbbreviation": "1JO", 
       "SBLAbbreviation": "1 John", 
+      "USXNumberString": "062", 
       "numExpectedChapters": "5"
     }, 
     "JN2": {
@@ -880,6 +942,7 @@
       "USFMNumberString": "64", 
       "ByzantineAbbreviation": "2JO", 
       "SBLAbbreviation": "2 John", 
+      "USXNumberString": "063", 
       "numExpectedChapters": "1"
     }, 
     "JN3": {
@@ -894,6 +957,7 @@
       "USFMNumberString": "65", 
       "ByzantineAbbreviation": "3JO", 
       "SBLAbbreviation": "3 John", 
+      "USXNumberString": "064", 
       "numExpectedChapters": "1"
     }, 
     "JDE": {
@@ -908,6 +972,7 @@
       "USFMNumberString": "66", 
       "ByzantineAbbreviation": "JUDE", 
       "SBLAbbreviation": "Jude", 
+      "USXNumberString": "065", 
       "numExpectedChapters": "1"
     }, 
     "REV": {
@@ -922,6 +987,7 @@
       "USFMNumberString": "67", 
       "ByzantineAbbreviation": "RE", 
       "SBLAbbreviation": "Rev", 
+      "USXNumberString": "066", 
       "numExpectedChapters": "22"
     }, 
     "ESG": {
@@ -936,6 +1002,7 @@
       "USFMNumberString": "70", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Add Esth", 
+      "USXNumberString": "069", 
       "numExpectedChapters": "10"
     }, 
     "ESA": {
@@ -950,6 +1017,7 @@
       "USFMNumberString": "70", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Add Esth", 
+      "USXNumberString": null, 
       "numExpectedChapters": "10"
     }, 
     "ESC": {
@@ -964,6 +1032,7 @@
       "USFMNumberString": "70", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Add Esth", 
+      "USXNumberString": null, 
       "numExpectedChapters": "10"
     }, 
     "DAG": {
@@ -978,6 +1047,7 @@
       "USFMNumberString": "B2", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Add Dan", 
+      "USXNumberString": "112", 
       "numExpectedChapters": "14"
     }, 
     "DAA": {
@@ -992,6 +1062,7 @@
       "USFMNumberString": "B2", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Add Dan", 
+      "USXNumberString": null, 
       "numExpectedChapters": "14"
     }, 
     "DAC": {
@@ -1006,6 +1077,7 @@
       "USFMNumberString": "B2", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Add Dan", 
+      "USXNumberString": null, 
       "numExpectedChapters": "14"
     }, 
     "BEL": {
@@ -1020,6 +1092,7 @@
       "USFMNumberString": "77", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Bel", 
+      "USXNumberString": "076", 
       "numExpectedChapters": "1"
     }, 
     "SUS": {
@@ -1034,6 +1107,7 @@
       "USFMNumberString": "76", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Sus", 
+      "USXNumberString": "075", 
       "numExpectedChapters": "1"
     }, 
     "JDT": {
@@ -1048,6 +1122,7 @@
       "USFMNumberString": "69", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Jdt", 
+      "USXNumberString": "068", 
       "numExpectedChapters": "16"
     }, 
     "MAN": {
@@ -1062,6 +1137,7 @@
       "USFMNumberString": "84", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Pr Man", 
+      "USXNumberString": "083", 
       "numExpectedChapters": "1"
     }, 
     "SIR": {
@@ -1076,6 +1152,7 @@
       "USFMNumberString": "72", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Sir", 
+      "USXNumberString": "071", 
       "numExpectedChapters": "51,52"
     }, 
     "TOB": {
@@ -1090,6 +1167,7 @@
       "USFMNumberString": "68", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Tob", 
+      "USXNumberString": "067", 
       "numExpectedChapters": "14"
     }, 
     "WIS": {
@@ -1104,6 +1182,7 @@
       "USFMNumberString": "71", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Wis", 
+      "USXNumberString": "070", 
       "numExpectedChapters": "19"
     }, 
     "PAZ": {
@@ -1118,6 +1197,7 @@
       "USFMNumberString": "75", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Pr Azar", 
+      "USXNumberString": "074", 
       "numExpectedChapters": "1"
     }, 
     "GES": {
@@ -1132,6 +1212,7 @@
       "USFMNumberString": "82", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "1 Esd", 
+      "USXNumberString": "081", 
       "numExpectedChapters": "9"
     }, 
     "LES": {
@@ -1146,6 +1227,7 @@
       "USFMNumberString": "83", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "2 Esd", 
+      "USXNumberString": "082", 
       "numExpectedChapters": "16"
     }, 
     "EZA": {
@@ -1160,6 +1242,7 @@
       "USFMNumberString": "A4", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "4 Ezra", 
+      "USXNumberString": "104", 
       "numExpectedChapters": "12,13"
     }, 
     "EZ5": {
@@ -1174,6 +1257,7 @@
       "USFMNumberString": "A5", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "5 Ezra", 
+      "USXNumberString": null, 
       "numExpectedChapters": "2"
     }, 
     "EZ6": {
@@ -1188,6 +1272,7 @@
       "USFMNumberString": "A6", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "6 Ezra", 
+      "USXNumberString": null, 
       "numExpectedChapters": "2"
     }, 
     "RVE": {
@@ -1202,6 +1287,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "LJE": {
@@ -1216,6 +1302,7 @@
       "USFMNumberString": "74", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Ep Jer", 
+      "USXNumberString": "073", 
       "numExpectedChapters": "1"
     }, 
     "BAR": {
@@ -1230,6 +1317,7 @@
       "USFMNumberString": "73", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Bar", 
+      "USXNumberString": "072", 
       "numExpectedChapters": "5,6"
     }, 
     "LJB": {
@@ -1244,6 +1332,7 @@
       "USFMNumberString": "74", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Ep Jer", 
+      "USXNumberString": null, 
       "numExpectedChapters": "6"
     }, 
     "BA2": {
@@ -1258,6 +1347,7 @@
       "USFMNumberString": "B4", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": "114", 
       "numExpectedChapters": "77"
     }, 
     "LBA": {
@@ -1272,6 +1362,7 @@
       "USFMNumberString": "B5", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": "115", 
       "numExpectedChapters": "9"
     }, 
     "LB2": {
@@ -1286,6 +1377,7 @@
       "USFMNumberString": "B4", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "86"
     }, 
     "BA3": {
@@ -1300,6 +1392,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "BA4": {
@@ -1314,6 +1407,7 @@
       "USFMNumberString": "C2", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "6,5"
     }, 
     "MAC": {
@@ -1328,6 +1422,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "31"
     }, 
     "MA1": {
@@ -1342,6 +1437,7 @@
       "USFMNumberString": "78", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "1 Macc", 
+      "USXNumberString": "077", 
       "numExpectedChapters": "16"
     }, 
     "MA2": {
@@ -1356,6 +1452,7 @@
       "USFMNumberString": "79", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "2 Macc", 
+      "USXNumberString": "078", 
       "numExpectedChapters": "15"
     }, 
     "MA3": {
@@ -1370,6 +1467,7 @@
       "USFMNumberString": "80", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "3 Macc", 
+      "USXNumberString": "079", 
       "numExpectedChapters": "7"
     }, 
     "MA4": {
@@ -1384,6 +1482,7 @@
       "USFMNumberString": "81", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "4 Macc", 
+      "USXNumberString": "080", 
       "numExpectedChapters": "18"
     }, 
     "MA5": {
@@ -1398,6 +1497,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "MQ1": {
@@ -1412,6 +1512,7 @@
       "USFMNumberString": "B8", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "36"
     }, 
     "MQ2": {
@@ -1426,6 +1527,7 @@
       "USFMNumberString": "B9", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "20,21"
     }, 
     "MQ3": {
@@ -1440,6 +1542,7 @@
       "USFMNumberString": "C0", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "10"
     }, 
     "PB1": {
@@ -1454,6 +1557,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "41"
     }, 
     "PB2": {
@@ -1468,6 +1572,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "31"
     }, 
     "PB3": {
@@ -1482,6 +1587,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "17"
     }, 
     "PB4": {
@@ -1496,6 +1602,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "17"
     }, 
     "PB5": {
@@ -1510,6 +1617,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "44"
     }, 
     "PSB": {
@@ -1524,6 +1632,7 @@
       "USFMNumberString": "88", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "150"
     }, 
     "PS2": {
@@ -1538,6 +1647,7 @@
       "USFMNumberString": "85", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": "084", 
       "numExpectedChapters": "1"
     }, 
     "PS3": {
@@ -1552,6 +1662,7 @@
       "USFMNumberString": "B3", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": "113", 
       "numExpectedChapters": "5,4"
     }, 
     "PSS": {
@@ -1566,6 +1677,7 @@
       "USFMNumberString": "87", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": "086", 
       "numExpectedChapters": "18"
     }, 
     "LAO": {
@@ -1580,6 +1692,7 @@
       "USFMNumberString": "C3", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": "123", 
       "numExpectedChapters": "1"
     }, 
     "ODE": {
@@ -1594,6 +1707,7 @@
       "USFMNumberString": "86", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": "085", 
       "numExpectedChapters": "14"
     }, 
     "PSO": {
@@ -1608,6 +1722,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "PJE": {
@@ -1622,6 +1737,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "1"
     }, 
     "WSI": {
@@ -1636,6 +1752,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "1"
     }, 
     "COP": {
@@ -1650,6 +1767,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "1"
     }, 
     "CO3": {
@@ -1664,6 +1782,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "1"
     }, 
     "EUT": {
@@ -1678,6 +1797,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "1"
     }, 
     "DOJ": {
@@ -1692,6 +1812,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "1"
     }, 
     "TTP": {
@@ -1706,6 +1827,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "JUB": {
@@ -1720,6 +1842,7 @@
       "USFMNumberString": "B6", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "34"
     }, 
     "ENO": {
@@ -1734,6 +1857,7 @@
       "USFMNumberString": "B7", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "42"
     }, 
     "EN2": {
@@ -1748,6 +1872,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "REP": {
@@ -1762,6 +1887,7 @@
       "USFMNumberString": "C1", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "6"
     }, 
     "LBB": {
@@ -1776,6 +1902,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "CL1": {
@@ -1790,6 +1917,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "65"
     }, 
     "CL2": {
@@ -1804,6 +1932,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "20"
     }, 
     "SHE": {
@@ -1818,6 +1947,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "DID": {
@@ -1832,6 +1962,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "16"
     }, 
     "GHE": {
@@ -1846,6 +1977,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "GTR": {
@@ -1860,6 +1992,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "GMA": {
@@ -1874,6 +2007,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "GMC": {
@@ -1888,6 +2022,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "GTW": {
@@ -1902,6 +2037,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "GPH": {
@@ -1916,6 +2052,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "GTH": {
@@ -1930,6 +2067,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "GJU": {
@@ -1944,6 +2082,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "GBA": {
@@ -1958,6 +2097,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "AJA": {
@@ -1972,6 +2112,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "WJC": {
@@ -1986,6 +2127,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "TAD": {
@@ -2000,6 +2142,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "LAE": {
@@ -2014,6 +2157,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "ASS": {
@@ -2028,6 +2172,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "TSO": {
@@ -2042,6 +2187,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "TJB": {
@@ -2056,6 +2202,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "MAI": {
@@ -2070,6 +2217,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "AEZ": {
@@ -2084,6 +2232,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "EZT": {
@@ -2098,6 +2247,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "EUP": {
@@ -2112,6 +2262,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "PEU": {
@@ -2126,6 +2277,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "VAM": {
@@ -2140,6 +2292,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "LAR": {
@@ -2154,6 +2307,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "ARI": {
@@ -2168,6 +2322,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "ABL": {
@@ -2182,6 +2337,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "ART": {
@@ -2196,6 +2352,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "CLM": {
@@ -2210,6 +2367,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "ELM": {
@@ -2224,6 +2382,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "HRE": {
@@ -2238,6 +2397,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "LPR": {
@@ -2252,6 +2412,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "EPL": {
@@ -2266,6 +2427,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "TEO": {
@@ -2280,6 +2442,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "MOS": {
@@ -2294,6 +2457,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "187"
     }, 
     "SAM": {
@@ -2308,6 +2472,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "55"
     }, 
     "KGS": {
@@ -2322,6 +2487,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "47"
     }, 
     "CHR": {
@@ -2336,6 +2502,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "65"
     }, 
     "EZN": {
@@ -2350,6 +2517,7 @@
       "USFMNumberString": "15", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Ezra", 
+      "USXNumberString": null, 
       "numExpectedChapters": "26"
     }, 
     "P12": {
@@ -2364,6 +2532,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "LKA": {
@@ -2378,6 +2547,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "52"
     }, 
     "FRT": {
@@ -2392,6 +2562,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": "100", 
       "numExpectedChapters": null
     }, 
     "PRF": {
@@ -2406,6 +2577,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "ACK": {
@@ -2420,6 +2592,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "INT": {
@@ -2434,6 +2607,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": "107", 
       "numExpectedChapters": null
     }, 
     "TOC": {
@@ -2448,6 +2622,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "GLS": {
@@ -2462,6 +2637,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": "109", 
       "numExpectedChapters": null
     }, 
     "CNC": {
@@ -2476,6 +2652,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "TPC": {
@@ -2490,6 +2667,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "IXN": {
@@ -2504,6 +2682,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": "111", 
       "numExpectedChapters": null
     }, 
     "IXP": {
@@ -2518,6 +2697,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "MAP": {
@@ -2532,6 +2712,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "IXT": {
@@ -2546,6 +2727,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": "110", 
       "numExpectedChapters": null
     }, 
     "BAK": {
@@ -2560,6 +2742,112 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": "101", 
+      "numExpectedChapters": null
+    }, 
+    "XXA": {
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 243, 
+      "nameEnglish": "Unspecified extra XXA", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": "XXA", 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": null, 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": "093", 
+      "numExpectedChapters": null
+    }, 
+    "XXB": {
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 244, 
+      "nameEnglish": "Unspecified extra XXB", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": "XXB", 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": null, 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": "094", 
+      "numExpectedChapters": null
+    }, 
+    "XXC": {
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 245, 
+      "nameEnglish": "Unspecified extra XXC", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": "XXC", 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": null, 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": "095", 
+      "numExpectedChapters": null
+    }, 
+    "XXD": {
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 246, 
+      "nameEnglish": "Unspecified extra XXD", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": "XXD", 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": null, 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": "096", 
+      "numExpectedChapters": null
+    }, 
+    "XXE": {
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 247, 
+      "nameEnglish": "Unspecified extra XXE", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": "XXE", 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": null, 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": "097", 
+      "numExpectedChapters": null
+    }, 
+    "XXF": {
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 248, 
+      "nameEnglish": "Unspecified extra XXF", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": "XXF", 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": null, 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": "098", 
+      "numExpectedChapters": null
+    }, 
+    "XXG": {
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 249, 
+      "nameEnglish": "Unspecified extra XXG", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": "XXG", 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": null, 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": "099", 
       "numExpectedChapters": null
     }
   }, 
@@ -3825,10 +4113,45 @@
       "EZ6", 
       "A6"
     ], 
+    "XXC": [
+      245, 
+      "XXC", 
+      null
+    ], 
+    "XXB": [
+      244, 
+      "XXB", 
+      null
+    ], 
+    "XXA": [
+      243, 
+      "XXA", 
+      null
+    ], 
     "GAL": [
       48, 
       "GAL", 
       "49"
+    ], 
+    "XXG": [
+      249, 
+      "XXG", 
+      null
+    ], 
+    "XXF": [
+      248, 
+      "XXF", 
+      null
+    ], 
+    "XXE": [
+      247, 
+      "XXE", 
+      null
+    ], 
+    "XXD": [
+      246, 
+      "XXD", 
+      null
     ], 
     "2BA": [
       105, 
@@ -4421,6 +4744,7 @@
       "USFMNumberString": "01", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Gen", 
+      "USXNumberString": "001", 
       "numExpectedChapters": "50"
     }, 
     "2": {
@@ -4435,6 +4759,7 @@
       "USFMNumberString": "02", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Exod", 
+      "USXNumberString": "002", 
       "numExpectedChapters": "40"
     }, 
     "3": {
@@ -4449,6 +4774,7 @@
       "USFMNumberString": "03", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Lev", 
+      "USXNumberString": "003", 
       "numExpectedChapters": "27"
     }, 
     "4": {
@@ -4463,6 +4789,7 @@
       "USFMNumberString": "04", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Num", 
+      "USXNumberString": "004", 
       "numExpectedChapters": "36"
     }, 
     "5": {
@@ -4477,6 +4804,7 @@
       "USFMNumberString": "05", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Deut", 
+      "USXNumberString": "005", 
       "numExpectedChapters": "34"
     }, 
     "6": {
@@ -4491,6 +4819,7 @@
       "USFMNumberString": "06", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Josh", 
+      "USXNumberString": "006", 
       "numExpectedChapters": "24"
     }, 
     "7": {
@@ -4505,6 +4834,7 @@
       "USFMNumberString": "07", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Judg", 
+      "USXNumberString": "007", 
       "numExpectedChapters": "21"
     }, 
     "8": {
@@ -4519,6 +4849,7 @@
       "USFMNumberString": "08", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Ruth", 
+      "USXNumberString": "008", 
       "numExpectedChapters": "4"
     }, 
     "9": {
@@ -4533,6 +4864,7 @@
       "USFMNumberString": "09", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "1 Sam", 
+      "USXNumberString": "009", 
       "numExpectedChapters": "31"
     }, 
     "10": {
@@ -4547,6 +4879,7 @@
       "USFMNumberString": "10", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "2 Sam", 
+      "USXNumberString": "010", 
       "numExpectedChapters": "24"
     }, 
     "11": {
@@ -4561,6 +4894,7 @@
       "USFMNumberString": "11", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "1 Kgs", 
+      "USXNumberString": "011", 
       "numExpectedChapters": "22"
     }, 
     "12": {
@@ -4575,6 +4909,7 @@
       "USFMNumberString": "12", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "2 Kgs", 
+      "USXNumberString": "012", 
       "numExpectedChapters": "25"
     }, 
     "13": {
@@ -4589,6 +4924,7 @@
       "USFMNumberString": "13", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "1 Chr", 
+      "USXNumberString": "013", 
       "numExpectedChapters": "29"
     }, 
     "14": {
@@ -4603,6 +4939,7 @@
       "USFMNumberString": "14", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "2 Chr", 
+      "USXNumberString": "014", 
       "numExpectedChapters": "36,37"
     }, 
     "15": {
@@ -4617,6 +4954,7 @@
       "USFMNumberString": "15", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Ezra", 
+      "USXNumberString": "015", 
       "numExpectedChapters": "10"
     }, 
     "16": {
@@ -4631,6 +4969,7 @@
       "USFMNumberString": "16", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Neh", 
+      "USXNumberString": "016", 
       "numExpectedChapters": "13"
     }, 
     "17": {
@@ -4645,6 +4984,7 @@
       "USFMNumberString": "17", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Esth", 
+      "USXNumberString": "017", 
       "numExpectedChapters": "10"
     }, 
     "18": {
@@ -4659,6 +4999,7 @@
       "USFMNumberString": "18", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Job", 
+      "USXNumberString": "018", 
       "numExpectedChapters": "42"
     }, 
     "19": {
@@ -4673,6 +5014,7 @@
       "USFMNumberString": "19", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Ps", 
+      "USXNumberString": "019", 
       "numExpectedChapters": "150,151"
     }, 
     "20": {
@@ -4687,6 +5029,7 @@
       "USFMNumberString": "20", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Prov", 
+      "USXNumberString": "020", 
       "numExpectedChapters": "31"
     }, 
     "21": {
@@ -4701,6 +5044,7 @@
       "USFMNumberString": "21", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Eccl", 
+      "USXNumberString": "021", 
       "numExpectedChapters": "12"
     }, 
     "22": {
@@ -4715,6 +5059,7 @@
       "USFMNumberString": "22", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Song", 
+      "USXNumberString": "022", 
       "numExpectedChapters": "8"
     }, 
     "23": {
@@ -4729,6 +5074,7 @@
       "USFMNumberString": "23", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Isa", 
+      "USXNumberString": "023", 
       "numExpectedChapters": "66"
     }, 
     "24": {
@@ -4743,6 +5089,7 @@
       "USFMNumberString": "24", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Jer", 
+      "USXNumberString": "024", 
       "numExpectedChapters": "52"
     }, 
     "25": {
@@ -4757,6 +5104,7 @@
       "USFMNumberString": "25", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Lam", 
+      "USXNumberString": "025", 
       "numExpectedChapters": "5"
     }, 
     "26": {
@@ -4771,6 +5119,7 @@
       "USFMNumberString": "26", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Ezek", 
+      "USXNumberString": "026", 
       "numExpectedChapters": "48"
     }, 
     "27": {
@@ -4785,6 +5134,7 @@
       "USFMNumberString": "27", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Dan", 
+      "USXNumberString": "027", 
       "numExpectedChapters": "12,14"
     }, 
     "28": {
@@ -4799,6 +5149,7 @@
       "USFMNumberString": "28", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Hos", 
+      "USXNumberString": "028", 
       "numExpectedChapters": "14"
     }, 
     "29": {
@@ -4813,6 +5164,7 @@
       "USFMNumberString": "29", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Joel", 
+      "USXNumberString": "029", 
       "numExpectedChapters": "3,4"
     }, 
     "30": {
@@ -4827,6 +5179,7 @@
       "USFMNumberString": "30", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Amos", 
+      "USXNumberString": "030", 
       "numExpectedChapters": "9"
     }, 
     "31": {
@@ -4841,6 +5194,7 @@
       "USFMNumberString": "31", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Obad", 
+      "USXNumberString": "031", 
       "numExpectedChapters": "1"
     }, 
     "32": {
@@ -4855,6 +5209,7 @@
       "USFMNumberString": "32", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Jonah", 
+      "USXNumberString": "032", 
       "numExpectedChapters": "4"
     }, 
     "33": {
@@ -4869,6 +5224,7 @@
       "USFMNumberString": "33", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Nic", 
+      "USXNumberString": "033", 
       "numExpectedChapters": "7"
     }, 
     "34": {
@@ -4883,6 +5239,7 @@
       "USFMNumberString": "34", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Nah", 
+      "USXNumberString": "034", 
       "numExpectedChapters": "3"
     }, 
     "35": {
@@ -4897,6 +5254,7 @@
       "USFMNumberString": "35", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Hab", 
+      "USXNumberString": "035", 
       "numExpectedChapters": "3"
     }, 
     "36": {
@@ -4911,6 +5269,7 @@
       "USFMNumberString": "36", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Zeph", 
+      "USXNumberString": "036", 
       "numExpectedChapters": "3"
     }, 
     "37": {
@@ -4925,6 +5284,7 @@
       "USFMNumberString": "37", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Hag", 
+      "USXNumberString": "037", 
       "numExpectedChapters": "2"
     }, 
     "38": {
@@ -4939,6 +5299,7 @@
       "USFMNumberString": "38", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Zech", 
+      "USXNumberString": "038", 
       "numExpectedChapters": "14"
     }, 
     "39": {
@@ -4953,6 +5314,7 @@
       "USFMNumberString": "39", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Mal", 
+      "USXNumberString": "039", 
       "numExpectedChapters": "4,3"
     }, 
     "40": {
@@ -4967,6 +5329,7 @@
       "USFMNumberString": "41", 
       "ByzantineAbbreviation": "MT", 
       "SBLAbbreviation": "Matt", 
+      "USXNumberString": "040", 
       "numExpectedChapters": "28"
     }, 
     "41": {
@@ -4981,6 +5344,7 @@
       "USFMNumberString": "42", 
       "ByzantineAbbreviation": "MR", 
       "SBLAbbreviation": "Mark", 
+      "USXNumberString": "041", 
       "numExpectedChapters": "16"
     }, 
     "42": {
@@ -4995,6 +5359,7 @@
       "USFMNumberString": "43", 
       "ByzantineAbbreviation": "LU", 
       "SBLAbbreviation": "Luke", 
+      "USXNumberString": "042", 
       "numExpectedChapters": "24"
     }, 
     "43": {
@@ -5009,6 +5374,7 @@
       "USFMNumberString": "44", 
       "ByzantineAbbreviation": "JOH", 
       "SBLAbbreviation": "John", 
+      "USXNumberString": "043", 
       "numExpectedChapters": "21"
     }, 
     "44": {
@@ -5023,6 +5389,7 @@
       "USFMNumberString": "45", 
       "ByzantineAbbreviation": "AC", 
       "SBLAbbreviation": "Acts", 
+      "USXNumberString": "044", 
       "numExpectedChapters": "28"
     }, 
     "45": {
@@ -5037,6 +5404,7 @@
       "USFMNumberString": "46", 
       "ByzantineAbbreviation": "RO", 
       "SBLAbbreviation": "Rom", 
+      "USXNumberString": "045", 
       "numExpectedChapters": "16"
     }, 
     "46": {
@@ -5051,6 +5419,7 @@
       "USFMNumberString": "47", 
       "ByzantineAbbreviation": "1CO", 
       "SBLAbbreviation": "1 Cor", 
+      "USXNumberString": "046", 
       "numExpectedChapters": "16"
     }, 
     "47": {
@@ -5065,6 +5434,7 @@
       "USFMNumberString": "48", 
       "ByzantineAbbreviation": "2CO", 
       "SBLAbbreviation": "2 Cor", 
+      "USXNumberString": "047", 
       "numExpectedChapters": "13"
     }, 
     "48": {
@@ -5079,6 +5449,7 @@
       "USFMNumberString": "49", 
       "ByzantineAbbreviation": "GA", 
       "SBLAbbreviation": "Gal", 
+      "USXNumberString": "048", 
       "numExpectedChapters": "6"
     }, 
     "49": {
@@ -5093,6 +5464,7 @@
       "USFMNumberString": "50", 
       "ByzantineAbbreviation": "EPH", 
       "SBLAbbreviation": "Eph", 
+      "USXNumberString": "049", 
       "numExpectedChapters": "6"
     }, 
     "50": {
@@ -5107,6 +5479,7 @@
       "USFMNumberString": "51", 
       "ByzantineAbbreviation": "PHP", 
       "SBLAbbreviation": "Phil", 
+      "USXNumberString": "050", 
       "numExpectedChapters": "4"
     }, 
     "51": {
@@ -5121,6 +5494,7 @@
       "USFMNumberString": "52", 
       "ByzantineAbbreviation": "COL", 
       "SBLAbbreviation": "Col", 
+      "USXNumberString": "051", 
       "numExpectedChapters": "4"
     }, 
     "52": {
@@ -5135,6 +5509,7 @@
       "USFMNumberString": "53", 
       "ByzantineAbbreviation": "1TH", 
       "SBLAbbreviation": "1 Thess", 
+      "USXNumberString": "052", 
       "numExpectedChapters": "5"
     }, 
     "53": {
@@ -5149,6 +5524,7 @@
       "USFMNumberString": "54", 
       "ByzantineAbbreviation": "2TH", 
       "SBLAbbreviation": "2 Thess", 
+      "USXNumberString": "053", 
       "numExpectedChapters": "3"
     }, 
     "54": {
@@ -5163,6 +5539,7 @@
       "USFMNumberString": "55", 
       "ByzantineAbbreviation": "1TI", 
       "SBLAbbreviation": "1 Tim", 
+      "USXNumberString": "054", 
       "numExpectedChapters": "6"
     }, 
     "55": {
@@ -5177,6 +5554,7 @@
       "USFMNumberString": "56", 
       "ByzantineAbbreviation": "2TI", 
       "SBLAbbreviation": "2 Tim", 
+      "USXNumberString": "055", 
       "numExpectedChapters": "4"
     }, 
     "56": {
@@ -5191,6 +5569,7 @@
       "USFMNumberString": "57", 
       "ByzantineAbbreviation": "TIT", 
       "SBLAbbreviation": "Titus", 
+      "USXNumberString": "056", 
       "numExpectedChapters": "3"
     }, 
     "57": {
@@ -5205,6 +5584,7 @@
       "USFMNumberString": "58", 
       "ByzantineAbbreviation": "PHM", 
       "SBLAbbreviation": "Phlm", 
+      "USXNumberString": "057", 
       "numExpectedChapters": "1"
     }, 
     "58": {
@@ -5219,6 +5599,7 @@
       "USFMNumberString": "59", 
       "ByzantineAbbreviation": "HEB", 
       "SBLAbbreviation": "Heb", 
+      "USXNumberString": "058", 
       "numExpectedChapters": "13"
     }, 
     "59": {
@@ -5233,6 +5614,7 @@
       "USFMNumberString": "60", 
       "ByzantineAbbreviation": "JAS", 
       "SBLAbbreviation": "Jas", 
+      "USXNumberString": "059", 
       "numExpectedChapters": "5"
     }, 
     "60": {
@@ -5247,6 +5629,7 @@
       "USFMNumberString": "61", 
       "ByzantineAbbreviation": "1PE", 
       "SBLAbbreviation": "1 Pet", 
+      "USXNumberString": "060", 
       "numExpectedChapters": "5"
     }, 
     "61": {
@@ -5261,6 +5644,7 @@
       "USFMNumberString": "62", 
       "ByzantineAbbreviation": "2PE", 
       "SBLAbbreviation": "2 Pet", 
+      "USXNumberString": "061", 
       "numExpectedChapters": "3"
     }, 
     "62": {
@@ -5275,6 +5659,7 @@
       "USFMNumberString": "63", 
       "ByzantineAbbreviation": "1JO", 
       "SBLAbbreviation": "1 John", 
+      "USXNumberString": "062", 
       "numExpectedChapters": "5"
     }, 
     "63": {
@@ -5289,6 +5674,7 @@
       "USFMNumberString": "64", 
       "ByzantineAbbreviation": "2JO", 
       "SBLAbbreviation": "2 John", 
+      "USXNumberString": "063", 
       "numExpectedChapters": "1"
     }, 
     "64": {
@@ -5303,6 +5689,7 @@
       "USFMNumberString": "65", 
       "ByzantineAbbreviation": "3JO", 
       "SBLAbbreviation": "3 John", 
+      "USXNumberString": "064", 
       "numExpectedChapters": "1"
     }, 
     "65": {
@@ -5317,6 +5704,7 @@
       "USFMNumberString": "66", 
       "ByzantineAbbreviation": "JUDE", 
       "SBLAbbreviation": "Jude", 
+      "USXNumberString": "065", 
       "numExpectedChapters": "1"
     }, 
     "66": {
@@ -5331,6 +5719,7 @@
       "USFMNumberString": "67", 
       "ByzantineAbbreviation": "RE", 
       "SBLAbbreviation": "Rev", 
+      "USXNumberString": "066", 
       "numExpectedChapters": "22"
     }, 
     "70": {
@@ -5345,6 +5734,7 @@
       "USFMNumberString": "70", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Add Esth", 
+      "USXNumberString": "069", 
       "numExpectedChapters": "10"
     }, 
     "71": {
@@ -5359,6 +5749,7 @@
       "USFMNumberString": "70", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Add Esth", 
+      "USXNumberString": null, 
       "numExpectedChapters": "10"
     }, 
     "72": {
@@ -5373,6 +5764,7 @@
       "USFMNumberString": "70", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Add Esth", 
+      "USXNumberString": null, 
       "numExpectedChapters": "10"
     }, 
     "73": {
@@ -5387,6 +5779,7 @@
       "USFMNumberString": "B2", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Add Dan", 
+      "USXNumberString": "112", 
       "numExpectedChapters": "14"
     }, 
     "74": {
@@ -5401,6 +5794,7 @@
       "USFMNumberString": "B2", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Add Dan", 
+      "USXNumberString": null, 
       "numExpectedChapters": "14"
     }, 
     "75": {
@@ -5415,6 +5809,7 @@
       "USFMNumberString": "B2", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Add Dan", 
+      "USXNumberString": null, 
       "numExpectedChapters": "14"
     }, 
     "80": {
@@ -5429,6 +5824,7 @@
       "USFMNumberString": "77", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Bel", 
+      "USXNumberString": "076", 
       "numExpectedChapters": "1"
     }, 
     "81": {
@@ -5443,6 +5839,7 @@
       "USFMNumberString": "76", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Sus", 
+      "USXNumberString": "075", 
       "numExpectedChapters": "1"
     }, 
     "82": {
@@ -5457,6 +5854,7 @@
       "USFMNumberString": "69", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Jdt", 
+      "USXNumberString": "068", 
       "numExpectedChapters": "16"
     }, 
     "83": {
@@ -5471,6 +5869,7 @@
       "USFMNumberString": "84", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Pr Man", 
+      "USXNumberString": "083", 
       "numExpectedChapters": "1"
     }, 
     "84": {
@@ -5485,6 +5884,7 @@
       "USFMNumberString": "72", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Sir", 
+      "USXNumberString": "071", 
       "numExpectedChapters": "51,52"
     }, 
     "85": {
@@ -5499,6 +5899,7 @@
       "USFMNumberString": "68", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Tob", 
+      "USXNumberString": "067", 
       "numExpectedChapters": "14"
     }, 
     "86": {
@@ -5513,6 +5914,7 @@
       "USFMNumberString": "71", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Wis", 
+      "USXNumberString": "070", 
       "numExpectedChapters": "19"
     }, 
     "87": {
@@ -5527,6 +5929,7 @@
       "USFMNumberString": "75", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Pr Azar", 
+      "USXNumberString": "074", 
       "numExpectedChapters": "1"
     }, 
     "90": {
@@ -5541,6 +5944,7 @@
       "USFMNumberString": "82", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "1 Esd", 
+      "USXNumberString": "081", 
       "numExpectedChapters": "9"
     }, 
     "91": {
@@ -5555,6 +5959,7 @@
       "USFMNumberString": "83", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "2 Esd", 
+      "USXNumberString": "082", 
       "numExpectedChapters": "16"
     }, 
     "92": {
@@ -5569,6 +5974,7 @@
       "USFMNumberString": "A4", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "4 Ezra", 
+      "USXNumberString": "104", 
       "numExpectedChapters": "12,13"
     }, 
     "93": {
@@ -5583,6 +5989,7 @@
       "USFMNumberString": "A5", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "5 Ezra", 
+      "USXNumberString": null, 
       "numExpectedChapters": "2"
     }, 
     "94": {
@@ -5597,6 +6004,7 @@
       "USFMNumberString": "A6", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "6 Ezra", 
+      "USXNumberString": null, 
       "numExpectedChapters": "2"
     }, 
     "95": {
@@ -5611,6 +6019,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "100": {
@@ -5625,6 +6034,7 @@
       "USFMNumberString": "74", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Ep Jer", 
+      "USXNumberString": "073", 
       "numExpectedChapters": "1"
     }, 
     "101": {
@@ -5639,6 +6049,7 @@
       "USFMNumberString": "73", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Bar", 
+      "USXNumberString": "072", 
       "numExpectedChapters": "5,6"
     }, 
     "102": {
@@ -5653,6 +6064,7 @@
       "USFMNumberString": "74", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Ep Jer", 
+      "USXNumberString": null, 
       "numExpectedChapters": "6"
     }, 
     "103": {
@@ -5667,6 +6079,7 @@
       "USFMNumberString": "B4", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": "114", 
       "numExpectedChapters": "77"
     }, 
     "104": {
@@ -5681,6 +6094,7 @@
       "USFMNumberString": "B5", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": "115", 
       "numExpectedChapters": "9"
     }, 
     "105": {
@@ -5695,6 +6109,7 @@
       "USFMNumberString": "B4", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "86"
     }, 
     "106": {
@@ -5709,6 +6124,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "107": {
@@ -5723,6 +6139,7 @@
       "USFMNumberString": "C2", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "6,5"
     }, 
     "110": {
@@ -5737,6 +6154,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "31"
     }, 
     "111": {
@@ -5751,6 +6169,7 @@
       "USFMNumberString": "78", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "1 Macc", 
+      "USXNumberString": "077", 
       "numExpectedChapters": "16"
     }, 
     "112": {
@@ -5765,6 +6184,7 @@
       "USFMNumberString": "79", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "2 Macc", 
+      "USXNumberString": "078", 
       "numExpectedChapters": "15"
     }, 
     "113": {
@@ -5779,6 +6199,7 @@
       "USFMNumberString": "80", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "3 Macc", 
+      "USXNumberString": "079", 
       "numExpectedChapters": "7"
     }, 
     "114": {
@@ -5793,6 +6214,7 @@
       "USFMNumberString": "81", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "4 Macc", 
+      "USXNumberString": "080", 
       "numExpectedChapters": "18"
     }, 
     "115": {
@@ -5807,6 +6229,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "116": {
@@ -5821,6 +6244,7 @@
       "USFMNumberString": "B8", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "36"
     }, 
     "117": {
@@ -5835,6 +6259,7 @@
       "USFMNumberString": "B9", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "20,21"
     }, 
     "118": {
@@ -5849,6 +6274,7 @@
       "USFMNumberString": "C0", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "10"
     }, 
     "120": {
@@ -5863,6 +6289,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "41"
     }, 
     "121": {
@@ -5877,6 +6304,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "31"
     }, 
     "122": {
@@ -5891,6 +6319,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "17"
     }, 
     "123": {
@@ -5905,6 +6334,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "17"
     }, 
     "124": {
@@ -5919,6 +6349,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "44"
     }, 
     "125": {
@@ -5933,6 +6364,7 @@
       "USFMNumberString": "88", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "150"
     }, 
     "126": {
@@ -5947,6 +6379,7 @@
       "USFMNumberString": "85", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": "084", 
       "numExpectedChapters": "1"
     }, 
     "127": {
@@ -5961,6 +6394,7 @@
       "USFMNumberString": "B3", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": "113", 
       "numExpectedChapters": "5,4"
     }, 
     "128": {
@@ -5975,6 +6409,7 @@
       "USFMNumberString": "87", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": "086", 
       "numExpectedChapters": "18"
     }, 
     "130": {
@@ -5989,6 +6424,7 @@
       "USFMNumberString": "C3", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": "123", 
       "numExpectedChapters": "1"
     }, 
     "131": {
@@ -6003,6 +6439,7 @@
       "USFMNumberString": "86", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": "085", 
       "numExpectedChapters": "14"
     }, 
     "132": {
@@ -6017,6 +6454,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "133": {
@@ -6031,6 +6469,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "1"
     }, 
     "134": {
@@ -6045,6 +6484,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "1"
     }, 
     "135": {
@@ -6059,6 +6499,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "1"
     }, 
     "136": {
@@ -6073,6 +6514,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "1"
     }, 
     "137": {
@@ -6087,6 +6529,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "1"
     }, 
     "138": {
@@ -6101,6 +6544,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "1"
     }, 
     "139": {
@@ -6115,6 +6559,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "140": {
@@ -6129,6 +6574,7 @@
       "USFMNumberString": "B6", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "34"
     }, 
     "141": {
@@ -6143,6 +6589,7 @@
       "USFMNumberString": "B7", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "42"
     }, 
     "142": {
@@ -6157,6 +6604,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "143": {
@@ -6171,6 +6619,7 @@
       "USFMNumberString": "C1", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "6"
     }, 
     "144": {
@@ -6185,6 +6634,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "150": {
@@ -6199,6 +6649,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "65"
     }, 
     "151": {
@@ -6213,6 +6664,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "20"
     }, 
     "152": {
@@ -6227,6 +6679,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "153": {
@@ -6241,6 +6694,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "16"
     }, 
     "160": {
@@ -6255,6 +6709,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "161": {
@@ -6269,6 +6724,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "162": {
@@ -6283,6 +6739,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "163": {
@@ -6297,6 +6754,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "164": {
@@ -6311,6 +6769,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "165": {
@@ -6325,6 +6784,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "166": {
@@ -6339,6 +6799,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "167": {
@@ -6353,6 +6814,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "168": {
@@ -6367,6 +6829,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "169": {
@@ -6381,6 +6844,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "170": {
@@ -6395,6 +6859,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "180": {
@@ -6409,6 +6874,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "181": {
@@ -6423,6 +6889,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "182": {
@@ -6437,6 +6904,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "183": {
@@ -6451,6 +6919,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "184": {
@@ -6465,6 +6934,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "185": {
@@ -6479,6 +6949,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "186": {
@@ -6493,6 +6964,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "187": {
@@ -6507,6 +6979,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "188": {
@@ -6521,6 +6994,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "189": {
@@ -6535,6 +7009,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "190": {
@@ -6549,6 +7024,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "191": {
@@ -6563,6 +7039,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "192": {
@@ -6577,6 +7054,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "193": {
@@ -6591,6 +7069,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "194": {
@@ -6605,6 +7084,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "195": {
@@ -6619,6 +7099,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "196": {
@@ -6633,6 +7114,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "197": {
@@ -6647,6 +7129,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "198": {
@@ -6661,6 +7144,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "199": {
@@ -6675,6 +7159,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "200": {
@@ -6689,6 +7174,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "220": {
@@ -6703,6 +7189,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "187"
     }, 
     "221": {
@@ -6717,6 +7204,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "55"
     }, 
     "222": {
@@ -6731,6 +7219,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "47"
     }, 
     "223": {
@@ -6745,6 +7234,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "65"
     }, 
     "224": {
@@ -6759,6 +7249,7 @@
       "USFMNumberString": "15", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "Ezra", 
+      "USXNumberString": null, 
       "numExpectedChapters": "26"
     }, 
     "225": {
@@ -6773,6 +7264,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "226": {
@@ -6787,6 +7279,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": "52"
     }, 
     "230": {
@@ -6801,6 +7294,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": "100", 
       "numExpectedChapters": null
     }, 
     "231": {
@@ -6815,6 +7309,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "232": {
@@ -6829,6 +7324,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "233": {
@@ -6843,6 +7339,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": "107", 
       "numExpectedChapters": null
     }, 
     "234": {
@@ -6857,6 +7354,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "235": {
@@ -6871,6 +7369,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": "109", 
       "numExpectedChapters": null
     }, 
     "236": {
@@ -6885,6 +7384,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "237": {
@@ -6899,6 +7399,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "238": {
@@ -6913,6 +7414,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": "111", 
       "numExpectedChapters": null
     }, 
     "239": {
@@ -6927,6 +7429,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "240": {
@@ -6941,6 +7444,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
     "241": {
@@ -6955,6 +7459,7 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": "110", 
       "numExpectedChapters": null
     }, 
     "242": {
@@ -6969,8 +7474,641 @@
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
+      "USXNumberString": "101", 
+      "numExpectedChapters": null
+    }, 
+    "243": {
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Unspecified extra XXA", 
+      "referenceAbbreviation": "XXA", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": "XXA", 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": null, 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": "093", 
+      "numExpectedChapters": null
+    }, 
+    "244": {
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Unspecified extra XXB", 
+      "referenceAbbreviation": "XXB", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": "XXB", 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": null, 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": "094", 
+      "numExpectedChapters": null
+    }, 
+    "245": {
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Unspecified extra XXC", 
+      "referenceAbbreviation": "XXC", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": "XXC", 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": null, 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": "095", 
+      "numExpectedChapters": null
+    }, 
+    "246": {
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Unspecified extra XXD", 
+      "referenceAbbreviation": "XXD", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": "XXD", 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": null, 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": "096", 
+      "numExpectedChapters": null
+    }, 
+    "247": {
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Unspecified extra XXE", 
+      "referenceAbbreviation": "XXE", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": "XXE", 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": null, 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": "097", 
+      "numExpectedChapters": null
+    }, 
+    "248": {
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Unspecified extra XXF", 
+      "referenceAbbreviation": "XXF", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": "XXF", 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": null, 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": "098", 
+      "numExpectedChapters": null
+    }, 
+    "249": {
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Unspecified extra XXG", 
+      "referenceAbbreviation": "XXG", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": "XXG", 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": null, 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": "099", 
       "numExpectedChapters": null
     }
+  }, 
+  "USXNumberDict": {
+    "098": [
+      248, 
+      "XXF", 
+      "XXF"
+    ], 
+    "099": [
+      249, 
+      "XXG", 
+      "XXG"
+    ], 
+    "093": [
+      243, 
+      "XXA", 
+      "XXA"
+    ], 
+    "094": [
+      244, 
+      "XXB", 
+      "XXB"
+    ], 
+    "095": [
+      245, 
+      "XXC", 
+      "XXC"
+    ], 
+    "096": [
+      246, 
+      "XXD", 
+      "XXD"
+    ], 
+    "097": [
+      247, 
+      "XXE", 
+      "XXE"
+    ], 
+    "010": [
+      10, 
+      "SA2", 
+      "2Sa"
+    ], 
+    "011": [
+      11, 
+      "KI1", 
+      "1Ki"
+    ], 
+    "012": [
+      12, 
+      "KI2", 
+      "2Ki"
+    ], 
+    "013": [
+      13, 
+      "CH1", 
+      "1Ch"
+    ], 
+    "014": [
+      14, 
+      "CH2", 
+      "2Ch"
+    ], 
+    "015": [
+      15, 
+      "EZR", 
+      "Ezr"
+    ], 
+    "016": [
+      16, 
+      "NEH", 
+      "Neh"
+    ], 
+    "017": [
+      17, 
+      "EST", 
+      "Est"
+    ], 
+    "018": [
+      18, 
+      "JOB", 
+      "Job"
+    ], 
+    "019": [
+      19, 
+      "PSA", 
+      "Psa"
+    ], 
+    "025": [
+      25, 
+      "LAM", 
+      "Lam"
+    ], 
+    "024": [
+      24, 
+      "JER", 
+      "Jer"
+    ], 
+    "027": [
+      27, 
+      "DAN", 
+      "Dan"
+    ], 
+    "026": [
+      26, 
+      "EZK", 
+      "Ezk"
+    ], 
+    "021": [
+      21, 
+      "ECC", 
+      "Ecc"
+    ], 
+    "020": [
+      20, 
+      "PRO", 
+      "Pro"
+    ], 
+    "023": [
+      23, 
+      "ISA", 
+      "Isa"
+    ], 
+    "022": [
+      22, 
+      "SNG", 
+      "Sng"
+    ], 
+    "029": [
+      29, 
+      "JOL", 
+      "Jol"
+    ], 
+    "028": [
+      28, 
+      "HOS", 
+      "Hos"
+    ], 
+    "115": [
+      104, 
+      "LBA", 
+      "LBa"
+    ], 
+    "114": [
+      103, 
+      "BA2", 
+      "2Ba"
+    ], 
+    "038": [
+      38, 
+      "ZEC", 
+      "Zec"
+    ], 
+    "039": [
+      39, 
+      "MAL", 
+      "Mal"
+    ], 
+    "111": [
+      238, 
+      "IXN", 
+      "NDX"
+    ], 
+    "110": [
+      241, 
+      "IXT", 
+      "TDX"
+    ], 
+    "113": [
+      127, 
+      "PS3", 
+      "Ps3"
+    ], 
+    "112": [
+      73, 
+      "DAG", 
+      "DaG"
+    ], 
+    "032": [
+      32, 
+      "JNA", 
+      "Jon"
+    ], 
+    "033": [
+      33, 
+      "MIC", 
+      "Mic"
+    ], 
+    "030": [
+      30, 
+      "AMO", 
+      "Amo"
+    ], 
+    "031": [
+      31, 
+      "OBA", 
+      "Oba"
+    ], 
+    "036": [
+      36, 
+      "ZEP", 
+      "Zep"
+    ], 
+    "037": [
+      37, 
+      "HAG", 
+      "Hag"
+    ], 
+    "034": [
+      34, 
+      "NAH", 
+      "Nam"
+    ], 
+    "035": [
+      35, 
+      "HAB", 
+      "Hab"
+    ], 
+    "109": [
+      235, 
+      "GLS", 
+      "Glo"
+    ], 
+    "049": [
+      49, 
+      "EPH", 
+      "Eph"
+    ], 
+    "048": [
+      48, 
+      "GAL", 
+      "Gal"
+    ], 
+    "047": [
+      47, 
+      "CO2", 
+      "2Co"
+    ], 
+    "046": [
+      46, 
+      "CO1", 
+      "1Co"
+    ], 
+    "045": [
+      45, 
+      "ROM", 
+      "Rom"
+    ], 
+    "044": [
+      44, 
+      "ACT", 
+      "Act"
+    ], 
+    "043": [
+      43, 
+      "JHN", 
+      "Jhn"
+    ], 
+    "042": [
+      42, 
+      "LUK", 
+      "Luk"
+    ], 
+    "104": [
+      92, 
+      "EZA", 
+      "EzA"
+    ], 
+    "040": [
+      40, 
+      "MAT", 
+      "Mat"
+    ], 
+    "058": [
+      58, 
+      "HEB", 
+      "Heb"
+    ], 
+    "059": [
+      59, 
+      "JAM", 
+      "Jas"
+    ], 
+    "054": [
+      54, 
+      "TI1", 
+      "1Ti"
+    ], 
+    "055": [
+      55, 
+      "TI2", 
+      "2Ti"
+    ], 
+    "056": [
+      56, 
+      "TIT", 
+      "Tit"
+    ], 
+    "057": [
+      57, 
+      "PHM", 
+      "Phm"
+    ], 
+    "050": [
+      50, 
+      "PHP", 
+      "Php"
+    ], 
+    "051": [
+      51, 
+      "COL", 
+      "Col"
+    ], 
+    "052": [
+      52, 
+      "TH1", 
+      "1Th"
+    ], 
+    "053": [
+      53, 
+      "TH2", 
+      "2Th"
+    ], 
+    "101": [
+      242, 
+      "BAK", 
+      "Bak"
+    ], 
+    "107": [
+      233, 
+      "INT", 
+      null
+    ], 
+    "041": [
+      41, 
+      "MRK", 
+      "Mrk"
+    ], 
+    "061": [
+      61, 
+      "PE2", 
+      "2Pe"
+    ], 
+    "060": [
+      60, 
+      "PE1", 
+      "1Pe"
+    ], 
+    "063": [
+      63, 
+      "JN2", 
+      "2Jn"
+    ], 
+    "062": [
+      62, 
+      "JN1", 
+      "1Jn"
+    ], 
+    "065": [
+      65, 
+      "JDE", 
+      "Jud"
+    ], 
+    "064": [
+      64, 
+      "JN3", 
+      "3Jn"
+    ], 
+    "067": [
+      85, 
+      "TOB", 
+      "Tob"
+    ], 
+    "066": [
+      66, 
+      "REV", 
+      "Rev"
+    ], 
+    "069": [
+      70, 
+      "ESG", 
+      "EsG"
+    ], 
+    "068": [
+      82, 
+      "JDT", 
+      "Jdt"
+    ], 
+    "076": [
+      80, 
+      "BEL", 
+      "Bel"
+    ], 
+    "077": [
+      111, 
+      "MA1", 
+      "1Ma"
+    ], 
+    "074": [
+      87, 
+      "PAZ", 
+      "S3Y"
+    ], 
+    "075": [
+      81, 
+      "SUS", 
+      "Sus"
+    ], 
+    "072": [
+      101, 
+      "BAR", 
+      "Bar"
+    ], 
+    "073": [
+      100, 
+      "LJE", 
+      "LJe"
+    ], 
+    "070": [
+      86, 
+      "WIS", 
+      "Wis"
+    ], 
+    "071": [
+      84, 
+      "SIR", 
+      "Sir"
+    ], 
+    "078": [
+      112, 
+      "MA2", 
+      "2Ma"
+    ], 
+    "079": [
+      113, 
+      "MA3", 
+      "3Ma"
+    ], 
+    "100": [
+      230, 
+      "FRT", 
+      "Frt"
+    ], 
+    "083": [
+      83, 
+      "MAN", 
+      "Man"
+    ], 
+    "082": [
+      91, 
+      "LES", 
+      "2Es"
+    ], 
+    "081": [
+      90, 
+      "GES", 
+      "1Es"
+    ], 
+    "080": [
+      114, 
+      "MA4", 
+      "4Ma"
+    ], 
+    "086": [
+      128, 
+      "PSS", 
+      "PsS"
+    ], 
+    "085": [
+      131, 
+      "ODE", 
+      "Ode"
+    ], 
+    "084": [
+      126, 
+      "PS2", 
+      "Ps2"
+    ], 
+    "003": [
+      3, 
+      "LEV", 
+      "Lev"
+    ], 
+    "002": [
+      2, 
+      "EXO", 
+      "Exo"
+    ], 
+    "001": [
+      1, 
+      "GEN", 
+      "Gen"
+    ], 
+    "007": [
+      7, 
+      "JDG", 
+      "Jdg"
+    ], 
+    "006": [
+      6, 
+      "JOS", 
+      "Jos"
+    ], 
+    "005": [
+      5, 
+      "DEU", 
+      "Deu"
+    ], 
+    "004": [
+      4, 
+      "NUM", 
+      "Num"
+    ], 
+    "009": [
+      9, 
+      "SA1", 
+      "1Sa"
+    ], 
+    "008": [
+      8, 
+      "RUT", 
+      "Rut"
+    ], 
+    "123": [
+      130, 
+      "LAO", 
+      "Lao"
+    ]
   }, 
   "CCELDict": {
     "56": [
@@ -7321,12 +8459,13 @@
     "2 CHR": "CH2", 
     "3MACC": "MA3", 
     "2KI": "KI2", 
+    "JAS": "JAM", 
     "EZEK": "EZK", 
     "JOS": "JOS", 
     "NEH": "NEH", 
     "PRO": "PRO", 
     "JOSH": "JOS", 
-    "SOS": "SNG", 
+    "XXA": "XXA", 
     "LBA": "LBA", 
     "RE": "REV", 
     "JOB": "JOB", 
@@ -7505,8 +8644,14 @@
     "PSSSOL": "PSS", 
     "DAN": "DAN", 
     "6EZ": "EZ6", 
+    "XXC": "XXC", 
+    "XXB": "XXB", 
     "2 THESS": "TH2", 
     "GAL": "GAL", 
+    "XXG": "XXG", 
+    "XXF": "XXF", 
+    "XXE": "XXE", 
+    "XXD": "XXD", 
     "1SAM": "SA1", 
     "2 SAM": "SA2", 
     "ADDPS": "PS3", 
@@ -7516,7 +8661,7 @@
     "1JN": "JN1", 
     "1JO": "JN1", 
     "1MEQ": "MQ1", 
-    "JAS": "JAM", 
+    "SOS": "SNG", 
     "1 ESD": "GES", 
     "CNC": "CNC", 
     "NUM": "NUM", 
@@ -7656,9 +8801,33 @@
       16, 
       "NEH"
     ], 
+    "UNSPECIFIED EXTRA XXF": [
+      248, 
+      "XXF"
+    ], 
+    "UNSPECIFIED EXTRA XXG": [
+      249, 
+      "XXG"
+    ], 
+    "UNSPECIFIED EXTRA XXD": [
+      246, 
+      "XXD"
+    ], 
     "WORDS OF SIRACH": [
       134, 
       "WSI"
+    ], 
+    "UNSPECIFIED EXTRA XXB": [
+      244, 
+      "XXB"
+    ], 
+    "UNSPECIFIED EXTRA XXC": [
+      245, 
+      "XXC"
+    ], 
+    "UNSPECIFIED EXTRA XXA": [
+      243, 
+      "XXA"
     ], 
     "REVELATION OF EZRA / VISON OF EZRA": [
       95, 
@@ -7895,6 +9064,10 @@
     "BEL AND THE DRAGON": [
       80, 
       "BEL"
+    ], 
+    "UNSPECIFIED EXTRA XXE": [
+      247, 
+      "XXE"
     ], 
     "PROVERBS": [
       20, 
