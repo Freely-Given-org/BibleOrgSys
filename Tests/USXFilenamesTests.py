@@ -42,7 +42,7 @@ class USXFilenamesTests( unittest.TestCase ):
     """ Unit tests for the USXFilenames object. """
 
     def setUp( self ):
-        testFolder = 'Tests/TestDataFiles/USXTest/' # This is a RELATIVE path
+        testFolder = 'Tests/DataFilesForTests/USXTest/' # This is a RELATIVE path
         if os.access( testFolder, os.R_OK ): # Create the USXFilenames object
             self.UFns = USXFilenames.USXFilenames( testFolder )
         else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
@@ -53,6 +53,16 @@ class USXFilenamesTests( unittest.TestCase ):
         self.assertTrue( isinstance( result, str ) )
         self.assertGreater( len(result), 20 )
     # end of test_010_str
+
+    def test_015_getFilenameTemplate( self ):
+        """ Test the getFilenameTemplate function. """
+        result = self.UFns.getFilenameTemplate()
+        self.assertTrue( isinstance( result, str ) )
+        self.assertEqual( len(result), 6 )
+        self.assertFalse( ' ' in result )
+        self.assertFalse( '.' in result )
+        self.assertEqual( result, 'dddBBB' )
+    # end of test_015_getFilenameTemplate
 
     def test_020_getPossibleFilenames( self ):
         """ Test the getPossibleFilenames function. """

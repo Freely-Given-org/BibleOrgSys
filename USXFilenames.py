@@ -27,7 +27,7 @@ Module for creating and manipulating USX filenames.
 """
 
 progName = "USX Bible filenames handler"
-versionString = "0.01"
+versionString = "0.50"
 
 
 import os, logging
@@ -49,7 +49,7 @@ class USXFilenames:
         self.BibleBooksCodes = BibleBooksCodes().loadData()
 
         self.folder = folder
-        self.pattern, self.fileExtension = 'dddBBB', 'usx'
+        self.pattern, self.fileExtension = '', 'usx' # Pattern should end up as 'dddBBB'
         self.digitsIndex, self.USXBookCodeIndex = 0, 3
         files = os.listdir( self.folder )
         if not files: logging.error( _("No files at all in given folder: '{}'").format( self.folder) ); return
@@ -57,7 +57,6 @@ class USXFilenames:
             if not foundFilename.endswith('~'): # Ignore backup files
                 foundFileBit, foundExtBit = os.path.splitext( foundFilename )
                 foundLength = len( foundFileBit )
-                #print( foundFileBit, foundExtBit )
                 containsDigits = False
                 for char in foundFilename:
                     if char.isdigit():
@@ -70,15 +69,10 @@ class USXFilenames:
                             digitsIndex = foundFileBit.index( USXDigits )
                             USXBookCodeIndex = foundFileBit.index(USXBookCode) if USXBookCode in foundFileBit else foundFileBit.index(USXBookCode.upper())
                             USXBookCode = foundFileBit[USXBookCodeIndex:USXBookCodeIndex+3]
-                            #print( digitsIndex, USXBookCodeIndex, USXBookCode )
-                            if digitsIndex==0 and USXBookCodeIndex==2: # Found a form like 01GENlanguage.xyz
+                            if foundLength==6 and digitsIndex==0 and USXBookCodeIndex==3: # Found a form like 001GEN.usx
                                 self.digitsIndex = digitsIndex
                                 self.USXBookCodeIndex = USXBookCodeIndex
-                                self.pattern = "ddbbb" + 'n'*(foundLength-5)
-                            elif foundLength==6 and digitsIndex==0 and USXBookCodeIndex==3: # Found a form like 001GEN.usx
-                                self.digitsIndex = digitsIndex
-                                self.USXBookCodeIndex = USXBookCodeIndex
-                                self.pattern = "nnnddbbb"
+                                self.pattern = "dddbbb"
                             else: logging.error( _("Unrecognized USX filename template at ")+foundFileBit ); return
                             if USXBookCode.isupper(): self.pattern = self.pattern.replace( 'bbb', 'BBB' )
                             self.fileExtension = foundExtBit[1:]
@@ -104,6 +98,14 @@ class USXFilenames:
         if self.fileExtension: result += ('\n' if result else '') + ' '*indent + _("File extension: {}").format( self.fileExtension )
         return result
     # end of __str___
+
+
+    def getFilenameTemplate( self ):
+        """ Returns a pattern/template for USX filenames where
+                bbb = book code (lower case) or BBB = book code (UPPER CASE)
+                ddd = digits
+            It should be 'dddBBB' for USX files """
+        return self.pattern
 
 
     def getPossibleFilenames( self ):
@@ -190,8 +192,8 @@ def demo():
 
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
-    testFolder = 'Tests/TestDataFiles/USXTest/' # This is a RELATIVE path
-    #testFolder = '/mnt/Work/VirtualBox_Shared_Folder/USXExports/Projects/MBTV/' # You can put your test folder here
+    testFolder = 'Tests/DataFilesForTests/USXTest/' # This is a RELATIVE path
+    #testFolder = '/home/myFolder' # You can put your test folder here
     if os.access( testFolder, os.R_OK ):
         UFns = USXFilenames( testFolder )
         print( UFns )

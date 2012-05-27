@@ -42,7 +42,7 @@ class USFMFilenamesTests( unittest.TestCase ):
     """ Unit tests for the USFMFilenames object. """
 
     def setUp( self ):
-        testFolder = 'Tests/TestDataFiles/USFMTest/' # This is a RELATIVE path
+        testFolder = 'Tests/DataFilesForTests/USFMTest/' # This is a RELATIVE path
         if os.access( testFolder, os.R_OK ): # Create the USFMFilenames object
             self.UFns = USFMFilenames.USFMFilenames( testFolder )
         else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
@@ -53,6 +53,18 @@ class USFMFilenamesTests( unittest.TestCase ):
         self.assertTrue( isinstance( result, str ) )
         self.assertGreater( len(result), 20 )
     # end of test_010_str
+
+    def test_015_getFilenameTemplate( self ):
+        """ Test the getFilenameTemplate function. """
+        result = self.UFns.getFilenameTemplate()
+        self.assertTrue( isinstance( result, str ) )
+        self.assertEqual( len(result), 8 )
+        self.assertFalse( ' ' in result )
+        self.assertFalse( '.' in result )
+        self.assertTrue( 'dd' in result )
+        self.assertTrue( 'nnn' in result or 'NNN' in result )
+        self.assertTrue( 'bbb' in result or 'BBB' in result )
+    # end of test_015_getFilenameTemplate
 
     def test_020_getPossibleFilenames( self ):
         """ Test the getPossibleFilenames function. """

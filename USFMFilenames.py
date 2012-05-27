@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # USFMFilenames.py
-#   Last modified: 2012-05-24 (also update versionString below)
+#   Last modified: 2012-05-25 (also update versionString below)
 #
 # Module handling USFM Bible filenames
 #
@@ -116,6 +116,14 @@ class USFMFilenames:
     # end of __str___
 
 
+    def getFilenameTemplate( self ):
+        """ Returns a pattern/template for USFM filenames where
+                nnn = language code (lower case) or NNN = language code (UPPER CASE)
+                bbb = book code (lower case) or BBB = book code (UPPER CASE)
+                dd = digits """
+        return self.pattern
+
+
     def getPossibleFilenames( self ):
         """Return a list of valid USFM filenames that match our filename template."""
         filelist = []
@@ -201,8 +209,8 @@ def demo():
 
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
-    testFolder = 'Tests/TestDataFiles/USFMTest/' # This is a RELATIVE path
-    #testFolder = '/mnt/Data/Matigsalug/Scripture/MBTV/' # You can put your test folder here
+    testFolder = 'Tests/DataFilesForTests/USFMTest/' # This is a RELATIVE path
+    #testFolder = '/home/myFolder' # You can put your test folder here
     if os.access( testFolder, os.R_OK ):
         UFns = USFMFilenames( testFolder )
         print( UFns )
