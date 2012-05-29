@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # InternalBibleBook.py
-#   Last modified: 2012-05-27 by RJH (also update versionString below)
+#   Last modified: 2012-05-28 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -38,8 +38,8 @@ and then calls
     self.appendLine (in order to fill self._RawLines)
 """
 
-progName = "Internal USFM Bible book handler"
-versionString = "0.02"
+progName = "Internal Bible book handler"
+versionString = "0.03"
 
 
 import os, logging
@@ -250,7 +250,7 @@ class InternalBibleBook:
         def processLine( originalMarker, text ):
             """ Process one USFM line. """
             nonlocal c, v
-            assert( marker and isinstance( marker, str ) )
+            assert( originalMarker and isinstance( originalMarker, str ) )
 
             # Convert USFM markers like s to standard markers like s1
             adjustedMarker = self.USFMMarkers.toStandardMarker( originalMarker )
@@ -277,8 +277,8 @@ class InternalBibleBook:
                             if self.logErrors: logging.error( _("Marker '{}' shouldn't appear within line after {} {}:{} in \\{}: '{}'").format( insideMarker, self.bookReferenceCode, c, v, marker, text ) ) # Only log the first error in the line
                             self.addPriorityError( 96, c, v, _("Marker \\{} shouldn't be inside a line").format( insideMarker ) )
                         thisText = text[ix:iMIndex].rstrip()
-                        result1, result2, result3 = processLineFix( marker, thisText )
-                        self.appendLine( result1, result2, result3 )
+                        adjText, extras = processLineFix( originalMarker, thisText )
+                        self._processedLines.append( (adjustedMarker, originalMarker, adjText, extras,) )
                         ix = iMIndex + 1 + len(insideMarker) + len(nextSignificantChar) # Get the start of the next text -- the 1 is for the backslash
                         adjMarker = self.USFMMarkers.toStandardMarker( insideMarker ) # setup for the next line
                 if ix != 0: # We must have separated multiple lines

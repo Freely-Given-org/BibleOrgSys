@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # USFMBibleBook.py
-#   Last modified: 2012-05-27 by RJH (also update versionString below)
+#   Last modified: 2012-05-28 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -103,7 +103,7 @@ class USFMBibleBook( InternalBibleBook ):
                 self.addPriorityError( 100, c, v, _("Found \\{} unknown marker on new line in file").format( marker ) )
                 for tryMarker in sorted( self.USFMMarkers.getNewlineMarkersList(), key=len, reverse=True ): # Try to do something intelligent here -- it might be just a missing space
                     if marker.startswith( tryMarker ): # Let's try changing it
-                        if lastMarker: processLine( lastMarker, lastText )
+                        if lastMarker: self.appendLine( lastMarker, lastText )
                         lastMarker, lastText = tryMarker, marker[len(tryMarker):] + ' ' + text
                         loadErrors.append( _("{} {}:{} Changed '\\{}' unknown marker to '{}' at beginning of line: {}").format( self.bookReferenceCode, c, v, marker, tryMarker, text ) )
                         if self.logErrors: logging.warning( _("Changed '\\{}' unknown marker to '{}' after {} {}:{} at beginning of line: {}").format( marker, tryMarker, self.bookReferenceCode, c, v, text ) )
