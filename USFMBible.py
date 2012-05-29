@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # USFMBible.py
-#   Last modified: 2012-05-28 by RJH (also update versionString below)
+#   Last modified: 2012-05-29 by RJH (also update versionString below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -27,7 +27,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 """
 
 progName = "USFM Bible handler"
-versionString = "0.23"
+versionString = "0.24"
 
 
 import os, logging, datetime
@@ -35,7 +35,6 @@ from gettext import gettext as _
 from collections import OrderedDict
 
 import Globals
-#import ControlFiles
 from USFMBibleBook import USFMBibleBook
 from InternalBible import InternalBible
 
@@ -45,17 +44,17 @@ class USFMBible( InternalBible ):
     Class to load and manipulate USFM Bibles.
 
     """
-    def __init__( self, name ):
+    def __init__( self, name, logErrorsFlag ):
         """
         Create the internal USFM Bible object.
         """
-        InternalBible.__init__( self, name ) # Initialise the base class
+        InternalBible.__init__( self, name, logErrorsFlag ) # Initialise the base class
         self.objectType = "USFM"
         self.objectNameString = "USFM Bible object"
     # end of __init_
 
 
-    def load( self, folder, encoding='utf-8', logErrors=True ):
+    def load( self, folder, encoding='utf-8' ):
         """
         Load the books.
         """
@@ -147,7 +146,7 @@ class USFMBible( InternalBible ):
 
         # Load the books one by one -- assuming that they have regular Paratext style filenames
         for BBB,filename in self.USFMFilenamesObject.getActualFilenames():
-            UBB = USFMBibleBook()
+            UBB = USFMBibleBook( self.logErrorsFlag )
             UBB.load( BBB, folder, filename, encoding )
             UBB.validateUSFM()
             #print( UBB )
@@ -177,7 +176,7 @@ class USFMBible( InternalBible ):
                             isUSFM = True
                         break # We only look at the first line
                 if isUSFM:
-                    UBB = USFMBibleBook()
+                    UBB = USFMBibleBook( self.logErrorsFlag )
                     UBB.load( BBB, folder, thisFilename, encoding, logErrors )
                     UBB.validateUSFM()
                     print( UBB )
@@ -209,8 +208,8 @@ def main():
 
     name, encoding, testFolder = "Matigsalug", "utf-8", "/mnt/Data/Matigsalug/Scripture/MBTV" # You can put your test folder here
     if os.access( testFolder, os.R_OK ):
-        UB = USFMBible( name )
-        UB.load( testFolder, encoding, logErrors=False )
+        UB = USFMBible( name, False ) # The second parameter is the logErrorsFlag
+        UB.load( testFolder, encoding )
         if Globals.verbosityLevel > 0: print( UB )
         UB.check()
         #UBErrors = UB.getErrors()

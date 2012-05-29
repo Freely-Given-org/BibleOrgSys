@@ -27,19 +27,15 @@ Module for defining and manipulating Bibles in our internal USFM-based 'lines' f
 
 The calling class needs to call this base class __init__ routine and also set:
     self.objectType (with "USFM" or "USX")
-    self.objectNameString (with a description of the type of BibleBook object)
+    self.objectNameString (with a description of the type of Bible object)
 It also needs to provide a "load" routine that sets:
-    self.bookReferenceCode (BBB)
-    self.isOneChapterBook (True or False)
     self.sourceFolder
-    self.sourceFilename
-    self.sourceFilepath = os.path.join( sourceFolder, sourceFilename )
-and then calls
-    self.appendLine (in order to fill self._RawLines)
+and then fills
+    self.books
 """
 
 progName = "Internal Bible handler"
-versionString = "0.02"
+versionString = "0.03"
 
 
 import os, logging, datetime
@@ -56,12 +52,14 @@ class InternalBible:
     Class to load and manipulate InternalBibles.
 
     """
-    def __init__( self, name ):
+    def __init__( self, name, logErrorsFlag ):
         """
         Create the object.
         """
-        # Set up empty containers for the object
         self.name = name
+        self.logErrorsFlag = logErrorsFlag
+
+        # Set up empty containers for the object
         self.books = OrderedDict()
         self.ssfPathName, self.ssfData = '', {}
         self.BBBToNameDict, self.bookNameDict, self.combinedBookNameDict, self.bookAbbrevDict = {}, {}, {}, {} # Used to store book name and abbreviations (pointing to the BBB codes)
@@ -82,7 +80,7 @@ class InternalBible:
         @rtype: string
         """
         result = self.objectNameString
-        if self.name: result += ('\n' if result else '') + self.name
+        if self.name: result += ('\n' if result else '') + "  Name: " + self.name
         if self.sourceFolder: result += ('\n' if result else '') + "  From: " + self.sourceFolder
         result += ('\n' if result else '') + "  Number of books = " + str(len(self.books))
         return result
@@ -565,7 +563,8 @@ def main():
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
     # Since this is only designed to be a base class, it can't actually do much at all
-    IB = InternalBible( "Test internal Bible" )
+    IB = InternalBible( "Test internal Bible", False ) # The second parameter is the logErrorsFlag
+    IB.objectNameString = "Dummy test Internal Bible object"
     IB.sourceFolder = "Nowhere"
     if Globals.verbosityLevel > 0: print( IB )
 if __name__ == '__main__':

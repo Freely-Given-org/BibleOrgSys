@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # USFMBibleBook.py
-#   Last modified: 2012-05-28 by RJH (also update versionString below)
+#   Last modified: 2012-05-29 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -27,12 +27,11 @@ Module for defining and manipulating USFM Bible books.
 """
 
 progName = "USFM Bible book handler"
-versionString = "0.21"
+versionString = "0.22"
 
 
 import os, logging
 from gettext import gettext as _
-#from collections import OrderedDict
 
 import Globals
 from InternalBibleBook import InternalBibleBook
@@ -43,11 +42,11 @@ class USFMBibleBook( InternalBibleBook ):
     Class to load and manipulate a single USFM file / book.
     """
 
-    def __init__( self ):
+    def __init__( self, logErrorsFlag ):
         """
         Create the USFM Bible book object.
         """
-        InternalBibleBook.__init__( self ) # Initialise the base class
+        InternalBibleBook.__init__( self, logErrorsFlag ) # Initialise the base class
         self.objectType = "USFM"
         self.objectNameString = "USFM Bible Book object"
     # end of __init__
@@ -85,10 +84,10 @@ class USFMBibleBook( InternalBibleBook ):
             elif self.USFMMarkers.isInternalMarker( marker ): # the line begins with an internal marker -- append it to the previous line
                 if text:
                     loadErrors.append( _("{} {}:{} Found '\\{}' internal marker at beginning of line with text: {}").format( self.bookReferenceCode, c, v, marker, text ) )
-                    if self.logErrors: logging.warning( _("Found '\\{}' internal marker after {} {}:{} at beginning of line with text: {}").format( marker, self.bookReferenceCode, c, v, text ) )
+                    if self.logErrorsFlag: logging.warning( _("Found '\\{}' internal marker after {} {}:{} at beginning of line with text: {}").format( marker, self.bookReferenceCode, c, v, text ) )
                 else: # no text
                     loadErrors.append( _("{} {}:{} Found '\\{}' internal marker at beginning of line (with no text)").format( self.bookReferenceCode, c, v, marker ) )
-                    if self.logErrors: logging.warning( _("Found '\\{}' internal marker after {} {}:{} at beginning of line (with no text)").format( marker, self.bookReferenceCode, c, v ) )
+                    if self.logErrorsFlag: logging.warning( _("Found '\\{}' internal marker after {} {}:{} at beginning of line (with no text)").format( marker, self.bookReferenceCode, c, v ) )
                 self.addPriorityError( 97, c, v, _("Found \\{} internal marker on new line in file").format( marker ) )
                 #lastText += '' if lastText.endswith(' ') else ' ' # Not always good to add a space, but it's their fault!
                 lastText +=  '\\' + marker + ' ' + text
@@ -96,17 +95,17 @@ class USFMBibleBook( InternalBibleBook ):
             else: # the line begins with an unknown marker
                 if text:
                     loadErrors.append( _("{} {}:{} Found '\\{}' unknown marker at beginning of line with text: {}").format( self.bookReferenceCode, c, v, marker, text ) )
-                    if self.logErrors: logging.error( _("Found '\\{}' unknown marker after {} {}:{} at beginning of line with text: {}").format( marker, self.bookReferenceCode, c, v, text ) )
+                    if self.logErrorsFlag: logging.error( _("Found '\\{}' unknown marker after {} {}:{} at beginning of line with text: {}").format( marker, self.bookReferenceCode, c, v, text ) )
                 else: # no text
                     loadErrors.append( _("{} {}:{} Found '\\{}' unknown marker at beginning of line (with no text").format( self.bookReferenceCode, c, v, marker ) )
-                    if self.logErrors: logging.error( _("Found '\\{}' unknown marker after {} {}:{} at beginning of line (with no text)").format( marker, self.bookReferenceCode, c, v ) )
+                    if self.logErrorsFlag: logging.error( _("Found '\\{}' unknown marker after {} {}:{} at beginning of line (with no text)").format( marker, self.bookReferenceCode, c, v ) )
                 self.addPriorityError( 100, c, v, _("Found \\{} unknown marker on new line in file").format( marker ) )
                 for tryMarker in sorted( self.USFMMarkers.getNewlineMarkersList(), key=len, reverse=True ): # Try to do something intelligent here -- it might be just a missing space
                     if marker.startswith( tryMarker ): # Let's try changing it
                         if lastMarker: self.appendLine( lastMarker, lastText )
                         lastMarker, lastText = tryMarker, marker[len(tryMarker):] + ' ' + text
                         loadErrors.append( _("{} {}:{} Changed '\\{}' unknown marker to '{}' at beginning of line: {}").format( self.bookReferenceCode, c, v, marker, tryMarker, text ) )
-                        if self.logErrors: logging.warning( _("Changed '\\{}' unknown marker to '{}' after {} {}:{} at beginning of line: {}").format( marker, tryMarker, self.bookReferenceCode, c, v, text ) )
+                        if self.logErrorsFlag: logging.warning( _("Changed '\\{}' unknown marker to '{}' after {} {}:{} at beginning of line: {}").format( marker, tryMarker, self.bookReferenceCode, c, v, text ) )
                         break
                 # Otherwise, don't bother processing this line -- it'll just cause more problems later on
         if lastMarker: self.appendLine( lastMarker, lastText ) # Process the final line
@@ -135,8 +134,7 @@ def main():
         fileList = USFMFilenames.USFMFilenames( testFolder ).getActualFilenames()
         for bookReferenceCode,filename in fileList:
             if Globals.verbosityLevel > 1: print( _("Loading {} from {}...").format( bookReferenceCode, filename ) )
-            UBB = USFMBibleBook()
-            UBB.logErrors = False
+            UBB = USFMBibleBook( False ) # The parameter is the logErrorsFlag
             UBB.load( bookReferenceCode, testFolder, filename, encoding )
             if Globals.verbosityLevel > 1: print( "  ID is '{}'".format( UBB.getField( 'id' ) ) )
             if Globals.verbosityLevel > 1: print( "  Header is '{}'".format( UBB.getField( 'h' ) ) )

@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # USXBible.py
-#   Last modified: 2012-05-28 by RJH (also update versionString below)
+#   Last modified: 2012-05-29 by RJH (also update versionString below)
 #
 # Module handling compilations of USX Bible books
 #
@@ -27,7 +27,7 @@ Module for defining and manipulating complete or partial USX Bibles.
 """
 
 progName = "USX Bible handler"
-versionString = "0.01"
+versionString = "0.02"
 
 
 import os, logging, datetime
@@ -35,7 +35,6 @@ from gettext import gettext as _
 from collections import OrderedDict
 
 import Globals
-#import ControlFiles
 from USXBibleBook import USXBibleBook
 from InternalBible import InternalBible
 
@@ -45,11 +44,11 @@ class USXBible( InternalBible ):
     Class to load and manipulate USX Bibles.
 
     """
-    def __init__( self, name ):
+    def __init__( self, name, logErrorsFlag ):
         """
         Create the internal USX Bible object.
         """
-        InternalBible.__init__( self, name ) # Initialise the base class
+        InternalBible.__init__( self, name, logErrorsFlag ) # Initialise the base class
         self.objectType = "USX"
         self.objectNameString = "USX Bible object"
     # end of __init_
@@ -148,7 +147,7 @@ class USXBible( InternalBible ):
 
         # Load the books one by one -- assuming that they have regular Paratext style filenames
         for BBB,filename in self.USXFilenamesObject.getActualFilenames():
-            UBB = USXBibleBook()
+            UBB = USXBibleBook( self.logErrorsFlag )
             UBB.load( BBB, folder, filename, encoding )
             UBB.validateUSFM()
             #print( UBB )
@@ -178,7 +177,7 @@ class USXBible( InternalBible ):
                             isUSX = True
                         break # We only look at the first line
                 if isUSX:
-                    UBB = USXBibleBook()
+                    UBB = USXBibleBook( self.logErrorsFlag )
                     UBB.load( BBB, folder, thisFilename, encoding )
                     UBB.validateUSFM()
                     print( UBB )
@@ -210,8 +209,8 @@ def main():
 
     name, encoding, testFolder = "Matigsalug", "utf-8", "/mnt/Work/VirtualBox_Shared_Folder/USXExports/Projects/MBTV/" # You can put your USX test folder here
     if os.access( testFolder, os.R_OK ):
-        UB = USXBible( name )
-        UB.load( testFolder, encoding, logErrors=False )
+        UB = USXBible( name, False ) # The second parameter is the logErrorsFlag
+        UB.load( testFolder, encoding )
         if Globals.verbosityLevel > 0: print( UB )
         UB.check()
         #UBErrors = UB.getErrors()

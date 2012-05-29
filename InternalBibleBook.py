@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # InternalBibleBook.py
-#   Last modified: 2012-05-28 by RJH (also update versionString below)
+#   Last modified: 2012-05-29 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -39,7 +39,7 @@ and then calls
 """
 
 progName = "Internal Bible book handler"
-versionString = "0.03"
+versionString = "0.04"
 
 
 import os, logging
@@ -65,14 +65,14 @@ class InternalBibleBook:
     The load routine (which populates self._rawLines) must be provided.
     """
 
-    def __init__( self ):
+    def __init__( self, logErrorsFlag ):
         """
         Create the USFM Bible book object.
         """
+        self.logErrorsFlag = logErrorsFlag
         self.bookReferenceCode = None
         self._rawLines = [] # Contains 2-tuples which contain the actual Bible text -- see appendRawLine below
         self._processed = self._indexed = False
-        self.logErrors = False
         self.errorDictionary = OrderedDict()
         self.errorDictionary['Priority Errors'] = [] # Put this one first in the ordered dictionary
         self.givenAngleBracketWarning = self.givenDoubleQuoteWarning = False
@@ -155,7 +155,7 @@ class InternalBibleBook:
             # Remove trailing spaces
             if adjText and adjText[-1].isspace():
                 #print( 10, self.bookReferenceCode, c, v, _("Trailing space at end of line") )
-                if self.logErrors: logging.warning( _("Removed trailing space after {} {}:{} in \\{}: '{}'").format( self.bookReferenceCode, c, v, originalMarker, text ) )
+                if self.logErrorsFlag: logging.warning( _("Removed trailing space after {} {}:{} in \\{}: '{}'").format( self.bookReferenceCode, c, v, originalMarker, text ) )
                 self.addPriorityError( 10, c, v, _("Trailing space at end of line") )
                 adjText = adjText.rstrip()
                 #print( originalMarker, "'"+text+"'", "'"+adjText+"'" )
@@ -164,14 +164,14 @@ class InternalBibleBook:
             if '<' in adjText or '>' in adjText:
                 if not self.givenAngleBracketWarning: # Just give the warning once (per book)
                     #fixErrors.append( _("{} {}:{} Replaced angle brackets in {}: {}").format( self.bookReferenceCode, c, v, originalMarker, text ) )
-                    if self.logErrors: logging.info( _("Replaced angle bracket(s) after {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, text ) )
+                    if self.logErrorsFlag: logging.info( _("Replaced angle bracket(s) after {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, text ) )
                     self.addPriorityError( 3, '', '', _("Book contains angle brackets") )
                     self.givenAngleBracketWarning = True
                 adjText = adjText.replace('<<','“').replace('>>','”').replace('<','‘').replace('>','’') # Replace angle brackets with the proper opening and close quote marks
             if '"' in adjText:
                 if not self.givenDoubleQuoteWarning: # Just give the warning once (per book)
                     fixErrors.append( _("{} {}:{} Replaced \" in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
-                    if self.logErrors: logging.info( _("Replaced \" after {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
+                    if self.logErrorsFlag: logging.info( _("Replaced \" after {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
                     self.addPriorityError( 8, '', '', _("Book contains straight quote signs") )
                     self.givenDoubleQuoteWarning = True
                 adjText = adjText.replace(' "',' “').replace('"','”') # Try to replace double-quote marks with the proper opening and closing quote marks
@@ -195,12 +195,12 @@ class InternalBibleBook:
                     thisOne, this1 = "cross-reference", "xr"
                 if ix2 == -1: # no closing marker
                     fixErrors.append( _("{} {}:{} Found unmatched {} open in \\{}: {}").format( self.bookReferenceCode, c, v, thisOne, originalMarker, adjText ) )
-                    if self.logErrors: logging.error( _("Found unmatched {} open after {} {}:{} in \\{}: {}").format( thisOne, self.bookReferenceCode, c, v, originalMarker, adjText ) )
+                    if self.logErrorsFlag: logging.error( _("Found unmatched {} open after {} {}:{} in \\{}: {}").format( thisOne, self.bookReferenceCode, c, v, originalMarker, adjText ) )
                     self.addPriorityError( 84, c, v, _("Marker {} is unmatched").format( thisOne ) )
                     ix2 = 99999 # Go to the end
                 elif ix2 < ix1: # closing marker is before opening marker
                     fixErrors.append( _("{} {}:{} Found unmatched {} in \\{}: {}").format( self.bookReferenceCode, c, v, thisOne, originalMarker, adjText ) )
-                    if self.logErrors: logging.error( _("Found unmatched {} after {} {}:{} in \\{}: {}").format( thisOne, self.bookReferenceCode, c, v, thisOne, originalMarker, adjText ) )
+                    if self.logErrorsFlag: logging.error( _("Found unmatched {} after {} {}:{} in \\{}: {}").format( thisOne, self.bookReferenceCode, c, v, thisOne, originalMarker, adjText ) )
                     self.addPriorityError( 84, c, v, _("Marker {} is unmatched").format( thisOne ) )
                     ix1, ix2 = ix2, ix1 # swap them then
                 # Remove the footnote or xref
@@ -208,17 +208,17 @@ class InternalBibleBook:
                 note = adjText[ix1+3:ix2] # Get the note text (without the beginning and end markers)
                 if not note:
                     fixErrors.append( _("{} {}:{} Found empty {} in \\{}: {}").format( self.bookReferenceCode, c, v, thisOne, originalMarker, adjText ) )
-                    if self.logErrors: logging.error( _("Found empty {} after {} {}:{} in \\{}: {}").format( thisOne, self.bookReferenceCode, c, v, originalMarker, adjText ) )
+                    if self.logErrorsFlag: logging.error( _("Found empty {} after {} {}:{} in \\{}: {}").format( thisOne, self.bookReferenceCode, c, v, originalMarker, adjText ) )
                     self.addPriorityError( 53, c, v, _("Empty {}").format( thisOne ) )
                 else: # there is a note
                     if note[0].isspace():
                         fixErrors.append( _("{} {}:{} Found {} starting with space in \\{}: {}").format( self.bookReferenceCode, c, v, thisOne, originalMarker, adjText ) )
-                        if self.logErrors: logging.error( _("Found {} starting with space after {} {}:{} in \\{}: {}").format( thisOne, self.bookReferenceCode, c, v, originalMarker, adjText ) )
+                        if self.logErrorsFlag: logging.error( _("Found {} starting with space after {} {}:{} in \\{}: {}").format( thisOne, self.bookReferenceCode, c, v, originalMarker, adjText ) )
                         self.addPriorityError( 12, c, v, _("{} starts with space").format( thisOne.title() ) )
                         note = note.lstrip()
                     if note and note[-1].isspace():
                         fixErrors.append( _("{} {}:{} Found {} ending with space in \\{}: {}").format( self.bookReferenceCode, c, v, thisOne, originalMarker, adjText ) )
-                        if self.logErrors: logging.error( _("Found {} ending with space after {} {}:{} in \\{}: {}").format( thisOne, self.bookReferenceCode, c, v, originalMarker, adjText ) )
+                        if self.logErrorsFlag: logging.error( _("Found {} ending with space after {} {}:{} in \\{}: {}").format( thisOne, self.bookReferenceCode, c, v, originalMarker, adjText ) )
                         self.addPriorityError( 11, c, v, _("{} ends with space").format( thisOne.title() ) )
                         note = note.rstrip()
                 adjText = adjText[:ix1] + adjText[ix2+3:] # Remove the note completely from the text
@@ -231,13 +231,13 @@ class InternalBibleBook:
 
             if '\\f' in lcAdjText or '\\x' in lcAdjText:
                 fixErrors.append( _("{} {}:{} Unable to properly process footnotes and cross-references in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
-                if self.logErrors: logging.error( _("Unable to properly process footnotes and cross-references {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
+                if self.logErrorsFlag: logging.error( _("Unable to properly process footnotes and cross-references {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
                 self.addPriorityError( 82, c, v, _("Invalid footnotes or cross-refernces") )
 
             # Check trailing spaces again now
             if adjText and adjText[-1].isspace():
                 #print( 10, self.bookReferenceCode, c, v, _("Trailing space before note at end of line") )
-                if self.logErrors: logging.warning( _("Removed trailing space before note after {} {}:{} in \\{}: '{}'").format( self.bookReferenceCode, c, v, originalMarker, text ) )
+                if self.logErrorsFlag: logging.warning( _("Removed trailing space before note after {} {}:{} in \\{}: '{}'").format( self.bookReferenceCode, c, v, originalMarker, text ) )
                 self.addPriorityError( 10, c, v, _("Trailing space before note at end of line") )
                 adjText = adjText.rstrip()
                 #print( originalMarker, "'"+text+"'", "'"+adjText+"'" )
@@ -274,7 +274,7 @@ class InternalBibleBook:
                     if self.USFMMarkers.isNewlineMarker(insideMarker): # Need to split the line for everything else to work properly
                         if ix==0:
                             fixErrors.append( _("{} {}:{} Marker '{}' shouldn't appear within line in \\{}: '{}'").format( self.bookReferenceCode, c, v, insideMarker, marker, text ) )
-                            if self.logErrors: logging.error( _("Marker '{}' shouldn't appear within line after {} {}:{} in \\{}: '{}'").format( insideMarker, self.bookReferenceCode, c, v, marker, text ) ) # Only log the first error in the line
+                            if self.logErrorsFlag: logging.error( _("Marker '{}' shouldn't appear within line after {} {}:{} in \\{}: '{}'").format( insideMarker, self.bookReferenceCode, c, v, marker, text ) ) # Only log the first error in the line
                             self.addPriorityError( 96, c, v, _("Marker \\{} shouldn't be inside a line").format( insideMarker ) )
                         thisText = text[ix:iMIndex].rstrip()
                         adjText, extras = processLineFix( originalMarker, thisText )
@@ -336,36 +336,36 @@ class InternalBibleBook:
                 if text: c = text.split()[0]
                 else:
                     validationErrors.append( _("{} {}:{} Missing chapter number").format( self.bookReferenceCode, c, v ) )
-                    if self.logErrors: logging.error( _("Missing chapter number after {} {}:{}").format( self.bookReferenceCode, c, v ) )
+                    if self.logErrorsFlag: logging.error( _("Missing chapter number after {} {}:{}").format( self.bookReferenceCode, c, v ) )
                 v = '0'
             if marker == 'v':
                 if text: v = text.split()[0]
                 else:
                     validationErrors.append( _("{} {}:{} Missing verse number").format( self.bookReferenceCode, c, v ) )
-                    if self.logErrors: logging.error( _("Missing verse number after {} {}:{}").format( self.bookReferenceCode, c, v ) )
+                    if self.logErrorsFlag: logging.error( _("Missing verse number after {} {}:{}").format( self.bookReferenceCode, c, v ) )
             if marker == 'v+': marker = 'v' # Makes it easier
 
             # Do a rough check of the SFMs
             if marker=='id' and j!=0:
                 validationErrors.append( _("{} {}:{} Marker 'id' should only appear as the first marker in a book but found on line {} in {}: {}").format( self.bookReferenceCode, c, v, j, marker, text ) )
-                if self.logErrors: logging.error( _("Marker 'id' should only appear as the first marker in a book but found on line {} after {} {}:{} in {}: {}").format( j, self.bookReferenceCode, c, v, marker, text ) )
+                if self.logErrorsFlag: logging.error( _("Marker 'id' should only appear as the first marker in a book but found on line {} after {} {}:{} in {}: {}").format( j, self.bookReferenceCode, c, v, marker, text ) )
             if not self.USFMMarkers.isNewlineMarker( marker ):
                 validationErrors.append( _("{} {}:{} Unexpected '\\{}' newline marker in Bible book (Text is '{}')").format( self.bookReferenceCode, c, v, marker, text ) )
-                if self.logErrors: logging.warning( _("Unexpected '\\{}' newline marker in Bible book after {} {}:{} (Text is '{}')").format( marker, self.bookReferenceCode, c, v, text ) )
+                if self.logErrorsFlag: logging.warning( _("Unexpected '\\{}' newline marker in Bible book after {} {}:{} (Text is '{}')").format( marker, self.bookReferenceCode, c, v, text ) )
             if self.USFMMarkers.isDeprecatedMarker( marker ):
                 validationErrors.append( _("{} {}:{} Deprecated '\\{}' newline marker in Bible book (Text is '{}')").format( self.bookReferenceCode, c, v, marker, text ) )
-                if self.logErrors: logging.warning( _("Deprecated '\\{}' newline marker in Bible book after {} {}:{} (Text is '{}')").format( marker, self.bookReferenceCode, c, v, text ) )
+                if self.logErrorsFlag: logging.warning( _("Deprecated '\\{}' newline marker in Bible book after {} {}:{} (Text is '{}')").format( marker, self.bookReferenceCode, c, v, text ) )
             markerList = self.USFMMarkers.getMarkerListFromText( text )
             #if markerList: print( "\nText = {}:'{}'".format(marker,text)); print( markerList )
             for insideMarker, nextSignificantChar, iMIndex in markerList: # check character markers
                 if self.USFMMarkers.isDeprecatedMarker( insideMarker ):
                     validationErrors.append( _("{} {}:{} Deprecated '\\{}' internal marker in Bible book (Text is '{}')").format( self.bookReferenceCode, c, v, insideMarker, text ) )
-                    if self.logErrors: logging.warning( _("Deprecated '\\{}' internal marker in Bible book after {} {}:{} (Text is '{}')").format( insideMarker, self.bookReferenceCode, c, v, text ) )
+                    if self.logErrorsFlag: logging.warning( _("Deprecated '\\{}' internal marker in Bible book after {} {}:{} (Text is '{}')").format( insideMarker, self.bookReferenceCode, c, v, text ) )
             ix = 0
             for insideMarker, nextSignificantChar, iMIndex in markerList: # check newline markers
                 if self.USFMMarkers.isNewlineMarker(insideMarker):
                     validationErrors.append( _("{} {}:{} Marker '\\{}' shouldn't appear within line in {}: {}").format( self.bookReferenceCode, c, v, insideMarker, marker, text ) )
-                    if self.logErrors: logging.error( _("Marker '\\{}' shouldn't appear within line after {} {}:{} in {}: {}").format( insideMarker, self.bookReferenceCode, c, v, marker, text ) )
+                    if self.logErrorsFlag: logging.error( _("Marker '\\{}' shouldn't appear within line after {} {}:{} in {}: {}").format( insideMarker, self.bookReferenceCode, c, v, marker, text ) )
 
         if validationErrors: self.errorDictionary['Validation Errors'] = validationErrors
     # end of validateUSFM
@@ -447,25 +447,25 @@ class InternalBibleBook:
                 chapterText = text.strip()
                 if ' ' in chapterText: # Seems that we can have footnotes here :)
                     versificationErrors.append( _("{} {}:{} Unexpected space in USFM chapter number field '{}'").format( self.bookReferenceCode, lastChapterNumber, lastVerseNumberString, chapterText, lastChapterNumber ) )
-                    if self.logErrors: logging.info( _("Unexpected space in USFM chapter number field '{}' after chapter {} of {}").format( chapterText, lastChapterNumber, self.bookReferenceCode ) )
+                    if self.logErrorsFlag: logging.info( _("Unexpected space in USFM chapter number field '{}' after chapter {} of {}").format( chapterText, lastChapterNumber, self.bookReferenceCode ) )
                     chapterText = chapterText.split( None, 1)[0]
                 #print( "{} chapter {}".format( self.bookReferenceCode, chapterText ) )
                 chapterNumber = int( chapterText)
                 if chapterNumber != lastChapterNumber+1:
                     versificationErrors.append( _("{} ({} after {}) USFM chapter numbers out of sequence in Bible book").format( self.bookReferenceCode, chapterNumber, lastChapterNumber ) )
-                    if self.logErrors: logging.error( _("USFM chapter numbers out of sequence in Bible book {} ({} after {})").format( self.bookReferenceCode, chapterNumber, lastChapterNumber ) )
+                    if self.logErrorsFlag: logging.error( _("USFM chapter numbers out of sequence in Bible book {} ({} after {})").format( self.bookReferenceCode, chapterNumber, lastChapterNumber ) )
                 lastChapterNumber = chapterNumber
                 verseText = verseNumberString = lastVerseNumberString = '0'
             elif marker == 'cp':
                 versificationErrors.append( _("{} {}:{} Encountered cp field {}").format( self.bookReferenceCode, chapterNumber, lastVerseNumberString, text ) )
-                if self.logErrors: logging.warning( _("Encountered cp field {} after {}:{} of {}").format( text, chapterNumber, lastVerseNumberString, self.bookReferenceCode ) )
+                if self.logErrorsFlag: logging.warning( _("Encountered cp field {} after {}:{} of {}").format( text, chapterNumber, lastVerseNumberString, self.bookReferenceCode ) )
             elif marker == 'v':
                 if chapterText == '0':
                     versificationErrors.append( _("{} {} Missing chapter number field before verse {}").format( self.bookReferenceCode, chapterText, text ) )
-                    if self.logErrors: logging.warning( _("Missing chapter number field before verse {} in chapter {} of {}").format( text, chapterText, self.bookReferenceCode ) )
+                    if self.logErrorsFlag: logging.warning( _("Missing chapter number field before verse {} in chapter {} of {}").format( text, chapterText, self.bookReferenceCode ) )
                 if not text:
                     versificationErrors.append( _("{} {} Missing USFM verse number after {}").format( self.bookReferenceCode, chapterNumber, lastVerseNumberString ) )
-                    if self.logErrors: logging.warning( _("Missing USFM verse number after {} in chapter {} of {}").format( lastVerseNumberString, chapterNumber, self.bookReferenceCode ) )
+                    if self.logErrorsFlag: logging.warning( _("Missing USFM verse number after {} in chapter {} of {}").format( lastVerseNumberString, chapterNumber, self.bookReferenceCode ) )
                     continue
                 verseText = text
                 doneWarning = False
@@ -473,12 +473,12 @@ class InternalBibleBook:
                     if char in verseText:
                         if not doneWarning:
                             versificationErrors.append( _("{} {} Removing letter(s) from USFM verse number {} in Bible book").format( self.bookReferenceCode, chapterText, verseText ) )
-                            if self.logErrors: logging.info( _("Removing letter(s) from USFM verse number {} in Bible book {} {}").format( verseText, self.bookReferenceCode, chapterText ) )
+                            if self.logErrorsFlag: logging.info( _("Removing letter(s) from USFM verse number {} in Bible book {} {}").format( verseText, self.bookReferenceCode, chapterText ) )
                             doneWarning = True
                         verseText = verseText.replace( char, '' )
                 if '-' in verseText or '–' in verseText: # we have a range like 7-9 with hyphen or en-dash
                     #versificationErrors.append( _("{} {}:{} Encountered combined verses field {}").format( self.bookReferenceCode, chapterNumber, lastVerseNumberString, verseText ) )
-                    if self.logErrors: logging.info( _("Encountered combined verses field {} after {}:{} of {}").format( verseText, chapterNumber, lastVerseNumberString, self.bookReferenceCode ) )
+                    if self.logErrorsFlag: logging.info( _("Encountered combined verses field {} after {}:{} of {}").format( verseText, chapterNumber, lastVerseNumberString, self.bookReferenceCode ) )
                     bits = verseText.replace('–','-').split( '-', 1 ) # Make sure that it's a hyphen then split once
                     verseNumberString, verseNumber = bits[0], 0
                     endVerseNumberString, endVerseNumber = bits[1], 0
@@ -486,20 +486,20 @@ class InternalBibleBook:
                         verseNumber = int( verseNumberString )
                     except:
                         versificationErrors.append( _("{} {} Invalid USFM verse range start '{}' in '{}' in Bible book").format( self.bookReferenceCode, chapterText, verseNumberString, verseText ) )
-                        if self.logErrors: logging.error( _("Invalid USFM verse range start '{}' in '{}' in Bible book {} {}").format( verseNumberString, verseText, self.bookReferenceCode, chapterText ) )
+                        if self.logErrorsFlag: logging.error( _("Invalid USFM verse range start '{}' in '{}' in Bible book {} {}").format( verseNumberString, verseText, self.bookReferenceCode, chapterText ) )
                     try:
                         endVerseNumber = int( endVerseNumberString )
                     except:
                         versificationErrors.append( _("{} {} Invalid USFM verse range end '{}' in '{}' in Bible book").format( self.bookReferenceCode, chapterText, endVerseNumberString, verseText ) )
-                        if self.logErrors: logging.error( _("Invalid USFM verse range end '{}' in '{}' in Bible book {} {}").format( endVerseNumberString, verseText, self.bookReferenceCode, chapterText ) )
+                        if self.logErrorsFlag: logging.error( _("Invalid USFM verse range end '{}' in '{}' in Bible book {} {}").format( endVerseNumberString, verseText, self.bookReferenceCode, chapterText ) )
                     if verseNumber >= endVerseNumber:
                         versificationErrors.append( _("{} {} ({}-{}) USFM verse range out of sequence in Bible book").format( self.bookReferenceCode, chapterText, verseNumberString, endVerseNumberString ) )
-                        if self.logErrors: logging.error( _("USFM verse range out of sequence in Bible book {} {} ({}-{})").format( self.bookReferenceCode, chapterText, verseNumberString, endVerseNumberString ) )
+                        if self.logErrorsFlag: logging.error( _("USFM verse range out of sequence in Bible book {} {} ({}-{})").format( self.bookReferenceCode, chapterText, verseNumberString, endVerseNumberString ) )
                     #else:
                     combinedVerses.append( (chapterText, verseText,) )
                 elif ',' in verseText: # we have a range like 7,8
                     versificationErrors.append( _("{} {}:{} Encountered comma combined verses field {}").format( self.bookReferenceCode, chapterNumber, lastVerseNumberString, verseText ) )
-                    if self.logErrors: logging.info( _("Encountered comma combined verses field {} after {}:{} of {}").format( verseText, chapterNumber, lastVerseNumberString, self.bookReferenceCode ) )
+                    if self.logErrorsFlag: logging.info( _("Encountered comma combined verses field {} after {}:{} of {}").format( verseText, chapterNumber, lastVerseNumberString, self.bookReferenceCode ) )
                     bits = verseText.split( ',', 1 )
                     verseNumberString, verseNumber = bits[0], 0
                     endVerseNumberString, endVerseNumber = bits[1], 0
@@ -507,15 +507,15 @@ class InternalBibleBook:
                         verseNumber = int( verseNumberString )
                     except:
                         versificationErrors.append( _("{} {} Invalid USFM verse list start '{}' in '{}' in Bible book").format( self.bookReferenceCode, chapterText, verseNumberString, verseText ) )
-                        if self.logErrors: logging.error( _("Invalid USFM verse list start '{}' in '{}' in Bible book {} {}").format( verseNumberString, verseText, self.bookReferenceCode, chapterText ) )
+                        if self.logErrorsFlag: logging.error( _("Invalid USFM verse list start '{}' in '{}' in Bible book {} {}").format( verseNumberString, verseText, self.bookReferenceCode, chapterText ) )
                     try:
                         endVerseNumber = int( endVerseNumberString )
                     except:
                         versificationErrors.append( _("{} {} Invalid USFM verse list end '{}' in '{}' in Bible book").format( self.bookReferenceCode, chapterText, endVerseNumberString, verseText ) )
-                        if self.logErrors: logging.error( _("Invalid USFM verse list end '{}' in '{}' in Bible book {} {}").format( endVerseNumberString, verseText, self.bookReferenceCode, chapterText ) )
+                        if self.logErrorsFlag: logging.error( _("Invalid USFM verse list end '{}' in '{}' in Bible book {} {}").format( endVerseNumberString, verseText, self.bookReferenceCode, chapterText ) )
                     if verseNumber >= endVerseNumber:
                         versificationErrors.append( _("{} {} ({}-{}) USFM verse list out of sequence in Bible book").format( self.bookReferenceCode, chapterText, verseNumberString, endVerseNumberString ) )
-                        if self.logErrors: logging.error( _("USFM verse list out of sequence in Bible book {} {} ({}-{})").format( self.bookReferenceCode, chapterText, verseNumberString, endVerseNumberString ) )
+                        if self.logErrorsFlag: logging.error( _("USFM verse list out of sequence in Bible book {} {} ({}-{})").format( self.bookReferenceCode, chapterText, verseNumberString, endVerseNumberString ) )
                     #else:
                     combinedVerses.append( (chapterText, verseText,) )
                 else: # Should be just a single verse number
@@ -525,7 +525,7 @@ class InternalBibleBook:
                     verseNumber = int( verseNumberString )
                 except:
                     versificationErrors.append( _("{} {} {} Invalid verse number digits in Bible book").format( self.bookReferenceCode, chapterText, verseNumberString ) )
-                    if self.logErrors: logging.error( _("Invalid verse number digits in Bible book {} {} {}").format( self.bookReferenceCode, chapterText, verseNumberString ) )
+                    if self.logErrorsFlag: logging.error( _("Invalid verse number digits in Bible book {} {} {}").format( self.bookReferenceCode, chapterText, verseNumberString ) )
                     newString = ''
                     for char in verseNumberString:
                         if char.isdigit(): newString += char
@@ -542,11 +542,11 @@ class InternalBibleBook:
                 if verseNumber != lastVerseNumber+1:
                     if verseNumber <= lastVerseNumber:
                         versificationErrors.append( _("{} {} ({} after {}) USFM verse numbers out of sequence in Bible book").format( self.bookReferenceCode, chapterText, verseText, lastVerseNumberString ) )
-                        if self.logErrors: logging.warning( _("USFM verse numbers out of sequence in Bible book {} {} ({} after {})").format( self.bookReferenceCode, chapterText, verseText, lastVerseNumberString ) )
+                        if self.logErrorsFlag: logging.warning( _("USFM verse numbers out of sequence in Bible book {} {} ({} after {})").format( self.bookReferenceCode, chapterText, verseText, lastVerseNumberString ) )
                         reorderedVerses.append( (chapterText, lastVerseNumberString, verseText,) )
                     else: # Must be missing some verse numbers
                         versificationErrors.append( _("{} {} Missing USFM verse number(s) between {} and {} in Bible book").format( self.bookReferenceCode, chapterText, lastVerseNumberString, verseNumberString ) )
-                        if self.logErrors: logging.info( _("Missing USFM verse number(s) between {} and {} in Bible book {} {}").format( lastVerseNumberString, verseNumberString, self.bookReferenceCode, chapterText ) )
+                        if self.logErrorsFlag: logging.info( _("Missing USFM verse number(s) between {} and {} in Bible book {} {}").format( lastVerseNumberString, verseNumberString, self.bookReferenceCode, chapterText ) )
                         for number in range( lastVerseNumber+1, verseNumber ):
                             omittedVerses.append( (chapterText, str(number),) )
                 lastVerseNumberString = endVerseNumberString
@@ -583,7 +583,7 @@ class InternalBibleBook:
                 #print( self.bookReferenceCode, chapterText, marker, text )
                 if not text:
                     addedUnitErrors.append( _("{} {} Missing USFM verse number after {}").format( self.bookReferenceCode, chapterText, verseText ) )
-                    if self.logErrors: logging.warning( _("Missing USFM verse number after {} in chapter {} of {}").format( verseText, chapterText, self.bookReferenceCode ) )
+                    if self.logErrorsFlag: logging.warning( _("Missing USFM verse number after {} in chapter {} of {}").format( verseText, chapterText, self.bookReferenceCode ) )
                     self.addPriorityError( 86, chapterText, verseText, _("Missing verse number") )
                     continue
                 verseText = text
@@ -645,7 +645,7 @@ class InternalBibleBook:
             if reference in paragraphReferences:
                 if typical == 'F':
                     addedUnitNotices.append( _("{} {} Paragraph break is less common after {}").format( self.bookReferenceCode, c, v ) )
-                    if self.logErrors: logging.info( _("Paragraph break is less common after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                    if self.logErrorsFlag: logging.info( _("Paragraph break is less common after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
                     self.addPriorityError( 17, c, v, _("Less common to have a paragraph break after") )
                     #print( "Surprise", self.bookReferenceCode, reference, typical, present )
                 elif typical == 'S' and severe:
@@ -654,7 +654,7 @@ class InternalBibleBook:
             else: # we didn't have it
                 if typical == 'A':
                     addedUnitNotices.append( _("{} {} Paragraph break normally inserted after {}").format( self.bookReferenceCode, c, v ) )
-                    if self.logErrors: logging.info( _("Paragraph break normally inserted after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                    if self.logErrorsFlag: logging.info( _("Paragraph break normally inserted after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
                     self.addPriorityError( 27, c, v, _("Paragraph break normally inserted after") )
                     #print( "All", self.bookReferenceCode, reference, typical, present )
                 elif typical == 'M' and severe:
@@ -666,7 +666,7 @@ class InternalBibleBook:
                 c, v = reference[0], reference[1]
                 if len(reference)==3: v += reference[2] # append the suffix
                 addedUnitNotices.append( _("{} {} Paragraph break is unusual after {}").format( self.bookReferenceCode, c, v ) )
-                if self.logErrors: logging.info( _("Paragraph break is unusual after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                if self.logErrorsFlag: logging.info( _("Paragraph break is unusual after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
                 self.addPriorityError( 37, c, v, _("Unusual to have a paragraph break after") )
                 #print( "Weird paragraph after", self.bookReferenceCode, reference )
         if addedUnitNotices:
@@ -685,7 +685,7 @@ class InternalBibleBook:
             if reference in qReferences:
                 if typical == 'F':
                     addedUnitNotices.append( _("{} {} Quote Paragraph is less common after {}").format( self.bookReferenceCode, c, v ) )
-                    if self.logErrors: logging.info( _("Quote Paragraph is less common after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                    if self.logErrorsFlag: logging.info( _("Quote Paragraph is less common after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
                     self.addPriorityError( 17, c, v, _("Less common to have a Quote Paragraph after") )
                     #print( "Surprise", self.bookReferenceCode, reference, typical, present )
                 elif typical == 'S' and severe:
@@ -694,7 +694,7 @@ class InternalBibleBook:
             else: # we didn't have it
                 if typical == 'A':
                     addedUnitNotices.append( _("{} {} Quote Paragraph normally inserted after {}").format( self.bookReferenceCode, c, v ) )
-                    if self.logErrors: logging.info( _("Quote Paragraph normally inserted after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                    if self.logErrorsFlag: logging.info( _("Quote Paragraph normally inserted after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
                     self.addPriorityError( 27, c, v, _("Quote Paragraph normally inserted after") )
                     #print( "All", self.bookReferenceCode, reference, typical, present )
                 elif typical == 'M' and severe:
@@ -706,7 +706,7 @@ class InternalBibleBook:
                 c, v = reference[0], reference[1]
                 if len(reference)==3: v += reference[2] # append the suffix
                 addedUnitNotices.append( _("{} {} Quote Paragraph is unusual after {}").format( self.bookReferenceCode, c, v ) )
-                if self.logErrors: logging.info( _("Quote Paragraph is unusual after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                if self.logErrorsFlag: logging.info( _("Quote Paragraph is unusual after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
                 self.addPriorityError( 37, c, v, _("Unusual to have a Quote Paragraph after") )
                 #print( "Weird qParagraph after", self.bookReferenceCode, reference )
         if addedUnitNotices:
@@ -725,7 +725,7 @@ class InternalBibleBook:
             if reference in sectionHeadings:
                 if typical == 'F':
                     addedUnitNotices.append( _("{} {} Section Heading is less common after {}").format( self.bookReferenceCode, c, v ) )
-                    if self.logErrors: logging.info( _("Section Heading is less common after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                    if self.logErrorsFlag: logging.info( _("Section Heading is less common after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
                     self.addPriorityError( 17, c, v, _("Less common to have a Section Heading after") )
                     #print( "Surprise", self.bookReferenceCode, reference, typical, present )
                 elif typical == 'S' and severe:
@@ -734,7 +734,7 @@ class InternalBibleBook:
             else: # we didn't have it
                 if typical == 'A':
                     addedUnitNotices.append( _("{} {} Section Heading normally inserted after {}").format( self.bookReferenceCode, c, v ) )
-                    if self.logErrors: logging.info( _("Section Heading normally inserted after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                    if self.logErrorsFlag: logging.info( _("Section Heading normally inserted after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
                     self.addPriorityError( 27, c, v, _("Section Heading normally inserted after") )
                     #print( "All", self.bookReferenceCode, reference, typical, present )
                 elif typical == 'M' and severe:
@@ -747,7 +747,7 @@ class InternalBibleBook:
                 c, v = reference[0], reference[1]
                 if len(reference)==3: v += reference[2] # append the suffix
                 addedUnitNotices.append( _("{} {} Section Heading is unusual after {}").format( self.bookReferenceCode, c, v ) )
-                if self.logErrors: logging.info( _("Section Heading is unusual after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                if self.logErrorsFlag: logging.info( _("Section Heading is unusual after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
                 self.addPriorityError( 37, c, v, _("Unusual to have a Section Heading after") )
                 #print( "Weird section heading after", self.bookReferenceCode, reference )
         if addedUnitNotices:
@@ -765,7 +765,7 @@ class InternalBibleBook:
             if reference in sectionReferences:
                 if typical == 'F':
                     addedUnitNotices.append( _("{} {} Section Reference is less common after {}").format( self.bookReferenceCode, c, v ) )
-                    if self.logErrors: logging.info( _("Section Reference is less common after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                    if self.logErrorsFlag: logging.info( _("Section Reference is less common after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
                     self.addPriorityError( 17, c, v, _("Less common to have a Section Reference after") )
                     #print( "Surprise", self.bookReferenceCode, reference, typical, present )
                 elif typical == 'S' and severe:
@@ -774,7 +774,7 @@ class InternalBibleBook:
             else: # we didn't have it
                 if typical == 'A':
                     addedUnitNotices.append( _("{} {} Section Reference normally inserted after {}").format( self.bookReferenceCode, c, v ) )
-                    if self.logErrors: logging.info( _("Section Reference normally inserted after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                    if self.logErrorsFlag: logging.info( _("Section Reference normally inserted after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
                     self.addPriorityError( 27, c, v, _("Section Reference normally inserted after") )
                     #print( "All", self.bookReferenceCode, reference, typical, present )
                 elif typical == 'M' and severe:
@@ -787,7 +787,7 @@ class InternalBibleBook:
                 c, v = reference[0], reference[1]
                 if len(reference)==3: v += reference[2] # append the suffix
                 addedUnitNotices.append( _("{} {} Section Reference is unusual after {}").format( self.bookReferenceCode, c, v ) )
-                if self.logErrors: logging.info( _("Section Reference is unusual after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                if self.logErrorsFlag: logging.info( _("Section Reference is unusual after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
                 self.addPriorityError( 37, c, v, _("Unusual to have a Section Reference after") )
                 #print( "Weird Section Reference after", self.bookReferenceCode, reference )
         if addedUnitNotices:
@@ -826,8 +826,12 @@ class InternalBibleBook:
             elif marker=='r':
                 functionalCounts['Section Cross-References'] = 1 if 'Section Cross-References' not in functionalCounts else (functionalCounts['Section Cross-References'] + 1)
 
-            if marker!='v+': assert( marker in allAvailableNewlineMarkers ) # Should have been checked at load time
-            newlineMarkerCounts[marker] = 1 if marker not in newlineMarkerCounts else (newlineMarkerCounts[marker] + 1)
+            if marker == 'v+':
+                lastMarker, lastMarkerEmpty = 'v', markerEmpty
+                continue
+            else: # it's not our (non-USFM) v+ marker
+                assert( marker in allAvailableNewlineMarkers ) # Should have been checked at load time
+                newlineMarkerCounts[marker] = 1 if marker not in newlineMarkerCounts else (newlineMarkerCounts[marker] + 1)
 
             # Check the progression through the various sections
             newSection = self.USFMMarkers.markerOccursIn( marker if marker!='v+' else 'v' )
@@ -952,7 +956,7 @@ class InternalBibleBook:
 
                 if markerShouldHaveContent == 'N': # Never
                     newlineMarkerErrors.append( _("{} {}:{} Marker '{}' should not have content: '{}'").format( self.bookReferenceCode, c, v, marker, text ) )
-                    if self.logErrors: logging.warning( _("Marker '{}' should not have content after {} {}:{} with: '{}'").format( marker, self.bookReferenceCode, c, v, text ) )
+                    if self.logErrorsFlag: logging.warning( _("Marker '{}' should not have content after {} {}:{} with: '{}'").format( marker, self.bookReferenceCode, c, v, text ) )
                     self.addPriorityError( 83, c, v, _("Marker {} shouldn't have content").format( marker ) )
                 markerList = self.USFMMarkers.getMarkerListFromText( text )
                 #if markerList: print( "\nText {} {}:{} = {}:'{}'".format(self.bookReferenceCode, c, v, marker, text)); print( markerList )
@@ -960,34 +964,34 @@ class InternalBibleBook:
                 for insideMarker, nextSignificantChar, iMIndex in markerList: # check character markers
                     if not self.USFMMarkers.isInternalMarker( insideMarker ): # these errors have probably been noted already
                         internalMarkerErrors.append( _("{} {}:{} Non-internal {} marker in {}: {}").format( self.bookReferenceCode, c, v, insideMarker, marker, text ) )
-                        if self.logErrors: logging.warning( _("Non-internal {} marker after {} {}:{} in {}: {}").format( insideMarker, self.bookReferenceCode, c, v, marker, text ) )
+                        if self.logErrorsFlag: logging.warning( _("Non-internal {} marker after {} {}:{} in {}: {}").format( insideMarker, self.bookReferenceCode, c, v, marker, text ) )
                         self.addPriorityError( 66, c, v, _("Non-internal {} marker").format( insideMarker, ) )
                     else:
                         if not openList: # no open markers
                             if nextSignificantChar in ('',' '): openList.append( insideMarker ) # Got a new marker
                             else:
                                 internalMarkerErrors.append( _("{} {}:{} Unexpected {}{} marker in {}: {}").format( self.bookReferenceCode, c, v, insideMarker, nextSignificantChar, marker, text ) )
-                                if self.logErrors: logging.warning( _("Unexpected {}{} marker after {} {}:{} in {}: {}").format( insideMarker, nextSignificantChar, self.bookReferenceCode, c, v, marker, text ) )
+                                if self.logErrorsFlag: logging.warning( _("Unexpected {}{} marker after {} {}:{} in {}: {}").format( insideMarker, nextSignificantChar, self.bookReferenceCode, c, v, marker, text ) )
                                 self.addPriorityError( 66, c, v, _("Unexpected {}{} marker").format( insideMarker, nextSignificantChar ) )
                         else: # have at least one open marker
                             if nextSignificantChar=='*':
                                 if insideMarker==openList[-1]: openList.pop() # We got the correct closing marker
                                 else:
                                     internalMarkerErrors.append( _("{} {}:{} Wrong {}* closing marker for {} in {}: {}").format( self.bookReferenceCode, c, v, insideMarker, openList[-1], marker, text ) )
-                                    if self.logErrors: logging.warning( _("Wrong {}* closing marker for {} after {} {}:{} in {}: {}").format( insideMarker, openList[-1], self.bookReferenceCode, c, v, marker, text ) )
+                                    if self.logErrorsFlag: logging.warning( _("Wrong {}* closing marker for {} after {} {}:{} in {}: {}").format( insideMarker, openList[-1], self.bookReferenceCode, c, v, marker, text ) )
                                     self.addPriorityError( 66, c, v, _("Wrong {}* closing marker for {}").format( insideMarker, openList[-1] ) )
                             else: # it's not an asterisk so appears to be another marker
                                 if not self.USFMMarkers.isNestingMarker( openList[-1] ): openList.pop() # Let this marker close the last one
                                 openList.append( insideMarker ) # Now have multiple entries in the openList
                 if openList:
                     internalMarkerErrors.append( _("{} {}:{} Marker(s) {} don't appear to be closed in {}: {}").format( self.bookReferenceCode, c, v, openList, marker, text ) )
-                    if self.logErrors: logging.warning( _("Marker(s) {} don't appear to be closed after {} {}:{} in {}: {}").format( openList, self.bookReferenceCode, c, v, marker, text ) )
+                    if self.logErrorsFlag: logging.warning( _("Marker(s) {} don't appear to be closed after {} {}:{} in {}: {}").format( openList, self.bookReferenceCode, c, v, marker, text ) )
                     self.addPriorityError( 36, c, v, _("Marker(s) {} should be closed").format( openList ) )
                     if len(openList) == 1: text += '\\' + openList[-1] + '*' # Try closing the last one for them
             else: # There's no text
                 if markerShouldHaveContent == 'A': # Always
                     newlineMarkerErrors.append( _("{} {}:{} Marker '{}' has no content").format( self.bookReferenceCode, c, v, marker ) )
-                    if self.logErrors: logging.warning( _("Marker '{}' has no content after {} {}:{}").format( marker, self.bookReferenceCode, c, v ) )
+                    if self.logErrorsFlag: logging.warning( _("Marker '{}' has no content after {} {}:{}").format( marker, self.bookReferenceCode, c, v ) )
                     self.addPriorityError( 47, c, v, _("Marker {} should have content").format( marker ) )
 
             if extras:
@@ -1089,29 +1093,29 @@ class InternalBibleBook:
             if (ix==0 or modifiedMarkerList[ix-1]!='mt1') and (ix==len(modifiedMarkerList)-1 or modifiedMarkerList[ix+1]!='mt1'):
                 newlineMarkerErrors.append( _("{} Expected mt2 marker to be next to an mt1 marker in {}...").format( self.bookReferenceCode, modifiedMarkerList[:10] ) )
 
-        if 'SFMs' not in self.errorDictionary: self.errorDictionary['SFMs'] = OrderedDict() # So we hopefully get the errors first
-        if newlineMarkerErrors: self.errorDictionary['SFMs']['Newline Marker Errors'] = newlineMarkerErrors
-        if internalMarkerErrors: self.errorDictionary['SFMs']['Internal Marker Errors'] = internalMarkerErrors
-        if noteMarkerErrors: self.errorDictionary['SFMs']['Footnote and Cross-Reference Marker Errors'] = noteMarkerErrors
+        if 'USFMs' not in self.errorDictionary: self.errorDictionary['USFMs'] = OrderedDict() # So we hopefully get the errors first
+        if newlineMarkerErrors: self.errorDictionary['USFMs']['Newline Marker Errors'] = newlineMarkerErrors
+        if internalMarkerErrors: self.errorDictionary['USFMs']['Internal Marker Errors'] = internalMarkerErrors
+        if noteMarkerErrors: self.errorDictionary['USFMs']['Footnote and Cross-Reference Marker Errors'] = noteMarkerErrors
         if modifiedMarkerList:
             modifiedMarkerList.insert( 0, '['+self.bookReferenceCode+']' )
-            self.errorDictionary['SFMs']['Modified Marker List'] = modifiedMarkerList
+            self.errorDictionary['USFMs']['Modified Marker List'] = modifiedMarkerList
         if newlineMarkerCounts:
             total = 0
             for marker in newlineMarkerCounts: total += newlineMarkerCounts[marker]
-            self.errorDictionary['SFMs']['All Newline Marker Counts'] = newlineMarkerCounts
-            self.errorDictionary['SFMs']['All Newline Marker Counts']['Total'] = total
+            self.errorDictionary['USFMs']['All Newline Marker Counts'] = newlineMarkerCounts
+            self.errorDictionary['USFMs']['All Newline Marker Counts']['Total'] = total
         if internalMarkerCounts:
             total = 0
             for marker in internalMarkerCounts: total += internalMarkerCounts[marker]
-            self.errorDictionary['SFMs']['All Text Internal Marker Counts'] = internalMarkerCounts
-            self.errorDictionary['SFMs']['All Text Internal Marker Counts']['Total'] = total
+            self.errorDictionary['USFMs']['All Text Internal Marker Counts'] = internalMarkerCounts
+            self.errorDictionary['USFMs']['All Text Internal Marker Counts']['Total'] = total
         if noteMarkerCounts:
             total = 0
             for marker in noteMarkerCounts: total += noteMarkerCounts[marker]
-            self.errorDictionary['SFMs']['All Footnote and Cross-Reference Internal Marker Counts'] = noteMarkerCounts
-            self.errorDictionary['SFMs']['All Footnote and Cross-Reference Internal Marker Counts']['Total'] = total
-        if functionalCounts: self.errorDictionary['SFMs']['Functional Marker Counts'] = functionalCounts
+            self.errorDictionary['USFMs']['All Footnote and Cross-Reference Internal Marker Counts'] = noteMarkerCounts
+            self.errorDictionary['USFMs']['All Footnote and Cross-Reference Internal Marker Counts']['Total'] = total
+        if functionalCounts: self.errorDictionary['USFMs']['Functional Marker Counts'] = functionalCounts
     # end of checkSFMs
 
 
@@ -1657,7 +1661,7 @@ def main():
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
     # Since this is only designed to be a base class, it can't actually do much at all
-    IBB = InternalBibleBook()
+    IBB = InternalBibleBook( False ) # The parameter is the logErrorsFlag
     # The following fields would normally be filled in a by "load" routine in the derived class
     IBB.objectType = "DUMMY"
     IBB.objectNameString = "Dummy test Internal Bible Book object"
