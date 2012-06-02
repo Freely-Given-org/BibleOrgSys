@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # USFMBible.py
-#   Last modified: 2012-05-29 by RJH (also update versionString below)
+#   Last modified: 2012-06-02 by RJH (also update versionString below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -177,7 +177,7 @@ class USFMBible( InternalBible ):
                         break # We only look at the first line
                 if isUSFM:
                     UBB = USFMBibleBook( self.logErrorsFlag )
-                    UBB.load( BBB, folder, thisFilename, encoding, logErrors )
+                    UBB.load( BBB, folder, thisFilename, encoding )
                     UBB.validateUSFM()
                     print( UBB )
                     self.books[BBB] = UBB
