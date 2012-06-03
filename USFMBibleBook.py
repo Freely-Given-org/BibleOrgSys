@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # USFMBibleBook.py
-#   Last modified: 2012-05-29 by RJH (also update versionString below)
+#   Last modified: 2012-06-03 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -27,7 +27,7 @@ Module for defining and manipulating USFM Bible books.
 """
 
 progName = "USFM Bible book handler"
-versionString = "0.22"
+versionString = "0.23"
 
 
 import os, logging
@@ -73,6 +73,7 @@ class USFMBibleBook( InternalBibleBook ):
         lastMarker = lastText = ''
         loadErrors = []
         for marker,text in originalBook.lines: # Always process a line behind in case we have to combine lines
+            #print( "After {} {}:{} \\{} '{}'".format( bookReferenceCode, c, v, marker, text ) )
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text: c = text.split()[0]; v = '0'
             elif marker=='v' and text: v = text.split()[0]
@@ -81,7 +82,8 @@ class USFMBibleBook( InternalBibleBook ):
             if self.USFMMarkers.isNewlineMarker( marker ):
                 if lastMarker: self.appendLine( lastMarker, lastText )
                 lastMarker, lastText = marker, text
-            elif self.USFMMarkers.isInternalMarker( marker ): # the line begins with an internal marker -- append it to the previous line
+            elif self.USFMMarkers.isInternalMarker( marker ) \
+            or marker.endswith('*') and self.USFMMarkers.isInternalMarker( marker[:-1] ): # the line begins with an internal marker -- append it to the previous line
                 if text:
                     loadErrors.append( _("{} {}:{} Found '\\{}' internal marker at beginning of line with text: {}").format( self.bookReferenceCode, c, v, marker, text ) )
                     if self.logErrorsFlag: logging.warning( _("Found '\\{}' internal marker after {} {}:{} at beginning of line with text: {}").format( marker, self.bookReferenceCode, c, v, text ) )

@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # InternalBibleBook.py
-#   Last modified: 2012-05-29 by RJH (also update versionString below)
+#   Last modified: 2012-06-03 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -39,7 +39,7 @@ and then calls
 """
 
 progName = "Internal Bible book handler"
-versionString = "0.04"
+versionString = "0.05"
 
 
 import os, logging
@@ -221,6 +221,9 @@ class InternalBibleBook:
                         if self.logErrorsFlag: logging.error( _("Found {} ending with space after {} {}:{} in \\{}: {}").format( thisOne, self.bookReferenceCode, c, v, originalMarker, adjText ) )
                         self.addPriorityError( 11, c, v, _("{} ends with space").format( thisOne.title() ) )
                         note = note.rstrip()
+                    if '\\f ' in note or '\\f*' in note or '\\x ' in note or '\\x*' in note: # Only the contents of these fields should be here now
+                        print( "{} {}:{} What went wrong here: '{}' from \\{} '{}'".format( self.bookReferenceCode, c, v, note, originalMarker, text ) )
+                        halt
                 adjText = adjText[:ix1] + adjText[ix2+3:] # Remove the note completely from the text
                 lcAdjText = adjText.lower()
                 extras.append( (this1,ix1,note,) ) # Saves a 3-tuple: type ('fn' or 'xr'), index into the main text line, the actual fn or xref contents
@@ -636,160 +639,180 @@ class InternalBibleBook:
         paragraphReferences, qReferences, sectionHeadings, sectionReferences = self.getAddedUnits()
 
         addedUnitNotices = []
-        for reference in typicalParagraphs[self.bookReferenceCode]:
-            assert( 2 <= len(reference) <= 3 )
-            c, v = reference[0], reference[1]
-            if len(reference)==3: v += reference[2] # append the suffix
-            typical = typicalParagraphs[self.bookReferenceCode][reference]
-            assert( typical in ('A','S','M','F') )
-            if reference in paragraphReferences:
-                if typical == 'F':
-                    addedUnitNotices.append( _("{} {} Paragraph break is less common after {}").format( self.bookReferenceCode, c, v ) )
-                    if self.logErrorsFlag: logging.info( _("Paragraph break is less common after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
-                    self.addPriorityError( 17, c, v, _("Less common to have a paragraph break after") )
-                    #print( "Surprise", self.bookReferenceCode, reference, typical, present )
-                elif typical == 'S' and severe:
-                    self.addPriorityError( 3, c, v, _("Less common to have a paragraph break after") )
-                    #print( "Yeah", self.bookReferenceCode, reference, typical, present )
-            else: # we didn't have it
-                if typical == 'A':
-                    addedUnitNotices.append( _("{} {} Paragraph break normally inserted after {}").format( self.bookReferenceCode, c, v ) )
-                    if self.logErrorsFlag: logging.info( _("Paragraph break normally inserted after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
-                    self.addPriorityError( 27, c, v, _("Paragraph break normally inserted after") )
-                    #print( "All", self.bookReferenceCode, reference, typical, present )
-                elif typical == 'M' and severe:
-                    self.addPriorityError( 15, c, v, _("Paragraph break often inserted after") )
-                    #print( "Most", self.bookReferenceCode, reference, typical, present )
-        for reference in paragraphReferences: # now check for ones in this book but not typically there
-            assert( 2 <= len(reference) <= 3 )
-            if reference not in typicalParagraphs[self.bookReferenceCode]:
+        if self.bookReferenceCode in typicalParagraphs:
+            for reference in typicalParagraphs[self.bookReferenceCode]:
+                assert( 2 <= len(reference) <= 3 )
                 c, v = reference[0], reference[1]
                 if len(reference)==3: v += reference[2] # append the suffix
-                addedUnitNotices.append( _("{} {} Paragraph break is unusual after {}").format( self.bookReferenceCode, c, v ) )
-                if self.logErrorsFlag: logging.info( _("Paragraph break is unusual after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
-                self.addPriorityError( 37, c, v, _("Unusual to have a paragraph break after") )
-                #print( "Weird paragraph after", self.bookReferenceCode, reference )
+                typical = typicalParagraphs[self.bookReferenceCode][reference]
+                assert( typical in ('A','S','M','F') )
+                if reference in paragraphReferences:
+                    if typical == 'F':
+                        addedUnitNotices.append( _("{} {} Paragraph break is less common after {}").format( self.bookReferenceCode, c, v ) )
+                        if self.logErrorsFlag: logging.info( _("Paragraph break is less common after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                        self.addPriorityError( 17, c, v, _("Less common to have a paragraph break after") )
+                        #print( "Surprise", self.bookReferenceCode, reference, typical, present )
+                    elif typical == 'S' and severe:
+                        self.addPriorityError( 3, c, v, _("Less common to have a paragraph break after") )
+                        #print( "Yeah", self.bookReferenceCode, reference, typical, present )
+                else: # we didn't have it
+                    if typical == 'A':
+                        addedUnitNotices.append( _("{} {} Paragraph break normally inserted after {}").format( self.bookReferenceCode, c, v ) )
+                        if self.logErrorsFlag: logging.info( _("Paragraph break normally inserted after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                        self.addPriorityError( 27, c, v, _("Paragraph break normally inserted after") )
+                        #print( "All", self.bookReferenceCode, reference, typical, present )
+                    elif typical == 'M' and severe:
+                        self.addPriorityError( 15, c, v, _("Paragraph break often inserted after") )
+                        #print( "Most", self.bookReferenceCode, reference, typical, present )
+            for reference in paragraphReferences: # now check for ones in this book but not typically there
+                assert( 2 <= len(reference) <= 3 )
+                if reference not in typicalParagraphs[self.bookReferenceCode]:
+                    c, v = reference[0], reference[1]
+                    if len(reference)==3: v += reference[2] # append the suffix
+                    addedUnitNotices.append( _("{} {} Paragraph break is unusual after {}").format( self.bookReferenceCode, c, v ) )
+                    if self.logErrorsFlag: logging.info( _("Paragraph break is unusual after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                    self.addPriorityError( 37, c, v, _("Unusual to have a paragraph break after") )
+                    #print( "Weird paragraph after", self.bookReferenceCode, reference )
+        else: # We don't have any info for this book
+            addedUnitNotices.append( _("{} has no paragraph info available").format( self.bookReferenceCode ) )
+            if self.logErrorsFlag: logging.info( _("{} No paragraph info available").format( self.bookReferenceCode ) )
+            self.addPriorityError( 3, '-', '-', _("No paragraph info for '{}' book").format( self.bookReferenceCode ) )
         if addedUnitNotices:
             if 'Added Formatting' not in self.errorDictionary: self.errorDictionary['Added Formatting'] = OrderedDict() # So we hopefully get the most important errors first
             self.errorDictionary['Added Formatting']['Possible Paragraphing Errors'] = addedUnitNotices
 
         addedUnitNotices = []
-        for entry in typicalQParagraphs[self.bookReferenceCode]:
-            reference, level = entry
-            assert( 2 <= len(reference) <= 3 )
-            c, v = reference[0], reference[1]
-            if len(reference)==3: v += reference[2] # append the suffix
-            typical = typicalQParagraphs[self.bookReferenceCode][entry]
-            #print( reference, c, v, level, typical )
-            assert( typical in ('A','S','M','F') )
-            if reference in qReferences:
-                if typical == 'F':
-                    addedUnitNotices.append( _("{} {} Quote Paragraph is less common after {}").format( self.bookReferenceCode, c, v ) )
-                    if self.logErrorsFlag: logging.info( _("Quote Paragraph is less common after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
-                    self.addPriorityError( 17, c, v, _("Less common to have a Quote Paragraph after") )
-                    #print( "Surprise", self.bookReferenceCode, reference, typical, present )
-                elif typical == 'S' and severe:
-                    self.addPriorityError( 3, c, v, _("Less common to have a Quote Paragraph after") )
-                    #print( "Yeah", self.bookReferenceCode, reference, typical, present )
-            else: # we didn't have it
-                if typical == 'A':
-                    addedUnitNotices.append( _("{} {} Quote Paragraph normally inserted after {}").format( self.bookReferenceCode, c, v ) )
-                    if self.logErrorsFlag: logging.info( _("Quote Paragraph normally inserted after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
-                    self.addPriorityError( 27, c, v, _("Quote Paragraph normally inserted after") )
-                    #print( "All", self.bookReferenceCode, reference, typical, present )
-                elif typical == 'M' and severe:
-                    self.addPriorityError( 15, c, v, _("Quote Paragraph often inserted after") )
-                    #print( "Most", self.bookReferenceCode, reference, typical, present )
-        for reference in qReferences: # now check for ones in this book but not typically there
-            assert( 2 <= len(reference) <= 3 )
-            if reference not in typicalQParagraphs[self.bookReferenceCode]:
+        if self.bookReferenceCode in typicalQParagraphs:
+            for entry in typicalQParagraphs[self.bookReferenceCode]:
+                reference, level = entry
+                assert( 2 <= len(reference) <= 3 )
                 c, v = reference[0], reference[1]
                 if len(reference)==3: v += reference[2] # append the suffix
-                addedUnitNotices.append( _("{} {} Quote Paragraph is unusual after {}").format( self.bookReferenceCode, c, v ) )
-                if self.logErrorsFlag: logging.info( _("Quote Paragraph is unusual after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
-                self.addPriorityError( 37, c, v, _("Unusual to have a Quote Paragraph after") )
-                #print( "Weird qParagraph after", self.bookReferenceCode, reference )
+                typical = typicalQParagraphs[self.bookReferenceCode][entry]
+                #print( reference, c, v, level, typical )
+                assert( typical in ('A','S','M','F') )
+                if reference in qReferences:
+                    if typical == 'F':
+                        addedUnitNotices.append( _("{} {} Quote Paragraph is less common after {}").format( self.bookReferenceCode, c, v ) )
+                        if self.logErrorsFlag: logging.info( _("Quote Paragraph is less common after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                        self.addPriorityError( 17, c, v, _("Less common to have a Quote Paragraph after") )
+                        #print( "Surprise", self.bookReferenceCode, reference, typical, present )
+                    elif typical == 'S' and severe:
+                        self.addPriorityError( 3, c, v, _("Less common to have a Quote Paragraph after") )
+                        #print( "Yeah", self.bookReferenceCode, reference, typical, present )
+                else: # we didn't have it
+                    if typical == 'A':
+                        addedUnitNotices.append( _("{} {} Quote Paragraph normally inserted after {}").format( self.bookReferenceCode, c, v ) )
+                        if self.logErrorsFlag: logging.info( _("Quote Paragraph normally inserted after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                        self.addPriorityError( 27, c, v, _("Quote Paragraph normally inserted after") )
+                        #print( "All", self.bookReferenceCode, reference, typical, present )
+                    elif typical == 'M' and severe:
+                        self.addPriorityError( 15, c, v, _("Quote Paragraph often inserted after") )
+                        #print( "Most", self.bookReferenceCode, reference, typical, present )
+            for reference in qReferences: # now check for ones in this book but not typically there
+                assert( 2 <= len(reference) <= 3 )
+                if reference not in typicalQParagraphs[self.bookReferenceCode]:
+                    c, v = reference[0], reference[1]
+                    if len(reference)==3: v += reference[2] # append the suffix
+                    addedUnitNotices.append( _("{} {} Quote Paragraph is unusual after {}").format( self.bookReferenceCode, c, v ) )
+                    if self.logErrorsFlag: logging.info( _("Quote Paragraph is unusual after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                    self.addPriorityError( 37, c, v, _("Unusual to have a Quote Paragraph after") )
+                    #print( "Weird qParagraph after", self.bookReferenceCode, reference )
+        else: # We don't have any info for this book
+            addedUnitNotices.append( _("{} has no quote paragraph info available").format( self.bookReferenceCode ) )
+            if self.logErrorsFlag: logging.info( _("{} No quote paragraph info available").format( self.bookReferenceCode ) )
+            self.addPriorityError( 3, '-', '-', _("No quote paragraph info for '{}' book").format( self.bookReferenceCode ) )
         if addedUnitNotices:
             if 'Added Formatting' not in self.errorDictionary: self.errorDictionary['Added Formatting'] = OrderedDict() # So we hopefully get the most important errors first
             self.errorDictionary['Added Formatting']['Possible Indenting Errors'] = addedUnitNotices
 
         addedUnitNotices = []
-        for entry in typicalSectionHeadings[self.bookReferenceCode]:
-            reference, level = entry
-            assert( 2 <= len(reference) <= 3 )
-            c, v = reference[0], reference[1]
-            if len(reference)==3: v += reference[2] # append the suffix
-            typical = typicalSectionHeadings[self.bookReferenceCode][entry]
-            #print( reference, c, v, level, typical )
-            assert( typical in ('A','S','M','F') )
-            if reference in sectionHeadings:
-                if typical == 'F':
-                    addedUnitNotices.append( _("{} {} Section Heading is less common after {}").format( self.bookReferenceCode, c, v ) )
-                    if self.logErrorsFlag: logging.info( _("Section Heading is less common after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
-                    self.addPriorityError( 17, c, v, _("Less common to have a Section Heading after") )
-                    #print( "Surprise", self.bookReferenceCode, reference, typical, present )
-                elif typical == 'S' and severe:
-                    self.addPriorityError( 3, c, v, _("Less common to have a Section Heading after") )
-                    #print( "Yeah", self.bookReferenceCode, reference, typical, present )
-            else: # we didn't have it
-                if typical == 'A':
-                    addedUnitNotices.append( _("{} {} Section Heading normally inserted after {}").format( self.bookReferenceCode, c, v ) )
-                    if self.logErrorsFlag: logging.info( _("Section Heading normally inserted after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
-                    self.addPriorityError( 27, c, v, _("Section Heading normally inserted after") )
-                    #print( "All", self.bookReferenceCode, reference, typical, present )
-                elif typical == 'M' and severe:
-                    self.addPriorityError( 15, c, v, _("Section Heading often inserted after") )
-                    #print( "Most", self.bookReferenceCode, reference, typical, present )
-        for entry in sectionHeadings: # now check for ones in this book but not typically there
-            reference, level, text = entry
-            assert( 2 <= len(reference) <= 3 )
-            if (reference,level) not in typicalSectionHeadings[self.bookReferenceCode]:
+        if self.bookReferenceCode in typicalSectionHeadings:
+            for entry in typicalSectionHeadings[self.bookReferenceCode]:
+                reference, level = entry
+                assert( 2 <= len(reference) <= 3 )
                 c, v = reference[0], reference[1]
                 if len(reference)==3: v += reference[2] # append the suffix
-                addedUnitNotices.append( _("{} {} Section Heading is unusual after {}").format( self.bookReferenceCode, c, v ) )
-                if self.logErrorsFlag: logging.info( _("Section Heading is unusual after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
-                self.addPriorityError( 37, c, v, _("Unusual to have a Section Heading after") )
-                #print( "Weird section heading after", self.bookReferenceCode, reference )
+                typical = typicalSectionHeadings[self.bookReferenceCode][entry]
+                #print( reference, c, v, level, typical )
+                assert( typical in ('A','S','M','F') )
+                if reference in sectionHeadings:
+                    if typical == 'F':
+                        addedUnitNotices.append( _("{} {} Section Heading is less common after {}").format( self.bookReferenceCode, c, v ) )
+                        if self.logErrorsFlag: logging.info( _("Section Heading is less common after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                        self.addPriorityError( 17, c, v, _("Less common to have a Section Heading after") )
+                        #print( "Surprise", self.bookReferenceCode, reference, typical, present )
+                    elif typical == 'S' and severe:
+                        self.addPriorityError( 3, c, v, _("Less common to have a Section Heading after") )
+                        #print( "Yeah", self.bookReferenceCode, reference, typical, present )
+                else: # we didn't have it
+                    if typical == 'A':
+                        addedUnitNotices.append( _("{} {} Section Heading normally inserted after {}").format( self.bookReferenceCode, c, v ) )
+                        if self.logErrorsFlag: logging.info( _("Section Heading normally inserted after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                        self.addPriorityError( 27, c, v, _("Section Heading normally inserted after") )
+                        #print( "All", self.bookReferenceCode, reference, typical, present )
+                    elif typical == 'M' and severe:
+                        self.addPriorityError( 15, c, v, _("Section Heading often inserted after") )
+                        #print( "Most", self.bookReferenceCode, reference, typical, present )
+            for entry in sectionHeadings: # now check for ones in this book but not typically there
+                reference, level, text = entry
+                assert( 2 <= len(reference) <= 3 )
+                if (reference,level) not in typicalSectionHeadings[self.bookReferenceCode]:
+                    c, v = reference[0], reference[1]
+                    if len(reference)==3: v += reference[2] # append the suffix
+                    addedUnitNotices.append( _("{} {} Section Heading is unusual after {}").format( self.bookReferenceCode, c, v ) )
+                    if self.logErrorsFlag: logging.info( _("Section Heading is unusual after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                    self.addPriorityError( 37, c, v, _("Unusual to have a Section Heading after") )
+                    #print( "Weird section heading after", self.bookReferenceCode, reference )
+        else: # We don't have any info for this book
+            addedUnitNotices.append( _("{} has no section heading info available").format( self.bookReferenceCode ) )
+            if self.logErrorsFlag: logging.info( _("{} No section heading info available").format( self.bookReferenceCode ) )
+            self.addPriorityError( 3, '-', '-', _("No section heading info for '{}' book").format( self.bookReferenceCode ) )
         if addedUnitNotices:
             if 'Added Formatting' not in self.errorDictionary: self.errorDictionary['Added Formatting'] = OrderedDict() # So we hopefully get the most important errors first
             self.errorDictionary['Added Formatting']['Possible Section Heading Errors'] = addedUnitNotices
 
         addedUnitNotices = []
-        for reference in typicalSectionReferences[self.bookReferenceCode]:
-            assert( 2 <= len(reference) <= 3 )
-            c, v = reference[0], reference[1]
-            if len(reference)==3: v += reference[2] # append the suffix
-            typical = typicalSectionReferences[self.bookReferenceCode][reference]
-            #print( reference, c, v, typical )
-            assert( typical in ('A','S','M','F') )
-            if reference in sectionReferences:
-                if typical == 'F':
-                    addedUnitNotices.append( _("{} {} Section Reference is less common after {}").format( self.bookReferenceCode, c, v ) )
-                    if self.logErrorsFlag: logging.info( _("Section Reference is less common after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
-                    self.addPriorityError( 17, c, v, _("Less common to have a Section Reference after") )
-                    #print( "Surprise", self.bookReferenceCode, reference, typical, present )
-                elif typical == 'S' and severe:
-                    self.addPriorityError( 3, c, v, _("Less common to have a Section Reference after") )
-                    #print( "Yeah", self.bookReferenceCode, reference, typical, present )
-            else: # we didn't have it
-                if typical == 'A':
-                    addedUnitNotices.append( _("{} {} Section Reference normally inserted after {}").format( self.bookReferenceCode, c, v ) )
-                    if self.logErrorsFlag: logging.info( _("Section Reference normally inserted after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
-                    self.addPriorityError( 27, c, v, _("Section Reference normally inserted after") )
-                    #print( "All", self.bookReferenceCode, reference, typical, present )
-                elif typical == 'M' and severe:
-                    self.addPriorityError( 15, c, v, _("Section Reference often inserted after") )
-                    #print( "Most", self.bookReferenceCode, reference, typical, present )
-        for entry in sectionReferences: # now check for ones in this book but not typically there
-            reference, text = entry
-            assert( 2 <= len(reference) <= 3 )
-            if reference not in typicalSectionReferences[self.bookReferenceCode]:
+        if self.bookReferenceCode in typicalSectionReferences:
+            for reference in typicalSectionReferences[self.bookReferenceCode]:
+                assert( 2 <= len(reference) <= 3 )
                 c, v = reference[0], reference[1]
                 if len(reference)==3: v += reference[2] # append the suffix
-                addedUnitNotices.append( _("{} {} Section Reference is unusual after {}").format( self.bookReferenceCode, c, v ) )
-                if self.logErrorsFlag: logging.info( _("Section Reference is unusual after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
-                self.addPriorityError( 37, c, v, _("Unusual to have a Section Reference after") )
-                #print( "Weird Section Reference after", self.bookReferenceCode, reference )
+                typical = typicalSectionReferences[self.bookReferenceCode][reference]
+                #print( reference, c, v, typical )
+                assert( typical in ('A','S','M','F') )
+                if reference in sectionReferences:
+                    if typical == 'F':
+                        addedUnitNotices.append( _("{} {} Section Reference is less common after {}").format( self.bookReferenceCode, c, v ) )
+                        if self.logErrorsFlag: logging.info( _("Section Reference is less common after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                        self.addPriorityError( 17, c, v, _("Less common to have a Section Reference after") )
+                        #print( "Surprise", self.bookReferenceCode, reference, typical, present )
+                    elif typical == 'S' and severe:
+                        self.addPriorityError( 3, c, v, _("Less common to have a Section Reference after") )
+                        #print( "Yeah", self.bookReferenceCode, reference, typical, present )
+                else: # we didn't have it
+                    if typical == 'A':
+                        addedUnitNotices.append( _("{} {} Section Reference normally inserted after {}").format( self.bookReferenceCode, c, v ) )
+                        if self.logErrorsFlag: logging.info( _("Section Reference normally inserted after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                        self.addPriorityError( 27, c, v, _("Section Reference normally inserted after") )
+                        #print( "All", self.bookReferenceCode, reference, typical, present )
+                    elif typical == 'M' and severe:
+                        self.addPriorityError( 15, c, v, _("Section Reference often inserted after") )
+                        #print( "Most", self.bookReferenceCode, reference, typical, present )
+            for entry in sectionReferences: # now check for ones in this book but not typically there
+                reference, text = entry
+                assert( 2 <= len(reference) <= 3 )
+                if reference not in typicalSectionReferences[self.bookReferenceCode]:
+                    c, v = reference[0], reference[1]
+                    if len(reference)==3: v += reference[2] # append the suffix
+                    addedUnitNotices.append( _("{} {} Section Reference is unusual after {}").format( self.bookReferenceCode, c, v ) )
+                    if self.logErrorsFlag: logging.info( _("Section Reference is unusual after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                    self.addPriorityError( 37, c, v, _("Unusual to have a Section Reference after") )
+                    #print( "Weird Section Reference after", self.bookReferenceCode, reference )
+        else: # We don't have any info for this book
+            addedUnitNotices.append( _("{} has no section reference info available").format( self.bookReferenceCode ) )
+            if self.logErrorsFlag: logging.info( _("{} No section reference info available").format( self.bookReferenceCode ) )
+            self.addPriorityError( 3, '-', '-', _("No section reference info for '{}' book").format( self.bookReferenceCode ) )
         if addedUnitNotices:
             if 'Added Formatting' not in self.errorDictionary: self.errorDictionary['Added Formatting'] = OrderedDict() # So we hopefully get the most important errors first
             self.errorDictionary['Added Formatting']['Possible Section Reference Errors'] = addedUnitNotices
@@ -1004,7 +1027,11 @@ class InternalBibleBook:
                     ( 0 <= extraIndex <= len(text) )
                     assert( extraType in ('fn','xr',) )
                     extraName = 'footnote' if extraType=='fn' else 'cross-reference'
-                    assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
+                    if '\\f ' in extraText or '\\f*' in extraText or '\\x ' in extraText or '\\x*' in extraText: # Only the contents of these fields should be in extras
+                        newlineMarkerErrors.append( _("{} {}:{} Programming error with extras: {}").format( self.bookReferenceCode, c, v, extraText ) )
+                        if self.logErrorsFlag: logging.warning( _("Programming error with {} notes after {} {}:{}").format( extraText, self.bookReferenceCode, c, v ) )
+                        self.addPriorityError( 99, c, v, _("Extras {} have a programming error").format( extraText ) )
+                        continue # we have a programming error -- just skip this one
                     thisExtraMarkers = []
                     if '\\\\' in extraText:
                         noteMarkerErrors.append( _("{} {}:{} doubled backslash characters in  {}: {}").format( self.bookReferenceCode, c, v, extraType, extraText ) )

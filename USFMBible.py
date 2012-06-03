@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # USFMBible.py
-#   Last modified: 2012-06-02 by RJH (also update versionString below)
+#   Last modified: 2012-06-03 by RJH (also update versionString below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -27,7 +27,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 """
 
 progName = "USFM Bible handler"
-versionString = "0.24"
+versionString = "0.25"
 
 
 import os, logging, datetime
@@ -175,11 +175,11 @@ class USFMBible( InternalBible ):
                             if Globals.verbosityLevel > 2: print( "BBB is '{}'".format( BBB ) )
                             isUSFM = True
                         break # We only look at the first line
-                if isUSFM:
+                if isUSFM: # have an irregularly named file, but it appears to be USFM
                     UBB = USFMBibleBook( self.logErrorsFlag )
                     UBB.load( BBB, folder, thisFilename, encoding )
                     UBB.validateUSFM()
-                    print( UBB )
+                    # print( UBB )
                     self.books[BBB] = UBB
                     # Make up our book name dictionaries while we're at it
                     assumedBookNames = UBB.getAssumedBookNames()
@@ -206,9 +206,9 @@ def main():
 
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
-    name, encoding, testFolder = "Matigsalug", "utf-8", "/mnt/Data/Matigsalug/Scripture/MBTV" # You can put your test folder here
+    name, encoding, testFolder = "Matigsalug", "utf-8", "/mnt/Data/Matigsalug/Scripture/MBTV/" # You can put your test folder here
     if os.access( testFolder, os.R_OK ):
-        UB = USFMBible( name, False ) # The second parameter is the logErrorsFlag
+        UB = USFMBible( name, False ) # The second parameter is the logErrorsFlag -- set to True if you want to see errors at the terminal
         UB.load( testFolder, encoding )
         if Globals.verbosityLevel > 0: print( UB )
         UB.check()
