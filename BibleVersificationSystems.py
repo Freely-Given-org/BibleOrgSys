@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # BibleVersificationSystems.py
+#   Last modified: 2012-06-04 (also update versionString below)
 #
 # Module handling BibleVersificationSystem_*.xml to produce C and Python data tables
-#   Last modified: 2011-12-06 (also update versionString below)
 #
-# Copyright (C) 2010-2011 Robert Hunt
+# Copyright (C) 2010-2012 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling BibleVersificationSystem_*.xml to produce C and Python data tabl
 """
 
 progName = "Bible Chapter/Verse Systems handler"
-versionString = "0.47"
+versionString = "0.48"
 
 
 import os, logging
@@ -544,9 +544,13 @@ class BibleVersificationSystem:
     # end of getVersificationSystemName
 
     def getNumChapters( self, BBB ):
-        """ Returns the number of chapters (int) in the given book. """
+        """ Returns the number of chapters (int) in the given book.
+            Returns None if we don't have any chapter information for this book. """
         assert( len(BBB) == 3 )
-        return int( self.__chapterDataDict[BBB]['numChapters'] )
+        if BBB in self.__chapterDataDict:
+            return int( self.__chapterDataDict[BBB]['numChapters'] )
+        # else
+        return None
     # end of getNumChapters
 
     def getNumVerses( self, BBB, C ):
@@ -559,9 +563,13 @@ class BibleVersificationSystem:
     # end of getNumVerses
 
     def isSingleChapterBook( self, BBB ):
-        """ Returns True/False to indicate if this book only contains a single chapter. """
+        """ Returns True/False to indicate if this book only contains a single chapter.
+            Returns None if we don't have any chapter information for this book. """
         assert( len(BBB) == 3 )
-        return self.__chapterDataDict[BBB]['numChapters'] == '1'
+        if BBB in self.__chapterDataDict:
+            return self.__chapterDataDict[BBB]['numChapters'] == '1'
+        # else
+        return None
     # end of isSingleChapterBook
 
     def getNumVersesList( self, BBB ):
