@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 #
 # BibleVersificationSystemsConverter.py
+#   Last modified: 2011-12-06 (also update versionString below)
 #
 # Module handling BibleVersificationSystem_*.xml to produce C and Python data tables
-#   Last modified: 2011-12-06 (also update versionString below)
 #
 # Copyright (C) 2010-2011 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>

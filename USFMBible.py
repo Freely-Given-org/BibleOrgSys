@@ -208,7 +208,7 @@ def main():
 
     name, encoding, testFolder = "Matigsalug", "utf-8", "/mnt/Data/Matigsalug/Scripture/MBTV/" # You can put your test folder here
     if os.access( testFolder, os.R_OK ):
-        UB = USFMBible( name, False ) # The second parameter is the logErrorsFlag -- set to True if you want to see errors at the terminal
+        UB = USFMBible( name, True ) # The second parameter is the logErrorsFlag -- set to True if you want to see errors at the terminal
         UB.load( testFolder, encoding )
         if Globals.verbosityLevel > 0: print( UB )
         UB.check()

@@ -244,9 +244,42 @@ class InternalBibleBook:
                 self.addPriorityError( 10, c, v, _("Trailing space before note at end of line") )
                 adjText = adjText.rstrip()
                 #print( originalMarker, "'"+text+"'", "'"+adjText+"'" )
-
             if '<' in adjText or '>' in adjText or '"' in adjText: print( originalMarker, adjText ); halt
-            return adjText, extras
+
+            # Now remove all formatting from the cleanText string
+            cleanText = adjText
+            if '\\' in cleanText: # we will first remove known USFM character formatting markers
+                for possibleCharacterMarker in self.USFMMarkers.getCharacterMarkersList():
+                    tryMarkers = []
+                    if self.USFMMarkers.isNumberableMarker( possibleCharacterMarker ):
+                        for d in ('1','2','3','4','5'):
+                            tryMarkers.append( '\\'+possibleCharacterMarker+d+' ' )
+                    tryMarkers.append( '\\'+possibleCharacterMarker+' ' )
+                    for tryMarker in tryMarkers:
+                        while tryMarker in cleanText:
+                            #print( "Removing '{}' from '{}'".format( tryMarker, cleanText ) )
+                            cleanText = cleanText.replace( tryMarker, '', 1 ) # Remove it
+                            tryCloseMarker = '\\'+possibleCharacterMarker+'*'
+                            shouldBeClosed = self.USFMMarkers.markerShouldBeClosed( possibleCharacterMarker )
+                            if shouldBeClosed == 'A' \
+                            or shouldBeClosed == 'S' and tryCloseMarker in cleanText:
+                                #print( "Removing '{}' from '{}'".format( tryCloseMarker, cleanText ) )
+                                cleanText = cleanText.replace( tryCloseMarker, '', 1 ) # Remove it
+                    if not '\\' in cleanText: break # no point in looping further
+                while '\\' in cleanText: # we will now try to remove any bad markers
+                    ixBS = cleanText.index( '\\' )
+                    ixSP = cleanText.find( ' ', ixBS )
+                    ixAS = cleanText.find( '*', ixBS )
+                    if ixSP == -1: ixSP=99999
+                    if ixAS == -1: ixAS=99999
+                    ixEND = min( ixSP, ixAS )
+                    if ixEND != 99999: # remove the marker and the following space or asterisk
+                        #print( "Removing unknown marker '{}' from '{}'".format( cleanText[ixBS:ixEND+1], cleanText ) )
+                        cleanText = cleanText[:ixBS] + cleanText[ixEND+1:]
+                    else: # we didn't find a space or asterisk so it's at the end of the line
+                        halt # Still need to write this bit
+                if '\\' in cleanText: logging.error( "Why do we still have a backslash in '{}' from '{}'?".format( cleanText, adjText ) ); halt
+            return adjText, cleanText, extras
         # end of processLineFix
 
 
@@ -266,7 +299,9 @@ class InternalBibleBook:
                 v = vbits[0]
                 if len(vbits)==2:
                     #print( ('v', 'v', vbits[0], []) )
-                    self._processedLines.append( (adjustedMarker, originalMarker, vbits[0], [],) )
+                    verseNumberBit = vbits[0]
+                    assert( '\\' not in verseNumberBit )
+                    self._processedLines.append( (adjustedMarker, originalMarker, verseNumberBit, verseNumberBit, [],) ) # Write the verse number (or range) as a separate line
                     adjustedMarker, text = 'v+', vbits[1]
 
             if text:
@@ -280,16 +315,16 @@ class InternalBibleBook:
                             if self.logErrorsFlag: logging.error( _("Marker '{}' shouldn't appear within line after {} {}:{} in \\{}: '{}'").format( insideMarker, self.bookReferenceCode, c, v, marker, text ) ) # Only log the first error in the line
                             self.addPriorityError( 96, c, v, _("Marker \\{} shouldn't be inside a line").format( insideMarker ) )
                         thisText = text[ix:iMIndex].rstrip()
-                        adjText, extras = processLineFix( originalMarker, thisText )
-                        self._processedLines.append( (adjustedMarker, originalMarker, adjText, extras,) )
+                        adjText, cleanText, extras = processLineFix( originalMarker, thisText )
+                        self._processedLines.append( (adjustedMarker, originalMarker, adjText, cleanText, extras,) )
                         ix = iMIndex + 1 + len(insideMarker) + len(nextSignificantChar) # Get the start of the next text -- the 1 is for the backslash
                         adjMarker = self.USFMMarkers.toStandardMarker( insideMarker ) # setup for the next line
                 if ix != 0: # We must have separated multiple lines
                     text = text[ix:]
 
-            # Save the corrected data
-            adjText, extras = processLineFix( originalMarker, text )
-            self._processedLines.append( (adjustedMarker, originalMarker, adjText, extras,) )
+            # Separate the notes (footnotes and cross-references)
+            adjText, cleanText, extras = processLineFix( originalMarker, text )
+            self._processedLines.append( (adjustedMarker, originalMarker, adjText, cleanText, extras,) )
         # end of processLine
 
 
@@ -297,7 +332,7 @@ class InternalBibleBook:
         if self._processed: return # Can only do it once
         if Globals.verbosityLevel > 2: print( "  " + _("Processing {} lines...").format( self.objectNameString ) )
         assert( self._rawLines )
-        self._processedLines = [] # Contains more processed 4-tuples which contain the actual Bible text -- see below
+        self._processedLines = [] # Contains more-processed 5-tuples which contain the actual Bible text -- see below
         c = v = '0'
         for marker,text in self._rawLines:
             if self.objectType=='USX' and text and text[-1]==' ': text = text[:-1] # Removing extra trailing space from USX files
@@ -331,7 +366,7 @@ class InternalBibleBook:
         validationErrors = []
 
         c = v = '0'
-        for j, (marker,originalMarker,text,extras) in enumerate(self._processedLines):
+        for j, (marker,originalMarker,text,cleanText,extras) in enumerate(self._processedLines):
             #print( marker, text[:40] )
 
             # Keep track of where we are for more helpful error messages
@@ -383,7 +418,7 @@ class InternalBibleBook:
         assert( fieldName and isinstance( fieldName, str ) )
         adjFieldName = self.USFMMarkers.toStandardMarker( fieldName )
 
-        for marker,originalMarker,text,extras in self._processedLines:
+        for marker,originalMarker,text,cleanText,extras in self._processedLines:
             if marker == adjFieldName:
                 assert( not extras )
                 return text
@@ -442,7 +477,7 @@ class InternalBibleBook:
         versification, omittedVerses, combinedVerses, reorderedVerses = [], [], [], []
         chapterText, chapterNumber, lastChapterNumber = '0', 0, 0
         verseText = verseNumberString = lastVerseNumberString = '0'
-        for marker,originalMarker,text,extras in self._processedLines:
+        for marker,originalMarker,text,cleanText,extras in self._processedLines:
             #print( marker, text )
             if marker == 'c':
                 if chapterNumber > 0:
@@ -571,7 +606,7 @@ class InternalBibleBook:
 
         paragraphReferences, qReferences, sectionHeadingReferences, sectionHeadings, sectionReferenceReferences, sectionReferences = [], [], [], [], [], []
         verseText = chapterText = '0'
-        for marker,originalMarker,text,extras in self._processedLines:
+        for marker,originalMarker,text,cleanText,extras in self._processedLines:
             #print( marker, text )
             if marker == 'c':
                 chapterText = text.split( None, 1 )[0]
@@ -832,7 +867,7 @@ class InternalBibleBook:
         c = v = '0'
         section, lastMarker = '', ''
         lastMarkerEmpty = True
-        for marker,originalMarker,text,extras in self._processedLines:
+        for marker,originalMarker,text,cleanText,extras in self._processedLines:
             markerEmpty = len(text) == 0
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text:
@@ -1190,7 +1225,7 @@ class InternalBibleBook:
         characterCounts, letterCounts, punctuationCounts = {}, {}, {} # We don't care about the order in which they appeared
         characterErrors = []
         c = v = '0'
-        for marker,originalMarker,text,extras in self._processedLines:
+        for marker,originalMarker,text,cleanText,extras in self._processedLines:
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text: c = text.split()[0]; v = '0'
             elif marker=='v' and text: v = text.split()[0]
@@ -1299,7 +1334,7 @@ class InternalBibleBook:
         wordErrors, repeatedWordErrors = [], []
         lastTextWordTuple = ('','')
         c = v = '0'
-        for marker,originalMarker,text,extras in self._processedLines:
+        for marker,originalMarker,text,cleanText,extras in self._processedLines:
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text: c = text.split()[0]; v = '0'
             elif marker=='v' and text: v = text.split()[0]
@@ -1344,7 +1379,7 @@ class InternalBibleBook:
 
         titleList, headingList, sectionReferenceList, headingErrors = [], [], [], []
         c = v = '0'
-        for marker,originalMarker,text,extras in self._processedLines:
+        for marker,originalMarker,text,cleanText,extras in self._processedLines:
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text: c = text.split()[0]; v = '0'
             elif marker=='v' and text: v = text.split()[0]
@@ -1390,7 +1425,7 @@ class InternalBibleBook:
 
         mainTitleList, headingList, titleList, outlineList, introductionErrors = [], [], [], [], []
         c = v = '0'
-        for marker,originalMarker,text,extras in self._processedLines:
+        for marker,originalMarker,text,cleanText,extras in self._processedLines:
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text: c = text.split()[0]; v = '0'
             elif marker=='v' and text: v = text.split()[0]
@@ -1460,7 +1495,7 @@ class InternalBibleBook:
         footnoteErrors, xrefErrors, noteMarkerErrors = [], [], []
         leaderCounts = {}
         c = v = '0'
-        for marker,originalMarker,text,extras in self._processedLines:
+        for marker,originalMarker,text,cleanText,extras in self._processedLines:
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text: c = text.split()[0]; v = '0'
             elif marker=='v' and text: v = text.split()[0]
@@ -1688,7 +1723,7 @@ def main():
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
     # Since this is only designed to be a base class, it can't actually do much at all
-    IBB = InternalBibleBook( False ) # The parameter is the logErrorsFlag
+    IBB = InternalBibleBook( False ) # The parameter is the logErrorsFlag -- set to true if you want errors logged to the console
     # The following fields would normally be filled in a by "load" routine in the derived class
     IBB.objectType = "DUMMY"
     IBB.objectNameString = "Dummy test Internal Bible Book object"

@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkers.py
+#   Last modified: 2012-06-04 (also update versionString below)
 #
 # Module handling USFMMarkers
-#   Last modified: 2011-06-15 (also update versionString below)
 #
-# Copyright (C) 2011 Robert Hunt
+# Copyright (C) 2011-2012 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -244,14 +244,14 @@ class USFMMarkers:
         return self.__DataDict["rawMarkerDict"][self.toRawMarker(marker)]["printedFlag"]
 
     def markerShouldBeClosed( self, marker ):
-        """ Return "N", "S", "A" for "never", "sometimes", "always".
+        """ Return 'N', 'S', 'A' for "never", "sometimes", "always".
             Returns False for an invalid marker. """
         if marker not in self.__DataDict["combinedMarkerDict"]: return False
         closed = self.__DataDict["rawMarkerDict"][self.toRawMarker(marker)]["closed"]
-        #if closed is None: return "N"
-        if closed == "No": return "N"
-        if closed == "Always": return "A"
-        if closed == "Optional": return "S"
+        #if closed is None: return 'N'
+        if closed == "No": return 'N'
+        if closed == "Always": return 'A'
+        if closed == "Optional": return 'S'
         print( 'msbc {}'.format( closed ))
         raise KeyError # Should be something better here
     # end of markerShouldBeClosed
@@ -319,16 +319,18 @@ class USFMMarkers:
 
     def getCharacterMarkersList( self, includeBackslash=False, includeEndMarkers=False ):
         """ Returns a list of all character markers.
-            This excludes footnote and xref markers. """
+            This excludes footnote and xref markers.
+            Note that some of the table markers are numberable (but that's not done here). """
         result = []
         for marker in self.__DataDict["internalMarkersList"]:
-            if marker!='f' and marker!='x' and self.markerOccursIn(marker)=="Text":
+            if marker!='f' and marker!='x' and self.markerOccursIn(marker) in ("Text","Table row","Introduction",):
                 adjMarker = '\\'+marker if includeBackslash else marker
                 result.append( adjMarker )
                 if includeEndMarkers:
-                    assert( self.markerShouldBeClosed( marker ) == 'A' )
+                    assert( self.markerShouldBeClosed( marker )=='A' or self.markerOccursIn(marker)=="Table row" )
                     result.append( adjMarker + '*' )
         return result
+    # end of getCharacterMarkersList
 
     def getTypicalNoteSets( self, select='All' ):
         """ Returns a container of typical footnote and xref sets. """
