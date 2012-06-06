@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # USFMBibleBook.py
-#   Last modified: 2012-06-03 by RJH (also update versionString below)
+#   Last modified: 2012-06-06 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -133,7 +133,7 @@ def main():
     name, encoding, testFolder = "Matigsalug", "utf-8", "/mnt/Data/Matigsalug/Scripture/MBTV/" # You can put your test folder here
     if os.access( testFolder, os.R_OK ):
         if Globals.verbosityLevel > 1: print( _("Scanning {} from {}...").format( name, testFolder ) )
-        fileList = USFMFilenames.USFMFilenames( testFolder ).getActualFilenames()
+        fileList = USFMFilenames.USFMFilenames( testFolder ).getConfirmedFilenames()
         for bookReferenceCode,filename in fileList:
             if Globals.verbosityLevel > 1: print( _("Loading {} from {}...").format( bookReferenceCode, filename ) )
             UBB = USFMBibleBook( False ) # The parameter is the logErrorsFlag

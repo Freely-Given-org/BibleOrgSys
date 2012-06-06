@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # USFMBible.py
-#   Last modified: 2012-06-03 by RJH (also update versionString below)
+#   Last modified: 2012-06-06 by RJH (also update versionString below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -145,7 +145,7 @@ class USFMBible( InternalBible ):
             self.ssfData = loadSSFData( ssfFilepathList[0] )
 
         # Load the books one by one -- assuming that they have regular Paratext style filenames
-        for BBB,filename in self.USFMFilenamesObject.getActualFilenames():
+        for BBB,filename in self.USFMFilenamesObject.getConfirmedFilenames():
             UBB = USFMBibleBook( self.logErrorsFlag )
             UBB.load( BBB, folder, filename, encoding )
             UBB.validateUSFM()
