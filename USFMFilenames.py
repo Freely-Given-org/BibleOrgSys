@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # USFMFilenames.py
-#   Last modified: 2012-05-25 (also update versionString below)
+#   Last modified: 2012-06-06 (also update versionString below)
 #
 # Module handling USFM Bible filenames
 #
@@ -27,7 +27,7 @@ Module for creating and manipulating USFM filenames.
 """
 
 progName = "USFM Bible filenames handler"
-versionString = "0.52"
+versionString = "0.53"
 
 
 import os, logging
@@ -52,7 +52,10 @@ class USFMFilenames:
                 dd = digits
         """
         # Get the data tables that we need for proper checking
-        self.BibleBooksCodes = BibleBooksCodes().loadData()
+        self._BibleBooksCodes = BibleBooksCodes().loadData()
+        self._USFMBooksCodes = self._BibleBooksCodes.getAllUSFMBooksCodes()
+        self._USFMBooksCodesUpper = [x.upper() for x in self._USFMBooksCodes]
+        self._USFMBooksCodeNumberTriples = self._BibleBooksCodes.getAllUSFMBooksCodeNumberTriples()
 
         self.folder = folder
         self.pattern, self.fileExtension = '', ''
@@ -69,32 +72,55 @@ class USFMFilenames:
                         containsDigits = True
                         break
                 matched = False
-                if foundLength>=8 and containsDigits and foundExtBit and foundExtBit[0]=='.':
-                    for USFMBookCode,USFMDigits,bookReferenceCode in self.BibleBooksCodes.getAllUSFMBooksCodeNumberTriples():
+                if containsDigits and foundExtBit and foundExtBit[0]=='.':
+                    for USFMBookCode,USFMDigits,bookReferenceCode in self._USFMBooksCodeNumberTriples:
                         if USFMDigits in foundFileBit and (USFMBookCode in foundFileBit or USFMBookCode.upper() in foundFileBit):
                             digitsIndex = foundFileBit.index( USFMDigits )
                             USFMBookCodeIndex = foundFileBit.index(USFMBookCode) if USFMBookCode in foundFileBit else foundFileBit.index(USFMBookCode.upper())
                             USFMBookCode = foundFileBit[USFMBookCodeIndex:USFMBookCodeIndex+3]
                             #print( digitsIndex, USFMBookCodeIndex, USFMBookCode )
-                            if digitsIndex==0 and USFMBookCodeIndex==2: # Found a form like 01GENlanguage.xyz
+                            if foundLength>=8 and digitsIndex==0 and USFMBookCodeIndex==2: # Found a form like 01GENlanguage.xyz
                                 self.languageIndex = 5
                                 self.languageCode = foundFileBit[self.languageIndex:self.languageIndex+foundLength-5]
                                 self.digitsIndex = digitsIndex
                                 self.USFMBookCodeIndex = USFMBookCodeIndex
-                                self.pattern = "ddbbb" + 'n'*(foundLength-5)
+                                self.pattern = "ddbbb" + 'l'*(foundLength-5)
+                                matched = True
                             elif foundLength==8 and digitsIndex==3 and USFMBookCodeIndex==5: # Found a form like lng01GEN.xyz
                                 self.languageIndex = 0
                                 self.languageCode = foundFileBit[self.languageIndex:self.languageIndex+foundLength-5]
                                 self.digitsIndex = digitsIndex
                                 self.USFMBookCodeIndex = USFMBookCodeIndex
-                                self.pattern = "nnnddbbb"
-                            else: logging.error( _("Unrecognized USFM filename template at ")+foundFileBit ); return
-                            if self.languageCode.isupper(): self.pattern = self.pattern.replace( 'n', 'N' )
-                            if USFMBookCode.isupper(): self.pattern = self.pattern.replace( 'bbb', 'BBB' )
-                            self.fileExtension = foundExtBit[1:]
-                            matched = True
-                            break
-                if matched: break
+                                self.pattern = "lllddbbb"
+                                matched = True
+                            else: # we'll try to be more generic
+                                self.languageIndex = None
+                                self.languageCode = None
+                                self.digitsIndex = digitsIndex
+                                self.USFMBookCodeIndex = USFMBookCodeIndex
+                                self.pattern = '*' * foundLength
+                                self.pattern = self.pattern[:digitsIndex] + 'dd' + self.pattern[digitsIndex+2:]
+                                self.pattern = self.pattern[:USFMBookCodeIndex] + 'bbb' + self.pattern[USFMBookCodeIndex+3:]
+                                fillerSize = self.pattern.count( '*' )
+                                fillerIndex = self.pattern.find( '*' )
+                                if fillerIndex!=-1 and fillerSize==1: self.pattern = self.pattern[:fillerIndex] + foundFilename[fillerIndex] + self.pattern[fillerIndex+1:]
+                                print( "Pattern is '{}'".format( self.pattern ) )
+                                if '*' not in self.pattern: matched = True
+                                else: # we'll try to be even more generic
+                                    self.languageIndex = self.digitsIndex = None
+                                    self.languageCode = None
+                                    self.USFMBookCodeIndex = USFMBookCodeIndex
+                                    self.pattern = '*' * foundLength
+                                    self.pattern = self.pattern[:USFMBookCodeIndex] + 'bbb' + self.pattern[USFMBookCodeIndex+3:]
+                                    print( "Pattern is '{}'".format( self.pattern ) )
+                                    matched = True
+                            if matched:
+                                if self.languageCode and self.languageCode.isupper(): self.pattern = self.pattern.replace( 'l', 'L' )
+                                if USFMBookCode.isupper(): self.pattern = self.pattern.replace( 'bbb', 'BBB' )
+                                self.fileExtension = foundExtBit[1:]
+                                break
+                    if matched: break
+            if matched: break
         if not matched: logging.info( _("Unable to recognize valid USFM files in ") + folder )
         #print( "USFMFilenames: pattern='{}' fileExtension='{}'".format( self.pattern, self.fileExtension ) )
     # end of __init__
@@ -118,50 +144,99 @@ class USFMFilenames:
 
     def getFilenameTemplate( self ):
         """ Returns a pattern/template for USFM filenames where
-                nnn = language code (lower case) or NNN = language code (UPPER CASE)
+                lll = language code (lower case) or LLL = language code (UPPER CASE)
                 bbb = book code (lower case) or BBB = book code (UPPER CASE)
-                dd = digits """
+                dd = Paratext digits (can actually include some letters) """
         return self.pattern
 
 
-    def getPossibleFilenames( self ):
+    def getAllFilenames( self ):
+        """Return a list of all filenames in our folder."""
+        filelist = os.listdir( self.folder )
+        return filelist
+    # end of getAllFilenames
+
+
+    def getDerivedFilenames( self ):
         """Return a list of valid USFM filenames that match our filename template."""
         filelist = []
         if self.pattern:
-            for USFMBookCode,USFMDigits,bookReferenceCode in self.BibleBooksCodes.getAllUSFMBooksCodeNumberTriples():
-                filename = "--------" # Eight characters
-                filename = filename[:self.digitsIndex] + USFMDigits + filename[self.digitsIndex+len(USFMDigits):]
+            for USFMBookCode,USFMDigits,bookReferenceCode in self._USFMBooksCodeNumberTriples:
+                filename = '*' * len(self.pattern)
+                if self.digitsIndex is not None: filename = filename[:self.digitsIndex] + USFMDigits + filename[self.digitsIndex+len(USFMDigits):]
                 filename = filename[:self.USFMBookCodeIndex] + ( USFMBookCode.upper() if 'BBB' in self.pattern else USFMBookCode ) + filename[self.USFMBookCodeIndex+len(USFMBookCode):]
-                filename = filename[:self.languageIndex] + self.languageCode + filename[self.languageIndex+len(self.languageCode):]
+                if self.languageCode: filename = filename[:self.languageIndex] + self.languageCode + filename[self.languageIndex+len(self.languageCode):]
                 filename += '.' + self.fileExtension
-                #print( filename )
+                for ix in range( 0, len(filename)): # See if there's any constant characters in the pattern that we need to grab
+                    if filename[ix]=='*' and self.pattern[ix]!='*':
+                        filename = filename[:ix] + self.pattern[ix] + filename[ix+1:]
                 filelist.append( (bookReferenceCode,filename,) )
         return filelist
-    # end of getPossibleFilenames
+    # end of getDerivedFilenames
 
 
-    def getActualFilenames( self ):
+    def getUSFMIDFromFile( self, filepath ):
+        """ Try to get the BBB from the first line in the file (which should be the \\id line). """
+        if os.path.isfile( filepath ): # We'll assume it's a USFM file but what is BBB?
+            # Look for BBB in the ID line (which should be the first line in a USFM file)
+            with open( filepath ) as possibleUSFMFile: # Automatically closes the file when done
+                for line in possibleUSFMFile:
+                    if line.startswith( '\\id ' ) and line[7]in (' ','\n',):
+                        USFMId = line[4:].strip()[:3] # Take the first three non-blank characters after the space after id
+                        #print( "Have possible USFM ID '{}'".format( USFMId ) )
+                        if USFMId.upper() in self._USFMBooksCodesUpper: return USFMId # it's a valid one
+                        else: print( "But '{}' wasn't a valid USFM ID!!!".format( USFMId ) )
+                    break # We only look at the first line
+        return None
+    # end of getUSFMIDFromFile
+
+
+    def getConfirmedFilenames( self ):
         """Return a list of tuples of UPPER CASE book codes with actual (present and readable) USFM filenames."""
         filelist = []
-        for bookReferenceCode,possibleFilename in self.getPossibleFilenames():
-            possibleFilepath = os.path.join( self.folder, possibleFilename )
-            #print( '  Looking for: ' + possibleFilename )
-            if os.access( possibleFilepath, os.R_OK ):
+        for bookReferenceCode,derivedFilename in self.getDerivedFilenames():
+            derivedFilepath = os.path.join( self.folder, derivedFilename )
+            if Globals.verbosityLevel > 2: print( '  Looking for: ' + derivedFilename )
+            if os.access( derivedFilepath, os.R_OK ):
                 #USFMBookCode = possibleFilename[self.USFMBookCodeIndex:self.USFMBookCodeIndex+3].upper()
-                filelist.append( (bookReferenceCode, possibleFilename,) )
+                filelist.append( (bookReferenceCode, derivedFilename,) )
         return filelist
-    # end of getActualFilenames
+    # end of getConfirmedFilenames
 
 
     def getUnusedFilenames( self ):
         """Return a list of filenames which didn't match the USFM template."""
         folderFilenames = os.listdir( self.folder )
-        actualFilenames = self.getActualFilenames()
-        filelist = []
+        actualFilenames = self.getConfirmedFilenames()
         for bookReferenceCode,actualFilename in actualFilenames:
             folderFilenames.remove( actualFilename )
         return folderFilenames
     # end of getUnusedFilenames
+
+
+    def getPossibleFilenames1( self ):
+        """Return a list of filenames which contain book codes."""
+        filelist = []
+        folderFilenames = os.listdir( self.folder )
+        for possibleFilename in folderFilenames:
+            if not possibleFilename.endswith('~') and not possibleFilename.upper().endswith('.BAK'): # Ignore backup files
+                for USFMBookCode,USFMDigits,bookReferenceCode in self._USFMBooksCodeNumberTriples:
+                    if USFMBookCode in possibleFilename or USFMBookCode.upper() in possibleFilename:
+                        filelist.append( possibleFilename )
+        return filelist
+    # end of getPossibleFilenames1
+
+
+    def getPossibleFilenames2( self ):
+        """Return a list of filenames which contain book codes."""
+        filelist = []
+        folderFilenames = os.listdir( self.folder )
+        for possibleFilename in folderFilenames:
+            if not possibleFilename.endswith('~') and not possibleFilename.upper().endswith('.BAK'): # Ignore backup files
+                if self.getUSFMIDFromFile( os.path.join( self.folder, possibleFilename ) ):
+                    filelist.append( possibleFilename )
+        return filelist
+    # end of getPossibleFilenames2
 
 
     def getSSFFilenames( self, searchAbove=False, auto=True ):
@@ -211,12 +286,17 @@ def demo():
 
     testFolder = 'Tests/DataFilesForTests/USFMTest/' # This is a RELATIVE path
     #testFolder = '/home/myFolder' # You can put your test folder here
+    name, encoding, testFolder = "WEB", "utf-8", "/mnt/Work/Bibles/English translations/WEB (World English Bible)/eng-web_usfm/" # You can put your test folder here
     if os.access( testFolder, os.R_OK ):
         UFns = USFMFilenames( testFolder )
         print( UFns )
-        result = UFns.getPossibleFilenames(); print( "Possible:", len(result), result )
-        result = UFns.getActualFilenames(); print( "\nActual:", len(result), result )
+        result = UFns.getAllFilenames(); print( "\nAll:", len(result), result )
+        result = UFns.getDerivedFilenames(); print( "\nDerived:", len(result), result )
+        result = UFns.getConfirmedFilenames(); print( "\nConfirmed:", len(result), result )
         result = UFns.getUnusedFilenames(); print( "\nOther:", len(result), result )
+        result = UFns.getSSFFilenames(); print( "\nSSF:", len(result), result )
+        result = UFns.getPossibleFilenames1(); print( "\nPossible1:", len(result), result )
+        result = UFns.getPossibleFilenames2(); print( "\nPossible2:", len(result), result )
     else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
 
 if __name__ == '__main__':

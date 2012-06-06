@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodes.py
-#   Last modified: 2012-05-23 (also update versionString below)
+#   Last modified: 2012-06-06 (also update versionString below)
 #
 # Module handling BibleBooksCodes functions
 #
@@ -28,7 +28,7 @@ Module handling BibleBooksCodes functions.
 """
 
 progName = "Bible Books Codes handler"
-versionString = "0.60"
+versionString = "0.61"
 
 
 import os, logging
@@ -219,6 +219,18 @@ class BibleBooksCodes:
         """
         return [bk for bk in self.__DataDicts["OSISAbbreviationDict"]]
     #end of getAllOSISBooksCodes
+
+    def getAllUSFMBooksCodes( self, toUpper=False ):
+        """
+        Return a list of all available USFM book codes.
+        """
+        result = []
+        for BBB, values in self.__DataDicts["referenceAbbreviationDict"].items():
+            pA = values["USFMAbbreviation"]
+            if pA is not None and pA not in result: # Don't want duplicates (where more than one book maps to a single USFMAbbreviation)
+                result.append( pA.upper() if toUpper else pA )
+        return result
+    # end of getAllUSFMBooksCodes
 
     def getAllUSFMBooksCodeNumberTriples( self ):
         """

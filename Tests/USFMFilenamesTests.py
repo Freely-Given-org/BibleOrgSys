@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMFilenamesTests.py
-#   Last modified: 2012-05-25 (also update versionString below)
+#   Last modified: 2012-06-06 (also update versionString below)
 #
 # Module testing USFMFilenames.py
 #
@@ -28,7 +28,7 @@ Module testing USFMFilenames.py.
 """
 
 progName = "USFM Filenames tests"
-versionString = "0.52"
+versionString = "0.53"
 
 
 import sys, os, unittest
@@ -62,13 +62,13 @@ class USFMFilenamesTests( unittest.TestCase ):
         self.assertFalse( ' ' in result )
         self.assertFalse( '.' in result )
         self.assertTrue( 'dd' in result )
-        self.assertTrue( 'nnn' in result or 'NNN' in result )
+        self.assertTrue( 'lll' in result or 'LLL' in result )
         self.assertTrue( 'bbb' in result or 'BBB' in result )
     # end of test_015_getFilenameTemplate
 
-    def test_020_getPossibleFilenames( self ):
-        """ Test the getPossibleFilenames function. """
-        results = self.UFns.getPossibleFilenames()
+    def test_020_getDerivedFilenames( self ):
+        """ Test the getDerivedFilenames function. """
+        results = self.UFns.getDerivedFilenames()
         self.assertTrue( isinstance( results, list ) )
         self.assertGreater( len(results), 3 )
         self.assertFalse( None in results )
@@ -77,12 +77,12 @@ class USFMFilenamesTests( unittest.TestCase ):
             self.assertTrue( isinstance( result, tuple ) )
             self.assertEqual( len(result), 2 )
             self.assertEqual( len(result[0]), 3 ) # BBB
-            self.assertGreater( len(result[1]), 10 ) # Filename, e.g., nnn08RUT.SCP
-    # end of test_020_getPossibleFilenames
+            self.assertGreater( len(result[1]), 10 ) # Filename, e.g., lll08RUT.SCP
+    # end of test_020_getDerivedFilenames
 
-    def test_030_getActualFilenames( self ):
-        """ Test the getActualFilenames function. """
-        results = self.UFns.getActualFilenames()
+    def test_030_getConfirmedFilenames( self ):
+        """ Test the getConfirmedFilenames function. """
+        results = self.UFns.getConfirmedFilenames()
         self.assertTrue( isinstance( results, list ) )
         self.assertGreater( len(results), 2 ) # Number of actual files found
         self.assertFalse( None in results )
@@ -91,14 +91,14 @@ class USFMFilenamesTests( unittest.TestCase ):
             self.assertTrue( isinstance( result, tuple ) )
             self.assertEqual( len(result), 2 )
             self.assertEqual( len(result[0]), 3 ) # BBB
-            self.assertGreater( len(result[1]), 10 ) # Filename, e.g., nnn08RUT.SCP
-    # end of test_030_getActualFilenames
+            self.assertGreater( len(result[1]), 10 ) # Filename, e.g., lll08RUT.SCP
+    # end of test_030_getConfirmedFilenames
 
     def test_040_getUnusedFilenames( self ):
         """ Test the getUnusedFilenames function. """
         results = self.UFns.getUnusedFilenames()
         self.assertTrue( isinstance( results, list ) )
-        self.assertEqual( len(results), 1 ) # Number of actual files found
+        self.assertEqual( len(results), 2 ) # Number of actual files found
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
         for result in results:
