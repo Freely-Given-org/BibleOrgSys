@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USXFilenamesTests.py
-#   Last modified: 2012-05-25 (also update versionString below)
+#   Last modified: 2012-06-06 (also update versionString below)
 #
 # Module testing USXFilenames.py
 #
@@ -78,9 +78,9 @@ class USXFilenamesTests( unittest.TestCase ):
             self.assertEqual( len(result[1]), 10 ) # Filename, e.g., 008RUT.usx
     # end of test_020_getPossibleFilenames
 
-    def test_030_getActualFilenames( self ):
-        """ Test the getActualFilenames function. """
-        results = self.UFns.getActualFilenames()
+    def test_030_getConfirmedFilenames( self ):
+        """ Test the getConfirmedFilenames function. """
+        results = self.UFns.getConfirmedFilenames()
         self.assertTrue( isinstance( results, list ) )
         self.assertEqual( len(results), 3 ) # Number of actual files found
         self.assertFalse( None in results )
@@ -90,7 +90,7 @@ class USXFilenamesTests( unittest.TestCase ):
             self.assertEqual( len(result), 2 )
             self.assertEqual( len(result[0]), 3 ) # BBB
             self.assertEqual( len(result[1]), 10 ) # Filename, e.g., 08RUT.usx
-    # end of test_030_getActualFilenames
+    # end of test_030_getConfirmedFilenames
 
     def test_040_getUnusedFilenames( self ):
         """ Test the getUnusedFilenames function. """

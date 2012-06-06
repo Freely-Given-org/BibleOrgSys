@@ -227,8 +227,10 @@ class BibleBooksCodes:
         result = []
         for BBB, values in self.__DataDicts["referenceAbbreviationDict"].items():
             pA = values["USFMAbbreviation"]
-            if pA is not None and pA not in result: # Don't want duplicates (where more than one book maps to a single USFMAbbreviation)
-                result.append( pA.upper() if toUpper else pA )
+            if pA is not None:
+                if toUpper: pA = pA.upper()
+                if pA not in result: # Don't want duplicates (where more than one book maps to a single USFMAbbreviation)
+                    result.append( pA )
         return result
     # end of getAllUSFMBooksCodes
 

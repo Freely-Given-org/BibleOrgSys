@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USXBibleBook.py
-#   Last modified: 2012-05-29 (also update versionString below)
+#   Last modified: 2012-06-06 (also update versionString below)
 #
 # Module handling USX Bible Book xml
 #
@@ -285,7 +285,7 @@ def main():
     if os.access( testFolder, os.R_OK ):
         if Globals.verbosityLevel > 1: print( _("Scanning {} from {}...").format( name, testFolder ) )
         if Globals.verbosityLevel > 1: print( _("Scanning {} from {}...").format( name, testFolder2 ) )
-        fileList = USXFilenames.USXFilenames( testFolder ).getActualFilenames()
+        fileList = USXFilenames.USXFilenames( testFolder ).getConfirmedFilenames()
         for bookReferenceCode,filename in fileList:
             if bookReferenceCode in ('GEN','RUT','EST','DAN','JNA', \
                                         'MAT','MRK','LUK','JHN','ACT', \
@@ -309,7 +309,7 @@ def main():
 
                 # Test our USX code by comparing with the original USFM books
                 if os.access( testFolder2, os.R_OK ):
-                    fileList2 = USFMFilenames.USFMFilenames( testFolder2 ).getActualFilenames()
+                    fileList2 = USFMFilenames.USFMFilenames( testFolder2 ).getConfirmedFilenames()
                     found2 = False
                     for bookReferenceCode2,filename2 in fileList2:
                         if bookReferenceCode2 == bookReferenceCode:

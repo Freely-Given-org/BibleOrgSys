@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodesTests.py
-#   Last modified: 2012-05-25 (also update versionString below)
+#   Last modified: 2012-06-06 (also update versionString below)
 #
 # Module testing BibleBooksCodes.py
 #
@@ -28,7 +28,7 @@ Module testing BibleBooksCodes.py.
 """
 
 progName = "Bible Books Codes tests"
-versionString = "0.60"
+versionString = "0.61"
 
 
 import sys, unittest
@@ -385,7 +385,31 @@ class BibleBooksCodesTests( unittest.TestCase ):
             self.assertLess( len(result), 8 )
     # end of test_330_getAllOSISBooksCodes
 
-    def test_340_getAllUSFMBooksCodeNumberTriples( self ):
+    def test_340_getAllUSFMBooksCodes( self ):
+        """ Test the getAllUSFMBooksCodes function. """
+        results1 = self.bbc.getAllUSFMBooksCodes()
+        self.assertTrue( isinstance( results1, list ) )
+        self.assertGreater( len(results1), 100 ) # Remember it includes many non-canonical books
+        self.assertLess( len(results1), 140 )
+        self.assertFalse( None in results1 )
+        self.assertFalse( '' in results1 )
+        for result in results1:
+            self.assertEqual( len(result), 3 )
+        for BBB in ('Gen','Rev',): self.assertTrue( BBB in results1 )
+        results2 = self.bbc.getAllUSFMBooksCodes( True ) # Upper case
+        self.assertTrue( isinstance( results2, list ) )
+        self.assertGreater( len(results2), 100 ) # Remember it includes many non-canonical books
+        self.assertLess( len(results2), 140 )
+        self.assertEqual( len(results1), len(results2) )
+        self.assertFalse( None in results2 )
+        self.assertFalse( '' in results2 )
+        for result in results2:
+            self.assertEqual( len(result), 3 )
+            self.assertEqual( result, result.upper() )
+        for BBB in ('GEN','REV',): self.assertTrue( BBB in results2 )
+    # end of test_340_getAllUSFMBooksCodes
+
+    def test_350_getAllUSFMBooksCodeNumberTriples( self ):
         """ Test the getAllUSFMBooksCodeNumberTriples function. """
         results = self.bbc.getAllUSFMBooksCodeNumberTriples()
         self.assertTrue( isinstance( results, list ) )
@@ -399,7 +423,23 @@ class BibleBooksCodesTests( unittest.TestCase ):
             self.assertEqual( len(resultTuple[1]), 2 )
             self.assertEqual( len(resultTuple[2]), 3 )
         for BBB in (('Gen','01','GEN'),): self.assertTrue( BBB in results )
-    # end of test_340_getAllUSFMBooksCodeNumberTriples
+    # end of test_350_getAllUSFMBooksCodeNumberTriples
+
+    def test_360_getAllUSXBooksCodeNumberTriples( self ):
+        """ Test the getAllUSXBooksCodeNumberTriples function. """
+        results = self.bbc.getAllUSXBooksCodeNumberTriples()
+        self.assertTrue( isinstance( results, list ) )
+        self.assertGreater( len(results), 65 ) # Remember it includes many non-canonical books
+        self.assertLess( len(results), 120 )
+        self.assertFalse( None in results )
+        self.assertFalse( '' in results )
+        for resultTuple in results:
+            self.assertEqual( len(resultTuple), 3 )
+            self.assertEqual( len(resultTuple[0]), 3 )
+            self.assertEqual( len(resultTuple[1]), 3 )
+            self.assertEqual( len(resultTuple[2]), 3 )
+        for BBB in (('Gen','001','GEN'),): self.assertTrue( BBB in results )
+    # end of test_360_getAllUSXBooksCodeNumberTriples
 # end of BibleBooksCodesTests class
 
 

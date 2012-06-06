@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # USXFilenames.py
-#   Last modified: 2012-05-25 (also update versionString below)
+#   Last modified: 2012-06-06 (also update versionString below)
 #
 # Module handling USX Bible filenames
 #
@@ -123,7 +123,7 @@ class USXFilenames:
     # end of getPossibleFilenames
 
 
-    def getActualFilenames( self ):
+    def getConfirmedFilenames( self ):
         """Return a list of tuples of UPPER CASE book codes with actual (present and readable) USX filenames."""
         filelist = []
         for bookReferenceCode,possibleFilename in self.getPossibleFilenames():
@@ -133,13 +133,13 @@ class USXFilenames:
                 #USXBookCode = possibleFilename[self.USXBookCodeIndex:self.USXBookCodeIndex+3].upper()
                 filelist.append( (bookReferenceCode, possibleFilename,) )
         return filelist
-    # end of getActualFilenames
+    # end of getConfirmedFilenames
 
 
     def getUnusedFilenames( self ):
         """Return a list of filenames which didn't match the USFX template."""
         folderFilenames = os.listdir( self.folder )
-        actualFilenames = self.getActualFilenames()
+        actualFilenames = self.getConfirmedFilenames()
         filelist = []
         for bookReferenceCode,actualFilename in actualFilenames:
             folderFilenames.remove( actualFilename )
@@ -197,8 +197,8 @@ def demo():
     if os.access( testFolder, os.R_OK ):
         UFns = USXFilenames( testFolder )
         print( UFns )
-        result = UFns.getPossibleFilenames(); print( "Possible:", len(result), result )
-        result = UFns.getActualFilenames(); print( "\nActual:", len(result), result )
+        result = UFns.getPossibleFilenames(); print( "\nPossible:", len(result), result )
+        result = UFns.getConfirmedFilenames(); print( "\nConfirmed:", len(result), result )
         result = UFns.getUnusedFilenames(); print( "\nOther:", len(result), result )
     else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
 
