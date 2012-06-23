@@ -4,9 +4,9 @@
 # USFMMarkersTests.py
 #
 # Module testing USFMMarkers.py
-#   Last modified: 2011-06-02 (also update versionString below)
+#   Last modified: 2012-06-23 (also update versionString below)
 #
-# Copyright (C) 2011 Robert Hunt
+# Copyright (C) 2011-2012 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module testing USFMMarkers.py.
 """
 
 progName = "USFM Markers tests"
-versionString = "0.53"
+versionString = "0.54"
 
 
 import sys, unittest
@@ -135,6 +135,8 @@ class USFMMarkersTests( unittest.TestCase ):
             self.assertTrue( self.UMs.isNewlineMarker(numberableMarker) )
         for numberedMarker in ( 'h1', 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', ):
             self.assertTrue( self.UMs.isNewlineMarker(numberedMarker) )
+        for deprecatedMarker in ( 'ps','pdi','pde', ):
+            self.assertTrue( self.UMs.isNewlineMarker(deprecatedMarker) )
         for simpleMarker in ( 'f', 'ft', 'x', 'xq', 'em', ):
             self.assertFalse( self.UMs.isNewlineMarker(simpleMarker) )
         for badMarker in ( 'H', 'y', 'Q1', 'q5', 'toc4', 'x*', '\\p', ):
@@ -145,6 +147,8 @@ class USFMMarkersTests( unittest.TestCase ):
         """ Test the isInternalMarker function. """
         for simpleMarker in ( 'f', 'ft', 'x', 'xq', 'em', ):
             self.assertTrue( self.UMs.isInternalMarker(simpleMarker) )
+        for deprecatedMarker in ( 'wr', ):
+            self.assertTrue( self.UMs.isInternalMarker(deprecatedMarker) )
         for simpleMarker in ( 'p', 'c', 'b', 'v', 'toc1', ):
             self.assertFalse( self.UMs.isInternalMarker(simpleMarker) )
         for numberableMarker in ( 'h', 'q', 'ili', ):
@@ -159,6 +163,8 @@ class USFMMarkersTests( unittest.TestCase ):
         """ Test the isDeprecatedMarker function. """
         for simpleMarker in ( 'pdi', 'pde', 'wr', 'ps', ):
             self.assertTrue( self.UMs.isDeprecatedMarker(simpleMarker) )
+        for numberableMarker in ( 'ph1', 'ph2', 'ph3', ):
+            self.assertTrue( self.UMs.isDeprecatedMarker(numberableMarker) )
         for simpleMarker in ( 'p', 'c', 'b', 'v', 'toc1', ):
             self.assertFalse( self.UMs.isDeprecatedMarker(simpleMarker) )
         for numberableMarker in ( 'h', 'q', 'ili', ):

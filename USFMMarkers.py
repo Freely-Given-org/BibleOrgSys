@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkers.py
-#   Last modified: 2012-06-04 (also update versionString below)
+#   Last modified: 2012-06-23 (also update versionString below)
 #
 # Module handling USFMMarkers
 #
@@ -28,7 +28,7 @@ Module handling USFMMarkers.
 """
 
 progName = "USFM Markers handler"
-versionString = "0.53"
+versionString = "0.54"
 
 
 import os, logging
@@ -143,10 +143,7 @@ for thisSet in xrefSets: assert( xrefSets.count(thisSet) == 1 )
 class USFMMarkers:
     """
     Class for handling USFMMarkers.
-
     This class doesn't deal at all with XML, only with Python dictionaries, etc.
-
-    Note: marker is used in this class to represent the three-character marker.
     """
 
     def __init__( self ): # We can't give this parameters because of the singleton
@@ -316,6 +313,7 @@ class USFMMarkers:
         """ Returns a list of all internal markers.
             This includes character, footnote and xref markers. """
         return self.__DataDict["internalMarkersList"]
+    # end of getInternalMarkersList
 
     def getCharacterMarkersList( self, includeBackslash=False, includeEndMarkers=False ):
         """ Returns a list of all character markers.

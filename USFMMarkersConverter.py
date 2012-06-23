@@ -4,9 +4,9 @@
 # USFMMarkersConverter.py
 #
 # Module handling USFMMarkers.xml to produce C and Python data tables
-#   Last modified: 2011-08-22 (also update versionString below)
+#   Last modified: 2012-06-23 (also update versionString below)
 #
-# Copyright (C) 2011 Robert Hunt
+# Copyright (C) 2011-2012 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling USFMMarkers.xml and to export to JSON, C, and Python data tables
 """
 
 progName = "USFM Markers converter"
-versionString = "0.53"
+versionString = "0.54"
 
 
 import logging, os.path
@@ -38,9 +38,6 @@ from xml.etree.cElementTree import ElementTree
 
 from singleton import singleton
 import Globals
-
-
-deprecatedUSFMMarkers = [ 'pdi', 'pde', 'wr', 'ps' ] # These aren't listed in the XML file
 
 
 @singleton # Can only ever have one instance
@@ -67,7 +64,7 @@ class USFMMarkersConverter:
         self._compulsoryAttributes = ()
         self._optionalAttributes = ()
         self._uniqueAttributes = self._compulsoryAttributes + self._optionalAttributes
-        self._compulsoryElements = ( "nameEnglish", "marker", "compulsory", "level", "numberable", "nests", "hasContent", "printed", "closed", "occursIn", )
+        self._compulsoryElements = ( "nameEnglish", "marker", "compulsory", "level", "numberable", "nests", "hasContent", "printed", "closed", "occursIn", "deprecated", )
         self._optionalElements = ( "description", )
         #self._uniqueElements = self._compulsoryElements + self.optionalElements
         self._uniqueElements = ( "nameEnglish", "marker", )
@@ -253,13 +250,12 @@ class USFMMarkersConverter:
         rawMarkerDict, numberedMarkerList, combinedMarkerDict, = OrderedDict(), [], {}
         conversionDict, backConversionDict = {}, {}
         newlineMarkersList, numberedNewlineMarkersList, combinedNewlineMarkersList = [], [], []
-        internalMarkersList, numberedInternalMarkersList, combinedInternalMarkersList = [], [], []
+        internalMarkersList, numberedInternalMarkersList, combinedInternalMarkersList, deprecatedMarkersList = [], [], [], []
         for element in self._XMLtree:
             # Get the required information out of the tree for this element
             # Start with the compulsory elements
             nameEnglish = element.find("nameEnglish").text # This name is really just a comment element
             marker = element.find("marker").text
-            assert( marker not in deprecatedUSFMMarkers )
             if marker.lower() != marker:
                 logging.error( _("Marker '{}' should be lower case").format( marker ) )
             compulsory = element.find("compulsory").text
@@ -284,8 +280,11 @@ class USFMMarkersConverter:
             closed = element.find("closed").text
             if  closed not in ( "No", "Always", "Optional" ): logging.error( _("Unexpected '{}' closed field for marker '{}'").format( closed, marker ) )
             occursIn = element.find("occursIn").text
-            if  occursIn not in ( "Header", "Introduction", "Text", "Poetry", "Text, Poetry", "Acrostic verse", "Table row", "Footnote", "Cross reference", "Front and back matter" ):
+            if  occursIn not in ( "Header", "Introduction", "Text", "Poetry", "Text, Poetry", "Acrostic verse", "Table row", "Footnote", "Cross-reference", "Front and back matter" ):
                 logging.error( _("Unexpected '{}' occursIn field for marker '{}'").format( occursIn, marker ) )
+            deprecated = element.find("deprecated").text
+            if  deprecated not in ( "Yes", "No" ): logging.error( _("Unexpected '{}' deprecated field for marker '{}'").format( deprecated, marker ) )
+            deprecatedFlag = deprecated == "Yes"
 
             # The optional elements are set to None if they don't exist
             #closed = None if element.find("closed") is None else element.find("closed").text
@@ -298,7 +297,8 @@ class USFMMarkersConverter:
             #   The marker is lowercase by definition
             if "marker" in self._uniqueElements: assert( marker not in rawMarkerDict ) # Shouldn't be any duplicates
             rawMarkerDict[marker] = { "compulsoryFlag":compulsoryFlag, "level":level, "numberableFlag":numberableFlag, "nestsFlag":nestsFlag,
-                                        "hasContent":hasContent, "occursIn":occursIn, "printedFlag":printedFlag, "closed":closed, "description":description, "nameEnglish":nameEnglish }
+                                        "hasContent":hasContent, "occursIn":occursIn, "printedFlag":printedFlag, "closed":closed, "deprecatedFlag":deprecatedFlag,
+                                        "description":description, "nameEnglish":nameEnglish }
             combinedMarkerDict[marker] = marker
             if numberableFlag: # We have some extra work to do
                 conversionDict[marker] = marker + '1'
@@ -309,21 +309,24 @@ class USFMMarkersConverter:
                     combinedMarkerDict[numberedMarker] = marker
                     if marker in newlineMarkersList: numberedNewlineMarkersList.append( numberedMarker ); combinedNewlineMarkersList.append( numberedMarker )
                     else: numberedInternalMarkersList.append( numberedMarker ); combinedInternalMarkersList.append( numberedMarker )
+                    if deprecatedFlag: deprecatedMarkersList.append( numberedMarker )
             else: # it's not numberable
                 numberedMarkerList.append( marker )
                 if marker in newlineMarkersList: numberedNewlineMarkersList.append( marker )
                 else: numberedInternalMarkersList.append( marker )
+                if deprecatedFlag: deprecatedMarkersList.append( marker )
 
         #print( conversionDict ); print( backConversionDict )
         #print( "newlineMarkersList", len(newlineMarkersList), newlineMarkersList )
         #print( "numberedNewlineMarkersList", len(numberedNewlineMarkersList), numberedNewlineMarkersList )
         #print( "combinedNewlineMarkersList", len(combinedNewlineMarkersList), combinedNewlineMarkersList )
         #print( "internalMarkersList", len(internalMarkersList), internalMarkersList )
+        #print( "deprecatedMarkersList", len(deprecatedMarkersList), deprecatedMarkersList )
         self.__DataDicts = { "rawMarkerDict":rawMarkerDict, "numberedMarkerList":numberedMarkerList, "combinedMarkerDict":combinedMarkerDict,
                                 "conversionDict":conversionDict, "backConversionDict":backConversionDict,
                                 "newlineMarkersList":newlineMarkersList, "numberedNewlineMarkersList":numberedNewlineMarkersList, "combinedNewlineMarkersList":combinedNewlineMarkersList,
                                 "internalMarkersList":internalMarkersList, "numberedInternalMarkersList":numberedInternalMarkersList, "combinedInternalMarkersList":combinedInternalMarkersList,
-                                "deprecatedMarkersList":deprecatedUSFMMarkers, }
+                                "deprecatedMarkersList":deprecatedMarkersList, }
         return self.__DataDicts # Just delete any of the dictionaries that you don't need
     # end of importDataToPython
 
