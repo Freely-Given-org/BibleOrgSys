@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # InternalBibleBook.py
-#   Last modified: 2012-06-03 by RJH (also update versionString below)
+#   Last modified: 2012-06-23 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -122,11 +122,12 @@ class InternalBibleBook:
 
 
     def appendLine( self, marker, text ):
-        """ Append a (USFM-based) 2-tuple to self._rawLines """
+        """ Append a (USFM-based) 2-tuple to self._rawLines.
+            This is a very simple function, but having it allows us to have a single point in order to catch particular bugs or errors. """
         assert( not self._processed )
 
         rawLineTuple = ( marker, text )
-        #print( "rawLineTuple", rawLineTuple )
+        #if " \\f " in text: print( "rawLineTuple", rawLineTuple )
         self._rawLines.append( rawLineTuple )
     # end of appendLine
 
@@ -189,6 +190,10 @@ class InternalBibleBook:
                 if ix1 == ixFN:
                     ix2 = lcAdjText.find( '\\f*' )
                     thisOne, this1 = "footnote", "fn"
+                    if ixFN and lcAdjText[ixFN-1]==' ':
+                        fixErrors.append( _("{} {}:{} Found footnote preceded by a space in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
+                        if self.logErrorsFlag: logging.error( _("Found footnote preceded by a space after {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
+                        self.addPriorityError( 52, c, v, _("Footnote is preceded by a space") )
                 else:
                     assert( ix1 == ixXR )
                     ix2 = lcAdjText.find( '\\x*' )
@@ -311,8 +316,8 @@ class InternalBibleBook:
                 for insideMarker, nextSignificantChar, iMIndex in markerList: # check paragraph markers
                     if self.USFMMarkers.isNewlineMarker(insideMarker): # Need to split the line for everything else to work properly
                         if ix==0:
-                            fixErrors.append( _("{} {}:{} Marker '{}' shouldn't appear within line in \\{}: '{}'").format( self.bookReferenceCode, c, v, insideMarker, marker, text ) )
-                            if self.logErrorsFlag: logging.error( _("Marker '{}' shouldn't appear within line after {} {}:{} in \\{}: '{}'").format( insideMarker, self.bookReferenceCode, c, v, marker, text ) ) # Only log the first error in the line
+                            fixErrors.append( _("{} {}:{} Marker '{}' mustn't appear within line in \\{}: '{}'").format( self.bookReferenceCode, c, v, insideMarker, marker, text ) )
+                            if self.logErrorsFlag: logging.error( _("Marker '{}' mustn't appear within line after {} {}:{} in \\{}: '{}'").format( insideMarker, self.bookReferenceCode, c, v, marker, text ) ) # Only log the first error in the line
                             self.addPriorityError( 96, c, v, _("Marker \\{} shouldn't be inside a line").format( insideMarker ) )
                         thisText = text[ix:iMIndex].rstrip()
                         adjText, cleanText, extras = processLineFix( originalMarker, thisText )
@@ -402,8 +407,8 @@ class InternalBibleBook:
             ix = 0
             for insideMarker, nextSignificantChar, iMIndex in markerList: # check newline markers
                 if self.USFMMarkers.isNewlineMarker(insideMarker):
-                    validationErrors.append( _("{} {}:{} Marker '\\{}' shouldn't appear within line in {}: {}").format( self.bookReferenceCode, c, v, insideMarker, marker, text ) )
-                    if self.logErrorsFlag: logging.error( _("Marker '\\{}' shouldn't appear within line after {} {}:{} in {}: {}").format( insideMarker, self.bookReferenceCode, c, v, marker, text ) )
+                    validationErrors.append( _("{} {}:{} Marker '\\{}' must not appear within line in {}: {}").format( self.bookReferenceCode, c, v, insideMarker, marker, text ) )
+                    if self.logErrorsFlag: logging.error( _("Marker '\\{}' must not appear within line after {} {}:{} in {}: {}").format( insideMarker, self.bookReferenceCode, c, v, marker, text ) )
 
         if validationErrors: self.errorDictionary['Validation Errors'] = validationErrors
     # end of validateUSFM
@@ -923,12 +928,12 @@ class InternalBibleBook:
                 # Regular chapter stuff (in alphabetical order)
                 ('b=E','q1'),('b=E','q1=E'),
                 ('c','p=E'),('c','q1=E'),('c','s1'),('c','s2'),('c','s3'),
-                ('li1','li1'),('li1','v'),
                 ('m=E','p'),('m=E','v'),
                 ('p','c'),('p','p=E'),('p=E','q1'),('p','s1'),('p','v'),('p=E','v'),
                 ('q1','b=E'),('q1','c'),('q1','m=E'),('q1','p=E'),('q1','q1'),('q1','q1=E'),('q1','q2'),('q1','q2=E'),('q1','s1'),('q1=E','v'),
                 ('q2','b=E'),('q2','c'),('q2','m=E'),('q2','p=E'),('q2','q1'),('q2','q1=E'),('q2','q2'),('q2','q2=E'),('q2','q3'),('q2','s1'),('q2','v'),('q2=E','v'),
                 ('q3','b=E'),('q3','c'),('q3','m=E'),('q3','p=E'),('q3','q2'),('q3','q3'),('q3','s1'),('q3','v'),('q3=E','v'),
+                ('li1','li1'),('li1','v'),('li1=E','v'),('li1','p=E'),
                 ('r','p=E'),
                 ('s1','p=E'),('s1','q1=E'),('s1','r'),
                 ('s2','p=E'),('s2','q1=E'),('s2','r'),
@@ -1041,6 +1046,14 @@ class InternalBibleBook:
                             else: # it's not an asterisk so appears to be another marker
                                 if not self.USFMMarkers.isNestingMarker( openList[-1] ): openList.pop() # Let this marker close the last one
                                 openList.append( insideMarker ) # Now have multiple entries in the openList
+                if len(openList) == 1: # only one marker left open
+                    closedFlag = self.USFMMarkers.markerShouldBeClosed( openList[0] )
+                    if closedFlag != 'A': # always
+                        if closedFlag == 'S': # sometimes
+                            internalMarkerErrors.append( _("{} {}:{} Marker(s) {} don't appear to be (optionally) closed in {}: {}").format( self.bookReferenceCode, c, v, openList, marker, text ) )
+                            if self.logErrorsFlag: logging.info( _("Marker(s) {} don't appear to be (optionally) closed after {} {}:{} in {}: {}").format( openList, self.bookReferenceCode, c, v, marker, text ) )
+                            self.addPriorityError( 26, c, v, _("Marker(s) {} isn't closed").format( openList ) ); halt
+                        openList.pop() # This marker can (always or sometimes) be closed by the end of line
                 if openList:
                     internalMarkerErrors.append( _("{} {}:{} Marker(s) {} don't appear to be closed in {}: {}").format( self.bookReferenceCode, c, v, openList, marker, text ) )
                     if self.logErrorsFlag: logging.warning( _("Marker(s) {} don't appear to be closed after {} {}:{} in {}: {}").format( openList, self.bookReferenceCode, c, v, marker, text ) )
@@ -1690,6 +1703,7 @@ class InternalBibleBook:
         self.checkIntroduction()
         self.checkNotes() # footnotes and cross-references
 
+        # This code is temporary XXXXXXXXXXXXXXXXXXXXXXXX ........................................................................
         if typicalAddedUnitData is None: # Get our recommendations for added units
             import pickle
             folder = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/" ) # Relative to module, not cwd
@@ -1722,8 +1736,10 @@ def main():
 
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
+    logErrors = False # Set to true if you want errors logged to the console
+
     # Since this is only designed to be a base class, it can't actually do much at all
-    IBB = InternalBibleBook( False ) # The parameter is the logErrorsFlag -- set to true if you want errors logged to the console
+    IBB = InternalBibleBook( logErrors ) # The parameter is the logErrorsFlag -- set to true if you want errors logged to the console
     # The following fields would normally be filled in a by "load" routine in the derived class
     IBB.objectType = "DUMMY"
     IBB.objectNameString = "Dummy test Internal Bible Book object"

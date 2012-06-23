@@ -9,6 +9,10 @@
 # or to validate against both this and the internal DTD, use
 #       xmllint --noout --relaxng DerivedFiles/BibleBooksCodes.rng --valid BibleBooksCodes.xml
 #
+# See the supplied ReadMe.txt file for more information.
+#
+# Note: ? = optional (zero or one), * = zero or more, + = one or more
+#
 
 # The root element
 start = BibleBooksCodes

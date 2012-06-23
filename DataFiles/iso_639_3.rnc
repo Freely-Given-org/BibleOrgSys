@@ -11,6 +11,8 @@
 #
 # See the supplied ReadMe.txt for more information.
 #
+# Note: ? = optional (zero or one), * = zero or more, + = one or more
+#
 
 # The root element
 start = iso_639_3_entries
