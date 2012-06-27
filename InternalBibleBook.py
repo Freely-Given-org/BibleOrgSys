@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # InternalBibleBook.py
-#   Last modified: 2012-06-23 by RJH (also update versionString below)
+#   Last modified: 2012-06-27 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -39,7 +39,7 @@ and then calls
 """
 
 progName = "Internal Bible book handler"
-versionString = "0.05"
+versionString = "0.06"
 
 
 import os, logging
@@ -171,11 +171,15 @@ class InternalBibleBook:
                 adjText = adjText.replace('<<','“').replace('>>','”').replace('<','‘').replace('>','’') # Replace angle brackets with the proper opening and close quote marks
             if '"' in adjText:
                 if not self.givenDoubleQuoteWarning: # Just give the warning once (per book)
-                    fixErrors.append( _("{} {}:{} Replaced \" in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
-                    if self.logErrorsFlag: logging.info( _("Replaced \" after {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
+                    fixErrors.append( _("{} {}:{} Replaced straight quote sign (\") in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
+                    if self.logErrorsFlag: logging.info( _("Replaced straight quote sign (\") after {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
                     self.addPriorityError( 8, '', '', _("Book contains straight quote signs") )
                     self.givenDoubleQuoteWarning = True
-                adjText = adjText.replace(' "',' “').replace('"','”') # Try to replace double-quote marks with the proper opening and closing quote marks
+                if adjText[0]=='"': adjText = adjText.replace('"','“',1) # Replace initial double-quote mark with a proper open quote mark
+                adjText = adjText.replace(' "',' “') # Try to replace double-quote marks with the proper opening and closing quote marks
+                adjText = adjText.replace('."','.”').replace(',"',',”').replace('?"','?”').replace('!"','!”').replace(')"',')”').replace(']"',']”').replace('*"','*”')
+                adjText = adjText.replace('" ','” ').replace('",','”,').replace('".','”.') # Even the bad ones!
+                if '"' in adjText: logging.error( "{} {}:{} still has straight quotes in {}:'{}'".format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
 
             # Move footnotes and crossreferences out to extras
             extras = []
@@ -249,7 +253,8 @@ class InternalBibleBook:
                 self.addPriorityError( 10, c, v, _("Trailing space before note at end of line") )
                 adjText = adjText.rstrip()
                 #print( originalMarker, "'"+text+"'", "'"+adjText+"'" )
-            if '<' in adjText or '>' in adjText or '"' in adjText: print( originalMarker, adjText ); halt
+            if '<' in adjText or '>' in adjText or '"' in adjText:
+                logging.critical( "{} {}:{} still has angle-brackets or straight-quotes in {}:'{}'".format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
 
             # Now remove all formatting from the cleanText string
             cleanText = adjText
@@ -507,8 +512,8 @@ class InternalBibleBook:
                     versificationErrors.append( _("{} {} Missing chapter number field before verse {}").format( self.bookReferenceCode, chapterText, text ) )
                     if self.logErrorsFlag: logging.warning( _("Missing chapter number field before verse {} in chapter {} of {}").format( text, chapterText, self.bookReferenceCode ) )
                 if not text:
-                    versificationErrors.append( _("{} {} Missing USFM verse number after {}").format( self.bookReferenceCode, chapterNumber, lastVerseNumberString ) )
-                    if self.logErrorsFlag: logging.warning( _("Missing USFM verse number after {} in chapter {} of {}").format( lastVerseNumberString, chapterNumber, self.bookReferenceCode ) )
+                    versificationErrors.append( _("{} {} Missing USFM verse number after v{}").format( self.bookReferenceCode, chapterNumber, lastVerseNumberString ) )
+                    if self.logErrorsFlag: logging.warning( _("Missing USFM verse number after v{} in chapter {} of {}").format( lastVerseNumberString, chapterNumber, self.bookReferenceCode ) )
                     continue
                 verseText = text
                 doneWarning = False
@@ -584,8 +589,8 @@ class InternalBibleBook:
                     lastVerseNumber = int(newString) if newString else 999
                 if verseNumber != lastVerseNumber+1:
                     if verseNumber <= lastVerseNumber:
-                        versificationErrors.append( _("{} {} ({} after {}) USFM verse numbers out of sequence in Bible book").format( self.bookReferenceCode, chapterText, verseText, lastVerseNumberString ) )
-                        if self.logErrorsFlag: logging.warning( _("USFM verse numbers out of sequence in Bible book {} {} ({} after {})").format( self.bookReferenceCode, chapterText, verseText, lastVerseNumberString ) )
+                        versificationErrors.append( _("{} {} ({} after v{}) USFM verse numbers out of sequence in Bible book").format( self.bookReferenceCode, chapterText, verseText, lastVerseNumberString ) )
+                        if self.logErrorsFlag: logging.warning( _("USFM verse numbers out of sequence in Bible book {} {} ({} after v{})").format( self.bookReferenceCode, chapterText, verseText, lastVerseNumberString ) )
                         reorderedVerses.append( (chapterText, lastVerseNumberString, verseText,) )
                     else: # Must be missing some verse numbers
                         versificationErrors.append( _("{} {} Missing USFM verse number(s) between {} and {} in Bible book").format( self.bookReferenceCode, chapterText, lastVerseNumberString, verseNumberString ) )
@@ -625,8 +630,8 @@ class InternalBibleBook:
             elif marker == 'v':
                 #print( self.bookReferenceCode, chapterText, marker, text )
                 if not text:
-                    addedUnitErrors.append( _("{} {} Missing USFM verse number after {}").format( self.bookReferenceCode, chapterText, verseText ) )
-                    if self.logErrorsFlag: logging.warning( _("Missing USFM verse number after {} in chapter {} of {}").format( verseText, chapterText, self.bookReferenceCode ) )
+                    addedUnitErrors.append( _("{} {} Missing USFM verse number after v{}").format( self.bookReferenceCode, chapterText, verseText ) )
+                    if self.logErrorsFlag: logging.warning( _("Missing USFM verse number after v{} in chapter {} of {}").format( verseText, chapterText, self.bookReferenceCode ) )
                     self.addPriorityError( 86, chapterText, verseText, _("Missing verse number") )
                     continue
                 verseText = text
@@ -688,30 +693,30 @@ class InternalBibleBook:
                 assert( typical in ('A','S','M','F') )
                 if reference in paragraphReferences:
                     if typical == 'F':
-                        addedUnitNotices.append( _("{} {} Paragraph break is less common after {}").format( self.bookReferenceCode, c, v ) )
-                        if self.logErrorsFlag: logging.info( _("Paragraph break is less common after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
-                        self.addPriorityError( 17, c, v, _("Less common to have a paragraph break after") )
+                        addedUnitNotices.append( _("{} {} Paragraph break is less common after v{}").format( self.bookReferenceCode, c, v ) )
+                        if self.logErrorsFlag: logging.info( _("Paragraph break is less common after v{} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                        self.addPriorityError( 17, c, v, _("Less common to have a paragraph break after field") )
                         #print( "Surprise", self.bookReferenceCode, reference, typical, present )
                     elif typical == 'S' and severe:
-                        self.addPriorityError( 3, c, v, _("Less common to have a paragraph break after") )
+                        self.addPriorityError( 3, c, v, _("Less common to have a paragraph break after field") )
                         #print( "Yeah", self.bookReferenceCode, reference, typical, present )
                 else: # we didn't have it
                     if typical == 'A':
-                        addedUnitNotices.append( _("{} {} Paragraph break normally inserted after {}").format( self.bookReferenceCode, c, v ) )
-                        if self.logErrorsFlag: logging.info( _("Paragraph break normally inserted after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
-                        self.addPriorityError( 27, c, v, _("Paragraph break normally inserted after") )
+                        addedUnitNotices.append( _("{} {} Paragraph break normally inserted after v{}").format( self.bookReferenceCode, c, v ) )
+                        if self.logErrorsFlag: logging.info( _("Paragraph break normally inserted after v{} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                        self.addPriorityError( 27, c, v, _("Paragraph break normally inserted after field") )
                         #print( "All", self.bookReferenceCode, reference, typical, present )
                     elif typical == 'M' and severe:
-                        self.addPriorityError( 15, c, v, _("Paragraph break often inserted after") )
+                        self.addPriorityError( 15, c, v, _("Paragraph break often inserted after field") )
                         #print( "Most", self.bookReferenceCode, reference, typical, present )
             for reference in paragraphReferences: # now check for ones in this book but not typically there
                 assert( 2 <= len(reference) <= 3 )
                 if reference not in typicalParagraphs[self.bookReferenceCode]:
                     c, v = reference[0], reference[1]
                     if len(reference)==3: v += reference[2] # append the suffix
-                    addedUnitNotices.append( _("{} {} Paragraph break is unusual after {}").format( self.bookReferenceCode, c, v ) )
-                    if self.logErrorsFlag: logging.info( _("Paragraph break is unusual after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
-                    self.addPriorityError( 37, c, v, _("Unusual to have a paragraph break after") )
+                    addedUnitNotices.append( _("{} {} Paragraph break is unusual after v{}").format( self.bookReferenceCode, c, v ) )
+                    if self.logErrorsFlag: logging.info( _("Paragraph break is unusual after v{} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                    self.addPriorityError( 37, c, v, _("Unusual to have a paragraph break after field") )
                     #print( "Weird paragraph after", self.bookReferenceCode, reference )
         else: # We don't have any info for this book
             addedUnitNotices.append( _("{} has no paragraph info available").format( self.bookReferenceCode ) )
@@ -733,30 +738,30 @@ class InternalBibleBook:
                 assert( typical in ('A','S','M','F') )
                 if reference in qReferences:
                     if typical == 'F':
-                        addedUnitNotices.append( _("{} {} Quote Paragraph is less common after {}").format( self.bookReferenceCode, c, v ) )
-                        if self.logErrorsFlag: logging.info( _("Quote Paragraph is less common after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
-                        self.addPriorityError( 17, c, v, _("Less common to have a Quote Paragraph after") )
+                        addedUnitNotices.append( _("{} {} Quote Paragraph is less common after v{}").format( self.bookReferenceCode, c, v ) )
+                        if self.logErrorsFlag: logging.info( _("Quote Paragraph is less common after v{} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                        self.addPriorityError( 17, c, v, _("Less common to have a Quote Paragraph after field") )
                         #print( "Surprise", self.bookReferenceCode, reference, typical, present )
                     elif typical == 'S' and severe:
-                        self.addPriorityError( 3, c, v, _("Less common to have a Quote Paragraph after") )
+                        self.addPriorityError( 3, c, v, _("Less common to have a Quote Paragraph after field") )
                         #print( "Yeah", self.bookReferenceCode, reference, typical, present )
                 else: # we didn't have it
                     if typical == 'A':
-                        addedUnitNotices.append( _("{} {} Quote Paragraph normally inserted after {}").format( self.bookReferenceCode, c, v ) )
-                        if self.logErrorsFlag: logging.info( _("Quote Paragraph normally inserted after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
-                        self.addPriorityError( 27, c, v, _("Quote Paragraph normally inserted after") )
+                        addedUnitNotices.append( _("{} {} Quote Paragraph normally inserted after v{}").format( self.bookReferenceCode, c, v ) )
+                        if self.logErrorsFlag: logging.info( _("Quote Paragraph normally inserted after v{} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                        self.addPriorityError( 27, c, v, _("Quote Paragraph normally inserted after field") )
                         #print( "All", self.bookReferenceCode, reference, typical, present )
                     elif typical == 'M' and severe:
-                        self.addPriorityError( 15, c, v, _("Quote Paragraph often inserted after") )
+                        self.addPriorityError( 15, c, v, _("Quote Paragraph often inserted after field") )
                         #print( "Most", self.bookReferenceCode, reference, typical, present )
             for reference in qReferences: # now check for ones in this book but not typically there
                 assert( 2 <= len(reference) <= 3 )
                 if reference not in typicalQParagraphs[self.bookReferenceCode]:
                     c, v = reference[0], reference[1]
                     if len(reference)==3: v += reference[2] # append the suffix
-                    addedUnitNotices.append( _("{} {} Quote Paragraph is unusual after {}").format( self.bookReferenceCode, c, v ) )
-                    if self.logErrorsFlag: logging.info( _("Quote Paragraph is unusual after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
-                    self.addPriorityError( 37, c, v, _("Unusual to have a Quote Paragraph after") )
+                    addedUnitNotices.append( _("{} {} Quote Paragraph is unusual after v{}").format( self.bookReferenceCode, c, v ) )
+                    if self.logErrorsFlag: logging.info( _("Quote Paragraph is unusual after v{} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                    self.addPriorityError( 37, c, v, _("Unusual to have a Quote Paragraph after field") )
                     #print( "Weird qParagraph after", self.bookReferenceCode, reference )
         else: # We don't have any info for this book
             addedUnitNotices.append( _("{} has no quote paragraph info available").format( self.bookReferenceCode ) )
@@ -778,21 +783,21 @@ class InternalBibleBook:
                 assert( typical in ('A','S','M','F') )
                 if reference in sectionHeadings:
                     if typical == 'F':
-                        addedUnitNotices.append( _("{} {} Section Heading is less common after {}").format( self.bookReferenceCode, c, v ) )
-                        if self.logErrorsFlag: logging.info( _("Section Heading is less common after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
-                        self.addPriorityError( 17, c, v, _("Less common to have a Section Heading after") )
+                        addedUnitNotices.append( _("{} {} Section Heading is less common after v{}").format( self.bookReferenceCode, c, v ) )
+                        if self.logErrorsFlag: logging.info( _("Section Heading is less common after v{} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                        self.addPriorityError( 17, c, v, _("Less common to have a Section Heading after field") )
                         #print( "Surprise", self.bookReferenceCode, reference, typical, present )
                     elif typical == 'S' and severe:
-                        self.addPriorityError( 3, c, v, _("Less common to have a Section Heading after") )
+                        self.addPriorityError( 3, c, v, _("Less common to have a Section Heading after field") )
                         #print( "Yeah", self.bookReferenceCode, reference, typical, present )
                 else: # we didn't have it
                     if typical == 'A':
-                        addedUnitNotices.append( _("{} {} Section Heading normally inserted after {}").format( self.bookReferenceCode, c, v ) )
-                        if self.logErrorsFlag: logging.info( _("Section Heading normally inserted after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
-                        self.addPriorityError( 27, c, v, _("Section Heading normally inserted after") )
+                        addedUnitNotices.append( _("{} {} Section Heading normally inserted after v{}").format( self.bookReferenceCode, c, v ) )
+                        if self.logErrorsFlag: logging.info( _("Section Heading normally inserted after v{} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                        self.addPriorityError( 27, c, v, _("Section Heading normally inserted after field") )
                         #print( "All", self.bookReferenceCode, reference, typical, present )
                     elif typical == 'M' and severe:
-                        self.addPriorityError( 15, c, v, _("Section Heading often inserted after") )
+                        self.addPriorityError( 15, c, v, _("Section Heading often inserted after field") )
                         #print( "Most", self.bookReferenceCode, reference, typical, present )
             for entry in sectionHeadings: # now check for ones in this book but not typically there
                 reference, level, text = entry
@@ -800,9 +805,9 @@ class InternalBibleBook:
                 if (reference,level) not in typicalSectionHeadings[self.bookReferenceCode]:
                     c, v = reference[0], reference[1]
                     if len(reference)==3: v += reference[2] # append the suffix
-                    addedUnitNotices.append( _("{} {} Section Heading is unusual after {}").format( self.bookReferenceCode, c, v ) )
-                    if self.logErrorsFlag: logging.info( _("Section Heading is unusual after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
-                    self.addPriorityError( 37, c, v, _("Unusual to have a Section Heading after") )
+                    addedUnitNotices.append( _("{} {} Section Heading is unusual after v{}").format( self.bookReferenceCode, c, v ) )
+                    if self.logErrorsFlag: logging.info( _("Section Heading is unusual after v{} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                    self.addPriorityError( 37, c, v, _("Unusual to have a Section Heading after field") )
                     #print( "Weird section heading after", self.bookReferenceCode, reference )
         else: # We don't have any info for this book
             addedUnitNotices.append( _("{} has no section heading info available").format( self.bookReferenceCode ) )
@@ -823,21 +828,21 @@ class InternalBibleBook:
                 assert( typical in ('A','S','M','F') )
                 if reference in sectionReferences:
                     if typical == 'F':
-                        addedUnitNotices.append( _("{} {} Section Reference is less common after {}").format( self.bookReferenceCode, c, v ) )
-                        if self.logErrorsFlag: logging.info( _("Section Reference is less common after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
-                        self.addPriorityError( 17, c, v, _("Less common to have a Section Reference after") )
+                        addedUnitNotices.append( _("{} {} Section Reference is less common after v{}").format( self.bookReferenceCode, c, v ) )
+                        if self.logErrorsFlag: logging.info( _("Section Reference is less common after v{} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                        self.addPriorityError( 17, c, v, _("Less common to have a Section Reference after field") )
                         #print( "Surprise", self.bookReferenceCode, reference, typical, present )
                     elif typical == 'S' and severe:
-                        self.addPriorityError( 3, c, v, _("Less common to have a Section Reference after") )
+                        self.addPriorityError( 3, c, v, _("Less common to have a Section Reference after field") )
                         #print( "Yeah", self.bookReferenceCode, reference, typical, present )
                 else: # we didn't have it
                     if typical == 'A':
-                        addedUnitNotices.append( _("{} {} Section Reference normally inserted after {}").format( self.bookReferenceCode, c, v ) )
-                        if self.logErrorsFlag: logging.info( _("Section Reference normally inserted after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
-                        self.addPriorityError( 27, c, v, _("Section Reference normally inserted after") )
+                        addedUnitNotices.append( _("{} {} Section Reference normally inserted after v{}").format( self.bookReferenceCode, c, v ) )
+                        if self.logErrorsFlag: logging.info( _("Section Reference normally inserted after v{} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                        self.addPriorityError( 27, c, v, _("Section Reference normally inserted after field") )
                         #print( "All", self.bookReferenceCode, reference, typical, present )
                     elif typical == 'M' and severe:
-                        self.addPriorityError( 15, c, v, _("Section Reference often inserted after") )
+                        self.addPriorityError( 15, c, v, _("Section Reference often inserted after field") )
                         #print( "Most", self.bookReferenceCode, reference, typical, present )
             for entry in sectionReferences: # now check for ones in this book but not typically there
                 reference, text = entry
@@ -845,9 +850,9 @@ class InternalBibleBook:
                 if reference not in typicalSectionReferences[self.bookReferenceCode]:
                     c, v = reference[0], reference[1]
                     if len(reference)==3: v += reference[2] # append the suffix
-                    addedUnitNotices.append( _("{} {} Section Reference is unusual after {}").format( self.bookReferenceCode, c, v ) )
-                    if self.logErrorsFlag: logging.info( _("Section Reference is unusual after {} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
-                    self.addPriorityError( 37, c, v, _("Unusual to have a Section Reference after") )
+                    addedUnitNotices.append( _("{} {} Section Reference is unusual after v{}").format( self.bookReferenceCode, c, v ) )
+                    if self.logErrorsFlag: logging.info( _("Section Reference is unusual after v{} in chapter {} of {}").format( v, c, self.bookReferenceCode ) )
+                    self.addPriorityError( 37, c, v, _("Unusual to have a Section Reference after field") )
                     #print( "Weird Section Reference after", self.bookReferenceCode, reference )
         else: # We don't have any info for this book
             addedUnitNotices.append( _("{} has no section reference info available").format( self.bookReferenceCode ) )
@@ -930,7 +935,8 @@ class InternalBibleBook:
                 ('c','p=E'),('c','q1=E'),('c','s1'),('c','s2'),('c','s3'),
                 ('m=E','p'),('m=E','v'),
                 ('p','c'),('p','p=E'),('p=E','q1'),('p','s1'),('p','v'),('p=E','v'),
-                ('q1','b=E'),('q1','c'),('q1','m=E'),('q1','p=E'),('q1','q1'),('q1','q1=E'),('q1','q2'),('q1','q2=E'),('q1','s1'),('q1=E','v'),
+                ('pi1','c'),('pi1','pi1=E'), ('pi1','s1'),('pi1','v'),('pi1=E','v'),
+                ('q1','b=E'),('q1','c'),('q1','m=E'),('q1','p=E'),('q1','q1'),('q1','q1=E'),('q1','q2'),('q1','q2=E'),('q1','s1'),('q1','v'),('q1=E','v'),
                 ('q2','b=E'),('q2','c'),('q2','m=E'),('q2','p=E'),('q2','q1'),('q2','q1=E'),('q2','q2'),('q2','q2=E'),('q2','q3'),('q2','s1'),('q2','v'),('q2=E','v'),
                 ('q3','b=E'),('q3','c'),('q3','m=E'),('q3','p=E'),('q3','q2'),('q3','q3'),('q3','s1'),('q3','v'),('q3=E','v'),
                 ('li1','li1'),('li1','v'),('li1=E','v'),('li1','p=E'),
@@ -938,14 +944,20 @@ class InternalBibleBook:
                 ('s1','p=E'),('s1','q1=E'),('s1','r'),
                 ('s2','p=E'),('s2','q1=E'),('s2','r'),
                 ('s3','p=E'),('s3','q1=E'),('s3','r'),
-                ('v','c'),('v','li1'),('v','m'),('v','p'),('v','p=E'),('v','q1'),('v','q1=E'),('v','q2'),('v','q2=E'),('v','q3'),('v','q3=E'),('v','s1'),('v','s2'),('v','s3'),('v','v'), )
+                ('v','c'),('v','li1'),('v','m'),
+                ('v','p'),('v','p=E'), ('v','pi1'),('v','pi1=E'),('v','pc'),
+                ('v','q1'),('v','q1=E'),('v','q2'),('v','q2=E'),('v','q3'),('v','q3=E'),
+                ('v','s1'),('v','s2'),('v','s3'),
+                ('v','v'), )
             rarerGoodNewlineMarkerCombinations = (
-                ('mt2','mt3'), ('mt3','mt1'), ('io1','cl'), ('io2','cl'),
+                ('mt2','mt3'), ('mt3','mt1'), ('io1','cl'), ('io2','cl'), ('ip','c'),
                 ('c','cl'), ('cl','c'),('cl','p=E'),('cl','q1=E'),('cl','s1'),('cl','s2'),('cl','s3'),
                 ('m','c'),('m','p=E'),('m','q1'),('m','v'),
-                ('p','p'),('p','q1'), ('pi1','v'),('pi1=E','v'),
+                ('p','p'),('p','q1'),
                 ('q1','m'),('q1','q3'), ('q2','m'), ('q3','q1'),
-                ('r','p'), ('s1','p'),('s1','pi1=E'), ('v','b=E'),('v','m=E'),('v','pi1'),('v','pi1=E'), )
+                ('r','p'), ('s1','p'),('s1','pi1=E'), ('v','b=E'),('v','m=E'), )
+            #for tuple2 in rarerGoodNewlineMarkerCombinations: print( tuple2); assert( tuple2 not in commonGoodNewlineMarkerCombinations ) # Just check our tables for unwanted duplicates
+            for tuple2 in rarerGoodNewlineMarkerCombinations: assert( tuple2 not in commonGoodNewlineMarkerCombinations ) # Just check our tables for unwanted duplicates
             # We allow rem (remark) markers to be anywhere without a warning
             if lastMarkerEmpty and markerEmpty:
                 if (lastMarker+'=E',marker+'=E') not in commonGoodNewlineMarkerCombinations:
@@ -1482,7 +1494,7 @@ class InternalBibleBook:
                 if not text:
                     introductionErrors.append( _("{} {}:{} Missing introduction text for marker {}").format( self.bookReferenceCode, c, v, marker ) )
                     self.addPriorityError( 36, c, v, _("Missing introduction text") )
-                elif not text.endswith('.') and not text.endswith('.)') and not text.endswith('.”') and not text.endswith('.’') and not text.endswith('.\\it*'):
+                elif not text.endswith('.') and not text.endswith('.)') and not text.endswith('.”') and not text.endswith('."') and not text.endswith('.’') and not text.endswith(".'") and not text.endswith('.\\it*'):
                     introductionErrors.append( _("{} {}:{} {} introduction text does not end with a period: {}").format( self.bookReferenceCode, c, v, marker, text ) )
                     self.addPriorityError( 46, c, v, _("Introduction text ends without a period") )
 
@@ -1595,7 +1607,7 @@ class InternalBibleBook:
                     if cleanText.endswith(' '):
                         footnoteErrors.append( _("{} {}:{} Footnote seems to have an extra space at end: '{}'").format( self.bookReferenceCode, c, v, extraText ) )
                         self.addPriorityError( 32, c, v, _("Extra space at end of footnote") )
-                    elif not cleanText.endswith('.') and not cleanText.endswith('?') and not cleanText.endswith('.)') and not cleanText.endswith('.”') and not cleanText.endswith('.’'):
+                    elif not cleanText.endswith('.') and not cleanText.endswith('?') and not cleanText.endswith('.)') and not cleanText.endswith('.”') and not cleanText.endswith('."') and not cleanText.endswith('.’') and not cleanText.endswith(".'"):
                         footnoteErrors.append( _("{} {}:{} Footnote seems to be missing a final period: '{}'").format( self.bookReferenceCode, c, v, extraText ) )
                         self.addPriorityError( 33, c, v, _("Missing period at end of footnote") )
                 elif extraType == 'xr':
@@ -1603,7 +1615,7 @@ class InternalBibleBook:
                     if cleanText.endswith(' '):
                         xrefErrors.append( _("{} {}:{} Cross-reference seems to have an extra space at end: '{}'").format( self.bookReferenceCode, c, v, extraText ) )
                         self.addPriorityError( 30, c, v, _("Extra space at end of cross-reference") )
-                    elif not cleanText.endswith('.') and not cleanText.endswith('.)') and not cleanText.endswith('.”'):
+                    elif not cleanText.endswith('.') and not cleanText.endswith('.)') and not cleanText.endswith('.”') and not cleanText.endswith('."'):
                         xrefErrors.append( _("{} {}:{} Cross-reference seems to be missing a final period: '{}'").format( self.bookReferenceCode, c, v, extraText ) )
                         self.addPriorityError( 31, c, v, _("Missing period at end of cross-reference") )
 

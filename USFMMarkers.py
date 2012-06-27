@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkers.py
-#   Last modified: 2012-06-23 (also update versionString below)
+#   Last modified: 2012-06-27 (also update versionString below)
 #
 # Module handling USFMMarkers
 #
@@ -315,10 +315,9 @@ class USFMMarkers:
         return self.__DataDict["internalMarkersList"]
     # end of getInternalMarkersList
 
-    def getCharacterMarkersList( self, includeBackslash=False, includeEndMarkers=False ):
+    def getCharacterMarkersList( self, includeBackslash=False, includeEndMarkers=False, expandNumberableMarkers=False ):
         """ Returns a list of all character markers.
-            This excludes footnote and xref markers.
-            Note that some of the table markers are numberable (but that's not done here). """
+            This excludes footnote and xref markers. """
         result = []
         for marker in self.__DataDict["internalMarkersList"]:
             if marker!='f' and marker!='x' and self.markerOccursIn(marker) in ("Text","Table row","Introduction",):
@@ -327,6 +326,11 @@ class USFMMarkers:
                 if includeEndMarkers:
                     assert( self.markerShouldBeClosed( marker )=='A' or self.markerOccursIn(marker)=="Table row" )
                     result.append( adjMarker + '*' )
+                if expandNumberableMarkers and self.isNumberableMarker( marker ):
+                    for digit in ('1','2','3',):
+                        result.append( adjMarker+digit )
+                        if includeEndMarkers:
+                            result.append( adjMarker + digit + '*' )
         return result
     # end of getCharacterMarkersList
 

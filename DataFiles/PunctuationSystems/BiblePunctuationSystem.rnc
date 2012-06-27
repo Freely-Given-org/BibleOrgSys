@@ -9,6 +9,10 @@
 # or to validate against both this and the internal DTD, use (with the proper suffix instead of XXX)
 #       xmllint --noout --relaxng ../../DerivedFiles/BiblePunctuationSystem.rng --valid BiblePunctuationSystem_XXX.xml
 #
+# See the supplied ReadMe.txt file for more information.
+#
+# Note: ? = optional (zero or one), * = zero or more, + = one or more
+#
 
 # The root element
 start = BiblePunctuationSystem

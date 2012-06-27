@@ -116,7 +116,7 @@ class USFMBibleBook( InternalBibleBook ):
                 self.addPriorityError( 97, c, v, _("Found \\{} internal marker on new line in file").format( marker ) )
                 if not lastText.endswith(' ') and marker!='f': lastText += ' ' # Not always good to add a space, but it's their fault! Don't do it for footnotes, though.
                 lastText +=  '\\' + marker + ' ' + text
-                if Globals.verbosityLevel > 2: print( "{} {} {} Appended {}:'{}' to get combined line {}:'{}'".format( self.bookReferenceCode, c, v, marker, text, lastMarker, lastText ) )
+                if Globals.verbosityLevel > 3: print( "{} {} {} Appended {}:'{}' to get combined line {}:'{}'".format( self.bookReferenceCode, c, v, marker, text, lastMarker, lastText ) )
             else: # the line begins with an unknown marker
                 if text:
                     loadErrors.append( _("{} {}:{} Found '\\{}' unknown marker at beginning of line with text: {}").format( self.bookReferenceCode, c, v, marker, text ) )

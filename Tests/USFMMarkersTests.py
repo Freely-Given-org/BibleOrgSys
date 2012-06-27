@@ -4,7 +4,7 @@
 # USFMMarkersTests.py
 #
 # Module testing USFMMarkers.py
-#   Last modified: 2012-06-23 (also update versionString below)
+#   Last modified: 2012-06-27 (also update versionString below)
 #
 # Copyright (C) 2011-2012 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -353,54 +353,104 @@ class USFMMarkersTests( unittest.TestCase ):
 
     def test_190_getCharacterMarkersList( self ):
         """ Test the getCharacterMarkersList function. """
-        result = self.UMs.getCharacterMarkersList()
-        self.assertTrue( isinstance( result, list ) )
-        self.assertGreater( len(result), 20 )
-        for something in result:
+        result1 = self.UMs.getCharacterMarkersList()
+        self.assertTrue( isinstance( result1, list ) )
+        self.assertGreater( len(result1), 20 )
+        for something in result1:
             self.assertTrue( isinstance( something , str ) )
             self.assertTrue( something )
             self.assertFalse( '\\' in something )
             self.assertFalse( '*' in something )
-            self.assertLess( len(something), 7 )
+            self.assertFalse( ' ' in something )
+            self.assertLess( len(something), 5 )
         for goodMarker in ( 'em', 'nd', 'fig', 'sig', 'bk', 'wj', ):
-            self.assertTrue( goodMarker in result )
+            self.assertTrue( goodMarker in result1 )
         for goodMarker in ( 'x', 'xo', 'f', 'fr', 'ft', 'p', 'q', 'q1', ):
-            self.assertFalse( goodMarker in result )
+            self.assertFalse( goodMarker in result1 )
         for badMarker in ( 'H', 'xyz', 'q9', 'bk*', ):
-            self.assertFalse( badMarker in result )
+            self.assertFalse( badMarker in result1 )
         result2 = self.UMs.getCharacterMarkersList( includeBackslash=True )
         self.assertTrue( isinstance( result2, list ) )
-        self.assertEqual( len(result2), len(result) )
+        self.assertEqual( len(result2), len(result1) )
         for something in result2:
             self.assertTrue( isinstance( something , str ) )
             self.assertTrue( something )
             self.assertEqual( something[0], '\\' )
             self.assertFalse( something[-1] == '\\' )
             self.assertFalse( '*' in something )
-            self.assertLess( len(something), 7 )
+            self.assertFalse( ' ' in something )
+            self.assertLess( len(something), 6 )
         for testCase in ('\\nd', '\\em'):
             self.assertTrue( testCase in result2 )
         result3 = self.UMs.getCharacterMarkersList( includeEndMarkers=True )
         self.assertTrue( isinstance( result3, list ) )
-        self.assertEqual( len(result3), len(result)*2 )
+        self.assertEqual( len(result3), len(result1)*2 )
         for something in result3:
             self.assertTrue( isinstance( something , str ) )
             self.assertTrue( something )
             self.assertFalse( '\\' in something )
-            self.assertLess( len(something), 7 )
+            self.assertFalse( ' ' in something )
+            self.assertLess( len(something), 6 )
         for testCase in ('nd', 'nd*'):
             self.assertTrue( testCase in result3 )
         result4 = self.UMs.getCharacterMarkersList( includeBackslash=True, includeEndMarkers=True )
         self.assertTrue( isinstance( result4, list ) )
-        self.assertEqual( len(result4), len(result)*2 )
+        self.assertEqual( len(result4), len(result1)*2 )
         for something in result4:
             self.assertTrue( isinstance( something , str ) )
             self.assertTrue( something )
             self.assertEqual( something[0], '\\' )
             self.assertFalse( something[-1] == '\\' )
+            self.assertFalse( ' ' in something )
             self.assertLess( len(something), 7 )
         for testCase in ('\\nd', '\\nd*'):
             self.assertTrue( testCase in result4 )
+        result5 = self.UMs.getCharacterMarkersList( expandNumberableMarkers=True )
+        self.assertTrue( isinstance( result5, list ) )
+        self.assertGreater( len(result5), len(result1) )
+        for something in result5:
+            self.assertTrue( isinstance( something , str ) )
+            self.assertTrue( something )
+            self.assertFalse( '\\' in something )
+            self.assertFalse( '*' in something )
+            self.assertFalse( ' ' in something )
+            self.assertLess( len(something), 5 )
+        for testCase in ('tc1','tc2','tc3','tcr1',):
+            self.assertTrue( testCase in result5 )
+        result6 = self.UMs.getCharacterMarkersList( includeBackslash=True, expandNumberableMarkers=True )
+        self.assertTrue( isinstance( result6, list ) )
+        self.assertGreater( len(result6), len(result1) )
+        for something in result6:
+            self.assertTrue( isinstance( something , str ) )
+            self.assertTrue( something )
+            self.assertTrue( '\\' in something )
+            self.assertFalse( '*' in something )
+            self.assertFalse( ' ' in something )
+            self.assertLess( len(something), 6 )
+        for testCase in ('\\tc1','\\tc2','\\tc3','\\tcr1',):
+            self.assertTrue( testCase in result6 )
+        result7 = self.UMs.getCharacterMarkersList( includeEndMarkers=True, expandNumberableMarkers=True )
+        self.assertTrue( isinstance( result7, list ) )
+        self.assertEqual( len(result7), len(result5)*2 )
+        for something in result7:
+            self.assertTrue( isinstance( something , str ) )
+            self.assertTrue( something )
+            self.assertFalse( '\\' in something )
+            self.assertFalse( ' ' in something )
+            self.assertLess( len(something), 6 )
+        for testCase in ('wj','tc1','tc2','tc3','tcr1', 'wj*','tc1*','tc2*','tc3*','tcr1*',):
+            self.assertTrue( testCase in result7 )
+        result8 = self.UMs.getCharacterMarkersList( includeBackslash=True, includeEndMarkers=True, expandNumberableMarkers=True )
+        self.assertTrue( isinstance( result8, list ) )
+        self.assertEqual( len(result8), len(result5)*2 )
+        for something in result8:
+            self.assertTrue( isinstance( something , str ) )
+            self.assertTrue( something )
+            self.assertTrue( '\\' in something )
+            self.assertFalse( ' ' in something )
+            self.assertLess( len(something), 7 )
+        for testCase in ('\\wj','\\tc1','\\tc2','\\tc3','\\tcr1', '\\wj*','\\tc1*','\\tc2*','\\tc3*','\\tcr1*',):
+            self.assertTrue( testCase in result8 )
     #end of test_190_getCharacterMarkersList
 
     def test_200_getTypicalNoteSets( self ):

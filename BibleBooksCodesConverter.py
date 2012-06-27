@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodesConverter.py
-#   Last modified: 2012-05-23 (also update versionString below)
+#   Last modified: 2012-06-26 (also update versionString below)
 #
 # Module handling BibleBooksCodes.xml to produce C and Python data tables
 #
@@ -307,7 +307,7 @@ class BibleBooksCodesConverter:
                 UCAbbreviation = SBLAbbreviation.upper()
                 mySBLDict[UCAbbreviation] = ( intID, referenceAbbreviation, )
                 if UCAbbreviation in allAbbreviationsDict and allAbbreviationsDict[UCAbbreviation] != referenceAbbreviation:
-                    logging.warning( _("This SBL '{}' abbreviation ({}) already assigned to '{}'").format( UCAbbreviation, referenceAbbreviation, allAbbreviationsDict[UCAbbreviation] ) )
+                    logging.info( _("This SBL '{}' abbreviation ({}) already assigned to '{}'").format( UCAbbreviation, referenceAbbreviation, allAbbreviationsDict[UCAbbreviation] ) )
                     allAbbreviationsDict[UCAbbreviation] = "MultipleValues"
                 else: allAbbreviationsDict[UCAbbreviation] = referenceAbbreviation
             if "OSISAbbreviation" in self._compulsoryElements or OSISAbbreviation:
@@ -315,7 +315,7 @@ class BibleBooksCodesConverter:
                 UCAbbreviation = OSISAbbreviation.upper()
                 myOADict[UCAbbreviation] = ( intID, referenceAbbreviation )
                 if UCAbbreviation in allAbbreviationsDict and allAbbreviationsDict[UCAbbreviation] != referenceAbbreviation:
-                    logging.warning( _("This OSIS '{}' abbreviation ({}) already assigned to '{}'").format( UCAbbreviation, referenceAbbreviation, allAbbreviationsDict[UCAbbreviation] ) )
+                    logging.info( _("This OSIS '{}' abbreviation ({}) already assigned to '{}'").format( UCAbbreviation, referenceAbbreviation, allAbbreviationsDict[UCAbbreviation] ) )
                     allAbbreviationsDict[UCAbbreviation] = "MultipleValues"
                 else: allAbbreviationsDict[UCAbbreviation] = referenceAbbreviation
             if "SwordAbbreviation" in self._compulsoryElements or SwordAbbreviation:
@@ -323,7 +323,7 @@ class BibleBooksCodesConverter:
                 UCAbbreviation = SwordAbbreviation.upper()
                 mySwDict[UCAbbreviation] = ( intID, referenceAbbreviation, )
                 if UCAbbreviation in allAbbreviationsDict and allAbbreviationsDict[UCAbbreviation] != referenceAbbreviation:
-                    logging.warning( _("This Sword '{}' abbreviation ({}) already assigned to '{}'").format( UCAbbreviation, referenceAbbreviation, allAbbreviationsDict[UCAbbreviation] ) )
+                    logging.info( _("This Sword '{}' abbreviation ({}) already assigned to '{}'").format( UCAbbreviation, referenceAbbreviation, allAbbreviationsDict[UCAbbreviation] ) )
                     allAbbreviationsDict[UCAbbreviation] = "MultipleValues"
                 else: allAbbreviationsDict[UCAbbreviation] = referenceAbbreviation
             if "CCELNumberString" in self._compulsoryElements or CCELNumberString:
@@ -334,7 +334,7 @@ class BibleBooksCodesConverter:
                 UCAbbreviation = USFMAbbreviation.upper()
                 myUSFMAbbrDict[UCAbbreviation] = ( intID, referenceAbbreviation, USFMNumberString, )
                 if UCAbbreviation in allAbbreviationsDict and allAbbreviationsDict[UCAbbreviation] != referenceAbbreviation:
-                    logging.warning( _("This USFM '{}' abbreviation ({}) already assigned to '{}'").format( UCAbbreviation, referenceAbbreviation, allAbbreviationsDict[UCAbbreviation] ) )
+                    logging.info( _("This USFM '{}' abbreviation ({}) already assigned to '{}'").format( UCAbbreviation, referenceAbbreviation, allAbbreviationsDict[UCAbbreviation] ) )
                     allAbbreviationsDict[UCAbbreviation] = "MultipleValues"
                 else: allAbbreviationsDict[UCAbbreviation] = referenceAbbreviation
             if "USFMNumberString" in self._compulsoryElements or USFMNumberString:
@@ -348,7 +348,7 @@ class BibleBooksCodesConverter:
                 UCAbbreviation = NETBibleAbbreviation.upper()
                 myNETDict[UCAbbreviation] = ( intID, referenceAbbreviation, )
                 if UCAbbreviation in allAbbreviationsDict and allAbbreviationsDict[UCAbbreviation] != referenceAbbreviation:
-                    logging.warning( _("This NET Bible '{}' abbreviation ({}) already assigned to '{}'").format( UCAbbreviation, referenceAbbreviation, allAbbreviationsDict[UCAbbreviation] ) )
+                    logging.info( _("This NET Bible '{}' abbreviation ({}) already assigned to '{}'").format( UCAbbreviation, referenceAbbreviation, allAbbreviationsDict[UCAbbreviation] ) )
                     allAbbreviationsDict[UCAbbreviation] = "MultipleValues"
                 else: allAbbreviationsDict[UCAbbreviation] = referenceAbbreviation
             if "ByzantineAbbreviation" in self._compulsoryElements or ByzantineAbbreviation:
@@ -356,7 +356,7 @@ class BibleBooksCodesConverter:
                 UCAbbreviation = ByzantineAbbreviation.upper()
                 myBzDict[UCAbbreviation] = ( intID, referenceAbbreviation, )
                 if UCAbbreviation in allAbbreviationsDict and allAbbreviationsDict[UCAbbreviation] != referenceAbbreviation:
-                    logging.warning( _("This Byzantine '{}' abbreviation ({}) already assigned to '{}'").format( UCAbbreviation, referenceAbbreviation, allAbbreviationsDict[UCAbbreviation] ) )
+                    logging.info( _("This Byzantine '{}' abbreviation ({}) already assigned to '{}'").format( UCAbbreviation, referenceAbbreviation, allAbbreviationsDict[UCAbbreviation] ) )
                     allAbbreviationsDict[UCAbbreviation] = "MultipleValues"
                 else: allAbbreviationsDict[UCAbbreviation] = referenceAbbreviation
             if "nameEnglish" in self._compulsoryElements or USFMNumberString:
