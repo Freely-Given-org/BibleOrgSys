@@ -1280,12 +1280,15 @@ class InternalBibleBook:
             if marker=='c' and text: c = text.split()[0]; v = '0'
             elif marker=='v' and text: v = text.split()[0]
 
-            adjText = text
+            #adjText = text
+            #internalSFMsToRemove = self.USFMMarkers.getCharacterMarkersList( includeBackslash=True, includeEndMarkers=True )
+            #internalSFMsToRemove = sorted( internalSFMsToRemove, key=len, reverse=True ) # List longest first
+            #for internalMarker in internalSFMsToRemove: adjText = adjText.replace( internalMarker, '' )
+            #if adjText: countCharacters( adjText )
+            if cleanText: countCharacters( cleanText )
+
             internalSFMsToRemove = self.USFMMarkers.getCharacterMarkersList( includeBackslash=True, includeEndMarkers=True )
             internalSFMsToRemove = sorted( internalSFMsToRemove, key=len, reverse=True ) # List longest first
-            for internalMarker in internalSFMsToRemove: adjText = adjText.replace( internalMarker, '' )
-            if adjText: countCharacters( adjText )
-
             for extraType, extraIndex, extraText in extras: # Now process the characters in the notes
                 assert( extraText ) # Shouldn't be blank
                 assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
@@ -1390,7 +1393,7 @@ class InternalBibleBook:
             elif marker=='v' and text: v = text.split()[0]
 
             if text and self.USFMMarkers.isPrinted(marker): # process this main text
-                lastTextWordTuple = countWords( marker, text, lastTextWordTuple )
+                lastTextWordTuple = countWords( marker, cleanText, lastTextWordTuple )
 
             for extraType, extraIndex, extraText in extras: # do any footnotes and cross-references
                 assert( extraText ) # Shouldn't be blank
