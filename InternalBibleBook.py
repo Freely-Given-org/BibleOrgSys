@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # InternalBibleBook.py
-#   Last modified: 2012-06-28 by RJH (also update versionString below)
+#   Last modified: 2012-06-29 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -39,7 +39,7 @@ and then calls
 """
 
 progName = "Internal Bible book handler"
-versionString = "0.06"
+versionString = "0.07"
 
 
 import os, logging
@@ -76,6 +76,11 @@ class InternalBibleBook:
         self.errorDictionary = OrderedDict()
         self.errorDictionary['Priority Errors'] = [] # Put this one first in the ordered dictionary
         self.givenAngleBracketWarning = self.givenDoubleQuoteWarning = False
+
+        # Options
+        self.checkAddedUnits = False
+        self.checkUSFMSequences = False
+        self.replaceStraightQuotes = False
 
         # Set up filled containers for the object
         self.BibleBooksCodes = BibleBooksCodes().loadData()
@@ -171,16 +176,34 @@ class InternalBibleBook:
                 adjText = adjText.replace('<<','“').replace('>>','”').replace('<','‘').replace('>','’') # Replace angle brackets with the proper opening and close quote marks
             if '"' in adjText:
                 if not self.givenDoubleQuoteWarning: # Just give the warning once (per book)
-                    fixErrors.append( _("{} {}:{} Replaced straight quote sign (\") in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
-                    if self.logErrorsFlag: logging.info( _("Replaced straight quote sign (\") after {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
-                    self.addPriorityError( 8, '', '', _("Book contains straight quote signs") )
+                    if self.replaceStraightQuotes:
+                        fixErrors.append( _("{} {}:{} Replaced straight quote sign(s) (\") in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
+                        if self.logErrorsFlag: logging.info( _("Replaced straight quote sign(s) (\") after {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
+                        self.addPriorityError( 8, '', '', _("Book contains straight quote signs (which we attempted to replace)") )
+                    else: # we're not attempting to replace them
+                        fixErrors.append( _("{} {}:{} Found straight quote sign (\") in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
+                        if self.logErrorsFlag: logging.info( _("Found straight quote sign (\") after {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
+                        self.addPriorityError( 58, '', '', _("Book contains straight quote sign(s)") )
                     self.givenDoubleQuoteWarning = True
-                if adjText[0]=='"': adjText = adjText.replace('"','“',1) # Replace initial double-quote mark with a proper open quote mark
-                adjText = adjText.replace(' "',' “').replace(';"',';“').replace('("','(“').replace('["','[“') # Try to replace double-quote marks with the proper opening and closing quote marks
-                adjText = adjText.replace('."','.”').replace(',"',',”').replace('?"','?”').replace('!"','!”').replace(')"',')”').replace(']"',']”').replace('*"','*”')
-                adjText = adjText.replace('";','”;').replace('"(','”(').replace('"[','”[') # Including the questionable ones
-                adjText = adjText.replace('" ','” ').replace('",','”,').replace('".','”.').replace('"?','”?').replace('"!','”!') # Even the bad ones!
-                if '"' in adjText: logging.warning( "{} {}:{} still has straight quotes in {}:'{}'".format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
+                if self.replaceStraightQuotes:
+                    if adjText[0]=='"': adjText = adjText.replace('"','“',1) # Replace initial double-quote mark with a proper open quote mark
+                    adjText = adjText.replace(' "',' “').replace(';"',';“').replace('("','(“').replace('["','[“') # Try to replace double-quote marks with the proper opening and closing quote marks
+                    adjText = adjText.replace('."','.”').replace(',"',',”').replace('?"','?”').replace('!"','!”').replace(')"',')”').replace(']"',']”').replace('*"','*”')
+                    adjText = adjText.replace('";','”;').replace('"(','”(').replace('"[','”[') # Including the questionable ones
+                    adjText = adjText.replace('" ','” ').replace('",','”,').replace('".','”.').replace('"?','”?').replace('"!','”!') # Even the bad ones!
+                    if '"' in adjText and self.logErrorsFlag: logging.warning( "{} {}:{} still has straight quotes in {}:'{}'".format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
+
+            # Do XML/HTML common character replacements
+            adjText = adjText.replace( '&', '&amp;' )
+            #adjText = adjText.replace( "'", '&#39;' ) # XML does contain &apos; for optional use, but not recognised in all versions of HTML
+            if '<' in adjText or '>' in adjText:
+                if self.logErrorsFlag: logging.error( "{} {}:{} still has angle-brackets in {}:'{}'".format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
+                self.addPriorityError( 12, c, v, _("Contains angle-bracket(s)") )
+                adjText = adjText.replace( '<', '&lt;' ).replace( '>', '&gt;' )
+            if '"' in adjText:
+                if self.logErrorsFlag: logging.warning( "{} {}:{} straight-quotes in {}:'{}'".format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
+                self.addPriorityError( 11, c, v, _("Contains straight-quote(s)") )
+                adjText = adjText.replace( '"', '&quot;' )
 
             # Move footnotes and crossreferences out to extras
             extras = []
@@ -254,11 +277,9 @@ class InternalBibleBook:
                 self.addPriorityError( 10, c, v, _("Trailing space before note at end of line") )
                 adjText = adjText.rstrip()
                 #print( originalMarker, "'"+text+"'", "'"+adjText+"'" )
-            if '<' in adjText or '>' in adjText or '"' in adjText:
-                logging.critical( "{} {}:{} still has angle-brackets or straight-quotes in {}:'{}'".format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
 
-            # Now remove all formatting from the cleanText string
-            cleanText = adjText
+            # Now remove all formatting from the cleanText string (to make it suitable for indexing and search routines
+            cleanText = adjText.replace( '&amp;', '&' ).replace( '&#39;', "'" ).replace( '&lt;', '<' ).replace( '&gt;', '>' ).replace( '&quot;', '"' ) # Undo any replacements above
             if '\\' in cleanText: # we will first remove known USFM character formatting markers
                 for possibleCharacterMarker in self.USFMMarkers.getCharacterMarkersList():
                     tryMarkers = []
@@ -295,7 +316,9 @@ class InternalBibleBook:
 
 
         def processLine( originalMarker, text ):
-            """ Process one USFM line. """
+            """ Process one USFM line by separating out the notes
+                    and producing clean text suitable for searching
+                    and then save the line. """
             nonlocal c, v
             assert( originalMarker and isinstance( originalMarker, str ) )
 
@@ -335,6 +358,7 @@ class InternalBibleBook:
 
             # Separate the notes (footnotes and cross-references)
             adjText, cleanText, extras = processLineFix( originalMarker, text )
+            #if c=='5' and v=='29': print( "processLine: {} '{}' to {} aT='{}' cT='{}' {}".format( originalMarker, text, adjustedMarker, adjText, cleanText, extras ) );halt
             self._processedLines.append( (adjustedMarker, originalMarker, adjText, cleanText, extras,) )
         # end of processLine
 
@@ -676,7 +700,7 @@ class InternalBibleBook:
     # end of getAddedUnits
 
 
-    def checkAddedUnits( self, typicalAddedUnitData, severe=False, ):
+    def doCheckAddedUnits( self, typicalAddedUnitData, severe=False, ):
         """
         Get the units added to the text of the book including paragraph breaks, section headings, and section references.
         Note that all chapter and verse values are returned as strings not integers.
@@ -862,10 +886,10 @@ class InternalBibleBook:
         if addedUnitNotices:
             if 'Added Formatting' not in self.errorDictionary: self.errorDictionary['Added Formatting'] = OrderedDict() # So we hopefully get the most important errors first
             self.errorDictionary['Added Formatting']['Possible Section Reference Errors'] = addedUnitNotices
-    # end of checkAddedUnits
+    # end of doCheckAddedUnits
 
 
-    def checkSFMs( self ):
+    def doCheckSFMs( self ):
         """Runs a number of comprehensive checks on the USFM codes in this Bible book."""
         allAvailableNewlineMarkers = self.USFMMarkers.getNewlineMarkersList()
         allAvailableCharacterMarkers = self.USFMMarkers.getCharacterMarkersList( includeEndMarkers=True )
@@ -922,76 +946,76 @@ class InternalBibleBook:
             # Check for known bad combinations
             if marker=='nb' and lastMarker in ('s','s1','s2','s3','s4','s5'):
                 newlineMarkerErrors.append( _("{} {}:{} 'nb' not allowed immediately after '{}' section heading").format( self.bookReferenceCode, c, v, marker ) )
-            # Check for known good combinations
-            commonGoodNewlineMarkerCombinations = (
-                # If a marker has nothing after it, it must contain data
-                # If a marker has =E after it, it must NOT contain data
-                # (If data is optional, enter both sets)
-                # Heading stuff (in order of occurrence)
-                ('=E','id'), ('id','h1'),('id','ide'), ('ide','h1'), ('h1','toc1'),('h1','mt1'),('h1','mt2'), ('toc1','toc2'), ('toc2','toc3'),('toc2','mt1'),('toc2','mt2'), ('toc3','mt1'),('toc3','mt2'),
-                ('mt1','mt2'),('mt1','imt1'),('mt1','is1'), ('mt2','mt1'),('mt2','imt1'),('mt2','is1'),
-                ('imt1','ip'),('is1','ip'), ('ip','ip'),('ip','iot'), ('imt','iot'), ('iot','io1'), ('io1','io1'),('io1','io2'),('io1','c'), ('io2','io1'),('io2','io2'),('io2','c'),
-                # Regular chapter stuff (in alphabetical order)
-                ('b=E','q1'),('b=E','q1=E'),
-                ('c','p=E'),('c','q1=E'),('c','s1'),('c','s2'),('c','s3'),
-                ('m=E','p'),('m=E','v'),
-                ('p','c'),('p','p=E'),('p=E','q1'),('p','s1'),('p','v'),('p=E','v'),
-                ('pi1','c'),('pi1','pi1=E'), ('pi1','s1'),('pi1','v'),('pi1=E','v'),
-                ('q1','b=E'),('q1','c'),('q1','m=E'),('q1','p=E'),('q1','q1'),('q1','q1=E'),('q1','q2'),('q1','q2=E'),('q1','s1'),('q1','v'),('q1=E','v'),
-                ('q2','b=E'),('q2','c'),('q2','m=E'),('q2','p=E'),('q2','q1'),('q2','q1=E'),('q2','q2'),('q2','q2=E'),('q2','q3'),('q2','s1'),('q2','v'),('q2=E','v'),
-                ('q3','b=E'),('q3','c'),('q3','m=E'),('q3','p=E'),('q3','q2'),('q3','q3'),('q3','s1'),('q3','v'),('q3=E','v'),
-                ('li1','li1'),('li1','v'),('li1=E','v'),('li1','p=E'),
-                ('r','p=E'),
-                ('s1','p=E'),('s1','q1=E'),('s1','r'),
-                ('s2','p=E'),('s2','q1=E'),('s2','r'),
-                ('s3','p=E'),('s3','q1=E'),('s3','r'),
-                ('v','c'),('v','li1'),('v','m'),
-                ('v','p'),('v','p=E'), ('v','pi1'),('v','pi1=E'),('v','pc'),
-                ('v','q1'),('v','q1=E'),('v','q2'),('v','q2=E'),('v','q3'),('v','q3=E'),
-                ('v','s1'),('v','s2'),('v','s3'),
-                ('v','v'), )
-            rarerGoodNewlineMarkerCombinations = (
-                ('mt2','mt3'), ('mt3','mt1'), ('io1','cl'), ('io2','cl'), ('ip','c'),
-                ('c','cl'), ('cl','c'),('cl','p=E'),('cl','q1=E'),('cl','s1'),('cl','s2'),('cl','s3'),
-                ('m','c'),('m','p=E'),('m','q1'),('m','v'),
-                ('p','p'),('p','q1'),
-                ('q1','m'),('q1','q3'), ('q2','m'), ('q3','q1'),
-                ('r','p'), ('s1','p'),('s1','pi1=E'), ('v','b=E'),('v','m=E'), )
-            #for tuple2 in rarerGoodNewlineMarkerCombinations: print( tuple2); assert( tuple2 not in commonGoodNewlineMarkerCombinations ) # Just check our tables for unwanted duplicates
-            for tuple2 in rarerGoodNewlineMarkerCombinations: assert( tuple2 not in commonGoodNewlineMarkerCombinations ) # Just check our tables for unwanted duplicates
-            # We allow rem (remark) markers to be anywhere without a warning
-            if lastMarkerEmpty and markerEmpty:
-                if (lastMarker+'=E',marker+'=E') not in commonGoodNewlineMarkerCombinations:
-                    if (lastMarker+'=E',marker+'=E') in rarerGoodNewlineMarkerCombinations:
-                        newlineMarkerErrors.append( _("{} {}:{} (Warning only) Empty '{}' not commonly used following empty '{}' marker").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
-                        #print( _("{} {}:{} (Warning only) Empty '{}' not commonly used following empty '{}' marker").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
-                    else:
-                        newlineMarkerErrors.append( _("{} {}:{} Empty '{}' not normally used following empty '{}' marker").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
-                        #print( _("{} {}:{} Empty '{}' not normally used following empty '{}' marker").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
-            elif lastMarkerEmpty and not markerEmpty and marker!='rem':
-                if (lastMarker+'=E',marker) not in commonGoodNewlineMarkerCombinations:
-                    if (lastMarker+'=E',marker) in rarerGoodNewlineMarkerCombinations:
-                        newlineMarkerErrors.append( _("{} {}:{} (Warning only) '{}' with text not commonly used following empty '{}' marker").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
-                        #print( _("{} {}:{} (Warning only) '{}' with text not commonly used following empty '{}' marker").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
-                    else:
-                        newlineMarkerErrors.append( _("{} {}:{} '{}' with text not normally used following empty '{}' marker").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
-                        #print( _("{} {}:{} '{}' with text not normally used following empty '{}' marker").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
-            elif not lastMarkerEmpty and markerEmpty and lastMarker!='rem':
-                if (lastMarker,marker+'=E') not in commonGoodNewlineMarkerCombinations:
-                    if (lastMarker,marker+'=E') in rarerGoodNewlineMarkerCombinations:
-                        newlineMarkerErrors.append( _("{} {}:{} (Warning only) Empty '{}' not commonly used following '{}' with text").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
-                        #print( _("{} {}:{} (Warning only) Empty '{}' not commonly used following '{}' with text").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
-                    else:
-                        newlineMarkerErrors.append( _("{} {}:{} Empty '{}' not normally used following '{}' with text").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
-                        #print( _("{} {}:{} Empty '{}' not normally used following '{}' with text").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
-            elif lastMarker!='rem' and marker!='rem': # both not empty
-                if (lastMarker,marker) not in commonGoodNewlineMarkerCombinations:
-                    if (lastMarker,marker) in rarerGoodNewlineMarkerCombinations:
-                        newlineMarkerErrors.append( _("{} {}:{} (Warning only) '{}' with text not commonly used following '{}' with text").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
-                        #print( _("{} {}:{} (Warning only) '{}' with text not commonly used following '{}' with text").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
-                    else:
-                        newlineMarkerErrors.append( _("{} {}:{} '{}' with text not normally used following '{}' with text").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
-                        #print( _("{} {}:{} '{}' with text not normally used following '{}' with text").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
+            if self.checkUSFMSequences: # Check for known good combinations
+                commonGoodNewlineMarkerCombinations = (
+                    # If a marker has nothing after it, it must contain data
+                    # If a marker has =E after it, it must NOT contain data
+                    # (If data is optional, enter both sets)
+                    # Heading stuff (in order of occurrence)
+                    ('=E','id'), ('id','h1'),('id','ide'), ('ide','h1'), ('h1','toc1'),('h1','mt1'),('h1','mt2'), ('toc1','toc2'), ('toc2','toc3'),('toc2','mt1'),('toc2','mt2'), ('toc3','mt1'),('toc3','mt2'),
+                    ('mt1','mt2'),('mt1','imt1'),('mt1','is1'), ('mt2','mt1'),('mt2','imt1'),('mt2','is1'),
+                    ('imt1','ip'),('is1','ip'), ('ip','ip'),('ip','iot'), ('imt','iot'), ('iot','io1'), ('io1','io1'),('io1','io2'),('io1','c'), ('io2','io1'),('io2','io2'),('io2','c'),
+                    # Regular chapter stuff (in alphabetical order)
+                    ('b=E','q1'),('b=E','q1=E'),
+                    ('c','p=E'),('c','q1=E'),('c','s1'),('c','s2'),('c','s3'),
+                    ('m=E','p'),('m=E','v'),
+                    ('p','c'),('p','p=E'),('p=E','q1'),('p','s1'),('p','v'),('p=E','v'),
+                    ('pi1','c'),('pi1','pi1=E'), ('pi1','s1'),('pi1','v'),('pi1=E','v'),
+                    ('q1','b=E'),('q1','c'),('q1','m=E'),('q1','p=E'),('q1','q1'),('q1','q1=E'),('q1','q2'),('q1','q2=E'),('q1','s1'),('q1','v'),('q1=E','v'),
+                    ('q2','b=E'),('q2','c'),('q2','m=E'),('q2','p=E'),('q2','q1'),('q2','q1=E'),('q2','q2'),('q2','q2=E'),('q2','q3'),('q2','s1'),('q2','v'),('q2=E','v'),
+                    ('q3','b=E'),('q3','c'),('q3','m=E'),('q3','p=E'),('q3','q2'),('q3','q3'),('q3','s1'),('q3','v'),('q3=E','v'),
+                    ('li1','li1'),('li1','v'),('li1=E','v'),('li1','p=E'),
+                    ('r','p=E'),
+                    ('s1','p=E'),('s1','q1=E'),('s1','r'),
+                    ('s2','p=E'),('s2','q1=E'),('s2','r'),
+                    ('s3','p=E'),('s3','q1=E'),('s3','r'),
+                    ('v','c'),('v','li1'),('v','m'),
+                    ('v','p'),('v','p=E'), ('v','pi1'),('v','pi1=E'),('v','pc'),
+                    ('v','q1'),('v','q1=E'),('v','q2'),('v','q2=E'),('v','q3'),('v','q3=E'),
+                    ('v','s1'),('v','s2'),('v','s3'),
+                    ('v','v'), )
+                rarerGoodNewlineMarkerCombinations = (
+                    ('mt2','mt3'), ('mt3','mt1'), ('io1','cl'), ('io2','cl'), ('ip','c'),
+                    ('c','cl'), ('cl','c'),('cl','p=E'),('cl','q1=E'),('cl','s1'),('cl','s2'),('cl','s3'),
+                    ('m','c'),('m','p=E'),('m','q1'),('m','v'),
+                    ('p','p'),('p','q1'),
+                    ('q1','m'),('q1','q3'), ('q2','m'), ('q3','q1'),
+                    ('r','p'), ('s1','p'),('s1','pi1=E'), ('v','b=E'),('v','m=E'), )
+                #for tuple2 in rarerGoodNewlineMarkerCombinations: print( tuple2); assert( tuple2 not in commonGoodNewlineMarkerCombinations ) # Just check our tables for unwanted duplicates
+                for tuple2 in rarerGoodNewlineMarkerCombinations: assert( tuple2 not in commonGoodNewlineMarkerCombinations ) # Just check our tables for unwanted duplicates
+                # We allow rem (remark) markers to be anywhere without a warning
+                if lastMarkerEmpty and markerEmpty:
+                    if (lastMarker+'=E',marker+'=E') not in commonGoodNewlineMarkerCombinations:
+                        if (lastMarker+'=E',marker+'=E') in rarerGoodNewlineMarkerCombinations:
+                            newlineMarkerErrors.append( _("{} {}:{} (Warning only) Empty '{}' not commonly used following empty '{}' marker").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
+                            #print( _("{} {}:{} (Warning only) Empty '{}' not commonly used following empty '{}' marker").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
+                        else:
+                            newlineMarkerErrors.append( _("{} {}:{} Empty '{}' not normally used following empty '{}' marker").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
+                            #print( _("{} {}:{} Empty '{}' not normally used following empty '{}' marker").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
+                elif lastMarkerEmpty and not markerEmpty and marker!='rem':
+                    if (lastMarker+'=E',marker) not in commonGoodNewlineMarkerCombinations:
+                        if (lastMarker+'=E',marker) in rarerGoodNewlineMarkerCombinations:
+                            newlineMarkerErrors.append( _("{} {}:{} (Warning only) '{}' with text not commonly used following empty '{}' marker").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
+                            #print( _("{} {}:{} (Warning only) '{}' with text not commonly used following empty '{}' marker").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
+                        else:
+                            newlineMarkerErrors.append( _("{} {}:{} '{}' with text not normally used following empty '{}' marker").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
+                            #print( _("{} {}:{} '{}' with text not normally used following empty '{}' marker").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
+                elif not lastMarkerEmpty and markerEmpty and lastMarker!='rem':
+                    if (lastMarker,marker+'=E') not in commonGoodNewlineMarkerCombinations:
+                        if (lastMarker,marker+'=E') in rarerGoodNewlineMarkerCombinations:
+                            newlineMarkerErrors.append( _("{} {}:{} (Warning only) Empty '{}' not commonly used following '{}' with text").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
+                            #print( _("{} {}:{} (Warning only) Empty '{}' not commonly used following '{}' with text").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
+                        else:
+                            newlineMarkerErrors.append( _("{} {}:{} Empty '{}' not normally used following '{}' with text").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
+                            #print( _("{} {}:{} Empty '{}' not normally used following '{}' with text").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
+                elif lastMarker!='rem' and marker!='rem': # both not empty
+                    if (lastMarker,marker) not in commonGoodNewlineMarkerCombinations:
+                        if (lastMarker,marker) in rarerGoodNewlineMarkerCombinations:
+                            newlineMarkerErrors.append( _("{} {}:{} (Warning only) '{}' with text not commonly used following '{}' with text").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
+                            #print( _("{} {}:{} (Warning only) '{}' with text not commonly used following '{}' with text").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
+                        else:
+                            newlineMarkerErrors.append( _("{} {}:{} '{}' with text not normally used following '{}' with text").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
+                            #print( _("{} {}:{} '{}' with text not normally used following '{}' with text").format( self.bookReferenceCode, c, v, marker, lastMarker ) )
 
             markerShouldHaveContent = self.USFMMarkers.markerShouldHaveContent( marker )
             if text:
@@ -1204,10 +1228,10 @@ class InternalBibleBook:
             self.errorDictionary['USFMs']['All Footnote and Cross-Reference Internal Marker Counts'] = noteMarkerCounts
             self.errorDictionary['USFMs']['All Footnote and Cross-Reference Internal Marker Counts']['Total'] = total
         if functionalCounts: self.errorDictionary['USFMs']['Functional Marker Counts'] = functionalCounts
-    # end of checkSFMs
+    # end of doCheckSFMs
 
 
-    def checkCharacters( self ):
+    def doCheckCharacters( self ):
         """Runs a number of checks on the characters used."""
         if Globals.verbosityLevel > 2: import unicodedata
 
@@ -1293,10 +1317,10 @@ class InternalBibleBook:
             for character in punctuationCounts: total += punctuationCounts[character]
             self.errorDictionary['Characters']['Punctuation Counts'] = punctuationCounts
             self.errorDictionary['Characters']['Punctuation Counts']['Total'] = total
-    # end of checkCharacters
+    # end of doCheckCharacters
 
 
-    def checkWords( self ):
+    def doCheckWords( self ):
         """Runs a number of checks on the words used."""
 
         def countWords( marker, segment, lastWordTuple=None ):
@@ -1395,10 +1419,10 @@ class InternalBibleBook:
             for word in caseInsensitiveWordCounts: total += caseInsensitiveWordCounts[word]
             self.errorDictionary['Words']['Case Insensitive Word Counts'] = caseInsensitiveWordCounts
             self.errorDictionary['Words']['Case Insensitive Word Counts']['--Total--'] = total
-    # end of checkWords
+    # end of doCheckWords
 
 
-    def checkHeadings( self ):
+    def doCheckHeadings( self ):
         """Runs a number of checks on headings and section cross-references."""
         if not self._processed: self.processLines()
         assert( self._processedLines )
@@ -1441,10 +1465,10 @@ class InternalBibleBook:
         if titleList: self.errorDictionary['Headings']['Title Lines'] = titleList
         if headingList: self.errorDictionary['Headings']['Section Heading Lines'] = headingList
         if sectionReferenceList: self.errorDictionary['Headings']['Section Cross-reference Lines'] = sectionReferenceList
-    # end of checkHeadings
+    # end of doCheckHeadings
 
 
-    def checkIntroduction( self ):
+    def doCheckIntroduction( self ):
         """Runs a number of checks on introductory parts."""
         if not self._processed: self.processLines()
         assert( self._processedLines )
@@ -1510,10 +1534,10 @@ class InternalBibleBook:
         if headingList: self.errorDictionary['Introduction']['Section Heading Lines'] = headingList
         if titleList: self.errorDictionary['Introduction']['Outline Title Lines'] = titleList
         if outlineList: self.errorDictionary['Introduction']['Outline Entry Lines'] = outlineList
-    # end of checkIntroduction
+    # end of doCheckIntroduction
 
 
-    def checkNotes( self ):
+    def doCheckNotes( self ):
         """Runs a number of checks on footnotes and cross-references."""
         if not self._processed: self.processLines()
         assert( self._processedLines )
@@ -1702,7 +1726,7 @@ class InternalBibleBook:
             if len(footnoteLeaderList) > 1: self.addPriorityError( 26, '-', '-', _("Mutiple different footnote leader characters: {}").format( footnoteLeaderList ) )
             if len(xrefLeaderList) > 1: self.addPriorityError( 25, '-', '-', _("Mutiple different cross-reference leader characters: {}").format( xrefLeaderList ) )
             if len(CVSeparatorList) > 1: self.addPriorityError( 27, '-', '-', _("Mutiple different chapter/verse separator characters: {}").format( CVSeparatorList ) )
-    # end of checkNotes
+    # end of doCheckNotes
 
 
     def check( self, typicalAddedUnitData=None ):
@@ -1713,22 +1737,22 @@ class InternalBibleBook:
         # Ignore the result of these next ones -- just use any errors collected
         self.getVersification() # This checks CV ordering, etc. at the same time
         # Further checks
-        self.checkSFMs()
-        self.checkCharacters()
-        self.checkWords()
-        self.checkHeadings()
-        self.checkIntroduction()
-        self.checkNotes() # footnotes and cross-references
+        self.doCheckSFMs()
+        self.doCheckCharacters()
+        self.doCheckWords()
+        self.doCheckHeadings()
+        self.doCheckIntroduction()
+        self.doCheckNotes() # footnotes and cross-references
 
-        # This code is temporary XXXXXXXXXXXXXXXXXXXXXXXX ........................................................................
-        if typicalAddedUnitData is None: # Get our recommendations for added units
-            import pickle
-            folder = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/" ) # Relative to module, not cwd
-            filepath = os.path.join( folder, "AddedUnitData.pickle" )
-            if Globals.verbosityLevel > 1: print( _("Importing from {}...").format( filepath ) )
-            with open( filepath, 'rb' ) as pickleFile:
-                typicalAddedUnitData = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
-        self.checkAddedUnits( typicalAddedUnitData )
+        if self.checkAddedUnits: # This code is temporary XXXXXXXXXXXXXXXXXXXXXXXX ........................................................................
+            if typicalAddedUnitData is None: # Get our recommendations for added units
+                import pickle
+                folder = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/" ) # Relative to module, not cwd
+                filepath = os.path.join( folder, "AddedUnitData.pickle" )
+                if Globals.verbosityLevel > 1: print( _("Importing from {}...").format( filepath ) )
+                with open( filepath, 'rb' ) as pickleFile:
+                    typicalAddedUnitData = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
+            self.doCheckAddedUnits( typicalAddedUnitData )
     # end of check
 
 
