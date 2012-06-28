@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # InternalBibleBook.py
-#   Last modified: 2012-06-27 by RJH (also update versionString below)
+#   Last modified: 2012-06-28 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -176,10 +176,11 @@ class InternalBibleBook:
                     self.addPriorityError( 8, '', '', _("Book contains straight quote signs") )
                     self.givenDoubleQuoteWarning = True
                 if adjText[0]=='"': adjText = adjText.replace('"','“',1) # Replace initial double-quote mark with a proper open quote mark
-                adjText = adjText.replace(' "',' “') # Try to replace double-quote marks with the proper opening and closing quote marks
+                adjText = adjText.replace(' "',' “').replace(';"',';“').replace('("','(“').replace('["','[“') # Try to replace double-quote marks with the proper opening and closing quote marks
                 adjText = adjText.replace('."','.”').replace(',"',',”').replace('?"','?”').replace('!"','!”').replace(')"',')”').replace(']"',']”').replace('*"','*”')
-                adjText = adjText.replace('" ','” ').replace('",','”,').replace('".','”.') # Even the bad ones!
-                if '"' in adjText: logging.error( "{} {}:{} still has straight quotes in {}:'{}'".format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
+                adjText = adjText.replace('";','”;').replace('"(','”(').replace('"[','”[') # Including the questionable ones
+                adjText = adjText.replace('" ','” ').replace('",','”,').replace('".','”.').replace('"?','”?').replace('"!','”!') # Even the bad ones!
+                if '"' in adjText: logging.warning( "{} {}:{} still has straight quotes in {}:'{}'".format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
 
             # Move footnotes and crossreferences out to extras
             extras = []
@@ -1495,8 +1496,12 @@ class InternalBibleBook:
                     introductionErrors.append( _("{} {}:{} Missing introduction text for marker {}").format( self.bookReferenceCode, c, v, marker ) )
                     self.addPriorityError( 36, c, v, _("Missing introduction text") )
                 elif not text.endswith('.') and not text.endswith('.)') and not text.endswith('.”') and not text.endswith('."') and not text.endswith('.’') and not text.endswith(".'") and not text.endswith('.\\it*'):
-                    introductionErrors.append( _("{} {}:{} {} introduction text does not end with a period: {}").format( self.bookReferenceCode, c, v, marker, text ) )
-                    self.addPriorityError( 46, c, v, _("Introduction text ends without a period") )
+                    if text.endswith(')') or text.endswith(']'):
+                        introductionErrors.append( _("{} {}:{} {} introduction text possibly does not end with a period: {}").format( self.bookReferenceCode, c, v, marker, text ) )
+                        self.addPriorityError( 26, c, v, _("Introduction text possibly ends without a period") )
+                    else:
+                        introductionErrors.append( _("{} {}:{} {} introduction text does not end with a period: {}").format( self.bookReferenceCode, c, v, marker, text ) )
+                        self.addPriorityError( 46, c, v, _("Introduction text ends without a period") )
 
         if (introductionErrors or mainTitleList or headingList or titleList or outlineList) and 'Introduction' not in self.errorDictionary:
             self.errorDictionary['Introduction'] = OrderedDict() # So we hopefully get the errors first
