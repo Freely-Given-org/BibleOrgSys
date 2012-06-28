@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # USFMFilenames.py
-#   Last modified: 2012-06-06 (also update versionString below)
+#   Last modified: 2012-06-29 (also update versionString below)
 #
 # Module handling USFM Bible filenames
 #
@@ -104,7 +104,7 @@ class USFMFilenames:
                                 fillerSize = self.pattern.count( '*' )
                                 fillerIndex = self.pattern.find( '*' )
                                 if fillerIndex!=-1 and fillerSize==1: self.pattern = self.pattern[:fillerIndex] + foundFilename[fillerIndex] + self.pattern[fillerIndex+1:]
-                                print( "Pattern is '{}'".format( self.pattern ) )
+                                if Globals.verbosityLevel > 2: print( "Pattern is '{}'".format( self.pattern ) )
                                 if '*' not in self.pattern: matched = True
                                 else: # we'll try to be even more generic
                                     self.languageIndex = self.digitsIndex = None
@@ -112,7 +112,7 @@ class USFMFilenames:
                                     self.USFMBookCodeIndex = USFMBookCodeIndex
                                     self.pattern = '*' * foundLength
                                     self.pattern = self.pattern[:USFMBookCodeIndex] + 'bbb' + self.pattern[USFMBookCodeIndex+3:]
-                                    print( "Pattern is '{}'".format( self.pattern ) )
+                                    if Globals.verbosityLevel > 2: print( "More generic pattern is '{}'".format( self.pattern ) )
                                     matched = True
                             if matched:
                                 if self.languageCode and self.languageCode.isupper(): self.pattern = self.pattern.replace( 'l', 'L' )

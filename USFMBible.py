@@ -186,7 +186,7 @@ class USFMBible( InternalBible ):
                     UBB.load( BBB, folder, thisFilename, encoding )
                     UBB.validateUSFM()
                     # print( UBB )
-                    if BBB in self.books: print( "Oops, loadUSFMBible has already found '{}', now we have a duplicate in {}".format( BBB, thisFilename ) )
+                    if BBB in self.books: print( "Oops, loadUSFMBible has already found '{}' in {}, now we have a duplicate in {}".format( BBB, self.books[BBB].sourceFilename, thisFilename ) )
                     self.books[BBB] = UBB
                     # Make up our book name dictionaries while we're at it
                     assumedBookNames = UBB.getAssumedBookNames()

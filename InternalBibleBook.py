@@ -52,10 +52,10 @@ from USFMMarkers import USFMMarkers
 
 
 # define allowed punctuation
-leadingWordPunctChars = '“‘([{<'
+leadingWordPunctChars = '“"‘([{<'
 medialWordPunctChars = '-'
 dashes = '—–' # em-dash and en-dash
-trailingWordPunctChars = ',.”’?)!;:]}>'
+trailingWordPunctChars = ',.”"’?)!;:]}>'
 allWordPunctChars = leadingWordPunctChars + medialWordPunctChars + dashes + trailingWordPunctChars
 
 
@@ -385,7 +385,7 @@ class InternalBibleBook:
         if self._indexed: return # Can only do it once
         if Globals.verbosityLevel > 2: print( "  " + _("Indexing {} text...").format( self.objectNameString ) )
         for something in self._processedLines:
-            pass
+            pass # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX to be written ..........................
         self._indexed = True
     # end of makeIndex
 
