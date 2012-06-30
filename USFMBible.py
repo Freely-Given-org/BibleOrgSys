@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # USFMBible.py
-#   Last modified: 2012-06-29 by RJH (also update versionString below)
+#   Last modified: 2012-06-30 by RJH (also update versionString below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -145,7 +145,7 @@ class USFMBible( InternalBible ):
             self.ssfData = loadSSFData( ssfFilepathList[0] )
 
         # Load the books one by one -- assuming that they have regular Paratext style filenames
-        for BBB,filename in self.USFMFilenamesObject.getConfirmedFilenames():
+        for BBB,filename in self.USFMFilenamesObject.getMaximumPossibleFilenameTuples():
             UBB = USFMBibleBook( self.logErrorsFlag )
             UBB.load( BBB, folder, filename, encoding )
             UBB.validateUSFM()
@@ -160,44 +160,45 @@ class USFMBible( InternalBible ):
                 self.combinedBookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
                 if ' ' in assumedBookNameLower: self.combinedBookNameDict[assumedBookNameLower.replace(' ','')] = BBB # Store the deduced book name (lower case without spaces)
 
-        if not self.books: # Didn't successfully load any regularly named books -- maybe the files have weird names??? -- try to be intelligent here
-            if Globals.verbosityLevel > 2: print( "USFMBible.load: Didn't find any regularly named USFM files in '{}'".format( folder ) )
-            #print( "\n", len(foundFiles), sorted(foundFiles) )
-            for thisFilename in foundFiles:
-                # Look for BBB in the ID line (which should be the first line in a USFM file)
-                isUSFM = False
-                thisPath = os.path.join( folder, thisFilename )
-                with open( thisPath ) as possibleUSFMFile: # Automatically closes the file when done
-                    for line in possibleUSFMFile:
-                        if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
-                        if line.startswith( '\\id ' ):
-                            USFMId = line[4:].strip()[:3] # Take the first three non-blank characters after the space after id
-                            if Globals.verbosityLevel > 2: print( "Have possible USFM ID '{}'".format( USFMId ) )
-                            BBB = self.BibleBooksCodes.getBBBFromUSFM( USFMId )
-                            if Globals.verbosityLevel > 2: print( "BBB is '{}'".format( BBB ) )
-                            isUSFM = True
-                        elif line.startswith ( '\\' ):
-                            print( "First line in {} in {} starts with a backslash but not an id line '{}'".format( thisFilename, folder, line ) )
-                        elif not line:
-                            print( "First line in {} in {} appears to be blank".format( thisFilename, folder ) )
-                        break # We only look at the first line
-                if isUSFM: # have an irregularly named file, but it appears to be USFM
-                    UBB = USFMBibleBook( self.logErrorsFlag )
-                    UBB.load( BBB, folder, thisFilename, encoding )
-                    UBB.validateUSFM()
-                    # print( UBB )
-                    if BBB in self.books: print( "Oops, loadUSFMBible has already found '{}' in {}, now we have a duplicate in {}".format( BBB, self.books[BBB].sourceFilename, thisFilename ) )
-                    self.books[BBB] = UBB
-                    # Make up our book name dictionaries while we're at it
-                    assumedBookNames = UBB.getAssumedBookNames()
-                    for assumedBookName in assumedBookNames:
-                        self.BBBToNameDict[BBB] = assumedBookName
-                        assumedBookNameLower = assumedBookName.lower()
-                        self.bookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
-                        self.combinedBookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
-                        if ' ' in assumedBookNameLower: self.combinedBookNameDict[assumedBookNameLower.replace(' ','')] = BBB # Store the deduced book name (lower case without spaces)
-                else: print( "{} doesn't seem to be a USFM Bible book in {}".format( thisFilename, folder ) )
-            if self.books: print( "USFMBible.load: Found {} irregularly named USFM files".format( len(self.books) ) )
+        if 0: # this code is now in USFMFilenames.py -- can now be deleted
+            if not self.books: # Didn't successfully load any regularly named books -- maybe the files have weird names??? -- try to be intelligent here
+                if Globals.verbosityLevel > 2: print( "USFMBible.load: Didn't find any regularly named USFM files in '{}'".format( folder ) )
+                #print( "\n", len(foundFiles), sorted(foundFiles) )
+                for thisFilename in foundFiles:
+                    # Look for BBB in the ID line (which should be the first line in a USFM file)
+                    isUSFM = False
+                    thisPath = os.path.join( folder, thisFilename )
+                    with open( thisPath ) as possibleUSFMFile: # Automatically closes the file when done
+                        for line in possibleUSFMFile:
+                            if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
+                            if line.startswith( '\\id ' ):
+                                USFMId = line[4:].strip()[:3] # Take the first three non-blank characters after the space after id
+                                if Globals.verbosityLevel > 2: print( "Have possible USFM ID '{}'".format( USFMId ) )
+                                BBB = self.BibleBooksCodes.getBBBFromUSFM( USFMId )
+                                if Globals.verbosityLevel > 2: print( "BBB is '{}'".format( BBB ) )
+                                isUSFM = True
+                            elif line.startswith ( '\\' ):
+                                print( "First line in {} in {} starts with a backslash but not an id line '{}'".format( thisFilename, folder, line ) )
+                            elif not line:
+                                print( "First line in {} in {} appears to be blank".format( thisFilename, folder ) )
+                            break # We only look at the first line
+                    if isUSFM: # have an irregularly named file, but it appears to be USFM
+                        UBB = USFMBibleBook( self.logErrorsFlag )
+                        UBB.load( BBB, folder, thisFilename, encoding )
+                        UBB.validateUSFM()
+                        # print( UBB )
+                        if BBB in self.books: print( "Oops, loadUSFMBible has already found '{}' in {}, now we have a duplicate in {}".format( BBB, self.books[BBB].sourceFilename, thisFilename ) )
+                        self.books[BBB] = UBB
+                        # Make up our book name dictionaries while we're at it
+                        assumedBookNames = UBB.getAssumedBookNames()
+                        for assumedBookName in assumedBookNames:
+                            self.BBBToNameDict[BBB] = assumedBookName
+                            assumedBookNameLower = assumedBookName.lower()
+                            self.bookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
+                            self.combinedBookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
+                            if ' ' in assumedBookNameLower: self.combinedBookNameDict[assumedBookNameLower.replace(' ','')] = BBB # Store the deduced book name (lower case without spaces)
+                    else: print( "{} doesn't seem to be a USFM Bible book in {}".format( thisFilename, folder ) )
+                if self.books: print( "USFMBible.load: Found {} irregularly named USFM files".format( len(self.books) ) )
         #print( "\n", len(self.books), sorted(self.books) ); halt
     # end of load
 # end of class USFMBible

@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # USFMBibleBook.py
-#   Last modified: 2012-06-22 by RJH (also update versionString below)
+#   Last modified: 2012-06-30 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -174,8 +174,8 @@ def main():
     logErrors = True
 
     if 0: # Test individual files
-        #name, encoding, testFolder, filename, bookReferenceCode = "WEB", "utf-8", "/mnt/Work/Bibles/English translations/WEB (World English Bible)/eng-web_usfm/", "06-JOS.usfm", "JOS" # You can put your test file here
-        #name, encoding, testFolder, filename, bookReferenceCode = "WEB", "utf-8", "/mnt/Work/Bibles/English translations/WEB (World English Bible)/eng-web_usfm/", "44-SIR.usfm", "SIR" # You can put your test file here
+        #name, encoding, testFolder, filename, bookReferenceCode = "WEB", "utf-8", "/mnt/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/", "06-JOS.usfm", "JOS" # You can put your test file here
+        #name, encoding, testFolder, filename, bookReferenceCode = "WEB", "utf-8", "/mnt/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/", "44-SIR.usfm", "SIR" # You can put your test file here
         name, encoding, testFolder, filename, bookReferenceCode = "Matigsalug", "utf-8", "/mnt/Data/Matigsalug/Scripture/MBTV/", "MBT15EZR.SCP", "EZR" # You can put your test file here
         #name, encoding, testFolder, filename, bookReferenceCode = "Matigsalug", "utf-8", "/mnt/Data/Matigsalug/Scripture/MBTV/", "MBT67REV.SCP", "REV" # You can put your test file here
         if os.access( testFolder, os.R_OK ):
@@ -184,10 +184,10 @@ def main():
 
     if 1: # Test a whole folder full of files
         #name, encoding, testFolder = "Matigsalug", "utf-8", "/mnt/Data/Matigsalug/Scripture/MBTV/" # You can put your test folder here
-        name, encoding, testFolder = "WEB", "utf-8", "/mnt/Work/Bibles/English translations/WEB (World English Bible)/eng-web_usfm/" # You can put your test folder here
+        name, encoding, testFolder = "WEB", "utf-8", "/mnt/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/" # You can put your test folder here
         if os.access( testFolder, os.R_OK ):
             if Globals.verbosityLevel > 1: print( _("Scanning {} from {}...").format( name, testFolder ) )
-            fileList = USFMFilenames.USFMFilenames( testFolder ).getConfirmedFilenames()
+            fileList = USFMFilenames.USFMFilenames( testFolder ).getMaximumPossibleFilenameTuples()
             for bookReferenceCode,filename in fileList:
                 demoFile( testFolder, filename, bookReferenceCode, logErrors )
         else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
