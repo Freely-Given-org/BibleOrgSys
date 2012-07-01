@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # InternalBibleBook.py
-#   Last modified: 2012-06-29 by RJH (also update versionString below)
+#   Last modified: 2012-07-01 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -39,7 +39,7 @@ and then calls
 """
 
 progName = "Internal Bible book handler"
-versionString = "0.07"
+versionString = "0.08"
 
 
 import os, logging
@@ -52,10 +52,10 @@ from USFMMarkers import USFMMarkers
 
 
 # define allowed punctuation
-leadingWordPunctChars = '“"‘([{<'
+leadingWordPunctChars = """“"‘'([{<"""
 medialWordPunctChars = '-'
 dashes = '—–' # em-dash and en-dash
-trailingWordPunctChars = ',.”"’?)!;:]}>'
+trailingWordPunctChars = """,.”"’'?)!;:]}>"""
 allWordPunctChars = leadingWordPunctChars + medialWordPunctChars + dashes + trailingWordPunctChars
 
 
@@ -1339,6 +1339,7 @@ class InternalBibleBook:
                     word = word[1:] # Remove leading punctuation
                 while word and word[-1] in trailingWordPunctChars:
                     word = word[:-1] # Remove trailing punctuation
+                if '"' in word: print( word ); halt
                 return word
             # end of stripWordPunctuation
 
@@ -1358,6 +1359,8 @@ class InternalBibleBook:
                 for internalMarker in internalSFMsToRemove: word = word.replace( internalMarker, '' )
                 word = stripWordPunctuation( word )
                 if word and not word[0].isalnum():
+                    #print( word, stripWordPunctuation( word ) )
+                    #print( _("{} {}:{} Have unexpected character starting word '{}'").format( self.bookReferenceCode, c, v, word ) )
                     wordErrors.append( _("{} {}:{} Have unexpected character starting word '{}'").format( self.bookReferenceCode, c, v, word ) )
                     word = word[1:]
                 if word: # There's still some characters remaining after all that stripping
