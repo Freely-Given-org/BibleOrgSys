@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # InternalBibleBook.py
-#   Last modified: 2012-07-01 by RJH (also update versionString below)
+#   Last modified: 2012-07-02 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -39,7 +39,7 @@ and then calls
 """
 
 progName = "Internal Bible book handler"
-versionString = "0.08"
+versionString = "0.09"
 
 
 import os, logging
@@ -80,7 +80,7 @@ class InternalBibleBook:
         # Options
         self.checkAddedUnits = False
         self.checkUSFMSequences = False
-        self.replaceStraightQuotes = False
+        self.replaceAngleBrackets, self.replaceStraightDoubleQuotes = True, False
 
         # Set up filled containers for the object
         self.BibleBooksCodes = BibleBooksCodes().loadData()
@@ -169,23 +169,29 @@ class InternalBibleBook:
             # Fix up quote marks
             if '<' in adjText or '>' in adjText:
                 if not self.givenAngleBracketWarning: # Just give the warning once (per book)
-                    #fixErrors.append( _("{} {}:{} Replaced angle brackets in {}: {}").format( self.bookReferenceCode, c, v, originalMarker, text ) )
-                    if self.logErrorsFlag: logging.info( _("Replaced angle bracket(s) after {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, text ) )
-                    self.addPriorityError( 3, '', '', _("Book contains angle brackets") )
+                    if self.replaceAngleBrackets:
+                        fixErrors.append( _("{} {}:{} Replaced angle bracket(s) in {}: {}").format( self.bookReferenceCode, c, v, originalMarker, text ) )
+                        if self.logErrorsFlag: logging.info( _("Replaced angle bracket(s) after {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, text ) )
+                        self.addPriorityError( 3, '', '', _("Book contains angle brackets (which we attempted to replace)") )
+                    else:
+                        fixErrors.append( _("{} {}:{} Found (first) angle bracket in {}: {}").format( self.bookReferenceCode, c, v, originalMarker, text ) )
+                        if self.logErrorsFlag: logging.info( _("Found (first) angle bracket after {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, text ) )
+                        self.addPriorityError( 3, '', '', _("Book contains angle bracket(s)") )
                     self.givenAngleBracketWarning = True
-                adjText = adjText.replace('<<','“').replace('>>','”').replace('<','‘').replace('>','’') # Replace angle brackets with the proper opening and close quote marks
+                if self.replaceAngleBrackets:
+                    adjText = adjText.replace('<<','“').replace('>>','”').replace('<','‘').replace('>','’') # Replace angle brackets with the proper opening and close quote marks
             if '"' in adjText:
                 if not self.givenDoubleQuoteWarning: # Just give the warning once (per book)
-                    if self.replaceStraightQuotes:
+                    if self.replaceStraightDoubleQuotes:
                         fixErrors.append( _("{} {}:{} Replaced straight quote sign(s) (\") in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
                         if self.logErrorsFlag: logging.info( _("Replaced straight quote sign(s) (\") after {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
                         self.addPriorityError( 8, '', '', _("Book contains straight quote signs (which we attempted to replace)") )
                     else: # we're not attempting to replace them
-                        fixErrors.append( _("{} {}:{} Found straight quote sign (\") in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
-                        if self.logErrorsFlag: logging.info( _("Found straight quote sign (\") after {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
+                        fixErrors.append( _("{} {}:{} Found (first) straight quote sign (\") in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
+                        if self.logErrorsFlag: logging.info( _("Found (first) straight quote sign (\") after {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
                         self.addPriorityError( 58, '', '', _("Book contains straight quote sign(s)") )
                     self.givenDoubleQuoteWarning = True
-                if self.replaceStraightQuotes:
+                if self.replaceStraightDoubleQuotes:
                     if adjText[0]=='"': adjText = adjText.replace('"','“',1) # Replace initial double-quote mark with a proper open quote mark
                     adjText = adjText.replace(' "',' “').replace(';"',';“').replace('("','(“').replace('["','[“') # Try to replace double-quote marks with the proper opening and closing quote marks
                     adjText = adjText.replace('."','.”').replace(',"',',”').replace('?"','?”').replace('!"','!”').replace(')"',')”').replace(']"',']”').replace('*"','*”')
@@ -259,7 +265,14 @@ class InternalBibleBook:
                         halt
                 adjText = adjText[:ix1] + adjText[ix2+3:] # Remove the note completely from the text
                 lcAdjText = adjText.lower()
-                extras.append( (this1,ix1,note,) ) # Saves a 3-tuple: type ('fn' or 'xr'), index into the main text line, the actual fn or xref contents
+                # Now prepare a cleaned version
+                cleanedNote = note.replace( '&amp;', '&' ).replace( '&#39;', "'" ).replace( '&lt;', '<' ).replace( '&gt;', '>' ).replace( '&quot;', '"' ) # Undo any replacements above
+                for sign in ('- ', '+ '): # Remove common leader characters (and the following space)
+                    cleanedNote = cleanedNote.replace( sign, '' )
+                for marker in ['\\xo*','\\xo ','\\xt*','\\xt ','\\xdc*','\\xdc ','\\fr*','\\fr ','\\ft*','\\ft ','\\fq*','\\fq ','\\fv*','\\fv ','\\fk*','\\fk ',] + internalSFMsToRemove:
+                    cleanedNote = cleanedNote.replace( marker, '' )
+                # Save it all and finish off
+                extras.append( (this1,ix1,note,cleanedNote) ) # Saves a 4-tuple: type ('fn' or 'xr'), index into the main text line, the actual fn or xref contents, then a cleaned version
                 ixFN = lcAdjText.find( '\\f ' )
                 ixXR = lcAdjText.find( '\\x ' )
             #if extras: print( "Fix gave '{}' and '{}'".format( adjText, extras ) )
@@ -363,10 +376,12 @@ class InternalBibleBook:
         # end of processLine
 
 
-        fixErrors = []
         if self._processed: return # Can only do it once
         if Globals.verbosityLevel > 2: print( "  " + _("Processing {} lines...").format( self.objectNameString ) )
+        internalSFMsToRemove = self.USFMMarkers.getCharacterMarkersList( includeBackslash=True, includeEndMarkers=True )
+        internalSFMsToRemove = sorted( internalSFMsToRemove, key=len, reverse=True ) # List longest first
         assert( self._rawLines )
+        fixErrors = []
         self._processedLines = [] # Contains more-processed 5-tuples which contain the actual Bible text -- see below
         c = v = '0'
         for marker,text in self._rawLines:
@@ -1105,11 +1120,12 @@ class InternalBibleBook:
             if extras:
                 #print( extras )
                 extraMarkers = []
-                for extraType, extraIndex, extraText in extras:
+                for extraType, extraIndex, extraText, cleanExtraText in extras:
                     assert( extraText ) # Shouldn't be blank
                     assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
                     assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
-                    ( 0 <= extraIndex <= len(text) )
+                    #print( extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
+                    assert( 0 <= extraIndex <= len(text)+1 )
                     assert( extraType in ('fn','xr',) )
                     extraName = 'footnote' if extraType=='fn' else 'cross-reference'
                     if '\\f ' in extraText or '\\f*' in extraText or '\\x ' in extraText or '\\x*' in extraText: # Only the contents of these fields should be in extras
@@ -1280,28 +1296,24 @@ class InternalBibleBook:
             if marker=='c' and text: c = text.split()[0]; v = '0'
             elif marker=='v' and text: v = text.split()[0]
 
-            #adjText = text
-            #internalSFMsToRemove = self.USFMMarkers.getCharacterMarkersList( includeBackslash=True, includeEndMarkers=True )
-            #internalSFMsToRemove = sorted( internalSFMsToRemove, key=len, reverse=True ) # List longest first
-            #for internalMarker in internalSFMsToRemove: adjText = adjText.replace( internalMarker, '' )
-            #if adjText: countCharacters( adjText )
             if cleanText: countCharacters( cleanText )
 
             internalSFMsToRemove = self.USFMMarkers.getCharacterMarkersList( includeBackslash=True, includeEndMarkers=True )
             internalSFMsToRemove = sorted( internalSFMsToRemove, key=len, reverse=True ) # List longest first
-            for extraType, extraIndex, extraText in extras: # Now process the characters in the notes
+            for extraType, extraIndex, extraText, cleanExtraText in extras: # Now process the characters in the notes
                 assert( extraText ) # Shouldn't be blank
                 assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
                 assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
-                ( 0 <= extraIndex <= len(text) )
+                #print( extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
+                assert( 0 <= extraIndex <= len(text)+1 )
                 assert( extraType in ('fn','xr',) )
                 assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
-                cleanText = extraText
-                for sign in ('- ', '+ '): # Remove common leader characters (and the following space)
-                    cleanText = cleanText.replace( sign, '' )
-                for marker in ['\\xo*','\\xo ','\\xt*','\\xt ','\\xdc*','\\xdc ','\\fr*','\\fr ','\\ft*','\\ft ','\\fq*','\\fq ','\\fv*','\\fv ','\\fk*','\\fk ',] + internalSFMsToRemove:
-                    cleanText = cleanText.replace( marker, '' )
-                if cleanText: countCharacters( cleanText )
+                #cleanExtraText = extraText
+                #for sign in ('- ', '+ '): # Remove common leader characters (and the following space)
+                #    cleanExtraText = cleanExtraText.replace( sign, '' )
+                #for marker in ['\\xo*','\\xo ','\\xt*','\\xt ','\\xdc*','\\xdc ','\\fr*','\\fr ','\\ft*','\\ft ','\\fq*','\\fq ','\\fv*','\\fv ','\\fk*','\\fk ',] + internalSFMsToRemove:
+                #    cleanExtraText = cleanExtraText.replace( marker, '' )
+                if cleanExtraText: countCharacters( cleanExtraText )
 
         # Add up the totals
         if (characterCounts or letterCounts or punctuationCounts) and 'Characters' not in self.errorDictionary: self.errorDictionary['Characters'] = OrderedDict()
@@ -1339,11 +1351,9 @@ class InternalBibleBook:
                     word = word[1:] # Remove leading punctuation
                 while word and word[-1] in trailingWordPunctChars:
                     word = word[:-1] # Remove trailing punctuation
-                if '"' in word: print( word ); halt
                 return word
             # end of stripWordPunctuation
 
-            allowedWordPunctuation = '-'
             internalSFMsToRemove = self.USFMMarkers.getCharacterMarkersList( includeBackslash=True, includeEndMarkers=True )
             internalSFMsToRemove = sorted( internalSFMsToRemove, key=len, reverse=True ) # List longest first
 
@@ -1366,7 +1376,7 @@ class InternalBibleBook:
                 if word: # There's still some characters remaining after all that stripping
                     if Globals.verbosityLevel > 3: # why???
                         for k,char in enumerate(word):
-                            if not char.isalnum() and (k==0 or k==len(word)-1 or char not in allowedWordPunctuation):
+                            if not char.isalnum() and (k==0 or k==len(word)-1 or char not in medialWordPunctChars):
                                 wordErrors.append( _("{} {}:{} Have unexpected '{}' in word '{}'").format( self.bookReferenceCode, c, v, char, word ) )
                     lcWord = word.lower()
                     isAReferenceOrNumber = True
@@ -1398,19 +1408,20 @@ class InternalBibleBook:
             if text and self.USFMMarkers.isPrinted(marker): # process this main text
                 lastTextWordTuple = countWords( marker, cleanText, lastTextWordTuple )
 
-            for extraType, extraIndex, extraText in extras: # do any footnotes and cross-references
+            for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
                 assert( extraText ) # Shouldn't be blank
                 assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
                 assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
-                ( 0 <= extraIndex <= len(text) )
+                #print( extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
+                assert( 0 <= extraIndex <= len(text)+1 )
                 assert( extraType in ('fn','xr',) )
                 assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
-                cleanText = extraText
-                for sign in ('- ', '+ '): # Remove common leader characters (and the following space)
-                    cleanText = cleanText.replace( sign, '' )
-                for marker in ('\\xo*','\\xo ','\\xt*','\\xt ','\\xdc*','\\xdc ','\\fr*','\\fr ','\\ft*','\\ft ','\\fq*','\\fq ','\\fv*','\\fv ','\\fk*','\\fk ',):
-                    cleanText = cleanText.replace( marker, '' )
-                countWords( extraType, cleanText )
+                #cleanExtraText = extraText
+                #for sign in ('- ', '+ '): # Remove common leader characters (and the following space)
+                #    cleanExtraText = cleanExtraText.replace( sign, '' )
+                #for marker in ('\\xo*','\\xo ','\\xt*','\\xt ','\\xdc*','\\xdc ','\\fr*','\\fr ','\\ft*','\\ft ','\\fq*','\\fq ','\\fv*','\\fv ','\\fk*','\\fk ',):
+                #    cleanExtraText = cleanExtraText.replace( marker, '' )
+                countWords( extraType, cleanExtraText )
 
         # Add up the totals
         if (wordErrors or wordCounts or caseInsensitiveWordCounts) and 'Words' not in self.errorDictionary: self.errorDictionary['Words'] = OrderedDict() # So we hopefully get the errors first
@@ -1489,46 +1500,46 @@ class InternalBibleBook:
             if marker in ('imt1','imt2','imt3','imt4',):
                 if marker=='imt1': mainTitleList.append( "{} {}:{} '{}'".format( self.bookReferenceCode, c, v, text ) )
                 else: mainTitleList.append( "{} {}:{} ({}) '{}'".format( self.bookReferenceCode, c, v, marker, text ) )
-                if not text:
+                if not cleanText:
                     introductionErrors.append( _("{} {}:{} Missing heading text for marker {}").format( self.bookReferenceCode, c, v, marker ) )
                     self.addPriorityError( 39, c, v, _("Missing heading text") )
-                elif text[-1]=='.':
+                elif cleanText[-1]=='.':
                     introductionErrors.append( _("{} {}:{} {} heading ends with a period: {}").format( self.bookReferenceCode, c, v, marker, text ) )
                     self.addPriorityError( 49, c, v, _("Heading ends with a period") )
             elif marker in ('is1','is2','is3','is4',):
                 if marker=='is1': headingList.append( "{} {}:{} '{}'".format( self.bookReferenceCode, c, v, text ) )
                 else: headingList.append( "{} {}:{} ({}) '{}'".format( self.bookReferenceCode, c, v, marker, text ) )
-                if not text:
+                if not cleanText:
                     introductionErrors.append( _("{} {}:{} Missing heading text for marker {}").format( self.bookReferenceCode, c, v, marker ) )
                     self.addPriorityError( 39, c, v, _("Missing heading text") )
-                elif text[-1]=='.':
+                elif cleanText[-1]=='.':
                     introductionErrors.append( _("{} {}:{} {} heading ends with a period: {}").format( self.bookReferenceCode, c, v, marker, text ) )
                     self.addPriorityError( 49, c, v, _("Heading ends with a period") )
             elif marker=='iot':
                 titleList.append( "{} {}:{} '{}'".format( self.bookReferenceCode, c, v, text ) )
-                if not text:
+                if not cleanText:
                     introductionErrors.append( _("{} {}:{} Missing outline title text for marker {}").format( self.bookReferenceCode, c, v, marker ) )
                     self.addPriorityError( 38, c, v, _("Missing outline title text") )
-                elif text[-1]=='.':
+                elif cleanText[-1]=='.':
                     introductionErrors.append( _("{} {}:{} {} heading ends with a period: {}").format( self.bookReferenceCode, c, v, marker, text ) )
                     self.addPriorityError( 48, c, v, _("Heading ends with a period") )
             elif marker in ('io1','io2','io3','io4',):
                 if marker=='io1': outlineList.append( "{} {}:{} '{}'".format( self.bookReferenceCode, c, v, text ) )
                 else: outlineList.append( "{} {}:{} ({}) '{}'".format( self.bookReferenceCode, c, v, marker, text ) )
-                if not text:
+                if not cleanText:
                     introductionErrors.append( _("{} {}:{} Missing outline text for marker {}").format( self.bookReferenceCode, c, v, marker ) )
                     self.addPriorityError( 37, c, v, _("Missing outline text") )
-                elif text[-1]=='.':
+                elif cleanText[-1]=='.':
                     introductionErrors.append( _("{} {}:{} {} outline entry ends with a period: {}").format( self.bookReferenceCode, c, v, marker, text ) )
                     self.addPriorityError( 47, c, v, _("Outline entry ends with a period") )
             elif marker in ('ip','ipi','im','imi',):
-                if not text:
+                if not cleanText:
                     introductionErrors.append( _("{} {}:{} Missing introduction text for marker {}").format( self.bookReferenceCode, c, v, marker ) )
                     self.addPriorityError( 36, c, v, _("Missing introduction text") )
-                elif not text.endswith('.') and not text.endswith('.)') and not text.endswith('.]') \
-                and not text.endswith('.”') and not text.endswith('."') and not text.endswith('.’') and not text.endswith(".'") \
-                and not text.endswith('.\\it*') and not text.endswith('.&quot;') and not text.endswith('.&#39;'):
-                    if text.endswith(')') or text.endswith(']'):
+                elif not cleanText.endswith('.') and not cleanText.endswith('.)') and not cleanText.endswith('.]') \
+                and not cleanText.endswith('.”') and not cleanText.endswith('."') and not cleanText.endswith('.’') and not cleanText.endswith(".'"): # \
+                #and not cleanText.endswith('.\\it*') and not text.endswith('.&quot;') and not text.endswith('.&#39;'):
+                    if cleanText.endswith(')') or cleanText.endswith(']'):
                         introductionErrors.append( _("{} {}:{} {} introduction text possibly does not end with a period: {}").format( self.bookReferenceCode, c, v, marker, text ) )
                         self.addPriorityError( 26, c, v, _("Introduction text possibly ends without a period") )
                     else:
@@ -1562,7 +1573,7 @@ class InternalBibleBook:
             if marker=='c' and text: c = text.split()[0]; v = '0'
             elif marker=='v' and text: v = text.split()[0]
 
-            for extraType, extraIndex, extraText in extras: # do any footnotes and cross-references
+            for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
                 assert( extraText ) # Shouldn't be blank
                 assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
                 assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
@@ -1571,11 +1582,11 @@ class InternalBibleBook:
                 assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the CONTENTS of these fields should be in extras
 
                 # Get a copy of the note text without any formatting
-                cleanText = extraText
-                for sign in ('- ', '+ '): # Remove common leader characters (and the following space)
-                    cleanText = cleanText.replace( sign, '' )
-                for marker in ('\\xo*','\\xo ','\\xt*','\\xt ','\\xdc*','\\xdc ','\\fr*','\\fr ','\\ft*','\\ft ','\\fq*','\\fq ','\\fv*','\\fv ','\\fk*','\\fk ',):
-                    cleanText = cleanText.replace( marker, '' )
+                #cleanExtraText = extraText
+                #for sign in ('- ', '+ '): # Remove common leader characters (and the following space)
+                #    cleanExtraText = cleanExtraText.replace( sign, '' )
+                #for marker in ('\\xo*','\\xo ','\\xt*','\\xt ','\\xdc*','\\xdc ','\\fr*','\\fr ','\\ft*','\\ft ','\\fq*','\\fq ','\\fv*','\\fv ','\\fk*','\\fk ',):
+                #    cleanExtraText = cleanExtraText.replace( marker, '' )
 
                 # Get a list of markers and their contents
                 status, myString, lastCode, lastString, extraList = 0, '', '', '', []
@@ -1641,22 +1652,22 @@ class InternalBibleBook:
                 line = "{} {}:{} '{}'".format( self.bookReferenceCode, c, v, extract )
                 if extraType == 'fn':
                     footnoteList.append( line )
-                    if cleanText.endswith(' '):
+                    if cleanExtraText.endswith(' '):
                         footnoteErrors.append( _("{} {}:{} Footnote seems to have an extra space at end: '{}'").format( self.bookReferenceCode, c, v, extraText ) )
                         self.addPriorityError( 32, c, v, _("Extra space at end of footnote") )
-                    elif not cleanText.endswith('.') and not cleanText.endswith('?') and not cleanText.endswith('.)') and not cleanText.endswith('.]') \
-                    and not cleanText.endswith('.”') and not cleanText.endswith('."') and not cleanText.endswith('.’') and not cleanText.endswith(".'") \
-                    and not cleanText.endswith('.&quot;') and not text.endswith('.&#39;'):
+                    elif not cleanExtraText.endswith('.') and not cleanExtraText.endswith('?') and not cleanExtraText.endswith('.)') and not cleanExtraText.endswith('.]') \
+                    and not cleanExtraText.endswith('.”') and not cleanExtraText.endswith('."') and not cleanExtraText.endswith('.’') and not cleanExtraText.endswith(".'"): # \
+                    #and not cleanExtraText.endswith('.&quot;') and not text.endswith('.&#39;'):
                         footnoteErrors.append( _("{} {}:{} Footnote seems to be missing a final period: '{}'").format( self.bookReferenceCode, c, v, extraText ) )
                         self.addPriorityError( 33, c, v, _("Missing period at end of footnote") )
                 elif extraType == 'xr':
                     xrefList.append( line )
-                    if cleanText.endswith(' '):
+                    if cleanExtraText.endswith(' '):
                         xrefErrors.append( _("{} {}:{} Cross-reference seems to have an extra space at end: '{}'").format( self.bookReferenceCode, c, v, extraText ) )
                         self.addPriorityError( 30, c, v, _("Extra space at end of cross-reference") )
-                    elif not cleanText.endswith('.') and not cleanText.endswith('?') and not cleanText.endswith('.)') and not cleanText.endswith('.]') \
-                    and not cleanText.endswith('.”') and not cleanText.endswith('."') and not cleanText.endswith('.’') and not cleanText.endswith(".'") \
-                    and not cleanText.endswith('.&quot;') and not text.endswith('.&#39;'):
+                    elif not cleanExtraText.endswith('.') and not cleanExtraText.endswith('?') and not cleanExtraText.endswith('.)') and not cleanExtraText.endswith('.]') \
+                    and not cleanExtraText.endswith('.”') and not cleanExtraText.endswith('."') and not cleanExtraText.endswith('.’') and not cleanExtraText.endswith(".'"): # \
+                    #and not cleanExtraText.endswith('.&quot;') and not text.endswith('.&#39;'):
                         xrefErrors.append( _("{} {}:{} Cross-reference seems to be missing a final period: '{}'").format( self.bookReferenceCode, c, v, extraText ) )
                         self.addPriorityError( 31, c, v, _("Missing period at end of cross-reference") )
 
