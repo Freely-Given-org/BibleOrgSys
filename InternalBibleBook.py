@@ -1525,7 +1525,9 @@ class InternalBibleBook:
                 if not text:
                     introductionErrors.append( _("{} {}:{} Missing introduction text for marker {}").format( self.bookReferenceCode, c, v, marker ) )
                     self.addPriorityError( 36, c, v, _("Missing introduction text") )
-                elif not text.endswith('.') and not text.endswith('.)') and not text.endswith('.”') and not text.endswith('."') and not text.endswith('.’') and not text.endswith(".'") and not text.endswith('.\\it*'):
+                elif not text.endswith('.') and not text.endswith('.)') and not text.endswith('.]') \
+                and not text.endswith('.”') and not text.endswith('."') and not text.endswith('.’') and not text.endswith(".'") \
+                and not text.endswith('.\\it*') and not text.endswith('.&quot;') and not text.endswith('.&#39;'):
                     if text.endswith(')') or text.endswith(']'):
                         introductionErrors.append( _("{} {}:{} {} introduction text possibly does not end with a period: {}").format( self.bookReferenceCode, c, v, marker, text ) )
                         self.addPriorityError( 26, c, v, _("Introduction text possibly ends without a period") )
@@ -1642,7 +1644,9 @@ class InternalBibleBook:
                     if cleanText.endswith(' '):
                         footnoteErrors.append( _("{} {}:{} Footnote seems to have an extra space at end: '{}'").format( self.bookReferenceCode, c, v, extraText ) )
                         self.addPriorityError( 32, c, v, _("Extra space at end of footnote") )
-                    elif not cleanText.endswith('.') and not cleanText.endswith('?') and not cleanText.endswith('.)') and not cleanText.endswith('.”') and not cleanText.endswith('."') and not cleanText.endswith('.’') and not cleanText.endswith(".'"):
+                    elif not cleanText.endswith('.') and not cleanText.endswith('?') and not cleanText.endswith('.)') and not cleanText.endswith('.]') \
+                    and not cleanText.endswith('.”') and not cleanText.endswith('."') and not cleanText.endswith('.’') and not cleanText.endswith(".'") \
+                    and not cleanText.endswith('.&quot;') and not text.endswith('.&#39;'):
                         footnoteErrors.append( _("{} {}:{} Footnote seems to be missing a final period: '{}'").format( self.bookReferenceCode, c, v, extraText ) )
                         self.addPriorityError( 33, c, v, _("Missing period at end of footnote") )
                 elif extraType == 'xr':
@@ -1650,7 +1654,9 @@ class InternalBibleBook:
                     if cleanText.endswith(' '):
                         xrefErrors.append( _("{} {}:{} Cross-reference seems to have an extra space at end: '{}'").format( self.bookReferenceCode, c, v, extraText ) )
                         self.addPriorityError( 30, c, v, _("Extra space at end of cross-reference") )
-                    elif not cleanText.endswith('.') and not cleanText.endswith('.)') and not cleanText.endswith('.”') and not cleanText.endswith('."'):
+                    elif not cleanText.endswith('.') and not cleanText.endswith('?') and not cleanText.endswith('.)') and not cleanText.endswith('.]') \
+                    and not cleanText.endswith('.”') and not cleanText.endswith('."') and not cleanText.endswith('.’') and not cleanText.endswith(".'") \
+                    and not cleanText.endswith('.&quot;') and not text.endswith('.&#39;'):
                         xrefErrors.append( _("{} {}:{} Cross-reference seems to be missing a final period: '{}'").format( self.bookReferenceCode, c, v, extraText ) )
                         self.addPriorityError( 31, c, v, _("Missing period at end of cross-reference") )
 
