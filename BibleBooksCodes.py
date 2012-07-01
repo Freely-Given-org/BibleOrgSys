@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodes.py
-#   Last modified: 2012-06-06 (also update versionString below)
+#   Last modified: 2012-07-01 by RJH (also update versionString below)
 #
 # Module handling BibleBooksCodes functions
 #
@@ -28,7 +28,7 @@ Module handling BibleBooksCodes functions.
 """
 
 progName = "Bible Books Codes handler"
-versionString = "0.61"
+versionString = "0.62"
 
 
 import os, logging
@@ -160,10 +160,14 @@ class BibleBooksCodes:
         """ Return the reference abbreviation string for the given OSIS book code string. """
         return self.__DataDicts["OSISAbbreviationDict"][osisAbbreviation.upper()][1]
 
-    def getBBBFromUSFM( self, USFMAbbreviation ):
+    def getBBBFromUSFM( self, USFMAbbreviation, strict=False ):
         """ Return the reference abbreviation string for the given USFM book code string. """
         assert( len(USFMAbbreviation) == 3 )
-        return self.__DataDicts["USFMAbbreviationDict"][USFMAbbreviation.upper()][1]
+        #print( USFMAbbreviation, self.__DataDicts["USFMAbbreviationDict"][USFMAbbreviation.upper()] )
+        result = self.__DataDicts["USFMAbbreviationDict"][USFMAbbreviation.upper()][1] # Can be a string or a list
+        if isinstance( result, str ): return result
+        if strict: logging.warning( "getBBBFromUSFM is assuming that the best fit for USFM ID '{}' is the first entry in {}".format( USFMAbbreviation, result ) )
+        return result[0] # Assume that the first entry is the best pick
 
     def getBBB( self, something ):
         """ Attempt to return the BBB reference abbreviation string for the given book information.

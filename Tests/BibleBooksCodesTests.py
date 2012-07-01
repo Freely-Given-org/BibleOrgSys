@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodesTests.py
-#   Last modified: 2012-06-06 (also update versionString below)
+#   Last modified: 2012-06-30 by RJH (also update versionString below)
 #
 # Module testing BibleBooksCodes.py
 #
@@ -28,7 +28,7 @@ Module testing BibleBooksCodes.py.
 """
 
 progName = "Bible Books Codes tests"
-versionString = "0.61"
+versionString = "0.62"
 
 
 import sys, unittest
@@ -319,6 +319,8 @@ class BibleBooksCodesTests( unittest.TestCase ):
     def test_210_getBBBFromUSFM( self ):
         """ Test the getBBBFromUSFM function. """
         self.assertEqual( self.bbc.getBBBFromUSFM('Gen'), 'GEN' )
+        self.assertEqual( self.bbc.getBBBFromUSFM('Ezr'), 'EZR' )
+        self.assertEqual( self.bbc.getBBBFromUSFM('Mat'), 'MAT' )
         self.assertEqual( self.bbc.getBBBFromUSFM('1Co'), 'CO1' )
         self.assertEqual( self.bbc.getBBBFromUSFM('Rev'), 'REV' )
         for badCode in ('XYZ','Abc',): # Must be three characters

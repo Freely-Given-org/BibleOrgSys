@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # USFMFilenames.py
-#   Last modified: 2012-06-30 by RJH (also update versionString below)
+#   Last modified: 2012-07-01 by RJH (also update versionString below)
 #
 # Module handling USFM Bible filenames
 #
@@ -155,38 +155,52 @@ class USFMFilenames:
     # end of __str___
 
 
+    def __len__( self ):
+        """
+        This method returns the last number of files found.
+        
+        @return: None (if no search done) or else the last number of USFM files found
+        @rtype: int
+        """
+        if self.lastTupleList is None: return 0
+        return len( self.lastTupleList )
+    # end of __len___
+
+
     def getUSFMIDFromFile( self, folder, thisFilename, filepath ):
         """ Try to intelligently get the USFMId from the first line in the file (which should be the \\id line). """
         # Look for the USFM id in the ID line (which should be the first line in a USFM file)
-        with open( filepath ) as possibleUSFMFile: # Automatically closes the file when done
-            lineNumber = 0
-            for line in possibleUSFMFile:
-                lineNumber += 1
-                if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
-                if line.startswith( '\\id ' ):
-                    if len(line)<5: logging.warning( "id line '{}' in {} is too short".format( line, filepath ) )
-                    idContent = line[4:]
-                    tokens = idContent.split()
-                    #print( "Have id tokens: {}".format( tokens ) )
-                    UCToken0 = tokens[0].upper()
-                    if UCToken0=='I': UCToken0 = '1'
-                    if UCToken0=='II': UCToken0 = '2'
-                    if UCToken0=='III': UCToken0 = '3'
-                    if UCToken0=='IV': UCToken0 = '4'
-                    if UCToken0=='V': UCToken0 = '5'
-                    if UCToken0 in ('1','2','3','4','5',) and len(tokens)>=2: UCToken0 += tokens[1].upper() # Combine something like 1 Sa to 1SA
-                    if UCToken0.startswith( 'JUDG' ): UCToken0 = UCToken0[0] + UCToken0[2:] # Remove the U because it gets confused with JUDE
-                    if len(UCToken0)>2 and UCToken0[1] in ('_','-'): UCToken0 = UCToken0[0] + UCToken0[2:] # Change something like 1_SA to 1SA
-                    if UCToken0 in self._USFMBooksCodesUpper: return UCToken0 # it's a valid one -- we have the most confidence in this one
-                    elif UCToken0[:3] in self._USFMBooksCodesUpper: return UCToken0[:3] # perhaps an abbreviated version is valid (but could think Judges is JUD=Jude)
-                    else: print( "But '{}' wasn't a valid USFM ID!!!".format( UCToken0 ) )
-                    break
-                elif lineNumber == 1:
-                    if line.startswith ( '\\' ):
-                        logging.warning( "First line in {} in {} starts with a backslash but not an id line '{}'".format( thisFilename, folder, line ) )
-                    elif not line:
-                        logging.info( "First line in {} in {} appears to be blank".format( thisFilename, folder ) )
-                if lineNumber >= 2: break # We only look at the first one or two lines
+        try:
+            with open( filepath ) as possibleUSFMFile: # Automatically closes the file when done
+                lineNumber = 0
+                for line in possibleUSFMFile:
+                    lineNumber += 1
+                    if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
+                    if line.startswith( '\\id ' ):
+                        if len(line)<5: logging.warning( "id line '{}' in {} is too short".format( line, filepath ) )
+                        idContent = line[4:]
+                        tokens = idContent.split()
+                        #print( "Have id tokens: {}".format( tokens ) )
+                        UCToken0 = tokens[0].upper()
+                        if UCToken0=='I': UCToken0 = '1'
+                        if UCToken0=='II': UCToken0 = '2'
+                        if UCToken0=='III': UCToken0 = '3'
+                        if UCToken0=='IV': UCToken0 = '4'
+                        if UCToken0=='V': UCToken0 = '5'
+                        if UCToken0 in ('1','2','3','4','5',) and len(tokens)>=2: UCToken0 += tokens[1].upper() # Combine something like 1 Sa to 1SA
+                        if UCToken0.startswith( 'JUDG' ): UCToken0 = UCToken0[0] + UCToken0[2:] # Remove the U because it gets confused with JUDE
+                        if len(UCToken0)>2 and UCToken0[1] in ('_','-'): UCToken0 = UCToken0[0] + UCToken0[2:] # Change something like 1_SA to 1SA
+                        if UCToken0 in self._USFMBooksCodesUpper: return UCToken0 # it's a valid one -- we have the most confidence in this one
+                        elif UCToken0[:3] in self._USFMBooksCodesUpper: return UCToken0[:3] # perhaps an abbreviated version is valid (but could think Judges is JUD=Jude)
+                        else: print( "But '{}' wasn't a valid USFM ID in {}!!!".format( UCToken0, thisFilename ) )
+                        break
+                    elif lineNumber == 1:
+                        if line.startswith ( '\\' ):
+                            logging.warning( "First line in {} in {} starts with a backslash but not an id line '{}'".format( thisFilename, folder, line ) )
+                        elif not line:
+                            logging.info( "First line in {} in {} appears to be blank".format( thisFilename, folder ) )
+                    if lineNumber >= 2: break # We only look at the first one or two lines
+        except: print( "Seems we couldn't open or read '{}'".format( filepath ) ) # Could be binary or a different encoding
         return None
     # end of getUSFMIDFromFile
 
@@ -232,6 +246,27 @@ class USFMFilenames:
     # end of getAllFilenames
 
 
+    def doListAppend( self, BBB, filename, givenList, caller ):
+        """ Check that BBB and filename are not in the givenList,
+                then add them as a 2-tuple.
+            If there is a duplicate, remove both (as we're obviously unsure). """
+        assert( isinstance( BBB, str ) )
+        assert( isinstance( filename, str ) )
+        assert( isinstance( givenList, list ) )
+        assert( isinstance( caller, str ) )
+        removeBBB = removeFilename = None
+        for existingBBB, existingFilename in givenList:
+            if existingBBB == BBB:
+                if Globals.verbosityLevel > 2: logging.warning( "{} tried to add duplicate {} {} when already had {} (removed both)".format( caller, BBB, filename, existingFilename ) )
+                removeBBB, removeFilename = existingBBB, existingFilename
+            if existingFilename == filename:
+                if Globals.verbosityLevel > 2: logging.warning( "{} tried to add duplicate {} {} when already had {} (removed both)".format( caller, filename, BBB, existingBBB ) )
+                removeBBB, removeFilename = existingBBB, existingFilename
+        if removeFilename:givenList.remove( (removeBBB,removeFilename,) )
+        else: givenList.append( (BBB,filename,) )
+    # end of doListAppend
+
+
     def getDerivedFilenameTuples( self ):
         """Return a theoretical list of valid USFM filenames that match our filename template."""
         resultList = []
@@ -245,20 +280,27 @@ class USFMFilenames:
                 for ix in range( 0, len(filename)): # See if there's any constant characters in the pattern that we need to grab
                     if filename[ix]=='*' and self.pattern[ix]!='*':
                         filename = filename[:ix] + self.pattern[ix] + filename[ix+1:]
-                resultList.append( (bookReferenceCode,filename,) )
+                self.doListAppend( bookReferenceCode, filename, resultList, "getDerivedFilenameTuples" )
         return resultList
     # end of getDerivedFilenameTuples
 
 
-    def getConfirmedFilenameTuples( self ):
+    def getConfirmedFilenameTuples( self, doubleCheck=False ):
         """ Starting with the theoretical list of filenames derived from the deduced template (if we have one),
-                return a list of tuples of UPPER CASE book codes with actual (present and readable) USFM filenames."""
+                return a list of tuples of UPPER CASE book codes with actual (present and readable) USFM filenames.
+            If the doubleCheck flag is set, the program also looks at the id lines inside the files. """
         resultList = []
         for bookReferenceCode,derivedFilename in self.getDerivedFilenameTuples():
             derivedFilepath = os.path.join( self.folder, derivedFilename )
             if Globals.verbosityLevel > 2: print( '  getConfirmedFilenameTuples: Checking for existence of: ' + derivedFilename )
             if os.access( derivedFilepath, os.R_OK ):
-                resultList.append( (bookReferenceCode, derivedFilename,) )
+                if doubleCheck:
+                    USFMId = self.getUSFMIDFromFile( self.folder, derivedFilename, derivedFilepath )
+                    BBB = self._BibleBooksCodes.getBBBFromUSFM( USFMId )
+                    if BBB != bookReferenceCode:
+                        logging.error( "getConfirmedFilenameTuples: internal USFM Id ({}{}) doesn't match {} for {}".format( USFMId, '' if BBB==USFMId else " -> {}".format(BBB), bookReferenceCode, derivedFilename ) )
+                        continue # so it doesn't get added
+                self.doListAppend( bookReferenceCode, derivedFilename, resultList, "getConfirmedFilenameTuples" )
         self.lastTupleList = resultList
         return resultList
     # end of getConfirmedFilenameTuples
@@ -270,7 +312,7 @@ class USFMFilenames:
         for possibleFilename in self.fileList:
             for USFMBookCode,USFMDigits,bookReferenceCode in self._USFMBooksCodeNumberTriples:
                 if USFMBookCode in possibleFilename or USFMBookCode.upper() in possibleFilename:
-                    resultList.append( (self._BibleBooksCodes.getBBBFromUSFM( USFMBookCode ), possibleFilename,) )
+                    self.doListAppend( self._BibleBooksCodes.getBBBFromUSFM( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
         self.lastTupleList = resultList
         return resultList
     # end of getPossibleFilenameTuplesExt
@@ -281,11 +323,11 @@ class USFMFilenames:
         resultList = []
         if len( self.BBBDictionary) >= len( self.fileDictionary ): # Choose the longest one
             for BBB in self.BBBDictionary.keys():
-                resultList.append( (BBB,self.BBBDictionary[BBB][1],) )
+                self.doListAppend( BBB, self.BBBDictionary[BBB][1], resultList, "getPossibleFilenameTuplesInt1" )
         else:
             for folder,filename in self.fileDictionary.keys():
                 assert( folder == self.folder )
-                resultList.append( self.fileDictionary( (folder,filename,), filename ) )
+                self.doListAppend( self.fileDictionary( (folder,filename,) ), filename, resultList, "getPossibleFilenameTuplesInt2" )
         self.lastTupleList = resultList
         return resultList
     # end of getPossibleFilenameTuplesInt
@@ -305,6 +347,19 @@ class USFMFilenames:
         self.lastTupleList = resultList
         return resultList
     # end of getMaximumPossibleFilenameTuples
+
+
+    def getUnusedFilenames( self ):
+        """Return a list of filenames which didn't seem to be USFM files.
+            NOTE: This list depends on which "find" routine above was run last! """
+        folderFilenames = os.listdir( self.folder )
+        if self.lastTupleList is None: return None # Not sure what list they're after here
+        #print( len(self.lastTupleList), self.lastTupleList )
+        for bookReferenceCode,actualFilename in self.lastTupleList:
+            #print( bookReferenceCode, actualFilename )
+            if actualFilename in folderFilenames: folderFilenames.remove( actualFilename ) # Sometimes it can be removed already if we had (invalid) duplicates in the lastTupleList
+        return folderFilenames
+    # end of getUnusedFilenames
 
 
     def getSSFFilenames( self, searchAbove=False, auto=True ):
@@ -340,17 +395,6 @@ class USFMFilenames:
                 if count==1 and index!=-1: filelist = [ filelist[index] ] # Found exactly one so reduce the list down to this one filepath
         return filelist
     # end of getSSFFilenames
-
-
-    def getUnusedFilenames( self ):
-        """Return a list of filenames which didn't match the USFM template."""
-        folderFilenames = os.listdir( self.folder )
-        if self.lastTupleList is None: # Not sure what list they're after here
-            return None
-        for bookReferenceCode,actualFilename in self.lastTupleList:
-            folderFilenames.remove( actualFilename )
-        return folderFilenames
-    # end of getUnusedFilenames
 # end of class USFMFiles
 
 
@@ -366,13 +410,16 @@ def demo():
     testFolder = 'Tests/DataFilesForTests/USFMTest/' # This is a RELATIVE path
     #testFolder = '/home/myFolder' # You can put your test folder here
     name, encoding, testFolder = "WEB", "utf-8", "/mnt/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/" # You can put your test folder here
-    name, encoding, testFolder = "KS", "utf-8", "/mnt/Work/Bibles/Formats/USFM/PrivateUSFMTestData/KS/" # You can put your test folder here
+    #name, encoding, testFolder = "KS", "utf-8", "/mnt/Work/Bibles/Formats/USFM/PrivateUSFMTestData/KS/" # You can put your test folder here
+    name, encoding, testFolder = "MS", "utf-8", "/mnt/Data/Matigsalug/Scripture/MBTBC/" # You can put your test folder here
     if os.access( testFolder, os.R_OK ):
         UFns = USFMFilenames( testFolder )
         print( UFns )
         result = UFns.getAllFilenames(); print( "\nAll:", len(result), result )
         result = UFns.getDerivedFilenameTuples(); print( "\nDerived:", UFns.getFilenameTemplate(), len(result), result )
         result = UFns.getConfirmedFilenameTuples(); print( "\nConfirmed:", UFns.getFilenameTemplate(), len(result), result )
+        result = UFns.getUnusedFilenames(); print( "Other:", len(result), result )
+        result = UFns.getConfirmedFilenameTuples( doubleCheck=True ); print( "\nConfirmed (with double check):", UFns.getFilenameTemplate(), len(result), result )
         result = UFns.getUnusedFilenames(); print( "Other:", len(result), result )
         result = UFns.getPossibleFilenameTuplesExt(); print( "\nPossibleExt:", len(result), result )
         result = UFns.getUnusedFilenames(); print( "Other:", len(result), result )

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodesConverter.py
-#   Last modified: 2012-06-26 (also update versionString below)
+#   Last modified: 2012-07-01 by RJH (also update versionString below)
 #
 # Module handling BibleBooksCodes.xml to produce C and Python data tables
 #
@@ -28,7 +28,7 @@ Module handling BibleBooksCodes.xml and to export to JSON, C, and Python data ta
 """
 
 progName = "Bible Books Codes converter"
-versionString = "0.60"
+versionString = "0.62"
 
 
 import logging, os.path
@@ -252,6 +252,17 @@ class BibleBooksCodesConverter:
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
         (Of course, you can just use the elementTree in self._XMLtree if you prefer.)
         """
+        def makeList( parameter1, parameter2 ):
+            """ Returns a list containing all parameters. Parameter1 may already be a list. """
+            if isinstance( parameter1, list ):
+                #assert( parameter2 not in parameter1 )
+                parameter1.append( parameter2 )
+                return parameter1
+            else:
+                return [ parameter1, parameter2 ]
+        # end of makeList
+
+
         assert( self._XMLtree )
         if self.__DataDicts: # We've already done an import/restructuring -- no need to repeat it
             return self.__DataDicts
@@ -288,16 +299,16 @@ class BibleBooksCodesConverter:
             #   The referenceAbbreviation is UPPER CASE by definition
             if "referenceAbbreviation" in self._compulsoryElements or referenceAbbreviation:
                 if "referenceAbbreviation" in self._uniqueElements: assert( referenceAbbreviation not in myRefAbbrDict ) # Shouldn't be any duplicates
-                #myRefAbbrDict[referenceAbbreviation] = ( intID, SBLAbbreviation, OSISAbbreviation, SwordAbbreviation, CCELNumberString, USFMAbbreviation, USFMNumberString, NETBibleAbbreviation, ByzantineAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish, )
-                myRefAbbrDict[referenceAbbreviation] = { "referenceNumber":intID, "SBLAbbreviation":SBLAbbreviation, "OSISAbbreviation":OSISAbbreviation,
+                if referenceAbbreviation in myRefAbbrDict: halt
+                else: myRefAbbrDict[referenceAbbreviation] = { "referenceNumber":intID, "SBLAbbreviation":SBLAbbreviation, "OSISAbbreviation":OSISAbbreviation,
                                                     "SwordAbbreviation":SwordAbbreviation, "CCELNumberString":CCELNumberString,
                                                     "USFMAbbreviation":USFMAbbreviation, "USFMNumberString":USFMNumberString, "USXNumberString":USXNumberString,
                                                     "NETBibleAbbreviation":NETBibleAbbreviation, "ByzantineAbbreviation":ByzantineAbbreviation,
                                                     "numExpectedChapters":expectedChapters, "possibleAlternativeBooks":possibleAlternativeBooks, "nameEnglish":nameEnglish }
             if "referenceNumber" in self._compulsoryElements or ID:
                 if "referenceNumber" in self._uniqueElements: assert( intID not in myIDDict ) # Shouldn't be any duplicates
-                #myIDDict[intID] = ( referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, SwordAbbreviation, CCELNumberString, USFMAbbreviation, USFMNumberString, NETBibleAbbreviation, ByzantineAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish, )
-                myIDDict[intID] = { "referenceAbbreviation":referenceAbbreviation, "SBLAbbreviation":SBLAbbreviation, "OSISAbbreviation":OSISAbbreviation,
+                if intID in myIDDict: halt
+                else: myIDDict[intID] = { "referenceAbbreviation":referenceAbbreviation, "SBLAbbreviation":SBLAbbreviation, "OSISAbbreviation":OSISAbbreviation,
                                     "SwordAbbreviation":SwordAbbreviation, "CCELNumberString":CCELNumberString,
                                     "USFMAbbreviation":USFMAbbreviation, "USFMNumberString":USFMNumberString, "USXNumberString":USXNumberString,
                                     "NETBibleAbbreviation":NETBibleAbbreviation, "ByzantineAbbreviation":ByzantineAbbreviation,
@@ -305,7 +316,8 @@ class BibleBooksCodesConverter:
             if "SBLAbbreviation" in self._compulsoryElements or SBLAbbreviation:
                 if "SBLAbbreviation" in self._uniqueElements: ssert( SBLAbbreviation not in myOADict ) # Shouldn't be any duplicates
                 UCAbbreviation = SBLAbbreviation.upper()
-                mySBLDict[UCAbbreviation] = ( intID, referenceAbbreviation, )
+                if UCAbbreviation in mySBLDict: mySBLDict[UCAbbreviation] = ( intID, makeList(mySBLDict[UCAbbreviation][1],referenceAbbreviation), )
+                else: mySBLDict[UCAbbreviation] = ( intID, referenceAbbreviation, )
                 if UCAbbreviation in allAbbreviationsDict and allAbbreviationsDict[UCAbbreviation] != referenceAbbreviation:
                     logging.info( _("This SBL '{}' abbreviation ({}) already assigned to '{}'").format( UCAbbreviation, referenceAbbreviation, allAbbreviationsDict[UCAbbreviation] ) )
                     allAbbreviationsDict[UCAbbreviation] = "MultipleValues"
@@ -313,7 +325,8 @@ class BibleBooksCodesConverter:
             if "OSISAbbreviation" in self._compulsoryElements or OSISAbbreviation:
                 if "OSISAbbreviation" in self._uniqueElements: assert( OSISAbbreviation not in myOADict ) # Shouldn't be any duplicates
                 UCAbbreviation = OSISAbbreviation.upper()
-                myOADict[UCAbbreviation] = ( intID, referenceAbbreviation )
+                if UCAbbreviation in myOADict: myOADict[UCAbbreviation] = ( intID, makeList(myOADict[UCAbbreviation][1],referenceAbbreviation), )
+                else: myOADict[UCAbbreviation] = ( intID, referenceAbbreviation, )
                 if UCAbbreviation in allAbbreviationsDict and allAbbreviationsDict[UCAbbreviation] != referenceAbbreviation:
                     logging.info( _("This OSIS '{}' abbreviation ({}) already assigned to '{}'").format( UCAbbreviation, referenceAbbreviation, allAbbreviationsDict[UCAbbreviation] ) )
                     allAbbreviationsDict[UCAbbreviation] = "MultipleValues"
@@ -321,32 +334,41 @@ class BibleBooksCodesConverter:
             if "SwordAbbreviation" in self._compulsoryElements or SwordAbbreviation:
                 if "SwordAbbreviation" in self._uniqueElements: assert( SwordAbbreviation not in mySwDict ) # Shouldn't be any duplicates
                 UCAbbreviation = SwordAbbreviation.upper()
-                mySwDict[UCAbbreviation] = ( intID, referenceAbbreviation, )
+                if UCAbbreviation in mySwDict: mySwDict[UCAbbreviation] = ( intID, makeList(mySwDict[UCAbbreviation][1],referenceAbbreviation), )
+                else: mySwDict[UCAbbreviation] = ( intID, referenceAbbreviation, )
                 if UCAbbreviation in allAbbreviationsDict and allAbbreviationsDict[UCAbbreviation] != referenceAbbreviation:
                     logging.info( _("This Sword '{}' abbreviation ({}) already assigned to '{}'").format( UCAbbreviation, referenceAbbreviation, allAbbreviationsDict[UCAbbreviation] ) )
                     allAbbreviationsDict[UCAbbreviation] = "MultipleValues"
                 else: allAbbreviationsDict[UCAbbreviation] = referenceAbbreviation
             if "CCELNumberString" in self._compulsoryElements or CCELNumberString:
                 if "CCELNumberString" in self._uniqueElements: assert( CCELNumberString not in myCCELDict ) # Shouldn't be any duplicates
-                myCCELDict[CCELNumberString.upper()] = ( intID, referenceAbbreviation, )
+                UCNumberString = CCELNumberString.upper()
+                if UCNumberString in myCCELDict: myCCELDict[UCNumberString] = ( intID, makeList(myCCELDict[UCNumberString][1],referenceAbbreviation), )
+                else: myCCELDict[UCNumberString] = ( intID, referenceAbbreviation, )
             if "USFMAbbreviation" in self._compulsoryElements or USFMAbbreviation:
                 if "USFMAbbreviation" in self._uniqueElements: assert( USFMAbbreviation not in myUSFMAbbrDict ) # Shouldn't be any duplicates
                 UCAbbreviation = USFMAbbreviation.upper()
-                myUSFMAbbrDict[UCAbbreviation] = ( intID, referenceAbbreviation, USFMNumberString, )
+                if UCAbbreviation in myUSFMAbbrDict: myUSFMAbbrDict[UCAbbreviation] = ( intID, makeList(myUSFMAbbrDict[UCAbbreviation][1],referenceAbbreviation), makeList(myUSFMAbbrDict[UCAbbreviation][2],USFMNumberString), )
+                else: myUSFMAbbrDict[UCAbbreviation] = ( intID, referenceAbbreviation, USFMNumberString, )
                 if UCAbbreviation in allAbbreviationsDict and allAbbreviationsDict[UCAbbreviation] != referenceAbbreviation:
-                    logging.info( _("This USFM '{}' abbreviation ({}) already assigned to '{}'").format( UCAbbreviation, referenceAbbreviation, allAbbreviationsDict[UCAbbreviation] ) )
+                    logging.error( _("This USFM '{}' abbreviation ({}) already assigned to '{}'").format( UCAbbreviation, referenceAbbreviation, allAbbreviationsDict[UCAbbreviation] ) )
                     allAbbreviationsDict[UCAbbreviation] = "MultipleValues"
                 else: allAbbreviationsDict[UCAbbreviation] = referenceAbbreviation
             if "USFMNumberString" in self._compulsoryElements or USFMNumberString:
                 if "USFMNumberString" in self._uniqueElements: assert( USFMNumberString not in myUSFMNDict ) # Shouldn't be any duplicates
-                myUSFMNDict[USFMNumberString.upper()] = ( intID, referenceAbbreviation, USFMAbbreviation, )
+                UCNumberString = USFMNumberString.upper()
+                if UCNumberString in myUSFMNDict: myUSFMNDict[UCNumberString] = ( intID, makeList(myUSFMNDict[UCNumberString][1],referenceAbbreviation), makeList(myUSFMNDict[UCNumberString][2],USFMAbbreviation), )
+                else: myUSFMNDict[UCNumberString] = ( intID, referenceAbbreviation, USFMAbbreviation, )
             if "USXNumberString" in self._compulsoryElements or USXNumberString:
                 if "USXNumberString" in self._uniqueElements: assert( USXNumberString not in myUSXNDict ) # Shouldn't be any duplicates
-                myUSXNDict[USXNumberString.upper()] = ( intID, referenceAbbreviation, USFMAbbreviation, )
+                UCNumberString = USXNumberString.upper()
+                if UCNumberString in myUSXNDict: halt
+                else: myUSXNDict[UCNumberString] = ( intID, referenceAbbreviation, USFMAbbreviation, )
             if "NETBibleAbbreviation" in self._compulsoryElements or NETBibleAbbreviation:
                 if "NETBibleAbbreviation" in self._uniqueElements: assert( NETBibleAbbreviation not in myBzDict ) # Shouldn't be any duplicates
                 UCAbbreviation = NETBibleAbbreviation.upper()
-                myNETDict[UCAbbreviation] = ( intID, referenceAbbreviation, )
+                if UCAbbreviation in myNETDict: myNETDict[UCAbbreviation] = ( intID, makeList(myNETDict[UCAbbreviation][1],referenceAbbreviation), )
+                else: myNETDict[UCAbbreviation] = ( intID, referenceAbbreviation, )
                 if UCAbbreviation in allAbbreviationsDict and allAbbreviationsDict[UCAbbreviation] != referenceAbbreviation:
                     logging.info( _("This NET Bible '{}' abbreviation ({}) already assigned to '{}'").format( UCAbbreviation, referenceAbbreviation, allAbbreviationsDict[UCAbbreviation] ) )
                     allAbbreviationsDict[UCAbbreviation] = "MultipleValues"
@@ -354,14 +376,17 @@ class BibleBooksCodesConverter:
             if "ByzantineAbbreviation" in self._compulsoryElements or ByzantineAbbreviation:
                 if "ByzantineAbbreviation" in self._uniqueElements: assert( ByzantineAbbreviation not in myBzDict ) # Shouldn't be any duplicates
                 UCAbbreviation = ByzantineAbbreviation.upper()
-                myBzDict[UCAbbreviation] = ( intID, referenceAbbreviation, )
+                if UCAbbreviation in myBzDict: halt
+                else: myBzDict[UCAbbreviation] = ( intID, referenceAbbreviation, )
                 if UCAbbreviation in allAbbreviationsDict and allAbbreviationsDict[UCAbbreviation] != referenceAbbreviation:
                     logging.info( _("This Byzantine '{}' abbreviation ({}) already assigned to '{}'").format( UCAbbreviation, referenceAbbreviation, allAbbreviationsDict[UCAbbreviation] ) )
                     allAbbreviationsDict[UCAbbreviation] = "MultipleValues"
                 else: allAbbreviationsDict[UCAbbreviation] = referenceAbbreviation
             if "nameEnglish" in self._compulsoryElements or USFMNumberString:
                 if "nameEnglish" in self._uniqueElements: assert( nameEnglish not in myENDict ) # Shouldn't be any duplicates
-                myENDict[nameEnglish.upper()] = ( intID, referenceAbbreviation )
+                UCName = nameEnglish.upper()
+                if UCName in myENDict: halt
+                else: myENDict[UCName] = ( intID, referenceAbbreviation )
         adjAllAbbreviationsDict = {}
         for abbreviation, value in allAbbreviationsDict.items(): # Remove useless entries
             if value != "MultipleValues": adjAllAbbreviationsDict[abbreviation] = value
@@ -477,6 +502,7 @@ class BibleBooksCodesConverter:
                         if field is None: result += '""'
                         elif isinstance( field, str): result += '"' + str(field).replace('"','\\"') + '"'
                         elif isinstance( field, int): result += str(field)
+                        elif isinstance( field, list): halt # not written yet
                         else: logging.error( _("Cannot convert unknown field type '{}' in entry '{}'").format( field, entry ) )
                 elif isinstance( entry, dict ):
                     for key in sorted(entry.keys()):
