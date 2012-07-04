@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # InternalBibleBook.py
-#   Last modified: 2012-07-02 by RJH (also update versionString below)
+#   Last modified: 2012-07-04 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -435,8 +435,8 @@ class InternalBibleBook:
 
             # Do a rough check of the SFMs
             if marker=='id' and j!=0:
-                validationErrors.append( _("{} {}:{} Marker 'id' should only appear as the first marker in a book but found on line {} in {}: {}").format( self.bookReferenceCode, c, v, j, marker, text ) )
-                if self.logErrorsFlag: logging.error( _("Marker 'id' should only appear as the first marker in a book but found on line {} after {} {}:{} in {}: {}").format( j, self.bookReferenceCode, c, v, marker, text ) )
+                validationErrors.append( _("{} {}:{} Marker 'id' should only appear as the first marker in a book but found on line {} in {}: {}").format( self.bookReferenceCode, c, v, j+1, marker, text ) )
+                if self.logErrorsFlag: logging.error( _("Marker 'id' should only appear as the first marker in a book but found on line {} after {} {}:{} in {}: {}").format( j+1, self.bookReferenceCode, c, v, marker, text ) )
             if not self.USFMMarkers.isNewlineMarker( marker ):
                 validationErrors.append( _("{} {}:{} Unexpected '\\{}' newline marker in Bible book (Text is '{}')").format( self.bookReferenceCode, c, v, marker, text ) )
                 if self.logErrorsFlag: logging.warning( _("Unexpected '\\{}' newline marker in Bible book after {} {}:{} (Text is '{}')").format( marker, self.bookReferenceCode, c, v, text ) )
@@ -1655,8 +1655,9 @@ class InternalBibleBook:
                     if cleanExtraText.endswith(' '):
                         footnoteErrors.append( _("{} {}:{} Footnote seems to have an extra space at end: '{}'").format( self.bookReferenceCode, c, v, extraText ) )
                         self.addPriorityError( 32, c, v, _("Extra space at end of footnote") )
-                    elif not cleanExtraText.endswith('.') and not cleanExtraText.endswith('?') and not cleanExtraText.endswith('.)') and not cleanExtraText.endswith('.]') \
-                    and not cleanExtraText.endswith('.”') and not cleanExtraText.endswith('."') and not cleanExtraText.endswith('.’') and not cleanExtraText.endswith(".'"): # \
+                    elif not cleanExtraText.endswith('.') and not cleanExtraText.endswith('.”') and not cleanExtraText.endswith('."') and not cleanExtraText.endswith('.’') and not cleanExtraText.endswith(".'") \
+                    and not cleanExtraText.endswith('?') and not cleanExtraText.endswith('?”') and not cleanExtraText.endswith('?"') and not cleanExtraText.endswith('?’') and not cleanExtraText.endswith("?'") \
+                    and not cleanExtraText.endswith('.)') and not cleanExtraText.endswith('.]'):
                     #and not cleanExtraText.endswith('.&quot;') and not text.endswith('.&#39;'):
                         footnoteErrors.append( _("{} {}:{} Footnote seems to be missing a final period: '{}'").format( self.bookReferenceCode, c, v, extraText ) )
                         self.addPriorityError( 33, c, v, _("Missing period at end of footnote") )
@@ -1703,11 +1704,13 @@ class InternalBibleBook:
                                 if char not in CVSeparatorList: CVSeparatorList.append( char )
                                 break
                         if not noteText[-1].isdigit(): fnTrailer = noteText[-1] # Sometimes these references end with a trailer character like a colon
-                        CV1 = v if self.isOneChapterBook else (c + fnCVSeparator + v) # Make up our own reference string
+                        myV = v # Temporary copy
+                        if myV.isdigit() and marker=='s1': myV=str(int(myV)+1) # Assume that a section heading goes with the next verse (bad assumption if the break is in the middle of a verse)
+                        CV1 = myV if self.isOneChapterBook else (c + fnCVSeparator + myV) # Make up our own reference string
                         CV2 = CV1 + fnTrailer # Make up our own reference string
                         if CV2 != noteText:
-                            if CV1 not in noteText:
-                                #print( 'fn', CV1, noteText )
+                            if CV1 not in noteText and noteText not in CV1: # This crudely handles a range in either the verse number or the anchor (as long as the individual one is at the start of the range)
+                                #print( "{} fn m='{}' v={} myV={} CV1='{}' CV2='{}' nT='{}'".format( self.bookReferenceCode, marker, v, myV, CV1, CV2, noteText ) )
                                 footnoteErrors.append( _("{} {}:{} Footnote anchor reference seems not to match: '{}'").format( self.bookReferenceCode, c, v, noteText ) )
                                 self.addPriorityError( 42, c, v, _("Footnote anchor reference mismatch") )
                             else: footnoteErrors.append( _("{} {}:{} Footnote anchor reference possibly does not match: '{}'").format( self.bookReferenceCode, c, v, noteText ) )
