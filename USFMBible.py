@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # USFMBible.py
-#   Last modified: 2012-06-30 by RJH (also update versionString below)
+#   Last modified: 2012-07-05 by RJH (also update versionString below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -48,9 +48,9 @@ class USFMBible( InternalBible ):
         """
         Create the internal USFM Bible object.
         """
-        InternalBible.__init__( self, name, logErrorsFlag ) # Initialise the base class
         self.objectType = "USFM"
         self.objectNameString = "USFM Bible object"
+        InternalBible.__init__( self, name, logErrorsFlag ) # Initialise the base class
     # end of __init_
 
 

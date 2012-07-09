@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USXBibleBook.py
-#   Last modified: 2012-06-06 (also update versionString below)
+#   Last modified: 2012-07-05 by RJH (also update versionString below)
 #
 # Module handling USX Bible Book xml
 #
@@ -46,9 +46,9 @@ class USXBibleBook( InternalBibleBook ):
         """
         Create the USX Bible book object.
         """
-        InternalBibleBook.__init__( self, logErrorsFlag ) # Initialise the base class
         self.objectType = "USX"
         self.objectNameString = "USX Bible Book object"
+        InternalBibleBook.__init__( self, logErrorsFlag ) # Initialise the base class
     # end of __init__
 
 

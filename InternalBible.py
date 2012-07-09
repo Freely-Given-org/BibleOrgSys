@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # InternalBible.py
-#   Last modified: 2012-05-29 by RJH (also update versionString below)
+#   Last modified: 2012-07-10 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -35,7 +35,7 @@ and then fills
 """
 
 progName = "Internal Bible handler"
-versionString = "0.03"
+versionString = "0.04"
 
 
 import os, logging, datetime
@@ -272,84 +272,20 @@ class InternalBible:
     # end of getAddedUnits
 
 
-    def xxxcheckAddedUnits( self, logErrors=False ):
-        """
-        Check things added to the text (like paragraph breaks, section headings, against common standards.
-        """
-        # Get our recommendations for added units
-        import pickle
-        folder = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/" ) # Relative to module, not cwd
-        filepath = os.path.join( folder, "AddedUnitData.pickle" )
-        if Globals.verbosityLevel > 1: print( _("Importing from {}...").format( filepath ) )
-        with open( filepath, 'rb' ) as pickleFile:
-            typicalParagraphs, typicalQParagraphs, typicalSectionHeadings, typicalSectionReferences = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
-
-        allParagraphs, allQParagraphs, allSectionHeadings, allSectionReferences = self.getAddedUnits()
-        addedUnitNotices = []
-        for BBB in self.books: # Do individual book checks
-            if BBB in typicalParagraphs and BBB in allParagraphs:
-                for reference in typicalParagraphs[BBB]:
-                    typical = typicalParagraphs[BBB][reference]
-                    present = reference in allParagraphs[BBB]
-                    #print( reference, typical, present )
-                    if present:
-                        if typical is None:
-                            print( "Unexpected", BBB, reference, typical, present ); halt
-                        elif typical == 'F':
-                            print( "Not many", BBB, reference, typical, present )
-                        #elif typical == 'S':
-                        #    print( "Good", BBB, reference, typical, present )
-                        #elif typical == 'A':
-                        #    print( "Spot-on", BBB, reference, typical, present )
-                    else: # we didn't have it
-                        #if typical is None:
-                        #    print( "None", BBB, reference, typical, present ); halt
-                        #elif typical == 'F':
-                        #    print( "Few", BBB, reference, typical, present )
-                        if typical == 'S':
-                            print( "Some", BBB, reference, typical, present )
-                        elif typical == 'A':
-                            print( "All", BBB, reference, typical, present )
-            else: print( _("checkAddedUnits: can't check {}").format( BBB ) )
-
-            if 0:
-                c = v = '0'
-                reference = c,v
-                for marker,text,extras in self.books[BBB].lines:
-                    #print( BBB, marker, c, v )
-                    # Keep track of where we are for more helpful error messages
-                    if marker=='c' and text:
-                        c = text.split()[0]; v = '0'
-                        reference = c,v
-                    elif marker=='v' and text:
-                        v = text.split()[0]
-                        reference = c,v
-                    elif marker=='p':
-                        typical = typicalParagraphs[BBB][reference] if BBB in typicalParagraphs and reference in typicalParagraphs[BBB] else None
-                        if typical is None:
-                            print( "Unexpected", BBB, reference ); halt
-                        elif typical == 'F':
-                            print( "Surprise", BBB, reference )
-                        elif typical == 'S':
-                            print( "Good", BBB, reference )
-                        elif typical == 'A':
-                            print( "Spot-on", BBB, reference )
-    # end of xxxcheckAddedUnits
-
     def check( self ):
         """Runs a series of individual checks (and counts) on each book of the Bible
             and then a number of overall checks on the entire Bible."""
-        # Get our recommendations for added units
+        # Get our recommendations for added units -- only load this once per Bible
         import pickle
         folder = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/" ) # Relative to module, not cwd
         filepath = os.path.join( folder, "AddedUnitData.pickle" )
-        if Globals.verbosityLevel > 1: print( _("Importing from {}...").format( filepath ) )
+        if Globals.verbosityLevel > 3: print( _("Importing from {}...").format( filepath ) )
         with open( filepath, 'rb' ) as pickleFile:
             typicalAddedUnits = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
 
-        if Globals.verbosityLevel > 1: print( _("Running checks on {}...").format( self.name ) )
+        if Globals.verbosityLevel > 2: print( _("Running checks on {}...").format( self.name ) )
         for BBB in self.books: # Do individual book checks
-            if Globals.verbosityLevel > 2: print( "  " + _("Checking {}...").format( BBB ) )
+            if Globals.verbosityLevel > 3: print( "  " + _("Checking {}...").format( BBB ) )
             self.books[BBB].check( typicalAddedUnits )
 
         # Do overall Bible checks

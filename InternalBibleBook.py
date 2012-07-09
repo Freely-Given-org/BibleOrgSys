@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # InternalBibleBook.py
-#   Last modified: 2012-07-04 by RJH (also update versionString below)
+#   Last modified: 2012-07-05 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -1253,6 +1253,7 @@ class InternalBibleBook:
 
         def countCharacters( adjText ):
             """ Counts the characters for the given text (with internal markers already removed). """
+            #print( "countCharacters: '{}'".format( adjText ) )
             if '  ' in adjText:
                 characterErrors.append( _("{} {}:{} Multiple spaces in '{}'").format( self.bookReferenceCode, c, v, adjText ) )
                 self.addPriorityError( 7, c, v, _("Multiple spaces in text line") )
@@ -1279,13 +1280,27 @@ class InternalBibleBook:
                             characterErrors.append( _("{} {}:{} Invalid '{}' word-building character").format( self.bookReferenceCode, c, v, charName ) )
                             self.addPriorityError( 10, c, v, _("Invalid '{}' word-building character").format( charName ) )
                 for char in leadingWordPunctChars:
-                    if adjText[-1]==char or char+' ' in adjText:
-                            characterErrors.append( _("{} {}:{} Misplaced '{}' word leading character").format( self.bookReferenceCode, c, v, charName ) )
-                            self.addPriorityError( 21, c, v, _("Misplaced '{}' word leading character").format( charName ) )
+                    if char not in trailingWordPunctChars and len(adjText)>1 \
+                    and ( adjText[-1]==char or char+' ' in adjText ):
+                        if Globals.verbosityLevel > 2: charName = unicodedata.name( char )
+                        else: # normal verbosity
+                            if char==' ': charName = 'Space'
+                            elif char==chr(0): charName = 'Null'
+                            else: charName = char
+                        #print( "{} {}:{} char is '{}' {}".format( self.bookReferenceCode, c, v, char, charName ) )
+                        characterErrors.append( _("{} {}:{} Misplaced '{}' word leading character").format( self.bookReferenceCode, c, v, charName ) )
+                        self.addPriorityError( 21, c, v, _("Misplaced '{}' word leading character").format( charName ) )
                 for char in trailingWordPunctChars:
-                    if adjText[0]==char or ' '+char in adjText:
-                            characterErrors.append( _("{} {}:{} Misplaced '{}' word trailing character").format( self.bookReferenceCode, c, v, charName ) )
-                            self.addPriorityError( 20, c, v, _("Misplaced '{}' word trailing character").format( charName ) )
+                    if char not in leadingWordPunctChars and len(adjText)>1 \
+                    and ( adjText[0]==char or ' '+char in adjText ):
+                        if Globals.verbosityLevel > 2: charName = unicodedata.name( char )
+                        else: # normal verbosity
+                            if char==' ': charName = 'Space'
+                            elif char==chr(0): charName = 'Null'
+                            else: charName = char
+                        #print( "{} {}:{} char is '{}' {}".format( self.bookReferenceCode, c, v, char, charName ) )
+                        characterErrors.append( _("{} {}:{} Misplaced '{}' word trailing character").format( self.bookReferenceCode, c, v, charName ) )
+                        self.addPriorityError( 20, c, v, _("Misplaced '{}' word trailing character").format( charName ) )
         # end of countCharacters
 
         characterCounts, letterCounts, punctuationCounts = {}, {}, {} # We don't care about the order in which they appeared

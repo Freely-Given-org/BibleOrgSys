@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # USXBible.py
-#   Last modified: 2012-06-06 by RJH (also update versionString below)
+#   Last modified: 2012-07-05 by RJH (also update versionString below)
 #
 # Module handling compilations of USX Bible books
 #
@@ -48,9 +48,9 @@ class USXBible( InternalBible ):
         """
         Create the internal USX Bible object.
         """
-        InternalBible.__init__( self, name, logErrorsFlag ) # Initialise the base class
         self.objectType = "USX"
         self.objectNameString = "USX Bible object"
+        InternalBible.__init__( self, name, logErrorsFlag ) # Initialise the base class
     # end of __init_
 
 

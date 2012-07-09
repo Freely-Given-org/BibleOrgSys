@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # USFMBibleBook.py
-#   Last modified: 2012-06-30 by RJH (also update versionString below)
+#   Last modified: 2012-07-05 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -46,9 +46,9 @@ class USFMBibleBook( InternalBibleBook ):
         """
         Create the USFM Bible book object.
         """
-        InternalBibleBook.__init__( self, logErrorsFlag ) # Initialise the base class
         self.objectType = "USFM"
         self.objectNameString = "USFM Bible Book object"
+        InternalBibleBook.__init__( self, logErrorsFlag ) # Initialise the base class
     # end of __init__
 
 
