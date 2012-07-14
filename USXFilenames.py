@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # USXFilenames.py
-#   Last modified: 2012-06-06 (also update versionString below)
+#   Last modified: 2012-07-14 (also update versionString below)
 #
 # Module handling USX Bible filenames
 #
@@ -46,7 +46,7 @@ class USXFilenames:
     def __init__( self, folder ):
         """Create the object by inspecting files in the given folder."""
         # Get the data tables that we need for proper checking
-        self.BibleBooksCodes = BibleBooksCodes().loadData()
+        self._BibleBooksCodesObject = BibleBooksCodes().loadData()
 
         self.folder = folder
         self.pattern, self.fileExtension = '', 'usx' # Pattern should end up as 'dddBBB'
@@ -64,7 +64,7 @@ class USXFilenames:
                         break
                 matched = False
                 if foundLength>=6 and containsDigits and foundExtBit=='.'+self.fileExtension:
-                    for USXBookCode,USXDigits,bookReferenceCode in self.BibleBooksCodes.getAllUSXBooksCodeNumberTriples():
+                    for USXBookCode,USXDigits,bookReferenceCode in self._BibleBooksCodesObject.getAllUSXBooksCodeNumberTriples():
                         if USXDigits in foundFileBit and (USXBookCode in foundFileBit or USXBookCode.upper() in foundFileBit):
                             digitsIndex = foundFileBit.index( USXDigits )
                             USXBookCodeIndex = foundFileBit.index(USXBookCode) if USXBookCode in foundFileBit else foundFileBit.index(USXBookCode.upper())
@@ -109,35 +109,42 @@ class USXFilenames:
 
 
     def getPossibleFilenames( self ):
-        """Return a list of valid USX filenames that match our filename template."""
-        filelist = []
+        """ Return a list of valid USX filenames that match our filename template.
+            The result is a list of 2-tuples in the default rough sequence order from the BibleBooksCodes module.
+                Each tuple contains ( BBB, filename ) not including the folder path.
+        """
+        resultList = []
         if self.pattern:
-            for USFMBookCode,USXDigits,bookReferenceCode in self.BibleBooksCodes.getAllUSXBooksCodeNumberTriples():
+            for USFMBookCode,USXDigits,bookReferenceCode in self._BibleBooksCodesObject.getAllUSXBooksCodeNumberTriples():
                 filename = "------" # Six characters
                 filename = filename[:self.digitsIndex] + USXDigits + filename[self.digitsIndex+len(USXDigits):]
                 filename = filename[:self.USXBookCodeIndex] + ( USFMBookCode.upper() if 'BBB' in self.pattern else USFMBookCode ) + filename[self.USXBookCodeIndex+len(USFMBookCode):]
                 filename += '.' + self.fileExtension
                 #print( "getPossibleFilenames: Filename is '{}'".format( filename ) )
-                filelist.append( (bookReferenceCode,filename,) )
-        return filelist
+                resultList.append( (bookReferenceCode,filename,) )
+        return self._BibleBooksCodesObject.getSequenceList( resultList )
     # end of getPossibleFilenames
 
 
     def getConfirmedFilenames( self ):
-        """Return a list of tuples of UPPER CASE book codes with actual (present and readable) USX filenames."""
-        filelist = []
+        """ Return a list of tuples of UPPER CASE book codes with actual (present and readable) USX filenames.
+            The result is a list of 2-tuples in the default rough sequence order from the BibleBooksCodes module.
+                Each tuple contains ( BBB, filename ) not including the folder path.
+        """
+        resultList = []
         for bookReferenceCode,possibleFilename in self.getPossibleFilenames():
             possibleFilepath = os.path.join( self.folder, possibleFilename )
             #print( '  Looking for: ' + possibleFilename )
             if os.access( possibleFilepath, os.R_OK ):
                 #USXBookCode = possibleFilename[self.USXBookCodeIndex:self.USXBookCodeIndex+3].upper()
-                filelist.append( (bookReferenceCode, possibleFilename,) )
-        return filelist
+                resultList.append( (bookReferenceCode, possibleFilename,) )
+        return resultList # No need to sort these, coz the above call produce sorted results
     # end of getConfirmedFilenames
 
 
     def getUnusedFilenames( self ):
-        """Return a list of filenames which didn't match the USFX template."""
+        """ Return a list of filenames which didn't match the USFX template.
+            The order of the filenames in the list has no meaning. """
         folderFilenames = os.listdir( self.folder )
         actualFilenames = self.getConfirmedFilenames()
         filelist = []

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodesConverter.py
-#   Last modified: 2012-07-01 by RJH (also update versionString below)
+#   Last modified: 2012-07-13 by RJH (also update versionString below)
 #
 # Module handling BibleBooksCodes.xml to produce C and Python data tables
 #
@@ -28,7 +28,7 @@ Module handling BibleBooksCodes.xml and to export to JSON, C, and Python data ta
 """
 
 progName = "Bible Books Codes converter"
-versionString = "0.62"
+versionString = "0.64"
 
 
 import logging, os.path
@@ -64,12 +64,11 @@ class BibleBooksCodesConverter:
         self._compulsoryAttributes = ()
         self._optionalAttributes = ()
         self._uniqueAttributes = self._compulsoryAttributes + self._optionalAttributes
-        self._compulsoryElements = ( "nameEnglish", "referenceAbbreviation", "referenceNumber" )
+        self._compulsoryElements = ( "nameEnglish", "referenceAbbreviation", "referenceNumber", "sequenceNumber" )
         self._optionalElements = ( "expectedChapters", "SBLAbbreviation", "OSISAbbreviation", "SwordAbbreviation", "CCELNumber",
-                                        "USFMAbbreviation", "USFMNumber", "USXNumber",
+                                        "USFMAbbreviation", "USFMNumber", "USXNumber", "BibleditNumber",
                                         "NETBibleAbbreviation", "ByzantineAbbreviation", "possibleAlternativeBooks" )
-        #self._uniqueElements = self._compulsoryElements + self.optionalElements
-        self._uniqueElements = self._compulsoryElements # Relax the checking
+        self._uniqueElements = self._compulsoryElements + ( "USXNumber", "BibleditNumber", "NETBibleAbbreviation", "ByzantineAbbreviation" )
 
         # These are fields that we will fill later
         self._XMLheader, self._XMLtree = None, None
@@ -268,7 +267,9 @@ class BibleBooksCodesConverter:
             return self.__DataDicts
 
         # We'll create a number of dictionaries with different elements as the key
-        myIDDict,myRefAbbrDict, mySBLDict,myOADict,mySwDict,myCCELDict,myUSFMAbbrDict,myUSFMNDict,myUSXNDict,myNETDict,myBzDict, myENDict, allAbbreviationsDict = OrderedDict(),OrderedDict(), {},{},{},{},{},{},{},{},{}, {}, {}
+        myIDDict, myRefAbbrDict = OrderedDict(), OrderedDict()
+        mySBLDict,myOADict,mySwDict,myCCELDict,myUSFMAbbrDict,myUSFMNDict,myUSXNDict,myBENDict,myNETDict,myBzDict, myENDict, allAbbreviationsDict = {},{},{},{},{},{},{},{},{},{}, {}, {}
+        sequenceNumberList, sequenceTupleList = [], [] # Both have the integer form (not the string form) of the sequenceNumber
         for element in self._XMLtree:
             # Get the required information out of the tree for this element
             # Start with the compulsory elements
@@ -278,6 +279,8 @@ class BibleBooksCodesConverter:
                 logging.error( _("Reference abbreviation '{}' should be UPPER CASE").format( referenceAbbreviation ) )
             ID = element.find("referenceNumber").text
             intID = int( ID )
+            sequenceNumber = element.find("sequenceNumber").text
+            intSequenceNumber = int( sequenceNumber )
             # The optional elements are set to None if they don't exist
             expectedChapters = None if element.find("expectedChapters") is None else element.find("expectedChapters").text
             SBLAbbreviation = None if element.find("SBLAbbreviation") is None else element.find("SBLAbbreviation").text
@@ -289,6 +292,7 @@ class BibleBooksCodesConverter:
             USFMNumberString = None if element.find("USFMNumber") is None else element.find("USFMNumber").text
             #USFMNumber = int( USFMNumberString ) if USFMNumberString else -1
             USXNumberString = None if element.find("USXNumber") is None else element.find("USXNumber").text
+            BibleditNumberString = None if element.find("BibleditNumber") is None else element.find("BibleditNumber").text
             NETBibleAbbreviation = None if element.find("NETBibleAbbreviation") is None else element.find("NETBibleAbbreviation").text
             ByzantineAbbreviation = None if element.find("ByzantineAbbreviation") is None else element.find("ByzantineAbbreviation").text
             possibleAlternativeBooks = None if element.find("possibleAlternativeBooks") is None else element.find("possibleAlternativeBooks").text
@@ -302,7 +306,7 @@ class BibleBooksCodesConverter:
                 if referenceAbbreviation in myRefAbbrDict: halt
                 else: myRefAbbrDict[referenceAbbreviation] = { "referenceNumber":intID, "SBLAbbreviation":SBLAbbreviation, "OSISAbbreviation":OSISAbbreviation,
                                                     "SwordAbbreviation":SwordAbbreviation, "CCELNumberString":CCELNumberString,
-                                                    "USFMAbbreviation":USFMAbbreviation, "USFMNumberString":USFMNumberString, "USXNumberString":USXNumberString,
+                                                    "USFMAbbreviation":USFMAbbreviation, "USFMNumberString":USFMNumberString, "USXNumberString":USXNumberString, "BibleditNumberString":BibleditNumberString,
                                                     "NETBibleAbbreviation":NETBibleAbbreviation, "ByzantineAbbreviation":ByzantineAbbreviation,
                                                     "numExpectedChapters":expectedChapters, "possibleAlternativeBooks":possibleAlternativeBooks, "nameEnglish":nameEnglish }
             if "referenceNumber" in self._compulsoryElements or ID:
@@ -310,11 +314,17 @@ class BibleBooksCodesConverter:
                 if intID in myIDDict: halt
                 else: myIDDict[intID] = { "referenceAbbreviation":referenceAbbreviation, "SBLAbbreviation":SBLAbbreviation, "OSISAbbreviation":OSISAbbreviation,
                                     "SwordAbbreviation":SwordAbbreviation, "CCELNumberString":CCELNumberString,
-                                    "USFMAbbreviation":USFMAbbreviation, "USFMNumberString":USFMNumberString, "USXNumberString":USXNumberString,
+                                    "USFMAbbreviation":USFMAbbreviation, "USFMNumberString":USFMNumberString, "USXNumberString":USXNumberString, "BibleditNumberString":BibleditNumberString,
                                     "NETBibleAbbreviation":NETBibleAbbreviation, "ByzantineAbbreviation":ByzantineAbbreviation,
                                     "numExpectedChapters":expectedChapters, "possibleAlternativeBooks":possibleAlternativeBooks, "nameEnglish":nameEnglish }
+            if "sequenceNumber" in self._compulsoryElements or sequenceNumber:
+                if "sequenceNumber" in self._uniqueElements: assert( intSequenceNumber not in sequenceNumberList ) # Shouldn't be any duplicates
+                if intSequenceNumber in sequenceNumberList: halt
+                else:
+                    sequenceNumberList.append( intSequenceNumber ) # Only used for checking duplicates
+                    sequenceTupleList.append( (intSequenceNumber,referenceAbbreviation,) ) # We'll sort this later
             if "SBLAbbreviation" in self._compulsoryElements or SBLAbbreviation:
-                if "SBLAbbreviation" in self._uniqueElements: ssert( SBLAbbreviation not in myOADict ) # Shouldn't be any duplicates
+                if "SBLAbbreviation" in self._uniqueElements: assert( SBLAbbreviation not in myOADict ) # Shouldn't be any duplicates
                 UCAbbreviation = SBLAbbreviation.upper()
                 if UCAbbreviation in mySBLDict: mySBLDict[UCAbbreviation] = ( intID, makeList(mySBLDict[UCAbbreviation][1],referenceAbbreviation), )
                 else: mySBLDict[UCAbbreviation] = ( intID, referenceAbbreviation, )
@@ -364,6 +374,11 @@ class BibleBooksCodesConverter:
                 UCNumberString = USXNumberString.upper()
                 if UCNumberString in myUSXNDict: halt
                 else: myUSXNDict[UCNumberString] = ( intID, referenceAbbreviation, USFMAbbreviation, )
+            if "BibleditNumberString" in self._compulsoryElements or BibleditNumberString:
+                if "BibleditNumberString" in self._uniqueElements: assert( BibleditNumberString not in myBENDict ) # Shouldn't be any duplicates
+                UCNumberString = BibleditNumberString.upper()
+                if UCNumberString in myBENDict: print( UCNumberString, myBENDict ); halt
+                else: myBENDict[UCNumberString] = ( intID, referenceAbbreviation, USFMAbbreviation, )
             if "NETBibleAbbreviation" in self._compulsoryElements or NETBibleAbbreviation:
                 if "NETBibleAbbreviation" in self._uniqueElements: assert( NETBibleAbbreviation not in myBzDict ) # Shouldn't be any duplicates
                 UCAbbreviation = NETBibleAbbreviation.upper()
@@ -390,9 +405,11 @@ class BibleBooksCodesConverter:
         adjAllAbbreviationsDict = {}
         for abbreviation, value in allAbbreviationsDict.items(): # Remove useless entries
             if value != "MultipleValues": adjAllAbbreviationsDict[abbreviation] = value
-        self.__DataDicts = { "referenceNumberDict":myIDDict, "referenceAbbreviationDict":myRefAbbrDict, "SBLAbbreviationDict":mySBLDict, "OSISAbbreviationDict":myOADict, "SwordAbbreviationDict":mySwDict,
-                        "CCELDict":myCCELDict, "USFMAbbreviationDict":myUSFMAbbrDict, "USFMNumberDict":myUSFMNDict, "USXNumberDict":myUSXNDict, "NETBibleAbbreviationDict":myNETDict,
-                        "ByzantineAbbreviationDict":myBzDict, "EnglishNameDict":myENDict, "allAbbreviationsDict":adjAllAbbreviationsDict }
+        sequenceList = [BBB for seqNum,BBB in sorted(sequenceTupleList)] # Get the book reference codes in order but discard the sequence numbers which have no absolute meaning
+        self.__DataDicts = { "referenceNumberDict":myIDDict, "referenceAbbreviationDict":myRefAbbrDict, "sequenceList":sequenceList,
+                        "SBLAbbreviationDict":mySBLDict, "OSISAbbreviationDict":myOADict, "SwordAbbreviationDict":mySwDict,
+                        "CCELDict":myCCELDict, "USFMAbbreviationDict":myUSFMAbbrDict, "USFMNumberDict":myUSFMNDict, "USXNumberDict":myUSXNDict, "BibleditNumberDict":myBENDict,
+                        "NETBibleAbbreviationDict":myNETDict, "ByzantineAbbreviationDict":myBzDict, "EnglishNameDict":myENDict, "allAbbreviationsDict":adjAllAbbreviationsDict }
         return self.__DataDicts # Just delete any of the dictionaries that you don't need
     # end of importDataToPython
 
@@ -419,9 +436,10 @@ class BibleBooksCodesConverter:
         """
         Writes the information tables to a .py file that can be cut and pasted into a Python program.
         """
-        def exportPythonDict( theFile, theDict, dictName, keyComment, fieldsComment ):
-            """Exports theDict to theFile."""
-            assert( theDict )
+        def exportPythonDictOrList( theFile, theDictOrList, dictName, keyComment, fieldsComment ):
+            """Exports theDictOrList to theFile."""
+            assert( theDictOrList )
+            raise Exception( "Not written yet" )
             for dictKey in theDict.keys(): # Have to iterate this :(
                 fieldsCount = len( theDict[dictKey] )
                 break # We only check the first (random) entry we get
@@ -429,7 +447,7 @@ class BibleBooksCodesConverter:
             for dictKey in sorted(theDict.keys()):
                 theFile.write( '  {}: {},\n'.format( repr(dictKey), repr(theDict[dictKey]) ) )
             theFile.write( "}}\n# end of {} ({} entries)\n\n".format( dictName, len(theDict) ) )
-        # end of exportPythonDict
+        # end of exportPythonDictOrList
 
         from datetime import datetime
 
@@ -451,14 +469,16 @@ class BibleBooksCodesConverter:
             myFile.write( "#   {} {} loaded from the original XML file.\n#\n\n".format( len(self._XMLtree), self._treeTag ) )
             mostEntries = "0=referenceNumber (integer 1..255), 1=referenceAbbreviation/BBB (3-uppercase characters)"
             dictInfo = { "referenceNumberDict":("referenceNumber (integer 1..255)","specified"), "referenceAbbreviationDict":("referenceAbbreviation","specified"),
+                            "sequenceList":("referenceAbbreviation/BBB (3-uppercase characters)",""),
                             "CCELDict":("CCELNumberString", mostEntries), "SBLAbbreviationDict":("SBLAbbreviation", mostEntries), "OSISAbbreviationDict":("OSISAbbreviation", mostEntries), "SwordAbbreviationDict":("SwordAbbreviation", mostEntries),
                             "USFMAbbreviationDict":("USFMAbbreviation", "0=referenceNumber (integer 1..255), 1=referenceAbbreviation/BBB (3-uppercase characters), 2=USFMNumberString (2-characters)"),
                             "USFMNumberDict":("USFMNumberString", "0=referenceNumber (integer 1..255), 1=referenceAbbreviation/BBB (3-uppercase characters), 2=USFMAbbreviationString (3-characters)"),
                             "USXNumberDict":("USXNumberString", "0=referenceNumber (integer 1..255), 1=referenceAbbreviation/BBB (3-uppercase characters), 2=USFMAbbreviationString (3-characters)"),
+                            "BibleditNumberDict":("BibleditNumberString", "0=referenceNumber (integer 1..88), 1=referenceAbbreviation/BBB (3-uppercase characters), 2=USFMAbbreviationString (3-characters)"),
                             "NETBibleAbbreviationDict":("NETBibleAbbreviation", mostEntries), "ByzantineAbbreviationDict":("ByzantineAbbreviation", mostEntries),
                             "EnglishNameDict":("nameEnglish", mostEntries), "allAbbreviationsDict":("allAbbreviations", mostEntries) }
             for dictName,dictData in self.__DataDicts.items():
-                exportPythonDict( myFile, dictData, dictName, dictInfo[dictName][0], dictInfo[dictName][1] )
+                exportPythonDictOrList( myFile, dictData, dictName, dictInfo[dictName][0], dictInfo[dictName][1] )
             myFile.write( "# end of {}".format( os.path.basename(filepath) ) )
     # end of exportDataToPython
 
@@ -502,7 +522,7 @@ class BibleBooksCodesConverter:
                         if field is None: result += '""'
                         elif isinstance( field, str): result += '"' + str(field).replace('"','\\"') + '"'
                         elif isinstance( field, int): result += str(field)
-                        elif isinstance( field, list): halt # not written yet
+                        elif isinstance( field, list): raise Exception( "Not written yet" )
                         else: logging.error( _("Cannot convert unknown field type '{}' in entry '{}'").format( field, entry ) )
                 elif isinstance( entry, dict ):
                     for key in sorted(entry.keys()):
@@ -581,6 +601,7 @@ class BibleBooksCodesConverter:
                 "referenceAbbreviationDict":("referenceAbbreviation",
                     "{} referenceAbbreviation[3+1]; {}* ByzantineAbbreviation; {}* CCELNumberString; {} referenceNumber; {}* NETBibleAbbreviation; {}* OSISAbbreviation; {} USFMAbbreviation[3+1]; {} USFMNumberString[2+1]; {}* SBLAbbreviation; {}* SwordAbbreviation; {}* nameEnglish; {}* numExpectedChapters; {}* possibleAlternativeBooks;"
                    .format(CHAR, CHAR, CHAR, BYTE, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR ) ),
+                "sequenceList":("sequenceList",),
                 "CCELDict":("CCELNumberString", "{}* CCELNumberString; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
                 "SBLAbbreviationDict":("SBLAbbreviation", "{}* SBLAbbreviation; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
                 "OSISAbbreviationDict":("OSISAbbreviation", "{}* OSISAbbreviation; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
@@ -588,6 +609,7 @@ class BibleBooksCodesConverter:
                 "USFMAbbreviationDict":("USFMAbbreviation", "{} USFMAbbreviation[3+1]; {} referenceNumber; {} referenceAbbreviation[3+1]; {} USFMNumberString[2+1];".format(CHAR,BYTE,CHAR,CHAR) ),
                 "USFMNumberDict":("USFMNumberString", "{} USFMNumberString[2+1]; {} referenceNumber; {} referenceAbbreviation[3+1]; {} USFMAbbreviation[3+1];".format(CHAR,BYTE,CHAR,CHAR) ),
                 "USXNumberDict":("USXNumberString", "{} USXNumberString[3+1]; {} referenceNumber; {} referenceAbbreviation[3+1]; {} USFMAbbreviation[3+1];".format(CHAR,BYTE,CHAR,CHAR) ),
+                "BibleditNumberDict":("BibleditNumberString", "{} BibleditNumberString[2+1]; {} referenceNumber; {} referenceAbbreviation[3+1]; {} USFMAbbreviation[3+1];".format(CHAR,BYTE,CHAR,CHAR) ),
                 "NETBibleAbbreviationDict":("NETBibleAbbreviation", "{}* NETBibleAbbreviation; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
                 "ByzantineAbbreviationDict":("ByzantineAbbreviation", "{}* ByzantineAbbreviation; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
                 "EnglishNameDict":("nameEnglish", "{}* nameEnglish; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),

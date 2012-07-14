@@ -1,6 +1,7 @@
 {
   "referenceAbbreviationDict": {
     "GEN": {
+      "BibleditNumberString": "1", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Gen", 
       "referenceNumber": 1, 
@@ -16,6 +17,7 @@
       "numExpectedChapters": "50"
     }, 
     "EXO": {
+      "BibleditNumberString": "2", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Exo", 
       "referenceNumber": 2, 
@@ -31,6 +33,7 @@
       "numExpectedChapters": "40"
     }, 
     "LEV": {
+      "BibleditNumberString": "3", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Lev", 
       "referenceNumber": 3, 
@@ -46,6 +49,7 @@
       "numExpectedChapters": "27"
     }, 
     "NUM": {
+      "BibleditNumberString": "4", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Num", 
       "referenceNumber": 4, 
@@ -61,6 +65,7 @@
       "numExpectedChapters": "36"
     }, 
     "DEU": {
+      "BibleditNumberString": "5", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Deu", 
       "referenceNumber": 5, 
@@ -76,6 +81,7 @@
       "numExpectedChapters": "34"
     }, 
     "JOS": {
+      "BibleditNumberString": "6", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Jos", 
       "referenceNumber": 6, 
@@ -91,6 +97,7 @@
       "numExpectedChapters": "24"
     }, 
     "JDG": {
+      "BibleditNumberString": "7", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Jdg", 
       "referenceNumber": 7, 
@@ -106,6 +113,7 @@
       "numExpectedChapters": "21"
     }, 
     "RUT": {
+      "BibleditNumberString": "8", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Rut", 
       "referenceNumber": 8, 
@@ -121,6 +129,7 @@
       "numExpectedChapters": "4"
     }, 
     "SA1": {
+      "BibleditNumberString": "9", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "1Sa", 
       "referenceNumber": 9, 
@@ -136,6 +145,7 @@
       "numExpectedChapters": "31"
     }, 
     "SA2": {
+      "BibleditNumberString": "10", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "2Sa", 
       "referenceNumber": 10, 
@@ -151,6 +161,7 @@
       "numExpectedChapters": "24"
     }, 
     "KI1": {
+      "BibleditNumberString": "11", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "1Ki", 
       "referenceNumber": 11, 
@@ -166,6 +177,7 @@
       "numExpectedChapters": "22"
     }, 
     "KI2": {
+      "BibleditNumberString": "12", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "2Ki", 
       "referenceNumber": 12, 
@@ -181,6 +193,7 @@
       "numExpectedChapters": "25"
     }, 
     "CH1": {
+      "BibleditNumberString": "13", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "1Ch", 
       "referenceNumber": 13, 
@@ -196,6 +209,7 @@
       "numExpectedChapters": "29"
     }, 
     "CH2": {
+      "BibleditNumberString": "14", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "2Ch", 
       "referenceNumber": 14, 
@@ -211,6 +225,7 @@
       "numExpectedChapters": "36,37"
     }, 
     "EZR": {
+      "BibleditNumberString": "15", 
       "possibleAlternativeBooks": "EZN", 
       "NETBibleAbbreviation": "Ezr", 
       "referenceNumber": 15, 
@@ -226,6 +241,7 @@
       "numExpectedChapters": "10"
     }, 
     "NEH": {
+      "BibleditNumberString": "16", 
       "possibleAlternativeBooks": "EZN", 
       "NETBibleAbbreviation": "Neh", 
       "referenceNumber": 16, 
@@ -241,6 +257,7 @@
       "numExpectedChapters": "13"
     }, 
     "EST": {
+      "BibleditNumberString": "17", 
       "possibleAlternativeBooks": "ESG,ESA,ESC", 
       "NETBibleAbbreviation": "Est", 
       "referenceNumber": 17, 
@@ -256,6 +273,7 @@
       "numExpectedChapters": "10"
     }, 
     "JOB": {
+      "BibleditNumberString": "18", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Job", 
       "referenceNumber": 18, 
@@ -271,6 +289,7 @@
       "numExpectedChapters": "42"
     }, 
     "PSA": {
+      "BibleditNumberString": "19", 
       "possibleAlternativeBooks": "PB1,PB2,PB3,PB4,PB5", 
       "NETBibleAbbreviation": "Psa", 
       "referenceNumber": 19, 
@@ -286,6 +305,7 @@
       "numExpectedChapters": "150,151"
     }, 
     "PRO": {
+      "BibleditNumberString": "20", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Pro", 
       "referenceNumber": 20, 
@@ -301,6 +321,7 @@
       "numExpectedChapters": "31"
     }, 
     "ECC": {
+      "BibleditNumberString": "21", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Ecc", 
       "referenceNumber": 21, 
@@ -316,6 +337,7 @@
       "numExpectedChapters": "12"
     }, 
     "SNG": {
+      "BibleditNumberString": "22", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Sos", 
       "referenceNumber": 22, 
@@ -331,6 +353,7 @@
       "numExpectedChapters": "8"
     }, 
     "ISA": {
+      "BibleditNumberString": "23", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Isa", 
       "referenceNumber": 23, 
@@ -346,6 +369,7 @@
       "numExpectedChapters": "66"
     }, 
     "JER": {
+      "BibleditNumberString": "24", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Jer", 
       "referenceNumber": 24, 
@@ -361,6 +385,7 @@
       "numExpectedChapters": "52"
     }, 
     "LAM": {
+      "BibleditNumberString": "25", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Lam", 
       "referenceNumber": 25, 
@@ -376,6 +401,7 @@
       "numExpectedChapters": "5"
     }, 
     "EZK": {
+      "BibleditNumberString": "26", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Eze", 
       "referenceNumber": 26, 
@@ -391,6 +417,7 @@
       "numExpectedChapters": "48"
     }, 
     "DAN": {
+      "BibleditNumberString": "27", 
       "possibleAlternativeBooks": "DAG,DAA,DAC", 
       "NETBibleAbbreviation": "Dan", 
       "referenceNumber": 27, 
@@ -406,6 +433,7 @@
       "numExpectedChapters": "12,14"
     }, 
     "HOS": {
+      "BibleditNumberString": "28", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Hos", 
       "referenceNumber": 28, 
@@ -421,6 +449,7 @@
       "numExpectedChapters": "14"
     }, 
     "JOL": {
+      "BibleditNumberString": "29", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Joe", 
       "referenceNumber": 29, 
@@ -436,6 +465,7 @@
       "numExpectedChapters": "3,4"
     }, 
     "AMO": {
+      "BibleditNumberString": "30", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Amo", 
       "referenceNumber": 30, 
@@ -451,6 +481,7 @@
       "numExpectedChapters": "9"
     }, 
     "OBA": {
+      "BibleditNumberString": "31", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Oba", 
       "referenceNumber": 31, 
@@ -466,6 +497,7 @@
       "numExpectedChapters": "1"
     }, 
     "JNA": {
+      "BibleditNumberString": "32", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Jon", 
       "referenceNumber": 32, 
@@ -481,6 +513,7 @@
       "numExpectedChapters": "4"
     }, 
     "MIC": {
+      "BibleditNumberString": "33", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Mic", 
       "referenceNumber": 33, 
@@ -496,6 +529,7 @@
       "numExpectedChapters": "7"
     }, 
     "NAH": {
+      "BibleditNumberString": "34", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Nah", 
       "referenceNumber": 34, 
@@ -511,6 +545,7 @@
       "numExpectedChapters": "3"
     }, 
     "HAB": {
+      "BibleditNumberString": "35", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Hab", 
       "referenceNumber": 35, 
@@ -526,6 +561,7 @@
       "numExpectedChapters": "3"
     }, 
     "ZEP": {
+      "BibleditNumberString": "36", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Zep", 
       "referenceNumber": 36, 
@@ -541,6 +577,7 @@
       "numExpectedChapters": "3"
     }, 
     "HAG": {
+      "BibleditNumberString": "37", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Hag", 
       "referenceNumber": 37, 
@@ -556,6 +593,7 @@
       "numExpectedChapters": "2"
     }, 
     "ZEC": {
+      "BibleditNumberString": "38", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Zec", 
       "referenceNumber": 38, 
@@ -571,6 +609,7 @@
       "numExpectedChapters": "14"
     }, 
     "MAL": {
+      "BibleditNumberString": "39", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Mal", 
       "referenceNumber": 39, 
@@ -586,6 +625,7 @@
       "numExpectedChapters": "4,3"
     }, 
     "MAT": {
+      "BibleditNumberString": "40", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Mat", 
       "referenceNumber": 40, 
@@ -601,6 +641,7 @@
       "numExpectedChapters": "28"
     }, 
     "MRK": {
+      "BibleditNumberString": "41", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Mar", 
       "referenceNumber": 41, 
@@ -616,6 +657,7 @@
       "numExpectedChapters": "16"
     }, 
     "LUK": {
+      "BibleditNumberString": "42", 
       "possibleAlternativeBooks": "LKA", 
       "NETBibleAbbreviation": "Luk", 
       "referenceNumber": 42, 
@@ -631,6 +673,7 @@
       "numExpectedChapters": "24"
     }, 
     "JHN": {
+      "BibleditNumberString": "43", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Joh", 
       "referenceNumber": 43, 
@@ -646,6 +689,7 @@
       "numExpectedChapters": "21"
     }, 
     "ACT": {
+      "BibleditNumberString": "44", 
       "possibleAlternativeBooks": "LKA", 
       "NETBibleAbbreviation": "Act", 
       "referenceNumber": 44, 
@@ -661,6 +705,7 @@
       "numExpectedChapters": "28"
     }, 
     "ROM": {
+      "BibleditNumberString": "45", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Rom", 
       "referenceNumber": 45, 
@@ -676,6 +721,7 @@
       "numExpectedChapters": "16"
     }, 
     "CO1": {
+      "BibleditNumberString": "46", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "1Co", 
       "referenceNumber": 46, 
@@ -691,6 +737,7 @@
       "numExpectedChapters": "16"
     }, 
     "CO2": {
+      "BibleditNumberString": "47", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "2Co", 
       "referenceNumber": 47, 
@@ -706,6 +753,7 @@
       "numExpectedChapters": "13"
     }, 
     "GAL": {
+      "BibleditNumberString": "48", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Gal", 
       "referenceNumber": 48, 
@@ -721,6 +769,7 @@
       "numExpectedChapters": "6"
     }, 
     "EPH": {
+      "BibleditNumberString": "49", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Eph", 
       "referenceNumber": 49, 
@@ -736,6 +785,7 @@
       "numExpectedChapters": "6"
     }, 
     "PHP": {
+      "BibleditNumberString": "50", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Phi", 
       "referenceNumber": 50, 
@@ -751,6 +801,7 @@
       "numExpectedChapters": "4"
     }, 
     "COL": {
+      "BibleditNumberString": "51", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Col", 
       "referenceNumber": 51, 
@@ -766,6 +817,7 @@
       "numExpectedChapters": "4"
     }, 
     "TH1": {
+      "BibleditNumberString": "52", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "1Th", 
       "referenceNumber": 52, 
@@ -781,6 +833,7 @@
       "numExpectedChapters": "5"
     }, 
     "TH2": {
+      "BibleditNumberString": "53", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "2Th", 
       "referenceNumber": 53, 
@@ -796,6 +849,7 @@
       "numExpectedChapters": "3"
     }, 
     "TI1": {
+      "BibleditNumberString": "54", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "1Ti", 
       "referenceNumber": 54, 
@@ -811,6 +865,7 @@
       "numExpectedChapters": "6"
     }, 
     "TI2": {
+      "BibleditNumberString": "55", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "2Ti", 
       "referenceNumber": 55, 
@@ -826,6 +881,7 @@
       "numExpectedChapters": "4"
     }, 
     "TIT": {
+      "BibleditNumberString": "56", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Tit", 
       "referenceNumber": 56, 
@@ -841,6 +897,7 @@
       "numExpectedChapters": "3"
     }, 
     "PHM": {
+      "BibleditNumberString": "57", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Phm", 
       "referenceNumber": 57, 
@@ -856,6 +913,7 @@
       "numExpectedChapters": "1"
     }, 
     "HEB": {
+      "BibleditNumberString": "58", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Heb", 
       "referenceNumber": 58, 
@@ -871,6 +929,7 @@
       "numExpectedChapters": "13"
     }, 
     "JAM": {
+      "BibleditNumberString": "59", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Jam", 
       "referenceNumber": 59, 
@@ -886,6 +945,7 @@
       "numExpectedChapters": "5"
     }, 
     "PE1": {
+      "BibleditNumberString": "60", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "1Pe", 
       "referenceNumber": 60, 
@@ -901,6 +961,7 @@
       "numExpectedChapters": "5"
     }, 
     "PE2": {
+      "BibleditNumberString": "61", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "2Pe", 
       "referenceNumber": 61, 
@@ -916,6 +977,7 @@
       "numExpectedChapters": "3"
     }, 
     "JN1": {
+      "BibleditNumberString": "62", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "1Jo", 
       "referenceNumber": 62, 
@@ -931,6 +993,7 @@
       "numExpectedChapters": "5"
     }, 
     "JN2": {
+      "BibleditNumberString": "63", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "2Jo", 
       "referenceNumber": 63, 
@@ -946,6 +1009,7 @@
       "numExpectedChapters": "1"
     }, 
     "JN3": {
+      "BibleditNumberString": "64", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "3Jo", 
       "referenceNumber": 64, 
@@ -961,6 +1025,7 @@
       "numExpectedChapters": "1"
     }, 
     "JDE": {
+      "BibleditNumberString": "65", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Jud", 
       "referenceNumber": 65, 
@@ -976,6 +1041,7 @@
       "numExpectedChapters": "1"
     }, 
     "REV": {
+      "BibleditNumberString": "66", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Rev", 
       "referenceNumber": 66, 
@@ -991,6 +1057,7 @@
       "numExpectedChapters": "22"
     }, 
     "ESG": {
+      "BibleditNumberString": "72", 
       "possibleAlternativeBooks": "EST,ESA,ESC", 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 70, 
@@ -1006,6 +1073,7 @@
       "numExpectedChapters": "10"
     }, 
     "ESA": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": "EST,ESG,ESC", 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 71, 
@@ -1021,6 +1089,7 @@
       "numExpectedChapters": "10"
     }, 
     "ESC": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": "EST,ESG,ESA", 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 72, 
@@ -1036,6 +1105,7 @@
       "numExpectedChapters": "10"
     }, 
     "DAG": {
+      "BibleditNumberString": "88", 
       "possibleAlternativeBooks": "DAN,DAA,DAC", 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 73, 
@@ -1051,6 +1121,7 @@
       "numExpectedChapters": "14"
     }, 
     "DAA": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": "DAN,DAG,DAC", 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 74, 
@@ -1066,6 +1137,7 @@
       "numExpectedChapters": "14"
     }, 
     "DAC": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": "DAN,DAG,DAA", 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 75, 
@@ -1081,6 +1153,7 @@
       "numExpectedChapters": "14"
     }, 
     "BEL": {
+      "BibleditNumberString": "79", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 80, 
@@ -1096,6 +1169,7 @@
       "numExpectedChapters": "1"
     }, 
     "SUS": {
+      "BibleditNumberString": "78", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 81, 
@@ -1111,6 +1185,7 @@
       "numExpectedChapters": "1"
     }, 
     "JDT": {
+      "BibleditNumberString": "71", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 82, 
@@ -1126,6 +1201,7 @@
       "numExpectedChapters": "16"
     }, 
     "MAN": {
+      "BibleditNumberString": "83", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 83, 
@@ -1141,6 +1217,7 @@
       "numExpectedChapters": "1"
     }, 
     "SIR": {
+      "BibleditNumberString": "74", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 84, 
@@ -1156,6 +1233,7 @@
       "numExpectedChapters": "51,52"
     }, 
     "TOB": {
+      "BibleditNumberString": "70", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 85, 
@@ -1171,6 +1249,7 @@
       "numExpectedChapters": "14"
     }, 
     "WIS": {
+      "BibleditNumberString": "73", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 86, 
@@ -1186,6 +1265,7 @@
       "numExpectedChapters": "19"
     }, 
     "PAZ": {
+      "BibleditNumberString": "77", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 87, 
@@ -1201,6 +1281,7 @@
       "numExpectedChapters": "1"
     }, 
     "GES": {
+      "BibleditNumberString": "82", 
       "possibleAlternativeBooks": "LES", 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 90, 
@@ -1216,6 +1297,7 @@
       "numExpectedChapters": "9"
     }, 
     "LES": {
+      "BibleditNumberString": "86", 
       "possibleAlternativeBooks": "GES", 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 91, 
@@ -1231,6 +1313,7 @@
       "numExpectedChapters": "16"
     }, 
     "EZA": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 92, 
@@ -1246,6 +1329,7 @@
       "numExpectedChapters": "12,13"
     }, 
     "EZ5": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 93, 
@@ -1261,6 +1345,7 @@
       "numExpectedChapters": "2"
     }, 
     "EZ6": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 94, 
@@ -1276,6 +1361,7 @@
       "numExpectedChapters": "2"
     }, 
     "RVE": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 95, 
@@ -1291,6 +1377,7 @@
       "numExpectedChapters": null
     }, 
     "LJE": {
+      "BibleditNumberString": "76", 
       "possibleAlternativeBooks": "LJB", 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 100, 
@@ -1306,6 +1393,7 @@
       "numExpectedChapters": "1"
     }, 
     "BAR": {
+      "BibleditNumberString": "75", 
       "possibleAlternativeBooks": "LJB", 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 101, 
@@ -1321,6 +1409,7 @@
       "numExpectedChapters": "5,6"
     }, 
     "LJB": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": "BAR", 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 102, 
@@ -1336,6 +1425,7 @@
       "numExpectedChapters": "6"
     }, 
     "BA2": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": "LB2", 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 103, 
@@ -1351,6 +1441,7 @@
       "numExpectedChapters": "77"
     }, 
     "LBA": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": "LB2", 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 104, 
@@ -1366,6 +1457,7 @@
       "numExpectedChapters": "9"
     }, 
     "LB2": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": "BA2,LBA", 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 105, 
@@ -1381,6 +1473,7 @@
       "numExpectedChapters": "86"
     }, 
     "BA3": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 106, 
@@ -1396,6 +1489,7 @@
       "numExpectedChapters": null
     }, 
     "BA4": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 107, 
@@ -1411,6 +1505,7 @@
       "numExpectedChapters": "6,5"
     }, 
     "MAC": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 110, 
@@ -1426,6 +1521,7 @@
       "numExpectedChapters": "31"
     }, 
     "MA1": {
+      "BibleditNumberString": "80", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 111, 
@@ -1441,6 +1537,7 @@
       "numExpectedChapters": "16"
     }, 
     "MA2": {
+      "BibleditNumberString": "81", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 112, 
@@ -1456,6 +1553,7 @@
       "numExpectedChapters": "15"
     }, 
     "MA3": {
+      "BibleditNumberString": "85", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 113, 
@@ -1471,6 +1569,7 @@
       "numExpectedChapters": "7"
     }, 
     "MA4": {
+      "BibleditNumberString": "87", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 114, 
@@ -1486,6 +1585,7 @@
       "numExpectedChapters": "18"
     }, 
     "MA5": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 115, 
@@ -1501,6 +1601,7 @@
       "numExpectedChapters": null
     }, 
     "MQ1": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 116, 
@@ -1516,6 +1617,7 @@
       "numExpectedChapters": "36"
     }, 
     "MQ2": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 117, 
@@ -1531,6 +1633,7 @@
       "numExpectedChapters": "20,21"
     }, 
     "MQ3": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 118, 
@@ -1546,6 +1649,7 @@
       "numExpectedChapters": "10"
     }, 
     "PB1": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 120, 
@@ -1561,6 +1665,7 @@
       "numExpectedChapters": "41"
     }, 
     "PB2": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 121, 
@@ -1576,6 +1681,7 @@
       "numExpectedChapters": "31"
     }, 
     "PB3": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 122, 
@@ -1591,6 +1697,7 @@
       "numExpectedChapters": "17"
     }, 
     "PB4": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 123, 
@@ -1606,6 +1713,7 @@
       "numExpectedChapters": "17"
     }, 
     "PB5": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 124, 
@@ -1621,6 +1729,7 @@
       "numExpectedChapters": "44"
     }, 
     "PSB": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 125, 
@@ -1636,6 +1745,7 @@
       "numExpectedChapters": "150"
     }, 
     "PS2": {
+      "BibleditNumberString": "84", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 126, 
@@ -1651,6 +1761,7 @@
       "numExpectedChapters": "1"
     }, 
     "PS3": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 127, 
@@ -1666,6 +1777,7 @@
       "numExpectedChapters": "5,4"
     }, 
     "PSS": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 128, 
@@ -1681,6 +1793,7 @@
       "numExpectedChapters": "18"
     }, 
     "LAO": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 130, 
@@ -1696,6 +1809,7 @@
       "numExpectedChapters": "1"
     }, 
     "ODE": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 131, 
@@ -1711,6 +1825,7 @@
       "numExpectedChapters": "14"
     }, 
     "PSO": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 132, 
@@ -1726,6 +1841,7 @@
       "numExpectedChapters": null
     }, 
     "PJE": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 133, 
@@ -1741,6 +1857,7 @@
       "numExpectedChapters": "1"
     }, 
     "WSI": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 134, 
@@ -1756,6 +1873,7 @@
       "numExpectedChapters": "1"
     }, 
     "COP": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 135, 
@@ -1771,6 +1889,7 @@
       "numExpectedChapters": "1"
     }, 
     "CO3": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 136, 
@@ -1786,6 +1905,7 @@
       "numExpectedChapters": "1"
     }, 
     "EUT": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 137, 
@@ -1801,6 +1921,7 @@
       "numExpectedChapters": "1"
     }, 
     "DOJ": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 138, 
@@ -1816,6 +1937,7 @@
       "numExpectedChapters": "1"
     }, 
     "TTP": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 139, 
@@ -1831,6 +1953,7 @@
       "numExpectedChapters": null
     }, 
     "JUB": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 140, 
@@ -1846,6 +1969,7 @@
       "numExpectedChapters": "34"
     }, 
     "ENO": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 141, 
@@ -1861,6 +1985,7 @@
       "numExpectedChapters": "42"
     }, 
     "EN2": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 142, 
@@ -1876,6 +2001,7 @@
       "numExpectedChapters": null
     }, 
     "REP": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 143, 
@@ -1891,6 +2017,7 @@
       "numExpectedChapters": "6"
     }, 
     "LBB": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 144, 
@@ -1906,6 +2033,7 @@
       "numExpectedChapters": null
     }, 
     "CL1": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 150, 
@@ -1921,6 +2049,7 @@
       "numExpectedChapters": "65"
     }, 
     "CL2": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 151, 
@@ -1936,6 +2065,7 @@
       "numExpectedChapters": "20"
     }, 
     "SHE": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 152, 
@@ -1951,6 +2081,7 @@
       "numExpectedChapters": null
     }, 
     "DID": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 153, 
@@ -1966,6 +2097,7 @@
       "numExpectedChapters": "16"
     }, 
     "GHE": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 160, 
@@ -1981,6 +2113,7 @@
       "numExpectedChapters": null
     }, 
     "GTR": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 161, 
@@ -1996,6 +2129,7 @@
       "numExpectedChapters": null
     }, 
     "GMA": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 162, 
@@ -2011,6 +2145,7 @@
       "numExpectedChapters": null
     }, 
     "GMC": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 163, 
@@ -2026,6 +2161,7 @@
       "numExpectedChapters": null
     }, 
     "GTW": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 164, 
@@ -2041,6 +2177,7 @@
       "numExpectedChapters": null
     }, 
     "GPH": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 165, 
@@ -2056,6 +2193,7 @@
       "numExpectedChapters": null
     }, 
     "GTH": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 166, 
@@ -2071,6 +2209,7 @@
       "numExpectedChapters": null
     }, 
     "GJU": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 167, 
@@ -2086,6 +2225,7 @@
       "numExpectedChapters": null
     }, 
     "GBA": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 168, 
@@ -2101,6 +2241,7 @@
       "numExpectedChapters": null
     }, 
     "AJA": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 169, 
@@ -2116,6 +2257,7 @@
       "numExpectedChapters": null
     }, 
     "WJC": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 170, 
@@ -2131,6 +2273,7 @@
       "numExpectedChapters": null
     }, 
     "TAD": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 180, 
@@ -2146,6 +2289,7 @@
       "numExpectedChapters": null
     }, 
     "LAE": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 181, 
@@ -2161,6 +2305,7 @@
       "numExpectedChapters": null
     }, 
     "ASS": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 182, 
@@ -2176,6 +2321,7 @@
       "numExpectedChapters": null
     }, 
     "TSO": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 183, 
@@ -2191,6 +2337,7 @@
       "numExpectedChapters": null
     }, 
     "TJB": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 184, 
@@ -2206,6 +2353,7 @@
       "numExpectedChapters": null
     }, 
     "MAI": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 185, 
@@ -2221,6 +2369,7 @@
       "numExpectedChapters": null
     }, 
     "AEZ": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 186, 
@@ -2236,6 +2385,7 @@
       "numExpectedChapters": null
     }, 
     "EZT": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 187, 
@@ -2251,6 +2401,7 @@
       "numExpectedChapters": null
     }, 
     "EUP": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 188, 
@@ -2266,6 +2417,7 @@
       "numExpectedChapters": null
     }, 
     "PEU": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 189, 
@@ -2281,6 +2433,7 @@
       "numExpectedChapters": null
     }, 
     "VAM": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 190, 
@@ -2296,6 +2449,7 @@
       "numExpectedChapters": null
     }, 
     "LAR": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 191, 
@@ -2311,6 +2465,7 @@
       "numExpectedChapters": null
     }, 
     "ARI": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 192, 
@@ -2326,6 +2481,7 @@
       "numExpectedChapters": null
     }, 
     "ABL": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 193, 
@@ -2341,6 +2497,7 @@
       "numExpectedChapters": null
     }, 
     "ART": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 194, 
@@ -2356,6 +2513,7 @@
       "numExpectedChapters": null
     }, 
     "CLM": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 195, 
@@ -2371,6 +2529,7 @@
       "numExpectedChapters": null
     }, 
     "ELM": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 196, 
@@ -2386,6 +2545,7 @@
       "numExpectedChapters": null
     }, 
     "HRE": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 197, 
@@ -2401,6 +2561,7 @@
       "numExpectedChapters": null
     }, 
     "LPR": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 198, 
@@ -2416,6 +2577,7 @@
       "numExpectedChapters": null
     }, 
     "EPL": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 199, 
@@ -2431,6 +2593,7 @@
       "numExpectedChapters": null
     }, 
     "TEO": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 200, 
@@ -2446,6 +2609,7 @@
       "numExpectedChapters": null
     }, 
     "MOS": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": "GEN,EXO,LEV,NUM,DEU", 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 220, 
@@ -2461,6 +2625,7 @@
       "numExpectedChapters": "187"
     }, 
     "SAM": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": "SA1,SA2", 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 221, 
@@ -2476,6 +2641,7 @@
       "numExpectedChapters": "55"
     }, 
     "KGS": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": "KG1,KG2", 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 222, 
@@ -2491,6 +2657,7 @@
       "numExpectedChapters": "47"
     }, 
     "CHR": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": "CH1,CH2", 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 223, 
@@ -2506,6 +2673,7 @@
       "numExpectedChapters": "65"
     }, 
     "EZN": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": "EZR,NEH", 
       "NETBibleAbbreviation": "Ezr", 
       "referenceNumber": 224, 
@@ -2521,6 +2689,7 @@
       "numExpectedChapters": "26"
     }, 
     "P12": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 225, 
@@ -2536,6 +2705,7 @@
       "numExpectedChapters": null
     }, 
     "LKA": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": "LUK,ACT", 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 226, 
@@ -2551,6 +2721,7 @@
       "numExpectedChapters": "52"
     }, 
     "FRT": {
+      "BibleditNumberString": "67", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 230, 
@@ -2566,6 +2737,7 @@
       "numExpectedChapters": null
     }, 
     "PRF": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 231, 
@@ -2581,6 +2753,7 @@
       "numExpectedChapters": null
     }, 
     "ACK": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 232, 
@@ -2596,6 +2769,7 @@
       "numExpectedChapters": null
     }, 
     "INT": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 233, 
@@ -2611,6 +2785,7 @@
       "numExpectedChapters": null
     }, 
     "TOC": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 234, 
@@ -2626,6 +2801,7 @@
       "numExpectedChapters": null
     }, 
     "GLS": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 235, 
@@ -2641,6 +2817,7 @@
       "numExpectedChapters": null
     }, 
     "CNC": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 236, 
@@ -2656,6 +2833,7 @@
       "numExpectedChapters": null
     }, 
     "TPC": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 237, 
@@ -2671,6 +2849,7 @@
       "numExpectedChapters": null
     }, 
     "IXN": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 238, 
@@ -2686,6 +2865,7 @@
       "numExpectedChapters": null
     }, 
     "IXP": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 239, 
@@ -2701,6 +2881,7 @@
       "numExpectedChapters": null
     }, 
     "MAP": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 240, 
@@ -2716,6 +2897,7 @@
       "numExpectedChapters": null
     }, 
     "IXT": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 241, 
@@ -2731,6 +2913,7 @@
       "numExpectedChapters": null
     }, 
     "BAK": {
+      "BibleditNumberString": "68", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 242, 
@@ -2746,6 +2929,7 @@
       "numExpectedChapters": null
     }, 
     "XXA": {
+      "BibleditNumberString": "69", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 243, 
@@ -2761,6 +2945,7 @@
       "numExpectedChapters": null
     }, 
     "XXB": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 244, 
@@ -2776,6 +2961,7 @@
       "numExpectedChapters": null
     }, 
     "XXC": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 245, 
@@ -2791,6 +2977,7 @@
       "numExpectedChapters": null
     }, 
     "XXD": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 246, 
@@ -2806,6 +2993,7 @@
       "numExpectedChapters": null
     }, 
     "XXE": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 247, 
@@ -2821,6 +3009,7 @@
       "numExpectedChapters": null
     }, 
     "XXF": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 248, 
@@ -2836,6 +3025,7 @@
       "numExpectedChapters": null
     }, 
     "XXG": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 249, 
@@ -3611,6 +3801,448 @@
     "RUTH": [
       8, 
       "RUT"
+    ]
+  }, 
+  "BibleditNumberDict": {
+    "24": [
+      24, 
+      "JER", 
+      "Jer"
+    ], 
+    "25": [
+      25, 
+      "LAM", 
+      "Lam"
+    ], 
+    "26": [
+      26, 
+      "EZK", 
+      "Ezk"
+    ], 
+    "27": [
+      27, 
+      "DAN", 
+      "Dan"
+    ], 
+    "20": [
+      20, 
+      "PRO", 
+      "Pro"
+    ], 
+    "21": [
+      21, 
+      "ECC", 
+      "Ecc"
+    ], 
+    "22": [
+      22, 
+      "SNG", 
+      "Sng"
+    ], 
+    "23": [
+      23, 
+      "ISA", 
+      "Isa"
+    ], 
+    "28": [
+      28, 
+      "HOS", 
+      "Hos"
+    ], 
+    "29": [
+      29, 
+      "JOL", 
+      "Jol"
+    ], 
+    "4": [
+      4, 
+      "NUM", 
+      "Num"
+    ], 
+    "8": [
+      8, 
+      "RUT", 
+      "Rut"
+    ], 
+    "59": [
+      59, 
+      "JAM", 
+      "Jas"
+    ], 
+    "58": [
+      58, 
+      "HEB", 
+      "Heb"
+    ], 
+    "55": [
+      55, 
+      "TI2", 
+      "2Ti"
+    ], 
+    "54": [
+      54, 
+      "TI1", 
+      "1Ti"
+    ], 
+    "57": [
+      57, 
+      "PHM", 
+      "Phm"
+    ], 
+    "56": [
+      56, 
+      "TIT", 
+      "Tit"
+    ], 
+    "51": [
+      51, 
+      "COL", 
+      "Col"
+    ], 
+    "50": [
+      50, 
+      "PHP", 
+      "Php"
+    ], 
+    "53": [
+      53, 
+      "TH2", 
+      "2Th"
+    ], 
+    "52": [
+      52, 
+      "TH1", 
+      "1Th"
+    ], 
+    "88": [
+      73, 
+      "DAG", 
+      "DaG"
+    ], 
+    "82": [
+      90, 
+      "GES", 
+      "1Es"
+    ], 
+    "83": [
+      83, 
+      "MAN", 
+      "Man"
+    ], 
+    "80": [
+      111, 
+      "MA1", 
+      "1Ma"
+    ], 
+    "81": [
+      112, 
+      "MA2", 
+      "2Ma"
+    ], 
+    "86": [
+      91, 
+      "LES", 
+      "2Es"
+    ], 
+    "87": [
+      114, 
+      "MA4", 
+      "4Ma"
+    ], 
+    "84": [
+      126, 
+      "PS2", 
+      "Ps2"
+    ], 
+    "85": [
+      113, 
+      "MA3", 
+      "3Ma"
+    ], 
+    "3": [
+      3, 
+      "LEV", 
+      "Lev"
+    ], 
+    "7": [
+      7, 
+      "JDG", 
+      "Jdg"
+    ], 
+    "39": [
+      39, 
+      "MAL", 
+      "Mal"
+    ], 
+    "38": [
+      38, 
+      "ZEC", 
+      "Zec"
+    ], 
+    "33": [
+      33, 
+      "MIC", 
+      "Mic"
+    ], 
+    "32": [
+      32, 
+      "JNA", 
+      "Jon"
+    ], 
+    "31": [
+      31, 
+      "OBA", 
+      "Oba"
+    ], 
+    "30": [
+      30, 
+      "AMO", 
+      "Amo"
+    ], 
+    "37": [
+      37, 
+      "HAG", 
+      "Hag"
+    ], 
+    "36": [
+      36, 
+      "ZEP", 
+      "Zep"
+    ], 
+    "35": [
+      35, 
+      "HAB", 
+      "Hab"
+    ], 
+    "34": [
+      34, 
+      "NAH", 
+      "Nam"
+    ], 
+    "60": [
+      60, 
+      "PE1", 
+      "1Pe"
+    ], 
+    "61": [
+      61, 
+      "PE2", 
+      "2Pe"
+    ], 
+    "62": [
+      62, 
+      "JN1", 
+      "1Jn"
+    ], 
+    "63": [
+      63, 
+      "JN2", 
+      "2Jn"
+    ], 
+    "64": [
+      64, 
+      "JN3", 
+      "3Jn"
+    ], 
+    "65": [
+      65, 
+      "JDE", 
+      "Jud"
+    ], 
+    "66": [
+      66, 
+      "REV", 
+      "Rev"
+    ], 
+    "67": [
+      230, 
+      "FRT", 
+      "Frt"
+    ], 
+    "68": [
+      242, 
+      "BAK", 
+      "Bak"
+    ], 
+    "69": [
+      243, 
+      "XXA", 
+      "XXA"
+    ], 
+    "2": [
+      2, 
+      "EXO", 
+      "Exo"
+    ], 
+    "6": [
+      6, 
+      "JOS", 
+      "Jos"
+    ], 
+    "11": [
+      11, 
+      "KI1", 
+      "1Ki"
+    ], 
+    "10": [
+      10, 
+      "SA2", 
+      "2Sa"
+    ], 
+    "13": [
+      13, 
+      "CH1", 
+      "1Ch"
+    ], 
+    "12": [
+      12, 
+      "KI2", 
+      "2Ki"
+    ], 
+    "15": [
+      15, 
+      "EZR", 
+      "Ezr"
+    ], 
+    "14": [
+      14, 
+      "CH2", 
+      "2Ch"
+    ], 
+    "17": [
+      17, 
+      "EST", 
+      "Est"
+    ], 
+    "16": [
+      16, 
+      "NEH", 
+      "Neh"
+    ], 
+    "19": [
+      19, 
+      "PSA", 
+      "Psa"
+    ], 
+    "18": [
+      18, 
+      "JOB", 
+      "Job"
+    ], 
+    "48": [
+      48, 
+      "GAL", 
+      "Gal"
+    ], 
+    "49": [
+      49, 
+      "EPH", 
+      "Eph"
+    ], 
+    "46": [
+      46, 
+      "CO1", 
+      "1Co"
+    ], 
+    "47": [
+      47, 
+      "CO2", 
+      "2Co"
+    ], 
+    "44": [
+      44, 
+      "ACT", 
+      "Act"
+    ], 
+    "45": [
+      45, 
+      "ROM", 
+      "Rom"
+    ], 
+    "42": [
+      42, 
+      "LUK", 
+      "Luk"
+    ], 
+    "43": [
+      43, 
+      "JHN", 
+      "Jhn"
+    ], 
+    "40": [
+      40, 
+      "MAT", 
+      "Mat"
+    ], 
+    "41": [
+      41, 
+      "MRK", 
+      "Mrk"
+    ], 
+    "1": [
+      1, 
+      "GEN", 
+      "Gen"
+    ], 
+    "5": [
+      5, 
+      "DEU", 
+      "Deu"
+    ], 
+    "9": [
+      9, 
+      "SA1", 
+      "1Sa"
+    ], 
+    "77": [
+      87, 
+      "PAZ", 
+      "S3Y"
+    ], 
+    "76": [
+      100, 
+      "LJE", 
+      "LJe"
+    ], 
+    "75": [
+      101, 
+      "BAR", 
+      "Bar"
+    ], 
+    "74": [
+      84, 
+      "SIR", 
+      "Sir"
+    ], 
+    "73": [
+      86, 
+      "WIS", 
+      "Wis"
+    ], 
+    "72": [
+      70, 
+      "ESG", 
+      "EsG"
+    ], 
+    "71": [
+      82, 
+      "JDT", 
+      "Jdt"
+    ], 
+    "70": [
+      85, 
+      "TOB", 
+      "Tob"
+    ], 
+    "79": [
+      80, 
+      "BEL", 
+      "Bel"
+    ], 
+    "78": [
+      81, 
+      "SUS", 
+      "Sus"
     ]
   }, 
   "USFMAbbreviationDict": {
@@ -4827,6 +5459,7 @@
   }, 
   "referenceNumberDict": {
     "1": {
+      "BibleditNumberString": "1", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Gen", 
       "nameEnglish": "Genesis / 1 Moses", 
@@ -4842,6 +5475,7 @@
       "numExpectedChapters": "50"
     }, 
     "2": {
+      "BibleditNumberString": "2", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Exo", 
       "nameEnglish": "Exodus / 2 Moses", 
@@ -4857,6 +5491,7 @@
       "numExpectedChapters": "40"
     }, 
     "3": {
+      "BibleditNumberString": "3", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Lev", 
       "nameEnglish": "Leviticus / 3 Moses", 
@@ -4872,6 +5507,7 @@
       "numExpectedChapters": "27"
     }, 
     "4": {
+      "BibleditNumberString": "4", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Num", 
       "nameEnglish": "Numbers / 4 Moses", 
@@ -4887,6 +5523,7 @@
       "numExpectedChapters": "36"
     }, 
     "5": {
+      "BibleditNumberString": "5", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Deu", 
       "nameEnglish": "Deuteronomy / 5 Moses", 
@@ -4902,6 +5539,7 @@
       "numExpectedChapters": "34"
     }, 
     "6": {
+      "BibleditNumberString": "6", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Jos", 
       "nameEnglish": "Joshua / Joshua son of Nun", 
@@ -4917,6 +5555,7 @@
       "numExpectedChapters": "24"
     }, 
     "7": {
+      "BibleditNumberString": "7", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Jdg", 
       "nameEnglish": "Judges", 
@@ -4932,6 +5571,7 @@
       "numExpectedChapters": "21"
     }, 
     "8": {
+      "BibleditNumberString": "8", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Rut", 
       "nameEnglish": "Ruth", 
@@ -4947,6 +5587,7 @@
       "numExpectedChapters": "4"
     }, 
     "9": {
+      "BibleditNumberString": "9", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "1Sa", 
       "nameEnglish": "1 Samuel / 1 Kingdoms / 1 Kings", 
@@ -4962,6 +5603,7 @@
       "numExpectedChapters": "31"
     }, 
     "10": {
+      "BibleditNumberString": "10", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "2Sa", 
       "nameEnglish": "2 Samuel / 2 Kingdoms / 2 Kings", 
@@ -4977,6 +5619,7 @@
       "numExpectedChapters": "24"
     }, 
     "11": {
+      "BibleditNumberString": "11", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "1Ki", 
       "nameEnglish": "1 Kings / 3 Kingdoms / 3 Kings", 
@@ -4992,6 +5635,7 @@
       "numExpectedChapters": "22"
     }, 
     "12": {
+      "BibleditNumberString": "12", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "2Ki", 
       "nameEnglish": "2 Kings / 4 Kingdoms / 4 Kings", 
@@ -5007,6 +5651,7 @@
       "numExpectedChapters": "25"
     }, 
     "13": {
+      "BibleditNumberString": "13", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "1Ch", 
       "nameEnglish": "1 Chronicles / 1 Paralipomenon", 
@@ -5022,6 +5667,7 @@
       "numExpectedChapters": "29"
     }, 
     "14": {
+      "BibleditNumberString": "14", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "2Ch", 
       "nameEnglish": "2 Chronicles / 2 Paralipomenon", 
@@ -5037,6 +5683,7 @@
       "numExpectedChapters": "36,37"
     }, 
     "15": {
+      "BibleditNumberString": "15", 
       "possibleAlternativeBooks": "EZN", 
       "NETBibleAbbreviation": "Ezr", 
       "nameEnglish": "Ezra / 1 Ezra / 1 Esdras", 
@@ -5052,6 +5699,7 @@
       "numExpectedChapters": "10"
     }, 
     "16": {
+      "BibleditNumberString": "16", 
       "possibleAlternativeBooks": "EZN", 
       "NETBibleAbbreviation": "Neh", 
       "nameEnglish": "Nehemiah / 2 Ezra / 2 Esdras", 
@@ -5067,6 +5715,7 @@
       "numExpectedChapters": "13"
     }, 
     "17": {
+      "BibleditNumberString": "17", 
       "possibleAlternativeBooks": "ESG,ESA,ESC", 
       "NETBibleAbbreviation": "Est", 
       "nameEnglish": "Esther", 
@@ -5082,6 +5731,7 @@
       "numExpectedChapters": "10"
     }, 
     "18": {
+      "BibleditNumberString": "18", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Job", 
       "nameEnglish": "Job", 
@@ -5097,6 +5747,7 @@
       "numExpectedChapters": "42"
     }, 
     "19": {
+      "BibleditNumberString": "19", 
       "possibleAlternativeBooks": "PB1,PB2,PB3,PB4,PB5", 
       "NETBibleAbbreviation": "Psa", 
       "nameEnglish": "Psalms / Gallicanum / Psalms A", 
@@ -5112,6 +5763,7 @@
       "numExpectedChapters": "150,151"
     }, 
     "20": {
+      "BibleditNumberString": "20", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Pro", 
       "nameEnglish": "Proverbs", 
@@ -5127,6 +5779,7 @@
       "numExpectedChapters": "31"
     }, 
     "21": {
+      "BibleditNumberString": "21", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Ecc", 
       "nameEnglish": "Ecclesiastes / Qoholeth", 
@@ -5142,6 +5795,7 @@
       "numExpectedChapters": "12"
     }, 
     "22": {
+      "BibleditNumberString": "22", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Sos", 
       "nameEnglish": "Song of Solomon / Song of Songs / Canticles / Canticle of Canticles", 
@@ -5157,6 +5811,7 @@
       "numExpectedChapters": "8"
     }, 
     "23": {
+      "BibleditNumberString": "23", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Isa", 
       "nameEnglish": "Isaiah", 
@@ -5172,6 +5827,7 @@
       "numExpectedChapters": "66"
     }, 
     "24": {
+      "BibleditNumberString": "24", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Jer", 
       "nameEnglish": "Jeremiah", 
@@ -5187,6 +5843,7 @@
       "numExpectedChapters": "52"
     }, 
     "25": {
+      "BibleditNumberString": "25", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Lam", 
       "nameEnglish": "Lamentations of Jeremiah", 
@@ -5202,6 +5859,7 @@
       "numExpectedChapters": "5"
     }, 
     "26": {
+      "BibleditNumberString": "26", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Eze", 
       "nameEnglish": "Ezekiel", 
@@ -5217,6 +5875,7 @@
       "numExpectedChapters": "48"
     }, 
     "27": {
+      "BibleditNumberString": "27", 
       "possibleAlternativeBooks": "DAG,DAA,DAC", 
       "NETBibleAbbreviation": "Dan", 
       "nameEnglish": "Daniel", 
@@ -5232,6 +5891,7 @@
       "numExpectedChapters": "12,14"
     }, 
     "28": {
+      "BibleditNumberString": "28", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Hos", 
       "nameEnglish": "Hosea", 
@@ -5247,6 +5907,7 @@
       "numExpectedChapters": "14"
     }, 
     "29": {
+      "BibleditNumberString": "29", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Joe", 
       "nameEnglish": "Joel", 
@@ -5262,6 +5923,7 @@
       "numExpectedChapters": "3,4"
     }, 
     "30": {
+      "BibleditNumberString": "30", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Amo", 
       "nameEnglish": "Amos", 
@@ -5277,6 +5939,7 @@
       "numExpectedChapters": "9"
     }, 
     "31": {
+      "BibleditNumberString": "31", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Oba", 
       "nameEnglish": "Obadiah", 
@@ -5292,6 +5955,7 @@
       "numExpectedChapters": "1"
     }, 
     "32": {
+      "BibleditNumberString": "32", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Jon", 
       "nameEnglish": "Jonah", 
@@ -5307,6 +5971,7 @@
       "numExpectedChapters": "4"
     }, 
     "33": {
+      "BibleditNumberString": "33", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Mic", 
       "nameEnglish": "Micah", 
@@ -5322,6 +5987,7 @@
       "numExpectedChapters": "7"
     }, 
     "34": {
+      "BibleditNumberString": "34", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Nah", 
       "nameEnglish": "Nahum", 
@@ -5337,6 +6003,7 @@
       "numExpectedChapters": "3"
     }, 
     "35": {
+      "BibleditNumberString": "35", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Hab", 
       "nameEnglish": "Habakkuk", 
@@ -5352,6 +6019,7 @@
       "numExpectedChapters": "3"
     }, 
     "36": {
+      "BibleditNumberString": "36", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Zep", 
       "nameEnglish": "Zephaniah", 
@@ -5367,6 +6035,7 @@
       "numExpectedChapters": "3"
     }, 
     "37": {
+      "BibleditNumberString": "37", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Hag", 
       "nameEnglish": "Haggai", 
@@ -5382,6 +6051,7 @@
       "numExpectedChapters": "2"
     }, 
     "38": {
+      "BibleditNumberString": "38", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Zec", 
       "nameEnglish": "Zechariah", 
@@ -5397,6 +6067,7 @@
       "numExpectedChapters": "14"
     }, 
     "39": {
+      "BibleditNumberString": "39", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Mal", 
       "nameEnglish": "Malachi", 
@@ -5412,6 +6083,7 @@
       "numExpectedChapters": "4,3"
     }, 
     "40": {
+      "BibleditNumberString": "40", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Mat", 
       "nameEnglish": "Matthew", 
@@ -5427,6 +6099,7 @@
       "numExpectedChapters": "28"
     }, 
     "41": {
+      "BibleditNumberString": "41", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Mar", 
       "nameEnglish": "Mark", 
@@ -5442,6 +6115,7 @@
       "numExpectedChapters": "16"
     }, 
     "42": {
+      "BibleditNumberString": "42", 
       "possibleAlternativeBooks": "LKA", 
       "NETBibleAbbreviation": "Luk", 
       "nameEnglish": "Luke", 
@@ -5457,6 +6131,7 @@
       "numExpectedChapters": "24"
     }, 
     "43": {
+      "BibleditNumberString": "43", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Joh", 
       "nameEnglish": "John", 
@@ -5472,6 +6147,7 @@
       "numExpectedChapters": "21"
     }, 
     "44": {
+      "BibleditNumberString": "44", 
       "possibleAlternativeBooks": "LKA", 
       "NETBibleAbbreviation": "Act", 
       "nameEnglish": "Acts", 
@@ -5487,6 +6163,7 @@
       "numExpectedChapters": "28"
     }, 
     "45": {
+      "BibleditNumberString": "45", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Rom", 
       "nameEnglish": "Romans", 
@@ -5502,6 +6179,7 @@
       "numExpectedChapters": "16"
     }, 
     "46": {
+      "BibleditNumberString": "46", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "1Co", 
       "nameEnglish": "1 Corinthians", 
@@ -5517,6 +6195,7 @@
       "numExpectedChapters": "16"
     }, 
     "47": {
+      "BibleditNumberString": "47", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "2Co", 
       "nameEnglish": "2 Corinthians", 
@@ -5532,6 +6211,7 @@
       "numExpectedChapters": "13"
     }, 
     "48": {
+      "BibleditNumberString": "48", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Gal", 
       "nameEnglish": "Galatians", 
@@ -5547,6 +6227,7 @@
       "numExpectedChapters": "6"
     }, 
     "49": {
+      "BibleditNumberString": "49", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Eph", 
       "nameEnglish": "Ephesians", 
@@ -5562,6 +6243,7 @@
       "numExpectedChapters": "6"
     }, 
     "50": {
+      "BibleditNumberString": "50", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Phi", 
       "nameEnglish": "Philippians", 
@@ -5577,6 +6259,7 @@
       "numExpectedChapters": "4"
     }, 
     "51": {
+      "BibleditNumberString": "51", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Col", 
       "nameEnglish": "Colossians", 
@@ -5592,6 +6275,7 @@
       "numExpectedChapters": "4"
     }, 
     "52": {
+      "BibleditNumberString": "52", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "1Th", 
       "nameEnglish": "1 Thessalonians", 
@@ -5607,6 +6291,7 @@
       "numExpectedChapters": "5"
     }, 
     "53": {
+      "BibleditNumberString": "53", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "2Th", 
       "nameEnglish": "2 Thessalonians", 
@@ -5622,6 +6307,7 @@
       "numExpectedChapters": "3"
     }, 
     "54": {
+      "BibleditNumberString": "54", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "1Ti", 
       "nameEnglish": "1 Timothy", 
@@ -5637,6 +6323,7 @@
       "numExpectedChapters": "6"
     }, 
     "55": {
+      "BibleditNumberString": "55", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "2Ti", 
       "nameEnglish": "2 Timothy", 
@@ -5652,6 +6339,7 @@
       "numExpectedChapters": "4"
     }, 
     "56": {
+      "BibleditNumberString": "56", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Tit", 
       "nameEnglish": "Titus", 
@@ -5667,6 +6355,7 @@
       "numExpectedChapters": "3"
     }, 
     "57": {
+      "BibleditNumberString": "57", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Phm", 
       "nameEnglish": "Philemon", 
@@ -5682,6 +6371,7 @@
       "numExpectedChapters": "1"
     }, 
     "58": {
+      "BibleditNumberString": "58", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Heb", 
       "nameEnglish": "Hebrews", 
@@ -5697,6 +6387,7 @@
       "numExpectedChapters": "13"
     }, 
     "59": {
+      "BibleditNumberString": "59", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Jam", 
       "nameEnglish": "James / Jacob", 
@@ -5712,6 +6403,7 @@
       "numExpectedChapters": "5"
     }, 
     "60": {
+      "BibleditNumberString": "60", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "1Pe", 
       "nameEnglish": "1 Peter", 
@@ -5727,6 +6419,7 @@
       "numExpectedChapters": "5"
     }, 
     "61": {
+      "BibleditNumberString": "61", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "2Pe", 
       "nameEnglish": "2 Peter", 
@@ -5742,6 +6435,7 @@
       "numExpectedChapters": "3"
     }, 
     "62": {
+      "BibleditNumberString": "62", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "1Jo", 
       "nameEnglish": "1 John", 
@@ -5757,6 +6451,7 @@
       "numExpectedChapters": "5"
     }, 
     "63": {
+      "BibleditNumberString": "63", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "2Jo", 
       "nameEnglish": "2 John", 
@@ -5772,6 +6467,7 @@
       "numExpectedChapters": "1"
     }, 
     "64": {
+      "BibleditNumberString": "64", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "3Jo", 
       "nameEnglish": "3 John", 
@@ -5787,6 +6483,7 @@
       "numExpectedChapters": "1"
     }, 
     "65": {
+      "BibleditNumberString": "65", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Jud", 
       "nameEnglish": "Jude", 
@@ -5802,6 +6499,7 @@
       "numExpectedChapters": "1"
     }, 
     "66": {
+      "BibleditNumberString": "66", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": "Rev", 
       "nameEnglish": "Revelation of John / Apocalypse of St. John", 
@@ -5817,6 +6515,7 @@
       "numExpectedChapters": "22"
     }, 
     "70": {
+      "BibleditNumberString": "72", 
       "possibleAlternativeBooks": "EST,ESA,ESC", 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Greek Esther / Esther (Greek)", 
@@ -5832,6 +6531,7 @@
       "numExpectedChapters": "10"
     }, 
     "71": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": "EST,ESG,ESC", 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Greek additions to Esther / Esther (additions)", 
@@ -5847,6 +6547,7 @@
       "numExpectedChapters": "10"
     }, 
     "72": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": "EST,ESG,ESA", 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Combined Hebrew/Greek Esther / Esther (combined)", 
@@ -5862,6 +6563,7 @@
       "numExpectedChapters": "10"
     }, 
     "73": {
+      "BibleditNumberString": "88", 
       "possibleAlternativeBooks": "DAN,DAA,DAC", 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Greek Daniel / Daniel (Greek)", 
@@ -5877,6 +6579,7 @@
       "numExpectedChapters": "14"
     }, 
     "74": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": "DAN,DAG,DAC", 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Greek additions to Daniel / Daniel (additions)", 
@@ -5892,6 +6595,7 @@
       "numExpectedChapters": "14"
     }, 
     "75": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": "DAN,DAG,DAA", 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Combined Hebrew/Greek Daniel / Daniel (combined)", 
@@ -5907,6 +6611,7 @@
       "numExpectedChapters": "14"
     }, 
     "80": {
+      "BibleditNumberString": "79", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Bel and the dragon", 
@@ -5922,6 +6627,7 @@
       "numExpectedChapters": "1"
     }, 
     "81": {
+      "BibleditNumberString": "78", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Susanna", 
@@ -5937,6 +6643,7 @@
       "numExpectedChapters": "1"
     }, 
     "82": {
+      "BibleditNumberString": "71", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Judith", 
@@ -5952,6 +6659,7 @@
       "numExpectedChapters": "16"
     }, 
     "83": {
+      "BibleditNumberString": "83", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Prayer of Manasses / Prayer of Manasseh", 
@@ -5967,6 +6675,7 @@
       "numExpectedChapters": "1"
     }, 
     "84": {
+      "BibleditNumberString": "74", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Sirach / Ecclesiasticus / Wisdom of Ben Sira / Wisdom of Jesus son of Sirach", 
@@ -5982,6 +6691,7 @@
       "numExpectedChapters": "51,52"
     }, 
     "85": {
+      "BibleditNumberString": "70", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Tobit / Tobias", 
@@ -5997,6 +6707,7 @@
       "numExpectedChapters": "14"
     }, 
     "86": {
+      "BibleditNumberString": "73", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Wisdom / Wisdom of Solomon", 
@@ -6012,6 +6723,7 @@
       "numExpectedChapters": "19"
     }, 
     "87": {
+      "BibleditNumberString": "77", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Prayer of Azariah and the Song of the Three Young Men / Prayer of Azariah / Song of the Three Young Men / Song of the Three Children", 
@@ -6027,6 +6739,7 @@
       "numExpectedChapters": "1"
     }, 
     "90": {
+      "BibleditNumberString": "82", 
       "possibleAlternativeBooks": "LES", 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Greek Esdras / Greek Ezra / 1 Esdras / 1 Ezra / 2 Ezra / 3 Ezra / 3 Esdras", 
@@ -6042,6 +6755,7 @@
       "numExpectedChapters": "9"
     }, 
     "91": {
+      "BibleditNumberString": "86", 
       "possibleAlternativeBooks": "GES", 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Latin Esdras / 2 Esdras / 3 Esdras / 4 Esdras / 4 Ezra", 
@@ -6057,6 +6771,7 @@
       "numExpectedChapters": "16"
     }, 
     "92": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Apocalypse of Ezra / Ezra Apocalypse / 4 Ezra / Ezra Shealtiel", 
@@ -6072,6 +6787,7 @@
       "numExpectedChapters": "12,13"
     }, 
     "93": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "5 Ezra / 3 Esdras / 5 Esdras", 
@@ -6087,6 +6803,7 @@
       "numExpectedChapters": "2"
     }, 
     "94": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "6 Ezra / 5 Esdras / 6 Esdras", 
@@ -6102,6 +6819,7 @@
       "numExpectedChapters": "2"
     }, 
     "95": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Revelation of Ezra / Vison of Ezra", 
@@ -6117,6 +6835,7 @@
       "numExpectedChapters": null
     }, 
     "100": {
+      "BibleditNumberString": "76", 
       "possibleAlternativeBooks": "LJB", 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Epistle of Jeremiah / Letter of Jeremiah", 
@@ -6132,6 +6851,7 @@
       "numExpectedChapters": "1"
     }, 
     "101": {
+      "BibleditNumberString": "75", 
       "possibleAlternativeBooks": "LJB", 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Baruch / 1 Baruch", 
@@ -6147,6 +6867,7 @@
       "numExpectedChapters": "5,6"
     }, 
     "102": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": "BAR", 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Letter/Epistle of Jeremiah with Baruch", 
@@ -6162,6 +6883,7 @@
       "numExpectedChapters": "6"
     }, 
     "103": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": "LB2", 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "2 Baruch / Apocalypse of Baruch", 
@@ -6177,6 +6899,7 @@
       "numExpectedChapters": "77"
     }, 
     "104": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": "LB2", 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Letter of Baruch", 
@@ -6192,6 +6915,7 @@
       "numExpectedChapters": "9"
     }, 
     "105": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": "BA2,LBA", 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "2 Baruch with the Letter of Baruch", 
@@ -6207,6 +6931,7 @@
       "numExpectedChapters": "86"
     }, 
     "106": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "3 Baruch", 
@@ -6222,6 +6947,7 @@
       "numExpectedChapters": null
     }, 
     "107": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "4 Baruch / Paralipomenon of Jeremiah / Paraleipomena Ieremiou / Rest of the Words of Baruch", 
@@ -6237,6 +6963,7 @@
       "numExpectedChapters": "6,5"
     }, 
     "110": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Maccabees", 
@@ -6252,6 +6979,7 @@
       "numExpectedChapters": "31"
     }, 
     "111": {
+      "BibleditNumberString": "80", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "1 Maccabees", 
@@ -6267,6 +6995,7 @@
       "numExpectedChapters": "16"
     }, 
     "112": {
+      "BibleditNumberString": "81", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "2 Maccabees", 
@@ -6282,6 +7011,7 @@
       "numExpectedChapters": "15"
     }, 
     "113": {
+      "BibleditNumberString": "85", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "3 Maccabees", 
@@ -6297,6 +7027,7 @@
       "numExpectedChapters": "7"
     }, 
     "114": {
+      "BibleditNumberString": "87", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "4 Maccabees", 
@@ -6312,6 +7043,7 @@
       "numExpectedChapters": "18"
     }, 
     "115": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "5 Maccabees", 
@@ -6327,6 +7059,7 @@
       "numExpectedChapters": null
     }, 
     "116": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "1 Meqabyan / 1 Makabian / Mekabis of Benjamin", 
@@ -6342,6 +7075,7 @@
       "numExpectedChapters": "36"
     }, 
     "117": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "2 Meqabyan / 2 Makabian / Mekabis of Moab", 
@@ -6357,6 +7091,7 @@
       "numExpectedChapters": "20,21"
     }, 
     "118": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "3 Meqabyan / 3 Makabian", 
@@ -6372,6 +7107,7 @@
       "numExpectedChapters": "10"
     }, 
     "120": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Psalms Book 1", 
@@ -6387,6 +7123,7 @@
       "numExpectedChapters": "41"
     }, 
     "121": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Psalms Book 2", 
@@ -6402,6 +7139,7 @@
       "numExpectedChapters": "31"
     }, 
     "122": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Psalms Book 3", 
@@ -6417,6 +7155,7 @@
       "numExpectedChapters": "17"
     }, 
     "123": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Psalms Book 4", 
@@ -6432,6 +7171,7 @@
       "numExpectedChapters": "17"
     }, 
     "124": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Psalms Book 5", 
@@ -6447,6 +7187,7 @@
       "numExpectedChapters": "44"
     }, 
     "125": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Psalms B / Liturgical Psalms / Metrical Psalms / Alternative Psalms / Grail Psalms", 
@@ -6462,6 +7203,7 @@
       "numExpectedChapters": "150"
     }, 
     "126": {
+      "BibleditNumberString": "84", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Psalm 151", 
@@ -6477,6 +7219,7 @@
       "numExpectedChapters": "1"
     }, 
     "127": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Syriac Psalms 152-155 / Five apocryphal Syriac Psalms", 
@@ -6492,6 +7235,7 @@
       "numExpectedChapters": "5,4"
     }, 
     "128": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Additional Psalms of Solomon", 
@@ -6507,6 +7251,7 @@
       "numExpectedChapters": "18"
     }, 
     "130": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Letter to the Laodiceans", 
@@ -6522,6 +7267,7 @@
       "numExpectedChapters": "1"
     }, 
     "131": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Odes / Odae", 
@@ -6537,6 +7283,7 @@
       "numExpectedChapters": "14"
     }, 
     "132": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Prayer of Solomon", 
@@ -6552,6 +7299,7 @@
       "numExpectedChapters": null
     }, 
     "133": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Prayer of Jeremiah", 
@@ -6567,6 +7315,7 @@
       "numExpectedChapters": "1"
     }, 
     "134": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Words of Sirach", 
@@ -6582,6 +7331,7 @@
       "numExpectedChapters": "1"
     }, 
     "135": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Letter of the Corinthians to Paul", 
@@ -6597,6 +7347,7 @@
       "numExpectedChapters": "1"
     }, 
     "136": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "3 Corinthians", 
@@ -6612,6 +7363,7 @@
       "numExpectedChapters": "1"
     }, 
     "137": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Prayer of Euthalius", 
@@ -6627,6 +7379,7 @@
       "numExpectedChapters": "1"
     }, 
     "138": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Dormition of John", 
@@ -6642,6 +7395,7 @@
       "numExpectedChapters": "1"
     }, 
     "139": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Testaments of the Twelve Patriarchs", 
@@ -6657,6 +7411,7 @@
       "numExpectedChapters": null
     }, 
     "140": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Jubilees", 
@@ -6672,6 +7427,7 @@
       "numExpectedChapters": "34"
     }, 
     "141": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Enoch / 1 Enoch / Ethiopic Apocalypse of Enoch", 
@@ -6687,6 +7443,7 @@
       "numExpectedChapters": "42"
     }, 
     "142": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "2 Enoch", 
@@ -6702,6 +7459,7 @@
       "numExpectedChapters": null
     }, 
     "143": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Reproof", 
@@ -6717,6 +7475,7 @@
       "numExpectedChapters": "6"
     }, 
     "144": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Letter of Barnabas / Epistle of Barnabas", 
@@ -6732,6 +7491,7 @@
       "numExpectedChapters": null
     }, 
     "150": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "1 Clement", 
@@ -6747,6 +7507,7 @@
       "numExpectedChapters": "65"
     }, 
     "151": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "2 Clement", 
@@ -6762,6 +7523,7 @@
       "numExpectedChapters": "20"
     }, 
     "152": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Shepherd of Hermas", 
@@ -6777,6 +7539,7 @@
       "numExpectedChapters": null
     }, 
     "153": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Didache", 
@@ -6792,6 +7555,7 @@
       "numExpectedChapters": "16"
     }, 
     "160": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Gospel of the Hebrews", 
@@ -6807,6 +7571,7 @@
       "numExpectedChapters": null
     }, 
     "161": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Gospel of Truth", 
@@ -6822,6 +7587,7 @@
       "numExpectedChapters": null
     }, 
     "162": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Gospel of Mary", 
@@ -6837,6 +7603,7 @@
       "numExpectedChapters": null
     }, 
     "163": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Gospel of Marcion", 
@@ -6852,6 +7619,7 @@
       "numExpectedChapters": null
     }, 
     "164": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Gospel of the Twelve", 
@@ -6867,6 +7635,7 @@
       "numExpectedChapters": null
     }, 
     "165": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Gospel of Philip", 
@@ -6882,6 +7651,7 @@
       "numExpectedChapters": null
     }, 
     "166": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Gospel of Thomas", 
@@ -6897,6 +7667,7 @@
       "numExpectedChapters": null
     }, 
     "167": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Gospel of Judas", 
@@ -6912,6 +7683,7 @@
       "numExpectedChapters": null
     }, 
     "168": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Gospel of Bartholomew", 
@@ -6927,6 +7699,7 @@
       "numExpectedChapters": null
     }, 
     "169": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Apocrypha of James / Apocryphal James", 
@@ -6942,6 +7715,7 @@
       "numExpectedChapters": null
     }, 
     "170": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Wisdom of Jesus Christ", 
@@ -6957,6 +7731,7 @@
       "numExpectedChapters": null
     }, 
     "180": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Testament of Adam", 
@@ -6972,6 +7747,7 @@
       "numExpectedChapters": null
     }, 
     "181": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Life of Adam and Eve", 
@@ -6987,6 +7763,7 @@
       "numExpectedChapters": null
     }, 
     "182": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Assumption of Moses / Testament of Moses", 
@@ -7002,6 +7779,7 @@
       "numExpectedChapters": null
     }, 
     "183": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Testament of Solomon", 
@@ -7017,6 +7795,7 @@
       "numExpectedChapters": null
     }, 
     "184": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Testament of Job", 
@@ -7032,6 +7811,7 @@
       "numExpectedChapters": null
     }, 
     "185": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Martyrdom and Ascension of Isaiah", 
@@ -7047,6 +7827,7 @@
       "numExpectedChapters": null
     }, 
     "186": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Apocrypha of Ezekiel / Apocryphon of Ezekiel", 
@@ -7062,6 +7843,7 @@
       "numExpectedChapters": null
     }, 
     "187": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Ezekiel the Tragedian", 
@@ -7077,6 +7859,7 @@
       "numExpectedChapters": null
     }, 
     "188": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Eupolemus", 
@@ -7092,6 +7875,7 @@
       "numExpectedChapters": null
     }, 
     "189": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Pseudo of Eupolemus / Pseudo-Eupolemus", 
@@ -7107,6 +7891,7 @@
       "numExpectedChapters": null
     }, 
     "190": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Visions of Amram", 
@@ -7122,6 +7907,7 @@
       "numExpectedChapters": null
     }, 
     "191": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Letter of Aristeas / Epistle of Aristeas", 
@@ -7137,6 +7923,7 @@
       "numExpectedChapters": null
     }, 
     "192": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Aristeas the Exegete", 
@@ -7152,6 +7939,7 @@
       "numExpectedChapters": null
     }, 
     "193": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Aristobulus", 
@@ -7167,6 +7955,7 @@
       "numExpectedChapters": null
     }, 
     "194": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Artapanus", 
@@ -7182,6 +7971,7 @@
       "numExpectedChapters": null
     }, 
     "195": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Cleodemus Malchus", 
@@ -7197,6 +7987,7 @@
       "numExpectedChapters": null
     }, 
     "196": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Eldad and Modad", 
@@ -7212,6 +8003,7 @@
       "numExpectedChapters": null
     }, 
     "197": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "History of the Rechabites", 
@@ -7227,6 +8019,7 @@
       "numExpectedChapters": null
     }, 
     "198": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Lives of the Prophets", 
@@ -7242,6 +8035,7 @@
       "numExpectedChapters": null
     }, 
     "199": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Philo the Epic Poet", 
@@ -7257,6 +8051,7 @@
       "numExpectedChapters": null
     }, 
     "200": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Theodotus", 
@@ -7272,6 +8067,7 @@
       "numExpectedChapters": null
     }, 
     "220": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": "GEN,EXO,LEV,NUM,DEU", 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Books of Moses", 
@@ -7287,6 +8083,7 @@
       "numExpectedChapters": "187"
     }, 
     "221": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": "SA1,SA2", 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Samuel", 
@@ -7302,6 +8099,7 @@
       "numExpectedChapters": "55"
     }, 
     "222": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": "KG1,KG2", 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Kings", 
@@ -7317,6 +8115,7 @@
       "numExpectedChapters": "47"
     }, 
     "223": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": "CH1,CH2", 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Chronicles", 
@@ -7332,6 +8131,7 @@
       "numExpectedChapters": "65"
     }, 
     "224": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": "EZR,NEH", 
       "NETBibleAbbreviation": "Ezr", 
       "nameEnglish": "Ezra-Nehemiah / 1 Esdras", 
@@ -7347,6 +8147,7 @@
       "numExpectedChapters": "26"
     }, 
     "225": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Twelve Prophets", 
@@ -7362,6 +8163,7 @@
       "numExpectedChapters": null
     }, 
     "226": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": "LUK,ACT", 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Luke-Acts", 
@@ -7377,6 +8179,7 @@
       "numExpectedChapters": "52"
     }, 
     "230": {
+      "BibleditNumberString": "67", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Generic front matter", 
@@ -7392,6 +8195,7 @@
       "numExpectedChapters": null
     }, 
     "231": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Preface", 
@@ -7407,6 +8211,7 @@
       "numExpectedChapters": null
     }, 
     "232": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Acknowledgements", 
@@ -7422,6 +8227,7 @@
       "numExpectedChapters": null
     }, 
     "233": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Introduction", 
@@ -7437,6 +8243,7 @@
       "numExpectedChapters": null
     }, 
     "234": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Table of Contents", 
@@ -7452,6 +8259,7 @@
       "numExpectedChapters": null
     }, 
     "235": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Glossary", 
@@ -7467,6 +8275,7 @@
       "numExpectedChapters": null
     }, 
     "236": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Concordance", 
@@ -7482,6 +8291,7 @@
       "numExpectedChapters": null
     }, 
     "237": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Topical Concordance", 
@@ -7497,6 +8307,7 @@
       "numExpectedChapters": null
     }, 
     "238": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Names Index", 
@@ -7512,6 +8323,7 @@
       "numExpectedChapters": null
     }, 
     "239": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Places Index", 
@@ -7527,6 +8339,7 @@
       "numExpectedChapters": null
     }, 
     "240": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Maps", 
@@ -7542,6 +8355,7 @@
       "numExpectedChapters": null
     }, 
     "241": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Thematic Index", 
@@ -7557,6 +8371,7 @@
       "numExpectedChapters": null
     }, 
     "242": {
+      "BibleditNumberString": "68", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Generic back matter", 
@@ -7572,6 +8387,7 @@
       "numExpectedChapters": null
     }, 
     "243": {
+      "BibleditNumberString": "69", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Unspecified extra XXA", 
@@ -7587,6 +8403,7 @@
       "numExpectedChapters": null
     }, 
     "244": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Unspecified extra XXB", 
@@ -7602,6 +8419,7 @@
       "numExpectedChapters": null
     }, 
     "245": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Unspecified extra XXC", 
@@ -7617,6 +8435,7 @@
       "numExpectedChapters": null
     }, 
     "246": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Unspecified extra XXD", 
@@ -7632,6 +8451,7 @@
       "numExpectedChapters": null
     }, 
     "247": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Unspecified extra XXE", 
@@ -7647,6 +8467,7 @@
       "numExpectedChapters": null
     }, 
     "248": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Unspecified extra XXF", 
@@ -7662,6 +8483,7 @@
       "numExpectedChapters": null
     }, 
     "249": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Unspecified extra XXG", 
@@ -10276,5 +11098,197 @@
       8, 
       "RUT"
     ]
-  }
+  }, 
+  "sequenceList": [
+    "PRF", 
+    "ACK", 
+    "INT", 
+    "FRT", 
+    "TOC", 
+    "MOS", 
+    "GEN", 
+    "EXO", 
+    "LEV", 
+    "NUM", 
+    "DEU", 
+    "JOS", 
+    "JDG", 
+    "RUT", 
+    "SAM", 
+    "SA1", 
+    "SA2", 
+    "KGS", 
+    "KI1", 
+    "KI2", 
+    "CHR", 
+    "CH1", 
+    "CH2", 
+    "EZR", 
+    "EZN", 
+    "NEH", 
+    "EST", 
+    "ESA", 
+    "ESC", 
+    "JOB", 
+    "PSA", 
+    "PB1", 
+    "PB2", 
+    "PB3", 
+    "PB4", 
+    "PB5", 
+    "PSB", 
+    "PS2", 
+    "PS3", 
+    "PSS", 
+    "PRO", 
+    "ECC", 
+    "SNG", 
+    "ISA", 
+    "JER", 
+    "LAM", 
+    "EZK", 
+    "DAN", 
+    "DAG", 
+    "DAA", 
+    "DAC", 
+    "P12", 
+    "HOS", 
+    "JOL", 
+    "AMO", 
+    "OBA", 
+    "JNA", 
+    "MIC", 
+    "NAH", 
+    "HAB", 
+    "ZEP", 
+    "HAG", 
+    "ZEC", 
+    "MAL", 
+    "TOB", 
+    "JDT", 
+    "ESG", 
+    "WIS", 
+    "SIR", 
+    "BAR", 
+    "LJB", 
+    "LBA", 
+    "LB2", 
+    "BA2", 
+    "BA3", 
+    "BA4", 
+    "LJE", 
+    "PAZ", 
+    "SUS", 
+    "BEL", 
+    "MAC", 
+    "MA1", 
+    "MA2", 
+    "MA3", 
+    "MA4", 
+    "MA5", 
+    "GES", 
+    "LES", 
+    "EZA", 
+    "EZ5", 
+    "EZ6", 
+    "MAN", 
+    "ODE", 
+    "PSO", 
+    "PJE", 
+    "WSI", 
+    "TTP", 
+    "JUB", 
+    "ENO", 
+    "EN2", 
+    "REP", 
+    "CL1", 
+    "CL2", 
+    "SHE", 
+    "DID", 
+    "MAT", 
+    "MRK", 
+    "LUK", 
+    "JHN", 
+    "LKA", 
+    "ACT", 
+    "ROM", 
+    "CO1", 
+    "CO2", 
+    "GAL", 
+    "EPH", 
+    "PHP", 
+    "COL", 
+    "TH1", 
+    "TH2", 
+    "TI1", 
+    "TI2", 
+    "TIT", 
+    "PHM", 
+    "HEB", 
+    "JAM", 
+    "PE1", 
+    "PE2", 
+    "JN1", 
+    "JN2", 
+    "JN3", 
+    "JDE", 
+    "REV", 
+    "LAO", 
+    "COP", 
+    "CO3", 
+    "EUT", 
+    "DOJ", 
+    "LBB", 
+    "MQ1", 
+    "MQ2", 
+    "MQ3", 
+    "TAD", 
+    "LAE", 
+    "ASS", 
+    "TSO", 
+    "TJB", 
+    "MAI", 
+    "AEZ", 
+    "EZT", 
+    "EUP", 
+    "PEU", 
+    "VAM", 
+    "LAR", 
+    "ARI", 
+    "ABL", 
+    "ART", 
+    "CLM", 
+    "ELM", 
+    "HRE", 
+    "LPR", 
+    "EPL", 
+    "TEO", 
+    "RVE", 
+    "GHE", 
+    "GTR", 
+    "GMA", 
+    "GMC", 
+    "GTW", 
+    "GPH", 
+    "GTH", 
+    "GJU", 
+    "GBA", 
+    "AJA", 
+    "WJC", 
+    "GLS", 
+    "CNC", 
+    "TPC", 
+    "IXN", 
+    "IXP", 
+    "IXT", 
+    "BAK", 
+    "MAP", 
+    "XXA", 
+    "XXB", 
+    "XXC", 
+    "XXD", 
+    "XXE", 
+    "XXF", 
+    "XXG"
+  ]
 }

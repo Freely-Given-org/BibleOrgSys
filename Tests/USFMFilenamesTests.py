@@ -109,7 +109,7 @@ class USFMFilenamesTests( unittest.TestCase ):
         junkResults = self.UFns.getConfirmedFilenameTuples()
         results = self.UFns.getUnusedFilenames()
         self.assertTrue( isinstance( results, list ) )
-        self.assertEqual( len(results), 2 ) # Number of actual files found
+        self.assertEqual( len(results), 3 ) # Number of actual files found
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
         for result in results:
@@ -135,7 +135,7 @@ class USFMFilenamesTests( unittest.TestCase ):
         junkResults = self.UFns.getPossibleFilenameTuplesExt()
         results = self.UFns.getUnusedFilenames()
         self.assertTrue( isinstance( results, list ) )
-        self.assertEqual( len(results), 2 ) # Number of actual files found
+        self.assertEqual( len(results), 3 ) # Number of actual files found
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
         for result in results:
@@ -146,7 +146,7 @@ class USFMFilenamesTests( unittest.TestCase ):
         """ Test the getPossibleFilenameTuplesInt function. """
         results = self.UFns.getPossibleFilenameTuplesInt()
         self.assertTrue( isinstance( results, list ) )
-        self.assertEqual( len(results), 0 ) # Number of actual files found (none coz our test files are empty)
+        self.assertEqual( len(results), 3 ) # Number of actual files found (not four coz one test file is empty and one id is wrong)
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
         for result in results:
@@ -161,7 +161,7 @@ class USFMFilenamesTests( unittest.TestCase ):
         junkResults = self.UFns.getPossibleFilenameTuplesInt()
         results = self.UFns.getUnusedFilenames()
         self.assertTrue( isinstance( results, list ) )
-        self.assertEqual( len(results), 5 ) # Number of actual files found
+        self.assertEqual( len(results), 4 ) # Number of actual files found
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
         for result in results:
@@ -187,7 +187,7 @@ class USFMFilenamesTests( unittest.TestCase ):
         junkResults = self.UFns.getMaximumPossibleFilenameTuples()
         results = self.UFns.getUnusedFilenames()
         self.assertTrue( isinstance( results, list ) )
-        self.assertEqual( len(results), 2 ) # Number of actual files found
+        self.assertEqual( len(results), 3 ) # Number of actual files found
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
         for result in results:

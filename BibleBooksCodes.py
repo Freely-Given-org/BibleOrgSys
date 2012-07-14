@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodes.py
-#   Last modified: 2012-07-01 by RJH (also update versionString below)
+#   Last modified: 2012-07-14 by RJH (also update versionString below)
 #
 # Module handling BibleBooksCodes functions
 #
@@ -28,7 +28,7 @@ Module handling BibleBooksCodes functions.
 """
 
 progName = "Bible Books Codes handler"
-versionString = "0.62"
+versionString = "0.64"
 
 
 import os, logging
@@ -120,6 +120,30 @@ class BibleBooksCodes:
         """ Return the referenceNumber 1..255 for the given book code (referenceAbbreviation). """
         return self.__DataDicts["referenceAbbreviationDict"][BBB]["referenceNumber"]
 
+    def getSequenceList( self, myList=None ):
+        """ Return a list of BBB codes in a sequence that could be used for the print order if no further information is available.
+            If you supply a list of books, it puts your actual book codes into the default order.
+                Your list can simply be a list of BBB strings, or a list of tuples with the BBB as the first entry in the tuple. """
+        if myList is None: return self.__DataDicts["sequenceList"]
+        # They must have given us their list of books
+        assert( isinstance( myList, list ) )
+        if not myList: return [] # Return an empty list if that's what they gave
+        for something in myList: # Something can be a BBB string or a tuple
+            BBB = something if isinstance( something, str ) else something[0] # If it's a tuple, assume that the BBB is the first item in the tuple
+            assert( self.isValidReferenceAbbreviation( BBB ) ) # Check the supplied list
+        resultList = []
+        for BBB1 in self.__DataDicts["sequenceList"]:
+            for something in myList:
+                BBB2 = something if isinstance( something, str ) else something[0] # If it's a tuple, assume that the BBB is the first item in the tuple
+                if BBB2 == BBB1:
+                    resultList.append( something )
+                    break
+        assert( len(resultList) == len(myList) )
+        #if resultList == myList: print( "getSequenceList made no change to the order" )
+        #else: print( "getSequenceList: {} produced {}".format( myList, resultList ) )
+        return resultList
+    # end of getSequenceList
+
     def getCCELNumber( self, BBB ):
         """ Return the CCEL number string for the given book code (referenceAbbreviation). """
         return self.__DataDicts["referenceAbbreviationDict"][BBB]["CCELNumberString"]
@@ -147,6 +171,10 @@ class BibleBooksCodes:
     def getUSXNumber( self, BBB ):
         """ Return the three-digit USX number string for the given book code (referenceAbbreviation). """
         return self.__DataDicts["referenceAbbreviationDict"][BBB]["USXNumberString"]
+
+    def getBibleditNumber( self, BBB ):
+        """ Return the one or two-digit Bibledit number string for the given book code (referenceAbbreviation). """
+        return self.__DataDicts["referenceAbbreviationDict"][BBB]["BibleditNumberString"]
 
     def getNETBibleAbbreviation( self, BBB ):
         """ Return the NET Bible abbreviation string for the given book code (referenceAbbreviation). """
@@ -272,6 +300,23 @@ class BibleBooksCodes:
         return result
     # end of getAllUSXBooksCodeNumberTriples
 
+    def getAllBibleditBooksCodeNumberTriples( self ):
+        """
+        Return a list of all available Bibledit book codes.
+
+        The list contains tuples of: USFMAbbreviation, BibleditNumber, referenceAbbreviation
+        """
+        found, result = [], []
+        for BBB, values in self.__DataDicts["referenceAbbreviationDict"].items():
+            pA = values["USFMAbbreviation"]
+            pN = values["BibleditNumberString"]
+            if pA is not None and pN is not None:
+                if pA not in found: # Don't want duplicates (where more than one book maps to a single USFMAbbreviation)
+                    result.append( (pA, pN, BBB,) )
+                    found.append( pA )
+        return result
+    # end of getAllBibleditBooksCodeNumberTriples
+
     # NOTE: The following functions are all not recommended (NR) because they rely on assumed information that may be incorrect
     #           i.e., they assume English language or European book order conventions
     #       They are included because they might be necessary for error messages or similar uses
@@ -333,8 +378,14 @@ def main():
     print( "Names for Genesis are:", bbc.getEnglishNameList_NR("GEN") )
     print( "Names for Sirach are:", bbc.getEnglishNameList_NR('SIR') )
     print( "All BBBs:", len(bbc.getAllReferenceAbbreviations()), bbc.getAllReferenceAbbreviations() )
+    print( "All BBBs in a print sequence", len(bbc.getSequenceList()), bbc.getSequenceList() )
+    myBBBs = ['GEN','EXO','PSA','ISA','MAL','MAT','REV','GLS']
+    print( "My BBBs in sequence", len(myBBBs), myBBBs, "now", len(bbc.getSequenceList(myBBBs)), bbc.getSequenceList(myBBBs) )
+    myBBBs = ['REV','CO2','GEN','PSA','CO1','ISA','SA2','MAT','GLS','JOB']
+    print( "My BBBs in sequence", len(myBBBs), myBBBs, "now", len(bbc.getSequenceList(myBBBs)), bbc.getSequenceList(myBBBs) )
     print( "USFM triples:", len(bbc.getAllUSFMBooksCodeNumberTriples()), bbc.getAllUSFMBooksCodeNumberTriples() )
     print( "USX triples:", len(bbc.getAllUSXBooksCodeNumberTriples()), bbc.getAllUSXBooksCodeNumberTriples() )
+    print( "Bibledit triples:", len(bbc.getAllBibleditBooksCodeNumberTriples()), bbc.getAllBibleditBooksCodeNumberTriples() )
     print( "Single chapter books (and OSIS):\n  {}\n  {}".format(bbc.getSingleChapterBooksList(), bbc.getOSISSingleChapterBooksList()) )
     for something in ('PE2', '2Pe', '2 Pet', '2Pet', 'Job', ):
         print( something, bbc.getBBB( something ) )

@@ -1,7 +1,7 @@
 # BibleBooksCodes.ReadMe.txt
 #   ReadMe.txt for Bible Books Codes
-#   Version 0.60
-#   Last modified: 2012-05-23
+#   Version 0.64
+#   Last modified: 2012-07-14
 #
 #
 # Abbreviations:
@@ -20,6 +20,7 @@
 #   SFM = Standard Format Markers used widely within SIL -- see http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=Glossary#sfm
 #   USFM = UBS Unified Standard Format Markers -- see http://paratext.ubs-translations.org/about/usfm
 #   USX = UBS Unified Standard XML -- see http://paratext.ubs-translations.org/about/usfm
+    Bibledit = (GTK) Bible editor program -- see https://sites.google.com/site/bibledit/home
 #
 #
 # Enclosed are four files:
@@ -29,6 +30,7 @@
 #           The data also includes a new 3-letter UPPER CASE referenceAbbreviation which always starts with a letter and so can be used directly as an XML ID (unlike most of the other fields).
 #               These referenceAbbreviation fields are often put in a variable called BBB (BiBle Book 3-character code) in program code.
 #           The unique 1..255 referenceNumber values are for processing and error messages -- numbers 1..66 are guaranteed to match the normal Protestant Bible.
+            A sequenceNumber which suggests a possible order for the books if no other order information is available.
 #           The English name is included as a comment only and is unimportant (although it might be used for some crude processing purposes).
 #           See the comments at the beginning of the file itself for the most up-to-date information on the file contents.
 #       The file also includes an internal DTD. To validate the XML on Linux systems, use
@@ -49,22 +51,32 @@
 #       or better still, to validate against both this and the internal DTD, use
 #           xmllint --noout --relaxng DerivedFiles/BibleBooksCodes.rng --valid DataFiles/BibleBooksCodes.xml
 #
-#   BibleBooksCodes.py (for Python 3)
+#   BibleBooksCodesConverter.py (for Python 3)
 #       This small program will load and do some very basic checking of the XML data file.
-#           It contains two classes -- the Converter class is not intended to be used by most end-user programs.
+#           The Converter class is not intended to be used by most end-user programs.
 #       It can be used in a larger Python program to load the XML data into a number of Python dictionaries (with different fields as the key).
 #       It can also be used to convert and export the XML data directly to Python or C code which can be included in another program as well as JSON format
 #           (if you don't want to have to supply or validate the master XML file).
 #       It is expected that the user might want to modify the Python code in order to customize it to your particular needs for either of the above strategies.
 #       The program is open source with a GPL-3.0 licence.
-#       If you have Python3 installed on Linux, run the program with ./BibleBooksCodes.py --help (once you have made the program file "executable").
-#               (Alternatively, try: python3 BibleBooksCodes.py --help)
+#       If you have Python3 installed on Linux, run the program with ./BibleBooksCodesConverter.py --help (once you have made the program file "executable").
+#               (Alternatively, try: python3 BibleBooksCodesConverter.py --help)
 #       To export the data in other formats, use --export (instead of --help).
 #           This should load and check the XML file and create BibleBooksCodes_Tables.* files in the DerivedFiles folder, suitable for including in other programs.
 #       If the program is run without any additional parameters, it runs in a demo mode which should show the use of some of the available routines.
 #
+#   BibleBooksCodes.py (for Python 3)
+#       This small program first calls the above Converter class to load and check the XML Bible books codes data.
+#       It then contains a number of helpful routines for accessing that data.
+#       The class is set up as a singleton, meaning that only one instance of this class is created, and then that same instance is shared by all callers.
+#       It is expected that the user might want to modify the Python code in order to customize it to your particular needs for either of the above strategies.
+#       The program is open source with a GPL-3.0 licence.
+#       If you have Python3 installed on Linux, run the program with ./BibleBooksCodes.py --help (once you have made the program file "executable").
+#               (Alternatively, try: python3 BibleBooksCodes.py --help)
+#       If the program is run without any additional parameters, it runs in a demo mode which should show the use of some of the available routines.
+#
 #   Tests/BibleBooksCodesTests.py (for Python 3)
-#       Running this program from the command line will automatically run tests on the above module, listing tests which fail.
+#       Running this program from the command line will automatically run tests on the above two modules, listing tests which fail.
 #           A result of OK indicates that the tests have all passed.
 #       If you have Python3 installed on Linux, run the program with Tests/BibleBooksCodesTests.py (once you have made the program file "executable").
 #               (Alternatively, try: python3 Tests/BibleBooksCodesTests.py)
@@ -73,4 +85,4 @@
 #
 # Robert Hunt
 # Hunt.RobertJ@gmail.com
-# October 2010--May 2012.
+# October 2010--July 2012.

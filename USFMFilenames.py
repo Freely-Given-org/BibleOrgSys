@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # USFMFilenames.py
-#   Last modified: 2012-07-01 by RJH (also update versionString below)
+#   Last modified: 2012-07-14 by RJH (also update versionString below)
 #
 # Module handling USFM Bible filenames
 #
@@ -27,7 +27,7 @@ Module for creating and manipulating USFM filenames.
 """
 
 progName = "USFM Bible filenames handler"
-versionString = "0.54"
+versionString = "0.55"
 
 
 import os, logging
@@ -38,9 +38,24 @@ import Globals
 from BibleBooksCodes import BibleBooksCodes
 
 
+# The filenames produced by the Bibledit program seem to have a .usfm extension (Info below is from gtk/src/bookdata.cpp 2012-07-11)
+BibleditFilenames = ( '1_Genesis', '2_Exodus', '3_Leviticus', '4_Numbers', '5_Deuteronomy', '6_Joshua', '7_Judges', '8_Ruth', '9_1_Samuel', '10_2_Samuel',
+    '11_1_Kings', '12_2_Kings', '13_1_Chronicles', '14_2_Chronicles', '15_Ezra', '16_Nehemiah', '17_Esther', '18_Job', '19_Psalms', '20_Proverbs', '21_Ecclesiastes',
+    '22_Song_of_Solomon', '23_Isaiah', '24_Jeremiah', '25_Lamentations', '26_Ezekiel', '27_Daniel', '28_Hosea', '29_Joel', '30_Amos', '31_Obadiah', '32_Jonah',
+    '33_Micah', '34_Nahum', '35_Habakkuk', '36_Zephaniah', '37_Haggai', '38_Zechariah', '39_Malachi',
+    '40_Matthew', '41_Mark', '42_Luke', '43_John', '44_Acts', '45_Romans', '46_1_Corinthians', '47_2_Corinthians', '48_Galatians', '49_Ephesians', '50_Philippians',
+    '51_Colossians', '52_1_Thessalonians', '53_2_Thessalonians', '54_1_Timothy', '55_2_Timothy', '56_Titus', '57_Philemon',
+    '58_Hebrews', '59_James', '60_1_Peter', '61_2_Peter', '62_1_John', '63_2_John', '64_3_John', '65_Jude', '66_Revelation',
+    '67_Front_Matter', '68_Back_Matter', '69_Other_Material', '70_Tobit', '71_Judith', '72_Esther_(Greek)', '73_Wisdom_of_Solomon', '74_Sirach', '75_Baruch',
+    '76_Letter_of_Jeremiah', '77_Song_of_the_Three_Children', '78_Susanna', '79_Bel_and_the_Dragon', '80_1_Maccabees', '81_2_Maccabees',
+    '82_1_Esdras', '83_Prayer_of_Manasses', '84_Psalm_151', '85_3_Maccabees', '86_2_Esdras', '87_4_Maccabees', '88_Daniel_(Greek)' )
+
+
 class USFMFilenames:
     """
-    Class for creating and manipulating USFM Filenames.
+    Class for creating and manipulating USFM filenames.
+
+    Always returns lists of USFM filenames in the default rough sequence order from the BibleBooksCodes module.
     """
 
     def __init__( self, folder ):
@@ -52,10 +67,11 @@ class USFMFilenames:
                 dd = digits
         """
         # Get the data tables that we need for proper checking
-        self._BibleBooksCodes = BibleBooksCodes().loadData()
-        self._USFMBooksCodes = self._BibleBooksCodes.getAllUSFMBooksCodes()
+        self._BibleBooksCodesObject = BibleBooksCodes().loadData()
+        self._USFMBooksCodes = self._BibleBooksCodesObject.getAllUSFMBooksCodes()
         self._USFMBooksCodesUpper = [x.upper() for x in self._USFMBooksCodes]
-        self._USFMBooksCodeNumberTriples = self._BibleBooksCodes.getAllUSFMBooksCodeNumberTriples()
+        self._USFMBooksCodeNumberTriples = self._BibleBooksCodesObject.getAllUSFMBooksCodeNumberTriples()
+        self._BibleditBooksCodeNumberTriples = self._BibleBooksCodesObject.getAllBibleditBooksCodeNumberTriples()
 
         # Find how many files are in our folder
         self.folder, self.lastTupleList = folder, None
@@ -73,12 +89,30 @@ class USFMFilenames:
             foundFileBit, foundExtBit = os.path.splitext( foundFilename )
             foundLength = len( foundFileBit )
             #print( foundFileBit, foundExtBit )
+            matched = False
+            if '_' in foundFileBit and foundExtBit and foundExtBit[0]=='.': # Check for possible Bibledit filenames first
+                for USFMBookCode,BibleditDigits,bookReferenceCode in self._BibleditBooksCodeNumberTriples:
+                    BibleditSignature = BibleditDigits + '_'
+                    if BibleditSignature in foundFileBit and foundFileBit in BibleditFilenames:
+                        digitsIndex = foundFileBit.index( BibleditSignature )
+                        assert( digitsIndex == 0 )
+                        assert( foundExtBit == '.usfm' )
+                        self.languageIndex = None
+                        self.languageCode = None
+                        self.digitsIndex = digitsIndex
+                        self.USFMBookCodeIndex = None
+                        self.pattern = "Dd_BEName"
+                        self.fileExtension = foundExtBit[1:]
+                        matched = True
+                        break
+                if matched: break
+            if matched: break
+            # Didn't find a Bibledit filename -- maybe it's a Paratext style or some kind of freestyle
             containsDigits = False
-            for char in foundFilename:
+            for char in foundFileBit:
                 if char.isdigit():
                     containsDigits = True
                     break
-            matched = False
             if containsDigits and foundExtBit and foundExtBit[0]=='.':
                 for USFMBookCode,USFMDigits,bookReferenceCode in self._USFMBooksCodeNumberTriples:
                     if USFMDigits in foundFileBit and (USFMBookCode in foundFileBit or USFMBookCode.upper() in foundFileBit):
@@ -220,7 +254,7 @@ class USFMFilenames:
                     USFMId = self.getUSFMIDFromFile( givenFolder, possibleFilename, filepath )
                     if USFMId:
                         assert( filepath not in self.fileDictionary )
-                        BBB = self._BibleBooksCodes.getBBBFromUSFM( USFMId )
+                        BBB = self._BibleBooksCodesObject.getBBBFromUSFM( USFMId )
                         self.fileDictionary[(givenFolder,possibleFilename,)] = BBB
                         if BBB in self.BBBDictionary: logging.error( "getUSFMIDsFromFiles: Oops, already found '{}' in {}, now we have a duplicate in {}".format( BBB, self.BBBDictionary[BBB], possibleFilename ) )
                         self.BBBDictionary[BBB] = (givenFolder,possibleFilename,)
@@ -268,27 +302,42 @@ class USFMFilenames:
 
 
     def getDerivedFilenameTuples( self ):
-        """Return a theoretical list of valid USFM filenames that match our filename template."""
+        """Return a theoretical list of valid USFM filenames that match our filename template.
+            The result is a list of 2-tuples in the default rough sequence order from the BibleBooksCodes module.
+                Each tuple contains ( BBB, filename ) not including the folder path.
+        """
         resultList = []
         if self.pattern:
-            for USFMBookCode,USFMDigits,bookReferenceCode in self._USFMBooksCodeNumberTriples:
-                filename = '*' * len(self.pattern)
-                if self.digitsIndex is not None: filename = filename[:self.digitsIndex] + USFMDigits + filename[self.digitsIndex+len(USFMDigits):]
-                filename = filename[:self.USFMBookCodeIndex] + ( USFMBookCode.upper() if 'BBB' in self.pattern else USFMBookCode ) + filename[self.USFMBookCodeIndex+len(USFMBookCode):]
-                if self.languageCode: filename = filename[:self.languageIndex] + self.languageCode + filename[self.languageIndex+len(self.languageCode):]
-                filename += '.' + self.fileExtension
-                for ix in range( 0, len(filename)): # See if there's any constant characters in the pattern that we need to grab
-                    if filename[ix]=='*' and self.pattern[ix]!='*':
-                        filename = filename[:ix] + self.pattern[ix] + filename[ix+1:]
-                self.doListAppend( bookReferenceCode, filename, resultList, "getDerivedFilenameTuples" )
-        return resultList
+            if self.pattern == "Dd_BEName": # they are Bibledit style
+                for USFMBookCode,BibleditDigits,bookReferenceCode in self._BibleditBooksCodeNumberTriples:
+                    BibleditSignature = BibleditDigits + '_'
+                    for BEFilename in BibleditFilenames: # this doesn't seem very efficient, but it does work
+                        if BEFilename.startswith( BibleditSignature ):
+                            resultList.append( (bookReferenceCode,BEFilename+'.'+self.fileExtension,) )
+                            break
+            else: # they are Paratext style
+                for USFMBookCode,USFMDigits,bookReferenceCode in self._USFMBooksCodeNumberTriples:
+                    filename = '*' * len(self.pattern)
+                    if self.digitsIndex is not None: filename = filename[:self.digitsIndex] + USFMDigits + filename[self.digitsIndex+len(USFMDigits):]
+                    filename = filename[:self.USFMBookCodeIndex] + ( USFMBookCode.upper() if 'BBB' in self.pattern else USFMBookCode ) + filename[self.USFMBookCodeIndex+len(USFMBookCode):]
+                    if self.languageCode: filename = filename[:self.languageIndex] + self.languageCode + filename[self.languageIndex+len(self.languageCode):]
+                    filename += '.' + self.fileExtension
+                    for ix in range( 0, len(filename)): # See if there's any constant characters in the pattern that we need to grab
+                        if filename[ix]=='*' and self.pattern[ix]!='*':
+                            filename = filename[:ix] + self.pattern[ix] + filename[ix+1:]
+                    self.doListAppend( bookReferenceCode, filename, resultList, "getDerivedFilenameTuples" )
+        return self._BibleBooksCodesObject.getSequenceList( resultList )
     # end of getDerivedFilenameTuples
 
 
     def getConfirmedFilenameTuples( self, doubleCheck=False ):
         """ Starting with the theoretical list of filenames derived from the deduced template (if we have one),
                 return a list of tuples of UPPER CASE book codes with actual (present and readable) USFM filenames.
-            If the doubleCheck flag is set, the program also looks at the id lines inside the files. """
+            If the doubleCheck flag is set, the program also looks at the id lines inside the files.
+
+            The result is a list of 2-tuples in the default rough sequence order from the BibleBooksCodes module.
+                Each tuple contains ( BBB, filename ) not including the folder path.
+        """
         resultList = []
         for bookReferenceCode,derivedFilename in self.getDerivedFilenameTuples():
             derivedFilepath = os.path.join( self.folder, derivedFilename )
@@ -296,30 +345,40 @@ class USFMFilenames:
             if os.access( derivedFilepath, os.R_OK ):
                 if doubleCheck:
                     USFMId = self.getUSFMIDFromFile( self.folder, derivedFilename, derivedFilepath )
-                    BBB = self._BibleBooksCodes.getBBBFromUSFM( USFMId )
+                    if USFMId is None:
+                        logging.error( "getConfirmedFilenameTuples: internal USFM Id missing for {} in {}".format( bookReferenceCode, derivedFilename ) )
+                        continue # so it doesn't get added
+                    BBB = self._BibleBooksCodesObject.getBBBFromUSFM( USFMId )
                     if BBB != bookReferenceCode:
                         logging.error( "getConfirmedFilenameTuples: internal USFM Id ({}{}) doesn't match {} for {}".format( USFMId, '' if BBB==USFMId else " -> {}".format(BBB), bookReferenceCode, derivedFilename ) )
                         continue # so it doesn't get added
                 self.doListAppend( bookReferenceCode, derivedFilename, resultList, "getConfirmedFilenameTuples" )
         self.lastTupleList = resultList
-        return resultList
+        return resultList # No need to sort these because the derived ones are sorted
     # end of getConfirmedFilenameTuples
 
 
     def getPossibleFilenameTuplesExt( self ):
-        """Return a list of 2-tuples of BBB, filenames which contain book codes in the filenames (external)."""
+        """ Return a list of filename tuples just derived from the list of files in the folder,
+                i.e., look only external at the filenames.
+            The result is a list of 2-tuples in the default rough sequence order from the BibleBooksCodes module.
+                Each tuple contains ( BBB, filename ) not including the folder path.
+        """
         resultList = []
         for possibleFilename in self.fileList:
             for USFMBookCode,USFMDigits,bookReferenceCode in self._USFMBooksCodeNumberTriples:
                 if USFMBookCode in possibleFilename or USFMBookCode.upper() in possibleFilename:
-                    self.doListAppend( self._BibleBooksCodes.getBBBFromUSFM( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
+                    self.doListAppend( self._BibleBooksCodesObject.getBBBFromUSFM( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
         self.lastTupleList = resultList
-        return resultList
+        return self._BibleBooksCodesObject.getSequenceList( resultList )
     # end of getPossibleFilenameTuplesExt
 
 
     def getPossibleFilenameTuplesInt( self ):
-        """Return a list of 2-tuples of BBB, filenames which contain book codes internally on the \\id line."""
+        """Return a list of filename tuples which contain book codes internally on the \\id line.
+            The result is a list of 2-tuples in the default rough sequence order from the BibleBooksCodes module.
+                Each tuple contains ( BBB, filename ) not including the folder path.
+        """
         resultList = []
         if len( self.BBBDictionary) >= len( self.fileDictionary ): # Choose the longest one
             for BBB in self.BBBDictionary.keys():
@@ -329,13 +388,15 @@ class USFMFilenames:
                 assert( folder == self.folder )
                 self.doListAppend( self.fileDictionary( (folder,filename,) ), filename, resultList, "getPossibleFilenameTuplesInt2" )
         self.lastTupleList = resultList
-        return resultList
+        return self._BibleBooksCodesObject.getSequenceList( resultList )
     # end of getPossibleFilenameTuplesInt
 
 
     def getMaximumPossibleFilenameTuples( self ):
         """ Find the method that finds the maximum number of USFM Bible files.
-                Return a list of 2-tuples with BBB and the filename. """
+            The result is a list of 2-tuples in the default rough sequence order from the BibleBooksCodes module.
+                Each tuple contains ( BBB, filename ) not including the folder path.
+        """
         resultString, resultList = "Confirmed", self.getConfirmedFilenameTuples()
         resultListExt = self.getPossibleFilenameTuplesExt()
         if len(resultListExt)>len(resultList):
@@ -345,13 +406,14 @@ class USFMFilenames:
             resultString, resultList = "Internal", resultListInt
         if Globals.verbosityLevel > 2: print( "getMaximumPossibleFilenameTuples: using {}".format( resultString ) )
         self.lastTupleList = resultList
-        return resultList
+        return resultList # No need to sort these, coz all the above calls produce sorted results
     # end of getMaximumPossibleFilenameTuples
 
 
     def getUnusedFilenames( self ):
-        """Return a list of filenames which didn't seem to be USFM files.
-            NOTE: This list depends on which "find" routine above was run last! """
+        """ Return a list of filenames which didn't seem to be USFM files.
+            NOTE: This list depends on which "find" routine above was run last!
+            The order of the filenames in the list has no meaning. """
         folderFilenames = os.listdir( self.folder )
         if self.lastTupleList is None: return None # Not sure what list they're after here
         #print( len(self.lastTupleList), self.lastTupleList )
@@ -363,7 +425,7 @@ class USFMFilenames:
 
 
     def getSSFFilenames( self, searchAbove=False, auto=True ):
-        """Return a list of full pathnames of .ssf files in the folder.
+        """ Return a list of full pathnames of .ssf files in the folder.
             NOTE: USFM projects don't usually have the .ssf files in the project folder,
                 but 'backed-up' projects often do.
             If searchAbove is set to True and no ssf files are found in the given folder,
@@ -407,11 +469,8 @@ def demo():
 
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
-    testFolder = 'Tests/DataFilesForTests/USFMTest/' # This is a RELATIVE path
-    #testFolder = '/home/myFolder' # You can put your test folder here
-    name, encoding, testFolder = "WEB", "utf-8", "/mnt/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/" # You can put your test folder here
-    #name, encoding, testFolder = "KS", "utf-8", "/mnt/Work/Bibles/Formats/USFM/PrivateUSFMTestData/KS/" # You can put your test folder here
-    name, encoding, testFolder = "MS", "utf-8", "/mnt/Data/Matigsalug/Scripture/MBTBC/" # You can put your test folder here
+    testFolder = "Tests/DataFilesForTests/USFMTest/" # This is a RELATIVE path
+    #testFolder = "/home/myFolder" # You can put your test folder here
     if os.access( testFolder, os.R_OK ):
         UFns = USFMFilenames( testFolder )
         print( UFns )

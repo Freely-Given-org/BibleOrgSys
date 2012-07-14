@@ -1,6 +1,6 @@
 # BibleBooksCodes.rnc           Relax NG Compact Syntax schema file
-#   Version 0.60
-#   Last modified: 2012-05-23
+#   Version 0.64
+#   Last modified: 2012-07-13 by RJH
 #
 # On Linux, to convert to RNG, use
 #       trang BibleBooksCodes.rnc DerivedFiles/BibleBooksCodes.rng
@@ -46,6 +46,7 @@ BibleBookCodes = element BibleBookCodes
 {   element nameEnglish { xsd:string { minLength="3" maxLength="140" } },
     element referenceAbbreviation { xsd:string { length="3" } },
     element referenceNumber { xsd:positiveInteger { totalDigits="3" minInclusive="1" maxExclusive="245" } },
+    element sequenceNumber { xsd:positiveInteger { totalDigits="3" minInclusive="1" maxExclusive="999" } },
     element expectedChapters { xsd:string { minLength="1" maxLength="7" } }?,
     element SBLAbbreviation { xsd:string { minLength="2" maxLength="8" } }?,
     element OSISAbbreviation { xsd:string { minLength="2" maxLength="7" } }?,
@@ -54,6 +55,7 @@ BibleBookCodes = element BibleBookCodes
     element USFMAbbreviation { xsd:string { length="3" } }?,
     element USFMNumber { xsd:string { length="2" } }?,
     element USXNumber { xsd:positiveInteger { length="3" totalDigits="3" minInclusive="1" maxExclusive="115" } }?,
+    element BibleditNumber { xsd:positiveInteger { length="2" totalDigits="2" minInclusive="1" maxExclusive="89" } }?,
     element NETBibleAbbreviation { xsd:string { length="3" } }?,
     element ByzantineAbbreviation { xsd:string { minLength="2" maxLength="4" } }?,
     element possibleAlternativeBooks { xsd:string { minLength="3" maxLength="19" } }?
