@@ -95,16 +95,15 @@ class USFMFilenames:
                     BibleditSignature = BibleditDigits + '_'
                     if BibleditSignature in foundFileBit and foundFileBit in BibleditFilenames:
                         digitsIndex = foundFileBit.index( BibleditSignature )
-                        assert( digitsIndex == 0 )
-                        assert( foundExtBit == '.usfm' )
-                        self.languageIndex = None
-                        self.languageCode = None
-                        self.digitsIndex = digitsIndex
-                        self.USFMBookCodeIndex = None
-                        self.pattern = "Dd_BEName"
-                        self.fileExtension = foundExtBit[1:]
-                        matched = True
-                        break
+                        if digitsIndex == 0 and foundExtBit == '.usfm':
+                            self.languageIndex = None
+                            self.languageCode = None
+                            self.digitsIndex = digitsIndex
+                            self.USFMBookCodeIndex = None
+                            self.pattern = "Dd_BEName"
+                            self.fileExtension = foundExtBit[1:]
+                            matched = True
+                            break
                 if matched: break
             if matched: break
             # Didn't find a Bibledit filename -- maybe it's a Paratext style or some kind of freestyle
