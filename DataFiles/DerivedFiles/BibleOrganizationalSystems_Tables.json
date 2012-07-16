@@ -125,7 +125,7 @@
         "REV"
       ], 
       "publicationDate": "1979", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "translation", 
       "bookOrderSystem": "EuropeanBible", 
@@ -294,7 +294,7 @@
         "REV"
       ], 
       "publicationDate": "1996", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "translation", 
       "bookOrderSystem": "EuropeanBible", 
@@ -416,6 +416,18 @@
       "type": "revision", 
       "bookOrderSystem": "EuropeanBible", 
       "booksNamesSystem": "eng_traditional"
+    }, 
+    "ORIGINAL_edition": {
+      "languageCode": "???", 
+      "type": "edition", 
+      "name": [
+        "Original Hebrew and Greek"
+      ], 
+      "referenceAbbreviation": "ORIGINAL", 
+      "usesText": [
+        "HEB", 
+        "NTG"
+      ]
     }, 
     "MB_translation": {
       "languageCode": "eng", 
@@ -608,7 +620,7 @@
         "REV"
       ], 
       "publicationDate": "1996", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "translation", 
       "bookOrderSystem": "EuropeanBible", 
@@ -667,7 +679,7 @@
       "derivedFrom": [
         "BNTG-10"
       ], 
-      "publicationDate": "xxx", 
+      "publicationDate": "???", 
       "referenceAbbreviation": "BNTG-11", 
       "type": "edition", 
       "usesText": [
@@ -752,7 +764,7 @@
         "REV"
       ], 
       "publicationDate": "1971", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "translation", 
       "bookOrderSystem": "EuropeanBible", 
@@ -794,7 +806,7 @@
         "REV"
       ], 
       "publicationDate": "1994", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "translation", 
       "bookOrderSystem": "EuropeanBible", 
@@ -932,7 +944,7 @@
         "REV"
       ], 
       "publicationDate": "1999", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "translation", 
       "bookOrderSystem": "EuropeanBible", 
@@ -1088,7 +1100,7 @@
         "REV"
       ], 
       "booksNamesSystem": "eng_traditional", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "translation", 
       "bookOrderSystem": "EuropeanBible"
@@ -1181,7 +1193,7 @@
         "REV"
       ], 
       "publicationDate": "2005", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "translation", 
       "bookOrderSystem": "EuropeanBible", 
@@ -1262,7 +1274,7 @@
         "REV"
       ], 
       "publicationDate": "2005", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "translation", 
       "bookOrderSystem": "EuropeanBible", 
@@ -1294,6 +1306,16 @@
       "referenceAbbreviation": "ENTG-1", 
       "type": "edition", 
       "publicationDate": "1 March 1516"
+    }, 
+    "KJV-1795_edition": {
+      "languageCode": "eng", 
+      "type": "edition", 
+      "name": [
+        "King James Version", 
+        "Also known as \"The Murderers Bible\""
+      ], 
+      "referenceAbbreviation": "KJV-1795", 
+      "publicationDate": "1795"
     }, 
     "VUL_translation": {
       "languageCode": "lat", 
@@ -1506,7 +1528,7 @@
         "REV"
       ], 
       "publicationDate": "1996", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "translation", 
       "bookOrderSystem": "EuropeanBible", 
@@ -1635,7 +1657,7 @@
         "REV"
       ], 
       "publicationDate": "2004", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "translation", 
       "bookOrderSystem": "EuropeanBible", 
@@ -1718,11 +1740,215 @@
         "REV"
       ], 
       "publicationDate": "1976", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "translation", 
       "bookOrderSystem": "EuropeanBible", 
       "booksNamesSystem": "eng_traditional"
+    }, 
+    "GENERIC-ENG_translation": {
+      "languageCode": "eng", 
+      "name": [
+        "Generic English with Deuterocanon"
+      ], 
+      "referenceAbbreviation": "GENERIC-ENG", 
+      "includesBooks": [
+        "PRF", 
+        "ACK", 
+        "INT", 
+        "FRT", 
+        "TOC", 
+        "MOS", 
+        "GEN", 
+        "EXO", 
+        "LEV", 
+        "NUM", 
+        "DEU", 
+        "JOS", 
+        "JDG", 
+        "RUT", 
+        "SAM", 
+        "SA1", 
+        "SA2", 
+        "KGS", 
+        "KI1", 
+        "KI2", 
+        "CHR", 
+        "CH1", 
+        "CH2", 
+        "EZR", 
+        "EZN", 
+        "NEH", 
+        "EST", 
+        "ESA", 
+        "ESC", 
+        "JOB", 
+        "PSA", 
+        "PB1", 
+        "PB2", 
+        "PB3", 
+        "PB4", 
+        "PB5", 
+        "PSB", 
+        "PS2", 
+        "PS3", 
+        "PSS", 
+        "PRO", 
+        "ECC", 
+        "SNG", 
+        "ISA", 
+        "JER", 
+        "LAM", 
+        "EZK", 
+        "DAN", 
+        "DAG", 
+        "DAA", 
+        "DAC", 
+        "P12", 
+        "HOS", 
+        "JOL", 
+        "AMO", 
+        "OBA", 
+        "JNA", 
+        "MIC", 
+        "NAH", 
+        "HAB", 
+        "ZEP", 
+        "HAG", 
+        "ZEC", 
+        "MAL", 
+        "TOB", 
+        "JDT", 
+        "ESG", 
+        "WIS", 
+        "SIR", 
+        "BAR", 
+        "LJB", 
+        "LBA", 
+        "LB2", 
+        "BA2", 
+        "BA3", 
+        "BA4", 
+        "LJE", 
+        "PAZ", 
+        "SUS", 
+        "BEL", 
+        "MAC", 
+        "MA1", 
+        "MA2", 
+        "MA3", 
+        "MA4", 
+        "MA5", 
+        "GES", 
+        "LES", 
+        "EZA", 
+        "EZ5", 
+        "EZ6", 
+        "MAN", 
+        "ODE", 
+        "PSO", 
+        "PJE", 
+        "WSI", 
+        "TTP", 
+        "JUB", 
+        "ENO", 
+        "EN2", 
+        "REP", 
+        "CL1", 
+        "CL2", 
+        "SHE", 
+        "DID", 
+        "MAT", 
+        "MRK", 
+        "LUK", 
+        "JHN", 
+        "LKA", 
+        "ACT", 
+        "ROM", 
+        "CO1", 
+        "CO2", 
+        "GAL", 
+        "EPH", 
+        "PHP", 
+        "COL", 
+        "TH1", 
+        "TH2", 
+        "TI1", 
+        "TI2", 
+        "TIT", 
+        "PHM", 
+        "HEB", 
+        "JAM", 
+        "PE1", 
+        "PE2", 
+        "JN1", 
+        "JN2", 
+        "JN3", 
+        "JDE", 
+        "REV", 
+        "LAO", 
+        "COP", 
+        "CO3", 
+        "EUT", 
+        "DOJ", 
+        "LBB", 
+        "MQ1", 
+        "MQ2", 
+        "MQ3", 
+        "TAD", 
+        "LAE", 
+        "ASS", 
+        "TSO", 
+        "TJB", 
+        "MAI", 
+        "AEZ", 
+        "EZT", 
+        "EUP", 
+        "PEU", 
+        "VAM", 
+        "LAR", 
+        "ARI", 
+        "ABL", 
+        "ART", 
+        "CLM", 
+        "ELM", 
+        "HRE", 
+        "LPR", 
+        "EPL", 
+        "TEO", 
+        "RVE", 
+        "GHE", 
+        "GTR", 
+        "GMA", 
+        "GMC", 
+        "GTW", 
+        "GPH", 
+        "GTH", 
+        "GJU", 
+        "GBA", 
+        "AJA", 
+        "WJC", 
+        "GLS", 
+        "CNC", 
+        "TPC", 
+        "IXN", 
+        "IXP", 
+        "IXT", 
+        "BAK", 
+        "MAP", 
+        "XXA", 
+        "XXB", 
+        "XXC", 
+        "XXD", 
+        "XXE", 
+        "XXF", 
+        "XXG"
+      ], 
+      "booksNamesSystem": "eng_traditional", 
+      "versificationSystem": "RSV52", 
+      "punctuationSystem": "None", 
+      "type": "translation", 
+      "bookOrderSystem": "EuropeanBible"
     }, 
     "ASV_translation": {
       "languageCode": "eng", 
@@ -2030,7 +2256,7 @@
         "REV"
       ], 
       "publicationDate": "2000", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "translation", 
       "bookOrderSystem": "EuropeanBible", 
@@ -2044,7 +2270,7 @@
       "derivedFrom": [
         "BNTG-2"
       ], 
-      "publicationDate": "xxx", 
+      "publicationDate": "???", 
       "referenceAbbreviation": "BNTG-3", 
       "type": "edition", 
       "usesText": [
@@ -2196,6 +2422,289 @@
       "bookOrderSystem": "EuropeanBible", 
       "booksNamesSystem": "eng_traditional"
     }, 
+    "GENERIC_translation": {
+      "languageCode": "???", 
+      "name": [
+        "Generic with Deuterocanon"
+      ], 
+      "referenceAbbreviation": "GENERIC", 
+      "includesBooks": [
+        "PRF", 
+        "ACK", 
+        "INT", 
+        "FRT", 
+        "TOC", 
+        "MOS", 
+        "GEN", 
+        "EXO", 
+        "LEV", 
+        "NUM", 
+        "DEU", 
+        "JOS", 
+        "JDG", 
+        "RUT", 
+        "SAM", 
+        "SA1", 
+        "SA2", 
+        "KGS", 
+        "KI1", 
+        "KI2", 
+        "CHR", 
+        "CH1", 
+        "CH2", 
+        "EZR", 
+        "EZN", 
+        "NEH", 
+        "EST", 
+        "ESA", 
+        "ESC", 
+        "JOB", 
+        "PSA", 
+        "PB1", 
+        "PB2", 
+        "PB3", 
+        "PB4", 
+        "PB5", 
+        "PSB", 
+        "PS2", 
+        "PS3", 
+        "PSS", 
+        "PRO", 
+        "ECC", 
+        "SNG", 
+        "ISA", 
+        "JER", 
+        "LAM", 
+        "EZK", 
+        "DAN", 
+        "DAG", 
+        "DAA", 
+        "DAC", 
+        "P12", 
+        "HOS", 
+        "JOL", 
+        "AMO", 
+        "OBA", 
+        "JNA", 
+        "MIC", 
+        "NAH", 
+        "HAB", 
+        "ZEP", 
+        "HAG", 
+        "ZEC", 
+        "MAL", 
+        "TOB", 
+        "JDT", 
+        "ESG", 
+        "WIS", 
+        "SIR", 
+        "BAR", 
+        "LJB", 
+        "LBA", 
+        "LB2", 
+        "BA2", 
+        "BA3", 
+        "BA4", 
+        "LJE", 
+        "PAZ", 
+        "SUS", 
+        "BEL", 
+        "MAC", 
+        "MA1", 
+        "MA2", 
+        "MA3", 
+        "MA4", 
+        "MA5", 
+        "GES", 
+        "LES", 
+        "EZA", 
+        "EZ5", 
+        "EZ6", 
+        "MAN", 
+        "ODE", 
+        "PSO", 
+        "PJE", 
+        "WSI", 
+        "TTP", 
+        "JUB", 
+        "ENO", 
+        "EN2", 
+        "REP", 
+        "CL1", 
+        "CL2", 
+        "SHE", 
+        "DID", 
+        "MAT", 
+        "MRK", 
+        "LUK", 
+        "JHN", 
+        "LKA", 
+        "ACT", 
+        "ROM", 
+        "CO1", 
+        "CO2", 
+        "GAL", 
+        "EPH", 
+        "PHP", 
+        "COL", 
+        "TH1", 
+        "TH2", 
+        "TI1", 
+        "TI2", 
+        "TIT", 
+        "PHM", 
+        "HEB", 
+        "JAM", 
+        "PE1", 
+        "PE2", 
+        "JN1", 
+        "JN2", 
+        "JN3", 
+        "JDE", 
+        "REV", 
+        "LAO", 
+        "COP", 
+        "CO3", 
+        "EUT", 
+        "DOJ", 
+        "LBB", 
+        "MQ1", 
+        "MQ2", 
+        "MQ3", 
+        "TAD", 
+        "LAE", 
+        "ASS", 
+        "TSO", 
+        "TJB", 
+        "MAI", 
+        "AEZ", 
+        "EZT", 
+        "EUP", 
+        "PEU", 
+        "VAM", 
+        "LAR", 
+        "ARI", 
+        "ABL", 
+        "ART", 
+        "CLM", 
+        "ELM", 
+        "HRE", 
+        "LPR", 
+        "EPL", 
+        "TEO", 
+        "RVE", 
+        "GHE", 
+        "GTR", 
+        "GMA", 
+        "GMC", 
+        "GTW", 
+        "GPH", 
+        "GTH", 
+        "GJU", 
+        "GBA", 
+        "AJA", 
+        "WJC", 
+        "GLS", 
+        "CNC", 
+        "TPC", 
+        "IXN", 
+        "IXP", 
+        "IXT", 
+        "BAK", 
+        "MAP", 
+        "XXA", 
+        "XXB", 
+        "XXC", 
+        "XXD", 
+        "XXE", 
+        "XXF", 
+        "XXG"
+      ], 
+      "versificationSystem": "RSV52", 
+      "punctuationSystem": "None", 
+      "type": "translation", 
+      "bookOrderSystem": "EuropeanBible"
+    }, 
+    "GENERIC-66-ENG_translation": {
+      "languageCode": "eng", 
+      "name": [
+        "Generic English Protestant"
+      ], 
+      "referenceAbbreviation": "GENERIC-66-ENG", 
+      "includesBooks": [
+        "GEN", 
+        "EXO", 
+        "LEV", 
+        "NUM", 
+        "DEU", 
+        "JOS", 
+        "JDG", 
+        "RUT", 
+        "SA1", 
+        "SA2", 
+        "KI1", 
+        "KI2", 
+        "CH1", 
+        "CH2", 
+        "EZR", 
+        "NEH", 
+        "EST", 
+        "JOB", 
+        "PSA", 
+        "PRO", 
+        "ECC", 
+        "SNG", 
+        "ISA", 
+        "JER", 
+        "LAM", 
+        "EZK", 
+        "DAN", 
+        "HOS", 
+        "JOL", 
+        "AMO", 
+        "OBA", 
+        "JNA", 
+        "MIC", 
+        "NAH", 
+        "HAB", 
+        "ZEP", 
+        "HAG", 
+        "ZEC", 
+        "MAL", 
+        "MAT", 
+        "MRK", 
+        "LUK", 
+        "JHN", 
+        "ACT", 
+        "ROM", 
+        "CO1", 
+        "CO2", 
+        "GAL", 
+        "EPH", 
+        "PHP", 
+        "COL", 
+        "TH1", 
+        "TH2", 
+        "TI1", 
+        "TI2", 
+        "TIT", 
+        "PHM", 
+        "HEB", 
+        "JAM", 
+        "PE1", 
+        "PE2", 
+        "JN1", 
+        "JN2", 
+        "JN3", 
+        "JDE", 
+        "REV"
+      ], 
+      "booksNamesSystem": "eng_traditional", 
+      "versificationSystem": "RSV52", 
+      "punctuationSystem": "None", 
+      "type": "translation", 
+      "bookOrderSystem": "EuropeanBible"
+    }, 
     "BNTG-6_edition": {
       "languageCode": "grc", 
       "name": [
@@ -2204,7 +2713,7 @@
       "derivedFrom": [
         "BNTG-5"
       ], 
-      "publicationDate": "xxx", 
+      "publicationDate": "???", 
       "referenceAbbreviation": "BNTG-6", 
       "type": "edition", 
       "usesText": [
@@ -2409,7 +2918,7 @@
       "derivedFrom": [
         "SNTG-1"
       ], 
-      "publicationDate": "xxx", 
+      "publicationDate": "???", 
       "referenceAbbreviation": "SNTG-2", 
       "type": "edition", 
       "usesText": [
@@ -2647,7 +3156,7 @@
       ], 
       "referenceAbbreviation": "MKJV", 
       "publicationDate": "1999", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "revision", 
       "bookOrderSystem": "EuropeanBible", 
@@ -2800,7 +3309,7 @@
         "REV"
       ], 
       "publicationDate": "1993", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "translation", 
       "bookOrderSystem": "EuropeanBible", 
@@ -2884,7 +3393,7 @@
         "REV"
       ], 
       "publicationDate": "1971", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "revision", 
       "bookOrderSystem": "EuropeanBible", 
@@ -2990,7 +3499,7 @@
         "REV"
       ], 
       "publicationDate": "1963", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "revision", 
       "bookOrderSystem": "EuropeanBible", 
@@ -3074,7 +3583,7 @@
         "REV"
       ], 
       "publicationDate": "1994", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "translation", 
       "bookOrderSystem": "EuropeanBible", 
@@ -3154,7 +3663,7 @@
         "JDE", 
         "REV"
       ], 
-      "publicationDate": "xxx", 
+      "publicationDate": "???", 
       "versificationSystem": "GNT", 
       "punctuationSystem": "English", 
       "type": "translation", 
@@ -3236,7 +3745,7 @@
         "REV"
       ], 
       "publicationDate": "1970", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "translation", 
       "bookOrderSystem": "EuropeanBible", 
@@ -3250,7 +3759,7 @@
       "derivedFrom": [
         "BNTG-3"
       ], 
-      "publicationDate": "xxx", 
+      "publicationDate": "???", 
       "referenceAbbreviation": "BNTG-4", 
       "type": "edition", 
       "usesText": [
@@ -3335,7 +3844,7 @@
         "REV"
       ], 
       "publicationDate": "2007", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "translation", 
       "bookOrderSystem": "EuropeanBible", 
@@ -3389,7 +3898,7 @@
         "MAL"
       ], 
       "publicationDate": "1995", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "translation", 
       "bookOrderSystem": "EuropeanBible", 
@@ -3470,7 +3979,7 @@
         "REV"
       ], 
       "publicationDate": "2004", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "translation", 
       "bookOrderSystem": "EuropeanBible", 
@@ -3509,7 +4018,7 @@
       "derivedFrom": [
         "BNTG-8"
       ], 
-      "publicationDate": "xxx", 
+      "publicationDate": "???", 
       "referenceAbbreviation": "BNTG-9", 
       "type": "edition", 
       "usesText": [
@@ -3594,7 +4103,7 @@
         "REV"
       ], 
       "publicationDate": "1983", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "translation", 
       "bookOrderSystem": "EuropeanBible", 
@@ -3678,7 +4187,7 @@
         "REV"
       ], 
       "publicationDate": "1989", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "translation", 
       "bookOrderSystem": "EuropeanBible", 
@@ -3717,7 +4226,7 @@
       "derivedFrom": [
         "BNTG-7"
       ], 
-      "publicationDate": "xxx", 
+      "publicationDate": "???", 
       "referenceAbbreviation": "BNTG-8", 
       "type": "edition", 
       "usesText": [
@@ -3826,7 +4335,7 @@
       "derivedFrom": [
         "BNTG-1"
       ], 
-      "publicationDate": "xxx", 
+      "publicationDate": "???", 
       "referenceAbbreviation": "BNTG-2", 
       "type": "edition", 
       "usesText": [
@@ -3908,21 +4417,106 @@
         "REV"
       ], 
       "publicationDate": "1998", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "translation", 
       "bookOrderSystem": "EuropeanBible", 
       "booksNamesSystem": "eng_traditional"
     }, 
-    "KJV-1795_edition": {
+    "GENERIC-81-ENG_translation": {
       "languageCode": "eng", 
-      "type": "edition", 
       "name": [
-        "King James Version", 
-        "Also known as \"The Murderers Bible\""
+        "Generic English with Deuterocanon"
       ], 
-      "referenceAbbreviation": "KJV-1795", 
-      "publicationDate": "1795"
+      "referenceAbbreviation": "GENERIC-81-ENG", 
+      "includesBooks": [
+        "GEN", 
+        "EXO", 
+        "LEV", 
+        "NUM", 
+        "DEU", 
+        "JOS", 
+        "JDG", 
+        "RUT", 
+        "SA1", 
+        "SA2", 
+        "KI1", 
+        "KI2", 
+        "CH1", 
+        "CH2", 
+        "EZR", 
+        "NEH", 
+        "EST", 
+        "JOB", 
+        "PSA", 
+        "PRO", 
+        "ECC", 
+        "SNG", 
+        "ISA", 
+        "JER", 
+        "LAM", 
+        "EZK", 
+        "DAN", 
+        "HOS", 
+        "JOL", 
+        "AMO", 
+        "OBA", 
+        "JNA", 
+        "MIC", 
+        "NAH", 
+        "HAB", 
+        "ZEP", 
+        "HAG", 
+        "ZEC", 
+        "MAL", 
+        "TOB", 
+        "JDT", 
+        "GES", 
+        "WIS", 
+        "SIR", 
+        "BAR", 
+        "LJE", 
+        "S3Y", 
+        "SUS", 
+        "BEL", 
+        "MA1", 
+        "MA2", 
+        "ES1", 
+        "ES2", 
+        "MAN", 
+        "MAT", 
+        "MRK", 
+        "LUK", 
+        "JHN", 
+        "ACT", 
+        "ROM", 
+        "CO1", 
+        "CO2", 
+        "GAL", 
+        "EPH", 
+        "PHP", 
+        "COL", 
+        "TH1", 
+        "TH2", 
+        "TI1", 
+        "TI2", 
+        "TIT", 
+        "PHM", 
+        "HEB", 
+        "JAM", 
+        "PE1", 
+        "PE2", 
+        "JN1", 
+        "JN2", 
+        "JN3", 
+        "JDE", 
+        "REV"
+      ], 
+      "booksNamesSystem": "eng_traditional", 
+      "versificationSystem": "RSV52", 
+      "punctuationSystem": "None", 
+      "type": "translation", 
+      "bookOrderSystem": "EuropeanBible"
     }, 
     "KJV-1611_translation": {
       "languageCode": "eng", 
@@ -4131,7 +4725,7 @@
         "REV"
       ], 
       "publicationDate": "1989", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "translation", 
       "bookOrderSystem": "EuropeanBible", 
@@ -4241,7 +4835,7 @@
         "REV"
       ], 
       "publicationDate": "1995", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "translation", 
       "bookOrderSystem": "EuropeanBible", 
@@ -4254,7 +4848,7 @@
       ], 
       "referenceAbbreviation": "HSE", 
       "publicationDate": "2001", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "revision", 
       "bookOrderSystem": "EuropeanBible", 
@@ -4315,7 +4909,7 @@
         "JDE", 
         "REV"
       ], 
-      "publicationDate": "xxx", 
+      "publicationDate": "???", 
       "versificationSystem": "KJV", 
       "punctuationSystem": "English", 
       "type": "revision", 
@@ -4362,7 +4956,7 @@
       ], 
       "referenceAbbreviation": "SNTG-1", 
       "type": "edition", 
-      "publicationDate": "xxx"
+      "publicationDate": "???"
     }, 
     "CEV_translation": {
       "languageCode": "eng", 
@@ -4439,7 +5033,7 @@
         "REV"
       ], 
       "publicationDate": "1995", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "translation", 
       "bookOrderSystem": "EuropeanBible", 
@@ -4523,7 +5117,7 @@
         "REV"
       ], 
       "publicationDate": "2001", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "revision", 
       "bookOrderSystem": "EuropeanBible", 
@@ -4692,7 +5286,7 @@
         "REV"
       ], 
       "publicationDate": "1989", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "translation", 
       "bookOrderSystem": "EuropeanBible", 
@@ -4809,7 +5403,7 @@
         "REV"
       ], 
       "publicationDate": "2002", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "translation", 
       "bookOrderSystem": "EuropeanBible", 
@@ -4823,7 +5417,7 @@
       "derivedFrom": [
         "SNTG-4"
       ], 
-      "publicationDate": "xxx", 
+      "publicationDate": "???", 
       "referenceAbbreviation": "BNTG-1", 
       "type": "edition", 
       "usesText": [
@@ -4838,7 +5432,7 @@
       "derivedFrom": [
         "BNTG-6"
       ], 
-      "publicationDate": "xxx", 
+      "publicationDate": "???", 
       "referenceAbbreviation": "BNTG-7", 
       "type": "edition", 
       "usesText": [
@@ -4955,7 +5549,7 @@
       "derivedFrom": [
         "BNTG-9"
       ], 
-      "publicationDate": "xxx", 
+      "publicationDate": "???", 
       "referenceAbbreviation": "BNTG-10", 
       "type": "edition", 
       "usesText": [
@@ -5037,7 +5631,7 @@
         "REV"
       ], 
       "publicationDate": "1978", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "translation", 
       "bookOrderSystem": "EuropeanBible", 
@@ -5220,7 +5814,7 @@
         "REV"
       ], 
       "publicationDate": "2011", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "revision", 
       "bookOrderSystem": "EuropeanBible", 
@@ -5262,7 +5856,7 @@
         "REV"
       ], 
       "publicationDate": "1963", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "translation", 
       "bookOrderSystem": "EuropeanBible", 
@@ -5389,7 +5983,7 @@
       "derivedFrom": [
         "BNTG-4"
       ], 
-      "publicationDate": "xxx", 
+      "publicationDate": "???", 
       "referenceAbbreviation": "BNTG-5", 
       "type": "edition", 
       "usesText": [
@@ -5510,7 +6104,7 @@
         "REV"
       ], 
       "publicationDate": "1973", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "translation", 
       "bookOrderSystem": "EuropeanBible", 
@@ -5629,6 +6223,100 @@
       "bookOrderSystem": "EuropeanBible", 
       "booksNamesSystem": "eng_traditional"
     }, 
+    "GENERIC-81_translation": {
+      "languageCode": "???", 
+      "name": [
+        "Generic with Deuterocanon"
+      ], 
+      "referenceAbbreviation": "GENERIC-81", 
+      "includesBooks": [
+        "GEN", 
+        "EXO", 
+        "LEV", 
+        "NUM", 
+        "DEU", 
+        "JOS", 
+        "JDG", 
+        "RUT", 
+        "SA1", 
+        "SA2", 
+        "KI1", 
+        "KI2", 
+        "CH1", 
+        "CH2", 
+        "EZR", 
+        "NEH", 
+        "EST", 
+        "JOB", 
+        "PSA", 
+        "PRO", 
+        "ECC", 
+        "SNG", 
+        "ISA", 
+        "JER", 
+        "LAM", 
+        "EZK", 
+        "DAN", 
+        "HOS", 
+        "JOL", 
+        "AMO", 
+        "OBA", 
+        "JNA", 
+        "MIC", 
+        "NAH", 
+        "HAB", 
+        "ZEP", 
+        "HAG", 
+        "ZEC", 
+        "MAL", 
+        "TOB", 
+        "JDT", 
+        "GES", 
+        "WIS", 
+        "SIR", 
+        "BAR", 
+        "LJE", 
+        "S3Y", 
+        "SUS", 
+        "BEL", 
+        "MA1", 
+        "MA2", 
+        "ES1", 
+        "ES2", 
+        "MAN", 
+        "MAT", 
+        "MRK", 
+        "LUK", 
+        "JHN", 
+        "ACT", 
+        "ROM", 
+        "CO1", 
+        "CO2", 
+        "GAL", 
+        "EPH", 
+        "PHP", 
+        "COL", 
+        "TH1", 
+        "TH2", 
+        "TI1", 
+        "TI2", 
+        "TIT", 
+        "PHM", 
+        "HEB", 
+        "JAM", 
+        "PE1", 
+        "PE2", 
+        "JN1", 
+        "JN2", 
+        "JN3", 
+        "JDE", 
+        "REV"
+      ], 
+      "versificationSystem": "RSV52", 
+      "punctuationSystem": "None", 
+      "type": "translation", 
+      "bookOrderSystem": "EuropeanBible"
+    }, 
     "TYN-2nd_edition": {
       "languageCode": "eng", 
       "name": [
@@ -5732,86 +6420,6 @@
       "bookOrderSystem": "EuropeanBible", 
       "booksNamesSystem": "eng_traditional"
     }, 
-    "DUMMY_translation": {
-      "languageCode": "eng", 
-      "name": [
-        "Unknown"
-      ], 
-      "referenceAbbreviation": "DUMMY", 
-      "includesBooks": [
-        "GEN", 
-        "EXO", 
-        "LEV", 
-        "NUM", 
-        "DEU", 
-        "JOS", 
-        "JDG", 
-        "RUT", 
-        "SA1", 
-        "SA2", 
-        "KI1", 
-        "KI2", 
-        "CH1", 
-        "CH2", 
-        "EZR", 
-        "NEH", 
-        "EST", 
-        "JOB", 
-        "PSA", 
-        "PRO", 
-        "ECC", 
-        "SNG", 
-        "ISA", 
-        "JER", 
-        "LAM", 
-        "EZK", 
-        "DAN", 
-        "HOS", 
-        "JOL", 
-        "AMO", 
-        "OBA", 
-        "JNA", 
-        "MIC", 
-        "NAH", 
-        "HAB", 
-        "ZEP", 
-        "HAG", 
-        "ZEC", 
-        "MAL", 
-        "MAT", 
-        "MRK", 
-        "LUK", 
-        "JHN", 
-        "ACT", 
-        "ROM", 
-        "CO1", 
-        "CO2", 
-        "GAL", 
-        "EPH", 
-        "PHP", 
-        "COL", 
-        "TH1", 
-        "TH2", 
-        "TI1", 
-        "TI2", 
-        "TIT", 
-        "PHM", 
-        "HEB", 
-        "JAM", 
-        "PE1", 
-        "PE2", 
-        "JN1", 
-        "JN2", 
-        "JN3", 
-        "JDE", 
-        "REV"
-      ], 
-      "booksNamesSystem": "None", 
-      "versificationSystem": "RSV52", 
-      "punctuationSystem": "None", 
-      "type": "translation", 
-      "bookOrderSystem": "EuropeanBible"
-    }, 
     "MBT-MB-2005_edition": {
       "languageCode": "mbt", 
       "name": [
@@ -5875,7 +6483,7 @@
         "REV"
       ], 
       "publicationDate": "1966", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "translation", 
       "bookOrderSystem": "EuropeanBible", 
@@ -6003,11 +6611,90 @@
         "REV"
       ], 
       "publicationDate": "1991", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "translation", 
       "bookOrderSystem": "EuropeanBible", 
       "booksNamesSystem": "eng_traditional"
+    }, 
+    "GENERIC-66_translation": {
+      "languageCode": "???", 
+      "name": [
+        "Generic Protestant"
+      ], 
+      "referenceAbbreviation": "GENERIC-66", 
+      "includesBooks": [
+        "GEN", 
+        "EXO", 
+        "LEV", 
+        "NUM", 
+        "DEU", 
+        "JOS", 
+        "JDG", 
+        "RUT", 
+        "SA1", 
+        "SA2", 
+        "KI1", 
+        "KI2", 
+        "CH1", 
+        "CH2", 
+        "EZR", 
+        "NEH", 
+        "EST", 
+        "JOB", 
+        "PSA", 
+        "PRO", 
+        "ECC", 
+        "SNG", 
+        "ISA", 
+        "JER", 
+        "LAM", 
+        "EZK", 
+        "DAN", 
+        "HOS", 
+        "JOL", 
+        "AMO", 
+        "OBA", 
+        "JNA", 
+        "MIC", 
+        "NAH", 
+        "HAB", 
+        "ZEP", 
+        "HAG", 
+        "ZEC", 
+        "MAL", 
+        "MAT", 
+        "MRK", 
+        "LUK", 
+        "JHN", 
+        "ACT", 
+        "ROM", 
+        "CO1", 
+        "CO2", 
+        "GAL", 
+        "EPH", 
+        "PHP", 
+        "COL", 
+        "TH1", 
+        "TH2", 
+        "TI1", 
+        "TI2", 
+        "TIT", 
+        "PHM", 
+        "HEB", 
+        "JAM", 
+        "PE1", 
+        "PE2", 
+        "JN1", 
+        "JN2", 
+        "JN3", 
+        "JDE", 
+        "REV"
+      ], 
+      "versificationSystem": "RSV52", 
+      "punctuationSystem": "None", 
+      "type": "translation", 
+      "bookOrderSystem": "EuropeanBible"
     }, 
     "TYN-NT-4_revision": {
       "languageCode": "eng", 
@@ -6047,7 +6734,7 @@
         "JDE", 
         "REV"
       ], 
-      "publicationDate": "xxx", 
+      "publicationDate": "???", 
       "versificationSystem": "KJV", 
       "punctuationSystem": "English", 
       "type": "revision", 
@@ -6304,7 +6991,7 @@
         "REV"
       ], 
       "publicationDate": "2002", 
-      "versificationSystem": "xxx", 
+      "versificationSystem": "???", 
       "punctuationSystem": "English", 
       "type": "translation", 
       "bookOrderSystem": "EuropeanBible", 
@@ -6403,6 +7090,9 @@
     "BJ": [
       "BJ_translation"
     ], 
+    "GENERIC-ENG": [
+      "GENERIC-ENG_translation"
+    ], 
     "UKJV": [
       "UKJV_revision"
     ], 
@@ -6424,6 +7114,9 @@
     "NTLT": [
       "NTLT_translation"
     ], 
+    "GENERIC": [
+      "GENERIC_translation"
+    ], 
     "MYB": [
       "MYB_translation"
     ], 
@@ -6439,8 +7132,14 @@
     "KJV-1964": [
       "KJV-1964_edition"
     ], 
+    "GENERIC-66-ENG": [
+      "GENERIC-66-ENG_translation"
+    ], 
     "MBT": [
       "MBT_translation"
+    ], 
+    "GENERIC-81": [
+      "GENERIC-81_translation"
     ], 
     "GB": [
       "GB_translation"
@@ -6652,9 +7351,6 @@
     "WYC-1395": [
       "WYC-1395_revision"
     ], 
-    "DUMMY": [
-      "DUMMY_translation"
-    ], 
     "CB": [
       "CB_translation"
     ], 
@@ -6702,6 +7398,9 @@
     ], 
     "GNT": [
       "GNT_translation"
+    ], 
+    "ORIGINAL": [
+      "ORIGINAL_edition"
     ], 
     "KJ21": [
       "KJ21_translation"
@@ -6763,6 +7462,9 @@
     "ESV": [
       "ESV_revision"
     ], 
+    "GENERIC-81-ENG": [
+      "GENERIC-81-ENG_translation"
+    ], 
     "EBR-NT-3": [
       "EBR-NT-3_revision"
     ], 
@@ -6777,6 +7479,9 @@
     ], 
     "HARWOOD": [
       "HARWOOD_translation"
+    ], 
+    "GENERIC-66": [
+      "GENERIC-66_translation"
     ], 
     "AKJV": [
       "AKJV_revision"
@@ -6828,6 +7533,9 @@
     "BJ": [
       "BJ_translation"
     ], 
+    "GENERIC-ENG": [
+      "GENERIC-ENG_translation"
+    ], 
     "UKJV": [
       "UKJV_revision"
     ], 
@@ -6867,6 +7575,12 @@
     "MB_translation": [
       "MB_translation"
     ], 
+    "GENERIC": [
+      "GENERIC_translation"
+    ], 
+    "ORIGINAL_edition": [
+      "ORIGINAL_edition"
+    ], 
     "TYN-3rd_edition": [
       "TYN-3rd_edition"
     ], 
@@ -6894,6 +7608,9 @@
     "MBT-2010_edition": [
       "MBT-2010_edition"
     ], 
+    "GENERIC-66-ENG_translation": [
+      "GENERIC-66-ENG_translation"
+    ], 
     "BNTG-10": [
       "BNTG-10_edition"
     ], 
@@ -6912,11 +7629,17 @@
     "HCSB-NT_translation": [
       "HCSB-NT_translation"
     ], 
+    "GENERIC-66-ENG": [
+      "GENERIC-66-ENG_translation"
+    ], 
     "KJVER_revision": [
       "KJVER_revision"
     ], 
     "MBT": [
       "MBT_translation"
+    ], 
+    "GENERIC-81": [
+      "GENERIC-81_translation"
     ], 
     "GB": [
       "GB_translation"
@@ -6941,6 +7664,9 @@
     ], 
     "NET_translation": [
       "NET_translation"
+    ], 
+    "GENERIC-81_translation": [
+      "GENERIC-81_translation"
     ], 
     "TYN-1526": [
       "TYN-1526_translation"
@@ -7024,6 +7750,9 @@
     "GNT_translation": [
       "GNT_translation"
     ], 
+    "GENERIC-ENG_translation": [
+      "GENERIC-ENG_translation"
+    ], 
     "REB": [
       "REB_translation"
     ], 
@@ -7078,6 +7807,9 @@
     ], 
     "CEV": [
       "CEV_translation"
+    ], 
+    "GENERIC_translation": [
+      "GENERIC_translation"
     ], 
     "NCPB_revision": [
       "NCPB_revision"
@@ -7320,8 +8052,8 @@
     "WYC-1395": [
       "WYC-1395_revision"
     ], 
-    "DUMMY": [
-      "DUMMY_translation"
+    "GENERIC-81-ENG_translation": [
+      "GENERIC-81-ENG_translation"
     ], 
     "KJV-1611_translation": [
       "KJV-1611_translation"
@@ -7452,6 +8184,9 @@
     "CPB_revision": [
       "CPB_revision"
     ], 
+    "ORIGINAL": [
+      "ORIGINAL_edition"
+    ], 
     "WEBSTER_revision": [
       "WEBSTER_revision"
     ], 
@@ -7563,8 +8298,11 @@
     "KJV-1792_edition": [
       "KJV-1792_edition"
     ], 
-    "DUMMY_translation": [
-      "DUMMY_translation"
+    "GENERIC-66_translation": [
+      "GENERIC-66_translation"
+    ], 
+    "GENERIC-81-ENG": [
+      "GENERIC-81-ENG_translation"
     ], 
     "EBR-NT-3": [
       "EBR-NT-3_revision"
@@ -7589,6 +8327,9 @@
     ], 
     "CEV-NT_translation": [
       "CEV-NT_translation"
+    ], 
+    "GENERIC-66": [
+      "GENERIC-66_translation"
     ], 
     "NLT": [
       "NLT_translation"

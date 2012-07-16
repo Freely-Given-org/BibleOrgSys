@@ -93,9 +93,9 @@ class USFMFilenames:
             if '_' in foundFileBit and foundExtBit and foundExtBit[0]=='.': # Check for possible Bibledit filenames first
                 for USFMBookCode,BibleditDigits,bookReferenceCode in self._BibleditBooksCodeNumberTriples:
                     BibleditSignature = BibleditDigits + '_'
-                    if BibleditSignature in foundFileBit and foundFileBit in BibleditFilenames:
+                    if BibleditSignature in foundFileBit and foundFileBit in BibleditFilenames and foundExtBit == '.usfm':
                         digitsIndex = foundFileBit.index( BibleditSignature )
-                        if digitsIndex == 0 and foundExtBit == '.usfm':
+                        if digitsIndex == 0:
                             self.languageIndex = None
                             self.languageCode = None
                             self.digitsIndex = digitsIndex

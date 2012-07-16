@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # InternalBibleBook.py
-#   Last modified: 2012-07-05 by RJH (also update versionString below)
+#   Last modified: 2012-07-15 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -1709,8 +1709,10 @@ class InternalBibleBook:
                 # Find, count and check CVSeparators
                 #  and also check that the references match
                 fnCVSeparator = xrCVSeparator = fnTrailer = xrTrailer = ''
+                haveAnchor = False
                 for noteMarker,noteText in extraList:
                     if noteMarker=='fr':
+                        haveAnchor = True
                         for j,char in enumerate(noteText):
                             if not char.isdigit() and j<len(noteText)-1: # Got a non-digit and it's not at the end of the reference
                                 fnCVSeparator = char
@@ -1721,16 +1723,20 @@ class InternalBibleBook:
                         if not noteText[-1].isdigit(): fnTrailer = noteText[-1] # Sometimes these references end with a trailer character like a colon
                         myV = v # Temporary copy
                         if myV.isdigit() and marker=='s1': myV=str(int(myV)+1) # Assume that a section heading goes with the next verse (bad assumption if the break is in the middle of a verse)
-                        CV1 = myV if self.isOneChapterBook else (c + fnCVSeparator + myV) # Make up our own reference string
+                        CV1 = (c + fnCVSeparator + myV) if fnCVSeparator and fnCVSeparator in noteText else myV # Make up our own reference string
                         CV2 = CV1 + fnTrailer # Make up our own reference string
                         if CV2 != noteText:
-                            if CV1 not in noteText and noteText not in CV1: # This crudely handles a range in either the verse number or the anchor (as long as the individual one is at the start of the range)
+                            if CV1 not in noteText and noteText not in CV2: # This crudely handles a range in either the verse number or the anchor (as long as the individual one is at the start of the range)
                                 #print( "{} fn m='{}' v={} myV={} CV1='{}' CV2='{}' nT='{}'".format( self.bookReferenceCode, marker, v, myV, CV1, CV2, noteText ) )
                                 footnoteErrors.append( _("{} {}:{} Footnote anchor reference seems not to match: '{}'").format( self.bookReferenceCode, c, v, noteText ) )
                                 self.addPriorityError( 42, c, v, _("Footnote anchor reference mismatch") )
-                            else: footnoteErrors.append( _("{} {}:{} Footnote anchor reference possibly does not match: '{}'").format( self.bookReferenceCode, c, v, noteText ) )
+                                print( self.bookReferenceCode, 'FN1', '"'+noteText+'"', "'"+fnCVSeparator+"'", "'"+fnTrailer+"'", CV1, CV2 )
+                            else:
+                                footnoteErrors.append( _("{} {}:{} Footnote anchor reference possibly does not match: '{}'").format( self.bookReferenceCode, c, v, noteText ) )
+                                print( self.bookReferenceCode, 'FN2', '"'+noteText+'"', "'"+fnCVSeparator+"'", "'"+fnTrailer+"'", CV1, CV2 )
                         break # Only process the first fr field
                     elif noteMarker=='xo':
+                        haveAnchor = True
                         for j,char in enumerate(noteText):
                             if not char.isdigit() and j<len(noteText)-1: # Got a non-digit and it's not at the end of the reference
                                 xrCVSeparator = char
@@ -1739,20 +1745,31 @@ class InternalBibleBook:
                                 if char not in CVSeparatorList: CVSeparatorList.append( char )
                                 break
                         if not noteText[-1].isalnum(): xrTrailer = noteText[-1] # Sometimes these references end with a trailer character like a colon
-                        CV1 = v if self.isOneChapterBook else (c + xrCVSeparator + v) # Make up our own reference string
+                        elif len(noteText)>3 and noteText[-2:]==' a' and not noteText[-3].isalnum(): xrTrailer = noteText[-3:] # This is a hack to handle something like "12:5: a"
+                        CV1 = (c + xrCVSeparator + v) if xrCVSeparator and xrCVSeparator in noteText else v # Make up our own reference string
                         CV2 = CV1 + xrTrailer # Make up our own reference string
                         if CV2 != noteText:
                             #print( "v='{}'  xrT='{}'  CV1='{}'  CV2='{}'  NT='{}'".format( v, xrTrailer, CV1, CV2, noteText ) )
-                            if CV1 not in noteText:
+                            if CV1 not in noteText and noteText not in CV2: # This crudely handles a range in either the verse number or the anchor (as long as the individual one is at the start of the range)
                                 #print( 'xr', CV1, noteText )
                                 xrefErrors.append( _("{} {}:{} Cross-reference anchor reference seems not to match: '{}'").format( self.bookReferenceCode, c, v, noteText ) )
                                 self.addPriorityError( 41, c, v, _("Cross-reference anchor reference mismatch") )
+                                print( self.bookReferenceCode, 'XR1', '"'+noteText+'"', "'"+xrCVSeparator+"'", "'"+xrTrailer+"'", CV1, CV2 )
                             elif noteText.startswith(CV2) or noteText.startswith(CV1+',') or noteText.startswith(CV1+'-'):
                                 #print( "  ok" )
                                 pass # it seems that the reference is contained there in the anchor
-                            else: xrefErrors.append( _("{} {}:{} Cross-reference anchor reference possibly does not match: '{}'").format( self.bookReferenceCode, c, v, noteText ) )
+                                #print( self.bookReferenceCode, 'XR2', '"'+noteText+'"', "'"+xrCVSeparator+"'", "'"+xrTrailer+"'", CV1, CV2 )
+                            else:
+                                xrefErrors.append( _("{} {}:{} Cross-reference anchor reference possibly does not match: '{}'").format( self.bookReferenceCode, c, v, noteText ) )
+                                print( self.bookReferenceCode, 'XR3', '"'+noteText+'"', "'"+xrCVSeparator+"'", "'"+xrTrailer+"'", CV1, CV2 )
                         break # Only process the first xo field
-                                
+                if not haveAnchor:
+                    if extraType == 'fn':
+                        footnoteErrors.append( _("{} {}:{} Footnote seems to have no anchor reference: '{}'").format( self.bookReferenceCode, c, v, extraText ) )
+                        self.addPriorityError( 39, c, v, _("Missing anchor reference for footnote") )
+                    elif extraType == 'xr':
+                        xrefErrors.append( _("{} {}:{} Cross-reference seems to have no anchor reference: '{}'").format( self.bookReferenceCode, c, v, extraText ) )
+                        self.addPriorityError( 38, c, v, _("Missing anchor reference for cross-reference") )
                 # much more yet to be written ................
 
         if (footnoteErrors or xrefErrors or noteMarkerErrors or footnoteList or xrefList or leaderCounts) and 'Notes' not in self.errorDictionary:
