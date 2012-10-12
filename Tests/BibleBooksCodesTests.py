@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodesTests.py
-#   Last modified: 2012-07-13 by RJH (also update versionString below)
+#   Last modified: 2012-09-07 by RJH (also update versionString below)
 #
 # Module testing BibleBooksCodes.py
 #
@@ -28,7 +28,7 @@ Module testing BibleBooksCodes.py.
 """
 
 progName = "Bible Books Codes tests"
-versionString = "0.64"
+versionString = "0.65"
 
 
 import sys, unittest
@@ -67,8 +67,8 @@ class BibleBooksCodesConverterTests( unittest.TestCase ):
                         "SBLAbbreviationDict","OSISAbbreviationDict","SwordAbbreviationDict","CCELDict", \
                         "USFMAbbreviationDict","USFMNumberDict","USXNumberDict","BibleditNumberDict","NETBibleAbbreviationDict","ByzantineAbbreviationDict","EnglishNameDict","allAbbreviationsDict",):
             self.assertTrue( dictName in result )
-            self.assertGreater( len(result[dictName]), 10 )
-            self.assertLess( len(result[dictName]), 255 )
+            self.assertGreater( len(result[dictName]), 20 )
+            self.assertLess( len(result[dictName]), 350 )
     # end of test_030_importDataToPython
 
     def test_040_pickle( self ):
@@ -121,9 +121,9 @@ class BibleBooksCodesTests( unittest.TestCase ):
         self.assertEqual( self.bbc.getBBBFromReferenceNumber(66), 'REV' )
         self.assertRaises( ValueError, self.bbc.getBBBFromReferenceNumber, -1 )
         self.assertRaises( ValueError, self.bbc.getBBBFromReferenceNumber, 0 )
-        self.assertRaises( ValueError, self.bbc.getBBBFromReferenceNumber, 256 )
+        self.assertRaises( ValueError, self.bbc.getBBBFromReferenceNumber, 455 )
+        self.assertRaises( ValueError, self.bbc.getBBBFromReferenceNumber, 999 )
         self.assertRaises( ValueError, self.bbc.getBBBFromReferenceNumber, 1234 )
-        self.assertRaises( KeyError, self.bbc.getBBBFromReferenceNumber, 255 )
     # end of test_030_getBBBFromReferenceNumber
 
     def test_040_isValidReferenceAbbreviation( self ):
@@ -149,7 +149,8 @@ class BibleBooksCodesTests( unittest.TestCase ):
         for BBB in self.bbc.getAllReferenceAbbreviations():
             RefN = self.bbc.getReferenceNumber( BBB )
             if RefN is not None:
-                self.assertTrue( 1 <= RefN <= 249 )
+                self.assertGreater( RefN, 0 )
+                self.assertLess( RefN, 900 )
         self.assertEqual( self.bbc.getReferenceNumber('GEN'), 1 )
         self.assertEqual( self.bbc.getReferenceNumber('MAL'), 39 )
         self.assertEqual( self.bbc.getReferenceNumber('MAT'), 40 )
@@ -234,7 +235,8 @@ class BibleBooksCodesTests( unittest.TestCase ):
             SwordAbbrev = self.bbc.getSwordAbbreviation( BBB )
             if SwordAbbrev is not None:
                 self.assertTrue( ' ' not in SwordAbbrev )
-                self.assertTrue( 2 <= len(SwordAbbrev) <= 7 )
+                self.assertGreater( len(SwordAbbrev), 1 ) # e.g., Ps
+                self.assertLess( len(SwordAbbrev), 14 ) # e.g., AddEsth, EpCorPaul, T12Patr.TNaph(13)
         self.assertEqual( self.bbc.getSwordAbbreviation('GEN'), 'Gen' )
         self.assertEqual( self.bbc.getSwordAbbreviation('MAL'), 'Mal' )
         self.assertEqual( self.bbc.getSwordAbbreviation('MAT'), 'Matt' )

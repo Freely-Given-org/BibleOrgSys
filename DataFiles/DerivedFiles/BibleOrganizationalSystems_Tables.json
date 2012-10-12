@@ -1801,9 +1801,9 @@
         "LAM", 
         "EZK", 
         "DAN", 
-        "DAG", 
-        "DAA", 
-        "DAC", 
+        "DNG", 
+        "DNA", 
+        "DNC", 
         "P12", 
         "HOS", 
         "JOL", 
@@ -1948,7 +1948,7 @@
       "versificationSystem": "RSV52", 
       "punctuationSystem": "None", 
       "type": "translation", 
-      "bookOrderSystem": "EuropeanBible"
+      "bookOrderSystem": "ALL"
     }, 
     "ASV_translation": {
       "languageCode": "eng", 
@@ -2477,9 +2477,9 @@
         "LAM", 
         "EZK", 
         "DAN", 
-        "DAG", 
-        "DAA", 
-        "DAC", 
+        "DNG", 
+        "DNA", 
+        "DNC", 
         "P12", 
         "HOS", 
         "JOL", 
@@ -2623,7 +2623,7 @@
       "versificationSystem": "RSV52", 
       "punctuationSystem": "None", 
       "type": "translation", 
-      "bookOrderSystem": "EuropeanBible"
+      "bookOrderSystem": "ALL"
     }, 
     "GENERIC-66-ENG_translation": {
       "languageCode": "eng", 

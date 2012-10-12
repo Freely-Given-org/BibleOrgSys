@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # TestSuite.py
-#   Last modified: 2012-05-25 (also update versionString below)
+#   Last modified: 2012-07-03 by RJH (also update versionString below)
 #
 # Suite for testing BibleOrgSys
 #
@@ -28,7 +28,7 @@ Suite testing BibleOrgSys.
 """
 
 progName = "Bible Organisational System test suite"
-versionString = "0.09"
+versionString = "0.10"
 
 
 import sys, unittest
@@ -41,6 +41,7 @@ import Globals
 import BibleBooksCodesTests, BibleBookOrdersTests
 import ISO_639_3_LanguagesTests, BiblePunctuationSystemsTests
 import BibleBooksNamesTests, BibleVersificationSystemsTests
+import BibleReferencesTests
 import USFMMarkersTests, USFMFilenamesTests, USXFilenamesTests
 
 
@@ -77,6 +78,8 @@ suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleBooksNamesTe
 suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleVersificationSystemsTests.BibleVersificationSystemsConverterTests ) )
 suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleVersificationSystemsTests.BibleVersificationSystemsTests ) )
 suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleVersificationSystemsTests.BibleVersificationSystemTests ) )
+
+suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleReferencesTests.BibleReferencesTests ) )
 
 suiteList.append( unittest.TestLoader().loadTestsFromTestCase( USFMMarkersTests.USFMMarkersConverterTests ) )
 suiteList.append( unittest.TestLoader().loadTestsFromTestCase( USFMMarkersTests.USFMMarkersTests ) )

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodesConverter.py
-#   Last modified: 2012-07-13 by RJH (also update versionString below)
+#   Last modified: 2012-09-07 by RJH (also update versionString below)
 #
 # Module handling BibleBooksCodes.xml to produce C and Python data tables
 #
@@ -28,7 +28,7 @@ Module handling BibleBooksCodes.xml and to export to JSON, C, and Python data ta
 """
 
 progName = "Bible Books Codes converter"
-versionString = "0.64"
+versionString = "0.65"
 
 
 import logging, os.path
@@ -410,6 +410,31 @@ class BibleBooksCodesConverter:
                         "SBLAbbreviationDict":mySBLDict, "OSISAbbreviationDict":myOADict, "SwordAbbreviationDict":mySwDict,
                         "CCELDict":myCCELDict, "USFMAbbreviationDict":myUSFMAbbrDict, "USFMNumberDict":myUSFMNDict, "USXNumberDict":myUSXNDict, "BibleditNumberDict":myBENDict,
                         "NETBibleAbbreviationDict":myNETDict, "ByzantineAbbreviationDict":myBzDict, "EnglishNameDict":myENDict, "allAbbreviationsDict":adjAllAbbreviationsDict }
+
+        if 0:
+            free = [] # Print available reference book numbers
+            for num in range(1, 1000):
+                if num not in myIDDict:
+                    if free: # Already have some -- collect ranges
+                        if isinstance(free[-1], int):
+                            if free[-1]==num-1: free.append( (free.pop(), num) ); continue
+                        else:
+                            s,f = free[-1]
+                            if f==num-1: free.pop(); free.append( (s, num) ); continue
+                    free.append( num )
+            print( "Free reference numbers = {}".format( free ) )
+            free = [] # Print available sequence numbers
+            for num in range(1, 1000):
+                if num not in sequenceNumberList:
+                    if free: # Already have some -- collect ranges
+                        if isinstance(free[-1], int):
+                            if free[-1]==num-1: free.append( (free.pop(), num) ); continue
+                        else:
+                            s,f = free[-1]
+                            if f==num-1: free.pop(); free.append( (s, num) ); continue
+                    free.append( num )
+            print( "Free sequence numbers = {}".format( free ) )
+
         return self.__DataDicts # Just delete any of the dictionaries that you don't need
     # end of importDataToPython
 

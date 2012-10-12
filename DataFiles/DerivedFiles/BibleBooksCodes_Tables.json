@@ -82,7 +82,7 @@
     }, 
     "JOS": {
       "BibleditNumberString": "6", 
-      "possibleAlternativeBooks": null, 
+      "possibleAlternativeBooks": "JSA", 
       "NETBibleAbbreviation": "Jos", 
       "referenceNumber": 6, 
       "nameEnglish": "Joshua / Joshua son of Nun", 
@@ -98,7 +98,7 @@
     }, 
     "JDG": {
       "BibleditNumberString": "7", 
-      "possibleAlternativeBooks": null, 
+      "possibleAlternativeBooks": "JGB", 
       "NETBibleAbbreviation": "Jdg", 
       "referenceNumber": 7, 
       "nameEnglish": "Judges", 
@@ -418,7 +418,7 @@
     }, 
     "DAN": {
       "BibleditNumberString": "27", 
-      "possibleAlternativeBooks": "DAG,DAA,DAC", 
+      "possibleAlternativeBooks": "DNG,DNA,DNC,DNT", 
       "NETBibleAbbreviation": "Dan", 
       "referenceNumber": 27, 
       "nameEnglish": "Daniel", 
@@ -1079,7 +1079,7 @@
       "referenceNumber": 71, 
       "nameEnglish": "Greek additions to Esther / Esther (additions)", 
       "OSISAbbreviation": "AddEsth", 
-      "USFMAbbreviation": "EsG", 
+      "USFMAbbreviation": "ADE", 
       "CCELNumberString": "95", 
       "SwordAbbreviation": "AddEsth", 
       "USFMNumberString": "70", 
@@ -1104,9 +1104,9 @@
       "USXNumberString": null, 
       "numExpectedChapters": "10"
     }, 
-    "DAG": {
+    "DNG": {
       "BibleditNumberString": "88", 
-      "possibleAlternativeBooks": "DAN,DAA,DAC", 
+      "possibleAlternativeBooks": "DAN,DNA,DNC,DNT", 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 73, 
       "nameEnglish": "Greek Daniel / Daniel (Greek)", 
@@ -1120,9 +1120,9 @@
       "USXNumberString": "112", 
       "numExpectedChapters": "14"
     }, 
-    "DAA": {
+    "DNA": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "DAN,DAG,DAC", 
+      "possibleAlternativeBooks": "DAN,DNG,DNC,DNT", 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 74, 
       "nameEnglish": "Greek additions to Daniel / Daniel (additions)", 
@@ -1136,9 +1136,9 @@
       "USXNumberString": null, 
       "numExpectedChapters": "14"
     }, 
-    "DAC": {
+    "DNC": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "DAN,DAG,DAA", 
+      "possibleAlternativeBooks": "DAN,DNG,DNA,DNT", 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 75, 
       "nameEnglish": "Combined Hebrew/Greek Daniel / Daniel (combined)", 
@@ -1154,7 +1154,7 @@
     }, 
     "BEL": {
       "BibleditNumberString": "79", 
-      "possibleAlternativeBooks": null, 
+      "possibleAlternativeBooks": "BLT", 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 80, 
       "nameEnglish": "Bel and the dragon", 
@@ -1170,7 +1170,7 @@
     }, 
     "SUS": {
       "BibleditNumberString": "78", 
-      "possibleAlternativeBooks": null, 
+      "possibleAlternativeBooks": "SST", 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 81, 
       "nameEnglish": "Susanna", 
@@ -1232,11 +1232,27 @@
       "USXNumberString": "071", 
       "numExpectedChapters": "51,52"
     }, 
-    "TOB": {
-      "BibleditNumberString": "70", 
+    "SIP": {
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 85, 
+      "nameEnglish": "Sirach Prologue", 
+      "OSISAbbreviation": "SirP", 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "SirP", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "TOB": {
+      "BibleditNumberString": "70", 
+      "possibleAlternativeBooks": "TBS", 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 86, 
       "nameEnglish": "Tobit / Tobias", 
       "OSISAbbreviation": "Tob", 
       "USFMAbbreviation": "Tob", 
@@ -1252,7 +1268,7 @@
       "BibleditNumberString": "73", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
-      "referenceNumber": 86, 
+      "referenceNumber": 87, 
       "nameEnglish": "Wisdom / Wisdom of Solomon", 
       "OSISAbbreviation": "Wis", 
       "USFMAbbreviation": "Wis", 
@@ -1268,7 +1284,7 @@
       "BibleditNumberString": "77", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
-      "referenceNumber": 87, 
+      "referenceNumber": 88, 
       "nameEnglish": "Prayer of Azariah and the Song of the Three Young Men / Prayer of Azariah / Song of the Three Young Men / Song of the Three Children", 
       "OSISAbbreviation": "PrAzar", 
       "USFMAbbreviation": "S3Y", 
@@ -1321,7 +1337,7 @@
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "EzA", 
       "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
+      "SwordAbbreviation": "4Ezra", 
       "USFMNumberString": "A4", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "4 Ezra", 
@@ -1337,7 +1353,7 @@
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "5Ez", 
       "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
+      "SwordAbbreviation": "5Ezra", 
       "USFMNumberString": "A5", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "5 Ezra", 
@@ -1353,7 +1369,7 @@
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "6Ez", 
       "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
+      "SwordAbbreviation": "6Ezra", 
       "USFMNumberString": "A6", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "6 Ezra", 
@@ -1381,7 +1397,7 @@
       "possibleAlternativeBooks": "LJB", 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 100, 
-      "nameEnglish": "Epistle of Jeremiah / Letter of Jeremiah", 
+      "nameEnglish": "Letter of Jeremiah / Epistle of Jeremiah", 
       "OSISAbbreviation": "EpJer", 
       "USFMAbbreviation": "LJe", 
       "CCELNumberString": "75", 
@@ -1413,7 +1429,7 @@
       "possibleAlternativeBooks": "BAR", 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 102, 
-      "nameEnglish": "Letter/Epistle of Jeremiah with Baruch", 
+      "nameEnglish": "Letter of Jeremiah with Baruch / Epistle of Jeremiah with Baruch", 
       "OSISAbbreviation": "EpJer", 
       "USFMAbbreviation": "LJe", 
       "CCELNumberString": null, 
@@ -1445,11 +1461,11 @@
       "possibleAlternativeBooks": "LB2", 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 104, 
-      "nameEnglish": "Letter of Baruch", 
+      "nameEnglish": "Letter of Baruch / Epistle of Baruch", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "LBa", 
       "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
+      "SwordAbbreviation": "EpBar", 
       "USFMNumberString": "B5", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
@@ -1503,6 +1519,38 @@
       "SBLAbbreviation": null, 
       "USXNumberString": null, 
       "numExpectedChapters": "6,5"
+    }, 
+    "JRA": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 108, 
+      "nameEnglish": "Additions to Jeremiah / Rest of Jeremiah", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "AddJer", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "PSJ": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 109, 
+      "nameEnglish": "Pseudo-Josephus", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "PsJos", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
     }, 
     "MAC": {
       "BibleditNumberString": null, 
@@ -1737,7 +1785,7 @@
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "PsB", 
       "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
+      "SwordAbbreviation": "PsMet", 
       "USFMNumberString": "88", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
@@ -1753,7 +1801,7 @@
       "OSISAbbreviation": "Ps151", 
       "USFMAbbreviation": "Ps2", 
       "CCELNumberString": "86", 
-      "SwordAbbreviation": null, 
+      "SwordAbbreviation": "Ps151", 
       "USFMNumberString": "85", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
@@ -1765,11 +1813,11 @@
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 127, 
-      "nameEnglish": "Syriac Psalms 152-155 / Five apocryphal Syriac Psalms", 
+      "nameEnglish": "Syriac Psalms 152-155 / Five apocryphal Syriac Psalms / Additional Syriac Psalms", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "Ps3", 
       "CCELNumberString": null, 
-      "SwordAbbreviation": "AddPs", 
+      "SwordAbbreviation": "5ApocSyrPss", 
       "USFMNumberString": "B3", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
@@ -1833,7 +1881,7 @@
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "PSo", 
       "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
+      "SwordAbbreviation": "PrSol", 
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
@@ -1849,7 +1897,7 @@
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "PJe", 
       "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
+      "SwordAbbreviation": "PrJer", 
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
@@ -1865,7 +1913,7 @@
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "WSi", 
       "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
+      "SwordAbbreviation": "WSir", 
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
@@ -1877,11 +1925,11 @@
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 135, 
-      "nameEnglish": "Letter of the Corinthians to Paul", 
+      "nameEnglish": "Letter of the Corinthians to Paul / Epistle of the Corinthians to Paul", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "CoP", 
       "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
+      "SwordAbbreviation": "EpCorPaul", 
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
@@ -1897,7 +1945,7 @@
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "3Co", 
       "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
+      "SwordAbbreviation": "3Cor", 
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
@@ -1913,7 +1961,7 @@
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "Eut", 
       "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
+      "SwordAbbreviation": "PrEuth", 
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
@@ -1929,28 +1977,12 @@
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "DoJ", 
       "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
+      "SwordAbbreviation": "DormJohn", 
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
       "USXNumberString": null, 
       "numExpectedChapters": "1"
-    }, 
-    "TTP": {
-      "BibleditNumberString": null, 
-      "possibleAlternativeBooks": null, 
-      "NETBibleAbbreviation": null, 
-      "referenceNumber": 139, 
-      "nameEnglish": "Testaments of the Twelve Patriarchs", 
-      "OSISAbbreviation": null, 
-      "USFMAbbreviation": null, 
-      "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
-      "USFMNumberString": null, 
-      "ByzantineAbbreviation": null, 
-      "SBLAbbreviation": null, 
-      "USXNumberString": null, 
-      "numExpectedChapters": null
     }, 
     "JUB": {
       "BibleditNumberString": null, 
@@ -2005,11 +2037,11 @@
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 143, 
-      "nameEnglish": "Reproof", 
+      "nameEnglish": "Reproof / Tegsas / Tegsats / Taagsas", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "Rep", 
       "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
+      "SwordAbbreviation": "Rep", 
       "USFMNumberString": "C1", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
@@ -2021,11 +2053,11 @@
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 144, 
-      "nameEnglish": "Letter of Barnabas / Epistle of Barnabas", 
+      "nameEnglish": "Letter of Barnabas / Epistle of Barnabas / Barnabas", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": null, 
       "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
+      "SwordAbbreviation": "Barn", 
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
@@ -2041,7 +2073,7 @@
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "1Cl", 
       "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
+      "SwordAbbreviation": "1Clem", 
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
@@ -2057,28 +2089,12 @@
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "2Cl", 
       "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
+      "SwordAbbreviation": "2Clem", 
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
       "USXNumberString": null, 
       "numExpectedChapters": "20"
-    }, 
-    "SHE": {
-      "BibleditNumberString": null, 
-      "possibleAlternativeBooks": null, 
-      "NETBibleAbbreviation": null, 
-      "referenceNumber": 152, 
-      "nameEnglish": "Shepherd of Hermas", 
-      "OSISAbbreviation": null, 
-      "USFMAbbreviation": "She", 
-      "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
-      "USFMNumberString": null, 
-      "ByzantineAbbreviation": null, 
-      "SBLAbbreviation": null, 
-      "USXNumberString": null, 
-      "numExpectedChapters": null
     }, 
     "DID": {
       "BibleditNumberString": null, 
@@ -2089,12 +2105,108 @@
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "Did", 
       "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
+      "SwordAbbreviation": "Did", 
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
       "USXNumberString": null, 
       "numExpectedChapters": "16"
+    }, 
+    "JSA": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": "JOS", 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 154, 
+      "nameEnglish": "Joshua A", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": "JsA", 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "JoshA", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "JGB": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": "JDG", 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 155, 
+      "nameEnglish": "Judges B", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": "JdB", 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "JudgB", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "TBS": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": "TOB", 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 156, 
+      "nameEnglish": "Tobit S", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": "TbS", 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "TobS", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "SST": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": "SUS", 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 157, 
+      "nameEnglish": "Susanna \u03b8", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": "SsT", 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "SusTh", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "DNT": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": "DAN,DNG,DNA,DNC", 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 158, 
+      "nameEnglish": "Daniel \u03b8", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": "DnT", 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "DanTh", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "BLT": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": "BEL", 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 159, 
+      "nameEnglish": "Bel and the dragon \u03b8", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": "BlT", 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "BelTh", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
     }, 
     "GHE": {
       "BibleditNumberString": null, 
@@ -2608,11 +2720,539 @@
       "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
+    "TTP": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 250, 
+      "nameEnglish": "Testaments of the Twelve Patriarchs", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "T12Patr", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "TSA": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 251, 
+      "nameEnglish": "Testament of Asher", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "T12Patr.TAsh", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "TSB": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 252, 
+      "nameEnglish": "Testament of Benjamin", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "T12Patr.TBenj", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "TSD": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 253, 
+      "nameEnglish": "Testament of Dan", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "T12Patr.TDan", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "TSG": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 254, 
+      "nameEnglish": "Testament of Gad", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "T12Patr.TGad", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "TSI": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 255, 
+      "nameEnglish": "Testament of Issachar", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "T12Patr.TIss", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "TSJ": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 256, 
+      "nameEnglish": "Testament of Joseph", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "T12Patr.TJos", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "TSY": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 257, 
+      "nameEnglish": "Testament of Judah", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "T12Patr.TJud", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "TSL": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 258, 
+      "nameEnglish": "Testament of Levi", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "T12Patr.TLevi", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "TSN": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 259, 
+      "nameEnglish": "Testament of Naphtali", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "T12Patr.TNaph", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "TSR": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 260, 
+      "nameEnglish": "Testament of Reuben", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "T12Patr.TReu", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "TSS": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 261, 
+      "nameEnglish": "Testament of Simeon", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "T12Patr.TSim", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "TSZ": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 262, 
+      "nameEnglish": "Testament of Zebulun", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "T12Patr.TZeb", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "JJW": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 270, 
+      "nameEnglish": "Josephus Jewish War VI", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "JosephusJWvi", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "SHE": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 280, 
+      "nameEnglish": "Shepherd of Hermas", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": "She", 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "Herm", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "SHM": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 281, 
+      "nameEnglish": "Shepherd of Hermas Mandates", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "Herm", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "SHS": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 282, 
+      "nameEnglish": "Shepherd of Hermas Similitudes", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "Herm", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "SHV": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 283, 
+      "nameEnglish": "Shepherd of Hermas Visions", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "Herm", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "IGE": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 290, 
+      "nameEnglish": "Ignatius to the Ephesians", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "IgnEph", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "IGM": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 291, 
+      "nameEnglish": "Ignatius to the Magnesians", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "IgnMagn", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "IGT": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 292, 
+      "nameEnglish": "Ignatius to the Trallians", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "IgnTrall", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "IGR": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 293, 
+      "nameEnglish": "Ignatius to the Romans", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "IgnRom", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "IGP": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 294, 
+      "nameEnglish": "Ignatius to the Philadelphians", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "IgnPhld", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "IGS": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 295, 
+      "nameEnglish": "Ignatius to the Smyrnaeans", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "IgnSmyrn", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "IGC": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 296, 
+      "nameEnglish": "Ignatius to Polycarp", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "IgnPol", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "PCP": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 297, 
+      "nameEnglish": "Polycarp to the Philippians", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "PolPhil", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "MPC": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 298, 
+      "nameEnglish": "Martydom of Polycarp", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "MartPol", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "DIO": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 300, 
+      "nameEnglish": "Diognetus", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "Diogn", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "APC": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 301, 
+      "nameEnglish": "Apostles' Creed", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "AposCreed", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "FOP": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 302, 
+      "nameEnglish": "Fragments of Papias", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "PapFrag", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "ROE": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 303, 
+      "nameEnglish": "Reliques of the Elders", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "RelElders", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "FOQ": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 304, 
+      "nameEnglish": "Fragment of Quadratus", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "QuadFrag", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "TAT": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "referenceNumber": 310, 
+      "nameEnglish": "Tatian / Tatian's Diatessaron / Diatessaron", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "TatDiat", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
     "MOS": {
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": "GEN,EXO,LEV,NUM,DEU", 
       "NETBibleAbbreviation": null, 
-      "referenceNumber": 220, 
+      "referenceNumber": 600, 
       "nameEnglish": "Books of Moses", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": null, 
@@ -2628,7 +3268,7 @@
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": "SA1,SA2", 
       "NETBibleAbbreviation": null, 
-      "referenceNumber": 221, 
+      "referenceNumber": 610, 
       "nameEnglish": "Samuel", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": null, 
@@ -2644,7 +3284,7 @@
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": "KG1,KG2", 
       "NETBibleAbbreviation": null, 
-      "referenceNumber": 222, 
+      "referenceNumber": 620, 
       "nameEnglish": "Kings", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": null, 
@@ -2660,7 +3300,7 @@
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": "CH1,CH2", 
       "NETBibleAbbreviation": null, 
-      "referenceNumber": 223, 
+      "referenceNumber": 630, 
       "nameEnglish": "Chronicles", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": null, 
@@ -2676,7 +3316,7 @@
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": "EZR,NEH", 
       "NETBibleAbbreviation": "Ezr", 
-      "referenceNumber": 224, 
+      "referenceNumber": 640, 
       "nameEnglish": "Ezra-Nehemiah / 1 Esdras", 
       "OSISAbbreviation": "Ezra", 
       "USFMAbbreviation": "Ezr", 
@@ -2692,7 +3332,7 @@
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
-      "referenceNumber": 225, 
+      "referenceNumber": 650, 
       "nameEnglish": "Twelve Prophets", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": null, 
@@ -2708,7 +3348,7 @@
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": "LUK,ACT", 
       "NETBibleAbbreviation": null, 
-      "referenceNumber": 226, 
+      "referenceNumber": 690, 
       "nameEnglish": "Luke-Acts", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": null, 
@@ -2724,7 +3364,7 @@
       "BibleditNumberString": "67", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
-      "referenceNumber": 230, 
+      "referenceNumber": 700, 
       "nameEnglish": "Generic front matter", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "Frt", 
@@ -2740,7 +3380,7 @@
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
-      "referenceNumber": 231, 
+      "referenceNumber": 705, 
       "nameEnglish": "Preface", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": null, 
@@ -2756,7 +3396,7 @@
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
-      "referenceNumber": 232, 
+      "referenceNumber": 710, 
       "nameEnglish": "Acknowledgements", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": null, 
@@ -2772,7 +3412,7 @@
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
-      "referenceNumber": 233, 
+      "referenceNumber": 715, 
       "nameEnglish": "Introduction", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": null, 
@@ -2788,7 +3428,7 @@
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
-      "referenceNumber": 234, 
+      "referenceNumber": 720, 
       "nameEnglish": "Table of Contents", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": null, 
@@ -2804,7 +3444,7 @@
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
-      "referenceNumber": 235, 
+      "referenceNumber": 725, 
       "nameEnglish": "Glossary", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "Glo", 
@@ -2820,7 +3460,7 @@
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
-      "referenceNumber": 236, 
+      "referenceNumber": 730, 
       "nameEnglish": "Concordance", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "Cnc", 
@@ -2836,7 +3476,7 @@
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
-      "referenceNumber": 237, 
+      "referenceNumber": 735, 
       "nameEnglish": "Topical Concordance", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": null, 
@@ -2852,7 +3492,7 @@
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
-      "referenceNumber": 238, 
+      "referenceNumber": 740, 
       "nameEnglish": "Names Index", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "NDX", 
@@ -2868,7 +3508,7 @@
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
-      "referenceNumber": 239, 
+      "referenceNumber": 745, 
       "nameEnglish": "Places Index", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": null, 
@@ -2884,7 +3524,7 @@
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
-      "referenceNumber": 240, 
+      "referenceNumber": 750, 
       "nameEnglish": "Maps", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": null, 
@@ -2900,7 +3540,7 @@
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
-      "referenceNumber": 241, 
+      "referenceNumber": 755, 
       "nameEnglish": "Thematic Index", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "TDX", 
@@ -2916,7 +3556,7 @@
       "BibleditNumberString": "68", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
-      "referenceNumber": 242, 
+      "referenceNumber": 760, 
       "nameEnglish": "Generic back matter", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "Bak", 
@@ -2932,7 +3572,7 @@
       "BibleditNumberString": "69", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
-      "referenceNumber": 243, 
+      "referenceNumber": 800, 
       "nameEnglish": "Unspecified extra XXA", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "XXA", 
@@ -2948,7 +3588,7 @@
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
-      "referenceNumber": 244, 
+      "referenceNumber": 810, 
       "nameEnglish": "Unspecified extra XXB", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "XXB", 
@@ -2964,7 +3604,7 @@
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
-      "referenceNumber": 245, 
+      "referenceNumber": 820, 
       "nameEnglish": "Unspecified extra XXC", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "XXC", 
@@ -2980,7 +3620,7 @@
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
-      "referenceNumber": 246, 
+      "referenceNumber": 830, 
       "nameEnglish": "Unspecified extra XXD", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "XXD", 
@@ -2996,7 +3636,7 @@
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
-      "referenceNumber": 247, 
+      "referenceNumber": 840, 
       "nameEnglish": "Unspecified extra XXE", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "XXE", 
@@ -3012,7 +3652,7 @@
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
-      "referenceNumber": 248, 
+      "referenceNumber": 850, 
       "nameEnglish": "Unspecified extra XXF", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "XXF", 
@@ -3028,7 +3668,7 @@
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
-      "referenceNumber": 249, 
+      "referenceNumber": 860, 
       "nameEnglish": "Unspecified extra XXG", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "XXG", 
@@ -3207,7 +3847,7 @@
       "ZEC"
     ], 
     "PR AZAR": [
-      87, 
+      88, 
       "PAZ"
     ], 
     "JONAH": [
@@ -3274,7 +3914,7 @@
       "JER"
     ], 
     "EZRA": [
-      224, 
+      640, 
       [
         "EZR", 
         "EZN"
@@ -3307,9 +3947,9 @@
     "ADD DAN": [
       75, 
       [
-        "DAG", 
-        "DAA", 
-        "DAC"
+        "DNG", 
+        "DNA", 
+        "DNC"
       ]
     ], 
     "JUDG": [
@@ -3325,7 +3965,7 @@
       "MRK"
     ], 
     "WIS": [
-      86, 
+      87, 
       "WIS"
     ], 
     "LEV": [
@@ -3357,7 +3997,7 @@
       "CH1"
     ], 
     "TOB": [
-      85, 
+      86, 
       "TOB"
     ], 
     "JOSH": [
@@ -3410,9 +4050,25 @@
       84, 
       "SIR"
     ], 
+    "IGNSMYRN": [
+      295, 
+      "IGS"
+    ], 
+    "T12PATR.TDAN": [
+      253, 
+      "TSD"
+    ], 
     "MIC": [
       33, 
       "MIC"
+    ], 
+    "5EZRA": [
+      93, 
+      "EZ5"
+    ], 
+    "3COR": [
+      136, 
+      "CO3"
     ], 
     "EPH": [
       49, 
@@ -3421,6 +4077,10 @@
     "3MACC": [
       113, 
       "MA3"
+    ], 
+    "BARN": [
+      144, 
+      "LBB"
     ], 
     "2BAR": [
       103, 
@@ -3446,6 +4106,10 @@
       48, 
       "GAL"
     ], 
+    "JOSHA": [
+      154, 
+      "JSA"
+    ], 
     "NAH": [
       34, 
       "NAH"
@@ -3453,6 +4117,14 @@
     "1CHR": [
       13, 
       "CH1"
+    ], 
+    "DANTH": [
+      158, 
+      "DNT"
+    ], 
+    "EPBAR": [
+      104, 
+      "LBA"
     ], 
     "1MACC": [
       111, 
@@ -3478,9 +4150,21 @@
       37, 
       "HAG"
     ], 
+    "IGNMAGN": [
+      291, 
+      "IGM"
+    ], 
     "2PET": [
       61, 
       "PE2"
+    ], 
+    "2CLEM": [
+      151, 
+      "CL2"
+    ], 
+    "DIOGN": [
+      300, 
+      "DIO"
     ], 
     "LAM": [
       25, 
@@ -3494,13 +4178,21 @@
       57, 
       "PHM"
     ], 
-    "2KGS": [
-      12, 
-      "KI2"
+    "4EZRA": [
+      92, 
+      "EZA"
+    ], 
+    "QUADFRAG": [
+      304, 
+      "FOQ"
     ], 
     "1COR": [
       46, 
       "CO1"
+    ], 
+    "T12PATR.TJOS": [
+      256, 
+      "TSJ"
     ], 
     "MAL": [
       39, 
@@ -3509,6 +4201,10 @@
     "2ESD": [
       91, 
       "LES"
+    ], 
+    "JUDGB": [
+      155, 
+      "JGB"
     ], 
     "ACTS": [
       44, 
@@ -3526,6 +4222,18 @@
       141, 
       "ENO"
     ], 
+    "TATDIAT": [
+      310, 
+      "TAT"
+    ], 
+    "T12PATR.TZEB": [
+      262, 
+      "TSZ"
+    ], 
+    "MARTPOL": [
+      298, 
+      "MPC"
+    ], 
     "EPJER": [
       102, 
       [
@@ -3536,6 +4244,10 @@
     "JDT": [
       82, 
       "JDT"
+    ], 
+    "IGNROM": [
+      293, 
+      "IGR"
     ], 
     "1TIM": [
       54, 
@@ -3557,9 +4269,21 @@
       45, 
       "ROM"
     ], 
+    "RELELDERS": [
+      303, 
+      "ROE"
+    ], 
+    "PSJOS": [
+      109, 
+      "PSJ"
+    ], 
     "PRAZAR": [
-      87, 
+      88, 
       "PAZ"
+    ], 
+    "T12PATR.TJUD": [
+      257, 
+      "TSY"
     ], 
     "1KGS": [
       11, 
@@ -3572,6 +4296,22 @@
     "EZEK": [
       26, 
       "EZK"
+    ], 
+    "T12PATR.TREU": [
+      260, 
+      "TSR"
+    ], 
+    "T12PATR.TASH": [
+      251, 
+      "TSA"
+    ], 
+    "SIRP": [
+      85, 
+      "SIP"
+    ], 
+    "BELTH": [
+      159, 
+      "BLT"
     ], 
     "EXOD": [
       2, 
@@ -3597,6 +4337,22 @@
       32, 
       "JNA"
     ], 
+    "PAPFRAG": [
+      302, 
+      "FOP"
+    ], 
+    "SUSTH": [
+      157, 
+      "SST"
+    ], 
+    "PRSOL": [
+      132, 
+      "PSO"
+    ], 
+    "PS151": [
+      126, 
+      "PS2"
+    ], 
     "NEH": [
       16, 
       "NEH"
@@ -3605,9 +4361,25 @@
       42, 
       "LUK"
     ], 
+    "REP": [
+      143, 
+      "REP"
+    ], 
+    "5APOCSYRPSS": [
+      127, 
+      "PS3"
+    ], 
     "ESTH": [
       17, 
       "EST"
+    ], 
+    "DORMJOHN": [
+      138, 
+      "DOJ"
+    ], 
+    "T12PATR.TISS": [
+      255, 
+      "TSI"
     ], 
     "SUS": [
       81, 
@@ -3621,17 +4393,29 @@
       51, 
       "COL"
     ], 
+    "ADDJER": [
+      108, 
+      "JRA"
+    ], 
     "DANGR": [
       73, 
-      "DAG"
+      "DNG"
     ], 
     "PHIL": [
       50, 
       "PHP"
     ], 
+    "PREUTH": [
+      137, 
+      "EUT"
+    ], 
     "NUM": [
       4, 
       "NUM"
+    ], 
+    "WSIR": [
+      134, 
+      "WSI"
     ], 
     "4MACC": [
       114, 
@@ -3646,10 +4430,19 @@
       "JN2"
     ], 
     "EZRA": [
-      224, 
+      640, 
       [
         "EZR", 
         "EZN"
+      ]
+    ], 
+    "HERM": [
+      283, 
+      [
+        "SHE", 
+        "SHM", 
+        "SHS", 
+        "SHV"
       ]
     ], 
     "1JOHN": [
@@ -3664,6 +4457,18 @@
       83, 
       "MAN"
     ], 
+    "T12PATR.TNAPH": [
+      259, 
+      "TSN"
+    ], 
+    "EPCORPAUL": [
+      135, 
+      "COP"
+    ], 
+    "2TIM": [
+      55, 
+      "TI2"
+    ], 
     "HEB": [
       58, 
       "HEB"
@@ -3672,12 +4477,24 @@
       130, 
       "LAO"
     ], 
+    "IGNEPH": [
+      290, 
+      "IGE"
+    ], 
     "ADDDAN": [
       75, 
       [
-        "DAA", 
-        "DAC"
+        "DNA", 
+        "DNC"
       ]
+    ], 
+    "T12PATR.TSIM": [
+      261, 
+      "TSS"
+    ], 
+    "T12PATR.TBENJ": [
+      252, 
+      "TSB"
     ], 
     "JUDG": [
       7, 
@@ -3700,12 +4517,16 @@
       "CH2"
     ], 
     "WIS": [
-      86, 
+      87, 
       "WIS"
     ], 
     "LEV": [
       3, 
       "LEV"
+    ], 
+    "JOSEPHUSJWVI": [
+      270, 
+      "JJW"
     ], 
     "AMOS": [
       30, 
@@ -3731,12 +4552,24 @@
       101, 
       "BAR"
     ], 
+    "T12PATR": [
+      250, 
+      "TTP"
+    ], 
+    "DID": [
+      153, 
+      "DID"
+    ], 
     "ESTHGR": [
       70, 
       "ESG"
     ], 
+    "T12PATR.TGAD": [
+      254, 
+      "TSG"
+    ], 
     "TOB": [
-      85, 
+      86, 
       "TOB"
     ], 
     "ADDESTH": [
@@ -3745,6 +4578,10 @@
         "ESA", 
         "ESC"
       ]
+    ], 
+    "1CLEM": [
+      150, 
+      "CL1"
     ], 
     "DAN": [
       27, 
@@ -3758,33 +4595,61 @@
       9, 
       "SA1"
     ], 
-    "ADDPS": [
-      127, 
-      "PS3"
+    "IGNPOL": [
+      296, 
+      "IGC"
+    ], 
+    "TOBS": [
+      156, 
+      "TBS"
+    ], 
+    "T12PATR.TLEVI": [
+      258, 
+      "TSL"
     ], 
     "1MEQ": [
       116, 
       "MQ1"
     ], 
+    "APOSCREED": [
+      301, 
+      "APC"
+    ], 
+    "PRJER": [
+      133, 
+      "PJE"
+    ], 
     "HOS": [
       28, 
       "HOS"
     ], 
-    "2TIM": [
-      55, 
-      "TI2"
+    "6EZRA": [
+      94, 
+      "EZ6"
     ], 
     "2THESS": [
       53, 
       "TH2"
     ], 
+    "IGNTRALL": [
+      292, 
+      "IGT"
+    ], 
     "2MACC": [
       112, 
       "MA2"
     ], 
+    "RUTH": [
+      8, 
+      "RUT"
+    ], 
     "2MEQ": [
       117, 
       "MQ2"
+    ], 
+    "IGNPHLD": [
+      294, 
+      "IGP"
     ], 
     "1PET": [
       60, 
@@ -3798,9 +4663,17 @@
       52, 
       "TH1"
     ], 
-    "RUTH": [
-      8, 
-      "RUT"
+    "2KGS": [
+      12, 
+      "KI2"
+    ], 
+    "PSMET": [
+      125, 
+      "PSB"
+    ], 
+    "POLPHIL": [
+      297, 
+      "PCP"
     ]
   }, 
   "BibleditNumberDict": {
@@ -3916,7 +4789,7 @@
     ], 
     "88": [
       73, 
-      "DAG", 
+      "DNG", 
       "DaG"
     ], 
     "82": [
@@ -4055,17 +4928,17 @@
       "Rev"
     ], 
     "67": [
-      230, 
+      700, 
       "FRT", 
       "Frt"
     ], 
     "68": [
-      242, 
+      760, 
       "BAK", 
       "Bak"
     ], 
     "69": [
-      243, 
+      800, 
       "XXA", 
       "XXA"
     ], 
@@ -4195,7 +5068,7 @@
       "1Sa"
     ], 
     "77": [
-      87, 
+      88, 
       "PAZ", 
       "S3Y"
     ], 
@@ -4215,7 +5088,7 @@
       "Sir"
     ], 
     "73": [
-      86, 
+      87, 
       "WIS", 
       "Wis"
     ], 
@@ -4230,7 +5103,7 @@
       "Jdt"
     ], 
     "70": [
-      85, 
+      86, 
       "TOB", 
       "Tob"
     ], 
@@ -4431,6 +5304,11 @@
       "DEU", 
       "05"
     ], 
+    "JDB": [
+      155, 
+      "JGB", 
+      null
+    ], 
     "1ES": [
       90, 
       "GES", 
@@ -4481,6 +5359,11 @@
       "GEN", 
       "01"
     ], 
+    "BLT": [
+      159, 
+      "BLT", 
+      null
+    ], 
     "LJE": [
       102, 
       [
@@ -4498,7 +5381,7 @@
       "B7"
     ], 
     "SHE": [
-      152, 
+      280, 
       "SHE", 
       null
     ], 
@@ -4511,6 +5394,16 @@
       125, 
       "PSB", 
       "88"
+    ], 
+    "SST": [
+      157, 
+      "SST", 
+      null
+    ], 
+    "TBS": [
+      156, 
+      "TBS", 
+      null
     ], 
     "PSA": [
       19, 
@@ -4533,7 +5426,7 @@
       "80"
     ], 
     "CNC": [
-      236, 
+      730, 
       "CNC", 
       null
     ], 
@@ -4558,7 +5451,7 @@
       "16"
     ], 
     "GLO": [
-      235, 
+      725, 
       "GLS", 
       null
     ], 
@@ -4607,6 +5500,11 @@
       "ECC", 
       "21"
     ], 
+    "JSA": [
+      154, 
+      "JSA", 
+      null
+    ], 
     "DID": [
       153, 
       "DID", 
@@ -4637,10 +5535,15 @@
       "OBA", 
       "31"
     ], 
-    "NDX": [
-      238, 
-      "IXN", 
+    "DNT": [
+      158, 
+      "DNT", 
       null
+    ], 
+    "ADE": [
+      71, 
+      "ESA", 
+      "70"
     ], 
     "HEB": [
       58, 
@@ -4648,7 +5551,7 @@
       "59"
     ], 
     "FRT": [
-      230, 
+      700, 
       "FRT", 
       null
     ], 
@@ -4683,12 +5586,12 @@
       "36"
     ], 
     "TDX": [
-      241, 
+      755, 
       "IXT", 
       null
     ], 
     "WIS": [
-      86, 
+      87, 
       "WIS", 
       "71"
     ], 
@@ -4753,21 +5656,21 @@
       "B3"
     ], 
     "TOB": [
-      85, 
+      86, 
       "TOB", 
       "68"
     ], 
     "BAK": [
-      242, 
+      760, 
       "BAK", 
       null
     ], 
     "DAG": [
       75, 
       [
-        "DAG", 
-        "DAA", 
-        "DAC"
+        "DNG", 
+        "DNA", 
+        "DNC"
       ], 
       [
         "B2", 
@@ -4786,17 +5689,17 @@
       "A6"
     ], 
     "XXC": [
-      245, 
+      820, 
       "XXC", 
       null
     ], 
     "XXB": [
-      244, 
+      810, 
       "XXB", 
       null
     ], 
     "XXA": [
-      243, 
+      800, 
       "XXA", 
       null
     ], 
@@ -4806,22 +5709,22 @@
       "49"
     ], 
     "XXG": [
-      249, 
+      860, 
       "XXG", 
       null
     ], 
     "XXF": [
-      248, 
+      850, 
       "XXF", 
       null
     ], 
     "XXE": [
-      247, 
+      840, 
       "XXE", 
       null
     ], 
     "XXD": [
-      246, 
+      830, 
       "XXD", 
       null
     ], 
@@ -4842,7 +5745,7 @@
       "17"
     ], 
     "S3Y": [
-      87, 
+      88, 
       "PAZ", 
       "75"
     ], 
@@ -4860,11 +5763,9 @@
       72, 
       [
         "ESG", 
-        "ESA", 
         "ESC"
       ], 
       [
-        "70", 
         "70", 
         "70"
       ]
@@ -4879,13 +5780,18 @@
       "JDE", 
       "66"
     ], 
+    "NDX": [
+      740, 
+      "IXN", 
+      null
+    ], 
     "2ES": [
       91, 
       "LES", 
       "83"
     ], 
     "EZR": [
-      224, 
+      640, 
       [
         "EZR", 
         "EZN"
@@ -5041,9 +5947,9 @@
     "B2": [
       75, 
       [
-        "DAG", 
-        "DAA", 
-        "DAC"
+        "DNG", 
+        "DNA", 
+        "DNC"
       ], 
       [
         "DaG", 
@@ -5247,7 +6153,7 @@
       "Rev"
     ], 
     "68": [
-      85, 
+      86, 
       "TOB", 
       "Tob"
     ], 
@@ -5297,7 +6203,7 @@
       "2Ki"
     ], 
     "15": [
-      224, 
+      640, 
       [
         "EZR", 
         "EZN"
@@ -5403,7 +6309,7 @@
       "Sus"
     ], 
     "75": [
-      87, 
+      88, 
       "PAZ", 
       "S3Y"
     ], 
@@ -5429,7 +6335,7 @@
       "Sir"
     ], 
     "71": [
-      86, 
+      87, 
       "WIS", 
       "Wis"
     ], 
@@ -5442,7 +6348,7 @@
       ], 
       [
         "EsG", 
-        "EsG", 
+        "ADE", 
         "EsG"
       ]
     ], 
@@ -5540,7 +6446,7 @@
     }, 
     "6": {
       "BibleditNumberString": "6", 
-      "possibleAlternativeBooks": null, 
+      "possibleAlternativeBooks": "JSA", 
       "NETBibleAbbreviation": "Jos", 
       "nameEnglish": "Joshua / Joshua son of Nun", 
       "referenceAbbreviation": "JOS", 
@@ -5556,7 +6462,7 @@
     }, 
     "7": {
       "BibleditNumberString": "7", 
-      "possibleAlternativeBooks": null, 
+      "possibleAlternativeBooks": "JGB", 
       "NETBibleAbbreviation": "Jdg", 
       "nameEnglish": "Judges", 
       "referenceAbbreviation": "JDG", 
@@ -5876,7 +6782,7 @@
     }, 
     "27": {
       "BibleditNumberString": "27", 
-      "possibleAlternativeBooks": "DAG,DAA,DAC", 
+      "possibleAlternativeBooks": "DNG,DNA,DNC,DNT", 
       "NETBibleAbbreviation": "Dan", 
       "nameEnglish": "Daniel", 
       "referenceAbbreviation": "DAN", 
@@ -6537,7 +7443,7 @@
       "nameEnglish": "Greek additions to Esther / Esther (additions)", 
       "referenceAbbreviation": "ESA", 
       "OSISAbbreviation": "AddEsth", 
-      "USFMAbbreviation": "EsG", 
+      "USFMAbbreviation": "ADE", 
       "CCELNumberString": "95", 
       "SwordAbbreviation": "AddEsth", 
       "USFMNumberString": "70", 
@@ -6564,10 +7470,10 @@
     }, 
     "73": {
       "BibleditNumberString": "88", 
-      "possibleAlternativeBooks": "DAN,DAA,DAC", 
+      "possibleAlternativeBooks": "DAN,DNA,DNC,DNT", 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Greek Daniel / Daniel (Greek)", 
-      "referenceAbbreviation": "DAG", 
+      "referenceAbbreviation": "DNG", 
       "OSISAbbreviation": "AddDan", 
       "USFMAbbreviation": "DaG", 
       "CCELNumberString": null, 
@@ -6580,10 +7486,10 @@
     }, 
     "74": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "DAN,DAG,DAC", 
+      "possibleAlternativeBooks": "DAN,DNG,DNC,DNT", 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Greek additions to Daniel / Daniel (additions)", 
-      "referenceAbbreviation": "DAA", 
+      "referenceAbbreviation": "DNA", 
       "OSISAbbreviation": "AddDan", 
       "USFMAbbreviation": "DaG", 
       "CCELNumberString": null, 
@@ -6596,10 +7502,10 @@
     }, 
     "75": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "DAN,DAG,DAA", 
+      "possibleAlternativeBooks": "DAN,DNG,DNA,DNT", 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Combined Hebrew/Greek Daniel / Daniel (combined)", 
-      "referenceAbbreviation": "DAC", 
+      "referenceAbbreviation": "DNC", 
       "OSISAbbreviation": "AddDan", 
       "USFMAbbreviation": "DaG", 
       "CCELNumberString": null, 
@@ -6612,7 +7518,7 @@
     }, 
     "80": {
       "BibleditNumberString": "79", 
-      "possibleAlternativeBooks": null, 
+      "possibleAlternativeBooks": "BLT", 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Bel and the dragon", 
       "referenceAbbreviation": "BEL", 
@@ -6628,7 +7534,7 @@
     }, 
     "81": {
       "BibleditNumberString": "78", 
-      "possibleAlternativeBooks": null, 
+      "possibleAlternativeBooks": "SST", 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Susanna", 
       "referenceAbbreviation": "SUS", 
@@ -6691,8 +7597,24 @@
       "numExpectedChapters": "51,52"
     }, 
     "85": {
-      "BibleditNumberString": "70", 
+      "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Sirach Prologue", 
+      "referenceAbbreviation": "SIP", 
+      "OSISAbbreviation": "SirP", 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "SirP", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "86": {
+      "BibleditNumberString": "70", 
+      "possibleAlternativeBooks": "TBS", 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Tobit / Tobias", 
       "referenceAbbreviation": "TOB", 
@@ -6706,7 +7628,7 @@
       "USXNumberString": "067", 
       "numExpectedChapters": "14"
     }, 
-    "86": {
+    "87": {
       "BibleditNumberString": "73", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
@@ -6722,7 +7644,7 @@
       "USXNumberString": "070", 
       "numExpectedChapters": "19"
     }, 
-    "87": {
+    "88": {
       "BibleditNumberString": "77", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
@@ -6779,7 +7701,7 @@
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "EzA", 
       "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
+      "SwordAbbreviation": "4Ezra", 
       "USFMNumberString": "A4", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "4 Ezra", 
@@ -6795,7 +7717,7 @@
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "5Ez", 
       "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
+      "SwordAbbreviation": "5Ezra", 
       "USFMNumberString": "A5", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "5 Ezra", 
@@ -6811,7 +7733,7 @@
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "6Ez", 
       "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
+      "SwordAbbreviation": "6Ezra", 
       "USFMNumberString": "A6", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": "6 Ezra", 
@@ -6838,7 +7760,7 @@
       "BibleditNumberString": "76", 
       "possibleAlternativeBooks": "LJB", 
       "NETBibleAbbreviation": null, 
-      "nameEnglish": "Epistle of Jeremiah / Letter of Jeremiah", 
+      "nameEnglish": "Letter of Jeremiah / Epistle of Jeremiah", 
       "referenceAbbreviation": "LJE", 
       "OSISAbbreviation": "EpJer", 
       "USFMAbbreviation": "LJe", 
@@ -6870,7 +7792,7 @@
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": "BAR", 
       "NETBibleAbbreviation": null, 
-      "nameEnglish": "Letter/Epistle of Jeremiah with Baruch", 
+      "nameEnglish": "Letter of Jeremiah with Baruch / Epistle of Jeremiah with Baruch", 
       "referenceAbbreviation": "LJB", 
       "OSISAbbreviation": "EpJer", 
       "USFMAbbreviation": "LJe", 
@@ -6902,12 +7824,12 @@
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": "LB2", 
       "NETBibleAbbreviation": null, 
-      "nameEnglish": "Letter of Baruch", 
+      "nameEnglish": "Letter of Baruch / Epistle of Baruch", 
       "referenceAbbreviation": "LBA", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "LBa", 
       "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
+      "SwordAbbreviation": "EpBar", 
       "USFMNumberString": "B5", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
@@ -6961,6 +7883,38 @@
       "SBLAbbreviation": null, 
       "USXNumberString": null, 
       "numExpectedChapters": "6,5"
+    }, 
+    "108": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Additions to Jeremiah / Rest of Jeremiah", 
+      "referenceAbbreviation": "JRA", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "AddJer", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "109": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Pseudo-Josephus", 
+      "referenceAbbreviation": "PSJ", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "PsJos", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
     }, 
     "110": {
       "BibleditNumberString": null, 
@@ -7195,7 +8149,7 @@
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "PsB", 
       "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
+      "SwordAbbreviation": "PsMet", 
       "USFMNumberString": "88", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
@@ -7211,7 +8165,7 @@
       "OSISAbbreviation": "Ps151", 
       "USFMAbbreviation": "Ps2", 
       "CCELNumberString": "86", 
-      "SwordAbbreviation": null, 
+      "SwordAbbreviation": "Ps151", 
       "USFMNumberString": "85", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
@@ -7222,12 +8176,12 @@
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
-      "nameEnglish": "Syriac Psalms 152-155 / Five apocryphal Syriac Psalms", 
+      "nameEnglish": "Syriac Psalms 152-155 / Five apocryphal Syriac Psalms / Additional Syriac Psalms", 
       "referenceAbbreviation": "PS3", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "Ps3", 
       "CCELNumberString": null, 
-      "SwordAbbreviation": "AddPs", 
+      "SwordAbbreviation": "5ApocSyrPss", 
       "USFMNumberString": "B3", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
@@ -7291,7 +8245,7 @@
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "PSo", 
       "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
+      "SwordAbbreviation": "PrSol", 
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
@@ -7307,7 +8261,7 @@
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "PJe", 
       "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
+      "SwordAbbreviation": "PrJer", 
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
@@ -7323,7 +8277,7 @@
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "WSi", 
       "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
+      "SwordAbbreviation": "WSir", 
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
@@ -7334,12 +8288,12 @@
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
-      "nameEnglish": "Letter of the Corinthians to Paul", 
+      "nameEnglish": "Letter of the Corinthians to Paul / Epistle of the Corinthians to Paul", 
       "referenceAbbreviation": "COP", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "CoP", 
       "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
+      "SwordAbbreviation": "EpCorPaul", 
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
@@ -7355,7 +8309,7 @@
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "3Co", 
       "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
+      "SwordAbbreviation": "3Cor", 
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
@@ -7371,7 +8325,7 @@
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "Eut", 
       "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
+      "SwordAbbreviation": "PrEuth", 
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
@@ -7387,28 +8341,12 @@
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "DoJ", 
       "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
+      "SwordAbbreviation": "DormJohn", 
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
       "USXNumberString": null, 
       "numExpectedChapters": "1"
-    }, 
-    "139": {
-      "BibleditNumberString": null, 
-      "possibleAlternativeBooks": null, 
-      "NETBibleAbbreviation": null, 
-      "nameEnglish": "Testaments of the Twelve Patriarchs", 
-      "referenceAbbreviation": "TTP", 
-      "OSISAbbreviation": null, 
-      "USFMAbbreviation": null, 
-      "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
-      "USFMNumberString": null, 
-      "ByzantineAbbreviation": null, 
-      "SBLAbbreviation": null, 
-      "USXNumberString": null, 
-      "numExpectedChapters": null
     }, 
     "140": {
       "BibleditNumberString": null, 
@@ -7462,12 +8400,12 @@
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
-      "nameEnglish": "Reproof", 
+      "nameEnglish": "Reproof / Tegsas / Tegsats / Taagsas", 
       "referenceAbbreviation": "REP", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "Rep", 
       "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
+      "SwordAbbreviation": "Rep", 
       "USFMNumberString": "C1", 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
@@ -7478,12 +8416,12 @@
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
-      "nameEnglish": "Letter of Barnabas / Epistle of Barnabas", 
+      "nameEnglish": "Letter of Barnabas / Epistle of Barnabas / Barnabas", 
       "referenceAbbreviation": "LBB", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": null, 
       "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
+      "SwordAbbreviation": "Barn", 
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
@@ -7499,7 +8437,7 @@
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "1Cl", 
       "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
+      "SwordAbbreviation": "1Clem", 
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
@@ -7515,28 +8453,12 @@
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "2Cl", 
       "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
+      "SwordAbbreviation": "2Clem", 
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
       "USXNumberString": null, 
       "numExpectedChapters": "20"
-    }, 
-    "152": {
-      "BibleditNumberString": null, 
-      "possibleAlternativeBooks": null, 
-      "NETBibleAbbreviation": null, 
-      "nameEnglish": "Shepherd of Hermas", 
-      "referenceAbbreviation": "SHE", 
-      "OSISAbbreviation": null, 
-      "USFMAbbreviation": "She", 
-      "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
-      "USFMNumberString": null, 
-      "ByzantineAbbreviation": null, 
-      "SBLAbbreviation": null, 
-      "USXNumberString": null, 
-      "numExpectedChapters": null
     }, 
     "153": {
       "BibleditNumberString": null, 
@@ -7547,12 +8469,108 @@
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "Did", 
       "CCELNumberString": null, 
-      "SwordAbbreviation": null, 
+      "SwordAbbreviation": "Did", 
       "USFMNumberString": null, 
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
       "USXNumberString": null, 
       "numExpectedChapters": "16"
+    }, 
+    "154": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": "JOS", 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Joshua A", 
+      "referenceAbbreviation": "JSA", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": "JsA", 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "JoshA", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "155": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": "JDG", 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Judges B", 
+      "referenceAbbreviation": "JGB", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": "JdB", 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "JudgB", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "156": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": "TOB", 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Tobit S", 
+      "referenceAbbreviation": "TBS", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": "TbS", 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "TobS", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "157": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": "SUS", 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Susanna \u03b8", 
+      "referenceAbbreviation": "SST", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": "SsT", 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "SusTh", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "158": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": "DAN,DNG,DNA,DNC", 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Daniel \u03b8", 
+      "referenceAbbreviation": "DNT", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": "DnT", 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "DanTh", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "159": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": "BEL", 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Bel and the dragon \u03b8", 
+      "referenceAbbreviation": "BLT", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": "BlT", 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "BelTh", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
     }, 
     "160": {
       "BibleditNumberString": null, 
@@ -8066,7 +9084,535 @@
       "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
-    "220": {
+    "250": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Testaments of the Twelve Patriarchs", 
+      "referenceAbbreviation": "TTP", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "T12Patr", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "251": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Testament of Asher", 
+      "referenceAbbreviation": "TSA", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "T12Patr.TAsh", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "252": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Testament of Benjamin", 
+      "referenceAbbreviation": "TSB", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "T12Patr.TBenj", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "253": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Testament of Dan", 
+      "referenceAbbreviation": "TSD", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "T12Patr.TDan", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "254": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Testament of Gad", 
+      "referenceAbbreviation": "TSG", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "T12Patr.TGad", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "255": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Testament of Issachar", 
+      "referenceAbbreviation": "TSI", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "T12Patr.TIss", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "256": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Testament of Joseph", 
+      "referenceAbbreviation": "TSJ", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "T12Patr.TJos", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "257": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Testament of Judah", 
+      "referenceAbbreviation": "TSY", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "T12Patr.TJud", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "258": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Testament of Levi", 
+      "referenceAbbreviation": "TSL", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "T12Patr.TLevi", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "259": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Testament of Naphtali", 
+      "referenceAbbreviation": "TSN", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "T12Patr.TNaph", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "260": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Testament of Reuben", 
+      "referenceAbbreviation": "TSR", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "T12Patr.TReu", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "261": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Testament of Simeon", 
+      "referenceAbbreviation": "TSS", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "T12Patr.TSim", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "262": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Testament of Zebulun", 
+      "referenceAbbreviation": "TSZ", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "T12Patr.TZeb", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "270": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Josephus Jewish War VI", 
+      "referenceAbbreviation": "JJW", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "JosephusJWvi", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "280": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Shepherd of Hermas", 
+      "referenceAbbreviation": "SHE", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": "She", 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "Herm", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "281": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Shepherd of Hermas Mandates", 
+      "referenceAbbreviation": "SHM", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "Herm", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "282": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Shepherd of Hermas Similitudes", 
+      "referenceAbbreviation": "SHS", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "Herm", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "283": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Shepherd of Hermas Visions", 
+      "referenceAbbreviation": "SHV", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "Herm", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "290": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Ignatius to the Ephesians", 
+      "referenceAbbreviation": "IGE", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "IgnEph", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "291": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Ignatius to the Magnesians", 
+      "referenceAbbreviation": "IGM", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "IgnMagn", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "292": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Ignatius to the Trallians", 
+      "referenceAbbreviation": "IGT", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "IgnTrall", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "293": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Ignatius to the Romans", 
+      "referenceAbbreviation": "IGR", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "IgnRom", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "294": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Ignatius to the Philadelphians", 
+      "referenceAbbreviation": "IGP", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "IgnPhld", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "295": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Ignatius to the Smyrnaeans", 
+      "referenceAbbreviation": "IGS", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "IgnSmyrn", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "296": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Ignatius to Polycarp", 
+      "referenceAbbreviation": "IGC", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "IgnPol", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "297": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Polycarp to the Philippians", 
+      "referenceAbbreviation": "PCP", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "PolPhil", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "298": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Martydom of Polycarp", 
+      "referenceAbbreviation": "MPC", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "MartPol", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "300": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Diognetus", 
+      "referenceAbbreviation": "DIO", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "Diogn", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "301": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Apostles' Creed", 
+      "referenceAbbreviation": "APC", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "AposCreed", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "302": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Fragments of Papias", 
+      "referenceAbbreviation": "FOP", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "PapFrag", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "303": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Reliques of the Elders", 
+      "referenceAbbreviation": "ROE", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "RelElders", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "304": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Fragment of Quadratus", 
+      "referenceAbbreviation": "FOQ", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "QuadFrag", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "310": {
+      "BibleditNumberString": null, 
+      "possibleAlternativeBooks": null, 
+      "NETBibleAbbreviation": null, 
+      "nameEnglish": "Tatian / Tatian's Diatessaron / Diatessaron", 
+      "referenceAbbreviation": "TAT", 
+      "OSISAbbreviation": null, 
+      "USFMAbbreviation": null, 
+      "CCELNumberString": null, 
+      "SwordAbbreviation": "TatDiat", 
+      "USFMNumberString": null, 
+      "ByzantineAbbreviation": null, 
+      "SBLAbbreviation": null, 
+      "USXNumberString": null, 
+      "numExpectedChapters": null
+    }, 
+    "600": {
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": "GEN,EXO,LEV,NUM,DEU", 
       "NETBibleAbbreviation": null, 
@@ -8082,7 +9628,7 @@
       "USXNumberString": null, 
       "numExpectedChapters": "187"
     }, 
-    "221": {
+    "610": {
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": "SA1,SA2", 
       "NETBibleAbbreviation": null, 
@@ -8098,7 +9644,7 @@
       "USXNumberString": null, 
       "numExpectedChapters": "55"
     }, 
-    "222": {
+    "620": {
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": "KG1,KG2", 
       "NETBibleAbbreviation": null, 
@@ -8114,7 +9660,7 @@
       "USXNumberString": null, 
       "numExpectedChapters": "47"
     }, 
-    "223": {
+    "630": {
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": "CH1,CH2", 
       "NETBibleAbbreviation": null, 
@@ -8130,7 +9676,7 @@
       "USXNumberString": null, 
       "numExpectedChapters": "65"
     }, 
-    "224": {
+    "640": {
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": "EZR,NEH", 
       "NETBibleAbbreviation": "Ezr", 
@@ -8146,7 +9692,7 @@
       "USXNumberString": null, 
       "numExpectedChapters": "26"
     }, 
-    "225": {
+    "650": {
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
@@ -8162,7 +9708,7 @@
       "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
-    "226": {
+    "690": {
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": "LUK,ACT", 
       "NETBibleAbbreviation": null, 
@@ -8178,7 +9724,7 @@
       "USXNumberString": null, 
       "numExpectedChapters": "52"
     }, 
-    "230": {
+    "700": {
       "BibleditNumberString": "67", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
@@ -8194,7 +9740,7 @@
       "USXNumberString": "100", 
       "numExpectedChapters": null
     }, 
-    "231": {
+    "705": {
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
@@ -8210,7 +9756,7 @@
       "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
-    "232": {
+    "710": {
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
@@ -8226,7 +9772,7 @@
       "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
-    "233": {
+    "715": {
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
@@ -8242,7 +9788,7 @@
       "USXNumberString": "107", 
       "numExpectedChapters": null
     }, 
-    "234": {
+    "720": {
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
@@ -8258,7 +9804,7 @@
       "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
-    "235": {
+    "725": {
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
@@ -8274,7 +9820,7 @@
       "USXNumberString": "109", 
       "numExpectedChapters": null
     }, 
-    "236": {
+    "730": {
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
@@ -8290,7 +9836,7 @@
       "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
-    "237": {
+    "735": {
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
@@ -8306,7 +9852,7 @@
       "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
-    "238": {
+    "740": {
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
@@ -8322,7 +9868,7 @@
       "USXNumberString": "111", 
       "numExpectedChapters": null
     }, 
-    "239": {
+    "745": {
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
@@ -8338,7 +9884,7 @@
       "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
-    "240": {
+    "750": {
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
@@ -8354,7 +9900,7 @@
       "USXNumberString": null, 
       "numExpectedChapters": null
     }, 
-    "241": {
+    "755": {
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
@@ -8370,7 +9916,7 @@
       "USXNumberString": "110", 
       "numExpectedChapters": null
     }, 
-    "242": {
+    "760": {
       "BibleditNumberString": "68", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
@@ -8386,7 +9932,7 @@
       "USXNumberString": "101", 
       "numExpectedChapters": null
     }, 
-    "243": {
+    "800": {
       "BibleditNumberString": "69", 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
@@ -8402,7 +9948,7 @@
       "USXNumberString": "093", 
       "numExpectedChapters": null
     }, 
-    "244": {
+    "810": {
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
@@ -8418,7 +9964,7 @@
       "USXNumberString": "094", 
       "numExpectedChapters": null
     }, 
-    "245": {
+    "820": {
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
@@ -8434,7 +9980,7 @@
       "USXNumberString": "095", 
       "numExpectedChapters": null
     }, 
-    "246": {
+    "830": {
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
@@ -8450,7 +9996,7 @@
       "USXNumberString": "096", 
       "numExpectedChapters": null
     }, 
-    "247": {
+    "840": {
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
@@ -8466,7 +10012,7 @@
       "USXNumberString": "097", 
       "numExpectedChapters": null
     }, 
-    "248": {
+    "850": {
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
@@ -8482,7 +10028,7 @@
       "USXNumberString": "098", 
       "numExpectedChapters": null
     }, 
-    "249": {
+    "860": {
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": null, 
       "NETBibleAbbreviation": null, 
@@ -8501,37 +10047,37 @@
   }, 
   "USXNumberDict": {
     "098": [
-      248, 
+      850, 
       "XXF", 
       "XXF"
     ], 
     "099": [
-      249, 
+      860, 
       "XXG", 
       "XXG"
     ], 
     "093": [
-      243, 
+      800, 
       "XXA", 
       "XXA"
     ], 
     "094": [
-      244, 
+      810, 
       "XXB", 
       "XXB"
     ], 
     "095": [
-      245, 
+      820, 
       "XXC", 
       "XXC"
     ], 
     "096": [
-      246, 
+      830, 
       "XXD", 
       "XXD"
     ], 
     "097": [
-      247, 
+      840, 
       "XXE", 
       "XXE"
     ], 
@@ -8656,12 +10202,12 @@
       "Mal"
     ], 
     "111": [
-      238, 
+      740, 
       "IXN", 
       "NDX"
     ], 
     "110": [
-      241, 
+      755, 
       "IXT", 
       "TDX"
     ], 
@@ -8672,7 +10218,7 @@
     ], 
     "112": [
       73, 
-      "DAG", 
+      "DNG", 
       "DaG"
     ], 
     "032": [
@@ -8716,7 +10262,7 @@
       "Hab"
     ], 
     "109": [
-      235, 
+      725, 
       "GLS", 
       "Glo"
     ], 
@@ -8821,12 +10367,12 @@
       "2Th"
     ], 
     "101": [
-      242, 
+      760, 
       "BAK", 
       "Bak"
     ], 
     "107": [
-      233, 
+      715, 
       "INT", 
       null
     ], 
@@ -8866,7 +10412,7 @@
       "3Jn"
     ], 
     "067": [
-      85, 
+      86, 
       "TOB", 
       "Tob"
     ], 
@@ -8896,7 +10442,7 @@
       "1Ma"
     ], 
     "074": [
-      87, 
+      88, 
       "PAZ", 
       "S3Y"
     ], 
@@ -8916,7 +10462,7 @@
       "LJe"
     ], 
     "070": [
-      86, 
+      87, 
       "WIS", 
       "Wis"
     ], 
@@ -8936,7 +10482,7 @@
       "3Ma"
     ], 
     "100": [
-      230, 
+      700, 
       "FRT", 
       "Frt"
     ], 
@@ -9088,7 +10634,7 @@
       "MAN"
     ], 
     "69": [
-      85, 
+      86, 
       "TOB"
     ], 
     "80": [
@@ -9236,7 +10782,7 @@
       "JDE"
     ], 
     "76": [
-      87, 
+      88, 
       "PAZ"
     ], 
     "75": [
@@ -9248,7 +10794,7 @@
       "ZEC"
     ], 
     "72": [
-      86, 
+      87, 
       "WIS"
     ], 
     "70": [
@@ -9371,18 +10917,26 @@
   "allAbbreviationsDict": {
     "SIR": "SIR", 
     "3CO": "CO3", 
+    "IGNSMYRN": "IGS", 
+    "T12PATR.TDAN": "TSD", 
     "TIT": "TIT", 
     "EXO": "EXO", 
     "NAH": "NAH", 
+    "5EZRA": "EZ5", 
     "NAM": "NAH", 
     "2PE": "PE2", 
+    "3COR": "CO3", 
     "2 CHR": "CH2", 
+    "PS3": "PS3", 
     "3MACC": "MA3", 
     "2KI": "KI2", 
-    "JAS": "JAM", 
+    "EST": "EST", 
+    "BARN": "LBB", 
     "EZEK": "EZK", 
     "JOS": "JOS", 
     "NEH": "NEH", 
+    "1JO": "JN1", 
+    "2CLEM": "CL2", 
     "PRO": "PRO", 
     "JOSH": "JOS", 
     "XXA": "XXA", 
@@ -9398,33 +10952,40 @@
     "JOL": "JOL", 
     "MIC": "MIC", 
     "JON": "JNA", 
+    "DANTH": "DNT", 
     "1 THESS": "TH1", 
-    "1MACC": "MA1", 
+    "EPBAR": "LBA", 
     "SONG": "SNG", 
     "REV": "REV", 
     "HAB": "HAB", 
     "2SA": "SA2", 
     "HAG": "HAG", 
     "JAM": "JAM", 
+    "IGNMAGN": "IGM", 
     "1 SAM": "SA1", 
     "GA": "GAL", 
     "MRK": "MRK", 
     "2JO": "JN2", 
     "2JN": "JN2", 
+    "JAS": "JAM", 
     "PR MAN": "MAN", 
+    "DIOGN": "DIO", 
     "PHLM": "PHM", 
-    "LAM": "LAM", 
+    "SNG": "SNG", 
     "PHI": "PHP", 
     "MAR": "MRK", 
+    "1SAM": "SA1", 
     "MAT": "MAT", 
     "PHM": "PHM", 
-    "SNG": "SNG", 
-    "NIC": "MIC", 
+    "4EZRA": "EZA", 
+    "QUADFRAG": "FOQ", 
     "JOEL": "JOL", 
     "ACTS": "ACT", 
     "2CL": "CL2", 
     "2CO": "CO2", 
     "2CH": "CH2", 
+    "NIC": "MIC", 
+    "2 KGS": "KI2", 
     "PHP": "PHP", 
     "MAL": "MAL", 
     "2ESD": "LES", 
@@ -9438,52 +10999,67 @@
     "2 TIM": "TI2", 
     "JDG": "JDG", 
     "5 EZRA": "EZ5", 
+    "NUM": "NUM", 
     "DEU": "DEU", 
-    "1EN": "ENO", 
+    "JDB": "JGB", 
     "1ES": "GES", 
-    "EST": "EST", 
+    "T12PATR.TZEB": "TSZ", 
     "5EZ": "EZ5", 
     "1MA": "MA1", 
     "JDT": "JDT", 
+    "IGNROM": "IGR", 
     "1TIM": "TI1", 
     "1TH": "TH1", 
     "1TI": "TI1", 
     "JUB": "JUB", 
-    "PS": "PSA", 
+    "T12PATR.TJOS": "TSJ", 
     "OBAD": "OBA", 
     "ROM": "ROM", 
     "AMO": "AMO", 
-    "PRAZAR": "PAZ", 
+    "2TIM": "TI2", 
+    "T12PATR.TLEVI": "TSL", 
+    "1MACC": "MA1", 
     "2CHR": "CH2", 
+    "T12PATR.TJUD": "TSY", 
     "1 JOHN": "JN1", 
     "1KGS": "KI1", 
     "GEN": "GEN", 
+    "2PET": "PE2", 
     "6 EZRA": "EZ6", 
     "2BAR": "BA2", 
+    "BLT": "BLT", 
     "1 PET": "PE1", 
+    "T12PATR.TREU": "TSR", 
     "2 JOHN": "JN2", 
+    "T12PATR.TASH": "TSA", 
+    "SIRP": "SIP", 
     "2SAM": "SA2", 
     "1 COR": "CO1", 
     "SHE": "SHE", 
     "1 MACC": "MA1", 
     "ENO": "ENO", 
+    "BELTH": "BLT", 
     "EXOD": "EXO", 
     "ZEPH": "ZEP", 
     "MATT": "MAT", 
+    "2ES": "LES", 
     "PSO": "PSO", 
     "PSB": "PSB", 
-    "PROV": "PRO", 
+    "SST": "SST", 
     "ZECH": "ZEC", 
     "PSA": "PSA", 
+    "RUTH": "RUT", 
     "PR AZAR": "PAZ", 
     "3MQ": "MQ3", 
     "JONAH": "JNA", 
     "MT": "MAT", 
     "4 MACC": "MA4", 
     "2 COR": "CO2", 
-    "RUT": "RUT", 
+    "PAPFRAG": "FOP", 
+    "SUSTH": "SST", 
     "MR": "MRK", 
-    "PSS": "PSS", 
+    "PRSOL": "PSO", 
+    "JUDGB": "JGB", 
     "3MA": "MA3", 
     "HOS": "HOS", 
     "DOJ": "DOJ", 
@@ -9494,20 +11070,31 @@
     "GLO": "GLS", 
     "3 JOHN": "JN3", 
     "REP": "REP", 
+    "5APOCSYRPSS": "PS3", 
     "2TI": "TI2", 
     "2TH": "TH2", 
+    "T12PATR.TISS": "TSI", 
     "SUS": "SUS", 
-    "ACT": "ACT", 
+    "6EZRA": "EZ6", 
     "ISA": "ISA", 
     "LUK": "LUK", 
     "COL": "COL", 
-    "DANGR": "DAG", 
+    "ADDJER": "JRA", 
+    "1 CHR": "CH1", 
+    "PRAZAR": "PAZ", 
+    "DANGR": "DNG", 
     "ECC": "ECC", 
+    "JSA": "JSA", 
+    "LAM": "LAM", 
     "2 PET": "PE2", 
     "PHIL": "PHP", 
     "EPH": "EPH", 
+    "PREUTH": "EUT", 
     "WSI": "WSI", 
     "2 ESD": "LES", 
+    "JHN": "JHN", 
+    "RUT": "RUT", 
+    "WSIR": "WSI", 
     "4MACC": "MA4", 
     "JOHN": "JHN", 
     "ODE": "ODE", 
@@ -9518,29 +11105,35 @@
     "ESTH": "EST", 
     "TITUS": "TIT", 
     "3 MACC": "MA3", 
-    "2 KGS": "KI2", 
+    "T12PATR.TNAPH": "TSN", 
+    "EPCORPAUL": "COP", 
     "OBA": "OBA", 
-    "NDX": "IXN", 
-    "2TIM": "TI2", 
+    "DNT": "DNT", 
+    "ADE": "ESA", 
     "HEB": "HEB", 
     "FRT": "FRT", 
     "4BA": "BA4", 
     "EUT": "EUT", 
-    "JHN": "JHN", 
+    "1EN": "ENO", 
     "EPLAO": "LAO", 
+    "IGNEPH": "IGE", 
     "ZEC": "ZEC", 
     "LAO": "LAO", 
+    "T12PATR.TSIM": "TSS", 
+    "T12PATR.TBENJ": "TSB", 
+    "JOSHA": "JSA", 
     "JUDG": "JDG", 
-    "ODES": "ODE", 
+    "TATDIAT": "TAT", 
     "JUDE": "JDE", 
     "MARK": "MRK", 
+    "ACT": "ACT", 
     "PJE": "PJE", 
     "ZEP": "ZEP", 
     "TDX": "IXT", 
     "WIS": "WIS", 
     "1CHR": "CH1", 
     "LEV": "LEV", 
-    "2ES": "LES", 
+    "JOSEPHUSJWVI": "JJW", 
     "AMOS": "AMO", 
     "DEUT": "DEU", 
     "1CH": "CH1", 
@@ -9548,21 +11141,25 @@
     "ECCL": "ECC", 
     "3MEQ": "MQ3", 
     "1CL": "CL1", 
+    "RELELDERS": "ROE", 
     "2JOHN": "JN2", 
     "1 TIM": "TI1", 
     "2MQ": "MQ2", 
     "BAR": "BAR", 
-    "1 CHR": "CH1", 
+    "T12PATR": "TTP", 
     "DID": "DID", 
     "ESTHGR": "ESG", 
     "1PE": "PE1", 
+    "PROV": "PRO", 
     "PS2": "PS2", 
+    "TBS": "TBS", 
     "2MA": "MA2", 
-    "PS3": "PS3", 
+    "ODES": "ODE", 
     "TOB": "TOB", 
+    "1CLEM": "CL1", 
     "BAK": "BAK", 
     "PSSSOL": "PSS", 
-    "DAN": "DAN", 
+    "PSMET": "PSB", 
     "6EZ": "EZ6", 
     "XXC": "XXC", 
     "XXB": "XXB", 
@@ -9572,25 +11169,34 @@
     "XXF": "XXF", 
     "XXE": "XXE", 
     "XXD": "XXD", 
-    "1SAM": "SA1", 
+    "MARTPOL": "MPC", 
     "2 SAM": "SA2", 
-    "ADDPS": "PS3", 
+    "IGNPOL": "IGC", 
     "LU": "LUK", 
     "PRMAN": "MAN", 
     "S3Y": "PAZ", 
     "1JN": "JN1", 
-    "1JO": "JN1", 
+    "PS": "PSA", 
     "1MEQ": "MQ1", 
+    "APOSCREED": "APC", 
     "SOS": "SNG", 
     "1 ESD": "GES", 
     "CNC": "CNC", 
-    "NUM": "NUM", 
+    "PSS": "PSS", 
+    "PRJER": "PJE", 
+    "PSJOS": "PSJ", 
     "2THESS": "TH2", 
     "4 EZRA": "EZA", 
+    "IGNTRALL": "IGT", 
     "2MACC": "MA2", 
-    "RUTH": "RUT", 
+    "TOBS": "TBS", 
+    "DORMJOHN": "DOJ", 
     "JUD": "JDE", 
+    "NDX": "IXN", 
     "2MEQ": "MQ2", 
+    "T12PATR.TGAD": "TSG", 
+    "IGNPHLD": "IGP", 
+    "EZA": "EZA", 
     "2 MACC": "MA2", 
     "4MA": "MA4", 
     "1PET": "PE1", 
@@ -9599,8 +11205,8 @@
     "EZE": "EZK", 
     "1THESS": "TH1", 
     "2KGS": "KI2", 
-    "EZA": "EZA", 
-    "2PET": "PE2"
+    "DAN": "DAN", 
+    "POLPHIL": "PCP"
   }, 
   "ByzantineAbbreviationDict": {
     "GA": [
@@ -9713,24 +11319,32 @@
     ]
   }, 
   "EnglishNameDict": {
+    "EUPOLEMUS": [
+      188, 
+      "EUP"
+    ], 
     "THEMATIC INDEX": [
-      241, 
+      755, 
       "IXT"
     ], 
     "NEHEMIAH / 2 EZRA / 2 ESDRAS": [
       16, 
       "NEH"
     ], 
+    "INTRODUCTION": [
+      715, 
+      "INT"
+    ], 
     "UNSPECIFIED EXTRA XXF": [
-      248, 
+      850, 
       "XXF"
     ], 
     "UNSPECIFIED EXTRA XXG": [
-      249, 
+      860, 
       "XXG"
     ], 
     "UNSPECIFIED EXTRA XXD": [
-      246, 
+      830, 
       "XXD"
     ], 
     "WORDS OF SIRACH": [
@@ -9738,15 +11352,15 @@
       "WSI"
     ], 
     "UNSPECIFIED EXTRA XXB": [
-      244, 
+      810, 
       "XXB"
     ], 
     "UNSPECIFIED EXTRA XXC": [
-      245, 
+      820, 
       "XXC"
     ], 
     "UNSPECIFIED EXTRA XXA": [
-      243, 
+      800, 
       "XXA"
     ], 
     "REVELATION OF EZRA / VISON OF EZRA": [
@@ -9757,6 +11371,10 @@
       57, 
       "PHM"
     ], 
+    "NAMES INDEX": [
+      740, 
+      "IXN"
+    ], 
     "ISAIAH": [
       23, 
       "ISA"
@@ -9765,9 +11383,9 @@
       59, 
       "JAM"
     ], 
-    "LETTER OF BARUCH": [
-      104, 
-      "LBA"
+    "4 BARUCH / PARALIPOMENON OF JEREMIAH / PARALEIPOMENA IEREMIOU / REST OF THE WORDS OF BARUCH": [
+      107, 
+      "BA4"
     ], 
     "1 KINGS / 3 KINGDOMS / 3 KINGS": [
       11, 
@@ -9780,6 +11398,10 @@
     "COMBINED HEBREW/GREEK ESTHER / ESTHER (COMBINED)": [
       72, 
       "ESC"
+    ], 
+    "IGNATIUS TO THE MAGNESIANS": [
+      291, 
+      "IGM"
     ], 
     "3 JOHN": [
       64, 
@@ -9810,7 +11432,7 @@
       "DAN"
     ], 
     "GENERIC BACK MATTER": [
-      242, 
+      760, 
       "BAK"
     ], 
     "PSALMS BOOK 4": [
@@ -9821,25 +11443,33 @@
       124, 
       "PB5"
     ], 
+    "SHEPHERD OF HERMAS SIMILITUDES": [
+      282, 
+      "SHS"
+    ], 
     "GOSPEL OF PHILIP": [
       165, 
       "GPH"
     ], 
     "SAMUEL": [
-      221, 
+      610, 
       "SAM"
     ], 
     "JEREMIAH": [
       24, 
       "JER"
     ], 
-    "SYRIAC PSALMS 152-155 / FIVE APOCRYPHAL SYRIAC PSALMS": [
-      127, 
-      "PS3"
-    ], 
     "6 EZRA / 5 ESDRAS / 6 ESDRAS": [
       94, 
       "EZ6"
+    ], 
+    "TESTAMENT OF NAPHTALI": [
+      259, 
+      "TSN"
+    ], 
+    "APOSTLES' CREED": [
+      301, 
+      "APC"
     ], 
     "1 CLEMENT": [
       150, 
@@ -9861,9 +11491,21 @@
       39, 
       "MAL"
     ], 
-    "REPROOF": [
-      143, 
-      "REP"
+    "JOSEPHUS JEWISH WAR VI": [
+      270, 
+      "JJW"
+    ], 
+    "IGNATIUS TO THE PHILADELPHIANS": [
+      294, 
+      "IGP"
+    ], 
+    "APOCRYPHA OF EZEKIEL / APOCRYPHON OF EZEKIEL": [
+      186, 
+      "AEZ"
+    ], 
+    "TATIAN / TATIAN'S DIATESSARON / DIATESSARON": [
+      310, 
+      "TAT"
     ], 
     "1 CORINTHIANS": [
       46, 
@@ -9877,9 +11519,9 @@
       142, 
       "EN2"
     ], 
-    "APOCRYPHA OF EZEKIEL / APOCRYPHON OF EZEKIEL": [
-      186, 
-      "AEZ"
+    "LETTER OF BARNABAS / EPISTLE OF BARNABAS / BARNABAS": [
+      144, 
+      "LBB"
     ], 
     "1 SAMUEL / 1 KINGDOMS / 1 KINGS": [
       9, 
@@ -9894,7 +11536,7 @@
       "ACT"
     ], 
     "GENERIC FRONT MATTER": [
-      230, 
+      700, 
       "FRT"
     ], 
     "LATIN ESDRAS / 2 ESDRAS / 3 ESDRAS / 4 ESDRAS / 4 EZRA": [
@@ -9905,13 +11547,17 @@
       26, 
       "EZK"
     ], 
-    "ASSUMPTION OF MOSES / TESTAMENT OF MOSES": [
-      182, 
-      "ASS"
+    "LETTER OF BARUCH / EPISTLE OF BARUCH": [
+      104, 
+      "LBA"
     ], 
     "THEODOTUS": [
       200, 
       "TEO"
+    ], 
+    "SHEPHERD OF HERMAS VISIONS": [
+      283, 
+      "SHV"
     ], 
     "PHILIPPIANS": [
       50, 
@@ -9929,9 +11575,25 @@
       51, 
       "COL"
     ], 
+    "TESTAMENT OF BENJAMIN": [
+      252, 
+      "TSB"
+    ], 
+    "TESTAMENT OF DAN": [
+      253, 
+      "TSD"
+    ], 
+    "TESTAMENT OF ZEBULUN": [
+      262, 
+      "TSZ"
+    ], 
     "MICAH": [
       33, 
       "MIC"
+    ], 
+    "TESTAMENT OF JUDAH": [
+      257, 
+      "TSY"
     ], 
     "2 BARUCH / APOCALYPSE OF BARUCH": [
       103, 
@@ -9958,12 +11620,12 @@
       "TSO"
     ], 
     "MAPS": [
-      240, 
+      750, 
       "MAP"
     ], 
     "COMBINED HEBREW/GREEK DANIEL / DANIEL (COMBINED)": [
       75, 
-      "DAC"
+      "DNC"
     ], 
     "JUDE": [
       65, 
@@ -9977,6 +11639,14 @@
       128, 
       "PSS"
     ], 
+    "SHEPHERD OF HERMAS MANDATES": [
+      281, 
+      "SHM"
+    ], 
+    "ASSUMPTION OF MOSES / TESTAMENT OF MOSES": [
+      182, 
+      "ASS"
+    ], 
     "TESTAMENT OF ADAM": [
       180, 
       "TAD"
@@ -9986,12 +11656,16 @@
       "BEL"
     ], 
     "UNSPECIFIED EXTRA XXE": [
-      247, 
+      840, 
       "XXE"
     ], 
     "PROVERBS": [
       20, 
       "PRO"
+    ], 
+    "IGNATIUS TO THE ROMANS": [
+      293, 
+      "IGR"
     ], 
     "GOSPEL OF THE TWELVE": [
       164, 
@@ -10002,7 +11676,7 @@
       "HEB"
     ], 
     "BOOKS OF MOSES": [
-      220, 
+      600, 
       "MOS"
     ], 
     "SONG OF SOLOMON / SONG OF SONGS / CANTICLES / CANTICLE OF CANTICLES": [
@@ -10011,18 +11685,18 @@
     ], 
     "GREEK ADDITIONS TO DANIEL / DANIEL (ADDITIONS)": [
       74, 
-      "DAA"
+      "DNA"
     ], 
-    "EPISTLE OF JEREMIAH / LETTER OF JEREMIAH": [
-      100, 
-      "LJE"
+    "IGNATIUS TO THE TRALLIANS": [
+      292, 
+      "IGT"
     ], 
     "SIRACH / ECCLESIASTICUS / WISDOM OF BEN SIRA / WISDOM OF JESUS SON OF SIRACH": [
       84, 
       "SIR"
     ], 
     "LUKE-ACTS": [
-      226, 
+      690, 
       "LKA"
     ], 
     "2 SAMUEL / 2 KINGDOMS / 2 KINGS": [
@@ -10030,35 +11704,27 @@
       "SA2"
     ], 
     "CHRONICLES": [
-      223, 
+      630, 
       "CHR"
     ], 
     "WISDOM / WISDOM OF SOLOMON": [
-      86, 
+      87, 
       "WIS"
     ], 
     "1 JOHN": [
       62, 
       "JN1"
     ], 
-    "LETTER OF ARISTEAS / EPISTLE OF ARISTEAS": [
-      191, 
-      "LAR"
-    ], 
     "REVELATION OF JOHN / APOCALYPSE OF ST. JOHN": [
       66, 
       "REV"
     ], 
-    "NAMES INDEX": [
-      238, 
-      "IXN"
-    ], 
-    "4 BARUCH / PARALIPOMENON OF JEREMIAH / PARALEIPOMENA IEREMIOU / REST OF THE WORDS OF BARUCH": [
-      107, 
-      "BA4"
+    "DANIEL \u0398": [
+      158, 
+      "DNT"
     ], 
     "TWELVE PROPHETS": [
-      225, 
+      650, 
       "P12"
     ], 
     "HABAKKUK": [
@@ -10077,9 +11743,17 @@
       138, 
       "DOJ"
     ], 
+    "TESTAMENT OF ISSACHAR": [
+      255, 
+      "TSI"
+    ], 
     "1 THESSALONIANS": [
       52, 
       "TH1"
+    ], 
+    "LETTER OF JEREMIAH WITH BARUCH / EPISTLE OF JEREMIAH WITH BARUCH": [
+      102, 
+      "LJB"
     ], 
     "GREEK ESDRAS / GREEK EZRA / 1 ESDRAS / 1 EZRA / 2 EZRA / 3 EZRA / 3 ESDRAS": [
       90, 
@@ -10093,12 +11767,16 @@
       15, 
       "EZR"
     ], 
+    "SUSANNA \u0398": [
+      157, 
+      "SST"
+    ], 
     "JUDGES": [
       7, 
       "JDG"
     ], 
     "GLOSSARY": [
-      235, 
+      725, 
       "GLS"
     ], 
     "2 MEQABYAN / 2 MAKABIAN / MEKABIS OF MOAB": [
@@ -10113,6 +11791,14 @@
       32, 
       "JNA"
     ], 
+    "PSEUDO-JOSEPHUS": [
+      109, 
+      "PSJ"
+    ], 
+    "TESTAMENT OF REUBEN": [
+      260, 
+      "TSR"
+    ], 
     "2 TIMOTHY": [
       55, 
       "TI2"
@@ -10125,6 +11811,14 @@
       21, 
       "ECC"
     ], 
+    "RELIQUES OF THE ELDERS": [
+      303, 
+      "ROE"
+    ], 
+    "REPROOF / TEGSAS / TEGSATS / TAAGSAS": [
+      143, 
+      "REP"
+    ], 
     "BARUCH / 1 BARUCH": [
       101, 
       "BAR"
@@ -10133,9 +11827,9 @@
       126, 
       "PS2"
     ], 
-    "EUPOLEMUS": [
-      188, 
-      "EUP"
+    "BEL AND THE DRAGON \u0398": [
+      159, 
+      "BLT"
     ], 
     "ESTHER": [
       17, 
@@ -10147,27 +11841,27 @@
     ], 
     "GREEK DANIEL / DANIEL (GREEK)": [
       73, 
-      "DAG"
+      "DNG"
     ], 
     "PRAYER OF AZARIAH AND THE SONG OF THE THREE YOUNG MEN / PRAYER OF AZARIAH / SONG OF THE THREE YOUNG MEN / SONG OF THE THREE CHILDREN": [
-      87, 
+      88, 
       "PAZ"
     ], 
-    "TABLE OF CONTENTS": [
-      234, 
-      "TOC"
+    "SIRACH PROLOGUE": [
+      85, 
+      "SIP"
     ], 
     "2 MACCABEES": [
       112, 
       "MA2"
     ], 
     "TOPICAL CONCORDANCE": [
-      237, 
+      735, 
       "TPC"
     ], 
-    "LETTER OF BARNABAS / EPISTLE OF BARNABAS": [
-      144, 
-      "LBB"
+    "LETTER OF ARISTEAS / EPISTLE OF ARISTEAS": [
+      191, 
+      "LAR"
     ], 
     "DIDACHE": [
       153, 
@@ -10177,10 +11871,6 @@
       125, 
       "PSB"
     ], 
-    "LETTER OF THE CORINTHIANS TO PAUL": [
-      135, 
-      "COP"
-    ], 
     "EPHESIANS": [
       49, 
       "EPH"
@@ -10188,6 +11878,10 @@
     "ARISTEAS THE EXEGETE": [
       192, 
       "ARI"
+    ], 
+    "POLYCARP TO THE PHILIPPIANS": [
+      297, 
+      "PCP"
     ], 
     "GOSPEL OF JUDAS": [
       167, 
@@ -10198,8 +11892,12 @@
       "MAC"
     ], 
     "PLACES INDEX": [
-      239, 
+      745, 
       "IXP"
+    ], 
+    "TESTAMENT OF JOSEPH": [
+      256, 
+      "TSJ"
     ], 
     "PSALMS BOOK 1": [
       120, 
@@ -10214,7 +11912,7 @@
       "ELM"
     ], 
     "SHEPHERD OF HERMAS": [
-      152, 
+      280, 
       "SHE"
     ], 
     "PHILO THE EPIC POET": [
@@ -10242,12 +11940,12 @@
       "MA5"
     ], 
     "TOBIT / TOBIAS": [
-      85, 
+      86, 
       "TOB"
     ], 
-    "MARTYRDOM AND ASCENSION OF ISAIAH": [
-      185, 
-      "MAI"
+    "TOBIT S": [
+      156, 
+      "TBS"
     ], 
     "JUBILEES": [
       140, 
@@ -10261,6 +11959,18 @@
       83, 
       "MAN"
     ], 
+    "TESTAMENT OF SIMEON": [
+      261, 
+      "TSS"
+    ], 
+    "MARTYDOM OF POLYCARP": [
+      298, 
+      "MPC"
+    ], 
+    "IGNATIUS TO THE SMYRNAEANS": [
+      295, 
+      "IGS"
+    ], 
     "GREEK ADDITIONS TO ESTHER / ESTHER (ADDITIONS)": [
       71, 
       "ESA"
@@ -10269,13 +11979,21 @@
       19, 
       "PSA"
     ], 
-    "LETTER/EPISTLE OF JEREMIAH WITH BARUCH": [
-      102, 
-      "LJB"
+    "DIOGNETUS": [
+      300, 
+      "DIO"
+    ], 
+    "JOSHUA A": [
+      154, 
+      "JSA"
     ], 
     "LEVITICUS / 3 MOSES": [
       3, 
       "LEV"
+    ], 
+    "IGNATIUS TO THE EPHESIANS": [
+      290, 
+      "IGE"
     ], 
     "3 MEQABYAN / 3 MAKABIAN": [
       118, 
@@ -10298,7 +12016,7 @@
       "MRK"
     ], 
     "CONCORDANCE": [
-      236, 
+      730, 
       "CNC"
     ], 
     "LETTER TO THE LAODICEANS": [
@@ -10310,7 +12028,7 @@
       "AMO"
     ], 
     "KINGS": [
-      222, 
+      620, 
       "KGS"
     ], 
     "JUDITH": [
@@ -10321,6 +12039,18 @@
       169, 
       "AJA"
     ], 
+    "IGNATIUS TO POLYCARP": [
+      296, 
+      "IGC"
+    ], 
+    "FRAGMENTS OF PAPIAS": [
+      302, 
+      "FOP"
+    ], 
+    "TESTAMENT OF GAD": [
+      254, 
+      "TSG"
+    ], 
     "LIFE OF ADAM AND EVE": [
       181, 
       "LAE"
@@ -10328,6 +12058,10 @@
     "ARISTOBULUS": [
       193, 
       "ABL"
+    ], 
+    "FRAGMENT OF QUADRATUS": [
+      304, 
+      "FOQ"
     ], 
     "MATTHEW": [
       40, 
@@ -10337,16 +12071,20 @@
       133, 
       "PJE"
     ], 
+    "LETTER OF JEREMIAH / EPISTLE OF JEREMIAH": [
+      100, 
+      "LJE"
+    ], 
     "4 MACCABEES": [
       114, 
       "MA4"
     ], 
     "ACKNOWLEDGEMENTS": [
-      232, 
+      710, 
       "ACK"
     ], 
     "TESTAMENTS OF THE TWELVE PATRIARCHS": [
-      139, 
+      250, 
       "TTP"
     ], 
     "1 MEQABYAN / 1 MAKABIAN / MEKABIS OF BENJAMIN": [
@@ -10361,6 +12099,10 @@
       12, 
       "KI2"
     ], 
+    "SYRIAC PSALMS 152-155 / FIVE APOCRYPHAL SYRIAC PSALMS / ADDITIONAL SYRIAC PSALMS": [
+      127, 
+      "PS3"
+    ], 
     "ODES / ODAE": [
       131, 
       "ODE"
@@ -10372,6 +12114,10 @@
     "EZEKIEL THE TRAGEDIAN": [
       187, 
       "EZT"
+    ], 
+    "TABLE OF CONTENTS": [
+      720, 
+      "TOC"
     ], 
     "ENOCH / 1 ENOCH / ETHIOPIC APOCALYPSE OF ENOCH": [
       141, 
@@ -10386,7 +12132,7 @@
       "TI1"
     ], 
     "EZRA-NEHEMIAH / 1 ESDRAS": [
-      224, 
+      640, 
       "EZN"
     ], 
     "OBADIAH": [
@@ -10394,7 +12140,7 @@
       "OBA"
     ], 
     "PREFACE": [
-      231, 
+      705, 
       "PRF"
     ], 
     "GOSPEL OF THOMAS": [
@@ -10408,6 +12154,10 @@
     "3 CORINTHIANS": [
       136, 
       "CO3"
+    ], 
+    "MARTYRDOM AND ASCENSION OF ISAIAH": [
+      185, 
+      "MAI"
     ], 
     "CLEODEMUS MALCHUS": [
       195, 
@@ -10429,6 +12179,10 @@
       34, 
       "NAH"
     ], 
+    "TESTAMENT OF LEVI": [
+      258, 
+      "TSL"
+    ], 
     "GALATIANS": [
       48, 
       "GAL"
@@ -10441,13 +12195,21 @@
       168, 
       "GBA"
     ], 
+    "JUDGES B": [
+      155, 
+      "JGB"
+    ], 
     "GOSPEL OF MARCION": [
       163, 
       "GMC"
     ], 
-    "INTRODUCTION": [
-      233, 
-      "INT"
+    "LETTER OF THE CORINTHIANS TO PAUL / EPISTLE OF THE CORINTHIANS TO PAUL": [
+      135, 
+      "COP"
+    ], 
+    "TESTAMENT OF ASHER": [
+      251, 
+      "TSA"
     ], 
     "3 MACCABEES": [
       113, 
@@ -10460,6 +12222,10 @@
     "ARTAPANUS": [
       194, 
       "ART"
+    ], 
+    "ADDITIONS TO JEREMIAH / REST OF JEREMIAH": [
+      108, 
+      "JRA"
     ], 
     "RUTH": [
       8, 
@@ -10475,191 +12241,53 @@
     ]
   }, 
   "OSISAbbreviationDict": {
-    "2JOHN": [
-      63, 
-      "JN2"
-    ], 
-    "1COR": [
-      46, 
-      "CO1"
-    ], 
-    "BAR": [
-      101, 
-      "BAR"
-    ], 
-    "NEH": [
-      16, 
-      "NEH"
-    ], 
     "SIR": [
       84, 
       "SIR"
-    ], 
-    "LUKE": [
-      42, 
-      "LUK"
     ], 
     "MIC": [
       33, 
       "MIC"
     ], 
-    "2ESD": [
-      91, 
-      "LES"
-    ], 
-    "ESTH": [
-      17, 
-      "EST"
-    ], 
-    "PRAZAR": [
-      87, 
-      "PAZ"
-    ], 
-    "1JOHN": [
-      62, 
-      "JN1"
+    "EPH": [
+      49, 
+      "EPH"
     ], 
     "3MACC": [
       113, 
       "MA3"
     ], 
-    "PS151": [
-      126, 
-      "PS2"
-    ], 
-    "HAB": [
-      35, 
-      "HAB"
-    ], 
-    "ZECH": [
-      38, 
-      "ZEC"
-    ], 
-    "EPH": [
-      49, 
-      "EPH"
-    ], 
-    "EPJER": [
-      102, 
-      [
-        "LJE", 
-        "LJB"
-      ]
-    ], 
-    "TOB": [
-      85, 
-      "TOB"
-    ], 
-    "JDT": [
-      82, 
-      "JDT"
-    ], 
-    "ISA": [
-      23, 
-      "ISA"
-    ], 
-    "MARK": [
-      41, 
-      "MRK"
-    ], 
-    "TITUS": [
-      56, 
-      "TIT"
-    ], 
-    "COL": [
-      51, 
-      "COL"
-    ], 
-    "4MACC": [
-      114, 
-      "MA4"
-    ], 
-    "PS": [
-      19, 
-      "PSA"
-    ], 
-    "NAH": [
-      34, 
-      "NAH"
+    "EZEK": [
+      26, 
+      "EZK"
     ], 
     "2SAM": [
       10, 
       "SA2"
     ], 
-    "OBAD": [
-      31, 
-      "OBA"
-    ], 
-    "ROM": [
-      45, 
-      "ROM"
-    ], 
-    "2MACC": [
-      112, 
-      "MA2"
-    ], 
-    "DAN": [
-      27, 
-      "DAN"
-    ], 
-    "PHIL": [
-      50, 
-      "PHP"
+    "2COR": [
+      47, 
+      "CO2"
     ], 
     "JOSH": [
       6, 
       "JOS"
     ], 
-    "MAL": [
-      39, 
-      "MAL"
-    ], 
-    "2COR": [
-      47, 
-      "CO2"
-    ], 
     "JOB": [
       18, 
       "JOB"
     ], 
-    "NUM": [
-      4, 
-      "NUM"
+    "GAL": [
+      48, 
+      "GAL"
     ], 
-    "EZEK": [
-      26, 
-      "EZK"
-    ], 
-    "WIS": [
-      86, 
-      "WIS"
-    ], 
-    "1KGS": [
-      11, 
-      "KI1"
-    ], 
-    "JOHN": [
-      43, 
-      "JHN"
-    ], 
-    "GEN": [
-      1, 
-      "GEN"
+    "NAH": [
+      34, 
+      "NAH"
     ], 
     "1CHR": [
       13, 
       "CH1"
-    ], 
-    "JER": [
-      24, 
-      "JER"
-    ], 
-    "EZRA": [
-      224, 
-      [
-        "EZR", 
-        "EZN"
-      ]
     ], 
     "1MACC": [
       111, 
@@ -10673,13 +12301,9 @@
       66, 
       "REV"
     ], 
-    "1SAM": [
-      9, 
-      "SA1"
-    ], 
-    "PRMAN": [
-      83, 
-      "MAN"
+    "HAB": [
+      35, 
+      "HAB"
     ], 
     "JAS": [
       59, 
@@ -10689,53 +12313,13 @@
       37, 
       "HAG"
     ], 
-    "HOS": [
-      28, 
-      "HOS"
-    ], 
-    "HEB": [
-      58, 
-      "HEB"
-    ], 
-    "BEL": [
-      80, 
-      "BEL"
-    ], 
-    "2TIM": [
-      55, 
-      "TI2"
-    ], 
-    "2THESS": [
-      53, 
-      "TH2"
-    ], 
-    "1THESS": [
-      52, 
-      "TH1"
-    ], 
-    "EXOD": [
-      2, 
-      "EXO"
-    ], 
-    "ZEPH": [
-      36, 
-      "ZEP"
+    "2PET": [
+      61, 
+      "PE2"
     ], 
     "LAM": [
       25, 
       "LAM"
-    ], 
-    "MATT": [
-      40, 
-      "MAT"
-    ], 
-    "ADDDAN": [
-      75, 
-      [
-        "DAG", 
-        "DAA", 
-        "DAC"
-      ]
     ], 
     "PHLM": [
       57, 
@@ -10745,53 +12329,195 @@
       12, 
       "KI2"
     ], 
-    "1ESD": [
-      90, 
-      "GES"
-    ], 
-    "PROV": [
-      20, 
-      "PRO"
-    ], 
     "JOEL": [
       29, 
       "JOL"
+    ], 
+    "1COR": [
+      46, 
+      "CO1"
+    ], 
+    "MAL": [
+      39, 
+      "MAL"
+    ], 
+    "2ESD": [
+      91, 
+      "LES"
     ], 
     "ACTS": [
       44, 
       "ACT"
     ], 
-    "JUDG": [
-      7, 
-      "JDG"
+    "BEL": [
+      80, 
+      "BEL"
     ], 
-    "GAL": [
-      48, 
-      "GAL"
+    "EPJER": [
+      102, 
+      [
+        "LJE", 
+        "LJB"
+      ]
     ], 
-    "JUDE": [
-      65, 
-      "JDE"
-    ], 
-    "JONAH": [
-      32, 
-      "JNA"
+    "JDT": [
+      82, 
+      "JDT"
     ], 
     "1TIM": [
       54, 
       "TI1"
     ], 
+    "PS": [
+      19, 
+      "PSA"
+    ], 
+    "OBAD": [
+      31, 
+      "OBA"
+    ], 
+    "ROM": [
+      45, 
+      "ROM"
+    ], 
+    "PRAZAR": [
+      88, 
+      "PAZ"
+    ], 
+    "1KGS": [
+      11, 
+      "KI1"
+    ], 
+    "GEN": [
+      1, 
+      "GEN"
+    ], 
+    "SIRP": [
+      85, 
+      "SIP"
+    ], 
+    "EXOD": [
+      2, 
+      "EXO"
+    ], 
+    "ZEPH": [
+      36, 
+      "ZEP"
+    ], 
+    "MATT": [
+      40, 
+      "MAT"
+    ], 
+    "PROV": [
+      20, 
+      "PRO"
+    ], 
+    "ZECH": [
+      38, 
+      "ZEC"
+    ], 
+    "JONAH": [
+      32, 
+      "JNA"
+    ], 
+    "PS151": [
+      126, 
+      "PS2"
+    ], 
+    "NEH": [
+      16, 
+      "NEH"
+    ], 
+    "LUKE": [
+      42, 
+      "LUK"
+    ], 
+    "ESTH": [
+      17, 
+      "EST"
+    ], 
+    "SUS": [
+      81, 
+      "SUS"
+    ], 
+    "ISA": [
+      23, 
+      "ISA"
+    ], 
+    "COL": [
+      51, 
+      "COL"
+    ], 
+    "PHIL": [
+      50, 
+      "PHP"
+    ], 
+    "NUM": [
+      4, 
+      "NUM"
+    ], 
+    "4MACC": [
+      114, 
+      "MA4"
+    ], 
+    "JOHN": [
+      43, 
+      "JHN"
+    ], 
+    "2JOHN": [
+      63, 
+      "JN2"
+    ], 
+    "EZRA": [
+      640, 
+      [
+        "EZR", 
+        "EZN"
+      ]
+    ], 
+    "1JOHN": [
+      62, 
+      "JN1"
+    ], 
+    "TITUS": [
+      56, 
+      "TIT"
+    ], 
+    "PRMAN": [
+      83, 
+      "MAN"
+    ], 
+    "HEB": [
+      58, 
+      "HEB"
+    ], 
+    "ADDDAN": [
+      75, 
+      [
+        "DNG", 
+        "DNA", 
+        "DNC"
+      ]
+    ], 
+    "JUDG": [
+      7, 
+      "JDG"
+    ], 
+    "JUDE": [
+      65, 
+      "JDE"
+    ], 
+    "MARK": [
+      41, 
+      "MRK"
+    ], 
     "2CHR": [
       14, 
       "CH2"
     ], 
-    "1PET": [
-      60, 
-      "PE1"
-    ], 
-    "3JOHN": [
-      64, 
-      "JN3"
+    "WIS": [
+      87, 
+      "WIS"
     ], 
     "LEV": [
       3, 
@@ -10801,21 +12527,25 @@
       30, 
       "AMO"
     ], 
-    "SUS": [
-      81, 
-      "SUS"
-    ], 
     "DEUT": [
       5, 
       "DEU"
     ], 
-    "RUTH": [
-      8, 
-      "RUT"
-    ], 
     "ECCL": [
       21, 
       "ECC"
+    ], 
+    "JER": [
+      24, 
+      "JER"
+    ], 
+    "BAR": [
+      101, 
+      "BAR"
+    ], 
+    "TOB": [
+      86, 
+      "TOB"
     ], 
     "ADDESTH": [
       72, 
@@ -10825,9 +12555,49 @@
         "ESC"
       ]
     ], 
-    "2PET": [
-      61, 
-      "PE2"
+    "DAN": [
+      27, 
+      "DAN"
+    ], 
+    "1ESD": [
+      90, 
+      "GES"
+    ], 
+    "1SAM": [
+      9, 
+      "SA1"
+    ], 
+    "HOS": [
+      28, 
+      "HOS"
+    ], 
+    "2TIM": [
+      55, 
+      "TI2"
+    ], 
+    "2THESS": [
+      53, 
+      "TH2"
+    ], 
+    "2MACC": [
+      112, 
+      "MA2"
+    ], 
+    "1PET": [
+      60, 
+      "PE1"
+    ], 
+    "3JOHN": [
+      64, 
+      "JN3"
+    ], 
+    "1THESS": [
+      52, 
+      "TH1"
+    ], 
+    "RUTH": [
+      8, 
+      "RUT"
     ]
   }, 
   "NETBibleAbbreviationDict": {
@@ -11052,7 +12822,7 @@
       "GAL"
     ], 
     "EZR": [
-      224, 
+      640, 
       [
         "EZR", 
         "EZN"
@@ -11148,9 +12918,9 @@
     "LAM", 
     "EZK", 
     "DAN", 
-    "DAG", 
-    "DAA", 
-    "DAC", 
+    "DNG", 
+    "DNA", 
+    "DNC", 
     "P12", 
     "HOS", 
     "JOL", 
@@ -11168,6 +12938,7 @@
     "JDT", 
     "ESG", 
     "WIS", 
+    "SIP", 
     "SIR", 
     "BAR", 
     "LJB", 
@@ -11176,6 +12947,8 @@
     "BA2", 
     "BA3", 
     "BA4", 
+    "JRA", 
+    "PSJ", 
     "LJE", 
     "PAZ", 
     "SUS", 
@@ -11191,20 +12964,67 @@
     "EZA", 
     "EZ5", 
     "EZ6", 
+    "RVE", 
     "MAN", 
     "ODE", 
     "PSO", 
     "PJE", 
     "WSI", 
-    "TTP", 
     "JUB", 
     "ENO", 
     "EN2", 
     "REP", 
     "CL1", 
     "CL2", 
-    "SHE", 
     "DID", 
+    "JSA", 
+    "JGB", 
+    "TBS", 
+    "SST", 
+    "DNT", 
+    "BLT", 
+    "JJW", 
+    "TTP", 
+    "TSA", 
+    "TSB", 
+    "TSD", 
+    "TSG", 
+    "TSI", 
+    "TSJ", 
+    "TSY", 
+    "TSL", 
+    "TSN", 
+    "TSR", 
+    "TSS", 
+    "TSZ", 
+    "SHE", 
+    "SHM", 
+    "SHS", 
+    "SHV", 
+    "TAD", 
+    "LAE", 
+    "ASS", 
+    "TSO", 
+    "TJB", 
+    "MAI", 
+    "AEZ", 
+    "EZT", 
+    "EUP", 
+    "PEU", 
+    "VAM", 
+    "LAR", 
+    "ARI", 
+    "ABL", 
+    "ART", 
+    "CLM", 
+    "ELM", 
+    "HRE", 
+    "LPR", 
+    "EPL", 
+    "TEO", 
+    "MQ1", 
+    "MQ2", 
+    "MQ3", 
     "MAT", 
     "MRK", 
     "LUK", 
@@ -11239,31 +13059,6 @@
     "EUT", 
     "DOJ", 
     "LBB", 
-    "MQ1", 
-    "MQ2", 
-    "MQ3", 
-    "TAD", 
-    "LAE", 
-    "ASS", 
-    "TSO", 
-    "TJB", 
-    "MAI", 
-    "AEZ", 
-    "EZT", 
-    "EUP", 
-    "PEU", 
-    "VAM", 
-    "LAR", 
-    "ARI", 
-    "ABL", 
-    "ART", 
-    "CLM", 
-    "ELM", 
-    "HRE", 
-    "LPR", 
-    "EPL", 
-    "TEO", 
-    "RVE", 
     "GHE", 
     "GTR", 
     "GMA", 
@@ -11275,6 +13070,21 @@
     "GBA", 
     "AJA", 
     "WJC", 
+    "IGE", 
+    "IGM", 
+    "IGT", 
+    "IGR", 
+    "IGP", 
+    "IGS", 
+    "IGC", 
+    "PCP", 
+    "MPC", 
+    "DIO", 
+    "APC", 
+    "FOP", 
+    "ROE", 
+    "FOQ", 
+    "TAT", 
     "GLS", 
     "CNC", 
     "TPC", 

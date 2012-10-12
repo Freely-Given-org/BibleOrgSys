@@ -469,6 +469,7 @@ def demo():
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
     testFolder = "Tests/DataFilesForTests/USFMTest/" # This is a RELATIVE path
+    testFolder = "/home/robert/USFM output from OSIS/"
     #testFolder = "/home/myFolder" # You can put your test folder here
     if os.access( testFolder, os.R_OK ):
         UFns = USFMFilenames( testFolder )

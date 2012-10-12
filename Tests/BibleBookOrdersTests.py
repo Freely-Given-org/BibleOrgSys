@@ -4,9 +4,9 @@
 # BibleBookOrdersTests.py
 #
 # Module testing BibleBookOrders.py
-#   Last modified: 2011-05-29 (also update versionString below)
+#   Last modified: 2012-09-07 (also update versionString below)
 #
-# Copyright (C) 2011 Robert Hunt
+# Copyright (C) 2011-2012 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module testing BibleBookOrders.py.
 """
 
 progName = "Bible Book Orders tests"
-versionString = "0.82"
+versionString = "0.83"
 
 
 import sys, unittest
@@ -170,11 +170,12 @@ class BibleBookOrderSystemsTests( unittest.TestCase ):
     # end of test_070_getBookOrderList
 
     def test_080_checkBookOrderSystem( self ):
-        """ Test the checkBookOrderSystem function. """
+        """ Test the checkBookOrderSystem function.
+            It returns the number of matched systems. """
         self.assertEqual( self.bboss.checkBookOrderSystem( "myGoodTest", \
-            ['MAT', 'MRK', 'LUK', 'JHN', 'ACT', 'ROM', 'CO1', 'CO2', 'GAL', 'EPH', 'PHP', 'COL', 'TH1', 'TH2', 'TI1', 'TI2', 'TIT', 'PHM', 'HEB', 'JAM', 'PE1', 'PE2', 'JN1', 'JN2', 'JN3', 'JDE', 'REV'] ), 4 )
+            ['MAT', 'MRK', 'LUK', 'JHN', 'ACT', 'ROM', 'CO1', 'CO2', 'GAL', 'EPH', 'PHP', 'COL', 'TH1', 'TH2', 'TI1', 'TI2', 'TIT', 'PHM', 'HEB', 'JAM', 'PE1', 'PE2', 'JN1', 'JN2', 'JN3', 'JDE', 'REV'] ), 5 )
         self.assertEqual( self.bboss.checkBookOrderSystem( "myPartialTest", \
-            ['MAT', 'MRK', 'LUK', 'JHN', 'ACT', 'ROM', 'CO1', 'CO2', 'GAL', 'EPH', 'PHP', 'COL', 'TH1', 'TH2', 'TI1', 'TI2', 'TIT', 'PHM', 'HEB', 'JAM', 'PE1', 'PE2', 'JN1', 'JN2', 'JDE', 'REV'] ), 4 )
+            ['MAT', 'MRK', 'LUK', 'JHN', 'ACT', 'ROM', 'CO1', 'CO2', 'GAL', 'EPH', 'PHP', 'COL', 'TH1', 'TH2', 'TI1', 'TI2', 'TIT', 'PHM', 'HEB', 'JAM', 'PE1', 'PE2', 'JN1', 'JN2', 'JDE', 'REV'] ), 5 )
     # end of test_080_checkBookOrderSystem
 # end of BibleBookOrderSystemsTests class
 

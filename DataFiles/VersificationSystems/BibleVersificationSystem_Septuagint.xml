@@ -48,8 +48,8 @@ Although an internal DTD is included, a Relax NG (RNC) schema is also supplied f
 
   <header>
     <work>
-      <version>0.33</version>
-      <date>2011-03-03</date>
+      <version>0.34</version>
+      <date>2012-09-07</date>
       <title>Septuagint plus Greek New Testament Bible versification system</title>
       <contributor role="com">Robert Hunt</contributor>
       <rights>Public Domain</rights>
@@ -1904,7 +1904,7 @@ Although an internal DTD is included, a Relax NG (RNC) schema is also supplied f
   </BibleBookVersification>
   <BibleBookVersification>
     <nameEnglish>Greek Daniel / Additions to Daniel</nameEnglish>
-    <referenceAbbreviation>DAG</referenceAbbreviation>
+    <referenceAbbreviation>DNG</referenceAbbreviation>
     <numChapters>14</numChapters>
     <numVerses chapter="1">21</numVerses>
     <numVerses chapter="2">49</numVerses>

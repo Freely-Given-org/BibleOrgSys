@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # USFMBibleBook.py
-#   Last modified: 2012-07-05 by RJH (also update versionString below)
+#   Last modified: 2012-09-11 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -27,7 +27,7 @@ Module for defining and manipulating USFM Bible books.
 """
 
 progName = "USFM Bible book handler"
-versionString = "0.23"
+versionString = "0.24"
 
 
 import os, logging
@@ -152,7 +152,7 @@ def main():
         if Globals.verbosityLevel > 1: print( "  ID is '{}'".format( UBB.getField( 'id' ) ) )
         if Globals.verbosityLevel > 1: print( "  Header is '{}'".format( UBB.getField( 'h' ) ) )
         if Globals.verbosityLevel > 1: print( "  Main titles are '{}' and '{}'".format( UBB.getField( 'mt1' ), UBB.getField( 'mt2' ) ) )
-        if Globals.verbosityLevel > 0: print( UBB )
+        #if Globals.verbosityLevel > 0: print( UBB )
         UBB.validateUSFM()
         UBBVersification = UBB.getVersification ()
         if Globals.verbosityLevel > 2: print( UBBVersification )
@@ -176,15 +176,17 @@ def main():
     if 0: # Test individual files
         #name, encoding, testFolder, filename, bookReferenceCode = "WEB", "utf-8", "/mnt/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/", "06-JOS.usfm", "JOS" # You can put your test file here
         #name, encoding, testFolder, filename, bookReferenceCode = "WEB", "utf-8", "/mnt/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/", "44-SIR.usfm", "SIR" # You can put your test file here
-        name, encoding, testFolder, filename, bookReferenceCode = "Matigsalug", "utf-8", "/mnt/Data/Matigsalug/Scripture/MBTV/", "MBT15EZR.SCP", "EZR" # You can put your test file here
+        #name, encoding, testFolder, filename, bookReferenceCode = "Matigsalug", "utf-8", "/mnt/Data/Matigsalug/Scripture/MBTV/", "MBT102SA.SCP", "SA2" # You can put your test file here
+        #name, encoding, testFolder, filename, bookReferenceCode = "Matigsalug", "utf-8", "/mnt/Data/Matigsalug/Scripture/MBTV/", "MBT15EZR.SCP", "EZR" # You can put your test file here
+        name, encoding, testFolder, filename, bookReferenceCode = "Matigsalug", "utf-8", "/mnt/Data/Matigsalug/Scripture/MBTV/", "MBT41MAT.SCP", "MAT" # You can put your test file here
         #name, encoding, testFolder, filename, bookReferenceCode = "Matigsalug", "utf-8", "/mnt/Data/Matigsalug/Scripture/MBTV/", "MBT67REV.SCP", "REV" # You can put your test file here
         if os.access( testFolder, os.R_OK ):
             demoFile( testFolder, filename, bookReferenceCode, logErrors )
         else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
 
     if 1: # Test a whole folder full of files
-        #name, encoding, testFolder = "Matigsalug", "utf-8", "/mnt/Data/Matigsalug/Scripture/MBTV/" # You can put your test folder here
-        name, encoding, testFolder = "WEB", "utf-8", "/mnt/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/" # You can put your test folder here
+        name, encoding, testFolder = "Matigsalug", "utf-8", "/mnt/Data/Matigsalug/Scripture/MBTV/" # You can put your test folder here
+        #name, encoding, testFolder = "WEB", "utf-8", "/mnt/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/" # You can put your test folder here
         if os.access( testFolder, os.R_OK ):
             if Globals.verbosityLevel > 1: print( _("Scanning {} from {}...").format( name, testFolder ) )
             fileList = USFMFilenames.USFMFilenames( testFolder ).getMaximumPossibleFilenameTuples()

@@ -4,9 +4,9 @@
 # Globals.py
 #
 # Module handling Global variables for our Bible Organisational System
-#   Last modified: 2011-05-26 (also update versionString below)
+#   Last modified: 2012-10-03 (also update versionString below)
 #
-# Copyright (C) 2010-2011 Robert Hunt
+# Copyright (C) 2010-2012 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling global variables.
 """
 
 progName = "Globals"
-versionString = "0.07"
+versionString = "0.08"
 
 import logging, os.path
 
@@ -131,21 +131,21 @@ def remove_logfile( projectHandler ):
 # Validating XML fields (from element tree)
 #
 
-def checkXMLNoText( element, locationString):
+def checkXMLNoText( element, locationString, idString=None ):
     """ Give a warning if the element text contains anything other than whitespace. """
-    if element.text and element.text.strip(): logging.warning( "Unprocessed '{}' element text in {}".format( element.text, locationString ) )
+    if element.text and element.text.strip(): logging.warning( "{}Unexpected '{}' element text in {}".format( (idString+' ') if idString else '', element.text, locationString ) )
 
-def checkXMLNoTail( element, locationString):
+def checkXMLNoTail( element, locationString, idString=None ):
     """ Give a warning if the element tail contains anything other than whitespace. """
-    if element.tail and element.tail.strip(): logging.warning( "Unprocessed '{}' element tail in {}".format( element.tail, locationString ) )
+    if element.tail and element.tail.strip(): logging.warning( "{}Unexpected '{}' element tail in {}".format( (idString+' ') if idString else '', element.tail, locationString ) )
 
-def checkXMLNoAttributes( element, locationString ):
+def checkXMLNoAttributes( element, locationString, idString=None ):
     for attrib,value in element.items():
-        logging.warning( "Unprocessed '{}' attribute ({}) in {}".format( attrib, value, locationString ) )
+        logging.warning( "{}Unexpected '{}' attribute ({}) in {}".format( (idString+' ') if idString else '', attrib, value, locationString ) )
 
-def checkXMLNoSubelements( element, locationString ):
+def checkXMLNoSubelements( element, locationString, idString=None ):
     for subelement in element.getchildren():
-        logging.warning( "Unprocessed '{}' sub-element ({}) in {}".format( subelement.tag, subelement.text, locationString ) )
+        logging.warning( "{}Unexpected '{}' sub-element ({}) in {}".format( (idString+' ') if idString else '', subelement.tag, subelement.text, locationString ) )
 
 
 ##########################################################################################################

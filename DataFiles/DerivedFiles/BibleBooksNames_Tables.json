@@ -1115,6 +1115,15 @@
           "Jrm"
         ]
       }, 
+      "DNG": {
+        "defaultAbbreviation": "Dn(Gk)", 
+        "defaultName": "Daniel (Greek)", 
+        "inputFields": [
+          "Daniel (Greek)", 
+          "Dn(Gk)", 
+          "DnlGk"
+        ]
+      }, 
       "KGS": {
         "defaultAbbreviation": "Kgs", 
         "defaultName": "Kings", 
@@ -1341,15 +1350,6 @@
           "Tobias", 
           "Tbt", 
           "Tbs"
-        ]
-      }, 
-      "DAG": {
-        "defaultAbbreviation": "Dn(Gk)", 
-        "defaultName": "Daniel (Greek)", 
-        "inputFields": [
-          "Daniel (Greek)", 
-          "Dn(Gk)", 
-          "DnlGk"
         ]
       }, 
       "DAN": {
@@ -3475,6 +3475,15 @@
           "Jrm"
         ]
       }, 
+      "DNG": {
+        "defaultAbbreviation": "Dn(Gk)", 
+        "defaultName": "Daniel (Greek)", 
+        "inputFields": [
+          "Daniel (Greek)", 
+          "Dn(Gk)", 
+          "DnlGk"
+        ]
+      }, 
       "KGS": {
         "defaultAbbreviation": "Kgs", 
         "defaultName": "Kings", 
@@ -3695,15 +3704,6 @@
           "Tobias", 
           "Tbt", 
           "Tbs"
-        ]
-      }, 
-      "DAG": {
-        "defaultAbbreviation": "Dn(Gk)", 
-        "defaultName": "Daniel (Greek)", 
-        "inputFields": [
-          "Daniel (Greek)", 
-          "Dn(Gk)", 
-          "DnlGk"
         ]
       }, 
       "DAN": {
@@ -4378,7 +4378,11 @@
           "Song of Songs", 
           "Sng of Sngs", 
           "SoS", 
-          "SS"
+          "SS", 
+          "Canticle of Canticles", 
+          "Cntcl of Cntcl", 
+          "CoC", 
+          "CC"
         ]
       }, 
       "HAB": {
@@ -4923,7 +4927,9 @@
         "inputFields": [
           "Ecclesiastes", 
           "Ecc", 
-          "Ecclsts"
+          "Ecclsts", 
+          "Qoheleth", 
+          "Qhlth"
         ]
       }, 
       "P12": {
@@ -4988,6 +4994,15 @@
           "Jeremiah", 
           "Jer", 
           "Jrmh"
+        ]
+      }, 
+      "DNG": {
+        "defaultAbbreviation": "Dn(Gk)", 
+        "defaultName": "Daniel (Greek)", 
+        "inputFields": [
+          "Daniel (Greek)", 
+          "Dn(Gk)", 
+          "DnlGk"
         ]
       }, 
       "KGS": {
@@ -5214,15 +5229,6 @@
           "Tobias", 
           "Tbt", 
           "Tbs"
-        ]
-      }, 
-      "DAG": {
-        "defaultAbbreviation": "Dn(Gk)", 
-        "defaultName": "Daniel (Greek)", 
-        "inputFields": [
-          "Daniel (Greek)", 
-          "Dn(Gk)", 
-          "DnlGk"
         ]
       }, 
       "DAN": {
