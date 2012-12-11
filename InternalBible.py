@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # InternalBible.py
-#   Last modified: 2012-07-10 by RJH (also update versionString below)
+#   Last modified: 2012-12-10 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -35,7 +35,7 @@ and then fills
 """
 
 progName = "Internal Bible handler"
-versionString = "0.04"
+versionString = "0.07"
 
 
 import os, logging, datetime
@@ -84,6 +84,14 @@ class InternalBible:
         if self.sourceFolder: result += ('\n' if result else '') + "  From: " + self.sourceFolder
         result += ('\n' if result else '') + "  Number of books = " + str(len(self.books))
         return result
+    # end of __str__
+
+
+    def __len__( self ):
+        """
+        This method returns the number of books in the Bible.
+        """
+        return len( self.books )
     # end of __str__
 
 
@@ -272,6 +280,67 @@ class InternalBible:
     # end of getAddedUnits
 
 
+    def discover( self ):
+        """Runs a series of checks and count on each book of the Bible
+            in order to try to determine what are the normal standards."""
+        #print( "\nInternalBible:discover" )
+        self.discoveryResults = OrderedDict()
+
+        # Get our recommendations for added units -- only load this once per Bible
+        #import pickle
+        #folder = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/" ) # Relative to module, not cwd
+        #filepath = os.path.join( folder, "AddedUnitData.pickle" )
+        #if Globals.verbosityLevel > 3: print( _("Importing from {}...").format( filepath ) )
+        #with open( filepath, 'rb' ) as pickleFile:
+        #    typicalAddedUnits = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
+
+        if Globals.verbosityLevel > 2: print( _("Running discover on {}...").format( self.name ) )
+        for BBB in self.books: # Do individual book prechecks
+            if Globals.verbosityLevel > 3: print( "  " + _("Prechecking {}...").format( BBB ) )
+            self.books[BBB].discover( self.discoveryResults )
+
+        # Now get the aggregate results for the entire Bible
+        aggregateResults = {}
+        assert( 'ALL' not in self.discoveryResults )
+        for BBB in self.discoveryResults:
+            #print( "discoveryResults", BBB, self.discoveryResults[BBB] )
+            for key,value in self.discoveryResults[BBB].items():
+                if key=='percentageProgress':
+                    if 'percentageProgressByBook' not in aggregateResults: aggregateResults['percentageProgressByBook'] = value
+                    else: aggregateResults['percentageProgressByBook'] += value
+                    #print( value, aggregateResults['percentageProgressByBook'] )
+                elif value==True:
+                    if key not in aggregateResults: aggregateResults[key] = 1
+                    else: aggregateResults[key] += 1
+                elif value==False:
+                    pass
+                elif isinstance( value, int ):
+                    if key not in aggregateResults: aggregateResults[key] = value
+                    else: aggregateResults[key] += value
+                else:
+                    print( "WARNING: unactioned discovery result", BBB, key, value )
+        #print( "aggregateResults", aggregateResults['percentageProgressByBook'], len(self) )
+        aggregateResults['percentageProgressByBook'] = str( round( aggregateResults['percentageProgressByBook'] / len(self) ) ) + '%'
+        aggregateResults['percentageProgressByVerse'] = str( round( aggregateResults['completedVerseCount'] * 100 / aggregateResults['verseCount'] ) ) + '%'
+        self.discoveryResults['ALL'] = aggregateResults
+
+        if Globals.verbosityLevel > 2: # Display some of these results
+            print( "Discovered Bible parameters:" )
+            if Globals.verbosityLevel > 2: # Print diagnostics
+                for BBB in self.discoveryResults:
+                    #print( BBB )
+                    if BBB != 'ALL':
+                        if self.discoveryResults[BBB]['seemsFinished']: print( "   ", BBB, "seems finished" ) #, str(self.discoveryResults[BBB]['percentageProgress'])+'%' )
+                        elif not self.discoveryResults[BBB]['haveVerseText']: print( "   ", BBB, "not started" ) #, str(self.discoveryResults[BBB]['percentageProgress'])+'%' )
+                        else: print( "   ", BBB, "in progress", str(self.discoveryResults[BBB]['percentageProgress'])+'%' )
+            for key,value in sorted(self.discoveryResults['ALL'].items()):
+                if key.startswith("percentage") or key.endswith("Count"): print( " ", key, "is", value )
+                else: print( " ", key, "in", value if value<len(self) else "All", "books" )
+
+        #print( self.books['LEV']._processedLines )
+    # end of discover
+
+
     def check( self ):
         """Runs a series of individual checks (and counts) on each book of the Bible
             and then a number of overall checks on the entire Bible."""
@@ -448,6 +517,7 @@ class InternalBible:
                         if anotherKey.endswith('Errors') or anotherKey.endswith('List') or anotherKey.endswith('Lines'):
                             assert( isinstance( errors['ByBook'][BBB][thisKey][anotherKey], list ) )
                             appendList( BBB, errors['ByBook'], thisKey, anotherKey )
+                            if thisKey not in errors['ByCategory']: errors['ByCategory'][thisKey] = OrderedDict() #; print( "Added", thisKey )
                             if anotherKey not in errors['ByCategory'][thisKey]: errors['ByCategory'][thisKey][anotherKey] = []
                             errors['ByCategory'][thisKey][anotherKey].extend( errors['ByBook'][BBB][thisKey][anotherKey] )
                         elif anotherKey.endswith('Counts'):

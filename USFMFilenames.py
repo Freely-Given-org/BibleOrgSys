@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # USFMFilenames.py
-#   Last modified: 2012-07-14 by RJH (also update versionString below)
+#   Last modified: 2012-12-08 by RJH (also update versionString below)
 #
 # Module handling USFM Bible filenames
 #
@@ -27,7 +27,7 @@ Module for creating and manipulating USFM filenames.
 """
 
 progName = "USFM Bible filenames handler"
-versionString = "0.55"
+versionString = "0.56"
 
 
 import os, logging
@@ -165,8 +165,8 @@ class USFMFilenames:
         #print( "USFMFilenames: pattern='{}' fileExtension='{}'".format( self.pattern, self.fileExtension ) )
 
         # Also, try looking inside the files
-        self.fileDictionary = {} # The keys are 2-tuples of folder, filename, the values are all valid BBB values
-        self.BBBDictionary = {} # The keys are valid BBB values, the values are all 2-tuples of folder, filename
+        self._fileDictionary = {} # The keys are 2-tuples of folder, filename, the values are all valid BBB values
+        self._BBBDictionary = {} # The keys are valid BBB values, the values are all 2-tuples of folder, filename
         self.getUSFMIDsFromFiles( self.folder ) # Fill the above dictionaries
     # end of __init__
         
@@ -243,8 +243,8 @@ class USFMFilenames:
                 Populates the two dictionaries.
                 Returns the number of files found. """
         # Empty the two dictionaries
-        self.fileDictionary = {} # The keys are 2-tuples of folder, filename, the values are all valid BBB values
-        self.BBBDictionary = {} # The keys are valid BBB values, the values are all 2-tuples of folder, filename
+        self._fileDictionary = {} # The keys are 2-tuples of folder, filename, the values are all valid BBB values
+        self._BBBDictionary = {} # The keys are valid BBB values, the values are all 2-tuples of folder, filename
         folderFilenames = os.listdir( givenFolder )
         for possibleFilename in folderFilenames:
             if not possibleFilename.endswith('~') and not possibleFilename.upper().endswith('.BAK'): # Ignore backup files
@@ -252,14 +252,14 @@ class USFMFilenames:
                 if os.path.isfile( filepath ): # It's a file not a folder
                     USFMId = self.getUSFMIDFromFile( givenFolder, possibleFilename, filepath )
                     if USFMId:
-                        assert( filepath not in self.fileDictionary )
+                        assert( filepath not in self._fileDictionary )
                         BBB = self._BibleBooksCodesObject.getBBBFromUSFM( USFMId )
-                        self.fileDictionary[(givenFolder,possibleFilename,)] = BBB
-                        if BBB in self.BBBDictionary: logging.error( "getUSFMIDsFromFiles: Oops, already found '{}' in {}, now we have a duplicate in {}".format( BBB, self.BBBDictionary[BBB], possibleFilename ) )
-                        self.BBBDictionary[BBB] = (givenFolder,possibleFilename,)
-        if len(self.fileDictionary) != len(self.BBBDictionary):
-            logging.warning( "getUSFMIDsFromFiles: Oops, something went wrong because dictionaries have {} and {} entries".format( len(self.fileDictionary), len(self.BBBDictionary) ) )
-        return len(self.fileDictionary)
+                        self._fileDictionary[(givenFolder,possibleFilename,)] = BBB
+                        if BBB in self._BBBDictionary: logging.error( "getUSFMIDsFromFiles: Oops, already found '{}' in {}, now we have a duplicate in {}".format( BBB, self._BBBDictionary[BBB], possibleFilename ) )
+                        self._BBBDictionary[BBB] = (givenFolder,possibleFilename,)
+        if len(self._fileDictionary) != len(self._BBBDictionary):
+            logging.warning( "getUSFMIDsFromFiles: Oops, something went wrong because dictionaries have {} and {} entries".format( len(self._fileDictionary), len(self._BBBDictionary) ) )
+        return len(self._fileDictionary)
     # end of getUSFMIDsFromFiles
 
 
@@ -379,13 +379,14 @@ class USFMFilenames:
                 Each tuple contains ( BBB, filename ) not including the folder path.
         """
         resultList = []
-        if len( self.BBBDictionary) >= len( self.fileDictionary ): # Choose the longest one
-            for BBB in self.BBBDictionary.keys():
-                self.doListAppend( BBB, self.BBBDictionary[BBB][1], resultList, "getPossibleFilenameTuplesInt1" )
+        if len( self._BBBDictionary) >= len( self._fileDictionary ): # Choose the longest one
+            for BBB in self._BBBDictionary.keys():
+                self.doListAppend( BBB, self._BBBDictionary[BBB][1], resultList, "getPossibleFilenameTuplesInt1" )
         else:
-            for folder,filename in self.fileDictionary.keys():
+            for folder,filename in self._fileDictionary.keys():
                 assert( folder == self.folder )
-                self.doListAppend( self.fileDictionary( (folder,filename,) ), filename, resultList, "getPossibleFilenameTuplesInt2" )
+                #print( "getPossibleFilenameTuplesInt", folder, filename, self._fileDictionary )
+                self.doListAppend( self._fileDictionary[(folder,filename,)], filename, resultList, "getPossibleFilenameTuplesInt2" )
         self.lastTupleList = resultList
         return self._BibleBooksCodesObject.getSequenceList( resultList )
     # end of getPossibleFilenameTuplesInt

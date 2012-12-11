@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # USFMBible.py
-#   Last modified: 2012-07-05 by RJH (also update versionString below)
+#   Last modified: 2012-12-09 by RJH (also update versionString below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -27,7 +27,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 """
 
 progName = "USFM Bible handler"
-versionString = "0.26"
+versionString = "0.27"
 
 
 import os, logging, datetime
@@ -200,6 +200,9 @@ class USFMBible( InternalBible ):
                     else: print( "{} doesn't seem to be a USFM Bible book in {}".format( thisFilename, folder ) )
                 if self.books: print( "USFMBible.load: Found {} irregularly named USFM files".format( len(self.books) ) )
         #print( "\n", len(self.books), sorted(self.books) ); halt
+        #print( "\n", "self.BBBToNameDict", self.BBBToNameDict )
+        #print( "\n", "self.bookNameDict", self.bookNameDict )
+        #print( "\n", "self.combinedBookNameDict", self.combinedBookNameDict ); halt
     # end of load
 # end of class USFMBible
 
@@ -216,25 +219,84 @@ def main():
 
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
-    name, encoding, testFolder = "Matigsalug", "utf-8", "/mnt/Data/Matigsalug/Scripture/MBTV/" # You can put your test folder here
-    if os.access( testFolder, os.R_OK ):
-        UB = USFMBible( name, True ) # The second parameter is the logErrorsFlag -- set to True if you want to see errors at the terminal
-        UB.load( testFolder, encoding )
-        if Globals.verbosityLevel > 0: print( UB )
-        UB.check()
-        #UBErrors = UB.getErrors()
-        # print( UBErrors )
-        #print( UB.getVersification () )
-        #print( UB.getAddedUnits () )
-        #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
-            ##print( "Looking for", ref )
-            #print( "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )
-    else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
+    if 0: # Test a single folder containing a USFM Bible
+        name, encoding, testFolder = "Matigsalug", "utf-8", "/mnt/Data/Matigsalug/Scripture/MBTV/" # You can put your test folder here
+        if os.access( testFolder, os.R_OK ):
+            UB = USFMBible( name, False ) # The second parameter is the logErrorsFlag -- set to True if you want to see errors at the terminal
+            UB.load( testFolder, encoding )
+            if Globals.verbosityLevel > 0: print( UB )
+            UB.discover()
+            UB.check()
+            #UBErrors = UB.getErrors()
+            # print( UBErrors )
+            #print( UB.getVersification () )
+            #print( UB.getAddedUnits () )
+            #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
+                ##print( "Looking for", ref )
+                #print( "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )
+        else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
+
+    if 1: # Test a whole folder full of folders of USFM Bibles
+        def findInfo():
+            """ Find out info about the project from the included copyright.htm file """
+            from BibleBooksCodes import BibleBooksCodes
+            BBC = BibleBooksCodes().loadData()
+            with open( os.path.join( somepath, "copyright.htm" ) ) as myFile: # Automatically closes the file when done
+                lastLine, lineCount = None, 0
+                title, nameDict = None, {}
+                for line in myFile:
+                    lineCount += 1
+                    if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
+                        #print( "      Detected UTF-16 Byte Order Marker in copyright.htm file" )
+                        line = line[1:] # Remove the UTF-8 Byte Order Marker
+                    if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
+                    if not line: continue # Just discard blank lines
+                    lastLine = line
+                    if line.startswith("<title>"): title = line.replace("<title>","").replace("</title>","").strip()
+                    if line.startswith('<option value="'):
+                        adjLine = line.replace('<option value="','').replace('</option>','')
+                        USFM_BBB, name = adjLine[:3], adjLine[11:]
+                        BBB = BBC.getBBBFromUSFM( USFM_BBB )
+                        #print( USFM_BBB, BBB, name )
+                        nameDict[BBB] = name
+            return title, nameDict
+        # end of findInfo
+
+        testBaseFolder = "../../Haiola USFM test versions/"
+        count = totalBooks = 0
+        for something in sorted( os.listdir( testBaseFolder ) ):
+            somepath = os.path.join( testBaseFolder, something )
+            if os.path.isfile( somepath ): print( "Ignoring file '{}' in '{}'".format( something, testBaseFolder ) )
+            elif os.path.isdir( somepath ): # Let's assume that it's a folder containing a USFM (partial) Bible
+                if not something.startswith( 'dob' ): continue
+                count += 1
+                title, bookNameDict = findInfo()
+                if title is None: title = something[:-5] if something.endswith("_usfm") else something
+                name, encoding, testFolder = title, "utf-8", somepath
+                if os.access( testFolder, os.R_OK ):
+                    if Globals.verbosityLevel > 0: print( "\n{}".format( count ) )
+                    UB = USFMBible( name, False ) # The second parameter is the logErrorsFlag -- set to True if you want to see errors at the terminal
+                    UB.load( testFolder, encoding )
+                    totalBooks += len( UB )
+                    if Globals.verbosityLevel > 0: print( UB )
+                    UB.discover()
+                    UB.check()
+                    #UBErrors = UB.getErrors()
+                    # print( UBErrors )
+                    #print( UB.getVersification () )
+                    #print( UB.getAddedUnits () )
+                    #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
+                        ##print( "Looking for", ref )
+                        #print( "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )
+                else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
+        if count: print( "\n{} total USFM (partial) Bibles processed.".format( count ) )
+        if totalBooks: print( "{} total books ({} average per folder)".format( totalBooks, round(totalBooks/count) ) )
 
     #if Globals.commandLineOptions.export:
     #    wantErrorMessages = True
     #    if Globals.verbosityLevel > 0: print( "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( progName, versionString ) )
     #       pass
+#end of main
 
 if __name__ == '__main__':
     main()

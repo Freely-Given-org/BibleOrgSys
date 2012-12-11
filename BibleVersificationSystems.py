@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleVersificationSystems.py
-#   Last modified: 2012-06-04 (also update versionString below)
+#   Last modified: 2012-11-07 (also update versionString below)
 #
 # Module handling BibleVersificationSystem_*.xml to produce C and Python data tables
 #
@@ -642,6 +642,7 @@ class BibleVersificationSystem:
 
     def expandCVRange( self, startRef, endRef, referenceString=None, bookOrderSystem=None, wantErrorMessages=False ):
         """ Returns a list containing all valid references (inclusive) between the given values. """
+        #print( "expandCVRange:", startRef, endRef, referenceString, bookOrderSystem, wantErrorMessages )
         assert( startRef and len(startRef)==4 )
         assert( endRef and len(endRef)==4 )
 
@@ -705,8 +706,13 @@ class BibleVersificationSystem:
                     resultList.append( (BBB1, str(Cint), str(Vint), S,) )
         else: # it's a range that spans multiple books
             BBB, Cfirst, Vfirst = BBB1, C1int, V1int
+            #print( "  here1 in expandCVRange:", BBB, Cfirst, Vfirst )
             while BBB != BBB2: # Go to the end of this book
                 Clast = self.getNumChapters( BBB )
+                if Clast is None: # This book didn't have any chapter info in the versification scheme  :(
+                    logging.critical( "Book {} didn't have chapter information for expanding range {} to {}".format( BBB, startRef, endRef ) )
+                    break
+                #print( "    here2 in expandCVRange:", BBB, Cfirst, Clast )
                 for Cint in range( Cfirst, Clast+1 ):
                     Vlast = self.getNumVerses( BBB, str(Cint) )
                     if Cint==Cfirst: # We're on the first chapter

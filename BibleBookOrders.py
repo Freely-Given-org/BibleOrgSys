@@ -4,9 +4,9 @@
 # BibleBookOrders.py
 #
 # Module handling BibleBookOrderSystems
-#   Last modified: 2011-06-30 (also update versionString below)
+#   Last modified: 2012-10-13 (also update versionString below)
 #
-# Copyright (C) 2010-2011 Robert Hunt
+# Copyright (C) 2010-2012 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling BibleBookOrder systems.
 """
 
 progName = "Bible Book Order Systems handler"
-versionString = "0.83"
+versionString = "0.84"
 
 
 import os, logging
@@ -53,6 +53,7 @@ class BibleBookOrderSystems:
         """
         Constructor: 
         """
+        if Globals.debugFlag: print( "BibleBookOrderSystems:__init__()" )
         self.__DataDicts = self.__DataLists = None # We'll import into these in loadData
 
         # Make sure we have the Bible books codes data loaded and available
@@ -90,6 +91,7 @@ class BibleBookOrderSystems:
                 bboc.loadSystems( XMLFolder ) # Load the XML (if not done already)
                 self.__DataDicts, self.__DataLists = bboc.importDataToPython() # Get the various dictionaries organised for quick lookup
         assert( len(self.__DataDicts) == len(self.__DataLists) )
+        if Globals.debugFlag: print( "BibleBookOrderSystems:loadData({}) loaded {} systems".format( XMLFolder, len(self.__DataDicts) ) )
         return self
     # end of loadData
 
@@ -234,9 +236,14 @@ class BibleBookOrderSystem:
         """
         Constructor: 
         """
+        if Globals.debugFlag: print( "BibleBookOrderSystem:__init__({})".format( systemName ) )
         self.__systemName = systemName
         self.__bbos = BibleBookOrderSystems().loadData() # Doesn't reload the XML unnecessarily :)
-        self.__BookOrderBookDict, self.__BookOrderNumberDict, self.__BookOrderList = self.__bbos.getBookOrderSystem( self.__systemName )
+        results = self.__bbos.getBookOrderSystem( self.__systemName )
+        if results is None:
+            print( "BibleBookOrderSystem:__init__({}) failed!".format( systemName ) )
+            self.__BookOrderBookDict = self.__BookOrderNumberDict = self.__BookOrderList = None
+        else: self.__BookOrderBookDict, self.__BookOrderNumberDict, self.__BookOrderList = results
     # end of __init__
 
     def __str__( self ):

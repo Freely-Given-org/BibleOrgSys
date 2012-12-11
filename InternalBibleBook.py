@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # InternalBibleBook.py
-#   Last modified: 2012-09-11 by RJH (also update versionString below)
+#   Last modified: 2012-12-10 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -35,11 +35,11 @@ It also needs to provide a "load" routine that sets:
     self.sourceFilename
     self.sourceFilepath = os.path.join( sourceFolder, sourceFilename )
 and then calls
-    self.appendLine (in order to fill self._RawLines)
+    self.appendLine (in order to fill self._rawLines)
 """
 
 progName = "Internal Bible book handler"
-versionString = "0.11"
+versionString = "0.13"
 
 
 import os, logging
@@ -140,7 +140,8 @@ class InternalBibleBook:
 
     def appendToLastLine( self, additionalText ):
         """ Append some extra text to the previous line in self._rawLines
-            Doesn't add any additional spaces. """
+            Doesn't add any additional spaces.
+            (Used by USXBibleBook.py) """
         assert( not self._processed )
         assert( additionalText and isinstance( additionalText, str ) )
         assert( self._rawLines )
@@ -156,7 +157,19 @@ class InternalBibleBook:
         """ Move notes out of the text into a separate area. """
 
         def processLineFix( originalMarker, text ):
-            """ Does character fixes on a specific line and moves footnotes and cross-references out of the main text. """
+            """ Does character fixes on a specific line and moves footnotes and cross-references out of the main text.
+                Returns:
+                    adjText: Text without notes and leading/trailing spaces
+                    cleanText: adjText without character formatting as well
+                    extras: a list containing
+                        extraType: 'fn' or 'xr'
+                        extraIndex: the index into adjText above
+                        extraText: the text of the note
+                        cleanExtraText: extraText without character formatting as well
+            """
+            #print( "processLineFix: '{}' '{}'".format( originalMarker, text ) )
+            assert( originalMarker and isinstance( originalMarker, str ) )
+            assert( isinstance( text, str ) )
             adjText = text
 
             # Remove trailing spaces
@@ -263,8 +276,9 @@ class InternalBibleBook:
                         self.addPriorityError( 11, c, v, _("{} ends with space").format( thisOne.title() ) )
                         note = note.rstrip()
                     if '\\f ' in note or '\\f*' in note or '\\x ' in note or '\\x*' in note: # Only the contents of these fields should be here now
-                        print( "{} {}:{} What went wrong here: '{}' from \\{} '{}'".format( note, originalMarker, text ) )
-                        halt
+                        print( "{} {}:{} What went wrong here: '{}' from \\{} '{}' (Is it an embedded note?)".format( self.bookReferenceCode, c, v, note, originalMarker, text ) )
+                        print( "Have an embedded note perhaps! Not handled correctly yet" )
+                        note = note.replace( '\\f ', ' ' ).replace( '\\f*','').replace( '\\x ', ' ').replace('\\x*','') # Temporary fix ..................
                 adjText = adjText[:ix1] + adjText[ix2+3:] # Remove the note completely from the text
                 lcAdjText = adjText.lower()
                 # Now prepare a cleaned version
@@ -325,18 +339,40 @@ class InternalBibleBook:
                         #print( "Removing unknown marker '{}' from '{}'".format( cleanText[ixBS:ixEND+1], cleanText ) )
                         cleanText = cleanText[:ixBS] + cleanText[ixEND+1:]
                     else: # we didn't find a space or asterisk so it's at the end of the line
-                        halt # Still need to write this bit
+                        #print( "text: '{}'".format( text ) )
+                        #print( "adjText: '{}'".format( adjText ) )
+                        #print( "cleanText: '{}'".format( cleanText ) )
+                        #print( ixBS, ixSP, ixAS, ixEND )
+                        assert( ixSP==99999 and ixAS==99999 and ixEND==99999 )
+                        cleanText = cleanText[:ixBS].rstrip()
+                        #print( "cleanText: '{}'".format( cleanText ) )
                 if '\\' in cleanText: logging.error( "Why do we still have a backslash in '{}' from '{}'?".format( cleanText, adjText ) ); halt
+
+            # Now do a final check that we did everything right
+            for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
+                assert( extraText ) # Shouldn't be blank
+                assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
+                assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
+                #print( extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
+                assert( extraIndex >= 0 )
+                # This can happen with multiple notes at the end separated by spaces
+                #if extraIndex > len(adjText)+1: print( "Programming Note: extraIndex {} is way more than text length of {} with '{}'".format( extraIndex, len(adjText), text ) )
+                assert( extraType in ('fn','xr',) )
+                assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
+
             return adjText, cleanText, extras
         # end of processLineFix
 
 
-        def processLine( originalMarker, text ):
+        def processLine( originalMarker, originalText ):
             """ Process one USFM line by separating out the notes
                     and producing clean text suitable for searching
                     and then save the line. """
             nonlocal c, v
+            #print( "processLine: '{}' '{}'".format( originalMarker, originalText ) )
             assert( originalMarker and isinstance( originalMarker, str ) )
+            assert( isinstance( originalText, str ) )
+            text = originalText
 
             # Convert USFM markers like s to standard markers like s1
             adjustedMarker = self.USFMMarkers.toStandardMarker( originalMarker )
@@ -345,14 +381,36 @@ class InternalBibleBook:
             if originalMarker=='c' and text: c = text.split()[0]; v = '0'
             elif originalMarker=='v' and text:
                 # Convert v markers to milestones only
-                vbits = text.split( None, 1 )
-                v = vbits[0]
-                if len(vbits)==2:
-                    #print( ('v', 'v', vbits[0], []) )
-                    verseNumberBit = vbits[0]
+                text = text.lstrip()
+                ixSP = text.find( ' ' )
+                ixBS = text.find( '\\' )
+                if ixSP == -1: ixSP=99999
+                if ixBS == -1: ixBS=99999
+                ix = min( ixSP, ixBS ) # Break at the first space or backslash
+                if ix<ixSP: # It must have been the backslash first
+                    #print( "processLine had an unusual case in {} {}:{}: '{}' '{}'".format( self.bookReferenceCode, c, v, originalMarker, originalText ) )
+                    fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Unusual field (after verse number): '{}'").format( originalText ) )
+                    if self.logErrorsFlag: logging.error( _("Unexpected backslash touching verse number (missing space?) after {} {}:{} in \\{}: '{}'").format( self.bookReferenceCode, c, v, originalMarker, originalText ) )
+                    self.addPriorityError( 94, c, v, _("Unexpected backslash touching verse number (missing space?) in '{}'").format( originalText ) )
+                if ix==99999: # There's neither -- not unexpected if this is a translation in progress
+                    #print( "processLine had an empty verse field in {} {}:{}: '{}' '{}' {} {} {}".format( self.bookReferenceCode, c, v, originalMarker, originalText, ix, ixSP, ixBS ) )
+                    fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Nothing after verse number: '{}'").format( originalText ) )
+                    if self.logErrorsFlag: logging.error( _("Nothing following verse number after {} {}:{} in \\{}: '{}'").format( self.bookReferenceCode, c, v, originalMarker, originalText ) )
+                    self.addPriorityError( 92, c, v, _("Nothing following verse number in '{}'").format( originalText ) )
+                    verseNumberBit = text
+                    #print( "verseNumberBit is '{}'".format( verseNumberBit ) )
+                    assert( verseNumberBit )
+                    assert( ' ' not in verseNumberBit )
                     assert( '\\' not in verseNumberBit )
                     self._processedLines.append( (adjustedMarker, originalMarker, verseNumberBit, verseNumberBit, [],) ) # Write the verse number (or range) as a separate line
-                    adjustedMarker, text = 'v+', vbits[1]
+                    adjustedMarker, text = 'v+', ''
+                else:
+                    verseNumberBit, verseNumberRest = text[:ix], text[ix:]
+                    #print( "verseNumberBit is '{}', verseNumberRest is '{}'".format( verseNumberBit, verseNumberRest ) )
+                    assert( verseNumberBit and verseNumberRest )
+                    assert( '\\' not in verseNumberBit )
+                    self._processedLines.append( (adjustedMarker, originalMarker, verseNumberBit, verseNumberBit, [],) ) # Write the verse number (or range) as a separate line
+                    adjustedMarker, text = 'v+', verseNumberRest.lstrip()
 
             if text:
                 # Check markers inside the lines
@@ -646,6 +704,83 @@ class InternalBibleBook:
         if versificationErrors: self.errorDictionary['Versification Errors'] = versificationErrors
         return versification, omittedVerses, combinedVerses, reorderedVerses
     # end of getVersification
+
+
+    def discover( self, resultDictionary ):
+        """
+        Do a precheck on the book to try to determine it's features.
+        """
+        #print( "InternalBibleBook:discover", self.bookReferenceCode )
+        assert( isinstance( resultDictionary, dict ) )
+
+        bkDict = {}
+        bkDict['chapterCount'] = bkDict['verseCount'] = bkDict['percentageProgress'] = None
+        bkDict['completedVerseCount'] = 0
+        bkDict['havePopulatedCVmarkers'] = bkDict['haveParagraphMarkers'] = bkDict['haveIntroductoryMarkers'] = False
+        bkDict['haveSectionReferences'] = bkDict['haveFootnotes'] = bkDict['haveCrossReferences'] = False
+        bkDict['haveIntroductoryText'] = bkDict['haveVerseText'] = False
+        bkDict['seemsFinished'] = None
+
+        c = v = '0'
+        lastMarker = None
+        for marker,originalMarker,text,cleanText,extras in self._processedLines:
+            # Keep track of where we are for more helpful error messages
+            if marker=='c' and text:
+                c = text.split()[0]; v = '0'
+                if bkDict['chapterCount'] is None: bkDict['chapterCount'] = 1
+                else: bkDict['chapterCount'] += 1
+            elif marker=='v' and text:
+                v = text.split()[0]
+                if bkDict['verseCount'] is None: bkDict['verseCount'] = 1
+                else: bkDict['verseCount'] += 1
+                if bkDict['chapterCount'] is None: # Some single chapter books don't have \c 1 explicitly encoded
+                    assert( c == '0' )
+                    c = '1'
+                    bkDict['chapterCount'] = 1
+                bkDict['havePopulatedCVmarkers'] = True
+                if bkDict['seemsFinished'] is None: bkDict['seemsFinished'] = True
+            elif marker=='v+' and text:
+                bkDict['haveVerseText'] = True
+                bkDict['completedVerseCount'] += 1
+            elif marker=='r' and text:
+                bkDict['haveSectionReferences'] = True
+            elif marker in ('p','q1','q2','q3'):
+                bkDict['haveParagraphMarkers'] = True
+                if text: bkDict['haveVerseText'] = True
+            elif marker in ('ip',):
+                bkDict['haveIntroductoryMarkers'] = True
+                if text: bkDict['haveIntroductoryText'] = True
+
+            if lastMarker=='v' and (marker!='v+' or not text): bkDict['seemsFinished'] = False
+
+            for extraType, extraIndex, extraText, cleanExtraText in extras:
+                assert( extraText ) # Shouldn't be blank
+                assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
+                assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
+                #print( extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
+                assert( extraIndex >= 0 )
+                #assert( 0 <= extraIndex <= len(text)+3 )
+                assert( extraType in ('fn','xr',) )
+                if extraType=='fn': bkDict['haveFootnotes'] = True
+                elif extraType=='xr': bkDict['haveCrossReferences'] = True
+            lastMarker = marker
+
+        if bkDict['verseCount'] is None: # Things like front and end matter (don't have verse numbers)
+            for aKey in ('verseCount','seemsFinished','chapterCount','percentageProgress',):
+                assert( bkDict[aKey] is None \
+                    or ( aKey=='chapterCount' and bkDict[aKey]==1 ) ) # Some people put a chapter count in their front matter, glossary, etc.
+                del bkDict[aKey]
+        else: # Do some finalizing to do with verse counts
+            if bkDict['verseCount'] is not None: bkDict['percentageProgress'] = round( bkDict['completedVerseCount'] * 100 / bkDict['verseCount'] )
+            #print( self.bookReferenceCode, bkDict )
+            if bkDict['seemsFinished']: assert( bkDict['percentageProgress']==100 and bkDict['havePopulatedCVmarkers'] and bkDict['haveVerseText'] )
+            if not bkDict['haveVerseText']: assert( bkDict['percentageProgress']==0 and not bkDict['seemsFinished'] )
+            bkDict['notStarted'] = not bkDict['haveVerseText']
+            bkDict['partlyDone'] = bkDict['haveVerseText'] and not bkDict['seemsFinished']
+
+        # Put the result for this book into the main dictionary
+        resultDictionary[self.bookReferenceCode] = bkDict
+    # end of discover
 
 
     def getAddedUnits( self ):
@@ -1121,14 +1256,16 @@ class InternalBibleBook:
                     self.addPriorityError( 47, c, v, _("Marker {} should have content").format( marker ) )
 
             if extras:
-                #print( extras )
+                #print( "InternalBibleBook:doCheckSFMs-Extras-A {} {}:{} ".format( self.bookReferenceCode, c, v ), extras )
                 extraMarkers = []
                 for extraType, extraIndex, extraText, cleanExtraText in extras:
                     assert( extraText ) # Shouldn't be blank
                     assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
                     assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
                     #print( extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
-                    assert( 0 <= extraIndex <= len(text)+1 )
+                    if Globals.debugFlag: print( "InternalBibleBook:doCheckSFMs-Extras-B {} {}:{} ".format( self.bookReferenceCode, c, v ), extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
+                    assert( extraIndex >= 0 )
+                    #assert( 0 <= extraIndex <= len(text)+3 )
                     assert( extraType in ('fn','xr',) )
                     extraName = 'footnote' if extraType=='fn' else 'cross-reference'
                     if '\\f ' in extraText or '\\f*' in extraText or '\\x ' in extraText or '\\x*' in extraText: # Only the contents of these fields should be in extras
@@ -1323,7 +1460,8 @@ class InternalBibleBook:
                 assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
                 assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
                 #print( extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
-                assert( 0 <= extraIndex <= len(text)+1 )
+                assert( extraIndex >= 0 )
+                #assert( 0 <= extraIndex <= len(text)+3 )
                 assert( extraType in ('fn','xr',) )
                 assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
                 #cleanExtraText = extraText
@@ -1483,8 +1621,9 @@ class InternalBibleBook:
                 assert( extraText ) # Shouldn't be blank
                 assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
                 assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
-                #print( extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
-                assert( 0 <= extraIndex <= len(text)+1 )
+                if Globals.debugFlag: print( "InternalBibleBook:doCheckSpeechMarks {} {}:{} ".format( self.bookReferenceCode, c, v ), extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
+                assert( extraIndex >= 0 )
+                #assert( 0 <= extraIndex <= len(text)+3 )
                 assert( extraType in ('fn','xr',) )
                 assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
                 extraOpenChars = []
@@ -1607,7 +1746,8 @@ class InternalBibleBook:
                 assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
                 assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
                 #print( extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
-                assert( 0 <= extraIndex <= len(text)+1 )
+                assert( extraIndex >= 0 )
+                #assert( 0 <= extraIndex <= len(text)+3 )
                 assert( extraType in ('fn','xr',) )
                 assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
                 #cleanExtraText = extraText
@@ -1646,7 +1786,7 @@ class InternalBibleBook:
             elif marker=='v' and text: v = text.split()[0]
 
             if marker.startswith('mt'):
-                titleList.append( "{} {}:{} Main Title {}: '{}'".format( marker[2:], text ) )
+                titleList.append( "{} {}:{} Main Title {}: '{}'".format( self.bookReferenceCode, c, v, marker[2:], text ) )
                 if not text:
                     headingErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Missing title text for marker {}").format( marker ) )
                     self.addPriorityError( 59, c, v, _("Missing title text") )
@@ -1654,8 +1794,8 @@ class InternalBibleBook:
                     headingErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("{} title ends with a period: {}").format( marker, text ) )
                     self.addPriorityError( 69, c, v, _("Title ends with a period") )
             elif marker in ('s1','s2','s3','s4',):
-                if marker=='s1': headingList.append( "{} {}:{} '{}'".format( text ) )
-                else: headingList.append( "{} {}:{} ({}) '{}'".format( marker, text ) )
+                if marker=='s1': headingList.append( "{} {}:{} '{}'".format( self.bookReferenceCode, c, v, text ) )
+                else: headingList.append( "{} {}:{} ({}) '{}'".format( self.bookReferenceCode, c, v, marker, text ) )
                 if not text:
                     headingErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Missing heading text for marker {}").format( marker ) )
                     self.addPriorityError( 58, c, v, _("Missing heading text") )
@@ -1663,7 +1803,7 @@ class InternalBibleBook:
                     headingErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("{} heading ends with a period: {}").format( marker, text ) )
                     self.addPriorityError( 68, c, v, _("Heading ends with a period") )
             elif marker=='r':
-                sectionReferenceList.append( "{} {}:{} '{}'".format( text ) )
+                sectionReferenceList.append( "{} {}:{} '{}'".format( self.bookReferenceCode, c, v, text ) )
                 if not text:
                     headingErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Missing section cross-reference text for marker {}").format( marker ) )
                     self.addPriorityError( 57, c, v, _("Missing section cross-reference text") )
@@ -1692,8 +1832,8 @@ class InternalBibleBook:
             elif marker=='v' and text: v = text.split()[0]
 
             if marker in ('imt1','imt2','imt3','imt4',):
-                if marker=='imt1': mainTitleList.append( "{} {}:{} '{}'".format( text ) )
-                else: mainTitleList.append( "{} {}:{} ({}) '{}'".format( marker, text ) )
+                if marker=='imt1': mainTitleList.append( "{} {}:{} '{}'".format( self.bookReferenceCode, c, v, text ) )
+                else: mainTitleList.append( "{} {}:{} ({}) '{}'".format( self.bookReferenceCode, c, v, marker, text ) )
                 if not cleanText:
                     introductionErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Missing heading text for marker {}").format( marker ) )
                     self.addPriorityError( 39, c, v, _("Missing heading text") )
@@ -1701,8 +1841,8 @@ class InternalBibleBook:
                     introductionErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("{} heading ends with a period: {}").format( marker, text ) )
                     self.addPriorityError( 49, c, v, _("Heading ends with a period") )
             elif marker in ('is1','is2','is3','is4',):
-                if marker=='is1': headingList.append( "{} {}:{} '{}'".format( text ) )
-                else: headingList.append( "{} {}:{} ({}) '{}'".format( marker, text ) )
+                if marker=='is1': headingList.append( "{} {}:{} '{}'".format( self.bookReferenceCode, c, v, text ) )
+                else: headingList.append( "{} {}:{} ({}) '{}'".format( self.bookReferenceCode, c, v, marker, text ) )
                 if not cleanText:
                     introductionErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Missing heading text for marker {}").format( marker ) )
                     self.addPriorityError( 39, c, v, _("Missing heading text") )
@@ -1710,7 +1850,7 @@ class InternalBibleBook:
                     introductionErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("{} heading ends with a period: {}").format( marker, text ) )
                     self.addPriorityError( 49, c, v, _("Heading ends with a period") )
             elif marker=='iot':
-                titleList.append( "{} {}:{} '{}'".format( text ) )
+                titleList.append( "{} {}:{} '{}'".format( self.bookReferenceCode, c, v, text ) )
                 if not cleanText:
                     introductionErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Missing outline title text for marker {}").format( marker ) )
                     self.addPriorityError( 38, c, v, _("Missing outline title text") )
@@ -1718,8 +1858,8 @@ class InternalBibleBook:
                     introductionErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("{} heading ends with a period: {}").format( marker, text ) )
                     self.addPriorityError( 48, c, v, _("Heading ends with a period") )
             elif marker in ('io1','io2','io3','io4',):
-                if marker=='io1': outlineList.append( "{} {}:{} '{}'".format( text ) )
-                else: outlineList.append( "{} {}:{} ({}) '{}'".format( marker, text ) )
+                if marker=='io1': outlineList.append( "{} {}:{} '{}'".format( self.bookReferenceCode, c, v, text ) )
+                else: outlineList.append( "{} {}:{} ({}) '{}'".format( self.bookReferenceCode, c, v, marker, text ) )
                 if not cleanText:
                     introductionErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Missing outline text for marker {}").format( marker ) )
                     self.addPriorityError( 37, c, v, _("Missing outline text") )
@@ -1784,7 +1924,7 @@ class InternalBibleBook:
                 #for marker in ('\\xo*','\\xo ','\\xt*','\\xt ','\\xdc*','\\xdc ','\\fr*','\\fr ','\\ft*','\\ft ','\\fq*','\\fq ','\\fv*','\\fv ','\\fk*','\\fk ',):
                 #    cleanExtraText = cleanExtraText.replace( marker, '' )
 
-                # Get a list of markers and their contents
+                # Create a list of markers and their contents
                 status, myString, lastCode, lastString, extraList = 0, '', '', '', []
                 #print( extraText )
                 adjExtraText = extraText
@@ -1845,7 +1985,7 @@ class InternalBibleBook:
                 # List all of the similar types of notes
                 #   plus check which ones end with a period
                 extract = (extraText[:70] + '...' + extraText[-5:]) if len(extraText)>80 else extraText
-                line = "{} {}:{} '{}'".format( extract )
+                line = "{} {}:{} '{}'".format( self.bookReferenceCode, c, v, extract )
                 if extraType == 'fn':
                     footnoteList.append( line )
                     if cleanExtraText.endswith(' '):
@@ -1870,6 +2010,19 @@ class InternalBibleBook:
                     #and not cleanExtraText.endswith('.&quot;') and not text.endswith('.&#39;'):
                         xrefErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Cross-reference seems to be missing a final period: '{}'").format( extraText ) )
                         self.addPriorityError( 31, c, v, _("Missing period at end of cross-reference") )
+
+                # Check for two identical fields in a row
+                lastNoteMarker = None
+                for noteMarker,noteText in extraList:
+                    if noteMarker == lastNoteMarker: # Have two identical fields in a row
+                        if extraType == 'fn':
+                            footnoteErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Consecutive {} fields in footnote: '{}'").format( noteMarker, extraText ) )
+                            self.addPriorityError( 35, c, v, _("Consecutive {} fields in footnote").format( noteMarker ) )
+                        elif extraType == 'xr':
+                            xrefErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Consecutive {} fields in cross-reference: '{}'").format( noteMarker, extraText ) )
+                            self.addPriorityError( 35, c, v, _("Consecutive {} fields in cross-reference").format( noteMarker ) )
+                        #print( "Consecutive fields in '{}'".format( extraText ) )
+                    lastNoteMarker = noteMarker
 
                 # Check leader characters
                 leader = ''
@@ -1899,9 +2052,10 @@ class InternalBibleBook:
                         haveAnchor = True
                         if 1: # new code
                             anchor = BibleAnchorReference( self.bookReferenceCode, c, v )
+                            #print( "here at BibleAnchorReference", self.bookReferenceCode, c, v, anchor )
                             if not anchor.matchesAnchorString( noteText, 'footnote', self.logErrorsFlag ):
                                 footnoteErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Footnote anchor reference seems not to match: '{}'").format( noteText ) )
-                                if self.logErrorsFlag: logging.error( _("Footnote anchor reference seems not to match after {} {}:{} in '{}'").format( noteText ) )
+                                if self.logErrorsFlag: logging.error( _("Footnote anchor reference seems not to match after {} {}:{} in '{}'").format( self.bookReferenceCode, c, v, noteText ) )
                                 self.addPriorityError( 42, c, v, _("Footnote anchor reference mismatch") )
                                 #print( self.bookReferenceCode, c, v, 'FN0', '"'+noteText+'"' )
                         else: # old code
@@ -1933,7 +2087,7 @@ class InternalBibleBook:
                             anchor = BibleAnchorReference( self.bookReferenceCode, c, v )
                             if not anchor.matchesAnchorString( noteText, 'cross-reference', self.logErrorsFlag ):
                                 footnoteErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Cross-reference anchor reference seems not to match: '{}'").format( noteText ) )
-                                if self.logErrorsFlag: logging.error( _("Cross-reference anchor reference seems not to match after {} {}:{} in '{}'").format( noteText ) )
+                                if self.logErrorsFlag: logging.error( _("Cross-reference anchor reference seems not to match after {} {}:{} in '{}'").format( self.bookReferenceCode, c, v, noteText ) )
                                 self.addPriorityError( 41, c, v, _("Cross-reference anchor reference mismatch") )
                                 #print( self.bookReferenceCode, c, v, 'XR0', '"'+noteText+'"' )
                         else: # old code
@@ -1970,6 +2124,7 @@ class InternalBibleBook:
                     elif extraType == 'xr':
                         xrefErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Cross-reference seems to have no anchor reference: '{}'").format( extraText ) )
                         self.addPriorityError( 38, c, v, _("Missing anchor reference for cross-reference") )
+
                 # much more yet to be written ................
 
         if (footnoteErrors or xrefErrors or noteMarkerErrors or footnoteList or xrefList or leaderCounts) and 'Notes' not in self.errorDictionary:
@@ -1995,10 +2150,9 @@ class InternalBibleBook:
         # Ignore the result of these next ones -- just use any errors collected
         #self.getVersification() # This checks CV ordering, etc. at the same time
         # Further checks
-        #self.doCheckSFMs()
-        #self.doCheckCharacters()
+        self.doCheckSFMs()
+        self.doCheckCharacters()
         self.doCheckSpeechMarks()
-        return
         self.doCheckWords()
         self.doCheckHeadings()
         self.doCheckIntroduction()

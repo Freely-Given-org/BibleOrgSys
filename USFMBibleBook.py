@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # USFMBibleBook.py
-#   Last modified: 2012-09-11 by RJH (also update versionString below)
+#   Last modified: 2012-12-11 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -27,7 +27,7 @@ Module for defining and manipulating USFM Bible books.
 """
 
 progName = "USFM Bible book handler"
-versionString = "0.24"
+versionString = "0.25"
 
 
 import os, logging
@@ -84,7 +84,7 @@ class USFMBibleBook( InternalBibleBook ):
         import SFMFile
         if Globals.verbosityLevel > 2: print( "  " + _("Loading {}...").format( filename ) )
         self.bookReferenceCode = bookReferenceCode
-        self.isOneChapterBook = bookReferenceCode in self.BibleBooksCodes.getSingleChapterBooksList()
+        self.isSingleChapterBook = bookReferenceCode in self.BibleBooksCodes.getSingleChapterBooksList()
         self.sourceFolder = folder
         self.sourceFilename = filename
         self.sourceFilepath = os.path.join( folder, filename )
@@ -95,11 +95,42 @@ class USFMBibleBook( InternalBibleBook ):
         c = v = '0'
         lastMarker = lastText = ''
         loadErrors = []
+        debugging = False
         for marker,text in originalBook.lines: # Always process a line behind in case we have to combine lines
             #print( "After {} {}:{} \\{} '{}'".format( bookReferenceCode, c, v, marker, text ) )
             # Keep track of where we are for more helpful error messages
-            if marker=='c' and text: c = text.split()[0]; v = '0'
-            elif marker=='v' and text: v = text.split()[0]
+            if marker=='c' and text:
+                bits = text.split( None, 1 )
+                c, v = bits[0], '0'
+                if len(bits) > 1: # We have extra stuff on the c line after the chapter number and a space
+                    loadErrors.append( _("{} {}:{} Chapter marker seems to contain extra material '{}'").format( self.bookReferenceCode, c, v, bits[1] ) )
+                    if self.logErrorsFlag: logging.error( _("Extra '{}' material in chapter marker {} {}:{}").format( bits[1], self.bookReferenceCode, c, v ) )
+                    self.addPriorityError( 98, c, v, _("Extra '{}' material after chapter marker").format( bits[1] ) )
+                    #print( "Something on c line", "'"+text+"'", "'"+bits[1]+"'" )
+                    debugging = True
+                    doAppendLine( lastMarker, lastText )
+                    lastMarker, lastText = 'c', c
+                    marker, text = 'c+', bits[1]
+            elif marker=='v' and text:
+                v = text.split()[0]
+                if c == '0': # Some single chapter books don't have an explicit chapter 1 marker -- we'll make it explicit here
+                    if not self.isSingleChapterBook:
+                        loadErrors.append( _("{} {}:{} Chapter marker seems to be missing before first verse").format( self.bookReferenceCode, c, v ) )
+                        if self.logErrorsFlag: logging.error( _("Missing chapter number before first verse {} {}:{}").format( self.bookReferenceCode, c, v ) )
+                        self.addPriorityError( 98, c, v, _("Missing chapter number before first verse") )
+                    c = '1'
+                    if self.isSingleChapterBook and v!='1':
+                            loadErrors.append( _("{} {}:{} Expected single chapter book to start with verse 1").format( self.bookReferenceCode, c, v ) )
+                            if self.logErrorsFlag: logging.error( _("Expected single chapter book to start with verse 1 at {} {}:{}").format( self.bookReferenceCode, c, v ) )
+                            self.addPriorityError( 38, c, v, _("Expected single chapter book to start with verse 1") )
+                    if lastMarker in ('p','q1'): # The chapter marker should go before this
+                        doAppendLine( 'c', '1' )
+                    else: # Assume that the last marker was part of the introduction, so write it first
+                        if lastMarker not in ( 'ip', ):
+                            print( "assumed",lastMarker,"was part of intro after", marker );
+                            if v!='13': halt # Just double-checking this code (except for one weird book that starts at v13)
+                        doAppendLine( lastMarker, lastText )
+                        lastMarker, lastText = 'c', '1'
             elif marker=='restore': continue # Ignore these lines completely
 
             if self.USFMMarkers.isNewlineMarker( marker ):
@@ -113,7 +144,7 @@ class USFMBibleBook( InternalBibleBook ):
                 else: # no text
                     loadErrors.append( _("{} {}:{} Found '\\{}' internal marker at beginning of line (with no text)").format( self.bookReferenceCode, c, v, marker ) )
                     if self.logErrorsFlag: logging.warning( _("Found '\\{}' internal marker after {} {}:{} at beginning of line (with no text)").format( marker, self.bookReferenceCode, c, v ) )
-                self.addPriorityError( 97, c, v, _("Found \\{} internal marker on new line in file").format( marker ) )
+                self.addPriorityError( 27, c, v, _("Found \\{} internal marker on new line in file").format( marker ) )
                 if not lastText.endswith(' ') and marker!='f': lastText += ' ' # Not always good to add a space, but it's their fault! Don't do it for footnotes, though.
                 lastText +=  '\\' + marker + ' ' + text
                 if Globals.verbosityLevel > 3: print( "{} {} {} Appended {}:'{}' to get combined line {}:'{}'".format( self.bookReferenceCode, c, v, marker, text, lastMarker, lastText ) )
@@ -136,6 +167,7 @@ class USFMBibleBook( InternalBibleBook ):
         if lastMarker: doAppendLine( lastMarker, lastText ) # Process the final line
 
         if loadErrors: self.errorDictionary['Load Errors'] = loadErrors
+        if debugging: print( self._rawLines ); halt
     # end of load
 
 
@@ -158,6 +190,9 @@ def main():
         if Globals.verbosityLevel > 2: print( UBBVersification )
         UBBAddedUnits = UBB.getAddedUnits ()
         if Globals.verbosityLevel > 2: print( UBBAddedUnits )
+        discoveryDict = {}
+        UBB.discover( discoveryDict )
+        print( "discoveryDict", discoveryDict )
         UBB.check()
         UBErrors = UBB.getErrors()
         if Globals.verbosityLevel > 2: print( UBErrors )
@@ -171,7 +206,7 @@ def main():
 
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
-    logErrors = True
+    logErrors = False
 
     if 0: # Test individual files
         #name, encoding, testFolder, filename, bookReferenceCode = "WEB", "utf-8", "/mnt/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/", "06-JOS.usfm", "JOS" # You can put your test file here
