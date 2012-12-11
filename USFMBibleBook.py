@@ -55,6 +55,14 @@ class USFMBibleBook( InternalBibleBook ):
     def load( self, bookReferenceCode, folder, filename, encoding='utf-8' ):
         """
         Load the USFM Bible book from a file.
+
+        Tries to combine physical lines into logical lines,
+            i.e., so that all lines begin with a USFM paragraph marker.
+
+        Uses the appendLine function of the base class to save the lines.
+
+        Note: the base class later on will try to break apart lines with a paragraph marker in the middle --
+                we don't need to worry about that here.
         """
 
         def doAppendLine( marker, text ):
@@ -95,42 +103,13 @@ class USFMBibleBook( InternalBibleBook ):
         c = v = '0'
         lastMarker = lastText = ''
         loadErrors = []
-        debugging = False
         for marker,text in originalBook.lines: # Always process a line behind in case we have to combine lines
             #print( "After {} {}:{} \\{} '{}'".format( bookReferenceCode, c, v, marker, text ) )
             # Keep track of where we are for more helpful error messages
-            if marker=='c' and text:
-                bits = text.split( None, 1 )
-                c, v = bits[0], '0'
-                if len(bits) > 1: # We have extra stuff on the c line after the chapter number and a space
-                    loadErrors.append( _("{} {}:{} Chapter marker seems to contain extra material '{}'").format( self.bookReferenceCode, c, v, bits[1] ) )
-                    if self.logErrorsFlag: logging.error( _("Extra '{}' material in chapter marker {} {}:{}").format( bits[1], self.bookReferenceCode, c, v ) )
-                    self.addPriorityError( 98, c, v, _("Extra '{}' material after chapter marker").format( bits[1] ) )
-                    #print( "Something on c line", "'"+text+"'", "'"+bits[1]+"'" )
-                    debugging = True
-                    doAppendLine( lastMarker, lastText )
-                    lastMarker, lastText = 'c', c
-                    marker, text = 'c+', bits[1]
+            if marker=='c' and text: c, v = text.split()[0], '0'
             elif marker=='v' and text:
                 v = text.split()[0]
-                if c == '0': # Some single chapter books don't have an explicit chapter 1 marker -- we'll make it explicit here
-                    if not self.isSingleChapterBook:
-                        loadErrors.append( _("{} {}:{} Chapter marker seems to be missing before first verse").format( self.bookReferenceCode, c, v ) )
-                        if self.logErrorsFlag: logging.error( _("Missing chapter number before first verse {} {}:{}").format( self.bookReferenceCode, c, v ) )
-                        self.addPriorityError( 98, c, v, _("Missing chapter number before first verse") )
-                    c = '1'
-                    if self.isSingleChapterBook and v!='1':
-                            loadErrors.append( _("{} {}:{} Expected single chapter book to start with verse 1").format( self.bookReferenceCode, c, v ) )
-                            if self.logErrorsFlag: logging.error( _("Expected single chapter book to start with verse 1 at {} {}:{}").format( self.bookReferenceCode, c, v ) )
-                            self.addPriorityError( 38, c, v, _("Expected single chapter book to start with verse 1") )
-                    if lastMarker in ('p','q1'): # The chapter marker should go before this
-                        doAppendLine( 'c', '1' )
-                    else: # Assume that the last marker was part of the introduction, so write it first
-                        if lastMarker not in ( 'ip', ):
-                            print( "assumed",lastMarker,"was part of intro after", marker );
-                            if v!='13': halt # Just double-checking this code (except for one weird book that starts at v13)
-                        doAppendLine( lastMarker, lastText )
-                        lastMarker, lastText = 'c', '1'
+                if c == '0': c = '1' # Some single chapter books don't have an explicit chapter 1 marker
             elif marker=='restore': continue # Ignore these lines completely
 
             if self.USFMMarkers.isNewlineMarker( marker ):
@@ -167,7 +146,7 @@ class USFMBibleBook( InternalBibleBook ):
         if lastMarker: doAppendLine( lastMarker, lastText ) # Process the final line
 
         if loadErrors: self.errorDictionary['Load Errors'] = loadErrors
-        if debugging: print( self._rawLines ); halt
+        #if debugging: print( self._rawLines ); halt
     # end of load
 
 

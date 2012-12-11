@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # InternalBibleBook.py
-#   Last modified: 2012-12-10 by RJH (also update versionString below)
+#   Last modified: 2012-12-11 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -154,7 +154,12 @@ class InternalBibleBook:
 
 
     def processLines( self ):
-        """ Move notes out of the text into a separate area. """
+        """ Move notes out of the text into a separate area. 
+            Also, splits lines if a paragraph marker appears within a line.
+
+            Uses self._rawLines and
+            fills self._processedLines.    
+        """
 
         def processLineFix( originalMarker, text ):
             """ Does character fixes on a specific line and moves footnotes and cross-references out of the main text.
@@ -378,8 +383,41 @@ class InternalBibleBook:
             adjustedMarker = self.USFMMarkers.toStandardMarker( originalMarker )
 
             # Keep track of where we are
-            if originalMarker=='c' and text: c = text.split()[0]; v = '0'
+            if originalMarker=='c' and text:
+                #c = text.split()[0]; v = '0'
+                cBits = text.split( None, 1 )
+                c, v = cBits[0], '0'
+                if len(cBits) > 1: # We have extra stuff on the c line after the chapter number and a space
+                    fixErrors.append( _("{} {}:{} Chapter marker seems to contain extra material '{}'").format( self.bookReferenceCode, c, v, cBits[1] ) )
+                    if self.logErrorsFlag: logging.error( _("Extra '{}' material in chapter marker {} {}:{}").format( cBits[1], self.bookReferenceCode, c, v ) )
+                    self.addPriorityError( 98, c, v, _("Extra '{}' material after chapter marker").format( cBits[1] ) )
+                    #print( "Something on c line", "'"+text+"'", "'"+cBits[1]+"'" )
+                    self._processedLines.append( (adjustedMarker, originalMarker, c, c, [],) ) # Write the chapter number as a separate line
+                    adjustedMarker, text = 'c+', cBits[1]
             elif originalMarker=='v' and text:
+                if c == '0': # Some single chapter books don't have an explicit chapter 1 marker -- we'll make it explicit here
+                    if not self.isSingleChapterBook:
+                        fixErrors.append( _("{} {}:{} Chapter marker seems to be missing before first verse").format( self.bookReferenceCode, c, v ) )
+                        if self.logErrorsFlag: logging.error( _("Missing chapter number before first verse {} {}:{}").format( self.bookReferenceCode, c, v ) )
+                        self.addPriorityError( 98, c, v, _("Missing chapter number before first verse") )
+                    c = '1'
+                    if self.isSingleChapterBook and v!='1':
+                        fixErrors.append( _("{} {}:{} Expected single chapter book to start with verse 1").format( self.bookReferenceCode, c, v ) )
+                        if self.logErrorsFlag: logging.error( _("Expected single chapter book to start with verse 1 at {} {}:{}").format( self.bookReferenceCode, c, v ) )
+                        self.addPriorityError( 38, c, v, _("Expected single chapter book to start with verse 1") )
+                    lastAdjustedMarker, lastOriginalMarker, lastAdjustedText, lastCleanText, lastExtras = self._processedLines.pop()
+                    print( self.bookReferenceCode, "lastMarker (popped) was", lastAdjustedMarker, lastAdjustedText )
+                    if lastAdjustedMarker in ('p','q1'): # The chapter marker should go before this
+                        self._processedLines.append( ('c', 'c', '1', '1', [],) ) # Write the explicit chapter number
+                        self._processedLines.append( (lastAdjustedMarker, lastOriginalMarker, lastAdjustedText, lastCleanText, lastExtras,) )
+                    else: # Assume that the last marker was part of the introduction, so write it first
+                        if lastAdjustedMarker not in ( 'ip', ):
+                            print( "assumed",lastAdjustedMarker,"was part of intro after", marker );
+                            if v!='13': halt # Just double-checking this code (except for one weird book that starts at v13)
+                        self._processedLines.append( (lastAdjustedMarker, lastOriginalMarker, lastAdjustedText, lastCleanText, lastExtras,) )
+                        self._processedLines.append( ('c', 'c', '1', '1', [],) ) # Write the explicit chapter number
+                    #print( self._processedLines ); halt
+
                 # Convert v markers to milestones only
                 text = text.lstrip()
                 ixSP = text.find( ' ' )
@@ -412,15 +450,14 @@ class InternalBibleBook:
                     self._processedLines.append( (adjustedMarker, originalMarker, verseNumberBit, verseNumberBit, [],) ) # Write the verse number (or range) as a separate line
                     adjustedMarker, text = 'v+', verseNumberRest.lstrip()
 
-            if text:
-                # Check markers inside the lines
+            if text: # check markers inside the lines and separate them if they're paragraph markers
                 markerList = self.USFMMarkers.getMarkerListFromText( text )
                 ix = 0
                 for insideMarker, nextSignificantChar, iMIndex in markerList: # check paragraph markers
                     if self.USFMMarkers.isNewlineMarker(insideMarker): # Need to split the line for everything else to work properly
                         if ix==0:
-                            fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Marker '{}' mustn't appear within line in \\{}: '{}'").format( insideMarker, marker, text ) )
-                            if self.logErrorsFlag: logging.error( _("Marker '{}' mustn't appear within line after {} {}:{} in \\{}: '{}'").format( insideMarker, self.bookReferenceCode, c, v, marker, text ) ) # Only log the first error in the line
+                            fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Marker '{}' shouldn't appear within line in \\{}: '{}'").format( insideMarker, marker, text ) )
+                            if self.logErrorsFlag: logging.error( _("Marker '{}' shouldn't appear within line after {} {}:{} in \\{}: '{}'").format( insideMarker, self.bookReferenceCode, c, v, marker, text ) ) # Only log the first error in the line
                             self.addPriorityError( 96, c, v, _("Marker \\{} shouldn't be inside a line").format( insideMarker ) )
                         thisText = text[ix:iMIndex].rstrip()
                         adjText, cleanText, extras = processLineFix( originalMarker, thisText )
@@ -447,8 +484,8 @@ class InternalBibleBook:
         c = v = '0'
         for marker,text in self._rawLines:
             if self.objectType=='USX' and text and text[-1]==' ': text = text[:-1] # Removing extra trailing space from USX files
-            processLine( marker, text )
-        #del self._rawLines # if short of memory
+            processLine( marker, text ) # Saves it's results in self._processedLines
+        if not Globals.debugFlag: del self._rawLines # if short of memory
         if fixErrors: self.errorDictionary['Fix Text Errors'] = fixErrors
         self._processed = True
         self.makeIndex()
@@ -462,7 +499,7 @@ class InternalBibleBook:
         if Globals.verbosityLevel > 2: print( "  " + _("Indexing {} text...").format( self.objectNameString ) )
         for something in self._processedLines:
             pass # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX to be written ..........................
-        self._indexed = True
+        #self._indexed = True
     # end of makeIndex
 
 
@@ -1075,7 +1112,10 @@ class InternalBibleBook:
             if marker == 'v+':
                 lastMarker, lastMarkerEmpty = 'v', markerEmpty
                 continue
-            else: # it's not our (non-USFM) v+ marker
+            elif marker == 'c+':
+                lastMarker, lastMarkerEmpty = 'c', markerEmpty
+                continue
+            else: # it's not our (non-USFM) c+,v+ markers
                 assert( marker in allAvailableNewlineMarkers ) # Should have been checked at load time
                 newlineMarkerCounts[marker] = 1 if marker not in newlineMarkerCounts else (newlineMarkerCounts[marker] + 1)
 
