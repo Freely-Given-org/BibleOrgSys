@@ -108,8 +108,8 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
 
   <header>
     <work>
-      <version>0.65</version>
-      <date>2012-09-07</date>
+      <version>0.66</version>
+      <date>2013-01-10</date>
       <title>Bible books codes list</title>
       <contributor role="com">Robert Hunt</contributor>
       <identifier type="URL">http://www.sbl-site.org/publications/publishingwithsbl.aspx</identifier>
@@ -2015,6 +2015,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <referenceAbbreviation>JSA</referenceAbbreviation>
     <referenceNumber>154</referenceNumber>
     <sequenceNumber>370</sequenceNumber>
+    <expectedChapters>24</expectedChapters>
     <SwordAbbreviation>JoshA</SwordAbbreviation>
     <USFMAbbreviation>JsA</USFMAbbreviation>
     <possibleAlternativeBooks>JOS</possibleAlternativeBooks>
@@ -2024,6 +2025,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <referenceAbbreviation>JGB</referenceAbbreviation>
     <referenceNumber>155</referenceNumber>
     <sequenceNumber>371</sequenceNumber>
+    <expectedChapters>21</expectedChapters>
     <SwordAbbreviation>JudgB</SwordAbbreviation>
     <USFMAbbreviation>JdB</USFMAbbreviation>
     <possibleAlternativeBooks>JDG</possibleAlternativeBooks>
@@ -2033,33 +2035,37 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <referenceAbbreviation>TBS</referenceAbbreviation>
     <referenceNumber>156</referenceNumber>
     <sequenceNumber>372</sequenceNumber>
+    <expectedChapters>14</expectedChapters>
     <SwordAbbreviation>TobS</SwordAbbreviation>
     <USFMAbbreviation>TbS</USFMAbbreviation>
     <possibleAlternativeBooks>TOB</possibleAlternativeBooks>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>Susanna θ</nameEnglish> <!-- Variant in Rahlfs from Theodotion (vs. LXX) -->
+    <nameEnglish>Susanna θ / Susanna Th</nameEnglish> <!-- Variant in Rahlfs from Theodotion (vs. LXX) -->
     <referenceAbbreviation>SST</referenceAbbreviation>
     <referenceNumber>157</referenceNumber>
     <sequenceNumber>373</sequenceNumber>
+    <expectedChapters>1</expectedChapters>
     <SwordAbbreviation>SusTh</SwordAbbreviation>
     <USFMAbbreviation>SsT</USFMAbbreviation>
     <possibleAlternativeBooks>SUS</possibleAlternativeBooks>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>Daniel θ</nameEnglish> <!-- Variant in Rahlfs from Theodotion (vs. LXX) -->
+    <nameEnglish>Daniel θ / Daniel Th</nameEnglish> <!-- Variant in Rahlfs from Theodotion (vs. LXX) -->
     <referenceAbbreviation>DNT</referenceAbbreviation>
     <referenceNumber>158</referenceNumber>
     <sequenceNumber>374</sequenceNumber>
+    <expectedChapters>12</expectedChapters>
     <SwordAbbreviation>DanTh</SwordAbbreviation>
     <USFMAbbreviation>DnT</USFMAbbreviation>
     <possibleAlternativeBooks>DAN,DNG,DNA,DNC</possibleAlternativeBooks>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>Bel and the dragon θ</nameEnglish> <!-- Variant in Rahlfs from Theodotion (vs. LXX) -->
+    <nameEnglish>Bel and the dragon θ / Bel and the dragon Th</nameEnglish> <!-- Variant in Rahlfs from Theodotion (vs. LXX) -->
     <referenceAbbreviation>BLT</referenceAbbreviation>
     <referenceNumber>159</referenceNumber>
     <sequenceNumber>375</sequenceNumber>
+    <expectedChapters>1</expectedChapters>
     <SwordAbbreviation>BelTh</SwordAbbreviation>
     <USFMAbbreviation>BlT</USFMAbbreviation>
     <possibleAlternativeBooks>BEL</possibleAlternativeBooks>

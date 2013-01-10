@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 #
 # USFMBibleBook.py
-#   Last modified: 2012-12-11 by RJH (also update versionString below)
+#   Last modified: 2013-01-10 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
-# Copyright (C) 2010-2012 Robert Hunt
+# Copyright (C) 2010-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -92,7 +92,7 @@ class USFMBibleBook( InternalBibleBook ):
         import SFMFile
         if Globals.verbosityLevel > 2: print( "  " + _("Loading {}...").format( filename ) )
         self.bookReferenceCode = bookReferenceCode
-        self.isSingleChapterBook = bookReferenceCode in self.BibleBooksCodes.getSingleChapterBooksList()
+        self.isSingleChapterBook = self.BibleBooksCodes.isSingleChapterBook( bookReferenceCode )
         self.sourceFolder = folder
         self.sourceFilename = filename
         self.sourceFilepath = os.path.join( folder, filename )
@@ -176,6 +176,8 @@ def main():
         UBErrors = UBB.getErrors()
         if Globals.verbosityLevel > 2: print( UBErrors )
     # end of demoFile
+
+    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
 
     # Handle command line parameters
     from optparse import OptionParser

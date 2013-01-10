@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 #
 # InternalBible.py
-#   Last modified: 2012-12-10 by RJH (also update versionString below)
+#   Last modified: 2013-01-10 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
-# Copyright (C) 2010-2012 Robert Hunt
+# Copyright (C) 2010-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -49,8 +49,9 @@ from USFMMarkers import USFMMarkers
 
 class InternalBible:
     """
-    Class to load and manipulate InternalBibles.
+    Class to define and manipulate InternalBibles.
 
+    This class contains no load function -- that is expected to be supplied by the superclass.
     """
     def __init__( self, name, logErrorsFlag ):
         """
@@ -67,7 +68,7 @@ class InternalBible:
 
         # Set up filled containers for the object
         self.BibleBooksCodes = BibleBooksCodes().loadData()
-        self.OneChapterBBBBookCodes = self.BibleBooksCodes.getSingleChapterBooksList()
+        #self.OneChapterBBBBookCodes = self.BibleBooksCodes.getSingleChapterBooksList()
         self.USFMMarkers = USFMMarkers().loadData()
     # end of __init_
 
@@ -553,13 +554,19 @@ class InternalBible:
                 del errors['ByCategory'][category]
         return errors
     # end of getErrors
+
+    def getBCVRef( self, ref ):
+        """ Search for a Bible reference and return the Bible text (in a list). """
+        if ref[0] in self.books: return self.books[ref[0]].getCVRef( ref )
 # end of class InternalBible
 
 
 def main():
     """
-    Demonstrate reading and checking some Bible databases.
+    A very basic test/demo of the InternalBible class.
     """
+    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
+
     # Handle command line parameters
     from optparse import OptionParser
     parser = OptionParser( version="v{}".format( versionString ) )

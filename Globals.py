@@ -4,9 +4,9 @@
 # Globals.py
 #
 # Module handling Global variables for our Bible Organisational System
-#   Last modified: 2012-10-03 (also update versionString below)
+#   Last modified: 2013-01-01 (also update versionString below)
 #
-# Copyright (C) 2010-2012 Robert Hunt
+# Copyright (C) 2010-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling global variables.
 """
 
 progName = "Globals"
-versionString = "0.08"
+versionString = "0.09"
 
 import logging, os.path
 
@@ -124,6 +124,52 @@ def remove_logfile( projectHandler ):
     root = logging.getLogger()  # No param means get the root logger
     root.removeHandler( projectHandler )
 # end of remove_logfile
+
+
+##########################################################################################################
+
+
+def totalSize( o, handlers={} ):
+    """ Returns the approximate memory footprint an object and all of its contents.
+
+    Automatically finds the contents of the following builtin containers and
+    their subclasses:  tuple, list, deque, dict, set and frozenset.
+    To search other containers, add handlers to iterate over their contents:
+
+        handlers = {SomeContainerClass: iter,
+                    OtherContainerClass: OtherContainerClass.get_elements}
+
+    """
+    from sys import getsizeof
+    from itertools import chain
+
+    dict_handler = lambda d: chain.from_iterable(d.items())
+    all_handlers = {tuple: iter,
+                    list: iter,
+                    dict: dict_handler,
+                    set: iter,
+                    frozenset: iter,
+                   }
+    all_handlers.update(handlers)     # user handlers take precedence
+    seen = set()                      # track which object id's have already been seen
+    default_size = getsizeof(0)       # estimate sizeof object without __sizeof__
+
+    def sizeof(o):
+        if id(o) in seen:       # do not double count the same object
+            return 0
+        seen.add(id(o))
+        s = getsizeof(o, default_size)
+
+        if Globals.verbosityLevel > 3: print( s, type(o), repr(o) )
+
+        for typ, handler in all_handlers.items():
+            if isinstance(o, typ):
+                s += sum(map(sizeof, handler(o)))
+                break
+        return s
+
+    return sizeof(o)
+# end of totalSize
 
 
 ##########################################################################################################

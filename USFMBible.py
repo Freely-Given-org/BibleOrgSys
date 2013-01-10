@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 #
 # USFMBible.py
-#   Last modified: 2012-12-09 by RJH (also update versionString below)
+#   Last modified: 2013-01-10 by RJH (also update versionString below)
 #
 # Module handling compilations of USFM Bible books
 #
-# Copyright (C) 2010-2012 Robert Hunt
+# Copyright (C) 2010-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -211,6 +211,8 @@ def main():
     """
     Demonstrate reading and checking some Bible databases.
     """
+    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
+
     # Handle command line parameters
     from optparse import OptionParser
     parser = OptionParser( version="v{}".format( versionString ) )
@@ -222,7 +224,7 @@ def main():
     if 0: # Test a single folder containing a USFM Bible
         name, encoding, testFolder = "Matigsalug", "utf-8", "/mnt/Data/Matigsalug/Scripture/MBTV/" # You can put your test folder here
         if os.access( testFolder, os.R_OK ):
-            UB = USFMBible( name, False ) # The second parameter is the logErrorsFlag -- set to True if you want to see errors at the terminal
+            UB = USFMBible( name, logErrorsFlag=False ) # Set to logErrorsFlag=True if you want to see errors at the terminal
             UB.load( testFolder, encoding )
             if Globals.verbosityLevel > 0: print( UB )
             UB.discover()

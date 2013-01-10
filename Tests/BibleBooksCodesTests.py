@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodesTests.py
-#   Last modified: 2012-09-07 by RJH (also update versionString below)
+#   Last modified: 2013-01-10 by RJH (also update versionString below)
 #
 # Module testing BibleBooksCodes.py
 #
-# Copyright (C) 2011-2012 Robert Hunt
+# Copyright (C) 2011-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module testing BibleBooksCodes.py.
 """
 
 progName = "Bible Books Codes tests"
-versionString = "0.65"
+versionString = "0.66"
 
 
 import sys, unittest
@@ -392,8 +392,8 @@ class BibleBooksCodesTests( unittest.TestCase ):
         """ Test the getSingleChapterBooksList function. """
         results = self.bbc.getSingleChapterBooksList()
         self.assertTrue( isinstance( results, list ) )
-        self.assertGreater( len(results), 10 ) # Remember it includes many non-canonical books
-        self.assertLess( len(results), 20 )
+        self.assertGreater( len(results), 15 ) # Remember it includes many non-canonical books
+        self.assertLess( len(results), 25 )
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
         for BBB in ('OBA','PHM','JN2','JN3','JDE',): self.assertTrue( BBB in results )

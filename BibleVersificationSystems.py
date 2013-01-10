@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # BibleVersificationSystems.py
-#   Last modified: 2012-11-07 (also update versionString below)
+#   Last modified: 2013-01-10 (also update versionString below)
 #
 # Module handling BibleVersificationSystem_*.xml to produce C and Python data tables
 #
-# Copyright (C) 2010-2012 Robert Hunt
+# Copyright (C) 2010-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling BibleVersificationSystem_*.xml to produce C and Python data tabl
 """
 
 progName = "Bible Chapter/Verse Systems handler"
-versionString = "0.48"
+versionString = "0.49"
 
 
 import os, logging
@@ -630,7 +630,7 @@ class BibleVersificationSystem:
         if BBB in self.__chapterDataDict:
             if C in self.__chapterDataDict[BBB]:
                 if not V: return True # NOTE: This allows blank verse numbers (as a reference can refer to an entire chapter)
-                if int(V) <= int(self.__chapterDataDict[BBB][C]):
+                if 0 < int(V) <= int(self.__chapterDataDict[BBB][C]):
                     if not self.isOmittedVerse( referenceTuple ):
                         return True
                     elif wantErrorMessages: logging.error( _("{} {}:{} is omitted in {} versification system {}").format(BBB,C,V,self.getVersificationSystemName(),myReferenceString) )
@@ -748,6 +748,8 @@ def main():
     """
     Main program to handle command line parameters and then run what they want.
     """
+    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
+
     # Handle command line parameters
     from optparse import OptionParser
     parser = OptionParser( version="v{}".format( versionString ) )

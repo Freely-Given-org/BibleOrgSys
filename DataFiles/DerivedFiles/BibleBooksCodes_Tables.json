@@ -2126,7 +2126,7 @@
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
       "USXNumberString": null, 
-      "numExpectedChapters": null
+      "numExpectedChapters": "24"
     }, 
     "JGB": {
       "BibleditNumberString": null, 
@@ -2142,7 +2142,7 @@
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
       "USXNumberString": null, 
-      "numExpectedChapters": null
+      "numExpectedChapters": "21"
     }, 
     "TBS": {
       "BibleditNumberString": null, 
@@ -2158,14 +2158,14 @@
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
       "USXNumberString": null, 
-      "numExpectedChapters": null
+      "numExpectedChapters": "14"
     }, 
     "SST": {
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": "SUS", 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 157, 
-      "nameEnglish": "Susanna \u03b8", 
+      "nameEnglish": "Susanna \u03b8 / Susanna Th", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "SsT", 
       "CCELNumberString": null, 
@@ -2174,14 +2174,14 @@
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
       "USXNumberString": null, 
-      "numExpectedChapters": null
+      "numExpectedChapters": "1"
     }, 
     "DNT": {
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": "DAN,DNG,DNA,DNC", 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 158, 
-      "nameEnglish": "Daniel \u03b8", 
+      "nameEnglish": "Daniel \u03b8 / Daniel Th", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "DnT", 
       "CCELNumberString": null, 
@@ -2190,14 +2190,14 @@
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
       "USXNumberString": null, 
-      "numExpectedChapters": null
+      "numExpectedChapters": "12"
     }, 
     "BLT": {
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": "BEL", 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 159, 
-      "nameEnglish": "Bel and the dragon \u03b8", 
+      "nameEnglish": "Bel and the dragon \u03b8 / Bel and the dragon Th", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "BlT", 
       "CCELNumberString": null, 
@@ -2206,7 +2206,7 @@
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
       "USXNumberString": null, 
-      "numExpectedChapters": null
+      "numExpectedChapters": "1"
     }, 
     "GHE": {
       "BibleditNumberString": null, 
@@ -8490,7 +8490,7 @@
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
       "USXNumberString": null, 
-      "numExpectedChapters": null
+      "numExpectedChapters": "24"
     }, 
     "155": {
       "BibleditNumberString": null, 
@@ -8506,7 +8506,7 @@
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
       "USXNumberString": null, 
-      "numExpectedChapters": null
+      "numExpectedChapters": "21"
     }, 
     "156": {
       "BibleditNumberString": null, 
@@ -8522,13 +8522,13 @@
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
       "USXNumberString": null, 
-      "numExpectedChapters": null
+      "numExpectedChapters": "14"
     }, 
     "157": {
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": "SUS", 
       "NETBibleAbbreviation": null, 
-      "nameEnglish": "Susanna \u03b8", 
+      "nameEnglish": "Susanna \u03b8 / Susanna Th", 
       "referenceAbbreviation": "SST", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "SsT", 
@@ -8538,13 +8538,13 @@
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
       "USXNumberString": null, 
-      "numExpectedChapters": null
+      "numExpectedChapters": "1"
     }, 
     "158": {
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": "DAN,DNG,DNA,DNC", 
       "NETBibleAbbreviation": null, 
-      "nameEnglish": "Daniel \u03b8", 
+      "nameEnglish": "Daniel \u03b8 / Daniel Th", 
       "referenceAbbreviation": "DNT", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "DnT", 
@@ -8554,13 +8554,13 @@
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
       "USXNumberString": null, 
-      "numExpectedChapters": null
+      "numExpectedChapters": "12"
     }, 
     "159": {
       "BibleditNumberString": null, 
       "possibleAlternativeBooks": "BEL", 
       "NETBibleAbbreviation": null, 
-      "nameEnglish": "Bel and the dragon \u03b8", 
+      "nameEnglish": "Bel and the dragon \u03b8 / Bel and the dragon Th", 
       "referenceAbbreviation": "BLT", 
       "OSISAbbreviation": null, 
       "USFMAbbreviation": "BlT", 
@@ -8570,7 +8570,7 @@
       "ByzantineAbbreviation": null, 
       "SBLAbbreviation": null, 
       "USXNumberString": null, 
-      "numExpectedChapters": null
+      "numExpectedChapters": "1"
     }, 
     "160": {
       "BibleditNumberString": null, 
@@ -11371,10 +11371,6 @@
       57, 
       "PHM"
     ], 
-    "NAMES INDEX": [
-      740, 
-      "IXN"
-    ], 
     "ISAIAH": [
       23, 
       "ISA"
@@ -11490,6 +11486,10 @@
     "MALACHI": [
       39, 
       "MAL"
+    ], 
+    "BEL AND THE DRAGON \u0398 / BEL AND THE DRAGON TH": [
+      159, 
+      "BLT"
     ], 
     "JOSEPHUS JEWISH WAR VI": [
       270, 
@@ -11719,9 +11719,9 @@
       66, 
       "REV"
     ], 
-    "DANIEL \u0398": [
-      158, 
-      "DNT"
+    "NAMES INDEX": [
+      740, 
+      "IXN"
     ], 
     "TWELVE PROPHETS": [
       650, 
@@ -11766,10 +11766,6 @@
     "EZRA / 1 EZRA / 1 ESDRAS": [
       15, 
       "EZR"
-    ], 
-    "SUSANNA \u0398": [
-      157, 
-      "SST"
     ], 
     "JUDGES": [
       7, 
@@ -11827,9 +11823,9 @@
       126, 
       "PS2"
     ], 
-    "BEL AND THE DRAGON \u0398": [
-      159, 
-      "BLT"
+    "MARTYRDOM AND ASCENSION OF ISAIAH": [
+      185, 
+      "MAI"
     ], 
     "ESTHER": [
       17, 
@@ -11907,9 +11903,9 @@
       2, 
       "EXO"
     ], 
-    "ELDAD AND MODAD": [
-      196, 
-      "ELM"
+    "DANIEL \u0398 / DANIEL TH": [
+      158, 
+      "DNT"
     ], 
     "SHEPHERD OF HERMAS": [
       280, 
@@ -11927,9 +11923,9 @@
       14, 
       "CH2"
     ], 
-    "HISTORY OF THE RECHABITES": [
-      197, 
-      "HRE"
+    "ELDAD AND MODAD": [
+      196, 
+      "ELM"
     ], 
     "LAMENTATIONS OF JEREMIAH": [
       25, 
@@ -12031,6 +12027,10 @@
       620, 
       "KGS"
     ], 
+    "HISTORY OF THE RECHABITES": [
+      197, 
+      "HRE"
+    ], 
     "JUDITH": [
       82, 
       "JDT"
@@ -12127,6 +12127,10 @@
       151, 
       "CL2"
     ], 
+    "SUSANNA \u0398 / SUSANNA TH": [
+      157, 
+      "SST"
+    ], 
     "1 TIMOTHY": [
       54, 
       "TI1"
@@ -12154,10 +12158,6 @@
     "3 CORINTHIANS": [
       136, 
       "CO3"
-    ], 
-    "MARTYRDOM AND ASCENSION OF ISAIAH": [
-      185, 
-      "MAI"
     ], 
     "CLEODEMUS MALCHUS": [
       195, 

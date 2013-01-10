@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodes.py
-#   Last modified: 2012-07-14 by RJH (also update versionString below)
+#   Last modified: 2013-01-10 by RJH (also update versionString below)
 #
 # Module handling BibleBooksCodes functions
 #
-# Copyright (C) 2010-2012 Robert Hunt
+# Copyright (C) 2010-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling BibleBooksCodes functions.
 """
 
 progName = "Bible Books Codes handler"
-versionString = "0.64"
+versionString = "0.65"
 
 
 import os, logging
@@ -236,6 +236,10 @@ class BibleBooksCodes:
         return results
     # end of getSingleChapterBooksList
 
+    def isSingleChapterBook( self, BBB ):
+        """ Returns True or False if the number of chapters for the book is only one. """
+        return self.__DataDicts["referenceAbbreviationDict"][BBB]["numExpectedChapters"] == '1'
+
     def getOSISSingleChapterBooksList( self ):
         """ Gets a list of OSIS single chapter book abbreviations. """
         results = []
@@ -362,6 +366,8 @@ def main():
     """
     Main program to handle command line parameters and then run what they want.
     """
+    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO )
+
     # Handle command line parameters
     from optparse import OptionParser
     parser = OptionParser( version="v{}".format( versionString ) )

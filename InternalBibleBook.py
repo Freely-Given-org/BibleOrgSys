@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 #
 # InternalBibleBook.py
-#   Last modified: 2012-12-11 by RJH (also update versionString below)
+#   Last modified: 2013-01-10 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
-# Copyright (C) 2010-2012 Robert Hunt
+# Copyright (C) 2010-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -39,7 +39,7 @@ and then calls
 """
 
 progName = "Internal Bible book handler"
-versionString = "0.13"
+versionString = "0.14"
 
 
 import os, logging
@@ -72,20 +72,20 @@ class InternalBibleBook:
         """
         self.logErrorsFlag = logErrorsFlag
         self.bookReferenceCode = None
-        self._rawLines = [] # Contains 2-tuples which contain the actual Bible text -- see appendRawLine below
-        self._processed = self._indexed = False
+        self._rawLines = [] # Contains 2-tuples which contain the actual Bible text -- see appendLine below
+        self._processedFlag = self._indexedFlag = False
         self.errorDictionary = OrderedDict()
         self.errorDictionary['Priority Errors'] = [] # Put this one first in the ordered dictionary
         self.givenAngleBracketWarning = self.givenDoubleQuoteWarning = False
 
         # Options
-        self.checkAddedUnits = False
-        self.checkUSFMSequences = False
-        self.replaceAngleBrackets, self.replaceStraightDoubleQuotes = True, False
+        self.checkAddedUnitsFlag = False
+        self.checkUSFMSequencesFlag = False
+        self.replaceAngleBracketsFlag, self.replaceStraightDoubleQuotesFlag = True, False
 
         # Set up filled containers for the object
         self.BibleBooksCodes = BibleBooksCodes().loadData()
-        self.USFMMarkers = USFMMarkers().loadData()
+        self.USFMMarkers = USFMMarkers().loadData() # TODO: Why is this in here? -- Should only be in USFM module!
     # end of __init__
 
     def __str__( self ):
@@ -98,7 +98,7 @@ class InternalBibleBook:
         result = self.objectNameString
         if self.bookReferenceCode: result += ('\n' if result else '') + "  " + self.bookReferenceCode
         if self.sourceFilepath: result += ('\n' if result else '') + "  " + _("From: ") + self.sourceFilepath
-        if self._processed: result += ('\n' if result else '') + "  " + _("Number of processed lines = ") + str(len(self._processedLines))
+        if self._processedFlag: result += ('\n' if result else '') + "  " + _("Number of processed lines = ") + str(len(self._processedLines))
         else: result += ('\n' if result else '') + "  " + _("Number of raw lines = ") + str(len(self._rawLines))
         if self.bookReferenceCode and Globals.verbosityLevel > 1: result += ('\n' if result else '') + "  " + _("Deduced short book name(s) are {}").format( self.getAssumedBookNames() )
         return result
@@ -107,7 +107,7 @@ class InternalBibleBook:
 
     def __len__( self ):
         """ This method returns the number of lines in the internal Bible book object. """
-        return len( self._processedLines if self._processed else self._rawLines )
+        return len( self._processedLines if self._processedFlag else self._rawLines )
 
 
     def addPriorityError( self, priority, c, v, string ):
@@ -130,7 +130,7 @@ class InternalBibleBook:
     def appendLine( self, marker, text ):
         """ Append a (USFM-based) 2-tuple to self._rawLines.
             This is a very simple function, but having it allows us to have a single point in order to catch particular bugs or errors. """
-        assert( not self._processed )
+        assert( not self._processedFlag )
 
         rawLineTuple = ( marker, text )
         #if " \\f " in text: print( "rawLineTuple", rawLineTuple )
@@ -142,7 +142,7 @@ class InternalBibleBook:
         """ Append some extra text to the previous line in self._rawLines
             Doesn't add any additional spaces.
             (Used by USXBibleBook.py) """
-        assert( not self._processed )
+        assert( not self._processedFlag )
         assert( additionalText and isinstance( additionalText, str ) )
         assert( self._rawLines )
         marker, text = self._rawLines[-1]
@@ -189,7 +189,7 @@ class InternalBibleBook:
             # Fix up quote marks
             if '<' in adjText or '>' in adjText:
                 if not self.givenAngleBracketWarning: # Just give the warning once (per book)
-                    if self.replaceAngleBrackets:
+                    if self.replaceAngleBracketsFlag:
                         fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Replaced angle bracket(s) in {}: {}").format( originalMarker, text ) )
                         if self.logErrorsFlag: logging.info( _("Replaced angle bracket(s) after {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, text ) )
                         self.addPriorityError( 3, '', '', _("Book contains angle brackets (which we attempted to replace)") )
@@ -198,11 +198,11 @@ class InternalBibleBook:
                         if self.logErrorsFlag: logging.info( _("Found (first) angle bracket after {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, text ) )
                         self.addPriorityError( 3, '', '', _("Book contains angle bracket(s)") )
                     self.givenAngleBracketWarning = True
-                if self.replaceAngleBrackets:
+                if self.replaceAngleBracketsFlag:
                     adjText = adjText.replace('<<','“').replace('>>','”').replace('<','‘').replace('>','’') # Replace angle brackets with the proper opening and close quote marks
             if '"' in adjText:
                 if not self.givenDoubleQuoteWarning: # Just give the warning once (per book)
-                    if self.replaceStraightDoubleQuotes:
+                    if self.replaceStraightDoubleQuotesFlag:
                         fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Replaced straight quote sign(s) (\") in \\{}: {}").format( originalMarker, adjText ) )
                         if self.logErrorsFlag: logging.info( _("Replaced straight quote sign(s) (\") after {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
                         self.addPriorityError( 8, '', '', _("Book contains straight quote signs (which we attempted to replace)") )
@@ -211,7 +211,7 @@ class InternalBibleBook:
                         if self.logErrorsFlag: logging.info( _("Found (first) straight quote sign (\") after {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
                         self.addPriorityError( 58, '', '', _("Book contains straight quote sign(s)") )
                     self.givenDoubleQuoteWarning = True
-                if self.replaceStraightDoubleQuotes:
+                if self.replaceStraightDoubleQuotesFlag:
                     if adjText[0]=='"': adjText = adjText.replace('"','“',1) # Replace initial double-quote mark with a proper open quote mark
                     adjText = adjText.replace(' "',' “').replace(';"',';“').replace('("','(“').replace('["','[“') # Try to replace double-quote marks with the proper opening and closing quote marks
                     adjText = adjText.replace('."','.”').replace(',"',',”').replace('?"','?”').replace('!"','!”').replace(')"',')”').replace(']"',']”').replace('*"','*”')
@@ -374,13 +374,13 @@ class InternalBibleBook:
                     and producing clean text suitable for searching
                     and then save the line. """
             nonlocal c, v
-            #print( "processLine: '{}' '{}'".format( originalMarker, originalText ) )
+            #print( "processLine: {} '{}' '{}'".format( self.bookReferenceCode, originalMarker, originalText ) )
             assert( originalMarker and isinstance( originalMarker, str ) )
             assert( isinstance( originalText, str ) )
             text = originalText
 
             # Convert USFM markers like s to standard markers like s1
-            adjustedMarker = self.USFMMarkers.toStandardMarker( originalMarker )
+            adjustedMarker = originalMarker if originalMarker=='v+' else self.USFMMarkers.toStandardMarker( originalMarker )
 
             # Keep track of where we are
             if originalMarker=='c' and text:
@@ -395,6 +395,7 @@ class InternalBibleBook:
                     self._processedLines.append( (adjustedMarker, originalMarker, c, c, [],) ) # Write the chapter number as a separate line
                     adjustedMarker, text = 'c+', cBits[1]
             elif originalMarker=='v' and text:
+                v = text.split()[0]
                 if c == '0': # Some single chapter books don't have an explicit chapter 1 marker -- we'll make it explicit here
                     if not self.isSingleChapterBook:
                         fixErrors.append( _("{} {}:{} Chapter marker seems to be missing before first verse").format( self.bookReferenceCode, c, v ) )
@@ -407,7 +408,7 @@ class InternalBibleBook:
                         self.addPriorityError( 38, c, v, _("Expected single chapter book to start with verse 1") )
                     lastAdjustedMarker, lastOriginalMarker, lastAdjustedText, lastCleanText, lastExtras = self._processedLines.pop()
                     print( self.bookReferenceCode, "lastMarker (popped) was", lastAdjustedMarker, lastAdjustedText )
-                    if lastAdjustedMarker in ('p','q1'): # The chapter marker should go before this
+                    if lastAdjustedMarker in ('p','q1','m',): # The chapter marker should go before this
                         self._processedLines.append( ('c', 'c', '1', '1', [],) ) # Write the explicit chapter number
                         self._processedLines.append( (lastAdjustedMarker, lastOriginalMarker, lastAdjustedText, lastCleanText, lastExtras,) )
                     else: # Assume that the last marker was part of the introduction, so write it first
@@ -456,8 +457,8 @@ class InternalBibleBook:
                 for insideMarker, nextSignificantChar, iMIndex in markerList: # check paragraph markers
                     if self.USFMMarkers.isNewlineMarker(insideMarker): # Need to split the line for everything else to work properly
                         if ix==0:
-                            fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Marker '{}' shouldn't appear within line in \\{}: '{}'").format( insideMarker, marker, text ) )
-                            if self.logErrorsFlag: logging.error( _("Marker '{}' shouldn't appear within line after {} {}:{} in \\{}: '{}'").format( insideMarker, self.bookReferenceCode, c, v, marker, text ) ) # Only log the first error in the line
+                            fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Marker '{}' shouldn't appear within line in \\{}: '{}'").format( insideMarker, originalMarker, text ) )
+                            if self.logErrorsFlag: logging.error( _("Marker '{}' shouldn't appear within line after {} {}:{} in \\{}: '{}'").format( insideMarker, self.bookReferenceCode, c, v, originalMarker, text ) ) # Only log the first error in the line
                             self.addPriorityError( 96, c, v, _("Marker \\{} shouldn't be inside a line").format( insideMarker ) )
                         thisText = text[ix:iMIndex].rstrip()
                         adjText, cleanText, extras = processLineFix( originalMarker, thisText )
@@ -469,12 +470,22 @@ class InternalBibleBook:
 
             # Separate the notes (footnotes and cross-references)
             adjText, cleanText, extras = processLineFix( originalMarker, text )
-            #if c=='5' and v=='29': print( "processLine: {} '{}' to {} aT='{}' cT='{}' {}".format( originalMarker, text, adjustedMarker, adjText, cleanText, extras ) );halt
-            self._processedLines.append( (adjustedMarker, originalMarker, adjText, cleanText, extras,) )
+
+            # From here on, we use adjText (not text)
+            #print( "marker '{}' text '{}', adjText '{}'".format( adjustedMarker, text, adjText ) )
+            if not adjText and not extras and ( self.USFMMarkers.markerShouldHaveContent(adjustedMarker)=='A' or adjustedMarker in ('v+','c+',) ): # should always have text
+                #print( "processLine: marker should always have text (ignoring it):", self.bookReferenceCode, c, v, originalMarker, adjustedMarker, " originally '"+text+"'" )
+                fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Marker '{}' should always have text").format( originalMarker ) )
+                if self.logErrorsFlag: logging.error( _("Marker '{}' at {} {}:{} should always have text").format( originalMarker, self.bookReferenceCode, c, v ) )
+                self.addPriorityError( 96, c, v, _("Marker \\{} should always have text").format( originalMarker ) )
+                # Don't bother even saving the marker since it's useless
+            else:
+                #if c=='5' and v=='29': print( "processLine: {} '{}' to {} aT='{}' cT='{}' {}".format( originalMarker, text, adjustedMarker, adjText, cleanText, extras ) );halt
+                self._processedLines.append( (adjustedMarker, originalMarker, adjText, cleanText, extras,) )
         # end of processLine
 
 
-        if self._processed: return # Can only do it once
+        if self._processedFlag: return # Can only do it once
         if Globals.verbosityLevel > 2: print( "  " + _("Processing {} lines...").format( self.objectNameString ) )
         internalSFMsToRemove = self.USFMMarkers.getCharacterMarkersList( includeBackslash=True, includeEndMarkers=True )
         internalSFMsToRemove = sorted( internalSFMsToRemove, key=len, reverse=True ) # List longest first
@@ -487,19 +498,33 @@ class InternalBibleBook:
             processLine( marker, text ) # Saves it's results in self._processedLines
         if not Globals.debugFlag: del self._rawLines # if short of memory
         if fixErrors: self.errorDictionary['Fix Text Errors'] = fixErrors
-        self._processed = True
+        self._processedFlag = True
         self.makeIndex()
     # end of processLines
 
 
     def makeIndex( self ):
         """ Index the lines for faster reference. """
-        assert( self._processed )
-        if self._indexed: return # Can only do it once
-        if Globals.verbosityLevel > 2: print( "  " + _("Indexing {} text...").format( self.objectNameString ) )
-        for something in self._processedLines:
-            pass # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX to be written ..........................
-        #self._indexed = True
+        assert( self._processedFlag )
+        if self._indexedFlag: return # Can only do it once
+
+        if Globals.verbosityLevel > 1: print( "  " + _("Indexing {} {} text...").format( self.objectNameString, self.bookReferenceCode ) )
+        self.CVIndex = {} # The keys are C,V 2-tuples
+        lastJ = 0
+        for j, (adjustedMarker, originalMarker, adjText, cleanText, extras,) in enumerate( self._processedLines):
+            #print( j, adjustedMarker )
+            if adjustedMarker=='c':
+                C = cleanText; V='0'
+                self.CVIndex[(C,V,)] = j
+                lastJ = j
+            elif adjustedMarker=='v':
+                V = cleanText
+                if self._processedLines[lastJ][0]=='v': lastJ += 1 # skip past the last verse number
+                if self._processedLines[lastJ][0]=='v+': lastJ += 1 # skip past the last verse contents
+                self.CVIndex[(C,V,)] = lastJ
+                lastJ = j
+        #if self.bookReferenceCode=='MAL': print( self.CVIndex )
+        self._indexedFlag = True
     # end of makeIndex
 
 
@@ -509,7 +534,7 @@ class InternalBibleBook:
 
         This does a quick check for major SFM errors. It is not as thorough as checkSFMs below.
         """
-        if not self._processed: self.processLines()
+        if not self._processedFlag: self.processLines()
         assert( self._processedLines )
         validationErrors = []
 
@@ -561,7 +586,7 @@ class InternalBibleBook:
         """
         Extract a SFM field from the loaded book.
         """
-        if not self._processed: self.processLines()
+        if not self._processedFlag: self.processLines()
         assert( self._processedLines )
         assert( fieldName and isinstance( fieldName, str ) )
         adjFieldName = self.USFMMarkers.toStandardMarker( fieldName )
@@ -580,7 +605,7 @@ class InternalBibleBook:
         Returns a list with the best guess first.
         """
         from BibleBooksCodes import BibleBooksCodes
-        if not self._processed: self.processLines()
+        if not self._processedFlag: self.processLines()
         assert( self._processedLines )
         results = []
 
@@ -618,7 +643,7 @@ class InternalBibleBook:
             The second list contains an entry for each missing verse in the book (not including verses that are missing at the END of a chapter).
         Note that all chapter and verse values are returned as strings not integers.
         """
-        if not self._processed: self.processLines()
+        if not self._processedFlag: self.processLines()
         assert( self._processedLines )
         versificationErrors = []
 
@@ -747,6 +772,8 @@ class InternalBibleBook:
         """
         Do a precheck on the book to try to determine it's features.
         """
+        if not self._processedFlag: self.processLines()
+        assert( self._processedLines )
         #print( "InternalBibleBook:discover", self.bookReferenceCode )
         assert( isinstance( resultDictionary, dict ) )
 
@@ -825,7 +852,7 @@ class InternalBibleBook:
         Get the units added to the text of the book including paragraph breaks, section headings, and section references.
         Note that all chapter and verse values are returned as strings not integers.
         """
-        if not self._processed: self.processLines()
+        if not self._processedFlag: self.processLines()
         assert( self._processedLines )
         addedUnitErrors = []
 
@@ -1139,7 +1166,7 @@ class InternalBibleBook:
             # Check for known bad combinations
             if marker=='nb' and lastMarker in ('s','s1','s2','s3','s4','s5'):
                 newlineMarkerErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("'nb' not allowed immediately after '{}' section heading").format( marker ) )
-            if self.checkUSFMSequences: # Check for known good combinations
+            if self.checkUSFMSequencesFlag: # Check for known good combinations
                 commonGoodNewlineMarkerCombinations = (
                     # If a marker has nothing after it, it must contain data
                     # If a marker has =E after it, it must NOT contain data
@@ -1815,7 +1842,7 @@ class InternalBibleBook:
 
     def doCheckHeadings( self ):
         """Runs a number of checks on headings and section cross-references."""
-        if not self._processed: self.processLines()
+        if not self._processedFlag: self.processLines()
         assert( self._processedLines )
 
         titleList, headingList, sectionReferenceList, headingErrors = [], [], [], []
@@ -1861,7 +1888,7 @@ class InternalBibleBook:
 
     def doCheckIntroduction( self ):
         """Runs a number of checks on introductory parts."""
-        if not self._processed: self.processLines()
+        if not self._processedFlag: self.processLines()
         assert( self._processedLines )
 
         mainTitleList, headingList, titleList, outlineList, introductionErrors = [], [], [], [], []
@@ -1934,7 +1961,7 @@ class InternalBibleBook:
 
     def doCheckNotes( self ):
         """Runs a number of checks on footnotes and cross-references."""
-        if not self._processed: self.processLines()
+        if not self._processedFlag: self.processLines()
         assert( self._processedLines )
 
         allAvailableCharacterMarkers = self.USFMMarkers.getCharacterMarkersList( includeBackslash=True )
@@ -2184,7 +2211,7 @@ class InternalBibleBook:
 
     def check( self, typicalAddedUnitData=None ):
         """Runs a number of checks on the book and returns the error dictionary."""
-        if not self._processed: self.processLines()
+        if not self._processedFlag: self.processLines()
         assert( self._processedLines )
 
         # Ignore the result of these next ones -- just use any errors collected
@@ -2198,7 +2225,7 @@ class InternalBibleBook:
         self.doCheckIntroduction()
         self.doCheckNotes() # footnotes and cross-references
 
-        if self.checkAddedUnits: # This code is temporary XXXXXXXXXXXXXXXXXXXXXXXX ........................................................................
+        if self.checkAddedUnitsFlag: # This code is temporary XXXXXXXXXXXXXXXXXXXXXXXX ........................................................................
             if typicalAddedUnitData is None: # Get our recommendations for added units
                 import pickle
                 folder = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/" ) # Relative to module, not cwd
@@ -2215,6 +2242,28 @@ class InternalBibleBook:
         if 'Priority Errors' in self.errorDictionary and not self.errorDictionary['Priority Errors']:
             self.errorDictionary.pop( 'Priority Errors' ) # Remove empty dictionary entry if unused
         return self.errorDictionary
+
+
+    def getCVRef( self, ref ):
+        """ Gets a list of processed lines for the given Bible reference. """
+        assert( ref[0] == self.bookReferenceCode )
+        if not self._processedFlag: self.processLines()
+        assert( self._processedLines )
+        assert( self._indexedFlag )
+        C,V = ref[1], ref[2]
+        if (C,V,) in self.CVIndex:
+            startIndex = self.CVIndex[ C,V ]
+            #print( ref, startIndex )
+            #print( "IBB getRef:", ref, startIndex, self._processedLines[startIndex:startIndex+5] )
+            result = []
+            for index in range( startIndex, len(self._processedLines) ):
+                stuff = self._processedLines[index]
+                adjustedMarker, originalMarker, adjText, cleanText, extras = stuff
+                if adjustedMarker== 'v' and cleanText!=V: break # Gone past our verse
+                result.append( stuff )
+            #print( ref, result )
+            return result
+    # end of InternalBibleBook:getCVRef
 # end of class InternalBibleBook
 
 
@@ -2223,6 +2272,7 @@ def main():
     Demonstrate reading and processing some Bible databases.
     """
     import USFMFilenames
+    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
 
     # Handle command line parameters
     from optparse import OptionParser
