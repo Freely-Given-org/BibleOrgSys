@@ -177,6 +177,7 @@ def main():
         if Globals.verbosityLevel > 2: print( UBErrors )
     # end of demoFile
 
+    # Configure basic logging
     logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
 
     # Handle command line parameters

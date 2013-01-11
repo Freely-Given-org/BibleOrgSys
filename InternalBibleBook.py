@@ -2272,6 +2272,8 @@ def main():
     Demonstrate reading and processing some Bible databases.
     """
     import USFMFilenames
+
+    # Configure basic logging
     logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
 
     # Handle command line parameters

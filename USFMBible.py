@@ -211,6 +211,7 @@ def main():
     """
     Demonstrate reading and checking some Bible databases.
     """
+    # Configure basic logging
     logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
 
     # Handle command line parameters
