@@ -1,0 +1,57 @@
+# BibleOrganizationalSystems.rnc           Relax NG Compact Syntax schema file
+#   Version 0.21
+#   Last modified: 2011-02-15
+#
+# On Linux, to convert to RNG, use
+#       trang BibleOrganizationalSystems.rnc DerivedFiles/BibleOrganizationalSystems.rng
+# On Linux, to validate against the .rng file, use
+#       xmllint --noout --relaxng DerivedFiles/BibleOrganizationalSystems.rng BibleOrganizationalSystems.xml
+# or to validate against both this and the internal DTD, use
+#       xmllint --noout --relaxng DerivedFiles/BibleOrganizationalSystems.rng --valid BibleOrganizationalSystems.xml
+#
+# See the supplied ReadMe.txt file for more information.
+#
+# Note: ? = optional (zero or one), * = zero or more, + = one or more
+#
+
+# The root element
+start = BibleOrganizationalSystems
+
+# A single header, then multiple BibleOrganizationalSystem entries
+BibleOrganizationalSystems = element BibleOrganizationalSystems
+{   header,
+    BibleOrganizationalSystem+
+}
+
+header  = element header
+{   revisionDesc*,
+    work
+}
+
+revisionDesc = element revisionDesc
+{   element date { xsd:date },
+    element p { xsd:string }+
+}
+
+work = element work
+{   element version { xsd:decimal { totalDigits="2" } },
+    element date { xsd:date },
+    element title { xsd:string },
+    element contributor { attribute role {"com"|"cre"|"edt"}, xsd:string }+,
+    element identifier { attribute type {"URL"}, xsd:anyURI }*,
+    element rights { xsd:string }
+}
+
+BibleOrganizationalSystem = element BibleOrganizationalSystem
+{   attribute type {"original"|"translation"|"revision"|"edition"},
+    element referenceAbbreviation { xsd:string { minLength="3" } },
+    element languageCode { xsd:string { length="3" } },
+    element name { xsd:string { minLength="3" } }+,
+    element publicationDate { xsd:string { minLength="2" } }*,
+    element versificationSystem { xsd:string { minLength="2" } }*,
+    element punctuationSystem { xsd:string { minLength="2" } }*,
+    element bookOrderSystem { xsd:string { minLength="2" } }*,
+    element booksNamesSystem { xsd:string { minLength="2" } }*,
+    element derivedFrom { xsd:string { minLength="2" } }*,
+    element usesText { xsd:string { minLength="2" } }*
+}
