@@ -82,7 +82,9 @@
     }, 
     "JOS": {
       "BibleditNumberString": "6", 
-      "possibleAlternativeBooks": "JSA", 
+      "possibleAlternativeBooks": [
+        "JSA"
+      ], 
       "NETBibleAbbreviation": "Jos", 
       "referenceNumber": 6, 
       "nameEnglish": "Joshua / Joshua son of Nun", 
@@ -98,7 +100,9 @@
     }, 
     "JDG": {
       "BibleditNumberString": "7", 
-      "possibleAlternativeBooks": "JGB", 
+      "possibleAlternativeBooks": [
+        "JGB"
+      ], 
       "NETBibleAbbreviation": "Jdg", 
       "referenceNumber": 7, 
       "nameEnglish": "Judges", 
@@ -226,7 +230,9 @@
     }, 
     "EZR": {
       "BibleditNumberString": "15", 
-      "possibleAlternativeBooks": "EZN", 
+      "possibleAlternativeBooks": [
+        "EZN"
+      ], 
       "NETBibleAbbreviation": "Ezr", 
       "referenceNumber": 15, 
       "nameEnglish": "Ezra / 1 Ezra / 1 Esdras", 
@@ -242,7 +248,9 @@
     }, 
     "NEH": {
       "BibleditNumberString": "16", 
-      "possibleAlternativeBooks": "EZN", 
+      "possibleAlternativeBooks": [
+        "EZN"
+      ], 
       "NETBibleAbbreviation": "Neh", 
       "referenceNumber": 16, 
       "nameEnglish": "Nehemiah / 2 Ezra / 2 Esdras", 
@@ -258,7 +266,11 @@
     }, 
     "EST": {
       "BibleditNumberString": "17", 
-      "possibleAlternativeBooks": "ESG,ESA,ESC", 
+      "possibleAlternativeBooks": [
+        "ESG", 
+        "ESA", 
+        "ESC"
+      ], 
       "NETBibleAbbreviation": "Est", 
       "referenceNumber": 17, 
       "nameEnglish": "Esther", 
@@ -290,7 +302,13 @@
     }, 
     "PSA": {
       "BibleditNumberString": "19", 
-      "possibleAlternativeBooks": "PB1,PB2,PB3,PB4,PB5", 
+      "possibleAlternativeBooks": [
+        "PB1", 
+        "PB2", 
+        "PB3", 
+        "PB4", 
+        "PB5"
+      ], 
       "NETBibleAbbreviation": "Psa", 
       "referenceNumber": 19, 
       "nameEnglish": "Psalms / Gallicanum / Psalms A", 
@@ -418,7 +436,12 @@
     }, 
     "DAN": {
       "BibleditNumberString": "27", 
-      "possibleAlternativeBooks": "DNG,DNA,DNC,DNT", 
+      "possibleAlternativeBooks": [
+        "DNG", 
+        "DNA", 
+        "DNC", 
+        "DNT"
+      ], 
       "NETBibleAbbreviation": "Dan", 
       "referenceNumber": 27, 
       "nameEnglish": "Daniel", 
@@ -658,7 +681,9 @@
     }, 
     "LUK": {
       "BibleditNumberString": "42", 
-      "possibleAlternativeBooks": "LKA", 
+      "possibleAlternativeBooks": [
+        "LKA"
+      ], 
       "NETBibleAbbreviation": "Luk", 
       "referenceNumber": 42, 
       "nameEnglish": "Luke", 
@@ -690,7 +715,9 @@
     }, 
     "ACT": {
       "BibleditNumberString": "44", 
-      "possibleAlternativeBooks": "LKA", 
+      "possibleAlternativeBooks": [
+        "LKA"
+      ], 
       "NETBibleAbbreviation": "Act", 
       "referenceNumber": 44, 
       "nameEnglish": "Acts", 
@@ -1058,7 +1085,11 @@
     }, 
     "ESG": {
       "BibleditNumberString": "72", 
-      "possibleAlternativeBooks": "EST,ESA,ESC", 
+      "possibleAlternativeBooks": [
+        "EST", 
+        "ESA", 
+        "ESC"
+      ], 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 70, 
       "nameEnglish": "Greek Esther / Esther (Greek)", 
@@ -1074,7 +1105,11 @@
     }, 
     "ESA": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "EST,ESG,ESC", 
+      "possibleAlternativeBooks": [
+        "EST", 
+        "ESG", 
+        "ESC"
+      ], 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 71, 
       "nameEnglish": "Greek additions to Esther / Esther (additions)", 
@@ -1090,7 +1125,11 @@
     }, 
     "ESC": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "EST,ESG,ESA", 
+      "possibleAlternativeBooks": [
+        "EST", 
+        "ESG", 
+        "ESA"
+      ], 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 72, 
       "nameEnglish": "Combined Hebrew/Greek Esther / Esther (combined)", 
@@ -1106,7 +1145,12 @@
     }, 
     "DNG": {
       "BibleditNumberString": "88", 
-      "possibleAlternativeBooks": "DAN,DNA,DNC,DNT", 
+      "possibleAlternativeBooks": [
+        "DAN", 
+        "DNA", 
+        "DNC", 
+        "DNT"
+      ], 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 73, 
       "nameEnglish": "Greek Daniel / Daniel (Greek)", 
@@ -1122,7 +1166,12 @@
     }, 
     "DNA": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "DAN,DNG,DNC,DNT", 
+      "possibleAlternativeBooks": [
+        "DAN", 
+        "DNG", 
+        "DNC", 
+        "DNT"
+      ], 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 74, 
       "nameEnglish": "Greek additions to Daniel / Daniel (additions)", 
@@ -1138,7 +1187,12 @@
     }, 
     "DNC": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "DAN,DNG,DNA,DNT", 
+      "possibleAlternativeBooks": [
+        "DAN", 
+        "DNG", 
+        "DNA", 
+        "DNT"
+      ], 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 75, 
       "nameEnglish": "Combined Hebrew/Greek Daniel / Daniel (combined)", 
@@ -1154,7 +1208,9 @@
     }, 
     "BEL": {
       "BibleditNumberString": "79", 
-      "possibleAlternativeBooks": "BLT", 
+      "possibleAlternativeBooks": [
+        "BLT"
+      ], 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 80, 
       "nameEnglish": "Bel and the dragon", 
@@ -1170,7 +1226,9 @@
     }, 
     "SUS": {
       "BibleditNumberString": "78", 
-      "possibleAlternativeBooks": "SST", 
+      "possibleAlternativeBooks": [
+        "SST"
+      ], 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 81, 
       "nameEnglish": "Susanna", 
@@ -1250,7 +1308,9 @@
     }, 
     "TOB": {
       "BibleditNumberString": "70", 
-      "possibleAlternativeBooks": "TBS", 
+      "possibleAlternativeBooks": [
+        "TBS"
+      ], 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 86, 
       "nameEnglish": "Tobit / Tobias", 
@@ -1298,7 +1358,9 @@
     }, 
     "GES": {
       "BibleditNumberString": "82", 
-      "possibleAlternativeBooks": "LES", 
+      "possibleAlternativeBooks": [
+        "LES"
+      ], 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 90, 
       "nameEnglish": "Greek Esdras / Greek Ezra / 1 Esdras / 1 Ezra / 2 Ezra / 3 Ezra / 3 Esdras", 
@@ -1314,7 +1376,9 @@
     }, 
     "LES": {
       "BibleditNumberString": "86", 
-      "possibleAlternativeBooks": "GES", 
+      "possibleAlternativeBooks": [
+        "GES"
+      ], 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 91, 
       "nameEnglish": "Latin Esdras / 2 Esdras / 3 Esdras / 4 Esdras / 4 Ezra", 
@@ -1394,7 +1458,9 @@
     }, 
     "LJE": {
       "BibleditNumberString": "76", 
-      "possibleAlternativeBooks": "LJB", 
+      "possibleAlternativeBooks": [
+        "LJB"
+      ], 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 100, 
       "nameEnglish": "Letter of Jeremiah / Epistle of Jeremiah", 
@@ -1410,7 +1476,9 @@
     }, 
     "BAR": {
       "BibleditNumberString": "75", 
-      "possibleAlternativeBooks": "LJB", 
+      "possibleAlternativeBooks": [
+        "LJB"
+      ], 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 101, 
       "nameEnglish": "Baruch / 1 Baruch", 
@@ -1426,7 +1494,9 @@
     }, 
     "LJB": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "BAR", 
+      "possibleAlternativeBooks": [
+        "BAR"
+      ], 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 102, 
       "nameEnglish": "Letter of Jeremiah with Baruch / Epistle of Jeremiah with Baruch", 
@@ -1442,7 +1512,9 @@
     }, 
     "BA2": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "LB2", 
+      "possibleAlternativeBooks": [
+        "LB2"
+      ], 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 103, 
       "nameEnglish": "2 Baruch / Apocalypse of Baruch", 
@@ -1458,7 +1530,9 @@
     }, 
     "LBA": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "LB2", 
+      "possibleAlternativeBooks": [
+        "LB2"
+      ], 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 104, 
       "nameEnglish": "Letter of Baruch / Epistle of Baruch", 
@@ -1474,7 +1548,10 @@
     }, 
     "LB2": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "BA2,LBA", 
+      "possibleAlternativeBooks": [
+        "BA2", 
+        "LBA"
+      ], 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 105, 
       "nameEnglish": "2 Baruch with the Letter of Baruch", 
@@ -2114,7 +2191,9 @@
     }, 
     "JSA": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "JOS", 
+      "possibleAlternativeBooks": [
+        "JOS"
+      ], 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 154, 
       "nameEnglish": "Joshua A", 
@@ -2130,7 +2209,9 @@
     }, 
     "JGB": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "JDG", 
+      "possibleAlternativeBooks": [
+        "JDG"
+      ], 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 155, 
       "nameEnglish": "Judges B", 
@@ -2146,7 +2227,9 @@
     }, 
     "TBS": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "TOB", 
+      "possibleAlternativeBooks": [
+        "TOB"
+      ], 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 156, 
       "nameEnglish": "Tobit S", 
@@ -2162,7 +2245,9 @@
     }, 
     "SST": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "SUS", 
+      "possibleAlternativeBooks": [
+        "SUS"
+      ], 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 157, 
       "nameEnglish": "Susanna \u03b8 / Susanna Th", 
@@ -2178,7 +2263,12 @@
     }, 
     "DNT": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "DAN,DNG,DNA,DNC", 
+      "possibleAlternativeBooks": [
+        "DAN", 
+        "DNG", 
+        "DNA", 
+        "DNC"
+      ], 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 158, 
       "nameEnglish": "Daniel \u03b8 / Daniel Th", 
@@ -2194,7 +2284,9 @@
     }, 
     "BLT": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "BEL", 
+      "possibleAlternativeBooks": [
+        "BEL"
+      ], 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 159, 
       "nameEnglish": "Bel and the dragon \u03b8 / Bel and the dragon Th", 
@@ -3250,7 +3342,13 @@
     }, 
     "MOS": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "GEN,EXO,LEV,NUM,DEU", 
+      "possibleAlternativeBooks": [
+        "GEN", 
+        "EXO", 
+        "LEV", 
+        "NUM", 
+        "DEU"
+      ], 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 600, 
       "nameEnglish": "Books of Moses", 
@@ -3266,7 +3364,10 @@
     }, 
     "SAM": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "SA1,SA2", 
+      "possibleAlternativeBooks": [
+        "SA1", 
+        "SA2"
+      ], 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 610, 
       "nameEnglish": "Samuel", 
@@ -3282,7 +3383,10 @@
     }, 
     "KGS": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "KG1,KG2", 
+      "possibleAlternativeBooks": [
+        "KI1", 
+        "KI2"
+      ], 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 620, 
       "nameEnglish": "Kings", 
@@ -3298,7 +3402,10 @@
     }, 
     "CHR": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "CH1,CH2", 
+      "possibleAlternativeBooks": [
+        "CH1", 
+        "CH2"
+      ], 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 630, 
       "nameEnglish": "Chronicles", 
@@ -3314,7 +3421,10 @@
     }, 
     "EZN": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "EZR,NEH", 
+      "possibleAlternativeBooks": [
+        "EZR", 
+        "NEH"
+      ], 
       "NETBibleAbbreviation": "Ezr", 
       "referenceNumber": 640, 
       "nameEnglish": "Ezra-Nehemiah / 1 Esdras", 
@@ -3346,7 +3456,10 @@
     }, 
     "LKA": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "LUK,ACT", 
+      "possibleAlternativeBooks": [
+        "LUK", 
+        "ACT"
+      ], 
       "NETBibleAbbreviation": null, 
       "referenceNumber": 690, 
       "nameEnglish": "Luke-Acts", 
@@ -6446,7 +6559,9 @@
     }, 
     "6": {
       "BibleditNumberString": "6", 
-      "possibleAlternativeBooks": "JSA", 
+      "possibleAlternativeBooks": [
+        "JSA"
+      ], 
       "NETBibleAbbreviation": "Jos", 
       "nameEnglish": "Joshua / Joshua son of Nun", 
       "referenceAbbreviation": "JOS", 
@@ -6462,7 +6577,9 @@
     }, 
     "7": {
       "BibleditNumberString": "7", 
-      "possibleAlternativeBooks": "JGB", 
+      "possibleAlternativeBooks": [
+        "JGB"
+      ], 
       "NETBibleAbbreviation": "Jdg", 
       "nameEnglish": "Judges", 
       "referenceAbbreviation": "JDG", 
@@ -6590,7 +6707,9 @@
     }, 
     "15": {
       "BibleditNumberString": "15", 
-      "possibleAlternativeBooks": "EZN", 
+      "possibleAlternativeBooks": [
+        "EZN"
+      ], 
       "NETBibleAbbreviation": "Ezr", 
       "nameEnglish": "Ezra / 1 Ezra / 1 Esdras", 
       "referenceAbbreviation": "EZR", 
@@ -6606,7 +6725,9 @@
     }, 
     "16": {
       "BibleditNumberString": "16", 
-      "possibleAlternativeBooks": "EZN", 
+      "possibleAlternativeBooks": [
+        "EZN"
+      ], 
       "NETBibleAbbreviation": "Neh", 
       "nameEnglish": "Nehemiah / 2 Ezra / 2 Esdras", 
       "referenceAbbreviation": "NEH", 
@@ -6622,7 +6743,11 @@
     }, 
     "17": {
       "BibleditNumberString": "17", 
-      "possibleAlternativeBooks": "ESG,ESA,ESC", 
+      "possibleAlternativeBooks": [
+        "ESG", 
+        "ESA", 
+        "ESC"
+      ], 
       "NETBibleAbbreviation": "Est", 
       "nameEnglish": "Esther", 
       "referenceAbbreviation": "EST", 
@@ -6654,7 +6779,13 @@
     }, 
     "19": {
       "BibleditNumberString": "19", 
-      "possibleAlternativeBooks": "PB1,PB2,PB3,PB4,PB5", 
+      "possibleAlternativeBooks": [
+        "PB1", 
+        "PB2", 
+        "PB3", 
+        "PB4", 
+        "PB5"
+      ], 
       "NETBibleAbbreviation": "Psa", 
       "nameEnglish": "Psalms / Gallicanum / Psalms A", 
       "referenceAbbreviation": "PSA", 
@@ -6782,7 +6913,12 @@
     }, 
     "27": {
       "BibleditNumberString": "27", 
-      "possibleAlternativeBooks": "DNG,DNA,DNC,DNT", 
+      "possibleAlternativeBooks": [
+        "DNG", 
+        "DNA", 
+        "DNC", 
+        "DNT"
+      ], 
       "NETBibleAbbreviation": "Dan", 
       "nameEnglish": "Daniel", 
       "referenceAbbreviation": "DAN", 
@@ -7022,7 +7158,9 @@
     }, 
     "42": {
       "BibleditNumberString": "42", 
-      "possibleAlternativeBooks": "LKA", 
+      "possibleAlternativeBooks": [
+        "LKA"
+      ], 
       "NETBibleAbbreviation": "Luk", 
       "nameEnglish": "Luke", 
       "referenceAbbreviation": "LUK", 
@@ -7054,7 +7192,9 @@
     }, 
     "44": {
       "BibleditNumberString": "44", 
-      "possibleAlternativeBooks": "LKA", 
+      "possibleAlternativeBooks": [
+        "LKA"
+      ], 
       "NETBibleAbbreviation": "Act", 
       "nameEnglish": "Acts", 
       "referenceAbbreviation": "ACT", 
@@ -7422,7 +7562,11 @@
     }, 
     "70": {
       "BibleditNumberString": "72", 
-      "possibleAlternativeBooks": "EST,ESA,ESC", 
+      "possibleAlternativeBooks": [
+        "EST", 
+        "ESA", 
+        "ESC"
+      ], 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Greek Esther / Esther (Greek)", 
       "referenceAbbreviation": "ESG", 
@@ -7438,7 +7582,11 @@
     }, 
     "71": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "EST,ESG,ESC", 
+      "possibleAlternativeBooks": [
+        "EST", 
+        "ESG", 
+        "ESC"
+      ], 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Greek additions to Esther / Esther (additions)", 
       "referenceAbbreviation": "ESA", 
@@ -7454,7 +7602,11 @@
     }, 
     "72": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "EST,ESG,ESA", 
+      "possibleAlternativeBooks": [
+        "EST", 
+        "ESG", 
+        "ESA"
+      ], 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Combined Hebrew/Greek Esther / Esther (combined)", 
       "referenceAbbreviation": "ESC", 
@@ -7470,7 +7622,12 @@
     }, 
     "73": {
       "BibleditNumberString": "88", 
-      "possibleAlternativeBooks": "DAN,DNA,DNC,DNT", 
+      "possibleAlternativeBooks": [
+        "DAN", 
+        "DNA", 
+        "DNC", 
+        "DNT"
+      ], 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Greek Daniel / Daniel (Greek)", 
       "referenceAbbreviation": "DNG", 
@@ -7486,7 +7643,12 @@
     }, 
     "74": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "DAN,DNG,DNC,DNT", 
+      "possibleAlternativeBooks": [
+        "DAN", 
+        "DNG", 
+        "DNC", 
+        "DNT"
+      ], 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Greek additions to Daniel / Daniel (additions)", 
       "referenceAbbreviation": "DNA", 
@@ -7502,7 +7664,12 @@
     }, 
     "75": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "DAN,DNG,DNA,DNT", 
+      "possibleAlternativeBooks": [
+        "DAN", 
+        "DNG", 
+        "DNA", 
+        "DNT"
+      ], 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Combined Hebrew/Greek Daniel / Daniel (combined)", 
       "referenceAbbreviation": "DNC", 
@@ -7518,7 +7685,9 @@
     }, 
     "80": {
       "BibleditNumberString": "79", 
-      "possibleAlternativeBooks": "BLT", 
+      "possibleAlternativeBooks": [
+        "BLT"
+      ], 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Bel and the dragon", 
       "referenceAbbreviation": "BEL", 
@@ -7534,7 +7703,9 @@
     }, 
     "81": {
       "BibleditNumberString": "78", 
-      "possibleAlternativeBooks": "SST", 
+      "possibleAlternativeBooks": [
+        "SST"
+      ], 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Susanna", 
       "referenceAbbreviation": "SUS", 
@@ -7614,7 +7785,9 @@
     }, 
     "86": {
       "BibleditNumberString": "70", 
-      "possibleAlternativeBooks": "TBS", 
+      "possibleAlternativeBooks": [
+        "TBS"
+      ], 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Tobit / Tobias", 
       "referenceAbbreviation": "TOB", 
@@ -7662,7 +7835,9 @@
     }, 
     "90": {
       "BibleditNumberString": "82", 
-      "possibleAlternativeBooks": "LES", 
+      "possibleAlternativeBooks": [
+        "LES"
+      ], 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Greek Esdras / Greek Ezra / 1 Esdras / 1 Ezra / 2 Ezra / 3 Ezra / 3 Esdras", 
       "referenceAbbreviation": "GES", 
@@ -7678,7 +7853,9 @@
     }, 
     "91": {
       "BibleditNumberString": "86", 
-      "possibleAlternativeBooks": "GES", 
+      "possibleAlternativeBooks": [
+        "GES"
+      ], 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Latin Esdras / 2 Esdras / 3 Esdras / 4 Esdras / 4 Ezra", 
       "referenceAbbreviation": "LES", 
@@ -7758,7 +7935,9 @@
     }, 
     "100": {
       "BibleditNumberString": "76", 
-      "possibleAlternativeBooks": "LJB", 
+      "possibleAlternativeBooks": [
+        "LJB"
+      ], 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Letter of Jeremiah / Epistle of Jeremiah", 
       "referenceAbbreviation": "LJE", 
@@ -7774,7 +7953,9 @@
     }, 
     "101": {
       "BibleditNumberString": "75", 
-      "possibleAlternativeBooks": "LJB", 
+      "possibleAlternativeBooks": [
+        "LJB"
+      ], 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Baruch / 1 Baruch", 
       "referenceAbbreviation": "BAR", 
@@ -7790,7 +7971,9 @@
     }, 
     "102": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "BAR", 
+      "possibleAlternativeBooks": [
+        "BAR"
+      ], 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Letter of Jeremiah with Baruch / Epistle of Jeremiah with Baruch", 
       "referenceAbbreviation": "LJB", 
@@ -7806,7 +7989,9 @@
     }, 
     "103": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "LB2", 
+      "possibleAlternativeBooks": [
+        "LB2"
+      ], 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "2 Baruch / Apocalypse of Baruch", 
       "referenceAbbreviation": "BA2", 
@@ -7822,7 +8007,9 @@
     }, 
     "104": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "LB2", 
+      "possibleAlternativeBooks": [
+        "LB2"
+      ], 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Letter of Baruch / Epistle of Baruch", 
       "referenceAbbreviation": "LBA", 
@@ -7838,7 +8025,10 @@
     }, 
     "105": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "BA2,LBA", 
+      "possibleAlternativeBooks": [
+        "BA2", 
+        "LBA"
+      ], 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "2 Baruch with the Letter of Baruch", 
       "referenceAbbreviation": "LB2", 
@@ -8478,7 +8668,9 @@
     }, 
     "154": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "JOS", 
+      "possibleAlternativeBooks": [
+        "JOS"
+      ], 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Joshua A", 
       "referenceAbbreviation": "JSA", 
@@ -8494,7 +8686,9 @@
     }, 
     "155": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "JDG", 
+      "possibleAlternativeBooks": [
+        "JDG"
+      ], 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Judges B", 
       "referenceAbbreviation": "JGB", 
@@ -8510,7 +8704,9 @@
     }, 
     "156": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "TOB", 
+      "possibleAlternativeBooks": [
+        "TOB"
+      ], 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Tobit S", 
       "referenceAbbreviation": "TBS", 
@@ -8526,7 +8722,9 @@
     }, 
     "157": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "SUS", 
+      "possibleAlternativeBooks": [
+        "SUS"
+      ], 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Susanna \u03b8 / Susanna Th", 
       "referenceAbbreviation": "SST", 
@@ -8542,7 +8740,12 @@
     }, 
     "158": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "DAN,DNG,DNA,DNC", 
+      "possibleAlternativeBooks": [
+        "DAN", 
+        "DNG", 
+        "DNA", 
+        "DNC"
+      ], 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Daniel \u03b8 / Daniel Th", 
       "referenceAbbreviation": "DNT", 
@@ -8558,7 +8761,9 @@
     }, 
     "159": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "BEL", 
+      "possibleAlternativeBooks": [
+        "BEL"
+      ], 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Bel and the dragon \u03b8 / Bel and the dragon Th", 
       "referenceAbbreviation": "BLT", 
@@ -9614,7 +9819,13 @@
     }, 
     "600": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "GEN,EXO,LEV,NUM,DEU", 
+      "possibleAlternativeBooks": [
+        "GEN", 
+        "EXO", 
+        "LEV", 
+        "NUM", 
+        "DEU"
+      ], 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Books of Moses", 
       "referenceAbbreviation": "MOS", 
@@ -9630,7 +9841,10 @@
     }, 
     "610": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "SA1,SA2", 
+      "possibleAlternativeBooks": [
+        "SA1", 
+        "SA2"
+      ], 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Samuel", 
       "referenceAbbreviation": "SAM", 
@@ -9646,7 +9860,10 @@
     }, 
     "620": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "KG1,KG2", 
+      "possibleAlternativeBooks": [
+        "KI1", 
+        "KI2"
+      ], 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Kings", 
       "referenceAbbreviation": "KGS", 
@@ -9662,7 +9879,10 @@
     }, 
     "630": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "CH1,CH2", 
+      "possibleAlternativeBooks": [
+        "CH1", 
+        "CH2"
+      ], 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Chronicles", 
       "referenceAbbreviation": "CHR", 
@@ -9678,7 +9898,10 @@
     }, 
     "640": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "EZR,NEH", 
+      "possibleAlternativeBooks": [
+        "EZR", 
+        "NEH"
+      ], 
       "NETBibleAbbreviation": "Ezr", 
       "nameEnglish": "Ezra-Nehemiah / 1 Esdras", 
       "referenceAbbreviation": "EZN", 
@@ -9710,7 +9933,10 @@
     }, 
     "690": {
       "BibleditNumberString": null, 
-      "possibleAlternativeBooks": "LUK,ACT", 
+      "possibleAlternativeBooks": [
+        "LUK", 
+        "ACT"
+      ], 
       "NETBibleAbbreviation": null, 
       "nameEnglish": "Luke-Acts", 
       "referenceAbbreviation": "LKA", 

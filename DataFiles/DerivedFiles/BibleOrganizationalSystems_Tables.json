@@ -477,7 +477,6 @@
         "MAL", 
         "TOB", 
         "JDT", 
-        "GES", 
         "WIS", 
         "SIR", 
         "BAR", 
@@ -1045,7 +1044,7 @@
       "booksNamesSystem": "eng_traditional"
     }, 
     "GENERIC-Vulgate-81_translation": {
-      "languageCode": "???", 
+      "languageCode": "lat", 
       "name": [
         "Generic with Deuterocanon"
       ], 
@@ -1092,7 +1091,6 @@
         "MAL", 
         "TOB", 
         "JDT", 
-        "GES", 
         "WIS", 
         "SIR", 
         "BAR", 
@@ -1102,9 +1100,6 @@
         "BEL", 
         "MA1", 
         "MA2", 
-        "GES", 
-        "LES", 
-        "MAN", 
         "MAT", 
         "MRK", 
         "LUK", 
@@ -1131,9 +1126,14 @@
         "JN2", 
         "JN3", 
         "JDE", 
-        "REV"
+        "REV", 
+        "MAN", 
+        "GES", 
+        "LES", 
+        "PS2", 
+        "LAO"
       ], 
-      "versificationSystem": "Vulgate", 
+      "versificationSystem": "Vulgate1", 
       "punctuationSystem": "None", 
       "type": "translation", 
       "bookOrderSystem": "EuropeanBible"
@@ -1186,7 +1186,6 @@
         "MAL", 
         "TOB", 
         "JDT", 
-        "GES", 
         "WIS", 
         "SIR", 
         "BAR", 
@@ -1653,7 +1652,7 @@
         "JDT", 
         "TOB", 
         "WIS", 
-        "ECC", 
+        "SIR", 
         "MAC", 
         "MAT", 
         "MRK", 
@@ -2752,7 +2751,6 @@
         "MAL", 
         "TOB", 
         "JDT", 
-        "GES", 
         "WIS", 
         "SIR", 
         "BAR", 
@@ -3005,7 +3003,7 @@
       "booksNamesSystem": "eng_traditional"
     }, 
     "GENERIC-German-81_translation": {
-      "languageCode": "???", 
+      "languageCode": "deu", 
       "name": [
         "Generic with Deuterocanon"
       ], 
@@ -3052,7 +3050,6 @@
         "MAL", 
         "TOB", 
         "JDT", 
-        "GES", 
         "WIS", 
         "SIR", 
         "BAR", 
@@ -5215,7 +5212,6 @@
         "MAL", 
         "TOB", 
         "JDT", 
-        "GES", 
         "WIS", 
         "SIR", 
         "BAR", 
@@ -5730,7 +5726,6 @@
         "MAL", 
         "TOB", 
         "JDT", 
-        "GES", 
         "WIS", 
         "SIR", 
         "BAR", 
@@ -6755,7 +6750,6 @@
         "MAL", 
         "TOB", 
         "JDT", 
-        "GES", 
         "WIS", 
         "SIR", 
         "BAR", 

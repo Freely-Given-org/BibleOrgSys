@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodesConverter.py
-#   Last modified: 2012-09-07 by RJH (also update versionString below)
+#   Last modified: 2013-01-12 by RJH (also update versionString below)
 #
 # Module handling BibleBooksCodes.xml to produce C and Python data tables
 #
-# Copyright (C) 2010-2012 Robert Hunt
+# Copyright (C) 2010-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -295,7 +295,7 @@ class BibleBooksCodesConverter:
             BibleditNumberString = None if element.find("BibleditNumber") is None else element.find("BibleditNumber").text
             NETBibleAbbreviation = None if element.find("NETBibleAbbreviation") is None else element.find("NETBibleAbbreviation").text
             ByzantineAbbreviation = None if element.find("ByzantineAbbreviation") is None else element.find("ByzantineAbbreviation").text
-            possibleAlternativeBooks = None if element.find("possibleAlternativeBooks") is None else element.find("possibleAlternativeBooks").text
+            possibleAlternativeBooks = None if element.find("possibleAlternativeBooks") is None else element.find("possibleAlternativeBooks").text.split(',')
 
             # Now put it into my dictionaries for easy access
             # This part should be customized or added to for however you need to process the data
@@ -402,6 +402,12 @@ class BibleBooksCodesConverter:
                 UCName = nameEnglish.upper()
                 if UCName in myENDict: halt
                 else: myENDict[UCName] = ( intID, referenceAbbreviation )
+        for BBB in myRefAbbrDict: # Do some cross-checking
+            if myRefAbbrDict[BBB]["possibleAlternativeBooks"]:
+                print( "Here", BBB, myRefAbbrDict[BBB]["possibleAlternativeBooks"] )
+                for possibility in myRefAbbrDict[BBB]["possibleAlternativeBooks"]:
+                    if possibility not in myRefAbbrDict:
+                        logging.error( _("Possible alternative books for '{}' contains invalid '{}' entry").format( BBB, possibility ) )
         adjAllAbbreviationsDict = {}
         for abbreviation, value in allAbbreviationsDict.items(): # Remove useless entries
             if value != "MultipleValues": adjAllAbbreviationsDict[abbreviation] = value
@@ -654,6 +660,9 @@ def main():
     """
     Main program to handle command line parameters and then run what they want.
     """
+    # Configure basic logging
+    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
+
     # Handle command line parameters
     from optparse import OptionParser
     parser = OptionParser( version="v{}".format( versionString ) )

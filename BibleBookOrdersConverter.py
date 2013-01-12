@@ -4,9 +4,9 @@
 # BibleBookOrdersConverter.py
 #
 # Module handling BibleBookOrderSystem_*.xml to produce C and Python data tables
-#   Last modified: 2011-05-30 (also update versionString below)
+#   Last modified: 2013-01-13 (also update versionString below)
 #
-# Copyright (C) 2010-2011 Robert Hunt
+# Copyright (C) 2010-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -533,6 +533,9 @@ def main():
     """
     Main program to handle command line parameters and then run what they want.
     """
+    # Configure basic logging
+    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
+
     # Handle command line parameters
     from optparse import OptionParser
     parser = OptionParser( version="v{}".format( versionString ) )

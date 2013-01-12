@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodes.py
-#   Last modified: 2013-01-10 by RJH (also update versionString below)
+#   Last modified: 2013-01-12 by RJH (also update versionString below)
 #
 # Module handling BibleBooksCodes functions
 #
@@ -302,7 +302,7 @@ class BibleBooksCodes:
                     result.append( (pA, pN, BBB,) )
                     found.append( pA )
         return result
-    # end of getAllUSXBooksCodeNumberTriples
+    # end of BibleBooksCodes:getAllUSXBooksCodeNumberTriples
 
     def getAllBibleditBooksCodeNumberTriples( self ):
         """
@@ -319,12 +319,22 @@ class BibleBooksCodes:
                     result.append( (pA, pN, BBB,) )
                     found.append( pA )
         return result
-    # end of getAllBibleditBooksCodeNumberTriples
+    # end of BibleBooksCodes:getAllBibleditBooksCodeNumberTriples
+
+    def getPossibleAlternativeBooksCodes( self, BBB ):
+        """
+        Return a list of any book reference codes for possible similar alternative books.
+
+        Returns None (rather than an empty list) if there's none.
+        """
+        return self.__DataDicts["referenceAbbreviationDict"][BBB]['possibleAlternativeBooks']
+    # end of BibleBooksCodes:getPossibleAlternativeBooksCodes
+
 
     # NOTE: The following functions are all not recommended (NR) because they rely on assumed information that may be incorrect
     #           i.e., they assume English language or European book order conventions
     #       They are included because they might be necessary for error messages or similar uses
-    #           (where the correct information is unknown)
+    #           (where the precisely correct information is unknown)
     def getEnglishName_NR( self, BBB ): # NR = not recommended
         """
         Returns the first English name for a book.
@@ -366,7 +376,8 @@ def main():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO )
+    # Configure basic logging
+    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
 
     # Handle command line parameters
     from optparse import OptionParser
@@ -392,7 +403,8 @@ def main():
     print( "USFM triples:", len(bbc.getAllUSFMBooksCodeNumberTriples()), bbc.getAllUSFMBooksCodeNumberTriples() )
     print( "USX triples:", len(bbc.getAllUSXBooksCodeNumberTriples()), bbc.getAllUSXBooksCodeNumberTriples() )
     print( "Bibledit triples:", len(bbc.getAllBibleditBooksCodeNumberTriples()), bbc.getAllBibleditBooksCodeNumberTriples() )
-    print( "Single chapter books (and OSIS):\n  {}\n  {}".format(bbc.getSingleChapterBooksList(), bbc.getOSISSingleChapterBooksList()) )
+    print( "Single chapter books (and OSIS):\n  {}\n  {}".format( bbc.getSingleChapterBooksList(), bbc.getOSISSingleChapterBooksList() ) )
+    print( "Possible alternative  books to Esther: {}".format( bbc.getPossibleAlternativeBooksCodes('EST') ) )
     for something in ('PE2', '2Pe', '2 Pet', '2Pet', 'Job', ):
         print( something, bbc.getBBB( something ) )
 # end of main

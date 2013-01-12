@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleOrganizationalSystemsConverter.py
-#   Last modified: 2013-01-10 by RJH (also update versionString below)
+#   Last modified: 2013-01-11 by RJH (also update versionString below)
 #
 # Module handling BibleOrganizationalSystems.xml to produce C and Python data tables
 #
@@ -232,6 +232,8 @@ class BibleOrganizationalSystemsConverter:
                     for BBB in bookList:
                         if not self._BibleBooksCodes.isValidReferenceAbbreviation( BBB ):
                             logging.critical( _("Unrecognized '{}' Bible book code found in 'includesBooks' in record with ID '{}' (record {})").format( BBB, ID, j) )
+                        if bookList.count( BBB ) > 1:
+                            logging.error( _("Multiple '{}' Bible book codes found in 'includesBooks' in record with ID '{}' (record {})").format( BBB, ID, j) )
 
             else:
                 logging.warning( _("Unexpected element: {} in record {}").format( element.tag, j ) )

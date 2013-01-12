@@ -63,7 +63,7 @@ See the supplied ReadMe.txt for more details.
   <header>
     <work>
       <version>0.22</version>
-      <date>2013-01-09</date>
+      <date>2013-01-12</date>
       <title>Bible organizational systems list</title>
       <contributor role="com">Robert Hunt</contributor>
       <rights>Public Domain</rights>
@@ -133,7 +133,7 @@ See the supplied ReadMe.txt for more details.
     <bookOrderSystem>EuropeanBible</bookOrderSystem>
     <booksNamesSystem>eng_traditional</booksNamesSystem>
     <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZK DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
-                    JDT TOB WIS ECC MAC
+                    JDT TOB WIS SIR MAC
                     MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
     <url>http://en.wikipedia.org/wiki/St_Jerome</url>
     <url>http://en.wikipedia.org/wiki/Vulgate</url>
@@ -1993,7 +1993,7 @@ See the supplied ReadMe.txt for more details.
     <bookOrderSystem>EuropeanBible</bookOrderSystem>
     <booksNamesSystem>eng_traditional</booksNamesSystem>
     <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZK DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
-                    TOB JDT GES WIS SIR BAR LJE PAZ SUS BEL MA1 MA2 GES LES MAN
+                    TOB JDT WIS SIR BAR LJE PAZ SUS BEL MA1 MA2 GES LES MAN
                     MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
   </BibleOrganizationalSystem>
 
@@ -2006,7 +2006,7 @@ See the supplied ReadMe.txt for more details.
     <bookOrderSystem>EuropeanBible</bookOrderSystem>
     <!--<booksNamesSystem>eng_traditional</booksNamesSystem>-->
     <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZK DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
-                    TOB JDT GES WIS SIR BAR LJE PAZ SUS BEL MA1 MA2 GES LES MAN
+                    TOB JDT WIS SIR BAR LJE PAZ SUS BEL MA1 MA2 GES LES MAN
                     MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
   </BibleOrganizationalSystem>
 
@@ -2019,7 +2019,7 @@ See the supplied ReadMe.txt for more details.
     <bookOrderSystem>EuropeanBible</bookOrderSystem>
     <!--<booksNamesSystem>eng_traditional</booksNamesSystem>-->
     <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZK DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
-                    TOB JDT GES WIS SIR BAR LJE PAZ SUS BEL MA1 MA2 GES LES MAN
+                    TOB JDT WIS SIR BAR LJE PAZ SUS BEL MA1 MA2 GES LES MAN
                     MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
   </BibleOrganizationalSystem>
 
@@ -2032,7 +2032,7 @@ See the supplied ReadMe.txt for more details.
     <bookOrderSystem>EuropeanBible</bookOrderSystem>
     <!--<booksNamesSystem>eng_traditional</booksNamesSystem>-->
     <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZK DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
-                    TOB JDT GES WIS SIR BAR LJE PAZ SUS BEL MA1 MA2 GES LES MAN
+                    TOB JDT WIS SIR BAR LJE PAZ SUS BEL MA1 MA2 GES LES MAN
                     MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
   </BibleOrganizationalSystem>
 
@@ -2045,21 +2045,21 @@ See the supplied ReadMe.txt for more details.
     <bookOrderSystem>EuropeanBible</bookOrderSystem>
     <!--<booksNamesSystem>eng_traditional</booksNamesSystem>-->
     <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZK DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
-                    TOB JDT GES WIS SIR BAR LJE PAZ SUS BEL MA1 MA2 GES LES MAN
+                    TOB JDT WIS SIR BAR LJE PAZ SUS BEL MA1 MA2 GES LES MAN
                     MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
   </BibleOrganizationalSystem>
 
   <BibleOrganizationalSystem type="translation">
     <referenceAbbreviation>GENERIC-Vulgate-81</referenceAbbreviation>
-    <languageCode>???</languageCode>
+    <languageCode>lat</languageCode>
     <name>Generic with Deuterocanon</name>
-    <versificationSystem>Vulgate</versificationSystem>
+    <versificationSystem>Vulgate1</versificationSystem>
     <punctuationSystem>None</punctuationSystem>
     <bookOrderSystem>EuropeanBible</bookOrderSystem>
     <!--<booksNamesSystem>eng_traditional</booksNamesSystem>-->
     <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZK DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
-                    TOB JDT GES WIS SIR BAR LJE PAZ SUS BEL MA1 MA2 GES LES MAN
-                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
+                    TOB JDT WIS SIR BAR LJE PAZ SUS BEL MA1 MA2
+                    MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV MAN GES LES PS2 LAO</includesBooks>
   </BibleOrganizationalSystem>
 
   <BibleOrganizationalSystem type="translation">
@@ -2071,20 +2071,20 @@ See the supplied ReadMe.txt for more details.
     <bookOrderSystem>EuropeanBible</bookOrderSystem>
     <!--<booksNamesSystem>eng_traditional</booksNamesSystem>-->
     <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZK DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
-                    TOB JDT GES WIS SIR BAR LJE PAZ SUS BEL MA1 MA2 GES LES MAN
+                    TOB JDT WIS SIR BAR LJE PAZ SUS BEL MA1 MA2 GES LES MAN
                     MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
   </BibleOrganizationalSystem>
 
   <BibleOrganizationalSystem type="translation">
     <referenceAbbreviation>GENERIC-German-81</referenceAbbreviation>
-    <languageCode>???</languageCode>
+    <languageCode>deu</languageCode>
     <name>Generic with Deuterocanon</name>
     <versificationSystem>Luther</versificationSystem>
     <punctuationSystem>None</punctuationSystem>
     <bookOrderSystem>EuropeanBible</bookOrderSystem>
     <!--<booksNamesSystem>eng_traditional</booksNamesSystem>-->
     <includesBooks>GEN EXO LEV NUM DEU JOS JDG RUT SA1 SA2 KI1 KI2 CH1 CH2 EZR NEH EST JOB PSA PRO ECC SNG ISA JER LAM EZK DAN HOS JOL AMO OBA JNA MIC NAH HAB ZEP HAG ZEC MAL
-                    TOB JDT GES WIS SIR BAR LJE PAZ SUS BEL MA1 MA2 GES LES MAN
+                    TOB JDT WIS SIR BAR LJE PAZ SUS BEL MA1 MA2 GES LES MAN
                     MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
   </BibleOrganizationalSystem>
 

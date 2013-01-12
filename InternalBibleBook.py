@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # InternalBibleBook.py
-#   Last modified: 2013-01-10 by RJH (also update versionString below)
+#   Last modified: 2013-01-11 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -39,7 +39,7 @@ and then calls
 """
 
 progName = "Internal Bible book handler"
-versionString = "0.14"
+versionString = "0.15"
 
 
 import os, logging
@@ -486,7 +486,7 @@ class InternalBibleBook:
 
 
         if self._processedFlag: return # Can only do it once
-        if Globals.verbosityLevel > 2: print( "  " + _("Processing {} lines...").format( self.objectNameString ) )
+        if Globals.verbosityLevel > 2: print( "  " + _("Processing {} {} lines...").format( self.objectNameString, self.bookReferenceCode ) )
         internalSFMsToRemove = self.USFMMarkers.getCharacterMarkersList( includeBackslash=True, includeEndMarkers=True )
         internalSFMsToRemove = sorted( internalSFMsToRemove, key=len, reverse=True ) # List longest first
         assert( self._rawLines )

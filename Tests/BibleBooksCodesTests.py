@@ -499,6 +499,23 @@ class BibleBooksCodesTests( unittest.TestCase ):
             self.assertEqual( len(resultTuple[2]), 3 )
         for BBB in (('Gen','1','GEN'),('Mat','40','MAT'),): self.assertTrue( BBB in results )
     # end of test_370_getAllBibleditBooksCodeNumberTriples
+
+    def test_380_getPossibleAlternativeBooksCodes( self ):
+        """ Test the getPossibleAlternativeBooksCodes function. """
+        for BBB in ('GEN','MAL','MAT','REV','SIR',):
+            result = self.bbc.getPossibleAlternativeBooksCodes( BBB )
+            self.assertEqual( result, None )
+        for BBB in ('EST','PSA','DAN',):
+            result = self.bbc.getPossibleAlternativeBooksCodes( BBB )
+            self.assertTrue( isinstance( result, list ) )
+            self.assertGreater( len(result), 0 )
+        result = self.bbc.getPossibleAlternativeBooksCodes( 'EST' )
+        self.assertTrue( isinstance( result, list ) )
+        self.assertGreater( len(result), 2 )
+        self.assertTrue( 'ESG' in result )
+        self.assertTrue( 'ESA' in result )
+        self.assertTrue( 'ESC' in result )
+    # end of test_380_getPossibleAlternativeBooksCodes
 # end of BibleBooksCodesTests class
 
 
