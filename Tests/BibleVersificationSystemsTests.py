@@ -4,9 +4,9 @@
 # BibleVersificationSystemsTests.py
 #
 # Module testing BibleVersificationSystems.py
-#   Last modified: 2011-12-06 (also update versionString below)
+#   Last modified: 2013-01-13 (also update versionString below)
 #
-# Copyright (C) 2011 Robert Hunt
+# Copyright (C) 2011-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -24,7 +24,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module testing BibleVersificationSystems.py.
+Module testing BibleVersificationSystemsConverter.py and BibleVersificationSystems.py.
 """
 
 progName = "Bible Versification Systems tests"
@@ -48,45 +48,45 @@ class BibleVersificationSystemsConverterTests(unittest.TestCase):
         # Create the BibleVersificationSystemsConverter object
         self.bvssc = BibleVersificationSystemsConverter.BibleVersificationSystemsConverter().loadSystems() # Doesn't reload the XML unnecessarily :)
 
-    def test_010_str( self ):
+    def test_1010_str( self ):
         """ Test the __str__ function. """
         result = str( self.bvssc )
         self.assertTrue( isinstance( result, str ) )
         self.assertTrue( len(result) > 20 )
-    # end of test_010_str
+    # end of test_1010_str
 
-    def test_020_len( self ):
+    def test_1020_len( self ):
         """ Test the __len__ function. """
         self.assertTrue( 10 < len(self.bvssc) < 50 ) # The number of loaded systems
-    # end of test_020_len
+    # end of test_1020_len
 
-    def test_030_importDataToPython( self ):
+    def test_1030_importDataToPython( self ):
         """ Test the importDataToPython function. """
         result = self.bvssc.importDataToPython()
         self.assertTrue( isinstance( result, dict ) )
         self.assertEqual( len(result), len(self.bvssc) )
-    # end of test_030_importDataToPython
+    # end of test_1030_importDataToPython
 
-    def test_040_pickle( self ):
+    def test_1040_pickle( self ):
         """ Test the pickle function. """
         self.assertEqual( self.bvssc.pickle(), None ) # Basically just make sure that it runs
-    # end of test_040_pickle
+    # end of test_1040_pickle
 
-    def test_050_exportDataToPython( self ):
+    def test_1050_exportDataToPython( self ):
         """ Test the exportDataToPython function. """
         self.assertEqual( self.bvssc.exportDataToPython(), None ) # Basically just make sure that it runs
-    # end of test_050_exportDataToPython
+    # end of test_1050_exportDataToPython
 
-    def test_060_exportDataToJSON( self ):
+    def test_1060_exportDataToJSON( self ):
         """ Test the exportDataToJSON function. """
         self.assertEqual( self.bvssc.exportDataToJSON(), None ) # Basically just make sure that it runs
-    # end of test_060_exportDataToJSON
+    # end of test_1060_exportDataToJSON
 
-    def test_070_exportDataToC( self ):
+    def test_1070_exportDataToC( self ):
         """ Test the exportDataToC function. """
         print( "Sorry, no C export yet :(" )
         #self.assertEqual( self.bvssc.exportDataToC(), None ) # Basically just make sure that it runs
-    # end of test_070_exportDataToC
+    # end of test_1070_exportDataToC
 # end of BibleVersificationSystemsConverterTests class
 
 
@@ -97,19 +97,19 @@ class BibleVersificationSystemsTests(unittest.TestCase):
         # Create the BibleVersificationSystems object
         self.bvss = BibleVersificationSystems.BibleVersificationSystems().loadData( os.path.join( sourceFolder, "DataFiles/VersificationSystems/" ) ) # Doesn't reload the XML unnecessarily :)
 
-    def test_010_str( self ):
+    def test_2010_str( self ):
         """ Test the __str__ function. """
         result = str( self.bvss )
         self.assertTrue( isinstance( result, str ) )
         self.assertTrue( len(result) > 20 )
-    # end of test_010_str
+    # end of test_2010_str
 
-    def test_020_len( self ):
+    def test_2020_len( self ):
         """ Test the __len__ function. """
         self.assertTrue( 10 < len(self.bvss) < 50 ) # The number of loaded systems
-    # end of test_020_len
+    # end of test_2020_len
 
-    def test_030_getAvailableVersificationSystemNames( self ):
+    def test_2030_getAvailableVersificationSystemNames( self ):
         """ Test the getAvailableVersificationSystemNames function. """
         results = self.bvss.getAvailableVersificationSystemNames()
         self.assertTrue( isinstance( results, list ) )
@@ -118,15 +118,15 @@ class BibleVersificationSystemsTests(unittest.TestCase):
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
         for name in ("KJV","GNT92","NRSV","NIV84","Luther",): self.assertTrue( name in results )
-    # end of test_030_getAvailableVersificationSystemNames
+    # end of test_2030_getAvailableVersificationSystemNames
 
-    def test_040_isValidVersificationSystemName( self ):
+    def test_2040_isValidVersificationSystemName( self ):
         """ Test the isValidVersificationSystemName function. """
         for goodName in ("KJV","GNT92","NRSV","NIV84","Luther",): self.assertTrue( self.bvss.isValidVersificationSystemName(goodName) )
         for badName in ("KJV2011","Gnt92","NewRSV",): self.assertFalse( self.bvss.isValidVersificationSystemName(badName) )
-    # end of test_040_getAvailableVersificationSystemNames
+    # end of test_2040_getAvailableVersificationSystemNames
 
-    def test_050_getVersificationSystem( self ):
+    def test_2050_getVersificationSystem( self ):
         """ Test the getVersificationSystem function. """
         for name in ("KJV","GNT92","NRSV","NIV84","Luther",):
             results = self.bvss.getVersificationSystem( name )
@@ -139,15 +139,15 @@ class BibleVersificationSystemsTests(unittest.TestCase):
             self.assertFalse( None in results )
             self.assertFalse( '' in results )
             self.assertEqual( self.bvss.getVersificationSystem('SomeName'), None )
-    # end of test_050_getVersificationSystem
+    # end of test_2050_getVersificationSystem
 
-    def test_060_checkVersificationSystem( self ):
+    def test_2060_checkVersificationSystem( self ):
         """ Test the getBookList function. """
         for systemName in ('RSV52','NLT96','KJV','Vulgate','Septuagint'): # Test these systems against themselves
             testSystem = self.bvss.getVersificationSystem( systemName )
             self.bvss.checkVersificationSystem( "testSystem-"+systemName+'-a', testSystem['CV'] ) # Just compare the number of verses per chapter
             self.bvss.checkVersificationSystem( "testSystem-"+systemName+'-b', testSystem['CV'], testSystem ) # include omitted/combined/reordered verses checks this time
-    # end of test_060_checkVersificationSystem
+    # end of test_2060_checkVersificationSystem
 # end of BibleVersificationSystemsTests class
 
 
@@ -159,34 +159,34 @@ class BibleVersificationSystemTests(unittest.TestCase):
         self.systemName = "KJV"
         self.bvs = BibleVersificationSystems.BibleVersificationSystem( self.systemName ) # Doesn't reload the XML unnecessarily :)
 
-    def test_010_str( self ):
+    def test_3010_str( self ):
         """ Test the __str__ function. """
         result = str( self.bvs )
         self.assertTrue( isinstance( result, str ) )
         self.assertTrue( len(result) > 20 )
-    # end of test_010_str
+    # end of test_3010_str
 
-    def test_020_numAvailableBooks( self ):
+    def test_3020_numAvailableBooks( self ):
         """ Test the __len__ and numBooks functions. """
         self.assertEqual( len(self.bvs), self.bvs.numAvailableBooks() )
         self.assertTrue( 22 < len(self.bvs) < 120 )
         self.assertTrue( 22 < self.bvs.numAvailableBooks() < 120 )
-    # end of test_020_numAvailableBooks
+    # end of test_3020_numAvailableBooks
 
-    def test_030_getVersificationSystemName( self ):
+    def test_3030_getVersificationSystemName( self ):
         """ Test the getVersificationSystemName function. """
         self.assertEqual( self.bvs.getVersificationSystemName(), self.systemName )
-    # end of test_030_getVersificationSystemName
+    # end of test3030_getVersificationSystemName
 
-    def test_040_getNumChapters( self ):
+    def test_3040_getNumChapters( self ):
         """ Test the getNumChapters function. """
         for BBB,value in (('GEN',50),('MAT',28), ):
             self.assertEqual( self.bvs.getNumChapters(BBB), value )
         for badBBB in ('XYZ','Gen', ):
             self.assertRaises( KeyError, self.bvs.getNumChapters, badBBB )
-    # end of test_040_getNumChapters
+    # end of test_3040_getNumChapters
 
-    def test_050_getNumVerses( self ):
+    def test_3050_getNumVerses( self ):
         """ Test the getNumVerses function. """
         for BBB,C,value in (('GEN','1',31),('GEN','50',26),('MAT','28',20), ):
             self.assertEqual( self.bvs.getNumVerses(BBB,C), value )
@@ -194,9 +194,9 @@ class BibleVersificationSystemTests(unittest.TestCase):
             self.assertRaises( KeyError, self.bvs.getNumVerses, badBBB, C )
         for BBB,badC in (('GEN','0'),('GEN','51'), ):
             self.assertRaises( KeyError, self.bvs.getNumVerses, BBB, badC )
-    # end of test_050_getNumVerses
+    # end of test_3050_getNumVerses
 
-    def test_060_isSingleChapterBook( self ):
+    def test_3060_isSingleChapterBook( self ):
         """ Test the isSingleChapterBook function. """
         for BBB in ('PHM','JDE', ):
             self.assertTrue( self.bvs.isSingleChapterBook(BBB) )
@@ -204,9 +204,9 @@ class BibleVersificationSystemTests(unittest.TestCase):
             self.assertFalse( self.bvs.isSingleChapterBook(BBB) )
         for badBBB in ('XYZ','Gen','MA6', ):
             self.assertRaises( KeyError, self.bvs.isSingleChapterBook, badBBB )
-    # end of test_060_isSingleChapterBook
+    # end of test_3060_isSingleChapterBook
 
-    def test_070_getNumVersesList( self ):
+    def test_3070_getNumVersesList( self ):
         """ Test the getNumVersesList function. """
         for BBB in ('GEN','MAT','JDE',):
             result = self.bvs.getNumVersesList( BBB )
@@ -218,7 +218,7 @@ class BibleVersificationSystemTests(unittest.TestCase):
                 self.assertTrue( isinstance( value, int ) )
         for badBBB in ('XYZ','Gen','MA6', ):
             self.assertRaises( KeyError, self.bvs.getNumVersesList, badBBB )
-    # end of test_070_getNumVersesList
+    # end of test_3070_getNumVersesList
 # end of BibleVersificationSystemTests class
 
 

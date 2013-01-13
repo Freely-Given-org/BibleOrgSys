@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodesConverter.py
-#   Last modified: 2013-01-12 by RJH (also update versionString below)
+#   Last modified: 2013-01-13 by RJH (also update versionString below)
 #
 # Module handling BibleBooksCodes.xml to produce C and Python data tables
 #
@@ -28,7 +28,7 @@ Module handling BibleBooksCodes.xml and to export to JSON, C, and Python data ta
 """
 
 progName = "Bible Books Codes converter"
-versionString = "0.65"
+versionString = "0.66"
 
 
 import logging, os.path
@@ -404,7 +404,6 @@ class BibleBooksCodesConverter:
                 else: myENDict[UCName] = ( intID, referenceAbbreviation )
         for BBB in myRefAbbrDict: # Do some cross-checking
             if myRefAbbrDict[BBB]["possibleAlternativeBooks"]:
-                print( "Here", BBB, myRefAbbrDict[BBB]["possibleAlternativeBooks"] )
                 for possibility in myRefAbbrDict[BBB]["possibleAlternativeBooks"]:
                     if possibility not in myRefAbbrDict:
                         logging.error( _("Possible alternative books for '{}' contains invalid '{}' entry").format( BBB, possibility ) )

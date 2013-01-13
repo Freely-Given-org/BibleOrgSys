@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # TestSuite.py
-#   Last modified: 2012-07-03 by RJH (also update versionString below)
+#   Last modified: 2013-01-13 by RJH (also update versionString below)
 #
 # Suite for testing BibleOrgSys
 #
-# Copyright (C) 2011-2012 Robert Hunt
+# Copyright (C) 2011-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Suite testing BibleOrgSys.
 """
 
 progName = "Bible Organisational System test suite"
-versionString = "0.10"
+versionString = "0.11"
 
 
 import sys, unittest
@@ -40,7 +40,7 @@ sys.path.append( sourceFolder )
 import Globals
 import BibleBooksCodesTests, BibleBookOrdersTests
 import ISO_639_3_LanguagesTests, BiblePunctuationSystemsTests
-import BibleBooksNamesTests, BibleVersificationSystemsTests
+import BibleBooksNamesTests, BibleVersificationSystemsTests, BibleOrganizationalSystemsTests
 import BibleReferencesTests
 import USFMMarkersTests, USFMFilenamesTests, USXFilenamesTests
 
@@ -78,6 +78,10 @@ suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleBooksNamesTe
 suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleVersificationSystemsTests.BibleVersificationSystemsConverterTests ) )
 suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleVersificationSystemsTests.BibleVersificationSystemsTests ) )
 suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleVersificationSystemsTests.BibleVersificationSystemTests ) )
+
+suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleOrganizationalSystemsTests.BibleOrganizationalSystemsConverterTests ) )
+suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleOrganizationalSystemsTests.BibleOrganizationalSystemsTests ) )
+suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleOrganizationalSystemsTests.BibleOrganizationalSystemTests ) )
 
 suiteList.append( unittest.TestLoader().loadTestsFromTestCase( BibleReferencesTests.BibleReferencesTests ) )
 

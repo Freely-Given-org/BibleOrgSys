@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleVersificationSystems.py
-#   Last modified: 2013-01-10 (also update versionString below)
+#   Last modified: 2013-01-14 (also update versionString below)
 #
 # Module handling BibleVersificationSystem_*.xml to produce C and Python data tables
 #
@@ -490,7 +490,7 @@ class BibleVersificationSystem:
 
         # Make sure we have the bible books codes data loaded and available
         self.__BibleBooksCodes = BibleBooksCodes().loadData()
-    # end of __init__
+    # end ofBibleVersificationSystem: __init__
 
     def __str__( self ):
         """
@@ -528,24 +528,24 @@ class BibleVersificationSystem:
         else: #not very verbose
             result += ('\n' if result else '') + " " + _("{} Bible versification system").format( self._systemName )
         return result
-    # end of __str__
+    # end of BibleVersificationSystem:__str__
 
     def __len__( self ):
         """ Returns the number of books defined in this versification system.
             NOTE: This value is not useful for finding the number of books in a particular Bible. """
         return len( self.__chapterDataDict  )
-    # end of __len__
+    # end of BibleVersificationSystem:__len__
 
     def numAvailableBooks( self ):
         """ Returns the number of available books in the versification system.
             NOTE: This value is not useful for finding the number of books in a particular Bible. """
         return len( self.__chapterDataDict )
-    # end of numAvailableBooks
+    # end of BibleVersificationSystem:numAvailableBooks
 
     def getVersificationSystemName( self ):
         """ Return the book order system name. """
         return self._systemName
-    # end of getVersificationSystemName
+    # end of BibleVersificationSystem:getVersificationSystemName
 
     def getNumChapters( self, BBB ):
         """ Returns the number of chapters (int) in the given book.
@@ -556,7 +556,7 @@ class BibleVersificationSystem:
             return int( self.__chapterDataDict[BBB]['numChapters'] )
         # else
         return None
-    # end of getNumChapters
+    # end of BibleVersificationSystem:getNumChapters
 
     def getNumVerses( self, BBB, C ):
         """ Returns the number of verses (int) in the given book and chapter. """
@@ -565,7 +565,7 @@ class BibleVersificationSystem:
             logging.debug( _("BibleVersificationSystem.getNumVerses was passed an integer chapter instead of a string with {} {}").format(BBB,C) )
             C = str( C )
         return int( self.__chapterDataDict[BBB][C] )
-    # end of getNumVerses
+    # end of BibleVersificationSystem:getNumVerses
 
     def isSingleChapterBook( self, BBB ):
         """ Returns True/False to indicate if this book only contains a single chapter.
@@ -576,7 +576,7 @@ class BibleVersificationSystem:
             return self.__chapterDataDict[BBB]['numChapters'] == '1'
         # else
         return None
-    # end of isSingleChapterBook
+    # end of BibleVersificationSystem:isSingleChapterBook
 
     def getNumVersesList( self, BBB ):
         """ Returns a list containing an integer for each chapter indicating the number of verses. """
@@ -585,7 +585,7 @@ class BibleVersificationSystem:
         for x in self.__chapterDataDict[BBB].keys():
             if x!='numChapters': myList.append( int( self.__chapterDataDict[BBB][x] ) )
         return myList
-    # end of getNumVersesList
+    # end of BibleVersificationSystem:getNumVersesList
 
     def getOmittedVerseList( self, BBB, fullRefs=False ):
         """ Returns a list of (C,V) tuples noting omitted verses in the given book.
@@ -595,7 +595,7 @@ class BibleVersificationSystem:
             return [(BBB,C,V) for (C,V) in self.__omittedVersesDict[BBB]]
         # else
         return self.__omittedVersesDict[BBB]
-    # end of getOmittedVerseList
+    # end of BibleVersificationSystem:getOmittedVerseList
 
     def isOmittedVerse( self, referenceTuple ):
         """ Returns True/False indicating if the given reference is omitted in this system. """
@@ -608,7 +608,7 @@ class BibleVersificationSystem:
             V = str( V )
         if BBB not in self.__omittedVersesDict: return False
         return (C,V) in self.__omittedVersesDict[BBB]
-    # end of isOmittedVerse
+    # end of BibleVersificationSystem:isOmittedVerse
 
     def getAuxilliaryVerseList( self, listName ):
         """ gets a list of auxilliary verse information for "omitted", "combined", or "reordered" verses. """
@@ -616,7 +616,7 @@ class BibleVersificationSystem:
         if listName=="omitted": return self.__omittedVersesDict
         if listName=="combined": return self.__combinedVersesDict
         if listName=="reordered": return self.__reorderedVersesDict
-    # end of getAuxilliaryVerseList
+    # end of BibleVersificationSystem:getAuxilliaryVerseList
 
     def isValidBCVRef( self, referenceTuple, referenceString=None, wantErrorMessages=False ):
         """ Returns True/False indicating if the given reference is valid in this system. """
@@ -638,7 +638,7 @@ class BibleVersificationSystem:
             elif wantErrorMessages: logging.error( _("{} {}:{} is invalid chapter in {} versification system {}").format(BBB,C,V,self.getVersificationSystemName(),myReferenceString) )
         elif wantErrorMessages: logging.error( _("{} {}:{} is invalid book in {} versification system {}").format(BBB,C,V,self.getVersificationSystemName(),myReferenceString) )
         return False
-    # end of isValidBCVRef
+    # end of BibleVersificationSystem:isValidBCVRef
 
     def expandCVRange( self, startRef, endRef, referenceString=None, bookOrderSystem=None, wantErrorMessages=False ):
         """ Returns a list containing all valid references (inclusive) between the given values. """
@@ -740,7 +740,7 @@ class BibleVersificationSystem:
 
         #print( startRef, endRef, resultList, haveErrors, haveWarnings )
         return resultList #, haveErrors, haveWarnings
-    # end of expandCVRange
+    # end of BibleVersificationSystem:expandCVRange
 # end of BibleVersificationSystem class
 
 

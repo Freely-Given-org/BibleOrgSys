@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # BibleVersificationSystemsConverter.py
-#   Last modified: 2011-12-06 (also update versionString below)
+#   Last modified: 2013-01-13 (also update versionString below)
 #
 # Module handling BibleVersificationSystem_*.xml to produce C and Python data tables
 #
-# Copyright (C) 2010-2011 Robert Hunt
+# Copyright (C) 2010-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -71,7 +71,7 @@ class BibleVersificationSystemsConverter:
 
         # Make sure we have the bible books codes data loaded and available
         self.__BibleBooksCodes = BibleBooksCodes().loadData()
-    # end of __init__
+    # end of BibleVersificationSystemsConverter:__init__
 
     def loadSystems( self, XMLFolder=None ):
         """
@@ -123,7 +123,7 @@ class BibleVersificationSystemsConverter:
         else: # The data must have been already loaded
             if XMLFolder is not None and XMLFolder!=self.__XMLFolder: logging.error( _("Bible versification systems are already loaded -- your different folder of '{}' was ignored").format( XMLFolder ) )
         return self
-    # end of loadSystems
+    # end of BibleVersificationSystemsConverter:loadSystems
 
     def _validateSystem( self, versificationTree ):
         """
@@ -194,7 +194,7 @@ class BibleVersificationSystemsConverter:
                         uniqueDict["Element_"+elementName].append( text )
             else:
                 logging.warning( _("Unexpected element: {} in record {}").format( element.tag, k ) )
-    # end of _validateSystem
+    # end of BibleVersificationSystemsConverter:_validateSystem
 
     def __str__( self ):
         """
@@ -235,12 +235,12 @@ class BibleVersificationSystemsConverter:
                 if numCombinedVersesInstances: result += ('\n' if result else '') + "      Number of combined verses instances = {}".format( numCombinedVersesInstances )
                 if numRecorderedVersesInstances: result += ('\n' if result else '') + "      Number of reordered verses instances = {}".format( numRecorderedVersesInstances )
         return result
-    # end of __str__
+    # end of BibleVersificationSystemsConverter:__str__
 
     def __len__( self ):
         """ Returns the number of systems loaded. """
         return len( self.__XMLSystems )
-    # end of __len__
+    # end of BibleVersificationSystemsConverter:__len__
 
     def importDataToPython( self ):
         """
@@ -697,6 +697,9 @@ def main():
     """
     Main program to handle command line parameters and then run what they want.
     """
+    # Configure basic logging
+    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
+
     # Handle command line parameters
     from optparse import OptionParser
     parser = OptionParser( version="v{}".format( versionString ) )

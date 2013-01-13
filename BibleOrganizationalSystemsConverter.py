@@ -88,7 +88,7 @@ class BibleOrganizationalSystemsConverter:
         self._BiblePunctuationSystems = BiblePunctuationSystems().loadData()
         self._BibleVersificationSystems = BibleVersificationSystems().loadData()
         self._BibleBooksNamesSystems = BibleBooksNamesSystems().loadData()
-    # end of __init__
+    # end of BibleOrganizationalSystemsConverter:__init__
 
     def __str__( self ):
         """
@@ -103,7 +103,12 @@ class BibleOrganizationalSystemsConverter:
         if self.date: result += ('\n' if result else '') + "  Date: {}".format( self.date )
         result += ('\n' if result else '') + "  Number of entries = {}".format( len(self._XMLtree) )
         return result
-    # end of __str__
+    # end of BibleOrganizationalSystemsConverter:__str__
+
+    def __len__( self ):
+        """ Returns the number of items loaded. """
+        return len( self._XMLtree )
+    # end of BibleOrganizationalSystemsConverter:__len__
 
     def loadAndValidate( self, XMLFilepath=None ):
         """
@@ -118,7 +123,7 @@ class BibleOrganizationalSystemsConverter:
             if Globals.strictCheckingFlag:
                 self._validate()
         return self
-    # end of loadAndValidate
+    # end of BibleOrganizationalSystemsConverter:loadAndValidate
 
     def _load( self, XMLFilepath ):
         """
@@ -154,7 +159,7 @@ class BibleOrganizationalSystemsConverter:
                 logging.warning( _("Missing header element (looking for '{}' tag)").format( self._headerTag ) )
         else:
             logging.error( _("Expected to load '{}' but got '{}'").format( self._treeTag, self._XMLtree.tag ) )
-    # end of _load
+    # end of BibleOrganizationalSystemsConverter:_load
 
     def _validate( self ):
         """
@@ -237,7 +242,7 @@ class BibleOrganizationalSystemsConverter:
 
             else:
                 logging.warning( _("Unexpected element: {} in record {}").format( element.tag, j ) )
-    # end of _validate
+    # end of BibleOrganizationalSystemsConverter:_validate
 
     def importDataToPython( self ):
         """
@@ -290,6 +295,8 @@ class BibleOrganizationalSystemsConverter:
                 #assert( extendedRA not in combinedIndexDict )
                 if extendedRA in combinedIndexDict: logging.error( _("Found {} in combinedIndexDict").format( extendedRA ) )
                 combinedIndexDict[extendedRA] = [extendedRA]
+        assert( len(indexDict) <= len(dataDict) )
+        assert( len(combinedIndexDict) >= len(indexDict) )
 
         if Globals.strictCheckingFlag: # We'll do quite a bit more cross-checking now
             for extendedReferenceAbbreviation,data in dataDict.items():

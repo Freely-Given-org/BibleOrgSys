@@ -4,9 +4,9 @@
 # BiblePunctuationSystemsTests.py
 #
 # Module testing BiblePunctuationSystems.py
-#   Last modified: 2011-06-15 (also update versionString below)
+#   Last modified: 2013-01-13 (also update versionString below)
 #
-# Copyright (C) 2011 Robert Hunt
+# Copyright (C) 2011-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -24,7 +24,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module testing BiblePunctuationSystems.py.
+Module testing BiblePunctuationSystemsConverter.py and BiblePunctuationSystems.py.
 """
 
 progName = "Bible Punctuation Systems tests"
@@ -47,44 +47,44 @@ class BiblePunctuationSystemsConverterTests( unittest.TestCase ):
         # Create the BiblePunctuationSystemsConvertor object
         self.bpssc = BiblePunctuationSystemsConverter.BiblePunctuationSystemsConverter().loadSystems() # Doesn't reload the XML unnecessarily :)
 
-    def test_005_str( self ):
+    def test_1005_str( self ):
         """ Test the __str__ function. """
         result = str( self.bpssc )
         self.assertTrue( isinstance( result, str ) )
         self.assertTrue( len(result) > 20 )
-    # end of test_005_str
+    # end of test_1005_str
 
-    def test_010_len( self ):
+    def test_1010_len( self ):
         """ Test the __len__ function. """
         self.assertTrue( 2 < len(self.bpssc) < 20 ) # The number of loaded systems
-    # end of test_010_len
+    # end of test_1010_len
 
-    def test_020_importDataToPython( self ):
+    def test_1020_importDataToPython( self ):
         """ Test the importDataToPython function. """
         result = self.bpssc.importDataToPython()
         self.assertTrue( isinstance( result, dict ) )
         self.assertGreater( len(result), 2 ) # Number of punctuation systems
-    # end of test_020_importDataToPython
+    # end of test_1020_importDataToPython
 
-    def test_030_pickle( self ):
+    def test_1030_pickle( self ):
         """ Test the pickle function. """
         self.assertEqual( self.bpssc.pickle(), None ) # Basically just make sure that it runs
-    # end of test_030_pickle
+    # end of test_1030_pickle
 
-    def test_040_exportDataToPython( self ):
+    def test_1040_exportDataToPython( self ):
         """ Test the exportDataToPython function. """
         self.assertEqual( self.bpssc.exportDataToPython(), None ) # Basically just make sure that it runs
-    # end of test_040_exportDataToPython
+    # end of test_1040_exportDataToPython
 
-    def test_050_exportDataToJSON( self ):
+    def test_1050_exportDataToJSON( self ):
         """ Test the exportDataToJSON function. """
         self.assertEqual( self.bpssc.exportDataToJSON(), None ) # Basically just make sure that it runs
-    # end of test_050_exportDataToJSON
+    # end of test_1050_exportDataToJSON
 
-    def test_060_exportDataToC( self ):
+    def test_1060_exportDataToC( self ):
         """ Test the exportDataToC function. """
         self.assertEqual( self.bpssc.exportDataToC(), None ) # Basically just make sure that it runs
-    # end of test_060_exportDataToC
+    # end of test_1060_exportDataToC
 # end of BiblePunctuationSystemsConverterTests class
 
 
@@ -95,27 +95,27 @@ class BiblePunctuationSystemsTests( unittest.TestCase ):
         # Create the BiblePunctuationSystems object
         self.bpss = BiblePunctuationSystems.BiblePunctuationSystems().loadData() # Doesn't reload the XML unnecessarily :)
 
-    def test_005_str( self ):
+    def test_2005_str( self ):
         """ Test the __str__ function. """
         result = str( self.bpss )
         self.assertTrue( isinstance( result, str ) )
         self.assertTrue( len(result) > 20 )
-    # end of test_005_str
+    # end of test_2005_str
 
-    def test_010_len( self ):
+    def test_2010_len( self ):
         """ Test the __len__ function. """
         self.assertTrue( 2 < len(self.bpss) < 20 ) # The number of loaded systems
-    # end of test_010_len
+    # end of test_2010_len
 
-    def test_020_contains( self ):
+    def test_2020_contains( self ):
         """ Test the __contains__ function. """
         for goodName in ('English','Matigsalug',):
             self.assertTrue( goodName in self.bpss )
         for badName in ('XYZ','StandardBible',):
             self.assertFalse( badName in self.bpss )
-    # end of test_020_contains
+    # end of test_2020_contains
 
-    def test_030_getAvailablePunctuationSystemNames( self ):
+    def test_2030_getAvailablePunctuationSystemNames( self ):
         """ Test the getAvailablePunctuationSystemNames function. """
         results = self.bpss.getAvailablePunctuationSystemNames()
         self.assertTrue( isinstance( results, list ) )
@@ -124,9 +124,9 @@ class BiblePunctuationSystemsTests( unittest.TestCase ):
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
         for name in ("English",): self.assertTrue( name in results )
-    # end of test_030_getAvailablePunctuationSystemNames
+    # end of test_2030_getAvailablePunctuationSystemNames
 
-    def test_040_getPunctuationSystem( self ):
+    def test_2040_getPunctuationSystem( self ):
         """ Test the getPunctuationSystem function. """
         results = self.bpss.getPunctuationSystem( "English" )
         self.assertTrue( isinstance( results, dict ) )
@@ -138,7 +138,7 @@ class BiblePunctuationSystemsTests( unittest.TestCase ):
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
         self.assertEqual( self.bpss.getPunctuationSystem('SomeName'), None )
-    # end of test_040_getPunctuationSystem
+    # end of test_2040_getPunctuationSystem
 # end of BiblePunctuationSystemsTests class
 
 
@@ -150,32 +150,32 @@ class BiblePunctuationSystemTests( unittest.TestCase ):
         self.systemName = "English"
         self.bps = BiblePunctuationSystems.BiblePunctuationSystem( self.systemName ) # Doesn't reload the XML unnecessarily :)
 
-    def test_005_str( self ):
+    def test_3005_str( self ):
         """ Test the __str__ function. """
         result = str( self.bps )
         self.assertTrue( isinstance( result, str ) )
         self.assertTrue( len(result) > 20 )
-    # end of test_005_str
+    # end of test_3005_str
 
-    def test_010_len( self ):
+    def test_3010_len( self ):
         """ Test the __len__ function. """
         self.assertTrue( 27 <= len(self.bps) < 40 )
-    # end of test_010_len
+    # end of test_3010_len
 
-    def test_020_contains( self ):
+    def test_3020_contains( self ):
         """ Test the __contains__ function. """
         for name in ('bookSeparator','chapterSeparator','chapterVerseSeparator',):
             self.assertTrue( name in self.bps )
         for name in ('XYZ','Gen','LAO','MA1','Rev'):
             self.assertFalse( name in self.bps )
-    # end of test_020_contains
+    # end of test_3020_contains
 
-    def test_030_getPunctuationSystemName( self ):
+    def test_3030_getPunctuationSystemName( self ):
         """ Test the getPunctuationSystemName function. """
         self.assertEqual( self.bps.getPunctuationSystemName(), self.systemName )
-    # end of test_030_getPunctuationSystemName
+    # end of test_3030_getPunctuationSystemName
 
-    def test_040_getPunctuationDict( self ):
+    def test_3040_getPunctuationDict( self ):
         """ Test the getPunctuationDict function. """
         results = self.bps.getPunctuationDict()
         self.assertTrue( isinstance( results, dict ) )
@@ -187,9 +187,9 @@ class BiblePunctuationSystemTests( unittest.TestCase ):
             self.assertTrue( name in results )
         for name in ('XYZ','Gen','LAO','MA1','Rev'):
             self.assertFalse( name in results )
-    # end of test_040_getPunctuationDict
+    # end of test_3040_getPunctuationDict
 
-    def test_050_getAvailablePunctuationValueNames( self ):
+    def test_3050_getAvailablePunctuationValueNames( self ):
         """ Test the getAvailablePunctuationValueNames function. """
         results = self.bps.getAvailablePunctuationValueNames()
         self.assertTrue( isinstance( results, list ) )
@@ -201,9 +201,9 @@ class BiblePunctuationSystemTests( unittest.TestCase ):
             self.assertTrue( name in results )
         for name in ('XYZ','Gen','LAO','MA1','Rev'):
             self.assertFalse( name in results )
-    # end of test_050_getAvailablePunctuationValueNames
+    # end of test_3050_getAvailablePunctuationValueNames
 
-    def test_060_getPunctuationValue( self ):
+    def test_3060_getPunctuationValue( self ):
         """ Test the getPunctuationValue function. """
         for name in ('bookSeparator','chapterSeparator','chapterVerseSeparator',):
             result = self.bps.getPunctuationValue( name )
@@ -211,7 +211,7 @@ class BiblePunctuationSystemTests( unittest.TestCase ):
             self.assertTrue( 0 < len(result) < 5 ) # The number of characters
         for name in ('XYZ','Gen','LAO','MA1','Rev'):
             self.assertRaises( KeyError, self.bps.getPunctuationValue, name )
-    # end of test_060_getPunctuationValue
+    # end of test_3060_getPunctuationValue
 # end of BiblePunctuationSystemTests class
 
 
