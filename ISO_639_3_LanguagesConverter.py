@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # ISO_639_3_Languages.py
+#   Last modified: 2013-01-26 by RJH (also update versionString below)
 #
 # Module handling ISO_639_3.xml to produce C and Python data tables
-#   Last modified: 2011-05-28 (also update versionString below)
 #
-# Copyright (C) 2010-2011 Robert Hunt
+# Copyright (C) 2010-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling ISO_639_3_Languages.xml and to export to JSON, C, and Python dat
 """
 
 progName = "ISO 639_3_Languages handler"
-versionString = "0.83"
+versionString = "0.84"
 
 import logging, os.path
 from gettext import gettext as _
@@ -57,9 +57,9 @@ class ISO_639_3_LanguagesConverter:
         self._mainElementTag = "iso_639_3_entry"
 
         # These fields are used for automatically checking/validating the XML
-        self._compulsoryAttributes = ( "id", "name", "type", "scope", )
-        self._optionalAttributes = ( "part1_code", "part2_code", )
-        self._uniqueAttributes = ( "id", "name", "part1_code", "part2_code", )
+        self._compulsoryAttributes = ( "id", "status", "scope", "type", "reference_name", "name" )
+        self._optionalAttributes = ( "part1_code", "part2_code", "inverted_name", "common_name" )
+        self._uniqueAttributes = ( "id", "reference_name", "part1_code", "part2_code", )
         self._compulsoryElements = ()
         self._optionalElements = ()
         self._uniqueElements = self._compulsoryElements + self._optionalElements
@@ -125,7 +125,7 @@ class ISO_639_3_LanguagesConverter:
                     attributeValue = element.get( attributeName )
                     if attributeValue is None:
                         logging.error( "Compulsory '{}' attribute is missing from {} element in record {}".format( attributeName, element.tag, j ) )
-                    if not attributeValue:
+                    if not attributeValue and attributeName!="type":
                         logging.warning( "Compulsory '{}' attribute is blank on {} element in record {}".format( attributeName, element.tag, j ) )
 
                 # Check optional attributes on this main element
@@ -144,7 +144,7 @@ class ISO_639_3_LanguagesConverter:
                 # Check the attributes that must contain unique information (in that particular field -- doesn't check across different attributes)
                 for attributeName in self._uniqueAttributes:
                     attributeValue = element.get( attributeName )
-                    if attributeValue is not None:
+                    if attributeValue is not None and attributeName!="reference_name":
                         if attributeValue in uniqueDict["Attribute_"+attributeName]:
                             logging.error( "Found '{}' data repeated in '{}' field on {} element in record {}".format( attributeValue, attributeName, element.tag, j ) )
                         uniqueDict["Attribute_"+attributeName].append( attributeValue )

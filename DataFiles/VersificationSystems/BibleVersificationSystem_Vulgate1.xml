@@ -47,7 +47,7 @@ See the supplied ReadMe.txt for more details.
   <header>
     <work>
       <version>0.22</version>
-      <date>2010-12-01</date>
+      <date>2013-01-17</date>
       <title>Latin Vulgate Bible versification system</title>
       <contributor role="com">Robert Hunt</contributor>
       <rights>Public Domain</rights>
@@ -1759,6 +1759,12 @@ See the supplied ReadMe.txt for more details.
     <referenceAbbreviation>MAN</referenceAbbreviation>
     <numChapters>1</numChapters>
     <numVerses chapter="1">15</numVerses>
+  </BibleBookVersification>
+  <BibleBookVersification>
+    <nameEnglish>Psalm 151</nameEnglish>
+    <referenceAbbreviation>PS2</referenceAbbreviation>
+    <numChapters>1</numChapters>
+    <numVerses chapter="1">7</numVerses>
   </BibleBookVersification>
   <BibleBookVersification>
     <nameEnglish>1 Esdras</nameEnglish>

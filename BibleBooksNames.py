@@ -4,9 +4,9 @@
 # BibleBooksNames.py
 #
 # Module handling BibleBooksNames
-#   Last modified: 2011-06-15 (also update versionString below)
+#   Last modified: 2013-01-03 (also update versionString below)
 #
-# Copyright (C) 2010-2011 Robert Hunt
+# Copyright (C) 2010-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -317,7 +317,7 @@ class BibleBooksNamesSystems:
             for BBB in bookList:
                 bookNamesDictCopy[BBB] = bookNamesDict[BBB]
 
-            if not Globals.commandLineOptions.fast: # check that this system contains all the books we need
+            if Globals.strictCheckingFlag: # check that this system contains all the books we need
                 missingList = []
                 for BBB in bookList:
                     if BBB not in bookNamesDictCopy: missingList.append( BBB )

@@ -4,7 +4,7 @@
 # Globals.py
 #
 # Module handling Global variables for our Bible Organisational System
-#   Last modified: 2013-01-01 (also update versionString below)
+#   Last modified: 2013-02-03 (also update versionString below)
 #
 # Copyright (C) 2010-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module handling global variables.
 """
 
 progName = "Globals"
-versionString = "0.09"
+versionString = "0.10"
 
 import logging, os.path
 
@@ -246,7 +246,7 @@ def setVerbosityLevel( verbosityStringParameter ):
 
 
 def setDebugFlag( newValue=True ):
-    """ See the debug flag. """
+    """ Set the debug flag. """
     global debugFlag
     debugFlag = newValue
     if debugFlag or verbosityLevel>3:
@@ -254,23 +254,32 @@ def setDebugFlag( newValue=True ):
 # end of setDebugFlag
 
 
+def setStrictCheckingFlag( newValue=True ):
+    """ See the strict checking flag. """
+    global strictCheckingFlag
+    strictCheckingFlag = newValue
+    if strictCheckingFlag or verbosityLevel>3:
+        print( '  strictCheckingFlag =', strictCheckingFlag )
+# end of setStrictCheckingFlag
+
+
 def addStandardOptionsAndProcess( parserObject ):
     """ Adds our standardOptions to the command line parser. """
     global commandLineOptions, commandLineArguments
     global strictCheckingFlag
-    parserObject.add_option("-f", "--fast", action="store_true", dest="fast", default=False, help="disable strict datafile checking")
     parserObject.add_option("-s", "--silent", action="store_const", dest="verbose", const=0, help="output no information to the console")
     parserObject.add_option("-q", "--quiet", action="store_const", dest="verbose", const=1, help="output less information to the console")
     parserObject.add_option("-i", "--informative", action="store_const", dest="verbose", const=3, help="output more information to the console")
     parserObject.add_option("-v", "--verbose", action="store_const", dest="verbose", const=4, help="output lots of information for the user")
+    parserObject.add_option("-t", "--strict", action="store_true", dest="strict", default=False, help="perform very strict checking of all input")
     parserObject.add_option("-d", "--debug", action="store_true", dest="debug", default=False, help="output even more information for the programmer/debugger")
     commandLineOptions, commandLineArguments = parserObject.parse_args()
+    if commandLineOptions.strict: setStrictCheckingFlag()
     if commandLineOptions.debug: setDebugFlag()
     setVerbosity( commandLineOptions.verbose if commandLineOptions.verbose is not None else 2)
     if debugFlag:
         print( "  commandLineOptions: {}".format( commandLineOptions ) )
         print( "  commandLineArguments: {}".format( commandLineArguments ) )
-    if commandLineOptions.fast: strictCheckingFlag = False
 # end of addStandardOptionsAndProcess
 
 
@@ -291,11 +300,10 @@ def printAllGlobals( indent=None ):
 
 commandLineOptions, commandLineArguments = None, None
 
-debugFlag = False
+strictCheckingFlag = debugFlag = False
+verbosityLevel = None
 verbosityString = 'Normal'
 setVerbosityLevel( verbosityString )
-
-strictCheckingFlag = True
 
 
 def demo():

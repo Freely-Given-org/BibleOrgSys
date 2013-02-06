@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # ISO_639_3_Languages.py
+#   Last modified: 2013-01-26 by RJH (also update versionString below)
 #
 # Module handling ISO_639_3
-#   Last modified: 2011-07-24 (also update versionString below)
 #
-# Copyright (C) 2010-2011 Robert Hunt
+# Copyright (C) 2010-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling ISO_639_3_Languages.
 """
 
 progName = "ISO 639_3_Languages handler"
-versionString = "0.83"
+versionString = "0.84"
 
 import os, logging
 from gettext import gettext as _
@@ -94,7 +94,7 @@ class ISO_639_3_Languages:
 
     def __len__( self ):
         """ Returns the number of languages loaded. """
-        assert( len(self.__IDDict) == len(self.__NameDict) )
+        assert( len(self.__IDDict) >= len(self.__NameDict) )
         return len(self.__IDDict)
 
     def isValidLanguageCode( self, ccc ):

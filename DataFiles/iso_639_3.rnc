@@ -1,6 +1,6 @@
 # iso_639_3.rnc           Relax NG Compact Syntax schema file
-#   Version 1.00
-#   Last modified: 2011-02-02
+#   Version 1.01
+#   Last modified: 2013-01-26 by RJH
 #
 # On Linux, to convert to RNG, use
 #       trang iso_639_3.rnc DerivedFiles/iso_639_3.rng
@@ -24,9 +24,13 @@ iso_639_3_entries = element iso_639_3_entries
 
 iso_639_3_entry = element iso_639_3_entry
 {   attribute id { xsd:string { length="3" } },
-    attribute scope { "I" | "M" | "S" },
-    attribute type { "A" | "C" | "E" | "H" | "L" | "S" },
+    attribute part1_code { xsd:string }?,
+    attribute part2_code { xsd:string { length="3" } }?,
+    attribute status { "Active" | "Retired" },
+    attribute scope { "C" | "I" | "L" | "M" | "S" },
+    attribute type { "" | "A" | "C" | "E" | "H" | "L" | "S" | "Geographic" | "Genetic" | "Genetic, Ancient" | "Genetic-like" },
+    attribute inverted_name { xsd:string }?,
+    attribute reference_name { xsd:string },
     attribute name { xsd:string },
-    attribute part1_code { xsd:string { length="2" } }?,
-    attribute part2_code { xsd:string { length="3" } }?
+    attribute common_name { xsd:string }?
 }
