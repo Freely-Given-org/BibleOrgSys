@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CommentList xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Comment>
+    <Thread>b4075378</Thread>
+    <User>Jill</User>
+    <Date>2009-11-09T19:43:46.3444011+10:00</Date>
+    <VerseRef>ACT 10:14</VerseRef>
+    <SelectedText>migtabak si Pidru</SelectedText>
+    <StartPosition>11</StartPosition>
+    <ContextBefore>\v 14 Piru </ContextBefore>
+    <ContextAfter>, &lt;&lt;Kena a Magbebaye, su ware</ContextAfter>
+    <Status>done</Status>
+    <Type />
+    <Contents>
+      <p>My additional test note.</p>
+      <p />
+    </Contents>
+  </Comment>
+  <Comment>
+    <Thread>b4075378</Thread>
+    <User>Jill</User>
+    <Date>2009-11-09T19:44:37.7383019+10:00</Date>
+    <VerseRef>ACT 10:14</VerseRef>
+    <SelectedText>migtabak si Pidru</SelectedText>
+    <StartPosition>11</StartPosition>
+    <ContextBefore>\v 14 Piru </ContextBefore>
+    <ContextAfter>, &lt;&lt;Kena a Magbebaye, su ware</ContextAfter>
+    <Status />
+    <Type />
+    <Contents>Marked as resolved now but unmarked again</Contents>
+  </Comment>
+</CommentList>

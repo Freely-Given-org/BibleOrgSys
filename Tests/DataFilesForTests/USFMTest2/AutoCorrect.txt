@@ -1,0 +1,5 @@
+﻿# Change angle brackets into curly quotes 
+<-->‘
+‘‘-->“
+>-->’
+’’-->”

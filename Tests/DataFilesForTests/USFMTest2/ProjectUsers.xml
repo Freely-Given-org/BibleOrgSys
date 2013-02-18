@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ProjectUsers PeerSharing="true">
+  <User UserName="Fred" FirstUser="true">
+    <Role>Administrator</Role>
+    <AllBooks>true</AllBooks>
+    <Books />
+  </User>
+  <User UserName="Tim" FirstUser="false">
+    <Role>TeamMember</Role>
+    <AllBooks>false</AllBooks>
+    <Books>
+      <Book Id="GEN" />
+      <Book Id="EXO" />
+      <Book Id="LEV" />
+      <Book Id="NUM" />
+      <Book Id="DEU" />
+      <Book Id="JOS" />
+      <Book Id="JDG" />
+      <Book Id="RUT" />
+      <Book Id="1SA" />
+      <Book Id="2SA" />
+      <Book Id="1KI" />
+      <Book Id="2KI" />
+      <Book Id="1CH" />
+      <Book Id="2CH" />
+      <Book Id="EZR" />
+      <Book Id="NEH" />
+      <Book Id="EST" />
+      <Book Id="JOB" />
+      <Book Id="PSA" />
+      <Book Id="PRO" />
+      <Book Id="ECC" />
+      <Book Id="SNG" />
+      <Book Id="ISA" />
+      <Book Id="JER" />
+      <Book Id="LAM" />
+      <Book Id="EZK" />
+      <Book Id="DAN" />
+      <Book Id="HOS" />
+      <Book Id="JOL" />
+      <Book Id="AMO" />
+      <Book Id="OBA" />
+      <Book Id="JON" />
+      <Book Id="MIC" />
+      <Book Id="NAM" />
+      <Book Id="HAB" />
+      <Book Id="ZEP" />
+      <Book Id="HAG" />
+      <Book Id="ZEC" />
+      <Book Id="MAL" />
+    </Books>
+  </User>
+  <User UserName="Mick" FirstUser="false">
+    <Role>TeamMember</Role>
+    <AllBooks>false</AllBooks>
+    <Books>
+      <Book Id="GEN" />
+      <Book Id="EXO" />
+      <Book Id="LEV" />
+      <Book Id="NUM" />
+      <Book Id="DEU" />
+      <Book Id="JOS" />
+      <Book Id="JDG" />
+      <Book Id="RUT" />
+      <Book Id="1SA" />
+      <Book Id="2SA" />
+      <Book Id="1KI" />
+      <Book Id="2KI" />
+      <Book Id="1CH" />
+      <Book Id="2CH" />
+      <Book Id="EZR" />
+      <Book Id="NEH" />
+      <Book Id="EST" />
+      <Book Id="JOB" />
+      <Book Id="PSA" />
+      <Book Id="PRO" />
+      <Book Id="ECC" />
+      <Book Id="SNG" />
+      <Book Id="ISA" />
+      <Book Id="JER" />
+      <Book Id="LAM" />
+      <Book Id="EZK" />
+      <Book Id="DAN" />
+      <Book Id="HOS" />
+      <Book Id="JOL" />
+      <Book Id="AMO" />
+      <Book Id="OBA" />
+      <Book Id="JON" />
+      <Book Id="MIC" />
+      <Book Id="NAM" />
+      <Book Id="HAB" />
+      <Book Id="ZEP" />
+      <Book Id="HAG" />
+      <Book Id="ZEC" />
+      <Book Id="MAL" />
+    </Books>
+  </User>
+  <User UserName="Alex" FirstUser="false">
+    <Role>TeamMember</Role>
+    <AllBooks>false</AllBooks>
+    <Books>
+      <Book Id="GEN" />
+      <Book Id="EXO" />
+      <Book Id="LEV" />
+      <Book Id="NUM" />
+      <Book Id="DEU" />
+      <Book Id="JOS" />
+      <Book Id="JDG" />
+      <Book Id="RUT" />
+      <Book Id="1SA" />
+      <Book Id="2SA" />
+      <Book Id="1KI" />
+      <Book Id="2KI" />
+      <Book Id="1CH" />
+      <Book Id="2CH" />
+      <Book Id="EZR" />
+      <Book Id="NEH" />
+      <Book Id="EST" />
+      <Book Id="JOB" />
+      <Book Id="PSA" />
+      <Book Id="PRO" />
+      <Book Id="ECC" />
+      <Book Id="SNG" />
+      <Book Id="ISA" />
+      <Book Id="JER" />
+      <Book Id="LAM" />
+      <Book Id="EZK" />
+      <Book Id="DAN" />
+      <Book Id="HOS" />
+      <Book Id="JOL" />
+      <Book Id="AMO" />
+      <Book Id="OBA" />
+      <Book Id="JON" />
+      <Book Id="MIC" />
+      <Book Id="NAM" />
+      <Book Id="HAB" />
+      <Book Id="ZEP" />
+      <Book Id="HAG" />
+      <Book Id="ZEC" />
+      <Book Id="MAL" />
+    </Books>
+  </User>
+</ProjectUsers>

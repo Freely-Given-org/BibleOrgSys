@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # InternalBibleBook.py
-#   Last modified: 2013-01-11 by RJH (also update versionString below)
+#   Last modified: 2013-02-18 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -508,7 +508,7 @@ class InternalBibleBook:
         assert( self._processedFlag )
         if self._indexedFlag: return # Can only do it once
 
-        if Globals.verbosityLevel > 1: print( "  " + _("Indexing {} {} text...").format( self.objectNameString, self.bookReferenceCode ) )
+        if Globals.verbosityLevel > 2: print( "  " + _("Indexing {} {} text...").format( self.objectNameString, self.bookReferenceCode ) )
         self.CVIndex = {} # The keys are C,V 2-tuples
         lastJ = 0
         for j, (adjustedMarker, originalMarker, adjText, cleanText, extras,) in enumerate( self._processedLines):

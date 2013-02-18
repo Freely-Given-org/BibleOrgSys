@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 #
 # USFMFilenames.py
-#   Last modified: 2012-12-08 by RJH (also update versionString below)
+#   Last modified: 2013-02-18 by RJH (also update versionString below)
 #
 # Module handling USFM Bible filenames
 #
-# Copyright (C) 2010-2012 Robert Hunt
+# Copyright (C) 2010-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -27,7 +27,7 @@ Module for creating and manipulating USFM filenames.
 """
 
 progName = "USFM Bible filenames handler"
-versionString = "0.56"
+versionString = "0.57"
 
 
 import os, logging
@@ -209,6 +209,7 @@ class USFMFilenames:
                 for line in possibleUSFMFile:
                     lineNumber += 1
                     if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
+                    #print( thisFilename, lineNumber, line )
                     if line.startswith( '\\id ' ):
                         if len(line)<5: logging.warning( "id line '{}' in {} is too short".format( line, filepath ) )
                         idContent = line[4:]
@@ -233,7 +234,7 @@ class USFMFilenames:
                         elif not line:
                             logging.info( "First line in {} in {} appears to be blank".format( thisFilename, folder ) )
                     if lineNumber >= 2: break # We only look at the first one or two lines
-        except: print( "Seems we couldn't open or read '{}'".format( filepath ) ) # Could be binary or a different encoding
+        except UnicodeDecodeError: print( "Seems we couldn't decode Unicode in '{}'".format( filepath ) ) # Could be binary or a different encoding
         return None
     # end of getUSFMIDFromFile
 
@@ -469,8 +470,8 @@ def demo():
 
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
-    testFolder = "Tests/DataFilesForTests/USFMTest/" # This is a RELATIVE path
-    testFolder = "/home/robert/USFM output from OSIS/"
+    testFolder = "Tests/DataFilesForTests/USFMTest2/" # This is a RELATIVE path
+    #testFolder = "/home/robert/USFM output from OSIS/"
     #testFolder = "/home/myFolder" # You can put your test folder here
     if os.access( testFolder, os.R_OK ):
         UFns = USFMFilenames( testFolder )

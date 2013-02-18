@@ -4,9 +4,9 @@
 # BibleBookOrders.py
 #
 # Module handling BibleBookOrderSystems
-#   Last modified: 2012-10-13 (also update versionString below)
+#   Last modified: 2013-02-18 (also update versionString below)
 #
-# Copyright (C) 2010-2012 Robert Hunt
+# Copyright (C) 2010-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -261,7 +261,8 @@ class BibleBookOrderSystem:
 
     def __len__( self ):
         """ Returns the number of books in this system. """
-        return len( self.__BookOrderList )
+        try: return len( self.__BookOrderList )
+        except: return None
     # end of __len__
 
     def numBooks( self ):
