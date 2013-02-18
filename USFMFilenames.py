@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # USFMFilenames.py
-#   Last modified: 2013-02-18 by RJH (also update versionString below)
+#   Last modified: 2013-02-19 by RJH (also update versionString below)
 #
 # Module handling USFM Bible filenames
 #
@@ -234,7 +234,9 @@ class USFMFilenames:
                         elif not line:
                             logging.info( "First line in {} in {} appears to be blank".format( thisFilename, folder ) )
                     if lineNumber >= 2: break # We only look at the first one or two lines
-        except UnicodeDecodeError: print( "Seems we couldn't decode Unicode in '{}'".format( filepath ) ) # Could be binary or a different encoding
+        except UnicodeDecodeError:
+            if thisFilename != 'usfm-color.sty': # Seems this file isn't UTF-8, but we don't need it here anyway so ignore it
+                print( "Seems we couldn't decode Unicode in '{}'".format( filepath ) ) # Could be binary or a different encoding
         return None
     # end of getUSFMIDFromFile
 
