@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # InternalBible.py
-#   Last modified: 2013-01-10 by RJH (also update versionString below)
+#   Last modified: 2013-02-25 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -76,7 +76,7 @@ class InternalBible:
     def __str__( self ):
         """
         This method returns the string representation of a Bible.
-        
+
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
@@ -309,7 +309,7 @@ class InternalBible:
                 if key=='percentageProgress':
                     if 'percentageProgressByBook' not in aggregateResults: aggregateResults['percentageProgressByBook'] = value
                     else: aggregateResults['percentageProgressByBook'] += value
-                    #print( value, aggregateResults['percentageProgressByBook'] )
+                    #print( 'xxx', value, aggregateResults['percentageProgressByBook'] )
                 elif value==True:
                     if key not in aggregateResults: aggregateResults[key] = 1
                     else: aggregateResults[key] += 1
@@ -320,14 +320,14 @@ class InternalBible:
                     else: aggregateResults[key] += value
                 else:
                     print( "WARNING: unactioned discovery result", BBB, key, value )
-        #print( "aggregateResults", aggregateResults['percentageProgressByBook'], len(self) )
+        #print( 'yyy', "aggregateResults", aggregateResults['percentageProgressByBook'], len(self) )
         aggregateResults['percentageProgressByBook'] = str( round( aggregateResults['percentageProgressByBook'] / len(self) ) ) + '%'
         aggregateResults['percentageProgressByVerse'] = str( round( aggregateResults['completedVerseCount'] * 100 / aggregateResults['verseCount'] ) ) + '%'
         self.discoveryResults['ALL'] = aggregateResults
 
-        if Globals.verbosityLevel > 2: # Display some of these results
+        if Globals.verbosityLevel > 2 or self.name=="Matigsalug": # Display some of these results
             print( "Discovered Bible parameters:" )
-            if Globals.verbosityLevel > 2: # Print diagnostics
+            if Globals.verbosityLevel > 2 or self.name=="Matigsalug": # Print diagnostics
                 for BBB in self.discoveryResults:
                     #print( BBB )
                     if BBB != 'ALL':
@@ -546,7 +546,7 @@ class InternalBible:
                         adjWord = getCapsList( word, lcCount, errors['ByBook']['All Books']['Words']['All Word Counts'] )[0]
                     uncommonWordCounts[adjWord] = lcCount
             if uncommonWordCounts: errors['ByBook']['All Books']['Words']['Uncommon Word Counts'] = uncommonWordCounts
-            
+
     	# Remove any unnecessary empty categories
         for category in errors['ByCategory']:
             if not errors['ByCategory'][category]:

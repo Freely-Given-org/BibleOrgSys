@@ -207,7 +207,7 @@ def main():
 
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
-    name, encoding, testFolder = "Matigsalug", "utf-8", "/mnt/Work/VirtualBox_Shared_Folder/USXExports/Projects/MBTV/" # You can put your USX test folder here
+    name, encoding, testFolder = "Matigsalug", "utf-8", "/mnt/Data/Work/VirtualBox_Shared_Folder/USXExports/Projects/MBTV/" # You can put your USX test folder here
     if os.access( testFolder, os.R_OK ):
         UB = USXBible( name, False ) # The second parameter is the logErrorsFlag
         UB.load( testFolder, encoding )

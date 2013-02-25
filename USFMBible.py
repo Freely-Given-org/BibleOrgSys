@@ -222,8 +222,8 @@ def main():
 
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
-    if 0: # Test a single folder containing a USFM Bible
-        name, encoding, testFolder = "Matigsalug", "utf-8", "/mnt/Data/Matigsalug/Scripture/MBTV/" # You can put your test folder here
+    if 1: # Test a single folder containing a USFM Bible
+        name, encoding, testFolder = "Matigsalug", "utf-8", "/mnt/Data/Work/Matigsalug/Bible/MBTV/" # You can put your test folder here
         if os.access( testFolder, os.R_OK ):
             UB = USFMBible( name, logErrorsFlag=False ) # Set to logErrorsFlag=True if you want to see errors at the terminal
             UB.load( testFolder, encoding )
@@ -239,7 +239,7 @@ def main():
                 #print( "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )
         else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 
-    if 1: # Test a whole folder full of folders of USFM Bibles
+    if 0: # Test a whole folder full of folders of USFM Bibles
         def findInfo():
             """ Find out info about the project from the included copyright.htm file """
             from BibleBooksCodes import BibleBooksCodes
