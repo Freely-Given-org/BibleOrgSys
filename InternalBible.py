@@ -305,24 +305,49 @@ class InternalBible:
         assert( 'ALL' not in self.discoveryResults )
         for BBB in self.discoveryResults:
             #print( "discoveryResults", BBB, self.discoveryResults[BBB] )
+            isOT = isNT = False
+            if self.BibleBooksCodes.isOldTestament_NR( BBB ): isOT = True
+            if self.BibleBooksCodes.isNewTestament_NR( BBB ): isNT = True
             for key,value in self.discoveryResults[BBB].items():
                 if key=='percentageProgress':
                     if 'percentageProgressByBook' not in aggregateResults: aggregateResults['percentageProgressByBook'] = value
                     else: aggregateResults['percentageProgressByBook'] += value
+                    if isOT:
+                        if 'percentageProgressByOTBook' not in aggregateResults: aggregateResults['percentageProgressByOTBook'] = value
+                        else: aggregateResults['percentageProgressByOTBook'] += value
+                    elif isNT:
+                        if 'percentageProgressByNTBook' not in aggregateResults: aggregateResults['percentageProgressByNTBook'] = value
+                        else: aggregateResults['percentageProgressByNTBook'] += value
                     #print( 'xxx', value, aggregateResults['percentageProgressByBook'] )
                 elif value==True:
                     if key not in aggregateResults: aggregateResults[key] = 1
                     else: aggregateResults[key] += 1
+                    if isOT:
+                        if 'OT'+key not in aggregateResults: aggregateResults['OT'+key] = 1
+                        else: aggregateResults['OT'+key] += 1
+                    elif isNT:
+                        if 'NT'+key not in aggregateResults: aggregateResults['NT'+key] = 1
+                        else: aggregateResults['NT'+key] += 1
                 elif value==False:
                     pass
                 elif isinstance( value, int ):
                     if key not in aggregateResults: aggregateResults[key] = value
                     else: aggregateResults[key] += value
+                    if isOT:
+                        if 'OT'+key not in aggregateResults: aggregateResults['OT'+key] = value
+                        else: aggregateResults['OT'+key] += value
+                    elif isNT:
+                        if 'NT'+key not in aggregateResults: aggregateResults['NT'+key] = value
+                        else: aggregateResults['NT'+key] += value
                 else:
                     print( "WARNING: unactioned discovery result", BBB, key, value )
         #print( 'yyy', "aggregateResults", aggregateResults['percentageProgressByBook'], len(self) )
         aggregateResults['percentageProgressByBook'] = str( round( aggregateResults['percentageProgressByBook'] / len(self) ) ) + '%'
+        aggregateResults['percentageProgressByOTBook'] = str( round( aggregateResults['percentageProgressByOTBook'] / 39 ) ) + '%'
+        aggregateResults['percentageProgressByNTBook'] = str( round( aggregateResults['percentageProgressByNTBook'] / 27 ) ) + '%'
         aggregateResults['percentageProgressByVerse'] = str( round( aggregateResults['completedVerseCount'] * 100 / aggregateResults['verseCount'] ) ) + '%'
+        aggregateResults['percentageProgressByOTVerse'] = str( round( aggregateResults['OTcompletedVerseCount'] * 100 / aggregateResults['OTverseCount'] ) ) + '%'
+        aggregateResults['percentageProgressByNTVerse'] = str( round( aggregateResults['NTcompletedVerseCount'] * 100 / aggregateResults['NTverseCount'] ) ) + '%'
         self.discoveryResults['ALL'] = aggregateResults
 
         if Globals.verbosityLevel > 2 or self.name=="Matigsalug": # Display some of these results
