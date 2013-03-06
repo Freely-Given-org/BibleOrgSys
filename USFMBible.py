@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # USFMBible.py
-#   Last modified: 2013-01-10 by RJH (also update versionString below)
+#   Last modified: 2013-03-06 by RJH (also update versionString below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -228,7 +228,6 @@ def main():
             UB = USFMBible( name, logErrorsFlag=False ) # Set to logErrorsFlag=True if you want to see errors at the terminal
             UB.load( testFolder, encoding )
             if Globals.verbosityLevel > 0: print( UB )
-            UB.discover()
             UB.check()
             #UBErrors = UB.getErrors()
             # print( UBErrors )
@@ -282,7 +281,6 @@ def main():
                     UB.load( testFolder, encoding )
                     totalBooks += len( UB )
                     if Globals.verbosityLevel > 0: print( UB )
-                    UB.discover()
                     UB.check()
                     #UBErrors = UB.getErrors()
                     # print( UBErrors )

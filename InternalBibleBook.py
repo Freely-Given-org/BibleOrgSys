@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # InternalBibleBook.py
-#   Last modified: 2013-02-18 by RJH (also update versionString below)
+#   Last modified: 2013-03-06 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -39,7 +39,7 @@ and then calls
 """
 
 progName = "Internal Bible book handler"
-versionString = "0.15"
+versionString = "0.16"
 
 
 import os, logging
@@ -91,7 +91,7 @@ class InternalBibleBook:
     def __str__( self ):
         """
         This method returns the string representation of a USFM Bible book object.
-        
+
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
@@ -154,11 +154,11 @@ class InternalBibleBook:
 
 
     def processLines( self ):
-        """ Move notes out of the text into a separate area. 
+        """ Move notes out of the text into a separate area.
             Also, splits lines if a paragraph marker appears within a line.
 
             Uses self._rawLines and
-            fills self._processedLines.    
+            fills self._processedLines.
         """
 
         def processLineFix( originalMarker, text ):
@@ -619,7 +619,7 @@ class InternalBibleBook:
             if mt1:
                 if mt1.isupper(): mt1 = mt1.title()
                 if mt1 not in results: results.append( mt1 )
-        
+
         if not results: # no helpful fields in file
             bbc = BibleBooksCodes().loadData()
             results.append( bbc.getEnglishName_NR( self.bookReferenceCode ) )
@@ -770,7 +770,9 @@ class InternalBibleBook:
 
     def discover( self, resultDictionary ):
         """
-        Do a precheck on the book to try to determine it's features.
+        Do a precheck on the book to try to determine its features.
+
+        We later use these discoveries to note when the translation veers from their norm.
         """
         if not self._processedFlag: self.processLines()
         assert( self._processedLines )
@@ -782,8 +784,11 @@ class InternalBibleBook:
         bkDict['completedVerseCount'] = 0
         bkDict['havePopulatedCVmarkers'] = bkDict['haveParagraphMarkers'] = bkDict['haveIntroductoryMarkers'] = False
         bkDict['haveSectionReferences'] = bkDict['haveFootnotes'] = bkDict['haveCrossReferences'] = False
+        bkDict['sectionReferencesParenthesisRatio'] = -1.0
         bkDict['haveIntroductoryText'] = bkDict['haveVerseText'] = False
         bkDict['seemsFinished'] = None
+
+        sectionRefCount = sectionRefParenthCount = 0
 
         c = v = '0'
         lastMarker = None
@@ -808,6 +813,8 @@ class InternalBibleBook:
                 bkDict['completedVerseCount'] += 1
             elif marker=='r' and text:
                 bkDict['haveSectionReferences'] = True
+                sectionRefCount += 1
+                if cleanText[0]=='(' and cleanText[-1]==')': sectionRefParenthCount += 1
             elif marker in ('p','q1','q2','q3'):
                 bkDict['haveParagraphMarkers'] = True
                 if text: bkDict['haveVerseText'] = True
@@ -841,6 +848,10 @@ class InternalBibleBook:
             if not bkDict['haveVerseText']: assert( bkDict['percentageProgress']==0 and not bkDict['seemsFinished'] )
             bkDict['notStarted'] = not bkDict['haveVerseText']
             bkDict['partlyDone'] = bkDict['haveVerseText'] and not bkDict['seemsFinished']
+
+        if sectionRefCount:
+            bkDict['sectionReferencesParenthesisRatio'] = sectionRefParenthCount / sectionRefCount
+        #print( self.bookReferenceCode, bkDict['sectionReferencesParenthesisRatio'] )
 
         # Put the result for this book into the main dictionary
         resultDictionary[self.bookReferenceCode] = bkDict
@@ -1840,7 +1851,7 @@ class InternalBibleBook:
     # end of doCheckWords
 
 
-    def doCheckHeadings( self ):
+    def doCheckHeadings( self, discoveryDict ):
         """Runs a number of checks on headings and section cross-references."""
         if not self._processedFlag: self.processLines()
         assert( self._processedLines )
@@ -1874,9 +1885,15 @@ class InternalBibleBook:
                 if not text:
                     headingErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Missing section cross-reference text for marker {}").format( marker ) )
                     self.addPriorityError( 57, c, v, _("Missing section cross-reference text") )
-                elif text[0]!='(' or text[-1]!=')':
-                    headingErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Section cross-reference not in parenthesis: {}").format( text ) )
-                    self.addPriorityError( 67, c, v, _("Section cross-reference not in parenthesis") )
+                else: # We have a section reference with text
+                    if 'sectionReferencesParenthesisFlag' in discoveryDict and discoveryDict['sectionReferencesParenthesisFlag']==False:
+                        if text[0]=='(' or text[-1]==')':
+                            headingErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Section cross-reference not expected to have parenthesis: {}").format( text ) )
+                            self.addPriorityError( 67, c, v, _("Section cross-reference not expected to have parenthesis") )
+                    else: # assume that parenthesis are required
+                        if text[0]!='(' or text[-1]!=')':
+                            headingErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Section cross-reference not in parenthesis: {}").format( text ) )
+                            self.addPriorityError( 67, c, v, _("Section cross-reference not in parenthesis") )
 
         if (headingErrors or titleList or headingList or sectionReferenceList) and 'Headings' not in self.errorDictionary: self.errorDictionary['Headings'] = OrderedDict() # So we hopefully get the errors first
         if headingErrors: self.errorDictionary['Headings']['Possible Heading Errors'] = headingErrors
@@ -2046,9 +2063,9 @@ class InternalBibleBook:
                         else: myString += char
                     else: raise KeyError
                 if lastCode and myString: extraList.append( (lastCode,myString.rstrip(),) ) # Append the final part of the note
-                #if len(extraList)<3 or '\\ft \\fq' in extraText:                
+                #if len(extraList)<3 or '\\ft \\fq' in extraText:
                 #print( "extraList", extraList, "'"+extraText+"'" )
-                
+
                 # List all of the similar types of notes
                 #   plus check which ones end with a period
                 extract = (extraText[:70] + '...' + extraText[-5:]) if len(extraText)>80 else extraText
@@ -2209,7 +2226,7 @@ class InternalBibleBook:
     # end of doCheckNotes
 
 
-    def check( self, typicalAddedUnitData=None ):
+    def check( self, discoveryDict=None, typicalAddedUnitData=None ):
         """Runs a number of checks on the book and returns the error dictionary."""
         if not self._processedFlag: self.processLines()
         assert( self._processedLines )
@@ -2221,7 +2238,7 @@ class InternalBibleBook:
         self.doCheckCharacters()
         self.doCheckSpeechMarks()
         self.doCheckWords()
-        self.doCheckHeadings()
+        self.doCheckHeadings( discoveryDict )
         self.doCheckIntroduction()
         self.doCheckNotes() # footnotes and cross-references
 

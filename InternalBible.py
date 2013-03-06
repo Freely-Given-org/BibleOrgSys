@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # InternalBible.py
-#   Last modified: 2013-02-25 by RJH (also update versionString below)
+#   Last modified: 2013-03-06 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -35,7 +35,7 @@ and then fills
 """
 
 progName = "Internal Bible handler"
-versionString = "0.07"
+versionString = "0.08"
 
 
 import os, logging, datetime
@@ -319,7 +319,23 @@ class InternalBible:
                         if 'percentageProgressByNTBook' not in aggregateResults: aggregateResults['percentageProgressByNTBook'] = value
                         else: aggregateResults['percentageProgressByNTBook'] += value
                     #print( 'xxx', value, aggregateResults['percentageProgressByBook'] )
-                elif value==True:
+                elif isinstance( value, float ):
+                    #print( "got", BBB, key, value )
+                    if 0.0 <= value <= 1.0:
+                        if key not in aggregateResults: aggregateResults[key] = [value]
+                        else: aggregateResults[key].append( value )
+                elif isinstance( value, int ):
+                    #print( "igot", BBB, key, value )
+                    if key not in aggregateResults: aggregateResults[key] = value
+                    else: aggregateResults[key] += value
+                    if isOT:
+                        if 'OT'+key not in aggregateResults: aggregateResults['OT'+key] = value
+                        else: aggregateResults['OT'+key] += value
+                    elif isNT:
+                        if 'NT'+key not in aggregateResults: aggregateResults['NT'+key] = value
+                        else: aggregateResults['NT'+key] += value
+                elif value==True: # This test must come below the isinstance tests
+                    #print( "tgot", BBB, key, value )
                     if key not in aggregateResults: aggregateResults[key] = 1
                     else: aggregateResults[key] += 1
                     if isOT:
@@ -329,18 +345,24 @@ class InternalBible:
                         if 'NT'+key not in aggregateResults: aggregateResults['NT'+key] = 1
                         else: aggregateResults['NT'+key] += 1
                 elif value==False:
-                    pass
-                elif isinstance( value, int ):
-                    if key not in aggregateResults: aggregateResults[key] = value
-                    else: aggregateResults[key] += value
-                    if isOT:
-                        if 'OT'+key not in aggregateResults: aggregateResults['OT'+key] = value
-                        else: aggregateResults['OT'+key] += value
-                    elif isNT:
-                        if 'NT'+key not in aggregateResults: aggregateResults['NT'+key] = value
-                        else: aggregateResults['NT'+key] += value
+                    pass # No action needed here
                 else:
                     print( "WARNING: unactioned discovery result", BBB, key, value )
+
+        for arKey in list(aggregateResults.keys()): # Make a list first so we can delete entries later
+            # Create summaries of lists with entries for various books
+            #print( "check", arKey, aggregateResults[arKey] )
+            if isinstance( aggregateResults[arKey], list ) and isinstance( aggregateResults[arKey][0], float ):
+                assert( arKey.endswith( 'Ratio' ) )
+                #print( "this", arKey, aggregateResults[arKey] )
+                aggregateRatio = sum( aggregateResults[arKey] ) / len( aggregateResults[arKey] )
+                aggregateFlag = None
+                if aggregateRatio > 0.6: aggregateFlag = True
+                if aggregateRatio < 0.4: aggregateFlag = False
+                #print( "now", arKey, aggregateResults[arKey] )
+                del aggregateResults[arKey] # Get rid of the ratio
+                aggregateResults[arKey[:-5]+'Flag'] = aggregateFlag
+
         #print( 'yyy', "aggregateResults", aggregateResults['percentageProgressByBook'], len(self) )
         aggregateResults['percentageProgressByBook'] = str( round( aggregateResults['percentageProgressByBook'] / len(self) ) ) + '%'
         aggregateResults['percentageProgressByOTBook'] = str( round( aggregateResults['percentageProgressByOTBook'] / 39 ) ) + '%'
@@ -348,11 +370,13 @@ class InternalBible:
         aggregateResults['percentageProgressByVerse'] = str( round( aggregateResults['completedVerseCount'] * 100 / aggregateResults['verseCount'] ) ) + '%'
         aggregateResults['percentageProgressByOTVerse'] = str( round( aggregateResults['OTcompletedVerseCount'] * 100 / aggregateResults['OTverseCount'] ) ) + '%'
         aggregateResults['percentageProgressByNTVerse'] = str( round( aggregateResults['NTcompletedVerseCount'] * 100 / aggregateResults['NTverseCount'] ) ) + '%'
+
+        # Save the results
         self.discoveryResults['ALL'] = aggregateResults
 
-        if Globals.verbosityLevel > 2 or self.name=="Matigsalug": # Display some of these results
+        if Globals.verbosityLevel > 2: # or self.name=="Matigsalug": # Display some of these results
             print( "Discovered Bible parameters:" )
-            if Globals.verbosityLevel > 2 or self.name=="Matigsalug": # Print diagnostics
+            if Globals.verbosityLevel > 2: # or self.name=="Matigsalug": # Print diagnostics
                 for BBB in self.discoveryResults:
                     #print( BBB )
                     if BBB != 'ALL':
@@ -360,7 +384,8 @@ class InternalBible:
                         elif not self.discoveryResults[BBB]['haveVerseText']: print( "   ", BBB, "not started" ) #, str(self.discoveryResults[BBB]['percentageProgress'])+'%' )
                         else: print( "   ", BBB, "in progress", str(self.discoveryResults[BBB]['percentageProgress'])+'%' )
             for key,value in sorted(self.discoveryResults['ALL'].items()):
-                if key.startswith("percentage") or key.endswith("Count"): print( " ", key, "is", value )
+                if key.startswith("percentage") or key.endswith("Count") or key.endswith("Flag"):
+                    print( " ", key, "is", value )
                 else: print( " ", key, "in", value if value<len(self) else "All", "books" )
 
         #print( self.books['LEV']._processedLines )
@@ -378,10 +403,11 @@ class InternalBible:
         with open( filepath, 'rb' ) as pickleFile:
             typicalAddedUnits = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
 
+        self.discover() # Try to automatically determine our norms
         if Globals.verbosityLevel > 2: print( _("Running checks on {}...").format( self.name ) )
         for BBB in self.books: # Do individual book checks
             if Globals.verbosityLevel > 3: print( "  " + _("Checking {}...").format( BBB ) )
-            self.books[BBB].check( typicalAddedUnits )
+            self.books[BBB].check( self.discoveryResults['ALL'], typicalAddedUnits )
 
         # Do overall Bible checks
         # xxxxxxxxxxxxxxxxx ......................................
