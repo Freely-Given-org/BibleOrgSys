@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodes.py
-#   Last modified: 2013-03-25 by RJH (also update versionString below)
+#   Last modified: 2013-04-07 by RJH (also update versionString below)
 #
 # Module handling BibleBooksCodes functions
 #
@@ -107,8 +107,14 @@ class BibleBooksCodes:
         return BBB in self.__DataDicts["referenceAbbreviationDict"]
 
     def getBBBFromReferenceNumber( self, referenceNumber ):
-        """ Return the referenceAbbreviation for the given book number (referenceNumber). """
-        if not 1 <= referenceNumber <= 255: raise ValueError
+        """
+        Return the referenceAbbreviation for the given book number (referenceNumber).
+
+        This is probably only useful in the range 1..66 (GEN..REV).
+            (After that, it specifies our arbitrary order.)
+        """
+        if isinstance( referenceNumber, str ): referenceNumber = int( referenceNumber ) # Convert str to int if necessary
+        if not 1 <= referenceNumber <= 999: raise ValueError
         return self.__DataDicts["referenceNumberDict"][referenceNumber]["referenceAbbreviation"]
 
     def getAllReferenceAbbreviations( self ):

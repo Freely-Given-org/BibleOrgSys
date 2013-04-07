@@ -59,6 +59,11 @@ class InternalBible:
         self.name = name
         self.logErrorsFlag = logErrorsFlag
 
+        # Set up empty variables for the object
+        self.shortName = self.abbreviation = None
+        self.sourceFolder = self.sourceFilepath = None
+        self.status = self.revision = None
+
         # Set up empty containers for the object
         self.books = OrderedDict()
         self.ssfPathName, self.ssfData = '', {}
@@ -81,10 +86,11 @@ class InternalBible:
         result = self.objectNameString
         if Globals.debugFlag or Globals.verbosityLevel>2: result += ' v' + versionString
         if self.name: result += ('\n' if result else '') + "  Name: " + self.name
-        try:
-            if self.sourceFolder: result += ('\n' if result else '') + "  Source folder: " + self.sourceFolder
-        except:
-            if self.sourceFilepath: result += ('\n' if result else '') + "  Source: " + self.sourceFilepath
+        if self.sourceFolder: result += ('\n' if result else '') + "  Source folder: " + self.sourceFolder
+        elif self.sourceFilepath: result += ('\n' if result else '') + "  Source: " + self.sourceFilepath
+        if self.status: result += ('\n' if result else '') + "  Status: " + self.status
+        if self.revision: result += ('\n' if result else '') + "  Revision: " + self.revision
+        if self.version: result += ('\n' if result else '') + "  Version: " + self.version
         result += ('\n' if result else '') + "  Number of books = " + str(len(self.books))
         return result
     # end of InternalBible.__str__
@@ -673,12 +679,13 @@ class InternalBible:
             verseText = ''
             for marker,originalMarker,text,cleanText,extras in verseData:
                 if marker == 'c': pass # Ignore
+                elif marker == 'c=': pass # Ignore also
                 elif marker == 's1': verseText += '¥' + cleanText + '¥'
                 elif marker == 'p': verseText += '¶' + cleanText
                 elif marker == 'm': verseText += '§' + cleanText
                 elif marker == 'v': pass # Ignore
                 elif marker == 'v=': verseText += cleanText
-                else: print( "Unknown marker", marker, cleanText )
+                else: print( "InternalBible.getVerseText Unknown marker", marker, cleanText )
             return verseText
     # end of InternalBible.getVerseText
 # end of class InternalBible

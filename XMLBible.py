@@ -229,7 +229,6 @@ def main():
         "Nowe Przymierze", "NVI.xmm", "NVI_PT", "PRT-IBS.xmm", "RV1960", "SVL.xmm", "UJPROT_HU", "vdc", \
         "Vietnamese Bible.xmm", )
     bad = ( "EPS99", )
-    zefania = ( "italian.xml", )
 
     for testFilename in good:
         testFilepath = os.path.join( testFolder, testFilename )
