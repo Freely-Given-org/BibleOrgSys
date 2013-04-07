@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkers.py
-#   Last modified: 2012-06-27 (also update versionString below)
+#   Last modified: 2013-03-25 (also update versionString below)
 #
 # Module handling USFMMarkers
 #
-# Copyright (C) 2011-2012 Robert Hunt
+# Copyright (C) 2011-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling USFMMarkers.
 """
 
 progName = "USFM Markers handler"
-versionString = "0.54"
+versionString = "0.55"
 
 
 import os, logging
@@ -148,7 +148,7 @@ class USFMMarkers:
 
     def __init__( self ): # We can't give this parameters because of the singleton
         """
-        Constructor: 
+        Constructor:
         """
         self.__DataDict = None # We'll import into this in loadData
     # end of __init__
@@ -180,7 +180,7 @@ class USFMMarkers:
     def __str__( self ):
         """
         This method returns the string representation of a Bible book code.
-        
+
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
@@ -201,6 +201,10 @@ class USFMMarkers:
     def __contains__( self, marker ):
         """ Returns True or False. """
         return marker in self.__DataDict["combinedMarkerDict"]
+
+    def __getitem__( self, keyIndex ):
+        """ Returns a marker according to an integer index. """
+        return self.__DataDict["numberedMarkerList"][keyIndex]
 
     def isValidMarker( self, marker ):
         """ Returns True or False. """
@@ -380,6 +384,9 @@ def main():
     """
     Main program to handle command line parameters and then run what they want.
     """
+    # Configure basic logging
+    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
+
     # Handle command line parameters
     from optparse import OptionParser
     parser = OptionParser( version="v{}".format( versionString ) )

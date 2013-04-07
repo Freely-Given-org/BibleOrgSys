@@ -4,7 +4,7 @@
 # BibleBookOrdersConverter.py
 #
 # Module handling BibleBookOrderSystem_*.xml to produce C and Python data tables
-#   Last modified: 2013-01-13 (also update versionString below)
+#   Last modified: 2013-04-05 (also update versionString below)
 #
 # Copyright (C) 2010-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -38,7 +38,6 @@ from xml.etree.cElementTree import ElementTree
 
 from singleton import singleton
 import Globals
-from BibleBooksCodes import BibleBooksCodes
 
 
 @singleton # Can only ever have one instance
@@ -70,9 +69,6 @@ class BibleBookOrdersConverter:
         # These are fields that we will fill later
         self._XMLSystems = {}
         self.__DataDicts, self.__DataLists = {}, {} # Used for import
-
-        # Make sure we have the Bible books codes data loaded and available
-        self.BibleBooksCodes = BibleBooksCodes().loadData()
     # end of __init__
 
     def loadSystems( self, XMLFolder=None ):
@@ -222,7 +218,7 @@ class BibleBookOrdersConverter:
     def __str__( self ):
         """
         This method returns the string representation of a Bible book order system.
-        
+
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
@@ -263,7 +259,7 @@ class BibleBookOrdersConverter:
                 bookRA = bookElement.text
                 ID = bookElement.get( "id" )
                 intID = int( ID )
-                if not self.BibleBooksCodes.isValidReferenceAbbreviation( bookRA ):
+                if not Globals.BibleBooksCodes.isValidReferenceAbbreviation( bookRA ):
                     logging.error( _("Unrecognized '{}' book abbreviation in '{}' book order system").format( bookRA, bookOrderSystemCode ) )
                 # Save it by book reference abbreviation
                 if bookRA in bookDataDict:

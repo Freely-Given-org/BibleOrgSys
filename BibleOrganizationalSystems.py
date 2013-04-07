@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleOrganizationalSystems.py
-#   Last modified: 2013-01-14 by RJH (also update versionString below)
+#   Last modified: 2013-04-01 by RJH (also update versionString below)
 #
 # Module handling BibleOrganizationalSystems
 #
@@ -38,8 +38,6 @@ from gettext import gettext as _
 from singleton import singleton
 import Globals
 from BibleOrganizationalSystemsConverter import BibleOrganizationalSystemsConverter, allowedTypes
-#from ISO_639_3_Languages import ISO_639_3_Languages
-#from BibleBooksCodes import BibleBooksCodes
 from BibleBookOrders import BibleBookOrderSystem
 from BiblePunctuationSystems import BiblePunctuationSystem
 from BibleVersificationSystems import BibleVersificationSystem
@@ -56,10 +54,10 @@ class BibleOrganizationalSystems:
 
     def __init__( self ): # We can't give this parameters because of the singleton
         """
-        Constructor: 
+        Constructor:
         """
         self.__dataDict = self.__indexDict = self.__combinedIndexDict = None # We'll import into this in loadData
-    # end of BibleOrganizationalSystems:__init__
+    # end of BibleOrganizationalSystems.__init__
 
     def loadData( self, XMLFilepath=None ):
         """ Loads the pickle or XML data file and imports it to dictionary format (if not done already). """
@@ -86,12 +84,12 @@ class BibleOrganizationalSystems:
         if result is not None:
             self.__dataDict, self.__indexDict, self.__combinedIndexDict = result
         return self
-    # end of BibleOrganizationalSystems:loadData
+    # end of BibleOrganizationalSystems.loadData
 
     def __str__( self ):
         """
         This method returns the string representation of a Bible organisational system.
-        
+
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
@@ -105,7 +103,7 @@ class BibleOrganizationalSystems:
             for possibleType in allowedTypes:
                 if counters[possibleType]: result += "    {} {}(s)".format( counters[possibleType], possibleType )
         return result
-    # end of BibleOrganizationalSystems:__str__
+    # end of BibleOrganizationalSystems.__str__
 
     def __len__( self ):
         """
@@ -115,8 +113,8 @@ class BibleOrganizationalSystems:
         #print( '2', len(self.__indexDict) )
         #print( '3', len(self.__combinedIndexDict) )
         return len( self.__dataDict )
-    # end of BibleOrganizationalSystems:__len__
-        
+    # end of BibleOrganizationalSystems.__len__
+
     def getAvailableOrganizationalSystemNames( self, extended=False ):
         """ Returns a list of available system name strings. """
         if extended:
@@ -126,11 +124,13 @@ class BibleOrganizationalSystems:
             return result
         # else:
         return [x for x in self.__indexDict]
-    # end of BibleOrganizationalSystems:getAvailableOrganizationalSystemNames
+    # end of BibleOrganizationalSystems.getAvailableOrganizationalSystemNames
 
     def getOrganizationalSystem( self, systemName ):
         """ Returns the system dictionary.
-            Accepts combined names (like KJV-1611_edition) or basic names (like KJV-1611). """
+            Accepts combined names (like KJV-1611_edition) or basic names (like KJV-1611).
+        """
+        #print( "getOrganizationalSystem( {} )".format( repr(systemName) ) )
         assert( systemName )
         assert( isinstance( systemName, str ) )
 
@@ -144,36 +144,38 @@ class BibleOrganizationalSystems:
             # else it's an ambiguous name that has multiple matches
             for possibleType in allowedTypes: # Steps through in priority order
                 x = systemName + '_' + possibleType
-                if x in self.__dataDict: return self.__dataDict[x]  
+                if x in self.__dataDict: return self.__dataDict[x]
         # else
         logging.error( _("No '{}' system in Bible Organisational Systems").format( systemName ) )
         if Globals.verbosityLevel>2: logging.error( _("Available systems are {}").format( self.getAvailableOrganizationalSystemNames( extended=True ) ) )
-    # end of BibleOrganizationalSystems:getOrganizationalSystem
+    # end of BibleOrganizationalSystems.getOrganizationalSystem
 
     def getOrganizationalSystemValue( self, systemName, valueName ):
         """ Gets a value for the system. """
-        assert( systemName )
-        print( '\nsN', systemName )
-        assert( isinstance( systemName, str ) )
-        assert( valueName )
-        assert( isinstance( valueName, str ) )
+        #print( "getOrganizationalSystemValue( {}, {} )".format( repr(systemName), repr(valueName) ) )
+        assert( systemName and isinstance( systemName, str ) )
+        assert( valueName and isinstance( valueName, str ) )
         thisSystem = self.getOrganizationalSystem( systemName )
         if thisSystem is not None:
             assert( thisSystem )
             if valueName in thisSystem: return thisSystem[valueName]
             # else maybe we can find the value in a derived text
             if 'usesText' in thisSystem:
-                trySystemName = thisSystem['usesText']
+                trySystemNames = thisSystem['usesText']
+                #print( "trySystemNames is {}".format( repr(trySystemNames) ) )
                 #print( "w1", "{} is trying usesText of {}".format(systemName,trySystemName) )
                 #print( "\nKeys:", self.__dataDict.keys() )
                 #print( "\nindexDict", self.__indexDict )
                 #print( "\ncombinedIndexDict", self.__combinedIndexDict )
-                #halt
-                result = self.getOrganizationalSystemValue( trySystemName, valueName )
-                if result is not None: return result
+                assert( isinstance( trySystemNames, list ) ) # Maybe this can also be a string???
+                for trySystemName in trySystemNames:
+                    if trySystemName != systemName: # Avoid infinite recursion
+                        result = self.getOrganizationalSystemValue( trySystemName, valueName )
+                        #print( "trySystemName result is {}".format( repr(result) ) )
+                        if result is not None: return result
             # else we couldn't find it anywhere
             logging.error( _("{} Bible Organizational System has no {} specified").format( systemName, valueName ) )
-    # end of BibleOrganizationalSystems:getOrganizationalSystemValue
+    # end of BibleOrganizationalSystems.getOrganizationalSystemValue
 # end of BibleOrganizationalSystems class
 
 
@@ -188,7 +190,7 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
 
     def __init__( self, systemName, logErrorsFlag=True ):
         """
-        Constructor: 
+        Constructor:
         """
         def getOrganizationalSystemValue( valueName ):
             """ Gets a value for the system. """
@@ -213,7 +215,7 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
                     trySystemName = self.__dataDict['derivedFrom']
                     if isinstance( trySystemName, str ): print( "trySystemName for 'derivedFrom' is a string: '{}'".format( trySystemName ) )
                     elif isinstance( trySystemName, list ):
-                        print( "trySystemName for 'derivedFrom' is a list: '{}'".format( trySystemName ) )
+                        #print( "trySystemName for 'derivedFrom' is a list: '{}'".format( trySystemName ) )
                         trySystemName = trySystemName[0] # Take the first string from the list
                     #print( "q3", "{} is trying derivedFrom of {}".format(self.__systemName,trySystemName) )
                     result = self.__boss.getOrganizationalSystemValue( trySystemName, valueName )
@@ -223,6 +225,7 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
             if self.__logErrorsFlag: logging.error( _("{} Bible Organizational System has no {} specified").format(self.__systemName,valueName) )
         # end of getOrganizationalSystemValue
 
+        assert( systemName and isinstance( systemName, str ) )
         self.__logErrorsFlag = logErrorsFlag
         self.__boss = BibleOrganizationalSystems().loadData() # Doesn't reload the XML unnecessarily :)
         result = self.__boss.getOrganizationalSystem( systemName )
@@ -253,12 +256,12 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
             for BBB in myBooks:
                 if not BibleBookOrderSystem.containsBook( self, BBB ):
                     if self.__logErrorsFlag: logging.error( _("Book '{}' is included in {} system but missing from {} book order system").format( BBB, self.__systemName, BibleBookOrderSystem.getBookOrderSystemName( self ) ) )
-    # end of BibleOrganizationalSystem:__init__
+    # end of BibleOrganizationalSystem.__init__
 
     def __str__( self ):
         """
         This method returns the string representation of a Bible organisational system.
-        
+
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
@@ -270,31 +273,31 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
             result += ('\n' if result else '') + "  Number of entry lines = {}".format( len(self.__dataDict) )
             if Globals.verbosityLevel > 3: result += ('\n' if result else '') + "  Entries are: {}".format( self.__dataDict )
         return result
-    # end of BibleOrganizationalSystem:__str__
+    # end of BibleOrganizationalSystem.__str__
 
     def getOrganizationalSystemName( self ):
         """ Return the system name. """
         assert( self.__systemName )
         return self.__systemName
-    # end of BibleOrganizationalSystem:getOrganizationalSystemName
+    # end of BibleOrganizationalSystem.getOrganizationalSystemName
 
     def getOrganizationalSystemType( self ):
         """ Return the system type. """
         assert( self.__dataDict )
         return self.__dataDict["type"]
-    # end of BibleOrganizationalSystem:getOrganizationalSystemType
+    # end of BibleOrganizationalSystem.getOrganizationalSystemType
 
     def getMoreBasicTypes( self ):
         """ Returns a list of more basic (original) types. """
         ix = allowedTypes.index( self.__dataDict["type"] )
         return allowedTypes[ix+1:]
-    # end of BibleOrganizationalSystem:getMoreBasicTypes
+    # end of BibleOrganizationalSystem.getMoreBasicTypes
 
     def getOrganizationalSystemValue( self, valueName ):
         """ Gets a value for the system. """
+        #print( "getOrganizationalSystemValue( {} )".format( repr(valueName) ) )
         assert( self.__dataDict )
-        assert( valueName )
-        assert( isinstance( valueName, str ) )
+        assert( valueName and isinstance( valueName, str ) )
 
         if valueName in self.__dataDict: return self.__dataDict[valueName]
         # else maybe we can find the value in a derived text
@@ -304,7 +307,7 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
                 for trySystemName in self.__dataDict['usesText']:
                     if isinstance( trySystemName, str ): print( "trySystemName for 'usesText' is a string: '{}'".format( trySystemName ) )
                     elif isinstance( trySystemName, list ):
-                        print( "trySystemName for 'usesText' is a list: '{}'".format( trySystemName ) )
+                        #print( "trySystemName for 'usesText' is a list: '{}'".format( trySystemName ) )
                         trySystemName = trySystemName[0] # Take the first string from the list
                     #print( "q1", "{} is trying usesText of {}".format(self.__systemName,trySystemName) )
                     result = self.__boss.getOrganizationalSystemValue( trySystemName, valueName )
@@ -313,29 +316,47 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
                 trySystemName = self.__dataDict['derivedFrom']
                 if isinstance( trySystemName, str ): print( "trySystemName for 'derivedFrom' is a string: '{}'".format( trySystemName ) )
                 elif isinstance( trySystemName, list ):
-                    print( "trySystemName for 'derivedFrom' is a list: '{}'".format( trySystemName ) )
+                    #print( "trySystemName for 'derivedFrom' is a list: '{}'".format( trySystemName ) )
                     trySystemName = trySystemName[0] # Take the first string from the list
                 #print( "q2", "{} is trying derivedFrom of {}".format(self.__systemName,trySystemName) )
                 result = self.__boss.getOrganizationalSystemValue( trySystemName, valueName )
                 if result is not None: return result
         # else we couldn't find it anywhere
         if self.__logErrorsFlag: logging.error( _("{} Bible Organizational System has no {} specified").format(self.getOrganizationalSystemName(),valueName) )
-    # end of BibleOrganizationalSystem:getOrganizationalSystemValue
-
-    def containsBook( self, BBB ):
-        """ Returns True or False if this book is in this system. """
-        return BBB in self.getBookList()
-    # end of BibleOrganizationalSystem:containsBook
+    # end of BibleOrganizationalSystem.getOrganizationalSystemValue
 
     def getBookList( self ):
-        """ Returns the list of books in this system. """
+        """
+        Returns the list of book reference codes (BBB) for books in this system.
+        Returns an empty list if there's no known books.
+        """
         result = self.getOrganizationalSystemValue( "includesBooks" )
         if result is None: return []
         else: return result
-    # end of BibleOrganizationalSystem:getBookList
+    # end of BibleOrganizationalSystem.getBookList
 
-    def isValidBCVRef( self, referenceTuple, referenceString, wantErrorMessages=False ):
-        """ Returns True/False indicating if the given reference is valid in this system. """
+    def containsBook( self, BBB ):
+        """ Returns True or False if this book is in this system. """
+        assert( BBB and isinstance( BBB, str ) and len(BBB)==3 )
+        return BBB in self.getBookList()
+    # end of BibleOrganizationalSystem.containsBook
+
+    def getFirstBookCode( self ):
+        """
+        Return the BBB code for the first book
+            otherwise returns None.
+        """
+        bookList = self.getOrganizationalSystemValue( "includesBooks" )
+        if bookList is None: return None
+        return bookList[0]
+    # end of BibleOrganizationalSystem.getFirstBookCode
+
+    def isValidBCVRef( self, referenceTuple, referenceString, extended=False, wantErrorMessages=False ):
+        """
+        Returns True/False indicating if the given reference is valid in this system.
+        Extended flag allows chapter and verse numbers of zero.
+        """
+        #print( "BibleOrganizationalSystem.isValidBCVRef( {}, {}, {}, {} )".format( referenceTuple, referenceString, extended, wantErrorMessages ) )
         BBB, C, V, S = referenceTuple
         if BBB is None or not BBB: return False
         assert( len(BBB) == 3 )
@@ -343,10 +364,10 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         assert( not V or V.isdigit() ) # Should be no suffix on V (although it can be blank if the reference is for a whole chapter)
         assert( not S or len(S)==1 and S.isalpha() ) # Suffix should be only one lower-case letter if anything
         if BBB and BibleBookOrderSystem.containsBook( self, BBB ):
-            return BibleVersificationSystem.isValidBCVRef( self, referenceTuple, referenceString, wantErrorMessages )
+            return BibleVersificationSystem.isValidBCVRef( self, referenceTuple, referenceString, extended=extended, wantErrorMessages=wantErrorMessages )
         elif wantErrorMessages: logging.error( _("{} {}:{} is invalid book for reference '{}' in {} versification system for {}").format(BBB,C,V,referenceString, self.getBookOrderSystemName(),self.getOrganizationalSystemName()) )
         return False
-    # end of BibleOrganizationalSystem:isValidBCVRef
+    # end of BibleOrganizationalSystem.isValidBCVRef
 # end of BibleOrganizationalSystem class
 
 
@@ -382,7 +403,7 @@ def main():
             #for test in ('GEN','Gen','MAT','Mat','Mt1','JUD','Jud','JDE', 'TOB', ):
             #    print( "Contains '{}': {}".format(test, bos.containsBook(test) ) )
             #for test in ('GEN','Gen','MAT','Mat','Mt1','JUD','Jud','Jde', 'Ma1', ):
-            #    print( "'{}' gives {}".format(test,bos.getBBB(test) ) ) # BibleBooksCodes base class call
+            #    print( "'{}' gives {}".format(test,bos.getBBB(test) ) )
 # end of main
 
 if __name__ == '__main__':

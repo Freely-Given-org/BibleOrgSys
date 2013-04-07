@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # USFMFilenames.py
-#   Last modified: 2013-02-19 by RJH (also update versionString below)
+#   Last modified: 2013-03-23 by RJH (also update versionString below)
 #
 # Module handling USFM Bible filenames
 #
@@ -35,7 +35,6 @@ from gettext import gettext as _
 
 
 import Globals
-from BibleBooksCodes import BibleBooksCodes
 
 
 # The filenames produced by the Bibledit program seem to have a .usfm extension (Info below is from gtk/src/bookdata.cpp 2012-07-11)
@@ -67,11 +66,10 @@ class USFMFilenames:
                 dd = digits
         """
         # Get the data tables that we need for proper checking
-        self._BibleBooksCodesObject = BibleBooksCodes().loadData()
-        self._USFMBooksCodes = self._BibleBooksCodesObject.getAllUSFMBooksCodes()
+        self._USFMBooksCodes = Globals.BibleBooksCodes.getAllUSFMBooksCodes()
         self._USFMBooksCodesUpper = [x.upper() for x in self._USFMBooksCodes]
-        self._USFMBooksCodeNumberTriples = self._BibleBooksCodesObject.getAllUSFMBooksCodeNumberTriples()
-        self._BibleditBooksCodeNumberTriples = self._BibleBooksCodesObject.getAllBibleditBooksCodeNumberTriples()
+        self._USFMBooksCodeNumberTriples = Globals.BibleBooksCodes.getAllUSFMBooksCodeNumberTriples()
+        self._BibleditBooksCodeNumberTriples = Globals.BibleBooksCodes.getAllBibleditBooksCodeNumberTriples()
 
         # Find how many files are in our folder
         self.folder, self.lastTupleList = folder, None
@@ -169,12 +167,12 @@ class USFMFilenames:
         self._BBBDictionary = {} # The keys are valid BBB values, the values are all 2-tuples of folder, filename
         self.getUSFMIDsFromFiles( self.folder ) # Fill the above dictionaries
     # end of __init__
-        
+
 
     def __str__( self ):
         """
         This method returns the string representation of an object.
-        
+
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
@@ -191,7 +189,7 @@ class USFMFilenames:
     def __len__( self ):
         """
         This method returns the last number of files found.
-        
+
         @return: None (if no search done) or else the last number of USFM files found
         @rtype: int
         """
@@ -256,7 +254,7 @@ class USFMFilenames:
                     USFMId = self.getUSFMIDFromFile( givenFolder, possibleFilename, filepath )
                     if USFMId:
                         assert( filepath not in self._fileDictionary )
-                        BBB = self._BibleBooksCodesObject.getBBBFromUSFM( USFMId )
+                        BBB = Globals.BibleBooksCodes.getBBBFromUSFM( USFMId )
                         self._fileDictionary[(givenFolder,possibleFilename,)] = BBB
                         if BBB in self._BBBDictionary: logging.error( "getUSFMIDsFromFiles: Oops, already found '{}' in {}, now we have a duplicate in {}".format( BBB, self._BBBDictionary[BBB], possibleFilename ) )
                         self._BBBDictionary[BBB] = (givenFolder,possibleFilename,)
@@ -328,7 +326,7 @@ class USFMFilenames:
                         if filename[ix]=='*' and self.pattern[ix]!='*':
                             filename = filename[:ix] + self.pattern[ix] + filename[ix+1:]
                     self.doListAppend( bookReferenceCode, filename, resultList, "getDerivedFilenameTuples" )
-        return self._BibleBooksCodesObject.getSequenceList( resultList )
+        return Globals.BibleBooksCodes.getSequenceList( resultList )
     # end of getDerivedFilenameTuples
 
 
@@ -350,7 +348,7 @@ class USFMFilenames:
                     if USFMId is None:
                         logging.error( "getConfirmedFilenameTuples: internal USFM Id missing for {} in {}".format( bookReferenceCode, derivedFilename ) )
                         continue # so it doesn't get added
-                    BBB = self._BibleBooksCodesObject.getBBBFromUSFM( USFMId )
+                    BBB = Globals.BibleBooksCodes.getBBBFromUSFM( USFMId )
                     if BBB != bookReferenceCode:
                         logging.error( "getConfirmedFilenameTuples: internal USFM Id ({}{}) doesn't match {} for {}".format( USFMId, '' if BBB==USFMId else " -> {}".format(BBB), bookReferenceCode, derivedFilename ) )
                         continue # so it doesn't get added
@@ -370,9 +368,9 @@ class USFMFilenames:
         for possibleFilename in self.fileList:
             for USFMBookCode,USFMDigits,bookReferenceCode in self._USFMBooksCodeNumberTriples:
                 if USFMBookCode in possibleFilename or USFMBookCode.upper() in possibleFilename:
-                    self.doListAppend( self._BibleBooksCodesObject.getBBBFromUSFM( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
+                    self.doListAppend( Globals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
         self.lastTupleList = resultList
-        return self._BibleBooksCodesObject.getSequenceList( resultList )
+        return Globals.BibleBooksCodes.getSequenceList( resultList )
     # end of getPossibleFilenameTuplesExt
 
 
@@ -391,7 +389,7 @@ class USFMFilenames:
                 #print( "getPossibleFilenameTuplesInt", folder, filename, self._fileDictionary )
                 self.doListAppend( self._fileDictionary[(folder,filename,)], filename, resultList, "getPossibleFilenameTuplesInt2" )
         self.lastTupleList = resultList
-        return self._BibleBooksCodesObject.getSequenceList( resultList )
+        return Globals.BibleBooksCodes.getSequenceList( resultList )
     # end of getPossibleFilenameTuplesInt
 
 

@@ -4,7 +4,7 @@
 # Globals.py
 #
 # Module handling Global variables for our Bible Organisational System
-#   Last modified: 2013-02-03 (also update versionString below)
+#   Last modified: 2013-04-02 (also update versionString below)
 #
 # Copyright (C) 2010-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -24,11 +24,12 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module handling global variables.
+Module handling global variables
+    and some useful general functions.
 """
 
 progName = "Globals"
-versionString = "0.10"
+versionString = "0.12"
 
 import logging, os.path
 
@@ -295,8 +296,9 @@ def printAllGlobals( indent=None ):
 # end of printAllGlobals()
 
 
+
 # Global variables
-##################
+#=================
 
 commandLineOptions, commandLineArguments = None, None
 
@@ -306,7 +308,16 @@ verbosityString = 'Normal'
 setVerbosityLevel( verbosityString )
 
 
-def demo():
+# Global Bible data sets
+#=======================
+
+if __name__ != '__main__':
+    from BibleBooksCodes import BibleBooksCodes
+    BibleBooksCodes = BibleBooksCodes().loadData()
+
+
+
+def main():
     """
     Demo program to handle command line parameters and then run what they want.
     """
@@ -318,8 +329,8 @@ def demo():
     if verbosityLevel>0: print( "{} V{}".format( progName, versionString ) )
     if verbosityLevel>2:
         printAllGlobals()
-# end of demo
+# end of main
 
 if __name__ == '__main__':
-    demo()
+    main()
 ## end of Globals.py

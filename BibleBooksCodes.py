@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodes.py
-#   Last modified: 2013-01-12 by RJH (also update versionString below)
+#   Last modified: 2013-03-25 by RJH (also update versionString below)
 #
 # Module handling BibleBooksCodes functions
 #
@@ -51,7 +51,7 @@ class BibleBooksCodes:
 
     def __init__( self ): # We can't give this parameters because of the singleton
         """
-        Constructor: 
+        Constructor:
         """
         self.__DataDicts = None # We'll import into this in loadData
     # end of BibleBooksCodes:__init__
@@ -77,13 +77,13 @@ class BibleBooksCodes:
                 bbcc = BibleBooksCodesConverter()
                 bbcc.loadAndValidate( XMLFilepath ) # Load the XML (if not done already)
                 self.__DataDicts = bbcc.importDataToPython() # Get the various dictionaries organised for quick lookup
-        return self
+        return self # So this command can be chained after the object creation
     # end of BibleBooksCodes:loadData
 
     def __str__( self ):
         """
         This method returns the string representation of a Bible book code.
-        
+
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
@@ -95,7 +95,7 @@ class BibleBooksCodes:
 
     def __len__( self ):
         """ Return the number of available codes. """
-        assert( len(self.__DataDicts["referenceAbbreviationDict"]) == len(self.__DataDicts["referenceNumberDict"]) ) 
+        assert( len(self.__DataDicts["referenceAbbreviationDict"]) == len(self.__DataDicts["referenceNumberDict"]) )
         return len(self.__DataDicts["referenceAbbreviationDict"])
 
     def __contains__( self, BBB ):
@@ -197,14 +197,17 @@ class BibleBooksCodes:
         if strict: logging.warning( "getBBBFromUSFM is assuming that the best fit for USFM ID '{}' is the first entry in {}".format( USFMAbbreviation, result ) )
         return result[0] # Assume that the first entry is the best pick
 
-    def getBBB( self, something ):
-        """ Attempt to return the BBB reference abbreviation string for the given book information.
+    def getBBB( self, someText ):
+        """ Attempt to return the BBB reference abbreviation string for the given book information (text).
             Returns BBB or None. """
-        assert( something )
-        UCSomething = something.upper()
-        if UCSomething in self.__DataDicts["referenceAbbreviationDict"]: return UCSomething # it's already a BBB code
-        #if something.isdigit() and 1 <= int(something) <= 255: return self.__DataDicts["referenceNumberDict"][int(something)]["referenceAbbreviation"]
-        if UCSomething in self.__DataDicts["allAbbreviationsDict"]: return self.__DataDicts["allAbbreviationsDict"][UCSomething]
+        assert( someText and isinstance( someText, str ) )
+        UCSomeText = someText.upper()
+        if UCSomeText in self.__DataDicts["referenceAbbreviationDict"]:
+            return UCSomeText # it's already a BBB code
+        #if someText.isdigit() and 1 <= int(someText) <= 255:
+            #return self.__DataDicts["referenceNumberDict"][int(someText)]["referenceAbbreviation"]
+        if UCSomeText in self.__DataDicts["allAbbreviationsDict"]:
+            return self.__DataDicts["allAbbreviationsDict"][UCSomeText]
     # end of BibleBooksCodes:getBBB
 
     def getExpectedChaptersList( self, BBB ):

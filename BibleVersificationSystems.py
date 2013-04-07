@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleVersificationSystems.py
-#   Last modified: 2013-01-14 (also update versionString below)
+#   Last modified: 2013-04-02 (also update versionString below)
 #
 # Module handling BibleVersificationSystem_*.xml to produce C and Python data tables
 #
@@ -28,7 +28,7 @@ Module handling BibleVersificationSystem_*.xml to produce C and Python data tabl
 """
 
 progName = "Bible Chapter/Verse Systems handler"
-versionString = "0.49"
+versionString = "0.50"
 
 
 import os, logging
@@ -51,7 +51,7 @@ class BibleVersificationSystems:
 
     def __init__( self ): # We can't give this parameters because of the singleton
         """
-        Constructor: 
+        Constructor:
         """
         self.__DataDict = None # We'll import into this in loadData
     # end of __init__
@@ -92,7 +92,7 @@ class BibleVersificationSystems:
         """
         This method returns the string representation of the Bible versification systems object.
         Will return more information if the verbosity setting is higher.
-        
+
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
@@ -479,7 +479,7 @@ class BibleVersificationSystem:
 
     def __init__( self, systemName ):
         """
-        Constructor: 
+        Constructor:
         """
         self._systemName = systemName
         self._bvss = BibleVersificationSystems().loadData() # Doesn't reload the XML unnecessarily :)
@@ -496,7 +496,7 @@ class BibleVersificationSystem:
         """
         This method returns the string representation of a Bible versification system.
         Will return more information if the verbosity setting is higher.
-        
+
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
@@ -618,8 +618,12 @@ class BibleVersificationSystem:
         if listName=="reordered": return self.__reorderedVersesDict
     # end of BibleVersificationSystem:getAuxilliaryVerseList
 
-    def isValidBCVRef( self, referenceTuple, referenceString=None, wantErrorMessages=False ):
-        """ Returns True/False indicating if the given reference is valid in this system. """
+    def isValidBCVRef( self, referenceTuple, referenceString=None, extended=False, wantErrorMessages=False ):
+        """
+        Returns True/False indicating if the given reference is valid in this system.
+        Extended flag allows chapter and verse numbers of zero.
+        """
+        #print( "BibleVersificationSystem.isValidBCVRef( {}, {}, {}, {} )".format( referenceTuple, referenceString, extended, wantErrorMessages ) )
         BBB, C, V, S = referenceTuple
         assert( len(BBB) == 3 )
         assert( not C or C.isdigit() ) # Should be no suffix on C (although it can be blank if the reference is for a whole book)
@@ -628,8 +632,10 @@ class BibleVersificationSystem:
         myReferenceString = " (from '{}')".format(referenceString) if referenceString is not None else ''
 
         if BBB in self.__chapterDataDict:
+            if extended and C=='0': return 0 <= int(V) < 20 # Don't check the verse number range accurately
             if C in self.__chapterDataDict[BBB]:
                 if not V: return True # NOTE: This allows blank verse numbers (as a reference can refer to an entire chapter)
+                if extended and V=='0': return True
                 if 0 < int(V) <= int(self.__chapterDataDict[BBB][C]):
                     if not self.isOmittedVerse( referenceTuple ):
                         return True

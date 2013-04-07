@@ -4,7 +4,7 @@
 # BibleBookOrders.py
 #
 # Module handling BibleBookOrderSystems
-#   Last modified: 2013-02-18 (also update versionString below)
+#   Last modified: 2013-04-05 (also update versionString below)
 #
 # Copyright (C) 2010-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -36,7 +36,6 @@ from gettext import gettext as _
 
 from singleton import singleton
 import Globals
-from BibleBooksCodes import BibleBooksCodes
 
 
 @singleton # Can only ever have one instance
@@ -51,13 +50,10 @@ class BibleBookOrderSystems:
 
     def __init__( self ): # We can't give this parameters because of the singleton
         """
-        Constructor: 
+        Constructor:
         """
         if Globals.debugFlag: print( "BibleBookOrderSystems:__init__()" )
         self.__DataDicts = self.__DataLists = None # We'll import into these in loadData
-
-        # Make sure we have the Bible books codes data loaded and available
-        self.BibleBooksCodes = BibleBooksCodes().loadData()
     # end of __init__
 
     def loadData( self, XMLFolder=None ):
@@ -98,7 +94,7 @@ class BibleBookOrderSystems:
     def __str__( self ):
         """
         This method returns the string representation of a Bible book order.
-        
+
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
@@ -158,7 +154,7 @@ class BibleBookOrderSystems:
         assert( self.__DataLists )
         #print( thisSystemName, bookOrderSchemeToCheck )
         for BBB in bookOrderSchemeToCheck:
-            if not self.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): logging.error( "Invalid '{}' book code".format( BBB ) )
+            if not Globals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): logging.error( "Invalid '{}' book code".format( BBB ) )
 
         matchedBookOrderSystemCodes = []
         exactMatchCount, subsetMatchCount, systemMismatchCount, allErrors, errorSummary = 0, 0, 0, '', ''
@@ -234,7 +230,7 @@ class BibleBookOrderSystem:
 
     def __init__( self, systemName ):
         """
-        Constructor: 
+        Constructor:
         """
         if Globals.debugFlag: print( "BibleBookOrderSystem:__init__({})".format( systemName ) )
         self.__systemName = systemName
@@ -249,7 +245,7 @@ class BibleBookOrderSystem:
     def __str__( self ):
         """
         This method returns the string representation of a Bible book order.
-        
+
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """

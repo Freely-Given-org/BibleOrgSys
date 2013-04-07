@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # InternalBible.py
-#   Last modified: 2013-03-06 by RJH (also update versionString below)
+#   Last modified: 2013-04-07 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -35,7 +35,7 @@ and then fills
 """
 
 progName = "Internal Bible handler"
-versionString = "0.08"
+versionString = "0.20"
 
 
 import os, logging, datetime
@@ -43,7 +43,6 @@ from gettext import gettext as _
 from collections import OrderedDict
 
 import Globals, ControlFiles
-from BibleBooksCodes import BibleBooksCodes
 from USFMMarkers import USFMMarkers
 
 
@@ -67,10 +66,9 @@ class InternalBible:
         self.reverseDict, self.guesses = {}, '' # A program history
 
         # Set up filled containers for the object
-        self.BibleBooksCodes = BibleBooksCodes().loadData()
         #self.OneChapterBBBBookCodes = self.BibleBooksCodes.getSingleChapterBooksList()
         self.USFMMarkers = USFMMarkers().loadData()
-    # end of __init_
+    # end of InternalBible.__init_
 
 
     def __str__( self ):
@@ -81,11 +79,15 @@ class InternalBible:
         @rtype: string
         """
         result = self.objectNameString
+        if Globals.debugFlag or Globals.verbosityLevel>2: result += ' v' + versionString
         if self.name: result += ('\n' if result else '') + "  Name: " + self.name
-        if self.sourceFolder: result += ('\n' if result else '') + "  From: " + self.sourceFolder
+        try:
+            if self.sourceFolder: result += ('\n' if result else '') + "  Source folder: " + self.sourceFolder
+        except:
+            if self.sourceFilepath: result += ('\n' if result else '') + "  Source: " + self.sourceFilepath
         result += ('\n' if result else '') + "  Number of books = " + str(len(self.books))
         return result
-    # end of __str__
+    # end of InternalBible.__str__
 
 
     def __len__( self ):
@@ -93,22 +95,44 @@ class InternalBible:
         This method returns the number of books in the Bible.
         """
         return len( self.books )
-    # end of __str__
+    # end of InternalBible.__len__
+
+
+    def __contains__( self, BBB ):
+        """
+        This method checks whether the Bible contains the BBB book.
+        Returns True or False.
+        """
+        return BBB in self.books
+    # end of InternalBible.__contains__
 
 
     def getAssumedBookName( self, BBB ):
         """Gets the book name for the given book reference code."""
-        assert( BBB in self.BibleBooksCodes)
+        assert( BBB in Globals.BibleBooksCodes)
         #assert( self.books[BBB] )
         if BBB in self.BBBToNameDict: return self.BBBToNameDict[BBB]
-    # end of getAssumedBookName
+    # end of InternalBible.getAssumedBookName
+
+
+    def saveBook( self, BBB, bookData ):
+        self.books[BBB] = bookData
+        # Make up our book name dictionaries while we're at it
+        assumedBookNames = bookData.getAssumedBookNames()
+        for assumedBookName in assumedBookNames:
+            self.BBBToNameDict[BBB] = assumedBookName
+            assumedBookNameLower = assumedBookName.lower()
+            self.bookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
+            self.combinedBookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
+            if ' ' in assumedBookNameLower: self.combinedBookNameDict[assumedBookNameLower.replace(' ','')] = BBB # Store the deduced book name (lower case without spaces)
+    # end of InternalBible.saveBook
 
 
     def guessXRefBBB( self, referenceString ):
         """ Attempt to return a book reference code given a book reference code (e.g., 'PRO'), a book name (e.g., Proverbs) or abbreviation (e.g., Prv).
             Uses self.combinedBookNameDict and makes and uses self.bookAbbrevDict.
             Return None if unsuccessful."""
-        result = self.BibleBooksCodes.getBBB( referenceString )
+        result = Globals.BibleBooksCodes.getBBB( referenceString )
         if result is not None: return result # It's already a valid BBB
 
         adjRefString = referenceString.lower()
@@ -235,7 +259,7 @@ class InternalBible:
         if Globals.debugFlag or Globals.verbosityLevel>2: print( "  getXRefBBB failed for '{}' with {} and {}".format( referenceString, self.bookNameDict, self.bookAbbrevDict ) )
         string = "Couldn't guess '{}'".format( referenceString[:5] )
         if string not in self.guesses: self.guesses += ('\n' if self.guesses else '') + string
-    # end of guessXRefBBB
+    # end of InternalBible.guessXRefBBB
 
 
     def getVersification( self ):
@@ -256,7 +280,7 @@ class InternalBible:
             if combinedVerses: totalCombinedVerses[bookReferenceCode] = combinedVerses
             if reorderedVerses: totalReorderedVerses[bookReferenceCode] = reorderedVerses
         return totalVersification, totalOmittedVerses, totalCombinedVerses, totalReorderedVerses
-    # end of getVersification
+    # end of InternalBible.getVersification
 
 
     def getAddedUnits( self ):
@@ -278,7 +302,7 @@ class InternalBible:
             AllSectionReferences[BBB] = sectionReferences
         # If a version lacks a feature completely, return None (rather than an empty dictionary)
         return AllParagraphs if haveParagraphs else None, AllQParagraphs if haveQParagraphs else None, AllSectionHeadings if haveSectionHeadings else None, AllSectionReferences if haveSectionReferences else None
-    # end of getAddedUnits
+    # end of InternalBible.getAddedUnits
 
 
     def discover( self ):
@@ -306,8 +330,8 @@ class InternalBible:
         for BBB in self.discoveryResults:
             #print( "discoveryResults", BBB, self.discoveryResults[BBB] )
             isOT = isNT = False
-            if self.BibleBooksCodes.isOldTestament_NR( BBB ): isOT = True
-            if self.BibleBooksCodes.isNewTestament_NR( BBB ): isNT = True
+            if Globals.BibleBooksCodes.isOldTestament_NR( BBB ): isOT = True
+            if Globals.BibleBooksCodes.isNewTestament_NR( BBB ): isNT = True
             for key,value in self.discoveryResults[BBB].items():
                 if key=='percentageProgress':
                     if 'percentageProgressByBook' not in aggregateResults: aggregateResults['percentageProgressByBook'] = value
@@ -365,11 +389,15 @@ class InternalBible:
 
         #print( 'yyy', "aggregateResults", aggregateResults['percentageProgressByBook'], len(self) )
         aggregateResults['percentageProgressByBook'] = str( round( aggregateResults['percentageProgressByBook'] / len(self) ) ) + '%'
-        aggregateResults['percentageProgressByOTBook'] = str( round( aggregateResults['percentageProgressByOTBook'] / 39 ) ) + '%'
-        aggregateResults['percentageProgressByNTBook'] = str( round( aggregateResults['percentageProgressByNTBook'] / 27 ) ) + '%'
+        if 'percentageProgressByOTBook' in aggregateResults:
+            aggregateResults['percentageProgressByOTBook'] = str( round( aggregateResults['percentageProgressByOTBook'] / 39 ) ) + '%'
+        if 'percentageProgressByNTBook' in aggregateResults:
+            aggregateResults['percentageProgressByNTBook'] = str( round( aggregateResults['percentageProgressByNTBook'] / 27 ) ) + '%'
         aggregateResults['percentageProgressByVerse'] = str( round( aggregateResults['completedVerseCount'] * 100 / aggregateResults['verseCount'] ) ) + '%'
-        aggregateResults['percentageProgressByOTVerse'] = str( round( aggregateResults['OTcompletedVerseCount'] * 100 / aggregateResults['OTverseCount'] ) ) + '%'
-        aggregateResults['percentageProgressByNTVerse'] = str( round( aggregateResults['NTcompletedVerseCount'] * 100 / aggregateResults['NTverseCount'] ) ) + '%'
+        if 'percentageProgressByOTVerse' in aggregateResults:
+            aggregateResults['percentageProgressByOTVerse'] = str( round( aggregateResults['OTcompletedVerseCount'] * 100 / aggregateResults['OTverseCount'] ) ) + '%'
+        if 'percentageProgressByNTVerse' in aggregateResults:
+            aggregateResults['percentageProgressByNTVerse'] = str( round( aggregateResults['NTcompletedVerseCount'] * 100 / aggregateResults['NTverseCount'] ) ) + '%'
 
         # Save the results
         self.discoveryResults['ALL'] = aggregateResults
@@ -389,7 +417,7 @@ class InternalBible:
                 else: print( " ", key, "in", value if value<len(self) else "All", "books" )
 
         #print( self.books['LEV']._processedLines )
-    # end of discover
+    # end of InternalBible.discover
 
 
     def check( self ):
@@ -411,7 +439,7 @@ class InternalBible:
 
         # Do overall Bible checks
         # xxxxxxxxxxxxxxxxx ......................................
-    # end of check
+    # end of InternalBible.check
 
 
     def getErrors( self ):
@@ -604,11 +632,55 @@ class InternalBible:
                 #print( "InternalBible.getErrors: Removing empty category", category, "from errors['ByCategory']" )
                 del errors['ByCategory'][category]
         return errors
-    # end of getErrors
+    # end of InternalBible.getErrors
 
     def getBCVRef( self, ref ):
-        """ Search for a Bible reference and return the Bible text (in a list). """
-        if ref[0] in self.books: return self.books[ref[0]].getCVRef( ref )
+        """
+        Search for a Bible reference and return the Bible text (in a list).
+
+        Expects a simpleVerseKey for the parameter.
+        """
+        BBB = ref.getBBB()
+        if BBB in self.books: return self.books[BBB].getCVRef( ref )
+        #else: print( "InternalBible {} doesn't have {}".format( self.name, BBB ) ); halt
+    # end of InternalBible.getBCVRef
+
+    def getVerseData( self, key ):
+        """
+        Return (USFM-like) verseData (a list).
+        """
+        #print( "InternalBible.getVerseData( {} )".format( key ) )
+        verseData = self.getBCVRef( key )
+        #print( "  gVD", self.name, key, verseData )
+        if verseData is None:
+            print( "IB.gVD no VD", self.name, key, verseData )
+            assert( key.getChapterNumberStr()=='0' or key.getVerseNumberStr()=='0' )
+        else:
+            assert( isinstance( verseData, list ) )
+            assert( 2 <= len(verseData) <= 6 )
+        return verseData
+    # end of InternalBible.getVerseData
+
+    def getVerseText( self, key ):
+        """
+        First miserable attempt at converting (USFM-like) verseData into a string.
+        """
+        verseData = self.getBCVRef( key )
+        if verseData is not None:
+            #print( "vT", self.name, key, verseData )
+            assert( isinstance( verseData, list ) )
+            assert( 2 <= len(verseData) <= 5 )
+            verseText = ''
+            for marker,originalMarker,text,cleanText,extras in verseData:
+                if marker == 'c': pass # Ignore
+                elif marker == 's1': verseText += '¥' + cleanText + '¥'
+                elif marker == 'p': verseText += '¶' + cleanText
+                elif marker == 'm': verseText += '§' + cleanText
+                elif marker == 'v': pass # Ignore
+                elif marker == 'v=': verseText += cleanText
+                else: print( "Unknown marker", marker, cleanText )
+            return verseText
+    # end of InternalBible.getVerseText
 # end of class InternalBible
 
 
@@ -634,4 +706,4 @@ def main():
     if Globals.verbosityLevel > 0: print( IB )
 if __name__ == '__main__':
     main()
-## End of InternalBible.py
+# end of InternalBible.py

@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 #
 # USXFilenames.py
-#   Last modified: 2012-07-14 (also update versionString below)
+#   Last modified: 2013-03-23 (also update versionString below)
 #
 # Module handling USX Bible filenames
 #
-# Copyright (C) 2012 Robert Hunt
+# Copyright (C) 2012-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -35,7 +35,6 @@ from gettext import gettext as _
 
 
 import Globals
-from BibleBooksCodes import BibleBooksCodes
 
 
 class USXFilenames:
@@ -45,9 +44,6 @@ class USXFilenames:
 
     def __init__( self, folder ):
         """Create the object by inspecting files in the given folder."""
-        # Get the data tables that we need for proper checking
-        self._BibleBooksCodesObject = BibleBooksCodes().loadData()
-
         self.folder = folder
         self.pattern, self.fileExtension = '', 'usx' # Pattern should end up as 'dddBBB'
         self.digitsIndex, self.USXBookCodeIndex = 0, 3
@@ -64,7 +60,7 @@ class USXFilenames:
                         break
                 matched = False
                 if foundLength>=6 and containsDigits and foundExtBit=='.'+self.fileExtension:
-                    for USXBookCode,USXDigits,bookReferenceCode in self._BibleBooksCodesObject.getAllUSXBooksCodeNumberTriples():
+                    for USXBookCode,USXDigits,bookReferenceCode in Globals.BibleBooksCodes.getAllUSXBooksCodeNumberTriples():
                         if USXDigits in foundFileBit and (USXBookCode in foundFileBit or USXBookCode.upper() in foundFileBit):
                             digitsIndex = foundFileBit.index( USXDigits )
                             USXBookCodeIndex = foundFileBit.index(USXBookCode) if USXBookCode in foundFileBit else foundFileBit.index(USXBookCode.upper())
@@ -82,12 +78,12 @@ class USXFilenames:
         if not matched: logging.info( _("Unable to recognize valid USX files in ") + folder )
         #print( "USXFilenames: pattern='{}' fileExtension='{}'".format( self.pattern, self.fileExtension ) )
     # end of __init__
-        
+
 
     def __str__( self ):
         """
         This method returns the string representation of an object.
-        
+
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
@@ -115,14 +111,14 @@ class USXFilenames:
         """
         resultList = []
         if self.pattern:
-            for USFMBookCode,USXDigits,bookReferenceCode in self._BibleBooksCodesObject.getAllUSXBooksCodeNumberTriples():
+            for USFMBookCode,USXDigits,bookReferenceCode in Globals.BibleBooksCodes.getAllUSXBooksCodeNumberTriples():
                 filename = "------" # Six characters
                 filename = filename[:self.digitsIndex] + USXDigits + filename[self.digitsIndex+len(USXDigits):]
                 filename = filename[:self.USXBookCodeIndex] + ( USFMBookCode.upper() if 'BBB' in self.pattern else USFMBookCode ) + filename[self.USXBookCodeIndex+len(USFMBookCode):]
                 filename += '.' + self.fileExtension
                 #print( "getPossibleFilenames: Filename is '{}'".format( filename ) )
                 resultList.append( (bookReferenceCode,filename,) )
-        return self._BibleBooksCodesObject.getSequenceList( resultList )
+        return Globals.BibleBooksCodes.getSequenceList( resultList )
     # end of getPossibleFilenames
 
 

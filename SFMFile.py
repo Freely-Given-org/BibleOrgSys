@@ -3,9 +3,9 @@
 # SFMFile.py
 #
 # SFM (Standard Format Marker) data file reader
-#   Last modified: 2011-09-23 (also update versionString below)
+#   Last modified: 2013-03-24 (also update versionString below)
 #
-# Copyright (C) 2010-2011 Robert Hunt
+# Copyright (C) 2010-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -26,10 +26,10 @@
 Module for reading UTF-8 SFM (Standard Format Marker) file.
 
 There are three kinds of SFM encoded files which can be loaded:
-    1/ A "flat" file, read line by line into a list.
+    1/ SFMLines: A "flat" file, read line by line into a list.
             This could be any kind of SFM data.
-    2/ A "record based" file (e.g., a dictionary), read record by record into a list
-    3/ A header segment, then a "record based" structure read into the same list,
+    2/ SFMRecords: A "record based" file (e.g., a dictionary), read record by record into a list
+    3/ SFMRecords: A header segment, then a "record based" structure read into the same list,
             for example an interlinearized text.
 
   In each case, the SFM and its data field are read into a 2-tuple and saved (in order) in the list.
@@ -39,7 +39,7 @@ There are three kinds of SFM encoded files which can be loaded:
 
 
 progName = "SFM Files loader"
-versionString = "0.81"
+versionString = "0.82"
 
 
 import logging
@@ -59,11 +59,12 @@ class SFMLines:
     def __str__(self):
         """
         This method returns the string representation of a SFM lines object.
-        
+
         @return: the name of a SFM field object formatted as a string
         @rtype: string
         """
         result = "SFM Lines Object"
+        if Globals.debugFlag or Globals.verbosityLevel>2: result += ' v' + versionString
         for line in self.lines:
             result += ('\n' if result else '') + str( line )
         return result
@@ -150,7 +151,7 @@ class SFMRecords:
     def __str__(self):
         """
         This method returns the string representation of a SFM lines object.
-        
+
         @return: the name of a SFM field object formatted as a string
         @rtype: string
         """
@@ -188,6 +189,12 @@ class SFMRecords:
         if key:
             if '\\' in key: raise ValueError('SFM marker must not contain backslash')
             if ' ' in key: raise ValueError('SFM marker must not contain spaces')
+        self.sfm_filename = sfm_filename
+        self.key = key
+        self.ignoreSFMs = ignoreSFMs
+        self.ignoreEntries = ignoreEntries
+        self.changePairs = changePairs
+        self.encoding = encoding
 
         lastLine, lineCount, record, result = '', 0, [], []
         with open( sfm_filename, encoding=encoding ) as myFile: # Automatically closes the file when done
@@ -259,6 +266,65 @@ class SFMRecords:
 
             self.records = result
     # end of SFMRecords.read
+
+
+    def analyze( self ):
+        """
+        Analyzes the list of records read in from the file
+            to find the smallest and largest size (number of lines) of each record
+        as well as making a list of all the SFM marker types
+            and a dictionary of all the possible values of all the various SFM markers.
+        Returns these two integers
+            plus the list and the dictionary.
+        """
+        smallestSize, largestSize, markerList, markerSets = 9999, -1, [], {}
+        for record in self.records:
+            lr = len( record )
+            if lr < smallestSize: smallestSize = lr
+            if lr > largestSize: largestSize = lr
+            for marker, value in record:
+                if marker not in markerList:
+                    markerList.append( marker )
+                    markerSets[marker] = []
+                if value not in markerSets[marker]:
+                    markerSets[marker].append( value )
+        return smallestSize, largestSize, markerList, markerSets
+    # end of SFMRecords.analyze
+
+
+    def copyToDict( self, internalStructure ):
+        """
+        self.records is a list of lists.
+
+        This function copies them to a dictionary
+            where the keys are the values of the given marker (self.key).
+
+        The inner structure can either be lists (if the parameter is "list" )
+            which is most useful if lines with the identical SFM can be repeated within the record.
+        The inner structure can be dicts (if the parameter is "dict" )
+            which then checks that each line within the record starts with a unique marker.
+            The order of the original lines within each record is lost.
+
+        Returns the dictionary.
+        """
+        assert( internalStructure in ( "list", "dict" ) )
+        self.dataDict = {}
+        for record in self.records:
+            for j, (marker,value) in enumerate( record ):
+                if j==0:
+                    assert( marker == self.key )
+                    key = value
+                    self.dataDict[key] = [] if internalStructure=="list" else {}
+                else:
+                    if isinstance( self.dataDict[key], list ):
+                        self.dataDict[key].append( (marker,value) )
+                    elif isinstance( self.dataDict[key], dict ):
+                        #print( j, key, marker, value )
+                        if marker in self.dataDict[key]:
+                            logging.warning( "Multiple {} lines in {} record--will be overwritten".format( marker, key ) )
+                        self.dataDict[key][marker] = value
+        return self.dataDict
+    # end of SFMRecords.copyToDict
 # end of class SFMRecords
 
 

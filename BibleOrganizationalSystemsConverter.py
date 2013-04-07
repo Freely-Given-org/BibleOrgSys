@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleOrganizationalSystemsConverter.py
-#   Last modified: 2013-01-11 by RJH (also update versionString below)
+#   Last modified: 2013-03-23 by RJH (also update versionString below)
 #
 # Module handling BibleOrganizationalSystems.xml to produce C and Python data tables
 #
@@ -28,7 +28,7 @@ Module handling BibleOrganizationalSystems.xml to produce C and Python data tabl
 """
 
 progName = "Bible Organization Systems converter"
-versionString = "0.22"
+versionString = "0.24"
 
 
 import logging, os.path
@@ -38,7 +38,6 @@ from xml.etree.cElementTree import ElementTree
 from singleton import singleton
 import Globals
 from ISO_639_3_Languages import ISO_639_3_Languages
-from BibleBooksCodes import BibleBooksCodes
 from BibleBookOrders import BibleBookOrderSystems, BibleBookOrderSystem
 from BiblePunctuationSystems import BiblePunctuationSystems, BiblePunctuationSystem
 from BibleVersificationSystems import BibleVersificationSystems, BibleVersificationSystem
@@ -83,17 +82,16 @@ class BibleOrganizationalSystemsConverter:
 
         # Get the data tables that we need for proper checking
         self._ISOLanguages = ISO_639_3_Languages().loadData()
-        self._BibleBooksCodes = BibleBooksCodes().loadData()
         self._BibleBookOrderSystems = BibleBookOrderSystems().loadData()
         self._BiblePunctuationSystems = BiblePunctuationSystems().loadData()
         self._BibleVersificationSystems = BibleVersificationSystems().loadData()
         self._BibleBooksNamesSystems = BibleBooksNamesSystems().loadData()
-    # end of BibleOrganizationalSystemsConverter:__init__
+    # end of BibleOrganizationalSystemsConverter.__init__
 
     def __str__( self ):
         """
         This method returns the string representation of a Bible book code.
-        
+
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
@@ -103,12 +101,12 @@ class BibleOrganizationalSystemsConverter:
         if self.date: result += ('\n' if result else '') + "  Date: {}".format( self.date )
         result += ('\n' if result else '') + "  Number of entries = {}".format( len(self._XMLtree) )
         return result
-    # end of BibleOrganizationalSystemsConverter:__str__
+    # end of BibleOrganizationalSystemsConverter.__str__
 
     def __len__( self ):
         """ Returns the number of items loaded. """
         return len( self._XMLtree )
-    # end of BibleOrganizationalSystemsConverter:__len__
+    # end of BibleOrganizationalSystemsConverter.__len__
 
     def loadAndValidate( self, XMLFilepath=None ):
         """
@@ -123,7 +121,7 @@ class BibleOrganizationalSystemsConverter:
             if Globals.strictCheckingFlag:
                 self._validate()
         return self
-    # end of BibleOrganizationalSystemsConverter:loadAndValidate
+    # end of BibleOrganizationalSystemsConverter.loadAndValidate
 
     def _load( self, XMLFilepath ):
         """
@@ -159,7 +157,7 @@ class BibleOrganizationalSystemsConverter:
                 logging.warning( _("Missing header element (looking for '{}' tag)").format( self._headerTag ) )
         else:
             logging.error( _("Expected to load '{}' but got '{}'").format( self._treeTag, self._XMLtree.tag ) )
-    # end of BibleOrganizationalSystemsConverter:_load
+    # end of BibleOrganizationalSystemsConverter._load
 
     def _validate( self ):
         """
@@ -235,14 +233,14 @@ class BibleOrganizationalSystemsConverter:
                 if element.find("includesBooks") is not None:
                     bookList = element.find("includesBooks").text.split()
                     for BBB in bookList:
-                        if not self._BibleBooksCodes.isValidReferenceAbbreviation( BBB ):
+                        if not Globals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ):
                             logging.critical( _("Unrecognized '{}' Bible book code found in 'includesBooks' in record with ID '{}' (record {})").format( BBB, ID, j) )
                         if bookList.count( BBB ) > 1:
                             logging.error( _("Multiple '{}' Bible book codes found in 'includesBooks' in record with ID '{}' (record {})").format( BBB, ID, j) )
 
             else:
                 logging.warning( _("Unexpected element: {} in record {}").format( element.tag, j ) )
-    # end of BibleOrganizationalSystemsConverter:_validate
+    # end of BibleOrganizationalSystemsConverter._validate
 
     def importDataToPython( self ):
         """
@@ -280,7 +278,7 @@ class BibleOrganizationalSystemsConverter:
                         if name=="includesBooks": # special handling
                             bits["includesBooks"] = nameData.text.split()
                             for BBB in bits["includesBooks"]:
-                                if not self._BibleBooksCodes.isValidReferenceAbbreviation( BBB ):
+                                if not Globals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ):
                                     logging.error( _("Unrecognized '{}' Bible book code found in 'includesBooks' in {} {}").format( BBB, referenceAbbreviation, myType) )
                         else: bits[name] = nameData.text # normal handling
 

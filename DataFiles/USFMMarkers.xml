@@ -57,7 +57,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
   <header>
     <work>
       <version>0.55</version>
-      <date>2012-12-08</date>
+      <date>2013-03-07</date>
       <title>USFM 2.35 markers list</title>
       <contributor role="com">Robert Hunt</contributor>
       <identifier type="URL">http://paratext.ubs-translations.org/usfm</identifier>
@@ -523,7 +523,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <closed>No</closed>
     <occursIn>Text</occursIn>
     <deprecated>No</deprecated>
-    <description>The text reference range listed under a major section heading</description>
+    <description>The text reference range listed under a major section heading. Perhaps it could be described as the verse range which the \ms major section heading above it applies to.</description>
   </USFMMarker>
 
   <USFMMarker>
@@ -553,7 +553,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <closed>No</closed>
     <occursIn>Text</occursIn>
     <deprecated>No</deprecated>
-    <description>The text reference range listed under a section heading. \sr is not equivalent to \r which is used for marking parallel references.</description>
+    <description>The text reference range listed under a section heading. \sr is not equivalent to \r which is used for marking parallel references. Perhaps it could be described as the verse range which the \s section heading above it applies to.</description>
   </USFMMarker>
 
   <USFMMarker>
@@ -868,7 +868,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <closed>No</closed>
     <occursIn>Text</occursIn>
     <deprecated>No</deprecated>
-    <description>Indicates "no-break" with previous paragraph (regardless of previous paragraph type). Commonly used in cases where the previous paragraph spans the chapter boundary. No-break markup within poetry: Some translations have a publishing tradition of inserting a small amount of additional white-space at chapter boundaries. It is important in these texts to use the 
+    <description>Indicates "no-break" with previous paragraph (regardless of previous paragraph type). Commonly used in cases where the previous paragraph spans the chapter boundary. No-break markup within poetry: Some translations have a publishing tradition of inserting a small amount of additional white-space at chapter boundaries. It is important in these texts to use the
 b marker within any specific poetic contexts where no visible break in the flow of the the text is intended at a particular chapter boundary.</description>
   </USFMMarker>
 

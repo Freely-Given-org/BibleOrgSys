@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # USFMBibleBook.py
-#   Last modified: 2013-01-10 by RJH (also update versionString below)
+#   Last modified: 2013-04-07 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -27,7 +27,7 @@ Module for defining and manipulating USFM Bible books.
 """
 
 progName = "USFM Bible book handler"
-versionString = "0.25"
+versionString = "0.30"
 
 
 import os, logging
@@ -42,13 +42,13 @@ class USFMBibleBook( InternalBibleBook ):
     Class to load and manipulate a single USFM file / book.
     """
 
-    def __init__( self, logErrorsFlag ):
+    def __init__( self, BBB, logErrorsFlag ):
         """
         Create the USFM Bible book object.
         """
         self.objectType = "USFM"
         self.objectNameString = "USFM Bible Book object"
-        InternalBibleBook.__init__( self, logErrorsFlag ) # Initialise the base class
+        InternalBibleBook.__init__( self, BBB, logErrorsFlag ) # Initialise the base class
     # end of __init__
 
 
@@ -91,8 +91,8 @@ class USFMBibleBook( InternalBibleBook ):
 
         import SFMFile
         if Globals.verbosityLevel > 2: print( "  " + _("Loading {}...").format( filename ) )
-        self.bookReferenceCode = bookReferenceCode
-        self.isSingleChapterBook = self.BibleBooksCodes.isSingleChapterBook( bookReferenceCode )
+        #self.bookReferenceCode = bookReferenceCode
+        #self.isSingleChapterBook = Globals.BibleBooksCodes.isSingleChapterBook( bookReferenceCode )
         self.sourceFolder = folder
         self.sourceFilename = filename
         self.sourceFilepath = os.path.join( folder, filename )
@@ -154,11 +154,14 @@ def main():
     """
     Demonstrate reading and processing some USFM Bible databases.
     """
+    # Configure basic logging
+    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
+
     import USFMFilenames
 
     def demoFile( folder, filename, bookReferenceCode, logErrorsFlag ):
         if Globals.verbosityLevel > 1: print( _("Loading {} from {}...").format( bookReferenceCode, filename ) )
-        UBB = USFMBibleBook( logErrorsFlag )
+        UBB = USFMBibleBook( bookReferenceCode, logErrorsFlag )
         UBB.load( bookReferenceCode, folder, filename, encoding )
         if Globals.verbosityLevel > 1: print( "  ID is '{}'".format( UBB.getField( 'id' ) ) )
         if Globals.verbosityLevel > 1: print( "  Header is '{}'".format( UBB.getField( 'h' ) ) )
@@ -171,14 +174,11 @@ def main():
         if Globals.verbosityLevel > 2: print( UBBAddedUnits )
         discoveryDict = {}
         UBB.discover( discoveryDict )
-        print( "discoveryDict", discoveryDict )
+        #print( "discoveryDict", discoveryDict )
         UBB.check()
         UBErrors = UBB.getErrors()
         if Globals.verbosityLevel > 2: print( UBErrors )
     # end of demoFile
-
-    # Configure basic logging
-    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
 
     # Handle command line parameters
     from optparse import OptionParser
@@ -214,4 +214,4 @@ def main():
 
 if __name__ == '__main__':
     main()
-## End of USFMBibleBook.py
+# end of USFMBibleBook.py

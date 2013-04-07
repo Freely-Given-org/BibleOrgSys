@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # USFMBible.py
-#   Last modified: 2013-03-06 by RJH (also update versionString below)
+#   Last modified: 2013-04-07 by RJH (also update versionString below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -27,7 +27,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 """
 
 progName = "USFM Bible handler"
-versionString = "0.27"
+versionString = "0.30"
 
 
 import os, logging, datetime
@@ -35,6 +35,7 @@ from gettext import gettext as _
 from collections import OrderedDict
 
 import Globals
+import USFMFilenames
 from USFMBibleBook import USFMBibleBook
 from InternalBible import InternalBible
 
@@ -44,46 +45,85 @@ class USFMBible( InternalBible ):
     Class to load and manipulate USFM Bibles.
 
     """
-    def __init__( self, name, logErrorsFlag ):
+    def __init__( self, sourceFolder, givenName=None, encoding='utf-8', logErrorsFlag=False ):
         """
         Create the internal USFM Bible object.
         """
+        self.sourceFolder, self.givenName, self.encoding, self.logErrorsFlag = sourceFolder, givenName, encoding, logErrorsFlag
+
+        # Do a preliminary check on the contents of our folder
+        foundFiles, foundFolders = [], []
+        for something in os.listdir( self.sourceFolder ):
+            somepath = os.path.join( self.sourceFolder, something )
+            if os.path.isdir( somepath ): foundFolders.append( something )
+            elif os.path.isfile( somepath ): foundFiles.append( something )
+            else: print( "ERROR: Not sure what '{}' is in {}!".format( somepath, self.sourceFolder ) )
+        if foundFolders: print( "USFMBible.load: Surprised to see subfolders in '{}': {}".format( self.sourceFolder, foundFolders ) )
+        if not foundFiles:
+            print( "USFMBible: Couldn't find any files in '{}'".format( self.sourceFolder ) )
+            return # No use continuing
+
+        self.USFMFilenamesObject = USFMFilenames.USFMFilenames( self.sourceFolder )
+
+        # Attempt to load the SSF file
+        self.ssfData = None
+        ssfFilepathList = self.USFMFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
+        if len(ssfFilepathList) == 1: # Seems we found the right one
+            self.loadSSFData( ssfFilepathList[0] )
+
+        self.name = self.givenName
+        if self.name is None and 'Name' in self.ssfData: self.name = self.ssfData['Name']
+
+         # Setup and initialise the base class
         self.objectType = "USFM"
         self.objectNameString = "USFM Bible object"
-        InternalBible.__init__( self, name, logErrorsFlag ) # Initialise the base class
-    # end of __init_
+        InternalBible.__init__( self, self.name, self.logErrorsFlag )
+    # end of USFMBible.__init_
 
 
-    def load( self, folder, encoding='utf-8' ):
-        """
-        Load the books.
-        """
-        def loadSSFData( ssfFilepath, encoding='utf-8' ):
-            """Process the SSF data from the given filepath.
-                Returns a dictionary."""
-            if Globals.verbosityLevel > 2: print( _("Loading SSF data from '{}'").format( ssfFilepath ) )
-            lastLine, lineCount, status, ssfData = '', 0, 0, {}
-            with open( ssfFilepath, encoding=encoding ) as myFile: # Automatically closes the file when done
-                for line in myFile:
-                    lineCount += 1
-                    if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
-                        print( "      Detected UTF-16 Byte Order Marker" )
-                        line = line[1:] # Remove the Byte Order Marker
-                    if line[-1]=='\n': line = line[:-1] # Remove trailing newline character
-                    line = line.strip() # Remove leading and trailing whitespace
-                    if not line: continue # Just discard blank lines
-                    lastLine = line
-                    processed = False
-                    if status==0 and line=="<ScriptureText>":
-                        status = 1
+    def loadSSFData( self, ssfFilepath, encoding='utf-8' ):
+        """Process the SSF data from the given filepath.
+            Returns a dictionary."""
+        if Globals.verbosityLevel > 2: print( _("Loading SSF data from '{}'").format( ssfFilepath ) )
+        lastLine, lineCount, status, ssfData = '', 0, 0, {}
+        with open( ssfFilepath, encoding=encoding ) as myFile: # Automatically closes the file when done
+            for line in myFile:
+                lineCount += 1
+                if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
+                    print( "      Detected UTF-16 Byte Order Marker" )
+                    line = line[1:] # Remove the Byte Order Marker
+                if line[-1]=='\n': line = line[:-1] # Remove trailing newline character
+                line = line.strip() # Remove leading and trailing whitespace
+                if not line: continue # Just discard blank lines
+                lastLine = line
+                processed = False
+                if status==0 and line=="<ScriptureText>":
+                    status = 1
+                    processed = True
+                elif status==1 and line=="</ScriptureText>":
+                    status = 2
+                    processed = True
+                elif status==1 and line[0]=='<' and line.endswith('/>'): # Handle a self-closing (empty) field
+                    fieldname = line[1:-3] if line.endswith(' />') else line[1:-2] # Handle it with or without a space
+                    if ' ' not in fieldname:
+                        ssfData[fieldname] = ''
                         processed = True
-                    elif status==1 and line=="</ScriptureText>":
-                        status = 2
+                    elif ' ' in fieldname: # Some fields (like "Naming") may contain attributes
+                        bits = fieldname.split( None, 1 )
+                        assert( len(bits)==2 )
+                        fieldname = bits[0]
+                        attributes = bits[1]
+                        #print( "attributes = '{}'".format( attributes) )
+                        ssfData[fieldname] = (contents, attributes)
                         processed = True
-                    elif status==1 and line[0]=='<' and line.endswith('/>'): # Handle a self-closing (empty) field
-                        fieldname = line[1:-3] if line.endswith(' />') else line[1:-2] # Handle it with or without a space
-                        if ' ' not in fieldname:
-                            ssfData[fieldname] = ''
+                elif status==1 and line[0]=='<' and line[-1]=='>':
+                    ix1 = line.index('>')
+                    ix2 = line.index('</')
+                    if ix1!=-1 and ix2!=-1 and ix2>ix1:
+                        fieldname = line[1:ix1]
+                        contents = line[ix1+1:ix2]
+                        if ' ' not in fieldname and line[ix2+2:-1]==fieldname:
+                            ssfData[fieldname] = contents
                             processed = True
                         elif ' ' in fieldname: # Some fields (like "Naming") may contain attributes
                             bits = fieldname.split( None, 1 )
@@ -91,119 +131,51 @@ class USFMBible( InternalBible ):
                             fieldname = bits[0]
                             attributes = bits[1]
                             #print( "attributes = '{}'".format( attributes) )
-                            ssfData[fieldname] = (contents, attributes)
-                            processed = True
-                    elif status==1 and line[0]=='<' and line[-1]=='>':
-                        ix1 = line.index('>')
-                        ix2 = line.index('</')
-                        if ix1!=-1 and ix2!=-1 and ix2>ix1:
-                            fieldname = line[1:ix1]
-                            contents = line[ix1+1:ix2]
-                            if ' ' not in fieldname and line[ix2+2:-1]==fieldname:
-                                ssfData[fieldname] = contents
+                            if line[ix2+2:-1]==fieldname:
+                                ssfData[fieldname] = (contents, attributes)
                                 processed = True
-                            elif ' ' in fieldname: # Some fields (like "Naming") may contain attributes
-                                bits = fieldname.split( None, 1 )
-                                assert( len(bits)==2 )
-                                fieldname = bits[0]
-                                attributes = bits[1]
-                                #print( "attributes = '{}'".format( attributes) )
-                                if line[ix2+2:-1]==fieldname:
-                                    ssfData[fieldname] = (contents, attributes)
-                                    processed = True
-                    if not processed: print( "ERROR: Unexpected '{}' line in SSF file".format( line ) )
-            if Globals.verbosityLevel > 2:
-                print( "  " + _("Got {} SSF entries:").format( len(ssfData) ) )
-                if Globals.verbosityLevel > 3:
-                    for key in sorted(ssfData):
-                        print( "    {}: {}".format( key, ssfData[key] ) )
-            return ssfData
-        # end of loadSSFData
+                if not processed: print( "ERROR: Unexpected '{}' line in SSF file".format( line ) )
+        if Globals.verbosityLevel > 2:
+            print( "  " + _("Got {} SSF entries:").format( len(ssfData) ) )
+            if Globals.verbosityLevel > 3:
+                for key in sorted(ssfData):
+                    print( "    {}: {}".format( key, ssfData[key] ) )
+        self.ssfData = ssfData
+    # end of USFMBible.loadSSFData
 
-        import USFMFilenames
 
-        if Globals.verbosityLevel > 1: print( _("USFMBible: Loading {} from {}...").format( self.name, folder ) )
-        self.sourceFolder = folder # Remember our folder
+    def loadBook( self, BBB, filename=None ):
+        """
+        Load the requested book if it's not already loaded.
+        """
+        if BBB in self.books: return # Already loaded
+        if Globals.verbosityLevel > 0: print( _("  USFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
+        if filename is None:
+            for someBBB, someFilename in self.USFMFilenamesObject.getMaximumPossibleFilenameTuples():
+                if someBBB == BBB: filename = someFilename; break
+        UBB = USFMBibleBook( BBB, self.logErrorsFlag )
+        UBB.load( BBB, self.sourceFolder, filename, self.encoding )
+        UBB.validateUSFM()
+        #print( UBB )
+        self.saveBook( BBB, UBB )
+    # end of USFMBible.loadBook
 
-        # Do a preliminary check on the contents of our folder
-        foundFiles, foundFolders = [], []
-        for something in os.listdir( folder ):
-            somepath = os.path.join( folder, something )
-            if os.path.isdir( somepath ): foundFolders.append( something )
-            elif os.path.isfile( somepath ): foundFiles.append( something )
-            else: print( "ERROR: Not sure what '{}' is in {}!".format( somepath, folder ) )
-        if foundFolders: print( "USFMBible.load: Surprised to see subfolders in '{}': {}".format( folder, foundFolders ) )
-        if not foundFiles:
-            print( "USFMBible.load: Couldn't find any files in '{}'".format( folder ) )
-            return # No use continuing
 
-        self.USFMFilenamesObject = USFMFilenames.USFMFilenames( folder )
-
-        # Attempt to load the SSF file
-        ssfFilepathList = self.USFMFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
-        if len(ssfFilepathList) == 1: # Seems we found the right one
-            self.ssfData = loadSSFData( ssfFilepathList[0] )
+    def loadAll( self ):
+        """
+        Load all the books.
+        """
+        if Globals.verbosityLevel > 1: print( _("USFMBible: Loading {} from {}...").format( self.name, self.sourceFolder ) )
 
         # Load the books one by one -- assuming that they have regular Paratext style filenames
         for BBB,filename in self.USFMFilenamesObject.getMaximumPossibleFilenameTuples():
-            UBB = USFMBibleBook( self.logErrorsFlag )
-            UBB.load( BBB, folder, filename, encoding )
-            UBB.validateUSFM()
-            #print( UBB )
-            self.books[BBB] = UBB
-            # Make up our book name dictionaries while we're at it
-            assumedBookNames = UBB.getAssumedBookNames()
-            for assumedBookName in assumedBookNames:
-                self.BBBToNameDict[BBB] = assumedBookName
-                assumedBookNameLower = assumedBookName.lower()
-                self.bookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
-                self.combinedBookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
-                if ' ' in assumedBookNameLower: self.combinedBookNameDict[assumedBookNameLower.replace(' ','')] = BBB # Store the deduced book name (lower case without spaces)
+            self. loadBook( BBB, filename )
 
-        if 0: # this code is now in USFMFilenames.py -- can now be deleted
-            if not self.books: # Didn't successfully load any regularly named books -- maybe the files have weird names??? -- try to be intelligent here
-                if Globals.verbosityLevel > 2: print( "USFMBible.load: Didn't find any regularly named USFM files in '{}'".format( folder ) )
-                #print( "\n", len(foundFiles), sorted(foundFiles) )
-                for thisFilename in foundFiles:
-                    # Look for BBB in the ID line (which should be the first line in a USFM file)
-                    isUSFM = False
-                    thisPath = os.path.join( folder, thisFilename )
-                    with open( thisPath ) as possibleUSFMFile: # Automatically closes the file when done
-                        for line in possibleUSFMFile:
-                            if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
-                            if line.startswith( '\\id ' ):
-                                USFMId = line[4:].strip()[:3] # Take the first three non-blank characters after the space after id
-                                if Globals.verbosityLevel > 2: print( "Have possible USFM ID '{}'".format( USFMId ) )
-                                BBB = self.BibleBooksCodes.getBBBFromUSFM( USFMId )
-                                if Globals.verbosityLevel > 2: print( "BBB is '{}'".format( BBB ) )
-                                isUSFM = True
-                            elif line.startswith ( '\\' ):
-                                print( "First line in {} in {} starts with a backslash but not an id line '{}'".format( thisFilename, folder, line ) )
-                            elif not line:
-                                print( "First line in {} in {} appears to be blank".format( thisFilename, folder ) )
-                            break # We only look at the first line
-                    if isUSFM: # have an irregularly named file, but it appears to be USFM
-                        UBB = USFMBibleBook( self.logErrorsFlag )
-                        UBB.load( BBB, folder, thisFilename, encoding )
-                        UBB.validateUSFM()
-                        # print( UBB )
-                        if BBB in self.books: print( "Oops, loadUSFMBible has already found '{}' in {}, now we have a duplicate in {}".format( BBB, self.books[BBB].sourceFilename, thisFilename ) )
-                        self.books[BBB] = UBB
-                        # Make up our book name dictionaries while we're at it
-                        assumedBookNames = UBB.getAssumedBookNames()
-                        for assumedBookName in assumedBookNames:
-                            self.BBBToNameDict[BBB] = assumedBookName
-                            assumedBookNameLower = assumedBookName.lower()
-                            self.bookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
-                            self.combinedBookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
-                            if ' ' in assumedBookNameLower: self.combinedBookNameDict[assumedBookNameLower.replace(' ','')] = BBB # Store the deduced book name (lower case without spaces)
-                    else: print( "{} doesn't seem to be a USFM Bible book in {}".format( thisFilename, folder ) )
-                if self.books: print( "USFMBible.load: Found {} irregularly named USFM files".format( len(self.books) ) )
         #print( "\n", len(self.books), sorted(self.books) ); halt
         #print( "\n", "self.BBBToNameDict", self.BBBToNameDict )
         #print( "\n", "self.bookNameDict", self.bookNameDict )
         #print( "\n", "self.combinedBookNameDict", self.combinedBookNameDict ); halt
-    # end of load
+    # end of USFMBible.loadAll
 # end of class USFMBible
 
 
@@ -222,11 +194,11 @@ def main():
 
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
-    if 1: # Test a single folder containing a USFM Bible
+    if 0: # Test a single folder containing a USFM Bible
         name, encoding, testFolder = "Matigsalug", "utf-8", "/mnt/Data/Work/Matigsalug/Bible/MBTV/" # You can put your test folder here
         if os.access( testFolder, os.R_OK ):
-            UB = USFMBible( name, logErrorsFlag=False ) # Set to logErrorsFlag=True if you want to see errors at the terminal
-            UB.load( testFolder, encoding )
+            UB = USFMBible( testFolder, name, encoding, logErrorsFlag=False ) # Set to logErrorsFlag=True if you want to see errors at the terminal
+            UB.loadAll()
             if Globals.verbosityLevel > 0: print( UB )
             UB.check()
             #UBErrors = UB.getErrors()
@@ -238,11 +210,9 @@ def main():
                 #print( "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )
         else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 
-    if 0: # Test a whole folder full of folders of USFM Bibles
+    if 1: # Test a whole folder full of folders of USFM Bibles
         def findInfo():
             """ Find out info about the project from the included copyright.htm file """
-            from BibleBooksCodes import BibleBooksCodes
-            BBC = BibleBooksCodes().loadData()
             with open( os.path.join( somepath, "copyright.htm" ) ) as myFile: # Automatically closes the file when done
                 lastLine, lineCount = None, 0
                 title, nameDict = None, {}
@@ -258,7 +228,7 @@ def main():
                     if line.startswith('<option value="'):
                         adjLine = line.replace('<option value="','').replace('</option>','')
                         USFM_BBB, name = adjLine[:3], adjLine[11:]
-                        BBB = BBC.getBBBFromUSFM( USFM_BBB )
+                        BBB = Globals.BibleBooksCodes.getBBBFromUSFM( USFM_BBB )
                         #print( USFM_BBB, BBB, name )
                         nameDict[BBB] = name
             return title, nameDict
@@ -270,15 +240,15 @@ def main():
             somepath = os.path.join( testBaseFolder, something )
             if os.path.isfile( somepath ): print( "Ignoring file '{}' in '{}'".format( something, testBaseFolder ) )
             elif os.path.isdir( somepath ): # Let's assume that it's a folder containing a USFM (partial) Bible
-                if not something.startswith( 'dob' ): continue
+                #if not something.startswith( 'bbb' ): continue
                 count += 1
                 title, bookNameDict = findInfo()
                 if title is None: title = something[:-5] if something.endswith("_usfm") else something
                 name, encoding, testFolder = title, "utf-8", somepath
                 if os.access( testFolder, os.R_OK ):
                     if Globals.verbosityLevel > 0: print( "\n{}".format( count ) )
-                    UB = USFMBible( name, False ) # The second parameter is the logErrorsFlag -- set to True if you want to see errors at the terminal
-                    UB.load( testFolder, encoding )
+                    UB = USFMBible( testFolder, name, encoding, False ) # The second parameter is the logErrorsFlag -- set to True if you want to see errors at the terminal
+                    UB.loadAll()
                     totalBooks += len( UB )
                     if Globals.verbosityLevel > 0: print( UB )
                     UB.check()
@@ -301,4 +271,4 @@ def main():
 
 if __name__ == '__main__':
     main()
-## End of USFMBible.py
+# end of USFMBible.py

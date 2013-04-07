@@ -4,7 +4,7 @@
 # USFMMarkersTests.py
 #
 # Module testing USFMMarkers.py
-#   Last modified: 2013-01-13 (also update versionString below)
+#   Last modified: 2013-04-07 (also update versionString below)
 #
 # Copyright (C) 2011-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -28,7 +28,7 @@ Module testing USFMMarkers.py.
 """
 
 progName = "USFM Markers tests"
-versionString = "0.54"
+versionString = "0.55"
 
 
 import sys, unittest
@@ -67,7 +67,7 @@ class USFMMarkersConverterTests( unittest.TestCase ):
                             "internalMarkersList", "numberedInternalMarkersList", "combinedInternalMarkersList", \
                             "deprecatedMarkersList", ):
             self.assertTrue( dictName in result )
-            self.assertTrue( 3 < len(result[dictName]) < 200 )
+            self.assertTrue( 3 < len(result[dictName]) < 220 )
     # end of test_1030_importDataToPython
 
     def test_1040_pickle( self ):
@@ -491,6 +491,9 @@ class USFMMarkersTests( unittest.TestCase ):
 
 
 if __name__ == '__main__':
+    # Configure basic logging
+    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
+
     # Handle command line parameters (for compatibility)
     from optparse import OptionParser
     parser = OptionParser( version="v{}".format( versionString ) )

@@ -4,7 +4,7 @@
 # BibleBooksNames.py
 #
 # Module handling BibleBooksNames
-#   Last modified: 2013-01-03 (also update versionString below)
+#   Last modified: 2013-04-05 (also update versionString below)
 #
 # Copyright (C) 2010-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -38,8 +38,6 @@ from collections import OrderedDict
 from singleton import singleton
 
 import Globals
-from BibleBooksCodes import BibleBooksCodes
-#from ISO_639_3_Languages import ISO_639_3_Languages
 
 
 def expandBibleNamesInputs ( systemName, divisionsNamesDict, booknameLeadersDict, bookNamesDict, bookList ):
@@ -200,9 +198,8 @@ class BibleBooksNamesSystems:
 
     def __init__( self ): # We can't give this parameters because of the singleton
         """
-        Constructor: 
+        Constructor:
         """
-        self.__BibleBooksCodes = BibleBooksCodes().loadData()
         self.__DataDicts, self.__ExpandedDicts = None, None # We'll import into this in loadData
     # end of __init__
 
@@ -242,7 +239,7 @@ class BibleBooksNamesSystems:
     def __str__( self ):
         """
         This method returns the string representation of a Bible book code.
-        
+
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
@@ -290,7 +287,7 @@ class BibleBooksNamesSystems:
         """ Returns two dictionaries and a list object."""
         if bookList is not None:
             for BBB in bookList: # Just check this list is valid
-                if not self.__BibleBooksCodes.isValidReferenceAbbreviation( BBB ): logging.error( _("Invalid '{}' in booklist requested for {} books names system").format(BBB,systemName) )
+                if not Globals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): logging.error( _("Invalid '{}' in booklist requested for {} books names system").format(BBB,systemName) )
 
         if systemName in self.__DataDicts:
             assert( len(self.__DataDicts[systemName]) == 3 )
@@ -363,7 +360,7 @@ class BibleBooksNamesSystem:
     def __str__( self ):
         """
         This method returns the string representation of a Bible books names system.
-        
+
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
@@ -401,8 +398,12 @@ class BibleBooksNamesSystem:
                 (Automatically converts to upper case before comparing strings.) """
         assert( bookNameOrAbbreviation )
         upperCaseBookNameOrAbbreviation = bookNameOrAbbreviation.upper()
-        if upperCaseBookNameOrAbbreviation in self.__sortedBookNamesDict:
-            return self.__sortedBookNamesDict[upperCaseBookNameOrAbbreviation]
+        try:
+            if upperCaseBookNameOrAbbreviation in self.__sortedBookNamesDict:
+                return self.__sortedBookNamesDict[upperCaseBookNameOrAbbreviation]
+        except AttributeError:
+            logging.critical( "No bookname dictionary in BibleBooksNamesSystem" )
+            return None
         if Globals.commandLineOptions.debug:
             # It failed so print what the closest alternatives were
             print( "getBBB", bookNameOrAbbreviation, upperCaseBookNameOrAbbreviation )
@@ -476,7 +477,7 @@ def main():
     bbns2 = BibleBooksNamesSystem("eng_traditional",sampleBookList) # Doesn't reload the XML unnecessarily :)
     print( bbns2 ) # Just print a summary
     print( "Checking book name inputs..." )
-    for bookAbbrevInput in ('Gen', 'GEN', 'Gn', 'Exo', '1 Samuel', '1Samuel', '1Sam', '1 Sam', '1 Sml', '1Sml', '1 S', '1S','II Sa','IIS','1Kgs', '1 Kgs', '1K', '1 K', 'IK', 'I K', '1M', 'IV Mac', 'Mt', 'Rvl' ):
+    for bookAbbrevInput in ('Gen', 'GEN', 'Gn', 'Exo', 'Judges','1 Samuel', '1Samuel', '1Sam', '1 Sam', '1 Sml', '1Sml', '1 S', '1S','II Sa','IIS','1Kgs', '1 Kgs', '1K', '1 K', 'IK', 'I K', '1M', 'IV Mac', 'Mt', 'Jude', 'Rvl' ):
         # NOTE: '1S' is ambiguous with '1st' :(
         print( "  Searching for '{}' got {}".format(bookAbbrevInput, bbns2.getBBB(bookAbbrevInput)) )
     print( "Checking division name inputs..." )

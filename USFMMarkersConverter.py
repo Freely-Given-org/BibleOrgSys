@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkersConverter.py
+#   Last modified: 2013-03-25 (also update versionString below)
 #
 # Module handling USFMMarkers.xml to produce C and Python data tables
-#   Last modified: 2012-06-23 (also update versionString below)
 #
-# Copyright (C) 2011-2012 Robert Hunt
+# Copyright (C) 2011-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling USFMMarkers.xml and to export to JSON, C, and Python data tables
 """
 
 progName = "USFM Markers converter"
-versionString = "0.54"
+versionString = "0.55"
 
 
 import logging, os.path
@@ -218,7 +218,7 @@ class USFMMarkersConverter:
     def __str__( self ):
         """
         This method returns the string representation of a Bible book code.
-        
+
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
@@ -302,7 +302,7 @@ class USFMMarkersConverter:
             combinedMarkerDict[marker] = marker
             if numberableFlag: # We have some extra work to do
                 conversionDict[marker] = marker + '1'
-                for suffix in ( '123' ): # These are the suffix digits that we allow
+                for suffix in ( '1234' ): # These are the suffix digits that we allow
                     numberedMarker = marker + suffix
                     backConversionDict[numberedMarker] = marker
                     numberedMarkerList.append( numberedMarker )
@@ -551,6 +551,9 @@ def main():
     """
     Main program to handle command line parameters and then run what they want.
     """
+    # Configure basic logging
+    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
+
     # Handle command line parameters
     from optparse import OptionParser
     parser = OptionParser( version="v{}".format( versionString ) )

@@ -4,9 +4,9 @@
 # BibleBooksNamesConverter.py
 #
 # Module handling BibleBooksNames_*.xml to produce C and Python data tables
-#   Last modified: 2011-08-22 (also update versionString below)
+#   Last modified: 2013-04-05 (also update versionString below)
 #
-# Copyright (C) 2010-2011 Robert Hunt
+# Copyright (C) 2010-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -39,8 +39,6 @@ from xml.etree.cElementTree import ElementTree
 from singleton import singleton
 
 import Globals
-from BibleBooksCodes import BibleBooksCodes
-from ISO_639_3_Languages import ISO_639_3_Languages
 
 
 @singleton # Can only ever have one instance
@@ -73,10 +71,6 @@ class BibleBooksNamesConverter:
 
         # These are fields that we will fill later
         self.__XMLFolder, self.__XMLSystems, self.__BookNamesSystemsDict, self.__expandedInputSystems = None, {}, {}, {}
-
-        # Get the data tables that we need for proper checking
-        self.__BibleBooksCodes = BibleBooksCodes().loadData()
-        self.__ISOLanguages = ISO_639_3_Languages().loadData() if Globals.strictCheckingFlag else None
     # end of __init__
 
     def loadSystems( self, folder=None ):
@@ -224,7 +218,7 @@ class BibleBooksNamesConverter:
     def __str__( self ):
         """
         This method returns the string representation of a Bible booksNames system.
-        
+
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
@@ -279,7 +273,7 @@ class BibleBooksNamesConverter:
 
         if bookList is not None:
             for BBB in bookList: # Just check this list is valid
-                if not self.__BibleBooksCodes.isValidReferenceAbbreviation( BBB ): logging.error( _("Invalid '{}' in booklist requested for expansion").format(BBB) )
+                if not Globals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): logging.error( _("Invalid '{}' in booklist requested for expansion").format(BBB) )
 
         if Globals.verbosityLevel > 1: print( _("Expanding input abbreviations...") )
         for systemName in self.__BookNamesSystemsDict:
@@ -322,7 +316,7 @@ class BibleBooksNamesConverter:
                     includedBooks = []
                     for subelement in element.findall("includesBook"):
                         BBB = subelement.text
-                        if not self.__BibleBooksCodes.isValidReferenceAbbreviation( BBB ):
+                        if not Globals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ):
                             logging.error( _("Unrecognized '{}' book abbreviation in BibleDivisionNames in '{}' booksNames system").format( BBB, booksNamesSystemCode ) )
                         if BBB in includedBooks:
                             logging.error( _("Duplicate '{}' entry in includesBook field for '{}' division in '{}' booksNames system").format( subelement.text, defaultName, booksNamesSystemCode ) )
@@ -339,7 +333,7 @@ class BibleBooksNamesConverter:
                     myBooknameLeadersDict[standardLeader+' '] = inputFields
                 elif element.tag == "BibleBookNames":
                     referenceAbbreviation = element.get("referenceAbbreviation")
-                    if not self.__BibleBooksCodes.isValidReferenceAbbreviation( referenceAbbreviation ):
+                    if not Globals.BibleBooksCodes.isValidReferenceAbbreviation( referenceAbbreviation ):
                         logging.error( _("Unrecognized '{}' book abbreviation in BibleBookNames in '{}' booksNames system").format( referenceAbbreviation, booksNamesSystemCode ) )
                     defaultName = element.find("defaultName").text
                     defaultAbbreviation = element.find("defaultAbbreviation").text
