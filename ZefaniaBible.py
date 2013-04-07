@@ -170,11 +170,127 @@ class ZefaniaBible( InternalBible ):
 
 
     def __validateAndExtractHeader( self ):
+        """
+        Extracts information out of the header record, such as:
+            <INFORMATION>
+            <title>King James Version</title>
+            <creator></creator>
+            <subject>The Holy Bible</subject>
+            <description>In 1604, King James I of England authorized that a new translation of the Bible into English be started. It was finished in 1611, just 85 years after the first translation of the New Testament into English appeared (Tyndale, 1526). The Authorized Version, or King James Version, quickly became the standard for English-speaking Protestants. Its flowing language and prose rhythm has had a profound influence on the literature of the past 300 years.</description>
+            <publisher>FREE BIBLE SOFTWARE GROUP</publisher>
+            <contributors />
+            <date>2009-01-23</date>
+            <type>Bible</type>
+            <format>Zefania XML Bible Markup Language</format>
+            <identifier>kjv</identifier>
+            <source>http://www.unboundbible.com/zips/index.cfm?lang=English</source>
+            <language>ENG</language>
+            <coverage>provide the Bible to the nations of the world</coverage>
+            <rights>We believe that this Bible is found in the Public Domain.</rights>
+        </INFORMATION>
+        """
         assert( self.header )
         location = 'Header'
         Globals.checkXMLNoAttributes( self.header, location, 'j4j6' )
         Globals.checkXMLNoText( self.header, location, 'sk4l' )
         Globals.checkXMLNoTail( self.header, location, 'a2d4' )
+
+        # TODO: We probably need to rationalise some of the self.xxx stores
+        for element in self.header:
+            if element.tag == 'title':
+                sublocation = "title in {}".format( location )
+                Globals.checkXMLNoTail( element, sublocation, 'al1d' )
+                Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
+                Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
+                assert( element.text )
+                self.title = element.text
+            elif element.tag == 'creator':
+                sublocation = "creator in {}".format( location )
+                Globals.checkXMLNoTail( element, sublocation, 'al1d' )
+                Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
+                Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
+                if element.text: self.creator = element.text
+            elif element.tag == 'subject':
+                sublocation = "subject in {}".format( location )
+                Globals.checkXMLNoTail( element, sublocation, 'al1d' )
+                Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
+                Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
+                if element.text: self.subject = element.text
+            elif element.tag == 'description':
+                sublocation = "description in {}".format( location )
+                Globals.checkXMLNoTail( element, sublocation, 'al1d' )
+                Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
+                Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
+                assert( element.text )
+                self.description = element.text
+            elif element.tag == 'publisher':
+                sublocation = "publisher in {}".format( location )
+                Globals.checkXMLNoTail( element, sublocation, 'al1d' )
+                Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
+                Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
+                if element.text: self.publisher = element.text
+            elif element.tag == 'contributors':
+                sublocation = "contributors in {}".format( location )
+                Globals.checkXMLNoTail( element, sublocation, 'al1d' )
+                Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
+                Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
+                if element.text: self.contributors = element.text
+            elif element.tag == 'date':
+                sublocation = "date in {}".format( location )
+                Globals.checkXMLNoTail( element, sublocation, 'al1d' )
+                Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
+                Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
+                assert( element.text )
+                self.date = element.text
+            elif element.tag == 'type':
+                sublocation = "type in {}".format( location )
+                Globals.checkXMLNoTail( element, sublocation, 'al1d' )
+                Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
+                Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
+                if element.text: self.documentType = element.text
+            elif element.tag == 'format':
+                sublocation = "format in {}".format( location )
+                Globals.checkXMLNoTail( element, sublocation, 'al1d' )
+                Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
+                Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
+                assert( element.text )
+                assert( element.text == 'Zefania XML Bible Markup Language' )
+            elif element.tag == 'identifier':
+                sublocation = "identifier in {}".format( location )
+                Globals.checkXMLNoTail( element, sublocation, 'al1d' )
+                Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
+                Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
+                assert( element.text )
+                self.identifier = element.text
+            elif element.tag == 'source':
+                sublocation = "source in {}".format( location )
+                Globals.checkXMLNoTail( element, sublocation, 'al1d' )
+                Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
+                Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
+                assert( element.text )
+                self.source = element.text
+            elif element.tag == 'language':
+                sublocation = "language in {}".format( location )
+                Globals.checkXMLNoTail( element, sublocation, 'al1d' )
+                Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
+                Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
+                assert( element.text )
+                self.language = element.text
+            elif element.tag == 'coverage':
+                sublocation = "coverage in {}".format( location )
+                Globals.checkXMLNoTail( element, sublocation, 'al1d' )
+                Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
+                Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
+                if element.text: self.coverage = element.text
+            elif element.tag == 'rights':
+                sublocation = "rights in {}".format( location )
+                Globals.checkXMLNoTail( element, sublocation, 'al1d' )
+                Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
+                Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
+                assert( element.text )
+                self.rights = element.text
+            else: logging.error( "Found unexpected '{}' tag in {}".format( element.tag, location ) )
+    # end of ZefaniaBible.__validateAndExtractHeader
 
 
     def __validateAndExtractBook( self, book ):
