@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # InternalBibleBook.py
-#   Last modified: 2013-04-07 by RJH (also update versionString below)
+#   Last modified: 2013-04-09 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -137,6 +137,7 @@ class InternalBibleBook:
         assert( not self._processedFlag )
 
         rawLineTuple = ( marker, text )
+        #print( "rawLineTuple", rawLineTuple )
         #if " \\f " in text: print( "rawLineTuple", rawLineTuple )
         self._rawLines.append( rawLineTuple )
     # end of InternalBibleBook.appendLine
@@ -582,7 +583,7 @@ class InternalBibleBook:
                     else: # Assume that the last marker was part of the introduction, so write it first
                         if lastAdjustedMarker not in ( 'ip', ):
                             print( "assumed",lastAdjustedMarker,"was part of intro after", marker );
-                            if v!='13': halt # Just double-checking this code (except for one weird book that starts at v13)
+                            #if v!='13': halt # Just double-checking this code (except for one weird book that starts at v13)
                         self._processedLines.append( (lastAdjustedMarker, lastOriginalMarker, lastAdjustedText, lastCleanText, lastExtras,) )
                         self._processedLines.append( ('c', 'c', '1', '1', [],) ) # Write the explicit chapter number
                     #print( self._processedLines ); halt

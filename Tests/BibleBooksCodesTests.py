@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodesTests.py
-#   Last modified: 2013-04-08 by RJH (also update versionString below)
+#   Last modified: 2013-04-09 by RJH (also update versionString below)
 #
 # Module testing BibleBooksCodes.py
 #
@@ -508,21 +508,21 @@ class BibleBooksCodesTests( unittest.TestCase ):
         for T3 in (('Gen','001','GEN'),('Mat','040','MAT'),): self.assertTrue( T3 in results )
     # end of test_2360_getAllUSXBooksCodeNumberTriples
 
-    def test_2365_getAllUnboundBibleBooksCodePairs( self ):
-        """ Test the getAllUnboundBibleBooksCodePairs function. """
-        results = self.bbc.getAllUnboundBibleBooksCodePairs()
-        print (results)
-        self.assertTrue( isinstance( results, list ) )
-        self.assertGreater( len(results), 65 ) # Remember it includes many non-canonical books
-        self.assertLess( len(results), 120 )
-        self.assertFalse( None in results )
-        self.assertFalse( '' in results )
-        for resultTuple in results:
-            self.assertEqual( len(resultTuple), 2 )
-            self.assertEqual( len(resultTuple[0]), 3 ) # UBC
-            self.assertEqual( len(resultTuple[1]), 3 ) # BBB
-        for T2 in (('01O','GEN'),('40N','MAT'),): self.assertTrue( T2 in results )
-    # end of test_2365_getAllUnboundBibleBooksCodePairs
+    #def test_2365_getAllUnboundBibleBooksCodePairs( self ):
+        #""" Test the getAllUnboundBibleBooksCodePairs function. """
+        #results = self.bbc.getAllUnboundBibleBooksCodePairs()
+        #print (results)
+        #self.assertTrue( isinstance( results, list ) )
+        #self.assertGreater( len(results), 65 ) # Remember it includes many non-canonical books
+        #self.assertLess( len(results), 120 )
+        #self.assertFalse( None in results )
+        #self.assertFalse( '' in results )
+        #for resultTuple in results:
+            #self.assertEqual( len(resultTuple), 2 )
+            #self.assertEqual( len(resultTuple[0]), 3 ) # UBC
+            #self.assertEqual( len(resultTuple[1]), 3 ) # BBB
+        #for T2 in (('01O','GEN'),('40N','MAT'),): self.assertTrue( T2 in results )
+    ## end of test_2365_getAllUnboundBibleBooksCodePairs
 
     def test_2370_getAllBibleditBooksCodeNumberTriples( self ):
         """ Test the getAllBibleditBooksCodeNumberTriples function. """

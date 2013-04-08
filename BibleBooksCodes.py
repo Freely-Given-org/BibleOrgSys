@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodes.py
-#   Last modified: 2013-04-08 by RJH (also update versionString below)
+#   Last modified: 2013-04-09 by RJH (also update versionString below)
 #
 # Module handling BibleBooksCodes functions
 #
@@ -207,6 +207,10 @@ class BibleBooksCodes:
         if strict: logging.warning( "getBBBFromUSFM is assuming that the best fit for USFM ID '{}' is the first entry in {}".format( USFMAbbreviation, result ) )
         return result[0] # Assume that the first entry is the best pick
 
+    def getBBBFromUnboundBible( self, UnboundBibleCode ):
+        """ Return the reference abbreviation string for the given Unbound Bible book code string. """
+        return self.__DataDicts["UnboundCodeDict"][UnboundBibleCode.upper()][1]
+
     def getBBB( self, someText ):
         """ Attempt to return the BBB reference abbreviation string for the given book information (text).
             Returns BBB or None. """
@@ -317,19 +321,19 @@ class BibleBooksCodes:
         return result
     # end of BibleBooksCodes:getAllUSXBooksCodeNumberTriples
 
-    def getAllUnboundBibleBooksCodePairs( self ):
-        """
-        Return a list of all available Unbound Bible book codes.
+    #def getAllUnboundBibleBooksCodePairs( self ):
+        #"""
+        #Return a list of all available Unbound Bible book codes.
 
-        The list contains tuples of: UnboundCode, referenceAbbreviation
-        """
-        result = []
-        for BBB, values in self.__DataDicts["referenceAbbreviationDict"].items():
-            uBC = values["UnboundCodeString"]
-            if uBC is not None:
-                result.append( (uBC, BBB,) )
-        return result
-    # end of BibleBooksCodes:getAllUnboundBibleBooksCodePairs
+        #The list contains tuples of: UnboundCode, referenceAbbreviation
+        #"""
+        #result = []
+        #for BBB, values in self.__DataDicts["referenceAbbreviationDict"].items():
+            #uBC = values["UnboundCodeString"]
+            #if uBC is not None:
+                #result.append( (uBC, BBB,) )
+        #return result
+    ## end of BibleBooksCodes:getAllUnboundBibleBooksCodePairs
 
     def getAllBibleditBooksCodeNumberTriples( self ):
         """

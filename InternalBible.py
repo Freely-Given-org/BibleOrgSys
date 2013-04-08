@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # InternalBible.py
-#   Last modified: 2013-04-07 by RJH (also update versionString below)
+#   Last modified: 2013-04-09 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -62,7 +62,7 @@ class InternalBible:
         # Set up empty variables for the object
         self.shortName = self.abbreviation = None
         self.sourceFolder = self.sourceFilepath = None
-        self.status = self.revision = None
+        self.status = self.revision = self.version = None
 
         # Set up empty containers for the object
         self.books = OrderedDict()

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ZefaniaBible.py
-#   Last modified: 2013-04-08 by RJH (also update versionString below)
+#   Last modified: 2013-04-09 by RJH (also update versionString below)
 #
 # Module handling simple XML Bibles
 #
@@ -538,23 +538,23 @@ def main():
         # Demonstrate the XML Bible class
         if Globals.verbosityLevel > 1: print( "\nDemonstrating the Zefania Bible class..." )
         if Globals.verbosityLevel > 0: print( "  Test filepath is '{}'".format( testFilepath ) )
-        xb = ZefaniaBible( testFilepath )
-        xb.load() # Load and process the XML
-        print( xb ) # Just print a summary
-        #print( xb.books['JDE']._processedLines )
+        zb = ZefaniaBible( testFilepath )
+        zb.load() # Load and process the XML
+        print( zb ) # Just print a summary
+        #print( zb.books['JDE']._processedLines )
         if 1: # Test verse lookup
             import VerseReferences
             for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
                                 ('OT','DAN','1','21'),
-                                ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','21','19'), \
+                                ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \
                                 ('DC','BAR','1','1'), ('DC','MA1','1','1'), ('DC','MA2','1','1',), ):
                 (t, b, c, v) = reference
-                if t=='OT' and len(xb)==27: continue # Don't bother with OT references if it's only a NT
-                if t=='NT' and len(xb)==39: continue # Don't bother with NT references if it's only a OT
-                if t=='DC' and len(xb)<=66: continue # Don't bother with DC references if it's too small
+                if t=='OT' and len(zb)==27: continue # Don't bother with OT references if it's only a NT
+                if t=='NT' and len(zb)==39: continue # Don't bother with NT references if it's only a OT
+                if t=='DC' and len(zb)<=66: continue # Don't bother with DC references if it's too small
                 svk = VerseReferences.simpleVerseKey( b, c, v )
                 #print( svk, ob.getVerseDataList( reference ) )
-                print( reference, svk.getShortText(), xb.getVerseText( svk ) )
+                print( reference, svk.getShortText(), zb.getVerseText( svk ) )
 # end of main
 
 if __name__ == '__main__':
