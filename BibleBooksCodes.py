@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodes.py
-#   Last modified: 2013-04-07 by RJH (also update versionString below)
+#   Last modified: 2013-04-08 by RJH (also update versionString below)
 #
 # Module handling BibleBooksCodes functions
 #
@@ -28,7 +28,7 @@ Module handling BibleBooksCodes functions.
 """
 
 progName = "Bible Books Codes handler"
-versionString = "0.66"
+versionString = "0.68"
 
 
 import os, logging
@@ -178,6 +178,10 @@ class BibleBooksCodes:
         """ Return the three-digit USX number string for the given book code (referenceAbbreviation). """
         return self.__DataDicts["referenceAbbreviationDict"][BBB]["USXNumberString"]
 
+    def getUnboundBibleCode( self, BBB ):
+        """ Return the three character (two-digits and one uppercase letter) Unbound Bible code for the given book code (referenceAbbreviation). """
+        return self.__DataDicts["referenceAbbreviationDict"][BBB]["UnboundCodeString"]
+
     def getBibleditNumber( self, BBB ):
         """ Return the one or two-digit Bibledit number string for the given book code (referenceAbbreviation). """
         return self.__DataDicts["referenceAbbreviationDict"][BBB]["BibleditNumberString"]
@@ -312,6 +316,20 @@ class BibleBooksCodes:
                     found.append( pA )
         return result
     # end of BibleBooksCodes:getAllUSXBooksCodeNumberTriples
+
+    def getAllUnboundBibleBooksCodePairs( self ):
+        """
+        Return a list of all available Unbound Bible book codes.
+
+        The list contains tuples of: UnboundCode, referenceAbbreviation
+        """
+        result = []
+        for BBB, values in self.__DataDicts["referenceAbbreviationDict"].items():
+            uBC = values["UnboundCodeString"]
+            if uBC is not None:
+                result.append( (uBC, BBB,) )
+        return result
+    # end of BibleBooksCodes:getAllUnboundBibleBooksCodePairs
 
     def getAllBibleditBooksCodeNumberTriples( self ):
         """

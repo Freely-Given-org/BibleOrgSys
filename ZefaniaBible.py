@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ZefaniaBible.py
-#   Last modified: 2013-04-07 by RJH (also update versionString below)
+#   Last modified: 2013-04-08 by RJH (also update versionString below)
 #
 # Module handling simple XML Bibles
 #
@@ -90,7 +90,7 @@ class ZefaniaBible( InternalBible ):
 
     def __init__( self, sourceFilepath, givenName=None, encoding='utf-8', logErrorsFlag=False  ):
         """
-        Constructor: just sets up the Zefania Bible file converter object.
+        Constructor: just sets up the Zefania Bible object.
         """
         self.sourceFilepath, self.givenName, self.encoding, self.logErrorsFlag = sourceFilepath, givenName, encoding, logErrorsFlag
 
@@ -132,12 +132,14 @@ class ZefaniaBible( InternalBible ):
             Globals.checkXMLNoTail( self.tree, location, '1wk8' )
 
             schema = None
-            name = status = BibleType = revision = None
+            name = status = BibleType = revision = lgid = None
             for attrib,value in self.tree.items():
                 if attrib == ZefaniaBible.XMLNameSpace + 'noNamespaceSchemaLocation':
                     schema = value
                 elif attrib == "biblename":
                     name = value
+                elif attrib == "lgid":
+                    lgid = value # In italian.xml this is set to "german"
                 elif attrib == "status":
                     status = value
                 elif attrib == "type":
@@ -156,6 +158,12 @@ class ZefaniaBible( InternalBible ):
                 self.header = self.tree[0]
                 self.tree.remove( self.header )
                 self.__validateAndExtractHeader()
+            else: # Handle information records at the END of the file
+                ix = len(self.tree) - 1
+                if self.tree[ix].tag == 'INFORMATION':
+                    self.header = self.tree[ix]
+                    self.tree.remove( self.header )
+                    self.__validateAndExtractHeader()
 
             # Find the submain (book) containers
             for element in self.tree:
@@ -197,6 +205,7 @@ class ZefaniaBible( InternalBible ):
 
         # TODO: We probably need to rationalise some of the self.xxx stores
         for element in self.header:
+            #print( "header", element.tag )
             if element.tag == 'title':
                 sublocation = "title in {}".format( location )
                 Globals.checkXMLNoTail( element, sublocation, 'al1d' )
@@ -287,8 +296,7 @@ class ZefaniaBible( InternalBible ):
                 Globals.checkXMLNoTail( element, sublocation, 'al1d' )
                 Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
-                assert( element.text )
-                self.rights = element.text
+                if element.text: self.rights = element.text
             else: logging.error( "Found unexpected '{}' tag in {}".format( element.tag, location ) )
     # end of ZefaniaBible.__validateAndExtractHeader
 
@@ -312,24 +320,26 @@ class ZefaniaBible( InternalBible ):
                 bookShortName = value
             else: logging.warning( "Unprocessed '{}' attribute ({}) in book element".format( attrib, value ) )
         if bookNumber:
-            BBB = Globals.BibleBooksCodes.getBBBFromReferenceNumber( bookNumber )
+            try: BBB = Globals.BibleBooksCodes.getBBBFromReferenceNumber( bookNumber )
+            except KeyError:
+                logging.warning( "Unable to deduce which book is number={}, name={}, shortName={} -- ignoring it" \
+                                                                        .format( bookNumber, bookName, bookShortName ) )
         elif bookName:
             BBB = self.genericBOS.getBBB( bookName )
-        if Globals.verbosityLevel > 2: print( _("Validating {} {}...").format( BBB, bookName ) )
-
-        thisBook = InternalBibleBook( BBB, self.logErrorsFlag )
-        thisBook.objectType = "XML"
-        thisBook.objectNameString = "XML Bible Book object"
-        #thisBook.sourceFilepath = self.sourceFilepath
-        for element in book:
-            if element.tag == ZefaniaBible.chapterTag:
-                sublocation = "chapter in {}".format( BBB )
-                Globals.checkXMLNoText( element, sublocation, 'j3jd' )
-                Globals.checkXMLNoTail( element, sublocation, 'al1d' )
-                self.__validateAndExtractChapter( BBB, thisBook, element )
-            else: logging.error( "Expected to find '{}' but got '{}'".format( ZefaniaBible.chapterTag, element.tag ) )
 
         if BBB:
+            if Globals.verbosityLevel > 2: print( _("Validating {} {}...").format( BBB, bookName ) )
+            thisBook = InternalBibleBook( BBB, self.logErrorsFlag )
+            thisBook.objectType = "XML"
+            thisBook.objectNameString = "XML Bible Book object"
+            #thisBook.sourceFilepath = self.sourceFilepath
+            for element in book:
+                if element.tag == ZefaniaBible.chapterTag:
+                    sublocation = "chapter in {}".format( BBB )
+                    Globals.checkXMLNoText( element, sublocation, 'j3jd' )
+                    Globals.checkXMLNoTail( element, sublocation, 'al1d' )
+                    self.__validateAndExtractChapter( BBB, thisBook, element )
+                else: logging.error( "Expected to find '{}' but got '{}'".format( ZefaniaBible.chapterTag, element.tag ) )
             if Globals.verbosityLevel > 2: print( "  Saving {} into results...".format( BBB ) )
             self.saveBook( BBB, thisBook )
     # end of ZefaniaBible.__validateAndExtractBook
@@ -402,7 +412,8 @@ class ZefaniaBible( InternalBible ):
         assert( verseNumber )
         location = "{}:{}".format( location, verseNumber ) # Get a better location description
         #thisBook.appendLine( 'v', verseNumber )
-        vText = verse.text.strip()
+        vText = verse.text
+        if vText: vText = vText.strip()
         #if not vText: # This happens if a verse starts immediately with a style or note
             #logging.warning( "{} {}:{} has no text".format( BBB, chapterNumber, verseNumber ) )
 
@@ -513,15 +524,15 @@ def main():
 
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
-    #testFolder = "/mnt/Data/Work/Bibles/Formats/Zefania/"
-    testFolder = "Tests/DataFilesForTests/ZefaniaTest/"
+    testFolder = "/mnt/Data/Work/Bibles/Zefania modules/"
+    #testFolder = "Tests/DataFilesForTests/ZefaniaTest/"
     single = ( "kjv.xml", )
     good = ( "BWE_zefania.xml", "en_gb_KJV2000.xml", "Etheridge_zefania.xml", "kjv.xml", "OEB_zefania.xml", \
-        'sf_elb_1871_original_NT_rev1.xml', )
+        'sf_elb_1871_original_NT_rev1.xml', 'sf_wycliffe.xml', 'ylt.xml')
     nonEnglish = ( "italian.xml", )
     bad = (  )
 
-    for testFilename in single: # Choose one of the above lists for testing
+    for testFilename in good: # Choose one of the above lists for testing
         testFilepath = os.path.join( testFolder, testFilename )
 
         # Demonstrate the XML Bible class
@@ -533,12 +544,17 @@ def main():
         #print( xb.books['JDE']._processedLines )
         if 1: # Test verse lookup
             import VerseReferences
-            for reference in ( ('OT','GEN','1','1',), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), ('OT','DAN','1','21',), ('NT','MAT','3','5',), ('NT','JDE','1','4',), ('NT','REV','21','19'), ):
+            for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
+                                ('OT','DAN','1','21'),
+                                ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','21','19'), \
+                                ('DC','BAR','1','1'), ('DC','MA1','1','1'), ('DC','MA2','1','1',), ):
                 (t, b, c, v) = reference
-                if t!='OT' or len(xb)!=27: # Don't bother with OT references if it's only a NT
-                    svk = VerseReferences.simpleVerseKey( b, c, v )
-                    #print( svk, ob.getVerseDataList( reference ) )
-                    print( reference, svk.getShortText(), xb.getVerseText( svk ) )
+                if t=='OT' and len(xb)==27: continue # Don't bother with OT references if it's only a NT
+                if t=='NT' and len(xb)==39: continue # Don't bother with NT references if it's only a OT
+                if t=='DC' and len(xb)<=66: continue # Don't bother with DC references if it's too small
+                svk = VerseReferences.simpleVerseKey( b, c, v )
+                #print( svk, ob.getVerseDataList( reference ) )
+                print( reference, svk.getShortText(), xb.getVerseText( svk ) )
 # end of main
 
 if __name__ == '__main__':
