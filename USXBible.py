@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 #
 # USXBible.py
-#   Last modified: 2012-07-05 by RJH (also update versionString below)
+#   Last modified: 2013-04-10 by RJH (also update versionString below)
 #
 # Module handling compilations of USX Bible books
 #
-# Copyright (C) 2012 Robert Hunt
+# Copyright (C) 2012-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -27,7 +27,7 @@ Module for defining and manipulating complete or partial USX Bibles.
 """
 
 progName = "USX Bible handler"
-versionString = "0.02"
+versionString = "0.03"
 
 
 import os, logging, datetime
@@ -44,13 +44,18 @@ class USXBible( InternalBible ):
     Class to load and manipulate USX Bibles.
 
     """
-    def __init__( self, name, logErrorsFlag ):
+    def __init__( self, givenName, logErrorsFlag ):
         """
         Create the internal USX Bible object.
         """
+         # Setup and initialise the base class first
         self.objectType = "USX"
         self.objectNameString = "USX Bible object"
-        InternalBible.__init__( self, name, logErrorsFlag ) # Initialise the base class
+        InternalBible.__init__( self )
+
+        # Now we can set our object variables
+        self.givenName, self.logErrorsFlag = givenName, logErrorsFlag
+        self.name = self.givenName
     # end of __init_
 
 

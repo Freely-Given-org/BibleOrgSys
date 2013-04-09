@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # InternalBible.py
-#   Last modified: 2013-04-09 by RJH (also update versionString below)
+#   Last modified: 2013-04-10 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -35,7 +35,7 @@ and then fills
 """
 
 progName = "Internal Bible handler"
-versionString = "0.20"
+versionString = "0.21"
 
 
 import os, logging, datetime
@@ -52,15 +52,13 @@ class InternalBible:
 
     This class contains no load function -- that is expected to be supplied by the superclass.
     """
-    def __init__( self, name, logErrorsFlag ):
+    def __init__( self ):
         """
         Create the object.
         """
-        self.name = name
-        self.logErrorsFlag = logErrorsFlag
-
-        # Set up empty variables for the object
-        self.shortName = self.abbreviation = None
+        # Set up empty variables for the object (to be filled in later)
+        self.logErrorsFlag = False
+        self.name = self.shortName = self.abbreviation = None
         self.sourceFolder = self.sourceFilepath = None
         self.status = self.revision = self.version = None
 

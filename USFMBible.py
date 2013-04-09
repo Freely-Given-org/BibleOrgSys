@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # USFMBible.py
-#   Last modified: 2013-04-07 by RJH (also update versionString below)
+#   Last modified: 2013-04-10 by RJH (also update versionString below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -27,7 +27,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 """
 
 progName = "USFM Bible handler"
-versionString = "0.30"
+versionString = "0.31"
 
 
 import os, logging, datetime
@@ -49,6 +49,12 @@ class USFMBible( InternalBible ):
         """
         Create the internal USFM Bible object.
         """
+         # Setup and initialise the base class first
+        self.objectType = "USFM"
+        self.objectNameString = "USFM Bible object"
+        InternalBible.__init__( self )
+
+        # Now we can set our object variables
         self.sourceFolder, self.givenName, self.encoding, self.logErrorsFlag = sourceFolder, givenName, encoding, logErrorsFlag
 
         # Do a preliminary check on the contents of our folder
@@ -73,11 +79,6 @@ class USFMBible( InternalBible ):
 
         self.name = self.givenName
         if self.name is None and 'Name' in self.ssfData: self.name = self.ssfData['Name']
-
-         # Setup and initialise the base class
-        self.objectType = "USFM"
-        self.objectNameString = "USFM Bible object"
-        InternalBible.__init__( self, self.name, self.logErrorsFlag )
     # end of USFMBible.__init_
 
 
@@ -169,7 +170,7 @@ class USFMBible( InternalBible ):
 
         # Load the books one by one -- assuming that they have regular Paratext style filenames
         for BBB,filename in self.USFMFilenamesObject.getMaximumPossibleFilenameTuples():
-            self. loadBook( BBB, filename )
+            self.loadBook( BBB, filename )
 
         #print( "\n", len(self.books), sorted(self.books) ); halt
         #print( "\n", "self.BBBToNameDict", self.BBBToNameDict )

@@ -183,6 +183,81 @@ class UnboundBible( InternalBible ):
 # end of UnboundBible class
 
 
+def UnboundBibleFileCheck( givenFolderName, autoLoad=False ):
+    """
+    Given a folder, search for Unbound Bible files or folders in the folder and in the next level down.
+
+    Returns False if an error is found.
+
+    if autoLoad is false (default)
+        returns None, or the number found.
+
+    if autoLoad is true and one Unbound Bible is found,
+        returns the loaded UnboundBible object.
+    """
+    if Globals.verbosityLevel > 2: print( "UnboundBibleFileCheck( {}, {} )".format( givenFolderName, autoLoad ) )
+    assert( givenFolderName and isinstance( givenFolderName, str ) )
+    assert( autoLoad in (True,False,) )
+
+    # Check that the given folder is readable
+    if not os.access( givenFolderName, os.R_OK ):
+        logging.critical( _("UnboundBibleFileCheck: Given '{}' folder is unreadable").format( givenFolderName ) )
+        return False
+
+    # Find all the files and folders in this folder
+    if Globals.verbosityLevel > 3: print( " UnboundBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    foundFolders, foundFiles = [], []
+    for something in os.listdir( givenFolderName ):
+        somepath = os.path.join( givenFolderName, something )
+        if os.path.isdir( somepath ): foundFolders.append( something )
+        elif os.path.isfile( somepath ): foundFiles.append( something )
+
+    # See if there's an UB project here in this folder
+    numFound = 0
+    looksHopeful = False
+    lastFilenameFound = None
+    for thisFilename in sorted( foundFiles ):
+        if thisFilename in ('book_names.txt','Readme.txt' ): looksHopeful = True
+        elif thisFilename.endswith( '_utf8.txt' ):
+            lastFilenameFound = thisFilename
+            numFound += 1
+    if numFound:
+        if numFound == 1 and autoLoad:
+            ub = UnboundBible( givenFolderName, lastFilenameFound[:-9] ) # Remove the end of the actual filename
+            ub.load() # Load and process the file
+            return ub
+        return numFound
+    elif looksHopeful and Globals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
+
+    # Look one level down
+    numFound = 0
+    foundProjects = []
+    for thisFolderName in sorted( foundFolders ):
+        tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
+        if Globals.verbosityLevel > 3: print( "    UnboundBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        foundSubfolders, foundSubfiles = [], []
+        for something in os.listdir( tryFolderName ):
+            somepath = os.path.join( givenFolderName, thisFolderName, something )
+            if os.path.isdir( somepath ): foundSubfolders.append( something )
+            elif os.path.isfile( somepath ): foundSubfiles.append( something )
+
+        # See if there's an UB project here in this folder
+        for thisFilename in sorted( foundSubfiles ):
+            if thisFilename.endswith( '_utf8.txt' ):
+                foundProjects.append( (tryFolderName, thisFilename,) )
+                lastFilenameFound = thisFilename
+                numFound += 1
+    if numFound:
+        if numFound == 1 and autoLoad:
+            assert( len(foundProjects) == 1 )
+            ub = UnboundBible( foundProjects[0][0], foundProjects[0][1][:-9] )
+            ub.load() # Load and process the file
+            return ub
+        return numFound
+    # end of UnboundBibleFileCheck
+
+
+
 def main():
     """
     Main program to handle command line parameters and then run what they want.
@@ -223,11 +298,14 @@ def main():
     testFolder = "/mnt/Data/Work/Bibles/Biola Unbound modules/"
     if 0: # specified modules
         single = ( "kjv_apocrypha", )
-        good = ( "afrikaans_1953", "albanian", "aleppo", "amharic", "arabic_svd", "armenian_eastern", "armenian_western_1853", "asv", "basic_english", "danish", "darby", "douay_rheims", "dutch_svv", "esperanto", "estonian", "kjv_apocrypha", "korean", "manx_gaelic", "maori", "myanmar_judson_1835", "norwegian", "peshitta", "portuguese", "potawatomi", "romani", )
+        good = ( "afrikaans_1953", "albanian", "aleppo", "amharic", "arabic_svd", "armenian_eastern", \
+                "armenian_western_1853", "asv", "basic_english", "danish", "darby", "douay_rheims", "dutch_svv", \
+                "esperanto", "estonian", "kjv_apocrypha", "korean", "manx_gaelic", "maori", "myanmar_judson_1835", \
+                "norwegian", "peshitta", "portuguese", "potawatomi", "romani", )
         nonEnglish = (  )
         bad = ( )
         for j, testFilename in enumerate( good ): # Choose one of the above: single, good, nonEnglish, bad
-            print( "\n{}/ Trying {}".format( j, testFilename ) )
+            print( "\n{}/ Trying {}".format( j+1, testFilename ) )
             myTestFolder = os.path.join( testFolder, testFilename+'/' )
             #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
             testUB( myTestFolder, testFilename )
@@ -239,11 +317,17 @@ def main():
             if os.path.isdir( somepath ): foundFolders.append( something )
             elif os.path.isfile( somepath ): foundFiles.append( something )
         for j, someFolder in enumerate( sorted( foundFolders ) ):
-            print( "\n{}/ Trying {}".format( j, someFolder ) )
+            print( "\n{}/ Trying {}".format( j+1, someFolder ) )
             myTestFolder = os.path.join( testFolder, someFolder+'/' )
             #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
             testUB( myTestFolder, someFolder )
 
+    if 1: # demo the file checking code
+        print( "TestA1", UnboundBibleFileCheck( testFolder ) )
+        print( "TestA2", UnboundBibleFileCheck( testFolder, autoLoad=True ) )
+        testSubfolder = os.path.join( testFolder, 'asv/' )
+        print( "TestB1", UnboundBibleFileCheck( testSubfolder ) )
+        print( "TestB2", UnboundBibleFileCheck( testSubfolder, autoLoad=True ) )
 # end of main
 
 if __name__ == '__main__':
