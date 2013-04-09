@@ -394,6 +394,22 @@ class BibleBooksCodesTests( unittest.TestCase ):
             self.assertRaises( AssertionError, self.bbc.getBBBFromUSFM, badCode )
     # end of test_2210_getBBBFromUSFM
 
+    def test_2215_getBBBFromUnboundBibleCode( self ):
+        """ Test the getBBBFromUnboundBibleCode function. """
+        self.assertEqual( self.bbc.getBBBFromUnboundBibleCode('01O'), 'GEN' )
+        self.assertEqual( self.bbc.getBBBFromUnboundBibleCode('15O'), 'EZR' )
+        self.assertEqual( self.bbc.getBBBFromUnboundBibleCode('40N'), 'MAT' )
+        self.assertEqual( self.bbc.getBBBFromUnboundBibleCode('46N'), 'CO1' )
+        self.assertEqual( self.bbc.getBBBFromUnboundBibleCode('66N'), 'REV' )
+        self.assertEqual( self.bbc.getBBBFromUnboundBibleCode('67A'), 'TOB' )
+        self.assertEqual( self.bbc.getBBBFromUnboundBibleCode('79A'), 'MA3' )
+        self.assertEqual( self.bbc.getBBBFromUnboundBibleCode('86A'), 'ODE' )
+        for badCode in ('XYZ','Abc',): # Must be three characters
+            self.assertRaises( KeyError, self.bbc.getBBBFromUnboundBibleCode, badCode )
+        for badCode in (':)','WXYZ','Genesis',): # Must not be three characters
+            self.assertRaises( KeyError, self.bbc.getBBBFromUnboundBibleCode, badCode )
+    # end of test_2215_getBBBFromUnboundBibleCode
+
     def test_2220_getBBB( self ):
         """ Test the getBBB function. """
         self.assertEqual( self.bbc.getBBB('Gen'), 'GEN' )

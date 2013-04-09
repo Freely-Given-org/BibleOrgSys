@@ -48,12 +48,6 @@ class UnboundBible( InternalBible ):
     """
     Class for reading, validating, and converting UnboundBible files.
     """
-    treeTag = 'bible'
-    bookTag = 'b'
-    chapterTag = 'c'
-    verseTag = 'v'
-
-
     def __init__( self, sourceFolder, givenName, encoding='utf-8', logErrorsFlag=False  ):
         """
         Constructor: just sets up the Bible object.
@@ -63,16 +57,15 @@ class UnboundBible( InternalBible ):
 
         # Get the data tables that we need for proper checking
         #self.ISOLanguages = ISO_639_3_Languages().loadData()
-        self.genericBOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
+        #self.genericBOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
 
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):
-            print( "UnboundBible: File '{}' is unreadable".format( self.sourceFilepath ) )
-            return # No use continuing
+            logging.critical( _("UnboundBible: File '{}' is unreadable").format( self.sourceFilepath ) )
 
         self.name = self.givenName
-        if self.name is None:
-            pass
+        #if self.name is None:
+            #pass
 
          # Setup and initialise the base class
         self.objectType = "Unbound"
@@ -116,18 +109,24 @@ class UnboundBible( InternalBible ):
                     bookCode, chapterNumberString, verseNumberString, subverseNumberString, sequenceNumberString, vText = bits
                 elif len(bits) == 9:
                     NRSVA_bookCode, NRSVA_chapterNumberString, NRSVA_verseNumberString, bookCode, chapterNumberString, verseNumberString, subverseNumberString, sequenceNumberString, vText = bits
-                else: halt
+                elif len(bits) == 1 and self.givenName.startswith( 'lxx_a_parsing_' ):
+                    if self.logErrorsFlag: logging.warning( _("Skipping bad '{}' line in {} {} {} {}:{}").format( line, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                    continue
+                else: print( "Expected number of bits", self.givenName, BBB, bookCode, chapterNumberString, verseNumberString, len(bits), bits ); halt
 
                 if NRSVA_bookCode: assert( len(NRSVA_bookCode) == 3 )
                 if NRSVA_chapterNumberString: assert( NRSVA_chapterNumberString.isdigit() )
                 if NRSVA_verseNumberString: assert( NRSVA_verseNumberString.isdigit() )
 
+                if not bookCode and not chapterNumberString and not verseNumberString:
+                    print( "Skipping empty line in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                    continue
                 assert( len(bookCode) == 3 )
                 assert( chapterNumberString.isdigit() )
                 assert( verseNumberString.isdigit() )
 
                 if subverseNumberString:
-                    print( "subverseNumberString '{}' in {} {} {}:{}".format( subverseNumberString, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                    if self.logErrorsFlag: logging.warning( _("subverseNumberString '{}' in {} {} {}:{}").format( subverseNumberString, BBB, bookCode, chapterNumberString, verseNumberString ) )
 
                 vText = vText.strip() # Remove leading and trailing spaces
                 if not vText: continue # Just ignore blank verses I think
@@ -138,13 +137,14 @@ class UnboundBible( InternalBible ):
                 if sequenceNumberString:
                     assert( sequenceNumberString.isdigit() )
                     sequenceNumber = int( sequenceNumberString )
-                    assert( sequenceNumber > lastSequence )
+                    assert( sequenceNumber > lastSequence or \
+                        self.givenName in ('gothic_latin', 'hebrew_bhs_consonants', 'hebrew_bhs_vowels', 'latvian_nt', 'ukrainian_1871',) ) # Why???
                     lastSequence = sequenceNumber
 
                 if bookCode != lastBookCode: # We've started a new book
                     if lastBookCode != -1: # Better save the last book
                         self.saveBook( BBB, thisBook )
-                    BBB = Globals.BibleBooksCodes.getBBBFromUnboundBible( bookCode )
+                    BBB = Globals.BibleBooksCodes.getBBBFromUnboundBibleCode( bookCode )
                     thisBook = InternalBibleBook( BBB, self.logErrorsFlag )
                     thisBook.objectType = "Unbound"
                     thisBook.objectNameString = "Unbound Bible Book object"
@@ -154,22 +154,25 @@ class UnboundBible( InternalBible ):
                 if chapterNumber != lastChapterNumber: # We've started a new chapter
                     assert( chapterNumber > lastChapterNumber or BBB=='ESG' ) # Esther Greek might be an exception
                     if chapterNumber == 0:
-                        print( "Note: Have chapter zero in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                        if self.logErrorsFlag: logging.info( "Have chapter zero in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                     thisBook.appendLine( 'c', chapterNumberString )
                     lastChapterNumber = chapterNumber
                     lastVerseNumber = -1
 
                 # Handle the verse info
                 if verseNumber==lastVerseNumber and vText==lastVText:
-                    print( "Ignored duplicate verse line in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                    if self.logErrorsFlag: logging.warning( _("Ignored duplicate verse line in {} {} {} {}:{}").format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                     continue
                 if BBB=='PSA' and verseNumberString=='1' and vText.startswith('&lt;') and self.givenName=='basic_english':
                     # Move Psalm titles to verse zero
                     verseNumber = 0
                 if verseNumber < lastVerseNumber:
-                    print( "Ignored receding verse number (from {} to {}) in {} {} {} {}:{}".format( lastVerseNumber, verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                    if self.logErrorsFlag: logging.warning( _("Ignored receding verse number (from {} to {}) in {} {} {} {}:{}").format( lastVerseNumber, verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                 elif verseNumber == lastVerseNumber:
-                    print( "Ignored duplicated {} verse number in {} {} {} {}:{}".format( verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                    if vText == lastVText:
+                        if self.logErrorsFlag: logging.warning( _("Ignored duplicated {} verse in {} {} {} {}:{}").format( verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                    else:
+                        if self.logErrorsFlag: logging.warning( _("Ignored duplicated {} verse number in {} {} {} {}:{}").format( verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                 thisBook.appendLine( 'v', verseNumberString + ' ' + vText )
                 lastVText = vText
                 lastVerseNumber = verseNumber
@@ -195,36 +198,52 @@ def main():
 
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
-    testFolder = "/mnt/Data/Work/Bibles/Biola Unbound modules/"
-    single = ( "kjv_apocrypha", )
-    good = ( "afrikaans_1953", "albanian", "aleppo", "amharic", "arabic_svd", "armenian_eastern", "armenian_western_1853", "asv", "basic_english", "danish", "darby", "douay_rheims", "dutch_svv", "esperanto", "estonian", "kjv_apocrypha", "korean", "manx_gaelic", "maori", "myanmar_judson_1835", "norwegian", "peshitta", "portuguese", "potawatomi", "romani", )
-    nonEnglish = (  )
-    bad = ( )
 
-    for testFilename in good:
-        myTestFolder = os.path.join( testFolder, testFilename+'/' )
-        #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
-
+    import VerseReferences
+    def testUB( TUBfolder, TUBfilename ):
         # Demonstrate the Unbound Bible class
-        if Globals.verbosityLevel > 1: print( "\nDemonstrating the Unbound Bible class..." )
-        if Globals.verbosityLevel > 0: print( "  Test folder is '{}' '{}'".format( testFolder, testFilename ) )
-        ub = UnboundBible( myTestFolder, testFilename )
+        if Globals.verbosityLevel > 1: print( "Demonstrating the Unbound Bible class..." )
+        if Globals.verbosityLevel > 2: print( "  Test folder is '{}' '{}'".format( TUBfolder, TUBfilename ) )
+        ub = UnboundBible( TUBfolder, TUBfilename )
         ub.load() # Load and process the file
-        print( ub ) # Just print a summary
-        #print( xb.books['JDE']._processedLines )
-        if 1: # Test verse lookup
-            import VerseReferences
-            for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
-                                ('OT','DAN','1','21'),
-                                ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \
-                                ('DC','BAR','1','1'), ('DC','MA1','1','1'), ('DC','MA2','1','1',), ):
-                (t, b, c, v) = reference
-                if t=='OT' and len(ub)==27: continue # Don't bother with OT references if it's only a NT
-                if t=='NT' and len(ub)==39: continue # Don't bother with NT references if it's only a OT
-                if t=='DC' and len(ub)<=66: continue # Don't bother with DC references if it's too small
-                svk = VerseReferences.simpleVerseKey( b, c, v )
-                #print( svk, ob.getVerseDataList( reference ) )
-                print( reference, svk.getShortText(), ub.getVerseText( svk ) )
+        if Globals.verbosityLevel > 1: print( ub ) # Just print a summary
+        for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
+                            ('OT','DAN','1','21'),
+                            ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \
+                            ('DC','BAR','1','1'), ('DC','MA1','1','1'), ('DC','MA2','1','1',), ):
+            (t, b, c, v) = reference
+            if t=='OT' and len(ub)==27: continue # Don't bother with OT references if it's only a NT
+            if t=='NT' and len(ub)==39: continue # Don't bother with NT references if it's only a OT
+            if t=='DC' and len(ub)<=66: continue # Don't bother with DC references if it's too small
+            svk = VerseReferences.simpleVerseKey( b, c, v )
+            #print( svk, ob.getVerseDataList( reference ) )
+            print( reference, svk.getShortText(), ub.getVerseText( svk ) )
+
+
+    testFolder = "/mnt/Data/Work/Bibles/Biola Unbound modules/"
+    if 0: # specified modules
+        single = ( "kjv_apocrypha", )
+        good = ( "afrikaans_1953", "albanian", "aleppo", "amharic", "arabic_svd", "armenian_eastern", "armenian_western_1853", "asv", "basic_english", "danish", "darby", "douay_rheims", "dutch_svv", "esperanto", "estonian", "kjv_apocrypha", "korean", "manx_gaelic", "maori", "myanmar_judson_1835", "norwegian", "peshitta", "portuguese", "potawatomi", "romani", )
+        nonEnglish = (  )
+        bad = ( )
+        for j, testFilename in enumerate( good ): # Choose one of the above: single, good, nonEnglish, bad
+            print( "\n{}/ Trying {}".format( j, testFilename ) )
+            myTestFolder = os.path.join( testFolder, testFilename+'/' )
+            #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
+            testUB( myTestFolder, testFilename )
+
+    if 1: # all discovered modules in the test folder
+        foundFolders, foundFiles = [], []
+        for something in os.listdir( testFolder ):
+            somepath = os.path.join( testFolder, something )
+            if os.path.isdir( somepath ): foundFolders.append( something )
+            elif os.path.isfile( somepath ): foundFiles.append( something )
+        for j, someFolder in enumerate( sorted( foundFolders ) ):
+            print( "\n{}/ Trying {}".format( j, someFolder ) )
+            myTestFolder = os.path.join( testFolder, someFolder+'/' )
+            #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
+            testUB( myTestFolder, someFolder )
+
 # end of main
 
 if __name__ == '__main__':

@@ -54,7 +54,7 @@ class BibleBooksCodes:
         Constructor:
         """
         self.__DataDicts = None # We'll import into this in loadData
-    # end of BibleBooksCodes:__init__
+    # end of BibleBooksCodes.__init__
 
     def loadData( self, XMLFilepath=None ):
         """ Loads the pickle or XML data file and imports it to dictionary format (if not done already). """
@@ -78,7 +78,7 @@ class BibleBooksCodes:
                 bbcc.loadAndValidate( XMLFilepath ) # Load the XML (if not done already)
                 self.__DataDicts = bbcc.importDataToPython() # Get the various dictionaries organised for quick lookup
         return self # So this command can be chained after the object creation
-    # end of BibleBooksCodes:loadData
+    # end of BibleBooksCodes.loadData
 
     def __str__( self ):
         """
@@ -91,7 +91,7 @@ class BibleBooksCodes:
         result = "BibleBooksCodes object"
         result += ('\n' if result else '') + ' '*indent + _("Number of entries = {}").format( len(self.__DataDicts["referenceAbbreviationDict"]) )
         return result
-    # end of BibleBooksCodes:__str__
+    # end of BibleBooksCodes.__str__
 
     def __len__( self ):
         """ Return the number of available codes. """
@@ -148,7 +148,7 @@ class BibleBooksCodes:
         #if resultList == myList: print( "getSequenceList made no change to the order" )
         #else: print( "getSequenceList: {} produced {}".format( myList, resultList ) )
         return resultList
-    # end of BibleBooksCodes:getSequenceList
+    # end of BibleBooksCodes.getSequenceList
 
     def getCCELNumber( self, BBB ):
         """ Return the CCEL number string for the given book code (referenceAbbreviation). """
@@ -207,9 +207,10 @@ class BibleBooksCodes:
         if strict: logging.warning( "getBBBFromUSFM is assuming that the best fit for USFM ID '{}' is the first entry in {}".format( USFMAbbreviation, result ) )
         return result[0] # Assume that the first entry is the best pick
 
-    def getBBBFromUnboundBible( self, UnboundBibleCode ):
+    def getBBBFromUnboundBibleCode( self, UnboundBibleCode ):
         """ Return the reference abbreviation string for the given Unbound Bible book code string. """
         return self.__DataDicts["UnboundCodeDict"][UnboundBibleCode.upper()][1]
+    # end of BibleBooksCodes.getBBBFromUnboundBibleCode
 
     def getBBB( self, someText ):
         """ Attempt to return the BBB reference abbreviation string for the given book information (text).
@@ -222,7 +223,7 @@ class BibleBooksCodes:
             #return self.__DataDicts["referenceNumberDict"][int(someText)]["referenceAbbreviation"]
         if UCSomeText in self.__DataDicts["allAbbreviationsDict"]:
             return self.__DataDicts["allAbbreviationsDict"][UCSomeText]
-    # end of BibleBooksCodes:getBBB
+    # end of BibleBooksCodes.getBBB
 
     def getExpectedChaptersList( self, BBB ):
         """
@@ -241,7 +242,7 @@ class BibleBooksCodes:
 
         eC = self.__DataDicts["referenceAbbreviationDict"][BBB]["numExpectedChapters"]
         if eC: return [v for v in eC.split(',')]
-    # end of BibleBooksCodes:getExpectedChaptersList
+    # end of BibleBooksCodes.getExpectedChaptersList
 
     def getSingleChapterBooksList( self ):
         """ Gets a list of single chapter book codes. """
@@ -251,7 +252,7 @@ class BibleBooksCodes:
             and self.__DataDicts["referenceAbbreviationDict"][BBB]["numExpectedChapters"] == '1':
                 results.append( BBB )
         return results
-    # end of BibleBooksCodes:getSingleChapterBooksList
+    # end of BibleBooksCodes.getSingleChapterBooksList
 
     def isSingleChapterBook( self, BBB ):
         """ Returns True or False if the number of chapters for the book is only one. """
@@ -264,14 +265,14 @@ class BibleBooksCodes:
             osisAbbrev = self.getOSISAbbreviation(BBB)
             if osisAbbrev is not None: results.append( osisAbbrev )
         return results
-    # end of BibleBooksCodes:getOSISSingleChapterBooksList
+    # end of BibleBooksCodes.getOSISSingleChapterBooksList
 
     def getAllOSISBooksCodes( self ):
         """
         Return a list of all available OSIS book codes (in no particular order).
         """
         return [bk for bk in self.__DataDicts["OSISAbbreviationDict"]]
-    #end of BibleBooksCodes:getAllOSISBooksCodes
+    #end of BibleBooksCodes.getAllOSISBooksCodes
 
     def getAllUSFMBooksCodes( self, toUpper=False ):
         """
@@ -285,7 +286,7 @@ class BibleBooksCodes:
                 if pA not in result: # Don't want duplicates (where more than one book maps to a single USFMAbbreviation)
                     result.append( pA )
         return result
-    # end of BibleBooksCodes:getAllUSFMBooksCodes
+    # end of BibleBooksCodes.getAllUSFMBooksCodes
 
     def getAllUSFMBooksCodeNumberTriples( self ):
         """
@@ -302,7 +303,7 @@ class BibleBooksCodes:
                     result.append( (pA, pN, BBB,) )
                     found.append( pA )
         return result
-    # end of BibleBooksCodes:getAllUSFMBooksCodeNumberTriples
+    # end of BibleBooksCodes.getAllUSFMBooksCodeNumberTriples
 
     def getAllUSXBooksCodeNumberTriples( self ):
         """
@@ -319,7 +320,7 @@ class BibleBooksCodes:
                     result.append( (pA, pN, BBB,) )
                     found.append( pA )
         return result
-    # end of BibleBooksCodes:getAllUSXBooksCodeNumberTriples
+    # end of BibleBooksCodes.getAllUSXBooksCodeNumberTriples
 
     #def getAllUnboundBibleBooksCodePairs( self ):
         #"""
@@ -333,7 +334,7 @@ class BibleBooksCodes:
             #if uBC is not None:
                 #result.append( (uBC, BBB,) )
         #return result
-    ## end of BibleBooksCodes:getAllUnboundBibleBooksCodePairs
+    ## end of BibleBooksCodes.getAllUnboundBibleBooksCodePairs
 
     def getAllBibleditBooksCodeNumberTriples( self ):
         """
@@ -350,7 +351,7 @@ class BibleBooksCodes:
                     result.append( (pA, pN, BBB,) )
                     found.append( pA )
         return result
-    # end of BibleBooksCodes:getAllBibleditBooksCodeNumberTriples
+    # end of BibleBooksCodes.getAllBibleditBooksCodeNumberTriples
 
     def getPossibleAlternativeBooksCodes( self, BBB ):
         """
@@ -359,7 +360,7 @@ class BibleBooksCodes:
         Returns None (rather than an empty list) if there's none.
         """
         return self.__DataDicts["referenceAbbreviationDict"][BBB]['possibleAlternativeBooks']
-    # end of BibleBooksCodes:getPossibleAlternativeBooksCodes
+    # end of BibleBooksCodes.getPossibleAlternativeBooksCodes
 
 
     # NOTE: The following functions are all not recommended (NR) because they rely on assumed information that may be incorrect
@@ -375,7 +376,7 @@ class BibleBooksCodes:
             The first one in the list is supposed to be the more common.
         """
         return self.__DataDicts["referenceAbbreviationDict"][BBB]["nameEnglish"].split('/',1)[0].strip()
-    # end of BibleBooksCodes:getEnglishName_NR
+    # end of BibleBooksCodes.getEnglishName_NR
 
     def getEnglishNameList_NR( self, BBB ): # NR = not recommended
         """
@@ -387,19 +388,19 @@ class BibleBooksCodes:
         """
         names = self.__DataDicts["referenceAbbreviationDict"][BBB]["nameEnglish"]
         return [name.strip() for name in names.split('/')]
-    # end of BibleBooksCodes:getEnglishNameList_NR
+    # end of BibleBooksCodes.getEnglishNameList_NR
 
     def isOldTestament_NR( self, BBB ): # NR = not recommended
         """ Returns True if the given referenceAbbreviation indicates a European Protestant Old Testament book.
             NOTE: This is not truly international so it's not a recommended function. """
         return 1 <= self.getReferenceNumber(BBB) <= 39
-    # end of BibleBooksCodes:isOldTestament_NR
+    # end of BibleBooksCodes.isOldTestament_NR
 
     def isNewTestament_NR( self, BBB ): # NR = not recommended
         """ Returns True if the given referenceAbbreviation indicates a European Protestant New Testament book.
             NOTE: This is not truly international so it's not a recommended function. """
         return 40 <= self.getReferenceNumber(BBB) <= 66
-    # end of BibleBooksCodes:isNewTestament_NR
+    # end of BibleBooksCodes.isNewTestament_NR
 # end of BibleBooksCodes class
 
 

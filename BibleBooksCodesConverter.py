@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodesConverter.py
-#   Last modified: 2013-04-08 by RJH (also update versionString below)
+#   Last modified: 2013-04-09 by RJH (also update versionString below)
 #
 # Module handling BibleBooksCodes.xml to produce C and Python data tables
 #
@@ -75,7 +75,7 @@ class BibleBooksCodesConverter:
         self._XMLheader, self._XMLtree = None, None
         self.__DataDicts = {} # Used for import
         self.titleString = self.versionString = self.dateString = ''
-    # end of __init__
+    # end of BibleBooksCodesConverter.__init__
 
     def loadAndValidate( self, XMLFilepath=None ):
         """
@@ -91,7 +91,7 @@ class BibleBooksCodesConverter:
         else: # The data must have been already loaded
             if XMLFilepath is not None and XMLFilepath!=self.__XMLFilepath: logging.error( _("Bible books codes are already loaded -- your different filepath of '{}' was ignored").format( XMLFilepath ) )
         return self
-    # end of loadAndValidate
+    # end of BibleBooksCodesConverter.loadAndValidate
 
     def __load( self, XMLFilepath ):
         """
@@ -134,7 +134,7 @@ class BibleBooksCodesConverter:
             if header.tail is not None and header.tail.strip(): logging.error( _("Unexpected '{}' tail data after header").format( element.tail ) )
         else:
             logging.error( _("Expected to load '{}' but got '{}'").format( self._treeTag, self._XMLtree.tag ) )
-    # end of __load
+    # end of BibleBooksCodesConverter.__load
 
     def __validate( self ):
         """
@@ -224,7 +224,7 @@ class BibleBooksCodesConverter:
                 logging.warning( _("Unexpected element: {} in record {}").format( element.tag, j ) )
             if element.tail is not None and element.tail.strip(): logging.error( _("Unexpected '{}' tail data after {} element in record {}").format( element.tail, element.tag, j ) )
         if self._XMLtree.tail is not None and self._XMLtree.tail.strip(): logging.error( _("Unexpected '{}' tail data after {} element").format( self._XMLtree.tail, self._XMLtree.tag ) )
-    # end of __validate
+    # end of BibleBooksCodesConverter.__validate
 
     def __str__( self ):
         """
@@ -240,12 +240,12 @@ class BibleBooksCodesConverter:
         if self.dateString: result += ('\n' if result else '') + ' '*indent + _("Date: {}").format( self.dateString )
         if self._XMLtree is not None: result += ('\n' if result else '') + ' '*indent + _("Number of entries = {}").format( len(self._XMLtree) )
         return result
-    # end of __str__
+    # end of BibleBooksCodesConverter.__str__
 
     def __len__( self ):
         """ Returns the number of books codes loaded. """
         return len( self._XMLtree )
-    # end of __len__
+    # end of BibleBooksCodesConverter.__len__
 
     def importDataToPython( self ):
         """
@@ -453,7 +453,8 @@ class BibleBooksCodesConverter:
             print( "Free sequence numbers = {}".format( free ) )
 
         return self.__DataDicts # Just delete any of the dictionaries that you don't need
-    # end of importDataToPython
+    # end of BibleBooksCodesConverter.importDataToPython
+
 
     def pickle( self, filepath=None ):
         """
@@ -472,7 +473,8 @@ class BibleBooksCodesConverter:
         if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.__DataDicts, myFile )
-    # end of pickle
+    # end of BibleBooksCodesConverter.pickle
+
 
     def exportDataToPython( self, filepath=None ):
         """
@@ -523,7 +525,8 @@ class BibleBooksCodesConverter:
             for dictName,dictData in self.__DataDicts.items():
                 exportPythonDictOrList( myFile, dictData, dictName, dictInfo[dictName][0], dictInfo[dictName][1] )
             myFile.write( "# end of {}".format( os.path.basename(filepath) ) )
-    # end of exportDataToPython
+    # end of BibleBooksCodesConverter.exportDataToPython
+
 
     def exportDataToJSON( self, filepath=None ):
         """
@@ -544,7 +547,8 @@ class BibleBooksCodesConverter:
         if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
         with open( filepath, 'wt' ) as myFile:
             json.dump( self.__DataDicts, myFile, indent=2 )
-    # end of exportDataToJSON
+    # end of BibleBooksCodesConverter.exportDataToJSON
+
 
     def exportDataToC( self, filepath=None ):
         """
@@ -565,8 +569,8 @@ class BibleBooksCodesConverter:
                         if field is None: result += '""'
                         elif isinstance( field, str): result += '"' + str(field).replace('"','\\"') + '"'
                         elif isinstance( field, int): result += str(field)
-                        elif isinstance( field, list): raise Exception( "Not written yet" )
-                        else: logging.error( _("Cannot convert unknown field type '{}' in entry '{}'").format( field, entry ) )
+                        elif isinstance( field, list): raise Exception( "Not written yet (list1)" )
+                        else: logging.error( _("Cannot convert unknown field type '{}' in tuple entry '{}'").format( field, entry ) )
                 elif isinstance( entry, dict ):
                     for key in sorted(entry.keys()):
                         field = entry[key]
@@ -574,7 +578,8 @@ class BibleBooksCodesConverter:
                         if field is None: result += '""'
                         elif isinstance( field, str): result += '"' + str(field).replace('"','\\"') + '"'
                         elif isinstance( field, int): result += str(field)
-                        else: logging.error( _("Cannot convert unknown field type '{}' in entry '{}'").format( field, entry ) )
+                        elif isinstance( field, list): raise Exception( "Not written yet (list2)" )
+                        else: logging.error( _("Cannot convert unknown field type '{}' in dict entry '{}'").format( field, entry ) )
                 else:
                     logging.error( _("Can't handle this type of entry yet: {}").format( repr(entry) ) )
                 return result
@@ -665,7 +670,7 @@ class BibleBooksCodesConverter:
             myHFile.write( "#endif // {}\n\n".format( ifdefName ) )
             myHFile.write( "// end of {}".format( os.path.basename(hFilepath) ) )
             myCFile.write( "// end of {}".format( os.path.basename(cFilepath) ) )
-    # end of exportDataToC
+    # end of BibleBooksCodesConverter.exportDataToC
 # end of BibleBooksCodesConverter class
 
 
