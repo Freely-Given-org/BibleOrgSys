@@ -432,7 +432,7 @@ class ZefaniaBible( InternalBible ):
                 #print( "note", BBB, chapterNumber, verseNumber, noteType, repr(nText), repr(nTail) )
                 #thisBook.appendLine( 'ST', css ) # XXXXXXXXXXXXXXXXXXXXXXXXXX Losing data here (for now)
                 #thisBook.appendLine( 'ST=', nText )
-                if nTail: thisBook.appendLine( 'v=', nTail )
+                if nTail: thisBook.appendLine( 'v~', nTail )
                 for subsubelement in subelement:
                     if subsubelement.tag == ZefaniaBible.styleTag:
                         subsublocation = "style in " + sublocation

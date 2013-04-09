@@ -547,7 +547,7 @@ class InternalBibleBook:
             text = originalText
 
             # Convert USFM markers like s to standard markers like s1
-            adjustedMarker = originalMarker if originalMarker=='v=' else self.USFMMarkers.toStandardMarker( originalMarker )
+            adjustedMarker = originalMarker if originalMarker=='v~' else self.USFMMarkers.toStandardMarker( originalMarker )
 
             # Keep track of where we are
             if originalMarker=='c' and text:
@@ -562,7 +562,7 @@ class InternalBibleBook:
                     self.addPriorityError( 98, c, v, _("Extra '{}' material after chapter marker").format( cBits[1] ) )
                     #print( "Something on c line", "'"+text+"'", "'"+cBits[1]+"'" )
                     self._processedLines.append( (adjustedMarker, originalMarker, c, c, [],) ) # Write the chapter number as a separate line
-                    adjustedMarker, text = 'c+', cBits[1]
+                    adjustedMarker, text = 'c~', cBits[1]
             elif originalMarker=='v' and text:
                 v = text.split()[0] # Get the actual verse number
                 if c == '0': # Some single chapter books don't have an explicit chapter 1 marker -- we'll make it explicit here
@@ -589,7 +589,7 @@ class InternalBibleBook:
                     #print( self._processedLines ); halt
 
                 if haveWaitingC: # Add a false chapter number at the place where we normally want it printed
-                    self._processedLines.append( ('c=', 'c', haveWaitingC, haveWaitingC, [],) ) # Write the additional chapter number
+                    self._processedLines.append( ('c#', 'c', haveWaitingC, haveWaitingC, [],) ) # Write the additional chapter number
                     haveWaitingC = False
 
                 # Convert v markers to milestones only
@@ -615,14 +615,14 @@ class InternalBibleBook:
                     assert( ' ' not in verseNumberBit )
                     assert( '\\' not in verseNumberBit )
                     self._processedLines.append( (adjustedMarker, originalMarker, verseNumberBit, verseNumberBit, [],) ) # Write the verse number (or range) as a separate line
-                    adjustedMarker, text = 'v=', ''
+                    adjustedMarker, text = 'v~', ''
                 else:
                     verseNumberBit, verseNumberRest = text[:ix], text[ix:]
                     #print( "verseNumberBit is '{}', verseNumberRest is '{}'".format( verseNumberBit, verseNumberRest ) )
                     assert( verseNumberBit and verseNumberRest )
                     assert( '\\' not in verseNumberBit )
                     self._processedLines.append( (adjustedMarker, originalMarker, verseNumberBit, verseNumberBit, [],) ) # Write the verse number (or range) as a separate line
-                    adjustedMarker, text = 'v=', verseNumberRest.lstrip()
+                    adjustedMarker, text = 'v~', verseNumberRest.lstrip()
 
             if text: # check markers inside the lines and separate them if they're paragraph markers
                 if self.objectType == 'USFM':
@@ -714,7 +714,7 @@ class InternalBibleBook:
                                 #assert( ixDOT != -1 )
                                 chapterDigits = osisID[ixDOT+1:]
                                 #print( "chapter", chapterDigits )
-                                self._processedLines.append( ('c+', originalMarker, chapterDigits, chapterDigits, [],) )
+                                self._processedLines.append( ('c~', originalMarker, chapterDigits, chapterDigits, [],) )
                             text = beforeText + afterText
                         elif ( thisField.startswith( '<chapter eID="' ) or thisField.startswith( '<l eID="' ) or thisField.startswith( '<lg eID="' ) or thisField.startswith( '<div eID="' ) ) \
                         and thisField.endswith( '"/>' ):
@@ -729,7 +729,7 @@ class InternalBibleBook:
 
             # From here on, we use adjText (not text)
             #print( "marker '{}' text '{}', adjText '{}'".format( adjustedMarker, text, adjText ) )
-            if not adjText and not extras and ( self.USFMMarkers.markerShouldHaveContent(adjustedMarker)=='A' or adjustedMarker in ('v=','c+',) ): # should always have text
+            if not adjText and not extras and ( self.USFMMarkers.markerShouldHaveContent(adjustedMarker)=='A' or adjustedMarker in ('v~','c~','c#',) ): # should always have text
                 #print( "processLine: marker should always have text (ignoring it):", self.bookReferenceCode, c, v, originalMarker, adjustedMarker, " originally '"+text+"'" )
                 fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Marker '{}' should always have text").format( originalMarker ) )
                 if self.logErrorsFlag: logging.error( _("Marker '{}' at {} {}:{} should always have text").format( originalMarker, self.bookReferenceCode, c, v ) )
@@ -781,7 +781,7 @@ class InternalBibleBook:
             elif adjustedMarker=='v':
                 V = cleanText
                 if self._processedLines[lastJ][0]=='v': lastJ += 1 # skip past the last verse number
-                if self._processedLines[lastJ][0]=='v=': lastJ += 1 # skip past the last verse contents
+                if self._processedLines[lastJ][0]=='v~': lastJ += 1 # skip past the last verse contents
                 self.CVIndex[(C,V,)] = lastJ
                 lastJ = j
         #if self.bookReferenceCode=='MAL': print( self.CVIndex )
@@ -815,7 +815,7 @@ class InternalBibleBook:
                 else:
                     validationErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Missing verse number").format( self.bookReferenceCode, c, v ) )
                     if self.logErrorsFlag: logging.error( _("Missing verse number after") + " {} {}:{}".format( self.bookReferenceCode, c, v ) )
-            if marker == 'v=': marker = 'v' # Makes it easier
+            if marker == 'v~': marker = 'v' # Makes it easier
 
             # Do a rough check of the SFMs
             if marker=='id' and j!=0:
@@ -1067,7 +1067,7 @@ class InternalBibleBook:
                     bkDict['chapterCount'] = 1
                 bkDict['havePopulatedCVmarkers'] = True
                 if bkDict['seemsFinished'] is None: bkDict['seemsFinished'] = True
-            elif marker=='v=' and text:
+            elif marker=='v~' and text:
                 bkDict['haveVerseText'] = True
                 bkDict['completedVerseCount'] += 1
             elif marker=='r' and text:
@@ -1081,7 +1081,7 @@ class InternalBibleBook:
                 bkDict['haveIntroductoryMarkers'] = True
                 if text: bkDict['haveIntroductoryText'] = True
 
-            if lastMarker=='v' and (marker!='v=' or not text): bkDict['seemsFinished'] = False
+            if lastMarker=='v' and (marker!='v~' or not text): bkDict['seemsFinished'] = False
 
             for extraType, extraIndex, extraText, cleanExtraText in extras:
                 assert( extraText ) # Shouldn't be blank
@@ -1410,22 +1410,22 @@ class InternalBibleBook:
             elif marker=='r':
                 functionalCounts['Section Cross-References'] = 1 if 'Section Cross-References' not in functionalCounts else (functionalCounts['Section Cross-References'] + 1)
 
-            if marker == 'v=':
+            if marker == 'v~':
                 lastMarker, lastMarkerEmpty = 'v', markerEmpty
                 continue
-            elif marker == 'c=':
+            elif marker == 'c~':
                 lastMarker, lastMarkerEmpty = 'c', markerEmpty
                 continue
-            elif marker == 'c+':
+            elif marker == 'c#':
                 lastMarker, lastMarkerEmpty = 'c', markerEmpty
                 continue
-            else: # it's not our (non-USFM) c+,v= markers
+            else: # it's not our (non-USFM) c~,c#,v~ markers
                 if marker not in allAvailableNewlineMarkers: print( "Marker is '{}'".format( marker ) )
                 assert( marker in allAvailableNewlineMarkers ) # Should have been checked at load time
                 newlineMarkerCounts[marker] = 1 if marker not in newlineMarkerCounts else (newlineMarkerCounts[marker] + 1)
 
             # Check the progression through the various sections
-            newSection = self.USFMMarkers.markerOccursIn( marker if marker!='v=' else 'v' )
+            newSection = self.USFMMarkers.markerOccursIn( marker if marker!='v~' else 'v' )
             if newSection != section: # Check changes into new sections
                 #print( section, marker, newSection )
                 if section=='' and newSection!='Header': newlineMarkerErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Missing Header section (went straight to {} section with {} marker)").format( newSection, marker ) )

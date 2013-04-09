@@ -677,12 +677,13 @@ class InternalBible:
             verseText = ''
             for marker,originalMarker,text,cleanText,extras in verseData:
                 if marker == 'c': pass # Ignore
-                elif marker == 'c=': pass # Ignore also
+                elif marker == 'c~': pass # Ignore text after chapter marker
+                elif marker == 'c#': pass # Ignore print chapter number
                 elif marker == 's1': verseText += '¥' + cleanText + '¥'
                 elif marker == 'p': verseText += '¶' + cleanText
                 elif marker == 'm': verseText += '§' + cleanText
                 elif marker == 'v': pass # Ignore
-                elif marker == 'v=': verseText += cleanText
+                elif marker == 'v~': verseText += cleanText
                 else: print( "InternalBible.getVerseText Unknown marker", marker, cleanText )
             return verseText
     # end of InternalBible.getVerseText
