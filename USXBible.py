@@ -152,8 +152,8 @@ class USXBible( InternalBible ):
 
         # Load the books one by one -- assuming that they have regular Paratext style filenames
         for BBB,filename in self.USXFilenamesObject.getConfirmedFilenames():
-            UBB = USXBibleBook( self.logErrorsFlag )
-            UBB.load( BBB, folder, filename, encoding )
+            UBB = USXBibleBook( BBB, self.logErrorsFlag )
+            UBB.load( folder, filename, encoding )
             UBB.validateUSFM()
             #print( UBB )
             self.books[BBB] = UBB
@@ -177,13 +177,13 @@ class USXBible( InternalBible ):
                         if line.startswith( '\\id ' ):
                             USXId = line[4:].strip()[:3] # Take the first three non-blank characters after the space after id
                             if Globals.verbosityLevel > 2: print( "Have possible USX ID '{}'".format( USXId ) )
-                            BBB = self.BibleBooksCodes.getBBBFromUSFM( USXId )
+                            BBB = Globals.BibleBooksCodes.getBBBFromUSFM( USXId )
                             if Globals.verbosityLevel > 2: print( "BBB is '{}'".format( BBB ) )
                             isUSX = True
                         break # We only look at the first line
                 if isUSX:
-                    UBB = USXBibleBook( self.logErrorsFlag )
-                    UBB.load( BBB, folder, thisFilename, encoding )
+                    UBB = USXBibleBook( BBB, self.logErrorsFlag )
+                    UBB.load( folder, thisFilename, encoding )
                     UBB.validateUSFM()
                     print( UBB )
                     self.books[BBB] = UBB
@@ -204,6 +204,9 @@ def main():
     """
     Demonstrate reading and checking some Bible databases.
     """
+    # Configure basic logging
+    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
+
     # Handle command line parameters
     from optparse import OptionParser
     parser = OptionParser( version="v{}".format( versionString ) )
@@ -212,7 +215,7 @@ def main():
 
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
-    name, encoding, testFolder = "Matigsalug", "utf-8", "/mnt/Data/Work/VirtualBox_Shared_Folder/USXExports/Projects/MBTV/" # You can put your USX test folder here
+    name, encoding, testFolder = "Matigsalug", "utf-8", "/mnt/Data/Work/VirtualBox_Shared_Folder/Exports/USXExports/Projects/MBTV/" # You can put your USX test folder here
     if os.access( testFolder, os.R_OK ):
         UB = USXBible( name, False ) # The second parameter is the logErrorsFlag
         UB.load( testFolder, encoding )
@@ -234,4 +237,4 @@ def main():
 
 if __name__ == '__main__':
     main()
-## End of USXBible.py
+# end of USXBible.py

@@ -155,7 +155,7 @@ class USFMBible( InternalBible ):
             for someBBB, someFilename in self.USFMFilenamesObject.getMaximumPossibleFilenameTuples():
                 if someBBB == BBB: filename = someFilename; break
         UBB = USFMBibleBook( BBB, self.logErrorsFlag )
-        UBB.load( BBB, self.sourceFolder, filename, self.encoding )
+        UBB.load( self.sourceFolder, filename, self.encoding )
         UBB.validateUSFM()
         #print( UBB )
         self.saveBook( BBB, UBB )

@@ -92,18 +92,14 @@ class ZefaniaBible( InternalBible ):
         """
         Constructor: just sets up the Zefania Bible object.
         """
-        self.sourceFilepath, self.givenName, self.encoding, self.logErrorsFlag = sourceFilepath, givenName, encoding, logErrorsFlag
-
-        self.name = self.givenName
-        if self.name is None:
-            pass
-
-         # Setup and initialise the base class
+         # Setup and initialise the base class first
         self.objectType = "Zefania"
         self.objectNameString = "Zefania Bible object"
-        InternalBible.__init__( self, self.name, self.logErrorsFlag )
+        InternalBible.__init__( self )
 
+        # Now we can set our object variables
         self.sourceFilepath, self.givenName, self.encoding, self.logErrorsFlag = sourceFilepath, givenName, encoding, logErrorsFlag
+
         self.tree = self.header = None # Will hold the XML data
 
         # Get the data tables that we need for proper checking
@@ -113,7 +109,10 @@ class ZefaniaBible( InternalBible ):
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):
             print( "ZefaniaBible: File '{}' is unreadable".format( self.sourceFilepath ) )
-            return # No use continuing
+
+        self.name = self.givenName
+        #if self.name is None:
+            #pass
     # end of ZefaniaBible.__init__
 
 

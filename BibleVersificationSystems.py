@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleVersificationSystems.py
-#   Last modified: 2013-04-02 (also update versionString below)
+#   Last modified: 2013-04-10 (also update versionString below)
 #
 # Module handling BibleVersificationSystem_*.xml to produce C and Python data tables
 #
@@ -298,10 +298,6 @@ class BibleVersificationSystems:
             if not omittedVersesToCheck and not combinedVersesToCheck and not reorderedVersesToCheck: # Then what was there???
                 logging.error( _("No useful information found in extraVerseInfoToCheck parameter: {}").format(extraVerseInfoToCheck) )
 
-        # Make sure we have the bible books codes data loaded and available
-        from BibleBooksCodes import BibleBooksCodes
-        self.BibleBooksCodes = BibleBooksCodes().loadData()
-
         matchedVersificationSystemCodes, badOVList, badCVList, badRVList = [], [], [], []
         systemMatchCount, systemMismatchCount, allErrors, errorSummary = 0, 0, '', ''
         for versificationSystemCode in self.__DataDict: # Step through the various reference schemes
@@ -448,7 +444,7 @@ class BibleVersificationSystems:
             with open( outputFilepath, 'wt' ) as myFile:
                 for BBB in versificationSchemeToCheck:
                     myFile.write( "  <BibleBookVersification>\n" )
-                    myFile.write( "    <nameEnglish>{}</nameEnglish>\n".format( self.BibleBooksCodes.getEnglishName_NR(BBB) ) ) # the English book name from the BibleBooksCodes.xml file
+                    myFile.write( "    <nameEnglish>{}</nameEnglish>\n".format( Globals.BibleBooksCodes.getEnglishName_NR(BBB) ) ) # the English book name from the BibleBooksCodes.xml file
                     myFile.write( "    <referenceAbbreviation>{}</referenceAbbreviation>\n".format( BBB ) )
                     myFile.write( "    <numChapters>{}</numChapters>\n".format( len(versificationSchemeToCheck[BBB]) ) )
                     for c,numV in versificationSchemeToCheck[BBB]:
@@ -487,9 +483,6 @@ class BibleVersificationSystem:
         if result is not None:
             self.__chapterDataDict, self.__omittedVersesDict, self.__combinedVersesDict, self.__reorderedVersesDict = result['CV'], result['omitted'], result['combined'], result['reordered']
             # no longer true: assert( len(self.__chapterDataDict) == len(self.__omittedVersesDict) == len(self.__combinedVersesDict) == len(self.__reorderedVersesDict) )
-
-        # Make sure we have the bible books codes data loaded and available
-        self.__BibleBooksCodes = BibleBooksCodes().loadData()
     # end ofBibleVersificationSystem: __init__
 
     def __str__( self ):
@@ -551,7 +544,7 @@ class BibleVersificationSystem:
         """ Returns the number of chapters (int) in the given book.
             Returns None if we don't have any chapter information for this book. """
         assert( len(BBB) == 3 )
-        if not self.__BibleBooksCodes.isValidReferenceAbbreviation( BBB ): raise KeyError
+        if not Globals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): raise KeyError
         if BBB in self.__chapterDataDict:
             return int( self.__chapterDataDict[BBB]['numChapters'] )
         # else
@@ -571,7 +564,7 @@ class BibleVersificationSystem:
         """ Returns True/False to indicate if this book only contains a single chapter.
             Returns None if we don't have any chapter information for this book. """
         assert( len(BBB) == 3 )
-        if not self.__BibleBooksCodes.isValidReferenceAbbreviation( BBB ): raise KeyError
+        if not Globals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): raise KeyError
         if BBB in self.__chapterDataDict:
             return self.__chapterDataDict[BBB]['numChapters'] == '1'
         # else

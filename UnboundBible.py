@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # UnboundBible.py
-#   Last modified: 2013-04-09 by RJH (also update versionString below)
+#   Last modified: 2013-04-10 by RJH (also update versionString below)
 #
 # Module handling Biola University "unbound" Bible files
 #
@@ -32,7 +32,7 @@ There also seem to be a range of other errors so these UB modules are not reliab
 """
 
 progName = "Unbound Bible format handler"
-versionString = "0.01"
+versionString = "0.10"
 
 import logging, os
 from gettext import gettext as _
@@ -52,12 +52,14 @@ class UnboundBible( InternalBible ):
         """
         Constructor: just sets up the Bible object.
         """
+         # Setup and initialise the base class first
+        self.objectType = "Unbound"
+        self.objectNameString = "Unbound Bible object"
+        InternalBible.__init__( self )
+
+        # Now we can set our object variables
         self.sourceFolder, self.givenName, self.encoding, self.logErrorsFlag = sourceFolder, givenName, encoding, logErrorsFlag
         self.sourceFilepath =  os.path.join( self.sourceFolder, self.givenName+'_utf8.txt' )
-
-        # Get the data tables that we need for proper checking
-        #self.ISOLanguages = ISO_639_3_Languages().loadData()
-        #self.genericBOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
 
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):
@@ -66,14 +68,6 @@ class UnboundBible( InternalBible ):
         self.name = self.givenName
         #if self.name is None:
             #pass
-
-         # Setup and initialise the base class
-        self.objectType = "Unbound"
-        self.objectNameString = "Unbound Bible object"
-        InternalBible.__init__( self, self.name, self.logErrorsFlag )
-
-        self.sourceFolder, self.givenName, self.encoding, self.logErrorsFlag = sourceFolder, givenName, encoding, logErrorsFlag
-        self.sourceFilepath =  os.path.join( self.sourceFolder, self.givenName+'_utf8.txt' )
     # end of UnboundBible.__init__
 
 

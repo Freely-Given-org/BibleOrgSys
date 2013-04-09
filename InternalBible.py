@@ -69,7 +69,7 @@ class InternalBible:
         self.reverseDict, self.guesses = {}, '' # A program history
 
         # Set up filled containers for the object
-        #self.OneChapterBBBBookCodes = self.BibleBooksCodes.getSingleChapterBooksList()
+        #self.OneChapterBBBBookCodes = Globals.BibleBooksCodes.getSingleChapterBooksList()
         self.USFMMarkers = USFMMarkers().loadData()
     # end of InternalBible.__init_
 
@@ -705,7 +705,7 @@ def main():
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
     # Since this is only designed to be a base class, it can't actually do much at all
-    IB = InternalBible( "Test internal Bible", False ) # The second parameter is the logErrorsFlag
+    IB = InternalBible()
     IB.objectNameString = "Dummy test Internal Bible object"
     IB.sourceFolder = "Nowhere"
     if Globals.verbosityLevel > 0: print( IB )

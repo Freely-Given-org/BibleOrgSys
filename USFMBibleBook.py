@@ -52,7 +52,7 @@ class USFMBibleBook( InternalBibleBook ):
     # end of __init__
 
 
-    def load( self, bookReferenceCode, folder, filename, encoding='utf-8' ):
+    def load( self, folder, filename, encoding='utf-8' ):
         """
         Load the USFM Bible book from a file.
 
@@ -162,7 +162,7 @@ def main():
     def demoFile( folder, filename, bookReferenceCode, logErrorsFlag ):
         if Globals.verbosityLevel > 1: print( _("Loading {} from {}...").format( bookReferenceCode, filename ) )
         UBB = USFMBibleBook( bookReferenceCode, logErrorsFlag )
-        UBB.load( bookReferenceCode, folder, filename, encoding )
+        UBB.load( folder, filename, encoding )
         if Globals.verbosityLevel > 1: print( "  ID is '{}'".format( UBB.getField( 'id' ) ) )
         if Globals.verbosityLevel > 1: print( "  Header is '{}'".format( UBB.getField( 'h' ) ) )
         if Globals.verbosityLevel > 1: print( "  Main titles are '{}' and '{}'".format( UBB.getField( 'mt1' ), UBB.getField( 'mt2' ) ) )

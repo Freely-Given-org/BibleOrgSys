@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # XMLBible.py
-#   Last modified: 2013-04-09 by RJH (also update versionString below)
+#   Last modified: 2013-04-10 by RJH (also update versionString below)
 #
 # Module handling simple XML Bibles
 #
@@ -34,7 +34,7 @@ Module reading and loading simple XML Bibles such as OpenSong Bibles:
 """
 
 progName = "XML Bible format handler"
-versionString = "0.20"
+versionString = "0.21"
 
 import logging, os
 from gettext import gettext as _
@@ -61,6 +61,12 @@ class XMLBible( InternalBible ):
         """
         Constructor: just sets up the XML Bible file converter object.
         """
+         # Setup and initialise the base class first
+        self.objectType = "XML"
+        self.objectNameString = "XML Bible object"
+        InternalBible.__init__( self )
+
+        # Now we can set our object variables
         self.sourceFilepath, self.givenName, self.encoding, self.logErrorsFlag = sourceFilepath, givenName, encoding, logErrorsFlag
 
         self.tree = None # Will hold the XML data
@@ -72,16 +78,10 @@ class XMLBible( InternalBible ):
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):
             print( "XMLBible: File '{}' is unreadable".format( self.sourceFilepath ) )
-            return # No use continuing
 
         self.name = self.givenName
-        if self.name is None:
-            pass
-
-         # Setup and initialise the base class
-        self.objectType = "XML"
-        self.objectNameString = "XML Bible object"
-        InternalBible.__init__( self, self.name, self.logErrorsFlag )
+        #if self.name is None:
+            #pass
     # end of XMLBible.__init__
 
 

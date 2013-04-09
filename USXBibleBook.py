@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # USXBibleBook.py
-#   Last modified: 2012-07-05 by RJH (also update versionString below)
+#   Last modified: 2013-04-10 by RJH (also update versionString below)
 #
 # Module handling USX Bible Book xml
 #
-# Copyright (C) 2012 Robert Hunt
+# Copyright (C) 2012-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling USX Bible book xml to produce C and Python data tables.
 """
 
 progName = "USX Bible book handler"
-versionString = "0.03"
+versionString = "0.04"
 
 import logging, os
 from gettext import gettext as _
@@ -42,17 +42,19 @@ class USXBibleBook( InternalBibleBook ):
     """
     Class to load, validate, and manipulate a single Bible book in USX XML.
     """
-    def __init__( self, logErrorsFlag ):
+    def __init__( self, BBB, logErrorsFlag ):
         """
         Create the USX Bible book object.
         """
         self.objectType = "USX"
         self.objectNameString = "USX Bible Book object"
-        InternalBibleBook.__init__( self, logErrorsFlag ) # Initialise the base class
+        InternalBibleBook.__init__( self, BBB, logErrorsFlag ) # Initialise the base class
+
+        #self.bookReferenceCode = bookReferenceCode
     # end of __init__
 
 
-    def load( self, bookReferenceCode, folder, filename, encoding ):
+    def load( self, folder, filename, encoding ):
         """
         Load a single source USX XML file and extract the information.
         """
@@ -160,8 +162,7 @@ class USXBibleBook( InternalBibleBook ):
         # end of loadParagraph
 
         if Globals.verbosityLevel > 2: print( "  " + _("Loading {}...").format( filename ) )
-        self.bookReferenceCode = bookReferenceCode
-        self.isOneChapterBook = bookReferenceCode in self.BibleBooksCodes.getSingleChapterBooksList()
+        self.isOneChapterBook = self.bookReferenceCode in Globals.BibleBooksCodes.getSingleChapterBooksList()
         self.sourceFolder = folder
         self.sourceFilename = filename
         self.sourceFilepath = os.path.join( folder, filename )
@@ -270,7 +271,8 @@ def main():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    import USXFilenames, USFMFilenames, USFMBibleBook
+    # Configure basic logging
+    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
 
     # Handle command line parameters
     from optparse import OptionParser
@@ -280,7 +282,8 @@ def main():
 
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
-    name, encoding, testFolder = "Matigsalug", "utf-8", "/mnt/Data/Work/VirtualBox_Shared_Folder/USXExports/Projects/MBTV/" # You can put your USX test folder here
+    import USXFilenames, USFMFilenames, USFMBibleBook
+    name, encoding, testFolder = "Matigsalug", "utf-8", "/mnt/Data/Work/VirtualBox_Shared_Folder/Exports/USXExports/Projects/MBTV/" # You can put your USX test folder here
     name2, encoding2, testFolder2 = "Matigsalug", "utf-8", "/mnt/Data/Work/Matigsalug/Bible/MBTV/" # You can put your USFM test folder here (for comparing the USX with)
     if os.access( testFolder, os.R_OK ):
         if Globals.verbosityLevel > 1: print( _("Scanning {} from {}...").format( name, testFolder ) )
@@ -292,8 +295,8 @@ def main():
                                         'ROM','CO1','CO2','GAL','EPH','PHP','COL','TH1','TH2','TI1','TI2','TIT','PHM', \
                                         'HEB','JAM','PE1','PE2','JN1','JN2','JN3','JDE','REV'):
                 if Globals.verbosityLevel > 1: print( _("Loading {} from {}...").format( bookReferenceCode, filename ) )
-                UxBB = USXBibleBook( True ) # The parameter is the logErrorsFlag
-                UxBB.load( bookReferenceCode, testFolder, filename, encoding )
+                UxBB = USXBibleBook( bookReferenceCode, logErrorsFlag=True )
+                UxBB.load( testFolder, filename, encoding=encoding )
                 if Globals.verbosityLevel > 1: print( "  ID is '{}'".format( UxBB.getField( 'id' ) ) )
                 if Globals.verbosityLevel > 1: print( "  Header is '{}'".format( UxBB.getField( 'h' ) ) )
                 if Globals.verbosityLevel > 1: print( "  Main titles are '{}' and '{}'".format( UxBB.getField( 'mt1' ), UxBB.getField( 'mt2' ) ) )
@@ -309,15 +312,15 @@ def main():
 
                 # Test our USX code by comparing with the original USFM books
                 if os.access( testFolder2, os.R_OK ):
-                    fileList2 = USFMFilenames.USFMFilenames( testFolder2 ).getConfirmedFilenames()
+                    fileList2 = USFMFilenames.USFMFilenames( testFolder2 ).getConfirmedFilenameTuples()
                     found2 = False
                     for bookReferenceCode2,filename2 in fileList2:
                         if bookReferenceCode2 == bookReferenceCode:
                             found2 = True; break
                     if found2:
                         if Globals.verbosityLevel > 2: print( _("Loading {} from {}...").format( bookReferenceCode2, filename2 ) )
-                        UBB = USFMBibleBook.USFMBibleBook( False ) # The parameter is the logErrorsFlag
-                        UBB.load( bookReferenceCode, testFolder2, filename2, encoding2 )
+                        UBB = USFMBibleBook.USFMBibleBook( bookReferenceCode, logErrorsFlag=False )
+                        UBB.load( testFolder2, filename2, encoding2 )
                         #print( "  ID is '{}'".format( UBB.getField( 'id' ) ) )
                         #print( "  Header is '{}'".format( UBB.getField( 'h' ) ) )
                         #print( "  Main titles are '{}' and '{}'".format( UBB.getField( 'mt1' ), UBB.getField( 'mt2' ) ) )

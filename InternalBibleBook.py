@@ -1097,8 +1097,11 @@ class InternalBibleBook:
 
         if bkDict['verseCount'] is None: # Things like front and end matter (don't have verse numbers)
             for aKey in ('verseCount','seemsFinished','chapterCount','percentageProgress',):
-                assert( bkDict[aKey] is None \
-                    or ( aKey=='chapterCount' and bkDict[aKey]==1 ) ) # Some people put a chapter count in their front matter, glossary, etc.
+                #assert( bkDict[aKey] is None \
+                    #or ( aKey=='chapterCount' and bkDict[aKey]==1 ) ) # Some people put a chapter count in their front matter, glossary, etc.
+                if bkDict[aKey] is not None and ( aKey!='chapterCount' or bkDict[aKey]!=1 ):
+                    # Some people put a chapter count in their front matter, glossary, etc.
+                    print( "ToProgrammer: Some wrong here. Why? '{}' '{}'".format( aKey, bkDict[aKey] ) )
                 del bkDict[aKey]
         else: # Do some finalizing to do with verse counts
             if bkDict['verseCount'] is not None: bkDict['percentageProgress'] = round( bkDict['completedVerseCount'] * 100 / bkDict['verseCount'] )
@@ -1584,7 +1587,7 @@ class InternalBibleBook:
                         if closedFlag == 'S': # sometimes
                             internalMarkerErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Marker(s) {} don't appear to be (optionally) closed in {}: {}").format( openList, marker, text ) )
                             if self.logErrorsFlag: logging.info( _("Marker(s) {} don't appear to be (optionally) closed after {} {}:{} in {}: {}").format( openList, self.bookReferenceCode, c, v, marker, text ) )
-                            self.addPriorityError( 26, c, v, _("Marker(s) {} isn't closed").format( openList ) ); halt
+                            self.addPriorityError( 26, c, v, _("Marker(s) {} isn't closed").format( openList ) )
                         openList.pop() # This marker can (always or sometimes) be closed by the end of line
                 if openList:
                     internalMarkerErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Marker(s) {} don't appear to be closed in {}: {}").format( openList, marker, text ) )
@@ -2574,7 +2577,7 @@ def main():
 
     print( "Since this is only designed to be a base class, it can't actually do much at all." )
     print( "  Try running USFMBibleBook or USXBibleBook which use this class." )
-    IBB = InternalBibleBook( logErrors ) # The parameter is the logErrorsFlag -- set to true if you want errors logged to the console
+    IBB = InternalBibleBook( 'GEN', logErrors ) # The parameter is the logErrorsFlag -- set to true if you want errors logged to the console
     # The following fields would normally be filled in a by "load" routine in the derived class
     IBB.objectType = "DUMMY"
     IBB.objectNameString = "Dummy test Internal Bible Book object"
