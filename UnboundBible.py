@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # UnboundBible.py
-#   Last modified: 2013-04-10 by RJH (also update versionString below)
+#   Last modified: 2013-04-13 by RJH (also update versionString below)
 #
 # Module handling Biola University "unbound" Bible files
 #
@@ -39,26 +39,27 @@ from gettext import gettext as _
 from collections import OrderedDict
 
 import Globals
-from BibleOrganizationalSystems import BibleOrganizationalSystem
-from InternalBible import InternalBible
-from InternalBibleBook import InternalBibleBook
+#from BibleOrganizationalSystems import BibleOrganizationalSystem
+#from InternalBible import InternalBible
+#from InternalBibleBook import InternalBibleBook
+#from BibleWriter import BibleWriter
+from Bible import Bible, BibleBook
 
-
-class UnboundBible( InternalBible ):
+class UnboundBible( Bible ):
     """
     Class for reading, validating, and converting UnboundBible files.
     """
-    def __init__( self, sourceFolder, givenName, encoding='utf-8', logErrorsFlag=False  ):
+    def __init__( self, sourceFolder, givenName, encoding='utf-8' ):
         """
         Constructor: just sets up the Bible object.
         """
          # Setup and initialise the base class first
-        self.objectType = "Unbound"
+        Bible.__init__( self )
         self.objectNameString = "Unbound Bible object"
-        InternalBible.__init__( self )
+        self.objectTypeString = "Unbound"
 
         # Now we can set our object variables
-        self.sourceFolder, self.givenName, self.encoding, self.logErrorsFlag = sourceFolder, givenName, encoding, logErrorsFlag
+        self.sourceFolder, self.givenName, self.encoding = sourceFolder, givenName, encoding
         self.sourceFilepath =  os.path.join( self.sourceFolder, self.givenName+'_utf8.txt' )
 
         # Do a preliminary check on the readability of our file
@@ -104,7 +105,7 @@ class UnboundBible( InternalBible ):
                 elif len(bits) == 9:
                     NRSVA_bookCode, NRSVA_chapterNumberString, NRSVA_verseNumberString, bookCode, chapterNumberString, verseNumberString, subverseNumberString, sequenceNumberString, vText = bits
                 elif len(bits) == 1 and self.givenName.startswith( 'lxx_a_parsing_' ):
-                    if self.logErrorsFlag: logging.warning( _("Skipping bad '{}' line in {} {} {} {}:{}").format( line, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                    if Globals.logErrorsFlag: logging.warning( _("Skipping bad '{}' line in {} {} {} {}:{}").format( line, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                     continue
                 else: print( "Expected number of bits", self.givenName, BBB, bookCode, chapterNumberString, verseNumberString, len(bits), bits ); halt
 
@@ -120,7 +121,7 @@ class UnboundBible( InternalBible ):
                 assert( verseNumberString.isdigit() )
 
                 if subverseNumberString:
-                    if self.logErrorsFlag: logging.warning( _("subverseNumberString '{}' in {} {} {}:{}").format( subverseNumberString, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                    if Globals.logErrorsFlag: logging.warning( _("subverseNumberString '{}' in {} {} {}:{}").format( subverseNumberString, BBB, bookCode, chapterNumberString, verseNumberString ) )
 
                 vText = vText.strip() # Remove leading and trailing spaces
                 if not vText: continue # Just ignore blank verses I think
@@ -139,34 +140,34 @@ class UnboundBible( InternalBible ):
                     if lastBookCode != -1: # Better save the last book
                         self.saveBook( BBB, thisBook )
                     BBB = Globals.BibleBooksCodes.getBBBFromUnboundBibleCode( bookCode )
-                    thisBook = InternalBibleBook( BBB, self.logErrorsFlag )
-                    thisBook.objectType = "Unbound"
+                    thisBook = BibleBook( BBB )
                     thisBook.objectNameString = "Unbound Bible Book object"
+                    thisBook.objectTypeString = "Unbound"
                     lastBookCode = bookCode
                     lastChapterNumber = lastVerseNumber = -1
 
                 if chapterNumber != lastChapterNumber: # We've started a new chapter
                     assert( chapterNumber > lastChapterNumber or BBB=='ESG' ) # Esther Greek might be an exception
                     if chapterNumber == 0:
-                        if self.logErrorsFlag: logging.info( "Have chapter zero in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                        if Globals.logErrorsFlag: logging.info( "Have chapter zero in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                     thisBook.appendLine( 'c', chapterNumberString )
                     lastChapterNumber = chapterNumber
                     lastVerseNumber = -1
 
                 # Handle the verse info
                 if verseNumber==lastVerseNumber and vText==lastVText:
-                    if self.logErrorsFlag: logging.warning( _("Ignored duplicate verse line in {} {} {} {}:{}").format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                    if Globals.logErrorsFlag: logging.warning( _("Ignored duplicate verse line in {} {} {} {}:{}").format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                     continue
                 if BBB=='PSA' and verseNumberString=='1' and vText.startswith('&lt;') and self.givenName=='basic_english':
                     # Move Psalm titles to verse zero
                     verseNumber = 0
                 if verseNumber < lastVerseNumber:
-                    if self.logErrorsFlag: logging.warning( _("Ignored receding verse number (from {} to {}) in {} {} {} {}:{}").format( lastVerseNumber, verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                    if Globals.logErrorsFlag: logging.warning( _("Ignored receding verse number (from {} to {}) in {} {} {} {}:{}").format( lastVerseNumber, verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                 elif verseNumber == lastVerseNumber:
                     if vText == lastVText:
-                        if self.logErrorsFlag: logging.warning( _("Ignored duplicated {} verse in {} {} {} {}:{}").format( verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                        if Globals.logErrorsFlag: logging.warning( _("Ignored duplicated {} verse in {} {} {} {}:{}").format( verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                     else:
-                        if self.logErrorsFlag: logging.warning( _("Ignored duplicated {} verse number in {} {} {} {}:{}").format( verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                        if Globals.logErrorsFlag: logging.warning( _("Ignored duplicated {} verse number in {} {} {} {}:{}").format( verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                 thisBook.appendLine( 'v', verseNumberString + ' ' + vText )
                 lastVText = vText
                 lastVerseNumber = verseNumber
@@ -252,7 +253,7 @@ def UnboundBibleFileCheck( givenFolderName, autoLoad=False ):
 
 
 
-def main():
+def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -284,7 +285,7 @@ def main():
             if t=='OT' and len(ub)==27: continue # Don't bother with OT references if it's only a NT
             if t=='NT' and len(ub)==39: continue # Don't bother with NT references if it's only a OT
             if t=='DC' and len(ub)<=66: continue # Don't bother with DC references if it's too small
-            svk = VerseReferences.simpleVerseKey( b, c, v )
+            svk = VerseReferences.SimpleVerseKey( b, c, v )
             #print( svk, ob.getVerseDataList( reference ) )
             print( reference, svk.getShortText(), ub.getVerseText( svk ) )
 
@@ -322,8 +323,8 @@ def main():
         testSubfolder = os.path.join( testFolder, 'asv/' )
         print( "TestB1", UnboundBibleFileCheck( testSubfolder ) )
         print( "TestB2", UnboundBibleFileCheck( testSubfolder, autoLoad=True ) )
-# end of main
+# end of demo
 
 if __name__ == '__main__':
-    main()
+    demo()
 # end of UnboundBible.py

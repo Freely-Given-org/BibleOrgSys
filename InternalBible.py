@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # InternalBible.py
-#   Last modified: 2013-04-10 by RJH (also update versionString below)
+#   Last modified: 2013-04-13 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -26,7 +26,7 @@
 Module for defining and manipulating Bibles in our internal USFM-based 'lines' format.
 
 The calling class needs to call this base class __init__ routine and also set:
-    self.objectType (with "USFM" or "USX")
+    self.objectTypeString (with "USFM" or "USX")
     self.objectNameString (with a description of the type of Bible object)
 It also needs to provide a "load" routine that sets:
     self.sourceFolder
@@ -42,7 +42,7 @@ import os, logging, datetime
 from gettext import gettext as _
 from collections import OrderedDict
 
-import Globals, ControlFiles
+import Globals
 from USFMMarkers import USFMMarkers
 
 
@@ -57,7 +57,6 @@ class InternalBible:
         Create the object.
         """
         # Set up empty variables for the object (to be filled in later)
-        self.logErrorsFlag = False
         self.name = self.shortName = self.abbreviation = None
         self.sourceFolder = self.sourceFilepath = None
         self.status = self.revision = self.version = None
@@ -120,6 +119,7 @@ class InternalBible:
 
 
     def saveBook( self, BBB, bookData ):
+        #print( "saveBook( {}, {} )".format( BBB, bookData ) )
         self.books[BBB] = bookData
         # Make up our book name dictionaries while we're at it
         assumedBookNames = bookData.getAssumedBookNames()
@@ -638,16 +638,19 @@ class InternalBible:
         return errors
     # end of InternalBible.getErrors
 
+
     def getBCVRef( self, ref ):
         """
         Search for a Bible reference and return the Bible text (in a list).
 
-        Expects a simpleVerseKey for the parameter.
+        Expects a SimpleVerseKey for the parameter.
         """
-        BBB = ref.getBBB()
+        if isinstance( ref, tuple ): BBB = ref[0]
+        else: BBB = ref.getBBB() # Assume it's a SimpleVerseKeyObject
         if BBB in self.books: return self.books[BBB].getCVRef( ref )
         #else: print( "InternalBible {} doesn't have {}".format( self.name, BBB ) ); halt
     # end of InternalBible.getBCVRef
+
 
     def getVerseData( self, key ):
         """
@@ -664,6 +667,7 @@ class InternalBible:
             assert( 2 <= len(verseData) <= 6 )
         return verseData
     # end of InternalBible.getVerseData
+
 
     def getVerseText( self, key ):
         """
@@ -690,7 +694,7 @@ class InternalBible:
 # end of class InternalBible
 
 
-def main():
+def demo():
     """
     A very basic test/demo of the InternalBible class.
     """
@@ -708,8 +712,9 @@ def main():
     # Since this is only designed to be a base class, it can't actually do much at all
     IB = InternalBible()
     IB.objectNameString = "Dummy test Internal Bible object"
-    IB.sourceFolder = "Nowhere"
     if Globals.verbosityLevel > 0: print( IB )
+# end of demo
+
 if __name__ == '__main__':
-    main()
+    demo()
 # end of InternalBible.py

@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 #
 # Globals.py
+#   Last modified: 2013-04-13 (also update versionString below)
 #
 # Module handling Global variables for our Bible Organisational System
-#   Last modified: 2013-04-02 (also update versionString below)
 #
 # Copyright (C) 2010-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -59,7 +59,7 @@ loggingLongFormat = '%(asctime)s %(levelname)8s: %(message)s'
 
 def setup_logfile( folder, progName ):
     """Sets up the main logfile for the program and returns the full pathname."""
-    # Gets called from our main() function when program starts up
+    # Gets called from our demo() function when program starts up
     filename = progName + '_log.txt'
     fullFilename = os.path.join( folder, filename )
 
@@ -264,6 +264,15 @@ def setStrictCheckingFlag( newValue=True ):
 # end of setStrictCheckingFlag
 
 
+def setLogErrorsFlag( newValue=True ):
+    """ See the error logging checking flag. """
+    global logErrorsFlag
+    logErrorsFlag = newValue
+    if logErrorsFlag or verbosityLevel>3:
+        print( '  logErrorsFlag =', logErrorsFlag )
+# end of setLogErrorsFlag
+
+
 def addStandardOptionsAndProcess( parserObject ):
     """ Adds our standardOptions to the command line parser. """
     global commandLineOptions, commandLineArguments
@@ -273,9 +282,11 @@ def addStandardOptionsAndProcess( parserObject ):
     parserObject.add_option("-i", "--informative", action="store_const", dest="verbose", const=3, help="output more information to the console")
     parserObject.add_option("-v", "--verbose", action="store_const", dest="verbose", const=4, help="output lots of information for the user")
     parserObject.add_option("-t", "--strict", action="store_true", dest="strict", default=False, help="perform very strict checking of all input")
+    parserObject.add_option("-l", "--log", action="store_true", dest="log", default=False, help="log errors to console")
     parserObject.add_option("-d", "--debug", action="store_true", dest="debug", default=False, help="output even more information for the programmer/debugger")
     commandLineOptions, commandLineArguments = parserObject.parse_args()
     if commandLineOptions.strict: setStrictCheckingFlag()
+    if commandLineOptions.strict: setLogErrorsFlag()
     if commandLineOptions.debug: setDebugFlag()
     setVerbosity( commandLineOptions.verbose if commandLineOptions.verbose is not None else 2)
     if debugFlag:
@@ -293,6 +304,7 @@ def printAllGlobals( indent=None ):
     print( "{}verbosityString: {}".format( ( ' '*indent, verbosityString) ) )
     print( "{}verbosityLevel: {}".format( ( ' '*indent, verbosityLevel) ) )
     print( "{}strictCheckingFlag: {}".format( ( ' '*indent, strictCheckingFlag) ) )
+    print( "{}logErrorsFlag: {}".format( ( ' '*indent, logErrorsFlag) ) )
 # end of printAllGlobals()
 
 
@@ -302,7 +314,7 @@ def printAllGlobals( indent=None ):
 
 commandLineOptions, commandLineArguments = None, None
 
-strictCheckingFlag = debugFlag = False
+strictCheckingFlag = logErrorsFlag = debugFlag = False
 verbosityLevel = None
 verbosityString = 'Normal'
 setVerbosityLevel( verbosityString )
@@ -317,7 +329,7 @@ if __name__ != '__main__':
 
 
 
-def main():
+def demo():
     """
     Demo program to handle command line parameters and then run what they want.
     """
@@ -329,8 +341,8 @@ def main():
     if verbosityLevel>0: print( "{} V{}".format( progName, versionString ) )
     if verbosityLevel>2:
         printAllGlobals()
-# end of main
+# end of demo
 
 if __name__ == '__main__':
-    main()
+    demo()
 ## end of Globals.py

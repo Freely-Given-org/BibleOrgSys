@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodesConverter.py
-#   Last modified: 2013-04-09 by RJH (also update versionString below)
+#   Last modified: 2013-04-13 by RJH (also update versionString below)
 #
 # Module handling BibleBooksCodes.xml to produce C and Python data tables
 #
@@ -674,7 +674,7 @@ class BibleBooksCodesConverter:
 # end of BibleBooksCodesConverter class
 
 
-def main():
+def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -700,8 +700,8 @@ def main():
         # Demo the converter object
         bbcc = BibleBooksCodesConverter().loadAndValidate() # Load the XML
         print( bbcc ) # Just print a summary
-# end of main
+# end of demo
 
 if __name__ == '__main__':
-    main()
+    demo()
 # end of BibleBooksCodesConverter.py

@@ -1,0 +1,47 @@
+# To_MediaWiki_controls.txt
+#
+# This is a sample control file for creating an MediaWiki Bible text file
+# You should edit this file for your specific situation
+#
+# Any line with a # in the first column is a comment line ignored by the program
+# Unless otherwise specified, most entries consist of a variable name on the left,
+#   and equals sign (with optional spaces either side), and the assigned value.
+#       e.g., DoThis = True
+# Note that all fieldnames and settings are CASE SENSITIVE
+#
+
+# The following values determine the Bible organisational system (especially needed for Bible references)
+LanguageCode = __PROJECT_NAME__
+PublicationCode = GENERIC
+
+# The following values are copied into the output file
+MediaWikiLanguage = en
+MediaWikiPublisher = __PUBLISHER__
+MediaWikiRights = Copyright (C) 2013 __NAME__
+MediaWikiContributors =
+MediaWikiSource = __NAME__
+MediaWikiCoverage = People around the world
+
+# Allowed values are byBible, byTestament, or byBook
+#MediaWikiFiles = byBible
+
+# Allowed values are All or None or Header
+#   This affects how many space and newline characters are included in the output file(s)
+MediaWikiHumanReadable = All
+
+# This section only applies if byBible is selected above
+MediaWikiOutputFilename = __PROJECT_NAME____MediaWiki_Bible.txt
+MediaWikiTitle = __PROJECT_NAME___ Bible
+MediaWikiBibleName = __PROJECT_NAME___ Bible
+MediaWikiSubject =
+MediaWikiDescription =
+MediaWikiIdentifier =
+LogFilename = To_MediaWiki_logfile.txt
+
+# This section only applies if byTestament or byBook is selected above
+# The fields must contain XxXxX which will be automatically replaced by the program
+#MediaWikiOutputFilenameTemplate = MBT_MediaWiki_XxXxX.xml
+#MediaWikiBibleNameTemplate = Matigsalug XxXxX
+#LogFileTemplate = MBT_MediaWiki_XxXxX_logfile.txt
+
+## End of To_MediaWiki_controls.txt

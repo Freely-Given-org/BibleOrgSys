@@ -3,7 +3,7 @@
 # SFMFile.py
 #
 # SFM (Standard Format Marker) data file reader
-#   Last modified: 2013-03-24 (also update versionString below)
+#   Last modified: 2013-04-13 (also update versionString below)
 #
 # Copyright (C) 2010-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -341,7 +341,7 @@ def demo():
 
     if Globals.verbosityLevel > 1: print( "{} V{}".format( progName, versionString ) )
 
-    filepath = os.path.join( 'Tests/DataFiles', 'MatigsalugDictionaryA.sfm' )
+    filepath = os.path.join( 'Tests/DataFilesForTests/', 'MatigsalugDictionaryA.sfm' )
     if Globals.verbosityLevel > 2: print( "Using {} as test file...".format( filepath ) )
 
     linesDB = SFMLines()

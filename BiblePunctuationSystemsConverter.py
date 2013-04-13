@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # BiblePunctuationSystemsConverter.py
+#   Last modified: 2013-04-13 (also update versionString below)
 #
 # Module handling BiblePunctuationSystem_*.xml to produce C and Python data tables
-#   Last modified: 2011-06-30 (also update versionString below)
 #
-# Copyright (C) 2010-2011 Robert Hunt
+# Copyright (C) 2010-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -208,7 +208,7 @@ class BiblePunctuationSystemsConverter:
     def __str__( self ):
         """
         This method returns the string representation of a Bible punctuation system.
-        
+
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
@@ -247,7 +247,7 @@ class BiblePunctuationSystemsConverter:
             for element in self._XMLSystems[punctuationSystemCode]["tree"]:
                 tag = element.tag
                 text = element.text
-                if text is None: text = '' # If a tag was given, but contained an empty string, indicate that 
+                if text is None: text = '' # If a tag was given, but contained an empty string, indicate that
                 if tag in punctuationDict: logging.error( _("Multiple {} entries in {} punctuation system").format( tag, punctuationSystemCode ) )
                 punctuationDict[tag] = text
 
@@ -266,7 +266,7 @@ class BiblePunctuationSystemsConverter:
                                 if not firstTag:
                                     firstTag = tag
                                     description = _(" (-->{}<-- versus -->{}<--)".format( punctuationDict[tag], checkSystemDataDict[tag] ) )
-                        if differenceCount==1: 
+                        if differenceCount==1:
                             logging.warning( _("{} and {} punctuation systems differ only by {}{}").format( punctuationSystemCode, checkSystemCode, firstTag, description ) )
 
             # Now put it into my dictionaries for easy access
@@ -494,7 +494,7 @@ class BiblePunctuationSystemsConverter:
 # end of BiblePunctuationSystemsConverter class
 
 
-def main():
+def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -517,8 +517,8 @@ def main():
         # Demo the converter object
         bpsc = BiblePunctuationSystemsConverter().loadSystems() # Load the XML
         print( bpsc ) # Just print a summary
-# end of main
+# end of demo
 
 if __name__ == '__main__':
-    main()
+    demo()
 # end of BiblePunctuationSystemsConverter.py

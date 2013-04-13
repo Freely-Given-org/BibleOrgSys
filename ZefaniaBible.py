@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ZefaniaBible.py
-#   Last modified: 2013-04-09 by RJH (also update versionString below)
+#   Last modified: 2013-04-13 by RJH (also update versionString below)
 #
 # Module handling simple XML Bibles
 #
@@ -68,11 +68,13 @@ from xml.etree.cElementTree import ElementTree
 
 import Globals
 from BibleOrganizationalSystems import BibleOrganizationalSystem
-from InternalBible import InternalBible
-from InternalBibleBook import InternalBibleBook
+#from InternalBible import InternalBible
+#from InternalBibleBook import InternalBibleBook
+#from BibleWriter import BibleWriter
+from Bible import Bible, BibleBook
 
 
-class ZefaniaBible( InternalBible ):
+class ZefaniaBible( Bible ):
     """
     Class for reading, validating, and converting ZefaniaBible XML.
     """
@@ -88,17 +90,17 @@ class ZefaniaBible( InternalBible ):
     breakTag = 'BR'
 
 
-    def __init__( self, sourceFilepath, givenName=None, encoding='utf-8', logErrorsFlag=False  ):
+    def __init__( self, sourceFilepath, givenName=None, encoding='utf-8' ):
         """
         Constructor: just sets up the Zefania Bible object.
         """
          # Setup and initialise the base class first
-        self.objectType = "Zefania"
+        Bible.__init__( self )
         self.objectNameString = "Zefania Bible object"
-        InternalBible.__init__( self )
+        self.objectTypeString = "Zefania"
 
         # Now we can set our object variables
-        self.sourceFilepath, self.givenName, self.encoding, self.logErrorsFlag = sourceFilepath, givenName, encoding, logErrorsFlag
+        self.sourceFilepath, self.givenName, self.encoding = sourceFilepath, givenName, encoding
 
         self.tree = self.header = None # Will hold the XML data
 
@@ -328,9 +330,9 @@ class ZefaniaBible( InternalBible ):
 
         if BBB:
             if Globals.verbosityLevel > 2: print( _("Validating {} {}...").format( BBB, bookName ) )
-            thisBook = InternalBibleBook( BBB, self.logErrorsFlag )
-            thisBook.objectType = "XML"
+            thisBook = BibleBook( BBB )
             thisBook.objectNameString = "XML Bible Book object"
+            thisBook.objectTypeString = "XML"
             #thisBook.sourceFilepath = self.sourceFilepath
             for element in book:
                 if element.tag == ZefaniaBible.chapterTag:
@@ -508,7 +510,7 @@ class ZefaniaBible( InternalBible ):
 # end of ZefaniaBible class
 
 
-def main():
+def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -551,11 +553,11 @@ def main():
                 if t=='OT' and len(zb)==27: continue # Don't bother with OT references if it's only a NT
                 if t=='NT' and len(zb)==39: continue # Don't bother with NT references if it's only a OT
                 if t=='DC' and len(zb)<=66: continue # Don't bother with DC references if it's too small
-                svk = VerseReferences.simpleVerseKey( b, c, v )
+                svk = VerseReferences.SimpleVerseKey( b, c, v )
                 #print( svk, ob.getVerseDataList( reference ) )
                 print( reference, svk.getShortText(), zb.getVerseText( svk ) )
-# end of main
+# end of demo
 
 if __name__ == '__main__':
-    main()
+    demo()
 # end of ZefaniaBible.py

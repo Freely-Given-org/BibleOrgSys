@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleVersificationSystemsConverter.py
-#   Last modified: 2013-04-02 (also update versionString below)
+#   Last modified: 2013-04-13 (also update versionString below)
 #
 # Module handling BibleVersificationSystem_*.xml to produce C and Python data tables
 #
@@ -644,7 +644,7 @@ class BibleVersificationSystemsConverter:
 # end of BibleVersificationSystemsConverter class
 
 
-def main():
+def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -668,8 +668,8 @@ def main():
 
     else: # Must be demo mode
         print( bvsc ) # Just print a summary
-# end of main
+# end of demo
 
 if __name__ == '__main__':
-    main()
+    demo()
 # end of BibleVersificationSystemsConverter.py

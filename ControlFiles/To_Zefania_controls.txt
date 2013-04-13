@@ -1,0 +1,47 @@
+# To_Zefania_controls.txt
+#
+# This is a sample control file for creating an Zefania XML Bible text file
+# You should edit this file for your specific situation
+#
+# Any line with a # in the first column is a comment line ignored by the program
+# Unless otherwise specified, most entries consist of a variable name on the left,
+#   and equals sign (with optional spaces either side), and the assigned value.
+#       e.g., DoThis = True
+# Note that all fieldnames and settings are CASE SENSITIVE
+#
+
+# The following values determine the Bible organisational system (especially needed for Bible references)
+LanguageCode = __PROJECT_NAME__
+PublicationCode = GENERIC
+
+# The following values are copied into the output file
+ZefaniaLanguage = en
+ZefaniaPublisher = __PUBLISHER__
+ZefaniaRights = Copyright (C) 2013 __NAME__
+ZefaniaContributors =
+ZefaniaSource = __NAME__
+ZefaniaCoverage = People around the world
+
+# Allowed values are byBible, byTestament, or byBook
+#ZefaniaFiles = byBible
+
+# Allowed values are All or None or Header
+#   This affects how many space and newline characters are included in the output file(s)
+ZefaniaHumanReadable = All
+
+# This section only applies if byBible is selected above
+ZefaniaOutputFilename = __PROJECT_NAME___Zefania_Bible.xml
+ZefaniaTitle = __PROJECT_NAME__ Bible
+ZefaniaBibleName = __PROJECT_NAME__ Bible
+ZefaniaSubject =
+ZefaniaDescription =
+ZefaniaIdentifier =
+LogFilename = To_Zefania_logfile.txt
+
+# This section only applies if byTestament or byBook is selected above
+# The fields must contain XxXxX which will be automatically replaced by the program
+#ZefaniaOutputFilenameTemplate = __PROJECT_NAME___Zefania_XxXxX.xml
+#ZefaniaBibleNameTemplate = __PROJECT_NAME__ XxXxX
+#LogFileTemplate = __PROJECT_NAME___Zefania_XxXxX_logfile.txt
+
+## End of To_Zefania_controls.txt

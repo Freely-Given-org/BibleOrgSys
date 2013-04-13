@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # XMLBible.py
-#   Last modified: 2013-04-10 by RJH (also update versionString below)
+#   Last modified: 2013-04-13 by RJH (also update versionString below)
 #
 # Module handling simple XML Bibles
 #
@@ -43,11 +43,13 @@ from xml.etree.cElementTree import ElementTree
 
 import Globals
 from BibleOrganizationalSystems import BibleOrganizationalSystem
-from InternalBible import InternalBible
-from InternalBibleBook import InternalBibleBook
+#from InternalBible import InternalBible
+#from InternalBibleBook import InternalBibleBook
+#from BibleWriter import BibleWriter
+from Bible import Bible, BibleBook
 
 
-class XMLBible( InternalBible ):
+class XMLBible( Bible ):
     """
     Class for reading, validating, and converting XMLBible XML.
     """
@@ -57,17 +59,17 @@ class XMLBible( InternalBible ):
     verseTag = 'v'
 
 
-    def __init__( self, sourceFilepath, givenName=None, encoding='utf-8', logErrorsFlag=False  ):
+    def __init__( self, sourceFilepath, givenName=None, encoding='utf-8' ):
         """
         Constructor: just sets up the XML Bible file converter object.
         """
          # Setup and initialise the base class first
-        self.objectType = "XML"
+        Bible.__init__( self )
         self.objectNameString = "XML Bible object"
-        InternalBible.__init__( self )
+        self.objectTypeString = "XML"
 
         # Now we can set our object variables
-        self.sourceFilepath, self.givenName, self.encoding, self.logErrorsFlag = sourceFilepath, givenName, encoding, logErrorsFlag
+        self.sourceFilepath, self.givenName, self.encoding = sourceFilepath, givenName, encoding
 
         self.tree = None # Will hold the XML data
 
@@ -141,9 +143,9 @@ class XMLBible( InternalBible ):
             BBB = self.genericBOS.getBBB( bookName )
             if Globals.verbosityLevel > 2: print( _("Validating {} {}...").format( BBB, bookName ) )
 
-        thisBook = InternalBibleBook( BBB, self.logErrorsFlag )
-        thisBook.objectType = "XML"
+        thisBook = BibleBook( BBB )
         thisBook.objectNameString = "XML Bible Book object"
+        thisBook.objectTypeString = "XML"
         #thisBook.sourceFilepath = self.sourceFilepath
         for element in book:
             if element.tag == XMLBible.chapterTag:
@@ -206,7 +208,7 @@ class XMLBible( InternalBible ):
 # end of XMLBible class
 
 
-def main():
+def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -221,7 +223,7 @@ def main():
 
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
-    testFolder = "/mnt/Data/Work/Bibles/Formats/OpenSong/"
+    testFolder = "/mnt/Data/Work/Bibles//OpenSong Bibles/"
     single = ( "KJV.xmm", )
     good = ( "KJV.xmm", "AMP.xmm", "Chinese_SU.xmm", "Contemporary English Version.xmm", "ESV", "Italiano", "MKJV", \
         "MSG.xmm", "NASB.xmm", "NIV", "NKJV.xmm", "NLT", "telugu.xmm", )
@@ -250,11 +252,11 @@ def main():
                 if t=='OT' and len(xb)==27: continue # Don't bother with OT references if it's only a NT
                 if t=='NT' and len(xb)==39: continue # Don't bother with NT references if it's only a OT
                 if t=='DC' and len(xb)<=66: continue # Don't bother with DC references if it's too small
-                svk = VerseReferences.simpleVerseKey( b, c, v )
+                svk = VerseReferences.SimpleVerseKey( b, c, v )
                 #print( svk, ob.getVerseDataList( reference ) )
                 print( reference, svk.getShortText(), xb.getVerseText( svk ) )
-# end of main
+# end of demo
 
 if __name__ == '__main__':
-    main()
+    demo()
 # end of XMLBible.py

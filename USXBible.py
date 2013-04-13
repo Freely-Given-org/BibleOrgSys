@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # USXBible.py
-#   Last modified: 2013-04-10 by RJH (also update versionString below)
+#   Last modified: 2013-04-13 by RJH (also update versionString below)
 #
 # Module handling compilations of USX Bible books
 #
@@ -44,17 +44,17 @@ class USXBible( InternalBible ):
     Class to load and manipulate USX Bibles.
 
     """
-    def __init__( self, givenName, logErrorsFlag ):
+    def __init__( self, givenName ):
         """
         Create the internal USX Bible object.
         """
          # Setup and initialise the base class first
-        self.objectType = "USX"
-        self.objectNameString = "USX Bible object"
         InternalBible.__init__( self )
+        self.objectNameString = "USX Bible object"
+        self.objectTypeString = "USX"
 
         # Now we can set our object variables
-        self.givenName, self.logErrorsFlag = givenName, logErrorsFlag
+        self.givenName = givenName
         self.name = self.givenName
     # end of __init_
 
@@ -152,7 +152,7 @@ class USXBible( InternalBible ):
 
         # Load the books one by one -- assuming that they have regular Paratext style filenames
         for BBB,filename in self.USXFilenamesObject.getConfirmedFilenames():
-            UBB = USXBibleBook( BBB, self.logErrorsFlag )
+            UBB = USXBibleBook( BBB )
             UBB.load( folder, filename, encoding )
             UBB.validateUSFM()
             #print( UBB )
@@ -182,7 +182,7 @@ class USXBible( InternalBible ):
                             isUSX = True
                         break # We only look at the first line
                 if isUSX:
-                    UBB = USXBibleBook( BBB, self.logErrorsFlag )
+                    UBB = USXBibleBook( BBB )
                     UBB.load( folder, thisFilename, encoding )
                     UBB.validateUSFM()
                     print( UBB )
@@ -200,7 +200,7 @@ class USXBible( InternalBible ):
 # end of class USXBible
 
 
-def main():
+def demo():
     """
     Demonstrate reading and checking some Bible databases.
     """
@@ -217,7 +217,7 @@ def main():
 
     name, encoding, testFolder = "Matigsalug", "utf-8", "/mnt/Data/Work/VirtualBox_Shared_Folder/Exports/USXExports/Projects/MBTV/" # You can put your USX test folder here
     if os.access( testFolder, os.R_OK ):
-        UB = USXBible( name, False ) # The second parameter is the logErrorsFlag
+        UB = USXBible( name )
         UB.load( testFolder, encoding )
         if Globals.verbosityLevel > 0: print( UB )
         UB.check()
@@ -231,10 +231,9 @@ def main():
     else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 
     #if Globals.commandLineOptions.export:
-    #    wantErrorMessages = True
     #    if Globals.verbosityLevel > 0: print( "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( progName, versionString ) )
     #       pass
 
 if __name__ == '__main__':
-    main()
+    demo()
 # end of USXBible.py

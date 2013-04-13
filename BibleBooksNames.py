@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksNames.py
+#   Last modified: 2013-04-13 (also update versionString below)
 #
 # Module handling BibleBooksNames
-#   Last modified: 2013-04-05 (also update versionString below)
 #
 # Copyright (C) 2010-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -444,7 +444,7 @@ class BibleBooksNamesSystem:
 # end of BibleBookNamesSystem class
 
 
-def main():
+def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -486,8 +486,8 @@ def main():
     print( "Getting division booklists..." )
     for divisionAbbrevInput in ('OT','NT', 'NewTest', 'Paul', 'Deutero', 'Gn', 'Exo', '1 Samuel' ):
         print( "  Searching for '{}' got {}".format(divisionAbbrevInput, bbns2.getDivisionBooklist(divisionAbbrevInput)) )
-# end of main
+# end of demo
 
 if __name__ == '__main__':
-    main()
+    demo()
 # end of BibleBooksNames.py

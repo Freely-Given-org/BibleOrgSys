@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBookOrdersConverter.py
+#   Last modified: 2013-04-13 (also update versionString below)
 #
 # Module handling BibleBookOrderSystem_*.xml to produce C and Python data tables
-#   Last modified: 2013-04-05 (also update versionString below)
 #
 # Copyright (C) 2010-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -525,7 +525,7 @@ class BibleBookOrdersConverter:
 # end of BibleBookOrdersConverter class
 
 
-def main():
+def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -551,8 +551,8 @@ def main():
         # Demo the converter object
         bbosc = BibleBookOrdersConverter().loadSystems() # Load the XML
         print( bbosc ) # Just print a summary
-# end of main
+# end of demo
 
 if __name__ == '__main__':
-    main()
+    demo()
 # end of BibleBookOrdersConverter.py

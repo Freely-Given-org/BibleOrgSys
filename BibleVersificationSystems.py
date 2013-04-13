@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleVersificationSystems.py
-#   Last modified: 2013-04-10 (also update versionString below)
+#   Last modified: 2013-04-13 (also update versionString below)
 #
 # Module handling BibleVersificationSystem_*.xml to produce C and Python data tables
 #
@@ -36,7 +36,6 @@ from gettext import gettext as _
 
 from singleton import singleton
 import Globals
-from BibleBooksCodes import BibleBooksCodes
 
 
 @singleton # Can only ever have one instance
@@ -611,12 +610,12 @@ class BibleVersificationSystem:
         if listName=="reordered": return self.__reorderedVersesDict
     # end of BibleVersificationSystem:getAuxilliaryVerseList
 
-    def isValidBCVRef( self, referenceTuple, referenceString=None, extended=False, wantErrorMessages=False ):
+    def isValidBCVRef( self, referenceTuple, referenceString=None, extended=False ):
         """
         Returns True/False indicating if the given reference is valid in this system.
         Extended flag allows chapter and verse numbers of zero.
         """
-        #print( "BibleVersificationSystem.isValidBCVRef( {}, {}, {}, {} )".format( referenceTuple, referenceString, extended, wantErrorMessages ) )
+        #print( "BibleVersificationSystem.isValidBCVRef( {}, {}, {}, {} )".format( referenceTuple, referenceString, extended ) )
         BBB, C, V, S = referenceTuple
         assert( len(BBB) == 3 )
         assert( not C or C.isdigit() ) # Should be no suffix on C (although it can be blank if the reference is for a whole book)
@@ -632,24 +631,24 @@ class BibleVersificationSystem:
                 if 0 < int(V) <= int(self.__chapterDataDict[BBB][C]):
                     if not self.isOmittedVerse( referenceTuple ):
                         return True
-                    elif wantErrorMessages: logging.error( _("{} {}:{} is omitted in {} versification system {}").format(BBB,C,V,self.getVersificationSystemName(),myReferenceString) )
-                elif wantErrorMessages: logging.error( _("{} {}:{} is invalid verse in {} versification system {}").format(BBB,C,V,self.getVersificationSystemName(),myReferenceString) )
-            elif wantErrorMessages: logging.error( _("{} {}:{} is invalid chapter in {} versification system {}").format(BBB,C,V,self.getVersificationSystemName(),myReferenceString) )
-        elif wantErrorMessages: logging.error( _("{} {}:{} is invalid book in {} versification system {}").format(BBB,C,V,self.getVersificationSystemName(),myReferenceString) )
+                    elif Globals.logErrorsFlag: logging.error( _("{} {}:{} is omitted in {} versification system {}").format(BBB,C,V,self.getVersificationSystemName(),myReferenceString) )
+                elif Globals.logErrorsFlag: logging.error( _("{} {}:{} is invalid verse in {} versification system {}").format(BBB,C,V,self.getVersificationSystemName(),myReferenceString) )
+            elif Globals.logErrorsFlag: logging.error( _("{} {}:{} is invalid chapter in {} versification system {}").format(BBB,C,V,self.getVersificationSystemName(),myReferenceString) )
+        elif Globals.logErrorsFlag: logging.error( _("{} {}:{} is invalid book in {} versification system {}").format(BBB,C,V,self.getVersificationSystemName(),myReferenceString) )
         return False
     # end of BibleVersificationSystem:isValidBCVRef
 
-    def expandCVRange( self, startRef, endRef, referenceString=None, bookOrderSystem=None, wantErrorMessages=False ):
+    def expandCVRange( self, startRef, endRef, referenceString=None, bookOrderSystem=None ):
         """ Returns a list containing all valid references (inclusive) between the given values. """
-        #print( "expandCVRange:", startRef, endRef, referenceString, bookOrderSystem, wantErrorMessages )
+        #print( "expandCVRange:", startRef, endRef, referenceString, bookOrderSystem )
         assert( startRef and len(startRef)==4 )
         assert( endRef and len(endRef)==4 )
 
         haveErrors, haveWarnings = False, False
         myReferenceString = " (from '{}')".format(referenceString) if referenceString is not None else ''
-        if not self.isValidBCVRef( startRef, referenceString, wantErrorMessages ):
+        if not self.isValidBCVRef( startRef, referenceString ):
             haveErrors = True
-        if not self.isValidBCVRef( endRef, referenceString, wantErrorMessages ):
+        if not self.isValidBCVRef( endRef, referenceString ):
             haveErrors = True
         if haveErrors: return None
 
@@ -658,18 +657,18 @@ class BibleVersificationSystem:
         # Check book details
         if BBB1!=BBB2:
             if bookOrderSystem is None:
-                if wantErrorMessages: logging.error( _("Book order system not specified (range covers {} to {}){}").format( BBB1, BBB2, myReferenceString ) )
+                if Globals.logErrorsFlag: logging.error( _("Book order system not specified (range covers {} to {}){}").format( BBB1, BBB2, myReferenceString ) )
                 haveErrors = True
                 return None
             if not bookOrderSystem.correctlyOrdered( BBB1, BBB2 ):
-                if wantErrorMessages: logging.error( _("Book range out of order ({} before {}){}").format( BBB1, BBB2, myReferenceString ) )
+                if Globals.logErrorsFlag: logging.error( _("Book range out of order ({} before {}){}").format( BBB1, BBB2, myReferenceString ) )
                 haveErrors = True
             if haveErrors: return None
 
         # Check chapter details
         C1int, C2int = int(C1), int(C2)
         if BBB1==BBB2 and C1int > C2int:
-            if wantErrorMessages: logging.error( _("Chapter range out of order ({} before {}) in {}{}").format( C1, C2, BBB1, myReferenceString ) )
+            if Globals.logErrorsFlag: logging.error( _("Chapter range out of order ({} before {}) in {}{}").format( C1, C2, BBB1, myReferenceString ) )
             haveErrors = True
         if haveErrors: return None
 
@@ -679,7 +678,7 @@ class BibleVersificationSystem:
         if V2: V2int = int(V2)
         else: V2int = self.getNumVerses( BBB2, C2 ) # End with the last verse if no verse specified (e.g., for a chapter range)
         if BBB1==BBB2 and C1int==C2int and V1int>=V2int:
-            if wantErrorMessages: logging.error( _("Verse range out of order ({} before {}) in {} {}{}").format( V1, V2, BBB1, C1, myReferenceString ) )
+            if Globals.logErrorsFlag: logging.error( _("Verse range out of order ({} before {}) in {} {}{}").format( V1, V2, BBB1, C1, myReferenceString ) )
             haveErrors = True
         if haveErrors: return None
 
@@ -743,7 +742,7 @@ class BibleVersificationSystem:
 # end of BibleVersificationSystem class
 
 
-def main():
+def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -795,9 +794,9 @@ def main():
         print( "{} {} {} {} is omitted: {}".format(BBB,C,V,S,bvs.isOmittedVerse(refTuple)) )
         print( "Omitted verses in {} are: {}".format(BBB,bvs.getOmittedVerseList(BBB)) )
         for myRange in ((('MAT','2','1',''),('MAT','2','5','')), (('MAT','3','2','b'),('MAT','3','6','a')), (('MAT','3','15',''),('MAT','4','2','')), (('MAT','3','16','b'),('MAT','4','3','a')), (('MAT','3','2',''),('MAT','2','6',''))):
-            print( "Expanding {} gives {}".format( myRange, bvs.expandCVRange( myRange[0],myRange[1],wantErrorMessages=True) ) )
-# end of main
+            print( "Expanding {} gives {}".format( myRange, bvs.expandCVRange( myRange[0],myRange[1]) ) )
+# end of demo
 
 if __name__ == '__main__':
-    main()
+    demo()
 # end of BibleVersificationSystems.py

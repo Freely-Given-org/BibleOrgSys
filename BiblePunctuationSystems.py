@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # BiblePunctuationSystems.py
+#   Last modified: 2013-04-13 (also update versionString below)
 #
 # Module handling BiblePunctuationSystem_*.xml to produce C and Python data tables
-#   Last modified: 2011-06-30 (also update versionString below)
 #
-# Copyright (C) 2010-2011 Robert Hunt
+# Copyright (C) 2010-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -49,7 +49,7 @@ class BiblePunctuationSystems:
 
     def __init__( self ): # We can't give this parameters because of the singleton
         """
-        Constructor: 
+        Constructor:
         """
         self.__DataDict = None # We'll import into this in loadData
     # end of __init__
@@ -89,7 +89,7 @@ class BiblePunctuationSystems:
     def __str__( self ):
         """
         This method returns the string representation of a Bible punctuation.
-        
+
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
@@ -194,7 +194,7 @@ class BiblePunctuationSystem:
 
     def __init__( self, systemName ):
         """
-        Constructor: 
+        Constructor:
         """
         assert( systemName )
         self.__systemName = systemName
@@ -206,7 +206,7 @@ class BiblePunctuationSystem:
     def __str__( self ):
         """
         This method returns the string representation of a Bible punctuation system.
-        
+
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
@@ -257,7 +257,7 @@ class BiblePunctuationSystem:
 # end of BiblePunctuationSystem class
 
 
-def main():
+def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -280,8 +280,8 @@ def main():
     print( "Variables are: {}".format(bps.getAvailablePunctuationValueNames()) )
     name = 'chapterVerseSeparator'
     print( "{} for {} is '{}'".format( name, bps.getPunctuationSystemName(), bps.getPunctuationValue(name) ) )
-# end of main
+# end of demo
 
 if __name__ == '__main__':
-    main()
+    demo()
 # end of BiblePunctuationSystems.py

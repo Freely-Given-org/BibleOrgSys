@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ISO_639_3_Languages.py
-#   Last modified: 2013-01-26 by RJH (also update versionString below)
+#   Last modified: 2013-04-13 by RJH (also update versionString below)
 #
 # Module handling ISO_639_3
 #
@@ -50,7 +50,7 @@ class ISO_639_3_Languages:
 
     def __init__( self ): # We can't give this parameters because of the singleton
         """
-        Constructor: 
+        Constructor:
         """
         self.__IDDict, self.__NameDict = None, None # We'll import into this in loadData
     # end of __init__
@@ -58,7 +58,7 @@ class ISO_639_3_Languages:
     def __str__( self ):
         """
         This method returns the string representation of a Bible book code.
-        
+
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
@@ -149,7 +149,7 @@ class ISO_639_3_Languages:
 # end of ISO_639_3_Languages class
 
 
-def main():
+def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -187,8 +187,8 @@ def main():
         for match in matches:
             print( "    Found {} = {}".format( lg.getLanguageCode(match), match ) )
         else: print( "    {} not found".format( testNamePortion ) )
-# end of main
+# end of demo
 
 if __name__ == '__main__':
-    main()
+    demo()
 # end of ISO_639_3_Languages.py

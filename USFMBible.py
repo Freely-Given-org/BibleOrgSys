@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # USFMBible.py
-#   Last modified: 2013-04-10 by RJH (also update versionString below)
+#   Last modified: 2013-04-13 by RJH (also update versionString below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -37,25 +37,27 @@ from collections import OrderedDict
 import Globals
 import USFMFilenames
 from USFMBibleBook import USFMBibleBook
-from InternalBible import InternalBible
+#from InternalBible import InternalBible
+#from BibleWriter import BibleWriter
+from Bible import Bible
 
 
-class USFMBible( InternalBible ):
+class USFMBible( Bible ):
     """
     Class to load and manipulate USFM Bibles.
 
     """
-    def __init__( self, sourceFolder, givenName=None, encoding='utf-8', logErrorsFlag=False ):
+    def __init__( self, sourceFolder, givenName=None, encoding='utf-8' ):
         """
         Create the internal USFM Bible object.
         """
          # Setup and initialise the base class first
-        self.objectType = "USFM"
+        Bible.__init__( self )
         self.objectNameString = "USFM Bible object"
-        InternalBible.__init__( self )
+        self.objectTypeString = "USFM"
 
         # Now we can set our object variables
-        self.sourceFolder, self.givenName, self.encoding, self.logErrorsFlag = sourceFolder, givenName, encoding, logErrorsFlag
+        self.sourceFolder, self.givenName, self.encoding = sourceFolder, givenName, encoding
 
         # Do a preliminary check on the contents of our folder
         foundFiles, foundFolders = [], []
@@ -154,7 +156,7 @@ class USFMBible( InternalBible ):
         if filename is None:
             for someBBB, someFilename in self.USFMFilenamesObject.getMaximumPossibleFilenameTuples():
                 if someBBB == BBB: filename = someFilename; break
-        UBB = USFMBibleBook( BBB, self.logErrorsFlag )
+        UBB = USFMBibleBook( BBB )
         UBB.load( self.sourceFolder, filename, self.encoding )
         UBB.validateUSFM()
         #print( UBB )
@@ -180,7 +182,7 @@ class USFMBible( InternalBible ):
 # end of class USFMBible
 
 
-def main():
+def demo():
     """
     Demonstrate reading and checking some Bible databases.
     """
@@ -190,18 +192,20 @@ def main():
     # Handle command line parameters
     from optparse import OptionParser
     parser = OptionParser( version="v{}".format( versionString ) )
-    #parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
+    parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
     Globals.addStandardOptionsAndProcess( parser )
 
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
-    if 0: # Test a single folder containing a USFM Bible
+    if 1: # Test a single folder containing a USFM Bible
         name, encoding, testFolder = "Matigsalug", "utf-8", "/mnt/Data/Work/Matigsalug/Bible/MBTV/" # You can put your test folder here
         if os.access( testFolder, os.R_OK ):
-            UB = USFMBible( testFolder, name, encoding, logErrorsFlag=False ) # Set to logErrorsFlag=True if you want to see errors at the terminal
+            UB = USFMBible( testFolder, name, encoding )
             UB.loadAll()
             if Globals.verbosityLevel > 0: print( UB )
-            UB.check()
+            if Globals.strictCheckingFlag:
+                if Globals.verbosityLevel > 1: print( "Checking..." )
+                UB.check()
             #UBErrors = UB.getErrors()
             # print( UBErrors )
             #print( UB.getVersification () )
@@ -211,7 +215,7 @@ def main():
                 #print( "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )
         else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 
-    if 1: # Test a whole folder full of folders of USFM Bibles
+    if 0: # Test a whole folder full of folders of USFM Bibles
         def findInfo():
             """ Find out info about the project from the included copyright.htm file """
             with open( os.path.join( somepath, "copyright.htm" ) ) as myFile: # Automatically closes the file when done
@@ -248,7 +252,7 @@ def main():
                 name, encoding, testFolder = title, "utf-8", somepath
                 if os.access( testFolder, os.R_OK ):
                     if Globals.verbosityLevel > 0: print( "\n{}".format( count ) )
-                    UB = USFMBible( testFolder, name, encoding, False ) # The second parameter is the logErrorsFlag -- set to True if you want to see errors at the terminal
+                    UB = USFMBible( testFolder, name, encoding )
                     UB.loadAll()
                     totalBooks += len( UB )
                     if Globals.verbosityLevel > 0: print( UB )
@@ -264,12 +268,177 @@ def main():
         if count: print( "\n{} total USFM (partial) Bibles processed.".format( count ) )
         if totalBooks: print( "{} total books ({} average per folder)".format( totalBooks, round(totalBooks/count) ) )
 
-    #if Globals.commandLineOptions.export:
-    #    wantErrorMessages = True
-    #    if Globals.verbosityLevel > 0: print( "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( progName, versionString ) )
-    #       pass
-#end of main
+
+    validateXML = False
+
+    if 1: # Do one test folder
+        name, encoding, testFolder = "Matigsalug", "utf-8", "/mnt/Data/Work/Matigsalug/Bible/MBTV/" # You can put your test folder here
+        #name, encoding, testFolder = "MS-BT", "utf-8", "/mnt/Data/Work/Matigsalug/Bible/MBTBT/" # You can put your test folder here
+        #name, encoding, testFolder = "MS-Notes", "utf-8", "/mnt/Data/Work/Matigsalug/Bible/MBTBC/" # You can put your test folder here
+        #name, encoding, testFolder = "WEB", "utf-8", "/mnt/Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/" # You can put your test folder here
+
+        if os.access( testFolder, os.R_OK ): # check that we can read the test data
+            UB = USFMBible( testFolder, name, encoding ) # create the BibleWriter object
+            UB.loadAll()
+            print( UB )
+            if not Globals.commandLineOptions.export: UB.check()
+            UBErrors = UB.getErrors()
+            #print( UBWErrors )
+
+            if Globals.commandLineOptions.export:
+
+                usxSchemaFile = "/mnt/Data/Work/Bibles/Formats/USX/usx 1.rng"
+                OSISSchemaFile = "/mnt/Data/Work/Bibles/Formats/OSIS/osisCore.2.1.1.xsd"
+
+                UB.setupWriter()
+                #BW.genericBOS = BibleOrganizationalSystem( "GENERIC-KJV-81" )
+                #BW.genericBRL = BibleReferenceList( BW.genericBOS, BibleObject=BW )
+                import subprocess # for running xmllint
+                import ControlFiles
+                if Globals.verbosityLevel > 0: print( "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( progName, versionString ) )
+                #xmllintError = ("No error", "Unclassified", "Error in DTD", "Validation error", "Validation error", "Error in schema compilation", "Error writing output", "Error in pattern", "Error in reader registration", "Out of memory")
+
+                if 1: # Do USX XML export
+                    USXControls = {}; ControlFiles.readControlFile( 'ControlFiles', "To_USX_controls.txt", USXControls )
+                    validationResults = UB.toUSX_XML( USXControls, validationSchema=usxSchemaFile if validateXML else None )
+                    if Globals.verbosityLevel>0 and validationResults and validationResults[0]: # print validation results
+                        if validationResults[1]: print( "\nUSFX checkProgramOutputString\n{}".format( validationResults[1] ) )
+                        if validationResults[2]: print( "\n USFX checkProgramErrorOutputString\n{}".format( validationResults[2] ) )
+                    # Remove any empty files
+                    USXOutputFolder = os.path.join( "OutputFiles/", "USX output/" )
+                    for filename in os.listdir( USXOutputFolder ):
+                        filepath = os.path.join( USXOutputFolder, filename )
+                        if os.stat(filepath).st_size == 0:
+                            print( "Removing empty file: {}".format( filepath ) )
+                            os.remove( filepath ) # delete the zero-length file
+
+                if 1: # Do OSIS XML export
+                    OSISControls = {}; ControlFiles.readControlFile( 'ControlFiles', "To_OSIS_controls.txt", OSISControls )
+                    for control in OSISControls:
+                        OSISControls[control] = OSISControls[control].replace('__PROJECT_NAME__','UBW-Test') #.replace('byBible','byBook')
+                    #print( OSISControls ); halt
+                    validationResults = UB.toOSIS_XML( OSISControls, validationSchema=OSISSchemaFile if validateXML else None )
+                    if Globals.verbosityLevel>0 and validationResults and validationResults[0]: # print validation results
+                        if validationResults[1]: print( "\nUSFX checkProgramOutputString\n{}".format( validationResults[1] ) )
+                        if validationResults[2]: print( "\n USFX checkProgramErrorOutputString\n{}".format( validationResults[2] ) )
+                    # Remove any empty files
+                    OSISOutputFolder = os.path.join( "OutputFiles/" )
+                    for filename in os.listdir( OSISOutputFolder ):
+                        filepath = os.path.join( OSISOutputFolder, filename )
+                        if os.stat(filepath).st_size == 0:
+                            print( "Removing empty file: {}".format( filepath ) )
+                            os.remove( filepath ) # delete the zero-length file
+
+                if 1: # Do Zefania XML export
+                    ZefaniaControls = {}; ControlFiles.readControlFile( 'ControlFiles', "To_Zefania_controls.txt", ZefaniaControls )
+                    BW.toZefania_XML( ZefaniaControls )
+
+                if 1: # Do MediaWiki export
+                    MediaWikiControls = {}; ControlFiles.readControlFile( 'ControlFiles', "To_MediaWiki_controls.txt", MediaWikiControls )
+                    BW.toMediaWiki( MediaWikiControls )
+
+                if 1: # Do Sword export
+                    SwordControls = {}; ControlFiles.readControlFile( 'ControlFiles', "To_OSIS_controls.txt", SwordControls )
+                    BW.toSwordModule( SwordControls ) # We use the same OSIS controls (except for the output filename)
+        else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
+
+    if 0: # Test a whole folder full of folders of USFM Bibles
+        def findInfo():
+            """ Find out info about the project from the included copyright.htm file """
+            with open( os.path.join( somepath, "copyright.htm" ) ) as myFile: # Automatically closes the file when done
+                lastLine, lineCount = None, 0
+                title, nameDict = None, {}
+                for line in myFile:
+                    lineCount += 1
+                    if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
+                        #print( "      Detected UTF-16 Byte Order Marker in copyright.htm file" )
+                        line = line[1:] # Remove the UTF-8 Byte Order Marker
+                    if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
+                    if not line: continue # Just discard blank lines
+                    lastLine = line
+                    if line.startswith("<title>"): title = line.replace("<title>","").replace("</title>","").strip()
+                    if line.startswith('<option value="'):
+                        adjLine = line.replace('<option value="','').replace('</option>','')
+                        USFM_BBB, name = adjLine[:3], adjLine[11:]
+                        BBB = Globals.BibleBooksCodes.getBBBFromUSFM( USFM_BBB )
+                        #print( USFM_BBB, BBB, name )
+                        nameDict[BBB] = name
+            return title, nameDict
+        # end of findInfo
+
+        testBaseFolder = "../../Haiola USFM test versions/"
+        count = totalBooks = 0
+        for something in sorted( os.listdir( testBaseFolder ) ):
+            somepath = os.path.join( testBaseFolder, something )
+            if os.path.isfile( somepath ): print( "Ignoring file '{}' in '{}'".format( something, testBaseFolder ) )
+            elif os.path.isdir( somepath ): # Let's assume that it's a folder containing a USFM (partial) Bible
+                #if not something.startswith( 'hui' ): continue # This line is used for debugging only specific modules
+                count += 1
+                title, bookNameDict = findInfo()
+                if title is None: title = something[:-5] if something.endswith("_usfm") else something
+                name, encoding, testFolder = title, "utf-8", somepath
+                if os.access( testFolder, os.R_OK ):
+                    if Globals.verbosityLevel > 0: print( "\n{}".format( count ) )
+                    UBW = BibleWriter( testFolder, name, encoding ) # create the BibleWriter object
+                    UBW.loadAll()
+                    print( UBW )
+                    if not Globals.commandLineOptions.export: UBW.check()
+                    UBWErrors = UBW.getErrors()
+                    #print( UBWErrors )
+
+                    if Globals.commandLineOptions.export:
+                        import subprocess # for running xmllint
+                        import ControlFiles
+                        if Globals.verbosityLevel > 0: print( "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( progName, versionString ) )
+                        #xmllintError = ("No error", "Unclassified", "Error in DTD", "Validation error", "Validation error", "Error in schema compilation", "Error writing output", "Error in pattern", "Error in reader registration", "Out of memory")
+
+                        if 1: # Do USX XML export
+                            USXControls = {}; ControlFiles.readControlFile( 'ControlFiles', "To_USX_controls.txt", USXControls )
+                            validationResults = UBW.toUSX_XML( USXControls, validationSchema=usxSchemaFile if validateXML else None )
+                            if Globals.verbosityLevel>0 and validationResults and validationResults[0]: # print validation results
+                                if validationResults[1]: print( "\nUSFX checkProgramOutputString\n{}".format( validationResults[1] ) )
+                                if validationResults[2]: print( "\n USFX checkProgramErrorOutputString\n{}".format( validationResults[2] ) )
+                            # Remove any empty files
+                            USXOutputFolder = os.path.join( "OutputFiles/", "USX output/" )
+                            for filename in os.listdir( USXOutputFolder ):
+                                filepath = os.path.join( USXOutputFolder, filename )
+                                if os.stat(filepath).st_size == 0:
+                                    print( "Removing empty file: {}".format( filepath ) )
+                                    os.remove( filepath ) # delete the zero-length file
+
+                        if 1: # Do OSIS XML export
+                            OSISControls = {}; ControlFiles.readControlFile( 'ControlFiles', "To_OSIS_controls.txt", OSISControls )
+                            for control in OSISControls:
+                                OSISControls[control] = OSISControls[control].replace('__PROJECT_NAME__','UBW-Test') #.replace('byBible','byBook')
+                            #print( OSISControls ); halt
+                            validationResults = UBW.toOSIS_XML( OSISControls, validationSchema=OSISSchemaFile if validateXML else None )
+                            if Globals.verbosityLevel>0 and validationResults and validationResults[0]: # print validation results
+                                if validationResults[1]: print( "\nUSFX checkProgramOutputString\n{}".format( validationResults[1] ) )
+                                if validationResults[2]: print( "\n USFX checkProgramErrorOutputString\n{}".format( validationResults[2] ) )
+                            # Remove any empty files
+                            OSISOutputFolder = os.path.join( "OutputFiles/" )
+                            for filename in os.listdir( OSISOutputFolder ):
+                                filepath = os.path.join( OSISOutputFolder, filename )
+                                if os.stat(filepath).st_size == 0:
+                                    print( "Removing empty file: {}".format( filepath ) )
+                                    os.remove( filepath ) # delete the zero-length file
+
+                        if 1: # Do Zefania XML export
+                            ZefaniaControls = {}; ControlFiles.readControlFile( 'ControlFiles', "To_Zefania_controls.txt", ZefaniaControls )
+                            UBW.toZefania_XML( ZefaniaControls )
+
+                        if 1: # Do MediaWiki export
+                            MediaWikiControls = {}; ControlFiles.readControlFile( 'ControlFiles', "To_MediaWiki_controls.txt", MediaWikiControls )
+                            UBW.toMediaWiki( MediaWikiControls )
+
+                        if 1: # Do Sword export
+                            SwordControls = {}; ControlFiles.readControlFile( 'ControlFiles', "To_OSIS_controls.txt", SwordControls )
+                            UBW.toSwordModule( SwordControls ) # We use the same OSIS controls (except for the output filename)
+                else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
+        if count: print( "\n{} total USFM (partial) Bibles processed.".format( count ) )
+        if totalBooks: print( "{} total books ({} average per folder)".format( totalBooks, round(totalBooks/count) ) )
+#end of demo
 
 if __name__ == '__main__':
-    main()
+    demo()
 # end of USFMBible.py

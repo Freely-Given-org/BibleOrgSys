@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkersConverter.py
-#   Last modified: 2013-03-25 (also update versionString below)
+#   Last modified: 2013-04-13 (also update versionString below)
 #
 # Module handling USFMMarkers.xml to produce C and Python data tables
 #
@@ -547,7 +547,7 @@ class USFMMarkersConverter:
 # end of USFMMarkersConverter class
 
 
-def main():
+def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -573,8 +573,8 @@ def main():
         # Demo the converter object
         umc = USFMMarkersConverter().loadAndValidate() # Load the XML
         print( umc ) # Just print a summary
-# end of main
+# end of demo
 
 if __name__ == '__main__':
-    main()
+    demo()
 # end of USFMMarkersConverter.py

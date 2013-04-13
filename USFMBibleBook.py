@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # USFMBibleBook.py
-#   Last modified: 2013-04-07 by RJH (also update versionString below)
+#   Last modified: 2013-04-13 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -34,21 +34,22 @@ import os, logging
 from gettext import gettext as _
 
 import Globals
-from InternalBibleBook import InternalBibleBook
+#from InternalBibleBook import InternalBibleBook
+from Bible import BibleBook
 
 
-class USFMBibleBook( InternalBibleBook ):
+class USFMBibleBook( BibleBook ):
     """
     Class to load and manipulate a single USFM file / book.
     """
 
-    def __init__( self, BBB, logErrorsFlag ):
+    def __init__( self, BBB ):
         """
         Create the USFM Bible book object.
         """
-        self.objectType = "USFM"
+        BibleBook.__init__( self, BBB ) # Initialise the base class
         self.objectNameString = "USFM Bible Book object"
-        InternalBibleBook.__init__( self, BBB, logErrorsFlag ) # Initialise the base class
+        self.objectTypeString = "USFM"
     # end of __init__
 
 
@@ -76,7 +77,7 @@ class USFMBibleBook( InternalBibleBook ):
                     if self.USFMMarkers.isNewlineMarker(insideMarker): # Need to split the line for everything else to work properly
                         if ix==0:
                             loadErrors.append( _("{} {}:{} NewLine marker '{}' shouldn't appear within line in \\{}: '{}'").format( self.bookReferenceCode, c, v, insideMarker, marker, text ) )
-                            if self.logErrorsFlag: logging.error( _("NewLine marker '{}' shouldn't appear within line after {} {}:{} in \\{}: '{}'").format( insideMarker, self.bookReferenceCode, c, v, marker, text ) ) # Only log the first error in the line
+                            if Globals.logErrorsFlag: logging.error( _("NewLine marker '{}' shouldn't appear within line after {} {}:{} in \\{}: '{}'").format( insideMarker, self.bookReferenceCode, c, v, marker, text ) ) # Only log the first error in the line
                             self.addPriorityError( 96, c, v, _("NewLine marker \\{} shouldn't be inside a line").format( insideMarker ) )
                         thisText = text[ix:iMIndex].rstrip()
                         self.appendLine( marker, thisText )
@@ -119,10 +120,10 @@ class USFMBibleBook( InternalBibleBook ):
             or marker.endswith('*') and self.USFMMarkers.isInternalMarker( marker[:-1] ): # the line begins with an internal marker -- append it to the previous line
                 if text:
                     loadErrors.append( _("{} {}:{} Found '\\{}' internal marker at beginning of line with text: {}").format( self.bookReferenceCode, c, v, marker, text ) )
-                    if self.logErrorsFlag: logging.warning( _("Found '\\{}' internal marker after {} {}:{} at beginning of line with text: {}").format( marker, self.bookReferenceCode, c, v, text ) )
+                    if Globals.logErrorsFlag: logging.warning( _("Found '\\{}' internal marker after {} {}:{} at beginning of line with text: {}").format( marker, self.bookReferenceCode, c, v, text ) )
                 else: # no text
                     loadErrors.append( _("{} {}:{} Found '\\{}' internal marker at beginning of line (with no text)").format( self.bookReferenceCode, c, v, marker ) )
-                    if self.logErrorsFlag: logging.warning( _("Found '\\{}' internal marker after {} {}:{} at beginning of line (with no text)").format( marker, self.bookReferenceCode, c, v ) )
+                    if Globals.logErrorsFlag: logging.warning( _("Found '\\{}' internal marker after {} {}:{} at beginning of line (with no text)").format( marker, self.bookReferenceCode, c, v ) )
                 self.addPriorityError( 27, c, v, _("Found \\{} internal marker on new line in file").format( marker ) )
                 if not lastText.endswith(' ') and marker!='f': lastText += ' ' # Not always good to add a space, but it's their fault! Don't do it for footnotes, though.
                 lastText +=  '\\' + marker + ' ' + text
@@ -130,17 +131,17 @@ class USFMBibleBook( InternalBibleBook ):
             else: # the line begins with an unknown marker
                 if text:
                     loadErrors.append( _("{} {}:{} Found '\\{}' unknown marker at beginning of line with text: {}").format( self.bookReferenceCode, c, v, marker, text ) )
-                    if self.logErrorsFlag: logging.error( _("Found '\\{}' unknown marker after {} {}:{} at beginning of line with text: {}").format( marker, self.bookReferenceCode, c, v, text ) )
+                    if Globals.logErrorsFlag: logging.error( _("Found '\\{}' unknown marker after {} {}:{} at beginning of line with text: {}").format( marker, self.bookReferenceCode, c, v, text ) )
                 else: # no text
                     loadErrors.append( _("{} {}:{} Found '\\{}' unknown marker at beginning of line (with no text").format( self.bookReferenceCode, c, v, marker ) )
-                    if self.logErrorsFlag: logging.error( _("Found '\\{}' unknown marker after {} {}:{} at beginning of line (with no text)").format( marker, self.bookReferenceCode, c, v ) )
+                    if Globals.logErrorsFlag: logging.error( _("Found '\\{}' unknown marker after {} {}:{} at beginning of line (with no text)").format( marker, self.bookReferenceCode, c, v ) )
                 self.addPriorityError( 100, c, v, _("Found \\{} unknown marker on new line in file").format( marker ) )
                 for tryMarker in sorted( self.USFMMarkers.getNewlineMarkersList(), key=len, reverse=True ): # Try to do something intelligent here -- it might be just a missing space
                     if marker.startswith( tryMarker ): # Let's try changing it
                         if lastMarker: doAppendLine( lastMarker, lastText )
                         lastMarker, lastText = tryMarker, marker[len(tryMarker):] + ' ' + text
                         loadErrors.append( _("{} {}:{} Changed '\\{}' unknown marker to '{}' at beginning of line: {}").format( self.bookReferenceCode, c, v, marker, tryMarker, text ) )
-                        if self.logErrorsFlag: logging.warning( _("Changed '\\{}' unknown marker to '{}' after {} {}:{} at beginning of line: {}").format( marker, tryMarker, self.bookReferenceCode, c, v, text ) )
+                        if Globals.logErrorsFlag: logging.warning( _("Changed '\\{}' unknown marker to '{}' after {} {}:{} at beginning of line: {}").format( marker, tryMarker, self.bookReferenceCode, c, v, text ) )
                         break
                 # Otherwise, don't bother processing this line -- it'll just cause more problems later on
         if lastMarker: doAppendLine( lastMarker, lastText ) # Process the final line
@@ -150,7 +151,7 @@ class USFMBibleBook( InternalBibleBook ):
     # end of load
 
 
-def main():
+def demo():
     """
     Demonstrate reading and processing some USFM Bible databases.
     """
@@ -159,9 +160,9 @@ def main():
 
     import USFMFilenames
 
-    def demoFile( folder, filename, bookReferenceCode, logErrorsFlag ):
+    def demoFile( folder, filename, bookReferenceCode ):
         if Globals.verbosityLevel > 1: print( _("Loading {} from {}...").format( bookReferenceCode, filename ) )
-        UBB = USFMBibleBook( bookReferenceCode, logErrorsFlag )
+        UBB = USFMBibleBook( bookReferenceCode )
         UBB.load( folder, filename, encoding )
         if Globals.verbosityLevel > 1: print( "  ID is '{}'".format( UBB.getField( 'id' ) ) )
         if Globals.verbosityLevel > 1: print( "  Header is '{}'".format( UBB.getField( 'h' ) ) )
@@ -188,8 +189,6 @@ def main():
 
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
-    logErrors = False
-
     if 0: # Test individual files
         #name, encoding, testFolder, filename, bookReferenceCode = "WEB", "utf-8", "/mnt/Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/", "06-JOS.usfm", "JOS" # You can put your test file here
         #name, encoding, testFolder, filename, bookReferenceCode = "WEB", "utf-8", "/mnt/Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/", "44-SIR.usfm", "SIR" # You can put your test file here
@@ -198,7 +197,7 @@ def main():
         name, encoding, testFolder, filename, bookReferenceCode = "Matigsalug", "utf-8", "/mnt/Data/Work/Matigsalug/Bible/MBTV/", "MBT41MAT.SCP", "MAT" # You can put your test file here
         #name, encoding, testFolder, filename, bookReferenceCode = "Matigsalug", "utf-8", "/mnt/Data/Work/Matigsalug/Bible/MBTV/", "MBT67REV.SCP", "REV" # You can put your test file here
         if os.access( testFolder, os.R_OK ):
-            demoFile( testFolder, filename, bookReferenceCode, logErrors )
+            demoFile( testFolder, filename, bookReferenceCode )
         else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
 
     if 1: # Test a whole folder full of files
@@ -208,10 +207,10 @@ def main():
             if Globals.verbosityLevel > 1: print( _("Scanning {} from {}...").format( name, testFolder ) )
             fileList = USFMFilenames.USFMFilenames( testFolder ).getMaximumPossibleFilenameTuples()
             for bookReferenceCode,filename in fileList:
-                demoFile( testFolder, filename, bookReferenceCode, logErrors )
+                demoFile( testFolder, filename, bookReferenceCode )
         else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
-# end of main
+# end of demo
 
 if __name__ == '__main__':
-    main()
+    demo()
 # end of USFMBibleBook.py

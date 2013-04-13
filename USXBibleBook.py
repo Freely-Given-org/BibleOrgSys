@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USXBibleBook.py
-#   Last modified: 2013-04-10 by RJH (also update versionString below)
+#   Last modified: 2013-04-13 by RJH (also update versionString below)
 #
 # Module handling USX Bible Book xml
 #
@@ -42,13 +42,13 @@ class USXBibleBook( InternalBibleBook ):
     """
     Class to load, validate, and manipulate a single Bible book in USX XML.
     """
-    def __init__( self, BBB, logErrorsFlag ):
+    def __init__( self, BBB ):
         """
         Create the USX Bible book object.
         """
-        self.objectType = "USX"
+        InternalBibleBook.__init__( self, BBB ) # Initialise the base class
         self.objectNameString = "USX Bible Book object"
-        InternalBibleBook.__init__( self, BBB, logErrorsFlag ) # Initialise the base class
+        self.objectTypeString = "USX"
 
         #self.bookReferenceCode = bookReferenceCode
     # end of __init__
@@ -70,7 +70,7 @@ class USXBibleBook( InternalBibleBook ):
                 if attrib=='style':
                     paragraphStyle = value # This is basically the USFM marker name
                 else:
-                    if self.logErrorsFlag: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+                    if Globals.logErrorsFlag: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
 
             # Now process the paragraph text (or write a paragraph marker anyway)
             self.appendLine( paragraphStyle, paragraphXML.text if paragraphXML.text and paragraphXML.text.strip() else '' )
@@ -90,9 +90,9 @@ class USXBibleBook( InternalBibleBook ):
                         elif attrib=='style':
                             verseStyle = value
                         else:
-                            if self.logErrorsFlag: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+                            if Globals.logErrorsFlag: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
                     if verseStyle != 'v':
-                        if self.logErrorsFlag: logging.warning( _("Unexpected style attribute ({}) in {}").format( verseStyle, location ) )
+                        if Globals.logErrorsFlag: logging.warning( _("Unexpected style attribute ({}) in {}").format( verseStyle, location ) )
                     self.appendLine( verseStyle, v + ' ' )
                     # Now process the tail (if there's one) which is the verse text
                     if element.tail:
@@ -108,7 +108,7 @@ class USXBibleBook( InternalBibleBook ):
                             charStyle = value # This is basically the USFM character marker name
                             assert( not self.USFMMarkers.isNewlineMarker( charStyle ) )
                         else:
-                            if self.logErrorsFlag: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+                            if Globals.logErrorsFlag: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
                     # A character field must be added to the previous field
                     additionalText = "\\{} {}\\{}*{}".format( charStyle, element.text, charStyle, element.tail )
                     #print( c, v, paragraphStyle, charStyle )
@@ -124,7 +124,7 @@ class USXBibleBook( InternalBibleBook ):
                         elif attrib=='caller':
                             noteCaller = value # Usually hyphen or a symbol to be used for the note
                         else:
-                            if self.logErrorsFlag: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+                            if Globals.logErrorsFlag: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
                     assert( noteStyle and noteCaller ) # both compulsory
                     noteLine = "\\{} {} ".format( noteStyle, noteCaller )
                     # Now process the subelements -- notes are one of the few multiply embedded fields in USX
@@ -143,11 +143,11 @@ class USXBibleBook( InternalBibleBook ):
                                     assert( value=='false' )
                                     charClosed = False
                                 else:
-                                    if self.logErrorsFlag: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
+                                    if Globals.logErrorsFlag: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
                             noteLine += "\\{} {}".format( charStyle, subelement.text )
                             if charClosed: noteLine += "\\{}*".format( charStyle )
                         else:
-                            if self.logErrorsFlag: logging.warning( _("Unprocessed {} subelement after {} {}:{} in {}").format( subelement.tag, bookReferenceCode, c, v, sublocation ) )
+                            if Globals.logErrorsFlag: logging.warning( _("Unprocessed {} subelement after {} {}:{} in {}").format( subelement.tag, bookReferenceCode, c, v, sublocation ) )
                             self.addPriorityError( 1, self.bookReferenceCode, c, v, _("Unprocessed {} subelement").format( subelement.tag ) )
                     if subelement.tail and subelement.tail.strip(): noteLine += subelement.tail
                     #noteLine += "\\{}*".format( charStyle )
@@ -155,7 +155,7 @@ class USXBibleBook( InternalBibleBook ):
                     if element.tail: noteLine += element.tail
                     self.appendToLastLine( noteLine )
                 else:
-                    if self.logErrorsFlag: logging.warning( _("Unprocessed {} element after {} {}:{} in {}").format( element.tag, bookReferenceCode, c, v, location ) )
+                    if Globals.logErrorsFlag: logging.warning( _("Unprocessed {} element after {} {}:{} in {}").format( element.tag, bookReferenceCode, c, v, location ) )
                     self.addPriorityError( 1, self.bookReferenceCode, c, v, _("Unprocessed {} element").format( element.tag ) )
                     for x in range(max(0,len(self)-10),len(self)): print( x, self._lines[x] )
                     halt
@@ -181,7 +181,7 @@ class USXBibleBook( InternalBibleBook ):
             # Process the attributes first
             self.schemaLocation = ''
             for attrib,value in self.tree.items():
-                if self.logErrorsFlag: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+                if Globals.logErrorsFlag: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
 
             # Now process the data
             for element in self.tree:
@@ -195,13 +195,13 @@ class USXBibleBook( InternalBibleBook ):
                         if attrib=='id' or attrib=='code':
                             idField = value # Should be USFM bookcode (not like bookReferenceCode which is BibleOrgSys BBB bookcode)
                             #if idField != bookReferenceCode:
-                            #    if self.logErrorsFlag: logging.warning( _("Unexpected book code ({}) in {}").format( idField, sublocation ) )
+                            #    if Globals.logErrorsFlag: logging.warning( _("Unexpected book code ({}) in {}").format( idField, sublocation ) )
                         elif attrib=='style':
                             bookStyle = value
                         else:
-                            if self.logErrorsFlag: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
+                            if Globals.logErrorsFlag: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
                     if bookStyle != 'id':
-                        if self.logErrorsFlag: logging.warning( _("Unexpected style attribute ({}) in {}").format( bookStyle, sublocation ) )
+                        if Globals.logErrorsFlag: logging.warning( _("Unexpected style attribute ({}) in {}").format( bookStyle, sublocation ) )
                     idLine = idField
                     if element.text and element.text.strip(): idLine += ' ' + element.text
                     self.appendLine( 'id', idLine )
@@ -218,9 +218,9 @@ class USXBibleBook( InternalBibleBook ):
                         elif attrib=='style':
                             chapterStyle = value
                         else:
-                            if self.logErrorsFlag: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
+                            if Globals.logErrorsFlag: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
                     if chapterStyle != 'c':
-                        if self.logErrorsFlag: logging.warning( _("Unexpected style attribute ({}) in {}").format( chapterStyle, sublocation ) )
+                        if Globals.logErrorsFlag: logging.warning( _("Unexpected style attribute ({}) in {}").format( chapterStyle, sublocation ) )
                     self.appendLine( 'c', c )
                 elif element.tag == 'para':
                     Globals.checkXMLNoTail( element, sublocation )
@@ -234,10 +234,10 @@ class USXBibleBook( InternalBibleBook ):
                         text = element.text
                         if text:
                             loadErrors.append( _("{} {}:{} Found '\\{}' internal USFM marker at beginning of line with text: {}").format( self.bookReferenceCode, c, v, USFMMarker, text ) )
-                            if self.logErrorsFlag: logging.warning( _("Found '\\{}' internal USFM Marker after {} {}:{} at beginning of line with text: {}").format( USFMMarker, self.bookReferenceCode, c, v, text ) )
+                            if Globals.logErrorsFlag: logging.warning( _("Found '\\{}' internal USFM Marker after {} {}:{} at beginning of line with text: {}").format( USFMMarker, self.bookReferenceCode, c, v, text ) )
                         else: # no text
                             loadErrors.append( _("{} {}:{} Found '\\{}' internal USFM Marker at beginning of line (with no text)").format( self.bookReferenceCode, c, v, USFMMarker ) )
-                            if self.logErrorsFlag: logging.warning( _("Found '\\{}' internal USFM Marker after {} {}:{} at beginning of line (with no text)").format( USFMMarker, self.bookReferenceCode, c, v ) )
+                            if Globals.logErrorsFlag: logging.warning( _("Found '\\{}' internal USFM Marker after {} {}:{} at beginning of line (with no text)").format( USFMMarker, self.bookReferenceCode, c, v ) )
                         self.addPriorityError( 97, c, v, _("Found \\{} internal USFM Marker on new line in file").format( USFMMarker ) )
                         #lastText += '' if lastText.endswith(' ') else ' ' # Not always good to add a space, but it's their fault!
                         lastText +=  '\\' + USFMMarker + ' ' + text
@@ -246,28 +246,28 @@ class USXBibleBook( InternalBibleBook ):
                         text = element.text
                         if text:
                             loadErrors.append( _("{} {}:{} Found '\\{}' unknown USFM Marker at beginning of line with text: {}").format( self.bookReferenceCode, c, v, USFMMarker, text ) )
-                            if self.logErrorsFlag: logging.error( _("Found '\\{}' unknown USFM Marker after {} {}:{} at beginning of line with text: {}").format( USFMMarker, self.bookReferenceCode, c, v, text ) )
+                            if Globals.logErrorsFlag: logging.error( _("Found '\\{}' unknown USFM Marker after {} {}:{} at beginning of line with text: {}").format( USFMMarker, self.bookReferenceCode, c, v, text ) )
                         else: # no text
                             loadErrors.append( _("{} {}:{} Found '\\{}' unknown USFM Marker at beginning of line (with no text").format( self.bookReferenceCode, c, v, USFMMarker ) )
-                            if self.logErrorsFlag: logging.error( _("Found '\\{}' unknown USFM Marker after {} {}:{} at beginning of line (with no text)").format( USFMMarker, self.bookReferenceCode, c, v ) )
+                            if Globals.logErrorsFlag: logging.error( _("Found '\\{}' unknown USFM Marker after {} {}:{} at beginning of line (with no text)").format( USFMMarker, self.bookReferenceCode, c, v ) )
                         self.addPriorityError( 100, c, v, _("Found \\{} unknown USFM Marker on new line in file").format( USFMMarker ) )
                         for tryMarker in sorted( self.USFMMarkers.getNewlineMarkersList(), key=len, reverse=True ): # Try to do something intelligent here -- it might be just a missing space
                             if USFMMarker.startswith( tryMarker ): # Let's try changing it
                                 if lastMarker: self.appendLine( lastMarker, lastText )
                                 lastMarker, lastText = tryMarker, USFMMarker[len(tryMarker):] + ' ' + text
                                 loadErrors.append( _("{} {}:{} Changed '\\{}' unknown USFM Marker to '{}' at beginning of line: {}").format( self.bookReferenceCode, c, v, USFMMarker, tryMarker, text ) )
-                                if self.logErrorsFlag: logging.warning( _("Changed '\\{}' unknown USFM Marker to '{}' after {} {}:{} at beginning of line: {}").format( USFMMarker, tryMarker, self.bookReferenceCode, c, v, text ) )
+                                if Globals.logErrorsFlag: logging.warning( _("Changed '\\{}' unknown USFM Marker to '{}' after {} {}:{} at beginning of line: {}").format( USFMMarker, tryMarker, self.bookReferenceCode, c, v, text ) )
                                 break
                         # Otherwise, don't bother processing this line -- it'll just cause more problems later on
                 else:
-                    if self.logErrorsFlag: logging.warning( _("Unprocessed {} element after {} {}:{} in {}").format( element.tag, bookReferenceCode, c, v, sublocation ) )
+                    if Globals.logErrorsFlag: logging.warning( _("Unprocessed {} element after {} {}:{} in {}").format( element.tag, bookReferenceCode, c, v, sublocation ) )
                     self.addPriorityError( 1, c, v, _("Unprocessed {} element").format( element.tag ) )
 
         if loadErrors: self.errorDictionary['Load Errors'] = loadErrors
     # end of load
 
 
-def main():
+def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -282,6 +282,10 @@ def main():
 
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
+    def getShortVersion( someString ):
+        if len(someString)<60: return someString
+        return someString[:30]+'...'+someString[-30:]
+
     import USXFilenames, USFMFilenames, USFMBibleBook
     name, encoding, testFolder = "Matigsalug", "utf-8", "/mnt/Data/Work/VirtualBox_Shared_Folder/Exports/USXExports/Projects/MBTV/" # You can put your USX test folder here
     name2, encoding2, testFolder2 = "Matigsalug", "utf-8", "/mnt/Data/Work/Matigsalug/Bible/MBTV/" # You can put your USFM test folder here (for comparing the USX with)
@@ -295,7 +299,7 @@ def main():
                                         'ROM','CO1','CO2','GAL','EPH','PHP','COL','TH1','TH2','TI1','TI2','TIT','PHM', \
                                         'HEB','JAM','PE1','PE2','JN1','JN2','JN3','JDE','REV'):
                 if Globals.verbosityLevel > 1: print( _("Loading {} from {}...").format( bookReferenceCode, filename ) )
-                UxBB = USXBibleBook( bookReferenceCode, logErrorsFlag=True )
+                UxBB = USXBibleBook( bookReferenceCode )
                 UxBB.load( testFolder, filename, encoding=encoding )
                 if Globals.verbosityLevel > 1: print( "  ID is '{}'".format( UxBB.getField( 'id' ) ) )
                 if Globals.verbosityLevel > 1: print( "  Header is '{}'".format( UxBB.getField( 'h' ) ) )
@@ -319,7 +323,7 @@ def main():
                             found2 = True; break
                     if found2:
                         if Globals.verbosityLevel > 2: print( _("Loading {} from {}...").format( bookReferenceCode2, filename2 ) )
-                        UBB = USFMBibleBook.USFMBibleBook( bookReferenceCode, logErrorsFlag=False )
+                        UBB = USFMBibleBook.USFMBibleBook( bookReferenceCode )
                         UBB.load( testFolder2, filename2, encoding2 )
                         #print( "  ID is '{}'".format( UBB.getField( 'id' ) ) )
                         #print( "  Header is '{}'".format( UBB.getField( 'h' ) ) )
@@ -328,17 +332,32 @@ def main():
                         UBB.validateUSFM()
 
                         # Now compare the USX and USFM projects
+                        if 0:
+                            print( "\nPRINTING COMPARISON" )
+                            ixFrom, ixTo = 8, 40
+                            if ixTo-ixFrom < 10:
+                                print( "UxBB[{}-{}]".format( ixFrom, ixTo ) )
+                                for ix in range( ixFrom, ixTo ): print( "  {} {}".format( 'GUD' if UxBB._processedLines[ix]==UBB._processedLines[ix] else 'BAD', UxBB._processedLines[ix] ) )
+                                print( "UBB[{}-{}]".format( ixFrom, ixTo ) )
+                                for ix in range( ixFrom, ixTo ): print( "  {} {}".format( 'GUD' if UxBB._processedLines[ix]==UBB._processedLines[ix] else 'BAD', UBB._processedLines[ix] ) )
+                            else:
+                                for ix in range( ixFrom, ixTo ):
+                                    print( "UxBB[{}]: {} {}".format( ix, 'GUD' if UxBB._processedLines[ix]==UBB._processedLines[ix] else 'BAD', UxBB._processedLines[ix] ) )
+                                    print( " UBB[{}]: {} {}".format( ix, 'GUD' if UxBB._processedLines[ix]==UBB._processedLines[ix] else 'BAD', UBB._processedLines[ix] ) )
+                            print( "END COMPARISON\n" )
+
                         mismatchCount = 0
                         UxL, UL = len(UxBB), len(UBB)
                         for i in range(0, max( UxL, UL ) ):
                             if i<UxL and i<UL:
                                 if UxBB._processedLines[i] != UBB._processedLines[i]:
                                     print( "\n{} line {} not equal: {} from {}".format( bookReferenceCode, i, UxBB._processedLines[i][0:2], UBB._processedLines[i][0:2] ) )
-                                    print( "   ", "'"+UxBB._processedLines[i][2]+"'" )
-                                    print( "   ", "'"+UBB._processedLines[i][2]+"'" )
-                                    if UxBB._processedLines[i][3] or UBB._processedLines[i][3]:
-                                        print( "   ", UxBB._processedLines[i][3] )
-                                        print( "   ", UBB._processedLines[i][3] )
+                                    if UxBB._processedLines[i][2] != UBB._processedLines[i][2]:
+                                        print( "   UxBB[2]: '{}'".format( getShortVersion( UxBB._processedLines[i][2] ) ) )
+                                        print( "    UBB[2]: '{}'".format( getShortVersion( UBB._processedLines[i][2] ) ) )
+                                    if (UxBB._processedLines[i][3] or UBB._processedLines[i][3]) and UxBB._processedLines[i][3]!=UBB._processedLines[i][3]:
+                                        print( "   UxBB[3]: '{}'".format( getShortVersion( UxBB._processedLines[i][3] ) ) )
+                                        print( "    UBB[3]: '{}'".format( getShortVersion( UBB._processedLines[i][3] ) ) )
                                     mismatchCount += 1
                             else: # one has more lines
                                 print( "Linecount not equal: {} from {}".format( i, UxL, UL ) )
@@ -350,8 +369,8 @@ def main():
                 else: print( "Sorry, USFM test folder '{}' doesn't exist on this computer.".format( testFolder2 ) )
             elif Globals.verbosityLevel > 1: print( "*** Skipped USX/USFM compare on {}", bookReferenceCode )
     else: print( "Sorry, USX test folder '{}' doesn't exist on this computer.".format( testFolder ) )
-# end of main
+# end of demo
 
 if __name__ == '__main__':
-    main()
+    demo()
 # end of USXBibleBook.py

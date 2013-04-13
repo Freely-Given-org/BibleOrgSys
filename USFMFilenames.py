@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # USFMFilenames.py
-#   Last modified: 2013-03-23 by RJH (also update versionString below)
+#   Last modified: 2013-04-13 by RJH (also update versionString below)
 #
 # Module handling USFM Bible filenames
 #
@@ -463,6 +463,9 @@ class USFMFilenames:
 
 def demo():
     """ Demonstrate finding files in some USFM Bible folders. """
+    # Configure basic logging
+    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
+
     # Handle command line parameters
     from optparse import OptionParser
     parser = OptionParser( version="v{}".format( versionString ) )

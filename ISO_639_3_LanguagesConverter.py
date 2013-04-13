@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ISO_639_3_Languages.py
-#   Last modified: 2013-01-26 by RJH (also update versionString below)
+#   Last modified: 2013-04-13 by RJH (also update versionString below)
 #
 # Module handling ISO_639_3.xml to produce C and Python data tables
 #
@@ -155,7 +155,7 @@ class ISO_639_3_LanguagesConverter:
     def __str__( self ):
         """
         This method returns the string representation of a Bible book code.
-        
+
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
@@ -367,7 +367,7 @@ class ISO_639_3_LanguagesConverter:
 # end of ISO_639_3_LanguagesConverter class
 
 
-def main():
+def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -390,8 +390,8 @@ def main():
         # Demo the converter object
         lgC = ISO_639_3_LanguagesConverter().loadAndValidate() # Load the XML
         print( lgC ) # Just print a summary
-# end of main
+# end of demo
 
 if __name__ == '__main__':
-    main()
+    demo()
 # end of ISO_639_3_LanguagesConverter.py

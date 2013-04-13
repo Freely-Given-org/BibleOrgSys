@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleOrganizationalSystemsConverter.py
-#   Last modified: 2013-03-23 by RJH (also update versionString below)
+#   Last modified: 2013-04-13 by RJH (also update versionString below)
 #
 # Module handling BibleOrganizationalSystems.xml to produce C and Python data tables
 #
@@ -485,7 +485,7 @@ class BibleOrganizationalSystemsConverter:
 # end of BibleOrganizationalSystemsConverter class
 
 
-def main():
+def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -511,8 +511,8 @@ def main():
         # Demo the converter object
         bosc = BibleOrganizationalSystemsConverter().loadAndValidate()
         print( bosc ) # Just print a summary
-# end of main
+# end of demo
 
 if __name__ == '__main__':
-    main()
+    demo()
 # end of BibleOrganizationalSystemsConverter.py

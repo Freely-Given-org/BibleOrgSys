@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleOrganizationalSystems.py
-#   Last modified: 2013-04-01 by RJH (also update versionString below)
+#   Last modified: 2013-04-13 by RJH (also update versionString below)
 #
 # Module handling BibleOrganizationalSystems
 #
@@ -188,7 +188,7 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
     This class doesn't deal at all with XML, only with Python dictionaries, etc.
     """
 
-    def __init__( self, systemName, logErrorsFlag=True ):
+    def __init__( self, systemName ):
         """
         Constructor:
         """
@@ -222,11 +222,10 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
                     #print( "  result is", result )
                     if result is not None: return result
             # else we couldn't find it anywhere
-            if self.__logErrorsFlag: logging.error( _("{} Bible Organizational System has no {} specified").format(self.__systemName,valueName) )
+            if Globals.logErrorsFlag: logging.error( _("{} Bible Organizational System has no {} specified").format(self.__systemName,valueName) )
         # end of getOrganizationalSystemValue
 
         assert( systemName and isinstance( systemName, str ) )
-        self.__logErrorsFlag = logErrorsFlag
         self.__boss = BibleOrganizationalSystems().loadData() # Doesn't reload the XML unnecessarily :)
         result = self.__boss.getOrganizationalSystem( systemName )
         if result is None:
@@ -255,7 +254,7 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         if myBooks is not None:
             for BBB in myBooks:
                 if not BibleBookOrderSystem.containsBook( self, BBB ):
-                    if self.__logErrorsFlag: logging.error( _("Book '{}' is included in {} system but missing from {} book order system").format( BBB, self.__systemName, BibleBookOrderSystem.getBookOrderSystemName( self ) ) )
+                    if Globals.logErrorsFlag: logging.error( _("Book '{}' is included in {} system but missing from {} book order system").format( BBB, self.__systemName, BibleBookOrderSystem.getBookOrderSystemName( self ) ) )
     # end of BibleOrganizationalSystem.__init__
 
     def __str__( self ):
@@ -322,7 +321,7 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
                 result = self.__boss.getOrganizationalSystemValue( trySystemName, valueName )
                 if result is not None: return result
         # else we couldn't find it anywhere
-        if self.__logErrorsFlag: logging.error( _("{} Bible Organizational System has no {} specified").format(self.getOrganizationalSystemName(),valueName) )
+        if Globals.logErrorsFlag: logging.error( _("{} Bible Organizational System has no {} specified").format(self.getOrganizationalSystemName(),valueName) )
     # end of BibleOrganizationalSystem.getOrganizationalSystemValue
 
     def getBookList( self ):
@@ -351,12 +350,12 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         return bookList[0]
     # end of BibleOrganizationalSystem.getFirstBookCode
 
-    def isValidBCVRef( self, referenceTuple, referenceString, extended=False, wantErrorMessages=False ):
+    def isValidBCVRef( self, referenceTuple, referenceString, extended=False ):
         """
         Returns True/False indicating if the given reference is valid in this system.
         Extended flag allows chapter and verse numbers of zero.
         """
-        #print( "BibleOrganizationalSystem.isValidBCVRef( {}, {}, {}, {} )".format( referenceTuple, referenceString, extended, wantErrorMessages ) )
+        #print( "BibleOrganizationalSystem.isValidBCVRef( {}, {}, {}, {} )".format( referenceTuple, referenceString, extended ) )
         BBB, C, V, S = referenceTuple
         if BBB is None or not BBB: return False
         assert( len(BBB) == 3 )
@@ -364,14 +363,14 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         assert( not V or V.isdigit() ) # Should be no suffix on V (although it can be blank if the reference is for a whole chapter)
         assert( not S or len(S)==1 and S.isalpha() ) # Suffix should be only one lower-case letter if anything
         if BBB and BibleBookOrderSystem.containsBook( self, BBB ):
-            return BibleVersificationSystem.isValidBCVRef( self, referenceTuple, referenceString, extended=extended, wantErrorMessages=wantErrorMessages )
-        elif wantErrorMessages: logging.error( _("{} {}:{} is invalid book for reference '{}' in {} versification system for {}").format(BBB,C,V,referenceString, self.getBookOrderSystemName(),self.getOrganizationalSystemName()) )
+            return BibleVersificationSystem.isValidBCVRef( self, referenceTuple, referenceString, extended=extended )
+        elif Globals.logErrorsFlag: logging.error( _("{} {}:{} is invalid book for reference '{}' in {} versification system for {}").format(BBB,C,V,referenceString, self.getBookOrderSystemName(),self.getOrganizationalSystemName()) )
         return False
     # end of BibleOrganizationalSystem.isValidBCVRef
 # end of BibleOrganizationalSystem class
 
 
-def main():
+def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -404,8 +403,8 @@ def main():
             #    print( "Contains '{}': {}".format(test, bos.containsBook(test) ) )
             #for test in ('GEN','Gen','MAT','Mat','Mt1','JUD','Jud','Jde', 'Ma1', ):
             #    print( "'{}' gives {}".format(test,bos.getBBB(test) ) )
-# end of main
+# end of demo
 
 if __name__ == '__main__':
-    main()
+    demo()
 # end of BibleOrganizationalSystems.py

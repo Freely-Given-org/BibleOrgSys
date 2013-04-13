@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodes.py
-#   Last modified: 2013-04-09 by RJH (also update versionString below)
+#   Last modified: 2013-04-13 by RJH (also update versionString below)
 #
 # Module handling BibleBooksCodes functions
 #
@@ -404,7 +404,7 @@ class BibleBooksCodes:
 # end of BibleBooksCodes class
 
 
-def main():
+def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -439,8 +439,8 @@ def main():
     print( "Possible alternative  books to Esther: {}".format( bbc.getPossibleAlternativeBooksCodes('EST') ) )
     for something in ('PE2', '2Pe', '2 Pet', '2Pet', 'Job', ):
         print( something, bbc.getBBB( something ) )
-# end of main
+# end of demo
 
 if __name__ == '__main__':
-    main()
+    demo()
 # end of BibleBooksCodes.py

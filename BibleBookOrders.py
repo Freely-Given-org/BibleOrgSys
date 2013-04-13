@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBookOrders.py
+#   Last modified: 2013-04-13 (also update versionString below)
 #
 # Module handling BibleBookOrderSystems
-#   Last modified: 2013-04-05 (also update versionString below)
 #
 # Copyright (C) 2010-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -315,7 +315,7 @@ class BibleBookOrderSystem:
 # end of BibleBookOrderSystem class
 
 
-def main():
+def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
@@ -357,8 +357,8 @@ def main():
             if BBB2 is None: break
             print( " Next book after {} is {}".format(BBB,BBB2) )
             BBB = BBB2
-# end of main
+# end of demo
 
 if __name__ == '__main__':
-    main()
+    demo()
 # end of BibleBookOrders.py

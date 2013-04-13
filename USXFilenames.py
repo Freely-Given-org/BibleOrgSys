@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 #
 # USXFilenames.py
-#   Last modified: 2013-03-23 (also update versionString below)
+#   Last modified: 2013-04-13 (also update versionString below)
 #
 # Module handling USX Bible filenames
 #
@@ -188,6 +188,9 @@ class USXFilenames:
 
 def demo():
     """ Demonstrate finding files in some USX Bible folders. """
+    # Configure basic logging
+    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
+
     # Handle command line parameters
     from optparse import OptionParser
     parser = OptionParser( version="v{}".format( versionString ) )
@@ -204,6 +207,7 @@ def demo():
         result = UFns.getConfirmedFilenames(); print( "\nConfirmed:", len(result), result )
         result = UFns.getUnusedFilenames(); print( "\nOther:", len(result), result )
     else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
+# end of demo
 
 if __name__ == '__main__':
     demo()
