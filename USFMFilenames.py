@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMFilenames.py
-#   Last modified: 2013-04-13 by RJH (also update versionString below)
+#   Last modified: 2013-04-14 by RJH (also update versionString below)
 #
 # Module handling USFM Bible filenames
 #
@@ -370,7 +370,7 @@ class USFMFilenames:
             pFUpper = possibleFilename.upper()
             for USFMBookCode,USFMDigits,bookReferenceCode in self._USFMBooksCodeNumberTriples:
                 if USFMBookCode.upper() in pFUpper:
-                    if not pFUpper.endswith('.XML') and not pFUpper.endswith('.OSIS'):
+                    if not pFUpper.endswith('.XML') and not pFUpper.endswith('.OSIS') and not pFUpper.endswith('.USX'):
                         self.doListAppend( Globals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
         self.lastTupleList = resultList
         return Globals.BibleBooksCodes.getSequenceList( resultList )
@@ -410,7 +410,7 @@ class USFMFilenames:
             resultString, resultList = "Internal", resultListInt
         if Globals.verbosityLevel > 2: print( "getMaximumPossibleFilenameTuples: using {}".format( resultString ) )
         self.lastTupleList = resultList
-        print( "getMaximumPossibleFilenameTuples is returning", resultList )
+        #print( "getMaximumPossibleFilenameTuples is returning", resultList )
         return resultList # No need to sort these, coz all the above calls produce sorted results
     # end of getMaximumPossibleFilenameTuples
 
