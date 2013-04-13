@@ -367,9 +367,11 @@ class USFMFilenames:
         """
         resultList = []
         for possibleFilename in self.fileList:
+            pFUpper = possibleFilename.upper()
             for USFMBookCode,USFMDigits,bookReferenceCode in self._USFMBooksCodeNumberTriples:
-                if USFMBookCode in possibleFilename or USFMBookCode.upper() in possibleFilename:
-                    self.doListAppend( Globals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
+                if USFMBookCode.upper() in pFUpper:
+                    if not pFUpper.endswith('.XML') and not pFUpper.endswith('.OSIS'):
+                        self.doListAppend( Globals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
         self.lastTupleList = resultList
         return Globals.BibleBooksCodes.getSequenceList( resultList )
     # end of getPossibleFilenameTuplesExt
@@ -408,6 +410,7 @@ class USFMFilenames:
             resultString, resultList = "Internal", resultListInt
         if Globals.verbosityLevel > 2: print( "getMaximumPossibleFilenameTuples: using {}".format( resultString ) )
         self.lastTupleList = resultList
+        print( "getMaximumPossibleFilenameTuples is returning", resultList )
         return resultList # No need to sort these, coz all the above calls produce sorted results
     # end of getMaximumPossibleFilenameTuples
 
@@ -483,15 +486,15 @@ def demo():
         result = UFns.getAllFilenames(); print( "\nAll:", len(result), result )
         result = UFns.getDerivedFilenameTuples(); print( "\nDerived:", UFns.getFilenameTemplate(), len(result), result )
         result = UFns.getConfirmedFilenameTuples(); print( "\nConfirmed:", UFns.getFilenameTemplate(), len(result), result )
-        result = UFns.getUnusedFilenames(); print( "Other:", len(result), result )
+        result = UFns.getUnusedFilenames(); print( "Unused:", len(result), result )
         result = UFns.getConfirmedFilenameTuples( doubleCheck=True ); print( "\nConfirmed (with double check):", UFns.getFilenameTemplate(), len(result), result )
-        result = UFns.getUnusedFilenames(); print( "Other:", len(result), result )
+        result = UFns.getUnusedFilenames(); print( "Unused:", len(result), result )
         result = UFns.getPossibleFilenameTuplesExt(); print( "\nPossibleExt:", len(result), result )
-        result = UFns.getUnusedFilenames(); print( "Other:", len(result), result )
+        result = UFns.getUnusedFilenames(); print( "Unused:", len(result), result )
         result = UFns.getPossibleFilenameTuplesInt(); print( "\nPossibleInt:", len(result), result )
-        result = UFns.getUnusedFilenames(); print( "Other:", len(result), result )
-        result = UFns.getMaximumPossibleFilenameTuples(); print( "\nMax:", len(result), result )
-        result = UFns.getUnusedFilenames(); print( "Other:", len(result), result )
+        result = UFns.getUnusedFilenames(); print( "Unused:", len(result), result )
+        result = UFns.getMaximumPossibleFilenameTuples(); print( "\nMaxPoss:", len(result), result )
+        result = UFns.getUnusedFilenames(); print( "Unused:", len(result), result )
         result = UFns.getSSFFilenames(); print( "\nSSF:", len(result), result )
     else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
 
