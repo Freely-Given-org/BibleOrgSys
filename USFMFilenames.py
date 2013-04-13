@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+# -*- coding: utf-8 -*-
 #
 # USFMFilenames.py
 #   Last modified: 2013-04-13 by RJH (also update versionString below)
@@ -202,7 +203,7 @@ class USFMFilenames:
         """ Try to intelligently get the USFMId from the first line in the file (which should be the \\id line). """
         # Look for the USFM id in the ID line (which should be the first line in a USFM file)
         try:
-            with open( filepath ) as possibleUSFMFile: # Automatically closes the file when done
+            with open( filepath, 'rt' ) as possibleUSFMFile: # Automatically closes the file when done
                 lineNumber = 0
                 for line in possibleUSFMFile:
                     lineNumber += 1

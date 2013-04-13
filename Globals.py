@@ -128,7 +128,31 @@ def remove_logfile( projectHandler ):
 
 
 ##########################################################################################################
+#
+# Peek at the first line of a file
 
+def peekAtFirstLine( filenameOrFilepath, folder=None ):
+    """
+    Reads and returns the first line of a text file
+    """
+    filepath = os.path.join( folder, filenameOrFilepath ) if folder else filenameOrFilepath
+    try:
+        with open( filepath, 'rt' ) as possibleUSFMFile: # Automatically closes the file when done
+            lineNumber = 0
+            for line in possibleUSFMFile:
+                lineNumber += 1
+                if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
+                #print( thisFilename, lineNumber, line )
+                return line
+    except UnicodeDecodeError:
+        if thisFilename != 'usfm-color.sty': # Seems this file isn't UTF-8, but we don't need it here anyway so ignore it
+            print( "Seems we couldn't decode Unicode in '{}'".format( filepath ) ) # Could be binary or a different encoding
+# end of peekAtFirstLine
+
+
+##########################################################################################################
+#
+# For debugging, etc.
 
 def totalSize( o, handlers={} ):
     """ Returns the approximate memory footprint an object and all of its contents.
@@ -341,6 +365,14 @@ def demo():
     if verbosityLevel>0: print( "{} V{}".format( progName, versionString ) )
     if verbosityLevel>2:
         printAllGlobals()
+
+    # Demonstrate peekAtFirstLine function
+    line1 = peekAtFirstLine( "Globals.py" ) # Simple filename
+    print( "Globals.py starts with '{}'".format( line1 ) )
+    line1 = peekAtFirstLine( "ReadMe.txt", "Tests/" ) # Filename and folder
+    print( "ReadMe.txt starts with '{}'".format( line1 ) )
+    line1 = peekAtFirstLine( "DataFiles/BibleBooksCodes.xml" ) # Filepath
+    print( "BibleBooksCodes.xml starts with '{}'".format( line1 ) )
 # end of demo
 
 if __name__ == '__main__':

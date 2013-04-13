@@ -13,3 +13,5 @@ Addendum: I've decided to change the Bible book order subsystem to not be author
 Robert Hunt.
 Hunt.RobertJ@gmail.com
 February-March 2011.
+
+http://OpenScriptures.org/blog/2011/02/bible-book-orders/

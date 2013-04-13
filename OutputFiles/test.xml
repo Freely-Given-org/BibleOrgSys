@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vwxyz xmlns="http://someURL.net/namespace" xmlns:xsi="http://someURL.net/XMLSchema-instance" xsi:schemaLocation="http://someURL.net/namespace ~/imaginary.xsd">
+  <header>
+    <title>myTitle</title>
+  </header>
+  <body>
+    <division id="Div1" name="First division">
+      <text font="favouriteFont">myText in here</text>
+    </division>
+  </body>
+</vwxyz>

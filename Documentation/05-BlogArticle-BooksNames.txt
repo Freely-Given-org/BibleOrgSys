@@ -19,3 +19,5 @@ There's also some basic Python3 code to handle these data files at https://githu
 Robert Hunt.
 Hunt.RobertJ@gmail.com
 February 2011.
+
+Published at: http://OpenScriptures.org/blog/2011/02/bible-books-names/

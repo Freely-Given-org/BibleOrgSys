@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+# -*- coding: utf-8 -*-
 #
 # InternalBible.py
 #   Last modified: 2013-04-13 by RJH (also update versionString below)

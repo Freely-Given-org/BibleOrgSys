@@ -13,3 +13,5 @@ Today I committed Python code to access the ISO 639-3 information. It's just a l
 Robert Hunt.
 Hunt.RobertJ@gmail.com
 February 2011.
+
+Published at: http://OpenScriptures.org/blog/2011/02/language-codes/
