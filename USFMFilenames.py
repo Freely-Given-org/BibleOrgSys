@@ -368,9 +368,10 @@ class USFMFilenames:
         resultList = []
         for possibleFilename in self.fileList:
             pFUpper = possibleFilename.upper()
+            pFUpperProper, pFUpperExt = os.path.splitext( pFUpper )
             for USFMBookCode,USFMDigits,bookReferenceCode in self._USFMBooksCodeNumberTriples:
-                if USFMBookCode.upper() in pFUpper:
-                    if not pFUpper.endswith('.XML') and not pFUpper.endswith('.OSIS') and not pFUpper.endswith('.USX'):
+                if USFMBookCode.upper() in pFUpperProper:
+                    if not pFUpperExt in ('.XML', '.OSIS', '.USX',):
                         self.doListAppend( Globals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
         self.lastTupleList = resultList
         return Globals.BibleBooksCodes.getSequenceList( resultList )
@@ -477,26 +478,28 @@ def demo():
 
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
-    testFolder = "Tests/DataFilesForTests/USFMTest2/" # This is a RELATIVE path
+    testFolders = ("Tests/DataFilesForTests/USFMTest1/", "Tests/DataFilesForTests/USFMTest2/",) # These are RELATIVE paths
     #testFolder = "/home/robert/USFM output from OSIS/"
     #testFolder = "/home/myFolder" # You can put your test folder here
-    if os.access( testFolder, os.R_OK ):
-        UFns = USFMFilenames( testFolder )
-        print( UFns )
-        result = UFns.getAllFilenames(); print( "\nAll:", len(result), result )
-        result = UFns.getDerivedFilenameTuples(); print( "\nDerived:", UFns.getFilenameTemplate(), len(result), result )
-        result = UFns.getConfirmedFilenameTuples(); print( "\nConfirmed:", UFns.getFilenameTemplate(), len(result), result )
-        result = UFns.getUnusedFilenames(); print( "Unused:", len(result), result )
-        result = UFns.getConfirmedFilenameTuples( doubleCheck=True ); print( "\nConfirmed (with double check):", UFns.getFilenameTemplate(), len(result), result )
-        result = UFns.getUnusedFilenames(); print( "Unused:", len(result), result )
-        result = UFns.getPossibleFilenameTuplesExt(); print( "\nPossibleExt:", len(result), result )
-        result = UFns.getUnusedFilenames(); print( "Unused:", len(result), result )
-        result = UFns.getPossibleFilenameTuplesInt(); print( "\nPossibleInt:", len(result), result )
-        result = UFns.getUnusedFilenames(); print( "Unused:", len(result), result )
-        result = UFns.getMaximumPossibleFilenameTuples(); print( "\nMaxPoss:", len(result), result )
-        result = UFns.getUnusedFilenames(); print( "Unused:", len(result), result )
-        result = UFns.getSSFFilenames(); print( "\nSSF:", len(result), result )
-    else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
+    for testFolder in testFolders:
+        print( '\n' )
+        if os.access( testFolder, os.R_OK ):
+            UFns = USFMFilenames( testFolder )
+            print( UFns )
+            result = UFns.getAllFilenames(); print( "\nAll:", len(result), result )
+            result = UFns.getDerivedFilenameTuples(); print( "\nDerived:", UFns.getFilenameTemplate(), len(result), result )
+            result = UFns.getConfirmedFilenameTuples(); print( "\nConfirmed:", UFns.getFilenameTemplate(), len(result), result )
+            result = UFns.getUnusedFilenames(); print( "Unused:", len(result), result )
+            result = UFns.getConfirmedFilenameTuples( doubleCheck=True ); print( "\nConfirmed (with double check):", UFns.getFilenameTemplate(), len(result), result )
+            result = UFns.getUnusedFilenames(); print( "Unused:", len(result), result )
+            result = UFns.getPossibleFilenameTuplesExt(); print( "\nPossibleExt:", len(result), result )
+            result = UFns.getUnusedFilenames(); print( "Unused:", len(result), result )
+            result = UFns.getPossibleFilenameTuplesInt(); print( "\nPossibleInt:", len(result), result )
+            result = UFns.getUnusedFilenames(); print( "Unused:", len(result), result )
+            result = UFns.getMaximumPossibleFilenameTuples(); print( "\nMaxPoss:", len(result), result )
+            result = UFns.getUnusedFilenames(); print( "Unused:", len(result), result )
+            result = UFns.getSSFFilenames(); print( "\nSSF:", len(result), result )
+        else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
 
 if __name__ == '__main__':
     demo()

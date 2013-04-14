@@ -1,7 +1,8 @@
 #!/usr/bin/python3
+# -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2013-04-13 by RJH (also update versionString below)
+#   Last modified: 2013-04-15 by RJH (also update versionString below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -80,7 +81,7 @@ class USFMBible( Bible ):
             self.loadSSFData( ssfFilepathList[0] )
 
         self.name = self.givenName
-        if self.name is None and 'Name' in self.ssfData: self.name = self.ssfData['Name']
+        if self.name is None and self.ssfData and 'Name' in self.ssfData: self.name = self.ssfData['Name']
     # end of USFMBible.__init_
 
 
@@ -164,7 +165,7 @@ class USFMBible( Bible ):
     # end of USFMBible.loadBook
 
 
-    def loadAll( self ):
+    def load( self ):
         """
         Load all the books.
         """
@@ -178,7 +179,7 @@ class USFMBible( Bible ):
         #print( "\n", "self.BBBToNameDict", self.BBBToNameDict )
         #print( "\n", "self.bookNameDict", self.bookNameDict )
         #print( "\n", "self.combinedBookNameDict", self.combinedBookNameDict ); halt
-    # end of USFMBible.loadAll
+    # end of USFMBible.load
 # end of class USFMBible
 
 
@@ -198,10 +199,10 @@ def demo():
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
     if 1: # Test a single folder containing a USFM Bible
-        name, encoding, testFolder = "Matigsalug", "utf-8", "/mnt/Data/Work/Matigsalug/Bible/MBTV/" # You can put your test folder here
+        name, encoding, testFolder = "Matigsalug", "utf-8", "../../../../../Data/Work/Matigsalug/Bible/MBTV/" # You can put your test folder here
         if os.access( testFolder, os.R_OK ):
             UB = USFMBible( testFolder, name, encoding )
-            UB.loadAll()
+            UB.load()
             if Globals.verbosityLevel > 0: print( UB )
             if Globals.strictCheckingFlag:
                 if Globals.verbosityLevel > 1: print( "Checking..." )
@@ -253,7 +254,7 @@ def demo():
                 if os.access( testFolder, os.R_OK ):
                     if Globals.verbosityLevel > 0: print( "\n{}".format( count ) )
                     UB = USFMBible( testFolder, name, encoding )
-                    UB.loadAll()
+                    UB.load()
                     totalBooks += len( UB )
                     if Globals.verbosityLevel > 0: print( UB )
                     UB.check()
@@ -272,14 +273,14 @@ def demo():
     validateXML = False
 
     if 1: # Do one test folder
-        name, encoding, testFolder = "Matigsalug", "utf-8", "/mnt/Data/Work/Matigsalug/Bible/MBTV/" # You can put your test folder here
-        #name, encoding, testFolder = "MS-BT", "utf-8", "/mnt/Data/Work/Matigsalug/Bible/MBTBT/" # You can put your test folder here
-        #name, encoding, testFolder = "MS-Notes", "utf-8", "/mnt/Data/Work/Matigsalug/Bible/MBTBC/" # You can put your test folder here
-        #name, encoding, testFolder = "WEB", "utf-8", "/mnt/Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/" # You can put your test folder here
+        name, encoding, testFolder = "Matigsalug", "utf-8", "../../../../../Data/Work/Matigsalug/Bible/MBTV/" # You can put your test folder here
+        #name, encoding, testFolder = "MS-BT", "utf-8", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/" # You can put your test folder here
+        #name, encoding, testFolder = "MS-Notes", "utf-8", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/" # You can put your test folder here
+        #name, encoding, testFolder = "WEB", "utf-8", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/" # You can put your test folder here
 
         if os.access( testFolder, os.R_OK ): # check that we can read the test data
             UB = USFMBible( testFolder, name, encoding ) # create the BibleWriter object
-            UB.loadAll()
+            UB.load()
             print( UB )
             if not Globals.commandLineOptions.export: UB.check()
             UBErrors = UB.getErrors()
@@ -287,8 +288,8 @@ def demo():
 
             if Globals.commandLineOptions.export:
 
-                usxSchemaFile = "/mnt/Data/Work/Bibles/Formats/USX/usx 1.rng"
-                OSISSchemaFile = "/mnt/Data/Work/Bibles/Formats/OSIS/osisCore.2.1.1.xsd"
+                usxSchemaFile = "../../../../../Data/Work/Bibles/Formats/USX/usx 1.rng"
+                OSISSchemaFile = "../../../../../Data/Work/Bibles/Formats/OSIS/osisCore.2.1.1.xsd"
 
                 UB.setupWriter()
                 #BW.genericBOS = BibleOrganizationalSystem( "GENERIC-KJV-81" )
@@ -380,7 +381,7 @@ def demo():
                 if os.access( testFolder, os.R_OK ):
                     if Globals.verbosityLevel > 0: print( "\n{}".format( count ) )
                     UBW = BibleWriter( testFolder, name, encoding ) # create the BibleWriter object
-                    UBW.loadAll()
+                    UBW.load()
                     print( UBW )
                     if not Globals.commandLineOptions.export: UBW.check()
                     UBWErrors = UBW.getErrors()

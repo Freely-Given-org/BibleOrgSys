@@ -1,7 +1,8 @@
 #!/usr/bin/python3
+# -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-04-13 by RJH (also update versionString below)
+#   Last modified: 2013-04-14 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -915,7 +916,7 @@ class InternalBibleBook:
                     versification.append( (chapterText, lastVerseNumberString,) )
                 chapterText = text.strip()
                 if ' ' in chapterText: # Seems that we can have footnotes here :)
-                    versificationErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Unexpected space in USFM chapter number field '{}'").format( self.bookReferenceCode, lastChapterNumber, lastVerseNumberString, chapterText, lastChapterNumber ) )
+                    versificationErrors.append( "{} {}:{} ".format( self.bookReferenceCode, chapterText, verseNumberString ) + _("Unexpected space in USFM chapter number field '{}'").format( self.bookReferenceCode, lastChapterNumber, lastVerseNumberString, chapterText, lastChapterNumber ) )
                     if Globals.logErrorsFlag: logging.info( _("Unexpected space in USFM chapter number field '{}' after chapter {} of {}").format( chapterText, lastChapterNumber, self.bookReferenceCode ) )
                     chapterText = chapterText.split( None, 1)[0]
                 #print( "{} chapter {}".format( self.bookReferenceCode, chapterText ) )
@@ -926,7 +927,7 @@ class InternalBibleBook:
                 lastChapterNumber = chapterNumber
                 verseText = verseNumberString = lastVerseNumberString = '0'
             elif marker == 'cp':
-                versificationErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Encountered cp field {}").format( self.bookReferenceCode, chapterNumber, lastVerseNumberString, text ) )
+                versificationErrors.append( "{} {}:{} ".format( self.bookReferenceCode, chapterText, verseNumberString ) + _("Encountered cp field {}").format( self.bookReferenceCode, chapterNumber, lastVerseNumberString, text ) )
                 if Globals.logErrorsFlag: logging.warning( _("Encountered cp field {} after {}:{} of {}").format( text, chapterNumber, lastVerseNumberString, self.bookReferenceCode ) )
             elif marker == 'v':
                 if chapterText == '0':
@@ -946,7 +947,7 @@ class InternalBibleBook:
                             doneWarning = True
                         verseText = verseText.replace( char, '' )
                 if '-' in verseText or '–' in verseText: # we have a range like 7-9 with hyphen or en-dash
-                    #versificationErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Encountered combined verses field {}").format( self.bookReferenceCode, chapterNumber, lastVerseNumberString, verseText ) )
+                    #versificationErrors.append( "{} {}:{} ".format( self.bookReferenceCode, chapterText, verseNumberString ) + _("Encountered combined verses field {}").format( self.bookReferenceCode, chapterNumber, lastVerseNumberString, verseText ) )
                     if Globals.logErrorsFlag: logging.info( _("Encountered combined verses field {} after {}:{} of {}").format( verseText, chapterNumber, lastVerseNumberString, self.bookReferenceCode ) )
                     bits = verseText.replace('–','-').split( '-', 1 ) # Make sure that it's a hyphen then split once
                     verseNumberString, verseNumber = bits[0], 0
@@ -967,7 +968,7 @@ class InternalBibleBook:
                     #else:
                     combinedVerses.append( (chapterText, verseText,) )
                 elif ',' in verseText: # we have a range like 7,8
-                    versificationErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Encountered comma combined verses field {}").format( self.bookReferenceCode, chapterNumber, lastVerseNumberString, verseText ) )
+                    versificationErrors.append( "{} {}:{} ".format( self.bookReferenceCode, chapterText, verseNumberString ) + _("Encountered comma combined verses field {}").format( self.bookReferenceCode, chapterNumber, lastVerseNumberString, verseText ) )
                     if Globals.logErrorsFlag: logging.info( _("Encountered comma combined verses field {} after {}:{} of {}").format( verseText, chapterNumber, lastVerseNumberString, self.bookReferenceCode ) )
                     bits = verseText.split( ',', 1 )
                     verseNumberString, verseNumber = bits[0], 0

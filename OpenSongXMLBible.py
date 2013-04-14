@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# XMLBible.py
-#   Last modified: 2013-04-13 by RJH (also update versionString below)
+# OpenSongXMLBible.py
+#   Last modified: 2013-04-14 by RJH (also update versionString below)
 #
-# Module handling simple XML Bibles
+# Module handling OpenSong XML Bibles
 #
 # Copyright (C) 2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -24,7 +24,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module reading and loading simple XML Bibles such as OpenSong Bibles:
+Module reading and loading OpenSong XML Bibles:
     <?xml version="1.0" encoding="ISO-8859-1"?>
     <bible>
     <b n="Genesis">
@@ -49,9 +49,9 @@ from BibleOrganizationalSystems import BibleOrganizationalSystem
 from Bible import Bible, BibleBook
 
 
-class XMLBible( Bible ):
+class OpenSongXMLBible( Bible ):
     """
-    Class for reading, validating, and converting XMLBible XML.
+    Class for reading, validating, and converting OpenSong Bible XML.
     """
     treeTag = 'bible'
     bookTag = 'b'
@@ -65,8 +65,8 @@ class XMLBible( Bible ):
         """
          # Setup and initialise the base class first
         Bible.__init__( self )
-        self.objectNameString = "XML Bible object"
-        self.objectTypeString = "XML"
+        self.objectNameString = "OpenSong XML Bible object"
+        self.objectTypeString = "OpenSong"
 
         # Now we can set our object variables
         self.sourceFilepath, self.givenName, self.encoding = sourceFilepath, givenName, encoding
@@ -79,12 +79,12 @@ class XMLBible( Bible ):
 
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):
-            print( "XMLBible: File '{}' is unreadable".format( self.sourceFilepath ) )
+            print( "OpenSongXMLBible: File '{}' is unreadable".format( self.sourceFilepath ) )
 
         self.name = self.givenName
         #if self.name is None:
             #pass
-    # end of XMLBible.__init__
+    # end of OpenSongXMLBible.__init__
 
 
     def load( self ):
@@ -96,7 +96,7 @@ class XMLBible( Bible ):
         assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
 
         # Find the main (bible) container
-        if self.tree.tag == XMLBible.treeTag:
+        if self.tree.tag == OpenSongXMLBible.treeTag:
             location = "XML file"
             Globals.checkXMLNoText( self.tree, location, '4f6h' )
             Globals.checkXMLNoTail( self.tree, location, '1wk8' )
@@ -111,7 +111,7 @@ class XMLBible( Bible ):
 
             # Find the submain (book) containers
             for element in self.tree:
-                if element.tag == XMLBible.bookTag:
+                if element.tag == OpenSongXMLBible.bookTag:
                     sublocation = "book in " + location
                     Globals.checkXMLNoText( element, sublocation, 'g3g5' )
                     Globals.checkXMLNoTail( element, sublocation, 'd3f6' )
@@ -120,9 +120,9 @@ class XMLBible( Bible ):
                     pass
                 elif element.tag == 'NT':
                     pass
-                else: logging.error( "Expected to find '{}' but got '{}'".format( XMLBible.bookTag, element.tag ) )
-        else: logging.error( "Expected to load '{}' but got '{}'".format( XMLBible.treeTag, self.tree.tag ) )
-    # end of XMLBible.load
+                else: logging.error( "Expected to find '{}' but got '{}'".format( OpenSongXMLBible.bookTag, element.tag ) )
+        else: logging.error( "Expected to load '{}' but got '{}'".format( OpenSongXMLBible.treeTag, self.tree.tag ) )
+    # end of OpenSongXMLBible.load
 
 
     def __validateAndExtractBook( self, book ):
@@ -148,17 +148,17 @@ class XMLBible( Bible ):
         thisBook.objectTypeString = "XML"
         #thisBook.sourceFilepath = self.sourceFilepath
         for element in book:
-            if element.tag == XMLBible.chapterTag:
+            if element.tag == OpenSongXMLBible.chapterTag:
                 sublocation = "chapter in {}".format( BBB )
                 Globals.checkXMLNoText( element, sublocation, 'j3jd' )
                 Globals.checkXMLNoTail( element, sublocation, 'al1d' )
                 self.__validateAndExtractChapter( BBB, thisBook, element )
-            else: logging.error( "Expected to find '{}' but got '{}'".format( XMLBible.chapterTag, element.tag ) )
+            else: logging.error( "Expected to find '{}' but got '{}'".format( OpenSongXMLBible.chapterTag, element.tag ) )
 
         if BBB:
             if Globals.verbosityLevel > 2: print( "  Saving {} into results...".format( BBB ) )
             self.saveBook( BBB, thisBook )
-    # end of XMLBible.__validateAndExtractBook
+    # end of OpenSongXMLBible.__validateAndExtractBook
 
 
     def __validateAndExtractChapter( self, BBB, thisBook, chapter ):
@@ -184,7 +184,7 @@ class XMLBible( Bible ):
         else: logging.error( "Missing 'n' attribute in chapter element for BBB".format( BBB ) )
 
         for element in chapter:
-            if element.tag == XMLBible.verseTag:
+            if element.tag == OpenSongXMLBible.verseTag:
                 sublocation = "verse in {} {}".format( BBB, chapterNumber )
                 Globals.checkXMLNoTail( element, sublocation, 'l5ks' )
                 Globals.checkXMLNoSubelements( element, sublocation, '5f7h' )
@@ -203,9 +203,9 @@ class XMLBible( Bible ):
                 if vText: # This is the main text of the verse (follows the verse milestone)
                     #print( "{} {}:{} '{}'".format( BBB, chapterNumber, verseNumber, vText ) )
                     thisBook.appendLine( 'v', verseNumber + ' ' + vText )
-            else: logging.error( "Expected to find '{}' but got '{}'".format( XMLBible.verseTag, element.tag ) )
-    # end of XMLBible.__validateAndExtractChapter
-# end of XMLBible class
+            else: logging.error( "Expected to find '{}' but got '{}'".format( OpenSongXMLBible.verseTag, element.tag ) )
+    # end of OpenSongXMLBible.__validateAndExtractChapter
+# end of OpenSongXMLBible class
 
 
 def demo():
@@ -223,7 +223,7 @@ def demo():
 
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
-    testFolder = "/mnt/Data/Work/Bibles//OpenSong Bibles/"
+    testFolder = "../../../../../Data/Work/Bibles//OpenSong Bibles/"
     single = ( "KJV.xmm", )
     good = ( "KJV.xmm", "AMP.xmm", "Chinese_SU.xmm", "Contemporary English Version.xmm", "ESV", "Italiano", "MKJV", \
         "MSG.xmm", "NASB.xmm", "NIV", "NKJV.xmm", "NLT", "telugu.xmm", )
@@ -235,10 +235,10 @@ def demo():
     for testFilename in good:
         testFilepath = os.path.join( testFolder, testFilename )
 
-        # Demonstrate the XML Bible class
+        # Demonstrate the OpenSong XML Bible class
         if Globals.verbosityLevel > 1: print( "\nDemonstrating the XML Bible class..." )
         if Globals.verbosityLevel > 0: print( "  Test filepath is '{}'".format( testFilepath ) )
-        xb = XMLBible( testFilepath )
+        xb = OpenSongXMLBible( testFilepath )
         xb.load() # Load and process the XML
         print( xb ) # Just print a summary
         #print( xb.books['JDE']._processedLines )
@@ -259,4 +259,4 @@ def demo():
 
 if __name__ == '__main__':
     demo()
-# end of XMLBible.py
+# end of OpenSongXMLBible.py

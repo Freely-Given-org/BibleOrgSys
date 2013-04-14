@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-04-13 by RJH (also update versionString below)
+#   Last modified: 2013-04-15 by RJH (also update versionString below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -28,7 +28,10 @@ PROTOTYPE ONLY AT THIS STAGE! (Code not well structured.)
 
 Module for exporting Bibles in various formats including USFM, USX, and OSIS.
 
-A virtual class which extends InternalBible.
+A class which extends InternalBible.
+
+This is intended to be a virtual class, i.e., to be extended further
+    by classes which load particular kinds of Bibles (e.g., OSIS, USFM, USX, etc.)
 """
 
 progName = "Bible writer"
@@ -77,13 +80,13 @@ class BibleWriter( InternalBible ):
     ## end of BibleWriter.__str__
 
 
-    #def xloadAll( self ):
+    #def xload( self ):
         #""" Load the object from the USFM files """
-        #USFMBible.loadAll( self )
+        #USFMBible.load( self )
         ##if Globals.commandLineOptions.export:
         ##self.genericBOS = BibleOrganizationalSystem( "GENERIC-KJV-81" )
         #self.genericBRL = BibleReferenceList( self.genericBOS, BibleObject=self )
-    ## end of BibleWriter.loadAll
+    ## end of BibleWriter.load
 
 
     def setupWriter( self ):

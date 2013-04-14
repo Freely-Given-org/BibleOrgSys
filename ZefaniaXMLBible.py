@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# ZefaniaBible.py
-#   Last modified: 2013-04-13 by RJH (also update versionString below)
+# ZefaniaXMLBible.py
+#   Last modified: 2013-04-14 by RJH (also update versionString below)
 #
-# Module handling simple XML Bibles
+# Module handling Zefania XML Bibles
 #
 # Copyright (C) 2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -58,7 +58,7 @@ or
       <VERS vnumber="3">to snap their bondsand fling their cords away? <BR art="x-nl" /></VERS>
 """
 
-progName = "Zefania Bible format handler"
+progName = "Zefania XML Bible format handler"
 versionString = "0.20"
 
 import logging, os
@@ -74,9 +74,9 @@ from BibleOrganizationalSystems import BibleOrganizationalSystem
 from Bible import Bible, BibleBook
 
 
-class ZefaniaBible( Bible ):
+class ZefaniaXMLBible( Bible ):
     """
-    Class for reading, validating, and converting ZefaniaBible XML.
+    Class for reading, validating, and converting ZefaniaXMLBible XML.
     """
     XMLNameSpace = "{http://www.w3.org/2001/XMLSchema-instance}"
     treeTag = 'XMLBIBLE'
@@ -110,12 +110,12 @@ class ZefaniaBible( Bible ):
 
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):
-            print( "ZefaniaBible: File '{}' is unreadable".format( self.sourceFilepath ) )
+            print( "ZefaniaXMLBible: File '{}' is unreadable".format( self.sourceFilepath ) )
 
         self.name = self.givenName
         #if self.name is None:
             #pass
-    # end of ZefaniaBible.__init__
+    # end of ZefaniaXMLBible.__init__
 
 
     def load( self ):
@@ -127,7 +127,7 @@ class ZefaniaBible( Bible ):
         assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
 
         # Find the main (bible) container
-        if self.tree.tag == ZefaniaBible.treeTag:
+        if self.tree.tag == ZefaniaXMLBible.treeTag:
             location = "Zefania XML file"
             Globals.checkXMLNoText( self.tree, location, '4f6h' )
             Globals.checkXMLNoTail( self.tree, location, '1wk8' )
@@ -135,7 +135,7 @@ class ZefaniaBible( Bible ):
             schema = None
             name = status = BibleType = revision = lgid = None
             for attrib,value in self.tree.items():
-                if attrib == ZefaniaBible.XMLNameSpace + 'noNamespaceSchemaLocation':
+                if attrib == ZefaniaXMLBible.XMLNameSpace + 'noNamespaceSchemaLocation':
                     schema = value
                 elif attrib == "biblename":
                     name = value
@@ -168,14 +168,14 @@ class ZefaniaBible( Bible ):
 
             # Find the submain (book) containers
             for element in self.tree:
-                if element.tag == ZefaniaBible.bookTag:
+                if element.tag == ZefaniaXMLBible.bookTag:
                     sublocation = "book in " + location
                     Globals.checkXMLNoText( element, sublocation, 'g3g5' )
                     Globals.checkXMLNoTail( element, sublocation, 'd3f6' )
                     self.__validateAndExtractBook( element )
-                else: logging.error( "Expected to find '{}' but got '{}'".format( ZefaniaBible.bookTag, element.tag ) )
-        else: logging.error( "Expected to load '{}' but got '{}'".format( ZefaniaBible.treeTag, self.tree.tag ) )
-    # end of ZefaniaBible.load
+                else: logging.error( "Expected to find '{}' but got '{}'".format( ZefaniaXMLBible.bookTag, element.tag ) )
+        else: logging.error( "Expected to load '{}' but got '{}'".format( ZefaniaXMLBible.treeTag, self.tree.tag ) )
+    # end of ZefaniaXMLBible.load
 
 
     def __validateAndExtractHeader( self ):
@@ -299,7 +299,7 @@ class ZefaniaBible( Bible ):
                 Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if element.text: self.rights = element.text
             else: logging.error( "Found unexpected '{}' tag in {}".format( element.tag, location ) )
-    # end of ZefaniaBible.__validateAndExtractHeader
+    # end of ZefaniaXMLBible.__validateAndExtractHeader
 
 
     def __validateAndExtractBook( self, book ):
@@ -335,15 +335,15 @@ class ZefaniaBible( Bible ):
             thisBook.objectTypeString = "XML"
             #thisBook.sourceFilepath = self.sourceFilepath
             for element in book:
-                if element.tag == ZefaniaBible.chapterTag:
+                if element.tag == ZefaniaXMLBible.chapterTag:
                     sublocation = "chapter in {}".format( BBB )
                     Globals.checkXMLNoText( element, sublocation, 'j3jd' )
                     Globals.checkXMLNoTail( element, sublocation, 'al1d' )
                     self.__validateAndExtractChapter( BBB, thisBook, element )
-                else: logging.error( "Expected to find '{}' but got '{}'".format( ZefaniaBible.chapterTag, element.tag ) )
+                else: logging.error( "Expected to find '{}' but got '{}'".format( ZefaniaXMLBible.chapterTag, element.tag ) )
             if Globals.verbosityLevel > 2: print( "  Saving {} into results...".format( BBB ) )
             self.saveBook( BBB, thisBook )
-    # end of ZefaniaBible.__validateAndExtractBook
+    # end of ZefaniaXMLBible.__validateAndExtractBook
 
 
     def __validateAndExtractChapter( self, BBB, thisBook, chapter ):
@@ -367,10 +367,10 @@ class ZefaniaBible( Bible ):
         else: logging.error( "Missing 'n' attribute in chapter element for BBB".format( BBB ) )
 
         for element in chapter:
-            if element.tag == ZefaniaBible.verseTag:
+            if element.tag == ZefaniaXMLBible.verseTag:
                 location = "verse in {} {}".format( BBB, chapterNumber )
                 self.__validateAndExtractVerse( BBB, chapterNumber, thisBook, element )
-            elif element.tag == ZefaniaBible.captionTag: # Used in Psalms
+            elif element.tag == ZefaniaXMLBible.captionTag: # Used in Psalms
                 location = "caption in {} {}".format( BBB, chapterNumber )
                 Globals.checkXMLNoTail( element, location, 'k5k8' )
                 Globals.checkXMLNoSubelements( element, location, 'd3f5' )
@@ -388,8 +388,8 @@ class ZefaniaBible( Bible ):
                 if vText: # This is the main text of the caption
                     #print( "{} {}:{} '{}'".format( BBB, chapterNumber, verseNumber, vText ) )
                     thisBook.appendLine( 'v', '0' + ' ' + vText ) # We save it as verse zero
-            else: logging.error( "Expected to find '{}' but got '{}'".format( ZefaniaBible.verseTag, element.tag ) )
-    # end of ZefaniaBible.__validateAndExtractChapter
+            else: logging.error( "Expected to find '{}' but got '{}'".format( ZefaniaXMLBible.verseTag, element.tag ) )
+    # end of ZefaniaXMLBible.__validateAndExtractChapter
 
 
     def __validateAndExtractVerse( self, BBB, chapterNumber, thisBook, verse ):
@@ -420,7 +420,7 @@ class ZefaniaBible( Bible ):
 
         # Handle verse subelements (notes and styled portions)
         for subelement in verse:
-            if subelement.tag == ZefaniaBible.noteTag:
+            if subelement.tag == ZefaniaXMLBible.noteTag:
                 sublocation = "note in " + location
                 noteType = None
                 for attrib,value in subelement.items():
@@ -436,7 +436,7 @@ class ZefaniaBible( Bible ):
                 #thisBook.appendLine( 'ST=', nText )
                 if nTail: thisBook.appendLine( 'v~', nTail )
                 for subsubelement in subelement:
-                    if subsubelement.tag == ZefaniaBible.styleTag:
+                    if subsubelement.tag == ZefaniaXMLBible.styleTag:
                         subsublocation = "style in " + sublocation
                         Globals.checkXMLNoSubelements( subsubelement, subsublocation, 'fyt4' )
                         css = idStyle = None
@@ -459,9 +459,9 @@ class ZefaniaBible( Bible ):
                         if SFM: vText += SFM+' ' + sText + SFM+'*'
                         else: vText += '\\sc ' + '['+css+']' + sText + '\\sc* ' # Use sc for unknown styles
                         if sTail: vText += sTail.strip()
-                    else: logging.error( "Expected to find {} but got '{}' in {}".format( ZefaniaBible.styleTag, subsubelement.tag, sublocation ) )
+                    else: logging.error( "Expected to find {} but got '{}' in {}".format( ZefaniaXMLBible.styleTag, subsubelement.tag, sublocation ) )
 
-            elif subelement.tag == ZefaniaBible.styleTag:
+            elif subelement.tag == ZefaniaXMLBible.styleTag:
                 sublocation = "style in " + location
                 Globals.checkXMLNoSubelements( subelement, sublocation, 'f5gh' )
                 css = idStyle = None
@@ -485,7 +485,7 @@ class ZefaniaBible( Bible ):
                 else: vText += '\\sc ' + '['+css+']' + sText + '\\sc* ' # Use sc for unknown styles
                 if sTail: vText += sTail.strip()
 
-            elif subelement.tag == ZefaniaBible.breakTag:
+            elif subelement.tag == ZefaniaXMLBible.breakTag:
                 sublocation = "line break in " + location
                 Globals.checkXMLNoText( subelement, sublocation, 'c1d4' )
                 Globals.checkXMLNoSubelements( subelement, sublocation, 'g4g8' )
@@ -506,8 +506,8 @@ class ZefaniaBible( Bible ):
         if vText: # This is the main text of the verse (follows the verse milestone)
             #if '\\' in vText: print( "{} {}:{} '{}'".format( BBB, chapterNumber, verseNumber, vText ) )
             thisBook.appendLine( 'v', verseNumber + ' ' + vText )
-    # end of ZefaniaBible.__validateAndExtractVerse
-# end of ZefaniaBible class
+    # end of ZefaniaXMLBible.__validateAndExtractVerse
+# end of ZefaniaXMLBible class
 
 
 def demo():
@@ -525,7 +525,7 @@ def demo():
 
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
-    testFolder = "/mnt/Data/Work/Bibles/Zefania modules/"
+    testFolder = "../../../../../Data/Work/Bibles/Zefania modules/"
     #testFolder = "Tests/DataFilesForTests/ZefaniaTest/"
     single = ( "kjv.xml", )
     good = ( "BWE_zefania.xml", "en_gb_KJV2000.xml", "Etheridge_zefania.xml", "kjv.xml", "OEB_zefania.xml", \
@@ -539,7 +539,7 @@ def demo():
         # Demonstrate the XML Bible class
         if Globals.verbosityLevel > 1: print( "\nDemonstrating the Zefania Bible class..." )
         if Globals.verbosityLevel > 0: print( "  Test filepath is '{}'".format( testFilepath ) )
-        zb = ZefaniaBible( testFilepath )
+        zb = ZefaniaXMLBible( testFilepath )
         zb.load() # Load and process the XML
         print( zb ) # Just print a summary
         #print( zb.books['JDE']._processedLines )
@@ -560,4 +560,4 @@ def demo():
 
 if __name__ == '__main__':
     demo()
-# end of ZefaniaBible.py
+# end of ZefaniaXMLBible.py

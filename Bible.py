@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 #
 # Bible.py
+#   Last modified: 2013-04-15 (also update versionString below)
 #
 # Module handling a internal Bible object
-#   Last modified: 2013-04-13 (also update versionString below)
 #
 # Copyright (C) 2010-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -42,58 +42,59 @@ from InternalBibleBook import InternalBibleBook
 from BibleWriter import BibleWriter
 
 
-class BibleExtra:
-    """
-    Class for handling Bible front and back matter.
-    """
-
-    def __init__( self ):
+if 0:
+    class BibleExtra:
         """
-        Constructor: creates an empty Bible extra object.
+        Class for handling Bible front and back matter.
         """
-        self.sections = []
-    # end of __init__
 
-    def __str__( self ):
+        def __init__( self ):
+            """
+            Constructor: creates an empty Bible extra object.
+            """
+            self.sections = []
+        # end of __init__
+
+        def __str__( self ):
+            """
+            This method returns the string representation of a Bible extra section.
+
+            @return: the name of a Bible object formatted as a string
+            @rtype: string
+            """
+            result = _("BibleExtra object")
+            result += ('\n' if result else '') + "  " + _("Number of sections = {}").format(len(self.sections) )
+            return result
+        # end of __str__
+    # end of class BibleExtra
+
+
+    class BibleDivision:
         """
-        This method returns the string representation of a Bible extra section.
-
-        @return: the name of a Bible object formatted as a string
-        @rtype: string
+        Class for handling Bible divisions (like Old Testament and New Testament).
         """
-        result = _("BibleExtra object")
-        result += ('\n' if result else '') + "  " + _("Number of sections = {}").format(len(self.sections) )
-        return result
-    # end of __str__
-# end of class BibleExtra
 
+        def __init__( self ):
+            """
+            Constructor: creates an empty Bible extra object.
+            """
+            self.shortName, self.longName = '', ''
+            self.inputAbbreviations = []
+            self.bookCodes = []
+        # end of __init__
 
-class BibleDivision:
-    """
-    Class for handling Bible divisions (like Old Testament and New Testament).
-    """
+        def __str__( self ):
+            """
+            This method returns the string representation of a Bible division.
 
-    def __init__( self ):
-        """
-        Constructor: creates an empty Bible extra object.
-        """
-        self.shortName, self.longName = '', ''
-        self.inputAbbreviations = []
-        self.bookCodes = []
-    # end of __init__
-
-    def __str__( self ):
-        """
-        This method returns the string representation of a Bible division.
-
-        @return: the name of a Bible object formatted as a string
-        @rtype: string
-        """
-        result = _("BibleDivision object")
-        result += ('\n' if result else '') + "  {} ({})".format(self.longName, self.shortName )
-        return result
-    # end of __str__
-# end of class BibleDivision
+            @return: the name of a Bible object formatted as a string
+            @rtype: string
+            """
+            result = _("BibleDivision object")
+            result += ('\n' if result else '') + "  {} ({})".format(self.longName, self.shortName )
+            return result
+        # end of __str__
+    # end of class BibleDivision
 
 
 class BibleBook ( InternalBibleBook ):
@@ -173,6 +174,8 @@ class Bible( BibleWriter ):
         Constructor: creates an empty Bible object.
         """
         BibleWriter.__init__( self )
+        self.objectNameString = "Bible object (generic/unknown type)"
+        self.objectTypeString = "Unknown"
 
         # Add our own extended data stores
         self.metadata = {}
@@ -193,6 +196,7 @@ class Bible( BibleWriter ):
         @rtype: string
         """
         result = _("Bible object")
+        result += ('\n' if result else '') + "  " + _("Type = {}").format( self.objectTypeString )
         if "title" in self.metadata: result += ('\n' if result else '') + self.metadata["title"]
         if "version" in self.metadata: result += ('\n' if result else '') + "  " + _("Version: {} ").format(self.metadata["version"] )
         if "publicationDate" in self.metadata: result += ('\n' if result else '') + "  " + _("Date: {}").format(self.metadata["publicationDate"] )

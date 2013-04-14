@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMFilenamesTests.py
-#   Last modified: 2013-02-18 by RJH (also update versionString below)
+#   Last modified: 2013-04-14 by RJH (also update versionString below)
 #
 # Module testing USFMFilenames.py
 #
@@ -109,7 +109,7 @@ class USFMFilenamesTests1( unittest.TestCase ):
         junkResults = self.UFns.getConfirmedFilenameTuples()
         results = self.UFns.getUnusedFilenames()
         self.assertTrue( isinstance( results, list ) )
-        self.assertEqual( len(results), 3 ) # Number of actual files found
+        self.assertEqual( len(results), 4 ) # Number of actual files found
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
         for result in results:
@@ -135,7 +135,7 @@ class USFMFilenamesTests1( unittest.TestCase ):
         junkResults = self.UFns.getPossibleFilenameTuplesExt()
         results = self.UFns.getUnusedFilenames()
         self.assertTrue( isinstance( results, list ) )
-        self.assertEqual( len(results), 3 ) # Number of actual files found
+        self.assertEqual( len(results), 4 ) # Number of actual files found
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
         for result in results:
@@ -161,7 +161,7 @@ class USFMFilenamesTests1( unittest.TestCase ):
         junkResults = self.UFns.getPossibleFilenameTuplesInt()
         results = self.UFns.getUnusedFilenames()
         self.assertTrue( isinstance( results, list ) )
-        self.assertEqual( len(results), 4 ) # Number of actual files found
+        self.assertEqual( len(results), 5 ) # Number of actual files found
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
         for result in results:
@@ -187,7 +187,7 @@ class USFMFilenamesTests1( unittest.TestCase ):
         junkResults = self.UFns.getMaximumPossibleFilenameTuples()
         results = self.UFns.getUnusedFilenames()
         self.assertTrue( isinstance( results, list ) )
-        self.assertEqual( len(results), 3 ) # Number of actual files found
+        self.assertEqual( len(results), 4 ) # Number of actual files found
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
         for result in results:

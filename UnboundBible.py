@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # UnboundBible.py
-#   Last modified: 2013-04-13 by RJH (also update versionString below)
+#   Last modified: 2013-04-14 by RJH (also update versionString below)
 #
 # Module handling Biola University "unbound" Bible files
 #
@@ -299,7 +299,7 @@ def demo():
             print( reference, svk.getShortText(), ub.getVerseText( svk ) )
 
 
-    testFolder = "/mnt/Data/Work/Bibles/Biola Unbound modules/"
+    testFolder = "../../../../../Data/Work/Bibles/Biola Unbound modules/"
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         print( "TestA1", UnboundBibleFileCheck( testFolder ) )

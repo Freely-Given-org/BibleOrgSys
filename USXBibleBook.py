@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USXBibleBook.py
-#   Last modified: 2013-04-13 by RJH (also update versionString below)
+#   Last modified: 2013-04-14 by RJH (also update versionString below)
 #
 # Module handling USX Bible Book xml
 #
@@ -287,8 +287,8 @@ def demo():
         return someString[:30]+'...'+someString[-30:]
 
     import USXFilenames, USFMFilenames, USFMBibleBook
-    name, encoding, testFolder = "Matigsalug", "utf-8", "/mnt/Data/Work/VirtualBox_Shared_Folder/Exports/USXExports/Projects/MBTV/" # You can put your USX test folder here
-    name2, encoding2, testFolder2 = "Matigsalug", "utf-8", "/mnt/Data/Work/Matigsalug/Bible/MBTV/" # You can put your USFM test folder here (for comparing the USX with)
+    name, encoding, testFolder = "Matigsalug", "utf-8", "../../../../../Data/Work/VirtualBox_Shared_Folder/Exports/USXExports/Projects/MBTV/" # You can put your USX test folder here
+    name2, encoding2, testFolder2 = "Matigsalug", "utf-8", "../../../../../Data/Work/Matigsalug/Bible/MBTV/" # You can put your USFM test folder here (for comparing the USX with)
     if os.access( testFolder, os.R_OK ):
         if Globals.verbosityLevel > 1: print( _("Scanning {} from {}...").format( name, testFolder ) )
         if Globals.verbosityLevel > 1: print( _("Scanning {} from {}...").format( name, testFolder2 ) )

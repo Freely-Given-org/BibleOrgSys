@@ -1,7 +1,8 @@
 #!/usr/bin/python3
+# -*- coding: utf-8 -*-
 #
 # USXBible.py
-#   Last modified: 2013-04-13 by RJH (also update versionString below)
+#   Last modified: 2013-04-14 by RJH (also update versionString below)
 #
 # Module handling compilations of USX Bible books
 #
@@ -44,7 +45,7 @@ class USXBible( InternalBible ):
     Class to load and manipulate USX Bibles.
 
     """
-    def __init__( self, givenName ):
+    def __init__( self, folder, givenName, encoding='utf-8' ):
         """
         Create the internal USX Bible object.
         """
@@ -53,13 +54,18 @@ class USXBible( InternalBible ):
         self.objectNameString = "USX Bible object"
         self.objectTypeString = "USX"
 
+        self.sourceFolder, self.givenName, self.encoding = folder, givenName, encoding # Remember our parameters
+
         # Now we can set our object variables
-        self.givenName = givenName
         self.name = self.givenName
+
+        # Do a preliminary check on the readability of our folder
+        if not os.access( self.sourceFolder, os.R_OK ):
+            print( "ZefaniaXMLBible: File '{}' is unreadable".format( self.sourceFolder ) )
     # end of __init_
 
 
-    def load( self, folder, encoding='utf-8', logErrors=True ):
+    def load( self ):
         """
         Load the books.
         """
@@ -127,22 +133,21 @@ class USXBible( InternalBible ):
 
         import USXFilenames
 
-        if Globals.verbosityLevel > 1: print( _("USXBible: Loading {} from {}...").format( self.name, folder ) )
-        self.sourceFolder = folder # Remember our folder
+        if Globals.verbosityLevel > 1: print( _("USXBible: Loading {} from {}...").format( self.name, self.sourceFolder ) )
 
         # Do a preliminary check on the contents of our folder
         foundFiles, foundFolders = [], []
-        for something in os.listdir( folder ):
-            somepath = os.path.join( folder, something )
+        for something in os.listdir( self.sourceFolder ):
+            somepath = os.path.join( self.sourceFolder, something )
             if os.path.isdir( somepath ): foundFolders.append( something )
             elif os.path.isfile( somepath ): foundFiles.append( something )
-            else: print( "ERROR: Not sure what '{}' is in {}!".format( somepath, folder ) )
-        if foundFolders: print( "USXBible.load: Surprised to see subfolders in '{}': {}".format( folder, foundFolders ) )
+            else: print( "ERROR: Not sure what '{}' is in {}!".format( somepath, self.sourceFolder ) )
+        if foundFolders: print( "USXBible.load: Surprised to see subfolders in '{}': {}".format( self.sourceFolder, foundFolders ) )
         if not foundFiles:
-            print( "USXBible.load: Couldn't find any files in '{}'".format( folder ) )
+            print( "USXBible.load: Couldn't find any files in '{}'".format( self.sourceFolder ) )
             return # No use continuing
 
-        self.USXFilenamesObject = USXFilenames.USXFilenames( folder )
+        self.USXFilenamesObject = USXFilenames.USXFilenames( self.sourceFolder )
 
         if 0:
             # Attempt to load the metadata file
@@ -153,7 +158,7 @@ class USXBible( InternalBible ):
         # Load the books one by one -- assuming that they have regular Paratext style filenames
         for BBB,filename in self.USXFilenamesObject.getConfirmedFilenames():
             UBB = USXBibleBook( BBB )
-            UBB.load( folder, filename, encoding )
+            UBB.load( self.sourceFolder, filename, self.encoding )
             UBB.validateUSFM()
             #print( UBB )
             self.books[BBB] = UBB
@@ -171,7 +176,7 @@ class USXBible( InternalBible ):
             for thisFilename in foundFiles:
                 # Look for BBB in the ID line (which should be the first line in a USX file)
                 isUSX = False
-                thisPath = os.path.join( folder, thisFilename )
+                thisPath = os.path.join( self.sourceFolder, thisFilename )
                 with open( thisPath ) as possibleUSXFile: # Automatically closes the file when done
                     for line in possibleUSXFile:
                         if line.startswith( '\\id ' ):
@@ -183,7 +188,7 @@ class USXBible( InternalBible ):
                         break # We only look at the first line
                 if isUSX:
                     UBB = USXBibleBook( BBB )
-                    UBB.load( folder, thisFilename, encoding )
+                    UBB.load( self.sourceFolder, thisFilename, self.encoding )
                     UBB.validateUSFM()
                     print( UBB )
                     self.books[BBB] = UBB
@@ -215,10 +220,10 @@ def demo():
 
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
-    name, encoding, testFolder = "Matigsalug", "utf-8", "/mnt/Data/Work/VirtualBox_Shared_Folder/Exports/USXExports/Projects/MBTV/" # You can put your USX test folder here
+    name, encoding, testFolder = "Matigsalug", "utf-8", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/" # You can put your USX test folder here
     if os.access( testFolder, os.R_OK ):
-        UB = USXBible( name )
-        UB.load( testFolder, encoding )
+        UB = USXBible( testFolder, name, encoding )
+        UB.load()
         if Globals.verbosityLevel > 0: print( UB )
         UB.check()
         #UBErrors = UB.getErrors()
