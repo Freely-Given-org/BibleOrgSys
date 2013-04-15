@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # UnboundBible.py
-#   Last modified: 2013-04-14 by RJH (also update versionString below)
+#   Last modified: 2013-04-15 by RJH (also update versionString below)
 #
 # Module handling Biola University "unbound" Bible files
 #
@@ -72,15 +72,15 @@ def UnboundBibleFileCheck( givenFolderName, autoLoad=False ):
         if os.path.isdir( somepath ): foundFolders.append( something )
         elif os.path.isfile( somepath ): foundFiles.append( something )
 
-    # See if there's an UB project here in this folder
+    # See if there's an UnboundBible project here in this folder
     numFound = 0
     looksHopeful = False
     lastFilenameFound = None
     for thisFilename in sorted( foundFiles ):
         if thisFilename in ('book_names.txt','Readme.txt' ): looksHopeful = True
         elif thisFilename.endswith( '_utf8.txt' ):
-            if Globals.strictCheckingFlag:
-                firstLine = Globals.peekAtFirstLine( thisFilename, givenFolderName )
+            if 1 or Globals.strictCheckingFlag:
+                firstLine = Globals.peekIntoFile( thisFilename, givenFolderName )
                 if firstLine != "#THE UNBOUND BIBLE (www.unboundbible.org)":
                     if Globals.verbosityLevel > 2: print( "UB (unexpected) first line was '{}' in {}".format( firstLine, thisFilename ) ); halt
                     continue
@@ -109,8 +109,8 @@ def UnboundBibleFileCheck( givenFolderName, autoLoad=False ):
         # See if there's an UB project here in this folder
         for thisFilename in sorted( foundSubfiles ):
             if thisFilename.endswith( '_utf8.txt' ):
-                if Globals.strictCheckingFlag:
-                    firstLine = Globals.peekAtFirstLine( thisFilename, tryFolderName )
+                if 1 or Globals.strictCheckingFlag:
+                    firstLine = Globals.peekIntoFile( thisFilename, tryFolderName )
                     if firstLine != "#THE UNBOUND BIBLE (www.unboundbible.org)":
                         if Globals.verbosityLevel > 2: print( "UB (unexpected) first line was '{}' in {}".format( firstLine, thisFilname ) ); halt
                         continue

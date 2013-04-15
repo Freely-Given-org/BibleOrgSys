@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Globals.py
-#   Last modified: 2013-04-13 (also update versionString below)
+#   Last modified: 2013-04-15 (also update versionString below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -129,25 +129,31 @@ def remove_logfile( projectHandler ):
 
 ##########################################################################################################
 #
-# Peek at the first line of a file
+# Peek at the first line(s) of a file
 
-def peekAtFirstLine( filenameOrFilepath, folder=None ):
+def peekIntoFile( filenameOrFilepath, folder=None, numLines=1 ):
     """
-    Reads and returns the first line of a text file
+    Reads and returns the first line of a text file as a string
+        unless more than one line is requested
+        in which case a list of strings is returned (including empty strings for empty lines).
     """
+    assert( 1 <= numLines < 5 )
     filepath = os.path.join( folder, filenameOrFilepath ) if folder else filenameOrFilepath
     try:
+        lines = []
         with open( filepath, 'rt' ) as possibleUSFMFile: # Automatically closes the file when done
             lineNumber = 0
             for line in possibleUSFMFile:
                 lineNumber += 1
                 if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
                 #print( thisFilename, lineNumber, line )
-                return line
+                if numLines==1: return line # Always returns the first line
+                lines.append( line )
+                if lineNumber >= numLines: return lines
     except UnicodeDecodeError:
         if thisFilename != 'usfm-color.sty': # Seems this file isn't UTF-8, but we don't need it here anyway so ignore it
             print( "Seems we couldn't decode Unicode in '{}'".format( filepath ) ) # Could be binary or a different encoding
-# end of peekAtFirstLine
+# end of peekIntoFile
 
 
 ##########################################################################################################
@@ -310,7 +316,7 @@ def addStandardOptionsAndProcess( parserObject ):
     parserObject.add_option("-d", "--debug", action="store_true", dest="debug", default=False, help="output even more information for the programmer/debugger")
     commandLineOptions, commandLineArguments = parserObject.parse_args()
     if commandLineOptions.strict: setStrictCheckingFlag()
-    if commandLineOptions.strict: setLogErrorsFlag()
+    if commandLineOptions.log: setLogErrorsFlag()
     if commandLineOptions.debug: setDebugFlag()
     setVerbosity( commandLineOptions.verbose if commandLineOptions.verbose is not None else 2)
     if debugFlag:
@@ -367,11 +373,11 @@ def demo():
         printAllGlobals()
 
     # Demonstrate peekAtFirstLine function
-    line1 = peekAtFirstLine( "Globals.py" ) # Simple filename
+    line1 = peekIntoFile( "Globals.py", numLines=2 ) # Simple filename
     print( "Globals.py starts with '{}'".format( line1 ) )
-    line1 = peekAtFirstLine( "ReadMe.txt", "Tests/" ) # Filename and folder
+    line1 = peekIntoFile( "ReadMe.txt", "Tests/", 3 ) # Filename and folder
     print( "ReadMe.txt starts with '{}'".format( line1 ) )
-    line1 = peekAtFirstLine( "DataFiles/BibleBooksCodes.xml" ) # Filepath
+    line1 = peekIntoFile( "DataFiles/BibleBooksCodes.xml" ) # Filepath
     print( "BibleBooksCodes.xml starts with '{}'".format( line1 ) )
 # end of demo
 

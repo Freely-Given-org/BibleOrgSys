@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMFilenames.py
-#   Last modified: 2013-04-14 by RJH (also update versionString below)
+#   Last modified: 2013-04-15 by RJH (also update versionString below)
 #
 # Module handling USFM Bible filenames
 #
@@ -49,6 +49,9 @@ BibleditFilenames = ( '1_Genesis', '2_Exodus', '3_Leviticus', '4_Numbers', '5_De
     '67_Front_Matter', '68_Back_Matter', '69_Other_Material', '70_Tobit', '71_Judith', '72_Esther_(Greek)', '73_Wisdom_of_Solomon', '74_Sirach', '75_Baruch',
     '76_Letter_of_Jeremiah', '77_Song_of_the_Three_Children', '78_Susanna', '79_Bel_and_the_Dragon', '80_1_Maccabees', '81_2_Maccabees',
     '82_1_Esdras', '83_Prayer_of_Manasses', '84_Psalm_151', '85_3_Maccabees', '86_2_Esdras', '87_4_Maccabees', '88_Daniel_(Greek)' )
+
+extensionsToIgnore = ('XML', 'OSIS', 'USX',) # Must be UPPERCASE
+
 
 
 class USFMFilenames:
@@ -308,7 +311,7 @@ class USFMFilenames:
                 Each tuple contains ( BBB, filename ) not including the folder path.
         """
         resultList = []
-        if self.pattern:
+        if self.pattern and self.fileExtension.upper() not in extensionsToIgnore:
             if self.pattern == "Dd_BEName": # they are Bibledit style
                 for USFMBookCode,BibleditDigits,bookReferenceCode in self._BibleditBooksCodeNumberTriples:
                     BibleditSignature = BibleditDigits + '_'
@@ -371,7 +374,7 @@ class USFMFilenames:
             pFUpperProper, pFUpperExt = os.path.splitext( pFUpper )
             for USFMBookCode,USFMDigits,bookReferenceCode in self._USFMBooksCodeNumberTriples:
                 if USFMBookCode.upper() in pFUpperProper:
-                    if not pFUpperExt in ('.XML', '.OSIS', '.USX',):
+                    if not pFUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
                         self.doListAppend( Globals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
         self.lastTupleList = resultList
         return Globals.BibleBooksCodes.getSequenceList( resultList )
@@ -478,9 +481,9 @@ def demo():
 
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
-    testFolders = ("Tests/DataFilesForTests/USFMTest1/", "Tests/DataFilesForTests/USFMTest2/",) # These are RELATIVE paths
-    #testFolder = "/home/robert/USFM output from OSIS/"
-    #testFolder = "/home/myFolder" # You can put your test folder here
+    # These are relative paths -- you can replace these with your test folder(s)
+    testFolders = ("Tests/DataFilesForTests/USFMTest1/", "Tests/DataFilesForTests/USFMTest2/",
+                   'Tests/DataFilesForTests/USXTest1/', 'Tests/DataFilesForTests/USXTest2/',)
     for testFolder in testFolders:
         print( '\n' )
         if os.access( testFolder, os.R_OK ):

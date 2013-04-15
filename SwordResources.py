@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # SwordResources.py
-#   Last modified: 2013-04-14 (also update versionString below)
+#   Last modified: 2013-04-15 (also update versionString below)
 #
 # Module handling Sword resources using the Sword engine
 #
@@ -46,11 +46,13 @@ try:
     import Sword
     SwordType = "CrosswireLibrary"
 except: # Sword library (dll and python bindings) seem to be not available
-    #logging.critical( _("You need to install the Sword library on your computer in order to use this module.") )
-    #logging.info( _("Alternatively, you can try the all-Python SwordModules module.") )
-    #sys.exit( 1 )
-    import SwordModules # Use our own Python3 code instead
-    SwordType = "OurCode"
+    if 0: # Warn the user that this won't work
+        logging.critical( _("You need to install the Sword library on your computer in order to use this module.") )
+        logging.info( _("Alternatively, you can try the all-Python SwordModules module.") )
+        sys.exit( 1 )
+    else: # Use our own Python3 code instead
+        import SwordModules
+        SwordType = "OurCode"
 
 
 
@@ -114,8 +116,23 @@ class SwordInterface():
 
 
     def getVerseData( self, module, key ):
+        """
+        Returns a list of 5-tuples, e.g.,
+            [
+            ('c', 'c', '1', '1', []),
+            ('c#', 'c', '1', '1', []),
+            ('v', 'v', '1', '1', []),
+            ('v~', 'v~', 'In the beginning God created the heavens and the earth.',
+                                    'In the beginning God created the heavens and the earth.', [])
+            ]
+        """
         if SwordType == "CrosswireLibrary":
+            try: verseText = module.stripText( key )
+            except UnicodeDecodeError:
+                print( "Can't decode utf-8 text of {} {}".format( module.getName(), key.getShortText() ) )
+                return
             verseData = []
+            verseData.append( ('v~','v~', verseText, verseText, [],) )
         else:
             verseData = module.getBCVRef( key )
             #print( "gVD", module.getName(), key, verseData )
@@ -125,6 +142,7 @@ class SwordInterface():
             else:
                 assert( isinstance( verseData, list ) )
                 assert( 1 <= len(verseData) <= 5 )
+        #print( verseData ); halt
         return verseData
     # end of SwordInterface.getVerseData
 
@@ -168,6 +186,7 @@ def getBCV( BCV, moduleAbbreviation='KJV' ): # Very slow -- for testing only
     #print( 'refString', refString )
     return module.stripText( Sword.VerseKey( refString ) )
 # end of getBCV
+
 
 
 def demo():

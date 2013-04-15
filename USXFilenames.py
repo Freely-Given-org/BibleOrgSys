@@ -1,7 +1,8 @@
 #!/usr/bin/python3
+# -*- coding: utf-8 -*-
 #
 # USXFilenames.py
-#   Last modified: 2013-04-13 (also update versionString below)
+#   Last modified: 2013-04-15 (also update versionString below)
 #
 # Module handling USX Bible filenames
 #
@@ -198,15 +199,18 @@ def demo():
 
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
-    testFolder = 'Tests/DataFilesForTests/USXTest/' # This is a RELATIVE path
-    #testFolder = '/home/myFolder' # You can put your test folder here
-    if os.access( testFolder, os.R_OK ):
-        UFns = USXFilenames( testFolder )
-        print( UFns )
-        result = UFns.getPossibleFilenames(); print( "\nPossible:", len(result), result )
-        result = UFns.getConfirmedFilenames(); print( "\nConfirmed:", len(result), result )
-        result = UFns.getUnusedFilenames(); print( "\nOther:", len(result), result )
-    else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
+    # These are relative paths -- you can replace these with your test folder(s)
+    testFolders = ('Tests/DataFilesForTests/USXTest1/', 'Tests/DataFilesForTests/USXTest2/',
+                   'Tests/DataFilesForTests/USFMTest1/', 'Tests/DataFilesForTests/USFMTest2/',)
+    for testFolder in testFolders:
+        print( '\n' )
+        if os.access( testFolder, os.R_OK ):
+            UFns = USXFilenames( testFolder )
+            print( UFns )
+            result = UFns.getPossibleFilenames(); print( "\nPossible:", len(result), result )
+            result = UFns.getConfirmedFilenames(); print( "\nConfirmed:", len(result), result )
+            result = UFns.getUnusedFilenames(); print( "\nOther:", len(result), result )
+        else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
 # end of demo
 
 if __name__ == '__main__':

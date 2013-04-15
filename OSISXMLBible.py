@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # OSISXMLBible.py
-#   Last modified: 2013-04-14 by RJH (also update versionString below)
+#   Last modified: 2013-04-15 by RJH (also update versionString below)
 #
 # Module handling OSIS XML Bibles
 #
@@ -260,7 +260,7 @@ class OSISXMLBible( Bible ):
                         self.lang = value
                     else: logging.warning( "gb2d Unprocessed {} attribute ({}) in {}".format( attrib, value, sublocation ) )
                 if self.osisRefWork:
-                    if self.osisRefWork not in ('Bible','defaultReferenceScheme',):
+                    if self.osisRefWork not in ('bible','Bible','defaultReferenceScheme',):
                         print( "New variety of osisRefWork: '{}'".format( self.osisRefWork ) )
                 if self.lang:
                     if self.lang in ('en','he','my',): # Only had these ones so far (English, Hebrew, my??)

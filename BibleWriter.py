@@ -136,6 +136,7 @@ class BibleWriter( InternalBible ):
                 if BBB in self.books:
                     swordAbbrev = Globals.BibleBooksCodes.getSwordAbbreviation( BBB )
                     vernacularName = getBookNameFunction(BBB).replace( ' ', '' ).upper()
+                    vernacularAbbrev = vernacularName
                     if len(vernacularName)>4  or (len(vernacularName)>3 and not vernacularName[0].isdigit):
                         vernacularAbbrev = vernacularName[:4 if vernacularName[0].isdigit() else 3]
                         if vernacularAbbrev in abbrevList:
@@ -149,9 +150,9 @@ class BibleWriter( InternalBible ):
                             SwLocFile.write( '{}={}\n'.format( vernacularAbbrev, swordAbbrev ) ) # Write the UPPER CASE language book name and the Sword abbreviation
                             abbrevList.append( vernacularAbbrev )
                     changed = False
-                    for something in ( ".''̉΄" ): # Remove punctuation and glottals (all UPPER CASE here)
-                        if something in vernacularAbbrev:
-                            vernacularAbbrev = vernacularAbbrev.replace( something, '' )
+                    for somePunct in ( ".''̉΄" ): # Remove punctuation and glottals (all UPPER CASE here)
+                        if somePunct in vernacularAbbrev:
+                            vernacularAbbrev = vernacularAbbrev.replace( somePunct, '' )
                             changed = True
                     if changed:
                         if vernacularAbbrev in abbrevList:
