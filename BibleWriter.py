@@ -101,7 +101,7 @@ class BibleWriter( InternalBible ):
         Adjust the pseudo USFM and write the USFM files.
         """
         if not outputFolder: outputFolder = "OutputFiles/USFMExport/"
-        if not os.access( outputFolder, os.F_OK ): os.mkdir( outputFolder ) # Make the empty folder if there wasn't already one there
+        if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         #if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_MediaWiki_controls.txt", controlDict )
         #assert( controlDict and isinstance( controlDict, dict ) )
 
@@ -179,7 +179,7 @@ class BibleWriter( InternalBible ):
             converts the USFM information to a Media Wiki file.
         """
         if not outputFolder: outputFolder = "OutputFiles/MediaWikiExport/"
-        if not os.access( outputFolder, os.F_OK ): os.mkdir( outputFolder ) # Make the empty folder if there wasn't already one there
+        if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_MediaWiki_controls.txt", controlDict )
         if Globals.debugFlag: assert( controlDict and isinstance( controlDict, dict ) )
 
@@ -411,7 +411,7 @@ class BibleWriter( InternalBible ):
             but more fields can be discovered by looking at downloaded files.
         """
         if not outputFolder: outputFolder = "OutputFiles/ZefaniaExport/"
-        if not os.access( outputFolder, os.F_OK ): os.mkdir( outputFolder ) # Make the empty folder if there wasn't already one there
+        if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_Zefania_controls.txt", controlDict )
         if Globals.debugFlag: assert( controlDict and isinstance( controlDict, dict ) )
 
@@ -502,7 +502,7 @@ class BibleWriter( InternalBible ):
         If a schema is given (either a path or URL), the XML output files are validated.
         """
         if not outputFolder: outputFolder = "OutputFiles/USXExport/"
-        if not os.access( outputFolder, os.F_OK ): os.mkdir( outputFolder ) # Make the empty folder if there wasn't already one there
+        if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_USX_controls.txt", controlDict )
         if Globals.debugFlag: assert( controlDict and isinstance( controlDict, dict ) )
 
@@ -947,7 +947,7 @@ class BibleWriter( InternalBible ):
         TODO: We're not consistent about handling errors: sometimes we use assert, sometime raise (both of which abort the program), and sometimes log errors or warnings.
         """
         if not outputFolder: outputFolder = "OutputFiles/OSISExport/"
-        if not os.access( outputFolder, os.F_OK ): os.mkdir( outputFolder ) # Make the empty folder if there wasn't already one there
+        if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_OSIS_controls.txt", controlDict )
         if Globals.debugFlag: assert( controlDict and isinstance( controlDict, dict ) )
 
@@ -1551,7 +1551,7 @@ class BibleWriter( InternalBible ):
             converts the USFM information to a UTF-8 OSIS-XML-based Sword module.
         """
         if not outputFolder: outputFolder = "OutputFiles/SwordExport/"
-        if not os.access( outputFolder, os.F_OK ): os.mkdir( outputFolder ) # Make the empty folder if there wasn't already one there
+        if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_OSIS_controls.txt", controlDict )
 
         import struct
