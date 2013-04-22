@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-04-20 by RJH (also update versionString below)
+#   Last modified: 2013-04-22 by RJH (also update versionString below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -1364,8 +1364,10 @@ class BibleWriter( InternalBible ):
                         haveOpenOutline = True
                     if text: writerObject.writeLineOpenClose( 'item', checkText(text) )
                 elif marker=='io2':
-                    if not haveOpenIntro: raise Exception( "toOSIS: Have an io2 not in an introduction section" )
-                    if not haveOpenOutline: raise Exception( "toOSIS: Have an io2 not in an outline section" )
+                    if not haveOpenIntro:
+                        if Globals.logErrorsFlag: logging.error( _("toOSIS: {} Have an io2 not in an introduction section").format( toOSISGlobals["verseRef"] ) )
+                    if not haveOpenOutline:
+                        if Globals.logErrorsFlag: logging.error( _("toOSIS: {} Have an io2 not in an outline section").format( toOSISGlobals["verseRef"] ) )
                     writerObject.writeLineOpenClose( 'item', checkText(text) ) # TODO: Shouldn't this be different from an io1???
                 elif marker=='c':
                     if haveOpenVsID != False: # Close the previous verse
@@ -1794,6 +1796,7 @@ class BibleWriter( InternalBible ):
                     <verse sID="Esth.9.16-Esth.9.17" osisID="Esth.9.16 Esth.9.17" n="16-17"/>text<verse eID="Esth.9.16-Esth.9.17"/> (Snowfall)
                 """
                 nonlocal haveOpenVsID
+                osisID = sID = toSwordGlobals["verseRef"] # default
                 if haveOpenVsID != False: # Close the previous verse
                     writerObject.writeLineOpenSelfclose( 'verse', ('eID',haveOpenVsID) )
                 #verseNumberString = text.split()[0] # Get the first token which is the first number
@@ -1925,7 +1928,8 @@ class BibleWriter( InternalBible ):
                         writerObject.writeLineClose( 'list' )
                         writerObject.writeLineOpenSelfclose( 'div', [('eID',toSwordGlobals['idStack'].pop()), ('type',"outline")] )
                         haveOpenOutline = False
-                    if haveOpenSection: raise Exception( "Not handled yet iot" )
+                    if haveOpenSection:
+                        if Globals.logErrorsFlag: logging.error( "toSword: {} Not handled yet iot".format( toSwordGlobals["verseRef"] ) )
                     closeAnyOpenParagraph()
                     writerObject.writeLineOpenSelfclose( 'div', [getSID(), ('type',"outline")] )
                     if text: writerObject.writeLineOpenClose( 'title', checkText(text) )
@@ -1948,8 +1952,10 @@ class BibleWriter( InternalBible ):
                         haveOpenOutline = True
                     if text: writerObject.writeLineOpenClose( 'item', checkText(text) )
                 elif marker=='io2':
-                    if not haveOpenIntro: raise Exception( "toSword: Have an io2 not in an introduction section" )
-                    if not haveOpenOutline: raise Exception( "toSword: Have an io2 not in an outline section" )
+                    if not haveOpenIntro:
+                        if Globals.logErrorsFlag: logging.error( _("toSword: {} Have an io2 not in an introduction section").format( toSwordGlobals["verseRef"] ) )
+                    if not haveOpenOutline:
+                        if Globals.logErrorsFlag: logging.error( _("toSword: {} Have an io2 not in an outline section").format( toSwordGlobals["verseRef"] ) )
                     writerObject.writeLineOpenClose( 'item', checkText(text) ) # TODO: Shouldn't this be different from an io1???
                 elif marker=='c':
                     if haveOpenOutline:

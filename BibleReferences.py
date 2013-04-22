@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleReferences.py
-#   Last modified: 2013-04-18 by RJH (also update versionString below)
+#   Last modified: 2013-04-22 by RJH (also update versionString below)
 #
 # Module for handling Bible references including ranges
 #
@@ -1230,7 +1230,7 @@ class BibleReferenceList( BibleReferenceBase ):
     #def XXXUnusedXXXMaybeUntestedXXXcontainsReferenceTuple( self, refTuple ):
         #""" Returns True/False if the internal reference list contains the given reference tuple. """
         #assert( refTuple and len(refTuple)==4 )
-        #if Globals.logErrorsFlag and not self._BibleOrganizationalSystem.isValidBCVRef( refTuple, "{} {}:{}{}"%(refTuple[0],refTuple[1],refTuple[2],refTuple[3]) ):
+        #if Globals.logErrorsFlag and not self._BibleOrganizationalSystem.isValidBCVRef( refTuple, "{} {}:{}{}".format(refTuple[0],refTuple[1],refTuple[2],refTuple[3]) ):
             #haveErrors = True
 
         ## See if we can find this reference in our internal list
@@ -1252,7 +1252,8 @@ class BibleReferenceList( BibleReferenceBase ):
         # First find out what we were given
         if V.isdigit(): # it's simple
             myTuple = (BBB, C, V, S)
-            if Globals.logErrorsFlag and not self._BibleOrganizationalSystem.isValidBCVRef( myTuple, "{} {}:{}{}"%(BBB,C,V,S) ):
+            if Globals.logErrorsFlag \
+            and not self._BibleOrganizationalSystem.isValidBCVRef( myTuple, "{} {}:{}{}".format(BBB,C,V,S) ):
                 haveErrors = True
             myList = [ myTuple, ]
         else: # Must have a list or range
@@ -1263,13 +1264,15 @@ class BibleReferenceList( BibleReferenceBase ):
                     if char.isdigit(): myV += char
                     elif myV and char in self.punctuationDict['verseSeparator']: # Just got a verse number
                         myTuple = (BBB, C, myV, S)
-                        if Globals.logErrorsFlag and not self._BibleOrganizationalSystem.isValidBCVRef( myTuple, "{} {}:{}{}"%(BBB,C,myV,S) ):
+                        if Globals.logErrorsFlag \
+                        and not self._BibleOrganizationalSystem.isValidBCVRef( myTuple, "{} {}:{}{}".format(BBB,C,myV,S) ):
                             haveErrors = True
                         myList.append( myTuple )
                         myV = ''
                     elif myV and char in self.punctuationDict['verseBridgeCharacter']: # Just got the start verse of a range
                         startTuple = (BBB, C, myV, S)
-                        if Globals.logErrorsFlag and not self._BibleOrganizationalSystem.isValidBCVRef( startTuple, "{} {}:{}{}"%(BBB,C,myV,S) ):
+                        if Globals.logErrorsFlag \
+                        and not self._BibleOrganizationalSystem.isValidBCVRef( startTuple, "{} {}:{}{}".format(BBB,C,myV,S) ):
                             haveErrors = True
                         status, myV = 1, ''
                     elif Globals.logErrorsFlag: logging.error( _("Invalid '{}' verse list/range given with {} {}:{}{}").format( V, BBB, C, V, S ) )
@@ -1278,7 +1281,7 @@ class BibleReferenceList( BibleReferenceBase ):
                     if char.isdigit(): myV += char
                     elif myV and char in self.punctuationDict['verseSeparator']: # Just got the end of the range
                         endTuple = (BBB, C, myV, S)
-                        if Globals.logErrorsFlag and not self._BibleOrganizationalSystem.isValidBCVRef( endTuple, "{} {}:{}{}"%(BBB,C,myV,S) ):
+                        if Globals.logErrorsFlag and not self._BibleOrganizationalSystem.isValidBCVRef( endTuple, "{} {}:{}{}".format(BBB,C,myV,S) ):
                             haveErrors = True
                         verseList = self._BibleOrganizationalSystem.expandCVRange( startTuple, endTuple, bookOrderSystem=self._BibleOrganizationalSystem )
                         if verseList is not None: myList.extend( verseList )
@@ -1684,7 +1687,7 @@ class BibleAnchorReference:
         ## First find out what we were given
         #if V.isdigit(): # it's simple
             #myTuple = (BBB, C, V, S)
-            #if Globals.logErrorsFlag and not self._BibleOrganizationalSystem.isValidBCVRef( myTuple, "{} {}:{}{}"%(BBB,C,V,S) ):
+            #if Globals.logErrorsFlag and not self._BibleOrganizationalSystem.isValidBCVRef( myTuple, "{} {}:{}{}".format(BBB,C,V,S) ):
                 #haveErrors = True
             #myList = [ myTuple, ]
         #else: # Must have a list or range
@@ -1695,13 +1698,13 @@ class BibleAnchorReference:
                     #if char.isdigit(): myV += char
                     #elif myV and char in self.punctuationDict['verseSeparator']: # Just got a verse number
                         #myTuple = (BBB, C, myV, S)
-                        #if Globals.logErrorsFlag and not self._BibleOrganizationalSystem.isValidBCVRef( myTuple, "{} {}:{}{}"%(BBB,C,myV,S) ):
+                        #if Globals.logErrorsFlag and not self._BibleOrganizationalSystem.isValidBCVRef( myTuple, "{} {}:{}{}".format(BBB,C,myV,S) ):
                             #haveErrors = True
                         #myList.append( myTuple )
                         #myV = ''
                     #elif myV and char in self.allowedBridgeCharacters: # Just got the start verse of a range
                         #startTuple = (BBB, C, myV, S)
-                        #if Globals.logErrorsFlag and not self._BibleOrganizationalSystem.isValidBCVRef( startTuple, "{} {}:{}{}"%(BBB,C,myV,S) ):
+                        #if Globals.logErrorsFlag and not self._BibleOrganizationalSystem.isValidBCVRef( startTuple, "{} {}:{}{}".format(BBB,C,myV,S) ):
                             #haveErrors = True
                         #status, myV = 1, ''
                     #elif Globals.logErrorsFlag: logging.error( _("Invalid '{}' verse list/range given with {} {}:{}{}").format( V, BBB, C, V, S ) )
@@ -1710,7 +1713,7 @@ class BibleAnchorReference:
                     #if char.isdigit(): myV += char
                     #elif myV and char in self.punctuationDict['verseSeparator']: # Just got the end of the range
                         #endTuple = (BBB, C, myV, S)
-                        #if Globals.logErrorsFlag and not self._BibleOrganizationalSystem.isValidBCVRef( endTuple, "{} {}:{}{}"%(BBB,C,myV,S) ):
+                        #if Globals.logErrorsFlag and not self._BibleOrganizationalSystem.isValidBCVRef( endTuple, "{} {}:{}{}".format(BBB,C,myV,S) ):
                             #haveErrors = True
                         #verseList = self._BibleOrganizationalSystem.expandCVRange( startTuple, endTuple, bookOrderSystem=self._BibleOrganizationalSystem )
                         #if verseList is not None: myList.extend( verseList )
