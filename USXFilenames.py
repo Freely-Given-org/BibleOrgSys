@@ -76,7 +76,7 @@ class USXFilenames:
                             matched = True
                             break
                 if matched: break
-        if not matched: logging.info( _("Unable to recognize valid USX files in ") + folder )
+        if Globals.verbosityLevel>2 and not matched: logging.info( _("Unable to recognize valid USX files in ") + folder )
         #print( "USXFilenames: pattern='{}' fileExtension='{}'".format( self.pattern, self.fileExtension ) )
     # end of __init__
 

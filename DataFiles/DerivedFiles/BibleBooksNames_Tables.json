@@ -274,56 +274,46 @@
       ]
     }, 
     {
-      "WSI": {
-        "defaultAbbreviation": "WrdsSir", 
-        "defaultName": "Words of Sirach", 
+      "CH1": {
+        "defaultAbbreviation": "1 Chr", 
+        "defaultName": "1 Chronicles", 
         "inputFields": [
-          "Words of Sirach", 
-          "WrdsSir", 
-          "Wrds Sirach", 
-          "Wrds Srch"
+          "1 Chronicles", 
+          "1 Chr", 
+          "1 Chrnc", 
+          "1 Cronic", 
+          "1 Crnc"
         ]
       }, 
-      "EZR": {
-        "defaultAbbreviation": "Ezr", 
-        "defaultName": "Ezra", 
+      "BAR": {
+        "defaultAbbreviation": "Bar", 
+        "defaultName": "Baruch", 
         "inputFields": [
-          "Ezra", 
-          "Ezr"
+          "Baruch", 
+          "Bar", 
+          "Brch"
         ]
       }, 
-      "LBA": {
-        "defaultAbbreviation": "EpBar", 
-        "defaultName": "Epistle of Baruch", 
+      "CH2": {
+        "defaultAbbreviation": "2 Chr", 
+        "defaultName": "2 Chronicles", 
         "inputFields": [
-          "Epistle of Baruch", 
-          "EpBar", 
-          "Ep Baruch", 
-          "Ep Brch", 
-          "Epi Baruch", 
-          "Epis Baruch", 
-          "Letter of Baruch", 
-          "Ltr of Baruch", 
-          "Ltr Baruch"
+          "2 Chronicles", 
+          "2 Chr", 
+          "2 Chrnc", 
+          "2 Cronic", 
+          "2 Crnc"
         ]
       }, 
-      "EZN": {
-        "defaultAbbreviation": "EzNeh", 
-        "defaultName": "Ezra-Nehemiah", 
+      "JAM": {
+        "defaultAbbreviation": "Jam", 
+        "defaultName": "James", 
         "inputFields": [
-          "Ezra-Nehemiah", 
-          "EzNeh", 
-          "Ezr Neh"
-        ]
-      }, 
-      "DOJ": {
-        "defaultAbbreviation": "DoJ", 
-        "defaultName": "Dormition of John", 
-        "inputFields": [
-          "Dormition of John", 
-          "DoJ", 
-          "Drm Jhn", 
-          "Drm Jn"
+          "James", 
+          "Jam", 
+          "Jms", 
+          "Jmes", 
+          "Jas"
         ]
       }, 
       "EZK": {
@@ -335,164 +325,15 @@
           "Ezkl"
         ]
       }, 
-      "ECC": {
-        "defaultAbbreviation": "Ecc", 
-        "defaultName": "Ecclesiastes", 
+      "MQ3": {
+        "defaultAbbreviation": "3 Meq", 
+        "defaultName": "3 Meqabyan", 
         "inputFields": [
-          "Ecclesiastes", 
-          "Ecc", 
-          "Ecclsts", 
-          "Qoheleth", 
-          "Qhlth"
-        ]
-      }, 
-      "P12": {
-        "defaultAbbreviation": "TwProp", 
-        "defaultName": "Twelve Prophets", 
-        "inputFields": [
-          "Twelve Prophets", 
-          "TwProp", 
-          "12 Prophets"
-        ]
-      }, 
-      "ODE": {
-        "defaultAbbreviation": "Ode", 
-        "defaultName": "Odes", 
-        "inputFields": [
-          "Odes", 
-          "Ode", 
-          "Odae"
-        ]
-      }, 
-      "PS2": {
-        "defaultAbbreviation": "Ps151", 
-        "defaultName": "Psalm 151", 
-        "inputFields": [
-          "Psalm 151", 
-          "Ps151", 
-          "Pslm 151"
-        ]
-      }, 
-      "NEH": {
-        "defaultAbbreviation": "Neh", 
-        "defaultName": "Nehemiah", 
-        "inputFields": [
-          "Nehemiah", 
-          "Neh", 
-          "Nhmh"
-        ]
-      }, 
-      "TH2": {
-        "defaultAbbreviation": "2 Thess", 
-        "defaultName": "2 Thessalonians", 
-        "inputFields": [
-          "2 Thessalonians", 
-          "2 Thess", 
-          "2 Thsslns", 
-          "2 Thslns", 
-          "2 Thesallonians", 
-          "2 Thessallonians", 
-          "2 Thesalonians"
-        ]
-      }, 
-      "TH1": {
-        "defaultAbbreviation": "1 Thess", 
-        "defaultName": "1 Thessalonians", 
-        "inputFields": [
-          "1 Thessalonians", 
-          "1 Thess", 
-          "1 Thsslns", 
-          "1 Thslns", 
-          "1 Thesallonians", 
-          "1 Thessallonians", 
-          "1 Thesalonians"
-        ]
-      }, 
-      "SNG": {
-        "defaultAbbreviation": "Sng", 
-        "defaultName": "Song of Solomon", 
-        "inputFields": [
-          "Song of Solomon", 
-          "Sng", 
-          "Sng of Slmn", 
-          "Song of Songs", 
-          "Sng of Sngs", 
-          "SoS", 
-          "SS", 
-          "Canticle of Canticles", 
-          "Cntcl of Cntcl", 
-          "CoC", 
-          "CC"
-        ]
-      }, 
-      "ACT": {
-        "defaultAbbreviation": "Act", 
-        "defaultName": "Acts", 
-        "inputFields": [
-          "Acts", 
-          "Act", 
-          "Ats"
-        ]
-      }, 
-      "MQ2": {
-        "defaultAbbreviation": "2 Meq", 
-        "defaultName": "2 Meqabyan", 
-        "inputFields": [
-          "2 Meqabyan", 
-          "2 Meq", 
-          "2 Mqbyn", 
-          "2 Makabian", 
-          "2 Mkbn", 
-          "Mekabis of Moab", 
-          "Mekabis Moab", 
-          "Mkbs Mb"
-        ]
-      }, 
-      "DID": {
-        "defaultAbbreviation": "Did", 
-        "defaultName": "Didache", 
-        "inputFields": [
-          "Didache", 
-          "Did", 
-          "Ddch"
-        ]
-      }, 
-      "JNA": {
-        "defaultAbbreviation": "Jon", 
-        "defaultName": "Jonah", 
-        "inputFields": [
-          "Jonah", 
-          "Jon", 
-          "Jnh"
-        ]
-      }, 
-      "JUB": {
-        "defaultAbbreviation": "Jub", 
-        "defaultName": "Jubilees", 
-        "inputFields": [
-          "Jubilees", 
-          "Jub", 
-          "Jbls"
-        ]
-      }, 
-      "CHR": {
-        "defaultAbbreviation": "Chr", 
-        "defaultName": "Chronicles", 
-        "inputFields": [
-          "Chronicles", 
-          "Chr", 
-          "Chrncls"
-        ]
-      }, 
-      "ZEP": {
-        "defaultAbbreviation": "Zep", 
-        "defaultName": "Zephaniah", 
-        "inputFields": [
-          "Zephaniah", 
-          "Zep", 
-          "Zphnh", 
-          "Zefaniah", 
-          "Zfnh"
+          "3 Meqabyan", 
+          "3 Meq", 
+          "3 Mqbyn", 
+          "3 Makabian", 
+          "3 Mkbn"
         ]
       }, 
       "JN2": {
@@ -522,145 +363,39 @@
           "1 Jhn"
         ]
       }, 
-      "BA3": {
-        "defaultAbbreviation": "3 Bar", 
-        "defaultName": "3 Baruch", 
+      "EZA": {
+        "defaultAbbreviation": "ApEz", 
+        "defaultName": "Apocalypse of Ezra", 
         "inputFields": [
-          "3 Baruch", 
-          "3 Bar", 
-          "3 Brch"
+          "Apocalypse of Ezra", 
+          "ApEz", 
+          "Ap Ezra"
         ]
       }, 
-      "TTP": {
-        "defaultAbbreviation": "Tst12", 
-        "defaultName": "Testaments of the Twelve Patriarchs", 
+      "CL2": {
+        "defaultAbbreviation": "2 Cle", 
+        "defaultName": "2 Clement", 
         "inputFields": [
-          "Testaments of the Twelve Patriarchs", 
-          "Tst12", 
-          "Tst 12P", 
-          "Tst Twelve"
+          "2 Clement", 
+          "2 Cle", 
+          "2 Clmnt"
         ]
       }, 
-      "ZEC": {
-        "defaultAbbreviation": "Zec", 
-        "defaultName": "Zechariah", 
+      "EZN": {
+        "defaultAbbreviation": "EzNeh", 
+        "defaultName": "Ezra-Nehemiah", 
         "inputFields": [
-          "Zechariah", 
-          "Zec", 
-          "Zchrh"
+          "Ezra-Nehemiah", 
+          "EzNeh", 
+          "Ezr Neh"
         ]
       }, 
-      "KGS": {
-        "defaultAbbreviation": "Kgs", 
-        "defaultName": "Kings", 
+      "AMO": {
+        "defaultAbbreviation": "Amos", 
+        "defaultName": "Amos", 
         "inputFields": [
-          "Kings", 
-          "Kgs", 
-          "Kngs"
-        ]
-      }, 
-      "HOS": {
-        "defaultAbbreviation": "Hos", 
-        "defaultName": "Hosea", 
-        "inputFields": [
-          "Hosea", 
-          "Hos", 
-          "Hs"
-        ]
-      }, 
-      "ENO": {
-        "defaultAbbreviation": "Eno", 
-        "defaultName": "Enoch", 
-        "inputFields": [
-          "Enoch", 
-          "Eno", 
-          "Ench", 
-          "1 Enoch", 
-          "1 Ench"
-        ]
-      }, 
-      "ISA": {
-        "defaultAbbreviation": "Isa", 
-        "defaultName": "Isaiah", 
-        "inputFields": [
-          "Isaiah", 
-          "Isa"
-        ]
-      }, 
-      "PRO": {
-        "defaultAbbreviation": "Pro", 
-        "defaultName": "Proverbs", 
-        "inputFields": [
-          "Proverbs", 
-          "Pro", 
-          "Prvrbs", 
-          "Prvbs"
-        ]
-      }, 
-      "EUT": {
-        "defaultAbbreviation": "Eut", 
-        "defaultName": "Prayer of Euthalius", 
-        "inputFields": [
-          "Prayer of Euthalius", 
-          "Eut", 
-          "Pr Eut"
-        ]
-      }, 
-      "BAR": {
-        "defaultAbbreviation": "Bar", 
-        "defaultName": "Baruch", 
-        "inputFields": [
-          "Baruch", 
-          "Bar", 
-          "Brch"
-        ]
-      }, 
-      "EZ5": {
-        "defaultAbbreviation": "5 Ezr", 
-        "defaultName": "5 Ezra", 
-        "inputFields": [
-          "5 Ezra", 
-          "5 Ezr", 
-          "5 Esdras"
-        ]
-      }, 
-      "JOL": {
-        "defaultAbbreviation": "Joel", 
-        "defaultName": "Joel", 
-        "inputFields": [
-          "Joel", 
-          "Jl"
-        ]
-      }, 
-      "PHP": {
-        "defaultAbbreviation": "Php", 
-        "defaultName": "Philippians", 
-        "inputFields": [
-          "Philippians", 
-          "Php", 
-          "Phlppns", 
-          "Phlpns", 
-          "Phillipians", 
-          "Philipians", 
-          "Flppns", 
-          "Flpns"
-        ]
-      }, 
-      "JOB": {
-        "defaultAbbreviation": "Job", 
-        "defaultName": "Job", 
-        "inputFields": [
-          "Job", 
-          "Jb"
-        ]
-      }, 
-      "GAL": {
-        "defaultAbbreviation": "Gal", 
-        "defaultName": "Galatians", 
-        "inputFields": [
-          "Galatians", 
-          "Gal", 
-          "Gltns"
+          "Amos", 
+          "Ams"
         ]
       }, 
       "TI1": {
@@ -672,22 +407,65 @@
           "1 Tmthy"
         ]
       }, 
-      "BEL": {
-        "defaultAbbreviation": "Bel", 
-        "defaultName": "Bel and the Dragon", 
+      "TI2": {
+        "defaultAbbreviation": "2 Tim", 
+        "defaultName": "2 Timothy", 
         "inputFields": [
-          "Bel and the Dragon", 
-          "Bel", 
-          "BaD"
+          "2 Timothy", 
+          "2 Tim", 
+          "2 Tmthy"
         ]
       }, 
-      "SIR": {
-        "defaultAbbreviation": "Sir", 
-        "defaultName": "Sirach", 
+      "EZR": {
+        "defaultAbbreviation": "Ezr", 
+        "defaultName": "Ezra", 
         "inputFields": [
-          "Sirach", 
-          "Sir", 
-          "Srch"
+          "Ezra", 
+          "Ezr"
+        ]
+      }, 
+      "ROM": {
+        "defaultAbbreviation": "Rom", 
+        "defaultName": "Romans", 
+        "inputFields": [
+          "Romans", 
+          "Rom", 
+          "Rmns"
+        ]
+      }, 
+      "LEV": {
+        "defaultAbbreviation": "Lev", 
+        "defaultName": "Leviticus", 
+        "inputFields": [
+          "Leviticus", 
+          "Lev", 
+          "Lvtcs", 
+          "3 Moses", 
+          "3 Mss"
+        ]
+      }, 
+      "LAM": {
+        "defaultAbbreviation": "Lam", 
+        "defaultName": "Lamentations", 
+        "inputFields": [
+          "Lamentations", 
+          "Lam", 
+          "Lmnts", 
+          "Lamentations of Jeremiah"
+        ]
+      }, 
+      "MQ2": {
+        "defaultAbbreviation": "2 Meq", 
+        "defaultName": "2 Meqabyan", 
+        "inputFields": [
+          "2 Meqabyan", 
+          "2 Meq", 
+          "2 Mqbyn", 
+          "2 Makabian", 
+          "2 Mkbn", 
+          "Mekabis of Moab", 
+          "Mekabis Moab", 
+          "Mkbs Mb"
         ]
       }, 
       "MRK": {
@@ -702,204 +480,13 @@
           "Saint Mk"
         ]
       }, 
-      "PHM": {
-        "defaultAbbreviation": "Phm", 
-        "defaultName": "Philemon", 
+      "MAL": {
+        "defaultAbbreviation": "Mal", 
+        "defaultName": "Malachi", 
         "inputFields": [
-          "Philemon", 
-          "Phm", 
-          "Phlmn", 
-          "Flmn"
-        ]
-      }, 
-      "DEU": {
-        "defaultAbbreviation": "Deu", 
-        "defaultName": "Deuteronomy", 
-        "inputFields": [
-          "Deuteronomy", 
-          "Deu", 
-          "Dtrnmy", 
-          "5 Moses", 
-          "5 Mss"
-        ]
-      }, 
-      "WIS": {
-        "defaultAbbreviation": "Wis", 
-        "defaultName": "Wisdom of Solomon", 
-        "inputFields": [
-          "Wisdom of Solomon", 
-          "Wis", 
-          "Wsdm of Slmn"
-        ]
-      }, 
-      "REV": {
-        "defaultAbbreviation": "Rev", 
-        "defaultName": "Revelation", 
-        "inputFields": [
-          "Revelation", 
-          "Rev", 
-          "Rvltn", 
-          "Rvln"
-        ]
-      }, 
-      "MOS": {
-        "defaultAbbreviation": "Mos", 
-        "defaultName": "Moses", 
-        "inputFields": [
-          "Moses", 
-          "Mos", 
-          "Mss"
-        ]
-      }, 
-      "REP": {
-        "defaultAbbreviation": "Rep", 
-        "defaultName": "Reproof", 
-        "inputFields": [
-          "Reproof", 
-          "Rep", 
-          "Rprf"
-        ]
-      }, 
-      "JDE": {
-        "defaultAbbreviation": "Jud", 
-        "defaultName": "Jude", 
-        "inputFields": [
-          "Jude", 
-          "Jud", 
-          "Jde"
-        ]
-      }, 
-      "JDG": {
-        "defaultAbbreviation": "Jdg", 
-        "defaultName": "Judges", 
-        "inputFields": [
-          "Judges", 
-          "Jdg", 
-          "Jdgs"
-        ]
-      }, 
-      "PS3": {
-        "defaultAbbreviation": "SyrPs", 
-        "defaultName": "Syriac Psalms", 
-        "inputFields": [
-          "Syriac Psalms", 
-          "SyrPs", 
-          "Syr Pslms"
-        ]
-      }, 
-      "GES": {
-        "defaultAbbreviation": "1 Esd", 
-        "defaultName": "1 Esdras", 
-        "inputFields": [
-          "1 Esdras", 
-          "1 Esd", 
-          "1 Esdrs"
-        ]
-      }, 
-      "EZA": {
-        "defaultAbbreviation": "ApEz", 
-        "defaultName": "Apocalypse of Ezra", 
-        "inputFields": [
-          "Apocalypse of Ezra", 
-          "ApEz", 
-          "Ap Ezra"
-        ]
-      }, 
-      "EPH": {
-        "defaultAbbreviation": "Eph", 
-        "defaultName": "Ephesians", 
-        "inputFields": [
-          "Ephesians", 
-          "Eph", 
-          "Ephsns", 
-          "Efsns"
-        ]
-      }, 
-      "CO3": {
-        "defaultAbbreviation": "3 Cor", 
-        "defaultName": "3 Corinthians", 
-        "inputFields": [
-          "3 Corinthians", 
-          "3 Cor", 
-          "3 Crnthns"
-        ]
-      }, 
-      "TIT": {
-        "defaultAbbreviation": "Tit", 
-        "defaultName": "Titus", 
-        "inputFields": [
-          "Titus", 
-          "Tit", 
-          "Tts"
-        ]
-      }, 
-      "JDT": {
-        "defaultAbbreviation": "Jdt", 
-        "defaultName": "Judith", 
-        "inputFields": [
-          "Judith", 
-          "Jdt", 
-          "Jdth"
-        ]
-      }, 
-      "EXO": {
-        "defaultAbbreviation": "Exo", 
-        "defaultName": "Exodus", 
-        "inputFields": [
-          "Exodus", 
-          "Exo", 
-          "Exds", 
-          "2 Moses", 
-          "2 Mss"
-        ]
-      }, 
-      "LEV": {
-        "defaultAbbreviation": "Lev", 
-        "defaultName": "Leviticus", 
-        "inputFields": [
-          "Leviticus", 
-          "Lev", 
-          "Lvtcs", 
-          "3 Moses", 
-          "3 Mss"
-        ]
-      }, 
-      "CO1": {
-        "defaultAbbreviation": "1 Cor", 
-        "defaultName": "1 Corinthians", 
-        "inputFields": [
-          "1 Corinthians", 
-          "1 Cor", 
-          "1 Crnthns"
-        ]
-      }, 
-      "CO2": {
-        "defaultAbbreviation": "2 Cor", 
-        "defaultName": "2 Corinthians", 
-        "inputFields": [
-          "2 Corinthians", 
-          "2 Cor", 
-          "2 Crnthns"
-        ]
-      }, 
-      "PAZ": {
-        "defaultAbbreviation": "PrAz", 
-        "defaultName": "Prayer of Azariah", 
-        "inputFields": [
-          "Prayer of Azariah", 
-          "PrAz", 
-          "Pryr Azrh"
-        ]
-      }, 
-      "GEN": {
-        "defaultAbbreviation": "Gen", 
-        "defaultName": "Genesis", 
-        "inputFields": [
-          "Genesis", 
-          "Gen", 
-          "Gnss", 
-          "1 Moses", 
-          "1 Mss"
+          "Malachi", 
+          "Mal", 
+          "Mlchi"
         ]
       }, 
       "KI2": {
@@ -912,61 +499,66 @@
           "2 Ks"
         ]
       }, 
-      "DAN": {
-        "defaultAbbreviation": "Dan", 
-        "defaultName": "Daniel", 
+      "MAN": {
+        "defaultAbbreviation": "Man", 
+        "defaultName": "Prayer of Manasses", 
         "inputFields": [
-          "Daniel", 
-          "Dan", 
-          "Dnl"
+          "Prayer of Manasses", 
+          "Man", 
+          "Manasses", 
+          "Manasseh", 
+          "Mnss", 
+          "Mnsh", 
+          "Pryr Man"
         ]
       }, 
-      "CH1": {
-        "defaultAbbreviation": "1 Chr", 
-        "defaultName": "1 Chronicles", 
+      "MQ1": {
+        "defaultAbbreviation": "1 Meq", 
+        "defaultName": "1 Meqabyan", 
         "inputFields": [
-          "1 Chronicles", 
-          "1 Chr", 
-          "1 Chrnc", 
-          "1 Cronic", 
-          "1 Crnc"
+          "1 Meqabyan", 
+          "1 Meq", 
+          "1 Mqbyn", 
+          "1 Makabian", 
+          "1 Mkbn", 
+          "Mekabis of Benjamin", 
+          "Mekabis Benjamin", 
+          "Mkbs Bnjmn"
         ]
       }, 
-      "EN2": {
-        "defaultAbbreviation": "2 Eno", 
-        "defaultName": "2 Enoch", 
+      "MAT": {
+        "defaultAbbreviation": "Mat", 
+        "defaultName": "Matthew", 
         "inputFields": [
-          "2 Enoch", 
-          "2 Eno", 
-          "2 Ench"
+          "Matthew", 
+          "Mat", 
+          "Mtthw", 
+          "Mthw", 
+          "Mtw", 
+          "Mw", 
+          "Saint Matthew", 
+          "Saint Mtthw", 
+          "Saint Mthw", 
+          "Saint Mtw", 
+          "Saint Mw"
         ]
       }, 
-      "AMO": {
-        "defaultAbbreviation": "Amos", 
-        "defaultName": "Amos", 
+      "EUT": {
+        "defaultAbbreviation": "Eut", 
+        "defaultName": "Prayer of Euthalius", 
         "inputFields": [
-          "Amos", 
-          "Ams"
+          "Prayer of Euthalius", 
+          "Eut", 
+          "Pr Eut"
         ]
       }, 
-      "SHE": {
-        "defaultAbbreviation": "Her", 
-        "defaultName": "Shepherd of Hermas", 
+      "JER": {
+        "defaultAbbreviation": "Jer", 
+        "defaultName": "Jeremiah", 
         "inputFields": [
-          "Shepherd of Hermas", 
-          "Her", 
-          "Hermas", 
-          "Hrms", 
-          "Shep Hermas"
-        ]
-      }, 
-      "LES": {
-        "defaultAbbreviation": "2 Esd", 
-        "defaultName": "2 Esdras", 
-        "inputFields": [
-          "2 Esdras", 
-          "2 Esd", 
-          "2 Esdrs"
+          "Jeremiah", 
+          "Jer", 
+          "Jrmh"
         ]
       }, 
       "NAH": {
@@ -980,34 +572,105 @@
           "Nhm"
         ]
       }, 
-      "SUS": {
-        "defaultAbbreviation": "Sus", 
-        "defaultName": "Susanna", 
+      "OBA": {
+        "defaultAbbreviation": "Oba", 
+        "defaultName": "Obadiah", 
         "inputFields": [
-          "Susanna", 
-          "Sus", 
-          "Ssnn"
+          "Obadiah", 
+          "Oba", 
+          "Obdh"
         ]
       }, 
-      "RUT": {
-        "defaultAbbreviation": "Rut", 
-        "defaultName": "Ruth", 
+      "NEH": {
+        "defaultAbbreviation": "Neh", 
+        "defaultName": "Nehemiah", 
         "inputFields": [
-          "Ruth", 
-          "Rut", 
-          "Rth"
+          "Nehemiah", 
+          "Neh", 
+          "Nhmh"
         ]
       }, 
-      "JHN": {
-        "defaultAbbreviation": "Jhn", 
-        "defaultName": "John", 
+      "WSI": {
+        "defaultAbbreviation": "WrdsSir", 
+        "defaultName": "Words of Sirach", 
         "inputFields": [
-          "John", 
-          "Jhn", 
-          "Jn", 
-          "Saint John", 
-          "Saint Jhn", 
-          "Saint Jn"
+          "Words of Sirach", 
+          "WrdsSir", 
+          "Wrds Sirach", 
+          "Wrds Srch"
+        ]
+      }, 
+      "MIC": {
+        "defaultAbbreviation": "Mic", 
+        "defaultName": "Micah", 
+        "inputFields": [
+          "Micah", 
+          "Mic", 
+          "Mcah", 
+          "Mich", 
+          "Mch"
+        ]
+      }, 
+      "HAG": {
+        "defaultAbbreviation": "Hag", 
+        "defaultName": "Haggai", 
+        "inputFields": [
+          "Haggai", 
+          "Hag", 
+          "Hgg", 
+          "Hagai"
+        ]
+      }, 
+      "HAB": {
+        "defaultAbbreviation": "Hab", 
+        "defaultName": "Habakkuk", 
+        "inputFields": [
+          "Habakkuk", 
+          "Hab", 
+          "Hbkk", 
+          "Habbakkuk", 
+          "Habbakuk", 
+          "Habakuk", 
+          "Hbbkk"
+        ]
+      }, 
+      "CL1": {
+        "defaultAbbreviation": "1 Cle", 
+        "defaultName": "1 Clement", 
+        "inputFields": [
+          "1 Clement", 
+          "1 Cle", 
+          "1 Clmnt"
+        ]
+      }, 
+      "ZEP": {
+        "defaultAbbreviation": "Zep", 
+        "defaultName": "Zephaniah", 
+        "inputFields": [
+          "Zephaniah", 
+          "Zep", 
+          "Zphnh", 
+          "Zefaniah", 
+          "Zfnh"
+        ]
+      }, 
+      "JOB": {
+        "defaultAbbreviation": "Job", 
+        "defaultName": "Job", 
+        "inputFields": [
+          "Job", 
+          "Jb"
+        ]
+      }, 
+      "NUM": {
+        "defaultAbbreviation": "Num", 
+        "defaultName": "Numbers", 
+        "inputFields": [
+          "Numbers", 
+          "Num", 
+          "Nmbrs", 
+          "4 Moses", 
+          "4 Mss"
         ]
       }, 
       "MA4": {
@@ -1030,27 +693,13 @@
           "5 Mcbs"
         ]
       }, 
-      "MQ1": {
-        "defaultAbbreviation": "1 Meq", 
-        "defaultName": "1 Meqabyan", 
+      "ZEC": {
+        "defaultAbbreviation": "Zec", 
+        "defaultName": "Zechariah", 
         "inputFields": [
-          "1 Meqabyan", 
-          "1 Meq", 
-          "1 Mqbyn", 
-          "1 Makabian", 
-          "1 Mkbn", 
-          "Mekabis of Benjamin", 
-          "Mekabis Benjamin", 
-          "Mkbs Bnjmn"
-        ]
-      }, 
-      "SAM": {
-        "defaultAbbreviation": "Sam", 
-        "defaultName": "Samuel", 
-        "inputFields": [
-          "Samuel", 
-          "Sam", 
-          "Sml"
+          "Zechariah", 
+          "Zec", 
+          "Zchrh"
         ]
       }, 
       "MA1": {
@@ -1083,259 +732,267 @@
           "3 Mcbs"
         ]
       }, 
-      "KI1": {
-        "defaultAbbreviation": "1 Kgs", 
-        "defaultName": "1 Kings", 
+      "PHP": {
+        "defaultAbbreviation": "Php", 
+        "defaultName": "Philippians", 
         "inputFields": [
-          "1 Kings", 
-          "1 Kgs", 
-          "1 Kngs", 
-          "1 Ks"
+          "Philippians", 
+          "Php", 
+          "Phlppns", 
+          "Phlpns", 
+          "Phillipians", 
+          "Philipians", 
+          "Flppns", 
+          "Flpns"
         ]
       }, 
-      "PE1": {
-        "defaultAbbreviation": "1 Pet", 
-        "defaultName": "1 Peter", 
+      "P12": {
+        "defaultAbbreviation": "TwProp", 
+        "defaultName": "Twelve Prophets", 
         "inputFields": [
-          "1 Peter", 
-          "1 Pet", 
-          "1 Ptr"
+          "Twelve Prophets", 
+          "TwProp", 
+          "12 Prophets"
         ]
       }, 
-      "PE2": {
-        "defaultAbbreviation": "2 Pet", 
-        "defaultName": "2 Peter", 
+      "TH2": {
+        "defaultAbbreviation": "2 Thess", 
+        "defaultName": "2 Thessalonians", 
         "inputFields": [
-          "2 Peter", 
-          "2 Pet", 
-          "2 Ptr"
+          "2 Thessalonians", 
+          "2 Thess", 
+          "2 Thsslns", 
+          "2 Thslns", 
+          "2 Thesallonians", 
+          "2 Thessallonians", 
+          "2 Thesalonians"
         ]
       }, 
-      "JOS": {
-        "defaultAbbreviation": "Josh", 
-        "defaultName": "Joshua", 
+      "TH1": {
+        "defaultAbbreviation": "1 Thess", 
+        "defaultName": "1 Thessalonians", 
         "inputFields": [
-          "Joshua", 
-          "Josh", 
-          "Jsh"
+          "1 Thessalonians", 
+          "1 Thess", 
+          "1 Thsslns", 
+          "1 Thslns", 
+          "1 Thesallonians", 
+          "1 Thessallonians", 
+          "1 Thesalonians"
         ]
       }, 
-      "JAM": {
-        "defaultAbbreviation": "Jam", 
-        "defaultName": "James", 
+      "BA3": {
+        "defaultAbbreviation": "3 Bar", 
+        "defaultName": "3 Baruch", 
         "inputFields": [
-          "James", 
-          "Jam", 
-          "Jms", 
-          "Jmes", 
-          "Jas"
+          "3 Baruch", 
+          "3 Bar", 
+          "3 Brch"
         ]
       }, 
-      "MQ3": {
-        "defaultAbbreviation": "3 Meq", 
-        "defaultName": "3 Meqabyan", 
+      "ENO": {
+        "defaultAbbreviation": "Eno", 
+        "defaultName": "Enoch", 
         "inputFields": [
-          "3 Meqabyan", 
-          "3 Meq", 
-          "3 Mqbyn", 
-          "3 Makabian", 
-          "3 Mkbn"
+          "Enoch", 
+          "Eno", 
+          "Ench", 
+          "1 Enoch", 
+          "1 Ench"
         ]
       }, 
-      "MAL": {
-        "defaultAbbreviation": "Mal", 
-        "defaultName": "Malachi", 
+      "TTP": {
+        "defaultAbbreviation": "Tst12", 
+        "defaultName": "Testaments of the Twelve Patriarchs", 
         "inputFields": [
-          "Malachi", 
-          "Mal", 
-          "Mlchi"
+          "Testaments of the Twelve Patriarchs", 
+          "Tst12", 
+          "Tst 12P", 
+          "Tst Twelve"
         ]
       }, 
-      "MAN": {
-        "defaultAbbreviation": "Man", 
-        "defaultName": "Prayer of Manasses", 
+      "CHR": {
+        "defaultAbbreviation": "Chr", 
+        "defaultName": "Chronicles", 
         "inputFields": [
-          "Prayer of Manasses", 
-          "Man", 
-          "Manasses", 
-          "Manasseh", 
-          "Mnss", 
-          "Mnsh", 
-          "Pryr Man"
+          "Chronicles", 
+          "Chr", 
+          "Chrncls"
         ]
       }, 
-      "EZ6": {
-        "defaultAbbreviation": "6 Ezr", 
-        "defaultName": "6 Ezra", 
+      "EPH": {
+        "defaultAbbreviation": "Eph", 
+        "defaultName": "Ephesians", 
         "inputFields": [
-          "6 Ezra", 
-          "6 Ezr", 
-          "6 Esdras"
+          "Ephesians", 
+          "Eph", 
+          "Ephsns", 
+          "Efsns"
         ]
       }, 
-      "ESG": {
-        "defaultAbbreviation": "EsGk", 
-        "defaultName": "Esther (Greek)", 
+      "GEN": {
+        "defaultAbbreviation": "Gen", 
+        "defaultName": "Genesis", 
         "inputFields": [
-          "Esther (Greek)", 
-          "EsGk", 
-          "EstGk"
+          "Genesis", 
+          "Gen", 
+          "Gnss", 
+          "1 Moses", 
+          "1 Mss"
         ]
       }, 
-      "MAT": {
-        "defaultAbbreviation": "Mat", 
-        "defaultName": "Matthew", 
+      "SUS": {
+        "defaultAbbreviation": "Sus", 
+        "defaultName": "Susanna", 
         "inputFields": [
-          "Matthew", 
-          "Mat", 
-          "Mtthw", 
-          "Mthw", 
-          "Mtw", 
-          "Mw", 
-          "Saint Matthew", 
-          "Saint Mtthw", 
-          "Saint Mthw", 
-          "Saint Mtw", 
-          "Saint Mw"
+          "Susanna", 
+          "Sus", 
+          "Ssnn"
         ]
       }, 
-      "CH2": {
-        "defaultAbbreviation": "2 Chr", 
-        "defaultName": "2 Chronicles", 
+      "RUT": {
+        "defaultAbbreviation": "Rut", 
+        "defaultName": "Ruth", 
         "inputFields": [
-          "2 Chronicles", 
-          "2 Chr", 
-          "2 Chrnc", 
-          "2 Cronic", 
-          "2 Crnc"
+          "Ruth", 
+          "Rut", 
+          "Rth"
         ]
       }, 
-      "LAM": {
-        "defaultAbbreviation": "Lam", 
-        "defaultName": "Lamentations", 
+      "ODE": {
+        "defaultAbbreviation": "Ode", 
+        "defaultName": "Odes", 
         "inputFields": [
-          "Lamentations", 
-          "Lam", 
-          "Lmnts"
+          "Odes", 
+          "Ode", 
+          "Odae"
         ]
       }, 
-      "JER": {
-        "defaultAbbreviation": "Jer", 
-        "defaultName": "Jeremiah", 
+      "DAN": {
+        "defaultAbbreviation": "Dan", 
+        "defaultName": "Daniel", 
         "inputFields": [
-          "Jeremiah", 
-          "Jer", 
-          "Jrmh"
+          "Daniel", 
+          "Dan", 
+          "Dnl"
         ]
       }, 
-      "LAO": {
-        "defaultAbbreviation": "Lao", 
-        "defaultName": "Laodiceans", 
+      "SNG": {
+        "defaultAbbreviation": "Sng", 
+        "defaultName": "Song of Solomon", 
         "inputFields": [
-          "Laodiceans", 
-          "Lao", 
-          "Eps Lao", 
-          "Ltr Lao"
+          "Song of Solomon", 
+          "Sng", 
+          "Sng of Slmn", 
+          "Song of Songs", 
+          "Sng of Sngs", 
+          "SoS", 
+          "SS", 
+          "Canticle of Canticles", 
+          "Cntcl of Cntcl", 
+          "CoC", 
+          "CC"
         ]
       }, 
-      "TI2": {
-        "defaultAbbreviation": "2 Tim", 
-        "defaultName": "2 Timothy", 
+      "LBA": {
+        "defaultAbbreviation": "EpBar", 
+        "defaultName": "Epistle of Baruch", 
         "inputFields": [
-          "2 Timothy", 
-          "2 Tim", 
-          "2 Tmthy"
+          "Epistle of Baruch", 
+          "EpBar", 
+          "Ep Baruch", 
+          "Ep Brch", 
+          "Epi Baruch", 
+          "Epis Baruch", 
+          "Letter of Baruch", 
+          "Ltr of Baruch", 
+          "Ltr Baruch"
         ]
       }, 
-      "DNG": {
-        "defaultAbbreviation": "Dn(Gk)", 
-        "defaultName": "Daniel (Greek)", 
+      "BEL": {
+        "defaultAbbreviation": "Bel", 
+        "defaultName": "Bel and the Dragon", 
         "inputFields": [
-          "Daniel (Greek)", 
-          "Dn(Gk)", 
-          "DnlGk"
+          "Bel and the Dragon", 
+          "Bel", 
+          "BaD"
         ]
       }, 
-      "CL1": {
-        "defaultAbbreviation": "1 Cle", 
-        "defaultName": "1 Clement", 
+      "GES": {
+        "defaultAbbreviation": "1 Esd", 
+        "defaultName": "1 Esdras", 
         "inputFields": [
-          "1 Clement", 
-          "1 Cle", 
-          "1 Clmnt"
+          "1 Esdras", 
+          "1 Esd", 
+          "1 Esdrs"
         ]
       }, 
-      "OBA": {
-        "defaultAbbreviation": "Oba", 
-        "defaultName": "Obadiah", 
+      "WIS": {
+        "defaultAbbreviation": "Wis", 
+        "defaultName": "Wisdom of Solomon", 
         "inputFields": [
-          "Obadiah", 
-          "Oba", 
-          "Obdh"
+          "Wisdom of Solomon", 
+          "Wis", 
+          "Wsdm of Slmn"
         ]
       }, 
-      "EST": {
-        "defaultAbbreviation": "Est", 
-        "defaultName": "Esther", 
+      "DEU": {
+        "defaultAbbreviation": "Deu", 
+        "defaultName": "Deuteronomy", 
         "inputFields": [
-          "Esther", 
-          "Est", 
-          "Esthr", 
-          "Estr"
+          "Deuteronomy", 
+          "Deu", 
+          "Dtrnmy", 
+          "5 Moses", 
+          "5 Mss"
         ]
       }, 
-      "CL2": {
-        "defaultAbbreviation": "2 Cle", 
-        "defaultName": "2 Clement", 
+      "COP": {
+        "defaultAbbreviation": "EpCor", 
+        "defaultName": "Epistle of Corinthians to Paul", 
         "inputFields": [
-          "2 Clement", 
-          "2 Cle", 
-          "2 Clmnt"
+          "Epistle of Corinthians to Paul", 
+          "EpCor", 
+          "Ep Corinthians", 
+          "Ep Crnthns", 
+          "Ltr Corinthians", 
+          "Ltr Crnthns"
         ]
       }, 
-      "HAG": {
-        "defaultAbbreviation": "Hag", 
-        "defaultName": "Haggai", 
+      "HEB": {
+        "defaultAbbreviation": "Heb", 
+        "defaultName": "Hebrews", 
         "inputFields": [
-          "Haggai", 
-          "Hag", 
-          "Hgg", 
-          "Hagai"
+          "Hebrews", 
+          "Heb", 
+          "Hbrws"
         ]
       }, 
-      "BA2": {
-        "defaultAbbreviation": "2 Bar", 
-        "defaultName": "2 Baruch", 
+      "TIT": {
+        "defaultAbbreviation": "Tit", 
+        "defaultName": "Titus", 
         "inputFields": [
-          "2 Baruch", 
-          "2 Bar", 
-          "2 Brch", 
-          "Apocalypse of Baruch", 
-          "Apoc of Baruch", 
-          "Apoc Baruch"
+          "Titus", 
+          "Tit", 
+          "Tts"
         ]
       }, 
-      "PSS": {
-        "defaultAbbreviation": "AddPs", 
-        "defaultName": "Psalms of Solomon", 
+      "GAL": {
+        "defaultAbbreviation": "Gal", 
+        "defaultName": "Galatians", 
         "inputFields": [
-          "Psalms of Solomon", 
-          "AddPs", 
-          "Ps Sol", 
-          "Slmn Pslms"
+          "Galatians", 
+          "Gal", 
+          "Gltns"
         ]
       }, 
-      "HAB": {
-        "defaultAbbreviation": "Hab", 
-        "defaultName": "Habakkuk", 
+      "EN2": {
+        "defaultAbbreviation": "2 Eno", 
+        "defaultName": "2 Enoch", 
         "inputFields": [
-          "Habakkuk", 
-          "Hab", 
-          "Hbkk", 
-          "Habbakkuk", 
-          "Habbakuk", 
-          "Habakuk", 
-          "Hbbkk"
+          "2 Enoch", 
+          "2 Eno", 
+          "2 Ench"
         ]
       }, 
       "COL": {
@@ -1352,141 +1009,63 @@
           "Colosians"
         ]
       }, 
-      "HEB": {
-        "defaultAbbreviation": "Heb", 
-        "defaultName": "Hebrews", 
+      "DNG": {
+        "defaultAbbreviation": "Dn(Gk)", 
+        "defaultName": "Daniel (Greek)", 
         "inputFields": [
-          "Hebrews", 
-          "Heb", 
-          "Hbrws"
+          "Daniel (Greek)", 
+          "Dn(Gk)", 
+          "DnlGk"
         ]
       }, 
-      "SA2": {
-        "defaultAbbreviation": "2 Sam", 
-        "defaultName": "2 Samuel", 
+      "PS3": {
+        "defaultAbbreviation": "SyrPs", 
+        "defaultName": "Syriac Psalms", 
         "inputFields": [
-          "2 Samuel", 
-          "2 Sam", 
-          "2 Sml", 
-          "2 Sl"
+          "Syriac Psalms", 
+          "SyrPs", 
+          "Syr Pslms"
         ]
       }, 
-      "TOB": {
-        "defaultAbbreviation": "Tob", 
-        "defaultName": "Tobit", 
+      "PS2": {
+        "defaultAbbreviation": "Ps151", 
+        "defaultName": "Psalm 151", 
         "inputFields": [
-          "Tobit", 
-          "Tob", 
-          "Tobias", 
-          "Tbt", 
-          "Tbs"
+          "Psalm 151", 
+          "Ps151", 
+          "Pslm 151"
         ]
       }, 
-      "NUM": {
-        "defaultAbbreviation": "Num", 
-        "defaultName": "Numbers", 
+      "ECC": {
+        "defaultAbbreviation": "Ecc", 
+        "defaultName": "Ecclesiastes", 
         "inputFields": [
-          "Numbers", 
-          "Num", 
-          "Nmbrs", 
-          "4 Moses", 
-          "4 Mss"
+          "Ecclesiastes", 
+          "Ecc", 
+          "Ecclsts", 
+          "Qoheleth", 
+          "Qhlth"
         ]
       }, 
-      "SA1": {
-        "defaultAbbreviation": "1 Sam", 
-        "defaultName": "1 Samuel", 
+      "EXO": {
+        "defaultAbbreviation": "Exo", 
+        "defaultName": "Exodus", 
         "inputFields": [
-          "1 Samuel", 
-          "1 Sam", 
-          "1 Sml", 
-          "1 Sl"
+          "Exodus", 
+          "Exo", 
+          "Exds", 
+          "2 Moses", 
+          "2 Mss"
         ]
       }, 
-      "ROM": {
-        "defaultAbbreviation": "Rom", 
-        "defaultName": "Romans", 
+      "REV": {
+        "defaultAbbreviation": "Rev", 
+        "defaultName": "Revelation", 
         "inputFields": [
-          "Romans", 
-          "Rom", 
-          "Rmns"
-        ]
-      }, 
-      "LUK": {
-        "defaultAbbreviation": "Luk", 
-        "defaultName": "Luke", 
-        "inputFields": [
-          "Luke", 
-          "Luk", 
-          "Lke", 
-          "Saint Luke", 
-          "Saint Lk"
-        ]
-      }, 
-      "COP": {
-        "defaultAbbreviation": "EpCor", 
-        "defaultName": "Epistle of Corinthians to Paul", 
-        "inputFields": [
-          "Epistle of Corinthians to Paul", 
-          "EpCor", 
-          "Ep Corinthians", 
-          "Ep Crnthns", 
-          "Ltr Corinthians", 
-          "Ltr Crnthns"
-        ]
-      }, 
-      "PSB": {
-        "defaultAbbreviation": "LitPs", 
-        "defaultName": "Psalms B", 
-        "inputFields": [
-          "Psalms B", 
-          "LitPs", 
-          "Metrical Psalms", 
-          "Mtrca Pslms", 
-          "Alternative Psalms", 
-          "Alt Psalms", 
-          "Alt Pslms", 
-          "Lit Psalms", 
-          "Lit Pslms"
-        ]
-      }, 
-      "PSA": {
-        "defaultAbbreviation": "Psa", 
-        "defaultName": "Psalms", 
-        "inputFields": [
-          "Psalms", 
-          "Psa", 
-          "Pslms"
-        ]
-      }, 
-      "BA4": {
-        "defaultAbbreviation": "4 Bar", 
-        "defaultName": "4 Baruch", 
-        "inputFields": [
-          "4 Baruch", 
-          "4 Bar", 
-          "4 Brch", 
-          "Paralipomenon of Jeremiah", 
-          "Prlp of Jrmh", 
-          "Rest of Words of Baruch"
-        ]
-      }, 
-      "PSO": {
-        "defaultAbbreviation": "PrSol", 
-        "defaultName": "Prayer of Solomon", 
-        "inputFields": [
-          "Prayer of Solomon", 
-          "PrSol", 
-          "Pryr Slm"
-        ]
-      }, 
-      "PJE": {
-        "defaultAbbreviation": "PrJer", 
-        "defaultName": "Prayer of Jeremiah", 
-        "inputFields": [
-          "Prayer of Jeremiah", 
-          "PrJer", 
-          "Pryr Jeremiah"
+          "Revelation", 
+          "Rev", 
+          "Rvltn", 
+          "Rvln"
         ]
       }, 
       "LJB": {
@@ -1510,15 +1089,438 @@
           "Ltr Jrm"
         ]
       }, 
-      "MIC": {
-        "defaultAbbreviation": "Mic", 
-        "defaultName": "Micah", 
+      "REP": {
+        "defaultAbbreviation": "Rep", 
+        "defaultName": "Reproof", 
         "inputFields": [
-          "Micah", 
-          "Mic", 
-          "Mcah", 
-          "Mich", 
-          "Mch"
+          "Reproof", 
+          "Rep", 
+          "Rprf"
+        ]
+      }, 
+      "ACT": {
+        "defaultAbbreviation": "Act", 
+        "defaultName": "Acts", 
+        "inputFields": [
+          "Acts", 
+          "Act", 
+          "Ats", 
+          "Acts of the Apostles"
+        ]
+      }, 
+      "JOS": {
+        "defaultAbbreviation": "Josh", 
+        "defaultName": "Joshua", 
+        "inputFields": [
+          "Joshua", 
+          "Josh", 
+          "Jsh"
+        ]
+      }, 
+      "MOS": {
+        "defaultAbbreviation": "Mos", 
+        "defaultName": "Moses", 
+        "inputFields": [
+          "Moses", 
+          "Mos", 
+          "Mss"
+        ]
+      }, 
+      "KI1": {
+        "defaultAbbreviation": "1 Kgs", 
+        "defaultName": "1 Kings", 
+        "inputFields": [
+          "1 Kings", 
+          "1 Kgs", 
+          "1 Kngs", 
+          "1 Ks"
+        ]
+      }, 
+      "PRO": {
+        "defaultAbbreviation": "Pro", 
+        "defaultName": "Proverbs", 
+        "inputFields": [
+          "Proverbs", 
+          "Pro", 
+          "Prvrbs", 
+          "Prvbs"
+        ]
+      }, 
+      "ESG": {
+        "defaultAbbreviation": "EsGk", 
+        "defaultName": "Esther (Greek)", 
+        "inputFields": [
+          "Esther (Greek)", 
+          "EsGk", 
+          "EstGk"
+        ]
+      }, 
+      "ISA": {
+        "defaultAbbreviation": "Isa", 
+        "defaultName": "Isaiah", 
+        "inputFields": [
+          "Isaiah", 
+          "Isa"
+        ]
+      }, 
+      "SAM": {
+        "defaultAbbreviation": "Sam", 
+        "defaultName": "Samuel", 
+        "inputFields": [
+          "Samuel", 
+          "Sam", 
+          "Sml"
+        ]
+      }, 
+      "SIR": {
+        "defaultAbbreviation": "Sir", 
+        "defaultName": "Sirach", 
+        "inputFields": [
+          "Sirach", 
+          "Sir", 
+          "Srch"
+        ]
+      }, 
+      "PAZ": {
+        "defaultAbbreviation": "PrAz", 
+        "defaultName": "Prayer of Azariah", 
+        "inputFields": [
+          "Prayer of Azariah", 
+          "PrAz", 
+          "Pryr Azrh"
+        ]
+      }, 
+      "JOL": {
+        "defaultAbbreviation": "Joel", 
+        "defaultName": "Joel", 
+        "inputFields": [
+          "Joel", 
+          "Jl"
+        ]
+      }, 
+      "EZ6": {
+        "defaultAbbreviation": "6 Ezr", 
+        "defaultName": "6 Ezra", 
+        "inputFields": [
+          "6 Ezra", 
+          "6 Ezr", 
+          "6 Esdras"
+        ]
+      }, 
+      "EST": {
+        "defaultAbbreviation": "Est", 
+        "defaultName": "Esther", 
+        "inputFields": [
+          "Esther", 
+          "Est", 
+          "Esthr", 
+          "Estr"
+        ]
+      }, 
+      "JUB": {
+        "defaultAbbreviation": "Jub", 
+        "defaultName": "Jubilees", 
+        "inputFields": [
+          "Jubilees", 
+          "Jub", 
+          "Jbls"
+        ]
+      }, 
+      "DOJ": {
+        "defaultAbbreviation": "DoJ", 
+        "defaultName": "Dormition of John", 
+        "inputFields": [
+          "Dormition of John", 
+          "DoJ", 
+          "Drm Jhn", 
+          "Drm Jn"
+        ]
+      }, 
+      "BA2": {
+        "defaultAbbreviation": "2 Bar", 
+        "defaultName": "2 Baruch", 
+        "inputFields": [
+          "2 Baruch", 
+          "2 Bar", 
+          "2 Brch", 
+          "Apocalypse of Baruch", 
+          "Apoc of Baruch", 
+          "Apoc Baruch"
+        ]
+      }, 
+      "PJE": {
+        "defaultAbbreviation": "PrJer", 
+        "defaultName": "Prayer of Jeremiah", 
+        "inputFields": [
+          "Prayer of Jeremiah", 
+          "PrJer", 
+          "Pryr Jeremiah"
+        ]
+      }, 
+      "SA2": {
+        "defaultAbbreviation": "2 Sam", 
+        "defaultName": "2 Samuel", 
+        "inputFields": [
+          "2 Samuel", 
+          "2 Sam", 
+          "2 Sml", 
+          "2 Sl"
+        ]
+      }, 
+      "SA1": {
+        "defaultAbbreviation": "1 Sam", 
+        "defaultName": "1 Samuel", 
+        "inputFields": [
+          "1 Samuel", 
+          "1 Sam", 
+          "1 Sml", 
+          "1 Sl"
+        ]
+      }, 
+      "PE1": {
+        "defaultAbbreviation": "1 Pet", 
+        "defaultName": "1 Peter", 
+        "inputFields": [
+          "1 Peter", 
+          "1 Pet", 
+          "1 Ptr"
+        ]
+      }, 
+      "EZ5": {
+        "defaultAbbreviation": "5 Ezr", 
+        "defaultName": "5 Ezra", 
+        "inputFields": [
+          "5 Ezra", 
+          "5 Ezr", 
+          "5 Esdras"
+        ]
+      }, 
+      "PE2": {
+        "defaultAbbreviation": "2 Pet", 
+        "defaultName": "2 Peter", 
+        "inputFields": [
+          "2 Peter", 
+          "2 Pet", 
+          "2 Ptr"
+        ]
+      }, 
+      "LUK": {
+        "defaultAbbreviation": "Luk", 
+        "defaultName": "Luke", 
+        "inputFields": [
+          "Luke", 
+          "Luk", 
+          "Lke", 
+          "Saint Luke", 
+          "Saint Lk"
+        ]
+      }, 
+      "BA4": {
+        "defaultAbbreviation": "4 Bar", 
+        "defaultName": "4 Baruch", 
+        "inputFields": [
+          "4 Baruch", 
+          "4 Bar", 
+          "4 Brch", 
+          "Paralipomenon of Jeremiah", 
+          "Prlp of Jrmh", 
+          "Rest of Words of Baruch"
+        ]
+      }, 
+      "PHM": {
+        "defaultAbbreviation": "Phm", 
+        "defaultName": "Philemon", 
+        "inputFields": [
+          "Philemon", 
+          "Phm", 
+          "Phlmn", 
+          "Flmn"
+        ]
+      }, 
+      "KGS": {
+        "defaultAbbreviation": "Kgs", 
+        "defaultName": "Kings", 
+        "inputFields": [
+          "Kings", 
+          "Kgs", 
+          "Kngs"
+        ]
+      }, 
+      "JNA": {
+        "defaultAbbreviation": "Jon", 
+        "defaultName": "Jonah", 
+        "inputFields": [
+          "Jonah", 
+          "Jon", 
+          "Jnh"
+        ]
+      }, 
+      "JDE": {
+        "defaultAbbreviation": "Jud", 
+        "defaultName": "Jude", 
+        "inputFields": [
+          "Jude", 
+          "Jud", 
+          "Jde"
+        ]
+      }, 
+      "JDG": {
+        "defaultAbbreviation": "Jdg", 
+        "defaultName": "Judges", 
+        "inputFields": [
+          "Judges", 
+          "Jdg", 
+          "Jdgs"
+        ]
+      }, 
+      "SHE": {
+        "defaultAbbreviation": "Her", 
+        "defaultName": "Shepherd of Hermas", 
+        "inputFields": [
+          "Shepherd of Hermas", 
+          "Her", 
+          "Hermas", 
+          "Hrms", 
+          "Shep Hermas"
+        ]
+      }, 
+      "LES": {
+        "defaultAbbreviation": "2 Esd", 
+        "defaultName": "2 Esdras", 
+        "inputFields": [
+          "2 Esdras", 
+          "2 Esd", 
+          "2 Esdrs"
+        ]
+      }, 
+      "PSA": {
+        "defaultAbbreviation": "Psa", 
+        "defaultName": "Psalms", 
+        "inputFields": [
+          "Psalms", 
+          "Psa", 
+          "Pslms"
+        ]
+      }, 
+      "PSO": {
+        "defaultAbbreviation": "PrSol", 
+        "defaultName": "Prayer of Solomon", 
+        "inputFields": [
+          "Prayer of Solomon", 
+          "PrSol", 
+          "Pryr Slm"
+        ]
+      }, 
+      "DID": {
+        "defaultAbbreviation": "Did", 
+        "defaultName": "Didache", 
+        "inputFields": [
+          "Didache", 
+          "Did", 
+          "Ddch"
+        ]
+      }, 
+      "JDT": {
+        "defaultAbbreviation": "Jdt", 
+        "defaultName": "Judith", 
+        "inputFields": [
+          "Judith", 
+          "Jdt", 
+          "Jdth"
+        ]
+      }, 
+      "PSB": {
+        "defaultAbbreviation": "LitPs", 
+        "defaultName": "Psalms B", 
+        "inputFields": [
+          "Psalms B", 
+          "LitPs", 
+          "Metrical Psalms", 
+          "Mtrca Pslms", 
+          "Alternative Psalms", 
+          "Alt Psalms", 
+          "Alt Pslms", 
+          "Lit Psalms", 
+          "Lit Pslms"
+        ]
+      }, 
+      "PSS": {
+        "defaultAbbreviation": "AddPs", 
+        "defaultName": "Psalms of Solomon", 
+        "inputFields": [
+          "Psalms of Solomon", 
+          "AddPs", 
+          "Ps Sol", 
+          "Slmn Pslms"
+        ]
+      }, 
+      "CO1": {
+        "defaultAbbreviation": "1 Cor", 
+        "defaultName": "1 Corinthians", 
+        "inputFields": [
+          "1 Corinthians", 
+          "1 Cor", 
+          "1 Crnthns"
+        ]
+      }, 
+      "CO2": {
+        "defaultAbbreviation": "2 Cor", 
+        "defaultName": "2 Corinthians", 
+        "inputFields": [
+          "2 Corinthians", 
+          "2 Cor", 
+          "2 Crnthns"
+        ]
+      }, 
+      "CO3": {
+        "defaultAbbreviation": "3 Cor", 
+        "defaultName": "3 Corinthians", 
+        "inputFields": [
+          "3 Corinthians", 
+          "3 Cor", 
+          "3 Crnthns"
+        ]
+      }, 
+      "HOS": {
+        "defaultAbbreviation": "Hos", 
+        "defaultName": "Hosea", 
+        "inputFields": [
+          "Hosea", 
+          "Hos", 
+          "Hs"
+        ]
+      }, 
+      "LAO": {
+        "defaultAbbreviation": "Lao", 
+        "defaultName": "Laodiceans", 
+        "inputFields": [
+          "Laodiceans", 
+          "Lao", 
+          "Eps Lao", 
+          "Ltr Lao"
+        ]
+      }, 
+      "TOB": {
+        "defaultAbbreviation": "Tob", 
+        "defaultName": "Tobit", 
+        "inputFields": [
+          "Tobit", 
+          "Tob", 
+          "Tobias", 
+          "Tbt", 
+          "Tbs"
+        ]
+      }, 
+      "JHN": {
+        "defaultAbbreviation": "Jhn", 
+        "defaultName": "John", 
+        "inputFields": [
+          "John", 
+          "Jhn", 
+          "Jn", 
+          "Saint John", 
+          "Saint Jhn", 
+          "Saint Jn"
         ]
       }
     }
@@ -1644,87 +1646,22 @@
       ]
     }, 
     {
-      "PE1": {
-        "defaultAbbreviation": "1 Pid", 
-        "defaultName": "1 Pidru", 
+      "CH1": {
+        "defaultAbbreviation": "1 Kru", 
+        "defaultName": "1 Krunikas", 
         "inputFields": [
-          "1 Pidru", 
-          "1 Pid", 
-          "1 Pdru"
+          "1 Krunikas", 
+          "1 Kru", 
+          "1 Krnks"
         ]
       }, 
-      "JDG": {
-        "defaultAbbreviation": "Tal", 
-        "defaultName": "Me Talewukum", 
+      "CH2": {
+        "defaultAbbreviation": "2 Kru", 
+        "defaultName": "2 Krunikas", 
         "inputFields": [
-          "Me Talewukum", 
-          "Tal", 
-          "Tlwkm"
-        ]
-      }, 
-      "DAN": {
-        "defaultAbbreviation": "Dan", 
-        "defaultName": "Danyil", 
-        "inputFields": [
-          "Danyil", 
-          "Dan", 
-          "Dnyl"
-        ]
-      }, 
-      "EPH": {
-        "defaultAbbreviation": "Ipi", 
-        "defaultName": "Matig-Ipisu", 
-        "inputFields": [
-          "Matig-Ipisu", 
-          "Ipi", 
-          "MatigIpisu", 
-          "Ipisu", 
-          "Ipsu"
-        ]
-      }, 
-      "TIT": {
-        "defaultAbbreviation": "Tit", 
-        "defaultName": "Titu", 
-        "inputFields": [
-          "Titu", 
-          "Tit", 
-          "Ttu"
-        ]
-      }, 
-      "EZR": {
-        "defaultAbbreviation": "Isd", 
-        "defaultName": "Isdras", 
-        "inputFields": [
-          "Isdras", 
-          "Isd", 
-          "Isdrs"
-        ]
-      }, 
-      "GEN": {
-        "defaultAbbreviation": "Hin", 
-        "defaultName": "Hinisis", 
-        "inputFields": [
-          "Hinisis", 
-          "Hin", 
-          "Hn"
-        ]
-      }, 
-      "PE2": {
-        "defaultAbbreviation": "2 Pid", 
-        "defaultName": "2 Pidru", 
-        "inputFields": [
-          "2 Pidru", 
-          "2 Pid", 
-          "2 Pdru"
-        ]
-      }, 
-      "NUM": {
-        "defaultAbbreviation": "Num", 
-        "defaultName": "Numiru", 
-        "inputFields": [
-          "Numiru", 
-          "Num", 
-          "Nmr"
+          "2 Krunikas", 
+          "2 Kru", 
+          "2 Krnks"
         ]
       }, 
       "EZK": {
@@ -1734,6 +1671,81 @@
           "Isikil", 
           "Isi", 
           "Iskl"
+        ]
+      }, 
+      "COL": {
+        "defaultAbbreviation": "Kul", 
+        "defaultName": "Matig-Kulusas", 
+        "inputFields": [
+          "Matig-Kulusas", 
+          "Kul", 
+          "MatigKulusas", 
+          "Kulusas", 
+          "Klss"
+        ]
+      }, 
+      "JN3": {
+        "defaultAbbreviation": "3 Huw", 
+        "defaultName": "3 Huwan", 
+        "inputFields": [
+          "3 Huwan", 
+          "3 Huw", 
+          "3 Hwn", 
+          "3 Hn", 
+          "3 Juan", 
+          "3 Jn"
+        ]
+      }, 
+      "HAB": {
+        "defaultAbbreviation": "Hab", 
+        "defaultName": "Habakuk", 
+        "inputFields": [
+          "Habakuk", 
+          "Hab", 
+          "Hbkk", 
+          "Habbakkuk", 
+          "Habbakuk", 
+          "Hbbkk"
+        ]
+      }, 
+      "JN1": {
+        "defaultAbbreviation": "1 Huw", 
+        "defaultName": "1 Huwan", 
+        "inputFields": [
+          "1 Huwan", 
+          "1 Huw", 
+          "1 Hwn", 
+          "1 Hn", 
+          "1 Juan", 
+          "1 Jn"
+        ]
+      }, 
+      "TI1": {
+        "defaultAbbreviation": "1 Tim", 
+        "defaultName": "1 Timutiyu", 
+        "inputFields": [
+          "1 Timutiyu", 
+          "1 Tim", 
+          "1 Tmtyu"
+        ]
+      }, 
+      "AMO": {
+        "defaultAbbreviation": "Amu", 
+        "defaultName": "Amus", 
+        "inputFields": [
+          "Amus", 
+          "Amu", 
+          "Ams"
+        ]
+      }, 
+      "REV": {
+        "defaultAbbreviation": "Imp", 
+        "defaultName": "Impakita", 
+        "inputFields": [
+          "Impakita", 
+          "Imp", 
+          "Impkta", 
+          "Gipadayag"
         ]
       }, 
       "EXO": {
@@ -1754,59 +1766,91 @@
           "Iklsysts"
         ]
       }, 
-      "KI2": {
-        "defaultAbbreviation": "2 Hari", 
-        "defaultName": "2 Me Hari", 
+      "TI2": {
+        "defaultAbbreviation": "2 Tim", 
+        "defaultName": "2 Timutiyu", 
         "inputFields": [
-          "2 Me Hari", 
-          "2 Hari", 
-          "2 Hri"
+          "2 Timutiyu", 
+          "2 Tim", 
+          "2 Tmtyu"
         ]
       }, 
-      "KI1": {
-        "defaultAbbreviation": "1 Hari", 
-        "defaultName": "1 Me Hari", 
+      "HEB": {
+        "defaultAbbreviation": "Heb", 
+        "defaultName": "Hibruwanen", 
         "inputFields": [
-          "1 Me Hari", 
-          "1 Hari", 
-          "1 Hri"
+          "Hibruwanen", 
+          "Heb", 
+          "Hibruhanen", 
+          "Hibruhanun", 
+          "Hbrws"
         ]
       }, 
-      "CH1": {
-        "defaultAbbreviation": "1 Kru", 
-        "defaultName": "1 Krunikas", 
+      "EZR": {
+        "defaultAbbreviation": "Isd", 
+        "defaultName": "Isdras", 
         "inputFields": [
-          "1 Krunikas", 
-          "1 Kru", 
-          "1 Krnks"
+          "Isdras", 
+          "Isd", 
+          "Isdrs"
         ]
       }, 
-      "AMO": {
-        "defaultAbbreviation": "Amu", 
-        "defaultName": "Amus", 
+      "ROM": {
+        "defaultAbbreviation": "Rum", 
+        "defaultName": "Matig-Ruma", 
         "inputFields": [
-          "Amus", 
-          "Amu", 
-          "Ams"
+          "Matig-Ruma", 
+          "Rum", 
+          "MatigRuma", 
+          "Ruma", 
+          "Rma", 
+          "Rumanh"
         ]
       }, 
-      "NAH": {
-        "defaultAbbreviation": "Nah", 
-        "defaultName": "Nahum", 
+      "ACT": {
+        "defaultAbbreviation": "Himu", 
+        "defaultName": "Me Himu", 
         "inputFields": [
-          "Nahum", 
-          "Nah", 
-          "Nahm", 
-          "Nhum", 
-          "Nhm"
+          "Me Himu", 
+          "Himu", 
+          "Hmu"
         ]
       }, 
-      "RUT": {
-        "defaultAbbreviation": "Rut", 
-        "defaultName": "Rut", 
+      "LEV": {
+        "defaultAbbreviation": "Lib", 
+        "defaultName": "Libitiku", 
         "inputFields": [
-          "Rut", 
-          "Rt"
+          "Libitiku", 
+          "Lib", 
+          "Lbtk"
+        ]
+      }, 
+      "LAM": {
+        "defaultAbbreviation": "Peg", 
+        "defaultName": "Pegkalange", 
+        "inputFields": [
+          "Pegkalange", 
+          "Peg", 
+          "Pgklange"
+        ]
+      }, 
+      "MRK": {
+        "defaultAbbreviation": "Mar", 
+        "defaultName": "Markus", 
+        "inputFields": [
+          "Markus", 
+          "Mar", 
+          "Mrks", 
+          "Mks"
+        ]
+      }, 
+      "MAL": {
+        "defaultAbbreviation": "Mal", 
+        "defaultName": "Malakyas", 
+        "inputFields": [
+          "Malakyas", 
+          "Mal", 
+          "Mlkys"
         ]
       }, 
       "TH2": {
@@ -1820,15 +1864,13 @@
           "2 Tslnka"
         ]
       }, 
-      "JHN": {
-        "defaultAbbreviation": "Huw", 
-        "defaultName": "Huwan", 
+      "PRO": {
+        "defaultAbbreviation": "Lal", 
+        "defaultName": "Lalahen", 
         "inputFields": [
-          "Huwan", 
-          "Huw", 
-          "Hwn", 
-          "Juan", 
-          "Jn"
+          "Lalahen", 
+          "Lal", 
+          "Llhn"
         ]
       }, 
       "TH1": {
@@ -1842,13 +1884,23 @@
           "1 Tslnka"
         ]
       }, 
-      "SNG": {
-        "defaultAbbreviation": "UNS", 
-        "defaultName": "Ulahingen ni Sulumun", 
+      "ISA": {
+        "defaultAbbreviation": "Isa", 
+        "defaultName": "Isayas", 
         "inputFields": [
-          "Ulahingen ni Sulumun", 
-          "UNS", 
-          "Ulahingen ni Slmn"
+          "Isayas", 
+          "Isa", 
+          "Isys"
+        ]
+      }, 
+      "MAT": {
+        "defaultAbbreviation": "Mat", 
+        "defaultName": "Matiyu", 
+        "inputFields": [
+          "Matiyu", 
+          "Mat", 
+          "Mtyu", 
+          "Mattiyu"
         ]
       }, 
       "JN2": {
@@ -1863,164 +1915,6 @@
           "2 Jn"
         ]
       }, 
-      "ACT": {
-        "defaultAbbreviation": "Himu", 
-        "defaultName": "Me Himu", 
-        "inputFields": [
-          "Me Himu", 
-          "Himu", 
-          "Hmu"
-        ]
-      }, 
-      "JN3": {
-        "defaultAbbreviation": "3 Huw", 
-        "defaultName": "3 Huwan", 
-        "inputFields": [
-          "3 Huwan", 
-          "3 Huw", 
-          "3 Hwn", 
-          "3 Hn", 
-          "3 Juan", 
-          "3 Jn"
-        ]
-      }, 
-      "JNA": {
-        "defaultAbbreviation": "Hun", 
-        "defaultName": "Hunas", 
-        "inputFields": [
-          "Hunas", 
-          "Hun", 
-          "Juns"
-        ]
-      }, 
-      "HEB": {
-        "defaultAbbreviation": "Heb", 
-        "defaultName": "Hibruwanen", 
-        "inputFields": [
-          "Hibruwanen", 
-          "Heb", 
-          "Hibruhanen", 
-          "Hibruhanun", 
-          "Hbrws"
-        ]
-      }, 
-      "JDE": {
-        "defaultAbbreviation": "Hud", 
-        "defaultName": "Hudas", 
-        "inputFields": [
-          "Hudas", 
-          "Hud", 
-          "Hds", 
-          "Judas"
-        ]
-      }, 
-      "LEV": {
-        "defaultAbbreviation": "Lib", 
-        "defaultName": "Libitiku", 
-        "inputFields": [
-          "Libitiku", 
-          "Lib", 
-          "Lbtk"
-        ]
-      }, 
-      "MRK": {
-        "defaultAbbreviation": "Mar", 
-        "defaultName": "Markus", 
-        "inputFields": [
-          "Markus", 
-          "Mar", 
-          "Mrks", 
-          "Mks"
-        ]
-      }, 
-      "JAM": {
-        "defaultAbbreviation": "San", 
-        "defaultName": "Santiyagu", 
-        "inputFields": [
-          "Santiyagu", 
-          "San", 
-          "Sntygu", 
-          "Hakubu"
-        ]
-      }, 
-      "ZEP": {
-        "defaultAbbreviation": "Sup", 
-        "defaultName": "Supuniyas", 
-        "inputFields": [
-          "Supuniyas", 
-          "Sup", 
-          "Spnys"
-        ]
-      }, 
-      "MAL": {
-        "defaultAbbreviation": "Mal", 
-        "defaultName": "Malakyas", 
-        "inputFields": [
-          "Malakyas", 
-          "Mal", 
-          "Mlkys"
-        ]
-      }, 
-      "PSA": {
-        "defaultAbbreviation": "Sal", 
-        "defaultName": "Me Salmu", 
-        "inputFields": [
-          "Me Salmu", 
-          "Sal", 
-          "Slmu"
-        ]
-      }, 
-      "JN1": {
-        "defaultAbbreviation": "1 Huw", 
-        "defaultName": "1 Huwan", 
-        "inputFields": [
-          "1 Huwan", 
-          "1 Huw", 
-          "1 Hwn", 
-          "1 Hn", 
-          "1 Juan", 
-          "1 Jn"
-        ]
-      }, 
-      "GAL": {
-        "defaultAbbreviation": "Gal", 
-        "defaultName": "Matig-Galasya", 
-        "inputFields": [
-          "Matig-Galasya", 
-          "Gal", 
-          "MatigGalasya", 
-          "Galasya", 
-          "Glsya"
-        ]
-      }, 
-      "MAT": {
-        "defaultAbbreviation": "Mat", 
-        "defaultName": "Matiyu", 
-        "inputFields": [
-          "Matiyu", 
-          "Mat", 
-          "Mtyu", 
-          "Mattiyu"
-        ]
-      }, 
-      "CH2": {
-        "defaultAbbreviation": "2 Kru", 
-        "defaultName": "2 Krunikas", 
-        "inputFields": [
-          "2 Krunikas", 
-          "2 Kru", 
-          "2 Krnks"
-        ]
-      }, 
-      "LAM": {
-        "defaultAbbreviation": "Peg", 
-        "defaultName": "Pegkalange", 
-        "inputFields": [
-          "Pegkalange", 
-          "Peg", 
-          "Pgklange"
-        ]
-      }, 
       "JER": {
         "defaultAbbreviation": "Hir", 
         "defaultName": "Hirimiyas", 
@@ -2030,22 +1924,23 @@
           "Hrmys"
         ]
       }, 
-      "TI2": {
-        "defaultAbbreviation": "2 Tim", 
-        "defaultName": "2 Timutiyu", 
+      "NAH": {
+        "defaultAbbreviation": "Nah", 
+        "defaultName": "Nahum", 
         "inputFields": [
-          "2 Timutiyu", 
-          "2 Tim", 
-          "2 Tmtyu"
+          "Nahum", 
+          "Nah", 
+          "Nahm", 
+          "Nhum", 
+          "Nhm"
         ]
       }, 
-      "HOS": {
-        "defaultAbbreviation": "Hus", 
-        "defaultName": "Husiya", 
+      "JOL": {
+        "defaultAbbreviation": "Huwil", 
+        "defaultName": "Huwil", 
         "inputFields": [
-          "Husiya", 
-          "Hus", 
-          "Hsya"
+          "Huwil", 
+          "Hwl"
         ]
       }, 
       "NEH": {
@@ -2057,6 +1952,15 @@
           "Nhmys"
         ]
       }, 
+      "PHM": {
+        "defaultAbbreviation": "Pilim", 
+        "defaultName": "Pilimun", 
+        "inputFields": [
+          "Pilimun", 
+          "Pilim", 
+          "Plmn"
+        ]
+      }, 
       "EST": {
         "defaultAbbreviation": "Ist", 
         "defaultName": "Istir", 
@@ -2066,24 +1970,13 @@
           "Istr"
         ]
       }, 
-      "ISA": {
-        "defaultAbbreviation": "Isa", 
-        "defaultName": "Isayas", 
+      "MIC": {
+        "defaultAbbreviation": "Mic", 
+        "defaultName": "Mikiyas", 
         "inputFields": [
-          "Isayas", 
-          "Isa", 
-          "Isys"
-        ]
-      }, 
-      "CO1": {
-        "defaultAbbreviation": "1 Kur", 
-        "defaultName": "1 Matig-Kurintu", 
-        "inputFields": [
-          "1 Matig-Kurintu", 
-          "1 Kur", 
-          "1 MatigKurintu", 
-          "1 Kurintu", 
-          "1 Krntu"
+          "Mikiyas", 
+          "Mic", 
+          "Mkys"
         ]
       }, 
       "HAG": {
@@ -2096,55 +1989,13 @@
           "Haggiyu"
         ]
       }, 
-      "PRO": {
-        "defaultAbbreviation": "Lal", 
-        "defaultName": "Lalahen", 
+      "ZEP": {
+        "defaultAbbreviation": "Sup", 
+        "defaultName": "Supuniyas", 
         "inputFields": [
-          "Lalahen", 
-          "Lal", 
-          "Llhn"
-        ]
-      }, 
-      "HAB": {
-        "defaultAbbreviation": "Hab", 
-        "defaultName": "Habakuk", 
-        "inputFields": [
-          "Habakuk", 
-          "Hab", 
-          "Hbkk", 
-          "Habbakkuk", 
-          "Habbakuk", 
-          "Hbbkk"
-        ]
-      }, 
-      "COL": {
-        "defaultAbbreviation": "Kul", 
-        "defaultName": "Matig-Kulusas", 
-        "inputFields": [
-          "Matig-Kulusas", 
-          "Kul", 
-          "MatigKulusas", 
-          "Kulusas", 
-          "Klss"
-        ]
-      }, 
-      "JOL": {
-        "defaultAbbreviation": "Huwil", 
-        "defaultName": "Huwil", 
-        "inputFields": [
-          "Huwil", 
-          "Hwl"
-        ]
-      }, 
-      "PHP": {
-        "defaultAbbreviation": "Pil", 
-        "defaultName": "Matig-Pilipu", 
-        "inputFields": [
-          "Matig-Pilipu", 
-          "Pil", 
-          "MatigPilipu", 
-          "Pilipu", 
-          "Plpu"
+          "Supuniyas", 
+          "Sup", 
+          "Spnys"
         ]
       }, 
       "JOB": {
@@ -2165,13 +2016,13 @@
           "2 Smwl"
         ]
       }, 
-      "OBA": {
-        "defaultAbbreviation": "Abd", 
-        "defaultName": "Abdiyas", 
+      "NUM": {
+        "defaultAbbreviation": "Num", 
+        "defaultName": "Numiru", 
         "inputFields": [
-          "Abdiyas", 
-          "Abd", 
-          "Abdy"
+          "Numiru", 
+          "Num", 
+          "Nmr"
         ]
       }, 
       "SA1": {
@@ -2183,43 +2034,13 @@
           "1 Smwl"
         ]
       }, 
-      "ROM": {
-        "defaultAbbreviation": "Rum", 
-        "defaultName": "Matig-Ruma", 
+      "PE1": {
+        "defaultAbbreviation": "1 Pid", 
+        "defaultName": "1 Pidru", 
         "inputFields": [
-          "Matig-Ruma", 
-          "Rum", 
-          "MatigRuma", 
-          "Ruma", 
-          "Rma", 
-          "Rumanh"
-        ]
-      }, 
-      "LUK": {
-        "defaultAbbreviation": "Luk", 
-        "defaultName": "Lukas", 
-        "inputFields": [
-          "Lukas", 
-          "Luk", 
-          "Lks"
-        ]
-      }, 
-      "JOS": {
-        "defaultAbbreviation": "Huswi", 
-        "defaultName": "Huswi", 
-        "inputFields": [
-          "Huswi", 
-          "Hswi", 
-          "Juswi"
-        ]
-      }, 
-      "PHM": {
-        "defaultAbbreviation": "Pilim", 
-        "defaultName": "Pilimun", 
-        "inputFields": [
-          "Pilimun", 
-          "Pilim", 
-          "Plmn"
+          "1 Pidru", 
+          "1 Pid", 
+          "1 Pdru"
         ]
       }, 
       "DEU": {
@@ -2231,6 +2052,15 @@
           "Dytrnmy"
         ]
       }, 
+      "PE2": {
+        "defaultAbbreviation": "2 Pid", 
+        "defaultName": "2 Pidru", 
+        "inputFields": [
+          "2 Pidru", 
+          "2 Pid", 
+          "2 Pdru"
+        ]
+      }, 
       "ZEC": {
         "defaultAbbreviation": "Sak", 
         "defaultName": "Sakariyas", 
@@ -2240,23 +2070,168 @@
           "Skrys"
         ]
       }, 
-      "REV": {
-        "defaultAbbreviation": "Imp", 
-        "defaultName": "Impakita", 
+      "LUK": {
+        "defaultAbbreviation": "Luk", 
+        "defaultName": "Lukas", 
         "inputFields": [
-          "Impakita", 
-          "Imp", 
-          "Impkta", 
-          "Gipadayag"
+          "Lukas", 
+          "Luk", 
+          "Lks"
         ]
       }, 
-      "TI1": {
-        "defaultAbbreviation": "1 Tim", 
-        "defaultName": "1 Timutiyu", 
+      "JAM": {
+        "defaultAbbreviation": "San", 
+        "defaultName": "Santiyagu", 
         "inputFields": [
-          "1 Timutiyu", 
-          "1 Tim", 
-          "1 Tmtyu"
+          "Santiyagu", 
+          "San", 
+          "Sntygu", 
+          "Hakubu"
+        ]
+      }, 
+      "PHP": {
+        "defaultAbbreviation": "Pil", 
+        "defaultName": "Matig-Pilipu", 
+        "inputFields": [
+          "Matig-Pilipu", 
+          "Pil", 
+          "MatigPilipu", 
+          "Pilipu", 
+          "Plpu"
+        ]
+      }, 
+      "CO1": {
+        "defaultAbbreviation": "1 Kur", 
+        "defaultName": "1 Matig-Kurintu", 
+        "inputFields": [
+          "1 Matig-Kurintu", 
+          "1 Kur", 
+          "1 MatigKurintu", 
+          "1 Kurintu", 
+          "1 Krntu"
+        ]
+      }, 
+      "KI2": {
+        "defaultAbbreviation": "2 Hari", 
+        "defaultName": "2 Me Hari", 
+        "inputFields": [
+          "2 Me Hari", 
+          "2 Hari", 
+          "2 Hri"
+        ]
+      }, 
+      "GAL": {
+        "defaultAbbreviation": "Gal", 
+        "defaultName": "Matig-Galasya", 
+        "inputFields": [
+          "Matig-Galasya", 
+          "Gal", 
+          "MatigGalasya", 
+          "Galasya", 
+          "Glsya"
+        ]
+      }, 
+      "KI1": {
+        "defaultAbbreviation": "1 Hari", 
+        "defaultName": "1 Me Hari", 
+        "inputFields": [
+          "1 Me Hari", 
+          "1 Hari", 
+          "1 Hri"
+        ]
+      }, 
+      "JDE": {
+        "defaultAbbreviation": "Hud", 
+        "defaultName": "Hudas", 
+        "inputFields": [
+          "Hudas", 
+          "Hud", 
+          "Hds", 
+          "Judas"
+        ]
+      }, 
+      "JDG": {
+        "defaultAbbreviation": "Tal", 
+        "defaultName": "Me Talewukum", 
+        "inputFields": [
+          "Me Talewukum", 
+          "Tal", 
+          "Tlwkm"
+        ]
+      }, 
+      "JOS": {
+        "defaultAbbreviation": "Huswi", 
+        "defaultName": "Huswi", 
+        "inputFields": [
+          "Huswi", 
+          "Hswi", 
+          "Juswi"
+        ]
+      }, 
+      "PSA": {
+        "defaultAbbreviation": "Sal", 
+        "defaultName": "Me Salmu", 
+        "inputFields": [
+          "Me Salmu", 
+          "Sal", 
+          "Slmu"
+        ]
+      }, 
+      "EPH": {
+        "defaultAbbreviation": "Ipi", 
+        "defaultName": "Matig-Ipisu", 
+        "inputFields": [
+          "Matig-Ipisu", 
+          "Ipi", 
+          "MatigIpisu", 
+          "Ipisu", 
+          "Ipsu"
+        ]
+      }, 
+      "GEN": {
+        "defaultAbbreviation": "Hin", 
+        "defaultName": "Hinisis", 
+        "inputFields": [
+          "Hinisis", 
+          "Hin", 
+          "Hn"
+        ]
+      }, 
+      "RUT": {
+        "defaultAbbreviation": "Rut", 
+        "defaultName": "Rut", 
+        "inputFields": [
+          "Rut", 
+          "Rt"
+        ]
+      }, 
+      "DAN": {
+        "defaultAbbreviation": "Dan", 
+        "defaultName": "Danyil", 
+        "inputFields": [
+          "Danyil", 
+          "Dan", 
+          "Dnyl"
+        ]
+      }, 
+      "SNG": {
+        "defaultAbbreviation": "UNS", 
+        "defaultName": "Ulahingen ni Sulumun", 
+        "inputFields": [
+          "Ulahingen ni Sulumun", 
+          "UNS", 
+          "Ulahingen ni Slmn"
+        ]
+      }, 
+      "JHN": {
+        "defaultAbbreviation": "Huw", 
+        "defaultName": "Huwan", 
+        "inputFields": [
+          "Huwan", 
+          "Huw", 
+          "Hwn", 
+          "Juan", 
+          "Jn"
         ]
       }, 
       "CO2": {
@@ -2270,19 +2245,60 @@
           "2 Krntu"
         ]
       }, 
-      "MIC": {
-        "defaultAbbreviation": "Mic", 
-        "defaultName": "Mikiyas", 
+      "HOS": {
+        "defaultAbbreviation": "Hus", 
+        "defaultName": "Husiya", 
         "inputFields": [
-          "Mikiyas", 
-          "Mic", 
-          "Mkys"
+          "Husiya", 
+          "Hus", 
+          "Hsya"
+        ]
+      }, 
+      "JNA": {
+        "defaultAbbreviation": "Hun", 
+        "defaultName": "Hunas", 
+        "inputFields": [
+          "Hunas", 
+          "Hun", 
+          "Juns"
+        ]
+      }, 
+      "TIT": {
+        "defaultAbbreviation": "Tit", 
+        "defaultName": "Titu", 
+        "inputFields": [
+          "Titu", 
+          "Tit", 
+          "Ttu"
+        ]
+      }, 
+      "OBA": {
+        "defaultAbbreviation": "Abd", 
+        "defaultName": "Abdiyas", 
+        "inputFields": [
+          "Abdiyas", 
+          "Abd", 
+          "Abdy"
         ]
       }
     }
   ], 
   "deu_traditional": [
     {
+      "GO": {
+        "defaultAbbreviation": "Gosp", 
+        "includedBooks": [
+          "MAT", 
+          "MRK", 
+          "LUK", 
+          "JHN"
+        ], 
+        "defaultName": "Gospels", 
+        "inputFields": [
+          "Gospels", 
+          "Gspls"
+        ]
+      }, 
       "GA": {
         "defaultAbbreviation": "NTGesch", 
         "includedBooks": [
@@ -2418,23 +2434,6 @@
           "Ltrs of Paul", 
           "Paul's letters", 
           "Paul's ltrs"
-        ]
-      }, 
-      "MJ": {
-        "defaultAbbreviation": "MajProps", 
-        "includedBooks": [
-          "ISA", 
-          "JER", 
-          "LAM", 
-          "EZK", 
-          "DAN", 
-          "BAR"
-        ], 
-        "defaultName": "Major Prophets", 
-        "inputFields": [
-          "Major Prophets", 
-          "MajProps", 
-          "Mjr Prphts"
         ]
       }, 
       "D3": {
@@ -2573,20 +2572,6 @@
           "Prphtschs Bch"
         ]
       }, 
-      "GO": {
-        "defaultAbbreviation": "Gosp", 
-        "includedBooks": [
-          "MAT", 
-          "MRK", 
-          "LUK", 
-          "JHN"
-        ], 
-        "defaultName": "Gospels", 
-        "inputFields": [
-          "Gospels", 
-          "Gspls"
-        ]
-      }, 
       "MN": {
         "defaultAbbreviation": "MinProp", 
         "includedBooks": [
@@ -2608,6 +2593,23 @@
           "Minor Prophets", 
           "MinProp", 
           "Mnr Prphts"
+        ]
+      }, 
+      "MJ": {
+        "defaultAbbreviation": "MajProps", 
+        "includedBooks": [
+          "ISA", 
+          "JER", 
+          "LAM", 
+          "EZK", 
+          "DAN", 
+          "BAR"
+        ], 
+        "defaultName": "Major Prophets", 
+        "inputFields": [
+          "Major Prophets", 
+          "MajProps", 
+          "Mjr Prphts"
         ]
       }
     }, 
@@ -2657,56 +2659,44 @@
       ]
     }, 
     {
-      "WSI": {
-        "defaultAbbreviation": "WrdsSir", 
-        "defaultName": "Words of Sirach", 
+      "CH1": {
+        "defaultAbbreviation": "1 Chr", 
+        "defaultName": "1 Chronik", 
         "inputFields": [
-          "Words of Sirach", 
-          "WrdsSir", 
-          "Wrds Sirach", 
-          "Wrds Srch"
+          "1 Chronik", 
+          "1 Chr", 
+          "1 Chrnk", 
+          "1 Cronik", 
+          "1 Crnk"
         ]
       }, 
-      "EZR": {
-        "defaultAbbreviation": "Esr", 
-        "defaultName": "Esra", 
+      "BAR": {
+        "defaultAbbreviation": "Bar", 
+        "defaultName": "Baruch", 
         "inputFields": [
-          "Esra", 
-          "Esr"
+          "Baruch", 
+          "Bar", 
+          "Brch"
         ]
       }, 
-      "LBA": {
-        "defaultAbbreviation": "EpBar", 
-        "defaultName": "Epistle of Baruch", 
+      "CH2": {
+        "defaultAbbreviation": "2 Chr", 
+        "defaultName": "2 Chronik", 
         "inputFields": [
-          "Epistle of Baruch", 
-          "EpBar", 
-          "Ep Baruch", 
-          "Ep Brch", 
-          "Epi Baruch", 
-          "Epis Baruch", 
-          "Letter of Baruch", 
-          "Ltr of Baruch", 
-          "Ltr Baruch"
+          "2 Chronik", 
+          "2 Chr", 
+          "2 Chrnk", 
+          "2 Cronik", 
+          "2 Crnk"
         ]
       }, 
-      "EZN": {
-        "defaultAbbreviation": "EzNeh", 
-        "defaultName": "Ezra-Nehemiah", 
+      "JAM": {
+        "defaultAbbreviation": "Jak", 
+        "defaultName": "Jakobus", 
         "inputFields": [
-          "Ezra-Nehemiah", 
-          "EzNeh", 
-          "Ezr Neh"
-        ]
-      }, 
-      "DOJ": {
-        "defaultAbbreviation": "DoJ", 
-        "defaultName": "Dormition of John", 
-        "inputFields": [
-          "Dormition of John", 
-          "DoJ", 
-          "Drm Jhn", 
-          "Drm Jn"
+          "Jakobus", 
+          "Jak", 
+          "Jkbs"
         ]
       }, 
       "EZK": {
@@ -2720,149 +2710,15 @@
           "Ezchl"
         ]
       }, 
-      "ECC": {
-        "defaultAbbreviation": "Pred", 
-        "defaultName": "Prediger", 
+      "MQ3": {
+        "defaultAbbreviation": "3 Meq", 
+        "defaultName": "3 Meqabyan", 
         "inputFields": [
-          "Prediger", 
-          "Pred", 
-          "Prdgr", 
-          "Kohelet", 
-          "Khlt"
-        ]
-      }, 
-      "P12": {
-        "defaultAbbreviation": "TwProp", 
-        "defaultName": "Twelve Prophets", 
-        "inputFields": [
-          "Twelve Prophets", 
-          "TwProp", 
-          "12 Prophets"
-        ]
-      }, 
-      "ODE": {
-        "defaultAbbreviation": "Ode", 
-        "defaultName": "Odes", 
-        "inputFields": [
-          "Odes", 
-          "Ode", 
-          "Odae"
-        ]
-      }, 
-      "PS2": {
-        "defaultAbbreviation": "Ps151", 
-        "defaultName": "Psalm 151", 
-        "inputFields": [
-          "Psalm 151", 
-          "Ps151", 
-          "Pslm 151"
-        ]
-      }, 
-      "NEH": {
-        "defaultAbbreviation": "Neh", 
-        "defaultName": "Nehemia", 
-        "inputFields": [
-          "Nehemia", 
-          "Neh", 
-          "Nhmia"
-        ]
-      }, 
-      "TH2": {
-        "defaultAbbreviation": "2 Thess", 
-        "defaultName": "2 Thessalonicher", 
-        "inputFields": [
-          "2 Thessalonicher", 
-          "2 Thess", 
-          "2 Thsslchr", 
-          "2 Thslchr"
-        ]
-      }, 
-      "TH1": {
-        "defaultAbbreviation": "1 Thess", 
-        "defaultName": "1 Thessalonicher", 
-        "inputFields": [
-          "1 Thessalonicher", 
-          "1 Thess", 
-          "1 Thsslchr", 
-          "1 Thslchr"
-        ]
-      }, 
-      "SNG": {
-        "defaultAbbreviation": "Hoh", 
-        "defaultName": "Hoheslied", 
-        "inputFields": [
-          "Hoheslied", 
-          "Hoh", 
-          "Hohelied Salomos", 
-          "Hhld"
-        ]
-      }, 
-      "ACT": {
-        "defaultAbbreviation": "Apst", 
-        "defaultName": "Apostelgeschichte", 
-        "inputFields": [
-          "Apostelgeschichte", 
-          "Apst", 
-          "Apstlgschchte"
-        ]
-      }, 
-      "MQ2": {
-        "defaultAbbreviation": "2 Meq", 
-        "defaultName": "2 Meqabyan", 
-        "inputFields": [
-          "2 Meqabyan", 
-          "2 Meq", 
-          "2 Mqbyn", 
-          "2 Makabian", 
-          "2 Mkbn", 
-          "Mekabis of Moab", 
-          "Mekabis Moab", 
-          "Mkbs Mb"
-        ]
-      }, 
-      "DID": {
-        "defaultAbbreviation": "Did", 
-        "defaultName": "Didache", 
-        "inputFields": [
-          "Didache", 
-          "Did", 
-          "Ddch"
-        ]
-      }, 
-      "JNA": {
-        "defaultAbbreviation": "Jon", 
-        "defaultName": "Jona", 
-        "inputFields": [
-          "Jona", 
-          "Jon", 
-          "Jna"
-        ]
-      }, 
-      "JUB": {
-        "defaultAbbreviation": "Jub", 
-        "defaultName": "Jubilees", 
-        "inputFields": [
-          "Jubilees", 
-          "Jub", 
-          "Jbls"
-        ]
-      }, 
-      "CHR": {
-        "defaultAbbreviation": "Chr", 
-        "defaultName": "Chronicles", 
-        "inputFields": [
-          "Chronicles", 
-          "Chr", 
-          "Chrncls"
-        ]
-      }, 
-      "ZEP": {
-        "defaultAbbreviation": "Zef", 
-        "defaultName": "Zefanja", 
-        "inputFields": [
-          "Zefanja", 
-          "Zef", 
-          "Zfnja"
+          "3 Meqabyan", 
+          "3 Meq", 
+          "3 Mqbyn", 
+          "3 Makabian", 
+          "3 Mkbn"
         ]
       }, 
       "JN2": {
@@ -2904,143 +2760,39 @@
           "1 Johhannes"
         ]
       }, 
-      "BA3": {
-        "defaultAbbreviation": "3 Bar", 
-        "defaultName": "3 Baruch", 
+      "EZA": {
+        "defaultAbbreviation": "ApEz", 
+        "defaultName": "Apocalypse of Ezra", 
         "inputFields": [
-          "3 Baruch", 
-          "3 Bar", 
-          "3 Brch"
+          "Apocalypse of Ezra", 
+          "ApEz", 
+          "Ap Ezra"
         ]
       }, 
-      "TTP": {
-        "defaultAbbreviation": "Tst12", 
-        "defaultName": "Testaments of the Twelve Patriarchs", 
+      "CL2": {
+        "defaultAbbreviation": "2 Cle", 
+        "defaultName": "2 Clement", 
         "inputFields": [
-          "Testaments of the Twelve Patriarchs", 
-          "Tst12", 
-          "Tst 12P", 
-          "Tst Twelve"
+          "2 Clement", 
+          "2 Cle", 
+          "2 Clmnt"
         ]
       }, 
-      "ZEC": {
-        "defaultAbbreviation": "Sach", 
-        "defaultName": "Sacharja", 
+      "EZN": {
+        "defaultAbbreviation": "EzNeh", 
+        "defaultName": "Ezra-Nehemiah", 
         "inputFields": [
-          "Sacharja", 
-          "Sach", 
-          "Schrja"
+          "Ezra-Nehemiah", 
+          "EzNeh", 
+          "Ezr Neh"
         ]
       }, 
-      "KGS": {
-        "defaultAbbreviation": "Kgs", 
-        "defaultName": "Kings", 
+      "AMO": {
+        "defaultAbbreviation": "Amos", 
+        "defaultName": "Amos", 
         "inputFields": [
-          "Kings", 
-          "Kgs", 
-          "Kngs"
-        ]
-      }, 
-      "HOS": {
-        "defaultAbbreviation": "Hos", 
-        "defaultName": "Hosea", 
-        "inputFields": [
-          "Hosea", 
-          "Hos", 
-          "Hs"
-        ]
-      }, 
-      "ENO": {
-        "defaultAbbreviation": "Eno", 
-        "defaultName": "Enoch", 
-        "inputFields": [
-          "Enoch", 
-          "Eno", 
-          "Ench", 
-          "1 Enoch", 
-          "1 Ench"
-        ]
-      }, 
-      "ISA": {
-        "defaultAbbreviation": "Jes", 
-        "defaultName": "Jesaja", 
-        "inputFields": [
-          "Jesaja", 
-          "Jes", 
-          "Jsj"
-        ]
-      }, 
-      "PRO": {
-        "defaultAbbreviation": "Spr", 
-        "defaultName": "Spr\u00fcche", 
-        "inputFields": [
-          "Spr\u00fcche", 
-          "Spr", 
-          "Sprch", 
-          "Sprichw\u00f6rter"
-        ]
-      }, 
-      "EUT": {
-        "defaultAbbreviation": "Eut", 
-        "defaultName": "Prayer of Euthalius", 
-        "inputFields": [
-          "Prayer of Euthalius", 
-          "Eut", 
-          "Pr Eut"
-        ]
-      }, 
-      "BAR": {
-        "defaultAbbreviation": "Bar", 
-        "defaultName": "Baruch", 
-        "inputFields": [
-          "Baruch", 
-          "Bar", 
-          "Brch"
-        ]
-      }, 
-      "EZ5": {
-        "defaultAbbreviation": "5 Ezr", 
-        "defaultName": "5 Ezra", 
-        "inputFields": [
-          "5 Ezra", 
-          "5 Ezr", 
-          "5 Esdras"
-        ]
-      }, 
-      "JOL": {
-        "defaultAbbreviation": "Joel", 
-        "defaultName": "Joel", 
-        "inputFields": [
-          "Joel", 
-          "Jl"
-        ]
-      }, 
-      "PHP": {
-        "defaultAbbreviation": "Php", 
-        "defaultName": "Philipper", 
-        "inputFields": [
-          "Philipper", 
-          "Php", 
-          "Phlppr", 
-          "Phlpr"
-        ]
-      }, 
-      "JOB": {
-        "defaultAbbreviation": "Hiob", 
-        "defaultName": "Hiob", 
-        "inputFields": [
-          "Hiob", 
-          "Hb", 
-          "Jb"
-        ]
-      }, 
-      "GAL": {
-        "defaultAbbreviation": "Gal", 
-        "defaultName": "Galater", 
-        "inputFields": [
-          "Galater", 
-          "Gal", 
-          "Gltr"
+          "Amos", 
+          "Ams"
         ]
       }, 
       "TI1": {
@@ -3052,180 +2804,31 @@
           "1 Tmths"
         ]
       }, 
-      "BEL": {
-        "defaultAbbreviation": "Bel", 
-        "defaultName": "Bel and the Dragon", 
+      "TI2": {
+        "defaultAbbreviation": "2 Tim", 
+        "defaultName": "2 Timotheus", 
         "inputFields": [
-          "Bel and the Dragon", 
-          "Bel", 
-          "BaD"
+          "2 Timotheus", 
+          "2 Tim", 
+          "2 Tmths"
         ]
       }, 
-      "SIR": {
-        "defaultAbbreviation": "Sir", 
-        "defaultName": "Sirach", 
+      "EZR": {
+        "defaultAbbreviation": "Esr", 
+        "defaultName": "Esra", 
         "inputFields": [
-          "Sirach", 
-          "Sir", 
-          "Srch"
+          "Esra", 
+          "Esr"
         ]
       }, 
-      "MRK": {
-        "defaultAbbreviation": "Mrk", 
-        "defaultName": "Markus", 
+      "ROM": {
+        "defaultAbbreviation": "R\u00f6m", 
+        "defaultName": "R\u00f6mer", 
         "inputFields": [
-          "Markus", 
-          "Mrk", 
-          "Mrks", 
-          "Mks"
-        ]
-      }, 
-      "PHM": {
-        "defaultAbbreviation": "Phm", 
-        "defaultName": "Philemon", 
-        "inputFields": [
-          "Philemon", 
-          "Phm", 
-          "Phlmn"
-        ]
-      }, 
-      "DEU": {
-        "defaultAbbreviation": "5 Mos", 
-        "defaultName": "5 Moses", 
-        "inputFields": [
-          "5 Moses", 
-          "5 Mos", 
-          "5 Mss", 
-          "Deuteronomium", 
-          "Dtrnmm"
-        ]
-      }, 
-      "WIS": {
-        "defaultAbbreviation": "Wis", 
-        "defaultName": "Wisdom of Solomon", 
-        "inputFields": [
-          "Wisdom of Solomon", 
-          "Wis", 
-          "Wsdm of Slmn"
-        ]
-      }, 
-      "REV": {
-        "defaultAbbreviation": "Off", 
-        "defaultName": "Offenbarung", 
-        "inputFields": [
-          "Offenbarung", 
-          "Off", 
-          "Offnbrng", 
-          "Ofnbrng"
-        ]
-      }, 
-      "MOS": {
-        "defaultAbbreviation": "Mos", 
-        "defaultName": "Moses", 
-        "inputFields": [
-          "Moses", 
-          "Mos", 
-          "Mss"
-        ]
-      }, 
-      "REP": {
-        "defaultAbbreviation": "Rep", 
-        "defaultName": "Reproof", 
-        "inputFields": [
-          "Reproof", 
-          "Rep", 
-          "Rprf"
-        ]
-      }, 
-      "JDE": {
-        "defaultAbbreviation": "Jud", 
-        "defaultName": "Judas", 
-        "inputFields": [
-          "Judas", 
-          "Jud", 
-          "Jds"
-        ]
-      }, 
-      "JDG": {
-        "defaultAbbreviation": "Rchtr", 
-        "defaultName": "Richter", 
-        "inputFields": [
-          "Richter", 
-          "Rchtr"
-        ]
-      }, 
-      "PS3": {
-        "defaultAbbreviation": "SyrPs", 
-        "defaultName": "Syriac Psalms", 
-        "inputFields": [
-          "Syriac Psalms", 
-          "SyrPs", 
-          "Syr Pslms"
-        ]
-      }, 
-      "GES": {
-        "defaultAbbreviation": "1 Esd", 
-        "defaultName": "1 Esdras", 
-        "inputFields": [
-          "1 Esdras", 
-          "1 Esd", 
-          "1 Esdrs"
-        ]
-      }, 
-      "EZA": {
-        "defaultAbbreviation": "ApEz", 
-        "defaultName": "Apocalypse of Ezra", 
-        "inputFields": [
-          "Apocalypse of Ezra", 
-          "ApEz", 
-          "Ap Ezra"
-        ]
-      }, 
-      "EPH": {
-        "defaultAbbreviation": "Eph", 
-        "defaultName": "Epheser", 
-        "inputFields": [
-          "Epheser", 
-          "Eph", 
-          "Ephsr"
-        ]
-      }, 
-      "CO3": {
-        "defaultAbbreviation": "3 Cor", 
-        "defaultName": "3 Corinthians", 
-        "inputFields": [
-          "3 Corinthians", 
-          "3 Cor", 
-          "3 Crnthns"
-        ]
-      }, 
-      "TIT": {
-        "defaultAbbreviation": "Tit", 
-        "defaultName": "Titus", 
-        "inputFields": [
-          "Titus", 
-          "Tit", 
-          "Tts"
-        ]
-      }, 
-      "JDT": {
-        "defaultAbbreviation": "Jdt", 
-        "defaultName": "Judith", 
-        "inputFields": [
-          "Judith", 
-          "Jdt", 
-          "Jdth"
-        ]
-      }, 
-      "EXO": {
-        "defaultAbbreviation": "2 Mos", 
-        "defaultName": "2 Moses", 
-        "inputFields": [
-          "2 Moses", 
-          "2 Mos", 
-          "2 Mss", 
-          "Exodus", 
-          "Exds"
+          "R\u00f6mer", 
+          "R\u00f6m", 
+          "Romer", 
+          "Rmr"
         ]
       }, 
       "LEV": {
@@ -3239,42 +2842,46 @@
           "Lvtks"
         ]
       }, 
-      "CO1": {
-        "defaultAbbreviation": "1 Kor", 
-        "defaultName": "1 Korinther", 
+      "LAM": {
+        "defaultAbbreviation": "Klag", 
+        "defaultName": "Klagelieder", 
         "inputFields": [
-          "1 Korinther", 
-          "1 Kor", 
-          "1 Krnthr"
+          "Klagelieder", 
+          "Klag", 
+          "Klgldr"
         ]
       }, 
-      "CO2": {
-        "defaultAbbreviation": "2 Kor", 
-        "defaultName": "2 Korinther", 
+      "MQ2": {
+        "defaultAbbreviation": "2 Meq", 
+        "defaultName": "2 Meqabyan", 
         "inputFields": [
-          "2 Korinther", 
-          "2 Kor", 
-          "2 Krnthr"
+          "2 Meqabyan", 
+          "2 Meq", 
+          "2 Mqbyn", 
+          "2 Makabian", 
+          "2 Mkbn", 
+          "Mekabis of Moab", 
+          "Mekabis Moab", 
+          "Mkbs Mb"
         ]
       }, 
-      "PAZ": {
-        "defaultAbbreviation": "PrAz", 
-        "defaultName": "Prayer of Azariah", 
+      "MRK": {
+        "defaultAbbreviation": "Mrk", 
+        "defaultName": "Markus", 
         "inputFields": [
-          "Prayer of Azariah", 
-          "PrAz", 
-          "Pryr Azrh"
+          "Markus", 
+          "Mrk", 
+          "Mrks", 
+          "Mks"
         ]
       }, 
-      "GEN": {
-        "defaultAbbreviation": "1 Mos", 
-        "defaultName": "1 Moses", 
+      "MAL": {
+        "defaultAbbreviation": "Mal", 
+        "defaultName": "Maleachi", 
         "inputFields": [
-          "1 Moses", 
-          "1 Mos", 
-          "1 Mss", 
-          "Genesis", 
-          "Gns"
+          "Maleachi", 
+          "Mal", 
+          "Mlchi"
         ]
       }, 
       "KI2": {
@@ -3285,61 +2892,60 @@
           "2 Kng"
         ]
       }, 
-      "DAN": {
-        "defaultAbbreviation": "Dan", 
-        "defaultName": "Daniel", 
+      "MAN": {
+        "defaultAbbreviation": "Man", 
+        "defaultName": "Prayer of Manasses", 
         "inputFields": [
-          "Daniel", 
-          "Dan", 
-          "Dnl"
+          "Prayer of Manasses", 
+          "Man", 
+          "Manasses", 
+          "Manasseh", 
+          "Mnss", 
+          "Mnsh", 
+          "Pryr Man"
         ]
       }, 
-      "CH1": {
-        "defaultAbbreviation": "1 Chr", 
-        "defaultName": "1 Chronik", 
+      "MQ1": {
+        "defaultAbbreviation": "1 Meq", 
+        "defaultName": "1 Meqabyan", 
         "inputFields": [
-          "1 Chronik", 
-          "1 Chr", 
-          "1 Chrnk", 
-          "1 Cronik", 
-          "1 Crnk"
+          "1 Meqabyan", 
+          "1 Meq", 
+          "1 Mqbyn", 
+          "1 Makabian", 
+          "1 Mkbn", 
+          "Mekabis of Benjamin", 
+          "Mekabis Benjamin", 
+          "Mkbs Bnjmn"
         ]
       }, 
-      "EN2": {
-        "defaultAbbreviation": "2 Eno", 
-        "defaultName": "2 Enoch", 
+      "MAT": {
+        "defaultAbbreviation": "Mat", 
+        "defaultName": "Matth\u00e4us", 
         "inputFields": [
-          "2 Enoch", 
-          "2 Eno", 
-          "2 Ench"
+          "Matth\u00e4us", 
+          "Mat", 
+          "Matthaus", 
+          "Mtths", 
+          "Mths"
         ]
       }, 
-      "AMO": {
-        "defaultAbbreviation": "Amos", 
-        "defaultName": "Amos", 
+      "EUT": {
+        "defaultAbbreviation": "Eut", 
+        "defaultName": "Prayer of Euthalius", 
         "inputFields": [
-          "Amos", 
-          "Ams"
+          "Prayer of Euthalius", 
+          "Eut", 
+          "Pr Eut"
         ]
       }, 
-      "SHE": {
-        "defaultAbbreviation": "Her", 
-        "defaultName": "Shepherd of Hermas", 
+      "JER": {
+        "defaultAbbreviation": "Jer", 
+        "defaultName": "Jeremia", 
         "inputFields": [
-          "Shepherd of Hermas", 
-          "Her", 
-          "Hermas", 
-          "Hrms", 
-          "Shep Hermas"
-        ]
-      }, 
-      "LES": {
-        "defaultAbbreviation": "2 Esd", 
-        "defaultName": "2 Esdras", 
-        "inputFields": [
-          "2 Esdras", 
-          "2 Esd", 
-          "2 Esdrs"
+          "Jeremia", 
+          "Jer", 
+          "Jrm"
         ]
       }, 
       "NAH": {
@@ -3353,31 +2959,98 @@
           "Nhm"
         ]
       }, 
-      "SUS": {
-        "defaultAbbreviation": "Sus", 
-        "defaultName": "Susanna", 
+      "OBA": {
+        "defaultAbbreviation": "Oba", 
+        "defaultName": "Obadja", 
         "inputFields": [
-          "Susanna", 
-          "Sus", 
-          "Ssnn"
+          "Obadja", 
+          "Oba", 
+          "Obdj"
         ]
       }, 
-      "RUT": {
-        "defaultAbbreviation": "Rut", 
-        "defaultName": "Rut", 
+      "NEH": {
+        "defaultAbbreviation": "Neh", 
+        "defaultName": "Nehemia", 
         "inputFields": [
-          "Rut", 
-          "Rt"
+          "Nehemia", 
+          "Neh", 
+          "Nhmia"
         ]
       }, 
-      "JHN": {
-        "defaultAbbreviation": "Jhn", 
-        "defaultName": "Johannes", 
+      "WSI": {
+        "defaultAbbreviation": "WrdsSir", 
+        "defaultName": "Words of Sirach", 
         "inputFields": [
-          "Johannes", 
-          "Jhn", 
-          "Jhnns", 
-          "Jn"
+          "Words of Sirach", 
+          "WrdsSir", 
+          "Wrds Sirach", 
+          "Wrds Srch"
+        ]
+      }, 
+      "MIC": {
+        "defaultAbbreviation": "Mic", 
+        "defaultName": "Micha", 
+        "inputFields": [
+          "Micha", 
+          "Mic", 
+          "Mcha"
+        ]
+      }, 
+      "HAG": {
+        "defaultAbbreviation": "Hag", 
+        "defaultName": "Haggai", 
+        "inputFields": [
+          "Haggai", 
+          "Hag", 
+          "Hgg", 
+          "Hagai"
+        ]
+      }, 
+      "HAB": {
+        "defaultAbbreviation": "Hab", 
+        "defaultName": "Habakuk", 
+        "inputFields": [
+          "Habakuk", 
+          "Hab", 
+          "Hbkk"
+        ]
+      }, 
+      "CL1": {
+        "defaultAbbreviation": "1 Cle", 
+        "defaultName": "1 Clement", 
+        "inputFields": [
+          "1 Clement", 
+          "1 Cle", 
+          "1 Clmnt"
+        ]
+      }, 
+      "ZEP": {
+        "defaultAbbreviation": "Zef", 
+        "defaultName": "Zefanja", 
+        "inputFields": [
+          "Zefanja", 
+          "Zef", 
+          "Zfnja"
+        ]
+      }, 
+      "JOB": {
+        "defaultAbbreviation": "Hiob", 
+        "defaultName": "Hiob", 
+        "inputFields": [
+          "Hiob", 
+          "Hb", 
+          "Jb"
+        ]
+      }, 
+      "NUM": {
+        "defaultAbbreviation": "4 Mos", 
+        "defaultName": "4 Moses", 
+        "inputFields": [
+          "4 Moses", 
+          "4 Mos", 
+          "4 Mss", 
+          "Numeri", 
+          "Nmr"
         ]
       }, 
       "MA4": {
@@ -3400,27 +3073,13 @@
           "5 Mcbs"
         ]
       }, 
-      "MQ1": {
-        "defaultAbbreviation": "1 Meq", 
-        "defaultName": "1 Meqabyan", 
+      "ZEC": {
+        "defaultAbbreviation": "Sach", 
+        "defaultName": "Sacharja", 
         "inputFields": [
-          "1 Meqabyan", 
-          "1 Meq", 
-          "1 Mqbyn", 
-          "1 Makabian", 
-          "1 Mkbn", 
-          "Mekabis of Benjamin", 
-          "Mekabis Benjamin", 
-          "Mkbs Bnjmn"
-        ]
-      }, 
-      "SAM": {
-        "defaultAbbreviation": "Sam", 
-        "defaultName": "Samuel", 
-        "inputFields": [
-          "Samuel", 
-          "Sam", 
-          "Sml"
+          "Sacharja", 
+          "Sach", 
+          "Schrja"
         ]
       }, 
       "MA1": {
@@ -3453,323 +3112,200 @@
           "3 Mcbs"
         ]
       }, 
-      "KI1": {
-        "defaultAbbreviation": "1 Kng", 
-        "defaultName": "1 K\u00f6nige", 
+      "PHP": {
+        "defaultAbbreviation": "Php", 
+        "defaultName": "Philipper", 
         "inputFields": [
-          "1 K\u00f6nige", 
-          "1 Kng"
+          "Philipper", 
+          "Php", 
+          "Phlppr", 
+          "Phlpr"
         ]
       }, 
-      "PE1": {
-        "defaultAbbreviation": "1 Pet", 
-        "defaultName": "1 Petrus", 
+      "P12": {
+        "defaultAbbreviation": "TwProp", 
+        "defaultName": "Twelve Prophets", 
         "inputFields": [
-          "1 Petrus", 
-          "1 Pet", 
-          "1 Ptrs"
+          "Twelve Prophets", 
+          "TwProp", 
+          "12 Prophets"
         ]
       }, 
-      "PE2": {
-        "defaultAbbreviation": "2 Pet", 
-        "defaultName": "2 Petrus", 
+      "TH2": {
+        "defaultAbbreviation": "2 Thess", 
+        "defaultName": "2 Thessalonicher", 
         "inputFields": [
-          "2 Petrus", 
-          "2 Pet", 
-          "2 Ptrs"
+          "2 Thessalonicher", 
+          "2 Thess", 
+          "2 Thsslchr", 
+          "2 Thslchr"
         ]
       }, 
-      "JOS": {
-        "defaultAbbreviation": "Jos", 
-        "defaultName": "Josua", 
+      "TH1": {
+        "defaultAbbreviation": "1 Thess", 
+        "defaultName": "1 Thessalonicher", 
         "inputFields": [
-          "Josua", 
-          "Jos", 
-          "Js"
+          "1 Thessalonicher", 
+          "1 Thess", 
+          "1 Thsslchr", 
+          "1 Thslchr"
         ]
       }, 
-      "JAM": {
-        "defaultAbbreviation": "Jak", 
-        "defaultName": "Jakobus", 
+      "BA3": {
+        "defaultAbbreviation": "3 Bar", 
+        "defaultName": "3 Baruch", 
         "inputFields": [
-          "Jakobus", 
-          "Jak", 
-          "Jkbs"
+          "3 Baruch", 
+          "3 Bar", 
+          "3 Brch"
         ]
       }, 
-      "MQ3": {
-        "defaultAbbreviation": "3 Meq", 
-        "defaultName": "3 Meqabyan", 
+      "ENO": {
+        "defaultAbbreviation": "Eno", 
+        "defaultName": "Enoch", 
         "inputFields": [
-          "3 Meqabyan", 
-          "3 Meq", 
-          "3 Mqbyn", 
-          "3 Makabian", 
-          "3 Mkbn"
+          "Enoch", 
+          "Eno", 
+          "Ench", 
+          "1 Enoch", 
+          "1 Ench"
         ]
       }, 
-      "MAL": {
-        "defaultAbbreviation": "Mal", 
-        "defaultName": "Maleachi", 
+      "TTP": {
+        "defaultAbbreviation": "Tst12", 
+        "defaultName": "Testaments of the Twelve Patriarchs", 
         "inputFields": [
-          "Maleachi", 
-          "Mal", 
-          "Mlchi"
+          "Testaments of the Twelve Patriarchs", 
+          "Tst12", 
+          "Tst 12P", 
+          "Tst Twelve"
         ]
       }, 
-      "MAN": {
-        "defaultAbbreviation": "Man", 
-        "defaultName": "Prayer of Manasses", 
+      "CHR": {
+        "defaultAbbreviation": "Chr", 
+        "defaultName": "Chronicles", 
         "inputFields": [
-          "Prayer of Manasses", 
-          "Man", 
-          "Manasses", 
-          "Manasseh", 
-          "Mnss", 
-          "Mnsh", 
-          "Pryr Man"
+          "Chronicles", 
+          "Chr", 
+          "Chrncls"
         ]
       }, 
-      "EZ6": {
-        "defaultAbbreviation": "6 Ezr", 
-        "defaultName": "6 Ezra", 
+      "EPH": {
+        "defaultAbbreviation": "Eph", 
+        "defaultName": "Epheser", 
         "inputFields": [
-          "6 Ezra", 
-          "6 Ezr", 
-          "6 Esdras"
+          "Epheser", 
+          "Eph", 
+          "Ephsr"
         ]
       }, 
-      "ESG": {
-        "defaultAbbreviation": "EsGk", 
-        "defaultName": "Esther (Greek)", 
+      "GEN": {
+        "defaultAbbreviation": "1 Mos", 
+        "defaultName": "1 Moses", 
         "inputFields": [
-          "Esther (Greek)", 
-          "EsGk", 
-          "EstGk"
+          "1 Moses", 
+          "1 Mos", 
+          "1 Mss", 
+          "Genesis", 
+          "Gns"
         ]
       }, 
-      "MAT": {
-        "defaultAbbreviation": "Mat", 
-        "defaultName": "Matth\u00e4us", 
+      "SUS": {
+        "defaultAbbreviation": "Sus", 
+        "defaultName": "Susanna", 
         "inputFields": [
-          "Matth\u00e4us", 
-          "Mat", 
-          "Matthaus", 
-          "Mtths", 
-          "Mths"
+          "Susanna", 
+          "Sus", 
+          "Ssnn"
         ]
       }, 
-      "CH2": {
-        "defaultAbbreviation": "2 Chr", 
-        "defaultName": "2 Chronik", 
+      "RUT": {
+        "defaultAbbreviation": "Rut", 
+        "defaultName": "Rut", 
         "inputFields": [
-          "2 Chronik", 
-          "2 Chr", 
-          "2 Chrnk", 
-          "2 Cronik", 
-          "2 Crnk"
+          "Rut", 
+          "Rt"
         ]
       }, 
-      "LAM": {
-        "defaultAbbreviation": "Klag", 
-        "defaultName": "Klagelieder", 
+      "ODE": {
+        "defaultAbbreviation": "Ode", 
+        "defaultName": "Odes", 
         "inputFields": [
-          "Klagelieder", 
-          "Klag", 
-          "Klgldr"
+          "Odes", 
+          "Ode", 
+          "Odae"
         ]
       }, 
-      "JER": {
-        "defaultAbbreviation": "Jer", 
-        "defaultName": "Jeremia", 
+      "DAN": {
+        "defaultAbbreviation": "Dan", 
+        "defaultName": "Daniel", 
         "inputFields": [
-          "Jeremia", 
-          "Jer", 
-          "Jrm"
+          "Daniel", 
+          "Dan", 
+          "Dnl"
         ]
       }, 
-      "LAO": {
-        "defaultAbbreviation": "Lao", 
-        "defaultName": "Laodiceans", 
+      "SNG": {
+        "defaultAbbreviation": "Hoh", 
+        "defaultName": "Hoheslied", 
         "inputFields": [
-          "Laodiceans", 
-          "Lao", 
-          "Eps Lao", 
-          "Ltr Lao"
+          "Hoheslied", 
+          "Hoh", 
+          "Hohelied Salomos", 
+          "Hhld"
         ]
       }, 
-      "TI2": {
-        "defaultAbbreviation": "2 Tim", 
-        "defaultName": "2 Timotheus", 
+      "LBA": {
+        "defaultAbbreviation": "EpBar", 
+        "defaultName": "Epistle of Baruch", 
         "inputFields": [
-          "2 Timotheus", 
-          "2 Tim", 
-          "2 Tmths"
+          "Epistle of Baruch", 
+          "EpBar", 
+          "Ep Baruch", 
+          "Ep Brch", 
+          "Epi Baruch", 
+          "Epis Baruch", 
+          "Letter of Baruch", 
+          "Ltr of Baruch", 
+          "Ltr Baruch"
         ]
       }, 
-      "DNG": {
-        "defaultAbbreviation": "Dn(Gk)", 
-        "defaultName": "Daniel (Greek)", 
+      "BEL": {
+        "defaultAbbreviation": "Bel", 
+        "defaultName": "Bel and the Dragon", 
         "inputFields": [
-          "Daniel (Greek)", 
-          "Dn(Gk)", 
-          "DnlGk"
+          "Bel and the Dragon", 
+          "Bel", 
+          "BaD"
         ]
       }, 
-      "CL1": {
-        "defaultAbbreviation": "1 Cle", 
-        "defaultName": "1 Clement", 
+      "GES": {
+        "defaultAbbreviation": "1 Esd", 
+        "defaultName": "1 Esdras", 
         "inputFields": [
-          "1 Clement", 
-          "1 Cle", 
-          "1 Clmnt"
+          "1 Esdras", 
+          "1 Esd", 
+          "1 Esdrs"
         ]
       }, 
-      "OBA": {
-        "defaultAbbreviation": "Oba", 
-        "defaultName": "Obadja", 
+      "WIS": {
+        "defaultAbbreviation": "Wis", 
+        "defaultName": "Wisdom of Solomon", 
         "inputFields": [
-          "Obadja", 
-          "Oba", 
-          "Obdj"
+          "Wisdom of Solomon", 
+          "Wis", 
+          "Wsdm of Slmn"
         ]
       }, 
-      "EST": {
-        "defaultAbbreviation": "Est", 
-        "defaultName": "Ester", 
+      "DEU": {
+        "defaultAbbreviation": "5 Mos", 
+        "defaultName": "5 Moses", 
         "inputFields": [
-          "Ester", 
-          "Est", 
-          "Estr"
-        ]
-      }, 
-      "CL2": {
-        "defaultAbbreviation": "2 Cle", 
-        "defaultName": "2 Clement", 
-        "inputFields": [
-          "2 Clement", 
-          "2 Cle", 
-          "2 Clmnt"
-        ]
-      }, 
-      "HAG": {
-        "defaultAbbreviation": "Hag", 
-        "defaultName": "Haggai", 
-        "inputFields": [
-          "Haggai", 
-          "Hag", 
-          "Hgg", 
-          "Hagai"
-        ]
-      }, 
-      "BA2": {
-        "defaultAbbreviation": "2 Bar", 
-        "defaultName": "2 Baruch", 
-        "inputFields": [
-          "2 Baruch", 
-          "2 Bar", 
-          "2 Brch", 
-          "Apocalypse of Baruch", 
-          "Apoc of Baruch", 
-          "Apoc Baruch"
-        ]
-      }, 
-      "PSS": {
-        "defaultAbbreviation": "AddPs", 
-        "defaultName": "Psalms of Solomon", 
-        "inputFields": [
-          "Psalms of Solomon", 
-          "AddPs", 
-          "Ps Sol", 
-          "Slmn Pslms"
-        ]
-      }, 
-      "HAB": {
-        "defaultAbbreviation": "Hab", 
-        "defaultName": "Habakuk", 
-        "inputFields": [
-          "Habakuk", 
-          "Hab", 
-          "Hbkk"
-        ]
-      }, 
-      "COL": {
-        "defaultAbbreviation": "Kol", 
-        "defaultName": "Kolosser", 
-        "inputFields": [
-          "Kolosser", 
-          "Kol", 
-          "Klssr", 
-          "Klsr"
-        ]
-      }, 
-      "HEB": {
-        "defaultAbbreviation": "Heb", 
-        "defaultName": "Hebr\u00e4er", 
-        "inputFields": [
-          "Hebr\u00e4er", 
-          "Heb", 
-          "Hebraer", 
-          "Hbrr"
-        ]
-      }, 
-      "SA2": {
-        "defaultAbbreviation": "2 Sam", 
-        "defaultName": "2 Samuel", 
-        "inputFields": [
-          "2 Samuel", 
-          "2 Sam", 
-          "2 Sml"
-        ]
-      }, 
-      "TOB": {
-        "defaultAbbreviation": "Tob", 
-        "defaultName": "Tobit", 
-        "inputFields": [
-          "Tobit", 
-          "Tob", 
-          "Tobias", 
-          "Tbt", 
-          "Tbs"
-        ]
-      }, 
-      "NUM": {
-        "defaultAbbreviation": "4 Mos", 
-        "defaultName": "4 Moses", 
-        "inputFields": [
-          "4 Moses", 
-          "4 Mos", 
-          "4 Mss", 
-          "Numeri", 
-          "Nmr"
-        ]
-      }, 
-      "SA1": {
-        "defaultAbbreviation": "1 Sam", 
-        "defaultName": "1 Samuel", 
-        "inputFields": [
-          "1 Samuel", 
-          "1 Sam", 
-          "1 Sml"
-        ]
-      }, 
-      "ROM": {
-        "defaultAbbreviation": "R\u00f6m", 
-        "defaultName": "R\u00f6mer", 
-        "inputFields": [
-          "R\u00f6mer", 
-          "R\u00f6m", 
-          "Romer", 
-          "Rmr"
-        ]
-      }, 
-      "LUK": {
-        "defaultAbbreviation": "Luk", 
-        "defaultName": "Lukas", 
-        "inputFields": [
-          "Lukas", 
-          "Luk", 
-          "Lks"
+          "5 Moses", 
+          "5 Mos", 
+          "5 Mss", 
+          "Deuteronomium", 
+          "Dtrnmm"
         ]
       }, 
       "COP": {
@@ -3784,60 +3320,110 @@
           "Ltr Crnthns"
         ]
       }, 
-      "PSB": {
-        "defaultAbbreviation": "LitPs", 
-        "defaultName": "Psalms B", 
+      "HEB": {
+        "defaultAbbreviation": "Heb", 
+        "defaultName": "Hebr\u00e4er", 
         "inputFields": [
-          "Psalms B", 
-          "LitPs", 
-          "Metrical Psalms", 
-          "Mtrca Pslms", 
-          "Alternative Psalms", 
-          "Alt Psalms", 
-          "Alt Pslms", 
-          "Lit Psalms", 
-          "Lit Pslms"
+          "Hebr\u00e4er", 
+          "Heb", 
+          "Hebraer", 
+          "Hbrr"
         ]
       }, 
-      "PSA": {
-        "defaultAbbreviation": "Psa", 
-        "defaultName": "Psalter", 
+      "TIT": {
+        "defaultAbbreviation": "Tit", 
+        "defaultName": "Titus", 
         "inputFields": [
-          "Psalter", 
-          "Psa", 
-          "Psltr", 
-          "Psalm", 
-          "Pslm"
+          "Titus", 
+          "Tit", 
+          "Tts"
         ]
       }, 
-      "BA4": {
-        "defaultAbbreviation": "4 Bar", 
-        "defaultName": "4 Baruch", 
+      "GAL": {
+        "defaultAbbreviation": "Gal", 
+        "defaultName": "Galater", 
         "inputFields": [
-          "4 Baruch", 
-          "4 Bar", 
-          "4 Brch", 
-          "Paralipomenon of Jeremiah", 
-          "Prlp of Jrmh", 
-          "Rest of Words of Baruch"
+          "Galater", 
+          "Gal", 
+          "Gltr"
         ]
       }, 
-      "PSO": {
-        "defaultAbbreviation": "PrSol", 
-        "defaultName": "Prayer of Solomon", 
+      "EN2": {
+        "defaultAbbreviation": "2 Eno", 
+        "defaultName": "2 Enoch", 
         "inputFields": [
-          "Prayer of Solomon", 
-          "PrSol", 
-          "Pryr Slm"
+          "2 Enoch", 
+          "2 Eno", 
+          "2 Ench"
         ]
       }, 
-      "PJE": {
-        "defaultAbbreviation": "PrJer", 
-        "defaultName": "Prayer of Jeremiah", 
+      "COL": {
+        "defaultAbbreviation": "Kol", 
+        "defaultName": "Kolosser", 
         "inputFields": [
-          "Prayer of Jeremiah", 
-          "PrJer", 
-          "Pryr Jeremiah"
+          "Kolosser", 
+          "Kol", 
+          "Klssr", 
+          "Klsr"
+        ]
+      }, 
+      "DNG": {
+        "defaultAbbreviation": "Dn(Gk)", 
+        "defaultName": "Daniel (Greek)", 
+        "inputFields": [
+          "Daniel (Greek)", 
+          "Dn(Gk)", 
+          "DnlGk"
+        ]
+      }, 
+      "PS3": {
+        "defaultAbbreviation": "SyrPs", 
+        "defaultName": "Syriac Psalms", 
+        "inputFields": [
+          "Syriac Psalms", 
+          "SyrPs", 
+          "Syr Pslms"
+        ]
+      }, 
+      "PS2": {
+        "defaultAbbreviation": "Ps151", 
+        "defaultName": "Psalm 151", 
+        "inputFields": [
+          "Psalm 151", 
+          "Ps151", 
+          "Pslm 151"
+        ]
+      }, 
+      "ECC": {
+        "defaultAbbreviation": "Pred", 
+        "defaultName": "Prediger", 
+        "inputFields": [
+          "Prediger", 
+          "Pred", 
+          "Prdgr", 
+          "Kohelet", 
+          "Khlt"
+        ]
+      }, 
+      "EXO": {
+        "defaultAbbreviation": "2 Mos", 
+        "defaultName": "2 Moses", 
+        "inputFields": [
+          "2 Moses", 
+          "2 Mos", 
+          "2 Mss", 
+          "Exodus", 
+          "Exds"
+        ]
+      }, 
+      "REV": {
+        "defaultAbbreviation": "Off", 
+        "defaultName": "Offenbarung", 
+        "inputFields": [
+          "Offenbarung", 
+          "Off", 
+          "Offnbrng", 
+          "Ofnbrng"
         ]
       }, 
       "LJB": {
@@ -3861,13 +3447,429 @@
           "Ltr Jrm"
         ]
       }, 
-      "MIC": {
-        "defaultAbbreviation": "Mic", 
-        "defaultName": "Micha", 
+      "REP": {
+        "defaultAbbreviation": "Rep", 
+        "defaultName": "Reproof", 
         "inputFields": [
-          "Micha", 
-          "Mic", 
-          "Mcha"
+          "Reproof", 
+          "Rep", 
+          "Rprf"
+        ]
+      }, 
+      "ACT": {
+        "defaultAbbreviation": "Apst", 
+        "defaultName": "Apostelgeschichte", 
+        "inputFields": [
+          "Apostelgeschichte", 
+          "Apst", 
+          "Apstlgschchte"
+        ]
+      }, 
+      "JOS": {
+        "defaultAbbreviation": "Jos", 
+        "defaultName": "Josua", 
+        "inputFields": [
+          "Josua", 
+          "Jos", 
+          "Js"
+        ]
+      }, 
+      "MOS": {
+        "defaultAbbreviation": "Mos", 
+        "defaultName": "Moses", 
+        "inputFields": [
+          "Moses", 
+          "Mos", 
+          "Mss"
+        ]
+      }, 
+      "KI1": {
+        "defaultAbbreviation": "1 Kng", 
+        "defaultName": "1 K\u00f6nige", 
+        "inputFields": [
+          "1 K\u00f6nige", 
+          "1 Kng"
+        ]
+      }, 
+      "PRO": {
+        "defaultAbbreviation": "Spr", 
+        "defaultName": "Spr\u00fcche", 
+        "inputFields": [
+          "Spr\u00fcche", 
+          "Spr", 
+          "Sprch", 
+          "Sprichw\u00f6rter"
+        ]
+      }, 
+      "ESG": {
+        "defaultAbbreviation": "EsGk", 
+        "defaultName": "Esther (Greek)", 
+        "inputFields": [
+          "Esther (Greek)", 
+          "EsGk", 
+          "EstGk"
+        ]
+      }, 
+      "ISA": {
+        "defaultAbbreviation": "Jes", 
+        "defaultName": "Jesaja", 
+        "inputFields": [
+          "Jesaja", 
+          "Jes", 
+          "Jsj"
+        ]
+      }, 
+      "SAM": {
+        "defaultAbbreviation": "Sam", 
+        "defaultName": "Samuel", 
+        "inputFields": [
+          "Samuel", 
+          "Sam", 
+          "Sml"
+        ]
+      }, 
+      "SIR": {
+        "defaultAbbreviation": "Sir", 
+        "defaultName": "Sirach", 
+        "inputFields": [
+          "Sirach", 
+          "Sir", 
+          "Srch"
+        ]
+      }, 
+      "PAZ": {
+        "defaultAbbreviation": "PrAz", 
+        "defaultName": "Prayer of Azariah", 
+        "inputFields": [
+          "Prayer of Azariah", 
+          "PrAz", 
+          "Pryr Azrh"
+        ]
+      }, 
+      "JOL": {
+        "defaultAbbreviation": "Joel", 
+        "defaultName": "Joel", 
+        "inputFields": [
+          "Joel", 
+          "Jl"
+        ]
+      }, 
+      "EZ6": {
+        "defaultAbbreviation": "6 Ezr", 
+        "defaultName": "6 Ezra", 
+        "inputFields": [
+          "6 Ezra", 
+          "6 Ezr", 
+          "6 Esdras"
+        ]
+      }, 
+      "EST": {
+        "defaultAbbreviation": "Est", 
+        "defaultName": "Ester", 
+        "inputFields": [
+          "Ester", 
+          "Est", 
+          "Estr"
+        ]
+      }, 
+      "JUB": {
+        "defaultAbbreviation": "Jub", 
+        "defaultName": "Jubilees", 
+        "inputFields": [
+          "Jubilees", 
+          "Jub", 
+          "Jbls"
+        ]
+      }, 
+      "DOJ": {
+        "defaultAbbreviation": "DoJ", 
+        "defaultName": "Dormition of John", 
+        "inputFields": [
+          "Dormition of John", 
+          "DoJ", 
+          "Drm Jhn", 
+          "Drm Jn"
+        ]
+      }, 
+      "BA2": {
+        "defaultAbbreviation": "2 Bar", 
+        "defaultName": "2 Baruch", 
+        "inputFields": [
+          "2 Baruch", 
+          "2 Bar", 
+          "2 Brch", 
+          "Apocalypse of Baruch", 
+          "Apoc of Baruch", 
+          "Apoc Baruch"
+        ]
+      }, 
+      "PJE": {
+        "defaultAbbreviation": "PrJer", 
+        "defaultName": "Prayer of Jeremiah", 
+        "inputFields": [
+          "Prayer of Jeremiah", 
+          "PrJer", 
+          "Pryr Jeremiah"
+        ]
+      }, 
+      "SA2": {
+        "defaultAbbreviation": "2 Sam", 
+        "defaultName": "2 Samuel", 
+        "inputFields": [
+          "2 Samuel", 
+          "2 Sam", 
+          "2 Sml"
+        ]
+      }, 
+      "SA1": {
+        "defaultAbbreviation": "1 Sam", 
+        "defaultName": "1 Samuel", 
+        "inputFields": [
+          "1 Samuel", 
+          "1 Sam", 
+          "1 Sml"
+        ]
+      }, 
+      "PE1": {
+        "defaultAbbreviation": "1 Pet", 
+        "defaultName": "1 Petrus", 
+        "inputFields": [
+          "1 Petrus", 
+          "1 Pet", 
+          "1 Ptrs"
+        ]
+      }, 
+      "EZ5": {
+        "defaultAbbreviation": "5 Ezr", 
+        "defaultName": "5 Ezra", 
+        "inputFields": [
+          "5 Ezra", 
+          "5 Ezr", 
+          "5 Esdras"
+        ]
+      }, 
+      "PE2": {
+        "defaultAbbreviation": "2 Pet", 
+        "defaultName": "2 Petrus", 
+        "inputFields": [
+          "2 Petrus", 
+          "2 Pet", 
+          "2 Ptrs"
+        ]
+      }, 
+      "LUK": {
+        "defaultAbbreviation": "Luk", 
+        "defaultName": "Lukas", 
+        "inputFields": [
+          "Lukas", 
+          "Luk", 
+          "Lks"
+        ]
+      }, 
+      "BA4": {
+        "defaultAbbreviation": "4 Bar", 
+        "defaultName": "4 Baruch", 
+        "inputFields": [
+          "4 Baruch", 
+          "4 Bar", 
+          "4 Brch", 
+          "Paralipomenon of Jeremiah", 
+          "Prlp of Jrmh", 
+          "Rest of Words of Baruch"
+        ]
+      }, 
+      "PHM": {
+        "defaultAbbreviation": "Phm", 
+        "defaultName": "Philemon", 
+        "inputFields": [
+          "Philemon", 
+          "Phm", 
+          "Phlmn"
+        ]
+      }, 
+      "KGS": {
+        "defaultAbbreviation": "Kgs", 
+        "defaultName": "Kings", 
+        "inputFields": [
+          "Kings", 
+          "Kgs", 
+          "Kngs"
+        ]
+      }, 
+      "JNA": {
+        "defaultAbbreviation": "Jon", 
+        "defaultName": "Jona", 
+        "inputFields": [
+          "Jona", 
+          "Jon", 
+          "Jna"
+        ]
+      }, 
+      "JDE": {
+        "defaultAbbreviation": "Jud", 
+        "defaultName": "Judas", 
+        "inputFields": [
+          "Judas", 
+          "Jud", 
+          "Jds"
+        ]
+      }, 
+      "JDG": {
+        "defaultAbbreviation": "Rchtr", 
+        "defaultName": "Richter", 
+        "inputFields": [
+          "Richter", 
+          "Rchtr"
+        ]
+      }, 
+      "SHE": {
+        "defaultAbbreviation": "Her", 
+        "defaultName": "Shepherd of Hermas", 
+        "inputFields": [
+          "Shepherd of Hermas", 
+          "Her", 
+          "Hermas", 
+          "Hrms", 
+          "Shep Hermas"
+        ]
+      }, 
+      "LES": {
+        "defaultAbbreviation": "2 Esd", 
+        "defaultName": "2 Esdras", 
+        "inputFields": [
+          "2 Esdras", 
+          "2 Esd", 
+          "2 Esdrs"
+        ]
+      }, 
+      "PSA": {
+        "defaultAbbreviation": "Psa", 
+        "defaultName": "Psalter", 
+        "inputFields": [
+          "Psalter", 
+          "Psa", 
+          "Psltr", 
+          "Psalm", 
+          "Pslm"
+        ]
+      }, 
+      "PSO": {
+        "defaultAbbreviation": "PrSol", 
+        "defaultName": "Prayer of Solomon", 
+        "inputFields": [
+          "Prayer of Solomon", 
+          "PrSol", 
+          "Pryr Slm"
+        ]
+      }, 
+      "DID": {
+        "defaultAbbreviation": "Did", 
+        "defaultName": "Didache", 
+        "inputFields": [
+          "Didache", 
+          "Did", 
+          "Ddch"
+        ]
+      }, 
+      "JDT": {
+        "defaultAbbreviation": "Jdt", 
+        "defaultName": "Judith", 
+        "inputFields": [
+          "Judith", 
+          "Jdt", 
+          "Jdth"
+        ]
+      }, 
+      "PSB": {
+        "defaultAbbreviation": "LitPs", 
+        "defaultName": "Psalms B", 
+        "inputFields": [
+          "Psalms B", 
+          "LitPs", 
+          "Metrical Psalms", 
+          "Mtrca Pslms", 
+          "Alternative Psalms", 
+          "Alt Psalms", 
+          "Alt Pslms", 
+          "Lit Psalms", 
+          "Lit Pslms"
+        ]
+      }, 
+      "PSS": {
+        "defaultAbbreviation": "AddPs", 
+        "defaultName": "Psalms of Solomon", 
+        "inputFields": [
+          "Psalms of Solomon", 
+          "AddPs", 
+          "Ps Sol", 
+          "Slmn Pslms"
+        ]
+      }, 
+      "CO1": {
+        "defaultAbbreviation": "1 Kor", 
+        "defaultName": "1 Korinther", 
+        "inputFields": [
+          "1 Korinther", 
+          "1 Kor", 
+          "1 Krnthr"
+        ]
+      }, 
+      "CO2": {
+        "defaultAbbreviation": "2 Kor", 
+        "defaultName": "2 Korinther", 
+        "inputFields": [
+          "2 Korinther", 
+          "2 Kor", 
+          "2 Krnthr"
+        ]
+      }, 
+      "CO3": {
+        "defaultAbbreviation": "3 Cor", 
+        "defaultName": "3 Corinthians", 
+        "inputFields": [
+          "3 Corinthians", 
+          "3 Cor", 
+          "3 Crnthns"
+        ]
+      }, 
+      "HOS": {
+        "defaultAbbreviation": "Hos", 
+        "defaultName": "Hosea", 
+        "inputFields": [
+          "Hosea", 
+          "Hos", 
+          "Hs"
+        ]
+      }, 
+      "LAO": {
+        "defaultAbbreviation": "Lao", 
+        "defaultName": "Laodiceans", 
+        "inputFields": [
+          "Laodiceans", 
+          "Lao", 
+          "Eps Lao", 
+          "Ltr Lao"
+        ]
+      }, 
+      "TOB": {
+        "defaultAbbreviation": "Tob", 
+        "defaultName": "Tobit", 
+        "inputFields": [
+          "Tobit", 
+          "Tob", 
+          "Tobias", 
+          "Tbt", 
+          "Tbs"
+        ]
+      }, 
+      "JHN": {
+        "defaultAbbreviation": "Jhn", 
+        "defaultName": "Johannes", 
+        "inputFields": [
+          "Johannes", 
+          "Jhn", 
+          "Jhnns", 
+          "Jn"
         ]
       }
     }
@@ -4126,57 +4128,46 @@
       ]
     }, 
     {
-      "WSI": {
-        "defaultAbbreviation": "WrdsSir", 
-        "defaultName": "Words of Sirach", 
+      "CH1": {
+        "defaultAbbreviation": "1 Chr", 
+        "defaultName": "1 Chroniques", 
         "inputFields": [
-          "Words of Sirach", 
-          "WrdsSir", 
-          "Wrds Sirach", 
-          "Wrds Srch"
+          "1 Chroniques", 
+          "1 Chr", 
+          "1 Chrnqs", 
+          "1 Croniqs", 
+          "1 Crnq"
         ]
       }, 
-      "EZR": {
-        "defaultAbbreviation": "Esd", 
-        "defaultName": "Esdras", 
+      "BAR": {
+        "defaultAbbreviation": "Bar", 
+        "defaultName": "Baruch", 
         "inputFields": [
-          "Esdras", 
-          "Esd", 
-          "Esdrs"
+          "Baruch", 
+          "Bar", 
+          "Brch"
         ]
       }, 
-      "LBA": {
-        "defaultAbbreviation": "EpBar", 
-        "defaultName": "Epistle of Baruch", 
+      "CH2": {
+        "defaultAbbreviation": "2 Chr", 
+        "defaultName": "2 Chroniques", 
         "inputFields": [
-          "Epistle of Baruch", 
-          "EpBar", 
-          "Ep Baruch", 
-          "Ep Brch", 
-          "Epi Baruch", 
-          "Epis Baruch", 
-          "Letter of Baruch", 
-          "Ltr of Baruch", 
-          "Ltr Baruch"
+          "2 Chroniques", 
+          "2 Chr", 
+          "2 Chrnqs", 
+          "2 Croniqs", 
+          "2 Crnq"
         ]
       }, 
-      "EZN": {
-        "defaultAbbreviation": "EzNeh", 
-        "defaultName": "Ezra-Nehemiah", 
+      "JAM": {
+        "defaultAbbreviation": "Jac", 
+        "defaultName": "Jacques", 
         "inputFields": [
-          "Ezra-Nehemiah", 
-          "EzNeh", 
-          "Ezr Neh"
-        ]
-      }, 
-      "DOJ": {
-        "defaultAbbreviation": "DoJ", 
-        "defaultName": "Dormition of John", 
-        "inputFields": [
-          "Dormition of John", 
-          "DoJ", 
-          "Drm Jhn", 
-          "Drm Jn"
+          "Jacques", 
+          "Jac", 
+          "Jcqs", 
+          "Saint Jacques", 
+          "Saint Jcqs"
         ]
       }, 
       "EZK": {
@@ -4192,161 +4183,15 @@
           "Ezchl"
         ]
       }, 
-      "ECC": {
-        "defaultAbbreviation": "Ecc", 
-        "defaultName": "Eccl\u00e9siaste", 
+      "MQ3": {
+        "defaultAbbreviation": "3 Meq", 
+        "defaultName": "3 Meqabyan", 
         "inputFields": [
-          "Eccl\u00e9siaste", 
-          "Ecc", 
-          "Ecclesiaste", 
-          "L'Eccl\u00e9siaste", 
-          "L'Ecclesiaste", 
-          "Ecclst"
-        ]
-      }, 
-      "P12": {
-        "defaultAbbreviation": "TwProp", 
-        "defaultName": "Twelve Prophets", 
-        "inputFields": [
-          "Twelve Prophets", 
-          "TwProp", 
-          "12 Prophets"
-        ]
-      }, 
-      "ODE": {
-        "defaultAbbreviation": "Ode", 
-        "defaultName": "Odes", 
-        "inputFields": [
-          "Odes", 
-          "Ode", 
-          "Odae"
-        ]
-      }, 
-      "PS2": {
-        "defaultAbbreviation": "Ps151", 
-        "defaultName": "Psalm 151", 
-        "inputFields": [
-          "Psalm 151", 
-          "Ps151", 
-          "Pslm 151"
-        ]
-      }, 
-      "NEH": {
-        "defaultAbbreviation": "Neh", 
-        "defaultName": "N\u00e9h\u00e9mie", 
-        "inputFields": [
-          "N\u00e9h\u00e9mie", 
-          "Neh", 
-          "Nhmie", 
-          "Neh\u00e9mie", 
-          "N\u00e9hemie", 
-          "Nehemie"
-        ]
-      }, 
-      "TH2": {
-        "defaultAbbreviation": "2 Thess", 
-        "defaultName": "2 Thessaloniciens", 
-        "inputFields": [
-          "2 Thessaloniciens", 
-          "2 Thess", 
-          "2 Thsslncns", 
-          "2 Thslns", 
-          "2 Thesalloniciens", 
-          "2 Thessalloniciens", 
-          "2 Thesaloniciens"
-        ]
-      }, 
-      "TH1": {
-        "defaultAbbreviation": "1 Thess", 
-        "defaultName": "1 Thessaloniciens", 
-        "inputFields": [
-          "1 Thessaloniciens", 
-          "1 Thess", 
-          "1 Thsslncns", 
-          "1 Thslns", 
-          "1 Thesalloniciens", 
-          "1 Thessalloniciens", 
-          "1 Thesaloniciens"
-        ]
-      }, 
-      "SNG": {
-        "defaultAbbreviation": "Cnt", 
-        "defaultName": "Cantique de Salomon", 
-        "inputFields": [
-          "Cantique de Salomon", 
-          "Cnt", 
-          "Cantique des Cantiques", 
-          "Cnt de Slmn", 
-          "CdS", 
-          "CS"
-        ]
-      }, 
-      "ACT": {
-        "defaultAbbreviation": "Act", 
-        "defaultName": "Actes", 
-        "inputFields": [
-          "Actes", 
-          "Act", 
-          "Acts"
-        ]
-      }, 
-      "MQ2": {
-        "defaultAbbreviation": "2 Meq", 
-        "defaultName": "2 Meqabyan", 
-        "inputFields": [
-          "2 Meqabyan", 
-          "2 Meq", 
-          "2 Mqbyn", 
-          "2 Makabian", 
-          "2 Mkbn", 
-          "Mekabis of Moab", 
-          "Mekabis Moab", 
-          "Mkbs Mb"
-        ]
-      }, 
-      "DID": {
-        "defaultAbbreviation": "Did", 
-        "defaultName": "Didache", 
-        "inputFields": [
-          "Didache", 
-          "Did", 
-          "Ddch"
-        ]
-      }, 
-      "JNA": {
-        "defaultAbbreviation": "Jon", 
-        "defaultName": "Jonas", 
-        "inputFields": [
-          "Jonas", 
-          "Jon", 
-          "Jns"
-        ]
-      }, 
-      "JUB": {
-        "defaultAbbreviation": "Jub", 
-        "defaultName": "Jubilees", 
-        "inputFields": [
-          "Jubilees", 
-          "Jub", 
-          "Jbls"
-        ]
-      }, 
-      "CHR": {
-        "defaultAbbreviation": "Chr", 
-        "defaultName": "Chronicles", 
-        "inputFields": [
-          "Chronicles", 
-          "Chr", 
-          "Chrncls"
-        ]
-      }, 
-      "ZEP": {
-        "defaultAbbreviation": "Sop", 
-        "defaultName": "Sophonie", 
-        "inputFields": [
-          "Sophonie", 
-          "Sop", 
-          "Sphnie"
+          "3 Meqabyan", 
+          "3 Meq", 
+          "3 Mqbyn", 
+          "3 Makabian", 
+          "3 Mkbn"
         ]
       }, 
       "JN2": {
@@ -4373,148 +4218,39 @@
           "1 Jn"
         ]
       }, 
-      "BA3": {
-        "defaultAbbreviation": "3 Bar", 
-        "defaultName": "3 Baruch", 
+      "EZA": {
+        "defaultAbbreviation": "ApEz", 
+        "defaultName": "Apocalypse of Ezra", 
         "inputFields": [
-          "3 Baruch", 
-          "3 Bar", 
-          "3 Brch"
+          "Apocalypse of Ezra", 
+          "ApEz", 
+          "Ap Ezra"
         ]
       }, 
-      "TTP": {
-        "defaultAbbreviation": "Tst12", 
-        "defaultName": "Testaments of the Twelve Patriarchs", 
+      "CL2": {
+        "defaultAbbreviation": "2 Cle", 
+        "defaultName": "2 Clement", 
         "inputFields": [
-          "Testaments of the Twelve Patriarchs", 
-          "Tst12", 
-          "Tst 12P", 
-          "Tst Twelve"
+          "2 Clement", 
+          "2 Cle", 
+          "2 Clmnt"
         ]
       }, 
-      "ZEC": {
-        "defaultAbbreviation": "Zac", 
-        "defaultName": "Zacharie", 
+      "EZN": {
+        "defaultAbbreviation": "EzNeh", 
+        "defaultName": "Ezra-Nehemiah", 
         "inputFields": [
-          "Zacharie", 
-          "Zac", 
-          "Zchrie"
+          "Ezra-Nehemiah", 
+          "EzNeh", 
+          "Ezr Neh"
         ]
       }, 
-      "KGS": {
-        "defaultAbbreviation": "Kgs", 
-        "defaultName": "Kings", 
+      "AMO": {
+        "defaultAbbreviation": "Amos", 
+        "defaultName": "Amos", 
         "inputFields": [
-          "Kings", 
-          "Kgs", 
-          "Kngs"
-        ]
-      }, 
-      "HOS": {
-        "defaultAbbreviation": "Os\u00e8", 
-        "defaultName": "Os\u00e8e", 
-        "inputFields": [
-          "Os\u00e8e", 
-          "Os\u00e8", 
-          "Os\u00e9e", 
-          "Osee"
-        ]
-      }, 
-      "ENO": {
-        "defaultAbbreviation": "Eno", 
-        "defaultName": "Enoch", 
-        "inputFields": [
-          "Enoch", 
-          "Eno", 
-          "Ench", 
-          "1 Enoch", 
-          "1 Ench"
-        ]
-      }, 
-      "ISA": {
-        "defaultAbbreviation": "\u00c9sa", 
-        "defaultName": "\u00c9saie", 
-        "inputFields": [
-          "\u00c9saie", 
-          "\u00c9sa", 
-          "Esa\u00efe", 
-          "Esaie"
-        ]
-      }, 
-      "PRO": {
-        "defaultAbbreviation": "Pro", 
-        "defaultName": "Proverbes", 
-        "inputFields": [
-          "Proverbes", 
-          "Pro", 
-          "Prvrbs", 
-          "Prvbs"
-        ]
-      }, 
-      "EUT": {
-        "defaultAbbreviation": "Eut", 
-        "defaultName": "Prayer of Euthalius", 
-        "inputFields": [
-          "Prayer of Euthalius", 
-          "Eut", 
-          "Pr Eut"
-        ]
-      }, 
-      "BAR": {
-        "defaultAbbreviation": "Bar", 
-        "defaultName": "Baruch", 
-        "inputFields": [
-          "Baruch", 
-          "Bar", 
-          "Brch"
-        ]
-      }, 
-      "EZ5": {
-        "defaultAbbreviation": "5 Ezr", 
-        "defaultName": "5 Ezra", 
-        "inputFields": [
-          "5 Ezra", 
-          "5 Ezr", 
-          "5 Esdras"
-        ]
-      }, 
-      "JOL": {
-        "defaultAbbreviation": "Joel", 
-        "defaultName": "Jo\u00ebl", 
-        "inputFields": [
-          "Jo\u00ebl", 
-          "Joel", 
-          "Jl"
-        ]
-      }, 
-      "PHP": {
-        "defaultAbbreviation": "Php", 
-        "defaultName": "Philippiens", 
-        "inputFields": [
-          "Philippiens", 
-          "Php", 
-          "Phlppns", 
-          "Phlpns", 
-          "Phillipiens", 
-          "Philipiens", 
-          "Phillippiens"
-        ]
-      }, 
-      "JOB": {
-        "defaultAbbreviation": "Job", 
-        "defaultName": "Job", 
-        "inputFields": [
-          "Job", 
-          "Jb"
-        ]
-      }, 
-      "GAL": {
-        "defaultAbbreviation": "Gal", 
-        "defaultName": "Galates", 
-        "inputFields": [
-          "Galates", 
-          "Gal", 
-          "Glts"
+          "Amos", 
+          "Ams"
         ]
       }, 
       "TI1": {
@@ -4527,192 +4263,32 @@
           "1 Timothee"
         ]
       }, 
-      "BEL": {
-        "defaultAbbreviation": "Bel", 
-        "defaultName": "Bel and the Dragon", 
+      "TI2": {
+        "defaultAbbreviation": "2 Tim", 
+        "defaultName": "2 Timoth\u00e9e", 
         "inputFields": [
-          "Bel and the Dragon", 
-          "Bel", 
-          "BaD"
+          "2 Timoth\u00e9e", 
+          "2 Tim", 
+          "2 Tmth", 
+          "2 Timothee"
         ]
       }, 
-      "SIR": {
-        "defaultAbbreviation": "Sir", 
-        "defaultName": "Sirach", 
+      "EZR": {
+        "defaultAbbreviation": "Esd", 
+        "defaultName": "Esdras", 
         "inputFields": [
-          "Sirach", 
-          "Sir", 
-          "Srch"
+          "Esdras", 
+          "Esd", 
+          "Esdrs"
         ]
       }, 
-      "MRK": {
-        "defaultAbbreviation": "Mrc", 
-        "defaultName": "Marc", 
+      "ROM": {
+        "defaultAbbreviation": "Rom", 
+        "defaultName": "Romains", 
         "inputFields": [
-          "Marc", 
-          "Mrc", 
-          "Mc", 
-          "Saint Marc", 
-          "Saint Mrc", 
-          "Saint Mc"
-        ]
-      }, 
-      "PHM": {
-        "defaultAbbreviation": "Phm", 
-        "defaultName": "Phil\u00e9mon", 
-        "inputFields": [
-          "Phil\u00e9mon", 
-          "Phm", 
-          "Phlmn", 
-          "Philemon"
-        ]
-      }, 
-      "DEU": {
-        "defaultAbbreviation": "Deu", 
-        "defaultName": "Deut\u00e9ronome", 
-        "inputFields": [
-          "Deut\u00e9ronome", 
-          "Deu", 
-          "Deuteronome", 
-          "Dtrnme", 
-          "5 Moses", 
-          "5 Mss"
-        ]
-      }, 
-      "WIS": {
-        "defaultAbbreviation": "Wis", 
-        "defaultName": "Wisdom of Solomon", 
-        "inputFields": [
-          "Wisdom of Solomon", 
-          "Wis", 
-          "Wsdm of Slmn"
-        ]
-      }, 
-      "REV": {
-        "defaultAbbreviation": "Apo", 
-        "defaultName": "Apocalypse", 
-        "inputFields": [
-          "Apocalypse", 
-          "Apo", 
-          "Apclypse", 
-          "Apclpse"
-        ]
-      }, 
-      "MOS": {
-        "defaultAbbreviation": "Mos", 
-        "defaultName": "Moses", 
-        "inputFields": [
-          "Moses", 
-          "Mos", 
-          "Mss"
-        ]
-      }, 
-      "REP": {
-        "defaultAbbreviation": "Rep", 
-        "defaultName": "Reproof", 
-        "inputFields": [
-          "Reproof", 
-          "Rep", 
-          "Rprf"
-        ]
-      }, 
-      "JDE": {
-        "defaultAbbreviation": "Jud", 
-        "defaultName": "Jude", 
-        "inputFields": [
-          "Jude", 
-          "Jud", 
-          "Jde"
-        ]
-      }, 
-      "JDG": {
-        "defaultAbbreviation": "Jug", 
-        "defaultName": "Juges", 
-        "inputFields": [
-          "Juges", 
-          "Jug", 
-          "Jges", 
-          "Jgs"
-        ]
-      }, 
-      "PS3": {
-        "defaultAbbreviation": "SyrPs", 
-        "defaultName": "Syriac Psalms", 
-        "inputFields": [
-          "Syriac Psalms", 
-          "SyrPs", 
-          "Syr Pslms"
-        ]
-      }, 
-      "GES": {
-        "defaultAbbreviation": "1 Esd", 
-        "defaultName": "1 Esdras", 
-        "inputFields": [
-          "1 Esdras", 
-          "1 Esd", 
-          "1 Esdrs"
-        ]
-      }, 
-      "EZA": {
-        "defaultAbbreviation": "ApEz", 
-        "defaultName": "Apocalypse of Ezra", 
-        "inputFields": [
-          "Apocalypse of Ezra", 
-          "ApEz", 
-          "Ap Ezra"
-        ]
-      }, 
-      "EPH": {
-        "defaultAbbreviation": "\u00c9ph", 
-        "defaultName": "\u00c9ph\u00e9siens", 
-        "inputFields": [
-          "\u00c9ph\u00e9siens", 
-          "\u00c9ph", 
-          "Eph\u00e9siens", 
-          "\u00c9phesiens", 
-          "Ephesiens", 
-          "\u00c9phsns", 
-          "Ephsns"
-        ]
-      }, 
-      "CO3": {
-        "defaultAbbreviation": "3 Cor", 
-        "defaultName": "3 Corinthians", 
-        "inputFields": [
-          "3 Corinthians", 
-          "3 Cor", 
-          "3 Crnthns"
-        ]
-      }, 
-      "TIT": {
-        "defaultAbbreviation": "Tit", 
-        "defaultName": "Tite", 
-        "inputFields": [
-          "Tite", 
-          "Tit", 
-          "Tte"
-        ]
-      }, 
-      "JDT": {
-        "defaultAbbreviation": "Jdt", 
-        "defaultName": "Judith", 
-        "inputFields": [
-          "Judith", 
-          "Jdt", 
-          "Jdth"
-        ]
-      }, 
-      "EXO": {
-        "defaultAbbreviation": "Exo", 
-        "defaultName": "Exode", 
-        "inputFields": [
-          "Exode", 
-          "Exo", 
-          "Exde", 
-          "L'Exode", 
-          "L'Exde", 
-          "2 Moses", 
-          "2 Mss"
+          "Romains", 
+          "Rom", 
+          "Rmns"
         ]
       }, 
       "LEV": {
@@ -4727,43 +4303,48 @@
           "3 Mss"
         ]
       }, 
-      "CO1": {
-        "defaultAbbreviation": "1 Cor", 
-        "defaultName": "1 Corinthiens", 
+      "LAM": {
+        "defaultAbbreviation": "Lam", 
+        "defaultName": "Lamentations", 
         "inputFields": [
-          "1 Corinthiens", 
-          "1 Cor", 
-          "1 Crnthns"
+          "Lamentations", 
+          "Lam", 
+          "Lmnts"
         ]
       }, 
-      "CO2": {
-        "defaultAbbreviation": "2 Cor", 
-        "defaultName": "2 Corinthiens", 
+      "MQ2": {
+        "defaultAbbreviation": "2 Meq", 
+        "defaultName": "2 Meqabyan", 
         "inputFields": [
-          "2 Corinthiens", 
-          "2 Cor", 
-          "2 Crnthns"
+          "2 Meqabyan", 
+          "2 Meq", 
+          "2 Mqbyn", 
+          "2 Makabian", 
+          "2 Mkbn", 
+          "Mekabis of Moab", 
+          "Mekabis Moab", 
+          "Mkbs Mb"
         ]
       }, 
-      "PAZ": {
-        "defaultAbbreviation": "PrAz", 
-        "defaultName": "Prayer of Azariah", 
+      "MRK": {
+        "defaultAbbreviation": "Mrc", 
+        "defaultName": "Marc", 
         "inputFields": [
-          "Prayer of Azariah", 
-          "PrAz", 
-          "Pryr Azrh"
+          "Marc", 
+          "Mrc", 
+          "Mc", 
+          "Saint Marc", 
+          "Saint Mrc", 
+          "Saint Mc"
         ]
       }, 
-      "GEN": {
-        "defaultAbbreviation": "Gen", 
-        "defaultName": "Gen\u00e8se", 
+      "MAL": {
+        "defaultAbbreviation": "Mal", 
+        "defaultName": "Malachie", 
         "inputFields": [
-          "Gen\u00e8se", 
-          "Gen", 
-          "Genese", 
-          "Gns", 
-          "1 Moses", 
-          "1 Mss"
+          "Malachie", 
+          "Mal", 
+          "Mlchie"
         ]
       }, 
       "KI2": {
@@ -4774,61 +4355,65 @@
           "2 Rs"
         ]
       }, 
-      "DAN": {
-        "defaultAbbreviation": "Dan", 
-        "defaultName": "Daniel", 
+      "MAN": {
+        "defaultAbbreviation": "Man", 
+        "defaultName": "Prayer of Manasses", 
         "inputFields": [
-          "Daniel", 
-          "Dan", 
-          "Dnl"
+          "Prayer of Manasses", 
+          "Man", 
+          "Manasses", 
+          "Manasseh", 
+          "Mnss", 
+          "Mnsh", 
+          "Pryr Man"
         ]
       }, 
-      "CH1": {
-        "defaultAbbreviation": "1 Chr", 
-        "defaultName": "1 Chroniques", 
+      "MQ1": {
+        "defaultAbbreviation": "1 Meq", 
+        "defaultName": "1 Meqabyan", 
         "inputFields": [
-          "1 Chroniques", 
-          "1 Chr", 
-          "1 Chrnqs", 
-          "1 Croniqs", 
-          "1 Crnq"
+          "1 Meqabyan", 
+          "1 Meq", 
+          "1 Mqbyn", 
+          "1 Makabian", 
+          "1 Mkbn", 
+          "Mekabis of Benjamin", 
+          "Mekabis Benjamin", 
+          "Mkbs Bnjmn"
         ]
       }, 
-      "EN2": {
-        "defaultAbbreviation": "2 Eno", 
-        "defaultName": "2 Enoch", 
+      "MAT": {
+        "defaultAbbreviation": "Mat", 
+        "defaultName": "Matthieu", 
         "inputFields": [
-          "2 Enoch", 
-          "2 Eno", 
-          "2 Ench"
+          "Matthieu", 
+          "Mat", 
+          "Mtth", 
+          "Mth", 
+          "Saint Matthieu", 
+          "Saint Mtth", 
+          "Saint Mth"
         ]
       }, 
-      "AMO": {
-        "defaultAbbreviation": "Amos", 
-        "defaultName": "Amos", 
+      "EUT": {
+        "defaultAbbreviation": "Eut", 
+        "defaultName": "Prayer of Euthalius", 
         "inputFields": [
-          "Amos", 
-          "Ams"
+          "Prayer of Euthalius", 
+          "Eut", 
+          "Pr Eut"
         ]
       }, 
-      "SHE": {
-        "defaultAbbreviation": "Her", 
-        "defaultName": "Shepherd of Hermas", 
+      "JER": {
+        "defaultAbbreviation": "J\u00e9r", 
+        "defaultName": "J\u00e9r\u00e9mie", 
         "inputFields": [
-          "Shepherd of Hermas", 
-          "Her", 
-          "Hermas", 
-          "Hrms", 
-          "Shep Hermas"
-        ]
-      }, 
-      "LES": {
-        "defaultAbbreviation": "2 Esd", 
-        "defaultName": "2 Esdras", 
-        "inputFields": [
-          "2 Esdras", 
-          "2 Esd", 
-          "2 Esdrs"
+          "J\u00e9r\u00e9mie", 
+          "J\u00e9r", 
+          "Jeremie", 
+          "Jer\u00e9mie", 
+          "J\u00e9remie", 
+          "Jrm"
         ]
       }, 
       "NAH": {
@@ -4841,32 +4426,104 @@
           "Nhum"
         ]
       }, 
-      "SUS": {
-        "defaultAbbreviation": "Sus", 
-        "defaultName": "Susanna", 
+      "OBA": {
+        "defaultAbbreviation": "Abd", 
+        "defaultName": "Abdias", 
         "inputFields": [
-          "Susanna", 
-          "Sus", 
-          "Ssnn"
+          "Abdias", 
+          "Abd", 
+          "Abds"
         ]
       }, 
-      "RUT": {
-        "defaultAbbreviation": "Rut", 
-        "defaultName": "Ruth", 
+      "NEH": {
+        "defaultAbbreviation": "Neh", 
+        "defaultName": "N\u00e9h\u00e9mie", 
         "inputFields": [
-          "Ruth", 
-          "Rut", 
-          "Rth"
+          "N\u00e9h\u00e9mie", 
+          "Neh", 
+          "Nhmie", 
+          "Neh\u00e9mie", 
+          "N\u00e9hemie", 
+          "Nehemie"
         ]
       }, 
-      "JHN": {
-        "defaultAbbreviation": "Jn", 
-        "defaultName": "Jean", 
+      "WSI": {
+        "defaultAbbreviation": "WrdsSir", 
+        "defaultName": "Words of Sirach", 
         "inputFields": [
-          "Jean", 
-          "Jn", 
-          "Saint Jean", 
-          "Saint Jn"
+          "Words of Sirach", 
+          "WrdsSir", 
+          "Wrds Sirach", 
+          "Wrds Srch"
+        ]
+      }, 
+      "MIC": {
+        "defaultAbbreviation": "Mic", 
+        "defaultName": "Mich\u00e9e", 
+        "inputFields": [
+          "Mich\u00e9e", 
+          "Mic", 
+          "Michee", 
+          "Mch\u00e9e", 
+          "Mchee"
+        ]
+      }, 
+      "HAG": {
+        "defaultAbbreviation": "Agg", 
+        "defaultName": "Agg\u00e9e", 
+        "inputFields": [
+          "Agg\u00e9e", 
+          "Agg", 
+          "Aggee", 
+          "Ag\u00e9e", 
+          "Agee"
+        ]
+      }, 
+      "HAB": {
+        "defaultAbbreviation": "Hab", 
+        "defaultName": "Habacuc", 
+        "inputFields": [
+          "Habacuc", 
+          "Hab", 
+          "Habakuk", 
+          "Hbcc"
+        ]
+      }, 
+      "CL1": {
+        "defaultAbbreviation": "1 Cle", 
+        "defaultName": "1 Clement", 
+        "inputFields": [
+          "1 Clement", 
+          "1 Cle", 
+          "1 Clmnt"
+        ]
+      }, 
+      "ZEP": {
+        "defaultAbbreviation": "Sop", 
+        "defaultName": "Sophonie", 
+        "inputFields": [
+          "Sophonie", 
+          "Sop", 
+          "Sphnie"
+        ]
+      }, 
+      "JOB": {
+        "defaultAbbreviation": "Job", 
+        "defaultName": "Job", 
+        "inputFields": [
+          "Job", 
+          "Jb"
+        ]
+      }, 
+      "NUM": {
+        "defaultAbbreviation": "Nom", 
+        "defaultName": "Nombres", 
+        "inputFields": [
+          "Nombres", 
+          "Nom", 
+          "Nmbrs", 
+          "4 Moses", 
+          "4 Mss"
         ]
       }, 
       "MA4": {
@@ -4889,27 +4546,13 @@
           "5 Mcbs"
         ]
       }, 
-      "MQ1": {
-        "defaultAbbreviation": "1 Meq", 
-        "defaultName": "1 Meqabyan", 
+      "ZEC": {
+        "defaultAbbreviation": "Zac", 
+        "defaultName": "Zacharie", 
         "inputFields": [
-          "1 Meqabyan", 
-          "1 Meq", 
-          "1 Mqbyn", 
-          "1 Makabian", 
-          "1 Mkbn", 
-          "Mekabis of Benjamin", 
-          "Mekabis Benjamin", 
-          "Mkbs Bnjmn"
-        ]
-      }, 
-      "SAM": {
-        "defaultAbbreviation": "Sam", 
-        "defaultName": "Samuel", 
-        "inputFields": [
-          "Samuel", 
-          "Sam", 
-          "Sml"
+          "Zacharie", 
+          "Zac", 
+          "Zchrie"
         ]
       }, 
       "MA1": {
@@ -4942,260 +4585,267 @@
           "3 Mcbs"
         ]
       }, 
-      "KI1": {
-        "defaultAbbreviation": "1 Rs", 
-        "defaultName": "1 Rois", 
+      "PHP": {
+        "defaultAbbreviation": "Php", 
+        "defaultName": "Philippiens", 
         "inputFields": [
-          "1 Rois", 
-          "1 Rs"
+          "Philippiens", 
+          "Php", 
+          "Phlppns", 
+          "Phlpns", 
+          "Phillipiens", 
+          "Philipiens", 
+          "Phillippiens"
         ]
       }, 
-      "PE1": {
-        "defaultAbbreviation": "1 Pie", 
-        "defaultName": "1 Pierre", 
+      "P12": {
+        "defaultAbbreviation": "TwProp", 
+        "defaultName": "Twelve Prophets", 
         "inputFields": [
-          "1 Pierre", 
-          "1 Pie", 
-          "1 Prre", 
-          "1 Saint Pierre", 
-          "1 Saint Prre"
+          "Twelve Prophets", 
+          "TwProp", 
+          "12 Prophets"
         ]
       }, 
-      "PE2": {
-        "defaultAbbreviation": "2 Pie", 
-        "defaultName": "2 Pierre", 
+      "TH2": {
+        "defaultAbbreviation": "2 Thess", 
+        "defaultName": "2 Thessaloniciens", 
         "inputFields": [
-          "2 Pierre", 
-          "2 Pie", 
-          "2 Prre", 
-          "2 Saint Pierre", 
-          "2 Saint Prre"
+          "2 Thessaloniciens", 
+          "2 Thess", 
+          "2 Thsslncns", 
+          "2 Thslns", 
+          "2 Thesalloniciens", 
+          "2 Thessalloniciens", 
+          "2 Thesaloniciens"
         ]
       }, 
-      "JOS": {
-        "defaultAbbreviation": "Jos", 
-        "defaultName": "Josu\u00e9", 
+      "TH1": {
+        "defaultAbbreviation": "1 Thess", 
+        "defaultName": "1 Thessaloniciens", 
         "inputFields": [
-          "Josu\u00e9", 
-          "Jos", 
-          "Josue", 
-          "Jsue"
+          "1 Thessaloniciens", 
+          "1 Thess", 
+          "1 Thsslncns", 
+          "1 Thslns", 
+          "1 Thesalloniciens", 
+          "1 Thessalloniciens", 
+          "1 Thesaloniciens"
         ]
       }, 
-      "JAM": {
-        "defaultAbbreviation": "Jac", 
-        "defaultName": "Jacques", 
+      "BA3": {
+        "defaultAbbreviation": "3 Bar", 
+        "defaultName": "3 Baruch", 
         "inputFields": [
-          "Jacques", 
-          "Jac", 
-          "Jcqs", 
-          "Saint Jacques", 
-          "Saint Jcqs"
+          "3 Baruch", 
+          "3 Bar", 
+          "3 Brch"
         ]
       }, 
-      "MQ3": {
-        "defaultAbbreviation": "3 Meq", 
-        "defaultName": "3 Meqabyan", 
+      "ENO": {
+        "defaultAbbreviation": "Eno", 
+        "defaultName": "Enoch", 
         "inputFields": [
-          "3 Meqabyan", 
-          "3 Meq", 
-          "3 Mqbyn", 
-          "3 Makabian", 
-          "3 Mkbn"
+          "Enoch", 
+          "Eno", 
+          "Ench", 
+          "1 Enoch", 
+          "1 Ench"
         ]
       }, 
-      "MAL": {
-        "defaultAbbreviation": "Mal", 
-        "defaultName": "Malachie", 
+      "TTP": {
+        "defaultAbbreviation": "Tst12", 
+        "defaultName": "Testaments of the Twelve Patriarchs", 
         "inputFields": [
-          "Malachie", 
-          "Mal", 
-          "Mlchie"
+          "Testaments of the Twelve Patriarchs", 
+          "Tst12", 
+          "Tst 12P", 
+          "Tst Twelve"
         ]
       }, 
-      "MAN": {
-        "defaultAbbreviation": "Man", 
-        "defaultName": "Prayer of Manasses", 
+      "CHR": {
+        "defaultAbbreviation": "Chr", 
+        "defaultName": "Chronicles", 
         "inputFields": [
-          "Prayer of Manasses", 
-          "Man", 
-          "Manasses", 
-          "Manasseh", 
-          "Mnss", 
-          "Mnsh", 
-          "Pryr Man"
+          "Chronicles", 
+          "Chr", 
+          "Chrncls"
         ]
       }, 
-      "EZ6": {
-        "defaultAbbreviation": "6 Ezr", 
-        "defaultName": "6 Ezra", 
+      "EPH": {
+        "defaultAbbreviation": "\u00c9ph", 
+        "defaultName": "\u00c9ph\u00e9siens", 
         "inputFields": [
-          "6 Ezra", 
-          "6 Ezr", 
-          "6 Esdras"
+          "\u00c9ph\u00e9siens", 
+          "\u00c9ph", 
+          "Eph\u00e9siens", 
+          "\u00c9phesiens", 
+          "Ephesiens", 
+          "\u00c9phsns", 
+          "Ephsns"
         ]
       }, 
-      "ESG": {
-        "defaultAbbreviation": "EsGk", 
-        "defaultName": "Esther (Greek)", 
+      "GEN": {
+        "defaultAbbreviation": "Gen", 
+        "defaultName": "Gen\u00e8se", 
         "inputFields": [
-          "Esther (Greek)", 
-          "EsGk", 
-          "EstGk"
+          "Gen\u00e8se", 
+          "Gen", 
+          "Genese", 
+          "Gns", 
+          "1 Moses", 
+          "1 Mss"
         ]
       }, 
-      "MAT": {
-        "defaultAbbreviation": "Mat", 
-        "defaultName": "Matthieu", 
+      "SUS": {
+        "defaultAbbreviation": "Sus", 
+        "defaultName": "Susanna", 
         "inputFields": [
-          "Matthieu", 
-          "Mat", 
-          "Mtth", 
-          "Mth", 
-          "Saint Matthieu", 
-          "Saint Mtth", 
-          "Saint Mth"
+          "Susanna", 
+          "Sus", 
+          "Ssnn"
         ]
       }, 
-      "CH2": {
-        "defaultAbbreviation": "2 Chr", 
-        "defaultName": "2 Chroniques", 
+      "RUT": {
+        "defaultAbbreviation": "Rut", 
+        "defaultName": "Ruth", 
         "inputFields": [
-          "2 Chroniques", 
-          "2 Chr", 
-          "2 Chrnqs", 
-          "2 Croniqs", 
-          "2 Crnq"
+          "Ruth", 
+          "Rut", 
+          "Rth"
         ]
       }, 
-      "LAM": {
-        "defaultAbbreviation": "Lam", 
-        "defaultName": "Lamentations", 
+      "ODE": {
+        "defaultAbbreviation": "Ode", 
+        "defaultName": "Odes", 
         "inputFields": [
-          "Lamentations", 
-          "Lam", 
-          "Lmnts"
+          "Odes", 
+          "Ode", 
+          "Odae"
         ]
       }, 
-      "JER": {
-        "defaultAbbreviation": "J\u00e9r", 
-        "defaultName": "J\u00e9r\u00e9mie", 
+      "DAN": {
+        "defaultAbbreviation": "Dan", 
+        "defaultName": "Daniel", 
         "inputFields": [
-          "J\u00e9r\u00e9mie", 
-          "J\u00e9r", 
-          "Jeremie", 
-          "Jer\u00e9mie", 
-          "J\u00e9remie", 
-          "Jrm"
+          "Daniel", 
+          "Dan", 
+          "Dnl"
         ]
       }, 
-      "LAO": {
-        "defaultAbbreviation": "Lao", 
-        "defaultName": "Laodiceans", 
+      "SNG": {
+        "defaultAbbreviation": "Cnt", 
+        "defaultName": "Cantique de Salomon", 
         "inputFields": [
-          "Laodiceans", 
-          "Lao", 
-          "Eps Lao", 
-          "Ltr Lao"
+          "Cantique de Salomon", 
+          "Cnt", 
+          "Cantique des Cantiques", 
+          "Cnt de Slmn", 
+          "CdS", 
+          "CS"
         ]
       }, 
-      "TI2": {
-        "defaultAbbreviation": "2 Tim", 
-        "defaultName": "2 Timoth\u00e9e", 
+      "LBA": {
+        "defaultAbbreviation": "EpBar", 
+        "defaultName": "Epistle of Baruch", 
         "inputFields": [
-          "2 Timoth\u00e9e", 
-          "2 Tim", 
-          "2 Tmth", 
-          "2 Timothee"
+          "Epistle of Baruch", 
+          "EpBar", 
+          "Ep Baruch", 
+          "Ep Brch", 
+          "Epi Baruch", 
+          "Epis Baruch", 
+          "Letter of Baruch", 
+          "Ltr of Baruch", 
+          "Ltr Baruch"
         ]
       }, 
-      "DNG": {
-        "defaultAbbreviation": "Dn(Gk)", 
-        "defaultName": "Daniel (Greek)", 
+      "BEL": {
+        "defaultAbbreviation": "Bel", 
+        "defaultName": "Bel and the Dragon", 
         "inputFields": [
-          "Daniel (Greek)", 
-          "Dn(Gk)", 
-          "DnlGk"
+          "Bel and the Dragon", 
+          "Bel", 
+          "BaD"
         ]
       }, 
-      "CL1": {
-        "defaultAbbreviation": "1 Cle", 
-        "defaultName": "1 Clement", 
+      "GES": {
+        "defaultAbbreviation": "1 Esd", 
+        "defaultName": "1 Esdras", 
         "inputFields": [
-          "1 Clement", 
-          "1 Cle", 
-          "1 Clmnt"
+          "1 Esdras", 
+          "1 Esd", 
+          "1 Esdrs"
         ]
       }, 
-      "OBA": {
-        "defaultAbbreviation": "Abd", 
-        "defaultName": "Abdias", 
+      "WIS": {
+        "defaultAbbreviation": "Wis", 
+        "defaultName": "Wisdom of Solomon", 
         "inputFields": [
-          "Abdias", 
-          "Abd", 
-          "Abds"
+          "Wisdom of Solomon", 
+          "Wis", 
+          "Wsdm of Slmn"
         ]
       }, 
-      "EST": {
-        "defaultAbbreviation": "Est", 
-        "defaultName": "Ester", 
+      "DEU": {
+        "defaultAbbreviation": "Deu", 
+        "defaultName": "Deut\u00e9ronome", 
         "inputFields": [
-          "Ester", 
-          "Est", 
-          "Esther", 
-          "Estr"
+          "Deut\u00e9ronome", 
+          "Deu", 
+          "Deuteronome", 
+          "Dtrnme", 
+          "5 Moses", 
+          "5 Mss"
         ]
       }, 
-      "CL2": {
-        "defaultAbbreviation": "2 Cle", 
-        "defaultName": "2 Clement", 
+      "COP": {
+        "defaultAbbreviation": "EpCor", 
+        "defaultName": "Epistle of Corinthians to Paul", 
         "inputFields": [
-          "2 Clement", 
-          "2 Cle", 
-          "2 Clmnt"
+          "Epistle of Corinthians to Paul", 
+          "EpCor", 
+          "Ep Corinthians", 
+          "Ep Crnthns", 
+          "Ltr Corinthians", 
+          "Ltr Crnthns"
         ]
       }, 
-      "HAG": {
-        "defaultAbbreviation": "Agg", 
-        "defaultName": "Agg\u00e9e", 
+      "HEB": {
+        "defaultAbbreviation": "Heb", 
+        "defaultName": "H\u00e9breux", 
         "inputFields": [
-          "Agg\u00e9e", 
-          "Agg", 
-          "Aggee", 
-          "Ag\u00e9e", 
-          "Agee"
+          "H\u00e9breux", 
+          "Heb", 
+          "Hbrx", 
+          "Hebreux"
         ]
       }, 
-      "BA2": {
-        "defaultAbbreviation": "2 Bar", 
-        "defaultName": "2 Baruch", 
+      "TIT": {
+        "defaultAbbreviation": "Tit", 
+        "defaultName": "Tite", 
         "inputFields": [
-          "2 Baruch", 
-          "2 Bar", 
-          "2 Brch", 
-          "Apocalypse of Baruch", 
-          "Apoc of Baruch", 
-          "Apoc Baruch"
+          "Tite", 
+          "Tit", 
+          "Tte"
         ]
       }, 
-      "PSS": {
-        "defaultAbbreviation": "AddPs", 
-        "defaultName": "Psalms of Solomon", 
+      "GAL": {
+        "defaultAbbreviation": "Gal", 
+        "defaultName": "Galates", 
         "inputFields": [
-          "Psalms of Solomon", 
-          "AddPs", 
-          "Ps Sol", 
-          "Slmn Pslms"
+          "Galates", 
+          "Gal", 
+          "Glts"
         ]
       }, 
-      "HAB": {
-        "defaultAbbreviation": "Hab", 
-        "defaultName": "Habacuc", 
+      "EN2": {
+        "defaultAbbreviation": "2 Eno", 
+        "defaultName": "2 Enoch", 
         "inputFields": [
-          "Habacuc", 
-          "Hab", 
-          "Habakuk", 
-          "Hbcc"
+          "2 Enoch", 
+          "2 Eno", 
+          "2 Ench"
         ]
       }, 
       "COL": {
@@ -5212,139 +4862,66 @@
           "Colosiens"
         ]
       }, 
-      "HEB": {
-        "defaultAbbreviation": "Heb", 
-        "defaultName": "H\u00e9breux", 
+      "DNG": {
+        "defaultAbbreviation": "Dn(Gk)", 
+        "defaultName": "Daniel (Greek)", 
         "inputFields": [
-          "H\u00e9breux", 
-          "Heb", 
-          "Hbrx", 
-          "Hebreux"
+          "Daniel (Greek)", 
+          "Dn(Gk)", 
+          "DnlGk"
         ]
       }, 
-      "SA2": {
-        "defaultAbbreviation": "2 Sam", 
-        "defaultName": "2 Samuel", 
+      "PS3": {
+        "defaultAbbreviation": "SyrPs", 
+        "defaultName": "Syriac Psalms", 
         "inputFields": [
-          "2 Samuel", 
-          "2 Sam", 
-          "2 Sml"
+          "Syriac Psalms", 
+          "SyrPs", 
+          "Syr Pslms"
         ]
       }, 
-      "TOB": {
-        "defaultAbbreviation": "Tob", 
-        "defaultName": "Tobit", 
+      "PS2": {
+        "defaultAbbreviation": "Ps151", 
+        "defaultName": "Psalm 151", 
         "inputFields": [
-          "Tobit", 
-          "Tob", 
-          "Tobias", 
-          "Tbt", 
-          "Tbs"
+          "Psalm 151", 
+          "Ps151", 
+          "Pslm 151"
         ]
       }, 
-      "NUM": {
-        "defaultAbbreviation": "Nom", 
-        "defaultName": "Nombres", 
+      "ECC": {
+        "defaultAbbreviation": "Ecc", 
+        "defaultName": "Eccl\u00e9siaste", 
         "inputFields": [
-          "Nombres", 
-          "Nom", 
-          "Nmbrs", 
-          "4 Moses", 
-          "4 Mss"
+          "Eccl\u00e9siaste", 
+          "Ecc", 
+          "Ecclesiaste", 
+          "L'Eccl\u00e9siaste", 
+          "L'Ecclesiaste", 
+          "Ecclst"
         ]
       }, 
-      "SA1": {
-        "defaultAbbreviation": "1 Sam", 
-        "defaultName": "1 Samuel", 
+      "EXO": {
+        "defaultAbbreviation": "Exo", 
+        "defaultName": "Exode", 
         "inputFields": [
-          "1 Samuel", 
-          "1 Sam", 
-          "1 Sml"
+          "Exode", 
+          "Exo", 
+          "Exde", 
+          "L'Exode", 
+          "L'Exde", 
+          "2 Moses", 
+          "2 Mss"
         ]
       }, 
-      "ROM": {
-        "defaultAbbreviation": "Rom", 
-        "defaultName": "Romains", 
+      "REV": {
+        "defaultAbbreviation": "Apo", 
+        "defaultName": "Apocalypse", 
         "inputFields": [
-          "Romains", 
-          "Rom", 
-          "Rmns"
-        ]
-      }, 
-      "LUK": {
-        "defaultAbbreviation": "Luc", 
-        "defaultName": "Luc", 
-        "inputFields": [
-          "Luc", 
-          "Lc", 
-          "Saint Luc", 
-          "Saint Lc"
-        ]
-      }, 
-      "COP": {
-        "defaultAbbreviation": "EpCor", 
-        "defaultName": "Epistle of Corinthians to Paul", 
-        "inputFields": [
-          "Epistle of Corinthians to Paul", 
-          "EpCor", 
-          "Ep Corinthians", 
-          "Ep Crnthns", 
-          "Ltr Corinthians", 
-          "Ltr Crnthns"
-        ]
-      }, 
-      "PSB": {
-        "defaultAbbreviation": "LitPs", 
-        "defaultName": "Psalms B", 
-        "inputFields": [
-          "Psalms B", 
-          "LitPs", 
-          "Metrical Psalms", 
-          "Mtrca Pslms", 
-          "Alternative Psalms", 
-          "Alt Psalms", 
-          "Alt Pslms", 
-          "Lit Psalms", 
-          "Lit Pslms"
-        ]
-      }, 
-      "PSA": {
-        "defaultAbbreviation": "Psa", 
-        "defaultName": "Psaumes", 
-        "inputFields": [
-          "Psaumes", 
-          "Psa", 
-          "Psms"
-        ]
-      }, 
-      "BA4": {
-        "defaultAbbreviation": "4 Bar", 
-        "defaultName": "4 Baruch", 
-        "inputFields": [
-          "4 Baruch", 
-          "4 Bar", 
-          "4 Brch", 
-          "Paralipomenon of Jeremiah", 
-          "Prlp of Jrmh", 
-          "Rest of Words of Baruch"
-        ]
-      }, 
-      "PSO": {
-        "defaultAbbreviation": "PrSol", 
-        "defaultName": "Prayer of Solomon", 
-        "inputFields": [
-          "Prayer of Solomon", 
-          "PrSol", 
-          "Pryr Slm"
-        ]
-      }, 
-      "PJE": {
-        "defaultAbbreviation": "PrJer", 
-        "defaultName": "Prayer of Jeremiah", 
-        "inputFields": [
-          "Prayer of Jeremiah", 
-          "PrJer", 
-          "Pryr Jeremiah"
+          "Apocalypse", 
+          "Apo", 
+          "Apclypse", 
+          "Apclpse"
         ]
       }, 
       "LJB": {
@@ -5368,15 +4945,440 @@
           "Ltr Jrm"
         ]
       }, 
-      "MIC": {
-        "defaultAbbreviation": "Mic", 
-        "defaultName": "Mich\u00e9e", 
+      "REP": {
+        "defaultAbbreviation": "Rep", 
+        "defaultName": "Reproof", 
         "inputFields": [
-          "Mich\u00e9e", 
-          "Mic", 
-          "Michee", 
-          "Mch\u00e9e", 
-          "Mchee"
+          "Reproof", 
+          "Rep", 
+          "Rprf"
+        ]
+      }, 
+      "ACT": {
+        "defaultAbbreviation": "Act", 
+        "defaultName": "Actes", 
+        "inputFields": [
+          "Actes", 
+          "Act", 
+          "Acts"
+        ]
+      }, 
+      "JOS": {
+        "defaultAbbreviation": "Jos", 
+        "defaultName": "Josu\u00e9", 
+        "inputFields": [
+          "Josu\u00e9", 
+          "Jos", 
+          "Josue", 
+          "Jsue"
+        ]
+      }, 
+      "MOS": {
+        "defaultAbbreviation": "Mos", 
+        "defaultName": "Moses", 
+        "inputFields": [
+          "Moses", 
+          "Mos", 
+          "Mss"
+        ]
+      }, 
+      "KI1": {
+        "defaultAbbreviation": "1 Rs", 
+        "defaultName": "1 Rois", 
+        "inputFields": [
+          "1 Rois", 
+          "1 Rs"
+        ]
+      }, 
+      "PRO": {
+        "defaultAbbreviation": "Pro", 
+        "defaultName": "Proverbes", 
+        "inputFields": [
+          "Proverbes", 
+          "Pro", 
+          "Prvrbs", 
+          "Prvbs"
+        ]
+      }, 
+      "ESG": {
+        "defaultAbbreviation": "EsGk", 
+        "defaultName": "Esther (Greek)", 
+        "inputFields": [
+          "Esther (Greek)", 
+          "EsGk", 
+          "EstGk"
+        ]
+      }, 
+      "ISA": {
+        "defaultAbbreviation": "\u00c9sa", 
+        "defaultName": "\u00c9saie", 
+        "inputFields": [
+          "\u00c9saie", 
+          "\u00c9sa", 
+          "Esa\u00efe", 
+          "Esaie"
+        ]
+      }, 
+      "SAM": {
+        "defaultAbbreviation": "Sam", 
+        "defaultName": "Samuel", 
+        "inputFields": [
+          "Samuel", 
+          "Sam", 
+          "Sml"
+        ]
+      }, 
+      "SIR": {
+        "defaultAbbreviation": "Sir", 
+        "defaultName": "Sirach", 
+        "inputFields": [
+          "Sirach", 
+          "Sir", 
+          "Srch"
+        ]
+      }, 
+      "PAZ": {
+        "defaultAbbreviation": "PrAz", 
+        "defaultName": "Prayer of Azariah", 
+        "inputFields": [
+          "Prayer of Azariah", 
+          "PrAz", 
+          "Pryr Azrh"
+        ]
+      }, 
+      "JOL": {
+        "defaultAbbreviation": "Joel", 
+        "defaultName": "Jo\u00ebl", 
+        "inputFields": [
+          "Jo\u00ebl", 
+          "Joel", 
+          "Jl"
+        ]
+      }, 
+      "EZ6": {
+        "defaultAbbreviation": "6 Ezr", 
+        "defaultName": "6 Ezra", 
+        "inputFields": [
+          "6 Ezra", 
+          "6 Ezr", 
+          "6 Esdras"
+        ]
+      }, 
+      "EST": {
+        "defaultAbbreviation": "Est", 
+        "defaultName": "Ester", 
+        "inputFields": [
+          "Ester", 
+          "Est", 
+          "Esther", 
+          "Estr"
+        ]
+      }, 
+      "JUB": {
+        "defaultAbbreviation": "Jub", 
+        "defaultName": "Jubilees", 
+        "inputFields": [
+          "Jubilees", 
+          "Jub", 
+          "Jbls"
+        ]
+      }, 
+      "DOJ": {
+        "defaultAbbreviation": "DoJ", 
+        "defaultName": "Dormition of John", 
+        "inputFields": [
+          "Dormition of John", 
+          "DoJ", 
+          "Drm Jhn", 
+          "Drm Jn"
+        ]
+      }, 
+      "BA2": {
+        "defaultAbbreviation": "2 Bar", 
+        "defaultName": "2 Baruch", 
+        "inputFields": [
+          "2 Baruch", 
+          "2 Bar", 
+          "2 Brch", 
+          "Apocalypse of Baruch", 
+          "Apoc of Baruch", 
+          "Apoc Baruch"
+        ]
+      }, 
+      "PJE": {
+        "defaultAbbreviation": "PrJer", 
+        "defaultName": "Prayer of Jeremiah", 
+        "inputFields": [
+          "Prayer of Jeremiah", 
+          "PrJer", 
+          "Pryr Jeremiah"
+        ]
+      }, 
+      "SA2": {
+        "defaultAbbreviation": "2 Sam", 
+        "defaultName": "2 Samuel", 
+        "inputFields": [
+          "2 Samuel", 
+          "2 Sam", 
+          "2 Sml"
+        ]
+      }, 
+      "SA1": {
+        "defaultAbbreviation": "1 Sam", 
+        "defaultName": "1 Samuel", 
+        "inputFields": [
+          "1 Samuel", 
+          "1 Sam", 
+          "1 Sml"
+        ]
+      }, 
+      "PE1": {
+        "defaultAbbreviation": "1 Pie", 
+        "defaultName": "1 Pierre", 
+        "inputFields": [
+          "1 Pierre", 
+          "1 Pie", 
+          "1 Prre", 
+          "1 Saint Pierre", 
+          "1 Saint Prre"
+        ]
+      }, 
+      "EZ5": {
+        "defaultAbbreviation": "5 Ezr", 
+        "defaultName": "5 Ezra", 
+        "inputFields": [
+          "5 Ezra", 
+          "5 Ezr", 
+          "5 Esdras"
+        ]
+      }, 
+      "PE2": {
+        "defaultAbbreviation": "2 Pie", 
+        "defaultName": "2 Pierre", 
+        "inputFields": [
+          "2 Pierre", 
+          "2 Pie", 
+          "2 Prre", 
+          "2 Saint Pierre", 
+          "2 Saint Prre"
+        ]
+      }, 
+      "LUK": {
+        "defaultAbbreviation": "Luc", 
+        "defaultName": "Luc", 
+        "inputFields": [
+          "Luc", 
+          "Lc", 
+          "Saint Luc", 
+          "Saint Lc"
+        ]
+      }, 
+      "BA4": {
+        "defaultAbbreviation": "4 Bar", 
+        "defaultName": "4 Baruch", 
+        "inputFields": [
+          "4 Baruch", 
+          "4 Bar", 
+          "4 Brch", 
+          "Paralipomenon of Jeremiah", 
+          "Prlp of Jrmh", 
+          "Rest of Words of Baruch"
+        ]
+      }, 
+      "PHM": {
+        "defaultAbbreviation": "Phm", 
+        "defaultName": "Phil\u00e9mon", 
+        "inputFields": [
+          "Phil\u00e9mon", 
+          "Phm", 
+          "Phlmn", 
+          "Philemon"
+        ]
+      }, 
+      "KGS": {
+        "defaultAbbreviation": "Kgs", 
+        "defaultName": "Kings", 
+        "inputFields": [
+          "Kings", 
+          "Kgs", 
+          "Kngs"
+        ]
+      }, 
+      "JNA": {
+        "defaultAbbreviation": "Jon", 
+        "defaultName": "Jonas", 
+        "inputFields": [
+          "Jonas", 
+          "Jon", 
+          "Jns"
+        ]
+      }, 
+      "JDE": {
+        "defaultAbbreviation": "Jud", 
+        "defaultName": "Jude", 
+        "inputFields": [
+          "Jude", 
+          "Jud", 
+          "Jde"
+        ]
+      }, 
+      "JDG": {
+        "defaultAbbreviation": "Jug", 
+        "defaultName": "Juges", 
+        "inputFields": [
+          "Juges", 
+          "Jug", 
+          "Jges", 
+          "Jgs"
+        ]
+      }, 
+      "SHE": {
+        "defaultAbbreviation": "Her", 
+        "defaultName": "Shepherd of Hermas", 
+        "inputFields": [
+          "Shepherd of Hermas", 
+          "Her", 
+          "Hermas", 
+          "Hrms", 
+          "Shep Hermas"
+        ]
+      }, 
+      "LES": {
+        "defaultAbbreviation": "2 Esd", 
+        "defaultName": "2 Esdras", 
+        "inputFields": [
+          "2 Esdras", 
+          "2 Esd", 
+          "2 Esdrs"
+        ]
+      }, 
+      "PSA": {
+        "defaultAbbreviation": "Psa", 
+        "defaultName": "Psaumes", 
+        "inputFields": [
+          "Psaumes", 
+          "Psa", 
+          "Psms"
+        ]
+      }, 
+      "PSO": {
+        "defaultAbbreviation": "PrSol", 
+        "defaultName": "Prayer of Solomon", 
+        "inputFields": [
+          "Prayer of Solomon", 
+          "PrSol", 
+          "Pryr Slm"
+        ]
+      }, 
+      "DID": {
+        "defaultAbbreviation": "Did", 
+        "defaultName": "Didache", 
+        "inputFields": [
+          "Didache", 
+          "Did", 
+          "Ddch"
+        ]
+      }, 
+      "JDT": {
+        "defaultAbbreviation": "Jdt", 
+        "defaultName": "Judith", 
+        "inputFields": [
+          "Judith", 
+          "Jdt", 
+          "Jdth"
+        ]
+      }, 
+      "PSB": {
+        "defaultAbbreviation": "LitPs", 
+        "defaultName": "Psalms B", 
+        "inputFields": [
+          "Psalms B", 
+          "LitPs", 
+          "Metrical Psalms", 
+          "Mtrca Pslms", 
+          "Alternative Psalms", 
+          "Alt Psalms", 
+          "Alt Pslms", 
+          "Lit Psalms", 
+          "Lit Pslms"
+        ]
+      }, 
+      "PSS": {
+        "defaultAbbreviation": "AddPs", 
+        "defaultName": "Psalms of Solomon", 
+        "inputFields": [
+          "Psalms of Solomon", 
+          "AddPs", 
+          "Ps Sol", 
+          "Slmn Pslms"
+        ]
+      }, 
+      "CO1": {
+        "defaultAbbreviation": "1 Cor", 
+        "defaultName": "1 Corinthiens", 
+        "inputFields": [
+          "1 Corinthiens", 
+          "1 Cor", 
+          "1 Crnthns"
+        ]
+      }, 
+      "CO2": {
+        "defaultAbbreviation": "2 Cor", 
+        "defaultName": "2 Corinthiens", 
+        "inputFields": [
+          "2 Corinthiens", 
+          "2 Cor", 
+          "2 Crnthns"
+        ]
+      }, 
+      "CO3": {
+        "defaultAbbreviation": "3 Cor", 
+        "defaultName": "3 Corinthians", 
+        "inputFields": [
+          "3 Corinthians", 
+          "3 Cor", 
+          "3 Crnthns"
+        ]
+      }, 
+      "HOS": {
+        "defaultAbbreviation": "Os\u00e8", 
+        "defaultName": "Os\u00e8e", 
+        "inputFields": [
+          "Os\u00e8e", 
+          "Os\u00e8", 
+          "Os\u00e9e", 
+          "Osee"
+        ]
+      }, 
+      "LAO": {
+        "defaultAbbreviation": "Lao", 
+        "defaultName": "Laodiceans", 
+        "inputFields": [
+          "Laodiceans", 
+          "Lao", 
+          "Eps Lao", 
+          "Ltr Lao"
+        ]
+      }, 
+      "TOB": {
+        "defaultAbbreviation": "Tob", 
+        "defaultName": "Tobit", 
+        "inputFields": [
+          "Tobit", 
+          "Tob", 
+          "Tobias", 
+          "Tbt", 
+          "Tbs"
+        ]
+      }, 
+      "JHN": {
+        "defaultAbbreviation": "Jn", 
+        "defaultName": "Jean", 
+        "inputFields": [
+          "Jean", 
+          "Jn", 
+          "Saint Jean", 
+          "Saint Jn"
         ]
       }
     }

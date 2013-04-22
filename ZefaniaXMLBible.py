@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ZefaniaXMLBible.py
-#   Last modified: 2013-04-14 by RJH (also update versionString below)
+#   Last modified: 2013-04-20 by RJH (also update versionString below)
 #
 # Module handling Zefania XML Bibles
 #
@@ -96,7 +96,7 @@ class ZefaniaXMLBible( Bible ):
         """
          # Setup and initialise the base class first
         Bible.__init__( self )
-        self.objectNameString = "Zefania Bible object"
+        self.objectNameString = "Zefania XML Bible object"
         self.objectTypeString = "Zefania"
 
         # Now we can set our object variables
@@ -124,7 +124,7 @@ class ZefaniaXMLBible( Bible ):
         """
         if Globals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
         self.tree = ElementTree().parse( self.sourceFilepath )
-        assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
+        if Globals.debugFlag: assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
 
         # Find the main (bible) container
         if self.tree.tag == ZefaniaXMLBible.treeTag:
@@ -198,7 +198,7 @@ class ZefaniaXMLBible( Bible ):
             <rights>We believe that this Bible is found in the Public Domain.</rights>
         </INFORMATION>
         """
-        assert( self.header )
+        if Globals.debugFlag: assert( self.header )
         location = 'Header'
         Globals.checkXMLNoAttributes( self.header, location, 'j4j6' )
         Globals.checkXMLNoText( self.header, location, 'sk4l' )
@@ -212,7 +212,7 @@ class ZefaniaXMLBible( Bible ):
                 Globals.checkXMLNoTail( element, sublocation, 'al1d' )
                 Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
-                assert( element.text )
+                if Globals.debugFlag: assert( element.text )
                 self.title = element.text
             elif element.tag == 'creator':
                 sublocation = "creator in {}".format( location )
@@ -231,7 +231,7 @@ class ZefaniaXMLBible( Bible ):
                 Globals.checkXMLNoTail( element, sublocation, 'al1d' )
                 Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
-                assert( element.text )
+                if Globals.debugFlag: assert( element.text )
                 self.description = element.text
             elif element.tag == 'publisher':
                 sublocation = "publisher in {}".format( location )
@@ -250,7 +250,7 @@ class ZefaniaXMLBible( Bible ):
                 Globals.checkXMLNoTail( element, sublocation, 'al1d' )
                 Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
-                assert( element.text )
+                if Globals.debugFlag: assert( element.text )
                 self.date = element.text
             elif element.tag == 'type':
                 sublocation = "type in {}".format( location )
@@ -263,28 +263,28 @@ class ZefaniaXMLBible( Bible ):
                 Globals.checkXMLNoTail( element, sublocation, 'al1d' )
                 Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
-                assert( element.text )
-                assert( element.text == 'Zefania XML Bible Markup Language' )
+                if Globals.debugFlag: assert( element.text )
+                if Globals.debugFlag: assert( element.text == 'Zefania XML Bible Markup Language' )
             elif element.tag == 'identifier':
                 sublocation = "identifier in {}".format( location )
                 Globals.checkXMLNoTail( element, sublocation, 'al1d' )
                 Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
-                assert( element.text )
+                if Globals.debugFlag: assert( element.text )
                 self.identifier = element.text
             elif element.tag == 'source':
                 sublocation = "source in {}".format( location )
                 Globals.checkXMLNoTail( element, sublocation, 'al1d' )
                 Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
-                assert( element.text )
+                if Globals.debugFlag: assert( element.text )
                 self.source = element.text
             elif element.tag == 'language':
                 sublocation = "language in {}".format( location )
                 Globals.checkXMLNoTail( element, sublocation, 'al1d' )
                 Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
-                assert( element.text )
+                if Globals.debugFlag: assert( element.text )
                 self.language = element.text
             elif element.tag == 'coverage':
                 sublocation = "coverage in {}".format( location )
@@ -379,9 +379,9 @@ class ZefaniaXMLBible( Bible ):
                 for attrib,value in element.items():
                     if attrib=="vref":
                         vRef = value
-                        assert( vRef == '1' )
+                        if Globals.debugFlag: assert( vRef == '1' )
                     else: logging.warning( "Unprocessed '{}' attribute ({}) in caption element".format( attrib, value ) )
-                assert( vRef )
+                if Globals.debugFlag: assert( vRef )
                 vText = element.text
                 if not vText:
                     logging.warning( "{} {}:{} has no text".format( BBB, chapterNumber, vRef ) )
@@ -410,7 +410,7 @@ class ZefaniaXMLBible( Bible ):
             if attrib=="vnumber":
                 verseNumber = value
             else: logging.warning( "Unprocessed '{}' attribute ({}) in verse element".format( attrib, value ) )
-        assert( verseNumber )
+        if Globals.debugFlag: assert( verseNumber )
         location = "{}:{}".format( location, verseNumber ) # Get a better location description
         #thisBook.appendLine( 'v', verseNumber )
         vText = verse.text
@@ -429,7 +429,7 @@ class ZefaniaXMLBible( Bible ):
                     else: logging.warning( "Unprocessed '{}' attribute ({}) in style subelement".format( attrib, value ) )
                 if noteType not in ('n-studynote','x-studynote',):
                     logging.warning( "Unexpected {} note type in {}".format( noteType, BBB ) )
-                assert( noteType )
+                if Globals.debugFlag: assert( noteType )
                 nText, nTail = subelement.text, subelement.tail
                 #print( "note", BBB, chapterNumber, verseNumber, noteType, repr(nText), repr(nTail) )
                 #thisBook.appendLine( 'ST', css ) # XXXXXXXXXXXXXXXXXXXXXXXXXX Losing data here (for now)
@@ -446,7 +446,7 @@ class ZefaniaXMLBible( Bible ):
                             elif attrib=="id":
                                 idStyle = value
                             else: logging.warning( "Unprocessed '{}' attribute ({}) in style subsubelement".format( attrib, value ) )
-                        assert( css or idStyle )
+                        if Globals.debugFlag: assert( css or idStyle )
                         SFM = None
                         if css == "font-style:italic": SFM = '\\it'
                         elif css == "font-style:italic;font-weight:bold": SFM = '\\bdit'
@@ -455,7 +455,7 @@ class ZefaniaXMLBible( Bible ):
                         elif css is None and idStyle=='cl:divineName': SFM = '\\nd'
                         else: print( "css is", css, "idStyle is", idStyle ); halt
                         sText, sTail = subsubelement.text.strip(), subsubelement.tail
-                        assert( sText )
+                        if Globals.debugFlag: assert( sText )
                         if SFM: vText += SFM+' ' + sText + SFM+'*'
                         else: vText += '\\sc ' + '['+css+']' + sText + '\\sc* ' # Use sc for unknown styles
                         if sTail: vText += sTail.strip()
@@ -471,7 +471,7 @@ class ZefaniaXMLBible( Bible ):
                     elif attrib=="id":
                         idStyle = value
                     else: logging.warning( "Unprocessed '{}' attribute ({}) in style subelement".format( attrib, value ) )
-                assert( css or idStyle )
+                if Globals.debugFlag: assert( css or idStyle )
                 SFM = None
                 if css == "font-style:italic": SFM = '\\it'
                 elif css == "font-style:italic;font-weight:bold": SFM = '\\bdit'
@@ -480,7 +480,7 @@ class ZefaniaXMLBible( Bible ):
                 elif css is None and idStyle=='cl:divineName': SFM = '\\nd'
                 else: print( "css is", css, "idStyle is", idStyle ); halt
                 sText, sTail = subelement.text.strip(), subelement.tail
-                assert( sText )
+                if Globals.debugFlag: assert( sText )
                 if SFM: vText += SFM+' ' + sText + SFM+'*'
                 else: vText += '\\sc ' + '['+css+']' + sText + '\\sc* ' # Use sc for unknown styles
                 if sTail: vText += sTail.strip()
@@ -494,7 +494,7 @@ class ZefaniaXMLBible( Bible ):
                     if attrib=="art":
                         art = value
                     else: logging.warning( "Unprocessed '{}' attribute ({}) in style subelement".format( attrib, value ) )
-                assert( art == 'x-nl' )
+                if Globals.debugFlag: assert( art == 'x-nl' )
                 if vText:
                     thisBook.appendLine( 'v', verseNumber + ' ' + vText )
                     vText = ''

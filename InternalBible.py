@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2013-04-13 by RJH (also update versionString below)
+#   Last modified: 2013-04-20 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -113,7 +113,7 @@ class InternalBible:
 
     def getAssumedBookName( self, BBB ):
         """Gets the book name for the given book reference code."""
-        assert( BBB in Globals.BibleBooksCodes)
+        if Globals.debugFlag: assert( BBB in Globals.BibleBooksCodes)
         #assert( self.books[BBB] )
         if BBB in self.BBBToNameDict: return self.BBBToNameDict[BBB]
     # end of InternalBible.getAssumedBookName
@@ -276,7 +276,7 @@ class InternalBible:
             The third list contains an entry for combined verses in the book.
             The fourth list contains an entry for reordered verses in the book.
         """
-        assert( self.books )
+        if Globals.debugFlag: assert( self.books )
         totalVersification, totalOmittedVerses, totalCombinedVerses, totalReorderedVerses = OrderedDict(), OrderedDict(), OrderedDict(), OrderedDict()
         for bookReferenceCode in self.books.keys():
             versification, omittedVerses, combinedVerses, reorderedVerses = self.books[bookReferenceCode].getVersification()
@@ -292,7 +292,7 @@ class InternalBible:
         """
         Get the added units in the Bible text, such as section headings, paragraph breaks, and section references.
         """
-        assert( self.books )
+        if Globals.debugFlag: assert( self.books )
         haveParagraphs = haveQParagraphs = haveSectionHeadings = haveSectionReferences = False
         AllParagraphs, AllQParagraphs, AllSectionHeadings, AllSectionReferences = OrderedDict(), OrderedDict(), OrderedDict(), OrderedDict()
         for BBB in self.books:
@@ -331,7 +331,7 @@ class InternalBible:
 
         # Now get the aggregate results for the entire Bible
         aggregateResults = {}
-        assert( 'ALL' not in self.discoveryResults )
+        if Globals.debugFlag: assert( 'ALL' not in self.discoveryResults )
         for BBB in self.discoveryResults:
             #print( "discoveryResults", BBB, self.discoveryResults[BBB] )
             isOT = isNT = False
@@ -382,7 +382,7 @@ class InternalBible:
             # Create summaries of lists with entries for various books
             #print( "check", arKey, aggregateResults[arKey] )
             if isinstance( aggregateResults[arKey], list ) and isinstance( aggregateResults[arKey][0], float ):
-                assert( arKey.endswith( 'Ratio' ) )
+                if Globals.debugFlag: assert( arKey.endswith( 'Ratio' ) )
                 #print( "this", arKey, aggregateResults[arKey] )
                 aggregateRatio = sum( aggregateResults[arKey] ) / len( aggregateResults[arKey] )
                 aggregateFlag = None
@@ -429,6 +429,7 @@ class InternalBible:
         """Runs a series of individual checks (and counts) on each book of the Bible
             and then a number of overall checks on the entire Bible."""
         # Get our recommendations for added units -- only load this once per Bible
+        if Globals.verbosityLevel > 1: print( _("Checking {} Bible...").format( self.name ) )
         import pickle
         folder = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/" ) # Relative to module, not cwd
         filepath = os.path.join( folder, "AddedUnitData.pickle" )
@@ -479,12 +480,12 @@ class InternalBible:
             """Appends a list to the ALL BOOKS errors."""
             #print( "  appendList", BBB, firstKey, secondKey )
             if secondKey is None:
-                assert( isinstance (errorDict[BBB][firstKey], list ) )
+                if Globals.debugFlag: assert( isinstance (errorDict[BBB][firstKey], list ) )
                 if firstKey not in errorDict['All Books']: errorDict['All Books'][firstKey] = []
                 errorDict['All Books'][firstKey].extend( errorDict[BBB][firstKey] )
             else: # We have an extra level
-                assert( isinstance (errorDict[BBB][firstKey], dict ) )
-                assert( isinstance (errorDict[BBB][firstKey][secondKey], list ) )
+                if Globals.debugFlag: assert( isinstance (errorDict[BBB][firstKey], dict ) )
+                if Globals.debugFlag: assert( isinstance (errorDict[BBB][firstKey][secondKey], list ) )
                 if firstKey not in errorDict['All Books']: errorDict['All Books'][firstKey] = OrderedDict()
                 if secondKey not in errorDict['All Books'][firstKey]: errorDict['All Books'][firstKey][secondKey] = []
                 errorDict['All Books'][firstKey][secondKey].extend( errorDict[BBB][firstKey][secondKey] )
@@ -494,13 +495,13 @@ class InternalBible:
             """Merges the counts together."""
             #print( "  mergeCount", BBB, firstKey, secondKey )
             if secondKey is None:
-                assert( isinstance (errorDict[BBB][firstKey], dict ) )
+                if Globals.debugFlag: assert( isinstance (errorDict[BBB][firstKey], dict ) )
                 if firstKey not in errorDict['All Books']: errorDict['All Books'][firstKey] = {}
                 for something in errorDict[BBB][firstKey]:
                     errorDict['All Books'][firstKey][something] = 1 if something not in errorDict['All Books'][firstKey] else errorDict[BBB][firstKey][something] + 1
             else:
-                assert( isinstance (errorDict[BBB][firstKey], (dict, OrderedDict,) ) )
-                assert( isinstance (errorDict[BBB][firstKey][secondKey], dict ) )
+                if Globals.debugFlag: assert( isinstance (errorDict[BBB][firstKey], (dict, OrderedDict,) ) )
+                if Globals.debugFlag: assert( isinstance (errorDict[BBB][firstKey][secondKey], dict ) )
                 if firstKey not in errorDict['All Books']: errorDict['All Books'][firstKey] = OrderedDict()
                 if secondKey not in errorDict['All Books'][firstKey]: errorDict['All Books'][firstKey][secondKey] = {}
                 for something in errorDict[BBB][firstKey][secondKey]:
@@ -520,7 +521,7 @@ class InternalBible:
 
             if total < lcTotal:
                 tcWord = lcWord.title() # NOTE: This can make in-enew into In-Enew
-                assert( tcWord != lcWord )
+                if Globals.debugFlag: assert( tcWord != lcWord )
                 tcCount = wordDict[tcWord] if tcWord in wordDict else 0
                 if tcCount: tempResult.append( (tcCount,tcWord,) ); total += tcCount
             if total < lcTotal:
@@ -537,7 +538,7 @@ class InternalBible:
                     if tCCount: tempResult.append( (tCCount,tCWord,) ); total += tCCount
             if total < lcTotal:
                 UCWord = lcWord.upper()
-                assert( UCWord!=lcWord )
+                if Globals.debugFlag: assert( UCWord!=lcWord )
                 if UCWord != TcWord:
                     UCCount = wordDict[UCWord] if UCWord in wordDict else 0
                     if UCCount: tempResult.append( (UCCount,UCWord,) ); total += UCCount
@@ -590,7 +591,7 @@ class InternalBible:
             for thisKey in errors['ByBook'][BBB]:
                 #print( "thisKey", BBB, thisKey )
                 if thisKey.endswith('Errors') or thisKey.endswith('List') or thisKey.endswith('Lines'):
-                    assert( isinstance( errors['ByBook'][BBB][thisKey], list ) )
+                    if Globals.debugFlag: assert( isinstance( errors['ByBook'][BBB][thisKey], list ) )
                     appendList( BBB, errors['ByBook'], thisKey )
                     errors['ByCategory'][thisKey].extend( errors['ByBook'][BBB][thisKey] )
                 elif thisKey.endswith('Counts'):
@@ -600,7 +601,7 @@ class InternalBible:
                     for anotherKey in errors['ByBook'][BBB][thisKey]:
                         #print( " anotherKey", BBB, anotherKey )
                         if anotherKey.endswith('Errors') or anotherKey.endswith('List') or anotherKey.endswith('Lines'):
-                            assert( isinstance( errors['ByBook'][BBB][thisKey][anotherKey], list ) )
+                            if Globals.debugFlag: assert( isinstance( errors['ByBook'][BBB][thisKey][anotherKey], list ) )
                             appendList( BBB, errors['ByBook'], thisKey, anotherKey )
                             if thisKey not in errors['ByCategory']: errors['ByCategory'][thisKey] = OrderedDict() #; print( "Added", thisKey )
                             if anotherKey not in errors['ByCategory'][thisKey]: errors['ByCategory'][thisKey][anotherKey] = []
@@ -662,10 +663,10 @@ class InternalBible:
         #print( "  gVD", self.name, key, verseData )
         if verseData is None:
             print( "IB.gVD no VD", self.name, key, verseData )
-            assert( key.getChapterNumberStr()=='0' or key.getVerseNumberStr()=='0' )
+            if Globals.debugFlag: assert( key.getChapterNumberStr()=='0' or key.getVerseNumberStr()=='0' )
         else:
-            assert( isinstance( verseData, list ) )
-            assert( 2 <= len(verseData) <= 6 )
+            if Globals.debugFlag: assert( isinstance( verseData, list ) )
+            if Globals.debugFlag: assert( 2 <= len(verseData) <= 6 )
         return verseData
     # end of InternalBible.getVerseData
 
@@ -676,9 +677,9 @@ class InternalBible:
         """
         verseData = self.getBCVRef( key )
         if verseData is not None:
-            #print( "vT", self.name, key, verseData )
-            assert( isinstance( verseData, list ) )
-            assert( 2 <= len(verseData) <= 5 )
+            print( "vT", self.name, key, verseData )
+            if Globals.debugFlag: assert( isinstance( verseData, list ) )
+            #if Globals.debugFlag: assert( 1 <= len(verseData) <= 5 )
             verseText = ''
             for marker,originalMarker,text,cleanText,extras in verseData:
                 if marker == 'c': pass # Ignore

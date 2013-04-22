@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # UnboundBible.py
-#   Last modified: 2013-04-15 by RJH (also update versionString below)
+#   Last modified: 2013-04-21 by RJH (also update versionString below)
 #
 # Module handling Biola University "unbound" Bible files
 #
@@ -29,6 +29,60 @@ These can be downloaded from: http://unbound.biola.edu/index.cfm?method=download
 
 Note that some modules have repeated lines (as at April 2013).  :-(
 There also seem to be a range of other errors so these UB modules are not reliably checked.  :-(
+
+A typical Unbound Bible file starts with lines beginning with #
+    which contain some meta-data
+    and then the main data lines are separated by tabs.
+Different versions have different numbers of tab-separated fields.
+
+e.g.,
+    #THE UNBOUND BIBLE (www.unboundbible.org)
+    #name   English: King James Version
+    #filetype       Unmapped-BCVS
+    #copyright      Public Domain
+    #abbreviation
+    #language       eng
+    #note
+    #columns        orig_book_index orig_chapter    orig_verse      orig_subverse   order_by        text
+    01O     1       1               10      In the beginning God created the heaven and the earth.
+    01O     1       2               20      And the earth was without form, and void; and darkness was upon the face of the deep. And the Spirit of God moved upon the face of the waters.
+    01O     1       3               30      And God said, Let there be light: and there was light.
+and
+    #THE UNBOUND BIBLE (www.unboundbible.org)
+    #name   English: American Standard Version
+    #filetype       Unmapped-BCVS
+    #copyright      Published 1901. Public Domain.
+    #abbreviation
+    #language       eng
+    #note
+    #columns        orig_book_index orig_chapter    orig_verse      orig_subverse   order_by        text
+    01O     1       1               10      In the beginning God created the heavens and the earth.
+    01O     1       2               20      And the earth was waste and void; and darkness was upon the face of the deep: and the Spirit of God moved upon the face of the waters
+    01O     1       3               30      And God said, Let there be light: and there was light.
+and
+    #THE UNBOUND BIBLE (www.unboundbible.org)
+    #name   Maori
+    #filetype       Unmapped-BCVS
+    #copyright
+    #abbreviation
+    #language       mbf
+    #note
+    #columns        orig_book_index orig_chapter    orig_verse      orig_subverse   order_by        text
+    01O     1       1               10      ¶ He mea hanga na te atua i te timatanga te rangi me te whenua.
+    01O     1       2               20      A kahore he ahua o te whenua, i takoto kau; he pouri ano a runga i te mata o te hohonu. Na ka whakapaho te Wairua o te Atua i runga i te kare o nga wai.
+    01O     1       3               30      ¶ A ka ki te Atua, Kia marama: na ka marama.
+    01O     1       4               40      A ka kite te Atua i te marama, he pai: a ka wehea e te Atua te marama i te pouri.
+and
+    #THE UNBOUND BIBLE (www.unboundbible.org)
+    #name   Albanian
+    #filetype       Unmapped-BCV
+    #copyright
+    #abbreviation
+    #language       aln
+    #note
+    #columns        orig_book_index orig_chapter    orig_verse      text
+    01O     1       1       Në fillim Perëndia krijoi qiejt dhe tokën.
+    01O     1       2       Toka ishte pa trajtë, e zbrazët dhe errësira mbulonte sipërfaqen e humnerës; dhe Fryma e Perëndisë fluturonte mbi sipërfaqen e ujërave.
 """
 
 progName = "Unbound Bible format handler"
@@ -50,14 +104,14 @@ def UnboundBibleFileCheck( givenFolderName, autoLoad=False ):
     Returns False if an error is found.
 
     if autoLoad is false (default)
-        returns None, or the number found.
+        returns None, or the number of Bibles found.
 
     if autoLoad is true and exactly one Unbound Bible is found,
         returns the loaded UnboundBible object.
     """
     if Globals.verbosityLevel > 2: print( "UnboundBibleFileCheck( {}, {} )".format( givenFolderName, autoLoad ) )
-    assert( givenFolderName and isinstance( givenFolderName, str ) )
-    assert( autoLoad in (True,False,) )
+    if Globals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
+    if Globals.debugFlag: assert( autoLoad in (True,False,) )
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
@@ -71,8 +125,10 @@ def UnboundBibleFileCheck( givenFolderName, autoLoad=False ):
         somepath = os.path.join( givenFolderName, something )
         if os.path.isdir( somepath ): foundFolders.append( something )
         elif os.path.isfile( somepath ): foundFiles.append( something )
+    if '__MACOSX' in foundFolders:
+        foundFolders.remove( foundFolders )  # don't visit these directories
 
-    # See if there's an UnboundBible project here in this folder
+    # See if there's an UnboundBible project here in this given folder
     numFound = 0
     looksHopeful = False
     lastFilenameFound = None
@@ -88,9 +144,9 @@ def UnboundBibleFileCheck( givenFolderName, autoLoad=False ):
             numFound += 1
     if numFound:
         if numFound == 1 and autoLoad:
-            ub = UnboundBible( givenFolderName, lastFilenameFound[:-9] ) # Remove the end of the actual filename
-            ub.load() # Load and process the file
-            return ub
+            uB = UnboundBible( givenFolderName, lastFilenameFound[:-9] ) # Remove the end of the actual filename "_utf8.txt"
+            uB.load() # Load and process the file
+            return uB
         return numFound
     elif looksHopeful and Globals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
 
@@ -99,6 +155,9 @@ def UnboundBibleFileCheck( givenFolderName, autoLoad=False ):
     foundProjects = []
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
+        if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
+            if Globals.logErrorsFlag: logging.warning( _("UnboundBibleFileCheck: '{}' subfolder is unreadable").format( tryFolderName ) )
+            continue
         if Globals.verbosityLevel > 3: print( "    UnboundBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
         for something in os.listdir( tryFolderName ):
@@ -119,10 +178,10 @@ def UnboundBibleFileCheck( givenFolderName, autoLoad=False ):
                 numFound += 1
     if numFound:
         if numFound == 1 and autoLoad:
-            assert( len(foundProjects) == 1 )
-            ub = UnboundBible( foundProjects[0][0], foundProjects[0][1][:-9] )
-            ub.load() # Load and process the file
-            return ub
+            if Globals.debugFlag: assert( len(foundProjects) == 1 )
+            uB = UnboundBible( foundProjects[0][0], foundProjects[0][1][:-9] ) # Remove the end of the actual filename "_utf8.txt"
+            uB.load() # Load and process the file
+            return uB
         return numFound
 # end of UnboundBibleFileCheck
 
@@ -177,7 +236,18 @@ class UnboundBible( Bible ):
                 if not line: continue # Just discard blank lines
                 lastLine = line
                 #print ( 'UB file line is "' + line + '"' )
-                if line[0]=='#': continue # Just discard comment lines
+                if line[0]=='#':
+                    hashBits = line[1:].split( '\t' )
+                    if len(hashBits)==2 and hashBits[1]: # We have some valid meta-data
+                        if hashBits[0] == 'name': self.name = hashBits[1]
+                        elif hashBits[0] == 'filetype': self.filetype = hashBits[1]
+                        elif hashBits[0] == 'copyright': self.copyright = hashBits[1]
+                        elif hashBits[0] == 'abbreviation': self.abbreviation = hashBits[1]
+                        elif hashBits[0] == 'language': self.language = hashBits[1]
+                        elif hashBits[0] == 'note': self.note = hashBits[1]
+                        elif hashBits[0] == 'columns': self.columns = hashBits[1]
+                        elif Globals.logErrorsFlag: logging.warning( "Unknown UnboundBible meta-data field '{}' = '{}'".format( hashBits[0], hashBits[1] ) )
+                    continue # Just discard comment lines
 
                 bits = line.split( '\t' )
                 #print( self.givenName, BBB, bits )
@@ -199,9 +269,9 @@ class UnboundBible( Bible ):
                 if not bookCode and not chapterNumberString and not verseNumberString:
                     print( "Skipping empty line in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                     continue
-                assert( len(bookCode) == 3 )
-                assert( chapterNumberString.isdigit() )
-                assert( verseNumberString.isdigit() )
+                if Globals.debugFlag: assert( len(bookCode) == 3 )
+                if Globals.debugFlag: assert( chapterNumberString.isdigit() )
+                if Globals.debugFlag: assert( verseNumberString.isdigit() )
 
                 if subverseNumberString:
                     if Globals.logErrorsFlag: logging.warning( _("subverseNumberString '{}' in {} {} {}:{}").format( subverseNumberString, BBB, bookCode, chapterNumberString, verseNumberString ) )
@@ -213,9 +283,9 @@ class UnboundBible( Bible ):
                 chapterNumber = int( chapterNumberString )
                 verseNumber = int( verseNumberString )
                 if sequenceNumberString:
-                    assert( sequenceNumberString.isdigit() )
+                    if Globals.debugFlag: assert( sequenceNumberString.isdigit() )
                     sequenceNumber = int( sequenceNumberString )
-                    assert( sequenceNumber > lastSequence or \
+                    if Globals.debugFlag: assert( sequenceNumber > lastSequence or \
                         self.givenName in ('gothic_latin', 'hebrew_bhs_consonants', 'hebrew_bhs_vowels', 'latvian_nt', 'ukrainian_1871',) ) # Why???
                     lastSequence = sequenceNumber
 
@@ -230,7 +300,7 @@ class UnboundBible( Bible ):
                     lastChapterNumber = lastVerseNumber = -1
 
                 if chapterNumber != lastChapterNumber: # We've started a new chapter
-                    assert( chapterNumber > lastChapterNumber or BBB=='ESG' ) # Esther Greek might be an exception
+                    if Globals.debugFlag: assert( chapterNumber > lastChapterNumber or BBB=='ESG' ) # Esther Greek might be an exception
                     if chapterNumber == 0:
                         if Globals.logErrorsFlag: logging.info( "Have chapter zero in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                     thisBook.appendLine( 'c', chapterNumberString )

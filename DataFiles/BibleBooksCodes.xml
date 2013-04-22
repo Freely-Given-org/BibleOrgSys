@@ -110,7 +110,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
   <header>
     <work>
       <version>0.68</version>
-      <date>2013-04-08</date>
+      <date>2013-04-21</date>
       <title>Bible books codes list</title>
       <contributor role="com">Robert Hunt</contributor>
       <identifier type="URL">http://www.sbl-site.org/publications/publishingwithsbl.aspx</identifier>
@@ -544,7 +544,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <NETBibleAbbreviation>Jer</NETBibleAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>Lamentations of Jeremiah</nameEnglish>
+    <nameEnglish>Lamentations / Lamentations of Jeremiah</nameEnglish>
     <referenceAbbreviation>LAM</referenceAbbreviation>
     <referenceNumber>25</referenceNumber>
     <sequenceNumber>136</sequenceNumber>
@@ -874,7 +874,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <ByzantineAbbreviation>JOH</ByzantineAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>Acts</nameEnglish>
+    <nameEnglish>Acts / Acts of the Apostles</nameEnglish>
     <referenceAbbreviation>ACT</referenceAbbreviation>
     <referenceNumber>44</referenceNumber>
     <sequenceNumber>610</sequenceNumber>
@@ -1271,7 +1271,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <ByzantineAbbreviation>JUDE</ByzantineAbbreviation>
   </BibleBookCodes>
   <BibleBookCodes>
-    <nameEnglish>Revelation of John / Apocalypse of St. John</nameEnglish>
+    <nameEnglish>Revelation / Revelation of John / Apocalypse of St. John</nameEnglish>
     <referenceAbbreviation>REV</referenceAbbreviation>
     <referenceNumber>66</referenceNumber>
     <sequenceNumber>654</sequenceNumber>

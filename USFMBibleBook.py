@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBibleBook.py
-#   Last modified: 2013-04-14 by RJH (also update versionString below)
+#   Last modified: 2013-04-17 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -34,9 +34,9 @@ versionString = "0.30"
 import os, logging
 from gettext import gettext as _
 
-import Globals
-#from InternalBibleBook import InternalBibleBook
+import Globals, SFMFile
 from Bible import BibleBook
+
 
 
 class USFMBibleBook( BibleBook ):
@@ -54,7 +54,7 @@ class USFMBibleBook( BibleBook ):
     # end of __init__
 
 
-    def load( self, folder, filename, encoding='utf-8' ):
+    def load( self, filename, folder=None, encoding='utf-8' ):
         """
         Load the USFM Bible book from a file.
 
@@ -91,13 +91,12 @@ class USFMBibleBook( BibleBook ):
         # end of doAppendLine
 
 
-        import SFMFile
         if Globals.verbosityLevel > 2: print( "  " + _("Loading {}...").format( filename ) )
         #self.bookReferenceCode = bookReferenceCode
         #self.isSingleChapterBook = Globals.BibleBooksCodes.isSingleChapterBook( bookReferenceCode )
-        self.sourceFolder = folder
         self.sourceFilename = filename
-        self.sourceFilepath = os.path.join( folder, filename )
+        self.sourceFolder = folder
+        self.sourceFilepath = os.path.join( folder, filename ) if folder else filename
         originalBook = SFMFile.SFMLines()
         originalBook.read( self.sourceFilepath, encoding=encoding )
 
@@ -150,6 +149,8 @@ class USFMBibleBook( BibleBook ):
         if loadErrors: self.errorDictionary['Load Errors'] = loadErrors
         #if debugging: print( self._rawLines ); halt
     # end of load
+# end of class USFMBibleBook
+
 
 
 def demo():
@@ -159,12 +160,19 @@ def demo():
     # Configure basic logging
     logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
 
-    import USFMFilenames
+    # Handle command line parameters
+    from optparse import OptionParser
+    parser = OptionParser( version="v{}".format( versionString ) )
+    #parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
+    Globals.addStandardOptionsAndProcess( parser )
 
-    def demoFile( folder, filename, bookReferenceCode ):
+    if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
+
+
+    def demoFile( filename, folder, bookReferenceCode ):
         if Globals.verbosityLevel > 1: print( _("Loading {} from {}...").format( bookReferenceCode, filename ) )
         UBB = USFMBibleBook( bookReferenceCode )
-        UBB.load( folder, filename, encoding )
+        UBB.load( filename, folder, encoding )
         if Globals.verbosityLevel > 1: print( "  ID is '{}'".format( UBB.getField( 'id' ) ) )
         if Globals.verbosityLevel > 1: print( "  Header is '{}'".format( UBB.getField( 'h' ) ) )
         if Globals.verbosityLevel > 1: print( "  Main titles are '{}' and '{}'".format( UBB.getField( 'mt1' ), UBB.getField( 'mt2' ) ) )
@@ -182,13 +190,8 @@ def demo():
         if Globals.verbosityLevel > 2: print( UBErrors )
     # end of demoFile
 
-    # Handle command line parameters
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
-    #parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
-    Globals.addStandardOptionsAndProcess( parser )
 
-    if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
+    import USFMFilenames
 
     if 0: # Test individual files
         #name, encoding, testFolder, filename, bookReferenceCode = "WEB", "utf-8", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/", "06-JOS.usfm", "JOS" # You can put your test file here
@@ -198,7 +201,7 @@ def demo():
         name, encoding, testFolder, filename, bookReferenceCode = "Matigsalug", "utf-8", "../../../../../Data/Work/Matigsalug/Bible/MBTV/", "MBT41MAT.SCP", "MAT" # You can put your test file here
         #name, encoding, testFolder, filename, bookReferenceCode = "Matigsalug", "utf-8", "../../../../../Data/Work/Matigsalug/Bible/MBTV/", "MBT67REV.SCP", "REV" # You can put your test file here
         if os.access( testFolder, os.R_OK ):
-            demoFile( testFolder, filename, bookReferenceCode )
+            demoFile( filename, testFolder, bookReferenceCode )
         else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
 
     if 1: # Test a whole folder full of files
@@ -208,7 +211,7 @@ def demo():
             if Globals.verbosityLevel > 1: print( _("Scanning {} from {}...").format( name, testFolder ) )
             fileList = USFMFilenames.USFMFilenames( testFolder ).getMaximumPossibleFilenameTuples()
             for bookReferenceCode,filename in fileList:
-                demoFile( testFolder, filename, bookReferenceCode )
+                demoFile( filename, testFolder, bookReferenceCode )
         else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
 # end of demo
 

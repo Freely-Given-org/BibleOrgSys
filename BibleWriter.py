@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-04-15 by RJH (also update versionString below)
+#   Last modified: 2013-04-20 by RJH (also update versionString below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -42,7 +42,7 @@ import sys, os, logging, datetime
 from gettext import gettext as _
 from collections import OrderedDict
 
-import Globals
+import Globals, ControlFiles
 from InternalBible import InternalBible
 from BibleOrganizationalSystems import BibleOrganizationalSystem
 from BibleReferences import BibleReferenceList
@@ -96,93 +96,93 @@ class BibleWriter( InternalBible ):
 
 
 
-    def writeSwordLocale( self, name, description, BibleOrganizationalSystem, getBookNameFunction, localeFilepath ):
+    def toUSFM( self, outputFolder=None ):
         """
-        Writes a UTF-8 Sword locale file containing the book names and abbreviations.
+        Adjust the pseudo USFM and write the USFM files.
         """
-        if Globals.verbosityLevel>1: print( _("Writing Sword locale file {}...").format(localeFilepath) )
+        if not outputFolder: outputFolder = "OutputFiles/USFMExport/"
+        if not os.access( outputFolder, os.F_OK ): os.mkdir( outputFolder ) # Make the empty folder if there wasn't already one there
+        #if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_MediaWiki_controls.txt", controlDict )
+        #assert( controlDict and isinstance( controlDict, dict ) )
 
-        with open( localeFilepath, 'wt' ) as SwLocFile:
-            SwLocFile.write( '[Meta]\nName={}\n'.format( name ) )
-            SwLocFile.write( 'Description={}\n'.format( description ) )
-            SwLocFile.write( 'Encoding=UTF-8\n\n[Text]\n' )
+        if Globals.verbosityLevel > 1: print( "Running BibleWriter:toUSFM..." )
+        if Globals.debugFlag: assert( self.books )
 
-            # This first section contains EnglishBookName=VernacularBookName
-            bookList = []
-            for BBB in BibleOrganizationalSystem.getBookList():
-                if BBB in self.books:
-                    vernacularName = getBookNameFunction(BBB)
-                    SwLocFile.write( '{}={}\n'.format( Globals.BibleBooksCodes.getEnglishName_NR(BBB), vernacularName ) ) # Write the first English book name and the language book name
-                    bookList.append( vernacularName )
+        import USFMMarkers
+        um = USFMMarkers.USFMMarkers().loadData() # Doesn't reload the XML unnecessarily :)
+        allCharMarkers = um.getCharacterMarkersList( expandNumberableMarkers=True )
+        #print( "aCM", allCharMarkers )
 
-            # This second section contains many VERNACULARABBREV=SwordBookAbbrev
-            SwLocFile.write( '\n[Book Abbrevs]\n' )
-            abbrevList = []
-            for BBB in BibleOrganizationalSystem.getBookList(): # First pass writes the full vernacular book names (with and without spaces removed)
-                if BBB in self.books:
-                    swordAbbrev = Globals.BibleBooksCodes.getSwordAbbreviation( BBB )
-                    vernacularName = getBookNameFunction(BBB).upper()
-                    #assert( vernacularName not in abbrevList )
-                    if vernacularName in abbrevList:
-                        print( "ToProgrammer: vernac name IS in abbrevList -- what does this mean? Why? '{}' {}".format( vernacularName, abbrevList ) )
-                    SwLocFile.write( '{}={}\n'.format( vernacularName, swordAbbrev ) ) # Write the UPPER CASE language book name and the Sword abbreviation
-                    abbrevList.append( vernacularName )
-                    if ' ' in vernacularName:
-                        vernacularAbbrev = vernacularName.replace( ' ', '' )
-                        assert( vernacularAbbrev not in abbrevList )
-                        SwLocFile.write( '{}={}\n'.format( vernacularAbbrev, swordAbbrev ) ) # Write the UPPER CASE language book name and the Sword abbreviation
-                        abbrevList.append( vernacularAbbrev )
-            for BBB in BibleOrganizationalSystem.getBookList(): # Second pass writes the shorter vernacular book abbreviations
-                if BBB in self.books:
-                    swordAbbrev = Globals.BibleBooksCodes.getSwordAbbreviation( BBB )
-                    vernacularName = getBookNameFunction(BBB).replace( ' ', '' ).upper()
-                    vernacularAbbrev = vernacularName
-                    if len(vernacularName)>4  or (len(vernacularName)>3 and not vernacularName[0].isdigit):
-                        vernacularAbbrev = vernacularName[:4 if vernacularName[0].isdigit() else 3]
-                        if vernacularAbbrev in abbrevList:
-                            if swordAbbrev == 'Philem':
-                                vernacularAbbrev = vernacularName[:5]
-                                if vernacularAbbrev not in abbrevList:
-                                    SwLocFile.write( '{}={}\n'.format( vernacularAbbrev, swordAbbrev ) ) # Write the UPPER CASE language book name and the Sword abbreviation
-                                    abbrevList.append( vernacularAbbrev )
-                            else: print( "   Oops, shouldn't have written {} (also could be {}) to Sword locale file".format( vernacularAbbrev, swordAbbrev ) ) # Need to fix this
-                        else:
-                            SwLocFile.write( '{}={}\n'.format( vernacularAbbrev, swordAbbrev ) ) # Write the UPPER CASE language book name and the Sword abbreviation
-                            abbrevList.append( vernacularAbbrev )
-                    changed = False
-                    for somePunct in ( ".''̉΄" ): # Remove punctuation and glottals (all UPPER CASE here)
-                        if somePunct in vernacularAbbrev:
-                            vernacularAbbrev = vernacularAbbrev.replace( somePunct, '' )
-                            changed = True
-                    if changed:
-                        if vernacularAbbrev in abbrevList:
-                            print( "   Oops, maybe shouldn't have written {} (also could be {}) to Sword locale file".format( vernacularAbbrev, swordAbbrev ) )
-                        else:
-                            SwLocFile.write( '{}={}\n'.format( vernacularAbbrev, swordAbbrev ) )
-                            abbrevList.append( vernacularAbbrev )
-                        changed = False
-                    for vowel in ( 'AΆÁÂÃÄÅEÈÉÊËIÌÍÎÏOÒÓÔÕÖUÙÚÛÜ' ): # Remove vowels (all UPPER CASE here)
-                        if vowel in vernacularAbbrev:
-                            vernacularAbbrev = vernacularAbbrev.replace( vowel, '' )
-                            changed = True
-                    if changed:
-                        if vernacularAbbrev in abbrevList:
-                            print( "   Oops, maybe shouldn't have written {} (also could be {}) to Sword locale file".format( vernacularAbbrev, swordAbbrev ) )
-                        else:
-                            SwLocFile.write( '{}={}\n'.format( vernacularAbbrev, swordAbbrev ) )
-                            abbrevList.append( vernacularAbbrev )
-
-        if Globals.verbosityLevel>1: print( _("  Wrote {} book names and {} abbreviations.").format( len(bookList), len(abbrevList) ) )
-    # end of BibleWriter.writeSwordLocale
+        #if outputFolder is None: USFMOutputFolder = os.path.join( "OutputFiles/", "USFM output from OSIS/" )
+        #else: USFMOutputFolder = os.path.join( "OutputFiles/", "USFM output from OSIS/" ) # Seems wrong XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 
+        # Adjust the extracted outputs
+        for BBB,bookObject in self.books.items():
+            pseudoUSFMData = bookObject._processedLines
+            #print( "\pseudoUSFMData", pseudoUSFMData[:50] ); halt
+            USFMAbbreviation = Globals.BibleBooksCodes.getUSFMAbbreviation( BBB )
+            USFMNumber = Globals.BibleBooksCodes.getUSFMNumber( BBB )
 
-    def toMediaWiki( self, controlDict, validationSchema=None ):
+            if 1 or Globals.debugFlag: # Write the pseudoUSFM output for debugging
+                filename = "{}{}OSC.pSFM".format( USFMNumber, USFMAbbreviation.upper() ) # OSC = OSIS converter
+                pseudoOutputFolder = os.path.join( outputFolder, "pseudoFiles/" )
+                if not os.path.exists( pseudoOutputFolder ): os.makedirs( pseudoOutputFolder )
+                filepath = os.path.join( pseudoOutputFolder, filename )
+                if Globals.verbosityLevel > 3: print( "  " + _("Writing '{}'...").format( filepath ) )
+                with open( filepath, 'wt' ) as myFile:
+                    for marker,originalMarker,text,cleanText,extras in pseudoUSFMData:
+                        myFile.write( "{} ({}): '{}' '{}' {}\n".format( marker, originalMarker, text, cleanText, extras ) )
+
+            USFM = ""
+            inField = None
+            if Globals.verbosityLevel > 2: print( "  " + _("Adjusting USFM output..." ) )
+            for pseudoMarker,originalMarker,text,cleanText,extras in pseudoUSFMData:
+                value = cleanText # (temp)
+                if Globals.debugFlag: print( "pseudoMarker = '{}' value = '{}'".format( pseudoMarker, value ) )
+                if pseudoMarker in ('v','f','fr','x','xo',): # These fields should always end with a space (but the USFM->OSIS processing may have removed them)
+                    if Globals.debugFlag: assert( value )
+                    if value[-1] != ' ': value += ' ' # Append a space since it didn't have one
+                if pseudoMarker[-1]=='+' or um.isNewlineMarker(pseudoMarker): # Have a continuation field
+                    if inField is not None:
+                        USFM += '\\{}*'.format( inField ) # Do a close marker for footnotes and cross-references
+                        inField = None
+                if pseudoMarker[-1]=='+': USFM += value
+                else: # not a continuation marker
+                    adjValue = value
+                    #if pseudoMarker in ('it','bk','ca','nd',): # Character markers to be closed -- had to remove ft and xt from this list for complex footnotes with f fr fq ft fq ft f*
+                    if pseudoMarker in allCharMarkers: # Character markers to be closed
+                        #if (USFM[-2]=='\\' or USFM[-3]=='\\') and USFM[-1]!=' ':
+                        if USFM[-1] != ' ':
+                            USFM += ' ' # Separate markers by a space e.g., \p\bk Revelation
+                            if Globals.debugFlag: print( "USFM: Added space to '{}' before '{}'".format( USFM[-2], pseudoMarker ) )
+                        adjValue += '\\{}*'.format( pseudoMarker ) # Do a close marker
+                    elif pseudoMarker in ('f','x',): inField = pseudoMarker # Remember these so we can close them later
+                    elif pseudoMarker in ('fr','fq','ft','xo',): USFM += '' # These go on the same line just separated by spaces and don't get closed
+                    elif USFM: USFM += '\n' # paragraph markers go on a new line
+                    if not value: USFM += '\\{}'.format( pseudoMarker )
+                    else: USFM += '\\{} {}'.format( pseudoMarker,adjValue )
+
+            # Write the USFM output
+            #print( "\nUSFM", USFM[:3000] )
+            filename = "{}{}OSC.SFM".format( USFMNumber, USFMAbbreviation.upper() ) # This seems to be the undocumented standard (OSC = OSIS converter)
+            #if not os.path.exists( USFMOutputFolder ): os.makedirs( USFMOutputFolder )
+            filepath = os.path.join( outputFolder, filename )
+            if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
+            with open( filepath, 'wt' ) as myFile: myFile.write( USFM )
+    # end of BibleWriter.toUSFM
+
+
+    def toMediaWiki( self, outputFolder=None, controlDict=None, validationSchema=None ):
         """
         Using settings from the given control file,
             converts the USFM information to a Media Wiki file.
         """
-        assert( controlDict and isinstance( controlDict, dict ) )
+        if not outputFolder: outputFolder = "OutputFiles/MediaWikiExport/"
+        if not os.access( outputFolder, os.F_OK ): os.mkdir( outputFolder ) # Make the empty folder if there wasn't already one there
+        if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_MediaWiki_controls.txt", controlDict )
+        if Globals.debugFlag: assert( controlDict and isinstance( controlDict, dict ) )
+
         unhandledMarkers = set()
 
         bookAbbrevDict, bookNameDict, bookAbbrevNameDict = {}, {}, {}
@@ -355,7 +355,7 @@ class BibleWriter( InternalBible ):
                     writerObject.writeNewLine( 2 );
                 elif marker=='v':
                     #if not chapterNumberString: # some single chapter books don't have a chapter number marker in them
-                    #    assert( BBB in Globals.BibleBooksCodes.getSingleChapterBooksList() )
+                    #    if Globals.debugFlag: assert( BBB in Globals.BibleBooksCodes.getSingleChapterBooksList() )
                     #    chapterNumberString = '1'
                     #    chapterRef = bookRef + '.' + chapterNumberString
                     verseNumberString = text # Gets written with in the v~ line
@@ -390,8 +390,6 @@ class BibleWriter( InternalBible ):
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
         if Globals.verbosityLevel>1: print( _("Exporting to MediaWiki format...") )
-        outputFolder = "OutputFiles"
-        if not os.access( outputFolder, os.F_OK ): os.mkdir( outputFolder ) # Make the empty folder if there wasn't already one there
         xw = XMLWriter().setOutputFilePath( controlDict["MediaWikiOutputFilename"], outputFolder )
         xw.setHumanReadable()
         xw.start()
@@ -404,7 +402,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toZefania_XML( self, controlDict, validationSchema=None ):
+    def toZefania_XML( self, outputFolder=None, controlDict=None, validationSchema=None ):
         """
         Using settings from the given control file,
             converts the USFM information to a UTF-8 Zefania XML file.
@@ -412,7 +410,11 @@ class BibleWriter( InternalBible ):
         This format is roughly documented at http://de.wikipedia.org/wiki/Zefania_XML
             but more fields can be discovered by looking at downloaded files.
         """
-        assert( controlDict and isinstance( controlDict, dict ) )
+        if not outputFolder: outputFolder = "OutputFiles/ZefaniaExport/"
+        if not os.access( outputFolder, os.F_OK ): os.mkdir( outputFolder ) # Make the empty folder if there wasn't already one there
+        if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_Zefania_controls.txt", controlDict )
+        if Globals.debugFlag: assert( controlDict and isinstance( controlDict, dict ) )
+
         unhandledMarkers = set()
 
         def writeHeader( writerObject ):
@@ -475,8 +477,6 @@ class BibleWriter( InternalBible ):
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
         if Globals.verbosityLevel>1: print( _("Exporting to Zefania format...") )
-        outputFolder = "OutputFiles"
-        if not os.access( outputFolder, os.F_OK ): os.mkdir( outputFolder ) # Make the empty folder if there wasn't already one there
         xw = XMLWriter().setOutputFilePath( controlDict["ZefaniaOutputFilename"], outputFolder )
         xw.setHumanReadable()
         xw.start()
@@ -494,14 +494,18 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toUSX_XML( self, controlDict, validationSchema=None ):
+    def toUSX_XML( self, outputFolder=None, controlDict=None, validationSchema=None ):
         """
         Using settings from the given control file,
             converts the USFM information to UTF-8 USX XML files.
 
         If a schema is given (either a path or URL), the XML output files are validated.
         """
-        assert( controlDict and isinstance( controlDict, dict ) )
+        if not outputFolder: outputFolder = "OutputFiles/USXExport/"
+        if not os.access( outputFolder, os.F_OK ): os.mkdir( outputFolder ) # Make the empty folder if there wasn't already one there
+        if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_USX_controls.txt", controlDict )
+        if Globals.debugFlag: assert( controlDict and isinstance( controlDict, dict ) )
+
         unhandledMarkers = set()
         allCharMarkers = self.USFMMarkers.getCharacterMarkersList( expandNumberableMarkers=True )
         #print( allCharMarkers ); halt
@@ -561,7 +565,7 @@ class BibleWriter( InternalBible ):
                             USXxrefXML += 'caller="{}">'.format( token.rstrip() )
                         elif lcToken.startswith('xo '): # xref reference follows
                             if xoOpen: # We have multiple xo fields one after the other (probably an encoding error)
-                                assert( not xtOpen )
+                                if Globals.debugFlag: assert( not xtOpen )
                                 USXxrefXML += ' closed="false">' + adjToken + '</char>'
                                 xoOpen = False
                             if xtOpen: # if we have multiple cross-references one after the other
@@ -571,12 +575,12 @@ class BibleWriter( InternalBible ):
                             USXxrefXML += '<char style="xo"'
                             xoOpen = True
                         elif lcToken.startswith('xo*'):
-                            assert( xoOpen and not xtOpen )
+                            if Globals.debugFlag: assert( xoOpen and not xtOpen )
                             USXxrefXML += '>' + adjToken + '</char>'
                             xoOpen = False
                         elif lcToken.startswith('xt '): # xref text follows
                             if xtOpen: # Multiple xt's in a row
-                                assert( not xoOpen )
+                                if Globals.debugFlag: assert( not xoOpen )
                                 USXxrefXML += ' closed="false">' + adjToken + '</char>'
                             if xoOpen:
                                 USXxrefXML += ' closed="false">' + adjToken + '</char>'
@@ -585,7 +589,7 @@ class BibleWriter( InternalBible ):
                             USXxrefXML += '<char style="xt"'
                             xtOpen = True
                         elif lcToken.startswith('xt*'):
-                            assert( xtOpen and not xoOpen )
+                            if Globals.debugFlag: assert( xtOpen and not xoOpen )
                             USXxrefXML += '>' + adjToken + '</char>'
                             xtOpen = False
                         #elif lcToken in ('xo*','xt*','x*',):
@@ -593,7 +597,7 @@ class BibleWriter( InternalBible ):
                         else:
                             if Globals.logErrorsFlag: logging.warning( _("toUSX: Unprocessed '{}' token in {} {}:{} xref '{}'").format( token, BBB, c, v, USXxref ) )
                     if xoOpen:
-                        assert( not xtOpen )
+                        if Globals.debugFlag: assert( not xtOpen )
                         USXxrefXML += ' closed="false">' + adjToken + '</char>'
                         xoOpen = False
                     if xtOpen:
@@ -621,27 +625,27 @@ class BibleWriter( InternalBible ):
                             USXfootnoteXML += 'caller="{}">'.format( token.rstrip() )
                         elif lcToken.startswith('fr '): # footnote reference follows
                             if frOpen:
-                                assert( not fTextOpen )
+                                if Globals.debugFlag: assert( not fTextOpen )
                                 if Globals.logErrorsFlag: logging.error( _("toUSX: Two consecutive fr fields in {} {}:{} footnote '{}'").format( token, BBB, c, v, USXfootnote ) )
                             if fTextOpen:
-                                assert( not frOpen )
+                                if Globals.debugFlag: assert( not frOpen )
                                 USXfootnoteXML += ' closed="false">' + adjToken + '</char>'
                                 fTextOpen = False
-                            assert( not fCharOpen )
+                            if Globals.debugFlag: assert( not fCharOpen )
                             adjToken = token[3:]
                             USXfootnoteXML += '<char style="fr"'
                             frOpen = True
                         elif lcToken.startswith('fr* '):
-                            assert( frOpen and not fTextOpen and not fCharOpen )
+                            if Globals.debugFlag: assert( frOpen and not fTextOpen and not fCharOpen )
                             USXfootnoteXML += '>' + adjToken + '</char>'
                             frOpen = False
                         elif lcToken.startswith('ft ') or lcToken.startswith('fq ') or lcToken.startswith('fqa ') or lcToken.startswith('fv ') or lcToken.startswith('fk '):
                             if fCharOpen:
-                                assert( not frOpen )
+                                if Globals.debugFlag: assert( not frOpen )
                                 USXfootnoteXML += '>' + adjToken + '</char>'
                                 fCharOpen = False
                             if frOpen:
-                                assert( not fTextOpen )
+                                if Globals.debugFlag: assert( not fTextOpen )
                                 USXfootnoteXML += ' closed="false">' + adjToken + '</char>'
                                 frOpen = False
                             if fTextOpen:
@@ -653,7 +657,7 @@ class BibleWriter( InternalBible ):
                             #print( "'{}' '{}'".format( fMarker, adjToken ) )
                             fTextOpen = True
                         elif lcToken.startswith('ft*') or lcToken.startswith('fq*') or lcToken.startswith('fqa*') or lcToken.startswith('fv*') or lcToken.startswith('fk*'):
-                            assert( fTextOpen and not frOpen and not fCharOpen )
+                            if Globals.debugFlag: assert( fTextOpen and not frOpen and not fCharOpen )
                             USXfootnoteXML += '>' + adjToken + '</char>'
                             fTextOpen = False
                         else: # Could be character formatting (or closing of character formatting)
@@ -662,11 +666,11 @@ class BibleWriter( InternalBible ):
                             #print( "ft", firstToken )
                             if firstToken in allCharMarkers: # Yes, confirmed
                                 if fCharOpen: # assume that the last one is closed by this one
-                                    assert( not frOpen )
+                                    if Globals.debugFlag: assert( not frOpen )
                                     USXfootnoteXML += '>' + adjToken + '</char>'
                                     fCharOpen = False
                                 if frOpen:
-                                    assert( not fCharOpen )
+                                    if Globals.debugFlag: assert( not fCharOpen )
                                     USXfootnoteXML += ' closed="false">' + adjToken + '</char>'
                                     frOpen = False
                                 USXfootnoteXML += '<char style="{}"'.format( firstToken )
@@ -675,7 +679,7 @@ class BibleWriter( InternalBible ):
                             else: # The problem is that a closing marker doesn't have to be followed by a space
                                 if firstToken[-1]=='*' and firstToken[:-1] in allCharMarkers: # it's a closing tag (that was followed by a space)
                                     if fCharOpen:
-                                        assert( not frOpen )
+                                        if Globals.debugFlag: assert( not frOpen )
                                         if not firstToken.startswith( fCharOpen+'*' ): # It's not a matching tag
                                             if Globals.logErrorsFlag: logging.warning( _("toUSX: '{}' closing tag doesn't match '{}' in {} {}:{} footnote '{}'").format( firstToken, fCharOpen, BBB, c, v, USXfootnote ) )
                                         USXfootnoteXML += '>' + adjToken + '</char>'
@@ -686,7 +690,7 @@ class BibleWriter( InternalBible ):
                                     #print( firstToken, ixAS, firstToken[:ixAS] if ixAS!=-1 else '' )
                                     if ixAS!=-1 and ixAS<4 and firstToken[:ixAS] in allCharMarkers: # it's a closing tag
                                         if fCharOpen:
-                                            assert( not frOpen )
+                                            if Globals.debugFlag: assert( not frOpen )
                                             if not firstToken.startswith( fCharOpen+'*' ): # It's not a matching tag
                                                 if Globals.logErrorsFlag: logging.warning( _("toUSX: '{}' closing tag doesn't match '{}' in {} {}:{} footnote '{}'").format( firstToken, fCharOpen, BBB, c, v, USXfootnote ) )
                                             USXfootnoteXML += '>' + adjToken + '</char>'
@@ -699,7 +703,7 @@ class BibleWriter( InternalBible ):
                     #print( "  ", frOpen, fCharOpen, fTextOpen )
                     if frOpen:
                         if Globals.logErrorsFlag: logging.warning( _("toUSX: Unclosed 'fr' token in {} {}:{} footnote '{}'").format( BBB, c, v, USXfootnote) )
-                        assert( not fCharOpen and not fTextOpen )
+                        if Globals.debugFlag: assert( not fCharOpen and not fTextOpen )
                         USXfootnoteXML += ' closed="false">' + adjToken + '</char>'
                     if fCharOpen and Globals.logErrorsFlag: logging.warning( _("toUSX: Unclosed '{}' token in {} {}:{} footnote '{}'").format( fCharOpen, BBB, c, v, USXfootnote) )
                     if fTextOpen: USXfootnoteXML += ' closed="false">' + adjToken + '</char>'
@@ -746,7 +750,7 @@ class BibleWriter( InternalBible ):
             if not USXNumber and Globals.logErrorsFlag: logging.error( "toUSX: Can't write {} USX book because no USX number available".format( BBB ) ); return
 
             c = v = '0'
-            xw = XMLWriter().setOutputFilePath( USXNumber+USXAbbrev+".usx", USXOutputFolder )
+            xw = XMLWriter().setOutputFilePath( USXNumber+USXAbbrev+".usx", outputFolder )
             xw.setHumanReadable()
             xw.spaceBeforeSelfcloseTag = True
             xw.start( lineEndings='w', writeBOM=True ) # Try to imitate Paratext output as closely as possible
@@ -836,10 +840,8 @@ class BibleWriter( InternalBible ):
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
         if Globals.verbosityLevel>1: print( _("Exporting to USX format...") )
-        outputFolder = "OutputFiles"
-        if not os.access( outputFolder, os.F_OK ): os.mkdir( outputFolder ) # Make the empty folder if there wasn't already one there
-        USXOutputFolder = os.path.join( "OutputFiles/", "USX output/" )
-        if not os.access( USXOutputFolder, os.F_OK ): os.mkdir( USXOutputFolder ) # Make the empty folder if there wasn't already one there
+        #USXOutputFolder = os.path.join( "OutputFiles/", "USX output/" )
+        #if not os.access( USXOutputFolder, os.F_OK ): os.mkdir( USXOutputFolder ) # Make the empty folder if there wasn't already one there
 
         validationResults = ( 0, '', '', ) # xmllint result code, program output, error output
         for BBB,bookData in self.books.items():
@@ -854,7 +856,88 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toOSIS_XML( self, controlDict, validationSchema=None ):
+    def writeSwordLocale( self, name, description, BibleOrganizationalSystem, getBookNameFunction, localeFilepath ):
+        """
+        Writes a UTF-8 Sword locale file containing the book names and abbreviations.
+        """
+        if Globals.verbosityLevel>1: print( _("Writing Sword locale file {}...").format(localeFilepath) )
+
+        with open( localeFilepath, 'wt' ) as SwLocFile:
+            SwLocFile.write( '[Meta]\nName={}\n'.format( name ) )
+            SwLocFile.write( 'Description={}\n'.format( description ) )
+            SwLocFile.write( 'Encoding=UTF-8\n\n[Text]\n' )
+
+            # This first section contains EnglishBookName=VernacularBookName
+            bookList = []
+            for BBB in BibleOrganizationalSystem.getBookList():
+                if BBB in self.books:
+                    vernacularName = getBookNameFunction(BBB)
+                    SwLocFile.write( '{}={}\n'.format( Globals.BibleBooksCodes.getEnglishName_NR(BBB), vernacularName ) ) # Write the first English book name and the language book name
+                    bookList.append( vernacularName )
+
+            # This second section contains many VERNACULARABBREV=SwordBookAbbrev
+            SwLocFile.write( '\n[Book Abbrevs]\n' )
+            abbrevList = []
+            for BBB in BibleOrganizationalSystem.getBookList(): # First pass writes the full vernacular book names (with and without spaces removed)
+                if BBB in self.books:
+                    swordAbbrev = Globals.BibleBooksCodes.getSwordAbbreviation( BBB )
+                    vernacularName = getBookNameFunction(BBB).upper()
+                    #assert( vernacularName not in abbrevList )
+                    if vernacularName in abbrevList:
+                        print( "ToProgrammer: vernac name IS in abbrevList -- what does this mean? Why? '{}' {}".format( vernacularName, abbrevList ) )
+                    SwLocFile.write( '{}={}\n'.format( vernacularName, swordAbbrev ) ) # Write the UPPER CASE language book name and the Sword abbreviation
+                    abbrevList.append( vernacularName )
+                    if ' ' in vernacularName:
+                        vernacularAbbrev = vernacularName.replace( ' ', '' )
+                        if Globals.debugFlag: assert( vernacularAbbrev not in abbrevList )
+                        SwLocFile.write( '{}={}\n'.format( vernacularAbbrev, swordAbbrev ) ) # Write the UPPER CASE language book name and the Sword abbreviation
+                        abbrevList.append( vernacularAbbrev )
+            for BBB in BibleOrganizationalSystem.getBookList(): # Second pass writes the shorter vernacular book abbreviations
+                if BBB in self.books:
+                    swordAbbrev = Globals.BibleBooksCodes.getSwordAbbreviation( BBB )
+                    vernacularName = getBookNameFunction(BBB).replace( ' ', '' ).upper()
+                    vernacularAbbrev = vernacularName
+                    if len(vernacularName)>4  or (len(vernacularName)>3 and not vernacularName[0].isdigit):
+                        vernacularAbbrev = vernacularName[:4 if vernacularName[0].isdigit() else 3]
+                        if vernacularAbbrev in abbrevList:
+                            if swordAbbrev == 'Philem':
+                                vernacularAbbrev = vernacularName[:5]
+                                if vernacularAbbrev not in abbrevList:
+                                    SwLocFile.write( '{}={}\n'.format( vernacularAbbrev, swordAbbrev ) ) # Write the UPPER CASE language book name and the Sword abbreviation
+                                    abbrevList.append( vernacularAbbrev )
+                            else: print( "   Oops, shouldn't have written {} (also could be {}) to Sword locale file".format( vernacularAbbrev, swordAbbrev ) ) # Need to fix this
+                        else:
+                            SwLocFile.write( '{}={}\n'.format( vernacularAbbrev, swordAbbrev ) ) # Write the UPPER CASE language book name and the Sword abbreviation
+                            abbrevList.append( vernacularAbbrev )
+                    changed = False
+                    for somePunct in ( ".''̉΄" ): # Remove punctuation and glottals (all UPPER CASE here)
+                        if somePunct in vernacularAbbrev:
+                            vernacularAbbrev = vernacularAbbrev.replace( somePunct, '' )
+                            changed = True
+                    if changed:
+                        if vernacularAbbrev in abbrevList:
+                            print( "   Oops, maybe shouldn't have written {} (also could be {}) to Sword locale file".format( vernacularAbbrev, swordAbbrev ) )
+                        else:
+                            SwLocFile.write( '{}={}\n'.format( vernacularAbbrev, swordAbbrev ) )
+                            abbrevList.append( vernacularAbbrev )
+                        changed = False
+                    for vowel in ( 'AΆÁÂÃÄÅEÈÉÊËIÌÍÎÏOÒÓÔÕÖUÙÚÛÜ' ): # Remove vowels (all UPPER CASE here)
+                        if vowel in vernacularAbbrev:
+                            vernacularAbbrev = vernacularAbbrev.replace( vowel, '' )
+                            changed = True
+                    if changed:
+                        if vernacularAbbrev in abbrevList:
+                            print( "   Oops, maybe shouldn't have written {} (also could be {}) to Sword locale file".format( vernacularAbbrev, swordAbbrev ) )
+                        else:
+                            SwLocFile.write( '{}={}\n'.format( vernacularAbbrev, swordAbbrev ) )
+                            abbrevList.append( vernacularAbbrev )
+
+        if Globals.verbosityLevel>1: print( _("  Wrote {} book names and {} abbreviations.").format( len(bookList), len(abbrevList) ) )
+    # end of BibleWriter.writeSwordLocale
+
+
+
+    def toOSIS_XML( self, outputFolder=None, controlDict=None, validationSchema=None ):
         """
         Using settings from the given control file,
             converts the USFM information to one or more UTF-8 OSIS XML files.
@@ -863,7 +946,10 @@ class BibleWriter( InternalBible ):
 
         TODO: We're not consistent about handling errors: sometimes we use assert, sometime raise (both of which abort the program), and sometimes log errors or warnings.
         """
-        assert( controlDict and isinstance( controlDict, dict ) )
+        if not outputFolder: outputFolder = "OutputFiles/OSISExport/"
+        if not os.access( outputFolder, os.F_OK ): os.mkdir( outputFolder ) # Make the empty folder if there wasn't already one there
+        if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_OSIS_controls.txt", controlDict )
+        if Globals.debugFlag: assert( controlDict and isinstance( controlDict, dict ) )
 
         # Set-up our Bible reference system
         #if Globals.debugFlag: print( "BibleWriter:toOSIS_XML publicationCode =", controlDict["PublicationCode"] )
@@ -883,8 +969,6 @@ class BibleWriter( InternalBible ):
             getBookAbbreviationFunction = Globals.BibleBooksCodes.getOSISAbbreviation
 
         unhandledMarkers = set()
-        outputFolder = "OutputFiles"
-        if not os.access( outputFolder, os.F_OK ): os.mkdir( outputFolder ) # Make the empty folder if there wasn't already one there
 
         # Let's write a Sword locale while we're at it
         self.writeSwordLocale( controlDict["xmlLanguage"], controlDict["LanguageName"], BOS, getBookNameFunction, os.path.join( outputFolder, "SwLocale-utf8.conf" ) )
@@ -940,7 +1024,7 @@ class BibleWriter( InternalBible ):
                     while count1 > count2:
                         helpText += '\\'+marker+'*'
                         count1, count2 = helpText.count('\\'+marker+' '), helpText.count('\\'+marker+'*') # count open and close markers again
-                    assert( count1 == count2 )
+                    if Globals.debugFlag: assert( count1 == count2 )
                     return helpText
                 # end of checkTextHelper
 
@@ -962,7 +1046,7 @@ class BibleWriter( InternalBible ):
                     ix2 = adjText.find( '\\fig*' )
                     if ix2 == -1: print( _("toOSIS: Missing fig end marker for OSIS in {}: '{}' field is '{}'").format( toOSISGlobals["verseRef"], marker, textToCheck ), file=sys.stderr )
                     else:
-                        assert( ix2 > ix1 )
+                        if Globals.debugFlag: assert( ix2 > ix1 )
                         #print( "was '{}'".format( adjText ) )
                         adjText = adjText[:ix1] + adjText[ix2+5:] # Remove the \\fig..\\fig* field
                         #print( "now '{}'".format( adjText ) )
@@ -1086,7 +1170,7 @@ class BibleWriter( InternalBible ):
                 # end of processFootnote
 
                 #if extras: print( '\n', chapterRef )
-                assert( offset >= 0 )
+                if Globals.debugFlag: assert( offset >= 0 )
                 for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
                     adjIndex = extraIndex - offset
                     lenV = len( verse )
@@ -1459,15 +1543,17 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toSwordModule( self, controlDict, validationSchema=None ):
+    def toSwordModule( self, outputFolder=None, controlDict=None, validationSchema=None ):
         """
         Using settings from the given control file,
             converts the USFM information to a UTF-8 OSIS-XML-based Sword module.
         """
-        assert( controlDict and isinstance( controlDict, dict ) )
+        if not outputFolder: outputFolder = "OutputFiles/SwordExport/"
+        if not os.access( outputFolder, os.F_OK ): os.mkdir( outputFolder ) # Make the empty folder if there wasn't already one there
+        if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_OSIS_controls.txt", controlDict )
 
         import struct
-        assert( struct.calcsize("IH") == 6 ) # Six-byte format
+        if Globals.debugFlag: assert( struct.calcsize("IH") == 6 ) # Six-byte format
 
         # Set-up our Bible reference system
         if controlDict['PublicationCode'] == "GENERIC":
@@ -1499,8 +1585,6 @@ class BibleWriter( InternalBible ):
 
         unhandledMarkers = set()
 
-        outputFolder = "OutputFiles"
-        if not os.access( outputFolder, os.F_OK ): os.mkdir( outputFolder ) # Make the empty folder if there wasn't already one there
 
         # Let's write a Sword locale while we're at it
         self.writeSwordLocale( controlDict["xmlLanguage"], controlDict["LanguageName"], BOS, getBookNameFunction, os.path.join( outputFolder, "SwLocale-utf8.conf" ) )
@@ -1556,7 +1640,7 @@ class BibleWriter( InternalBible ):
                     while count1 > count2:
                         helpText += '\\'+marker+'*'
                         count1, count2 = helpText.count('\\'+marker+' '), helpText.count('\\'+marker+'*') # count open and close markers again
-                    assert( count1 == count2 )
+                    if Globals.debugFlag: assert( count1 == count2 )
                     return helpText
                 # end of checkTextHelper
 
@@ -1938,7 +2022,7 @@ class BibleWriter( InternalBible ):
                     haveOpenParagraph = True
                 elif marker=='v':
                     #if not chapterNumberString: # Some single chapter books don't have an explicit c marker
-                    #    assert( BBB in Globals.BibleBooksCodes.getSingleChapterBooksList() )
+                    #    if Globals.debugFlag: assert( BBB in Globals.BibleBooksCodes.getSingleChapterBooksList() )
                     verseNumberString = text
                     if not haveOpenL: closeAnyOpenLG()
                     writeVerseStart( writerObject, BBB, chapterRef, verseNumberString )
@@ -1989,7 +2073,7 @@ class BibleWriter( InternalBible ):
 
         # An uncompressed Sword module consists of a .conf file
         #   plus ot and nt XML files with binary indexes ot.vss and nt.vss (containing 6-byte chunks = 4-byte offset, 2-byte length)
-        if Globals.verbosityLevel>1: print( _("Exporting to Sword modified-OSIS XML format...") )
+        if Globals.verbosityLevel > 1: print( _("Exporting to Sword modified-OSIS XML format...") )
         xwOT = XMLWriter().setOutputFilePath( 'ot', lgFolder )
         xwNT = XMLWriter().setOutputFilePath( 'nt', lgFolder )
         xwOT.setHumanReadable( 'NLSpace', indentSize=5 ) # Can be set to 'All', 'Header', or 'None'
@@ -2019,6 +2103,37 @@ class BibleWriter( InternalBible ):
             NTresults= xwNT.validateXML( validationSchema )
             return OTresults, NTresults
     #end of BibleWriter.toSwordModule
+
+
+    def doAllExports( self, givenOutputFolderName=None ):
+        """
+        """
+        if Globals.verbosityLevel > 1: print( _("Exporting {} ({}) to all formats...").format( self.name, self.objectTypeString ) )
+        if givenOutputFolderName == None: givenOutputFolderName = "OutputFiles"
+
+        if Globals.debugFlag: assert( givenOutputFolderName and isinstance( givenOutputFolderName, str ) )
+        # Check that the given folder is readable
+        if not os.access( givenOutputFolderName, os.W_OK ):
+            logging.critical( _("Bible.doAllExports: Given '{}' folder is unwritable").format( givenOutputFolderName ) )
+            return False
+
+        self.setupWriter()
+
+        USFMOutputFolder = os.path.join( givenOutputFolderName, "USFM" + ("Reexport" if self.objectTypeString=='USFM' else "Export" ) )
+        USFMExportResult = self.toUSFM( outputFolder=USFMOutputFolder )
+        MWOutputFolder = os.path.join( givenOutputFolderName, "MediaWiki" + ("Reexport" if self.objectTypeString=='MediaWiki' else "Export" ) )
+        MWExportResult = self.toMediaWiki( outputFolder=MWOutputFolder )
+        zOutputFolder = os.path.join( givenOutputFolderName, "Zefania" + ("Reexport" if self.objectTypeString=='Zefania' else "Export" ) )
+        zExportResult = self.toZefania_XML( outputFolder=zOutputFolder )
+        USXOutputFolder = os.path.join( givenOutputFolderName, "USX" + ("Reexport" if self.objectTypeString=='USX' else "Export" ) )
+        USXExportResult = self.toUSX_XML( outputFolder=USXOutputFolder )
+        OSISOutputFolder = os.path.join( givenOutputFolderName, "OSIS" + ("Reexport" if self.objectTypeString=='OSIS' else "Export" ) )
+        OSISExportResult = self.toOSIS_XML( outputFolder=OSISOutputFolder )
+        swOutputFolder = os.path.join( givenOutputFolderName, "Sword" + ("Reexport" if self.objectTypeString=='Sword' else "Export" ) )
+        swExportResult = self.toSwordModule( outputFolder=swOutputFolder )
+
+        print( "\nResults: MW =", MWExportResult, " Zef =", zExportResult, " USX =", USXExportResult, " OSIS =", OSISExportResult, " Sw =", swExportResult )
+    # end of BibleWriter.doAllExports
 # end of class BibleWriter
 
 
@@ -2038,7 +2153,7 @@ def demo():
 
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
-    # Since this is only designed to be a base class, it can't actually do much at all
+    # Since this is only designed to be a virtual base class, it can't actually do much at all
     BW = BibleWriter()
     BW.objectNameString = "Dummy test Bible Writer object"
     if Globals.verbosityLevel > 0: print( BW )

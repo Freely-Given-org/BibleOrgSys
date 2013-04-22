@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksNames.py
-#   Last modified: 2013-04-13 (also update versionString below)
+#   Last modified: 2013-04-21 (also update versionString below)
 #
 # Module handling BibleBooksNames
 #
@@ -334,6 +334,7 @@ class BibleBooksNamesSystems:
 # end of BibleBooksNamesSystems class
 
 
+
 class BibleBooksNamesSystem:
     """
     Class for handling a particular Bible book names system.
@@ -355,7 +356,8 @@ class BibleBooksNamesSystem:
         result = self.__bnss.getBooksNamesSystem( self.__systemName, bookList )
         if result is not None:
             self.__divisionsNamesDict, self.__booknameLeadersDict, self.__bookNamesDict, self.__sortedDivisionNamesDict, self.__sortedBookNamesDict = result
-    # end of __init__
+    # end of BibleBooksNamesSystem.__init__
+
 
     def __str__( self ):
         """
@@ -374,29 +376,33 @@ class BibleBooksNamesSystem:
             result += ('\n' if result else '') + "    " + _("Number of expanded division name abbreviations = {}").format( len(self.__sortedDivisionNamesDict) )
             result += ('\n' if result else '') + "    " + _("Number of expanded book name abbreviations = {}").format( len(self.__sortedBookNamesDict) )
         return result
-    # end of __str__
+    # end of BibleBooksNamesSystem.__str__
+
 
     def getBooksNamesSystemName( self ):
         """ Return the book names system name. """
         return self.__systemName
-    # end of getBooksNamesSystemName
+    # end of BibleBooksNamesSystem.getBooksNamesSystemName
+
 
     def getBookName( self, BBB ):
         """ Get the default book name from the given referenceAbbreviation. """
-        assert( len(BBB) == 3 )
+        if Globals.debugFlag: assert( len(BBB) == 3 )
         return self.__bookNamesDict[BBB]['defaultName']
-    # end of getBookName
+    # end of BibleBooksNamesSystem.getBookName
+
 
     def getBookAbbreviation( self, BBB ):
         """ Get the default book abbreviation from the given referenceAbbreviation. """
-        assert( len(BBB) == 3 )
+        if Globals.debugFlag: assert( len(BBB) == 3 )
         return self.__bookNamesDict[BBB]['defaultAbbreviation']
-    # end of getBookAbbreviation
+    # end of BibleBooksNamesSystem.getBookAbbreviation
+
 
     def getBBB( self, bookNameOrAbbreviation ):
         """ Get the referenceAbbreviation from the given book name or abbreviation.
                 (Automatically converts to upper case before comparing strings.) """
-        assert( bookNameOrAbbreviation )
+        if Globals.debugFlag: assert( bookNameOrAbbreviation )
         upperCaseBookNameOrAbbreviation = bookNameOrAbbreviation.upper()
         try:
             if upperCaseBookNameOrAbbreviation in self.__sortedBookNamesDict:
@@ -406,17 +412,21 @@ class BibleBooksNamesSystem:
             return None
         if Globals.commandLineOptions.debug:
             # It failed so print what the closest alternatives were
-            print( "getBBB", bookNameOrAbbreviation, upperCaseBookNameOrAbbreviation )
+            print( "BibleBooksNamesSystem.getBBB( {} ) {}".format( repr(bookNameOrAbbreviation), upperCaseBookNameOrAbbreviation ) )
+            #print( self.__sortedBookNamesDict )
             myList, thisLen = [], len(upperCaseBookNameOrAbbreviation)
+            #for key in self.__sortedBookNamesDict.keys():
+                #if key.startswith('L'): print( key )
             for key in self.__sortedBookNamesDict.keys():
                 if key.startswith( upperCaseBookNameOrAbbreviation[0] ) and len(key)==thisLen: myList.append( key )
             print( "Possibility list is", myList )
-    # end of getBBB
+    # end of BibleBooksNamesSystem.getBBB
+
 
     def getDivisionAbbreviation( self, divisionNameOrAbbreviation ):
         """ Get the division standardAbbreviation from the given division name or abbreviation.
                 (Automatically converts to upper case before comparing strings.) """
-        assert( divisionNameOrAbbreviation )
+        if Globals.debugFlag: assert( divisionNameOrAbbreviation )
         upperCaseDivisionNameOrAbbreviation = divisionNameOrAbbreviation.upper()
         if upperCaseDivisionNameOrAbbreviation in self.__sortedDivisionNamesDict:
             #print( self.__sortedDivisionNamesDict[upperCaseDivisionNameOrAbbreviation], self.__divisionsNamesDict[self.__sortedDivisionNamesDict[upperCaseDivisionNameOrAbbreviation]]['defaultAbbreviation'] )
@@ -428,19 +438,20 @@ class BibleBooksNamesSystem:
             for key in self.__sortedDivisionNamesDict.keys():
                 if key.startswith( upperCaseDivisionNameOrAbbreviation[0] ) and len(key)==thisLen: myList.append( key )
             print( "Possibility list is", myList )
-    # end of getDivisionAbbreviation
+    # end of BibleBooksNamesSystem.getDivisionAbbreviation
+
 
     def getDivisionBooklist( self, divisionAbbreviation ):
         """ Returns the booklist for the division given the division standardAbbreviation
                                                 or else given a vernacular inputAbbreviation. """
-        assert( divisionAbbreviation )
+        if Globals.debugFlag: assert( divisionAbbreviation )
         if divisionAbbreviation in self.__divisionsNamesDict:
             return self.__divisionsNamesDict[divisionAbbreviation]['includedBooks']
         # else it might be a vernacular value
         standardDivisionAbbreviation = self.getDivisionAbbreviation( divisionAbbreviation )
         if standardDivisionAbbreviation is not None:
             return self.__divisionsNamesDict[standardDivisionAbbreviation]['includedBooks']
-    # end of getDivisionBooklist
+    # end of BibleBooksNamesSystem.getDivisionBooklist
 # end of BibleBookNamesSystem class
 
 

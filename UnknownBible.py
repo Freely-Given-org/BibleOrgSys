@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # UnknownBible.py
-#   Last modified: 2013-04-15 (also update versionString below)
+#   Last modified: 2013-04-21 (also update versionString below)
 #
 # Module handling a unknown Bible object
 #
@@ -43,13 +43,17 @@ import logging, os.path
 from gettext import gettext as _
 
 import Globals
-from USFMBible import USFMBible
-from USXBible import USXBible
-from OpenSongXMLBible import OpenSongXMLBible
+from USFMFilenames import USFMFilenames
+from USXFilenames import USXFilenames
+
+from USFMBible import USFMBibleFileCheck, USFMBible
+from USXXMLBible import USXXMLBibleFileCheck, USXXMLBible
+from OpenSongXMLBible import OpenSongXMLBibleFileCheck, OpenSongXMLBible
 from OSISXMLBible import OSISXMLBible
 from ZefaniaXMLBible import ZefaniaXMLBible
 from UnboundBible import UnboundBibleFileCheck, UnboundBible
-from SwordResources import SwordInterface
+#from SwordResources import SwordInterface
+
 
 
 class UnknownBible:
@@ -57,12 +61,18 @@ class UnknownBible:
     Class for handling an entire Bible.
     """
 
-    def __init__( self, folder ):
+    def __init__( self, givenFolderName ):
         """
         Constructor: creates an empty Bible object.
         """
-        assert( folder and isinstance( folder, str ) )
-        self.folder = folder
+        if Globals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
+        self.givenFolderName = givenFolderName
+
+        # Check that the given folder is readable
+        if not os.access( givenFolderName, os.R_OK ):
+            logging.critical( _("UnknownBible: Given '{}' folder is unreadable").format( self.givenFolderName ) )
+
+        self.foundType = None
     # end of UnknownBible.__init__
 
 
@@ -74,7 +84,8 @@ class UnknownBible:
         @rtype: string
         """
         result = _("Unknown Bible object")
-        result += ('\n' if result else '') + "  " + _("Folder: {} ").format( self.folder )
+        result += ('\n' if result else '') + "  " + _("Folder: {} ").format( self.givenFolderName )
+        if self.foundType: result += ('\n' if result else '') + "  " + _("Type: {} ").format( self.foundType )
         return result
     # end of UnknownBible.__str__
 
@@ -85,15 +96,73 @@ class UnknownBible:
 
         These searches are best done in a certain order to avoid false detections.
         """
-        # Try UnboundBible
-        UnboundBibleResult = UnboundBibleFileCheck( self.folder )
-        print( "UBR", UnboundBibleResult )
+        totalBibleCount, totalBibleTypes, typesFound = 0, 0, []
 
-        if UnboundBibleResult:
-            if autoLoad: return UnboundBibleFileCheck( self.folder, autoLoad=True )
-            else: return "Unbound", UnboundBibleResult
+        # Search for Unbound Bibles
+        UnboundBibleCount = UnboundBibleFileCheck( self.givenFolderName )
+        if UnboundBibleCount:
+            totalBibleCount += UnboundBibleCount
+            totalBibleTypes += 1
+            typesFound.append( 'Unbound' )
+            #print( "UnboundBibleCount", UnboundBibleCount )
+
+        # Search for USFM Bibles
+        USFMBibleCount = USFMBibleFileCheck( self.givenFolderName )
+        if USFMBibleCount:
+            totalBibleCount += USFMBibleCount
+            totalBibleTypes += 1
+            typesFound.append( 'USFM' )
+            #print( "USFMBibleCount", USFMBibleCount )
+
+        # Search for USX XML Bibles
+        USXBibleCount = USXXMLBibleFileCheck( self.givenFolderName )
+        if USXBibleCount:
+            totalBibleCount += USXBibleCount
+            totalBibleTypes += 1
+            typesFound.append( 'USX' )
+            #print( "USXBibleCount", USXBibleCount )
+
+        # Search for OpenSong XML Bibles
+        OpenSongBibleCount = OpenSongXMLBibleFileCheck( self.givenFolderName )
+        if OpenSongBibleCount:
+            totalBibleCount += OpenSongBibleCount
+            totalBibleTypes += 1
+            typesFound.append( 'OpenSong' )
+            #print( "OpenSongBibleCount", OpenSongBibleCount )
+
+
+        assert( len(typesFound) == totalBibleTypes )
+        if totalBibleCount == 0:
+            if Globals.verbosityLevel > 0: print( "No Bibles found" )
+            self.foundType = 'None found'
+        elif totalBibleCount > 1:
+            if totalBibleTypes == 1:
+                if Globals.verbosityLevel > 0:
+                    print( "Multiple ({}) {} Bibles found".format( totalBibleCount, typesFound[0] ) )
+            else:
+                if Globals.verbosityLevel > 0:
+                    print( "Multiple ({}) Bibles found: {}".format( totalBibleCount, typesFound ) )
+                self.foundType = 'Many found'
+
+        elif UnboundBibleCount == 1:
+            self.foundType = "Unbound Bible"
+            if autoLoad: return UnboundBibleFileCheck( self.givenFolderName, autoLoad=True )
+            else: return self.foundType, UnboundBibleCount
+        elif USFMBibleCount == 1:
+            self.foundType = "USFM Bible"
+            if autoLoad: return USFMBibleFileCheck( self.givenFolderName, autoLoad=True )
+            else: return self.foundType, USFMBibleCount
+        elif USXBibleCount == 1:
+            self.foundType = "USX XML Bible"
+            if autoLoad: return USXXMLBibleFileCheck( self.givenFolderName, autoLoad=True )
+            else: return self.foundType, USXBibleCount
+        elif OpenSongBibleCount == 1:
+            self.foundType = "OpenSong XML Bible"
+            if autoLoad: return OpenSongXMLBibleFileCheck( self.givenFolderName, autoLoad=True )
+            else: return self.foundType, OpenSongBibleCount
     # end of UnknownBible.search
 # end of class UnknownBible
+
 
 
 def demo():
@@ -112,15 +181,20 @@ def demo():
     if Globals.verbosityLevel > 0: print( "{} V{}".format(progName, versionString ) )
 
     # Now demo the class
-    testFolders = ( "../../../../../Data/Work/Bibles/Biola Unbound modules/asv",
-                    "../../../../../Data/Work/Matigsalug/Bible/MBTV/", )
+    testFolders = ( "/home/robert/Logs", "../../../../../Data/Work/Bibles/Biola Unbound modules/asv/",
+                    "../../../../../Data/Work/Matigsalug/Bible/MBTV/",
+                    "../../../../../SSD/AutoProcesses/Processed/",
+                    "Tests/DataFilesForTests/USFMTest1/", "Tests/DataFilesForTests/USFMTest2/",
+                    "Tests/DataFilesForTests/USXTest1/", "Tests/DataFilesForTests/USXTest2/",
+                    "Tests/DataFilesForTests/ZefaniaTest/", "Tests/DataFilesForTests/",)
     for j, testFolder in enumerate( testFolders ):
-        print( "\n\n{} Trying {}...".format( j+1, testFolder ) )
+        print( "\n\n{}/ Trying {}...".format( j+1, testFolder ) )
         B = UnknownBible( testFolder )
-        print( B )
+        #print( B )
         result1 = B.search( autoLoad=False )
         result2 = B.search( autoLoad=True ) if result1 else None
-        if Globals.verbosityLevel > 0: print( "  Results are: {} and {}".format( result1, result2 ) )
+        if Globals.verbosityLevel > 2: print( "  Results are: {} and {}".format( result1, result2 ) )
+        print( B )
 # end of demo
 
 if __name__ == '__main__':

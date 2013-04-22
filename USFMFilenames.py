@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMFilenames.py
-#   Last modified: 2013-04-15 by RJH (also update versionString below)
+#   Last modified: 2013-04-20 by RJH (also update versionString below)
 #
 # Module handling USFM Bible filenames
 #
@@ -50,7 +50,8 @@ BibleditFilenames = ( '1_Genesis', '2_Exodus', '3_Leviticus', '4_Numbers', '5_De
     '76_Letter_of_Jeremiah', '77_Song_of_the_Three_Children', '78_Susanna', '79_Bel_and_the_Dragon', '80_1_Maccabees', '81_2_Maccabees',
     '82_1_Esdras', '83_Prayer_of_Manasses', '84_Psalm_151', '85_3_Maccabees', '86_2_Esdras', '87_4_Maccabees', '88_Daniel_(Greek)' )
 
-extensionsToIgnore = ('XML', 'OSIS', 'USX',) # Must be UPPERCASE
+filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
+extensionsToIgnore = ('ZIP', 'BAK', 'XML', 'OSIS', 'USX', 'TXT', 'STY', 'LDS', 'SSF', 'VRS',) # Must be UPPERCASE
 
 
 
@@ -61,7 +62,7 @@ class USFMFilenames:
     Always returns lists of USFM filenames in the default rough sequence order from the BibleBooksCodes module.
     """
 
-    def __init__( self, folder ):
+    def __init__( self, givenFolderName ):
         """Create the object by inspecting files in the given folder.
 
             Creates a self.pattern (Paratext template) for USFM filenames where
@@ -69,6 +70,18 @@ class USFMFilenames:
                 bbb = book code (lower case) or BBB = book code (UPPER CASE)
                 dd = digits
         """
+        #print( "USFMFilenames( {} )".format( givenFolderName ) )
+        self.givenFolderName = givenFolderName
+        self.pattern, self.fileExtension = '', ''
+        self.fileList = [] # A list of all files in our folder (excluding folder names and backup filenames)
+        self._fileDictionary = {} # The keys are 2-tuples of folder, filename, the values are all valid BBB values
+        self._BBBDictionary = {} # The keys are valid BBB values, the values are all 2-tuples of folder, filename
+
+        # Check that the given folder is readable
+        if not os.access( self.givenFolderName, os.R_OK ):
+            logging.critical( _("USFMFilenames: Given '{}' folder is unreadable").format( self.givenFolderName ) )
+            return
+
         # Get the data tables that we need for proper checking
         self._USFMBooksCodes = Globals.BibleBooksCodes.getAllUSFMBooksCodes()
         self._USFMBooksCodesUpper = [x.upper() for x in self._USFMBooksCodes]
@@ -76,17 +89,23 @@ class USFMFilenames:
         self._BibleditBooksCodeNumberTriples = Globals.BibleBooksCodes.getAllBibleditBooksCodeNumberTriples()
 
         # Find how many files are in our folder
-        self.folder, self.lastTupleList = folder, None
-        self.fileList = [] # A list of all files in our folder (excluding folder names and backup filenames)
-        for possibleFilename in os.listdir( self.folder ):
-            if not possibleFilename.endswith('~') and not possibleFilename.upper().endswith('.BAK'): # Ignore backup files
-                filepath = os.path.join( self.folder, possibleFilename )
+        self.lastTupleList = None
+        for possibleFilename in os.listdir( self.givenFolderName ):
+            pFUpper = possibleFilename.upper()
+            pFUpperProper, pFUpperExt = os.path.splitext( pFUpper )
+            ignore = False
+            for ending in filenameEndingsToIgnore:
+                if pFUpper.endswith( ending): ignore=True; break
+            if ignore: continue
+            if not pFUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+                filepath = os.path.join( self.givenFolderName, possibleFilename )
                 if os.path.isfile( filepath ): # It's a file not a folder
-                    self.fileList.append( possibleFilename )
-        if not self.fileList: logging.error( _("No files at all in given folder: '{}'").format( self.folder) ); return
+                        self.fileList.append( possibleFilename )
+        #print( "fL", self.fileList )
+        #if not self.fileList: logging.error( _("No files at all in given folder: '{}'").format( self.givenFolderName) ); return
 
         # See if we can find a pattern for these filenames
-        self.pattern, self.fileExtension = '', ''
+        matched = False
         for foundFilename in self.fileList:
             foundFileBit, foundExtBit = os.path.splitext( foundFilename )
             foundLength = len( foundFileBit )
@@ -163,13 +182,12 @@ class USFMFilenames:
                             break
                 if matched: break
             if matched: break
-        if not matched: logging.info( _("Unable to recognize pattern of valid USFM files in ") + folder )
+        #if not matched: logging.info( _("Unable to recognize pattern of valid USFM files in ") + self.givenFolderName )
         #print( "USFMFilenames: pattern='{}' fileExtension='{}'".format( self.pattern, self.fileExtension ) )
 
         # Also, try looking inside the files
-        self._fileDictionary = {} # The keys are 2-tuples of folder, filename, the values are all valid BBB values
-        self._BBBDictionary = {} # The keys are valid BBB values, the values are all 2-tuples of folder, filename
-        self.getUSFMIDsFromFiles( self.folder ) # Fill the above dictionaries
+        self.getUSFMIDsFromFiles( self.givenFolderName ) # Fill the above dictionaries
+        #print( "fD", self._fileDictionary )
     # end of __init__
 
 
@@ -182,7 +200,7 @@ class USFMFilenames:
         """
         result = "USFM Filenames object"
         indent = 2
-        if self.folder: result += ('\n' if result else '') + ' '*indent + _("Folder: {}").format( self.folder )
+        if self.givenFolderName: result += ('\n' if result else '') + ' '*indent + _("Folder: {}").format( self.givenFolderName )
         if self.pattern: result += ('\n' if result else '') + ' '*indent + _("Filename pattern: {}").format( self.pattern )
         if self.fileExtension: result += ('\n' if result else '') + ' '*indent + _("File extension: {}").format( self.fileExtension )
         if self.fileList and Globals.verbosityLevel > 2: result += ('\n' if result else '') + ' '*indent + _("File list: {}").format( self.fileList )
@@ -238,7 +256,7 @@ class USFMFilenames:
                     if lineNumber >= 2: break # We only look at the first one or two lines
         except UnicodeDecodeError:
             if thisFilename != 'usfm-color.sty': # Seems this file isn't UTF-8, but we don't need it here anyway so ignore it
-                print( "Seems we couldn't decode Unicode in '{}'".format( filepath ) ) # Could be binary or a different encoding
+                if Globals.logErrorsFlag: logging.warning( _("Seems we couldn't decode Unicode in '{}'").format( filepath ) ) # Could be binary or a different encoding
         return None
     # end of getUSFMIDFromFile
 
@@ -252,7 +270,13 @@ class USFMFilenames:
         self._BBBDictionary = {} # The keys are valid BBB values, the values are all 2-tuples of folder, filename
         folderFilenames = os.listdir( givenFolder )
         for possibleFilename in folderFilenames:
-            if not possibleFilename.endswith('~') and not possibleFilename.upper().endswith('.BAK'): # Ignore backup files
+            pFUpper = possibleFilename.upper()
+            pFUpperProper, pFUpperExt = os.path.splitext( pFUpper )
+            ignore = False
+            for ending in filenameEndingsToIgnore:
+                if pFUpper.endswith( ending): ignore=True; break
+            if ignore: continue
+            if not pFUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
                 filepath = os.path.join( givenFolder, possibleFilename )
                 if os.path.isfile( filepath ): # It's a file not a folder
                     USFMId = self.getUSFMIDFromFile( givenFolder, possibleFilename, filepath )
@@ -264,6 +288,7 @@ class USFMFilenames:
                         self._BBBDictionary[BBB] = (givenFolder,possibleFilename,)
         if len(self._fileDictionary) != len(self._BBBDictionary):
             logging.warning( "getUSFMIDsFromFiles: Oops, something went wrong because dictionaries have {} and {} entries".format( len(self._fileDictionary), len(self._BBBDictionary) ) )
+        #print( "fD2", self._fileDictionary )
         return len(self._fileDictionary)
     # end of getUSFMIDsFromFiles
 
@@ -344,11 +369,11 @@ class USFMFilenames:
         """
         resultList = []
         for bookReferenceCode,derivedFilename in self.getDerivedFilenameTuples():
-            derivedFilepath = os.path.join( self.folder, derivedFilename )
+            derivedFilepath = os.path.join( self.givenFolderName, derivedFilename )
             if Globals.verbosityLevel > 2: print( '  getConfirmedFilenameTuples: Checking for existence of: ' + derivedFilename )
             if os.access( derivedFilepath, os.R_OK ):
                 if doubleCheck:
-                    USFMId = self.getUSFMIDFromFile( self.folder, derivedFilename, derivedFilepath )
+                    USFMId = self.getUSFMIDFromFile( self.givenFolderName, derivedFilename, derivedFilepath )
                     if USFMId is None:
                         logging.error( "getConfirmedFilenameTuples: internal USFM Id missing for {} in {}".format( bookReferenceCode, derivedFilename ) )
                         continue # so it doesn't get added
@@ -373,6 +398,10 @@ class USFMFilenames:
             pFUpper = possibleFilename.upper()
             pFUpperProper, pFUpperExt = os.path.splitext( pFUpper )
             for USFMBookCode,USFMDigits,bookReferenceCode in self._USFMBooksCodeNumberTriples:
+                ignore = False
+                for ending in filenameEndingsToIgnore:
+                    if pFUpper.endswith( ending): ignore=True; break
+                if ignore: continue
                 if USFMBookCode.upper() in pFUpperProper:
                     if not pFUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
                         self.doListAppend( Globals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
@@ -392,7 +421,7 @@ class USFMFilenames:
                 self.doListAppend( BBB, self._BBBDictionary[BBB][1], resultList, "getPossibleFilenameTuplesInt1" )
         else:
             for folder,filename in self._fileDictionary.keys():
-                assert( folder == self.folder )
+                assert( folder == self.givenFolderName )
                 #print( "getPossibleFilenameTuplesInt", folder, filename, self._fileDictionary )
                 self.doListAppend( self._fileDictionary[(folder,filename,)], filename, resultList, "getPossibleFilenameTuplesInt2" )
         self.lastTupleList = resultList
@@ -423,7 +452,7 @@ class USFMFilenames:
         """ Return a list of filenames which didn't seem to be USFM files.
             NOTE: This list depends on which "find" routine above was run last!
             The order of the filenames in the list has no meaning. """
-        folderFilenames = os.listdir( self.folder )
+        folderFilenames = os.listdir( self.givenFolderName )
         if self.lastTupleList is None: return None # Not sure what list they're after here
         #print( len(self.lastTupleList), self.lastTupleList )
         for bookReferenceCode,actualFilename in self.lastTupleList:
@@ -452,16 +481,16 @@ class USFMFilenames:
             return resultPathlist
         # end of getSSFFilenamesHelper
 
-        filelist = getSSFFilenamesHelper( self.folder )
+        filelist = getSSFFilenamesHelper( self.givenFolderName )
         if not filelist and searchAbove: # try the next level up
-            filelist = getSSFFilenamesHelper( os.path.join( self.folder, '../' ) )
+            filelist = getSSFFilenamesHelper( os.path.join( self.givenFolderName, '../' ) )
             if auto and len(filelist)>1: # See if we can help them by automatically choosing the right one
                 count, index = 0, -1
                 for j, filepath in enumerate(filelist): # Check if we can find a single matching ssf file
                     foundPathBit, foundExtBit = os.path.splitext( filepath )
                     foundPathBit, foundFileBit = os.path.split( foundPathBit )
-                    #print( foundPathBit, foundFileBit, foundExtBit, self.folder )
-                    if foundFileBit in self.folder: index = j; count += 1 # Take a guess that this might be the right one
+                    #print( foundPathBit, foundFileBit, foundExtBit, self.givenFolderName )
+                    if foundFileBit in self.givenFolderName: index = j; count += 1 # Take a guess that this might be the right one
                 #print( count, index )
                 if count==1 and index!=-1: filelist = [ filelist[index] ] # Found exactly one so reduce the list down to this one filepath
         return filelist
@@ -483,9 +512,10 @@ def demo():
 
     # These are relative paths -- you can replace these with your test folder(s)
     testFolders = ("Tests/DataFilesForTests/USFMTest1/", "Tests/DataFilesForTests/USFMTest2/",
-                   'Tests/DataFilesForTests/USXTest1/', 'Tests/DataFilesForTests/USXTest2/',)
-    for testFolder in testFolders:
-        print( '\n' )
+                   'Tests/DataFilesForTests/USXTest1/', 'Tests/DataFilesForTests/USXTest2/',
+                   "../../../../../SSD/AutoProcesses/Processed/","../../../../../SSD/AutoProcesses/Processed/Test/",)
+    for j, testFolder in enumerate( testFolders ):
+        print( '\n{}'.format( j+1 ) )
         if os.access( testFolder, os.R_OK ):
             UFns = USFMFilenames( testFolder )
             print( UFns )

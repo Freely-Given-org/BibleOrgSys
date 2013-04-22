@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Globals.py
-#   Last modified: 2013-04-15 (also update versionString below)
+#   Last modified: 2013-04-2 (also update versionString below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -29,7 +29,7 @@ Module handling global variables
 """
 
 progName = "Globals"
-versionString = "0.12"
+versionString = "0.13"
 
 import logging, os.path
 
@@ -91,7 +91,7 @@ def setup_logfile( folder, progName ):
     root = logging.getLogger()  # No param means get the root logger
     root.addHandler(stderr_handler)
     return fullFilename
-# end of setup_logfile
+# end of Globals.setup_logfile
 
 
 def add_logfile( folder, projectName ):
@@ -117,14 +117,14 @@ def add_logfile( folder, projectName ):
     root = logging.getLogger()
     root.addHandler( projectHandler )
     return fullFilename, projectHandler
-# end of add_logfile
+# end of Globals.add_logfile
 
 
 def remove_logfile( projectHandler ):
     """Removes the project specific logger."""
     root = logging.getLogger()  # No param means get the root logger
     root.removeHandler( projectHandler )
-# end of remove_logfile
+# end of Globals.remove_logfile
 
 
 ##########################################################################################################
@@ -139,8 +139,8 @@ def peekIntoFile( filenameOrFilepath, folder=None, numLines=1 ):
     """
     assert( 1 <= numLines < 5 )
     filepath = os.path.join( folder, filenameOrFilepath ) if folder else filenameOrFilepath
+    lines = []
     try:
-        lines = []
         with open( filepath, 'rt' ) as possibleUSFMFile: # Automatically closes the file when done
             lineNumber = 0
             for line in possibleUSFMFile:
@@ -151,8 +151,8 @@ def peekIntoFile( filenameOrFilepath, folder=None, numLines=1 ):
                 lines.append( line )
                 if lineNumber >= numLines: return lines
     except UnicodeDecodeError:
-        if thisFilename != 'usfm-color.sty': # Seems this file isn't UTF-8, but we don't need it here anyway so ignore it
-            print( "Seems we couldn't decode Unicode in '{}'".format( filepath ) ) # Could be binary or a different encoding
+        #if not filepath.lower().endswith( 'usfm-color.sty' ): # Seems this file isn't UTF-8, but we don't need it here anyway so ignore it
+        if logErrorsFlag: logging.warning( "Seems we couldn't decode Unicode in '{}'".format( filepath ) ) # Could be binary or a different encoding
 # end of peekIntoFile
 
 
@@ -200,7 +200,7 @@ def totalSize( o, handlers={} ):
         return s
 
     return sizeof(o)
-# end of totalSize
+# end of Globals.totalSize
 
 
 ##########################################################################################################
@@ -244,13 +244,13 @@ def setVerbosity( verbosityLevelParameter ):
     elif verbosityLevel == 3:
         verbosityString = 'Informative'
     elif verbosityLevel == 4:
-        verbosityString = 'Informative'
+        verbosityString = 'Verbose'
     else: logging.error( "Invalid '" + verbosityLevel + "' verbosity parameter" )
 
     if debugFlag:
         print( '  Verbosity =', verbosityString )
         print( '  VerbosityLevel =', verbosityLevel )
-# end of setVerbosity
+# end of Globals.setVerbosity
 
 
 def setVerbosityLevel( verbosityStringParameter ):
@@ -273,7 +273,7 @@ def setVerbosityLevel( verbosityStringParameter ):
     if debugFlag:
         print( '  VerbosityLevel =', verbosityLevel )
         print( '  Verbosity =', verbosityString )
-# end of setVerbosityLevel
+# end of Globals.setVerbosityLevel
 
 
 def setDebugFlag( newValue=True ):
@@ -282,7 +282,7 @@ def setDebugFlag( newValue=True ):
     debugFlag = newValue
     if debugFlag or verbosityLevel>3:
         print( '  debugFlag =', debugFlag )
-# end of setDebugFlag
+# end of Globals.setDebugFlag
 
 
 def setStrictCheckingFlag( newValue=True ):
@@ -291,7 +291,7 @@ def setStrictCheckingFlag( newValue=True ):
     strictCheckingFlag = newValue
     if strictCheckingFlag or verbosityLevel>3:
         print( '  strictCheckingFlag =', strictCheckingFlag )
-# end of setStrictCheckingFlag
+# end of Globals.setStrictCheckingFlag
 
 
 def setLogErrorsFlag( newValue=True ):
@@ -300,7 +300,7 @@ def setLogErrorsFlag( newValue=True ):
     logErrorsFlag = newValue
     if logErrorsFlag or verbosityLevel>3:
         print( '  logErrorsFlag =', logErrorsFlag )
-# end of setLogErrorsFlag
+# end of Globals.setLogErrorsFlag
 
 
 def addStandardOptionsAndProcess( parserObject ):
@@ -322,20 +322,20 @@ def addStandardOptionsAndProcess( parserObject ):
     if debugFlag:
         print( "  commandLineOptions: {}".format( commandLineOptions ) )
         print( "  commandLineArguments: {}".format( commandLineArguments ) )
-# end of addStandardOptionsAndProcess
+# end of Globals.addStandardOptionsAndProcess
 
 
 def printAllGlobals( indent=None ):
     """ Print all global variables. """
     if indent is None: indent = 2
-    print( "{}commandLineOptions: {}".format( ( ' '*indent, commandLineOptions) ) )
-    print( "{}commandLineArguments: {}".format( ( ' '*indent, commandLineArguments) ) )
-    print( "{}debugFlag: {}".format( ( ' '*indent, debugFlag) ) )
-    print( "{}verbosityString: {}".format( ( ' '*indent, verbosityString) ) )
-    print( "{}verbosityLevel: {}".format( ( ' '*indent, verbosityLevel) ) )
-    print( "{}strictCheckingFlag: {}".format( ( ' '*indent, strictCheckingFlag) ) )
-    print( "{}logErrorsFlag: {}".format( ( ' '*indent, logErrorsFlag) ) )
-# end of printAllGlobals()
+    print( "{}commandLineOptions: {}".format( ' '*indent, commandLineOptions ) )
+    print( "{}commandLineArguments: {}".format( ' '*indent, commandLineArguments ) )
+    print( "{}debugFlag: {}".format( ' '*indent, debugFlag ) )
+    print( "{}verbosityString: {}".format( ' '*indent, verbosityString ) )
+    print( "{}verbosityLevel: {}".format( ' '*indent, verbosityLevel ) )
+    print( "{}strictCheckingFlag: {}".format( ' '*indent, strictCheckingFlag ) )
+    print( "{}logErrorsFlag: {}".format( ' '*indent, logErrorsFlag ) )
+# end of Globals.printAllGlobals
 
 
 
@@ -361,7 +361,8 @@ if __name__ != '__main__':
 
 def demo():
     """
-    Demo program to handle command line parameters and then run what they want.
+    Demo program to handle command line parameters
+        and then demonstrate some basic functions.
     """
     # Handle command line parameters
     from optparse import OptionParser

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMFilenamesTests.py
-#   Last modified: 2013-04-14 by RJH (also update versionString below)
+#   Last modified: 2013-04-21 by RJH (also update versionString below)
 #
 # Module testing USFMFilenames.py
 #
@@ -312,7 +312,7 @@ class USFMFilenamesTests2( unittest.TestCase ):
         junkResults = self.UFns.getPossibleFilenameTuplesExt()
         results = self.UFns.getUnusedFilenames()
         self.assertTrue( isinstance( results, list ) )
-        self.assertEqual( len(results), 12 ) # Number of actual files found
+        self.assertEqual( len(results), 14 ) # Number of actual files found
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
         for result in results:
@@ -364,7 +364,7 @@ class USFMFilenamesTests2( unittest.TestCase ):
         junkResults = self.UFns.getMaximumPossibleFilenameTuples()
         results = self.UFns.getUnusedFilenames()
         self.assertTrue( isinstance( results, list ) )
-        self.assertEqual( len(results), 12 ) # Number of actual files found
+        self.assertEqual( len(results), 13 ) # Number of actual files found
         self.assertFalse( None in results )
         self.assertFalse( '' in results )
         for result in results:

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # OpenSongXMLBible.py
-#   Last modified: 2013-04-15 by RJH (also update versionString below)
+#   Last modified: 2013-04-21 by RJH (also update versionString below)
 #
 # Module handling OpenSong XML Bibles
 #
@@ -43,9 +43,6 @@ from xml.etree.cElementTree import ElementTree
 
 import Globals
 from BibleOrganizationalSystems import BibleOrganizationalSystem
-#from InternalBible import InternalBible
-#from InternalBibleBook import InternalBibleBook
-#from BibleWriter import BibleWriter
 from Bible import Bible, BibleBook
 
 
@@ -63,8 +60,8 @@ def OpenSongXMLBibleFileCheck( givenFolderName, autoLoad=False ):
         returns the loaded OpenSongXMLBible object.
     """
     if Globals.verbosityLevel > 2: print( "OpenSongXMLBibleFileCheck( {}, {} )".format( givenFolderName, autoLoad ) )
-    assert( givenFolderName and isinstance( givenFolderName, str ) )
-    assert( autoLoad in (True,False,) )
+    if Globals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
+    if Globals.debugFlag: assert( autoLoad in (True,False,) )
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
@@ -78,22 +75,28 @@ def OpenSongXMLBibleFileCheck( givenFolderName, autoLoad=False ):
         somepath = os.path.join( givenFolderName, something )
         if os.path.isdir( somepath ): foundFolders.append( something )
         elif os.path.isfile( somepath ): foundFiles.append( something )
+    if '__MACOSX' in foundFolders:
+        foundFolders.remove( foundFolders )  # don't visit these directories
 
     # See if there's an OpenSong project here in this folder
     numFound = 0
     looksHopeful = False
     lastFilenameFound = None
     for thisFilename in sorted( foundFiles ):
-        if Globals.strictCheckingFlag:
-            firstLine = Globals.peekIntoFile( thisFilename, givenFolderName )
-            if firstLine != "#THE UNBOUND BIBLE (www.unboundbible.org)":
-                if Globals.verbosityLevel > 2: print( "OSB (unexpected) first line was '{}' in {}".format( firstLine, thisFilename ) ); halt
+        if 1 or Globals.strictCheckingFlag:
+            firstLines = Globals.peekIntoFile( thisFilename, givenFolderName, numLines=2 )
+            if not firstLines or len(firstLines)<2: continue
+            if not firstLines[0].startswith( '<?xml version="1.0"' ):
+                if Globals.verbosityLevel > 2: print( "OSB (unexpected) first line was '{}' in {}".format( firstLines, thisFilename ) ); halt
+                continue
+            if not firstLines[1].startswith( '<bible>' ):
                 continue
         lastFilenameFound = thisFilename
         numFound += 1
     if numFound:
         if numFound == 1 and autoLoad:
-            ub = OpenSongXMLBible( givenFolderName, lastFilenameFound[:-9] ) # Remove the end of the actual filename
+            print( "got", givenFolderName, lastFilenameFound )
+            ub = OpenSongXMLBible( givenFolderName, lastFilenameFound )
             ub.load() # Load and process the file
             return ub
         return numFound
@@ -115,17 +118,21 @@ def OpenSongXMLBibleFileCheck( givenFolderName, autoLoad=False ):
         for thisFilename in sorted( foundSubfiles ):
             if thisFilename.endswith( '_utf8.txt' ):
                 if Globals.strictCheckingFlag:
-                    firstLine = Globals.peekIntoFile( thisFilename, tryFolderName )
-                    if firstLine != "#THE UNBOUND BIBLE (www.unboundbible.org)":
-                        if Globals.verbosityLevel > 2: print( "UB (unexpected) first line was '{}' in {}".format( firstLine, thisFilname ) ); halt
+                    firstLines = Globals.peekIntoFile( thisFilename, givenFolderName, numLines=2 )
+                    if not firstLines or len(firstLines)<2: continue
+                    if not firstLines[0].startswith( '<?xml version="1.0"' ):
+                        if Globals.verbosityLevel > 2: print( "OSB (unexpected) first line was '{}' in {}".format( firstLines, thisFilename ) ); halt
+                        continue
+                    if not firstLines[1].startswith( '<bible>' ):
                         continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
                 lastFilenameFound = thisFilename
                 numFound += 1
     if numFound:
         if numFound == 1 and autoLoad:
-            assert( len(foundProjects) == 1 )
-            ub = OpenSongXMLBible( foundProjects[0][0], foundProjects[0][1][:-9] )
+            if Globals.debugFlag: assert( len(foundProjects) == 1 )
+            print( "fP", foundProjects )
+            ub = OpenSongXMLBible( foundProjects[0][0], foundProjects[0][1] ) # Folder and filename
             ub.load() # Load and process the file
             return ub
         return numFound
@@ -143,17 +150,19 @@ class OpenSongXMLBible( Bible ):
     verseTag = 'v'
 
 
-    def __init__( self, sourceFilepath, givenName=None, encoding='utf-8' ):
+    def __init__( self, sourceFolder, givenName, encoding='utf-8' ):
         """
         Constructor: just sets up the XML Bible file converter object.
         """
-         # Setup and initialise the base class first
+        # Setup and initialise the base class first
+        if Globals.debugFlag: print( "OpenSongXMLBible( {}, {}, {} )".format( sourceFolder, givenName, encoding ) )
         Bible.__init__( self )
         self.objectNameString = "OpenSong XML Bible object"
         self.objectTypeString = "OpenSong"
 
         # Now we can set our object variables
-        self.sourceFilepath, self.givenName, self.encoding = sourceFilepath, givenName, encoding
+        self.sourceFolder, self.givenName, self.encoding = sourceFolder, givenName, encoding
+        self.sourceFilepath =  os.path.join( self.sourceFolder, self.givenName )
 
         self.tree = None # Will hold the XML data
 
@@ -177,7 +186,7 @@ class OpenSongXMLBible( Bible ):
         """
         if Globals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
         self.tree = ElementTree().parse( self.sourceFilepath )
-        assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
+        if Globals.debugFlag: assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
 
         # Find the main (bible) container
         if self.tree.tag == OpenSongXMLBible.treeTag:
@@ -279,7 +288,7 @@ class OpenSongXMLBible( Bible ):
                     elif attrib=="t":
                         toVerseNumber = value
                     else: logging.warning( "Unprocessed '{}' attribute ({}) in verse element".format( attrib, value ) )
-                assert( verseNumber )
+                if Globals.debugFlag: assert( verseNumber )
                 #thisBook.appendLine( 'v', verseNumber )
                 vText = element.text
                 if not vText:
@@ -322,7 +331,7 @@ def demo():
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         print( "TestA1", OpenSongXMLBibleFileCheck( testFolder ) )
         print( "TestA2", OpenSongXMLBibleFileCheck( testFolder, autoLoad=True ) )
-        testSubfolder = os.path.join( testFolder, 'asv/' )
+        testSubfolder = os.path.join( testFolder, 'nrsv_update/' )
         print( "TestB1", OpenSongXMLBibleFileCheck( testSubfolder ) )
         print( "TestB2", OpenSongXMLBibleFileCheck( testSubfolder, autoLoad=True ) )
 
@@ -335,7 +344,7 @@ def demo():
             # Demonstrate the OpenSong XML Bible class
             if Globals.verbosityLevel > 1: print( "Demonstrating the OpenSong XML Bible class..." )
             if Globals.verbosityLevel > 0: print( "  Test filepath is '{}'".format( testFilepath ) )
-            xb = OpenSongXMLBible( testFilepath )
+            xb = OpenSongXMLBible( testFolder, testFilename )
             xb.load() # Load and process the XML
             print( xb ) # Just print a summary
             #print( xb.books['JDE']._processedLines )
