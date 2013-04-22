@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-04-20 by RJH (also update versionString below)
+#   Last modified: 2013-04-22 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -2299,7 +2299,7 @@ class InternalBibleBook:
                     assert( extraText ) # Shouldn't be blank
                     #assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
                     assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
-                    assert( 0 <= extraIndex <= len(text) )
+                    #assert( 0 <= extraIndex <= len(text) ) -- not necessarily true for multiple notes
                     assert( extraType in ('fn','xr',) )
                     assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the CONTENTS of these fields should be in extras
 
