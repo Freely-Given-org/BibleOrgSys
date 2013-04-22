@@ -1998,7 +1998,7 @@ class InternalBibleBook:
                     assert( extraText ) # Shouldn't be blank
                     #assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
                     assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
-                    print( "InternalBibleBook:doCheckSpeechMarks {} {}:{} ".format( self.bookReferenceCode, c, v ), extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
+                    #print( "InternalBibleBook:doCheckSpeechMarks {} {}:{} ".format( self.bookReferenceCode, c, v ), extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
                     assert( extraIndex >= 0 )
                     #assert( 0 <= extraIndex <= len(text)+3 )
                     assert( extraType in ('fn','xr',) )
