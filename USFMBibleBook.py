@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBibleBook.py
-#   Last modified: 2013-04-17 by RJH (also update versionString below)
+#   Last modified: 2013-04-22 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -72,10 +72,10 @@ class USFMBibleBook( BibleBook ):
                     and save the information in our database. """
             #originalMarker, originalText = marker, text # Only needed for the debug print line below
             if '\\' in text: # Check markers inside the lines
-                markerList = self.USFMMarkers.getMarkerListFromText( text )
+                markerList = Globals.USFMMarkers.getMarkerListFromText( text )
                 ix = 0
                 for insideMarker, nextSignificantChar, iMIndex in markerList: # check paragraph markers
-                    if self.USFMMarkers.isNewlineMarker(insideMarker): # Need to split the line for everything else to work properly
+                    if Globals.USFMMarkers.isNewlineMarker(insideMarker): # Need to split the line for everything else to work properly
                         if ix==0:
                             loadErrors.append( _("{} {}:{} NewLine marker '{}' shouldn't appear within line in \\{}: '{}'").format( self.bookReferenceCode, c, v, insideMarker, marker, text ) )
                             if Globals.logErrorsFlag: logging.error( _("NewLine marker '{}' shouldn't appear within line after {} {}:{} in \\{}: '{}'").format( insideMarker, self.bookReferenceCode, c, v, marker, text ) ) # Only log the first error in the line
@@ -113,11 +113,11 @@ class USFMBibleBook( BibleBook ):
                 if c == '0': c = '1' # Some single chapter books don't have an explicit chapter 1 marker
             elif marker=='restore': continue # Ignore these lines completely
 
-            if self.USFMMarkers.isNewlineMarker( marker ):
+            if Globals.USFMMarkers.isNewlineMarker( marker ):
                 if lastMarker: doAppendLine( lastMarker, lastText )
                 lastMarker, lastText = marker, text
-            elif self.USFMMarkers.isInternalMarker( marker ) \
-            or marker.endswith('*') and self.USFMMarkers.isInternalMarker( marker[:-1] ): # the line begins with an internal marker -- append it to the previous line
+            elif Globals.USFMMarkers.isInternalMarker( marker ) \
+            or marker.endswith('*') and Globals.USFMMarkers.isInternalMarker( marker[:-1] ): # the line begins with an internal marker -- append it to the previous line
                 if text:
                     loadErrors.append( _("{} {}:{} Found '\\{}' internal marker at beginning of line with text: {}").format( self.bookReferenceCode, c, v, marker, text ) )
                     if Globals.logErrorsFlag: logging.warning( _("Found '\\{}' internal marker after {} {}:{} at beginning of line with text: {}").format( marker, self.bookReferenceCode, c, v, text ) )
@@ -136,7 +136,7 @@ class USFMBibleBook( BibleBook ):
                     loadErrors.append( _("{} {}:{} Found '\\{}' unknown marker at beginning of line (with no text").format( self.bookReferenceCode, c, v, marker ) )
                     if Globals.logErrorsFlag: logging.error( _("Found '\\{}' unknown marker after {} {}:{} at beginning of line (with no text)").format( marker, self.bookReferenceCode, c, v ) )
                 self.addPriorityError( 100, c, v, _("Found \\{} unknown marker on new line in file").format( marker ) )
-                for tryMarker in sorted( self.USFMMarkers.getNewlineMarkersList(), key=len, reverse=True ): # Try to do something intelligent here -- it might be just a missing space
+                for tryMarker in sorted( Globals.USFMMarkers.getNewlineMarkersList(), key=len, reverse=True ): # Try to do something intelligent here -- it might be just a missing space
                     if marker.startswith( tryMarker ): # Let's try changing it
                         if lastMarker: doAppendLine( lastMarker, lastText )
                         lastMarker, lastText = tryMarker, marker[len(tryMarker):] + ' ' + text

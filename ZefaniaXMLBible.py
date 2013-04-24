@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ZefaniaXMLBible.py
-#   Last modified: 2013-04-20 by RJH (also update versionString below)
+#   Last modified: 2013-04-23 by RJH (also update versionString below)
 #
 # Module handling Zefania XML Bibles
 #
@@ -59,7 +59,7 @@ or
 """
 
 progName = "Zefania XML Bible format handler"
-versionString = "0.20"
+versionString = "0.21"
 
 import logging, os
 from gettext import gettext as _
@@ -72,6 +72,132 @@ from BibleOrganizationalSystems import BibleOrganizationalSystem
 #from InternalBibleBook import InternalBibleBook
 #from BibleWriter import BibleWriter
 from Bible import Bible, BibleBook
+
+
+filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
+extensionsToIgnore = ('ZIP', 'BAK', 'LOG', 'HTM','HTML', 'OSIS', 'USX', 'TXT', 'STY', 'LDS', 'SSF', 'VRS',) # Must be UPPERCASE
+
+
+
+def ZefaniaXMLBibleFileCheck( givenFolderName, autoLoad=False ):
+    """
+    Given a folder, search for Zefania XML Bible files or folders in the folder and in the next level down.
+
+    Returns False if an error is found.
+
+    if autoLoad is false (default)
+        returns None, or the number found.
+
+    if autoLoad is true and exactly one Zefania Bible is found,
+        returns the loaded ZefaniaXMLBible object.
+    """
+    if Globals.verbosityLevel > 2: print( "ZefaniaXMLBibleFileCheck( {}, {} )".format( givenFolderName, autoLoad ) )
+    if Globals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
+    if Globals.debugFlag: assert( autoLoad in (True,False,) )
+
+    # Check that the given folder is readable
+    if not os.access( givenFolderName, os.R_OK ):
+        logging.critical( _("ZefaniaXMLBibleFileCheck: Given '{}' folder is unreadable").format( givenFolderName ) )
+        return False
+    if not os.path.isdir( givenFolderName ):
+        logging.critical( _("ZefaniaXMLBibleFileCheck: Given '{}' path is not a folder").format( givenFolderName ) )
+        return False
+
+    # Find all the files and folders in this folder
+    if Globals.verbosityLevel > 3: print( " ZefaniaXMLBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    foundFolders, foundFiles = [], []
+    for something in os.listdir( givenFolderName ):
+        somepath = os.path.join( givenFolderName, something )
+        if os.path.isdir( somepath ): foundFolders.append( something )
+        elif os.path.isfile( somepath ):
+            somethingUpper = something.upper()
+            somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
+            ignore = False
+            for ending in filenameEndingsToIgnore:
+                if somethingUpper.endswith( ending): ignore=True; break
+            if ignore: continue
+            if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+                foundFiles.append( something )
+    if '__MACOSX' in foundFolders:
+        foundFolders.remove( foundFolders )  # don't visit these directories
+    #print( 'ff', foundFiles )
+
+    # See if there's an OpenSong project here in this folder
+    numFound = 0
+    looksHopeful = False
+    lastFilenameFound = None
+    for thisFilename in sorted( foundFiles ):
+        if 1 or Globals.strictCheckingFlag:
+            firstLines = Globals.peekIntoFile( thisFilename, givenFolderName, numLines=2 )
+            if not firstLines or len(firstLines)<2: continue
+            if not firstLines[0].startswith( '<?xml version="1.0"' ) \
+            and not firstLines[0].startswith( '\ufeff<?xml version="1.0"' ): # same but with BOM
+                if Globals.verbosityLevel > 2: print( "ZB (unexpected) first line was '{}' in {}".format( firstLines, thisFilename ) )
+                continue
+            if not firstLines[1].startswith( '<!--Nice Viewer' ) \
+            and not firstLines[1].startswith( '<!--Builded with' ) \
+            and not firstLines[1].startswith( '<!--For Programmers' ) \
+            and not firstLines[1].startswith( '<!--http://zefania' ):
+                continue
+        lastFilenameFound = thisFilename
+        numFound += 1
+    if numFound:
+        if numFound == 1 and autoLoad:
+            #print( "got", givenFolderName, lastFilenameFound )
+            ub = ZefaniaXMLBible( givenFolderName, lastFilenameFound )
+            ub.load() # Load and process the file
+            return ub
+        return numFound
+    elif looksHopeful and Globals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
+
+    # Look one level down
+    numFound = 0
+    foundProjects = []
+    for thisFolderName in sorted( foundFolders ):
+        tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
+        if Globals.verbosityLevel > 3: print( "    ZefaniaXMLBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        foundSubfolders, foundSubfiles = [], []
+        for something in os.listdir( tryFolderName ):
+            somepath = os.path.join( givenFolderName, thisFolderName, something )
+            if os.path.isdir( somepath ): foundSubfolders.append( something )
+            elif os.path.isfile( somepath ):
+                somethingUpper = something.upper()
+                somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
+                ignore = False
+                for ending in filenameEndingsToIgnore:
+                    if somethingUpper.endswith( ending): ignore=True; break
+                if ignore: continue
+                if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+                    foundSubfiles.append( something )
+        #print( 'fsf', foundSubfiles )
+
+        # See if there's an OS project here in this folder
+        for thisFilename in sorted( foundSubfiles ):
+            if Globals.strictCheckingFlag:
+                firstLines = Globals.peekIntoFile( thisFilename, tryFolderName, numLines=2 )
+                if not firstLines or len(firstLines)<2: continue
+                if not firstLines[0].startswith( '<?xml version="1.0"' ) \
+                and not firstLines[0].startswith( '\ufeff<?xml version="1.0"' ): # same but with BOM
+                    if Globals.verbosityLevel > 2: print( "ZB (unexpected) first line was '{}' in {}".format( firstLines, thisFilename ) )
+                    continue
+                if not firstLines[1].startswith( '<!--Nice Viewer' ) \
+                and not firstLines[1].startswith( '<!--Builded with' ) \
+                and not firstLines[1].startswith( '<!--For Programmers' ) \
+                and not firstLines[1].startswith( '<!--http://zefania' ):
+                    continue
+            foundProjects.append( (tryFolderName, thisFilename,) )
+            lastFilenameFound = thisFilename
+            numFound += 1
+    if numFound:
+        if numFound == 1 and autoLoad:
+            if Globals.debugFlag: assert( len(foundProjects) == 1 )
+            print( "fP", foundProjects )
+            ub = ZefaniaXMLBible( foundProjects[0][0], foundProjects[0][1] ) # Folder and filename
+            ub.load() # Load and process the file
+            return ub
+        return numFound
+# end of ZefaniaXMLBibleFileCheck
+
 
 
 class ZefaniaXMLBible( Bible ):
@@ -90,7 +216,7 @@ class ZefaniaXMLBible( Bible ):
     breakTag = 'BR'
 
 
-    def __init__( self, sourceFilepath, givenName=None, encoding='utf-8' ):
+    def __init__( self, sourceFolder, givenName, encoding='utf-8' ):
         """
         Constructor: just sets up the Zefania Bible object.
         """
@@ -100,7 +226,8 @@ class ZefaniaXMLBible( Bible ):
         self.objectTypeString = "Zefania"
 
         # Now we can set our object variables
-        self.sourceFilepath, self.givenName, self.encoding = sourceFilepath, givenName, encoding
+        self.sourceFolder, self.givenName, self.encoding = sourceFolder, givenName, encoding
+        self.sourceFilepath =  os.path.join( self.sourceFolder, self.givenName )
 
         self.tree = self.header = None # Will hold the XML data
 
@@ -533,29 +660,38 @@ def demo():
     nonEnglish = ( "italian.xml", )
     bad = (  )
 
-    for testFilename in good: # Choose one of the above lists for testing
-        testFilepath = os.path.join( testFolder, testFilename )
+    if 1: # demo the file checking code -- first with the whole folder and then with only one folder
+        print( "TestA1", ZefaniaXMLBibleFileCheck( testFolder ) )
+        print( "TestA2", ZefaniaXMLBibleFileCheck( testFolder, autoLoad=True ) )
+        #testSubfolder = os.path.join( testFolder, 'something/' )
+        #print( "TestB1", ZefaniaXMLBibleFileCheck( testSubfolder ) )
+        #print( "TestB2", ZefaniaXMLBibleFileCheck( testSubfolder, autoLoad=True ) )
 
-        # Demonstrate the XML Bible class
-        if Globals.verbosityLevel > 1: print( "\nDemonstrating the Zefania Bible class..." )
-        if Globals.verbosityLevel > 0: print( "  Test filepath is '{}'".format( testFilepath ) )
-        zb = ZefaniaXMLBible( testFilepath )
-        zb.load() # Load and process the XML
-        print( zb ) # Just print a summary
-        #print( zb.books['JDE']._processedLines )
-        if 1: # Test verse lookup
-            import VerseReferences
-            for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
-                                ('OT','DAN','1','21'),
-                                ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \
-                                ('DC','BAR','1','1'), ('DC','MA1','1','1'), ('DC','MA2','1','1',), ):
-                (t, b, c, v) = reference
-                if t=='OT' and len(zb)==27: continue # Don't bother with OT references if it's only a NT
-                if t=='NT' and len(zb)==39: continue # Don't bother with NT references if it's only a OT
-                if t=='DC' and len(zb)<=66: continue # Don't bother with DC references if it's too small
-                svk = VerseReferences.SimpleVerseKey( b, c, v )
-                #print( svk, ob.getVerseDataList( reference ) )
-                print( reference, svk.getShortText(), zb.getVerseText( svk ) )
+
+    if 1:
+        for testFilename in good: # Choose one of the above lists for testing
+            testFilepath = os.path.join( testFolder, testFilename )
+
+            # Demonstrate the XML Bible class
+            if Globals.verbosityLevel > 1: print( "\nDemonstrating the Zefania Bible class..." )
+            if Globals.verbosityLevel > 0: print( "  Test filepath is '{}'".format( testFilepath ) )
+            zb = ZefaniaXMLBible( testFolder, testFilename )
+            zb.load() # Load and process the XML
+            print( zb ) # Just print a summary
+            #print( zb.books['JDE']._processedLines )
+            if 1: # Test verse lookup
+                import VerseReferences
+                for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
+                                    ('OT','DAN','1','21'),
+                                    ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \
+                                    ('DC','BAR','1','1'), ('DC','MA1','1','1'), ('DC','MA2','1','1',), ):
+                    (t, b, c, v) = reference
+                    if t=='OT' and len(zb)==27: continue # Don't bother with OT references if it's only a NT
+                    if t=='NT' and len(zb)==39: continue # Don't bother with NT references if it's only a OT
+                    if t=='DC' and len(zb)<=66: continue # Don't bother with DC references if it's too small
+                    svk = VerseReferences.SimpleVerseKey( b, c, v )
+                    #print( svk, ob.getVerseDataList( reference ) )
+                    print( reference, svk.getShortText(), zb.getVerseText( svk ) )
 # end of demo
 
 if __name__ == '__main__':

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # OpenSongXMLBible.py
-#   Last modified: 2013-04-21 by RJH (also update versionString below)
+#   Last modified: 2013-04-24 by RJH (also update versionString below)
 #
 # Module handling OpenSong XML Bibles
 #
@@ -46,17 +46,21 @@ from BibleOrganizationalSystems import BibleOrganizationalSystem
 from Bible import Bible, BibleBook
 
 
+filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
+extensionsToIgnore = ('ZIP', 'BAK', 'LOG', 'HTM','HTML', 'OSIS', 'USX', 'TXT', 'STY', 'LDS', 'SSF', 'VRS',) # Must be UPPERCASE
+
+
 
 def OpenSongXMLBibleFileCheck( givenFolderName, autoLoad=False ):
     """
-    Given a folder, search for Unbound Bible files or folders in the folder and in the next level down.
+    Given a folder, search for OpenSong XML Bible files or folders in the folder and in the next level down.
 
     Returns False if an error is found.
 
     if autoLoad is false (default)
         returns None, or the number found.
 
-    if autoLoad is true and exactly one Unbound Bible is found,
+    if autoLoad is true and exactly one OpenSong Bible is found,
         returns the loaded OpenSongXMLBible object.
     """
     if Globals.verbosityLevel > 2: print( "OpenSongXMLBibleFileCheck( {}, {} )".format( givenFolderName, autoLoad ) )
@@ -67,6 +71,9 @@ def OpenSongXMLBibleFileCheck( givenFolderName, autoLoad=False ):
     if not os.access( givenFolderName, os.R_OK ):
         logging.critical( _("OpenSongXMLBibleFileCheck: Given '{}' folder is unreadable").format( givenFolderName ) )
         return False
+    if not os.path.isdir( givenFolderName ):
+        logging.critical( _("OpenSongXMLBibleFileCheck: Given '{}' path is not a folder").format( givenFolderName ) )
+        return False
 
     # Find all the files and folders in this folder
     if Globals.verbosityLevel > 3: print( " OpenSongXMLBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
@@ -74,9 +81,18 @@ def OpenSongXMLBibleFileCheck( givenFolderName, autoLoad=False ):
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
         if os.path.isdir( somepath ): foundFolders.append( something )
-        elif os.path.isfile( somepath ): foundFiles.append( something )
+        elif os.path.isfile( somepath ):
+            somethingUpper = something.upper()
+            somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
+            ignore = False
+            for ending in filenameEndingsToIgnore:
+                if somethingUpper.endswith( ending): ignore=True; break
+            if ignore: continue
+            if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+                foundFiles.append( something )
     if '__MACOSX' in foundFolders:
         foundFolders.remove( foundFolders )  # don't visit these directories
+    #print( 'ff', foundFiles )
 
     # See if there's an OpenSong project here in this folder
     numFound = 0
@@ -86,8 +102,9 @@ def OpenSongXMLBibleFileCheck( givenFolderName, autoLoad=False ):
         if 1 or Globals.strictCheckingFlag:
             firstLines = Globals.peekIntoFile( thisFilename, givenFolderName, numLines=2 )
             if not firstLines or len(firstLines)<2: continue
-            if not firstLines[0].startswith( '<?xml version="1.0"' ):
-                if Globals.verbosityLevel > 2: print( "OSB (unexpected) first line was '{}' in {}".format( firstLines, thisFilename ) ); halt
+            if not firstLines[0].startswith( '<?xml version="1.0"' ) \
+            and not firstLines[0].startswith( '\ufeff<?xml version="1.0"' ): # same but with BOM
+                if Globals.verbosityLevel > 2: print( "OSB (unexpected) first line was '{}' in {}".format( firstLines, thisFilename ) )
                 continue
             if not firstLines[1].startswith( '<bible>' ):
                 continue
@@ -95,7 +112,7 @@ def OpenSongXMLBibleFileCheck( givenFolderName, autoLoad=False ):
         numFound += 1
     if numFound:
         if numFound == 1 and autoLoad:
-            print( "got", givenFolderName, lastFilenameFound )
+            #print( "got", givenFolderName, lastFilenameFound )
             ub = OpenSongXMLBible( givenFolderName, lastFilenameFound )
             ub.load() # Load and process the file
             return ub
@@ -112,26 +129,35 @@ def OpenSongXMLBibleFileCheck( givenFolderName, autoLoad=False ):
         for something in os.listdir( tryFolderName ):
             somepath = os.path.join( givenFolderName, thisFolderName, something )
             if os.path.isdir( somepath ): foundSubfolders.append( something )
-            elif os.path.isfile( somepath ): foundSubfiles.append( something )
+            elif os.path.isfile( somepath ):
+                somethingUpper = something.upper()
+                somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
+                ignore = False
+                for ending in filenameEndingsToIgnore:
+                    if somethingUpper.endswith( ending): ignore=True; break
+                if ignore: continue
+                if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+                    foundSubfiles.append( something )
+        #print( 'fsf', foundSubfiles )
 
-        # See if there's an UB project here in this folder
+        # See if there's an OS project here in this folder
         for thisFilename in sorted( foundSubfiles ):
-            if thisFilename.endswith( '_utf8.txt' ):
-                if Globals.strictCheckingFlag:
-                    firstLines = Globals.peekIntoFile( thisFilename, givenFolderName, numLines=2 )
-                    if not firstLines or len(firstLines)<2: continue
-                    if not firstLines[0].startswith( '<?xml version="1.0"' ):
-                        if Globals.verbosityLevel > 2: print( "OSB (unexpected) first line was '{}' in {}".format( firstLines, thisFilename ) ); halt
-                        continue
-                    if not firstLines[1].startswith( '<bible>' ):
-                        continue
-                foundProjects.append( (tryFolderName, thisFilename,) )
-                lastFilenameFound = thisFilename
-                numFound += 1
+            if Globals.strictCheckingFlag:
+                firstLines = Globals.peekIntoFile( thisFilename, tryFolderName, numLines=2 )
+                if not firstLines or len(firstLines)<2: continue
+                if not firstLines[0].startswith( '<?xml version="1.0"' ) \
+                and not firstLines[0].startswith( '\ufeff<?xml version="1.0"' ): # same but with BOM
+                    if Globals.verbosityLevel > 2: print( "OSB (unexpected) first line was '{}' in {}".format( firstLines, thisFilename ) )
+                    continue
+                if not firstLines[1].startswith( '<bible>' ):
+                    continue
+            foundProjects.append( (tryFolderName, thisFilename,) )
+            lastFilenameFound = thisFilename
+            numFound += 1
     if numFound:
         if numFound == 1 and autoLoad:
             if Globals.debugFlag: assert( len(foundProjects) == 1 )
-            print( "fP", foundProjects )
+            #print( "fP", foundProjects )
             ub = OpenSongXMLBible( foundProjects[0][0], foundProjects[0][1] ) # Folder and filename
             ub.load() # Load and process the file
             return ub
@@ -329,16 +355,20 @@ def demo():
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
-        print( "TestA1", OpenSongXMLBibleFileCheck( testFolder ) )
-        print( "TestA2", OpenSongXMLBibleFileCheck( testFolder, autoLoad=True ) )
+        resultA1 = OpenSongXMLBibleFileCheck( testFolder )
+        if Globals.verbosityLevel > 0: print( "TestA1", resultA1 )
+        resultA2 = OpenSongXMLBibleFileCheck( testFolder, autoLoad=True )
+        if Globals.verbosityLevel > 0: print( "TestA2", resultA2 )
         testSubfolder = os.path.join( testFolder, 'nrsv_update/' )
-        print( "TestB1", OpenSongXMLBibleFileCheck( testSubfolder ) )
-        print( "TestB2", OpenSongXMLBibleFileCheck( testSubfolder, autoLoad=True ) )
+        resultB1 = OpenSongXMLBibleFileCheck( testSubfolder )
+        if Globals.verbosityLevel > 0: print( "TestB1", resultB1 )
+        resultB2 = OpenSongXMLBibleFileCheck( testSubfolder, autoLoad=True )
+        if Globals.verbosityLevel > 0: print( "TestB2", resultB2 )
 
 
     if 1:
         for j, testFilename in enumerate( bad ):
-            print( "\n\n{}: {}".format( j+1, testFilename ) )
+            if Globals.verbosityLevel > 0: print( "\n\n{}: {}".format( j+1, testFilename ) )
             testFilepath = os.path.join( testFolder, testFilename )
 
             # Demonstrate the OpenSong XML Bible class
@@ -346,7 +376,7 @@ def demo():
             if Globals.verbosityLevel > 0: print( "  Test filepath is '{}'".format( testFilepath ) )
             xb = OpenSongXMLBible( testFolder, testFilename )
             xb.load() # Load and process the XML
-            print( xb ) # Just print a summary
+            if Globals.verbosityLevel > 0: print( xb ) # Just print a summary
             #print( xb.books['JDE']._processedLines )
             if 1: # Test verse lookup
                 import VerseReferences
@@ -360,7 +390,7 @@ def demo():
                     if t=='DC' and len(xb)<=66: continue # Don't bother with DC references if it's too small
                     svk = VerseReferences.SimpleVerseKey( b, c, v )
                     #print( svk, ob.getVerseDataList( reference ) )
-                    print( reference, svk.getShortText(), xb.getVerseText( svk ) )
+                    if Globals.verbosityLevel > 1: print( reference, svk.getShortText(), xb.getVerseText( svk ) )
             if not xb: halt # if no books
 # end of demo
 

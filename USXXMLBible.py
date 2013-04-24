@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USXXMLBible.py
-#   Last modified: 2013-04-21 by RJH (also update versionString below)
+#   Last modified: 2013-04-23 by RJH (also update versionString below)
 #
 # Module handling compilations of USX Bible books
 #
@@ -61,6 +61,9 @@ def USXXMLBibleFileCheck( givenFolderName, autoLoad=False ):
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
         logging.critical( _("USXXMLBibleFileCheck: Given '{}' folder is unreadable").format( givenFolderName ) )
+        return False
+    if not os.path.isdir( givenFolderName ):
+        logging.critical( _("USXXMLBibleFileCheck: Given '{}' path is not a folder").format( givenFolderName ) )
         return False
 
     # Find all the files and folders in this folder
@@ -161,7 +164,7 @@ class USXXMLBible( InternalBible ):
                 for line in myFile:
                     lineCount += 1
                     if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
-                        print( "      Detected UTF-16 Byte Order Marker" )
+                        if Globals.verbosityLevel > 0: print( "      Detected UTF-16 Byte Order Marker" )
                         line = line[1:] # Remove the Byte Order Marker
                     if line[-1]=='\n': line = line[:-1] # Remove trailing newline character
                     line = line.strip() # Remove leading and trailing whitespace

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Globals.py
-#   Last modified: 2013-04-2 (also update versionString below)
+#   Last modified: 2013-04-23 (also update versionString below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -29,7 +29,7 @@ Module handling global variables
 """
 
 progName = "Globals"
-versionString = "0.13"
+versionString = "0.14"
 
 import logging, os.path
 
@@ -210,19 +210,21 @@ def totalSize( o, handlers={} ):
 
 def checkXMLNoText( element, locationString, idString=None ):
     """ Give a warning if the element text contains anything other than whitespace. """
-    if element.text and element.text.strip(): logging.warning( "{}Unexpected '{}' element text in {}".format( (idString+' ') if idString else '', element.text, locationString ) )
+    if logErrorsFlag and element.text and element.text.strip(): logging.warning( "{}Unexpected '{}' element text in {}".format( (idString+' ') if idString else '', element.text, locationString ) )
 
 def checkXMLNoTail( element, locationString, idString=None ):
     """ Give a warning if the element tail contains anything other than whitespace. """
-    if element.tail and element.tail.strip(): logging.warning( "{}Unexpected '{}' element tail in {}".format( (idString+' ') if idString else '', element.tail, locationString ) )
+    if logErrorsFlag and element.tail and element.tail.strip(): logging.warning( "{}Unexpected '{}' element tail in {}".format( (idString+' ') if idString else '', element.tail, locationString ) )
 
 def checkXMLNoAttributes( element, locationString, idString=None ):
-    for attrib,value in element.items():
-        logging.warning( "{}Unexpected '{}' attribute ({}) in {}".format( (idString+' ') if idString else '', attrib, value, locationString ) )
+    if logErrorsFlag:
+        for attrib,value in element.items():
+            logging.warning( "{}Unexpected '{}' attribute ({}) in {}".format( (idString+' ') if idString else '', attrib, value, locationString ) )
 
 def checkXMLNoSubelements( element, locationString, idString=None ):
-    for subelement in element.getchildren():
-        logging.warning( "{}Unexpected '{}' sub-element ({}) in {}".format( (idString+' ') if idString else '', subelement.tag, subelement.text, locationString ) )
+    if logErrorsFlag:
+        for subelement in element.getchildren():
+            logging.warning( "{}Unexpected '{}' sub-element ({}) in {}".format( (idString+' ') if idString else '', subelement.tag, subelement.text, locationString ) )
 
 
 ##########################################################################################################
@@ -356,6 +358,8 @@ setVerbosityLevel( verbosityString )
 if __name__ != '__main__':
     from BibleBooksCodes import BibleBooksCodes
     BibleBooksCodes = BibleBooksCodes().loadData()
+    from USFMMarkers import USFMMarkers
+    USFMMarkers = USFMMarkers().loadData()
 
 
 

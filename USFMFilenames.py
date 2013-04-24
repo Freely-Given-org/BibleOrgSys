@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMFilenames.py
-#   Last modified: 2013-04-20 by RJH (also update versionString below)
+#   Last modified: 2013-04-23 by RJH (also update versionString below)
 #
 # Module handling USFM Bible filenames
 #
@@ -51,7 +51,7 @@ BibleditFilenames = ( '1_Genesis', '2_Exodus', '3_Leviticus', '4_Numbers', '5_De
     '82_1_Esdras', '83_Prayer_of_Manasses', '84_Psalm_151', '85_3_Maccabees', '86_2_Esdras', '87_4_Maccabees', '88_Daniel_(Greek)' )
 
 filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
-extensionsToIgnore = ('ZIP', 'BAK', 'XML', 'OSIS', 'USX', 'TXT', 'STY', 'LDS', 'SSF', 'VRS',) # Must be UPPERCASE
+extensionsToIgnore = ('ZIP', 'BAK', 'LOG', 'HTM','HTML', 'XML', 'OSIS', 'USX', 'TXT', 'STY', 'LDS', 'SSF', 'VRS',) # Must be UPPERCASE
 
 
 
@@ -231,7 +231,7 @@ class USFMFilenames:
                     if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
                     #print( thisFilename, lineNumber, line )
                     if line.startswith( '\\id ' ):
-                        if len(line)<5: logging.warning( "id line '{}' in {} is too short".format( line, filepath ) )
+                        if len(line)<5 and Globals.logErrorsFlag: logging.warning( "id line '{}' in {} is too short".format( line, filepath ) )
                         idContent = line[4:]
                         tokens = idContent.split()
                         #print( "Have id tokens: {}".format( tokens ) )
@@ -248,7 +248,7 @@ class USFMFilenames:
                         elif UCToken0[:3] in self._USFMBooksCodesUpper: return UCToken0[:3] # perhaps an abbreviated version is valid (but could think Judges is JUD=Jude)
                         else: print( "But '{}' wasn't a valid USFM ID in {}!!!".format( UCToken0, thisFilename ) )
                         break
-                    elif lineNumber == 1:
+                    elif lineNumber == 1 and Globals.logErrorsFlag:
                         if line.startswith ( '\\' ):
                             logging.warning( "First line in {} in {} starts with a backslash but not an id line '{}'".format( thisFilename, folder, line ) )
                         elif not line:

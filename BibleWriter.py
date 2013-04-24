@@ -108,9 +108,7 @@ class BibleWriter( InternalBible ):
         if Globals.verbosityLevel > 1: print( "Running BibleWriter:toUSFM..." )
         if Globals.debugFlag: assert( self.books )
 
-        import USFMMarkers
-        um = USFMMarkers.USFMMarkers().loadData() # Doesn't reload the XML unnecessarily :)
-        allCharMarkers = um.getCharacterMarkersList( expandNumberableMarkers=True )
+        allCharMarkers = Globals.USFMMarkers.getCharacterMarkersList( expandNumberableMarkers=True )
         #print( "aCM", allCharMarkers )
 
         #if outputFolder is None: USFMOutputFolder = os.path.join( "OutputFiles/", "USFM output from OSIS/" )
@@ -143,7 +141,7 @@ class BibleWriter( InternalBible ):
                 if pseudoMarker in ('v','f','fr','x','xo',): # These fields should always end with a space (but the USFM->OSIS processing may have removed them)
                     if Globals.debugFlag: assert( value )
                     if value[-1] != ' ': value += ' ' # Append a space since it didn't have one
-                if pseudoMarker[-1]=='+' or um.isNewlineMarker(pseudoMarker): # Have a continuation field
+                if pseudoMarker[-1]=='+' or Globals.USFMMarkers.isNewlineMarker(pseudoMarker): # Have a continuation field
                     if inField is not None:
                         USFM += '\\{}*'.format( inField ) # Do a close marker for footnotes and cross-references
                         inField = None
@@ -507,7 +505,7 @@ class BibleWriter( InternalBible ):
         if Globals.debugFlag: assert( controlDict and isinstance( controlDict, dict ) )
 
         unhandledMarkers = set()
-        allCharMarkers = self.USFMMarkers.getCharacterMarkersList( expandNumberableMarkers=True )
+        allCharMarkers = Globals.USFMMarkers.getCharacterMarkersList( expandNumberableMarkers=True )
         #print( allCharMarkers ); halt
 
         def writeBook( BBB, bkData ):
@@ -757,7 +755,7 @@ class BibleWriter( InternalBible ):
             xw.writeLineOpen( 'usx' )
             haveOpenPara = paraJustOpened = False
             for marker,originalMarker,text,cleanText,extras in bkData._processedLines: # Process USFM lines
-                markerShouldHaveContent = self.USFMMarkers.markerShouldHaveContent( marker )
+                markerShouldHaveContent = Globals.USFMMarkers.markerShouldHaveContent( marker )
                 #print( BBB, c, v, marker, markerShouldHaveContent, haveOpenPara, paraJustOpened )
                 adjText = handleNotes( text, extras )
                 if marker == 'id':

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USXXMLBibleBook.py
-#   Last modified: 2013-04-21 by RJH (also update versionString below)
+#   Last modified: 2013-04-22 by RJH (also update versionString below)
 #
 # Module handling USX Bible Book xml
 #
@@ -106,7 +106,7 @@ class USXXMLBibleBook( InternalBibleBook ):
                     for attrib,value in element.items():
                         if attrib=='style':
                             charStyle = value # This is basically the USFM character marker name
-                            assert( not self.USFMMarkers.isNewlineMarker( charStyle ) )
+                            assert( not Globals.USFMMarkers.isNewlineMarker( charStyle ) )
                         else:
                             if Globals.logErrorsFlag: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
                     # A character field must be added to the previous field
@@ -230,11 +230,11 @@ class USXXMLBibleBook( InternalBibleBook ):
                 elif element.tag == 'para':
                     Globals.checkXMLNoTail( element, sublocation )
                     USFMMarker = element.attrib['style'] # Get the USFM code for the paragraph style
-                    if self.USFMMarkers.isNewlineMarker( USFMMarker ):
+                    if Globals.USFMMarkers.isNewlineMarker( USFMMarker ):
                         #if lastMarker: self.appendLine( lastMarker, lastText )
                         #lastMarker, lastText = USFMMarker, text
                         loadParagraph( element, sublocation )
-                    elif self.USFMMarkers.isInternalMarker( USFMMarker ): # the line begins with an internal USFM Marker -- append it to the previous line
+                    elif Globals.USFMMarkers.isInternalMarker( USFMMarker ): # the line begins with an internal USFM Marker -- append it to the previous line
                         halt # Not checked yet
                         text = element.text
                         if text:
@@ -256,7 +256,7 @@ class USXXMLBibleBook( InternalBibleBook ):
                             loadErrors.append( _("{} {}:{} Found '\\{}' unknown USFM Marker at beginning of line (with no text").format( self.bookReferenceCode, c, v, USFMMarker ) )
                             if Globals.logErrorsFlag: logging.error( _("Found '\\{}' unknown USFM Marker after {} {}:{} at beginning of line (with no text)").format( USFMMarker, self.bookReferenceCode, c, v ) )
                         self.addPriorityError( 100, c, v, _("Found \\{} unknown USFM Marker on new line in file").format( USFMMarker ) )
-                        for tryMarker in sorted( self.USFMMarkers.getNewlineMarkersList(), key=len, reverse=True ): # Try to do something intelligent here -- it might be just a missing space
+                        for tryMarker in sorted( Globals.USFMMarkers.getNewlineMarkersList(), key=len, reverse=True ): # Try to do something intelligent here -- it might be just a missing space
                             if USFMMarker.startswith( tryMarker ): # Let's try changing it
                                 if lastMarker: self.appendLine( lastMarker, lastText )
                                 lastMarker, lastText = tryMarker, USFMMarker[len(tryMarker):] + ' ' + text

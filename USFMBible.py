@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2013-04-22 by RJH (also update versionString below)
+#   Last modified: 2013-04-23 by RJH (also update versionString below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -61,6 +61,9 @@ def USFMBibleFileCheck( givenFolderName, autoLoad=False ):
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
         logging.critical( _("USFMBibleFileCheck: Given '{}' folder is unreadable").format( givenFolderName ) )
+        return False
+    if not os.path.isdir( givenFolderName ):
+        logging.critical( _("USFMBibleFileCheck: Given '{}' path is not a folder").format( givenFolderName ) )
         return False
 
     # Find all the files and folders in this folder
@@ -182,7 +185,7 @@ class USFMBible( Bible ):
             for line in myFile:
                 lineCount += 1
                 if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
-                    print( "      Detected UTF-16 Byte Order Marker" )
+                    if Globals.verbosityLevel > 0: print( "      Detected UTF-16 Byte Order Marker" )
                     line = line[1:] # Remove the Byte Order Marker
                 if line[-1]=='\n': line = line[:-1] # Remove trailing newline character
                 line = line.strip() # Remove leading and trailing whitespace
@@ -290,7 +293,7 @@ def demo():
             UB.load()
             if Globals.verbosityLevel > 0: print( UB )
             if Globals.strictCheckingFlag: UB.check()
-            if Globals.debugFlag: print( UB.books['GEN']._processedLines[0:40] )
+            #print( UB.books['GEN']._processedLines[0:40] )
             #UBErrors = UB.getErrors()
             # print( UBErrors )
             #print( UB.getVersification () )
@@ -309,7 +312,7 @@ def demo():
                 for line in myFile:
                     lineCount += 1
                     if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
-                        #print( "      Detected UTF-16 Byte Order Marker in copyright.htm file" )
+                        #if Globals.verbosityLevel > 0: print( "      Detected UTF-16 Byte Order Marker in copyright.htm file" )
                         line = line[1:] # Remove the UTF-8 Byte Order Marker
                     if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines
@@ -429,7 +432,7 @@ def demo():
         else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
 
 
-    if 1: # Test a single folder containing the error project USFM Bible
+    if 0: # Test a single folder containing the error project USFM Bible
         name, encoding, testFolder = "UEP", "utf-8", "Tests/DataFilesForTests/USFMErrorProject/" # You can put your test folder here
         if os.access( testFolder, os.R_OK ):
             UB = USFMBible( testFolder, name, encoding )
@@ -438,7 +441,7 @@ def demo():
             UB.check()
             #print( UB.books['GEN']._processedLines[0:40] )
             UBErrors = UB.getErrors()
-            print( UBErrors )
+            #print( UBErrors )
         else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 
 
@@ -452,7 +455,7 @@ def demo():
                 for line in myFile:
                     lineCount += 1
                     if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
-                        #print( "      Detected UTF-16 Byte Order Marker in copyright.htm file" )
+                        #if Globals.verbosityLevel > 0: print( "      Detected UTF-16 Byte Order Marker in copyright.htm file" )
                         line = line[1:] # Remove the UTF-8 Byte Order Marker
                     if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-04-22 by RJH (also update versionString below)
+#   Last modified: 2013-04-24 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 progName = "Internal Bible book handler"
-versionString = "0.21"
+versionString = "0.22"
 
 
 import os, logging
@@ -46,7 +46,6 @@ from gettext import gettext as _
 from collections import OrderedDict
 
 import Globals
-from USFMMarkers import USFMMarkers
 from BibleReferences import BibleAnchorReference
 
 
@@ -56,6 +55,65 @@ medialWordPunctChars = '-'
 dashes = '—–' # em-dash and en-dash
 trailingWordPunctChars = """,.”»"’›'?)!;:]}>"""
 allWordPunctChars = leadingWordPunctChars + medialWordPunctChars + dashes + trailingWordPunctChars
+
+
+NON_USFM_MARKERS = ( 'c~', 'c#', 'v-', 'v+', 'v~', )
+
+class InternalBibleEntry:
+    """
+    This class represents an entry in the _processedLines list.
+    """
+
+    def __init__( self, marker, originalMarker, text, cleanText, extras ):
+        """
+        Accept the parameters and double-check them if requested.
+        """
+        if Globals.debugFlag or Globals.strictCheckingFlag:
+            #print( "InternalBibleEntry.__init__( {}, {}, {}, {}, {} )".format( marker, originalMarker, text[:5], cleanText[:5], extras ) )
+            assert( marker and isinstance( marker, str ) ) # Mustn't be blank
+            assert( originalMarker and isinstance( originalMarker, str ) ) # Mustn't be blank
+            assert( isinstance( text, str ) )
+            assert( isinstance( cleanText, str ) )
+            assert( isinstance( extras, list ) )
+            if extras:
+                #print( "extras:", extras )
+                for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
+                    assert( isinstance( extraType, str ) and extraType in ('fn','xr','sr','sn',) )
+                    assert( isinstance( extraIndex, int ) and extraIndex >= 0 )
+                    assert( isinstance( extraText, str ) and extraText ) # Mustn't be blank
+                    assert( isinstance( cleanExtraText, str ) and cleanExtraText ) # Shouldn't be blank
+                    assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
+                    assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
+
+            #assert( marker in Globals.USFMMarkers or marker in NON_USFM_MARKERS ) # Doesn't work for OSIS bible yet
+
+        self.marker, self.originalMarker, self.text, self.cleanText, self.extras = marker, originalMarker, text, cleanText, extras
+    # end of InternalBibleEntry.__init__
+
+
+    def __eq__( self, other ):
+        if type( other ) is type( self ): return self.__dict__ == other.__dict__
+        return False
+    def __ne__(self, other): return not self.__eq__(other)
+
+
+    def __str__( self ):
+        cleanAbbreviation = self.cleanText if len(self.cleanText)<60 else (self.cleanText[:30]+'...'+self.cleanText[-30:])
+        return "InternalBibleEntry object: {}={}".format( marker, repr(cleanAbbreviation) )
+    # end of InternalBibleEntry.__str__
+
+
+    def __len__( self ): return 5
+    def __getitem__( self, keyIndex ):
+        if keyIndex==0: return self.marker
+        elif keyIndex==1: return self.originalMarker
+        elif keyIndex==2: return self.text
+        elif keyIndex==3: return self.cleanText
+        elif keyIndex==4: return self.extras
+        else: raise IndexError
+    # end of InternalBibleEntry.__getitem__
+# end of class InternalBibleEntry
+
 
 
 class InternalBibleBook:
@@ -83,10 +141,8 @@ class InternalBibleBook:
         self.checkAddedUnitsFlag = False
         self.checkUSFMSequencesFlag = False
         self.replaceAngleBracketsFlag, self.replaceStraightDoubleQuotesFlag = True, False
-
-        # Set up filled containers for the object
-        self.USFMMarkers = USFMMarkers().loadData() # TODO: Why is this in here? -- Should only be in USFM module!
     # end of InternalBibleBook.__init__
+
 
     def __str__( self ):
         """
@@ -488,9 +544,9 @@ class InternalBibleBook:
             if self.objectTypeString == ('USFM','USX',):
                 cleanText = adjText.replace( '&amp;', '&' ).replace( '&#39;', "'" ).replace( '&lt;', '<' ).replace( '&gt;', '>' ).replace( '&quot;', '"' ) # Undo any replacements above
                 if '\\' in cleanText: # we will first remove known USFM character formatting markers
-                    for possibleCharacterMarker in self.USFMMarkers.getCharacterMarkersList():
+                    for possibleCharacterMarker in Globals.USFMMarkers.getCharacterMarkersList():
                         tryMarkers = []
-                        if self.USFMMarkers.isNumberableMarker( possibleCharacterMarker ):
+                        if Globals.USFMMarkers.isNumberableMarker( possibleCharacterMarker ):
                             for d in ('1','2','3','4','5'):
                                 tryMarkers.append( '\\'+possibleCharacterMarker+d+' ' )
                         tryMarkers.append( '\\'+possibleCharacterMarker+' ' )
@@ -499,7 +555,7 @@ class InternalBibleBook:
                                 #print( "Removing '{}' from '{}'".format( tryMarker, cleanText ) )
                                 cleanText = cleanText.replace( tryMarker, '', 1 ) # Remove it
                                 tryCloseMarker = '\\'+possibleCharacterMarker+'*'
-                                shouldBeClosed = self.USFMMarkers.markerShouldBeClosed( possibleCharacterMarker )
+                                shouldBeClosed = Globals.USFMMarkers.markerShouldBeClosed( possibleCharacterMarker )
                                 if shouldBeClosed == 'A' \
                                 or shouldBeClosed == 'S' and tryCloseMarker in cleanText:
                                     #print( "Removing '{}' from '{}'".format( tryCloseMarker, cleanText ) )
@@ -566,15 +622,15 @@ class InternalBibleBook:
 
             # Convert USFM markers like s to standard markers like s1
             try:
-                adjustedMarker = originalMarker if originalMarker=='v~' else self.USFMMarkers.toStandardMarker( originalMarker )
+                adjustedMarker = originalMarker if originalMarker=='v~' else Globals.USFMMarkers.toStandardMarker( originalMarker )
             except KeyError: # unknown marker
-                if self.objectTypeString == "OSIS": print( "processLine: OSIS originalMarker =", originalMarker )
-                else: print( "processLine: originalMarker =", originalMarker )
+                if Globals.logErrorsFlag:
+                    logging.error( "processLine-check: unknown {} originalMarker = {}".format( self.objectTypeString, originalMarker ) )
                 adjustedMarker = originalMarker # temp....................
 
             # Keep track of where we are
             if originalMarker=='c' and text:
-                if haveWaitingC: print( "Note: Two c markers with no intervening v markers at {} {}:{}".format( self.bookReferenceCode, c, v ) )
+                if haveWaitingC and Globals.logErrorsFlag: logging.warning( "Note: Two c markers with no intervening v markers at {} {}:{}".format( self.bookReferenceCode, c, v ) )
                 #c = text.split()[0]; v = '0'
                 cBits = text.split( None, 1 )
                 c, v = cBits[0], '0'
@@ -584,7 +640,7 @@ class InternalBibleBook:
                     if Globals.logErrorsFlag: logging.error( _("Extra '{}' material in chapter marker {} {}:{}").format( cBits[1], self.bookReferenceCode, c, v ) )
                     self.addPriorityError( 98, c, v, _("Extra '{}' material after chapter marker").format( cBits[1] ) )
                     #print( "Something on c line", "'"+text+"'", "'"+cBits[1]+"'" )
-                    self._processedLines.append( (adjustedMarker, originalMarker, c, c, [],) ) # Write the chapter number as a separate line
+                    self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, c, c, []) ) # Write the chapter number as a separate line
                     adjustedMarker, text = 'c~', cBits[1]
             elif originalMarker=='v' and text:
                 v = text.split()[0] # Get the actual verse number
@@ -601,18 +657,18 @@ class InternalBibleBook:
                     lastAdjustedMarker, lastOriginalMarker, lastAdjustedText, lastCleanText, lastExtras = self._processedLines.pop()
                     print( self.bookReferenceCode, "lastMarker (popped) was", lastAdjustedMarker, lastAdjustedText )
                     if lastAdjustedMarker in ('p','q1','m',): # The chapter marker should go before this
-                        self._processedLines.append( ('c', 'c', '1', '1', [],) ) # Write the explicit chapter number
-                        self._processedLines.append( (lastAdjustedMarker, lastOriginalMarker, lastAdjustedText, lastCleanText, lastExtras,) )
+                        self._processedLines.append( InternalBibleEntry('c', 'c', '1', '1', []) ) # Write the explicit chapter number
+                        self._processedLines.append( InternalBibleEntry(lastAdjustedMarker, lastOriginalMarker, lastAdjustedText, lastCleanText, lastExtras) )
                     else: # Assume that the last marker was part of the introduction, so write it first
                         if lastAdjustedMarker not in ( 'ip', ):
                             print( "assumed",lastAdjustedMarker,"was part of intro after", marker );
                             #if v!='13': halt # Just double-checking this code (except for one weird book that starts at v13)
-                        self._processedLines.append( (lastAdjustedMarker, lastOriginalMarker, lastAdjustedText, lastCleanText, lastExtras,) )
-                        self._processedLines.append( ('c', 'c', '1', '1', [],) ) # Write the explicit chapter number
+                        self._processedLines.append( InternalBibleEntry(lastAdjustedMarker, lastOriginalMarker, lastAdjustedText, lastCleanText, lastExtras) )
+                        self._processedLines.append( InternalBibleEntry('c', 'c', '1', '1', []) ) # Write the explicit chapter number
                     #print( self._processedLines ); halt
 
                 if haveWaitingC: # Add a false chapter number at the place where we normally want it printed
-                    self._processedLines.append( ('c#', 'c', haveWaitingC, haveWaitingC, [],) ) # Write the additional chapter number
+                    self._processedLines.append( InternalBibleEntry('c#', 'c', haveWaitingC, haveWaitingC, []) ) # Write the additional chapter number
                     haveWaitingC = False
 
                 # Convert v markers to milestones only
@@ -638,7 +694,7 @@ class InternalBibleBook:
                         assert( verseNumberBit )
                         assert( ' ' not in verseNumberBit )
                         assert( '\\' not in verseNumberBit )
-                    self._processedLines.append( (adjustedMarker, originalMarker, verseNumberBit, verseNumberBit, [],) ) # Write the verse number (or range) as a separate line
+                    self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, verseNumberBit, verseNumberBit, []) ) # Write the verse number (or range) as a separate line
                     adjustedMarker, text = 'v~', ''
                 else:
                     verseNumberBit, verseNumberRest = text[:ix], text[ix:]
@@ -646,24 +702,24 @@ class InternalBibleBook:
                     if Globals.debugFlag:
                         assert( verseNumberBit and verseNumberRest )
                         assert( '\\' not in verseNumberBit )
-                    self._processedLines.append( (adjustedMarker, originalMarker, verseNumberBit, verseNumberBit, [],) ) # Write the verse number (or range) as a separate line
+                    self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, verseNumberBit, verseNumberBit, []) ) # Write the verse number (or range) as a separate line
                     adjustedMarker, text = 'v~', verseNumberRest.lstrip()
 
             if text: # check markers inside the lines and separate them if they're paragraph markers
                 if self.objectTypeString == 'USFM':
-                    markerList = self.USFMMarkers.getMarkerListFromText( text )
+                    markerList = Globals.USFMMarkers.getMarkerListFromText( text )
                     ix = 0
                     for insideMarker, nextSignificantChar, iMIndex in markerList: # check paragraph markers
-                        if self.USFMMarkers.isNewlineMarker(insideMarker): # Need to split the line for everything else to work properly
+                        if Globals.USFMMarkers.isNewlineMarker(insideMarker): # Need to split the line for everything else to work properly
                             if ix==0:
                                 fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Marker '{}' shouldn't appear within line in \\{}: '{}'").format( insideMarker, originalMarker, text ) )
                                 if Globals.logErrorsFlag: logging.error( _("Marker '{}' shouldn't appear within line after {} {}:{} in \\{}: '{}'").format( insideMarker, self.bookReferenceCode, c, v, originalMarker, text ) ) # Only log the first error in the line
                                 self.addPriorityError( 96, c, v, _("Marker \\{} shouldn't be inside a line").format( insideMarker ) )
                             thisText = text[ix:iMIndex].rstrip()
                             adjText, cleanText, extras = processLineFix( originalMarker, thisText )
-                            self._processedLines.append( (adjustedMarker, originalMarker, adjText, cleanText, extras,) )
+                            self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, adjText, cleanText, extras) )
                             ix = iMIndex + 1 + len(insideMarker) + len(nextSignificantChar) # Get the start of the next text -- the 1 is for the backslash
-                            adjMarker = self.USFMMarkers.toStandardMarker( insideMarker ) # setup for the next line
+                            adjMarker = Globals.USFMMarkers.toStandardMarker( insideMarker ) # setup for the next line
                     if ix != 0: # We must have separated multiple lines
                         text = text[ix:]
                 elif self.objectTypeString == 'SwordBibleModule':
@@ -680,10 +736,10 @@ class InternalBibleBook:
                                 adjText, cleanText, extras = processLineFix( originalMarker, beforeText )
                                 lastAM, lastOM, lastAT, lastCT, lastX = self._processedLines.pop() # Get the previous line
                                 if adjText or lastAM != 'v': # Just return it again
-                                    self._processedLines.append( (lastAM, lastOM, lastAT, lastCT, lastX) )
-                                self._processedLines.append( ('p', originalMarker, adjText, cleanText, extras,) )
+                                    self._processedLines.append( InternalBibleEntry(lastAM, lastOM, lastAT, lastCT, lastX) )
+                                self._processedLines.append( InternalBibleEntry('p', originalMarker, adjText, cleanText, extras) )
                                 if lastAM == 'v' and not adjText: # Put the empty paragraph marker BEFORE verse number marker
-                                    self._processedLines.append( (lastAM, lastOM, lastAT, lastCT, lastX) ) # Return it
+                                    self._processedLines.append( InternalBibleEntry(lastAM, lastOM, lastAT, lastCT, lastX) ) # Return it
                                 text = afterText
                                 ixLT = -1
                         ixLT = text.find( '<', ixLT+1 )
@@ -704,14 +760,14 @@ class InternalBibleBook:
                             ixFinal = afterText.index( '>', ixEnd+30 )
                             preverseText = afterText[:ixEnd].strip()
                             if preverseText.startswith( '<div sID="' ) and preverseText.endswith( '" type="paragraph"/>' ):
-                                self._processedLines.append( ('p', originalMarker, '', '', [],) )
+                                self._processedLines.append( InternalBibleEntry('p', originalMarker, '', '', []) )
                             else: print( "preverse", "'"+preverseText+"'" )
                             text = beforeText + afterText[ixFinal+1:]
                         elif thisField.startswith( '<div sID="' ) and thisField.endswith( '" type="paragraph"/>' ):
-                            self._processedLines.append( ('p', originalMarker, '', '', [],) )
+                            self._processedLines.append( InternalBibleEntry('p', originalMarker, '', '', []) )
                             text = beforeText + afterText
                         #elif thisField.startswith( '<div eID="' ) and thisField.endswith( '" type="paragraph"/>' ):
-                            #self._processedLines.append( ('m', originalMarker, '', '', [],) )
+                            #self._processedLines.append( InternalBibleEntry('m', originalMarker, '', '', []) )
                             #text = beforeText + afterText
                         elif thisField == '<note>':
                             ixEND = afterText.index( '</note>' )
@@ -725,10 +781,10 @@ class InternalBibleBook:
                             if Globals.debugFlag:
                                 assert( thisField[11] == '"' )
                                 assert( levelDigit.isdigit() )
-                            self._processedLines.append( ('q'+levelDigit, originalMarker, '', '', [],) )
+                            self._processedLines.append( InternalBibleEntry('q'+levelDigit, originalMarker, '', '', []) )
                             text = beforeText + afterText
                         elif thisField.startswith( '<lg sID="' ) and thisField.endswith( '"/>' ):
-                            self._processedLines.append( ('qx', originalMarker, '', '', [],) )
+                            self._processedLines.append( InternalBibleEntry('qx', originalMarker, '', '', []) )
                             text = beforeText + afterText
                         elif thisField.startswith( '<chapter osisID="' ) and thisField.endswith( '"/>' ):
                             if 0: # Don't actually need this stuff
@@ -740,7 +796,7 @@ class InternalBibleBook:
                                 #assert( ixDOT != -1 )
                                 chapterDigits = osisID[ixDOT+1:]
                                 #print( "chapter", chapterDigits )
-                                self._processedLines.append( ('c~', originalMarker, chapterDigits, chapterDigits, [],) )
+                                self._processedLines.append( InternalBibleEntry('c~', originalMarker, chapterDigits, chapterDigits, []) )
                             text = beforeText + afterText
                         elif ( thisField.startswith( '<chapter eID="' ) or thisField.startswith( '<l eID="' ) or thisField.startswith( '<lg eID="' ) or thisField.startswith( '<div eID="' ) ) \
                         and thisField.endswith( '"/>' ):
@@ -755,7 +811,7 @@ class InternalBibleBook:
 
             # From here on, we use adjText (not text)
             #print( "marker '{}' text '{}', adjText '{}'".format( adjustedMarker, text, adjText ) )
-            if not adjText and not extras and ( self.USFMMarkers.markerShouldHaveContent(adjustedMarker)=='A' or adjustedMarker in ('v~','c~','c#',) ): # should always have text
+            if not adjText and not extras and ( Globals.USFMMarkers.markerShouldHaveContent(adjustedMarker)=='A' or adjustedMarker in ('v~','c~','c#',) ): # should always have text
                 #print( "processLine: marker should always have text (ignoring it):", self.bookReferenceCode, c, v, originalMarker, adjustedMarker, " originally '"+text+"'" )
                 fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Marker '{}' should always have text").format( originalMarker ) )
                 if Globals.logErrorsFlag: logging.error( _("Marker '{}' at {} {}:{} should always have text").format( originalMarker, self.bookReferenceCode, c, v ) )
@@ -763,14 +819,14 @@ class InternalBibleBook:
                 # Don't bother even saving the marker since it's useless
             else:
                 #if c=='5' and v=='29': print( "processLine: {} '{}' to {} aT='{}' cT='{}' {}".format( originalMarker, text, adjustedMarker, adjText, cleanText, extras ) );halt
-                self._processedLines.append( (adjustedMarker, originalMarker, adjText, cleanText, extras,) )
+                self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, adjText, cleanText, extras) )
         # end of InternalBibleBook.processLines.processLine
 
 
         #if self._processedFlag: return # Can only do it once
         if Globals.debugFlag: assert( not self._processedFlag ) # Can only do it once
         if Globals.verbosityLevel > 2: print( "  " + _("Processing {} ({}) {} lines...").format( self.objectNameString, self.objectTypeString, self.bookReferenceCode ) )
-        internalSFMsToRemove = self.USFMMarkers.getCharacterMarkersList( includeBackslash=True, includeEndMarkers=True )
+        internalSFMsToRemove = Globals.USFMMarkers.getCharacterMarkersList( includeBackslash=True, includeEndMarkers=True )
         internalSFMsToRemove = sorted( internalSFMsToRemove, key=len, reverse=True ) # List longest first
         if Globals.debugFlag: assert( self._rawLines )
         fixErrors = []
@@ -789,29 +845,37 @@ class InternalBibleBook:
 
 
     def makeIndex( self ):
-        """ Index the lines for faster reference. """
+        """
+        Index the lines for faster reference.
+
+        The keys to the dictionary are (C,V,) 2-tuples.
+        The dictionary entries are (ix,cnt) 2-tuples where
+            ix is the index into self._processedLines, and
+            cnt is the number of entries.
+        """
         if Globals.debugFlag:
             assert( self._processedFlag )
             assert( not self._indexedFlag )
         if self._indexedFlag: return # Can only do it once
 
         if Globals.verbosityLevel > 2: print( "  " + _("Indexing {} {} text...").format( self.objectNameString, self.bookReferenceCode ) )
-        self.CVIndex = {} # The keys are C,V 2-tuples
+        self._CVIndex = {} # The keys are C,V 2-tuples
         lastJ = 0
+        cnt = -1 # temp
         for j, (adjustedMarker, originalMarker, adjText, cleanText, extras,) in enumerate( self._processedLines):
             #print( "  makeIndex", j, adjustedMarker )
             if adjustedMarker=='c':
                 C = cleanText; V='0'
-                self.CVIndex[(C,V,)] = j
+                self._CVIndex[(C,V,)] = (j,cnt,)
                 lastJ = j
                 #print( "makeIndex", C, V, j )
             elif adjustedMarker=='v':
                 V = cleanText
                 if self._processedLines[lastJ][0]=='v': lastJ += 1 # skip past the last verse number
                 if self._processedLines[lastJ][0]=='v~': lastJ += 1 # skip past the last verse contents
-                self.CVIndex[(C,V,)] = lastJ
+                self._CVIndex[(C,V,)] = (lastJ,cnt,)
                 lastJ = j
-        #if self.bookReferenceCode=='MAL': print( self.CVIndex )
+        #if self.bookReferenceCode=='MAL': print( self._CVIndex )
         self._indexedFlag = True
     # end of InternalBibleBook.makeIndex
 
@@ -848,21 +912,21 @@ class InternalBibleBook:
             if marker=='id' and j!=0:
                 validationErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Marker 'id' should only appear as the first marker in a book but found on line {} in {}: {}").format( j+1, marker, text ) )
                 if Globals.logErrorsFlag: logging.error( _("Marker 'id' should only appear as the first marker in a book but found on line {} after {} {}:{} in {}: {}").format( j+1, self.bookReferenceCode, c, v, marker, text ) )
-            if not self.USFMMarkers.isNewlineMarker( marker ) and marker not in ('c#',):
+            if not Globals.USFMMarkers.isNewlineMarker( marker ) and marker not in ('c#',):
                 validationErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Unexpected '\\{}' newline marker in Bible book (Text is '{}')").format( marker, text ) )
                 if Globals.logErrorsFlag: logging.warning( _("Unexpected '\\{}' newline marker in Bible book after {} {}:{} (Text is '{}')").format( marker, self.bookReferenceCode, c, v, text ) )
-            if self.USFMMarkers.isDeprecatedMarker( marker ):
+            if Globals.USFMMarkers.isDeprecatedMarker( marker ):
                 validationErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Deprecated '\\{}' newline marker in Bible book (Text is '{}')").format( marker, text ) )
                 if Globals.logErrorsFlag: logging.warning( _("Deprecated '\\{}' newline marker in Bible book after {} {}:{} (Text is '{}')").format( marker, self.bookReferenceCode, c, v, text ) )
-            markerList = self.USFMMarkers.getMarkerListFromText( text )
+            markerList = Globals.USFMMarkers.getMarkerListFromText( text )
             #if markerList: print( "\nText = {}:'{}'".format(marker,text)); print( markerList )
             for insideMarker, nextSignificantChar, iMIndex in markerList: # check character markers
-                if self.USFMMarkers.isDeprecatedMarker( insideMarker ):
+                if Globals.USFMMarkers.isDeprecatedMarker( insideMarker ):
                     validationErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Deprecated '\\{}' internal marker in Bible book (Text is '{}')").format( insideMarker, text ) )
                     if Globals.logErrorsFlag: logging.warning( _("Deprecated '\\{}' internal marker in Bible book after {} {}:{} (Text is '{}')").format( insideMarker, self.bookReferenceCode, c, v, text ) )
             ix = 0
             for insideMarker, nextSignificantChar, iMIndex in markerList: # check newline markers
-                if self.USFMMarkers.isNewlineMarker(insideMarker):
+                if Globals.USFMMarkers.isNewlineMarker(insideMarker):
                     validationErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Marker '\\{}' must not appear within line in {}: {}").format( insideMarker, marker, text ) )
                     if Globals.logErrorsFlag: logging.error( _("Marker '\\{}' must not appear within line after {} {}:{} in {}: {}").format( insideMarker, self.bookReferenceCode, c, v, marker, text ) )
 
@@ -878,7 +942,7 @@ class InternalBibleBook:
         if Globals.debugFlag:
             assert( self._processedLines )
             assert( fieldName and isinstance( fieldName, str ) )
-        adjFieldName = self.USFMMarkers.toStandardMarker( fieldName )
+        adjFieldName = Globals.USFMMarkers.toStandardMarker( fieldName )
 
         for marker,originalMarker,text,cleanText,extras in self._processedLines:
             if marker == adjFieldName:
@@ -1411,8 +1475,8 @@ class InternalBibleBook:
 
     def doCheckSFMs( self ):
         """Runs a number of comprehensive checks on the USFM codes in this Bible book."""
-        allAvailableNewlineMarkers = self.USFMMarkers.getNewlineMarkersList()
-        allAvailableCharacterMarkers = self.USFMMarkers.getCharacterMarkersList( includeEndMarkers=True )
+        allAvailableNewlineMarkers = Globals.USFMMarkers.getNewlineMarkersList()
+        allAvailableCharacterMarkers = Globals.USFMMarkers.getCharacterMarkersList( includeEndMarkers=True )
 
         newlineMarkerCounts, internalMarkerCounts, noteMarkerCounts = OrderedDict(), OrderedDict(), OrderedDict()
         #newlineMarkerCounts['Total'], internalMarkerCounts['Total'], noteMarkerCounts['Total'] = 0, 0, 0 # Put these first in the ordered dict
@@ -1454,7 +1518,7 @@ class InternalBibleBook:
                 newlineMarkerCounts[marker] = 1 if marker not in newlineMarkerCounts else (newlineMarkerCounts[marker] + 1)
 
             # Check the progression through the various sections
-            newSection = self.USFMMarkers.markerOccursIn( marker if marker!='v~' else 'v' )
+            newSection = Globals.USFMMarkers.markerOccursIn( marker if marker!='v~' else 'v' )
             if newSection != section: # Check changes into new sections
                 #print( section, marker, newSection )
                 if section=='' and newSection!='Header': newlineMarkerErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Missing Header section (went straight to {} section with {} marker)").format( newSection, marker ) )
@@ -1544,7 +1608,7 @@ class InternalBibleBook:
                             newlineMarkerErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("'{}' with text not normally used following '{}' with text").format( marker, lastMarker ) )
                             #print( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("'{}' with text not normally used following '{}' with text").format( marker, lastMarker ) )
 
-            markerShouldHaveContent = self.USFMMarkers.markerShouldHaveContent( marker )
+            markerShouldHaveContent = Globals.USFMMarkers.markerShouldHaveContent( marker )
             if text:
                 # Check the internal SFMs
                 if '\\' in text:
@@ -1569,13 +1633,13 @@ class InternalBibleBook:
                         internalMarkerCounts[internalMarker] = 1 if internalMarker not in internalMarkerCounts else (internalMarkerCounts[internalMarker] + 1)
                         if internalMarker and internalMarker[-1] == '*':
                             closedMarkerText = internalMarker[:-1]
-                            shouldBeClosed = self.USFMMarkers.markerShouldBeClosed( closedMarkerText )
+                            shouldBeClosed = Globals.USFMMarkers.markerShouldBeClosed( closedMarkerText )
                             if shouldBeClosed == 'N': internalMarkerErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Marker {} cannot be closed").format( closedMarkerText ) )
                             elif hierarchy and hierarchy[-1] == closedMarkerText: hierarchy.pop(); continue # all ok
                             elif closedMarkerText in hierarchy: internalMarkerErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Internal markers appear to overlap: {}").format( internalTextMarkers ) )
                             else: internalMarkerErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Unexpected internal closing marker: {} in {}").format( internalMarker, internalTextMarkers ) )
                         else: # it's not a closing marker
-                            shouldBeClosed = self.USFMMarkers.markerShouldBeClosed( internalMarker )
+                            shouldBeClosed = Globals.USFMMarkers.markerShouldBeClosed( internalMarker )
                             if shouldBeClosed == 'N': continue # N for never
                             else: hierarchy.append( internalMarker ) # but what if it's optional ????????????????????????????????
                     if hierarchy: # it should be empty
@@ -1585,11 +1649,11 @@ class InternalBibleBook:
                     newlineMarkerErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Marker '{}' should not have content: '{}'").format( marker, text ) )
                     if Globals.logErrorsFlag: logging.warning( _("Marker '{}' should not have content after {} {}:{} with: '{}'").format( marker, self.bookReferenceCode, c, v, text ) )
                     self.addPriorityError( 83, c, v, _("Marker {} shouldn't have content").format( marker ) )
-                markerList = self.USFMMarkers.getMarkerListFromText( text )
+                markerList = Globals.USFMMarkers.getMarkerListFromText( text )
                 #if markerList: print( "\nText {} {}:{} = {}:'{}'".format(self.bookReferenceCode, c, v, marker, text)); print( markerList )
                 openList = []
                 for insideMarker, nextSignificantChar, iMIndex in markerList: # check character markers
-                    if not self.USFMMarkers.isInternalMarker( insideMarker ): # these errors have probably been noted already
+                    if not Globals.USFMMarkers.isInternalMarker( insideMarker ): # these errors have probably been noted already
                         internalMarkerErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Non-internal {} marker in {}: {}").format( insideMarker, marker, text ) )
                         if Globals.logErrorsFlag: logging.warning( _("Non-internal {} marker after {} {}:{} in {}: {}").format( insideMarker, self.bookReferenceCode, c, v, marker, text ) )
                         self.addPriorityError( 66, c, v, _("Non-internal {} marker").format( insideMarker, ) )
@@ -1608,10 +1672,10 @@ class InternalBibleBook:
                                     if Globals.logErrorsFlag: logging.warning( _("Wrong {}* closing marker for {} after {} {}:{} in {}: {}").format( insideMarker, openList[-1], self.bookReferenceCode, c, v, marker, text ) )
                                     self.addPriorityError( 66, c, v, _("Wrong {}* closing marker for {}").format( insideMarker, openList[-1] ) )
                             else: # it's not an asterisk so appears to be another marker
-                                if not self.USFMMarkers.isNestingMarker( openList[-1] ): openList.pop() # Let this marker close the last one
+                                if not Globals.USFMMarkers.isNestingMarker( openList[-1] ): openList.pop() # Let this marker close the last one
                                 openList.append( insideMarker ) # Now have multiple entries in the openList
                 if len(openList) == 1: # only one marker left open
-                    closedFlag = self.USFMMarkers.markerShouldBeClosed( openList[0] )
+                    closedFlag = Globals.USFMMarkers.markerShouldBeClosed( openList[0] )
                     if closedFlag != 'A': # always
                         if closedFlag == 'S': # sometimes
                             internalMarkerErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Marker(s) {} don't appear to be (optionally) closed in {}: {}").format( openList, marker, text ) )
@@ -1676,22 +1740,22 @@ class InternalBibleBook:
                             noteMarkerCounts[extraMarker] = 1 if extraMarker not in noteMarkerCounts else (noteMarkerCounts[extraMarker] + 1)
                             if extraMarker and extraMarker[-1] == '*':
                                 closedMarkerText = extraMarker[:-1]
-                                shouldBeClosed = self.USFMMarkers.markerShouldBeClosed( closedMarkerText )
+                                shouldBeClosed = Globals.USFMMarkers.markerShouldBeClosed( closedMarkerText )
                                 #print( "here with", extraType, extraText, thisExtraMarkers, hierarchy, closedMarkerText, shouldBeClosed )
                                 if shouldBeClosed == 'N': noteMarkerErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Marker {} is not closeable").format( closedMarkerText ) )
                                 elif hierarchy and hierarchy[-1] == closedMarkerText: hierarchy.pop(); continue # all ok
                                 elif closedMarkerText in hierarchy: noteMarkerErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Internal {} markers appear to overlap: {}").format( extraName, thisExtraMarkers ) )
                                 else: noteMarkerErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Unexpected {} closing marker: {} in {}").format( extraName, extraMarker, thisExtraMarkers ) )
                             else: # it's not a closing marker -- for extras, it probably automatically closes the previous marker
-                                shouldBeClosed = self.USFMMarkers.markerShouldBeClosed( extraMarker )
+                                shouldBeClosed = Globals.USFMMarkers.markerShouldBeClosed( extraMarker )
                                 if shouldBeClosed == 'N': continue # N for never
                                 elif hierarchy: # Maybe the previous one is automatically closed by this one
                                     previousMarker = hierarchy[-1]
-                                    previousShouldBeClosed = self.USFMMarkers.markerShouldBeClosed( previousMarker )
+                                    previousShouldBeClosed = Globals.USFMMarkers.markerShouldBeClosed( previousMarker )
                                     if previousShouldBeClosed == 'S': # S for sometimes
                                         hierarchy.pop() # That they are not overlapped, but rather that the previous one is automatically closed by this one
                                 hierarchy.append( extraMarker )
-                        if len(hierarchy)==1 and self.USFMMarkers.markerShouldBeClosed(hierarchy[0])=='S': # Maybe the last marker can be automatically closed
+                        if len(hierarchy)==1 and Globals.USFMMarkers.markerShouldBeClosed(hierarchy[0])=='S': # Maybe the last marker can be automatically closed
                             hierarchy.pop()
                         if hierarchy: # it should be empty
                             #print( "here with remaining", extraType, extraText, thisExtraMarkers, hierarchy )
@@ -1699,7 +1763,7 @@ class InternalBibleBook:
                     adjExtraMarkers = thisExtraMarkers
                     for uninterestingMarker in allAvailableCharacterMarkers: # Remove character formatting markers so we can check the footnote/xref hierarchy
                         while uninterestingMarker in adjExtraMarkers: adjExtraMarkers.remove( uninterestingMarker )
-                    if adjExtraMarkers not in self.USFMMarkers.getTypicalNoteSets( extraType ):
+                    if adjExtraMarkers not in Globals.USFMMarkers.getTypicalNoteSets( extraType ):
                         #print( "Got", extraType, extraText, thisExtraMarkers )
                         if thisExtraMarkers: noteMarkerErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Unusual {} marker set: {} in {}").format( extraName, thisExtraMarkers, extraText ) )
                         else: noteMarkerErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Missing {} formatting in {}").format( extraName, extraText ) )
@@ -1776,7 +1840,7 @@ class InternalBibleBook:
                 characterErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Trailing space in '{}'").format( adjText ) )
                 self.addPriorityError( 5, c, v, _("Trailing space in text line") )
                 #print( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Trailing space in {} '{}'").format( marker, adjText ) )
-            if self.USFMMarkers.isPrinted( marker ): # Only do character counts on lines that will be printed
+            if Globals.USFMMarkers.isPrinted( marker ): # Only do character counts on lines that will be printed
                 for char in adjText:
                     lcChar = char.lower()
                     if Globals.verbosityLevel > 2:
@@ -1828,7 +1892,7 @@ class InternalBibleBook:
 
             if cleanText: countCharacters( cleanText )
 
-            internalSFMsToRemove = self.USFMMarkers.getCharacterMarkersList( includeBackslash=True, includeEndMarkers=True )
+            internalSFMsToRemove = Globals.USFMMarkers.getCharacterMarkersList( includeBackslash=True, includeEndMarkers=True )
             internalSFMsToRemove = sorted( internalSFMsToRemove, key=len, reverse=True ) # List longest first
             for extraType, extraIndex, extraText, cleanExtraText in extras: # Now process the characters in the notes
                 if Globals.debugFlag:
@@ -2064,7 +2128,7 @@ class InternalBibleBook:
                 return word
             # end of stripWordPunctuation
 
-            internalSFMsToRemove = self.USFMMarkers.getCharacterMarkersList( includeBackslash=True, includeEndMarkers=True )
+            internalSFMsToRemove = Globals.USFMMarkers.getCharacterMarkersList( includeBackslash=True, includeEndMarkers=True )
             internalSFMsToRemove = sorted( internalSFMsToRemove, key=len, reverse=True ) # List longest first
 
             words = segment.replace('—',' ').replace('–',' ').split() # Treat em-dash and en-dash as word break characters
@@ -2116,7 +2180,7 @@ class InternalBibleBook:
             if marker=='c' and text: c = text.split()[0]; v = '0'
             elif marker=='v' and text: v = text.split()[0]
 
-            if text and self.USFMMarkers.isPrinted(marker): # process this main text
+            if text and Globals.USFMMarkers.isPrinted(marker): # process this main text
                 lastTextWordTuple = countWords( marker, cleanText, lastTextWordTuple )
 
             for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
@@ -2282,7 +2346,7 @@ class InternalBibleBook:
         if not self._processedFlag: self.processLines()
         if Globals.debugFlag: assert( self._processedLines )
 
-        allAvailableCharacterMarkers = self.USFMMarkers.getCharacterMarkersList( includeBackslash=True )
+        allAvailableCharacterMarkers = Globals.USFMMarkers.getCharacterMarkersList( includeBackslash=True )
 
         footnoteList, xrefList = [], []
         footnoteLeaderList, xrefLeaderList, CVSeparatorList = [], [], []
@@ -2575,8 +2639,8 @@ class InternalBibleBook:
             assert( self._indexedFlag )
         C,V = ref.getChapterNumberStr(), ref.getVerseNumberStr()
         #print( "CV", repr(C), repr(V) )
-        if (C,V,) in self.CVIndex:
-            startIndex = self.CVIndex[ C,V ]
+        if (C,V,) in self._CVIndex:
+            startIndex, count = self._CVIndex[ C,V ]
             #print( ref, startIndex )
             #print( "IBB getRef:", ref, startIndex, self._processedLines[startIndex:startIndex+5] )
             result = []
@@ -2590,7 +2654,7 @@ class InternalBibleBook:
             if result[-1][0]=='p' and not result[-1][3]: result.pop()
             #print( ref, result )
             return result
-        #else: print( self.bookReferenceCode, C, V, "not in index", self.CVIndex )
+        #else: print( self.bookReferenceCode, C, V, "not in index", self._CVIndex )
     # end of InternalBibleBook.getCVRef
 # end of class InternalBibleBook
 

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # UnknownBible.py
-#   Last modified: 2013-04-21 (also update versionString below)
+#   Last modified: 2013-04-23 (also update versionString below)
 #
 # Module handling a unknown Bible object
 #
@@ -49,8 +49,8 @@ from USXFilenames import USXFilenames
 from USFMBible import USFMBibleFileCheck, USFMBible
 from USXXMLBible import USXXMLBibleFileCheck, USXXMLBible
 from OpenSongXMLBible import OpenSongXMLBibleFileCheck, OpenSongXMLBible
-from OSISXMLBible import OSISXMLBible
-from ZefaniaXMLBible import ZefaniaXMLBible
+from OSISXMLBible import OSISXMLBibleFileCheck, OSISXMLBible
+from ZefaniaXMLBible import ZefaniaXMLBibleFileCheck, ZefaniaXMLBible
 from UnboundBible import UnboundBibleFileCheck, UnboundBible
 #from SwordResources import SwordInterface
 
@@ -122,6 +122,14 @@ class UnknownBible:
             typesFound.append( 'USX' )
             #print( "USXBibleCount", USXBibleCount )
 
+        # Search for OSIS XML Bibles
+        OSISBibleCount = OSISXMLBibleFileCheck( self.givenFolderName )
+        if OSISBibleCount:
+            totalBibleCount += OSISBibleCount
+            totalBibleTypes += 1
+            typesFound.append( 'OSIS' )
+            #print( "OSISBibleCount", OSISBibleCount )
+
         # Search for OpenSong XML Bibles
         OpenSongBibleCount = OpenSongXMLBibleFileCheck( self.givenFolderName )
         if OpenSongBibleCount:
@@ -129,6 +137,14 @@ class UnknownBible:
             totalBibleTypes += 1
             typesFound.append( 'OpenSong' )
             #print( "OpenSongBibleCount", OpenSongBibleCount )
+
+        # Search for Zefania XML Bibles
+        ZefaniaBibleCount = ZefaniaXMLBibleFileCheck( self.givenFolderName )
+        if ZefaniaBibleCount:
+            totalBibleCount += ZefaniaBibleCount
+            totalBibleTypes += 1
+            typesFound.append( 'Zefania' )
+            #print( "ZefaniaBibleCount", ZefaniaBibleCount )
 
 
         assert( len(typesFound) == totalBibleTypes )
@@ -156,10 +172,18 @@ class UnknownBible:
             self.foundType = "USX XML Bible"
             if autoLoad: return USXXMLBibleFileCheck( self.givenFolderName, autoLoad=True )
             else: return self.foundType, USXBibleCount
+        elif OSISBibleCount == 1:
+            self.foundType = "OSIS XML Bible"
+            if autoLoad: return OSISXMLBibleFileCheck( self.givenFolderName, autoLoad=True )
+            else: return self.foundType, OSISBibleCount
         elif OpenSongBibleCount == 1:
             self.foundType = "OpenSong XML Bible"
             if autoLoad: return OpenSongXMLBibleFileCheck( self.givenFolderName, autoLoad=True )
             else: return self.foundType, OpenSongBibleCount
+        elif ZefaniaBibleCount == 1:
+            self.foundType = "Zefania XML Bible"
+            if autoLoad: return ZefaniaXMLBibleFileCheck( self.givenFolderName, autoLoad=True )
+            else: return self.foundType, ZefaniaBibleCount
     # end of UnknownBible.search
 # end of class UnknownBible
 
@@ -181,20 +205,26 @@ def demo():
     if Globals.verbosityLevel > 0: print( "{} V{}".format(progName, versionString ) )
 
     # Now demo the class
-    testFolders = ( "/home/robert/Logs", "../../../../../Data/Work/Bibles/Biola Unbound modules/asv/",
+    testFolders = ( "/home/robert/Logs",
+                    "../../../../../Data/Work/Bibles/Biola Unbound modules/",
+                    "../../../../../Data/Work/Bibles/OpenSong Bibles/",
+                    "../../../../../Data/Work/Bibles/Zefania modules/",
                     "../../../../../Data/Work/Matigsalug/Bible/MBTV/",
                     "../../../../../SSD/AutoProcesses/Processed/",
                     "Tests/DataFilesForTests/USFMTest1/", "Tests/DataFilesForTests/USFMTest2/",
                     "Tests/DataFilesForTests/USXTest1/", "Tests/DataFilesForTests/USXTest2/",
-                    "Tests/DataFilesForTests/ZefaniaTest/", "Tests/DataFilesForTests/",)
+                    "Tests/DataFilesForTests/OSISTest1/", "Tests/DataFilesForTests/OSISTest2/",
+                    "Tests/DataFilesForTests/ZefaniaTest/",
+                    "Tests/DataFilesForTests/", # Up a level
+                    )
     for j, testFolder in enumerate( testFolders ):
-        print( "\n\n{}/ Trying {}...".format( j+1, testFolder ) )
+        if Globals.verbosityLevel > 0: print( "\n\n{}/ Trying {}...".format( j+1, testFolder ) )
         B = UnknownBible( testFolder )
         #print( B )
         result1 = B.search( autoLoad=False )
         result2 = B.search( autoLoad=True ) if result1 else None
         if Globals.verbosityLevel > 2: print( "  Results are: {} and {}".format( result1, result2 ) )
-        print( B )
+        if Globals.verbosityLevel > 0: print( B )
 # end of demo
 
 if __name__ == '__main__':

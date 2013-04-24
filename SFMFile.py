@@ -1,9 +1,10 @@
 #!/usr/bin/python3
-##
+# -*- coding: utf-8 -*-
+#
 # SFMFile.py
+#   Last modified: 2013-04-23 (also update versionString below)
 #
 # SFM (Standard Format Marker) data file reader
-#   Last modified: 2013-04-13 (also update versionString below)
 #
 # Copyright (C) 2010-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -89,7 +90,7 @@ class SFMLines:
                 for line in myFile:
                     lineCount += 1
                     if lineCount==1 and encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF
-                        print( "      Detected UTF-16 Byte Order Marker" )
+                        if Globals.verbosityLevel > 0: print( "      Detected UTF-16 Byte Order Marker" )
                         line = line[1:] # Remove the UTF-8 Byte Order Marker
                     if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines
@@ -128,7 +129,7 @@ class SFMLines:
                     if marker not in ignoreSFMs:
                         result.append( (marker, text) )
             except:
-                logging.critical( "Invalid line in " + sfm_filename + " -- line ignored at " + str(lineCount) )
+                if Globals.logErrorsFlag: logging.critical( "Invalid line in " + sfm_filename + " -- line ignored at " + str(lineCount) )
                 if lineCount > 1: print( 'Previous line was: ', lastLine )
                 print( line )
                 #raise
@@ -202,7 +203,7 @@ class SFMRecords:
                 for line in myFile:
                     lineCount += 1
                     if lineCount==1 and encoding.lower()=='utf-8' and line and line[0]==chr(65279): #U+FEFF
-                        print( "      Detected UTF-16 Byte Order Marker" )
+                        if Globals.verbosityLevel > 0: print( "      Detected UTF-16 Byte Order Marker" )
                         line = line[1:] # Remove the UTF-8 Byte Order Marker
                     if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines
@@ -250,7 +251,7 @@ class SFMRecords:
                     # Save the current marker and text
                     record.append( (marker, text) )
             except:
-                logging.critical( "Invalid line in " + sfm_filename + " -- line ignored at " + str(lineCount) )
+                if Globals.logErrorsFlag: logging.critical( "Invalid line in " + sfm_filename + " -- line ignored at " + str(lineCount) )
                 if lineCount > 1: print( 'Previous line was: ', lastLine )
                 else: print( 'Possible encoding error -- expected', encoding )
                 #raise
@@ -321,7 +322,7 @@ class SFMRecords:
                     elif isinstance( self.dataDict[key], dict ):
                         #print( j, key, marker, value )
                         if marker in self.dataDict[key]:
-                            logging.warning( "Multiple {} lines in {} record--will be overwritten".format( marker, key ) )
+                            if Globals.logErrorsFlag: logging.warning( "Multiple {} lines in {} record--will be overwritten".format( marker, key ) )
                         self.dataDict[key][marker] = value
         return self.dataDict
     # end of SFMRecords.copyToDict

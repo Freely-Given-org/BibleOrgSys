@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2013-04-20 by RJH (also update versionString below)
+#   Last modified: 2013-04-22 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -44,7 +44,6 @@ from gettext import gettext as _
 from collections import OrderedDict
 
 import Globals
-from USFMMarkers import USFMMarkers
 
 
 class InternalBible:
@@ -70,7 +69,6 @@ class InternalBible:
 
         # Set up filled containers for the object
         #self.OneChapterBBBBookCodes = Globals.BibleBooksCodes.getSingleChapterBooksList()
-        self.USFMMarkers = USFMMarkers().loadData()
     # end of InternalBible.__init_
 
 
