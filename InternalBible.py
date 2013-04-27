@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2013-04-22 by RJH (also update versionString below)
+#   Last modified: 2013-04-25 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -105,9 +105,15 @@ class InternalBible:
         This method checks whether the Bible contains the BBB book.
         Returns True or False.
         """
+        if Globals.debugFlag: assert( isinstance(BBB,str) and len(BBB)==3 )
         return BBB in self.books
     # end of InternalBible.__contains__
 
+
+    def __getitem__( self, BBB ):
+        return( self.books[BBB] )
+    # end of InternalBible.__getitem__
+    
 
     def getAssumedBookName( self, BBB ):
         """Gets the book name for the given book reference code."""

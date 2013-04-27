@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMFilenames.py
-#   Last modified: 2013-04-23 by RJH (also update versionString below)
+#   Last modified: 2013-04-26 by RJH (also update versionString below)
 #
 # Module handling USFM Bible filenames
 #
@@ -97,7 +97,7 @@ class USFMFilenames:
             for ending in filenameEndingsToIgnore:
                 if pFUpper.endswith( ending): ignore=True; break
             if ignore: continue
-            if not pFUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+            if pFUpper[-1]!='~' and not pFUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
                 filepath = os.path.join( self.givenFolderName, possibleFilename )
                 if os.path.isfile( filepath ): # It's a file not a folder
                         self.fileList.append( possibleFilename )
@@ -276,7 +276,7 @@ class USFMFilenames:
             for ending in filenameEndingsToIgnore:
                 if pFUpper.endswith( ending): ignore=True; break
             if ignore: continue
-            if not pFUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+            if pFUpper[-1]!='~' and not pFUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
                 filepath = os.path.join( givenFolder, possibleFilename )
                 if os.path.isfile( filepath ): # It's a file not a folder
                     USFMId = self.getUSFMIDFromFile( givenFolder, possibleFilename, filepath )
@@ -403,7 +403,7 @@ class USFMFilenames:
                     if pFUpper.endswith( ending): ignore=True; break
                 if ignore: continue
                 if USFMBookCode.upper() in pFUpperProper:
-                    if not pFUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+                    if pFUpper[-1]!='~' and not pFUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
                         self.doListAppend( Globals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
         self.lastTupleList = resultList
         return Globals.BibleBooksCodes.getSequenceList( resultList )

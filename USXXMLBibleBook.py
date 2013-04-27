@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USXXMLBibleBook.py
-#   Last modified: 2013-04-22 by RJH (also update versionString below)
+#   Last modified: 2013-04-26 by RJH (also update versionString below)
 #
 # Module handling USX Bible Book xml
 #
@@ -28,17 +28,17 @@ Module handling USX Bible book xml to produce C and Python data tables.
 """
 
 progName = "USX XML Bible book handler"
-versionString = "0.05"
+versionString = "0.06"
 
 import logging, os
 from gettext import gettext as _
 from xml.etree.cElementTree import ElementTree
 
 import Globals
-from InternalBibleBook import InternalBibleBook
+from Bible import BibleBook
 
 
-class USXXMLBibleBook( InternalBibleBook ):
+class USXXMLBibleBook( BibleBook ):
     """
     Class to load, validate, and manipulate a single Bible book in USX XML.
     """
@@ -46,7 +46,7 @@ class USXXMLBibleBook( InternalBibleBook ):
         """
         Create the USX Bible book object.
         """
-        InternalBibleBook.__init__( self, BBB ) # Initialise the base class
+        BibleBook.__init__( self, BBB ) # Initialise the base class
         self.objectNameString = "USX XML Bible Book object"
         self.objectTypeString = "USX"
 
@@ -288,24 +288,28 @@ def demo():
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
     def getShortVersion( someString ):
-        if len(someString)<60: return someString
-        return someString[:30]+'...'+someString[-30:]
+        maxLen = 140
+        if len(someString)<maxLen: return someString
+        return someString[:int(maxLen/2)]+'...'+someString[-int(maxLen/2):]
 
     import USXFilenames, USFMFilenames, USFMBibleBook
-    name, encoding, testFolder = "Matigsalug", "utf-8", "../../../../../Data/Work/VirtualBox_Shared_Folder/Exports/USXExports/Projects/MBTV/" # You can put your USX test folder here
-    name2, encoding2, testFolder2 = "Matigsalug", "utf-8", "../../../../../Data/Work/Matigsalug/Bible/MBTV/" # You can put your USFM test folder here (for comparing the USX with)
+    name, testFolder = "Matigsalug", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/" # You can put your USX test folder here
+    name, testFolder = "Matigsalug", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/" # You can put your USX test folder here
+    name2, testFolder2 = "Matigsalug", "../../../../../Data/Work/Matigsalug/Bible/MBTV/" # You can put your USFM test folder here (for comparing the USX with)
     if os.access( testFolder, os.R_OK ):
         if Globals.verbosityLevel > 1: print( _("Scanning {} from {}...").format( name, testFolder ) )
         if Globals.verbosityLevel > 1: print( _("Scanning {} from {}...").format( name, testFolder2 ) )
         fileList = USXFilenames.USXFilenames( testFolder ).getConfirmedFilenames()
         for bookReferenceCode,filename in fileList:
-            if bookReferenceCode in ('GEN','RUT','EST','DAN','JNA', \
-                                        'MAT','MRK','LUK','JHN','ACT', \
-                                        'ROM','CO1','CO2','GAL','EPH','PHP','COL','TH1','TH2','TI1','TI2','TIT','PHM', \
-                                        'HEB','JAM','PE1','PE2','JN1','JN2','JN3','JDE','REV'):
+            if bookReferenceCode in ( 'GEN',
+                    'RUT', 'EST','DAN','JNA',
+                    #'MAT','MRK','LUK','JHN','ACT',
+                    #'ROM','CO1','CO2','GAL','EPH','PHP','COL','TH1','TH2','TI1','TI2','TIT','PHM',
+                    #'HEB','JAM','PE1','PE2','JN1','JN2','JN3','JDE','REV'
+                    ):
                 if Globals.verbosityLevel > 1: print( _("Loading {} from {}...").format( bookReferenceCode, filename ) )
                 UxBB = USXXMLBibleBook( bookReferenceCode )
-                UxBB.load( testFolder, filename, encoding=encoding )
+                UxBB.load( filename, testFolder )
                 if Globals.verbosityLevel > 1: print( "  ID is '{}'".format( UxBB.getField( 'id' ) ) )
                 if Globals.verbosityLevel > 1: print( "  Header is '{}'".format( UxBB.getField( 'h' ) ) )
                 if Globals.verbosityLevel > 1: print( "  Main titles are '{}' and '{}'".format( UxBB.getField( 'mt1' ), UxBB.getField( 'mt2' ) ) )
@@ -329,7 +333,7 @@ def demo():
                     if found2:
                         if Globals.verbosityLevel > 2: print( _("Loading {} from {}...").format( bookReferenceCode2, filename2 ) )
                         UBB = USFMBibleBook.USFMBibleBook( bookReferenceCode )
-                        UBB.load( testFolder2, filename2, encoding2 )
+                        UBB.load( filename2, testFolder2 )
                         #print( "  ID is '{}'".format( UBB.getField( 'id' ) ) )
                         #print( "  Header is '{}'".format( UBB.getField( 'h' ) ) )
                         #print( "  Main titles are '{}' and '{}'".format( UBB.getField( 'mt1' ), UBB.getField( 'mt2' ) ) )
@@ -341,14 +345,14 @@ def demo():
                             print( "\nPRINTING COMPARISON" )
                             ixFrom, ixTo = 8, 40
                             if ixTo-ixFrom < 10:
-                                print( "UxBB[{}-{}]".format( ixFrom, ixTo ) )
+                                print( "UsxBB[{}-{}]".format( ixFrom, ixTo ) )
                                 for ix in range( ixFrom, ixTo ): print( "  {} {}".format( 'GUD' if UxBB._processedLines[ix]==UBB._processedLines[ix] else 'BAD', UxBB._processedLines[ix] ) )
-                                print( "UBB[{}-{}]".format( ixFrom, ixTo ) )
+                                print( "UsfBB[{}-{}]".format( ixFrom, ixTo ) )
                                 for ix in range( ixFrom, ixTo ): print( "  {} {}".format( 'GUD' if UxBB._processedLines[ix]==UBB._processedLines[ix] else 'BAD', UBB._processedLines[ix] ) )
                             else:
                                 for ix in range( ixFrom, ixTo ):
-                                    print( "UxBB[{}]: {} {}".format( ix, 'GUD' if UxBB._processedLines[ix]==UBB._processedLines[ix] else 'BAD', UxBB._processedLines[ix] ) )
-                                    print( " UBB[{}]: {} {}".format( ix, 'GUD' if UxBB._processedLines[ix]==UBB._processedLines[ix] else 'BAD', UBB._processedLines[ix] ) )
+                                    print( "UsxBB[{}]: {} {}".format( ix, 'GUD' if UxBB._processedLines[ix]==UBB._processedLines[ix] else 'BAD', UxBB._processedLines[ix] ) )
+                                    print( "UsfBB[{}]: {} {}".format( ix, 'GUD' if UxBB._processedLines[ix]==UBB._processedLines[ix] else 'BAD', UBB._processedLines[ix] ) )
                             print( "END COMPARISON\n" )
 
                         mismatchCount = 0
@@ -356,13 +360,15 @@ def demo():
                         for i in range(0, max( UxL, UL ) ):
                             if i<UxL and i<UL:
                                 if UxBB._processedLines[i] != UBB._processedLines[i]:
-                                    print( "\n{} line {} not equal: {} from {}".format( bookReferenceCode, i, UxBB._processedLines[i][0:2], UBB._processedLines[i][0:2] ) )
+                                    #print( "usx ", i, len(UxBB._processedLines[i]), str(UxBB._processedLines[i])[:2] )
+                                    #print( "usfm", i, len(UBB._processedLines[i]), UBB._processedLines[i][0]) #[:2] )
+                                    print( "\n{} line {} not equal: {}({}) from {}({})".format( bookReferenceCode, i, UxBB._processedLines[i][0], UxBB._processedLines[i][1], UBB._processedLines[i][0], UBB._processedLines[i][1] ) )
                                     if UxBB._processedLines[i][2] != UBB._processedLines[i][2]:
-                                        print( "   UxBB[2]: '{}'".format( getShortVersion( UxBB._processedLines[i][2] ) ) )
-                                        print( "    UBB[2]: '{}'".format( getShortVersion( UBB._processedLines[i][2] ) ) )
+                                        print( "   UsxBB[2]: '{}'".format( getShortVersion( UxBB._processedLines[i][2] ) ) )
+                                        print( "   UsfBB[2]: '{}'".format( getShortVersion( UBB._processedLines[i][2] ) ) )
                                     if (UxBB._processedLines[i][3] or UBB._processedLines[i][3]) and UxBB._processedLines[i][3]!=UBB._processedLines[i][3]:
-                                        print( "   UxBB[3]: '{}'".format( getShortVersion( UxBB._processedLines[i][3] ) ) )
-                                        print( "    UBB[3]: '{}'".format( getShortVersion( UBB._processedLines[i][3] ) ) )
+                                        print( "   UdsBB[3]: '{}'".format( getShortVersion( UxBB._processedLines[i][3] ) ) )
+                                        print( "   UsfBB[3]: '{}'".format( getShortVersion( UBB._processedLines[i][3] ) ) )
                                     mismatchCount += 1
                             else: # one has more lines
                                 print( "Linecount not equal: {} from {}".format( i, UxL, UL ) )
@@ -372,7 +378,7 @@ def demo():
                         if mismatchCount == 0 and Globals.verbosityLevel > 2: print( "All {} processedLines matched!".format( UxL ) )
                     else: print( "Sorry, USFM test folder doesn't contain the {} book.".format( bookReferenceCode ) )
                 else: print( "Sorry, USFM test folder '{}' doesn't exist on this computer.".format( testFolder2 ) )
-            elif Globals.verbosityLevel > 1: print( "*** Skipped USX/USFM compare on {}", bookReferenceCode )
+            elif Globals.verbosityLevel > 2: print( "*** Skipped USX/USFM compare on {}", bookReferenceCode )
     else: print( "Sorry, USX test folder '{}' doesn't exist on this computer.".format( testFolder ) )
 # end of demo
 

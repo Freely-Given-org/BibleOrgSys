@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Globals.py
-#   Last modified: 2013-04-23 (also update versionString below)
+#   Last modified: 2013-04-27 (also update versionString below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -29,7 +29,7 @@ Module handling global variables
 """
 
 progName = "Globals"
-versionString = "0.14"
+versionString = "0.15"
 
 import logging, os.path
 
@@ -201,6 +201,161 @@ def totalSize( o, handlers={} ):
 
     return sizeof(o)
 # end of Globals.totalSize
+
+
+##########################################################################################################
+#
+# File comparisons
+#
+
+def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=True, exitCount=10 ):
+    """
+    Compare the two files.
+    """
+    filepath1 = os.path.join( folder1, filename1 ) if folder1 else filename1
+    filepath2 = os.path.join( folder2, filename2 ) if folder2 else filename2
+    if verbosityLevel > 1:
+        if filename1==filename2: print( "Comparing {} files in folders {} and {}...".format( repr(filename1), repr(folder1), repr(folder2) ) )
+        else: print( "Comparing files {} and {}...".format( repr(filename1), repr(filename2) ) )
+
+    # Do a preliminary check on the readability of our files
+    if not os.access( filepath1, os.R_OK ):
+        if logErrorsFlag: logging.error( "Globals.fileCompare: File1 '{}' is unreadable".format( filepath1 ) )
+        return None
+    if not os.access( filepath2, os.R_OK ):
+        if logErrorsFlag: logging.error( "Globals.fileCompare: File2 '{}' is unreadable".format( filepath2 ) )
+        return None
+
+    # Read the files
+    lineCount, lines1 = 0, []
+    with open( filepath1, 'rt' ) as file1:
+        for line in file1:
+            lineCount += 1
+            if lineCount==1 and line[0]==chr(65279): #U+FEFF
+                if printFlag and verbosityLevel > 2: print( "      Detected UTF-16 Byte Order Marker in file1" )
+                line = line[1:] # Remove the UTF-8 Byte Order Marker
+            if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
+            if not line: continue # Just discard blank lines
+            lines1.append( line )
+    lineCount, lines2 = 0, []
+    with open( filepath2, 'rt' ) as file2:
+        for line in file2:
+            lineCount += 1
+            if lineCount==1 and line[0]==chr(65279): #U+FEFF
+                if printFlag and verbosityLevel > 2: print( "      Detected UTF-16 Byte Order Marker in file2" )
+                line = line[1:] # Remove the UTF-8 Byte Order Marker
+            if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
+            if not line: continue # Just discard blank lines
+            lines2.append( line )
+
+    len1, len2 = len(lines1), len(lines2 )
+    equalFlag = True
+    if len1 != len2:
+        if printFlag: print( "Count of lines differ: file1={}, file2={}".format( len1, len2 ) )
+        equalFlag = False
+
+    diffCount = 0
+    for k in range( 0, min( len1, len2 ) ):
+        if lines1[k] != lines2[k]:
+            if printFlag:
+                print( "  {}:{} ({} chars)\n  {}:{} ({} chars)" \
+                    .format( k, repr(lines1[k]), len(lines1[k]), k, repr(lines2[k]), len(lines2[k]) ) )
+            equalFlag = False
+            diffCount += 1
+            if diffCount > exitCount: break
+
+    return equalFlag
+# end of Globals.fileCompare
+
+
+def fileCompareXML( filename1, filename2, folder1=None, folder2=None, printFlag=True, exitCount=10, ignoreWhitespace=True ):
+    """
+    Compare the two files.
+    """
+    filepath1 = os.path.join( folder1, filename1 ) if folder1 else filename1
+    filepath2 = os.path.join( folder2, filename2 ) if folder2 else filename2
+    if verbosityLevel > 1:
+        if filename1==filename2: print( "Comparing XML {} files in folders {} and {}...".format( repr(filename1), repr(folder1), repr(folder2) ) )
+        else: print( "Comparing XML files {} and {}...".format( repr(filename1), repr(filename2) ) )
+
+    # Do a preliminary check on the readability of our files
+    if not os.access( filepath1, os.R_OK ):
+        if logErrorsFlag: logging.error( "Globals.fileCompareXML: File1 '{}' is unreadable".format( filepath1 ) )
+        return None
+    if not os.access( filepath2, os.R_OK ):
+        if logErrorsFlag: logging.error( "Globals.fileCompareXML: File2 '{}' is unreadable".format( filepath2 ) )
+        return None
+
+    # Load the files
+    from xml.etree.cElementTree import ElementTree
+    tree1 = ElementTree().parse( filepath1 )
+    tree2 = ElementTree().parse( filepath2 )
+
+    def compareElements( element1, element2 ):
+        """
+        """
+        nonlocal diffCount, location
+        if element1.tag != element2.tag:
+            if printFlag: print( "Element tags differ ({} and {}) at {}".format( repr(element1.tag), repr(element2.tag), location ) )
+            diffCount += 1
+            if diffCount > exitCount: return
+            location.append( "{}/{}".format( element1.tag, element2.tag ) )
+        else: location.append( element1.tag )
+        attribs1, attribs2 = element1.items(), element2.items()
+        if len(attribs1) != len(attribs2):
+            if printFlag: print( "Number of attributes differ ({} and {}) at {}".format( len(attribs1), len(attribs2), location ) )
+            diffCount += 1
+            if diffCount > exitCount: return
+        for avPair in attribs1:
+            if avPair not in attribs2:
+                if printFlag: print( "File1 has {} but not in file2 {} at {}".format( avPair, attribs2, location ) )
+                diffCount += 1
+                if diffCount > exitCount: return
+        for avPair in attribs2:
+            if avPair not in attribs1:
+                if printFlag: print( "File2 has {} but not in file1 {} at {}".format( avPair, attribs1, location ) )
+                diffCount += 1
+                if diffCount > exitCount: return
+        if element1.text != element2.text:
+            if ignoreWhitespace:
+                if element1.text is None and not element2.text.strip(): pass
+                elif element2.text is None and not element1.text.strip(): pass
+                elif element1.text and element2.text and element1.text.strip()==element2.text.strip(): pass
+                else:
+                    if printFlag: print( "Element text differs:\n {}\n {}\n at {}".format( repr(element1.text), repr(element2.text), location ) )
+                    diffCount += 1
+                    if diffCount > exitCount: return
+            else:
+                if printFlag: print( "Element text differs:\n {}\n {}\n at {}".format( repr(element1.text), repr(element2.text), location ) )
+                diffCount += 1
+                if diffCount > exitCount: return
+        if element1.tail != element2.tail:
+            if ignoreWhitespace:
+                if element1.tail is None and not element2.tail.strip(): pass
+                elif element2.tail is None and not element1.tail.strip(): pass
+                else:
+                    if printFlag: print( "Element tail differs:\n {}\n {}\n at {}".format( repr(element1.tail), repr(element2.tail), location ) )
+                    diffCount += 1
+                    if diffCount > exitCount: return
+            else:
+                if printFlag: print( "Element tail differs:\n {}\n {}\n at {}".format( repr(element1.tail), repr(element2.tail), location ) )
+                diffCount += 1
+                if diffCount > exitCount: return
+        if len(element1) != len(element2):
+            if printFlag: print( "Number of subelements differ ({} and {}) at {}".format( len(element1), len(element2), location ) )
+            diffCount += 1
+            if diffCount > exitCount: return
+        # Compare the subelements
+        for j in range( 0, min( len(element1), len(element2) ) ):
+            compareElements( element1[j], element2[j] ) # Recursive call
+            if diffCount > exitCount: return
+
+    # Compare the files
+    diffCount, location = 0, []
+    compareElements( tree1, tree2 )
+    if diffCount and verbosityLevel > 1: print( "{} differences discovered.".format( diffCount if diffCount<=exitCount else 'Many' ) )
+    return diffCount==0
+# end of Globals.fileCompareXML
 
 
 ##########################################################################################################

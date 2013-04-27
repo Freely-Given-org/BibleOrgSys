@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-04-22 by RJH (also update versionString below)
+#   Last modified: 2013-04-27 by RJH (also update versionString below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -35,7 +35,7 @@ This is intended to be a virtual class, i.e., to be extended further
 """
 
 progName = "Bible writer"
-versionString = "0.05"
+versionString = "0.06"
 
 
 import sys, os, logging, datetime
@@ -123,7 +123,7 @@ class BibleWriter( InternalBible ):
             USFMNumber = Globals.BibleBooksCodes.getUSFMNumber( BBB )
 
             if 1 or Globals.debugFlag: # Write the pseudoUSFM output for debugging
-                filename = "{}{}OSC.pSFM".format( USFMNumber, USFMAbbreviation.upper() ) # OSC = OSIS converter
+                filename = "{}{}BWr.pSFM".format( USFMNumber, USFMAbbreviation.upper() ) # BWr = BibleWriter
                 pseudoOutputFolder = os.path.join( outputFolder, "pseudoFiles/" )
                 if not os.path.exists( pseudoOutputFolder ): os.makedirs( pseudoOutputFolder )
                 filepath = os.path.join( pseudoOutputFolder, filename )
@@ -138,14 +138,14 @@ class BibleWriter( InternalBible ):
             for pseudoMarker,originalMarker,text,cleanText,extras in pseudoUSFMData:
                 value = cleanText # (temp)
                 if Globals.debugFlag: print( "pseudoMarker = '{}' value = '{}'".format( pseudoMarker, value ) )
-                if pseudoMarker in ('v','f','fr','x','xo',): # These fields should always end with a space (but the USFM->OSIS processing may have removed them)
+                if pseudoMarker in ('v','f','fr','x','xo',): # These fields should always end with a space but the processing will have removed them
                     if Globals.debugFlag: assert( value )
                     if value[-1] != ' ': value += ' ' # Append a space since it didn't have one
-                if pseudoMarker[-1]=='+' or Globals.USFMMarkers.isNewlineMarker(pseudoMarker): # Have a continuation field
+                if pseudoMarker[-1]=='~' or Globals.USFMMarkers.isNewlineMarker(pseudoMarker): # Have a continuation field
                     if inField is not None:
                         USFM += '\\{}*'.format( inField ) # Do a close marker for footnotes and cross-references
                         inField = None
-                if pseudoMarker[-1]=='+': USFM += value
+                if pseudoMarker[-1]=='~': USFM += value
                 else: # not a continuation marker
                     adjValue = value
                     #if pseudoMarker in ('it','bk','ca','nd',): # Character markers to be closed -- had to remove ft and xt from this list for complex footnotes with f fr fq ft fq ft f*
@@ -160,10 +160,11 @@ class BibleWriter( InternalBible ):
                     elif USFM: USFM += '\n' # paragraph markers go on a new line
                     if not value: USFM += '\\{}'.format( pseudoMarker )
                     else: USFM += '\\{} {}'.format( pseudoMarker,adjValue )
+                #print( pseudoMarker, USFM[-200:] )
 
             # Write the USFM output
             #print( "\nUSFM", USFM[:3000] )
-            filename = "{}{}OSC.SFM".format( USFMNumber, USFMAbbreviation.upper() ) # This seems to be the undocumented standard (OSC = OSIS converter)
+            filename = "{}{}BWr.SFM".format( USFMNumber, USFMAbbreviation.upper() ) # This seems to be the undocumented standard filename format (and BWr = BibleWriter)
             #if not os.path.exists( USFMOutputFolder ): os.makedirs( USFMOutputFolder )
             filepath = os.path.join( outputFolder, filename )
             if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
@@ -400,7 +401,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toZefania_XML( self, outputFolder=None, controlDict=None, validationSchema=None ):
+    def toZefaniaXML( self, outputFolder=None, controlDict=None, validationSchema=None ):
         """
         Using settings from the given control file,
             converts the USFM information to a UTF-8 Zefania XML file.
@@ -433,7 +434,7 @@ class BibleWriter( InternalBible ):
             if "ZefaniaLanguage" in controlDict and controlDict["ZefaniaLanguage"]: writerObject.writeLineOpenClose( 'language', controlDict["ZefaniaLanguage"] )
             if "ZefaniaRights" in controlDict and controlDict["ZefaniaRights"]: writerObject.writeLineOpenClose( 'rights', controlDict["ZefaniaRights"] )
             writerObject.writeLineClose( 'INFORMATION' )
-        # end of toZefania_XML:writeHeader
+        # end of toZefaniaXML:writeHeader
 
         def writeBook( writerObject, BBB, bkData ):
             """Writes a book to the Zefania XML writerObject."""
@@ -464,7 +465,7 @@ class BibleWriter( InternalBible ):
             if haveOpenChapter:
                 writerObject.writeLineClose( 'CHAPTER' )
             writerObject.writeLineClose( 'BIBLEBOOK' )
-        # end of toZefania_XML:writeBook
+        # end of toZefaniaXML:writeBook
 
         # Set-up our Bible reference system
         if controlDict['PublicationCode'] == "GENERIC":
@@ -488,11 +489,11 @@ class BibleWriter( InternalBible ):
         xw.close()
         if unhandledMarkers and Globals.verbosityLevel>0: print( "  " + _("WARNING: Unhandled toZefania USFM markers were {}").format(unhandledMarkers) )
         if validationSchema: return xw.validateXML( validationSchema )
-    # end of BibleWriter.toZefania_XML
+    # end of BibleWriter.toZefaniaXML
 
 
 
-    def toUSX_XML( self, outputFolder=None, controlDict=None, validationSchema=None ):
+    def toUSXXML( self, outputFolder=None, controlDict=None, validationSchema=None ):
         """
         Using settings from the given control file,
             converts the USFM information to UTF-8 USX XML files.
@@ -539,7 +540,7 @@ class BibleWriter( InternalBible ):
                     if Globals.logErrorsFlag: logging.info( "toUSX: Had to close automatically in {} {}:{} {}:'{}' now '{}'".format( BBB, c, v, marker, text, adjText ) )
                 if '\\' in adjText: logging.critical( "toUSX: Didn't handle a backslash in {} {}:{} {}:'{}' now '{}'".format( BBB, c, v, marker, text, adjText ) )
                 return adjText
-            # end of handleInternalTextMarkersForUSX
+            # end of toUSXXML.handleInternalTextMarkersForUSX
 
             def handleNotes( text, extras ):
                 """ Integrate notes into the text again. """
@@ -554,13 +555,14 @@ class BibleWriter( InternalBible ):
                         gives
                     <note style="x" caller="-"><char style="xo" closed="false">1:3: </char><char style="xt">2Kur 4:6.</char></note>
                     """
-                    USXxrefXML = '<note style="x" '
+                    USXxrefXML = '<note ' if version>=2 else '<note style="x" '
                     xoOpen = xtOpen = False
                     for j,token in enumerate(USXxref.split('\\')):
                         #print( "toUSX:processXRef", j, "'"+token+"'", "from", '"'+USXxref+'"', xoOpen, xtOpen )
                         lcToken = token.lower()
                         if j==0: # The first token (but the x has already been removed)
-                            USXxrefXML += 'caller="{}">'.format( token.rstrip() )
+                            USXxrefXML += ('caller="{}" style="x">' if version>=2 else 'caller="{}">') \
+                                .format( token.rstrip() )
                         elif lcToken.startswith('xo '): # xref reference follows
                             if xoOpen: # We have multiple xo fields one after the other (probably an encoding error)
                                 if Globals.debugFlag: assert( not xtOpen )
@@ -602,7 +604,7 @@ class BibleWriter( InternalBible ):
                         USXxrefXML += ' closed="false">' + adjToken + '</char>'
                     USXxrefXML += '</note>'
                     return USXxrefXML
-                # end of processXRef
+                # end of toUSXXML.processXRef
 
                 def processFootnote( USXfootnote ):
                     """
@@ -709,7 +711,7 @@ class BibleWriter( InternalBible ):
                     #print( '', USXfootnote, USXfootnoteXML )
                     #if BBB=='EXO' and c=='17' and v=='7': halt
                     return USXfootnoteXML
-                # end of processFootnote
+                # end of toUSXXML.processFootnote
 
 
                 adjText = text
@@ -747,12 +749,14 @@ class BibleWriter( InternalBible ):
             if not USXAbbrev and Globals.logErrorsFlag: logging.error( "toUSX: Can't write {} USX book because no USFM code available".format( BBB ) ); return
             if not USXNumber and Globals.logErrorsFlag: logging.error( "toUSX: Can't write {} USX book because no USX number available".format( BBB ) ); return
 
+            version = 2
+            xtra = ' ' if version<2 else ''
             c = v = '0'
             xw = XMLWriter().setOutputFilePath( USXNumber+USXAbbrev+".usx", outputFolder )
             xw.setHumanReadable()
             xw.spaceBeforeSelfcloseTag = True
             xw.start( lineEndings='w', writeBOM=True ) # Try to imitate Paratext output as closely as possible
-            xw.writeLineOpen( 'usx' )
+            xw.writeLineOpen( 'usx', ('version','2.0') ) if version>=2 else xw.writeLineOpen( 'usx' )
             haveOpenPara = paraJustOpened = False
             for marker,originalMarker,text,cleanText,extras in bkData._processedLines: # Process USFM lines
                 markerShouldHaveContent = Globals.USFMMarkers.markerShouldHaveContent( marker )
@@ -769,7 +773,7 @@ class BibleWriter( InternalBible ):
                     if adjText[0:3] != USXAbbrev:
                         if Globals.logErrorsFlag: logging.error( "toUSX: Book {}{} might be incorrect -- we got: '{}'".format( BBB, " ({})".format(USXAbbrev) if USXAbbrev!=BBB else '', adjText[0:3] ) )
                     adjText = adjText[4:] # Remove the book code from the ID line because it's put in as an attribute
-                    if adjText: xw.writeLineOpenClose( 'book', handleInternalTextMarkersForUSX(adjText)+' ', [('code',USXAbbrev),('style',marker)] )
+                    if adjText: xw.writeLineOpenClose( 'book', handleInternalTextMarkersForUSX(adjText)+xtra, [('code',USXAbbrev),('style',marker)] )
                     elif not text and Globals.logErrorsFlag: logging.error( "toUSX: {} {}:{} has a blank id line that was ignored".format( BBB, c, v ) )
                 elif marker == 'c':
                     if haveOpenPara:
@@ -783,25 +787,27 @@ class BibleWriter( InternalBible ):
                     if not adjText: print( "toUSX: Missing text for c~" ); continue
                     # TODO: We haven't stripped out character fields from within the text -- not sure how USX handles them yet
                     xw.removeFinalNewline( True )
-                    xw.writeLineText( handleInternalTextMarkersForUSX(adjText)+' ', noTextCheck=True ) # no checks coz might already have embedded XML
+                    xw.writeLineText( handleInternalTextMarkersForUSX(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
                 elif marker == 'c#': # Chapter number added for printing
                     pass # Just ignore it completely
                 elif marker == 'v':
                     v = adjText
                     if paraJustOpened: paraJustOpened = False
-                    else: xw.removeFinalNewline( True )
+                    else:
+                        xw.removeFinalNewline( True )
+                        if version>=2: xw._writeToBuffer( ' ' ) # Space between verses
                     xw.writeLineOpenSelfclose ( 'verse', [('number',v),('style','v')] )
                 elif marker == 'v~':
                     if not adjText: print( "toUSX: Missing text for v~" ); continue
                     # TODO: We haven't stripped out character fields from within the verse -- not sure how USX handles them yet
                     xw.removeFinalNewline( True )
-                    xw.writeLineText( handleInternalTextMarkersForUSX(adjText)+' ', noTextCheck=True ) # no checks coz might already have embedded XML
+                    xw.writeLineText( handleInternalTextMarkersForUSX(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
                 elif markerShouldHaveContent == 'N': # N = never, e.g., b, nb
                     if haveOpenPara:
                         xw.removeFinalNewline( True )
                         xw.writeLineClose( 'para' )
                         haveOpenPara = False
-                    if adjText: print( "toUSX: {} {}:{} has a {} line containing text ('{}') that was ignored".format( BBB, c, v, originalMarker, adjText ) )
+                    if adjText and Globals.logErrorsFlag: logging.error( "toUSX: {} {}:{} has a {} line containing text ('{}') that was ignored".format( BBB, c, v, originalMarker, adjText ) )
                     xw.writeLineOpenSelfclose ( 'para', ('style',marker) )
                 elif markerShouldHaveContent == 'S': # S = sometimes, e.g., p,pi,q,q1,q2,q3,q4,m
                     if haveOpenPara:
@@ -809,7 +815,7 @@ class BibleWriter( InternalBible ):
                         xw.writeLineClose( 'para' )
                         haveOpenPara = False
                     if not adjText: xw.writeLineOpen( 'para', ('style',originalMarker) )
-                    else: xw.writeLineOpenText( 'para', handleInternalTextMarkersForUSX(adjText)+' ', ('style',originalMarker), noTextCheck=True ) # no checks coz might already have embedded XML
+                    else: xw.writeLineOpenText( 'para', handleInternalTextMarkersForUSX(adjText)+xtra, ('style',originalMarker), noTextCheck=True ) # no checks coz might already have embedded XML
                     haveOpenPara = paraJustOpened = True
                 else:
                     #assert( markerShouldHaveContent == 'A' ) # A = always, e.g.,  ide, mt, h, s, ip, etc.
@@ -819,7 +825,7 @@ class BibleWriter( InternalBible ):
                         xw.removeFinalNewline( True )
                         xw.writeLineClose( 'para' )
                         haveOpenPara = False
-                    if adjText: xw.writeLineOpenClose( 'para', handleInternalTextMarkersForUSX(adjText)+' ', ('style',originalMarker), noTextCheck=True ) # no checks coz might already have embedded XML
+                    if adjText: xw.writeLineOpenClose( 'para', handleInternalTextMarkersForUSX(adjText)+xtra, ('style',originalMarker), noTextCheck=True ) # no checks coz might already have embedded XML
                     else: logging.info( "toUSX: {} {}:{} has a blank {} line that was ignored".format( BBB, c, v, originalMarker ) )
             if haveOpenPara:
                 xw.removeFinalNewline( True )
@@ -827,7 +833,7 @@ class BibleWriter( InternalBible ):
             xw.writeLineClose( 'usx' )
             xw.close( writeFinalNL=True ) # Try to imitate Paratext output as closely as possible
             if validationSchema: return xw.validateXML( validationSchema )
-        # end of toUSX_XML:writeBook
+        # end of toUSXXML.writeBook
 
         # Set-up our Bible reference system
         if controlDict['PublicationCode'] == "GENERIC":
@@ -850,7 +856,7 @@ class BibleWriter( InternalBible ):
                 if bookResults[2]: validationResults = ( validationResults[0], validationResults[1], validationResults[2] + bookResults[2], )
         if unhandledMarkers and Globals.verbosityLevel>0: print( "  " + _("WARNING: Unhandled toUSX USFM markers were {}").format(unhandledMarkers) )
         if validationSchema: return validationResults
-    # end of BibleWriter.toUSX_XML
+    # end of BibleWriter.toUSXXML
 
 
 
@@ -935,7 +941,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toOSIS_XML( self, outputFolder=None, controlDict=None, validationSchema=None ):
+    def toOSISXML( self, outputFolder=None, controlDict=None, validationSchema=None ):
         """
         Using settings from the given control file,
             converts the USFM information to one or more UTF-8 OSIS XML files.
@@ -950,7 +956,7 @@ class BibleWriter( InternalBible ):
         if Globals.debugFlag: assert( controlDict and isinstance( controlDict, dict ) )
 
         # Set-up our Bible reference system
-        #if Globals.debugFlag: print( "BibleWriter:toOSIS_XML publicationCode =", controlDict["PublicationCode"] )
+        #if Globals.debugFlag: print( "BibleWriter:toOSISXML publicationCode =", controlDict["PublicationCode"] )
         if controlDict['PublicationCode'] == "GENERIC":
             BOS = self.genericBOS
             BRL = self.genericBRL
@@ -1001,7 +1007,7 @@ class BibleWriter( InternalBible ):
             writerObject.writeLineOpenClose( 'refSystem', "Bible" )
             writerObject.writeLineClose( 'work' )
             writerObject.writeLineClose( 'header' )
-        # end of toOSIS_XML:writeHeader
+        # end of toOSISXML:writeHeader
 
         toOSISGlobals = { "verseRef":'', "XRefNum":0, "FootnoteNum":0, "lastRef":'', "OneChapterOSISBookCodes":Globals.BibleBooksCodes.getOSISSingleChapterBooksList() } # These are our global variables
 
@@ -1496,7 +1502,7 @@ class BibleWriter( InternalBible ):
             closeAnyOpenMajorSection()
             writerObject.writeLineClose( 'div' ) # Close book division
             writerObject.writeNewLine()
-        # end of toOSIS_XML:writeBook
+        # end of toOSISXML:writeBook
 
         if controlDict["osisFiles"]=="byBook": # Write an individual XML file for each book
             if Globals.verbosityLevel>1: print( _("Exporting individually to OSIS XML format...") )
@@ -1539,7 +1545,7 @@ class BibleWriter( InternalBible ):
         if unhandledMarkers and Globals.verbosityLevel>0: print( "  " + _("WARNING: Unhandled toOSIS USFM markers were {}").format(unhandledMarkers) )
         if Globals.verbosityLevel > 2: print( "Need to find and look at an example where a new chapter isn't a new <p> to see how chapter eIDs should be handled there" )
         if validationSchema: return validationResults
-    # end of BibleWriter.toOSIS_XML
+    # end of BibleWriter.toOSISXML
 
 
 
@@ -2128,11 +2134,11 @@ class BibleWriter( InternalBible ):
         MWOutputFolder = os.path.join( givenOutputFolderName, "MediaWiki" + ("Reexport" if self.objectTypeString=='MediaWiki' else "Export" ) )
         MWExportResult = self.toMediaWiki( outputFolder=MWOutputFolder )
         zOutputFolder = os.path.join( givenOutputFolderName, "Zefania" + ("Reexport" if self.objectTypeString=='Zefania' else "Export" ) )
-        zExportResult = self.toZefania_XML( outputFolder=zOutputFolder )
+        zExportResult = self.toZefaniaXML( outputFolder=zOutputFolder )
         USXOutputFolder = os.path.join( givenOutputFolderName, "USX" + ("Reexport" if self.objectTypeString=='USX' else "Export" ) )
-        USXExportResult = self.toUSX_XML( outputFolder=USXOutputFolder )
+        USXExportResult = self.toUSXXML( outputFolder=USXOutputFolder )
         OSISOutputFolder = os.path.join( givenOutputFolderName, "OSIS" + ("Reexport" if self.objectTypeString=='OSIS' else "Export" ) )
-        OSISExportResult = self.toOSIS_XML( outputFolder=OSISOutputFolder )
+        OSISExportResult = self.toOSISXML( outputFolder=OSISOutputFolder )
         swOutputFolder = os.path.join( givenOutputFolderName, "Sword" + ("Reexport" if self.objectTypeString=='Sword' else "Export" ) )
         swExportResult = self.toSwordModule( outputFolder=swOutputFolder )
 
@@ -2160,7 +2166,36 @@ def demo():
     # Since this is only designed to be a virtual base class, it can't actually do much at all
     BW = BibleWriter()
     BW.objectNameString = "Dummy test Bible Writer object"
-    if Globals.verbosityLevel > 0: print( BW )
+    if Globals.verbosityLevel > 0: print( BW ); print()
+
+    # But we'll test reading and writing a USX Bible
+    from USXXMLBible import USXXMLBible
+    from USXFilenames import USXFilenames
+    testData = (
+            #("Matigsalug", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/",),
+            ("Matigsalug", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/",),
+            ) # You can put your USX test folder here
+
+    for name, testFolder in testData:
+        if os.access( testFolder, os.R_OK ):
+            UB = USXXMLBible( testFolder, name )
+            UB.load()
+            if Globals.verbosityLevel > 0: print( UB )
+            if Globals.strictCheckingFlag: UB.check()
+            UB.setupWriter()
+            UB.toUSXXML()
+            # Now compare the original and the derived USX XML files
+            outputFolder = "OutputFiles/USXExport/"
+            fN = USXFilenames( testFolder )
+            f1 = os.listdir( testFolder ) # Originals
+            f2 = os.listdir( outputFolder ) # Derived
+            for j, (BBB,filename) in enumerate( fN.getPossibleFilenames() ):
+                if filename in f1 and filename in f2:
+                    #print( "\n{}: {} {}".format( j+1, BBB, filename ) )
+                    result = Globals.fileCompareXML( filename, filename, testFolder, outputFolder )
+                    if not result: halt
+        else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
+
 # end of demo
 
 if __name__ == '__main__':

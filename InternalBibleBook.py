@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-04-24 by RJH (also update versionString below)
+#   Last modified: 2013-04-26 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -57,7 +57,11 @@ trailingWordPunctChars = """,.”»"’›'?)!;:]}>"""
 allWordPunctChars = leadingWordPunctChars + medialWordPunctChars + dashes + trailingWordPunctChars
 
 
-NON_USFM_MARKERS = ( 'c~', 'c#', 'v-', 'v+', 'v~', )
+PSEUDO_USFM_MARKERS = ( 'c~', 'c#', 'v-', 'v+', 'v~', )
+PSEUDO_OSIS_MARKERS = ( 'pp+', )
+NON_USFM_MARKERS = PSEUDO_USFM_MARKERS + PSEUDO_OSIS_MARKERS
+
+
 
 class InternalBibleEntry:
     """
@@ -85,7 +89,7 @@ class InternalBibleEntry:
                     assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
                     assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
 
-            #assert( marker in Globals.USFMMarkers or marker in NON_USFM_MARKERS ) # Doesn't work for OSIS bible yet
+            assert( marker in Globals.USFMMarkers or marker in NON_USFM_MARKERS )
 
         self.marker, self.originalMarker, self.text, self.cleanText, self.extras = marker, originalMarker, text, cleanText, extras
     # end of InternalBibleEntry.__init__
@@ -98,8 +102,8 @@ class InternalBibleEntry:
 
 
     def __str__( self ):
-        cleanAbbreviation = self.cleanText if len(self.cleanText)<60 else (self.cleanText[:30]+'...'+self.cleanText[-30:])
-        return "InternalBibleEntry object: {}={}".format( marker, repr(cleanAbbreviation) )
+        cleanAbbreviation = self.cleanText if len(self.cleanText)<100 else (self.cleanText[:50]+'...'+self.cleanText[-50:])
+        return "InternalBibleEntry object: {} = {}".format( self.marker, repr(cleanAbbreviation) )
     # end of InternalBibleEntry.__str__
 
 
@@ -141,6 +145,8 @@ class InternalBibleBook:
         self.checkAddedUnitsFlag = False
         self.checkUSFMSequencesFlag = False
         self.replaceAngleBracketsFlag, self.replaceStraightDoubleQuotesFlag = True, False
+
+        self.badMarkers, self.badMarkerCounts = [], []
     # end of InternalBibleBook.__init__
 
 
@@ -191,19 +197,30 @@ class InternalBibleBook:
     def appendLine( self, marker, text ):
         """ Append a (USFM-based) 2-tuple to self._rawLines.
             This is a very simple function, but having it allows us to have a single point in order to catch particular bugs or errors. """
-        if Globals.debugFlag: assert( not self._processedFlag )
+        if Globals.debugFlag:
+            print( "InternalBibleBook.appendLine( {}, {} )".format( repr(marker), repr(text) ) )
+            assert( not self._processedFlag )
 
-        if text is None: halt # Programming error in the calling routine, sorry
-        #if self.objectTypeString == "OSIS" and text is None: halt #originalText = '' # temporary hack
+        if not ( marker in Globals.USFMMarkers or marker in NON_USFM_MARKERS ):
+            if marker in self.badMarkers:
+                ix = self.badMarkers.index( marker )
+                assert( 0 <= ix < len(self.badMarkers) )
+                self.badMarkerCounts[ix] += 1
+            else:
+                self.badMarkers.append( marker )
+                self.badMarkerCounts.append( 1 )
+            return
+        if Globals.debugFlag: assert( marker in Globals.USFMMarkers or marker in NON_USFM_MARKERS )
 
-        strippedText = text.strip()
-        if strippedText != text:
-            if Globals.logErrorsFlag: logging.warning( "Needed to strip: {} {} {}='{}'".format( self.objectTypeString, self.bookReferenceCode, marker, text ) )
-            #if 'XML' not in self.objectNameString: halt
+        if text is None:
+            if Globals.logErrorsFlag: logging.critical( "InternalBibleBook.appendLine: Received {} {} {}={}".format( self.objectTypeString, self.bookReferenceCode, marker, text ) )
+            if Globals.debugFlag: halt # Programming error in the calling routine, sorry
+            text = '' # Try to recover
 
-        rawLineTuple = ( marker, strippedText )
-        #print( "rawLineTuple", rawLineTuple )
-        #if " \\f " in text: print( "rawLineTuple", rawLineTuple )
+        if text.strip() != text:
+            if Globals.logErrorsFlag: logging.warning( "InternalBibleBook.appendLine: Possibly needed to strip {} {} {}='{}'".format( self.objectTypeString, self.bookReferenceCode, marker, text ) )
+
+        rawLineTuple = ( marker, text )
         self._rawLines.append( rawLineTuple )
     # end of InternalBibleBook.appendLine
 
@@ -213,6 +230,7 @@ class InternalBibleBook:
             Doesn't add any additional spaces.
             (Used by USXXMLBibleBook.py) """
         if Globals.debugFlag:
+            print( " InternalBibleBook.appendToLastLine( {}, {} )".format( repr(additionalText), repr(expectedLastMarker) ) )
             assert( not self._processedFlag )
             assert( additionalText and isinstance( additionalText, str ) )
             assert( self._rawLines )
@@ -836,7 +854,7 @@ class InternalBibleBook:
         for marker,text in self._rawLines:
             if self.objectTypeString=='USX' and text and text[-1]==' ': text = text[:-1] # Removing extra trailing space from USX files
             processLine( marker, text ) # Saves its results in self._processedLines
-        #for n in range( 0, 30 ): print( "\n{}: {}".format( n, self._processedLines[n] ) )
+        #self.debugPrint(); halt
         if not Globals.debugFlag: del self._rawLines # if short of memory
         if fixErrors: self.errorDictionary['Fix Text Errors'] = fixErrors
         self._processedFlag = True
@@ -878,6 +896,18 @@ class InternalBibleBook:
         #if self.bookReferenceCode=='MAL': print( self._CVIndex )
         self._indexedFlag = True
     # end of InternalBibleBook.makeIndex
+
+
+    def debugPrint( self ):
+        """
+        """
+        print( "InternalBibleBook.debugPrint: {}".format( self.bookReferenceCode ) )
+        numLines = 30
+        for j in range( 0, min( numLines, len(self._rawLines) ) ):
+            print( " Raw {}: {} = {}".format( j, self._rawLines[j][0], repr(self._rawLines[j][1]) ) )
+        for j in range( 0, min( numLines, len(self._processedLines) ) ):
+            print( " Proc {}: {}{} = {}".format( j, self._processedLines[j][0], '('+self._processedLines[j][1]+')' if self._processedLines[j][1]!=self._processedLines[j][0] else '', repr(self._processedLines[j][2]) ) )
+    # end of InternalBibleBook.debugPrint
 
 
     def validateUSFM( self ):

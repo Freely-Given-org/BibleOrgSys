@@ -1,0 +1,24 @@
+﻿<ScriptureText>
+  <BooksPresent>000000000000000000000000000000000000000100000000000000000000000010000000000000000000000000000000000000000000000000000000000</BooksPresent>
+  <Versification>4</Versification>
+  <CreatedWithPTW6>T</CreatedWithPTW6>
+  <Name>UEP</Name>
+  <Encoding>65001</Encoding>
+  <Language>English</Language>
+  <DefaultFont>Arial</DefaultFont>
+  <DefaultFontSize>10</DefaultFontSize>
+  <FileNamePostPart>UEP.SFM</FileNamePostPart>
+  <FileNameBookNameForm>41MAT</FileNameBookNameForm>
+  <StyleSheet>usfm.sty</StyleSheet>
+  <ChapterMarker>c</ChapterMarker>
+  <VerseMarker>v</VerseMarker>
+  <FullName>USFM Error Project</FullName>
+  <Copyright>Freely given for all to use</Copyright>
+  <Directory>C:\My Paratext Projects\UEP</Directory>
+  <Editable>T</Editable>
+  <FileNamePrePart />
+  <FileNameChapterNumberForm />
+  <NeedsEnglishLanguageFix>No</NeedsEnglishLanguageFix>
+  <NeedsPortugueseLanguageFix>No</NeedsPortugueseLanguageFix>
+  <Naming PrePart="" PostPart="UEP.SFM" BookNameForm="41MAT" ChapterNumberForm="" />
+</ScriptureText>

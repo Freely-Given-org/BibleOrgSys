@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USXXMLBible.py
-#   Last modified: 2013-04-23 by RJH (also update versionString below)
+#   Last modified: 2013-04-26 by RJH (also update versionString below)
 #
 # Module handling compilations of USX Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USX Bibles.
 """
 
 progName = "USX XML Bible handler"
-versionString = "0.05"
+versionString = "0.06"
 
 
 import os, logging, datetime
@@ -38,7 +38,7 @@ from collections import OrderedDict
 import Globals
 from USXFilenames import USXFilenames
 from USXXMLBibleBook import USXXMLBibleBook
-from InternalBible import InternalBible
+from Bible import Bible
 
 
 
@@ -126,7 +126,7 @@ def USXXMLBibleFileCheck( givenFolderName, autoLoad=False ):
 
 
 
-class USXXMLBible( InternalBible ):
+class USXXMLBible( Bible ):
     """
     Class to load and manipulate USX Bibles.
 
@@ -136,7 +136,7 @@ class USXXMLBible( InternalBible ):
         Create the internal USX Bible object.
         """
          # Setup and initialise the base class first
-        InternalBible.__init__( self )
+        Bible.__init__( self )
         self.objectNameString = "USX XML Bible object"
         self.objectTypeString = "USX"
 
@@ -304,20 +304,25 @@ def demo():
 
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
-    name, encoding, testFolder = "Matigsalug", "utf-8", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/" # You can put your USX test folder here
-    if os.access( testFolder, os.R_OK ):
-        UB = USXXMLBible( testFolder, name, encoding )
-        UB.load()
-        if Globals.verbosityLevel > 0: print( UB )
-        UB.check()
-        #UBErrors = UB.getErrors()
-        # print( UBErrors )
-        #print( UB.getVersification () )
-        #print( UB.getAddedUnits () )
-        #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
-            ##print( "Looking for", ref )
-            #print( "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )
-    else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
+    testData = (
+                ("Matigsalug", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/",),
+                ("Matigsalug", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/",),
+                ) # You can put your USX test folder here
+
+    for name, testFolder in testData:
+        if os.access( testFolder, os.R_OK ):
+            UB = USXXMLBible( testFolder, name )
+            UB.load()
+            if Globals.verbosityLevel > 0: print( UB )
+            if Globals.strictCheckingFlag: UB.check()
+            #UBErrors = UB.getErrors()
+            # print( UBErrors )
+            #print( UB.getVersification () )
+            #print( UB.getAddedUnits () )
+            #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
+                ##print( "Looking for", ref )
+                #print( "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )
+        else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 
     #if Globals.commandLineOptions.export:
     #    if Globals.verbosityLevel > 0: print( "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( progName, versionString ) )

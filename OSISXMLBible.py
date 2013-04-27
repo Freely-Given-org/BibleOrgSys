@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # OSISXMLBible.py
-#   Last modified: 2013-04-24 by RJH (also update versionString below)
+#   Last modified: 2013-04-26 by RJH (also update versionString below)
 #
 # Module handling OSIS XML Bibles
 #
@@ -1102,14 +1102,14 @@ class OSISXMLBible( Bible ):
             elif noteType == 'footnote':
                 #print( "  noteType =", noteType, "noteN =", noteN )
                 if Globals.debugFlag: assert( not placement )
-                if not noteN: noteN = '+'
+                if not noteN: noteN = '~'
                 #bookResults.append( ('footnote',noteN,) )
                 #USFMResults.append( ('f',noteN,) )
                 self.thisBook.appendLine( 'f', noteN )
             elif noteType == 'study':
                 #print( "  noteType =", noteType, "noteN =", noteN )
                 if Globals.debugFlag: assert( not placement )
-                if not noteN: noteN = '+'
+                if not noteN: noteN = '~'
                 #bookResults.append( ('studyNote',noteN,) )
                 #USFMResults.append( ('f',noteN,) )
                 self.thisBook.appendLine( 'f', noteN )
@@ -1118,14 +1118,14 @@ class OSISXMLBible( Bible ):
                 #print( "  noteType =", noteType, "noteN =", noteN )
                 if Globals.debugFlag: assert( not placement )
                 # What do we do here ???? XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-                #if not noteN: noteN = '+'
+                #if not noteN: noteN = '~'
                 bookResults.append( ('variant',noteN,) )
                 #USFMResults.append( ('f',noteN,) )
                 self.thisBook.appendLine( 'var', noteN )
             elif noteType == 'x-index':
                 #print( "  noteType =", noteType, "noteN =", noteN )
                 if Globals.debugFlag: assert( placement in ('inline',) )
-                if not noteN: noteN = '+'
+                if not noteN: noteN = '~'
                 #bookResults.append( ('index',noteN,) )
                 #USFMResults.append( ('ix',noteN,) )
                 self.thisBook.appendLine( 'ix', noteN )
@@ -1165,13 +1165,13 @@ class OSISXMLBible( Bible ):
                     #print( "Need to handle study note properly here" ) # ................. xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
                     #bookResults.append( ('studyNote+',noteText,) )
                     #USFMResults.append( ('sn+',noteText,) )
-                    self.thisBook.appendLine( 'sn+', noteText )
+                    self.thisBook.appendLine( 'sn~', noteText )
                     #print( "study note2", location, "Type =", noteType, "N =", noteN, "Ref =", noteOsisRef, "ID =", noteOsisID, "p =", placement ); halt
                 elif noteType == 'x-index':
                     #print( "Need to handle index note properly here" ) # ................. xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
                     #bookResults.append( ('index+',noteText,) )
                     #USFMResults.append( ('ix+',noteText,) )
-                    self.thisBook.appendLine( 'ix+', noteText )
+                    self.thisBook.appendLine( 'ix~', noteText )
                 else: print( "note2", noteType ); halt
             for subelement in element.getchildren():
                 if subelement.tag == OSISXMLBible.OSISNameSpace+"reference": # cross-references
@@ -1260,7 +1260,7 @@ class OSISXMLBible( Bible ):
                             if Globals.debugFlag: assert( noteType == 'crossReference' )
                             #bookResults.append( ('crossReferenceSource+',subreferenceText,) )
                             #USFMResults.append( ('xo+',subreferenceText,) )
-                            self.thisBook.appendLine( 'xo+', subreferenceText )
+                            self.thisBook.appendLine( 'xo~', subreferenceText )
                         else: logging.warning( "7h45 Unprocessed '{}' sub2element ({}) in {} at {}".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"q":
                     sublocation = "validateCrossReferenceOrFootnote: q of " + locationDescription
@@ -1321,7 +1321,7 @@ class OSISXMLBible( Bible ):
                     if pTail:
                         #bookResults.append( ('note+',pTail,) )
                         #USFMResults.append( ('note+',pTail,) )
-                        self.thisBook.appendLine( 'note+', pTail )
+                        self.thisBook.appendLine( 'note~', pTail )
                     justFinishedLG = False
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"rdg":
                     sublocation = "validateCrossReferenceOrFootnote: rdg of " + locationDescription
@@ -1452,7 +1452,7 @@ class OSISXMLBible( Bible ):
                             if trailingText:
                                 #bookResults.append( ('nd+',trailingText,) )
                                 #USFMResults.append( ('nd+',trailingText,) )
-                                self.thisBook.appendLine( 'nd+', trailingText )
+                                self.thisBook.appendLine( 'nd~', trailingText )
                         elif Globals.logErrorsFlag:
                             logging.warning( "4j12 Unprocessed '{}' sub2element ({}) in {} at {}".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"divineName":
@@ -1540,7 +1540,7 @@ class OSISXMLBible( Bible ):
                             #print( referenceText, referenceOsisRef, referenceTail )
                             #bookResults.append( ('reference',referenceText,) )
                             #USFMResults.append( ('r+',referenceText+referenceTail,) )
-                            self.thisBook.appendLine( 'r+', referenceText+referenceTail )
+                            self.thisBook.appendLine( 'r~', referenceText+referenceTail )
                         elif Globals.logErrorsFlag:
                             logging.warning( "2d6h Unprocessed '{}' sub3element ({}) in {} at {}".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
         # end of validateTitle
@@ -1673,7 +1673,7 @@ class OSISXMLBible( Bible ):
                     if pTail and not pTail.isspace(): # Just ignore XML spacing characters
                         #bookResults.append( ('paragraph+',pTail,) )
                         #USFMResults.append( ('p+',pTail,) )
-                        self.thisBook.appendLine( 'p+', pTail )
+                        self.thisBook.appendLine( 'p~', pTail )
                     justFinishedLG = False
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"hi":
                     sublocation = "validateParagraph: hi of " + locationDescription
@@ -1693,7 +1693,7 @@ class OSISXMLBible( Bible ):
                     if pTail and not pTail.isspace(): # Just ignore XML spacing characters
                         #bookResults.append( ('paragraph+',pTail,) )
                         #USFMResults.append( ('p+',pTail,) )
-                        self.thisBook.appendLine( 'p+', pTail )
+                        self.thisBook.appendLine( 'p~', pTail )
                     justFinishedLG = False
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"lb":
                     sublocation = "validateParagraph: lb of " + locationDescription
@@ -1714,7 +1714,7 @@ class OSISXMLBible( Bible ):
                     combined = word + trailingPunctuation
                     #bookResults.append( ('w',combined,) )
                     #USFMResults.append( ('w+',combined,) )
-                    self.thisBook.appendLine( 'w+', combined )
+                    self.thisBook.appendLine( 'w~', combined )
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"signed":
                     sublocation = "validateParagraph: signed of " + locationDescription
                     Globals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, 'fc3v3' )
@@ -1734,12 +1734,12 @@ class OSISXMLBible( Bible ):
                     self.thisBook.appendLine( 'nd', divineName )
                     #bookResults.append( ('nd+',trailingText,) )
                     #USFMResults.append( ('nd+',trailingText,) )
-                    self.thisBook.appendLine( 'nd+', trailingText )
+                    self.thisBook.appendLine( 'nd~', trailingText )
                 else: logging.warning( "3kj6 Unprocessed '{}' sub-element ({}) in {} at {}".format( subelement.tag, subelement.text, location, verseMilestone ) )
             if element.tail and not element.tail.isspace(): # Just ignore XML spacing characters
                 #bookResults.append( ('paragraph+',element.tail,) )
                 #USFMResults.append( ('p+',element.tail,) )
-                self.thisBook.appendLine( 'p+', element.tail )
+                self.thisBook.appendLine( 'p~', element.tail )
             return verseMilestone
         # end of validateParagraph
 
@@ -2015,14 +2015,14 @@ class OSISXMLBible( Bible ):
                                         #print( referenceText, referenceOsisRef, referenceTail )
                                         #bookResults.append( ('reference',referenceText,) )
                                         #USFMResults.append( ('r+',referenceText+referenceTail,) )
-                                        self.thisBook.appendLine( 'r+', referenceText+referenceTail )
+                                        self.thisBook.appendLine( 'r~', referenceText+referenceTail )
                                     elif sub3element.tag == OSISXMLBible.OSISNameSpace+"note":
                                         sub3location = "note of " + sub2location
                                         validateCrossReferenceOrFootnote( sub3element, sub3location, verseMilestone )
                                         noteTail = sub3element.tail
                                         if noteTail: # This is the main text of the verse (follows the inserted note)
                                             #bookResults.append( ('lverse+', noteTail,) )
-                                            self.thisBook.appendLine( 'lverse+', noteTail )
+                                            self.thisBook.appendLine( 'lverse~', noteTail )
                                             adjNoteTail = noteTail.replace('\n','') # XML line formatting is irrelevant to USFM
                                             if adjNoteTail: USFMResults.append( ('lv~',adjNoteTail,) )
                                     else: logging.warning( "m4g5 Unprocessed '{}' sub3element ({}) in {} at {}".format( sub3element.tag, sub3element.text, sub2location, verseMilestone ) )
@@ -2421,18 +2421,19 @@ def demo():
 
     if 1: # Test OSISXMLBible object
         testFilepaths = (
-            "Tests/DataFilesForTests/OSISTest1/",
-            "Tests/DataFilesForTests/OSISTest2/",
-            "../morphhb/wlc/Ruth.xml", "../morphhb/wlc/Dan.xml", "../morphhb/wlc/", # Hebrew Ruth, Daniel, Bible
-            "../../../../../Data/Work/Bibles/Formats/OSIS/Crosswire USFM-to-OSIS (Perl)/Matigsalug.osis.xml", # Entire Bible in one file 4.4MB
-            "../../../../../Data/Work/Bibles/Formats/OSIS/kjvxml from DMSmith/kjv.xml", # Entire Bible in one file 23.7MB
-            "../../../../../Data/Work/Bibles/Formats/OSIS/kjvxml from DMSmith/kjvfull.xml", # Entire Bible in one file 24.2MB
-            "../../../../../Data/Work/Bibles/Formats/OSIS/kjvxml from DMSmith/kjvlite.xml", # Entire Bible in one file 7.7MB
-            "../../MatigsalugOSIS/OSIS-Output/MBTGEN.xml", "../../MatigsalugOSIS/OSIS-Output/MBTRUT.xml", # Single books
-                "../../MatigsalugOSIS/OSIS-Output/MBTMRK.xml", "../../MatigsalugOSIS/OSIS-Output/MBTJAS.xml", # Single books
-                "../../MatigsalugOSIS/OSIS-Output/MBT2PE.xml", # Single book
-            "../../MatigsalugOSIS/OSIS-Output", # Entire folder of single books
-        )
+            #"Tests/DataFilesForTests/OSISTest1/",
+            #"Tests/DataFilesForTests/OSISTest2/",
+            #"../morphhb/wlc/Ruth.xml", "../morphhb/wlc/Dan.xml", "../morphhb/wlc/", # Hebrew Ruth, Daniel, Bible
+            #"../../../../../Data/Work/Bibles/Formats/OSIS/Crosswire USFM-to-OSIS (Perl)/Matigsalug.osis.xml", # Entire Bible in one file 4.4MB
+            #"../../../../../Data/Work/Bibles/Formats/OSIS/kjvxml from DMSmith/kjv.xml", # Entire Bible in one file 23.7MB
+            #"../../../../../Data/Work/Bibles/Formats/OSIS/kjvxml from DMSmith/kjvfull.xml", # Entire Bible in one file 24.2MB
+            #"../../../../../Data/Work/Bibles/Formats/OSIS/kjvxml from DMSmith/kjvlite.xml", # Entire Bible in one file 7.7MB
+            #"../../MatigsalugOSIS/OSIS-Output/MBTGEN.xml",
+            "../../MatigsalugOSIS/OSIS-Output/MBTRUT.xml", # Single books
+            #    "../../MatigsalugOSIS/OSIS-Output/MBTMRK.xml", "../../MatigsalugOSIS/OSIS-Output/MBTJAS.xml", # Single books
+            #    "../../MatigsalugOSIS/OSIS-Output/MBT2PE.xml", # Single book
+            #"../../MatigsalugOSIS/OSIS-Output", # Entire folder of single books
+            )
         justOne = ( testFilepaths[0], )
 
         for j, testFilepath in enumerate( justOne ): # Choose testFilepaths or justOne
@@ -2441,12 +2442,20 @@ def demo():
             if Globals.verbosityLevel > 0: print( "  Test filepath is '{}'".format( testFilepath ) )
             oB = OSISXMLBible( testFilepath ) # Load and process the XML
             oB.load()
-            print( oB ) # Just print a summary
+            if Globals.verbosityLevel > 0: print( oB ) # Just print a summary
+            print( 'RUT' in oB )
+            oBB = oB['RUT']
+            print( "rawLines", oBB._rawLines[:50] )
+            print( "rejected", list(zip( oBB.badMarkers, oBB.badMarkerCounts)) )
+            for j in range( 0, 30 ):
+                print( "  processedLines", oBB._processedLines[j] )
             if 1: # Test verse lookup
                 import VerseReferences
-                for referenceTuple in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
+                for referenceTuple in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'),
+                                    ('OT','RUT','1','1'), ('OT','RUT','3','3'),
+                                    ('OT','PSA','3','0'), ('OT','PSA','3','1'),
                                     ('OT','DAN','1','21'),
-                                    ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \
+                                    ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'),
                                     ('DC','BAR','1','1'), ('DC','MA1','1','1'), ('DC','MA2','1','1',), ):
                     (t, b, c, v) = referenceTuple
                     if t=='OT' and len(oB)==27: continue # Don't bother with OT references if it's only a NT
