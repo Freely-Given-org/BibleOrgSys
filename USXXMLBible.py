@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USXXMLBible.py
-#   Last modified: 2013-04-26 by RJH (also update versionString below)
+#   Last modified: 2013-04-28 by RJH (also update versionString below)
 #
 # Module handling compilations of USX Bible books
 #
@@ -147,7 +147,7 @@ class USXXMLBible( Bible ):
 
         # Do a preliminary check on the readability of our folder
         if not os.access( self.givenFolderName, os.R_OK ):
-            print( "ZefaniaXMLBible: File '{}' is unreadable".format( self.givenFolderName ) )
+            print( "USXXMLBible: File '{}' is unreadable".format( self.givenFolderName ) )
     # end of __init_
 
 
@@ -164,7 +164,7 @@ class USXXMLBible( Bible ):
                 for line in myFile:
                     lineCount += 1
                     if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
-                        if Globals.verbosityLevel > 0: print( "      Detected UTF-16 Byte Order Marker" )
+                        if Globals.verbosityLevel > 0: print( "      USXXMLBible.load: Detected UTF-16 Byte Order Marker" )
                         line = line[1:] # Remove the Byte Order Marker
                     if line[-1]=='\n': line = line[:-1] # Remove trailing newline character
                     line = line.strip() # Remove leading and trailing whitespace

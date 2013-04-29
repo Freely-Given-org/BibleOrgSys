@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Globals.py
-#   Last modified: 2013-04-27 (also update versionString below)
+#   Last modified: 2013-04-29 (also update versionString below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -232,7 +232,7 @@ def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=Tru
         for line in file1:
             lineCount += 1
             if lineCount==1 and line[0]==chr(65279): #U+FEFF
-                if printFlag and verbosityLevel > 2: print( "      Detected UTF-16 Byte Order Marker in file1" )
+                if printFlag and verbosityLevel > 2: print( "      Globals.fileCompare: Detected UTF-16 Byte Order Marker in file1" )
                 line = line[1:] # Remove the UTF-8 Byte Order Marker
             if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
             if not line: continue # Just discard blank lines
@@ -242,7 +242,7 @@ def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=Tru
         for line in file2:
             lineCount += 1
             if lineCount==1 and line[0]==chr(65279): #U+FEFF
-                if printFlag and verbosityLevel > 2: print( "      Detected UTF-16 Byte Order Marker in file2" )
+                if printFlag and verbosityLevel > 2: print( "      Globals.fileCompare: Detected UTF-16 Byte Order Marker in file2" )
                 line = line[1:] # Remove the UTF-8 Byte Order Marker
             if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
             if not line: continue # Just discard blank lines
@@ -333,6 +333,7 @@ def fileCompareXML( filename1, filename2, folder1=None, folder2=None, printFlag=
             if ignoreWhitespace:
                 if element1.tail is None and not element2.tail.strip(): pass
                 elif element2.tail is None and not element1.tail.strip(): pass
+                elif element1.tail and element2.tail and element1.tail.strip()==element2.tail.strip(): pass
                 else:
                     if printFlag: print( "Element tail differs:\n {}\n {}\n at {}".format( repr(element1.tail), repr(element2.tail), location ) )
                     diffCount += 1

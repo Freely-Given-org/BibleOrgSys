@@ -253,7 +253,7 @@ class UnboundBible( Bible ):
             for line in myFile:
                 lineCount += 1
                 #if lineCount==1 and self.encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF
-                    #if Globals.verbosityLevel > 0: print( "      Detected UTF-16 Byte Order Marker" )
+                    #if Globals.verbosityLevel > 0: print( "      UnboundBible.load: Detected UTF-16 Byte Order Marker" )
                     #line = line[1:] # Remove the UTF-8 Byte Order Marker
                 if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 if not line: continue # Just discard blank lines

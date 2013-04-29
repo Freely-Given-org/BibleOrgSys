@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # SFMFile.py
-#   Last modified: 2013-04-23 (also update versionString below)
+#   Last modified: 2013-04-28 (also update versionString below)
 #
 # SFM (Standard Format Marker) data file reader
 #
@@ -48,6 +48,7 @@ import logging
 import Globals
 
 
+
 class SFMLines:
     """
     Class holding a list of (non-blank) SFM lines.
@@ -90,7 +91,7 @@ class SFMLines:
                 for line in myFile:
                     lineCount += 1
                     if lineCount==1 and encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF
-                        if Globals.verbosityLevel > 0: print( "      Detected UTF-16 Byte Order Marker" )
+                        if Globals.verbosityLevel > 0: print( "      SFMLines: Detected UTF-16 Byte Order Marker" )
                         line = line[1:] # Remove the UTF-8 Byte Order Marker
                     if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines
@@ -137,6 +138,7 @@ class SFMLines:
             self.lines = result
     # end of SFMLines.read
 # end of class SFMLines
+
 
 
 class SFMRecords:
@@ -203,7 +205,7 @@ class SFMRecords:
                 for line in myFile:
                     lineCount += 1
                     if lineCount==1 and encoding.lower()=='utf-8' and line and line[0]==chr(65279): #U+FEFF
-                        if Globals.verbosityLevel > 0: print( "      Detected UTF-16 Byte Order Marker" )
+                        if Globals.verbosityLevel > 0: print( "      SFMRecords: Detected UTF-16 Byte Order Marker" )
                         line = line[1:] # Remove the UTF-8 Byte Order Marker
                     if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines
@@ -327,6 +329,7 @@ class SFMRecords:
         return self.dataDict
     # end of SFMRecords.copyToDict
 # end of class SFMRecords
+
 
 
 def demo():

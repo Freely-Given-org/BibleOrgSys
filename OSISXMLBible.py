@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # OSISXMLBible.py
-#   Last modified: 2013-04-26 by RJH (also update versionString below)
+#   Last modified: 2013-04-29 by RJH (also update versionString below)
 #
 # Module handling OSIS XML Bibles
 #
@@ -2445,7 +2445,8 @@ def demo():
             if Globals.verbosityLevel > 0: print( oB ) # Just print a summary
             print( 'RUT' in oB )
             oBB = oB['RUT']
-            print( "rawLines", oBB._rawLines[:50] )
+            try: print( "rawLines", oBB._rawLines[:50] )
+            except: print( "processedLines", oBB._processedLines[:50] )
             print( "rejected", list(zip( oBB.badMarkers, oBB.badMarkerCounts)) )
             for j in range( 0, 30 ):
                 print( "  processedLines", oBB._processedLines[j] )

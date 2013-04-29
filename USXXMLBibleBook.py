@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USXXMLBibleBook.py
-#   Last modified: 2013-04-26 by RJH (also update versionString below)
+#   Last modified: 2013-04-29 by RJH (also update versionString below)
 #
 # Module handling USX Bible Book xml
 #
@@ -110,6 +110,7 @@ class USXXMLBibleBook( BibleBook ):
                         else:
                             if Globals.logErrorsFlag: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
                     # A character field must be added to the previous field
+                    if element.tail is None: element.tail = ''
                     additionalText = "\\{} {}\\{}*{}".format( charStyle, element.text, charStyle, element.tail )
                     #print( c, v, paragraphStyle, charStyle )
                     self.appendToLastLine( additionalText )
@@ -185,8 +186,12 @@ class USXXMLBibleBook( BibleBook ):
 
             # Process the attributes first
             self.schemaLocation = ''
+            version = None
             for attrib,value in self.tree.items():
-                if Globals.logErrorsFlag: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+                if attrib=='version': version = value
+                elif Globals.logErrorsFlag: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+            if version not in ( None, '2.0' ):
+                if Globals.logErrorsFlag: logging.warning( _("Not sure if we can handle v{} USX files").format( version ) )
 
             # Now process the data
             for element in self.tree:
@@ -293,7 +298,7 @@ def demo():
         return someString[:int(maxLen/2)]+'...'+someString[-int(maxLen/2):]
 
     import USXFilenames, USFMFilenames, USFMBibleBook
-    name, testFolder = "Matigsalug", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/" # You can put your USX test folder here
+    #name, testFolder = "Matigsalug", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/" # You can put your USX test folder here
     name, testFolder = "Matigsalug", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/" # You can put your USX test folder here
     name2, testFolder2 = "Matigsalug", "../../../../../Data/Work/Matigsalug/Bible/MBTV/" # You can put your USFM test folder here (for comparing the USX with)
     if os.access( testFolder, os.R_OK ):
@@ -301,19 +306,21 @@ def demo():
         if Globals.verbosityLevel > 1: print( _("Scanning {} from {}...").format( name, testFolder2 ) )
         fileList = USXFilenames.USXFilenames( testFolder ).getConfirmedFilenames()
         for bookReferenceCode,filename in fileList:
-            if bookReferenceCode in ( 'GEN',
-                    'RUT', 'EST','DAN','JNA',
-                    #'MAT','MRK','LUK','JHN','ACT',
-                    #'ROM','CO1','CO2','GAL','EPH','PHP','COL','TH1','TH2','TI1','TI2','TIT','PHM',
-                    #'HEB','JAM','PE1','PE2','JN1','JN2','JN3','JDE','REV'
+            if bookReferenceCode in (
+                     'GEN',
+                    'RUT', 'EST',
+                    'DAN', 'JNA',
+                    'MAT','MRK','LUK','JHN','ACT',
+                    'ROM','CO1','CO2','GAL','EPH','PHP','COL','TH1','TH2','TI1','TI2','TIT','PHM',
+                    'HEB','JAM','PE1','PE2','JN1','JN2','JN3','JDE','REV'
                     ):
                 if Globals.verbosityLevel > 1: print( _("Loading {} from {}...").format( bookReferenceCode, filename ) )
                 UxBB = USXXMLBibleBook( bookReferenceCode )
                 UxBB.load( filename, testFolder )
-                if Globals.verbosityLevel > 1: print( "  ID is '{}'".format( UxBB.getField( 'id' ) ) )
-                if Globals.verbosityLevel > 1: print( "  Header is '{}'".format( UxBB.getField( 'h' ) ) )
-                if Globals.verbosityLevel > 1: print( "  Main titles are '{}' and '{}'".format( UxBB.getField( 'mt1' ), UxBB.getField( 'mt2' ) ) )
-                if Globals.verbosityLevel > 0: print( UxBB )
+                if Globals.verbosityLevel > 2: print( "  ID is '{}'".format( UxBB.getField( 'id' ) ) )
+                if Globals.verbosityLevel > 2: print( "  Header is '{}'".format( UxBB.getField( 'h' ) ) )
+                if Globals.verbosityLevel > 2: print( "  Main titles are '{}' and '{}'".format( UxBB.getField( 'mt1' ), UxBB.getField( 'mt2' ) ) )
+                if Globals.verbosityLevel > 2: print( UxBB )
                 UxBB.validateUSFM()
                 UxBBVersification = UxBB.getVersification ()
                 if Globals.verbosityLevel > 2: print( UxBBVersification )
@@ -374,7 +381,7 @@ def demo():
                                 print( "Linecount not equal: {} from {}".format( i, UxL, UL ) )
                                 mismatchCount += 1
                                 break
-                            if mismatchCount > 10: print( "..." ); halt
+                            if mismatchCount > 5: print( "..." ); break
                         if mismatchCount == 0 and Globals.verbosityLevel > 2: print( "All {} processedLines matched!".format( UxL ) )
                     else: print( "Sorry, USFM test folder doesn't contain the {} book.".format( bookReferenceCode ) )
                 else: print( "Sorry, USFM test folder '{}' doesn't exist on this computer.".format( testFolder2 ) )

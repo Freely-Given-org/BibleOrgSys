@@ -2193,7 +2193,8 @@ def demo():
                 if filename in f1 and filename in f2:
                     #print( "\n{}: {} {}".format( j+1, BBB, filename ) )
                     result = Globals.fileCompareXML( filename, filename, testFolder, outputFolder )
-                    if not result: halt
+                    if Globals.debugFlag:
+                        if not result: halt
         else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 
 # end of demo

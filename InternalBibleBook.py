@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-04-26 by RJH (also update versionString below)
+#   Last modified: 2013-04-29 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -218,7 +218,8 @@ class InternalBibleBook:
             text = '' # Try to recover
 
         if text.strip() != text:
-            if Globals.logErrorsFlag: logging.warning( "InternalBibleBook.appendLine: Possibly needed to strip {} {} {}='{}'".format( self.objectTypeString, self.bookReferenceCode, marker, text ) )
+            if marker=='v' and len(text)<=4 and self.objectTypeString in ('USX',): pass
+            elif Globals.logErrorsFlag: logging.warning( "InternalBibleBook.appendLine: Possibly needed to strip {} {} {}='{}'".format( self.objectTypeString, self.bookReferenceCode, marker, text ) )
 
         rawLineTuple = ( marker, text )
         self._rawLines.append( rawLineTuple )

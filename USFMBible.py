@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2013-04-23 by RJH (also update versionString below)
+#   Last modified: 2013-04-28 by RJH (also update versionString below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -185,7 +185,7 @@ class USFMBible( Bible ):
             for line in myFile:
                 lineCount += 1
                 if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
-                    if Globals.verbosityLevel > 0: print( "      Detected UTF-16 Byte Order Marker" )
+                    if Globals.verbosityLevel > 0: print( "      USFMBible.loadSSFData: Detected UTF-16 Byte Order Marker" )
                     line = line[1:] # Remove the Byte Order Marker
                 if line[-1]=='\n': line = line[:-1] # Remove trailing newline character
                 line = line.strip() # Remove leading and trailing whitespace
@@ -312,7 +312,7 @@ def demo():
                 for line in myFile:
                     lineCount += 1
                     if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
-                        #if Globals.verbosityLevel > 0: print( "      Detected UTF-16 Byte Order Marker in copyright.htm file" )
+                        #if Globals.verbosityLevel > 0: print( "      USFMBible: Detected UTF-16 Byte Order Marker in copyright.htm file" )
                         line = line[1:] # Remove the UTF-8 Byte Order Marker
                     if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines
@@ -455,7 +455,7 @@ def demo():
                 for line in myFile:
                     lineCount += 1
                     if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
-                        #if Globals.verbosityLevel > 0: print( "      Detected UTF-16 Byte Order Marker in copyright.htm file" )
+                        #if Globals.verbosityLevel > 0: print( "      USFMBible: Detected UTF-16 Byte Order Marker in copyright.htm file" )
                         line = line[1:] # Remove the UTF-8 Byte Order Marker
                     if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines
