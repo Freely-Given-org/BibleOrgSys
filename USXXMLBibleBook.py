@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USXXMLBibleBook.py
-#   Last modified: 2013-04-29 by RJH (also update versionString below)
+#   Last modified: 2013-05-01 by RJH (also update versionString below)
 #
 # Module handling USX Bible Book xml
 #
@@ -32,7 +32,7 @@ versionString = "0.06"
 
 import logging, os
 from gettext import gettext as _
-from xml.etree.cElementTree import ElementTree
+from xml.etree.ElementTree import ElementTree
 
 import Globals
 from Bible import BibleBook
@@ -240,8 +240,11 @@ class USXXMLBibleBook( BibleBook ):
                         #lastMarker, lastText = USFMMarker, text
                         loadParagraph( element, sublocation )
                     elif Globals.USFMMarkers.isInternalMarker( USFMMarker ): # the line begins with an internal USFM Marker -- append it to the previous line
-                        halt # Not checked yet
                         text = element.text
+                        if text is None: text = ''
+                        if Globals.debugFlag:
+                            print( _("{} {}:{} Found '\\{}' internal USFM marker at beginning of line with text: {}").format( self.bookReferenceCode, c, v, USFMMarker, text ) )
+                            halt # Not checked yet
                         if text:
                             loadErrors.append( _("{} {}:{} Found '\\{}' internal USFM marker at beginning of line with text: {}").format( self.bookReferenceCode, c, v, USFMMarker, text ) )
                             if Globals.logErrorsFlag: logging.warning( _("Found '\\{}' internal USFM Marker after {} {}:{} at beginning of line with text: {}").format( USFMMarker, self.bookReferenceCode, c, v, text ) )
@@ -250,7 +253,7 @@ class USXXMLBibleBook( BibleBook ):
                             if Globals.logErrorsFlag: logging.warning( _("Found '\\{}' internal USFM Marker after {} {}:{} at beginning of line (with no text)").format( USFMMarker, self.bookReferenceCode, c, v ) )
                         self.addPriorityError( 97, c, v, _("Found \\{} internal USFM Marker on new line in file").format( USFMMarker ) )
                         #lastText += '' if lastText.endswith(' ') else ' ' # Not always good to add a space, but it's their fault!
-                        lastText +=  '\\' + USFMMarker + ' ' + text
+                        lastText =  '\\' + USFMMarker + ' ' + text
                         #print( "{} {} {} Now have {}:'{}'".format( self.bookReferenceCode, c, v, lastMarker, lastText ) )
                     else: # the line begins with an unknown USFM Marker
                         text = element.text

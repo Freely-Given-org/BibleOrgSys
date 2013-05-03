@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Bible.py
-#   Last modified: 2013-04-20 (also update versionString below)
+#   Last modified: 2013-05-01 (also update versionString below)
 #
 # Module handling a internal Bible object
 #
@@ -28,71 +28,70 @@ Module handling an internal Bible object.
 """
 
 progName = "Bible object handler"
-versionString = "0.03"
+versionString = "0.04"
 
 import logging, os.path
 from gettext import gettext as _
-from collections import OrderedDict
-from xml.etree.cElementTree import ElementTree
+#from collections import OrderedDict
+from xml.etree.ElementTree import ElementTree
 
 import Globals
 from InternalBibleBook import InternalBibleBook
 from BibleWriter import BibleWriter
 
 
-if 0:
-    class BibleExtra:
-        """
-        Class for handling Bible front and back matter.
-        """
+#class BibleExtra:
+    #"""
+    #Class for handling Bible front and back matter.
+    #"""
 
-        def __init__( self ):
-            """
-            Constructor: creates an empty Bible extra object.
-            """
-            self.sections = []
-        # end of __init__
+    #def __init__( self ):
+        #"""
+        #Constructor: creates an empty Bible extra object.
+        #"""
+        #self.sections = []
+    ## end of __init__
 
-        def __str__( self ):
-            """
-            This method returns the string representation of a Bible extra section.
+    #def __str__( self ):
+        #"""
+        #This method returns the string representation of a Bible extra section.
 
-            @return: the name of a Bible object formatted as a string
-            @rtype: string
-            """
-            result = _("BibleExtra object")
-            result += ('\n' if result else '') + "  " + _("Number of sections = {}").format(len(self.sections) )
-            return result
-        # end of __str__
-    # end of class BibleExtra
+        #@return: the name of a Bible object formatted as a string
+        #@rtype: string
+        #"""
+        #result = _("BibleExtra object")
+        #result += ('\n' if result else '') + "  " + _("Number of sections = {}").format(len(self.sections) )
+        #return result
+    ## end of __str__
+## end of class BibleExtra
 
 
-    class BibleDivision:
-        """
-        Class for handling Bible divisions (like Old Testament and New Testament).
-        """
+#class BibleDivision:
+    #"""
+    #Class for handling Bible divisions (like Old Testament and New Testament).
+    #"""
 
-        def __init__( self ):
-            """
-            Constructor: creates an empty Bible extra object.
-            """
-            self.shortName, self.longName = '', ''
-            self.inputAbbreviations = []
-            self.bookCodes = []
-        # end of __init__
+    #def __init__( self ):
+        #"""
+        #Constructor: creates an empty Bible extra object.
+        #"""
+        #self.shortName, self.longName = '', ''
+        #self.inputAbbreviations = []
+        #self.bookCodes = []
+    ## end of __init__
 
-        def __str__( self ):
-            """
-            This method returns the string representation of a Bible division.
+    #def __str__( self ):
+        #"""
+        #This method returns the string representation of a Bible division.
 
-            @return: the name of a Bible object formatted as a string
-            @rtype: string
-            """
-            result = _("BibleDivision object")
-            result += ('\n' if result else '') + "  {} ({})".format(self.longName, self.shortName )
-            return result
-        # end of __str__
-    # end of class BibleDivision
+        #@return: the name of a Bible object formatted as a string
+        #@rtype: string
+        #"""
+        #result = _("BibleDivision object")
+        #result += ('\n' if result else '') + "  {} ({})".format(self.longName, self.shortName )
+        #return result
+    ## end of __str__
+## end of class BibleDivision
 
 
 class BibleBook ( InternalBibleBook ):
@@ -137,28 +136,28 @@ class BibleBook ( InternalBibleBook ):
         return result
     # end of __str__
 
-    def append( self, stuff ):
-        """
-        Append the stuff tuple to a Bible book.
-        """
-        if Globals.debugFlag: assert( len(stuff) == 2 )
-        if Globals.debugFlag: assert( stuff[0] in self.textCodes )
-        self.text.append( stuff )
-    # end of append
+    #def append( self, stuff ):
+        #"""
+        #Append the stuff tuple to a Bible book.
+        #"""
+        #if Globals.debugFlag: assert( len(stuff) == 2 )
+        #if Globals.debugFlag: assert( stuff[0] in self.textCodes )
+        #self.text.append( stuff )
+    ## end of append
 
-    def createIndex( self ):
-        """ Create the chapter verse index for this book. """
-        self.index = {}
-        C, V = '0', '0'
-        for j,(code,text) in enumerate(self.text):
-            if code == 'Chp':
-                C, V = text, '0'
-                self.index[ (C,V) ] = j, 0
-            elif code == 'Vrs':
-                V = text
-                self.index[ (C,V) ] = j, 0
-        #print( self.index )
-    # end of createIndex
+    #def createIndex( self ):
+        #""" Create the chapter verse index for this book. """
+        #self.index = {}
+        #C, V = '0', '0'
+        #for j,(code,text) in enumerate(self.text):
+            #if code == 'Chp':
+                #C, V = text, '0'
+                #self.index[ (C,V) ] = j, 0
+            #elif code == 'Vrs':
+                #V = text
+                #self.index[ (C,V) ] = j, 0
+        ##print( self.index )
+    ## end of createIndex
 # end of class BibleBook
 
 

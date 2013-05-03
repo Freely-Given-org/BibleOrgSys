@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-04-29 by RJH (also update versionString below)
+#   Last modified: 2013-05-03 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -868,33 +868,109 @@ class InternalBibleBook:
         Index the lines for faster reference.
 
         The keys to the dictionary are (C,V,) 2-tuples.
-        The dictionary entries are (ix,cnt) 2-tuples where
+        The dictionary entries are (ix,lineCount) 2-tuples where
             ix is the index into self._processedLines, and
-            cnt is the number of entries.
+            lineCount is the number of entries.
         """
         if Globals.debugFlag:
             assert( self._processedFlag )
             assert( not self._indexedFlag )
         if self._indexedFlag: return # Can only do it once
 
+        def saveAnythingOutstanding():
+            nonlocal saveCV, saveJ, lineCount, context
+            if saveCV and saveJ:
+                #print( "saveAnythingOutstanding", self.bookReferenceCode, saveCV, saveJ, lineCount, context )
+                assert( 1 <= lineCount <= 56 ) # Could potentially be even higher for bridged verses (e.g., 1Chr 11:26-47, Ezra 2:3-20)
+                if saveCV in self._CVIndex:
+                    print( "makeIndex.saveAnythingOutstanding: WARNING -- replacing index entry!" )
+                    print( " ", self.bookReferenceCode, C, V )
+                    print( "  was", self._CVIndex[saveCV] )
+                    ix,lc,ct = self._CVIndex[saveCV]
+                    for ixx in range( ix, ix+lc ):
+                        print( "   ", self._processedLines[ixx], ct )
+                    print( "  now", (saveJ,lineCount,context) )
+                    for ixx in range( saveJ, saveJ+lineCount ):
+                        print( "   ", self._processedLines[ixx], context )
+                    #halt
+                self._CVIndex[saveCV] = (saveJ,lineCount,context)
+                saveCV = saveJ = None
+                lineCount = 0
+
         if Globals.verbosityLevel > 2: print( "  " + _("Indexing {} {} text...").format( self.objectNameString, self.bookReferenceCode ) )
-        self._CVIndex = {} # The keys are C,V 2-tuples
-        lastJ = 0
-        cnt = -1 # temp
+        self._CVIndex = {} # The keys are C,V 2-tuples; the entries are index,length,context 3-tuples
+        saveCV = saveJ = None
+        lineCount = 0
+        C, V = '0', '0'
+        context = None
         for j, (adjustedMarker, originalMarker, adjText, cleanText, extras,) in enumerate( self._processedLines):
-            #print( "  makeIndex", j, adjustedMarker )
+            #print( "  makeIndex", j, self.bookReferenceCode, adjustedMarker, cleanText[:20] + ('' if len(cleanText)<20 else '...') )
             if adjustedMarker=='c':
-                C = cleanText; V='0'
-                self._CVIndex[(C,V,)] = (j,cnt,)
-                lastJ = j
-                #print( "makeIndex", C, V, j )
+                saveAnythingOutstanding()
+                # Save anything before the first verse number as verse "zero"
+                C, V = cleanText, '0'
+                saveCV, saveJ = (C,V,), j
+                lineCount += 1
             elif adjustedMarker=='v':
+                # Go back and look what we passed that might actually belong with this verse
+                revertToJ = j
+                if revertToJ >= 1:
+                    aM,cT = self._processedLines[revertToJ-1][0], self._processedLines[revertToJ-1][3]
+                    if aM == 'c#':
+                        assert( cT ) # Should have a chapter number here
+                        revertToJ -= 1
+                        assert( lineCount > 0 )
+                        lineCount -= 1
+                        aM,cT = self._processedLines[revertToJ-1][0], self._processedLines[revertToJ-1][3]
+                    if revertToJ >= 1 and aM in ('p','q1','q2','q3',) and not cT: # This applies to the next line
+                        revertToJ -= 1
+                        assert( lineCount > 0 )
+                        lineCount -= 1
+                        aM,cT = self._processedLines[revertToJ-1][0], self._processedLines[revertToJ-1][3]
+                        if revertToJ >= 1 and aM in ('s1','s2','s3',):
+                            assert( cT ) # Should have text (for a completed Bible at least)
+                            revertToJ -= 1
+                            assert( lineCount > 0 )
+                            lineCount -= 1
+                    elif aM in ('s1','s2','s3',): # Shouldn't happen but just in case
+                        print( "makeIndex: just in case", aM, self.bookReferenceCode, C, V )
+                        revertToJ = j - 1
+                        assert( lineCount > 0 )
+                        lineCount -= 1
+                saveAnythingOutstanding()
                 V = cleanText
-                if self._processedLines[lastJ][0]=='v': lastJ += 1 # skip past the last verse number
-                if self._processedLines[lastJ][0]=='v~': lastJ += 1 # skip past the last verse contents
-                self._CVIndex[(C,V,)] = (lastJ,cnt,)
+                #assert( V != '0' or self.bookReferenceCode=='PSA' ) # Not really handled properly yet
+                saveCV, saveJ = (C,V,), revertToJ
+                lineCount += (j-revertToJ) + 1 # For the v
+            elif C == '0': # Still in the introduction
+                # Each line is considered a new verse entry in chapter "zero"
+                assert( saveCV is None and saveJ is None )
+                self._CVIndex[(C,V)] = (j,1,context)
+                Vi = int( V )
+                assert( Vi == j )
+                V = str( Vi + 1 ) # Increment the verse number
                 lastJ = j
-        #if self.bookReferenceCode=='MAL': print( self._CVIndex )
+                assert( lineCount == 0 )
+            else: # All the other lines don't cause a new index entry to be made
+                lineCount += 1
+        saveAnythingOutstanding()
+        if 0 and self.bookReferenceCode=='GEN':
+            for j, (adjustedMarker, originalMarker, adjText, cleanText, extras,) in enumerate( self._processedLines):
+                print( j, adjustedMarker, cleanText[:60] + ('' if len(cleanText)<60 else '...') )
+                #if j>breakAt: break
+            def getKey( CVALX ):
+                CV, ALX = CVALX
+                C, V = CV
+                try: Ci = int(C)
+                except: Ci = 300
+                try: Vi = int(V)
+                except: Vi = 300
+                return Ci*1000 + Vi
+            for CV,ALX in sorted(self._CVIndex.items(), key=getKey): #lambda s: int(s[0][0])*1000+int(s[0][1])): # Sort by C*1000+V
+                C, V = CV
+                A, L, X = ALX
+                print( "{}:{}={},{},{}".format( C, V, A, L, X ), end='  ' )
+            halt
         self._indexedFlag = True
     # end of InternalBibleBook.makeIndex
 
@@ -2660,7 +2736,9 @@ class InternalBibleBook:
 
 
     def getCVRef( self, ref ):
-        """ Gets a list of processed lines for the given Bible reference. """
+        """
+        Returns a list of processed lines for the given Bible reference.
+        """
         #print( "InternalBibleBook.getCVRef( {} ) for {}".format( ref, self.bookReferenceCode ) )
         if isinstance( ref, tuple ): assert( ref[0] == self.bookReferenceCode )
         else: assert( ref.getBBB() == self.bookReferenceCode )
@@ -2671,20 +2749,22 @@ class InternalBibleBook:
         C,V = ref.getChapterNumberStr(), ref.getVerseNumberStr()
         #print( "CV", repr(C), repr(V) )
         if (C,V,) in self._CVIndex:
-            startIndex, count = self._CVIndex[ C,V ]
+            startIndex, count, context = self._CVIndex[ C,V ]
             #print( ref, startIndex )
             #print( "IBB getRef:", ref, startIndex, self._processedLines[startIndex:startIndex+5] )
-            result = []
-            for index in range( startIndex, len(self._processedLines) ):
-                stuff = self._processedLines[index]
-                adjustedMarker, originalMarker, adjText, cleanText, extras = stuff
-                if adjustedMarker== 'c' and cleanText!=C: break # Gone past our chapter
-                if adjustedMarker== 'v' and cleanText!=V: break # Gone past our verse
-                result.append( stuff )
-            # Remove any empty final paragraph (that belongs with the next verse )
-            if result[-1][0]=='p' and not result[-1][3]: result.pop()
-            #print( ref, result )
-            return result
+            #if 0: # old stuff
+                #result = []
+                #for index in range( startIndex, len(self._processedLines) ):
+                    #stuff = self._processedLines[index]
+                    #adjustedMarker, originalMarker, adjText, cleanText, extras = stuff
+                    #if adjustedMarker== 'c' and cleanText!=C: break # Gone past our chapter
+                    #if adjustedMarker== 'v' and cleanText!=V: break # Gone past our verse
+                    #result.append( stuff )
+                ## Remove any empty final paragraph (that belongs with the next verse )
+                #if result[-1][0]=='p' and not result[-1][3]: result.pop()
+                ##print( ref, result )
+                #return result
+            return self._processedLines[startIndex:startIndex+count], context
         #else: print( self.bookReferenceCode, C, V, "not in index", self._CVIndex )
     # end of InternalBibleBook.getCVRef
 # end of class InternalBibleBook

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # OSISXMLBible.py
-#   Last modified: 2013-04-29 by RJH (also update versionString below)
+#   Last modified: 2013-05-01 by RJH (also update versionString below)
 #
 # Module handling OSIS XML Bibles
 #
@@ -39,7 +39,7 @@ versionString = "0.21"
 import logging, os
 from gettext import gettext as _
 from collections import OrderedDict
-from xml.etree.cElementTree import ElementTree
+from xml.etree.ElementTree import ElementTree
 
 import Globals
 from ISO_639_3_Languages import ISO_639_3_Languages

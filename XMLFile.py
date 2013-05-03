@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # XMLFile.py
-#   Last modified: 2013-04-14 by RJH (also update versionString below)
+#   Last modified: 2013-05-01 by RJH (also update versionString below)
 #
 # Module handling simple XML files
 #
@@ -32,7 +32,7 @@ versionString = "0.01"
 
 import logging, os, sys, subprocess
 from gettext import gettext as _
-from xml.etree.cElementTree import ElementTree
+from xml.etree.ElementTree import ElementTree
 import urllib.request
 
 import Globals

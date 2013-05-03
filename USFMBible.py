@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2013-04-28 by RJH (also update versionString below)
+#   Last modified: 2013-04-30 by RJH (also update versionString below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -33,7 +33,7 @@ versionString = "0.31"
 
 import os, logging, datetime
 from gettext import gettext as _
-from collections import OrderedDict
+#from collections import OrderedDict
 
 import Globals
 from USFMFilenames import USFMFilenames

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2013-04-25 by RJH (also update versionString below)
+#   Last modified: 2013-05-03 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -113,7 +113,7 @@ class InternalBible:
     def __getitem__( self, BBB ):
         return( self.books[BBB] )
     # end of InternalBible.__getitem__
-    
+
 
     def getAssumedBookName( self, BBB ):
         """Gets the book name for the given book reference code."""
@@ -397,12 +397,14 @@ class InternalBible:
                 aggregateResults[arKey[:-5]+'Flag'] = aggregateFlag
 
         #print( 'yyy', "aggregateResults", aggregateResults['percentageProgressByBook'], len(self) )
-        aggregateResults['percentageProgressByBook'] = str( round( aggregateResults['percentageProgressByBook'] / len(self) ) ) + '%'
+        if 'percentageProgressByBook' in aggregateResults:
+            aggregateResults['percentageProgressByBook'] = str( round( aggregateResults['percentageProgressByBook'] / len(self) ) ) + '%'
         if 'percentageProgressByOTBook' in aggregateResults:
             aggregateResults['percentageProgressByOTBook'] = str( round( aggregateResults['percentageProgressByOTBook'] / 39 ) ) + '%'
         if 'percentageProgressByNTBook' in aggregateResults:
             aggregateResults['percentageProgressByNTBook'] = str( round( aggregateResults['percentageProgressByNTBook'] / 27 ) ) + '%'
-        aggregateResults['percentageProgressByVerse'] = str( round( aggregateResults['completedVerseCount'] * 100 / aggregateResults['verseCount'] ) ) + '%'
+        if 'percentageProgressByVerse' in aggregateResults:
+            aggregateResults['percentageProgressByVerse'] = str( round( aggregateResults['completedVerseCount'] * 100 / aggregateResults['verseCount'] ) ) + '%'
         if 'percentageProgressByOTVerse' in aggregateResults:
             aggregateResults['percentageProgressByOTVerse'] = str( round( aggregateResults['OTcompletedVerseCount'] * 100 / aggregateResults['OTverseCount'] ) ) + '%'
         if 'percentageProgressByNTVerse' in aggregateResults:
@@ -647,9 +649,11 @@ class InternalBible:
 
     def getBCVRef( self, ref ):
         """
-        Search for a Bible reference and return the Bible text (in a list).
+        Search for a Bible reference
+            and return the Bible text (in a list) along with the context.
 
-        Expects a SimpleVerseKey for the parameter.
+        Expects a SimpleVerseKey for the parameter
+            but also copes with a (B,C,V,S) tuple.
         """
         if isinstance( ref, tuple ): BBB = ref[0]
         else: BBB = ref.getBBB() # Assume it's a SimpleVerseKeyObject
@@ -663,12 +667,13 @@ class InternalBible:
         Return (USFM-like) verseData (a list).
         """
         #print( "InternalBible.getVerseData( {} )".format( key ) )
-        verseData = self.getBCVRef( key )
+        result = self.getBCVRef( key )
         #print( "  gVD", self.name, key, verseData )
-        if verseData is None:
-            print( "IB.gVD no VD", self.name, key, verseData )
+        if result is None:
+            print( "IB.gVD no VD", self.name, key, result )
             if Globals.debugFlag: assert( key.getChapterNumberStr()=='0' or key.getVerseNumberStr()=='0' )
         else:
+            verseData, context = result
             if Globals.debugFlag: assert( isinstance( verseData, list ) )
             if Globals.debugFlag: assert( 2 <= len(verseData) <= 6 )
         return verseData
@@ -679,10 +684,11 @@ class InternalBible:
         """
         First miserable attempt at converting (USFM-like) verseData into a string.
         """
-        verseData = self.getBCVRef( key )
-        if verseData is not None:
+        result = self.getBCVRef( key )
+        if result is not None:
+            verseData, context = result
             print( "vT", self.name, key, verseData )
-            if Globals.debugFlag: assert( isinstance( verseData, list ) )
+            assert( isinstance( verseData, list ) )
             #if Globals.debugFlag: assert( 1 <= len(verseData) <= 5 )
             verseText = ''
             for marker,originalMarker,text,cleanText,extras in verseData:

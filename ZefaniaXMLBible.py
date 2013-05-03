@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ZefaniaXMLBible.py
-#   Last modified: 2013-04-23 by RJH (also update versionString below)
+#   Last modified: 2013-05-01 by RJH (also update versionString below)
 #
 # Module handling Zefania XML Bibles
 #
@@ -64,7 +64,7 @@ versionString = "0.21"
 import logging, os
 from gettext import gettext as _
 from collections import OrderedDict
-from xml.etree.cElementTree import ElementTree
+from xml.etree.ElementTree import ElementTree
 
 import Globals
 from BibleOrganizationalSystems import BibleOrganizationalSystem
@@ -622,12 +622,14 @@ class ZefaniaXMLBible( Bible ):
                         art = value
                     else: logging.warning( "Unprocessed '{}' attribute ({}) in style subelement".format( attrib, value ) )
                 if Globals.debugFlag: assert( art == 'x-nl' )
+                #print( BBB, chapterNumber, verseNumber )
+                #assert( vText )
                 if vText:
                     thisBook.appendLine( 'v', verseNumber + ' ' + vText )
                     vText = ''
-                    thisBook.appendLine( 'p', '' )
-                bTail = subelement.tail
-                if bTail: vText = bTail.strip()
+                thisBook.appendLine( 'm', subelement.tail.strip() if subelement.tail else '' )
+                #bTail = subelement.tail
+                #if bTail: vText = bTail.strip()
             else: logging.error( "Expected to find NOTE or STYLE but got '{}' in {}".format( subelement.tag, location ) )
 
         if vText: # This is the main text of the verse (follows the verse milestone)

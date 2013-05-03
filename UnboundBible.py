@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # UnboundBible.py
-#   Last modified: 2013-04-23 by RJH (also update versionString below)
+#   Last modified: 2013-04-30 by RJH (also update versionString below)
 #
 # Module handling Biola University "unbound" Bible files
 #
@@ -90,7 +90,7 @@ versionString = "0.11"
 
 import logging, os
 from gettext import gettext as _
-from collections import OrderedDict
+#from collections import OrderedDict
 
 import Globals
 from Bible import Bible, BibleBook

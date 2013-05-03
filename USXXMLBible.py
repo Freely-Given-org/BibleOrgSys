@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USXXMLBible.py
-#   Last modified: 2013-04-28 by RJH (also update versionString below)
+#   Last modified: 2013-04-30 by RJH (also update versionString below)
 #
 # Module handling compilations of USX Bible books
 #
@@ -33,7 +33,7 @@ versionString = "0.06"
 
 import os, logging, datetime
 from gettext import gettext as _
-from collections import OrderedDict
+#from collections import OrderedDict
 
 import Globals
 from USXFilenames import USXFilenames
@@ -256,7 +256,8 @@ class USXXMLBible( Bible ):
                 if ' ' in assumedBookNameLower: self.combinedBookNameDict[assumedBookNameLower.replace(' ','')] = BBB # Store the deduced book name (lower case without spaces)
 
         if not self.books: # Didn't successfully load any regularly named books -- maybe the files have weird names??? -- try to be intelligent here
-            if Globals.verbosityLevel > 2: print( "USXXMLBible.load: Didn't find any regularly named USX files in '{}'".format( folder ) )
+            if Globals.verbosityLevel > 2:
+                print( "USXXMLBible.load: Didn't find any regularly named USX files in '{}'".format( self.givenFolderName ) )
             for thisFilename in foundFiles:
                 # Look for BBB in the ID line (which should be the first line in a USX file)
                 isUSX = False

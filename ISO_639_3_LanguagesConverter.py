@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ISO_639_3_Languages.py
-#   Last modified: 2013-04-13 by RJH (also update versionString below)
+#   Last modified: 2013-05-01 by RJH (also update versionString below)
 #
 # Module handling ISO_639_3.xml to produce C and Python data tables
 #
@@ -33,7 +33,7 @@ versionString = "0.84"
 import logging, os.path
 from gettext import gettext as _
 from collections import OrderedDict
-from xml.etree.cElementTree import ElementTree
+from xml.etree.ElementTree import ElementTree
 
 from singleton import singleton
 import Globals

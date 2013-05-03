@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-04-27 by RJH (also update versionString below)
+#   Last modified: 2013-04-30 by RJH (also update versionString below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -40,7 +40,7 @@ versionString = "0.06"
 
 import sys, os, logging, datetime
 from gettext import gettext as _
-from collections import OrderedDict
+#from collections import OrderedDict
 
 import Globals, ControlFiles
 from InternalBible import InternalBible

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Globals.py
-#   Last modified: 2013-04-29 (also update versionString below)
+#   Last modified: 2013-05-01 (also update versionString below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -287,7 +287,7 @@ def fileCompareXML( filename1, filename2, folder1=None, folder2=None, printFlag=
         return None
 
     # Load the files
-    from xml.etree.cElementTree import ElementTree
+    from xml.etree.ElementTree import ElementTree
     tree1 = ElementTree().parse( filepath1 )
     tree2 = ElementTree().parse( filepath2 )
 
@@ -382,6 +382,23 @@ def checkXMLNoSubelements( element, locationString, idString=None ):
         for subelement in element.getchildren():
             logging.warning( "{}Unexpected '{}' sub-element ({}) in {}".format( (idString+' ') if idString else '', subelement.tag, subelement.text, locationString ) )
 
+def getFlattenedXML( element, locationString, idString=None, level=0 ):
+    """
+    Return the XML nested inside the element as a text string.
+    """
+    result = ''
+    if level: result += '<' + element.tag + '>' # For lower levels (other than the called one) need to add the tags
+    if element.text: result += element.text
+    # We ignore attributes here
+    for subelement in element:
+        result += getFlattenedXML( subelement, subelement.tag + ' in ' + locationString, idString, level+1 ) # Recursive call
+    if level:
+        result += '</' + element.tag + '>'
+        if element.tail: result += element.tail
+    #else: print( "Globals.getFlattenedXML: Result is '{}'".format( result ) )
+    return result
+# end of Globals.getFlattenedXML
+
 
 ##########################################################################################################
 #
@@ -438,7 +455,7 @@ def setDebugFlag( newValue=True ):
     """ Set the debug flag. """
     global debugFlag
     debugFlag = newValue
-    if debugFlag or verbosityLevel>3:
+    if (debugFlag and verbosityLevel> 2) or verbosityLevel>3:
         print( '  debugFlag =', debugFlag )
 # end of Globals.setDebugFlag
 
@@ -447,7 +464,7 @@ def setStrictCheckingFlag( newValue=True ):
     """ See the strict checking flag. """
     global strictCheckingFlag
     strictCheckingFlag = newValue
-    if strictCheckingFlag or verbosityLevel>3:
+    if (strictCheckingFlag and verbosityLevel> 2) or verbosityLevel>3:
         print( '  strictCheckingFlag =', strictCheckingFlag )
 # end of Globals.setStrictCheckingFlag
 
@@ -456,7 +473,7 @@ def setLogErrorsFlag( newValue=True ):
     """ See the error logging checking flag. """
     global logErrorsFlag
     logErrorsFlag = newValue
-    if logErrorsFlag or verbosityLevel>3:
+    if (logErrorsFlag and verbosityLevel> 2) or verbosityLevel>3:
         print( '  logErrorsFlag =', logErrorsFlag )
 # end of Globals.setLogErrorsFlag
 

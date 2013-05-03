@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BiblePunctuationSystemsConverter.py
-#   Last modified: 2013-04-13 (also update versionString below)
+#   Last modified: 2013-05-01 (also update versionString below)
 #
 # Module handling BiblePunctuationSystem_*.xml to produce C and Python data tables
 #
@@ -34,7 +34,7 @@ versionString = "0.43"
 import os, logging
 from gettext import gettext as _
 from collections import OrderedDict
-from xml.etree.cElementTree import ElementTree
+from xml.etree.ElementTree import ElementTree
 
 from singleton import singleton
 import Globals
