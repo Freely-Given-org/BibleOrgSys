@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ISO_639_3_Languages.py
-#   Last modified: 2013-05-01 by RJH (also update versionString below)
+#   Last modified: 2013-05-08 by RJH (also update versionString below)
 #
 # Module handling ISO_639_3.xml to produce C and Python data tables
 #
@@ -32,11 +32,13 @@ versionString = "0.84"
 
 import logging, os.path
 from gettext import gettext as _
+from datetime import datetime
 from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree
 
 from singleton import singleton
 import Globals
+
 
 
 @singleton # Can only ever have one instance
@@ -236,7 +238,6 @@ class ISO_639_3_LanguagesConverter:
             theFile.write( "}}\n# end of {}\n\n".format( dictName ) )
         # end of exportPythonDict
 
-        from datetime import datetime
 
         assert( self._XMLtree )
         self.importDataToPython()
@@ -265,7 +266,6 @@ class ISO_639_3_LanguagesConverter:
 
         See http://en.wikipedia.org/wiki/JSON.
         """
-        from datetime import datetime
         import json
 
         assert( self._XMLtree )
@@ -330,8 +330,6 @@ class ISO_639_3_LanguagesConverter:
         # end of exportPythonDict
 
 
-        from datetime import datetime
-
         assert( self._XMLtree )
         self.importDataToPython()
         assert( self.__DataDicts )
@@ -365,6 +363,7 @@ class ISO_639_3_LanguagesConverter:
             myCFile.write( "// end of {}".format( os.path.basename(cFilepath) ) )
     # end of exportDataToC
 # end of ISO_639_3_LanguagesConverter class
+
 
 
 def demo():

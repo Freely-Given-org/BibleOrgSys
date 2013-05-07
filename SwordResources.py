@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # SwordResources.py
-#   Last modified: 2013-04-15 (also update versionString below)
+#   Last modified: 2013-05-03 (also update versionString below)
 #
 # Module handling Sword resources using the Sword engine
 #
@@ -132,6 +132,10 @@ class SwordInterface():
                 print( "Can't decode utf-8 text of {} {}".format( module.getName(), key.getShortText() ) )
                 return
             verseData = []
+            c, v = str(key.getChapter()), str(key.getVerse())
+            # Prepend the verse number since Sword modules don't contain that info in the data
+            if v=='1': verseData.append( ('c#','c', c, c, [],) )
+            verseData.append( ('v','v', v, v, [],) )
             verseData.append( ('v~','v~', verseText, verseText, [],) )
         else:
             verseData = module.getBCVRef( key )

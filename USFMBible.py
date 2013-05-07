@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2013-04-30 by RJH (also update versionString below)
+#   Last modified: 2013-05-06 by RJH (also update versionString below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -31,7 +31,7 @@ progName = "USFM Bible handler"
 versionString = "0.31"
 
 
-import os, logging, datetime
+import os, logging
 from gettext import gettext as _
 #from collections import OrderedDict
 
@@ -301,6 +301,10 @@ def demo():
             #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
                 ##print( "Looking for", ref )
                 #print( "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )
+            if Globals.commandLineOptions.export:
+                UB.pickle()
+                newObj = Globals.unpickleObject( 'MBTV.pickle' )
+                if Globals.verbosityLevel > 0: print( "newObj is", newObj )
         else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 
     if 0: # Test a whole folder full of folders of USFM Bibles

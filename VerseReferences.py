@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # VerseReferences.py
-#   Last modified: 2013-04-13 (also update versionString below)
+#   Last modified: 2013-05-06 (also update versionString below)
 #
 # Module handling Bible verse references
 #
@@ -76,6 +76,7 @@ import os, logging
 import Globals
 
 
+
 class SimpleVerseKey():
     """
     Handles individual verse references (no ranges, etc. allowed) in the BCVS form
@@ -141,6 +142,7 @@ class SimpleVerseKey():
     def getOSISReference( self ):
         return "{}.{}.{}".format( self.getOSISBookAbbreviation(), self.C, self.V )
 # end of class SimpleVerseKey
+
 
 
 def demo():

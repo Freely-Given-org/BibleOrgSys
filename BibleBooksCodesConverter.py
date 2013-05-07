@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodesConverter.py
-#   Last modified: 2013-05-01 by RJH (also update versionString below)
+#   Last modified: 2013-05-08 by RJH (also update versionString below)
 #
 # Module handling BibleBooksCodes.xml to produce C and Python data tables
 #
@@ -33,11 +33,13 @@ versionString = "0.68"
 
 import logging, os.path
 from gettext import gettext as _
+from datetime import datetime
 from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree
 
 from singleton import singleton
 import Globals
+
 
 
 @singleton # Can only ever have one instance
@@ -428,29 +430,29 @@ class BibleBooksCodesConverter:
                         "NETBibleAbbreviationDict":myNETDict, "ByzantineAbbreviationDict":myBzDict,
                         "EnglishNameDict":myENDict, "allAbbreviationsDict":adjAllAbbreviationsDict }
 
-        if 0:
-            free = [] # Print available reference book numbers
-            for num in range(1, 1000):
-                if num not in myIDDict:
-                    if free: # Already have some -- collect ranges
-                        if isinstance(free[-1], int):
-                            if free[-1]==num-1: free.append( (free.pop(), num) ); continue
-                        else:
-                            s,f = free[-1]
-                            if f==num-1: free.pop(); free.append( (s, num) ); continue
-                    free.append( num )
-            print( "Free reference numbers = {}".format( free ) )
-            free = [] # Print available sequence numbers
-            for num in range(1, 1000):
-                if num not in sequenceNumberList:
-                    if free: # Already have some -- collect ranges
-                        if isinstance(free[-1], int):
-                            if free[-1]==num-1: free.append( (free.pop(), num) ); continue
-                        else:
-                            s,f = free[-1]
-                            if f==num-1: free.pop(); free.append( (s, num) ); continue
-                    free.append( num )
-            print( "Free sequence numbers = {}".format( free ) )
+        #if 0:
+            #free = [] # Print available reference book numbers
+            #for num in range(1, 1000):
+                #if num not in myIDDict:
+                    #if free: # Already have some -- collect ranges
+                        #if isinstance(free[-1], int):
+                            #if free[-1]==num-1: free.append( (free.pop(), num) ); continue
+                        #else:
+                            #s,f = free[-1]
+                            #if f==num-1: free.pop(); free.append( (s, num) ); continue
+                    #free.append( num )
+            #print( "Free reference numbers = {}".format( free ) )
+            #free = [] # Print available sequence numbers
+            #for num in range(1, 1000):
+                #if num not in sequenceNumberList:
+                    #if free: # Already have some -- collect ranges
+                        #if isinstance(free[-1], int):
+                            #if free[-1]==num-1: free.append( (free.pop(), num) ); continue
+                        #else:
+                            #s,f = free[-1]
+                            #if f==num-1: free.pop(); free.append( (s, num) ); continue
+                    #free.append( num )
+            #print( "Free sequence numbers = {}".format( free ) )
 
         return self.__DataDicts # Just delete any of the dictionaries that you don't need
     # end of BibleBooksCodesConverter.importDataToPython
@@ -493,7 +495,6 @@ class BibleBooksCodesConverter:
             theFile.write( "}}\n# end of {} ({} entries)\n\n".format( dictName, len(theDict) ) )
         # end of exportPythonDictOrList
 
-        from datetime import datetime
 
         assert( self._XMLtree )
         self.importDataToPython()
@@ -607,7 +608,6 @@ class BibleBooksCodesConverter:
             cFile.write( "]}}; // {} ({} entries)\n\n".format( dictName, len(theDict) ) )
         # end of exportPythonDict
 
-        from datetime import datetime
 
         assert( self._XMLtree )
         self.importDataToPython()
@@ -672,6 +672,7 @@ class BibleBooksCodesConverter:
             myCFile.write( "// end of {}".format( os.path.basename(cFilepath) ) )
     # end of BibleBooksCodesConverter.exportDataToC
 # end of BibleBooksCodesConverter class
+
 
 
 def demo():

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodes.py
-#   Last modified: 2013-04-13 by RJH (also update versionString below)
+#   Last modified: 2013-05-06 by RJH (also update versionString below)
 #
 # Module handling BibleBooksCodes functions
 #
@@ -37,6 +37,7 @@ from collections import OrderedDict
 
 from singleton import singleton
 import Globals
+
 
 
 @singleton # Can only ever have one instance
@@ -402,6 +403,7 @@ class BibleBooksCodes:
         return 40 <= self.getReferenceNumber(BBB) <= 66
     # end of BibleBooksCodes.isNewTestament_NR
 # end of BibleBooksCodes class
+
 
 
 def demo():

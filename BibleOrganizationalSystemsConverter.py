@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleOrganizationalSystemsConverter.py
-#   Last modified: 2013-05-01 by RJH (also update versionString below)
+#   Last modified: 2013-05-08 by RJH (also update versionString below)
 #
 # Module handling BibleOrganizationalSystems.xml to produce C and Python data tables
 #
@@ -33,6 +33,7 @@ versionString = "0.24"
 
 import logging, os.path
 from gettext import gettext as _
+from datetime import datetime
 from xml.etree.ElementTree import ElementTree
 
 from singleton import singleton
@@ -45,6 +46,7 @@ from BibleBooksNames import BibleBooksNamesSystems, BibleBooksNamesSystem
 
 
 allowedTypes = ( "edition", "revision", "translation", "original", ) # NOTE: The order is important here
+
 
 
 @singleton # Can only ever have one instance
@@ -377,7 +379,6 @@ class BibleOrganizationalSystemsConverter:
             theFile.write( "}}\n# end of {}\n\n".format( dictName ) )
         # end of exportPythonDict
 
-        from datetime import datetime
 
         assert( self._XMLtree )
         self.importDataToPython()
@@ -406,7 +407,6 @@ class BibleOrganizationalSystemsConverter:
 
         See http://en.wikipedia.org/wiki/JSON.
         """
-        from datetime import datetime
         import json
 
         assert( self._XMLtree )
@@ -455,7 +455,6 @@ class BibleOrganizationalSystemsConverter:
             theFile.write( "}; // {}\n\n".format( dictName) )
         # end of exportPythonDict
 
-        from datetime import datetime
 
         assert( self._XMLtree )
         self.importDataToPython()
@@ -483,6 +482,7 @@ class BibleOrganizationalSystemsConverter:
             myFile.write( "#endif // {}\n".format( ifdefName ) )
     # end of exportDataToC
 # end of BibleOrganizationalSystemsConverter class
+
 
 
 def demo():

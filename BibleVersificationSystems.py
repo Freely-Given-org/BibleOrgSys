@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleVersificationSystems.py
-#   Last modified: 2013-04-13 (also update versionString below)
+#   Last modified: 2013-05-08 (also update versionString below)
 #
 # Module handling BibleVersificationSystem_*.xml to produce C and Python data tables
 #
@@ -36,6 +36,7 @@ from gettext import gettext as _
 
 from singleton import singleton
 import Globals
+
 
 
 @singleton # Can only ever have one instance
@@ -465,6 +466,7 @@ class BibleVersificationSystems:
 # end of BibleVersificationSystems class
 
 
+
 class BibleVersificationSystem:
     """
     Class for handling a particular Bible versification system.
@@ -740,6 +742,7 @@ class BibleVersificationSystem:
         return resultList #, haveErrors, haveWarnings
     # end of BibleVersificationSystem:expandCVRange
 # end of BibleVersificationSystem class
+
 
 
 def demo():

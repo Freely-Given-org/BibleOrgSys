@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-05-03 by RJH (also update versionString below)
+#   Last modified: 2013-05-08 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -57,7 +57,7 @@ trailingWordPunctChars = """,.”»"’›'?)!;:]}>"""
 allWordPunctChars = leadingWordPunctChars + medialWordPunctChars + dashes + trailingWordPunctChars
 
 
-PSEUDO_USFM_MARKERS = ( 'c~', 'c#', 'v-', 'v+', 'v~', )
+PSEUDO_USFM_MARKERS = ( 'c~', 'c#', 'v-', 'v+', 'v~', 'vw', 'g', )
 PSEUDO_OSIS_MARKERS = ( 'pp+', )
 NON_USFM_MARKERS = PSEUDO_USFM_MARKERS + PSEUDO_OSIS_MARKERS
 
@@ -66,6 +66,8 @@ NON_USFM_MARKERS = PSEUDO_USFM_MARKERS + PSEUDO_OSIS_MARKERS
 class InternalBibleEntry:
     """
     This class represents an entry in the _processedLines list.
+
+    (It's mainly here for extra data validation and the str function for debugging.)
     """
 
     def __init__( self, marker, originalMarker, text, cleanText, extras ):
@@ -87,18 +89,20 @@ class InternalBibleEntry:
                     assert( isinstance( extraText, str ) and extraText ) # Mustn't be blank
                     assert( isinstance( cleanExtraText, str ) and cleanExtraText ) # Shouldn't be blank
                     assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
-                    assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
-
-            assert( marker in Globals.USFMMarkers or marker in NON_USFM_MARKERS )
-
+                    for letters in ( 'f', 'x', 'fe', 'ef' ): # footnote, cross-ref, endnotes, studynotes
+                        assert( '\\'+letters+' ' not in extraText )
+                        assert( '\\'+letters+'*' not in extraText )
+            #assert( marker in Globals.USFMMarkers or marker in NON_USFM_MARKERS )
+            if marker not in Globals.USFMMarkers and marker not in NON_USFM_MARKERS:
+                print( "InternalBibleEntry doesn't handle '{}' marker yet.".format( marker ) )
         self.marker, self.originalMarker, self.text, self.cleanText, self.extras = marker, originalMarker, text, cleanText, extras
     # end of InternalBibleEntry.__init__
 
 
-    def __eq__( self, other ):
-        if type( other ) is type( self ): return self.__dict__ == other.__dict__
-        return False
-    def __ne__(self, other): return not self.__eq__(other)
+    #def __eq__( self, other ):
+        #if type( other ) is type( self ): return self.__dict__ == other.__dict__
+        #return False
+    #def __ne__(self, other): return not self.__eq__(other)
 
 
     def __str__( self ):
@@ -116,7 +120,71 @@ class InternalBibleEntry:
         elif keyIndex==4: return self.extras
         else: raise IndexError
     # end of InternalBibleEntry.__getitem__
+
+    def getMarker( self ): return self.marker
+    def getOriginalMarker( self ): return self.originalMarker
+    def getText( self ): return self.text
+    def getCleanText( self ): return self.cleanText
+    def getExtras( self ): return self.extras
 # end of class InternalBibleEntry
+
+
+
+class InternalBibleEntryList:
+    """
+    This class is a specialised list for holding InternalBibleEntries
+        so _processedLines is one of these.
+
+    (It's mainly here for extra data validation and the str function for debugging.)
+    """
+
+    def __init__( self, initialData=None ):
+        """
+        """
+        self.data = []
+        if initialData is not None:
+            if isinstance( initialData, list ) or isinstance( initialData, InternalBibleEntryList ):
+                for something in initialData:
+                    self.append( something )
+            else: halt # Programming error -- unknown parameter type
+    # end of InternalBibleEntryList.__init__
+
+
+    #def __eq__( self, other ):
+        #if type( other ) is type( self ): return self.__dict__ == other.__dict__
+        #return False
+    #def __ne__(self, other): return not self.__eq__(other)
+
+
+    def __str__( self ):
+        result = "InternalBibleEntryList object:"
+        if not self.data: result += "\n  Empty."
+        else:
+            dataLen = len( self.data )
+            for j, entry in enumerate( self.data ):
+                assert( isinstance( entry, InternalBibleEntry ) )
+                cleanAbbreviation = entry.cleanText if len(entry.cleanText)<100 else (entry.cleanText[:50]+'...'+entry.cleanText[-50:])
+                result += "\n  {}{}/ {} = {}".format( ' ' if j<9 and dataLen>=10 else '', j+1, entry.marker, repr(cleanAbbreviation) )
+                if j>=20 and dataLen>20:
+                    result += "\n  ... ({} total entries)".format( dataLen )
+                    break
+        return result
+    # end of InternalBibleEntryList.__str__
+
+
+    def __len__( self ): return len( self.data )
+    def __getitem__( self, keyIndex ): return self.data[keyIndex]
+
+
+    def append( self, something ):
+        assert( isinstance( something, InternalBibleEntry ) )
+        self.data.append( something )
+    # end of InternalBibleEntryList.append
+
+    def pop( self ): # Doesn't allow a parameter
+        return self.data.pop()
+    # end of InternalBibleEntryList.append
+# end of class InternalBibleEntryList
 
 
 
@@ -130,6 +198,7 @@ class InternalBibleBook:
         """
         Create the USFM Bible book object.
         """
+        #print( "InternalBibleBook.__init__( {} )".format( BBB ) )
         self.bookReferenceCode = BBB
         if Globals.debugFlag: assert( self.bookReferenceCode in Globals.BibleBooksCodes )
 
@@ -209,7 +278,7 @@ class InternalBibleBook:
             else:
                 self.badMarkers.append( marker )
                 self.badMarkerCounts.append( 1 )
-            return
+            #return
         if Globals.debugFlag: assert( marker in Globals.USFMMarkers or marker in NON_USFM_MARKERS )
 
         if text is None:
@@ -641,7 +710,7 @@ class InternalBibleBook:
 
             # Convert USFM markers like s to standard markers like s1
             try:
-                adjustedMarker = originalMarker if originalMarker=='v~' else Globals.USFMMarkers.toStandardMarker( originalMarker )
+                adjustedMarker = originalMarker if originalMarker in NON_USFM_MARKERS else Globals.USFMMarkers.toStandardMarker( originalMarker )
             except KeyError: # unknown marker
                 if Globals.logErrorsFlag:
                     logging.error( "processLine-check: unknown {} originalMarker = {}".format( self.objectTypeString, originalMarker ) )
@@ -705,7 +774,7 @@ class InternalBibleBook:
                 if ix==99999: # There's neither -- not unexpected if this is a translation in progress
                     #print( "processLine had an empty verse field in {} {}:{}: '{}' '{}' {} {} {}".format( self.bookReferenceCode, c, v, originalMarker, originalText, ix, ixSP, ixBS ) )
                     fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Nothing after verse number: '{}'").format( originalText ) )
-                    if Globals.logErrorsFlag: logging.error( _("Nothing following verse number after {} {}:{} in \\{}: '{}'").format( self.bookReferenceCode, c, v, originalMarker, originalText ) )
+                    if self.objectTypeString in ('USFM','USX',) and Globals.logErrorsFlag: logging.error( _("Nothing following verse number after {} {}:{} in \\{}: '{}'").format( self.bookReferenceCode, c, v, originalMarker, originalText ) )
                     self.addPriorityError( 92, c, v, _("Nothing following verse number in '{}'").format( originalText ) )
                     verseNumberBit = text
                     #print( "verseNumberBit is '{}'".format( verseNumberBit ) )
@@ -833,7 +902,7 @@ class InternalBibleBook:
             if not adjText and not extras and ( Globals.USFMMarkers.markerShouldHaveContent(adjustedMarker)=='A' or adjustedMarker in ('v~','c~','c#',) ): # should always have text
                 #print( "processLine: marker should always have text (ignoring it):", self.bookReferenceCode, c, v, originalMarker, adjustedMarker, " originally '"+text+"'" )
                 fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Marker '{}' should always have text").format( originalMarker ) )
-                if Globals.logErrorsFlag: logging.error( _("Marker '{}' at {} {}:{} should always have text").format( originalMarker, self.bookReferenceCode, c, v ) )
+                if self.objectTypeString in ('USFM','USX',) and Globals.logErrorsFlag: logging.error( _("Marker '{}' at {} {}:{} should always have text").format( originalMarker, self.bookReferenceCode, c, v ) )
                 self.addPriorityError( 96, c, v, _("Marker \\{} should always have text").format( originalMarker ) )
                 # Don't bother even saving the marker since it's useless
             else:
@@ -849,7 +918,7 @@ class InternalBibleBook:
         internalSFMsToRemove = sorted( internalSFMsToRemove, key=len, reverse=True ) # List longest first
         if Globals.debugFlag: assert( self._rawLines )
         fixErrors = []
-        self._processedLines = [] # Contains more-processed 5-tuples which contain the actual Bible text -- see below
+        self._processedLines = InternalBibleEntryList() #[] # Contains more-processed 5-tuples which contain the actual Bible text -- see below
         c = v = '0'
         haveWaitingC = False
         for marker,text in self._rawLines:
@@ -881,7 +950,7 @@ class InternalBibleBook:
             nonlocal saveCV, saveJ, lineCount, context
             if saveCV and saveJ:
                 #print( "saveAnythingOutstanding", self.bookReferenceCode, saveCV, saveJ, lineCount, context )
-                assert( 1 <= lineCount <= 56 ) # Could potentially be even higher for bridged verses (e.g., 1Chr 11:26-47, Ezra 2:3-20)
+                #assert( 1 <= lineCount <= 120 ) # Could potentially be even higher for bridged verses (e.g., 1Chr 11:26-47, Ezra 2:3-20) and where words are stored individually
                 if saveCV in self._CVIndex:
                     print( "makeIndex.saveAnythingOutstanding: WARNING -- replacing index entry!" )
                     print( " ", self.bookReferenceCode, C, V )
@@ -892,7 +961,7 @@ class InternalBibleBook:
                     print( "  now", (saveJ,lineCount,context) )
                     for ixx in range( saveJ, saveJ+lineCount ):
                         print( "   ", self._processedLines[ixx], context )
-                    #halt
+                    if Globals.debugFlag: halt
                 self._CVIndex[saveCV] = (saveJ,lineCount,context)
                 saveCV = saveJ = None
                 lineCount = 0
@@ -2764,7 +2833,7 @@ class InternalBibleBook:
                 #if result[-1][0]=='p' and not result[-1][3]: result.pop()
                 ##print( ref, result )
                 #return result
-            return self._processedLines[startIndex:startIndex+count], context
+            return InternalBibleEntryList( self._processedLines[startIndex:startIndex+count] ), context
         #else: print( self.bookReferenceCode, C, V, "not in index", self._CVIndex )
     # end of InternalBibleBook.getCVRef
 # end of class InternalBibleBook

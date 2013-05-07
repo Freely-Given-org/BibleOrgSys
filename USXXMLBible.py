@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USXXMLBible.py
-#   Last modified: 2013-04-30 by RJH (also update versionString below)
+#   Last modified: 2013-05-06 by RJH (also update versionString below)
 #
 # Module handling compilations of USX Bible books
 #
@@ -31,7 +31,7 @@ progName = "USX XML Bible handler"
 versionString = "0.06"
 
 
-import os, logging, datetime
+import os, logging
 from gettext import gettext as _
 #from collections import OrderedDict
 
@@ -288,6 +288,7 @@ class USXXMLBible( Bible ):
             if self.books: print( "USXXMLBible.load: Found {} irregularly named USX files".format( len(self.books) ) )
     # end of load
 # end of class USXXMLBible
+
 
 
 def demo():

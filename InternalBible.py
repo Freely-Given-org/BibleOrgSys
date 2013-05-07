@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2013-05-03 by RJH (also update versionString below)
+#   Last modified: 2013-05-08 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -39,11 +39,13 @@ progName = "Internal Bible handler"
 versionString = "0.21"
 
 
-import os, logging, datetime
+import os, logging
 from gettext import gettext as _
 from collections import OrderedDict
 
 import Globals
+from InternalBibleBook import InternalBibleEntryList
+
 
 
 class InternalBible:
@@ -113,6 +115,21 @@ class InternalBible:
     def __getitem__( self, BBB ):
         return( self.books[BBB] )
     # end of InternalBible.__getitem__
+
+
+    def pickle( self, filename=None, folder=None ):
+        """
+        Writes the object to a .pickle file that can be easily loaded into a Python3 program.
+            If folder is None (or missing), defaults to the default cache folder specified in Globals.
+            Created the folder(s) if necessary.
+        """
+        filename = self.abbreviation if self.abbreviation else self.name
+        assert( filename )
+        filename += '.pickle'
+        if Globals.verbosityLevel > 1:
+            print( _("Saving {} to {}...").format( self.objectNameString, filename if folder is None else os.path.join( folder, filename ) ) )
+        Globals.pickleObject( self, filename, folder )
+    # end of InternalBible.pickle
 
 
     def getAssumedBookName( self, BBB ):
@@ -674,9 +691,9 @@ class InternalBible:
             if Globals.debugFlag: assert( key.getChapterNumberStr()=='0' or key.getVerseNumberStr()=='0' )
         else:
             verseData, context = result
-            if Globals.debugFlag: assert( isinstance( verseData, list ) )
-            if Globals.debugFlag: assert( 2 <= len(verseData) <= 6 )
-        return verseData
+            if Globals.debugFlag: assert( isinstance( verseData, InternalBibleEntryList ) )
+            if Globals.debugFlag: assert( 2 <= len(verseData) <= 20 )
+            return verseData
     # end of InternalBible.getVerseData
 
 
@@ -687,10 +704,10 @@ class InternalBible:
         result = self.getBCVRef( key )
         if result is not None:
             verseData, context = result
-            print( "vT", self.name, key, verseData )
-            assert( isinstance( verseData, list ) )
+            #print( "gVT", self.name, key, verseData )
+            assert( isinstance( verseData, InternalBibleEntryList ) )
             #if Globals.debugFlag: assert( 1 <= len(verseData) <= 5 )
-            verseText = ''
+            verseText, firstWord = '', False
             for marker,originalMarker,text,cleanText,extras in verseData:
                 if marker == 'c': pass # Ignore
                 elif marker == 'c~': pass # Ignore text after chapter marker
@@ -698,12 +715,17 @@ class InternalBible:
                 elif marker == 's1': verseText += '¥' + cleanText + '¥'
                 elif marker == 'p': verseText += '¶' + cleanText
                 elif marker == 'm': verseText += '§' + cleanText
-                elif marker == 'v': pass # Ignore
+                elif marker == 'v': firstWord = True # Ignore
                 elif marker == 'v~': verseText += cleanText
-                else: print( "InternalBible.getVerseText Unknown marker", marker, cleanText )
+                elif marker == 'vw':
+                    if not firstWord: verseText += ' '
+                    verseText += cleanText
+                    firstWord = False
+                elif Globals.logErrorsFlag: logging.warning( "InternalBible.getVerseText Unknown marker {}={}".format( marker, repr(cleanText) ) )
             return verseText
     # end of InternalBible.getVerseText
 # end of class InternalBible
+
 
 
 def demo():

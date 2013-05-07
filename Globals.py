@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Globals.py
-#   Last modified: 2013-05-01 (also update versionString below)
+#   Last modified: 2013-05-06 (also update versionString below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -31,7 +31,11 @@ Module handling global variables
 progName = "Globals"
 versionString = "0.15"
 
-import logging, os.path
+
+import logging, os.path, pickle
+
+
+cacheFolder = 'ObjectCache/' # Relative path
 
 
 ##########################################################################################################
@@ -398,6 +402,46 @@ def getFlattenedXML( element, locationString, idString=None, level=0 ):
     #else: print( "Globals.getFlattenedXML: Result is '{}'".format( result ) )
     return result
 # end of Globals.getFlattenedXML
+
+
+##########################################################################################################
+#
+# Reloading a saved Python object from the cache
+#
+
+def pickleObject( theObject, filename, folder=None ):
+    """
+    Writes the object to a .pickle file that can be easily loaded into a Python3 program.
+        If folder is None (or missing), defaults to the default cache folder specified above.
+        Created the folder(s) if necessary.
+    """
+    assert( theObject )
+    assert( filename )
+    if folder is None: folder = cacheFolder
+    filepath = filename # default
+    if folder:
+        if not os.access( folder, os.R_OK ): # Make the folder hierarchy if necessary
+            os.makedirs( folder )
+        filepath = os.path.join( folder, filename )
+    if verbosityLevel > 2: print( _("Saving object to {}...").format( filepath ) )
+    with open( filepath, 'wb' ) as pickleOutputFile:
+        pickle.dump( theObject, pickleOutputFile )
+# end of Globals.pickle
+
+
+def unpickleObject( filename, folder=None ):
+    """
+    Reads the object from the file and returns it.
+
+    NOTE: The class for the object must, of course, be loaded already (at the module level).
+    """
+    assert( filename )
+    if folder is None: folder = cacheFolder
+    filepath = os.path.join( folder, filename )
+    if verbosityLevel > 2: print( _("Loading object from pickle file {}...").format( filepath ) )
+    with open( filepath, 'rb') as pickleInputFile:
+        return pickle.load( pickleInputFile ) # The protocol version used is detected automatically, so we do not have to specify it
+# end of Globals.unpickle
 
 
 ##########################################################################################################

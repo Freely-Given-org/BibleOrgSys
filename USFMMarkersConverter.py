@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkersConverter.py
-#   Last modified: 2013-05-01 (also update versionString below)
+#   Last modified: 2013-05-08 (also update versionString below)
 #
 # Module handling USFMMarkers.xml to produce C and Python data tables
 #
@@ -33,11 +33,13 @@ versionString = "0.55"
 
 import logging, os.path
 from gettext import gettext as _
+from datetime import datetime
 from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree
 
 from singleton import singleton
 import Globals
+
 
 
 @singleton # Can only ever have one instance
@@ -387,8 +389,6 @@ class USFMMarkersConverter:
             theFile.write( "], # end of {} ({} entries)\n\n".format( listName, len(theList) ) )
         # end of exportPythonList
 
-        from datetime import datetime
-
         assert( self._XMLtree )
         self.importDataToPython()
         assert( self.__DataDicts )
@@ -427,7 +427,6 @@ class USFMMarkersConverter:
 
         See http://en.wikipedia.org/wiki/JSON.
         """
-        from datetime import datetime
         import json
 
         assert( self._XMLtree )
@@ -493,8 +492,6 @@ class USFMMarkersConverter:
             cFile.write( "]}}; // {} ({} entries)\n\n".format( dictName, len(theDict) ) )
         # end of exportPythonDict
 
-        from datetime import datetime
-
         assert( self._XMLtree )
         self.importDataToPython()
         assert( self.__DataDicts )
@@ -545,6 +542,7 @@ class USFMMarkersConverter:
             myCFile.write( "// end of {}".format( os.path.basename(cFilepath) ) )
     # end of exportDataToC
 # end of USFMMarkersConverter class
+
 
 
 def demo():

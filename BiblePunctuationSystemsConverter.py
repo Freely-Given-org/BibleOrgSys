@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BiblePunctuationSystemsConverter.py
-#   Last modified: 2013-05-01 (also update versionString below)
+#   Last modified: 2013-05-08 (also update versionString below)
 #
 # Module handling BiblePunctuationSystem_*.xml to produce C and Python data tables
 #
@@ -33,11 +33,13 @@ versionString = "0.43"
 
 import os, logging
 from gettext import gettext as _
+from datetime import datetime
 from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree
 
 from singleton import singleton
 import Globals
+
 
 
 @singleton # Can only ever have one instance
@@ -306,7 +308,6 @@ class BiblePunctuationSystemsConverter:
             theFile.write( "  }}, # end of {} ({} entries)\n\n".format( dictName, len(theDict) ) )
         # end of exportPythonDict
 
-        from datetime import datetime
 
         assert( self._XMLSystems )
         self.importDataToPython()
@@ -337,7 +338,6 @@ class BiblePunctuationSystemsConverter:
 
         See http://en.wikipedia.org/wiki/JSON.
         """
-        from datetime import datetime
         import json
 
         assert( self._XMLSystems )
@@ -396,7 +396,6 @@ class BiblePunctuationSystemsConverter:
             cFile.write( "}}; // {} ({} entries)\n\n".format( dictName, len(theDict) ) )
         # end of exportPythonDict
 
-        from datetime import datetime
 
         assert( self._XMLSystems )
         self.importDataToPython()
@@ -492,6 +491,7 @@ class BiblePunctuationSystemsConverter:
                 myFile.write( "</BiblePunctuationSystem>" )
     # end of obsoleteCheckPunctuationSystem
 # end of BiblePunctuationSystemsConverter class
+
 
 
 def demo():

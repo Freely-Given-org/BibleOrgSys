@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleVersificationSystemsConverter.py
-#   Last modified: 2013-05-01 (also update versionString below)
+#   Last modified: 2013-05-08 (also update versionString below)
 #
 # Module handling BibleVersificationSystem_*.xml to produce C and Python data tables
 #
@@ -33,12 +33,14 @@ versionString = "0.50"
 
 import os, logging
 from gettext import gettext as _
+from datetime import datetime
 from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree
 from singleton import singleton
 
 import Globals
 from BibleBooksCodes import BibleBooksCodes
+
 
 
 @singleton # Can only ever have one instance
@@ -417,7 +419,6 @@ class BibleVersificationSystemsConverter:
             theFile.write( "  }}, # end of{} ({} entries)\n\n".format( systemName, len(theDict) ) )
         # end of exportPythonDict
 
-        from datetime import datetime
 
         assert( self.__XMLSystems )
         self.importDataToPython()
@@ -460,7 +461,6 @@ class BibleVersificationSystemsConverter:
 
         See http://en.wikipedia.org/wiki/JSON.
         """
-        from datetime import datetime
         import json
 
         assert( self.__XMLSystems )
@@ -569,7 +569,6 @@ class BibleVersificationSystemsConverter:
             theFile.write( "}; //{} ({} entries)\n\n".format( dictName, len(theDict) ) )
         # end of XXXexportPythonDict
 
-        from datetime import datetime
 
         assert( self.__XMLSystems )
         self.importDataToPython()
@@ -642,6 +641,7 @@ class BibleVersificationSystemsConverter:
             myCFile.write( "// end of{}".format( os.path.basename(cFilepath) ) )
     # end of BibleVersificationSystemsConverter.exportDataToC
 # end of BibleVersificationSystemsConverter class
+
 
 
 def demo():

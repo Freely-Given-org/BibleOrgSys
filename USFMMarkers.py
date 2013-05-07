@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkers.py
-#   Last modified: 2013-04-13 (also update versionString below)
+#   Last modified: 2013-05-06 (also update versionString below)
 #
 # Module handling USFMMarkers
 #
@@ -137,6 +137,7 @@ xrefSets = (
     )
 for thisSet in footnoteSets: assert( footnoteSets.count(thisSet) == 1 ) # Check there's no duplicates above
 for thisSet in xrefSets: assert( xrefSets.count(thisSet) == 1 )
+
 
 
 @singleton # Can only ever have one instance
@@ -378,6 +379,7 @@ class USFMMarkers:
         return result
     # end of getMarkerListFromText
 # end of USFMMarkers class
+
 
 
 def demo():
