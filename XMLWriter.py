@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # XMLWriter.py
-#   Last modified: 2013-04-13 by RJH (also update versionString below)
+#   Last modified: 2013-05-14 by RJH (also update versionString below)
 #
 # Module handling pretty writing of XML (and xHTML) files
 #
@@ -205,7 +205,11 @@ class XMLWriter:
     # end of removeFinalNewline
 
     def start( self, lineEndings='l', noAutoXML=False, writeBOM=False ):
-        """ Opens the file and writes a header record to it. """
+        """
+        Opens the file and writes a header record to it.
+            lineEndings: l for Linux
+                         w for Windows
+        """
         assert( self._status == 'Idle' )
         if lineEndings=='l': self._nl = '\n'
         elif lineEndings=='w': self._nl = '\r\n'
@@ -252,7 +256,7 @@ class XMLWriter:
 
     def checkAttribValue( self, valueString ):
         """ Returns a checked string containing the attribute value. Note that special characters should have already been handled before calling this routine. """
-        if isinstance( valueString, int ): valueString = str( valueString ) # Do an automatic conversion if they pass us and integer
+        if isinstance( valueString, int ): valueString = str( valueString ) # Do an automatic conversion if they pass us an integer
         assert( valueString ) # It can't be blank (can it?)
         assert( '<' not in valueString and '>' not in valueString and '"' not in valueString )
         return valueString
@@ -263,10 +267,14 @@ class XMLWriter:
         result = ''
         if isinstance( attribInfo, tuple ): # Assume it's a single pair
             assert( len(attribInfo) == 2 )
+            assert( isinstance( attribInfo[0], str ) )
+            assert( isinstance( attribInfo[1], str ) )
             if result: result += ' '
             result += '{}="{}"'.format( self.checkAttribName(attribInfo[0]), self.checkAttribValue(attribInfo[1]) )
         elif isinstance( attribInfo, list ):
             for attrib,value in attribInfo:
+                assert( isinstance( attrib, str ) )
+                assert( isinstance( value, str ) or isinstance( value, int ) )
                 if result: result += ' '
                 result += '{}="{}"'.format( self.checkAttribName(attrib), self.checkAttribValue(value) )
         else: # It's not a tuple or a list so we assume it's a dictionary or ordered dictionary
@@ -403,32 +411,60 @@ def demo():
 
     if Globals.verbosityLevel>0: print( "{} V{}".format( progName, versionString ) )
 
-    # Demo the writer object
-    outputFolder = "OutputFiles"
-    outputFilename = "test.xml"
-    if not os.access( outputFolder, os.F_OK ): os.mkdir( outputFolder ) # Make the empty folder if there wasn't already one there
-    #schema = "http://someURL.net/myOwn.xsd"
-    schema = "~/imaginary.xsd"
-    xw = XMLWriter().setOutputFilePath( outputFilename, outputFolder )
-    xw.setHumanReadable( "All" )
-    xw.start()
-    xw.writeLineOpen( "vwxyz", [("xmlns","http://someURL.net/namespace"),("xmlns:xsi","http://someURL.net/XMLSchema-instance"),("xsi:schemaLocation","http://someURL.net/namespace {}".format(schema))] )
-    xw.writeLineOpen( "header" )
-    xw.writeLineOpenClose( "title", "myTitle" )
-    xw.writeLineClose( "header" )
-    xw.writeLineOpen( "body" )
-    xw.writeLineOpen( "division", [('id','Div1'),('name','First division')] )
-    xw.writeLineOpenClose( "text", "myText in here", ("font","favouriteFont") )
-    xw.autoClose()
-    print( xw ) # Just print a summary
-    print( xw.validateXML( schema ) )
+    if 1: # Demo the writer object with XML
+        outputFolder = "OutputFiles"
+        outputFilename = "test.xml"
+        if not os.access( outputFolder, os.F_OK ): os.mkdir( outputFolder ) # Make the empty folder if there wasn't already one there
+        #schema = "http://someURL.net/myOwn.xsd"
+        schema = "~/imaginary.xsd"
+        xw = XMLWriter().setOutputFilePath( outputFilename, outputFolder )
+        xw.setHumanReadable( "All" )
+        xw.start()
+        xw.writeLineOpen( "vwxyz", [("xmlns","http://someURL.net/namespace"),("xmlns:xsi","http://someURL.net/XMLSchema-instance"),("xsi:schemaLocation","http://someURL.net/namespace {}".format(schema))] )
+        xw.writeLineOpen( "header" )
+        xw.writeLineOpenClose( "title", "myTitle" )
+        xw.writeLineClose( "header" )
+        xw.writeLineOpen( "body" )
+        xw.writeLineOpen( "division", [('id','Div1'),('name','First division')] )
+        xw.writeLineOpenClose( "text", "myText in here", ("font","favouriteFont") )
+        xw.autoClose()
+        print( xw ) # Just print a summary
+        print( xw.validateXML( schema ) )
 
-    from XMLFile import XMLFile
-    xf = XMLFile( outputFilename, outputFolder )
-    xf.validateByLoading()
-    xf.validateWithLint()
-    #print( xf.validateAll() )
-    print( xf )
+        from XMLFile import XMLFile
+        xf = XMLFile( outputFilename, outputFolder )
+        xf.validateByLoading()
+        xf.validateWithLint()
+        #print( xf.validateAll() )
+        print( xf )
+
+    if 1: # Demo the writer object with HTML
+        outputFolder = "OutputFiles"
+        outputFilename = "test.html"
+        if not os.access( outputFolder, os.F_OK ): os.mkdir( outputFolder ) # Make the empty folder if there wasn't already one there
+        schema = ""
+        xw = XMLWriter().setOutputFilePath( outputFilename, outputFolder )
+        xw.setHumanReadable( "All" )
+        xw.start( noAutoXML=True )
+        xw.writeLineText( '<!DOCTYPE html>', noTextCheck=True )
+        xw.writeLineOpen( 'html' )
+        xw.writeLineOpen( "header" )
+        xw.writeLineOpenClose( "title", "myTitle" )
+        xw.writeLineClose( "header" )
+        xw.writeLineOpen( "body" )
+        #xw.writeLineOpen( "div", [('id','Div1'),('name','First division')] )
+        xw.writeLineOpenClose( "h1", "myHeading in here", ('class','testHeading') )
+        xw.writeLineOpenClose( "p", "myText in here", [("class","funParagraph"),('id','myAnchor'),] )
+        xw.autoClose()
+        print( xw ) # Just print a summary
+        print( xw.validateXML( schema ) )
+
+        from XMLFile import XMLFile
+        xf = XMLFile( outputFilename, outputFolder )
+        xf.validateByLoading()
+        xf.validateWithLint()
+        #print( xf.validateAll() )
+        print( xf )
 # end of demo
 
 if __name__ == '__main__':

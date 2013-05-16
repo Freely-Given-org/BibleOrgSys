@@ -39,7 +39,9 @@ See the supplied ReadMe.txt for more details.
             <!ELEMENT numVerses (#PCDATA)>
                 <!ATTLIST numVerses
                     chapter CDATA #REQUIRED
-                    omittedVerses CDATA #IMPLIED>
+                    omittedVerses CDATA #IMPLIED
+                    combinedVerses CDATA #IMPLIED
+                    reorderedVerses CDATA #IMPLIED>
 ]>
 
 <BibleVersificationSystem>

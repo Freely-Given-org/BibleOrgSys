@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-04-30 by RJH (also update versionString below)
+#   Last modified: 2013-05-16 by RJH (also update versionString below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -47,6 +47,9 @@ from InternalBible import InternalBible
 from BibleOrganizationalSystems import BibleOrganizationalSystem
 from BibleReferences import BibleReferenceList
 from XMLWriter import XMLWriter
+
+
+defaultControlFolder = "ControlFiles" # Relative to the current working directory
 
 
 
@@ -169,6 +172,7 @@ class BibleWriter( InternalBible ):
             filepath = os.path.join( outputFolder, filename )
             if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
             with open( filepath, 'wt' ) as myFile: myFile.write( USFM )
+        return True
     # end of BibleWriter.toUSFM
 
 
@@ -179,7 +183,12 @@ class BibleWriter( InternalBible ):
         """
         if not outputFolder: outputFolder = "OutputFiles/MediaWikiExport/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
-        if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_MediaWiki_controls.txt", controlDict )
+        if not controlDict:
+            controlDict, defaultControlFilename = {}, "To_MediaWiki_controls.txt"
+            try:
+                ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
+            except:
+                if Globals.logErrorsFlag: logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
         if Globals.debugFlag: assert( controlDict and isinstance( controlDict, dict ) )
 
         unhandledMarkers = set()
@@ -397,6 +406,7 @@ class BibleWriter( InternalBible ):
         xw.close()
         if unhandledMarkers and Globals.verbosityLevel>0: print( "  " + _("WARNING: Unhandled toMediaWiki USFM markers were {}").format(unhandledMarkers) )
         if validationSchema: return xw.validateXML( validationSchema )
+        return True
     # end of BibleWriter.toMediaWiki
 
 
@@ -411,7 +421,12 @@ class BibleWriter( InternalBible ):
         """
         if not outputFolder: outputFolder = "OutputFiles/ZefaniaExport/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
-        if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_Zefania_controls.txt", controlDict )
+        if not controlDict:
+            controlDict, defaultControlFilename = {}, "To_Zefania_controls.txt"
+            try:
+                ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
+            except:
+                if Globals.logErrorsFlag: logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
         if Globals.debugFlag: assert( controlDict and isinstance( controlDict, dict ) )
 
         unhandledMarkers = set()
@@ -429,7 +444,7 @@ class BibleWriter( InternalBible ):
             if "ZefaniaCoverage" in controlDict and controlDict["ZefaniaCoverage"]: writerObject.writeLineOpenClose( 'coverage', controlDict["ZefaniaCoverage"] )
             writerObject.writeLineOpenClose( 'format', 'Zefania XML Bible Markup Language' )
             writerObject.writeLineOpenClose( 'date', datetime.datetime.now().date().isoformat() )
-            writerObject.writeLineOpenClose( 'creator', 'USFMBible.py' )
+            writerObject.writeLineOpenClose( 'creator', 'BibleWriter.py' )
             writerObject.writeLineOpenClose( 'type', 'bible text' )
             if "ZefaniaLanguage" in controlDict and controlDict["ZefaniaLanguage"]: writerObject.writeLineOpenClose( 'language', controlDict["ZefaniaLanguage"] )
             if "ZefaniaRights" in controlDict and controlDict["ZefaniaRights"]: writerObject.writeLineOpenClose( 'rights', controlDict["ZefaniaRights"] )
@@ -489,6 +504,7 @@ class BibleWriter( InternalBible ):
         xw.close()
         if unhandledMarkers and Globals.verbosityLevel>0: print( "  " + _("WARNING: Unhandled toZefania USFM markers were {}").format(unhandledMarkers) )
         if validationSchema: return xw.validateXML( validationSchema )
+        return True
     # end of BibleWriter.toZefaniaXML
 
 
@@ -502,7 +518,12 @@ class BibleWriter( InternalBible ):
         """
         if not outputFolder: outputFolder = "OutputFiles/USXExport/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
-        if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_USX_controls.txt", controlDict )
+        if not controlDict:
+            controlDict, defaultControlFilename = {}, "To_USX_controls.txt"
+            try:
+                ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
+            except:
+                if Globals.logErrorsFlag: logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
         if Globals.debugFlag: assert( controlDict and isinstance( controlDict, dict ) )
 
         unhandledMarkers = set()
@@ -856,6 +877,7 @@ class BibleWriter( InternalBible ):
                 if bookResults[2]: validationResults = ( validationResults[0], validationResults[1], validationResults[2] + bookResults[2], )
         if unhandledMarkers and Globals.verbosityLevel>0: print( "  " + _("WARNING: Unhandled toUSX USFM markers were {}").format(unhandledMarkers) )
         if validationSchema: return validationResults
+        return True
     # end of BibleWriter.toUSXXML
 
 
@@ -952,7 +974,12 @@ class BibleWriter( InternalBible ):
         """
         if not outputFolder: outputFolder = "OutputFiles/OSISExport/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
-        if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_OSIS_controls.txt", controlDict )
+        if not controlDict:
+            controlDict, defaultControlFilename = {}, "To_OSIS_controls.txt"
+            try:
+                ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
+            except:
+                if Globals.logErrorsFlag: logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
         if Globals.debugFlag: assert( controlDict and isinstance( controlDict, dict ) )
 
         # Set-up our Bible reference system
@@ -1545,6 +1572,7 @@ class BibleWriter( InternalBible ):
         if unhandledMarkers and Globals.verbosityLevel>0: print( "  " + _("WARNING: Unhandled toOSIS USFM markers were {}").format(unhandledMarkers) )
         if Globals.verbosityLevel > 2: print( "Need to find and look at an example where a new chapter isn't a new <p> to see how chapter eIDs should be handled there" )
         if validationSchema: return validationResults
+        return True
     # end of BibleWriter.toOSISXML
 
 
@@ -1556,7 +1584,12 @@ class BibleWriter( InternalBible ):
         """
         if not outputFolder: outputFolder = "OutputFiles/SwordExport/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
-        if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_OSIS_controls.txt", controlDict )
+        if not controlDict:
+            controlDict, defaultControlFilename = {}, "To_OSIS_controls.txt"
+            try:
+                ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
+            except:
+                if Globals.logErrorsFlag: logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
 
         import struct
         if Globals.debugFlag: assert( struct.calcsize("IH") == 6 ) # Six-byte format
@@ -2089,8 +2122,8 @@ class BibleWriter( InternalBible ):
         xwOT.setHumanReadable( 'NLSpace', indentSize=5 ) # Can be set to 'All', 'Header', or 'None'
         xwNT.setHumanReadable( 'NLSpace', indentSize=5 ) # Can be set to 'All', 'Header', or 'None'
         xwOT.start( noAutoXML=True ); xwNT.start( noAutoXML=True )
-        toSwordGlobals['length'] = xwOT.writeLineOpenSelfclose( 'milestone', [('type',"x-importer"), ('subtype',"x-USFMBible.py"), ('n',"${} $".format(versionString))] )
-        toSwordGlobals['length'] = xwNT.writeLineOpenSelfclose( 'milestone', [('type',"x-importer"), ('subtype',"x-USFMBible.py"), ('n',"${} $".format(versionString))] )
+        toSwordGlobals['length'] = xwOT.writeLineOpenSelfclose( 'milestone', [('type',"x-importer"), ('subtype',"x-BibleWriter.py"), ('n',"${} $".format(versionString))] )
+        toSwordGlobals['length'] = xwNT.writeLineOpenSelfclose( 'milestone', [('type',"x-importer"), ('subtype',"x-BibleWriter.py"), ('n',"${} $".format(versionString))] )
         xwOT.setSectionName( 'Main' ); xwNT.setSectionName( 'Main' )
         with open( os.path.join( lgFolder, 'ot.vss' ), 'wb' ) as ixOT, open( os.path.join( lgFolder, 'nt.vss' ), 'wb' ) as ixNT:
             ixOT.write( struct.pack( "IH", 0, 0 ) ) # Write the first dummy entry
@@ -2111,8 +2144,222 @@ class BibleWriter( InternalBible ):
         if validationSchema:
             OTresults= xwOT.validateXML( validationSchema )
             NTresults= xwNT.validateXML( validationSchema )
-            return OTresults, NTresults
+            return OTresults and NTresults
+        return True
     #end of BibleWriter.toSwordModule
+
+
+
+    def toHTML5( self, outputFolder=None, controlDict=None, validationSchema=None ):
+        """
+        Using settings from the given control file,
+            converts the USFM information to UTF-8 HTML files.
+        """
+        if not outputFolder: outputFolder = "OutputFiles/HTML5Export/"
+        if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
+        if not controlDict:
+            controlDict, defaultControlFilename = {}, "To_HTML5_controls.txt"
+            try:
+                ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
+            except:
+                if Globals.logErrorsFlag: logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
+        if Globals.debugFlag: assert( controlDict and isinstance( controlDict, dict ) )
+
+        unhandledMarkers = set()
+
+        def writeHeader( writerObject ):
+            """Writes the HTML5 header to the HTML writerObject."""
+            writerObject.writeLineOpen( 'head' )
+            writerObject.writeLineText( '<meta http-equiv="Content-Type" content="text/html;charset=utf-8">', noTextCheck=True )
+            if "HTML5Title" in controlDict and controlDict["HTML5Title"]:
+                writerObject.writeLineOpenClose( 'title' , controlDict["HTML5Title"].replace('__PROJECT_NAME__',self.name) )
+            #if "HTML5Subject" in controlDict and controlDict["HTML5Subject"]: writerObject.writeLineOpenClose( 'subject', controlDict["HTML5Subject"] )
+            #if "HTML5Description" in controlDict and controlDict["HTML5Description"]: writerObject.writeLineOpenClose( 'description', controlDict["HTML5Description"] )
+            #if "HTML5Publisher" in controlDict and controlDict["HTML5Publisher"]: writerObject.writeLineOpenClose( 'publisher', controlDict["HTML5Publisher"] )
+            #if "HTML5Contributors" in controlDict and controlDict["HTML5Contributors"]: writerObject.writeLineOpenClose( 'contributors', controlDict["HTML5Contributors"] )
+            #if "HTML5Identifier" in controlDict and controlDict["HTML5Identifier"]: writerObject.writeLineOpenClose( 'identifier', controlDict["HTML5Identifier"] )
+            #if "HTML5Source" in controlDict and controlDict["HTML5Source"]: writerObject.writeLineOpenClose( 'identifier', controlDict["HTML5Source"] )
+            #if "HTML5Coverage" in controlDict and controlDict["HTML5Coverage"]: writerObject.writeLineOpenClose( 'coverage', controlDict["HTML5Coverage"] )
+            #writerObject.writeLineOpenClose( 'format', 'HTML5 markup language' )
+            #writerObject.writeLineOpenClose( 'date', datetime.datetime.now().date().isoformat() )
+            #writerObject.writeLineOpenClose( 'creator', 'BibleWriter.py' )
+            #writerObject.writeLineOpenClose( 'type', 'bible text' )
+            #if "HTML5Language" in controlDict and controlDict["HTML5Language"]: writerObject.writeLineOpenClose( 'language', controlDict["HTML5Language"] )
+            #if "HTML5Rights" in controlDict and controlDict["HTML5Rights"]: writerObject.writeLineOpenClose( 'rights', controlDict["HTML5Rights"] )
+            writerObject.writeLineClose( 'head' )
+
+            writerObject.writeLineOpen( 'body' )
+            writerObject.writeLineOpen( 'header' )
+            writerObject.writeLineText( 'HEADER STUFF GOES HERE' )
+            writerObject.writeLineClose( 'header' )
+            writerObject.writeLineOpen( 'nav' )
+            writerObject.writeLineText( 'NAVIGATION STUFF GOES HERE' )
+            writerObject.writeLineClose( 'nav' )
+        # end of toHTML5.writeHeader
+
+        def writeFooter( writerObject ):
+            """Writes the HTML5 footer to the HTML writerObject."""
+            writerObject.writeLineOpen( 'footer' )
+            writerObject.writeLineOpen( 'p', ('class','footerLine') )
+            writerObject.writeLineOpen( 'a', ('href','http://www.w3.org/html/logo/') )
+            writerObject.writeLineText( '<img src="http://www.w3.org/html/logo/badge/html5-badge-h-css3-semantics.png" width="165" height="64" alt="HTML5 Powered with CSS3 / Styling, and Semantics" title="HTML5 Powered with CSS3 / Styling, and Semantics">', noTextCheck=True )
+            writerObject.writeLineClose( 'a' )
+            writerObject.writeLineText( "This page automatically created by: {} v{} {}".format( progName, versionString, datetime.date.today().strftime("%d-%b-%Y") ) )
+            writerObject.writeLineClose( 'p' )
+            writerObject.writeLineClose( 'footer' )
+            writerObject.writeLineClose( 'body' )
+        # end of toHTML5.writeFooter
+
+        def createSectionReference( theRef ):
+            """ Returns an HTML string for a section reference. """
+            print( "createSectionReference: '{}'".format( theRef ) )
+            result = bracket = ''
+            for bracketLeft,bracketRight in (('(',')'),('[',']'),):
+                if theRef and theRef[0]==bracketLeft and theRef[-1]==bracketRight:
+                    result += bracketLeft
+                    bracket = bracketRight
+                    theRef = theRef[1:-1] # Remove the brackets
+            refs = theRef.split( ';' )
+            for j,ref in enumerate(refs):
+                if j: result += '; '
+                ref = ref.strip()
+                result += '<a href=".">{}</a>'.format( ref )
+            print( "now = '{}'".format( result ) )
+            return result + bracket
+        # end of toHTML5.createSectionReference
+
+        def writeBook( writerObject, BBB, bkData ):
+            """Writes a book to the HTML5 writerObject."""
+            writeHeader( writerObject )
+            haveOpenSection = haveOpenParagraph = haveOpenList = False
+            for marker,originalMarker,text,cleanText,extras in bkData._processedLines: # Process internal Bible lines
+                #if BBB=='MRK': print( "writeBook", marker, cleanText )
+                if marker in ('id','ide','toc1','toc2','toc3','rem',):
+                    pass # Just ignore these lines
+
+                # Markers usually only found in the introduction
+                elif marker in ('mt1','mt2',):
+                    assert( not haveOpenParagraph )
+                    writerObject.writeLineOpenClose( 'h1', cleanText, ('class','mainTitle'+marker[2]) )
+                elif marker in ('ms1','ms2',):
+                    assert( not haveOpenParagraph )
+                    writerObject.writeLineOpenClose( 'h2', cleanText, ('class','mainSectionHeading'+marker[1]) )
+                elif marker == 'ip':
+                    if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
+                    writerObject.writeLineOpen( 'p', ('class','introductoryParagraph') ); haveOpenParagraph = True
+                    if cleanText: writerObject.writeLineText( cleanText )
+                elif marker == 'iot':
+                    if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
+                    writerObject.writeLineOpenClose( 'span', cleanText, ('class','outlineTitle') )
+                elif marker in ('io1','io2','io3',):
+                    if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
+                    writerObject.writeLineOpenClose( 'span', cleanText, ('class','outlineEntry'+marker[2]) )
+
+                # Now markers in the main text
+                elif marker in 'c':
+                    # What should we put in here -- we don't need/want to display it, but it's a place to jump to
+                    writerObject.writeLineOpenClose( 'span', ' ', [('class','chapterStart'),('id','C'+cleanText)] )
+                elif marker in 'c#':
+                    C = cleanText
+                    if not haveOpenParagraph:
+                        if Globals.logErrorsFlag:
+                            logging.warning( "toHTML5: Have chapter number {} outside a paragraph in {}".format( cleanText, BBB ) )
+                        writerObject.writeLineOpen( 'p', ('class','unknownParagraph') ); haveOpenParagraph = True
+                    writerObject.writeLineOpenClose( 'span', cleanText, ('class','chapterNumber') )
+                elif marker in ('s1','s2','s3',):
+                    if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
+                    if marker == 's1':
+                        if haveOpenSection: writerObject.writeLineClose( 'section' ); haveOpenSection = False
+                        writerObject.writeLineOpen( 'section', ('class','regularSection') ); haveOpenSection = True
+                    writerObject.writeLineOpenClose( 'h2', cleanText, ('class','sectionHeading'+marker[1]) )
+                elif marker == 'r':
+                    assert( haveOpenSection )
+                    assert( not haveOpenParagraph )
+                    writerObject.writeLineOpenClose( 'span', createSectionReference(cleanText), ('class','sectionReference'), noTextCheck=True )
+                elif marker == 'v':
+                    if not haveOpenParagraph:
+                        if Globals.logErrorsFlag:
+                            logging.warning( "toHTML5: Have verse number {} outside a paragraph in {}".format( cleanText, BBB ) )
+                    if 1: # no span -- it's simpler so why not!
+                        writerObject.writeLineOpenClose( 'sup', cleanText, [('class','verseNumber'),('id','C'+C+'V'+cleanText)] )
+                    else: # use sup and then span
+                        writerObject.writeLineOpen( 'sup' )
+                        writerObject.writeLineOpenClose( 'span', cleanText, [('class','verseNumber'),('id','C'+C+'V'+cleanText)] )
+                        writerObject.writeLineClose( 'sup' )
+                elif marker == 'p':
+                    if haveOpenList: writerObject.writeLineClose( 'p' ); haveOpenList = False
+                    if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
+                    writerObject.writeLineOpen( 'p', ('class','proseParagraph') ); haveOpenParagraph = True
+                elif marker == 'pi':
+                    if haveOpenParagraph: writerObject.writeLineClose( 'p' )
+                    writerObject.writeLineOpen( 'p', ('class','indentedProseParagraph') ); haveOpenParagraph = True
+                elif marker == 'q1':
+                    if haveOpenParagraph: writerObject.writeLineClose( 'p' )
+                    writerObject.writeLineOpen( 'p', ('class','poetryParagraph1') ); haveOpenParagraph = True
+                    if cleanText: writerObject.writeLineText( cleanText )
+                elif marker == 'q2':
+                    if haveOpenParagraph: writerObject.writeLineClose( 'p' )
+                    writerObject.writeLineOpen( 'p', ('class','poetryParagraph2') ); haveOpenParagraph = True
+                    if cleanText: writerObject.writeLineText( cleanText )
+                elif marker == 'q3':
+                    if haveOpenParagraph: writerObject.writeLineClose( 'p' )
+                    writerObject.writeLineOpen( 'p', ('class','poetryParagraph3') ); haveOpenParagraph = True
+                    if cleanText: writerObject.writeLineText( cleanText )
+                elif marker == 'li1':
+                    if not haveOpenList:
+                        writerObject.writeLineOpen( 'p', ('class','list') ); haveOpenList = True
+                    writerObject.writeLineOpen( 'span', ('class','listItem1') )
+                    if cleanText: writerObject.writeLineText( cleanText )
+
+                # Character markers
+                elif marker=='v~':
+                    assert( haveOpenParagraph )
+                    writerObject.writeLineText( cleanText )
+                else: unhandledMarkers.add( marker )
+            if haveOpenList: writerObject.writeLineClose( 'p' ); haveOpenList = False
+            if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
+            if haveOpenSection: writerObject.writeLineClose( 'section' ); haveOpenSection = False
+            writeFooter( writerObject )
+        # end of toHTML5.writeBook
+
+        # Set-up our Bible reference system
+        if controlDict['PublicationCode'] == "GENERIC":
+            BOS = self.genericBOS
+            BRL = self.genericBRL
+        else:
+            BOS = BibleOrganizationalSystem( controlDict["PublicationCode"] )
+            BRL = BibleReferenceList( BOS, BibleObject=None )
+
+        Globals.logErrorsFlag = True # To debug this
+        if Globals.verbosityLevel>1: print( _("Exporting to HTML5 format...") )
+        suffix = controlDict['HTML5Suffix'] if 'HTML5Suffix' in controlDict else 'html'
+        filenameDict = {}
+        for BBB in self.books: # Make a list of filenames
+            filename = controlDict['HTML5OutputFilenameTemplate'].replace('__PROJECT_NAME__','BIBLE') \
+                            .replace('__BOOKCODE__',BBB ).replace('__SUFFIX__',suffix)
+            filenameDict[BBB] = filename
+
+        if controlDict["HTML5Files"]=="byBook":
+            for BBB,bookData in self.books.items(): # Now export the books
+                if Globals.verbosityLevel>1: print( _("  Exporting {} to HTML5 format...").format( BBB ) )
+                xw = XMLWriter().setOutputFilePath( filenameDict[BBB], outputFolder )
+                xw.setHumanReadable()
+                xw.start( noAutoXML=True )
+                xw.writeLineText( '<!DOCTYPE html>', noTextCheck=True )
+                xw.writeLineOpen( 'html' )
+                try: writeBook( xw, BBB, bookData )
+                except Exception as err:
+                    print("Unexpected error:", sys.exc_info()[0], err)
+                    #print( "I/O error({0}): {1}".format(e.errno, e.strerror ) )
+                    if Globals.logErrorsFlag: logging.error( "toHTML5: Oops, creating {} failed!".format( BBB ) )
+                xw.writeLineClose( 'html' )
+                xw.close()
+        else: halt # not done yet
+        if unhandledMarkers and Globals.verbosityLevel>0: print( "  " + _("WARNING: Unhandled toHTML5 USFM markers were {}").format(unhandledMarkers) )
+        if validationSchema: return xw.validateXML( validationSchema )
+        return True
+    # end of BibleWriter.toHTML5
+
 
 
     def doAllExports( self, givenOutputFolderName=None ):
@@ -2130,19 +2377,22 @@ class BibleWriter( InternalBible ):
         self.setupWriter()
 
         USFMOutputFolder = os.path.join( givenOutputFolderName, "USFM" + ("Reexport" if self.objectTypeString=='USFM' else "Export" ) )
-        USFMExportResult = self.toUSFM( outputFolder=USFMOutputFolder )
+        #USFMExportResult = self.toUSFM( outputFolder=USFMOutputFolder )
         MWOutputFolder = os.path.join( givenOutputFolderName, "MediaWiki" + ("Reexport" if self.objectTypeString=='MediaWiki' else "Export" ) )
-        MWExportResult = self.toMediaWiki( outputFolder=MWOutputFolder )
+        #MWExportResult = self.toMediaWiki( outputFolder=MWOutputFolder )
         zOutputFolder = os.path.join( givenOutputFolderName, "Zefania" + ("Reexport" if self.objectTypeString=='Zefania' else "Export" ) )
-        zExportResult = self.toZefaniaXML( outputFolder=zOutputFolder )
+        #zExportResult = self.toZefaniaXML( outputFolder=zOutputFolder )
         USXOutputFolder = os.path.join( givenOutputFolderName, "USX" + ("Reexport" if self.objectTypeString=='USX' else "Export" ) )
-        USXExportResult = self.toUSXXML( outputFolder=USXOutputFolder )
+        #USXExportResult = self.toUSXXML( outputFolder=USXOutputFolder )
         OSISOutputFolder = os.path.join( givenOutputFolderName, "OSIS" + ("Reexport" if self.objectTypeString=='OSIS' else "Export" ) )
-        OSISExportResult = self.toOSISXML( outputFolder=OSISOutputFolder )
+        #OSISExportResult = self.toOSISXML( outputFolder=OSISOutputFolder )
         swOutputFolder = os.path.join( givenOutputFolderName, "Sword" + ("Reexport" if self.objectTypeString=='Sword' else "Export" ) )
-        swExportResult = self.toSwordModule( outputFolder=swOutputFolder )
+        #swExportResult = self.toSwordModule( outputFolder=swOutputFolder )
+        htmlOutputFolder = os.path.join( givenOutputFolderName, "HTML5" + "Export" )
+        htmlExportResult = self.toHTML5( outputFolder=htmlOutputFolder )
 
-        print( "\nResults: MW =", MWExportResult, " Zef =", zExportResult, " USX =", USXExportResult, " OSIS =", OSISExportResult, " Sw =", swExportResult )
+        print( "\nResults:  MW={}  Zef={}  USX={}  OSIS={}  Sw={}  HTML={}" \
+            .format( MWExportResult, zExportResult, USXExportResult, OSISExportResult, swExportResult, htmlExportResult ) )
     # end of BibleWriter.doAllExports
 # end of class BibleWriter
 
@@ -2182,19 +2432,19 @@ def demo():
             UB.load()
             if Globals.verbosityLevel > 0: print( UB )
             if Globals.strictCheckingFlag: UB.check()
-            UB.setupWriter()
-            UB.toUSXXML()
-            # Now compare the original and the derived USX XML files
-            outputFolder = "OutputFiles/USXExport/"
-            fN = USXFilenames( testFolder )
-            f1 = os.listdir( testFolder ) # Originals
-            f2 = os.listdir( outputFolder ) # Derived
-            for j, (BBB,filename) in enumerate( fN.getPossibleFilenames() ):
-                if filename in f1 and filename in f2:
-                    #print( "\n{}: {} {}".format( j+1, BBB, filename ) )
-                    result = Globals.fileCompareXML( filename, filename, testFolder, outputFolder )
-                    if Globals.debugFlag:
-                        if not result: halt
+            #UB.setupWriter()
+            UB.doAllExports()
+            if 0: # Now compare the original and the derived USX XML files
+                outputFolder = "OutputFiles/USXExport/"
+                fN = USXFilenames( testFolder )
+                f1 = os.listdir( testFolder ) # Originals
+                f2 = os.listdir( outputFolder ) # Derived
+                for j, (BBB,filename) in enumerate( fN.getPossibleFilenames() ):
+                    if filename in f1 and filename in f2:
+                        #print( "\n{}: {} {}".format( j+1, BBB, filename ) )
+                        result = Globals.fileCompareXML( filename, filename, testFolder, outputFolder )
+                        if Globals.debugFlag:
+                            if not result: halt
         else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 
 # end of demo
