@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleReferences.py
-#   Last modified: 2013-04-22 by RJH (also update versionString below)
+#   Last modified: 2013-05-16 by RJH (also update versionString below)
 #
 # Module for handling Bible references including ranges
 #
@@ -77,7 +77,7 @@ Technical note: Our Bible reference parsers use state machines rather than regul
 """
 
 progName = "Bible References handler"
-versionString = "0.27"
+versionString = "0.28"
 
 
 import os, logging
@@ -618,7 +618,7 @@ class BibleReferenceList( BibleReferenceBase ):
         self.objectNameString = "Bible reference list object"
         self.objectTypeString = "BibleReferenceList"
         self.referenceList = []
-    # end of BibleReferenceList:__init__
+    # end of BibleReferenceList.__init__
 
     def __str__( self ):
         """
@@ -630,7 +630,7 @@ class BibleReferenceList( BibleReferenceBase ):
         result = "Bible Range References object"
         if self.referenceList: result += ('\n' if result else '') + "  {}".format( self.referenceList )
         return result
-    # end of BibleReferenceList:__str__
+    # end of BibleReferenceList.__str__
 
     def makeReferenceString( self, refTuple, location=None ):
         """
@@ -659,7 +659,7 @@ class BibleReferenceList( BibleReferenceBase ):
         else: # it's a book with multiple chapters
             resultString = "{}{}{}{}{}{}".format( BBBstr, BCS, ' ' if self.punctuationDict['spaceAllowedAfterBCS']=='Y' else '', C, CVS, V )
         return resultString
-    # end of BibleReferenceList:makeReferenceString
+    # end of BibleReferenceList.makeReferenceString
 
     def parseReferenceString( self, referenceString, location=None ):
         """
@@ -1144,7 +1144,20 @@ class BibleReferenceList( BibleReferenceBase ):
                     if Globals.logErrorsFlag: logging.warning( _("Have duplicate or overlapping range at {} in Bible references '{}'").format( self.makeReferenceString(entry), referenceString ) )
             haveWarnings = True
         return status==9 and not haveErrors, haveWarnings, self.referenceList
-    # end of BibleReferenceList:parseReferenceString
+    # end of BibleReferenceList.parseReferenceString
+
+
+    def getFirstReference( self, referenceString, location=None ):
+        """
+        """
+        hE, hW, refList = self.parseReferenceString( referenceString, location )
+        #print( "gFR", hE, hW, refList )
+        for something in refList:
+            if isinstance( something, tuple ):
+                if len(something)==4: return something
+                if len(something)==2 and isinstance( something[0], tuple ) and len(something[0])==4: return something[0]
+    # end if BibleReferenceList.getFirstReference
+
 
     def parseOSISReferenceString( self, referenceString ):
         """
@@ -1168,7 +1181,7 @@ class BibleReferenceList( BibleReferenceBase ):
         self.getBBB = self._BibleOrganizationalSystem.getBBB # This is the function that finds a book by name
 
         return sucessFlag, haveWarnings, resultList
-    # end of BibleReferenceList:parseOSISReferenceString
+    # end of BibleReferenceList.parseOSISReferenceString
 
     def getReferenceList( self, expanded=False ):
         """ Returns the internal list of Bible references.
@@ -1185,7 +1198,7 @@ class BibleReferenceList( BibleReferenceBase ):
             return expandedList
         else:
             return self.referenceList
-    # end of BibleReferenceList:getReferenceList
+    # end of BibleReferenceList.getReferenceList
 
     def getOSISRefList( self ):
         """ Converts our internal reference list to OSIS format.
@@ -1215,7 +1228,7 @@ class BibleReferenceList( BibleReferenceBase ):
                 else: result += "{}.{}".format(Bk,C)
                 lastBk, lastC, lastV = Bk, C, V
         return result
-    # end of BibleReferenceList:getOSISRefList
+    # end of BibleReferenceList.getOSISRefList
 
     def parseToOSIS( self, referenceString, location=None ):
         """ Just combines the two above routines.
@@ -1225,7 +1238,7 @@ class BibleReferenceList( BibleReferenceBase ):
         successFlag, haveWarnings, refList = self.parseReferenceString( referenceString, location )
         if successFlag: return self.getOSISRefList()
         #if Globals.logErrorsFlag: logging.error( "You should already have an error above for '{}'".format( referenceString ) ) # temp
-    # end of BibleReferenceList:parseToOSIS
+    # end of BibleReferenceList.parseToOSIS
 
     #def XXXUnusedXXXMaybeUntestedXXXcontainsReferenceTuple( self, refTuple ):
         #""" Returns True/False if the internal reference list contains the given reference tuple. """
@@ -1241,7 +1254,7 @@ class BibleReferenceList( BibleReferenceBase ):
                 #if refTuple in expandedList: return True
             #elif refTuple == refTuple: return True
         #return False
-    ## end of BibleReferenceList:containsReferenceTuple
+    ## end of BibleReferenceList.containsReferenceTuple
 
     def containsReference( self, BBB, C, V, S=None ):
         """ Returns True/False if the internal reference list contains the given reference. """
@@ -1302,7 +1315,7 @@ class BibleReferenceList( BibleReferenceBase ):
                 elif myRefTuple == refTuple: return True
                 elif S is None and myRefTuple[0]==refTuple[0] and myRefTuple[1]==refTuple[1] and myRefTuple[2]==refTuple[2]: return True # Just compare BBB,C,V (not S)
         return False
-    # end of BibleReferenceList:containsReference
+    # end of BibleReferenceList.containsReference
 # end of class BibleReferenceList
 
 

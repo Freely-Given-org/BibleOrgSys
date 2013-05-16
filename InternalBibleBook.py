@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-05-08 by RJH (also update versionString below)
+#   Last modified: 2013-05-16 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -75,11 +75,12 @@ class InternalBibleEntry:
         Accept the parameters and double-check them if requested.
         """
         if Globals.debugFlag or Globals.strictCheckingFlag:
-            #print( "InternalBibleEntry.__init__( {}, {}, {}, {}, {} )".format( marker, originalMarker, text[:5], cleanText[:5], extras ) )
+            #print( "InternalBibleEntry.__init__( {}, {}, {}, {}, {} )".format( marker, originalMarker, text[:35], cleanText[:35], extras ) )
             assert( marker and isinstance( marker, str ) ) # Mustn't be blank
             assert( originalMarker and isinstance( originalMarker, str ) ) # Mustn't be blank
             assert( isinstance( text, str ) )
             assert( isinstance( cleanText, str ) )
+            assert( '\\' not in cleanText )
             assert( isinstance( extras, list ) )
             if extras:
                 #print( "extras:", extras )
@@ -88,6 +89,7 @@ class InternalBibleEntry:
                     assert( isinstance( extraIndex, int ) and extraIndex >= 0 )
                     assert( isinstance( extraText, str ) and extraText ) # Mustn't be blank
                     assert( isinstance( cleanExtraText, str ) and cleanExtraText ) # Shouldn't be blank
+                    assert( '\\' not in cleanExtraText )
                     assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
                     for letters in ( 'f', 'x', 'fe', 'ef' ): # footnote, cross-ref, endnotes, studynotes
                         assert( '\\'+letters+' ' not in extraText )
@@ -629,7 +631,7 @@ class InternalBibleBook:
                 #print( originalMarker, "'"+text+"'", "'"+adjText+"'" )
 
             # Now remove all formatting from the cleanText string (to make it suitable for indexing and search routines
-            if self.objectTypeString == ('USFM','USX',):
+            if self.objectTypeString in ('USFM','USX',):
                 cleanText = adjText.replace( '&amp;', '&' ).replace( '&#39;', "'" ).replace( '&lt;', '<' ).replace( '&gt;', '>' ).replace( '&quot;', '"' ) # Undo any replacements above
                 if '\\' in cleanText: # we will first remove known USFM character formatting markers
                     for possibleCharacterMarker in Globals.USFMMarkers.getCharacterMarkersList():

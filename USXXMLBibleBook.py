@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USXXMLBibleBook.py
-#   Last modified: 2013-05-01 by RJH (also update versionString below)
+#   Last modified: 2013-05-16 by RJH (also update versionString below)
 #
 # Module handling USX Bible Book xml
 #
@@ -244,7 +244,7 @@ class USXXMLBibleBook( BibleBook ):
                         if text is None: text = ''
                         if Globals.debugFlag:
                             print( _("{} {}:{} Found '\\{}' internal USFM marker at beginning of line with text: {}").format( self.bookReferenceCode, c, v, USFMMarker, text ) )
-                            halt # Not checked yet
+                            #halt # Not checked yet
                         if text:
                             loadErrors.append( _("{} {}:{} Found '\\{}' internal USFM marker at beginning of line with text: {}").format( self.bookReferenceCode, c, v, USFMMarker, text ) )
                             if Globals.logErrorsFlag: logging.warning( _("Found '\\{}' internal USFM Marker after {} {}:{} at beginning of line with text: {}").format( USFMMarker, self.bookReferenceCode, c, v, text ) )

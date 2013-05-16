@@ -35,7 +35,7 @@ This is intended to be a virtual class, i.e., to be extended further
 """
 
 progName = "Bible writer"
-versionString = "0.06"
+versionString = "0.07"
 
 
 import sys, os, logging, datetime
@@ -2171,6 +2171,7 @@ class BibleWriter( InternalBible ):
             """Writes the HTML5 header to the HTML writerObject."""
             writerObject.writeLineOpen( 'head' )
             writerObject.writeLineText( '<meta http-equiv="Content-Type" content="text/html;charset=utf-8">', noTextCheck=True )
+            writerObject.writeLineText( '<link rel="stylesheet" type="text/css" href="BibleBook.css">', noTextCheck=True )
             if "HTML5Title" in controlDict and controlDict["HTML5Title"]:
                 writerObject.writeLineOpenClose( 'title' , controlDict["HTML5Title"].replace('__PROJECT_NAME__',self.name) )
             #if "HTML5Subject" in controlDict and controlDict["HTML5Subject"]: writerObject.writeLineOpenClose( 'subject', controlDict["HTML5Subject"] )
@@ -2210,9 +2211,16 @@ class BibleWriter( InternalBible ):
             writerObject.writeLineClose( 'body' )
         # end of toHTML5.writeFooter
 
-        def createSectionReference( theRef ):
+        def convertToPageReference( refTuple ):
+            assert( refTuple and len(refTuple)==4 )
+            assert( refTuple[0] and len(refTuple[0])==3 ) #BBB
+            return '{}#C{}V{}'.format( filenameDict[refTuple[0]], refTuple[1], refTuple[2] )
+        # end of toHTML5.convertToPageReference
+
+        def createSectionReference( givenRef ):
             """ Returns an HTML string for a section reference. """
-            print( "createSectionReference: '{}'".format( theRef ) )
+            print( "createSectionReference: '{}'".format( givenRef ) )
+            theRef = givenRef
             result = bracket = ''
             for bracketLeft,bracketRight in (('(',')'),('[',']'),):
                 if theRef and theRef[0]==bracketLeft and theRef[-1]==bracketRight:
@@ -2223,8 +2231,11 @@ class BibleWriter( InternalBible ):
             for j,ref in enumerate(refs):
                 if j: result += '; '
                 ref = ref.strip()
-                result += '<a href=".">{}</a>'.format( ref )
-            print( "now = '{}'".format( result ) )
+                analysis = BRL.getFirstReference( ref, "section reference '{}' from '{}'".format( ref, givenRef ) )
+                #print( "a", analysis )
+                if analysis: result += '<a href="{}">{}</a>'.format( convertToPageReference(analysis), ref )
+                else: result += ref
+            #print( "now = '{}'".format( result ) )
             return result + bracket
         # end of toHTML5.createSectionReference
 
@@ -2233,7 +2244,7 @@ class BibleWriter( InternalBible ):
             writeHeader( writerObject )
             haveOpenSection = haveOpenParagraph = haveOpenList = False
             for marker,originalMarker,text,cleanText,extras in bkData._processedLines: # Process internal Bible lines
-                #if BBB=='MRK': print( "writeBook", marker, cleanText )
+                if BBB=='MRK': print( "writeBook", marker, cleanText )
                 if marker in ('id','ide','toc1','toc2','toc3','rem',):
                     pass # Just ignore these lines
 
@@ -2250,10 +2261,10 @@ class BibleWriter( InternalBible ):
                     if cleanText: writerObject.writeLineText( cleanText )
                 elif marker == 'iot':
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
-                    writerObject.writeLineOpenClose( 'span', cleanText, ('class','outlineTitle') )
+                    writerObject.writeLineOpenClose( 'h3', cleanText, ('class','outlineTitle') )
                 elif marker in ('io1','io2','io3',):
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
-                    writerObject.writeLineOpenClose( 'span', cleanText, ('class','outlineEntry'+marker[2]) )
+                    writerObject.writeLineOpenClose( 'p', cleanText, ('class','outlineEntry'+marker[2]) )
 
                 # Now markers in the main text
                 elif marker in 'c':
@@ -2350,7 +2361,6 @@ class BibleWriter( InternalBible ):
                 try: writeBook( xw, BBB, bookData )
                 except Exception as err:
                     print("Unexpected error:", sys.exc_info()[0], err)
-                    #print( "I/O error({0}): {1}".format(e.errno, e.strerror ) )
                     if Globals.logErrorsFlag: logging.error( "toHTML5: Oops, creating {} failed!".format( BBB ) )
                 xw.writeLineClose( 'html' )
                 xw.close()
@@ -2377,17 +2387,17 @@ class BibleWriter( InternalBible ):
         self.setupWriter()
 
         USFMOutputFolder = os.path.join( givenOutputFolderName, "USFM" + ("Reexport" if self.objectTypeString=='USFM' else "Export" ) )
-        #USFMExportResult = self.toUSFM( outputFolder=USFMOutputFolder )
+        USFMExportResult = self.toUSFM( outputFolder=USFMOutputFolder )
         MWOutputFolder = os.path.join( givenOutputFolderName, "MediaWiki" + ("Reexport" if self.objectTypeString=='MediaWiki' else "Export" ) )
-        #MWExportResult = self.toMediaWiki( outputFolder=MWOutputFolder )
+        MWExportResult = self.toMediaWiki( outputFolder=MWOutputFolder )
         zOutputFolder = os.path.join( givenOutputFolderName, "Zefania" + ("Reexport" if self.objectTypeString=='Zefania' else "Export" ) )
-        #zExportResult = self.toZefaniaXML( outputFolder=zOutputFolder )
+        zExportResult = self.toZefaniaXML( outputFolder=zOutputFolder )
         USXOutputFolder = os.path.join( givenOutputFolderName, "USX" + ("Reexport" if self.objectTypeString=='USX' else "Export" ) )
-        #USXExportResult = self.toUSXXML( outputFolder=USXOutputFolder )
+        USXExportResult = self.toUSXXML( outputFolder=USXOutputFolder )
         OSISOutputFolder = os.path.join( givenOutputFolderName, "OSIS" + ("Reexport" if self.objectTypeString=='OSIS' else "Export" ) )
-        #OSISExportResult = self.toOSISXML( outputFolder=OSISOutputFolder )
+        OSISExportResult = self.toOSISXML( outputFolder=OSISOutputFolder )
         swOutputFolder = os.path.join( givenOutputFolderName, "Sword" + ("Reexport" if self.objectTypeString=='Sword' else "Export" ) )
-        #swExportResult = self.toSwordModule( outputFolder=swOutputFolder )
+        swExportResult = self.toSwordModule( outputFolder=swOutputFolder )
         htmlOutputFolder = os.path.join( givenOutputFolderName, "HTML5" + "Export" )
         htmlExportResult = self.toHTML5( outputFolder=htmlOutputFolder )
 
