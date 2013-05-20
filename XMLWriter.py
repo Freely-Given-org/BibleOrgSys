@@ -438,7 +438,8 @@ def demo():
         #print( xf.validateAll() )
         print( xf )
 
-    if 1: # Demo the writer object with HTML
+    if 1: # Demo the writer object with HTML5
+        import datetime
         outputFolder = "OutputFiles"
         outputFilename = "test.html"
         if not os.access( outputFolder, os.F_OK ): os.mkdir( outputFolder ) # Make the empty folder if there wasn't already one there
@@ -448,13 +449,31 @@ def demo():
         xw.start( noAutoXML=True )
         xw.writeLineText( '<!DOCTYPE html>', noTextCheck=True )
         xw.writeLineOpen( 'html' )
-        xw.writeLineOpen( "header" )
-        xw.writeLineOpenClose( "title", "myTitle" )
-        xw.writeLineClose( "header" )
-        xw.writeLineOpen( "body" )
+        xw.writeLineOpen( 'head' )
+        xw.writeLineText( '<meta http-equiv="Content-Type" content="text/html;charset=utf-8">', noTextCheck=True )
+        xw.writeLineText( '<link rel="stylesheet" type="text/css" href="CSS/BibleBook.css">', noTextCheck=True )
+        xw.writeLineOpenClose( 'title' , "My HTML5 Test Page" )
+        xw.writeLineClose( 'head' )
+
+        xw.writeLineOpen( 'body' )
+        xw.writeLineOpen( 'header' )
+        xw.writeLineText( 'HEADER STUFF GOES HERE' )
+        xw.writeLineClose( 'header' )
+        xw.writeLineOpen( 'nav' )
+        xw.writeLineText( 'NAVIGATION STUFF GOES HERE' )
+        xw.writeLineClose( 'nav' )
         #xw.writeLineOpen( "div", [('id','Div1'),('name','First division')] )
         xw.writeLineOpenClose( "h1", "myHeading in here", ('class','testHeading') )
         xw.writeLineOpenClose( "p", "myText in here", [("class","funParagraph"),('id','myAnchor'),] )
+        xw.writeLineOpen( 'footer' )
+        xw.writeLineOpen( 'p', ('class','footerLine') )
+        xw.writeLineOpen( 'a', ('href','http://www.w3.org/html/logo/') )
+        xw.writeLineText( '<img src="http://www.w3.org/html/logo/badge/html5-badge-h-css3-semantics.png" width="165" height="64" alt="HTML5 Powered with CSS3 / Styling, and Semantics" title="HTML5 Powered with CSS3 / Styling, and Semantics">', noTextCheck=True )
+        xw.writeLineClose( 'a' )
+        xw.writeLineText( "This page automatically created by: {} v{} {}".format( progName, versionString, datetime.date.today().strftime("%d-%b-%Y") ) )
+        xw.writeLineClose( 'p' )
+        xw.writeLineClose( 'footer' )
+        xw.writeLineClose( 'body' )
         xw.autoClose()
         print( xw ) # Just print a summary
         print( xw.validateXML( schema ) )

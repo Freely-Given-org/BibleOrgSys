@@ -2171,7 +2171,7 @@ class BibleWriter( InternalBible ):
             """Writes the HTML5 header to the HTML writerObject."""
             writerObject.writeLineOpen( 'head' )
             writerObject.writeLineText( '<meta http-equiv="Content-Type" content="text/html;charset=utf-8">', noTextCheck=True )
-            writerObject.writeLineText( '<link rel="stylesheet" type="text/css" href="BibleBook.css">', noTextCheck=True )
+            writerObject.writeLineText( '<link rel="stylesheet" type="text/css" href="../CSS/BibleBook.css">', noTextCheck=True )
             if "HTML5Title" in controlDict and controlDict["HTML5Title"]:
                 writerObject.writeLineOpenClose( 'title' , controlDict["HTML5Title"].replace('__PROJECT_NAME__',self.name) )
             #if "HTML5Subject" in controlDict and controlDict["HTML5Subject"]: writerObject.writeLineOpenClose( 'subject', controlDict["HTML5Subject"] )

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodesConverter.py
-#   Last modified: 2013-05-08 by RJH (also update versionString below)
+#   Last modified: 2013-05-20 by RJH (also update versionString below)
 #
 # Module handling BibleBooksCodes.xml to produce C and Python data tables
 #
@@ -431,7 +431,8 @@ class BibleBooksCodesConverter:
                         "EnglishNameDict":myENDict, "allAbbreviationsDict":adjAllAbbreviationsDict }
 
         #if 0:
-            #free = [] # Print available reference book numbers
+            ## Print available reference book numbers
+            #free = []
             #for num in range(1, 1000):
                 #if num not in myIDDict:
                     #if free: # Already have some -- collect ranges
@@ -453,6 +454,15 @@ class BibleBooksCodesConverter:
                             #if f==num-1: free.pop(); free.append( (s, num) ); continue
                     #free.append( num )
             #print( "Free sequence numbers = {}".format( free ) )
+
+            ## Compare OSIS and Sword entries
+            #print( "referenceNumberDict", len(myIDDict), myIDDict[1] )
+            #print( "referenceAbbreviationDict", len(myRefAbbrDict), myRefAbbrDict['GEN'] )
+            #print( "OSISAbbreviationDict", len(myOADict) ) #myOADict )
+            #print( "SwordAbbreviationDict", len(mySwDict) ) #mySwDict )
+            #for num, entry in myIDDict.items():
+                #if entry['SwordAbbreviation']!=entry['OSISAbbreviation']:
+                    #print( "{} {} OSIS='{}' Sword='{}'".format( num, entry['referenceAbbreviation'], entry['OSISAbbreviation'], entry['SwordAbbreviation'] ) )
 
         return self.__DataDicts # Just delete any of the dictionaries that you don't need
     # end of BibleBooksCodesConverter.importDataToPython
