@@ -24,17 +24,22 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
+This module interfaces with the online Bible versions available
+    from Faith Comes By Hearing (FCBH).
+
 In this module, we use:
     DAM = Digital Asset Management – the software system for users to administer the volumes contained in the DBP.
     DAM ID – the unique id by which an individual volume is identified.
     DBP = Digital Bible Platform
+
+More details are available from http://www.DigitalBiblePlatform.com.
 """
 
 progName = "Digital Bible Platform handler"
 versionString = "0.01"
 
 
-#from singleton import singleton
+from singleton import singleton
 import os, logging
 from gettext import gettext as _
 import urllib.request, json
@@ -46,6 +51,136 @@ from VerseReferences import SimpleVerseKey
 
 URLBase = "http://dbt.io/"
 MAX_CACHED_VERSES = 100 # Per version in use
+
+
+
+@singleton # Can only ever have one instance
+class DBPBibles:
+    """
+    Class to download and manipulate online DBP Bibles.
+
+    """
+    def __init__( self ):
+        """
+        Create the internal Bible object.
+        """
+         # Setup and initialise the base class first
+        #USXXMLBible.__init__( self, givenFolderName, givenName, encoding )
+
+        with open( "DBPKey.txt", "rt" ) as keyFile:
+            self.key = keyFile.read() # Our personal key
+        self.URLFixedData = "?v=2&key=" + self.key
+
+        # See if the site is online by getting the API version
+        self.URLTest = "api/apiversion"
+        self.onlineVersion = None
+        result = self.getOnlineData( self.URLTest )
+        if 'Version' in result: self.onlineVersion = result['Version']
+
+        if Globals.verbosityLevel > 1: print( _("Downloading list of available volumes from FCBH...") )
+        self.languageList = self.versionList = self.volumeList = None
+        if self.onlineVersion: # Get a list of available data sets
+            self.languageList = self.getOnlineData( "library/language" ) # Get an alphabetically ordered list of dictionaries -- one for each language
+            #print( "languageList", len(self.languageList), self.languageList )
+            self.versionList = self.getOnlineData( "library/version" ) # Get an alphabetically ordered list of dictionaries -- one for each version
+            #print( "versionList", len(self.versionList), self.versionList )
+            self.volumeList = self.getOnlineData( "library/volume" ) # Get an alphabetically ordered list of dictionaries -- one for each volume
+            #print( "volumeList", len(self.volumeList), self.volumeList )
+
+            #if 0:# Get all book codes and English names
+                #bookCodeDictList = self.getOnlineData( "library/bookname", "language_code=ENG" )
+                ## Note sure why it comes back as a dictionary in a one-element list
+                #assert( isinstance( bookCodeDictList, list ) and len(bookCodeDictList)==1 )
+                #bookCodeDict = bookCodeDictList[0]
+                #assert( isinstance( bookCodeDict, dict ) )
+                #print( "bookCodeDict", len(bookCodeDict), bookCodeDict )
+
+        self.ourList = {}
+        if self.volumeList: # Create a list of resource types
+            for j, volume in enumerate(self.volumeList):
+                assert( volume['language_name'] and volume['volume_name'] )
+                ourName= '{} {}'.format( volume['language_name'], volume['volume_name'] )
+                assert( volume['media'] and volume['delivery'] and volume['collection_code'] )
+                if volume['media'] == 'text':
+                    if 'web' in volume['delivery']:
+                        ourName= '{} {}'.format( volume['language_name'], volume['volume_name'] )
+                        if ourName in self.ourList:
+                            #print( "\nAlready have", ourName )
+                            ##print( "New", j, volume )
+                            #ix = self.ourList[ourName]
+                            #oldVolume = self.volumeList[ix]
+                            ##print( "Old", ix, oldVolume )
+                            #assert( len(volume) == len(oldVolume) )
+                            #for someKey in volume:
+                                #if volume[someKey] != oldVolume[someKey]:
+                                    #if someKey not in ('dam_id','fcbh_id','sku','updated_on','collection_name',):
+                                        #print( "  ", someKey, volume[someKey], oldVolume[someKey] )
+                            self.ourList[ourName].append( j )
+                        else: self.ourList[ourName] = [j]
+                    #else: print( j, repr(volume['language_name']), repr(volume['volume_name']) )
+                    else: print( "No web delivery in", ourName, volume['delivery'] )
+                elif volume['media']!='audio': print( "No text in", ourName, volume['media'] )
+        #print( "ourList", len(self.ourList), self.ourList )
+    # end of DBPBibles.__init__
+
+
+    def __str__( self ):
+        """
+        Create a string representation of the Bibles object.
+        """
+        indent = 2
+        result = "DBP online Bible object"
+        if self.onlineVersion: result += ('\n' if result else '') + ' '*indent + _("Online version: {}").format( self.onlineVersion )
+        if self.languageList: result += ('\n' if result else '') + ' '*indent + _("Languages: {}").format( len(self.languageList) )
+        if self.versionList: result += ('\n' if result else '') + ' '*indent + _("Versions: {}").format( len(self.versionList) )
+        if self.volumeList: result += ('\n' if result else '') + ' '*indent + _("Volumes: {}").format( len(self.volumeList) )
+        if self.ourList: result += ('\n' if result else '') + ' '*indent + _("Displayable volumes: {}").format( len(self.ourList) )
+        return result
+    # end of DBPBibles.__str__
+
+
+    def getOnlineData( self, fieldREST, additionalParameters=None ):
+        """
+        Given a string, e.g., "api/apiversion"
+            Does an HTTP GET to our site.
+            Receives the JSON result (hopefully)
+            Converts the JSON bytes to a JSON string
+            Loads the JSON string into a dictionary
+            Returns the dictionary.
+        Returns None if the data cannot be fetched.
+        """
+        requestString = "{}{}{}{}".format( URLBase, fieldREST, self.URLFixedData, '&'+additionalParameters if additionalParameters else '' )
+        #print( "Request string is", repr(requestString) )
+        try: responseJSON = urllib.request.urlopen( requestString )
+        except urllib.error.URLError: return None
+        #print( "responseJSON", responseJSON.read() )
+        responseSTR = responseJSON.readall().decode('utf-8')
+        #print( "responseSTR", repr(responseSTR) )
+        return( json.loads( responseSTR ) )
+    # end of DBPBibles.getOnlineData
+
+
+    def getDAM( self, refNumber ):
+        """
+        """
+        return self.volumeList[refNumber]['dam_id']
+    # end of DBPBibles.getDAM
+
+
+    def searchNames( self, searchText ):
+        """
+        """
+        searchTextUC = searchText.upper()
+        results = []
+        for name in self.ourList:
+            if searchTextUC in name.upper():
+                for refNumber in self.ourList[name]:
+                    DAM = self.getDAM(refNumber)
+                    assert( DAM.endswith( '2ET' ) ) # O2 (OT) or N2 (NT), plus ET for text
+                    results.append( (refNumber,DAM,) )
+        return results
+    # end of DBPBibles.searchNames
+# end of class DBPBibles
 
 
 
@@ -68,7 +203,7 @@ class DBPBible:
             self.key = keyFile.read() # Our personal key
         self.URLFixedData = "?v=2&key=" + self.key
 
-        # See if the site is online
+        # See if the site is online by getting the API version
         self.URLTest = "api/apiversion"
         self.onlineVersion = None
         result = self.getOnlineData( self.URLTest )
@@ -185,135 +320,6 @@ class DBPBible:
             return resultList
     # end of DBPBible.getVerseData
 # end of class DBPBible
-
-
-
-class DBPBibles:
-    """
-    Class to download and manipulate online DBP Bibles.
-
-    """
-    def __init__( self ):
-        """
-        Create the internal Bible object.
-        """
-         # Setup and initialise the base class first
-        #USXXMLBible.__init__( self, givenFolderName, givenName, encoding )
-
-        with open( "DBPKey.txt", "rt" ) as keyFile:
-            self.key = keyFile.read() # Our personal key
-        self.URLFixedData = "?v=2&key=" + self.key
-
-        # See if the site is online, e.g., by getting http://dbt.io/api/apiversion?key=09faefe6701e36f0f0e7aa01cfb33f85&v=2
-        self.URLTest = "api/apiversion"
-        self.onlineVersion = None
-        result = self.getOnlineData( self.URLTest )
-        if 'Version' in result: self.onlineVersion = result['Version']
-
-        if Globals.verbosityLevel > 1: print( _("Downloading list of available volumes from FCBH...") )
-        self.languageList = self.versionList = self.volumeList = None
-        if self.onlineVersion: # Get a list of available data sets
-            self.languageList = self.getOnlineData( "library/language" ) # Get an alphabetically ordered list of dictionaries -- one for each language
-            #print( "languageList", len(self.languageList), self.languageList )
-            self.versionList = self.getOnlineData( "library/version" ) # Get an alphabetically ordered list of dictionaries -- one for each version
-            #print( "versionList", len(self.versionList), self.versionList )
-            self.volumeList = self.getOnlineData( "library/volume" ) # Get an alphabetically ordered list of dictionaries -- one for each volume
-            #print( "volumeList", len(self.volumeList), self.volumeList )
-
-            #if 0:# Get all book codes and English names
-                #bookCodeDictList = self.getOnlineData( "library/bookname", "language_code=ENG" )
-                ## Note sure why it comes back as a dictionary in a one-element list
-                #assert( isinstance( bookCodeDictList, list ) and len(bookCodeDictList)==1 )
-                #bookCodeDict = bookCodeDictList[0]
-                #assert( isinstance( bookCodeDict, dict ) )
-                #print( "bookCodeDict", len(bookCodeDict), bookCodeDict )
-
-        self.ourList = {}
-        if self.volumeList: # Create a list of resource types
-            for j, volume in enumerate(self.volumeList):
-                assert( volume['language_name'] and volume['volume_name'] )
-                ourName= '{} {}'.format( volume['language_name'], volume['volume_name'] )
-                assert( volume['media'] and volume['delivery'] and volume['collection_code'] )
-                if volume['media'] == 'text':
-                    if 'web' in volume['delivery']:
-                        ourName= '{} {}'.format( volume['language_name'], volume['volume_name'] )
-                        if ourName in self.ourList:
-                            #print( "\nAlready have", ourName )
-                            ##print( "New", j, volume )
-                            #ix = self.ourList[ourName]
-                            #oldVolume = self.volumeList[ix]
-                            ##print( "Old", ix, oldVolume )
-                            #assert( len(volume) == len(oldVolume) )
-                            #for someKey in volume:
-                                #if volume[someKey] != oldVolume[someKey]:
-                                    #if someKey not in ('dam_id','fcbh_id','sku','updated_on','collection_name',):
-                                        #print( "  ", someKey, volume[someKey], oldVolume[someKey] )
-                            self.ourList[ourName].append( j )
-                        else: self.ourList[ourName] = [j]
-                    #else: print( j, repr(volume['language_name']), repr(volume['volume_name']) )
-                    else: print( "No web delivery in", ourName, volume['delivery'] )
-                elif volume['media']!='audio': print( "No text in", ourName, volume['media'] )
-        #print( "ourList", len(self.ourList), self.ourList )
-    # end of DBPBibles.__init__
-
-
-    def __str__( self ):
-        """
-        Create a string representation of the Bibles object.
-        """
-        indent = 2
-        result = "DBP online Bible object"
-        if self.onlineVersion: result += ('\n' if result else '') + ' '*indent + _("Online version: {}").format( self.onlineVersion )
-        if self.languageList: result += ('\n' if result else '') + ' '*indent + _("Languages: {}").format( len(self.languageList) )
-        if self.versionList: result += ('\n' if result else '') + ' '*indent + _("Versions: {}").format( len(self.versionList) )
-        if self.volumeList: result += ('\n' if result else '') + ' '*indent + _("Volumes: {}").format( len(self.volumeList) )
-        if self.ourList: result += ('\n' if result else '') + ' '*indent + _("Displayable volumes: {}").format( len(self.ourList) )
-        return result
-    # end of DBPBibles.__str__
-
-
-    def getOnlineData( self, fieldREST, additionalParameters=None ):
-        """
-        Given a string, e.g., "api/apiversion"
-            Does an HTTP GET to our site.
-            Receives the JSON result (hopefully)
-            Converts the JSON bytes to a JSON string
-            Loads the JSON string into a dictionary
-            Returns the dictionary.
-        Returns None if the data cannot be fetched.
-        """
-        requestString = "{}{}{}{}".format( URLBase, fieldREST, self.URLFixedData, '&'+additionalParameters if additionalParameters else '' )
-        #print( "Request string is", repr(requestString) )
-        try: responseJSON = urllib.request.urlopen( requestString )
-        except urllib.error.URLError: return None
-        #print( "responseJSON", responseJSON.read() )
-        responseSTR = responseJSON.readall().decode('utf-8')
-        #print( "responseSTR", repr(responseSTR) )
-        return( json.loads( responseSTR ) )
-    # end of DBPBibles.getOnlineData
-
-
-    def getDAM( self, refNumber ):
-        """
-        """
-        return self.volumeList[refNumber]['dam_id']
-    # end of DBPBibles.getDAM
-
-
-    def searchNames( self, searchText ):
-        """
-        """
-        searchTextUC = searchText.upper()
-        results = []
-        for name in self.ourList:
-            if searchTextUC in name.upper():
-                for refNumber in self.ourList[name]:
-                    DAM = self.getDAM(refNumber)
-                    assert( DAM.endswith( '2ET' ) ) # O2 (OT) or N2 (NT), plus ET for text
-                    results.append( (refNumber,DAM,) )
-        return results
-    # end of DBPBibles.searchNames
-# end of class DBPBibles
 
 
 
