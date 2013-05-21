@@ -50,7 +50,7 @@ from VerseReferences import SimpleVerseKey
 
 
 URLBase = "http://dbt.io/"
-MAX_CACHED_VERSES = 100 # Per version in use
+MAX_CACHED_VERSES = 100 # Per Bible version in use
 
 
 
@@ -64,14 +64,11 @@ class DBPBibles:
         """
         Create the internal Bible object.
         """
-         # Setup and initialise the base class first
-        #USXXMLBible.__init__( self, givenFolderName, givenName, encoding )
-
         with open( "DBPKey.txt", "rt" ) as keyFile:
             self.key = keyFile.read() # Our personal key
         self.URLFixedData = "?v=2&key=" + self.key
 
-        # See if the site is online by getting the API version
+        # See if the site is online by making a small call to get the API version
         self.URLTest = "api/apiversion"
         self.onlineVersion = None
         result = self.getOnlineData( self.URLTest )
@@ -89,13 +86,13 @@ class DBPBibles:
 
             #if 0:# Get all book codes and English names
                 #bookCodeDictList = self.getOnlineData( "library/bookname", "language_code=ENG" )
-                ## Note sure why it comes back as a dictionary in a one-element list
+                ## Not sure why it comes back as a dictionary in a one-element list
                 #assert( isinstance( bookCodeDictList, list ) and len(bookCodeDictList)==1 )
                 #bookCodeDict = bookCodeDictList[0]
                 #assert( isinstance( bookCodeDict, dict ) )
                 #print( "bookCodeDict", len(bookCodeDict), bookCodeDict )
 
-        self.ourList = {}
+        self.volumeNameList = {}
         if self.volumeList: # Create a list of resource types
             for j, volume in enumerate(self.volumeList):
                 assert( volume['language_name'] and volume['volume_name'] )
@@ -104,10 +101,10 @@ class DBPBibles:
                 if volume['media'] == 'text':
                     if 'web' in volume['delivery']:
                         ourName= '{} {}'.format( volume['language_name'], volume['volume_name'] )
-                        if ourName in self.ourList:
+                        if ourName in self.volumeNameList:
                             #print( "\nAlready have", ourName )
                             ##print( "New", j, volume )
-                            #ix = self.ourList[ourName]
+                            #ix = self.volumeNameList[ourName]
                             #oldVolume = self.volumeList[ix]
                             ##print( "Old", ix, oldVolume )
                             #assert( len(volume) == len(oldVolume) )
@@ -115,12 +112,12 @@ class DBPBibles:
                                 #if volume[someKey] != oldVolume[someKey]:
                                     #if someKey not in ('dam_id','fcbh_id','sku','updated_on','collection_name',):
                                         #print( "  ", someKey, volume[someKey], oldVolume[someKey] )
-                            self.ourList[ourName].append( j )
-                        else: self.ourList[ourName] = [j]
+                            self.volumeNameList[ourName].append( j )
+                        else: self.volumeNameList[ourName] = [j]
                     #else: print( j, repr(volume['language_name']), repr(volume['volume_name']) )
                     else: print( "No web delivery in", ourName, volume['delivery'] )
                 elif volume['media']!='audio': print( "No text in", ourName, volume['media'] )
-        #print( "ourList", len(self.ourList), self.ourList )
+        #print( "volumeNameList", len(self.volumeNameList), self.volumeNameList )
     # end of DBPBibles.__init__
 
 
@@ -134,7 +131,7 @@ class DBPBibles:
         if self.languageList: result += ('\n' if result else '') + ' '*indent + _("Languages: {}").format( len(self.languageList) )
         if self.versionList: result += ('\n' if result else '') + ' '*indent + _("Versions: {}").format( len(self.versionList) )
         if self.volumeList: result += ('\n' if result else '') + ' '*indent + _("Volumes: {}").format( len(self.volumeList) )
-        if self.ourList: result += ('\n' if result else '') + ' '*indent + _("Displayable volumes: {}").format( len(self.ourList) )
+        if self.volumeNameList: result += ('\n' if result else '') + ' '*indent + _("Displayable volumes: {}").format( len(self.volumeNameList) )
         return result
     # end of DBPBibles.__str__
 
@@ -172,9 +169,9 @@ class DBPBibles:
         """
         searchTextUC = searchText.upper()
         results = []
-        for name in self.ourList:
+        for name in self.volumeNameList:
             if searchTextUC in name.upper():
-                for refNumber in self.ourList[name]:
+                for refNumber in self.volumeNameList[name]:
                     DAM = self.getDAM(refNumber)
                     assert( DAM.endswith( '2ET' ) ) # O2 (OT) or N2 (NT), plus ET for text
                     results.append( (refNumber,DAM,) )
@@ -203,7 +200,7 @@ class DBPBible:
             self.key = keyFile.read() # Our personal key
         self.URLFixedData = "?v=2&key=" + self.key
 
-        # See if the site is online by getting the API version
+        # See if the site is online by making a small call to get the API version
         self.URLTest = "api/apiversion"
         self.onlineVersion = None
         result = self.getOnlineData( self.URLTest )
@@ -216,7 +213,7 @@ class DBPBible:
 
             #if 0:# Get all book codes and English names
                 #bookCodeDictList = self.getOnlineData( "library/bookname", "language_code=ENG" )
-                ## Note sure why it comes back as a dictionary in a one-element list
+                ## Not sure why it comes back as a dictionary in a one-element list
                 #assert( isinstance( bookCodeDictList, list ) and len(bookCodeDictList)==1 )
                 #bookCodeDict = bookCodeDictList[0]
                 #assert( isinstance( bookCodeDict, dict ) )
@@ -341,9 +338,9 @@ def demo():
         print()
         dbpBibles = DBPBibles()
         print( dbpBibles )
-        #for someName in dbpBibles.ourList:
-            #if 'English' in someName:
-                #print( "English:", someName, dbpBibles.ourList[someName] )
+        #if 0:
+            #for someName in dbpBibles.volumeNameList:
+                #if 'English' in someName: print( "English:", someName, dbpBibles.volumeNameList[someName] )
         print( "English search", dbpBibles.searchNames( "English" ) )
         print( "MS search", dbpBibles.searchNames( "Salug" ) )
 

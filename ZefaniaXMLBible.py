@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ZefaniaXMLBible.py
-#   Last modified: 2013-05-01 by RJH (also update versionString below)
+#   Last modified: 2013-05-21 by RJH (also update versionString below)
 #
 # Module handling Zefania XML Bibles
 #
@@ -458,8 +458,8 @@ class ZefaniaXMLBible( Bible ):
         if BBB:
             if Globals.verbosityLevel > 2: print( _("Validating {} {}...").format( BBB, bookName ) )
             thisBook = BibleBook( BBB )
-            thisBook.objectNameString = "XML Bible Book object"
-            thisBook.objectTypeString = "XML"
+            thisBook.objectNameString = "Zefania XML Bible Book object"
+            thisBook.objectTypeString = "Zefania"
             #thisBook.sourceFilepath = self.sourceFilepath
             for element in book:
                 if element.tag == ZefaniaXMLBible.chapterTag:

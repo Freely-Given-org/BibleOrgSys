@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # SwordResources.py
-#   Last modified: 2013-05-03 (also update versionString below)
+#   Last modified: 2013-05-21 (also update versionString below)
 #
 # Module handling Sword resources using the Sword engine
 #
@@ -57,25 +57,17 @@ except: # Sword library (dll and python bindings) seem to be not available
 
 
 class SwordKey( SimpleVerseKey ):
-    #def __init__( self, BBB, c, v, s=None ):
-        #if s is None: s = ''
-        #self.myKey = BBB, c, v, s
-
-    #def __getitem__( self, keyIndex ):
-        #return self.myKey[keyIndex]
-
-    #def __str__( self ):
-        #return "{} {}:{}{}".format( self.myKey[0], self.myKey[1], self.myKey[2], self.myKey[3] )
-
-    #def getShortText( self ):
-        #return "{} {}:{}{}".format( self.myKey[0], self.myKey[1], self.myKey[2], self.myKey[3] )
-
+    """
+    Just a SimpleVerseKey class (with BBB, C, V, optional S)
+        with a couple of calls compatible with the SwordKey class.
+    """
     def getChapter( self ):
         return self.getChapterNumberInt()
 
     def getVerse( self ):
         return self.getVerseNumberInt()
 # end of class SwordKey
+
 
 
 class SwordInterface():

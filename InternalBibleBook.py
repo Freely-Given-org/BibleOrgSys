@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-05-16 by RJH (also update versionString below)
+#   Last modified: 2013-05-21 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 progName = "Internal Bible book handler"
-versionString = "0.22"
+versionString = "0.23"
 
 
 import os, logging
@@ -192,7 +192,7 @@ class InternalBibleEntryList:
 
 class InternalBibleBook:
     """
-    Class to create and manipulate a single internal file / book.
+    Class to create and manipulate a single internal Bible file / book.
     The load routine (which populates self._rawLines) by calling appendLine must be provided.
     """
 
@@ -459,7 +459,10 @@ class InternalBibleBook:
                     cleanedNote = note.replace( '&amp;', '&' ).replace( '&#39;', "'" ).replace( '&lt;', '<' ).replace( '&gt;', '>' ).replace( '&quot;', '"' ) # Undo any replacements above
                     for sign in ('- ', '+ '): # Remove common leader characters (and the following space)
                         cleanedNote = cleanedNote.replace( sign, '' )
-                    for marker in ['\\xo*','\\xo ','\\xt*','\\xt ','\\xdc*','\\xdc ','\\fr*','\\fr ','\\ft*','\\ft ','\\fq*','\\fq ','\\fv*','\\fv ','\\fk*','\\fk ',] + internalSFMsToRemove:
+                    for marker in ['\\xo*','\\xo ', '\\xt*','\\xt ', '\\xk*','\\xk ', '\\xq*','\\xq ',
+                                   '\\xot*','\\xot ', '\\xnt*','\\xnt ', '\\xdc*','\\xdc ',
+                                   '\\fr*','\\fr ','\\ft*','\\ft ','\\fq*','\\fq ','\\fv*','\\fv ','\\fk*','\\fk ',] \
+                                       + internalSFMsToRemove:
                         cleanedNote = cleanedNote.replace( marker, '' )
                     # Save it all and finish off
                     extras.append( (this1,ix1,note,cleanedNote) ) # Saves a 4-tuple: type ('fn' or 'xr'), index into the main text line, the actual fn or xref contents, then a cleaned version
@@ -474,7 +477,7 @@ class InternalBibleBook:
                     if Globals.logErrorsFlag: logging.error( _("Unable to properly process footnotes and cross-references {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
                     self.addPriorityError( 82, c, v, _("Invalid footnotes or cross-refernces") )
 
-            if self.objectTypeString == 'SwordBibleModule': # Move Sword notes out to extras
+            elif self.objectTypeString == 'SwordBibleModule': # Move Sword notes out to extras
                 #print( "\nhere", adjText )
                 ixStart = 0 # Start searching from here
                 indexDigits = [] # For Sword <RF>n<Rf> note markers
@@ -630,8 +633,22 @@ class InternalBibleBook:
                 adjText = adjText.rstrip()
                 #print( originalMarker, "'"+text+"'", "'"+adjText+"'" )
 
-            # Now remove all formatting from the cleanText string (to make it suitable for indexing and search routines
-            if self.objectTypeString in ('USFM','USX',):
+            # Now remove all character formatting from the cleanText string (to make it suitable for indexing and search routines
+            #   This includes markers like \em, \bd, \wj, etc.
+            #print( "here", self.objectTypeString )
+            if self.objectTypeString == 'SwordBibleModule': # remove character formatting
+                cleanText = adjText
+                cleanText = cleanText.replace( '<title type="chapter">', '' ).replace( '</title>', '' )
+                cleanText = cleanText.replace( '<transChange type="added">', '' ).replace( '</transChange>', '' )
+                #cleanText = cleanText.replace( '<milestone marker="Â¶" subType="x-added" type="x-p"/>', '' )
+                #cleanText = cleanText.replace( '<milestone marker="Â¶" type="x-p"/>', '' )
+                #cleanText = cleanText.replace( '<milestone type="x-extra-p"/>', '' )
+                cleanText = cleanText.replace( '<seg><divineName>', '' ).replace( '</divineName></seg>', '' )
+                if '<' in cleanText or '>' in cleanText:
+                    print( "\nFrom:", c, v, text )
+                    print( " Still have angle brackets left in:", cleanText )
+                    #halt
+            else: # not Sword
                 cleanText = adjText.replace( '&amp;', '&' ).replace( '&#39;', "'" ).replace( '&lt;', '<' ).replace( '&gt;', '>' ).replace( '&quot;', '"' ) # Undo any replacements above
                 if '\\' in cleanText: # we will first remove known USFM character formatting markers
                     for possibleCharacterMarker in Globals.USFMMarkers.getCharacterMarkersList():
@@ -640,6 +657,7 @@ class InternalBibleBook:
                             for d in ('1','2','3','4','5'):
                                 tryMarkers.append( '\\'+possibleCharacterMarker+d+' ' )
                         tryMarkers.append( '\\'+possibleCharacterMarker+' ' )
+                        #print( "tryMarkers", tryMarkers )
                         for tryMarker in tryMarkers:
                             while tryMarker in cleanText:
                                 #print( "Removing '{}' from '{}'".format( tryMarker, cleanText ) )
@@ -670,18 +688,6 @@ class InternalBibleBook:
                             cleanText = cleanText[:ixBS].rstrip()
                             #print( "cleanText: '{}'".format( cleanText ) )
                     if '\\' in cleanText: logging.error( "Why do we still have a backslash in '{}' from '{}'?".format( cleanText, adjText ) ); halt
-            elif self.objectTypeString == 'SwordBibleModule': # remove character formatting
-                cleanText = adjText
-                cleanText = cleanText.replace( '<title type="chapter">', '' ).replace( '</title>', '' )
-                cleanText = cleanText.replace( '<transChange type="added">', '' ).replace( '</transChange>', '' )
-                #cleanText = cleanText.replace( '<milestone marker="Â¶" subType="x-added" type="x-p"/>', '' )
-                #cleanText = cleanText.replace( '<milestone marker="Â¶" type="x-p"/>', '' )
-                #cleanText = cleanText.replace( '<milestone type="x-extra-p"/>', '' )
-                cleanText = cleanText.replace( '<seg><divineName>', '' ).replace( '</divineName></seg>', '' )
-                if '<' in cleanText or '>' in cleanText:
-                    print( "\nFrom:", c, v, text )
-                    print( " Still have angle brackets left in:", cleanText )
-                    #halt
 
             if Globals.debugFlag: # Now do a final check that we did everything right
                 for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
