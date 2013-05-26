@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2013-05-08 by RJH (also update versionString below)
+#   Last modified: 2013-05-26 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -36,7 +36,7 @@ and then fills
 """
 
 progName = "Internal Bible handler"
-versionString = "0.21"
+versionString = "0.22"
 
 
 import os, logging
@@ -140,8 +140,9 @@ class InternalBible:
     # end of InternalBible.getAssumedBookName
 
 
-    def saveBook( self, BBB, bookData ):
-        #print( "saveBook( {}, {} )".format( BBB, bookData ) )
+    def saveBook( self, bookData ):
+        #print( "saveBook( {} )".format( bookData ) )
+        BBB = bookData.bookReferenceCode
         self.books[BBB] = bookData
         # Make up our book name dictionaries while we're at it
         assumedBookNames = bookData.getAssumedBookNames()

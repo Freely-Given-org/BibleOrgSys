@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Globals.py
-#   Last modified: 2013-05-06 (also update versionString below)
+#   Last modified: 2013-05-26 (also update versionString below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -29,10 +29,11 @@ Module handling global variables
 """
 
 progName = "Globals"
-versionString = "0.15"
+versionString = "0.16"
 
 
 import logging, os.path, pickle
+import multiprocessing
 
 
 cacheFolder = 'ObjectCache/' # Relative path
@@ -525,20 +526,26 @@ def setLogErrorsFlag( newValue=True ):
 def addStandardOptionsAndProcess( parserObject ):
     """ Adds our standardOptions to the command line parser. """
     global commandLineOptions, commandLineArguments
-    global strictCheckingFlag
+    global maxProcesses
     parserObject.add_option("-s", "--silent", action="store_const", dest="verbose", const=0, help="output no information to the console")
     parserObject.add_option("-q", "--quiet", action="store_const", dest="verbose", const=1, help="output less information to the console")
     parserObject.add_option("-i", "--informative", action="store_const", dest="verbose", const=3, help="output more information to the console")
     parserObject.add_option("-v", "--verbose", action="store_const", dest="verbose", const=4, help="output lots of information for the user")
     parserObject.add_option("-t", "--strict", action="store_true", dest="strict", default=False, help="perform very strict checking of all input")
     parserObject.add_option("-l", "--log", action="store_true", dest="log", default=False, help="log errors to console")
+    parserObject.add_option("-1", "--single", action="store_true", dest="single", default=False, help="don't use multiprocessing")
     parserObject.add_option("-d", "--debug", action="store_true", dest="debug", default=False, help="output even more information for the programmer/debugger")
     commandLineOptions, commandLineArguments = parserObject.parse_args()
     if commandLineOptions.strict: setStrictCheckingFlag()
     if commandLineOptions.log: setLogErrorsFlag()
     if commandLineOptions.debug: setDebugFlag()
     setVerbosity( commandLineOptions.verbose if commandLineOptions.verbose is not None else 2)
+    maxProcesses = multiprocessing.cpu_count()
+    #if maxProcesses > 1: maxProcesses -= 1 # Leave one CPU alone (normally)
+    if maxProcesses > 1: maxProcesses = maxProcesses * 8 // 10 # Use 80% of them so other things keep working also
+    if commandLineOptions.single: maxProcesses = 1
     if debugFlag:
+        maxProcesses = 1 # Limit to one process
         print( "  commandLineOptions: {}".format( commandLineOptions ) )
         print( "  commandLineArguments: {}".format( commandLineArguments ) )
 # end of Globals.addStandardOptionsAndProcess
@@ -550,6 +557,7 @@ def printAllGlobals( indent=None ):
     print( "{}commandLineOptions: {}".format( ' '*indent, commandLineOptions ) )
     print( "{}commandLineArguments: {}".format( ' '*indent, commandLineArguments ) )
     print( "{}debugFlag: {}".format( ' '*indent, debugFlag ) )
+    print( "{}maxProcesses: {}".format( ' '*indent, maxProcesses ) )
     print( "{}verbosityString: {}".format( ' '*indent, verbosityString ) )
     print( "{}verbosityLevel: {}".format( ' '*indent, verbosityLevel ) )
     print( "{}strictCheckingFlag: {}".format( ' '*indent, strictCheckingFlag ) )
@@ -564,6 +572,7 @@ def printAllGlobals( indent=None ):
 commandLineOptions, commandLineArguments = None, None
 
 strictCheckingFlag = logErrorsFlag = debugFlag = False
+maxProcesses = 1
 verbosityLevel = None
 verbosityString = 'Normal'
 setVerbosityLevel( verbosityString )
@@ -591,8 +600,7 @@ def demo():
     addStandardOptionsAndProcess( parser )
 
     if verbosityLevel>0: print( "{} V{}".format( progName, versionString ) )
-    if verbosityLevel>2:
-        printAllGlobals()
+    if verbosityLevel>2: printAllGlobals()
 
     # Demonstrate peekAtFirstLine function
     line1 = peekIntoFile( "Globals.py", numLines=2 ) # Simple filename
@@ -604,5 +612,6 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
+    multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
     demo()
 ## end of Globals.py

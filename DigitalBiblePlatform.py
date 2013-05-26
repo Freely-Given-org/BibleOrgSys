@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # DigitalBiblePlatform.py
-#   Last modified: 2013-05-20 (also update versionString below)
+#   Last modified: 2013-05-22 (also update versionString below)
 #
 # Module handling online DBP resources
 #
@@ -281,6 +281,7 @@ class DBPBible:
             Returns the dictionary.
         Returns None if the data cannot be fetched.
         """
+        if Globals.verbosityLevel > 2: print( "Requesting data from {} for {}...".format( URLBase, self.damRoot ) )
         requestString = "{}{}{}{}".format( URLBase, fieldREST, self.URLFixedData, '&'+additionalParameters if additionalParameters else '' )
         #print( "Request string is", repr(requestString) )
         try: responseJSON = urllib.request.urlopen( requestString )
@@ -293,7 +294,7 @@ class DBPBible:
     def getVerseData( self, key ):
         """
         """
-        if Globals.debugFlag: print( "DBPBible.getVerseData( {} )".format( key ) )
+        if Globals.debugFlag: print( "DBPBible.getVerseData( {} ) for {}".format( key, self.damRoot ) )
         if str(key) in self.cache:
             self.cache.move_to_end( str(key) )
             return self.cache[str(key)]

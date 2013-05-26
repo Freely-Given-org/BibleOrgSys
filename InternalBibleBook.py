@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-05-21 by RJH (also update versionString below)
+#   Last modified: 2013-05-23 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -959,7 +959,7 @@ class InternalBibleBook:
             if saveCV and saveJ:
                 #print( "saveAnythingOutstanding", self.bookReferenceCode, saveCV, saveJ, lineCount, context )
                 #assert( 1 <= lineCount <= 120 ) # Could potentially be even higher for bridged verses (e.g., 1Chr 11:26-47, Ezra 2:3-20) and where words are stored individually
-                if saveCV in self._CVIndex:
+                if saveCV in self._CVIndex and Globals.verbosityLevel > 1:
                     print( "makeIndex.saveAnythingOutstanding: WARNING -- replacing index entry!" )
                     print( " ", self.bookReferenceCode, C, V )
                     print( "  was", self._CVIndex[saveCV] )

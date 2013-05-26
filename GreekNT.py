@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # GreekNT.py
-#   Last modified: 2013-05-08 (also update versionString below)
+#   Last modified: 2013-05-26 (also update versionString below)
 #
 # Module handling GreekNT.xml
 #
@@ -226,7 +226,7 @@ class GreekNT( Bible ):
                 else: print( 'Possible encoding error -- expected', encoding )
         if self.thisBook:
             if Globals.verbosityLevel > 3: print( "    {} words loaded from {}".format( len(self.thisBook), filename ) )
-            self.saveBook( BBB, self.thisBook )
+            self.saveBook( self.thisBook )
             #self.books[BBB] = self.thisBook
     # end of loadBook
 

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # UnboundBible.py
-#   Last modified: 2013-04-30 by RJH (also update versionString below)
+#   Last modified: 2013-05-26 by RJH (also update versionString below)
 #
 # Module handling Biola University "unbound" Bible files
 #
@@ -86,11 +86,11 @@ and
 """
 
 progName = "Unbound Bible format handler"
-versionString = "0.11"
+versionString = "0.12"
 
 import logging, os
 from gettext import gettext as _
-#from collections import OrderedDict
+import multiprocessing
 
 import Globals
 from Bible import Bible, BibleBook
@@ -314,7 +314,7 @@ class UnboundBible( Bible ):
 
                 if bookCode != lastBookCode: # We've started a new book
                     if lastBookCode != -1: # Better save the last book
-                        self.saveBook( BBB, thisBook )
+                        self.saveBook( thisBook )
                     BBB = Globals.BibleBooksCodes.getBBBFromUnboundBibleCode( bookCode )
                     thisBook = BibleBook( BBB )
                     thisBook.objectNameString = "Unbound Bible Book object"
@@ -349,10 +349,36 @@ class UnboundBible( Bible ):
                 lastVerseNumber = verseNumber
 
         # Save the final bookCode
-        self.saveBook( BBB, thisBook )
+        self.saveBook( thisBook )
     # end of UnboundBible.load
 # end of UnboundBible class
 
+
+
+def testUB( TUBfilename ):
+    # Crudely demonstrate the Unbound Bible class
+    import VerseReferences
+    testFolder = "../../../../../Data/Work/Bibles/Biola Unbound modules/" # Must be the same as below
+
+    TUBfolder = os.path.join( testFolder, TUBfilename+'/' )
+    if Globals.verbosityLevel > 1: print( _("Demonstrating the Unbound Bible class...") )
+    if Globals.verbosityLevel > 0: print( "  Test folder is '{}' '{}'".format( TUBfolder, TUBfilename ) )
+    ub = UnboundBible( TUBfolder, TUBfilename )
+    ub.load() # Load and process the file
+    if Globals.verbosityLevel > 1: print( ub ) # Just print a summary
+    for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
+                        ('OT','DAN','1','21'),
+                        ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \
+                        ('DC','BAR','1','1'), ('DC','MA1','1','1'), ('DC','MA2','1','1',), ):
+        (t, b, c, v) = reference
+        if t=='OT' and len(ub)==27: continue # Don't bother with OT references if it's only a NT
+        if t=='NT' and len(ub)==39: continue # Don't bother with NT references if it's only a OT
+        if t=='DC' and len(ub)<=66: continue # Don't bother with DC references if it's too small
+        svk = VerseReferences.SimpleVerseKey( b, c, v )
+        #print( svk, ob.getVerseDataList( reference ) )
+        shortText, verseText = svk.getShortText(), ub.getVerseText( svk )
+        if Globals.verbosityLevel > 1: print( reference, shortText, verseText )
+# end of testUB
 
 
 def demo():
@@ -371,35 +397,19 @@ def demo():
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
 
-    import VerseReferences
-    def testUB( TUBfolder, TUBfilename ):
-        # Demonstrate the Unbound Bible class
-        if Globals.verbosityLevel > 1: print( _("Demonstrating the Unbound Bible class...") )
-        if Globals.verbosityLevel > 2: print( "  Test folder is '{}' '{}'".format( TUBfolder, TUBfilename ) )
-        ub = UnboundBible( TUBfolder, TUBfilename )
-        ub.load() # Load and process the file
-        if Globals.verbosityLevel > 1: print( ub ) # Just print a summary
-        for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
-                            ('OT','DAN','1','21'),
-                            ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \
-                            ('DC','BAR','1','1'), ('DC','MA1','1','1'), ('DC','MA2','1','1',), ):
-            (t, b, c, v) = reference
-            if t=='OT' and len(ub)==27: continue # Don't bother with OT references if it's only a NT
-            if t=='NT' and len(ub)==39: continue # Don't bother with NT references if it's only a OT
-            if t=='DC' and len(ub)<=66: continue # Don't bother with DC references if it's too small
-            svk = VerseReferences.SimpleVerseKey( b, c, v )
-            #print( svk, ob.getVerseDataList( reference ) )
-            print( reference, svk.getShortText(), ub.getVerseText( svk ) )
-
-
     testFolder = "../../../../../Data/Work/Bibles/Biola Unbound modules/"
 
+
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
-        print( "TestA1", UnboundBibleFileCheck( testFolder ) )
-        print( "TestA2", UnboundBibleFileCheck( testFolder, autoLoad=True ) )
+        result1 = UnboundBibleFileCheck( testFolder )
+        if Globals.verbosityLevel > 1: print( "TestA1", result1 )
+        result2 = UnboundBibleFileCheck( testFolder, autoLoad=True )
+        if Globals.verbosityLevel > 1: print( "TestA2", result2 )
         testSubfolder = os.path.join( testFolder, 'asv/' )
-        print( "TestB1", UnboundBibleFileCheck( testSubfolder ) )
-        print( "TestB2", UnboundBibleFileCheck( testSubfolder, autoLoad=True ) )
+        result3 = UnboundBibleFileCheck( testSubfolder )
+        if Globals.verbosityLevel > 1: print( "TestB1", result3 )
+        result4 = UnboundBibleFileCheck( testSubfolder, autoLoad=True )
+        if Globals.verbosityLevel > 1: print( "TestB2", result4 )
 
 
     if 1: # specified modules
@@ -411,10 +421,10 @@ def demo():
         nonEnglish = (  )
         bad = ( )
         for j, testFilename in enumerate( single ): # Choose one of the above: single, good, nonEnglish, bad
-            print( "\n{}/ Trying {}".format( j+1, testFilename ) )
-            myTestFolder = os.path.join( testFolder, testFilename+'/' )
+            if Globals.verbosityLevel > 1: print( "\n{}/ Trying {}".format( j+1, testFilename ) )
+            #myTestFolder = os.path.join( testFolder, testFilename+'/' )
             #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
-            testUB( myTestFolder, testFilename )
+            testUB( testFilename )
 
 
     if 1: # all discovered modules in the test folder
@@ -423,13 +433,21 @@ def demo():
             somepath = os.path.join( testFolder, something )
             if os.path.isdir( somepath ): foundFolders.append( something )
             elif os.path.isfile( somepath ): foundFiles.append( something )
-        for j, someFolder in enumerate( sorted( foundFolders ) ):
-            print( "\n{}/ Trying {}".format( j+1, someFolder ) )
-            myTestFolder = os.path.join( testFolder, someFolder+'/' )
-            #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
-            testUB( myTestFolder, someFolder )
+
+        if Globals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
+            if Globals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
+            parameters = [folderName for folderName in sorted(foundFolders)]
+            with multiprocessing.Pool( processes=Globals.maxProcesses ) as pool: # start worker processes
+                results = pool.map( testUB, parameters ) # have the pool do our loads
+                assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
+        else: # Just single threaded
+            for j, someFolder in enumerate( sorted( foundFolders ) ):
+                if Globals.verbosityLevel > 1: print( "\n{}/ Trying {}".format( j+1, someFolder ) )
+                #myTestFolder = os.path.join( testFolder, someFolder+'/' )
+                testUB( someFolder )
 # end of demo
 
 if __name__ == '__main__':
+    multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
     demo()
 # end of UnboundBible.py

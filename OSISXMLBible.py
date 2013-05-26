@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # OSISXMLBible.py
-#   Last modified: 2013-05-07 by RJH (also update versionString below)
+#   Last modified: 2013-05-26 by RJH (also update versionString below)
 #
 # Module handling OSIS XML Bibles
 #
@@ -903,7 +903,7 @@ class OSISXMLBible( Bible ):
                                 lastLineTuple = None
                             #if bookResults: self.bkData[BBB] = bookResults
                             #if USFMResults: self.USFMBooks[BBB] = USFMResults
-                            self.saveBook( BBB, self.thisBook )
+                            self.saveBook( self.thisBook )
                             #bookResults, USFMResults = [], []
                             #if lastBookResult:
                                 #bookResults.append( ('header',cmBBB,) )
@@ -2374,7 +2374,7 @@ class OSISXMLBible( Bible ):
             #print( mainDivOsisID, "results", BBB, bookResults[:10], "..." )
             #if bookResults: self.bkData[BBB] = bookResults
             #if USFMResults: self.USFMBooks[BBB] = USFMResults
-            self.saveBook( BBB, self.thisBook )
+            self.saveBook( self.thisBook )
     # end of OSISXMLBible.validateAndExtractMainDiv
 
 

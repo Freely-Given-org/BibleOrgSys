@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2013-05-06 by RJH (also update versionString below)
+#   Last modified: 2013-05-26 by RJH (also update versionString below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -28,12 +28,12 @@ Module for defining and manipulating complete or partial USFM Bibles.
 """
 
 progName = "USFM Bible handler"
-versionString = "0.31"
+versionString = "0.32"
 
 
 import os, logging
 from gettext import gettext as _
-#from collections import OrderedDict
+import multiprocessing
 
 import Globals
 from USFMFilenames import USFMFilenames
@@ -173,6 +173,11 @@ class USFMBible( Bible ):
 
         self.name = self.givenName
         if self.name is None and self.ssfData and 'Name' in self.ssfData: self.name = self.ssfData['Name']
+
+        self.maximumPossibleFilenameTuples = self.USFMFilenamesObject.getMaximumPossibleFilenameTuples()
+        self.possibleFilenameDict = {}
+        for BBB, filename in self.maximumPossibleFilenameTuples:
+            self.possibleFilenameDict[BBB] = filename
     # end of USFMBible.__init_
 
 
@@ -243,16 +248,14 @@ class USFMBible( Bible ):
         """
         Load the requested book if it's not already loaded.
         """
+        if Globals.verbosityLevel > 2: print( "USFMBible.loadBook( {}, {} )".format( BBB, filename ) )
         if BBB in self.books: return # Already loaded
         if Globals.verbosityLevel > 2 or Globals.logErrorsFlag: print( _("  USFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
-        if filename is None:
-            for someBBB, someFilename in self.USFMFilenamesObject.getMaximumPossibleFilenameTuples():
-                if someBBB == BBB: filename = someFilename; break
+        if filename is None: filename = self.possibleFilenameDict[BBB]
         UBB = USFMBibleBook( BBB )
         UBB.load( filename, self.sourceFolder, self.encoding )
         UBB.validateUSFM()
-        #print( UBB )
-        self.saveBook( BBB, UBB )
+        return UBB
     # end of USFMBible.loadBook
 
 
@@ -262,9 +265,17 @@ class USFMBible( Bible ):
         """
         if Globals.verbosityLevel > 1: print( _("USFMBible: Loading {} from {}...").format( self.name, self.sourceFolder ) )
 
-        # Load the books one by one -- assuming that they have regular Paratext style filenames
-        for BBB,filename in self.USFMFilenamesObject.getMaximumPossibleFilenameTuples():
-            self.loadBook( BBB, filename )
+        if Globals.maxProcesses > 1: # Load all the books as quickly as possible
+            parameters = [BBB for BBB,filename in self.maximumPossibleFilenameTuples] # Can only pass a single parameter to map
+            with multiprocessing.Pool( processes=Globals.maxProcesses ) as pool: # start worker processes
+                results = pool.map( self.loadBook, parameters ) # have the pool do our loads
+                assert( len(results) == len(parameters) )
+                for bBook in results: self.saveBook( bBook )
+        else: # Just single threaded
+            # Load the books one by one -- assuming that they have regular Paratext style filenames
+            for BBB,filename in self.maximumPossibleFilenameTuples:
+                loadedBook = self.loadBook( BBB, filename )
+                self.saveBook( loadedBook )
     # end of USFMBible.load
 # end of class USFMBible
 
@@ -548,5 +559,6 @@ def demo():
 #end of demo
 
 if __name__ == '__main__':
+    multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
     demo()
 # end of USFMBible.py

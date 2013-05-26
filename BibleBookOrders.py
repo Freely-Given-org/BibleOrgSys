@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBookOrders.py
-#   Last modified: 2013-04-13 (also update versionString below)
+#   Last modified: 2013-05-26 (also update versionString below)
 #
 # Module handling BibleBookOrderSystems
 #
@@ -33,12 +33,13 @@ versionString = "0.84"
 
 import os, logging
 from gettext import gettext as _
+#from singleton import singleton
 
-from singleton import singleton
 import Globals
 
 
-@singleton # Can only ever have one instance
+
+#@singleton # Can only ever have one instance (but doesn't work for multiprocessing
 class BibleBookOrderSystems:
     """
     Class for handling Bible book order systems.

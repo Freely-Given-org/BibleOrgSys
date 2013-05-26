@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # OpenSongXMLBible.py
-#   Last modified: 2013-05-01 by RJH (also update versionString below)
+#   Last modified: 2013-05-26 by RJH (also update versionString below)
 #
 # Module handling OpenSong XML Bibles
 #
@@ -274,7 +274,7 @@ class OpenSongXMLBible( Bible ):
                         self.__validateAndExtractChapter( BBB, thisBook, element )
                     else: logging.error( "Expected to find '{}' but got '{}'".format( OpenSongXMLBible.chapterTag, element.tag ) )
                 if Globals.verbosityLevel > 2: print( "  Saving {} into results...".format( BBB ) )
-                self.saveBook( BBB, thisBook )
+                self.saveBook( thisBook )
             elif Globals.logErrorsFlag: logging.error( _("OpenSong load doesn't recognize book name: '{}'").format( bookName ) )
         elif Globals.logErrorsFlag: logging.error( _("OpenSong load can't find a book name") )
     # end of OpenSongXMLBible.__validateAndExtractBook

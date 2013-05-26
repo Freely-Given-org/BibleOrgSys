@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ZefaniaXMLBible.py
-#   Last modified: 2013-05-21 by RJH (also update versionString below)
+#   Last modified: 2013-05-26 by RJH (also update versionString below)
 #
 # Module handling Zefania XML Bibles
 #
@@ -469,7 +469,7 @@ class ZefaniaXMLBible( Bible ):
                     self.__validateAndExtractChapter( BBB, thisBook, element )
                 else: logging.error( "Expected to find '{}' but got '{}'".format( ZefaniaXMLBible.chapterTag, element.tag ) )
             if Globals.verbosityLevel > 2: print( "  Saving {} into results...".format( BBB ) )
-            self.saveBook( BBB, thisBook )
+            self.saveBook( thisBook )
     # end of ZefaniaXMLBible.__validateAndExtractBook
 
 

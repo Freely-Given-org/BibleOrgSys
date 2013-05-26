@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-05-16 by RJH (also update versionString below)
+#   Last modified: 2013-05-26 by RJH (also update versionString below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -139,6 +139,7 @@ class BibleWriter( InternalBible ):
             inField = None
             if Globals.verbosityLevel > 2: print( "  " + _("Adjusting USFM output..." ) )
             for pseudoMarker,originalMarker,text,cleanText,extras in pseudoUSFMData:
+                if pseudoMarker in ('c#',): continue # Ignore our additions
                 value = cleanText # (temp)
                 if Globals.debugFlag: print( "pseudoMarker = '{}' value = '{}'".format( pseudoMarker, value ) )
                 if pseudoMarker in ('v','f','fr','x','xo',): # These fields should always end with a space but the processing will have removed them
