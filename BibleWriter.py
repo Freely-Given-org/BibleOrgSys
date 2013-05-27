@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-05-26 by RJH (also update versionString below)
+#   Last modified: 2013-05-27 by RJH (also update versionString below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -35,18 +35,18 @@ This is intended to be a virtual class, i.e., to be extended further
 """
 
 progName = "Bible writer"
-versionString = "0.07"
+versionString = "0.08"
 
 
 import sys, os, logging, datetime
 from gettext import gettext as _
-#from collections import OrderedDict
+import multiprocessing
 
 import Globals, ControlFiles
 from InternalBible import InternalBible
 from BibleOrganizationalSystems import BibleOrganizationalSystem
 from BibleReferences import BibleReferenceList
-from XMLWriter import XMLWriter
+from MLWriter import MLWriter
 
 
 defaultControlFolder = "ControlFiles" # Relative to the current working directory
@@ -399,7 +399,7 @@ class BibleWriter( InternalBible ):
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
         if Globals.verbosityLevel>1: print( _("Exporting to MediaWiki format...") )
-        xw = XMLWriter().setOutputFilePath( controlDict["MediaWikiOutputFilename"], outputFolder )
+        xw = MLWriter( controlDict["MediaWikiOutputFilename"], outputFolder )
         xw.setHumanReadable()
         xw.start()
         for BBB,bookData in self.books.items():
@@ -492,7 +492,7 @@ class BibleWriter( InternalBible ):
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
         if Globals.verbosityLevel>1: print( _("Exporting to Zefania format...") )
-        xw = XMLWriter().setOutputFilePath( controlDict["ZefaniaOutputFilename"], outputFolder )
+        xw = MLWriter( controlDict["ZefaniaOutputFilename"], outputFolder )
         xw.setHumanReadable()
         xw.start()
 # TODO: Some modules have <XMLBIBLE xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="zef2005.xsd" version="2.0.1.18" status='v' revision="1" type="x-bible" biblename="KJV+">
@@ -774,7 +774,7 @@ class BibleWriter( InternalBible ):
             version = 2
             xtra = ' ' if version<2 else ''
             c = v = '0'
-            xw = XMLWriter().setOutputFilePath( USXNumber+USXAbbrev+".usx", outputFolder )
+            xw = MLWriter( USXNumber+USXAbbrev+".usx", outputFolder )
             xw.setHumanReadable()
             xw.spaceBeforeSelfcloseTag = True
             xw.start( lineEndings='w', writeBOM=True ) # Try to imitate Paratext output as closely as possible
@@ -1536,7 +1536,7 @@ class BibleWriter( InternalBible ):
             if Globals.verbosityLevel>1: print( _("Exporting individually to OSIS XML format...") )
             validationResults = ( 0, '', '', ) # xmllint result code, program output, error output
             for BBB,bookData in self.books.items(): # Process each Bible book
-                xw = XMLWriter().setOutputFilePath( controlDict["osisOutputFilename"].replace('_Bible',"_Book-{}".format(BBB)), outputFolder )
+                xw = MLWriter( controlDict["osisOutputFilename"].replace('_Bible',"_Book-{}".format(BBB)), outputFolder )
                 xw.setHumanReadable( 'All' ) # Can be set to 'All', 'Header', or 'None' -- one output file went from None/Header=4.7MB to All=5.7MB
                 xw.start()
                 xw.writeLineOpen( 'osis', [('xmlns',"http://www.bibletechnologies.net/2003/OSIS/namespace"), ('xmlns:xsi',"http://www.w3.org/2001/XMLSchema-instance"), ('xsi:schemaLocation',"http://www.bibletechnologies.net/2003/OSIS/namespace http://www.bibletechnologies.net/osisCore.2.1.1.xsd")] )
@@ -1555,7 +1555,7 @@ class BibleWriter( InternalBible ):
                     if bookResults[2]: validationResults = ( validationResults[0], validationResults[1], validationResults[2] + bookResults[2], )
         elif controlDict["osisFiles"]=="byBible": # write all the books into a single file
             if Globals.verbosityLevel>1: print( _("Exporting to OSIS XML format...") )
-            xw = XMLWriter().setOutputFilePath( controlDict["osisOutputFilename"], outputFolder )
+            xw = MLWriter( controlDict["osisOutputFilename"], outputFolder )
             xw.setHumanReadable( 'All' ) # Can be set to 'All', 'Header', or 'None' -- one output file went from None/Header=4.7MB to All=5.7MB
             xw.start()
             xw.writeLineOpen( 'osis', [('xmlns',"http://www.bibletechnologies.net/2003/OSIS/namespace"), ('xmlns:xsi',"http://www.w3.org/2001/XMLSchema-instance"), ('xsi:schemaLocation',"http://www.bibletechnologies.net/2003/OSIS/namespace http://www.bibletechnologies.net/osisCore.2.1.1.xsd")] )
@@ -2118,8 +2118,8 @@ class BibleWriter( InternalBible ):
         # An uncompressed Sword module consists of a .conf file
         #   plus ot and nt XML files with binary indexes ot.vss and nt.vss (containing 6-byte chunks = 4-byte offset, 2-byte length)
         if Globals.verbosityLevel > 1: print( _("Exporting to Sword modified-OSIS XML format...") )
-        xwOT = XMLWriter().setOutputFilePath( 'ot', lgFolder )
-        xwNT = XMLWriter().setOutputFilePath( 'nt', lgFolder )
+        xwOT = MLWriter( 'ot', lgFolder )
+        xwNT = MLWriter( 'nt', lgFolder )
         xwOT.setHumanReadable( 'NLSpace', indentSize=5 ) # Can be set to 'All', 'Header', or 'None'
         xwNT.setHumanReadable( 'NLSpace', indentSize=5 ) # Can be set to 'All', 'Header', or 'None'
         xwOT.start( noAutoXML=True ); xwNT.start( noAutoXML=True )
@@ -2354,7 +2354,7 @@ class BibleWriter( InternalBible ):
         if controlDict["HTML5Files"]=="byBook":
             for BBB,bookData in self.books.items(): # Now export the books
                 if Globals.verbosityLevel>1: print( _("  Exporting {} to HTML5 format...").format( BBB ) )
-                xw = XMLWriter().setOutputFilePath( filenameDict[BBB], outputFolder )
+                xw = MLWriter( filenameDict[BBB], outputFolder, 'HTML' )
                 xw.setHumanReadable()
                 xw.start( noAutoXML=True )
                 xw.writeLineText( '<!DOCTYPE html>', noTextCheck=True )
@@ -2372,6 +2372,21 @@ class BibleWriter( InternalBible ):
     # end of BibleWriter.toHTML5
 
 
+    #def doExport( self, n ):
+        #"""
+        #Only used for multiprocessing.
+        #"""
+        #print( "BibleWriter.doExport( {} )".format( n ) )
+        #if n==0: f = self.toUSFM
+        #elif n==1: f = self.toMediaWiki
+        #elif n==2: f = self.toZefaniaXML
+        #elif n==3: f = self.toUSXXML
+        #elif n==4: f = self.toOSISXML
+        #elif n==5: f = self.toSwordModule
+        #elif n==6: f = self.toHTML5
+        #return f( self.__outputFolders[n] )
+    ## end of BibleWriter.doExport
+
 
     def doAllExports( self, givenOutputFolderName=None ):
         """
@@ -2387,20 +2402,42 @@ class BibleWriter( InternalBible ):
 
         self.setupWriter()
 
+        # Define our various output folders
         USFMOutputFolder = os.path.join( givenOutputFolderName, "USFM" + ("Reexport" if self.objectTypeString=='USFM' else "Export" ) )
-        USFMExportResult = self.toUSFM( outputFolder=USFMOutputFolder )
         MWOutputFolder = os.path.join( givenOutputFolderName, "MediaWiki" + ("Reexport" if self.objectTypeString=='MediaWiki' else "Export" ) )
-        MWExportResult = self.toMediaWiki( outputFolder=MWOutputFolder )
         zOutputFolder = os.path.join( givenOutputFolderName, "Zefania" + ("Reexport" if self.objectTypeString=='Zefania' else "Export" ) )
-        zExportResult = self.toZefaniaXML( outputFolder=zOutputFolder )
         USXOutputFolder = os.path.join( givenOutputFolderName, "USX" + ("Reexport" if self.objectTypeString=='USX' else "Export" ) )
-        USXExportResult = self.toUSXXML( outputFolder=USXOutputFolder )
         OSISOutputFolder = os.path.join( givenOutputFolderName, "OSIS" + ("Reexport" if self.objectTypeString=='OSIS' else "Export" ) )
-        OSISExportResult = self.toOSISXML( outputFolder=OSISOutputFolder )
         swOutputFolder = os.path.join( givenOutputFolderName, "Sword" + ("Reexport" if self.objectTypeString=='Sword' else "Export" ) )
-        swExportResult = self.toSwordModule( outputFolder=swOutputFolder )
         htmlOutputFolder = os.path.join( givenOutputFolderName, "HTML5" + "Export" )
-        htmlExportResult = self.toHTML5( outputFolder=htmlOutputFolder )
+
+        if 0 and Globals.maxProcesses > 1: # Process all the exports with different threads
+            # DON'T KNOW WHY THIS CAUSES A SEGFAULT
+            self.__outputFolders = [USFMOutputFolder, MWOutputFolder, zOutputFolder, USXOutputFolder, OSISOutputFolder, swOutputFolder, htmlOutputFolder]
+            #self.__outputProcesses = [self.toUSFM, self.toMediaWiki, self.toZefaniaXML, self.toUSXXML, self.toOSISXML, self.toSwordModule, self.toHTML5]
+            #assert( len(self.__outputFolders) == len(self.__outputProcesses) )
+            print( "here1" )
+            with multiprocessing.Pool( processes=Globals.maxProcesses ) as pool: # start worker processes
+                print( "here2" )
+                print( range( len(self.__outputFolders) ) )
+                results = pool.map( self.doExport, range( len(self.__outputFolders) ) ) # have the pool do our loads
+                print( "got results", len(results) )
+                assert( len(results) == len(self.__outputFolders) )
+                USFMExportResult = results[0]
+                MWExportResult = results[1]
+                zExportResult = results[2]
+                USXExportResult = results[3]
+                OSISExportResult = results[4]
+                swExportResult = results[5]
+                htmlExportResult = results[6]
+        else: # Just single threaded
+            USFMExportResult = self.toUSFM( USFMOutputFolder )
+            MWExportResult = self.toMediaWiki( MWOutputFolder )
+            zExportResult = self.toZefaniaXML( zOutputFolder )
+            USXExportResult = self.toUSXXML( USXOutputFolder )
+            OSISExportResult = self.toOSISXML( OSISOutputFolder )
+            swExportResult = self.toSwordModule( swOutputFolder )
+            htmlExportResult = self.toHTML5( htmlOutputFolder )
 
         print( "\nResults:  MW={}  Zef={}  USX={}  OSIS={}  Sw={}  HTML={}" \
             .format( MWExportResult, zExportResult, USXExportResult, OSISExportResult, swExportResult, htmlExportResult ) )
@@ -2413,15 +2450,6 @@ def demo():
     """
     Demonstrate reading and processing some Bible databases.
     """
-    # Configure basic logging
-    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
-
-    # Handle command line parameters
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
-    parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
-    Globals.addStandardOptionsAndProcess( parser )
-
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
     # Since this is only designed to be a virtual base class, it can't actually do much at all
@@ -2461,5 +2489,16 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
+    # Configure basic logging
+    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
+
+    # Handle command line parameters
+    from optparse import OptionParser
+    parser = OptionParser( version="v{}".format( versionString ) )
+    parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
+    Globals.addStandardOptionsAndProcess( parser )
+
+    multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
+
     demo()
 # end of BibleWriter.py

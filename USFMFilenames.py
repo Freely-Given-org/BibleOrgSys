@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMFilenames.py
-#   Last modified: 2013-04-26 by RJH (also update versionString below)
+#   Last modified: 2013-05-27 by RJH (also update versionString below)
 #
 # Module handling USFM Bible filenames
 #
@@ -500,14 +500,6 @@ class USFMFilenames:
 
 def demo():
     """ Demonstrate finding files in some USFM Bible folders. """
-    # Configure basic logging
-    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
-
-    # Handle command line parameters
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
-    Globals.addStandardOptionsAndProcess( parser )
-
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
     # These are relative paths -- you can replace these with your test folder(s)
@@ -535,5 +527,13 @@ def demo():
         else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
 
 if __name__ == '__main__':
+    # Configure basic logging
+    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
+
+    # Handle command line parameters
+    from optparse import OptionParser
+    parser = OptionParser( version="v{}".format( versionString ) )
+    Globals.addStandardOptionsAndProcess( parser )
+
     demo()
 # end of USFMFilenames.py

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2013-05-26 by RJH (also update versionString below)
+#   Last modified: 2013-05-27 by RJH (also update versionString below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -285,15 +285,6 @@ def demo():
     """
     Demonstrate reading and checking some Bible databases.
     """
-    # Configure basic logging
-    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
-
-    # Handle command line parameters
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
-    parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
-    Globals.addStandardOptionsAndProcess( parser )
-
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
 
@@ -314,11 +305,11 @@ def demo():
                 #print( "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )
             if Globals.commandLineOptions.export:
                 UB.pickle()
-                newObj = Globals.unpickleObject( 'MBTV.pickle' )
+                newObj = Globals.unpickleObject( 'Matigsalug.pickle' )
                 if Globals.verbosityLevel > 0: print( "newObj is", newObj )
         else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 
-    if 0: # Test a whole folder full of folders of USFM Bibles
+    if 1: # Test a whole folder full of folders of USFM Bibles
         def findInfo():
             """ Find out info about the project from the included copyright.htm file """
             with open( os.path.join( somepath, "copyright.htm" ) ) as myFile: # Automatically closes the file when done
@@ -375,7 +366,7 @@ def demo():
     validateXML = False
 
 
-    if 0: # Do one test folder
+    if 1: # Do one test folder
         name, encoding, testFolder = "Matigsalug", "utf-8", "../../../../../Data/Work/Matigsalug/Bible/MBTV/" # You can put your test folder here
         #name, encoding, testFolder = "MS-BT", "utf-8", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/" # You can put your test folder here
         #name, encoding, testFolder = "MS-Notes", "utf-8", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/" # You can put your test folder here
@@ -405,7 +396,7 @@ def demo():
                 if 1: # Do USX XML export
                     USXOutputFolder = os.path.join( "OutputFiles/", "USX output/" )
                     USXControls = {}; ControlFiles.readControlFile( 'ControlFiles', "To_USX_controls.txt", USXControls )
-                    validationResults = UB.toUSX_XML( USXOutputFolder, USXControls, usxSchemaFile if validateXML else None )
+                    validationResults = UB.toUSXXML( USXOutputFolder, USXControls, usxSchemaFile if validateXML else None )
                     if Globals.verbosityLevel>0 and validationResults and validationResults[0]: # print validation results
                         if validationResults[1]: print( "\nUSFX checkProgramOutputString\n{}".format( validationResults[1] ) )
                         if validationResults[2]: print( "\n USFX checkProgramErrorOutputString\n{}".format( validationResults[2] ) )
@@ -422,7 +413,7 @@ def demo():
                     for control in OSISControls:
                         OSISControls[control] = OSISControls[control].replace('__PROJECT_NAME__','UBW-Test') #.replace('byBible','byBook')
                     #print( OSISControls ); halt
-                    validationResults = UB.toOSIS_XML( OSISOutputFolder, OSISControls, OSISSchemaFile if validateXML else None )
+                    validationResults = UB.toOSISXML( OSISOutputFolder, OSISControls, OSISSchemaFile if validateXML else None )
                     if Globals.verbosityLevel>0 and validationResults and validationResults[0]: # print validation results
                         if validationResults[1]: print( "\nUSFX checkProgramOutputString\n{}".format( validationResults[1] ) )
                         if validationResults[2]: print( "\n USFX checkProgramErrorOutputString\n{}".format( validationResults[2] ) )
@@ -435,7 +426,7 @@ def demo():
 
                 if 1: # Do Zefania XML export
                     #ZefaniaControls = {}; ControlFiles.readControlFile( 'ControlFiles', "To_Zefania_controls.txt", ZefaniaControls )
-                    UB.toZefania_XML()
+                    UB.toZefaniaXML()
 
                 if 1: # Do MediaWiki export
                     #MediaWikiControls = {}; ControlFiles.readControlFile( 'ControlFiles', "To_MediaWiki_controls.txt", MediaWikiControls )
@@ -447,7 +438,7 @@ def demo():
         else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
 
 
-    if 0: # Test a single folder containing the error project USFM Bible
+    if 1: # Test a single folder containing the error project USFM Bible
         name, encoding, testFolder = "UEP", "utf-8", "Tests/DataFilesForTests/USFMErrorProject/" # You can put your test folder here
         if os.access( testFolder, os.R_OK ):
             UB = USFMBible( testFolder, name, encoding )
@@ -513,7 +504,7 @@ def demo():
 
                         if 1: # Do USX XML export
                             USXControls = {}; ControlFiles.readControlFile( 'ControlFiles', "To_USX_controls.txt", USXControls )
-                            validationResults = UBW.toUSX_XML( controlDict=USXControls, validationSchema=usxSchemaFile if validateXML else None )
+                            validationResults = UBW.toUSXXML( controlDict=USXControls, validationSchema=usxSchemaFile if validateXML else None )
                             if Globals.verbosityLevel>0 and validationResults and validationResults[0]: # print validation results
                                 if validationResults[1]: print( "\nUSFX checkProgramOutputString\n{}".format( validationResults[1] ) )
                                 if validationResults[2]: print( "\n USFX checkProgramErrorOutputString\n{}".format( validationResults[2] ) )
@@ -530,7 +521,7 @@ def demo():
                             for control in OSISControls:
                                 OSISControls[control] = OSISControls[control].replace('__PROJECT_NAME__','UBW-Test') #.replace('byBible','byBook')
                             #print( OSISControls ); halt
-                            validationResults = UBW.toOSIS_XML( controlDict=OSISControls, validationSchema=OSISSchemaFile if validateXML else None )
+                            validationResults = UBW.toOSISXML( controlDict=OSISControls, validationSchema=OSISSchemaFile if validateXML else None )
                             if Globals.verbosityLevel>0 and validationResults and validationResults[0]: # print validation results
                                 if validationResults[1]: print( "\nUSFX checkProgramOutputString\n{}".format( validationResults[1] ) )
                                 if validationResults[2]: print( "\n USFX checkProgramErrorOutputString\n{}".format( validationResults[2] ) )
@@ -544,7 +535,7 @@ def demo():
 
                         if 1: # Do Zefania XML export
                             ZefaniaControls = {}; ControlFiles.readControlFile( 'ControlFiles', "To_Zefania_controls.txt", ZefaniaControls )
-                            UBW.toZefania_XML( ZefaniaControls )
+                            UBW.toZefaniaXML( ZefaniaControls )
 
                         if 1: # Do MediaWiki export
                             MediaWikiControls = {}; ControlFiles.readControlFile( 'ControlFiles', "To_MediaWiki_controls.txt", MediaWikiControls )
@@ -559,6 +550,16 @@ def demo():
 #end of demo
 
 if __name__ == '__main__':
+    # Configure basic logging
+    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
+
+    # Handle command line parameters
+    from optparse import OptionParser
+    parser = OptionParser( version="v{}".format( versionString ) )
+    parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
+    Globals.addStandardOptionsAndProcess( parser )
+
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
+
     demo()
 # end of USFMBible.py

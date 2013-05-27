@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Globals.py
-#   Last modified: 2013-05-26 (also update versionString below)
+#   Last modified: 2013-05-27 (also update versionString below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -29,7 +29,7 @@ Module handling global variables
 """
 
 progName = "Globals"
-versionString = "0.16"
+versionString = "0.17"
 
 
 import logging, os.path, pickle
@@ -454,18 +454,40 @@ def setVerbosity( verbosityLevelParameter ):
     """Sets the VerbosityLevel global variable to an integer value depending on the Verbosity control."""
 
     global verbosityString, verbosityLevel
-    verbosityLevel = verbosityLevelParameter
-    if verbosityLevel == 0:
-        verbosityString = 'Silent'
-    elif verbosityLevel == 1:
-        verbosityString = 'Quiet'
-    elif verbosityLevel == 2:
-        verbosityString = 'Normal'
-    elif verbosityLevel == 3:
-        verbosityString = 'Informative'
-    elif verbosityLevel == 4:
-        verbosityString = 'Verbose'
-    else: logging.error( "Invalid '" + verbosityLevel + "' verbosity parameter" )
+    if isinstance( verbosityLevelParameter, str ):
+        if verbosityLevelParameter == 'Silent':
+            verbosityString = verbosityLevelParameter
+            verbosityLevel = 0
+        elif verbosityLevelParameter == 'Quiet':
+            verbosityString = verbosityLevelParameter
+            verbosityLevel = 1
+        elif verbosityLevelParameter == 'Normal':
+            verbosityString = verbosityLevelParameter
+            verbosityLevel = 2
+        elif verbosityLevelParameter == 'Informative':
+            verbosityString = verbosityLevelParameter
+            verbosityLevel = 3
+        elif verbosityLevelParameter == 'Verbose':
+            verbosityString = verbosityLevelParameter
+            verbosityLevel = 4
+        else: logging.error( "Invalid '" + verbosityLevelParameter + "' verbosity parameter" )
+    else: # assume it's an integer
+        if verbosityLevelParameter == 0:
+            verbosityLevel = verbosityLevelParameter
+            verbosityString = 'Silent'
+        elif verbosityLevelParameter == 1:
+            verbosityLevel = verbosityLevelParameter
+            verbosityString = 'Quiet'
+        elif verbosityLevelParameter == 2:
+            verbosityLevel = verbosityLevelParameter
+            verbosityString = 'Normal'
+        elif verbosityLevelParameter == 3:
+            verbosityLevel = verbosityLevelParameter
+            verbosityString = 'Informative'
+        elif verbosityLevelParameter == 4:
+            verbosityLevel = verbosityLevelParameter
+            verbosityString = 'Verbose'
+        else: logging.error( "Invalid '" + verbosityLevelParameter + "' verbosity parameter" )
 
     if debugFlag:
         print( '  Verbosity =', verbosityString )
@@ -473,27 +495,27 @@ def setVerbosity( verbosityLevelParameter ):
 # end of Globals.setVerbosity
 
 
-def setVerbosityLevel( verbosityStringParameter ):
-    """Sets the VerbosityLevel global variable to an integer value depending on the Verbosity control."""
+#def setVerbosityLevel( verbosityStringParameter ):
+    #"""Sets the VerbosityLevel global variable to an integer value depending on the Verbosity control."""
 
-    global verbosityString, verbosityLevel
-    verbosityString = verbosityStringParameter
-    if verbosityString == 'Silent':
-        verbosityLevel = 0
-    elif verbosityString == 'Quiet':
-        verbosityLevel = 1
-    elif verbosityString == 'Normal':
-        verbosityLevel = 2
-    elif verbosityString == 'Informative':
-        verbosityLevel = 3
-    elif verbosityString == 'Verbose':
-        verbosityLevel = 4
-    else: logging.error( "Invalid '" + verbosityString + "' verbosity parameter" )
+    #global verbosityString, verbosityLevel
+    #verbosityString = verbosityStringParameter
+    #if verbosityString == 'Silent':
+        #verbosityLevel = 0
+    #elif verbosityString == 'Quiet':
+        #verbosityLevel = 1
+    #elif verbosityString == 'Normal':
+        #verbosityLevel = 2
+    #elif verbosityString == 'Informative':
+        #verbosityLevel = 3
+    #elif verbosityString == 'Verbose':
+        #verbosityLevel = 4
+    #else: logging.error( "Invalid '" + verbosityString + "' verbosity parameter" )
 
-    if debugFlag:
-        print( '  VerbosityLevel =', verbosityLevel )
-        print( '  Verbosity =', verbosityString )
-# end of Globals.setVerbosityLevel
+    #if debugFlag:
+        #print( '  VerbosityLevel =', verbosityLevel )
+        #print( '  Verbosity =', verbosityString )
+## end of Globals.setVerbosityLevel
 
 
 def setDebugFlag( newValue=True ):
@@ -575,7 +597,7 @@ strictCheckingFlag = logErrorsFlag = debugFlag = False
 maxProcesses = 1
 verbosityLevel = None
 verbosityString = 'Normal'
-setVerbosityLevel( verbosityString )
+setVerbosity( verbosityString )
 
 
 # Global Bible data sets
@@ -594,11 +616,6 @@ def demo():
     Demo program to handle command line parameters
         and then demonstrate some basic functions.
     """
-    # Handle command line parameters
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
-    addStandardOptionsAndProcess( parser )
-
     if verbosityLevel>0: print( "{} V{}".format( progName, versionString ) )
     if verbosityLevel>2: printAllGlobals()
 
@@ -612,6 +629,12 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
+    # Handle command line parameters
+    from optparse import OptionParser
+    parser = OptionParser( version="v{}".format( versionString ) )
+    addStandardOptionsAndProcess( parser )
+
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
+
     demo()
 ## end of Globals.py

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2013-05-26 by RJH (also update versionString below)
+#   Last modified: 2013-05-27 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -123,6 +123,7 @@ class InternalBible:
             If folder is None (or missing), defaults to the default cache folder specified in Globals.
             Created the folder(s) if necessary.
         """
+        #print( repr(self.abbreviation), repr(self.name) )
         filename = self.abbreviation if self.abbreviation else self.name
         assert( filename )
         filename += '.pickle'
@@ -733,15 +734,6 @@ def demo():
     """
     A very basic test/demo of the InternalBible class.
     """
-    # Configure basic logging
-    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
-
-    # Handle command line parameters
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
-    #parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
-    Globals.addStandardOptionsAndProcess( parser )
-
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
     # Since this is only designed to be a base class, it can't actually do much at all
@@ -751,5 +743,14 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
+    # Configure basic logging
+    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
+
+    # Handle command line parameters
+    from optparse import OptionParser
+    parser = OptionParser( version="v{}".format( versionString ) )
+    #parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
+    Globals.addStandardOptionsAndProcess( parser )
+
     demo()
 # end of InternalBible.py

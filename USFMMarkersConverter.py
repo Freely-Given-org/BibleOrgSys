@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkersConverter.py
-#   Last modified: 2013-05-08 (also update versionString below)
+#   Last modified: 2013-05-27 (also update versionString below)
 #
 # Module handling USFMMarkers.xml to produce C and Python data tables
 #
@@ -549,15 +549,6 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    # Configure basic logging
-    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
-
-    # Handle command line parameters
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
-    parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h/.c formats suitable for directly including into other programs, as well as .json.")
-    Globals.addStandardOptionsAndProcess( parser )
-
     if Globals.verbosityLevel > 1: print( "{} V{}".format( progName, versionString ) )
 
     if Globals.commandLineOptions.export:
@@ -574,5 +565,14 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
+    # Configure basic logging
+    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
+
+    # Handle command line parameters
+    from optparse import OptionParser
+    parser = OptionParser( version="v{}".format( versionString ) )
+    parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h/.c formats suitable for directly including into other programs, as well as .json.")
+    Globals.addStandardOptionsAndProcess( parser )
+
     demo()
 # end of USFMMarkersConverter.py

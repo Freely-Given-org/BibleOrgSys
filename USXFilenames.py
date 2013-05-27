@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USXFilenames.py
-#   Last modified: 2013-04-15 (also update versionString below)
+#   Last modified: 2013-05-27 (also update versionString below)
 #
 # Module handling USX Bible filenames
 #
@@ -189,14 +189,6 @@ class USXFilenames:
 
 def demo():
     """ Demonstrate finding files in some USX Bible folders. """
-    # Configure basic logging
-    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
-
-    # Handle command line parameters
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
-    Globals.addStandardOptionsAndProcess( parser )
-
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
     # These are relative paths -- you can replace these with your test folder(s)
@@ -214,5 +206,13 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
+    # Configure basic logging
+    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
+
+    # Handle command line parameters
+    from optparse import OptionParser
+    parser = OptionParser( version="v{}".format( versionString ) )
+    Globals.addStandardOptionsAndProcess( parser )
+
     demo()
 # end of USXFilenames.py

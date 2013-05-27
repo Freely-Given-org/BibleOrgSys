@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # SFMFile.py
-#   Last modified: 2013-04-28 (also update versionString below)
+#   Last modified: 2013-05-27 (also update versionString below)
 #
 # SFM (Standard Format Marker) data file reader
 #
@@ -333,18 +333,12 @@ class SFMRecords:
 
 
 def demo():
-    """Demonstrate reading and processing some UTF-8 SFM databases.
     """
-    import os.path
-
-    # Handle command line parameters
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
-    #parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h/.c formats suitable for directly including into other programs, as well as .json.")
-    Globals.addStandardOptionsAndProcess( parser )
-
+    Demonstrate reading and processing some UTF-8 SFM databases.
+    """
     if Globals.verbosityLevel > 1: print( "{} V{}".format( progName, versionString ) )
 
+    import os.path
     filepath = os.path.join( 'Tests/DataFilesForTests/', 'MatigsalugDictionaryA.sfm' )
     if Globals.verbosityLevel > 2: print( "Using {} as test file...".format( filepath ) )
 
@@ -363,7 +357,13 @@ def demo():
         print ( i, r)
         if i>3: break
     print( '...\n',len(recordsDB.records)-1, recordsDB.records[-1]) # Display the last record
+# end of demo
 
 if __name__ == '__main__':
+    # Handle command line parameters
+    from optparse import OptionParser
+    parser = OptionParser( version="v{}".format( versionString ) )
+    Globals.addStandardOptionsAndProcess( parser )
+
     demo()
 # end of SFMFile.py

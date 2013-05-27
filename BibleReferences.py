@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleReferences.py
-#   Last modified: 2013-05-16 by RJH (also update versionString below)
+#   Last modified: 2013-05-27 by RJH (also update versionString below)
 #
 # Module for handling Bible references including ranges
 #
@@ -1751,7 +1751,8 @@ class BibleAnchorReference:
 
 
     def matchesAnchorString( self, anchorString, location=None ):
-        """ Compares the given footnote or cross-reference anchor string, and sees if it matches where we are in the text.
+        """
+        Compares the given footnote or cross-reference anchor string, and sees if it matches where we are in the text.
             Returns True or False.
         """
         #print( "matchesAnchorString: {} passed '{}'".format( self.homeTuple, anchorString ) )
@@ -1787,15 +1788,11 @@ class BibleAnchorReference:
 # end of class BibleAnchorReference
 
 
-def demo():
-    """Demonstrate parsing some Bible reference strings.
-    """
-    # Handle command line parameters
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
-    #parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
-    Globals.addStandardOptionsAndProcess( parser )
 
+def demo():
+    """
+    Demonstrate parsing some Bible reference strings.
+    """
     if Globals.verbosityLevel > 1: print( "{} V{}".format( progName, versionString ) )
 
     ourBOS = BibleOrganizationalSystem( "RSV" )
@@ -1916,5 +1913,11 @@ def demo():
             else: print( "  DIDN'T MATCH '{}' <--------------------- Oops!".format( ourAnchor ) )
 
 if __name__ == '__main__':
+    # Handle command line parameters
+    from optparse import OptionParser
+    parser = OptionParser( version="v{}".format( versionString ) )
+    #parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
+    Globals.addStandardOptionsAndProcess( parser )
+
     demo()
 # end of BibleReferences.py

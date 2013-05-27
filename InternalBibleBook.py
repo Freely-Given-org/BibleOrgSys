@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-05-23 by RJH (also update versionString below)
+#   Last modified: 2013-05-27 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -1972,8 +1972,8 @@ class InternalBibleBook:
 
 
         # Check the relative ordering of newline markers
-        #print( "modifiedMarkerList", modifiedMarkerList )
-        if modifiedMarkerList[0] != 'id':
+        #print( "modifiedMarkerList", modifiedMarkerList, self.bookReferenceCode )
+        if modifiedMarkerList and modifiedMarkerList[0] != 'id':
             newlineMarkerErrors.append( _("{} First USFM field in file should have been 'id' not '{}'").format( self.bookReferenceCode, modifiedMarkerList[0] ) )
             self.addPriorityError( 100, '', '', _("id line not first in file") )
         for otherHeaderMarker in ( 'ide','sts', ):
@@ -2851,17 +2851,9 @@ def demo():
     """
     Demonstrate reading and processing some Bible databases.
     """
-    # Configure basic logging
-    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
-
-    import USFMFilenames
-
-    # Handle command line parameters
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
-    Globals.addStandardOptionsAndProcess( parser )
-
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
+
+    #import USFMFilenames
 
     logErrors = False # Set to true if you want errors logged to the console
 
@@ -2876,5 +2868,13 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
+    # Configure basic logging
+    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
+
+    # Handle command line parameters
+    from optparse import OptionParser
+    parser = OptionParser( version="v{}".format( versionString ) )
+    Globals.addStandardOptionsAndProcess( parser )
+
     demo()
 # end of InternalBibleBook.py

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # DigitalBiblePlatform.py
-#   Last modified: 2013-05-22 (also update versionString below)
+#   Last modified: 2013-05-27 (also update versionString below)
 #
 # Module handling online DBP resources
 #
@@ -325,14 +325,6 @@ def demo():
     """
     Demonstrate how some of the above classes can be used.
     """
-    # Configure basic logging
-    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
-
-    # Handle command line parameters
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
-    Globals.addStandardOptionsAndProcess( parser )
-
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
     if 1: # Test the DBPBibles class
@@ -363,5 +355,13 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
+    # Configure basic logging
+    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
+
+    # Handle command line parameters
+    from optparse import OptionParser
+    parser = OptionParser( version="v{}".format( versionString ) )
+    Globals.addStandardOptionsAndProcess( parser )
+
     demo()
 # end of DigitalBiblePlatform.py

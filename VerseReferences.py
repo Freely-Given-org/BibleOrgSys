@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # VerseReferences.py
-#   Last modified: 2013-05-06 (also update versionString below)
+#   Last modified: 2013-05-27 (also update versionString below)
 #
 # Module handling Bible verse references
 #
@@ -149,6 +149,14 @@ def demo():
     """
     Short program to demonstrate/test the above class(es).
     """
+    if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
+
+    vK = SimpleVerseKey( 'GEN', '1', '1' )
+    print( vK, "and", vK.getOSISReference() )
+    print( vK == SimpleVerseKey( 'GEN', '1', '1' ), "then", vK == SimpleVerseKey( 'EXO', '1', '1' ) )
+# end of demo
+
+if __name__ == '__main__':
     # Configure basic logging
     logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
 
@@ -158,13 +166,5 @@ def demo():
     #parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML files to .py and .h tables suitable for directly including into other programs")
     Globals.addStandardOptionsAndProcess( parser )
 
-    if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
-
-    vK = SimpleVerseKey( 'GEN', '1', '1' )
-    print( vK, "and", vK.getOSISReference() )
-    print( vK == SimpleVerseKey( 'GEN', '1', '1' ), "then", vK == SimpleVerseKey( 'EXO', '1', '1' ) )
-# end of demo
-
-if __name__ == '__main__':
     demo()
 # end of VerseReferences.py

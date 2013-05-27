@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ControlFiles.py
-#   Last modified: 2013-04-13 (also update versionString below)
+#   Last modified: 2013-05-27 (also update versionString below)
 #
 # Control file module
 #
@@ -128,18 +128,19 @@ def booleanControl( controlName, controlDict=None ):
 # end of booleanControl
 
 
+
 def demo():
     """
     Demo program to handle command line parameters and then run what they want.
     """
+    if Globals.verbosityLevel>0: print( "{} V{}".format( progName, versionString ) )
+# end of demo
+
+if __name__ == '__main__':
     # Handle command line parameters
     from optparse import OptionParser
     parser = OptionParser( version="v{}".format( versionString ) )
     Globals.addStandardOptionsAndProcess( parser )
 
-    if Globals.verbosityLevel>0: print( "{} V{}".format( progName, versionString ) )
-# end of demo
-
-if __name__ == '__main__':
     demo()
 # end of ControlFiles.py

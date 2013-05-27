@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksNamesConverter.py
-#   Last modified: 2013-05-01 (also update versionString below)
+#   Last modified: 2013-05-27 (also update versionString below)
 #
 # Module handling BibleBooksNames_*.xml to produce C and Python data tables
 #
@@ -568,13 +568,6 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    # Handle command line parameters
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
-    #parser.add_option("-x", "--expandDemo", action="store_true", dest="expandDemo", default=False, help="expand the input abbreviations to include all unambiguous shorter forms")
-    parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML files to .py and .h tables suitable for directly including into other programs")
-    Globals.addStandardOptionsAndProcess( parser )
-
     if Globals.verbosityLevel > 1: print( "{} V{}".format( progName, versionString ) )
 
     sampleBookList = ['GEN','JDG','SA1','SA2','KI1','KI2','MA4','MAT','MRK','LUK','JHN','ACT','ROM','CO1','CO2','PE1','PE2','JDE','REV']
@@ -599,5 +592,12 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
+    # Handle command line parameters
+    from optparse import OptionParser
+    parser = OptionParser( version="v{}".format( versionString ) )
+    #parser.add_option("-x", "--expandDemo", action="store_true", dest="expandDemo", default=False, help="expand the input abbreviations to include all unambiguous shorter forms")
+    parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML files to .py and .h tables suitable for directly including into other programs")
+    Globals.addStandardOptionsAndProcess( parser )
+
     demo()
 # end of BibleBooksNamesConverter.py

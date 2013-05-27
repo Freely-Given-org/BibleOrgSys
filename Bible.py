@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Bible.py
-#   Last modified: 2013-05-01 (also update versionString below)
+#   Last modified: 2013-05-27 (also update versionString below)
 #
 # Module handling a internal Bible object
 #
@@ -334,12 +334,6 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    # Handle command line parameters
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format(versionString ) )
-    #parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
-    Globals.addStandardOptionsAndProcess( parser )
-
     if Globals.verbosityLevel > 0: print( "{} V{}".format(progName, versionString ) )
 
     # Since this is only designed to be a base class, it can't actually do much at all
@@ -360,5 +354,11 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
+    # Handle command line parameters
+    from optparse import OptionParser
+    parser = OptionParser( version="v{}".format(versionString ) )
+    #parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
+    Globals.addStandardOptionsAndProcess( parser )
+
     demo()
 # end of Bible.py

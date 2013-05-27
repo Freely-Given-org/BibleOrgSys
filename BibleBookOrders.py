@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBookOrders.py
-#   Last modified: 2013-05-26 (also update versionString below)
+#   Last modified: 2013-05-27 (also update versionString below)
 #
 # Module handling BibleBookOrderSystems
 #
@@ -320,12 +320,6 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    # Handle command line parameters
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
-    parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export newly found book orders as XML files")
-    Globals.addStandardOptionsAndProcess( parser )
-
     if Globals.verbosityLevel > 1: print( "{} V{}".format( progName, versionString ) )
 
     # Demo the BibleBookOrders object
@@ -361,5 +355,11 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
+    # Handle command line parameters
+    from optparse import OptionParser
+    parser = OptionParser( version="v{}".format( versionString ) )
+    parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export newly found book orders as XML files")
+    Globals.addStandardOptionsAndProcess( parser )
+
     demo()
 # end of BibleBookOrders.py

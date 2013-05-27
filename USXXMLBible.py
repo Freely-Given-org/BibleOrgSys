@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USXXMLBible.py
-#   Last modified: 2013-05-06 by RJH (also update versionString below)
+#   Last modified: 2013-05-27 by RJH (also update versionString below)
 #
 # Module handling compilations of USX Bible books
 #
@@ -33,7 +33,7 @@ versionString = "0.06"
 
 import os, logging
 from gettext import gettext as _
-#from collections import OrderedDict
+import multiprocessing
 
 import Globals
 from USXFilenames import USXFilenames
@@ -148,7 +148,22 @@ class USXXMLBible( Bible ):
         # Do a preliminary check on the readability of our folder
         if not os.access( self.givenFolderName, os.R_OK ):
             print( "USXXMLBible: File '{}' is unreadable".format( self.givenFolderName ) )
-    # end of __init_
+    # end of USXXMLBible.__init_
+
+
+    def loadBook( self, BBB ):
+        """
+        Used for multiprocessing.
+        """
+        print( "USXXMLBible.loadBook( {} )".format( BBB ) )
+        UBB = USXXMLBibleBook( BBB )
+        print( "created", BBB )
+        UBB.load( self._filenameDict[BBB], self.givenFolderName, self.encoding )
+        print( "loaded", BBB )
+        UBB.validateUSFM()
+        print( "validated", BBB )
+        return UBB
+    # end of USXXMLBible.loadBook
 
 
     def load( self ):
@@ -240,20 +255,43 @@ class USXXMLBible( Bible ):
                 self.ssfData = loadSSFData( ssfFilepathList[0] )
 
         # Load the books one by one -- assuming that they have regular Paratext style filenames
-        for BBB,filename in self.USXFilenamesObject.getConfirmedFilenames():
-            UBB = USXXMLBibleBook( BBB )
-            UBB.load( filename, self.givenFolderName, self.encoding )
-            UBB.validateUSFM()
-            #print( UBB )
-            self.books[BBB] = UBB
-            # Make up our book name dictionaries while we're at it
-            assumedBookNames = UBB.getAssumedBookNames()
-            for assumedBookName in assumedBookNames:
-                self.BBBToNameDict[BBB] = assumedBookName
-                assumedBookNameLower = assumedBookName.lower()
-                self.bookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
-                self.combinedBookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
-                if ' ' in assumedBookNameLower: self.combinedBookNameDict[assumedBookNameLower.replace(' ','')] = BBB # Store the deduced book name (lower case without spaces)
+        # DON'T KNOW WHY THIS DOESN'T WORK
+        if 0 and Globals.maxProcesses > 1: # Load all the books as quickly as possible
+            self._filenameDict, parameters = {}, []
+            for BBB,filename in self.USXFilenamesObject.getConfirmedFilenames():
+                parameters.append( BBB )
+                self._filenameDict[BBB] = filename
+            #print( "parameters", parameters )
+            with multiprocessing.Pool( processes=Globals.maxProcesses ) as pool: # start worker processes
+                results = pool.map( self.loadBook, parameters ) # have the pool do our loads
+                print( "results", results )
+                assert( len(results) == len(parameters) )
+                for j, UBB in enumerate( results ):
+                    BBB = parameters[j]
+                    self.books[BBB] = UBB
+                    # Make up our book name dictionaries while we're at it
+                    assumedBookNames = UBB.getAssumedBookNames()
+                    for assumedBookName in assumedBookNames:
+                        self.BBBToNameDict[BBB] = assumedBookName
+                        assumedBookNameLower = assumedBookName.lower()
+                        self.bookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
+                        self.combinedBookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
+                        if ' ' in assumedBookNameLower: self.combinedBookNameDict[assumedBookNameLower.replace(' ','')] = BBB # Store the deduced book name (lower case without spaces)
+        else: # Just single threaded
+            for BBB,filename in self.USXFilenamesObject.getConfirmedFilenames():
+                UBB = USXXMLBibleBook( BBB )
+                UBB.load( filename, self.givenFolderName, self.encoding )
+                UBB.validateUSFM()
+                #print( UBB )
+                self.books[BBB] = UBB
+                # Make up our book name dictionaries while we're at it
+                assumedBookNames = UBB.getAssumedBookNames()
+                for assumedBookName in assumedBookNames:
+                    self.BBBToNameDict[BBB] = assumedBookName
+                    assumedBookNameLower = assumedBookName.lower()
+                    self.bookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
+                    self.combinedBookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
+                    if ' ' in assumedBookNameLower: self.combinedBookNameDict[assumedBookNameLower.replace(' ','')] = BBB # Store the deduced book name (lower case without spaces)
 
         if not self.books: # Didn't successfully load any regularly named books -- maybe the files have weird names??? -- try to be intelligent here
             if Globals.verbosityLevel > 2:
@@ -286,7 +324,7 @@ class USXXMLBible( Bible ):
                         self.combinedBookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
                         if ' ' in assumedBookNameLower: self.combinedBookNameDict[assumedBookNameLower.replace(' ','')] = BBB # Store the deduced book name (lower case without spaces)
             if self.books: print( "USXXMLBible.load: Found {} irregularly named USX files".format( len(self.books) ) )
-    # end of load
+    # end of USXXMLBible.load
 # end of class USXXMLBible
 
 
@@ -295,15 +333,6 @@ def demo():
     """
     Demonstrate reading and checking some Bible databases.
     """
-    # Configure basic logging
-    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
-
-    # Handle command line parameters
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
-    #parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
-    Globals.addStandardOptionsAndProcess( parser )
-
     if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
 
     testData = (
@@ -331,5 +360,16 @@ def demo():
     #       pass
 
 if __name__ == '__main__':
+    # Configure basic logging
+    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
+
+    # Handle command line parameters
+    from optparse import OptionParser
+    parser = OptionParser( version="v{}".format( versionString ) )
+    #parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
+    Globals.addStandardOptionsAndProcess( parser )
+
+    multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
+
     demo()
 # end of USXXMLBible.py
