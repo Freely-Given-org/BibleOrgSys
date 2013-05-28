@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2013-05-27 by RJH (also update versionString below)
+#   Last modified: 2013-05-29 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -316,10 +316,10 @@ class InternalBible:
         Get the added units in the Bible text, such as section headings, paragraph breaks, and section references.
         """
         if Globals.debugFlag: assert( self.books )
-        haveParagraphs = haveQParagraphs = haveSectionHeadings = haveSectionReferences = False
-        AllParagraphs, AllQParagraphs, AllSectionHeadings, AllSectionReferences = OrderedDict(), OrderedDict(), OrderedDict(), OrderedDict()
+        haveParagraphs = haveQParagraphs = haveSectionHeadings = haveSectionReferences = haveWordsOfJesus = False
+        AllParagraphs, AllQParagraphs, AllSectionHeadings, AllSectionReferences, AllWordsOfJesus = OrderedDict(), OrderedDict(), OrderedDict(), OrderedDict(), OrderedDict()
         for BBB in self.books:
-            paragraphReferences, qReferences, sectionHeadings, sectionReferences = self.books[BBB].getAddedUnits()
+            paragraphReferences, qReferences, sectionHeadings, sectionReferences, wordsOfJesus = self.books[BBB].getAddedUnits()
             if paragraphReferences: haveParagraphs = True
             AllParagraphs[BBB] = paragraphReferences # Add an entry for each given book, even if the entry is blank
             if qReferences: haveQParagraphs = True
@@ -328,8 +328,10 @@ class InternalBible:
             AllSectionHeadings[BBB] = sectionHeadings
             if sectionReferences: haveSectionReferences = True
             AllSectionReferences[BBB] = sectionReferences
+            if wordsOfJesus: haveWordsOfJesus = True
+            AllWordsOfJesus[BBB] = wordsOfJesus
         # If a version lacks a feature completely, return None (rather than an empty dictionary)
-        return AllParagraphs if haveParagraphs else None, AllQParagraphs if haveQParagraphs else None, AllSectionHeadings if haveSectionHeadings else None, AllSectionReferences if haveSectionReferences else None
+        return AllParagraphs if haveParagraphs else None, AllQParagraphs if haveQParagraphs else None, AllSectionHeadings if haveSectionHeadings else None, AllSectionReferences if haveSectionReferences else None, AllWordsOfJesus if haveWordsOfJesus else None
     # end of InternalBible.getAddedUnits
 
 

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # XMLFile.py
-#   Last modified: 2013-05-27 by RJH (also update versionString below)
+#   Last modified: 2013-05-29 by RJH (also update versionString below)
 #
 # Module handling simple XML files
 #
@@ -39,6 +39,7 @@ import Globals
 
 
 xmllintError = ("No error", "Unclassified", "Error in DTD", "Validation error", "Validation error", "Error in schema compilation", "Error writing output", "Error in pattern", "Error in reader registration", "Out of memory")
+
 
 
 class XMLFile():
@@ -78,6 +79,7 @@ class XMLFile():
                 print( "XMLFile: Schema file '{}' is not downloadable".format( self.schemaURL ) )
     # end of XMLFile.__init__
 
+
     def __str__( self ):
         """
         This method returns the string representation of a Bible.
@@ -96,6 +98,7 @@ class XMLFile():
             if self.schema: result += ('\n' if result else '') + "    with schema = {}".format( self.schema )
         return result
     # end of XMLFile.__str__
+
 
     def validateByLoading( self ):
         """
@@ -150,7 +153,9 @@ class XMLFile():
 
     def validateAll( self ):
         return self.validateByLoading()[0] and self.validateWithLint()[0] # No returned error messages
+    # end of XMLFile.validateAll
 # end of class XMLFile
+
 
 
 def demo():

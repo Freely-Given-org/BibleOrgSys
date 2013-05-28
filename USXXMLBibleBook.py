@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USXXMLBibleBook.py
-#   Last modified: 2013-05-27 by RJH (also update versionString below)
+#   Last modified: 2013-05-29 by RJH (also update versionString below)
 #
 # Module handling USX Bible Book xml
 #
@@ -38,6 +38,7 @@ import Globals
 from Bible import BibleBook
 
 
+
 class USXXMLBibleBook( BibleBook ):
     """
     Class to load, validate, and manipulate a single Bible book in USX XML.
@@ -51,7 +52,7 @@ class USXXMLBibleBook( BibleBook ):
         self.objectTypeString = "USX"
 
         #self.bookReferenceCode = bookReferenceCode
-    # end of __init__
+    # end of USXXMLBibleBook.__init__
 
 
     def load( self, filename, folder=None, encoding='utf-8' ):
@@ -78,7 +79,7 @@ class USXXMLBibleBook( BibleBook ):
             # Now process the paragraph subelements
             for element in paragraphXML:
                 location = element.tag + ' ' + paragraphlocation
-                #print( c, v, element.tag )
+                print( "USXXMLBibleBook.load", c, v, element.tag, location )
                 if element.tag == 'verse': # milestone (not a container)
                     Globals.checkXMLNoText( element, location )
                     Globals.checkXMLNoSubelements( element, location )
@@ -106,6 +107,7 @@ class USXXMLBibleBook( BibleBook ):
                     for attrib,value in element.items():
                         if attrib=='style':
                             charStyle = value # This is basically the USFM character marker name
+                            print( "  charStyle", charStyle )
                             assert( not Globals.USFMMarkers.isNewlineMarker( charStyle ) )
                         else:
                             if Globals.logErrorsFlag: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
@@ -277,7 +279,9 @@ class USXXMLBibleBook( BibleBook ):
                     self.addPriorityError( 1, c, v, _("Unprocessed {} element").format( element.tag ) )
 
         if loadErrors: self.errorDictionary['Load Errors'] = loadErrors
-    # end of load
+    # end of USXXMLBibleBook.load
+# end of class USXXMLBibleBook
+
 
 
 def demo():

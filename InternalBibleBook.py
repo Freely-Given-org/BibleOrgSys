@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-05-27 by RJH (also update versionString below)
+#   Last modified: 2013-05-29 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -1407,47 +1407,47 @@ class InternalBibleBook:
         if Globals.debugFlag: assert( self._processedLines )
         addedUnitErrors = []
 
-        paragraphReferences, qReferences, sectionHeadingReferences, sectionHeadings, sectionReferenceReferences, sectionReferences = [], [], [], [], [], []
-        verseText = chapterText = '0'
+        paragraphReferences, qReferences, sectionHeadingReferences, sectionHeadings, sectionReferenceReferences, sectionReferences, wordsOfJesus = [], [], [], [], [], [], []
+        chapterNumberStr = verseNumberStr = '0'
         for marker,originalMarker,text,cleanText,extras in self._processedLines:
-            #print( marker, text )
+            #print( "InternalBibleBook.getAddedUnits", chapterNumberStr, verseNumberStr, marker, cleanText )
             if marker == 'c':
-                chapterText = text.split( None, 1 )[0]
-                verseText = '0'
+                chapterNumberStr = text.split( None, 1 )[0]
+                verseNumberStr = '0'
             elif marker == 'cp':
                 cpChapterText = text.split( None, 1 )[0]
-                if Globals.verbosityLevel > 2: print( "In {}, chapter text went from '{}' to '{}' with cp marker".format( self.bookReferenceCode, chapterText, cpChapterText ) )
-                chapterText = cpChapterText
-                if len(chapterText)>2 and chapterText[0]=='(' and chapterText[-1]==')': chapterText = chapterText[1:-1] # Remove parenthesis -- NOT SURE IF WE REALLY WANT TO DO THIS OR NOT ???
-                verseText = '0'
+                if Globals.verbosityLevel > 2: print( "In {}, chapter text went from '{}' to '{}' with cp marker".format( self.bookReferenceCode, chapterNumberStr, cpChapterText ) )
+                chapterNumberStr = cpChapterText
+                if len(chapterNumberStr)>2 and chapterNumberStr[0]=='(' and chapterNumberStr[-1]==')': chapterNumberStr = chapterNumberStr[1:-1] # Remove parenthesis -- NOT SURE IF WE REALLY WANT TO DO THIS OR NOT ???
+                verseNumberStr = '0'
             elif marker == 'v':
-                #print( self.bookReferenceCode, chapterText, marker, text )
+                #print( self.bookReferenceCode, chapterNumberStr, marker, text )
                 if not text:
-                    addedUnitErrors.append( _("{} {} Missing USFM verse number after v{}").format( self.bookReferenceCode, chapterText, verseText ) )
-                    if Globals.logErrorsFlag: logging.warning( _("Missing USFM verse number after v{} in chapter {} of {}").format( verseText, chapterText, self.bookReferenceCode ) )
-                    self.addPriorityError( 86, chapterText, verseText, _("Missing verse number") )
+                    addedUnitErrors.append( _("{} {} Missing USFM verse number after v{}").format( self.bookReferenceCode, chapterNumberStr, verseNumberStr ) )
+                    if Globals.logErrorsFlag: logging.warning( _("Missing USFM verse number after v{} in chapter {} of {}").format( verseNumberStr, chapterNumberStr, self.bookReferenceCode ) )
+                    self.addPriorityError( 86, chapterNumberStr, verseNumberStr, _("Missing verse number") )
                     continue
-                verseText = text
+                verseNumberStr = text
             elif marker == 'p':
-                reference = primeReference = (chapterText,verseText,)
+                reference = primeReference = (chapterNumberStr,verseNumberStr,)
                 while reference in paragraphReferences: # Must be a single verse broken into multiple paragraphs
                     if Globals.debugFlag: assert( primeReference in paragraphReferences )
-                    if reference == primeReference: reference = (chapterText,verseText,'a',) # Append a suffix
+                    if reference == primeReference: reference = (chapterNumberStr,verseNumberStr,'a',) # Append a suffix
                     else: # Already have a suffix
-                        reference = (chapterText,verseText,chr(ord(reference[2])+1),) # Just increment the suffix
+                        reference = (chapterNumberStr,verseNumberStr,chr(ord(reference[2])+1),) # Just increment the suffix
                 paragraphReferences.append( reference )
             elif len(marker)==2 and marker[0]=='q' and marker[1].isdigit():# q1, q2, etc.
-                reference = primeReference = (chapterText,verseText,)
+                reference = primeReference = (chapterNumberStr,verseNumberStr,)
                 while reference in qReferences: # Must be a single verse broken into multiple segments
                     if Globals.debugFlag: assert( primeReference in qReferences )
-                    if reference == primeReference: reference = (chapterText,verseText,'a',) # Append a suffix
+                    if reference == primeReference: reference = (chapterNumberStr,verseNumberStr,'a',) # Append a suffix
                     else: # Already have a suffix
-                        reference = (chapterText,verseText,chr(ord(reference[2])+1),) # Just increment the suffix
+                        reference = (chapterNumberStr,verseNumberStr,chr(ord(reference[2])+1),) # Just increment the suffix
                 level = int( marker[1] ) # 1, 2, etc.
                 qReferences.append( (reference,level,) )
             elif len(marker)==2 and marker[0]=='s' and marker[1].isdigit():# s1, s2, etc.
-                if text and text[-1].isspace(): print( self.bookReferenceCode, chapterText, verseText, marker, "'"+text+"'" )
-                reference = (chapterText,verseText,)
+                if text and text[-1].isspace(): print( self.bookReferenceCode, chapterNumberStr, verseNumberStr, marker, "'"+text+"'" )
+                reference = (chapterNumberStr,verseNumberStr,)
                 level = int( marker[1] ) # 1, 2, etc.
                 #levelReference = (level,reference,)
                 adjText = text.strip().replace('\\nd ','').replace('\\nd*','')
@@ -1456,15 +1456,26 @@ class InternalBibleBook:
                 #sectionHeadingReferences.append( levelReference ) # Just for checking
                 sectionHeadings.append( (reference,level,adjText,) ) # This is the real data
             elif marker == 'r':
-                reference = (chapterText,verseText,)
+                reference = (chapterNumberStr,verseNumberStr,)
                 if Globals.debugFlag: assert( reference not in sectionReferenceReferences ) # Shouldn't be any cases of two lots of section references within one verse boundary
                 sectionReferenceReferences.append( reference ) # Just for checking
                 sectionReferenceText = text
                 if sectionReferenceText[0]=='(' and sectionReferenceText[-1]==')': sectionReferenceText = sectionReferenceText[1:-1] # Remove parenthesis
                 sectionReferences.append( (reference,sectionReferenceText,) ) # This is the real data
+
+            if 'wj' in text:
+                reference = (chapterNumberStr,verseNumberStr,)
+                print( "InternalBibleBook.getAddedUnits", chapterNumberStr, verseNumberStr, marker, cleanText )
+                print( " ", marker, text )
+                wjCount = text.count( 'wj' ) / 2 # Assuming that half of them are \wj* end markers
+                wjFirst = text.startswith( '\\wj ' )
+                wjLast = text.endswith( '\\wj*' )
+                info = (wjCount,wjFirst,wjLast,)
+                wordsOfJesus.append( (reference,info,) ) # This is the real data
+
         if addedUnitErrors: self.errorDictionary['Added Unit Errors'] = addedUnitErrors
         if Globals.debugFlag: assert( len(paragraphReferences) == len(set(paragraphReferences)) ) # No duplicates
-        return paragraphReferences, qReferences, sectionHeadings, sectionReferences
+        return paragraphReferences, qReferences, sectionHeadings, sectionReferences, wordsOfJesus
     # end of InternalBibleBook.getAddedUnits
 
 

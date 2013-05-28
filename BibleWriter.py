@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-05-27 by RJH (also update versionString below)
+#   Last modified: 2013-05-29 by RJH (also update versionString below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -406,7 +406,7 @@ class BibleWriter( InternalBible ):
             writeBook( xw, BBB, bookData )
         xw.close()
         if unhandledMarkers and Globals.verbosityLevel>0: print( "  " + _("WARNING: Unhandled toMediaWiki USFM markers were {}").format(unhandledMarkers) )
-        if validationSchema: return xw.validateXML( validationSchema )
+        if validationSchema: return xw.validate( validationSchema )
         return True
     # end of BibleWriter.toMediaWiki
 
@@ -504,7 +504,7 @@ class BibleWriter( InternalBible ):
         xw.writeLineClose( 'XMLBible' )
         xw.close()
         if unhandledMarkers and Globals.verbosityLevel>0: print( "  " + _("WARNING: Unhandled toZefania USFM markers were {}").format(unhandledMarkers) )
-        if validationSchema: return xw.validateXML( validationSchema )
+        if validationSchema: return xw.validate( validationSchema )
         return True
     # end of BibleWriter.toZefaniaXML
 
@@ -854,7 +854,7 @@ class BibleWriter( InternalBible ):
                 xw.writeLineClose( 'para' )
             xw.writeLineClose( 'usx' )
             xw.close( writeFinalNL=True ) # Try to imitate Paratext output as closely as possible
-            if validationSchema: return xw.validateXML( validationSchema )
+            if validationSchema: return xw.validate( validationSchema )
         # end of toUSXXML.writeBook
 
         # Set-up our Bible reference system
@@ -1549,7 +1549,7 @@ class BibleWriter( InternalBible ):
                 xw.writeLineClose( 'osis' )
                 xw.close()
                 if validationSchema:
-                    bookResults = xw.validateXML( validationSchema )
+                    bookResults = xw.validate( validationSchema )
                     if bookResults[0] > validationResults[0]: validationResults = ( bookResults[0], validationResults[1], validationResults[2], )
                     if bookResults[1]: validationResults = ( validationResults[0], validationResults[1] + bookResults[1], validationResults[2], )
                     if bookResults[2]: validationResults = ( validationResults[0], validationResults[1], validationResults[2] + bookResults[2], )
@@ -1568,7 +1568,7 @@ class BibleWriter( InternalBible ):
             xw.writeLineClose( 'osisText' )
             xw.writeLineClose( 'osis' )
             xw.close()
-            if validationSchema: validationResults = xw.validateXML( validationSchema )
+            if validationSchema: validationResults = xw.validate( validationSchema )
         elif Globals.logErrorsFlag: logging.critical( "Unrecognized toOSIS control \"osisFiles\" = '{}'".format( controlDict["osisFiles"] ) )
         if unhandledMarkers and Globals.verbosityLevel>0: print( "  " + _("WARNING: Unhandled toOSIS USFM markers were {}").format(unhandledMarkers) )
         if Globals.verbosityLevel > 2: print( "Need to find and look at an example where a new chapter isn't a new <p> to see how chapter eIDs should be handled there" )
@@ -2143,8 +2143,8 @@ class BibleWriter( InternalBible ):
         xwOT.close(); xwNT.close()
         if unhandledMarkers and Globals.verbosityLevel>0: print( "  " + _("WARNING: Unhandled toSwordModule USFM markers were {}").format(unhandledMarkers) )
         if validationSchema:
-            OTresults= xwOT.validateXML( validationSchema )
-            NTresults= xwNT.validateXML( validationSchema )
+            OTresults= xwOT.validate( validationSchema )
+            NTresults= xwNT.validate( validationSchema )
             return OTresults and NTresults
         return True
     #end of BibleWriter.toSwordModule
@@ -2367,7 +2367,7 @@ class BibleWriter( InternalBible ):
                 xw.close()
         else: halt # not done yet
         if unhandledMarkers and Globals.verbosityLevel>0: print( "  " + _("WARNING: Unhandled toHTML5 USFM markers were {}").format(unhandledMarkers) )
-        if validationSchema: return xw.validateXML( validationSchema )
+        if validationSchema: return xw.validate( validationSchema )
         return True
     # end of BibleWriter.toHTML5
 
