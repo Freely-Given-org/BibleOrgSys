@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2013-05-27 by RJH (also update versionString below)
+#   Last modified: 2013-05-28 by RJH (also update versionString below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -255,8 +255,23 @@ class USFMBible( Bible ):
         UBB = USFMBibleBook( BBB )
         UBB.load( filename, self.sourceFolder, self.encoding )
         UBB.validateUSFM()
-        return UBB
+        self.saveBook( UBB )
     # end of USFMBible.loadBook
+
+
+    def loadBookMP( self, BBB ):
+        """
+        Multiprocessing version!
+        Load the requested book if it's not already loaded.
+        """
+        if Globals.verbosityLevel > 2: print( "USFMBible.loadBookMP( {} )".format( BBB ) )
+        assert( BBB not in self.books )
+        if Globals.verbosityLevel > 2 or Globals.logErrorsFlag: print( _("  USFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
+        UBB = USFMBibleBook( BBB )
+        UBB.load( self.possibleFilenameDict[BBB], self.sourceFolder, self.encoding )
+        UBB.validateUSFM()
+        return UBB
+    # end of USFMBible.loadBookMP
 
 
     def load( self ):
@@ -268,14 +283,14 @@ class USFMBible( Bible ):
         if Globals.maxProcesses > 1: # Load all the books as quickly as possible
             parameters = [BBB for BBB,filename in self.maximumPossibleFilenameTuples] # Can only pass a single parameter to map
             with multiprocessing.Pool( processes=Globals.maxProcesses ) as pool: # start worker processes
-                results = pool.map( self.loadBook, parameters ) # have the pool do our loads
+                results = pool.map( self.loadBookMP, parameters ) # have the pool do our loads
                 assert( len(results) == len(parameters) )
                 for bBook in results: self.saveBook( bBook )
         else: # Just single threaded
             # Load the books one by one -- assuming that they have regular Paratext style filenames
             for BBB,filename in self.maximumPossibleFilenameTuples:
                 loadedBook = self.loadBook( BBB, filename )
-                self.saveBook( loadedBook )
+                #self.saveBook( loadedBook )
     # end of USFMBible.load
 # end of class USFMBible
 

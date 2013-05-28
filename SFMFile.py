@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # SFMFile.py
-#   Last modified: 2013-05-27 (also update versionString below)
+#   Last modified: 2013-05-28 (also update versionString below)
 #
 # SFM (Standard Format Marker) data file reader
 #
@@ -100,12 +100,14 @@ class SFMLines:
                     #if line[0:2]=='\\_': continue # Just discard Toolbox header lines
                     if line[0]=='#': continue # Just discard comment lines
 
-                    if line[0]!='\\':
-                        if len(result)==0:
-                            print( "SFMFile.py: XXZXResult is", result, len(line) )
-                            for x in range(0, min(6,len(line))):
-                                print( x, "'" + str(ord(line[x])) + "'" )
-                            raise IOError('Oops: Line break on last line ??? not handled here "' + line + '"')
+                    if line[0]!='\\': # Not a SFM line
+                        if len(result)==0: # We don't have any SFM data lines yet
+                            if Globals.logErrorsFlag and Globals.verbosityLevel > 2:
+                                logging.error( "Non-SFM line in " + sfm_filename + " -- line ignored at #" + str(lineCount) )
+                            #print( "SFMFile.py: XXZXResult is", result, len(line) )
+                            #for x in range(0, min(6,len(line))):
+                                #print( x, "'" + str(ord(line[x])) + "'" )
+                            #raise IOError('Oops: Line break on last line ??? not handled here "' + line + '"')
                         else: # Append this continuation line
                             if marker not in ignoreSFMs:
                                 oldmarker, oldtext = result.pop()
@@ -130,7 +132,7 @@ class SFMLines:
                     if marker not in ignoreSFMs:
                         result.append( (marker, text) )
             except:
-                if Globals.logErrorsFlag: logging.critical( "Invalid line in " + sfm_filename + " -- line ignored at " + str(lineCount) )
+                if Globals.logErrorsFlag: logging.critical( "Invalid line in " + sfm_filename + " -- line ignored at #" + str(lineCount) )
                 if lineCount > 1: print( 'Previous line was: ', lastLine )
                 print( line )
                 #raise

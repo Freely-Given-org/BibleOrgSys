@@ -674,8 +674,10 @@ class InternalBible:
         Expects a SimpleVerseKey for the parameter
             but also copes with a (B,C,V,S) tuple.
         """
+        #print( "InternalBible.getBCVRef( {} )".format( ref ) )
         if isinstance( ref, tuple ): BBB = ref[0]
         else: BBB = ref.getBBB() # Assume it's a SimpleVerseKeyObject
+        #print( " ", BBB in self.books )
         if BBB in self.books: return self.books[BBB].getCVRef( ref )
         #else: print( "InternalBible {} doesn't have {}".format( self.name, BBB ) ); halt
     # end of InternalBible.getBCVRef
