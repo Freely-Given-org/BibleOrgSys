@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMFilenames.py
-#   Last modified: 2013-05-27 by RJH (also update versionString below)
+#   Last modified: 2013-06-04 by RJH (also update versionString below)
 #
 # Module handling USFM Bible filenames
 #
@@ -28,7 +28,7 @@ Module for creating and manipulating USFM filenames.
 """
 
 progName = "USFM Bible filenames handler"
-versionString = "0.57"
+versionString = "0.58"
 
 
 import os, logging
@@ -50,8 +50,11 @@ BibleditFilenames = ( '1_Genesis', '2_Exodus', '3_Leviticus', '4_Numbers', '5_De
     '76_Letter_of_Jeremiah', '77_Song_of_the_Three_Children', '78_Susanna', '79_Bel_and_the_Dragon', '80_1_Maccabees', '81_2_Maccabees',
     '82_1_Esdras', '83_Prayer_of_Manasses', '84_Psalm_151', '85_3_Maccabees', '86_2_Esdras', '87_4_Maccabees', '88_Daniel_(Greek)' )
 
-filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
-extensionsToIgnore = ('ZIP', 'BAK', 'LOG', 'HTM','HTML', 'XML', 'OSIS', 'USX', 'TXT', 'STY', 'LDS', 'SSF', 'VRS',) # Must be UPPERCASE
+# All of the following must be all UPPER CASE
+filenamesToIgnore = ('AUTOCORRECT.TXT','HYPHENATEDWORDS.TXT','PRINTDRAFTCHANGES.TXT','README.TXT',) # Only needs to include names whose extensions are not listed below
+filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must begin with a dot
+# NOTE: Extensions ending in ~ are also ignored
+extensionsToIgnore = ('ZIP', 'BAK', 'LOG', 'HTM','HTML', 'XML', 'OSIS', 'USX', 'STY', 'LDS', 'SSF', 'VRS',) # Must NOT begin with a dot
 
 
 
@@ -92,6 +95,7 @@ class USFMFilenames:
         self.lastTupleList = None
         for possibleFilename in os.listdir( self.givenFolderName ):
             pFUpper = possibleFilename.upper()
+            if pFUpper in filenamesToIgnore: continue
             pFUpperProper, pFUpperExt = os.path.splitext( pFUpper )
             ignore = False
             for ending in filenameEndingsToIgnore:
@@ -271,6 +275,7 @@ class USFMFilenames:
         folderFilenames = os.listdir( givenFolder )
         for possibleFilename in folderFilenames:
             pFUpper = possibleFilename.upper()
+            if pFUpper in filenamesToIgnore: continue
             pFUpperProper, pFUpperExt = os.path.splitext( pFUpper )
             ignore = False
             for ending in filenameEndingsToIgnore:
@@ -396,6 +401,7 @@ class USFMFilenames:
         resultList = []
         for possibleFilename in self.fileList:
             pFUpper = possibleFilename.upper()
+            if pFUpper in filenamesToIgnore: continue
             pFUpperProper, pFUpperExt = os.path.splitext( pFUpper )
             for USFMBookCode,USFMDigits,bookReferenceCode in self._USFMBooksCodeNumberTriples:
                 ignore = False

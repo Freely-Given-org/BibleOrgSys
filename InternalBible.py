@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2013-05-29 by RJH (also update versionString below)
+#   Last modified: 2013-06-04 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -448,8 +448,10 @@ class InternalBible:
                 for BBB in self.discoveryResults:
                     #print( BBB )
                     if BBB != 'ALL':
-                        if self.discoveryResults[BBB]['seemsFinished']: print( "   ", BBB, "seems finished" ) #, str(self.discoveryResults[BBB]['percentageProgress'])+'%' )
-                        elif not self.discoveryResults[BBB]['haveVerseText']: print( "   ", BBB, "not started" ) #, str(self.discoveryResults[BBB]['percentageProgress'])+'%' )
+                        if 'seemsFinished' in self.discoveryResults[BBB] and self.discoveryResults[BBB]['seemsFinished']:
+                            print( "   ", BBB, "seems finished" ) #, str(self.discoveryResults[BBB]['percentageProgress'])+'%' )
+                        elif not self.discoveryResults[BBB]['haveVerseText']:
+                            print( "   ", BBB, "not started" ) #, str(self.discoveryResults[BBB]['percentageProgress'])+'%' )
                         else: print( "   ", BBB, "in progress", str(self.discoveryResults[BBB]['percentageProgress'])+'%' )
             for key,value in sorted(self.discoveryResults['ALL'].items()):
                 if key.startswith("percentage") or key.endswith("Count") or key.endswith("Flag"):
