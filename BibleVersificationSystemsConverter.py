@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleVersificationSystemsConverter.py
-#   Last modified: 2013-05-27 (also update versionString below)
+#   Last modified: 2013-05-30 (also update versionString below)
 #
 # Module handling BibleVersificationSystem_*.xml to produce C and Python data tables
 #
@@ -39,7 +39,6 @@ from xml.etree.ElementTree import ElementTree
 from singleton import singleton
 
 import Globals
-from BibleBooksCodes import BibleBooksCodes
 
 
 
@@ -70,9 +69,6 @@ class BibleVersificationSystemsConverter:
 
         # These are fields that we will fill later
         self.__XMLSystems, self.__DataDict = {}, {}
-
-        # Make sure we have the bible books codes data loaded and available
-        self.__BibleBooksCodes = BibleBooksCodes().loadData()
     # end of BibleVersificationSystemsConverter.__init__
 
 
@@ -266,13 +262,13 @@ class BibleVersificationSystemsConverter:
             for bookElement in self.__XMLSystems[versificationSystemCode]["tree"]:
                 BBB = bookElement.find("referenceAbbreviation").text
                 #print( BBB )
-                if not self.__BibleBooksCodes.isValidReferenceAbbreviation( BBB ):
+                if not Globals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ):
                     logging.error( _("Unrecognized '{}' book abbreviation in '{}' versification system").format( BBB, versificationSystemCode ) )
                 numChapters = bookElement.find("numChapters").text # This is a string
 
                 # Check the chapter data against the expected chapters in the BibleBooksCodes data
-                if numChapters not in self.__BibleBooksCodes.getExpectedChaptersList(BBB):
-                    logging.info( _("Expected number of chapters for {} is {} but we got '{}' for {}").format(BBB, self.__BibleBooksCodes.getExpectedChaptersList(BBB), numChapters, versificationSystemCode ) )
+                if numChapters not in Globals.BibleBooksCodes.getExpectedChaptersList(BBB):
+                    logging.info( _("Expected number of chapters for {} is {} but we got '{}' for {}").format(BBB, Globals.BibleBooksCodes.getExpectedChaptersList(BBB), numChapters, versificationSystemCode ) )
 
                 chapterData, omittedVersesData, combinedVersesData, reorderedVersesData = OrderedDict(), [], [], []
                 chapterData['numChapters'] = numChapters

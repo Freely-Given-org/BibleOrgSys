@@ -125,7 +125,7 @@ class BibleWriter( InternalBible ):
             USFMAbbreviation = Globals.BibleBooksCodes.getUSFMAbbreviation( BBB )
             USFMNumber = Globals.BibleBooksCodes.getUSFMNumber( BBB )
 
-            if 1 or Globals.debugFlag: # Write the pseudoUSFM output for debugging
+            if Globals.debugFlag: # Write the pseudoUSFM output for debugging
                 filename = "{}{}BWr.pSFM".format( USFMNumber, USFMAbbreviation.upper() ) # BWr = BibleWriter
                 pseudoOutputFolder = os.path.join( outputFolder, "pseudoFiles/" )
                 if not os.path.exists( pseudoOutputFolder ): os.makedirs( pseudoOutputFolder )
@@ -2485,7 +2485,6 @@ def demo():
                         if Globals.debugFlag:
                             if not result: halt
         else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
-
 # end of demo
 
 if __name__ == '__main__':

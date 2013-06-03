@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # OpenSongXMLBible.py
-#   Last modified: 2013-05-27 by RJH (also update versionString below)
+#   Last modified: 2013-06-03 by RJH (also update versionString below)
 #
 # Module handling OpenSong XML Bibles
 #
@@ -91,7 +91,7 @@ def OpenSongXMLBibleFileCheck( givenFolderName, autoLoad=False ):
             if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
                 foundFiles.append( something )
     if '__MACOSX' in foundFolders:
-        foundFolders.remove( foundFolders )  # don't visit these directories
+        foundFolders.remove( '__MACOSX' )  # don't visit these directories
     #print( 'ff', foundFiles )
 
     # See if there's an OpenSong project here in this folder

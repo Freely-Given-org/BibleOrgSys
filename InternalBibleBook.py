@@ -1464,14 +1464,13 @@ class InternalBibleBook:
                 sectionReferences.append( (reference,sectionReferenceText,) ) # This is the real data
 
             if 'wj' in text:
-                reference = (chapterNumberStr,verseNumberStr,)
-                print( "InternalBibleBook.getAddedUnits", chapterNumberStr, verseNumberStr, marker, cleanText )
-                print( " ", marker, text )
-                wjCount = text.count( 'wj' ) / 2 # Assuming that half of them are \wj* end markers
-                wjFirst = text.startswith( '\\wj ' )
-                wjLast = text.endswith( '\\wj*' )
-                info = (wjCount,wjFirst,wjLast,)
-                wordsOfJesus.append( (reference,info,) ) # This is the real data
+                reference = (chapterNumberStr,verseNumberStr)
+                #print( "InternalBibleBook.getAddedUnits", chapterNumberStr, verseNumberStr, marker, cleanText )
+                #print( " ", marker, text )
+                wjCount = text.count( 'wj' ) // 2 # Assuming that half of them are \wj* end markers
+                wjFirst, wjLast = text.startswith( '\\wj ' ), text.endswith( '\\wj*' )
+                wjInfo = (originalMarker,wjCount,wjFirst,wjLast,)
+                wordsOfJesus.append( (reference,wjInfo,) ) # This is the real data
 
         if addedUnitErrors: self.errorDictionary['Added Unit Errors'] = addedUnitErrors
         if Globals.debugFlag: assert( len(paragraphReferences) == len(set(paragraphReferences)) ) # No duplicates
@@ -1484,8 +1483,8 @@ class InternalBibleBook:
         Get the units added to the text of the book including paragraph breaks, section headings, and section references.
         Note that all chapter and verse values are returned as strings not integers.
         """
-        typicalParagraphs, typicalQParagraphs, typicalSectionHeadings, typicalSectionReferences = typicalAddedUnitData
-        paragraphReferences, qReferences, sectionHeadings, sectionReferences = self.getAddedUnits()
+        typicalParagraphs, typicalQParagraphs, typicalSectionHeadings, typicalSectionReferences, typicalWordsOfJesus = typicalAddedUnitData
+        paragraphReferences, qReferences, sectionHeadings, sectionReferences, wordsOfJesus = self.getAddedUnits() # For this object
 
         addedUnitNotices = []
         if self.bookReferenceCode in typicalParagraphs:

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Globals.py
-#   Last modified: 2013-05-27 (also update versionString below)
+#   Last modified: 2013-05-30 (also update versionString below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -37,6 +37,16 @@ import multiprocessing
 
 
 cacheFolder = 'ObjectCache/' # Relative path
+
+
+
+# Some language independant punctuation help
+openingSpeechChars = """“«"‘‹¿¡"""
+closingSpeechChars = """”»"’›?!"""
+matchingOpeningCharacters = {'(':')', '[':']', '{':'}', '<':'>', '<<':'>>', '“':'”', '‘':'‘', '«':'»', '‹':'›', '¿':'?', '¡':'!', }
+matchingCharacters = {'(':')',')':'(', '[':']',']':'[', '{':'}','}':'{', '<':'>','>':'<', '<<':'>>','>>':'<<',
+                      '“':'”','”':'“', '‘':'’','’':'‘', '«':'»','»':'«', '‹':'›','›':'‹', '¿':'?','?':'¿', '¡':'!','!':'¡', }
+
 
 
 ##########################################################################################################

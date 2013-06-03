@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USXXMLBible.py
-#   Last modified: 2013-05-27 by RJH (also update versionString below)
+#   Last modified: 2013-06-03 by RJH (also update versionString below)
 #
 # Module handling compilations of USX Bible books
 #
@@ -74,7 +74,7 @@ def USXXMLBibleFileCheck( givenFolderName, autoLoad=False ):
         if os.path.isdir( somepath ): foundFolders.append( something )
         elif os.path.isfile( somepath ): foundFiles.append( something )
     if '__MACOSX' in foundFolders:
-        foundFolders.remove( foundFolders )  # don't visit these directories
+        foundFolders.remove( '__MACOSX' )  # don't visit these directories
 
     # See if there's an USXBible project here in this given folder
     numFound = 0

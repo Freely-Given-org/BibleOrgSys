@@ -79,7 +79,7 @@ class USXXMLBibleBook( BibleBook ):
             # Now process the paragraph subelements
             for element in paragraphXML:
                 location = element.tag + ' ' + paragraphlocation
-                print( "USXXMLBibleBook.load", c, v, element.tag, location )
+                #print( "USXXMLBibleBook.load", c, v, element.tag, location )
                 if element.tag == 'verse': # milestone (not a container)
                     Globals.checkXMLNoText( element, location )
                     Globals.checkXMLNoSubelements( element, location )
@@ -107,7 +107,7 @@ class USXXMLBibleBook( BibleBook ):
                     for attrib,value in element.items():
                         if attrib=='style':
                             charStyle = value # This is basically the USFM character marker name
-                            print( "  charStyle", charStyle )
+                            #print( "  charStyle", charStyle )
                             assert( not Globals.USFMMarkers.isNewlineMarker( charStyle ) )
                         else:
                             if Globals.logErrorsFlag: logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )

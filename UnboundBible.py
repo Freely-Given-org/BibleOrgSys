@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # UnboundBible.py
-#   Last modified: 2013-05-27 by RJH (also update versionString below)
+#   Last modified: 2013-06-03 by RJH (also update versionString below)
 #
 # Module handling Biola University "unbound" Bible files
 #
@@ -141,7 +141,7 @@ def UnboundBibleFileCheck( givenFolderName, autoLoad=False ):
             if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
                 foundFiles.append( something )
     if '__MACOSX' in foundFolders:
-        foundFolders.remove( foundFolders )  # don't visit these directories
+        foundFolders.remove( '__MACOSX' )  # don't visit these directories
 
     # See if there's an UnboundBible project here in this given folder
     numFound = 0

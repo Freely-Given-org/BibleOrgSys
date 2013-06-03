@@ -71,6 +71,8 @@ class InternalBible:
 
         # Set up filled containers for the object
         #self.OneChapterBBBBookCodes = Globals.BibleBooksCodes.getSingleChapterBooksList()
+
+        self.triedLoadingBook = {}
     # end of InternalBible.__init_
 
 
@@ -142,6 +144,10 @@ class InternalBible:
 
 
     def saveBook( self, bookData ):
+        """
+        Save the Bible book into our object
+            and uupdate our indexes.
+        """
         #print( "saveBook( {} )".format( bookData ) )
         BBB = bookData.bookReferenceCode
         self.books[BBB] = bookData
@@ -157,7 +163,9 @@ class InternalBible:
 
 
     def guessXRefBBB( self, referenceString ):
-        """ Attempt to return a book reference code given a book reference code (e.g., 'PRO'), a book name (e.g., Proverbs) or abbreviation (e.g., Prv).
+        """
+        Attempt to return a book reference code given a book reference code (e.g., 'PRO'),
+                a book name (e.g., Proverbs) or abbreviation (e.g., Prv).
             Uses self.combinedBookNameDict and makes and uses self.bookAbbrevDict.
             Return None if unsuccessful."""
         result = Globals.BibleBooksCodes.getBBB( referenceString )
@@ -458,17 +466,17 @@ class InternalBible:
         # Get our recommendations for added units -- only load this once per Bible
         if Globals.verbosityLevel > 1: print( _("Checking {} Bible...").format( self.name ) )
         import pickle
-        folder = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/" ) # Relative to module, not cwd
-        filepath = os.path.join( folder, "AddedUnitData.pickle" )
-        if Globals.verbosityLevel > 3: print( _("Importing from {}...").format( filepath ) )
-        with open( filepath, 'rb' ) as pickleFile:
-            typicalAddedUnits = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
+        pickleFolder = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/" ) # Relative to module, not cwd
+        pickleFilepath = os.path.join( pickleFolder, "AddedUnitData.pickle" )
+        if Globals.verbosityLevel > 3: print( _("Importing from {}...").format( pickleFilepath ) )
+        with open( pickleFilepath, 'rb' ) as pickleFile:
+            typicalAddedUnitData = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
 
         self.discover() # Try to automatically determine our norms
         if Globals.verbosityLevel > 2: print( _("Running checks on {}...").format( self.name ) )
         for BBB in self.books: # Do individual book checks
             if Globals.verbosityLevel > 3: print( "  " + _("Checking {}...").format( BBB ) )
-            self.books[BBB].check( self.discoveryResults['ALL'], typicalAddedUnits )
+            self.books[BBB].check( self.discoveryResults['ALL'], typicalAddedUnitData )
 
         # Do overall Bible checks
         # xxxxxxxxxxxxxxxxx ......................................
@@ -680,6 +688,10 @@ class InternalBible:
         if isinstance( ref, tuple ): BBB = ref[0]
         else: BBB = ref.getBBB() # Assume it's a SimpleVerseKeyObject
         #print( " ", BBB in self.books )
+        if BBB not in self.triedLoadingBook:
+            try: self.loadBook( BBB ) # Some types of Bibles have this function (so an entire Bible doesn't have to be loaded at startup)
+            except: pass # Ignore errors
+            self.triedLoadingBook[BBB] = True
         if BBB in self.books: return self.books[BBB].getCVRef( ref )
         #else: print( "InternalBible {} doesn't have {}".format( self.name, BBB ) ); halt
     # end of InternalBible.getBCVRef

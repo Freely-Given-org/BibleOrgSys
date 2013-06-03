@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2013-05-28 by RJH (also update versionString below)
+#   Last modified: 2013-06-03 by RJH (also update versionString below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -74,7 +74,7 @@ def USFMBibleFileCheck( givenFolderName, autoLoad=False ):
         if os.path.isdir( somepath ): foundFolders.append( something )
         elif os.path.isfile( somepath ): foundFiles.append( something )
     if '__MACOSX' in foundFolders:
-        foundFolders.remove( foundFolders )  # don't visit these directories
+        foundFolders.remove( '__MACOSX' )  # don't visit these directories
 
     # See if there's an USFMBible project here in this given folder
     numFound = 0
@@ -250,6 +250,10 @@ class USFMBible( Bible ):
         """
         if Globals.verbosityLevel > 2: print( "USFMBible.loadBook( {}, {} )".format( BBB, filename ) )
         if BBB in self.books: return # Already loaded
+        if BBB in self.triedLoadingBook:
+            if Globals.logErrorsFlag: logging.warning( "We had already tried loading USFM {} for {}".format( BBB, self.name ) )
+            return # We've already attempted to load this book
+        self.triedLoadingBook[BBB] = True
         if Globals.verbosityLevel > 2 or Globals.logErrorsFlag: print( _("  USFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
         if filename is None: filename = self.possibleFilenameDict[BBB]
         UBB = USFMBibleBook( BBB )
@@ -266,6 +270,7 @@ class USFMBible( Bible ):
         """
         if Globals.verbosityLevel > 2: print( "USFMBible.loadBookMP( {} )".format( BBB ) )
         assert( BBB not in self.books )
+        self.triedLoadingBook[BBB] = True
         if Globals.verbosityLevel > 2 or Globals.logErrorsFlag: print( _("  USFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
         UBB = USFMBibleBook( BBB )
         UBB.load( self.possibleFilenameDict[BBB], self.sourceFolder, self.encoding )
