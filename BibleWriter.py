@@ -468,7 +468,7 @@ class BibleWriter( InternalBible ):
                 elif marker=='v':
                     #print( "Text '{}'".format( text ) )
                     if not text: print( "Missing text for v" ); continue
-                    verseNumberString = text # Used below
+                    verseNumberString = text.replace('<','').replace('>','').replace('"','') # Used below but remove anything that'll cause a big XML problem later
                     #writerObject.writeLineOpenClose ( 'VERS', verseText, ('vnumber',verseNumberString) )
                 elif marker=='v~':
                     #print( "Text '{}'".format( text ) )
