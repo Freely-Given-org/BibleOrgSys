@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-05-29 by RJH (also update versionString below)
+#   Last modified: 2013-06-04 by RJH (also update versionString below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -1270,7 +1270,9 @@ class BibleWriter( InternalBible ):
                     sID = osisID = toOSISGlobals["verseRef"] = chapterRef + '.' + verseNumberString
                 else:
                     if Globals.logErrorsFlag: logging.critical( _("toOSIS: Doesn't handle verse number of form '{}' yet for {}").format(verseNumberString,chapterRef) )
-                    sID = osisID = toOSISGlobals["verseRef"] = chapterRef + '.' + verseNumberString # Try it anyway
+                    tempID = toOSISGlobals["verseRef"] = chapterRef + '.' + verseNumberString # Try it anyway
+                    sID = osisID = tempID.replace('<','').replace('>','').replace('"','') # But remove anything that'll cause a big XML problem later
+                #print( "here SID='{}' osisID='{}'".format( sID, osisID ) )
                 writerObject.writeLineOpenSelfclose( 'verse', [('sID',sID), ('osisID',osisID)] ); haveOpenVsID = sID
                 #adjText = processXRefsAndFootnotes( verseText, extras, offset )
                 #writerObject.writeLineText( checkText(adjText), noTextCheck=True )
