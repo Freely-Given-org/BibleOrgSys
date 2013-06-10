@@ -79,7 +79,7 @@ extensionsToIgnore = ('ZIP', 'BAK', 'LOG', 'HTM','HTML', 'OSIS', 'USX', 'TXT', '
 
 
 
-def ZefaniaXMLBibleFileCheck( givenFolderName, autoLoad=False ):
+def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
     """
     Given a folder, search for Zefania XML Bible files or folders in the folder and in the next level down.
 
@@ -91,7 +91,7 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, autoLoad=False ):
     if autoLoad is true and exactly one Zefania Bible is found,
         returns the loaded ZefaniaXMLBible object.
     """
-    if Globals.verbosityLevel > 2: print( "ZefaniaXMLBibleFileCheck( {}, {} )".format( givenFolderName, autoLoad ) )
+    if Globals.verbosityLevel > 2: print( "ZefaniaXMLBibleFileCheck( {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad ) )
     if Globals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
     if Globals.debugFlag: assert( autoLoad in (True,False,) )
 
@@ -127,7 +127,7 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, autoLoad=False ):
     looksHopeful = False
     lastFilenameFound = None
     for thisFilename in sorted( foundFiles ):
-        if 1 or Globals.strictCheckingFlag:
+        if strictCheck or Globals.strictCheckingFlag:
             firstLines = Globals.peekIntoFile( thisFilename, givenFolderName, numLines=2 )
             if not firstLines or len(firstLines)<2: continue
             if not firstLines[0].startswith( '<?xml version="1.0"' ) \
@@ -142,7 +142,7 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, autoLoad=False ):
         lastFilenameFound = thisFilename
         numFound += 1
     if numFound:
-        if Globals.verbosityLevel > 2: print( "ZefaniaXMLBibleFileCheck got", givenFolderName, lastFilenameFound )
+        if Globals.verbosityLevel > 2: print( "ZefaniaXMLBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and autoLoad:
             ub = ZefaniaXMLBible( givenFolderName, lastFilenameFound )
             ub.load() # Load and process the file
@@ -173,7 +173,7 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, autoLoad=False ):
 
         # See if there's an OS project here in this folder
         for thisFilename in sorted( foundSubfiles ):
-            if Globals.strictCheckingFlag:
+            if strictCheck or Globals.strictCheckingFlag:
                 firstLines = Globals.peekIntoFile( thisFilename, tryFolderName, numLines=2 )
                 if not firstLines or len(firstLines)<2: continue
                 if not firstLines[0].startswith( '<?xml version="1.0"' ) \
@@ -189,7 +189,7 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, autoLoad=False ):
             lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
-        if Globals.verbosityLevel > 2: print( "ZefaniaXMLBibleFileCheck foundProjects", foundProjects )
+        if Globals.verbosityLevel > 2: print( "ZefaniaXMLBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and autoLoad:
             if Globals.debugFlag: assert( len(foundProjects) == 1 )
             ub = ZefaniaXMLBible( foundProjects[0][0], foundProjects[0][1] ) # Folder and filename

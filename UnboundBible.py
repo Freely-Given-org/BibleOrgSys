@@ -101,7 +101,7 @@ extensionsToIgnore = ('ZIP', 'BAK', 'LOG', 'HTM','HTML', 'XML', 'OSIS', 'USX', '
 
 
 
-def UnboundBibleFileCheck( givenFolderName, autoLoad=False ):
+def UnboundBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
     """
     Given a folder, search for Unbound Bible files or folders in the folder and in the next level down.
 
@@ -113,7 +113,7 @@ def UnboundBibleFileCheck( givenFolderName, autoLoad=False ):
     if autoLoad is true and exactly one Unbound Bible is found,
         returns the loaded UnboundBible object.
     """
-    if Globals.verbosityLevel > 2: print( "UnboundBibleFileCheck( {}, {} )".format( givenFolderName, autoLoad ) )
+    if Globals.verbosityLevel > 2: print( "UnboundBibleFileCheck( {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad ) )
     if Globals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
     if Globals.debugFlag: assert( autoLoad in (True,False,) )
 
@@ -150,7 +150,7 @@ def UnboundBibleFileCheck( givenFolderName, autoLoad=False ):
     for thisFilename in sorted( foundFiles ):
         if thisFilename in ('book_names.txt','Readme.txt' ): looksHopeful = True
         elif thisFilename.endswith( '_utf8.txt' ):
-            if 1 or Globals.strictCheckingFlag:
+            if strictCheck or Globals.strictCheckingFlag:
                 firstLine = Globals.peekIntoFile( thisFilename, givenFolderName )
                 if firstLine != "#THE UNBOUND BIBLE (www.unboundbible.org)":
                     if Globals.verbosityLevel > 2: print( "UB (unexpected) first line was '{}' in {}".format( firstLine, thisFilename ) )
@@ -158,7 +158,7 @@ def UnboundBibleFileCheck( givenFolderName, autoLoad=False ):
             lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
-        if Globals.verbosityLevel > 2: print( "UnboundBibleFileCheck got", givenFolderName, lastFilenameFound )
+        if Globals.verbosityLevel > 2: print( "UnboundBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and autoLoad:
             uB = UnboundBible( givenFolderName, lastFilenameFound[:-9] ) # Remove the end of the actual filename "_utf8.txt"
             uB.load() # Load and process the file
@@ -192,7 +192,7 @@ def UnboundBibleFileCheck( givenFolderName, autoLoad=False ):
         # See if there's an UB project here in this folder
         for thisFilename in sorted( foundSubfiles ):
             if thisFilename.endswith( '_utf8.txt' ):
-                if 1 or Globals.strictCheckingFlag:
+                if strictCheck or Globals.strictCheckingFlag:
                     firstLine = Globals.peekIntoFile( thisFilename, tryFolderName )
                     if firstLine != "#THE UNBOUND BIBLE (www.unboundbible.org)":
                         if Globals.verbosityLevel > 2: print( "UB (unexpected) first line was '{}' in {}".format( firstLine, thisFilname ) ); halt
@@ -201,7 +201,7 @@ def UnboundBibleFileCheck( givenFolderName, autoLoad=False ):
                 lastFilenameFound = thisFilename
                 numFound += 1
     if numFound:
-        if Globals.verbosityLevel > 2: print( "UnboundBibleFileCheck foundProjects", foundProjects )
+        if Globals.verbosityLevel > 2: print( "UnboundBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and autoLoad:
             if Globals.debugFlag: assert( len(foundProjects) == 1 )
             uB = UnboundBible( foundProjects[0][0], foundProjects[0][1][:-9] ) # Remove the end of the actual filename "_utf8.txt"

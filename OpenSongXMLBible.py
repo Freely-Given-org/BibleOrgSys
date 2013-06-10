@@ -51,7 +51,7 @@ extensionsToIgnore = ('ZIP', 'BAK', 'LOG', 'HTM','HTML', 'OSIS', 'USX', 'TXT', '
 
 
 
-def OpenSongXMLBibleFileCheck( givenFolderName, autoLoad=False ):
+def OpenSongXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
     """
     Given a folder, search for OpenSong XML Bible files or folders in the folder and in the next level down.
 
@@ -63,7 +63,7 @@ def OpenSongXMLBibleFileCheck( givenFolderName, autoLoad=False ):
     if autoLoad is true and exactly one OpenSong Bible is found,
         returns the loaded OpenSongXMLBible object.
     """
-    if Globals.verbosityLevel > 2: print( "OpenSongXMLBibleFileCheck( {}, {} )".format( givenFolderName, autoLoad ) )
+    if Globals.verbosityLevel > 2: print( "OpenSongXMLBibleFileCheck( {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad ) )
     if Globals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
     if Globals.debugFlag: assert( autoLoad in (True,False,) )
 
@@ -99,7 +99,7 @@ def OpenSongXMLBibleFileCheck( givenFolderName, autoLoad=False ):
     looksHopeful = False
     lastFilenameFound = None
     for thisFilename in sorted( foundFiles ):
-        if 1 or Globals.strictCheckingFlag:
+        if strictCheck or Globals.strictCheckingFlag:
             firstLines = Globals.peekIntoFile( thisFilename, givenFolderName, numLines=2 )
             if not firstLines or len(firstLines)<2: continue
             if not firstLines[0].startswith( '<?xml version="1.0"' ) \
@@ -111,7 +111,7 @@ def OpenSongXMLBibleFileCheck( givenFolderName, autoLoad=False ):
         lastFilenameFound = thisFilename
         numFound += 1
     if numFound:
-        if Globals.verbosityLevel > 2: print( "OpenSongXMLBibleFileCheck got", givenFolderName, lastFilenameFound )
+        if Globals.verbosityLevel > 2: print( "OpenSongXMLBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and autoLoad:
             ub = OpenSongXMLBible( givenFolderName, lastFilenameFound )
             ub.load() # Load and process the file
@@ -142,7 +142,7 @@ def OpenSongXMLBibleFileCheck( givenFolderName, autoLoad=False ):
 
         # See if there's an OS project here in this folder
         for thisFilename in sorted( foundSubfiles ):
-            if Globals.strictCheckingFlag:
+            if strictCheck or Globals.strictCheckingFlag:
                 firstLines = Globals.peekIntoFile( thisFilename, tryFolderName, numLines=2 )
                 if not firstLines or len(firstLines)<2: continue
                 if not firstLines[0].startswith( '<?xml version="1.0"' ) \
@@ -155,7 +155,7 @@ def OpenSongXMLBibleFileCheck( givenFolderName, autoLoad=False ):
             lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
-        if Globals.verbosityLevel > 2: print( "OpenSongXMLBibleFileCheck foundProjects", foundProjects )
+        if Globals.verbosityLevel > 2: print( "OpenSongXMLBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and autoLoad:
             if Globals.debugFlag: assert( len(foundProjects) == 1 )
             ub = OpenSongXMLBible( foundProjects[0][0], foundProjects[0][1] ) # Folder and filename
