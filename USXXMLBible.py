@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USXXMLBible.py
-#   Last modified: 2013-06-03 by RJH (also update versionString below)
+#   Last modified: 2013-06-11 by RJH (also update versionString below)
 #
 # Module handling compilations of USX Bible books
 #
@@ -42,7 +42,7 @@ from Bible import Bible
 
 
 
-def USXXMLBibleFileCheck( givenFolderName, autoLoad=False ):
+def USXXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
     """
     Given a folder, search for USX Bible files or folders in the folder and in the next level down.
 
@@ -54,7 +54,7 @@ def USXXMLBibleFileCheck( givenFolderName, autoLoad=False ):
     if autoLoad is true and exactly one USX Bible is found,
         returns the loaded USXBible object.
     """
-    if Globals.verbosityLevel > 2: print( "USXXMLBibleFileCheck( {}, {} )".format( givenFolderName, autoLoad ) )
+    if Globals.verbosityLevel > 2: print( "USXXMLBibleFileCheck( {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad ) )
     if Globals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
     if Globals.debugFlag: assert( autoLoad in (True,False,) )
 
@@ -86,6 +86,7 @@ def USXXMLBibleFileCheck( givenFolderName, autoLoad=False ):
     if filenameTuples:
         numFound += 1
     if numFound:
+        if Globals.verbosityLevel > 2: print( "USXXMLBibleFileCheck got", numFound, givenFolderName )
         if numFound == 1 and autoLoad:
             uB = USXXMLBible( givenFolderName )
             uB.load() # Load and process the file
@@ -115,10 +116,12 @@ def USXXMLBibleFileCheck( givenFolderName, autoLoad=False ):
         if Globals.verbosityLevel > 2 and filenameTuples: print( "  Found {} USX files: {}".format( len(filenameTuples), filenameTuples ) )
         elif Globals.verbosityLevel > 1 and filenameTuples: print( "  Found {} USX files".format( len(filenameTuples) ) )
         if filenameTuples:
+            foundProjects.append( tryFolderName )
             numFound += 1
     if numFound:
+        if Globals.verbosityLevel > 2: print( "USXXMLBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and autoLoad:
-            uB = USXXMLBible( givenFolderName )
+            uB = USXXMLBible( foundProjects[0] )
             uB.load() # Load and process the file
             return uB
         return numFound

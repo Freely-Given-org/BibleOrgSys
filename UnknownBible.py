@@ -99,7 +99,7 @@ class UnknownBible:
         totalBibleCount, totalBibleTypes, typesFound = 0, 0, []
 
         # Search for Unbound Bibles
-        UnboundBibleCount = UnboundBibleFileCheck( self.givenFolderName, strictCheck )
+        UnboundBibleCount = UnboundBibleFileCheck( self.givenFolderName, strictCheck=strickCheck )
         if UnboundBibleCount:
             totalBibleCount += UnboundBibleCount
             totalBibleTypes += 1
@@ -107,7 +107,7 @@ class UnknownBible:
             if Globals.verbosityLevel > 2: print( "UnknownBible.search: UnboundBibleCount", UnboundBibleCount )
 
         # Search for USFM Bibles
-        USFMBibleCount = USFMBibleFileCheck( self.givenFolderName, strictCheck )
+        USFMBibleCount = USFMBibleFileCheck( self.givenFolderName, strictCheck=strickCheck )
         if USFMBibleCount:
             totalBibleCount += USFMBibleCount
             totalBibleTypes += 1
@@ -115,7 +115,7 @@ class UnknownBible:
             if Globals.verbosityLevel > 2: print( "UnknownBible.search: USFMBibleCount", USFMBibleCount )
 
         # Search for USX XML Bibles
-        USXBibleCount = USXXMLBibleFileCheck( self.givenFolderName, strictCheck )
+        USXBibleCount = USXXMLBibleFileCheck( self.givenFolderName, strictCheck=strickCheck )
         if USXBibleCount:
             totalBibleCount += USXBibleCount
             totalBibleTypes += 1
@@ -123,7 +123,7 @@ class UnknownBible:
             if Globals.verbosityLevel > 2: print( "UnknownBible.search: USXBibleCount", USXBibleCount )
 
         # Search for OSIS XML Bibles
-        OSISBibleCount = OSISXMLBibleFileCheck( self.givenFolderName, strictCheck )
+        OSISBibleCount = OSISXMLBibleFileCheck( self.givenFolderName, strictCheck=strickCheck )
         if OSISBibleCount:
             totalBibleCount += OSISBibleCount
             totalBibleTypes += 1
@@ -131,7 +131,7 @@ class UnknownBible:
             if Globals.verbosityLevel > 2: print( "UnknownBible.search: OSISBibleCount", OSISBibleCount )
 
         # Search for OpenSong XML Bibles
-        OpenSongBibleCount = OpenSongXMLBibleFileCheck( self.givenFolderName, strictCheck )
+        OpenSongBibleCount = OpenSongXMLBibleFileCheck( self.givenFolderName, strictCheck=strickCheck )
         if OpenSongBibleCount:
             totalBibleCount += OpenSongBibleCount
             totalBibleTypes += 1
@@ -139,7 +139,7 @@ class UnknownBible:
             if Globals.verbosityLevel > 2: print( "UnknownBible.search: OpenSongBibleCount", OpenSongBibleCount )
 
         # Search for Zefania XML Bibles
-        ZefaniaBibleCount = ZefaniaXMLBibleFileCheck( self.givenFolderName, strictCheck )
+        ZefaniaBibleCount = ZefaniaXMLBibleFileCheck( self.givenFolderName, strictCheck=strickCheck )
         if ZefaniaBibleCount:
             totalBibleCount += ZefaniaBibleCount
             totalBibleTypes += 1
@@ -162,27 +162,27 @@ class UnknownBible:
 
         elif UnboundBibleCount == 1:
             self.foundType = "Unbound Bible"
-            if autoLoad: return UnboundBibleFileCheck( self.givenFolderName, strictCheck, autoLoad=True )
+            if autoLoad: return UnboundBibleFileCheck( self.givenFolderName, strictCheck=strickCheck, autoLoad=autoLoad )
             else: return self.foundType, UnboundBibleCount
         elif USFMBibleCount == 1:
             self.foundType = "USFM Bible"
-            if autoLoad: return USFMBibleFileCheck( self.givenFolderName, strictCheck, autoLoad=True )
+            if autoLoad: return USFMBibleFileCheck( self.givenFolderName, strictCheck=strickCheck, autoLoad=autoLoad )
             else: return self.foundType, USFMBibleCount
         elif USXBibleCount == 1:
             self.foundType = "USX XML Bible"
-            if autoLoad: return USXXMLBibleFileCheck( self.givenFolderName, strictCheck, autoLoad=True )
+            if autoLoad: return USXXMLBibleFileCheck( self.givenFolderName, strictCheck=strickCheck, autoLoad=autoLoad )
             else: return self.foundType, USXBibleCount
         elif OSISBibleCount == 1:
             self.foundType = "OSIS XML Bible"
-            if autoLoad: return OSISXMLBibleFileCheck( self.givenFolderName, strictCheck, autoLoad=True )
+            if autoLoad: return OSISXMLBibleFileCheck( self.givenFolderName, strictCheck=strickCheck, autoLoad=autoLoad )
             else: return self.foundType, OSISBibleCount
         elif OpenSongBibleCount == 1:
             self.foundType = "OpenSong XML Bible"
-            if autoLoad: return OpenSongXMLBibleFileCheck( self.givenFolderName, strictCheck, autoLoad=True )
+            if autoLoad: return OpenSongXMLBibleFileCheck( self.givenFolderName, strictCheck=strickCheck, autoLoad=autoLoad )
             else: return self.foundType, OpenSongBibleCount
         elif ZefaniaBibleCount == 1:
             self.foundType = "Zefania XML Bible"
-            if autoLoad: return ZefaniaXMLBibleFileCheck( self.givenFolderName, strictCheck, autoLoad=True )
+            if autoLoad: return ZefaniaXMLBibleFileCheck( self.givenFolderName, strictCheck=strickCheck, autoLoad=autoLoad )
             else: return self.foundType, ZefaniaBibleCount
     # end of UnknownBible.search
 # end of class UnknownBible

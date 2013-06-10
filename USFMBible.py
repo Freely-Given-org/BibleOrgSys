@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2013-06-03 by RJH (also update versionString below)
+#   Last modified: 2013-06-11 by RJH (also update versionString below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -42,7 +42,7 @@ from Bible import Bible
 
 
 
-def USFMBibleFileCheck( givenFolderName, autoLoad=False ):
+def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
     """
     Given a folder, search for USFM Bible files or folders in the folder and in the next level down.
 
@@ -54,7 +54,7 @@ def USFMBibleFileCheck( givenFolderName, autoLoad=False ):
     if autoLoad is true and exactly one USFM Bible is found,
         returns the loaded USFMBible object.
     """
-    if Globals.verbosityLevel > 2: print( "USFMBibleFileCheck( {}, {} )".format( givenFolderName, autoLoad ) )
+    if Globals.verbosityLevel > 2: print( "USFMBibleFileCheck( {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad ) )
     if Globals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
     if Globals.debugFlag: assert( autoLoad in (True,False,) )
 
@@ -90,6 +90,7 @@ def USFMBibleFileCheck( givenFolderName, autoLoad=False ):
             ssfFilepath = os.path.join( givenFolderName, SSFs[0] )
         numFound += 1
     if numFound:
+        if Globals.verbosityLevel > 2: print( "USFMBibleFileCheck got", numFound, givenFolderName )
         if numFound == 1 and autoLoad:
             uB = USFMBible( givenFolderName )
             uB.load() # Load and process the file
@@ -123,10 +124,12 @@ def USFMBibleFileCheck( givenFolderName, autoLoad=False ):
             if SSFs:
                 if Globals.verbosityLevel > 2: print( "Got SSFs:", SSFs )
                 ssfFilepath = os.path.join( thisFolderName, SSFs[0] )
+            foundProjects.append( tryFolderName )
             numFound += 1
     if numFound:
+        if Globals.verbosityLevel > 2: print( "USFMBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and autoLoad:
-            uB = USFMBible( givenFolderName )
+            uB = USFMBible( foundProjects[0] )
             uB.load() # Load and process the file
             return uB
         return numFound
