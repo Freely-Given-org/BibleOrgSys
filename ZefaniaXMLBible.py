@@ -142,8 +142,8 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, autoLoad=False ):
         lastFilenameFound = thisFilename
         numFound += 1
     if numFound:
+        if Globals.verbosityLevel > 2: print( "ZefaniaXMLBibleFileCheck got", givenFolderName, lastFilenameFound )
         if numFound == 1 and autoLoad:
-            #print( "got", givenFolderName, lastFilenameFound )
             ub = ZefaniaXMLBible( givenFolderName, lastFilenameFound )
             ub.load() # Load and process the file
             return ub
@@ -189,9 +189,9 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, autoLoad=False ):
             lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
+        if Globals.verbosityLevel > 2: print( "ZefaniaXMLBibleFileCheck foundProjects", foundProjects )
         if numFound == 1 and autoLoad:
             if Globals.debugFlag: assert( len(foundProjects) == 1 )
-            print( "fP", foundProjects )
             ub = ZefaniaXMLBible( foundProjects[0][0], foundProjects[0][1] ) # Folder and filename
             ub.load() # Load and process the file
             return ub

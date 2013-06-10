@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # UnboundBible.py
-#   Last modified: 2013-06-03 by RJH (also update versionString below)
+#   Last modified: 2013-06-11 by RJH (also update versionString below)
 #
 # Module handling Biola University "unbound" Bible files
 #
@@ -158,6 +158,7 @@ def UnboundBibleFileCheck( givenFolderName, autoLoad=False ):
             lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
+        if Globals.verbosityLevel > 2: print( "UnboundBibleFileCheck got", givenFolderName, lastFilenameFound )
         if numFound == 1 and autoLoad:
             uB = UnboundBible( givenFolderName, lastFilenameFound[:-9] ) # Remove the end of the actual filename "_utf8.txt"
             uB.load() # Load and process the file
@@ -200,6 +201,7 @@ def UnboundBibleFileCheck( givenFolderName, autoLoad=False ):
                 lastFilenameFound = thisFilename
                 numFound += 1
     if numFound:
+        if Globals.verbosityLevel > 2: print( "UnboundBibleFileCheck foundProjects", foundProjects )
         if numFound == 1 and autoLoad:
             if Globals.debugFlag: assert( len(foundProjects) == 1 )
             uB = UnboundBible( foundProjects[0][0], foundProjects[0][1][:-9] ) # Remove the end of the actual filename "_utf8.txt"

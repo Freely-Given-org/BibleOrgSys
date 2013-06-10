@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # OpenSongXMLBible.py
-#   Last modified: 2013-06-03 by RJH (also update versionString below)
+#   Last modified: 2013-06-11 by RJH (also update versionString below)
 #
 # Module handling OpenSong XML Bibles
 #
@@ -111,8 +111,8 @@ def OpenSongXMLBibleFileCheck( givenFolderName, autoLoad=False ):
         lastFilenameFound = thisFilename
         numFound += 1
     if numFound:
+        if Globals.verbosityLevel > 2: print( "OpenSongXMLBibleFileCheck got", givenFolderName, lastFilenameFound )
         if numFound == 1 and autoLoad:
-            #print( "got", givenFolderName, lastFilenameFound )
             ub = OpenSongXMLBible( givenFolderName, lastFilenameFound )
             ub.load() # Load and process the file
             return ub
@@ -155,9 +155,9 @@ def OpenSongXMLBibleFileCheck( givenFolderName, autoLoad=False ):
             lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
+        if Globals.verbosityLevel > 2: print( "OpenSongXMLBibleFileCheck foundProjects", foundProjects )
         if numFound == 1 and autoLoad:
             if Globals.debugFlag: assert( len(foundProjects) == 1 )
-            #print( "fP", foundProjects )
             ub = OpenSongXMLBible( foundProjects[0][0], foundProjects[0][1] ) # Folder and filename
             ub.load() # Load and process the file
             return ub

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # OSISXMLBible.py
-#   Last modified: 2013-06-03 by RJH (also update versionString below)
+#   Last modified: 2013-06-11 by RJH (also update versionString below)
 #
 # Module handling OSIS XML Bibles
 #
@@ -113,8 +113,8 @@ def OSISXMLBibleFileCheck( givenFolderName, autoLoad=False ):
         lastFilenameFound = thisFilename
         numFound += 1
     if numFound:
+        if Globals.verbosityLevel > 2: print( "OSISXMLBibleFileCheck got", givenFolderName, lastFilenameFound )
         if numFound == 1 and autoLoad:
-            #print( "got", givenFolderName, lastFilenameFound )
             ub = OSISXMLBible( givenFolderName, lastFilenameFound )
             ub.load() # Load and process the file
             return ub
@@ -157,9 +157,9 @@ def OSISXMLBibleFileCheck( givenFolderName, autoLoad=False ):
             lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
+        if Globals.verbosityLevel > 2: print( "OSISXMLBibleFileCheck foundProjects", foundProjects )
         if numFound == 1 and autoLoad:
             if Globals.debugFlag: assert( len(foundProjects) == 1 )
-            #print( "fP", foundProjects )
             ub = OSISXMLBible( foundProjects[0][0], foundProjects[0][1] ) # Folder and filename
             ub.load() # Load and process the file
             return ub

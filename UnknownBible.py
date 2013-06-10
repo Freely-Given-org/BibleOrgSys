@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # UnknownBible.py
-#   Last modified: 2013-05-27 (also update versionString below)
+#   Last modified: 2013-06-11 (also update versionString below)
 #
 # Module handling a unknown Bible object
 #
@@ -37,7 +37,7 @@ Currently aware of the following Bible types:
 """
 
 progName = "Unknown Bible object handler"
-versionString = "0.01"
+versionString = "0.02"
 
 import logging, os.path
 from gettext import gettext as _
@@ -104,7 +104,7 @@ class UnknownBible:
             totalBibleCount += UnboundBibleCount
             totalBibleTypes += 1
             typesFound.append( 'Unbound' )
-            #print( "UnboundBibleCount", UnboundBibleCount )
+            if Globals.verbosityLevel > 2: print( "UnboundBibleCount", UnboundBibleCount )
 
         # Search for USFM Bibles
         USFMBibleCount = USFMBibleFileCheck( self.givenFolderName )
@@ -112,7 +112,7 @@ class UnknownBible:
             totalBibleCount += USFMBibleCount
             totalBibleTypes += 1
             typesFound.append( 'USFM' )
-            #print( "USFMBibleCount", USFMBibleCount )
+            if Globals.verbosityLevel > 2: print( "USFMBibleCount", USFMBibleCount )
 
         # Search for USX XML Bibles
         USXBibleCount = USXXMLBibleFileCheck( self.givenFolderName )
@@ -120,7 +120,7 @@ class UnknownBible:
             totalBibleCount += USXBibleCount
             totalBibleTypes += 1
             typesFound.append( 'USX' )
-            #print( "USXBibleCount", USXBibleCount )
+            if Globals.verbosityLevel > 2: print( "USXBibleCount", USXBibleCount )
 
         # Search for OSIS XML Bibles
         OSISBibleCount = OSISXMLBibleFileCheck( self.givenFolderName )
@@ -128,7 +128,7 @@ class UnknownBible:
             totalBibleCount += OSISBibleCount
             totalBibleTypes += 1
             typesFound.append( 'OSIS' )
-            #print( "OSISBibleCount", OSISBibleCount )
+            if Globals.verbosityLevel > 2: print( "OSISBibleCount", OSISBibleCount )
 
         # Search for OpenSong XML Bibles
         OpenSongBibleCount = OpenSongXMLBibleFileCheck( self.givenFolderName )
@@ -136,7 +136,7 @@ class UnknownBible:
             totalBibleCount += OpenSongBibleCount
             totalBibleTypes += 1
             typesFound.append( 'OpenSong' )
-            #print( "OpenSongBibleCount", OpenSongBibleCount )
+            if Globals.verbosityLevel > 2: print( "OpenSongBibleCount", OpenSongBibleCount )
 
         # Search for Zefania XML Bibles
         ZefaniaBibleCount = ZefaniaXMLBibleFileCheck( self.givenFolderName )
@@ -144,7 +144,7 @@ class UnknownBible:
             totalBibleCount += ZefaniaBibleCount
             totalBibleTypes += 1
             typesFound.append( 'Zefania' )
-            #print( "ZefaniaBibleCount", ZefaniaBibleCount )
+            if Globals.verbosityLevel > 2: print( "ZefaniaBibleCount", ZefaniaBibleCount )
 
 
         assert( len(typesFound) == totalBibleTypes )

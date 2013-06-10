@@ -813,7 +813,7 @@ class BibleWriter( InternalBible ):
                 elif marker == 'c#': # Chapter number added for printing
                     pass # Just ignore it completely
                 elif marker == 'v':
-                    v = adjText
+                    v = adjText.replace('<','').replace('>','').replace('"','') # Used below but remove anything that'll cause a big XML problem later
                     if paraJustOpened: paraJustOpened = False
                     else:
                         xw.removeFinalNewline( True )
