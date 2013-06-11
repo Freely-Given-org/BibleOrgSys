@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleOrganizationalSystems.py
-#   Last modified: 2013-05-27 by RJH (also update versionString below)
+#   Last modified: 2013-06-11 by RJH (also update versionString below)
 #
 # Module handling BibleOrganizationalSystems
 #
@@ -359,7 +359,8 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         BBB, C, V, S = referenceTuple
         if BBB is None or not BBB: return False
         assert( len(BBB) == 3 )
-        assert( not C or C.isdigit() ) # Should be no suffix on C (although it can be blank if the reference is for a whole book)
+        if C and C.isdigit(): # Should be no suffix on C (although it can be blank if the reference is for a whole book)
+            print( "BibleOrganizationalSystem.isValidBCVRef( {}, {}, {} ) expected C to be digits".format( referenceTuple, referenceString, extended ) )
         assert( not V or V.isdigit() ) # Should be no suffix on V (although it can be blank if the reference is for a whole chapter)
         assert( not S or len(S)==1 and S.isalpha() ) # Suffix should be only one lower-case letter if anything
         if BBB and BibleBookOrderSystem.containsBook( self, BBB ):

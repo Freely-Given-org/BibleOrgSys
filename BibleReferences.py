@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleReferences.py
-#   Last modified: 2013-05-27 by RJH (also update versionString below)
+#   Last modified: 2013-06-11 by RJH (also update versionString below)
 #
 # Module for handling Bible references including ranges
 #
@@ -1183,6 +1183,7 @@ class BibleReferenceList( BibleReferenceBase ):
         return sucessFlag, haveWarnings, resultList
     # end of BibleReferenceList.parseOSISReferenceString
 
+
     def getReferenceList( self, expanded=False ):
         """ Returns the internal list of Bible references.
 
@@ -1199,6 +1200,7 @@ class BibleReferenceList( BibleReferenceBase ):
         else:
             return self.referenceList
     # end of BibleReferenceList.getReferenceList
+
 
     def getOSISRefList( self ):
         """ Converts our internal reference list to OSIS format.
@@ -1256,10 +1258,13 @@ class BibleReferenceList( BibleReferenceBase ):
         #return False
     ## end of BibleReferenceList.containsReferenceTuple
 
+
     def containsReference( self, BBB, C, V, S=None ):
         """ Returns True/False if the internal reference list contains the given reference. """
+        #if Globals.verbosityLevel > 3: print( "BibleReferenceList.containsReference( {}, {}, {}, {} )".format( BBB, C, V, S ) )
         assert( BBB and len(BBB)==3 )
-        assert( C and C.isdigit() )
+        assert( C )
+        if not C.isdigit(): print( "BibleReferenceList.containsReference( {}, {}, {}, {} ) expected C to be digits".format( BBB, C, V, S ) )
         assert( V ) # May contain a list or range here
 
         # First find out what we were given
@@ -1317,6 +1322,7 @@ class BibleReferenceList( BibleReferenceBase ):
         return False
     # end of BibleReferenceList.containsReference
 # end of class BibleReferenceList
+
 
 
 class BibleAnchorReference:
@@ -1380,6 +1386,7 @@ class BibleAnchorReference:
         if self.referenceList: result += ('\n' if result else '') + "  {}".format( self.referenceList )
         return result
     # end of BibleAnchorReference:__str__
+
 
     def parseAnchorString( self, anchorString, location=None ):
         """
