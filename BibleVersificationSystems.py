@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleVersificationSystems.py
-#   Last modified: 2013-05-27 (also update versionString below)
+#   Last modified: 2013-06-11 (also update versionString below)
 #
 # Module handling BibleVersificationSystem_*.xml to produce C and Python data tables
 #
@@ -657,7 +657,8 @@ class BibleVersificationSystem:
         #print( "BibleVersificationSystem.isValidBCVRef( {}, {}, {}, {} )".format( referenceTuple, referenceString, extended ) )
         BBB, C, V, S = referenceTuple
         assert( len(BBB) == 3 )
-        assert( not C or C.isdigit() ) # Should be no suffix on C (although it can be blank if the reference is for a whole book)
+        if C and C.isdigit(): # Should be no suffix on C (although it can be blank if the reference is for a whole book)
+            print( "BibleVersificationSystem.isValidBCVRef( {}, {}, {} ) expected C to be digits".format( referenceTuple, referenceString, extended ) )
         assert( not V or V.isdigit() ) # Should be no suffix on V (although it can be blank if the reference is for a whole chapter)
         assert( not S or len(S)==1 and S.isalpha() ) # Suffix should be only one lower-case letter if anything
         myReferenceString = " (from '{}')".format(referenceString) if referenceString is not None else ''
