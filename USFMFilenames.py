@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMFilenames.py
-#   Last modified: 2013-06-11 by RJH (also update versionString below)
+#   Last modified: 2013-06-12 by RJH (also update versionString below)
 #
 # Module handling USFM Bible filenames
 #
@@ -29,6 +29,7 @@ Module for creating and manipulating USFM filenames.
 
 progName = "USFM Bible filenames handler"
 versionString = "0.58"
+debuggingThisModule = False
 
 
 import os, logging
@@ -375,7 +376,7 @@ class USFMFilenames:
         resultList = []
         for bookReferenceCode,derivedFilename in self.getDerivedFilenameTuples():
             derivedFilepath = os.path.join( self.givenFolderName, derivedFilename )
-            #if Globals.verbosityLevel > 2: print( '  getConfirmedFilenameTuples: Checking for existence of: ' + derivedFilename )
+            if Globals.debugFlag and debuggingThisModule: print( '  getConfirmedFilenameTuples: Checking for existence of: ' + derivedFilename )
             if os.access( derivedFilepath, os.R_OK ):
                 if doubleCheck:
                     USFMId = self.getUSFMIDFromFile( self.givenFolderName, derivedFilename, derivedFilepath )

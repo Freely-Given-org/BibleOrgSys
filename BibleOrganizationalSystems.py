@@ -359,7 +359,7 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         BBB, C, V, S = referenceTuple
         if BBB is None or not BBB: return False
         assert( len(BBB) == 3 )
-        if C and C.isdigit(): # Should be no suffix on C (although it can be blank if the reference is for a whole book)
+        if C and not C.isdigit(): # Should be no suffix on C (although it can be blank if the reference is for a whole book)
             print( "BibleOrganizationalSystem.isValidBCVRef( {}, {}, {} ) expected C to be digits".format( referenceTuple, referenceString, extended ) )
         assert( not V or V.isdigit() ) # Should be no suffix on V (although it can be blank if the reference is for a whole chapter)
         assert( not S or len(S)==1 and S.isalpha() ) # Suffix should be only one lower-case letter if anything

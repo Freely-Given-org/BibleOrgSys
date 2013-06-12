@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-06-04 by RJH (also update versionString below)
+#   Last modified: 2013-06-12 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -39,6 +39,7 @@ and then calls
 
 progName = "Internal Bible book handler"
 versionString = "0.23"
+debuggingThisModule = False
 
 
 import os, logging
@@ -269,7 +270,7 @@ class InternalBibleBook:
         """ Append a (USFM-based) 2-tuple to self._rawLines.
             This is a very simple function, but having it allows us to have a single point in order to catch particular bugs or errors. """
         if Globals.debugFlag:
-            print( "InternalBibleBook.appendLine( {}, {} )".format( repr(marker), repr(text) ) )
+            if debuggingThisModule: print( "InternalBibleBook.appendLine( {}, {} )".format( repr(marker), repr(text) ) )
             assert( not self._processedFlag )
 
         if not ( marker in Globals.USFMMarkers or marker in NON_USFM_MARKERS ):
