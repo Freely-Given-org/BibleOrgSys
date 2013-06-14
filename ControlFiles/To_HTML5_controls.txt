@@ -1,0 +1,48 @@
+# To_HTML5_controls.txt
+#
+# This is a sample control file for creating an HTML5 Bible text file
+# You should edit this file for your specific situation
+#
+# Any line with a # in the first column is a comment line ignored by the program
+# Unless otherwise specified, most entries consist of a variable name on the left,
+#   and equals sign (with optional spaces either side), and the assigned value.
+#       e.g., DoThis = True
+# Note that all fieldnames and settings are CASE SENSITIVE
+#
+
+# The following values determine the Bible organisational system (especially needed for Bible references)
+LanguageCode = __PROJECT_NAME__
+PublicationCode = GENERIC
+
+# The following values are copied into the output file
+HTML5Language = en
+HTML5Suffix = html
+HTML5Publisher = __PUBLISHER__
+HTML5Rights = Copyright (C) 2013 __NAME__
+HTML5Contributors =
+HTML5Source = __NAME__
+HTML5Coverage = People around the world
+
+# Allowed values are byBible, byTestament, byBook, or byChapter
+HTML5Files = byBook
+
+# Allowed values are All or None or Header
+#   This affects how many space and newline characters are included in the output file(s)
+HTML5HumanReadable = All
+
+# This section only applies if byBible is selected above
+#HTML5OutputFilename = __PROJECT_NAME____BOOKCODE___BibleBook.__SUFFIX___
+HTML5Title = __PROJECT_NAME__ BibleBook
+#HTML5BibleName = __PROJECT_NAME__ BibleBook
+#HTML5Subject =
+#HTML5Description =
+#HTML5Identifier =
+#LogFilename = To_HTML5_logfile.txt
+
+# This section only applies if byTestament, byBook, or byChapter is selected above
+# The fields must contain XxXxX which will be automatically replaced by the program
+HTML5OutputFilenameTemplate = __PROJECT_NAME_____BOOKCODE__.__SUFFIX__
+HTML5BibleNameTemplate = __PROJECT_NAME__ XxXxX
+LogFileTemplate = __PROJECT_NAME___HTML5_XxXxX_logfile.txt
+
+## End of To_HTML5_controls.txt
