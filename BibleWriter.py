@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-06-04 by RJH (also update versionString below)
+#   Last modified: 2013-06-14 by RJH (also update versionString below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -32,10 +32,19 @@ A class which extends InternalBible.
 
 This is intended to be a virtual class, i.e., to be extended further
     by classes which load particular kinds of Bibles (e.g., OSIS, USFM, USX, etc.)
+
+Contains functions:
+    toUSFM( self, outputFolder=None )
+    toMediaWiki( self, outputFolder=None, controlDict=None, validationSchema=None )
+    toZefaniaXML( self, outputFolder=None, controlDict=None, validationSchema=None )
+    toUSXXML( self, outputFolder=None, controlDict=None, validationSchema=None )
+    toSwordModule( self, outputFolder=None, controlDict=None, validationSchema=None )
+    toHTML5( self, outputFolder=None, controlDict=None, validationSchema=None )
+    doAllExports( self, givenOutputFolderName=None )
 """
 
 progName = "Bible writer"
-versionString = "0.08"
+versionString = "0.09"
 
 
 import sys, os, logging, datetime
@@ -49,7 +58,7 @@ from BibleReferences import BibleReferenceList
 from MLWriter import MLWriter
 
 
-defaultControlFolder = "ControlFiles" # Relative to the current working directory
+defaultControlFolder = "ControlFiles/" # Relative to the current working directory
 
 
 
@@ -58,14 +67,15 @@ class BibleWriter( InternalBible ):
     Class to export Bibles.
 
     """
-    #def __init__( self ):
-        #"""
-        ##    Create the object.
-        ##    """
-        #InternalBible.__init__( self  )
+    def __init__( self ):
+        """
+        #    Create the object.
+        #    """
+        InternalBible.__init__( self  ) # Initialise the base class
+        self.doneSetupGeneric = False
         #self.genericBOS = BibleOrganizationalSystem( "GENERIC-KJV-81" )
-        #self.genericBRL = BibleReferenceList( self.genericBOS, BibleObject=self ) # self isn't defined yet!!!
-    ## end of BibleWriter.__init_
+        #self.genericBRL = BibleReferenceList( self.genericBOS, BibleObject=self ) # self isn't actualised yet!!!
+    # end of BibleWriter.__init_
 
 
     #def x__str__( self ):
@@ -83,19 +93,26 @@ class BibleWriter( InternalBible ):
     ## end of BibleWriter.__str__
 
 
-    #def xload( self ):
-        #""" Load the object from the USFM files """
-        #USFMBible.load( self )
-        ##if Globals.commandLineOptions.export:
-        ##self.genericBOS = BibleOrganizationalSystem( "GENERIC-KJV-81" )
-        #self.genericBRL = BibleReferenceList( self.genericBOS, BibleObject=self )
-    ## end of BibleWriter.load
+
+    def setDefaultControlFolder( self, newFolderName ):
+        global defaultControlFolder
+        defaultControlFolder = newFolderName
+    # end of BibleWriter.setDefaultControlFolder
 
 
-    def setupWriter( self ):
+
+    def __setupWriter( self ):
+        """
+        Do some generic system setting up.
+
+        Unfortunately, I don't know how to do this in the _init__ function
+            coz it uses self (which isn't actualised yet in init).
+        """
+        assert( not self.doneSetupGeneric )
         self.genericBOS = BibleOrganizationalSystem( "GENERIC-KJV-81" )
         self.genericBRL = BibleReferenceList( self.genericBOS, BibleObject=self )
-    # end of BibleWriter.setupWriter
+        self.doneSetupGeneric = True
+    # end of BibleWriter.__setupWriter
 
 
 
@@ -103,6 +120,7 @@ class BibleWriter( InternalBible ):
         """
         Adjust the pseudo USFM and write the USFM files.
         """
+        if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = "OutputFiles/USFMExport/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         #if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_MediaWiki_controls.txt", controlDict )
@@ -182,6 +200,7 @@ class BibleWriter( InternalBible ):
         Using settings from the given control file,
             converts the USFM information to a Media Wiki file.
         """
+        if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = "OutputFiles/MediaWikiExport/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         if not controlDict:
@@ -420,6 +439,7 @@ class BibleWriter( InternalBible ):
         This format is roughly documented at http://de.wikipedia.org/wiki/Zefania_XML
             but more fields can be discovered by looking at downloaded files.
         """
+        if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = "OutputFiles/ZefaniaExport/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         if not controlDict:
@@ -517,6 +537,7 @@ class BibleWriter( InternalBible ):
 
         If a schema is given (either a path or URL), the XML output files are validated.
         """
+        if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = "OutputFiles/USXExport/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         if not controlDict:
@@ -883,7 +904,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def writeSwordLocale( self, name, description, BibleOrganizationalSystem, getBookNameFunction, localeFilepath ):
+    def _writeSwordLocale( self, name, description, BibleOrganizationalSystem, getBookNameFunction, localeFilepath ):
         """
         Writes a UTF-8 Sword locale file containing the book names and abbreviations.
         """
@@ -960,7 +981,7 @@ class BibleWriter( InternalBible ):
                             abbrevList.append( vernacularAbbrev )
 
         if Globals.verbosityLevel>1: print( _("  Wrote {} book names and {} abbreviations.").format( len(bookList), len(abbrevList) ) )
-    # end of BibleWriter.writeSwordLocale
+    # end of BibleWriter._writeSwordLocale
 
 
 
@@ -973,6 +994,7 @@ class BibleWriter( InternalBible ):
 
         TODO: We're not consistent about handling errors: sometimes we use assert, sometime raise (both of which abort the program), and sometimes log errors or warnings.
         """
+        if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = "OutputFiles/OSISExport/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         if not controlDict:
@@ -1003,7 +1025,7 @@ class BibleWriter( InternalBible ):
         unhandledMarkers = set()
 
         # Let's write a Sword locale while we're at it
-        self.writeSwordLocale( controlDict["xmlLanguage"], controlDict["LanguageName"], BOS, getBookNameFunction, os.path.join( outputFolder, "SwLocale-utf8.conf" ) )
+        self._writeSwordLocale( controlDict["xmlLanguage"], controlDict["LanguageName"], BOS, getBookNameFunction, os.path.join( outputFolder, "SwLocale-utf8.conf" ) )
         #if Globals.verbosityLevel>1: print( _("Writing Sword locale file {}...").format(SwLocFilepath) )
         #with open( SwLocFilepath, 'wt' ) as SwLocFile:
             #SwLocFile.write( '[Meta]\nName={}\n'.format(controlDict["xmlLanguage"]) )
@@ -1585,6 +1607,7 @@ class BibleWriter( InternalBible ):
         Using settings from the given control file,
             converts the USFM information to a UTF-8 OSIS-XML-based Sword module.
         """
+        if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = "OutputFiles/SwordExport/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         if not controlDict:
@@ -1629,7 +1652,7 @@ class BibleWriter( InternalBible ):
 
 
         # Let's write a Sword locale while we're at it
-        self.writeSwordLocale( controlDict["xmlLanguage"], controlDict["LanguageName"], BOS, getBookNameFunction, os.path.join( outputFolder, "SwLocale-utf8.conf" ) )
+        self._writeSwordLocale( controlDict["xmlLanguage"], controlDict["LanguageName"], BOS, getBookNameFunction, os.path.join( outputFolder, "SwLocale-utf8.conf" ) )
         #SwLocFilepath = os.path.join( outputFolder, "SwLocale-utf8.conf" )
         #if Globals.verbosityLevel>1: print( _("Writing Sword locale file {}...").format(SwLocFilepath) )
         #with open( SwLocFilepath, 'wt' ) as SwLocFile:
@@ -2158,6 +2181,7 @@ class BibleWriter( InternalBible ):
         Using settings from the given control file,
             converts the USFM information to UTF-8 HTML files.
         """
+        if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = "OutputFiles/HTML5Export/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         if not controlDict:
@@ -2393,16 +2417,14 @@ class BibleWriter( InternalBible ):
     def doAllExports( self, givenOutputFolderName=None ):
         """
         """
-        if Globals.verbosityLevel > 1: print( _("Exporting {} ({}) to all formats...").format( self.name, self.objectTypeString ) )
+        if Globals.verbosityLevel > 1: print( _("BibleWriter.doAllExports: Exporting {} ({}) to all formats...").format( self.name, self.objectTypeString ) )
         if givenOutputFolderName == None: givenOutputFolderName = "OutputFiles"
 
         if Globals.debugFlag: assert( givenOutputFolderName and isinstance( givenOutputFolderName, str ) )
         # Check that the given folder is readable
         if not os.access( givenOutputFolderName, os.W_OK ):
-            logging.critical( _("Bible.doAllExports: Given '{}' folder is unwritable").format( givenOutputFolderName ) )
+            logging.critical( _("BibleWriter.doAllExports: Given '{}' folder is unwritable").format( givenOutputFolderName ) )
             return False
-
-        self.setupWriter()
 
         # Define our various output folders
         USFMOutputFolder = os.path.join( givenOutputFolderName, "USFM" + ("Reexport" if self.objectTypeString=='USFM' else "Export" ) )
@@ -2473,7 +2495,6 @@ def demo():
             UB.load()
             if Globals.verbosityLevel > 0: print( UB )
             if Globals.strictCheckingFlag: UB.check()
-            #UB.setupWriter()
             UB.doAllExports()
             if 0: # Now compare the original and the derived USX XML files
                 outputFolder = "OutputFiles/USXExport/"

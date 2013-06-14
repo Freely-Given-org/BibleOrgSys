@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Globals.py
-#   Last modified: 2013-05-30 (also update versionString below)
+#   Last modified: 2013-06-14 (also update versionString below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -29,7 +29,7 @@ Module handling global variables
 """
 
 progName = "Globals"
-versionString = "0.17"
+versionString = "0.18"
 
 
 import logging, os.path, pickle
@@ -563,7 +563,7 @@ def addStandardOptionsAndProcess( parserObject ):
     parserObject.add_option("-q", "--quiet", action="store_const", dest="verbose", const=1, help="output less information to the console")
     parserObject.add_option("-i", "--informative", action="store_const", dest="verbose", const=3, help="output more information to the console")
     parserObject.add_option("-v", "--verbose", action="store_const", dest="verbose", const=4, help="output lots of information for the user")
-    parserObject.add_option("-t", "--strict", action="store_true", dest="strict", default=False, help="perform very strict checking of all input")
+    parserObject.add_option("-c", "--strict", action="store_true", dest="strict", default=False, help="perform very strict checking of all input")
     parserObject.add_option("-l", "--log", action="store_true", dest="log", default=False, help="log errors to console")
     parserObject.add_option("-1", "--single", action="store_true", dest="single", default=False, help="don't use multiprocessing")
     parserObject.add_option("-d", "--debug", action="store_true", dest="debug", default=False, help="output even more information for the programmer/debugger")

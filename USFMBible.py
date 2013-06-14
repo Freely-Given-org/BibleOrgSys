@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2013-06-11 by RJH (also update versionString below)
+#   Last modified: 2013-06-13 by RJH (also update versionString below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -408,7 +408,6 @@ def demo():
                 usxSchemaFile = "../../../../../Data/Work/Bibles/Formats/USX/usx 1.rng"
                 OSISSchemaFile = "../../../../../Data/Work/Bibles/Formats/OSIS/osisCore.2.1.1.xsd"
 
-                UB.setupWriter()
                 #BW.genericBOS = BibleOrganizationalSystem( "GENERIC-KJV-81" )
                 #BW.genericBRL = BibleReferenceList( BW.genericBOS, BibleObject=BW )
                 import subprocess # for running xmllint
