@@ -2436,6 +2436,9 @@ class BibleWriter( InternalBible ):
         htmlOutputFolder = os.path.join( givenOutputFolderName, "BOS_HTML5" + "Export" )
         pickleOutputFolder = os.path.join( givenOutputFolderName, "BOS_Bible_Object_Pickle" )
 
+        try: self.pickle( folder=pickleOutputFolder )
+        except: print( "BibleWriter.doAllExports: pickle failed." )
+
         if 0 and Globals.maxProcesses > 1: # Process all the exports with different threads
             # DON'T KNOW WHY THIS CAUSES A SEGFAULT
             self.__outputFolders = [USFMOutputFolder, MWOutputFolder, zOutputFolder, USXOutputFolder, OSISOutputFolder, swOutputFolder, htmlOutputFolder]
@@ -2463,8 +2466,6 @@ class BibleWriter( InternalBible ):
             OSISExportResult = self.toOSISXML( OSISOutputFolder )
             swExportResult = self.toSwordModule( swOutputFolder )
             htmlExportResult = self.toHTML5( htmlOutputFolder )
-        try: self.pickle( folder=pickleOutputFolder )
-        except: print( "BibleWriter.doAllExports: pickle failed." )
 
         print( "\nResults:  MW={}  Zef={}  USX={}  OSIS={}  Sw={}  HTML={}" \
             .format( MWExportResult, zExportResult, USXExportResult, OSISExportResult, swExportResult, htmlExportResult ) )
