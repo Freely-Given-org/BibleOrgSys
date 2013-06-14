@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksNames.py
-#   Last modified: 2013-05-27 (also update versionString below)
+#   Last modified: 2013-06-14 (also update versionString below)
 #
 # Module handling BibleBooksNames
 #
@@ -35,7 +35,7 @@ import logging, os
 from gettext import gettext as _
 from collections import OrderedDict
 
-from singleton import singleton
+#from singleton import singleton
 
 import Globals
 
@@ -189,7 +189,7 @@ def expandBibleNamesInputs ( systemName, divisionsNamesDict, booknameLeadersDict
 
 
 
-@singleton # Can only ever have one instance
+#@singleton # Can only ever have one instance
 class BibleBooksNamesSystems:
     """
     Class for handling Bible books names systems.

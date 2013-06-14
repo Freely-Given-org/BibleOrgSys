@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-06-12 by RJH (also update versionString below)
+#   Last modified: 2013-06-14 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -291,7 +291,7 @@ class InternalBibleBook:
 
         if text.strip() != text:
             if marker=='v' and len(text)<=4 and self.objectTypeString in ('USX',): pass
-            elif Globals.logErrorsFlag: logging.warning( "InternalBibleBook.appendLine: Possibly needed to strip {} {} {}='{}'".format( self.objectTypeString, self.bookReferenceCode, marker, text ) )
+            elif Globals.logErrorsFlag and Globals.verbosityLevel > 2: logging.warning( "InternalBibleBook.appendLine: Possibly needed to strip {} {} {}='{}'".format( self.objectTypeString, self.bookReferenceCode, marker, text ) )
 
         rawLineTuple = ( marker, text )
         self._rawLines.append( rawLineTuple )
@@ -783,7 +783,7 @@ class InternalBibleBook:
                 if ix==99999: # There's neither -- not unexpected if this is a translation in progress
                     #print( "processLine had an empty verse field in {} {}:{}: '{}' '{}' {} {} {}".format( self.bookReferenceCode, c, v, originalMarker, originalText, ix, ixSP, ixBS ) )
                     fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Nothing after verse number: '{}'").format( originalText ) )
-                    if self.objectTypeString in ('USFM','USX',) and Globals.logErrorsFlag: logging.error( _("Nothing following verse number after {} {}:{} in \\{}: '{}'").format( self.bookReferenceCode, c, v, originalMarker, originalText ) )
+                    if self.objectTypeString in ('USFM','USX',) and Globals.logErrorsFlag and Globals.verbosityLevel > 2: logging.error( _("Nothing following verse number after {} {}:{} in \\{}: '{}'").format( self.bookReferenceCode, c, v, originalMarker, originalText ) )
                     self.addPriorityError( 92, c, v, _("Nothing following verse number in '{}'").format( originalText ) )
                     verseNumberBit = text
                     #print( "verseNumberBit is '{}'".format( verseNumberBit ) )

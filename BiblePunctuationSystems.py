@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BiblePunctuationSystems.py
-#   Last modified: 2013-05-27 (also update versionString below)
+#   Last modified: 2013-06-14 (also update versionString below)
 #
 # Module handling BiblePunctuationSystem_*.xml to produce C and Python data tables
 #
@@ -35,11 +35,11 @@ import os, logging
 from gettext import gettext as _
 from collections import OrderedDict
 
-from singleton import singleton
+#from singleton import singleton
 import Globals
 
 
-@singleton # Can only ever have one instance
+#@singleton # Can only ever have one instance
 class BiblePunctuationSystems:
     """
     Class for handling Bible punctuation systems.

@@ -2463,7 +2463,8 @@ class BibleWriter( InternalBible ):
             OSISExportResult = self.toOSISXML( OSISOutputFolder )
             swExportResult = self.toSwordModule( swOutputFolder )
             htmlExportResult = self.toHTML5( htmlOutputFolder )
-        self.pickle( folder=pickleOutputFolder )
+        try: self.pickle( folder=pickleOutputFolder )
+        except: print( "BibleWriter.doAllExports: pickle failed." )
 
         print( "\nResults:  MW={}  Zef={}  USX={}  OSIS={}  Sw={}  HTML={}" \
             .format( MWExportResult, zExportResult, USXExportResult, OSISExportResult, swExportResult, htmlExportResult ) )
