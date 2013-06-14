@@ -2271,7 +2271,7 @@ class BibleWriter( InternalBible ):
             writeHeader( writerObject )
             haveOpenSection = haveOpenParagraph = haveOpenList = False
             for marker,originalMarker,text,cleanText,extras in bkData._processedLines: # Process internal Bible lines
-                if BBB=='MRK': print( "writeBook", marker, cleanText )
+                #if BBB=='MRK': print( "writeBook", marker, cleanText )
                 if marker in ('id','ide','toc1','toc2','toc3','rem',):
                     pass # Just ignore these lines
 
