@@ -2246,7 +2246,7 @@ class BibleWriter( InternalBible ):
 
         def createSectionReference( givenRef ):
             """ Returns an HTML string for a section reference. """
-            print( "createSectionReference: '{}'".format( givenRef ) )
+            #print( "createSectionReference: '{}'".format( givenRef ) )
             theRef = givenRef
             result = bracket = ''
             for bracketLeft,bracketRight in (('(',')'),('[',']'),):

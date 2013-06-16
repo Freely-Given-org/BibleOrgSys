@@ -298,7 +298,7 @@ class InternalBibleBook:
             elif Globals.logErrorsFlag:
                 if self.pntsCount != -1:
                     self.pntsCount += 1
-                    if self.pntsCount < MAX_NONCRITICAL_ERRORS_PER_BOOK:
+                    if self.pntsCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
                         logging.warning( "InternalBibleBook.appendLine: Possibly needed to strip {} {} {}='{}'".format( self.objectTypeString, self.bookReferenceCode, marker, text ) )
                     else: # we've reached our limit
                         logging.error( _('Additional "Possible needed to strip" messages suppressed...') )
@@ -800,7 +800,7 @@ class InternalBibleBook:
                     if self.objectTypeString in ('USFM','USX',) and Globals.logErrorsFlag:
                         if nfvnCount != -1:
                             nfvnCount += 1
-                            if nfvnCount < MAX_NONCRITICAL_ERRORS_PER_BOOK:
+                            if nfvnCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
                                 logging.error( _("Nothing following verse number after {} {}:{} in \\{}: '{}'").format( self.bookReferenceCode, c, v, originalMarker, originalText ) )
                             else: # we've reached our limit
                                 logging.error( _('Additional "Nothing following verse number" messages suppressed...') )
@@ -935,7 +935,7 @@ class InternalBibleBook:
                 if self.objectTypeString in ('USFM','USX',) and Globals.logErrorsFlag:
                     if sahtCount != -1:
                         sahtCount += 1
-                        if sahtCount < MAX_NONCRITICAL_ERRORS_PER_BOOK:
+                        if sahtCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
                             logging.error( _("Marker '{}' at {} {}:{} should always have text").format( originalMarker, self.bookReferenceCode, c, v ) )
                         else: # we've reached our limit
                             logging.error( _('Additional "Marker should always have text" messages suppressed...') )
