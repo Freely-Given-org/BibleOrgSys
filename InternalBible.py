@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2013-06-16 by RJH (also update versionString below)
+#   Last modified: 2013-06-17 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -372,8 +372,18 @@ class InternalBible:
         for BBB in self.discoveryResults:
             #print( "discoveryResults", BBB, self.discoveryResults[BBB] )
             isOT = isNT = False
-            if Globals.BibleBooksCodes.isOldTestament_NR( BBB ): isOT = True
-            if Globals.BibleBooksCodes.isNewTestament_NR( BBB ): isNT = True
+            if Globals.BibleBooksCodes.isOldTestament_NR( BBB ):
+                isOT = True
+                if 'OTBookCount' not in aggregateResults: aggregateResults['OTBookCount'] = 1
+                else: aggregateResults['OTBookCount'] += 1
+            elif Globals.BibleBooksCodes.isNewTestament_NR( BBB ):
+                isNT = True
+                if 'NTBookCount' not in aggregateResults: aggregateResults['NTBookCount'] = 1
+                else: aggregateResults['NTBookCount'] += 1
+            else: # not conventional OT or NT
+                if 'OtherBookCount' not in aggregateResults: aggregateResults['OtherBookCount'] = 1
+                else: aggregateResults['OtherBookCount'] += 1
+
             for key,value in self.discoveryResults[BBB].items():
                 if key=='percentageProgress':
                     if 'percentageProgressByBook' not in aggregateResults: aggregateResults['percentageProgressByBook'] = value
@@ -450,7 +460,6 @@ class InternalBible:
             print( "Discovered Bible parameters:" )
             if Globals.verbosityLevel > 2: # or self.name=="Matigsalug": # Print diagnostics
                 for BBB in self.discoveryResults:
-                    #print( BBB )
                     if BBB != 'ALL':
                         if 'seemsFinished' in self.discoveryResults[BBB] and self.discoveryResults[BBB]['seemsFinished']:
                             print( "   ", BBB, "seems finished" ) #, str(self.discoveryResults[BBB]['percentageProgress'])+'%' )
@@ -461,8 +470,6 @@ class InternalBible:
                 if key.startswith("percentage") or key.endswith("Count") or key.endswith("Flag"):
                     print( " ", key, "is", value )
                 else: print( " ", key, "in", value if value<len(self) else "All", "books" )
-
-        #print( self.books['LEV']._processedLines )
     # end of InternalBible.discover
 
 
