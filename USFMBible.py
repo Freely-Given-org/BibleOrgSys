@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2013-06-13 by RJH (also update versionString below)
+#   Last modified: 2013-06-16 by RJH (also update versionString below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -317,6 +317,8 @@ def demo():
             UB = USFMBible( testFolder, name, encoding )
             UB.load()
             if Globals.verbosityLevel > 0: print( UB )
+            #for thisBook in UB:
+                #print( "here", thisBook.bookReferenceCode )
             if Globals.strictCheckingFlag: UB.check()
             #print( UB.books['GEN']._processedLines[0:40] )
             #UBErrors = UB.getErrors()

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2013-06-14 by RJH (also update versionString below)
+#   Last modified: 2013-06-16 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -114,8 +114,11 @@ class InternalBible:
     # end of InternalBible.__contains__
 
 
-    def __getitem__( self, BBB ):
-        return( self.books[BBB] )
+    def __getitem__( self, keyIndex ):
+        """
+        Given an index, return the book object (or raise an IndexError)
+        """
+        return list(self.books.items())[keyIndex][1] # element 0 is BBB, element 1 is the book object
     # end of InternalBible.__getitem__
 
 

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # DigitalBiblePlatform.py
-#   Last modified: 2013-05-27 (also update versionString below)
+#   Last modified: 2013-06-16 (also update versionString below)
 #
 # Module handling online DBP resources
 #
@@ -36,7 +36,7 @@ More details are available from http://www.DigitalBiblePlatform.com.
 """
 
 progName = "Digital Bible Platform handler"
-versionString = "0.01"
+versionString = "0.02"
 
 
 from singleton import singleton
@@ -266,8 +266,11 @@ class DBPBible:
     # end of DBPBible.__contains__
 
 
-    def __getitem__( self, BBB ):
-        return( self.books[BBB] )
+    def __getitem__( self, keyIndex ):
+        """
+        Given an index, return the book object (or raise an IndexError)
+        """
+        return list(self.books.items())[keyIndex][1] # element 0 is BBB, element 1 is the book object
     # end of DBPBible.__getitem__
 
 

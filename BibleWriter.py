@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-06-14 by RJH (also update versionString below)
+#   Last modified: 2013-06-16 by RJH (also update versionString below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -417,7 +417,7 @@ class BibleWriter( InternalBible ):
             BOS = BibleOrganizationalSystem( controlDict["PublicationCode"] )
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
-        if Globals.verbosityLevel>1: print( _("Exporting to MediaWiki format...") )
+        if Globals.verbosityLevel > 1: print( _("Exporting to MediaWiki format...") )
         xw = MLWriter( controlDict["MediaWikiOutputFilename"], outputFolder )
         xw.setHumanReadable()
         xw.start()
@@ -511,7 +511,7 @@ class BibleWriter( InternalBible ):
             BOS = BibleOrganizationalSystem( controlDict["PublicationCode"] )
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
-        if Globals.verbosityLevel>1: print( _("Exporting to Zefania format...") )
+        if Globals.verbosityLevel > 1: print( _("Exporting to Zefania format...") )
         xw = MLWriter( controlDict["ZefaniaOutputFilename"], outputFolder )
         xw.setHumanReadable()
         xw.start()
@@ -886,7 +886,7 @@ class BibleWriter( InternalBible ):
             BOS = BibleOrganizationalSystem( controlDict["PublicationCode"] )
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
-        if Globals.verbosityLevel>1: print( _("Exporting to USX format...") )
+        if Globals.verbosityLevel > 1: print( _("Exporting to USX format...") )
         #USXOutputFolder = os.path.join( "OutputFiles/", "USX output/" )
         #if not os.access( USXOutputFolder, os.F_OK ): os.mkdir( USXOutputFolder ) # Make the empty folder if there wasn't already one there
 
@@ -908,7 +908,7 @@ class BibleWriter( InternalBible ):
         """
         Writes a UTF-8 Sword locale file containing the book names and abbreviations.
         """
-        if Globals.verbosityLevel>1: print( _("Writing Sword locale file {}...").format(localeFilepath) )
+        if Globals.verbosityLevel > 1: print( _("Writing Sword locale file {}...").format(localeFilepath) )
 
         with open( localeFilepath, 'wt' ) as SwLocFile:
             SwLocFile.write( '[Meta]\nName={}\n'.format( name ) )
@@ -980,7 +980,7 @@ class BibleWriter( InternalBible ):
                             SwLocFile.write( '{}={}\n'.format( vernacularAbbrev, swordAbbrev ) )
                             abbrevList.append( vernacularAbbrev )
 
-        if Globals.verbosityLevel>1: print( _("  Wrote {} book names and {} abbreviations.").format( len(bookList), len(abbrevList) ) )
+        if Globals.verbosityLevel > 1: print( _("  Wrote {} book names and {} abbreviations.").format( len(bookList), len(abbrevList) ) )
     # end of BibleWriter._writeSwordLocale
 
 
@@ -1026,7 +1026,7 @@ class BibleWriter( InternalBible ):
 
         # Let's write a Sword locale while we're at it
         self._writeSwordLocale( controlDict["xmlLanguage"], controlDict["LanguageName"], BOS, getBookNameFunction, os.path.join( outputFolder, "SwLocale-utf8.conf" ) )
-        #if Globals.verbosityLevel>1: print( _("Writing Sword locale file {}...").format(SwLocFilepath) )
+        #if Globals.verbosityLevel > 1: print( _("Writing Sword locale file {}...").format(SwLocFilepath) )
         #with open( SwLocFilepath, 'wt' ) as SwLocFile:
             #SwLocFile.write( '[Meta]\nName={}\n'.format(controlDict["xmlLanguage"]) )
             #SwLocFile.write( 'Description={}\n'.format(controlDict["LanguageName"]) )
@@ -1557,7 +1557,7 @@ class BibleWriter( InternalBible ):
         # end of toOSISXML:writeBook
 
         if controlDict["osisFiles"]=="byBook": # Write an individual XML file for each book
-            if Globals.verbosityLevel>1: print( _("Exporting individually to OSIS XML format...") )
+            if Globals.verbosityLevel > 1: print( _("Exporting individually to OSIS XML format...") )
             validationResults = ( 0, '', '', ) # xmllint result code, program output, error output
             for BBB,bookData in self.books.items(): # Process each Bible book
                 xw = MLWriter( controlDict["osisOutputFilename"].replace('_Bible',"_Book-{}".format(BBB)), outputFolder )
@@ -1578,7 +1578,7 @@ class BibleWriter( InternalBible ):
                     if bookResults[1]: validationResults = ( validationResults[0], validationResults[1] + bookResults[1], validationResults[2], )
                     if bookResults[2]: validationResults = ( validationResults[0], validationResults[1], validationResults[2] + bookResults[2], )
         elif controlDict["osisFiles"]=="byBible": # write all the books into a single file
-            if Globals.verbosityLevel>1: print( _("Exporting to OSIS XML format...") )
+            if Globals.verbosityLevel > 1: print( _("Exporting to OSIS XML format...") )
             xw = MLWriter( controlDict["osisOutputFilename"], outputFolder )
             xw.setHumanReadable( 'All' ) # Can be set to 'All', 'Header', or 'None' -- one output file went from None/Header=4.7MB to All=5.7MB
             xw.start()
@@ -1654,7 +1654,7 @@ class BibleWriter( InternalBible ):
         # Let's write a Sword locale while we're at it
         self._writeSwordLocale( controlDict["xmlLanguage"], controlDict["LanguageName"], BOS, getBookNameFunction, os.path.join( outputFolder, "SwLocale-utf8.conf" ) )
         #SwLocFilepath = os.path.join( outputFolder, "SwLocale-utf8.conf" )
-        #if Globals.verbosityLevel>1: print( _("Writing Sword locale file {}...").format(SwLocFilepath) )
+        #if Globals.verbosityLevel > 1: print( _("Writing Sword locale file {}...").format(SwLocFilepath) )
         #with open( SwLocFilepath, 'wt' ) as SwLocFile:
             #SwLocFile.write( '[Meta]\nName={}\n'.format(controlDict["xmlLanguage"]) )
             #SwLocFile.write( 'Description={}\n'.format(controlDict["LanguageName"]) )
@@ -2369,7 +2369,7 @@ class BibleWriter( InternalBible ):
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
         Globals.logErrorsFlag = True # To debug this
-        if Globals.verbosityLevel>1: print( _("Exporting to HTML5 format...") )
+        if Globals.verbosityLevel > 1: print( _("Exporting to HTML5 format...") )
         suffix = controlDict['HTML5Suffix'] if 'HTML5Suffix' in controlDict else 'html'
         filenameDict = {}
         for BBB in self.books: # Make a list of filenames
@@ -2379,7 +2379,7 @@ class BibleWriter( InternalBible ):
 
         if controlDict["HTML5Files"]=="byBook":
             for BBB,bookData in self.books.items(): # Now export the books
-                if Globals.verbosityLevel>1: print( _("  Exporting {} to HTML5 format...").format( BBB ) )
+                if Globals.verbosityLevel > 2: print( _("  Exporting {} to HTML5 format...").format( BBB ) )
                 xw = MLWriter( filenameDict[BBB], outputFolder, 'HTML' )
                 xw.setHumanReadable()
                 xw.start( noAutoXML=True )
