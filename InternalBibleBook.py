@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-06-14 by RJH (also update versionString below)
+#   Last modified: 2013-06-16 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -50,7 +50,7 @@ import Globals
 from BibleReferences import BibleAnchorReference
 
 
-# define allowed punctuation
+# Define allowed punctuation
 leadingWordPunctChars = """“«"‘‹'([{<"""
 medialWordPunctChars = '-'
 dashes = '—–' # em-dash and en-dash
@@ -61,6 +61,9 @@ allWordPunctChars = leadingWordPunctChars + medialWordPunctChars + dashes + trai
 PSEUDO_USFM_MARKERS = ( 'c~', 'c#', 'v-', 'v+', 'v~', 'vw', 'g', )
 PSEUDO_OSIS_MARKERS = ( 'pp+', )
 NON_USFM_MARKERS = PSEUDO_USFM_MARKERS + PSEUDO_OSIS_MARKERS
+
+
+MAX_NONCRITICAL_ERRORS_PER_BOOK = 5
 
 
 
@@ -219,6 +222,7 @@ class InternalBibleBook:
         self.replaceAngleBracketsFlag, self.replaceStraightDoubleQuotesFlag = True, False
 
         self.badMarkers, self.badMarkerCounts = [], []
+        self.pntsCount = 0
     # end of InternalBibleBook.__init__
 
 
@@ -291,7 +295,14 @@ class InternalBibleBook:
 
         if text.strip() != text:
             if marker=='v' and len(text)<=4 and self.objectTypeString in ('USX',): pass
-            elif Globals.logErrorsFlag and Globals.verbosityLevel > 2: logging.warning( "InternalBibleBook.appendLine: Possibly needed to strip {} {} {}='{}'".format( self.objectTypeString, self.bookReferenceCode, marker, text ) )
+            elif Globals.logErrorsFlag:
+                if self.pntsCount != -1:
+                    self.pntsCount += 1
+                    if self.pntsCount < MAX_NONCRITICAL_ERRORS_PER_BOOK:
+                        logging.warning( "InternalBibleBook.appendLine: Possibly needed to strip {} {} {}='{}'".format( self.objectTypeString, self.bookReferenceCode, marker, text ) )
+                    else: # we've reached our limit
+                        logging.error( _('Additional "Possible needed to strip" messages suppressed...') )
+                        self.pntsCount = -1 # So we don't do this again (for this book)
 
         rawLineTuple = ( marker, text )
         self._rawLines.append( rawLineTuple )
@@ -325,6 +336,8 @@ class InternalBibleBook:
             Uses self._rawLines and
             fills self._processedLines.
         """
+        nfvnCount = sahtCount = 0
+
 
         def processLineFix( originalMarker, text ):
             """ Does character fixes on a specific line and moves footnotes and cross-references out of the main text.
@@ -711,6 +724,7 @@ class InternalBibleBook:
                     and producing clean text suitable for searching
                     and then save the line. """
             nonlocal c, v, haveWaitingC
+            nonlocal nfvnCount, sahtCount
             #print( "processLine: {} '{}' '{}'".format( self.bookReferenceCode, originalMarker, originalText ) )
             if Globals.debugFlag:
                 assert( originalMarker and isinstance( originalMarker, str ) )
@@ -783,7 +797,14 @@ class InternalBibleBook:
                 if ix==99999: # There's neither -- not unexpected if this is a translation in progress
                     #print( "processLine had an empty verse field in {} {}:{}: '{}' '{}' {} {} {}".format( self.bookReferenceCode, c, v, originalMarker, originalText, ix, ixSP, ixBS ) )
                     fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Nothing after verse number: '{}'").format( originalText ) )
-                    if self.objectTypeString in ('USFM','USX',) and Globals.logErrorsFlag and Globals.verbosityLevel > 2: logging.error( _("Nothing following verse number after {} {}:{} in \\{}: '{}'").format( self.bookReferenceCode, c, v, originalMarker, originalText ) )
+                    if self.objectTypeString in ('USFM','USX',) and Globals.logErrorsFlag:
+                        if nfvnCount != -1:
+                            nfvnCount += 1
+                            if nfvnCount < MAX_NONCRITICAL_ERRORS_PER_BOOK:
+                                logging.error( _("Nothing following verse number after {} {}:{} in \\{}: '{}'").format( self.bookReferenceCode, c, v, originalMarker, originalText ) )
+                            else: # we've reached our limit
+                                logging.error( _('Additional "Nothing following verse number" messages suppressed...') )
+                                nfvnCount = -1 # So we don't do this again (for this book)
                     self.addPriorityError( 92, c, v, _("Nothing following verse number in '{}'").format( originalText ) )
                     verseNumberBit = text
                     #print( "verseNumberBit is '{}'".format( verseNumberBit ) )
@@ -911,7 +932,14 @@ class InternalBibleBook:
             if not adjText and not extras and ( Globals.USFMMarkers.markerShouldHaveContent(adjustedMarker)=='A' or adjustedMarker in ('v~','c~','c#',) ): # should always have text
                 #print( "processLine: marker should always have text (ignoring it):", self.bookReferenceCode, c, v, originalMarker, adjustedMarker, " originally '"+text+"'" )
                 fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Marker '{}' should always have text").format( originalMarker ) )
-                if self.objectTypeString in ('USFM','USX',) and Globals.logErrorsFlag: logging.error( _("Marker '{}' at {} {}:{} should always have text").format( originalMarker, self.bookReferenceCode, c, v ) )
+                if self.objectTypeString in ('USFM','USX',) and Globals.logErrorsFlag:
+                    if sahtCount != -1:
+                        sahtCount += 1
+                        if sahtCount < MAX_NONCRITICAL_ERRORS_PER_BOOK:
+                            logging.error( _("Marker '{}' at {} {}:{} should always have text").format( originalMarker, self.bookReferenceCode, c, v ) )
+                        else: # we've reached our limit
+                            logging.error( _('Additional "Marker should always have text" messages suppressed...') )
+                            sahtCount = -1 # So we don't do this again (for this book)
                 self.addPriorityError( 96, c, v, _("Marker \\{} should always have text").format( originalMarker ) )
                 # Don't bother even saving the marker since it's useless
             else:
