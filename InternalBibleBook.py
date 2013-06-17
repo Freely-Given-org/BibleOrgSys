@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-06-16 by RJH (also update versionString below)
+#   Last modified: 2013-06-18 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 progName = "Internal Bible book handler"
-versionString = "0.23"
+versionString = "0.24"
 debuggingThisModule = False
 
 
@@ -1347,12 +1347,15 @@ class InternalBibleBook:
         bkDict['chapterCount'] = bkDict['verseCount'] = bkDict['percentageProgress'] = None
         bkDict['completedVerseCount'] = 0
         bkDict['havePopulatedCVmarkers'] = bkDict['haveParagraphMarkers'] = bkDict['haveIntroductoryMarkers'] = False
-        bkDict['haveSectionReferences'] = bkDict['haveFootnotes'] = bkDict['haveCrossReferences'] = False
+        bkDict['haveSectionReferences'] = False
+        bkDict['haveFootnotes'] = bkDict['haveFootnoteOrigins'] = False
+        bkDict['haveCrossReferences'] = bkDict['haveCrossReferenceOrigins'] = False
+        bkDict['sectionReferencesCount'] = bkDict['footnotesCount'] = bkDict['crossReferencesCount'] = 0
         bkDict['sectionReferencesParenthesisRatio'] = -1.0
         bkDict['haveIntroductoryText'] = bkDict['haveVerseText'] = False
         bkDict['seemsFinished'] = None
 
-        sectionRefCount = sectionRefParenthCount = 0
+        sectionRefParenthCount = 0
 
         c = v = '0'
         lastMarker = None
@@ -1377,7 +1380,7 @@ class InternalBibleBook:
                 bkDict['completedVerseCount'] += 1
             elif marker=='r' and text:
                 bkDict['haveSectionReferences'] = True
-                sectionRefCount += 1
+                bkDict['sectionReferencesCount'] += 1
                 if cleanText[0]=='(' and cleanText[-1]==')': sectionRefParenthCount += 1
             elif marker in ('p','q1','q2','q3'):
                 bkDict['haveParagraphMarkers'] = True
@@ -1397,8 +1400,14 @@ class InternalBibleBook:
                     assert( extraIndex >= 0 )
                     #assert( 0 <= extraIndex <= len(text)+3 )
                     assert( extraType in ('fn','xr',) )
-                if extraType=='fn': bkDict['haveFootnotes'] = True
-                elif extraType=='xr': bkDict['haveCrossReferences'] = True
+                if extraType=='fn':
+                    bkDict['haveFootnotes'] = True
+                    bkDict['footnotesCount'] += 1
+                    if '\\fr' in extraText: bkDict['haveFootnoteOrigins'] = True
+                elif extraType=='xr':
+                    bkDict['haveCrossReferences'] = True
+                    bkDict['crossReferencesCount'] += 1
+                    if '\\xo' in extraText: bkDict['haveCrossReferenceOrigins'] = True
             lastMarker = marker
 
         if bkDict['verseCount'] is None: # Things like front and end matter (don't have verse numbers)
@@ -1417,8 +1426,8 @@ class InternalBibleBook:
             bkDict['notStarted'] = not bkDict['haveVerseText']
             bkDict['partlyDone'] = bkDict['haveVerseText'] and not bkDict['seemsFinished']
 
-        if sectionRefCount:
-            bkDict['sectionReferencesParenthesisRatio'] = sectionRefParenthCount / sectionRefCount
+        if bkDict['sectionReferencesCount']:
+            bkDict['sectionReferencesParenthesisRatio'] = sectionRefParenthCount / bkDict['sectionReferencesCount']
             bkDict['sectionReferencesParenthesisFlag'] = bkDict['sectionReferencesParenthesisRatio'] > 0.8
         #print( self.bookReferenceCode, bkDict['sectionReferencesParenthesisRatio'] )
 
@@ -2668,6 +2677,8 @@ class InternalBibleBook:
                                                         and not cleanExtraText.endswith('.’') and not cleanExtraText.endswith(".'") and not cleanExtraText.endswith('.›') \
                     and not cleanExtraText.endswith('?') and not cleanExtraText.endswith('?”') and not cleanExtraText.endswith('?"') and not cleanExtraText.endswith('?»') \
                                                         and not cleanExtraText.endswith('?’') and not cleanExtraText.endswith("?'") and not cleanExtraText.endswith('?›') \
+                    and not cleanExtraText.endswith('!') and not cleanExtraText.endswith('!”') and not cleanExtraText.endswith('!"') and not cleanExtraText.endswith('!»') \
+                                                        and not cleanExtraText.endswith('!’') and not cleanExtraText.endswith("!'") and not cleanExtraText.endswith('!›') \
                     and not cleanExtraText.endswith('.)') and not cleanExtraText.endswith('.]'):
                     #and not cleanExtraText.endswith('.&quot;') and not text.endswith('.&#39;'):
                         footnoteErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Footnote seems to be missing a final period: '{}'").format( extraText ) )
@@ -2677,7 +2688,8 @@ class InternalBibleBook:
                     if cleanExtraText.endswith(' '):
                         xrefErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Cross-reference seems to have an extra space at end: '{}'").format( extraText ) )
                         self.addPriorityError( 30, c, v, _("Extra space at end of cross-reference") )
-                    elif not cleanExtraText.endswith('.') and not cleanExtraText.endswith('?') and not cleanExtraText.endswith('.)') and not cleanExtraText.endswith('.]') \
+                    elif not cleanExtraText.endswith('.') and not cleanExtraText.endswith('?') and not cleanExtraText.endswith('!') \
+                    and not cleanExtraText.endswith('.)') and not cleanExtraText.endswith('.]') \
                     and not cleanExtraText.endswith('.”') and not cleanExtraText.endswith('."') and not cleanExtraText.endswith('.»') \
                     and not cleanExtraText.endswith('.’') and not cleanExtraText.endswith(".'") and not cleanExtraText.endswith('.›'): # \
                     #and not cleanExtraText.endswith('.&quot;') and not text.endswith('.&#39;'):

@@ -458,7 +458,7 @@ class InternalBible:
 
         if Globals.verbosityLevel > 2: # or self.name=="Matigsalug": # Display some of these results
             print( "Discovered Bible parameters:" )
-            if Globals.verbosityLevel > 2: # or self.name=="Matigsalug": # Print diagnostics
+            if Globals.verbosityLevel > 2: # or self.name=="Matigsalug": # Print completion level for each book
                 for BBB in self.discoveryResults:
                     if BBB != 'ALL':
                         if 'seemsFinished' in self.discoveryResults[BBB] and self.discoveryResults[BBB]['seemsFinished']:
