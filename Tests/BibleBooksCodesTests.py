@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodesTests.py
-#   Last modified: 2013-04-09 by RJH (also update versionString below)
+#   Last modified: 2013-06-18 by RJH (also update versionString below)
 #
 # Module testing BibleBooksCodes.py
 #
@@ -28,7 +28,7 @@ Module testing BibleBooksCodesConverter.py and BibleBooksCodes.py.
 """
 
 progName = "Bible Books Codes tests"
-versionString = "0.68"
+versionString = "0.69"
 
 
 import sys, unittest
@@ -601,6 +601,10 @@ class BibleBooksCodesTests( unittest.TestCase ):
             self.assertFalse( self.bbc.isOldTestament_NR( BBB ))
         for BBB in ('SIR','MA1','WIS','PS2','JDT',):
             self.assertFalse( self.bbc.isOldTestament_NR( BBB ))
+        count = 0
+        for BBB in self.bbc:
+            if self.bbc.isOldTestament_NR( BBB ): count += 1
+        self.assertEqual( count, 39 )
     # end of test_2820_isOldTestament_NR
 
     def test_2830_isNewTestament_NR( self ):
@@ -611,7 +615,27 @@ class BibleBooksCodesTests( unittest.TestCase ):
             self.assertTrue( self.bbc.isNewTestament_NR( BBB ))
         for BBB in ('SIR','MA1','WIS','PS2','JDT',):
             self.assertFalse( self.bbc.isNewTestament_NR( BBB ))
+        count = 0
+        for BBB in self.bbc:
+            if self.bbc.isNewTestament_NR( BBB ): count += 1
+        self.assertEqual( count, 27 )
     # end of test_2830_isNewTestament_NR
+
+    def test_2830_isDeuterocanon_NR( self ):
+        """ Test the isDeuterocanon_NR function. """
+        for BBB in ('GEN','JOS','SA1','KI2','MAL',):
+            self.assertFalse( self.bbc.isDeuterocanon_NR( BBB ))
+        for BBB in ('MAT','ACT','CO1','PE2','REV',):
+            self.assertFalse( self.bbc.isDeuterocanon_NR( BBB ))
+        for BBB in ('SIR','MA1','WIS','LJE','JDT',):
+            self.assertTrue( self.bbc.isDeuterocanon_NR( BBB ))
+        for BBB in ('MA3','EZ5','LJB','MQ1','FOQ',):
+            self.assertFalse( self.bbc.isDeuterocanon_NR( BBB ))
+        count = 0
+        for BBB in self.bbc:
+            if self.bbc.isDeuterocanon_NR( BBB ): count += 1
+        self.assertEqual( count, 15 )
+    # end of test_2830_isDeuterocanon_NR
 # end of BibleBooksCodesTests class
 
 

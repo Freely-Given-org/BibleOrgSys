@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2013-06-17 by RJH (also update versionString below)
+#   Last modified: 2013-06-18 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -120,6 +120,13 @@ class InternalBible:
         """
         return list(self.books.items())[keyIndex][1] # element 0 is BBB, element 1 is the book object
     # end of InternalBible.__getitem__
+
+
+    def __iter__( self ):
+        """ Yields the next book. """
+        for BBB in self.books:
+            yield self.books[BBB]
+    # end of InternalBible.__iter__
 
 
     def pickle( self, filename=None, folder=None ):
@@ -371,7 +378,7 @@ class InternalBible:
         if Globals.debugFlag: assert( 'ALL' not in self.discoveryResults )
         for BBB in self.discoveryResults:
             #print( "discoveryResults", BBB, self.discoveryResults[BBB] )
-            isOT = isNT = False
+            isOT = isNT = isDC = False
             if Globals.BibleBooksCodes.isOldTestament_NR( BBB ):
                 isOT = True
                 if 'OTBookCount' not in aggregateResults: aggregateResults['OTBookCount'] = 1
@@ -380,7 +387,11 @@ class InternalBible:
                 isNT = True
                 if 'NTBookCount' not in aggregateResults: aggregateResults['NTBookCount'] = 1
                 else: aggregateResults['NTBookCount'] += 1
-            else: # not conventional OT or NT
+            elif Globals.BibleBooksCodes.isDeuterocanon_NR( BBB ):
+                isDC = True
+                if 'DCBookCount' not in aggregateResults: aggregateResults['DCBookCount'] = 1
+                else: aggregateResults['DCBookCount'] += 1
+            else: # not conventional OT or NT or DC
                 if 'OtherBookCount' not in aggregateResults: aggregateResults['OtherBookCount'] = 1
                 else: aggregateResults['OtherBookCount'] += 1
 
@@ -394,6 +405,9 @@ class InternalBible:
                     elif isNT:
                         if 'percentageProgressByNTBook' not in aggregateResults: aggregateResults['percentageProgressByNTBook'] = value
                         else: aggregateResults['percentageProgressByNTBook'] += value
+                    elif isDC:
+                        if 'percentageProgressByDCBook' not in aggregateResults: aggregateResults['percentageProgressByDCBook'] = value
+                        else: aggregateResults['percentageProgressByDCBook'] += value
                     #print( 'xxx', value, aggregateResults['percentageProgressByBook'] )
                 elif isinstance( value, float ):
                     #print( "got", BBB, key, value )
@@ -410,6 +424,9 @@ class InternalBible:
                     elif isNT:
                         if 'NT'+key not in aggregateResults: aggregateResults['NT'+key] = value
                         else: aggregateResults['NT'+key] += value
+                    elif isDC:
+                        if 'DC'+key not in aggregateResults: aggregateResults['DC'+key] = value
+                        else: aggregateResults['DC'+key] += value
                 elif value==True: # This test must come below the isinstance tests
                     #print( "tgot", BBB, key, value )
                     if key not in aggregateResults: aggregateResults[key] = 1
@@ -420,6 +437,9 @@ class InternalBible:
                     elif isNT:
                         if 'NT'+key not in aggregateResults: aggregateResults['NT'+key] = 1
                         else: aggregateResults['NT'+key] += 1
+                    elif isDC:
+                        if 'DC'+key not in aggregateResults: aggregateResults['DC'+key] = 1
+                        else: aggregateResults['DC'+key] += 1
                 elif value==False:
                     pass # No action needed here
                 else:
@@ -446,12 +466,16 @@ class InternalBible:
             aggregateResults['percentageProgressByOTBook'] = str( round( aggregateResults['percentageProgressByOTBook'] / 39 ) ) + '%'
         if 'percentageProgressByNTBook' in aggregateResults:
             aggregateResults['percentageProgressByNTBook'] = str( round( aggregateResults['percentageProgressByNTBook'] / 27 ) ) + '%'
+        if 'percentageProgressByDCBook' in aggregateResults:
+            aggregateResults['percentageProgressByDCBook'] = str( round( aggregateResults['percentageProgressByDCBook'] / 15 ) ) + '%'
         if 'percentageProgressByVerse' in aggregateResults:
             aggregateResults['percentageProgressByVerse'] = str( round( aggregateResults['completedVerseCount'] * 100 / aggregateResults['verseCount'] ) ) + '%'
         if 'percentageProgressByOTVerse' in aggregateResults:
             aggregateResults['percentageProgressByOTVerse'] = str( round( aggregateResults['OTcompletedVerseCount'] * 100 / aggregateResults['OTverseCount'] ) ) + '%'
         if 'percentageProgressByNTVerse' in aggregateResults:
             aggregateResults['percentageProgressByNTVerse'] = str( round( aggregateResults['NTcompletedVerseCount'] * 100 / aggregateResults['NTverseCount'] ) ) + '%'
+        if 'percentageProgressByDCVerse' in aggregateResults:
+            aggregateResults['percentageProgressByDCVerse'] = str( round( aggregateResults['DCcompletedVerseCount'] * 100 / aggregateResults['DCverseCount'] ) ) + '%'
 
         # Save the results
         self.discoveryResults['ALL'] = aggregateResults

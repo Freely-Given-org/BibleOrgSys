@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-06-16 by RJH (also update versionString below)
+#   Last modified: 2013-06-18 by RJH (also update versionString below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -44,7 +44,7 @@ Contains functions:
 """
 
 progName = "Bible writer"
-versionString = "0.09"
+versionString = "0.10"
 
 
 import sys, os, logging, datetime
@@ -120,14 +120,14 @@ class BibleWriter( InternalBible ):
         """
         Adjust the pseudo USFM and write the USFM files.
         """
+        if Globals.verbosityLevel > 1: print( "Running BibleWriter:toUSFM..." )
+        if Globals.debugFlag: assert( self.books )
+
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = "OutputFiles/BOS_USFMExport/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         #if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_MediaWiki_controls.txt", controlDict )
         #assert( controlDict and isinstance( controlDict, dict ) )
-
-        if Globals.verbosityLevel > 1: print( "Running BibleWriter:toUSFM..." )
-        if Globals.debugFlag: assert( self.books )
 
         allCharMarkers = Globals.USFMMarkers.getCharacterMarkersList( expandNumberableMarkers=True )
         #print( "aCM", allCharMarkers )
@@ -200,6 +200,9 @@ class BibleWriter( InternalBible ):
         Using settings from the given control file,
             converts the USFM information to a Media Wiki file.
         """
+        if Globals.verbosityLevel > 1: print( "Running BibleWriter:toMediaWiki..." )
+        if Globals.debugFlag: assert( self.books )
+
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = "OutputFiles/BOS_MediaWikiExport/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
@@ -439,6 +442,9 @@ class BibleWriter( InternalBible ):
         This format is roughly documented at http://de.wikipedia.org/wiki/Zefania_XML
             but more fields can be discovered by looking at downloaded files.
         """
+        if Globals.verbosityLevel > 1: print( "Running BibleWriter:toZefaniaXML..." )
+        if Globals.debugFlag: assert( self.books )
+
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = "OutputFiles/BOS_ZefaniaExport/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
@@ -537,6 +543,9 @@ class BibleWriter( InternalBible ):
 
         If a schema is given (either a path or URL), the XML output files are validated.
         """
+        if Globals.verbosityLevel > 1: print( "Running BibleWriter:toUSXXML..." )
+        if Globals.debugFlag: assert( self.books )
+
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = "OutputFiles/BOS_USXExport/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
@@ -994,6 +1003,9 @@ class BibleWriter( InternalBible ):
 
         TODO: We're not consistent about handling errors: sometimes we use assert, sometime raise (both of which abort the program), and sometimes log errors or warnings.
         """
+        if Globals.verbosityLevel > 1: print( "Running BibleWriter:toOSISXML..." )
+        if Globals.debugFlag: assert( self.books )
+
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = "OutputFiles/BOS_OSISExport/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
@@ -1607,6 +1619,9 @@ class BibleWriter( InternalBible ):
         Using settings from the given control file,
             converts the USFM information to a UTF-8 OSIS-XML-based Sword module.
         """
+        if Globals.verbosityLevel > 1: print( "Running BibleWriter:toSwordModule..." )
+        if Globals.debugFlag: assert( self.books )
+
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = "OutputFiles/BOS_SwordExport/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
@@ -2181,6 +2196,9 @@ class BibleWriter( InternalBible ):
         Using settings from the given control file,
             converts the USFM information to UTF-8 HTML files.
         """
+        if Globals.verbosityLevel > 1: print( "Running BibleWriter:toHTML5..." )
+        if Globals.debugFlag: assert( self.books )
+
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = "OutputFiles/BOS_HTML5Export/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
@@ -2459,13 +2477,41 @@ class BibleWriter( InternalBible ):
                 swExportResult = results[5]
                 htmlExportResult = results[6]
         else: # Just single threaded
-            USFMExportResult = self.toUSFM( USFMOutputFolder )
-            MWExportResult = self.toMediaWiki( MWOutputFolder )
-            zExportResult = self.toZefaniaXML( zOutputFolder )
-            USXExportResult = self.toUSXXML( USXOutputFolder )
-            OSISExportResult = self.toOSISXML( OSISOutputFolder )
-            swExportResult = self.toSwordModule( swOutputFolder )
-            htmlExportResult = self.toHTML5( htmlOutputFolder )
+            try: USFMExportResult = self.toUSFM( USFMOutputFolder )
+            except Exception as err:
+                USFMExportResult = False
+                print("BibleWriter.doAllExports.toUSFM Unexpected error:", sys.exc_info()[0], err)
+                if Globals.logErrorsFlag: logging.error( "BibleWriter.doAllExports.toUSFM: Oops, failed!" )
+            try: MWExportResult = self.toMediaWiki( MWOutputFolder )
+            except Exception as err:
+                MWExportResult = False
+                print("BibleWriter.doAllExports.toMediaWiki Unexpected error:", sys.exc_info()[0], err)
+                if Globals.logErrorsFlag: logging.error( "BibleWriter.doAllExports.toMediaWiki: Oops, failed!" )
+            try: zExportResult = self.toZefaniaXML( zOutputFolder )
+            except Exception as err:
+                zExportResult = False
+                print("BibleWriter.doAllExports.toZefaniaXML Unexpected error:", sys.exc_info()[0], err)
+                if Globals.logErrorsFlag: logging.error( "BibleWriter.doAllExports.toZefaniaXML: Oops, failed!" )
+            try: USXExportResult = self.toUSXXML( USXOutputFolder )
+            except Exception as err:
+                USXExportResult = False
+                print("BibleWriter.doAllExports.toUSXXML Unexpected error:", sys.exc_info()[0], err)
+                if Globals.logErrorsFlag: logging.error( "BibleWriter.doAllExports.toUSXXML: Oops, failed!" )
+            try: OSISExportResult = self.toOSISXML( OSISOutputFolder )
+            except Exception as err:
+                OSISExportResult = False
+                print("BibleWriter.doAllExports.toOSISXML Unexpected error:", sys.exc_info()[0], err)
+                if Globals.logErrorsFlag: logging.error( "BibleWriter.doAllExports.toOSISXML: Oops, failed!" )
+            try: swExportResult = self.toSwordModule( swOutputFolder )
+            except Exception as err:
+                swExportResult = False
+                print("BibleWriter.doAllExports.toSwordModule Unexpected error:", sys.exc_info()[0], err)
+                if Globals.logErrorsFlag: logging.error( "BibleWriter.doAllExports.toSwordModule: Oops, failed!" )
+            try: htmlExportResult = self.toHTML5( htmlOutputFolder )
+            except Exception as err:
+                htmlExportResult = False
+                print("BibleWriter.doAllExports.toHTML5 Unexpected error:", sys.exc_info()[0], err)
+                if Globals.logErrorsFlag: logging.error( "BibleWriter.doAllExports.toHTML5: Oops, failed!" )
 
         print( "\nResults:  MW={}  Zef={}  USX={}  OSIS={}  Sw={}  HTML={}" \
             .format( MWExportResult, zExportResult, USXExportResult, OSISExportResult, swExportResult, htmlExportResult ) )
