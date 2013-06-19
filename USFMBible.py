@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2013-06-16 by RJH (also update versionString below)
+#   Last modified: 2013-06-19 by RJH (also update versionString below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 """
 
 progName = "USFM Bible handler"
-versionString = "0.32"
+versionString = "0.33"
 
 
 import os, logging
@@ -169,10 +169,11 @@ class USFMBible( Bible ):
         self.USFMFilenamesObject = USFMFilenames( self.sourceFolder )
 
         # Attempt to load the SSF file
-        self.ssfData = None
+        self.ssfFilepath = self.ssfData = None
         ssfFilepathList = self.USFMFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
         if len(ssfFilepathList) == 1: # Seems we found the right one
-            self.loadSSFData( ssfFilepathList[0] )
+            self.ssfFilepath = ssfFilepathList[0]
+            self.loadSSFData( self.ssfFilepath )
 
         self.name = self.givenName
         if self.name is None and self.ssfData and 'Name' in self.ssfData: self.name = self.ssfData['Name']
