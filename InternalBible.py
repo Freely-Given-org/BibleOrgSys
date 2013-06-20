@@ -65,7 +65,7 @@ class InternalBible:
 
         # Set up empty containers for the object
         self.books = OrderedDict()
-        self.ssfPathName, self.ssfData = '', {}
+        self.ssfFilepath, self.ssfData = '', {}
         self.BBBToNameDict, self.bookNameDict, self.combinedBookNameDict, self.bookAbbrevDict = {}, {}, {}, {} # Used to store book name and abbreviations (pointing to the BBB codes)
         self.reverseDict, self.guesses = {}, '' # A program history
 
