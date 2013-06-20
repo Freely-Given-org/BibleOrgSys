@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-06-18 by RJH (also update versionString below)
+#   Last modified: 2013-06-20 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 progName = "Internal Bible book handler"
-versionString = "0.24"
+versionString = "0.25"
 debuggingThisModule = False
 
 
@@ -2021,7 +2021,7 @@ class InternalBibleBook:
 
         # Check the relative ordering of newline markers
         #print( "modifiedMarkerList", modifiedMarkerList, self.bookReferenceCode )
-        if modifiedMarkerList and modifiedMarkerList[0] != 'id':
+        if self.objectTypeString in ('USFM','USX') and modifiedMarkerList and modifiedMarkerList[0] != 'id':
             newlineMarkerErrors.append( _("{} First USFM field in file should have been 'id' not '{}'").format( self.bookReferenceCode, modifiedMarkerList[0] ) )
             self.addPriorityError( 100, '', '', _("id line not first in file") )
         for otherHeaderMarker in ( 'ide','sts', ):

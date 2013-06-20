@@ -38,6 +38,7 @@ Contains functions:
     toMediaWiki( self, outputFolder=None, controlDict=None, validationSchema=None )
     toZefaniaXML( self, outputFolder=None, controlDict=None, validationSchema=None )
     toUSXXML( self, outputFolder=None, controlDict=None, validationSchema=None )
+    toOSISXML( self, outputFolder=None, controlDict=None, validationSchema=None )
     toSwordModule( self, outputFolder=None, controlDict=None, validationSchema=None )
     toHTML5( self, outputFolder=None, controlDict=None, validationSchema=None )
     doAllExports( self, givenOutputFolderName=None )
@@ -1036,7 +1037,7 @@ class BibleWriter( InternalBible ):
 
         unhandledMarkers = set()
 
-        # Let's write a Sword locale while we're at it
+        # Let's write a Sword locale while we're at it -- might be useful if we make a Sword module from this OSIS file
         self._writeSwordLocale( controlDict["xmlLanguage"], controlDict["LanguageName"], BOS, getBookNameFunction, os.path.join( outputFolder, "SwLocale-utf8.conf" ) )
         #if Globals.verbosityLevel > 1: print( _("Writing Sword locale file {}...").format(SwLocFilepath) )
         #with open( SwLocFilepath, 'wt' ) as SwLocFile:
@@ -2513,9 +2514,9 @@ class BibleWriter( InternalBible ):
                 print("BibleWriter.doAllExports.toHTML5 Unexpected error:", sys.exc_info()[0], err)
                 if Globals.logErrorsFlag: logging.error( "BibleWriter.doAllExports.toHTML5: Oops, failed!" )
 
-        if Globals.verbosityLevel > 1: print( "\nResults:  MW={}  Zef={}  USX={}  OSIS={}  Sw={}  HTML={}" \
-            .format( MWExportResult, zExportResult, USXExportResult, OSISExportResult, swExportResult, htmlExportResult ) )
-        return {'MWExport':MWExportResult, 'zExport':zExportResult, 'USXExport':USXExportResult, 'OSISExport':OSISExportResult, 'swExport':swExportResult, 'htmlExport':htmlExportResult}
+        if Globals.verbosityLevel > 2: print( "\nResults:  USFM={}  MW={}  Zef={}  USX={}  OSIS={}  Sw={}  HTML={}" \
+            .format( USFMExportResult, MWExportResult, zExportResult, USXExportResult, OSISExportResult, swExportResult, htmlExportResult ) )
+        return {'USFMExport':USFMExportResult, 'MWExport':MWExportResult, 'zExport':zExportResult, 'USXExport':USXExportResult, 'OSISExport':OSISExportResult, 'swExport':swExportResult, 'htmlExport':htmlExportResult}
     # end of BibleWriter.doAllExports
 # end of class BibleWriter
 
