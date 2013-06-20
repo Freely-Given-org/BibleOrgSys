@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-06-18 by RJH (also update versionString below)
+#   Last modified: 2013-06-20 by RJH (also update versionString below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -44,7 +44,7 @@ Contains functions:
 """
 
 progName = "Bible writer"
-versionString = "0.10"
+versionString = "0.11"
 
 
 import sys, os, logging, datetime
@@ -2454,8 +2454,8 @@ class BibleWriter( InternalBible ):
         htmlOutputFolder = os.path.join( givenOutputFolderName, "BOS_HTML5" + "Export" )
         pickleOutputFolder = os.path.join( givenOutputFolderName, "BOS_Bible_Object_Pickle" )
 
-        try: self.pickle( folder=pickleOutputFolder )
-        except: print( "BibleWriter.doAllExports: pickle failed." )
+        try: self.pickleBible( folder=pickleOutputFolder )
+        except: print( "BibleWriter.doAllExports: pickleBible failed." )
 
         if 0 and Globals.maxProcesses > 1: # Process all the exports with different threads
             # DON'T KNOW WHY THIS CAUSES A SEGFAULT
@@ -2513,8 +2513,9 @@ class BibleWriter( InternalBible ):
                 print("BibleWriter.doAllExports.toHTML5 Unexpected error:", sys.exc_info()[0], err)
                 if Globals.logErrorsFlag: logging.error( "BibleWriter.doAllExports.toHTML5: Oops, failed!" )
 
-        print( "\nResults:  MW={}  Zef={}  USX={}  OSIS={}  Sw={}  HTML={}" \
+        if Globals.verbosityLevel > 1: print( "\nResults:  MW={}  Zef={}  USX={}  OSIS={}  Sw={}  HTML={}" \
             .format( MWExportResult, zExportResult, USXExportResult, OSISExportResult, swExportResult, htmlExportResult ) )
+        return {'MWExport':MWExportResult, 'zExport':zExportResult, 'USXExport':USXExportResult, 'OSISExport':OSISExportResult, 'swExport':swExportResult, 'htmlExport':htmlExportResult}
     # end of BibleWriter.doAllExports
 # end of class BibleWriter
 
@@ -2545,7 +2546,7 @@ def demo():
             UB.load()
             if Globals.verbosityLevel > 0: print( UB )
             if Globals.strictCheckingFlag: UB.check()
-            UB.doAllExports()
+            doaResults = UB.doAllExports()
             if 0: # Now compare the original and the derived USX XML files
                 outputFolder = "OutputFiles/BOS_USXExport/"
                 fN = USXFilenames( testFolder )

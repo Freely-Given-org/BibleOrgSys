@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2013-06-18 by RJH (also update versionString below)
+#   Last modified: 2013-06-20 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -36,7 +36,7 @@ and then fills
 """
 
 progName = "Internal Bible handler"
-versionString = "0.23"
+versionString = "0.24"
 
 
 import os, logging
@@ -129,7 +129,7 @@ class InternalBible:
     # end of InternalBible.__iter__
 
 
-    def pickle( self, filename=None, folder=None ):
+    def pickleBible( self, filename=None, folder=None ):
         """
         Writes the object to a .pickle file that can be easily loaded into a Python3 program.
             If folder is None (or missing), defaults to the default cache folder specified in Globals.
@@ -141,9 +141,10 @@ class InternalBible:
         assert( filename )
         filename += '.pickle'
         if Globals.verbosityLevel > 1:
-            print( _("Saving {} to {}...").format( self.objectNameString, filename if folder is None else os.path.join( folder, filename ) ) )
-        Globals.pickleObject( self, filename, folder )
-    # end of InternalBible.pickle
+            print( _("InternalBible.pickleBible: Saving {} to {}...").format( self.objectNameString, filename if folder is None else os.path.join( folder, filename ) ) )
+        # Causes SEG FAULT
+        #Globals.pickleObject( self, filename, folder )
+    # end of InternalBible.pickleBible
 
 
     def getAssumedBookName( self, BBB ):

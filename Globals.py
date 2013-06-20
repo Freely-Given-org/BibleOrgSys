@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Globals.py
-#   Last modified: 2013-06-14 (also update versionString below)
+#   Last modified: 2013-06-20 (also update versionString below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -29,11 +29,12 @@ Module handling global variables
 """
 
 progName = "Globals"
-versionString = "0.18"
+versionString = "0.19"
 
 
 import logging, os.path, pickle
 import multiprocessing
+from gettext import gettext as _
 
 
 cacheFolder = 'ObjectCache/' # Relative path
@@ -424,7 +425,7 @@ def pickleObject( theObject, filename, folder=None ):
     """
     Writes the object to a .pickle file that can be easily loaded into a Python3 program.
         If folder is None (or missing), defaults to the default cache folder specified above.
-        Created the folder(s) if necessary.
+        Creates the folder(s) if necessary.
     """
     assert( theObject )
     assert( filename )
