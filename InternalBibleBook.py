@@ -1347,6 +1347,7 @@ class InternalBibleBook:
         bkDict['chapterCount'] = bkDict['verseCount'] = bkDict['percentageProgress'] = None
         bkDict['completedVerseCount'] = 0
         bkDict['havePopulatedCVmarkers'] = bkDict['haveParagraphMarkers'] = bkDict['haveIntroductoryMarkers'] = False
+        bkDict['haveSectionHeadings'] = False; bkDict['sectionHeadingsCount'] = 0
         bkDict['haveSectionReferences'] = False
         bkDict['haveFootnotes'] = bkDict['haveFootnoteOrigins'] = False
         bkDict['haveCrossReferences'] = bkDict['haveCrossReferenceOrigins'] = False
@@ -1378,6 +1379,9 @@ class InternalBibleBook:
             elif marker=='v~' and text:
                 bkDict['haveVerseText'] = True
                 bkDict['completedVerseCount'] += 1
+            elif marker in ('s1','s2','s3'):
+                bkDict['haveSectionHeadings'] = True
+                bkDict['sectionHeadingsCount'] += 1
             elif marker=='r' and text:
                 bkDict['haveSectionReferences'] = True
                 bkDict['sectionReferencesCount'] += 1
