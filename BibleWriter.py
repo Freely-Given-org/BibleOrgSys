@@ -158,6 +158,8 @@ class BibleWriter( InternalBible ):
             inField = None
             if Globals.verbosityLevel > 2: print( "  " + _("Adjusting USFM output..." ) )
             for pseudoMarker,originalMarker,text,cleanText,extras in pseudoUSFMData:
+                if (not USFM) and pseudoMarker!='id': # We need to create an initial id line
+                    USFM += '\\id {} BOS USFM export v{}'.format( USFMAbbreviation, versionString )
                 if pseudoMarker in ('c#',): continue # Ignore our additions
                 value = cleanText # (temp)
                 if Globals.debugFlag: print( "pseudoMarker = '{}' value = '{}'".format( pseudoMarker, value ) )
