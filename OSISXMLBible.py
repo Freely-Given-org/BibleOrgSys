@@ -1503,7 +1503,7 @@ class OSISXMLBible( Bible ):
                     if not titleType and not titleShort and self.language=='ksw': # it's a Karen alternate chapter number
                         #bookResults.append( ("alternateChapterNumber",titleText,) )
                         #USFMResults.append( ('ca',titleText,) )
-                        self.thisBook.appendLine( 'ca', titleText )
+                        self.thisBook.appendLine( 'cp', titleText )
                     else: # let's guess that it's a section heading
                         #bookResults.append( ('title', titleType, titleText,) )
                         #USFMResults.append( ('ms1', titleText,) )
