@@ -93,6 +93,7 @@ class InternalBibleEntry:
                     assert( isinstance( extraIndex, int ) and extraIndex >= 0 )
                     assert( isinstance( extraText, str ) and extraText ) # Mustn't be blank
                     assert( isinstance( cleanExtraText, str ) and cleanExtraText ) # Shouldn't be blank
+                    if '\\' in cleanExtraText: print( "How does a backslash remain in cleanExtraText '{}".format( cleanExtraText ) )
                     assert( '\\' not in cleanExtraText )
                     assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
                     for letters in ( 'f', 'x', 'fe', 'ef' ): # footnote, cross-ref, endnotes, studynotes
