@@ -477,7 +477,7 @@ class InternalBibleBook:
                     for marker in ['\\xo*','\\xo ', '\\xt*','\\xt ', '\\xk*','\\xk ', '\\xq*','\\xq ',
                                    '\\xot*','\\xot ', '\\xnt*','\\xnt ', '\\xdc*','\\xdc ',
                                    '\\fr*','\\fr ','\\ft*','\\ft ','\\fqa*','\\fqa ','\\fq*','\\fq ',
-                                   '\\fv*','\\fv ','\\fk*','\\fk ',] \
+                                   '\\fv*','\\fv ','\\fk*','\\fk ','\\fl*','\\fl ','\\fdc*','\\fdc ',] \
                                        + internalSFMsToRemove:
                         cleanedNote = cleanedNote.replace( marker, '' )
                     if '\\' in cleanedNote:

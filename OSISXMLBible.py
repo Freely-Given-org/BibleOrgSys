@@ -34,7 +34,7 @@ This is a quickly updated version of an early module,
 """
 
 progName = "OSIS XML Bible format handler"
-versionString = "0.21"
+versionString = "0.22"
 
 import logging, os
 from gettext import gettext as _
@@ -102,13 +102,13 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
     lastFilenameFound = None
     for thisFilename in sorted( foundFiles ):
         if strictCheck or Globals.strictCheckingFlag:
-            firstLines = Globals.peekIntoFile( thisFilename, givenFolderName, numLines=2 )
+            firstLines = Globals.peekIntoFile( thisFilename, givenFolderName, numLines=3 )
             if not firstLines or len(firstLines)<2: continue
             if not firstLines[0].startswith( '<?xml version="1.0"' ) \
             and not firstLines[0].startswith( '\ufeff<?xml version="1.0"' ): # same but with BOM
                 if Globals.verbosityLevel > 2: print( "OB (unexpected) first line was '{}' in {}".format( firstLines, thisFilename ) )
                 continue
-            if not firstLines[1].startswith( '<osis ' ):
+            if not (firstLines[1].startswith( '<osis ' ) or firstLines[2].startswith( '<osis ' )):
                 continue
         lastFilenameFound = thisFilename
         numFound += 1
