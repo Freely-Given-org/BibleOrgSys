@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # OSISXMLBible.py
-#   Last modified: 2013-06-11 by RJH (also update versionString below)
+#   Last modified: 2013-06-21 by RJH (also update versionString below)
 #
 # Module handling OSIS XML Bibles
 #
@@ -1679,7 +1679,7 @@ class OSISXMLBible( Bible ):
                     if pTail and not pTail.isspace(): # Just ignore XML spacing characters
                         #bookResults.append( ('paragraph+',pTail,) )
                         #USFMResults.append( ('p+',pTail,) )
-                        self.thisBook.appendLine( 'p~', pTail )
+                        self.thisBook.appendLine( 'p', pTail ) # 'p~'
                     justFinishedLG = False
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"hi":
                     sublocation = "validateParagraph: hi of " + locationDescription
@@ -1699,7 +1699,7 @@ class OSISXMLBible( Bible ):
                     if pTail and not pTail.isspace(): # Just ignore XML spacing characters
                         #bookResults.append( ('paragraph+',pTail,) )
                         #USFMResults.append( ('p+',pTail,) )
-                        self.thisBook.appendLine( 'p~', pTail )
+                        self.thisBook.appendLine( 'p', pTail ) # 'p~'
                     justFinishedLG = False
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"lb":
                     sublocation = "validateParagraph: lb of " + locationDescription
@@ -1745,7 +1745,7 @@ class OSISXMLBible( Bible ):
             if element.tail and not element.tail.isspace(): # Just ignore XML spacing characters
                 #bookResults.append( ('paragraph+',element.tail,) )
                 #USFMResults.append( ('p+',element.tail,) )
-                self.thisBook.appendLine( 'p~', element.tail )
+                self.thisBook.appendLine( 'p', element.tail ) # 'p~'
             return verseMilestone
         # end of OSISXMLBible.validateParagraph
 
