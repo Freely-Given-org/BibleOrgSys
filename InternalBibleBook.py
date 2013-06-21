@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-06-20 by RJH (also update versionString below)
+#   Last modified: 2013-06-21 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 progName = "Internal Bible book handler"
-versionString = "0.25"
+versionString = "0.26"
 debuggingThisModule = False
 
 
@@ -476,9 +476,15 @@ class InternalBibleBook:
                         cleanedNote = cleanedNote.replace( sign, '' )
                     for marker in ['\\xo*','\\xo ', '\\xt*','\\xt ', '\\xk*','\\xk ', '\\xq*','\\xq ',
                                    '\\xot*','\\xot ', '\\xnt*','\\xnt ', '\\xdc*','\\xdc ',
-                                   '\\fr*','\\fr ','\\ft*','\\ft ','\\fq*','\\fq ','\\fv*','\\fv ','\\fk*','\\fk ',] \
+                                   '\\fr*','\\fr ','\\ft*','\\ft ','\\fqa*','\\fqa ','\\fq*','\\fq ',
+                                   '\\fv*','\\fv ','\\fk*','\\fk ',] \
                                        + internalSFMsToRemove:
                         cleanedNote = cleanedNote.replace( marker, '' )
+                    if '\\' in cleanedNote:
+                        fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Found unexpected backslash in {}: {}").format( thisOne, cleanedNote ) )
+                        if Globals.logErrorsFlag: logging.error( _("Found unexpected backslash after {} {}:{} in {}: {}").format( self.bookReferenceCode, c, v, thisOne, cleanedNote ) )
+                        self.addPriorityError( 81, c, v, _("{} contains unexpected backslash").format( thisOne.title() ) )
+                        cleanedNote = cleanedNote.replace( '\\', '' )
                     # Save it all and finish off
                     extras.append( (this1,ix1,note,cleanedNote) ) # Saves a 4-tuple: type ('fn' or 'xr'), index into the main text line, the actual fn or xref contents, then a cleaned version
                     ixFN = lcAdjText.find( '\\f ' )
