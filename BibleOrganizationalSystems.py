@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleOrganizationalSystems.py
-#   Last modified: 2013-06-11 by RJH (also update versionString below)
+#   Last modified: 2013-06-22 by RJH (also update versionString below)
 #
 # Module handling BibleOrganizationalSystems
 #
@@ -222,7 +222,7 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
                     #print( "  result is", result )
                     if result is not None: return result
             # else we couldn't find it anywhere
-            if Globals.logErrorsFlag: logging.error( _("{} Bible Organizational System has no {} specified").format(self.__systemName,valueName) )
+            logging.error( _("{} Bible Organizational System has no {} specified").format(self.__systemName,valueName) )
         # end of getOrganizationalSystemValue
 
         assert( systemName and isinstance( systemName, str ) )
@@ -254,7 +254,7 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         if myBooks is not None:
             for BBB in myBooks:
                 if not BibleBookOrderSystem.containsBook( self, BBB ):
-                    if Globals.logErrorsFlag: logging.error( _("Book '{}' is included in {} system but missing from {} book order system").format( BBB, self.__systemName, BibleBookOrderSystem.getBookOrderSystemName( self ) ) )
+                    logging.error( _("Book '{}' is included in {} system but missing from {} book order system").format( BBB, self.__systemName, BibleBookOrderSystem.getBookOrderSystemName( self ) ) )
     # end of BibleOrganizationalSystem.__init__
 
     def __str__( self ):
@@ -321,7 +321,7 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
                 result = self.__boss.getOrganizationalSystemValue( trySystemName, valueName )
                 if result is not None: return result
         # else we couldn't find it anywhere
-        if Globals.logErrorsFlag: logging.error( _("{} Bible Organizational System has no {} specified").format(self.getOrganizationalSystemName(),valueName) )
+        logging.error( _("{} Bible Organizational System has no {} specified").format(self.getOrganizationalSystemName(),valueName) )
     # end of BibleOrganizationalSystem.getOrganizationalSystemValue
 
     def getBookList( self ):
@@ -365,7 +365,7 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         assert( not S or len(S)==1 and S.isalpha() ) # Suffix should be only one lower-case letter if anything
         if BBB and BibleBookOrderSystem.containsBook( self, BBB ):
             return BibleVersificationSystem.isValidBCVRef( self, referenceTuple, referenceString, extended=extended )
-        elif Globals.logErrorsFlag: logging.error( _("{} {}:{} is invalid book for reference '{}' in {} versification system for {}").format(BBB,C,V,referenceString, self.getBookOrderSystemName(),self.getOrganizationalSystemName()) )
+        logging.error( _("{} {}:{} is invalid book for reference '{}' in {} versification system for {}").format(BBB,C,V,referenceString, self.getBookOrderSystemName(),self.getOrganizationalSystemName()) )
         return False
     # end of BibleOrganizationalSystem.isValidBCVRef
 # end of BibleOrganizationalSystem class
@@ -398,14 +398,11 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
-    # Configure basic logging
-    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
-
-    # Handle command line parameters
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
-    #parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
+    # Configure basic set-up
+    parser = Globals.setup( progName, versionString )
     Globals.addStandardOptionsAndProcess( parser )
 
     demo()
+
+    Globals.closedown( progName, versionString )
 # end of BibleOrganizationalSystems.py

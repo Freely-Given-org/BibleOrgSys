@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleVersificationSystems.py
-#   Last modified: 2013-06-11 (also update versionString below)
+#   Last modified: 2013-06-22 (also update versionString below)
 #
 # Module handling BibleVersificationSystem_*.xml to produce C and Python data tables
 #
@@ -671,10 +671,10 @@ class BibleVersificationSystem:
                 if 0 < int(V) <= int(self.__chapterDataDict[BBB][C]):
                     if not self.isOmittedVerse( referenceTuple ):
                         return True
-                    elif Globals.logErrorsFlag: logging.error( _("{} {}:{} is omitted in {} versification system {}").format(BBB,C,V,self.getVersificationSystemName(),myReferenceString) )
-                elif Globals.logErrorsFlag: logging.error( _("{} {}:{} is invalid verse in {} versification system {}").format(BBB,C,V,self.getVersificationSystemName(),myReferenceString) )
-            elif Globals.logErrorsFlag: logging.error( _("{} {}:{} is invalid chapter in {} versification system {}").format(BBB,C,V,self.getVersificationSystemName(),myReferenceString) )
-        elif Globals.logErrorsFlag: logging.error( _("{} {}:{} is invalid book in {} versification system {}").format(BBB,C,V,self.getVersificationSystemName(),myReferenceString) )
+                    logging.error( _("{} {}:{} is omitted in {} versification system {}").format(BBB,C,V,self.getVersificationSystemName(),myReferenceString) )
+                logging.error( _("{} {}:{} is invalid verse in {} versification system {}").format(BBB,C,V,self.getVersificationSystemName(),myReferenceString) )
+            logging.error( _("{} {}:{} is invalid chapter in {} versification system {}").format(BBB,C,V,self.getVersificationSystemName(),myReferenceString) )
+        logging.error( _("{} {}:{} is invalid book in {} versification system {}").format(BBB,C,V,self.getVersificationSystemName(),myReferenceString) )
         return False
     # end of BibleVersificationSystem.isValidBCVRef
 
@@ -698,18 +698,18 @@ class BibleVersificationSystem:
         # Check book details
         if BBB1!=BBB2:
             if bookOrderSystem is None:
-                if Globals.logErrorsFlag: logging.error( _("Book order system not specified (range covers {} to {}){}").format( BBB1, BBB2, myReferenceString ) )
+                logging.error( _("Book order system not specified (range covers {} to {}){}").format( BBB1, BBB2, myReferenceString ) )
                 haveErrors = True
                 return None
             if not bookOrderSystem.correctlyOrdered( BBB1, BBB2 ):
-                if Globals.logErrorsFlag: logging.error( _("Book range out of order ({} before {}){}").format( BBB1, BBB2, myReferenceString ) )
+                logging.error( _("Book range out of order ({} before {}){}").format( BBB1, BBB2, myReferenceString ) )
                 haveErrors = True
             if haveErrors: return None
 
         # Check chapter details
         C1int, C2int = int(C1), int(C2)
         if BBB1==BBB2 and C1int > C2int:
-            if Globals.logErrorsFlag: logging.error( _("Chapter range out of order ({} before {}) in {}{}").format( C1, C2, BBB1, myReferenceString ) )
+            logging.error( _("Chapter range out of order ({} before {}) in {}{}").format( C1, C2, BBB1, myReferenceString ) )
             haveErrors = True
         if haveErrors: return None
 
@@ -719,7 +719,7 @@ class BibleVersificationSystem:
         if V2: V2int = int(V2)
         else: V2int = self.getNumVerses( BBB2, C2 ) # End with the last verse if no verse specified (e.g., for a chapter range)
         if BBB1==BBB2 and C1int==C2int and V1int>=V2int:
-            if Globals.logErrorsFlag: logging.error( _("Verse range out of order ({} before {}) in {} {}{}").format( V1, V2, BBB1, C1, myReferenceString ) )
+            logging.error( _("Verse range out of order ({} before {}) in {} {}{}").format( V1, V2, BBB1, C1, myReferenceString ) )
             haveErrors = True
         if haveErrors: return None
 
@@ -832,13 +832,11 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
-    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
-
-    # Handle command line parameters
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
-    #parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML files to .py and .h tables suitable for directly including into other programs")
+    # Configure basic set-up
+    parser = Globals.setup( progName, versionString )
     Globals.addStandardOptionsAndProcess( parser )
 
     demo()
+
+    Globals.closedown( progName, versionString )
 # end of BibleVersificationSystems.py

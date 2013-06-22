@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # SFMFile.py
-#   Last modified: 2013-05-28 (also update versionString below)
+#   Last modified: 2013-06-23 (also update versionString below)
 #
 # SFM (Standard Format Marker) data file reader
 #
@@ -91,7 +91,7 @@ class SFMLines:
                 for line in myFile:
                     lineCount += 1
                     if lineCount==1 and encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF
-                        if Globals.verbosityLevel > 0: print( "      SFMLines: Detected UTF-16 Byte Order Marker" )
+                        logging.info( "SFMLines: Detected UTF-16 Byte Order Marker in {}".format( sfm_filename ) )
                         line = line[1:] # Remove the UTF-8 Byte Order Marker
                     if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines
@@ -102,7 +102,7 @@ class SFMLines:
 
                     if line[0]!='\\': # Not a SFM line
                         if len(result)==0: # We don't have any SFM data lines yet
-                            if Globals.logErrorsFlag and Globals.verbosityLevel > 2:
+                            if Globals.verbosityLevel > 2:
                                 logging.error( "Non-SFM line in " + sfm_filename + " -- line ignored at #" + str(lineCount) )
                             #print( "SFMFile.py: XXZXResult is", result, len(line) )
                             #for x in range(0, min(6,len(line))):
@@ -132,7 +132,7 @@ class SFMLines:
                     if marker not in ignoreSFMs:
                         result.append( (marker, text) )
             except:
-                if Globals.logErrorsFlag: logging.critical( "Invalid line in " + sfm_filename + " -- line ignored at #" + str(lineCount) )
+                logging.critical( "Invalid line in " + sfm_filename + " -- line ignored at #" + str(lineCount) )
                 if lineCount > 1: print( 'Previous line was: ', lastLine )
                 print( line )
                 #raise
@@ -207,7 +207,7 @@ class SFMRecords:
                 for line in myFile:
                     lineCount += 1
                     if lineCount==1 and encoding.lower()=='utf-8' and line and line[0]==chr(65279): #U+FEFF
-                        if Globals.verbosityLevel > 0: print( "      SFMRecords: Detected UTF-16 Byte Order Marker" )
+                        logging.info( "SFMRecords: Detected UTF-16 Byte Order Marker in {}".format( sfm_filename ) )
                         line = line[1:] # Remove the UTF-8 Byte Order Marker
                     if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines
@@ -255,7 +255,7 @@ class SFMRecords:
                     # Save the current marker and text
                     record.append( (marker, text) )
             except:
-                if Globals.logErrorsFlag: logging.critical( "Invalid line in " + sfm_filename + " -- line ignored at " + str(lineCount) )
+                logging.critical( "Invalid line in " + sfm_filename + " -- line ignored at " + str(lineCount) )
                 if lineCount > 1: print( 'Previous line was: ', lastLine )
                 else: print( 'Possible encoding error -- expected', encoding )
                 #raise
@@ -326,7 +326,7 @@ class SFMRecords:
                     elif isinstance( self.dataDict[key], dict ):
                         #print( j, key, marker, value )
                         if marker in self.dataDict[key]:
-                            if Globals.logErrorsFlag: logging.warning( "Multiple {} lines in {} record--will be overwritten".format( marker, key ) )
+                            logging.warning( "Multiple {} lines in {} record--will be overwritten".format( marker, key ) )
                         self.dataDict[key][marker] = value
         return self.dataDict
     # end of SFMRecords.copyToDict
@@ -362,10 +362,11 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
-    # Handle command line parameters
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
+    # Configure basic set-up
+    parser = Globals.setup( progName, versionString )
     Globals.addStandardOptionsAndProcess( parser )
 
     demo()
+
+    Globals.closedown( progName, versionString )
 # end of SFMFile.py

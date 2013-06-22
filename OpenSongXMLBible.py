@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # OpenSongXMLBible.py
-#   Last modified: 2013-06-11 by RJH (also update versionString below)
+#   Last modified: 2013-06-22 by RJH (also update versionString below)
 #
 # Module handling OpenSong XML Bibles
 #
@@ -275,8 +275,8 @@ class OpenSongXMLBible( Bible ):
                     else: logging.error( "Expected to find '{}' but got '{}'".format( OpenSongXMLBible.chapterTag, element.tag ) )
                 if Globals.verbosityLevel > 2: print( "  Saving {} into results...".format( BBB ) )
                 self.saveBook( thisBook )
-            elif Globals.logErrorsFlag: logging.error( _("OpenSong load doesn't recognize book name: '{}'").format( bookName ) )
-        elif Globals.logErrorsFlag: logging.error( _("OpenSong load can't find a book name") )
+            logging.error( _("OpenSong load doesn't recognize book name: '{}'").format( bookName ) )
+        logging.error( _("OpenSong load can't find a book name") )
     # end of OpenSongXMLBible.__validateAndExtractBook
 
 
@@ -386,14 +386,11 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
-    # Configure basic logging
-    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
-
-    # Handle command line parameters
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
-    #parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
+    # Configure basic set-up
+    parser = Globals.setup( progName, versionString )
     Globals.addStandardOptionsAndProcess( parser )
 
     demo()
+
+    Globals.closedown( progName, versionString )
 # end of OpenSongXMLBible.py

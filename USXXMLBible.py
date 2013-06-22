@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USXXMLBible.py
-#   Last modified: 2013-06-11 by RJH (also update versionString below)
+#   Last modified: 2013-06-23 by RJH (also update versionString below)
 #
 # Module handling compilations of USX Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USX Bibles.
 """
 
 progName = "USX XML Bible handler"
-versionString = "0.06"
+versionString = "0.07"
 
 
 import os, logging
@@ -99,7 +99,7 @@ def USXXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
-            if Globals.logErrorsFlag: logging.warning( _("USXXMLBibleFileCheck: '{}' subfolder is unreadable").format( tryFolderName ) )
+            logging.warning( _("USXXMLBibleFileCheck: '{}' subfolder is unreadable").format( tryFolderName ) )
             continue
         if Globals.verbosityLevel > 3: print( "    USXXMLBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
@@ -150,7 +150,7 @@ class USXXMLBible( Bible ):
 
         # Do a preliminary check on the readability of our folder
         if not os.access( self.givenFolderName, os.R_OK ):
-            print( "USXXMLBible: File '{}' is unreadable".format( self.givenFolderName ) )
+            logging.error( "USXXMLBible: File '{}' is unreadable".format( self.givenFolderName ) )
     # end of USXXMLBible.__init_
 
 
@@ -182,7 +182,7 @@ class USXXMLBible( Bible ):
                 for line in myFile:
                     lineCount += 1
                     if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
-                        if Globals.verbosityLevel > 0: print( "      USXXMLBible.load: Detected UTF-16 Byte Order Marker" )
+                        logging.info( "USXXMLBible.load: Detected UTF-16 Byte Order Marker in {}".format( ssfFilepath ) )
                         line = line[1:] # Remove the Byte Order Marker
                     if line[-1]=='\n': line = line[:-1] # Remove trailing newline character
                     line = line.strip() # Remove leading and trailing whitespace
@@ -226,7 +226,7 @@ class USXXMLBible( Bible ):
                                 if line[ix2+2:-1]==fieldname:
                                     ssfData[fieldname] = (contents, attributes)
                                     processed = True
-                    if not processed: print( "ERROR: Unexpected '{}' line in SSF file".format( line ) )
+                    if not processed: logging.error( "Unexpected '{}' line in SSF file".format( line ) )
             if Globals.verbosityLevel > 2:
                 print( "  " + _("Got {} SSF entries:").format( len(ssfData) ) )
                 if Globals.verbosityLevel > 3:
@@ -243,10 +243,10 @@ class USXXMLBible( Bible ):
             somepath = os.path.join( self.givenFolderName, something )
             if os.path.isdir( somepath ): foundFolders.append( something )
             elif os.path.isfile( somepath ): foundFiles.append( something )
-            else: print( "ERROR: Not sure what '{}' is in {}!".format( somepath, self.givenFolderName ) )
-        if foundFolders: print( "USXXMLBible.load: Surprised to see subfolders in '{}': {}".format( self.givenFolderName, foundFolders ) )
+            else: logging.error( "Not sure what '{}' is in {}!".format( somepath, self.givenFolderName ) )
+        if foundFolders: logging.info( "USXXMLBible.load: Surprised to see subfolders in '{}': {}".format( self.givenFolderName, foundFolders ) )
         if not foundFiles:
-            print( "USXXMLBible.load: Couldn't find any files in '{}'".format( self.givenFolderName ) )
+            if Globals.verbosityLevel > 0: print( "USXXMLBible.load: Couldn't find any files in '{}'".format( self.givenFolderName ) )
             return # No use continuing
 
         self.USXFilenamesObject = USXFilenames( self.givenFolderName )
@@ -363,16 +363,13 @@ def demo():
     #       pass
 
 if __name__ == '__main__':
-    # Configure basic logging
-    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
-
-    # Handle command line parameters
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
-    #parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
+    # Configure basic set-up
+    parser = Globals.setup( progName, versionString )
     Globals.addStandardOptionsAndProcess( parser )
 
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     demo()
+
+    Globals.closedown( progName, versionString )
 # end of USXXMLBible.py

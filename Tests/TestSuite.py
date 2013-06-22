@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # TestSuite.py
-#   Last modified: 2013-05-03 by RJH (also update versionString below)
+#   Last modified: 2013-06-22 by RJH (also update versionString below)
 #
 # Suite for testing BibleOrgSys
 #
@@ -46,9 +46,9 @@ import USFMMarkersTests, USFMFilenamesTests, USXFilenamesTests
 
 
 # Handle command line parameters (for compatibility)
-from optparse import OptionParser
-parser = OptionParser( version="v{}".format( versionString ) )
-parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML files to .py and .h tables suitable for directly including into other programs")
+# Configure basic set-up
+parser = Globals.setup( progName, versionString )
+parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
 Globals.addStandardOptionsAndProcess( parser )
 
 if Globals.verbosityLevel > 1: print( "{} V{}".format( progName, versionString ) )
@@ -97,6 +97,5 @@ suiteList.append( unittest.TestLoader().loadTestsFromTestCase( USXFilenamesTests
 # Now run all the tests in the suite
 allTests = unittest.TestSuite( suiteList )
 unittest.TextTestRunner(verbosity=2).run( allTests )
-
 
 # end of TestSuite.py

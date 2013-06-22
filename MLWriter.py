@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # MLWriter.py
-#   Last modified: 2013-05-27 by RJH (also update versionString below)
+#   Last modified: 2013-06-22 by RJH (also update versionString below)
 #
 # Module handling pretty writing of XML (and xHTML) and HTML files
 #
@@ -37,7 +37,7 @@ TODO: Add writeAutoDTD
 """
 
 progName = "ML Writer"
-versionString = "0.28"
+versionString = "0.29"
 
 
 import os, logging
@@ -256,7 +256,7 @@ class MLWriter:
         assert( self._status == 'Idle' )
         if lineEndings=='l': self._nl = '\n'
         elif lineEndings=='w': self._nl = '\r\n'
-        else: logging.error( "MLWriter: Unknown '{}' lineEndings flag".format( lineEndings ) )
+        logging.error( "MLWriter: Unknown '{}' lineEndings flag".format( lineEndings ) )
         if Globals.verbosityLevel>2: print( _("Writing {}...").format(self._outputFilePath) )
         self.__outputFile = open( self._outputFilePath, 'wt' ) # Just create the empty file
         self.__outputFile.close()
@@ -288,7 +288,7 @@ class MLWriter:
     def checkText( self, textString ):
         """ Returns a checked string containing the tag name. Note that special characters should have already been handled before calling this routine. """
         assert( textString ) # It can't be blank
-        if '<' in textString or '>' in textString or '"' in textString: logging.error( _("MLWriter:checkText: unexpected characters found in '{}'").format( textString ) )
+        if ('<' in textString or '>' in textString or '"' in textString): logging.error( _("MLWriter:checkText: unexpected characters found in '{}'").format( textString ) )
         return textString
     # end of MLWriter.checkText
 
@@ -385,10 +385,12 @@ class MLWriter:
     def writeLineClose( self, closeTag ):
         """ Writes an opening tag on a line. """
         #print( 'writeLineClose', self._openStack )
-        if not self._openStack: logging.error( _("MLWriter:writeLineClose: closed '{}' tag even though no tags open").format( closeTag ) )
+        if not self._openStack:
+             logging.error( _("MLWriter:writeLineClose: closed '{}' tag even though no tags open").format( closeTag ) )
         else:
             expectedTag = self._openStack.pop()
-            if expectedTag != closeTag: logging.error( _("MLWriter:writeLineClose: closed '{}' tag but should have closed '{}'").format( closeTag, expectedTag ) )
+            if expectedTag != closeTag:
+                logging.error( _("MLWriter:writeLineClose: closed '{}' tag but should have closed '{}'").format( closeTag, expectedTag ) )
         noNL = self._outputType=='HTML' and closeTag in HTMLInsideTags
         self._autoWrite( '</{}>'.format(self.checkTag(closeTag)), noNL=noNL )
     # end of MLWriter.writeLineOpen
@@ -554,10 +556,11 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
-    # Handle command line parameters
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
+    # Configure basic set-up
+    parser = Globals.setup( progName, versionString )
     Globals.addStandardOptionsAndProcess( parser )
 
     demo()
+
+    Globals.closedown( progName, versionString )
 # end of MLWriter.py

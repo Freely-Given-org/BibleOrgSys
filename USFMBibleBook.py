@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBibleBook.py
-#   Last modified: 2013-05-27 by RJH (also update versionString below)
+#   Last modified: 2013-06-22 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -78,7 +78,7 @@ class USFMBibleBook( BibleBook ):
                     if Globals.USFMMarkers.isNewlineMarker(insideMarker): # Need to split the line for everything else to work properly
                         if ix==0:
                             loadErrors.append( _("{} {}:{} NewLine marker '{}' shouldn't appear within line in \\{}: '{}'").format( self.bookReferenceCode, c, v, insideMarker, marker, text ) )
-                            if Globals.logErrorsFlag: logging.error( _("NewLine marker '{}' shouldn't appear within line after {} {}:{} in \\{}: '{}'").format( insideMarker, self.bookReferenceCode, c, v, marker, text ) ) # Only log the first error in the line
+                            logging.error( _("NewLine marker '{}' shouldn't appear within line after {} {}:{} in \\{}: '{}'").format( insideMarker, self.bookReferenceCode, c, v, marker, text ) ) # Only log the first error in the line
                             self.addPriorityError( 96, c, v, _("NewLine marker \\{} shouldn't be inside a line").format( insideMarker ) )
                         thisText = text[ix:iMIndex].rstrip()
                         self.appendLine( marker, thisText )
@@ -120,10 +120,10 @@ class USFMBibleBook( BibleBook ):
             or marker.endswith('*') and Globals.USFMMarkers.isInternalMarker( marker[:-1] ): # the line begins with an internal marker -- append it to the previous line
                 if text:
                     loadErrors.append( _("{} {}:{} Found '\\{}' internal marker at beginning of line with text: {}").format( self.bookReferenceCode, c, v, marker, text ) )
-                    if Globals.logErrorsFlag: logging.warning( _("Found '\\{}' internal marker after {} {}:{} at beginning of line with text: {}").format( marker, self.bookReferenceCode, c, v, text ) )
+                    logging.warning( _("Found '\\{}' internal marker after {} {}:{} at beginning of line with text: {}").format( marker, self.bookReferenceCode, c, v, text ) )
                 else: # no text
                     loadErrors.append( _("{} {}:{} Found '\\{}' internal marker at beginning of line (with no text)").format( self.bookReferenceCode, c, v, marker ) )
-                    if Globals.logErrorsFlag: logging.warning( _("Found '\\{}' internal marker after {} {}:{} at beginning of line (with no text)").format( marker, self.bookReferenceCode, c, v ) )
+                    logging.warning( _("Found '\\{}' internal marker after {} {}:{} at beginning of line (with no text)").format( marker, self.bookReferenceCode, c, v ) )
                 self.addPriorityError( 27, c, v, _("Found \\{} internal marker on new line in file").format( marker ) )
                 if not lastText.endswith(' ') and marker!='f': lastText += ' ' # Not always good to add a space, but it's their fault! Don't do it for footnotes, though.
                 lastText +=  '\\' + marker + ' ' + text
@@ -131,17 +131,17 @@ class USFMBibleBook( BibleBook ):
             else: # the line begins with an unknown marker
                 if text:
                     loadErrors.append( _("{} {}:{} Found '\\{}' unknown marker at beginning of line with text: {}").format( self.bookReferenceCode, c, v, marker, text ) )
-                    if Globals.logErrorsFlag: logging.error( _("Found '\\{}' unknown marker after {} {}:{} at beginning of line with text: {}").format( marker, self.bookReferenceCode, c, v, text ) )
+                    logging.error( _("Found '\\{}' unknown marker after {} {}:{} at beginning of line with text: {}").format( marker, self.bookReferenceCode, c, v, text ) )
                 else: # no text
                     loadErrors.append( _("{} {}:{} Found '\\{}' unknown marker at beginning of line (with no text").format( self.bookReferenceCode, c, v, marker ) )
-                    if Globals.logErrorsFlag: logging.error( _("Found '\\{}' unknown marker after {} {}:{} at beginning of line (with no text)").format( marker, self.bookReferenceCode, c, v ) )
+                    logging.error( _("Found '\\{}' unknown marker after {} {}:{} at beginning of line (with no text)").format( marker, self.bookReferenceCode, c, v ) )
                 self.addPriorityError( 100, c, v, _("Found \\{} unknown marker on new line in file").format( marker ) )
                 for tryMarker in sorted( Globals.USFMMarkers.getNewlineMarkersList(), key=len, reverse=True ): # Try to do something intelligent here -- it might be just a missing space
                     if marker.startswith( tryMarker ): # Let's try changing it
                         if lastMarker: doAppendLine( lastMarker, lastText )
                         lastMarker, lastText = tryMarker, marker[len(tryMarker):] + ' ' + text
                         loadErrors.append( _("{} {}:{} Changed '\\{}' unknown marker to '{}' at beginning of line: {}").format( self.bookReferenceCode, c, v, marker, tryMarker, text ) )
-                        if Globals.logErrorsFlag: logging.warning( _("Changed '\\{}' unknown marker to '{}' after {} {}:{} at beginning of line: {}").format( marker, tryMarker, self.bookReferenceCode, c, v, text ) )
+                        logging.warning( _("Changed '\\{}' unknown marker to '{}' after {} {}:{} at beginning of line: {}").format( marker, tryMarker, self.bookReferenceCode, c, v, text ) )
                         break
                 # Otherwise, don't bother processing this line -- it'll just cause more problems later on
         if lastMarker: doAppendLine( lastMarker, lastText ) # Process the final line
@@ -207,14 +207,11 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
-    # Configure basic logging
-    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
-
-    # Handle command line parameters
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
-    #parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
+    # Configure basic set-up
+    parser = Globals.setup( progName, versionString )
     Globals.addStandardOptionsAndProcess( parser )
 
     demo()
+
+    Globals.closedown( progName, versionString )
 # end of USFMBibleBook.py

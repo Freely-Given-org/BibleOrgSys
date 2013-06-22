@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # UnboundBible.py
-#   Last modified: 2013-06-11 by RJH (also update versionString below)
+#   Last modified: 2013-06-22 by RJH (also update versionString below)
 #
 # Module handling Biola University "unbound" Bible files
 #
@@ -172,7 +172,7 @@ def UnboundBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
-            if Globals.logErrorsFlag: logging.warning( _("UnboundBibleFileCheck: '{}' subfolder is unreadable").format( tryFolderName ) )
+            logging.warning( _("UnboundBibleFileCheck: '{}' subfolder is unreadable").format( tryFolderName ) )
             continue
         if Globals.verbosityLevel > 3: print( "    UnboundBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
@@ -255,7 +255,7 @@ class UnboundBible( Bible ):
             for line in myFile:
                 lineCount += 1
                 #if lineCount==1 and self.encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF
-                    #if Globals.verbosityLevel > 0: print( "      UnboundBible.load: Detected UTF-16 Byte Order Marker" )
+                    #logging.info( "      UnboundBible.load: Detected UTF-16 Byte Order Marker" )
                     #line = line[1:] # Remove the UTF-8 Byte Order Marker
                 if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 if not line: continue # Just discard blank lines
@@ -271,7 +271,7 @@ class UnboundBible( Bible ):
                         elif hashBits[0] == 'language': self.language = hashBits[1]
                         elif hashBits[0] == 'note': self.note = hashBits[1]
                         elif hashBits[0] == 'columns': self.columns = hashBits[1]
-                        elif Globals.logErrorsFlag: logging.warning( "Unknown UnboundBible meta-data field '{}' = '{}'".format( hashBits[0], hashBits[1] ) )
+                        logging.warning( "Unknown UnboundBible meta-data field '{}' = '{}'".format( hashBits[0], hashBits[1] ) )
                     continue # Just discard comment lines
 
                 bits = line.split( '\t' )
@@ -283,7 +283,7 @@ class UnboundBible( Bible ):
                 elif len(bits) == 9:
                     NRSVA_bookCode, NRSVA_chapterNumberString, NRSVA_verseNumberString, bookCode, chapterNumberString, verseNumberString, subverseNumberString, sequenceNumberString, vText = bits
                 elif len(bits) == 1 and self.givenName.startswith( 'lxx_a_parsing_' ):
-                    if Globals.logErrorsFlag: logging.warning( _("Skipping bad '{}' line in {} {} {} {}:{}").format( line, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                    logging.warning( _("Skipping bad '{}' line in {} {} {} {}:{}").format( line, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                     continue
                 else: print( "Expected number of bits", self.givenName, BBB, bookCode, chapterNumberString, verseNumberString, len(bits), bits ); halt
 
@@ -299,7 +299,7 @@ class UnboundBible( Bible ):
                 if Globals.debugFlag: assert( verseNumberString.isdigit() )
 
                 if subverseNumberString:
-                    if Globals.logErrorsFlag: logging.warning( _("subverseNumberString '{}' in {} {} {}:{}").format( subverseNumberString, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                    logging.warning( _("subverseNumberString '{}' in {} {} {}:{}").format( subverseNumberString, BBB, bookCode, chapterNumberString, verseNumberString ) )
 
                 vText = vText.strip() # Remove leading and trailing spaces
                 if not vText: continue # Just ignore blank verses I think
@@ -327,25 +327,25 @@ class UnboundBible( Bible ):
                 if chapterNumber != lastChapterNumber: # We've started a new chapter
                     if Globals.debugFlag: assert( chapterNumber > lastChapterNumber or BBB=='ESG' ) # Esther Greek might be an exception
                     if chapterNumber == 0:
-                        if Globals.logErrorsFlag: logging.info( "Have chapter zero in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                        logging.info( "Have chapter zero in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                     thisBook.appendLine( 'c', chapterNumberString )
                     lastChapterNumber = chapterNumber
                     lastVerseNumber = -1
 
                 # Handle the verse info
                 if verseNumber==lastVerseNumber and vText==lastVText:
-                    if Globals.logErrorsFlag: logging.warning( _("Ignored duplicate verse line in {} {} {} {}:{}").format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                    logging.warning( _("Ignored duplicate verse line in {} {} {} {}:{}").format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                     continue
                 if BBB=='PSA' and verseNumberString=='1' and vText.startswith('&lt;') and self.givenName=='basic_english':
                     # Move Psalm titles to verse zero
                     verseNumber = 0
                 if verseNumber < lastVerseNumber:
-                    if Globals.logErrorsFlag: logging.warning( _("Ignored receding verse number (from {} to {}) in {} {} {} {}:{}").format( lastVerseNumber, verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                    logging.warning( _("Ignored receding verse number (from {} to {}) in {} {} {} {}:{}").format( lastVerseNumber, verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                 elif verseNumber == lastVerseNumber:
                     if vText == lastVText:
-                        if Globals.logErrorsFlag: logging.warning( _("Ignored duplicated {} verse in {} {} {} {}:{}").format( verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                        logging.warning( _("Ignored duplicated {} verse in {} {} {} {}:{}").format( verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                     else:
-                        if Globals.logErrorsFlag: logging.warning( _("Ignored duplicated {} verse number in {} {} {} {}:{}").format( verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                        logging.warning( _("Ignored duplicated {} verse number in {} {} {} {}:{}").format( verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                 thisBook.appendLine( 'v', verseNumberString + ' ' + vText )
                 lastVText = vText
                 lastVerseNumber = verseNumber
@@ -441,16 +441,13 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
-    # Configure basic logging
-    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
-
-    # Handle command line parameters
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
-    #parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the data file to .py and .h tables suitable for directly including into other programs")
+    # Configure basic set-up
+    parser = Globals.setup( progName, versionString )
     Globals.addStandardOptionsAndProcess( parser )
 
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     demo()
+
+    Globals.closedown( progName, versionString )
 # end of UnboundBible.py

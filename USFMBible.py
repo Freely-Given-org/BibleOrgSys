@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2013-06-19 by RJH (also update versionString below)
+#   Last modified: 2013-06-23 by RJH (also update versionString below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 """
 
 progName = "USFM Bible handler"
-versionString = "0.33"
+versionString = "0.34"
 
 
 import os, logging
@@ -103,7 +103,7 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
-            if Globals.logErrorsFlag: logging.warning( _("USFMBibleFileCheck: '{}' subfolder is unreadable").format( tryFolderName ) )
+            logging.warning( _("USFMBibleFileCheck: '{}' subfolder is unreadable").format( tryFolderName ) )
             continue
         if Globals.verbosityLevel > 3: print( "    USFMBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
@@ -160,10 +160,10 @@ class USFMBible( Bible ):
             somepath = os.path.join( self.sourceFolder, something )
             if os.path.isdir( somepath ): foundFolders.append( something )
             elif os.path.isfile( somepath ): foundFiles.append( something )
-            else: print( "ERROR: Not sure what '{}' is in {}!".format( somepath, self.sourceFolder ) )
-        if foundFolders: print( "USFMBible.load: Surprised to see subfolders in '{}': {}".format( self.sourceFolder, foundFolders ) )
+            else: logging.error( "Not sure what '{}' is in {}!".format( somepath, self.sourceFolder ) )
+        if foundFolders: logging.info( "USFMBible.load: Surprised to see subfolders in '{}': {}".format( self.sourceFolder, foundFolders ) )
         if not foundFiles:
-            print( "USFMBible: Couldn't find any files in '{}'".format( self.sourceFolder ) )
+            if Globals.verbosityLevel > 0: print( "USFMBible: Couldn't find any files in '{}'".format( self.sourceFolder ) )
             return # No use continuing
 
         self.USFMFilenamesObject = USFMFilenames( self.sourceFolder )
@@ -194,7 +194,7 @@ class USFMBible( Bible ):
             for line in myFile:
                 lineCount += 1
                 if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
-                    if Globals.verbosityLevel > 0: print( "      USFMBible.loadSSFData: Detected UTF-16 Byte Order Marker" )
+                    logging.info( "USFMBible.loadSSFData: Detected UTF-16 Byte Order Marker in {}".format( ssfFilepath ) )
                     line = line[1:] # Remove the Byte Order Marker
                 if line[-1]=='\n': line = line[:-1] # Remove trailing newline character
                 line = line.strip() # Remove leading and trailing whitespace
@@ -255,10 +255,10 @@ class USFMBible( Bible ):
         if Globals.verbosityLevel > 2: print( "USFMBible.loadBook( {}, {} )".format( BBB, filename ) )
         if BBB in self.books: return # Already loaded
         if BBB in self.triedLoadingBook:
-            if Globals.logErrorsFlag: logging.warning( "We had already tried loading USFM {} for {}".format( BBB, self.name ) )
+            logging.warning( "We had already tried loading USFM {} for {}".format( BBB, self.name ) )
             return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
-        if Globals.verbosityLevel > 2 or Globals.logErrorsFlag: print( _("  USFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
+        if Globals.verbosityLevel > 2 or Globals.debugFlag: print( _("  USFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
         if filename is None: filename = self.possibleFilenameDict[BBB]
         UBB = USFMBibleBook( BBB )
         UBB.load( filename, self.sourceFolder, self.encoding )
@@ -275,7 +275,7 @@ class USFMBible( Bible ):
         if Globals.verbosityLevel > 2: print( "USFMBible.loadBookMP( {} )".format( BBB ) )
         assert( BBB not in self.books )
         self.triedLoadingBook[BBB] = True
-        if Globals.verbosityLevel > 2 or Globals.logErrorsFlag: print( _("  USFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
+        if Globals.verbosityLevel > 2 or Globals.debugFlag: print( _("  USFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
         UBB = USFMBibleBook( BBB )
         UBB.load( self.possibleFilenameDict[BBB], self.sourceFolder, self.encoding )
         UBB.validateUSFM()
@@ -344,7 +344,7 @@ def demo():
                 for line in myFile:
                     lineCount += 1
                     if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
-                        #if Globals.verbosityLevel > 0: print( "      USFMBible: Detected UTF-16 Byte Order Marker in copyright.htm file" )
+                        logging.info( "USFMBible: Detected UTF-16 Byte Order Marker in copyright.htm file" )
                         line = line[1:] # Remove the UTF-8 Byte Order Marker
                     if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines
@@ -486,7 +486,7 @@ def demo():
                 for line in myFile:
                     lineCount += 1
                     if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
-                        #if Globals.verbosityLevel > 0: print( "      USFMBible: Detected UTF-16 Byte Order Marker in copyright.htm file" )
+                        logging.info( "USFMBible: Detected UTF-16 Byte Order Marker in copyright.htm file" )
                         line = line[1:] # Remove the UTF-8 Byte Order Marker
                     if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines
@@ -575,16 +575,14 @@ def demo():
 #end of demo
 
 if __name__ == '__main__':
-    # Configure basic logging
-    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
-
-    # Handle command line parameters
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
+    # Configure basic set-up
+    parser = Globals.setup( progName, versionString )
     parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
     Globals.addStandardOptionsAndProcess( parser )
 
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     demo()
+
+    Globals.closedown( progName, versionString )
 # end of USFMBible.py

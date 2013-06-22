@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMFilenames.py
-#   Last modified: 2013-06-19 by RJH (also update versionString below)
+#   Last modified: 2013-06-22 by RJH (also update versionString below)
 #
 # Module handling USFM Bible filenames
 #
@@ -236,7 +236,7 @@ class USFMFilenames:
                     if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
                     #print( thisFilename, lineNumber, line )
                     if line.startswith( '\\id ' ):
-                        if len(line)<5 and Globals.logErrorsFlag: logging.warning( "id line '{}' in {} is too short".format( line, filepath ) )
+                        if len(line)<5: logging.warning( "id line '{}' in {} is too short".format( line, filepath ) )
                         idContent = line[4:]
                         tokens = idContent.split()
                         #print( "Have id tokens: {}".format( tokens ) )
@@ -253,7 +253,7 @@ class USFMFilenames:
                         elif UCToken0[:3] in self._USFMBooksCodesUpper: return UCToken0[:3] # perhaps an abbreviated version is valid (but could think Judges is JUD=Jude)
                         else: print( "But '{}' wasn't a valid USFM ID in {}!!!".format( UCToken0, thisFilename ) )
                         break
-                    elif lineNumber == 1 and Globals.logErrorsFlag:
+                    elif lineNumber == 1:
                         if line.startswith ( '\\' ):
                             logging.warning( "First line in {} in {} starts with a backslash but not an id line '{}'".format( thisFilename, folder, line ) )
                         elif not line:
@@ -261,7 +261,7 @@ class USFMFilenames:
                     if lineNumber >= 2: break # We only look at the first one or two lines
         except UnicodeDecodeError:
             if thisFilename != 'usfm-color.sty': # Seems this file isn't UTF-8, but we don't need it here anyway so ignore it
-                if Globals.logErrorsFlag: logging.warning( _("Seems we couldn't decode Unicode in '{}'").format( filepath ) ) # Could be binary or a different encoding
+                logging.warning( _("Seems we couldn't decode Unicode in '{}'").format( filepath ) ) # Could be binary or a different encoding
         return None
     # end of getUSFMIDFromFile
 
@@ -534,13 +534,11 @@ def demo():
         else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
 
 if __name__ == '__main__':
-    # Configure basic logging
-    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
-
-    # Handle command line parameters
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
+    # Configure basic set-up
+    parser = Globals.setup( progName, versionString )
     Globals.addStandardOptionsAndProcess( parser )
 
     demo()
+
+    Globals.closedown( progName, versionString )
 # end of USFMFilenames.py

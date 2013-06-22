@@ -34,10 +34,12 @@ versionString = "0.19"
 
 import logging, os.path, pickle
 import multiprocessing
+from optparse import OptionParser
 from gettext import gettext as _
 
 
-cacheFolder = 'ObjectCache/' # Relative path
+defaultLogFolder = 'Logs/' # Relative path
+defaultcacheFolder = 'ObjectCache/' # Relative path
 
 
 
@@ -73,30 +75,35 @@ loggingDateFormat = "%Y-%m-%d %H:%M"
 loggingShortFormat = '%(levelname)8s: %(message)s'
 loggingLongFormat = '%(asctime)s %(levelname)8s: %(message)s'
 
-def setup_logfile( folder, progName ):
+def setupLoggingToFile( progName, versionString, folder=None ):
     """Sets up the main logfile for the program and returns the full pathname."""
     # Gets called from our demo() function when program starts up
     filename = progName + '_log.txt'
-    fullFilename = os.path.join( folder, filename )
+    if folder is None: folder = defaultLogFolder # relative path
+    filepath = os.path.join( folder, filename )
 
     # Create the folder if necessary
     if not os.access( folder, os.W_OK ):
         os.makedirs( folder ) # Works for an absolute or a relative pathname
 
     # Rename the existing file to a backup copy if it already exists
-    if os.access( fullFilename, os.F_OK ):
+    if os.access( filepath, os.F_OK ):
         if __name__ == '__main__':
-            print ( fullFilename, 'already exists -- renaming it first!' )
-        if os.access( fullFilename+'.bak', os.F_OK ):
-            os.remove( fullFilename+'.bak' )
-        os.rename( fullFilename, fullFilename+'.bak' )
+            print ( filepath, 'already exists -- renaming it first!' )
+        if os.access( filepath+'.bak', os.F_OK ):
+            os.remove( filepath+'.bak' )
+        os.rename( filepath, filepath+'.bak' )
 
     # Now setup our new log file
-    setLevel = logging.INFO
-    if booleanControl( 'Debug' ): setLevel = logging.DEBUG
-    logging.basicConfig( filename=fullFilename, level=setLevel, format=loggingShortFormat, datefmt=loggingDateFormat )
+    setLevel = logging.DEBUG if debugFlag else logging.INFO
+    logging.basicConfig( filename=filepath, level=setLevel, format=loggingLongFormat, datefmt=loggingDateFormat )
 
-    # Now add a handler to also send ERROR and higher to console
+    return filepath
+# end of Globals.setupLogging
+
+
+def addConsoleLogging():
+    # Now add a handler to also send ERROR and higher to console (depending on verbosity)
     stderr_handler = logging.StreamHandler() # StreamHandler with no parameters defaults to sys.stderr
     if verbosityLevel == 0: # Silent
         stderr_handler.setLevel( logging.CRITICAL )
@@ -106,41 +113,41 @@ def setup_logfile( folder, progName ):
         stderr_handler.setLevel( logging.ERROR )
     root = logging.getLogger()  # No param means get the root logger
     root.addHandler(stderr_handler)
-    return fullFilename
-# end of Globals.setup_logfile
+# end of Globals.addConsoleLogging
 
 
-def add_logfile( folder, projectName ):
+def addLogfile( projectName, folder=None ):
     """Adds an extra project specific log file to the logger."""
     filename = projectName + '_log.txt'
-    fullFilename = os.path.join( folder, filename )
+    if folder is None: folder = defaultLogFolder # relative path
+    filepath = os.path.join( folder, filename )
 
     # Create the folder if necessary
     if not os.access( folder, os.W_OK ):
         os.makedirs( folder ) # Works for an absolute or a relative pathname
 
     # Rename the existing file to a backup copy if it already exists
-    if os.access( fullFilename, os.F_OK ):
+    if os.access( filepath, os.F_OK ):
         if __name__ == '__main__':
-            print ( fullFilename, 'already exists -- renaming it first!' )
-        if os.access( fullFilename+'.bak', os.F_OK ):
-            os.remove( fullFilename+'.bak' )
-        os.rename( fullFilename, fullFilename+'.bak' )
+            print ( filepath, 'already exists -- renaming it first!' )
+        if os.access( filepath+'.bak', os.F_OK ):
+            os.remove( filepath+'.bak' )
+        os.rename( filepath, filepath+'.bak' )
 
-    projectHandler = logging.FileHandler( fullFilename )
+    projectHandler = logging.FileHandler( filepath )
     projectHandler.setFormatter( logging.Formatter( loggingShortFormat, loggingDateFormat ) )
     projectHandler.setLevel( logging.INFO )
     root = logging.getLogger()
     root.addHandler( projectHandler )
-    return fullFilename, projectHandler
-# end of Globals.add_logfile
+    return filepath, projectHandler
+# end of Globals.addLogfile
 
 
-def remove_logfile( projectHandler ):
+def removeLogfile( projectHandler ):
     """Removes the project specific logger."""
     root = logging.getLogger()  # No param means get the root logger
     root.removeHandler( projectHandler )
-# end of Globals.remove_logfile
+# end of Globals.removeLogfile
 
 
 ##########################################################################################################
@@ -168,7 +175,7 @@ def peekIntoFile( filenameOrFilepath, folder=None, numLines=1 ):
                 if lineNumber >= numLines: return lines
     except UnicodeDecodeError:
         #if not filepath.lower().endswith( 'usfm-color.sty' ): # Seems this file isn't UTF-8, but we don't need it here anyway so ignore it
-        if logErrorsFlag: logging.warning( "Seems we couldn't decode Unicode in '{}'".format( filepath ) ) # Could be binary or a different encoding
+        logging.warning( "Seems we couldn't decode Unicode in '{}'".format( filepath ) ) # Could be binary or a different encoding
 # end of peekIntoFile
 
 
@@ -236,10 +243,10 @@ def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=Tru
 
     # Do a preliminary check on the readability of our files
     if not os.access( filepath1, os.R_OK ):
-        if logErrorsFlag: logging.error( "Globals.fileCompare: File1 '{}' is unreadable".format( filepath1 ) )
+        logging.error( "Globals.fileCompare: File1 '{}' is unreadable".format( filepath1 ) )
         return None
     if not os.access( filepath2, os.R_OK ):
-        if logErrorsFlag: logging.error( "Globals.fileCompare: File2 '{}' is unreadable".format( filepath2 ) )
+        logging.error( "Globals.fileCompare: File2 '{}' is unreadable".format( filepath2 ) )
         return None
 
     # Read the files
@@ -296,10 +303,10 @@ def fileCompareXML( filename1, filename2, folder1=None, folder2=None, printFlag=
 
     # Do a preliminary check on the readability of our files
     if not os.access( filepath1, os.R_OK ):
-        if logErrorsFlag: logging.error( "Globals.fileCompareXML: File1 '{}' is unreadable".format( filepath1 ) )
+        logging.error( "Globals.fileCompareXML: File1 '{}' is unreadable".format( filepath1 ) )
         return None
     if not os.access( filepath2, os.R_OK ):
-        if logErrorsFlag: logging.error( "Globals.fileCompareXML: File2 '{}' is unreadable".format( filepath2 ) )
+        logging.error( "Globals.fileCompareXML: File2 '{}' is unreadable".format( filepath2 ) )
         return None
 
     # Load the files
@@ -382,21 +389,21 @@ def fileCompareXML( filename1, filename2, folder1=None, folder2=None, printFlag=
 
 def checkXMLNoText( element, locationString, idString=None ):
     """ Give a warning if the element text contains anything other than whitespace. """
-    if logErrorsFlag and element.text and element.text.strip(): logging.warning( "{}Unexpected '{}' element text in {}".format( (idString+' ') if idString else '', element.text, locationString ) )
+    if element.text and element.text.strip():
+        logging.warning( "{}Unexpected '{}' element text in {}".format( (idString+' ') if idString else '', element.text, locationString ) )
 
 def checkXMLNoTail( element, locationString, idString=None ):
     """ Give a warning if the element tail contains anything other than whitespace. """
-    if logErrorsFlag and element.tail and element.tail.strip(): logging.warning( "{}Unexpected '{}' element tail in {}".format( (idString+' ') if idString else '', element.tail, locationString ) )
+    if element.tail and element.tail.strip():
+        logging.warning( "{}Unexpected '{}' element tail in {}".format( (idString+' ') if idString else '', element.tail, locationString ) )
 
 def checkXMLNoAttributes( element, locationString, idString=None ):
-    if logErrorsFlag:
-        for attrib,value in element.items():
-            logging.warning( "{}Unexpected '{}' attribute ({}) in {}".format( (idString+' ') if idString else '', attrib, value, locationString ) )
+    for attrib,value in element.items():
+        logging.warning( "{}Unexpected '{}' attribute ({}) in {}".format( (idString+' ') if idString else '', attrib, value, locationString ) )
 
 def checkXMLNoSubelements( element, locationString, idString=None ):
-    if logErrorsFlag:
-        for subelement in element.getchildren():
-            logging.warning( "{}Unexpected '{}' sub-element ({}) in {}".format( (idString+' ') if idString else '', subelement.tag, subelement.text, locationString ) )
+    for subelement in element.getchildren():
+        logging.warning( "{}Unexpected '{}' sub-element ({}) in {}".format( (idString+' ') if idString else '', subelement.tag, subelement.text, locationString ) )
 
 def getFlattenedXML( element, locationString, idString=None, level=0 ):
     """
@@ -429,7 +436,7 @@ def pickleObject( theObject, filename, folder=None ):
     """
     assert( theObject )
     assert( filename )
-    if folder is None: folder = cacheFolder
+    if folder is None: folder = defaultcacheFolder
     filepath = filename # default
     if folder:
         if not os.access( folder, os.R_OK ): # Make the folder hierarchy if necessary
@@ -448,12 +455,35 @@ def unpickleObject( filename, folder=None ):
     NOTE: The class for the object must, of course, be loaded already (at the module level).
     """
     assert( filename )
-    if folder is None: folder = cacheFolder
+    if folder is None: folder = defaultcacheFolder
     filepath = os.path.join( folder, filename )
     if verbosityLevel > 2: print( _("Loading object from pickle file {}...").format( filepath ) )
     with open( filepath, 'rb') as pickleInputFile:
         return pickle.load( pickleInputFile ) # The protocol version used is detected automatically, so we do not have to specify it
 # end of Globals.unpickle
+
+
+##########################################################################################################
+#
+# Default program setup routine
+
+def setup( progName, versionString ):
+    """
+    Does the initial set-up for our scripts / programs.
+
+    Sets up logging to a file in the default logging folder.
+
+    Returns the parser object
+        so that custom command line parameters can be added
+        then addStandardOptionsAndProcess must be called on it.
+    """
+    setupLoggingToFile( progName, versionString )
+    logging.info( "{} v{} started".format( progName, versionString ) )
+
+    # Handle command line parameters
+    parser = OptionParser( version="v{}".format( versionString ) )
+    return parser
+# end of Globals.setup
 
 
 ##########################################################################################################
@@ -553,6 +583,7 @@ def setLogErrorsFlag( newValue=True ):
     logErrorsFlag = newValue
     if (logErrorsFlag and verbosityLevel> 2) or verbosityLevel>3:
         print( '  logErrorsFlag =', logErrorsFlag )
+    if  logErrorsFlag: addConsoleLogging()
 # end of Globals.setLogErrorsFlag
 
 
@@ -598,6 +629,14 @@ def printAllGlobals( indent=None ):
 # end of Globals.printAllGlobals
 
 
+def closedown( progName, versionString ):
+    """
+    Does all the finishing off for the program.
+    """
+    logging.info( "{} v{} finished.".format( progName, versionString ) )
+# end of Globals.closedown
+
+
 
 # Global variables
 #=================
@@ -640,12 +679,13 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
-    # Handle command line parameters
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
+    # Configure basic set-up
+    parser = setup( progName, versionString )
     addStandardOptionsAndProcess( parser )
 
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     demo()
-## end of Globals.py
+
+    closedown( progName, versionString )
+# end of Globals.py

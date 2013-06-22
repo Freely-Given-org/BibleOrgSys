@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodes.py
-#   Last modified: 2013-06-18 by RJH (also update versionString below)
+#   Last modified: 2013-06-22 by RJH (also update versionString below)
 #
 # Module handling BibleBooksCodes functions
 #
@@ -35,12 +35,12 @@ import os, logging
 from gettext import gettext as _
 from collections import OrderedDict
 
-#from singleton import singleton
+from singleton import singleton
 import Globals
 
 
 
-#@singleton # Can only ever have one instance
+@singleton # Can only ever have one instance
 class BibleBooksCodes:
     """
     Class for handling BibleBooksCodes.
@@ -107,7 +107,7 @@ class BibleBooksCodes:
         """ Yields the next BBB. """
         for BBB in self.__DataDicts["referenceAbbreviationDict"]:
             yield BBB
-            
+
     def isValidReferenceAbbreviation( self, BBB ):
         """ Returns True or False. """
         return BBB in self.__DataDicts["referenceAbbreviationDict"]
@@ -446,14 +446,11 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
-    # Configure basic logging
-    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
-
-    # Handle command line parameters
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
-    #parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h/.c formats suitable for directly including into other programs, as well as .json.")
+    # Configure basic set-up
+    parser = Globals.setup( progName, versionString )
     Globals.addStandardOptionsAndProcess( parser )
 
     demo()
+
+    Globals.closedown( progName, versionString )
 # end of BibleBooksCodes.py

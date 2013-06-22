@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ControlFiles.py
-#   Last modified: 2013-05-27 (also update versionString below)
+#   Last modified: 2013-06-22 (also update versionString below)
 #
 # Control file module
 #
@@ -137,10 +137,11 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
-    # Handle command line parameters
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
+    # Configure basic set-up
+    parser = Globals.setup( progName, versionString )
     Globals.addStandardOptionsAndProcess( parser )
 
     demo()
+
+    Globals.closedown( progName, versionString )
 # end of ControlFiles.py

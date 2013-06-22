@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksNamesConverter.py
-#   Last modified: 2013-05-27 (also update versionString below)
+#   Last modified: 2013-06-22 (also update versionString below)
 #
 # Module handling BibleBooksNames_*.xml to produce C and Python data tables
 #
@@ -592,12 +592,13 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
-    # Handle command line parameters
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
+    # Configure basic set-up
+    parser = Globals.setup( progName, versionString )
     #parser.add_option("-x", "--expandDemo", action="store_true", dest="expandDemo", default=False, help="expand the input abbreviations to include all unambiguous shorter forms")
     parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML files to .py and .h tables suitable for directly including into other programs")
     Globals.addStandardOptionsAndProcess( parser )
 
     demo()
+
+    Globals.closedown( progName, versionString )
 # end of BibleBooksNamesConverter.py

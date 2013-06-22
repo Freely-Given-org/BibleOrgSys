@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodesTests.py
-#   Last modified: 2013-06-18 by RJH (also update versionString below)
+#   Last modified: 2013-06-22 by RJH (also update versionString below)
 #
 # Module testing BibleBooksCodes.py
 #
@@ -640,9 +640,8 @@ class BibleBooksCodesTests( unittest.TestCase ):
 
 
 if __name__ == '__main__':
-    # Handle command line parameters (for compatibility)
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
+    # Configure basic set-up
+    parser = Globals.setup( progName, versionString )
     Globals.addStandardOptionsAndProcess( parser )
 
     if Globals.verbosityLevel > 1: print( "{} V{}".format( progName, versionString ) )

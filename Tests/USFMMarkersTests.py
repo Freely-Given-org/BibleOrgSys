@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkersTests.py
+#   Last modified: 2013-06-22 (also update versionString below)
 #
 # Module testing USFMMarkers.py
-#   Last modified: 2013-04-07 (also update versionString below)
 #
 # Copyright (C) 2011-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -491,12 +491,8 @@ class USFMMarkersTests( unittest.TestCase ):
 
 
 if __name__ == '__main__':
-    # Configure basic logging
-    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
-
-    # Handle command line parameters (for compatibility)
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
+    # Configure basic set-up
+    parser = Globals.setup( progName, versionString )
     Globals.addStandardOptionsAndProcess( parser )
 
     if Globals.verbosityLevel > 1: print( "{} V{}".format( progName, versionString ) )

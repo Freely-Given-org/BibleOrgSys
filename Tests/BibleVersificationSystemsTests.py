@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 #
 # BibleVersificationSystemsTests.py
+#   Last modified: 2013-06-22 (also update versionString below)
 #
 # Module testing BibleVersificationSystems.py
-#   Last modified: 2013-01-13 (also update versionString below)
 #
 # Copyright (C) 2011-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -223,10 +223,9 @@ class BibleVersificationSystemTests(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # Handle command line parameters (for compatibility)
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
-    parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML files to .py and .h tables suitable for directly including into other programs")
+    # Configure basic set-up
+    parser = Globals.setup( progName, versionString )
+    parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
     Globals.addStandardOptionsAndProcess( parser )
 
     if Globals.verbosityLevel > 1: print( "{} V{}".format( progName, versionString ) )

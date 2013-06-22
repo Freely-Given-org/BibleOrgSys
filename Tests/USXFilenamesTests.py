@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USXFilenamesTests.py
-#   Last modified: 2013-05-03 (also update versionString below)
+#   Last modified: 2013-06-22 (also update versionString below)
 #
 # Module testing USXFilenames.py
 #
@@ -212,9 +212,8 @@ class USXFilenamesTests2( unittest.TestCase ):
 
 
 if __name__ == '__main__':
-    # Handle command line parameters (for compatibility)
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
+    # Configure basic set-up
+    parser = Globals.setup( progName, versionString )
     Globals.addStandardOptionsAndProcess( parser )
 
     if Globals.verbosityLevel > 1: print( "{} V{}".format( progName, versionString ) )

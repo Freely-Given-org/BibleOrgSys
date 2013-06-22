@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # GreekNT.py
-#   Last modified: 2013-05-27 (also update versionString below)
+#   Last modified: 2013-06-23 (also update versionString below)
 #
 # Module handling GreekNT.xml
 #
@@ -93,8 +93,7 @@ class GreekNT( Bible ):
                     if os.access( thisFilepath, os.R_OK ): # we can read that file
                         self.possibleFilenames.append( filename )
         elif not os.access( self.sourceFilepath, os.R_OK ):
-            if Globals.logErrorsFlag:
-                logging.critical( "GreekNT: File '{}' is unreadable".format( self.sourceFilepath ) )
+            logging.critical( "GreekNT: File '{}' is unreadable".format( self.sourceFilepath ) )
             return # No use continuing
         #print( self.possibleFilenames ); halt
 
@@ -196,7 +195,7 @@ class GreekNT( Bible ):
                 for line in myFile:
                     lineCount += 1
                     if lineCount==1 and encoding.lower()=='utf-8' and line and line[0]==chr(65279): #U+FEFF
-                        print( "      Detected UTF-16 Byte Order Marker" )
+                        logging.info( "GreekNT: Detected UTF-16 Byte Order Marker in {}".format( filename ) )
                         line = line[1:] # Remove the UTF-8 Byte Order Marker
                     if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
                     #if not line: continue # Just discard blank lines
@@ -441,11 +440,12 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
-    # Handle command line parameters
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
+    # Configure basic set-up
+    parser = Globals.setup( progName, versionString )
     parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
     Globals.addStandardOptionsAndProcess( parser )
 
     demo()
+
+    Globals.closedown( progName, versionString )
 # end of GreekNT.py

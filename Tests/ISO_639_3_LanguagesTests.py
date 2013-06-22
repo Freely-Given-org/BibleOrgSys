@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ISO_639_3_LanguagesTests.py
-#   Last modified: 2013-01-26 by RJH (also update versionString below)
+#   Last modified: 2013-06-22 by RJH (also update versionString below)
 #
 # Module testing ISO_639_3_Languages.py
 #
@@ -219,9 +219,8 @@ class ISO_639_3_LanguagesTests( unittest.TestCase ):
 
 
 if __name__ == '__main__':
-    # Handle command line parameters (for compatibility)
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
+    # Configure basic set-up
+    parser = Globals.setup( progName, versionString )
     Globals.addStandardOptionsAndProcess( parser )
 
     if Globals.verbosityLevel > 1: print( "{} V{}".format( progName, versionString ) )

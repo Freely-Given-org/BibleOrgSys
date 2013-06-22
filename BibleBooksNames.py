@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksNames.py
-#   Last modified: 2013-06-14 (also update versionString below)
+#   Last modified: 2013-06-22 (also update versionString below)
 #
 # Module handling BibleBooksNames
 #
@@ -114,8 +114,7 @@ def expandBibleNamesInputs ( systemName, divisionsNamesDict, booknameLeadersDict
         for field in divisionsNamesDict[divAbbrev]["inputFields"]:
             UCField = field.upper()
             if UCField in divNameInputDict or UCField in bkNameInputDict:
-                if Globals.logErrorsFlag:
-                    logging.warning( _("Have duplicate entries of '{}' in divisionsNames for {}").format( UCField, systemName ) )
+                logging.warning( _("Have duplicate entries of '{}' in divisionsNames for {}").format( UCField, systemName ) )
                 ambigSet.add( UCField )
             divNameInputDict[UCField] = divAbbrev # Store the index into divisionsNamesDict
     for refAbbrev in bookNamesDict.keys():
@@ -123,8 +122,7 @@ def expandBibleNamesInputs ( systemName, divisionsNamesDict, booknameLeadersDict
             for field in bookNamesDict[refAbbrev]["inputFields"]: # inputFields include the defaultName, defaultAbbreviation, and inputAbbreviations
                 UCField = field.upper()
                 if UCField in divNameInputDict or UCField in bkNameInputDict:
-                    if Globals.logErrorsFlag:
-                        logging.warning( _("Have duplicate entries of '{}' in divisions and book names for {}").format( UCField, systemName ) )
+                    logging.warning( _("Have duplicate entries of '{}' in divisions and book names for {}").format( UCField, systemName ) )
                     ambigSet.add( UCField )
                 bkNameInputDict[UCField] = refAbbrev # Store the index to the book
     #print( 'amb', len(ambigSet), ambigSet )
@@ -233,8 +231,7 @@ class BibleBooksNamesSystems:
             else: # We have to load the XML (much slower)
                 from BibleBooksNamesConverter import BibleBooksNamesConverter
                 if XMLFolder is not None:
-                    if Globals.logErrorsFlag:
-                        logging.warning( _("Bible books names are already loaded -- your given folder of '{}' was ignored").format(XMLFolder) )
+                    logging.warning( _("Bible books names are already loaded -- your given folder of '{}' was ignored").format(XMLFolder) )
                 bbnsc = BibleBooksNamesConverter()
                 bbnsc.loadSystems( XMLFolder ) # Load the XML (if not done already)
                 self.__DataDicts, self.__ExpandedDicts = bbnsc.importDataToPython() # Get the various dictionaries organised for quick lookup
@@ -293,8 +290,7 @@ class BibleBooksNamesSystems:
         if bookList is not None:
             for BBB in bookList: # Just check this list is valid
                 if not Globals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ):
-                    if Globals.logErrorsFlag:
-                        logging.error( _("Invalid '{}' in booklist requested for {} books names system").format(BBB,systemName) )
+                    logging.error( _("Invalid '{}' in booklist requested for {} books names system").format(BBB,systemName) )
 
         if systemName in self.__DataDicts:
             assert( len(self.__DataDicts[systemName]) == 3 )
@@ -308,8 +304,7 @@ class BibleBooksNamesSystems:
 
             # Else we were given a booklist so we need to expand the input abbreviations here now
             if self.__ExpandedDicts:
-                if Globals.logErrorsFlag:
-                    logging.warning( _("This {} book names system was already expanded, but never mind :)").format(systemName) )
+                logging.warning( _("This {} book names system was already expanded, but never mind :)").format(systemName) )
 
             # Let's make copies without unneeded entries
             divisionsNamesDictCopy = {}
@@ -328,8 +323,7 @@ class BibleBooksNamesSystems:
                 for BBB in bookList:
                     if BBB not in bookNamesDictCopy: missingList.append( BBB )
                 if missingList:
-                    if Globals.logErrorsFlag:
-                        logging.error( "The following book(s) have no information in {} bookname system: {}".format( systemName, missingList ) )
+                    logging.error( "The following book(s) have no information in {} bookname system: {}".format( systemName, missingList ) )
 
             # Now expand to get unambiguous input abbreviations for a publication only containing the books we specified
             sortedDNDict, sortedBNDict = expandBibleNamesInputs( systemName, divisionsNamesDictCopy, booknameLeadersDict, bookNamesDictCopy, bookList )
@@ -339,10 +333,9 @@ class BibleBooksNamesSystems:
             return divisionsNamesDictCopy, booknameLeadersDict, bookNamesDictCopy, sortedDNDict, sortedBNDict
 
         # else we couldn't find the requested system name
-        if Globals.logErrorsFlag:
-            logging.error( _("No '{}' system in Bible Books Names Systems").format(systemName) )
-            if Globals.verbosityLevel > 2:
-                logging.error( _("Available systems are {}").format(self.getAvailableBooksNamesSystemNames()) )
+        logging.error( _("No '{}' system in Bible Books Names Systems").format(systemName) )
+        if Globals.verbosityLevel > 2:
+            logging.error( _("Available systems are {}").format(self.getAvailableBooksNamesSystemNames()) )
     # end of getBooksNamesSystem
 # end of BibleBooksNamesSystems class
 
@@ -421,8 +414,7 @@ class BibleBooksNamesSystem:
             if upperCaseBookNameOrAbbreviation in self.__sortedBookNamesDict:
                 return self.__sortedBookNamesDict[upperCaseBookNameOrAbbreviation]
         except AttributeError:
-            if Globals.logErrorsFlag:
-                logging.critical( "No bookname dictionary in BibleBooksNamesSystem" )
+            logging.critical( "No bookname dictionary in BibleBooksNamesSystem" )
             return None
         if Globals.commandLineOptions.debug:
             # It failed so print what the closest alternatives were
@@ -508,12 +500,13 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
-    # Handle command line parameters
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
+    # Configure basic set-up
+    parser = Globals.setup( progName, versionString )
     parser.add_option("-x", "--expandDemo", action="store_true", dest="expandDemo", default=False, help="expand the input abbreviations to include all unambiguous shorter forms")
     #parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML files to .py and .h tables suitable for directly including into other programs")
     Globals.addStandardOptionsAndProcess( parser )
 
     demo()
+
+    Globals.closedown( progName, versionString )
 # end of BibleBooksNames.py

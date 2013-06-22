@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2013-06-20 by RJH (also update versionString below)
+#   Last modified: 2013-06-22 by RJH (also update versionString below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -129,7 +129,7 @@ class InternalBible:
     # end of InternalBible.__iter__
 
 
-    def pickleBible( self, filename=None, folder=None ):
+    def pickle( self, filename=None, folder=None ):
         """
         Writes the object to a .pickle file that can be easily loaded into a Python3 program.
             If folder is None (or missing), defaults to the default cache folder specified in Globals.
@@ -141,10 +141,9 @@ class InternalBible:
         assert( filename )
         filename += '.pickle'
         if Globals.verbosityLevel > 1:
-            print( _("InternalBible.pickleBible: Saving {} to {}...").format( self.objectNameString, filename if folder is None else os.path.join( folder, filename ) ) )
-        # Causes SEG FAULT
-        #Globals.pickleObject( self, filename, folder )
-    # end of InternalBible.pickleBible
+            print( _("InternalBible.pickle: Saving {} to {}...").format( self.objectNameString, filename if folder is None else os.path.join( folder, filename ) ) )
+        Globals.pickleObject( self, filename, folder )
+    # end of InternalBible.pickle
 
 
     def getAssumedBookName( self, BBB ):
@@ -777,7 +776,7 @@ class InternalBible:
                     if not firstWord: verseText += ' '
                     verseText += cleanText
                     firstWord = False
-                elif Globals.logErrorsFlag: logging.warning( "InternalBible.getVerseText Unknown marker {}={}".format( marker, repr(cleanText) ) )
+                else: logging.warning( "InternalBible.getVerseText Unknown marker {}={}".format( marker, repr(cleanText) ) )
             return verseText
     # end of InternalBible.getVerseText
 # end of class InternalBible
@@ -797,14 +796,11 @@ def demo():
 # end of demo
 
 if __name__ == '__main__':
-    # Configure basic logging
-    logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO ) # Removes the unnecessary and unhelpful 'root:' part of the logged messages
-
-    # Handle command line parameters
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
-    #parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
+    # Configure basic set-up
+    parser = Globals.setup( progName, versionString )
     Globals.addStandardOptionsAndProcess( parser )
 
     demo()
+
+    Globals.closedown( progName, versionString )
 # end of InternalBible.py

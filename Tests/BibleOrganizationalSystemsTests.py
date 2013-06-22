@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleOrganizationalSystemsTests.py
-#   Last modified: 2013-04-14 (also update versionString below)
+#   Last modified: 2013-06-22 (also update versionString below)
 #
 # Module testing BibleOrganizationalSystems.py
 #
@@ -284,9 +284,8 @@ class BibleOrganizationalSystemTests(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    # Handle command line parameters (for compatibility)
-    from optparse import OptionParser
-    parser = OptionParser( version="v{}".format( versionString ) )
+    # Configure basic set-up
+    parser = Globals.setup( progName, versionString )
     parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML files to .py and .h tables suitable for directly including into other programs")
     Globals.addStandardOptionsAndProcess( parser )
 
