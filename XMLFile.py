@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # XMLFile.py
-#   Last modified: 2013-06-22 by RJH (also update versionString below)
+#   Last modified: 2013-06-24 by RJH (also update ProgVersion below)
 #
 # Module handling simple XML files
 #
@@ -26,8 +26,9 @@
 """
 """
 
-progName = "XML file handler"
-versionString = "0.01"
+ProgName = "XML file handler"
+ProgVersion = "0.01"
+ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
 import logging, os, sys, subprocess
@@ -88,7 +89,7 @@ class XMLFile():
         @rtype: string
         """
         result = "XML file object"
-        if Globals.debugFlag or Globals.verbosityLevel>2: result += ' v' + versionString
+        if Globals.debugFlag or Globals.verbosityLevel>2: result += ' v' + ProgVersion
         if self.sourceFilename: result += ('\n' if result else '') + "  Source filename: " + self.sourceFilename
         if self.sourceFolder: result += ('\n' if result else '') + "  Source folder: " + self.sourceFolder
         if self.sourceFilepath: result += ('\n' if result else '') + "  Source filepath: " + self.sourceFilepath
@@ -162,7 +163,7 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
+    if Globals.verbosityLevel > 0: print( ProgNameVersion )
 
     AutoProcessesFolder = "../../"
     osisSchemaHTTP = 'http://www.bibletechnologies.net/osisCore.2.1.1.xsd'
@@ -209,10 +210,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( progName, versionString )
+    parser = Globals.setup( ProgName, ProgVersion )
     Globals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( progName, versionString )
+    Globals.closedown( ProgName, ProgVersion )
 # end of XMLFile.py

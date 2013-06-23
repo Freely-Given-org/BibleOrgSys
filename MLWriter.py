@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # MLWriter.py
-#   Last modified: 2013-06-23 by RJH (also update ProgVersion below)
+#   Last modified: 2013-06-24 by RJH (also update ProgVersion below)
 #
 # Module handling pretty writing of XML (and xHTML) and HTML files
 #

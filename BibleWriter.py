@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-06-23 by RJH (also update ProgVersion below)
+#   Last modified: 2013-06-24 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #

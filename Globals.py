@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Globals.py
-#   Last modified: 2013-06-23 (also update ProgVersion below)
+#   Last modified: 2013-06-24 (also update ProgVersion below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -29,7 +29,7 @@ Module handling global variables
 """
 
 ProgName = "Globals"
-ProgVersion = "0.21"
+ProgVersion = "0.22"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -468,7 +468,7 @@ def unpickleObject( filename, folder=None ):
 #
 # Default program setup routine
 
-def setup( ProgName, ProgVersion ):
+def setup( ProgName, ProgVersion, loggingFolder=None ):
     """
     Does the initial set-up for our scripts / programs.
 
@@ -478,7 +478,7 @@ def setup( ProgName, ProgVersion ):
         so that custom command line parameters can be added
         then addStandardOptionsAndProcess must be called on it.
     """
-    setupLoggingToFile( ProgName, ProgVersion )
+    setupLoggingToFile( ProgName, ProgVersion, loggingFolder )
     logging.info( "{} v{} started".format( ProgName, ProgVersion ) )
 
     if verbosityLevel > 2:

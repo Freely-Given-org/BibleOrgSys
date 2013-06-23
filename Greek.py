@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Greek.py
-#   Last modified: 2013-06-22 (also update versionString below)
+#   Last modified: 2013-06-24 (also update ProgVersion below)
 #
 # Module handling Greek language
 #
@@ -27,8 +27,10 @@
 Module handling Greek language particularities.
 """
 
-progName = "Greek language handler"
-versionString = "0.01"
+ProgName = "Greek language handler"
+ProgVersion = "0.01"
+ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+
 
 import os, unicodedata
 from gettext import gettext as _
@@ -191,7 +193,7 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
+    if Globals.verbosityLevel > 0: print( ProgNameVersion )
 
     # Demonstrate the Greek class
     dan11 = "בִּשְׁנַ֣ת שָׁל֔וֹשׁ לְמַלְכ֖וּת יְהוֹיָקִ֣ים מֶֽלֶךְ־יְהוּדָ֑ה בָּ֣א נְבוּכַדְנֶאצַּ֧ר מֶֽלֶךְ־בָּבֶ֛ל יְרוּשָׁלִַ֖ם וַיָּ֥צַר עָלֶֽיהָ ׃"
@@ -212,11 +214,11 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( progName, versionString )
+    parser = Globals.setup( ProgName, ProgVersion )
     parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
     Globals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( progName, versionString )
+    Globals.closedown( ProgName, ProgVersion )
 # end of Greek.py

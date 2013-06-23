@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # OSISXMLBible.py
-#   Last modified: 2013-06-22 by RJH (also update versionString below)
+#   Last modified: 2013-06-24 by RJH (also update ProgVersion below)
 #
 # Module handling OSIS XML Bibles
 #
@@ -33,8 +33,10 @@ This is a quickly updated version of an early module,
     and it's both ugly and fragile  :-(
 """
 
-progName = "OSIS XML Bible format handler"
-versionString = "0.22"
+ProgName = "OSIS XML Bible format handler"
+ProgVersion = "0.22"
+ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+
 
 import logging, os
 from gettext import gettext as _
@@ -907,7 +909,7 @@ class OSISXMLBible( Bible ):
                                 ##print( lastBookResultList )
                                 #bookResults.append( adjBookResult )
                             #if lastUSFMResult:
-                                #USFMResults.append( ('id',(USFMAbbreviation if USFMAbbreviation else mainDivOsisID).upper() + " converted to USFM from OSIS by {} V{}".format( progName, versionString ),) )
+                                #USFMResults.append( ('id',(USFMAbbreviation if USFMAbbreviation else mainDivOsisID).upper() + " converted to USFM from OSIS by {} V{}".format( ProgName, ProgVersion ),) )
                                 #USFMResults.append( ('h',USFMAbbreviation if USFMAbbreviation else mainDivOsisID,) )
                                 #lastUSFMResultList = list( lastUSFMResult )
                                 #lastUSFMResultList[0] = 'mt1'
@@ -915,7 +917,7 @@ class OSISXMLBible( Bible ):
                                 #adjSFMResult = tuple( lastUSFMResultList )
                                 #USFMResults.append( adjSFMResult )
                             if lastLineTuple:
-                                self.thisBook.appendLine( 'id', (USFMAbbreviation if USFMAbbreviation else mainDivOsisID).upper() + " converted to USFM from OSIS by {} V{}".format( progName, versionString ) )
+                                self.thisBook.appendLine( 'id', (USFMAbbreviation if USFMAbbreviation else mainDivOsisID).upper() + " converted to USFM from OSIS by {} V{}".format( ProgName, ProgVersion ) )
                                 self.thisBook.appendLine( 'h', USFMAbbreviation if USFMAbbreviation else mainDivOsisID )
                                 self.thisBook.appendLine( 'mt1', lastLineTuple[1] ) # Change from s to mt1
                             chapterMilestone = verseMilestone = ''
@@ -1777,8 +1779,8 @@ class OSISXMLBible( Bible ):
                 self.thisBook.objectNameString = "OSIS XML Bible Book object"
                 self.thisBook.objectTypeString = "OSIS"
             #bookResults.append( (mainDivType+'Div', mainDivOsisID,) )
-            #USFMResults.append( ('id',(USFMAbbreviation if USFMAbbreviation else mainDivOsisID).upper() + " converted to USFM from OSIS by {} V{}".format( progName, versionString ),) )
-            self.thisBook.appendLine( 'id', (USFMAbbreviation if USFMAbbreviation else mainDivOsisID).upper() + " converted to USFM from OSIS by {} V{}".format( progName, versionString ) )
+            #USFMResults.append( ('id',(USFMAbbreviation if USFMAbbreviation else mainDivOsisID).upper() + " converted to USFM from OSIS by {} V{}".format( ProgName, ProgVersion ),) )
+            self.thisBook.appendLine( 'id', (USFMAbbreviation if USFMAbbreviation else mainDivOsisID).upper() + " converted to USFM from OSIS by {} V{}".format( ProgName, ProgVersion ) )
             #USFMResults.append( ('h',USFMAbbreviation if USFMAbbreviation else mainDivOsisID,) )
             self.thisBook.appendLine( 'h', USFMAbbreviation if USFMAbbreviation else mainDivOsisID )
         elif mainDivType=='bookGroup':
@@ -2405,7 +2407,7 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
+    if Globals.verbosityLevel > 0: print( ProgNameVersion )
 
 
     if 1: # Test OSISXMLBible object
@@ -2458,10 +2460,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( progName, versionString )
+    parser = Globals.setup( ProgName, ProgVersion )
     Globals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( progName, versionString )
+    Globals.closedown( ProgName, ProgVersion )
 # end of OSISXMLBible.py

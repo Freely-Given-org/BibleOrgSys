@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleReferences.py
-#   Last modified: 2013-06-22 by RJH (also update versionString below)
+#   Last modified: 2013-06-24 by RJH (also update ProgVersion below)
 #
 # Module for handling Bible references including ranges
 #
@@ -76,8 +76,9 @@ Technical note: Our Bible reference parsers use state machines rather than regul
     If I'm wrong, please show me.
 """
 
-progName = "Bible References handler"
-versionString = "0.28"
+ProgName = "Bible References handler"
+ProgVersion = "0.28"
+ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
 import os, logging
@@ -1792,7 +1793,7 @@ def demo():
     """
     Demonstrate parsing some Bible reference strings.
     """
-    if Globals.verbosityLevel > 1: print( "{} V{}".format( progName, versionString ) )
+    if Globals.verbosityLevel > 1: print( ProgNameVersion )
 
     ourBOS = BibleOrganizationalSystem( "RSV" )
     printProcessingMessages = True
@@ -1913,10 +1914,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( progName, versionString )
+    parser = Globals.setup( ProgName, ProgVersion )
     Globals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( progName, versionString )
+    Globals.closedown( ProgName, ProgVersion )
 # end of BibleReferences.py

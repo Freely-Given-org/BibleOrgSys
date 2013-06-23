@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMFilenames.py
-#   Last modified: 2013-06-22 by RJH (also update versionString below)
+#   Last modified: 2013-06-24 by RJH (also update ProgVersion below)
 #
 # Module handling USFM Bible filenames
 #
@@ -27,8 +27,10 @@
 Module for creating and manipulating USFM filenames.
 """
 
-progName = "USFM Bible filenames handler"
-versionString = "0.59"
+ProgName = "USFM Bible filenames handler"
+ProgVersion = "0.59"
+ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+
 debuggingThisModule = False
 
 
@@ -507,7 +509,7 @@ class USFMFilenames:
 
 def demo():
     """ Demonstrate finding files in some USFM Bible folders. """
-    if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
+    if Globals.verbosityLevel > 0: print( ProgNameVersion )
 
     # These are relative paths -- you can replace these with your test folder(s)
     testFolders = ("Tests/DataFilesForTests/USFMTest1/", "Tests/DataFilesForTests/USFMTest2/",
@@ -535,10 +537,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( progName, versionString )
+    parser = Globals.setup( ProgName, ProgVersion )
     Globals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( progName, versionString )
+    Globals.closedown( ProgName, ProgVersion )
 # end of USFMFilenames.py

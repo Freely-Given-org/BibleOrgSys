@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # UnknownBible.py
-#   Last modified: 2013-06-22 (also update versionString below)
+#   Last modified: 2013-06-24 (also update ProgVersion below)
 #
 # Module handling a unknown Bible object
 #
@@ -36,8 +36,10 @@ Currently aware of the following Bible types:
     Sword modules.
 """
 
-progName = "Unknown Bible object handler"
-versionString = "0.02"
+ProgName = "Unknown Bible object handler"
+ProgVersion = "0.02"
+ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+
 
 import logging, os.path
 from gettext import gettext as _
@@ -193,7 +195,7 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 0: print( "{} V{}".format(progName, versionString ) )
+    if Globals.verbosityLevel > 0: print( "{} V{}".format(ProgName, ProgVersion ) )
 
     # Now demo the class
     testFolders = ( "/home/robert/Logs",
@@ -220,10 +222,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( progName, versionString )
+    parser = Globals.setup( ProgName, ProgVersion )
     Globals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( progName, versionString )
+    Globals.closedown( ProgName, ProgVersion )
 # end of UnknownBible.py

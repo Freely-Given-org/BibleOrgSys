@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleOrganizationalSystems.py
-#   Last modified: 2013-06-22 by RJH (also update versionString below)
+#   Last modified: 2013-06-24 by RJH (also update ProgVersion below)
 #
 # Module handling BibleOrganizationalSystems
 #
@@ -27,8 +27,9 @@
 Module handling BibleOrganizationalSystems.
 """
 
-progName = "Bible Organization Systems handler"
-versionString = "0.24"
+ProgName = "Bible Organization Systems handler"
+ProgVersion = "0.24"
+ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
 import logging, os
@@ -375,7 +376,7 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 1: print( "{} V{}".format( progName, versionString ) )
+    if Globals.verbosityLevel > 1: print( ProgNameVersion )
 
     if 0: # Demo the BibleOrganizationalSystems object
         print()
@@ -399,10 +400,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( progName, versionString )
+    parser = Globals.setup( ProgName, ProgVersion )
     Globals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( progName, versionString )
+    Globals.closedown( ProgName, ProgVersion )
 # end of BibleOrganizationalSystems.py

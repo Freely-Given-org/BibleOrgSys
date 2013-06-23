@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2013-06-23 by RJH (also update ProgVersion below)
+#   Last modified: 2013-06-24 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -87,7 +87,7 @@ class InternalBible:
         @rtype: string
         """
         result = self.objectNameString
-        if Globals.debugFlag or Globals.verbosityLevel>2: result += ' v' + versionString
+        if Globals.debugFlag or Globals.verbosityLevel>2: result += ' v' + ProgVersion
         if self.name: result += ('\n' if result else '') + "  Name: " + self.name
         if self.sourceFolder: result += ('\n' if result else '') + "  Source folder: " + self.sourceFolder
         elif self.sourceFilepath: result += ('\n' if result else '') + "  Source: " + self.sourceFilepath

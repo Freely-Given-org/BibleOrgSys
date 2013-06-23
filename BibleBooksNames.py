@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksNames.py
-#   Last modified: 2013-06-22 (also update versionString below)
+#   Last modified: 2013-06-24 (also update ProgVersion below)
 #
 # Module handling BibleBooksNames
 #
@@ -27,8 +27,9 @@
 Module handling BibleBooksNames.
 """
 
-progName = "Bible Books Names Systems handler"
-versionString = "0.34"
+ProgName = "Bible Books Names Systems handler"
+ProgVersion = "0.34"
+ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
 import logging, os
@@ -466,7 +467,7 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 1: print( "{} V{}".format( progName, versionString ) )
+    if Globals.verbosityLevel > 1: print( ProgNameVersion )
 
     sampleBookList = ['GEN','JDG','SA1','SA2','KI1','KI2','MA4','MAT','MRK','LUK','JHN','ACT','ROM','CO1','CO2','PE1','PE2','JDE','REV']
     #sampleBookList = ['GEN','JDG','SA1','SA2','KI1','KI2','MA1','MA2']
@@ -501,12 +502,12 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( progName, versionString )
+    parser = Globals.setup( ProgName, ProgVersion )
     parser.add_option("-x", "--expandDemo", action="store_true", dest="expandDemo", default=False, help="expand the input abbreviations to include all unambiguous shorter forms")
     #parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML files to .py and .h tables suitable for directly including into other programs")
     Globals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( progName, versionString )
+    Globals.closedown( ProgName, ProgVersion )
 # end of BibleBooksNames.py

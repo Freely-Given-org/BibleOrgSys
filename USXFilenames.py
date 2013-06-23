@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USXFilenames.py
-#   Last modified: 2013-06-22 (also update versionString below)
+#   Last modified: 2013-06-24 (also update ProgVersion below)
 #
 # Module handling USX Bible filenames
 #
@@ -27,8 +27,9 @@
 Module for creating and manipulating USX filenames.
 """
 
-progName = "USX Bible filenames handler"
-versionString = "0.50"
+ProgName = "USX Bible filenames handler"
+ProgVersion = "0.50"
+ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
 import os, logging
@@ -189,7 +190,7 @@ class USXFilenames:
 
 def demo():
     """ Demonstrate finding files in some USX Bible folders. """
-    if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
+    if Globals.verbosityLevel > 0: print( ProgNameVersion )
 
     # These are relative paths -- you can replace these with your test folder(s)
     testFolders = ('Tests/DataFilesForTests/USXTest1/', 'Tests/DataFilesForTests/USXTest2/',
@@ -207,10 +208,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( progName, versionString )
+    parser = Globals.setup( ProgName, ProgVersion )
     Globals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( progName, versionString )
+    Globals.closedown( ProgName, ProgVersion )
 # end of USXFilenames.py

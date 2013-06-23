@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # TestSuite.py
-#   Last modified: 2013-06-22 by RJH (also update versionString below)
+#   Last modified: 2013-06-24 by RJH (also update ProgVersion below)
 #
 # Suite for testing BibleOrgSys
 #
@@ -27,8 +27,9 @@
 Suite testing BibleOrgSys.
 """
 
-progName = "Bible Organisational System test suite"
-versionString = "0.12"
+ProgName = "Bible Organisational System test suite"
+ProgVersion = "0.12"
+ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
 import sys, unittest
@@ -47,11 +48,11 @@ import USFMMarkersTests, USFMFilenamesTests, USXFilenamesTests
 
 # Handle command line parameters (for compatibility)
 # Configure basic set-up
-parser = Globals.setup( progName, versionString )
+parser = Globals.setup( ProgName, ProgVersion )
 parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
 Globals.addStandardOptionsAndProcess( parser )
 
-if Globals.verbosityLevel > 1: print( "{} V{}".format( progName, versionString ) )
+if Globals.verbosityLevel > 1: print( ProgNameVersion )
 
 
 # Create the test suite

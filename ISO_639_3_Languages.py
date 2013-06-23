@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ISO_639_3_Languages.py
-#   Last modified: 2013-06-22 by RJH (also update versionString below)
+#   Last modified: 2013-06-24 by RJH (also update ProgVersion below)
 #
 # Module handling ISO_639_3
 #
@@ -27,8 +27,10 @@
 Module handling ISO_639_3_Languages.
 """
 
-progName = "ISO 639_3_Languages handler"
-versionString = "0.84"
+ProgName = "ISO 639_3_Languages handler"
+ProgVersion = "0.84"
+ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+
 
 import os, logging
 from gettext import gettext as _
@@ -153,7 +155,7 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 1: print( "{} V{}".format( progName, versionString ) )
+    if Globals.verbosityLevel > 1: print( ProgNameVersion )
 
     # Demo the languages object
     lg = ISO_639_3_Languages().loadData() # Doesn't reload the XML unnecessarily :)
@@ -185,10 +187,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( progName, versionString )
+    parser = Globals.setup( ProgName, ProgVersion )
     Globals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( progName, versionString )
+    Globals.closedown( ProgName, ProgVersion )
 # end of ISO_639_3_Languages.py

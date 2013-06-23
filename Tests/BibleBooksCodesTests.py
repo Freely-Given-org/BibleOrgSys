@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodesTests.py
-#   Last modified: 2013-06-22 by RJH (also update versionString below)
+#   Last modified: 2013-06-24 by RJH (also update ProgVersion below)
 #
 # Module testing BibleBooksCodes.py
 #
@@ -27,8 +27,9 @@
 Module testing BibleBooksCodesConverter.py and BibleBooksCodes.py.
 """
 
-progName = "Bible Books Codes tests"
-versionString = "0.69"
+ProgName = "Bible Books Codes tests"
+ProgVersion = "0.69"
+ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
 import sys, unittest
@@ -641,10 +642,10 @@ class BibleBooksCodesTests( unittest.TestCase ):
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( progName, versionString )
+    parser = Globals.setup( ProgName, ProgVersion )
     Globals.addStandardOptionsAndProcess( parser )
 
-    if Globals.verbosityLevel > 1: print( "{} V{}".format( progName, versionString ) )
+    if Globals.verbosityLevel > 1: print( ProgNameVersion )
 
     unittest.main() # Automatically runs all of the above tests
 # end of BibleBooksCodesTests.py

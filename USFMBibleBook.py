@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBibleBook.py
-#   Last modified: 2013-06-22 by RJH (also update versionString below)
+#   Last modified: 2013-06-24 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -27,8 +27,9 @@
 Module for defining and manipulating USFM Bible books.
 """
 
-progName = "USFM Bible book handler"
-versionString = "0.30"
+ProgName = "USFM Bible book handler"
+ProgVersion = "0.30"
+ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
 import os, logging
@@ -157,7 +158,7 @@ def demo():
     """
     Demonstrate reading and processing some USFM Bible databases.
     """
-    if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
+    if Globals.verbosityLevel > 0: print( ProgNameVersion )
 
 
     def demoFile( filename, folder, bookReferenceCode ):
@@ -208,10 +209,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( progName, versionString )
+    parser = Globals.setup( ProgName, ProgVersion )
     Globals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( progName, versionString )
+    Globals.closedown( ProgName, ProgVersion )
 # end of USFMBibleBook.py

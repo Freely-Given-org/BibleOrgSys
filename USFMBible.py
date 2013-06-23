@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2013-06-23 by RJH (also update versionString below)
+#   Last modified: 2013-06-24 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -27,8 +27,9 @@
 Module for defining and manipulating complete or partial USFM Bibles.
 """
 
-progName = "USFM Bible handler"
-versionString = "0.34"
+ProgName = "USFM Bible handler"
+ProgVersion = "0.35"
+ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
 import os, logging
@@ -309,7 +310,7 @@ def demo():
     """
     Demonstrate reading and checking some Bible databases.
     """
-    if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
+    if Globals.verbosityLevel > 0: print( ProgNameVersion )
 
 
     if 1: # Test a single folder containing a USFM Bible
@@ -415,7 +416,7 @@ def demo():
                 #BW.genericBRL = BibleReferenceList( BW.genericBOS, BibleObject=BW )
                 import subprocess # for running xmllint
                 import ControlFiles
-                if Globals.verbosityLevel > 0: print( "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( progName, versionString ) )
+                if Globals.verbosityLevel > 0: print( "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( ProgName, ProgVersion ) )
                 #xmllintError = ("No error", "Unclassified", "Error in DTD", "Validation error", "Validation error", "Error in schema compilation", "Error writing output", "Error in pattern", "Error in reader registration", "Out of memory")
 
                 if 1: # Do USX XML export
@@ -524,7 +525,7 @@ def demo():
                     if Globals.commandLineOptions.export:
                         import subprocess # for running xmllint
                         import ControlFiles
-                        if Globals.verbosityLevel > 0: print( "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( progName, versionString ) )
+                        if Globals.verbosityLevel > 0: print( "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( ProgName, ProgVersion ) )
                         #xmllintError = ("No error", "Unclassified", "Error in DTD", "Validation error", "Validation error", "Error in schema compilation", "Error writing output", "Error in pattern", "Error in reader registration", "Out of memory")
 
                         if 1: # Do USX XML export
@@ -576,7 +577,7 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( progName, versionString )
+    parser = Globals.setup( ProgName, ProgVersion )
     parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
     Globals.addStandardOptionsAndProcess( parser )
 
@@ -584,5 +585,5 @@ if __name__ == '__main__':
 
     demo()
 
-    Globals.closedown( progName, versionString )
+    Globals.closedown( ProgName, ProgVersion )
 # end of USFMBible.py

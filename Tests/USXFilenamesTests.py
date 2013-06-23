@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USXFilenamesTests.py
-#   Last modified: 2013-06-22 (also update versionString below)
+#   Last modified: 2013-06-24 (also update ProgVersion below)
 #
 # Module testing USXFilenames.py
 #
@@ -27,8 +27,9 @@
 Module testing USXFilenames.py.
 """
 
-progName = "USX Filenames tests"
-versionString = "0.50"
+ProgName = "USX Filenames tests"
+ProgVersion = "0.50"
+ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
 import sys, os, unittest
@@ -213,10 +214,10 @@ class USXFilenamesTests2( unittest.TestCase ):
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( progName, versionString )
+    parser = Globals.setup( ProgName, ProgVersion )
     Globals.addStandardOptionsAndProcess( parser )
 
-    if Globals.verbosityLevel > 1: print( "{} V{}".format( progName, versionString ) )
+    if Globals.verbosityLevel > 1: print( ProgNameVersion )
 
     # Make sure you set the testFolder in setUp above
     unittest.main() # Automatically runs all of the above tests

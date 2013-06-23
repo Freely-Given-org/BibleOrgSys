@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # SFMFile.py
-#   Last modified: 2013-06-23 (also update versionString below)
+#   Last modified: 2013-06-24 (also update ProgVersion below)
 #
 # SFM (Standard Format Marker) data file reader
 #
@@ -39,8 +39,9 @@ There are three kinds of SFM encoded files which can be loaded:
 """
 
 
-progName = "SFM Files loader"
-versionString = "0.82"
+ProgName = "SFM Files loader"
+ProgVersion = "0.82"
+ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
 import logging
@@ -66,7 +67,7 @@ class SFMLines:
         @rtype: string
         """
         result = "SFM Lines Object"
-        if Globals.debugFlag or Globals.verbosityLevel>2: result += ' v' + versionString
+        if Globals.debugFlag or Globals.verbosityLevel>2: result += ' v' + ProgVersion
         for line in self.lines:
             result += ('\n' if result else '') + str( line )
         return result
@@ -338,7 +339,7 @@ def demo():
     """
     Demonstrate reading and processing some UTF-8 SFM databases.
     """
-    if Globals.verbosityLevel > 1: print( "{} V{}".format( progName, versionString ) )
+    if Globals.verbosityLevel > 1: print( ProgNameVersion )
 
     import os.path
     filepath = os.path.join( 'Tests/DataFilesForTests/', 'MatigsalugDictionaryA.sfm' )
@@ -363,10 +364,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( progName, versionString )
+    parser = Globals.setup( ProgName, ProgVersion )
     Globals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( progName, versionString )
+    Globals.closedown( ProgName, ProgVersion )
 # end of SFMFile.py

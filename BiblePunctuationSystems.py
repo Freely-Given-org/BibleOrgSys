@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BiblePunctuationSystems.py
-#   Last modified: 2013-06-22 (also update versionString below)
+#   Last modified: 2013-06-24 (also update ProgVersion below)
 #
 # Module handling BiblePunctuationSystem_*.xml to produce C and Python data tables
 #
@@ -27,8 +27,9 @@
 Module handling BiblePunctuation_*.xml and to export to JSON, C, and Python data tables.
 """
 
-progName = "Bible Punctuation Systems handler"
-versionString = "0.43"
+ProgName = "Bible Punctuation Systems handler"
+ProgVersion = "0.43"
+ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
 import os, logging
@@ -261,7 +262,7 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
+    if Globals.verbosityLevel > 0: print( ProgNameVersion )
 
     # Demo the BiblePunctuationSystems object
     bpss = BiblePunctuationSystems().loadData() # Doesn't reload the XML unnecessarily :)
@@ -278,10 +279,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( progName, versionString )
+    parser = Globals.setup( ProgName, ProgVersion )
     Globals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( progName, versionString )
+    Globals.closedown( ProgName, ProgVersion )
 # end of BiblePunctuationSystems.py

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ControlFiles.py
-#   Last modified: 2013-06-22 (also update versionString below)
+#   Last modified: 2013-06-24 (also update ProgVersion below)
 #
 # Control file module
 #
@@ -27,8 +27,10 @@
 Module for reading and parsing simple text control files.
 """
 
-progName = "ControlFiles"
-versionString = "0.05"
+ProgName = "ControlFiles"
+ProgVersion = "0.05"
+ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+
 
 import os, logging
 import Globals
@@ -133,15 +135,15 @@ def demo():
     """
     Demo program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel>0: print( "{} V{}".format( progName, versionString ) )
+    if Globals.verbosityLevel>0: print( ProgNameVersion )
 # end of demo
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( progName, versionString )
+    parser = Globals.setup( ProgName, ProgVersion )
     Globals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( progName, versionString )
+    Globals.closedown( ProgName, ProgVersion )
 # end of ControlFiles.py

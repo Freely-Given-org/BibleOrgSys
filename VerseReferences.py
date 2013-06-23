@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # VerseReferences.py
-#   Last modified: 2013-06-22 (also update versionString below)
+#   Last modified: 2013-06-24 (also update ProgVersion below)
 #
 # Module handling Bible verse references
 #
@@ -66,8 +66,9 @@ OXES is different again and tends to remove the second (redundant) book identifi
     e.g., Gen.1.1-1.2 (if I remember correctly)
 """
 
-progName = "Bible verse reference handler"
-versionString = "0.01"
+ProgName = "Bible verse reference handler"
+ProgVersion = "0.01"
+ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
 import os, logging
@@ -149,7 +150,7 @@ def demo():
     """
     Short program to demonstrate/test the above class(es).
     """
-    if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
+    if Globals.verbosityLevel > 0: print( ProgNameVersion )
 
     vK = SimpleVerseKey( 'GEN', '1', '1' )
     print( vK, "and", vK.getOSISReference() )
@@ -158,10 +159,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( progName, versionString )
+    parser = Globals.setup( ProgName, ProgVersion )
     Globals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( progName, versionString )
+    Globals.closedown( ProgName, ProgVersion )
 # end of VerseReferences.py

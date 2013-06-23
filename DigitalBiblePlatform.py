@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # DigitalBiblePlatform.py
-#   Last modified: 2013-06-22 (also update versionString below)
+#   Last modified: 2013-06-24 (also update ProgVersion below)
 #
 # Module handling online DBP resources
 #
@@ -35,8 +35,9 @@ In this module, we use:
 More details are available from http://www.DigitalBiblePlatform.com.
 """
 
-progName = "Digital Bible Platform handler"
-versionString = "0.02"
+ProgName = "Digital Bible Platform handler"
+ProgVersion = "0.02"
+ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
 from singleton import singleton
@@ -328,7 +329,7 @@ def demo():
     """
     Demonstrate how some of the above classes can be used.
     """
-    if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
+    if Globals.verbosityLevel > 0: print( ProgNameVersion )
 
     if 1: # Test the DBPBibles class
         print()
@@ -359,10 +360,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( progName, versionString )
+    parser = Globals.setup( ProgName, ProgVersion )
     Globals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( progName, versionString )
+    Globals.closedown( ProgName, ProgVersion )
 # end of DigitalBiblePlatform.py

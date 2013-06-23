@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # SwordResources.py
-#   Last modified: 2013-06-22 (also update versionString below)
+#   Last modified: 2013-06-24 (also update ProgVersion below)
 #
 # Module handling Sword resources using the Sword engine
 #
@@ -29,8 +29,9 @@ This module uses the Sword engine (libsword) via the Python SWIG bindings.
 (If you don't want to install that, consider our SwordModules module.)
 """
 
-progName = "Sword resource handler"
-versionString = "0.02"
+ProgName = "Sword resource handler"
+ProgVersion = "0.02"
+ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
 #from singleton import singleton
@@ -189,7 +190,7 @@ def demo():
     """
     Sword
     """
-    if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
+    if Globals.verbosityLevel > 0: print( ProgNameVersion )
 
     #print( "\ndir Sword", dir(Sword) )
 
@@ -353,10 +354,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( progName, versionString )
+    parser = Globals.setup( ProgName, ProgVersion )
     Globals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( progName, versionString )
+    Globals.closedown( ProgName, ProgVersion )
 # end of SwordResources.py

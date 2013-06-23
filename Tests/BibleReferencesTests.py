@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleReferencesTests.py
-#   Last modified: 2013-06-22 by RJH (also update versionString below)
+#   Last modified: 2013-06-24 by RJH (also update ProgVersion below)
 #
 # Module testing BibleReferences.py
 #
@@ -27,8 +27,9 @@
 Module testing BibleReferences.py.
 """
 
-progName = "Bible References tests"
-versionString = "0.24"
+ProgName = "Bible References tests"
+ProgVersion = "0.24"
+ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
 import sys, unittest
@@ -288,10 +289,10 @@ class BibleReferencesTests( unittest.TestCase ):
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( progName, versionString )
+    parser = Globals.setup( ProgName, ProgVersion )
     Globals.addStandardOptionsAndProcess( parser )
 
-    if Globals.verbosityLevel > 1: print( "{} V{}".format( progName, versionString ) )
+    if Globals.verbosityLevel > 1: print( ProgNameVersion )
 
     unittest.main() # Automatically runs all of the above tests
 # end of BibleReferencesTests.py

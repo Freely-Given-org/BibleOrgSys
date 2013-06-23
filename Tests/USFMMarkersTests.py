@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkersTests.py
-#   Last modified: 2013-06-22 (also update versionString below)
+#   Last modified: 2013-06-24 (also update ProgVersion below)
 #
 # Module testing USFMMarkers.py
 #
@@ -27,8 +27,9 @@
 Module testing USFMMarkers.py.
 """
 
-progName = "USFM Markers tests"
-versionString = "0.55"
+ProgName = "USFM Markers tests"
+ProgVersion = "0.55"
+ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
 import sys, unittest
@@ -492,10 +493,10 @@ class USFMMarkersTests( unittest.TestCase ):
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( progName, versionString )
+    parser = Globals.setup( ProgName, ProgVersion )
     Globals.addStandardOptionsAndProcess( parser )
 
-    if Globals.verbosityLevel > 1: print( "{} V{}".format( progName, versionString ) )
+    if Globals.verbosityLevel > 1: print( ProgNameVersion )
 
     unittest.main() # Automatically runs all of the above tests
 # end of USFMMarkersTests.py
