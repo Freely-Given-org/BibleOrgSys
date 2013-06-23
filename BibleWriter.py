@@ -431,7 +431,7 @@ class BibleWriter( InternalBible ):
             writeBook( xw, BBB, bookData )
         xw.close()
         if unhandledMarkers:
-            logging.warning( "toMediaWiki: Unhandled USFM markers were {}").format( unhandledMarkers ) )
+            logging.warning( "toMediaWiki: Unhandled USFM markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:
                 print( "  " + _("WARNING: Unhandled toMediaWiki USFM markers were {}").format( unhandledMarkers ) )
         if validationSchema: return xw.validate( validationSchema )
@@ -537,7 +537,7 @@ class BibleWriter( InternalBible ):
         xw.writeLineClose( 'XMLBible' )
         xw.close()
         if unhandledMarkers:
-            logging.warning( "toZefania: Unhandled USFM markers were {}").format( unhandledMarkers ) )
+            logging.warning( "toZefania: Unhandled USFM markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:
                 print( "  " + _("WARNING: Unhandled toZefania USFM markers were {}").format( unhandledMarkers ) )
         if validationSchema: return xw.validate( validationSchema )
@@ -917,7 +917,7 @@ class BibleWriter( InternalBible ):
                 if bookResults[1]: validationResults = ( validationResults[0], validationResults[1] + bookResults[1], validationResults[2], )
                 if bookResults[2]: validationResults = ( validationResults[0], validationResults[1], validationResults[2] + bookResults[2], )
         if unhandledMarkers:
-            logging.warning( "toUSXXML: Unhandled USFM markers were {}").format( unhandledMarkers ) )
+            logging.warning( "toUSXXML: Unhandled USFM markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:
                 print( "  " + _("WARNING: Unhandled toUSX USFM markers were {}").format( unhandledMarkers ) )
         if validationSchema: return validationResults
@@ -1620,7 +1620,7 @@ class BibleWriter( InternalBible ):
         else:
             logging.critical( "Unrecognized toOSIS control \"osisFiles\" = '{}'".format( controlDict["osisFiles"] ) )
         if unhandledMarkers:
-            logging.warning( "toOSISXML: Unhandled USFM markers were {}").format( unhandledMarkers ) )
+            logging.warning( "toOSISXML: Unhandled USFM markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:
                 print( "  " + _("WARNING: Unhandled toOSIS USFM markers were {}").format( unhandledMarkers ) )
         if Globals.verbosityLevel > 2:
@@ -2211,7 +2211,7 @@ class BibleWriter( InternalBible ):
                 writeBook( xw, ix, BBB, bookData )
         xwOT.close(); xwNT.close()
         if unhandledMarkers:
-            logging.warning( "toSwordModule: Unhandled USFM markers were {}").format( unhandledMarkers ) )
+            logging.warning( "toSwordModule: Unhandled USFM markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:
                 print( "  " + _("WARNING: Unhandled toSwordModule USFM markers were {}").format( unhandledMarkers ) )
         if validationSchema:
@@ -2440,7 +2440,7 @@ class BibleWriter( InternalBible ):
                 xw.close()
         else: halt # not done yet
         if unhandledMarkers:
-            logging.warning( "toHTML5: Unhandled USFM markers were {}").format( unhandledMarkers ) )
+            logging.warning( "toHTML5: Unhandled USFM markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:
                 print( "  " + _("WARNING: Unhandled toHTML5 USFM markers were {}").format( unhandledMarkers ) )
         if validationSchema: return xw.validate( validationSchema )
