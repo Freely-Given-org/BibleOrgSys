@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Globals.py
-#   Last modified: 2013-06-23 (also update versionString below)
+#   Last modified: 2013-06-23 (also update ProgVersion below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -28,8 +28,9 @@ Module handling global variables
     and some useful general functions.
 """
 
-progName = "Globals"
-versionString = "0.20"
+ProgName = "Globals"
+ProgVersion = "0.21"
+ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
 import logging, os.path, pickle
@@ -75,10 +76,10 @@ loggingDateFormat = "%Y-%m-%d %H:%M"
 loggingShortFormat = '%(levelname)8s: %(message)s'
 loggingLongFormat = '%(asctime)s %(levelname)8s: %(message)s'
 
-def setupLoggingToFile( progName, versionString, folder=None ):
+def setupLoggingToFile( ProgName, ProgVersion, folder=None ):
     """Sets up the main logfile for the program and returns the full pathname."""
     # Gets called from our demo() function when program starts up
-    filename = progName + '_log.txt'
+    filename = ProgName + '_log.txt'
     if folder is None: folder = defaultLogFolder # relative path
     filepath = os.path.join( folder, filename )
 
@@ -467,7 +468,7 @@ def unpickleObject( filename, folder=None ):
 #
 # Default program setup routine
 
-def setup( progName, versionString ):
+def setup( ProgName, ProgVersion ):
     """
     Does the initial set-up for our scripts / programs.
 
@@ -477,16 +478,16 @@ def setup( progName, versionString ):
         so that custom command line parameters can be added
         then addStandardOptionsAndProcess must be called on it.
     """
-    setupLoggingToFile( progName, versionString )
-    logging.info( "{} v{} started".format( progName, versionString ) )
+    setupLoggingToFile( ProgName, ProgVersion )
+    logging.info( "{} v{} started".format( ProgName, ProgVersion ) )
 
-    if Globals.verbosityLevel > 2:
+    if verbosityLevel > 2:
         print( "  This program comes with ABSOLUTELY NO WARRANTY." )
         print( "  It is free software, and you are welcome to redistribute it under certain conditions." )
         print( "  See the license in file 'gpl-3.0.txt' for more details.\n" )
 
     # Handle command line parameters
-    parser = OptionParser( version="v{}".format( versionString ) )
+    parser = OptionParser( version="v{}".format( ProgVersion ) )
     return parser
 # end of Globals.setup
 
@@ -634,11 +635,11 @@ def printAllGlobals( indent=None ):
 # end of Globals.printAllGlobals
 
 
-def closedown( progName, versionString ):
+def closedown( ProgName, ProgVersion ):
     """
     Does all the finishing off for the program.
     """
-    logging.info( "{} v{} finished.".format( progName, versionString ) )
+    logging.info( "{} v{} finished.".format( ProgName, ProgVersion ) )
 # end of Globals.closedown
 
 
@@ -671,7 +672,7 @@ def demo():
     Demo program to handle command line parameters
         and then demonstrate some basic functions.
     """
-    if verbosityLevel>0: print( "{} V{}".format( progName, versionString ) )
+    if verbosityLevel>0: print( ProgNameVersion )
     if verbosityLevel>2: printAllGlobals()
 
     # Demonstrate peekAtFirstLine function
@@ -685,12 +686,12 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = setup( progName, versionString )
+    parser = setup( ProgName, ProgVersion )
     addStandardOptionsAndProcess( parser )
 
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     demo()
 
-    closedown( progName, versionString )
+    closedown( ProgName, ProgVersion )
 # end of Globals.py
