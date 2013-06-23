@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Globals.py
-#   Last modified: 2013-06-20 (also update versionString below)
+#   Last modified: 2013-06-23 (also update versionString below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -29,7 +29,7 @@ Module handling global variables
 """
 
 progName = "Globals"
-versionString = "0.19"
+versionString = "0.20"
 
 
 import logging, os.path, pickle
@@ -479,6 +479,11 @@ def setup( progName, versionString ):
     """
     setupLoggingToFile( progName, versionString )
     logging.info( "{} v{} started".format( progName, versionString ) )
+
+    if Globals.verbosityLevel > 2:
+        print( "  This program comes with ABSOLUTELY NO WARRANTY." )
+        print( "  It is free software, and you are welcome to redistribute it under certain conditions." )
+        print( "  See the license in file 'gpl-3.0.txt' for more details.\n" )
 
     # Handle command line parameters
     parser = OptionParser( version="v{}".format( versionString ) )

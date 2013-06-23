@@ -1046,7 +1046,7 @@ class InternalBibleBook:
                             assert( lineCount > 0 )
                             lineCount -= 1
                     elif aM in ('s1','s2','s3',): # Shouldn't happen but just in case
-                        print( "makeIndex: just in case", aM, self.bookReferenceCode, C, V )
+                        if Globals.debugFlag: print( "makeIndex: just in case", aM, self.bookReferenceCode, C, V )
                         revertToJ = j - 1
                         assert( lineCount > 0 )
                         lineCount -= 1
