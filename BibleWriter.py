@@ -162,7 +162,7 @@ class BibleWriter( InternalBible ):
             if Globals.verbosityLevel > 2: print( "  " + _("Adjusting USFM output..." ) )
             for pseudoMarker,originalMarker,text,cleanText,extras in pseudoUSFMData:
                 if (not USFM) and pseudoMarker!='id': # We need to create an initial id line
-                    USFM += '\\id {} -- BibleOrgSys USFM export v{}'.format( USFMAbbreviation.upper(), versionString )
+                    USFM += '\\id {} -- BibleOrgSys USFM export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
                 if pseudoMarker in ('c#',): continue # Ignore our additions
                 value = cleanText # (temp)
                 if Globals.debugFlag and debuggingThisModule: print( "pseudoMarker = '{}' value = '{}'".format( pseudoMarker, value ) )
@@ -2195,8 +2195,8 @@ class BibleWriter( InternalBible ):
         xwOT.setHumanReadable( 'NLSpace', indentSize=5 ) # Can be set to 'All', 'Header', or 'None'
         xwNT.setHumanReadable( 'NLSpace', indentSize=5 ) # Can be set to 'All', 'Header', or 'None'
         xwOT.start( noAutoXML=True ); xwNT.start( noAutoXML=True )
-        toSwordGlobals['length'] = xwOT.writeLineOpenSelfclose( 'milestone', [('type',"x-importer"), ('subtype',"x-BibleWriter.py"), ('n',"${} $".format(versionString))] )
-        toSwordGlobals['length'] = xwNT.writeLineOpenSelfclose( 'milestone', [('type',"x-importer"), ('subtype',"x-BibleWriter.py"), ('n',"${} $".format(versionString))] )
+        toSwordGlobals['length'] = xwOT.writeLineOpenSelfclose( 'milestone', [('type',"x-importer"), ('subtype',"x-BibleWriter.py"), ('n',"${} $".format(ProgVersion))] )
+        toSwordGlobals['length'] = xwNT.writeLineOpenSelfclose( 'milestone', [('type',"x-importer"), ('subtype',"x-BibleWriter.py"), ('n',"${} $".format(ProgVersion))] )
         xwOT.setSectionName( 'Main' ); xwNT.setSectionName( 'Main' )
         with open( os.path.join( lgFolder, 'ot.vss' ), 'wb' ) as ixOT, open( os.path.join( lgFolder, 'nt.vss' ), 'wb' ) as ixNT:
             ixOT.write( struct.pack( "IH", 0, 0 ) ) # Write the first dummy entry
@@ -2559,9 +2559,9 @@ class BibleWriter( InternalBible ):
                 print("BibleWriter.doAllExports.toHTML5 Unexpected error:", sys.exc_info()[0], err)
                 logging.error( "BibleWriter.doAllExports.toHTML5: Oops, failed!" )
 
-        if Globals.verbosityLevel > 2: print( "\nResults:  USFM={}  MW={}  Zef={}  USX={}  OSIS={}  Sw={}  HTML={}" \
+        if Globals.verbosityLevel > 1: print( "BibleWriter.doAllExports finished:  USFM={}  MW={}  Zef={}  USX={}  OSIS={}  Sw={}  HTML={}" \
             .format( USFMExportResult, MWExportResult, zExportResult, USXExportResult, OSISExportResult, swExportResult, htmlExportResult ) )
-        #return {'USFMExport':USFMExportResult, 'MWExport':MWExportResult, 'zExport':zExportResult, 'USXExport':USXExportResult, 'OSISExport':OSISExportResult, 'swExport':swExportResult, 'htmlExport':htmlExportResult}
+        return {'USFMExport':USFMExportResult, 'MWExport':MWExportResult, 'zExport':zExportResult, 'USXExport':USXExportResult, 'OSISExport':OSISExportResult, 'swExport':swExportResult, 'htmlExport':htmlExportResult}
     # end of BibleWriter.doAllExports
 # end of class BibleWriter
 

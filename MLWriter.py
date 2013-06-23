@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # MLWriter.py
-#   Last modified: 2013-06-22 by RJH (also update versionString below)
+#   Last modified: 2013-06-23 by RJH (also update ProgVersion below)
 #
 # Module handling pretty writing of XML (and xHTML) and HTML files
 #
@@ -36,8 +36,9 @@ TODO: Add writeAutoDTD
 
 """
 
-progName = "ML Writer"
-versionString = "0.29"
+ProgName = "ML Writer"
+ProgVersion = "0.29"
+ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
 import os, logging
@@ -478,7 +479,7 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel>0: print( "{} V{}".format( progName, versionString ) )
+    if Globals.verbosityLevel>0: print( ProgNameVersion )
 
     if 1: # Demo the writer object with XML
         outputFolder = "OutputFiles"
@@ -546,7 +547,7 @@ def demo():
         mlWr.writeLineOpen( 'a', ('href','http://www.w3.org/html/logo/') )
         mlWr.writeLineText( '<img src="http://www.w3.org/html/logo/badge/html5-badge-h-css3-semantics.png" width="165" height="64" alt="HTML5 Powered with CSS3 / Styling, and Semantics" title="HTML5 Powered with CSS3 / Styling, and Semantics">', noTextCheck=True )
         mlWr.writeLineClose( 'a' )
-        mlWr.writeLineText( "This page automatically created by: {} v{} {}".format( progName, versionString, datetime.date.today().strftime("%d-%b-%Y") ) )
+        mlWr.writeLineText( "This page automatically created by: {} v{} {}".format( ProgName, ProgVersion, datetime.date.today().strftime("%d-%b-%Y") ) )
         mlWr.writeLineClose( 'p' )
         mlWr.writeLineClose( 'footer' )
         mlWr.writeLineClose( 'body' )
@@ -557,10 +558,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( progName, versionString )
+    parser = Globals.setup( ProgName, ProgVersion )
     Globals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( progName, versionString )
+    Globals.closedown( ProgName, ProgVersion )
 # end of MLWriter.py
