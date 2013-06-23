@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-06-23 by RJH (also update versionString below)
+#   Last modified: 2013-06-23 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -37,8 +37,10 @@ and then calls
     self.appendLine (in order to fill self._rawLines)
 """
 
-progName = "Internal Bible book handler"
-versionString = "0.26"
+ProgName = "Internal Bible book handler"
+ProgVersion = "0.27"
+ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+
 debuggingThisModule = False
 
 
@@ -235,7 +237,7 @@ class InternalBibleBook:
         @rtype: string
         """
         result = self.objectNameString
-        if Globals.debugFlag or Globals.verbosityLevel>2: result += ' v' + versionString
+        if Globals.debugFlag or Globals.verbosityLevel>2: result += ' v' + ProgVersion
         if self.bookReferenceCode: result += ('\n' if result else '') + "  " + self.bookReferenceCode
         try:
             if self.sourceFilepath: result += ('\n' if result else '') + "  " + _("From: ") + self.sourceFilepath
@@ -2914,7 +2916,7 @@ def demo():
     """
     Demonstrate reading and processing some Bible databases.
     """
-    if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
+    if Globals.verbosityLevel > 0: print( ProgNameVersion )
 
     #import USFMFilenames
 
@@ -2932,10 +2934,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( progName, versionString )
+    parser = Globals.setup( ProgName, ProgVersion )
     Globals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( progName, versionString )
+    Globals.closedown( ProgName, ProgVersion )
 # end of InternalBibleBook.py

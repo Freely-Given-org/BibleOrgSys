@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2013-06-22 by RJH (also update versionString below)
+#   Last modified: 2013-06-23 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -35,8 +35,11 @@ and then fills
     self.books
 """
 
-progName = "Internal Bible handler"
-versionString = "0.24"
+ProgName = "Internal Bible handler"
+ProgVersion = "0.24"
+ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+
+debuggingThisModule = False
 
 
 import os, logging
@@ -199,7 +202,7 @@ class InternalBible:
         for BBB in self.reverseDict: assert( self.reverseDict[BBB] != referenceString )
 
         # See if a book name starts with this string
-        if Globals.debugFlag: print( "  getXRefBBB using startswith1..." )
+        if Globals.debugFlag and debuggingThisModule: print( "  getXRefBBB using startswith1..." )
         count = 0
         for bookName in self.bookNameDict:
             if bookName.startswith( adjRefString ):
@@ -221,9 +224,10 @@ class InternalBible:
                 self.guesses += ('\n' if self.guesses else '') + "Guessed '{}' to be {} (startswith1SECOND)".format( referenceString, BBB )
                 self.reverseDict[BBB] = referenceString
                 return BBB
-        if Globals.debugFlag and count > 1: print( "  getXRefBBB has multiple startswith matches for '{}' in {}".format( adjRefString, self.combinedBookNameDict ) )
+        if Globals.debugFlag and debuggingThisModule and count > 1:
+            print( "  getXRefBBB has multiple startswith matches for '{}' in {}".format( adjRefString, self.combinedBookNameDict ) )
         if count == 0:
-            if Globals.debugFlag: print( "  getXRefBBB using startswith2..." )
+            if Globals.debugFlag and debuggingThisModule: print( "  getXRefBBB using startswith2..." )
             for bookName in self.combinedBookNameDict:
                 if bookName.startswith( adjRefString ):
                     BBB = self.combinedBookNameDict[bookName]
@@ -247,7 +251,7 @@ class InternalBible:
 
         # See if a book name contains a word that starts with this string
         if count == 0:
-            if Globals.debugFlag: print( "  getXRefBBB using word startswith..." )
+            if Globals.debugFlag and debuggingThisModule: print( "  getXRefBBB using word startswith..." )
             for bookName in self.bookNameDict:
                 if ' ' in bookName:
                     for bit in bookName.split():
@@ -259,11 +263,12 @@ class InternalBible:
                 self.guesses += ('\n' if self.guesses else '') + "Guessed '{}' to be {} (word startswith)".format( referenceString, BBB )
                 self.reverseDict[BBB] = referenceString
                 return BBB
-            if Globals.debugFlag and count > 1: print( "  getXRefBBB has multiple startswith matches for '{}' in {}".format( adjRefString, self.bookNameDict ) )
+            if Globals.debugFlag and debuggingThisModule and count > 1:
+                print( "  getXRefBBB has multiple startswith matches for '{}' in {}".format( adjRefString, self.bookNameDict ) )
 
         # See if a book name starts with the same letter plus contains the letters in this string (slow)
         if count == 0:
-            if Globals.debugFlag: print ("  getXRefBBB using first plus other characters..." )
+            if Globals.debugFlag and debuggingThisModule: print ("  getXRefBBB using first plus other characters..." )
             for bookName in self.bookNameDict:
                 if not bookName: print( self.bookNameDict ); halt # temp...
                 #print( "aRS='{}', bN='{}'".format( adjRefString, bookName ) )
@@ -281,12 +286,13 @@ class InternalBible:
                 self.bookAbbrevDict[adjRefString] = BBB # Save to make it faster next time
                 self.guesses += ('\n' if self.guesses else '') + "Guessed '{}' to be {} (firstletter+)".format( referenceString, BBB )
                 return BBB
-            if Globals.debugFlag and count > 1: print( "  getXRefBBB has first and other character multiple matches for '{}' in {}".format( adjRefString, self.bookNameDict ) )
+            if Globals.debugFlag and debuggingThisModule and count > 1:
+                print( "  getXRefBBB has first and other character multiple matches for '{}' in {}".format( adjRefString, self.bookNameDict ) )
 
         if 0: # Too error prone!!!
             # See if a book name contains the letters in this string (slow)
             if count == 0:
-                if Globals.debugFlag: print ("  getXRefBBB using characters..." )
+                if Globals.debugFlag and debuggingThisModule: print ("  getXRefBBB using characters..." )
                 for bookName in self.bookNameDict:
                     found = True
                     for char in adjRefString:
@@ -301,9 +307,11 @@ class InternalBible:
                     self.bookAbbrevDict[adjRefString] = BBB # Save to make it faster next time
                     self.guesses += ('\n' if self.guesses else '') + "Guessed '{}' to be {} (letters)".format( referenceString, BBB )
                     return BBB
-                if Globals.debugFlag and count > 1: print( "  getXRefBBB has character multiple matches for '{}' in {}".format( adjRefString, self.bookNameDict ) )
+                if Globals.debugFlag and debuggingThisModule and count > 1:
+                    print( "  getXRefBBB has character multiple matches for '{}' in {}".format( adjRefString, self.bookNameDict ) )
 
-        if Globals.debugFlag or Globals.verbosityLevel>2: print( "  getXRefBBB failed for '{}' with {} and {}".format( referenceString, self.bookNameDict, self.bookAbbrevDict ) )
+        if Globals.debugFlag and debuggingThisModule or Globals.verbosityLevel>2:
+            print( "  getXRefBBB failed for '{}' with {} and {}".format( referenceString, self.bookNameDict, self.bookAbbrevDict ) )
         string = "Couldn't guess '{}'".format( referenceString[:5] )
         if string not in self.guesses: self.guesses += ('\n' if self.guesses else '') + string
     # end of InternalBible.guessXRefBBB
@@ -787,7 +795,7 @@ def demo():
     """
     A very basic test/demo of the InternalBible class.
     """
-    if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
+    if Globals.verbosityLevel > 0: print( ProgNameVersion )
 
     # Since this is only designed to be a base class, it can't actually do much at all
     IB = InternalBible()
@@ -797,10 +805,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( progName, versionString )
+    parser = Globals.setup( ProgName, ProgVersion )
     Globals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( progName, versionString )
+    Globals.closedown( ProgName, ProgVersion )
 # end of InternalBible.py

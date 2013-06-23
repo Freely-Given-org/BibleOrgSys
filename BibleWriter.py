@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-06-23 by RJH (also update versionString below)
+#   Last modified: 2013-06-23 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -44,8 +44,11 @@ Contains functions:
     doAllExports( self, givenOutputFolderName=None )
 """
 
-progName = "Bible writer"
-versionString = "0.11"
+ProgName = "Bible writer"
+ProgVersion = "0.12"
+ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+
+debuggingThisModule = False
 
 
 import sys, os, logging, datetime
@@ -144,7 +147,7 @@ class BibleWriter( InternalBible ):
             USFMAbbreviation = Globals.BibleBooksCodes.getUSFMAbbreviation( BBB )
             USFMNumber = Globals.BibleBooksCodes.getUSFMNumber( BBB )
 
-            if Globals.debugFlag: # Write the pseudoUSFM output for debugging
+            if Globals.debugFlag and debuggingThisModule: # Write the pseudoUSFM output for debugging
                 filename = "{}{}BWr.pSFM".format( USFMNumber, USFMAbbreviation.upper() ) # BWr = BibleWriter
                 pseudoOutputFolder = os.path.join( outputFolder, "pseudoFiles/" )
                 if not os.path.exists( pseudoOutputFolder ): os.makedirs( pseudoOutputFolder )
@@ -162,7 +165,7 @@ class BibleWriter( InternalBible ):
                     USFM += '\\id {} -- BibleOrgSys USFM export v{}'.format( USFMAbbreviation.upper(), versionString )
                 if pseudoMarker in ('c#',): continue # Ignore our additions
                 value = cleanText # (temp)
-                if Globals.debugFlag: print( "pseudoMarker = '{}' value = '{}'".format( pseudoMarker, value ) )
+                if Globals.debugFlag and debuggingThisModule: print( "pseudoMarker = '{}' value = '{}'".format( pseudoMarker, value ) )
                 if pseudoMarker in ('v','f','fr','x','xo',): # These fields should always end with a space but the processing will have removed them
                     if Globals.debugFlag: assert( value )
                     if value[-1] != ' ': value += ' ' # Append a space since it didn't have one
@@ -2282,7 +2285,7 @@ class BibleWriter( InternalBible ):
             writerObject.writeLineOpen( 'a', ('href','http://www.w3.org/html/logo/') )
             writerObject.writeLineText( '<img src="http://www.w3.org/html/logo/badge/html5-badge-h-css3-semantics.png" width="165" height="64" alt="HTML5 Powered with CSS3 / Styling, and Semantics" title="HTML5 Powered with CSS3 / Styling, and Semantics">', noTextCheck=True )
             writerObject.writeLineClose( 'a' )
-            writerObject.writeLineText( "This page automatically created by: {} v{} {}".format( progName, versionString, datetime.date.today().strftime("%d-%b-%Y") ) )
+            writerObject.writeLineText( "This page automatically created by: {} v{} {}".format( ProgName, ProgVersion, datetime.date.today().strftime("%d-%b-%Y") ) )
             writerObject.writeLineClose( 'p' )
             writerObject.writeLineClose( 'footer' )
             writerObject.writeLineClose( 'body' )
@@ -2568,7 +2571,7 @@ def demo():
     """
     Demonstrate reading and processing some Bible databases.
     """
-    if Globals.verbosityLevel > 0: print( "{} V{}".format( progName, versionString ) )
+    if Globals.verbosityLevel > 0: print( ProgNameVersion )
 
     # Since this is only designed to be a virtual base class, it can't actually do much at all
     BW = BibleWriter()
@@ -2606,7 +2609,7 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( progName, versionString )
+    parser = Globals.setup( ProgName, ProgVersion )
     parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
     Globals.addStandardOptionsAndProcess( parser )
 
@@ -2614,5 +2617,5 @@ if __name__ == '__main__':
 
     demo()
 
-    Globals.closedown( progName, versionString )
+    Globals.closedown( ProgName, ProgVersion )
 # end of BibleWriter.py
