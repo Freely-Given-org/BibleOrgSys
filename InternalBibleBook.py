@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-06-24 by RJH (also update ProgVersion below)
+#   Last modified: 2013-06-27 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -1429,7 +1429,7 @@ class InternalBibleBook:
                     #or ( aKey=='chapterCount' and bkDict[aKey]==1 ) ) # Some people put a chapter count in their front matter, glossary, etc.
                 if bkDict[aKey] is not None and ( aKey!='chapterCount' or bkDict[aKey]!=1 ):
                     # Some people put a chapter count in their front matter, glossary, etc.
-                    print( "ToProgrammer: Some wrong in {} here. Why? '{}' '{}'".format( self.bookReferenceCode, aKey, bkDict[aKey] ) )
+                    logging.debug( "InternalBibleBook.discover: ToProgrammer -- Some wrong in {} here. Why? '{}' '{}'".format( self.bookReferenceCode, aKey, bkDict[aKey] ) )
                 del bkDict[aKey]
         else: # Do some finalizing to do with verse counts
             if bkDict['verseCount'] is not None: bkDict['percentageProgress'] = round( bkDict['completedVerseCount'] * 100 / bkDict['verseCount'] )
@@ -1529,7 +1529,7 @@ class InternalBibleBook:
     # end of InternalBibleBook.getAddedUnits
 
 
-    def doCheckAddedUnits( self, typicalAddedUnitData, severe=False, ):
+    def doCheckAddedUnits( self, typicalAddedUnitData, severe=False ):
         """
         Get the units added to the text of the book including paragraph breaks, section headings, and section references.
         Note that all chapter and verse values are returned as strings not integers.
@@ -2918,12 +2918,9 @@ def demo():
     """
     if Globals.verbosityLevel > 0: print( ProgNameVersion )
 
-    #import USFMFilenames
-
-    logErrors = False # Set to true if you want errors logged to the console
-
     print( "Since this is only designed to be a base class, it can't actually do much at all." )
     print( "  Try running USFMBibleBook or USXXMLBibleBook which use this class." )
+
     IBB = InternalBibleBook( 'GEN' )
     # The following fields would normally be filled in a by "load" routine in the derived class
     IBB.objectNameString = "Dummy test Internal Bible Book object"

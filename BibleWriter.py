@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-06-24 by RJH (also update ProgVersion below)
+#   Last modified: 2013-06-27 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -885,7 +885,7 @@ class BibleWriter( InternalBible ):
                 else:
                     #assert( markerShouldHaveContent == 'A' ) # A = always, e.g.,  ide, mt, h, s, ip, etc.
                     if markerShouldHaveContent != 'A':
-                        print( "ToProgrammer: should be 'A': '{}' is '{}' Why?".format( marker, markerShouldHaveContent ) )
+                        logging.debug( "BibleWriter.toUSXXML: ToProgrammer -- should be 'A': '{}' is '{}' Why?".format( marker, markerShouldHaveContent ) )
                     if haveOpenPara:
                         xw.removeFinalNewline( True )
                         xw.writeLineClose( 'para' )
@@ -957,7 +957,7 @@ class BibleWriter( InternalBible ):
                     vernacularName = getBookNameFunction(BBB).upper()
                     #assert( vernacularName not in abbrevList )
                     if vernacularName in abbrevList:
-                        print( "ToProgrammer: vernac name IS in abbrevList -- what does this mean? Why? '{}' {}".format( vernacularName, abbrevList ) )
+                        logging.debug( "BibleWriter._writeSwordLocale: ToProgrammer -- vernacular name IS in abbrevList -- what does this mean? Why? '{}' {}".format( vernacularName, abbrevList ) )
                     SwLocFile.write( '{}={}\n'.format( vernacularName, swordAbbrev ) ) # Write the UPPER CASE language book name and the Sword abbreviation
                     abbrevList.append( vernacularName )
                     if ' ' in vernacularName:
