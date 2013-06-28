@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-06-27 by RJH (also update ProgVersion below)
+#   Last modified: 2013-06-29 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.27"
+ProgVersion = "0.28"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -155,7 +155,7 @@ class InternalBibleEntryList:
             if isinstance( initialData, list ) or isinstance( initialData, InternalBibleEntryList ):
                 for something in initialData:
                     self.append( something )
-            else: halt # Programming error -- unknown parameter type
+            else: logging.critical( "InternalBibleEntryList.__init__: Programming error -- unknown parameter type {}".format( repr(initialData) ) )
     # end of InternalBibleEntryList.__init__
 
 
@@ -838,7 +838,7 @@ class InternalBibleBook:
                 if self.objectTypeString == 'USFM':
                     markerList = Globals.USFMMarkers.getMarkerListFromText( text )
                     ix = 0
-                    for insideMarker, nextSignificantChar, iMIndex in markerList: # check paragraph markers
+                    for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, markerField in markerList: # check paragraph markers
                         if Globals.USFMMarkers.isNewlineMarker(insideMarker): # Need to split the line for everything else to work properly
                             if ix==0:
                                 fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Marker '{}' shouldn't appear within line in \\{}: '{}'").format( insideMarker, originalMarker, text ) )
@@ -1142,12 +1142,12 @@ class InternalBibleBook:
                 logging.warning( _("Deprecated '\\{}' newline marker in Bible book after {} {}:{} (Text is '{}')").format( marker, self.bookReferenceCode, c, v, text ) )
             markerList = Globals.USFMMarkers.getMarkerListFromText( text )
             #if markerList: print( "\nText = {}:'{}'".format(marker,text)); print( markerList )
-            for insideMarker, nextSignificantChar, iMIndex in markerList: # check character markers
+            for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, markerField in markerList: # check character markers
                 if Globals.USFMMarkers.isDeprecatedMarker( insideMarker ):
                     validationErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Deprecated '\\{}' internal marker in Bible book (Text is '{}')").format( insideMarker, text ) )
                     logging.warning( _("Deprecated '\\{}' internal marker in Bible book after {} {}:{} (Text is '{}')").format( insideMarker, self.bookReferenceCode, c, v, text ) )
             ix = 0
-            for insideMarker, nextSignificantChar, iMIndex in markerList: # check newline markers
+            for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, markerField in markerList: # check newline markers
                 if Globals.USFMMarkers.isNewlineMarker(insideMarker):
                     validationErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Marker '\\{}' must not appear within line in {}: {}").format( insideMarker, marker, text ) )
                     logging.error( _("Marker '\\{}' must not appear within line after {} {}:{} in {}: {}").format( insideMarker, self.bookReferenceCode, c, v, marker, text ) )
@@ -1363,6 +1363,7 @@ class InternalBibleBook:
         bkDict['sectionReferencesCount'] = bkDict['footnotesCount'] = bkDict['crossReferencesCount'] = 0
         bkDict['sectionReferencesParenthesisRatio'] = -1.0
         bkDict['haveIntroductoryText'] = bkDict['haveVerseText'] = False
+        bkDict['haveNestedUSFMarkers'] = False
         bkDict['seemsFinished'] = None
 
         sectionRefParenthCount = 0
@@ -1402,6 +1403,7 @@ class InternalBibleBook:
                 bkDict['haveIntroductoryMarkers'] = True
                 if text: bkDict['haveIntroductoryText'] = True
 
+            if '\\+' in text: bkDict['haveNestedUSFMarkers'] = True
             if lastMarker=='v' and (marker!='v~' or not text): bkDict['seemsFinished'] = False
 
             for extraType, extraIndex, extraText, cleanExtraText in extras:
@@ -1898,7 +1900,7 @@ class InternalBibleBook:
                 markerList = Globals.USFMMarkers.getMarkerListFromText( text )
                 #if markerList: print( "\nText {} {}:{} = {}:'{}'".format(self.bookReferenceCode, c, v, marker, text)); print( markerList )
                 openList = []
-                for insideMarker, nextSignificantChar, iMIndex in markerList: # check character markers
+                for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, markerField in markerList: # check character markers
                     if not Globals.USFMMarkers.isInternalMarker( insideMarker ): # these errors have probably been noted already
                         internalMarkerErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Non-internal {} marker in {}: {}").format( insideMarker, marker, text ) )
                         logging.warning( _("Non-internal {} marker after {} {}:{} in {}: {}").format( insideMarker, self.bookReferenceCode, c, v, marker, text ) )

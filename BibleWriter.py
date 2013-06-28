@@ -578,11 +578,15 @@ class BibleWriter( InternalBible ):
             """ Writes a book to the USX XML writerObject. """
 
             def handleInternalTextMarkersForUSX( text ):
-                """ Handles character formatting markers within the text. """
+                """
+                Handles character formatting markers within the text.
+                Tries to find pairs of markers and replaces them with html char segments.
+                """
                 #if '\\' in text: print( "toUSXXML:hITM:", BBB, c, v, marker, "'"+text+"'" )
                 adjText = text
                 haveOpenChar = False
                 for charMarker in allCharMarkers:
+                    # Handle USFM character markers
                     fullCharMarker = '\\' + charMarker + ' '
                     if fullCharMarker in adjText:
                         if haveOpenChar:

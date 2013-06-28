@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkers.py
-#   Last modified: 2013-06-24 (also update ProgVersion below)
+#   Last modified: 2013-06-29 (also update ProgVersion below)
 #
 # Module handling USFMMarkers
 #
@@ -28,7 +28,7 @@ Module handling USFMMarkers.
 """
 
 ProgName = "USFM Markers handler"
-ProgVersion = "0.55"
+ProgVersion = "0.56"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -308,7 +308,7 @@ class USFMMarkers:
     # end of getOccursInList
 
     def getNewlineMarkersList( self, option='Combined' ):
-        """ Returns a list of all new line markers. """
+        """ Returns a list of all possible new line markers. """
         assert( option in ('Raw','Numbered','Combined') )
         if option=='Combined': return self.__DataDict["combinedNewlineMarkersList"]
         elif option=='Raw': return self.__DataDict["numberedNewlineMarkersList"]
@@ -316,13 +316,13 @@ class USFMMarkers:
     # end of getNewlineMarkersList
 
     def getInternalMarkersList( self ):
-        """ Returns a list of all internal markers.
+        """ Returns a list of all possible internal markers.
             This includes character, footnote and xref markers. """
         return self.__DataDict["internalMarkersList"]
     # end of getInternalMarkersList
 
     def getCharacterMarkersList( self, includeBackslash=False, includeEndMarkers=False, expandNumberableMarkers=False ):
-        """ Returns a list of all character markers.
+        """ Returns a list of all possible character markers.
             This excludes footnote and xref markers. """
         result = []
         for marker in self.__DataDict["internalMarkersList"]:
@@ -347,37 +347,97 @@ class USFMMarkers:
         elif select=='All': return footnoteSets + xrefSets
     # end of getTypicalNoteSets
 
-    def getMarkerListFromText( self, text ):
-        """Given a text, return a list of the markers (along with their positions).
-            Returns a list of three-tuple containing (marker, nextSignificantChar, indexOfBackslashCharacter).
-                nextSignificantChar is ' ', '*' (for closing marker) or '' (for end of line)."""
+    def getMarkerListFromText( self, text, verifyMarkers=False ):
+        """
+        Given a text, return a list of the actual markers (along with their positions and other information).
+        Returns a list of six-tuples containing:
+            1: marker
+            2: indexOfBackslashCharacter
+            3: nextSignificantChar
+                ' ' for normal opening marker
+                '+' for nested opening marker
+                '-' for nested closing marker
+                '*' for normal closing marker
+                '' for end of line.
+            4: full marker text including the backslash (can be used to search for)
+            5: character context for the following text (list of markers)
+            6: field from the marker until the next USFM
+        Note that any text preceding the first USFM is not returned.
+        """
         result = []
         textLength = len( text )
-        ix = text.find( '\\' )
-        while( ix != -1 ): # Find backslashes
+        ixBS = text.find( '\\' )
+        while( ixBS != -1 ): # Find backslashes
+            #print( ixBS, result )
             marker = ''
-            iy = ix + 1
+            iy = ixBS + 1
             if iy<textLength:
                 c1 = text[iy]
                 if c1==' ': logging.error( _("USFMMarkers.getMarkerListFromText found invalid '\\' in '{}'").format( text ) )
                 elif c1=='*': logging.error( _("USFMMarkers.getMarkerListFromText found invalid '\\*' in '{}'").format( text ) )
-                else: # it's probably ok
+                elif c1=='+': # it's a nested USFM 2.4 marker
+                    iy += 1 # skip past the +
+                    if iy<textLength:
+                        c1 = text[iy]
+                        if c1==' ': logging.error( _("USFMMarkers.getMarkerListFromText found invalid '\\+' in '{}'").format( text ) )
+                        elif c1=='*': logging.error( _("USFMMarkers.getMarkerListFromText found invalid '\\+*' in '{}'").format( text ) )
+                        elif c1=='+': logging.error( _("USFMMarkers.getMarkerListFromText found invalid '\\++' in '{}'").format( text ) )
+                        else: # it's probably a letter which is part of the actual marker
+                            marker += c1
+                            iy += 1
+                            while ( iy < textLength ):
+                                c = text[iy]
+                                if c==' ': result.append( (marker,ixBS,'+','\\+'+marker+' ') ); break
+                                elif c=='*': result.append( (marker,ixBS,'-','\\+'+marker+'*') ); break
+                                else: # it's probably ok
+                                    marker += c
+                                iy += 1
+                            else: result.append( (marker,ixBS,'+','\\+'+marker) ) # How do we indicate the end of line here?
+                    else: # it was a backslash then plus at the end of the line
+                        result.append( ('\\',ixBS,'+','\\+') )
+                        logging.error( _("USFMMarkers.getMarkerListFromText found invalid '\\+' at end of '{}'").format( text ) )
+                else: # it's probably a letter which is part of the actual marker
                     marker += c1
                     iy += 1
                     while ( iy < textLength ):
                         c = text[iy]
-                        if c==' ': result.append( (marker,' ',ix,) ); break
-                        elif c=='*': result.append( (marker,'*',ix,) ); break
+                        if c==' ': result.append( (marker,ixBS,' ','\\'+marker+' ') ); break
+                        elif c=='*': result.append( (marker,ixBS,'*','\\'+marker+'*') ); break
                         else: # it's probably ok
                             marker += c
                         iy += 1
-                    else: result.append( (marker,'',ix,) )
+                    else: result.append( (marker,ixBS,'','\\'+marker) )
             else: # it was a backslash at the end of the line
-                result.append( ('\\','',ix,) )
+                result.append( ('\\',ixBS,'','\\') )
                 logging.error( _("USFMMarkers.getMarkerListFromText found invalid '\\' at end of '{}'").format( text ) )
-            ix = text.find( '\\', ix+1 )
-        #if result: print( result )
-        return result
+            ixBS = text.find( '\\', ixBS+1 )
+
+        # Now get the text fields between the markers
+        finalResult = []
+        rLen = len( result )
+        cx = []
+        for j, (m, ix, x, mx) in enumerate(result):
+            if self.isNewlineMarker( m ): cx = [] #; print( "rst", cx )
+            elif x==' ': cx = [m] #; print( "set", cx )
+            elif x=='+': cx.append( m ) #; print( "add", m, cx )
+            elif x=='-': cx.pop() #; print( "del", m, cx )
+            elif x=='*': cx = [] #; print( "clr", cx )
+            else: print( "Shouldn't happen" )
+            if j>= rLen-1: tx = text[ix+len(mx):]
+            else: tx=text[ix+len(mx):result[j+1][1]]
+            #print( j, m, ix, x, repr(mx), cx, repr(tx) )
+            finalResult.append( (m, ix, x, mx, cx[:], tx,) )
+
+        #if finalResult: print( finalResult )
+        if verifyMarkers:
+            for j, (m, ix, x, mx, cx, tx) in enumerate(finalResult):
+                #print( j, m, ix, repr(x), repr(mx), cx, repr(tx) )
+                assert( ix < textLength )
+                assert( x in (' ','+','-','*','',) )
+                if j == 0:
+                    if not self.isNewlineMarker( m ): logging.error( _("USFMMarkers.getMarkerListFromText found possible invalid first marker '{}' in '{}'").format( m, text ) )
+                elif not self.isInternalMarker( m ): logging.error( _("USFMMarkers.getMarkerListFromText found possible invalid marker '{}' at position {} in '{}'").format( m, j+1, text ) )
+        return finalResult
     # end of getMarkerListFromText
 # end of USFMMarkers class
 
@@ -405,6 +465,15 @@ def demo():
                 print( '  ' + _("Compulsory:{}, Numberable:{}, Occurs in: {}").format( um.isCompulsoryMarker(m), um.isNumberableMarker(m), um.markerOccursIn(m) ) )
                 print( '  ' + _("{} is {}a new line marker").format( m, "" if um.isNewlineMarker(m) else _("not")+' ' ) )
                 print( '  ' + _("{} is {}an internal (character) marker").format( m, "" if um.isInternalMarker(m) else _("not")+' ' ) )
+    for text in ('This is a bit of plain text',
+                 '\\v 1 This is some \\it italicised\\it* text.',
+                 '\\v 2 This \\it is\\it* \\bd more\\bd* complicated.\\f + \\fr 2 \\ft footnote.\\f*',
+                 '\\v 3 This \\add contains \\+it embedded\\+it* codes\\add* with everything closed separately.',
+                 '\\v 4 This \\add contains \\+it embedded codes\\+it*\\add* with an simultaneous closure of the two fields.',
+                 '\\v 5 This \\add contains \\+it embedded codes\\add* with an assumed closure of the inner field.',
+                 ):
+        print( "For text '{}' got markers:".format( text ) )
+        print( "         {}".format( um.getMarkerListFromText( text, verifyMarkers=True ) ) )
 # end of demo
 
 if __name__ == '__main__':

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkersTests.py
-#   Last modified: 2013-06-24 (also update ProgVersion below)
+#   Last modified: 2013-06-29 (also update ProgVersion below)
 #
 # Module testing USFMMarkers.py
 #
@@ -28,7 +28,7 @@ Module testing USFMMarkers.py.
 """
 
 ProgName = "USFM Markers tests"
-ProgVersion = "0.55"
+ProgVersion = "0.56"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -486,7 +486,9 @@ class USFMMarkersTests( unittest.TestCase ):
     def test_2210_getMarkerListFromText( self ):
         """ Test the getMarkerListFromText function. """
         self.assertEqual( self.UMs.getMarkerListFromText(''), [] )
-        self.assertEqual( self.UMs.getMarkerListFromText('This \\bk book\\bk* is good'), [('bk',' ',5), ('bk','*',13)] )
+        self.assertEqual( self.UMs.getMarkerListFromText('This is just plain text.'), [] )
+        self.assertEqual( self.UMs.getMarkerListFromText('This \\bk book\\bk* is good'), \
+                                [('bk',5,' ','\\bk ', ['bk'], 'book'), ('bk',13, '*','\\bk*',[],' is good')] )
     #end of test_2210_getMarkerListFromText
 # end of USFMMarkersTests class
 

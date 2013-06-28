@@ -1,6 +1,6 @@
 # USFMMarkers.rnc           Relax NG Compact Syntax schema file
-#   Version 0.54
-#   Last modified: 2012-06-23
+#   Version 0.57
+#   Last modified: 2012-06-28
 #
 # On Linux, to convert to RNG, use
 #       trang USFMMarkers.rnc DerivedFiles/USFMMarkers.rng
