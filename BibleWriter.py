@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-06-27 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-01 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -45,7 +45,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.12"
+ProgVersion = "0.13"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -1494,7 +1494,7 @@ class BibleWriter( InternalBible ):
                     writerObject.writeLineOpen( 'div', ('type',"majorSection") )
                     haveOpenMajorSection = True
                     if text: writerObject.writeLineOpenClose( 'title', checkText(text) ) # Section heading
-                    logging.info( _("toOSIS: Blank ms1 section heading encountered after {}:{}").format( currentChapterNumberString, verseNumberString ) )
+                    logging.info( _("toOSIS: {} Blank ms1 section heading encountered").format( toOSISGlobals["verseRef"] ) )
                 elif marker=='s1':
                     if haveOpenParagraph:
                         closeAnyOpenLG()
@@ -1511,7 +1511,7 @@ class BibleWriter( InternalBible ):
                     if extras: flag = True
                     adjustedText = processXRefsAndFootnotes( text, extras )
                     if text: writerObject.writeLineOpenClose( 'title', checkText(adjustedText), noTextCheck=flag ) # Section heading
-                    logging.info( _("toOSIS: Blank s1 section heading encountered after {}:{}").format( currentChapterNumberString, verseNumberString ) )
+                    logging.info( _("toOSIS: {} Blank s1 section heading encountered").format( toOSISGlobals["verseRef"] ) )
                 elif marker=='s2':
                     if haveOpenParagraph:
                         closeAnyOpenLG()
@@ -1520,7 +1520,7 @@ class BibleWriter( InternalBible ):
                     writerObject.writeLineOpen( 'div', ('type', "subSection") )
                     haveOpenSubsection = True
                     if text: writerObject.writeLineOpenClose( 'title',checkText(text) ) # Section heading
-                    logging.info( _("toOSIS: Blank s2 section heading encountered after {}:{}").format( currentChapterNumberString, verseNumberString ) )
+                    logging.info( _("toOSIS: {} Blank s2 section heading encountered").format( toOSISGlobals["verseRef"] ) )
                 elif marker=='mr':
                     # Should only follow a ms1 I think
                     if haveOpenParagraph or haveOpenSection or not haveOpenMajorSection: logging.error( _("toOSIS: Didn't expect major reference 'mr' marker after {}").format(toOSISGlobals["verseRef"]) )
