@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # UnknownBible.py
-#   Last modified: 2013-06-24 (also update ProgVersion below)
+#   Last modified: 2013-07-03 (also update ProgVersion below)
 #
 # Module handling a unknown Bible object
 #
@@ -31,13 +31,13 @@ Given a folder name, analyses the files in it
 
 Currently aware of the following Bible types:
     USFM
-    Unbound Bible
+    Unbound Bible, TheWord (line based)
     OSIS, USX, OpenSong, Zefania (all XML)
     Sword modules.
 """
 
 ProgName = "Unknown Bible object handler"
-ProgVersion = "0.02"
+ProgVersion = "0.03"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -54,6 +54,7 @@ from OpenSongXMLBible import OpenSongXMLBibleFileCheck, OpenSongXMLBible
 from OSISXMLBible import OSISXMLBibleFileCheck, OSISXMLBible
 from ZefaniaXMLBible import ZefaniaXMLBibleFileCheck, ZefaniaXMLBible
 from UnboundBible import UnboundBibleFileCheck, UnboundBible
+from TheWordBible import TheWordBibleFileCheck, TheWordBible
 #from SwordResources import SwordInterface
 
 
@@ -99,6 +100,14 @@ class UnknownBible:
         These searches are best done in a certain order to avoid false detections.
         """
         totalBibleCount, totalBibleTypes, typesFound = 0, 0, []
+
+        # Search for TheWord Bibles
+        TheWordBibleCount = TheWordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+        if TheWordBibleCount:
+            totalBibleCount += TheWordBibleCount
+            totalBibleTypes += 1
+            typesFound.append( 'TheWord' )
+            if Globals.verbosityLevel > 2: print( "TheWordBible.search: TheWordBibleCount", TheWordBibleCount )
 
         # Search for Unbound Bibles
         UnboundBibleCount = UnboundBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -162,6 +171,10 @@ class UnknownBible:
                     print( "UnknownBible.search: Multiple ({}) Bibles found: {}".format( totalBibleCount, typesFound ) )
                 self.foundType = 'Many found'
 
+        elif TheWordBibleCount == 1:
+            self.foundType = "TheWord Bible"
+            if autoLoad: return TheWordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad )
+            else: return self.foundType, TheWordBibleCount
         elif UnboundBibleCount == 1:
             self.foundType = "Unbound Bible"
             if autoLoad: return UnboundBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad )
@@ -199,6 +212,7 @@ def demo():
 
     # Now demo the class
     testFolders = ( "/home/robert/Logs",
+                    "../../../../../Data/Work/Bibles/TheWord modules/",
                     "../../../../../Data/Work/Bibles/Biola Unbound modules/",
                     "../../../../../Data/Work/Bibles/OpenSong Bibles/",
                     "../../../../../Data/Work/Bibles/Zefania modules/",
@@ -208,6 +222,7 @@ def demo():
                     "Tests/DataFilesForTests/USXTest1/", "Tests/DataFilesForTests/USXTest2/",
                     "Tests/DataFilesForTests/OSISTest1/", "Tests/DataFilesForTests/OSISTest2/",
                     "Tests/DataFilesForTests/ZefaniaTest/",
+                    "Tests/DataFilesForTests/TheWordTest/",
                     "Tests/DataFilesForTests/", # Up a level
                     )
     for j, testFolder in enumerate( testFolders ):

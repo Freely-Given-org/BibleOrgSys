@@ -36,6 +36,7 @@ This is intended to be a virtual class, i.e., to be extended further
 Contains functions:
     toPseudoUSFM( self, outputFolder=None )
     toUSFM( self, outputFolder=None )
+    toTheWord( self, outputFolder=None )
     toMediaWiki( self, outputFolder=None, controlDict=None, validationSchema=None )
     toZefaniaXML( self, outputFolder=None, controlDict=None, validationSchema=None )
     toUSXXML( self, outputFolder=None, controlDict=None, validationSchema=None )
@@ -233,6 +234,140 @@ class BibleWriter( InternalBible ):
             with open( filepath, 'wt' ) as myFile: myFile.write( USFM )
         return True
     # end of BibleWriter.toUSFM
+
+
+    def toUSFM( self, outputFolder=None ):
+        """
+        Adjust the pseudo USFM and write the USFM files.
+        """
+        if Globals.verbosityLevel > 1: print( "Running BibleWriter:toUSFM..." )
+        if Globals.debugFlag: assert( self.books )
+
+        if not self.doneSetupGeneric: self.__setupWriter()
+        if not outputFolder: outputFolder = "OutputFiles/BOS_USFMExport/"
+        if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
+        #if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_MediaWiki_controls.txt", controlDict )
+        #assert( controlDict and isinstance( controlDict, dict ) )
+
+        allCharMarkers = Globals.USFMMarkers.getCharacterMarkersList( expandNumberableMarkers=True )
+
+
+        # Adjust the extracted outputs
+        for BBB,bookObject in self.books.items():
+            pseudoUSFMData = bookObject._processedLines
+            #print( "\pseudoUSFMData", pseudoUSFMData[:50] ); halt
+            USFMAbbreviation = Globals.BibleBooksCodes.getUSFMAbbreviation( BBB )
+            USFMNumber = Globals.BibleBooksCodes.getUSFMNumber( BBB )
+
+            USFM = ""
+            inField = None
+            if Globals.verbosityLevel > 2: print( "  " + _("Adjusting USFM output..." ) )
+            for pseudoMarker,originalMarker,text,cleanText,extras in pseudoUSFMData:
+                if (not USFM) and pseudoMarker!='id': # We need to create an initial id line
+                    USFM += '\\id {} -- BibleOrgSys USFM export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
+                if pseudoMarker in ('c#',): continue # Ignore our additions
+                value = cleanText # (temp)
+                if Globals.debugFlag and debuggingThisModule: print( "pseudoMarker = '{}' value = '{}'".format( pseudoMarker, value ) )
+                if pseudoMarker in ('v','f','fr','x','xo',): # These fields should always end with a space but the processing will have removed them
+                    if Globals.debugFlag: assert( value )
+                    if value[-1] != ' ': value += ' ' # Append a space since it didn't have one
+                if pseudoMarker[-1]=='~' or Globals.USFMMarkers.isNewlineMarker(pseudoMarker): # Have a continuation field
+                    if inField is not None:
+                        USFM += '\\{}*'.format( inField ) # Do a close marker for footnotes and cross-references
+                        inField = None
+                if pseudoMarker[-1]=='~': USFM += value
+                else: # not a continuation marker
+                    adjValue = value
+                    #if pseudoMarker in ('it','bk','ca','nd',): # Character markers to be closed -- had to remove ft and xt from this list for complex footnotes with f fr fq ft fq ft f*
+                    if pseudoMarker in allCharMarkers: # Character markers to be closed
+                        #if (USFM[-2]=='\\' or USFM[-3]=='\\') and USFM[-1]!=' ':
+                        if USFM[-1] != ' ':
+                            USFM += ' ' # Separate markers by a space e.g., \p\bk Revelation
+                            if Globals.debugFlag: print( "USFM: Added space to '{}' before '{}'".format( USFM[-2], pseudoMarker ) )
+                        adjValue += '\\{}*'.format( pseudoMarker ) # Do a close marker
+                    elif pseudoMarker in ('f','x',): inField = pseudoMarker # Remember these so we can close them later
+                    elif pseudoMarker in ('fr','fq','ft','xo',): USFM += '' # These go on the same line just separated by spaces and don't get closed
+                    elif USFM: USFM += '\n' # paragraph markers go on a new line
+                    if not value: USFM += '\\{}'.format( pseudoMarker )
+                    else: USFM += '\\{} {}'.format( pseudoMarker,adjValue )
+                #print( pseudoMarker, USFM[-200:] )
+
+            # Write the USFM output
+            #print( "\nUSFM", USFM[:3000] )
+            filename = "{}{}BWr.SFM".format( USFMNumber, USFMAbbreviation.upper() ) # This seems to be the undocumented standard filename format (and BWr = BibleWriter)
+            #if not os.path.exists( USFMOutputFolder ): os.makedirs( USFMOutputFolder )
+            filepath = os.path.join( outputFolder, filename )
+            if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
+            with open( filepath, 'wt' ) as myFile: myFile.write( USFM )
+        return True
+    # end of BibleWriter.toUSFM
+
+
+    def toTheWord( self, outputFolder=None ):
+        """
+        Adjust the pseudo USFM and write the USFM files.
+        """
+        if Globals.verbosityLevel > 1: print( "Running BibleWriter:toTheWord..." )
+        if Globals.debugFlag: assert( self.books )
+
+        if not self.doneSetupGeneric: self.__setupWriter()
+        if not outputFolder: outputFolder = "OutputFiles/BOS_TheWordExport/"
+        if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
+        #if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_MediaWiki_controls.txt", controlDict )
+        #assert( controlDict and isinstance( controlDict, dict ) )
+
+        allCharMarkers = Globals.USFMMarkers.getCharacterMarkersList( expandNumberableMarkers=True )
+
+
+        # Adjust the extracted outputs
+        for BBB,bookObject in self.books.items():
+            pseudoUSFMData = bookObject._processedLines
+            #print( "\pseudoUSFMData", pseudoUSFMData[:50] ); halt
+            USFMAbbreviation = Globals.BibleBooksCodes.getUSFMAbbreviation( BBB )
+            USFMNumber = Globals.BibleBooksCodes.getUSFMNumber( BBB )
+
+            USFM = ""
+            inField = None
+            if Globals.verbosityLevel > 2: print( "  " + _("Adjusting USFM output..." ) )
+            for pseudoMarker,originalMarker,text,cleanText,extras in pseudoUSFMData:
+                if (not USFM) and pseudoMarker!='id': # We need to create an initial id line
+                    USFM += '\\id {} -- BibleOrgSys TheWord export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
+                if pseudoMarker in ('c#',): continue # Ignore our additions
+                value = cleanText # (temp)
+                if Globals.debugFlag and debuggingThisModule: print( "pseudoMarker = '{}' value = '{}'".format( pseudoMarker, value ) )
+                if pseudoMarker in ('v','f','fr','x','xo',): # These fields should always end with a space but the processing will have removed them
+                    if Globals.debugFlag: assert( value )
+                    if value[-1] != ' ': value += ' ' # Append a space since it didn't have one
+                if pseudoMarker[-1]=='~' or Globals.USFMMarkers.isNewlineMarker(pseudoMarker): # Have a continuation field
+                    if inField is not None:
+                        USFM += '\\{}*'.format( inField ) # Do a close marker for footnotes and cross-references
+                        inField = None
+                if pseudoMarker[-1]=='~': USFM += value
+                else: # not a continuation marker
+                    adjValue = value
+                    #if pseudoMarker in ('it','bk','ca','nd',): # Character markers to be closed -- had to remove ft and xt from this list for complex footnotes with f fr fq ft fq ft f*
+                    if pseudoMarker in allCharMarkers: # Character markers to be closed
+                        #if (USFM[-2]=='\\' or USFM[-3]=='\\') and USFM[-1]!=' ':
+                        if USFM[-1] != ' ':
+                            USFM += ' ' # Separate markers by a space e.g., \p\bk Revelation
+                            if Globals.debugFlag: print( "toTheWord: Added space to '{}' before '{}'".format( USFM[-2], pseudoMarker ) )
+                        adjValue += '\\{}*'.format( pseudoMarker ) # Do a close marker
+                    elif pseudoMarker in ('f','x',): inField = pseudoMarker # Remember these so we can close them later
+                    elif pseudoMarker in ('fr','fq','ft','xo',): USFM += '' # These go on the same line just separated by spaces and don't get closed
+                    elif USFM: USFM += '\n' # paragraph markers go on a new line
+                    if not value: USFM += '\\{}'.format( pseudoMarker )
+                    else: USFM += '\\{} {}'.format( pseudoMarker,adjValue )
+                #print( pseudoMarker, USFM[-200:] )
+
+            # Write the USFM output
+            #print( "\nUSFM", USFM[:3000] )
+            filename = "{}{}BWr.SFM".format( USFMNumber, USFMAbbreviation.upper() ) # This seems to be the undocumented standard filename format (and BWr = BibleWriter)
+            #if not os.path.exists( USFMOutputFolder ): os.makedirs( USFMOutputFolder )
+            filepath = os.path.join( outputFolder, filename )
+            if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
+            with open( filepath, 'wt' ) as myFile: myFile.write( USFM )
+        return True
+    # end of BibleWriter.toTheWord
 
 
     def toMediaWiki( self, outputFolder=None, controlDict=None, validationSchema=None ):
@@ -2537,6 +2672,7 @@ class BibleWriter( InternalBible ):
         # Define our various output folders
         PseudoUSFMOutputFolder = os.path.join( givenOutputFolderName, "BOS_PseudoUSFM" + "Export" )
         USFMOutputFolder = os.path.join( givenOutputFolderName, "BOS_USFM" + ("Reexport" if self.objectTypeString=='USFM' else "Export" ) )
+        TWOutputFolder = os.path.join( givenOutputFolderName, "BOS_TheWord" + ("Reexport" if self.objectTypeString=='TheWord' else "Export" ) )
         MWOutputFolder = os.path.join( givenOutputFolderName, "BOS_MediaWiki" + ("Reexport" if self.objectTypeString=='MediaWiki' else "Export" ) )
         zOutputFolder = os.path.join( givenOutputFolderName, "BOS_Zefania" + ("Reexport" if self.objectTypeString=='Zefania' else "Export" ) )
         USXOutputFolder = os.path.join( givenOutputFolderName, "BOS_USX" + ("Reexport" if self.objectTypeString=='USX' else "Export" ) )
@@ -2554,6 +2690,7 @@ class BibleWriter( InternalBible ):
         if Globals.debugFlag:
             PseudoUSFMExportResult = self.toPseudoUSFM( PseudoUSFMOutputFolder )
             USFMExportResult = self.toUSFM( USFMOutputFolder )
+            TWExportResult = self.toTheWord( TWOutputFolder )
             MWExportResult = self.toMediaWiki( MWOutputFolder )
             zExportResult = self.toZefaniaXML( zOutputFolder )
             USXExportResult = self.toUSXXML( USXOutputFolder )
@@ -2590,6 +2727,11 @@ class BibleWriter( InternalBible ):
                 USFMExportResult = False
                 print("BibleWriter.doAllExports.toUSFM Unexpected error:", sys.exc_info()[0], err)
                 logging.error( "BibleWriter.doAllExports.toUSFM: Oops, failed!" )
+            try: TWExportResult = self.toTheWord( TWOutputFolder )
+            except Exception as err:
+                TWExportResult = False
+                print("BibleWriter.doAllExports.toTheWord Unexpected error:", sys.exc_info()[0], err)
+                logging.error( "BibleWriter.doAllExports.toTheWord: Oops, failed!" )
             try: MWExportResult = self.toMediaWiki( MWOutputFolder )
             except Exception as err:
                 MWExportResult = False
@@ -2622,11 +2764,15 @@ class BibleWriter( InternalBible ):
                 logging.error( "BibleWriter.doAllExports.toHTML5: Oops, failed!" )
 
         if Globals.verbosityLevel > 1:
-            if PseudoUSFMExportResult and USFMExportResult and MWExportResult and zExportResult and USXExportResult and OSISExportResult and swExportResult and htmlExportResult:
+            if PseudoUSFMExportResult and USFMExportResult and TWExportResult and MWExportResult and zExportResult \
+            and USXExportResult and OSISExportResult and swExportResult and htmlExportResult:
                 print( "BibleWriter.doAllExports finished them all successfully!" )
-            else: print( "BibleWriter.doAllExports finished:  PsUSFM={} USFM={}  MW={}  Zef={}  USX={}  OSIS={}  Sw={}  HTML={}" \
-                    .format( PseudoUSFMExportResult, USFMExportResult, MWExportResult, zExportResult, USXExportResult, OSISExportResult, swExportResult, htmlExportResult ) )
-        return {'PseudoUSFMExportResult':PseudoUSFMExportResult, 'USFMExport':USFMExportResult, 'MWExport':MWExportResult, 'zExport':zExportResult, 'USXExport':USXExportResult, 'OSISExport':OSISExportResult, 'swExport':swExportResult, 'htmlExport':htmlExportResult}
+            else: print( "BibleWriter.doAllExports finished:  PsUSFM={} USFM={}  TW={} MW={}  Zef={}  USX={}  OSIS={}  Sw={}  HTML={}" \
+                    .format( PseudoUSFMExportResult, USFMExportResult, TWExportResult, MWExportResult, zExportResult, USXExportResult, OSISExportResult, swExportResult, htmlExportResult ) )
+        return {'PseudoUSFMExport':PseudoUSFMExportResult, 'USFMExport':USFMExportResult,
+                    'TWExport':TWExportResult, 'MWExport':MWExportResult, 'zExport':zExportResult,
+                    'USXExport':USXExportResult, 'OSISExport':OSISExportResult, 'swExport':swExportResult,
+                    'htmlExport':htmlExportResult}
     # end of BibleWriter.doAllExports
 # end of class BibleWriter
 

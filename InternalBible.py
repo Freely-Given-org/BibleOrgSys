@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2013-06-24 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-03 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -36,7 +36,7 @@ and then fills
 """
 
 ProgName = "Internal Bible handler"
-ProgVersion = "0.24"
+ProgVersion = "0.25"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -63,7 +63,7 @@ class InternalBible:
         """
         # Set up empty variables for the object (to be filled in later)
         self.name = self.shortName = self.abbreviation = None
-        self.sourceFolder = self.sourceFilepath = None
+        self.sourceFolder = self.sourceFilename = self.sourceFilepath = None
         self.status = self.revision = self.version = None
 
         # Set up empty containers for the object
