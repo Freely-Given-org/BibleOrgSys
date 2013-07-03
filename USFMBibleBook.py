@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBibleBook.py
-#   Last modified: 2013-06-29 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-02 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating USFM Bible books.
 """
 
 ProgName = "USFM Bible book handler"
-ProgVersion = "0.31"
+ProgVersion = "0.32"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -75,7 +75,7 @@ class USFMBibleBook( BibleBook ):
             if '\\' in text: # Check markers inside the lines
                 markerList = Globals.USFMMarkers.getMarkerListFromText( text )
                 ix = 0
-                for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, markerField in markerList: # check paragraph markers
+                for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check paragraph markers
                     if Globals.USFMMarkers.isNewlineMarker(insideMarker): # Need to split the line for everything else to work properly
                         if ix==0:
                             loadErrors.append( _("{} {}:{} NewLine marker '{}' shouldn't appear within line in \\{}: '{}'").format( self.bookReferenceCode, c, v, insideMarker, marker, text ) )

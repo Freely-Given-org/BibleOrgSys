@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkers.py
-#   Last modified: 2013-06-29 (also update ProgVersion below)
+#   Last modified: 2013-07-02 (also update ProgVersion below)
 #
 # Module handling USFMMarkers
 #
@@ -153,7 +153,8 @@ class USFMMarkers:
         Constructor:
         """
         self.__DataDict = None # We'll import into this in loadData
-    # end of __init__
+    # end of USFMMarkers.__init__
+
 
     def loadData( self, XMLFilepath=None ):
         """ Loads the XML data file and imports it to dictionary format (if not done already). """
@@ -177,7 +178,8 @@ class USFMMarkers:
                 umc.loadAndValidate( XMLFilepath ) # Load the XML (if not done already)
                 self.__DataDict = umc.importDataToPython() # Get the various dictionaries organised for quick lookup
         return self
-    # end of loadData
+    # end of USFMMarkers.loadData
+
 
     def __str__( self ):
         """
@@ -194,57 +196,69 @@ class USFMMarkers:
             result += ('\n' if result else '') + ' '*indent + _("Number of raw new line markers = {}").format( len(self.__DataDict["newlineMarkersList"]) )
             result += ('\n' if result else '') + ' '*indent + _("Number of internal markers = {}").format( len(self.__DataDict["internalMarkersList"]) )
         return result
-    # end of __str__
+    # end of USFMMarkers.__str__
+
 
     def __len__( self ):
         """ Return the number of available markers. """
         return len(self.__DataDict["combinedMarkerDict"])
 
+
     def __contains__( self, marker ):
         """ Returns True or False. """
         return marker in self.__DataDict["combinedMarkerDict"]
+
 
     def __getitem__( self, keyIndex ):
         """ Returns a marker according to an integer index. """
         return self.__DataDict["numberedMarkerList"][keyIndex]
 
+
     def isValidMarker( self, marker ):
         """ Returns True or False. """
         return marker in self.__DataDict["combinedMarkerDict"]
+
 
     def isNewlineMarker( self, marker ):
         """ Return True or False. """
         if marker not in self.__DataDict["combinedMarkerDict"]: return False
         return self.toRawMarker(marker) in self.__DataDict["combinedNewlineMarkersList"]
 
+
     def isInternalMarker( self, marker ):
         """ Return True or False. """
         if marker not in self.__DataDict["combinedMarkerDict"]: return False
         return self.toRawMarker(marker) in self.__DataDict["internalMarkersList"]
 
+
     def isDeprecatedMarker( self, marker ):
         """ Return True or False. """
         return marker in self.__DataDict["deprecatedMarkersList"]
+
 
     def isCompulsoryMarker( self, marker ):
         """ Return True or False. """
         if marker not in self.__DataDict["combinedMarkerDict"]: return False
         return self.__DataDict["rawMarkerDict"][self.toRawMarker(marker)]["compulsoryFlag"]
 
+
     def isNumberableMarker( self, marker ):
         """ Return True or False. """
         if marker not in self.__DataDict["combinedMarkerDict"]: return False
         return self.__DataDict["rawMarkerDict"][self.toRawMarker(marker)]["numberableFlag"]
+
 
     def isNestingMarker( self, marker ):
         """ Return True or False. """
         if marker not in self.__DataDict["combinedMarkerDict"]: return False
         return self.__DataDict["rawMarkerDict"][self.toRawMarker(marker)]["nestsFlag"]
 
+
     def isPrinted( self, marker ):
         """ Return True or False. """
         if marker not in self.__DataDict["combinedMarkerDict"]: return False
         return self.__DataDict["rawMarkerDict"][self.toRawMarker(marker)]["printedFlag"]
+
 
     def markerShouldBeClosed( self, marker ):
         """ Return 'N', 'S', 'A' for "never", "sometimes", "always".
@@ -257,7 +271,8 @@ class USFMMarkers:
         if closed == "Optional": return 'S'
         print( 'msbc {}'.format( closed ))
         raise KeyError # Should be something better here
-    # end of markerShouldBeClosed
+    # end of USFMMarkers.markerShouldBeClosed
+
 
     def markerShouldHaveContent( self, marker ):
         """ Return "N", "S", "A" for "never", "sometimes", "always".
@@ -270,11 +285,13 @@ class USFMMarkers:
         if hasContent == "Sometimes": return "S"
         print( 'mshc {}'.format( hasContent ))
         raise KeyError # Should be something better here
-    # end of markerShouldHaveContent
+    # end of USFMMarkers.markerShouldHaveContent
+
 
     def toRawMarker( self, marker ):
         """ Returns a marker without numerical suffixes, i.e., s1->s, q1->q, etc. """
         return self.__DataDict["combinedMarkerDict"][marker]
+
 
     def toStandardMarker( self, marker ):
         """ Returns a standard marker, i.e., s->s1, q->q1, etc. """
@@ -283,20 +300,24 @@ class USFMMarkers:
         if marker in self.__DataDict["combinedMarkerDict"]: return marker
         #else must be something wrong
         raise KeyError
-    # end of toStandardMarker
+    # end of USFMMarkers.toStandardMarker
+
 
     def markerOccursIn( self, marker ):
         """ Return a short string, e.g. "Introduction", "Text". """
         return self.__DataDict["rawMarkerDict"][self.toRawMarker(marker)]["occursIn"]
+
 
     def getMarkerEnglishName( self, marker ):
         """ Returns the English name for a marker.
                 Use getOccursInList() to get a list of all possibilities. """
         return self.__DataDict["rawMarkerDict"][self.toRawMarker(marker)]["nameEnglish"]
 
+
     def getMarkerDescription( self, marker ):
         """ Returns the description for a marker (or None). """
         return self.__DataDict["rawMarkerDict"][self.toRawMarker(marker)]["description"]
+
 
     def getOccursInList( self ):
         """ Returns a list of strings which markerOccursIn can return. """
@@ -305,7 +326,8 @@ class USFMMarkers:
             occursIn = self.__DataDict["rawMarkerDict"][marker]['occursIn']
             if occursIn not in oiList: oiList.append( occursIn )
         return oiList
-    # end of getOccursInList
+    # end of USFMMarkers.getOccursInList
+
 
     def getNewlineMarkersList( self, option='Combined' ):
         """ Returns a list of all possible new line markers. """
@@ -319,7 +341,8 @@ class USFMMarkers:
         """ Returns a list of all possible internal markers.
             This includes character, footnote and xref markers. """
         return self.__DataDict["internalMarkersList"]
-    # end of getInternalMarkersList
+    # end of USFMMarkers.getInternalMarkersList
+
 
     def getCharacterMarkersList( self, includeBackslash=False, includeEndMarkers=False, expandNumberableMarkers=False ):
         """ Returns a list of all possible character markers.
@@ -338,21 +361,25 @@ class USFMMarkers:
                         if includeEndMarkers:
                             result.append( adjMarker + digit + '*' )
         return result
-    # end of getCharacterMarkersList
+    # end of USFMMarkers.getCharacterMarkersList
+
 
     def getTypicalNoteSets( self, select='All' ):
         """ Returns a container of typical footnote and xref sets. """
         if select=='fn': return footnoteSets
         elif select=='xr': return xrefSets
         elif select=='All': return footnoteSets + xrefSets
-    # end of getTypicalNoteSets
+    # end of USFMMarkers.getTypicalNoteSets
+
 
     def getMarkerListFromText( self, text, verifyMarkers=False ):
         """
-        Given a text, return a list of the actual markers (along with their positions and other information).
+        Given a text, return a list of the actual markers
+            (along with their positions and other useful derived information).
+
         Returns a list of six-tuples containing:
             1: marker
-            2: indexOfBackslashCharacter
+            2: indexOfBackslashCharacter in text string
             3: nextSignificantChar
                 ' ' for normal opening marker
                 '+' for nested opening marker
@@ -360,15 +387,17 @@ class USFMMarkers:
                 '*' for normal closing marker
                 '' for end of line.
             4: full marker text including the backslash (can be used to search for)
-            5: character context for the following text (list of markers)
-            6: field from the marker until the next USFM
-        Note that any text preceding the first USFM is not returned.
+            5: character context for the following text (list of markers, including this one)
+            6: index (to the result list of this function) of the
+                marker which closes this opening marker (or None if it's not an opening marker)
+            7: text field from the marker until the next USFM
+                but any text preceding the first USFM is not returned anywhere.
         """
-        result = []
+        firstResult = []
         textLength = len( text )
         ixBS = text.find( '\\' )
         while( ixBS != -1 ): # Find backslashes
-            #print( ixBS, result )
+            #print( ixBS, firstResult )
             marker = ''
             iy = ixBS + 1
             if iy<textLength:
@@ -387,36 +416,36 @@ class USFMMarkers:
                             iy += 1
                             while ( iy < textLength ):
                                 c = text[iy]
-                                if c==' ': result.append( (marker,ixBS,'+','\\+'+marker+' ') ); break
-                                elif c=='*': result.append( (marker,ixBS,'-','\\+'+marker+'*') ); break
+                                if c==' ': firstResult.append( (marker,ixBS,'+','\\+'+marker+' ') ); break
+                                elif c=='*': firstResult.append( (marker,ixBS,'-','\\+'+marker+'*') ); break
                                 else: # it's probably ok
                                     marker += c
                                 iy += 1
-                            else: result.append( (marker,ixBS,'+','\\+'+marker) ) # How do we indicate the end of line here?
+                            else: firstResult.append( (marker,ixBS,'+','\\+'+marker) ) # How do we indicate the end of line here?
                     else: # it was a backslash then plus at the end of the line
-                        result.append( ('\\',ixBS,'+','\\+') )
+                        firstResult.append( ('\\',ixBS,'+','\\+') )
                         logging.error( _("USFMMarkers.getMarkerListFromText found invalid '\\+' at end of '{}'").format( text ) )
                 else: # it's probably a letter which is part of the actual marker
                     marker += c1
                     iy += 1
                     while ( iy < textLength ):
                         c = text[iy]
-                        if c==' ': result.append( (marker,ixBS,' ','\\'+marker+' ') ); break
-                        elif c=='*': result.append( (marker,ixBS,'*','\\'+marker+'*') ); break
+                        if c==' ': firstResult.append( (marker,ixBS,' ','\\'+marker+' ') ); break
+                        elif c=='*': firstResult.append( (marker,ixBS,'*','\\'+marker+'*') ); break
                         else: # it's probably ok
                             marker += c
                         iy += 1
-                    else: result.append( (marker,ixBS,'','\\'+marker) )
+                    else: firstResult.append( (marker,ixBS,'','\\'+marker) )
             else: # it was a backslash at the end of the line
-                result.append( ('\\',ixBS,'','\\') )
+                firstResult.append( ('\\',ixBS,'','\\') )
                 logging.error( _("USFMMarkers.getMarkerListFromText found invalid '\\' at end of '{}'").format( text ) )
             ixBS = text.find( '\\', ixBS+1 )
 
-        # Now get the text fields between the markers
-        finalResult = []
-        rLen = len( result )
+        # Now that we have found all the markers and where they are, get the text fields between them
+        rLen = len( firstResult )
+        secondResult = []
         cx = []
-        for j, (m, ix, x, mx) in enumerate(result):
+        for j, (m, ix, x, mx) in enumerate(firstResult):
             if self.isNewlineMarker( m ): cx = [] #; print( "rst", cx )
             elif x==' ': cx = [m] #; print( "set", cx )
             elif x=='+': cx.append( m ) #; print( "add", m, cx )
@@ -424,21 +453,35 @@ class USFMMarkers:
             elif x=='*': cx = [] #; print( "clr", cx )
             else: print( "Shouldn't happen" )
             if j>= rLen-1: tx = text[ix+len(mx):]
-            else: tx=text[ix+len(mx):result[j+1][1]]
-            #print( j, m, ix, x, repr(mx), cx, repr(tx) )
-            finalResult.append( (m, ix, x, mx, cx[:], tx,) )
+            else: tx=text[ix+len(mx):firstResult[j+1][1]]
+            #print( 'second', j, m, ix, repr(x), repr(mx), cx, repr(tx) )
+            secondResult.append( (m, ix, x, mx, cx[:], tx,) )
+
+        # And now find where they are closed
+        finalResult = []
+        for j, (m, ix, x, mx, cx, tx) in enumerate(secondResult):
+            ixEnd = None
+            if x in (' ','+') and len(cx)>0: # i.e., a character start marker
+                # Find where this marker is closed
+                cxi = len(cx) - 1
+                assert( cx[cxi] == m )
+                for k in range( j+1, rLen ):
+                    m2, ix2, x2, mx2, cx2, tx2 = secondResult[k]
+                    if len(cx2)<=cxi or cx2[cxi] != m: ixEnd = k; break
+            #print( 'final', j, m, ix, repr(x), repr(mx), cx, repr(tx), ixEnd )
+            finalResult.append( (m, ix, x, mx, cx[:], ixEnd, tx,) )
 
         #if finalResult: print( finalResult )
         if verifyMarkers:
-            for j, (m, ix, x, mx, cx, tx) in enumerate(finalResult):
-                #print( j, m, ix, repr(x), repr(mx), cx, repr(tx) )
+            for j, (m, ix, x, mx, cx, ixEnd, tx,) in enumerate(finalResult):
+                #print( 'verify', j, m, ix, repr(x), repr(mx), cx, ixEnd, repr(tx) )
                 assert( ix < textLength )
                 assert( x in (' ','+','-','*','',) )
                 if j == 0:
                     if not self.isNewlineMarker( m ): logging.error( _("USFMMarkers.getMarkerListFromText found possible invalid first marker '{}' in '{}'").format( m, text ) )
                 elif not self.isInternalMarker( m ): logging.error( _("USFMMarkers.getMarkerListFromText found possible invalid marker '{}' at position {} in '{}'").format( m, j+1, text ) )
         return finalResult
-    # end of getMarkerListFromText
+    # end of USFMMarkers.getMarkerListFromText
 # end of USFMMarkers class
 
 
@@ -471,6 +514,7 @@ def demo():
                  '\\v 3 This \\add contains \\+it embedded\\+it* codes\\add* with everything closed separately.',
                  '\\v 4 This \\add contains \\+it embedded codes\\+it*\\add* with an simultaneous closure of the two fields.',
                  '\\v 5 This \\add contains \\+it embedded codes\\add* with an assumed closure of the inner field.',
+                 '\\v 6 This \\add contains \\+it embedded codes with all closures missing.',
                  ):
         print( "For text '{}' got markers:".format( text ) )
         print( "         {}".format( um.getMarkerListFromText( text, verifyMarkers=True ) ) )

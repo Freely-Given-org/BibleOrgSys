@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# Globals.py
-#   Last modified: 2013-06-24 (also update ProgVersion below)
+# py
+#   Last modified: 2013-07-03 (also update ProgVersion below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -26,10 +26,34 @@
 """
 Module handling global variables
     and some useful general functions.
+
+Contains functions:
+    setupLoggingToFile( ProgName, ProgVersion, folder=None )
+    addConsoleLogging()
+    addLogfile( projectName, folder=None )
+    removeLogfile( projectHandler )
+
+    peekIntoFile( filenameOrFilepath, folder=None, numLines=1 )
+
+    totalSize( o, handlers={} )
+
+    fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=True, exitCount=10 )
+    fileCompareXML( filename1, filename2, folder1=None, folder2=None, printFlag=True, exitCount=10, ignoreWhitespace=True )
+
+    checkXMLNoText( element, locationString, idString=None )
+    checkXMLNoTail( element, locationString, idString=None )
+    checkXMLNoAttributes( element, locationString, idString=None )
+    checkXMLNoSubelements( element, locationString, idString=None )
+    getFlattenedXML( element, locationString, idString=None, level=0 )
+
+    pickleObject( theObject, filename, folder=None )
+    unpickleObject( filename, folder=None )
+
+    setup( ProgName, ProgVersion, loggingFolder=None )
 """
 
 ProgName = "Globals"
-ProgVersion = "0.22"
+ProgVersion = "0.25"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -37,6 +61,17 @@ import logging, os.path, pickle
 import multiprocessing
 from optparse import OptionParser
 from gettext import gettext as _
+
+
+# Global variables
+#=================
+
+commandLineOptions, commandLineArguments = None, None
+
+strictCheckingFlag = logErrorsFlag = debugFlag = False
+maxProcesses = 1
+verbosityLevel = None
+verbosityString = 'Normal'
 
 
 defaultLogFolder = 'Logs/' # Relative path
@@ -100,7 +135,7 @@ def setupLoggingToFile( ProgName, ProgVersion, folder=None ):
     logging.basicConfig( filename=filepath, level=setLevel, format=loggingLongFormat, datefmt=loggingDateFormat )
 
     return filepath
-# end of Globals.setupLogging
+# end of setupLogging
 
 
 def addConsoleLogging():
@@ -114,7 +149,7 @@ def addConsoleLogging():
         stderr_handler.setLevel( logging.ERROR )
     root = logging.getLogger()  # No param means get the root logger
     root.addHandler(stderr_handler)
-# end of Globals.addConsoleLogging
+# end of addConsoleLogging
 
 
 def addLogfile( projectName, folder=None ):
@@ -141,14 +176,14 @@ def addLogfile( projectName, folder=None ):
     root = logging.getLogger()
     root.addHandler( projectHandler )
     return filepath, projectHandler
-# end of Globals.addLogfile
+# end of addLogfile
 
 
 def removeLogfile( projectHandler ):
     """Removes the project specific logger."""
     root = logging.getLogger()  # No param means get the root logger
     root.removeHandler( projectHandler )
-# end of Globals.removeLogfile
+# end of removeLogfile
 
 
 ##########################################################################################################
@@ -215,7 +250,7 @@ def totalSize( o, handlers={} ):
         seen.add(id(o))
         s = getsizeof(o, default_size)
 
-        if Globals.verbosityLevel > 3: print( s, type(o), repr(o) )
+        if verbosityLevel > 3: print( s, type(o), repr(o) )
 
         for typ, handler in all_handlers.items():
             if isinstance(o, typ):
@@ -224,7 +259,7 @@ def totalSize( o, handlers={} ):
         return s
 
     return sizeof(o)
-# end of Globals.totalSize
+# end of totalSize
 
 
 ##########################################################################################################
@@ -244,10 +279,10 @@ def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=Tru
 
     # Do a preliminary check on the readability of our files
     if not os.access( filepath1, os.R_OK ):
-        logging.error( "Globals.fileCompare: File1 '{}' is unreadable".format( filepath1 ) )
+        logging.error( "fileCompare: File1 '{}' is unreadable".format( filepath1 ) )
         return None
     if not os.access( filepath2, os.R_OK ):
-        logging.error( "Globals.fileCompare: File2 '{}' is unreadable".format( filepath2 ) )
+        logging.error( "fileCompare: File2 '{}' is unreadable".format( filepath2 ) )
         return None
 
     # Read the files
@@ -256,7 +291,7 @@ def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=Tru
         for line in file1:
             lineCount += 1
             if lineCount==1 and line[0]==chr(65279): #U+FEFF
-                if printFlag and verbosityLevel > 2: print( "      Globals.fileCompare: Detected UTF-16 Byte Order Marker in file1" )
+                if printFlag and verbosityLevel > 2: print( "      fileCompare: Detected UTF-16 Byte Order Marker in file1" )
                 line = line[1:] # Remove the UTF-8 Byte Order Marker
             if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
             if not line: continue # Just discard blank lines
@@ -266,7 +301,7 @@ def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=Tru
         for line in file2:
             lineCount += 1
             if lineCount==1 and line[0]==chr(65279): #U+FEFF
-                if printFlag and verbosityLevel > 2: print( "      Globals.fileCompare: Detected UTF-16 Byte Order Marker in file2" )
+                if printFlag and verbosityLevel > 2: print( "      fileCompare: Detected UTF-16 Byte Order Marker in file2" )
                 line = line[1:] # Remove the UTF-8 Byte Order Marker
             if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
             if not line: continue # Just discard blank lines
@@ -289,7 +324,7 @@ def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=Tru
             if diffCount > exitCount: break
 
     return equalFlag
-# end of Globals.fileCompare
+# end of fileCompare
 
 
 def fileCompareXML( filename1, filename2, folder1=None, folder2=None, printFlag=True, exitCount=10, ignoreWhitespace=True ):
@@ -304,10 +339,10 @@ def fileCompareXML( filename1, filename2, folder1=None, folder2=None, printFlag=
 
     # Do a preliminary check on the readability of our files
     if not os.access( filepath1, os.R_OK ):
-        logging.error( "Globals.fileCompareXML: File1 '{}' is unreadable".format( filepath1 ) )
+        logging.error( "fileCompareXML: File1 '{}' is unreadable".format( filepath1 ) )
         return None
     if not os.access( filepath2, os.R_OK ):
-        logging.error( "Globals.fileCompareXML: File2 '{}' is unreadable".format( filepath2 ) )
+        logging.error( "fileCompareXML: File2 '{}' is unreadable".format( filepath2 ) )
         return None
 
     # Load the files
@@ -320,24 +355,32 @@ def fileCompareXML( filename1, filename2, folder1=None, folder2=None, printFlag=
         """
         nonlocal diffCount, location
         if element1.tag != element2.tag:
-            if printFlag: print( "Element tags differ ({} and {}) at {}".format( repr(element1.tag), repr(element2.tag), location ) )
+            if printFlag:
+                print( "Element tags differ ({} and {})".format( repr(element1.tag), repr(element2.tag) ) )
+                if verbosityLevel > 2: print( "  at", location )
             diffCount += 1
             if diffCount > exitCount: return
             location.append( "{}/{}".format( element1.tag, element2.tag ) )
         else: location.append( element1.tag )
         attribs1, attribs2 = element1.items(), element2.items()
         if len(attribs1) != len(attribs2):
-            if printFlag: print( "Number of attributes differ ({} and {}) at {}".format( len(attribs1), len(attribs2), location ) )
+            if printFlag:
+                print( "Number of attributes differ ({} and {})".format( len(attribs1), len(attribs2) ) )
+                if verbosityLevel > 2: print( "  at", location )
             diffCount += 1
             if diffCount > exitCount: return
         for avPair in attribs1:
             if avPair not in attribs2:
-                if printFlag: print( "File1 has {} but not in file2 {} at {}".format( avPair, attribs2, location ) )
+                if printFlag:
+                    print( "File1 has {} but not in file2 {}".format( avPair, attribs2 ) )
+                    if verbosityLevel > 2: print( "  at", location )
                 diffCount += 1
                 if diffCount > exitCount: return
         for avPair in attribs2:
             if avPair not in attribs1:
-                if printFlag: print( "File2 has {} but not in file1 {} at {}".format( avPair, attribs1, location ) )
+                if printFlag:
+                    print( "File2 has {} but not in file1 {}".format( avPair, attribs1 ) )
+                    if verbosityLevel > 2: print( "  at", location )
                 diffCount += 1
                 if diffCount > exitCount: return
         if element1.text != element2.text:
@@ -346,11 +389,15 @@ def fileCompareXML( filename1, filename2, folder1=None, folder2=None, printFlag=
                 elif element2.text is None and not element1.text.strip(): pass
                 elif element1.text and element2.text and element1.text.strip()==element2.text.strip(): pass
                 else:
-                    if printFlag: print( "Element text differs:\n {}\n {}\n at {}".format( repr(element1.text), repr(element2.text), location ) )
+                    if printFlag:
+                        print( "Element text differs:\n {}\n {}".format( repr(element1.text), repr(element2.text) ) )
+                        if verbosityLevel > 2: print( "  at", location )
                     diffCount += 1
                     if diffCount > exitCount: return
             else:
-                if printFlag: print( "Element text differs:\n {}\n {}\n at {}".format( repr(element1.text), repr(element2.text), location ) )
+                if printFlag:
+                    print( "Element text differs:\n {}\n {}".format( repr(element1.text), repr(element2.text) ) )
+                    if verbosityLevel > 2: print( "  at", location )
                 diffCount += 1
                 if diffCount > exitCount: return
         if element1.tail != element2.tail:
@@ -359,15 +406,21 @@ def fileCompareXML( filename1, filename2, folder1=None, folder2=None, printFlag=
                 elif element2.tail is None and not element1.tail.strip(): pass
                 elif element1.tail and element2.tail and element1.tail.strip()==element2.tail.strip(): pass
                 else:
-                    if printFlag: print( "Element tail differs:\n {}\n {}\n at {}".format( repr(element1.tail), repr(element2.tail), location ) )
+                    if printFlag:
+                        print( "Element tail differs:\n {}\n {}".format( repr(element1.tail), repr(element2.tail) ) )
+                        if verbosityLevel > 2: print( "  at", location )
                     diffCount += 1
                     if diffCount > exitCount: return
             else:
-                if printFlag: print( "Element tail differs:\n {}\n {}\n at {}".format( repr(element1.tail), repr(element2.tail), location ) )
+                if printFlag:
+                    print( "Element tail differs:\n {}\n {}".format( repr(element1.tail), repr(element2.tail) ) )
+                    if verbosityLevel > 2: print( "  at", location )
                 diffCount += 1
                 if diffCount > exitCount: return
         if len(element1) != len(element2):
-            if printFlag: print( "Number of subelements differ ({} and {}) at {}".format( len(element1), len(element2), location ) )
+            if printFlag:
+                print( "Number of subelements differ ({} and {})".format( len(element1), len(element2) ) )
+                if verbosityLevel > 2: print( "  at", location )
             diffCount += 1
             if diffCount > exitCount: return
         # Compare the subelements
@@ -380,7 +433,7 @@ def fileCompareXML( filename1, filename2, folder1=None, folder2=None, printFlag=
     compareElements( tree1, tree2 )
     if diffCount and verbosityLevel > 1: print( "{} differences discovered.".format( diffCount if diffCount<=exitCount else 'Many' ) )
     return diffCount==0
-# end of Globals.fileCompareXML
+# end of fileCompareXML
 
 
 ##########################################################################################################
@@ -419,9 +472,38 @@ def getFlattenedXML( element, locationString, idString=None, level=0 ):
     if level:
         result += '</' + element.tag + '>'
         if element.tail: result += element.tail
-    #else: print( "Globals.getFlattenedXML: Result is '{}'".format( result ) )
+    #else: print( "getFlattenedXML: Result is '{}'".format( result ) )
     return result
-# end of Globals.getFlattenedXML
+# end of getFlattenedXML
+
+
+##########################################################################################################
+#
+# Fixing strings
+#
+
+def applyStringAdjustments( originalText, adjustmentList ):
+    """
+    Applies the list of adjustments to the text and returns the new text.
+
+    The adjustmentList is a list object containing 3-tuples with:
+        1/ index where field should be found (in originalText)
+        2/ findString (null for a pure insert)
+        3/ replaceString (often a different length)
+    """
+    text = originalText
+    offset = 0
+    for ix, findStr, replaceStr in sorted(adjustmentList): # sorted with lowest index first
+        lenFS, lenRS = len(findStr), len(replaceStr)
+        if debugFlag: assert( text[ix+offset:ix+offset+lenFS] == findStr ) # Our find string must be there
+        elif text[ix+offset:ix+offset+lenFS] != findStr:
+            logging.error( "applyStringAdjustments programming error -- given bad data for '{}': {}".format( originalText, adjustmentList ) )
+        #print( "before", repr(text) )
+        text = text[:ix+offset] + replaceStr + text[ix+offset+lenFS:]
+        #print( " after", repr(text) )
+        offset += lenRS - lenFS
+    return text
+# end of applyStringAdjustments
 
 
 ##########################################################################################################
@@ -446,7 +528,7 @@ def pickleObject( theObject, filename, folder=None ):
     if verbosityLevel > 2: print( _("Saving object to {}...").format( filepath ) )
     with open( filepath, 'wb' ) as pickleOutputFile:
         pickle.dump( theObject, pickleOutputFile )
-# end of Globals.pickle
+# end of pickle
 
 
 def unpickleObject( filename, folder=None ):
@@ -461,7 +543,7 @@ def unpickleObject( filename, folder=None ):
     if verbosityLevel > 2: print( _("Loading object from pickle file {}...").format( filepath ) )
     with open( filepath, 'rb') as pickleInputFile:
         return pickle.load( pickleInputFile ) # The protocol version used is detected automatically, so we do not have to specify it
-# end of Globals.unpickle
+# end of unpickle
 
 
 ##########################################################################################################
@@ -489,7 +571,7 @@ def setup( ProgName, ProgVersion, loggingFolder=None ):
     # Handle command line parameters
     parser = OptionParser( version="v{}".format( ProgVersion ) )
     return parser
-# end of Globals.setup
+# end of setup
 
 
 ##########################################################################################################
@@ -539,7 +621,7 @@ def setVerbosity( verbosityLevelParameter ):
     if debugFlag:
         print( '  Verbosity =', verbosityString )
         print( '  VerbosityLevel =', verbosityLevel )
-# end of Globals.setVerbosity
+# end of setVerbosity
 
 
 #def setVerbosityLevel( verbosityStringParameter ):
@@ -562,7 +644,7 @@ def setVerbosity( verbosityLevelParameter ):
     #if debugFlag:
         #print( '  VerbosityLevel =', verbosityLevel )
         #print( '  Verbosity =', verbosityString )
-## end of Globals.setVerbosityLevel
+## end of setVerbosityLevel
 
 
 def setDebugFlag( newValue=True ):
@@ -571,7 +653,7 @@ def setDebugFlag( newValue=True ):
     debugFlag = newValue
     if (debugFlag and verbosityLevel> 2) or verbosityLevel>3:
         print( '  debugFlag =', debugFlag )
-# end of Globals.setDebugFlag
+# end of setDebugFlag
 
 
 def setStrictCheckingFlag( newValue=True ):
@@ -580,7 +662,7 @@ def setStrictCheckingFlag( newValue=True ):
     strictCheckingFlag = newValue
     if (strictCheckingFlag and verbosityLevel> 2) or verbosityLevel>3:
         print( '  strictCheckingFlag =', strictCheckingFlag )
-# end of Globals.setStrictCheckingFlag
+# end of setStrictCheckingFlag
 
 
 def setLogErrorsFlag( newValue=True ):
@@ -590,7 +672,7 @@ def setLogErrorsFlag( newValue=True ):
     if (logErrorsFlag and verbosityLevel> 2) or verbosityLevel>3:
         print( '  logErrorsFlag =', logErrorsFlag )
     if  logErrorsFlag: addConsoleLogging()
-# end of Globals.setLogErrorsFlag
+# end of setLogErrorsFlag
 
 
 def addStandardOptionsAndProcess( parserObject ):
@@ -618,7 +700,7 @@ def addStandardOptionsAndProcess( parserObject ):
         maxProcesses = 1 # Limit to one process
         print( "  commandLineOptions: {}".format( commandLineOptions ) )
         print( "  commandLineArguments: {}".format( commandLineArguments ) )
-# end of Globals.addStandardOptionsAndProcess
+# end of addStandardOptionsAndProcess
 
 
 def printAllGlobals( indent=None ):
@@ -632,7 +714,7 @@ def printAllGlobals( indent=None ):
     print( "{}verbosityLevel: {}".format( ' '*indent, verbosityLevel ) )
     print( "{}strictCheckingFlag: {}".format( ' '*indent, strictCheckingFlag ) )
     print( "{}logErrorsFlag: {}".format( ' '*indent, logErrorsFlag ) )
-# end of Globals.printAllGlobals
+# end of printAllGlobals
 
 
 def closedown( ProgName, ProgVersion ):
@@ -640,30 +722,7 @@ def closedown( ProgName, ProgVersion ):
     Does all the finishing off for the program.
     """
     logging.info( "{} v{} finished.".format( ProgName, ProgVersion ) )
-# end of Globals.closedown
-
-
-
-# Global variables
-#=================
-
-commandLineOptions, commandLineArguments = None, None
-
-strictCheckingFlag = logErrorsFlag = debugFlag = False
-maxProcesses = 1
-verbosityLevel = None
-verbosityString = 'Normal'
-setVerbosity( verbosityString )
-
-
-# Global Bible data sets
-#=======================
-
-if __name__ != '__main__':
-    from BibleBooksCodes import BibleBooksCodes
-    BibleBooksCodes = BibleBooksCodes().loadData()
-    from USFMMarkers import USFMMarkers
-    USFMMarkers = USFMMarkers().loadData()
+# end of closedown
 
 
 
@@ -676,13 +735,24 @@ def demo():
     if verbosityLevel>2: printAllGlobals()
 
     # Demonstrate peekAtFirstLine function
-    line1 = peekIntoFile( "Globals.py", numLines=2 ) # Simple filename
-    print( "Globals.py starts with '{}'".format( line1 ) )
+    line1 = peekIntoFile( "py", numLines=2 ) # Simple filename
+    print( "py starts with '{}'".format( line1 ) )
     line1 = peekIntoFile( "ReadMe.txt", "Tests/", 3 ) # Filename and folder
     print( "ReadMe.txt starts with '{}'".format( line1 ) )
     line1 = peekIntoFile( "DataFiles/BibleBooksCodes.xml" ) # Filepath
     print( "BibleBooksCodes.xml starts with '{}'".format( line1 ) )
+
+    text = "The quick brown fox jumped over the lazy dog"
+    adjustments = [(36,'lazy','fat'),(0,'The','A'),(20,'jumped','tripped'),(4,'','very '),(10,'brown','orange')]
+    print( "'{}'->'{}'".format( text, applyStringAdjustments( text, adjustments ) ) )
 # end of demo
+
+setVerbosity( verbosityString )
+if __name__ != '__main__': # Load global Bible data sets
+    from BibleBooksCodes import BibleBooksCodes
+    BibleBooksCodes = BibleBooksCodes().loadData()
+    from USFMMarkers import USFMMarkers
+    USFMMarkers = USFMMarkers().loadData()
 
 if __name__ == '__main__':
     # Configure basic set-up
@@ -694,4 +764,4 @@ if __name__ == '__main__':
     demo()
 
     closedown( ProgName, ProgVersion )
-# end of Globals.py
+# end of py

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-06-29 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-03 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.28"
+ProgVersion = "0.30"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -319,7 +319,7 @@ class InternalBibleBook:
         """ Append some extra text to the previous line in self._rawLines
             Doesn't add any additional spaces.
             (Used by USXXMLBibleBook.py) """
-        if Globals.debugFlag:
+        if Globals.debugFlag and debuggingThisModule:
             print( " InternalBibleBook.appendToLastLine( {}, {} )".format( repr(additionalText), repr(expectedLastMarker) ) )
             assert( not self._processedFlag )
             assert( additionalText and isinstance( additionalText, str ) )
@@ -778,7 +778,7 @@ class InternalBibleBook:
                         self.addPriorityError( 38, c, v, _("Expected single chapter book to start with verse 1") )
                     lastAdjustedMarker, lastOriginalMarker, lastAdjustedText, lastCleanText, lastExtras = self._processedLines.pop()
                     print( self.bookReferenceCode, "lastMarker (popped) was", lastAdjustedMarker, lastAdjustedText )
-                    if lastAdjustedMarker in ('p','q1','m',): # The chapter marker should go before this
+                    if lastAdjustedMarker in ('p','q1','m','nb',): # The chapter marker should go before this
                         self._processedLines.append( InternalBibleEntry('c', 'c', '1', '1', []) ) # Write the explicit chapter number
                         self._processedLines.append( InternalBibleEntry(lastAdjustedMarker, lastOriginalMarker, lastAdjustedText, lastCleanText, lastExtras) )
                     else: # Assume that the last marker was part of the introduction, so write it first
@@ -834,11 +834,11 @@ class InternalBibleBook:
                     self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, verseNumberBit, verseNumberBit, []) ) # Write the verse number (or range) as a separate line
                     adjustedMarker, text = 'v~', verseNumberRest.lstrip()
 
-            if text: # check markers inside the lines and separate them if they're paragraph markers
+            if 1 or text: # check markers inside the lines and separate them if they're paragraph markers
                 if self.objectTypeString == 'USFM':
                     markerList = Globals.USFMMarkers.getMarkerListFromText( text )
                     ix = 0
-                    for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, markerField in markerList: # check paragraph markers
+                    for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check paragraph markers
                         if Globals.USFMMarkers.isNewlineMarker(insideMarker): # Need to split the line for everything else to work properly
                             if ix==0:
                                 fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Marker '{}' shouldn't appear within line in \\{}: '{}'").format( insideMarker, originalMarker, text ) )
@@ -935,8 +935,12 @@ class InternalBibleBook:
                 #for n in range( 0, 30 ): print( "\n{}: {}".format( n, self._processedLines[n] ) )
                 #halt
 
-            # Separate the notes (footnotes and cross-references)
+            # Separate out the notes (footnotes and cross-references)
             adjText, cleanText, extras = processLineFix( originalMarker, text )
+
+            #if adjustedMarker=='v~' and not cleanText:
+                #if text or adjText:
+                    #print( "Suppressed blank v~ for", self.bookReferenceCode, c, v, "'"+text+"'", "'"+adjText+"'" ); halt
 
             # From here on, we use adjText (not text)
             #print( "marker '{}' text '{}', adjText '{}'".format( adjustedMarker, text, adjText ) )
@@ -953,6 +957,9 @@ class InternalBibleBook:
                             sahtCount = -1 # So we don't do this again (for this book)
                 self.addPriorityError( 96, c, v, _("Marker \\{} should always have text").format( originalMarker ) )
                 # Don't bother even saving the marker since it's useless
+                # Wrong -- save the empty marker
+                if adjustedMarker != 'v~': # Save all other empty markers
+                    self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, adjText, cleanText, extras) )
             else:
                 #if c=='5' and v=='29': print( "processLine: {} '{}' to {} aT='{}' cT='{}' {}".format( originalMarker, text, adjustedMarker, adjText, cleanText, extras ) );halt
                 self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, adjText, cleanText, extras) )
@@ -1043,7 +1050,7 @@ class InternalBibleBook:
                         lineCount -= 1
                         aM,cT = self._processedLines[revertToJ-1][0], self._processedLines[revertToJ-1][3]
                         if revertToJ >= 1 and aM in ('s1','s2','s3',):
-                            assert( cT ) # Should have text (for a completed Bible at least)
+                            #assert( cT ) # Should have text (for a completed Bible at least)
                             revertToJ -= 1
                             assert( lineCount > 0 )
                             lineCount -= 1
@@ -1142,12 +1149,12 @@ class InternalBibleBook:
                 logging.warning( _("Deprecated '\\{}' newline marker in Bible book after {} {}:{} (Text is '{}')").format( marker, self.bookReferenceCode, c, v, text ) )
             markerList = Globals.USFMMarkers.getMarkerListFromText( text )
             #if markerList: print( "\nText = {}:'{}'".format(marker,text)); print( markerList )
-            for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, markerField in markerList: # check character markers
+            for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check character markers
                 if Globals.USFMMarkers.isDeprecatedMarker( insideMarker ):
                     validationErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Deprecated '\\{}' internal marker in Bible book (Text is '{}')").format( insideMarker, text ) )
                     logging.warning( _("Deprecated '\\{}' internal marker in Bible book after {} {}:{} (Text is '{}')").format( insideMarker, self.bookReferenceCode, c, v, text ) )
             ix = 0
-            for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, markerField in markerList: # check newline markers
+            for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check newline markers
                 if Globals.USFMMarkers.isNewlineMarker(insideMarker):
                     validationErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Marker '\\{}' must not appear within line in {}: {}").format( insideMarker, marker, text ) )
                     logging.error( _("Marker '\\{}' must not appear within line after {} {}:{} in {}: {}").format( insideMarker, self.bookReferenceCode, c, v, marker, text ) )
@@ -1202,7 +1209,7 @@ class InternalBibleBook:
         #    elif header is not None and mt1 is not None: print( "getBookName: header '{}' and main title '{}' are both different so selected '{}'".format( header, mt1, bookName ) )
         #    elif header is not None or mt1 is not None: print( "getBookName: only have one of header '{}' or main title '{}'".format( header, mt1 ) )
         #    else: print( "getBookName: no header or main title so used English book name '{}'".format( bookName ) )
-        if Globals.debugFlag or Globals.verbosityLevel > 3: # Print our level of confidence
+        if (Globals.debugFlag and debuggingThisModule) or Globals.verbosityLevel > 3: # Print our level of confidence
             print( "Assumed bookname(s) of {} for {}".format( results, self.bookReferenceCode ) )
 
         return results
@@ -1900,7 +1907,7 @@ class InternalBibleBook:
                 markerList = Globals.USFMMarkers.getMarkerListFromText( text )
                 #if markerList: print( "\nText {} {}:{} = {}:'{}'".format(self.bookReferenceCode, c, v, marker, text)); print( markerList )
                 openList = []
-                for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, markerField in markerList: # check character markers
+                for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check character markers
                     if not Globals.USFMMarkers.isInternalMarker( insideMarker ): # these errors have probably been noted already
                         internalMarkerErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Non-internal {} marker in {}: {}").format( insideMarker, marker, text ) )
                         logging.warning( _("Non-internal {} marker after {} {}:{} in {}: {}").format( insideMarker, self.bookReferenceCode, c, v, marker, text ) )

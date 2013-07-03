@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-07-02 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-03 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -34,6 +34,7 @@ This is intended to be a virtual class, i.e., to be extended further
     by classes which load particular kinds of Bibles (e.g., OSIS, USFM, USX, etc.)
 
 Contains functions:
+    toPseudoUSFM( self, outputFolder=None )
     toUSFM( self, outputFolder=None )
     toMediaWiki( self, outputFolder=None, controlDict=None, validationSchema=None )
     toZefaniaXML( self, outputFolder=None, controlDict=None, validationSchema=None )
@@ -45,7 +46,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.13"
+ProgVersion = "0.15"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -120,6 +121,53 @@ class BibleWriter( InternalBible ):
 
 
 
+    def toPseudoUSFM( self, outputFolder=None ):
+        """
+        Write the pseudo USFM out directly (for debugging, etc.).
+        """
+        if Globals.verbosityLevel > 1: print( "Running BibleWriter:toPseudoUSFM..." )
+        if Globals.debugFlag: assert( self.books )
+
+        if not self.doneSetupGeneric: self.__setupWriter()
+        if not outputFolder: outputFolder = "OutputFiles/BOS_PseudoUSFMExport/"
+        if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
+
+        allCharMarkers = Globals.USFMMarkers.getCharacterMarkersList( expandNumberableMarkers=True )
+
+
+        # Write the raw and pseudo-USFM files
+        for BBB,bookObject in self.books.items():
+            try: rawUSFMData = bookObject._rawLines
+            except: rawUSFMData = None # it's been deleted  :-(
+            if rawUSFMData:
+                #print( "\pseudoUSFMData", pseudoUSFMData[:50] ); halt
+                USFMAbbreviation = Globals.BibleBooksCodes.getUSFMAbbreviation( BBB )
+                USFMNumber = Globals.BibleBooksCodes.getUSFMNumber( BBB )
+
+                filename = "{}{}BWr.rSFM".format( USFMNumber, USFMAbbreviation.upper() ) # BWr = BibleWriter
+                filepath = os.path.join( outputFolder, filename )
+                if Globals.verbosityLevel > 3: print( "  " + _("Writing '{}'...").format( filepath ) )
+                with open( filepath, 'wt' ) as myFile:
+                    for marker,text in rawUSFMData:
+                        myFile.write( "{}: '{}'\n".format( marker, text ) )
+
+            pseudoUSFMData = bookObject._processedLines
+            #print( "\pseudoUSFMData", pseudoUSFMData[:50] ); halt
+            USFMAbbreviation = Globals.BibleBooksCodes.getUSFMAbbreviation( BBB )
+            USFMNumber = Globals.BibleBooksCodes.getUSFMNumber( BBB )
+
+            filename = "{}{}BWr.pSFM".format( USFMNumber, USFMAbbreviation.upper() ) # BWr = BibleWriter
+            filepath = os.path.join( outputFolder, filename )
+            if Globals.verbosityLevel > 3: print( "  " + _("Writing '{}'...").format( filepath ) )
+            with open( filepath, 'wt' ) as myFile:
+                for marker,originalMarker,text,cleanText,extras in pseudoUSFMData:
+                    myFile.write( "{} ({}): '{}' '{}' {}\n".format( marker, originalMarker, text, cleanText, extras ) )
+
+        return True
+    # end of BibleWriter.toPseudoUSFM
+
+
+
     def toUSFM( self, outputFolder=None ):
         """
         Adjust the pseudo USFM and write the USFM files.
@@ -134,10 +182,6 @@ class BibleWriter( InternalBible ):
         #assert( controlDict and isinstance( controlDict, dict ) )
 
         allCharMarkers = Globals.USFMMarkers.getCharacterMarkersList( expandNumberableMarkers=True )
-        #print( "aCM", allCharMarkers )
-
-        #if outputFolder is None: USFMOutputFolder = os.path.join( "OutputFiles/", "USFM output from OSIS/" )
-        #else: USFMOutputFolder = os.path.join( "OutputFiles/", "USFM output from OSIS/" ) # Seems wrong XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 
         # Adjust the extracted outputs
@@ -146,16 +190,6 @@ class BibleWriter( InternalBible ):
             #print( "\pseudoUSFMData", pseudoUSFMData[:50] ); halt
             USFMAbbreviation = Globals.BibleBooksCodes.getUSFMAbbreviation( BBB )
             USFMNumber = Globals.BibleBooksCodes.getUSFMNumber( BBB )
-
-            if Globals.debugFlag and debuggingThisModule: # Write the pseudoUSFM output for debugging
-                filename = "{}{}BWr.pSFM".format( USFMNumber, USFMAbbreviation.upper() ) # BWr = BibleWriter
-                pseudoOutputFolder = os.path.join( outputFolder, "pseudoFiles/" )
-                if not os.path.exists( pseudoOutputFolder ): os.makedirs( pseudoOutputFolder )
-                filepath = os.path.join( pseudoOutputFolder, filename )
-                if Globals.verbosityLevel > 3: print( "  " + _("Writing '{}'...").format( filepath ) )
-                with open( filepath, 'wt' ) as myFile:
-                    for marker,originalMarker,text,cleanText,extras in pseudoUSFMData:
-                        myFile.write( "{} ({}): '{}' '{}' {}\n".format( marker, originalMarker, text, cleanText, extras ) )
 
             USFM = ""
             inField = None
@@ -577,13 +611,19 @@ class BibleWriter( InternalBible ):
         def writeBook( BBB, bkData ):
             """ Writes a book to the USX XML writerObject. """
 
-            def handleInternalTextMarkersForUSX( text ):
+            def handleInternalTextMarkersForUSX( originalText ):
                 """
-                Handles character formatting markers within the text.
+                Handles character formatting markers within the originalText.
                 Tries to find pairs of markers and replaces them with html char segments.
                 """
-                #if '\\' in text: print( "toUSXXML:hITM:", BBB, c, v, marker, "'"+text+"'" )
-                adjText = text
+                if '\\' not in originalText: return originalText
+                print( "toUSXXML:hITM4USX:", BBB, c, v, marker, "'"+originalText+"'" )
+                markerList = sorted( Globals.USFMMarkers.getMarkerListFromText( originalText ),
+                                            key=lambda s: -len(s[4])) # Sort by longest characterContext first (maximum nesting)
+                for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check for internal markers
+                    pass
+                # Old code
+                adjText = originalText
                 haveOpenChar = False
                 for charMarker in allCharMarkers:
                     # Handle USFM character markers
@@ -591,13 +631,13 @@ class BibleWriter( InternalBible ):
                     if fullCharMarker in adjText:
                         if haveOpenChar:
                             adjText = adjText.replace( 'CLOSED_BIT', ' closed="false"' ) # Fix up closed bit since it wasn't closed
-                            logging.info( "toUSXXML: USX export had to close automatically in {} {}:{} {}:'{}' now '{}'".format( BBB, c, v, marker, text, adjText ) ) # The last marker presumably only had optional closing (or else we just messed up nesting markers)
+                            logging.info( "toUSXXML: USX export had to close automatically in {} {}:{} {}:'{}' now '{}'".format( BBB, c, v, marker, originalText, adjText ) ) # The last marker presumably only had optional closing (or else we just messed up nesting markers)
                         adjText = adjText.replace( fullCharMarker, '{}<char style="{}"CLOSED_BIT>'.format( '</char>' if haveOpenChar else '', charMarker ) )
                         haveOpenChar = True
                     endCharMarker = '\\' + charMarker + '*'
                     if endCharMarker in adjText:
                         if not haveOpenChar: # Then we must have a missing open marker (or extra closing marker)
-                            logging.error( "toUSXXML: Ignored extra '{}' closing marker in {} {}:{} {}:'{}' now '{}'".format( charMarker, BBB, c, v, marker, text, adjText ) )
+                            logging.error( "toUSXXML: Ignored extra '{}' closing marker in {} {}:{} {}:'{}' now '{}'".format( charMarker, BBB, c, v, marker, originalText, adjText ) )
                             adjText = adjText.replace( endCharMarker, '' ) # Remove the unused marker
                         else: # looks good
                             adjText = adjText.replace( 'CLOSED_BIT', '' ) # Fix up closed bit since it was specifically closed
@@ -606,8 +646,8 @@ class BibleWriter( InternalBible ):
                 if haveOpenChar:
                     adjText = adjText.replace( 'CLOSED_BIT', ' closed="false"' ) # Fix up closed bit since it wasn't closed
                     adjText += '{}</char>'.format( '' if adjText[-1]==' ' else ' ')
-                    logging.info( "toUSXXML: Had to close automatically in {} {}:{} {}:'{}' now '{}'".format( BBB, c, v, marker, text, adjText ) )
-                if '\\' in adjText: logging.critical( "toUSXXML: Didn't handle a backslash in {} {}:{} {}:'{}' now '{}'".format( BBB, c, v, marker, text, adjText ) )
+                    logging.info( "toUSXXML: Had to close automatically in {} {}:{} {}:'{}' now '{}'".format( BBB, c, v, marker, originalText, adjText ) )
+                if '\\' in adjText: logging.critical( "toUSXXML: Didn't handle a backslash in {} {}:{} {}:'{}' now '{}'".format( BBB, c, v, marker, originalText, adjText ) )
                 return adjText
             # end of toUSXXML.handleInternalTextMarkersForUSX
 
@@ -895,7 +935,7 @@ class BibleWriter( InternalBible ):
                         xw.removeFinalNewline( True )
                         xw.writeLineClose( 'para' )
                         haveOpenPara = False
-                    if adjText: xw.writeLineOpenClose( 'para', handleInternalTextMarkersForUSX(adjText)+xtra, ('style',originalMarker), noTextCheck=True ) # no checks coz might already have embedded XML
+                    if 1 or adjText: xw.writeLineOpenClose( 'para', handleInternalTextMarkersForUSX(adjText)+xtra, ('style',originalMarker), noTextCheck=True ) # no checks coz might already have embedded XML
                     else: logging.info( "toUSXXML: {} {}:{} has a blank {} line that was ignored".format( BBB, c, v, originalMarker ) )
             if haveOpenPara:
                 xw.removeFinalNewline( True )
@@ -2126,7 +2166,7 @@ class BibleWriter( InternalBible ):
                 elif marker=='mr':
                     # Should only follow a ms1 I think
                     if haveOpenParagraph or haveOpenSection or not haveOpenMajorSection: logging.error( _("toSword: Didn't expect major reference 'mr' marker after {}").format(toSwordGlobals["verseRef"]) )
-                    writerObject.writeLineOpenClose( 'title', checkText(text), ('type',"parallel") ) # Section reference
+                    if text: writerObject.writeLineOpenClose( 'title', checkText(text), ('type',"parallel") ) # Section reference
                 elif marker=='r':
                     # Should only follow a s1 I think
                     if haveOpenParagraph or not haveOpenSection: logging.error( _("toSword: Didn't expect reference 'r' marker after {}").format(toSwordGlobals["verseRef"]) )
@@ -2316,10 +2356,11 @@ class BibleWriter( InternalBible ):
             for j,ref in enumerate(refs):
                 if j: result += '; '
                 ref = ref.strip()
-                analysis = BRL.getFirstReference( ref, "section reference '{}' from '{}'".format( ref, givenRef ) )
-                #print( "a", analysis )
-                if analysis: result += '<a href="{}">{}</a>'.format( convertToPageReference(analysis), ref )
-                else: result += ref
+                if ref:
+                    analysis = BRL.getFirstReference( ref, "section reference '{}' from '{}'".format( ref, givenRef ) )
+                    #print( "a", analysis )
+                    if analysis: result += '<a href="{}">{}</a>'.format( convertToPageReference(analysis), ref )
+                    else: result += ref
             #print( "now = '{}'".format( result ) )
             return result + bracket
         # end of toHTML5.createSectionReference
@@ -2328,8 +2369,10 @@ class BibleWriter( InternalBible ):
             """Writes a book to the HTML5 writerObject."""
             writeHeader( writerObject )
             haveOpenSection = haveOpenParagraph = haveOpenList = False
+            C = V = ''
             for marker,originalMarker,text,cleanText,extras in bkData._processedLines: # Process internal Bible lines
                 #if BBB=='MRK': print( "writeBook", marker, cleanText )
+                #print( "toHTML5.writeBook", BBB, C, V, marker, cleanText )
                 if marker in ('id','ide','toc1','toc2','toc3','rem',):
                     pass # Just ignore these lines
 
@@ -2338,18 +2381,20 @@ class BibleWriter( InternalBible ):
                     assert( not haveOpenParagraph )
                     writerObject.writeLineOpenClose( 'h1', cleanText, ('class','mainTitle'+marker[2]) )
                 elif marker in ('ms1','ms2',):
-                    assert( not haveOpenParagraph )
-                    writerObject.writeLineOpenClose( 'h2', cleanText, ('class','mainSectionHeading'+marker[1]) )
+                    if not haveOpenParagraph:
+                        logging.warning( "toHTML5: Have main section heading {} outside a paragraph in {}".format( cleanText, BBB ) )
+                        writerObject.writeLineOpen( 'p', ('class','unknownParagraph') ); haveOpenParagraph = True
+                    if cleanText: writerObject.writeLineOpenClose( 'h2', cleanText, ('class','mainSectionHeading'+marker[1]) )
                 elif marker == 'ip':
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
                     writerObject.writeLineOpen( 'p', ('class','introductoryParagraph') ); haveOpenParagraph = True
                     if cleanText: writerObject.writeLineText( cleanText )
                 elif marker == 'iot':
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
-                    writerObject.writeLineOpenClose( 'h3', cleanText, ('class','outlineTitle') )
+                    if cleanText: writerObject.writeLineOpenClose( 'h3', cleanText, ('class','outlineTitle') )
                 elif marker in ('io1','io2','io3',):
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
-                    writerObject.writeLineOpenClose( 'p', cleanText, ('class','outlineEntry'+marker[2]) )
+                    if cleanText: writerObject.writeLineOpenClose( 'p', cleanText, ('class','outlineEntry'+marker[2]) )
 
                 # Now markers in the main text
                 elif marker in 'c':
@@ -2366,12 +2411,13 @@ class BibleWriter( InternalBible ):
                     if marker == 's1':
                         if haveOpenSection: writerObject.writeLineClose( 'section' ); haveOpenSection = False
                         writerObject.writeLineOpen( 'section', ('class','regularSection') ); haveOpenSection = True
-                    writerObject.writeLineOpenClose( 'h2', cleanText, ('class','sectionHeading'+marker[1]) )
+                    if cleanText: writerObject.writeLineOpenClose( 'h2', cleanText, ('class','sectionHeading'+marker[1]) )
                 elif marker == 'r':
                     assert( haveOpenSection )
                     assert( not haveOpenParagraph )
-                    writerObject.writeLineOpenClose( 'span', createSectionReference(cleanText), ('class','sectionReference'), noTextCheck=True )
+                    if cleanText: writerObject.writeLineOpenClose( 'span', createSectionReference(cleanText), ('class','sectionReference'), noTextCheck=True )
                 elif marker == 'v':
+                    V = cleanText
                     if not haveOpenParagraph:
                         logging.warning( "toHTML5: Have verse number {} outside a paragraph in {}".format( cleanText, BBB ) )
                     if 1: # no span -- it's simpler so why not!
@@ -2407,8 +2453,10 @@ class BibleWriter( InternalBible ):
 
                 # Character markers
                 elif marker=='v~':
-                    assert( haveOpenParagraph )
-                    writerObject.writeLineText( cleanText )
+                    if not haveOpenParagraph:
+                        logging.warning( "toHTML5: Have verse text {} outside a paragraph in {}".format( cleanText, BBB ) )
+                        writerObject.writeLineOpen( 'p', ('class','unknownParagraph') ); haveOpenParagraph = True
+                    if cleanText: writerObject.writeLineText( cleanText )
                 else: unhandledMarkers.add( marker )
             if haveOpenList: writerObject.writeLineClose( 'p' ); haveOpenList = False
             if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
@@ -2440,10 +2488,12 @@ class BibleWriter( InternalBible ):
                 xw.start( noAutoXML=True )
                 xw.writeLineText( '<!DOCTYPE html>', noTextCheck=True )
                 xw.writeLineOpen( 'html' )
-                try: writeBook( xw, BBB, bookData )
-                except Exception as err:
-                    print("Unexpected error:", sys.exc_info()[0], err)
-                    logging.error( "toHTML5: Oops, creating {} failed!".format( BBB ) )
+                if Globals.debugFlag: writeBook( xw, BBB, bookData )
+                else:
+                    try: writeBook( xw, BBB, bookData )
+                    except Exception as err:
+                        print( BBB, "Unexpected error:", sys.exc_info()[0], err)
+                        logging.error( "toHTML5: Oops, creating {} failed!".format( BBB ) )
                 xw.writeLineClose( 'html' )
                 xw.close()
         else: halt # not done yet
@@ -2485,6 +2535,7 @@ class BibleWriter( InternalBible ):
             return False
 
         # Define our various output folders
+        PseudoUSFMOutputFolder = os.path.join( givenOutputFolderName, "BOS_PseudoUSFM" + "Export" )
         USFMOutputFolder = os.path.join( givenOutputFolderName, "BOS_USFM" + ("Reexport" if self.objectTypeString=='USFM' else "Export" ) )
         MWOutputFolder = os.path.join( givenOutputFolderName, "BOS_MediaWiki" + ("Reexport" if self.objectTypeString=='MediaWiki' else "Export" ) )
         zOutputFolder = os.path.join( givenOutputFolderName, "BOS_Zefania" + ("Reexport" if self.objectTypeString=='Zefania' else "Export" ) )
@@ -2501,6 +2552,7 @@ class BibleWriter( InternalBible ):
             #except: print( "BibleWriter.doAllExports: pickle( {} ) failed.".format( folder ) )
 
         if Globals.debugFlag:
+            PseudoUSFMExportResult = self.toPseudoUSFM( PseudoUSFMOutputFolder )
             USFMExportResult = self.toUSFM( USFMOutputFolder )
             MWExportResult = self.toMediaWiki( MWOutputFolder )
             zExportResult = self.toZefaniaXML( zOutputFolder )
@@ -2527,7 +2579,12 @@ class BibleWriter( InternalBible ):
                 OSISExportResult = results[4]
                 swExportResult = results[5]
                 htmlExportResult = results[6]
-        else: # Just single threaded
+        else: # Just single threaded and not debugging
+            try: PseudoUSFMExportResult = self.toPseudoUSFM( PseudoUSFMOutputFolder )
+            except Exception as err:
+                PseudoUSFMExportResult = False
+                print("BibleWriter.doAllExports.toPseudoUSFM Unexpected error:", sys.exc_info()[0], err)
+                logging.error( "BibleWriter.doAllExports.toPseudoUSFM: Oops, failed!" )
             try: USFMExportResult = self.toUSFM( USFMOutputFolder )
             except Exception as err:
                 USFMExportResult = False
@@ -2564,9 +2621,12 @@ class BibleWriter( InternalBible ):
                 print("BibleWriter.doAllExports.toHTML5 Unexpected error:", sys.exc_info()[0], err)
                 logging.error( "BibleWriter.doAllExports.toHTML5: Oops, failed!" )
 
-        if Globals.verbosityLevel > 1: print( "BibleWriter.doAllExports finished:  USFM={}  MW={}  Zef={}  USX={}  OSIS={}  Sw={}  HTML={}" \
-            .format( USFMExportResult, MWExportResult, zExportResult, USXExportResult, OSISExportResult, swExportResult, htmlExportResult ) )
-        return {'USFMExport':USFMExportResult, 'MWExport':MWExportResult, 'zExport':zExportResult, 'USXExport':USXExportResult, 'OSISExport':OSISExportResult, 'swExport':swExportResult, 'htmlExport':htmlExportResult}
+        if Globals.verbosityLevel > 1:
+            if PseudoUSFMExportResult and USFMExportResult and MWExportResult and zExportResult and USXExportResult and OSISExportResult and swExportResult and htmlExportResult:
+                print( "BibleWriter.doAllExports finished them all successfully!" )
+            else: print( "BibleWriter.doAllExports finished:  PsUSFM={} USFM={}  MW={}  Zef={}  USX={}  OSIS={}  Sw={}  HTML={}" \
+                    .format( PseudoUSFMExportResult, USFMExportResult, MWExportResult, zExportResult, USXExportResult, OSISExportResult, swExportResult, htmlExportResult ) )
+        return {'PseudoUSFMExportResult':PseudoUSFMExportResult, 'USFMExport':USFMExportResult, 'MWExport':MWExportResult, 'zExport':zExportResult, 'USXExport':USXExportResult, 'OSISExport':OSISExportResult, 'swExport':swExportResult, 'htmlExport':htmlExportResult}
     # end of BibleWriter.doAllExports
 # end of class BibleWriter
 
@@ -2598,11 +2658,12 @@ def demo():
             if Globals.verbosityLevel > 0: print( UB )
             if Globals.strictCheckingFlag: UB.check()
             doaResults = UB.doAllExports()
-            if 0: # Now compare the original and the derived USX XML files
-                outputFolder = "OutputFiles/BOS_USXExport/"
+            if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
+                outputFolder = "OutputFiles/BOS_USXReexport/"
                 fN = USXFilenames( testFolder )
                 f1 = os.listdir( testFolder ) # Originals
                 f2 = os.listdir( outputFolder ) # Derived
+                if Globals.verbosityLevel > 1: print( "\nComparing original and re-exported USX files..." )
                 for j, (BBB,filename) in enumerate( fN.getPossibleFilenames() ):
                     if filename in f1 and filename in f2:
                         #print( "\n{}: {} {}".format( j+1, BBB, filename ) )
