@@ -1006,7 +1006,7 @@ class InternalBibleBook:
             if saveCV and saveJ:
                 #print( "saveAnythingOutstanding", self.bookReferenceCode, saveCV, saveJ, lineCount, context )
                 #assert( 1 <= lineCount <= 120 ) # Could potentially be even higher for bridged verses (e.g., 1Chr 11:26-47, Ezra 2:3-20) and where words are stored individually
-                if saveCV in self._CVIndex and Globals.verbosityLevel > 1:
+                if saveCV in self._CVIndex and Globals.verbosityLevel > 2:
                     logging.critical( "makeIndex.saveAnythingOutstanding: replacing index entry {} {}:{}".format( self.bookReferenceCode, C, V ) )
                     logging.error( "  mI:saO was", self._CVIndex[saveCV] )
                     ix,lc,ct = self._CVIndex[saveCV]

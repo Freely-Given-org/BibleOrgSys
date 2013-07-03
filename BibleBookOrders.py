@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBookOrders.py
-#   Last modified: 2013-06-24 (also update ProgVersion below)
+#   Last modified: 2013-07-03 (also update ProgVersion below)
 #
 # Module handling BibleBookOrderSystems
 #
@@ -28,7 +28,7 @@ Module handling BibleBookOrder systems.
 """
 
 ProgName = "Bible Book Order Systems handler"
-ProgVersion = "0.84"
+ProgVersion = "0.85"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -301,19 +301,19 @@ class BibleBookOrderSystem:
         return self.__BookOrderList
     # end of getBookOrderList
 
-    def getNextBook( self, BBB ):
+    def getNextBookCode( self, BBB ):
         """ Returns the book (if any) after the given one. """
         assert( len(BBB)==3 )
         nextPosition = self.__BookOrderBookDict[BBB] + 1
         if nextPosition in self.__BookOrderNumberDict: return self.__BookOrderNumberDict[nextPosition]
-    # end of getNextBook
+    # end of BibleBookOrderSystem.getNextBookCode
 
     def correctlyOrdered( self, BBB1, BBB2 ):
         """ Returns True/False if the two books are in the correct order. """
         assert( BBB1 and len(BBB1)==3 )
         assert( BBB2 and len(BBB2)==3 )
         return self.__BookOrderBookDict[BBB1] < self.__BookOrderBookDict[BBB2]
-    # end of correctlyOrdered
+    # end of BibleBookOrderSystem.correctlyOrdered
 # end of BibleBookOrderSystem class
 
 

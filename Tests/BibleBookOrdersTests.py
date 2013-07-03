@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBookOrdersTests.py
-#   Last modified: 2013-06-24 (also update ProgVersion below)
+#   Last modified: 2013-07-03 (also update ProgVersion below)
 #
 # Module testing BibleBookOrders.py
 #
@@ -28,7 +28,7 @@ Module testing BibleBookOrdersConverter.py and BibleBookOrders.py.
 """
 
 ProgName = "Bible Book Orders tests"
-ProgVersion = "0.83"
+ProgVersion = "0.84"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -260,16 +260,16 @@ class BibleBookOrderSystemTests( unittest.TestCase ):
         for BBB in ('OBA','PHM','JN2','JN3','JDE',): self.assertTrue( BBB in results )
     # end of test_3070_getBookOrderList
 
-    def test_3080_getNextBook( self ):
-        """ Test the getNextBook function. """
-        self.assertEqual( self.bbos.getNextBook('GEN'), 'EXO' )
-        self.assertEqual( self.bbos.getNextBook('ZEC'), 'MAL' )
-        self.assertEqual( self.bbos.getNextBook('MAL'), 'MAT' )
-        self.assertEqual( self.bbos.getNextBook('CO1'), 'CO2' )
-        self.assertEqual( self.bbos.getNextBook('JDE'), 'REV' )
-        self.assertRaises( KeyError, self.bbos.getNextBook, 'XYZ' )
-        self.assertRaises( KeyError, self.bbos.getNextBook, 'Gen' )
-    # end of test_3080_getNextBook
+    def test_3080_getNextBookCode( self ):
+        """ Test the getNextBookCode function. """
+        self.assertEqual( self.bbos.getNextBookCode('GEN'), 'EXO' )
+        self.assertEqual( self.bbos.getNextBookCode('ZEC'), 'MAL' )
+        self.assertEqual( self.bbos.getNextBookCode('MAL'), 'MAT' )
+        self.assertEqual( self.bbos.getNextBookCode('CO1'), 'CO2' )
+        self.assertEqual( self.bbos.getNextBookCode('JDE'), 'REV' )
+        self.assertRaises( KeyError, self.bbos.getNextBookCode, 'XYZ' )
+        self.assertRaises( KeyError, self.bbos.getNextBookCode, 'Gen' )
+    # end of test_3080_getNextBookCode
 
     def test_3090_correctlyOrdered( self ):
         """ Test the correctlyOrdered function. """

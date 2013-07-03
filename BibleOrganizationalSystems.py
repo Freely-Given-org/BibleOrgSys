@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleOrganizationalSystems.py
-#   Last modified: 2013-06-24 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-03 by RJH (also update ProgVersion below)
 #
 # Module handling BibleOrganizationalSystems
 #
@@ -28,7 +28,7 @@ Module handling BibleOrganizationalSystems.
 """
 
 ProgName = "Bible Organization Systems handler"
-ProgVersion = "0.24"
+ProgVersion = "0.25"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -347,9 +347,19 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
             otherwise returns None.
         """
         bookList = self.getOrganizationalSystemValue( "includesBooks" )
+# I think this is wrong! Should use BookOrderSystem -- see next function
         if bookList is None: return None
         return bookList[0]
     # end of BibleOrganizationalSystem.getFirstBookCode
+
+    def getNextBookCode( self, BBB ):
+        """ Returns the book (if any) after the given one. """
+        while True:
+            nextCode = BibleBookOrderSystem.getNextBookCode( self, BBB )
+            if self.containsBook( nextCode ): return nextCode
+            BBB = nextCode
+    # end of BibleOrganizationalSystem.getNextBookCode
+
 
     def isValidBCVRef( self, referenceTuple, referenceString, extended=False ):
         """
