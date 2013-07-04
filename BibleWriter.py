@@ -247,7 +247,7 @@ class BibleWriter( InternalBible ):
         if Globals.debugFlag: assert( self.books )
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolder: outputFolder = "OutputFiles/BOS_TheWordExport/"
+        if not outputFolder: outputFolder = "OutputFiles/BOS_TheWord" + ("Reexport/" if self.objectTypeString=="TheWord" else "Export/")
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         if not controlDict:
             controlDict, defaultControlFilename = {}, "To_TheWord_controls.txt"
@@ -255,7 +255,7 @@ class BibleWriter( InternalBible ):
                 ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
             except:
                 logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
-        if Globals.debugFlag: assert( controlDict and isinstance( controlDict, dict ) )
+        #if Globals.debugFlag: assert( controlDict and isinstance( controlDict, dict ) )
 
         unhandledMarkers = set()
 
@@ -318,14 +318,14 @@ class BibleWriter( InternalBible ):
                     result = bkData.getCVRef( (BBB,'0',str(V),) ) # Current this only gets one line
                     if result:
                         verseData, context = result
-                        #print( "vD0", len(verseData), verseData )
+                        #if BBB=='MRK': print( "vD", BBB, '0', V, len(verseData), verseData )
                         for marker,originalMarker,text,cleanText,extras in verseData:
                             #print( marker, cleanText )
                             if marker=='mt1': composedLine = '<TS1>'+adjustLine(text)+'<Ts1>'
                             elif marker=='mt2': composedLine = '<TS2>'+adjustLine(text)+'<Ts2>'
                             elif marker=='mt3': composedLine = '<TS3>'+adjustLine(text)+'<Ts3>'
                             else: halt # programming error
-                            writerObject.write( composedLine )
+                            writerObject.write( composedLine ) # Note: no trailing newline character
                         V += 1
                     else: break
 

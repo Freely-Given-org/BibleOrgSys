@@ -180,8 +180,8 @@ class TheWordBible( Bible ):
         """
          # Setup and initialise the base class first
         Bible.__init__( self )
-        self.objectNameString = "TheWord Bible object"
-        self.objectTypeString = "TheWord"
+        self.objectNameString = 'TheWord Bible object'
+        self.objectTypeString = 'TheWord'
 
         # Now we can set our object variables
         self.sourceFolder, self.sourceFilename, self.encoding = sourceFolder, givenFilename, encoding
@@ -413,7 +413,7 @@ def testTWB( TWBfolder, TWBfilename ):
         if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
             outputFolder = "OutputFiles/BOS_TheWordReexport/"
             if Globals.verbosityLevel > 1: print( "\nComparing original and re-exported theWord files..." )
-            result = Globals.fileCompare( TWBfilename, TWBfilename, testFolder, outputFolder )
+            result = Globals.fileCompare( TWBfilename, TWBfilename, TWBfolder, outputFolder )
             if Globals.debugFlag:
                 if not result: halt
 # end of testTWB
