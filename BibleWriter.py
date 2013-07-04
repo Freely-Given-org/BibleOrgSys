@@ -249,12 +249,14 @@ class BibleWriter( InternalBible ):
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = "OutputFiles/BOS_TheWord" + ("Reexport/" if self.objectTypeString=="TheWord" else "Export/")
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
+        # ControlDict is not used (yet)
         if not controlDict:
             controlDict, defaultControlFilename = {}, "To_TheWord_controls.txt"
             try:
                 ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
             except:
-                logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
+                pass
+                #logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
         #if Globals.debugFlag: assert( controlDict and isinstance( controlDict, dict ) )
 
         unhandledMarkers = set()
@@ -368,7 +370,10 @@ class BibleWriter( InternalBible ):
 
         if Globals.verbosityLevel > 1: print( _("Exporting to theWord format...") )
         if 'TheWordOutputFilename' in controlDict: filename = controlDict["TheWordOutputFilename"]
-        else: filename = self.sourceFilename
+        elif self.sourceFilename: filename = self.sourceFilename
+        elif self.shortName: filename = self.shortName
+        elif self.abbreviation: filename = self.abbreviation
+        else: filename = "export"
         if not filename.endswith( extension ): filename += extension # Make sure that we have the right file extension
         filepath = os.path.join( outputFolder, filename )
         if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
