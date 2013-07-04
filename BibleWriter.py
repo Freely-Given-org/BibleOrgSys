@@ -274,6 +274,9 @@ class BibleWriter( InternalBible ):
             line = line.replace('\\bd ','<b>',).replace('\\bd*','</b>')
             line = line.replace('\\it ','<i>').replace('\\it*','</i>')
 
+            # Things we don't know how to handle yet
+            line = line.replace('\\nd ','',).replace('\\nd*','')
+
             # Check what's left at the end
             if '\\' in line:
                 logging.error( "toTheWord.writeLine: Doesn't handle formatted line yet: '{}'".format( line ) )
@@ -374,6 +377,7 @@ class BibleWriter( InternalBible ):
         elif self.sourceFilename: filename = self.sourceFilename
         elif self.shortName: filename = self.shortName
         elif self.abbreviation: filename = self.abbreviation
+        elif self.name: filename = self.name
         else: filename = "export"
         if not filename.endswith( extension ): filename += extension # Make sure that we have the right file extension
         filepath = os.path.join( outputFolder, filename )
@@ -385,10 +389,31 @@ class BibleWriter( InternalBible ):
                 if BBB == endBBB: break
                 BBB = BOS.getNextBookCode( BBB )
             # Now append the various settings if any
+            written = []
             for key in self.settingsDict:
-                myFile.write( "{}={}\n".format( key, self.settingsDict[key] ) )
+                if key.lower() in ('id','lang','charset','title','short.title','title.english','description','author',
+                            'status','publish.date','version.date','isbn','r2l','font','font.size',
+                           'version.major','version.minor','publisher','about','source','creator','keywords',
+                           'verse.rule',) \
+                and self.settingsDict[key]: # Copy non-blank exact matches
+                    myFile.write( "{}={}\n".format( key.lower(), self.settingsDict[key] ) )
+                    written.append( key.lower() )
+                elif Globals.verbosityLevel > 2: print( "BibleWriter.toTheWord: ignored '{}' setting ({})".format( key, self.settingsDict[key] ) )
+            # Now do some adaptions
+            key = 'short.title'
+            if self.abbreviation and key not in written:
+                myFile.write( "{}={}\n".format( key, self.abbreviation ) )
+                written.append( key )
+            if self.name and key not in written:
+                myFile.write( "{}={}\n".format( key, self.name ) )
+                written.append( key )
+            # Anything useful in the settingsDict?
+            for key, fieldName in (('title','FullName'),):
+                if fieldName in self.settingsDict and key not in written:
+                    myFile.write( "{}={}\n".format( key, self.settingsDict[fieldName] ) )
+                    written.append( key )
         if unhandledMarkers:
-            logging.warning( "toTheWord: Unhandled USFM markers were {}".format( unhandledMarkers ) )
+            logging.warning( "BibleWriter.toTheWord: Unhandled USFM markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:
                 print( "  " + _("WARNING: Unhandled toTheWord USFM markers were {}").format( unhandledMarkers ) )
         return True
@@ -2754,11 +2779,6 @@ class BibleWriter( InternalBible ):
                 USFMExportResult = False
                 print("BibleWriter.doAllExports.toUSFM Unexpected error:", sys.exc_info()[0], err)
                 logging.error( "BibleWriter.doAllExports.toUSFM: Oops, failed!" )
-            try: TWExportResult = self.toTheWord( TWOutputFolder )
-            except Exception as err:
-                TWExportResult = False
-                print("BibleWriter.doAllExports.toTheWord Unexpected error:", sys.exc_info()[0], err)
-                logging.error( "BibleWriter.doAllExports.toTheWord: Oops, failed!" )
             try: MWExportResult = self.toMediaWiki( MWOutputFolder )
             except Exception as err:
                 MWExportResult = False
@@ -2789,6 +2809,11 @@ class BibleWriter( InternalBible ):
                 htmlExportResult = False
                 print("BibleWriter.doAllExports.toHTML5 Unexpected error:", sys.exc_info()[0], err)
                 logging.error( "BibleWriter.doAllExports.toHTML5: Oops, failed!" )
+            try: TWExportResult = self.toTheWord( TWOutputFolder )
+            except Exception as err:
+                TWExportResult = False
+                print("BibleWriter.doAllExports.toTheWord Unexpected error:", sys.exc_info()[0], err)
+                logging.error( "BibleWriter.doAllExports.toTheWord: Oops, failed!" )
 
         if Globals.verbosityLevel > 1:
             if PseudoUSFMExportResult and USFMExportResult and TWExportResult and MWExportResult and zExportResult \
@@ -2816,34 +2841,66 @@ def demo():
     BW.objectNameString = "Dummy test Bible Writer object"
     if Globals.verbosityLevel > 0: print( BW ); print()
 
-    # But we'll test reading and writing a USX Bible
-    from USXXMLBible import USXXMLBible
-    from USXFilenames import USXFilenames
-    testData = (
-            #("Matigsalug", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/",),
-            ("Matigsalug", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/",),
-            ) # You can put your USX test folder here
+    if 1: # Test reading and writing a USFM Bible
+        from USFMBible import USFMBible
+        from USFMFilenames import USFMFilenames
+        testData = (
+                ("Matigsalug", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
+                ) # You can put your USFM test folder here
+        #name, encoding, testFolder = "Matigsalug", "utf-8", "../../../../../Data/Work/Matigsalug/Bible/MBTV/" # You can put your test folder here
+        #name, encoding, testFolder = "MS-BT", "utf-8", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/" # You can put your test folder here
+        #name, encoding, testFolder = "MS-Notes", "utf-8", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/" # You can put your test folder here
+        #name, encoding, testFolder = "WEB", "utf-8", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/" # You can put your test folder here
 
-    for name, testFolder in testData:
-        if os.access( testFolder, os.R_OK ):
-            UB = USXXMLBible( testFolder, name )
-            UB.load()
-            if Globals.verbosityLevel > 0: print( UB )
-            if Globals.strictCheckingFlag: UB.check()
-            doaResults = UB.doAllExports()
-            if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
-                outputFolder = "OutputFiles/BOS_USXReexport/"
-                fN = USXFilenames( testFolder )
-                f1 = os.listdir( testFolder ) # Originals
-                f2 = os.listdir( outputFolder ) # Derived
-                if Globals.verbosityLevel > 1: print( "\nComparing original and re-exported USX files..." )
-                for j, (BBB,filename) in enumerate( fN.getPossibleFilenames() ):
-                    if filename in f1 and filename in f2:
-                        #print( "\n{}: {} {}".format( j+1, BBB, filename ) )
-                        result = Globals.fileCompareXML( filename, filename, testFolder, outputFolder )
-                        if Globals.debugFlag:
-                            if not result: halt
-        else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
+        for name, testFolder in testData:
+            if os.access( testFolder, os.R_OK ):
+                UB = USFMBible( testFolder, name )
+                UB.load()
+                if Globals.verbosityLevel > 0: print( UB )
+                if Globals.strictCheckingFlag: UB.check()
+                doaResults = UB.doAllExports()
+                if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
+                    outputFolder = "OutputFiles/BOS_USFMReexport/"
+                    fN = USXFilenames( testFolder )
+                    f1 = os.listdir( testFolder ) # Originals
+                    f2 = os.listdir( outputFolder ) # Derived
+                    if Globals.verbosityLevel > 1: print( "\nComparing original and re-exported USFM files..." )
+                    for j, (BBB,filename) in enumerate( fN.getPossibleFilenames() ):
+                        if filename in f1 and filename in f2:
+                            #print( "\n{}: {} {}".format( j+1, BBB, filename ) )
+                            result = Globals.fileCompare( filename, filename, testFolder, outputFolder )
+                            if Globals.debugFlag:
+                                if not result: halt
+            else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
+
+    if 1: # Test reading and writing a USX Bible
+        from USXXMLBible import USXXMLBible
+        from USXFilenames import USXFilenames
+        testData = (
+                #("Matigsalug", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.3 Exports/USXExports/Projects/MBTV/",),
+                ("Matigsalug", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/",),
+                ) # You can put your USX test folder here
+
+        for name, testFolder in testData:
+            if os.access( testFolder, os.R_OK ):
+                UB = USXXMLBible( testFolder, name )
+                UB.load()
+                if Globals.verbosityLevel > 0: print( UB )
+                if Globals.strictCheckingFlag: UB.check()
+                doaResults = UB.doAllExports()
+                if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
+                    outputFolder = "OutputFiles/BOS_USXReexport/"
+                    fN = USXFilenames( testFolder )
+                    f1 = os.listdir( testFolder ) # Originals
+                    f2 = os.listdir( outputFolder ) # Derived
+                    if Globals.verbosityLevel > 1: print( "\nComparing original and re-exported USX files..." )
+                    for j, (BBB,filename) in enumerate( fN.getPossibleFilenames() ):
+                        if filename in f1 and filename in f2:
+                            #print( "\n{}: {} {}".format( j+1, BBB, filename ) )
+                            result = Globals.fileCompareXML( filename, filename, testFolder, outputFolder )
+                            if Globals.debugFlag:
+                                if not result: halt
+            else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 # end of demo
 
 if __name__ == '__main__':

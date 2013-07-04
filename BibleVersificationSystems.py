@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleVersificationSystems.py
-#   Last modified: 2013-06-24 (also update ProgVersion below)
+#   Last modified: 2013-07-05 (also update ProgVersion below)
 #
 # Module handling BibleVersificationSystem_*.xml to produce C and Python data tables
 #
@@ -28,7 +28,7 @@ Module handling BibleVersificationSystem_*.xml to produce C and Python data tabl
 """
 
 ProgName = "Bible Chapter/Verse Systems handler"
-ProgVersion = "0.50"
+ProgVersion = "0.51"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -765,7 +765,7 @@ class BibleVersificationSystem:
                         if Cint==C1int and Vint==V1int: S = S1
                         else: S = ''
                         resultList.append( (BBB, str(Cint), str(Vint), S,) )
-                BBB, Cfirst, Vfirst = bookOrderSystem.getNextBook( BBB ), 1, 1
+                BBB, Cfirst, Vfirst = bookOrderSystem.getNextBookCode( BBB ), 1, 1
             for Cint in range( 1, C2int+1 ): # Now finish the last book
                 if Cint==C2int: # We're on the final chapter
                     startVint = 1

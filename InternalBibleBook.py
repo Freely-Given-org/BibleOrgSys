@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-07-04 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-05 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.31"
+ProgVersion = "0.32"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -2101,8 +2101,10 @@ class InternalBibleBook:
                 for char in adjText:
                     lcChar = char.lower()
                     if Globals.verbosityLevel > 2:
-                        charName = unicodedata.name( char )
-                        lcCharName = unicodedata.name( lcChar )
+                        try: charName = unicodedata.name( char )
+                        except ValueError: charName = char
+                        try: lcCharName = unicodedata.name( lcChar )
+                        except ValueError: lcCharName = lcChar
                     else: # normal verbosity
                         if char==' ': charName = lcCharName = 'Space'
                         elif char==chr(0): charName = lcCharName = 'Null'
