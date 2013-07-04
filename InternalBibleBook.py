@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-07-03 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-04 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.30"
+ProgVersion = "0.31"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -116,7 +116,7 @@ class InternalBibleEntry:
 
     def __str__( self ):
         cleanAbbreviation = self.cleanText if len(self.cleanText)<100 else (self.cleanText[:50]+'...'+self.cleanText[-50:])
-        return "InternalBibleEntry object: {} = {}".format( self.marker, repr(cleanAbbreviation) )
+        return "InternalBibleEntry object: {} = {}{}".format( self.marker, repr(cleanAbbreviation), '+extras' if self.extras else '' )
     # end of InternalBibleEntry.__str__
 
 
@@ -156,6 +156,8 @@ class InternalBibleEntryList:
                 for something in initialData:
                     self.append( something )
             else: logging.critical( "InternalBibleEntryList.__init__: Programming error -- unknown parameter type {}".format( repr(initialData) ) )
+        if initialData: assert( len(self.data) == len(initialData) )
+        else: assert( not self.data )
     # end of InternalBibleEntryList.__init__
 
 
@@ -307,7 +309,7 @@ class InternalBibleBook:
                     if self.pntsCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
                         logging.warning( "InternalBibleBook.appendLine: Possibly needed to strip {} {} {}='{}'".format( self.objectTypeString, self.bookReferenceCode, marker, text ) )
                     else: # we've reached our limit
-                        logging.error( _('Additional "Possible needed to strip" messages suppressed...') )
+                        logging.warning( _('Additional "Possible needed to strip" messages suppressed...') )
                         self.pntsCount = -1 # So we don't do this again (for this book)
 
         rawLineTuple = ( marker, text )
@@ -2897,11 +2899,12 @@ class InternalBibleBook:
         if Globals.debugFlag:
             assert( self._processedLines )
             assert( self._indexedFlag )
-        C,V = ref.getChapterNumberStr(), ref.getVerseNumberStr()
+        if isinstance( ref, tuple ): C, V = ref[1], ref[2]
+        else: C,V = ref.getChapterNumberStr(), ref.getVerseNumberStr()
         #print( "CV", repr(C), repr(V) )
         if (C,V,) in self._CVIndex:
             startIndex, count, context = self._CVIndex[ C,V ]
-            #print( ref, startIndex )
+            #print( "data", ref, startIndex, count, context, InternalBibleEntryList(self._processedLines[startIndex:startIndex+count]) )
             #print( "IBB getRef:", ref, startIndex, self._processedLines[startIndex:startIndex+5] )
             #if 0: # old stuff
                 #result = []

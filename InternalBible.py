@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2013-07-03 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-04 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -36,7 +36,7 @@ and then fills
 """
 
 ProgName = "Internal Bible handler"
-ProgVersion = "0.25"
+ProgVersion = "0.26"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -61,14 +61,15 @@ class InternalBible:
         """
         Create the object.
         """
-        # Set up empty variables for the object (to be filled in later)
-        self.name = self.shortName = self.abbreviation = None
-        self.sourceFolder = self.sourceFilename = self.sourceFilepath = None
+        # Set up empty variables for the object
+        #       some of which will be filled in later depending on what is known from the Bible type
+        self.name = self.givenName = self.shortName = self.abbreviation = None
+        self.sourceFolder = self.sourceFilename = self.sourceFilepath = self.fileExtension = None
         self.status = self.revision = self.version = None
 
         # Set up empty containers for the object
         self.books = OrderedDict()
-        self.ssfFilepath, self.ssfData = '', {}
+        self.ssfFilepath, self.settingsDict = '', {}
         self.BBBToNameDict, self.bookNameDict, self.combinedBookNameDict, self.bookAbbrevDict = {}, {}, {}, {} # Used to store book name and abbreviations (pointing to the BBB codes)
         self.reverseDict, self.guesses = {}, '' # A program history
 

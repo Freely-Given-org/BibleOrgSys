@@ -185,17 +185,17 @@ class TheWordBible( Bible ):
 
         # Now we can set our object variables
         self.sourceFolder, self.sourceFilename, self.encoding = sourceFolder, givenFilename, encoding
-        self.givenName = os.path.splitext( self.sourceFilename )[0]
         self.sourceFilepath =  os.path.join( self.sourceFolder, self.sourceFilename )
 
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):
             logging.critical( _("TheWordBible: File '{}' is unreadable").format( self.sourceFilepath ) )
 
-        self.name = self.givenName
+        filenameBits = os.path.splitext( self.sourceFilename )
+        self.name = filenameBits[0]
+        self.fileExtension = filenameBits[1]
 
-        fileExtensionUpper = os.path.splitext( self.sourceFilename )[1].upper()
-        if fileExtensionUpper.endswith('X'):
+        if self.fileExtension.upper().endswith('X'):
             logging.warning( _("TheWordBible: File '{}' is encrypted").format( self.sourceFilepath ) )
     # end of TheWordBible.__init__
 
@@ -206,7 +206,7 @@ class TheWordBible( Bible ):
         """
         if Globals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
 
-        fileExtensionUpper = os.path.splitext( self.sourceFilename )[1].upper()
+        fileExtensionUpper = self.fileExtension.upper()
         assert( fileExtensionUpper in filenameEndingsToAccept )
         if fileExtensionUpper.endswith('X'):
             logging.error( _("TheWordBible: File '{}' is encrypted").format( self.sourceFilepath ) )
@@ -229,87 +229,153 @@ class TheWordBible( Bible ):
         thisBook.objectNameString = "TheWord Bible Book object"
         thisBook.objectTypeString = "TheWord"
 
-        VerseList = BOS.getNumVersesList( BBB )
-        #print( BBB, len(VerseList), VerseList )
-        numC = len(VerseList)
-        numV = VerseList[0]
+        verseList = BOS.getNumVersesList( BBB )
+        numC, numV = len(verseList), verseList[0]
         C = V = 1
-        thisBook.appendLine( 'c', str(C) )
 
-        lastLine, lineCount, textLineCount, bookCount = '', 0, 0, 0
-        haveParagraph = False
-        # , encoding=self.encoding
-        with open( self.sourceFilepath ) as myFile: # Automatically closes the file when done
-            for line in myFile:
-                lineCount += 1
-                #if lineCount==1 and self.encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF
-                    #logging.info( "      TheWordBible.load: Detected UTF-16 Byte Order Marker" )
-                    #line = line[1:] # Remove the UTF-8 Byte Order Marker
-                if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
-                if not line: continue # Just discard blank lines
-                lastLine = line
+        lastLine, lineCount, bookCount = '', 0, 0
+        continued = haveParagraph = False
+        encodings = ['utf-8', 'ISO-8859-15', 'ISO-8859-1']
+        encodings.remove( self.encoding ) # Remove the given encoding if included
+        if self.encoding: encodings.insert( 0, self.encoding ) # Put the given encoding back in in the first position
+        for encoding in encodings: # Start by trying the given encoding
+            try:
+                with open( self.sourceFilepath, 'rt', encoding=encoding ) as myFile: # Automatically closes the file when done
+                    for line in myFile:
+                        lineCount += 1
+                        if lineCount==1 and self.encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF
+                            logging.info( "      TheWordBible.load: Detected UTF-16 Byte Order Marker" )
+                            line = line[1:] # Remove the UTF-8 Byte Order Marker
+                        if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
+                        lastLine = line
 
-                if lineCount > textLineCountExpected: # Should be module info at end of file
-                    #print ( lineCount, 'TW file line is "' + line + '"' )
-                    assert( textLineCount == textLineCountExpected ) # Should be at end of file
-                    if Globals.verbosityLevel > 2: print( "  Have module info:", line )
-                else: # assume it's verse text
-                    #print ( lineCount, BBB, C, V, 'TW file line is "' + line + '"' )
-                    assert( lineCount <= textLineCountExpected )
-                    textLineCount += 1
-                    #if textLineCount > 10: halt
+                        if lineCount <= textLineCountExpected: # assume it's verse text
+                            #print ( lineCount, BBB, C, V, 'TW file line is "' + line + '"' )
+                            if not line: logging.warning( "TheWordBible.load: Found blank verse line at {} {} {}:{}".format( lineCount, BBB, C, V ) )
 
-                    # Adjust formatting
-                    if line.endswith( '<CM>' ): # Means start a new paragraph after this line
-                        assert( not haveParagraph )
-                        line = line[:-4] # Remove the marker
-                        haveParagraph = True
-                    line = line.replace('<FI>','\\add ').replace('<Fi>','\\add*')
-                    line = line.replace('<FO>','\\qt ').replace('<Fr>','\\qt*')
-                    line = line.replace('<FR>','\\wj ').replace('<Fr>','\\wj*')
-                    line = line.replace('<RF>','\\f ').replace('<Rf>','\\f*')
-                    line = line.replace('<RX>','\\x ').replace('<Rx>','\\x*')
+                            # Try to convert display formatting to semantic formatting as much as possible
+                            # Adjust paragraph formatting
+                            assert( not haveParagraph )
+                            if line.endswith( '<CM>' ): # Means start a new paragraph after this line
+                                line = line[:-4] # Remove the marker
+                                haveParagraph = 'CM'
+                            elif line.endswith( '<CI>' ): # Means start a new paragraph (without a space before it) after this line
+                                line = line[:-4] # Remove the marker
+                                haveParagraph = 'CI'
+                            elif line.endswith( '<CL>' ): # Means start on a new line
+                                line = line[:-4] # Remove the marker
+                                haveParagraph = 'CL'
 
-                    # Simple HTML tags (with no semantic info)
-                    line = line.replace('<b>','\\bd ').replace('</b>','\\bd*')
-                    line = line.replace('<i>','\\it ').replace('</i>','\\it*')
+                            # Adjust line formatting
+                            line = line.replace('<TS1>','\\mt1 ').replace('<Ts1>','\\NL*') # Start marker and then a newline at end
+                            line = line.replace('<TS2>','\\mt2 ').replace('<Ts2>','\\NL*')
+                            line = line.replace('<TS3>','\\mt3 ').replace('<Ts3>','\\NL*')
 
-                    # Check what's left at the end
-                    if '<' in line or '>' in line:
-                        logging.error( "TheWordBible.load: Doesn't handle formatted line yet: '{}'".format( line ) )
+                            # Adjust character formatting with USFM equivalents
+                            line = line.replace('<FI>','\\add ').replace('<Fi>','\\add*')
+                            line = line.replace('<FO>','\\qt ').replace('<Fo>','\\qt*')
+                            line = line.replace('<FR>','\\wj ').replace('<Fr>','\\wj*')
+                            line = line.replace('<FU>','\\ul ').replace('<Fu>','\\ul*') # Not USFM
+                            line = line.replace('<RF q=*>','\\f ').replace('<Rf>','\\f*')
+                            line = line.replace('<RF>','\\f ').replace('<Rf>','\\f*')
+                            line = line.replace('<RX>','\\x ').replace('<Rx>','\\x*')
 
-                    thisBook.appendLine( 'v', '{} {}'.format( V, line ) )
-                    V += 1
-                    if V > numV:
-                        C += 1
-                        if C > numC: # Save this book now
-                            if Globals.verbosityLevel > 3: print( "Saving", BBB, bookCount+1 )
-                            self.saveBook( thisBook )
-                            bookCount += 1
-                            if bookCount >= booksExpected: continue
-                            BBB = BOS.getNextBookCode( BBB )
-                            # Create the next book
-                            thisBook = BibleBook( BBB )
-                            thisBook.objectNameString = "TheWord Bible Book object"
-                            thisBook.objectTypeString = "TheWord"
+                            # Simple HTML tags (with no semantic info)
+                            line = line.replace('<b>','\\bd ').replace('</b>','\\bd*')
+                            line = line.replace('<i>','\\it ').replace('</i>','\\it*')
+                            line = line.replace('<u>','\\ul ').replace('</u>','\\ul*') # Not USFM
 
-                            VerseList = BOS.getNumVersesList( BBB )
-                            #print( BBB, len(VerseList), VerseList )
-                            numC = len(VerseList)
-                            numV = VerseList[0]
-                            C = V = 1
-                            thisBook.appendLine( 'c', str(C) )
-                        else: # next chapter only
-                            thisBook.appendLine( 'c', str(C) )
-                            numV = VerseList[C-1]
-                            V = 1
+                            # Unhandled stuff -- not done properly yet...............................................
+                            line = line.replace('<CI>','')
+                            line = line.replace('<CM>','')
+                            line = line.replace('<PF0>','')
+                            line = line.replace('<PF1>','')
+                            line = line.replace('<PF2>','')
+                            line = line.replace('<PF3>','')
+                            line = line.replace('<PI1>','')
+                            line = line.replace('<PI2>','')
+                            line = line.replace('<PI3>','')
 
-                    if haveParagraph:
-                        thisBook.appendLine( 'p', '' )
-                        haveParagraph = False
+                            # Check what's left at the end
+                            if '<' in line or '>' in line:
+                                logging.error( "TheWordBible.load: Doesn't handle formatted line yet: '{}'".format( line ) )
 
-        if textLineCount < textLineCountExpected:
-            logging.error( _("TheWord Bible module file seems too short: {}").format( self.sourceFilename ) )
+                            if '\\NL*' in line: # We need to break the original line into different USFM markers
+                                #print( "Messing with segments: '{}'".format( line ) )
+                                segments = line.split( '\\NL*' )
+                                assert( len(segments) >= 2 )
+                                for segment in segments:
+                                    if segment[0] == '\\':
+                                        bits = segment.split( None, 1 )
+                                        assert( len(bits) == 2 )
+                                        if bits[0] in ('\\mt1','\\mt2','\\mt3',):
+                                            thisBook.appendLine( bits[0][1:], bits[1] )
+                                        else: halt # programming error
+                                    else:
+                                        if V==1: thisBook.appendLine( 'c', str(C) )
+                                        thisBook.appendLine( 'v', '{} {}'.format( V, segment ) )
+                            else:
+                                if V==1: thisBook.appendLine( 'c', str(C) )
+                                thisBook.appendLine( 'v', '{} {}'.format( V, line ) )
+                            V += 1
+                            if V > numV:
+                                C += 1
+                                if C > numC: # Save this book now
+                                    if Globals.verbosityLevel > 3: print( "Saving", BBB, bookCount+1 )
+                                    self.saveBook( thisBook )
+                                    bookCount += 1
+                                    if bookCount >= booksExpected: continue
+                                    BBB = BOS.getNextBookCode( BBB )
+                                    # Create the next book
+                                    thisBook = BibleBook( BBB )
+                                    thisBook.objectNameString = "TheWord Bible Book object"
+                                    thisBook.objectTypeString = "TheWord"
+
+                                    verseList = BOS.getNumVersesList( BBB )
+                                    numC, numV = len(verseList), verseList[0]
+                                    C = V = 1
+                                    #thisBook.appendLine( 'c', str(C) )
+                                else: # next chapter only
+                                    #thisBook.appendLine( 'c', str(C) )
+                                    numV = verseList[C-1]
+                                    V = 1
+
+                            if haveParagraph:
+                                thisBook.appendLine( 'p', '' )
+                                haveParagraph = False
+
+                        else: # Should be module info at end of file (after all of the verse lines)
+                            #print ( lineCount, 'TW file line is "' + line + '"' )
+                            if not line: continue # Just discard additional blank lines
+                            if line[0] == '#': continue # Just discard comment lines
+                            if not continued:
+                                if '=' not in line:
+                                    logging.error( "Missing equals sign from info line: {} '{}'".format( lineCount, line ) )
+                                else: # Seems like a field=something type line
+                                    bits = line.split( '=', 1 )
+                                    assert( len(bits) == 2 )
+                                    fieldName = bits[0]
+                                    fieldContents = bits[1]
+                                    if line.endswith( '\\' ): continued = True
+                                    else: self.settingsDict[fieldName] = fieldContents
+                            else: # continued
+                                fieldContents += line
+                                if not line.endswith( '\\' ):
+                                    self.settingsDict[fieldName] = fieldContents
+                                    continued = False
+                        #if lineCount > 3:
+                            #self.saveBook( thisBook )
+                            #break
+
+                if lineCount < textLineCountExpected:
+                    logging.error( _("TheWord Bible module file seems too short: {}").format( self.sourceFilename ) )
+                self.encoding = encoding
+                break; # Get out of decoding loop because we were successful
+            except UnicodeDecodeError:
+                logging.critical( _("TheWord Bible module file fails with encoding: {} {}").format( self.sourceFilename, self.encoding ) )
+        #print( self.settingsDict ); halt
+        if 'description' in self.settingsDict and len(self.settingsDict['description'])<40: self.name = self.settingsDict['description']
+        if 'short.title' in self.settingsDict: self.shortName = self.settingsDict['short.title']
     # end of TheWordBible.load
 # end of TheWordBible class
 
@@ -323,21 +389,33 @@ def testTWB( TWBfolder, TWBfilename ):
     #TUBfolder = os.path.join( TWBfolder, TWBfilename )
     if Globals.verbosityLevel > 1: print( _("Demonstrating the TheWord Bible class...") )
     if Globals.verbosityLevel > 0: print( "  Test folder is '{}' '{}'".format( TWBfolder, TWBfilename ) )
-    ub = TheWordBible( TWBfolder, TWBfilename )
-    ub.load() # Load and process the file
-    if Globals.verbosityLevel > 1: print( ub ) # Just print a summary
-    for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
-                        ('OT','DAN','1','21'),
-                        ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \
-                        ('DC','BAR','1','1'), ('DC','MA1','1','1'), ('DC','MA2','1','1',), ):
-        (t, b, c, v) = reference
-        if t=='OT' and len(ub)==27: continue # Don't bother with OT references if it's only a NT
-        if t=='NT' and len(ub)==39: continue # Don't bother with NT references if it's only a OT
-        if t=='DC' and len(ub)<=66: continue # Don't bother with DC references if it's too small
-        svk = VerseReferences.SimpleVerseKey( b, c, v )
-        #print( svk, ob.getVerseDataList( reference ) )
-        shortText, verseText = svk.getShortText(), ub.getVerseText( svk )
-        if Globals.verbosityLevel > 1: print( reference, shortText, verseText )
+    tWb = TheWordBible( TWBfolder, TWBfilename )
+    tWb.load() # Load and process the file
+    if Globals.verbosityLevel > 1: print( tWb ) # Just print a summary
+    if tWb:
+        if Globals.strictCheckingFlag: tWb.check()
+        for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
+                            ('OT','DAN','1','21'),
+                            ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \
+                            ('DC','BAR','1','1'), ('DC','MA1','1','1'), ('DC','MA2','1','1',), ):
+            (t, b, c, v) = reference
+            if t=='OT' and len(tWb)==27: continue # Don't bother with OT references if it's only a NT
+            if t=='NT' and len(tWb)==39: continue # Don't bother with NT references if it's only a OT
+            if t=='DC' and len(tWb)<=66: continue # Don't bother with DC references if it's too small
+            svk = VerseReferences.SimpleVerseKey( b, c, v )
+            #print( svk, ob.getVerseDataList( reference ) )
+            shortText, verseText = svk.getShortText(), tWb.getVerseText( svk )
+            if Globals.verbosityLevel > 1: print( reference, shortText, verseText )
+
+        # Now export the Bible and compare the round trip
+        tWb.toTheWord()
+        #doaResults = tWb.doAllExports()
+        if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
+            outputFolder = "OutputFiles/BOS_TheWordReexport/"
+            if Globals.verbosityLevel > 1: print( "\nComparing original and re-exported theWord files..." )
+            result = Globals.fileCompare( TWBfilename, TWBfilename, testFolder, outputFolder )
+            if Globals.debugFlag:
+                if not result: halt
 # end of testTWB
 
 
@@ -352,7 +430,7 @@ def demo():
     testFolder = "Tests/DataFilesForTests/TheWordTest/"
 
 
-    if 1: # demo the file checking code -- first with the whole folder and then with only one folder
+    if 0: # demo the file checking code -- first with the whole folder and then with only one folder
         result1 = TheWordBibleFileCheck( testFolder )
         if Globals.verbosityLevel > 1: print( "TestA1", result1 )
         result2 = TheWordBibleFileCheck( testFolder, autoLoad=True )
@@ -367,7 +445,7 @@ def demo():
             if os.path.isdir( somepath ): foundFolders.append( something )
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
-        if Globals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
+        if 0 and Globals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
             if Globals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
             parameters = [filename for filename in sorted(foundFiles)]
             with multiprocessing.Pool( processes=Globals.maxProcesses ) as pool: # start worker processes
@@ -378,6 +456,7 @@ def demo():
                 if Globals.verbosityLevel > 1: print( "\n{}/ Trying {}".format( j+1, someFile ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testTWB( testFolder, someFile )
+                break # only do the first one.........temp
 # end of demo
 
 if __name__ == '__main__':

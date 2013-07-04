@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2013-06-24 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-04 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 """
 
 ProgName = "USFM Bible handler"
-ProgVersion = "0.35"
+ProgVersion = "0.36"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -170,14 +170,14 @@ class USFMBible( Bible ):
         self.USFMFilenamesObject = USFMFilenames( self.sourceFolder )
 
         # Attempt to load the SSF file
-        self.ssfFilepath = self.ssfData = None
+        self.ssfFilepath = self.settingsDict = None
         ssfFilepathList = self.USFMFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
         if len(ssfFilepathList) == 1: # Seems we found the right one
             self.ssfFilepath = ssfFilepathList[0]
             self.loadSSFData( self.ssfFilepath )
 
         self.name = self.givenName
-        if self.name is None and self.ssfData and 'Name' in self.ssfData: self.name = self.ssfData['Name']
+        if self.name is None and self.settingsDict and 'Name' in self.settingsDict: self.name = self.settingsDict['Name']
 
         self.maximumPossibleFilenameTuples = self.USFMFilenamesObject.getMaximumPossibleFilenameTuples()
         self.possibleFilenameDict = {}
@@ -190,7 +190,7 @@ class USFMBible( Bible ):
         """Process the SSF data from the given filepath.
             Returns a dictionary."""
         if Globals.verbosityLevel > 2: print( _("Loading SSF data from '{}'").format( ssfFilepath ) )
-        lastLine, lineCount, status, ssfData = '', 0, 0, {}
+        lastLine, lineCount, status, settingsDict = '', 0, 0, {}
         with open( ssfFilepath, encoding=encoding ) as myFile: # Automatically closes the file when done
             for line in myFile:
                 lineCount += 1
@@ -211,7 +211,7 @@ class USFMBible( Bible ):
                 elif status==1 and line[0]=='<' and line.endswith('/>'): # Handle a self-closing (empty) field
                     fieldname = line[1:-3] if line.endswith(' />') else line[1:-2] # Handle it with or without a space
                     if ' ' not in fieldname:
-                        ssfData[fieldname] = ''
+                        settingsDict[fieldname] = ''
                         processed = True
                     elif ' ' in fieldname: # Some fields (like "Naming") may contain attributes
                         bits = fieldname.split( None, 1 )
@@ -219,7 +219,7 @@ class USFMBible( Bible ):
                         fieldname = bits[0]
                         attributes = bits[1]
                         #print( "attributes = '{}'".format( attributes) )
-                        ssfData[fieldname] = (contents, attributes)
+                        settingsDict[fieldname] = (contents, attributes)
                         processed = True
                 elif status==1 and line[0]=='<' and line[-1]=='>':
                     ix1 = line.index('>')
@@ -228,7 +228,7 @@ class USFMBible( Bible ):
                         fieldname = line[1:ix1]
                         contents = line[ix1+1:ix2]
                         if ' ' not in fieldname and line[ix2+2:-1]==fieldname:
-                            ssfData[fieldname] = contents
+                            settingsDict[fieldname] = contents
                             processed = True
                         elif ' ' in fieldname: # Some fields (like "Naming") may contain attributes
                             bits = fieldname.split( None, 1 )
@@ -237,15 +237,15 @@ class USFMBible( Bible ):
                             attributes = bits[1]
                             #print( "attributes = '{}'".format( attributes) )
                             if line[ix2+2:-1]==fieldname:
-                                ssfData[fieldname] = (contents, attributes)
+                                settingsDict[fieldname] = (contents, attributes)
                                 processed = True
                 if not processed: print( "ERROR: Unexpected '{}' line in SSF file".format( line ) )
         if Globals.verbosityLevel > 2:
-            print( "  " + _("Got {} SSF entries:").format( len(ssfData) ) )
+            print( "  " + _("Got {} SSF entries:").format( len(settingsDict) ) )
             if Globals.verbosityLevel > 3:
-                for key in sorted(ssfData):
-                    print( "    {}: {}".format( key, ssfData[key] ) )
-        self.ssfData = ssfData
+                for key in sorted(settingsDict):
+                    print( "    {}: {}".format( key, settingsDict[key] ) )
+        self.settingsDict = settingsDict
     # end of USFMBible.loadSSFData
 
 

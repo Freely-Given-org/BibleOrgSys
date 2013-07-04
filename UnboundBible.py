@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # UnboundBible.py
-#   Last modified: 2013-06-24 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-04 by RJH (also update ProgVersion below)
 #
 # Module handling Biola University "unbound" Bible files
 #
@@ -273,6 +273,7 @@ class UnboundBible( Bible ):
                         elif hashBits[0] == 'language': self.language = hashBits[1]
                         elif hashBits[0] == 'note': self.note = hashBits[1]
                         elif hashBits[0] == 'columns': self.columns = hashBits[1]
+# Should some of these be placed into self.settingsDict???
                         logging.warning( "Unknown UnboundBible meta-data field '{}' = '{}'".format( hashBits[0], hashBits[1] ) )
                     continue # Just discard comment lines
 

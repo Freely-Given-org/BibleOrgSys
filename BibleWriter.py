@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-07-03 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-04 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -236,76 +236,12 @@ class BibleWriter( InternalBible ):
     # end of BibleWriter.toUSFM
 
 
-    def toUSFM( self, outputFolder=None ):
+    def toTheWord( self, outputFolder=None, controlDict=None ):
         """
-        Adjust the pseudo USFM and write the USFM files.
-        """
-        if Globals.verbosityLevel > 1: print( "Running BibleWriter:toUSFM..." )
-        if Globals.debugFlag: assert( self.books )
+        Using settings from the given control file,
+            converts the USFM information to a UTF-8 TheWord file.
 
-        if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolder: outputFolder = "OutputFiles/BOS_USFMExport/"
-        if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
-        #if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_MediaWiki_controls.txt", controlDict )
-        #assert( controlDict and isinstance( controlDict, dict ) )
-
-        allCharMarkers = Globals.USFMMarkers.getCharacterMarkersList( expandNumberableMarkers=True )
-
-
-        # Adjust the extracted outputs
-        for BBB,bookObject in self.books.items():
-            pseudoUSFMData = bookObject._processedLines
-            #print( "\pseudoUSFMData", pseudoUSFMData[:50] ); halt
-            USFMAbbreviation = Globals.BibleBooksCodes.getUSFMAbbreviation( BBB )
-            USFMNumber = Globals.BibleBooksCodes.getUSFMNumber( BBB )
-
-            USFM = ""
-            inField = None
-            if Globals.verbosityLevel > 2: print( "  " + _("Adjusting USFM output..." ) )
-            for pseudoMarker,originalMarker,text,cleanText,extras in pseudoUSFMData:
-                if (not USFM) and pseudoMarker!='id': # We need to create an initial id line
-                    USFM += '\\id {} -- BibleOrgSys USFM export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
-                if pseudoMarker in ('c#',): continue # Ignore our additions
-                value = cleanText # (temp)
-                if Globals.debugFlag and debuggingThisModule: print( "pseudoMarker = '{}' value = '{}'".format( pseudoMarker, value ) )
-                if pseudoMarker in ('v','f','fr','x','xo',): # These fields should always end with a space but the processing will have removed them
-                    if Globals.debugFlag: assert( value )
-                    if value[-1] != ' ': value += ' ' # Append a space since it didn't have one
-                if pseudoMarker[-1]=='~' or Globals.USFMMarkers.isNewlineMarker(pseudoMarker): # Have a continuation field
-                    if inField is not None:
-                        USFM += '\\{}*'.format( inField ) # Do a close marker for footnotes and cross-references
-                        inField = None
-                if pseudoMarker[-1]=='~': USFM += value
-                else: # not a continuation marker
-                    adjValue = value
-                    #if pseudoMarker in ('it','bk','ca','nd',): # Character markers to be closed -- had to remove ft and xt from this list for complex footnotes with f fr fq ft fq ft f*
-                    if pseudoMarker in allCharMarkers: # Character markers to be closed
-                        #if (USFM[-2]=='\\' or USFM[-3]=='\\') and USFM[-1]!=' ':
-                        if USFM[-1] != ' ':
-                            USFM += ' ' # Separate markers by a space e.g., \p\bk Revelation
-                            if Globals.debugFlag: print( "USFM: Added space to '{}' before '{}'".format( USFM[-2], pseudoMarker ) )
-                        adjValue += '\\{}*'.format( pseudoMarker ) # Do a close marker
-                    elif pseudoMarker in ('f','x',): inField = pseudoMarker # Remember these so we can close them later
-                    elif pseudoMarker in ('fr','fq','ft','xo',): USFM += '' # These go on the same line just separated by spaces and don't get closed
-                    elif USFM: USFM += '\n' # paragraph markers go on a new line
-                    if not value: USFM += '\\{}'.format( pseudoMarker )
-                    else: USFM += '\\{} {}'.format( pseudoMarker,adjValue )
-                #print( pseudoMarker, USFM[-200:] )
-
-            # Write the USFM output
-            #print( "\nUSFM", USFM[:3000] )
-            filename = "{}{}BWr.SFM".format( USFMNumber, USFMAbbreviation.upper() ) # This seems to be the undocumented standard filename format (and BWr = BibleWriter)
-            #if not os.path.exists( USFMOutputFolder ): os.makedirs( USFMOutputFolder )
-            filepath = os.path.join( outputFolder, filename )
-            if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
-            with open( filepath, 'wt' ) as myFile: myFile.write( USFM )
-        return True
-    # end of BibleWriter.toUSFM
-
-
-    def toTheWord( self, outputFolder=None ):
-        """
-        Adjust the pseudo USFM and write the USFM files.
+        This format is roughly documented at http://www.theword.net/index.php?article.tools&l=english
         """
         if Globals.verbosityLevel > 1: print( "Running BibleWriter:toTheWord..." )
         if Globals.debugFlag: assert( self.books )
@@ -313,61 +249,144 @@ class BibleWriter( InternalBible ):
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = "OutputFiles/BOS_TheWordExport/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
-        #if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_MediaWiki_controls.txt", controlDict )
-        #assert( controlDict and isinstance( controlDict, dict ) )
+        if not controlDict:
+            controlDict, defaultControlFilename = {}, "To_TheWord_controls.txt"
+            try:
+                ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
+            except:
+                logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
+        if Globals.debugFlag: assert( controlDict and isinstance( controlDict, dict ) )
 
-        allCharMarkers = Globals.USFMMarkers.getCharacterMarkersList( expandNumberableMarkers=True )
+        unhandledMarkers = set()
 
 
-        # Adjust the extracted outputs
-        for BBB,bookObject in self.books.items():
-            pseudoUSFMData = bookObject._processedLines
-            #print( "\pseudoUSFMData", pseudoUSFMData[:50] ); halt
-            USFMAbbreviation = Globals.BibleBooksCodes.getUSFMAbbreviation( BBB )
-            USFMNumber = Globals.BibleBooksCodes.getUSFMNumber( BBB )
+        def adjustLine( originalLine ):
+            line = originalLine
+            line = line.replace('\\add ','<FI>').replace('\\add*','<Fi>')
+            line = line.replace('\\qt ','<FO>').replace('\\qt*','<Fo>')
+            line = line.replace('\\wj ','<FR>').replace('\\wj*','<Fr>')
+            line = line.replace('\\f ','<RF>').replace('\\f*','<Rf>')
+            line = line.replace('\\x ','<RX>').replace('\\x*','<Rx>')
 
-            USFM = ""
-            inField = None
-            if Globals.verbosityLevel > 2: print( "  " + _("Adjusting USFM output..." ) )
-            for pseudoMarker,originalMarker,text,cleanText,extras in pseudoUSFMData:
-                if (not USFM) and pseudoMarker!='id': # We need to create an initial id line
-                    USFM += '\\id {} -- BibleOrgSys TheWord export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
-                if pseudoMarker in ('c#',): continue # Ignore our additions
-                value = cleanText # (temp)
-                if Globals.debugFlag and debuggingThisModule: print( "pseudoMarker = '{}' value = '{}'".format( pseudoMarker, value ) )
-                if pseudoMarker in ('v','f','fr','x','xo',): # These fields should always end with a space but the processing will have removed them
-                    if Globals.debugFlag: assert( value )
-                    if value[-1] != ' ': value += ' ' # Append a space since it didn't have one
-                if pseudoMarker[-1]=='~' or Globals.USFMMarkers.isNewlineMarker(pseudoMarker): # Have a continuation field
-                    if inField is not None:
-                        USFM += '\\{}*'.format( inField ) # Do a close marker for footnotes and cross-references
-                        inField = None
-                if pseudoMarker[-1]=='~': USFM += value
-                else: # not a continuation marker
-                    adjValue = value
-                    #if pseudoMarker in ('it','bk','ca','nd',): # Character markers to be closed -- had to remove ft and xt from this list for complex footnotes with f fr fq ft fq ft f*
-                    if pseudoMarker in allCharMarkers: # Character markers to be closed
-                        #if (USFM[-2]=='\\' or USFM[-3]=='\\') and USFM[-1]!=' ':
-                        if USFM[-1] != ' ':
-                            USFM += ' ' # Separate markers by a space e.g., \p\bk Revelation
-                            if Globals.debugFlag: print( "toTheWord: Added space to '{}' before '{}'".format( USFM[-2], pseudoMarker ) )
-                        adjValue += '\\{}*'.format( pseudoMarker ) # Do a close marker
-                    elif pseudoMarker in ('f','x',): inField = pseudoMarker # Remember these so we can close them later
-                    elif pseudoMarker in ('fr','fq','ft','xo',): USFM += '' # These go on the same line just separated by spaces and don't get closed
-                    elif USFM: USFM += '\n' # paragraph markers go on a new line
-                    if not value: USFM += '\\{}'.format( pseudoMarker )
-                    else: USFM += '\\{} {}'.format( pseudoMarker,adjValue )
-                #print( pseudoMarker, USFM[-200:] )
+            # Simple HTML tags (with no semantic info)
+            line = line.replace('\\bd ','<b>',).replace('\\bd*','</b>')
+            line = line.replace('\\it ','<i>').replace('\\it*','</i>')
 
-            # Write the USFM output
-            #print( "\nUSFM", USFM[:3000] )
-            filename = "{}{}BWr.SFM".format( USFMNumber, USFMAbbreviation.upper() ) # This seems to be the undocumented standard filename format (and BWr = BibleWriter)
-            #if not os.path.exists( USFMOutputFolder ): os.makedirs( USFMOutputFolder )
-            filepath = os.path.join( outputFolder, filename )
-            if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
-            with open( filepath, 'wt' ) as myFile: myFile.write( USFM )
+            # Check what's left at the end
+            if '\\' in line:
+                logging.error( "toTheWord.writeLine: Doesn't handle formatted line yet: '{}'".format( line ) )
+            return line
+
+
+        def writeVerseLine( writerObject, BBB, C, V, verseData ):
+            """
+            Writes a single line to the file representing a verse.
+            """
+            #print( "writeVerseLine {} {}:{} {}".format( BBB, C, V, verseData ) )
+            for marker,originalMarker,text,cleanText,extras in verseData:
+                if marker in ('c','c#','v'):
+                    pass # ignore all of these
+                elif marker == 'v~':
+                    line = text
+                    #print( BBB, C, V, line )
+
+                    # Adjust formatting
+                    #if line.endswith( '<CM>' ): # Means start a new paragraph after this line
+                        #assert( not haveParagraph )
+                        #line = line[:-4] # Remove the marker
+                        #haveParagraph = True
+
+                    line = adjustLine ( line )
+                    writerObject.write( line + '\n' )
+                else:
+                    unhandledMarkers.add( marker )
+        # end of toTheWord.writeVerseLine
+
+
+        def writeBook( writerObject, BBB ):
+            """
+            Writes a book to the TheWord writerObject file.
+            """
+            bkData = self.books[BBB] if BBB in self.books else None
+            #print( bkData._processedLines )
+            verseList = BOS.getNumVersesList( BBB )
+            numC, numV = len(verseList), verseList[0]
+
+            if bkData: # Write book headings
+                V = 0
+                while True:
+                    result = bkData.getCVRef( (BBB,'0',str(V),) ) # Current this only gets one line
+                    if result:
+                        verseData, context = result
+                        #print( "vD0", len(verseData), verseData )
+                        for marker,originalMarker,text,cleanText,extras in verseData:
+                            #print( marker, cleanText )
+                            if marker=='mt1': composedLine = '<TS1>'+adjustLine(text)+'<Ts1>'
+                            elif marker=='mt2': composedLine = '<TS2>'+adjustLine(text)+'<Ts2>'
+                            elif marker=='mt3': composedLine = '<TS3>'+adjustLine(text)+'<Ts3>'
+                            else: halt # programming error
+                            writerObject.write( composedLine )
+                        V += 1
+                    else: break
+
+            # Write the verses
+            C = V = 1
+            while True:
+                if bkData:
+                    result = bkData.getCVRef( (BBB,str(C),str(V),) )
+                    if result:
+                        verseData, context = result
+                        if verseData: writeVerseLine( writerObject, BBB, C, V, verseData )
+                        else: writerObject.write( '\n' ) # no verseData
+                    else: writerObject.write( '\n' ) # no result
+                else: writerObject.write( '\n' ) # no bkData
+                V += 1
+                if V > numV:
+                    C += 1
+                    if C > numC:
+                        return
+                    else: # next chapter only
+                        numV = verseList[C-1]
+                        V = 1
+        # end of toTheWord.writeBook
+
+
+        # Set-up their Bible reference system
+        BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
+        #BRL = BibleReferenceList( BOS, BibleObject=None )
+
+        if len(self) >= 66:
+            testament, extension, startBBB, endBBB = 'BOTH', '.ont', 'GEN', 'REV'
+            booksExpected, textLineCountExpected = 66, 31102
+        elif len(self) <= 39 and 'GEN' in self:
+            testament, extension, startBBB, endBBB = 'OT', '.ot', 'GEN', 'MAL'
+            booksExpected, textLineCountExpected = 39, 23145
+        elif len(self) <= 27 and 'MAT' in self:
+            testament, extension, startBBB, endBBB = 'NT', '.nt', 'MAT', 'REV'
+            booksExpected, textLineCountExpected = 27, 7957
+
+        if Globals.verbosityLevel > 1: print( _("Exporting to theWord format...") )
+        if 'TheWordOutputFilename' in controlDict: filename = controlDict["TheWordOutputFilename"]
+        else: filename = self.sourceFilename
+        if not filename.endswith( extension ): filename += extension # MAke sure that we have the right file extension
+        filepath = os.path.join( outputFolder, filename )
+        if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
+        with open( filepath, 'wt' ) as myFile:
+            BBB = startBBB
+            while True: # Write each Bible book
+                writeBook( myFile, BBB )
+                if BBB == endBBB: break
+                BBB = BOS.getNextBookCode( BBB )
+            # Now append the various settings if any
+            for key in self.settingsDict:
+                myFile.write( "{}={}\n".format( key, self.settingsDict[key] ) )
+        if unhandledMarkers:
+            logging.warning( "toTheWord: Unhandled USFM markers were {}".format( unhandledMarkers ) )
+            if Globals.verbosityLevel > 1:
+                print( "  " + _("WARNING: Unhandled toTheWord USFM markers were {}").format( unhandledMarkers ) )
         return True
     # end of BibleWriter.toTheWord
+
 
 
     def toMediaWiki( self, outputFolder=None, controlDict=None, validationSchema=None ):
@@ -458,7 +477,7 @@ class BibleWriter( InternalBible ):
                             logging.warning( _("toMediaWiki: Unprocessed '{}' token in {} xref '{}'").format( token, toWikiMediaGlobals["verseRef"], USFMxref ) )
                     OSISxref += '</note>'
                     return OSISxref
-                # end of processXRef
+                # end of toMediaWiki.processXRef
 
                 def processFootnote( USFMfootnote ):
                     """
@@ -496,7 +515,7 @@ class BibleWriter( InternalBible ):
                     OSISfootnote += '</note>'
                     #print( '', OSISfootnote )
                     return OSISfootnote
-                # end of processFootnote
+                # end of toMediaWiki.processFootnote
 
                 while '\\x ' in verse and '\\x*' in verse: # process cross-references (xrefs)
                     ix1 = verse.index('\\x ')
@@ -525,7 +544,7 @@ class BibleWriter( InternalBible ):
                     verse = verse[:ix1] + osisFootnote + verse[ix2+3:]
 #                    verse = verse[:ix1] + osisFootnote + verse[ix2b:]
                 return verse
-            # end of processXRefsAndFootnotes
+            # end of toMediaWiki.processXRefsAndFootnotes
 
             bookRef = Globals.BibleBooksCodes.getOSISAbbreviation( BBB ) # OSIS book name
             if bookRef is None:
@@ -536,30 +555,30 @@ class BibleWriter( InternalBible ):
             #chapterNumberString = None
             for marker,originalMarker,text,cleanText,extras in bkData._processedLines: # Process USFM lines
                 #print( "toMediaWiki:writeBook", BBB, bookRef, bookName, marker, text, extras )
-                if marker in ("id","h","mt1"):
+                if marker in ('id','h','mt1'):
                     writerObject.writeLineComment( '\\{} {}'.format( marker, text ) )
                     bookName = text # in case there's no toc2 entry later
-                elif marker=="toc2":
+                elif marker == 'toc2':
                     bookName = text
-                elif marker=="li":
+                elif marker == 'li':
                     # :<!-- \li -->text
                     writerObject.writeLineText( ":" )
                     writerObject.writeLineComment( '\\li' )
                     writerObject.writeLineText( text )
-                elif marker=="c":
+                elif marker == 'c':
                     chapterNumberString = text
                     chapterRef = bookRef + '.' + chapterNumberString
                     # Bible:BookName_#
                     if bookName: writerObject.writeLineText( 'Bible:{}_{}'.format(bookName, chapterNumberString) )
-                elif marker=="s1":
+                elif marker == 's1':
                     # === text ===
                     writerObject.writeLineText( '=== {} ==='.format(text) )
-                elif marker=="r":
+                elif marker == 'r':
                     # <span class="srefs">text</span>
                     if text: writerObject.writeLineOpenClose( 'span', text, ('class','srefs') )
-                elif marker=='p':
+                elif marker == 'p':
                     writerObject.writeNewLine( 2 );
-                elif marker=='v':
+                elif marker == 'v':
                     #if not chapterNumberString: # some single chapter books don't have a chapter number marker in them
                     #    if Globals.debugFlag: assert( BBB in Globals.BibleBooksCodes.getSingleChapterBooksList() )
                     #    chapterNumberString = '1'
@@ -567,25 +586,25 @@ class BibleWriter( InternalBible ):
                     verseNumberString = text # Gets written with in the v~ line
                     # <span id="chapter#_#"><sup>#</sup> text</span>
                     #writerObject.writeLineOpenClose( 'span', '<sup>{}</sup> {}'.format(verseNumberString,adjText), ('id',"chapter{}_{}".format(chapterNumberString, verseNumberString) ), noTextCheck=True )
-                elif marker=='v~':
+                elif marker == 'v~':
                     # TODO: We haven't stripped out character fields from within the verse -- not sure how MediaWiki handles them yet
                     if not text: # this is an empty (untranslated) verse
                         adjText = '- - -' # but we'll put in a filler
                     else: adjText = processXRefsAndFootnotes( text, extras )
                     # <span id="chapter#_#"><sup>#</sup> text</span>
                     writerObject.writeLineOpenClose( 'span', '<sup>{}</sup> {}'.format(verseNumberString,adjText), ('id',"chapter{}_{}".format(chapterNumberString, verseNumberString) ), noTextCheck=True )
-                elif marker=="q1":
+                elif marker == 'q1':
                     adjText = processXRefsAndFootnotes( verseText, extras )
                     writerObject.writeLineText( ':{}'.format(adjText, noTextCheck=True) ) # No check so it doesn't choke on embedded xref and footnote fields
-                elif marker=="q2":
+                elif marker == 'q2':
                     adjText = processXRefsAndFootnotes( verseText, extras )
                     writerObject.writeLineText( '::{}'.format(adjText, noTextCheck=True) )
-                elif marker=='m': # Margin/Flush-left paragraph
+                elif marker == 'm': # Margin/Flush-left paragraph
                     adjText = processXRefsAndFootnotes( verseText, extras )
                     writerObject.writeLineText( '::{}'.format(adjText, noTextCheck=True) )
-                else:
+                elif marker not in ('c#',): # These are the markers that we can safely ignore for this export
                     unhandledMarkers.add( marker )
-        # end of toMediaWiki:writeBook
+        # end of toMediaWiki.writeBook
 
         # Set-up our Bible reference system
         if controlDict['PublicationCode'] == "GENERIC":
@@ -654,7 +673,7 @@ class BibleWriter( InternalBible ):
             if "ZefaniaLanguage" in controlDict and controlDict["ZefaniaLanguage"]: writerObject.writeLineOpenClose( 'language', controlDict["ZefaniaLanguage"] )
             if "ZefaniaRights" in controlDict and controlDict["ZefaniaRights"]: writerObject.writeLineOpenClose( 'rights', controlDict["ZefaniaRights"] )
             writerObject.writeLineClose( 'INFORMATION' )
-        # end of toZefaniaXML:writeHeader
+        # end of toZefaniaXML.writeHeader
 
         def writeBook( writerObject, BBB, bkData ):
             """Writes a book to the Zefania XML writerObject."""
@@ -665,28 +684,29 @@ class BibleWriter( InternalBible ):
             writerObject.writeLineOpen( 'BIBLEBOOK', [('bnumber',Globals.BibleBooksCodes.getReferenceNumber(BBB)), ('bname',Globals.BibleBooksCodes.getEnglishName_NR(BBB)), ('bsname',OSISAbbrev)] )
             haveOpenChapter = False
             for marker,originalMarker,text,cleanText,extras in bkData._processedLines: # Process USFM lines
-                if marker=="c":
+                if marker == 'c':
                     if haveOpenChapter:
                         writerObject.writeLineClose ( 'CHAPTER' )
                     writerObject.writeLineOpen ( 'CHAPTER', ('cnumber',text) )
                     haveOpenChapter = True
-                elif marker=='v':
+                elif marker == 'v':
                     #print( "Text '{}'".format( text ) )
                     if not text: logging.warning( "toZefaniaXML: Missing text for v" ); continue
                     verseNumberString = text.replace('<','').replace('>','').replace('"','') # Used below but remove anything that'll cause a big XML problem later
                     #writerObject.writeLineOpenClose ( 'VERS', verseText, ('vnumber',verseNumberString) )
-                elif marker=='v~':
+                elif marker == 'v~':
                     #print( "Text '{}'".format( text ) )
                     if not text: logging.warning( "toZefaniaXML: Missing text for v~" ); continue
                     # TODO: We haven't stripped out character fields from within the verse -- not sure how Zefania handles them yet
                     if not text: # this is an empty (untranslated) verse
                         text = '- - -' # but we'll put in a filler
                     writerObject.writeLineOpenClose ( 'VERS', text, ('vnumber',verseNumberString) )
-                else: unhandledMarkers.add( marker )
+                elif marker not in ('c#',): # These are the markers that we can safely ignore for this export
+                    unhandledMarkers.add( marker )
             if haveOpenChapter:
                 writerObject.writeLineClose( 'CHAPTER' )
             writerObject.writeLineClose( 'BIBLEBOOK' )
-        # end of toZefaniaXML:writeBook
+        # end of toZefaniaXML.writeBook
 
         # Set-up our Bible reference system
         if controlDict['PublicationCode'] == "GENERIC":
@@ -986,7 +1006,7 @@ class BibleWriter( InternalBible ):
                     offset -= len( extra )
                     #print( "now", verse )
                 return adjText
-            # end of handleNotes
+            # end of toUSXXML.handleNotes
 
             USXAbbrev = Globals.BibleBooksCodes.getUSFMAbbreviation( BBB ).upper()
             USXNumber = Globals.BibleBooksCodes.getUSXNumber( BBB )
@@ -1265,7 +1285,7 @@ class BibleWriter( InternalBible ):
             writerObject.writeLineOpenClose( 'refSystem', "Bible" )
             writerObject.writeLineClose( 'work' )
             writerObject.writeLineClose( 'header' )
-        # end of toOSISXML:writeHeader
+        # end of toOSISXML.writeHeader
 
         toOSISGlobals = { "verseRef":'', "XRefNum":0, "FootnoteNum":0, "lastRef":'', "OneChapterOSISBookCodes":Globals.BibleBooksCodes.getOSISSingleChapterBooksList() } # These are our global variables
 
@@ -1318,7 +1338,7 @@ class BibleWriter( InternalBible ):
                     print( _("toOSIS: We still have some unprocessed backslashes for OSIS in {}: '{}' field is '{}'").format( toOSISGlobals["verseRef"], marker, textToCheck ), file=sys.stderr )
                     adjText = adjText.replace('\\','ENCODING ERROR HERE ' )
                 return adjText
-            # end of checkText
+            # end of toOSISXML.checkText
 
             def processXRefsAndFootnotes( verse, extras, offset=0 ):
                 """Convert cross-references and footnotes and return the adjusted verse text."""
@@ -1389,7 +1409,7 @@ class BibleWriter( InternalBible ):
                             logging.warning( _("toOSIS: Unprocessed '{}' token in {} xref '{}'").format( token, toOSISGlobals["verseRef"], USFMxref ) )
                     OSISxref += '</note>'
                     return OSISxref
-                # end of processXRef
+                # end of toOSISXML.processXRef
 
                 def processFootnote( USFMfootnote ):
                     """
@@ -1429,7 +1449,7 @@ class BibleWriter( InternalBible ):
                     #print( '', OSISfootnote )
                     #if currentChapterNumberString=='5' and verseNumberString=='29': halt
                     return OSISfootnote
-                # end of processFootnote
+                # end of toOSISXML.processFootnote
 
                 #if extras: print( '\n', chapterRef )
                 if Globals.debugFlag: assert( offset >= 0 )
@@ -1458,7 +1478,7 @@ class BibleWriter( InternalBible ):
                     offset -= len( extra )
                     #print( "now", verse )
                 return verse
-            # end of processXRefsAndFootnotes
+            # end of toOSISXML.processXRefsAndFootnotes
 
             def writeVerseStart( writerObject, BBB, chapterRef, verseNumberText ):
                 """
@@ -1507,7 +1527,7 @@ class BibleWriter( InternalBible ):
                 #adjText = processXRefsAndFootnotes( verseText, extras, offset )
                 #writerObject.writeLineText( checkText(adjText), noTextCheck=True )
                 ##writerObject.writeLineOpenSelfclose( 'verse', ('eID',sID) )
-            # end of writeVerseStart
+            # end of toOSISXML.writeVerseStart
 
             def closeAnyOpenMajorSection():
                 """ Close a <div> if it's open. """
@@ -1515,7 +1535,7 @@ class BibleWriter( InternalBible ):
                 if haveOpenMajorSection:
                     writerObject.writeLineClose( 'div' )
                     haveOpenMajorSection = False
-            # end of closeAnyOpenMajorSection
+            # end of toOSISXML.closeAnyOpenMajorSection
 
             def closeAnyOpenSection():
                 """ Close a <div> if it's open. """
@@ -1540,7 +1560,7 @@ class BibleWriter( InternalBible ):
                 if haveOpenSection:
                     writerObject.writeLineClose( 'div' )
                     haveOpenSection = False
-            # end of closeAnyOpenSection
+            # end of toOSISXML.closeAnyOpenSection
 
             def closeAnyOpenSubsection():
                 """ Close a <div> if it's open. """
@@ -1548,7 +1568,7 @@ class BibleWriter( InternalBible ):
                 if haveOpenSubsection:
                     writerObject.writeLineClose( 'div' )
                     haveOpenSubsection = False
-            # end of closeAnyOpenSubsection
+            # end of toOSISXML.closeAnyOpenSubsection
 
             def closeAnyOpenParagraph():
                 """ Close a <p> if it's open. """
@@ -1556,7 +1576,7 @@ class BibleWriter( InternalBible ):
                 if haveOpenParagraph:
                     writerObject.writeLineClose( 'p' )
                     haveOpenParagraph = False
-            # end of closeAnyOpenParagraph
+            # end of toOSISXML.closeAnyOpenParagraph
 
             def closeAnyOpenLG():
                 """ Close a <lg> if it's open. """
@@ -1565,7 +1585,7 @@ class BibleWriter( InternalBible ):
                     #print( "closeAnyOpenLG", toOSISGlobals["verseRef"] )
                     writerObject.writeLineClose( 'lg' )
                     haveOpenLG = False
-            # end of closeAnyOpenLG
+            # end of toOSISXML.closeAnyOpenLG
 
             def closeAnyOpenL():
                 """ Close a <l> if it's open. """
@@ -1573,7 +1593,7 @@ class BibleWriter( InternalBible ):
                 if haveOpenL:
                     writerObject.writeLineClose( 'l' )
                     haveOpenL = False
-            # end of closeAnyOpenL
+            # end of toOSISXML.closeAnyOpenL
 
             bookRef = Globals.BibleBooksCodes.getOSISAbbreviation( BBB ) # OSIS book name
             if not bookRef:
@@ -1761,7 +1781,7 @@ class BibleWriter( InternalBible ):
             closeAnyOpenMajorSection()
             writerObject.writeLineClose( 'div' ) # Close book division
             writerObject.writeNewLine()
-        # end of toOSISXML:writeBook
+        # end of toOSISXML.writeBook
 
         if controlDict["osisFiles"]=="byBook": # Write an individual XML file for each book
             if Globals.verbosityLevel > 1: print( _("Exporting individually to OSIS XML format...") )
@@ -1903,7 +1923,7 @@ class BibleWriter( InternalBible ):
             indexFile.write( struct.pack( "IH", toSwordGlobals['offset'], toSwordGlobals['length'] ) )
             toSwordGlobals['offset'] = writerObject.getFilePosition() # Get the new offset
             toSwordGlobals['length'] = 0 # Reset
-        # end of toSwordModule:writeIndexEntry
+        # end of toSwordModule.writeIndexEntry
 
         def writeBook( writerObject, ix, BBB, bkData ):
             """ Writes a Bible book to the output files. """
@@ -1922,7 +1942,7 @@ class BibleWriter( InternalBible ):
                         count1, count2 = helpText.count('\\'+marker+' '), helpText.count('\\'+marker+'*') # count open and close markers again
                     if Globals.debugFlag: assert( count1 == count2 )
                     return helpText
-                # end of checkTextHelper
+                # end of toSwordModule.checkTextHelper
 
                 adjText = textToCheck
                 if '<<' in adjText or '>>' in adjText:
@@ -1941,7 +1961,7 @@ class BibleWriter( InternalBible ):
                     logging.error( _("toSword: We still have some unprocessed backslashes for Sword in {}: '{}' field is '{}'").format(toSwordGlobals["verseRef"],marker,textToCheck) )
                     adjText = adjText.replace('\\','ENCODING ERROR HERE ' )
                 return adjText
-            # end of checkText
+            # end of toSwordModule.checkText
 
             def processXRefsAndFootnotes( verse, extras ):
                 """Convert cross-references and footnotes and return the adjusted verse text."""
@@ -1995,7 +2015,7 @@ class BibleWriter( InternalBible ):
                             logging.warning( _("toSword: Unprocessed '{}' token in {} xref '{}'").format(token, toSwordGlobals["verseRef"], USFMxref) )
                     OSISxref += '</note>'
                     return OSISxref
-                # end of processXRef
+                # end of toSwordModule.processXRef
 
                 def processFootnote( USFMfootnote ):
                     """
@@ -2033,7 +2053,7 @@ class BibleWriter( InternalBible ):
                     OSISfootnote += '</note>'
                     #print( '', OSISfootnote )
                     return OSISfootnote
-                # end of processFootnote
+                # end of toSwordModule.processFootnote
 
                 while '\\x ' in verse and '\\x*' in verse: # process cross-references (xrefs)
                     ix1 = verse.index('\\x ')
@@ -2062,7 +2082,7 @@ class BibleWriter( InternalBible ):
                     verse = verse[:ix1] + osisFootnote + verse[ix2+3:]
 #                    verse = verse[:ix1] + osisFootnote + verse[ix2b:]
                 return verse
-            # end of processXRefsAndFootnotes
+            # end of toSwordModule.processXRefsAndFootnotes
 
             def writeVerseStart( writerObject, BBB, chapterRef, verseNumberString ):
                 """
@@ -2108,7 +2128,7 @@ class BibleWriter( InternalBible ):
                 #writerObject.writeLineText( checkText(adjText), noTextCheck=True )
                 ##writerObject.writeLineOpenSelfclose( 'verse', ('eID',sID) )
                 #writeIndexEntry( writerObject, indexFile )
-            # end of writeVerseStart
+            # end of toSwordModule.writeVerseStart
 
             def closeAnyOpenMajorSection():
                 """ Close a <div> if it's open. """
@@ -2116,7 +2136,7 @@ class BibleWriter( InternalBible ):
                 if haveOpenMajorSection:
                     writerObject.writeLineClose( 'div' )
                     haveOpenMajorSection = False
-            # end of closeAnyOpenMajorSection
+            # end of toSwordModule.closeAnyOpenMajorSection
 
             def closeAnyOpenSection():
                 """ Close a <div> if it's open. """
@@ -2124,7 +2144,7 @@ class BibleWriter( InternalBible ):
                 if haveOpenSection:
                     writerObject.writeLineClose( 'div' )
                     haveOpenSection = False
-            # end of closeAnyOpenSection
+            # end of toSwordModule.closeAnyOpenSection
 
             def closeAnyOpenSubsection():
                 """ Close a <div> if it's open. """
@@ -2132,7 +2152,7 @@ class BibleWriter( InternalBible ):
                 if haveOpenSubsection:
                     writerObject.writeLineClose( 'div' )
                     haveOpenSubsection = False
-            # end of closeAnyOpenSubsection
+            # end of toSwordModule.closeAnyOpenSubsection
 
             def closeAnyOpenParagraph():
                 """ Close a <p> if it's open. """
@@ -2140,7 +2160,7 @@ class BibleWriter( InternalBible ):
                 if haveOpenParagraph:
                     writerObject.writeLineOpenSelfclose( 'div', [('eID',toSwordGlobals['idStack'].pop()), ('type',"paragraph")] )
                     haveOpenParagraph = False
-            # end of closeAnyOpenParagraph
+            # end of toSwordModule.closeAnyOpenParagraph
 
             def closeAnyOpenLG():
                 """ Close a <lg> if it's open. """
@@ -2148,7 +2168,7 @@ class BibleWriter( InternalBible ):
                 if haveOpenLG:
                     writerObject.writeLineClose( 'lg' )
                     haveOpenLG = False
-            # end of closeAnyOpenLG
+            # end of toSwordModule.closeAnyOpenLG
 
             def closeAnyOpenL():
                 """ Close a <l> if it's open. """
@@ -2156,20 +2176,20 @@ class BibleWriter( InternalBible ):
                 if haveOpenL:
                     writerObject.writeLineClose( 'l' )
                     haveOpenL = False
-            # end of closeAnyOpenL
+            # end of toSwordModule.closeAnyOpenL
 
             def getNextID():
                 """ Returns the next sID sequence code. """
                 toSwordGlobals['currentID'] += 1
                 return "gen{}".format(toSwordGlobals['currentID'])
-            # end of getNextID
+            # end of toSwordModule.getNextID
 
             def getSID():
                 """ Returns a tuple containing ('sID', getNextID() ). """
                 ID = getNextID()
                 toSwordGlobals['idStack'].append( ID )
                 return ('sID', ID )
-            # end of getSID
+            # end of toSwordModule.getSID
 
             bookRef = Globals.BibleBooksCodes.getOSISAbbreviation( BBB ) # OSIS book name
             writerObject.writeLineOpen( 'div', [('osisID',bookRef), getSID(), ('type',"book")] )
@@ -2365,7 +2385,7 @@ class BibleWriter( InternalBible ):
             closeAnyOpenMajorSection()
             writerObject.writeLineClose( 'div' ) # Close book division
             writerObject.writeNewLine()
-        # end of toSwordModule:writeBook
+        # end of toSwordModule.writeBook
 
         # An uncompressed Sword module consists of a .conf file
         #   plus ot and nt XML files with binary indexes ot.vss and nt.vss (containing 6-byte chunks = 4-byte offset, 2-byte length)
@@ -2661,7 +2681,7 @@ class BibleWriter( InternalBible ):
         """
         """
         if Globals.verbosityLevel > 1: print( _("BibleWriter.doAllExports: Exporting {} ({}) to all formats...").format( self.name, self.objectTypeString ) )
-        if givenOutputFolderName == None: givenOutputFolderName = "OutputFiles"
+        if givenOutputFolderName == None: givenOutputFolderName = "OutputFiles/"
 
         if Globals.debugFlag: assert( givenOutputFolderName and isinstance( givenOutputFolderName, str ) )
         # Check that the given folder is readable
@@ -2670,16 +2690,16 @@ class BibleWriter( InternalBible ):
             return False
 
         # Define our various output folders
-        PseudoUSFMOutputFolder = os.path.join( givenOutputFolderName, "BOS_PseudoUSFM" + "Export" )
-        USFMOutputFolder = os.path.join( givenOutputFolderName, "BOS_USFM" + ("Reexport" if self.objectTypeString=='USFM' else "Export" ) )
-        TWOutputFolder = os.path.join( givenOutputFolderName, "BOS_TheWord" + ("Reexport" if self.objectTypeString=='TheWord' else "Export" ) )
-        MWOutputFolder = os.path.join( givenOutputFolderName, "BOS_MediaWiki" + ("Reexport" if self.objectTypeString=='MediaWiki' else "Export" ) )
-        zOutputFolder = os.path.join( givenOutputFolderName, "BOS_Zefania" + ("Reexport" if self.objectTypeString=='Zefania' else "Export" ) )
-        USXOutputFolder = os.path.join( givenOutputFolderName, "BOS_USX" + ("Reexport" if self.objectTypeString=='USX' else "Export" ) )
-        OSISOutputFolder = os.path.join( givenOutputFolderName, "BOS_OSIS" + ("Reexport" if self.objectTypeString=='OSIS' else "Export" ) )
-        swOutputFolder = os.path.join( givenOutputFolderName, "BOS_Sword" + ("Reexport" if self.objectTypeString=='Sword' else "Export" ) )
-        htmlOutputFolder = os.path.join( givenOutputFolderName, "BOS_HTML5" + "Export" )
-        pickleOutputFolder = os.path.join( givenOutputFolderName, "BOS_Bible_Object_Pickle" )
+        PseudoUSFMOutputFolder = os.path.join( givenOutputFolderName, "BOS_PseudoUSFM" + "Export/" )
+        USFMOutputFolder = os.path.join( givenOutputFolderName, "BOS_USFM" + ("Reexport/" if self.objectTypeString=='USFM' else "Export/" ) )
+        TWOutputFolder = os.path.join( givenOutputFolderName, "BOS_TheWord" + ("Reexport/" if self.objectTypeString=='TheWord' else "Export/" ) )
+        MWOutputFolder = os.path.join( givenOutputFolderName, "BOS_MediaWiki" + ("Reexport/" if self.objectTypeString=='MediaWiki' else "Export/" ) )
+        zOutputFolder = os.path.join( givenOutputFolderName, "BOS_Zefania" + ("Reexport/" if self.objectTypeString=='Zefania' else "Export/" ) )
+        USXOutputFolder = os.path.join( givenOutputFolderName, "BOS_USX" + ("Reexport/" if self.objectTypeString=='USX' else "Export/" ) )
+        OSISOutputFolder = os.path.join( givenOutputFolderName, "BOS_OSIS" + ("Reexport/" if self.objectTypeString=='OSIS' else "Export/" ) )
+        swOutputFolder = os.path.join( givenOutputFolderName, "BOS_Sword" + ("Reexport/" if self.objectTypeString=='Sword' else "Export/" ) )
+        htmlOutputFolder = os.path.join( givenOutputFolderName, "BOS_HTML5" + "Export/" )
+        pickleOutputFolder = os.path.join( givenOutputFolderName, "BOS_Bible_Object_Pickle/" )
 
         # Don't know why this causes a seg fault
         #if Globals.debugFlag: self.pickle( folder=pickleOutputFolder ) # halts if fails

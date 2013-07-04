@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USXXMLBible.py
-#   Last modified: 2013-06-24 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-04 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USX Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USX Bibles.
 """
 
 ProgName = "USX XML Bible handler"
-ProgVersion = "0.07"
+ProgVersion = "0.08"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -178,7 +178,7 @@ class USXXMLBible( Bible ):
             """Process the SSF data from the given filepath.
                 Returns a dictionary."""
             if Globals.verbosityLevel > 2: print( _("Loading SSF data from '{}'").format( ssfFilepath ) )
-            lastLine, lineCount, status, ssfData = '', 0, 0, {}
+            lastLine, lineCount, status, settingsDict = '', 0, 0, {}
             with open( ssfFilepath, encoding=encoding ) as myFile: # Automatically closes the file when done
                 for line in myFile:
                     lineCount += 1
@@ -199,7 +199,7 @@ class USXXMLBible( Bible ):
                     elif status==1 and line[0]=='<' and line.endswith('/>'): # Handle a self-closing (empty) field
                         fieldname = line[1:-3] if line.endswith(' />') else line[1:-2] # Handle it with or without a space
                         if ' ' not in fieldname:
-                            ssfData[fieldname] = ''
+                            settingsDict[fieldname] = ''
                             processed = True
                         elif ' ' in fieldname: # Some fields (like "Naming") may contain attributes
                             bits = fieldname.split( None, 1 )
@@ -207,7 +207,7 @@ class USXXMLBible( Bible ):
                             fieldname = bits[0]
                             attributes = bits[1]
                             #print( "attributes = '{}'".format( attributes) )
-                            ssfData[fieldname] = (contents, attributes)
+                            settingsDict[fieldname] = (contents, attributes)
                             processed = True
                     elif status==1 and line[0]=='<' and line[-1]=='>':
                         ix1 = line.index('>')
@@ -216,7 +216,7 @@ class USXXMLBible( Bible ):
                             fieldname = line[1:ix1]
                             contents = line[ix1+1:ix2]
                             if ' ' not in fieldname and line[ix2+2:-1]==fieldname:
-                                ssfData[fieldname] = contents
+                                settingsDict[fieldname] = contents
                                 processed = True
                             elif ' ' in fieldname: # Some fields (like "Naming") may contain attributes
                                 bits = fieldname.split( None, 1 )
@@ -225,15 +225,15 @@ class USXXMLBible( Bible ):
                                 attributes = bits[1]
                                 #print( "attributes = '{}'".format( attributes) )
                                 if line[ix2+2:-1]==fieldname:
-                                    ssfData[fieldname] = (contents, attributes)
+                                    settingsDict[fieldname] = (contents, attributes)
                                     processed = True
                     if not processed: logging.error( "Unexpected '{}' line in SSF file".format( line ) )
             if Globals.verbosityLevel > 2:
-                print( "  " + _("Got {} SSF entries:").format( len(ssfData) ) )
+                print( "  " + _("Got {} SSF entries:").format( len(settingsDict) ) )
                 if Globals.verbosityLevel > 3:
-                    for key in sorted(ssfData):
-                        print( "    {}: {}".format( key, ssfData[key] ) )
-            return ssfData
+                    for key in sorted(settingsDict):
+                        print( "    {}: {}".format( key, settingsDict[key] ) )
+            return settingsDict
         # end of loadSSFData
 
         if Globals.verbosityLevel > 1: print( _("USXXMLBible: Loading {} from {}...").format( self.name, self.givenFolderName ) )
@@ -256,7 +256,7 @@ class USXXMLBible( Bible ):
             # Attempt to load the metadata file
             ssfFilepathList = self.USXFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
             if len(ssfFilepathList) == 1: # Seems we found the right one
-                self.ssfData = loadSSFData( ssfFilepathList[0] )
+                self.settingsDict = loadSSFData( ssfFilepathList[0] )
 
         # Load the books one by one -- assuming that they have regular Paratext style filenames
         # DON'T KNOW WHY THIS DOESN'T WORK
