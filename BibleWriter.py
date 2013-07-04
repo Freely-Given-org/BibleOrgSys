@@ -326,7 +326,7 @@ class BibleWriter( InternalBible ):
                             if marker=='mt1': composedLine = '<TS1>'+adjustLine(text)+'<Ts1>'
                             elif marker=='mt2': composedLine = '<TS2>'+adjustLine(text)+'<Ts2>'
                             elif marker=='mt3': composedLine = '<TS3>'+adjustLine(text)+'<Ts3>'
-                            else: halt # programming error
+                            else: logging.warning( "toTheWord.writeBook: doesn't handle '{} yet".format( marker ) )
                             writerObject.write( composedLine ) # Note: no trailing newline character
                         V += 1
                     else: break
