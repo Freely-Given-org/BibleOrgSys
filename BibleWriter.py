@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-07-04 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-05 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -47,7 +47,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.15"
+ProgVersion = "0.16"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -355,25 +355,26 @@ class BibleWriter( InternalBible ):
         BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
         #BRL = BibleReferenceList( BOS, BibleObject=None )
 
-        if len(self) >= 66:
-            testament, extension, startBBB, endBBB = 'BOTH', '.ont', 'GEN', 'REV'
-            booksExpected, textLineCountExpected = 66, 31102
-        elif len(self) <= 39 and 'GEN' in self:
+        # Try to figure out if it's an OT/NT or what (allow for up to 4 extra books like FRT,GLO, etc.)
+        if len(self) <= (39+4) and 'GEN' in self and 'MAT' not in self:
             testament, extension, startBBB, endBBB = 'OT', '.ot', 'GEN', 'MAL'
             booksExpected, textLineCountExpected = 39, 23145
-        elif len(self) <= 27 and 'MAT' in self:
+        elif len(self) <= (27+4) and 'MAT' in self and 'GEN' not in self:
             testament, extension, startBBB, endBBB = 'NT', '.nt', 'MAT', 'REV'
             booksExpected, textLineCountExpected = 27, 7957
+        else: # assume it's an entire Bible
+            testament, extension, startBBB, endBBB = 'BOTH', '.ont', 'GEN', 'REV'
+            booksExpected, textLineCountExpected = 66, 31102
 
         if Globals.verbosityLevel > 1: print( _("Exporting to theWord format...") )
         if 'TheWordOutputFilename' in controlDict: filename = controlDict["TheWordOutputFilename"]
         else: filename = self.sourceFilename
-        if not filename.endswith( extension ): filename += extension # MAke sure that we have the right file extension
+        if not filename.endswith( extension ): filename += extension # Make sure that we have the right file extension
         filepath = os.path.join( outputFolder, filename )
         if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
         with open( filepath, 'wt' ) as myFile:
             BBB = startBBB
-            while True: # Write each Bible book
+            while True: # Write each Bible book in the KJV order
                 writeBook( myFile, BBB )
                 if BBB == endBBB: break
                 BBB = BOS.getNextBookCode( BBB )
