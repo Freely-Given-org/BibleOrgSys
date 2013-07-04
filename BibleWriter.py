@@ -2533,7 +2533,7 @@ class BibleWriter( InternalBible ):
 
                 # Markers usually only found in the introduction
                 elif marker in ('mt1','mt2',):
-                    assert( not haveOpenParagraph )
+                    if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
                     writerObject.writeLineOpenClose( 'h1', cleanText, ('class','mainTitle'+marker[2]) )
                 elif marker in ('ms1','ms2',):
                     if not haveOpenParagraph:

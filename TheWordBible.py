@@ -408,8 +408,8 @@ def testTWB( TWBfolder, TWBfilename ):
             if Globals.verbosityLevel > 1: print( reference, shortText, verseText )
 
         # Now export the Bible and compare the round trip
-        tWb.toTheWord()
-        #doaResults = tWb.doAllExports()
+        #tWb.toTheWord()
+        doaResults = tWb.doAllExports()
         if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
             outputFolder = "OutputFiles/BOS_TheWordReexport/"
             if Globals.verbosityLevel > 1: print( "\nComparing original and re-exported theWord files..." )
@@ -456,7 +456,7 @@ def demo():
                 if Globals.verbosityLevel > 1: print( "\n{}/ Trying {}".format( j+1, someFile ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testTWB( testFolder, someFile )
-                break # only do the first one.........temp
+                #break # only do the first one.........temp
 # end of demo
 
 if __name__ == '__main__':
