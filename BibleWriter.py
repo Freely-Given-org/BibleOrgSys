@@ -323,6 +323,7 @@ class BibleWriter( InternalBible ):
                         #if BBB=='MRK': print( "vD", BBB, '0', V, len(verseData), verseData )
                         for marker,originalMarker,text,cleanText,extras in verseData:
                             #print( marker, cleanText )
+                            composedLine = None
                             if marker=='mt1': composedLine = '<TS1>'+adjustLine(text)+'<Ts1>'
                             elif marker=='mt2': composedLine = '<TS2>'+adjustLine(text)+'<Ts2>'
                             elif marker=='mt3': composedLine = '<TS3>'+adjustLine(text)+'<Ts3>'
