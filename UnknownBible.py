@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # UnknownBible.py
-#   Last modified: 2013-07-03 (also update ProgVersion below)
+#   Last modified: 2013-07-07 (also update ProgVersion below)
 #
 # Module handling a unknown Bible object
 #
@@ -31,13 +31,13 @@ Given a folder name, analyses the files in it
 
 Currently aware of the following Bible types:
     USFM
-    Unbound Bible, TheWord (line based)
+    Unbound Bible (table based), TheWord (line based), MySword (SQLite3 based)
     OSIS, USX, OpenSong, Zefania (all XML)
-    Sword modules.
+    Sword modules (binary).
 """
 
 ProgName = "Unknown Bible object handler"
-ProgVersion = "0.03"
+ProgVersion = "0.04"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -55,6 +55,7 @@ from OSISXMLBible import OSISXMLBibleFileCheck, OSISXMLBible
 from ZefaniaXMLBible import ZefaniaXMLBibleFileCheck, ZefaniaXMLBible
 from UnboundBible import UnboundBibleFileCheck, UnboundBible
 from TheWordBible import TheWordBibleFileCheck, TheWordBible
+from MySwordBible import MySwordBibleFileCheck, MySwordBible
 #from SwordResources import SwordInterface
 
 
@@ -108,6 +109,14 @@ class UnknownBible:
             totalBibleTypes += 1
             typesFound.append( 'TheWord' )
             if Globals.verbosityLevel > 2: print( "TheWordBible.search: TheWordBibleCount", TheWordBibleCount )
+
+        # Search for MySword Bibles
+        MySwordBibleCount = MySwordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+        if MySwordBibleCount:
+            totalBibleCount += MySwordBibleCount
+            totalBibleTypes += 1
+            typesFound.append( 'MySword' )
+            if Globals.verbosityLevel > 2: print( "MySwordBible.search: MySwordBibleCount", MySwordBibleCount )
 
         # Search for Unbound Bibles
         UnboundBibleCount = UnboundBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -175,6 +184,10 @@ class UnknownBible:
             self.foundType = "TheWord Bible"
             if autoLoad: return TheWordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad )
             else: return self.foundType, TheWordBibleCount
+        elif MySwordBibleCount == 1:
+            self.foundType = "MySword Bible"
+            if autoLoad: return MySwordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad )
+            else: return self.foundType, MySwordBibleCount
         elif UnboundBibleCount == 1:
             self.foundType = "Unbound Bible"
             if autoLoad: return UnboundBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad )
@@ -223,16 +236,42 @@ def demo():
                     "Tests/DataFilesForTests/OSISTest1/", "Tests/DataFilesForTests/OSISTest2/",
                     "Tests/DataFilesForTests/ZefaniaTest/",
                     "Tests/DataFilesForTests/TheWordTest/",
+                    "Tests/DataFilesForTests/MySwordTest/",
                     "Tests/DataFilesForTests/", # Up a level
                     )
-    for j, testFolder in enumerate( testFolders ):
-        if Globals.verbosityLevel > 0: print( "\n\n{}/ Trying {}...".format( j+1, testFolder ) )
-        B = UnknownBible( testFolder )
-        #print( B )
-        result1 = B.search( autoLoad=False )
-        result2 = B.search( autoLoad=True ) if result1 else None
-        if Globals.verbosityLevel > 2: print( "  Results are: {} and {}".format( result1, result2 ) )
-        if Globals.verbosityLevel > 0: print( B )
+    if 1: # Just find the files
+        for j, testFolder in enumerate( testFolders ):
+            if Globals.verbosityLevel > 0: print( "\n\nA{}/ Trying {}...".format( j+1, testFolder ) )
+            B = UnknownBible( testFolder )
+            #print( B )
+            result = B.search( autoLoad=False )
+            #result2 = B.search( autoLoad=True ) if result1 else None
+            if Globals.verbosityLevel > 2: print( "  Result is: {}".format( result ) )
+            if Globals.verbosityLevel > 0: print( B )
+
+    if 1: # Just load the files
+        for j, testFolder in enumerate( testFolders ):
+            if Globals.verbosityLevel > 0: print( "\n\nB{}/ Loading {}...".format( j+1, testFolder ) )
+            B = UnknownBible( testFolder )
+            #print( B )
+            #result1 = B.search( autoLoad=False )
+            result = B.search( autoLoad=True )
+            if Globals.verbosityLevel > 2: print( "  Result is: {}".format( result ) )
+            if Globals.verbosityLevel > 0: print( B )
+
+    if 1: # Load, check, and export the files
+        for j, testFolder in enumerate( testFolders ):
+            if Globals.verbosityLevel > 0: print( "\n\nC{}/ Processing {}...".format( j+1, testFolder ) )
+            B = UnknownBible( testFolder )
+            #print( B )
+            result = B.search( autoLoad=True )
+            #result2 = B.search( autoLoad=True ) if result1 else None
+            #if Globals.verbosityLevel > 2: print( "  Results are: {} and {}".format( result1, result2 ) )
+            if Globals.verbosityLevel > 0: print( B )
+            if result:
+                result.check()
+                results = result.doAllExports()
+                if Globals.verbosityLevel > 2: print( "  Results are: {}".format( results ) )
 # end of demo
 
 if __name__ == '__main__':

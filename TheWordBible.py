@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # TheWordBible.py
-#   Last modified: 2013-07-04 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-07 by RJH (also update ProgVersion below)
 #
 # Module handling "TheWord" Bible module files
 #
@@ -51,11 +51,11 @@ e.g.,
 """
 
 ProgName = "TheWord Bible format handler"
-ProgVersion = "0.02"
+ProgVersion = "0.04"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
-import logging, os
+import logging, os, re
 from gettext import gettext as _
 import multiprocessing
 
@@ -170,6 +170,123 @@ def TheWordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
 
 
 
+def handleLine( BBB, C, V, originalLine, bookObject, myGlobals ):
+    """
+    Adjusts the formatting of the line for Bible reference BBB C:V
+        and then writes it to the bookObject.
+
+    myGlobals dict contains flags.
+    """
+    line = originalLine
+    if line is None: # We don't have an entry for this C:V
+        return
+
+    # Fix an encoding error in asv.ont
+    if line.endswith( '<CM' ): line += '>' # asv.ont
+    if line.startswith( '>  ' ): line = line[3:] # pinyin.ont
+
+    # Try to convert display formatting to semantic formatting as much as possible
+    # Adjust paragraph formatting
+    assert( not myGlobals['haveParagraph'] )
+    if line.endswith( '<CM>' ): # Means start a new paragraph after this line
+        line = line[:-4] # Remove the marker
+        myGlobals['haveParagraph'] = 'CM'
+    elif line.endswith( '<CI>' ): # Means start a new paragraph (without a space before it) after this line
+        line = line[:-4] # Remove the marker
+        myGlobals['haveParagraph'] = 'CI'
+    elif line.endswith( '<CL>' ): # Means start on a new line
+        line = line[:-4] # Remove the marker
+        myGlobals['haveParagraph'] = 'CL'
+
+    # Adjust line formatting
+    line = line.replace('<TS>','\\mt1 ').replace('<Ts>','\\NL*')
+    line = line.replace('<TS1>','\\mt1 ').replace('<Ts1>','\\NL*') # Start marker and then a newline at end
+    line = line.replace('<TS2>','\\mt2 ').replace('<Ts2>','\\NL*')
+    line = line.replace('<TS3>','\\mt3 ').replace('<Ts3>','\\NL*')
+
+    # Adjust character formatting with USFM equivalents
+    line = line.replace('<FI>','\\add ').replace('<Fi>','\\add*')
+    line = line.replace('<FO>','\\qt ').replace('<Fo>','\\qt*')
+    line = line.replace('<FR>','\\wj ').replace('<Fr>','\\wj*')
+    line = line.replace('<FU>','\\ul ').replace('<Fu>','\\ul*') # Not USFM
+    line = line.replace('<RF>','\\f \\ft ').replace('<Rf>','\\f*')
+    line = line.replace('<RX>','\\x ').replace('<Rx>','\\x*')
+
+    #Now the more complex ones that need regexs
+    #line = line.replace('<RF q=*>','\\f * \\ft ').replace('<Rf>','\\f*')
+    #if '<RF' in line:
+        #print( "line1", repr(originalLine), '\n', repr(line) )
+    line = re.sub( '<RF q=(.)>', r'\\f \1 \\ft ', line )
+        #print( "line2", repr(originalLine), '\n', repr(line) )
+    line = re.sub( '<A(\d{1,3}):(\d{1,2})>', '', line )
+    line = re.sub( '<A (\d{1,3})\.(\d{1,2})>', '', line )
+    if '<A' in line:
+        print( "line3", repr(originalLine), '\n', repr(line) )
+        #halt
+    line = re.sub( '<WH(\d{1,4})>', '', line )
+    line = line.replace( '<wh>','' )
+    if '<WH' in line or '<wh' in line:
+        print( "line4", repr(originalLine), '\n', repr(line) )
+        #halt
+    line = re.sub( '<l=(.*?)>', '', line )
+    if '<l=' in line:
+        print( "line5", repr(originalLine), '\n', repr(line) )
+        #halt
+    line = re.sub('<CI><PI(\d)>',r'\\q\1 ',line).replace('<Ci>','\\NL*')
+    line = re.sub('<CI><PF(\d)>',r'\\q\1 ',line)
+
+    # Simple HTML tags (with no semantic info)
+    line = line.replace('<b>','\\bd ').replace('</b>','\\bd*')
+    line = line.replace('<i>','\\it ').replace('</i>','\\it*')
+    line = line.replace('<u>','\\ul ').replace('</u>','\\ul*') # Not USFM
+    line = line.replace('<sup>','\\ord ').replace('</sup>','\\ord*') # Not proper USFM meaning
+
+    if 1: # Unhandled stuff -- not done properly yet...............................................
+        line = line.replace('<CI>','')
+        line = line.replace('<CL>','')
+        line = line.replace('<CM>','')
+        line = line.replace('<PF0>','')
+        line = line.replace('<PF1>','')
+        line = line.replace('<PF2>','')
+        line = line.replace('<PF3>','')
+        line = line.replace('<PI1>','')
+        line = line.replace('<PI2>','')
+        line = line.replace('<PI3>','')
+        line = line.replace('<K>','').replace('<k>','')
+        line = line.replace('<R>','').replace('<r>','')
+        line = line.replace('<sub>','').replace('</sub>','')
+        line = re.sub('<(.*?)>', '', line )
+
+    # Check what's left at the end
+    if '<' in line or '>' in line:
+        print( "Original", repr(originalLine) )
+        logging.error( "TheWordBible.load: Doesn't handle formatted line yet: '{}'".format( line ) )
+        #if self.name not in ('ckjv-sc','ckjv-tc',): halt
+
+    if line.endswith( '\\NL*' ): line = line[:-4] # Don't need nl and end of line
+    if '\\NL*' in line: # We need to break the original line into different USFM markers
+        #print( "Messing with segments: '{}'".format( line ) )
+        segments = line.split( '\\NL*' )
+        assert( len(segments) >= 2 )
+        #print( " ", segments )
+        for segment in segments:
+            if segment and segment[0] == '\\':
+                bits = segment.split( None, 1 )
+                assert( len(bits) == 2 )
+                if bits[0] in ('\\mt1','\\mt2','\\mt3','\\q1','\\q2','\\q3',):
+                    bookObject.appendLine( bits[0][1:], bits[1] )
+                else: print( "seg", repr(segment), repr(originalLine) ) # programming error
+            else: # What is segment is blank (\\NL* at end of line)???
+                if V==1: bookObject.appendLine( 'c', str(C) )
+                bookObject.appendLine( 'v', '{} {}'.format( V, segment ) )
+    else:
+        if V==1: bookObject.appendLine( 'c', str(C) )
+        bookObject.appendLine( 'v', '{} {}'.format( V, line ) )
+# end of TheWordBible.handleLine
+
+
+
+
 class TheWordBible( Bible ):
     """
     Class for reading, validating, and converting TheWordBible files.
@@ -234,89 +351,130 @@ class TheWordBible( Bible ):
         C = V = 1
 
         lastLine, lineCount, bookCount = '', 0, 0
-        continued = haveParagraph = False
-        encodings = ['utf-8', 'ISO-8859-15', 'ISO-8859-1']
+        ourGlobals = {}
+        continued = ourGlobals['haveParagraph'] = False
+        encodings = ['utf-8', 'ISO-8859-1', 'ISO-8859-15']
         encodings.remove( self.encoding ) # Remove the given encoding if included
         if self.encoding: encodings.insert( 0, self.encoding ) # Put the given encoding back in in the first position
         for encoding in encodings: # Start by trying the given encoding
             try:
                 with open( self.sourceFilepath, 'rt', encoding=encoding ) as myFile: # Automatically closes the file when done
-                    for line in myFile:
+                    for sourceLine in myFile:
+                        originalLine = sourceLine
                         lineCount += 1
-                        if lineCount==1 and self.encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF
+                        if lineCount==1 and self.encoding.lower()=='utf-8' and originalLine[0]==chr(65279): #U+FEFF
                             logging.info( "      TheWordBible.load: Detected UTF-16 Byte Order Marker" )
-                            line = line[1:] # Remove the UTF-8 Byte Order Marker
-                        if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
-                        lastLine = line
+                            originalLine = originalLine[1:] # Remove the UTF-8 Byte Order Marker
+                        if originalLine[-1]=='\n': originalLine=originalLine[:-1] # Removing trailing newline character
+                        line = originalLine
+                        #lastLine = line
 
                         if lineCount <= textLineCountExpected: # assume it's verse text
                             #print ( lineCount, BBB, C, V, 'TW file line is "' + line + '"' )
                             if not line: logging.warning( "TheWordBible.load: Found blank verse line at {} {} {}:{}".format( lineCount, BBB, C, V ) )
 
-                            # Try to convert display formatting to semantic formatting as much as possible
-                            # Adjust paragraph formatting
-                            assert( not haveParagraph )
-                            if line.endswith( '<CM>' ): # Means start a new paragraph after this line
-                                line = line[:-4] # Remove the marker
-                                haveParagraph = 'CM'
-                            elif line.endswith( '<CI>' ): # Means start a new paragraph (without a space before it) after this line
-                                line = line[:-4] # Remove the marker
-                                haveParagraph = 'CI'
-                            elif line.endswith( '<CL>' ): # Means start on a new line
-                                line = line[:-4] # Remove the marker
-                                haveParagraph = 'CL'
+                            handleLine( BBB, C, V, line, thisBook, ourGlobals )
+                            ## Fix an encoding error in asv.ont
+                            #if line.endswith( '<CM' ): line += '>' # asv.ont
+                            #if line.startswith( '>  ' ): line = line[3:] # pinyin.ont
 
-                            # Adjust line formatting
-                            line = line.replace('<TS1>','\\mt1 ').replace('<Ts1>','\\NL*') # Start marker and then a newline at end
-                            line = line.replace('<TS2>','\\mt2 ').replace('<Ts2>','\\NL*')
-                            line = line.replace('<TS3>','\\mt3 ').replace('<Ts3>','\\NL*')
+                            ## Try to convert display formatting to semantic formatting as much as possible
+                            ## Adjust paragraph formatting
+                            #assert( not haveParagraph )
+                            #if line.endswith( '<CM>' ): # Means start a new paragraph after this line
+                                #line = line[:-4] # Remove the marker
+                                #haveParagraph = 'CM'
+                            #elif line.endswith( '<CI>' ): # Means start a new paragraph (without a space before it) after this line
+                                #line = line[:-4] # Remove the marker
+                                #haveParagraph = 'CI'
+                            #elif line.endswith( '<CL>' ): # Means start on a new line
+                                #line = line[:-4] # Remove the marker
+                                #haveParagraph = 'CL'
 
-                            # Adjust character formatting with USFM equivalents
-                            line = line.replace('<FI>','\\add ').replace('<Fi>','\\add*')
-                            line = line.replace('<FO>','\\qt ').replace('<Fo>','\\qt*')
-                            line = line.replace('<FR>','\\wj ').replace('<Fr>','\\wj*')
-                            line = line.replace('<FU>','\\ul ').replace('<Fu>','\\ul*') # Not USFM
-                            line = line.replace('<RF q=*>','\\f ').replace('<Rf>','\\f*')
-                            line = line.replace('<RF>','\\f ').replace('<Rf>','\\f*')
-                            line = line.replace('<RX>','\\x ').replace('<Rx>','\\x*')
+                            ## Adjust line formatting
+                            #line = line.replace('<TS>','\\mt1 ').replace('<Ts>','\\NL*')
+                            #line = line.replace('<TS1>','\\mt1 ').replace('<Ts1>','\\NL*') # Start marker and then a newline at end
+                            #line = line.replace('<TS2>','\\mt2 ').replace('<Ts2>','\\NL*')
+                            #line = line.replace('<TS3>','\\mt3 ').replace('<Ts3>','\\NL*')
 
-                            # Simple HTML tags (with no semantic info)
-                            line = line.replace('<b>','\\bd ').replace('</b>','\\bd*')
-                            line = line.replace('<i>','\\it ').replace('</i>','\\it*')
-                            line = line.replace('<u>','\\ul ').replace('</u>','\\ul*') # Not USFM
+                            ## Adjust character formatting with USFM equivalents
+                            #line = line.replace('<FI>','\\add ').replace('<Fi>','\\add*')
+                            #line = line.replace('<FO>','\\qt ').replace('<Fo>','\\qt*')
+                            #line = line.replace('<FR>','\\wj ').replace('<Fr>','\\wj*')
+                            #line = line.replace('<FU>','\\ul ').replace('<Fu>','\\ul*') # Not USFM
+                            #line = line.replace('<RF>','\\f \\ft ').replace('<Rf>','\\f*')
+                            #line = line.replace('<RX>','\\x ').replace('<Rx>','\\x*')
 
-                            # Unhandled stuff -- not done properly yet...............................................
-                            line = line.replace('<CI>','')
-                            line = line.replace('<CM>','')
-                            line = line.replace('<PF0>','')
-                            line = line.replace('<PF1>','')
-                            line = line.replace('<PF2>','')
-                            line = line.replace('<PF3>','')
-                            line = line.replace('<PI1>','')
-                            line = line.replace('<PI2>','')
-                            line = line.replace('<PI3>','')
+                            ##Now the more complex ones that need regexs
+                            ##line = line.replace('<RF q=*>','\\f * \\ft ').replace('<Rf>','\\f*')
+                            ##if '<RF' in line:
+                                ##print( "line1", repr(originalLine), '\n', repr(line) )
+                            #line = re.sub( '<RF q=(.)>', r'\\f \1 \\ft ', line )
+                                ##print( "line2", repr(originalLine), '\n', repr(line) )
+                            #line = re.sub( '<A(\d{1,3}):(\d{1,2})>', '', line )
+                            #line = re.sub( '<A (\d{1,3})\.(\d{1,2})>', '', line )
+                            #if '<A' in line:
+                                #print( "line3", repr(originalLine), '\n', repr(line) )
+                                ##halt
+                            #line = re.sub( '<WH(\d{1,4})>', '', line )
+                            #line = line.replace( '<wh>','' )
+                            #if '<WH' in line or '<wh' in line:
+                                #print( "line4", repr(originalLine), '\n', repr(line) )
+                                ##halt
+                            #line = re.sub( '<l=(.*?)>', '', line )
+                            #if '<l=' in line:
+                                #print( "line5", repr(originalLine), '\n', repr(line) )
+                                ##halt
+                            #line = re.sub('<CI><PI(\d)>',r'\\q\1 ',line).replace('<Ci>','\\NL*')
+                            #line = re.sub('<CI><PF(\d)>',r'\\q\1 ',line)
 
-                            # Check what's left at the end
-                            if '<' in line or '>' in line:
-                                logging.error( "TheWordBible.load: Doesn't handle formatted line yet: '{}'".format( line ) )
+                            ## Simple HTML tags (with no semantic info)
+                            #line = line.replace('<b>','\\bd ').replace('</b>','\\bd*')
+                            #line = line.replace('<i>','\\it ').replace('</i>','\\it*')
+                            #line = line.replace('<u>','\\ul ').replace('</u>','\\ul*') # Not USFM
+                            #line = line.replace('<sup>','\\ord ').replace('</sup>','\\ord*') # Not proper USFM meaning
 
-                            if '\\NL*' in line: # We need to break the original line into different USFM markers
-                                #print( "Messing with segments: '{}'".format( line ) )
-                                segments = line.split( '\\NL*' )
-                                assert( len(segments) >= 2 )
-                                for segment in segments:
-                                    if segment[0] == '\\':
-                                        bits = segment.split( None, 1 )
-                                        assert( len(bits) == 2 )
-                                        if bits[0] in ('\\mt1','\\mt2','\\mt3',):
-                                            thisBook.appendLine( bits[0][1:], bits[1] )
-                                        else: halt # programming error
-                                    else:
-                                        if V==1: thisBook.appendLine( 'c', str(C) )
-                                        thisBook.appendLine( 'v', '{} {}'.format( V, segment ) )
-                            else:
-                                if V==1: thisBook.appendLine( 'c', str(C) )
-                                thisBook.appendLine( 'v', '{} {}'.format( V, line ) )
+                            #if 1: # Unhandled stuff -- not done properly yet...............................................
+                                #line = line.replace('<CI>','')
+                                #line = line.replace('<CL>','')
+                                #line = line.replace('<CM>','')
+                                #line = line.replace('<PF0>','')
+                                #line = line.replace('<PF1>','')
+                                #line = line.replace('<PF2>','')
+                                #line = line.replace('<PF3>','')
+                                #line = line.replace('<PI1>','')
+                                #line = line.replace('<PI2>','')
+                                #line = line.replace('<PI3>','')
+                                #line = line.replace('<K>','').replace('<k>','')
+                                #line = line.replace('<R>','').replace('<r>','')
+                                #line = line.replace('<sub>','').replace('</sub>','')
+                                #line = re.sub('<(.*?)>', '', line )
+
+                            ## Check what's left at the end
+                            #if '<' in line or '>' in line:
+                                #print( "Original", repr(originalLine) )
+                                #logging.error( "TheWordBible.load: Doesn't handle formatted line yet: '{}'".format( line ) )
+                                #if self.name not in ('ckjv-sc','ckjv-tc',): halt
+
+                            #if line.endswith( '\\NL*' ): line = line[:-4] # Don't need nl and end of line
+                            #if '\\NL*' in line: # We need to break the original line into different USFM markers
+                                ##print( "Messing with segments: '{}'".format( line ) )
+                                #segments = line.split( '\\NL*' )
+                                #assert( len(segments) >= 2 )
+                                ##print( " ", segments )
+                                #for segment in segments:
+                                    #if segment and segment[0] == '\\':
+                                        #bits = segment.split( None, 1 )
+                                        #assert( len(bits) == 2 )
+                                        #if bits[0] in ('\\mt1','\\mt2','\\mt3','\\q1','\\q2','\\q3',):
+                                            #thisBook.appendLine( bits[0][1:], bits[1] )
+                                        #else: print( "seg", repr(segment), repr(originalLine) ) # programming error
+                                    #else: # What is segment is blank (\\NL* at end of line)???
+                                        #if V==1: thisBook.appendLine( 'c', str(C) )
+                                        #thisBook.appendLine( 'v', '{} {}'.format( V, segment ) )
+                            #else:
+                                #if V==1: thisBook.appendLine( 'c', str(C) )
+                                #thisBook.appendLine( 'v', '{} {}'.format( V, line ) )
                             V += 1
                             if V > numV:
                                 C += 1
@@ -340,9 +498,9 @@ class TheWordBible( Bible ):
                                     numV = verseList[C-1]
                                     V = 1
 
-                            if haveParagraph:
+                            if ourGlobals['haveParagraph']:
                                 thisBook.appendLine( 'p', '' )
-                                haveParagraph = False
+                                ourGlobals['haveParagraph'] = False
 
                         else: # Should be module info at end of file (after all of the verse lines)
                             #print ( lineCount, 'TW file line is "' + line + '"' )
@@ -350,7 +508,7 @@ class TheWordBible( Bible ):
                             if line[0] == '#': continue # Just discard comment lines
                             if not continued:
                                 if '=' not in line:
-                                    logging.error( "Missing equals sign from info line: {} '{}'".format( lineCount, line ) )
+                                    logging.warning( "Missing equals sign from info line (ignored): {} '{}'".format( lineCount, line ) )
                                 else: # Seems like a field=something type line
                                     bits = line.split( '=', 1 )
                                     assert( len(bits) == 2 )
@@ -392,7 +550,7 @@ def testTWB( TWBfolder, TWBfilename ):
     tWb = TheWordBible( TWBfolder, TWBfilename )
     tWb.load() # Load and process the file
     if Globals.verbosityLevel > 1: print( tWb ) # Just print a summary
-    if tWb:
+    if 0 and tWb:
         if Globals.strictCheckingFlag: tWb.check()
         for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
                             ('OT','DAN','1','21'),
@@ -408,8 +566,8 @@ def testTWB( TWBfolder, TWBfilename ):
             if Globals.verbosityLevel > 1: print( reference, shortText, verseText )
 
         # Now export the Bible and compare the round trip
-        #tWb.toTheWord()
-        doaResults = tWb.doAllExports()
+        tWb.toTheWord()
+        #doaResults = tWb.doAllExports()
         if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
             outputFolder = "OutputFiles/BOS_TheWordReexport/"
             if Globals.verbosityLevel > 1: print( "\nComparing original and re-exported theWord files..." )

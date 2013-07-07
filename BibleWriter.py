@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-07-05 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-08 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -36,18 +36,18 @@ This is intended to be a virtual class, i.e., to be extended further
 Contains functions:
     toPseudoUSFM( self, outputFolder=None )
     toUSFM( self, outputFolder=None )
-    toTheWord( self, outputFolder=None )
     toMediaWiki( self, outputFolder=None, controlDict=None, validationSchema=None )
     toZefaniaXML( self, outputFolder=None, controlDict=None, validationSchema=None )
     toUSXXML( self, outputFolder=None, controlDict=None, validationSchema=None )
     toOSISXML( self, outputFolder=None, controlDict=None, validationSchema=None )
     toSwordModule( self, outputFolder=None, controlDict=None, validationSchema=None )
     toHTML5( self, outputFolder=None, controlDict=None, validationSchema=None )
+    toTheWord( self, outputFolder=None )
     doAllExports( self, givenOutputFolderName=None )
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.16"
+ProgVersion = "0.18"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -55,6 +55,7 @@ debuggingThisModule = False
 
 import sys, os, logging, datetime
 from gettext import gettext as _
+import sqlite3
 import multiprocessing
 
 import Globals, ControlFiles
@@ -234,191 +235,6 @@ class BibleWriter( InternalBible ):
             with open( filepath, 'wt' ) as myFile: myFile.write( USFM )
         return True
     # end of BibleWriter.toUSFM
-
-
-    def toTheWord( self, outputFolder=None, controlDict=None ):
-        """
-        Using settings from the given control file,
-            converts the USFM information to a UTF-8 TheWord file.
-
-        This format is roughly documented at http://www.theword.net/index.php?article.tools&l=english
-        """
-        if Globals.verbosityLevel > 1: print( "Running BibleWriter:toTheWord..." )
-        if Globals.debugFlag: assert( self.books )
-
-        if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolder: outputFolder = "OutputFiles/BOS_TheWord" + ("Reexport/" if self.objectTypeString=="TheWord" else "Export/")
-        if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
-        # ControlDict is not used (yet)
-        if not controlDict:
-            controlDict, defaultControlFilename = {}, "To_TheWord_controls.txt"
-            try:
-                ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
-            except:
-                pass
-                #logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
-        #if Globals.debugFlag: assert( controlDict and isinstance( controlDict, dict ) )
-
-        unhandledMarkers = set()
-
-
-        def adjustLine( originalLine ):
-            line = originalLine
-            line = line.replace('\\add ','<FI>').replace('\\add*','<Fi>')
-            line = line.replace('\\qt ','<FO>').replace('\\qt*','<Fo>')
-            line = line.replace('\\wj ','<FR>').replace('\\wj*','<Fr>')
-            line = line.replace('\\f ','<RF>').replace('\\f*','<Rf>')
-            line = line.replace('\\x ','<RX>').replace('\\x*','<Rx>')
-
-            # Simple HTML tags (with no semantic info)
-            line = line.replace('\\bd ','<b>',).replace('\\bd*','</b>')
-            line = line.replace('\\it ','<i>').replace('\\it*','</i>')
-
-            # Things we don't know how to handle yet
-            line = line.replace('\\nd ','',).replace('\\nd*','')
-
-            # Check what's left at the end
-            if '\\' in line:
-                logging.error( "toTheWord.writeLine: Doesn't handle formatted line yet: '{}'".format( line ) )
-            return line
-
-
-        def writeVerseLine( writerObject, BBB, C, V, verseData ):
-            """
-            Writes a single line to the file representing a verse.
-            """
-            #print( "writeVerseLine {} {}:{} {}".format( BBB, C, V, verseData ) )
-            for marker,originalMarker,text,cleanText,extras in verseData:
-                if marker in ('c','c#','v'):
-                    pass # ignore all of these
-                elif marker == 'v~':
-                    line = text
-                    #print( BBB, C, V, line )
-
-                    # Adjust formatting
-                    #if line.endswith( '<CM>' ): # Means start a new paragraph after this line
-                        #assert( not haveParagraph )
-                        #line = line[:-4] # Remove the marker
-                        #haveParagraph = True
-
-                    line = adjustLine ( line )
-                    writerObject.write( line + '\n' )
-                else:
-                    unhandledMarkers.add( marker )
-        # end of toTheWord.writeVerseLine
-
-
-        def writeBook( writerObject, BBB ):
-            """
-            Writes a book to the TheWord writerObject file.
-            """
-            bkData = self.books[BBB] if BBB in self.books else None
-            #print( bkData._processedLines )
-            verseList = BOS.getNumVersesList( BBB )
-            numC, numV = len(verseList), verseList[0]
-
-            if bkData: # Write book headings
-                V = 0
-                while True:
-                    result = bkData.getCVRef( (BBB,'0',str(V),) ) # Current this only gets one line
-                    if result:
-                        verseData, context = result
-                        #if BBB=='MRK': print( "vD", BBB, '0', V, len(verseData), verseData )
-                        for marker,originalMarker,text,cleanText,extras in verseData:
-                            #print( marker, cleanText )
-                            composedLine = None
-                            if marker=='mt1': composedLine = '<TS1>'+adjustLine(text)+'<Ts1>'
-                            elif marker=='mt2': composedLine = '<TS2>'+adjustLine(text)+'<Ts2>'
-                            elif marker=='mt3': composedLine = '<TS3>'+adjustLine(text)+'<Ts3>'
-                            else: logging.warning( "toTheWord.writeBook: doesn't handle '{} yet".format( marker ) )
-                            if composedLine: writerObject.write( composedLine ) # Note: no trailing newline character
-                        V += 1
-                    else: break
-
-            # Write the verses
-            C = V = 1
-            while True:
-                if bkData:
-                    result = bkData.getCVRef( (BBB,str(C),str(V),) )
-                    if result:
-                        verseData, context = result
-                        if verseData: writeVerseLine( writerObject, BBB, C, V, verseData )
-                        else: writerObject.write( '\n' ) # no verseData
-                    else: writerObject.write( '\n' ) # no result
-                else: writerObject.write( '\n' ) # no bkData
-                V += 1
-                if V > numV:
-                    C += 1
-                    if C > numC:
-                        return
-                    else: # next chapter only
-                        numV = verseList[C-1]
-                        V = 1
-        # end of toTheWord.writeBook
-
-
-        # Set-up their Bible reference system
-        BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
-        #BRL = BibleReferenceList( BOS, BibleObject=None )
-
-        # Try to figure out if it's an OT/NT or what (allow for up to 4 extra books like FRT,GLO, etc.)
-        if len(self) <= (39+4) and 'GEN' in self and 'MAT' not in self:
-            testament, extension, startBBB, endBBB = 'OT', '.ot', 'GEN', 'MAL'
-            booksExpected, textLineCountExpected = 39, 23145
-        elif len(self) <= (27+4) and 'MAT' in self and 'GEN' not in self:
-            testament, extension, startBBB, endBBB = 'NT', '.nt', 'MAT', 'REV'
-            booksExpected, textLineCountExpected = 27, 7957
-        else: # assume it's an entire Bible
-            testament, extension, startBBB, endBBB = 'BOTH', '.ont', 'GEN', 'REV'
-            booksExpected, textLineCountExpected = 66, 31102
-
-        if Globals.verbosityLevel > 1: print( _("Exporting to theWord format...") )
-        if 'TheWordOutputFilename' in controlDict: filename = controlDict["TheWordOutputFilename"]
-        elif self.sourceFilename: filename = self.sourceFilename
-        elif self.shortName: filename = self.shortName
-        elif self.abbreviation: filename = self.abbreviation
-        elif self.name: filename = self.name
-        else: filename = "export"
-        if not filename.endswith( extension ): filename += extension # Make sure that we have the right file extension
-        filepath = os.path.join( outputFolder, filename )
-        if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
-        with open( filepath, 'wt' ) as myFile:
-            BBB = startBBB
-            while True: # Write each Bible book in the KJV order
-                writeBook( myFile, BBB )
-                if BBB == endBBB: break
-                BBB = BOS.getNextBookCode( BBB )
-            # Now append the various settings if any
-            written = []
-            for key in self.settingsDict:
-                if key.lower() in ('id','lang','charset','title','short.title','title.english','description','author',
-                            'status','publish.date','version.date','isbn','r2l','font','font.size',
-                           'version.major','version.minor','publisher','about','source','creator','keywords',
-                           'verse.rule',) \
-                and self.settingsDict[key]: # Copy non-blank exact matches
-                    myFile.write( "{}={}\n".format( key.lower(), self.settingsDict[key] ) )
-                    written.append( key.lower() )
-                elif Globals.verbosityLevel > 2: print( "BibleWriter.toTheWord: ignored '{}' setting ({})".format( key, self.settingsDict[key] ) )
-            # Now do some adaptions
-            key = 'short.title'
-            if self.abbreviation and key not in written:
-                myFile.write( "{}={}\n".format( key, self.abbreviation ) )
-                written.append( key )
-            if self.name and key not in written:
-                myFile.write( "{}={}\n".format( key, self.name ) )
-                written.append( key )
-            # Anything useful in the settingsDict?
-            for key, fieldName in (('title','FullName'),):
-                if fieldName in self.settingsDict and key not in written:
-                    myFile.write( "{}={}\n".format( key, self.settingsDict[fieldName] ) )
-                    written.append( key )
-        if unhandledMarkers:
-            logging.warning( "BibleWriter.toTheWord: Unhandled USFM markers were {}".format( unhandledMarkers ) )
-            if Globals.verbosityLevel > 1:
-                print( "  " + _("WARNING: Unhandled toTheWord USFM markers were {}").format( unhandledMarkers ) )
-        return True
-    # end of BibleWriter.toTheWord
-
 
 
     def toMediaWiki( self, outputFolder=None, controlDict=None, validationSchema=None ):
@@ -2693,6 +2509,404 @@ class BibleWriter( InternalBible ):
     # end of BibleWriter.toHTML5
 
 
+    def toTheWord( self, outputFolder=None, controlDict=None ):
+        """
+        Using settings from the given control file,
+            converts the USFM information to a UTF-8 TheWord file.
+
+        This format is roughly documented at http://www.theword.net/index.php?article.tools&l=english
+        """
+        if Globals.verbosityLevel > 1: print( "Running BibleWriter:toTheWord..." )
+        if Globals.debugFlag: assert( self.books )
+
+        if not self.doneSetupGeneric: self.__setupWriter()
+        if not outputFolder: outputFolder = "OutputFiles/BOS_TheWord" + ("Reexport/" if self.objectTypeString=="TheWord" else "Export/")
+        if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
+        # ControlDict is not used (yet)
+        if not controlDict:
+            controlDict, defaultControlFilename = {}, "To_TheWord_controls.txt"
+            try:
+                ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
+            except:
+                pass
+                #logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
+        #if Globals.debugFlag: assert( controlDict and isinstance( controlDict, dict ) )
+
+        unhandledMarkers = set()
+
+
+        def adjustLine( originalLine ):
+            line = originalLine
+            line = line.replace('\\add ','<FI>').replace('\\add*','<Fi>')
+            line = line.replace('\\qt ','<FO>').replace('\\qt*','<Fo>')
+            line = line.replace('\\wj ','<FR>').replace('\\wj*','<Fr>')
+            line = line.replace('\\f ','<RF>').replace('\\f*','<Rf>')
+            line = line.replace('\\x ','<RX>').replace('\\x*','<Rx>')
+
+            # Simple HTML tags (with no semantic info)
+            line = line.replace('\\bd ','<b>',).replace('\\bd*','</b>')
+            line = line.replace('\\it ','<i>').replace('\\it*','</i>')
+
+            # Things we don't know how to handle yet
+            line = line.replace('\\nd ','',).replace('\\nd*','')
+
+            # Check what's left at the end
+            if '\\' in line:
+                logging.error( "toTheWord.writeLine: Doesn't handle formatted line yet: '{}'".format( line ) )
+            return line
+
+
+        def writeVerseLine( writerObject, BBB, C, V, verseData ):
+            """
+            Writes a single line to the file representing a verse.
+            """
+            #print( "writeVerseLine {} {}:{} {}".format( BBB, C, V, verseData ) )
+            for marker,originalMarker,text,cleanText,extras in verseData:
+                if marker in ('c','c#','v'):
+                    pass # ignore all of these
+                elif marker == 'v~':
+                    line = text
+                    #print( BBB, C, V, line )
+
+                    # Adjust formatting
+                    #if line.endswith( '<CM>' ): # Means start a new paragraph after this line
+                        #assert( not haveParagraph )
+                        #line = line[:-4] # Remove the marker
+                        #haveParagraph = True
+
+                    line = adjustLine ( line )
+                    writerObject.write( line + '\n' )
+                else:
+                    unhandledMarkers.add( marker )
+        # end of toTheWord.writeVerseLine
+
+
+        def writeBook( writerObject, BBB ):
+            """
+            Writes a book to the TheWord writerObject file.
+            """
+            bkData = self.books[BBB] if BBB in self.books else None
+            #print( bkData._processedLines )
+            verseList = BOS.getNumVersesList( BBB )
+            numC, numV = len(verseList), verseList[0]
+
+            if bkData: # Write book headings
+                V = 0
+                while True:
+                    result = bkData.getCVRef( (BBB,'0',str(V),) ) # Current this only gets one line
+                    if result:
+                        verseData, context = result
+                        #if BBB=='MRK': print( "vD", BBB, '0', V, len(verseData), verseData )
+                        for marker,originalMarker,text,cleanText,extras in verseData:
+                            #print( marker, cleanText )
+                            composedLine = None
+                            if marker=='mt1': composedLine = '<TS1>'+adjustLine(text)+'<Ts1>'
+                            elif marker=='mt2': composedLine = '<TS2>'+adjustLine(text)+'<Ts2>'
+                            elif marker=='mt3': composedLine = '<TS3>'+adjustLine(text)+'<Ts3>'
+                            else: logging.warning( "toTheWord.writeBook: doesn't handle '{} yet".format( marker ) )
+                            if composedLine: writerObject.write( composedLine ) # Note: no trailing newline character
+                        V += 1
+                    else: break
+
+            # Write the verses
+            C = V = 1
+            while True:
+                if bkData:
+                    result = bkData.getCVRef( (BBB,str(C),str(V),) )
+                    if result:
+                        verseData, context = result
+                        if verseData: writeVerseLine( writerObject, BBB, C, V, verseData )
+                        else: writerObject.write( '\n' ) # no verseData
+                    else: writerObject.write( '\n' ) # no result
+                else: writerObject.write( '\n' ) # no bkData
+                V += 1
+                if V > numV:
+                    C += 1
+                    if C > numC:
+                        return
+                    else: # next chapter only
+                        numV = verseList[C-1]
+                        V = 1
+        # end of toTheWord.writeBook
+
+
+        # Set-up their Bible reference system
+        BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
+        #BRL = BibleReferenceList( BOS, BibleObject=None )
+
+        # Try to figure out if it's an OT/NT or what (allow for up to 4 extra books like FRT,GLO, etc.)
+        if len(self) <= (39+4) and 'GEN' in self and 'MAT' not in self:
+            testament, extension, startBBB, endBBB = 'OT', '.ot', 'GEN', 'MAL'
+            booksExpected, textLineCountExpected = 39, 23145
+        elif len(self) <= (27+4) and 'MAT' in self and 'GEN' not in self:
+            testament, extension, startBBB, endBBB = 'NT', '.nt', 'MAT', 'REV'
+            booksExpected, textLineCountExpected = 27, 7957
+        else: # assume it's an entire Bible
+            testament, extension, startBBB, endBBB = 'BOTH', '.ont', 'GEN', 'REV'
+            booksExpected, textLineCountExpected = 66, 31102
+
+        if Globals.verbosityLevel > 1: print( _("Exporting to theWord format...") )
+        if 'TheWordOutputFilename' in controlDict: filename = controlDict["TheWordOutputFilename"]
+        elif self.sourceFilename: filename = self.sourceFilename
+        elif self.shortName: filename = self.shortName
+        elif self.abbreviation: filename = self.abbreviation
+        elif self.name: filename = self.name
+        else: filename = "export"
+        if not filename.endswith( extension ): filename += extension # Make sure that we have the right file extension
+        filepath = os.path.join( outputFolder, filename )
+        if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
+        with open( filepath, 'wt' ) as myFile:
+            BBB = startBBB
+            while True: # Write each Bible book in the KJV order
+                writeBook( myFile, BBB )
+                if BBB == endBBB: break
+                BBB = BOS.getNextBookCode( BBB )
+            # Now append the various settings if any
+            written = []
+            for key in self.settingsDict:
+                if key.lower() in ('id','lang','charset','title','short.title','title.english','description','author',
+                            'status','publish.date','version.date','isbn','r2l','font','font.size',
+                           'version.major','version.minor','publisher','about','source','creator','keywords',
+                           'verse.rule',) \
+                and self.settingsDict[key]: # Copy non-blank exact matches
+                    myFile.write( "{}={}\n".format( key.lower(), self.settingsDict[key] ) )
+                    written.append( key.lower() )
+                elif Globals.verbosityLevel > 2: print( "BibleWriter.toTheWord: ignored '{}' setting ({})".format( key, self.settingsDict[key] ) )
+            # Now do some adaptions
+            key = 'short.title'
+            if self.abbreviation and key not in written:
+                myFile.write( "{}={}\n".format( key, self.abbreviation ) )
+                written.append( key )
+            if self.name and key not in written:
+                myFile.write( "{}={}\n".format( key, self.name ) )
+                written.append( key )
+            # Anything useful in the settingsDict?
+            for key, fieldName in (('title','FullName'),):
+                if fieldName in self.settingsDict and key not in written:
+                    myFile.write( "{}={}\n".format( key, self.settingsDict[fieldName] ) )
+                    written.append( key )
+        if unhandledMarkers:
+            logging.warning( "BibleWriter.toTheWord: Unhandled USFM markers were {}".format( unhandledMarkers ) )
+            if Globals.verbosityLevel > 1:
+                print( "  " + _("WARNING: Unhandled toTheWord USFM markers were {}").format( unhandledMarkers ) )
+        return True
+    # end of BibleWriter.toTheWord
+
+
+
+    def toMySword( self, outputFolder=None, controlDict=None ):
+        """
+        Using settings from the given control file,
+            converts the USFM information to a UTF-8 MySword file.
+
+        This format is roughly documented at http://www.theword.net/index.php?article.tools&l=english
+        """
+        if Globals.verbosityLevel > 1: print( "Running BibleWriter:toMySword..." )
+        if Globals.debugFlag: assert( self.books )
+
+        if not self.doneSetupGeneric: self.__setupWriter()
+        if not outputFolder: outputFolder = "OutputFiles/BOS_MySword" + ("Reexport/" if self.objectTypeString=="MySword" else "Export/")
+        if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
+        # ControlDict is not used (yet)
+        if not controlDict:
+            controlDict, defaultControlFilename = {}, "To_MySword_controls.txt"
+            try:
+                ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
+            except:
+                pass
+                #logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
+        #if Globals.debugFlag: assert( controlDict and isinstance( controlDict, dict ) )
+
+        unhandledMarkers = set()
+
+
+        def adjustLine( originalLine ):
+            line = originalLine
+            line = line.replace('\\add ','<FI>').replace('\\add*','<Fi>')
+            line = line.replace('\\qt ','<FO>').replace('\\qt*','<Fo>')
+            line = line.replace('\\wj ','<FR>').replace('\\wj*','<Fr>')
+            line = line.replace('\\f ','<RF>').replace('\\f*','<Rf>')
+            line = line.replace('\\x ','<RX>').replace('\\x*','<Rx>')
+
+            # Simple HTML tags (with no semantic info)
+            line = line.replace('\\bd ','<b>',).replace('\\bd*','</b>')
+            line = line.replace('\\it ','<i>').replace('\\it*','</i>')
+
+            # Things we don't know how to handle yet
+            line = line.replace('\\nd ','',).replace('\\nd*','')
+
+            # Check what's left at the end
+            if '\\' in line:
+                logging.error( "toMySword.writeLine: Doesn't handle formatted line yet: '{}'".format( line ) )
+            return line
+
+
+        def writeVerseLine( writerObject, BBB, nBBB, C, V, verseData, myGlobals ):
+            """
+            Writes a single line to the file representing a verse.
+            """
+            #print( "writeVerseLine {} {}:{} {}".format( BBB, C, V, verseData ) )
+            for marker,originalMarker,text,cleanText,extras in verseData:
+                if marker in ('c','c#','v'):
+                    pass # ignore all of these
+                elif marker == 'v~':
+                    line = text
+                    #print( BBB, C, V, line )
+
+                    # Adjust formatting
+                    #if line.endswith( '<CM>' ): # Means start a new paragraph after this line
+                        #assert( not haveParagraph )
+                        #line = line[:-4] # Remove the marker
+                        #haveParagraph = True
+
+                    line = adjustLine ( line )
+                    if myGlobals['line']: # We've got some stuff to prepend to the line (e.g., headings before the actual verse text)
+                        line = myGlobals['line'] + line
+                        myGlobals['line'] = ''
+                    print( "Writing", nBBB, C, V, repr(line) )
+                    writerObject.execute( 'INSERT INTO "Bible" VALUES(?,?,?,?)', (nBBB,C,V,line) )
+                else:
+                    unhandledMarkers.add( marker )
+        # end of toMySword.writeVerseLine
+
+
+        def writeBook( writerObject, BBB ):
+            """
+            Writes a book to the MySword writerObject file.
+            """
+            bkData = self.books[BBB] if BBB in self.books else None
+            #print( bkData._processedLines )
+            verseList = BOS.getNumVersesList( BBB )
+            nBBB = Globals.BibleBooksCodes.getReferenceNumber( BBB )
+            numC, numV = len(verseList), verseList[0]
+
+            ourGlobals = {}
+            ourGlobals['line'] = ''
+            if bkData: # Write book headings
+                V = 0
+                while True:
+                    result = bkData.getCVRef( (BBB,'0',str(V),) ) # Current this only gets one line
+                    if result:
+                        verseData, context = result
+                        #if BBB=='MRK': print( "vD", BBB, '0', V, len(verseData), verseData )
+                        for marker,originalMarker,text,cleanText,extras in verseData:
+                            #print( marker, cleanText )
+                            composedLine = None
+                            if marker=='mt1': composedLine = '<TS1>'+adjustLine(text)+'<Ts1>'
+                            elif marker=='mt2': composedLine = '<TS2>'+adjustLine(text)+'<Ts2>'
+                            elif marker=='mt3': composedLine = '<TS3>'+adjustLine(text)+'<Ts3>'
+                            else: logging.warning( "toMySword.writeBook: doesn't handle '{} yet".format( marker ) )
+                            if composedLine: ourGlobals['line'] += composedLine
+                        V += 1
+                    else: break
+
+            # Write the verses
+            C = V = 1
+            while True:
+                if bkData:
+                    result = bkData.getCVRef( (BBB,str(C),str(V),) )
+                    if result:
+                        verseData, context = result
+                        if verseData: writeVerseLine( writerObject, BBB, nBBB, C, V, verseData, ourGlobals )
+                        #else: writerObject.write( '\n' ) # no verseData
+                    #else: writerObject.write( '\n' ) # no result
+                #else: writerObject.write( '\n' ) # no bkData
+                V += 1
+                if V > numV:
+                    C += 1
+                    if C > numC:
+                        return
+                    else: # next chapter only
+                        numV = verseList[C-1]
+                        V = 1
+        # end of toMySword.writeBook
+
+
+        # Set-up their Bible reference system
+        BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
+        #BRL = BibleReferenceList( BOS, BibleObject=None )
+
+        # Try to figure out if it's an OT/NT or what (allow for up to 4 extra books like FRT,GLO, etc.)
+        if len(self) <= (39+4) and 'MAT' not in self:
+            testament, startBBB, endBBB = 'OT', 'GEN', 'MAL'
+            booksExpected, textLineCountExpected = 39, 23145
+        elif len(self) <= (27+4) and 'GEN' not in self:
+            testament, startBBB, endBBB = 'NT', 'MAT', 'REV'
+            booksExpected, textLineCountExpected = 27, 7957
+        else: # assume it's an entire Bible
+            testament, startBBB, endBBB = 'BOTH', 'GEN', 'REV'
+            booksExpected, textLineCountExpected = 66, 31102
+        extension = '.bbl.mybible'
+
+        if Globals.verbosityLevel > 1: print( _("Exporting to MySword format...") )
+        if 'MySwordOutputFilename' in controlDict: filename = controlDict["MySwordOutputFilename"]
+        elif self.sourceFilename: filename = self.sourceFilename
+        elif self.shortName: filename = self.shortName
+        elif self.abbreviation: filename = self.abbreviation
+        elif self.name: filename = self.name
+        else: filename = "export"
+        if not filename.endswith( extension ): filename += extension # Make sure that we have the right file extension
+        filepath = os.path.join( outputFolder, filename )
+        if os.path.exists( filepath ): os.remove( filepath )
+        if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
+        conn = sqlite3.connect( filepath )
+        cursor = conn.cursor()
+
+        # First write the settings Details table
+        exeStr = 'CREATE TABLE Details (Description NVARCHAR(255), Abbreviation NVARCHAR(50), Comments TEXT, Version TEXT, VersionDate DATETIME, PublishDate DATETIME, RightToLeft BOOL, OT BOOL, NT BOOL, Strong BOOL'
+        if 'CustomCSS' in self.settingsDict: exeStr += ', CustomCSS TEXT'
+        exeStr += ')'
+        cursor.execute( exeStr )
+        values = []
+        v = ''
+        if 'Description' in self.settingsDict: v = self.settingsDict['Description']
+        elif 'description' in self.settingsDict: v = self.settingsDict['description']
+        elif self.name: v = self.name
+        values.append( v); v = ''
+        if self.abbreviation: v = self.abbreviation
+        values.append( v ); v = ''
+        if 'Comments' in self.settingsDict: v = self.settingsDict['Comments']
+        values.append( v ); v = ''
+        if 'Version' in self.settingsDict: v = self.settingsDict['Version']
+        values.append( v ); v = ''
+        if 'VersionDate' in self.settingsDict: v = self.settingsDict['VersionDate']
+        values.append( v ); v = ''
+        if 'PublishDate' in self.settingsDict: v = self.settingsDict['PublishDate']
+        values.append( v ); v = False
+        if 'RightToLeft' in self.settingsDict: v = self.settingsDict['RightToLeft']
+        values.append( v ); v = False
+        if testament=='OT' or testament=='BOTH': v = True
+        values.append( v ); v = False
+        if testament=='NT' or testament=='BOTH': v = True
+        values.append( v ); v = False
+        if 'Strong' in self.settingsDict: v = self.settingsDict['Strong']
+        values.append( v ); v = ''
+        if 'CustomCSS' in self.settingsDict: v = self.settingsDict['CustomCSS']
+        exeStr = 'INSERT INTO "Details" VALUES(' + '?,'*(len(values)-1) + '?)'
+        #print( exeStr, values )
+        cursor.execute( exeStr, values )
+
+        # Now create and fill the Bible table
+        cursor.execute( 'CREATE TABLE Bible(Book INT, Chapter INT, Verse INT, Scripture TEXT, Primary Key(Book,Chapter,Verse))' )
+        conn.commit() # save (commit) the changes
+        BBB = startBBB
+        while True: # Write each Bible book in the KJV order
+            writeBook( cursor, BBB )
+            conn.commit() # save (commit) the changes
+            if BBB == endBBB: break
+            BBB = BOS.getNextBookCode( BBB )
+
+        if unhandledMarkers:
+            logging.warning( "BibleWriter.toMySword: Unhandled USFM markers were {}".format( unhandledMarkers ) )
+            if Globals.verbosityLevel > 1:
+                print( "  " + _("WARNING: Unhandled toMySword USFM markers were {}").format( unhandledMarkers ) )
+        conn.commit() # save (commit) the changes
+        cursor.close()
+        return True
+    # end of BibleWriter.toMySword
+
+
+
     #def doExport( self, n ):
         #"""
         #Only used for multiprocessing.
@@ -2725,6 +2939,7 @@ class BibleWriter( InternalBible ):
         PseudoUSFMOutputFolder = os.path.join( givenOutputFolderName, "BOS_PseudoUSFM" + "Export/" )
         USFMOutputFolder = os.path.join( givenOutputFolderName, "BOS_USFM" + ("Reexport/" if self.objectTypeString=='USFM' else "Export/" ) )
         TWOutputFolder = os.path.join( givenOutputFolderName, "BOS_TheWord" + ("Reexport/" if self.objectTypeString=='TheWord' else "Export/" ) )
+        MySwOutputFolder = os.path.join( givenOutputFolderName, "BOS_MySword" + ("Reexport/" if self.objectTypeString=='MySword' else "Export/" ) )
         MWOutputFolder = os.path.join( givenOutputFolderName, "BOS_MediaWiki" + ("Reexport/" if self.objectTypeString=='MediaWiki' else "Export/" ) )
         zOutputFolder = os.path.join( givenOutputFolderName, "BOS_Zefania" + ("Reexport/" if self.objectTypeString=='Zefania' else "Export/" ) )
         USXOutputFolder = os.path.join( givenOutputFolderName, "BOS_USX" + ("Reexport/" if self.objectTypeString=='USX' else "Export/" ) )
@@ -2742,13 +2957,14 @@ class BibleWriter( InternalBible ):
         if Globals.debugFlag:
             PseudoUSFMExportResult = self.toPseudoUSFM( PseudoUSFMOutputFolder )
             USFMExportResult = self.toUSFM( USFMOutputFolder )
-            TWExportResult = self.toTheWord( TWOutputFolder )
             MWExportResult = self.toMediaWiki( MWOutputFolder )
             zExportResult = self.toZefaniaXML( zOutputFolder )
             USXExportResult = self.toUSXXML( USXOutputFolder )
             OSISExportResult = self.toOSISXML( OSISOutputFolder )
             swExportResult = self.toSwordModule( swOutputFolder )
             htmlExportResult = self.toHTML5( htmlOutputFolder )
+            TWExportResult = self.toTheWord( TWOutputFolder )
+            MySwExportResult = self.toMySword( MySwOutputFolder )
         elif 0 and Globals.maxProcesses > 1: # Process all the exports with different threads
             # DON'T KNOW WHY THIS CAUSES A SEGFAULT
             self.__outputFolders = [USFMOutputFolder, MWOutputFolder, zOutputFolder, USXOutputFolder, OSISOutputFolder, swOutputFolder, htmlOutputFolder]
@@ -2814,15 +3030,20 @@ class BibleWriter( InternalBible ):
                 TWExportResult = False
                 print("BibleWriter.doAllExports.toTheWord Unexpected error:", sys.exc_info()[0], err)
                 logging.error( "BibleWriter.doAllExports.toTheWord: Oops, failed!" )
+            try: MySwExportResult = self.toMySword( MySwOutputFolder )
+            except Exception as err:
+                MySwExportResult = False
+                print("BibleWriter.doAllExports.toMySword Unexpected error:", sys.exc_info()[0], err)
+                logging.error( "BibleWriter.doAllExports.toMySword: Oops, failed!" )
 
         if Globals.verbosityLevel > 1:
-            if PseudoUSFMExportResult and USFMExportResult and TWExportResult and MWExportResult and zExportResult \
-            and USXExportResult and OSISExportResult and swExportResult and htmlExportResult:
+            if PseudoUSFMExportResult and USFMExportResult and TWExportResult and MySwExportResult and MWExportResult \
+            and zExportResult and USXExportResult and OSISExportResult and swExportResult and htmlExportResult:
                 print( "BibleWriter.doAllExports finished them all successfully!" )
-            else: print( "BibleWriter.doAllExports finished:  PsUSFM={} USFM={}  TW={} MW={}  Zef={}  USX={}  OSIS={}  Sw={}  HTML={}" \
-                    .format( PseudoUSFMExportResult, USFMExportResult, TWExportResult, MWExportResult, zExportResult, USXExportResult, OSISExportResult, swExportResult, htmlExportResult ) )
+            else: print( "BibleWriter.doAllExports finished:  PsUSFM={} USFM={}  TW={} MySw={} MW={}  Zef={}  USX={}  OSIS={}  Sw={}  HTML={}" \
+                    .format( PseudoUSFMExportResult, USFMExportResult, TWExportResult, MySwExportResult, MWExportResult, zExportResult, USXExportResult, OSISExportResult, swExportResult, htmlExportResult ) )
         return {'PseudoUSFMExport':PseudoUSFMExportResult, 'USFMExport':USFMExportResult,
-                    'TWExport':TWExportResult, 'MWExport':MWExportResult, 'zExport':zExportResult,
+                    'TWExport':TWExportResult, 'MySwExport':MySwExportResult, 'MWExport':MWExportResult, 'zExport':zExportResult,
                     'USXExport':USXExportResult, 'OSISExport':OSISExportResult, 'swExport':swExportResult,
                     'htmlExport':htmlExportResult}
     # end of BibleWriter.doAllExports
