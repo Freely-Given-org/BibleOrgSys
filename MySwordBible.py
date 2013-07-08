@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # MySwordBible.py
-#   Last modified: 2013-07-07 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-08 by RJH (also update ProgVersion below)
 #
 # Module handling "MySword" Bible module files
 #
@@ -51,7 +51,7 @@ e.g.,
 """
 
 ProgName = "MySword Bible format handler"
-ProgVersion = "0.03"
+ProgVersion = "0.04"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -211,32 +211,17 @@ class MySwordBible( Bible ):
 
         fileExtensionUpper = self.fileExtension.upper()
         assert( fileExtensionUpper in filenameEndingsToAccept )
-        #if fileExtensionUpper.endswith('X'):
-            #logging.error( _("MySwordBible: File '{}' is encrypted").format( self.sourceFilepath ) )
-            #return
 
-        conn = sqlite3.connect( self.sourceFilepath )
-        cursor = conn.cursor()
+        connection = sqlite3.connect( self.sourceFilepath )
+        connection.row_factory = sqlite3.Row # Enable row names
+        cursor = connection.cursor()
 
         # First get the settings
         cursor.execute( 'select * from Details' )
-        #for row in cursor: print( "Details row", row )
-        #try:
         row = cursor.fetchone()
-        self.settingsDict['Description'] = row[0]
-        self.settingsDict['Abbreviation'] = row[1]
-        self.settingsDict['Comments'] = row[2]
-        self.settingsDict['Version'] = row[3]
-        self.settingsDict['VersionDate'] = row[4]
-        self.settingsDict['PublishDate'] = row[5]
-        self.settingsDict['RightToLeft'] = row[6]
-        self.settingsDict['OT'] = row[7]
-        self.settingsDict['NT'] = row[8]
-        self.settingsDict['Strong'] = row[9]
-        if len(row)>=11: self.settingsDict['CustomCSS'] = row[10]
-
-
-        #print( self.settingsDict )
+        for key in row.keys():
+            self.settingsDict[key] = row[key]
+        #print( self.settingsDict ); halt
         if 'Description' in self.settingsDict and len(self.settingsDict['Description'])<40: self.name = self.settingsDict['Description']
         if 'Abbreviation' in self.settingsDict: self.abbreviation = self.settingsDict['Abbreviation']
 
@@ -266,18 +251,21 @@ class MySwordBible( Bible ):
         bookCount = 0
         ourGlobals = {}
         continued = ourGlobals['haveParagraph'] = False
+        haveLines = False
         while True:
             cursor.execute('select Scripture from Bible where Book=? and Chapter=? and Verse=?', (nBBB,C,V) )
             try:
                 row = cursor.fetchone()
                 line = row[0]
-            except:
-                print( "something wrong at", BBB, C, V )
-                print( row )
+            except: # This reference is missing
+                #print( "something wrong at", BBB, C, V )
+                #if Globals.debugFlag: halt
+                #print( row )
                 line = None
             #print ( nBBB, BBB, C, V, 'MySw file line is "' + line + '"' )
             if line is None: logging.warning( "MySwordBible.load: Found missing verse line at {} {}:{}".format( BBB, C, V ) )
             elif not line: logging.warning( "MySwordBible.load: Found blank verse line at {} {}:{}".format( BBB, C, V ) )
+            else: haveLines = True
 
             handleLine( BBB, C, V, line, thisBook, ourGlobals )
 
@@ -387,15 +375,18 @@ class MySwordBible( Bible ):
             if V > numV:
                 C += 1
                 if C > numC: # Save this book now
-                    if Globals.verbosityLevel > 3: print( "Saving", BBB, bookCount+1 )
-                    self.saveBook( thisBook )
-                    bookCount += 1
+                    if haveLines:
+                        if Globals.verbosityLevel > 3: print( "Saving", BBB, bookCount+1 )
+                        self.saveBook( thisBook )
+                    #else: print( "Not saving", BBB )
+                    bookCount += 1 # Not the number saved but the number we attempted to process
                     if bookCount >= booksExpected: break
                     BBB = BOS.getNextBookCode( BBB )
                     # Create the next book
                     thisBook = BibleBook( BBB )
                     thisBook.objectNameString = "MySword Bible Book object"
                     thisBook.objectTypeString = "MySword"
+                    haveLines = False
 
                     verseList = BOS.getNumVersesList( BBB )
                     numC, numV = len(verseList), verseList[0]
@@ -424,27 +415,28 @@ def testMySwB( MySwBfolder, MySwBfilename ):
     #TUBfolder = os.path.join( MySwBfolder, MySwBfilename )
     if Globals.verbosityLevel > 1: print( _("Demonstrating the MySword Bible class...") )
     if Globals.verbosityLevel > 0: print( "  Test folder is '{}' '{}'".format( MySwBfolder, MySwBfilename ) )
-    tWb = MySwordBible( MySwBfolder, MySwBfilename )
-    tWb.load() # Load and process the file
-    if Globals.verbosityLevel > 1: print( tWb ) # Just print a summary
-    if 0 and tWb:
-        if Globals.strictCheckingFlag: tWb.check()
+    MySwB = MySwordBible( MySwBfolder, MySwBfilename )
+    MySwB.load() # Load and process the file
+    if Globals.verbosityLevel > 1: print( MySwB ) # Just print a summary
+    #print( MySwB.settingsDict )
+    if 0 and MySwB:
+        if Globals.strictCheckingFlag: MySwB.check()
         for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
                             ('OT','DAN','1','21'),
                             ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \
                             ('DC','BAR','1','1'), ('DC','MA1','1','1'), ('DC','MA2','1','1',), ):
             (t, b, c, v) = reference
-            if t=='OT' and len(tWb)==27: continue # Don't bother with OT references if it's only a NT
-            if t=='NT' and len(tWb)==39: continue # Don't bother with NT references if it's only a OT
-            if t=='DC' and len(tWb)<=66: continue # Don't bother with DC references if it's too small
+            if t=='OT' and len(MySwB)==27: continue # Don't bother with OT references if it's only a NT
+            if t=='NT' and len(MySwB)==39: continue # Don't bother with NT references if it's only a OT
+            if t=='DC' and len(MySwB)<=66: continue # Don't bother with DC references if it's too small
             svk = VerseReferences.SimpleVerseKey( b, c, v )
             #print( svk, ob.getVerseDataList( reference ) )
-            shortText, verseText = svk.getShortText(), tWb.getVerseText( svk )
+            shortText, verseText = svk.getShortText(), MySwB.getVerseText( svk )
             if Globals.verbosityLevel > 1: print( reference, shortText, verseText )
 
         # Now export the Bible and compare the round trip
-        tWb.toMySword()
-        #doaResults = tWb.doAllExports()
+        MySwB.toMySword()
+        #doaResults = MySwB.doAllExports()
         if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
             outputFolder = "OutputFiles/BOS_MySwordReexport/"
             if Globals.verbosityLevel > 1: print( "\nComparing original and re-exported MySword files..." )
@@ -467,6 +459,24 @@ def demo():
         if Globals.verbosityLevel > 1: print( "TestA1", result1 )
         result2 = MySwordBibleFileCheck( testFolder, autoLoad=True )
         if Globals.verbosityLevel > 1: print( "TestA2", result2 )
+
+
+    if 1: # individual modules in the test folder
+        testFolder = "../../../../../Data/Work/Bibles/MySword modules/"
+        names = ("nko",)
+        for j, name in enumerate( names):
+            fullname = name + '.bbl.mybible'
+            if Globals.verbosityLevel > 1: print( "\n{}/ Trying {}".format( j+1, fullname ) )
+            testMySwB( testFolder, fullname )
+
+
+    if 1: # individual modules in the output folder
+        testFolder = "OutputFiles/BOS_MySwordExport"
+        names = ("Matigsalug",)
+        for j, name in enumerate( names):
+            fullname = name + '.bbl.mybible'
+            if Globals.verbosityLevel > 1: print( "\n{}/ Trying {}".format( j+1, fullname ) )
+            testMySwB( testFolder, fullname )
 
 
     if 1: # all discovered modules in the test folder

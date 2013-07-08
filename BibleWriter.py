@@ -47,7 +47,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.18"
+ProgVersion = "0.19"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -55,7 +55,7 @@ debuggingThisModule = False
 
 import sys, os, logging, datetime
 from gettext import gettext as _
-import sqlite3
+import sqlite3, tarfile
 import multiprocessing
 
 import Globals, ControlFiles
@@ -2902,6 +2902,12 @@ class BibleWriter( InternalBible ):
                 print( "  " + _("WARNING: Unhandled toMySword USFM markers were {}").format( unhandledMarkers ) )
         conn.commit() # save (commit) the changes
         cursor.close()
+
+        # Now create the gzipped file
+        tar = tarfile.open( filepath + '.gz', 'w:gz' )
+        tar.add( filepath )
+        tar.close()
+
         return True
     # end of BibleWriter.toMySword
 

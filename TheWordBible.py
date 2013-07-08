@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # TheWordBible.py
-#   Last modified: 2013-07-07 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-08 by RJH (also update ProgVersion below)
 #
 # Module handling "TheWord" Bible module files
 #
@@ -51,7 +51,7 @@ e.g.,
 """
 
 ProgName = "TheWord Bible format handler"
-ProgVersion = "0.04"
+ProgVersion = "0.05"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -257,11 +257,12 @@ def handleLine( BBB, C, V, originalLine, bookObject, myGlobals ):
         line = line.replace('<sub>','').replace('</sub>','')
         line = re.sub('<(.*?)>', '', line )
 
+
     # Check what's left at the end
-    if '<' in line or '>' in line:
-        print( "Original", repr(originalLine) )
-        logging.error( "TheWordBible.load: Doesn't handle formatted line yet: '{}'".format( line ) )
-        #if self.name not in ('ckjv-sc','ckjv-tc',): halt
+    if '<' in line or '>' in line: # NOTE: some modules can use these as speech marks so they might be part of the text!
+        logging.debug( "Original line; {}".format( originalLine ) )
+        logging.debug( "TheWordBible.load: Doesn't handle formatted line yet: '{}'".format( line ) )
+
 
     if line.endswith( '\\NL*' ): line = line[:-4] # Don't need nl and end of line
     if '\\NL*' in line: # We need to break the original line into different USFM markers
