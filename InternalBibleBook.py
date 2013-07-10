@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.35"
+ProgVersion = "0.36"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -1218,7 +1218,10 @@ class InternalBibleBook:
                 else:
                     validationErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Missing verse number").format( self.bookReferenceCode, c, v ) )
                     logging.error( _("Missing verse number after") + " {} {}:{}".format( self.bookReferenceCode, c, v ) )
-            if marker == 'v~': marker = 'v' # Makes it easier
+
+            # Temporarily substitute some markers just to make this check go easier
+            if marker == 'v~': marker = 'v'
+            if marker == 'p~': marker = 'v'
 
             # Do a rough check of the SFMs
             if marker=='id' and j!=0:
