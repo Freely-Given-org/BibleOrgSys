@@ -1535,10 +1535,10 @@ class InternalBibleBook:
 
             #print( self.bookReferenceCode, bkDict )
             if bkDict['seemsFinished']:
-                print( self.bookReferenceCode )
-                print( bkDict['percentageProgress'] )
-                print( bkDict['havePopulatedCVmarkers'] )
-                print( bkDict['haveVerseText'] )
+                #print( self.bookReferenceCode )
+                #print( bkDict['percentageProgress'] )
+                #print( bkDict['havePopulatedCVmarkers'] )
+                #print( bkDict['haveVerseText'] )
                 assert( bkDict['percentageProgress']==100 and bkDict['havePopulatedCVmarkers'] and bkDict['haveVerseText'] )
             if not bkDict['haveVerseText']: assert( bkDict['percentageProgress']==0 and not bkDict['seemsFinished'] )
             bkDict['notStarted'] = not bkDict['haveVerseText']

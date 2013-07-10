@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBibleBook.py
-#   Last modified: 2013-07-10 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-11 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -145,11 +145,12 @@ class USFMBibleBook( BibleBook ):
                         logging.warning( _("Changed '\\{}' unknown marker to '{}' after {} {}:{} at beginning of line: {}").format( marker, tryMarker, self.bookReferenceCode, c, v, text ) )
                         break
                 # Otherwise, don't bother processing this line -- it'll just cause more problems later on
-        else: # There were no lines!!!
+        if lastMarker: doAppendLine( lastMarker, lastText ) # Process the final line
+
+        if not originalBook.lines: # There were no lines!!!
             loadErrors.append( _("{} This USFM file was totally empty: {}").format( self.bookReferenceCode, self.sourceFilename ) )
             logging.error( _("USFM file for {} was totally empty: {}").format( self.bookReferenceCode, self.sourceFilename ) )
             lastMarker, lastText = 'rem', 'This (USFM) file was completely empty' # Save something since we had a file at least
-        if lastMarker: doAppendLine( lastMarker, lastText ) # Process the final line
 
         if loadErrors: self.errorDictionary['Load Errors'] = loadErrors
         #if debugging: print( self._rawLines ); halt
