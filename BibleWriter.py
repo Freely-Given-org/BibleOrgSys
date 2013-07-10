@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-07-08 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-10 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -47,7 +47,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.19"
+ProgVersion = "0.20"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -126,6 +126,8 @@ class BibleWriter( InternalBible ):
     def toPseudoUSFM( self, outputFolder=None ):
         """
         Write the pseudo USFM out directly (for debugging, etc.).
+            May write the rawLines 2-tuples to .rSFM files (if _rawLines still exists)
+            Always writes the processed 5-tuples to .pSFM files (from _processedLines).
         """
         if Globals.verbosityLevel > 1: print( "Running BibleWriter:toPseudoUSFM..." )
         if Globals.debugFlag: assert( self.books )
@@ -148,7 +150,7 @@ class BibleWriter( InternalBible ):
 
                 filename = "{}{}BWr.rSFM".format( USFMNumber, USFMAbbreviation.upper() ) # BWr = BibleWriter
                 filepath = os.path.join( outputFolder, filename )
-                if Globals.verbosityLevel > 3: print( "  " + _("Writing '{}'...").format( filepath ) )
+                if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
                 with open( filepath, 'wt' ) as myFile:
                     for marker,text in rawUSFMData:
                         myFile.write( "{}: '{}'\n".format( marker, text ) )
@@ -160,7 +162,7 @@ class BibleWriter( InternalBible ):
 
             filename = "{}{}BWr.pSFM".format( USFMNumber, USFMAbbreviation.upper() ) # BWr = BibleWriter
             filepath = os.path.join( outputFolder, filename )
-            if Globals.verbosityLevel > 3: print( "  " + _("Writing '{}'...").format( filepath ) )
+            if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
             with open( filepath, 'wt' ) as myFile:
                 for marker,originalMarker,text,cleanText,extras in pseudoUSFMData:
                     myFile.write( "{} ({}): '{}' '{}' {}\n".format( marker, originalMarker, text, cleanText, extras ) )
@@ -209,7 +211,9 @@ class BibleWriter( InternalBible ):
                     if inField is not None:
                         USFM += '\\{}*'.format( inField ) # Do a close marker for footnotes and cross-references
                         inField = None
-                if pseudoMarker[-1]=='~': USFM += value
+                if pseudoMarker[-1]=='~':
+                    assert( pseudoMarker[:-1] in ('v','p') )
+                    USFM += value
                 else: # not a continuation marker
                     adjValue = value
                     #if pseudoMarker in ('it','bk','ca','nd',): # Character markers to be closed -- had to remove ft and xt from this list for complex footnotes with f fr fq ft fq ft f*
@@ -435,12 +439,20 @@ class BibleWriter( InternalBible ):
                     # <span id="chapter#_#"><sup>#</sup> text</span>
                     #writerObject.writeLineOpenClose( 'span', '<sup>{}</sup> {}'.format(verseNumberString,adjText), ('id',"chapter{}_{}".format(chapterNumberString, verseNumberString) ), noTextCheck=True )
                 elif marker == 'v~':
+                    #print( "Oomph", marker, repr(text), chapterRef, verseNumberString )
+                    assert( text or extras )
                     # TODO: We haven't stripped out character fields from within the verse -- not sure how MediaWiki handles them yet
                     if not text: # this is an empty (untranslated) verse
                         adjText = '- - -' # but we'll put in a filler
                     else: adjText = processXRefsAndFootnotes( text, extras )
                     # <span id="chapter#_#"><sup>#</sup> text</span>
                     writerObject.writeLineOpenClose( 'span', '<sup>{}</sup> {}'.format(verseNumberString,adjText), ('id',"chapter{}_{}".format(chapterNumberString, verseNumberString) ), noTextCheck=True )
+                elif marker == 'p~':
+                    #print( "Ouch", marker, repr(text), chapterRef, verseNumberString )
+                    assert( text or extras )
+                    # TODO: We haven't stripped out character fields from within the verse -- not sure how MediaWiki handles them yet
+                    adjText = processXRefsAndFootnotes( text, extras )
+                    writerObject.writeLineText( ':{}'.format(adjText, noTextCheck=True) ) # No check so it doesn't choke on embedded xref and footnote fields
                 elif marker == 'q1':
                     adjText = processXRefsAndFootnotes( verseText, extras )
                     writerObject.writeLineText( ':{}'.format(adjText, noTextCheck=True) ) # No check so it doesn't choke on embedded xref and footnote fields
@@ -543,11 +555,16 @@ class BibleWriter( InternalBible ):
                     verseNumberString = text.replace('<','').replace('>','').replace('"','') # Used below but remove anything that'll cause a big XML problem later
                     #writerObject.writeLineOpenClose ( 'VERS', verseText, ('vnumber',verseNumberString) )
                 elif marker == 'v~':
+                    assert( text or extras )
                     #print( "Text '{}'".format( text ) )
                     if not text: logging.warning( "toZefaniaXML: Missing text for v~" ); continue
                     # TODO: We haven't stripped out character fields from within the verse -- not sure how Zefania handles them yet
                     if not text: # this is an empty (untranslated) verse
                         text = '- - -' # but we'll put in a filler
+                    writerObject.writeLineOpenClose ( 'VERS', text, ('vnumber',verseNumberString) )
+                elif marker == 'p~':
+                    assert( text or extras )
+                    # TODO: We haven't stripped out character fields from within the verse -- not sure how Zefania handles them yet
                     writerObject.writeLineOpenClose ( 'VERS', text, ('vnumber',verseNumberString) )
                 elif marker not in ('c#',): # These are the markers that we can safely ignore for this export
                     unhandledMarkers.add( marker )
@@ -912,6 +929,11 @@ class BibleWriter( InternalBible ):
                     xw.writeLineOpenSelfclose ( 'verse', [('number',v),('style','v')] )
                 elif marker == 'v~':
                     if not adjText: logging.warning( "toUSXXML: Missing text for v~" ); continue
+                    # TODO: We haven't stripped out character fields from within the verse -- not sure how USX handles them yet
+                    xw.removeFinalNewline( True )
+                    xw.writeLineText( handleInternalTextMarkersForUSX(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
+                elif marker == 'p~':
+                    if not adjText: logging.warning( "toUSXXML: Missing text for p~" ); continue
                     # TODO: We haven't stripped out character fields from within the verse -- not sure how USX handles them yet
                     xw.removeFinalNewline( True )
                     xw.writeLineText( handleInternalTextMarkersForUSX(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
@@ -1590,6 +1612,9 @@ class BibleWriter( InternalBible ):
                 elif marker=='v~':
                     adjText = processXRefsAndFootnotes( text, extras, 0 )
                     writerObject.writeLineText( checkText(adjText), noTextCheck=True )
+                elif marker=='p~':
+                    adjText = processXRefsAndFootnotes( text, extras, 0 )
+                    writerObject.writeLineText( checkText(adjText), noTextCheck=True )
                 elif marker in ('q1','q2','q3',):
                     qLevel = marker[1] # The digit
                     closeAnyOpenL()
@@ -1610,7 +1635,7 @@ class BibleWriter( InternalBible ):
                         # Doesn't seem that OSIS has a way to encode this presentation element
                         writerObject.writeNewLine() # We'll do this for now
                 else: unhandledMarkers.add( marker )
-                if marker not in ('v','v~','p','q1','q2','q3','s1',) and extras: print( "toOSIS: Programming note: Didn't handle extras", marker, extras )
+                if marker not in ('v','v~','p','p~','q1','q2','q3','s1',) and extras: print( "toOSIS: Programming note: Didn't handle extras", marker, extras )
                 lastMarker = marker
 
             # At the end of everything
@@ -2199,6 +2224,14 @@ class BibleWriter( InternalBible ):
                     #writerObject.writeLineOpenSelfclose( 'verse', ('eID',sID) )
                     writeIndexEntry( writerObject, ix )
                     closeAnyOpenL()
+                elif marker=='p~':
+                    #if not haveOpenL: closeAnyOpenLG()
+                    #writeVerseStart( writerObject, ix, BBB, chapterRef, text )
+                    adjText = processXRefsAndFootnotes( text, extras )
+                    writerObject.writeLineText( checkText(adjText), noTextCheck=True )
+                    #writerObject.writeLineOpenSelfclose( 'verse', ('eID',sID) )
+                    writeIndexEntry( writerObject, ix )
+                    closeAnyOpenL()
                 elif marker=='q1' or marker=='q2' or marker=='q3':
                     qLevel = '1' if marker=='q1' else '2' if marker=='q2' else '3'
                     if not haveOpenLG:
@@ -2280,7 +2313,10 @@ class BibleWriter( InternalBible ):
             converts the USFM information to UTF-8 HTML files.
         """
         if Globals.verbosityLevel > 1: print( "Running BibleWriter:toHTML5..." )
-        if Globals.debugFlag: assert( self.books )
+        if Globals.debugFlag:
+            print( self )
+            assert( self.books )
+            assert( self.name )
 
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = "OutputFiles/BOS_HTML5Export/"
@@ -2300,8 +2336,8 @@ class BibleWriter( InternalBible ):
             writerObject.writeLineOpen( 'head' )
             writerObject.writeLineText( '<meta http-equiv="Content-Type" content="text/html;charset=utf-8">', noTextCheck=True )
             writerObject.writeLineText( '<link rel="stylesheet" type="text/css" href="../CSS/BibleBook.css">', noTextCheck=True )
-            if "HTML5Title" in controlDict and controlDict["HTML5Title"]:
-                writerObject.writeLineOpenClose( 'title' , controlDict["HTML5Title"].replace('__PROJECT_NAME__',self.name) )
+            if 'HTML5Title' in controlDict and controlDict['HTML5Title']:
+                writerObject.writeLineOpenClose( 'title' , controlDict['HTML5Title'].replace('__PROJECT_NAME__',self.name) )
             #if "HTML5Subject" in controlDict and controlDict["HTML5Subject"]: writerObject.writeLineOpenClose( 'subject', controlDict["HTML5Subject"] )
             #if "HTML5Description" in controlDict and controlDict["HTML5Description"]: writerObject.writeLineOpenClose( 'description', controlDict["HTML5Description"] )
             #if "HTML5Publisher" in controlDict and controlDict["HTML5Publisher"]: writerObject.writeLineOpenClose( 'publisher', controlDict["HTML5Publisher"] )
@@ -2342,7 +2378,8 @@ class BibleWriter( InternalBible ):
         def convertToPageReference( refTuple ):
             assert( refTuple and len(refTuple)==4 )
             assert( refTuple[0] and len(refTuple[0])==3 ) #BBB
-            return '{}#C{}V{}'.format( filenameDict[refTuple[0]], refTuple[1], refTuple[2] )
+            if refTuple[0] in filenameDict:
+                return '{}#C{}V{}'.format( filenameDict[refTuple[0]], refTuple[1], refTuple[2] )
         # end of toHTML5.convertToPageReference
 
         def createSectionReference( givenRef ):
@@ -2362,7 +2399,10 @@ class BibleWriter( InternalBible ):
                 if ref:
                     analysis = BRL.getFirstReference( ref, "section reference '{}' from '{}'".format( ref, givenRef ) )
                     #print( "a", analysis )
-                    if analysis: result += '<a href="{}">{}</a>'.format( convertToPageReference(analysis), ref )
+                    if analysis:
+                        link = convertToPageReference(analysis)
+                        if link: result += '<a href="{}">{}</a>'.format( link, ref )
+                        else: result += ref
                     else: result += ref
             #print( "now = '{}'".format( result ) )
             return result + bracket
@@ -2456,6 +2496,11 @@ class BibleWriter( InternalBible ):
 
                 # Character markers
                 elif marker=='v~':
+                    if not haveOpenParagraph:
+                        logging.warning( "toHTML5: Have verse text {} outside a paragraph in {}".format( cleanText, BBB ) )
+                        writerObject.writeLineOpen( 'p', ('class','unknownParagraph') ); haveOpenParagraph = True
+                    if cleanText: writerObject.writeLineText( cleanText )
+                elif marker=='p~':
                     if not haveOpenParagraph:
                         logging.warning( "toHTML5: Have verse text {} outside a paragraph in {}".format( cleanText, BBB ) )
                         writerObject.writeLineOpen( 'p', ('class','unknownParagraph') ); haveOpenParagraph = True
@@ -2576,6 +2621,18 @@ class BibleWriter( InternalBible ):
 
                     line = adjustLine ( line )
                     writerObject.write( line + '\n' )
+                elif marker == 'p~':
+                    line = text
+                    #print( BBB, C, V, line )
+
+                    # Adjust formatting
+                    #if line.endswith( '<CM>' ): # Means start a new paragraph after this line
+                        #assert( not haveParagraph )
+                        #line = line[:-4] # Remove the marker
+                        #haveParagraph = True
+
+                    line = adjustLine ( line )
+                    writerObject.write( line + '\n' )
                 else:
                     unhandledMarkers.add( marker )
         # end of toTheWord.writeVerseLine
@@ -2608,7 +2665,7 @@ class BibleWriter( InternalBible ):
                         V += 1
                     else: break
 
-            # Write the verses
+            # Write the verses (whether or not they're populated)
             C = V = 1
             while True:
                 if bkData:
@@ -2656,6 +2713,7 @@ class BibleWriter( InternalBible ):
         filepath = os.path.join( outputFolder, filename )
         if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
         with open( filepath, 'wt' ) as myFile:
+            myFile.write('\ufeff') # theWord needs the BOM
             BBB = startBBB
             while True: # Write each Bible book in the KJV order
                 writeBook( myFile, BBB )
@@ -2746,6 +2804,8 @@ class BibleWriter( InternalBible ):
             Writes a single line to the file representing a verse.
             """
             #print( "writeVerseLine {} {}:{} {}".format( BBB, C, V, verseData ) )
+
+            line = None
             for marker,originalMarker,text,cleanText,extras in verseData:
                 if marker in ('c','c#','v'):
                     pass # ignore all of these
@@ -2763,10 +2823,27 @@ class BibleWriter( InternalBible ):
                     if myGlobals['line']: # We've got some stuff to prepend to the line (e.g., headings before the actual verse text)
                         line = myGlobals['line'] + line
                         myGlobals['line'] = ''
-                    print( "Writing", nBBB, C, V, repr(line) )
-                    writerObject.execute( 'INSERT INTO "Bible" VALUES(?,?,?,?)', (nBBB,C,V,line) )
+                elif marker == 'p~':
+                    line = text
+                    #print( BBB, C, V, line )
+
+                    # Adjust formatting
+                    #if line.endswith( '<CM>' ): # Means start a new paragraph after this line
+                        #assert( not haveParagraph )
+                        #line = line[:-4] # Remove the marker
+                        #haveParagraph = True
+
+                    line = adjustLine ( line )
+                    if myGlobals['line']: # We've got some stuff to prepend to the line (e.g., headings before the actual verse text)
+                        line = myGlobals['line'] + line
+                        myGlobals['line'] = ''
                 else:
                     unhandledMarkers.add( marker )
+
+            #if line is not None: # don't bother writing blank (unfinished?) verses
+            if line: # don't bother writing blank (unfinished?) verses
+                #print( "toMySword: Writing", BBB, nBBB, C, V, marker, repr(line) )
+                writerObject.execute( 'INSERT INTO "Bible" VALUES(?,?,?,?)', (nBBB,C,V,line) )
         # end of toMySword.writeVerseLine
 
 
@@ -2781,10 +2858,10 @@ class BibleWriter( InternalBible ):
             numC, numV = len(verseList), verseList[0]
 
             ourGlobals = {}
-            ourGlobals['line'] = ''
-            if bkData: # Write book headings
+            ourGlobals['line'], ourGlobals['lastLine'] = '', None
+            if bkData:
                 V = 0
-                while True:
+                while True: # write book headings
                     result = bkData.getCVRef( (BBB,'0',str(V),) ) # Current this only gets one line
                     if result:
                         verseData, context = result
@@ -2799,26 +2876,28 @@ class BibleWriter( InternalBible ):
                             if composedLine: ourGlobals['line'] += composedLine
                         V += 1
                     else: break
+                #assert( not ourGlobals['line'] and not ourGlobals['lastLine'] ) #  We should have written everything
 
-            # Write the verses
-            C = V = 1
-            while True:
-                if bkData:
-                    result = bkData.getCVRef( (BBB,str(C),str(V),) )
-                    if result:
-                        verseData, context = result
-                        if verseData: writeVerseLine( writerObject, BBB, nBBB, C, V, verseData, ourGlobals )
-                        #else: writerObject.write( '\n' ) # no verseData
-                    #else: writerObject.write( '\n' ) # no result
-                #else: writerObject.write( '\n' ) # no bkData
-                V += 1
-                if V > numV:
-                    C += 1
-                    if C > numC:
-                        return
-                    else: # next chapter only
-                        numV = verseList[C-1]
-                        V = 1
+                # Write the verses
+                C = V = 1
+                while True:
+                    if bkData:
+                        result = bkData.getCVRef( (BBB,str(C),str(V),) )
+                        if result:
+                            verseData, context = result
+                            if verseData: writeVerseLine( writerObject, BBB, nBBB, C, V, verseData, ourGlobals )
+                            #else: writerObject.write( '\n' ) # no verseData
+                        #else: writerObject.write( '\n' ) # no result
+                    #else: writerObject.write( '\n' ) # no bkData
+                    V += 1
+                    if V > numV:
+                        C += 1
+                        if C > numC:
+                            return
+                        else: # next chapter only
+                            numV = verseList[C-1]
+                            V = 1
+                assert( not ourGlobals['line'] and not ourGlobals['lastLine'] ) #  We should have written everything
         # end of toMySword.writeBook
 
 

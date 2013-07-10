@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USXXMLBible.py
-#   Last modified: 2013-07-04 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-10 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USX Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USX Bibles.
 """
 
 ProgName = "USX XML Bible handler"
-ProgVersion = "0.08"
+ProgVersion = "0.09"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -148,6 +148,9 @@ class USXXMLBible( Bible ):
 
         # Now we can set our object variables
         self.name = self.givenName
+        if not self.name: self.name = os.path.basename( self.givenFolderName )
+        if not self.name: self.name = os.path.basename( self.givenFolderName[:-1] ) # Remove the final slash
+        if not self.name: self.name = "USX Bible"
 
         # Do a preliminary check on the readability of our folder
         if not os.access( self.givenFolderName, os.R_OK ):

@@ -589,7 +589,7 @@ def demo():
     testFolder = "Tests/DataFilesForTests/TheWordTest/"
 
 
-    if 0: # demo the file checking code -- first with the whole folder and then with only one folder
+    if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         result1 = TheWordBibleFileCheck( testFolder )
         if Globals.verbosityLevel > 1: print( "TestA1", result1 )
         result2 = TheWordBibleFileCheck( testFolder, autoLoad=True )

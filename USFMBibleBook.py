@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBibleBook.py
-#   Last modified: 2013-07-02 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-10 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating USFM Bible books.
 """
 
 ProgName = "USFM Bible book handler"
-ProgVersion = "0.32"
+ProgVersion = "0.33"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -145,6 +145,10 @@ class USFMBibleBook( BibleBook ):
                         logging.warning( _("Changed '\\{}' unknown marker to '{}' after {} {}:{} at beginning of line: {}").format( marker, tryMarker, self.bookReferenceCode, c, v, text ) )
                         break
                 # Otherwise, don't bother processing this line -- it'll just cause more problems later on
+        else: # There were no lines!!!
+            loadErrors.append( _("{} This USFM file was totally empty: {}").format( self.bookReferenceCode, self.sourceFilename ) )
+            logging.error( _("USFM file for {} was totally empty: {}").format( self.bookReferenceCode, self.sourceFilename ) )
+            lastMarker, lastText = 'rem', 'This (USFM) file was completely empty' # Save something since we had a file at least
         if lastMarker: doAppendLine( lastMarker, lastText ) # Process the final line
 
         if loadErrors: self.errorDictionary['Load Errors'] = loadErrors
@@ -185,7 +189,7 @@ def demo():
 
     import USFMFilenames
 
-    if 0: # Test individual files
+    if 1: # Test individual files
         #name, encoding, testFolder, filename, bookReferenceCode = "WEB", "utf-8", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/", "06-JOS.usfm", "JOS" # You can put your test file here
         #name, encoding, testFolder, filename, bookReferenceCode = "WEB", "utf-8", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/", "44-SIR.usfm", "SIR" # You can put your test file here
         #name, encoding, testFolder, filename, bookReferenceCode = "Matigsalug", "utf-8", "../../../../../Data/Work/Matigsalug/Bible/MBTV/", "MBT102SA.SCP", "SA2" # You can put your test file here

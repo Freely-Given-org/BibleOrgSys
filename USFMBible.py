@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2013-07-04 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-10 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -177,7 +177,12 @@ class USFMBible( Bible ):
             self.loadSSFData( self.ssfFilepath )
 
         self.name = self.givenName
-        if self.name is None and self.settingsDict and 'Name' in self.settingsDict: self.name = self.settingsDict['Name']
+        if self.name is None and self.settingsDict:
+            for field in ('FullName','Name',):
+                if field in self.settingsDict: self.name = self.settingsDict[field]; break
+        if not self.name: self.name = os.path.basename( self.sourceFolder )
+        if not self.name: self.name = os.path.basename( self.sourceFolder[:-1] ) # Remove the final slash
+        if not self.name: self.name = "USFM Bible"
 
         self.maximumPossibleFilenameTuples = self.USFMFilenamesObject.getMaximumPossibleFilenameTuples()
         self.possibleFilenameDict = {}
@@ -299,8 +304,7 @@ class USFMBible( Bible ):
         else: # Just single threaded
             # Load the books one by one -- assuming that they have regular Paratext style filenames
             for BBB,filename in self.maximumPossibleFilenameTuples:
-                loadedBook = self.loadBook( BBB, filename )
-                #self.saveBook( loadedBook )
+                loadedBook = self.loadBook( BBB, filename ) # also saves it
     # end of USFMBible.load
 # end of class USFMBible
 
@@ -478,7 +482,7 @@ def demo():
 
 
 
-    if 0: # Test a whole folder full of folders of USFM Bibles
+    if 1: # Test a whole folder full of folders of USFM Bibles
         def findInfo():
             """ Find out info about the project from the included copyright.htm file """
             with open( os.path.join( somepath, "copyright.htm" ) ) as myFile: # Automatically closes the file when done

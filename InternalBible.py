@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2013-07-05 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-09 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -36,7 +36,7 @@ and then fills
 """
 
 ProgName = "Internal Bible handler"
-ProgVersion = "0.27"
+ProgVersion = "0.28"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -764,6 +764,8 @@ class InternalBible:
     def getVerseText( self, key ):
         """
         First miserable attempt at converting (USFM-like) verseData into a string.
+
+        Uses uncommon Unicode symbols to represent various formatted styles
         """
         result = self.getBCVRef( key )
         if result is not None:
@@ -778,9 +780,14 @@ class InternalBible:
                 elif marker == 'c#': pass # Ignore print chapter number
                 elif marker == 's1': verseText += '¥' + cleanText + '¥'
                 elif marker == 'p': verseText += '¶' + cleanText
+                elif marker == 'q1': verseText += '₁' + cleanText
+                elif marker == 'q2': verseText += '₂' + cleanText
+                elif marker == 'q3': verseText += '₃' + cleanText
+                elif marker == 'q4': verseText += '₄' + cleanText
                 elif marker == 'm': verseText += '§' + cleanText
                 elif marker == 'v': firstWord = True # Ignore
                 elif marker == 'v~': verseText += cleanText
+                elif marker == 'p~': verseText += cleanText
                 elif marker == 'vw':
                     if not firstWord: verseText += ' '
                     verseText += cleanText

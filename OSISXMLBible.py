@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # OSISXMLBible.py
-#   Last modified: 2013-06-24 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-10 by RJH (also update ProgVersion below)
 #
 # Module handling OSIS XML Bibles
 #
@@ -34,7 +34,7 @@ This is a quickly updated version of an early module,
 """
 
 ProgName = "OSIS XML Bible format handler"
-ProgVersion = "0.22"
+ProgVersion = "0.24"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -1094,21 +1094,21 @@ class OSISXMLBible( Bible ):
                 if not noteN: noteN = '-'
                 #bookResults.append( ('crossReference',noteN,) )
                 #USFMResults.append( ('x',noteN,) )
-                self.thisBook.appendLine( 'x', noteN )
+                self.thisBook.appendToLastLine( '\\x {}'.format( noteN ) )
             elif noteType == 'footnote':
                 #print( "  noteType =", noteType, "noteN =", noteN )
                 if Globals.debugFlag: assert( not placement )
                 if not noteN: noteN = '~'
                 #bookResults.append( ('footnote',noteN,) )
                 #USFMResults.append( ('f',noteN,) )
-                self.thisBook.appendLine( 'f', noteN )
+                self.thisBook.appendToLastLine( '\\f {}'.format( noteN ) )
             elif noteType == 'study':
                 #print( "  noteType =", noteType, "noteN =", noteN )
                 if Globals.debugFlag: assert( not placement )
                 if not noteN: noteN = '~'
                 #bookResults.append( ('studyNote',noteN,) )
                 #USFMResults.append( ('f',noteN,) )
-                self.thisBook.appendLine( 'f', noteN )
+                self.thisBook.appendToLastLine( '\\f {}'.format( noteN ) )
                 #print( "study note1", location, "Type =", noteType, "N =", noteN, "Ref =", noteOsisRef, "ID =", noteOsisID, "p =", placement ); halt
             elif noteType == 'variant':
                 #print( "  noteType =", noteType, "noteN =", noteN )
@@ -1136,7 +1136,7 @@ class OSISXMLBible( Bible ):
                 if noteType == 'crossReference': # This could be something like '1:6:' or '1:8: a'
                     #bookResults.append( ('crossReferenceSource',noteText,) )
                     #USFMResults.append( ('xt',noteText) )
-                    self.thisBook.appendLine( 'xt', noteText )
+                    self.thisBook.appendToLastLine( '\\xt {}'.format( noteText ) )
                 elif noteType == 'footnote': # This could be something like '4:3 In Greek: some note.' or it could just be random text
                     #print( "  noteType =", noteType, "noteText =", noteText )
                     if Globals.debugFlag: assert( noteText )
@@ -1151,17 +1151,17 @@ class OSISXMLBible( Bible ):
                         #USFMResults.append( ('fr',sourceText) )
                         #bookResults.append( ('footnoteText',footnoteText,) )
                         #USFMResults.append( ('ft',footnoteText,) )
-                        self.thisBook.appendLine( 'fr', sourceText )
-                        self.thisBook.appendLine( 'ft', footnoteText )
+                        self.thisBook.appendToLastLine( '\\fr {}'.format( sourceText ) )
+                        self.thisBook.appendToLastLine( '\\ft {}'.format( footnoteText )  )
                     else: # Let's assume it's a simple note
                         #bookResults.append( ('footnoteText',noteText,) )
                         #USFMResults.append( ('ft',noteText,) )
-                        self.thisBook.appendLine( 'ft', noteText )
+                        self.thisBook.appendToLastLine( '\\ft {}'.format( noteText ) )
                 elif noteType == 'study':
                     #print( "Need to handle study note properly here" ) # ................. xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
                     #bookResults.append( ('studyNote+',noteText,) )
                     #USFMResults.append( ('sn+',noteText,) )
-                    self.thisBook.appendLine( 'sn~', noteText )
+                    self.thisBook.appendToLastLine( '\\sn~ {}'.format( noteText ) )
                     #print( "study note2", location, "Type =", noteType, "N =", noteN, "Ref =", noteOsisRef, "ID =", noteOsisID, "p =", placement ); halt
                 elif noteType == 'x-index':
                     #print( "Need to handle index note properly here" ) # ................. xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -1198,7 +1198,7 @@ class OSISXMLBible( Bible ):
                                     logging.error( "What do we do here with the note at {}".format( verseMilestone ) )
                                 #bookResults.append( ('crossReferenceSource',anchor,) )
                                 #USFMResults.append( ('xo',anchor) )
-                                self.thisBook.appendLine( 'xo', anchor )
+                                self.thisBook.appendToLastLine( '\\xo {}'.format( anchor ) )
                             elif noteType=='footnote':
                                 #bookResults.append( ('footnoteSource',anchor,) )
                                 #USFMResults.append( ('v~',anchor) ) # There's no USFM for this
@@ -1211,25 +1211,25 @@ class OSISXMLBible( Bible ):
                         if Globals.debugFlag: assert( not noteText or noteText.isspace() )
                         #bookResults.append( ('crossReferenceSource',referenceText,) )
                         #USFMResults.append( ('xt',referenceText) )
-                        self.thisBook.appendLine( 'xt', referenceText )
+                        self.thisBook.appendToLastLine( '\\xt {}'.format( referenceText ) )
                     elif noteType=='crossReference' and not referenceType and referenceOsisRef is not None:
                         #bookResults.append( ('crossReference',referenceText,referenceTail,) )
                         if 0 and USFMResults and USFMResults[-1][0]=='xt': # Combine multiple cross-references into one xt field
                             #USFMResults.append( ('xt',USFMResults.pop()[1]+referenceText+referenceTail,) )
-                            self.thisBook.appendLine( 'xt', USFMResults.pop()[1]+referenceText+referenceTail )
+                            self.thisBook.appendToLastLine( '\\xt {}'.format( USFMResults.pop()[1]+referenceText+referenceTail ) )
                         else:
                             #USFMResults.append( ('xt',referenceText+referenceTail,) )
-                            self.thisBook.appendLine( 'xt', referenceText+referenceTail )
+                            self.thisBook.appendToLastLine( '\\xt {}'.format( referenceText+referenceTail ) )
                     elif noteType=='footnote' and referenceType=='source':
                         if Globals.debugFlag: assert( referenceText and not noteText )
                         #bookResults.append( ('footnoteSource',referenceText,) )
                         if not referenceText[-1] == ' ': referenceText += ' '
                         #USFMResults.append( ('fr',referenceText,) )
-                        self.thisBook.appendLine( 'fr', referenceText )
+                        self.thisBook.appendToLastLine( '\\fr {}'.format( referenceText ) )
                         if Globals.debugFlag: assert( referenceTail )
                         #bookResults.append( ('footnoteText',referenceTail,) )
                         #USFMResults.append( ('ft',referenceTail,) )
-                        self.thisBook.appendLine( 'ft', referenceTail )
+                        self.thisBook.appendToLastLine( '\\ft {}'.format( referenceTail ) )
                     elif noteType=='study' and referenceType=='source': # This bit needs fixing up properly ................................xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
                         #print( "rT='{}' nT='{}' rTail='{}'".format( referenceText, noteText, referenceTail ) )
                         if Globals.debugFlag: assert( referenceText and not noteText.strip() )
@@ -1255,7 +1255,7 @@ class OSISXMLBible( Bible ):
                             if Globals.debugFlag: assert( noteType == 'crossReference' )
                             #bookResults.append( ('crossReferenceSource+',subreferenceText,) )
                             #USFMResults.append( ('xo+',subreferenceText,) )
-                            self.thisBook.appendLine( 'xo~', subreferenceText )
+                            self.thisBook.appendToLastLine( '\\xo {}'.format( subreferenceText ) )
                         else: logging.warning( "7h45 Unprocessed '{}' sub2element ({}) in {} at {}".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"q":
                     sublocation = "validateCrossReferenceOrFootnote: q of " + locationDescription
@@ -1266,11 +1266,11 @@ class OSISXMLBible( Bible ):
                     if Globals.debugFlag: assert( qText )
                     #bookResults.append( ('footnoteQ',qText,) )
                     #USFMResults.append( ('fq',qText,) )
-                    self.thisBook.appendLine( 'fq', qText )
+                    self.thisBook.appendToLastLine( '\\fq {}'.format( qText ) )
                     if qTail:
                         #bookResults.append( ('note+',qTail,) )
                         #USFMResults.append( ('ft',qTail,) )
-                        self.thisBook.appendLine( 'ft', qTail )
+                        self.thisBook.appendToLastLine( '\\ft {}'.format( qTail ) )
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"catchWord":
                     sublocation = "validateCrossReferenceOrFootnote: catchWord of " + locationDescription
                     Globals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, 'c48n' )
@@ -1279,7 +1279,7 @@ class OSISXMLBible( Bible ):
                     if noteType == 'footnote':
                         #bookResults.append( ('footnoteCatchWord',catchWordText,) )
                         #USFMResults.append( ('fq',catchWordText,) )
-                        self.thisBook.appendLine( 'fq', catchWordText )
+                        self.thisBook.appendToLastLine( '\\fq {}'.format( catchWordText ) )
                         for sub2element in subelement.getchildren(): # Can have nested catchWords in some (horrible) OSIS files)
                             if sub2element.tag == OSISXMLBible.OSISNameSpace+"catchWord": #
                                 sub2location = "validateCrossReferenceOrFootnote: catchWord of catchWord of " + locationDescription
@@ -1291,7 +1291,7 @@ class OSISXMLBible( Bible ):
                                 if Globals.debugFlag: assert( noteType == 'footnote' )
                                 #bookResults.append( ('footnoteCatchWord2',subCatchWordText,) )
                                 #USFMResults.append( ('fq',subCatchWordText,) )
-                                self.thisBook.appendLine( 'fq', subCatchWordText )
+                                self.thisBook.appendToLastLine( '\\fq {}'.format( subCatchWordText ) )
                             else:
                                 logging.warning( "8j6g Unprocessed '{}' sub2element ({}) in {} at {}".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
                     elif noteType == 'variant':
@@ -1438,7 +1438,7 @@ class OSISXMLBible( Bible ):
                                 adjNoteTail = noteTail.replace('\n','') # XML line formatting is irrelevant to USFM
                                 if adjNoteTail:
                                     #USFMResults.append( ('lv~',adjNoteTail,) )
-                                    self.thisBook.appendLine( 'lv~', adjNoteTail )
+                                    self.thisBook.appendLine( 'v~', adjNoteTail )
                         elif sub2element.tag == OSISXMLBible.OSISNameSpace+"divineName":
                             sub2location = "validateLG: divineName of l of  " + locationDescription
                             Globals.checkXMLNoAttributes( sub2element, sub2location+" at "+verseMilestone, '3q6y' )
@@ -1595,7 +1595,7 @@ class OSISXMLBible( Bible ):
                         adjNoteTail = noteTail.strip() # XML line formatting is irrelevant to USFM
                         if adjNoteTail:
                             #USFMResults.append( ('lv~',adjNoteTail,) )
-                            self.thisBook.appendLine( 'lv~', adjNoteTail )
+                            self.thisBook.appendLine( 'v~', adjNoteTail )
                     justFinishedLG = False
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"lg":
                     sublocation = "validateParagraph: lg of " + locationDescription
@@ -1643,7 +1643,7 @@ class OSISXMLBible( Bible ):
                                         if noteTail: # This is the main text of the verse (follows the inserted note)
                                             bookResults.append( ('lverse+', noteTail,) )
                                             adjNoteTail = noteTail.replace('\n','') # XML line formatting is irrelevant to USFM
-                                            if adjNoteTail: USFMResults.append( ('lv~',adjNoteTail,) )
+                                            if adjNoteTail: USFMResults.append( ('v~',adjNoteTail,) )
                                     else: logging.warning( "32df Unprocessed '{}' sub3element ({}) in {} at {}".format( sub3element.tag, sub3element.text, sub2location, verseMilestone ) )
                             else: logging.warning( "5g1e Unprocessed '{}' sub2element ({}) in {} at {}".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
                         if lgTail and lgTail!='\n': # This is the main text of the verse (outside of the quotation indents)
@@ -1990,7 +1990,7 @@ class OSISXMLBible( Bible ):
                                     elif divType=='section' and subDivType=='subSection':
                                         #bookResults.append( ('title',title,) )
                                         #USFMResults.append( ('xxxx3' if subDivType == 'outline' else 'xxxx4',title,) )
-                                        self.thisBook.appendLine( 'xxxx3' if subDivType == 'outline' else 'xxxx4',title )
+                                        self.thisBook.appendLine( 'xxxx3' if subDivType == 'outline' else 's',title )
                                     elif divType=='section' and subDivType=='outline':
                                         #bookResults.append( ('title',title,) )
                                         #USFMResults.append( ('iot',title,) )
@@ -2019,7 +2019,7 @@ class OSISXMLBible( Bible ):
                                             #bookResults.append( ('lverse+', noteTail,) )
                                             self.thisBook.appendLine( 'lverse~', noteTail )
                                             adjNoteTail = noteTail.replace('\n','') # XML line formatting is irrelevant to USFM
-                                            if adjNoteTail: USFMResults.append( ('lv~',adjNoteTail,) )
+                                            if adjNoteTail: USFMResults.append( ('v~',adjNoteTail,) )
                                     else: logging.warning( "m4g5 Unprocessed '{}' sub3element ({}) in {} at {}".format( sub3element.tag, sub3element.text, sub2location, verseMilestone ) )
                             elif sub2element.tag == OSISXMLBible.OSISNameSpace+"p":
                                 sub2location = "p of " + sublocation
@@ -2245,7 +2245,7 @@ class OSISXMLBible( Bible ):
                                             adjNoteTail = noteTail.replace('\n','') # XML line formatting is irrelevant to USFM
                                             if adjNoteTail:
                                                 #USFMResults.append( ('lv~',adjNoteTail,) )
-                                                self.thisBook.appendLine( 'lv~', adjNoteTail )
+                                                self.thisBook.appendLine( 'v~', adjNoteTail )
                                         # Now process the subelements
                                         for sub3element in sub2element.getchildren():
                                             if sub3element.tag == OSISXMLBible.OSISNameSpace+"catchWord":
@@ -2350,7 +2350,7 @@ class OSISXMLBible( Bible ):
                 if noteTail: # This is the main text of the verse (follows the inserted note)
                     bookResults.append( ('lverse+', noteTail,) )
                     adjNoteTail = noteTail.replace('\n','') # XML line formatting is irrelevant to USFM
-                    if adjNoteTail: USFMResults.append( ('lv~',adjNoteTail,) )
+                    if adjNoteTail: self.thisBook.appendLine( 'v~', adjNoteTail ) # USFMResults.append( ('lv~',adjNoteTail,) )
 ########### Left-overs!
             else: logging.warning( "5ks1 Unprocessed '{}' sub-element ({}) in {} div at {}".format( element.tag, element.text, mainDivType, verseMilestone ) )
             #if element.tail is not None and element.tail.strip(): logging.error( "Unexpected left-over '{}' tail data after {} element in {} div at {}".format( element.tail, element.tag, mainDivType, verseMilestone ) )
