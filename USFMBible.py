@@ -250,7 +250,8 @@ class USFMBible( Bible ):
             if Globals.verbosityLevel > 3:
                 for key in sorted(settingsDict):
                     print( "    {}: {}".format( key, settingsDict[key] ) )
-        self.settingsDict = settingsDict
+        self.ssfDict = settingsDict # We'll keep a copy of just the SSF settings
+        self.settingsDict = settingsDict.copy() # This will be all the combined settings
     # end of USFMBible.loadSSFData
 
 

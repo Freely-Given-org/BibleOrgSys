@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USXXMLBible.py
-#   Last modified: 2013-07-10 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-11 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USX Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USX Bibles.
 """
 
 ProgName = "USX XML Bible handler"
-ProgVersion = "0.09"
+ProgVersion = "0.10"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -236,7 +236,8 @@ class USXXMLBible( Bible ):
                 if Globals.verbosityLevel > 3:
                     for key in sorted(settingsDict):
                         print( "    {}: {}".format( key, settingsDict[key] ) )
-            return settingsDict
+            self.ssfDict = settingsDict # We'll keep a copy of just the SSF settings
+            self.settingsDict = settingsDict.copy() # This will be all the combined settings
         # end of loadSSFData
 
         if Globals.verbosityLevel > 1: print( _("USXXMLBible: Loading {} from {}...").format( self.name, self.givenFolderName ) )
@@ -255,11 +256,11 @@ class USXXMLBible( Bible ):
 
         self.USXFilenamesObject = USXFilenames( self.givenFolderName )
 
-        if 0:
+        if 0: # We don't have a getSSFFilenames function
             # Attempt to load the metadata file
             ssfFilepathList = self.USXFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
             if len(ssfFilepathList) == 1: # Seems we found the right one
-                self.settingsDict = loadSSFData( ssfFilepathList[0] )
+                loadSSFData( ssfFilepathList[0] )
 
         # Load the books one by one -- assuming that they have regular Paratext style filenames
         # DON'T KNOW WHY THIS DOESN'T WORK

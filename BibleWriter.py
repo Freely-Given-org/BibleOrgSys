@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-07-10 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-11 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -2073,7 +2073,7 @@ class BibleWriter( InternalBible ):
                 #print( BBB, marker, text )
                 #print( " ", haveOpenIntro, haveOpenOutline, haveOpenMajorSection, haveOpenSection, haveOpenSubsection, needChapterEID, haveOpenParagraph, haveOpenVsID, haveOpenLG, haveOpenL )
                 #print( toSwordGlobals['idStack'] )
-                if marker in ( 'id', 'h1', 'mt2' ): continue # We just ignore these markers
+                if marker in ( 'id', 'h1', 'mt2', 'c#', ): continue # We just ignore these markers
                 if marker=='mt1': writerObject.writeLineOpenClose( 'title', checkText(text) )
                 elif marker=='is1' or marker=='imt1':
                     if haveOpenIntro: # already -- assume it's a second one
