@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBookOrders.py
-#   Last modified: 2013-07-03 (also update ProgVersion below)
+#   Last modified: 2013-07-12 (also update ProgVersion below)
 #
 # Module handling BibleBookOrderSystems
 #
@@ -28,8 +28,11 @@ Module handling BibleBookOrder systems.
 """
 
 ProgName = "Bible Book Order Systems handler"
-ProgVersion = "0.85"
+ProgVersion = "0.86"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+
+debuggingThisModule = False
+
 
 
 import os, logging
@@ -54,7 +57,7 @@ class BibleBookOrderSystems:
         """
         Constructor:
         """
-        if Globals.debugFlag: print( "BibleBookOrderSystems:__init__()" )
+        if Globals.debugFlag and debuggingThisModule: print( "BibleBookOrderSystems:__init__()" )
         self.__DataDicts = self.__DataLists = None # We'll import into these in loadData
     # end of __init__
 
@@ -89,7 +92,8 @@ class BibleBookOrderSystems:
                 bboc.loadSystems( XMLFolder ) # Load the XML (if not done already)
                 self.__DataDicts, self.__DataLists = bboc.importDataToPython() # Get the various dictionaries organised for quick lookup
         assert( len(self.__DataDicts) == len(self.__DataLists) )
-        if Globals.debugFlag: print( "BibleBookOrderSystems:loadData({}) loaded {} systems".format( XMLFolder, len(self.__DataDicts) ) )
+        if (Globals.debugFlag and debuggingThisModule) or Globals.verbosityLevel > 3:
+            print( "BibleBookOrderSystems:loadData({}) loaded {} systems".format( XMLFolder, len(self.__DataDicts) ) )
         return self
     # end of loadData
 
@@ -234,7 +238,7 @@ class BibleBookOrderSystem:
         """
         Constructor:
         """
-        if Globals.debugFlag: print( "BibleBookOrderSystem:__init__({})".format( systemName ) )
+        if Globals.debugFlag and debuggingThisModule: print( "BibleBookOrderSystem:__init__({})".format( systemName ) )
         self.__systemName = systemName
         self.__bbos = BibleBookOrderSystems().loadData() # Doesn't reload the XML unnecessarily :)
         results = self.__bbos.getBookOrderSystem( self.__systemName )

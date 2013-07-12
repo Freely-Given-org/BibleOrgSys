@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-07-10 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-12 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -126,6 +126,9 @@ class InternalBibleEntry:
 
 
     def __str__( self ):
+        """
+        Just display a very abbreviated form of the entry.
+        """
         cleanAbbreviation = self.cleanText if len(self.cleanText)<100 else (self.cleanText[:50]+'...'+self.cleanText[-50:])
         return "InternalBibleEntry object: {} = {}{}".format( self.marker, repr(cleanAbbreviation), '+extras' if self.extras else '' )
     # end of InternalBibleEntry.__str__
@@ -179,12 +182,15 @@ class InternalBibleEntryList:
 
 
     def __str__( self ):
+        """
+        Just display a simplified view of the list of entries.
+        """
         result = "InternalBibleEntryList object:"
         if not self.data: result += "\n  Empty."
         else:
             dataLen = len( self.data )
             for j, entry in enumerate( self.data ):
-                assert( isinstance( entry, InternalBibleEntry ) )
+                if Globals.debugFlag: assert( isinstance( entry, InternalBibleEntry ) )
                 cleanAbbreviation = entry.cleanText if len(entry.cleanText)<100 else (entry.cleanText[:50]+'...'+entry.cleanText[-50:])
                 result += "\n  {}{}/ {} = {}".format( ' ' if j<9 and dataLen>=10 else '', j+1, entry.marker, repr(cleanAbbreviation) )
                 if j>=20 and dataLen>20:

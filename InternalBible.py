@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2013-07-11 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-12 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -751,7 +751,7 @@ class InternalBible:
         result = self.getBCVRef( key )
         #print( "  gVD", self.name, key, verseData )
         if result is None:
-            print( "IB.gVD no VD", self.name, key, result )
+            if Globals.debugFlag or Globals.verbosityLevel>2: print( "IB.gVD no VD", self.name, key, result )
             if Globals.debugFlag: assert( key.getChapterNumberStr()=='0' or key.getVerseNumberStr()=='0' )
         else:
             verseData, context = result

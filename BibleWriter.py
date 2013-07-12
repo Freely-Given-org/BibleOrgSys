@@ -637,7 +637,7 @@ class BibleWriter( InternalBible ):
                 Tries to find pairs of markers and replaces them with html char segments.
                 """
                 if '\\' not in originalText: return originalText
-                print( "toUSXXML:hITM4USX:", BBB, c, v, marker, "'"+originalText+"'" )
+                if Globals.debugFlag and debuggingThisModule: print( "toUSXXML:hITM4USX:", BBB, c, v, marker, "'"+originalText+"'" )
                 markerList = sorted( Globals.USFMMarkers.getMarkerListFromText( originalText ),
                                             key=lambda s: -len(s[4])) # Sort by longest characterContext first (maximum nesting)
                 for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check for internal markers

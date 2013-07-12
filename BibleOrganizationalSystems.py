@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleOrganizationalSystems.py
-#   Last modified: 2013-07-03 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-12 by RJH (also update ProgVersion below)
 #
 # Module handling BibleOrganizationalSystems
 #
@@ -28,8 +28,10 @@ Module handling BibleOrganizationalSystems.
 """
 
 ProgName = "Bible Organization Systems handler"
-ProgVersion = "0.25"
+ProgVersion = "0.26"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+
+debuggingThisModule = False
 
 
 import logging, os

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # MLWriter.py
-#   Last modified: 2013-06-24 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-12 by RJH (also update ProgVersion below)
 #
 # Module handling pretty writing of XML (and xHTML) and HTML files
 #
@@ -37,7 +37,7 @@ TODO: Add writeAutoDTD
 """
 
 ProgName = "ML Writer"
-ProgVersion = "0.29"
+ProgVersion = "0.30"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -255,9 +255,9 @@ class MLWriter:
                          w for Windows
         """
         assert( self._status == 'Idle' )
-        if lineEndings=='l': self._nl = '\n'
-        elif lineEndings=='w': self._nl = '\r\n'
-        logging.error( "MLWriter: Unknown '{}' lineEndings flag".format( lineEndings ) )
+        if lineEndings == 'l': self._nl = '\n'
+        elif lineEndings == 'w': self._nl = '\r\n'
+        else: logging.error( "MLWriter: Unknown '{}' lineEndings flag".format( lineEndings ) )
         if Globals.verbosityLevel>2: print( _("Writing {}...").format(self._outputFilePath) )
         self.__outputFile = open( self._outputFilePath, 'wt' ) # Just create the empty file
         self.__outputFile.close()
