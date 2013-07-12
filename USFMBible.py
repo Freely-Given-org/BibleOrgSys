@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2013-07-10 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-12 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 """
 
 ProgName = "USFM Bible handler"
-ProgVersion = "0.36"
+ProgVersion = "0.37"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -170,14 +170,14 @@ class USFMBible( Bible ):
         self.USFMFilenamesObject = USFMFilenames( self.sourceFolder )
 
         # Attempt to load the SSF file
-        self.ssfFilepath = self.settingsDict = None
+        self.ssfFilepath, self.settingsDict = {}, {}
         ssfFilepathList = self.USFMFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
         if len(ssfFilepathList) == 1: # Seems we found the right one
             self.ssfFilepath = ssfFilepathList[0]
             self.loadSSFData( self.ssfFilepath )
 
         self.name = self.givenName
-        if self.name is None and self.settingsDict:
+        if self.name is None:
             for field in ('FullName','Name',):
                 if field in self.settingsDict: self.name = self.settingsDict[field]; break
         if not self.name: self.name = os.path.basename( self.sourceFolder )

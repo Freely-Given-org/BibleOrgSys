@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-07-11 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-12 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -47,7 +47,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.20"
+ProgVersion = "0.21"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -211,8 +211,9 @@ class BibleWriter( InternalBible ):
                     if inField is not None:
                         USFM += '\\{}*'.format( inField ) # Do a close marker for footnotes and cross-references
                         inField = None
-                if pseudoMarker[-1]=='~':
-                    assert( pseudoMarker[:-1] in ('v','p') )
+                if pseudoMarker[-1] == '~':
+                    #print( "psMarker ends with squiggle: '{}'='{}'".format( pseudoMarker, value ) )
+                    if Globals.debugFlag: assert( pseudoMarker[:-1] in ('v','p','c') )
                     USFM += value
                 else: # not a continuation marker
                     adjValue = value
