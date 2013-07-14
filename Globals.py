@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # py
-#   Last modified: 2013-07-12 (also update ProgVersion below)
+#   Last modified: 2013-07-15 (also update ProgVersion below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -53,7 +53,7 @@ Contains functions:
 """
 
 ProgName = "Globals"
-ProgVersion = "0.25"
+ProgVersion = "0.26"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -108,6 +108,7 @@ matchingCharacters = {'(':')',')':'(', '[':']',']':'[', '{':'}','}':'{', '<':'>'
 
 
 loggingDateFormat = "%Y-%m-%d %H:%M"
+loggingConsoleFormat = '%(levelname)s: %(message)s'
 loggingShortFormat = '%(levelname)8s: %(message)s'
 loggingLongFormat = '%(asctime)s %(levelname)8s: %(message)s'
 
@@ -138,17 +139,21 @@ def setupLoggingToFile( ProgName, ProgVersion, folder=None ):
 # end of setupLogging
 
 
-def addConsoleLogging():
+def addConsoleLogging( consoleLoggingLevel=None ):
     # Now add a handler to also send ERROR and higher to console (depending on verbosity)
-    stderr_handler = logging.StreamHandler() # StreamHandler with no parameters defaults to sys.stderr
-    if verbosityLevel == 0: # Silent
-        stderr_handler.setLevel( logging.CRITICAL )
-    elif verbosityLevel == 4: # Verbose
-        stderr_handler.setLevel( logging.WARNING )
-    else: # Quiet or normal
-        stderr_handler.setLevel( logging.ERROR )
+    stderrHandler = logging.StreamHandler() # StreamHandler with no parameters defaults to sys.stderr
+    stderrHandler.setFormatter( logging.Formatter( loggingConsoleFormat, None ) )
+    if consoleLoggingLevel is not None:
+        stderrHandler.setLevel( consoleLoggingLevel )
+    else: # work it out for ourselves
+        if verbosityLevel == 0: # Silent
+            stderrHandler.setLevel( logging.CRITICAL )
+        elif verbosityLevel == 4: # Verbose
+            stderrHandler.setLevel( logging.WARNING )
+        else: # Quiet or normal
+            stderrHandler.setLevel( logging.ERROR )
     root = logging.getLogger()  # No param means get the root logger
-    root.addHandler(stderr_handler)
+    root.addHandler(stderrHandler)
 # end of addConsoleLogging
 
 
@@ -677,21 +682,32 @@ def setLogErrorsFlag( newValue=True ):
 
 def addStandardOptionsAndProcess( parserObject ):
     """ Adds our standardOptions to the command line parser. """
-    global commandLineOptions, commandLineArguments
-    global maxProcesses
+    global commandLineOptions, commandLineArguments, maxProcesses
+
     parserObject.add_option( "-s", "--silent", action="store_const", dest="verbose", const=0, help="output no information to the console" )
     parserObject.add_option( "-q", "--quiet", action="store_const", dest="verbose", const=1, help="output less information to the console" )
     parserObject.add_option( "-i", "--informative", action="store_const", dest="verbose", const=3, help="output more information to the console" )
     parserObject.add_option( "-v", "--verbose", action="store_const", dest="verbose", const=4, help="output lots of information for the user" )
     parserObject.add_option( "-c", "--strict", action="store_true", dest="strict", default=False, help="perform very strict checking of all input" )
     parserObject.add_option( "-l", "--log", action="store_true", dest="log", default=False, help="log errors to console" )
+    parserObject.add_option( "-w", "--warn", action="store_true", dest="warn", default=False, help="log warnings and errors to console" )
     parserObject.add_option( "-1", "--single", action="store_true", dest="single", default=False, help="don't use multiprocessing" )
     parserObject.add_option( "-d", "--debug", action="store_true", dest="debug", default=False, help="output even more information for the programmer/debugger" )
     commandLineOptions, commandLineArguments = parserObject.parse_args()
-    if commandLineOptions.strict: setStrictCheckingFlag()
-    if commandLineOptions.log: setLogErrorsFlag()
-    if commandLineOptions.debug: setDebugFlag()
+    if commandLineOptions.log and commandLineOptions.warn:
+        parserObject.error( "options -l and -w are mutually exclusive" )
+
     setVerbosity( commandLineOptions.verbose if commandLineOptions.verbose is not None else 2)
+    if commandLineOptions.debug: setDebugFlag()
+
+    # Determine console logging levels
+    if commandLineOptions.warn: addConsoleLogging( logging.WARNING if not debugFlag else logging.DEBUG )
+    elif commandLineOptions.log: addConsoleLogging( logging.ERROR )
+    else: addConsoleLogging( logging.CRITICAL ) # default
+    if commandLineOptions.strict: setStrictCheckingFlag()
+    #if commandLineOptions.log: setLogErrorsFlag()
+
+    # Determine multiprocessing strategy
     maxProcesses = multiprocessing.cpu_count()
     #if maxProcesses > 1: maxProcesses -= 1 # Leave one CPU alone (normally)
     if maxProcesses > 1: maxProcesses = maxProcesses * 8 // 10 # Use 80% of them so other things keep working also
