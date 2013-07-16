@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBibleBook.py
-#   Last modified: 2013-07-11 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-15 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating USFM Bible books.
 """
 
 ProgName = "USFM Bible book handler"
-ProgVersion = "0.33"
+ProgVersion = "0.35"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -107,6 +107,7 @@ class USFMBibleBook( BibleBook ):
         loadErrors = []
         for marker,text in originalBook.lines: # Always process a line behind in case we have to combine lines
             #print( "After {} {}:{} \\{} '{}'".format( bookReferenceCode, c, v, marker, text ) )
+
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text: c, v = text.split()[0], '0'
             elif marker=='v' and text:
@@ -114,6 +115,7 @@ class USFMBibleBook( BibleBook ):
                 if c == '0': c = '1' # Some single chapter books don't have an explicit chapter 1 marker
             elif marker=='restore': continue # Ignore these lines completely
 
+            # Now load the actual Bible book data
             if Globals.USFMMarkers.isNewlineMarker( marker ):
                 if lastMarker: doAppendLine( lastMarker, lastText )
                 lastMarker, lastText = marker, text
@@ -174,7 +176,7 @@ def demo():
         if Globals.verbosityLevel > 1: print( "  Header is '{}'".format( UBB.getField( 'h' ) ) )
         if Globals.verbosityLevel > 1: print( "  Main titles are '{}' and '{}'".format( UBB.getField( 'mt1' ), UBB.getField( 'mt2' ) ) )
         #if Globals.verbosityLevel > 0: print( UBB )
-        UBB.validateUSFM()
+        UBB.validateMarkers()
         UBBVersification = UBB.getVersification ()
         if Globals.verbosityLevel > 2: print( UBBVersification )
         UBBAddedUnits = UBB.getAddedUnits ()

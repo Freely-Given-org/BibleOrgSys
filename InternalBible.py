@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2013-07-12 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-16 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -27,16 +27,24 @@
 Module for defining and manipulating Bibles in our internal USFM-based 'lines' format.
 
 The calling class needs to call this base class __init__ routine and also set:
-    self.objectTypeString (with "USFM" or "USX")
-    self.objectNameString (with a description of the type of Bible object)
-It also needs to provide a "load" routine that sets:
-    self.sourceFolder
+    self.objectTypeString (e.g., "USFM" or "USX")
+    self.objectNameString (with a description of the type of Bible object, e.g., "USFM Bible object")
+
+It also needs to provide a "load" routine that sets any of the relevant fields:
+    self.sourceFolder, self.sourceFilename, self.sourceFilepath, self.fileExtension
+    self.name, self.givenName, self.shortName, self.abbreviation
+    self.status, self.revision, self.version
+
+If you have access to any metadata, that goes in
+    self.ssfFilepath, self.ssfDict, self.settingsDict
+
 and then fills
-    self.books
+    self.books by calling saveBook() which updates:
+        self.BBBToNameDict, self.bookNameDict, self.combinedBookNameDict
 """
 
 ProgName = "Internal Bible handler"
-ProgVersion = "0.28"
+ProgVersion = "0.31"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -47,7 +55,7 @@ from gettext import gettext as _
 from collections import OrderedDict
 
 import Globals
-from InternalBibleBook import InternalBibleEntryList
+from InternalBibleInternals import InternalBibleEntryList
 
 
 
@@ -120,9 +128,16 @@ class InternalBible:
 
     def __getitem__( self, keyIndex ):
         """
-        Given an index, return the book object (or raise an IndexError)
+        Given an index integer, return the book object (or raise an IndexError)
+
+        This function also accepts a BBB so you can use it to get a book from the Bible by bookReferenceCode.
         """
-        return list(self.books.items())[keyIndex][1] # element 0 is BBB, element 1 is the book object
+        #print( "InternalBible.__getitem__( {} )".format( keyIndex ) )
+        #print( list(self.books.items()) )
+        if isinstance( keyIndex, int ):
+            return list(self.books.items())[keyIndex][1] # element 0 is BBB, element 1 is the book object
+        if isinstance( keyIndex, str ) and len(keyIndex)==3: # assume it's a BBB
+            return self.books[keyIndex]
     # end of InternalBible.__getitem__
 
 
@@ -729,14 +744,19 @@ class InternalBible:
 
         Expects a SimpleVerseKey for the parameter
             but also copes with a (B,C,V,S) tuple.
+
+        Returns None if there is no information for this book.
+        Raises a KeyError if there is no CV reference.
         """
         #print( "InternalBible.getBCVRef( {} )".format( ref ) )
         if isinstance( ref, tuple ): BBB = ref[0]
         else: BBB = ref.getBBB() # Assume it's a SimpleVerseKeyObject
         #print( " ", BBB in self.books )
-        if BBB not in self.triedLoadingBook:
-            try: self.loadBook( BBB ) # Some types of Bibles have this function (so an entire Bible doesn't have to be loaded at startup)
-            except: pass # Ignore errors
+        if BBB not in self.books and BBB not in self.triedLoadingBook:
+            if Globals.debugFlag: self.loadBook( BBB ) # Some types of Bibles have this function (so an entire Bible doesn't have to be loaded at startup)
+            else:
+                try: self.loadBook( BBB ) # Some types of Bibles have this function (so an entire Bible doesn't have to be loaded at startup)
+                except: logging.info( "Failed to load Bible book: {}".format( BBB ) ) # Ignore errors
             self.triedLoadingBook[BBB] = True
         if BBB in self.books: return self.books[BBB].getCVRef( ref )
         #else: print( "InternalBible {} doesn't have {}".format( self.name, BBB ) ); halt
@@ -746,17 +766,22 @@ class InternalBible:
     def getVerseData( self, key ):
         """
         Return (USFM-like) verseData (a list).
+
+        Returns None if there is no information for this book.
+        Raises a KeyError if there is no CV reference.
         """
         #print( "InternalBible.getVerseData( {} )".format( key ) )
         result = self.getBCVRef( key )
         #print( "  gVD", self.name, key, verseData )
         if result is None:
-            if Globals.debugFlag or Globals.verbosityLevel>2: print( "IB.gVD no VD", self.name, key, result )
-            if Globals.debugFlag: assert( key.getChapterNumberStr()=='0' or key.getVerseNumberStr()=='0' )
+            if Globals.debugFlag or Globals.verbosityLevel>2: print( "InternalBible.getVerseData: no VD", self.name, key, result )
+            if Globals.debugFlag: assert( key.getChapterNumberStr()=='0' or key.getVerseNumberStr()=='0' ) # Why did we get nothing???
         else:
             verseData, context = result
             if Globals.debugFlag: assert( isinstance( verseData, InternalBibleEntryList ) )
-            if Globals.debugFlag: assert( 2 <= len(verseData) <= 20 )
+            if Globals.debugFlag:
+                #if 2 > len(verseData) > 20: print( "len", len(verseData) )
+                assert( 1 <= len(verseData) <= 20 ) # Smallest is just a chapter number line
             return verseData
     # end of InternalBible.getVerseData
 

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USXXMLBible.py
-#   Last modified: 2013-07-11 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-13 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USX Bible books
 #
@@ -155,21 +155,39 @@ class USXXMLBible( Bible ):
         # Do a preliminary check on the readability of our folder
         if not os.access( self.givenFolderName, os.R_OK ):
             logging.error( "USXXMLBible: File '{}' is unreadable".format( self.givenFolderName ) )
+
+        # Find the filenames of all our books
+        self.USXFilenamesObject = USXFilenames( self.givenFolderName )
+        self.possibleFilenameDict = {}
+        for BBB,filename in self.USXFilenamesObject.getConfirmedFilenames():
+            self.possibleFilenameDict[BBB] = filename
     # end of USXXMLBible.__init_
 
 
-    def loadBook( self, BBB ):
+    def loadBook( self, BBB, filename=None ):
         """
         Used for multiprocessing.
         """
-        print( "USXXMLBible.loadBook( {} )".format( BBB ) )
+        if Globals.verbosityLevel > 2: print( "USXXMLBible.loadBook( {}, {} )".format( BBB, filename ) )
+        if BBB in self.books: return # Already loaded
+        if BBB in self.triedLoadingBook:
+            logging.warning( "We had already tried loading USX {} for {}".format( BBB, self.name ) )
+            return # We've already attempted to load this book
+        self.triedLoadingBook[BBB] = True
+        if Globals.verbosityLevel > 2 or Globals.debugFlag: print( _("  USXXMLBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
+        if filename is None: filename = self.possibleFilenameDict[BBB]
         UBB = USXXMLBibleBook( BBB )
-        print( "created", BBB )
-        UBB.load( self._filenameDict[BBB], self.givenFolderName, self.encoding )
-        print( "loaded", BBB )
-        UBB.validateUSFM()
-        print( "validated", BBB )
-        return UBB
+        UBB.load( filename, self.givenFolderName, self.encoding )
+        UBB.validateMarkers()
+        #for j, something in enumerate( UBB._processedLines ):
+            #print( j, something )
+            #if j > 100: break
+        #for j, something in enumerate( sorted(UBB._CVIndex) ):
+            #print( j, something )
+            #if j > 50: break
+        #halt
+        self.saveBook( UBB )
+        #return UBB
     # end of USXXMLBible.loadBook
 
 
@@ -254,8 +272,6 @@ class USXXMLBible( Bible ):
             if Globals.verbosityLevel > 0: print( "USXXMLBible.load: Couldn't find any files in '{}'".format( self.givenFolderName ) )
             return # No use continuing
 
-        self.USXFilenamesObject = USXFilenames( self.givenFolderName )
-
         if 0: # We don't have a getSSFFilenames function
             # Attempt to load the metadata file
             ssfFilepathList = self.USXFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
@@ -265,10 +281,9 @@ class USXXMLBible( Bible ):
         # Load the books one by one -- assuming that they have regular Paratext style filenames
         # DON'T KNOW WHY THIS DOESN'T WORK
         if 0 and Globals.maxProcesses > 1: # Load all the books as quickly as possible
-            self._filenameDict, parameters = {}, []
+            parameters = []
             for BBB,filename in self.USXFilenamesObject.getConfirmedFilenames():
                 parameters.append( BBB )
-                self._filenameDict[BBB] = filename
             #print( "parameters", parameters )
             with multiprocessing.Pool( processes=Globals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( self.loadBook, parameters ) # have the pool do our loads
@@ -289,17 +304,18 @@ class USXXMLBible( Bible ):
             for BBB,filename in self.USXFilenamesObject.getConfirmedFilenames():
                 UBB = USXXMLBibleBook( BBB )
                 UBB.load( filename, self.givenFolderName, self.encoding )
-                UBB.validateUSFM()
+                UBB.validateMarkers()
                 #print( UBB )
-                self.books[BBB] = UBB
-                # Make up our book name dictionaries while we're at it
-                assumedBookNames = UBB.getAssumedBookNames()
-                for assumedBookName in assumedBookNames:
-                    self.BBBToNameDict[BBB] = assumedBookName
-                    assumedBookNameLower = assumedBookName.lower()
-                    self.bookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
-                    self.combinedBookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
-                    if ' ' in assumedBookNameLower: self.combinedBookNameDict[assumedBookNameLower.replace(' ','')] = BBB # Store the deduced book name (lower case without spaces)
+                self.saveBook( UBB )
+                #self.books[BBB] = UBB
+                ## Make up our book name dictionaries while we're at it
+                #assumedBookNames = UBB.getAssumedBookNames()
+                #for assumedBookName in assumedBookNames:
+                    #self.BBBToNameDict[BBB] = assumedBookName
+                    #assumedBookNameLower = assumedBookName.lower()
+                    #self.bookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
+                    #self.combinedBookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
+                    #if ' ' in assumedBookNameLower: self.combinedBookNameDict[assumedBookNameLower.replace(' ','')] = BBB # Store the deduced book name (lower case without spaces)
 
         if not self.books: # Didn't successfully load any regularly named books -- maybe the files have weird names??? -- try to be intelligent here
             if Globals.verbosityLevel > 2:
@@ -320,7 +336,7 @@ class USXXMLBible( Bible ):
                 if isUSX:
                     UBB = USXXMLBibleBook( BBB )
                     UBB.load( self.givenFolderName, thisFilename, self.encoding )
-                    UBB.validateUSFM()
+                    UBB.validateMarkers()
                     print( UBB )
                     self.books[BBB] = UBB
                     # Make up our book name dictionaries while we're at it

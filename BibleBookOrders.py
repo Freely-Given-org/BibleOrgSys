@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBookOrders.py
-#   Last modified: 2013-07-12 (also update ProgVersion below)
+#   Last modified: 2013-07-15 (also update ProgVersion below)
 #
 # Module handling BibleBookOrderSystems
 #
@@ -353,7 +353,7 @@ def demo():
         print( "Book order list is: {}".format( bbos.getBookOrderList() ) )
         BBB = "TI1"
         while True: # Step through the next books until the end of the publication
-            BBB2 = bbos.getNextBook( BBB )
+            BBB2 = bbos.getNextBookCode( BBB )
             if BBB2 is None: break
             print( " Next book after {} is {}".format(BBB,BBB2) )
             BBB = BBB2

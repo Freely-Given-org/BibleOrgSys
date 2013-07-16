@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # UnknownBible.py
-#   Last modified: 2013-07-07 (also update ProgVersion below)
+#   Last modified: 2013-07-13 (also update ProgVersion below)
 #
 # Module handling a unknown Bible object
 #
@@ -37,7 +37,7 @@ Currently aware of the following Bible types:
 """
 
 ProgName = "Unknown Bible object handler"
-ProgVersion = "0.04"
+ProgVersion = "0.05"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -75,6 +75,8 @@ class UnknownBible:
         # Check that the given folder is readable
         if not os.access( givenFolderName, os.R_OK ):
             logging.critical( _("UnknownBible: Given '{}' folder is unreadable").format( self.givenFolderName ) )
+            self.folderReadable = False
+        else: self.folderReadable = True
 
         self.foundType = None
     # end of UnknownBible.__init__
@@ -88,7 +90,7 @@ class UnknownBible:
         @rtype: string
         """
         result = _("Unknown Bible object")
-        result += ('\n' if result else '') + "  " + _("Folder: {} ").format( self.givenFolderName )
+        result += ('\n' if result else '') + "  " + _("Folder: {}{}").format( self.givenFolderName, '' if self.folderReadable else ' UNREADABLE' )
         if self.foundType: result += ('\n' if result else '') + "  " + _("Type: {} ").format( self.foundType )
         return result
     # end of UnknownBible.__str__
@@ -100,6 +102,8 @@ class UnknownBible:
 
         These searches are best done in a certain order to avoid false detections.
         """
+        if not self.folderReadable: return None
+
         totalBibleCount, totalBibleTypes, typesFound = 0, 0, []
 
         # Search for TheWord Bibles

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USXXMLBibleBook.py
-#   Last modified: 2013-06-24 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-13 by RJH (also update ProgVersion below)
 #
 # Module handling USX Bible Book xml
 #
@@ -28,7 +28,7 @@ Module handling USX Bible book xml to produce C and Python data tables.
 """
 
 ProgName = "USX XML Bible book handler"
-ProgVersion = "0.06"
+ProgVersion = "0.07"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -321,7 +321,7 @@ def demo():
                 if Globals.verbosityLevel > 2: print( "  Header is '{}'".format( UxBB.getField( 'h' ) ) )
                 if Globals.verbosityLevel > 2: print( "  Main titles are '{}' and '{}'".format( UxBB.getField( 'mt1' ), UxBB.getField( 'mt2' ) ) )
                 if Globals.verbosityLevel > 2: print( UxBB )
-                UxBB.validateUSFM()
+                UxBB.validateMarkers()
                 UxBBVersification = UxBB.getVersification ()
                 if Globals.verbosityLevel > 2: print( UxBBVersification )
                 UxBBAddedUnits = UxBB.getAddedUnits ()
@@ -345,7 +345,7 @@ def demo():
                         #print( "  Header is '{}'".format( UBB.getField( 'h' ) ) )
                         #print( "  Main titles are '{}' and '{}'".format( UBB.getField( 'mt1' ), UBB.getField( 'mt2' ) ) )
                         if Globals.verbosityLevel > 2: print( UBB )
-                        UBB.validateUSFM()
+                        UBB.validateMarkers()
 
                         # Now compare the USX and USFM projects
                         if 0:

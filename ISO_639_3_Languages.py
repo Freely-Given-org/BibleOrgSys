@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ISO_639_3_Languages.py
-#   Last modified: 2013-06-24 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-14 by RJH (also update ProgVersion below)
 #
 # Module handling ISO_639_3
 #
@@ -55,7 +55,7 @@ class ISO_639_3_Languages:
         Constructor:
         """
         self.__IDDict, self.__NameDict = None, None # We'll import into this in loadData
-    # end of __init__
+    # end of ISO_639_3_Languages.__init__
 
     def __str__( self ):
         """
@@ -65,10 +65,10 @@ class ISO_639_3_Languages:
         @rtype: string
         """
         result = "ISO_639_3_Languages object"
-        assert( len(self.__IDDict) == len(self.__NameDict) )
+        if Globals.debugFlag: assert( len(self.__IDDict) == len(self.__NameDict) )
         result += ('\n' if result else '') + "  Number of entries = {}".format( len(self.__IDDict) )
         return result
-    # end of __str__
+    # end of ISO_639_3_Languages.__str__
 
     def loadData( self, XMLFilepath=None ):
         """ Loads the pickle or XML data file and imports it to dictionary format (if not done already). """
@@ -92,7 +92,7 @@ class ISO_639_3_Languages:
                 self.__IDDict, self.__NameDict = self._lgC.importDataToPython() # Get the various dictionaries organised for quick lookup
                 del self._lgC # Now the converter class (that handles the XML) is no longer needed
         return self
-    # end of loadData
+    # end of ISO_639_3_Languages.loadData
 
     def __len__( self ):
         """ Returns the number of languages loaded. """

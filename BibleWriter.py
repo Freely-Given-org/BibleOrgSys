@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-07-12 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-16 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -47,7 +47,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.21"
+ProgVersion = "0.24"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -66,6 +66,71 @@ from MLWriter import MLWriter
 
 
 defaultControlFolder = "ControlFiles/" # Relative to the current working directory
+
+
+
+# These next two functions are used both by theWord and MySword exports
+def theWordAdjustLine( originalLine ):
+    line = originalLine
+    line = line.replace('\\add ','<FI>').replace('\\add*','<Fi>')
+    line = line.replace('\\qt ','<FO>').replace('\\qt*','<Fo>')
+    line = line.replace('\\wj ','<FR>').replace('\\wj*','<Fr>')
+    line = line.replace('\\f ','<RF>').replace('\\f*','<Rf>')
+    line = line.replace('\\x ','<RX>').replace('\\x*','<Rx>')
+
+    # Simple HTML tags (with no semantic info)
+    line = line.replace('\\bd ','<b>',).replace('\\bd*','</b>')
+    line = line.replace('\\it ','<i>').replace('\\it*','</i>')
+
+    # Things we don't know how to handle yet
+    line = line.replace('\\nd ','',).replace('\\nd*','')
+
+    # Check what's left at the end
+    if '\\' in line:
+        logging.error( "theWordadjustLine: Doesn't handle formatted line yet: '{}'".format( line ) )
+    return line
+# end of theWordAdjustLine
+
+
+def theWordComposeVerseLine( BBB, C, V, verseData, settings ):
+    """
+    Writes a single line to the file representing a verse.
+    """
+    #print( "theWordComposeVerseLine( {} ) {} {}:{}".format( verseData, BBB, C, V ) )
+    composedLine = settings['line']
+    settings['line'] = ''
+    
+    for verseDataEntry in verseData:
+        marker, text = verseDataEntry.getMarker(), verseDataEntry.getFullText()
+        if marker in ('c','c#','v'): continue  # ignore all of these
+        if marker == 's1': composedLine += '<TS1>'+theWordAdjustLine(text)+'<Ts1>'
+        elif marker == 's2': composedLine += '<TS2>'+theWordAdjustLine(text)+'<Ts2>'
+        elif marker in ( 's3', 'sr', 'd', ): composedLine += '<TS3>'+theWordAdjustLine(text)+'<Ts3>'
+        elif marker in ( 'qa', 'r', ): composedLine += '<TS3><i>'+theWordAdjustLine(text)+'</i><Ts3>'
+        elif marker in ( 'v~', 'p~', ):
+            composedLine += theWordAdjustLine( text )
+        elif marker in ( 'm', ): composedLine += '<CL>'+theWordAdjustLine(text)
+        elif marker in ( 'p', 'b', ): composedLine += '<CM>'+theWordAdjustLine(text)
+        elif marker in ( 'pi1', ): composedLine += '<CM><PI>'+theWordAdjustLine(text)
+        elif marker in ( 'pi2', ): composedLine += '<CM><PI2>'+theWordAdjustLine(text)
+        elif marker in ( 'pi3', 'pmc', ): composedLine += '<CM><PI3>'+theWordAdjustLine(text)
+        elif marker in ( 'pi4', ): composedLine += '<CM><PI4>'+theWordAdjustLine(text)
+        elif marker in ( 'pc', ): composedLine += '<CM><PI5>'+theWordAdjustLine(text)
+        elif marker in ( 'pr', 'pmr', 'cls', ): composedLine += '<CM><PI6>'+theWordAdjustLine(text) # Originally right-justified
+        elif marker in ( 'pi1', 'b', 'mi', 'pm', 'pmo', ): composedLine += '<CM><PI7>'+theWordAdjustLine(text)
+        elif marker in ( 'q1', 'qm1', ): composedLine += '<CI><PI>'+theWordAdjustLine(text)
+        elif marker in ( 'q2', 'qm2', ): composedLine += '<CI><PI2>'+theWordAdjustLine(text)
+        elif marker in ( 'q3', 'qm3', ): composedLine += '<CI><PI3>'+theWordAdjustLine(text)
+        elif marker in ( 'q4', 'qm4', ): composedLine += '<CI><PI4>'+theWordAdjustLine(text)
+        elif marker == 'li1': composedLine += '<PI>• '+theWordAdjustLine(text)
+        elif marker == 'li2': composedLine += '<PI2>• '+theWordAdjustLine(text)
+        elif marker == 'li3': composedLine += '<PI3>• '+theWordAdjustLine(text)
+        elif marker == 'li4': composedLine += '<PI4>• '+theWordAdjustLine(text)
+        elif marker in ( 'cd', 'sp', ): composedLine += '<i>'+theWordAdjustLine(text)+'</i>'
+        else:
+            unhandledMarkers.add( marker )
+    return composedLine
+# end of theWordComposeVerseLine
 
 
 
@@ -198,11 +263,13 @@ class BibleWriter( InternalBible ):
             USFM = ""
             inField = None
             if Globals.verbosityLevel > 2: print( "  " + _("Adjusting USFM output..." ) )
-            for pseudoMarker,originalMarker,text,cleanText,extras in pseudoUSFMData:
+            #for pseudoMarker,originalMarker,text,cleanText,extras in pseudoUSFMData:
+            for verseDataEntry in pseudoUSFMData:
+                pseudoMarker, value = verseDataEntry.getMarker(), verseDataEntry.getFullText()
                 if (not USFM) and pseudoMarker!='id': # We need to create an initial id line
                     USFM += '\\id {} -- BibleOrgSys USFM export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
                 if pseudoMarker in ('c#',): continue # Ignore our additions
-                value = cleanText # (temp)
+                #value = cleanText # (temp)
                 if Globals.debugFlag and debuggingThisModule: print( "pseudoMarker = '{}' value = '{}'".format( pseudoMarker, value ) )
                 if pseudoMarker in ('v','f','fr','x','xo',): # These fields should always end with a space but the processing will have removed them
                     if Globals.debugFlag: assert( value )
@@ -406,7 +473,9 @@ class BibleWriter( InternalBible ):
             bookName = None
             verseText = '' # Do we really need this?
             #chapterNumberString = None
-            for marker,originalMarker,text,cleanText,extras in bkData._processedLines: # Process USFM lines
+            #for marker,originalMarker,text,cleanText,extras in bkData._processedLines: # Process internal Bible data lines
+            for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
+                marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getText(), verseDataEntry.getExtras()
                 #print( "toMediaWiki:writeBook", BBB, bookRef, bookName, marker, text, extras )
                 if marker in ('id','h','mt1'):
                     writerObject.writeLineComment( '\\{} {}'.format( marker, text ) )
@@ -483,9 +552,9 @@ class BibleWriter( InternalBible ):
             writeBook( xw, BBB, bookData )
         xw.close()
         if unhandledMarkers:
-            logging.warning( "toMediaWiki: Unhandled USFM markers were {}".format( unhandledMarkers ) )
+            logging.warning( "toMediaWiki: Unhandled markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:
-                print( "  " + _("WARNING: Unhandled toMediaWiki USFM markers were {}").format( unhandledMarkers ) )
+                print( "  " + _("WARNING: Unhandled toMediaWiki markers were {}").format( unhandledMarkers ) )
         if validationSchema: return xw.validate( validationSchema )
         return True
     # end of BibleWriter.toMediaWiki
@@ -544,7 +613,9 @@ class BibleWriter( InternalBible ):
                 logging.error( "toZefania: Can't write {} Zefania book because no OSIS code available".format( BBB ) ); return
             writerObject.writeLineOpen( 'BIBLEBOOK', [('bnumber',Globals.BibleBooksCodes.getReferenceNumber(BBB)), ('bname',Globals.BibleBooksCodes.getEnglishName_NR(BBB)), ('bsname',OSISAbbrev)] )
             haveOpenChapter = False
-            for marker,originalMarker,text,cleanText,extras in bkData._processedLines: # Process USFM lines
+            #for marker,originalMarker,text,cleanText,extras in bkData._processedLines: # Process internal Bible data lines
+            for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
+                marker, text = verseDataEntry.getMarker(), verseDataEntry.getFullText()
                 if marker == 'c':
                     if haveOpenChapter:
                         writerObject.writeLineClose ( 'CHAPTER' )
@@ -566,7 +637,7 @@ class BibleWriter( InternalBible ):
                 elif marker == 'p~':
                     assert( text or extras )
                     # TODO: We haven't stripped out character fields from within the verse -- not sure how Zefania handles them yet
-                    writerObject.writeLineOpenClose ( 'VERS', text, ('vnumber',verseNumberString) )
+                    if text: writerObject.writeLineOpenClose ( 'VERS', text )
                 elif marker not in ('c#',): # These are the markers that we can safely ignore for this export
                     unhandledMarkers.add( marker )
             if haveOpenChapter:
@@ -595,9 +666,9 @@ class BibleWriter( InternalBible ):
         xw.writeLineClose( 'XMLBible' )
         xw.close()
         if unhandledMarkers:
-            logging.warning( "toZefania: Unhandled USFM markers were {}".format( unhandledMarkers ) )
+            logging.warning( "toZefania: Unhandled markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:
-                print( "  " + _("WARNING: Unhandled toZefania USFM markers were {}").format( unhandledMarkers ) )
+                print( "  " + _("WARNING: Unhandled toZefania markers were {}").format( unhandledMarkers ) )
         if validationSchema: return xw.validate( validationSchema )
         return True
     # end of BibleWriter.toZefaniaXML
@@ -888,7 +959,9 @@ class BibleWriter( InternalBible ):
             xw.start( lineEndings='w', writeBOM=True ) # Try to imitate Paratext output as closely as possible
             xw.writeLineOpen( 'usx', ('version','2.0') ) if version>=2 else xw.writeLineOpen( 'usx' )
             haveOpenPara = paraJustOpened = False
-            for marker,originalMarker,text,cleanText,extras in bkData._processedLines: # Process USFM lines
+            #for marker,originalMarker,text,cleanText,extras in bkData._processedLines: # Process internal Bible data lines
+            for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
+                marker, originalMarker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getOriginalMarker(), verseDataEntry.getText(), verseDataEntry.getExtras()
                 markerShouldHaveContent = Globals.USFMMarkers.markerShouldHaveContent( marker )
                 #print( BBB, c, v, marker, markerShouldHaveContent, haveOpenPara, paraJustOpened )
                 adjText = handleNotes( text, extras )
@@ -991,9 +1064,9 @@ class BibleWriter( InternalBible ):
                 if bookResults[1]: validationResults = ( validationResults[0], validationResults[1] + bookResults[1], validationResults[2], )
                 if bookResults[2]: validationResults = ( validationResults[0], validationResults[1], validationResults[2] + bookResults[2], )
         if unhandledMarkers:
-            logging.warning( "toUSXXML: Unhandled USFM markers were {}".format( unhandledMarkers ) )
+            logging.warning( "toUSXXML: Unhandled markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:
-                print( "  " + _("WARNING: Unhandled toUSX USFM markers were {}").format( unhandledMarkers ) )
+                print( "  " + _("WARNING: Unhandled toUSX markers were {}").format( unhandledMarkers ) )
         if validationSchema: return validationResults
         return True
     # end of BibleWriter.toUSXXML
@@ -1194,6 +1267,7 @@ class BibleWriter( InternalBible ):
                 if '\\em ' in adjText: adjText = checkTextHelper('em',adjText).replace('\\em ','<hi type="bold">').replace('\\em*','</hi>')
                 if '\\sc ' in adjText: adjText = checkTextHelper('sc',adjText).replace('\\sc ','<hi type="SMALLCAPS">').replace('\\sc*','</hi>') # XXXXXX temp ....
                 if '\\wj ' in adjText: adjText = checkTextHelper('wj',adjText).replace('\\wj ','<hi type="bold">').replace('\\wj*','</hi>') # XXXXXX temp ....
+                if '\\ior ' in adjText: adjText = checkTextHelper('ior',adjText).replace('\\ior ','<reference>').replace('\\ior*','</reference>')
                 if '\\fig ' in adjText: # Figure is not used in Sword modules so we'll remove it from the OSIS (for now at least)
                     ix1 = adjText.find( '\\fig ' )
                     ix2 = adjText.find( '\\fig*' )
@@ -1475,7 +1549,9 @@ class BibleWriter( InternalBible ):
             writerObject.writeLineOpen( 'div', [('type',"book"), ('osisID',bookRef)] )
             haveOpenIntro = haveOpenOutline = haveOpenMajorSection = haveOpenSection = haveOpenSubsection = needChapterEID = haveOpenParagraph = haveOpenVsID = haveOpenLG = haveOpenL = False
             lastMarker = unprocessedMarker = ''
-            for marker,originalMarker,text,cleanText,extras in bkData._processedLines: # Process USFM lines
+            #for marker,originalMarker,text,cleanText,extras in bkData._processedLines: # Process internal Bible data lines
+            for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
+                marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getText(), verseDataEntry.getExtras()
                 #print( "toOSIS:", marker, originalMarker, text )
                 if marker in ( 'id', 'h1', 'mt2' ): continue # We just ignore these markers
                 if marker=='mt1':
@@ -1697,9 +1773,9 @@ class BibleWriter( InternalBible ):
         else:
             logging.critical( "Unrecognized toOSIS control \"osisFiles\" = '{}'".format( controlDict["osisFiles"] ) )
         if unhandledMarkers:
-            logging.warning( "toOSISXML: Unhandled USFM markers were {}".format( unhandledMarkers ) )
+            logging.warning( "toOSISXML: Unhandled markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:
-                print( "  " + _("WARNING: Unhandled toOSIS USFM markers were {}").format( unhandledMarkers ) )
+                print( "  " + _("WARNING: Unhandled toOSIS markers were {}").format( unhandledMarkers ) )
         if Globals.verbosityLevel > 2:
             print( "Need to find and look at an example where a new chapter isn't a new <p> to see how chapter eIDs should be handled there" )
         if validationSchema: return validationResults
@@ -2070,7 +2146,9 @@ class BibleWriter( InternalBible ):
             haveOpenIntro = haveOpenOutline = haveOpenMajorSection = haveOpenSection = haveOpenSubsection = needChapterEID = haveOpenParagraph = haveOpenVsID = haveOpenLG = haveOpenL = False
             lastMarker = unprocessedMarker = ''
             #chapterNumberString = None
-            for marker,originalMarker,text,cleanText,extras in bkData._processedLines: # Process USFM lines
+            #for marker,originalMarker,text,cleanText,extras in bkData._processedLines: # Process internal Bible data lines
+            for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
+                marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getText(), verseDataEntry.getExtras()
                 #print( BBB, marker, text )
                 #print( " ", haveOpenIntro, haveOpenOutline, haveOpenMajorSection, haveOpenSection, haveOpenSubsection, needChapterEID, haveOpenParagraph, haveOpenVsID, haveOpenLG, haveOpenL )
                 #print( toSwordGlobals['idStack'] )
@@ -2296,9 +2374,9 @@ class BibleWriter( InternalBible ):
                 writeBook( xw, ix, BBB, bookData )
         xwOT.close(); xwNT.close()
         if unhandledMarkers:
-            logging.warning( "toSwordModule: Unhandled USFM markers were {}".format( unhandledMarkers ) )
+            logging.warning( "toSwordModule: Unhandled markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:
-                print( "  " + _("WARNING: Unhandled toSwordModule USFM markers were {}").format( unhandledMarkers ) )
+                print( "  " + _("WARNING: Unhandled toSwordModule markers were {}").format( unhandledMarkers ) )
         if validationSchema:
             OTresults= xwOT.validate( validationSchema )
             NTresults= xwNT.validate( validationSchema )
@@ -2315,7 +2393,7 @@ class BibleWriter( InternalBible ):
         """
         if Globals.verbosityLevel > 1: print( "Running BibleWriter:toHTML5..." )
         if Globals.debugFlag:
-            print( self )
+            #print( self )
             assert( self.books )
             assert( self.name )
 
@@ -2414,7 +2492,9 @@ class BibleWriter( InternalBible ):
             writeHeader( writerObject )
             haveOpenSection = haveOpenParagraph = haveOpenList = False
             C = V = ''
-            for marker,originalMarker,text,cleanText,extras in bkData._processedLines: # Process internal Bible lines
+            #for marker,originalMarker,text,cleanText,extras in bkData._processedLines: # Process internal Bible lines
+            for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
+                marker, text, cleanText = verseDataEntry.getMarker(), verseDataEntry.getFullText(), verseDataEntry.getCleanText()
                 #if BBB=='MRK': print( "writeBook", marker, cleanText )
                 #print( "toHTML5.writeBook", BBB, C, V, marker, cleanText )
                 if marker in ('id','ide','toc1','toc2','toc3','rem',):
@@ -2547,9 +2627,9 @@ class BibleWriter( InternalBible ):
                 xw.close()
         else: halt # not done yet
         if unhandledMarkers:
-            logging.warning( "toHTML5: Unhandled USFM markers were {}".format( unhandledMarkers ) )
+            logging.warning( "toHTML5: Unhandled markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:
-                print( "  " + _("WARNING: Unhandled toHTML5 USFM markers were {}").format( unhandledMarkers ) )
+                print( "  " + _("WARNING: Unhandled toHTML5 markers were {}").format( unhandledMarkers ) )
         if validationSchema: return xw.validate( validationSchema )
         return True
     # end of BibleWriter.toHTML5
@@ -2581,102 +2661,50 @@ class BibleWriter( InternalBible ):
         unhandledMarkers = set()
 
 
-        def adjustLine( originalLine ):
-            line = originalLine
-            line = line.replace('\\add ','<FI>').replace('\\add*','<Fi>')
-            line = line.replace('\\qt ','<FO>').replace('\\qt*','<Fo>')
-            line = line.replace('\\wj ','<FR>').replace('\\wj*','<Fr>')
-            line = line.replace('\\f ','<RF>').replace('\\f*','<Rf>')
-            line = line.replace('\\x ','<RX>').replace('\\x*','<Rx>')
-
-            # Simple HTML tags (with no semantic info)
-            line = line.replace('\\bd ','<b>',).replace('\\bd*','</b>')
-            line = line.replace('\\it ','<i>').replace('\\it*','</i>')
-
-            # Things we don't know how to handle yet
-            line = line.replace('\\nd ','',).replace('\\nd*','')
-
-            # Check what's left at the end
-            if '\\' in line:
-                logging.error( "toTheWord.writeLine: Doesn't handle formatted line yet: '{}'".format( line ) )
-            return line
-
-
-        def writeVerseLine( writerObject, BBB, C, V, verseData ):
-            """
-            Writes a single line to the file representing a verse.
-            """
-            #print( "writeVerseLine {} {}:{} {}".format( BBB, C, V, verseData ) )
-            for marker,originalMarker,text,cleanText,extras in verseData:
-                if marker in ('c','c#','v'):
-                    pass # ignore all of these
-                elif marker == 'v~':
-                    line = text
-                    #print( BBB, C, V, line )
-
-                    # Adjust formatting
-                    #if line.endswith( '<CM>' ): # Means start a new paragraph after this line
-                        #assert( not haveParagraph )
-                        #line = line[:-4] # Remove the marker
-                        #haveParagraph = True
-
-                    line = adjustLine ( line )
-                    writerObject.write( line + '\n' )
-                elif marker == 'p~':
-                    line = text
-                    #print( BBB, C, V, line )
-
-                    # Adjust formatting
-                    #if line.endswith( '<CM>' ): # Means start a new paragraph after this line
-                        #assert( not haveParagraph )
-                        #line = line[:-4] # Remove the marker
-                        #haveParagraph = True
-
-                    line = adjustLine ( line )
-                    writerObject.write( line + '\n' )
-                else:
-                    unhandledMarkers.add( marker )
-        # end of toTheWord.writeVerseLine
-
-
         def writeBook( writerObject, BBB ):
             """
-            Writes a book to the TheWord writerObject file.
+            Writes a book to the theWord writerObject file.
             """
             bkData = self.books[BBB] if BBB in self.books else None
             #print( bkData._processedLines )
             verseList = BOS.getNumVersesList( BBB )
             numC, numV = len(verseList), verseList[0]
 
-            if bkData: # Write book headings
+            if bkData: # Write book headings (stuff before chapter 1)
                 V = 0
                 while True:
-                    result = bkData.getCVRef( (BBB,'0',str(V),) ) # Current this only gets one line
-                    if result:
-                        verseData, context = result
-                        #if BBB=='MRK': print( "vD", BBB, '0', V, len(verseData), verseData )
-                        for marker,originalMarker,text,cleanText,extras in verseData:
-                            #print( marker, cleanText )
-                            composedLine = None
-                            if marker=='mt1': composedLine = '<TS1>'+adjustLine(text)+'<Ts1>'
-                            elif marker=='mt2': composedLine = '<TS2>'+adjustLine(text)+'<Ts2>'
-                            elif marker=='mt3': composedLine = '<TS3>'+adjustLine(text)+'<Ts3>'
-                            else: logging.warning( "toTheWord.writeBook: doesn't handle '{} yet".format( marker ) )
-                            if composedLine: writerObject.write( composedLine ) # Note: no trailing newline character
-                        V += 1
-                    else: break
+                    try: result = bkData.getCVRef( (BBB,'0',str(V),) ) # Currently this only gets one line
+                    except KeyError: break
+                    verseData, context = result
+                    #if BBB=='MRK': print( "vD", BBB, '0', V, len(verseData), verseData )
+                    for verseDataEntry in verseData:
+                        marker, text = verseDataEntry.getMarker(), verseDataEntry.getFullText()
+                        #print( marker, cleanText )
+                        composedLine = None
+                        if marker=='mt1': composedLine = '<TS1>'+theWordAdjustLine(text)+'<Ts1>'
+                        elif marker=='mt2': composedLine = '<TS2>'+theWordAdjustLine(text)+'<Ts2>'
+                        elif marker=='mt3': composedLine = '<TS3>'+theWordAdjustLine(text)+'<Ts3>'
+                        if marker=='ms1': composedLine = '<TS2>'+theWordAdjustLine(text)+'<Ts2>'
+                        elif marker=='ms2': composedLine = '<TS3>'+theWordAdjustLine(text)+'<Ts3>'
+                        elif marker=='mr': composedLine = '<TS3>'+theWordAdjustLine(text)+'<Ts3>'
+                        else: logging.warning( "toTheWord.writeBook: doesn't handle '{}' in introduction yet".format( marker ) )
+                        if composedLine: writerObject.write( composedLine ) # Note: no trailing newline character
+                    V += 1
 
             # Write the verses (whether or not they're populated)
+
+            mySettings = {}
+            mySettings['pi1'] = mySettings['pi2'] = mySettings['pi3'] = mySettings['pi4'] = mySettings['pi5'] = mySettings['pi6'] = mySettings['pi7'] = False
             C = V = 1
             while True:
+                composedLine = ''
                 if bkData:
-                    result = bkData.getCVRef( (BBB,str(C),str(V),) )
-                    if result:
+                    try:
+                        result = bkData.getCVRef( (BBB,str(C),str(V),) )
                         verseData, context = result
-                        if verseData: writeVerseLine( writerObject, BBB, C, V, verseData )
-                        else: writerObject.write( '\n' ) # no verseData
-                    else: writerObject.write( '\n' ) # no result
-                else: writerObject.write( '\n' ) # no bkData
+                        if verseData: composedLine = theWordComposeVerseLine( BBB, C, V, verseData, mySettings )
+                    except KeyError: pass #  just ignore it
+                writerObject.write( composedLine + '\n' )
                 V += 1
                 if V > numV:
                     C += 1
@@ -2720,6 +2748,7 @@ class BibleWriter( InternalBible ):
                 writeBook( myFile, BBB )
                 if BBB == endBBB: break
                 BBB = BOS.getNextBookCode( BBB )
+
             # Now append the various settings if any
             written = []
             for key in self.settingsDict:
@@ -2745,9 +2774,9 @@ class BibleWriter( InternalBible ):
                     myFile.write( "{}={}\n".format( key, self.settingsDict[fieldName] ) )
                     written.append( key )
         if unhandledMarkers:
-            logging.warning( "BibleWriter.toTheWord: Unhandled USFM markers were {}".format( unhandledMarkers ) )
+            logging.warning( "BibleWriter.toTheWord: Unhandled markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:
-                print( "  " + _("WARNING: Unhandled toTheWord USFM markers were {}").format( unhandledMarkers ) )
+                print( "  " + _("WARNING: Unhandled toTheWord markers were {}").format( unhandledMarkers ) )
         return True
     # end of BibleWriter.toTheWord
 
@@ -2779,73 +2808,74 @@ class BibleWriter( InternalBible ):
         unhandledMarkers = set()
 
 
-        def adjustLine( originalLine ):
-            line = originalLine
-            line = line.replace('\\add ','<FI>').replace('\\add*','<Fi>')
-            line = line.replace('\\qt ','<FO>').replace('\\qt*','<Fo>')
-            line = line.replace('\\wj ','<FR>').replace('\\wj*','<Fr>')
-            line = line.replace('\\f ','<RF>').replace('\\f*','<Rf>')
-            line = line.replace('\\x ','<RX>').replace('\\x*','<Rx>')
+        #def adjustLine( originalLine ):
+            #line = originalLine
+            #line = line.replace('\\add ','<FI>').replace('\\add*','<Fi>')
+            #line = line.replace('\\qt ','<FO>').replace('\\qt*','<Fo>')
+            #line = line.replace('\\wj ','<FR>').replace('\\wj*','<Fr>')
+            #line = line.replace('\\f ','<RF>').replace('\\f*','<Rf>')
+            #line = line.replace('\\x ','<RX>').replace('\\x*','<Rx>')
 
-            # Simple HTML tags (with no semantic info)
-            line = line.replace('\\bd ','<b>',).replace('\\bd*','</b>')
-            line = line.replace('\\it ','<i>').replace('\\it*','</i>')
+            ## Simple HTML tags (with no semantic info)
+            #line = line.replace('\\bd ','<b>',).replace('\\bd*','</b>')
+            #line = line.replace('\\it ','<i>').replace('\\it*','</i>')
 
-            # Things we don't know how to handle yet
-            line = line.replace('\\nd ','',).replace('\\nd*','')
+            ## Things we don't know how to handle yet
+            #line = line.replace('\\nd ','',).replace('\\nd*','')
 
-            # Check what's left at the end
-            if '\\' in line:
-                logging.error( "toMySword.writeLine: Doesn't handle formatted line yet: '{}'".format( line ) )
-            return line
+            ## Check what's left at the end
+            #if '\\' in line:
+                #logging.error( "toMySword.writeLine: Doesn't handle formatted line yet: '{}'".format( line ) )
+            #return line
 
 
-        def writeVerseLine( writerObject, BBB, nBBB, C, V, verseData, myGlobals ):
-            """
-            Writes a single line to the file representing a verse.
-            """
-            #print( "writeVerseLine {} {}:{} {}".format( BBB, C, V, verseData ) )
+        #def writeVerseLine( writerObject, BBB, nBBB, C, V, verseData, myGlobals ):
+            #"""
+            #Writes a single line to the file representing a verse.
+            #"""
+            ##print( "writeVerseLine {} {}:{} {}".format( BBB, C, V, verseData ) )
 
-            line = None
-            for marker,originalMarker,text,cleanText,extras in verseData:
-                if marker in ('c','c#','v'):
-                    pass # ignore all of these
-                elif marker == 'v~':
-                    line = text
-                    #print( BBB, C, V, line )
+            #line = None
+            #for verseDataEntry in verseData:
+                #marker, text = verseDataEntry.getMarker(), verseDataEntry.getFullText()
+                #if marker in ('c','c#','v'):
+                    #pass # ignore all of these
+                #elif marker == 'v~':
+                    #line = text
+                    ##print( BBB, C, V, line )
 
-                    # Adjust formatting
-                    #if line.endswith( '<CM>' ): # Means start a new paragraph after this line
-                        #assert( not haveParagraph )
-                        #line = line[:-4] # Remove the marker
-                        #haveParagraph = True
+                    ## Adjust formatting
+                    ##if line.endswith( '<CM>' ): # Means start a new paragraph after this line
+                        ##assert( not haveParagraph )
+                        ##line = line[:-4] # Remove the marker
+                        ##haveParagraph = True
 
-                    line = adjustLine ( line )
-                    if myGlobals['line']: # We've got some stuff to prepend to the line (e.g., headings before the actual verse text)
-                        line = myGlobals['line'] + line
-                        myGlobals['line'] = ''
-                elif marker == 'p~':
-                    line = text
-                    #print( BBB, C, V, line )
+                    #line = adjustLine ( line )
+                    #if myGlobals['line']: # We've got some stuff to prepend to the line (e.g., headings before the actual verse text)
+                        #line = myGlobals['line'] + line
+                        #myGlobals['line'] = ''
+                #elif marker == 'p~':
+                    #line = text
+                    ##print( BBB, C, V, line )
 
-                    # Adjust formatting
-                    #if line.endswith( '<CM>' ): # Means start a new paragraph after this line
-                        #assert( not haveParagraph )
-                        #line = line[:-4] # Remove the marker
-                        #haveParagraph = True
+                    ## Adjust formatting
+                    ##if line.endswith( '<CM>' ): # Means start a new paragraph after this line
+                        ##assert( not haveParagraph )
+                        ##line = line[:-4] # Remove the marker
+                        ##haveParagraph = True
 
-                    line = adjustLine ( line )
-                    if myGlobals['line']: # We've got some stuff to prepend to the line (e.g., headings before the actual verse text)
-                        line = myGlobals['line'] + line
-                        myGlobals['line'] = ''
-                else:
-                    unhandledMarkers.add( marker )
+                    #line = adjustLine ( line )
+                    #if myGlobals['line']: # We've got some stuff to prepend to the line (e.g., headings before the actual verse text)
+                        #line = myGlobals['line'] + line
+                        #myGlobals['line'] = ''
+                #else:
+                    #unhandledMarkers.add( marker )
 
-            #if line is not None: # don't bother writing blank (unfinished?) verses
-            if line: # don't bother writing blank (unfinished?) verses
-                #print( "toMySword: Writing", BBB, nBBB, C, V, marker, repr(line) )
-                writerObject.execute( 'INSERT INTO "Bible" VALUES(?,?,?,?)', (nBBB,C,V,line) )
-        # end of toMySword.writeVerseLine
+            ##if line is not None: # don't bother writing blank (unfinished?) verses
+            #if line: # don't bother writing blank (unfinished?) verses
+                ##print( "toMySword: Writing", BBB, nBBB, C, V, marker, repr(line) )
+                #writerObject.execute( 'INSERT INTO "Bible" VALUES(?,?,?,?)', (nBBB,C,V,line) )
+        ## end of toMySword.writeVerseLine
 
 
         def writeBook( writerObject, BBB ):
@@ -2858,38 +2888,42 @@ class BibleWriter( InternalBible ):
             nBBB = Globals.BibleBooksCodes.getReferenceNumber( BBB )
             numC, numV = len(verseList), verseList[0]
 
-            ourGlobals = {}
-            ourGlobals['line'], ourGlobals['lastLine'] = '', None
+            mySettings = {}
+            mySettings['line'], mySettings['lastLine'] = '', None
+            mySettings['pi1'] = mySettings['pi2'] = mySettings['pi3'] = mySettings['pi4'] = mySettings['pi5'] = mySettings['pi6'] = mySettings['pi7'] = False
             if bkData:
                 V = 0
                 while True: # write book headings
-                    result = bkData.getCVRef( (BBB,'0',str(V),) ) # Current this only gets one line
-                    if result:
+                    try:
+                        result = bkData.getCVRef( (BBB,'0',str(V),) ) # Currently this only gets one line
                         verseData, context = result
                         #if BBB=='MRK': print( "vD", BBB, '0', V, len(verseData), verseData )
-                        for marker,originalMarker,text,cleanText,extras in verseData:
+                        for verseDataEntry in verseData:
+                            marker, text = verseDataEntry.getMarker(), verseDataEntry.getFullText()
                             #print( marker, cleanText )
                             composedLine = None
-                            if marker=='mt1': composedLine = '<TS1>'+adjustLine(text)+'<Ts1>'
-                            elif marker=='mt2': composedLine = '<TS2>'+adjustLine(text)+'<Ts2>'
-                            elif marker=='mt3': composedLine = '<TS3>'+adjustLine(text)+'<Ts3>'
+                            if marker=='mt1': composedLine = '<TS1>'+theWordAdjustLine(text)+'<Ts1>'
+                            elif marker=='mt2': composedLine = '<TS2>'+theWordAdjustLine(text)+'<Ts2>'
+                            elif marker=='mt3': composedLine = '<TS3>'+theWordAdjustLine(text)+'<Ts3>'
                             else: logging.warning( "toMySword.writeBook: doesn't handle '{} yet".format( marker ) )
-                            if composedLine: ourGlobals['line'] += composedLine
+                            if composedLine: mySettings['line'] += composedLine
                         V += 1
-                    else: break
-                #assert( not ourGlobals['line'] and not ourGlobals['lastLine'] ) #  We should have written everything
+                    except KeyError: break
+                #assert( not mySettings['line'] and not mySettings['lastLine'] ) #  We should have written everything
 
                 # Write the verses
                 C = V = 1
                 while True:
                     if bkData:
-                        result = bkData.getCVRef( (BBB,str(C),str(V),) )
-                        if result:
+                        try:
+                            result = bkData.getCVRef( (BBB,str(C),str(V),) )
                             verseData, context = result
-                            if verseData: writeVerseLine( writerObject, BBB, nBBB, C, V, verseData, ourGlobals )
-                            #else: writerObject.write( '\n' ) # no verseData
-                        #else: writerObject.write( '\n' ) # no result
-                    #else: writerObject.write( '\n' ) # no bkData
+                            if verseData:
+                                composedLine = theWordComposeVerseLine( BBB, C, V, verseData, mySettings )
+                                if composedLine: # don't bother writing blank (unfinished?) verses
+                                    #print( "toMySword: Writing", BBB, nBBB, C, V, marker, repr(line) )
+                                    writerObject.execute( 'INSERT INTO "Bible" VALUES(?,?,?,?)', (nBBB,C,V,composedLine) )
+                        except KeyError: pass # Just ignore missing verses
                     V += 1
                     if V > numV:
                         C += 1
@@ -2898,7 +2932,7 @@ class BibleWriter( InternalBible ):
                         else: # next chapter only
                             numV = verseList[C-1]
                             V = 1
-                assert( not ourGlobals['line'] and not ourGlobals['lastLine'] ) #  We should have written everything
+                assert( not mySettings['line'] and not mySettings['lastLine'] ) #  We should have written everything
         # end of toMySword.writeBook
 
 
@@ -2977,9 +3011,9 @@ class BibleWriter( InternalBible ):
             BBB = BOS.getNextBookCode( BBB )
 
         if unhandledMarkers:
-            logging.warning( "BibleWriter.toMySword: Unhandled USFM markers were {}".format( unhandledMarkers ) )
+            logging.warning( "BibleWriter.toMySword: Unhandled markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:
-                print( "  " + _("WARNING: Unhandled toMySword USFM markers were {}").format( unhandledMarkers ) )
+                print( "  " + _("WARNING: Unhandled toMySword markers were {}").format( unhandledMarkers ) )
         conn.commit() # save (commit) the changes
         cursor.close()
 

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # UnboundBible.py
-#   Last modified: 2013-07-04 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-16 by RJH (also update ProgVersion below)
 #
 # Module handling Biola University "unbound" Bible files
 #
@@ -86,7 +86,7 @@ and
 """
 
 ProgName = "Unbound Bible format handler"
-ProgVersion = "0.12"
+ProgVersion = "0.13"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -381,7 +381,11 @@ def testUB( TUBfilename ):
         if t=='DC' and len(ub)<=66: continue # Don't bother with DC references if it's too small
         svk = VerseReferences.SimpleVerseKey( b, c, v )
         #print( svk, ob.getVerseDataList( reference ) )
-        shortText, verseText = svk.getShortText(), ub.getVerseText( svk )
+        shortText = svk.getShortText()
+        try:
+            verseText = ub.getVerseText( svk )
+        except KeyError:
+            verseText = "Verse not available!"
         if Globals.verbosityLevel > 1: print( reference, shortText, verseText )
 # end of testUB
 
@@ -417,7 +421,7 @@ def demo():
         nonEnglish = (  )
         bad = ( )
         for j, testFilename in enumerate( single ): # Choose one of the above: single, good, nonEnglish, bad
-            if Globals.verbosityLevel > 1: print( "\n{}/ Trying {}".format( j+1, testFilename ) )
+            if Globals.verbosityLevel > 1: print( "\nB{}/ Trying {}".format( j+1, testFilename ) )
             #myTestFolder = os.path.join( testFolder, testFilename+'/' )
             #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
             testUB( testFilename )
@@ -430,7 +434,7 @@ def demo():
             if os.path.isdir( somepath ): foundFolders.append( something )
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
-        if Globals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
+        if 0 and Globals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
             if Globals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
             parameters = [folderName for folderName in sorted(foundFolders)]
             with multiprocessing.Pool( processes=Globals.maxProcesses ) as pool: # start worker processes
@@ -438,7 +442,7 @@ def demo():
                 assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                if Globals.verbosityLevel > 1: print( "\n{}/ Trying {}".format( j+1, someFolder ) )
+                if Globals.verbosityLevel > 1: print( "\nC{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testUB( someFolder )
 # end of demo

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # py
-#   Last modified: 2013-07-15 (also update ProgVersion below)
+#   Last modified: 2013-07-16 (also update ProgVersion below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -50,10 +50,22 @@ Contains functions:
     unpickleObject( filename, folder=None )
 
     setup( ProgName, ProgVersion, loggingFolder=None )
+
+    setVerbosity( verbosityLevelParameter )
+    setDebugFlag( newValue=True )
+    setStrictCheckingFlag( newValue=True )
+    setLogErrorsFlag( newValue=True )
+
+    addStandardOptionsAndProcess( parserObject )
+    printAllGlobals( indent=None )
+
+    closedown( ProgName, ProgVersion )
+
+    demo()
 """
 
 ProgName = "Globals"
-ProgVersion = "0.26"
+ProgVersion = "0.27"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -629,29 +641,6 @@ def setVerbosity( verbosityLevelParameter ):
 # end of setVerbosity
 
 
-#def setVerbosityLevel( verbosityStringParameter ):
-    #"""Sets the VerbosityLevel global variable to an integer value depending on the Verbosity control."""
-
-    #global verbosityString, verbosityLevel
-    #verbosityString = verbosityStringParameter
-    #if verbosityString == 'Silent':
-        #verbosityLevel = 0
-    #elif verbosityString == 'Quiet':
-        #verbosityLevel = 1
-    #elif verbosityString == 'Normal':
-        #verbosityLevel = 2
-    #elif verbosityString == 'Informative':
-        #verbosityLevel = 3
-    #elif verbosityString == 'Verbose':
-        #verbosityLevel = 4
-    #else: logging.error( "Invalid '" + verbosityString + "' verbosity parameter" )
-
-    #if debugFlag:
-        #print( '  VerbosityLevel =', verbosityLevel )
-        #print( '  Verbosity =', verbosityString )
-## end of setVerbosityLevel
-
-
 def setDebugFlag( newValue=True ):
     """ Set the debug flag. """
     global debugFlag
@@ -751,8 +740,8 @@ def demo():
     if verbosityLevel>2: printAllGlobals()
 
     # Demonstrate peekAtFirstLine function
-    line1 = peekIntoFile( "py", numLines=2 ) # Simple filename
-    print( "py starts with '{}'".format( line1 ) )
+    line1 = peekIntoFile( "Bible.py", numLines=2 ) # Simple filename
+    print( "Bible.py starts with '{}'".format( line1 ) )
     line1 = peekIntoFile( "ReadMe.txt", "Tests/", 3 ) # Filename and folder
     print( "ReadMe.txt starts with '{}'".format( line1 ) )
     line1 = peekIntoFile( "DataFiles/BibleBooksCodes.xml" ) # Filepath
@@ -780,4 +769,4 @@ if __name__ == '__main__':
     demo()
 
     closedown( ProgName, ProgVersion )
-# end of py
+# end of Globals.py

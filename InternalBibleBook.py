@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-07-12 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-16 by RJH (also update ProgVersion below)
 #
-# Module handling the USFM markers for Bible books
+# Module handling the internal markers for individual Bible books
 #
 # Copyright (C) 2010-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.36"
+ProgVersion = "0.39"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -49,6 +49,7 @@ from gettext import gettext as _
 from collections import OrderedDict
 
 import Globals
+from InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry, InternalBibleIndex
 from BibleReferences import BibleAnchorReference
 
 
@@ -77,142 +78,6 @@ NON_USFM_MARKERS = PSEUDO_USFM_MARKERS + PSEUDO_OSIS_MARKERS
 
 
 MAX_NONCRITICAL_ERRORS_PER_BOOK = 5
-
-
-
-class InternalBibleEntry:
-    """
-    This class represents an entry in the _processedLines list.
-
-    (It's mainly here for extra data validation and the str function for debugging.)
-    """
-
-    def __init__( self, marker, originalMarker, text, cleanText, extras ):
-        """
-        Accept the parameters and double-check them if requested.
-        """
-        if Globals.debugFlag or Globals.strictCheckingFlag:
-            #print( "InternalBibleEntry.__init__( {}, {}, {}, {}, {} )".format( marker, originalMarker, text[:35], cleanText[:35], extras ) )
-            assert( marker and isinstance( marker, str ) ) # Mustn't be blank
-            assert( originalMarker and isinstance( originalMarker, str ) ) # Mustn't be blank
-            assert( isinstance( text, str ) )
-            assert( isinstance( cleanText, str ) )
-            assert( '\\' not in cleanText )
-            assert( isinstance( extras, list ) )
-            if extras:
-                #print( "extras:", extras )
-                for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
-                    assert( isinstance( extraType, str ) and extraType in ('fn','xr','sr','sn',) )
-                    assert( isinstance( extraIndex, int ) and extraIndex >= 0 )
-                    assert( isinstance( extraText, str ) and extraText ) # Mustn't be blank
-                    assert( isinstance( cleanExtraText, str ) and cleanExtraText ) # Shouldn't be blank
-                    if '\\' in cleanExtraText: print( "How does a backslash remain in cleanExtraText '{}".format( cleanExtraText ) )
-                    assert( '\\' not in cleanExtraText )
-                    assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
-                    for letters in ( 'f', 'x', 'fe', 'ef' ): # footnote, cross-ref, endnotes, studynotes
-                        assert( '\\'+letters+' ' not in extraText )
-                        assert( '\\'+letters+'*' not in extraText )
-            #assert( marker in Globals.USFMMarkers or marker in NON_USFM_MARKERS )
-            if marker not in Globals.USFMMarkers and marker not in NON_USFM_MARKERS:
-                print( "InternalBibleEntry doesn't handle '{}' marker yet.".format( marker ) )
-        self.marker, self.originalMarker, self.text, self.cleanText, self.extras = marker, originalMarker, text, cleanText, extras
-    # end of InternalBibleEntry.__init__
-
-
-    #def __eq__( self, other ):
-        #if type( other ) is type( self ): return self.__dict__ == other.__dict__
-        #return False
-    #def __ne__(self, other): return not self.__eq__(other)
-
-
-    def __str__( self ):
-        """
-        Just display a very abbreviated form of the entry.
-        """
-        cleanAbbreviation = self.cleanText if len(self.cleanText)<100 else (self.cleanText[:50]+'...'+self.cleanText[-50:])
-        return "InternalBibleEntry object: {} = {}{}".format( self.marker, repr(cleanAbbreviation), '+extras' if self.extras else '' )
-    # end of InternalBibleEntry.__str__
-
-
-    def __len__( self ): return 5
-    def __getitem__( self, keyIndex ):
-        if keyIndex==0: return self.marker
-        elif keyIndex==1: return self.originalMarker
-        elif keyIndex==2: return self.text
-        elif keyIndex==3: return self.cleanText
-        elif keyIndex==4: return self.extras
-        else: raise IndexError
-    # end of InternalBibleEntry.__getitem__
-
-    def getMarker( self ): return self.marker
-    def getOriginalMarker( self ): return self.originalMarker
-    def getText( self ): return self.text
-    def getCleanText( self ): return self.cleanText
-    def getExtras( self ): return self.extras
-# end of class InternalBibleEntry
-
-
-
-class InternalBibleEntryList:
-    """
-    This class is a specialised list for holding InternalBibleEntries
-        so _processedLines is one of these.
-
-    (It's mainly here for extra data validation and the str function for debugging.)
-    """
-
-    def __init__( self, initialData=None ):
-        """
-        """
-        self.data = []
-        if initialData is not None:
-            if isinstance( initialData, list ) or isinstance( initialData, InternalBibleEntryList ):
-                for something in initialData:
-                    self.append( something )
-            else: logging.critical( "InternalBibleEntryList.__init__: Programming error -- unknown parameter type {}".format( repr(initialData) ) )
-        if initialData: assert( len(self.data) == len(initialData) )
-        else: assert( not self.data )
-    # end of InternalBibleEntryList.__init__
-
-
-    #def __eq__( self, other ):
-        #if type( other ) is type( self ): return self.__dict__ == other.__dict__
-        #return False
-    #def __ne__(self, other): return not self.__eq__(other)
-
-
-    def __str__( self ):
-        """
-        Just display a simplified view of the list of entries.
-        """
-        result = "InternalBibleEntryList object:"
-        if not self.data: result += "\n  Empty."
-        else:
-            dataLen = len( self.data )
-            for j, entry in enumerate( self.data ):
-                if Globals.debugFlag: assert( isinstance( entry, InternalBibleEntry ) )
-                cleanAbbreviation = entry.cleanText if len(entry.cleanText)<100 else (entry.cleanText[:50]+'...'+entry.cleanText[-50:])
-                result += "\n  {}{}/ {} = {}".format( ' ' if j<9 and dataLen>=10 else '', j+1, entry.marker, repr(cleanAbbreviation) )
-                if j>=20 and dataLen>20:
-                    result += "\n  ... ({} total entries)".format( dataLen )
-                    break
-        return result
-    # end of InternalBibleEntryList.__str__
-
-
-    def __len__( self ): return len( self.data )
-    def __getitem__( self, keyIndex ): return self.data[keyIndex]
-
-
-    def append( self, something ):
-        assert( isinstance( something, InternalBibleEntry ) )
-        self.data.append( something )
-    # end of InternalBibleEntryList.append
-
-    def pop( self ): # Doesn't allow a parameter
-        return self.data.pop()
-    # end of InternalBibleEntryList.append
-# end of class InternalBibleEntryList
 
 
 
@@ -265,6 +130,10 @@ class InternalBibleBook:
         else: result += ('\n' if result else '') + "  " + _("Number of raw lines = ") + str(len(self._rawLines))
         if self.bookReferenceCode and (self._processedFlag or self._rawLines) and Globals.verbosityLevel > 1:
             result += ('\n' if result else '') + "  " + _("Deduced short book name(s) are {}").format( self.getAssumedBookNames() )
+
+        if Globals.debugFlag or Globals.verbosityLevel>2:
+            if self._processedFlag: result += '\n' + str( self._processedLines )
+            if self._indexedFlag: result += '\n' + str( self.self._CVIndex )
         return result
     # end of InternalBibleBook.__str__
 
@@ -314,7 +183,7 @@ class InternalBibleBook:
         if Globals.debugFlag: assert( marker in Globals.USFMMarkers or marker in NON_USFM_MARKERS )
 
         if marker not in NON_USFM_MARKERS and not Globals.USFMMarkers.isNewlineMarker( marker ):
-            print( "IBB.appendLine: Not a NL marker: {}='{}'".format( marker, text ) )
+            logging.critical( "IBB.appendLine: Not a NL marker: {}='{}'".format( marker, text ) )
             if Globals.debugFlag:
                 print( self )
                 halt
@@ -366,7 +235,14 @@ class InternalBibleBook:
 
             Uses self._rawLines and fills self._processedLines.
         """
-        nfvnCount = owfvnCount = sahtCount = 0
+        #if self._processedFlag: return # Can only do it once
+        if Globals.verbosityLevel > 2: print( "  " + _("Processing {} ({}) {} lines...").format( self.objectNameString, self.objectTypeString, self.bookReferenceCode ) )
+        if Globals.debugFlag: assert( not self._processedFlag ) # Can only do it once
+        if Globals.debugFlag: assert( self._rawLines ) # or else the book was totally blank
+        #print( self._rawLines[:20] ); halt
+
+        internalSFMsToRemove = Globals.USFMMarkers.getCharacterMarkersList( includeBackslash=True, includeEndMarkers=True )
+        internalSFMsToRemove = sorted( internalSFMsToRemove, key=len, reverse=True ) # List longest first
 
 
         def processLineFix( originalMarker, text ):
@@ -829,6 +705,14 @@ class InternalBibleBook:
                 #c = text.split()[0]; v = '0'
                 cBits = text.split( None, 1 )
                 c, v = cBits[0], '0'
+                if c == '0':
+                    fixErrors.append( _("{} {}:{} Chapter zero is not allowed '{}'").format( self.bookReferenceCode, c, v, text ) )
+                    logging.error( _("Found zero '{}' in chapter marker {} {}:{}").format( text, self.bookReferenceCode, c, v ) )
+                    self.addPriorityError( 97, c, v, _("Chapter zero '{}' not allowed").format( text ) )
+                    if len(self._processedLines) < 30: # It's near the beginning of the file
+                        logging.info( "Converting given chapter zero to chapter one in {}".format( self.bookReferenceCode ) )
+                        c = '1' # Our best guess
+                        text = c + text[1:]
                 haveWaitingC = c
                 if len(cBits) > 1: # We have extra stuff on the c line after the chapter number and a space
                     fixErrors.append( _("{} {}:{} Chapter marker seems to contain extra material '{}'").format( self.bookReferenceCode, c, v, cBits[1] ) )
@@ -856,7 +740,7 @@ class InternalBibleBook:
                         self._processedLines.append( InternalBibleEntry(lastAdjustedMarker, lastOriginalMarker, lastAdjustedText, lastCleanText, lastExtras) )
                     else: # Assume that the last marker was part of the introduction, so write it first
                         if lastAdjustedMarker not in ( 'ip', ):
-                            print( "assumed",lastAdjustedMarker,"was part of intro after", marker );
+                            logging.info( "{} {}:{} Assumed {} was part of intro after {}".format( self.bookReferenceCode, c, v, lastAdjustedMarker, marker ) )
                             #if v!='13': halt # Just double-checking this code (except for one weird book that starts at v13)
                         self._processedLines.append( InternalBibleEntry(lastAdjustedMarker, lastOriginalMarker, lastAdjustedText, lastCleanText, lastExtras) )
                         self._processedLines.append( InternalBibleEntry('c', 'c', '1', '1', []) ) # Write the explicit chapter number
@@ -1054,14 +938,9 @@ class InternalBibleBook:
         # end of InternalBibleBook.processLines.processLine
 
 
-        #if self._processedFlag: return # Can only do it once
-        if Globals.debugFlag: assert( not self._processedFlag ) # Can only do it once
-        if Globals.verbosityLevel > 2: print( "  " + _("Processing {} ({}) {} lines...").format( self.objectNameString, self.objectTypeString, self.bookReferenceCode ) )
-        internalSFMsToRemove = Globals.USFMMarkers.getCharacterMarkersList( includeBackslash=True, includeEndMarkers=True )
-        internalSFMsToRemove = sorted( internalSFMsToRemove, key=len, reverse=True ) # List longest first
-        if Globals.debugFlag: assert( self._rawLines ) # or else the book was totally blank
+        nfvnCount = owfvnCount = sahtCount = 0
         fixErrors = []
-        self._processedLines = InternalBibleEntryList() #[] # Contains more-processed 5-tuples which contain the actual Bible text -- see below
+        self._processedLines = InternalBibleEntryList() # Contains more-processed tuples which contain the actual Bible text -- see below
         c = v = '0'
         haveWaitingC = False
         for marker,text in self._rawLines:
@@ -1079,92 +958,16 @@ class InternalBibleBook:
         """
         Index the lines for faster reference.
 
-        The keys to the dictionary are (C,V,) 2-tuples.
-        The dictionary entries are (ix,lineCount) 2-tuples where
-            ix is the index into self._processedLines, and
-            lineCount is the number of entries.
         """
         if Globals.debugFlag:
             assert( self._processedFlag )
             assert( not self._indexedFlag )
         if self._indexedFlag: return # Can only do it once
 
-        def saveAnythingOutstanding():
-            nonlocal saveCV, saveJ, lineCount, context
-            if saveCV and saveJ:
-                #print( "saveAnythingOutstanding", self.bookReferenceCode, saveCV, saveJ, lineCount, context )
-                #assert( 1 <= lineCount <= 120 ) # Could potentially be even higher for bridged verses (e.g., 1Chr 11:26-47, Ezra 2:3-20) and where words are stored individually
-                if saveCV in self._CVIndex and Globals.verbosityLevel > 2:
-                    logging.critical( "makeIndex.saveAnythingOutstanding: replacing index entry {} {}:{}".format( self.bookReferenceCode, C, V ) )
-                    logging.error( "  mI:saO was", self._CVIndex[saveCV] )
-                    ix,lc,ct = self._CVIndex[saveCV]
-                    for ixx in range( ix, ix+lc ):
-                        logging.error( "   mI:saO ", self._processedLines[ixx], ct )
-                    logging.error( "  mI:saO now", (saveJ,lineCount,context) )
-                    for ixx in range( saveJ, saveJ+lineCount ):
-                        logging.error( "   mI:saO ", self._processedLines[ixx], context )
-                self._CVIndex[saveCV] = (saveJ,lineCount,context)
-                saveCV = saveJ = None
-                lineCount = 0
-
         if Globals.verbosityLevel > 2: print( "  " + _("Indexing {} {} text...").format( self.objectNameString, self.bookReferenceCode ) )
-        self._CVIndex = {} # The keys are C,V 2-tuples; the entries are index,length,context 3-tuples
-        saveCV = saveJ = None
-        lineCount = 0
-        C, V = '0', '0'
-        context = None
-        for j, (adjustedMarker, originalMarker, adjText, cleanText, extras,) in enumerate( self._processedLines):
-            #print( "  makeIndex", j, self.bookReferenceCode, adjustedMarker, cleanText[:20] + ('' if len(cleanText)<20 else '...') )
-            if adjustedMarker in ( 'p','q1','q2','q3','q4' ): assert( not adjText and not cleanText and not extras )
-            if adjustedMarker=='c':
-                saveAnythingOutstanding()
-                # Save anything before the first verse number as verse "zero"
-                C, V = cleanText, '0'
-                saveCV, saveJ = (C,V,), j
-                lineCount += 1
-            elif adjustedMarker=='v':
-                # Go back and look what we passed that might actually belong with this verse
-                revertToJ = j
-                if revertToJ >= 1:
-                    aM,cT = self._processedLines[revertToJ-1][0], self._processedLines[revertToJ-1][3]
-                    if aM == 'c#':
-                        assert( cT ) # Should have a chapter number here
-                        revertToJ -= 1
-                        assert( lineCount > 0 )
-                        lineCount -= 1
-                        aM,cT = self._processedLines[revertToJ-1][0], self._processedLines[revertToJ-1][3]
-                    if revertToJ >= 1 and aM in ('p','q1','q2','q3',) and not cT: # This applies to the next line
-                        revertToJ -= 1
-                        assert( lineCount > 0 )
-                        lineCount -= 1
-                        aM,cT = self._processedLines[revertToJ-1][0], self._processedLines[revertToJ-1][3]
-                        if revertToJ >= 1 and aM in ('s1','s2','s3',):
-                            #assert( cT ) # Should have text (for a completed Bible at least)
-                            revertToJ -= 1
-                            assert( lineCount > 0 )
-                            lineCount -= 1
-                    elif aM in ('s1','s2','s3',): # Shouldn't happen but just in case
-                        if Globals.debugFlag: print( "makeIndex: just in case", aM, self.bookReferenceCode, C, V )
-                        revertToJ = j - 1
-                        assert( lineCount > 0 )
-                        lineCount -= 1
-                saveAnythingOutstanding()
-                V = cleanText
-                #assert( V != '0' or self.bookReferenceCode=='PSA' ) # Not really handled properly yet
-                saveCV, saveJ = (C,V,), revertToJ
-                lineCount += (j-revertToJ) + 1 # For the v
-            elif C == '0': # Still in the introduction
-                # Each line is considered a new verse entry in chapter "zero"
-                assert( saveCV is None and saveJ is None )
-                self._CVIndex[(C,V)] = (j,1,context)
-                Vi = int( V )
-                assert( Vi == j )
-                V = str( Vi + 1 ) # Increment the verse number
-                lastJ = j
-                assert( lineCount == 0 )
-            else: # All the other lines don't cause a new index entry to be made
-                lineCount += 1
-        saveAnythingOutstanding()
+        self._CVIndex = InternalBibleIndex( self.bookReferenceCode )
+        self._CVIndex.makeIndex( self._processedLines )
+
         if 0 and self.bookReferenceCode=='GEN':
             for j, (adjustedMarker, originalMarker, adjText, cleanText, extras,) in enumerate( self._processedLines):
                 print( j, adjustedMarker, cleanText[:60] + ('' if len(cleanText)<60 else '...') )
@@ -1179,8 +982,8 @@ class InternalBibleBook:
                 return Ci*1000 + Vi
             for CV,ALX in sorted(self._CVIndex.items(), key=getKey): #lambda s: int(s[0][0])*1000+int(s[0][1])): # Sort by C*1000+V
                 C, V = CV
-                A, L, X = ALX
-                print( "{}:{}={},{},{}".format( C, V, A, L, X ), end='  ' )
+                #A, L, X = ALX
+                print( "{}:{}={},{},{}".format( C, V, ALX.getEntryIndex(), ALX.getEntryCount(), ALX.getContext() ), end='  ' )
             halt
         self._indexedFlag = True
     # end of InternalBibleBook.makeIndex
@@ -1198,7 +1001,7 @@ class InternalBibleBook:
     # end of InternalBibleBook.debugPrint
 
 
-    def validateUSFM( self ):
+    def validateMarkers( self ):
         """
         Validate the loaded book.
 
@@ -1252,7 +1055,7 @@ class InternalBibleBook:
                     logging.error( _("Marker '\\{}' must not appear within line after {} {}:{} in {}: {}").format( insideMarker, self.bookReferenceCode, c, v, marker, text ) )
 
         if validationErrors: self.errorDictionary['Validation Errors'] = validationErrors
-    # end of InternalBibleBook.validateUSFM
+    # end of InternalBibleBook.validateMarkers
 
 
     def getField( self, fieldName ):
@@ -2997,6 +2800,8 @@ class InternalBibleBook:
     def getCVRef( self, ref ):
         """
         Returns a list of processed lines for the given Bible reference.
+
+        Raises a KeyError if the C:V reference is not found
         """
         #print( "InternalBibleBook.getCVRef( {} ) for {}".format( ref, self.bookReferenceCode ) )
         if isinstance( ref, tuple ): assert( ref[0] == self.bookReferenceCode )
@@ -3008,23 +2813,26 @@ class InternalBibleBook:
         if isinstance( ref, tuple ): C, V = ref[1], ref[2]
         else: C,V = ref.getChapterNumberStr(), ref.getVerseNumberStr()
         #print( "CV", repr(C), repr(V) )
-        if (C,V,) in self._CVIndex:
-            startIndex, count, context = self._CVIndex[ C,V ]
-            #print( "data", ref, startIndex, count, context, InternalBibleEntryList(self._processedLines[startIndex:startIndex+count]) )
-            #print( "IBB getRef:", ref, startIndex, self._processedLines[startIndex:startIndex+5] )
-            #if 0: # old stuff
-                #result = []
-                #for index in range( startIndex, len(self._processedLines) ):
-                    #stuff = self._processedLines[index]
-                    #adjustedMarker, originalMarker, adjText, cleanText, extras = stuff
-                    #if adjustedMarker== 'c' and cleanText!=C: break # Gone past our chapter
-                    #if adjustedMarker== 'v' and cleanText!=V: break # Gone past our verse
-                    #result.append( stuff )
-                ## Remove any empty final paragraph (that belongs with the next verse )
-                #if result[-1][0]=='p' and not result[-1][3]: result.pop()
-                ##print( ref, result )
-                #return result
-            return InternalBibleEntryList( self._processedLines[startIndex:startIndex+count] ), context
+        #if (C,V,) in self._CVIndex:
+        return self._CVIndex.getEntries( (C,V,) )
+        #else: # old code
+            #startIndex, count, context = self._CVIndex[ C,V ]
+            ##print( "data", ref, startIndex, count, context, InternalBibleEntryList(self._processedLines[startIndex:startIndex+count]) )
+            ##print( "IBB getRef:", ref, startIndex, self._processedLines[startIndex:startIndex+5] )
+            ##if 0: # old stuff
+                ##result = []
+                ##for index in range( startIndex, len(self._processedLines) ):
+                    ##stuff = self._processedLines[index]
+                    ##adjustedMarker, originalMarker, adjText, cleanText, extras = stuff
+                    ##if adjustedMarker== 'c' and cleanText!=C: break # Gone past our chapter
+                    ##if adjustedMarker== 'v' and cleanText!=V: break # Gone past our verse
+                    ##result.append( stuff )
+                ### Remove any empty final paragraph (that belongs with the next verse )
+                ##if result[-1][0]=='p' and not result[-1][3]: result.pop()
+                ###print( ref, result )
+                ##return result
+            #return InternalBibleEntryList( self._processedLines[startIndex:startIndex+count] ), context
+        #else: raise KeyError( "{}:{} not found in  {} index".format( C, V, self.bookReferenceCode ) )
         #else: print( self.bookReferenceCode, C, V, "not in index", self._CVIndex )
     # end of InternalBibleBook.getCVRef
 # end of class InternalBibleBook

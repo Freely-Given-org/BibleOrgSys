@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # MySwordBible.py
-#   Last modified: 2013-07-08 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-16 by RJH (also update ProgVersion below)
 #
 # Module handling "MySword" Bible module files
 #
@@ -51,8 +51,10 @@ e.g.,
 """
 
 ProgName = "MySword Bible format handler"
-ProgVersion = "0.04"
+ProgVersion = "0.06"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+
+debuggingThisModule = False
 
 
 import logging, os, re
@@ -68,6 +70,7 @@ from TheWordBible import handleLine
 
 
 filenameEndingsToAccept = ('.MYBIBLE',) # Must be UPPERCASE
+BibleFilenameEndingsToAccept = ('.BBL.MYBIBLE',) # Must be UPPERCASE
 #filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
 #extensionsToIgnore = ('ZIP', 'BAK', 'LOG', 'HTM','HTML', 'XML', 'OSIS', 'USX', 'STY', 'LDS', 'SSF', 'VRS',) # Must be UPPERCASE
 
@@ -210,7 +213,10 @@ class MySwordBible( Bible ):
         if Globals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
 
         fileExtensionUpper = self.fileExtension.upper()
-        assert( fileExtensionUpper in filenameEndingsToAccept )
+        if fileExtensionUpper not in filenameEndingsToAccept:
+            logging.critical( "{} doesn't appear to be a MySword file".format( self.sourceFilename ) )
+        elif not self.sourceFilename.upper().endswith( BibleFilenameEndingsToAccept[0] ):
+            logging.critical( "{} doesn't appear to be a MySword Bible file".format( self.sourceFilename ) )
 
         connection = sqlite3.connect( self.sourceFilepath )
         connection.row_factory = sqlite3.Row # Enable row names
@@ -224,6 +230,7 @@ class MySwordBible( Bible ):
         #print( self.settingsDict ); halt
         if 'Description' in self.settingsDict and len(self.settingsDict['Description'])<40: self.name = self.settingsDict['Description']
         if 'Abbreviation' in self.settingsDict: self.abbreviation = self.settingsDict['Abbreviation']
+        if 'encryption' in self.settingsDict: logging.critical( "{} is encrypted: level {}".format( self.sourceFilename, self.settingsDict['encryption'] ) )
 
 
         if self.settingsDict['OT'] and self.settingsDict['NT']:
@@ -264,113 +271,17 @@ class MySwordBible( Bible ):
                 line = None
             #print ( nBBB, BBB, C, V, 'MySw file line is "' + line + '"' )
             if line is None: logging.warning( "MySwordBible.load: Found missing verse line at {} {}:{}".format( BBB, C, V ) )
-            elif not line: logging.warning( "MySwordBible.load: Found blank verse line at {} {}:{}".format( BBB, C, V ) )
-            else: haveLines = True
+            else: # line is not None
+                if not isinstance( line, str ):
+                    if 'encryption' in self.settingsDict:
+                        logging.critical( "Unable to decrypt verse line at {} {}:{} {}".format( BBB, C, V, repr(line) ) )
+                        break
+                    else:
+                        logging.critical( "Unable to decode verse line at {} {}:{} {} {}".format( BBB, C, V, repr(line), self.settingsDict ) )
+                elif not line: logging.warning( "MySwordBible.load: Found blank verse line at {} {}:{}".format( BBB, C, V ) )
+                else: haveLines = True
 
             handleLine( BBB, C, V, line, thisBook, ourGlobals )
-
-            ## Fix an encoding error in asv.ont
-            #if line.endswith( '<CM' ): line += '>' # asv.ont
-            #if line.startswith( '>  ' ): line = line[3:] # pinyin.ont
-
-            ## Try to convert display formatting to semantic formatting as much as possible
-            ## Adjust paragraph formatting
-            #assert( not haveParagraph )
-            #if line.endswith( '<CM>' ): # Means start a new paragraph after this line
-                #line = line[:-4] # Remove the marker
-                #haveParagraph = 'CM'
-            #elif line.endswith( '<CI>' ): # Means start a new paragraph (without a space before it) after this line
-                #line = line[:-4] # Remove the marker
-                #haveParagraph = 'CI'
-            #elif line.endswith( '<CL>' ): # Means start on a new line
-                #line = line[:-4] # Remove the marker
-                #haveParagraph = 'CL'
-
-            ## Adjust line formatting
-            #line = line.replace('<TS>','\\mt1 ').replace('<Ts>','\\NL*')
-            #line = line.replace('<TS1>','\\mt1 ').replace('<Ts1>','\\NL*') # Start marker and then a newline at end
-            #line = line.replace('<TS2>','\\mt2 ').replace('<Ts2>','\\NL*')
-            #line = line.replace('<TS3>','\\mt3 ').replace('<Ts3>','\\NL*')
-
-            ## Adjust character formatting with USFM equivalents
-            #line = line.replace('<FI>','\\add ').replace('<Fi>','\\add*')
-            #line = line.replace('<FO>','\\qt ').replace('<Fo>','\\qt*')
-            #line = line.replace('<FR>','\\wj ').replace('<Fr>','\\wj*')
-            #line = line.replace('<FU>','\\ul ').replace('<Fu>','\\ul*') # Not USFM
-            #line = line.replace('<RF>','\\f \\ft ').replace('<Rf>','\\f*')
-            #line = line.replace('<RX>','\\x ').replace('<Rx>','\\x*')
-
-            ##Now the more complex ones that need regexs
-            ##line = line.replace('<RF q=*>','\\f * \\ft ').replace('<Rf>','\\f*')
-            ##if '<RF' in line:
-                ##print( "line1", repr(originalLine), '\n', repr(line) )
-            #line = re.sub( '<RF q=(.)>', r'\\f \1 \\ft ', line )
-                ##print( "line2", repr(originalLine), '\n', repr(line) )
-            #line = re.sub( '<A(\d{1,3}):(\d{1,2})>', '', line )
-            #line = re.sub( '<A (\d{1,3})\.(\d{1,2})>', '', line )
-            #if '<A' in line:
-                #print( "line3", repr(originalLine), '\n', repr(line) )
-                ##halt
-            #line = re.sub( '<WH(\d{1,4})>', '', line )
-            #line = line.replace( '<wh>','' )
-            #if '<WH' in line or '<wh' in line:
-                #print( "line4", repr(originalLine), '\n', repr(line) )
-                ##halt
-            #line = re.sub( '<l=(.*?)>', '', line )
-            #if '<l=' in line:
-                #print( "line5", repr(originalLine), '\n', repr(line) )
-                ##halt
-            #line = re.sub('<CI><PI(\d)>',r'\\q\1 ',line).replace('<Ci>','\\NL*')
-            #line = re.sub('<CI><PF(\d)>',r'\\q\1 ',line)
-
-            ## Simple HTML tags (with no semantic info)
-            #line = line.replace('<b>','\\bd ').replace('</b>','\\bd*')
-            #line = line.replace('<i>','\\it ').replace('</i>','\\it*')
-            #line = line.replace('<u>','\\ul ').replace('</u>','\\ul*') # Not USFM
-            #line = line.replace('<sup>','\\ord ').replace('</sup>','\\ord*') # Not proper USFM meaning
-
-            #if 1: # Unhandled stuff -- not done properly yet...............................................
-                #line = line.replace('<CI>','')
-                #line = line.replace('<CL>','')
-                #line = line.replace('<CM>','')
-                #line = line.replace('<PF0>','')
-                #line = line.replace('<PF1>','')
-                #line = line.replace('<PF2>','')
-                #line = line.replace('<PF3>','')
-                #line = line.replace('<PI1>','')
-                #line = line.replace('<PI2>','')
-                #line = line.replace('<PI3>','')
-                #line = line.replace('<K>','').replace('<k>','')
-                #line = line.replace('<R>','').replace('<r>','')
-                #line = line.replace('<sub>','').replace('</sub>','')
-                #line = re.sub('<(.*?)>', '', line )
-
-            ## Check what's left at the end
-            #if '<' in line or '>' in line:
-                #print( "Original", repr(originalLine) )
-                #logging.error( "MySwordBible.load: Doesn't handle formatted line yet: '{}'".format( line ) )
-                #if self.name not in ('ckjv-sc','ckjv-tc',): halt
-
-            #if line.endswith( '\\NL*' ): line = line[:-4] # Don't need nl and end of line
-            #if '\\NL*' in line: # We need to break the original line into different USFM markers
-                ##print( "Messing with segments: '{}'".format( line ) )
-                #segments = line.split( '\\NL*' )
-                #assert( len(segments) >= 2 )
-                ##print( " ", segments )
-                #for segment in segments:
-                    #if segment and segment[0] == '\\':
-                        #bits = segment.split( None, 1 )
-                        #assert( len(bits) == 2 )
-                        #if bits[0] in ('\\mt1','\\mt2','\\mt3','\\q1','\\q2','\\q3',):
-                            #thisBook.appendLine( bits[0][1:], bits[1] )
-                        #else: print( "seg", repr(segment), repr(originalLine) ) # programming error
-                    #else: # What is segment is blank (\\NL* at end of line)???
-                        #if V==1: thisBook.appendLine( 'c', str(C) )
-                        #thisBook.appendLine( 'v', '{} {}'.format( V, segment ) )
-            #else:
-                #if V==1: thisBook.appendLine( 'c', str(C) )
-                #thisBook.appendLine( 'v', '{} {}'.format( V, line ) )
-
             V += 1
             if V > numV:
                 C += 1
@@ -463,10 +374,10 @@ def demo():
 
     if 1: # individual modules in the test folder
         testFolder = "../../../../../Data/Work/Bibles/MySword modules/"
-        names = ("nko",)
+        names = ('nheb-je','nko','ts1998',)
         for j, name in enumerate( names):
             fullname = name + '.bbl.mybible'
-            if Globals.verbosityLevel > 1: print( "\n{}/ Trying {}".format( j+1, fullname ) )
+            if Globals.verbosityLevel > 1: print( "\nB{}/ Trying {}".format( j+1, fullname ) )
             testMySwB( testFolder, fullname )
 
 
@@ -475,7 +386,7 @@ def demo():
         names = ("Matigsalug",)
         for j, name in enumerate( names):
             fullname = name + '.bbl.mybible'
-            if Globals.verbosityLevel > 1: print( "\n{}/ Trying {}".format( j+1, fullname ) )
+            if Globals.verbosityLevel > 1: print( "\nC{}/ Trying {}".format( j+1, fullname ) )
             testMySwB( testFolder, fullname )
 
 
@@ -495,7 +406,7 @@ def demo():
                 assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFile in enumerate( sorted( foundFiles ) ):
-                if Globals.verbosityLevel > 1: print( "\n{}/ Trying {}".format( j+1, someFile ) )
+                if Globals.verbosityLevel > 1: print( "\nD{}/ Trying {}".format( j+1, someFile ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testMySwB( testFolder, someFile )
                 #break # only do the first one.........temp
