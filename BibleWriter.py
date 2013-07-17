@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-07-17 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-18 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -49,7 +49,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.25"
+ProgVersion = "0.26"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -137,50 +137,54 @@ def theWordAdjustLine( BBB, C, V, originalLine ):
     """
     line = originalLine # Keep a copy of the original line for error messages
 
-    # Remove cross-references completely
-    #line = line.replace('\\x ','<RX>').replace('\\x*','<Rx>')
-    line = Globals.removeUSFMCharacterField( line, 'x', closed=True )
+    if '\\x' in line: # Remove cross-references completely
+        #line = line.replace('\\x ','<RX>').replace('\\x*','<Rx>')
+        line = Globals.removeUSFMCharacterField( line, 'x', closed=True )
 
-    # Handle footnotes
-    for marker in ( 'fr', 'fm', ): # simply remove these whole field
-        line = Globals.removeUSFMCharacterField( line, marker, closed=None )
-    for marker in ( 'fq', 'fqa', 'fl', 'fk', ): # italicise these ones
-        here = line
-        while '\\'+marker+' ' in line:
-            #print( BBB, C, V, marker, line.count('\\'+marker+' '), line )
-            #print( "was", "'"+line+"'" )
-            ix = line.find( '\\'+marker+' ' )
-            assert( ix != -1 )
-            ixEnd = line.find( '\\', ix+len(marker)+2 )
-            if ixEnd == -1: # no following marker so assume field stops at the end of the line
-                line = line.replace( '\\'+marker+' ', '<i>' ) + '</i>'
-            elif line[ixEnd:].startswith( '\\'+marker+'*' ): # replace the end marker also
-                line = line.replace( '\\'+marker+' ', '<i>' ).replace( '\\'+marker+'*', '</i>' )
-            else: # leave the next marker in place
-                line = line[:ixEnd].replace( '\\'+marker+' ', '<i>' ) + '</i>' + line[ixEnd:]
-            #print( "now", "'"+line+"'" )
-        #if line!=here: halt
-    for marker in ( 'ft', ): # simply remove these markers (but leave behind the text field
-        line = line.replace( '\\'+marker+' ', '' ).replace( '\\'+marker+'*', '' )
-    #for caller in '+*abcdefghijklmnopqrstuvwxyz': line.replace('\\f '+caller+' ','<RF>') # Handle single-character callers
-    line = re.sub( r'(\\f [a-z+*]{1,3} )', '<RF>', line ) # Handle one to three character callers
-    line = line.replace('\\f ','<RF>').replace('\\f*','<Rf>') # Must be after the italicisation
-    #if '\\f' in originalLine:
-        #print( "o", originalLine )
-        #print( "n", line )
-        #halt
+    if '\\f' in line: # Handle footnotes
+        for marker in ( 'fr', 'fm', ): # simply remove these whole field
+            line = Globals.removeUSFMCharacterField( line, marker, closed=None )
+        for marker in ( 'fq', 'fqa', 'fl', 'fk', ): # italicise these ones
+            here = line
+            while '\\'+marker+' ' in line:
+                #print( BBB, C, V, marker, line.count('\\'+marker+' '), line )
+                #print( "was", "'"+line+"'" )
+                ix = line.find( '\\'+marker+' ' )
+                assert( ix != -1 )
+                ixEnd = line.find( '\\', ix+len(marker)+2 )
+                if ixEnd == -1: # no following marker so assume field stops at the end of the line
+                    line = line.replace( '\\'+marker+' ', '<i>' ) + '</i>'
+                elif line[ixEnd:].startswith( '\\'+marker+'*' ): # replace the end marker also
+                    line = line.replace( '\\'+marker+' ', '<i>' ).replace( '\\'+marker+'*', '</i>' )
+                else: # leave the next marker in place
+                    line = line[:ixEnd].replace( '\\'+marker+' ', '<i>' ) + '</i>' + line[ixEnd:]
+                #print( "now", "'"+line+"'" )
+            #if line!=here: halt
+        for marker in ( 'ft', ): # simply remove these markers (but leave behind the text field
+            line = line.replace( '\\'+marker+' ', '' ).replace( '\\'+marker+'*', '' )
+        #for caller in '+*abcdefghijklmnopqrstuvwxyz': line.replace('\\f '+caller+' ','<RF>') # Handle single-character callers
+        line = re.sub( r'(\\f [a-z+*]{1,3} )', '<RF>', line ) # Handle one to three character callers
+        line = line.replace('\\f ','<RF>').replace('\\f*','<Rf>') # Must be after the italicisation
+        #if '\\f' in originalLine:
+            #print( "o", originalLine )
+            #print( "n", line )
+            #halt
 
-    # Handle character fields
-    line = line.replace('\\add ','<FI>').replace('\\add*','<Fi>').replace('\\+add ','<FI>').replace('\\+add*','<Fi>')
-    if '\\nd' in line or '\\+nd' in line:
-        line = line.replace('\\nd ','<font size=-1>',).replace('\\nd*','</font>').replace('\\+nd ','<font size=-1>',).replace('\\+nd*','</font>')
-    else: line = line.replace('LORD', '<font size=-1>LORD</font>')
-    line = line.replace('\\qt ','<FO>').replace('\\qt*','<Fo>').replace('\\+qt ','<FO>').replace('\\+qt*','<Fo>')
-    line = line.replace('\\wj ','<FR>').replace('\\wj*','<Fr>').replace('\\+wj ','<FR>').replace('\\+wj*','<Fr>')
+    if '\\' in line: # Handle character fields
+        line = line.replace('\\add ','<FI>').replace('\\add*','<Fi>').replace('\\+add ','<FI>').replace('\\+add*','<Fi>')
+        if '\\nd' in line or '\\+nd' in line:
+            line = line.replace('\\nd ','<font size=-1>',).replace('\\nd*','</font>').replace('\\+nd ','<font size=-1>',).replace('\\+nd*','</font>')
+        else: line = line.replace('LORD', '<font size=-1>LORD</font>')
+        line = line.replace('\\qt ','<FO>').replace('\\qt*','<Fo>').replace('\\+qt ','<FO>').replace('\\+qt*','<Fo>')
+        line = line.replace('\\wj ','<FR>').replace('\\wj*','<Fr>').replace('\\+wj ','<FR>').replace('\\+wj*','<Fr>')
 
-    # Simple HTML tags (with no semantic info)
-    line = line.replace('\\bd ','<b>',).replace('\\bd*','</b>')
-    line = line.replace('\\it ','<i>').replace('\\it*','</i>')
+    if '\\' in line: # Output simple HTML tags (with no semantic info)
+        line = line.replace('\\bdit ','<b><i>').replace('\\bdit*','</i></b>').replace('\\+bdit ','<b><i>').replace('\\+bdit*','</i></b>')
+        for marker in ( 'it', 'rq', 'bk', 'dc', 'qs', 'sig', 'sls', 'tl', ): # All these markers are just italicised
+            line = line.replace('\\'+marker+' ','<i>').replace('\\'+marker+'*','</i>').replace('\\+'+marker+' ','<i>').replace('\\+'+marker+'*','</i>')
+        for marker in ( 'bd', 'em', 'k', ): # All these markers are just bolded
+            line = line.replace('\\'+marker+' ','<b>').replace('\\'+marker+'*','</b>').replace('\\+'+marker+' ','<b>').replace('\\+'+marker+'*','</b>')
+        line = line.replace('\\sc ','<font size=-1>',).replace('\\sc*','</font>').replace('\\+sc ','<font size=-1>',).replace('\\+sc*','</font>')
 
     # Things we don't know how to handle yet
     pass
@@ -200,7 +204,7 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
     Composes a single line representing a verse.
 
     Parameters are the Scripture reference (for error messages),
-        the verseData (a list of pseudo-USFM markers and their contents),
+        the verseData (a list of InternalBibleEntries: pseudo-USFM markers and their contents),
         and a ourGlobals dictionary for holding persistent variables (between calls).
 
     This function handles the paragraph/new-line markers;
@@ -217,16 +221,34 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
     composedLine = ourGlobals['line'] # We might already have some book headings to precede the text for this verse
     ourGlobals['line'] = '' # We've used them so we don't need them any more
 
+    vCount = 0
     for verseDataEntry in verseData:
         marker, text = verseDataEntry.getMarker(), verseDataEntry.getFullText()
-        if marker in ('c','c#','cl','cp','v','rem',): continue  # ignore all of these
+        if marker in ('c','c#','cl','cp','rem',): continue  # ignore all of these for this
+
+        if marker == 'v': # handle versification differences here
+            vCount += 1
+            if vCount == 1: # Handle verse bridges
+                if text != str(V):
+                    #print( "got", "'"+text+"'" )
+                    composedLine += '<sup>('+text+')</sup>' # Put the additional verse number into the text in parenthesis
+                    #print( "gotit1", "'"+composedLine+"'" )
+            elif vCount > 1: # We have an additional verse number
+                assert( text != str(V) )
+                composedLine += ' <sup>('+text+')</sup>' # Put the additional verse number into the text in parenthesis
+                #print( "gotit2", "'"+composedLine+"'" )
+            continue
+
         #print( "theWordComposeVerseLine:", BBB, C, V, marker, text )
         if Globals.debugFlag: assert( marker not in theWordIgnoredIntroMarkers ) # these markers shouldn't occur in verses
 
         if marker == 's1': composedLine += '<TS1>'+theWordAdjustLine(BBB,C,V,text)+'<Ts1>'
         elif marker == 's2': composedLine += '<TS2>'+theWordAdjustLine(BBB,C,V,text)+'<Ts2>'
         elif marker in ( 's3', 'sr', 'd', ): composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts3>'
-        elif marker in ( 'qa', 'r', ): composedLine += '<TS3><i>'+theWordAdjustLine(BBB,C,V,text)+'</i><Ts3>'
+        elif marker in ( 'qa', 'r', ):
+            if marker=='r' and text and text[0]!='(' and text[-1]!=')': # Put parenthesis around this if not already there
+                text = '(' + text + ')'
+            composedLine += '<TS3><i>'+theWordAdjustLine(BBB,C,V,text)+'</i><Ts3>'
         elif marker in ( 'm', ):
             if not text:
                 if ourGlobals['pi1'] or ourGlobals['pi2'] or ourGlobals['pi3'] or ourGlobals['pi4'] or ourGlobals['pi5'] or ourGlobals['pi6'] or ourGlobals['pi7']:
@@ -266,6 +288,12 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
                 print( "theWordComposeVerseLine: doesn't handle '{}' yet".format( marker ) )
                 halt
             ourGlobals['unhandledMarkers'].add( marker )
+
+    # Final clean-up
+    composedLine = composedLine.replace( '<CM><CI>', '<CM>' ) # paragraph mark not needed when following a title close marker
+    while '  ' in composedLine: # remove double spaces
+        composedLine = composedLine.replace( '  ', ' ' )
+
     # Check what's left at the end
     if '\\' in composedLine:
         logging.warning( "theWordComposeVerseLine: Doesn't handle formatted line yet: {} {}:{} '{}'".format( BBB, C, V, composedLine ) )
@@ -2811,43 +2839,33 @@ class BibleWriter( InternalBible ):
             numC, numV = len(verseList), verseList[0]
 
             ourGlobals['pi1'] = ourGlobals['pi2'] = ourGlobals['pi3'] = ourGlobals['pi4'] = ourGlobals['pi5'] = ourGlobals['pi6'] = ourGlobals['pi7'] = False
-            if bkData:
-                # Write book headings (stuff before chapter 1)
+            if bkData: # write book headings (stuff before chapter 1)
                 ourGlobals['line'] = theWordHandleIntroduction( BBB, bkData, ourGlobals )
-                #C = V = 0
-                #while True:
-                    #try: result = bkData.getCVRef( (BBB,'0',str(V),) ) # Currently this only gets one line
-                    #except KeyError: break # Reach the end of the introduction
-                    #verseData, context = result
-                    #assert( len(verseData ) == 1 ) # in the introductory section
-                    ##if BBB=='MRK': print( "vD", BBB, '0', V, len(verseData), verseData )
-                    #for verseDataEntry in verseData:
-                        #marker, text = verseDataEntry.getMarker(), verseDataEntry.getFullText()
-                        #if marker in theWordIgnoredIntroMarkers: continue
-                        #composedLine = None
-                        #if marker=='mt1': composedLine = '<TS1>'+theWordAdjustLine(BBB,C,V,text)+'<Ts1>'
-                        #elif marker=='mt2': composedLine = '<TS2>'+theWordAdjustLine(BBB,C,V,text)+'<Ts2>'
-                        #elif marker=='mt3': composedLine = '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts3>'
-                        #elif marker=='ms1': composedLine = '<TS2>'+theWordAdjustLine(BBB,C,V,text)+'<Ts2>'
-                        #elif marker=='ms2': composedLine = '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts3>'
-                        #elif marker=='mr': composedLine = '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts3>'
-                        #else:
-                            #logging.warning( "toTheWord.writeBook: doesn't handle '{}' in introduction yet".format( marker ) )
-                            #ourGlobals['unhandledMarkers'].add( marker )
-                        #if composedLine: writerObject.write( composedLine ) # Note: no trailing newline character
-                    #V += 1
 
             # Write the verses (whether or not they're populated)
             C = V = 1
             while True:
-                composedLine = ''
+                verseData, composedLine = None, ''
                 if bkData:
                     try:
                         result = bkData.getCVRef( (BBB,str(C),str(V),) )
                         verseData, context = result
-                        if verseData: composedLine = theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals )
                     except KeyError: pass #  just ignore it
-                writerObject.write( composedLine + '\n' )
+                # Handle some common versification anomalies
+                if (BBB,C,V) == ('JN3',1,14): # Add text for v15 if it exists
+                    try:
+                        result15 = bkData.getCVRef( ('JN3','1','15',) )
+                        verseData15, context15 = result15
+                        verseData.extend( verseData15 )
+                    except KeyError: pass #  just ignore it
+                elif (BBB,C,V) == ('REV',12,17): # Add text for v15 if it exists
+                    try:
+                        result18 = bkData.getCVRef( ('REV','12','18',) )
+                        verseData18, context18 = result18
+                        verseData.extend( verseData18 )
+                    except KeyError: pass #  just ignore it
+                if verseData: composedLine = theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals )
+                writerObject.write( composedLine + '\n' ) # Write it whether or not we got data
                 V += 1
                 if V > numV:
                     C += 1
@@ -2967,41 +2985,34 @@ class BibleWriter( InternalBible ):
             if bkData:
                 # Write book headings (stuff before chapter 1)
                 ourGlobals['line'] = theWordHandleIntroduction( BBB, bkData, ourGlobals )
-                #C = V = 0
-                #while True: # write book headings
-                    #try: result = bkData.getCVRef( (BBB,'0',str(V),) ) # Currently this only gets one line
-                    #except KeyError: break # Reached the end of the introduction
-                    #verseData, context = result
-                    #assert( len(verseData ) == 1 ) # in the introductory section
-                    ##if BBB=='MRK': print( "vD", BBB, '0', V, len(verseData), verseData )
-                    #for verseDataEntry in verseData:
-                        #marker, text = verseDataEntry.getMarker(), verseDataEntry.getFullText()
-                        #if marker in theWordIgnoredIntroMarkers: continue
-                        ##print( marker, cleanText )
-                        #composedLine = None
-                        #if marker=='mt1': composedLine = '<TS1>'+theWordAdjustLine(BBB,C,V,text)+'<Ts1>'
-                        #elif marker=='mt2': composedLine = '<TS2>'+theWordAdjustLine(BBB,C,V,text)+'<Ts2>'
-                        #elif marker=='mt3': composedLine = '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts3>'
-                        #else:
-                            #logging.warning( "toMySword.writeBook: doesn't handle '{}' in introduction yet".format( marker ) )
-                            #ourGlobals['unhandledMarkers'].add( marker )
-                        #if composedLine: ourGlobals['line'] += composedLine
-                    #V += 1
-                #assert( not ourGlobals['line'] and not ourGlobals['lastLine'] ) #  We should have written everything
 
                 # Write the verses
                 C = V = 1
                 while True:
+                    verseData = None
                     if bkData:
                         try:
                             result = bkData.getCVRef( (BBB,str(C),str(V),) )
                             verseData, context = result
-                            if verseData:
-                                composedLine = theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals )
-                                if composedLine: # don't bother writing blank (unfinished?) verses
-                                    #print( "toMySword: Writing", BBB, nBBB, C, V, marker, repr(line) )
-                                    writerObject.execute( 'INSERT INTO "Bible" VALUES(?,?,?,?)', (nBBB,C,V,composedLine) )
                         except KeyError: pass # Just ignore missing verses
+                        # Handle some common versification anomalies
+                        if (BBB,C,V) == ('JN3',1,14): # Add text for v15 if it exists
+                            try:
+                                result15 = bkData.getCVRef( ('JN3','1','15',) )
+                                verseData15, context15 = result15
+                                verseData.extend( verseData15 )
+                            except KeyError: pass #  just ignore it
+                        elif (BBB,C,V) == ('REV',12,17): # Add text for v15 if it exists
+                            try:
+                                result18 = bkData.getCVRef( ('REV','12','18',) )
+                                verseData18, context18 = result18
+                                verseData.extend( verseData18 )
+                            except KeyError: pass #  just ignore it
+                        if verseData:
+                            composedLine = theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals )
+                            if composedLine: # don't bother writing blank (unfinished?) verses
+                                #print( "toMySword: Writing", BBB, nBBB, C, V, marker, repr(line) )
+                                writerObject.execute( 'INSERT INTO "Bible" VALUES(?,?,?,?)', (nBBB,C,V,composedLine) )
                     V += 1
                     if V > numV:
                         C += 1

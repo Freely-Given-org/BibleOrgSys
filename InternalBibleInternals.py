@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleInternals.py
-#   Last modified: 2013-07-17 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-18 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Bible internals handler"
-ProgVersion = "0.03"
+ProgVersion = "0.04"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -234,14 +234,19 @@ class InternalBibleEntryList:
         return self.data[keyIndex]
 
 
-    def append( self, something ):
-        assert( isinstance( something, InternalBibleEntry ) )
-        self.data.append( something )
+    def append( self, newBibleEntry ):
+        assert( isinstance( newBibleEntry, InternalBibleEntry ) )
+        self.data.append( newBibleEntry )
     # end of InternalBibleEntryList.append
 
     def pop( self ): # Doesn't allow a parameter
         return self.data.pop()
     # end of InternalBibleEntryList.append
+
+    def extend( self, newList ):
+        assert( isinstance( newList, InternalBibleEntryList ) )
+        self.data.extend( newList )
+    # end of InternalBibleEntryList.extend
 # end of class InternalBibleEntryList
 
 
