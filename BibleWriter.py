@@ -57,7 +57,7 @@ debuggingThisModule = False
 
 import sys, os, logging, datetime
 from gettext import gettext as _
-import sqlite3, tarfile
+import re, sqlite3, tarfile
 import multiprocessing
 
 import Globals, ControlFiles
@@ -70,10 +70,11 @@ from MLWriter import MLWriter
 defaultControlFolder = "ControlFiles/" # Relative to the current working directory
 
 
+oftenIgnoredIntroMarkers = ('id','ide','sts','rem','h1','toc1','toc2','toc3',)
+
 
 # These next three functions are used both by theWord and MySword exports
-theWordIgnoredIntroMarkers = (
-    'id','ide','sts','rem','h1','toc1','toc2','toc3',
+theWordIgnoredIntroMarkers = oftenIgnoredIntroMarkers + (
     'imt1','imt2','imt3','is1','is2','is3',
     'ip','ipi','im','imi','ipq','imq','ir','iq1','iq2','iq3','ib','ili',
     'iot','io1','io2','io3','ir','iex','iqt','imte','ie','mte',)
@@ -107,16 +108,20 @@ def theWordHandleIntroduction( BBB, bookData, ourGlobals ):
             elif marker=='ms2': composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts3>'
             elif marker=='mr': composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts3>'
             else:
-                logging.warning( "theWordHandleIntroduction: doesn't handle '{}' yet".format( marker ) )
-                if Globals.debugFlag and debuggingThisModule: halt
-                ourGlobals['unhandledMarkers'].add( marker )
+                logging.warning( "theWordHandleIntroduction: doesn't handle {} '{}' yet".format( BBB, marker ) )
+                if Globals.debugFlag and debuggingThisModule:
+                    print( "theWordHandleIntroduction: doesn't handle {} '{}' yet".format( BBB, marker ) )
+                    halt
+                ourGlobals['unhandledMarkers'].add( marker + ' (in intro)' )
             #if composedLine: writerObject.write( composedLine ) # Note: no trailing newline character
         V += 1 # Step to the next introductory section "verse"
 
     # Check what's left at the end
     if '\\' in composedLine:
         logging.warning( "theWordHandleIntroduction: Doesn't handle formatted line yet: {} '{}'".format( BBB, composedLine ) )
-        if Globals.debugFlag and debuggingThisModule: halt
+        if Globals.debugFlag and debuggingThisModule:
+            print( "theWordHandleIntroduction: Doesn't handle formatted line yet: {} '{}'".format( BBB, composedLine ) )
+            halt
     return composedLine
 # end of theWordHandleIntroduction
 
@@ -131,23 +136,61 @@ def theWordAdjustLine( BBB, C, V, originalLine ):
     Returns a string with the backslash codes replaced by theWord formatting codes.
     """
     line = originalLine # Keep a copy of the original line for error messages
-    line = line.replace('\\add ','<FI>').replace('\\add*','<Fi>')
-    line = line.replace('\\qt ','<FO>').replace('\\qt*','<Fo>')
-    line = line.replace('\\wj ','<FR>').replace('\\wj*','<Fr>')
-    line = line.replace('\\f ','<RF>').replace('\\f*','<Rf>')
-    line = line.replace('\\x ','<RX>').replace('\\x*','<Rx>')
+
+    # Remove cross-references completely
+    #line = line.replace('\\x ','<RX>').replace('\\x*','<Rx>')
+    line = Globals.removeUSFMCharacterField( line, 'x', closed=True )
+
+    # Handle footnotes
+    for marker in ( 'fr', 'fm', ): # simply remove these whole field
+        line = Globals.removeUSFMCharacterField( line, marker, closed=None )
+    for marker in ( 'fq', 'fqa', 'fl', 'fk', ): # italicise these ones
+        here = line
+        while '\\'+marker+' ' in line:
+            #print( BBB, C, V, marker, line.count('\\'+marker+' '), line )
+            #print( "was", "'"+line+"'" )
+            ix = line.find( '\\'+marker+' ' )
+            assert( ix != -1 )
+            ixEnd = line.find( '\\', ix+len(marker)+2 )
+            if ixEnd == -1: # no following marker so assume field stops at the end of the line
+                line = line.replace( '\\'+marker+' ', '<i>' ) + '</i>'
+            elif line[ixEnd:].startswith( '\\'+marker+'*' ): # replace the end marker also
+                line = line.replace( '\\'+marker+' ', '<i>' ).replace( '\\'+marker+'*', '</i>' )
+            else: # leave the next marker in place
+                line = line[:ixEnd].replace( '\\'+marker+' ', '<i>' ) + '</i>' + line[ixEnd:]
+            #print( "now", "'"+line+"'" )
+        #if line!=here: halt
+    for marker in ( 'ft', ): # simply remove these markers (but leave behind the text field
+        line = line.replace( '\\'+marker+' ', '' ).replace( '\\'+marker+'*', '' )
+    #for caller in '+*abcdefghijklmnopqrstuvwxyz': line.replace('\\f '+caller+' ','<RF>') # Handle single-character callers
+    line = re.sub( r'(\\f [a-z+*]{1,3} )', '<RF>', line ) # Handle one to three character callers
+    line = line.replace('\\f ','<RF>').replace('\\f*','<Rf>') # Must be after the italicisation
+    #if '\\f' in originalLine:
+        #print( "o", originalLine )
+        #print( "n", line )
+        #halt
+
+    # Handle character fields
+    line = line.replace('\\add ','<FI>').replace('\\add*','<Fi>').replace('\\+add ','<FI>').replace('\\+add*','<Fi>')
+    if '\\nd' in line or '\\+nd' in line:
+        line = line.replace('\\nd ','<font size=-1>',).replace('\\nd*','</font>').replace('\\+nd ','<font size=-1>',).replace('\\+nd*','</font>')
+    else: line = line.replace('LORD', '<font size=-1>LORD</font>')
+    line = line.replace('\\qt ','<FO>').replace('\\qt*','<Fo>').replace('\\+qt ','<FO>').replace('\\+qt*','<Fo>')
+    line = line.replace('\\wj ','<FR>').replace('\\wj*','<Fr>').replace('\\+wj ','<FR>').replace('\\+wj*','<Fr>')
 
     # Simple HTML tags (with no semantic info)
     line = line.replace('\\bd ','<b>',).replace('\\bd*','</b>')
     line = line.replace('\\it ','<i>').replace('\\it*','</i>')
 
     # Things we don't know how to handle yet
-    line = line.replace('\\nd ','',).replace('\\nd*','')
+    pass
 
     # Check what's left at the end
     if '\\' in line:
         logging.warning( "theWordadjustLine: Doesn't handle formatted line yet: {} {}:{} '{}'".format( BBB, C, V, line ) )
-        if Globals.debugFlag and debuggingThisModule: halt
+        if Globals.debugFlag and debuggingThisModule:
+            print( "theWordadjustLine: Doesn't handle formatted line yet: {} {}:{} '{}'".format( BBB, C, V, line ) )
+            halt
     return line
 # end of theWordAdjustLine
 
@@ -176,7 +219,8 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
 
     for verseDataEntry in verseData:
         marker, text = verseDataEntry.getMarker(), verseDataEntry.getFullText()
-        if marker in ('c','c#','cl','cp','v'): continue  # ignore all of these
+        if marker in ('c','c#','cl','cp','v','rem',): continue  # ignore all of these
+        #print( "theWordComposeVerseLine:", BBB, C, V, marker, text )
         if Globals.debugFlag: assert( marker not in theWordIgnoredIntroMarkers ) # these markers shouldn't occur in verses
 
         if marker == 's1': composedLine += '<TS1>'+theWordAdjustLine(BBB,C,V,text)+'<Ts1>'
@@ -218,12 +262,16 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
             composedLine += theWordAdjustLine(BBB,C,V, text )
         else:
             logging.warning( "theWordComposeVerseLine: doesn't handle '{}' yet".format( marker ) )
-            if Globals.debugFlag and debuggingThisModule: halt
+            if Globals.debugFlag and debuggingThisModule:
+                print( "theWordComposeVerseLine: doesn't handle '{}' yet".format( marker ) )
+                halt
             ourGlobals['unhandledMarkers'].add( marker )
     # Check what's left at the end
     if '\\' in composedLine:
         logging.warning( "theWordComposeVerseLine: Doesn't handle formatted line yet: {} {}:{} '{}'".format( BBB, C, V, composedLine ) )
-        if Globals.debugFlag and debuggingThisModule: halt
+        if Globals.debugFlag and debuggingThisModule:
+            print( "theWordComposeVerseLine: Doesn't handle formatted line yet: {} {}:{} '{}'".format( BBB, C, V, composedLine ) )
+            halt
     return composedLine
 # end of theWordComposeVerseLine
 
@@ -365,7 +413,7 @@ class BibleWriter( InternalBible ):
                     USFM += '\\id {} -- BibleOrgSys USFM export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
                 if pseudoMarker in ('c#',): continue # Ignore our additions
                 #value = cleanText # (temp)
-                if Globals.debugFlag and debuggingThisModule: print( "pseudoMarker = '{}' value = '{}'".format( pseudoMarker, value ) )
+                #if Globals.debugFlag and debuggingThisModule: print( "toUSFM: pseudoMarker = '{}' value = '{}'".format( pseudoMarker, value ) )
                 if pseudoMarker in ('v','f','fr','x','xo',): # These fields should always end with a space but the processing will have removed them
                     if Globals.debugFlag: assert( value )
                     if value[-1] != ' ': value += ' ' # Append a space since it didn't have one
@@ -384,7 +432,7 @@ class BibleWriter( InternalBible ):
                         #if (USFM[-2]=='\\' or USFM[-3]=='\\') and USFM[-1]!=' ':
                         if USFM[-1] != ' ':
                             USFM += ' ' # Separate markers by a space e.g., \p\bk Revelation
-                            if Globals.debugFlag: print( "USFM: Added space to '{}' before '{}'".format( USFM[-2], pseudoMarker ) )
+                            if Globals.debugFlag: print( "toUSFM: Added space to '{}' before '{}'".format( USFM[-2], pseudoMarker ) )
                         adjValue += '\\{}*'.format( pseudoMarker ) # Do a close marker
                     elif pseudoMarker in ('f','x',): inField = pseudoMarker # Remember these so we can close them later
                     elif pseudoMarker in ('fr','fq','ft','xo',): USFM += '' # These go on the same line just separated by spaces and don't get closed
@@ -1648,7 +1696,7 @@ class BibleWriter( InternalBible ):
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getText(), verseDataEntry.getExtras()
                 #print( "toOSIS:", marker, originalMarker, text )
-                if marker in ( 'id', 'h1', 'mt2' ): continue # We just ignore these markers
+                if marker in ( 'id', 'ide', 'h1', 'mt2' ): continue # We just ignore these markers
                 if marker=='mt1':
                     if text: writerObject.writeLineOpenClose( 'title', checkText(text) )
                 elif marker=='is1' or marker=='imt1':
@@ -2247,7 +2295,7 @@ class BibleWriter( InternalBible ):
                 #print( BBB, marker, text )
                 #print( " ", haveOpenIntro, haveOpenOutline, haveOpenMajorSection, haveOpenSection, haveOpenSubsection, needChapterEID, haveOpenParagraph, haveOpenVsID, haveOpenLG, haveOpenL )
                 #print( toSwordGlobals['idStack'] )
-                if marker in ( 'id', 'h1', 'mt2', 'c#', ): continue # We just ignore these markers
+                if marker in ( 'id', 'ide', 'h1', 'mt2', 'c#', ): continue # We just ignore these markers
                 if marker=='mt1': writerObject.writeLineOpenClose( 'title', checkText(text) )
                 elif marker=='is1' or marker=='imt1':
                     if haveOpenIntro: # already -- assume it's a second one
@@ -2592,8 +2640,7 @@ class BibleWriter( InternalBible ):
                 marker, text, cleanText = verseDataEntry.getMarker(), verseDataEntry.getFullText(), verseDataEntry.getCleanText()
                 #if BBB=='MRK': print( "writeBook", marker, cleanText )
                 #print( "toHTML5.writeBook", BBB, C, V, marker, cleanText )
-                if marker in ('id','ide','toc1','toc2','toc3','rem',):
-                    pass # Just ignore these lines
+                if marker in oftenIgnoredIntroMarkers: pass # Just ignore these lines
 
                 # Markers usually only found in the introduction
                 elif marker in ('mt1','mt2',):
@@ -3218,14 +3265,13 @@ def demo():
 
     if 1: # Test reading and writing a USFM Bible
         from USFMBible import USFMBible
-        from USFMFilenames import USFMFilenames
+        from USXFilenames import USXFilenames
         testData = (
                 ("Matigsalug", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
+                ("MS-BT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
+                ("MS-Notes", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/",),
+                ("WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/",),
                 ) # You can put your USFM test folder here
-        #name, encoding, testFolder = "Matigsalug", "utf-8", "../../../../../Data/Work/Matigsalug/Bible/MBTV/" # You can put your test folder here
-        #name, encoding, testFolder = "MS-BT", "utf-8", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/" # You can put your test folder here
-        #name, encoding, testFolder = "MS-Notes", "utf-8", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/" # You can put your test folder here
-        #name, encoding, testFolder = "WEB", "utf-8", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/" # You can put your test folder here
 
         for name, testFolder in testData:
             if os.access( testFolder, os.R_OK ):

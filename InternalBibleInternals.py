@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleInternals.py
-#   Last modified: 2013-07-15 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-17 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Bible internals handler"
-ProgVersion = "0.02"
+ProgVersion = "0.03"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -159,7 +159,10 @@ class InternalBibleEntry:
             #print( "{} at {} = '{}' ({})".format( extraType, extraIndex, extraText, cleanExtraText ) )
             #print( "  was '{}'".format( result ) )
             ix = extraIndex + offset
-            result = '{}\\{} {}\\{}*{}'.format( result[:ix], extraType, extraText, extraType, result[ix:] )
+            if extraType == 'fn': USFM = 'f'
+            elif extraType == 'xr': USFM = 'x'
+            elif Globals.debugFlag: halt
+            result = '{}\\{} {}\\{}*{}'.format( result[:ix], USFM, extraText, USFM, result[ix:] )
             #print( "  now '{}'".format( result ) )
             offset += len(extraText ) + 2*len(extraType) + 4
         #if result != self.adjustedText:
