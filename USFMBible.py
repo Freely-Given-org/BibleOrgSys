@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2013-07-16 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-18 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 """
 
 ProgName = "USFM Bible handler"
-ProgVersion = "0.38"
+ProgVersion = "0.39"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -321,6 +321,31 @@ def demo():
     if Globals.verbosityLevel > 0: print( ProgNameVersion )
 
 
+    def findInfo( somepath ):
+        """ Find out info about the project from the included copyright.htm file """
+        cFilepath = os.path.join( somepath, "copyright.htm" )
+        if not os.path.exists( cFilepath ): return
+        with open( cFilepath ) as myFile: # Automatically closes the file when done
+            lastLine, lineCount = None, 0
+            title, nameDict = None, {}
+            for line in myFile:
+                lineCount += 1
+                if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
+                    logging.info( "USFMBible: Detected UTF-16 Byte Order Marker in copyright.htm file" )
+                    line = line[1:] # Remove the UTF-8 Byte Order Marker
+                if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
+                if not line: continue # Just discard blank lines
+                lastLine = line
+                if line.startswith("<title>"): title = line.replace("<title>","").replace("</title>","").strip()
+                if line.startswith('<option value="'):
+                    adjLine = line.replace('<option value="','').replace('</option>','')
+                    USFM_BBB, name = adjLine[:3], adjLine[11:]
+                    BBB = Globals.BibleBooksCodes.getBBBFromUSFM( USFM_BBB )
+                    #print( USFM_BBB, BBB, name )
+                    nameDict[BBB] = name
+        return title, nameDict
+    # end of findInfo
+
     if 1: # Test a single folder containing a USFM Bible
         name, encoding, testFolder = "Matigsalug", "utf-8", "../../../../../Data/Work/Matigsalug/Bible/MBTV/" # You can put your test folder here
         if os.access( testFolder, os.R_OK ):
@@ -345,29 +370,6 @@ def demo():
         else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 
     if 1: # Test a whole folder full of folders of USFM Bibles
-        def findInfo():
-            """ Find out info about the project from the included copyright.htm file """
-            with open( os.path.join( somepath, "copyright.htm" ) ) as myFile: # Automatically closes the file when done
-                lastLine, lineCount = None, 0
-                title, nameDict = None, {}
-                for line in myFile:
-                    lineCount += 1
-                    if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
-                        logging.info( "USFMBible: Detected UTF-16 Byte Order Marker in copyright.htm file" )
-                        line = line[1:] # Remove the UTF-8 Byte Order Marker
-                    if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
-                    if not line: continue # Just discard blank lines
-                    lastLine = line
-                    if line.startswith("<title>"): title = line.replace("<title>","").replace("</title>","").strip()
-                    if line.startswith('<option value="'):
-                        adjLine = line.replace('<option value="','').replace('</option>','')
-                        USFM_BBB, name = adjLine[:3], adjLine[11:]
-                        BBB = Globals.BibleBooksCodes.getBBBFromUSFM( USFM_BBB )
-                        #print( USFM_BBB, BBB, name )
-                        nameDict[BBB] = name
-            return title, nameDict
-        # end of findInfo
-
         testBaseFolder = "../../../../../Data/Work/Bibles/USFM Bibles/Haiola USFM test versions/"
         count = totalBooks = 0
         for something in sorted( os.listdir( testBaseFolder ) ):
@@ -376,7 +378,8 @@ def demo():
             elif os.path.isdir( somepath ): # Let's assume that it's a folder containing a USFM (partial) Bible
                 #if not something.startswith( 'ssx' ): continue
                 count += 1
-                title, bookNameDict = findInfo()
+                findInfoResult = findInfo( somepath )
+                if findInfoResult: title, bookNameDict = findInfoResult
                 if title is None: title = something[:-5] if something.endswith("_usfm") else something
                 name, encoding, testFolder = title, "utf-8", somepath
                 if os.access( testFolder, os.R_OK ):
@@ -492,28 +495,30 @@ def demo():
 
 
     if 1: # Test a whole folder full of folders of USFM Bibles
-        def findInfo():
-            """ Find out info about the project from the included copyright.htm file """
-            with open( os.path.join( somepath, "copyright.htm" ) ) as myFile: # Automatically closes the file when done
-                lastLine, lineCount = None, 0
-                title, nameDict = None, {}
-                for line in myFile:
-                    lineCount += 1
-                    if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
-                        logging.info( "USFMBible: Detected UTF-16 Byte Order Marker in copyright.htm file" )
-                        line = line[1:] # Remove the UTF-8 Byte Order Marker
-                    if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
-                    if not line: continue # Just discard blank lines
-                    lastLine = line
-                    if line.startswith("<title>"): title = line.replace("<title>","").replace("</title>","").strip()
-                    if line.startswith('<option value="'):
-                        adjLine = line.replace('<option value="','').replace('</option>','')
-                        USFM_BBB, name = adjLine[:3], adjLine[11:]
-                        BBB = Globals.BibleBooksCodes.getBBBFromUSFM( USFM_BBB )
-                        #print( USFM_BBB, BBB, name )
-                        nameDict[BBB] = name
-            return title, nameDict
-        # end of findInfo
+        #def findInfo():
+            #""" Find out info about the project from the included copyright.htm file """
+            #cFilepath = os.path.join( somepath, "copyright.htm" )
+            #if not os.path.exists( cFilepath ): return
+            #with open( cFilepath ) as myFile: # Automatically closes the file when done
+                #lastLine, lineCount = None, 0
+                #title, nameDict = None, {}
+                #for line in myFile:
+                    #lineCount += 1
+                    #if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
+                        #logging.info( "USFMBible: Detected UTF-16 Byte Order Marker in copyright.htm file" )
+                        #line = line[1:] # Remove the UTF-8 Byte Order Marker
+                    #if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
+                    #if not line: continue # Just discard blank lines
+                    #lastLine = line
+                    #if line.startswith("<title>"): title = line.replace("<title>","").replace("</title>","").strip()
+                    #if line.startswith('<option value="'):
+                        #adjLine = line.replace('<option value="','').replace('</option>','')
+                        #USFM_BBB, name = adjLine[:3], adjLine[11:]
+                        #BBB = Globals.BibleBooksCodes.getBBBFromUSFM( USFM_BBB )
+                        ##print( USFM_BBB, BBB, name )
+                        #nameDict[BBB] = name
+            #return title, nameDict
+        ## end of findInfo
 
         testBaseFolder = "../../../../../Data/Work/Bibles/USFM Bibles/Haiola USFM test versions/"
         count = totalBooks = 0
@@ -523,7 +528,8 @@ def demo():
             elif os.path.isdir( somepath ): # Let's assume that it's a folder containing a USFM (partial) Bible
                 #if not something.startswith( 'ssx' ): continue # This line is used for debugging only specific modules
                 count += 1
-                title, bookNameDict = findInfo()
+                findInfoResult = findInfo( somepath )
+                if findInfoResult: title, bookNameDict = findInfoResult
                 if title is None: title = something[:-5] if something.endswith("_usfm") else something
                 name, encoding, testFolder = title, "utf-8", somepath
                 if os.access( testFolder, os.R_OK ):

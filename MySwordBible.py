@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # MySwordBible.py
-#   Last modified: 2013-07-16 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-18 by RJH (also update ProgVersion below)
 #
 # Module handling "MySword" Bible module files
 #
@@ -51,7 +51,7 @@ e.g.,
 """
 
 ProgName = "MySword Bible format handler"
-ProgVersion = "0.06"
+ProgVersion = "0.07"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -349,7 +349,7 @@ def testMySwB( MySwBfolder, MySwBfilename ):
         MySwB.toMySword()
         #doaResults = MySwB.doAllExports()
         if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
-            outputFolder = "OutputFiles/BOS_MySwordReexport/"
+            outputFolder = "OutputFiles/BOS_MySword_Reexport/"
             if Globals.verbosityLevel > 1: print( "\nComparing original and re-exported MySword files..." )
             result = Globals.fileCompare( MySwBfilename, MySwBfilename, MySwBfolder, outputFolder )
             if Globals.debugFlag:

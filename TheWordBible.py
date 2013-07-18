@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # TheWordBible.py
-#   Last modified: 2013-07-16 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-18 by RJH (also update ProgVersion below)
 #
 # Module handling "TheWord" Bible module files
 #
@@ -51,7 +51,7 @@ e.g.,
 """
 
 ProgName = "TheWord Bible format handler"
-ProgVersion = "0.06"
+ProgVersion = "0.07"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -498,7 +498,7 @@ def testTWB( TWBfolder, TWBfilename ):
         tWb.toTheWord()
         #doaResults = tWb.doAllExports()
         if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
-            outputFolder = "OutputFiles/BOS_TheWordReexport/"
+            outputFolder = "OutputFiles/BOS_TheWord_Reexport/"
             if Globals.verbosityLevel > 1: print( "\nComparing original and re-exported theWord files..." )
             result = Globals.fileCompare( TWBfilename, TWBfilename, TWBfolder, outputFolder )
             if Globals.debugFlag:

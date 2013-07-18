@@ -364,7 +364,7 @@ class BibleWriter( InternalBible ):
         if Globals.debugFlag: assert( self.books )
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolder: outputFolder = "OutputFiles/BOS_PseudoUSFMExport/"
+        if not outputFolder: outputFolder = "OutputFiles/BOS_PseudoUSFM_Export/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
 
         allCharMarkers = Globals.USFMMarkers.getCharacterMarkersList( expandNumberableMarkers=True )
@@ -411,7 +411,7 @@ class BibleWriter( InternalBible ):
         if Globals.debugFlag: assert( self.books )
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolder: outputFolder = "OutputFiles/BOS_USFMExport/"
+        if not outputFolder: outputFolder = "OutputFiles/BOS_USFM_Export/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         #if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_MediaWiki_controls.txt", controlDict )
         #assert( controlDict and isinstance( controlDict, dict ) )
@@ -484,7 +484,7 @@ class BibleWriter( InternalBible ):
         if Globals.debugFlag: assert( self.books )
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolder: outputFolder = "OutputFiles/BOS_MediaWikiExport/"
+        if not outputFolder: outputFolder = "OutputFiles/BOS_MediaWiki_Export/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         if not controlDict:
             controlDict, defaultControlFilename = {}, "To_MediaWiki_controls.txt"
@@ -739,7 +739,7 @@ class BibleWriter( InternalBible ):
         if Globals.debugFlag: assert( self.books )
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolder: outputFolder = "OutputFiles/BOS_ZefaniaExport/"
+        if not outputFolder: outputFolder = "OutputFiles/BOS_Zefania_Export/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         if not controlDict:
             controlDict, defaultControlFilename = {}, "To_Zefania_controls.txt"
@@ -852,7 +852,7 @@ class BibleWriter( InternalBible ):
         if Globals.debugFlag: assert( self.books )
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolder: outputFolder = "OutputFiles/BOS_USXExport/"
+        if not outputFolder: outputFolder = "OutputFiles/BOS_USX_Export/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         if not controlDict:
             controlDict, defaultControlFilename = {}, "To_USX_controls.txt"
@@ -1335,7 +1335,7 @@ class BibleWriter( InternalBible ):
         if Globals.debugFlag: assert( self.books )
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolder: outputFolder = "OutputFiles/BOS_OSISExport/"
+        if not outputFolder: outputFolder = "OutputFiles/BOS_OSIS_Export/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         if not controlDict:
             controlDict, defaultControlFilename = {}, "To_OSIS_controls.txt"
@@ -1961,7 +1961,7 @@ class BibleWriter( InternalBible ):
         if Globals.debugFlag: assert( self.books )
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolder: outputFolder = "OutputFiles/BOS_SwordExport/"
+        if not outputFolder: outputFolder = "OutputFiles/BOS_Sword_Export/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         if not controlDict:
             controlDict, defaultControlFilename = {}, "To_OSIS_controls.txt"
@@ -2566,7 +2566,7 @@ class BibleWriter( InternalBible ):
             assert( self.name )
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolder: outputFolder = "OutputFiles/BOS_HTML5Export/"
+        if not outputFolder: outputFolder = "OutputFiles/BOS_HTML5_Export/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         if not controlDict:
             controlDict, defaultControlFilename = {}, "To_HTML5_controls.txt"
@@ -2813,7 +2813,7 @@ class BibleWriter( InternalBible ):
         if Globals.debugFlag: assert( self.books )
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolder: outputFolder = "OutputFiles/BOS_TheWord" + ("Reexport/" if self.objectTypeString=="TheWord" else "Export/")
+        if not outputFolder: outputFolder = "OutputFiles/BOS_TheWord_" + ("Reexport/" if self.objectTypeString=="TheWord" else "Export/")
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         # ControlDict is not used (yet)
         if not controlDict:
@@ -2963,7 +2963,7 @@ class BibleWriter( InternalBible ):
         if Globals.debugFlag: assert( self.books )
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolder: outputFolder = "OutputFiles/BOS_MySword" + ("Reexport/" if self.objectTypeString=="MySword" else "Export/")
+        if not outputFolder: outputFolder = "OutputFiles/BOS_MySword_" + ("Reexport/" if self.objectTypeString=="MySword" else "Export/")
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         # ControlDict is not used (yet)
         if not controlDict:
@@ -3155,16 +3155,16 @@ class BibleWriter( InternalBible ):
             return False
 
         # Define our various output folders
-        PseudoUSFMOutputFolder = os.path.join( givenOutputFolderName, "BOS_PseudoUSFM" + "Export/" )
-        USFMOutputFolder = os.path.join( givenOutputFolderName, "BOS_USFM" + ("Reexport/" if self.objectTypeString=='USFM' else "Export/" ) )
-        TWOutputFolder = os.path.join( givenOutputFolderName, "BOS_TheWord" + ("Reexport/" if self.objectTypeString=='TheWord' else "Export/" ) )
-        MySwOutputFolder = os.path.join( givenOutputFolderName, "BOS_MySword" + ("Reexport/" if self.objectTypeString=='MySword' else "Export/" ) )
-        MWOutputFolder = os.path.join( givenOutputFolderName, "BOS_MediaWiki" + ("Reexport/" if self.objectTypeString=='MediaWiki' else "Export/" ) )
-        zOutputFolder = os.path.join( givenOutputFolderName, "BOS_Zefania" + ("Reexport/" if self.objectTypeString=='Zefania' else "Export/" ) )
-        USXOutputFolder = os.path.join( givenOutputFolderName, "BOS_USX" + ("Reexport/" if self.objectTypeString=='USX' else "Export/" ) )
-        OSISOutputFolder = os.path.join( givenOutputFolderName, "BOS_OSIS" + ("Reexport/" if self.objectTypeString=='OSIS' else "Export/" ) )
-        swOutputFolder = os.path.join( givenOutputFolderName, "BOS_Sword" + ("Reexport/" if self.objectTypeString=='Sword' else "Export/" ) )
-        htmlOutputFolder = os.path.join( givenOutputFolderName, "BOS_HTML5" + "Export/" )
+        PseudoUSFMOutputFolder = os.path.join( givenOutputFolderName, "BOS_PseudoUSFM_" + "Export/" )
+        USFMOutputFolder = os.path.join( givenOutputFolderName, "BOS_USFM_" + ("Reexport/" if self.objectTypeString=='USFM' else "Export/" ) )
+        TWOutputFolder = os.path.join( givenOutputFolderName, "BOS_TheWord_" + ("Reexport/" if self.objectTypeString=='TheWord' else "Export/" ) )
+        MySwOutputFolder = os.path.join( givenOutputFolderName, "BOS_MySword_" + ("Reexport/" if self.objectTypeString=='MySword' else "Export/" ) )
+        MWOutputFolder = os.path.join( givenOutputFolderName, "BOS_MediaWiki_" + ("Reexport/" if self.objectTypeString=='MediaWiki' else "Export/" ) )
+        zOutputFolder = os.path.join( givenOutputFolderName, "BOS_Zefania_" + ("Reexport/" if self.objectTypeString=='Zefania' else "Export/" ) )
+        USXOutputFolder = os.path.join( givenOutputFolderName, "BOS_USX_" + ("Reexport/" if self.objectTypeString=='USX' else "Export/" ) )
+        OSISOutputFolder = os.path.join( givenOutputFolderName, "BOS_OSIS_" + ("Reexport/" if self.objectTypeString=='OSIS' else "Export/" ) )
+        swOutputFolder = os.path.join( givenOutputFolderName, "BOS_Sword_" + ("Reexport/" if self.objectTypeString=='Sword' else "Export/" ) )
+        htmlOutputFolder = os.path.join( givenOutputFolderName, "BOS_HTML5_" + "Export/" )
         pickleOutputFolder = os.path.join( givenOutputFolderName, "BOS_Bible_Object_Pickle/" )
 
         # Don't know why this causes a seg fault
@@ -3299,7 +3299,7 @@ def demo():
                 if Globals.strictCheckingFlag: UB.check()
                 doaResults = UB.doAllExports()
                 if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
-                    outputFolder = "OutputFiles/BOS_USFMReexport/"
+                    outputFolder = "OutputFiles/BOS_USFM_Reexport/"
                     fN = USXFilenames( testFolder )
                     f1 = os.listdir( testFolder ) # Originals
                     f2 = os.listdir( outputFolder ) # Derived
@@ -3328,7 +3328,7 @@ def demo():
                 if Globals.strictCheckingFlag: UB.check()
                 doaResults = UB.doAllExports()
                 if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
-                    outputFolder = "OutputFiles/BOS_USXReexport/"
+                    outputFolder = "OutputFiles/BOS_USX_Reexport/"
                     fN = USXFilenames( testFolder )
                     f1 = os.listdir( testFolder ) # Originals
                     f2 = os.listdir( outputFolder ) # Derived
