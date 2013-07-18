@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-07-16 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-18 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.39"
+ProgVersion = "0.40"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -256,6 +256,7 @@ class InternalBibleBook:
                         extraText: the text of the note
                         cleanExtraText: extraText without character formatting as well
             """
+            nonlocal rtsCount
             #print( "InternalBibleBook.processLineFix( {}, '{}' ) for {} ({})".format( originalMarker, text, self.bookReferenceCode, self.objectTypeString ) )
             if Globals.debugFlag:
                 assert( originalMarker and isinstance( originalMarker, str ) )
@@ -266,7 +267,13 @@ class InternalBibleBook:
             if adjText and adjText[-1].isspace():
                 #print( 10, self.bookReferenceCode, c, v, _("Trailing space at end of line") )
                 fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Removed trailing space in {}: {}").format( originalMarker, text ) )
-                logging.warning( _("Removed trailing space after {} {}:{} in \\{}: '{}'").format( self.bookReferenceCode, c, v, originalMarker, text ) )
+                if rtsCount != -1:
+                    rtsCount += 1
+                    if rtsCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
+                        logging.warning( _("Removed trailing space after {} {}:{} in \\{}: '{}'").format( self.bookReferenceCode, c, v, originalMarker, text ) )
+                    else: # we've reached our limit
+                        logging.error( _('Additional "Removed trailing space" messages suppressed...') )
+                        rtsCount = -1 # So we don't do this again (for this book)
                 self.addPriorityError( 10, c, v, _("Trailing space at end of line") )
                 adjText = adjText.rstrip()
                 #print( originalMarker, "'"+text+"'", "'"+adjText+"'" )
@@ -685,7 +692,7 @@ class InternalBibleBook:
                     and then save the line.
             """
             nonlocal c, v, haveWaitingC
-            nonlocal nfvnCount, owfvnCount, sahtCount
+            nonlocal nfvnCount, owfvnCount, rtsCount, sahtCount
             #print( "processLine: {} '{}' '{}'".format( self.bookReferenceCode, originalMarker, originalText ) )
             if Globals.debugFlag:
                 assert( originalMarker and isinstance( originalMarker, str ) )
@@ -938,7 +945,7 @@ class InternalBibleBook:
         # end of InternalBibleBook.processLines.processLine
 
 
-        nfvnCount = owfvnCount = sahtCount = 0
+        nfvnCount = owfvnCount = rtsCount = sahtCount = 0
         fixErrors = []
         self._processedLines = InternalBibleEntryList() # Contains more-processed tuples which contain the actual Bible text -- see below
         c = v = '0'

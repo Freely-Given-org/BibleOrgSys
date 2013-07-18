@@ -57,7 +57,8 @@ debuggingThisModule = False
 
 import sys, os, logging, datetime
 from gettext import gettext as _
-import re, sqlite3, tarfile
+import re, sqlite3
+import zipfile, tarfile
 import multiprocessing
 
 import Globals, ControlFiles
@@ -97,10 +98,8 @@ def theWordHandleIntroduction( BBB, bookData, ourGlobals ):
         except KeyError: break # Reached the end of the introduction
         verseData, context = result
         assert( len(verseData ) == 1 ) # in the introductory section
-        #verseDataEntry = verseData[0]
         marker, text = verseData[0].getMarker(), verseData[0].getFullText()
         if marker not in theWordIgnoredIntroMarkers:
-            #composedLine = None
             if marker=='mt1': composedLine += '<TS1>'+theWordAdjustLine(BBB,C,V,text)+'<Ts1>'
             elif marker=='mt2': composedLine += '<TS2>'+theWordAdjustLine(BBB,C,V,text)+'<Ts2>'
             elif marker=='mt3': composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts3>'
@@ -113,7 +112,6 @@ def theWordHandleIntroduction( BBB, bookData, ourGlobals ):
                     print( "theWordHandleIntroduction: doesn't handle {} '{}' yet".format( BBB, marker ) )
                     halt
                 ourGlobals['unhandledMarkers'].add( marker + ' (in intro)' )
-            #if composedLine: writerObject.write( composedLine ) # Note: no trailing newline character
         V += 1 # Step to the next introductory section "verse"
 
     # Check what's left at the end
@@ -145,7 +143,6 @@ def theWordAdjustLine( BBB, C, V, originalLine ):
         for marker in ( 'fr', 'fm', ): # simply remove these whole field
             line = Globals.removeUSFMCharacterField( line, marker, closed=None )
         for marker in ( 'fq', 'fqa', 'fl', 'fk', ): # italicise these ones
-            here = line
             while '\\'+marker+' ' in line:
                 #print( BBB, C, V, marker, line.count('\\'+marker+' '), line )
                 #print( "was", "'"+line+"'" )
@@ -158,8 +155,6 @@ def theWordAdjustLine( BBB, C, V, originalLine ):
                     line = line.replace( '\\'+marker+' ', '<i>' ).replace( '\\'+marker+'*', '</i>' )
                 else: # leave the next marker in place
                     line = line[:ixEnd].replace( '\\'+marker+' ', '<i>' ) + '</i>' + line[ixEnd:]
-                #print( "now", "'"+line+"'" )
-            #if line!=here: halt
         for marker in ( 'ft', ): # simply remove these markers (but leave behind the text field
             line = line.replace( '\\'+marker+' ', '' ).replace( '\\'+marker+'*', '' )
         #for caller in '+*abcdefghijklmnopqrstuvwxyz': line.replace('\\f '+caller+' ','<RF>') # Handle single-character callers
@@ -185,9 +180,6 @@ def theWordAdjustLine( BBB, C, V, originalLine ):
         for marker in ( 'bd', 'em', 'k', ): # All these markers are just bolded
             line = line.replace('\\'+marker+' ','<b>').replace('\\'+marker+'*','</b>').replace('\\+'+marker+' ','<b>').replace('\\+'+marker+'*','</b>')
         line = line.replace('\\sc ','<font size=-1>',).replace('\\sc*','</font>').replace('\\+sc ','<font size=-1>',).replace('\\+sc*','</font>')
-
-    # Things we don't know how to handle yet
-    pass
 
     # Check what's left at the end
     if '\\' in line:
@@ -236,13 +228,10 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
             vCount += 1
             if vCount == 1: # Handle verse bridges
                 if text != str(V):
-                    #print( "got", "'"+text+"'" )
                     composedLine += '<sup>('+text+')</sup>' # Put the additional verse number into the text in parenthesis
-                    #print( "gotit1", "'"+composedLine+"'" )
             elif vCount > 1: # We have an additional verse number
                 assert( text != str(V) )
                 composedLine += ' <sup>('+text+')</sup>' # Put the additional verse number into the text in parenthesis
-                #print( "gotit2", "'"+composedLine+"'" )
             continue
 
         #print( "theWordComposeVerseLine:", BBB, C, V, marker, text )
@@ -891,10 +880,12 @@ class BibleWriter( InternalBible ):
                                             key=lambda s: -len(s[4])) # Sort by longest characterContext first (maximum nesting)
                 for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check for internal markers
                     pass
+
                 # Old code
                 adjText = originalText
                 haveOpenChar = False
                 for charMarker in allCharMarkers:
+                    #print( "handleInternalTextMarkersForUSX", charMarker )
                     # Handle USFM character markers
                     fullCharMarker = '\\' + charMarker + ' '
                     if fullCharMarker in adjText:
@@ -2943,10 +2934,19 @@ class BibleWriter( InternalBible ):
                 if fieldName in self.settingsDict and key not in written:
                     myFile.write( "{}={}\n".format( key, self.settingsDict[fieldName] ) )
                     written.append( key )
+
         if mySettings['unhandledMarkers']:
             logging.warning( "BibleWriter.toTheWord: Unhandled markers were {}".format( mySettings['unhandledMarkers'] ) )
             if Globals.verbosityLevel > 1:
                 print( "  " + _("WARNING: Unhandled toTheWord markers were {}").format( mySettings['unhandledMarkers'] ) )
+
+        # Now create a zipped version
+        if Globals.verbosityLevel > 2: print( "  Zipping {} theWord file...".format( filename ) )
+        zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
+        zf.write( filepath )
+        zf.close()
+
+
         return True
     # end of BibleWriter.toTheWord
 
@@ -3116,7 +3116,8 @@ class BibleWriter( InternalBible ):
         cursor.close()
 
         # Now create the gzipped file
-        tar = tarfile.open( filepath + '.gz', 'w:gz' )
+        if Globals.verbosityLevel > 2: print( "  Compressing {} MySword file...".format( filename ) )
+        tar = tarfile.open( filepath+'.gz', 'w:gz' )
         tar.add( filepath )
         tar.close()
 

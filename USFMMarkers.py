@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkers.py
-#   Last modified: 2013-07-02 (also update ProgVersion below)
+#   Last modified: 2013-07-18 (also update ProgVersion below)
 #
 # Module handling USFMMarkers
 #
@@ -28,8 +28,10 @@ Module handling USFMMarkers.
 """
 
 ProgName = "USFM Markers handler"
-ProgVersion = "0.56"
+ProgVersion = "0.57"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+
+debuggingThisModule = False
 
 
 import os, logging
@@ -349,7 +351,7 @@ class USFMMarkers:
             This excludes footnote and xref markers. """
         result = []
         for marker in self.__DataDict["internalMarkersList"]:
-            if marker!='f' and marker!='x' and self.markerOccursIn(marker) in ("Text","Table row","Introduction",):
+            if marker!='f' and marker!='x' and self.markerOccursIn(marker) in ("Text","Poetry","Table row","Introduction",):
                 adjMarker = '\\'+marker if includeBackslash else marker
                 result.append( adjMarker )
                 if includeEndMarkers:
