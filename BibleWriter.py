@@ -212,10 +212,16 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
 
     Returns the composed line.
     """
-    def resetSettings( setKey=None ):
+    def resetMargins( setKey=None ):
+        """
+        Reset all of our persistent margin variables.
+
+        If a key name is given, just set that one to True.
+        """
+        nonlocal ourGlobals
         ourGlobals['pi1'] = ourGlobals['pi2'] = ourGlobals['pi3'] = ourGlobals['pi4'] = ourGlobals['pi5'] = ourGlobals['pi6'] = ourGlobals['pi7'] = False
         if setKey: ourGlobals[setKey] = True
-    # end of resetSettings
+    # end of resetMargins
 
     #print( "theWordComposeVerseLine( {} ) {} {}:{}".format( verseData, BBB, C, V ) )
     composedLine = ourGlobals['line'] # We might already have some book headings to precede the text for this verse
@@ -257,21 +263,21 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
             else: # there is text
                 composedLine += '<CL>'+theWordAdjustLine(BBB,C,V,text)
         elif marker in ( 'p', 'b', ): composedLine += '<CM>'+theWordAdjustLine(BBB,C,V,text)
-        elif marker in ( 'pi1', ): resetSettings('pi1'); composedLine += '<CM><PI>'+theWordAdjustLine(BBB,C,V,text)
-        elif marker in ( 'pi2', ): resetSettings('pi2'); composedLine += '<CM><PI2>'+theWordAdjustLine(BBB,C,V,text)
-        elif marker in ( 'pi3', 'pmc', ): resetSettings('pi3'); composedLine += '<CM><PI3>'+theWordAdjustLine(BBB,C,V,text)
-        elif marker in ( 'pi4', ): resetSettings('pi4'); composedLine += '<CM><PI4>'+theWordAdjustLine(BBB,C,V,text)
-        elif marker in ( 'pc', ): resetSettings('pi5'); composedLine += '<CM><PI5>'+theWordAdjustLine(BBB,C,V,text)
-        elif marker in ( 'pr', 'pmr', 'cls', ): resetSettings('pi6'); composedLine += '<CM><PI6>'+theWordAdjustLine(BBB,C,V,text) # Originally right-justified
-        elif marker in ( 'pi1', 'b', 'mi', 'pm', 'pmo', ): resetSettings('pi7'); composedLine += '<CM><PI7>'+theWordAdjustLine(BBB,C,V,text)
+        elif marker in ( 'pi1', ): resetMargins('pi1'); composedLine += '<CM><PI>'+theWordAdjustLine(BBB,C,V,text)
+        elif marker in ( 'pi2', ): resetMargins('pi2'); composedLine += '<CM><PI2>'+theWordAdjustLine(BBB,C,V,text)
+        elif marker in ( 'pi3', 'pmc', ): resetMargins('pi3'); composedLine += '<CM><PI3>'+theWordAdjustLine(BBB,C,V,text)
+        elif marker in ( 'pi4', ): resetMargins('pi4'); composedLine += '<CM><PI4>'+theWordAdjustLine(BBB,C,V,text)
+        elif marker in ( 'pc', ): resetMargins('pi5'); composedLine += '<CM><PI5>'+theWordAdjustLine(BBB,C,V,text)
+        elif marker in ( 'pr', 'pmr', 'cls', ): resetMargins('pi6'); composedLine += '<CM><PI6>'+theWordAdjustLine(BBB,C,V,text) # Originally right-justified
+        elif marker in ( 'pi1', 'b', 'mi', 'pm', 'pmo', ): resetMargins('pi7'); composedLine += '<CM><PI7>'+theWordAdjustLine(BBB,C,V,text)
         elif marker in ( 'q1', 'qm1', ): composedLine += '<CI><PI>'+theWordAdjustLine(BBB,C,V,text)
         elif marker in ( 'q2', 'qm2', ): composedLine += '<CI><PI2>'+theWordAdjustLine(BBB,C,V,text)
         elif marker in ( 'q3', 'qm3', ): composedLine += '<CI><PI3>'+theWordAdjustLine(BBB,C,V,text)
         elif marker in ( 'q4', 'qm4', ): composedLine += '<CI><PI4>'+theWordAdjustLine(BBB,C,V,text)
-        elif marker == 'li1': resetSettings('pi1'); composedLine += '<PI>• '+theWordAdjustLine(BBB,C,V,text)
-        elif marker == 'li2': resetSettings('pi2'); composedLine += '<PI2>• '+theWordAdjustLine(BBB,C,V,text)
-        elif marker == 'li3': resetSettings('pi3'); composedLine += '<PI3>• '+theWordAdjustLine(BBB,C,V,text)
-        elif marker == 'li4': resetSettings('pi4'); composedLine += '<PI4>• '+theWordAdjustLine(BBB,C,V,text)
+        elif marker == 'li1': resetMargins('pi1'); composedLine += '<PI>• '+theWordAdjustLine(BBB,C,V,text)
+        elif marker == 'li2': resetMargins('pi2'); composedLine += '<PI2>• '+theWordAdjustLine(BBB,C,V,text)
+        elif marker == 'li3': resetMargins('pi3'); composedLine += '<PI3>• '+theWordAdjustLine(BBB,C,V,text)
+        elif marker == 'li4': resetMargins('pi4'); composedLine += '<PI4>• '+theWordAdjustLine(BBB,C,V,text)
         elif marker in ( 'cd', 'sp', ): composedLine += '<i>'+theWordAdjustLine(BBB,C,V,text)+'</i>'
         elif marker in ( 'v~', 'p~', ):
             if ourGlobals['pi1']: composedLine += '<PI>'

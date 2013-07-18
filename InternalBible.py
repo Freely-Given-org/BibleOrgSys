@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2013-07-16 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-18 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -44,7 +44,7 @@ and then fills
 """
 
 ProgName = "Internal Bible handler"
-ProgVersion = "0.31"
+ProgVersion = "0.32"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -405,19 +405,19 @@ class InternalBible:
             isOT = isNT = isDC = False
             if Globals.BibleBooksCodes.isOldTestament_NR( BBB ):
                 isOT = True
-                if 'OTBookCount' not in aggregateResults: aggregateResults['OTBookCount'] = 1
-                else: aggregateResults['OTBookCount'] += 1
+                if 'OTBookCount' not in aggregateResults: aggregateResults['OTBookCount'], aggregateResults['OTBookCodes'] = 1, [BBB]
+                else: aggregateResults['OTBookCount'] += 1; aggregateResults['OTBookCodes'].append( BBB )
             elif Globals.BibleBooksCodes.isNewTestament_NR( BBB ):
                 isNT = True
-                if 'NTBookCount' not in aggregateResults: aggregateResults['NTBookCount'] = 1
-                else: aggregateResults['NTBookCount'] += 1
+                if 'NTBookCount' not in aggregateResults: aggregateResults['NTBookCount'], aggregateResults['NTBookCodes'] = 1, [BBB]
+                else: aggregateResults['NTBookCount'] += 1; aggregateResults['NTBookCodes'].append( BBB )
             elif Globals.BibleBooksCodes.isDeuterocanon_NR( BBB ):
                 isDC = True
-                if 'DCBookCount' not in aggregateResults: aggregateResults['DCBookCount'] = 1
-                else: aggregateResults['DCBookCount'] += 1
+                if 'DCBookCount' not in aggregateResults: aggregateResults['DCBookCount'], aggregateResults['DCBookCodes'] = 1, [BBB]
+                else: aggregateResults['DCBookCount'] += 1; aggregateResults['DCBookCodes'].append( BBB )
             else: # not conventional OT or NT or DC
-                if 'OtherBookCount' not in aggregateResults: aggregateResults['OtherBookCount'] = 1
-                else: aggregateResults['OtherBookCount'] += 1
+                if 'OtherBookCount' not in aggregateResults: aggregateResults['OtherBookCount'], aggregateResults['OtherBookCodes'] = 1, [BBB]
+                else: aggregateResults['OtherBookCount'] += 1; aggregateResults['OtherBookCodes'].append( BBB )
 
             for key,value in self.discoveryResults[BBB].items():
                 if key=='percentageProgress':
