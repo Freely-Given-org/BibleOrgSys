@@ -44,7 +44,7 @@ and then fills
 """
 
 ProgName = "Internal Bible handler"
-ProgVersion = "0.32"
+ProgVersion = "0.33"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -420,6 +420,16 @@ class InternalBible:
                 else: aggregateResults['OtherBookCount'] += 1; aggregateResults['OtherBookCodes'].append( BBB )
 
             for key,value in self.discoveryResults[BBB].items():
+                if key=='notStarted' and value:
+                    if 'NotStartedBookCodes' not in aggregateResults: aggregateResults['NotStartedBookCodes'] = [BBB]
+                    else: aggregateResults['NotStartedBookCodes'].append( BBB )
+                elif key=='seemsFinished' and value:
+                    if 'SeemsFinishedBookCodes' not in aggregateResults: aggregateResults['SeemsFinishedBookCodes'] = [BBB]
+                    else: aggregateResults['SeemsFinishedBookCodes'].append( BBB )
+                elif key=='partlyDone' and value:
+                    if 'PartlyDoneBookCodes' not in aggregateResults: aggregateResults['PartlyDoneBookCodes'] = [BBB]
+                    else: aggregateResults['PartlyDoneBookCodes'].append( BBB )
+
                 if key=='percentageProgress':
                     if 'percentageProgressByBook' not in aggregateResults: aggregateResults['percentageProgressByBook'] = value
                     else: aggregateResults['percentageProgressByBook'] += value
