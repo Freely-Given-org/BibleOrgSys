@@ -3028,7 +3028,6 @@ class BibleWriter( InternalBible ):
 
         This format is roughly documented at http://www.theword.net/index.php?article.tools&l=english
         """
-        return
         if Globals.verbosityLevel > 1: print( "Running BibleWriter:toMySword..." )
         if Globals.debugFlag: assert( self.books )
 
@@ -3050,6 +3049,7 @@ class BibleWriter( InternalBible ):
             """
             Writes a book to the MySword sqlObject file.
             """
+            nonlocal lineCount
             bkData = self.books[BBB] if BBB in self.books else None
             #print( bkData._processedLines )
             verseList = BOS.getNumVersesList( BBB )
@@ -3064,7 +3064,7 @@ class BibleWriter( InternalBible ):
 
                 # Write the verses
                 C = V = 1
-                ourGlobals['lastLine'] = ''
+                ourGlobals['lastLine'] = ourGlobals['lastBCV'] = None
                 while True:
                     verseData = None
                     if bkData:
@@ -3085,11 +3085,20 @@ class BibleWriter( InternalBible ):
                                 verseData18, context18 = result18
                                 verseData.extend( verseData18 )
                             except KeyError: pass #  just ignore it
+                        composedLine = ''
                         if verseData:
                             composedLine = theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals )
-                            if composedLine: # don't bother writing blank (unfinished?) verses
+                            #if composedLine: # don't bother writing blank (unfinished?) verses
                                 #print( "toMySword: Writing", BBB, nBBB, C, V, marker, repr(line) )
-                                sqlObject.execute( 'INSERT INTO "Bible" VALUES(?,?,?,?)', (nBBB,C,V,composedLine) )
+                                #sqlObject.execute( 'INSERT INTO "Bible" VALUES(?,?,?,?)', (nBBB,C,V,composedLine) )
+                            # Stay one line behind (because paragraph indicators get appended to the previous line)
+                            if ourGlobals['lastBCV'] is not None \
+                            and ourGlobals['lastLine']: # don't bother writing blank (unfinished?) verses
+                                sqlObject.execute( 'INSERT INTO "Bible" VALUES(?,?,?,?)', \
+                                    (ourGlobals['lastBCV'][0],ourGlobals['lastBCV'][1],ourGlobals['lastBCV'][2],ourGlobals['lastLine']) )
+                                lineCount += 1
+                        ourGlobals['lastLine'] = composedLine
+                    ourGlobals['lastBCV'] = (nBBB,C,V)
                     V += 1
                     if V > numV:
                         C += 1
@@ -3098,13 +3107,13 @@ class BibleWriter( InternalBible ):
                         else: # next chapter only
                             numV = verseList[C-1]
                             V = 1
-                assert( not ourGlobals['line'] and not ourGlobals['lastLine'] ) #  We should have written everything
+                #assert( not ourGlobals['line'] and not ourGlobals['lastLine'] ) #  We should have written everything
+
             # Write the last line of the file
-            if composedLine: # don't bother writing blank (unfinished?) verses
-                #print( "toMySword: Writing", BBB, nBBB, C, V, marker, repr(line) )
-                sqlObject.execute( 'INSERT INTO "Bible" VALUES(?,?,?,?)', (nBBB,C,V,composedLine) )
-            assert( '\n' not in ourGlobals['lastLine'] ) # This would mess everything up
-            writerObject.write( ourGlobals['lastLine'] + '\n' ) # Write it whether or not we got data
+            if ourGlobals['lastLine']: # don't bother writing blank (unfinished?) verses
+                sqlObject.execute( 'INSERT INTO "Bible" VALUES(?,?,?,?)', \
+                    (ourGlobals['lastBCV'][0],ourGlobals['lastBCV'][1],ourGlobals['lastBCV'][2],ourGlobals['lastLine']) )
+                lineCount += 1
         # end of toMySword.writeBook
 
 
@@ -3178,7 +3187,7 @@ class BibleWriter( InternalBible ):
         # Now create and fill the Bible table
         cursor.execute( 'CREATE TABLE Bible(Book INT, Chapter INT, Verse INT, Scripture TEXT, Primary Key(Book,Chapter,Verse))' )
         conn.commit() # save (commit) the changes
-        BBB = startBBB
+        BBB, lineCount = startBBB, 0
         while True: # Write each Bible book in the KJV order
             writeBook( cursor, BBB, mySettings )
             conn.commit() # save (commit) the changes
@@ -3427,7 +3436,7 @@ def demo():
         mainFolder = "Tests/DataFilesForTests/theWordRoundtripTestFiles/"
         testData = (
                 ("aai", "Tests/DataFilesForTests/theWordRoundtripTestFiles/aai 2013-05-13/",),
-                ("aacNT", "Tests/DataFilesForTests/theWordRoundtripTestFiles/aacNT 2012-01-20/",),
+                ("aacNT", "Tests/DataFilesForTests/theWordRoundtripTestFiles/accNT 2012-01-20/",),
                 ) # You can put your USFM test folder here
 
         for name, testFolder in testData:
@@ -3447,7 +3456,6 @@ def demo():
                         print( "theWord modules did NOT match" )
                         if Globals.debugFlag: halt
             else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
-            halt
 # end of demo
 
 if __name__ == '__main__':
