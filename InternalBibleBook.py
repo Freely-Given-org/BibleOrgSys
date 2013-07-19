@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-07-19 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-20 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.41"
+ProgVersion = "0.42"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -740,7 +740,7 @@ class InternalBibleBook:
                     logging.error( _("Extra '{}' material in chapter marker {} {}:{}").format( cBits[1], self.bookReferenceCode, c, v ) )
                     self.addPriorityError( 98, c, v, _("Extra '{}' material after chapter marker").format( cBits[1] ) )
                     #print( "Something on c line", "'"+text+"'", "'"+cBits[1]+"'" )
-                    self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, c, c, []) ) # Write the chapter number as a separate line
+                    self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, c, c, [], c) ) # Write the chapter number as a separate line
                     adjustedMarker, text = 'c~', cBits[1]
             elif originalMarker=='v' and text:
                 v = text.split()[0] # Get the actual verse number
@@ -754,17 +754,17 @@ class InternalBibleBook:
                         fixErrors.append( _("{} {}:{} Expected single chapter book to start with verse 1").format( self.bookReferenceCode, c, v ) )
                         logging.error( _("Expected single chapter book to start with verse 1 at {} {}:{}").format( self.bookReferenceCode, c, v ) )
                         self.addPriorityError( 38, c, v, _("Expected single chapter book to start with verse 1") )
-                    lastAdjustedMarker, lastOriginalMarker, lastAdjustedText, lastCleanText, lastExtras = self._processedLines.pop()
+                    lastAdjustedMarker, lastOriginalMarker, lastAdjustedText, lastCleanText, lastExtras, lastOriginalText = self._processedLines.pop()
                     print( self.bookReferenceCode, "lastMarker (popped) was", lastAdjustedMarker, lastAdjustedText )
                     if lastAdjustedMarker in ('p','q1','m','nb',): # The chapter marker should go before this
-                        self._processedLines.append( InternalBibleEntry('c', 'c', '1', '1', []) ) # Write the explicit chapter number
-                        self._processedLines.append( InternalBibleEntry(lastAdjustedMarker, lastOriginalMarker, lastAdjustedText, lastCleanText, lastExtras) )
+                        self._processedLines.append( InternalBibleEntry('c', 'c', '1', '1', [], '1') ) # Write the explicit chapter number
+                        self._processedLines.append( InternalBibleEntry(lastAdjustedMarker, lastOriginalMarker, lastAdjustedText, lastCleanText, lastExtras, lastOriginalText) )
                     else: # Assume that the last marker was part of the introduction, so write it first
                         if lastAdjustedMarker not in ( 'ip', ):
                             logging.info( "{} {}:{} Assumed {} was part of intro after {}".format( self.bookReferenceCode, c, v, lastAdjustedMarker, marker ) )
                             #if v!='13': halt # Just double-checking this code (except for one weird book that starts at v13)
-                        self._processedLines.append( InternalBibleEntry(lastAdjustedMarker, lastOriginalMarker, lastAdjustedText, lastCleanText, lastExtras) )
-                        self._processedLines.append( InternalBibleEntry('c', 'c', '1', '1', []) ) # Write the explicit chapter number
+                        self._processedLines.append( InternalBibleEntry(lastAdjustedMarker, lastOriginalMarker, lastAdjustedText, lastCleanText, lastExtras, lastOriginalText) )
+                        self._processedLines.append( InternalBibleEntry('c', 'c', '1', '1', [], '1') ) # Write the explicit chapter number
                     #print( self._processedLines ); halt
 
                 if haveWaitingC: # Add a false chapter number at the place where we normally want it printed
@@ -805,7 +805,7 @@ class InternalBibleBook:
                     self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, verseNumberBit, verseNumberBit, [], verseNumberBit) ) # Write the verse number (or range) as a separate line
                     return # Don't write a blank v~ field
                     #adjustedMarker, text = 'v~', ''
-                else:
+                else: # there is something following the verse number digits (starting with space or backslash)
                     verseNumberBit, verseNumberRest = text[:ix], text[ix:]
                     #print( "verseNumberBit is '{}', verseNumberRest is '{}'".format( verseNumberBit, verseNumberRest ) )
                     if Globals.debugFlag:
@@ -931,7 +931,9 @@ class InternalBibleBook:
                 #for n in range( 0, 30 ): print( "\n{}: {}".format( n, self._processedLines[n] ) )
                 #halt
 
-            doAppend( adjustedMarker, originalMarker, text, verseNumberRest if adjustedMarker=='v~' else originalText )
+            #print( "doAppend", adjustedMarker, originalMarker, repr(text), repr(originalText) )
+            #print( " ", verseNumberRest if originalMarker=='v' and adjustedMarker=='v~' else originalText )
+            doAppend( adjustedMarker, originalMarker, text, verseNumberRest if originalMarker=='v' and adjustedMarker=='v~' else originalText )
             ## Separate out the notes (footnotes and cross-references)
             #adjText, cleanText, extras = processLineFix( originalMarker, text )
 
@@ -995,8 +997,9 @@ class InternalBibleBook:
         self._CVIndex.makeIndex( self._processedLines )
 
         if 0 and self.bookReferenceCode=='GEN':
-            for j, (adjustedMarker, originalMarker, adjText, cleanText, extras,) in enumerate( self._processedLines):
-                print( j, adjustedMarker, cleanText[:60] + ('' if len(cleanText)<60 else '...') )
+            for j, entry in enumerate( self._processedLines):
+                cleanText = entry.getCleanText()
+                print( j, entry.getMarker(), cleanText[:60] + ('' if len(cleanText)<60 else '...') )
                 #if j>breakAt: break
             def getKey( CVALX ):
                 CV, ALX = CVALX
@@ -1038,7 +1041,8 @@ class InternalBibleBook:
         validationErrors = []
 
         c = v = '0'
-        for j, (marker,originalMarker,text,cleanText,extras) in enumerate(self._processedLines):
+        for j, entry in enumerate(self._processedLines):
+            marker, text = entry.getMarker(), entry.getText()
             #print( marker, text[:40] )
 
             # Keep track of where we are for more helpful error messages
@@ -1094,10 +1098,10 @@ class InternalBibleBook:
             assert( fieldName and isinstance( fieldName, str ) )
         adjFieldName = Globals.USFMMarkers.toStandardMarker( fieldName )
 
-        for marker,originalMarker,text,cleanText,extras in self._processedLines:
-            if marker == adjFieldName:
-                if Globals.debugFlag: assert( not extras )
-                return text
+        for entry in self._processedLines:
+            if entry.getMarker() == adjFieldName:
+                if Globals.debugFlag: assert( not entry.getExtras() )
+                return entry.getText()
     # end of InternalBibleBook.getField
 
 
@@ -1151,7 +1155,8 @@ class InternalBibleBook:
         versification, omittedVerses, combinedVerses, reorderedVerses = [], [], [], []
         chapterText, chapterNumber, lastChapterNumber = '0', 0, 0
         verseText = verseNumberString = lastVerseNumberString = '0'
-        for marker,originalMarker,text,cleanText,extras in self._processedLines:
+        for entry in self._processedLines:
+            marker, text = entry.getMarker(), entry.getText()
             #print( marker, text )
             if marker == 'c':
                 if chapterNumber > 0:
@@ -1298,7 +1303,9 @@ class InternalBibleBook:
 
         c = v = '0'
         lastMarker = None
-        for marker,originalMarker,text,cleanText,extras in self._processedLines:
+        for entry in self._processedLines:
+            marker, text, cleanText = entry.getMarker(), entry.getText(), entry.getCleanText()
+
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text:
                 c = text.split()[0]; v = '0'
@@ -1334,7 +1341,7 @@ class InternalBibleBook:
             if '\\+' in text: bkDict['haveNestedUSFMarkers'] = True
             if lastMarker=='v' and (marker!='v~' or not text): bkDict['seemsFinished'] = False
 
-            for extraType, extraIndex, extraText, cleanExtraText in extras:
+            for extraType, extraIndex, extraText, cleanExtraText in entry.getExtras():
                 if Globals.debugFlag:
                     assert( extraText ) # Shouldn't be blank
                     #assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
@@ -1400,7 +1407,8 @@ class InternalBibleBook:
 
         paragraphReferences, qReferences, sectionHeadingReferences, sectionHeadings, sectionReferenceReferences, sectionReferences, wordsOfJesus = [], [], [], [], [], [], []
         chapterNumberStr = verseNumberStr = '0'
-        for marker,originalMarker,text,cleanText,extras in self._processedLines:
+        for entry in self._processedLines:
+            marker, text = entry.getMarker(), entry.getText()
             #print( "InternalBibleBook.getAddedUnits", chapterNumberStr, verseNumberStr, marker, cleanText )
             if marker == 'c':
                 chapterNumberStr = text.split( None, 1 )[0]
@@ -1672,7 +1680,8 @@ class InternalBibleBook:
         c = v = '0'
         section, lastMarker = '', ''
         lastMarkerEmpty = True
-        for marker,originalMarker,text,cleanText,extras in self._processedLines:
+        for entry in self._processedLines:
+            marker, text = entry.getMarker(), entry.getText()
             markerEmpty = len(text) == 0
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text:
@@ -1883,6 +1892,7 @@ class InternalBibleBook:
                     logging.warning( _("Marker '{}' has no content after").format( marker ) + " {} {}:{}".format( self.bookReferenceCode, c, v ) )
                     self.addPriorityError( 47, c, v, _("Marker {} should have content").format( marker ) )
 
+            extras = entry.getExtras()
             if extras:
                 #print( "InternalBibleBook:doCheckSFMs-Extras-A {} {}:{} ".format( self.bookReferenceCode, c, v ), extras )
                 extraMarkers = []
@@ -2077,7 +2087,9 @@ class InternalBibleBook:
         characterCounts, letterCounts, punctuationCounts = {}, {}, {} # We don't care about the order in which they appeared
         characterErrors = []
         c = v = '0'
-        for marker,originalMarker,text,cleanText,extras in self._processedLines:
+        for entry in self._processedLines:
+            marker, text, cleanText = entry.getMarker(), entry.getText(), entry.getCleanText()
+
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text: c = text.split()[0]; v = '0'
             elif marker=='v' and text: v = text.split()[0]
@@ -2086,7 +2098,7 @@ class InternalBibleBook:
 
             internalSFMsToRemove = Globals.USFMMarkers.getCharacterMarkersList( includeBackslash=True, includeEndMarkers=True )
             internalSFMsToRemove = sorted( internalSFMsToRemove, key=len, reverse=True ) # List longest first
-            for extraType, extraIndex, extraText, cleanExtraText in extras: # Now process the characters in the notes
+            for extraType, extraIndex, extraText, cleanExtraText in entry.getExtras(): # Now process the characters in the notes
                 if Globals.debugFlag:
                     assert( extraText ) # Shouldn't be blank
                     #assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
@@ -2140,7 +2152,9 @@ class InternalBibleBook:
         bitMarker = ''
         startsWithOpen = endedWithClose = False
         c = v = '0'
-        for marker,originalMarker,text,cleanText,extras in self._processedLines:
+        for entry in self._processedLines:
+            marker, originalMarker, text, cleanText = entry.getMarker(), entry.getOriginalMarker(), entry.getText(), entry.getCleanText()
+
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text:
                 c = text.split()[0]; v = '0'
@@ -2249,7 +2263,7 @@ class InternalBibleBook:
 
             #if c=='9': halt
             # Check the notes also -- each note is complete in itself so it's much simpler
-            for extraType, extraIndex, extraText, cleanExtraText in extras: # Now process the characters in the notes
+            for extraType, extraIndex, extraText, cleanExtraText in entry.getExtras(): # Now process the characters in the notes
                 if Globals.debugFlag:
                     assert( extraText ) # Shouldn't be blank
                     #assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
@@ -2367,7 +2381,9 @@ class InternalBibleBook:
         wordErrors, repeatedWordErrors = [], []
         lastTextWordTuple = ('','')
         c = v = '0'
-        for marker,originalMarker,text,cleanText,extras in self._processedLines:
+        for entry in self._processedLines:
+            marker, text, cleanText = entry.getMarker(), entry.getText(), entry.getCleanText()
+
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text: c = text.split()[0]; v = '0'
             elif marker=='v' and text: v = text.split()[0]
@@ -2375,7 +2391,7 @@ class InternalBibleBook:
             if text and Globals.USFMMarkers.isPrinted(marker): # process this main text
                 lastTextWordTuple = countWords( marker, cleanText, lastTextWordTuple )
 
-            for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
+            for extraType, extraIndex, extraText, cleanExtraText in entry.getExtras(): # do any footnotes and cross-references
                 if Globals.debugFlag:
                     assert( extraText ) # Shouldn't be blank
                     #assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
@@ -2415,7 +2431,8 @@ class InternalBibleBook:
 
         titleList, headingList, sectionReferenceList, headingErrors = [], [], [], []
         c = v = '0'
-        for marker,originalMarker,text,cleanText,extras in self._processedLines:
+        for entry in self._processedLines:
+            marker, text = entry.getMarker(), entry.getText()
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text: c = text.split()[0]; v = '0'
             elif marker=='v' and text: v = text.split()[0]
@@ -2467,7 +2484,9 @@ class InternalBibleBook:
 
         mainTitleList, headingList, titleList, outlineList, introductionErrors = [], [], [], [], []
         c = v = '0'
-        for marker,originalMarker,text,cleanText,extras in self._processedLines:
+        for entry in self._processedLines:
+            marker, text, cleanText = entry.getMarker(), entry.getText(), entry.getCleanText()
+
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text: c = text.split()[0]; v = '0'
             elif marker=='v' and text: v = text.split()[0]
@@ -2545,12 +2564,14 @@ class InternalBibleBook:
         footnoteErrors, xrefErrors, noteMarkerErrors = [], [], []
         leaderCounts = {}
         c = v = '0'
-        for marker,originalMarker,text,cleanText,extras in self._processedLines:
+        for entry in self._processedLines:
+            marker, text = entry.getMarker(), entry.getText()
+
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text: c = text.split()[0]; v = '0'
             elif marker=='v' and text: v = text.split()[0]
 
-            for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
+            for extraType, extraIndex, extraText, cleanExtraText in entry.getExtras(): # do any footnotes and cross-references
                 if Globals.debugFlag:
                     assert( extraText ) # Shouldn't be blank
                     #assert( extraText[0] != '\\' ) # Shouldn't start with backslash code

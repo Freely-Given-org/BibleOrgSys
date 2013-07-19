@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2013-07-19 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-20 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -44,7 +44,7 @@ and then fills
 """
 
 ProgName = "Internal Bible handler"
-ProgVersion = "0.34"
+ProgVersion = "0.35"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -809,7 +809,8 @@ class InternalBible:
             assert( isinstance( verseData, InternalBibleEntryList ) )
             #if Globals.debugFlag: assert( 1 <= len(verseData) <= 5 )
             verseText, firstWord = '', False
-            for marker,originalMarker,text,cleanText,extras in verseData:
+            for entry in verseData:
+                marker, cleanText = entry.getMarker(), entry.getCleanText()
                 if marker == 'c': pass # Ignore
                 elif marker == 'c~': pass # Ignore text after chapter marker
                 elif marker == 'c#': pass # Ignore print chapter number

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleInternals.py
-#   Last modified: 2013-07-19 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-20 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Bible internals handler"
-ProgVersion = "0.06"
+ProgVersion = "0.07"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -151,6 +151,7 @@ class InternalBibleEntry:
         elif keyIndex==2: return self.adjustedText
         elif keyIndex==3: return self.cleanText
         elif keyIndex==4: return self.extras
+        elif keyIndex==5: return self.originalText
         else: raise IndexError
     # end of InternalBibleEntry.__getitem__
 
@@ -393,7 +394,8 @@ class InternalBibleIndex:
                 if saveCV in self.indexData and Globals.verbosityLevel > 2:
                     logging.critical( "makeIndex.saveAnythingOutstanding: replacing index entry {} {}:{}".format( self.bookReferenceCode, C, V ) )
                     logging.error( "  mI:saO was", self.indexData[saveCV] )
-                    ix,lc,ct = self.indexData[saveCV]
+                    ie = self.indexData[saveCV]
+                    ix,lc,ct = ie.getEntryIndex(), ie.getEntryCount(), ie.getContext()
                     for ixx in range( ix, ix+lc ):
                         logging.error( "   mI:saO ", self.givenBibleEntries[ixx], ct )
                     logging.error( "  mI:saO now", (saveJ,lineCount,context) )
@@ -438,14 +440,14 @@ class InternalBibleIndex:
                         assert( lineCount > 0 )
                         lineCount -= 1
                         aM,cT = self.givenBibleEntries[revertToJ-1].getMarker(), self.givenBibleEntries[revertToJ-1].getCleanText()
-                        while revertToJ >= 1 and aM in ('s1','s2','s3','r',):
+                        while revertToJ >= 1 and aM in ('s1','s2','s3','r','p','q1','p~',):
                             #assert( cT ) # Should have text (for a completed Bible at least)
                             revertToJ -= 1
                             assert( lineCount > 0 )
                             lineCount -= 1
                             if revertToJ==0: print( "InternalBibleIndex.makeIndex: Get out of here" ); break
                             aM,cT = self.givenBibleEntries[revertToJ-1].getMarker(), self.givenBibleEntries[revertToJ-1].getCleanText()
-                    elif aM in ('s1','s2','s3','r',): # Shouldn't happen but just in case
+                    elif aM in ('s1','s2','s3','r','p','q1','p~',): # Shouldn't happen but just in case
                         if Globals.debugFlag: print( "InternalBibleIndex.makeIndex: just in case", aM, self.bookReferenceCode, C, V )
                         revertToJ = j - 1
                         assert( lineCount > 0 )
@@ -524,7 +526,8 @@ class InternalBibleIndex:
 
             # Now check them
             if  C!='0' and V=='0':
-                assert( 's1' not in markers and 'r' not in markers )
+                print( self.bookReferenceCode, C, V, markers, entries )
+                assert( 's1' not in markers and 'r' not in markers and 'p' not in markers and 'q1' not in markers )
 
             # Check that C,V entries match
             for entry in entries:
