@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USXXMLBibleBook.py
-#   Last modified: 2013-07-13 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-19 by RJH (also update ProgVersion below)
 #
 # Module handling USX Bible Book xml
 #
@@ -28,8 +28,10 @@ Module handling USX Bible book xml to produce C and Python data tables.
 """
 
 ProgName = "USX XML Bible book handler"
-ProgVersion = "0.07"
+ProgVersion = "0.08"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+
+debuggingThisModule = False
 
 
 import logging, os
@@ -99,8 +101,9 @@ class USXXMLBibleBook( BibleBook ):
                     self.appendLine( verseStyle, v + ' ' )
                     # Now process the tail (if there's one) which is the verse text
                     if element.tail:
-                        vText = element.tail
+                        vText = element.tail.strip()
                         if vText:
+                            #print( repr(vText) )
                             self.appendToLastLine( vText )
                 elif element.tag == 'char':
                     Globals.checkXMLNoSubelements( element, location )
@@ -157,7 +160,9 @@ class USXXMLBibleBook( BibleBook ):
                     if subelement.tail and subelement.tail.strip(): noteLine += subelement.tail
                     #noteLine += "\\{}*".format( charStyle )
                     noteLine += "\\{}*".format( noteStyle )
-                    if element.tail: noteLine += element.tail
+                    if element.tail:
+                        noteText = element.tail.strip()
+                        noteLine += noteText
                     self.appendToLastLine( noteLine )
                 elif element.tag == 'unmatched': # Used to denote errors in the source text
                     Globals.checkXMLNoText( element, location )

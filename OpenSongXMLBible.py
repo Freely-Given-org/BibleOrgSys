@@ -37,6 +37,8 @@ ProgName = "OpenSong XML Bible format handler"
 ProgVersion = "0.21"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
+debuggingThisModule = False
+
 
 import logging, os
 from gettext import gettext as _

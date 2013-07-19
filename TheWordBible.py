@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 #
 # TheWordBible.py
-#   Last modified: 2013-07-18 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-19 by RJH (also update ProgVersion below)
 #
-# Module handling "TheWord" Bible module files
+# Module handling "theWord" Bible module files
 #
 # Copyright (C) 2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -24,10 +24,10 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module reading and loading TheWord Bible files.
+Module reading and loading theWord Bible files.
 These can be downloaded from: http://www.theword.net/index.php?downloads.modules
 
-A TheWord Bible module file has one verse per line (KJV versification)
+A theWord Bible module file has one verse per line (KJV versification)
     OT (.ot file) has 23145 lines
     NT (.nt file) has 7957 lines
     Bible (.ont file) has 31102 lines.
@@ -50,8 +50,8 @@ e.g.,
     And God calleth to the expanse `Heavens;' and there is an evening, and there is a morning--day second.<CM>
 """
 
-ProgName = "TheWord Bible format handler"
-ProgVersion = "0.07"
+ProgName = "theWord Bible format handler"
+ProgVersion = "0.08"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -74,15 +74,15 @@ filenameEndingsToAccept = ('.OT','.NT','.ONT','.OTX','.NTX','.ONTX',) # Must be 
 
 def TheWordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
     """
-    Given a folder, search for TheWord Bible files or folders in the folder and in the next level down.
+    Given a folder, search for theWord Bible files or folders in the folder and in the next level down.
 
     Returns False if an error is found.
 
     if autoLoad is false (default)
         returns None, or the number of Bibles found.
 
-    if autoLoad is true and exactly one TheWord Bible is found,
-        returns the loaded TheWordBible object.
+    if autoLoad is true and exactly one theWord Bible is found,
+        returns the loaded theWordBible object.
     """
     if Globals.verbosityLevel > 2: print( "TheWordBibleFileCheck( {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad ) )
     if Globals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
@@ -115,7 +115,7 @@ def TheWordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
     if '__MACOSX' in foundFolders:
         foundFolders.remove( '__MACOSX' )  # don't visit these directories
 
-    # See if there's an TheWordBible project here in this given folder
+    # See if there's an theWordBible project here in this given folder
     numFound = 0
     looksHopeful = False
     lastFilenameFound = None
@@ -327,8 +327,8 @@ class TheWordBible( Bible ):
         """
          # Setup and initialise the base class first
         Bible.__init__( self )
-        self.objectNameString = 'TheWord Bible object'
-        self.objectTypeString = 'TheWord'
+        self.objectNameString = 'theWord Bible object'
+        self.objectTypeString = 'theWord'
 
         # Now we can set our object variables
         self.sourceFolder, self.sourceFilename, self.encoding = sourceFolder, givenFilename, encoding
@@ -373,8 +373,8 @@ class TheWordBible( Bible ):
 
         # Create the first book
         thisBook = BibleBook( BBB )
-        thisBook.objectNameString = "TheWord Bible Book object"
-        thisBook.objectTypeString = "TheWord"
+        thisBook.objectNameString = "theWord Bible Book object"
+        thisBook.objectTypeString = "theWord"
 
         verseList = BOS.getNumVersesList( BBB )
         numC, numV = len(verseList), verseList[0]
@@ -415,8 +415,8 @@ class TheWordBible( Bible ):
                                     BBB = BOS.getNextBookCode( BBB )
                                     # Create the next book
                                     thisBook = BibleBook( BBB )
-                                    thisBook.objectNameString = "TheWord Bible Book object"
-                                    thisBook.objectTypeString = "TheWord"
+                                    thisBook.objectNameString = "theWord Bible Book object"
+                                    thisBook.objectTypeString = "theWord"
 
                                     verseList = BOS.getNumVersesList( BBB )
                                     numC, numV = len(verseList), verseList[0]
@@ -474,7 +474,7 @@ def testTWB( TWBfolder, TWBfilename ):
     #testFolder = "../../../../../Data/Work/Bibles/TheWord modules/" # Must be the same as below
 
     #TUBfolder = os.path.join( TWBfolder, TWBfilename )
-    if Globals.verbosityLevel > 1: print( _("Demonstrating the TheWord Bible class...") )
+    if Globals.verbosityLevel > 1: print( _("Demonstrating the theWord Bible class...") )
     if Globals.verbosityLevel > 0: print( "  Test folder is '{}' '{}'".format( TWBfolder, TWBfilename ) )
     tWb = TheWordBible( TWBfolder, TWBfilename )
     tWb.load() # Load and process the file
@@ -495,10 +495,10 @@ def testTWB( TWBfolder, TWBfilename ):
             if Globals.verbosityLevel > 1: print( reference, shortText, verseText )
 
         # Now export the Bible and compare the round trip
-        tWb.toTheWord()
+        tWb.totheWord()
         #doaResults = tWb.doAllExports()
         if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
-            outputFolder = "OutputFiles/BOS_TheWord_Reexport/"
+            outputFolder = "OutputFiles/BOS_theWord_Reexport/"
             if Globals.verbosityLevel > 1: print( "\nComparing original and re-exported theWord files..." )
             result = Globals.fileCompare( TWBfilename, TWBfilename, TWBfolder, outputFolder )
             if Globals.debugFlag:
@@ -513,8 +513,8 @@ def demo():
     if Globals.verbosityLevel > 0: print( ProgNameVersion )
 
 
-    #testFolder = "../../../../../Data/Work/Bibles/TheWord modules/"
-    testFolder = "Tests/DataFilesForTests/TheWordTest/"
+    #testFolder = "../../../../../Data/Work/Bibles/theWord modules/"
+    testFolder = "Tests/DataFilesForTests/theWordTest/"
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
@@ -525,7 +525,7 @@ def demo():
 
 
     if 1: # all discovered modules in the test folder
-        testFolder = "../../../../../Data/Work/Bibles/TheWord modules/"
+        testFolder = "../../../../../Data/Work/Bibles/theWord modules/"
         foundFolders, foundFiles = [], []
         for something in os.listdir( testFolder ):
             somepath = os.path.join( testFolder, something )

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2013-07-18 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-19 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -44,7 +44,7 @@ and then fills
 """
 
 ProgName = "Internal Bible handler"
-ProgVersion = "0.33"
+ProgVersion = "0.34"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -525,7 +525,7 @@ class InternalBible:
                             print( "   ", BBB, "not started" ) #, str(self.discoveryResults[BBB]['percentageProgress'])+'%' )
                         else: print( "   ", BBB, "in progress", (str(self.discoveryResults[BBB]['percentageProgress'])+'%') if 'percentageProgress' in self.discoveryResults[BBB] else '' )
             for key,value in sorted(self.discoveryResults['ALL'].items()):
-                if key.startswith("percentage") or key.endswith("Count") or key.endswith("Flag"):
+                if key.startswith("percentage") or key.endswith("Count") or key.endswith("Flag") or key.endswith("Codes"):
                     print( " ", key, "is", value )
                 else: print( " ", key, "in", value if value<len(self) else "All", "books" )
     # end of InternalBible.discover

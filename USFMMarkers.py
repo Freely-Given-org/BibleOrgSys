@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkers.py
-#   Last modified: 2013-07-18 (also update ProgVersion below)
+#   Last modified: 2013-07-19 (also update ProgVersion below)
 #
 # Module handling USFMMarkers
 #
@@ -25,10 +25,16 @@
 
 """
 Module handling USFMMarkers.
+
+Contains functions:
+    removeUSFMCharacterField( marker, originalText, closed )
+    replaceUSFMCharacterFields( replacements, originalText )
+
+Contains the singleton class: USFMMarkers
 """
 
 ProgName = "USFM Markers handler"
-ProgVersion = "0.57"
+ProgVersion = "0.58"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -40,6 +46,98 @@ from collections import OrderedDict
 
 from singleton import singleton
 import Globals
+
+
+
+def removeUSFMCharacterField( marker, originalText, closed ):
+    """
+    Removes all instances of the marker (if it exists) and its contents from the originalText.
+
+    marker should not contain the backslash or the following space.
+
+    If closed=True, expects a close marker (otherwise does nothing )
+    If closed=False, goes to the next marker or end of line.
+    If closed=None (unknown), stops at the first of closing marker, next marker, or end of line.
+    """
+    #print( "removeUSFMCharacterField( {}, {}, {} )".format( originalText, marker, closed ) )
+    assert( '\\' not in marker and ' ' not in marker and '*' not in marker )
+    text = originalText
+    mLen = len( marker )
+    ix = text.find( '\\'+marker+' ' )
+    while ix != -1:
+        tLen = len( text )
+        if closed is None:
+            ixEnd = text.find( '\\', ix+mLen+2 )
+            if ixEnd == -1: # remove until end of line
+                text = text[:ix]
+            elif text[ixEnd:].startswith( '\\'+marker+'*' ): # remove the end marker also
+                text = text[:ix] + text[ixEnd+mLen+2:]
+            else: # leave the next marker in place
+                text = text[:ix] + text[ixEnd:]
+            #print( "                         ", text ); halt
+        elif closed == True:
+            ixEnd = text.find( '\\'+marker+'*', ix+mLen+2 )
+            if ixEnd == -1:
+                logging.error( "removeUSFMCharacterField: no end marker for '{}' in '{}'".format( marker, originalText ) )
+                break
+            text = text[:ix] + text[ixEnd+mLen+2:]
+        elif closed == False:
+            ixEnd = text.find( '\\', ix+mLen+2 )
+            if ixEnd == -1: # remove until end of line
+                text = text[:ix]
+            elif ixEnd<tLen-1 and text[ixEnd+1]=='+': # We've hit an embedded marker
+                logging.critical( "removeUSFMCharacterField: doesn't handle embedded markers yet with '{}' in '{}'".format( marker, originalText ) )
+                if debugFlag: halt
+            else:
+                text = text[:ix] + text[ixEnd:]
+        ix = text.find( '\\'+marker+' ' )
+    return text
+# end of removeUSFMCharacterField
+
+
+
+def replaceUSFMCharacterFields( replacements, originalText ):
+    """
+    Makes a series of replacements to a line of USFM text.
+        This is designed for USFM character formatting fields that are explicitly closed
+            so it doesn't work with footnote or cross-reference fields where
+            the next open marker implicitly closes the previous marker.
+
+    Parameter 1 is a list of 3-tuples of the replacements to be made:
+        1/ The set of markers
+        2/ The replacement text for the opening marker
+        3/ The replacement text for the closing marker
+    Parameter 2 is the original text.
+
+    Produces warning messages if the opening and close markers don't match.
+
+    Returns the adjusted text.
+    """
+    text = originalText
+    for markers, openReplacment, closeReplacement in replacements:
+        for marker in markers:
+            assert( '\\' not in marker and ' ' not in marker and '*' not in marker )
+
+            # Handle the traditional USFM markers
+            openMarker, closeMarker = '\\'+marker+' ', '\\'+marker+'*'
+            openCount, closedCount = originalText.count( openMarker ), originalText.count( closeMarker )
+            if openCount > closedCount:
+                logging.warning( "replaceUSFMCharacterFields: missing close marker for '{}' in '{}'".format( openMarker, originalText ) )
+            elif openCount < closedCount:
+                logging.warning( "replaceUSFMCharacterFields: superfluous '{}' close marker in '{}'".format( closeMarker, originalText ) )
+            text = text.replace( openMarker, openReplacment ).replace( closeMarker, closeReplacement )
+
+            # Handle the new v2.4 nested markers
+            openMarker, closeMarker = '\\+'+marker+' ', '\\+'+marker+'*'
+            openCount, closedCount = originalText.count( openMarker ), originalText.count( closeMarker )
+            if openCount > closedCount:
+                logging.warning( "replaceUSFMCharacterFields: missing nested close marker for '{}' in '{}'".format( openMarker, originalText ) )
+            elif openCount < closedCount:
+                logging.warning( "replaceUSFMCharacterFields: superfluous '{}' nested close marker in '{}'".format( closeMarker, originalText ) )
+            text = text.replace( openMarker, openReplacment ).replace( closeMarker, closeReplacement )
+    return text
+# end of replaceUSFMCharacterFields
+
 
 
 # Define commonly used sets of footnote and xref markers
@@ -520,6 +618,21 @@ def demo():
                  ):
         print( "For text '{}' got markers:".format( text ) )
         print( "         {}".format( um.getMarkerListFromText( text, verifyMarkers=True ) ) )
+
+
+    text = "\\v~ \\x - \\xo 12:13 \\xt Cross \wj \wj*reference text.\\x*Main \\add actual\\add* verse text.\\f + \\fr 12:13\\fr* \\ft with footnote.\\f*"
+    print( "\nFor text: '{}'".format( text ) )
+    print( "  remove whole xref = '{}'".format( removeUSFMCharacterField( 'x', text, closed=True ) ) )
+    print( "  remove xo = '{}'".format( removeUSFMCharacterField( 'xo', text, closed=False ) ) )
+    print( "  remove xref part = '{}'".format( removeUSFMCharacterField( 'x', text, closed=None ) ) )
+    print( "  remove fr = '{}'".format( removeUSFMCharacterField( 'fr', text, closed=None ) ) )
+    print( "  remove ft = '{}'".format( removeUSFMCharacterField( 'ft', text, closed=None ) ) )
+    print( "  remove ft = '{}'".format( removeUSFMCharacterField( 'ft', text, closed=False ) ) )
+    print( "  remove wj = '{}'".format( removeUSFMCharacterField( 'wj', text, closed=True ) ) )
+
+    print( "\nFor text: '{}'".format( text ) )
+    replacements = ( (('add',),'<span>','</span>'), (('wj',),'<i>','</i>'), )
+    print( "  replace = '{}'".format( replaceUSFMCharacterFields( replacements, text ) ) )
 # end of demo
 
 if __name__ == '__main__':

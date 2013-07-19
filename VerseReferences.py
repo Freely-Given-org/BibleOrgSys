@@ -70,6 +70,8 @@ ProgName = "Bible verse reference handler"
 ProgVersion = "0.01"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
+debuggingThisModule = False
+
 
 import os, logging
 #from gettext import gettext as _

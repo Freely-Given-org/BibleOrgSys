@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleInternals.py
-#   Last modified: 2013-07-18 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-19 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Bible internals handler"
-ProgVersion = "0.04"
+ProgVersion = "0.06"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -85,18 +85,27 @@ class InternalBibleEntry:
     This class represents an entry in the _processedLines list.
     """
 
-    def __init__( self, marker, originalMarker, adjustedText, cleanText, extras ):
+    def __init__( self, marker, originalMarker, adjustedText, cleanText, extras, originalText ):
         """
         Accept the parameters and double-check them if requested.
         """
         if Globals.debugFlag or Globals.strictCheckingFlag:
-            #print( "InternalBibleEntry.__init__( {}, {}, {}, {}, {} )".format( marker, originalMarker, adjustedText[:35], cleanText[:35], extras ) )
+            #print( "InternalBibleEntry.__init__( {}, {}, '{}', '{}', {}, '{}' )" \
+                    #.format( marker, originalMarker, adjustedText[:35]+('...' if len(adjustedText)>35 else ''), \
+                        #cleanText[:35]+('...' if len(cleanText)>35 else ''), extras, \
+                        #originalText[:35]+('...' if len(originalText)>35 else '') ) )
             assert( marker and isinstance( marker, str ) ) # Mustn't be blank
+            assert( '\\' not in marker and ' ' not in marker and '*' not in marker )
             assert( originalMarker and isinstance( originalMarker, str ) ) # Mustn't be blank
+            assert( '\\' not in originalMarker and ' ' not in originalMarker and '*' not in originalMarker )
             assert( isinstance( adjustedText, str ) )
+            assert( '\n' not in adjustedText )
             assert( isinstance( cleanText, str ) )
+            assert( '\n' not in cleanText )
             assert( '\\' not in cleanText )
             assert( isinstance( extras, list ) )
+            assert( isinstance( originalText, str ) )
+            assert( '\n' not in originalText )
             if extras:
                 #print( "extras:", extras )
                 for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
@@ -113,7 +122,10 @@ class InternalBibleEntry:
             #assert( marker in Globals.USFMMarkers or marker in NON_USFM_MARKERS )
             if marker not in Globals.USFMMarkers and marker not in NON_USFM_MARKERS:
                 print( "InternalBibleEntry doesn't handle '{}' marker yet.".format( marker ) )
-        self.marker, self.originalMarker, self.adjustedText, self.cleanText, self.extras = marker, originalMarker, adjustedText, cleanText, extras
+        self.marker, self.originalMarker, self.adjustedText, self.cleanText, self.extras, self.originalText = marker, originalMarker, adjustedText, cleanText, extras, originalText
+
+        if Globals.debugFlag and debuggingThisModule and self.getFullText() != self.originalText.strip():
+            halt
     # end of InternalBibleEntry.__init__
 
 
@@ -147,29 +159,44 @@ class InternalBibleEntry:
     def getText( self ): return self.adjustedText
     def getCleanText( self ): return self.cleanText
     def getExtras( self ): return self.extras
+    def getOriginalText( self ): return self.originalText
 
 
     def getFullText( self ):
         """
         Returns the full text with footnotes and cross-references reinserted.
+
+        Note that some spaces may not be recovered,
+            e.g., in 'lamb\f + \fr 18.9 \ft Sheep \f* more text here'
+            the space before the close of the footnote is not restored!
         """
+        #return self.originalText
+
         result = self.adjustedText
         offset = 0
         for extraType, extraIndex, extraText, cleanExtraText in self.extras: # do any footnotes and cross-references
-            #print( "{} at {} = '{}' ({})".format( extraType, extraIndex, extraText, cleanExtraText ) )
-            #print( "  was '{}'".format( result ) )
+            #print( "getFullText: {} at {} = '{}' ({})".format( extraType, extraIndex, extraText, cleanExtraText ) )
+            #print( "getFullText:  was '{}'".format( result ) )
             ix = extraIndex + offset
             if extraType == 'fn': USFM = 'f'
             elif extraType == 'xr': USFM = 'x'
             elif Globals.debugFlag: halt
             result = '{}\\{} {}\\{}*{}'.format( result[:ix], USFM, extraText, USFM, result[ix:] )
-            #print( "  now '{}'".format( result ) )
-            offset += len(extraText ) + 2*len(extraType) + 4
+            #print( "getFullText:  now '{}'".format( result ) )
+            offset += len(extraText ) + 2*len(USFM) + 4
+
         #if result != self.adjustedText:
             #if len(self.extras) > 1:
-                #print( "Was '{}'".format( self.cleanText ) )
+                #print( "\nWas '{}'".format( self.cleanText ) )
                 #print( "And '{}'".format( self.adjustedText ) )
+                #print( "Orig'{}'".format( self.originalText ) )
                 #print( "Now '{}'".format( result ) )
+                #print( "Extras are {}".format( self.extras ) )
+        #if result != self.originalText.strip():
+            #print( "\nWe're giving '{}'".format( result ) )
+            #print( "   Should be '{}'".format( self.originalText.strip() ) )
+            #print( "        From '{}'".format( self.originalText ) )
+        #if Globals.debugFlag: assert( result == self.originalText.strip() )
         return result
     # end of InternalBibleEntry.getFullText
 # end of class InternalBibleEntry
@@ -411,12 +438,14 @@ class InternalBibleIndex:
                         assert( lineCount > 0 )
                         lineCount -= 1
                         aM,cT = self.givenBibleEntries[revertToJ-1].getMarker(), self.givenBibleEntries[revertToJ-1].getCleanText()
-                        if revertToJ >= 1 and aM in ('s1','s2','s3',):
+                        while revertToJ >= 1 and aM in ('s1','s2','s3','r',):
                             #assert( cT ) # Should have text (for a completed Bible at least)
                             revertToJ -= 1
                             assert( lineCount > 0 )
                             lineCount -= 1
-                    elif aM in ('s1','s2','s3',): # Shouldn't happen but just in case
+                            if revertToJ==0: print( "InternalBibleIndex.makeIndex: Get out of here" ); break
+                            aM,cT = self.givenBibleEntries[revertToJ-1].getMarker(), self.givenBibleEntries[revertToJ-1].getCleanText()
+                    elif aM in ('s1','s2','s3','r',): # Shouldn't happen but just in case
                         if Globals.debugFlag: print( "InternalBibleIndex.makeIndex: just in case", aM, self.bookReferenceCode, C, V )
                         revertToJ = j - 1
                         assert( lineCount > 0 )
@@ -476,18 +505,28 @@ class InternalBibleIndex:
         if Globals.verbosityLevel > 2: print(  _("Checking {} {} index entries...").format( len(self.indexData), self.bookReferenceCode ) )
         if Globals.verbosityLevel > 3: print( self )
 
-        #for j, key in enumerate( sorted( self.indexData, key=lambda s: int(s[0])*1000+int(s[1]) ) ):
-            #C, V = key
-            #indexEntry = self.indexData[key]
-            #entries, context = self.getEntries( key )
-            #print( "checkIndex display", j, key, indexEntry, entries )
-            #if j>10: break
-
-        for key in self.indexData:
+        sortedIndex = sorted( self.indexData, key=lambda s: int(s[0])*1000+int(s[1]) )
+        for j, key in enumerate( sortedIndex ):
             C, V = key
             indexEntry = self.indexData[key]
             entries, context = self.getEntries( key )
-            #print( key, indexEntry, entries )
+            #print( "checkIndex display", j, key, indexEntry, entries )
+            if self.bookReferenceCode!='FRT' and j>30: break
+
+        for key in sortedIndex:
+            C, V = key
+            indexEntry = self.indexData[key]
+            entries, context = self.getEntries( key )
+            markers = []
+            for entry in entries: markers.append( entry.getMarker() )
+            #print( "checkIndex line", key, indexEntry, entries, markers )
+            #if self.bookReferenceCode!='FRT': halt
+
+            # Now check them
+            if  C!='0' and V=='0':
+                assert( 's1' not in markers and 'r' not in markers )
+
+            # Check that C,V entries match
             for entry in entries:
                 marker, cleanText = entry.getMarker(), entry.getCleanText()
                 if marker in ( 'c','c#' ):

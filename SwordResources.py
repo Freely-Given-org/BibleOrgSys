@@ -33,6 +33,8 @@ ProgName = "Sword resource handler"
 ProgVersion = "0.02"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
+debuggingThisModule = False
+
 
 #from singleton import singleton
 import os, logging

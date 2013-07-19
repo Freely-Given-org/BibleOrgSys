@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-07-18 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-19 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.40"
+ProgVersion = "0.41"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -170,6 +170,7 @@ class InternalBibleBook:
         if Globals.debugFlag:
             if debuggingThisModule: print( "InternalBibleBook.appendLine( {}, {} ) for {}".format( repr(marker), repr(text), self.objectTypeString ) )
             assert( not self._processedFlag )
+        assert( '\n' not in text )
 
         if not ( marker in Globals.USFMMarkers or marker in NON_USFM_MARKERS ):
             logging.critical( "InternalBibleBook.appendLine marker for {} not in lists: {}={}".format( self.objectTypeString, marker, text ) )
@@ -216,8 +217,10 @@ class InternalBibleBook:
         if Globals.debugFlag and debuggingThisModule:
             print( " InternalBibleBook.appendToLastLine( {}, {} )".format( repr(additionalText), repr(expectedLastMarker) ) )
             assert( not self._processedFlag )
-            assert( additionalText and isinstance( additionalText, str ) )
             assert( self._rawLines )
+        assert( additionalText and isinstance( additionalText, str ) )
+        assert( '\n' not in additionalText )
+
         marker, text = self._rawLines[-1]
         #print( "additionalText for {} '{}' is '{}'".format( marker, text, additionalText ) )
         if expectedLastMarker and marker!=expectedLastMarker: # Not what we were expecting
@@ -246,7 +249,8 @@ class InternalBibleBook:
 
 
         def processLineFix( originalMarker, text ):
-            """ Does character fixes on a specific line and moves footnotes and cross-references out of the main text.
+            """
+            Does character fixes on a specific line and moves footnotes and cross-references out of the main text.
                 Returns:
                     adjText: Text without notes and leading/trailing spaces
                     cleanText: adjText without character formatting as well
@@ -255,6 +259,8 @@ class InternalBibleBook:
                         extraIndex: the index into adjText above
                         extraText: the text of the note
                         cleanExtraText: extraText without character formatting as well
+
+            NOTE: You must NOT strip the text any more AFTER calling this (or the note insert indices will be incorrect!
             """
             nonlocal rtsCount
             #print( "InternalBibleBook.processLineFix( {}, '{}' ) for {} ({})".format( originalMarker, text, self.bookReferenceCode, self.objectTypeString ) )
@@ -276,6 +282,7 @@ class InternalBibleBook:
                         rtsCount = -1 # So we don't do this again (for this book)
                 self.addPriorityError( 10, c, v, _("Trailing space at end of line") )
                 adjText = adjText.rstrip()
+                #print( "QQQ1: rstrip ok" )
                 #print( originalMarker, "'"+text+"'", "'"+adjText+"'" )
 
             if self.objectTypeString in ('USFM','USX',):
@@ -329,6 +336,7 @@ class InternalBibleBook:
             extras = []
             lcAdjText = adjText.lower()
 
+            #print( "QQQ MOVE OUT NOTES" )
             if self.objectTypeString in ('USFM','USX',): # Move USFM footnotes and crossreferences out to extras
                 ixFN = lcAdjText.find( '\\f ' )
                 ixXR = lcAdjText.find( '\\x ' )
@@ -371,11 +379,13 @@ class InternalBibleBook:
                             logging.error( _("Found {} starting with space after {} {}:{} in \\{}: {}").format( thisOne, self.bookReferenceCode, c, v, originalMarker, adjText ) )
                             self.addPriorityError( 12, c, v, _("{} starts with space").format( thisOne.title() ) )
                             note = note.lstrip()
+                            #print( "QQQ2: lstrip in note" ); halt
                         if note and note[-1].isspace():
                             fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Found {} ending with space in \\{}: {}").format( thisOne, originalMarker, adjText ) )
                             logging.error( _("Found {} ending with space after {} {}:{} in \\{}: {}").format( thisOne, self.bookReferenceCode, c, v, originalMarker, adjText ) )
                             self.addPriorityError( 11, c, v, _("{} ends with space").format( thisOne.title() ) )
                             note = note.rstrip()
+                            #print( "QQQ3: rstrip in note" )
                         if '\\f ' in note or '\\f*' in note or '\\x ' in note or '\\x*' in note: # Only the contents of these fields should be here now
                             print( "{} {}:{} What went wrong here: '{}' from \\{} '{}' (Is it an embedded note?)".format( self.bookReferenceCode, c, v, note, originalMarker, text ) )
                             print( "Have an embedded note perhaps! Not handled correctly yet" )
@@ -467,6 +477,7 @@ class InternalBibleBook:
                         for indexDigit, stringIndex in reversed( indexDigits ):
                             ixN = notes.find( indexDigit+') ' )
                             noteContents = notes[ixN+3:].strip()
+                            #print( "QQQ4: strip" ); halt
                             if not noteContents: noteContents = lastNoteContents # Might have same note twice
                             cleanNoteContents = noteContents.replace( '\\add ', '' ).replace( '\\add*', '').strip()
                             #print( (indexDigit, stringIndex, noteContents, cleanNoteContents) )
@@ -490,6 +501,7 @@ class InternalBibleBook:
                         for indexDigit, stringIndex in reversed( indexDigits ):
                             #ixN = notes.find( indexDigit+') ' )
                             noteContents = notes.strip()
+                            #print( "QQQ5: strip" ); halt
                             if not noteContents: noteContents = lastNoteContents # Might have same note twice
                             cleanNoteContents = noteContents.replace( '\\add ', '' ).replace( '\\add*', '').strip()
                             print( (indexDigit, stringIndex, noteContents, cleanNoteContents) )
@@ -564,6 +576,7 @@ class InternalBibleBook:
                 logging.warning( _("Removed trailing space before note after {} {}:{} in \\{}: '{}'").format( self.bookReferenceCode, c, v, originalMarker, text ) )
                 self.addPriorityError( 10, c, v, _("Trailing space before note at end of line") )
                 adjText = adjText.rstrip()
+                #print( "QQQ6: rstrip" ); halt
                 #print( originalMarker, "'"+text+"'", "'"+adjText+"'" )
 
             # Now remove all character formatting from the cleanText string (to make it suitable for indexing and search routines
@@ -619,6 +632,7 @@ class InternalBibleBook:
                             #print( ixBS, ixSP, ixAS, ixEND )
                             if Globals.debugFlag: assert( ixSP==99999 and ixAS==99999 and ixEND==99999 )
                             cleanText = cleanText[:ixBS].rstrip()
+                            #print( "QQQ7: rstrip" ); halt
                             #print( "cleanText: '{}'".format( cleanText ) )
                     if '\\' in cleanText: logging.error( "Why do we still have a backslash in '{}' from '{}'?".format( cleanText, adjText ) ); halt
 
@@ -638,14 +652,14 @@ class InternalBibleBook:
         # end of InternalBibleBook.processLines.processLineFix
 
 
-        def doAppend( adjMarker, originalMarker, text ):
+        def doAppend( adjMarker, originalMarker, text, originalText ):
             """
             Append the entry to self._processedLines
             """
             nonlocal sahtCount
 
             if adjMarker in ('p','q1','q2','q3','q4') and text: # Separate the verse text from the paragraph markers
-                self._processedLines.append( InternalBibleEntry(adjMarker, originalMarker, '', '', []) )
+                self._processedLines.append( InternalBibleEntry(adjMarker, originalMarker, '', '', [], '') )
                 adjMarker = 'p~'
                 if not text.strip():
                     fixErrors.append( _("{} {}:{} Paragraph marker '{}' seems to contain only whitespace").format( self.bookReferenceCode, c, v, originalMarker ) )
@@ -676,10 +690,10 @@ class InternalBibleBook:
                 # Don't bother even saving the marker since it's useless
                 # Wrong -- save the empty marker
                 if adjMarker != 'v~': # Save all other empty markers
-                    self._processedLines.append( InternalBibleEntry(adjMarker, originalMarker, adjText, cleanText, extras) )
+                    self._processedLines.append( InternalBibleEntry(adjMarker, originalMarker, adjText, cleanText, extras, originalText) )
             else:
                 #if c=='5' and v=='29': print( "processLine: {} '{}' to {} aT='{}' cT='{}' {}".format( originalMarker, text, adjMarker, adjText, cleanText, extras ) );halt
-                self._processedLines.append( InternalBibleEntry(adjMarker, originalMarker, adjText, cleanText, extras) )
+                self._processedLines.append( InternalBibleEntry(adjMarker, originalMarker, adjText, cleanText, extras, originalText) )
         # end of doAppend
 
 
@@ -754,11 +768,12 @@ class InternalBibleBook:
                     #print( self._processedLines ); halt
 
                 if haveWaitingC: # Add a false chapter number at the place where we normally want it printed
-                    self._processedLines.append( InternalBibleEntry('c#', 'c', haveWaitingC, haveWaitingC, []) ) # Write the additional chapter number
+                    self._processedLines.append( InternalBibleEntry('c#', 'c', haveWaitingC, haveWaitingC, [], haveWaitingC) ) # Write the additional chapter number
                     haveWaitingC = False
 
                 # Convert v markers to milestones only
                 text = text.lstrip()
+                #print( "QQQ8: lstrip" )
                 ixSP = text.find( ' ' )
                 ixBS = text.find( '\\' )
                 if ixSP == -1: ixSP=99999
@@ -787,7 +802,7 @@ class InternalBibleBook:
                         assert( verseNumberBit )
                         assert( ' ' not in verseNumberBit )
                         assert( '\\' not in verseNumberBit )
-                    self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, verseNumberBit, verseNumberBit, []) ) # Write the verse number (or range) as a separate line
+                    self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, verseNumberBit, verseNumberBit, [], verseNumberBit) ) # Write the verse number (or range) as a separate line
                     return # Don't write a blank v~ field
                     #adjustedMarker, text = 'v~', ''
                 else:
@@ -796,8 +811,9 @@ class InternalBibleBook:
                     if Globals.debugFlag:
                         assert( verseNumberBit and verseNumberRest )
                         assert( '\\' not in verseNumberBit )
-                    self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, verseNumberBit, verseNumberBit, []) ) # Write the verse number (or range) as a separate line
+                    self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, verseNumberBit, verseNumberBit, [], verseNumberBit) ) # Write the verse number (or range) as a separate line
                     strippedVerseText = verseNumberRest.lstrip()
+                    #print( "QQQ9: lstrip" )
                     if not strippedVerseText:
                         if owfvnCount != -1:
                             owfvnCount += 1
@@ -823,6 +839,7 @@ class InternalBibleBook:
                                 logging.error( _("Marker '{}' shouldn't appear within line after {} {}:{} in \\{}: '{}'").format( insideMarker, self.bookReferenceCode, c, v, originalMarker, text ) ) # Only log the first error in the line
                                 self.addPriorityError( 96, c, v, _("Marker \\{} shouldn't be inside a line").format( insideMarker ) )
                             thisText = text[ix:iMIndex].rstrip()
+                            #print( "QQQ10: rstrip" ); halt
                             adjText, cleanText, extras = processLineFix( originalMarker, thisText )
                             self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, adjText, cleanText, extras) )
                             ix = iMIndex + 1 + len(insideMarker) + len(nextSignificantChar) # Get the start of the next text -- the 1 is for the backslash
@@ -866,6 +883,7 @@ class InternalBibleBook:
                             ixEnd = afterText.index( '<div type="x-milestone" subType="x-preverse" eID="' )
                             ixFinal = afterText.index( '>', ixEnd+30 )
                             preverseText = afterText[:ixEnd].strip()
+                            #print( "QQQ11: strip" ); halt
                             if preverseText.startswith( '<div sID="' ) and preverseText.endswith( '" type="paragraph"/>' ):
                                 self._processedLines.append( InternalBibleEntry('p', originalMarker, '', '', []) )
                             else: print( "preverse", "'"+preverseText+"'" )
@@ -913,7 +931,7 @@ class InternalBibleBook:
                 #for n in range( 0, 30 ): print( "\n{}: {}".format( n, self._processedLines[n] ) )
                 #halt
 
-            doAppend( adjustedMarker, originalMarker, text )
+            doAppend( adjustedMarker, originalMarker, text, verseNumberRest if adjustedMarker=='v~' else originalText )
             ## Separate out the notes (footnotes and cross-references)
             #adjText, cleanText, extras = processLineFix( originalMarker, text )
 
@@ -951,6 +969,7 @@ class InternalBibleBook:
         c = v = '0'
         haveWaitingC = False
         for marker,text in self._rawLines:
+            #print( "\nQQQ" )
             if self.objectTypeString=='USX' and text and text[-1]==' ': text = text[:-1] # Removing extra trailing space from USX files
             processLine( marker, text ) # Saves its results in self._processedLines
         #self.debugPrint(); halt

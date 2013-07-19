@@ -89,6 +89,8 @@ ProgName = "Unbound Bible format handler"
 ProgVersion = "0.13"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
+debuggingThisModule = False
+
 
 import logging, os
 from gettext import gettext as _

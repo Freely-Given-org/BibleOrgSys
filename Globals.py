@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # py
-#   Last modified: 2013-07-16 (also update ProgVersion below)
+#   Last modified: 2013-07-19 (also update ProgVersion below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -46,6 +46,8 @@ Contains functions:
     checkXMLNoSubelements( element, locationString, idString=None )
     getFlattenedXML( element, locationString, idString=None, level=0 )
 
+    applyStringAdjustments( originalText, adjustmentList )
+
     pickleObject( theObject, filename, folder=None )
     unpickleObject( filename, folder=None )
 
@@ -65,8 +67,10 @@ Contains functions:
 """
 
 ProgName = "Globals"
-ProgVersion = "0.27"
+ProgVersion = "0.28"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+
+debuggingThisModule = False
 
 
 import logging, os.path, pickle
@@ -335,7 +339,7 @@ def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=Tru
         if lines1[k] != lines2[k]:
             if printFlag:
                 print( "  {}:{} ({} chars)\n  {}:{} ({} chars)" \
-                    .format( k, repr(lines1[k]), len(lines1[k]), k, repr(lines2[k]), len(lines2[k]) ) )
+                    .format( k+1, repr(lines1[k]), len(lines1[k]), k+1, repr(lines2[k]), len(lines2[k]) ) )
             equalFlag = False
             diffCount += 1
             if diffCount > exitCount: break
@@ -528,52 +532,6 @@ def applyStringAdjustments( originalText, adjustmentList ):
         offset += lenRS - lenFS
     return text
 # end of applyStringAdjustments
-
-
-def removeUSFMCharacterField( originalText, marker, closed ):
-    """
-    Removes all instances of the marker (if it exists) and its contents from the originalText.
-
-    marker should not contain the backslash or the following space.
-
-    If closed=True, expects a close marker (otherwise does nothing )
-    If closed=False, goes to the next marker or end of line.
-    If closed=None (unknown), stops at the first of closing marker, next marker, or end of line.
-    """
-    #print( "removeUSFMCharacterField( {}, {}, {} )".format( originalText, marker, closed ) )
-    assert( '\\' not in marker and ' ' not in marker )
-    text = originalText
-    mLen = len( marker )
-    ix = text.find( '\\'+marker+' ' )
-    while ix != -1:
-        tLen = len( text )
-        if closed is None:
-            ixEnd = text.find( '\\', ix+mLen+2 )
-            if ixEnd == -1: # remove until end of line
-                text = text[:ix]
-            elif text[ixEnd:].startswith( '\\'+marker+'*' ): # remove the end marker also
-                text = text[:ix] + text[ixEnd+mLen+2:]
-            else: # leave the next marker in place
-                text = text[:ix] + text[ixEnd:]
-            #print( "                         ", text ); halt
-        elif closed == True:
-            ixEnd = text.find( '\\'+marker+'*', ix+mLen+2 )
-            if ixEnd == -1:
-                logging.error( "removeUSFMCharacterField: no end marker for '{}' in '{}'".format( marker, originalText ) )
-                break
-            text = text[:ix] + text[ixEnd+mLen+2:]
-        elif closed == False:
-            ixEnd = text.find( '\\', ix+mLen+2 )
-            if ixEnd == -1: # remove until end of line
-                text = text[:ix]
-            elif ixEnd<tLen-1 and text[ixEnd+1]=='+': # We've hit an embedded marker
-                logging.critical( "removeUSFMCharacterField: doesn't handle embedded markers yet with '{}' in '{}'".format( marker, originalText ) )
-                if debugFlag: halt
-            else:
-                text = text[:ix] + text[ixEnd:]
-        ix = text.find( '\\'+marker+' ' )
-    return text
-# end of removeUSFMCharacterField
 
 
 ##########################################################################################################
@@ -803,15 +761,6 @@ def demo():
     text = "The quick brown fox jumped over the lazy brown dog."
     adjustments = [(36,'lazy','fat'),(0,'The','A'),(20,'jumped','tripped'),(4,'','very '),(10,'brown','orange')]
     print( "'{}'->'{}'".format( text, applyStringAdjustments( text, adjustments ) ) )
-
-    text = "\\v~ \\x - \\xo 12:13 \\xt Cross \wj \wj*reference text.\\x*Main \\add actual\\add* verse text.\\f + \\fr 12:13\\fr* \\ft with footnote.\\f*"
-    print( "remove whole xref = '{}'".format( removeUSFMCharacterField( text, 'x', closed=True ) ) )
-    print( "remove xo = '{}'".format( removeUSFMCharacterField( text, 'xo', closed=False ) ) )
-    print( "remove xref part = '{}'".format( removeUSFMCharacterField( text, 'x', closed=None ) ) )
-    print( "remove fr = '{}'".format( removeUSFMCharacterField( text, 'fr', closed=None ) ) )
-    print( "remove ft = '{}'".format( removeUSFMCharacterField( text, 'ft', closed=None ) ) )
-    print( "remove ft = '{}'".format( removeUSFMCharacterField( text, 'ft', closed=False ) ) )
-    print( "remove wj = '{}'".format( removeUSFMCharacterField( text, 'wj', closed=True ) ) )
 # end of demo
 
 setVerbosity( verbosityString )

@@ -31,6 +31,8 @@ ProgName = "Bible Chapter/Verse Systems handler"
 ProgVersion = "0.51"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
+debuggingThisModule = False
+
 
 import os, logging
 from gettext import gettext as _

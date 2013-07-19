@@ -31,6 +31,8 @@ ProgName = "ISO 639_3_Languages handler"
 ProgVersion = "0.84"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
+debuggingThisModule = False
+
 
 import os, logging
 from gettext import gettext as _

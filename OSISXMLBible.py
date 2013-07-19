@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # OSISXMLBible.py
-#   Last modified: 2013-07-10 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-19 by RJH (also update ProgVersion below)
 #
 # Module handling OSIS XML Bibles
 #
@@ -34,8 +34,10 @@ This is a quickly updated version of an early module,
 """
 
 ProgName = "OSIS XML Bible format handler"
-ProgVersion = "0.24"
+ProgVersion = "0.25"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+
+debuggingThisModule = False
 
 
 import logging, os
@@ -1395,7 +1397,7 @@ class OSISXMLBible( Bible ):
             location = "validateLG: " + locationDescription
             Globals.checkXMLNoText( element, location+" at "+verseMilestone, '3f6v' )
             #lgText = element.text
-            lgTail = element.tail
+            lgTail = element.tail.strip()
             for attrib,value in element.items():
                 if attrib=="type":
                     halt
@@ -1410,7 +1412,7 @@ class OSISXMLBible( Bible ):
                 if subelement.tag == OSISXMLBible.OSISNameSpace+"l":
                     sublocation = "validateLG l of " + locationDescription
                     Globals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, '3d56g' )
-                    lText = subelement.text
+                    lText = subelement.text.strip()
                     level3 = None
                     for attrib,value in subelement.items():
                         if attrib=="level":
@@ -1462,7 +1464,7 @@ class OSISXMLBible( Bible ):
                     Globals.checkXMLNoAttributes( subelement, sublocation+" at "+verseMilestone, '6y4t' )
                 else:
                     logging.warning( "q2b6 Unprocessed '{}' sub-element ({}) in {} at {}".format( subelement.tag, subelement.text, location, verseMilestone ) )
-            if lgTail and lgTail!='\n': # This is the main text of the verse (outside of the quotation indents)
+            if lgTail: # and lgTail!='\n': # This is the main text of the verse (outside of the quotation indents)
                 #bookResults.append( ('margin',lgTail,) )
                 #USFMResults.append( ('m',lgTail,) )
                 self.thisBook.appendLine( 'm', lgTail )
@@ -1562,8 +1564,8 @@ class OSISXMLBible( Bible ):
             if not element.text: # A new paragraph starting
                 p = None
             else: # A new paragraph in the middle of a verse, e.g., James 3:5b
-                p = element.text
-                if p.isspace(): p = None # Ignore newlines and blank lines in the xml file
+                p = element.text.strip()
+                #if p.isspace(): p = None # Ignore newlines and blank lines in the xml file
             if chapterMilestone:
                 #bookResults.append( ('p',p,) )
                 #USFMResults.append( ('p',p.replace('\n','') if p is not None else p,) )

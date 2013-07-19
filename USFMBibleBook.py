@@ -31,6 +31,8 @@ ProgName = "USFM Bible book handler"
 ProgVersion = "0.35"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
+debuggingThisModule = False
+
 
 import os, logging
 from gettext import gettext as _

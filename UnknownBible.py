@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # UnknownBible.py
-#   Last modified: 2013-07-13 (also update ProgVersion below)
+#   Last modified: 2013-07-19 (also update ProgVersion below)
 #
 # Module handling a unknown Bible object
 #
@@ -31,14 +31,16 @@ Given a folder name, analyses the files in it
 
 Currently aware of the following Bible types:
     USFM
-    Unbound Bible (table based), TheWord (line based), MySword (SQLite3 based)
+    Unbound Bible (table based), theWord (line based), MySword (SQLite3 based)
     OSIS, USX, OpenSong, Zefania (all XML)
     Sword modules (binary).
 """
 
 ProgName = "Unknown Bible object handler"
-ProgVersion = "0.05"
+ProgVersion = "0.06"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+
+debuggingThisModule = False
 
 
 import logging, os.path
@@ -75,6 +77,7 @@ class UnknownBible:
         # Check that the given folder is readable
         if not os.access( givenFolderName, os.R_OK ):
             logging.critical( _("UnknownBible: Given '{}' folder is unreadable").format( self.givenFolderName ) )
+            if Globals.debugFlag and debuggingThisModule: halt
             self.folderReadable = False
         else: self.folderReadable = True
 
@@ -107,12 +110,12 @@ class UnknownBible:
         totalBibleCount, totalBibleTypes, typesFound = 0, 0, []
 
         # Search for TheWord Bibles
-        TheWordBibleCount = TheWordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-        if TheWordBibleCount:
-            totalBibleCount += TheWordBibleCount
+        theWordBibleCount = TheWordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+        if theWordBibleCount:
+            totalBibleCount += theWordBibleCount
             totalBibleTypes += 1
-            typesFound.append( 'TheWord' )
-            if Globals.verbosityLevel > 2: print( "TheWordBible.search: TheWordBibleCount", TheWordBibleCount )
+            typesFound.append( 'theWord' )
+            if Globals.verbosityLevel > 2: print( "TheWordBible.search: theWordBibleCount", theWordBibleCount )
 
         # Search for MySword Bibles
         MySwordBibleCount = MySwordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -184,10 +187,10 @@ class UnknownBible:
                     print( "UnknownBible.search: Multiple ({}) Bibles found: {}".format( totalBibleCount, typesFound ) )
                 self.foundType = 'Many found'
 
-        elif TheWordBibleCount == 1:
-            self.foundType = "TheWord Bible"
+        elif theWordBibleCount == 1:
+            self.foundType = "theWord Bible"
             if autoLoad: return TheWordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad )
-            else: return self.foundType, TheWordBibleCount
+            else: return self.foundType, theWordBibleCount
         elif MySwordBibleCount == 1:
             self.foundType = "MySword Bible"
             if autoLoad: return MySwordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad )
@@ -229,7 +232,7 @@ def demo():
 
     # Now demo the class
     testFolders = ( "/home/robert/Logs",
-                    "../../../../../Data/Work/Bibles/TheWord modules/",
+                    "../../../../../Data/Work/Bibles/theWord modules/",
                     "../../../../../Data/Work/Bibles/Biola Unbound modules/",
                     "../../../../../Data/Work/Bibles/OpenSong Bibles/",
                     "../../../../../Data/Work/Bibles/Zefania modules/",
@@ -239,7 +242,7 @@ def demo():
                     "Tests/DataFilesForTests/USXTest1/", "Tests/DataFilesForTests/USXTest2/",
                     "Tests/DataFilesForTests/OSISTest1/", "Tests/DataFilesForTests/OSISTest2/",
                     "Tests/DataFilesForTests/ZefaniaTest/",
-                    "Tests/DataFilesForTests/TheWordTest/",
+                    "Tests/DataFilesForTests/theWordTest/",
                     "Tests/DataFilesForTests/MySwordTest/",
                     "Tests/DataFilesForTests/", # Up a level
                     )
