@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-07-19 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-20 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -49,7 +49,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.27"
+ProgVersion = "0.28"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -443,9 +443,9 @@ class BibleWriter( InternalBible ):
             filepath = os.path.join( outputFolder, filename )
             if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
             with open( filepath, 'wt' ) as myFile:
-                for marker,originalMarker,text,cleanText,extras in pseudoUSFMData:
-                    myFile.write( "{} ({}): '{}' '{}' {}\n".format( marker, originalMarker, text, cleanText, extras ) )
-
+                for entry in pseudoUSFMData:
+                    myFile.write( "{} ({}): '{}' '{}' {}\n" \
+                        .format( entry.getMarker(), entry.getOriginalMarker(), entry.getText(), entry.getCleanText(), entry.getExtras() ) )
         return True
     # end of BibleWriter.toPseudoUSFM
 
@@ -829,7 +829,7 @@ class BibleWriter( InternalBible ):
             haveOpenChapter = False
             #for marker,originalMarker,text,cleanText,extras in bkData._processedLines: # Process internal Bible data lines
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
-                marker, text = verseDataEntry.getMarker(), verseDataEntry.getFullText()
+                marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getFullText(), verseDataEntry.getExtras()
                 if marker == 'c':
                     if haveOpenChapter:
                         writerObject.writeLineClose ( 'CHAPTER' )
@@ -1487,16 +1487,16 @@ class BibleWriter( InternalBible ):
                 if '\\fig ' in adjText: # Figure is not used in Sword modules so we'll remove it from the OSIS (for now at least)
                     ix1 = adjText.find( '\\fig ' )
                     ix2 = adjText.find( '\\fig*' )
-                    if ix2 == -1: print( _("toOSIS: Missing fig end marker for OSIS in {}: '{}' field is '{}'").format( toOSISGlobals["verseRef"], marker, textToCheck ), file=sys.stderr )
+                    if ix2 == -1: logging.error( _("toOSIS: Missing fig end marker for OSIS in {}: '{}' field is '{}'").format( toOSISGlobals["verseRef"], marker, textToCheck ) )
                     else:
                         if Globals.debugFlag: assert( ix2 > ix1 )
                         #print( "was '{}'".format( adjText ) )
                         adjText = adjText[:ix1] + adjText[ix2+5:] # Remove the \\fig..\\fig* field
                         #print( "now '{}'".format( adjText ) )
-                        print( _("toOSIS: Figure reference removed for OSIS generation in {}: '{}' field").format( toOSISGlobals["verseRef"], marker ), file=sys.stderr )
+                        logging.warning( _("toOSIS: Figure reference removed for OSIS generation in {}: '{}' field").format( toOSISGlobals["verseRef"], marker ) )
                 if checkLeftovers and '\\' in adjText:
                     logging.error( _("toOSIS: We still have some unprocessed backslashes for OSIS in {}: '{}' field is '{}'").format( toOSISGlobals["verseRef"], marker, textToCheck ) )
-                    print( _("toOSIS: We still have some unprocessed backslashes for OSIS in {}: '{}' field is '{}'").format( toOSISGlobals["verseRef"], marker, textToCheck ), file=sys.stderr )
+                    #print( _("toOSIS: We still have some unprocessed backslashes for OSIS in {}: '{}' field is '{}'").format( toOSISGlobals["verseRef"], marker, textToCheck ) )
                     adjText = adjText.replace('\\','ENCODING ERROR HERE ' )
                 return adjText
             # end of toOSISXML.checkText
@@ -1928,7 +1928,8 @@ class BibleWriter( InternalBible ):
                         # Doesn't seem that OSIS has a way to encode this presentation element
                         writerObject.writeNewLine() # We'll do this for now
                 else: unhandledMarkers.add( marker )
-                if marker not in ('v','v~','p','p~','q1','q2','q3','s1',) and extras: print( "toOSIS: Programming note: Didn't handle extras", marker, extras )
+                if marker not in ('v','v~','p','p~','q1','q2','q3','s1',) and extras:
+                    logging.error( "toOSIS: Programming note: Didn't handle '{}' extras: {}".format( marker, extras ) )
                 lastMarker = marker
 
             # At the end of everything
@@ -3270,7 +3271,7 @@ class BibleWriter( InternalBible ):
             htmlExportResult = self.toHTML5( htmlOutputFolder )
             TWExportResult = self.totheWord( TWOutputFolder )
             MySwExportResult = self.toMySword( MySwOutputFolder )
-        elif 0 and Globals.maxProcesses > 1: # Process all the exports with different threads
+        elif Globals.maxProcesses > 1: # Process all the exports with different threads
             # DON'T KNOW WHY THIS CAUSES A SEGFAULT
             self.__outputFolders = [USFMOutputFolder, MWOutputFolder, zOutputFolder, USXOutputFolder, OSISOutputFolder, swOutputFolder, htmlOutputFolder]
             #self.__outputProcesses = [self.toUSFM, self.toMediaWiki, self.toZefaniaXML, self.toUSXXML, self.toOSISXML, self.toSwordModule, self.toHTML5]
@@ -3368,7 +3369,7 @@ def demo():
     if Globals.verbosityLevel > 0: print( BW ); print()
 
 
-    if 0: # Test reading and writing a USFM Bible
+    if 1: # Test reading and writing a USFM Bible
         from USFMBible import USFMBible
         from USFMFilenames import USFMFilenames
         testData = (
@@ -3401,7 +3402,7 @@ def demo():
             else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 
 
-    if 0: # Test reading and writing a USX Bible
+    if 1: # Test reading and writing a USX Bible
         from USXXMLBible import USXXMLBible
         from USXFilenames import USXFilenames
         testData = (

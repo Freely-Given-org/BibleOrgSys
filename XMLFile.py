@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # XMLFile.py
-#   Last modified: 2013-06-24 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-20 by RJH (also update ProgVersion below)
 #
 # Module handling simple XML files
 #
@@ -184,7 +184,7 @@ def demo():
             print( xf )
     # end of doTest
 
-    if 0: # Test some OpenSong Bibles
+    if 1: # Test some OpenSong Bibles
         testFolder = "../../../../../Data/Work/Bibles//OpenSong Bibles/"
         single = ( "KJV.xmm", )
         good = ( "KJV.xmm", "AMP.xmm", "Chinese_SU.xmm", "Contemporary English Version.xmm", "ESV", "Italiano", "MKJV", \

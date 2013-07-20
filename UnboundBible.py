@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # UnboundBible.py
-#   Last modified: 2013-07-16 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-20 by RJH (also update ProgVersion below)
 #
 # Module handling Biola University "unbound" Bible files
 #
@@ -436,7 +436,7 @@ def demo():
             if os.path.isdir( somepath ): foundFolders.append( something )
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
-        if 0 and Globals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
+        if Globals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
             if Globals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
             parameters = [folderName for folderName in sorted(foundFolders)]
             with multiprocessing.Pool( processes=Globals.maxProcesses ) as pool: # start worker processes

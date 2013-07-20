@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # OpenSongXMLBible.py
-#   Last modified: 2013-06-24 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-20 by RJH (also update ProgVersion below)
 #
 # Module handling OpenSong XML Bibles
 #
@@ -34,7 +34,7 @@ Module reading and loading OpenSong XML Bibles:
 """
 
 ProgName = "OpenSong XML Bible format handler"
-ProgVersion = "0.21"
+ProgVersion = "0.22"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -325,7 +325,15 @@ class OpenSongXMLBible( Bible ):
                     logging.warning( "{} {}:{} has no text".format( BBB, chapterNumber, verseNumber ) )
                 if vText: # This is the main text of the verse (follows the verse milestone)
                     #print( "{} {}:{} '{}'".format( BBB, chapterNumber, verseNumber, vText ) )
-                    thisBook.appendLine( 'v', verseNumber + ' ' + vText )
+                    if '\n' in vText: # This is how they represent poety
+                        #print( "vText", repr(vText), repr(element.text) )
+                        for j, textBit in enumerate( vText.split( '\n' ) ):
+                            if j==0:
+                                thisBook.appendLine( 'q1', '' )
+                                thisBook.appendLine( 'v', verseNumber + ' ' + textBit )
+                            else: thisBook.appendLine( 'q1', textBit )
+                    else: # Just one verse line
+                        thisBook.appendLine( 'v', verseNumber + ' ' + vText )
             else: logging.error( "Expected to find '{}' but got '{}'".format( OpenSongXMLBible.verseTag, element.tag ) )
     # end of OpenSongXMLBible.__validateAndExtractChapter
 # end of OpenSongXMLBible class
@@ -362,7 +370,7 @@ def demo():
 
 
     if 1:
-        for j, testFilename in enumerate( bad ):
+        for j, testFilename in enumerate( allOfThem ):
             if Globals.verbosityLevel > 0: print( "\n\n{}: {}".format( j+1, testFilename ) )
             testFilepath = os.path.join( testFolder, testFilename )
 
@@ -386,7 +394,7 @@ def demo():
                     svk = VerseReferences.SimpleVerseKey( b, c, v )
                     #print( svk, ob.getVerseDataList( reference ) )
                     if Globals.verbosityLevel > 1: print( reference, svk.getShortText(), xb.getVerseText( svk ) )
-            if not xb: halt # if no books
+            if Globals.debugFlag and not xb: halt # if no books
 # end of demo
 
 if __name__ == '__main__':

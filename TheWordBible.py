@@ -532,7 +532,7 @@ def demo():
             if os.path.isdir( somepath ): foundFolders.append( something )
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
-        if 0 and Globals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
+        if Globals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
             if Globals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
             parameters = [filename for filename in sorted(foundFiles)]
             with multiprocessing.Pool( processes=Globals.maxProcesses ) as pool: # start worker processes

@@ -301,7 +301,7 @@ class USFMBible( Bible ):
         """
         if Globals.verbosityLevel > 1: print( _("USFMBible: Loading {} from {}...").format( self.name, self.sourceFolder ) )
 
-        if 0 and Globals.maxProcesses > 1: # Load all the books as quickly as possible
+        if Globals.maxProcesses > 1: # Load all the books as quickly as possible
             parameters = [BBB for BBB,filename in self.maximumPossibleFilenameTuples] # Can only pass a single parameter to map
             with multiprocessing.Pool( processes=Globals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( self.loadBookMP, parameters ) # have the pool do our loads

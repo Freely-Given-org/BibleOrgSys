@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # py
-#   Last modified: 2013-07-19 (also update ProgVersion below)
+#   Last modified: 2013-07-20 (also update ProgVersion below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -708,7 +708,7 @@ def addStandardOptionsAndProcess( parserObject ):
     #if commandLineOptions.log: setLogErrorsFlag()
 
     # Determine multiprocessing strategy
-    maxProcesses = multiprocessing.cpu_count()
+    if 0: maxProcesses = multiprocessing.cpu_count()
     #if maxProcesses > 1: maxProcesses -= 1 # Leave one CPU alone (normally)
     if maxProcesses > 1: maxProcesses = maxProcesses * 8 // 10 # Use 80% of them so other things keep working also
     if commandLineOptions.single: maxProcesses = 1

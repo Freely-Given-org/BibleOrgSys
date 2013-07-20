@@ -235,7 +235,10 @@ class InternalBibleEntryList:
     def __str__( self ):
         """
         Just display a simplified view of the list of entries.
+
+        Only prints the first maxPrinted lines.
         """
+        maxPrinted = 20
         result = "InternalBibleEntryList object:"
         if not self.data: result += "\n  Empty."
         else:
@@ -244,7 +247,7 @@ class InternalBibleEntryList:
                 if Globals.debugFlag: assert( isinstance( entry, InternalBibleEntry ) )
                 cleanAbbreviation = entry.cleanText if len(entry.cleanText)<100 else (entry.cleanText[:50]+'...'+entry.cleanText[-50:])
                 result += "\n  {}{}/ {} = {}".format( ' ' if j<9 and dataLen>=10 else '', j+1, entry.marker, repr(cleanAbbreviation) )
-                if j>=20 and dataLen>20:
+                if j>=maxPrinted and dataLen>maxPrinted:
                     result += "\n  ... ({} total entries)".format( dataLen )
                     break
         return result
@@ -370,21 +373,27 @@ class InternalBibleIndex:
         """
         Index the lines for faster reference.
 
-        The keys to the dictionary are (C,V,) 2-tuples.
-        The dictionary entries are (ix,lineCount,context) 3-tuples where
+        The keys to the index dictionary for each Bible book are (C,V,) 2-tuples.
+            Chapter 0 is the book introduction
+                Each line is a successive "verse" number (usually the id line is "verse" 0)
+            For each chapter, verse 0 is the chapter introduction.
+                Normally this contains only the 'c' entry.
+
+        The created dictionary entries are (ix,lineCount,context) 3-tuples where
             ix is the index into givenBibleEntries,
-            lineCount is the number of entries, and
+            lineCount is the number of entries for this verse, and
             context is a list containing contextual markers which still apply to this entry.
         """
         #print( "InternalBibleIndex.makeIndex( {} )".format( givenBibleEntries ) )
-        self.givenBibleEntries = givenBibleEntries # Keep a pointer to the original entries
-        #if self.bookReferenceCode=='PHM': print( self.givenBibleEntries[:20] ); halt
+        self.givenBibleEntries = givenBibleEntries # Keep a pointer to the original Bible entries
+        #if self.bookReferenceCode=='PHM':
+        #print( self.givenBibleEntries )
         self.indexData = {}
 
 
         def saveAnythingOutstanding():
             """
-            Save any outstanding index entries.
+            Save the outstanding index entry if any.
             """
             nonlocal saveCV, saveJ, lineCount, context
             if saveCV and saveJ is not None:
@@ -408,97 +417,133 @@ class InternalBibleIndex:
 
 
         if Globals.verbosityLevel > 3: print( "    " + _("Indexing {} {} entries...").format( len(self.givenBibleEntries), self.bookReferenceCode ) )
-        saveCV = saveJ = None
-        lineCount, context = 0, None # lineCount is the number of datalines pointed to by this index entry
-        C, V = '0', '0'
-        for j, entry in enumerate( self.givenBibleEntries):
-            #print( "  makeIndex", j, "saveCV =", saveCV, "saveJ =", saveJ, "this =", entry.getMarker(), entry.getCleanText()[:20] + ('' if len(entry.getCleanText())<20 else '...') )
-            if entry.getMarker() in ( 'p','q1','q2','q3','q4' ):
-                assert( not entry.getText() and not entry.getCleanText() and not entry.getExtras() )
-            if entry.getMarker() == 'c': # A new chapter always means that it's a clean new entry
-                saveAnythingOutstanding()
-                # Save anything before the first verse number as verse "zero"
-                C, V = entry.getCleanText(), '0'
-                assert( C != '0' )
-                saveCV, saveJ = (C,V,), j
-                lineCount += 1
-            elif entry.getMarker() == 'v':
-                assert( C != '0' ) # Should be in a chapter by now
-                # Go back and look what we passed that might actually belong with this verse
-                revertToJ = j
-                if revertToJ >= 1: # we have a processedLine to go back to
-                    aM,cT = self.givenBibleEntries[revertToJ-1].getMarker(), self.givenBibleEntries[revertToJ-1].getCleanText()
-                    if aM == 'c#':
-                        assert( cT ) # Should have a chapter number here
-                        revertToJ -= 1
-                        assert( lineCount > 0 )
-                        lineCount -= 1
-                        #print( "going to", revertToJ-1 )
-                        aM,cT = self.givenBibleEntries[revertToJ-1].getMarker(), self.givenBibleEntries[revertToJ-1].getCleanText()
-                    if revertToJ >= 1 and aM in ('p','q1','q2','q3',) and not cT: # These markers apply to the next line, i.e., to our current v line
-                        revertToJ -= 1
-                        assert( lineCount > 0 )
-                        lineCount -= 1
-                        aM,cT = self.givenBibleEntries[revertToJ-1].getMarker(), self.givenBibleEntries[revertToJ-1].getCleanText()
-                        while revertToJ >= 1 and aM in ('s1','s2','s3','r','p','q1','p~',):
-                            #assert( cT ) # Should have text (for a completed Bible at least)
-                            revertToJ -= 1
-                            assert( lineCount > 0 )
-                            lineCount -= 1
-                            if revertToJ==0: print( "InternalBibleIndex.makeIndex: Get out of here" ); break
-                            aM,cT = self.givenBibleEntries[revertToJ-1].getMarker(), self.givenBibleEntries[revertToJ-1].getCleanText()
-                    elif aM in ('s1','s2','s3','r','p','q1','p~',): # Shouldn't happen but just in case
-                        if Globals.debugFlag: print( "InternalBibleIndex.makeIndex: just in case", aM, self.bookReferenceCode, C, V )
-                        revertToJ = j - 1
-                        assert( lineCount > 0 )
-                        lineCount -= 1
-                saveAnythingOutstanding()
-                # Remove verse ranges, etc. and then save the verse number
-                V = entry.getCleanText()
-                digitV = ''
-                for char in V:
-                    if char.isdigit(): digitV += char
-                    else:
-                        if Globals.verbosityLevel > 3: print( "Ignored non-digits in verse for index: {} {}:{}".format( self.bookReferenceCode, C, V ) )
-                        break # ignore the rest
-                #assert( V != '0' or self.bookReferenceCode=='PSA' ) # Not really handled properly yet
-                saveCV, saveJ = (C,digitV,), revertToJ
-                lineCount += (j-revertToJ) + 1 # For the v
-            elif C == '0': # Still in the introduction
-                # Each line is considered a new "verse" entry in chapter "zero"
-                assert( saveCV is None and saveJ is None )
-                self.indexData[(C,V)] = InternalBibleIndexEntry( j, 1, context )
-                Vi = int( V )
-                assert( Vi == j )
-                V = str( Vi + 1 ) # Increment the verse number
-                lastJ = j
-                assert( lineCount == 0 )
-            else: # All the other lines don't cause a new index entry to be made
-                lineCount += 1
-            #if j > 10: break
-        saveAnythingOutstanding()
-
-        if 0:
+        if self.bookReferenceCode not in ('FRT','GLO','BAK',): # Assume it's a C/V book
+            saveCV = saveJ = None
+            lineCount, context = 0, None # lineCount is the number of datalines pointed to by this index entry
+            strC, strV = '0', '0'
             for j, entry in enumerate( self.givenBibleEntries):
-                print( j, entry.getMarker(), entry.getCleanText()[:60] + ('' if len(entry.getCleanText())<60 else '...') )
-                #if j>breakAt: break
-            def getKey( CVALX ):
-                CV, ALX = CVALX
-                C, V = CV
-                try: Ci = int(C)
-                except: Ci = 300
-                try: Vi = int(V)
-                except: Vi = 300
-                return Ci*1000 + Vi
-            for CV,ALX in sorted(self.indexData.items(), key=getKey): #lambda s: int(s[0][0])*1000+int(s[0][1])): # Sort by C*1000+V
-                C, V = CV
-                #A, L, X = ALX
-                print( "{}:{}={},{},{}".format( C, V, ALX.getEntryIndex(), ALX.getEntryCount(), ALX.getContext() ), end='  ' )
-            halt
-        self._indexedFlag = True
+                #print( "  makeIndex1", j, "saveCV =", saveCV, "saveJ =", saveJ, "this =", entry.getMarker(), entry.getCleanText()[:20] + ('' if len(entry.getCleanText())<20 else '...') )
+                marker = entry.getMarker()
+                if Globals.debugFlag and marker in ( 'p','q1','q2','q3','q4' ):
+                    assert( not entry.getText() and not entry.getCleanText() and not entry.getExtras() )
+                if marker == 'c': # A new chapter always means that it's a clean new index entry
+                    saveAnythingOutstanding()
+                    # Save anything before the first verse number as verse "zero"
+                    strC, strV = entry.getCleanText(), '0'
+                    assert( strC != '0' )
+                    saveCV, saveJ = (strC,strV,), j
+                    lineCount += 1
+                elif marker == 'v':
+                    assert( strC != '0' ) # Should be in a chapter by now
+                    # Go back and look what we passed that might actually belong with this verse
+                    revertToJ = j
+                    if revertToJ >= 1: # we have a processedLine to go back to
+                        aM,cT = self.givenBibleEntries[revertToJ-1].getMarker(), self.givenBibleEntries[revertToJ-1].getCleanText()
+                        if 1: # new code
+                            while revertToJ >= 1 and aM not in ('c','v', 'v~','p~'):
+                                # Anything else gets pulled down into this next verse
+                                #   especially p & q markers and section heading & references
+                                revertToJ -= 1
+                                assert( lineCount > 0 )
+                                lineCount -= 1
+                                if revertToJ==0: print( "InternalBibleIndex.makeIndex: Get out of here" ); break
+                                aM,cT = self.givenBibleEntries[revertToJ-1].getMarker(), self.givenBibleEntries[revertToJ-1].getCleanText()
+                        else: # old code
+                            if aM == 'c#':
+                                assert( cT ) # Should have a chapter number here
+                                revertToJ -= 1
+                                assert( lineCount > 0 )
+                                lineCount -= 1
+                                #print( "going to", revertToJ-1 )
+                                aM,cT = self.givenBibleEntries[revertToJ-1].getMarker(), self.givenBibleEntries[revertToJ-1].getCleanText()
+                            if revertToJ >= 1 and aM in ('p','q1','q2','q3',) and not cT: # These markers apply to the next line, i.e., to our current v line
+                                revertToJ -= 1
+                                assert( lineCount > 0 )
+                                lineCount -= 1
+                                aM,cT = self.givenBibleEntries[revertToJ-1].getMarker(), self.givenBibleEntries[revertToJ-1].getCleanText()
+                                while revertToJ >= 1 and aM not in ('c','v~','p~'): # was in ('s1','s2','s3','r','p','q1','p~',):
+                                    #assert( cT ) # Should have text (for a completed Bible at least)
+                                    revertToJ -= 1
+                                    assert( lineCount > 0 )
+                                    lineCount -= 1
+                                    if revertToJ==0: print( "InternalBibleIndex.makeIndex: Get out of here" ); break
+                                    aM,cT = self.givenBibleEntries[revertToJ-1].getMarker(), self.givenBibleEntries[revertToJ-1].getCleanText()
+                            elif aM not in ('c','v~','p~'): # was in ('s1','s2','s3','r','p','q1','p~',): # Shouldn't happen but just in case
+                                if Globals.debugFlag: print( "InternalBibleIndex.makeIndex: just in case", aM, self.bookReferenceCode, strC, strV )
+                                revertToJ = j - 1
+                                assert( lineCount > 0 )
+                                lineCount -= 1
+                    saveAnythingOutstanding() # with the adjusted lineCount
+                    # Remove verse ranges, etc. and then save the verse number
+                    strV = entry.getCleanText()
+                    digitV = ''
+                    for char in strV:
+                        if char.isdigit(): digitV += char
+                        else: # the first non-digit in the verse "number"
+                            if Globals.verbosityLevel > 3: print( "Ignored non-digits in verse for index: {} {}:{}".format( self.bookReferenceCode, strC, strV ) )
+                            break # ignore the rest
+                    #assert( strV != '0' or self.bookReferenceCode=='PSA' ) # Not really handled properly yet
+                    saveCV, saveJ = (strC,digitV,), revertToJ
+                    lineCount += (j-revertToJ) + 1 # For the v
+                elif strC == '0': # Still in the introduction
+                    # Each line is considered a new "verse" entry in chapter "zero"
+                    assert( saveCV is None and saveJ is None )
+                    self.indexData[(strC,strV)] = InternalBibleIndexEntry( j, 1, context )
+                    Vi = int( strV )
+                    assert( Vi == j )
+                    strV = str( Vi + 1 ) # Increment the verse number
+                    lastJ = j
+                    assert( lineCount == 0 )
+                else: # All the other lines don't cause a new index entry to be made
+                    lineCount += 1
+                #if j > 10: break
+            saveAnythingOutstanding()
+        else: # it's a front or back book (which may or may not have a c=1 line in it)
+            saveCV = saveJ = None
+            lineCount, context = 0, None # lineCount is the number of datalines pointed to by this index entry
+            strC, strV = '0', '0'
+            for j, entry in enumerate( self.givenBibleEntries):
+                #print( "  makeIndex2", j, "saveCV =", saveCV, "saveJ =", saveJ, "this =", entry.getMarker(), entry.getCleanText()[:20] + ('' if len(entry.getCleanText())<20 else '...') )
+                marker = entry.getMarker()
+                if Globals.debugFlag and marker in ( 'p','q1','q2','q3','q4' ):
+                    assert( not entry.getText() and not entry.getCleanText() and not entry.getExtras() )
+                if marker == 'c': # A new chapter always means that it's a clean new index entry
+                    saveAnythingOutstanding()
+                    # Save anything before the first verse number as verse "zero"
+                    strC, strV = entry.getCleanText(), '0'
+                    assert( strC != '0' )
+                    #saveCV, saveJ = (strC,strV,), j
+                    lineCount += 1
+                elif marker == 'v':
+                    assert( strC != '0' ) # Should be in a chapter by now
+                    saveAnythingOutstanding() # with the adjusted lineCount
+                    # Remove verse ranges, etc. and then save the verse number
+                    strV = entry.getCleanText()
+                    digitV = ''
+                    for char in strV:
+                        if char.isdigit(): digitV += char
+                        else: # the first non-digit in the verse "number"
+                            if Globals.verbosityLevel > 3: print( "Ignored non-digits in verse for index: {} {}:{}".format( self.bookReferenceCode, strC, strV ) )
+                            break # ignore the rest
+                    #assert( strV != '0' or self.bookReferenceCode=='PSA' ) # Not really handled properly yet
+                    saveCV, saveJ = (strC,digitV,), revertToJ
+                elif strC == '0': # Still in the introduction
+                    # Each line is considered a new "verse" entry in chapter "zero"
+                    assert( saveCV is None and saveJ is None )
+                    self.indexData[(strC,strV)] = InternalBibleIndexEntry( j, 1, context )
+                    Vi = int( strV )
+                    assert( Vi == j )
+                    strV = str( Vi + 1 ) # Increment the verse number
+                    lastJ = j
+                    assert( lineCount == 0 )
+                else: # All the other lines don't cause a new index entry to be made
+                    lineCount += 1
+            saveAnythingOutstanding()
 
-        if Globals.debugFlag: self.checkIndex()
+        self._indexedFlag = True
+        if Globals.strictCheckingFlag or Globals.debugFlag: self.checkIndex()
     # end of InternalBibleIndex.makeIndex
+
 
     def checkIndex( self ):
         """
@@ -508,12 +553,12 @@ class InternalBibleIndex:
         if Globals.verbosityLevel > 3: print( self )
 
         sortedIndex = sorted( self.indexData, key=lambda s: int(s[0])*1000+int(s[1]) )
-        for j, key in enumerate( sortedIndex ):
-            C, V = key
-            indexEntry = self.indexData[key]
-            entries, context = self.getEntries( key )
+        #for j, key in enumerate( sortedIndex ):
+            #C, V = key
+            #indexEntry = self.indexData[key]
+            #entries, context = self.getEntries( key )
             #print( "checkIndex display", j, key, indexEntry, entries )
-            if self.bookReferenceCode!='FRT' and j>30: break
+            #if self.bookReferenceCode!='FRT' and j>30: break
 
         for key in sortedIndex:
             C, V = key
@@ -521,13 +566,51 @@ class InternalBibleIndex:
             entries, context = self.getEntries( key )
             markers = []
             for entry in entries: markers.append( entry.getMarker() )
-            #print( "checkIndex line", key, indexEntry, entries, markers )
+            print( "InternalBibleIndex.checkIndex line", self.bookReferenceCode, key, indexEntry, entries, markers )
             #if self.bookReferenceCode!='FRT': halt
 
+            # Check the order of the markers
+            if C == '0': # the book introduction
+                pass
+            else: # not the book introduction
+                if V == '0': assert( 'c' in markers )
+                else: assert( 'v' in markers )
+                if 'p' in markers: assert( 'p~' in markers or 'v' in markers )
+                if 'q1' in markers or 'q2' in markers: assert( 'v' in markers or 'p~' in markers )
+
+                for j, marker in enumerate( markers ):
+                    previousMarker = None if j==0 else markers[j-1]
+                    nextMarker = None if j==len(markers)-1 else markers[j+1]
+
+                    if marker == 'c#': assert( nextMarker == 'v' )
+                    if marker == 'v' and markers[-1]!='v' and nextMarker != 'v~':
+                        logging.critical( "InternalBibleIndex.checkIndex: Probable encoding error in {} {}:{} {}".format( self.bookReferenceCode, C, V, entries ) )
+                        if Globals.debugFlag and debuggingThisModule: halt
+                    if marker in ('p','q1') and nextMarker not in ('v','p~','c#',):
+                        logging.critical( "InternalBibleIndex.checkIndex: Probable p or q1 encoding error in {} {}:{} {}".format( self.bookReferenceCode, C, V, entries ) )
+                        if Globals.debugFlag and debuggingThisModule: halt
+                    if marker in ('q2','q3',) and nextMarker not in ('v','p~',):
+                        logging.critical( "InternalBibleIndex.checkIndex: Probable q2 or q3 encoding error in {} {}:{} {}".format( self.bookReferenceCode, C, V, entries ) )
+                        if Globals.debugFlag and debuggingThisModule: halt
+
             # Now check them
-            if  C!='0' and V=='0':
-                print( self.bookReferenceCode, C, V, markers, entries )
-                assert( 's1' not in markers and 'r' not in markers and 'p' not in markers and 'q1' not in markers )
+            if C == '0': # the book introduction
+                pass
+            else: # not the book introduction
+                if  V=='0': # chapter introduction
+                    #print( self.bookReferenceCode, C, V, markers, entries )
+                    #newKey = (C, '1')
+                    #try:
+                        #iE = self.indexData[newKey]
+                        #iD, ct = self.getEntries( newKey )
+                    #except KeyError: pass
+                    #print( self
+                    #print( " ", newKey, iD, ct )
+                    if self.bookReferenceCode=='ACT' and C=='8':
+                        if 'p' in markers:
+                            logging.critical( "InternalBibleIndex.checkIndex: Check that text in Acts 8:0 gets processed correctly!" )
+                        else:
+                            assert( 's1' not in markers and 'r' not in markers and 'p' not in markers and 'q1' not in markers )
 
             # Check that C,V entries match
             for entry in entries:
@@ -541,7 +624,7 @@ class InternalBibleIndex:
                         if '-' not in cleanText and ',' not in cleanText: # Handle verse ranges
                             logging.critical( "InternalBibleIndex.checkIndex: wrong {} {} verse number '{}' expected '{}'".format( self.bookReferenceCode, C, cleanText, V ) )
                             #if Globals.debugFlag: halt
-        #halt
+        #if self.bookReferenceCode=='FRT': halt
     # end if InternalBibleIndex.checkIndex
 # end of class InternalBibleIndex
 

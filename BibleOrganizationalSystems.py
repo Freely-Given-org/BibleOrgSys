@@ -390,7 +390,7 @@ def demo():
     """
     if Globals.verbosityLevel > 1: print( ProgNameVersion )
 
-    if 0: # Demo the BibleOrganizationalSystems object
+    if 1: # Demo the BibleOrganizationalSystems object
         print()
         boss = BibleOrganizationalSystems().loadData() # Doesn't reload the XML unnecessarily :)
         print( boss ) # Just print a summary
