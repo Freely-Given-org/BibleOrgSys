@@ -27,13 +27,15 @@
 """
 
 ProgName = "XML file handler"
-ProgVersion = "0.01"
+ProgVersion = "0.02"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+
+debuggingThisModule = False
 
 
 import logging, os, sys, subprocess
 from gettext import gettext as _
-from xml.etree.ElementTree import ElementTree
+from xml.etree.ElementTree import ElementTree, ParseError
 import urllib.request
 
 import Globals
@@ -74,10 +76,12 @@ class XMLFile():
         if self.schemaURL:
             try:
                 resp = urllib.request.urlopen( self.schemaURL )
+            except urllib.error.URLError:
+                logging.error( "XMLFile: Schema file '{}' is not downloadable".format( self.schemaURL ) )
+                resp = None
+            if resp is not None:
                 data = resp.read() # a bytes object
                 text = data.decode('utf-8') # a string
-            except:
-                print( "XMLFile: Schema file '{}' is not downloadable".format( self.schemaURL ) )
     # end of XMLFile.__init__
 
 
@@ -113,9 +117,13 @@ class XMLFile():
             assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
             if Globals.verbosityLevel > 2: print( "  ElementTree loaded the xml file {}.".format( self.sourceFilepath ) )
             self.validatedByLoading = True
-        except:
+        except FileNotFoundError:
             errorString = sys.exc_info()[1]
-            if Globals.verbosityLevel > 2: print( "  ElementTree failed loading the xml file {}: '{}'.".format( self.sourceFilepath, errorString ) )
+            logging.error( "validateByLoading: Unable to open {}".format( self.sourceFilepath ) )
+            self.validatedByLoading = False
+        except ParseError:
+            errorString = sys.exc_info()[1]
+            logging.error( "  ElementTree failed loading the xml file {}: '{}'.".format( self.sourceFilepath, errorString ) )
             self.validatedByLoading = False
 
         return self.validatedByLoading, errorString
@@ -207,6 +215,7 @@ def demo():
         if Globals.verbosityLevel > 1: print( "\n\nDemonstrating the XMLFile class with OSIS Bibles (web schema)..." )
         doTest( testFolder, (testNames[0],), schema=osisSchemaHTTP )
 # end of demo
+
 
 if __name__ == '__main__':
     # Configure basic set-up

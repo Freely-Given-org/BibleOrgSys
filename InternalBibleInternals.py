@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Bible internals handler"
-ProgVersion = "0.07"
+ProgVersion = "0.08"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -246,7 +246,7 @@ class InternalBibleEntryList:
             for j, entry in enumerate( self.data ):
                 if Globals.debugFlag: assert( isinstance( entry, InternalBibleEntry ) )
                 cleanAbbreviation = entry.cleanText if len(entry.cleanText)<100 else (entry.cleanText[:50]+'...'+entry.cleanText[-50:])
-                result += "\n  {}{}/ {} = {}".format( ' ' if j<9 and dataLen>=10 else '', j+1, entry.marker, repr(cleanAbbreviation) )
+                result += "\n  {}{}/ {} = {}{}".format( ' ' if j<9 and dataLen>=10 else '', j+1, entry.marker, repr(cleanAbbreviation), " + extras" if entry.extras else '' )
                 if j>=maxPrinted and dataLen>maxPrinted:
                     result += "\n  ... ({} total entries)".format( dataLen )
                     break
@@ -565,8 +565,15 @@ class InternalBibleIndex:
             indexEntry = self.indexData[key]
             entries, context = self.getEntries( key )
             markers = []
-            for entry in entries: markers.append( entry.getMarker() )
-            print( "InternalBibleIndex.checkIndex line", self.bookReferenceCode, key, indexEntry, entries, markers )
+            anyText = anyExtras = False
+            for entry in entries:
+                marker = entry.getMarker()
+                markers.append( marker )
+                if marker not in ('c','v'): # These always have to have text
+                    if entry.getCleanText(): anyText = True
+                    if entry.getExtras(): anyExtras = True
+
+            #print( "InternalBibleIndex.checkIndex line", self.bookReferenceCode, key, indexEntry, entries, markers )
             #if self.bookReferenceCode!='FRT': halt
 
             # Check the order of the markers
@@ -586,12 +593,13 @@ class InternalBibleIndex:
                     if marker == 'v' and markers[-1]!='v' and nextMarker != 'v~':
                         logging.critical( "InternalBibleIndex.checkIndex: Probable encoding error in {} {}:{} {}".format( self.bookReferenceCode, C, V, entries ) )
                         if Globals.debugFlag and debuggingThisModule: halt
-                    if marker in ('p','q1') and nextMarker not in ('v','p~','c#',):
-                        logging.critical( "InternalBibleIndex.checkIndex: Probable p or q1 encoding error in {} {}:{} {}".format( self.bookReferenceCode, C, V, entries ) )
-                        if Globals.debugFlag and debuggingThisModule: halt
-                    if marker in ('q2','q3',) and nextMarker not in ('v','p~',):
-                        logging.critical( "InternalBibleIndex.checkIndex: Probable q2 or q3 encoding error in {} {}:{} {}".format( self.bookReferenceCode, C, V, entries ) )
-                        if Globals.debugFlag and debuggingThisModule: halt
+                    if anyText or anyExtras: # Mustn't be a blank (unfinished) verse
+                        if marker in ('p','q1') and nextMarker not in ('v','p~','c#',):
+                            logging.critical( "InternalBibleIndex.checkIndex: Probable p or q1 encoding error in {} {}:{} {}".format( self.bookReferenceCode, C, V, entries ) )
+                            if Globals.debugFlag and debuggingThisModule: halt
+                        if marker in ('q2','q3',) and nextMarker not in ('v','p~',):
+                                logging.critical( "InternalBibleIndex.checkIndex: Probable q2 or q3 encoding error in {} {}:{} {}".format( self.bookReferenceCode, C, V, entries ) )
+                                if Globals.debugFlag and debuggingThisModule: halt
 
             # Now check them
             if C == '0': # the book introduction
@@ -645,6 +653,7 @@ def demo():
     #IBB.sourceFilepath = "Nowhere"
     #if Globals.verbosityLevel > 0: print( IBB )
 # end of demo
+
 
 if __name__ == '__main__':
     # Configure basic set-up

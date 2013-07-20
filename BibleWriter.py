@@ -49,7 +49,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.28"
+ProgVersion = "0.29"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -2711,7 +2711,7 @@ class BibleWriter( InternalBible ):
             C = V = ''
             #for marker,originalMarker,text,cleanText,extras in bkData._processedLines: # Process internal Bible lines
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
-                marker, text, cleanText = verseDataEntry.getMarker(), verseDataEntry.getFullText(), verseDataEntry.getCleanText()
+                marker, text, cleanText, extras = verseDataEntry.getMarker(), verseDataEntry.getFullText(), verseDataEntry.getCleanText(), verseDataEntry.getExtras()
                 #if BBB=='MRK': print( "writeBook", marker, cleanText )
                 #print( "toHTML5.writeBook", BBB, C, V, marker, cleanText )
                 if marker in oftenIgnoredIntroMarkers: pass # Just ignore these lines
@@ -2803,6 +2803,7 @@ class BibleWriter( InternalBible ):
                         writerObject.writeLineOpen( 'p', ('class','unknownParagraph') ); haveOpenParagraph = True
                     if cleanText: writerObject.writeLineText( cleanText )
                 else: unhandledMarkers.add( marker )
+                if extras: logging.warning( "toHTML5: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
             if haveOpenList: writerObject.writeLineClose( 'p' ); haveOpenList = False
             if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
             if haveOpenSection: writerObject.writeLineClose( 'section' ); haveOpenSection = False
