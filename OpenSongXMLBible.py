@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # OpenSongXMLBible.py
-#   Last modified: 2013-07-20 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-24 by RJH (also update ProgVersion below)
 #
 # Module handling OpenSong XML Bibles
 #
@@ -34,7 +34,7 @@ Module reading and loading OpenSong XML Bibles:
 """
 
 ProgName = "OpenSong XML Bible format handler"
-ProgVersion = "0.22"
+ProgVersion = "0.23"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -303,6 +303,7 @@ class OpenSongXMLBible( Bible ):
             else: logging.warning( "Unprocessed '{}' attribute ({}) in chapter element".format( attrib, value ) )
         if chapterNumber:
             #print( BBB, 'c', chapterNumber )
+            chapterNumber = chapterNumber.replace( 'of Solomon ', '' ) # Fix a mistake in the Chinese_SU module
             thisBook.appendLine( 'c', chapterNumber )
         else: logging.error( "Missing 'n' attribute in chapter element for BBB".format( BBB ) )
 
@@ -371,7 +372,7 @@ def demo():
 
     if 1:
         for j, testFilename in enumerate( allOfThem ):
-            if Globals.verbosityLevel > 0: print( "\n\n{}: {}".format( j+1, testFilename ) )
+            if Globals.verbosityLevel > 0: print( "\n\nOpnSng B{}/ {}".format( j+1, testFilename ) )
             testFilepath = os.path.join( testFolder, testFilename )
 
             # Demonstrate the OpenSong XML Bible class

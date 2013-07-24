@@ -763,10 +763,8 @@ class InternalBible:
         else: BBB = ref.getBBB() # Assume it's a SimpleVerseKeyObject
         #print( " ", BBB in self.books )
         if BBB not in self.books and BBB not in self.triedLoadingBook:
-            if Globals.debugFlag: self.loadBook( BBB ) # Some types of Bibles have this function (so an entire Bible doesn't have to be loaded at startup)
-            else:
-                try: self.loadBook( BBB ) # Some types of Bibles have this function (so an entire Bible doesn't have to be loaded at startup)
-                except: logging.info( "Failed to load Bible book: {}".format( BBB ) ) # Ignore errors
+            try: self.loadBook( BBB ) # Some types of Bibles have this function (so an entire Bible doesn't have to be loaded at startup)
+            except AttributeError: logging.info( "Unable to load individual Bible book: {}".format( BBB ) ) # Ignore errors
             self.triedLoadingBook[BBB] = True
         if BBB in self.books: return self.books[BBB].getCVRef( ref )
         #else: print( "InternalBible {} doesn't have {}".format( self.name, BBB ) ); halt

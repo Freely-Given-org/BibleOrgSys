@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-07-20 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-24 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -49,7 +49,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.29"
+ProgVersion = "0.33"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -66,285 +66,14 @@ import Globals, ControlFiles
 from InternalBible import InternalBible
 from BibleOrganizationalSystems import BibleOrganizationalSystem
 from BibleReferences import BibleReferenceList
-from USFMMarkers import removeUSFMCharacterField, replaceUSFMCharacterFields
+from USFMMarkers import oftenIgnoredIntroMarkers #removeUSFMCharacterField, replaceUSFMCharacterFields
 from MLWriter import MLWriter
 
 
 defaultControlFolder = "ControlFiles/" # Relative to the current working directory
+allCharMarkers = Globals.USFMMarkers.getCharacterMarkersList( expandNumberableMarkers=True )
+#print( allCharMarkers ); halt
 
-
-oftenIgnoredIntroMarkers = ('id','ide','sts','rem','h1','toc1','toc2','toc3',)
-
-
-# These next tables and three functions are used both by theWord and MySword exports
-# These are the verses per book in the traditional KJV versification (but only for the 66 books)
-theWordOTBookLines = ( 1533, 1213, 859, 1288, 959, 658, 618, 85, 810, 695, 816, 719, 942, 822, 280, 406, 167, 1070, 2461,
-                        915, 222, 117, 1292, 1364, 154, 1273, 357, 197, 73, 146, 21, 48, 105, 47, 56, 53, 38, 211, 55 )
-assert( len( theWordOTBookLines ) == 39 )
-total=0
-for count in theWordOTBookLines: total += count
-assert( total == 23145 )
-theWordNTBookLines = ( 1071, 678, 1151, 879, 1007, 433, 437, 257, 149, 155, 104, 95, 89, 47, 113, 83, 46, 25, 303, 108, 105, 61, 105, 13, 14, 25, 404 )
-assert( len( theWordNTBookLines ) == 27 )
-total=0
-for count in theWordNTBookLines: total += count
-assert( total == 7957 )
-theWordBookLines = theWordOTBookLines + theWordNTBookLines
-assert( len( theWordBookLines ) == 66 )
-total=0
-for count in theWordBookLines: total += count
-assert( total == 31102 )
-
-theWordIgnoredIntroMarkers = oftenIgnoredIntroMarkers + (
-    'imt1','imt2','imt3','is1','is2','is3',
-    'ip','ipi','im','imi','ipq','imq','ir','iq1','iq2','iq3','ib','ili',
-    'iot','io1','io2','io3','ir','iex','iqt','imte','ie','mte',)
-
-def theWordHandleIntroduction( BBB, bookData, ourGlobals ):
-    """
-    Go through the book introduction (if any) and extract main titles for theWord export.
-
-    Parameters are BBB (for error messages),
-        the actual book data, and
-        ourGlobals dictionary for persistent variables.
-
-    Returns the information in a composed line string.
-    """
-    C = V = 0
-    composedLine = ''
-    while True:
-        #print( "theWordHandleIntroduction", BBB, C, V )
-        try: result = bookData.getCVRef( (BBB,'0',str(V),) ) # Currently this only gets one line
-        except KeyError: break # Reached the end of the introduction
-        verseData, context = result
-        assert( len(verseData ) == 1 ) # in the introductory section
-        marker, text = verseData[0].getMarker(), verseData[0].getFullText()
-        if marker not in theWordIgnoredIntroMarkers:
-            if marker=='mt1': composedLine += '<TS1>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-            elif marker=='mt2': composedLine += '<TS2>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-            elif marker=='mt3': composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-            elif marker=='ms1': composedLine += '<TS2>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-            elif marker=='ms2': composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-            elif marker=='mr': composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-            else:
-                logging.warning( "theWordHandleIntroduction: doesn't handle {} '{}' yet".format( BBB, marker ) )
-                if Globals.debugFlag and debuggingThisModule:
-                    print( "theWordHandleIntroduction: doesn't handle {} '{}' yet".format( BBB, marker ) )
-                    halt
-                ourGlobals['unhandledMarkers'].add( marker + ' (in intro)' )
-        V += 1 # Step to the next introductory section "verse"
-
-    # Check what's left at the end
-    if '\\' in composedLine:
-        logging.warning( "theWordHandleIntroduction: Doesn't handle formatted line yet: {} '{}'".format( BBB, composedLine ) )
-        if Globals.debugFlag and debuggingThisModule:
-            print( "theWordHandleIntroduction: Doesn't handle formatted line yet: {} '{}'".format( BBB, composedLine ) )
-            halt
-    return composedLine
-# end of theWordHandleIntroduction
-
-
-def theWordAdjustLine( BBB, C, V, originalLine ):
-    """
-    Handle pseudo-USFM markers within the line (cross-references, footnotes, and character formatting).
-
-    Parameters are the Scripture reference (for error messsages)
-        and the line (string) containing the backslash codes.
-
-    Returns a string with the backslash codes replaced by theWord formatting codes.
-    """
-    line = originalLine # Keep a copy of the original line for error messages
-
-    if '\\x' in line: # Remove cross-references completely (why???)
-        #line = line.replace('\\x ','<RX>').replace('\\x*','<Rx>')
-        line = removeUSFMCharacterField( 'x', line, closed=True ).lstrip() # Remove superfluous spaces
-
-    if '\\f' in line: # Handle footnotes
-        for marker in ( 'fr', 'fm', ): # simply remove these whole field
-            line = removeUSFMCharacterField( marker, line, closed=None )
-        for marker in ( 'fq', 'fqa', 'fl', 'fk', ): # italicise these ones
-            while '\\'+marker+' ' in line:
-                #print( BBB, C, V, marker, line.count('\\'+marker+' '), line )
-                #print( "was", "'"+line+"'" )
-                ix = line.find( '\\'+marker+' ' )
-                assert( ix != -1 )
-                ixEnd = line.find( '\\', ix+len(marker)+2 )
-                if ixEnd == -1: # no following marker so assume field stops at the end of the line
-                    line = line.replace( '\\'+marker+' ', '<i>' ) + '</i>'
-                elif line[ixEnd:].startswith( '\\'+marker+'*' ): # replace the end marker also
-                    line = line.replace( '\\'+marker+' ', '<i>' ).replace( '\\'+marker+'*', '</i>' )
-                else: # leave the next marker in place
-                    line = line[:ixEnd].replace( '\\'+marker+' ', '<i>' ) + '</i>' + line[ixEnd:]
-        for marker in ( 'ft', ): # simply remove these markers (but leave behind the text field)
-            line = line.replace( '\\'+marker+' ', '' ).replace( '\\'+marker+'*', '' )
-        #for caller in '+*abcdefghijklmnopqrstuvwxyz': line.replace('\\f '+caller+' ','<RF>') # Handle single-character callers
-        line = re.sub( r'(\\f [a-z+*]{1,3} )', '<RF>', line ) # Handle one to three character callers
-        line = line.replace('\\f ','<RF>').replace('\\f*','<Rf>') # Must be after the italicisation
-        #if '\\f' in originalLine:
-            #print( "o", originalLine )
-            #print( "n", line )
-            #halt
-
-    if '\\' in line: # Handle character formatting fields
-        line = removeUSFMCharacterField( 'fig', line, closed=True ) # Remove figures
-        replacements = (
-            ( ('add',), '<FI>','<Fi>' ),
-            ( ('qt',), '<FO>','<Fo>' ),
-            ( ('wj',), '<FR>','<Fr>' ),
-            ( ('bdit',), '<b><i>','</i></b>' ),
-            ( ('bd','em','k',), '<b>','</b>' ),
-            ( ('it','rq','bk','dc','qs','sig','sls','tl',), '<i>','</i>' ),
-            ( ('nd','sc',), '<font size=-1>','</font>' ),
-            )
-        line = replaceUSFMCharacterFields( replacements, line ) # This function also handles USFM 2.4 nested character markers
-        if '\\nd' not in originalLine and '\\+nd' not in originalLine:
-            line = line.replace('LORD', '<font size=-1>LORD</font>')
-            #line = line.replace('\\nd ','<font size=-1>',).replace('\\nd*','</font>').replace('\\+nd ','<font size=-1>',).replace('\\+nd*','</font>')
-        #else:
-            #line = line.replace('LORD', '<font size=-1>LORD</font>')
-        #line = line.replace('\\add ','<FI>').replace('\\add*','<Fi>').replace('\\+add ','<FI>').replace('\\+add*','<Fi>')
-        #line = line.replace('\\qt ','<FO>').replace('\\qt*','<Fo>').replace('\\+qt ','<FO>').replace('\\+qt*','<Fo>')
-        #line = line.replace('\\wj ','<FR>').replace('\\wj*','<Fr>').replace('\\+wj ','<FR>').replace('\\+wj*','<Fr>')
-
-    #if '\\' in line: # Output simple HTML tags (with no semantic info)
-        #line = line.replace('\\bdit ','<b><i>').replace('\\bdit*','</i></b>').replace('\\+bdit ','<b><i>').replace('\\+bdit*','</i></b>')
-        #for marker in ( 'it', 'rq', 'bk', 'dc', 'qs', 'sig', 'sls', 'tl', ): # All these markers are just italicised
-            #line = line.replace('\\'+marker+' ','<i>').replace('\\'+marker+'*','</i>').replace('\\+'+marker+' ','<i>').replace('\\+'+marker+'*','</i>')
-        #for marker in ( 'bd', 'em', 'k', ): # All these markers are just bolded
-            #line = line.replace('\\'+marker+' ','<b>').replace('\\'+marker+'*','</b>').replace('\\+'+marker+' ','<b>').replace('\\+'+marker+'*','</b>')
-        #line = line.replace('\\sc ','<font size=-1>',).replace('\\sc*','</font>').replace('\\+sc ','<font size=-1>',).replace('\\+sc*','</font>')
-
-    # Check what's left at the end
-    if '\\' in line:
-        logging.warning( "theWordadjustLine: Doesn't handle formatted line yet: {} {}:{} '{}'".format( BBB, C, V, line ) )
-        if Globals.debugFlag and debuggingThisModule:
-            print( "theWordadjustLine: Doesn't handle formatted line yet: {} {}:{} '{}'".format( BBB, C, V, line ) )
-            halt
-    return line
-# end of theWordAdjustLine
-
-
-def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
-    """
-    Composes a single line representing a verse.
-
-    Parameters are the Scripture reference (for error messages),
-        the verseData (a list of InternalBibleEntries: pseudo-USFM markers and their contents),
-        and a ourGlobals dictionary for holding persistent variables (between calls).
-
-    This function handles the paragraph/new-line markers;
-        theWordAdjustLine (above) is called to handle internal/character markers.
-
-    Returns the composed line.
-    """
-    def resetMargins( setKey=None ):
-        """
-        Reset all of our persistent margin variables.
-
-        If a key name is given, just set that one to True.
-        """
-        nonlocal ourGlobals
-        ourGlobals['pi1'] = ourGlobals['pi2'] = ourGlobals['pi3'] = ourGlobals['pi4'] = ourGlobals['pi5'] = ourGlobals['pi6'] = ourGlobals['pi7'] = False
-        if setKey: ourGlobals[setKey] = True
-    # end of resetMargins
-
-    #print( "theWordComposeVerseLine( {} {}:{} {} {}".format( BBB, C, V, verseData, ourGlobals ) )
-    composedLine = ourGlobals['line'] # We might already have some book headings to precede the text for this verse
-    ourGlobals['line'] = '' # We've used them so we don't need them any more
-    resetMargins()
-
-    vCount = 0
-    for verseDataEntry in verseData:
-        marker, text = verseDataEntry.getMarker(), verseDataEntry.getFullText()
-        if marker in ('c','c#','cl','cp','rem',): continue  # ignore all of these for this
-
-        if marker == 'v': # handle versification differences here
-            vCount += 1
-            if vCount == 1: # Handle verse bridges
-                if text != str(V):
-                    composedLine += '<sup>('+text+')</sup> ' # Put the additional verse number into the text in parenthesis
-            elif vCount > 1: # We have an additional verse number
-                assert( text != str(V) )
-                composedLine += ' <sup>('+text+')</sup>' # Put the additional verse number into the text in parenthesis
-            continue
-
-        #print( "theWordComposeVerseLine:", BBB, C, V, marker, text )
-        if Globals.debugFlag: assert( marker not in theWordIgnoredIntroMarkers ) # these markers shouldn't occur in verses
-
-        if marker == 's1':
-            if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
-                ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '<CM>' # append the new paragraph marker to the previous line
-            composedLine += '<TS1>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-        elif marker == 's2': composedLine += '<TS2>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-        elif marker in ( 's3', 'sr', 'd', ): composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-        elif marker in ( 'qa', 'r', ):
-            if marker=='r' and text and text[0]!='(' and text[-1]!=')': # Put parenthesis around this if not already there
-                text = '(' + text + ')'
-            composedLine += '<TS3><i>'+theWordAdjustLine(BBB,C,V,text)+'</i><Ts>'
-        elif marker in ( 'm', ):
-            if not text:
-                if ourGlobals['pi1'] or ourGlobals['pi2'] or ourGlobals['pi3'] or ourGlobals['pi4'] or ourGlobals['pi5'] or ourGlobals['pi6'] or ourGlobals['pi7']:
-                    composedLine += '<CL>'
-                else: composedLine += '<CM>'
-            else: # there is text
-                composedLine += '<CL>'+theWordAdjustLine(BBB,C,V,text)
-        elif marker in ( 'p', 'b', ):
-            if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
-                ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '<CM>' # append the new paragraph marker to the previous line
-            composedLine += theWordAdjustLine(BBB,C,V,text)
-            resetMargins()
-        elif marker in ( 'pi1', ): resetMargins('pi1'); composedLine += '<CM><PI>'+theWordAdjustLine(BBB,C,V,text)
-        elif marker in ( 'pi2', ): resetMargins('pi2'); composedLine += '<CM><PI2>'+theWordAdjustLine(BBB,C,V,text)
-        elif marker in ( 'pi3', 'pmc', ): resetMargins('pi3'); composedLine += '<CM><PI3>'+theWordAdjustLine(BBB,C,V,text)
-        elif marker in ( 'pi4', ): resetMargins('pi4'); composedLine += '<CM><PI4>'+theWordAdjustLine(BBB,C,V,text)
-        elif marker in ( 'pc', ): resetMargins('pi5'); composedLine += '<CM><PI5>'+theWordAdjustLine(BBB,C,V,text)
-        elif marker in ( 'pr', 'pmr', 'cls', ): resetMargins('pi6'); composedLine += '<CM><PI6>'+theWordAdjustLine(BBB,C,V,text) # Originally right-justified
-        elif marker in ( 'b', 'mi', 'pm', 'pmo', ): resetMargins('pi7'); composedLine += '<CM><PI7>'+theWordAdjustLine(BBB,C,V,text)
-        elif marker in ( 'q1', 'qm1', ):
-            if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
-                ourGlobals['lastLine'] += '<CI>' # append the new quotation paragraph marker to the previous line
-            else: composedLine += '<CI>'
-            if not ourGlobals['pi1']: composedLine += '<PI>'
-            resetMargins('pi1')
-            assert( not text )
-            #composedLine += theWordAdjustLine(BBB,C,V,text)
-        elif marker in ( 'q2', 'qm2', ): composedLine += '<CI><PI2>'+theWordAdjustLine(BBB,C,V,text)
-        elif marker in ( 'q3', 'qm3', ): composedLine += '<CI><PI3>'+theWordAdjustLine(BBB,C,V,text)
-        elif marker in ( 'q4', 'qm4', ): composedLine += '<CI><PI4>'+theWordAdjustLine(BBB,C,V,text)
-        elif marker == 'li1': resetMargins('pi1'); composedLine += '<PI>• '+theWordAdjustLine(BBB,C,V,text)
-        elif marker == 'li2': resetMargins('pi2'); composedLine += '<PI2>• '+theWordAdjustLine(BBB,C,V,text)
-        elif marker == 'li3': resetMargins('pi3'); composedLine += '<PI3>• '+theWordAdjustLine(BBB,C,V,text)
-        elif marker == 'li4': resetMargins('pi4'); composedLine += '<PI4>• '+theWordAdjustLine(BBB,C,V,text)
-        elif marker in ( 'cd', 'sp', ): composedLine += '<i>'+theWordAdjustLine(BBB,C,V,text)+'</i>'
-        elif marker in ( 'v~', 'p~', ):
-            #if ourGlobals['pi1']: composedLine += '<PI>'
-            #elif ourGlobals['pi2']: composedLine += '<PI2>'
-            #elif ourGlobals['pi3']: composedLine += '<PI3>'
-            #elif ourGlobals['pi4']: composedLine += '<PI4>'
-            #elif ourGlobals['pi5']: composedLine += '<PI5>'
-            #elif ourGlobals['pi6']: composedLine += '<PI6>'
-            #elif ourGlobals['pi7']: composedLine += '<PI7>'
-            composedLine += theWordAdjustLine(BBB,C,V, text )
-        else:
-            logging.warning( "theWordComposeVerseLine: doesn't handle '{}' yet".format( marker ) )
-            if Globals.debugFlag and debuggingThisModule:
-                print( "theWordComposeVerseLine: doesn't handle '{}' yet".format( marker ) )
-                halt
-            ourGlobals['unhandledMarkers'].add( marker )
-
-    # Final clean-up
-    composedLine = composedLine.replace( '<CM><CI>', '<CM>' ) # paragraph mark not needed when following a title close marker
-    while '  ' in composedLine: # remove double spaces
-        composedLine = composedLine.replace( '  ', ' ' )
-
-    # Check what's left at the end
-    if '\\' in composedLine:
-        logging.warning( "theWordComposeVerseLine: Doesn't handle formatted line yet: {} {}:{} '{}'".format( BBB, C, V, composedLine ) )
-        if Globals.debugFlag and debuggingThisModule:
-            print( "theWordComposeVerseLine: Doesn't handle formatted line yet: {} {}:{} '{}'".format( BBB, C, V, composedLine ) )
-            halt
-    return composedLine.rstrip()
-# end of theWordComposeVerseLine
 
 
 
@@ -415,9 +144,6 @@ class BibleWriter( InternalBible ):
         if not outputFolder: outputFolder = "OutputFiles/BOS_PseudoUSFM_Export/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
 
-        allCharMarkers = Globals.USFMMarkers.getCharacterMarkersList( expandNumberableMarkers=True )
-
-
         # Write the raw and pseudo-USFM files
         for BBB,bookObject in self.books.items():
             try: rawUSFMData = bookObject._rawLines
@@ -464,9 +190,6 @@ class BibleWriter( InternalBible ):
         #if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_MediaWiki_controls.txt", controlDict )
         #assert( controlDict and isinstance( controlDict, dict ) )
 
-        allCharMarkers = Globals.USFMMarkers.getCharacterMarkersList( expandNumberableMarkers=True )
-
-
         # Adjust the extracted outputs
         for BBB,bookObject in self.books.items():
             pseudoUSFMData = bookObject._processedLines
@@ -477,7 +200,6 @@ class BibleWriter( InternalBible ):
             USFM = ""
             inField = None
             if Globals.verbosityLevel > 2: print( "  " + _("Adjusting USFM output..." ) )
-            #for pseudoMarker,originalMarker,text,cleanText,extras in pseudoUSFMData:
             for verseDataEntry in pseudoUSFMData:
                 pseudoMarker, value = verseDataEntry.getMarker(), verseDataEntry.getFullText()
                 if (not USFM) and pseudoMarker!='id': # We need to create an initial id line
@@ -687,7 +409,6 @@ class BibleWriter( InternalBible ):
             bookName = None
             verseText = '' # Do we really need this?
             #chapterNumberString = None
-            #for marker,originalMarker,text,cleanText,extras in bkData._processedLines: # Process internal Bible data lines
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getText(), verseDataEntry.getExtras()
                 #print( "toMediaWiki:writeBook", BBB, bookRef, bookName, marker, text, extras )
@@ -827,7 +548,6 @@ class BibleWriter( InternalBible ):
                 logging.error( "toZefania: Can't write {} Zefania book because no OSIS code available".format( BBB ) ); return
             writerObject.writeLineOpen( 'BIBLEBOOK', [('bnumber',Globals.BibleBooksCodes.getReferenceNumber(BBB)), ('bname',Globals.BibleBooksCodes.getEnglishName_NR(BBB)), ('bsname',OSISAbbrev)] )
             haveOpenChapter = False
-            #for marker,originalMarker,text,cleanText,extras in bkData._processedLines: # Process internal Bible data lines
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getFullText(), verseDataEntry.getExtras()
                 if marker == 'c':
@@ -911,8 +631,6 @@ class BibleWriter( InternalBible ):
         if Globals.debugFlag: assert( controlDict and isinstance( controlDict, dict ) )
 
         unhandledMarkers = set()
-        allCharMarkers = Globals.USFMMarkers.getCharacterMarkersList( expandNumberableMarkers=True )
-        #print( allCharMarkers ); halt
 
         def writeBook( BBB, bkData ):
             """ Writes a book to the USX XML writerObject. """
@@ -923,7 +641,7 @@ class BibleWriter( InternalBible ):
                 Tries to find pairs of markers and replaces them with html char segments.
                 """
                 if '\\' not in originalText: return originalText
-                if Globals.debugFlag and debuggingThisModule: print( "toUSXXML:hITM4USX:", BBB, c, v, marker, "'"+originalText+"'" )
+                if Globals.debugFlag and debuggingThisModule: print( "toUSXXML:hITM4USX:", BBB, C, V, marker, "'"+originalText+"'" )
                 markerList = sorted( Globals.USFMMarkers.getMarkerListFromText( originalText ),
                                             key=lambda s: -len(s[4])) # Sort by longest characterContext first (maximum nesting)
                 for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check for internal markers
@@ -939,13 +657,13 @@ class BibleWriter( InternalBible ):
                     if fullCharMarker in adjText:
                         if haveOpenChar:
                             adjText = adjText.replace( 'CLOSED_BIT', ' closed="false"' ) # Fix up closed bit since it wasn't closed
-                            logging.info( "toUSXXML: USX export had to close automatically in {} {}:{} {}:'{}' now '{}'".format( BBB, c, v, marker, originalText, adjText ) ) # The last marker presumably only had optional closing (or else we just messed up nesting markers)
+                            logging.info( "toUSXXML: USX export had to close automatically in {} {}:{} {}:'{}' now '{}'".format( BBB, C, V, marker, originalText, adjText ) ) # The last marker presumably only had optional closing (or else we just messed up nesting markers)
                         adjText = adjText.replace( fullCharMarker, '{}<char style="{}"CLOSED_BIT>'.format( '</char>' if haveOpenChar else '', charMarker ) )
                         haveOpenChar = True
                     endCharMarker = '\\' + charMarker + '*'
                     if endCharMarker in adjText:
                         if not haveOpenChar: # Then we must have a missing open marker (or extra closing marker)
-                            logging.error( "toUSXXML: Ignored extra '{}' closing marker in {} {}:{} {}:'{}' now '{}'".format( charMarker, BBB, c, v, marker, originalText, adjText ) )
+                            logging.error( "toUSXXML: Ignored extra '{}' closing marker in {} {}:{} {}:'{}' now '{}'".format( charMarker, BBB, C, V, marker, originalText, adjText ) )
                             adjText = adjText.replace( endCharMarker, '' ) # Remove the unused marker
                         else: # looks good
                             adjText = adjText.replace( 'CLOSED_BIT', '' ) # Fix up closed bit since it was specifically closed
@@ -954,8 +672,8 @@ class BibleWriter( InternalBible ):
                 if haveOpenChar:
                     adjText = adjText.replace( 'CLOSED_BIT', ' closed="false"' ) # Fix up closed bit since it wasn't closed
                     adjText += '{}</char>'.format( '' if adjText[-1]==' ' else ' ')
-                    logging.info( "toUSXXML: Had to close automatically in {} {}:{} {}:'{}' now '{}'".format( BBB, c, v, marker, originalText, adjText ) )
-                if '\\' in adjText: logging.critical( "toUSXXML: Didn't handle a backslash in {} {}:{} {}:'{}' now '{}'".format( BBB, c, v, marker, originalText, adjText ) )
+                    logging.info( "toUSXXML: Had to close automatically in {} {}:{} {}:'{}' now '{}'".format( BBB, C, V, marker, originalText, adjText ) )
+                if '\\' in adjText: logging.critical( "toUSXXML: Didn't handle a backslash in {} {}:{} {}:'{}' now '{}'".format( BBB, C, V, marker, originalText, adjText ) )
                 return adjText
             # end of toUSXXML.handleInternalTextMarkersForUSX
 
@@ -1012,7 +730,7 @@ class BibleWriter( InternalBible ):
                         #elif lcToken in ('xo*','xt*','x*',):
                         #    pass # We're being lazy here and not checking closing markers properly
                         else:
-                            logging.warning( _("toUSXXML: Unprocessed '{}' token in {} {}:{} xref '{}'").format( token, BBB, c, v, USXxref ) )
+                            logging.warning( _("toUSXXML: Unprocessed '{}' token in {} {}:{} xref '{}'").format( token, BBB, C, V, USXxref ) )
                     if xoOpen:
                         if Globals.debugFlag: assert( not xtOpen )
                         USXxrefXML += ' closed="false">' + adjToken + '</char>'
@@ -1043,7 +761,7 @@ class BibleWriter( InternalBible ):
                         elif lcToken.startswith('fr '): # footnote reference follows
                             if frOpen:
                                 if Globals.debugFlag: assert( not fTextOpen )
-                                logging.error( _("toUSXXML: Two consecutive fr fields in {} {}:{} footnote '{}'").format( token, BBB, c, v, USXfootnote ) )
+                                logging.error( _("toUSXXML: Two consecutive fr fields in {} {}:{} footnote '{}'").format( token, BBB, C, V, USXfootnote ) )
                             if fTextOpen:
                                 if Globals.debugFlag: assert( not frOpen )
                                 USXfootnoteXML += ' closed="false">' + adjToken + '</char>'
@@ -1098,10 +816,10 @@ class BibleWriter( InternalBible ):
                                     if fCharOpen:
                                         if Globals.debugFlag: assert( not frOpen )
                                         if not firstToken.startswith( fCharOpen+'*' ): # It's not a matching tag
-                                            logging.warning( _("toUSXXML: '{}' closing tag doesn't match '{}' in {} {}:{} footnote '{}'").format( firstToken, fCharOpen, BBB, c, v, USXfootnote ) )
+                                            logging.warning( _("toUSXXML: '{}' closing tag doesn't match '{}' in {} {}:{} footnote '{}'").format( firstToken, fCharOpen, BBB, C, V, USXfootnote ) )
                                         USXfootnoteXML += '>' + adjToken + '</char>'
                                         fCharOpen = False
-                                    logging.warning( _("toUSXXML: '{}' closing tag doesn't match in {} {}:{} footnote '{}'").format( firstToken, BBB, c, v, USXfootnote ) )
+                                    logging.warning( _("toUSXXML: '{}' closing tag doesn't match in {} {}:{} footnote '{}'").format( firstToken, BBB, C, V, USXfootnote ) )
                                 else:
                                     ixAS = firstToken.find( '*' )
                                     #print( firstToken, ixAS, firstToken[:ixAS] if ixAS!=-1 else '' )
@@ -1109,24 +827,24 @@ class BibleWriter( InternalBible ):
                                         if fCharOpen:
                                             if Globals.debugFlag: assert( not frOpen )
                                             if not firstToken.startswith( fCharOpen+'*' ): # It's not a matching tag
-                                                logging.warning( _("toUSXXML: '{}' closing tag doesn't match '{}' in {} {}:{} footnote '{}'").format( firstToken, fCharOpen, BBB, c, v, USXfootnote ) )
+                                                logging.warning( _("toUSXXML: '{}' closing tag doesn't match '{}' in {} {}:{} footnote '{}'").format( firstToken, fCharOpen, BBB, C, V, USXfootnote ) )
                                             USXfootnoteXML += '>' + adjToken + '</char>'
                                             fCharOpen = False
-                                        logging.warning( _("toUSXXML: '{}' closing tag doesn't match in {} {}:{} footnote '{}'").format( firstToken, BBB, c, v, USXfootnote ) )
+                                        logging.warning( _("toUSXXML: '{}' closing tag doesn't match in {} {}:{} footnote '{}'").format( firstToken, BBB, C, V, USXfootnote ) )
                                     else:
-                                        logging.warning( _("toUSXXML: Unprocessed '{}' token in {} {}:{} footnote '{}'").format( firstToken, BBB, c, v, USXfootnote ) )
+                                        logging.warning( _("toUSXXML: Unprocessed '{}' token in {} {}:{} footnote '{}'").format( firstToken, BBB, C, V, USXfootnote ) )
                                         #print( allCharMarkers )
                                         #halt
                     #print( "  ", frOpen, fCharOpen, fTextOpen )
                     if frOpen:
-                        logging.warning( _("toUSXXML: Unclosed 'fr' token in {} {}:{} footnote '{}'").format( BBB, c, v, USXfootnote) )
+                        logging.warning( _("toUSXXML: Unclosed 'fr' token in {} {}:{} footnote '{}'").format( BBB, C, V, USXfootnote) )
                         if Globals.debugFlag: assert( not fCharOpen and not fTextOpen )
                         USXfootnoteXML += ' closed="false">' + adjToken + '</char>'
-                    if fCharOpen: logging.warning( _("toUSXXML: Unclosed '{}' token in {} {}:{} footnote '{}'").format( fCharOpen, BBB, c, v, USXfootnote) )
+                    if fCharOpen: logging.warning( _("toUSXXML: Unclosed '{}' token in {} {}:{} footnote '{}'").format( fCharOpen, BBB, C, V, USXfootnote) )
                     if fTextOpen: USXfootnoteXML += ' closed="false">' + adjToken + '</char>'
                     USXfootnoteXML += '</note>'
                     #print( '', USXfootnote, USXfootnoteXML )
-                    #if BBB=='EXO' and c=='17' and v=='7': halt
+                    #if BBB=='EXO' and C=='17' and V=='7': halt
                     return USXfootnoteXML
                 # end of toUSXXML.processFootnote
 
@@ -1134,14 +852,14 @@ class BibleWriter( InternalBible ):
                 adjText = text
                 offset = 0
                 for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
-                    #print( "{} {}:{} Text='{}' eT={}, eI={}, eText='{}'".format( BBB, c, v, text, extraType, extraIndex, extraText ) )
+                    #print( "{} {}:{} Text='{}' eT={}, eI={}, eText='{}'".format( BBB, C, V, text, extraType, extraIndex, extraText ) )
                     adjIndex = extraIndex - offset
                     lenT = len( adjText )
                     if adjIndex > lenT: # This can happen if we have verse/space/notes at end (and the space was deleted after the note was separated off)
-                        logging.warning( _("toUSXXML: Space before note at end of verse in {} {}:{} has been lost").format( BBB, c, v ) )
+                        logging.warning( _("toUSXXML: Space before note at end of verse in {} {}:{} has been lost").format( BBB, C, V ) )
                         # No need to adjust adjIndex because the code below still works
                     elif adjIndex<0 or adjIndex>lenT: # The extras don't appear to fit correctly inside the text
-                        print( "toUSXXML: Extras don't fit inside verse at {} {}:{}: eI={} o={} len={} aI={}".format( BBB, c, v, extraIndex, offset, len(text), adjIndex ) )
+                        print( "toUSXXML: Extras don't fit inside verse at {} {}:{}: eI={} o={} len={} aI={}".format( BBB, C, V, extraIndex, offset, len(text), adjIndex ) )
                         print( "  Verse='{}'".format( text ) )
                         print( "  Extras='{}'".format( extras ) )
                     #assert( 0 <= adjIndex <= len(verse) )
@@ -1168,18 +886,17 @@ class BibleWriter( InternalBible ):
 
             version = 2
             xtra = ' ' if version<2 else ''
-            c = v = '0'
+            C = V = '0'
             xw = MLWriter( USXNumber+USXAbbrev+".usx", outputFolder )
             xw.setHumanReadable()
             xw.spaceBeforeSelfcloseTag = True
             xw.start( lineEndings='w', writeBOM=True ) # Try to imitate Paratext output as closely as possible
             xw.writeLineOpen( 'usx', ('version','2.0') ) if version>=2 else xw.writeLineOpen( 'usx' )
             haveOpenPara = paraJustOpened = False
-            #for marker,originalMarker,text,cleanText,extras in bkData._processedLines: # Process internal Bible data lines
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, originalMarker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getOriginalMarker(), verseDataEntry.getText(), verseDataEntry.getExtras()
                 markerShouldHaveContent = Globals.USFMMarkers.markerShouldHaveContent( marker )
-                #print( BBB, c, v, marker, markerShouldHaveContent, haveOpenPara, paraJustOpened )
+                #print( BBB, C, V, marker, markerShouldHaveContent, haveOpenPara, paraJustOpened )
                 adjText = handleNotes( text, extras )
                 if marker == 'id':
                     if haveOpenPara: # This should never happen coz the ID line should have been the first line in the file
@@ -1194,15 +911,15 @@ class BibleWriter( InternalBible ):
                         logging.error( "toUSXXML: Book {}{} might be incorrect -- we got: '{}'".format( BBB, " ({})".format(USXAbbrev) if USXAbbrev!=BBB else '', adjText[0:3] ) )
                     adjText = adjText[4:] # Remove the book code from the ID line because it's put in as an attribute
                     if adjText: xw.writeLineOpenClose( 'book', handleInternalTextMarkersForUSX(adjText)+xtra, [('code',USXAbbrev),('style',marker)] )
-                    elif not text: logging.error( "toUSXXML: {} {}:{} has a blank id line that was ignored".format( BBB, c, v ) )
+                    elif not text: logging.error( "toUSXXML: {} {}:{} has a blank id line that was ignored".format( BBB, C, V ) )
                 elif marker == 'c':
                     if haveOpenPara:
                         xw.removeFinalNewline( True )
                         xw.writeLineClose( 'para' )
                         haveOpenPara = False
-                    c = adjText
-                    #print( 'c', c )
-                    xw.writeLineOpenSelfclose ( 'chapter', [('number',c),('style','c')] )
+                    C = adjText
+                    #print( 'c', C )
+                    xw.writeLineOpenSelfclose ( 'chapter', [('number',C),('style','c')] )
                 elif marker == 'c~': # Don't really know what this stuff is!!!
                     if not adjText: logging.warning( "toUSXXML: Missing text for c~" ); continue
                     # TODO: We haven't stripped out character fields from within the text -- not sure how USX handles them yet
@@ -1211,12 +928,12 @@ class BibleWriter( InternalBible ):
                 elif marker == 'c#': # Chapter number added for printing
                     pass # Just ignore it completely
                 elif marker == 'v':
-                    v = adjText.replace('<','').replace('>','').replace('"','') # Used below but remove anything that'll cause a big XML problem later
+                    V = adjText.replace('<','').replace('>','').replace('"','') # Used below but remove anything that'll cause a big XML problem later
                     if paraJustOpened: paraJustOpened = False
                     else:
                         xw.removeFinalNewline( True )
                         if version>=2: xw._writeToBuffer( ' ' ) # Space between verses
-                    xw.writeLineOpenSelfclose ( 'verse', [('number',v),('style','v')] )
+                    xw.writeLineOpenSelfclose ( 'verse', [('number',V),('style','v')] )
                 elif marker == 'v~':
                     if not adjText: logging.warning( "toUSXXML: Missing text for v~" ); continue
                     # TODO: We haven't stripped out character fields from within the verse -- not sure how USX handles them yet
@@ -1232,7 +949,7 @@ class BibleWriter( InternalBible ):
                         xw.removeFinalNewline( True )
                         xw.writeLineClose( 'para' )
                         haveOpenPara = False
-                    if adjText: logging.error( "toUSXXML: {} {}:{} has a {} line containing text ('{}') that was ignored".format( BBB, c, v, originalMarker, adjText ) )
+                    if adjText: logging.error( "toUSXXML: {} {}:{} has a {} line containing text ('{}') that was ignored".format( BBB, C, V, originalMarker, adjText ) )
                     xw.writeLineOpenSelfclose ( 'para', ('style',marker) )
                 elif markerShouldHaveContent == 'S': # S = sometimes, e.g., p,pi,q,q1,q2,q3,q4,m
                     if haveOpenPara:
@@ -1251,7 +968,7 @@ class BibleWriter( InternalBible ):
                         xw.writeLineClose( 'para' )
                         haveOpenPara = False
                     if 1 or adjText: xw.writeLineOpenClose( 'para', handleInternalTextMarkersForUSX(adjText)+xtra, ('style',originalMarker), noTextCheck=True ) # no checks coz might already have embedded XML
-                    else: logging.info( "toUSXXML: {} {}:{} has a blank {} line that was ignored".format( BBB, c, v, originalMarker ) )
+                    else: logging.info( "toUSXXML: {} {}:{} has a blank {} line that was ignored".format( BBB, C, V, originalMarker ) )
             if haveOpenPara:
                 xw.removeFinalNewline( True )
                 xw.writeLineClose( 'para' )
@@ -1765,7 +1482,6 @@ class BibleWriter( InternalBible ):
             writerObject.writeLineOpen( 'div', [('type',"book"), ('osisID',bookRef)] )
             haveOpenIntro = haveOpenOutline = haveOpenMajorSection = haveOpenSection = haveOpenSubsection = needChapterEID = haveOpenParagraph = haveOpenVsID = haveOpenLG = haveOpenL = False
             lastMarker = unprocessedMarker = ''
-            #for marker,originalMarker,text,cleanText,extras in bkData._processedLines: # Process internal Bible data lines
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getText(), verseDataEntry.getExtras()
                 #print( "toOSIS:", marker, originalMarker, text )
@@ -2363,7 +2079,6 @@ class BibleWriter( InternalBible ):
             haveOpenIntro = haveOpenOutline = haveOpenMajorSection = haveOpenSection = haveOpenSubsection = needChapterEID = haveOpenParagraph = haveOpenVsID = haveOpenLG = haveOpenL = False
             lastMarker = unprocessedMarker = ''
             #chapterNumberString = None
-            #for marker,originalMarker,text,cleanText,extras in bkData._processedLines: # Process internal Bible data lines
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getText(), verseDataEntry.getExtras()
                 #print( BBB, marker, text )
@@ -2658,6 +2373,34 @@ class BibleWriter( InternalBible ):
             writerObject.writeLineClose( 'nav' )
         # end of toHTML5.writeHeader
 
+        def writeEndNotes( writerObject, ourGlobals ):
+            """
+            Writes the HTML5 footer to the HTML writerObject.
+
+
+            <div id="XRefs- Normal"><h2 class="XRefsHeading">Cross References</h2>
+            <p id="XRef0" class="XRef"><a title="Go back up to 2:2 in the text" href="#C2V2"><span class="ChapterVerse">2:2</span></a> <span class="VernacularCrossReference">Lib 19:9&#x2011;10</span>; <span class="VernacularCrossReference">Diy 24:19</span></p>
+            <p id="XRef1" class="XRef"><a title="Go back up to 2:20 in the text" href="#C2V20"><span class="ChapterVerse">2:20</span></a> <span class="VernacularCrossReference">Lib 25:25</span></p>
+            <p id="XRef2" class="XRef"><a title="Go back up to 3:12 in the text" href="#C3V12"><span class="ChapterVerse">3:12</span></a> <a title="Go to Rut 2:20" href="RUT.htm#C2V20"><span class="VernacularCrossReference">Rut 2:20</span></a></p>
+            <p id="XRef3" class="XRef"><a title="Go back up to 4:7 in the text" href="#C4V7"><span class="ChapterVerse">4:7</span></a> <span class="VernacularCrossReference">Diy 25:9</span></p>
+            <p id="XRef4" class="XRef"><a title="Go back up to 4:10 in the text" href="#C4V10"><span class="ChapterVerse">4:10</span></a> <span class="VernacularCrossReference">Diy 25:5&#x2011;6</span></p>
+            <p id="XRef5" class="XRef"><a title="Go back up to 4:11 in the text" href="#C4V11"><span class="ChapterVerse">4:11</span></a> <a title="Go to Hinisis 29:31" href="GEN.htm#C29V31"><span class="VernacularCrossReference">Hin 29:31</span></a></p>
+            <p id="XRef6" class="XRef"><a title="Go back up to 4:12 in the text" href="#C4V12"><span class="ChapterVerse">4:12</span></a> <a title="Go to Hinisis 38:27" href="GEN.htm#C38V27"><span class="VernacularCrossReference">Hin 38:27&#x2011;30</span></a></p></div>
+            <div id="FNotes"><h2 class="FootnotesHeading">Footnotes</h2>
+            <p id="FNote0" class="Footnote"><a title="Go back up to 1:20 in the text" href="#C1V20"><span class="ChapterVerse">1:20 </span></a><a title="su" href="../../Lexicon/indexLSIM-45.htm#su1"><span class="WordLink">Su</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="kaluwasan" href="../../Lexicon/indexLLO-67.htm#luwas2"><span class="WordLink">kaluwasan</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <span class="NameWordLink">Nawumi</span> &lsquo;<a title="n. fortunate (upian)" href="../../Lexicon/Details/upian.htm"><span class="WordLink">keupianan</span></a>,&rsquo; <a title="conj. but" href="../../Lexicon/Details/piru.htm"><span class="WordLink">piru</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="kaluwasan" href="../../Lexicon/indexLLO-67.htm#luwas2"><span class="WordLink">kaluwasan</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="mara" href="../../Lexicon/Details/mara.htm"><span class="WordLink">Mara</span></a> &lsquo;<a title="adj. painful (sakit)" href="../../Lexicon/Details/sakit.htm"><span class="WordLink">masakit</span></a> <a title="se" href="../../Lexicon/indexLSE-64.htm#se1"><span class="WordLink">se</span></a> <a title="n. breath" href="../../Lexicon/Details/geyinawa.htm"><span class="WordLink">geyinawa</span></a>.&rsquo;</p>
+            <p id="FNote1" class="Footnote"><a title="Go back up to 3:9 in the text" href="#C3V9"><span class="ChapterVerse">3:9 </span></a><a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">Te</span></a> <a title="prop_n. Hebrew language (Hibru)" href="../../Lexicon/Details/Hibru.htm"><span class="WordLink">Hibruwanen</span></a>: <a title="buni" href="../../Lexicon/Details/buni2.htm"><span class="WordLink">Bunbuni</span></a> <a title="pron. you(sg); by you(sg)" href="../../Lexicon/Details/nu.htm"><span class="WordLink">nu</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="kumbalè" href="../../Lexicon/Details/kumbal%C3%A8.htm"><span class="WordLink">kumbale</span></a> <a title="pron. you(sg); by you(sg)" href="../../Lexicon/Details/nu.htm"><span class="WordLink">nu</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="suluhuanen" href="../../Lexicon/indexLSIM-45.htm#suluh%C3%B9"><span class="WordLink">suluhuanen</span></a> <a title="pron. you(sg); by you(sg)" href="../../Lexicon/Details/nu.htm"><span class="WordLink">nu</span></a>.</p>
+            <p id="FNote2" class="Footnote"><a title="Go back up to 4:11 in the text" href="#C4V11"><span class="ChapterVerse">4:11 </span></a><a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">Kene</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="adj. clear" href="../../Lexicon/Details/klaru.htm"><span class="WordLink">klaru</span></a> <a title="diya" href="../../Lexicon/indexLD-80.htm#diyav"><span class="WordLink">diye</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="adj. true (lehet)" href="../../Lexicon/Details/lehet1.htm"><span class="WordLink">malehet</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="migpuun" href="../../Lexicon/Details/puun.htm"><span class="WordLink">migpuunan</span></a> <a title="ke" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ke</span></a> <a title="n. other" href="../../Lexicon/Details/lein.htm"><span class="WordLink">lein</span></a> <a title="e" href="../../Lexicon/indexLA-77.htm#a"><span class="WordLink">e</span></a> <a title="part. also" href="../../Lexicon/Details/degma.htm"><span class="WordLink">degma</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="n. place" href="../../Lexicon/Details/inged.htm"><span class="WordLink">inged</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <span class="NameWordLink">Iprata</span>. <a title="kahiyen" href="../../Lexicon/Details/kahi.htm"><span class="WordLink">Kahiyen</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="adj. other" href="../../Lexicon/Details/duma.htm"><span class="WordLink">duma</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <span class="NameWordLink">Iprata</span> <a title="dem. that" href="../../Lexicon/Details/iyan.htm"><span class="WordLink">iyan</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="tapey" href="../../Lexicon/indexLT-96.htm#tapey1"><span class="WordLink">tapey</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="n. name" href="../../Lexicon/Details/ngaran.htm"><span class="WordLink">ngaran</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="See glossary entry for Bitlihim" href="../indexGlossary.htm#Bitlihim"><span class="WordLink">Bitlihim</span><span class="GlossaryLinkSymbol"><sup>[gl]</sup></span></a>.</p></div>
+            """
+            if ourGlobals['footnoteHTML5'] or ourGlobals['xrefHTML5']:
+                writerObject.writeLineOpen( 'div' ) # endNotes
+                if ourGlobals['footnoteHTML5']:
+                    writerObject.writeLineOpen( 'p', ('class','footerLine') )
+                    writerObject.writeLineClose( 'p' )
+                if ourGlobals['xrefHTML5']:
+                    pass # for now -- finish the above first then adapt it to here
+                writerObject.writeLineClose( 'div' ) # endNotes
+        # end of toHTML5.writeEndNotes
+
         def writeFooter( writerObject ):
             """Writes the HTML5 footer to the HTML writerObject."""
             writerObject.writeLineOpen( 'footer' )
@@ -2704,67 +2447,279 @@ class BibleWriter( InternalBible ):
             return result + bracket
         # end of toHTML5.createSectionReference
 
-        def writeBook( writerObject, BBB, bkData ):
+        def writeBook( writerObject, BBB, bkData, ourGlobals ):
             """Writes a book to the HTML5 writerObject."""
+
+            def handleExtras( text, extras, ourGlobals ):
+                """
+                Returns the HTML5 text with footnotes and xrefs processed.
+                It also accumulates HTML5 in ourGlobals for the end notes.
+                """
+                def processXRef( HTML5xref, ourGlobals ):
+                    """
+                    Return the HTML5 for the processed cross-reference (xref).
+                    It also accumulates HTML5 in ourGlobals for the end notes.
+
+                    NOTE: The parameter here already has the /x and /x* removed.
+
+                    \\x - \\xo 2:2: \\xt Lib 19:9-10; Diy 24:19.\\xt*\\x* (Backslashes are shown doubled here)
+                        gives
+                    <a title="Lib 19:9-10; Diy 24:19" href="#XRef0"><span class="XRefLinkSymbol"><sup>[xr]</sup></span></a>
+                    <a title="Lib 25:25" href="#XRef1"><span class="XRefLinkSymbol"><sup>[xr]</sup></span></a>
+                    <a title="Rut 2:20" href="#XRef2"><span class="XRefLinkSymbol"><sup>[xr]</sup></span></a>
+                    DELETE LATER: XML was <span style="x" caller="-"><char style="xo" closed="false">1:3: </char><char style="xt">2Kur 4:6.</char></span>
+                    """
+                    xrefHTML5 = '<a title="'
+                    xoOpen = xtOpen = False
+                    for j,token in enumerate(HTML5xref.split('\\')):
+                        #print( "toHTML5.processXRef", j, "'"+token+"'", "from", '"'+HTML5xref+'"', xoOpen, xtOpen )
+                        if token.startswith( '+' ): halt # Need to handle nested USFM 2.4 markers
+                        lcToken = token.lower()
+                        if j==0: # The first token (but the x has already been removed)
+                            #xrefHTML5 += 'caller="{}" style="x">'.format( token.rstrip() )
+                            pass
+                        elif lcToken.startswith('xo '): # xref reference follows
+                            if xoOpen: # We have multiple xo fields one after the other (probably an encoding error)
+                                if Globals.debugFlag: assert( not xtOpen )
+                                xrefHTML5 += ' closed="false">' + adjToken + '</char>'
+                                xoOpen = False
+                            if xtOpen: # if we have multiple cross-references one after the other
+                                xrefHTML5 += ' closed="false">' + adjToken + '</char>'
+                                xtOpen = False
+                            adjToken = token[3:]
+                            xrefHTML5 += '<char style="xo"'
+                            xoOpen = True
+                        elif lcToken.startswith('xo*'):
+                            if Globals.debugFlag: assert( xoOpen and not xtOpen )
+                            xrefHTML5 += '>' + adjToken + '</char>'
+                            xoOpen = False
+                        elif lcToken.startswith('xt '): # xref text follows
+                            if xtOpen: # Multiple xt's in a row
+                                if Globals.debugFlag: assert( not xoOpen )
+                                xrefHTML5 += ' closed="false">' + adjToken + '</char>'
+                            if xoOpen:
+                                xrefHTML5 += ' closed="false">' + adjToken + '</char>'
+                                xoOpen = False
+                            adjToken = token[3:]
+                            xrefHTML5 += '<char style="xt"'
+                            xtOpen = True
+                        elif lcToken.startswith('xt*'):
+                            if Globals.debugFlag: assert( xtOpen and not xoOpen )
+                            xrefHTML5 += '>' + adjToken + '</char>'
+                            xtOpen = False
+                        #elif lcToken in ('xo*','xt*','x*',):
+                        #    pass # We're being lazy here and not checking closing markers properly
+                        else:
+                            logging.warning( _("toHTML5: Unprocessed '{}' token in {} {}:{} xref '{}'").format( token, BBB, C, V, USXxref ) )
+                    if xoOpen:
+                        if Globals.debugFlag: assert( not xtOpen )
+                        xrefHTML5 += ' closed="false">' + adjToken + '</char>'
+                        xoOpen = False
+                    if xtOpen:
+                        xrefHTML5 += ' closed="false">' + adjToken + '</char>'
+                    xrefHTML5 += '"><span class="XRefLinkSymbol">[xr]</span></a>'
+                    return xrefHTML5
+                # end of toHTML5.processXRef
+
+                def processFootnote( HTML5footnote, ourGlobals ):
+                    """
+                    Return the HTML5 for the processed footnote.
+                    It also accumulates HTML5 in ourGlobals for the end notes.
+
+                    NOTE: The parameter here already has the /f and /f* removed.
+
+                    \\f + \\fr 1:20 \\ft Su ka kaluwasan te Nawumi ‘keupianan,’ piru ka kaluwasan te Mara ‘masakit se geyinawa.’\\f* (Backslashes are shown doubled here)
+                        gives
+                    <a title="Su ka kaluwasan te Nawumi &lsquo;keupianan,&rsquo; piru ka kaluwasan te Mara &lsquo;masakit se geyinawa.&rsquo;" href="#FNote0"><span class="FootnoteLinkSymbol"><sup>[fn]</sup></span></a>
+                    <note style="f" caller="+"><char style="fr" closed="false">2:23 </char><char style="ft">Te Hibruwanen: bayew egpekegsahid ka ngaran te “malitan” wey “lukes.”</char></note>
+                    """
+                    footnoteHTML5 = '<note style="f" '
+                    frOpen = fTextOpen = fCharOpen = False
+                    for j,token in enumerate(HTML5footnote.split('\\')):
+                        #print( "HTML5.processFootnote", j, "'"+token+"'", frOpen, fTextOpen, fCharOpen, HTML5footnote )
+                        lcToken = token.lower()
+                        if j==0:
+                            footnoteHTML5 += 'caller="{}">'.format( token.rstrip() )
+                        elif lcToken.startswith('fr '): # footnote reference follows
+                            if frOpen:
+                                if Globals.debugFlag: assert( not fTextOpen )
+                                logging.error( _("toHTML5: Two consecutive fr fields in {} {}:{} footnote '{}'").format( token, BBB, C, V, USXfootnote ) )
+                            if fTextOpen:
+                                if Globals.debugFlag: assert( not frOpen )
+                                footnoteHTML5 += ' closed="false">' + adjToken + '</char>'
+                                fTextOpen = False
+                            if Globals.debugFlag: assert( not fCharOpen )
+                            adjToken = token[3:]
+                            footnoteHTML5 += '<char style="fr"'
+                            frOpen = True
+                        elif lcToken.startswith('fr* '):
+                            if Globals.debugFlag: assert( frOpen and not fTextOpen and not fCharOpen )
+                            footnoteHTML5 += '>' + adjToken + '</char>'
+                            frOpen = False
+                        elif lcToken.startswith('ft ') or lcToken.startswith('fq ') or lcToken.startswith('fqa ') or lcToken.startswith('fv ') or lcToken.startswith('fk '):
+                            if fCharOpen:
+                                if Globals.debugFlag: assert( not frOpen )
+                                footnoteHTML5 += '>' + adjToken + '</char>'
+                                fCharOpen = False
+                            if frOpen:
+                                if Globals.debugFlag: assert( not fTextOpen )
+                                footnoteHTML5 += ' closed="false">' + adjToken + '</char>'
+                                frOpen = False
+                            if fTextOpen:
+                                footnoteHTML5 += ' closed="false">' + adjToken + '</char>'
+                                fTextOpen = False
+                            fMarker = lcToken.split()[0] # Get the bit before the space
+                            footnoteHTML5 += '<char style="{}"'.format( fMarker )
+                            adjToken = token[len(fMarker)+1:] # Get the bit after the space
+                            #print( "'{}' '{}'".format( fMarker, adjToken ) )
+                            fTextOpen = True
+                        elif lcToken.startswith('ft*') or lcToken.startswith('fq*') or lcToken.startswith('fqa*') or lcToken.startswith('fv*') or lcToken.startswith('fk*'):
+                            if Globals.debugFlag: assert( fTextOpen and not frOpen and not fCharOpen )
+                            footnoteHTML5 += '>' + adjToken + '</char>'
+                            fTextOpen = False
+                        else: # Could be character formatting (or closing of character formatting)
+                            subTokens = lcToken.split()
+                            firstToken = subTokens[0]
+                            #print( "ft", firstToken )
+                            if firstToken in allCharMarkers: # Yes, confirmed
+                                if fCharOpen: # assume that the last one is closed by this one
+                                    if Globals.debugFlag: assert( not frOpen )
+                                    footnoteHTML5 += '>' + adjToken + '</char>'
+                                    fCharOpen = False
+                                if frOpen:
+                                    if Globals.debugFlag: assert( not fCharOpen )
+                                    footnoteHTML5 += ' closed="false">' + adjToken + '</char>'
+                                    frOpen = False
+                                footnoteHTML5 += '<char style="{}"'.format( firstToken )
+                                adjToken = token[len(firstToken)+1:] # Get the bit after the space
+                                fCharOpen = firstToken
+                            else: # The problem is that a closing marker doesn't have to be followed by a space
+                                if firstToken[-1]=='*' and firstToken[:-1] in allCharMarkers: # it's a closing tag (that was followed by a space)
+                                    if fCharOpen:
+                                        if Globals.debugFlag: assert( not frOpen )
+                                        if not firstToken.startswith( fCharOpen+'*' ): # It's not a matching tag
+                                            logging.warning( _("toHTML5: '{}' closing tag doesn't match '{}' in {} {}:{} footnote '{}'").format( firstToken, fCharOpen, BBB, C, V, HTML5footnote ) )
+                                        footnoteHTML5 += '>' + adjToken + '</char>'
+                                        fCharOpen = False
+                                    logging.warning( _("toHTML5: '{}' closing tag doesn't match in {} {}:{} footnote '{}'").format( firstToken, BBB, C, V, HTML5footnote ) )
+                                else:
+                                    ixAS = firstToken.find( '*' )
+                                    #print( firstToken, ixAS, firstToken[:ixAS] if ixAS!=-1 else '' )
+                                    if ixAS!=-1 and ixAS<4 and firstToken[:ixAS] in allCharMarkers: # it's a closing tag
+                                        if fCharOpen:
+                                            if Globals.debugFlag: assert( not frOpen )
+                                            if not firstToken.startswith( fCharOpen+'*' ): # It's not a matching tag
+                                                logging.warning( _("toHTML5: '{}' closing tag doesn't match '{}' in {} {}:{} footnote '{}'").format( firstToken, fCharOpen, BBB, C, V, HTML5footnote ) )
+                                            footnoteHTML5 += '>' + adjToken + '</char>'
+                                            fCharOpen = False
+                                        logging.warning( _("toHTML5: '{}' closing tag doesn't match in {} {}:{} footnote '{}'").format( firstToken, BBB, C, V, HTML5footnote ) )
+                                    else:
+                                        logging.warning( _("toHTML5: Unprocessed '{}' token in {} {}:{} footnote '{}'").format( firstToken, BBB, C, V, HTML5footnote ) )
+                                        #print( allCharMarkers )
+                                        #halt
+                    #print( "  ", frOpen, fCharOpen, fTextOpen )
+                    if frOpen:
+                        logging.warning( _("toHTML5: Unclosed 'fr' token in {} {}:{} footnote '{}'").format( BBB, C, V, HTML5footnote) )
+                        if Globals.debugFlag: assert( not fCharOpen and not fTextOpen )
+                        footnoteHTML5 += ' closed="false">' + adjToken + '</char>'
+                    if fCharOpen: logging.warning( _("toHTML5: Unclosed '{}' token in {} {}:{} footnote '{}'").format( fCharOpen, BBB, C, V, HTML5footnote) )
+                    if fTextOpen: footnoteHTML5 += ' closed="false">' + adjToken + '</char>'
+                    footnoteHTML5 += '</note>'
+                    #print( '', HTML5footnote, footnoteHTML5 )
+                    #if BBB=='EXO' and C=='17' and V=='7': halt
+                    return footnoteHTML5
+                # end of toHTML5.processFootnote
+
+
+                adjText = text
+                offset = 0
+                for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
+                    #print( "{} {}:{} Text='{}' eT={}, eI={}, eText='{}'".format( BBB, C, V, text, extraType, extraIndex, extraText ) )
+                    adjIndex = extraIndex - offset
+                    lenT = len( adjText )
+                    if adjIndex > lenT: # This can happen if we have verse/space/notes at end (and the space was deleted after the note was separated off)
+                        logging.warning( _("toHTML5: Space before note at end of verse in {} {}:{} has been lost").format( BBB, C, V ) )
+                        # No need to adjust adjIndex because the code below still works
+                    elif adjIndex<0 or adjIndex>lenT: # The extras don't appear to fit correctly inside the text
+                        print( "toHTML5: Extras don't fit inside verse at {} {}:{}: eI={} o={} len={} aI={}".format( BBB, C, V, extraIndex, offset, len(text), adjIndex ) )
+                        print( "  Verse='{}'".format( text ) )
+                        print( "  Extras='{}'".format( extras ) )
+                    #assert( 0 <= adjIndex <= len(verse) )
+                    #adjText = checkText( extraText, checkLeftovers=False ) # do any general character formatting
+                    #if adjText!=extraText: print( "processXRefsAndFootnotes: {}@{}-{}={} '{}' now '{}'".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
+                    if extraType == 'fn':
+                        extra = processFootnote( extraText, ourGlobals )
+                        #print( "fn got", extra )
+                    elif extraType == 'xr':
+                        extra = processXRef( extraText, ourGlobals )
+                        #print( "xr got", extra )
+                    else: print( extraType ); halt
+                    #print( "was", verse )
+                    adjText = adjText[:adjIndex] + extra + adjText[adjIndex:]
+                    offset -= len( extra )
+                    #print( "now", verse )
+                return adjText
+            # end of toHTML5.handleExtras
+
+
             writeHeader( writerObject )
             haveOpenSection = haveOpenParagraph = haveOpenList = False
             C = V = ''
-            #for marker,originalMarker,text,cleanText,extras in bkData._processedLines: # Process internal Bible lines
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
-                marker, text, cleanText, extras = verseDataEntry.getMarker(), verseDataEntry.getFullText(), verseDataEntry.getCleanText(), verseDataEntry.getExtras()
-                #if BBB=='MRK': print( "writeBook", marker, cleanText )
-                #print( "toHTML5.writeBook", BBB, C, V, marker, cleanText )
+                marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getText(), verseDataEntry.getExtras()
+                #if BBB=='MRK': print( "writeBook", marker, text )
+                #print( "toHTML5.writeBook", BBB, C, V, marker, text )
                 if marker in oftenIgnoredIntroMarkers: pass # Just ignore these lines
 
                 # Markers usually only found in the introduction
                 elif marker in ('mt1','mt2',):
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
-                    writerObject.writeLineOpenClose( 'h1', cleanText, ('class','mainTitle'+marker[2]) )
+                    writerObject.writeLineOpenClose( 'h1', text, ('class','mainTitle'+marker[2]) )
                 elif marker in ('ms1','ms2',):
                     if not haveOpenParagraph:
-                        logging.warning( "toHTML5: Have main section heading {} outside a paragraph in {}".format( cleanText, BBB ) )
+                        logging.warning( "toHTML5: Have main section heading {} outside a paragraph in {}".format( text, BBB ) )
                         writerObject.writeLineOpen( 'p', ('class','unknownParagraph') ); haveOpenParagraph = True
-                    if cleanText: writerObject.writeLineOpenClose( 'h2', cleanText, ('class','mainSectionHeading'+marker[1]) )
+                    if text: writerObject.writeLineOpenClose( 'h2', text, ('class','mainSectionHeading'+marker[1]) )
                 elif marker == 'ip':
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
                     writerObject.writeLineOpen( 'p', ('class','introductoryParagraph') ); haveOpenParagraph = True
-                    if cleanText: writerObject.writeLineText( cleanText )
+                    if text: writerObject.writeLineText( text )
                 elif marker == 'iot':
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
-                    if cleanText: writerObject.writeLineOpenClose( 'h3', cleanText, ('class','outlineTitle') )
+                    if text: writerObject.writeLineOpenClose( 'h3', text, ('class','outlineTitle') )
                 elif marker in ('io1','io2','io3',):
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
-                    if cleanText: writerObject.writeLineOpenClose( 'p', cleanText, ('class','outlineEntry'+marker[2]) )
+                    if text: writerObject.writeLineOpenClose( 'p', text, ('class','outlineEntry'+marker[2]) )
 
                 # Now markers in the main text
                 elif marker in 'c':
                     # What should we put in here -- we don't need/want to display it, but it's a place to jump to
-                    writerObject.writeLineOpenClose( 'span', ' ', [('class','chapterStart'),('id','C'+cleanText)] )
+                    writerObject.writeLineOpenClose( 'span', ' ', [('class','chapterStart'),('id','C'+text)] )
                 elif marker in 'c#':
-                    C = cleanText
+                    C = text
                     if not haveOpenParagraph:
-                        logging.warning( "toHTML5: Have chapter number {} outside a paragraph in {}".format( cleanText, BBB ) )
+                        logging.warning( "toHTML5: Have chapter number {} outside a paragraph in {}".format( text, BBB ) )
                         writerObject.writeLineOpen( 'p', ('class','unknownParagraph') ); haveOpenParagraph = True
-                    writerObject.writeLineOpenClose( 'span', cleanText, ('class','chapterNumber') )
+                    writerObject.writeLineOpenClose( 'span', text, ('class','chapterNumber') )
                 elif marker in ('s1','s2','s3',):
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
                     if marker == 's1':
                         if haveOpenSection: writerObject.writeLineClose( 'section' ); haveOpenSection = False
                         writerObject.writeLineOpen( 'section', ('class','regularSection') ); haveOpenSection = True
-                    if cleanText: writerObject.writeLineOpenClose( 'h2', cleanText, ('class','sectionHeading'+marker[1]) )
+                    if text: writerObject.writeLineOpenClose( 'h2', text, ('class','sectionHeading'+marker[1]) )
                 elif marker == 'r':
                     assert( haveOpenSection )
                     assert( not haveOpenParagraph )
-                    if cleanText: writerObject.writeLineOpenClose( 'span', createSectionReference(cleanText), ('class','sectionReference'), noTextCheck=True )
+                    if text: writerObject.writeLineOpenClose( 'span', createSectionReference(text), ('class','sectionReference'), noTextCheck=True )
                 elif marker == 'v':
-                    V = cleanText
+                    V = text
                     if not haveOpenParagraph:
-                        logging.warning( "toHTML5: Have verse number {} outside a paragraph in {}".format( cleanText, BBB ) )
+                        logging.warning( "toHTML5: Have verse number {} outside a paragraph in {}".format( text, BBB ) )
                     if 1: # no span -- it's simpler so why not!
-                        writerObject.writeLineOpenClose( 'sup', cleanText, [('class','verseNumber'),('id','C'+C+'V'+cleanText)] )
+                        writerObject.writeLineOpenClose( 'sup', text, [('class','verseNumber'),('id','C'+C+'V'+text)] )
                     else: # use sup and then span
                         writerObject.writeLineOpen( 'sup' )
-                        writerObject.writeLineOpenClose( 'span', cleanText, [('class','verseNumber'),('id','C'+C+'V'+cleanText)] )
+                        writerObject.writeLineOpenClose( 'span', text, [('class','verseNumber'),('id','C'+C+'V'+text)] )
                         writerObject.writeLineClose( 'sup' )
                 elif marker == 'p':
                     if haveOpenList: writerObject.writeLineClose( 'p' ); haveOpenList = False
@@ -2776,39 +2731,41 @@ class BibleWriter( InternalBible ):
                 elif marker == 'q1':
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' )
                     writerObject.writeLineOpen( 'p', ('class','poetryParagraph1') ); haveOpenParagraph = True
-                    if cleanText: writerObject.writeLineText( cleanText )
+                    if text: writerObject.writeLineText( text )
                 elif marker == 'q2':
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' )
                     writerObject.writeLineOpen( 'p', ('class','poetryParagraph2') ); haveOpenParagraph = True
-                    if cleanText: writerObject.writeLineText( cleanText )
+                    if text: writerObject.writeLineText( text )
                 elif marker == 'q3':
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' )
                     writerObject.writeLineOpen( 'p', ('class','poetryParagraph3') ); haveOpenParagraph = True
-                    if cleanText: writerObject.writeLineText( cleanText )
+                    if text: writerObject.writeLineText( text )
                 elif marker == 'li1':
                     if not haveOpenList:
                         writerObject.writeLineOpen( 'p', ('class','list') ); haveOpenList = True
                     writerObject.writeLineOpen( 'span', ('class','listItem1') )
-                    if cleanText: writerObject.writeLineText( cleanText )
+                    if text: writerObject.writeLineText( text )
 
                 # Character markers
                 elif marker=='v~':
                     if not haveOpenParagraph:
-                        logging.warning( "toHTML5: Have verse text {} outside a paragraph in {}".format( cleanText, BBB ) )
+                        logging.warning( "toHTML5: Have verse text {} outside a paragraph in {}".format( text, BBB ) )
                         writerObject.writeLineOpen( 'p', ('class','unknownParagraph') ); haveOpenParagraph = True
-                    if cleanText: writerObject.writeLineText( cleanText )
+                    if text: writerObject.writeLineText( handleExtras( text, extras, ourGlobals ) )
                 elif marker=='p~':
                     if not haveOpenParagraph:
-                        logging.warning( "toHTML5: Have verse text {} outside a paragraph in {}".format( cleanText, BBB ) )
+                        logging.warning( "toHTML5: Have verse text {} outside a paragraph in {}".format( text, BBB ) )
                         writerObject.writeLineOpen( 'p', ('class','unknownParagraph') ); haveOpenParagraph = True
-                    if cleanText: writerObject.writeLineText( cleanText )
+                    if text: writerObject.writeLineText( handleExtras( text, extras, ourGlobals ) )
                 else: unhandledMarkers.add( marker )
-                if extras: logging.warning( "toHTML5: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
+                if extras and marker not in ('v~','p~',): logging.warning( "toHTML5: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
             if haveOpenList: writerObject.writeLineClose( 'p' ); haveOpenList = False
             if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
             if haveOpenSection: writerObject.writeLineClose( 'section' ); haveOpenSection = False
+            writeEndNotes( writerObject, ourGlobals )
             writeFooter( writerObject )
         # end of toHTML5.writeBook
+
 
         # Set-up our Bible reference system
         if controlDict['PublicationCode'] == "GENERIC":
@@ -2826,6 +2783,10 @@ class BibleWriter( InternalBible ):
                             .replace('__BOOKCODE__',BBB ).replace('__SUFFIX__',suffix)
             filenameDict[BBB] = filename
 
+        html5Globals = {}
+        html5Globals['nextFootnoteIndex'] = html5Globals['nextXRefIndex'] = 0
+        html5Globals['footnoteHTML5'] = html5Globals['xrefHTML5'] = ''
+
         if controlDict["HTML5Files"]=="byBook":
             for BBB,bookData in self.books.items(): # Now export the books
                 if Globals.verbosityLevel > 2: print( _("  Exporting {} to HTML5 format...").format( BBB ) )
@@ -2834,9 +2795,9 @@ class BibleWriter( InternalBible ):
                 xw.start( noAutoXML=True )
                 xw.writeLineText( '<!DOCTYPE html>', noTextCheck=True )
                 xw.writeLineOpen( 'html' )
-                if Globals.debugFlag: writeBook( xw, BBB, bookData )
+                if Globals.debugFlag: writeBook( xw, BBB, bookData, html5Globals )
                 else:
-                    try: writeBook( xw, BBB, bookData )
+                    try: writeBook( xw, BBB, bookData, html5Globals )
                     except Exception as err:
                         print( BBB, "Unexpected error:", sys.exc_info()[0], err)
                         logging.error( "toHTML5: Oops, creating {} failed!".format( BBB ) )
@@ -2859,6 +2820,7 @@ class BibleWriter( InternalBible ):
 
         This format is roughly documented at http://www.theword.net/index.php?article.tools&l=english
         """
+        from TheWordBible import theWordOTBookLines, theWordNTBookLines, theWordBookLines, resetTheWordMargins, theWordHandleIntroduction, theWordComposeVerseLine
         if Globals.verbosityLevel > 1: print( "Running BibleWriter:totheWord..." )
         if Globals.debugFlag: assert( self.books )
 
@@ -2886,7 +2848,7 @@ class BibleWriter( InternalBible ):
             verseList = BOS.getNumVersesList( BBB )
             numC, numV = len(verseList), verseList[0]
 
-            ourGlobals['pi1'] = ourGlobals['pi2'] = ourGlobals['pi3'] = ourGlobals['pi4'] = ourGlobals['pi5'] = ourGlobals['pi6'] = ourGlobals['pi7'] = False
+            resetTheWordMargins( ourGlobals )
             if bkData: # write book headings (stuff before chapter 1)
                 ourGlobals['line'] = theWordHandleIntroduction( BBB, bkData, ourGlobals )
 
@@ -2940,11 +2902,11 @@ class BibleWriter( InternalBible ):
         BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
         #BRL = BibleReferenceList( BOS, BibleObject=None )
 
-        # Try to figure out if it's an OT/NT or what (allow for up to 4 extra books like FRT,GLO, etc.)
-        if len(self) <= (39+4) and 'GEN' in self and 'MAT' not in self:
+        # Try to figure out if it's an OT/NT or what (allow for up to 6 extra books like FRT,GLO, etc.)
+        if len(self) <= (39+6) and 'GEN' in self and 'MAT' not in self:
             testament, extension, startBBB, endBBB = 'OT', '.ot', 'GEN', 'MAL'
             booksExpected, textLineCountExpected, checkTotals = 39, 23145, theWordOTBookLines
-        elif len(self) <= (27+4) and 'MAT' in self and 'GEN' not in self:
+        elif len(self) <= (27+6) and 'MAT' in self and 'GEN' not in self:
             testament, extension, startBBB, endBBB = 'NT', '.nt', 'MAT', 'REV'
             booksExpected, textLineCountExpected, checkTotals = 27, 7957, theWordNTBookLines
         else: # assume it's an entire Bible
@@ -3030,6 +2992,7 @@ class BibleWriter( InternalBible ):
 
         This format is roughly documented at http://www.theword.net/index.php?article.tools&l=english
         """
+        from TheWordBible import theWordOTBookLines, theWordNTBookLines, theWordBookLines, theWordHandleIntroduction, theWordComposeVerseLine
         if Globals.verbosityLevel > 1: print( "Running BibleWriter:toMySword..." )
         if Globals.debugFlag: assert( self.books )
 
@@ -3158,30 +3121,30 @@ class BibleWriter( InternalBible ):
         exeStr += ')'
         cursor.execute( exeStr )
         values = []
-        v = ''
-        if 'Description' in self.settingsDict: v = self.settingsDict['Description']
-        elif 'description' in self.settingsDict: v = self.settingsDict['description']
-        elif self.name: v = self.name
-        values.append( v); v = ''
-        if self.abbreviation: v = self.abbreviation
-        values.append( v ); v = ''
-        if 'Comments' in self.settingsDict: v = self.settingsDict['Comments']
-        values.append( v ); v = ''
-        if 'Version' in self.settingsDict: v = self.settingsDict['Version']
-        values.append( v ); v = ''
-        if 'VersionDate' in self.settingsDict: v = self.settingsDict['VersionDate']
-        values.append( v ); v = ''
-        if 'PublishDate' in self.settingsDict: v = self.settingsDict['PublishDate']
-        values.append( v ); v = False
-        if 'RightToLeft' in self.settingsDict: v = self.settingsDict['RightToLeft']
-        values.append( v ); v = False
-        if testament=='OT' or testament=='BOTH': v = True
-        values.append( v ); v = False
-        if testament=='NT' or testament=='BOTH': v = True
-        values.append( v ); v = False
-        if 'Strong' in self.settingsDict: v = self.settingsDict['Strong']
-        values.append( v ); v = ''
-        if 'CustomCSS' in self.settingsDict: v = self.settingsDict['CustomCSS']
+        value = ''
+        if 'Description' in self.settingsDict: value = self.settingsDict['Description']
+        elif 'description' in self.settingsDict: value = self.settingsDict['description']
+        elif self.name: value = self.name
+        values.append( value); value = ''
+        if self.abbreviation: value = self.abbreviation
+        values.append( value ); value = ''
+        if 'Comments' in self.settingsDict: value = self.settingsDict['Comments']
+        values.append( value ); value = ''
+        if 'Version' in self.settingsDict: value = self.settingsDict['Version']
+        values.append( value ); value = ''
+        if 'VersionDate' in self.settingsDict: value = self.settingsDict['VersionDate']
+        values.append( value ); value = ''
+        if 'PublishDate' in self.settingsDict: value = self.settingsDict['PublishDate']
+        values.append( value ); value = False
+        if 'RightToLeft' in self.settingsDict: value = self.settingsDict['RightToLeft']
+        values.append( value ); value = False
+        if testament=='OT' or testament=='BOTH': value = True
+        values.append( value ); value = False
+        if testament=='NT' or testament=='BOTH': value = True
+        values.append( value ); value = False
+        if 'Strong' in self.settingsDict: value = self.settingsDict['Strong']
+        values.append( value ); value = ''
+        if 'CustomCSS' in self.settingsDict: value = self.settingsDict['CustomCSS']
         exeStr = 'INSERT INTO "Details" VALUES(' + '?,'*(len(values)-1) + '?)'
         #print( exeStr, values )
         cursor.execute( exeStr, values )
@@ -3370,7 +3333,7 @@ def demo():
     if Globals.verbosityLevel > 0: print( BW ); print()
 
 
-    if 1: # Test reading and writing a USFM Bible
+    if 0: # Test reading and writing a USFM Bible
         from USFMBible import USFMBible
         from USFMFilenames import USFMFilenames
         testData = (
@@ -3381,12 +3344,14 @@ def demo():
                 ("WEB", "../../../../../Data/Work/Bibles/From eBible/WEB/eng-web_usfm 2013-07-18/",),
                 ) # You can put your USFM test folder here
 
-        for name, testFolder in testData:
+        for j, (name, testFolder) in enumerate( testData ):
             if os.access( testFolder, os.R_OK ):
                 UB = USFMBible( testFolder, name )
                 UB.load()
-                if Globals.verbosityLevel > 0: print( UB )
+                if Globals.verbosityLevel > 0: print( '\nA'+str(j+1)+'/', UB )
                 if Globals.strictCheckingFlag: UB.check()
+                #result = UB.toHTML5()
+                #halt
                 doaResults = UB.doAllExports()
                 if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
                     outputFolder = "OutputFiles/BOS_USFM_Reexport/"
@@ -3403,7 +3368,7 @@ def demo():
             else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 
 
-    if 1: # Test reading and writing a USX Bible
+    if 0: # Test reading and writing a USX Bible
         from USXXMLBible import USXXMLBible
         from USXFilenames import USXFilenames
         testData = (
@@ -3411,11 +3376,11 @@ def demo():
                 ("MatigsalugUSX", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/",),
                 ) # You can put your USX test folder here
 
-        for name, testFolder in testData:
+        for j, (name, testFolder) in enumerate( testData ):
             if os.access( testFolder, os.R_OK ):
                 UB = USXXMLBible( testFolder, name )
                 UB.load()
-                if Globals.verbosityLevel > 0: print( UB )
+                if Globals.verbosityLevel > 0: print( '\nB'+str(j+1)+'/', UB )
                 if Globals.strictCheckingFlag: UB.check()
                 doaResults = UB.doAllExports()
                 if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
@@ -3435,28 +3400,46 @@ def demo():
 
     if 1: # Test reading USFM Bibles and exporting to theWord and MySword
         from USFMBible import USFMBible
+        from TheWordBible import theWordFileCompare
         mainFolder = "Tests/DataFilesForTests/theWordRoundtripTestFiles/"
         testData = (
                 ("aai", "Tests/DataFilesForTests/theWordRoundtripTestFiles/aai 2013-05-13/",),
-                ("aacNT", "Tests/DataFilesForTests/theWordRoundtripTestFiles/accNT 2012-01-20/",),
+                ("acc", "Tests/DataFilesForTests/theWordRoundtripTestFiles/accNT 2012-01-20/",),
+                ("acf", "Tests/DataFilesForTests/theWordRoundtripTestFiles/acfDBL 2013-02-03/",),
+                ("acr-n", "Tests/DataFilesForTests/theWordRoundtripTestFiles/acrNDBL 2013-03-08/",),
+                ("acr-t", "Tests/DataFilesForTests/theWordRoundtripTestFiles/accTDBL 2013-03-08/",),
+                ("agr", "Tests/DataFilesForTests/theWordRoundtripTestFiles/agrDBL 2013-03-08/",),
+                ("agu", "Tests/DataFilesForTests/theWordRoundtripTestFiles/aguDBL 2013-03-08/",),
+                ("ame", "Tests/DataFilesForTests/theWordRoundtripTestFiles/ameDBL 2013-02-13/",),
+                ("amr", "Tests/DataFilesForTests/theWordRoundtripTestFiles/amrDBL 2013-02-13/",),
+                ("apn", "Tests/DataFilesForTests/theWordRoundtripTestFiles/apnDBL 2013-02-13/",),
+                ("apu", "Tests/DataFilesForTests/theWordRoundtripTestFiles/apuDBL 2013-02-14/",),
+                ("apy", "Tests/DataFilesForTests/theWordRoundtripTestFiles/apyDBL 2013-02-15/",),
+                ("arn", "Tests/DataFilesForTests/theWordRoundtripTestFiles/arnDBL 2013-03-08/",),
+                ("auc", "Tests/DataFilesForTests/theWordRoundtripTestFiles/aucDBL 2013-02-26/",),
                 ) # You can put your USFM test folder here
 
-        for name, testFolder in testData:
+        for j, (name, testFolder) in enumerate( testData ):
             if os.access( testFolder, os.R_OK ):
                 UB = USFMBible( testFolder, name )
                 UB.load()
-                if Globals.verbosityLevel > 0: print( UB )
+                if Globals.verbosityLevel > 0: print( '\nC'+str(j+1)+'/', UB )
                 #if Globals.strictCheckingFlag: UB.check()
+                #result = UB.totheWord()
                 doaResults = UB.doAllExports()
                 if Globals.strictCheckingFlag: # Now compare the supplied and the exported theWord modules
                     outputFolder = "OutputFiles/BOS_theWord_Export/"
-                    fn1 = name + ('.nt' if name=="aai" else '.ont') # Supplied
-                    fn2 = name + ('.nt' if name=="aai" else '.ont') # Created
+                    if os.path.exists( os.path.join( mainFolder, name + '.nt' ) ): ext = '.nt'
+                    elif os.path.exists( os.path.join( mainFolder, name + '.ont' ) ): ext = '.ont'
+                    elif os.path.exists( os.path.join( mainFolder, name + '.ot' ) ): ext = '.ot'
+                    else: halt
+                    fn1 = name + ext # Supplied
+                    fn2 = name + ext # Created
                     if Globals.verbosityLevel > 1: print( "\nComparing supplied and exported theWord files..." )
-                    result = Globals.fileCompare( fn1, fn2, mainFolder, outputFolder )
+                    result = theWordFileCompare( fn1, fn2, mainFolder, outputFolder, exitCount=10 )
                     if not result:
                         print( "theWord modules did NOT match" )
-                        if Globals.debugFlag: halt
+                        #if Globals.debugFlag: halt
             else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 # end of demo
 

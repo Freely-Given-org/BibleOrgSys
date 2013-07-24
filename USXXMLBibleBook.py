@@ -117,9 +117,9 @@ class USXXMLBibleBook( BibleBook ):
                         else:
                             logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
                     # A character field must be added to the previous field
-                    if element.tail is None: element.tail = ''
-                    additionalText = "\\{} {}\\{}*{}".format( charStyle, element.text, charStyle, element.tail )
-                    #print( c, v, paragraphStyle, charStyle )
+                    tail = '' if element.tail is None else element.tail.strip()
+                    additionalText = "\\{} {}\\{}*{}".format( charStyle, element.text, charStyle, tail )
+                    print( "USX.loadParagraph:", c, v, paragraphStyle, charStyle, repr(additionalText) )
                     self.appendToLastLine( additionalText )
                 elif element.tag == 'note':
                     Globals.checkXMLNoText( element, location )

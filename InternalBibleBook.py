@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-07-20 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-24 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.42"
+ProgVersion = "0.45"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -168,9 +168,13 @@ class InternalBibleBook:
                 but having it allows us to have a single point in order to catch particular bugs or errors.
         """
         if Globals.debugFlag:
-            if debuggingThisModule: print( "InternalBibleBook.appendLine( {}, {} ) for {}".format( repr(marker), repr(text), self.objectTypeString ) )
+            if debuggingThisModule: print( "InternalBibleBook.appendLine( {}, {} ) for {} {}".format( repr(marker), repr(text), self.objectTypeString, self.bookReferenceCode ) )
+        if text and ( '\n' in text or '\r' in text ):
+            logging.critical( "InternalBibleBook.appendLine found newLine in text: {}={}".format( self.objectTypeString, marker, repr(text) ) )
+        if Globals.debugFlag:
             assert( not self._processedFlag )
-        assert( '\n' not in text )
+            assert( marker and isinstance( marker, str ) )
+            if text: assert( '\n' not in text and '\r' not in text )
 
         if not ( marker in Globals.USFMMarkers or marker in NON_USFM_MARKERS ):
             logging.critical( "InternalBibleBook.appendLine marker for {} not in lists: {}={}".format( self.objectTypeString, marker, text ) )
@@ -276,9 +280,9 @@ class InternalBibleBook:
                 if rtsCount != -1:
                     rtsCount += 1
                     if rtsCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
-                        logging.warning( _("Removed trailing space after {} {}:{} in \\{}: '{}'").format( self.bookReferenceCode, c, v, originalMarker, text ) )
+                        logging.warning( _("processLineFix: Removed trailing space after {} {}:{} in \\{}: '{}'").format( self.bookReferenceCode, c, v, originalMarker, text ) )
                     else: # we've reached our limit
-                        logging.error( _('Additional "Removed trailing space" messages suppressed...') )
+                        logging.error( _('processLineFix: Additional "Removed trailing space" messages suppressed...') )
                         rtsCount = -1 # So we don't do this again (for this book)
                 self.addPriorityError( 10, c, v, _("Trailing space at end of line") )
                 adjText = adjText.rstrip()
@@ -291,11 +295,11 @@ class InternalBibleBook:
                     if not self.givenAngleBracketWarning: # Just give the warning once (per book)
                         if self.replaceAngleBracketsFlag:
                             fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Replaced angle bracket(s) in {}: {}").format( originalMarker, text ) )
-                            logging.info( _("Replaced angle bracket(s) after {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, text ) )
+                            logging.info( _("processLineFix: Replaced angle bracket(s) after {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, text ) )
                             self.addPriorityError( 3, '', '', _("Book contains angle brackets (which we attempted to replace)") )
                         else:
                             fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Found (first) angle bracket in {}: {}").format( originalMarker, text ) )
-                            logging.info( _("Found (first) angle bracket after {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, text ) )
+                            logging.info( _("processLineFix: Found (first) angle bracket after {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, text ) )
                             self.addPriorityError( 3, '', '', _("Book contains angle bracket(s)") )
                         self.givenAngleBracketWarning = True
                     if self.replaceAngleBracketsFlag:
@@ -304,11 +308,11 @@ class InternalBibleBook:
                     if not self.givenDoubleQuoteWarning: # Just give the warning once (per book)
                         if self.replaceStraightDoubleQuotesFlag:
                             fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Replaced straight quote sign(s) (\") in \\{}: {}").format( originalMarker, adjText ) )
-                            logging.info( _("Replaced straight quote sign(s) (\") after {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
+                            logging.info( _("processLineFix: Replaced straight quote sign(s) (\") after {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
                             self.addPriorityError( 8, '', '', _("Book contains straight quote signs (which we attempted to replace)") )
                         else: # we're not attempting to replace them
                             fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Found (first) straight quote sign (\") in \\{}: {}").format( originalMarker, adjText ) )
-                            logging.info( _("Found (first) straight quote sign (\") after {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
+                            logging.info( _("processLineFix: Found (first) straight quote sign (\") after {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
                             self.addPriorityError( 58, '', '', _("Book contains straight quote sign(s)") )
                         self.givenDoubleQuoteWarning = True
                     if self.replaceStraightDoubleQuotesFlag:
@@ -317,17 +321,18 @@ class InternalBibleBook:
                         adjText = adjText.replace('."','.”').replace(',"',',”').replace('?"','?”').replace('!"','!”').replace(')"',')”').replace(']"',']”').replace('*"','*”')
                         adjText = adjText.replace('";','”;').replace('"(','”(').replace('"[','”[') # Including the questionable ones
                         adjText = adjText.replace('" ','” ').replace('",','”,').replace('".','”.').replace('"?','”?').replace('"!','”!') # Even the bad ones!
-                        if '"' in adjText: logging.warning( "{} {}:{} still has straight quotes in {}:'{}'".format( originalMarker, adjText ) )
+                        if '"' in adjText:
+                            logging.warning( "processLineFix: {} {}:{} still has straight quotes in {}:'{}'".format( originalMarker, adjText ) )
 
                 # Do XML/HTML common character replacements
                 adjText = adjText.replace( '&', '&amp;' )
                 #adjText = adjText.replace( "'", '&#39;' ) # XML does contain &apos; for optional use, but not recognised in all versions of HTML
                 if '<' in adjText or '>' in adjText:
-                    logging.error( "{} {}:{} still has angle-brackets in {}:'{}'".format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
+                    logging.error( "processLineFix: {} {}:{} still has angle-brackets in {}:'{}'".format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
                     self.addPriorityError( 12, c, v, _("Contains angle-bracket(s)") )
                     adjText = adjText.replace( '<', '&lt;' ).replace( '>', '&gt;' )
                 if '"' in adjText:
-                    logging.warning( "{} {}:{} straight-quotes in {}:'{}'".format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
+                    logging.warning( "processLineFix: {} {}:{} straight-quotes in {}:'{}'".format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
                     self.addPriorityError( 11, c, v, _("Contains straight-quote(s)") )
                     adjText = adjText.replace( '"', '&quot;' )
 
@@ -350,7 +355,7 @@ class InternalBibleBook:
                         thisOne, this1 = "footnote", "fn"
                         if ixFN and lcAdjText[ixFN-1]==' ':
                             fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Found footnote preceded by a space in \\{}: {}").format( originalMarker, adjText ) )
-                            logging.error( _("Found footnote preceded by a space after {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
+                            logging.error( _("processLineFix: Found footnote preceded by a space after {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
                             self.addPriorityError( 52, c, v, _("Footnote is preceded by a space") )
                     else:
                         if Globals.debugFlag: assert( ix1 == ixXR )
@@ -358,12 +363,12 @@ class InternalBibleBook:
                         thisOne, this1 = "cross-reference", "xr"
                     if ix2 == -1: # no closing marker
                         fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Found unmatched {} open in \\{}: {}").format( thisOne, originalMarker, adjText ) )
-                        logging.error( _("Found unmatched {} open after {} {}:{} in \\{}: {}").format( thisOne, self.bookReferenceCode, c, v, originalMarker, adjText ) )
+                        logging.error( _("processLineFix: Found unmatched {} open after {} {}:{} in \\{}: {}").format( thisOne, self.bookReferenceCode, c, v, originalMarker, adjText ) )
                         self.addPriorityError( 84, c, v, _("Marker {} is unmatched").format( thisOne ) )
                         ix2 = 99999 # Go to the end
                     elif ix2 < ix1: # closing marker is before opening marker
                         fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Found unmatched {} in \\{}: {}").format( thisOne, originalMarker, adjText ) )
-                        logging.error( _("Found unmatched {} after {} {}:{} in \\{}: {}").format( thisOne, self.bookReferenceCode, c, v, thisOne, originalMarker, adjText ) )
+                        logging.error( _("processLineFix: Found unmatched {} after {} {}:{} in \\{}: {}").format( thisOne, self.bookReferenceCode, c, v, thisOne, originalMarker, adjText ) )
                         self.addPriorityError( 84, c, v, _("Marker {} is unmatched").format( thisOne ) )
                         ix1, ix2 = ix2, ix1 # swap them then
                     # Remove the footnote or xref
@@ -371,24 +376,24 @@ class InternalBibleBook:
                     note = adjText[ix1+3:ix2] # Get the note text (without the beginning and end markers)
                     if not note:
                         fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Found empty {} in \\{}: {}").format( thisOne, originalMarker, adjText ) )
-                        logging.error( _("Found empty {} after {} {}:{} in \\{}: {}").format( thisOne, self.bookReferenceCode, c, v, originalMarker, adjText ) )
+                        logging.error( _("processLineFix: Found empty {} after {} {}:{} in \\{}: {}").format( thisOne, self.bookReferenceCode, c, v, originalMarker, adjText ) )
                         self.addPriorityError( 53, c, v, _("Empty {}").format( thisOne ) )
                     else: # there is a note
                         if note[0].isspace():
                             fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Found {} starting with space in \\{}: {}").format( thisOne, originalMarker, adjText ) )
-                            logging.error( _("Found {} starting with space after {} {}:{} in \\{}: {}").format( thisOne, self.bookReferenceCode, c, v, originalMarker, adjText ) )
+                            logging.error( _("processLineFix: Found {} starting with space after {} {}:{} in \\{}: {}").format( thisOne, self.bookReferenceCode, c, v, originalMarker, adjText ) )
                             self.addPriorityError( 12, c, v, _("{} starts with space").format( thisOne.title() ) )
                             note = note.lstrip()
                             #print( "QQQ2: lstrip in note" ); halt
                         if note and note[-1].isspace():
                             fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Found {} ending with space in \\{}: {}").format( thisOne, originalMarker, adjText ) )
-                            logging.error( _("Found {} ending with space after {} {}:{} in \\{}: {}").format( thisOne, self.bookReferenceCode, c, v, originalMarker, adjText ) )
+                            logging.error( _("processLineFix: Found {} ending with space after {} {}:{} in \\{}: {}").format( thisOne, self.bookReferenceCode, c, v, originalMarker, adjText ) )
                             self.addPriorityError( 11, c, v, _("{} ends with space").format( thisOne.title() ) )
                             note = note.rstrip()
                             #print( "QQQ3: rstrip in note" )
                         if '\\f ' in note or '\\f*' in note or '\\x ' in note or '\\x*' in note: # Only the contents of these fields should be here now
-                            print( "{} {}:{} What went wrong here: '{}' from \\{} '{}' (Is it an embedded note?)".format( self.bookReferenceCode, c, v, note, originalMarker, text ) )
-                            print( "Have an embedded note perhaps! Not handled correctly yet" )
+                            print( "processLineFix: {} {}:{} What went wrong here: '{}' from \\{} '{}' (Is it an embedded note?)".format( self.bookReferenceCode, c, v, note, originalMarker, text ) )
+                            print( "processLineFix: Have an embedded note perhaps! Not handled correctly yet" )
                             note = note.replace( '\\f ', ' ' ).replace( '\\f*','').replace( '\\x ', ' ').replace('\\x*','') # Temporary fix ..................
                     adjText = adjText[:ix1] + adjText[ix2+3:] # Remove the note completely from the text
                     lcAdjText = adjText.lower()
@@ -404,7 +409,7 @@ class InternalBibleBook:
                         cleanedNote = cleanedNote.replace( marker, '' )
                     if '\\' in cleanedNote:
                         fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Found unexpected backslash in {}: {}").format( thisOne, cleanedNote ) )
-                        logging.error( _("Found unexpected backslash after {} {}:{} in {}: {}").format( self.bookReferenceCode, c, v, thisOne, cleanedNote ) )
+                        logging.error( _("processLineFix: Found unexpected backslash after {} {}:{} in {}: {}").format( self.bookReferenceCode, c, v, thisOne, cleanedNote ) )
                         self.addPriorityError( 81, c, v, _("{} contains unexpected backslash").format( thisOne.title() ) )
                         cleanedNote = cleanedNote.replace( '\\', '' )
                     # Save it all and finish off
@@ -417,7 +422,7 @@ class InternalBibleBook:
                 # Check for anything left over
                 if '\\f' in lcAdjText or '\\x' in lcAdjText:
                     fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Unable to properly process footnotes and cross-references in \\{}: {}").format( originalMarker, adjText ) )
-                    logging.error( _("Unable to properly process footnotes and cross-references {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
+                    logging.error( _("processLineFix: Unable to properly process footnotes and cross-references {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
                     self.addPriorityError( 82, c, v, _("Invalid footnotes or cross-refernces") )
 
             elif self.objectTypeString == 'SwordBibleModule': # Move Sword notes out to extras
@@ -573,7 +578,7 @@ class InternalBibleBook:
             if adjText and adjText[-1].isspace():
                 #print( 10, self.bookReferenceCode, c, v, _("Trailing space before note at end of line") )
                 fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Removed trailing space before note in \\{}: '{}'").format( originalMarker, text ) )
-                logging.warning( _("Removed trailing space before note after {} {}:{} in \\{}: '{}'").format( self.bookReferenceCode, c, v, originalMarker, text ) )
+                logging.warning( _("processLineFix: Removed trailing space before note after {} {}:{} in \\{}: '{}'").format( self.bookReferenceCode, c, v, originalMarker, text ) )
                 self.addPriorityError( 10, c, v, _("Trailing space before note at end of line") )
                 adjText = adjText.rstrip()
                 #print( "QQQ6: rstrip" ); halt
@@ -634,7 +639,7 @@ class InternalBibleBook:
                             cleanText = cleanText[:ixBS].rstrip()
                             #print( "QQQ7: rstrip" ); halt
                             #print( "cleanText: '{}'".format( cleanText ) )
-                    if '\\' in cleanText: logging.error( "Why do we still have a backslash in '{}' from '{}'?".format( cleanText, adjText ) ); halt
+                    if '\\' in cleanText: logging.error( "processLineFix: Why do we still have a backslash in '{}' from '{}'?".format( cleanText, adjText ) ); halt
 
             if Globals.debugFlag: # Now do a final check that we did everything right
                 for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
@@ -658,12 +663,14 @@ class InternalBibleBook:
             """
             nonlocal sahtCount
 
-            if adjMarker in ('p','q1','q2','q3','q4') and text: # Separate the verse text from the paragraph markers
+            if adjMarker in ('p','q1','q2','q3','q4','m','mi','pi1','pi2','pi3','pi4','pmo','pm','pmc','pmr','cls',
+                             'li1','li2','li3','li4','pc','pr','ph1','ph2','ph3','ph4','qm1','qm2','qm3','qm4',) and text:
+                # Separate the verse text from the paragraph markers
                 self._processedLines.append( InternalBibleEntry(adjMarker, originalMarker, '', '', [], '') )
                 adjMarker = 'p~'
                 if not text.strip():
                     fixErrors.append( _("{} {}:{} Paragraph marker '{}' seems to contain only whitespace").format( self.bookReferenceCode, c, v, originalMarker ) )
-                    logging.error( _("Only whitespace for '{}' paragraph marker {} {}:{}").format( originalMarker, self.bookReferenceCode, c, v ) )
+                    logging.error( _("doAppend: Only whitespace for '{}' paragraph marker {} {}:{}").format( originalMarker, self.bookReferenceCode, c, v ) )
                     self.addPriorityError( 68, c, v, _("Only whitespace following character marker '{}").format( originalMarker ) )
                     return # nothing more to do here
 
@@ -682,9 +689,9 @@ class InternalBibleBook:
                     if sahtCount != -1:
                         sahtCount += 1
                         if sahtCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
-                            logging.error( _("Marker '{}' at {} {}:{} should always have text").format( originalMarker, self.bookReferenceCode, c, v ) )
+                            logging.error( _("doAppend: Marker '{}' at {} {}:{} should always have text").format( originalMarker, self.bookReferenceCode, c, v ) )
                         else: # we've reached our limit
-                            logging.error( _('Additional "Marker should always have text" messages suppressed...') )
+                            logging.error( _('doAppend: Additional "Marker should always have text" messages suppressed...') )
                             sahtCount = -1 # So we don't do this again (for this book)
                 self.addPriorityError( 96, c, v, _("Marker \\{} should always have text").format( originalMarker ) )
                 # Don't bother even saving the marker since it's useless
@@ -1469,7 +1476,7 @@ class InternalBibleBook:
                 #print( " ", marker, text )
                 wjCount = text.count( 'wj' ) // 2 # Assuming that half of them are \wj* end markers
                 wjFirst, wjLast = text.startswith( '\\wj ' ), text.endswith( '\\wj*' )
-                wjInfo = (originalMarker,wjCount,wjFirst,wjLast,)
+                wjInfo = (entry.getOriginalMarker(),wjCount,wjFirst,wjLast,)
                 wordsOfJesus.append( (reference,wjInfo,) ) # This is the real data
 
         if addedUnitErrors: self.errorDictionary['Added Unit Errors'] = addedUnitErrors

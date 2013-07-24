@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleInternals.py
-#   Last modified: 2013-07-20 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-24 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Bible internals handler"
-ProgVersion = "0.08"
+ProgVersion = "0.09"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -401,15 +401,15 @@ class InternalBibleIndex:
                 #if saveCV == ('0','0'): halt
                 #assert( 1 <= lineCount <= 120 ) # Could potentially be even higher for bridged verses (e.g., 1Chr 11:26-47, Ezra 2:3-20) and where words are stored individually
                 if saveCV in self.indexData and Globals.verbosityLevel > 2:
-                    logging.critical( "makeIndex.saveAnythingOutstanding: replacing index entry {} {}:{}".format( self.bookReferenceCode, C, V ) )
-                    logging.error( "  mI:saO was", self.indexData[saveCV] )
+                    logging.critical( "makeIndex.saveAnythingOutstanding: replacing index entry {} {}:{}".format( self.bookReferenceCode, strC, strV ) )
+                    logging.error( "  mI:saO was {}".format( self.indexData[saveCV] ) )
                     ie = self.indexData[saveCV]
                     ix,lc,ct = ie.getEntryIndex(), ie.getEntryCount(), ie.getContext()
                     for ixx in range( ix, ix+lc ):
-                        logging.error( "   mI:saO ", self.givenBibleEntries[ixx], ct )
-                    logging.error( "  mI:saO now", (saveJ,lineCount,context) )
+                        logging.error( "   mI:saO {} {}".format( self.givenBibleEntries[ixx], ct ) )
+                    logging.error( "  mI:saO now {}".format( (saveJ,lineCount,context) ) )
                     for ixx in range( saveJ, saveJ+lineCount ):
-                        logging.error( "   mI:saO ", self.givenBibleEntries[ixx], context )
+                        logging.error( "   mI:saO {} {}".format( self.givenBibleEntries[ixx], context ) )
                 self.indexData[saveCV] = InternalBibleIndexEntry( saveJ, lineCount, context )
                 saveCV = saveJ = None
                 lineCount = 0
@@ -417,7 +417,9 @@ class InternalBibleIndex:
 
 
         if Globals.verbosityLevel > 3: print( "    " + _("Indexing {} {} entries...").format( len(self.givenBibleEntries), self.bookReferenceCode ) )
-        if self.bookReferenceCode not in ('FRT','GLO','BAK',): # Assume it's a C/V book
+        if self.bookReferenceCode not in ('FRT','PRF','ACK','INT','TOC','GLS','CNC','NDX','TDX','BAK','OTH', \
+                                                'XXA','XXB','XXC','XXD','XXE','XXF','XXG',):
+            # Assume it's a C/V book
             saveCV = saveJ = None
             lineCount, context = 0, None # lineCount is the number of datalines pointed to by this index entry
             strC, strV = '0', '0'
@@ -516,17 +518,20 @@ class InternalBibleIndex:
                     lineCount += 1
                 elif marker == 'v':
                     assert( strC != '0' ) # Should be in a chapter by now
+                    print( "Why do we have a verse number in a {} book?".format( self.bookReferenceCode ) )
+                    print( "  makeIndex3", j, "saveCV =", saveCV, "saveJ =", saveJ, "this =", entry.getMarker(), entry.getCleanText()[:20] + ('' if len(entry.getCleanText())<20 else '...') )
                     saveAnythingOutstanding() # with the adjusted lineCount
-                    # Remove verse ranges, etc. and then save the verse number
-                    strV = entry.getCleanText()
-                    digitV = ''
-                    for char in strV:
-                        if char.isdigit(): digitV += char
-                        else: # the first non-digit in the verse "number"
-                            if Globals.verbosityLevel > 3: print( "Ignored non-digits in verse for index: {} {}:{}".format( self.bookReferenceCode, strC, strV ) )
-                            break # ignore the rest
-                    #assert( strV != '0' or self.bookReferenceCode=='PSA' ) # Not really handled properly yet
-                    saveCV, saveJ = (strC,digitV,), revertToJ
+                    if 0:
+                        # Remove verse ranges, etc. and then save the verse number
+                        strV = entry.getCleanText()
+                        digitV = ''
+                        for char in strV:
+                            if char.isdigit(): digitV += char
+                            else: # the first non-digit in the verse "number"
+                                if Globals.verbosityLevel > 3: print( "Ignored non-digits in verse for index: {} {}:{}".format( self.bookReferenceCode, strC, strV ) )
+                                break # ignore the rest
+                        #assert( strV != '0' or self.bookReferenceCode=='PSA' ) # Not really handled properly yet
+                        saveCV, saveJ = (strC,digitV,), revertToJ
                 elif strC == '0': # Still in the introduction
                     # Each line is considered a new "verse" entry in chapter "zero"
                     assert( saveCV is None and saveJ is None )
@@ -580,7 +585,10 @@ class InternalBibleIndex:
             if C == '0': # the book introduction
                 pass
             else: # not the book introduction
-                if V == '0': assert( 'c' in markers )
+                if V == '0':
+                    if 'c' not in markers:
+                        logging.critical( "InternalBibleIndex.checkIndex: Probable v0 encoding error in {} {}:{} {}".format( self.bookReferenceCode, C, V, entries ) )
+                    if Globals.debugFlag: assert( 'c' in markers )
                 else: assert( 'v' in markers )
                 if 'p' in markers: assert( 'p~' in markers or 'v' in markers )
                 if 'q1' in markers or 'q2' in markers: assert( 'v' in markers or 'p~' in markers )

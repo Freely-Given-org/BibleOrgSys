@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ZefaniaXMLBible.py
-#   Last modified: 2013-06-24 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-24 by RJH (also update ProgVersion below)
 #
 # Module handling Zefania XML Bibles
 #
@@ -59,7 +59,7 @@ or
 """
 
 ProgName = "Zefania XML Bible format handler"
-ProgVersion = "0.21"
+ProgVersion = "0.22"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -563,7 +563,11 @@ class ZefaniaXMLBible( Bible ):
                 #print( "note", BBB, chapterNumber, verseNumber, noteType, repr(nText), repr(nTail) )
                 #thisBook.appendLine( 'ST', css ) # XXXXXXXXXXXXXXXXXXXXXXXXXX Losing data here (for now)
                 #thisBook.appendLine( 'ST=', nText )
-                if nTail: thisBook.appendLine( 'v~', nTail )
+                if nTail:
+                    if '\n' in nTail:
+                        print( "ZefaniaXMLBible.__validateAndExtractVerse: nTail {} {}:{} '{}'".format( BBB, chapterNumber, verseNumber, nTail ) )
+                        nTail = nTail.replace( '\n', ' ' )
+                    thisBook.appendLine( 'v~', nTail )
                 for subsubelement in subelement:
                     if subsubelement.tag == ZefaniaXMLBible.styleTag:
                         subsublocation = "style in " + sublocation
@@ -635,7 +639,9 @@ class ZefaniaXMLBible( Bible ):
             else: logging.error( "Expected to find NOTE or STYLE but got '{}' in {}".format( subelement.tag, location ) )
 
         if vText: # This is the main text of the verse (follows the verse milestone)
-            #if '\\' in vText: print( "{} {}:{} '{}'".format( BBB, chapterNumber, verseNumber, vText ) )
+            if '\n' in vText:
+                print( "ZefaniaXMLBible.__validateAndExtractVerse: vText {} {}:{} '{}'".format( BBB, chapterNumber, verseNumber, vText ) )
+                vText = vText.replace( '\n', ' ' )
             thisBook.appendLine( 'v', verseNumber + ' ' + vText )
     # end of ZefaniaXMLBible.__validateAndExtractVerse
 # end of ZefaniaXMLBible class
@@ -664,11 +670,11 @@ def demo():
 
 
     if 1:
-        for testFilename in good: # Choose one of the above lists for testing
+        for j, testFilename in enumerate( good ): # Choose one of the above lists for testing
             testFilepath = os.path.join( testFolder, testFilename )
 
             # Demonstrate the XML Bible class
-            if Globals.verbosityLevel > 1: print( "\nDemonstrating the Zefania Bible class..." )
+            if Globals.verbosityLevel > 1: print( "\nZ B{}/ Demonstrating the Zefania Bible class...".format( j+1 ) )
             if Globals.verbosityLevel > 0: print( "  Test filepath is '{}'".format( testFilepath ) )
             zb = ZefaniaXMLBible( testFolder, testFilename )
             zb.load() # Load and process the XML

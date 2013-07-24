@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2013-07-18 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-24 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 """
 
 ProgName = "USFM Bible handler"
-ProgVersion = "0.39"
+ProgVersion = "0.40"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -380,12 +380,13 @@ def demo():
             elif os.path.isdir( somepath ): # Let's assume that it's a folder containing a USFM (partial) Bible
                 #if not something.startswith( 'ssx' ): continue
                 count += 1
+                title = bookNameDict = None
                 findInfoResult = findInfo( somepath )
                 if findInfoResult: title, bookNameDict = findInfoResult
                 if title is None: title = something[:-5] if something.endswith("_usfm") else something
                 name, encoding, testFolder = title, "utf-8", somepath
                 if os.access( testFolder, os.R_OK ):
-                    if Globals.verbosityLevel > 0: print( "\n{}".format( count ) )
+                    if Globals.verbosityLevel > 0: print( "\nUSFM A{}".format( count ) )
                     UB = USFMBible( testFolder, name, encoding )
                     UB.load()
                     totalBooks += len( UB )
@@ -535,7 +536,7 @@ def demo():
                 if title is None: title = something[:-5] if something.endswith("_usfm") else something
                 name, encoding, testFolder = title, "utf-8", somepath
                 if os.access( testFolder, os.R_OK ):
-                    if Globals.verbosityLevel > 0: print( "\n{}".format( count ) )
+                    if Globals.verbosityLevel > 0: print( "\nD{}".format( count ) )
                     UBW = USFMBible( testFolder, name, encoding )
                     UBW.load()
                     print( UBW )
@@ -594,6 +595,35 @@ def demo():
                         if 1: # Do Sword export
                             SwordControls = {}; ControlFiles.readControlFile( 'ControlFiles', "To_OSIS_controls.txt", SwordControls )
                             UBW.toSwordModule( controlDict=SwordControls ) # We use the same OSIS controls (except for the output filename)
+                else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
+        if count: print( "\n{} total USFM (partial) Bibles processed.".format( count ) )
+        if totalBooks: print( "{} total books ({} average per folder)".format( totalBooks, round(totalBooks/count) ) )
+
+
+    if 1: # Test a whole folder full of folders of USFM Bibles
+        testBaseFolder = "Tests/DataFilesForTests/theWordRoundtripTestFiles/"
+        count = totalBooks = 0
+        for something in sorted( os.listdir( testBaseFolder ) ):
+            somepath = os.path.join( testBaseFolder, something )
+            if os.path.isfile( somepath ): print( "Ignoring file '{}' in '{}'".format( something, testBaseFolder ) )
+            elif os.path.isdir( somepath ): # Let's assume that it's a folder containing a USFM (partial) Bible
+                #if not something.startswith( 'ssx' ): continue # This line is used for debugging only specific modules
+                count += 1
+                findInfoResult = findInfo( somepath )
+                if findInfoResult: title, bookNameDict = findInfoResult
+                if title is None: title = something[:-5] if something.endswith("_usfm") else something
+                name, encoding, testFolder = title, "utf-8", somepath
+                if os.access( testFolder, os.R_OK ):
+                    if Globals.verbosityLevel > 0: print( "\nUSFM E{}".format( count ) )
+                    UBW = USFMBible( testFolder, name, encoding )
+                    UBW.load()
+                    print( UBW )
+                    if not Globals.commandLineOptions.export: UBW.check()
+                    UBWErrors = UBW.getErrors()
+                    #print( UBWErrors )
+
+                    if Globals.commandLineOptions.export:
+                        UBW.doAllExports()
                 else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
         if count: print( "\n{} total USFM (partial) Bibles processed.".format( count ) )
         if totalBooks: print( "{} total books ({} average per folder)".format( totalBooks, round(totalBooks/count) ) )

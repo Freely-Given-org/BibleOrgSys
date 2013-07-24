@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # py
-#   Last modified: 2013-07-20 (also update ProgVersion below)
+#   Last modified: 2013-07-23 (also update ProgVersion below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -67,7 +67,7 @@ Contains functions:
 """
 
 ProgName = "Globals"
-ProgVersion = "0.28"
+ProgVersion = "0.29"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -295,7 +295,8 @@ def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=Tru
     filepath1 = os.path.join( folder1, filename1 ) if folder1 else filename1
     filepath2 = os.path.join( folder2, filename2 ) if folder2 else filename2
     if verbosityLevel > 1:
-        if filename1==filename2: print( "Comparing {} files in folders {} and {}...".format( repr(filename1), repr(folder1), repr(folder2) ) )
+        if filename1==filename2:
+            print( "Comparing {} files in folders {} and {}...".format( repr(filename1), repr(folder1), repr(folder2) ) )
         else: print( "Comparing files {} and {}...".format( repr(filename1), repr(filename2) ) )
 
     # Do a preliminary check on the readability of our files
@@ -312,7 +313,8 @@ def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=Tru
         for line in file1:
             lineCount += 1
             if lineCount==1 and line[0]==chr(65279): #U+FEFF
-                if printFlag and verbosityLevel > 2: print( "      fileCompare: Detected UTF-16 Byte Order Marker in file1" )
+                if printFlag and verbosityLevel > 2:
+                    print( "      fileCompare: Detected UTF-16 Byte Order Marker in file1" )
                 line = line[1:] # Remove the UTF-8 Byte Order Marker
             if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
             if not line: continue # Just discard blank lines
@@ -322,7 +324,8 @@ def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=Tru
         for line in file2:
             lineCount += 1
             if lineCount==1 and line[0]==chr(65279): #U+FEFF
-                if printFlag and verbosityLevel > 2: print( "      fileCompare: Detected UTF-16 Byte Order Marker in file2" )
+                if printFlag and verbosityLevel > 2:
+                    print( "      fileCompare: Detected UTF-16 Byte Order Marker in file2" )
                 line = line[1:] # Remove the UTF-8 Byte Order Marker
             if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
             if not line: continue # Just discard blank lines
@@ -342,7 +345,10 @@ def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=Tru
                     .format( k+1, repr(lines1[k]), len(lines1[k]), k+1, repr(lines2[k]), len(lines2[k]) ) )
             equalFlag = False
             diffCount += 1
-            if diffCount > exitCount: break
+            if diffCount > exitCount:
+                if printFlag and Globals.verbosityLevel > 1:
+                    print( "fileCompare: stopped comparing after {} mismatches".format( exitCount ) )
+                break
 
     return equalFlag
 # end of fileCompare

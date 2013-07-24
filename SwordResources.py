@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # SwordResources.py
-#   Last modified: 2013-06-24 (also update ProgVersion below)
+#   Last modified: 2013-07-24 (also update ProgVersion below)
 #
 # Module handling Sword resources using the Sword engine
 #
@@ -30,7 +30,7 @@ This module uses the Sword engine (libsword) via the Python SWIG bindings.
 """
 
 ProgName = "Sword resource handler"
-ProgVersion = "0.02"
+ProgVersion = "0.04"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -89,7 +89,10 @@ class SwordInterface():
             #print( "gM", module.getName() )
             return self.library.getModule( moduleAbbreviation )
         else:
-            return self.library.loadModule( moduleAbbreviation )
+            try:result = self.library.loadModule( moduleAbbreviation ) # e.g., KJV
+            except KeyError: result = self.library.loadModule( moduleAbbreviation.lower() ) # needs kjv??? why? what changed?
+            #print( moduleAbbreviation, result ); halt
+            return result
     # end of SwordInterface.getModule
 
 
@@ -133,6 +136,7 @@ class SwordInterface():
             verseData.append( ('v','v', v, v, [],) )
             verseData.append( ('v~','v~', verseText, verseText, [],) )
         else:
+            #print( "module", module )
             verseData = module.getBCVRef( key )
             #print( "gVD", module.getName(), key, verseData )
             if verseData is None:
@@ -163,7 +167,8 @@ class SwordInterface():
             assert( isinstance( verseData, list ) )
             assert( 2 <= len(verseData) <= 5 )
             verseText = ''
-            for marker,originalMarker,text,cleanText,extras in verseData:
+            for entry in verseData:
+                marker, cleanText = entry.getMarker(), entry.getCleanText()
                 if marker == 'c': pass # Ignore
                 elif marker == 'p': verseText += '¶' + cleanText
                 elif marker == 'm': verseText += '§' + cleanText

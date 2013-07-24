@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodesConverter.py
-#   Last modified: 2013-06-24 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-24 by RJH (also update ProgVersion below)
 #
 # Module handling BibleBooksCodes.xml to produce C and Python data tables
 #
@@ -28,8 +28,10 @@ Module handling BibleBooksCodes.xml and to export to JSON, C, and Python data ta
 """
 
 ProgName = "Bible Books Codes converter"
-ProgVersion = "0.68"
+ProgVersion = "0.69"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+
+debuggingThisModule = False
 
 
 import logging, os.path
@@ -67,11 +69,13 @@ class BibleBooksCodesConverter:
         self._compulsoryAttributes = ()
         self._optionalAttributes = ()
         self._uniqueAttributes = self._compulsoryAttributes + self._optionalAttributes
-        self._compulsoryElements = ( "nameEnglish", "referenceAbbreviation", "referenceNumber", "sequenceNumber" )
-        self._optionalElements = ( "expectedChapters", "SBLAbbreviation", "OSISAbbreviation", "SwordAbbreviation", "CCELNumber",
-                                        "USFMAbbreviation", "USFMNumber", "USXNumber", "UnboundCode", "BibleditNumber",
-                                        "NETBibleAbbreviation", "ByzantineAbbreviation", "possibleAlternativeBooks" )
-        self._uniqueElements = self._compulsoryElements + \
+        self._compulsoryElements = ( "nameEnglish", "referenceAbbreviation", "referenceNumber", "sequenceNumber",
+                                    "typicalSection" )
+        self._optionalElements = ( "expectedChapters", "SBLAbbreviation", "OSISAbbreviation", "SwordAbbreviation",
+                                    "CCELNumber", "USFMAbbreviation", "USFMNumber", "USXNumber", "UnboundCode",
+                                    "BibleditNumber", "NETBibleAbbreviation", "ByzantineAbbreviation",
+                                    "possibleAlternativeBooks" )
+        self._uniqueElements = ( "nameEnglish", "referenceAbbreviation", "referenceNumber", "sequenceNumber" ) + \
                     ( "USXNumber", "UnboundCode", "BibleditNumber", "NETBibleAbbreviation", "ByzantineAbbreviation" )
 
         # These are fields that we will fill later
@@ -79,6 +83,7 @@ class BibleBooksCodesConverter:
         self.__DataDicts = {} # Used for import
         self.titleString = self.ProgVersion = self.dateString = ''
     # end of BibleBooksCodesConverter.__init__
+
 
     def loadAndValidate( self, XMLFilepath=None ):
         """
@@ -95,6 +100,7 @@ class BibleBooksCodesConverter:
             if XMLFilepath is not None and XMLFilepath!=self.__XMLFilepath: logging.error( _("Bible books codes are already loaded -- your different filepath of '{}' was ignored").format( XMLFilepath ) )
         return self
     # end of BibleBooksCodesConverter.loadAndValidate
+
 
     def __load( self, XMLFilepath ):
         """
@@ -138,6 +144,7 @@ class BibleBooksCodesConverter:
         else:
             logging.error( _("Expected to load '{}' but got '{}'").format( self._treeTag, self._XMLtree.tag ) )
     # end of BibleBooksCodesConverter.__load
+
 
     def __validate( self ):
         """
@@ -229,6 +236,7 @@ class BibleBooksCodesConverter:
         if self._XMLtree.tail is not None and self._XMLtree.tail.strip(): logging.error( _("Unexpected '{}' tail data after {} element").format( self._XMLtree.tail, self._XMLtree.tag ) )
     # end of BibleBooksCodesConverter.__validate
 
+
     def __str__( self ):
         """
         This method returns the string representation of a Bible book code.
@@ -245,10 +253,12 @@ class BibleBooksCodesConverter:
         return result
     # end of BibleBooksCodesConverter.__str__
 
+
     def __len__( self ):
         """ Returns the number of books codes loaded. """
         return len( self._XMLtree )
     # end of BibleBooksCodesConverter.__len__
+
 
     def importDataToPython( self ):
         """
@@ -285,6 +295,8 @@ class BibleBooksCodesConverter:
             intID = int( ID )
             sequenceNumber = element.find("sequenceNumber").text
             intSequenceNumber = int( sequenceNumber )
+            typicalSection = element.find("typicalSection").text
+            if Globals.debugFlag: assert( typicalSection in ('OT','OT+','NT','NT+','DC','PS','FRT','BAK',) )
             # The optional elements are set to None if they don't exist
             expectedChapters = None if element.find("expectedChapters") is None else element.find("expectedChapters").text
             SBLAbbreviation = None if element.find("SBLAbbreviation") is None else element.find("SBLAbbreviation").text
@@ -314,7 +326,8 @@ class BibleBooksCodesConverter:
                                                     "USFMAbbreviation":USFMAbbreviation, "USFMNumberString":USFMNumberString, "USXNumberString":USXNumberString,
                                                     "UnboundCodeString":UnboundCodeString, "BibleditNumberString":BibleditNumberString,
                                                     "NETBibleAbbreviation":NETBibleAbbreviation, "ByzantineAbbreviation":ByzantineAbbreviation,
-                                                    "numExpectedChapters":expectedChapters, "possibleAlternativeBooks":possibleAlternativeBooks, "nameEnglish":nameEnglish }
+                                                    "numExpectedChapters":expectedChapters, "possibleAlternativeBooks":possibleAlternativeBooks,
+                                                    "nameEnglish":nameEnglish, "typicalSection":typicalSection }
             if "referenceNumber" in self._compulsoryElements or ID:
                 if "referenceNumber" in self._uniqueElements: assert( intID not in myIDDict ) # Shouldn't be any duplicates
                 if intID in myIDDict: halt
@@ -323,7 +336,8 @@ class BibleBooksCodesConverter:
                                     "USFMAbbreviation":USFMAbbreviation, "USFMNumberString":USFMNumberString, "USXNumberString":USXNumberString,
                                     "UnboundCodeString":UnboundCodeString, "BibleditNumberString":BibleditNumberString,
                                     "NETBibleAbbreviation":NETBibleAbbreviation, "ByzantineAbbreviation":ByzantineAbbreviation,
-                                    "numExpectedChapters":expectedChapters, "possibleAlternativeBooks":possibleAlternativeBooks, "nameEnglish":nameEnglish }
+                                    "numExpectedChapters":expectedChapters, "possibleAlternativeBooks":possibleAlternativeBooks,
+                                    "nameEnglish":nameEnglish, "typicalSection":typicalSection }
             if "sequenceNumber" in self._compulsoryElements or sequenceNumber:
                 if "sequenceNumber" in self._uniqueElements: assert( intSequenceNumber not in sequenceNumberList ) # Shouldn't be any duplicates
                 if intSequenceNumber in sequenceNumberList: halt

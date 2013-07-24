@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkers.py
-#   Last modified: 2013-07-19 (also update ProgVersion below)
+#   Last modified: 2013-07-24 (also update ProgVersion below)
 #
 # Module handling USFMMarkers
 #
@@ -34,7 +34,7 @@ Contains the singleton class: USFMMarkers
 """
 
 ProgName = "USFM Markers handler"
-ProgVersion = "0.58"
+ProgVersion = "0.60"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -47,6 +47,8 @@ from collections import OrderedDict
 from singleton import singleton
 import Globals
 
+
+oftenIgnoredIntroMarkers = ('id','ide','sts','rem','h1','toc1','toc2','toc3',)
 
 
 def removeUSFMCharacterField( marker, originalText, closed ):
@@ -493,7 +495,8 @@ class USFMMarkers:
             7: text field from the marker until the next USFM
                 but any text preceding the first USFM is not returned anywhere.
         """
-        firstResult = []
+        #if Globals.verbosityLevel > 2: print( "USFMMarkers.getMarkerListFromText( {}, {} )".format( repr(text), verifyMarkers ) )
+        firstResult = [] # A list of 4-tuples containing ( 1, 2, 3, 4 ) above
         textLength = len( text )
         ixBS = text.find( '\\' )
         while( ixBS != -1 ): # Find backslashes
@@ -543,22 +546,26 @@ class USFMMarkers:
 
         # Now that we have found all the markers and where they are, get the text fields between them
         rLen = len( firstResult )
-        secondResult = []
+        secondResult = []  # A list of 6-tuples containing ( 1, 2, 3, 4, 5, 7 ) above
         cx = []
         for j, (m, ix, x, mx) in enumerate(firstResult):
             if self.isNewlineMarker( m ): cx = [] #; print( "rst", cx )
-            elif x==' ': cx = [m] #; print( "set", cx )
+            elif x==' ' or x=='': # Open marker in line or at end of line
+                cx = [m] #; print( "set", cx )
             elif x=='+': cx.append( m ) #; print( "add", m, cx )
             elif x=='-': cx.pop() #; print( "del", m, cx )
             elif x=='*': cx = [] #; print( "clr", cx )
-            else: print( "Shouldn't happen" )
+            else:
+                print( "USFMMarkers.getMarkerListFromText: Shouldn't happen", firstResult, secondResult,
+                      '\n', j, repr(m), ix, repr(x), mx, cx )
+                if Globals.debugFlag: halt
             if j>= rLen-1: tx = text[ix+len(mx):]
             else: tx=text[ix+len(mx):firstResult[j+1][1]]
             #print( 'second', j, m, ix, repr(x), repr(mx), cx, repr(tx) )
             secondResult.append( (m, ix, x, mx, cx[:], tx,) )
 
         # And now find where they are closed
-        finalResult = []
+        finalResult = [] # The final list of 7-tuples (inserting #6 here)
         for j, (m, ix, x, mx, cx, tx) in enumerate(secondResult):
             ixEnd = None
             if x in (' ','+') and len(cx)>0: # i.e., a character start marker

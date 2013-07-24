@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # MySwordBible.py
-#   Last modified: 2013-07-18 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-24 by RJH (also update ProgVersion below)
 #
 # Module handling "MySword" Bible module files
 #
@@ -51,7 +51,7 @@ e.g.,
 """
 
 ProgName = "MySword Bible format handler"
-ProgVersion = "0.07"
+ProgVersion = "0.08"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -274,13 +274,22 @@ class MySwordBible( Bible ):
             else: # line is not None
                 if not isinstance( line, str ):
                     if 'encryption' in self.settingsDict:
-                        logging.critical( "Unable to decrypt verse line at {} {}:{} {}".format( BBB, C, V, repr(line) ) )
+                        logging.critical( "MySwordBible.load: Unable to decrypt verse line at {} {}:{} {}".format( BBB, C, V, repr(line) ) )
                         break
                     else:
-                        logging.critical( "Unable to decode verse line at {} {}:{} {} {}".format( BBB, C, V, repr(line), self.settingsDict ) )
+                        logging.critical( "MySwordBible.load: Unable to decode verse line at {} {}:{} {} {}".format( BBB, C, V, repr(line), self.settingsDict ) )
                 elif not line: logging.warning( "MySwordBible.load: Found blank verse line at {} {}:{}".format( BBB, C, V ) )
-                else: haveLines = True
+                else:
+                    haveLines = True
 
+                    # Some modules end lines with \r\n or have it in the middle!
+                    #   (We just ignore these for now)
+                    if '\r' in line or '\n' in line:
+                        logging.warning( "MySwordBible.load: Found CR or LF characters in verse line at {} {}:{}".format( BBB, C, V ) )
+                    while line and line[-1] in '\r\n': line = line[:-1]
+                    line = line.replace( '\r\n', ' ' ).replace( '\r', ' ' ).replace( '\n', ' ' )
+
+            #print( "MySword.load", BBB, C, V, repr(line) )
             handleLine( BBB, C, V, line, thisBook, ourGlobals )
             V += 1
             if V > numV:
@@ -377,7 +386,7 @@ def demo():
         names = ('nheb-je','nko','ts1998',)
         for j, name in enumerate( names):
             fullname = name + '.bbl.mybible'
-            if Globals.verbosityLevel > 1: print( "\nB{}/ Trying {}".format( j+1, fullname ) )
+            if Globals.verbosityLevel > 1: print( "\nMySw B{}/ Trying {}".format( j+1, fullname ) )
             testMySwB( testFolder, fullname )
 
 
@@ -386,8 +395,10 @@ def demo():
         names = ("Matigsalug",)
         for j, name in enumerate( names):
             fullname = name + '.bbl.mybible'
-            if Globals.verbosityLevel > 1: print( "\nC{}/ Trying {}".format( j+1, fullname ) )
-            testMySwB( testFolder, fullname )
+            pathname = os.path.join( testFolder, fullname )
+            if os.path.exists( pathname ):
+                if Globals.verbosityLevel > 1: print( "\nMySw C{}/ Trying {}".format( j+1, fullname ) )
+                testMySwB( testFolder, fullname )
 
 
     if 1: # all discovered modules in the test folder
@@ -406,7 +417,7 @@ def demo():
                 assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFile in enumerate( sorted( foundFiles ) ):
-                if Globals.verbosityLevel > 1: print( "\nD{}/ Trying {}".format( j+1, someFile ) )
+                if Globals.verbosityLevel > 1: print( "\nMySw D{}/ Trying {}".format( j+1, someFile ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testMySwB( testFolder, someFile )
                 #break # only do the first one.........temp

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodesTests.py
-#   Last modified: 2013-06-24 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-24 by RJH (also update ProgVersion below)
 #
 # Module testing BibleBooksCodes.py
 #
@@ -94,6 +94,7 @@ class BibleBooksCodesConverterTests( unittest.TestCase ):
         self.assertEqual( self.bbcsc.exportDataToC(), None ) # Basically just make sure that it runs
     # end of test_1070_exportDataToC
 # end of BibleBooksCodesConverterTests class
+
 
 
 class BibleBooksCodesTests( unittest.TestCase ):
@@ -573,6 +574,16 @@ class BibleBooksCodesTests( unittest.TestCase ):
         self.assertTrue( 'ESA' in result )
         self.assertTrue( 'ESC' in result )
     # end of test_2380_getPossibleAlternativeBooksCodes
+
+    def test_2390_getTypicalSection( self ):
+        """ Test the getTypicalSection function. """
+        for BBB, section in (('GEN','OT'),('MAL','OT'),('MAT','NT'),('REV','NT'), \
+                                ('SIR','DC'), ('PRF','FRT'), ('XXC','BAK'),):
+            result = self.bbc.getTypicalSection( BBB )
+            self.assertEqual( result, section )
+        for badBBB in ('ABC','xyz','Gen',):
+            self.assertRaises( KeyError, self.bbc.getTypicalSection, badBBB )
+    # end of test_2390_getTypicalSection
 
     # Test the NR (not recommended) functions
     def test_2800_getEnglishName_NR( self ):
