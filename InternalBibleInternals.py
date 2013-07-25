@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleInternals.py
-#   Last modified: 2013-07-24 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-26 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Bible internals handler"
-ProgVersion = "0.09"
+ProgVersion = "0.11"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -99,13 +99,13 @@ class InternalBibleEntry:
             assert( originalMarker and isinstance( originalMarker, str ) ) # Mustn't be blank
             assert( '\\' not in originalMarker and ' ' not in originalMarker and '*' not in originalMarker )
             assert( isinstance( adjustedText, str ) )
-            assert( '\n' not in adjustedText )
+            assert( '\n' not in adjustedText and '\r' not in adjustedText )
             assert( isinstance( cleanText, str ) )
-            assert( '\n' not in cleanText )
+            assert( '\n' not in cleanText and '\r' not in adjustedText )
             assert( '\\' not in cleanText )
             assert( isinstance( extras, list ) )
             assert( isinstance( originalText, str ) )
-            assert( '\n' not in originalText )
+            assert( '\n' not in originalText and '\r' not in adjustedText )
             if extras:
                 #print( "extras:", extras )
                 for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
@@ -426,7 +426,7 @@ class InternalBibleIndex:
             for j, entry in enumerate( self.givenBibleEntries):
                 #print( "  makeIndex1", j, "saveCV =", saveCV, "saveJ =", saveJ, "this =", entry.getMarker(), entry.getCleanText()[:20] + ('' if len(entry.getCleanText())<20 else '...') )
                 marker = entry.getMarker()
-                if Globals.debugFlag and marker in ( 'p','q1','q2','q3','q4' ):
+                if Globals.debugFlag and marker in Globals.USFMParagraphMarkers:
                     assert( not entry.getText() and not entry.getCleanText() and not entry.getExtras() )
                 if marker == 'c': # A new chapter always means that it's a clean new index entry
                     saveAnythingOutstanding()
@@ -458,7 +458,8 @@ class InternalBibleIndex:
                                 lineCount -= 1
                                 #print( "going to", revertToJ-1 )
                                 aM,cT = self.givenBibleEntries[revertToJ-1].getMarker(), self.givenBibleEntries[revertToJ-1].getCleanText()
-                            if revertToJ >= 1 and aM in ('p','q1','q2','q3',) and not cT: # These markers apply to the next line, i.e., to our current v line
+                            if revertToJ >= 1 and aM in Globals.USFMParagraphMarkers and not cT:
+                                # These markers apply to the next line, i.e., to our current v line
                                 revertToJ -= 1
                                 assert( lineCount > 0 )
                                 lineCount -= 1
@@ -500,14 +501,14 @@ class InternalBibleIndex:
                     lineCount += 1
                 #if j > 10: break
             saveAnythingOutstanding()
-        else: # it's a front or back book (which may or may not have a c=1 line in it)
+        else: # it's a front or back book (which may or may not have a c=1 and possibly a v=1 line in it)
             saveCV = saveJ = None
             lineCount, context = 0, None # lineCount is the number of datalines pointed to by this index entry
             strC, strV = '0', '0'
             for j, entry in enumerate( self.givenBibleEntries):
                 #print( "  makeIndex2", j, "saveCV =", saveCV, "saveJ =", saveJ, "this =", entry.getMarker(), entry.getCleanText()[:20] + ('' if len(entry.getCleanText())<20 else '...') )
                 marker = entry.getMarker()
-                if Globals.debugFlag and marker in ( 'p','q1','q2','q3','q4' ):
+                if Globals.debugFlag and marker in Globals.USFMParagraphMarkers:
                     assert( not entry.getText() and not entry.getCleanText() and not entry.getExtras() )
                 if marker == 'c': # A new chapter always means that it's a clean new index entry
                     saveAnythingOutstanding()
@@ -557,7 +558,17 @@ class InternalBibleIndex:
         if Globals.verbosityLevel > 2: print(  _("Checking {} {} index entries...").format( len(self.indexData), self.bookReferenceCode ) )
         if Globals.verbosityLevel > 3: print( self )
 
-        sortedIndex = sorted( self.indexData, key=lambda s: int(s[0])*1000+int(s[1]) )
+        for ixKey in self.indexData:
+            #print( ixKey ); halt
+            C, V = ixKey
+            if not C.isdigit():
+                logging.critical( "InternalBibleIndex.checkIndex: Non-digit C entry in {} {}:{}".format( self.bookReferenceCode, C, V ) )
+            if not V.isdigit():
+                logging.critical( "InternalBibleIndex.checkIndex: Non-digit V entry in {} {}:{}".format( self.bookReferenceCode, C, V ) )
+
+        try: sortedIndex = sorted( self.indexData, key=lambda s: int(s[0])*1000+int(s[1]) )
+        except ValueError: # non-numbers in C or V -- should already have received notification above
+            sortedIndex = self.indexData # for now
         #for j, key in enumerate( sortedIndex ):
             #C, V = key
             #indexEntry = self.indexData[key]
@@ -587,8 +598,8 @@ class InternalBibleIndex:
             else: # not the book introduction
                 if V == '0':
                     if 'c' not in markers:
-                        logging.critical( "InternalBibleIndex.checkIndex: Probable v0 encoding error in {} {}:{} {}".format( self.bookReferenceCode, C, V, entries ) )
-                    if Globals.debugFlag: assert( 'c' in markers )
+                        logging.critical( "InternalBibleIndex.checkIndex: Probable v0 encoding error (no chapter?) in {} {}:{} {}".format( self.bookReferenceCode, C, V, entries ) )
+                    if Globals.debugFlag and debuggingThisModule: assert( 'c' in markers )
                 else: assert( 'v' in markers )
                 if 'p' in markers: assert( 'p~' in markers or 'v' in markers )
                 if 'q1' in markers or 'q2' in markers: assert( 'v' in markers or 'p~' in markers )
@@ -626,6 +637,8 @@ class InternalBibleIndex:
                         if 'p' in markers:
                             logging.critical( "InternalBibleIndex.checkIndex: Check that text in Acts 8:0 gets processed correctly!" )
                         else:
+                            if 's1'  in markers or 'r' in markers or 'p' in markers or 'q1' in markers:
+                                print( key, entries )
                             assert( 's1' not in markers and 'r' not in markers and 'p' not in markers and 'q1' not in markers )
 
             # Check that C,V entries match

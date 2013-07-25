@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleVersificationSystems.py
-#   Last modified: 2013-07-05 (also update ProgVersion below)
+#   Last modified: 2013-07-25 (also update ProgVersion below)
 #
 # Module handling BibleVersificationSystem_*.xml to produce C and Python data tables
 #
@@ -27,7 +27,7 @@
 Module handling BibleVersificationSystem_*.xml to produce C and Python data tables.
 """
 
-ProgName = "Bible Chapter/Verse Systems handler"
+ProgName = "Bible Chapter-Verse Systems handler"
 ProgVersion = "0.51"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 

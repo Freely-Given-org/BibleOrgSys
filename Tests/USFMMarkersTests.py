@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkersTests.py
-#   Last modified: 2013-07-02 (also update ProgVersion below)
+#   Last modified: 2013-07-26 (also update ProgVersion below)
 #
 # Module testing USFMMarkers.py
 #
@@ -28,7 +28,7 @@ Module testing USFMMarkers.py.
 """
 
 ProgName = "USFM Markers tests"
-ProgVersion = "0.57"
+ProgVersion = "0.58"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -320,20 +320,71 @@ class USFMMarkersTests( unittest.TestCase ):
 
     def test_2170_getNewlineMarkersList( self ):
         """ Test the getNewlineMarkersList function. """
-        result = self.UMs.getNewlineMarkersList()
+        result = self.UMs.getNewlineMarkersList( 'Raw' )
         self.assertTrue( isinstance( result , list ) )
-        self.assertGreater( len(result), 30 )
+        self.assertGreater( len(result), 60 )
         for something in result:
             self.assertTrue( isinstance( something , str ) )
             self.assertTrue( something )
             self.assertLess( len(something), 7 )
-        for goodMarker in ( 'p', 'q', 'q1', ):
+        for goodMarker in ( 'p', 'q', 'qr', 'r', ):
+            self.assertTrue( goodMarker in result )
+        for goodMarker in ( 'x', 'f', 'wj', 'q1', 's2', ):
+            self.assertFalse( goodMarker in result )
+        for badMarker in ( 'H', 'xyz', 'q5', 'wj*', ):
+            self.assertFalse( badMarker in result )
+    #end of test_2170_getNewlineMarkersList
+
+    def test_2172_getNewlineMarkersList( self ):
+        """ Test the getNewlineMarkersList function. """
+        result = self.UMs.getNewlineMarkersList( 'Numbered' )
+        self.assertTrue( isinstance( result , list ) )
+        self.assertGreater( len(result), 60 )
+        for something in result:
+            self.assertTrue( isinstance( something , str ) )
+            self.assertTrue( something )
+            self.assertLess( len(something), 7 )
+        for goodMarker in ( 'p', 'q1', 'pi2', 's3', 'r', ):
             self.assertTrue( goodMarker in result )
         for goodMarker in ( 'x', 'f', 'wj', ):
             self.assertFalse( goodMarker in result )
-        for badMarker in ( 'H', 'xyz', 'q9', 'wj*', ):
+        for badMarker in ( 'H', 'xyz', 'q5', 'wj*', ):
             self.assertFalse( badMarker in result )
-    #end of test_2170_getNewlineMarkersList
+    #end of test_2172_getNewlineMarkersList
+
+    def test_2174_getNewlineMarkersList( self ):
+        """ Test the getNewlineMarkersList function. """
+        result = self.UMs.getNewlineMarkersList( 'Combined' )
+        self.assertTrue( isinstance( result , list ) )
+        self.assertGreater( len(result), 60 )
+        for something in result:
+            self.assertTrue( isinstance( something , str ) )
+            self.assertTrue( something )
+            self.assertLess( len(something), 7 )
+        for goodMarker in ( 'p', 'q', 'q1', 's', 's3', 'r', ):
+            self.assertTrue( goodMarker in result )
+        for goodMarker in ( 'x', 'f', 'wj', ):
+            self.assertFalse( goodMarker in result )
+        for badMarker in ( 'H', 'xyz', 'q5', 'wj*', ):
+            self.assertFalse( badMarker in result )
+    #end of test_2174_getNewlineMarkersList
+
+    def test_2176_getNewlineMarkersList( self ):
+        """ Test the getNewlineMarkersList function. """
+        result = self.UMs.getNewlineMarkersList( 'CanonicalText' )
+        self.assertTrue( isinstance( result , list ) )
+        self.assertTrue( 30 < len(result) < 40 )
+        for something in result:
+            self.assertTrue( isinstance( something , str ) )
+            self.assertTrue( something )
+            self.assertLess( len(something), 7 )
+        for goodMarker in ( 'p', 'pi2', 'q1', ):
+            self.assertTrue( goodMarker in result )
+        for goodMarker in ( 'x', 'f', 'wj', 's', 's1', 'r', ):
+            self.assertFalse( goodMarker in result )
+        for badMarker in ( 'H', 'xyz', 'q5', 'wj*', ):
+            self.assertFalse( badMarker in result )
+    #end of test_2176_getNewlineMarkersList
 
     def test_2180_getInternalMarkersList( self ):
         """ Test the getInternalMarkersList function. """

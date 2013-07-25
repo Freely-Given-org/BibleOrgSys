@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodes.py
-#   Last modified: 2013-07-24 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-25 by RJH (also update ProgVersion below)
 #
 # Module handling BibleBooksCodes functions
 #
@@ -496,6 +496,14 @@ def demo():
     print( "Possible alternative  books to Esther: {}".format( bbc.getPossibleAlternativeBooksCodes('EST') ) )
     for something in ('PE2', '2Pe', '2 Pet', '2Pet', 'Job', ):
         print( something, bbc.getBBB( something ) )
+
+    sections = {}
+    for BBB in bbc:
+        section = bbc.getTypicalSection( BBB )
+        if section not in sections: sections[section] = []
+        sections[section].append( BBB )
+    print( "\n{} book codes in {} sections".format( len(bbc), len(sections) ) )
+    for section in sections: print( "  {} section: {} {}".format( section, len(sections[section]), sections[section] ) )
 # end of demo
 
 if __name__ == '__main__':

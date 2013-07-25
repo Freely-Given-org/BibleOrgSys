@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USXXMLBibleBook.py
-#   Last modified: 2013-07-19 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-25 by RJH (also update ProgVersion below)
 #
 # Module handling USX Bible Book xml
 #
@@ -28,7 +28,7 @@ Module handling USX Bible book xml to produce C and Python data tables.
 """
 
 ProgName = "USX XML Bible book handler"
-ProgVersion = "0.08"
+ProgVersion = "0.09"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -40,6 +40,9 @@ from xml.etree.ElementTree import ElementTree
 
 import Globals
 from Bible import BibleBook
+
+
+sortedNLMarkers = sorted( Globals.USFMMarkers.getNewlineMarkersList('Combined'), key=len, reverse=True )
 
 
 
@@ -273,7 +276,7 @@ class USXXMLBibleBook( BibleBook ):
                             loadErrors.append( _("{} {}:{} Found '\\{}' unknown USFM Marker at beginning of line (with no text").format( self.bookReferenceCode, c, v, USFMMarker ) )
                             logging.error( _("Found '\\{}' unknown USFM Marker after {} {}:{} at beginning of line (with no text)").format( USFMMarker, self.bookReferenceCode, c, v ) )
                         self.addPriorityError( 100, c, v, _("Found \\{} unknown USFM Marker on new line in file").format( USFMMarker ) )
-                        for tryMarker in sorted( Globals.USFMMarkers.getNewlineMarkersList(), key=len, reverse=True ): # Try to do something intelligent here -- it might be just a missing space
+                        for tryMarker in sortedNLMarkers: # Try to do something intelligent here -- it might be just a missing space
                             if USFMMarker.startswith( tryMarker ): # Let's try changing it
                                 if lastMarker: self.appendLine( lastMarker, lastText )
                                 lastMarker, lastText = tryMarker, USFMMarker[len(tryMarker):] + ' ' + text

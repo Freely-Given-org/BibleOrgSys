@@ -114,7 +114,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
   <header>
     <work>
       <version>0.70</version>
-      <date>2013-07-24</date>
+      <date>2013-07-25</date>
       <title>Bible books codes list</title>
       <contributor role="com">Robert Hunt</contributor>
       <identifier type="URL">http://www.sbl-site.org/publications/publishingwithsbl.aspx</identifier>
@@ -1611,7 +1611,8 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
 
 <!-- Ezra / Esdras -->
   <BibleBookCodes>
-    <!-- 1 Esdras is a Greek paraphrase of Hebrew Ezra. Also called 1 Ezra or 2 Ezra or 3 Ezra depending on the canon. In the Catholic tradition it is called 3 Esdras/Ezra. -->
+    <!-- 1 Esdras is a Greek paraphrase of Hebrew Ezra. Also called 1 Ezra or 2 Ezra or 3 Ezra depending on the canon.
+        In the Catholic tradition it is called 3 Esdras/Ezra. -->
     <nameEnglish>Greek Esdras / Greek Ezra / 1 Esdras / 1 Ezra / 2 Ezra / 3 Ezra / 3 Esdras</nameEnglish>
     <referenceAbbreviation>GES</referenceAbbreviation>
     <referenceNumber>90</referenceNumber>
@@ -1630,7 +1631,8 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <typicalSection>???</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
-    <!-- 2 Esdras is Latin Esdras. It is also called 4 Esdras or 4 Ezra in the Catholic tradition. It is called 3 Esdras in the Russian and Georgian traditions. -->
+    <!-- 2 Esdras is Latin Esdras. It is also called 4 Esdras or 4 Ezra in the Catholic tradition.
+        It is called 3 Esdras in the Russian and Georgian traditions. -->
     <nameEnglish>Latin Esdras / 2 Esdras / 3 Esdras / 4 Esdras / 4 Ezra</nameEnglish>
     <referenceAbbreviation>LES</referenceAbbreviation>
     <referenceNumber>91</referenceNumber>
@@ -1959,7 +1961,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <referenceNumber>120</referenceNumber>
     <sequenceNumber>101</sequenceNumber>
     <expectedChapters>41</expectedChapters>
-    <typicalSection>???</typicalSection>
+    <typicalSection>OT</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Psalms Book 2 / Psalms Book II</nameEnglish>
@@ -1968,7 +1970,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <referenceNumber>121</referenceNumber>
     <sequenceNumber>102</sequenceNumber>
     <expectedChapters>31</expectedChapters>
-    <typicalSection>???</typicalSection>
+    <typicalSection>OT</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Psalms Book 3 / Psalms Book III</nameEnglish>
@@ -1977,7 +1979,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <referenceNumber>122</referenceNumber>
     <sequenceNumber>103</sequenceNumber>
     <expectedChapters>17</expectedChapters>
-    <typicalSection>???</typicalSection>
+    <typicalSection>OT</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Psalms Book 4 / Psalms Book IV</nameEnglish>
@@ -1986,7 +1988,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <referenceNumber>123</referenceNumber>
     <sequenceNumber>104</sequenceNumber>
     <expectedChapters>17</expectedChapters>
-    <typicalSection>???</typicalSection>
+    <typicalSection>OT</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Psalms Book 5 / Psalms Book V</nameEnglish>
@@ -1995,7 +1997,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <referenceNumber>124</referenceNumber>
     <sequenceNumber>105</sequenceNumber>
     <expectedChapters>44</expectedChapters>
-    <typicalSection>???</typicalSection>
+    <typicalSection>OT</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Psalms B / Liturgical Psalms / Metrical Psalms / Alternative Psalms / Grail Psalms</nameEnglish>
@@ -2006,7 +2008,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <SwordAbbreviation>PsMet</SwordAbbreviation>
     <USFMAbbreviation>PsB</USFMAbbreviation>
     <USFMNumber>88</USFMNumber>
-    <typicalSection>???</typicalSection>
+    <typicalSection>OT+</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Psalm 151</nameEnglish>
@@ -2024,7 +2026,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <USXNumber>084</USXNumber>
     <UnboundCode>84A</UnboundCode>
     <BibleditNumber>84</BibleditNumber>
-    <typicalSection>???</typicalSection>
+    <typicalSection>OT+</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <nameEnglish>Syriac Psalms 152-155 / Five apocryphal Syriac Psalms / Additional Syriac Psalms</nameEnglish>
@@ -2065,7 +2067,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <USFMAbbreviation>Lao</USFMAbbreviation>
     <USFMNumber>C3</USFMNumber>
     <USXNumber>123</USXNumber>
-    <typicalSection>DC</typicalSection>
+    <typicalSection>NT+</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>
     <!-- At this stage, we use a single code for the Greek, Russian or Syriac Odes -->

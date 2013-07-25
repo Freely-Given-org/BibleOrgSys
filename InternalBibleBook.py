@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-07-24 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-25 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.45"
+ProgVersion = "0.46"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -663,8 +663,7 @@ class InternalBibleBook:
             """
             nonlocal sahtCount
 
-            if adjMarker in ('p','q1','q2','q3','q4','m','mi','pi1','pi2','pi3','pi4','pmo','pm','pmc','pmr','cls',
-                             'li1','li2','li3','li4','pc','pr','ph1','ph2','ph3','ph4','qm1','qm2','qm3','qm4',) and text:
+            if adjMarker in Globals.USFMParagraphMarkers and text:
                 # Separate the verse text from the paragraph markers
                 self._processedLines.append( InternalBibleEntry(adjMarker, originalMarker, '', '', [], '') )
                 adjMarker = 'p~'
@@ -1338,7 +1337,7 @@ class InternalBibleBook:
                 bkDict['haveSectionReferences'] = True
                 bkDict['sectionReferencesCount'] += 1
                 if cleanText[0]=='(' and cleanText[-1]==')': sectionRefParenthCount += 1
-            elif marker in ('p','q1','q2','q3'):
+            elif marker in Globals.USFMParagraphMarkers:
                 bkDict['haveParagraphMarkers'] = True
                 if text: bkDict['haveVerseText'] = True
             elif marker in ('ip',):
@@ -1676,7 +1675,7 @@ class InternalBibleBook:
 
     def doCheckSFMs( self ):
         """Runs a number of comprehensive checks on the USFM codes in this Bible book."""
-        allAvailableNewlineMarkers = Globals.USFMMarkers.getNewlineMarkersList()
+        allAvailableNewlineMarkers = Globals.USFMMarkers.getNewlineMarkersList( 'Numbered' )
         allAvailableCharacterMarkers = Globals.USFMMarkers.getCharacterMarkersList( includeEndMarkers=True )
 
         newlineMarkerCounts, internalMarkerCounts, noteMarkerCounts = OrderedDict(), OrderedDict(), OrderedDict()

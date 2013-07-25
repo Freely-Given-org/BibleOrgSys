@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # TheWordBible.py
-#   Last modified: 2013-07-24 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-25 by RJH (also update ProgVersion below)
 #
 # Module handling "theWord" Bible module files
 #
@@ -51,7 +51,7 @@ e.g.,
 """
 
 ProgName = "theWord Bible format handler"
-ProgVersion = "0.11"
+ProgVersion = "0.12"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -603,9 +603,7 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
             #print( lastMarker )
             if lastMarker == 'p': composedLine += '<CM>' # We had a continuation paragraph
             elif lastMarker == 'm': composedLine += '<CL>' # We had a continuation paragraph
-            elif lastMarker in ('p','q1','q2','q3','q4','m','mi','pi1','pi2','pi3','pi4','pmo','pm','pmc','pmr','cls',
-                             'li1','li2','li3','li4','pc','pr','ph1','ph2','ph3','ph4','qm1','qm2','qm3','qm4',):
-                pass # Did we need to do anything here???
+            elif lastMarker in Globals.USFMParagraphMarkers: pass # Did we need to do anything here???
             elif lastMarker != 'v': print( BBB, C, V, marker, lastMarker ); halt # We should have done something here
             #if ourGlobals['pi1']: composedLine += '<PI>'
             #elif ourGlobals['pi2']: composedLine += '<PI2>'

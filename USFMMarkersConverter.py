@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkersConverter.py
-#   Last modified: 2013-06-24 (also update ProgVersion below)
+#   Last modified: 2013-07-26 (also update ProgVersion below)
 #
 # Module handling USFMMarkers.xml to produce C and Python data tables
 #
@@ -28,7 +28,7 @@ Module handling USFMMarkers.xml and to export to JSON, C, and Python data tables
 """
 
 ProgName = "USFM Markers converter"
-ProgVersion = "0.55"
+ProgVersion = "0.56"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -283,7 +283,7 @@ class USFMMarkersConverter:
             closed = element.find("closed").text
             if  closed not in ( "No", "Always", "Optional" ): logging.error( _("Unexpected '{}' closed field for marker '{}'").format( closed, marker ) )
             occursIn = element.find("occursIn").text
-            if  occursIn not in ( "Header", "Introduction", "Text", "Poetry", "Text, Poetry", "Acrostic verse", "Table row", "Footnote", "Cross-reference", "Front and back matter" ):
+            if  occursIn not in ( "Header", "Introduction", "Numbering", "Text", "Canonical Text", "Poetry", "Text, Poetry", "Acrostic verse", "Table row", "Footnote", "Cross-reference", "Front and back matter" ):
                 logging.error( _("Unexpected '{}' occursIn field for marker '{}'").format( occursIn, marker ) )
             deprecated = element.find("deprecated").text
             if  deprecated not in ( "Yes", "No" ): logging.error( _("Unexpected '{}' deprecated field for marker '{}'").format( deprecated, marker ) )

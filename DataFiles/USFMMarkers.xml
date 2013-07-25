@@ -56,8 +56,8 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
 
   <header>
     <work>
-      <version>0.57</version>
-      <date>2013-06-28</date>
+      <version>0.58</version>
+      <date>2013-07-26</date>
       <title>USFM 2.4 markers list</title>
       <contributor role="com">Robert Hunt</contributor>
       <identifier type="URL">http://paratext.ubs-translations.org/usfm</identifier>
@@ -628,7 +628,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
-    <occursIn>Text</occursIn>
+    <occursIn>Numbering</occursIn>
     <deprecated>No</deprecated>
     <description>No text should follow this marker (i.e., after the chapter number? But some versions have footnotes here!</description>
   </USFMMarker>
@@ -643,7 +643,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Always</closed>
-    <occursIn>Text</occursIn>
+    <occursIn>Numbering</occursIn>
     <deprecated>No</deprecated>
     <description>Used for marking the chapter number used in an alternate versification scheme. Required when different versification traditions need to be supported in the same translation text.</description>
   </USFMMarker>
@@ -658,7 +658,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
-    <occursIn>Text</occursIn>
+    <occursIn>Numbering</occursIn>
     <deprecated>No</deprecated>
     <description>Used when the chosen publishing presentation will render chapter divisions as headings, and not drop cap numerals. Usage note: If \cl is entered once before chapter 1 (\c 1) it represents the text for "chapter" to be used throughout the current book. If \cl is used after each individual chapter marker, it represents the particular text to be used for the display of the current chapter heading (usually done if numbers are being presented as words, not numerals).</description>
   </USFMMarker>
@@ -673,7 +673,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
-    <occursIn>Text</occursIn>
+    <occursIn>Numbering</occursIn>
     <deprecated>No</deprecated>
     <description>This is a chapter marker (number, letter) which would be displayed in the published text (where the published marker is different than the \c # used within the translation editing environment)</description>
   </USFMMarker>
@@ -703,7 +703,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
-    <occursIn>Text</occursIn>
+    <occursIn>Numbering</occursIn>
     <deprecated>No</deprecated>
     <description>Marker is followed by the verse number #, and the text of the verse</description>
   </USFMMarker>
@@ -718,7 +718,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Always</closed>
-    <occursIn>Text</occursIn>
+    <occursIn>Numbering</occursIn>
     <deprecated>No</deprecated>
     <description>Used for marking verse numbers used in an alternate versification scheme. Required when different versification traditions need to be supported in the same translation text.</description>
   </USFMMarker>
@@ -733,7 +733,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>Always</closed>
-    <occursIn>Text</occursIn>
+    <occursIn>Numbering</occursIn>
     <deprecated>No</deprecated>
     <description>This is a verse marker (number, letter) which would be displayed in the published text (where the published marker is different than the \v # used within the translation editing environment)</description>
   </USFMMarker>
@@ -750,7 +750,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <hasContent>Sometimes</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
-    <occursIn>Text</occursIn>
+    <occursIn>Canonical Text</occursIn>
     <deprecated>No</deprecated>
     <description>Followed immediately by a space and paragraph text, or by a new line and a verse marker</description>
   </USFMMarker>
@@ -765,7 +765,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <hasContent>Sometimes</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
-    <occursIn>Text</occursIn>
+    <occursIn>Canonical Text</occursIn>
     <deprecated>No</deprecated>
     <description>No first line indent. Followed immediately by a space and paragraph text, or by a new line and a verse marker. Usually used to resume prose at the margin (without indent) after poetry or OT quotation (i.e. continuation of the previous paragraph).</description>
   </USFMMarker>
@@ -780,7 +780,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
-    <occursIn>Text</occursIn>
+    <occursIn>Canonical Text</occursIn>
     <deprecated>No</deprecated>
   </USFMMarker>
 
@@ -794,7 +794,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <hasContent>Sometimes</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
-    <occursIn>Text</occursIn>
+    <occursIn>Canonical Text</occursIn>
     <deprecated>No</deprecated>
   </USFMMarker>
 
@@ -808,7 +808,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
-    <occursIn>Text</occursIn>
+    <occursIn>Canonical Text</occursIn>
     <deprecated>No</deprecated>
   </USFMMarker>
 
@@ -822,7 +822,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
-    <occursIn>Text</occursIn>
+    <occursIn>Canonical Text</occursIn>
     <deprecated>No</deprecated>
   </USFMMarker>
 
@@ -836,9 +836,10 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <hasContent>Sometimes</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
-    <occursIn>Text</occursIn>
+    <occursIn>Canonical Text</occursIn>
     <deprecated>No</deprecated>
-    <description>Used in some texts for discourse sections. The variable # represents the level of indent. See also \pm.</description>
+    <description>Used in some texts for discourse sections. The variable # represents the level of indent.
+        See also \pm.</description>
   </USFMMarker>
 
   <USFMMarker>
@@ -851,7 +852,7 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <hasContent>Sometimes</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
-    <occursIn>Text</occursIn>
+    <occursIn>Canonical Text</occursIn>
     <deprecated>No</deprecated>
     <description>No first line indent</description>
   </USFMMarker>
@@ -866,10 +867,14 @@ See the supplied USFMMarkers.ReadMe.txt for more details.
     <hasContent>Never</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
-    <occursIn>Text</occursIn>
+    <occursIn>Canonical Text</occursIn>
     <deprecated>No</deprecated>
-    <description>Indicates "no-break" with previous paragraph (regardless of previous paragraph type). Commonly used in cases where the previous paragraph spans the chapter boundary. No-break markup within poetry: Some translations have a publishing tradition of inserting a small amount of additional white-space at chapter boundaries. It is important in these texts to use the
-b marker within any specific poetic contexts where no visible break in the flow of the the text is intended at a particular chapter boundary.</description>
+    <description>Indicates "no-break" with previous paragraph (regardless of previous paragraph type).
+        Commonly used in cases where the previous paragraph spans the chapter boundary.
+        No-break markup within poetry: Some translations have a publishing tradition of inserting a small
+            amount of additional white-space at chapter boundaries.
+        It is important in these texts to use the b marker within any specific poetic contexts where
+            no visible break in the flow of the the text is intended at a particular chapter boundary.</description>
   </USFMMarker>
 
   <USFMMarker>
@@ -882,7 +887,7 @@ b marker within any specific poetic contexts where no visible break in the flow 
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
-    <occursIn>Text</occursIn>
+    <occursIn>Canonical Text</occursIn>
     <deprecated>No</deprecated>
     <description>Similar to "With love," or "Sincerely yours,"</description>
   </USFMMarker>
@@ -897,9 +902,11 @@ b marker within any specific poetic contexts where no visible break in the flow 
     <hasContent>Sometimes</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
-    <occursIn>Text</occursIn>
+    <occursIn>Canonical Text</occursIn>
     <deprecated>No</deprecated>
-    <description>An out-dented paragraph meant to highlight the items of a list. Lists may be used to markup the elements of a recurrent structure, such as the days within the creation account, or the Decalogue (10 commandments). The variable # represents the level of indent.</description>
+    <description>An out-dented paragraph meant to highlight the items of a list.
+        Lists may be used to markup the elements of a recurrent structure, such as the days within the creation account,
+            or the Decalogue (10 commandments). The variable # represents the level of indent.</description>
   </USFMMarker>
 
   <USFMMarker>
@@ -912,7 +919,7 @@ b marker within any specific poetic contexts where no visible break in the flow 
     <hasContent>Sometimes</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
-    <occursIn>Text</occursIn>
+    <occursIn>Canonical Text</occursIn>
     <deprecated>No</deprecated>
     <description>Recommended for inscriptions</description>
   </USFMMarker>
@@ -927,7 +934,7 @@ b marker within any specific poetic contexts where no visible break in the flow 
     <hasContent>Sometimes</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
-    <occursIn>Text</occursIn>
+    <occursIn>Canonical Text</occursIn>
     <deprecated>Yes</deprecated>
     <description>"Deprecated" (i.e. use is strongly discouraged). Recommended alternate: \pmr</description>
   </USFMMarker>
@@ -942,9 +949,10 @@ b marker within any specific poetic contexts where no visible break in the flow 
     <hasContent>Sometimes</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
-    <occursIn>Text</occursIn>
+    <occursIn>Canonical Text</occursIn>
     <deprecated>Yes</deprecated>
-    <description>"Deprecated" (i.e. use is strongly discouraged). The variable # represents the level of overall paragraph indent.</description>
+    <description>"Deprecated" (i.e. use is strongly discouraged).
+        The variable # represents the level of overall paragraph indent.</description>
   </USFMMarker>
 
   <USFMMarker>
@@ -959,7 +967,9 @@ b marker within any specific poetic contexts where no visible break in the flow 
     <closed>No</closed>
     <occursIn>Text, Poetry</occursIn>
     <deprecated>No</deprecated>
-    <description>May be used to explicitly indicate additional white space between paragraphs. No text should follow this marker, and it should not be used before or after titles to indicate white-space. Also use for stanza breaks in poetry, or between poetry and prose.</description>
+    <description>May be used to explicitly indicate additional white space between paragraphs.
+        No text should follow this marker, and it should not be used before or after titles to indicate white-space.
+        Also use for stanza breaks in poetry, or between poetry and prose.</description>
   </USFMMarker>
 
 
@@ -974,7 +984,7 @@ b marker within any specific poetic contexts where no visible break in the flow 
     <hasContent>Sometimes</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
-    <occursIn>Text</occursIn>
+    <occursIn>Canonical Text</occursIn>
     <deprecated>No</deprecated>
     <description>The variable # represents the level of indent (i.e. \q1, \q2, \q3 etc.)</description>
   </USFMMarker>
@@ -989,7 +999,7 @@ b marker within any specific poetic contexts where no visible break in the flow 
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
-    <occursIn>Text</occursIn>
+    <occursIn>Canonical Text</occursIn>
     <deprecated>No</deprecated>
     <description>Common use: Poetic refrain</description>
   </USFMMarker>
@@ -1004,7 +1014,7 @@ b marker within any specific poetic contexts where no visible break in the flow 
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
-    <occursIn>Text</occursIn>
+    <occursIn>Canonical Text</occursIn>
     <deprecated>No</deprecated>
   </USFMMarker>
 
@@ -1033,7 +1043,7 @@ b marker within any specific poetic contexts where no visible break in the flow 
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
-    <occursIn>Text</occursIn>
+    <occursIn>Canonical Text</occursIn>
     <deprecated>No</deprecated>
   </USFMMarker>
 
@@ -1062,7 +1072,7 @@ b marker within any specific poetic contexts where no visible break in the flow 
     <hasContent>Always</hasContent>
     <printed>Yes</printed>
     <closed>No</closed>
-    <occursIn>Text</occursIn>
+    <occursIn>Canonical Text</occursIn>
     <deprecated>No</deprecated>
     <description>The variable # represents the level of indent (i.e. \qm1, \qm2 etc.)</description>
   </USFMMarker>

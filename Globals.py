@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # py
-#   Last modified: 2013-07-23 (also update ProgVersion below)
+#   Last modified: 2013-07-26 (also update ProgVersion below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -67,7 +67,7 @@ Contains functions:
 """
 
 ProgName = "Globals"
-ProgVersion = "0.29"
+ProgVersion = "0.30"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -131,7 +131,7 @@ loggingLongFormat = '%(asctime)s %(levelname)8s: %(message)s'
 def setupLoggingToFile( ProgName, ProgVersion, folder=None ):
     """Sets up the main logfile for the program and returns the full pathname."""
     # Gets called from our demo() function when program starts up
-    filename = ProgName + '_log.txt'
+    filename = ProgName.replace('/','-').replace(':','_').replace('\\','_') + '_log.txt'
     if folder is None: folder = defaultLogFolder # relative path
     filepath = os.path.join( folder, filename )
 
@@ -775,6 +775,18 @@ if __name__ != '__main__': # Load global Bible data sets
     BibleBooksCodes = BibleBooksCodes().loadData()
     from USFMMarkers import USFMMarkers
     USFMMarkers = USFMMarkers().loadData()
+    USFMParagraphMarkers = USFMMarkers.getNewlineMarkersList( 'CanonicalText' )
+    #print( len(USFMParagraphMarkers), sorted(USFMParagraphMarkers) )
+    #for marker in ( ):
+        #print( marker )
+        #USFMParagraphMarkers.remove( marker )
+    # was 30 ['cls', 'li1', 'li2', 'li3', 'li4', 'm', 'mi', 'p', 'pc', 'ph1', 'ph2', 'ph3', 'ph4',
+    #    'pi1', 'pi2', 'pi3', 'pi4', 'pm', 'pmc', 'pmo', 'pmr', 'pr', 'q1', 'q2', 'q3', 'q4',
+    #    'qm1', 'qm2', 'qm3', 'qm4']
+    # now 34 ['cls', 'li1', 'li2', 'li3', 'li4', 'm', 'mi', 'nb', 'p', 'pc', 'ph1', 'ph2', 'ph3', 'ph4',
+    #    'pi1', 'pi2', 'pi3', 'pi4', 'pm', 'pmc', 'pmo', 'pmr', 'pr', 'q1', 'q2', 'q3', 'q4', 'qa', 'qc',
+    #    'qm1', 'qm2', 'qm3', 'qm4', 'qr']
+    #print( len(USFMParagraphMarkers), sorted(USFMParagraphMarkers) ); halt
 
 if __name__ == '__main__':
     # Configure basic set-up

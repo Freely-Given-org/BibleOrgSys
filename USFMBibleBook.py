@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBibleBook.py
-#   Last modified: 2013-07-15 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-25 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating USFM Bible books.
 """
 
 ProgName = "USFM Bible book handler"
-ProgVersion = "0.35"
+ProgVersion = "0.36"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -39,6 +39,9 @@ from gettext import gettext as _
 
 import Globals, SFMFile
 from Bible import BibleBook
+
+
+sortedNLMarkers = sorted( Globals.USFMMarkers.getNewlineMarkersList('Combined'), key=len, reverse=True )
 
 
 
@@ -141,7 +144,7 @@ class USFMBibleBook( BibleBook ):
                     loadErrors.append( _("{} {}:{} Found '\\{}' unknown marker at beginning of line (with no text").format( self.bookReferenceCode, c, v, marker ) )
                     logging.error( _("Found '\\{}' unknown marker after {} {}:{} at beginning of line (with no text)").format( marker, self.bookReferenceCode, c, v ) )
                 self.addPriorityError( 100, c, v, _("Found \\{} unknown marker on new line in file").format( marker ) )
-                for tryMarker in sorted( Globals.USFMMarkers.getNewlineMarkersList(), key=len, reverse=True ): # Try to do something intelligent here -- it might be just a missing space
+                for tryMarker in sortedNLMarkers: # Try to do something intelligent here -- it might be just a missing space
                     if marker.startswith( tryMarker ): # Let's try changing it
                         if lastMarker: doAppendLine( lastMarker, lastText )
                         lastMarker, lastText = tryMarker, marker[len(tryMarker):] + ' ' + text

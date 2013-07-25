@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkers.py
-#   Last modified: 2013-07-24 (also update ProgVersion below)
+#   Last modified: 2013-07-26 (also update ProgVersion below)
 #
 # Module handling USFMMarkers
 #
@@ -431,13 +431,16 @@ class USFMMarkers:
     # end of USFMMarkers.getOccursInList
 
 
-    def getNewlineMarkersList( self, option='Combined' ):
+    def getNewlineMarkersList( self, option ):
         """ Returns a list of all possible new line markers. """
-        assert( option in ('Raw','Numbered','Combined') )
-        if option=='Combined': return self.__DataDict["combinedNewlineMarkersList"]
-        elif option=='Raw': return self.__DataDict["numberedNewlineMarkersList"]
-        elif option=='Numbered': return self.__DataDict["newlineMarkersList"]
+        assert( option in ('Raw','Numbered','Combined','CanonicalText') )
+        if option=='Combined': return self.__DataDict["combinedNewlineMarkersList"] # Includes q, q1, q2, ...
+        elif option=='Raw': return self.__DataDict["newlineMarkersList"] # Doesn't include q1, q2, ...
+        elif option=='Numbered': return self.__DataDict["numberedNewlineMarkersList"] # Doesn't include q
+        elif option=='CanonicalText':
+            return [m for m in self.__DataDict["numberedNewlineMarkersList"] if self.markerOccursIn(m)=='Canonical Text'] # Doesn't include id, h1, b, q
     # end of getNewlineMarkersList
+
 
     def getInternalMarkersList( self ):
         """ Returns a list of all possible internal markers.
@@ -603,10 +606,18 @@ def demo():
     um = USFMMarkers().loadData() # Doesn't reload the XML unnecessarily :)
     print( um ) # Just print a summary
     print( "Markers can occurs in", um.getOccursInList() )
-    pm = um.getNewlineMarkersList()
-    print( "New line markers are", len(pm), pm )
+    pm = um.getNewlineMarkersList( 'Raw' )
+    print( "\nRaw New line markers are", len(pm), pm )
+    pm = um.getNewlineMarkersList( 'Numbered' )
+    print( "\nNumbered New line markers are", len(pm), pm )
+    for m in pm:
+        print( m, um.markerOccursIn( m ) )
+    pm = um.getNewlineMarkersList( 'Combined' )
+    print( "\nCombined New line markers are", len(pm), pm )
+    pm = um.getNewlineMarkersList( 'CanonicalText' )
+    print( "\Canonical text New line markers are", len(pm), pm )
     cm = um.getInternalMarkersList()
-    print( "Internal (character) markers are", len(cm), cm )
+    print( "\nInternal (character) markers are", len(cm), cm )
     for m in ('ab', 'h', 'toc1', 'toc4', 'q', 'q1', 'q2', 'q3', 'q4', 'p', 'P', 'f', 'f*' ):
         print( _("{} is {}a valid marker").format( m, "" if um.isValidMarker(m) else _("not")+' ' ) )
         if um.isValidMarker(m):
