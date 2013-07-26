@@ -535,6 +535,7 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
             #else: # there is text
                 #composedLine += '<CL>'+theWordAdjustLine(BBB,C,V,text)
         elif marker in ( 'p', 'b', ):
+            #print( marker, text )
             assert( not text )
             if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
                 ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '<CM>' # append the new paragraph marker to the previous line
@@ -604,7 +605,10 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
             if lastMarker == 'p': composedLine += '<CM>' # We had a continuation paragraph
             elif lastMarker == 'm': composedLine += '<CL>' # We had a continuation paragraph
             elif lastMarker in Globals.USFMParagraphMarkers: pass # Did we need to do anything here???
-            elif lastMarker != 'v': print( BBB, C, V, marker, lastMarker ); halt # We should have done something here
+            elif lastMarker != 'v':
+                print( BBB, C, V, marker, lastMarker )
+                composedLine += theWordAdjustLine(BBB,C,V, text )
+                if Globals.debugFlag: halt # This should never happen -- probably a b marker with text
             #if ourGlobals['pi1']: composedLine += '<PI>'
             #elif ourGlobals['pi2']: composedLine += '<PI2>'
             #elif ourGlobals['pi3']: composedLine += '<PI3>'

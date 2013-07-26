@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-07-24 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-26 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -2473,7 +2473,7 @@ class BibleWriter( InternalBible ):
                     xoOpen = xtOpen = False
                     for j,token in enumerate(HTML5xref.split('\\')):
                         #print( "toHTML5.processXRef", j, "'"+token+"'", "from", '"'+HTML5xref+'"', xoOpen, xtOpen )
-                        if token.startswith( '+' ): halt # Need to handle nested USFM 2.4 markers
+                        if Globals.debugFlag and token.startswith( '+' ): halt # Need to handle nested USFM 2.4 markers
                         lcToken = token.lower()
                         if j==0: # The first token (but the x has already been removed)
                             #xrefHTML5 += 'caller="{}" style="x">'.format( token.rstrip() )
@@ -3333,7 +3333,7 @@ def demo():
     if Globals.verbosityLevel > 0: print( BW ); print()
 
 
-    if 0: # Test reading and writing a USFM Bible
+    if 1: # Test reading and writing a USFM Bible
         from USFMBible import USFMBible
         from USFMFilenames import USFMFilenames
         testData = (
@@ -3359,7 +3359,7 @@ def demo():
                     f1 = os.listdir( testFolder ) # Originals
                     f2 = os.listdir( outputFolder ) # Derived
                     if Globals.verbosityLevel > 1: print( "\nComparing original and re-exported USFM files..." )
-                    for j, (BBB,filename) in enumerate( fN.getPossibleFilenames() ):
+                    for j, (BBB,filename) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
                         if filename in f1 and filename in f2:
                             #print( "\n{}: {} {}".format( j+1, BBB, filename ) )
                             result = Globals.fileCompare( filename, filename, testFolder, outputFolder )
@@ -3368,7 +3368,7 @@ def demo():
             else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 
 
-    if 0: # Test reading and writing a USX Bible
+    if 1: # Test reading and writing a USX Bible
         from USXXMLBible import USXXMLBible
         from USXFilenames import USXFilenames
         testData = (

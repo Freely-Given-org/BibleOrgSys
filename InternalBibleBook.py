@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-07-25 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-26 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.46"
+ProgVersion = "0.47"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -663,7 +663,12 @@ class InternalBibleBook:
             """
             nonlocal sahtCount
 
-            if adjMarker in Globals.USFMParagraphMarkers and text:
+            if adjMarker=='b' and text:
+                fixErrors.append( _("{} {}:{} Paragraph marker '{}' should not contain text").format( self.bookReferenceCode, c, v, originalMarker ) )
+                logging.error( _("doAppend: Illegal text for '{}' paragraph marker {} {}:{}").format( originalMarker, self.bookReferenceCode, c, v ) )
+                self.addPriorityError( 97, c, v, _("Should not have text following character marker '{}").format( originalMarker ) )
+
+            if (adjMarker=='b' or adjMarker in Globals.USFMParagraphMarkers) and text:
                 # Separate the verse text from the paragraph markers
                 self._processedLines.append( InternalBibleEntry(adjMarker, originalMarker, '', '', [], '') )
                 adjMarker = 'p~'
