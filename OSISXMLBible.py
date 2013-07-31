@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # OSISXMLBible.py
-#   Last modified: 2013-07-19 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-30 by RJH (also update ProgVersion below)
 #
 # Module handling OSIS XML Bibles
 #
@@ -34,7 +34,7 @@ This is a quickly updated version of an early module,
 """
 
 ProgName = "OSIS XML Bible format handler"
-ProgVersion = "0.25"
+ProgVersion = "0.26"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -929,7 +929,7 @@ class OSISXMLBible( Bible ):
                         USFMAbbreviation = Globals.BibleBooksCodes.getUSFMAbbreviation( BBB )
                         USFMNumber = Globals.BibleBooksCodes.getUSFMNumber( BBB )
                         if Globals.verbosityLevel > 2: print( _("  It seems we have {}...").format( BBB ) )
-                        self.thisBook = BibleBook( BBB )
+                        self.thisBook = BibleBook( self.name, BBB )
                         self.thisBook.objectNameString = "OSIS XML Bible Book object"
                         self.thisBook.objectTypeString = "OSIS"
                     #bookResults.append( ('chapter', chapterMilestone,) )
@@ -1777,7 +1777,7 @@ class OSISXMLBible( Bible ):
                 if Globals.verbosityLevel > 2: print( _("  Validating {}...").format( BBB ) )
                 USFMAbbreviation = Globals.BibleBooksCodes.getUSFMAbbreviation( BBB )
                 USFMNumber = Globals.BibleBooksCodes.getUSFMNumber( BBB )
-                self.thisBook = BibleBook( BBB )
+                self.thisBook = BibleBook( self.name, BBB )
                 self.thisBook.objectNameString = "OSIS XML Bible Book object"
                 self.thisBook.objectTypeString = "OSIS"
             #bookResults.append( (mainDivType+'Div', mainDivOsisID,) )

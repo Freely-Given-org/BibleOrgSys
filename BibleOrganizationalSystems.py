@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleOrganizationalSystems.py
-#   Last modified: 2013-07-12 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-31 by RJH (also update ProgVersion below)
 #
 # Module handling BibleOrganizationalSystems
 #
@@ -28,7 +28,7 @@ Module handling BibleOrganizationalSystems.
 """
 
 ProgName = "Bible Organization Systems handler"
-ProgVersion = "0.26"
+ProgVersion = "0.27"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -216,7 +216,8 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
                         if result is not None: return result
                 if 'derivedFrom' in self.__dataDict:
                     trySystemName = self.__dataDict['derivedFrom']
-                    if isinstance( trySystemName, str ): print( "trySystemName for 'derivedFrom' is a string: '{}'".format( trySystemName ) )
+                    if isinstance( trySystemName, str ):
+                        if Globals.debugFlag: print( "trySystemName for 'derivedFrom' is a string: '{}'".format( trySystemName ) )
                     elif isinstance( trySystemName, list ):
                         #print( "trySystemName for 'derivedFrom' is a list: '{}'".format( trySystemName ) )
                         trySystemName = trySystemName[0] # Take the first string from the list
@@ -307,7 +308,8 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         for tryType in self.getMoreBasicTypes():
             if 'usesText' in self.__dataDict:
                 for trySystemName in self.__dataDict['usesText']:
-                    if isinstance( trySystemName, str ): print( "trySystemName for 'usesText' is a string: '{}'".format( trySystemName ) )
+                    if isinstance( trySystemName, str ):
+                        if Globals.debugFlag: print( "trySystemName for 'usesText' is a string: '{}'".format( trySystemName ) )
                     elif isinstance( trySystemName, list ):
                         #print( "trySystemName for 'usesText' is a list: '{}'".format( trySystemName ) )
                         trySystemName = trySystemName[0] # Take the first string from the list
@@ -316,7 +318,8 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
                     if result is not None: return result
             if 'derivedFrom' in self.__dataDict:
                 trySystemName = self.__dataDict['derivedFrom']
-                if isinstance( trySystemName, str ): print( "trySystemName for 'derivedFrom' is a string: '{}'".format( trySystemName ) )
+                if isinstance( trySystemName, str ):
+                    if Globals.debugFlag: print( "trySystemName for 'derivedFrom' is a string: '{}'".format( trySystemName ) )
                 elif isinstance( trySystemName, list ):
                     #print( "trySystemName for 'derivedFrom' is a list: '{}'".format( trySystemName ) )
                     trySystemName = trySystemName[0] # Take the first string from the list

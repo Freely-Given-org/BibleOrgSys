@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleReferences.py
-#   Last modified: 2013-06-24 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-31 by RJH (also update ProgVersion below)
 #
 # Module for handling Bible references including ranges
 #
@@ -79,6 +79,8 @@ Technical note: Our Bible reference parsers use state machines rather than regul
 ProgName = "Bible References handler"
 ProgVersion = "0.28"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+
+debuggingThisModule = False
 
 
 import os, logging

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBibleBook.py
-#   Last modified: 2013-07-25 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-30 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating USFM Bible books.
 """
 
 ProgName = "USFM Bible book handler"
-ProgVersion = "0.36"
+ProgVersion = "0.37"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -50,11 +50,11 @@ class USFMBibleBook( BibleBook ):
     Class to load and manipulate a single USFM file / book.
     """
 
-    def __init__( self, BBB ):
+    def __init__( self, name, BBB ):
         """
         Create the USFM Bible book object.
         """
-        BibleBook.__init__( self, BBB ) # Initialise the base class
+        BibleBook.__init__( self, name, BBB ) # Initialise the base class
         self.objectNameString = "USFM Bible Book object"
         self.objectTypeString = "USFM"
     # end of __init__
@@ -173,9 +173,9 @@ def demo():
     if Globals.verbosityLevel > 0: print( ProgNameVersion )
 
 
-    def demoFile( filename, folder, bookReferenceCode ):
+    def demoFile( name, filename, folder, bookReferenceCode ):
         if Globals.verbosityLevel > 1: print( _("Loading {} from {}...").format( bookReferenceCode, filename ) )
-        UBB = USFMBibleBook( bookReferenceCode )
+        UBB = USFMBibleBook( name, bookReferenceCode )
         UBB.load( filename, folder, encoding )
         if Globals.verbosityLevel > 1: print( "  ID is '{}'".format( UBB.getField( 'id' ) ) )
         if Globals.verbosityLevel > 1: print( "  Header is '{}'".format( UBB.getField( 'h' ) ) )
@@ -205,7 +205,7 @@ def demo():
         name, encoding, testFolder, filename, bookReferenceCode = "Matigsalug", "utf-8", "../../../../../Data/Work/Matigsalug/Bible/MBTV/", "MBT41MAT.SCP", "MAT" # You can put your test file here
         #name, encoding, testFolder, filename, bookReferenceCode = "Matigsalug", "utf-8", "../../../../../Data/Work/Matigsalug/Bible/MBTV/", "MBT67REV.SCP", "REV" # You can put your test file here
         if os.access( testFolder, os.R_OK ):
-            demoFile( filename, testFolder, bookReferenceCode )
+            demoFile( name, filename, testFolder, bookReferenceCode )
         else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
 
     if 1: # Test a whole folder full of files
@@ -215,7 +215,7 @@ def demo():
             if Globals.verbosityLevel > 1: print( _("Scanning {} from {}...").format( name, testFolder ) )
             fileList = USFMFilenames.USFMFilenames( testFolder ).getMaximumPossibleFilenameTuples()
             for bookReferenceCode,filename in fileList:
-                demoFile( filename, testFolder, bookReferenceCode )
+                demoFile( name, filename, testFolder, bookReferenceCode )
         else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
 # end of demo
 

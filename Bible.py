@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Bible.py
-#   Last modified: 2013-06-24 (also update ProgVersion below)
+#   Last modified: 2013-07-28 (also update ProgVersion below)
 #
 # Module handling a internal Bible object
 #
@@ -28,12 +28,14 @@ Module handling an internal Bible object.
 """
 
 ProgName = "Bible object handler"
-ProgVersion = "0.04"
+ProgVersion = "0.05"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+
+debuggingThisModule = False
+
 
 import logging, os.path
 from gettext import gettext as _
-#from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree
 
 import Globals
@@ -110,11 +112,11 @@ class BibleBook ( InternalBibleBook ):
             This means that the index has to be updated if the data is updated.
     """
 
-    def __init__( self, BBB ):
+    def __init__( self, name, BBB ):
         """
         Constructor: creates an empty Bible book.
         """
-        InternalBibleBook.__init__( self, BBB )
+        InternalBibleBook.__init__( self, name, BBB )
 
         # Define our added data stores
         self.shortName, self.longName = '', ''

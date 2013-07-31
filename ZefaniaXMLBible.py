@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ZefaniaXMLBible.py
-#   Last modified: 2013-07-24 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-30 by RJH (also update ProgVersion below)
 #
 # Module handling Zefania XML Bibles
 #
@@ -59,7 +59,7 @@ or
 """
 
 ProgName = "Zefania XML Bible format handler"
-ProgVersion = "0.22"
+ProgVersion = "0.23"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -459,7 +459,7 @@ class ZefaniaXMLBible( Bible ):
 
         if BBB:
             if Globals.verbosityLevel > 2: print( _("Validating {} {}...").format( BBB, bookName ) )
-            thisBook = BibleBook( BBB )
+            thisBook = BibleBook( self.name, BBB )
             thisBook.objectNameString = "Zefania XML Bible Book object"
             thisBook.objectTypeString = "Zefania"
             #thisBook.sourceFilepath = self.sourceFilepath

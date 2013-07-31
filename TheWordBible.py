@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # TheWordBible.py
-#   Last modified: 2013-07-25 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-31 by RJH (also update ProgVersion below)
 #
 # Module handling "theWord" Bible module files
 #
@@ -51,7 +51,7 @@ e.g.,
 """
 
 ProgName = "theWord Bible format handler"
-ProgVersion = "0.12"
+ProgVersion = "0.14"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -642,58 +642,134 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
 
 
 
-def handleLine( BBB, C, V, originalLine, bookObject, myGlobals ):
+def handleLine( myName, BBB, C, V, originalLine, bookObject, myGlobals ):
     """
     Adjusts the formatting of the line for Bible reference BBB C:V
         and then writes it to the bookObject.
+
+    Try to convert display formatting to semantic formatting as much as possible
 
     myGlobals dict contains flags.
     """
     if Globals.debugFlag:
         if debuggingThisModule:
-            print( "TheWordBible.handleLine( {} {}:{} {} ... {}".format( BBB, C, V, repr(originalLine), myGlobals ) )
+            print( "TheWordBible.handleLine( {} {} {}:{} {} ... {}".format( myName, BBB, C, V, repr(originalLine), myGlobals ) )
         assert( '\n' not in originalLine )
     line = originalLine
+
+    writtenV = False
+    if V==1: appendedCFlag = False
+    if C!=1 and V==1: bookObject.appendLine( 'c', str(C) ); appendedCFlag = True
+
     if line is None: # We don't have an entry for this C:V
         return
 
-    # Fix an encoding error in asv.ont
+    if line.startswith( '<CM>' ):
+        print( "Why does theWord line start with <CM>?", myName, BBB, C, V, repr(originalLine) )
+
+    # Fix apparent encoding errors in particular modules
+    line = line.replace( ' >', '>' ) # fpr1933
     if line.endswith( '<CM' ): line += '>' # asv.ont
     if line.startswith( '>  ' ): line = line[3:] # pinyin.ont
+    line = line.replace( '<TS><Ts>', '' ) # Fixes a module bug (has an empty field)
+    line = line.replace( '<PF0><PF0>', '<PF0>' ) # 20cNT
+    line = line.replace( '<PF0><PF1>', '<PF1>' ) # 20cNT
+    line = line.replace( '<CM><CI>', '<CI>' ) # 20cNT
+    line = line.replace( '<CI><CI>', '<CI>' ) # Tanakh1917.ot
+    line = line.replace( '<CM><TS', '<TS' ) # 20cNT, gertextbibel
+    line = line.replace( '(<12>) ', '' ).replace( '(<13>) ', '' ) # afr1953
+    match = re.search( '<CT>(.+?)<CG> ', line ) # Lots found in alb
+    if match:
+        logging.warning( "Removed {} {} {}:{} unknown field {} from {}" \
+            .format( myName, BBB, C, V, repr(line[match.start():match.end()]), repr(originalLine) ) )
+        line = line[:match.start()] + line[match.end():]
+    line = line.replace( ' <CLX>', '' ) # Undocumented what this means
+    line = line.replace( '</<sup>>', '</sup>' ) # aleppo
+    if line.endswith( '<CI><PI2>' ): line = line[:-5] # remove <PI2> from Tanakh1917
+    line = line.replace( '<26-Ezekiel.21:3>', '' ) # Tanakh1917
+    #if '\xa0' in line: print( myName, BBB, C, V, repr(originalLine) ); halt
+    line = line.replace( '\xa0', ' ' ) # NBSpace? Not sure what this is (in aleppo and arm1967 and others?)
+    if line.endswith( ' <CM>\t' ): line = line.replace( ' <CM>\t', '<CM>' ) # asv
+    line = re.sub( '<V (\d{1,3}):(\d{1,3})>', '', line ) # cpdv for some verses
+    line = re.sub( '<V P:(\d{1,2})>', '', line ) # cpdv for some prologue verses
+    line = re.sub( '<RX (\d{1,2})\.(\d{1,3})\.(\d{1,3})>', '', line ) # dutsv
+    #line = re.sub( '<RX (\d{1,2})\.(\d{1,3})\.(\d{1,2}) >', '', line ) # fpr1933
+    line = re.sub( '<RX (\d{1,2})\.(\d{1,3})\.(\d{1,3})[+-\.](\d{1,3})>', '', line ) # dutsv, fpr1933
+    #line = line.replace( '<BOOK THE FIRST> ', '' ) # ebr
+    line = line.replace( ' /a>', '' ) # jfa-rc(pt)
+    line = line.replace( '?>> A', '? A' ).replace( 'viu>.', 'viu.' ) # romorthodox
+    line = re.sub( '<V1{>(.*?)<V1}>', r'\1', line ) # tr.nt
+    line = re.sub( '<V2(.+?)>', '', line ) # remove variant 2 from tr.nt
+    line = line.replace( '<CM> <CM> <TS>', '<TS>' ).replace( '<CM> <CM>', '<CM>' ) # web
 
-    # Try to convert display formatting to semantic formatting as much as possible
-    # Adjust paragraph formatting
-    assert( not myGlobals['haveParagraph'] )
-    if line.endswith( '<CM>' ): # Means start a new paragraph after this line
-        line = line[:-4] # Remove the marker
-        myGlobals['haveParagraph'] = 'CM'
-    elif line.endswith( '<CI>' ): # Means start a new paragraph (without a space before it) after this line
-        line = line[:-4] # Remove the marker
-        myGlobals['haveParagraph'] = 'CI'
-    elif line.endswith( '<CL>' ): # Means start on a new line
-        line = line[:-4] # Remove the marker
-        myGlobals['haveParagraph'] = 'CL'
+    # Not sure what <A represents, but it's often at the beginning of a line and messes up other tests
+    #   so lets remove them here
+    line = re.sub( '<AX (.+?)>', '', line ) # fpr1933
+    line = re.sub( '<A(\d{1,3}):(\d{1,2})>', '', line )
+    line = re.sub( '<A (\d{1,3})\.(\d{1,2})>', '', line )
+    #if '<A' in line:
+        #print( "line3", repr(originalLine), '\n', repr(line) )
+        #if Globals.debugFlag: halt
+    line = re.sub( '<22-Song of Songs\.(\d{1,2})\.(\d{1,2})>', '', line ) # Tanakh1917
+    line = line.replace( '<z1>', '' ).replace( '<z2>', '' ) # footnote referent text in leb
+    line = re.sub( '<AF(.)(.*?)>', '', line ) # sblgnt.nt seems to have alternatives immediately before the word
+    line = re.sub( '<AU(.)>', '', line ) # sblgnt.nt seems to have this immediately after the word
+    line = re.sub( '<a href=(.+?)>(.+?)</a>', '', line ) # slt.ont has these html links
+    line = re.sub( '<sync type="(.+?)" value="(.+?)" />', '', line ) # spasev.ont has these links
+
+
+    # Adjust paragraph formatting at the beginning of lines
+    # Don't need to include a \p before a \q1 or whatever
+    if line.startswith( '<PF0>' ):
+        line = line.replace( '<PF0>', '\\q1 ', 1 )
+        myGlobals['haveParagraph'] = False
+    elif line.startswith( '<PF1><PI1>' ):
+        line = line.replace( '<PF1><PI1>', '\\q1 ', 1 )
+        myGlobals['haveParagraph'] = False
+    elif line.startswith( '<PF1>' ):
+        line = line.replace( '<PF1>', '\\q1 ', 1 )
+        myGlobals['haveParagraph'] = False
+    elif line.startswith( '<PI>' ):
+        line = line.replace( '<PI>', '\\q1 ', 1 )
+        myGlobals['haveParagraph'] = False
+    elif line.startswith( '<PI1>' ):
+        line = line.replace( '<PI1>', '\\q1 ', 1 )
+        myGlobals['haveParagraph'] = False
+    elif line.startswith( '<PI2>' ):
+        line = line.replace( '<PI2>', '\\q2 ', 1 )
+        myGlobals['haveParagraph'] = False
+    elif line.startswith( '<PI3>' ):
+        line = line.replace( '<PI3>', '\\q3 ', 1 )
+        myGlobals['haveParagraph'] = False
+    elif line.startswith( '<CI>' ):
+        myGlobals['haveParagraph'] = False
+        if line.startswith( '<CI><PI2>' ):
+            line = line.replace( '<CI><PI2>', '<CI><PI2>\\NL*', 1 ) # This will cause the first q to be followed by a v
+    elif line.startswith( '<CL>' ):
+        myGlobals['haveParagraph'] = False
 
     # Handle some special cases
-    line = line.replace('<TS3><i>(','\\r (').replace(')</i>',')') # The TS3 ending will be covered below
+    line = line.replace('<TS3><i>(','\\NL*\\r (').replace(')</i>',')') # The TS3 ending will be covered below
 
     # Adjust line formatting
-    line = line.replace( '<TS><Ts>', '' ) # Fixes a module bug (has an empty field)
-    if C==1 and V==1: # These are right at the beginning
-        line = line.replace('<TS>','\\mt1 ').replace('<Ts>','\\NL*')
-        line = line.replace('<TS1>','\\mt1 ').replace('<Ts1>','\\NL*') # Start marker and then a newline at end
-        line = line.replace('<TS2>','\\mt2 ').replace('<Ts2>','\\NL*')
-        line = line.replace('<TS3>','\\mt3 ').replace('<Ts3>','\\NL*')
+    if C==1 and V==1 and originalLine and originalLine[0]=='<': # These are right at the beginning of the book
+        line = line.replace('<TS>','\\NL*\\mt1 ').replace('<Ts>','\\NL*')
+        line = line.replace('<TS1>','\\NL*\\mt1 ').replace('<Ts1>','\\NL*') # Start marker and then a newline at end
+        line = line.replace('<TS2>','\\NL*\\mt2 ').replace('<Ts2>','\\NL*')
+        line = line.replace('<TS3>','\\NL*\\mt3 ').replace('<Ts3>','\\NL*')
     else: # we'll assume that they're section headings
-        line = line.replace('<TS>','\\s1 ').replace('<Ts>','\\NL*')
-        line = line.replace('<TS1>','\\s1 ').replace('<Ts1>','\\NL*') # Start marker and then a newline at end
-        line = line.replace('<TS2>','\\s2 ').replace('<Ts2>','\\NL*')
-        line = line.replace('<TS3>','\\s3 ').replace('<Ts3>','\\NL*')
+        if line.startswith( '<TS' ): myGlobals['haveParagraph'] = False # Don't need a paragraph marker before a section heading
+        line = line.replace('<TS>','\\NL*\\s1 ').replace('<Ts>','\\NL*')
+        line = line.replace('<TS1>','\\NL*\\s1 ').replace('<Ts1>','\\NL*') # Start marker and then a newline at end
+        line = line.replace('<TS2>','\\NL*\\s2 ').replace('<Ts2>','\\NL*')
+        line = line.replace('<TS3>','\\NL*\\s3 ').replace('<Ts3>','\\NL*')
     # Some (poor) modules end even the numbered TS fields with just <Ts>!!!
 
     # Adjust character formatting with USFM equivalents
     line = line.replace('<FI>','\\add ').replace('<Fi>','\\add*')
     line = line.replace('<FO>','\\qt ').replace('<Fo>','\\qt*')
+    line = line.replace('<CI><FR><PF1><PI1>','\\NL*\\q1 \\wj ') # in 20cNT
+    line = line.replace('<CI><FR><PF1>','\\NL*\\p \\wj ') # in 20cNT
     line = line.replace('<FR>','\\wj ').replace('<Fr>','\\wj*')
     line = line.replace('<FU>','\\ul ').replace('<Fu>','\\ul*') # Not USFM
     line = line.replace('<RF>','\\f \\ft ').replace('<Rf>','\\f*')
@@ -705,58 +781,109 @@ def handleLine( BBB, C, V, originalLine, bookObject, myGlobals ):
         #print( "line1", repr(originalLine), '\n', repr(line) )
     line = re.sub( '<RF q=(.)>', r'\\f \1 \\ft ', line )
         #print( "line2", repr(originalLine), '\n', repr(line) )
-    line = re.sub( '<A(\d{1,3}):(\d{1,2})>', '', line )
-    line = re.sub( '<A (\d{1,3})\.(\d{1,2})>', '', line )
-    if '<A' in line:
-        print( "line3", repr(originalLine), '\n', repr(line) )
-        #halt
     line = re.sub( '<WH(\d{1,4})>', '', line )
     line = line.replace( '<wh>','' )
     if '<WH' in line or '<wh' in line:
         print( "line4", repr(originalLine), '\n', repr(line) )
         #halt
-    line = re.sub( '<l=(.*?)>', '', line )
+    line = re.sub( '<l=(.+?)>', '', line )
     if '<l=' in line:
         print( "line5", repr(originalLine), '\n', repr(line) )
         #halt
-    line = re.sub('<CI><PI(\d)>',r'\\q\1 ',line).replace('<Ci>','\\NL*')
-    line = re.sub('<CI><PF(\d)>',r'\\q\1 ',line)
 
     # Simple HTML tags (with no semantic info)
     line = line.replace('<b>','\\bd ').replace('</b>','\\bd*')
     line = line.replace('<i>','\\it ').replace('</i>','\\it*')
     line = line.replace('<u>','\\ul ').replace('</u>','\\ul*') # Not USFM
+    line = line.replace( ' <BR> ', '\\NL*\\m ' ).replace( '<BR> ', '\\NL*\\m ' ).replace( '<BR>', '\\NL*\\m ' )
+    line = line.replace( ' <br> ', '\\NL*\\m ' ).replace( '<br> ', '\\NL*\\m ' ).replace( '<br>', '\\NL*\\m ' )
     line = line.replace('<sup>','\\ord ').replace('</sup>','\\ord*') # Not proper USFM meaning
+    line = re.sub('<font size=-1>(.+?)</font>', r'\\sc \1\\sc*', line ) # This causes nested markers in aleppo
+    line = re.sub('<font size=\+1>(.+?)</font>', r'\\em \1\\em*', line )
+    line = re.sub( '<font color=(.+?)>(.+?)</font>', r'\2', line )
+    line = re.sub( '<font color=(.+?)>', '', line ).replace( '</font>','' ) # asv has <font color="850000"> with the closing on the next line
+    line = re.sub( '<HEB>(.+?)<heb>', r'\\qac \1\\qac*', line ) # acrostic letter in asv
+    line = re.sub( '<HEB>(.+?)<Heb>', r'\\nd \1\\nd*', line ) # divine name in rnkjv
 
-    if 1: # Unhandled stuff -- not done properly yet...............................................
-        line = line.replace('<CI>','')
-        line = line.replace('<CL>','')
-        line = line.replace('<CM>','')
-        line = line.replace('<PF0>','')
-        line = line.replace('<PF1>','')
-        line = line.replace('<PF2>','')
-        line = line.replace('<PF3>','')
-        line = line.replace('<PI1>','')
-        line = line.replace('<PI2>','')
-        line = line.replace('<PI3>','')
-        line = line.replace('<K>','').replace('<k>','')
-        line = line.replace('<R>','').replace('<r>','')
-        line = line.replace('<sub>','').replace('</sub>','')
-        line = re.sub('<(.*?)>', '', line )
+    # Handle the paragraph at the end of the previous line
+    if myGlobals['haveParagraph']: # from the end of the previous line
+        bookObject.appendLine( 'p', '' )
+        myGlobals['haveParagraph'] = False
 
+    # Adjust paragraph formatting at the end of lines
+    line = line.replace( '<CM><CM>', '\\NL*\\b<CM>' ) # 20cNT
+    assert( not myGlobals['haveParagraph'] )
+    if line.endswith( '<CM>' ): # Means start a new paragraph after this line
+        line = line[:-4] # Remove the marker
+        myGlobals['haveParagraph'] = 'CM'
+    elif line.endswith( '<CI>' ): # Means start a new paragraph (without a space before it) after this line
+        line = line[:-4] # Remove the marker
+        myGlobals['haveParagraph'] = 'CI'
+    elif line.endswith( '<CL>' ): # Means start on a new line
+        line = line[:-4] # Remove the marker
+        myGlobals['haveParagraph'] = 'CL'
+
+    # Paragraph markers (not at the end of the line)
+    #line = re.sub('<CI><PI(\d)>',r'\\NL*\\q\1 ',line).replace('<Ci>','')
+    #line = re.sub('<CI><PF(\d)>',r'\\NL*\\q\1 ',line)
+    line = line.replace( '<CI><PF0>','\\NL*\\p ' )
+    line = line.replace( '<CI><PF1><PI1>','\\NL*\\q1 ' )
+    line = line.replace( '<CI><PF1>','\\NL*\\p ' )
+    line = line.replace( '<CI><PF2><PI2>', '\\NL*\\q2 ' )
+    line = line.replace( '<CI><PF3><PI3>', '\\NL*\\q3 ' )
+    line = line.replace( '<CI><PI>','\\NL*\\q1 ' )
+    line = line.replace( '<CI><PI0>','\\NL*\\p ' )
+    line = line.replace( '<CI><PI1>','\\NL*\\q1 ' )
+    line = line.replace( '<CI><PI2>','\\NL*\\q2 ' ).replace('<Ci>','')
+    line = line.replace( '<CI><PI3>','\\NL*\\q3 ' )
+    line = line.replace( '<CI><PI4>','\\NL*\\q4 ' )
+    #line = line.replace( '<CI><PI5>','\\NL*\\q4 ' )
+    line = line.replace( '<CL><PI2>','\\NL*\\q2 ' )
+    line = line.replace( '<CL>','\\NL*\\m ' )
+    line = line.replace( '<CM><PI>','\\NL*\\q1 ' )
+    line = line.replace( '<CM><PI5>','\\NL*\\q4 ' )
+    line = line.replace( '<CM><PI6>','\\NL*\\q4 ' )
+    line = line.replace( '<CM><PF1><PI1>', '\\NL*\\q1 ' )
+    line = line.replace( '<CM><PF2><PI2>', '\\NL*\\q2 ' )
+    line = line.replace( '<CM><PF3><PI3>', '\\NL*\\q3 ' )
+    #line = line.replace( '<CM><PF4><PI4>', '\\NL*\\q4 ' )
+    line = line.replace( '<CM><PF0>', '\\NL*\\m ' )
+    line = line.replace( '<CM>', '\\NL*\\p ' )
+    line = line.replace( '<PF0>','\\NL*\\p ')
+    line = line.replace( '<PF1><PI1>','\\NL*\\q1 ' )
+    line = line.replace( '<PI2>', '\\NL*\\q2 ' )
+
+    line = line.replace( '<K>','').replace('<k>','')
+    line = line.replace( '<R>','').replace('<r>','')
+    line = line.replace( '<sub>','').replace('</sub>','')
+
+    if myName == 'ebr': line = line.replace( '<', '\\em ' ).replace( '>', '\\em*' )
 
     # Check what's left at the end
-    if '<' in line or '>' in line: # NOTE: some modules can use these as speech marks so they might be part of the text!
-        logging.debug( "Original line; {}".format( originalLine ) )
-        logging.debug( "TheWordBible.load: Doesn't handle formatted line yet: '{}'".format( line ) )
+    if ('<' in line or '>' in line) and myName not in ('ckjv-sc','ckjv-tc',):
+        # NOTE: some modules can use these as speech marks so they might be part of the text!
+        if '<WT' not in line and '<WG' not in line and '<WH' not in line:
+            # Don't yet handle lines like this: βιβλος<WG976><WTN-NSF> γενεσεως<WG1078><WTN-GSF> ιησου<WG2424><WTN-GSM> χριστου<WG5547><WTN-GSM> υιου<WG5207><WTN-GSM> δαυιδ<WG1138><WTN-PRI> υιου<WG5207><WTN-GSM> αβρααμ<WG11><WTN-PRI>
+            logging.error( "{} original line: {}".format( myName, repr(originalLine) ) )
+            logging.error( "TheWordBible.load: Doesn't handle {} {}:{} formatted line yet: {}".format( BBB, C, V, repr(line) ) )
+            if 1: # Unhandled stuff -- not done properly yet...............................................
+                line = re.sub( '<(.+?)>', '', line ) # Remove all remaining sets of angle brackets
+            if Globals.debugFlag: halt
 
 
+    line = line.replace( '\\NL*\\NL*', '\\NL*' ) # Don't need double-ups
+    if line.startswith( '\\NL*' ): line = line[4:] # Don't need nl at start of line
+    if line.endswith( '\\p \\NL*'): line = line[:-5] # Don't need nl and then space at end of line
+    if line.endswith( '\\q1 \\NL*'): line = line[:-5] # Don't need nl and then space at end of line
+    if line.endswith( '\\q2 \\NL*'): line = line[:-5] # Don't need nl and then space at end of line
+    if line.endswith( '\\q3 \\NL*'): line = line[:-5] # Don't need nl and then space at end of line
+    if line.endswith( '\\q4 \\NL*'): line = line[:-5] # Don't need nl and then space at end of line
     if line.endswith( '\\NL*' ): line = line[:-4] # Don't need nl at end of line
     if '\\NL*' in line: # We need to break the original line into different USFM markers
         #print( "\nMessing with segments: {} {}:{} '{}'".format( BBB, C, V, line ) )
         segments = line.split( '\\NL*' )
         assert( len(segments) >= 2 )
-        #print( " segments:", segments )
+        #print( " segments (split by backslash):", segments )
         leftovers = ''
         for segment in segments:
             if segment and segment[0] == '\\':
@@ -764,7 +891,13 @@ def handleLine( BBB, C, V, originalLine, bookObject, myGlobals ):
                 #print( " bits", bits )
                 marker = bits[0][1:]
                 if len(bits) == 1:
-                    logging.warning( "It seems that we had a blank '{}' field in '{}'".format( bits[0], originalLine ) )
+                    #if bits[0] in ('\\p','\\b'):
+                    if Globals.USFMMarkers.isNewlineMarker( marker ):
+                        if C==1 and V==1 and not appendedCFlag: bookObject.appendLine( 'c', str(C) ); appendedCFlag = True
+                        bookObject.appendLine( marker, '' )
+                    else:
+                        logging.error( "It seems that we had a blank '{}' field in '{}'".format( bits[0], originalLine ) )
+                        #halt
                 else:
                     assert( len(bits) == 2 )
                     if Globals.debugFlag and debuggingThisModule:
@@ -774,16 +907,34 @@ def handleLine( BBB, C, V, originalLine, bookObject, myGlobals ):
                         print( "segments:", segments )
                         print( "bits", bits )
                         print( "marker", marker )
+                        print( "leftovers", repr(leftovers) )
                         assert( marker in ('mt1','mt2','mt3', 's1','s2','s3', 'q1','q2','q3', 'r') )
                     if Globals.USFMMarkers.isNewlineMarker( marker ):
                         bookObject.appendLine( marker, bits[1] )
+                    elif not writtenV:
+                        bookObject.appendLine( 'v', '{} {}'.format( V, segment ) )
+                        writtenV = True
                     else: leftovers += segment
             else: # What is segment is blank (\\NL* at end of line)???
-                if V==1: bookObject.appendLine( 'c', str(C) )
-                bookObject.appendLine( 'v', '{} {}'.format( V, leftovers+segment ) )
+                if C==1 and V==1 and not appendedCFlag: bookObject.appendLine( 'c', str(C) ); appendedCFlag = True
+                if not writtenV:
+                    bookObject.appendLine( 'v', '{} {}'.format( V, leftovers+segment ) )
+                    writtenV = True
+                else:
+                    bookObject.appendLine( 'v~', leftovers+segment )
+                leftovers = ''
+                #if myGlobals['haveParagraph']:
+                    #bookObject.appendLine( 'p', '' )
+                    #myGlobals['haveParagraph'] = False
+        if leftovers: logging.critical( "Had leftovers {}".format( repr(leftovers) ) )
+        if Globals.debugFlag: assert( not leftovers )
+        #halt
     else:
-        if V==1: bookObject.appendLine( 'c', str(C) )
+        if C==1 and V==1 and not appendedCFlag: bookObject.appendLine( 'c', str(C) ); appendedCFlag = True
         bookObject.appendLine( 'v', '{} {}'.format( V, line ) )
+        #if myGlobals['haveParagraph']:
+            #bookObject.appendLine( 'p', '' )
+            #myGlobals['haveParagraph'] = False
 # end of TheWordBible.handleLine
 
 
@@ -843,7 +994,7 @@ class TheWordBible( Bible ):
             booksExpected, textLineCountExpected = theWordNTBookCount, theWordOTTotalLines
 
         # Create the first book
-        thisBook = BibleBook( BBB )
+        thisBook = BibleBook( self.name, BBB )
         thisBook.objectNameString = "theWord Bible Book object"
         thisBook.objectTypeString = "theWord"
 
@@ -874,7 +1025,7 @@ class TheWordBible( Bible ):
                             #print ( lineCount, BBB, C, V, 'TW file line is "' + line + '"' )
                             if not line: logging.warning( "TheWordBible.load: Found blank verse line at {} {} {}:{}".format( lineCount, BBB, C, V ) )
 
-                            handleLine( BBB, C, V, line, thisBook, ourGlobals )
+                            handleLine( self.name, BBB, C, V, line, thisBook, ourGlobals )
                             V += 1
                             if V > numV:
                                 C += 1
@@ -885,22 +1036,23 @@ class TheWordBible( Bible ):
                                     if bookCount >= booksExpected: break
                                     BBB = BOS.getNextBookCode( BBB )
                                     # Create the next book
-                                    thisBook = BibleBook( BBB )
+                                    thisBook = BibleBook( self.name, BBB )
                                     thisBook.objectNameString = "theWord Bible Book object"
                                     thisBook.objectTypeString = "theWord"
 
                                     verseList = BOS.getNumVersesList( BBB )
                                     numC, numV = len(verseList), verseList[0]
                                     C = V = 1
-                                    #thisBook.appendLine( 'c', str(C) )
+                                    # Don't append c 1 yet, because there might be a book heading to precede it
                                 else: # next chapter only
                                     #thisBook.appendLine( 'c', str(C) )
                                     numV = verseList[C-1]
                                     V = 1
+                                #thisBook.appendLine( 'cc', str(C) ) # All chapter numbers except the first
 
-                            if ourGlobals['haveParagraph']:
-                                thisBook.appendLine( 'p', '' )
-                                ourGlobals['haveParagraph'] = False
+                            #if ourGlobals['haveParagraph']:
+                                #thisBook.appendLine( 'p', '' )
+                                #ourGlobals['haveParagraph'] = False
 
                         else: # Should be module info at end of file (after all of the verse lines)
                             #print ( lineCount, 'TW file line is "' + line + '"' )
@@ -984,9 +1136,6 @@ def demo():
     if Globals.verbosityLevel > 0: print( ProgNameVersion )
 
 
-    #testFolder = "../../../../../Data/Work/Bibles/theWord modules/"
-    testFolder = "Tests/DataFilesForTests/theWordTest/"
-
     if 1: # demo the functions
         #print( theWordGetBBBCV( 1532 ) )
         assert( theWordGetBBBCV( 0 ) == ('GEN', 1, 1) )
@@ -994,33 +1143,64 @@ def demo():
         assert( theWordGetBBBCV( 1533 ) == ('EXO', 1, 1) )
 
 
+
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
+        #testFolder = "../../../../../Data/Work/Bibles/theWord modules/"
+        testFolder = "Tests/DataFilesForTests/theWordTest/"
         result1 = TheWordBibleFileCheck( testFolder )
         if Globals.verbosityLevel > 1: print( "TestA1", result1 )
         result2 = TheWordBibleFileCheck( testFolder, autoLoad=True )
         if Globals.verbosityLevel > 1: print( "TestA2", result2 )
 
 
+    if 1: # all discovered modules in the round-trip folder
+        testFolder = "Tests/DataFilesForTests/theWordRoundtripTestFiles/"
+        foundFolders, foundFiles = [], []
+        if os.access( testFolder, os.R_OK ):
+            for something in sorted( os.listdir( testFolder ) ):
+                somepath = os.path.join( testFolder, something )
+                if os.path.isdir( somepath ): foundFolders.append( something )
+                elif os.path.isfile( somepath ):
+                    if somepath.endswith('.ont') or somepath.endswith('.ot') or somepath.endswith('.nt'):
+                        foundFiles.append( something )
+
+            if Globals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
+                if Globals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
+                parameters = [filename for filename in sorted(foundFiles)]
+                with multiprocessing.Pool( processes=Globals.maxProcesses ) as pool: # start worker processes
+                    results = pool.map( testTWB, parameters ) # have the pool do our loads
+                    assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
+            else: # Just single threaded
+                for j, someFile in enumerate( sorted( foundFiles ) ):
+                    if Globals.verbosityLevel > 1: print( "\ntW C{}/ Trying {}".format( j+1, someFile ) )
+                    #myTestFolder = os.path.join( testFolder, someFolder+'/' )
+                    testTWB( testFolder, someFile )
+                    #break # only do the first one.........temp
+        else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
+
     if 1: # all discovered modules in the test folder
         testFolder = "../../../../../Data/Work/Bibles/theWord modules/"
         foundFolders, foundFiles = [], []
-        for something in os.listdir( testFolder ):
-            somepath = os.path.join( testFolder, something )
-            if os.path.isdir( somepath ): foundFolders.append( something )
-            elif os.path.isfile( somepath ): foundFiles.append( something )
+        if os.access( testFolder, os.R_OK ):
+            for something in sorted( os.listdir( testFolder ) ):
+                somepath = os.path.join( testFolder, something )
+                if os.path.isdir( somepath ): foundFolders.append( something )
+                elif os.path.isfile( somepath ): foundFiles.append( something )
 
-        if Globals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            if Globals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
-            parameters = [filename for filename in sorted(foundFiles)]
-            with multiprocessing.Pool( processes=Globals.maxProcesses ) as pool: # start worker processes
-                results = pool.map( testTWB, parameters ) # have the pool do our loads
-                assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
-        else: # Just single threaded
-            for j, someFile in enumerate( sorted( foundFiles ) ):
-                if Globals.verbosityLevel > 1: print( "\ntW C{}/ Trying {}".format( j+1, someFile ) )
-                #myTestFolder = os.path.join( testFolder, someFolder+'/' )
-                testTWB( testFolder, someFile )
-                #break # only do the first one.........temp
+            if Globals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
+                if Globals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
+                parameters = [filename for filename in sorted(foundFiles)]
+                with multiprocessing.Pool( processes=Globals.maxProcesses ) as pool: # start worker processes
+                    results = pool.map( testTWB, parameters ) # have the pool do our loads
+                    assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
+            else: # Just single threaded
+                for j, someFile in enumerate( sorted( foundFiles ) ):
+                    #if 'web' not in someFile: continue # Just try this module
+                    if Globals.verbosityLevel > 1: print( "\ntW D{}/ Trying {}".format( j+1, someFile ) )
+                    #myTestFolder = os.path.join( testFolder, someFolder+'/' )
+                    testTWB( testFolder, someFile )
+                    #break # only do the first one.........temp
+        else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 # end of demo
 
 if __name__ == '__main__':

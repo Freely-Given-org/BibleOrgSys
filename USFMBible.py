@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2013-07-25 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-30 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 """
 
 ProgName = "USFM Bible handler"
-ProgVersion = "0.40"
+ProgVersion = "0.41"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -270,7 +270,7 @@ class USFMBible( Bible ):
         self.triedLoadingBook[BBB] = True
         if Globals.verbosityLevel > 2 or Globals.debugFlag: print( _("  USFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
         if filename is None: filename = self.possibleFilenameDict[BBB]
-        UBB = USFMBibleBook( BBB )
+        UBB = USFMBibleBook( self.name, BBB )
         UBB.load( filename, self.sourceFolder, self.encoding )
         if UBB._rawLines:
             UBB.validateMarkers()
@@ -288,7 +288,7 @@ class USFMBible( Bible ):
         assert( BBB not in self.books )
         self.triedLoadingBook[BBB] = True
         if Globals.verbosityLevel > 2 or Globals.debugFlag: print( _("  USFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
-        UBB = USFMBibleBook( BBB )
+        UBB = USFMBibleBook( self.name, BBB )
         UBB.load( self.possibleFilenameDict[BBB], self.sourceFolder, self.encoding )
         UBB.validateMarkers()
         return UBB
@@ -374,34 +374,36 @@ def demo():
     if 1: # Test a whole folder full of folders of USFM Bibles
         testBaseFolder = "../../../../../Data/Work/Bibles/USFM Bibles/Haiola USFM test versions/"
         count = totalBooks = 0
-        for something in sorted( os.listdir( testBaseFolder ) ):
-            somepath = os.path.join( testBaseFolder, something )
-            if os.path.isfile( somepath ): print( "Ignoring file '{}' in '{}'".format( something, testBaseFolder ) )
-            elif os.path.isdir( somepath ): # Let's assume that it's a folder containing a USFM (partial) Bible
-                #if not something.startswith( 'ssx' ): continue
-                count += 1
-                title = bookNameDict = None
-                findInfoResult = findInfo( somepath )
-                if findInfoResult: title, bookNameDict = findInfoResult
-                if title is None: title = something[:-5] if something.endswith("_usfm") else something
-                name, encoding, testFolder = title, "utf-8", somepath
-                if os.access( testFolder, os.R_OK ):
-                    if Globals.verbosityLevel > 0: print( "\nUSFM A{}/".format( count ) )
-                    UB = USFMBible( testFolder, name, encoding )
-                    UB.load()
-                    totalBooks += len( UB )
-                    if Globals.verbosityLevel > 0: print( UB )
-                    UB.check()
-                    #UBErrors = UB.getErrors()
-                    # print( UBErrors )
-                    #print( UB.getVersification () )
-                    #print( UB.getAddedUnits () )
-                    #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
-                        ##print( "Looking for", ref )
-                        #print( "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )
-                else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
-        if count: print( "\n{} total USFM (partial) Bibles processed.".format( count ) )
-        if totalBooks: print( "{} total books ({} average per folder)".format( totalBooks, round(totalBooks/count) ) )
+        if os.access( testBaseFolder, os.R_OK ): # check that we can read the test data
+            for something in sorted( os.listdir( testBaseFolder ) ):
+                somepath = os.path.join( testBaseFolder, something )
+                if os.path.isfile( somepath ): print( "Ignoring file '{}' in '{}'".format( something, testBaseFolder ) )
+                elif os.path.isdir( somepath ): # Let's assume that it's a folder containing a USFM (partial) Bible
+                    #if not something.startswith( 'ssx' ): continue
+                    count += 1
+                    title = bookNameDict = None
+                    findInfoResult = findInfo( somepath )
+                    if findInfoResult: title, bookNameDict = findInfoResult
+                    if title is None: title = something[:-5] if something.endswith("_usfm") else something
+                    name, encoding, testFolder = title, "utf-8", somepath
+                    if os.access( testFolder, os.R_OK ):
+                        if Globals.verbosityLevel > 0: print( "\nUSFM A{}/".format( count ) )
+                        UB = USFMBible( testFolder, name, encoding )
+                        UB.load()
+                        totalBooks += len( UB )
+                        if Globals.verbosityLevel > 0: print( UB )
+                        UB.check()
+                        #UBErrors = UB.getErrors()
+                        # print( UBErrors )
+                        #print( UB.getVersification () )
+                        #print( UB.getAddedUnits () )
+                        #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
+                            ##print( "Looking for", ref )
+                            #print( "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )
+                    else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
+            if count: print( "\n{} total USFM (partial) Bibles processed.".format( count ) )
+            if totalBooks: print( "{} total books ({} average per folder)".format( totalBooks, round(totalBooks/count) ) )
+        else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testBaseFolder ) )
 
 
     validateXML = Globals.strictCheckingFlag
@@ -525,108 +527,112 @@ def demo():
 
         testBaseFolder = "../../../../../Data/Work/Bibles/USFM Bibles/Haiola USFM test versions/"
         count = totalBooks = 0
-        for something in sorted( os.listdir( testBaseFolder ) ):
-            somepath = os.path.join( testBaseFolder, something )
-            if os.path.isfile( somepath ): print( "Ignoring file '{}' in '{}'".format( something, testBaseFolder ) )
-            elif os.path.isdir( somepath ): # Let's assume that it's a folder containing a USFM (partial) Bible
-                #if not something.startswith( 'ssx' ): continue # This line is used for debugging only specific modules
-                count += 1
-                findInfoResult = findInfo( somepath )
-                if findInfoResult: title, bookNameDict = findInfoResult
-                if title is None: title = something[:-5] if something.endswith("_usfm") else something
-                name, encoding, testFolder = title, "utf-8", somepath
-                if os.access( testFolder, os.R_OK ):
-                    if Globals.verbosityLevel > 0: print( "\nUSFM D{}/".format( count ) )
-                    UBW = USFMBible( testFolder, name, encoding )
-                    UBW.load()
-                    print( UBW )
-                    if not Globals.commandLineOptions.export: UBW.check()
-                    UBWErrors = UBW.getErrors()
-                    #print( UBWErrors )
+        if os.access( testBaseFolder, os.R_OK ): # check that we can read the test data
+            for something in sorted( os.listdir( testBaseFolder ) ):
+                somepath = os.path.join( testBaseFolder, something )
+                if os.path.isfile( somepath ): print( "Ignoring file '{}' in '{}'".format( something, testBaseFolder ) )
+                elif os.path.isdir( somepath ): # Let's assume that it's a folder containing a USFM (partial) Bible
+                    #if not something.startswith( 'ssx' ): continue # This line is used for debugging only specific modules
+                    count += 1
+                    findInfoResult = findInfo( somepath )
+                    if findInfoResult: title, bookNameDict = findInfoResult
+                    if title is None: title = something[:-5] if something.endswith("_usfm") else something
+                    name, encoding, testFolder = title, "utf-8", somepath
+                    if os.access( testFolder, os.R_OK ):
+                        if Globals.verbosityLevel > 0: print( "\nUSFM D{}/".format( count ) )
+                        UBW = USFMBible( testFolder, name, encoding )
+                        UBW.load()
+                        print( UBW )
+                        if not Globals.commandLineOptions.export: UBW.check()
+                        UBWErrors = UBW.getErrors()
+                        #print( UBWErrors )
 
-                    if Globals.commandLineOptions.export:
-                        import subprocess # for running xmllint
-                        import ControlFiles
+                        if Globals.commandLineOptions.export:
+                            import subprocess # for running xmllint
+                            import ControlFiles
 
-                        if 1: # Do USX XML export
-                            USXControls = {}; ControlFiles.readControlFile( 'ControlFiles', "To_USX_controls.txt", USXControls )
-                            if validateXML:
-                                validationResults = UBW.toUSXXML( controlDict=USXControls, validationSchema=usxSchemaFile )
-                                if Globals.verbosityLevel>0 and validationResults and validationResults[0]: # print validation results
-                                    if validationResults[1]: print( "\nUSFX checkProgramOutputString\n{}".format( validationResults[1] ) )
-                                    if validationResults[2]: print( "\n USFX checkProgramErrorOutputString\n{}".format( validationResults[2] ) )
-                            else: # not validating the XML
-                                exportResult = UBW.toUSXXML( controlDict=USXControls )
-                            # Remove any empty files
-                            USXOutputFolder = os.path.join( "OutputFiles/", "USX output/" )
-                            for filename in os.listdir( USXOutputFolder ):
-                                filepath = os.path.join( USXOutputFolder, filename )
-                                if os.stat(filepath).st_size == 0:
-                                    print( "Removing empty file: {}".format( filepath ) )
-                                    os.remove( filepath ) # delete the zero-length file
+                            if 1: # Do USX XML export
+                                USXControls = {}; ControlFiles.readControlFile( 'ControlFiles', "To_USX_controls.txt", USXControls )
+                                if validateXML:
+                                    validationResults = UBW.toUSXXML( controlDict=USXControls, validationSchema=usxSchemaFile )
+                                    if Globals.verbosityLevel>0 and validationResults and validationResults[0]: # print validation results
+                                        if validationResults[1]: print( "\nUSFX checkProgramOutputString\n{}".format( validationResults[1] ) )
+                                        if validationResults[2]: print( "\n USFX checkProgramErrorOutputString\n{}".format( validationResults[2] ) )
+                                else: # not validating the XML
+                                    exportResult = UBW.toUSXXML( controlDict=USXControls )
+                                # Remove any empty files
+                                USXOutputFolder = os.path.join( "OutputFiles/", "USX output/" )
+                                for filename in os.listdir( USXOutputFolder ):
+                                    filepath = os.path.join( USXOutputFolder, filename )
+                                    if os.stat(filepath).st_size == 0:
+                                        print( "Removing empty file: {}".format( filepath ) )
+                                        os.remove( filepath ) # delete the zero-length file
 
-                        if 1: # Do OSIS XML export
-                            OSISControls = {}; ControlFiles.readControlFile( 'ControlFiles', "To_OSIS_controls.txt", OSISControls )
-                            for control in OSISControls:
-                                OSISControls[control] = OSISControls[control].replace('__PROJECT_NAME__','UBW-Test') #.replace('byBible','byBook')
-                            #print( OSISControls ); halt
-                            if validateXML:
-                                if Globals.verbosityLevel>0 and validationResults and validationResults[0]: # print validation results
-                                    if validationResults[1]: print( "\nUSFX checkProgramOutputString\n{}".format( validationResults[1] ) )
-                                    if validationResults[2]: print( "\n USFX checkProgramErrorOutputString\n{}".format( validationResults[2] ) )
-                            else: # not validating the XML
-                                exportResult = UBW.toOSISXML( controlDict=OSISControls )
-                            # Remove any empty files
-                            OSISOutputFolder = os.path.join( "OutputFiles/" )
-                            for filename in os.listdir( OSISOutputFolder ):
-                                filepath = os.path.join( OSISOutputFolder, filename )
-                                if os.stat(filepath).st_size == 0:
-                                    print( "Removing empty file: {}".format( filepath ) )
-                                    os.remove( filepath ) # delete the zero-length file
+                            if 1: # Do OSIS XML export
+                                OSISControls = {}; ControlFiles.readControlFile( 'ControlFiles', "To_OSIS_controls.txt", OSISControls )
+                                for control in OSISControls:
+                                    OSISControls[control] = OSISControls[control].replace('__PROJECT_NAME__','UBW-Test') #.replace('byBible','byBook')
+                                #print( OSISControls ); halt
+                                if validateXML:
+                                    if Globals.verbosityLevel>0 and validationResults and validationResults[0]: # print validation results
+                                        if validationResults[1]: print( "\nUSFX checkProgramOutputString\n{}".format( validationResults[1] ) )
+                                        if validationResults[2]: print( "\n USFX checkProgramErrorOutputString\n{}".format( validationResults[2] ) )
+                                else: # not validating the XML
+                                    exportResult = UBW.toOSISXML( controlDict=OSISControls )
+                                # Remove any empty files
+                                OSISOutputFolder = os.path.join( "OutputFiles/" )
+                                for filename in os.listdir( OSISOutputFolder ):
+                                    filepath = os.path.join( OSISOutputFolder, filename )
+                                    if os.stat(filepath).st_size == 0:
+                                        print( "Removing empty file: {}".format( filepath ) )
+                                        os.remove( filepath ) # delete the zero-length file
 
-                        if 1: # Do Zefania XML export
-                            ZefaniaControls = {}; ControlFiles.readControlFile( 'ControlFiles', "To_Zefania_controls.txt", ZefaniaControls )
-                            UBW.toZefaniaXML( controlDict=ZefaniaControls )
+                            if 1: # Do Zefania XML export
+                                ZefaniaControls = {}; ControlFiles.readControlFile( 'ControlFiles', "To_Zefania_controls.txt", ZefaniaControls )
+                                UBW.toZefaniaXML( controlDict=ZefaniaControls )
 
-                        if 1: # Do MediaWiki export
-                            MediaWikiControls = {}; ControlFiles.readControlFile( 'ControlFiles', "To_MediaWiki_controls.txt", MediaWikiControls )
-                            UBW.toMediaWiki( controlDict=MediaWikiControls )
+                            if 1: # Do MediaWiki export
+                                MediaWikiControls = {}; ControlFiles.readControlFile( 'ControlFiles', "To_MediaWiki_controls.txt", MediaWikiControls )
+                                UBW.toMediaWiki( controlDict=MediaWikiControls )
 
-                        if 1: # Do Sword export
-                            SwordControls = {}; ControlFiles.readControlFile( 'ControlFiles', "To_OSIS_controls.txt", SwordControls )
-                            UBW.toSwordModule( controlDict=SwordControls ) # We use the same OSIS controls (except for the output filename)
-                else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
-        if count: print( "\n{} total USFM (partial) Bibles processed.".format( count ) )
-        if totalBooks: print( "{} total books ({} average per folder)".format( totalBooks, round(totalBooks/count) ) )
+                            if 1: # Do Sword export
+                                SwordControls = {}; ControlFiles.readControlFile( 'ControlFiles', "To_OSIS_controls.txt", SwordControls )
+                                UBW.toSwordModule( controlDict=SwordControls ) # We use the same OSIS controls (except for the output filename)
+                    else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
+            if count: print( "\n{} total USFM (partial) Bibles processed.".format( count ) )
+            if totalBooks: print( "{} total books ({} average per folder)".format( totalBooks, round(totalBooks/count) ) )
+        else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testBaseFolder ) )
 
 
     if 1: # Test a whole folder full of folders of USFM Bibles
         testBaseFolder = "Tests/DataFilesForTests/theWordRoundtripTestFiles/"
         count = totalBooks = 0
-        for something in sorted( os.listdir( testBaseFolder ) ):
-            somepath = os.path.join( testBaseFolder, something )
-            if os.path.isfile( somepath ): print( "Ignoring file '{}' in '{}'".format( something, testBaseFolder ) )
-            elif os.path.isdir( somepath ): # Let's assume that it's a folder containing a USFM (partial) Bible
-                #if not something.startswith( 'ssx' ): continue # This line is used for debugging only specific modules
-                count += 1
-                findInfoResult = findInfo( somepath )
-                if findInfoResult: title, bookNameDict = findInfoResult
-                if title is None: title = something[:-5] if something.endswith("_usfm") else something
-                name, encoding, testFolder = title, "utf-8", somepath
-                if os.access( testFolder, os.R_OK ):
-                    if Globals.verbosityLevel > 0: print( "\nUSFM E{}/".format( count ) )
-                    UBW = USFMBible( testFolder, name, encoding )
-                    UBW.load()
-                    print( UBW )
-                    if not Globals.commandLineOptions.export: UBW.check()
-                    UBWErrors = UBW.getErrors()
-                    #print( UBWErrors )
+        if os.access( testBaseFolder, os.R_OK ): # check that we can read the test data
+            for something in sorted( os.listdir( testBaseFolder ) ):
+                somepath = os.path.join( testBaseFolder, something )
+                if os.path.isfile( somepath ): print( "Ignoring file '{}' in '{}'".format( something, testBaseFolder ) )
+                elif os.path.isdir( somepath ): # Let's assume that it's a folder containing a USFM (partial) Bible
+                    #if not something.startswith( 'ssx' ): continue # This line is used for debugging only specific modules
+                    count += 1
+                    findInfoResult = findInfo( somepath )
+                    if findInfoResult: title, bookNameDict = findInfoResult
+                    if title is None: title = something[:-5] if something.endswith("_usfm") else something
+                    name, encoding, testFolder = title, "utf-8", somepath
+                    if os.access( testFolder, os.R_OK ):
+                        if Globals.verbosityLevel > 0: print( "\nUSFM E{}/".format( count ) )
+                        UBW = USFMBible( testFolder, name, encoding )
+                        UBW.load()
+                        print( UBW )
+                        if not Globals.commandLineOptions.export: UBW.check()
+                        UBWErrors = UBW.getErrors()
+                        #print( UBWErrors )
 
-                    if Globals.commandLineOptions.export:
-                        UBW.doAllExports()
-                else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
-        if count: print( "\n{} total USFM (partial) Bibles processed.".format( count ) )
-        if totalBooks: print( "{} total books ({} average per folder)".format( totalBooks, round(totalBooks/count) ) )
+                        if Globals.commandLineOptions.export:
+                            UBW.doAllExports()
+                    else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
+            if count: print( "\n{} total USFM (partial) Bibles processed.".format( count ) )
+            if totalBooks: print( "{} total books ({} average per folder)".format( totalBooks, round(totalBooks/count) ) )
+        else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testBaseFolder ) )
 #end of demo
 
 if __name__ == '__main__':

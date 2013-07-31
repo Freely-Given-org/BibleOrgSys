@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # GreekNT.py
-#   Last modified: 2013-06-24 (also update ProgVersion below)
+#   Last modified: 2013-07-30 (also update ProgVersion below)
 #
 # Module handling GreekNT.xml
 #
@@ -44,7 +44,7 @@ Module handling xxx to produce C and Python data tables.
 """
 
 ProgName = "Greek NT format handler"
-ProgVersion = "0.04"
+ProgVersion = "0.05"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -185,7 +185,7 @@ class GreekNT( Bible ):
             return (bn,cn,vn,), (POSCode,parsingCode,), (bits[3],bits[4],bits[5],bits[6],)
         # end of unpackLine
 
-        self.thisBook = BibleBook( BBB )
+        self.thisBook = BibleBook( self.name, BBB )
         self.thisBook.objectNameString = "Morph Greek NT Bible Book object"
         self.thisBook.objectTypeString = "MorphGNT"
         filepath = os.path.join( self.sourceFilepath, filename )

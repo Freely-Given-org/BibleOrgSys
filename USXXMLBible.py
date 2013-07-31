@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USXXMLBible.py
-#   Last modified: 2013-07-20 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-30 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USX Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USX Bibles.
 """
 
 ProgName = "USX XML Bible handler"
-ProgVersion = "0.10"
+ProgVersion = "0.11"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -178,7 +178,7 @@ class USXXMLBible( Bible ):
         self.triedLoadingBook[BBB] = True
         if Globals.verbosityLevel > 2 or Globals.debugFlag: print( _("  USXXMLBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
         if filename is None: filename = self.possibleFilenameDict[BBB]
-        UBB = USXXMLBibleBook( BBB )
+        UBB = USXXMLBibleBook( self.name, BBB )
         UBB.load( filename, self.givenFolderName, self.encoding )
         UBB.validateMarkers()
         #for j, something in enumerate( UBB._processedLines ):
@@ -304,7 +304,7 @@ class USXXMLBible( Bible ):
                         if ' ' in assumedBookNameLower: self.combinedBookNameDict[assumedBookNameLower.replace(' ','')] = BBB # Store the deduced book name (lower case without spaces)
         else: # Just single threaded
             for BBB,filename in self.USXFilenamesObject.getConfirmedFilenames():
-                UBB = USXXMLBibleBook( BBB )
+                UBB = USXXMLBibleBook( self.name, BBB )
                 UBB.load( filename, self.givenFolderName, self.encoding )
                 UBB.validateMarkers()
                 #print( UBB )
@@ -336,7 +336,7 @@ class USXXMLBible( Bible ):
                             isUSX = True
                         break # We only look at the first line
                 if isUSX:
-                    UBB = USXXMLBibleBook( BBB )
+                    UBB = USXXMLBibleBook( self.name, BBB )
                     UBB.load( self.givenFolderName, thisFilename, self.encoding )
                     UBB.validateMarkers()
                     print( UBB )

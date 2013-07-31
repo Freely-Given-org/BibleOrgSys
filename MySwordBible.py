@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # MySwordBible.py
-#   Last modified: 2013-07-24 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-30 by RJH (also update ProgVersion below)
 #
 # Module handling "MySword" Bible module files
 #
@@ -51,7 +51,7 @@ e.g.,
 """
 
 ProgName = "MySword Bible format handler"
-ProgVersion = "0.08"
+ProgVersion = "0.09"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -246,7 +246,7 @@ class MySwordBible( Bible ):
         BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
 
         # Create the first book
-        thisBook = BibleBook( BBB )
+        thisBook = BibleBook( self.name, BBB )
         thisBook.objectNameString = "MySword Bible Book object"
         thisBook.objectTypeString = "MySword"
 
@@ -290,7 +290,7 @@ class MySwordBible( Bible ):
                     line = line.replace( '\r\n', ' ' ).replace( '\r', ' ' ).replace( '\n', ' ' )
 
             #print( "MySword.load", BBB, C, V, repr(line) )
-            handleLine( BBB, C, V, line, thisBook, ourGlobals )
+            handleLine( self.name, BBB, C, V, line, thisBook, ourGlobals )
             V += 1
             if V > numV:
                 C += 1
@@ -303,7 +303,7 @@ class MySwordBible( Bible ):
                     if bookCount >= booksExpected: break
                     BBB = BOS.getNextBookCode( BBB )
                     # Create the next book
-                    thisBook = BibleBook( BBB )
+                    thisBook = BibleBook( self.name, BBB )
                     thisBook.objectNameString = "MySword Bible Book object"
                     thisBook.objectTypeString = "MySword"
                     haveLines = False
@@ -402,6 +402,29 @@ def demo():
 
 
     if 1: # all discovered modules in the test folder
+        testFolder = "Tests/DataFilesForTests/theWordRoundtripTestFiles/"
+        foundFolders, foundFiles = [], []
+        for something in os.listdir( testFolder ):
+            somepath = os.path.join( testFolder, something )
+            if os.path.isdir( somepath ): foundFolders.append( something )
+            elif os.path.isfile( somepath ) and somepath.endswith('.mybible'):
+                if something != 'acc.bbl.mybible': # has a corrupted file it seems
+                    foundFiles.append( something )
+
+        if Globals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
+            if Globals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
+            parameters = [filename for filename in sorted(foundFiles)]
+            with multiprocessing.Pool( processes=Globals.maxProcesses ) as pool: # start worker processes
+                results = pool.map( testMySwB, parameters ) # have the pool do our loads
+                assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
+        else: # Just single threaded
+            for j, someFile in enumerate( sorted( foundFiles ) ):
+                if Globals.verbosityLevel > 1: print( "\nMySw D{}/ Trying {}".format( j+1, someFile ) )
+                #myTestFolder = os.path.join( testFolder, someFolder+'/' )
+                testMySwB( testFolder, someFile )
+                #break # only do the first one.........temp
+
+    if 1: # all discovered modules in the test folder
         testFolder = "../../../../../Data/Work/Bibles/MySword modules/"
         foundFolders, foundFiles = [], []
         for something in os.listdir( testFolder ):
@@ -417,7 +440,7 @@ def demo():
                 assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFile in enumerate( sorted( foundFiles ) ):
-                if Globals.verbosityLevel > 1: print( "\nMySw D{}/ Trying {}".format( j+1, someFile ) )
+                if Globals.verbosityLevel > 1: print( "\nMySw E{}/ Trying {}".format( j+1, someFile ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testMySwB( testFolder, someFile )
                 #break # only do the first one.........temp

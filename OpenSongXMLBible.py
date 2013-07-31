@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # OpenSongXMLBible.py
-#   Last modified: 2013-07-24 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-30 by RJH (also update ProgVersion below)
 #
 # Module handling OpenSong XML Bibles
 #
@@ -34,7 +34,7 @@ Module reading and loading OpenSong XML Bibles:
 """
 
 ProgName = "OpenSong XML Bible format handler"
-ProgVersion = "0.23"
+ProgVersion = "0.24"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -266,7 +266,7 @@ class OpenSongXMLBible( Bible ):
             BBB = self.genericBOS.getBBB( bookName )
             if BBB:
                 if Globals.verbosityLevel > 2: print( _("Validating {} {}...").format( BBB, bookName ) )
-                thisBook = BibleBook( BBB )
+                thisBook = BibleBook( self.name, BBB )
                 thisBook.objectNameString = "OpenSong XML Bible Book object"
                 thisBook.objectTypeString = "OpenSong"
                 #thisBook.sourceFilepath = self.sourceFilepath

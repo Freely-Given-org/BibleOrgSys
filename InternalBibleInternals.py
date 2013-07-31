@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleInternals.py
-#   Last modified: 2013-07-26 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-30 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for Bible books
 #
@@ -38,10 +38,10 @@ and then calls
 """
 
 ProgName = "Bible internals handler"
-ProgVersion = "0.11"
+ProgVersion = "0.13"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
-debuggingThisModule = False
+debuggingThisModule = True
 
 
 import os, logging
@@ -125,7 +125,7 @@ class InternalBibleEntry:
         self.marker, self.originalMarker, self.adjustedText, self.cleanText, self.extras, self.originalText = marker, originalMarker, adjustedText, cleanText, extras, originalText
 
         if Globals.debugFlag and debuggingThisModule and self.getFullText() != self.originalText.strip():
-            halt
+            pass # halt
     # end of InternalBibleEntry.__init__
 
 
@@ -316,13 +316,13 @@ class InternalBibleIndex:
     """
     Handles the C:V index for an internal Bible.
     """
-    def __init__( self, bookReferenceCode ):
+    def __init__( self, name, bookReferenceCode ):
         """
         Creates the index for a Bible book.
 
         The book code is stored to enable better error messages.
         """
-        self.bookReferenceCode = bookReferenceCode
+        self.name, self.bookReferenceCode = name, bookReferenceCode
     # end of InternalBibleIndex.__init__
 
 
@@ -401,22 +401,31 @@ class InternalBibleIndex:
                 #if saveCV == ('0','0'): halt
                 #assert( 1 <= lineCount <= 120 ) # Could potentially be even higher for bridged verses (e.g., 1Chr 11:26-47, Ezra 2:3-20) and where words are stored individually
                 if saveCV in self.indexData and Globals.verbosityLevel > 2:
-                    logging.critical( "makeIndex.saveAnythingOutstanding: replacing index entry {} {}:{}".format( self.bookReferenceCode, strC, strV ) )
-                    logging.error( "  mI:saO was {}".format( self.indexData[saveCV] ) )
+                    logging.critical( "makeIndex.saveAnythingOutstanding: losing Biblical text by replacing index entry {} {}:{}".format( self.bookReferenceCode, strC, strV ) )
+                    print( saveCV )
+                    try:
+                        iep = self.indexData[(saveCV[0],str(int(saveCV[1])-1))]
+                        logging.error( "  mI:sAO previous {}".format( iep ) )
+                        ix,lc,ct = iep.getEntryIndex(), iep.getEntryCount(), iep.getContext()
+                        for ixx in range( ix, ix+lc ):
+                            logging.error( "   mI:sAO prev {} {}".format( self.givenBibleEntries[ixx], ct ) )
+                    except: pass
+                    logging.error( "  mI:sAO was {}".format( self.indexData[saveCV] ) )
                     ie = self.indexData[saveCV]
                     ix,lc,ct = ie.getEntryIndex(), ie.getEntryCount(), ie.getContext()
                     for ixx in range( ix, ix+lc ):
-                        logging.error( "   mI:saO {} {}".format( self.givenBibleEntries[ixx], ct ) )
-                    logging.error( "  mI:saO now {}".format( (saveJ,lineCount,context) ) )
+                        logging.error( "   mI:sAO {} {}".format( self.givenBibleEntries[ixx], ct ) )
+                    logging.error( "  mI:sAO now {}".format( (saveJ,lineCount,context) ) )
                     for ixx in range( saveJ, saveJ+lineCount ):
-                        logging.error( "   mI:saO {} {}".format( self.givenBibleEntries[ixx], context ) )
+                        logging.error( "   mI:sAO {} {}".format( self.givenBibleEntries[ixx], context ) )
+                    if Globals.debugFlag: halt # This is a serious error that is losing Biblical text
                 self.indexData[saveCV] = InternalBibleIndexEntry( saveJ, lineCount, context )
                 saveCV = saveJ = None
                 lineCount = 0
         # end of saveAnythingOutstanding
 
 
-        if Globals.verbosityLevel > 3: print( "    " + _("Indexing {} {} entries...").format( len(self.givenBibleEntries), self.bookReferenceCode ) )
+        if Globals.verbosityLevel > 3: print( "    " + _("Indexing {} {} {} entries...").format( len(self.givenBibleEntries), self.name, self.bookReferenceCode ) )
         if self.bookReferenceCode not in ('FRT','PRF','ACK','INT','TOC','GLS','CNC','NDX','TDX','BAK','OTH', \
                                                 'XXA','XXB','XXC','XXD','XXE','XXF','XXG',):
             # Assume it's a C/V book
@@ -555,19 +564,20 @@ class InternalBibleIndex:
         """
         Just run a quick internal check on the index.
         """
-        if Globals.verbosityLevel > 2: print(  _("Checking {} {} index entries...").format( len(self.indexData), self.bookReferenceCode ) )
+        if Globals.verbosityLevel > 2: print(  "  " + _("Checking {} {} {} index entries...").format( len(self.indexData), self.name, self.bookReferenceCode ) )
         if Globals.verbosityLevel > 3: print( self )
 
         for ixKey in self.indexData:
             #print( ixKey ); halt
             C, V = ixKey
             if not C.isdigit():
-                logging.critical( "InternalBibleIndex.checkIndex: Non-digit C entry in {} {}:{}".format( self.bookReferenceCode, C, V ) )
+                logging.critical( "InternalBibleIndex.checkIndex: Non-digit C entry in {} {}:{}".format( self.bookReferenceCode, repr(C), repr(V) ) )
             if not V.isdigit():
-                logging.critical( "InternalBibleIndex.checkIndex: Non-digit V entry in {} {}:{}".format( self.bookReferenceCode, C, V ) )
+                logging.critical( "InternalBibleIndex.checkIndex: Non-digit V entry in {} {}:{}".format( self.bookReferenceCode, repr(C), repr(V) ) )
 
         try: sortedIndex = sorted( self.indexData, key=lambda s: int(s[0])*1000+int(s[1]) )
         except ValueError: # non-numbers in C or V -- should already have received notification above
+            logging.error( "InternalBibleIndex.checkIndex: Unable to sort index for {} {}".format( self.name, self.bookReferenceCode ) )
             sortedIndex = self.indexData # for now
         #for j, key in enumerate( sortedIndex ):
             #C, V = key
@@ -576,8 +586,17 @@ class InternalBibleIndex:
             #print( "checkIndex display", j, key, indexEntry, entries )
             #if self.bookReferenceCode!='FRT' and j>30: break
 
-        for key in sortedIndex:
+
+        lastKey = nextKey = nextNextKey = None
+        for k, key in enumerate( sortedIndex ):
+            try: nextKey = sortedIndex[k+1]
+            except IndexError: nextKey = None
+            except KeyError: print( "nextKeyError2", k, len(sortedIndex), repr(key) ); nextKey = None
+            try: nextNextKey = sortedIndex[k+2]
+            except IndexError: nextNextKey = None
+            except KeyError: print( "nextKeyError2", k, len(sortedIndex), repr(key) ); nextKey = None
             C, V = key
+
             indexEntry = self.indexData[key]
             entries, context = self.getEntries( key )
             markers = []
@@ -614,9 +633,12 @@ class InternalBibleIndex:
                         if Globals.debugFlag and debuggingThisModule: halt
                     if anyText or anyExtras: # Mustn't be a blank (unfinished) verse
                         if marker in ('p','q1') and nextMarker not in ('v','p~','c#',):
+                            if lastKey: print( lastKey, self.getEntries( lastKey )[0] )
                             logging.critical( "InternalBibleIndex.checkIndex: Probable p or q1 encoding error in {} {}:{} {}".format( self.bookReferenceCode, C, V, entries ) )
+                            if nextKey: print( nextKey, self.getEntries( nextKey )[0] )
+                            if nextNextKey: print( nextNextKey, self.getEntries( nextNextKey )[0] )
                             if Globals.debugFlag and debuggingThisModule: halt
-                        if marker in ('q2','q3',) and nextMarker not in ('v','p~',):
+                        if marker in ('q2','q3',) and nextMarker not in ('v','p~','c#',):
                                 logging.critical( "InternalBibleIndex.checkIndex: Probable q2 or q3 encoding error in {} {}:{} {}".format( self.bookReferenceCode, C, V, entries ) )
                                 if Globals.debugFlag and debuggingThisModule: halt
 
@@ -653,6 +675,7 @@ class InternalBibleIndex:
                         if '-' not in cleanText and ',' not in cleanText: # Handle verse ranges
                             logging.critical( "InternalBibleIndex.checkIndex: wrong {} {} verse number '{}' expected '{}'".format( self.bookReferenceCode, C, cleanText, V ) )
                             #if Globals.debugFlag: halt
+            lastKey = key
         #if self.bookReferenceCode=='FRT': halt
     # end if InternalBibleIndex.checkIndex
 # end of class InternalBibleIndex

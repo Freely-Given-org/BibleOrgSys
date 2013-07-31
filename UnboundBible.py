@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # UnboundBible.py
-#   Last modified: 2013-07-20 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-30 by RJH (also update ProgVersion below)
 #
 # Module handling Biola University "unbound" Bible files
 #
@@ -86,7 +86,7 @@ and
 """
 
 ProgName = "Unbound Bible format handler"
-ProgVersion = "0.13"
+ProgVersion = "0.14"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -323,7 +323,7 @@ class UnboundBible( Bible ):
                     if lastBookCode != -1: # Better save the last book
                         self.saveBook( thisBook )
                     BBB = Globals.BibleBooksCodes.getBBBFromUnboundBibleCode( bookCode )
-                    thisBook = BibleBook( BBB )
+                    thisBook = BibleBook( self.name, BBB )
                     thisBook.objectNameString = "Unbound Bible Book object"
                     thisBook.objectTypeString = "Unbound"
                     lastBookCode = bookCode

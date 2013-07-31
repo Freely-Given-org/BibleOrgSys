@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-07-26 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-31 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -87,12 +87,12 @@ class InternalBibleBook:
     The load routine (which populates self._rawLines) by calling appendLine must be provided.
     """
 
-    def __init__( self, BBB ):
+    def __init__( self, name, BBB ):
         """
         Create the USFM Bible book object.
         """
         #print( "InternalBibleBook.__init__( {} )".format( BBB ) )
-        self.bookReferenceCode = BBB
+        self.name, self.bookReferenceCode = name, BBB
         if Globals.debugFlag: assert( self.bookReferenceCode in Globals.BibleBooksCodes )
 
         self.isSingleChapterBook = Globals.BibleBooksCodes.isSingleChapterBook( self.bookReferenceCode )
@@ -169,6 +169,8 @@ class InternalBibleBook:
         """
         if Globals.debugFlag:
             if debuggingThisModule: print( "InternalBibleBook.appendLine( {}, {} ) for {} {}".format( repr(marker), repr(text), self.objectTypeString, self.bookReferenceCode ) )
+            #if len(self._rawLines ) > 60: halt
+            #if 'Thou hast turned from the fierceness of Thine anger' in text: halt
         if text and ( '\n' in text or '\r' in text ):
             logging.critical( "InternalBibleBook.appendLine found newLine in text: {}={}".format( self.objectTypeString, marker, repr(text) ) )
         if Globals.debugFlag:
@@ -243,7 +245,7 @@ class InternalBibleBook:
             Uses self._rawLines and fills self._processedLines.
         """
         #if self._processedFlag: return # Can only do it once
-        if Globals.verbosityLevel > 2: print( "  " + _("Processing {} ({}) {} lines...").format( self.objectNameString, self.objectTypeString, self.bookReferenceCode ) )
+        if Globals.verbosityLevel > 2: print( "  " + _("Processing {} ({} {}) {} lines...").format( self.objectNameString, self.objectTypeString, self.name, self.bookReferenceCode ) )
         if Globals.debugFlag: assert( not self._processedFlag ) # Can only do it once
         if Globals.debugFlag: assert( self._rawLines ) # or else the book was totally blank
         #print( self._rawLines[:20] ); halt
@@ -1003,8 +1005,8 @@ class InternalBibleBook:
             assert( not self._indexedFlag )
         if self._indexedFlag: return # Can only do it once
 
-        if Globals.verbosityLevel > 2: print( "  " + _("Indexing {} {} text...").format( self.objectNameString, self.bookReferenceCode ) )
-        self._CVIndex = InternalBibleIndex( self.bookReferenceCode )
+        if Globals.verbosityLevel > 2: print( "  " + _("Indexing {} {} {} text...").format( self.objectNameString, self.name, self.bookReferenceCode ) )
+        self._CVIndex = InternalBibleIndex( self.name, self.bookReferenceCode )
         self._CVIndex.makeIndex( self._processedLines )
 
         if 0 and self.bookReferenceCode=='GEN':
@@ -2905,7 +2907,7 @@ def demo():
     print( "Since this is only designed to be a base class, it can't actually do much at all." )
     print( "  Try running USFMBibleBook or USXXMLBibleBook which use this class." )
 
-    IBB = InternalBibleBook( 'GEN' )
+    IBB = InternalBibleBook( 'Dummy', 'GEN' )
     # The following fields would normally be filled in a by "load" routine in the derived class
     IBB.objectNameString = "Dummy test Internal Bible Book object"
     IBB.objectTypeString = "DUMMY"

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USXXMLBibleBook.py
-#   Last modified: 2013-07-25 by RJH (also update ProgVersion below)
+#   Last modified: 2013-07-30 by RJH (also update ProgVersion below)
 #
 # Module handling USX Bible Book xml
 #
@@ -28,7 +28,7 @@ Module handling USX Bible book xml to produce C and Python data tables.
 """
 
 ProgName = "USX XML Bible book handler"
-ProgVersion = "0.09"
+ProgVersion = "0.10"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -50,11 +50,11 @@ class USXXMLBibleBook( BibleBook ):
     """
     Class to load, validate, and manipulate a single Bible book in USX XML.
     """
-    def __init__( self, BBB ):
+    def __init__( self, name, BBB ):
         """
         Create the USX Bible book object.
         """
-        BibleBook.__init__( self, BBB ) # Initialise the base class
+        BibleBook.__init__( self, name, BBB ) # Initialise the base class
         self.objectNameString = "USX XML Bible Book object"
         self.objectTypeString = "USX"
 
@@ -323,7 +323,7 @@ def demo():
                     'HEB','JAM','PE1','PE2','JN1','JN2','JN3','JDE','REV'
                     ):
                 if Globals.verbosityLevel > 1: print( _("Loading {} from {}...").format( bookReferenceCode, filename ) )
-                UxBB = USXXMLBibleBook( bookReferenceCode )
+                UxBB = USXXMLBibleBook( name, bookReferenceCode )
                 UxBB.load( filename, testFolder )
                 if Globals.verbosityLevel > 2: print( "  ID is '{}'".format( UxBB.getField( 'id' ) ) )
                 if Globals.verbosityLevel > 2: print( "  Header is '{}'".format( UxBB.getField( 'h' ) ) )
@@ -347,7 +347,7 @@ def demo():
                             found2 = True; break
                     if found2:
                         if Globals.verbosityLevel > 2: print( _("Loading {} from {}...").format( bookReferenceCode2, filename2 ) )
-                        UBB = USFMBibleBook.USFMBibleBook( bookReferenceCode )
+                        UBB = USFMBibleBook.USFMBibleBook( name, bookReferenceCode )
                         UBB.load( filename2, testFolder2 )
                         #print( "  ID is '{}'".format( UBB.getField( 'id' ) ) )
                         #print( "  Header is '{}'".format( UBB.getField( 'h' ) ) )
