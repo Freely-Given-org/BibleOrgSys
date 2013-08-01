@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleReferences.py
-#   Last modified: 2013-07-31 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-02 by RJH (also update ProgVersion below)
 #
 # Module for handling Bible references including ranges
 #
@@ -710,16 +710,28 @@ class BibleReferenceList( BibleReferenceBase ):
             Checks the reference info then saves it as a referenceTuple in the refList.
             """
             #print( "saveReferenceRange:", "startTuple =", startTuple, "BBB =", BBB, "C =", C, "V =", V, "S = ", S, "refList =", refList )
-            assert( BBB is None or len(BBB) == 3 )
-            assert( not C or C.isdigit() ) # Should be no suffix on C (although it can be blank if the reference is for a whole book)
             if V and not S and V[-1] in ('a','b','c',): # Remove the suffix
                 S = V[-1]; V = V[:-1]
-            assert( not V or V.isdigit() ) # Should be no suffix on V (although it can be blank if the reference is for a whole chapter)
-            assert( not S or len(S)==1 and S.isalpha() ) # Suffix should be only one lower-case letter if anything
+            if V=='3O': V = '30' # Fix a bug in byr-w.usfm
+            if not BBB:
+                logging.error( _("saveReferenceRange: Missing BBB parameter from {} Bible reference '{}'").format( BBB, referenceString ) )
+            if not C:
+                logging.error( _("saveReferenceRange: Missing C parameter from {} Bible reference '{}'").format( BBB, referenceString ) )
+            elif not C.isdigit():
+                logging.error( _("saveReferenceRange: Non-digit {} C parameter from {} Bible reference '{}'").format( repr(C), BBB, referenceString ) )
+            if not V:
+                logging.error( _("saveReferenceRange: Missing V parameter from {} Bible reference '{}'").format( BBB, referenceString ) )
+            elif not V.isdigit():
+                logging.error( _("saveReferenceRange: Non-digit {} V parameter from {} Bible reference '{}'").format( repr(V), BBB, referenceString ) )
+            if Globals.debugFlag:
+                assert( BBB is None or len(BBB) == 3 )
+                assert( not C or C.isdigit() ) # Should be no suffix on C (although it can be blank if the reference is for a whole book)
+                assert( not V or V.isdigit() ) # Should be no suffix on V (although it can be blank if the reference is for a whole chapter)
+                assert( not S or len(S)==1 and S.isalpha() ) # Suffix should be only one lower-case letter if anything
 
             nonlocal haveErrors, haveWarnings, totalVerseList
             if len(S) > 1:
-                logging.error( _("Unexpected long '{}' suffix in {} Bible reference '{}'").format( S, BBB, referenceString ) )
+                logging.error( _("saveReferenceRange: Unexpected long '{}' suffix in {} Bible reference '{}'").format( S, BBB, referenceString ) )
                 haveErrors = True
                 S = S[0] # Just take the first one
             finishTuple = ( BBB, C, V, S, )
@@ -729,7 +741,7 @@ class BibleReferenceList( BibleReferenceBase ):
             verseList = self._BibleOrganizationalSystem.expandCVRange( startTuple, finishTuple, referenceString, self._BibleOrganizationalSystem )
             if verseList is not None: totalVerseList.extend( verseList )
             if rangeTuple in refList:
-                logging.warning( _("Reference range {} is repeated in Bible reference '{}'").format( rangeTuple, referenceString ) )
+                logging.warning( _("saveReferenceRange: Reference range {} is repeated in Bible reference '{}'").format( rangeTuple, referenceString ) )
                 haveWarnings = True
             refList.append( rangeTuple )
         # end of saveReferenceRange

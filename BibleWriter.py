@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-08-01 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-02 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -154,7 +154,7 @@ class BibleWriter( InternalBible ):
                 USFMNumber = Globals.BibleBooksCodes.getUSFMNumber( BBB )
 
                 filename = "{}{}BWr.rSFM".format( USFMNumber, USFMAbbreviation.upper() ) # BWr = BibleWriter
-                filepath = os.path.join( outputFolder, filename )
+                filepath = os.path.join( outputFolder, Globals.makeSafeFilename( filename ) )
                 if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
                 with open( filepath, 'wt' ) as myFile:
                     for marker,text in rawUSFMData:
@@ -166,7 +166,7 @@ class BibleWriter( InternalBible ):
             USFMNumber = Globals.BibleBooksCodes.getUSFMNumber( BBB )
 
             filename = "{}{}BWr.pSFM".format( USFMNumber, USFMAbbreviation.upper() ) # BWr = BibleWriter
-            filepath = os.path.join( outputFolder, filename )
+            filepath = os.path.join( outputFolder, Globals.makeSafeFilename( filename ) )
             if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
             with open( filepath, 'wt' ) as myFile:
                 for entry in pseudoUSFMData:
@@ -238,7 +238,7 @@ class BibleWriter( InternalBible ):
             #print( "\nUSFM", USFM[:3000] )
             filename = "{}{}BWr.SFM".format( USFMNumber, USFMAbbreviation.upper() ) # This seems to be the undocumented standard filename format (and BWr = BibleWriter)
             #if not os.path.exists( USFMOutputFolder ): os.makedirs( USFMOutputFolder )
-            filepath = os.path.join( outputFolder, filename )
+            filepath = os.path.join( outputFolder, Globals.makeSafeFilename( filename ) )
             if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
             with open( filepath, 'wt' ) as myFile: myFile.write( USFM )
         return True
@@ -480,7 +480,7 @@ class BibleWriter( InternalBible ):
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
         if Globals.verbosityLevel > 1: print( _("Exporting to MediaWiki format...") )
-        xw = MLWriter( controlDict["MediaWikiOutputFilename"], outputFolder )
+        xw = MLWriter( Globals.makeSafeFilename( controlDict["MediaWikiOutputFilename"] ), outputFolder )
         xw.setHumanReadable()
         xw.start()
         for BBB,bookData in self.books.items():
@@ -588,7 +588,7 @@ class BibleWriter( InternalBible ):
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
         if Globals.verbosityLevel > 1: print( _("Exporting to Zefania format...") )
-        xw = MLWriter( controlDict["ZefaniaOutputFilename"], outputFolder )
+        xw = MLWriter( Globals.makeSafeFilename( controlDict["ZefaniaOutputFilename"] ), outputFolder )
         xw.setHumanReadable()
         xw.start()
 # TODO: Some modules have <XMLBIBLE xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="zef2005.xsd" version="2.0.1.18" status='v' revision="1" type="x-bible" biblename="KJV+">
@@ -887,7 +887,7 @@ class BibleWriter( InternalBible ):
             version = 2
             xtra = ' ' if version<2 else ''
             C = V = '0'
-            xw = MLWriter( USXNumber+USXAbbrev+".usx", outputFolder )
+            xw = MLWriter( Globals.makeSafeFilename( USXNumber+USXAbbrev+".usx" ), outputFolder )
             xw.setHumanReadable()
             xw.spaceBeforeSelfcloseTag = True
             xw.start( lineEndings='w', writeBOM=True ) # Try to imitate Paratext output as closely as possible
@@ -1672,7 +1672,7 @@ class BibleWriter( InternalBible ):
             if Globals.verbosityLevel > 1: print( _("Exporting individually to OSIS XML format...") )
             validationResults = ( 0, '', '', ) # xmllint result code, program output, error output
             for BBB,bookData in self.books.items(): # Process each Bible book
-                xw = MLWriter( controlDict["osisOutputFilename"].replace('_Bible',"_Book-{}".format(BBB)), outputFolder )
+                xw = MLWriter( Globals.makeSafeFilename( controlDict["osisOutputFilename"].replace('_Bible',"_Book-{}".format(BBB)) ), outputFolder )
                 xw.setHumanReadable( 'All' ) # Can be set to 'All', 'Header', or 'None' -- one output file went from None/Header=4.7MB to All=5.7MB
                 xw.start()
                 xw.writeLineOpen( 'osis', [('xmlns',"http://www.bibletechnologies.net/2003/OSIS/namespace"), ('xmlns:xsi',"http://www.w3.org/2001/XMLSchema-instance"), ('xsi:schemaLocation',"http://www.bibletechnologies.net/2003/OSIS/namespace http://www.bibletechnologies.net/osisCore.2.1.1.xsd")] )
@@ -1691,7 +1691,7 @@ class BibleWriter( InternalBible ):
                     if bookResults[2]: validationResults = ( validationResults[0], validationResults[1], validationResults[2] + bookResults[2], )
         elif controlDict["osisFiles"]=="byBible": # write all the books into a single file
             if Globals.verbosityLevel > 1: print( _("Exporting to OSIS XML format...") )
-            xw = MLWriter( controlDict["osisOutputFilename"], outputFolder )
+            xw = MLWriter( Globals.makeSafeFilename( controlDict["osisOutputFilename"] ), outputFolder )
             xw.setHumanReadable( 'All' ) # Can be set to 'All', 'Header', or 'None' -- one output file went from None/Header=4.7MB to All=5.7MB
             xw.start()
             xw.writeLineOpen( 'osis', [('xmlns',"http://www.bibletechnologies.net/2003/OSIS/namespace"), ('xmlns:xsi',"http://www.w3.org/2001/XMLSchema-instance"), ('xsi:schemaLocation',"http://www.bibletechnologies.net/2003/OSIS/namespace http://www.bibletechnologies.net/osisCore.2.1.1.xsd")] )
@@ -2146,7 +2146,7 @@ class BibleWriter( InternalBible ):
                         logging.error( _("toSword: {} Have an io2 not in an introduction section").format( toSwordGlobals["verseRef"] ) )
                     if not haveOpenOutline:
                         logging.error( _("toSword: {} Have an io2 not in an outline section").format( toSwordGlobals["verseRef"] ) )
-                    writerObject.writeLineOpenClose( 'item', checkText(text) ) # TODO: Shouldn't this be different from an io1???
+                    if text: writerObject.writeLineOpenClose( 'item', checkText(text) ) # TODO: Shouldn't this be different from an io1???
                 elif marker=='c':
                     if haveOpenOutline:
                         if text!='1' and not text.startswith('1 '):
@@ -2514,7 +2514,7 @@ class BibleWriter( InternalBible ):
                         #elif lcToken in ('xo*','xt*','x*',):
                         #    pass # We're being lazy here and not checking closing markers properly
                         else:
-                            logging.warning( _("toHTML5: Unprocessed '{}' token in {} {}:{} xref '{}'").format( token, BBB, C, V, USXxref ) )
+                            logging.warning( _("toHTML5: Unprocessed '{}' token in {} {}:{} xref '{}'").format( token, BBB, C, V, HTML5xref ) )
                     if xoOpen:
                         if Globals.debugFlag: assert( not xtOpen )
                         xrefHTML5 += ' closed="false">' + adjToken + '</char>'
@@ -2547,7 +2547,7 @@ class BibleWriter( InternalBible ):
                         elif lcToken.startswith('fr '): # footnote reference follows
                             if frOpen:
                                 if Globals.debugFlag: assert( not fTextOpen )
-                                logging.error( _("toHTML5: Two consecutive fr fields in {} {}:{} footnote '{}'").format( token, BBB, C, V, USXfootnote ) )
+                                logging.error( _("toHTML5: Two consecutive fr fields in {} {}:{} footnote '{}'").format( token, BBB, C, V, HTML5footnote ) )
                             if fTextOpen:
                                 if Globals.debugFlag: assert( not frOpen )
                                 footnoteHTML5 += ' closed="false">' + adjToken + '</char>'
@@ -2796,7 +2796,7 @@ class BibleWriter( InternalBible ):
         if controlDict["HTML5Files"]=="byBook":
             for BBB,bookData in self.books.items(): # Now export the books
                 if Globals.verbosityLevel > 2: print( _("  Exporting {} to HTML5 format...").format( BBB ) )
-                xw = MLWriter( filenameDict[BBB], outputFolder, 'HTML' )
+                xw = MLWriter( Globals.makeSafeFilename( filenameDict[BBB] ), outputFolder, 'HTML' )
                 xw.setHumanReadable()
                 xw.start( noAutoXML=True )
                 xw.writeLineText( '<!DOCTYPE html>', noTextCheck=True )
@@ -2930,7 +2930,7 @@ class BibleWriter( InternalBible ):
         elif self.name: filename = self.name
         else: filename = "export"
         if not filename.endswith( extension ): filename += extension # Make sure that we have the right file extension
-        filepath = os.path.join( outputFolder, filename )
+        filepath = os.path.join( outputFolder, Globals.makeSafeFilename( filename ) )
         if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
         with open( filepath, 'wt' ) as myFile:
             myFile.write('\ufeff') # theWord needs the BOM
@@ -3115,7 +3115,7 @@ class BibleWriter( InternalBible ):
         elif self.name: filename = self.name
         else: filename = "export"
         if not filename.endswith( extension ): filename += extension # Make sure that we have the right file extension
-        filepath = os.path.join( outputFolder, filename )
+        filepath = os.path.join( outputFolder, Globals.makeSafeFilename( filename ) )
         if os.path.exists( filepath ): os.remove( filepath )
         if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
         conn = sqlite3.connect( filepath )

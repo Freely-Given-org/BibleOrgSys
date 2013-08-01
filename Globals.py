@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # py
-#   Last modified: 2013-08-01 (also update ProgVersion below)
+#   Last modified: 2013-08-02 (also update ProgVersion below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -33,6 +33,7 @@ Contains functions:
     addLogfile( projectName, folder=None )
     removeLogfile( projectHandler )
 
+    makeSafeFilename( somename )
     peekIntoFile( filenameOrFilepath, folder=None, numLines=1 )
 
     totalSize( o, handlers={} )
@@ -67,7 +68,7 @@ Contains functions:
 """
 
 ProgName = "Globals"
-ProgVersion = "0.31"
+ProgVersion = "0.32"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -205,6 +206,18 @@ def removeLogfile( projectHandler ):
     root = logging.getLogger()  # No param means get the root logger
     root.removeHandler( projectHandler )
 # end of removeLogfile
+
+
+##########################################################################################################
+#
+# Peek at the first line(s) of a file
+
+def makeSafeFilename( somename ):
+    """
+    Replaces unsafe characters in a name to make it suitable for a filename.
+    """
+    return somename.replace('\\','_').replace('/','-').replace(':',',')
+# end of makeSafeFilename
 
 
 ##########################################################################################################

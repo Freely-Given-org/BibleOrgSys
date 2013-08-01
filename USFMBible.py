@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2013-08-01 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-02 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -380,7 +380,7 @@ def demo():
                 somepath = os.path.join( testBaseFolder, something )
                 if os.path.isfile( somepath ): print( "Ignoring file '{}' in '{}'".format( something, testBaseFolder ) )
                 elif os.path.isdir( somepath ): # Let's assume that it's a folder containing a USFM (partial) Bible
-                    #if not something.startswith( 'ssx' ): continue
+                    #if not something.startswith( 'byr' ): continue
                     count += 1
                     title = bookNameDict = None
                     findInfoResult = findInfo( somepath )
@@ -388,7 +388,7 @@ def demo():
                     if title is None: title = something[:-5] if something.endswith("_usfm") else something
                     name, encoding, testFolder = title, "utf-8", somepath
                     if os.access( testFolder, os.R_OK ):
-                        if Globals.verbosityLevel > 0: print( "\nUSFM A{}/".format( count ) )
+                        if Globals.verbosityLevel > 0: print( "\nUSFM B{}/".format( count ) )
                         UB = USFMBible( testFolder, name, encoding )
                         UB.load()
                         totalBooks += len( UB )
@@ -544,7 +544,7 @@ def demo():
                     if title is None: title = something[:-5] if something.endswith("_usfm") else something
                     name, encoding, testFolder = title, "utf-8", somepath
                     if os.access( testFolder, os.R_OK ):
-                        if Globals.verbosityLevel > 0: print( "\nUSFM D{}/".format( count ) )
+                        if Globals.verbosityLevel > 0: print( "\nUSFM E{}/".format( count ) )
                         UBW = USFMBible( testFolder, name, encoding )
                         UBW.load()
                         if Globals.verbosityLevel > 0: print( UBW )
@@ -625,7 +625,7 @@ def demo():
                     if title is None: title = something[:-5] if something.endswith("_usfm") else something
                     name, encoding, testFolder = title, "utf-8", somepath
                     if os.access( testFolder, os.R_OK ):
-                        if Globals.verbosityLevel > 0: print( "\nUSFM E{}/".format( count ) )
+                        if Globals.verbosityLevel > 0: print( "\nUSFM F{}/".format( count ) )
                         UBW = USFMBible( testFolder, name, encoding )
                         UBW.load()
                         if Globals.verbosityLevel > 0: print( UBW )
