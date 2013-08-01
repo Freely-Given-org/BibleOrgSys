@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleInternals.py
-#   Last modified: 2013-07-30 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-01 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for Bible books
 #
@@ -41,7 +41,7 @@ ProgName = "Bible internals handler"
 ProgVersion = "0.13"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
-debuggingThisModule = True
+debuggingThisModule = False
 
 
 import os, logging
@@ -101,11 +101,11 @@ class InternalBibleEntry:
             assert( isinstance( adjustedText, str ) )
             assert( '\n' not in adjustedText and '\r' not in adjustedText )
             assert( isinstance( cleanText, str ) )
-            assert( '\n' not in cleanText and '\r' not in adjustedText )
+            assert( '\n' not in cleanText and '\r' not in cleanText )
             assert( '\\' not in cleanText )
             assert( isinstance( extras, list ) )
             assert( isinstance( originalText, str ) )
-            assert( '\n' not in originalText and '\r' not in adjustedText )
+            assert( '\n' not in originalText and '\r' not in originalText )
             if extras:
                 #print( "extras:", extras )
                 for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references

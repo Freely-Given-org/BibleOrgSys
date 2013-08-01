@@ -691,6 +691,7 @@ class BibleReferenceList( BibleReferenceBase ):
             totalVerseList.append( refTuple )
         # end of saveReference
 
+
         def saveStartReference( BBB, C, V, S ):
             """ Checks the reference info then saves it as a referenceTuple. """
             nonlocal haveErrors, haveWarnings, startReferenceTuple
@@ -703,10 +704,13 @@ class BibleReferenceList( BibleReferenceBase ):
                 haveErrors = True
         # end of saveStartReference
 
+
         def saveReferenceRange( startTuple, BBB, C, V, S, refList ):
-            """ Checks the reference info then saves it as a referenceTuple in the refList. """
+            """
+            Checks the reference info then saves it as a referenceTuple in the refList.
+            """
             #print( "saveReferenceRange:", "startTuple =", startTuple, "BBB =", BBB, "C =", C, "V =", V, "S = ", S, "refList =", refList )
-            assert( len(BBB) == 3 )
+            assert( BBB is None or len(BBB) == 3 )
             assert( not C or C.isdigit() ) # Should be no suffix on C (although it can be blank if the reference is for a whole book)
             if V and not S and V[-1] in ('a','b','c',): # Remove the suffix
                 S = V[-1]; V = V[:-1]
@@ -729,6 +733,7 @@ class BibleReferenceList( BibleReferenceBase ):
                 haveWarnings = True
             refList.append( rangeTuple )
         # end of saveReferenceRange
+
 
         if location is None: location = '(unknown)'
         #print( "Processing '{}' from {}".format( referenceString, location ) )
@@ -787,16 +792,20 @@ class BibleReferenceList( BibleReferenceBase ):
                                 haveWarnings = True
                     continue
                 elif char in self.punctuationDict['bookChapterSeparator']:
-                    BBB = self.getBBB( bookNameOrAbbreviation )
-                    if BBB is None:
-                        logging.error( _("Invalid '{}' bookname in Bible reference '{}'").format( bookNameOrAbbreviation, referenceString ) )
+                    if bookNameOrAbbreviation:
+                        BBB = self.getBBB( bookNameOrAbbreviation )
+                        if BBB is None:
+                            logging.error( _("Invalid '{}' bookname in Bible reference '{}'").format( bookNameOrAbbreviation, referenceString ) )
+                            haveErrors = True
+                        else: # we found an unambiguous bookname
+                            shortBookName = self.getBookNameFunction( BBB )
+                            if shortBookName != bookNameOrAbbreviation: # they didn't enter the full bookname -- we really expect the punctuationAfterBookAbbreviation
+                                if 'punctuationAfterBookAbbreviation' in self.punctuationDict and self.punctuationDict['punctuationAfterBookAbbreviation']:
+                                    logging.warning( _("Missing '{}' punctuationAfterBookAbbreviation when the book name abbreviation was given at position {} in '{}'").format(self.punctuationDict['punctuationAfterBookAbbreviation'],nnn,referenceString) )
+                                    haveWarnings = True
+                    else:
+                        logging.error( _("Missing bookname in Bible reference '{}'").format( referenceString ) )
                         haveErrors = True
-                    else: # we found an unambiguous bookname
-                        shortBookName = self.getBookNameFunction( BBB )
-                        if shortBookName != bookNameOrAbbreviation: # they didn't enter the full bookname -- we really expect the punctuationAfterBookAbbreviation
-                            if 'punctuationAfterBookAbbreviation' in self.punctuationDict and self.punctuationDict['punctuationAfterBookAbbreviation']:
-                                logging.warning( _("Missing '{}' punctuationAfterBookAbbreviation when the book name abbreviation was given at position {} in '{}'").format(self.punctuationDict['punctuationAfterBookAbbreviation'],nnn,referenceString) )
-                                haveWarnings = True
                     spaceCount = 1 if char==' ' else 0
                     status = 2
                     continue

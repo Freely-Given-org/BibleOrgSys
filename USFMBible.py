@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2013-07-30 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-01 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 """
 
 ProgName = "USFM Bible handler"
-ProgVersion = "0.41"
+ProgVersion = "0.42"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -356,10 +356,11 @@ def demo():
             if Globals.verbosityLevel > 0: print( UB )
             #for thisBook in UB:
                 #print( "here", thisBook.bookReferenceCode )
-            if Globals.strictCheckingFlag: UB.check()
-            #print( UB.books['GEN']._processedLines[0:40] )
-            #UBErrors = UB.getErrors()
-            # print( UBErrors )
+            if Globals.strictCheckingFlag:
+                UB.check()
+                #print( UB.books['GEN']._processedLines[0:40] )
+                #UBErrors = UB.getErrors()
+                # print( UBErrors )
             #print( UB.getVersification () )
             #print( UB.getAddedUnits () )
             #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
@@ -392,14 +393,16 @@ def demo():
                         UB.load()
                         totalBooks += len( UB )
                         if Globals.verbosityLevel > 0: print( UB )
-                        UB.check()
-                        #UBErrors = UB.getErrors()
-                        # print( UBErrors )
+                        if Globals.strictCheckingFlag:
+                            UB.check()
+                            #UBErrors = UB.getErrors()
+                            # print( UBErrors )
                         #print( UB.getVersification () )
                         #print( UB.getAddedUnits () )
                         #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
                             ##print( "Looking for", ref )
                             #print( "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )
+                        if Globals.commandLineOptions.export: UB.doAllExports()
                     else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
             if count: print( "\n{} total USFM (partial) Bibles processed.".format( count ) )
             if totalBooks: print( "{} total books ({} average per folder)".format( totalBooks, round(totalBooks/count) ) )
@@ -418,10 +421,11 @@ def demo():
         if os.access( testFolder, os.R_OK ): # check that we can read the test data
             UB = USFMBible( testFolder, name, encoding ) # create the BibleWriter object
             UB.load()
-            print( UB )
-            if Globals.strictCheckingFlag: UB.check()
-            #UBErrors = UB.getErrors()
-            #print( UBErrors )
+            if Globals.verbosityLevel > 0: print( UB )
+            if Globals.strictCheckingFlag:
+                UB.check()
+                #UBErrors = UB.getErrors()
+                #print( UBErrors )
 
             if Globals.commandLineOptions.export:
 
@@ -491,10 +495,11 @@ def demo():
             UB = USFMBible( testFolder, name, encoding )
             UB.load()
             if Globals.verbosityLevel > 0: print( UB )
-            UB.check()
-            #print( UB.books['GEN']._processedLines[0:40] )
-            UBErrors = UB.getErrors()
-            #print( UBErrors )
+            if Globals.strictCheckingFlag:
+                UB.check()
+                #print( UB.books['GEN']._processedLines[0:40] )
+                UBErrors = UB.getErrors()
+                #print( UBErrors )
         else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 
 
@@ -542,10 +547,11 @@ def demo():
                         if Globals.verbosityLevel > 0: print( "\nUSFM D{}/".format( count ) )
                         UBW = USFMBible( testFolder, name, encoding )
                         UBW.load()
-                        print( UBW )
-                        if not Globals.commandLineOptions.export: UBW.check()
-                        UBWErrors = UBW.getErrors()
-                        #print( UBWErrors )
+                        if Globals.verbosityLevel > 0: print( UBW )
+                        if not Globals.commandLineOptions.export:
+                            UBW.check()
+                            UBWErrors = UBW.getErrors()
+                            #print( UBWErrors )
 
                         if Globals.commandLineOptions.export:
                             import subprocess # for running xmllint
@@ -622,13 +628,12 @@ def demo():
                         if Globals.verbosityLevel > 0: print( "\nUSFM E{}/".format( count ) )
                         UBW = USFMBible( testFolder, name, encoding )
                         UBW.load()
-                        print( UBW )
-                        if not Globals.commandLineOptions.export: UBW.check()
-                        UBWErrors = UBW.getErrors()
-                        #print( UBWErrors )
-
-                        if Globals.commandLineOptions.export:
-                            UBW.doAllExports()
+                        if Globals.verbosityLevel > 0: print( UBW )
+                        if Globals.strictCheckingFlag:
+                            UBW.check()
+                            UBWErrors = UBW.getErrors()
+                            #print( UBWErrors )
+                        if Globals.commandLineOptions.export: UBW.doAllExports()
                     else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
             if count: print( "\n{} total USFM (partial) Bibles processed.".format( count ) )
             if totalBooks: print( "{} total books ({} average per folder)".format( totalBooks, round(totalBooks/count) ) )

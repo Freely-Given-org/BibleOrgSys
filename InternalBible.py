@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2013-07-20 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-01 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -44,7 +44,7 @@ and then fills
 """
 
 ProgName = "Internal Bible handler"
-ProgVersion = "0.35"
+ProgVersion = "0.36"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -159,8 +159,9 @@ class InternalBible:
             filename = self.abbreviation if self.abbreviation else self.name
         assert( filename )
         filename += '.pickle'
-        if Globals.verbosityLevel > 1:
-            print( _("InternalBible.pickle: Saving {} to {}...").format( self.objectNameString, filename if folder is None else os.path.join( folder, filename ) ) )
+        if Globals.verbosityLevel > 2:
+            print( _("InternalBible.pickle: Saving {} to {}...") \
+                .format( self.objectNameString, filename if folder is None else os.path.join( folder, filename ) ) )
         Globals.pickleObject( self, filename, folder )
     # end of InternalBible.pickle
 
@@ -198,6 +199,7 @@ class InternalBible:
                 a book name (e.g., Proverbs) or abbreviation (e.g., Prv).
             Uses self.combinedBookNameDict and makes and uses self.bookAbbrevDict.
             Return None if unsuccessful."""
+        if Globals.debugFlag: assert( referenceString and isinstance( referenceString, str ) )
         result = Globals.BibleBooksCodes.getBBB( referenceString )
         if result is not None: return result # It's already a valid BBB
 

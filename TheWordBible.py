@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # TheWordBible.py
-#   Last modified: 2013-07-31 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-01 by RJH (also update ProgVersion below)
 #
 # Module handling "theWord" Bible module files
 #
@@ -51,7 +51,7 @@ e.g.,
 """
 
 ProgName = "theWord Bible format handler"
-ProgVersion = "0.14"
+ProgVersion = "0.15"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -510,7 +510,10 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
             continue
 
         #print( "theWordComposeVerseLine:", BBB, C, V, marker, text )
-        if Globals.debugFlag: assert( marker not in theWordIgnoredIntroMarkers ) # these markers shouldn't occur in verses
+        if marker in theWordIgnoredIntroMarkers:
+            logging.error( "theWordComposeVerseLine: Found unexpected {} introduction marker at {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
+            print( "theWordComposeVerseLine:", BBB, C, V, marker, text, verseData )
+            if Globals.debugFlag and debuggingThisModule: assert( marker not in theWordIgnoredIntroMarkers ) # these markers shouldn't occur in verses
 
         if marker == 's1':
             if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
@@ -606,9 +609,9 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
             elif lastMarker == 'm': composedLine += '<CL>' # We had a continuation paragraph
             elif lastMarker in Globals.USFMParagraphMarkers: pass # Did we need to do anything here???
             elif lastMarker != 'v':
-                print( BBB, C, V, marker, lastMarker )
+                print( BBB, C, V, marker, lastMarker, verseData )
                 composedLine += theWordAdjustLine(BBB,C,V, text )
-                if Globals.debugFlag: halt # This should never happen -- probably a b marker with text
+                if Globals.debugFlag and debuggingThisModule: halt # This should never happen -- probably a b marker with text
             #if ourGlobals['pi1']: composedLine += '<PI>'
             #elif ourGlobals['pi2']: composedLine += '<PI2>'
             #elif ourGlobals['pi3']: composedLine += '<PI3>'
@@ -650,6 +653,10 @@ def handleLine( myName, BBB, C, V, originalLine, bookObject, myGlobals ):
     Try to convert display formatting to semantic formatting as much as possible
 
     myGlobals dict contains flags.
+
+    Appends pseudo-USFM results to the supplied bookObject.
+
+    NOTE: There are no checks in here yet to discover nested character-formatting markers.  :-(
     """
     if Globals.debugFlag:
         if debuggingThisModule:

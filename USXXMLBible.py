@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USXXMLBible.py
-#   Last modified: 2013-07-30 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-01 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USX Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USX Bibles.
 """
 
 ProgName = "USX XML Bible handler"
-ProgVersion = "0.11"
+ProgVersion = "0.12"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -372,6 +372,7 @@ def demo():
             UB.load()
             if Globals.verbosityLevel > 0: print( UB )
             if Globals.strictCheckingFlag: UB.check()
+            if Globals.commandLineOptions.export: UB.doAllExports()
             #UBErrors = UB.getErrors()
             # print( UBErrors )
             #print( UB.getVersification () )
@@ -388,6 +389,7 @@ def demo():
 if __name__ == '__main__':
     # Configure basic set-up
     parser = Globals.setup( ProgName, ProgVersion )
+    parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
     Globals.addStandardOptionsAndProcess( parser )
 
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables

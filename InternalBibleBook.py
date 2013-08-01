@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-07-31 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-01 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.47"
+ProgVersion = "0.48"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -273,7 +273,8 @@ class InternalBibleBook:
             if Globals.debugFlag:
                 assert( originalMarker and isinstance( originalMarker, str ) )
                 assert( isinstance( text, str ) )
-            cleanText = adjText = text
+            adjText = text
+            cleanText = text.replace( 'xa0', ' ' ) # Replace non-break spaces
 
             # Remove trailing spaces
             if adjText and adjText[-1].isspace():
@@ -988,7 +989,11 @@ class InternalBibleBook:
             if self.objectTypeString=='USX' and text and text[-1]==' ': text = text[:-1] # Removing extra trailing space from USX files
             processLine( marker, text ) # Saves its results in self._processedLines
         #self.debugPrint(); halt
-        if not Globals.debugFlag: del self._rawLines # if short of memory
+        #if not Globals.debugFlag:
+        del self._rawLines # if short of memory
+        try: del self.tree # for xml Bible types (some Bible books caused a segfault when pickled with this data)
+        except AttributeError: pass
+
         if fixErrors: self.errorDictionary['Fix Text Errors'] = fixErrors
         self._processedFlag = True
         self.makeIndex()

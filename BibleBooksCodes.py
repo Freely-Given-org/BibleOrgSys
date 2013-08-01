@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodes.py
-#   Last modified: 2013-07-25 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-01 by RJH (also update ProgVersion below)
 #
 # Module handling BibleBooksCodes functions
 #
@@ -30,6 +30,8 @@ Module handling BibleBooksCodes functions.
 ProgName = "Bible Books Codes handler"
 ProgVersion = "0.69"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+
+debuggingThisModule = False
 
 
 import os, logging
@@ -247,7 +249,7 @@ class BibleBooksCodes:
     def getBBB( self, someText ):
         """ Attempt to return the BBB reference abbreviation string for the given book information (text).
             Returns BBB or None. """
-        assert( someText and isinstance( someText, str ) )
+        if Globals.debugFlag: assert( someText and isinstance( someText, str ) )
         UCSomeText = someText.upper()
         if UCSomeText in self.__DataDicts["referenceAbbreviationDict"]:
             return UCSomeText # it's already a BBB code

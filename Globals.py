@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # py
-#   Last modified: 2013-07-26 (also update ProgVersion below)
+#   Last modified: 2013-08-01 (also update ProgVersion below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -67,7 +67,7 @@ Contains functions:
 """
 
 ProgName = "Globals"
-ProgVersion = "0.30"
+ProgVersion = "0.31"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -545,11 +545,13 @@ def applyStringAdjustments( originalText, adjustmentList ):
 # Reloading a saved Python object from the cache
 #
 
-def pickleObject( theObject, filename, folder=None ):
+def pickleObject( theObject, filename, folder=None, disassembleObjectFlag=False ):
     """
     Writes the object to a .pickle file that can be easily loaded into a Python3 program.
         If folder is None (or missing), defaults to the default cache folder specified above.
         Creates the folder(s) if necessary.
+
+    disassembleObjectFlag is used to find segfaults by pickling the object piece by piece.
     """
     assert( theObject )
     assert( filename )
@@ -560,6 +562,28 @@ def pickleObject( theObject, filename, folder=None ):
             os.makedirs( folder )
         filepath = os.path.join( folder, filename )
     if verbosityLevel > 2: print( _("Saving object to {}...").format( filepath ) )
+
+    if disassembleObjectFlag: # Pickles an object attribute by attribute (to help narrow down segfault)
+        print( '\nobject', disassembleObjectFlag, dir(theObject) )
+        for name in dir( theObject ):
+            a = theObject.__getattribute__( name )
+            t = type( a )
+            ts = str( t )
+            f = 'pickle' + name
+            print( 'attrib', name, ts )
+            if '__' not in name and 'method' not in ts:
+                print( '  go' )
+                if name=='books':
+                    print( '  books' )
+                    for bn in a:
+                        print( '     ', bn )
+                        b = a[bn]
+                        print( b.bookReferenceCode )
+                        pickleObject( b, f, folder )
+                else:
+                    pickleObject( a, f, folder, disassembleObjectFlag=True )
+            else: print( '  skip' )
+
     with open( filepath, 'wb' ) as pickleOutputFile:
         pickle.dump( theObject, pickleOutputFile )
 # end of pickle

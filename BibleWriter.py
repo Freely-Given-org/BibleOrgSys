@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-07-26 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-01 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -125,7 +125,7 @@ class BibleWriter( InternalBible ):
         """
         assert( not self.doneSetupGeneric )
         self.genericBOS = BibleOrganizationalSystem( "GENERIC-KJV-81" )
-        self.genericBRL = BibleReferenceList( self.genericBOS, BibleObject=self )
+        self.genericBRL = BibleReferenceList( self.genericBOS, BibleObject=self ) # this prevents pickling!
         self.doneSetupGeneric = True
     # end of BibleWriter.__setupWriter
 
@@ -1034,12 +1034,14 @@ class BibleWriter( InternalBible ):
                     vernacularName = getBookNameFunction(BBB).upper()
                     #assert( vernacularName not in abbrevList )
                     if vernacularName in abbrevList:
+                        if Globals.debugFlag:
+                            print( "BibleWriter._writeSwordLocale: ToProgrammer -- vernacular name IS in abbrevList -- what does this mean? Why? '{}' {}".format( vernacularName, abbrevList ) )
                         logging.debug( "BibleWriter._writeSwordLocale: ToProgrammer -- vernacular name IS in abbrevList -- what does this mean? Why? '{}' {}".format( vernacularName, abbrevList ) )
                     SwLocFile.write( '{}={}\n'.format( vernacularName, swordAbbrev ) ) # Write the UPPER CASE language book name and the Sword abbreviation
                     abbrevList.append( vernacularName )
                     if ' ' in vernacularName:
                         vernacularAbbrev = vernacularName.replace( ' ', '' )
-                        if Globals.debugFlag: assert( vernacularAbbrev not in abbrevList )
+                        if Globals.debugFlag and debuggingThisModule: assert( vernacularAbbrev not in abbrevList )
                         SwLocFile.write( '{}={}\n'.format( vernacularAbbrev, swordAbbrev ) ) # Write the UPPER CASE language book name and the Sword abbreviation
                         abbrevList.append( vernacularAbbrev )
             for BBB in BibleOrganizationalSystem.getBookList(): # Second pass writes the shorter vernacular book abbreviations
@@ -1531,7 +1533,7 @@ class BibleWriter( InternalBible ):
                         logging.error( _("toOSIS: {} Have an io2 not in an introduction section").format( toOSISGlobals["verseRef"] ) )
                     if not haveOpenOutline:
                         logging.error( _("toOSIS: {} Have an io2 not in an outline section").format( toOSISGlobals["verseRef"] ) )
-                    writerObject.writeLineOpenClose( 'item', checkText(text) ) # TODO: Shouldn't this be different from an io1???
+                    if text: writerObject.writeLineOpenClose( 'item', checkText(text) ) # TODO: Shouldn't this be different from an io1???
                 elif marker=='c':
                     if haveOpenVsID != False: # Close the previous verse
                         writerObject.writeLineOpenSelfclose( 'verse', ('eID',haveOpenVsID) )
@@ -2416,7 +2418,7 @@ class BibleWriter( InternalBible ):
 
         def convertToPageReference( refTuple ):
             assert( refTuple and len(refTuple)==4 )
-            assert( refTuple[0] and len(refTuple[0])==3 ) #BBB
+            assert( refTuple[0] is None or ( refTuple[0] and len(refTuple[0])==3 ) ) #BBB
             if refTuple[0] in filenameDict:
                 return '{}#C{}V{}'.format( filenameDict[refTuple[0]], refTuple[1], refTuple[2] )
         # end of toHTML5.convertToPageReference
@@ -2473,7 +2475,9 @@ class BibleWriter( InternalBible ):
                     xoOpen = xtOpen = False
                     for j,token in enumerate(HTML5xref.split('\\')):
                         #print( "toHTML5.processXRef", j, "'"+token+"'", "from", '"'+HTML5xref+'"', xoOpen, xtOpen )
-                        if Globals.debugFlag and token.startswith( '+' ): halt # Need to handle nested USFM 2.4 markers
+                        if Globals.debugFlag and token.startswith( '+' ):
+                            print( "toHTML5.processXRef", j, repr(token), "from", repr(HTML5xref), xoOpen, xtOpen )
+                            if debuggingThisModule: halt # Need to handle nested USFM 2.4 markers
                         lcToken = token.lower()
                         if j==0: # The first token (but the x has already been removed)
                             #xrefHTML5 += 'caller="{}" style="x">'.format( token.rstrip() )
@@ -2698,7 +2702,7 @@ class BibleWriter( InternalBible ):
                 elif marker in 'c#':
                     C = text
                     if not haveOpenParagraph:
-                        logging.warning( "toHTML5: Have chapter number {} outside a paragraph in {}".format( text, BBB ) )
+                        logging.warning( "toHTML5: Have chapter number {} outside a paragraph in {} {}:{}".format( text, BBB, C, V ) )
                         writerObject.writeLineOpen( 'p', ('class','unknownParagraph') ); haveOpenParagraph = True
                     writerObject.writeLineOpenClose( 'span', text, ('class','chapterNumber') )
                 elif marker in ('s1','s2','s3',):
@@ -2708,13 +2712,15 @@ class BibleWriter( InternalBible ):
                         writerObject.writeLineOpen( 'section', ('class','regularSection') ); haveOpenSection = True
                     if text: writerObject.writeLineOpenClose( 'h2', text, ('class','sectionHeading'+marker[1]) )
                 elif marker == 'r':
-                    assert( haveOpenSection )
-                    assert( not haveOpenParagraph )
+                    if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
+                    if not haveOpenSection:
+                        logging.warning( "toHTML5: Have section reference {} outside a paragraph in {} {}:{}".format( text, BBB, C, V ) )
+                        writerObject.writeLineOpen( 'section', ('class','regularSection') ); haveOpenSection = True
                     if text: writerObject.writeLineOpenClose( 'span', createSectionReference(text), ('class','sectionReference'), noTextCheck=True )
                 elif marker == 'v':
                     V = text
                     if not haveOpenParagraph:
-                        logging.warning( "toHTML5: Have verse number {} outside a paragraph in {}".format( text, BBB ) )
+                        logging.warning( "toHTML5: Have verse number {} outside a paragraph in {} {}:{}".format( text, BBB, C, V ) )
                     if 1: # no span -- it's simpler so why not!
                         writerObject.writeLineOpenClose( 'sup', text, [('class','verseNumber'),('id','C'+C+'V'+text)] )
                     else: # use sup and then span
@@ -2749,12 +2755,12 @@ class BibleWriter( InternalBible ):
                 # Character markers
                 elif marker=='v~':
                     if not haveOpenParagraph:
-                        logging.warning( "toHTML5: Have verse text {} outside a paragraph in {}".format( text, BBB ) )
+                        logging.warning( "toHTML5: Have verse text {} outside a paragraph in {} {}:{}".format( text, BBB, C, V ) )
                         writerObject.writeLineOpen( 'p', ('class','unknownParagraph') ); haveOpenParagraph = True
                     if text: writerObject.writeLineText( handleExtras( text, extras, ourGlobals ) )
                 elif marker=='p~':
                     if not haveOpenParagraph:
-                        logging.warning( "toHTML5: Have verse text {} outside a paragraph in {}".format( text, BBB ) )
+                        logging.warning( "toHTML5: Have verse text {} outside a paragraph in {} {}:{}".format( text, BBB, C, V ) )
                         writerObject.writeLineOpen( 'p', ('class','unknownParagraph') ); haveOpenParagraph = True
                     if text: writerObject.writeLineText( handleExtras( text, extras, ourGlobals ) )
                 else: unhandledMarkers.add( marker )
@@ -2862,19 +2868,19 @@ class BibleWriter( InternalBible ):
                         result = bkData.getCVRef( (BBB,str(C),str(V),) )
                         verseData, context = result
                     except KeyError: composedLine = '(-)' # assume it was a verse bridge (or something)
-                # Handle some common versification anomalies
-                if (BBB,C,V) == ('JN3',1,14): # Add text for v15 if it exists
-                    try:
-                        result15 = bkData.getCVRef( ('JN3','1','15',) )
-                        verseData15, context15 = result15
-                        verseData.extend( verseData15 )
-                    except KeyError: pass #  just ignore it
-                elif (BBB,C,V) == ('REV',12,17): # Add text for v15 if it exists
-                    try:
-                        result18 = bkData.getCVRef( ('REV','12','18',) )
-                        verseData18, context18 = result18
-                        verseData.extend( verseData18 )
-                    except KeyError: pass #  just ignore it
+                    # Handle some common versification anomalies
+                    if (BBB,C,V) == ('JN3',1,14): # Add text for v15 if it exists
+                        try:
+                            result15 = bkData.getCVRef( ('JN3','1','15',) )
+                            verseData15, context15 = result15
+                            verseData.extend( verseData15 )
+                        except KeyError: pass #  just ignore it
+                    elif (BBB,C,V) == ('REV',12,17): # Add text for v15 if it exists
+                        try:
+                            result18 = bkData.getCVRef( ('REV','12','18',) )
+                            verseData18, context18 = result18
+                            verseData.extend( verseData18 )
+                        except KeyError: pass #  just ignore it
                 if verseData: composedLine = theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals )
                 assert( '\n' not in composedLine ) # This would mess everything up
                 #print( BBB, C, V, repr(composedLine) )
@@ -3218,11 +3224,13 @@ class BibleWriter( InternalBible ):
         htmlOutputFolder = os.path.join( givenOutputFolderName, "BOS_HTML5_" + "Export/" )
         pickleOutputFolder = os.path.join( givenOutputFolderName, "BOS_Bible_Object_Pickle/" )
 
-        # Don't know why this causes a seg fault
-        #if Globals.debugFlag: self.pickle( folder=pickleOutputFolder ) # halts if fails
-        #else:
-            #try: self.pickle( folder=pickleOutputFolder )
-            #except: print( "BibleWriter.doAllExports: pickle( {} ) failed.".format( folder ) )
+        # NOTE: This must be done before self.__setupWriter is called
+        #       because the BRL object has a recursive pointer to self and the pickle fails
+        if Globals.verbosityLevel > 1: print( "Running BibleWriter:pickle..." )
+        if Globals.debugFlag: self.pickle( folder=pickleOutputFolder ) # halts if fails
+        else:
+            try: self.pickle( folder=pickleOutputFolder )
+            except: print( "BibleWriter.doAllExports: pickle( {} ) failed.".format( pickleOutputFolder ) )
 
         if Globals.debugFlag:
             PseudoUSFMExportResult = self.toPseudoUSFM( PseudoUSFMOutputFolder )
