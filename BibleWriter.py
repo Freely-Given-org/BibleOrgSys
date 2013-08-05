@@ -208,14 +208,14 @@ class BibleWriter( InternalBible ):
                 if pseudoMarker in ('c#',): continue # Ignore our additions
                 #value = cleanText # (temp)
                 #if Globals.debugFlag and debuggingThisModule: print( "toUSFM: pseudoMarker = '{}' value = '{}'".format( pseudoMarker, value ) )
+                if removeVerseBridges and pseudoMarker in ('v','c',):
+                    if value1 and value2:
+                        for vNum in range( value1+1, value2+1 ): # Fill in missing verse numbers
+                            USFM += '\n\\v {}'.format( vNum )
+                    value1 = value2 = None
+
                 if pseudoMarker in ('v','f','fr','x','xo',): # These fields should always end with a space but the processing will have removed them
                     if Globals.debugFlag: assert( value )
-                    if pseudoMarker=='v' and removeVerseBridges:
-                        if value1 and value2:
-                            for vNum in range( value1+1, value2+1 ): # Fill in missing verse numbers
-                                USFM += '\n\\v {}'.format( vNum )
-                        value1 = value2 = None
-
                         vString = value
                         for bridgeChar in ('-', '–', '—'): # hyphen, endash, emdash
                             ix = vString.find( bridgeChar )

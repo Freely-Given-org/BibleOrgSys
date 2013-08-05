@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # py
-#   Last modified: 2013-08-02 (also update ProgVersion below)
+#   Last modified: 2013-08-05 (also update ProgVersion below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -216,7 +216,7 @@ def makeSafeFilename( somename ):
     """
     Replaces unsafe characters in a name to make it suitable for a filename.
     """
-    return somename.replace('\\','_').replace('/','-').replace(':',',')
+    return somename.replace('/','-').replace('\\','_BACKSLASH_').replace(':','_COLON_').replace('#','_HASH_')
 # end of makeSafeFilename
 
 
