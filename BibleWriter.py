@@ -216,6 +216,7 @@ class BibleWriter( InternalBible ):
 
                 if pseudoMarker in ('v','f','fr','x','xo',): # These fields should always end with a space but the processing will have removed them
                     if Globals.debugFlag: assert( value )
+                    if pseudoMarker=='v' and removeVerseBridges:
                         vString = value
                         for bridgeChar in ('-', '–', '—'): # hyphen, endash, emdash
                             ix = vString.find( bridgeChar )
