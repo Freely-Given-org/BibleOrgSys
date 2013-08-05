@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-08-01 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-04 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -90,6 +90,10 @@ class InternalBibleBook:
     def __init__( self, name, BBB ):
         """
         Create the USFM Bible book object.
+
+        Parameters are:
+            name: version name
+            BBB: book reference code
         """
         #print( "InternalBibleBook.__init__( {} )".format( BBB ) )
         self.name, self.bookReferenceCode = name, BBB

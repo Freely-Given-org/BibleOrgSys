@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-08-02 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-04 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -49,7 +49,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.33"
+ProgVersion = "0.35"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -177,7 +177,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toUSFM( self, outputFolder=None ):
+    def toUSFM( self, outputFolder=None, removeVerseBridges=False ):
         """
         Adjust the pseudo USFM and write the USFM files.
         """
@@ -199,6 +199,7 @@ class BibleWriter( InternalBible ):
 
             USFM = ""
             inField = None
+            value1 = value2 = None
             if Globals.verbosityLevel > 2: print( "  " + _("Adjusting USFM output..." ) )
             for verseDataEntry in pseudoUSFMData:
                 pseudoMarker, value = verseDataEntry.getMarker(), verseDataEntry.getFullText()
@@ -209,6 +210,22 @@ class BibleWriter( InternalBible ):
                 #if Globals.debugFlag and debuggingThisModule: print( "toUSFM: pseudoMarker = '{}' value = '{}'".format( pseudoMarker, value ) )
                 if pseudoMarker in ('v','f','fr','x','xo',): # These fields should always end with a space but the processing will have removed them
                     if Globals.debugFlag: assert( value )
+                    if pseudoMarker=='v' and removeVerseBridges:
+                        if value1 and value2:
+                            for vNum in range( value1+1, value2+1 ): # Fill in missing verse numbers
+                                USFM += '\n\\v {}'.format( vNum )
+                        value1 = value2 = None
+
+                        vString = value
+                        for bridgeChar in ('-', '–', '—'): # hyphen, endash, emdash
+                            ix = vString.find( bridgeChar )
+                            if ix != -1:
+                                value = vString[:ix] # Remove verse bridges
+                                vEnd = vString[ix+1:]
+                                print( BBB, repr(value), repr(vEnd) )
+                                value1, value2 = int( value ), int( vEnd )
+                                print( ' ', BBB, repr(value1), repr(value2) )
+                                break
                     if value[-1] != ' ': value += ' ' # Append a space since it didn't have one
                 if pseudoMarker[-1]=='~' or Globals.USFMMarkers.isNewlineMarker(pseudoMarker): # Have a continuation field
                     if inField is not None:
@@ -217,7 +234,7 @@ class BibleWriter( InternalBible ):
                 if pseudoMarker[-1] == '~':
                     #print( "psMarker ends with squiggle: '{}'='{}'".format( pseudoMarker, value ) )
                     if Globals.debugFlag: assert( pseudoMarker[:-1] in ('v','p','c') )
-                    USFM += value
+                    USFM += (' ' if USFM and USFM[-1]!=' ' else '') + value
                 else: # not a continuation marker
                     adjValue = value
                     #if pseudoMarker in ('it','bk','ca','nd',): # Character markers to be closed -- had to remove ft and xt from this list for complex footnotes with f fr fq ft fq ft f*
@@ -2320,7 +2337,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toHTML5( self, outputFolder=None, controlDict=None, validationSchema=None ):
+    def toHTML5( self, outputFolder=None, controlDict=None, validationSchema=None, humanReadable=True ):
         """
         Using settings from the given control file,
             converts the USFM information to UTF-8 HTML files.
@@ -2377,8 +2394,7 @@ class BibleWriter( InternalBible ):
 
         def writeEndNotes( writerObject, ourGlobals ):
             """
-            Writes the HTML5 footer to the HTML writerObject.
-
+            Writes the HTML5 end notes (footnotes and cross-references) to the HTML writerObject.
 
             <div id="XRefs- Normal"><h2 class="XRefsHeading">Cross References</h2>
             <p id="XRef0" class="XRef"><a title="Go back up to 2:2 in the text" href="#C2V2"><span class="ChapterVerse">2:2</span></a> <span class="VernacularCrossReference">Lib 19:9&#x2011;10</span>; <span class="VernacularCrossReference">Diy 24:19</span></p>
@@ -2396,10 +2412,17 @@ class BibleWriter( InternalBible ):
             if ourGlobals['footnoteHTML5'] or ourGlobals['xrefHTML5']:
                 writerObject.writeLineOpen( 'div' ) # endNotes
                 if ourGlobals['footnoteHTML5']:
-                    writerObject.writeLineOpen( 'p', ('class','footerLine') )
-                    writerObject.writeLineClose( 'p' )
+                    writerObject.writeLineOpenSelfclose( 'hr' )
+                    writerObject.writeLineOpenClose( 'h3', 'Footnotes', ('class','footnotesHeader') )
+                    writerObject.writeLineOpen( 'div', ('class','footerLine') )
+                    writerObject.writeLineText( ourGlobals['footnoteHTML5'] )
+                    writerObject.writeLineClose( 'div' )
                 if ourGlobals['xrefHTML5']:
-                    pass # for now -- finish the above first then adapt it to here
+                    writerObject.writeLineOpenSelfclose( 'hr' )
+                    writerObject.writeLineOpenClose( 'h3', 'Cross References', ('class','xrefsHeader') )
+                    writerObject.writeLineOpen( 'div', ('class','xrefSection') )
+                    writerObject.writeLineText( ourGlobals['xrefHTML5'] )
+                    writerObject.writeLineClose( 'div' )
                 writerObject.writeLineClose( 'div' ) # endNotes
         # end of toHTML5.writeEndNotes
 
@@ -2457,6 +2480,21 @@ class BibleWriter( InternalBible ):
                 Returns the HTML5 text with footnotes and xrefs processed.
                 It also accumulates HTML5 in ourGlobals for the end notes.
                 """
+                def liveCV( CV ):
+                    """
+                    Given a CV text (in the same book), make it live
+                        e.g., given 1:3 return #C1V3
+                            given 17:4-9 return #C17V4
+                    """
+                    #print( "liveCV( {} )".format( repr(CV) ) )
+                    result = 'C' + CV.strip().replace( ':', 'V')
+                    for bridgeChar in ('-', '–', '—'): # hyphen, endash, emdash
+                        ix = result.find( bridgeChar )
+                        if ix != -1: result = result[:ix] # Remove verse bridges
+                    #print( " returns", result )
+                    return '#' + result
+                # end of liveCV
+
                 def processXRef( HTML5xref, ourGlobals ):
                     """
                     Return the HTML5 for the processed cross-reference (xref).
@@ -2469,59 +2507,44 @@ class BibleWriter( InternalBible ):
                     <a title="Lib 19:9-10; Diy 24:19" href="#XRef0"><span class="XRefLinkSymbol"><sup>[xr]</sup></span></a>
                     <a title="Lib 25:25" href="#XRef1"><span class="XRefLinkSymbol"><sup>[xr]</sup></span></a>
                     <a title="Rut 2:20" href="#XRef2"><span class="XRefLinkSymbol"><sup>[xr]</sup></span></a>
-                    DELETE LATER: XML was <span style="x" caller="-"><char style="xo" closed="false">1:3: </char><char style="xt">2Kur 4:6.</char></span>
+                        plus
+                    <p id="XRef0" class="XRef"><a title="Go back up to 2:2 in the text" href="#C2V2"><span class="ChapterVerse">2:2</span></a> <span class="VernacularCrossReference">Lib 19:9&#x2011;10</span>; <span class="VernacularCrossReference">Diy 24:19</span></p>
                     """
-                    xrefHTML5 = '<a title="'
-                    xoOpen = xtOpen = False
-                    for j,token in enumerate(HTML5xref.split('\\')):
-                        #print( "toHTML5.processXRef", j, "'"+token+"'", "from", '"'+HTML5xref+'"', xoOpen, xtOpen )
-                        if Globals.debugFlag and token.startswith( '+' ):
-                            print( "toHTML5.processXRef", j, repr(token), "from", repr(HTML5xref), xoOpen, xtOpen )
-                            if debuggingThisModule: halt # Need to handle nested USFM 2.4 markers
-                        lcToken = token.lower()
-                        if j==0: # The first token (but the x has already been removed)
-                            #xrefHTML5 += 'caller="{}" style="x">'.format( token.rstrip() )
-                            pass
-                        elif lcToken.startswith('xo '): # xref reference follows
-                            if xoOpen: # We have multiple xo fields one after the other (probably an encoding error)
-                                if Globals.debugFlag: assert( not xtOpen )
-                                xrefHTML5 += ' closed="false">' + adjToken + '</char>'
-                                xoOpen = False
-                            if xtOpen: # if we have multiple cross-references one after the other
-                                xrefHTML5 += ' closed="false">' + adjToken + '</char>'
-                                xtOpen = False
-                            adjToken = token[3:]
-                            xrefHTML5 += '<char style="xo"'
-                            xoOpen = True
-                        elif lcToken.startswith('xo*'):
-                            if Globals.debugFlag: assert( xoOpen and not xtOpen )
-                            xrefHTML5 += '>' + adjToken + '</char>'
-                            xoOpen = False
-                        elif lcToken.startswith('xt '): # xref text follows
-                            if xtOpen: # Multiple xt's in a row
-                                if Globals.debugFlag: assert( not xoOpen )
-                                xrefHTML5 += ' closed="false">' + adjToken + '</char>'
-                            if xoOpen:
-                                xrefHTML5 += ' closed="false">' + adjToken + '</char>'
-                                xoOpen = False
-                            adjToken = token[3:]
-                            xrefHTML5 += '<char style="xt"'
-                            xtOpen = True
-                        elif lcToken.startswith('xt*'):
-                            if Globals.debugFlag: assert( xtOpen and not xoOpen )
-                            xrefHTML5 += '>' + adjToken + '</char>'
-                            xtOpen = False
-                        #elif lcToken in ('xo*','xt*','x*',):
-                        #    pass # We're being lazy here and not checking closing markers properly
+                    markerDict = Globals.USFMMarkers.getMarkerDictFromText( HTML5xref, includeInitialText=True )
+                    #print( "toHTML5.processXRef( {}, {} ) gives {}".format( repr(HTML5xref), ourGlobals, markerDict ) )
+                    xrefIndex = ourGlobals['nextXRefIndex']; ourGlobals['nextXRefIndex'] += 1
+                    caller = origin = originCV = xrefText = ''
+                    for marker, info in markerDict.items():
+                        #print( " ", marker, info )
+                        ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt = info
+                        if marker is None:
+                            #if txt not in '-+': # just a caller
+                            caller = txt
+                        elif marker == 'xo':
+                            origin = txt
+                            originCV = origin
+                            if originCV and originCV[-1] in (':','.'): originCV = originCV[:-1]
+                            originCV = originCV.strip()
+                        #elif marker == Should handle other internal markers here
                         else:
-                            logging.warning( _("toHTML5: Unprocessed '{}' token in {} {}:{} xref '{}'").format( token, BBB, C, V, HTML5xref ) )
-                    if xoOpen:
-                        if Globals.debugFlag: assert( not xtOpen )
-                        xrefHTML5 += ' closed="false">' + adjToken + '</char>'
-                        xoOpen = False
-                    if xtOpen:
-                        xrefHTML5 += ' closed="false">' + adjToken + '</char>'
-                    xrefHTML5 += '"><span class="XRefLinkSymbol">[xr]</span></a>'
+                            logging.error( "toHTML5.processXRef didn't handle xref marker: {}".format( marker ) )
+                            xrefText += txt
+
+                    xrefHTML5 = '<a title="{}" href="#XRef{}"><span class="xrefLinkSymbol">[xr]</span></a>' \
+                                    .format( xrefText, xrefIndex )
+
+                    endHTML5 = '<p id="XRef{}" class="xref">'.format( xrefIndex )
+                    if origin: # This only handles CV separator of : so far
+                        endHTML5 += '<a title="Go back up to {} in the text" href="{}"><span class="xrefOrigin">{}</span></a>' \
+                                                            .format( originCV, liveCV(originCV), origin )
+                    endHTML5 += ' <span class="xrefEntry">{}</span>'.format( xrefText )
+                    endHTML5 += '</p>'
+
+                    #print( "xrefHTML5", BBB, xrefHTML5 )
+                    #print( "endHTML5", endHTML5 )
+                    ourGlobals['xrefHTML5'] += ('\n' if humanReadable and ourGlobals['xrefHTML5'] else '') + endHTML5
+                    #if xrefIndex > 2: halt
+
                     return xrefHTML5
                 # end of toHTML5.processXRef
 
@@ -2536,101 +2559,46 @@ class BibleWriter( InternalBible ):
                         gives
                     <a title="Su ka kaluwasan te Nawumi &lsquo;keupianan,&rsquo; piru ka kaluwasan te Mara &lsquo;masakit se geyinawa.&rsquo;" href="#FNote0"><span class="FootnoteLinkSymbol"><sup>[fn]</sup></span></a>
                     <note style="f" caller="+"><char style="fr" closed="false">2:23 </char><char style="ft">Te Hibruwanen: bayew egpekegsahid ka ngaran te “malitan” wey “lukes.”</char></note>
+                        plus
+                    <p id="FNote0" class="Footnote"><a title="Go back up to 1:20 in the text" href="#C1V20"><span class="ChapterVerse">1:20 </span></a><a title="su" href="../../Lexicon/indexLSIM-45.htm#su1"><span class="WordLink">Su</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="kaluwasan" href="../../Lexicon/indexLLO-67.htm#luwas2"><span class="WordLink">kaluwasan</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <span class="NameWordLink">Nawumi</span> &lsquo;<a title="n. fortunate (upian)" href="../../Lexicon/Details/upian.htm"><span class="WordLink">keupianan</span></a>,&rsquo; <a title="conj. but" href="../../Lexicon/Details/piru.htm"><span class="WordLink">piru</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="kaluwasan" href="../../Lexicon/indexLLO-67.htm#luwas2"><span class="WordLink">kaluwasan</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="mara" href="../../Lexicon/Details/mara.htm"><span class="WordLink">Mara</span></a> &lsquo;<a title="adj. painful (sakit)" href="../../Lexicon/Details/sakit.htm"><span class="WordLink">masakit</span></a> <a title="se" href="../../Lexicon/indexLSE-64.htm#se1"><span class="WordLink">se</span></a> <a title="n. breath" href="../../Lexicon/Details/geyinawa.htm"><span class="WordLink">geyinawa</span></a>.&rsquo;</p>
+                    <p id="FNote1" class="Footnote"><a title="Go back up to 3:9 in the text" href="#C3V9"><span class="ChapterVerse">3:9 </span></a><a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">Te</span></a> <a title="prop_n. Hebrew language (Hibru)" href="../../Lexicon/Details/Hibru.htm"><span class="WordLink">Hibruwanen</span></a>: <a title="buni" href="../../Lexicon/Details/buni2.htm"><span class="WordLink">Bunbuni</span></a> <a title="pron. you(sg); by you(sg)" href="../../Lexicon/Details/nu.htm"><span class="WordLink">nu</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="kumbalè" href="../../Lexicon/Details/kumbal%C3%A8.htm"><span class="WordLink">kumbale</span></a> <a title="pron. you(sg); by you(sg)" href="../../Lexicon/Details/nu.htm"><span class="WordLink">nu</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="suluhuanen" href="../../Lexicon/indexLSIM-45.htm#suluh%C3%B9"><span class="WordLink">suluhuanen</span></a> <a title="pron. you(sg); by you(sg)" href="../../Lexicon/Details/nu.htm"><span class="WordLink">nu</span></a>.</p>
+                    <p id="FNote2" class="Footnote"><a title="Go back up to 4:11 in the text" href="#C4V11"><span class="ChapterVerse">4:11 </span></a><a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">Kene</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="adj. clear" href="../../Lexicon/Details/klaru.htm"><span class="WordLink">klaru</span></a> <a title="diya" href="../../Lexicon/indexLD-80.htm#diyav"><span class="WordLink">diye</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="adj. true (lehet)" href="../../Lexicon/Details/lehet1.htm"><span class="WordLink">malehet</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="migpuun" href="../../Lexicon/Details/puun.htm"><span class="WordLink">migpuunan</span></a> <a title="ke" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ke</span></a> <a title="n. other" href="../../Lexicon/Details/lein.htm"><span class="WordLink">lein</span></a> <a title="e" href="../../Lexicon/indexLA-77.htm#a"><span class="WordLink">e</span></a> <a title="part. also" href="../../Lexicon/Details/degma.htm"><span class="WordLink">degma</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="n. place" href="../../Lexicon/Details/inged.htm"><span class="WordLink">inged</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <span class="NameWordLink">Iprata</span>. <a title="kahiyen" href="../../Lexicon/Details/kahi.htm"><span class="WordLink">Kahiyen</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="adj. other" href="../../Lexicon/Details/duma.htm"><span class="WordLink">duma</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <span class="NameWordLink">Iprata</span> <a title="dem. that" href="../../Lexicon/Details/iyan.htm"><span class="WordLink">iyan</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="tapey" href="../../Lexicon/indexLT-96.htm#tapey1"><span class="WordLink">tapey</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="n. name" href="../../Lexicon/Details/ngaran.htm"><span class="WordLink">ngaran</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="See glossary entry for Bitlihim" href="../indexGlossary.htm#Bitlihim"><span class="WordLink">Bitlihim</span><span class="GlossaryLinkSymbol"><sup>[gl]</sup></span></a>.</p></div>
                     """
-                    footnoteHTML5 = '<note style="f" '
-                    frOpen = fTextOpen = fCharOpen = False
-                    for j,token in enumerate(HTML5footnote.split('\\')):
-                        #print( "HTML5.processFootnote", j, "'"+token+"'", frOpen, fTextOpen, fCharOpen, HTML5footnote )
-                        lcToken = token.lower()
-                        if j==0:
-                            footnoteHTML5 += 'caller="{}">'.format( token.rstrip() )
-                        elif lcToken.startswith('fr '): # footnote reference follows
-                            if frOpen:
-                                if Globals.debugFlag: assert( not fTextOpen )
-                                logging.error( _("toHTML5: Two consecutive fr fields in {} {}:{} footnote '{}'").format( token, BBB, C, V, HTML5footnote ) )
-                            if fTextOpen:
-                                if Globals.debugFlag: assert( not frOpen )
-                                footnoteHTML5 += ' closed="false">' + adjToken + '</char>'
-                                fTextOpen = False
-                            if Globals.debugFlag: assert( not fCharOpen )
-                            adjToken = token[3:]
-                            footnoteHTML5 += '<char style="fr"'
-                            frOpen = True
-                        elif lcToken.startswith('fr* '):
-                            if Globals.debugFlag: assert( frOpen and not fTextOpen and not fCharOpen )
-                            footnoteHTML5 += '>' + adjToken + '</char>'
-                            frOpen = False
-                        elif lcToken.startswith('ft ') or lcToken.startswith('fq ') or lcToken.startswith('fqa ') or lcToken.startswith('fv ') or lcToken.startswith('fk '):
-                            if fCharOpen:
-                                if Globals.debugFlag: assert( not frOpen )
-                                footnoteHTML5 += '>' + adjToken + '</char>'
-                                fCharOpen = False
-                            if frOpen:
-                                if Globals.debugFlag: assert( not fTextOpen )
-                                footnoteHTML5 += ' closed="false">' + adjToken + '</char>'
-                                frOpen = False
-                            if fTextOpen:
-                                footnoteHTML5 += ' closed="false">' + adjToken + '</char>'
-                                fTextOpen = False
-                            fMarker = lcToken.split()[0] # Get the bit before the space
-                            footnoteHTML5 += '<char style="{}"'.format( fMarker )
-                            adjToken = token[len(fMarker)+1:] # Get the bit after the space
-                            #print( "'{}' '{}'".format( fMarker, adjToken ) )
-                            fTextOpen = True
-                        elif lcToken.startswith('ft*') or lcToken.startswith('fq*') or lcToken.startswith('fqa*') or lcToken.startswith('fv*') or lcToken.startswith('fk*'):
-                            if Globals.debugFlag: assert( fTextOpen and not frOpen and not fCharOpen )
-                            footnoteHTML5 += '>' + adjToken + '</char>'
-                            fTextOpen = False
-                        else: # Could be character formatting (or closing of character formatting)
-                            subTokens = lcToken.split()
-                            firstToken = subTokens[0]
-                            #print( "ft", firstToken )
-                            if firstToken in allCharMarkers: # Yes, confirmed
-                                if fCharOpen: # assume that the last one is closed by this one
-                                    if Globals.debugFlag: assert( not frOpen )
-                                    footnoteHTML5 += '>' + adjToken + '</char>'
-                                    fCharOpen = False
-                                if frOpen:
-                                    if Globals.debugFlag: assert( not fCharOpen )
-                                    footnoteHTML5 += ' closed="false">' + adjToken + '</char>'
-                                    frOpen = False
-                                footnoteHTML5 += '<char style="{}"'.format( firstToken )
-                                adjToken = token[len(firstToken)+1:] # Get the bit after the space
-                                fCharOpen = firstToken
-                            else: # The problem is that a closing marker doesn't have to be followed by a space
-                                if firstToken[-1]=='*' and firstToken[:-1] in allCharMarkers: # it's a closing tag (that was followed by a space)
-                                    if fCharOpen:
-                                        if Globals.debugFlag: assert( not frOpen )
-                                        if not firstToken.startswith( fCharOpen+'*' ): # It's not a matching tag
-                                            logging.warning( _("toHTML5: '{}' closing tag doesn't match '{}' in {} {}:{} footnote '{}'").format( firstToken, fCharOpen, BBB, C, V, HTML5footnote ) )
-                                        footnoteHTML5 += '>' + adjToken + '</char>'
-                                        fCharOpen = False
-                                    logging.warning( _("toHTML5: '{}' closing tag doesn't match in {} {}:{} footnote '{}'").format( firstToken, BBB, C, V, HTML5footnote ) )
-                                else:
-                                    ixAS = firstToken.find( '*' )
-                                    #print( firstToken, ixAS, firstToken[:ixAS] if ixAS!=-1 else '' )
-                                    if ixAS!=-1 and ixAS<4 and firstToken[:ixAS] in allCharMarkers: # it's a closing tag
-                                        if fCharOpen:
-                                            if Globals.debugFlag: assert( not frOpen )
-                                            if not firstToken.startswith( fCharOpen+'*' ): # It's not a matching tag
-                                                logging.warning( _("toHTML5: '{}' closing tag doesn't match '{}' in {} {}:{} footnote '{}'").format( firstToken, fCharOpen, BBB, C, V, HTML5footnote ) )
-                                            footnoteHTML5 += '>' + adjToken + '</char>'
-                                            fCharOpen = False
-                                        logging.warning( _("toHTML5: '{}' closing tag doesn't match in {} {}:{} footnote '{}'").format( firstToken, BBB, C, V, HTML5footnote ) )
-                                    else:
-                                        logging.warning( _("toHTML5: Unprocessed '{}' token in {} {}:{} footnote '{}'").format( firstToken, BBB, C, V, HTML5footnote ) )
-                                        #print( allCharMarkers )
-                                        #halt
-                    #print( "  ", frOpen, fCharOpen, fTextOpen )
-                    if frOpen:
-                        logging.warning( _("toHTML5: Unclosed 'fr' token in {} {}:{} footnote '{}'").format( BBB, C, V, HTML5footnote) )
-                        if Globals.debugFlag: assert( not fCharOpen and not fTextOpen )
-                        footnoteHTML5 += ' closed="false">' + adjToken + '</char>'
-                    if fCharOpen: logging.warning( _("toHTML5: Unclosed '{}' token in {} {}:{} footnote '{}'").format( fCharOpen, BBB, C, V, HTML5footnote) )
-                    if fTextOpen: footnoteHTML5 += ' closed="false">' + adjToken + '</char>'
-                    footnoteHTML5 += '</note>'
-                    #print( '', HTML5footnote, footnoteHTML5 )
-                    #if BBB=='EXO' and C=='17' and V=='7': halt
+                    markerDict = Globals.USFMMarkers.getMarkerDictFromText( HTML5footnote, includeInitialText=True )
+                    #print( "toHTML5.processFootnote( {}, {} ) gives {}".format( repr(HTML5footnote), ourGlobals, markerDict ) )
+                    fnIndex = ourGlobals['nextFootnoteIndex']; ourGlobals['nextFootnoteIndex'] += 1
+                    caller = origin = originCV = fnText = ''
+                    for marker, info in markerDict.items():
+                        #print( " ", marker, info )
+                        ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt = info
+                        if marker is None:
+                            #if txt not in '-+': # just a caller
+                            caller = txt
+                        elif marker == 'fr':
+                            origin = txt
+                            originCV = origin
+                            if originCV and originCV[-1] in (':','.'): originCV = originCV[:-1]
+                            originCV = originCV.strip()
+                        #elif marker == Should handle other internal markers here
+                        else:
+                            logging.error( "toHTML5.processFootnote didn't handle footnote marker: {}".format( marker ) )
+                            fnText += txt
+
+                    footnoteHTML5 = '<a title="{}" href="#FNote{}"><span class="footnoteLinkSymbol">[fn]</span></a>' \
+                                    .format( fnText, fnIndex )
+
+                    endHTML5 = '<p id="FNote{}" class="footnote">'.format( fnIndex )
+                    if origin: # This only handles CV separator of : so far
+                        endHTML5 += '<a title="Go back up to {} in the text" href="{}"><span class="footnoteOrigin">{}</span></a>' \
+                                                            .format( originCV, liveCV(originCV), origin )
+                    endHTML5 += ' <span class="footnoteEntry">{}</span>'.format( fnText )
+                    endHTML5 += '</p>'
+
+                    #print( "footnoteHTML5", BBB, footnoteHTML5 )
+                    #print( "endHTML5", endHTML5 )
+                    ourGlobals['footnoteHTML5'] += ('\n' if humanReadable and ourGlobals['footnoteHTML5'] else '') + endHTML5
+                    #if fnIndex > 2: halt
+
                     return footnoteHTML5
                 # end of toHTML5.processFootnote
 
@@ -2666,8 +2634,33 @@ class BibleWriter( InternalBible ):
             # end of toHTML5.handleExtras
 
 
+            def formatText( givenText, extras, ourGlobals ):
+                """
+                Format character codes within the text
+                """
+                #print( "toHTML5.formatText( {}, {}, {} )".format( repr(givenText), len(extras), ourGlobals.keys() ) )
+                assert( givenText )
+                text = handleExtras( givenText, extras, ourGlobals )
+
+                # Semantic stuff
+                text = text.replace( '\\bk ', '<span class="bookName">' ).replace( '\\bk*', '</span>' )
+
+                # Direct formatting
+                text = text.replace( '\\bdit ', '<span class="boldItalitc">' ).replace( '\\bdit*', '</span>' )
+                text = text.replace( '\\it ', '<span class="italic">' ).replace( '\\it*', '</span>' )
+                text = text.replace( '\\bd ', '<span class="bold">' ).replace( '\\bd*', '</span>' )
+
+                if '\\' in text:
+                    print( "toHTML5.formatText: unprocessed code in {} from {}".format( repr(text), repr(givenText) ) )
+                    if Globals.debugFlag and debuggingThisModule: halt
+                return text
+            # end of formatText
+
+
             writeHeader( writerObject )
             haveOpenSection = haveOpenParagraph = haveOpenList = False
+            html5Globals['nextFootnoteIndex'] = html5Globals['nextXRefIndex'] = 0
+            html5Globals['footnoteHTML5'] = html5Globals['xrefHTML5'] = ''
             C = V = ''
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getText(), verseDataEntry.getExtras()
@@ -2687,7 +2680,7 @@ class BibleWriter( InternalBible ):
                 elif marker == 'ip':
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
                     writerObject.writeLineOpen( 'p', ('class','introductoryParagraph') ); haveOpenParagraph = True
-                    if text: writerObject.writeLineText( text )
+                    if text: writerObject.writeLineText( formatText( text, extras, ourGlobals ) )
                 elif marker == 'iot':
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
                     if text: writerObject.writeLineOpenClose( 'h3', text, ('class','outlineTitle') )
@@ -2731,38 +2724,40 @@ class BibleWriter( InternalBible ):
                     if haveOpenList: writerObject.writeLineClose( 'p' ); haveOpenList = False
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
                     writerObject.writeLineOpen( 'p', ('class','proseParagraph') ); haveOpenParagraph = True
+                    if text: halt
                 elif marker == 'pi':
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' )
                     writerObject.writeLineOpen( 'p', ('class','indentedProseParagraph') ); haveOpenParagraph = True
+                    if text: halt
                 elif marker == 'q1':
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' )
                     writerObject.writeLineOpen( 'p', ('class','poetryParagraph1') ); haveOpenParagraph = True
-                    if text: writerObject.writeLineText( text )
+                    if text: halt
                 elif marker == 'q2':
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' )
                     writerObject.writeLineOpen( 'p', ('class','poetryParagraph2') ); haveOpenParagraph = True
-                    if text: writerObject.writeLineText( text )
+                    if text: halt
                 elif marker == 'q3':
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' )
                     writerObject.writeLineOpen( 'p', ('class','poetryParagraph3') ); haveOpenParagraph = True
-                    if text: writerObject.writeLineText( text )
+                    if text: halt
                 elif marker == 'li1':
                     if not haveOpenList:
                         writerObject.writeLineOpen( 'p', ('class','list') ); haveOpenList = True
                     writerObject.writeLineOpen( 'span', ('class','listItem1') )
-                    if text: writerObject.writeLineText( text )
+                    if text: halt
 
                 # Character markers
                 elif marker=='v~':
                     if not haveOpenParagraph:
                         logging.warning( "toHTML5: Have verse text {} outside a paragraph in {} {}:{}".format( text, BBB, C, V ) )
                         writerObject.writeLineOpen( 'p', ('class','unknownParagraph') ); haveOpenParagraph = True
-                    if text: writerObject.writeLineText( handleExtras( text, extras, ourGlobals ) )
+                    if text: writerObject.writeLineText( formatText( text, extras, ourGlobals ) )
                 elif marker=='p~':
                     if not haveOpenParagraph:
                         logging.warning( "toHTML5: Have verse text {} outside a paragraph in {} {}:{}".format( text, BBB, C, V ) )
                         writerObject.writeLineOpen( 'p', ('class','unknownParagraph') ); haveOpenParagraph = True
-                    if text: writerObject.writeLineText( handleExtras( text, extras, ourGlobals ) )
+                    if text: writerObject.writeLineText( formatText( text, extras, ourGlobals ) )
                 else: unhandledMarkers.add( marker )
                 if extras and marker not in ('v~','p~',): logging.warning( "toHTML5: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
             if haveOpenList: writerObject.writeLineClose( 'p' ); haveOpenList = False
@@ -2790,9 +2785,6 @@ class BibleWriter( InternalBible ):
             filenameDict[BBB] = filename
 
         html5Globals = {}
-        html5Globals['nextFootnoteIndex'] = html5Globals['nextXRefIndex'] = 0
-        html5Globals['footnoteHTML5'] = html5Globals['xrefHTML5'] = ''
-
         if controlDict["HTML5Files"]=="byBook":
             for BBB,bookData in self.books.items(): # Now export the books
                 if Globals.verbosityLevel > 2: print( _("  Exporting {} to HTML5 format...").format( BBB ) )
@@ -3212,6 +3204,7 @@ class BibleWriter( InternalBible ):
             return False
 
         # Define our various output folders
+        pickleOutputFolder = os.path.join( givenOutputFolderName, "BOS_Bible_Object_Pickle/" )
         PseudoUSFMOutputFolder = os.path.join( givenOutputFolderName, "BOS_PseudoUSFM_" + "Export/" )
         USFMOutputFolder = os.path.join( givenOutputFolderName, "BOS_USFM_" + ("Reexport/" if self.objectTypeString=='USFM' else "Export/" ) )
         TWOutputFolder = os.path.join( givenOutputFolderName, "BOS_theWord_" + ("Reexport/" if self.objectTypeString=='TheWord' else "Export/" ) )
@@ -3222,7 +3215,6 @@ class BibleWriter( InternalBible ):
         OSISOutputFolder = os.path.join( givenOutputFolderName, "BOS_OSIS_" + ("Reexport/" if self.objectTypeString=='OSIS' else "Export/" ) )
         swOutputFolder = os.path.join( givenOutputFolderName, "BOS_Sword_" + ("Reexport/" if self.objectTypeString=='Sword' else "Export/" ) )
         htmlOutputFolder = os.path.join( givenOutputFolderName, "BOS_HTML5_" + "Export/" )
-        pickleOutputFolder = os.path.join( givenOutputFolderName, "BOS_Bible_Object_Pickle/" )
 
         # NOTE: This must be done before self.__setupWriter is called
         #       because the BRL object has a recursive pointer to self and the pickle fails
@@ -3323,7 +3315,7 @@ class BibleWriter( InternalBible ):
         return {'PseudoUSFMExport':PseudoUSFMExportResult, 'USFMExport':USFMExportResult,
                     'TWExport':TWExportResult, 'MySwExport':MySwExportResult, 'MWExport':MWExportResult, 'zExport':zExportResult,
                     'USXExport':USXExportResult, 'OSISExport':OSISExportResult, 'swExport':swExportResult,
-                    'htmlExport':htmlExportResult}
+                    'htmlExport':htmlExportResult }
     # end of BibleWriter.doAllExports
 # end of class BibleWriter
 

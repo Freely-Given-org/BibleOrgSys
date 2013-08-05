@@ -367,7 +367,7 @@ def demo():
                 ##print( "Looking for", ref )
                 #print( "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )
             if Globals.commandLineOptions.export:
-                UB.pickle()
+                UB.doAllExports()
                 newObj = Globals.unpickleObject( 'Matigsalug.pickle' )
                 if Globals.verbosityLevel > 0: print( "newObj is", newObj )
         else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
@@ -505,31 +505,6 @@ def demo():
 
 
     if 1: # Test a whole folder full of folders of USFM Bibles
-        #def findInfo():
-            #""" Find out info about the project from the included copyright.htm file """
-            #cFilepath = os.path.join( somepath, "copyright.htm" )
-            #if not os.path.exists( cFilepath ): return
-            #with open( cFilepath ) as myFile: # Automatically closes the file when done
-                #lastLine, lineCount = None, 0
-                #title, nameDict = None, {}
-                #for line in myFile:
-                    #lineCount += 1
-                    #if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
-                        #logging.info( "USFMBible: Detected UTF-16 Byte Order Marker in copyright.htm file" )
-                        #line = line[1:] # Remove the UTF-8 Byte Order Marker
-                    #if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
-                    #if not line: continue # Just discard blank lines
-                    #lastLine = line
-                    #if line.startswith("<title>"): title = line.replace("<title>","").replace("</title>","").strip()
-                    #if line.startswith('<option value="'):
-                        #adjLine = line.replace('<option value="','').replace('</option>','')
-                        #USFM_BBB, name = adjLine[:3], adjLine[11:]
-                        #BBB = Globals.BibleBooksCodes.getBBBFromUSFM( USFM_BBB )
-                        ##print( USFM_BBB, BBB, name )
-                        #nameDict[BBB] = name
-            #return title, nameDict
-        ## end of findInfo
-
         testBaseFolder = "../../../../../Data/Work/Bibles/USFM Bibles/Haiola USFM test versions/"
         count = totalBooks = 0
         if os.access( testBaseFolder, os.R_OK ): # check that we can read the test data

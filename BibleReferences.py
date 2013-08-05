@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleReferences.py
-#   Last modified: 2013-08-02 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-04 by RJH (also update ProgVersion below)
 #
 # Module for handling Bible references including ranges
 #
@@ -723,7 +723,7 @@ class BibleReferenceList( BibleReferenceBase ):
                 logging.error( _("saveReferenceRange: Missing V parameter from {} Bible reference '{}'").format( BBB, referenceString ) )
             elif not V.isdigit():
                 logging.error( _("saveReferenceRange: Non-digit {} V parameter from {} Bible reference '{}'").format( repr(V), BBB, referenceString ) )
-            if Globals.debugFlag:
+            if Globals.debugFlag and debuggingThisModule:
                 assert( BBB is None or len(BBB) == 3 )
                 assert( not C or C.isdigit() ) # Should be no suffix on C (although it can be blank if the reference is for a whole book)
                 assert( not V or V.isdigit() ) # Should be no suffix on V (although it can be blank if the reference is for a whole chapter)

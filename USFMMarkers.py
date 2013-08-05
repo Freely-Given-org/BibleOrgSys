@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkers.py
-#   Last modified: 2013-07-26 (also update ProgVersion below)
+#   Last modified: 2013-08-03 (also update ProgVersion below)
 #
 # Module handling USFMMarkers
 #
@@ -34,7 +34,7 @@ Contains the singleton class: USFMMarkers
 """
 
 ProgName = "USFM Markers handler"
-ProgVersion = "0.60"
+ProgVersion = "0.61"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -477,13 +477,13 @@ class USFMMarkers:
     # end of USFMMarkers.getTypicalNoteSets
 
 
-    def getMarkerListFromText( self, text, verifyMarkers=False ):
+    def getMarkerListFromText( self, text, includeInitialText=False, verifyMarkers=False ):
         """
-        Given a text, return a list of the actual markers
+        Given a text, return an OrderedDict of the actual markers
             (along with their positions and other useful derived information).
 
-        Returns a list of six-tuples containing:
-            1: marker
+        Returns a list of seven-tuples containing:
+            1: marker or None for initial text (if includeInitialText)
             2: indexOfBackslashCharacter in text string
             3: nextSignificantChar
                 ' ' for normal opening marker
@@ -496,7 +496,7 @@ class USFMMarkers:
             6: index (to the result list of this function) of the
                 marker which closes this opening marker (or None if it's not an opening marker)
             7: text field from the marker until the next USFM
-                but any text preceding the first USFM is not returned anywhere.
+                but any text preceding the first USFM is not returned anywhere unless includeInitialText is set.
         """
         #if Globals.verbosityLevel > 2: print( "USFMMarkers.getMarkerListFromText( {}, {} )".format( repr(text), verifyMarkers ) )
         firstResult = [] # A list of 4-tuples containing ( 1, 2, 3, 4 ) above
@@ -567,8 +567,8 @@ class USFMMarkers:
             #print( 'second', j, m, ix, repr(x), repr(mx), cx, repr(tx) )
             secondResult.append( (m, ix, x, mx, cx[:], tx,) )
 
-        # And now find where they are closed
-        finalResult = [] # The final list of 7-tuples (inserting #6 here)
+        # And now find where they are closed (the index to the result array, not to the text string)
+        thirdResult = [] # The near-final list of 7-tuples (inserting #6 here)
         for j, (m, ix, x, mx, cx, tx) in enumerate(secondResult):
             ixEnd = None
             if x in (' ','+') and len(cx)>0: # i.e., a character start marker
@@ -579,19 +579,63 @@ class USFMMarkers:
                     m2, ix2, x2, mx2, cx2, tx2 = secondResult[k]
                     if len(cx2)<=cxi or cx2[cxi] != m: ixEnd = k; break
             #print( 'final', j, m, ix, repr(x), repr(mx), cx, repr(tx), ixEnd )
-            finalResult.append( (m, ix, x, mx, cx[:], ixEnd, tx,) )
+            thirdResult.append( (m, ix, x, mx, cx[:], ixEnd, tx,) )
+
+        finalResult = thirdResult # The final list of 7-tuples
+        if thirdResult and includeInitialText:
+            ix1 = thirdResult[0][1] # index of first marker in text
+            if ix1 != 0:
+                finalResult = [] # The final list of 7-tuples (inserting a new entry #0 below)
+                finalResult.append( (None,0,None,None,None,1,text[:ix1]) )
+                for m, ix, x, mx, cx[:], ixEnd, tx in thirdResult: # Shift the end index (#6) by one
+                    finalResult.append( (m, ix, x, mx, cx[:], None if ixEnd is None else ixEnd+1, tx,) )
 
         #if finalResult: print( finalResult )
         if verifyMarkers:
             for j, (m, ix, x, mx, cx, ixEnd, tx,) in enumerate(finalResult):
                 #print( 'verify', j, m, ix, repr(x), repr(mx), cx, ixEnd, repr(tx) )
                 assert( ix < textLength )
-                assert( x in (' ','+','-','*','',) )
-                if j == 0:
-                    if not self.isNewlineMarker( m ): logging.error( _("USFMMarkers.getMarkerListFromText found possible invalid first marker '{}' in '{}'").format( m, text ) )
-                elif not self.isInternalMarker( m ): logging.error( _("USFMMarkers.getMarkerListFromText found possible invalid marker '{}' at position {} in '{}'").format( m, j+1, text ) )
+                assert( x in (' ','+','-','*','',) or ( includeInitialText and j==0 and x is None ) )
+                if m is None:
+                    assert( j==0 and ix==0 and x is None )
+                else:
+                    if j == 0:
+                        if not self.isNewlineMarker( m ): logging.error( _("USFMMarkers.getMarkerListFromText found possible invalid first marker '{}' in '{}'").format( m, text ) )
+                    elif not self.isInternalMarker( m ): logging.error( _("USFMMarkers.getMarkerListFromText found possible invalid marker '{}' at position {} in '{}'").format( m, j+1, text ) )
+
         return finalResult
     # end of USFMMarkers.getMarkerListFromText
+
+
+    def getMarkerDictFromText( self, text, includeInitialText=False, verifyMarkers=False ):
+        """
+        Given a text, return an OrderedDict of the actual markers
+            (along with their positions and other useful derived information).
+
+        Returns a dictionary of six-tuples containing:
+            key: marker or None for initial text (if includeInitialText)
+            1: indexOfBackslashCharacter in text string
+            2: nextSignificantChar
+                ' ' for normal opening marker
+                '+' for nested opening marker
+                '-' for nested closing marker
+                '*' for normal closing marker
+                '' for end of line.
+            3: full marker text including the backslash (can be used to search for)
+            4: character context for the following text (list of markers, including this one)
+            5: index (to the result list of this function) of the
+                marker which closes this opening marker (or None if it's not an opening marker)
+            6: STRIPPED text field from the marker until the next USFM
+                but any text preceding the first USFM is not returned anywhere unless includeInitialText is set.
+
+        NOTE: text is stripped in this function
+        """
+        myList = self.getMarkerListFromText( text, includeInitialText, verifyMarkers )
+        myDict = OrderedDict()
+        for marker, ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt in myList:
+            myDict[marker] = (ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt.strip())
+        return myDict
+    # end of USFMMarkers.getMarkerDictFromText
 # end of USFMMarkers class
 
 
@@ -633,9 +677,15 @@ def demo():
                  '\\v 4 This \\add contains \\+it embedded codes\\+it*\\add* with an simultaneous closure of the two fields.',
                  '\\v 5 This \\add contains \\+it embedded codes\\add* with an assumed closure of the inner field.',
                  '\\v 6 This \\add contains \\+it embedded codes with all closures missing.',
+                 '- \\xo 1:3: \\xt 2Kur 4:6.', # A cross-reference
                  ):
         print( "For text '{}' got markers:".format( text ) )
-        print( "         {}".format( um.getMarkerListFromText( text, verifyMarkers=True ) ) )
+        print( "         A-L {}".format( um.getMarkerListFromText( text, verifyMarkers=True ) ) )
+        print( "         B-L {}".format( um.getMarkerListFromText( text, includeInitialText=True ) ) )
+        print( "         C-L {}".format( um.getMarkerListFromText( text, includeInitialText=True, verifyMarkers=True ) ) )
+        print( "         A-D {}".format( um.getMarkerDictFromText( text, verifyMarkers=True ) ) )
+        print( "         B-D {}".format( um.getMarkerDictFromText( text, includeInitialText=True ) ) )
+        print( "         C-D {}".format( um.getMarkerDictFromText( text, includeInitialText=True, verifyMarkers=True ) ) )
 
 
     text = "\\v~ \\x - \\xo 12:13 \\xt Cross \wj \wj*reference text.\\x*Main \\add actual\\add* verse text.\\f + \\fr 12:13\\fr* \\ft with footnote.\\f*"
