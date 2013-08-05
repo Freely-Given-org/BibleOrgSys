@@ -199,7 +199,7 @@ class BibleWriter( InternalBible ):
 
             USFM = ""
             inField = None
-            value1 = value2 = None
+            value1 = value2 = None # For printing missing (bridged) verse numbers
             if Globals.verbosityLevel > 2: print( "  " + _("Adjusting USFM output..." ) )
             for verseDataEntry in pseudoUSFMData:
                 pseudoMarker, value = verseDataEntry.getMarker(), verseDataEntry.getFullText()
@@ -222,9 +222,9 @@ class BibleWriter( InternalBible ):
                             if ix != -1:
                                 value = vString[:ix] # Remove verse bridges
                                 vEnd = vString[ix+1:]
-                                print( BBB, repr(value), repr(vEnd) )
+                                #print( BBB, repr(value), repr(vEnd) )
                                 value1, value2 = int( value ), int( vEnd )
-                                print( ' ', BBB, repr(value1), repr(value2) )
+                                #print( ' ', BBB, repr(value1), repr(value2) )
                                 break
                     if value[-1] != ' ': value += ' ' # Append a space since it didn't have one
                 if pseudoMarker[-1]=='~' or Globals.USFMMarkers.isNewlineMarker(pseudoMarker): # Have a continuation field
