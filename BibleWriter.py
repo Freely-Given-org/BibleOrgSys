@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-08-04 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-06 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -49,7 +49,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.35"
+ProgVersion = "0.36"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -227,7 +227,7 @@ class BibleWriter( InternalBible ):
                                 value1, value2 = int( value ), int( vEnd )
                                 #print( ' ', BBB, repr(value1), repr(value2) )
                                 break
-                    if value[-1] != ' ': value += ' ' # Append a space since it didn't have one
+                    if value and value[-1] != ' ': value += ' ' # Append a space since it didn't have one
                 if pseudoMarker[-1]=='~' or Globals.USFMMarkers.isNewlineMarker(pseudoMarker): # Have a continuation field
                     if inField is not None:
                         USFM += '\\{}*'.format( inField ) # Do a close marker for footnotes and cross-references
