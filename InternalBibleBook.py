@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-08-04 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-06 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.48"
+ProgVersion = "0.49"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -859,7 +859,7 @@ class InternalBibleBook:
                             thisText = text[ix:iMIndex].rstrip()
                             #print( "QQQ10: rstrip" ); halt
                             adjText, cleanText, extras = processLineFix( originalMarker, thisText )
-                            self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, adjText, cleanText, extras) )
+                            self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, adjText, cleanText, extras, originalText) )
                             ix = iMIndex + 1 + len(insideMarker) + len(nextSignificantChar) # Get the start of the next text -- the 1 is for the backslash
                             adjMarker = Globals.USFMMarkers.toStandardMarker( insideMarker ) # setup for the next line
                     if ix != 0: # We must have separated multiple lines
@@ -876,12 +876,12 @@ class InternalBibleBook:
                                 #print( "\n", c, v, "'"+text+"'" )
                                 #print( "'"+beforeText+"'", pText, "'"+afterText+"'" )
                                 adjText, cleanText, extras = processLineFix( originalMarker, beforeText )
-                                lastAM, lastOM, lastAT, lastCT, lastX = self._processedLines.pop() # Get the previous line
+                                lastAM, lastOM, lastAT, lastCT, lastX, lastOT = self._processedLines.pop() # Get the previous line
                                 if adjText or lastAM != 'v': # Just return it again
-                                    self._processedLines.append( InternalBibleEntry(lastAM, lastOM, lastAT, lastCT, lastX) )
-                                self._processedLines.append( InternalBibleEntry('p', originalMarker, adjText, cleanText, extras) )
+                                    self._processedLines.append( InternalBibleEntry(lastAM, lastOM, lastAT, lastCT, lastX, lastOT) )
+                                self._processedLines.append( InternalBibleEntry('p', originalMarker, adjText, cleanText, extras,originalText) )
                                 if lastAM == 'v' and not adjText: # Put the empty paragraph marker BEFORE verse number marker
-                                    self._processedLines.append( InternalBibleEntry(lastAM, lastOM, lastAT, lastCT, lastX) ) # Return it
+                                    self._processedLines.append( InternalBibleEntry(lastAM, lastOM, lastAT, lastCT, lastX, lastOT) ) # Return it
                                 text = afterText
                                 ixLT = -1
                         ixLT = text.find( '<', ixLT+1 )
@@ -903,11 +903,11 @@ class InternalBibleBook:
                             preverseText = afterText[:ixEnd].strip()
                             #print( "QQQ11: strip" ); halt
                             if preverseText.startswith( '<div sID="' ) and preverseText.endswith( '" type="paragraph"/>' ):
-                                self._processedLines.append( InternalBibleEntry('p', originalMarker, '', '', []) )
+                                self._processedLines.append( InternalBibleEntry('p', originalMarker, '', '', [], originalText) )
                             else: print( "preverse", "'"+preverseText+"'" )
                             text = beforeText + afterText[ixFinal+1:]
                         elif thisField.startswith( '<div sID="' ) and thisField.endswith( '" type="paragraph"/>' ):
-                            self._processedLines.append( InternalBibleEntry('p', originalMarker, '', '', []) )
+                            self._processedLines.append( InternalBibleEntry('p', originalMarker, '', '', [], originalText) )
                             text = beforeText + afterText
                         #elif thisField.startswith( '<div eID="' ) and thisField.endswith( '" type="paragraph"/>' ):
                             #self._processedLines.append( InternalBibleEntry('m', originalMarker, '', '', []) )
@@ -924,10 +924,10 @@ class InternalBibleBook:
                             if Globals.debugFlag:
                                 assert( thisField[11] == '"' )
                                 assert( levelDigit.isdigit() )
-                            self._processedLines.append( InternalBibleEntry('q'+levelDigit, originalMarker, '', '', []) )
+                            self._processedLines.append( InternalBibleEntry('q'+levelDigit, originalMarker, '', '', [], originalText) )
                             text = beforeText + afterText
                         elif thisField.startswith( '<lg sID="' ) and thisField.endswith( '"/>' ):
-                            self._processedLines.append( InternalBibleEntry('qx', originalMarker, '', '', []) )
+                            self._processedLines.append( InternalBibleEntry('qx', originalMarker, '', '', [], originalText) )
                             text = beforeText + afterText
                         elif thisField.startswith( '<chapter osisID="' ) and thisField.endswith( '"/>' ):
                             if 0: # Don't actually need this stuff
@@ -939,7 +939,7 @@ class InternalBibleBook:
                                 #assert( ixDOT != -1 )
                                 chapterDigits = osisID[ixDOT+1:]
                                 #print( "chapter", chapterDigits )
-                                self._processedLines.append( InternalBibleEntry('c~', originalMarker, chapterDigits, chapterDigits, []) )
+                                self._processedLines.append( InternalBibleEntry('c~', originalMarker, chapterDigits, chapterDigits, [], originalText) )
                             text = beforeText + afterText
                         elif ( thisField.startswith( '<chapter eID="' ) or thisField.startswith( '<l eID="' ) or thisField.startswith( '<lg eID="' ) or thisField.startswith( '<div eID="' ) ) \
                         and thisField.endswith( '"/>' ):
