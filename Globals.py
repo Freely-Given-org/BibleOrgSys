@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # py
-#   Last modified: 2013-08-05 (also update ProgVersion below)
+#   Last modified: 2013-08-07 (also update ProgVersion below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -33,7 +33,8 @@ Contains functions:
     addLogfile( projectName, folder=None )
     removeLogfile( projectHandler )
 
-    makeSafeFilename( somename )
+    makeSafeFilename( someName )
+    makeSafeString( someString )
     peekIntoFile( filenameOrFilepath, folder=None, numLines=1 )
 
     totalSize( o, handlers={} )
@@ -68,7 +69,7 @@ Contains functions:
 """
 
 ProgName = "Globals"
-ProgVersion = "0.32"
+ProgVersion = "0.33"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -210,14 +211,35 @@ def removeLogfile( projectHandler ):
 
 ##########################################################################################################
 #
-# Peek at the first line(s) of a file
+# Make a string safe if it's going to be used as a filename
+#
+#       We don't want a malicious user to be able to gain access to the filesystem
+#               by putting a filepath into a filename string.
 
-def makeSafeFilename( somename ):
+def makeSafeFilename( someName ):
     """
-    Replaces unsafe characters in a name to make it suitable for a filename.
+    Replaces potentially unsafe characters in a name to make it suitable for a filename.
     """
-    return somename.replace('/','-').replace('\\','_BACKSLASH_').replace(':','_COLON_').replace('#','_HASH_')
+    return someName.replace('/','-') \
+        .replace('\\','_BACKSLASH_').replace(':','_COLON_').replace('#','_HASH_') \
+        .replace('?','_QUESTIONMARK_').replace('*','_ASTERISK_')
 # end of makeSafeFilename
+
+
+##########################################################################################################
+#
+# Make a string safe if it could be used in an HTML or other document
+#
+#       We don't want a malicious user to be able to gain access to the system
+#               by putting system commands into a string that's then used in a webpage or something.
+
+def makeSafeString( someString ):
+    """
+    Replaces potentially unsafe characters in a string to make it safe for display.
+    """
+    #return someString.replace('&','&amp;').replace('<','&lt;').replace('>','&gt;')
+    return someString.replace('<','_LT_').replace('>','_GT_')
+# end of makeSafeString
 
 
 ##########################################################################################################
@@ -794,16 +816,19 @@ def demo():
     if verbosityLevel>2: printAllGlobals()
 
     # Demonstrate peekAtFirstLine function
-    line1 = peekIntoFile( "Bible.py", numLines=2 ) # Simple filename
-    print( "Bible.py starts with '{}'".format( line1 ) )
-    line1 = peekIntoFile( "ReadMe.txt", "Tests/", 3 ) # Filename and folder
-    print( "ReadMe.txt starts with '{}'".format( line1 ) )
-    line1 = peekIntoFile( "DataFiles/BibleBooksCodes.xml" ) # Filepath
-    print( "BibleBooksCodes.xml starts with '{}'".format( line1 ) )
+    line1a = peekIntoFile( "Bible.py", numLines=2 ) # Simple filename
+    print( "Bible.py starts with {}".format( repr(line1a) ) )
+    line1b = peekIntoFile( "ReadMe.txt", "Tests/", 3 ) # Filename and folder
+    print( "ReadMe.txt starts with {}".format( repr(line1b) ) )
+    line1c = peekIntoFile( "DataFiles/BibleBooksCodes.xml" ) # Filepath
+    print( "BibleBooksCodes.xml starts with {}".format( repr(line1c) ) )
+
+    print( "\nFirst one made filename safe: {}".format( repr( makeSafeFilename( line1a[0] ) ) ) )
+    print( "Last one made string safe: {}".format( repr( makeSafeString( line1c ) ) ) )
 
     text = "The quick brown fox jumped over the lazy brown dog."
     adjustments = [(36,'lazy','fat'),(0,'The','A'),(20,'jumped','tripped'),(4,'','very '),(10,'brown','orange')]
-    print( "'{}'->'{}'".format( text, applyStringAdjustments( text, adjustments ) ) )
+    print( "\n{}->{}".format( repr(text), repr( applyStringAdjustments( text, adjustments ) ) ) )
 # end of demo
 
 setVerbosity( verbosityString )
