@@ -224,7 +224,10 @@ class BibleWriter( InternalBible ):
                                 value = vString[:ix] # Remove verse bridges
                                 vEnd = vString[ix+1:]
                                 #print( BBB, repr(value), repr(vEnd) )
-                                value1, value2 = int( value ), int( vEnd )
+                                try: value1, value2 = int( value ), int( vEnd )
+                                except ValueError:
+                                    print( "toUSFM: bridge doesn't seem to be integers in {} {}".format( BBB, repr(vString) ) )
+                                    value1 = value2 = None # One of them isn't an integer
                                 #print( ' ', BBB, repr(value1), repr(value2) )
                                 break
                     if value and value[-1] != ' ': value += ' ' # Append a space since it didn't have one
