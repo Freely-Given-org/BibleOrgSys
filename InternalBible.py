@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2013-08-02 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-07 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -44,7 +44,7 @@ and then fills
 """
 
 ProgName = "Internal Bible handler"
-ProgVersion = "0.37"
+ProgVersion = "0.38"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -425,12 +425,39 @@ class InternalBible:
                 if key=='notStarted' and value:
                     if 'NotStartedBookCodes' not in aggregateResults: aggregateResults['NotStartedBookCodes'] = [BBB]
                     else: aggregateResults['NotStartedBookCodes'].append( BBB )
+                    if isOT:
+                        if 'OTNotStartedBookCodes' not in aggregateResults: aggregateResults['OTNotStartedBookCodes'] = [BBB]
+                        else: aggregateResults['OTNotStartedBookCodes'].append( BBB )
+                    elif isNT:
+                        if 'NTNotStartedBookCodes' not in aggregateResults: aggregateResults['NTNotStartedBookCodes'] = [BBB]
+                        else: aggregateResults['NTNotStartedBookCodes'].append( BBB )
+                    elif isDC:
+                        if 'DCNotStartedBookCodes' not in aggregateResults: aggregateResults['DCNotStartedBookCodes'] = [BBB]
+                        else: aggregateResults['DCNotStartedBookCodes'].append( BBB )
                 elif key=='seemsFinished' and value:
                     if 'SeemsFinishedBookCodes' not in aggregateResults: aggregateResults['SeemsFinishedBookCodes'] = [BBB]
                     else: aggregateResults['SeemsFinishedBookCodes'].append( BBB )
+                    if isOT:
+                        if 'OTSeemsFinishedBookCodes' not in aggregateResults: aggregateResults['OTSeemsFinishedBookCodes'] = [BBB]
+                        else: aggregateResults['OTSeemsFinishedBookCodes'].append( BBB )
+                    elif isNT:
+                        if 'NTSeemsFinishedBookCodes' not in aggregateResults: aggregateResults['NTSeemsFinishedBookCodes'] = [BBB]
+                        else: aggregateResults['NTSeemsFinishedBookCodes'].append( BBB )
+                    elif isDC:
+                        if 'DCSeemsFinishedBookCodes' not in aggregateResults: aggregateResults['DCSeemsFinishedBookCodes'] = [BBB]
+                        else: aggregateResults['DCSeemsFinishedBookCodes'].append( BBB )
                 elif key=='partlyDone' and value:
                     if 'PartlyDoneBookCodes' not in aggregateResults: aggregateResults['PartlyDoneBookCodes'] = [BBB]
                     else: aggregateResults['PartlyDoneBookCodes'].append( BBB )
+                    if isOT:
+                        if 'OTPartlyDoneBookCodes' not in aggregateResults: aggregateResults['OTPartlyDoneBookCodes'] = [BBB]
+                        else: aggregateResults['OTPartlyDoneBookCodes'].append( BBB )
+                    elif isNT:
+                        if 'NTPartlyDoneBookCodes' not in aggregateResults: aggregateResults['NTPartlyDoneBookCodes'] = [BBB]
+                        else: aggregateResults['NTPartlyDoneBookCodes'].append( BBB )
+                    elif isDC:
+                        if 'DCPartlyDoneBookCodes' not in aggregateResults: aggregateResults['DCPartlyDoneBookCodes'] = [BBB]
+                        else: aggregateResults['DCPartlyDoneBookCodes'].append( BBB )
 
                 if key=='percentageProgress':
                     if 'percentageProgressByBook' not in aggregateResults: aggregateResults['percentageProgressByBook'] = value
