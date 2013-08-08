@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # UnknownBible.py
-#   Last modified: 2013-07-19 (also update ProgVersion below)
+#   Last modified: 2013-08-07 (also update ProgVersion below)
 #
 # Module handling a unknown Bible object
 #
@@ -37,7 +37,7 @@ Currently aware of the following Bible types:
 """
 
 ProgName = "Unknown Bible object handler"
-ProgVersion = "0.06"
+ProgVersion = "0.07"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -58,6 +58,7 @@ from ZefaniaXMLBible import ZefaniaXMLBibleFileCheck, ZefaniaXMLBible
 from UnboundBible import UnboundBibleFileCheck, UnboundBible
 from TheWordBible import TheWordBibleFileCheck, TheWordBible
 from MySwordBible import MySwordBibleFileCheck, MySwordBible
+from ESwordBible import ESwordBibleFileCheck, ESwordBible
 #from SwordResources import SwordInterface
 
 
@@ -124,6 +125,14 @@ class UnknownBible:
             totalBibleTypes += 1
             typesFound.append( 'MySword' )
             if Globals.verbosityLevel > 2: print( "MySwordBible.search: MySwordBibleCount", MySwordBibleCount )
+
+        # Search for e-Sword Bibles
+        ESwordBibleCount = ESwordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+        if ESwordBibleCount:
+            totalBibleCount += ESwordBibleCount
+            totalBibleTypes += 1
+            typesFound.append( 'e-Sword' )
+            if Globals.verbosityLevel > 2: print( "ESwordBible.search: ESwordBibleCount", ESwordBibleCount )
 
         # Search for Unbound Bibles
         UnboundBibleCount = UnboundBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -195,6 +204,10 @@ class UnknownBible:
             self.foundType = "MySword Bible"
             if autoLoad: return MySwordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad )
             else: return self.foundType, MySwordBibleCount
+        elif ESwordBibleCount == 1:
+            self.foundType = "e-Sword Bible"
+            if autoLoad: return ESwordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad )
+            else: return self.foundType, ESwordBibleCount
         elif UnboundBibleCount == 1:
             self.foundType = "Unbound Bible"
             if autoLoad: return UnboundBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad )

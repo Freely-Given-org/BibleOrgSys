@@ -271,7 +271,8 @@ class InternalBibleEntryList:
     # end of InternalBibleEntryList.append
 
     def pop( self ): # Doesn't allow a parameter
-        return self.data.pop()
+        try: return self.data.pop()
+        except: return None
     # end of InternalBibleEntryList.append
 
     def extend( self, newList ):

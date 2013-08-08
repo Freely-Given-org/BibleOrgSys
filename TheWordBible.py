@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # TheWordBible.py
-#   Last modified: 2013-08-01 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-08 by RJH (also update ProgVersion below)
 #
 # Module handling "theWord" Bible module files
 #
@@ -448,9 +448,9 @@ def theWordAdjustLine( BBB, C, V, originalLine ):
 
     # Check what's left at the end
     if '\\' in line:
-        logging.warning( "theWordadjustLine: Doesn't handle formatted line yet: {} {}:{} '{}'".format( BBB, C, V, line ) )
+        logging.warning( "theWordAdjustLine: Doesn't handle formatted line yet: {} {}:{} '{}'".format( BBB, C, V, line ) )
         if Globals.debugFlag and debuggingThisModule:
-            print( "theWordadjustLine: Doesn't handle formatted line yet: {} {}:{} '{}'".format( BBB, C, V, line ) )
+            print( "theWordAdjustLine: Doesn't handle formatted line yet: {} {}:{} '{}'".format( BBB, C, V, line ) )
             halt
     return line
 # end of theWordAdjustLine
@@ -661,7 +661,7 @@ def handleLine( myName, BBB, C, V, originalLine, bookObject, myGlobals ):
     if Globals.debugFlag:
         if debuggingThisModule:
             print( "TheWordBible.handleLine( {} {} {}:{} {} ... {}".format( myName, BBB, C, V, repr(originalLine), myGlobals ) )
-        assert( '\n' not in originalLine )
+        assert( '\n' not in originalLine and '\r' not in originalLine )
     line = originalLine
 
     writtenV = False
@@ -936,7 +936,7 @@ def handleLine( myName, BBB, C, V, originalLine, bookObject, myGlobals ):
         if leftovers: logging.critical( "Had leftovers {}".format( repr(leftovers) ) )
         if Globals.debugFlag: assert( not leftovers )
         #halt
-    else:
+    else: # no newlines in the middle
         if C==1 and V==1 and not appendedCFlag: bookObject.appendLine( 'c', str(C) ); appendedCFlag = True
         bookObject.appendLine( 'v', '{} {}'.format( V, line ) )
         #if myGlobals['haveParagraph']:

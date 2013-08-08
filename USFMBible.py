@@ -371,6 +371,7 @@ def demo():
                 newObj = Globals.unpickleObject( 'Matigsalug.pickle' )
                 if Globals.verbosityLevel > 0: print( "newObj is", newObj )
         else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
+    #halt
 
     if 1: # Test a whole folder full of folders of USFM Bibles
         testBaseFolder = "../../../../../Data/Work/Bibles/USFM Bibles/Haiola USFM test versions/"

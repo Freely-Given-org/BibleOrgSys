@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-08-06 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-08 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -45,11 +45,12 @@ Contains functions:
     toHTML5( self, outputFolder=None, controlDict=None, validationSchema=None )
     totheWord( self, outputFolder=None )
     toMySword( self, outputFolder=None )
+    toESword( self, outputFolder=None )
     doAllExports( self, givenOutputFolderName=None )
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.36"
+ProgVersion = "0.37"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -66,7 +67,7 @@ import Globals, ControlFiles
 from InternalBible import InternalBible
 from BibleOrganizationalSystems import BibleOrganizationalSystem
 from BibleReferences import BibleReferenceList
-from USFMMarkers import oftenIgnoredIntroMarkers #removeUSFMCharacterField, replaceUSFMCharacterFields
+from USFMMarkers import oftenIgnoredIntroMarkers, removeUSFMCharacterField, replaceUSFMCharacterFields
 from MLWriter import MLWriter
 
 
@@ -3129,6 +3130,8 @@ class BibleWriter( InternalBible ):
         elif self.name: value = self.name
         values.append( value); value = ''
         if self.abbreviation: value = self.abbreviation
+        elif 'WorkAbbreviation' in self.settingsDict: value = self.settingsDict['WorkAbbreviation']
+        else: value = self.name[:3].upper()
         values.append( value ); value = ''
         if 'Comments' in self.settingsDict: value = self.settingsDict['Comments']
         values.append( value ); value = ''
@@ -3179,6 +3182,482 @@ class BibleWriter( InternalBible ):
 
 
 
+    def toESword( self, outputFolder=None, controlDict=None ):
+        """
+        Using settings from the given control file,
+            converts the USFM information to a UTF-8 e-Sword file.
+
+        This format is roughly documented at xxx
+        """
+        from TheWordBible import theWordOTBookLines, theWordNTBookLines, theWordBookLines, theWordIgnoredIntroMarkers
+        if Globals.verbosityLevel > 1: print( "Running BibleWriter:toESword..." )
+        if Globals.debugFlag: assert( self.books )
+
+        if not self.doneSetupGeneric: self.__setupWriter()
+        if not outputFolder: outputFolder = "OutputFiles/BOS_e-Sword_" + ("Reexport/" if self.objectTypeString=="e-Sword" else "Export/")
+        if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
+        # ControlDict is not used (yet)
+        if not controlDict:
+            controlDict, defaultControlFilename = {}, "To_e-Sword_controls.txt"
+            try:
+                ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
+            except:
+                pass
+                #logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
+        #if Globals.debugFlag: assert( controlDict and isinstance( controlDict, dict ) )
+
+
+        def adjustLine( BBB, C, V, originalLine ):
+            """
+            Handle pseudo-USFM markers within the line (cross-references, footnotes, and character formatting).
+
+            Parameters are the Scripture reference (for error messsages)
+                and the line (string) containing the backslash codes.
+
+            Returns a string with the backslash codes replaced by e-Sword RTF formatting codes.
+            """
+            line = originalLine # Keep a copy of the original line for error messages
+
+            if '\\x' in line: # Remove cross-references completely (why???)
+                #line = line.replace('\\x ','<RX>').replace('\\x*','<Rx>')
+                line = removeUSFMCharacterField( 'x', line, closed=True ).lstrip() # Remove superfluous spaces
+
+            if '\\f' in line: # Handle footnotes
+                line = removeUSFMCharacterField( 'f', line, closed=True ).lstrip() # Remove superfluous spaces
+                #for marker in ( 'fr', 'fm', ): # simply remove these whole field
+                    #line = removeUSFMCharacterField( marker, line, closed=None )
+                #for marker in ( 'fq', 'fqa', 'fl', 'fk', ): # italicise these ones
+                    #while '\\'+marker+' ' in line:
+                        ##print( BBB, C, V, marker, line.count('\\'+marker+' '), line )
+                        ##print( "was", "'"+line+"'" )
+                        #ix = line.find( '\\'+marker+' ' )
+                        #assert( ix != -1 )
+                        #ixEnd = line.find( '\\', ix+len(marker)+2 )
+                        #if ixEnd == -1: # no following marker so assume field stops at the end of the line
+                            #line = line.replace( '\\'+marker+' ', '<i>' ) + '</i>'
+                        #elif line[ixEnd:].startswith( '\\'+marker+'*' ): # replace the end marker also
+                            #line = line.replace( '\\'+marker+' ', '<i>' ).replace( '\\'+marker+'*', '</i>' )
+                        #else: # leave the next marker in place
+                            #line = line[:ixEnd].replace( '\\'+marker+' ', '<i>' ) + '</i>' + line[ixEnd:]
+                #for marker in ( 'ft', ): # simply remove these markers (but leave behind the text field)
+                    #line = line.replace( '\\'+marker+' ', '' ).replace( '\\'+marker+'*', '' )
+                ##for caller in '+*abcdefghijklmnopqrstuvwxyz': line.replace('\\f '+caller+' ','<RF>') # Handle single-character callers
+                #line = re.sub( r'(\\f [a-z+*]{1,3} )', '<RF>', line ) # Handle one to three character callers
+                #line = line.replace('\\f ','<RF>').replace('\\f*','<Rf>') # Must be after the italicisation
+                ##if '\\f' in originalLine:
+                    ##print( "o", originalLine )
+                    ##print( "n", line )
+                    ##halt
+
+            if '\\' in line: # Handle character formatting fields
+                line = removeUSFMCharacterField( 'fig', line, closed=True ) # Remove figures
+                replacements = (
+                    ( ('add',), '~^~cf15~^~i','~^~cf0~^~i0' ),
+                    ( ('qt',), '<FO>','<Fo>' ),
+                    ( ('wj',), '<FR>','<Fr>' ),
+                    ( ('bdit',), '<b><i>','</i></b>' ),
+                    ( ('bd','em','k',), '<b>','</b>' ),
+                    ( ('it','rq','bk','dc','qs','sig','sls','tl',), '<i>','</i>' ),
+                    ( ('nd','sc',), '<font size=-1>','</font>' ),
+                    )
+                line = replaceUSFMCharacterFields( replacements, line ) # This function also handles USFM 2.4 nested character markers
+                if '\\nd' not in originalLine and '\\+nd' not in originalLine:
+                    line = line.replace('LORD', '<font size=-1>LORD</font>')
+                    #line = line.replace('\\nd ','<font size=-1>',).replace('\\nd*','</font>').replace('\\+nd ','<font size=-1>',).replace('\\+nd*','</font>')
+                #else:
+                    #line = line.replace('LORD', '<font size=-1>LORD</font>')
+                #line = line.replace('\\add ','<FI>').replace('\\add*','<Fi>').replace('\\+add ','<FI>').replace('\\+add*','<Fi>')
+                #line = line.replace('\\qt ','<FO>').replace('\\qt*','<Fo>').replace('\\+qt ','<FO>').replace('\\+qt*','<Fo>')
+                #line = line.replace('\\wj ','<FR>').replace('\\wj*','<Fr>').replace('\\+wj ','<FR>').replace('\\+wj*','<Fr>')
+
+            #if '\\' in line: # Output simple HTML tags (with no semantic info)
+                #line = line.replace('\\bdit ','<b><i>').replace('\\bdit*','</i></b>').replace('\\+bdit ','<b><i>').replace('\\+bdit*','</i></b>')
+                #for marker in ( 'it', 'rq', 'bk', 'dc', 'qs', 'sig', 'sls', 'tl', ): # All these markers are just italicised
+                    #line = line.replace('\\'+marker+' ','<i>').replace('\\'+marker+'*','</i>').replace('\\+'+marker+' ','<i>').replace('\\+'+marker+'*','</i>')
+                #for marker in ( 'bd', 'em', 'k', ): # All these markers are just bolded
+                    #line = line.replace('\\'+marker+' ','<b>').replace('\\'+marker+'*','</b>').replace('\\+'+marker+' ','<b>').replace('\\+'+marker+'*','</b>')
+                #line = line.replace('\\sc ','<font size=-1>',).replace('\\sc*','</font>').replace('\\+sc ','<font size=-1>',).replace('\\+sc*','</font>')
+
+            # Check what's left at the end
+            if '\\' in line:
+                logging.warning( "toESword.adjustLine: Doesn't handle formatted line yet: {} {}:{} '{}'".format( BBB, C, V, line ) )
+                if Globals.debugFlag and debuggingThisModule:
+                    print( "toESword.adjustLine: Doesn't handle formatted line yet: {} {}:{} '{}'".format( BBB, C, V, line ) )
+                    halt
+            return line
+        # end of toESword.adjustLine
+
+
+        def handleIntroduction( BBB, bookData, ourGlobals ):
+            """
+            Go through the book introduction (if any) and extract main titles for e-Sword export.
+
+            Parameters are BBB (for error messages),
+                the actual book data, and
+                ourGlobals dictionary for persistent variables.
+
+            Returns the information in a composed line string.
+            """
+            C = V = 0
+            composedLine = ''
+            while True:
+                #print( "toESword.handleIntroduction", BBB, C, V )
+                try: result = bookData.getCVRef( (BBB,'0',str(V),) ) # Currently this only gets one line
+                except KeyError: break # Reached the end of the introduction
+                verseData, context = result
+                assert( len(verseData ) == 1 ) # in the introductory section
+                marker, text = verseData[0].getMarker(), verseData[0].getFullText()
+                if marker not in theWordIgnoredIntroMarkers:
+                    if marker=='mt1': composedLine += '<TS1>'+adjustLine(BBB,C,V,text)+'<Ts>'
+                    elif marker=='mt2': composedLine += '<TS2>'+adjustLine(BBB,C,V,text)+'<Ts>'
+                    elif marker=='mt3': composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>'
+                    elif marker=='ms1': composedLine += '<TS2>'+adjustLine(BBB,C,V,text)+'<Ts>'
+                    elif marker=='ms2': composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>'
+                    elif marker=='mr': composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>'
+                    else:
+                        logging.warning( "toESword.handleIntroduction: doesn't handle {} '{}' yet".format( BBB, marker ) )
+                        if Globals.debugFlag and debuggingThisModule:
+                            print( "toESword.handleIntroduction: doesn't handle {} '{}' yet".format( BBB, marker ) )
+                            halt
+                        ourGlobals['unhandledMarkers'].add( marker + ' (in intro)' )
+                V += 1 # Step to the next introductory section "verse"
+
+            # Check what's left at the end
+            if '\\' in composedLine:
+                logging.warning( "toESword.handleIntroduction: Doesn't handle formatted line yet: {} '{}'".format( BBB, composedLine ) )
+                if Globals.debugFlag and debuggingThisModule:
+                    print( "toESword.handleIntroduction: Doesn't handle formatted line yet: {} '{}'".format( BBB, composedLine ) )
+                    halt
+            return composedLine.replace( '~^~', '\\' )
+        # end of toESword.handleIntroduction
+
+
+        def composeVerseLine( BBB, C, V, verseData, ourGlobals ):
+            """
+            Composes a single line representing a verse.
+
+            Parameters are the Scripture reference (for error messages),
+                the verseData (a list of InternalBibleEntries: pseudo-USFM markers and their contents),
+                and a ourGlobals dictionary for holding persistent variables (between calls).
+
+            This function handles the paragraph/new-line markers;
+                adjustLine (above) is called to handle internal/character markers.
+
+            Returns the composed line.
+            """
+            #print( "toESword.composeVerseLine( {} {}:{} {} {}".format( BBB, C, V, verseData, ourGlobals ) )
+            composedLine = ourGlobals['line'] # We might already have some book headings to precede the text for this verse
+            ourGlobals['line'] = '' # We've used them so we don't need them any more
+            #marker = text = None
+
+            vCount = 0
+            lastMarker = None
+            #if BBB=='MAT' and C==4 and 14<V<18: print( BBB, C, V, ourGlobals, verseData )
+            for verseDataEntry in verseData:
+                marker, text = verseDataEntry.getMarker(), verseDataEntry.getFullText()
+                if marker in ('c','c#','cl','cp','rem',): lastMarker = marker; continue  # ignore all of these for this
+
+                if marker == 'v': # handle versification differences here
+                    vCount += 1
+                    if vCount == 1: # Handle verse bridges
+                        if text != str(V):
+                            composedLine += '<sup>('+text+')</sup> ' # Put the additional verse number into the text in parenthesis
+                    elif vCount > 1: # We have an additional verse number
+                        assert( text != str(V) )
+                        composedLine += ' <sup>('+text+')</sup>' # Put the additional verse number into the text in parenthesis
+                    lastMarker = marker
+                    continue
+
+                #print( "toESword.composeVerseLine:", BBB, C, V, marker, text )
+                if marker in theWordIgnoredIntroMarkers:
+                    logging.error( "toESword.composeVerseLine: Found unexpected {} introduction marker at {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
+                    print( "toESword.composeVerseLine:", BBB, C, V, marker, text, verseData )
+                    if Globals.debugFlag and debuggingThisModule: assert( marker not in theWordIgnoredIntroMarkers ) # these markers shouldn't occur in verses
+
+                if marker == 's1':
+                    if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
+                        ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '~^~line' # append the new paragraph marker to the previous line
+                    composedLine += '<TS1>'+adjustLine(BBB,C,V,text)+'<Ts>'
+                elif marker == 's2': composedLine += '<TS2>'+adjustLine(BBB,C,V,text)+'<Ts>'
+                elif marker in ( 's3', 'sr', 'd', ): composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>'
+                elif marker in ( 'qa', 'r', ):
+                    if marker=='r' and text and text[0]!='(' and text[-1]!=')': # Put parenthesis around this if not already there
+                        text = '(' + text + ')'
+                    composedLine += '<TS3><i>'+adjustLine(BBB,C,V,text)+'</i><Ts>'
+                elif marker in ( 'm', ):
+                    assert( not text )
+                    if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
+                        ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '~^~line' # append the new paragraph marker to the previous line
+                    #if text:
+                        #print( 'm', repr(text), verseData )
+                        #composedLine += '~^~line'+adjustLine(BBB,C,V,text)
+                        #if ourGlobals['pi1'] or ourGlobals['pi2'] or ourGlobals['pi3'] or ourGlobals['pi4'] or ourGlobals['pi5'] or ourGlobals['pi6'] or ourGlobals['pi7']:
+                            #composedLine += '~^~line'
+                        #else: composedLine += '~^~line'
+                    #else: # there is text
+                        #composedLine += '~^~line'+adjustLine(BBB,C,V,text)
+                elif marker in ( 'p', 'b', ):
+                    #print( marker, text )
+                    assert( not text )
+                    if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
+                        ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '~^~line' # append the new paragraph marker to the previous line
+                    #else: composedLine += '~^~line'
+                    #composedLine += adjustLine(BBB,C,V,text)
+                elif marker in ( 'pi1', ):
+                    assert( not text )
+                elif marker in ( 'pi2', ):
+                    assert( not text )
+                elif marker in ( 'pi3', 'pmc', ):
+                    assert( not text )
+                elif marker in ( 'pi4', ):
+                    assert( not text )
+                elif marker in ( 'pc', ):
+                    assert( not text )
+                elif marker in ( 'pr', 'pmr', 'cls', ):
+                    assert( not text )
+                elif marker in ( 'b', 'mi', 'pm', 'pmo', ):
+                    assert( not text )
+                elif marker in ( 'q1', 'qm1', ):
+                    assert( not text )
+                    if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
+                        ourGlobals['lastLine'] += '~^~line' # append the new quotation paragraph marker to the previous line
+                    else: composedLine += '~^~line'
+                    #composedLine += adjustLine(BBB,C,V,text)
+                elif marker in ( 'q2', 'qm2', ):
+                    assert( not text )
+                    if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
+                        ourGlobals['lastLine'] += '~^~line' # append the new quotation paragraph marker to the previous line
+                    else: composedLine += '~^~line'
+                    #composedLine += '~^~line<PI2>'+adjustLine(BBB,C,V,text)
+                elif marker in ( 'q3', 'qm3', ):
+                    assert( not text )
+                    if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
+                        ourGlobals['lastLine'] += '~^~line' # append the new quotation paragraph marker to the previous line
+                    else: composedLine += '~^~line'
+                    #composedLine += '~^~line<PI3>'+adjustLine(BBB,C,V,text)
+                elif marker in ( 'q4', 'qm4', ):
+                    assert( not text )
+                    if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
+                        ourGlobals['lastLine'] += '~^~line' # append the new quotation paragraph marker to the previous line
+                    else: composedLine += '~^~line'
+                    #composedLine += '~^~line<PI4>'+adjustLine(BBB,C,V,text)
+                elif marker == 'li1': composedLine += '<PI>• '+adjustLine(BBB,C,V,text)
+                elif marker == 'li2': composedLine += '<PI2>• '+adjustLine(BBB,C,V,text)
+                elif marker == 'li3': composedLine += '<PI3>• '+adjustLine(BBB,C,V,text)
+                elif marker == 'li4': composedLine += '<PI4>• '+adjustLine(BBB,C,V,text)
+                elif marker in ( 'cd', 'sp', ): composedLine += '<i>'+adjustLine(BBB,C,V,text)+'</i>'
+                elif marker in ( 'v~', 'p~', ):
+                    #print( lastMarker )
+                    if lastMarker == 'p': composedLine += '~^~line' # We had a continuation paragraph
+                    elif lastMarker == 'm': composedLine += '~^~line' # We had a continuation paragraph
+                    elif lastMarker in Globals.USFMParagraphMarkers: pass # Did we need to do anything here???
+                    elif lastMarker != 'v':
+                        print( BBB, C, V, marker, lastMarker, verseData )
+                        composedLine += adjustLine(BBB,C,V, text )
+                        if Globals.debugFlag and debuggingThisModule: halt # This should never happen -- probably a b marker with text
+                    #if ourGlobals['pi1']: composedLine += '<PI>'
+                    #elif ourGlobals['pi2']: composedLine += '<PI2>'
+                    #elif ourGlobals['pi3']: composedLine += '<PI3>'
+                    #elif ourGlobals['pi4']: composedLine += '<PI4>'
+                    #elif ourGlobals['pi5']: composedLine += '<PI5>'
+                    #elif ourGlobals['pi6']: composedLine += '<PI6>'
+                    #elif ourGlobals['pi7']: composedLine += '<PI7>'
+                    composedLine += adjustLine(BBB,C,V, text )
+                else:
+                    logging.warning( "toESword.composeVerseLine: doesn't handle '{}' yet".format( marker ) )
+                    if Globals.debugFlag and debuggingThisModule:
+                        print( "toESword.composeVerseLine: doesn't handle '{}' yet".format( marker ) )
+                        halt
+                    ourGlobals['unhandledMarkers'].add( marker )
+                lastMarker = marker
+
+            # Final clean-up
+            #while '  ' in composedLine: # remove double spaces
+                #composedLine = composedLine.replace( '  ', ' ' )
+
+            # Check what's left at the end
+            if '\\' in composedLine:
+                logging.warning( "toESword.composeVerseLine: Doesn't handle formatted line yet: {} {}:{} '{}'".format( BBB, C, V, composedLine ) )
+                if Globals.debugFlag and debuggingThisModule:
+                    print( "toESword.composeVerseLine: Doesn't handle formatted line yet: {} {}:{} '{}'".format( BBB, C, V, composedLine ) )
+                    halt
+            return composedLine.replace( '~^~', '\\' ).rstrip()
+        # end of toESword.composeVerseLine
+
+
+        def writeBook( sqlObject, BBB, ourGlobals ):
+            """
+            Writes a book to the e-Sword sqlObject file.
+            """
+            nonlocal lineCount
+            bkData = self.books[BBB] if BBB in self.books else None
+            #print( bkData._processedLines )
+            verseList = BOS.getNumVersesList( BBB )
+            nBBB = Globals.BibleBooksCodes.getReferenceNumber( BBB )
+            numC, numV = len(verseList), verseList[0]
+
+            ourGlobals['line'], ourGlobals['lastLine'] = '', None
+            if bkData:
+                # Write book headings (stuff before chapter 1)
+                ourGlobals['line'] = handleIntroduction( BBB, bkData, ourGlobals )
+
+                # Write the verses
+                C = V = 1
+                ourGlobals['lastLine'] = ourGlobals['lastBCV'] = None
+                while True:
+                    verseData = None
+                    if bkData:
+                        try:
+                            result = bkData.getCVRef( (BBB,str(C),str(V),) )
+                            verseData, context = result
+                        except KeyError: pass # Just ignore missing verses
+                        # Handle some common versification anomalies
+                        if (BBB,C,V) == ('JN3',1,14): # Add text for v15 if it exists
+                            try:
+                                result15 = bkData.getCVRef( ('JN3','1','15',) )
+                                verseData15, context15 = result15
+                                verseData.extend( verseData15 )
+                            except KeyError: pass #  just ignore it
+                        elif (BBB,C,V) == ('REV',12,17): # Add text for v15 if it exists
+                            try:
+                                result18 = bkData.getCVRef( ('REV','12','18',) )
+                                verseData18, context18 = result18
+                                verseData.extend( verseData18 )
+                            except KeyError: pass #  just ignore it
+                        composedLine = ''
+                        if verseData:
+                            composedLine = composeVerseLine( BBB, C, V, verseData, ourGlobals )
+                            if '~' in composedLine: print( BBB, C, V, repr(composedLine) ); halt
+                            #if composedLine: # don't bother writing blank (unfinished?) verses
+                                #print( "toESword: Writing", BBB, nBBB, C, V, marker, repr(line) )
+                                #sqlObject.execute( 'INSERT INTO "Bible" VALUES(?,?,?,?)', (nBBB,C,V,composedLine) )
+                            # Stay one line behind (because paragraph indicators get appended to the previous line)
+                            if ourGlobals['lastBCV'] is not None \
+                            and ourGlobals['lastLine']: # don't bother writing blank (unfinished?) verses
+                                sqlObject.execute( 'INSERT INTO "Bible" VALUES(?,?,?,?)', \
+                                    (ourGlobals['lastBCV'][0],ourGlobals['lastBCV'][1],ourGlobals['lastBCV'][2],ourGlobals['lastLine']) )
+                                lineCount += 1
+                        ourGlobals['lastLine'] = composedLine
+                    ourGlobals['lastBCV'] = (nBBB,C,V)
+                    V += 1
+                    if V > numV:
+                        C += 1
+                        if C > numC:
+                            break
+                        else: # next chapter only
+                            numV = verseList[C-1]
+                            V = 1
+                #assert( not ourGlobals['line'] and not ourGlobals['lastLine'] ) #  We should have written everything
+
+            # Write the last line of the file
+            if ourGlobals['lastLine']: # don't bother writing blank (unfinished?) verses
+                sqlObject.execute( 'INSERT INTO "Bible" VALUES(?,?,?,?)', \
+                    (ourGlobals['lastBCV'][0],ourGlobals['lastBCV'][1],ourGlobals['lastBCV'][2],ourGlobals['lastLine']) )
+                lineCount += 1
+        # end of toESword.writeBook
+
+
+        # Set-up their Bible reference system
+        BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
+        #BRL = BibleReferenceList( BOS, BibleObject=None )
+
+        # Try to figure out if it's an OT/NT or what (allow for up to 4 extra books like FRT,GLO, etc.)
+        if len(self) <= (39+4) and 'MAT' not in self:
+            testament, startBBB, endBBB = 'OT', 'GEN', 'MAL'
+            booksExpected, textLineCountExpected, checkTotals = 39, 23145, theWordOTBookLines
+        elif len(self) <= (27+4) and 'GEN' not in self:
+            testament, startBBB, endBBB = 'NT', 'MAT', 'REV'
+            booksExpected, textLineCountExpected, checkTotals = 27, 7957, theWordNTBookLines
+        else: # assume it's an entire Bible
+            testament, startBBB, endBBB = 'BOTH', 'GEN', 'REV'
+            booksExpected, textLineCountExpected, checkTotals = 66, 31102, theWordBookLines
+        extension = '.bblx'
+
+        if Globals.verbosityLevel > 1: print( _("Exporting to e-Sword format...") )
+        mySettings = {}
+        mySettings['unhandledMarkers'] = set()
+
+        if 'e-SwordOutputFilename' in controlDict: filename = controlDict["e-SwordOutputFilename"]
+        elif self.sourceFilename: filename = self.sourceFilename
+        elif self.shortName: filename = self.shortName
+        elif self.abbreviation: filename = self.abbreviation
+        elif self.name: filename = self.name
+        else: filename = "export"
+        if not filename.endswith( extension ): filename += extension # Make sure that we have the right file extension
+        filepath = os.path.join( outputFolder, Globals.makeSafeFilename( filename ) )
+        if os.path.exists( filepath ): os.remove( filepath )
+        if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
+        conn = sqlite3.connect( filepath )
+        cursor = conn.cursor()
+
+        # First write the settings Details table
+        exeStr = 'CREATE TABLE Details (Description NVARCHAR(255), Abbreviation NVARCHAR(50), Comments TEXT, Version TEXT, VersionDate DATETIME, PublishDate DATETIME, RightToLeft BOOL, OT BOOL, NT BOOL, Strong BOOL'
+        if 'CustomCSS' in self.settingsDict: exeStr += ', CustomCSS TEXT'
+        exeStr += ')'
+        cursor.execute( exeStr )
+        values = []
+        value = ''
+        if 'Description' in self.settingsDict: value = self.settingsDict['Description']
+        elif 'description' in self.settingsDict: value = self.settingsDict['description']
+        elif self.name: value = self.name
+        values.append( value); value = ''
+        if self.abbreviation: value = self.abbreviation
+        elif 'WorkAbbreviation' in self.settingsDict: value = self.settingsDict['WorkAbbreviation']
+        else: value = self.name[:3].upper()
+        values.append( value ); value = ''
+        if 'Comments' in self.settingsDict: value = self.settingsDict['Comments']
+        values.append( value ); value = ''
+        if 'Version' in self.settingsDict: value = self.settingsDict['Version']
+        values.append( value ); value = ''
+        if 'VersionDate' in self.settingsDict: value = self.settingsDict['VersionDate']
+        values.append( value ); value = ''
+        if 'PublishDate' in self.settingsDict: value = self.settingsDict['PublishDate']
+        values.append( value ); value = False
+        if 'RightToLeft' in self.settingsDict: value = self.settingsDict['RightToLeft']
+        values.append( value ); value = False
+        if testament=='OT' or testament=='BOTH': value = True
+        values.append( value ); value = False
+        if testament=='NT' or testament=='BOTH': value = True
+        values.append( value ); value = False
+        if 'Strong' in self.settingsDict: value = self.settingsDict['Strong']
+        values.append( value ); value = ''
+        if 'CustomCSS' in self.settingsDict: value = self.settingsDict['CustomCSS']
+        exeStr = 'INSERT INTO "Details" VALUES(' + '?,'*(len(values)-1) + '?)'
+        #print( exeStr, values )
+        cursor.execute( exeStr, values )
+
+        # Now create and fill the Bible table
+        cursor.execute( 'CREATE TABLE Bible(Book INT, Chapter INT, Verse INT, Scripture TEXT)' )
+        conn.commit() # save (commit) the changes
+        BBB, lineCount = startBBB, 0
+        while True: # Write each Bible book in the KJV order
+            writeBook( cursor, BBB, mySettings )
+            conn.commit() # save (commit) the changes
+            if BBB == endBBB: break
+            BBB = BOS.getNextBookCode( BBB )
+
+        # Now create the index
+        cursor.execute( 'CREATE INDEX BookChapterVerseIndex ON Bible (Book, Chapter, Verse)' )
+        conn.commit() # save (commit) the changes
+
+        if mySettings['unhandledMarkers']:
+            logging.warning( "BibleWriter.toESword: Unhandled markers were {}".format( mySettings['unhandledMarkers'] ) )
+            if Globals.verbosityLevel > 1:
+                print( "  " + _("WARNING: Unhandled toESword markers were {}").format( mySettings['unhandledMarkers'] ) )
+        conn.commit() # save (commit) the changes
+        cursor.close()
+
+        # Now create the gzipped file
+        if Globals.verbosityLevel > 2: print( "  Zipping {} e-Sword file...".format( filename ) )
+        zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
+        zf.write( filepath )
+        zf.close()
+
+        return True
+    # end of BibleWriter.toESword
+
+
+
     #def doExport( self, n ):
         #"""
         #Only used for multiprocessing.
@@ -3213,6 +3692,7 @@ class BibleWriter( InternalBible ):
         USFMOutputFolder = os.path.join( givenOutputFolderName, "BOS_USFM_" + ("Reexport/" if self.objectTypeString=='USFM' else "Export/" ) )
         TWOutputFolder = os.path.join( givenOutputFolderName, "BOS_theWord_" + ("Reexport/" if self.objectTypeString=='TheWord' else "Export/" ) )
         MySwOutputFolder = os.path.join( givenOutputFolderName, "BOS_MySword_" + ("Reexport/" if self.objectTypeString=='MySword' else "Export/" ) )
+        ESwOutputFolder = os.path.join( givenOutputFolderName, "BOS_e-Sword_" + ("Reexport/" if self.objectTypeString=='e-Sword' else "Export/" ) )
         MWOutputFolder = os.path.join( givenOutputFolderName, "BOS_MediaWiki_" + ("Reexport/" if self.objectTypeString=='MediaWiki' else "Export/" ) )
         zOutputFolder = os.path.join( givenOutputFolderName, "BOS_Zefania_" + ("Reexport/" if self.objectTypeString=='Zefania' else "Export/" ) )
         USXOutputFolder = os.path.join( givenOutputFolderName, "BOS_USX_" + ("Reexport/" if self.objectTypeString=='USX' else "Export/" ) )
@@ -3239,6 +3719,7 @@ class BibleWriter( InternalBible ):
             htmlExportResult = self.toHTML5( htmlOutputFolder )
             TWExportResult = self.totheWord( TWOutputFolder )
             MySwExportResult = self.toMySword( MySwOutputFolder )
+            ESwExportResult = self.toESword( ESwOutputFolder )
         elif Globals.maxProcesses > 1: # Process all the exports with different threads
             # DON'T KNOW WHY THIS CAUSES A SEGFAULT
             self.__outputFolders = [USFMOutputFolder, MWOutputFolder, zOutputFolder, USXOutputFolder, OSISOutputFolder, swOutputFolder, htmlOutputFolder]
@@ -3309,15 +3790,21 @@ class BibleWriter( InternalBible ):
                 MySwExportResult = False
                 print("BibleWriter.doAllExports.toMySword Unexpected error:", sys.exc_info()[0], err)
                 logging.error( "BibleWriter.doAllExports.toMySword: Oops, failed!" )
+            try: ESwExportResult = self.toESword( ESwOutputFolder )
+            except Exception as err:
+                ESwExportResult = False
+                print("BibleWriter.doAllExports.toESword Unexpected error:", sys.exc_info()[0], err)
+                logging.error( "BibleWriter.doAllExports.toESword: Oops, failed!" )
 
         if Globals.verbosityLevel > 1:
-            if PseudoUSFMExportResult and USFMExportResult and TWExportResult and MySwExportResult and MWExportResult \
+            if PseudoUSFMExportResult and USFMExportResult and TWExportResult and MySwExportResult and ESwExportResult and MWExportResult \
             and zExportResult and USXExportResult and OSISExportResult and swExportResult and htmlExportResult:
                 print( "BibleWriter.doAllExports finished them all successfully!" )
-            else: print( "BibleWriter.doAllExports finished:  PsUSFM={} USFM={}  TW={} MySw={} MW={}  Zef={}  USX={}  OSIS={}  Sw={}  HTML={}" \
-                    .format( PseudoUSFMExportResult, USFMExportResult, TWExportResult, MySwExportResult, MWExportResult, zExportResult, USXExportResult, OSISExportResult, swExportResult, htmlExportResult ) )
+            else: print( "BibleWriter.doAllExports finished:  PsUSFM={} USFM={}  TW={} MySw={} eSw={}  MW={}  Zef={}  USX={}  OSIS={}  Sw={}  HTML={}" \
+                    .format( PseudoUSFMExportResult, USFMExportResult, TWExportResult, MySwExportResult, ESwExportResult, MWExportResult, zExportResult, USXExportResult, OSISExportResult, swExportResult, htmlExportResult ) )
         return {'PseudoUSFMExport':PseudoUSFMExportResult, 'USFMExport':USFMExportResult,
-                    'TWExport':TWExportResult, 'MySwExport':MySwExportResult, 'MWExport':MWExportResult, 'zExport':zExportResult,
+                    'TWExport':TWExportResult, 'MySwExport':MySwExportResult, 'ESwExportResult':ESwExportResult,
+                    'MWExport':MWExportResult, 'zExport':zExportResult,
                     'USXExport':USXExportResult, 'OSISExport':OSISExportResult, 'swExport':swExportResult,
                     'htmlExport':htmlExportResult }
     # end of BibleWriter.doAllExports

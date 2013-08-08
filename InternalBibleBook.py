@@ -172,7 +172,7 @@ class InternalBibleBook:
                 but having it allows us to have a single point in order to catch particular bugs or errors.
         """
         if Globals.debugFlag:
-            if debuggingThisModule: print( "InternalBibleBook.appendLine( {}, {} ) for {} {}".format( repr(marker), repr(text), self.objectTypeString, self.bookReferenceCode ) )
+            if debuggingThisModule: print( "InternalBibleBook.appendLine( {}, {} ) for {} {} {}".format( repr(marker), repr(text), self.objectTypeString, self.name, self.bookReferenceCode ) )
             #if len(self._rawLines ) > 60: halt
             #if 'Thou hast turned from the fierceness of Thine anger' in text: halt
         if text and ( '\n' in text or '\r' in text ):
