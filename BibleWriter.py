@@ -3802,7 +3802,7 @@ class BibleWriter( InternalBible ):
             else: print( "BibleWriter.doAllExports finished:  PsUSFM={} USFM={}  TW={} MySw={} eSw={}  MW={}  Zef={}  USX={}  OSIS={}  Sw={}  HTML={}" \
                     .format( PseudoUSFMExportResult, USFMExportResult, TWExportResult, MySwExportResult, ESwExportResult, MWExportResult, zExportResult, USXExportResult, OSISExportResult, swExportResult, htmlExportResult ) )
         return {'PseudoUSFMExport':PseudoUSFMExportResult, 'USFMExport':USFMExportResult,
-                    'TWExport':TWExportResult, 'MySwExport':MySwExportResult, 'ESwExportResult':ESwExportResult,
+                    'TWExport':TWExportResult, 'MySwExport':MySwExportResult, 'ESwExport':ESwExportResult,
                     'MWExport':MWExportResult, 'zExport':zExportResult,
                     'USXExport':USXExportResult, 'OSISExport':OSISExportResult, 'swExport':swExportResult,
                     'htmlExport':htmlExportResult }
