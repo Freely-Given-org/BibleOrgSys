@@ -3308,12 +3308,12 @@ class BibleWriter( InternalBible ):
                 assert( len(verseData ) == 1 ) # in the introductory section
                 marker, text = verseData[0].getMarker(), verseData[0].getFullText()
                 if marker not in theWordIgnoredIntroMarkers:
-                    if marker=='mt1': composedLine += '<TS1>'+adjustLine(BBB,C,V,text)+'<Ts>'
-                    elif marker=='mt2': composedLine += '<TS2>'+adjustLine(BBB,C,V,text)+'<Ts>'
-                    elif marker=='mt3': composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>'
-                    elif marker=='ms1': composedLine += '<TS2>'+adjustLine(BBB,C,V,text)+'<Ts>'
-                    elif marker=='ms2': composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>'
-                    elif marker=='mr': composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>'
+                    if marker=='mt1': composedLine += '<TS1>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
+                    elif marker=='mt2': composedLine += '<TS2>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
+                    elif marker=='mt3': composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
+                    elif marker=='ms1': composedLine += '<TS2>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
+                    elif marker=='ms2': composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
+                    elif marker=='mr': composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
                     else:
                         logging.warning( "toESword.handleIntroduction: doesn't handle {} '{}' yet".format( BBB, marker ) )
                         if Globals.debugFlag and debuggingThisModule:
@@ -3376,10 +3376,10 @@ class BibleWriter( InternalBible ):
 
                 if marker == 's1':
                     if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
-                        ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '~^~line' # append the new paragraph marker to the previous line
-                    composedLine += '<TS1>'+adjustLine(BBB,C,V,text)+'<Ts>'
-                elif marker == 's2': composedLine += '<TS2>'+adjustLine(BBB,C,V,text)+'<Ts>'
-                elif marker in ( 's3', 'sr', 'd', ): composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>'
+                        ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '\\line ' # append the new paragraph marker to the previous line
+                    composedLine += '~^~b~^~i~^~f0 '+adjustLine(BBB,C,V,text)+'~^~cf0~^~b0~^~i0~^~line '
+                elif marker == 's2': composedLine += '~^~b~^~i~^~f0 '+adjustLine(BBB,C,V,text)+'~^~cf0~^~b0~^~i0~^~line '
+                elif marker in ( 's3', 'sr', 'd', ): composedLine += '~^~b~^~i~^~f0 '+adjustLine(BBB,C,V,text)+'~^~b~^~i~^~f0 '
                 elif marker in ( 'qa', 'r', ):
                     if marker=='r' and text and text[0]!='(' and text[-1]!=')': # Put parenthesis around this if not already there
                         text = '(' + text + ')'
@@ -3387,21 +3387,21 @@ class BibleWriter( InternalBible ):
                 elif marker in ( 'm', ):
                     assert( not text )
                     if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
-                        ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '~^~line' # append the new paragraph marker to the previous line
+                        ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '\\line ' # append the new paragraph marker to the previous line
                     #if text:
                         #print( 'm', repr(text), verseData )
-                        #composedLine += '~^~line'+adjustLine(BBB,C,V,text)
+                        #composedLine += '~^~line '+adjustLine(BBB,C,V,text)
                         #if ourGlobals['pi1'] or ourGlobals['pi2'] or ourGlobals['pi3'] or ourGlobals['pi4'] or ourGlobals['pi5'] or ourGlobals['pi6'] or ourGlobals['pi7']:
-                            #composedLine += '~^~line'
-                        #else: composedLine += '~^~line'
+                            #composedLine += '~^~line '
+                        #else: composedLine += '~^~line '
                     #else: # there is text
                         #composedLine += '~^~line'+adjustLine(BBB,C,V,text)
                 elif marker in ( 'p', 'b', ):
                     #print( marker, text )
                     assert( not text )
                     if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
-                        ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '~^~line' # append the new paragraph marker to the previous line
-                    #else: composedLine += '~^~line'
+                        ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '\\line ' # append the new paragraph marker to the previous line
+                    #else: composedLine += '~^~line '
                     #composedLine += adjustLine(BBB,C,V,text)
                 elif marker in ( 'pi1', ):
                     assert( not text )
@@ -3420,26 +3420,26 @@ class BibleWriter( InternalBible ):
                 elif marker in ( 'q1', 'qm1', ):
                     assert( not text )
                     if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
-                        ourGlobals['lastLine'] += '~^~line' # append the new quotation paragraph marker to the previous line
-                    else: composedLine += '~^~line'
+                        ourGlobals['lastLine'] += '\\line ' # append the new quotation paragraph marker to the previous line
+                    else: composedLine += '~^~line '
                     #composedLine += adjustLine(BBB,C,V,text)
                 elif marker in ( 'q2', 'qm2', ):
                     assert( not text )
                     if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
-                        ourGlobals['lastLine'] += '~^~line' # append the new quotation paragraph marker to the previous line
-                    else: composedLine += '~^~line'
+                        ourGlobals['lastLine'] += '\\line ' # append the new quotation paragraph marker to the previous line
+                    else: composedLine += '~^~line '
                     #composedLine += '~^~line<PI2>'+adjustLine(BBB,C,V,text)
                 elif marker in ( 'q3', 'qm3', ):
                     assert( not text )
                     if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
-                        ourGlobals['lastLine'] += '~^~line' # append the new quotation paragraph marker to the previous line
-                    else: composedLine += '~^~line'
+                        ourGlobals['lastLine'] += '\\line ' # append the new quotation paragraph marker to the previous line
+                    else: composedLine += '~^~line '
                     #composedLine += '~^~line<PI3>'+adjustLine(BBB,C,V,text)
                 elif marker in ( 'q4', 'qm4', ):
                     assert( not text )
                     if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
-                        ourGlobals['lastLine'] += '~^~line' # append the new quotation paragraph marker to the previous line
-                    else: composedLine += '~^~line'
+                        ourGlobals['lastLine'] += '\\line ' # append the new quotation paragraph marker to the previous line
+                    else: composedLine += '~^~line '
                     #composedLine += '~^~line<PI4>'+adjustLine(BBB,C,V,text)
                 elif marker == 'li1': composedLine += '<PI>• '+adjustLine(BBB,C,V,text)
                 elif marker == 'li2': composedLine += '<PI2>• '+adjustLine(BBB,C,V,text)
@@ -3448,8 +3448,8 @@ class BibleWriter( InternalBible ):
                 elif marker in ( 'cd', 'sp', ): composedLine += '<i>'+adjustLine(BBB,C,V,text)+'</i>'
                 elif marker in ( 'v~', 'p~', ):
                     #print( lastMarker )
-                    if lastMarker == 'p': composedLine += '~^~line' # We had a continuation paragraph
-                    elif lastMarker == 'm': composedLine += '~^~line' # We had a continuation paragraph
+                    if lastMarker == 'p': composedLine += '~^~line ' # We had a continuation paragraph
+                    elif lastMarker == 'm': composedLine += '~^~line ' # We had a continuation paragraph
                     elif lastMarker in Globals.USFMParagraphMarkers: pass # Did we need to do anything here???
                     elif lastMarker != 'v':
                         print( BBB, C, V, marker, lastMarker, verseData )
@@ -3527,7 +3527,6 @@ class BibleWriter( InternalBible ):
                         composedLine = ''
                         if verseData:
                             composedLine = composeVerseLine( BBB, C, V, verseData, ourGlobals )
-                            if '~' in composedLine: print( BBB, C, V, repr(composedLine) ); halt
                             #if composedLine: # don't bother writing blank (unfinished?) verses
                                 #print( "toESword: Writing", BBB, nBBB, C, V, marker, repr(line) )
                                 #sqlObject.execute( 'INSERT INTO "Bible" VALUES(?,?,?,?)', (nBBB,C,V,composedLine) )
