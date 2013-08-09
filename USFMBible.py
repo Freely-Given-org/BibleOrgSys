@@ -348,6 +348,7 @@ def demo():
         return title, nameDict
     # end of findInfo
 
+
     if 1: # Test a single folder containing a USFM Bible
         name, encoding, testFolder = "Matigsalug", "utf-8", "../../../../../Data/Work/Matigsalug/Bible/MBTV/" # You can put your test folder here
         if os.access( testFolder, os.R_OK ):
@@ -371,6 +372,7 @@ def demo():
                 newObj = Globals.unpickleObject( 'Matigsalug.pickle' )
                 if Globals.verbosityLevel > 0: print( "newObj is", newObj )
         else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
+
 
     if 1: # Test a whole folder full of folders of USFM Bibles
         testBaseFolder = "../../../../../Data/Work/Bibles/USFM Bibles/Haiola USFM test versions/"

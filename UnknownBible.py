@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # UnknownBible.py
-#   Last modified: 2013-08-07 (also update ProgVersion below)
+#   Last modified: 2013-08-09 (also update ProgVersion below)
 #
 # Module handling a unknown Bible object
 #
@@ -31,13 +31,13 @@ Given a folder name, analyses the files in it
 
 Currently aware of the following Bible types:
     USFM
-    Unbound Bible (table based), theWord (line based), MySword (SQLite3 based)
-    OSIS, USX, OpenSong, Zefania (all XML)
+    Unbound Bible (table based), theWord (line based), MySword (SQLite based), e-Sword (SQLite based)
+    OSIS, USX, OpenSong, Zefania, Haggai (all XML)
     Sword modules (binary).
 """
 
 ProgName = "Unknown Bible object handler"
-ProgVersion = "0.07"
+ProgVersion = "0.08"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -55,6 +55,7 @@ from USXXMLBible import USXXMLBibleFileCheck, USXXMLBible
 from OpenSongXMLBible import OpenSongXMLBibleFileCheck, OpenSongXMLBible
 from OSISXMLBible import OSISXMLBibleFileCheck, OSISXMLBible
 from ZefaniaXMLBible import ZefaniaXMLBibleFileCheck, ZefaniaXMLBible
+from HaggaiXMLBible import HaggaiXMLBibleFileCheck, HaggaiXMLBible
 from UnboundBible import UnboundBibleFileCheck, UnboundBible
 from TheWordBible import TheWordBibleFileCheck, TheWordBible
 from MySwordBible import MySwordBibleFileCheck, MySwordBible
@@ -182,6 +183,14 @@ class UnknownBible:
             typesFound.append( 'Zefania' )
             if Globals.verbosityLevel > 2: print( "UnknownBible.search: ZefaniaBibleCount", ZefaniaBibleCount )
 
+        # Search for Haggai XML Bibles
+        HaggaiBibleCount = HaggaiXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+        if HaggaiBibleCount:
+            totalBibleCount += HaggaiBibleCount
+            totalBibleTypes += 1
+            typesFound.append( 'Haggai' )
+            if Globals.verbosityLevel > 2: print( "UnknownBible.search: HaggaiBibleCount", HaggaiBibleCount )
+
 
         assert( len(typesFound) == totalBibleTypes )
         if totalBibleCount == 0:
@@ -232,6 +241,10 @@ class UnknownBible:
             self.foundType = "Zefania XML Bible"
             if autoLoad: return ZefaniaXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad )
             else: return self.foundType, ZefaniaBibleCount
+        elif HaggaiBibleCount == 1:
+            self.foundType = "Haggai XML Bible"
+            if autoLoad: return HaggaiXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad )
+            else: return self.foundType, HaggaiBibleCount
     # end of UnknownBible.search
 # end of class UnknownBible
 

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-08-06 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-08 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.49"
+ProgVersion = "0.50"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -174,7 +174,7 @@ class InternalBibleBook:
         if Globals.debugFlag:
             if debuggingThisModule: print( "InternalBibleBook.appendLine( {}, {} ) for {} {} {}".format( repr(marker), repr(text), self.objectTypeString, self.name, self.bookReferenceCode ) )
             #if len(self._rawLines ) > 60: halt
-            #if 'Thou hast turned from the fierceness of Thine anger' in text: halt
+            #if 'xyz' in text: halt
         if text and ( '\n' in text or '\r' in text ):
             logging.critical( "InternalBibleBook.appendLine found newLine in text: {}={}".format( self.objectTypeString, marker, repr(text) ) )
         if Globals.debugFlag:
@@ -772,7 +772,10 @@ class InternalBibleBook:
                         fixErrors.append( _("{} {}:{} Expected single chapter book to start with verse 1").format( self.bookReferenceCode, c, v ) )
                         logging.error( _("Expected single chapter book to start with verse 1 at {} {}:{}").format( self.bookReferenceCode, c, v ) )
                         self.addPriorityError( 38, c, v, _("Expected single chapter book to start with verse 1") )
-                    lastAdjustedMarker, lastOriginalMarker, lastAdjustedText, lastCleanText, lastExtras, lastOriginalText = self._processedLines.pop()
+                    poppedStuff = self._processedLines.pop()
+                    if poppedStuff is not None:
+                        lastAdjustedMarker, lastOriginalMarker, lastAdjustedText, lastCleanText, lastExtras, lastOriginalText = poppedStuff
+                    else: lastAdjustedMarker = lastOriginalMarker = lastAdjustedText = lastCleanText = lastExtras = lastOriginalText = None
                     print( self.bookReferenceCode, "lastMarker (popped) was", lastAdjustedMarker, lastAdjustedText )
                     if lastAdjustedMarker in ('p','q1','m','nb',): # The chapter marker should go before this
                         self._processedLines.append( InternalBibleEntry('c', 'c', '1', '1', [], '1') ) # Write the explicit chapter number

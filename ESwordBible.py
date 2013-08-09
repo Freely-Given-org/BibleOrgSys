@@ -48,7 +48,7 @@ e.g.,
 """
 
 ProgName = "e-Sword Bible format handler"
-ProgVersion = "0.01"
+ProgVersion = "0.02"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -248,10 +248,20 @@ class ESwordBible( Bible ):
             #halt
 
         # Stuff to just remove -- not sure what most of this is about yet
-        for stuff in ( '\\viewkind4', '\\uc1', '\\nowidctlpar', \
-                '\\tx720', '\\tx1440', '\\tx2160' '\\tx2880', '\\tx3600', '\\tx4320', '\\tx5040', '\\tx5760', '\\tx6480', '\\tx7200', '\\tx7920', '\\tx8640', '\\tx9360', '\\tx10080', \
-                '\\cf15', '\\cf10', '\\lang1030', '\\lang1033', '\\f0', ):
-            if line.startswith( stuff ): line = line[len(stuff):]
+        while True:
+            line = line.lstrip()
+            changed = False
+            for stuff in ( '\\viewkind4', '\\uc1', '\\nowidctlpar', \
+                    '\\paperw12240', '\\paperh15840', \
+                    '\\tx720', '\\tx1440', '\\tx2160' '\\tx2880', '\\tx3600', '\\tx4320', '\\tx5040', '\\tx5760', '\\tx6480', '\\tx7200', '\\tx7920', '\\tx8640', '\\tx9360', '\\tx10080', \
+                    '\\margl1440', '\\margt1440', '\\margr1440', '\\margb1440', '\\deftab1134', '\\widowctrl', \
+                    '\\formshade', '\\sectd', \
+                    '\\headery720', '\\footery720', '\\pgwsxn12240', '\\pghsxn15840', '\\marglsxn1800', \
+                    '\\margtsxn1440', '\\margrsxn1800', '\\margbsxn1440', '\\pgbrdropt32', '\\s17', \
+                    '\\itap0', '\\nosupersub', \
+                    '\\cf15', '\\cf14', '\\cf10', '\\lang1030', '\\lang1033', '\\f0', ):
+                if line.startswith( stuff ): line = line[len(stuff):]; changed = True
+            if not changed: break
         for stuff in ( '\\nosupersub', '\\ulnone', '\\b0', '\\i0', '\\cf0', ):
             if line.endswith( stuff ): line = line[:-len(stuff)]
 
@@ -350,8 +360,7 @@ class ESwordBible( Bible ):
             BBB = Globals.BibleBooksCodes.getBBBFromReferenceNumber( BBBn )
             if not BOS.isValidBCVRef( (BBB,str(C),str(V),''), 'checkForExtraMaterial' ):
                 logging.error( "checkForExtraMaterial: {} contains {} {}:{} {}".format( self.name, BBB, C, V, repr(text) ) )
-                halt
-
+                if Globals.debugFlag and debuggingThisModule: halt
     # end of ESwordBible.checkForExtraMaterial
 
 

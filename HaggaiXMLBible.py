@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# ZefaniaXMLBible.py
+# HaggaiXMLBible.py
 #   Last modified: 2013-08-09 by RJH (also update ProgVersion below)
 #
-# Module handling Zefania XML Bibles
+# Module handling Haggai XML Bibles
 #
 # Copyright (C) 2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -24,7 +24,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module reading and loading Zefania XML Bibles:
+Module reading and loading Haggai XML Bibles:
     <?xml version="1.0" encoding="utf-8"?>
     <XMLBIBLE xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="zef2005.xsd" version="2.0.1.18" status="v" biblename="King James Version" type="x-bible" revision="0">
     <INFORMATION>
@@ -36,7 +36,7 @@ Module reading and loading Zefania XML Bibles:
         <contributors />
         <date>2009-01-23</date>
         <type>Bible</type>
-        <format>Zefania XML Bible Markup Language</format>
+        <format>Haggai XML Bible Markup Language</format>
         <identifier>kjv</identifier>
         <source>http://www.unboundbible.com/zips/index.cfm?lang=English</source>
         <language>ENG</language>
@@ -58,7 +58,7 @@ or
       <VERS vnumber="3">to snap their bondsand fling their cords away? <BR art="x-nl" /></VERS>
 """
 
-ProgName = "Zefania XML Bible format handler"
+ProgName = "Haggai XML Bible format handler"
 ProgVersion = "0.23"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
@@ -81,32 +81,32 @@ extensionsToIgnore = ('ZIP', 'BAK', 'LOG', 'HTM','HTML', 'OSIS', 'USX', 'TXT', '
 
 
 
-def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
+def HaggaiXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
     """
-    Given a folder, search for Zefania XML Bible files or folders in the folder and in the next level down.
+    Given a folder, search for Haggai XML Bible files or folders in the folder and in the next level down.
 
     Returns False if an error is found.
 
     if autoLoad is false (default)
         returns None, or the number found.
 
-    if autoLoad is true and exactly one Zefania Bible is found,
-        returns the loaded ZefaniaXMLBible object.
+    if autoLoad is true and exactly one Haggai Bible is found,
+        returns the loaded HaggaiXMLBible object.
     """
-    if Globals.verbosityLevel > 2: print( "ZefaniaXMLBibleFileCheck( {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad ) )
+    if Globals.verbosityLevel > 2: print( "HaggaiXMLBibleFileCheck( {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad ) )
     if Globals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
     if Globals.debugFlag: assert( autoLoad in (True,False,) )
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
-        logging.critical( _("ZefaniaXMLBibleFileCheck: Given '{}' folder is unreadable").format( givenFolderName ) )
+        logging.critical( _("HaggaiXMLBibleFileCheck: Given '{}' folder is unreadable").format( givenFolderName ) )
         return False
     if not os.path.isdir( givenFolderName ):
-        logging.critical( _("ZefaniaXMLBibleFileCheck: Given '{}' path is not a folder").format( givenFolderName ) )
+        logging.critical( _("HaggaiXMLBibleFileCheck: Given '{}' path is not a folder").format( givenFolderName ) )
         return False
 
     # Find all the files and folders in this folder
-    if Globals.verbosityLevel > 3: print( " ZefaniaXMLBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    if Globals.verbosityLevel > 3: print( " HaggaiXMLBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -134,19 +134,15 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False 
             if not firstLines or len(firstLines)<2: continue
             if not firstLines[0].startswith( '<?xml version="1.0"' ) \
             and not firstLines[0].startswith( '\ufeff<?xml version="1.0"' ): # same but with BOM
-                if Globals.verbosityLevel > 2: print( "ZB (unexpected) first line was '{}' in {}".format( firstLines, thisFilename ) )
+                if Globals.verbosityLevel > 2: print( "HB (unexpected) first line was '{}' in {}".format( firstLines, thisFilename ) )
                 continue
-            if not firstLines[1].startswith( '<!--Nice Viewer' ) \
-            and not firstLines[1].startswith( '<!--Builded with' ) \
-            and not firstLines[1].startswith( '<!--For Programmers' ) \
-            and not firstLines[1].startswith( '<!--http://zefania' ):
-                continue
+            if 'haggai_' not in firstLines[1]: continue
         lastFilenameFound = thisFilename
         numFound += 1
     if numFound:
-        if Globals.verbosityLevel > 2: print( "ZefaniaXMLBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
+        if Globals.verbosityLevel > 2: print( "HaggaiXMLBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and autoLoad:
-            ub = ZefaniaXMLBible( givenFolderName, lastFilenameFound )
+            ub = HaggaiXMLBible( givenFolderName, lastFilenameFound )
             ub.load() # Load and process the file
             return ub
         return numFound
@@ -157,7 +153,7 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False 
     foundProjects = []
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
-        if Globals.verbosityLevel > 3: print( "    ZefaniaXMLBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        if Globals.verbosityLevel > 3: print( "    HaggaiXMLBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
         for something in os.listdir( tryFolderName ):
             somepath = os.path.join( givenFolderName, thisFolderName, something )
@@ -182,29 +178,25 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False 
                 and not firstLines[0].startswith( '\ufeff<?xml version="1.0"' ): # same but with BOM
                     if Globals.verbosityLevel > 2: print( "ZB (unexpected) first line was '{}' in {}".format( firstLines, thisFilename ) )
                     continue
-                if not firstLines[1].startswith( '<!--Nice Viewer' ) \
-                and not firstLines[1].startswith( '<!--Builded with' ) \
-                and not firstLines[1].startswith( '<!--For Programmers' ) \
-                and not firstLines[1].startswith( '<!--http://zefania' ):
-                    continue
+                if 'haggai_' not in firstLines[1]: continue
             foundProjects.append( (tryFolderName, thisFilename,) )
             lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
-        if Globals.verbosityLevel > 2: print( "ZefaniaXMLBibleFileCheck foundProjects", numFound, foundProjects )
+        if Globals.verbosityLevel > 2: print( "HaggaiXMLBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and autoLoad:
             if Globals.debugFlag: assert( len(foundProjects) == 1 )
-            ub = ZefaniaXMLBible( foundProjects[0][0], foundProjects[0][1] ) # Folder and filename
+            ub = HaggaiXMLBible( foundProjects[0][0], foundProjects[0][1] ) # Folder and filename
             ub.load() # Load and process the file
             return ub
         return numFound
-# end of ZefaniaXMLBibleFileCheck
+# end of HaggaiXMLBibleFileCheck
 
 
 
-class ZefaniaXMLBible( Bible ):
+class HaggaiXMLBible( Bible ):
     """
-    Class for reading, validating, and converting ZefaniaXMLBible XML.
+    Class for reading, validating, and converting HaggaiXMLBible XML.
     """
     XMLNameSpace = "{http://www.w3.org/2001/XMLSchema-instance}"
     treeTag = 'XMLBIBLE'
@@ -212,7 +204,8 @@ class ZefaniaXMLBible( Bible ):
     bookTag = 'BIBLEBOOK'
     chapterTag = 'CHAPTER'
     captionTag = 'CAPTION'
-    verseTag = 'VERS'
+    paragraphTag = 'PARAGRAPH'
+    verseTag = 'VERSE'
     noteTag = 'NOTE'
     styleTag = 'STYLE'
     breakTag = 'BR'
@@ -220,12 +213,12 @@ class ZefaniaXMLBible( Bible ):
 
     def __init__( self, sourceFolder, givenName, encoding='utf-8' ):
         """
-        Constructor: just sets up the Zefania Bible object.
+        Constructor: just sets up the Haggai Bible object.
         """
          # Setup and initialise the base class first
         Bible.__init__( self )
-        self.objectNameString = "Zefania XML Bible object"
-        self.objectTypeString = "Zefania"
+        self.objectNameString = "Haggai XML Bible object"
+        self.objectTypeString = "Haggai"
 
         # Now we can set our object variables
         self.sourceFolder, self.givenName, self.encoding = sourceFolder, givenName, encoding
@@ -239,12 +232,12 @@ class ZefaniaXMLBible( Bible ):
 
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):
-            print( "ZefaniaXMLBible: File '{}' is unreadable".format( self.sourceFilepath ) )
+            print( "HaggaiXMLBible: File '{}' is unreadable".format( self.sourceFilepath ) )
 
         self.name = self.givenName
         #if self.name is None:
             #pass
-    # end of ZefaniaXMLBible.__init__
+    # end of HaggaiXMLBible.__init__
 
 
     def load( self ):
@@ -256,15 +249,15 @@ class ZefaniaXMLBible( Bible ):
         if Globals.debugFlag: assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
 
         # Find the main (bible) container
-        if self.tree.tag == ZefaniaXMLBible.treeTag:
-            location = "Zefania XML file"
+        if self.tree.tag == HaggaiXMLBible.treeTag:
+            location = "Haggai XML file"
             Globals.checkXMLNoText( self.tree, location, '4f6h' )
             Globals.checkXMLNoTail( self.tree, location, '1wk8' )
 
             schema = None
             name = status = BibleType = revision = lgid = None
             for attrib,value in self.tree.items():
-                if attrib == ZefaniaXMLBible.XMLNameSpace + 'noNamespaceSchemaLocation':
+                if attrib == HaggaiXMLBible.XMLNameSpace + 'noNamespaceSchemaLocation':
                     schema = value
                 elif attrib == "biblename":
                     name = value
@@ -297,14 +290,14 @@ class ZefaniaXMLBible( Bible ):
 
             # Find the submain (book) containers
             for element in self.tree:
-                if element.tag == ZefaniaXMLBible.bookTag:
+                if element.tag == HaggaiXMLBible.bookTag:
                     sublocation = "book in " + location
                     Globals.checkXMLNoText( element, sublocation, 'g3g5' )
                     Globals.checkXMLNoTail( element, sublocation, 'd3f6' )
                     self.__validateAndExtractBook( element )
-                else: logging.error( "Expected to find '{}' but got '{}'".format( ZefaniaXMLBible.bookTag, element.tag ) )
-        else: logging.error( "Expected to load '{}' but got '{}'".format( ZefaniaXMLBible.treeTag, self.tree.tag ) )
-    # end of ZefaniaXMLBible.load
+                else: logging.error( "Expected to find '{}' but got '{}'".format( HaggaiXMLBible.bookTag, element.tag ) )
+        else: logging.error( "Expected to load '{}' but got '{}'".format( HaggaiXMLBible.treeTag, self.tree.tag ) )
+    # end of HaggaiXMLBible.load
 
 
     def __validateAndExtractHeader( self ):
@@ -319,7 +312,7 @@ class ZefaniaXMLBible( Bible ):
             <contributors />
             <date>2009-01-23</date>
             <type>Bible</type>
-            <format>Zefania XML Bible Markup Language</format>
+            <format>Haggai XML Bible Markup Language</format>
             <identifier>kjv</identifier>
             <source>http://www.unboundbible.com/zips/index.cfm?lang=English</source>
             <language>ENG</language>
@@ -368,6 +361,14 @@ class ZefaniaXMLBible( Bible ):
                 Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if element.text: self.publisher = element.text
+            elif element.tag == 'contributor':
+                sublocation = "contributor in {}".format( location )
+                Globals.checkXMLNoTail( element, sublocation, 'alj1d' )
+                Globals.checkXMLNoAttributes( element, sublocation, 'j3jjd' )
+                Globals.checkXMLNoSubelements( element, sublocation, '5gk78' )
+                if element.text:
+                    try: self.contributor = [ self.contributor, element.text ] # Put multiples into a list
+                    except AttributeError: self.contributor = element.text # Must be the first (and possibly only) one
             elif element.tag == 'contributors':
                 sublocation = "contributors in {}".format( location )
                 Globals.checkXMLNoTail( element, sublocation, 'al1d' )
@@ -393,7 +394,7 @@ class ZefaniaXMLBible( Bible ):
                 Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if Globals.debugFlag: assert( element.text )
-                if Globals.debugFlag: assert( element.text == 'Zefania XML Bible Markup Language' )
+                if Globals.debugFlag: assert( element.text == 'Haggai XML Bible Markup Language' )
             elif element.tag == 'identifier':
                 sublocation = "identifier in {}".format( location )
                 Globals.checkXMLNoTail( element, sublocation, 'al1d' )
@@ -428,7 +429,7 @@ class ZefaniaXMLBible( Bible ):
                 Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if element.text: self.rights = element.text
             else: logging.error( "Found unexpected '{}' tag in {}".format( element.tag, location ) )
-    # end of ZefaniaXMLBible.__validateAndExtractHeader
+    # end of HaggaiXMLBible.__validateAndExtractHeader
 
 
     def __validateAndExtractBook( self, book ):
@@ -460,19 +461,25 @@ class ZefaniaXMLBible( Bible ):
         if BBB:
             if Globals.verbosityLevel > 2: print( _("Validating {} {}...").format( BBB, bookName ) )
             thisBook = BibleBook( self.name, BBB )
-            thisBook.objectNameString = "Zefania XML Bible Book object"
-            thisBook.objectTypeString = "Zefania"
+            thisBook.objectNameString = "Haggai XML Bible Book object"
+            thisBook.objectTypeString = "Haggai"
             #thisBook.sourceFilepath = self.sourceFilepath
             for element in book:
-                if element.tag == ZefaniaXMLBible.chapterTag:
+                if element.tag == HaggaiXMLBible.captionTag:
+                    sublocation = "caption in {}".format( BBB )
+                    Globals.checkXMLNoAttributes( element, sublocation, 'jhl6' )
+                    Globals.checkXMLNoSubelements( element, sublocation, 'jk21' )
+                    Globals.checkXMLNoTail( element, sublocation, 'kjh6' )
+                    thisBook.appendLine( 'mt', element.text )
+                elif element.tag == HaggaiXMLBible.chapterTag:
                     sublocation = "chapter in {}".format( BBB )
                     Globals.checkXMLNoText( element, sublocation, 'j3jd' )
                     Globals.checkXMLNoTail( element, sublocation, 'al1d' )
                     self.__validateAndExtractChapter( BBB, thisBook, element )
-                else: logging.error( "Expected to find '{}' but got '{}'".format( ZefaniaXMLBible.chapterTag, element.tag ) )
+                else: logging.error( "Expected to find '{}' but got '{}'".format( HaggaiXMLBible.chapterTag, element.tag ) )
             if Globals.verbosityLevel > 2: print( "  Saving {} into results...".format( BBB ) )
             self.saveBook( thisBook )
-    # end of ZefaniaXMLBible.__validateAndExtractBook
+    # end of HaggaiXMLBible.__validateAndExtractBook
 
 
     def __validateAndExtractChapter( self, BBB, thisBook, chapter ):
@@ -496,10 +503,13 @@ class ZefaniaXMLBible( Bible ):
         else: logging.error( "Missing 'n' attribute in chapter element for BBB".format( BBB ) )
 
         for element in chapter:
-            if element.tag == ZefaniaXMLBible.verseTag:
+            if element.tag == HaggaiXMLBible.paragraphTag:
+                location = "paragraph in {} {}".format( BBB, chapterNumber )
+                self.__validateAndExtractParagraph( BBB, chapterNumber, thisBook, element )
+            elif element.tag == HaggaiXMLBible.verseTag+'disabled':
                 location = "verse in {} {}".format( BBB, chapterNumber )
                 self.__validateAndExtractVerse( BBB, chapterNumber, thisBook, element )
-            elif element.tag == ZefaniaXMLBible.captionTag: # Used in Psalms
+            elif element.tag == HaggaiXMLBible.captionTag+'disabled': # Used in Psalms
                 location = "caption in {} {}".format( BBB, chapterNumber )
                 Globals.checkXMLNoTail( element, location, 'k5k8' )
                 Globals.checkXMLNoSubelements( element, location, 'd3f5' )
@@ -517,14 +527,55 @@ class ZefaniaXMLBible( Bible ):
                 if vText: # This is the main text of the caption
                     #print( "{} {}:{} '{}'".format( BBB, chapterNumber, verseNumber, vText ) )
                     thisBook.appendLine( 'v', '0' + ' ' + vText ) # We save it as verse zero
-            else: logging.error( "Expected to find '{}' but got '{}'".format( ZefaniaXMLBible.verseTag, element.tag ) )
-    # end of ZefaniaXMLBible.__validateAndExtractChapter
+            else: logging.error( "Expected to find '{}' but got '{}'".format( HaggaiXMLBible.verseTag, element.tag ) )
+    # end of HaggaiXMLBible.__validateAndExtractChapter
+
+
+    def __validateAndExtractParagraph( self, BBB, chapterNumber, thisBook, paragraph ):
+        """
+        Check/validate and extract paragraph data from the given XML book record
+            finding and saving paragraphs and
+            finding and saving verse elements.
+        """
+
+        if Globals.verbosityLevel > 3: print( _("Validating XML paragraph...") )
+
+        location = "paragraph in {} {}".format( BBB, chapterNumber )
+        Globals.checkXMLNoAttributes( paragraph, location, 'brgw3' )
+        Globals.checkXMLNoText( paragraph, location, 'brgw3' )
+        Globals.checkXMLNoTail( paragraph, location, 'brgw3' )
+        thisBook.appendLine( 'p', '' )
+
+        # Handle verse subelements (verses)
+        for element in paragraph:
+            if element.tag == HaggaiXMLBible.verseTag:
+                location = "verse in {} {}".format( BBB, chapterNumber )
+                self.__validateAndExtractVerse( BBB, chapterNumber, thisBook, element )
+            elif element.tag == HaggaiXMLBible.captionTag+'disabled': # Used in Psalms
+                location = "caption in {} {}".format( BBB, chapterNumber )
+                Globals.checkXMLNoTail( element, location, 'k5k8' )
+                Globals.checkXMLNoSubelements( element, location, 'd3f5' )
+                # Handle caption attributes
+                vRef = None
+                for attrib,value in element.items():
+                    if attrib=="vref":
+                        vRef = value
+                        if Globals.debugFlag: assert( vRef == '1' )
+                    else: logging.warning( "Unprocessed '{}' attribute ({}) in caption element".format( attrib, value ) )
+                if Globals.debugFlag: assert( vRef )
+                vText = element.text
+                if not vText:
+                    logging.warning( "{} {}:{} has no text".format( BBB, chapterNumber, vRef ) )
+                if vText: # This is the main text of the caption
+                    #print( "{} {}:{} '{}'".format( BBB, chapterNumber, verseNumber, vText ) )
+                    thisBook.appendLine( 'v', '0' + ' ' + vText ) # We save it as verse zero
+            else: logging.error( "Expected to find '{}' but got '{}'".format( HaggaiXMLBible.verseTag, element.tag ) )
+    # end of HaggaiXMLBible.__validateAndExtractParagraph
 
 
     def __validateAndExtractVerse( self, BBB, chapterNumber, thisBook, verse ):
         """
-        Check/validate and extract chapter data from the given XML book record
-            finding and saving chapter numbers and
+        Check/validate and extract verse data from the given XML book record
             finding and saving verse elements.
         """
 
@@ -542,83 +593,86 @@ class ZefaniaXMLBible( Bible ):
         if Globals.debugFlag: assert( verseNumber )
         location = "{}:{}".format( location, verseNumber ) # Get a better location description
         #thisBook.appendLine( 'v', verseNumber )
-        vText = verse.text
+        vText = '' if verse.text is None else verse.text
         if vText: vText = vText.strip()
         #if not vText: # This happens if a verse starts immediately with a style or note
             #logging.warning( "{} {}:{} has no text".format( BBB, chapterNumber, verseNumber ) )
 
         # Handle verse subelements (notes and styled portions)
         for subelement in verse:
-            if subelement.tag == ZefaniaXMLBible.noteTag:
+            if subelement.tag == HaggaiXMLBible.noteTag:
                 sublocation = "note in " + location
                 noteType = None
                 for attrib,value in subelement.items():
-                    if attrib=="type":
-                        noteType = value
+                    if attrib=="type": noteType = value
                     else: logging.warning( "Unprocessed '{}' attribute ({}) in style subelement".format( attrib, value ) )
-                if noteType not in ('n-studynote','x-studynote',):
+                if noteType and noteType not in ('variant',):
                     logging.warning( "Unexpected {} note type in {}".format( noteType, BBB ) )
-                if Globals.debugFlag: assert( noteType )
                 nText, nTail = subelement.text, subelement.tail
                 #print( "note", BBB, chapterNumber, verseNumber, noteType, repr(nText), repr(nTail) )
-                #thisBook.appendLine( 'ST', css ) # XXXXXXXXXXXXXXXXXXXXXXXXXX Losing data here (for now)
-                #thisBook.appendLine( 'ST=', nText )
+                vText += "\\f + \\fk {} \\ft {}\\f*".format( noteType, nText ) if noteType else "\\f + \\ft {}\\f*".format( nText )
                 if nTail:
                     if '\n' in nTail:
-                        print( "ZefaniaXMLBible.__validateAndExtractVerse: nTail {} {}:{} '{}'".format( BBB, chapterNumber, verseNumber, nTail ) )
+                        print( "HaggaiXMLBible.__validateAndExtractVerse: nTail {} {}:{} '{}'".format( BBB, chapterNumber, verseNumber, nTail ) )
                         nTail = nTail.replace( '\n', ' ' )
-                    thisBook.appendLine( 'v~', nTail )
+                    vText += nTail
                 for subsubelement in subelement:
-                    if subsubelement.tag == ZefaniaXMLBible.styleTag:
+                    if subsubelement.tag == HaggaiXMLBible.styleTag:
                         subsublocation = "style in " + sublocation
                         Globals.checkXMLNoSubelements( subsubelement, subsublocation, 'fyt4' )
-                        css = idStyle = None
+                        fs = css = idStyle = None
                         for attrib,value in subsubelement.items():
-                            if attrib=="css":
-                                css = value
-                            elif attrib=="id":
-                                idStyle = value
+                            if attrib=='fs': fs = value
+                            #elif attrib=="css": css = value
+                            #elif attrib=="id": idStyle = value
                             else: logging.warning( "Unprocessed '{}' attribute ({}) in style subsubelement".format( attrib, value ) )
-                        if Globals.debugFlag: assert( css or idStyle )
+                        if Globals.debugFlag: assert( fs or css or idStyle )
                         SFM = None
-                        if css == "font-style:italic": SFM = '\\it'
-                        elif css == "font-style:italic;font-weight:bold": SFM = '\\bdit'
-                        elif css == "color:#FF0000": SFM = '\\em'
-                        elif css == "font-size: x-small; color:#8B8378": SFM = '\\add'
-                        elif css is None and idStyle=='cl:divineName': SFM = '\\nd'
-                        else: print( "css is", css, "idStyle is", idStyle ); halt
+                        if fs == 'italic': SFM = '\\it'
+                        elif fs == 'super': SFM = '\\bdit'
+                        elif fs == 'emphasis': SFM = '\\em'
+                        else: print( "fs is", fs, "css is", css, "idStyle is", idStyle ); halt
+                        #if css == "font-style:italic": SFM = '\\it'
+                        #elif css == "font-style:italic;font-weight:bold": SFM = '\\bdit'
+                        #elif css == "color:#FF0000": SFM = '\\em'
+                        #elif css == "font-size: x-small; color:#8B8378": SFM = '\\add'
+                        #elif css is None and idStyle=='cl:divineName': SFM = '\\nd'
+                        #else: print( "css is", css, "idStyle is", idStyle ); halt
                         sText, sTail = subsubelement.text.strip(), subsubelement.tail
                         if Globals.debugFlag: assert( sText )
                         if SFM: vText += SFM+' ' + sText + SFM+'*'
                         else: vText += '\\sc ' + '['+css+']' + sText + '\\sc* ' # Use sc for unknown styles
                         if sTail: vText += sTail.strip()
-                    else: logging.error( "Expected to find {} but got '{}' in {}".format( ZefaniaXMLBible.styleTag, subsubelement.tag, sublocation ) )
+                    else: logging.error( "Expected to find {} but got '{}' in {}".format( HaggaiXMLBible.styleTag, subsubelement.tag, sublocation ) )
 
-            elif subelement.tag == ZefaniaXMLBible.styleTag:
+            elif subelement.tag == HaggaiXMLBible.styleTag:
                 sublocation = "style in " + location
                 Globals.checkXMLNoSubelements( subelement, sublocation, 'f5gh' )
-                css = idStyle = None
+                fs = css = idStyle = None
                 for attrib,value in subelement.items():
-                    if attrib=="css":
-                        css = value
-                    elif attrib=="id":
-                        idStyle = value
+                    if attrib=="fs": fs = value
+                    #elif attrib=="css": css = value
+                    #elif attrib=="id": idStyle = value
                     else: logging.warning( "Unprocessed '{}' attribute ({}) in style subelement".format( attrib, value ) )
-                if Globals.debugFlag: assert( css or idStyle )
+                if Globals.debugFlag: assert( fs )
                 SFM = None
-                if css == "font-style:italic": SFM = '\\it'
-                elif css == "font-style:italic;font-weight:bold": SFM = '\\bdit'
-                elif css == "color:#FF0000": SFM = '\\em'
-                elif css == "font-size: x-small; color:#8B8378": SFM = '\\add'
-                elif css is None and idStyle=='cl:divineName': SFM = '\\nd'
-                else: print( "css is", css, "idStyle is", idStyle ); halt
+                if fs == 'super': SFM = '\\bdit'
+                elif fs == 'emphasis': SFM = '\\em'
+                else: print( "fs is", fs, "css is", css, "idStyle is", idStyle ); halt
+                #if css == "font-style:italic": SFM = '\\it'
+                #elif css == "font-style:italic;font-weight:bold": SFM = '\\bdit'
+                #elif css == "color:#FF0000": SFM = '\\em'
+                #elif css == "font-size: x-small; color:#8B8378": SFM = '\\add'
+                #elif css is None and idStyle=='cl:divineName': SFM = '\\nd'
+                #else: print( "css is", css, "idStyle is", idStyle ); halt
                 sText, sTail = subelement.text.strip(), subelement.tail
                 if Globals.debugFlag: assert( sText )
+                #print( BBB, chapterNumber, sublocation )
                 if SFM: vText += SFM+' ' + sText + SFM+'*'
                 else: vText += '\\sc ' + '['+css+']' + sText + '\\sc* ' # Use sc for unknown styles
                 if sTail: vText += sTail.strip()
 
-            elif subelement.tag == ZefaniaXMLBible.breakTag:
+            elif subelement.tag == HaggaiXMLBible.breakTag:
                 sublocation = "line break in " + location
                 Globals.checkXMLNoText( subelement, sublocation, 'c1d4' )
                 Globals.checkXMLNoSubelements( subelement, sublocation, 'g4g8' )
@@ -631,7 +685,7 @@ class ZefaniaXMLBible( Bible ):
                 #print( BBB, chapterNumber, verseNumber )
                 #assert( vText )
                 if vText:
-                    thisBook.appendLine( 'v', verseNumber + ' ' + vText )
+                    thisBook.appendLine( 'v', verseNumber + ' ' + vText ); verseNumber = None
                     vText = ''
                 thisBook.appendLine( 'm', subelement.tail.strip() if subelement.tail else '' )
                 #bTail = subelement.tail
@@ -640,11 +694,11 @@ class ZefaniaXMLBible( Bible ):
 
         if vText: # This is the main text of the verse (follows the verse milestone)
             if '\n' in vText:
-                print( "ZefaniaXMLBible.__validateAndExtractVerse: vText {} {}:{} '{}'".format( BBB, chapterNumber, verseNumber, vText ) )
+                print( "HaggaiXMLBible.__validateAndExtractVerse: vText {} {}:{} '{}'".format( BBB, chapterNumber, verseNumber, vText ) )
                 vText = vText.replace( '\n', ' ' )
-            thisBook.appendLine( 'v', verseNumber + ' ' + vText )
-    # end of ZefaniaXMLBible.__validateAndExtractVerse
-# end of ZefaniaXMLBible class
+            thisBook.appendLine( 'v', verseNumber + ' ' + vText ); verseNumber = None
+    # end of HaggaiXMLBible.__validateAndExtractVerse
+# end of HaggaiXMLBible class
 
 
 def demo():
@@ -654,90 +708,90 @@ def demo():
     if Globals.verbosityLevel > 0: print( ProgNameVersion )
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
-        testFolder = "../../../../../Data/Work/Bibles/Zefania modules/"
-        print( "TestA1", ZefaniaXMLBibleFileCheck( testFolder ) )
-        print( "TestA2", ZefaniaXMLBibleFileCheck( testFolder, autoLoad=True ) )
+        testFolder = "../../../../../Data/Work/Bibles/Formats/Haggai XML/"
+        print( "TestA1", HaggaiXMLBibleFileCheck( testFolder ) )
+        print( "TestA2", HaggaiXMLBibleFileCheck( testFolder, autoLoad=True ) )
         #testSubfolder = os.path.join( testFolder, 'something/' )
-        #print( "TestB1", ZefaniaXMLBibleFileCheck( testSubfolder ) )
-        #print( "TestB2", ZefaniaXMLBibleFileCheck( testSubfolder, autoLoad=True ) )
+        #print( "TestB1", HaggaiXMLBibleFileCheck( testSubfolder ) )
+        #print( "TestB2", HaggaiXMLBibleFileCheck( testSubfolder, autoLoad=True ) )
 
 
     if 1:
-        testFolder = "../../../../../Data/Work/Bibles/Zefania modules/"
-        #testFolder = "Tests/DataFilesForTests/ZefaniaTest/"
-        single = ( "kjv.xml", )
-        good = ( "BWE_zefania.xml", "en_gb_KJV2000.xml", "Etheridge_zefania.xml", "kjv.xml", "OEB_zefania.xml", \
-            'sf_elb_1871_original_NT_rev1.xml', 'sf_wycliffe.xml', 'ylt.xml')
-        nonEnglish = ( "italian.xml", )
-        bad = (  )
-        allOfThem = good + nonEnglish + bad
+        testFolder = "../../../../../Data/Work/Bibles/Formats/Haggai XML/"
+        count = totalBooks = 0
+        if os.access( testFolder, os.R_OK ): # check that we can read the test data
+            for something in sorted( os.listdir( testFolder ) ):
+                somepath = os.path.join( testFolder, something )
+                if os.path.isfile( somepath ) and something.endswith( '.xml' ):
+                    count += 1
+                    if Globals.verbosityLevel > 0: print( "\nH B{}/ {}".format( count, something ) )
+                    zb = HaggaiXMLBible( testFolder, something )
+                    zb.load()
+                    if Globals.verbosityLevel > 0: print( zb )
+                    if Globals.strictCheckingFlag:
+                        zb.check()
+                        #UBErrors = UB.getErrors()
+                        # print( UBErrors )
+                    #print( UB.getVersification () )
+                    #print( UB.getAddedUnits () )
+                    #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
+                        ##print( "Looking for", ref )
+                        #print( "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )
+                    if 1: # Test verse lookup
+                        import VerseReferences
+                        for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
+                                            ('OT','DAN','1','21'),
+                                            ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \
+                                            ('DC','BAR','1','1'), ('DC','MA1','1','1'), ('DC','MA2','1','1',), ):
+                            (t, b, c, v) = reference
+                            if t=='OT' and len(zb)==27: continue # Don't bother with OT references if it's only a NT
+                            if t=='NT' and len(zb)==39: continue # Don't bother with NT references if it's only a OT
+                            if t=='DC' and len(zb)<=66: continue # Don't bother with DC references if it's too small
+                            svk = VerseReferences.SimpleVerseKey( b, c, v )
+                            #print( svk, ob.getVerseDataList( reference ) )
+                            try: print( reference, svk.getShortText(), zb.getVerseText( svk ) )
+                            except KeyError: print( something, reference, "doesn't exist" )
+                    if Globals.commandLineOptions.export:
+                        zb.doAllExports()
+                else: print( "Sorry, skipping {}.".format( something ) )
+            if count: print( "\n{} total Haggai Bibles processed.".format( count ) )
+        else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testBaseFolder ) )
 
-        for j, testFilename in enumerate( allOfThem ): # Choose one of the above lists for testing
-            testFilepath = os.path.join( testFolder, testFilename )
 
-            # Demonstrate the XML Bible class
-            if Globals.verbosityLevel > 1: print( "\nZ B{}/ Demonstrating the Zefania Bible class...".format( j+1 ) )
-            if Globals.verbosityLevel > 0: print( "  Test filepath is '{}'".format( testFilepath ) )
-            zb = ZefaniaXMLBible( testFolder, testFilename )
-            zb.load() # Load and process the XML
-            print( zb ) # Just print a summary
-            #print( zb.books['JDE']._processedLines )
-            if 1: # Test verse lookup
-                import VerseReferences
-                for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
-                                    ('OT','DAN','1','21'),
-                                    ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \
-                                    ('DC','BAR','1','1'), ('DC','MA1','1','1'), ('DC','MA2','1','1',), ):
-                    (t, b, c, v) = reference
-                    if t=='OT' and len(zb)==27: continue # Don't bother with OT references if it's only a NT
-                    if t=='NT' and len(zb)==39: continue # Don't bother with NT references if it's only a OT
-                    if t=='DC' and len(zb)<=66: continue # Don't bother with DC references if it's too small
-                    svk = VerseReferences.SimpleVerseKey( b, c, v )
-                    #print( svk, ob.getVerseDataList( reference ) )
-                    try: print( reference, svk.getShortText(), zb.getVerseText( svk ) )
-                    except KeyError: print( testFilename, reference, "doesn't exist" )
+    #if 0: # Try some Zefania modules and see if they load
+        #testFolder = "../../../../../Data/Work/Bibles/Zefania modules/"
+        ##testFolder = "Tests/DataFilesForTests/HaggaiTest/"
+        #single = ( "kjv.xml", )
+        #good = ( "BWE_zefania.xml", "en_gb_KJV2000.xml", "Etheridge_zefania.xml", "kjv.xml", "OEB_zefania.xml", \
+            #'sf_elb_1871_original_NT_rev1.xml', 'sf_wycliffe.xml', 'ylt.xml')
+        #nonEnglish = ( "italian.xml", )
+        #bad = (  )
+        #allOfThem = good + nonEnglish + bad
 
+        #for j, testFilename in enumerate( allOfThem ): # Choose one of the above lists for testing
+            #testFilepath = os.path.join( testFolder, testFilename )
 
-    #if 1: # See how well Haggai XML modules load using this program
-        #testFolder = "../../../../../Data/Work/Bibles/Formats/Haggai XML/"
-        #count = totalBooks = 0
-        #if os.access( testFolder, os.R_OK ): # check that we can read the test data
-            #for something in sorted( os.listdir( testFolder ) ):
-                #somepath = os.path.join( testFolder, something )
-                #if os.path.isfile( somepath ) and something.endswith( '.xml' ):
-                    #count += 1
-                    #if Globals.verbosityLevel > 0: print( "\nZH C{}/ {}".format( count, something ) )
-                    #zb = ZefaniaXMLBible( testFolder, something )
-                    #zb.load()
-                    #if Globals.verbosityLevel > 0: print( zb )
-                    #if Globals.strictCheckingFlag:
-                        #zb.check()
-                        ##UBErrors = UB.getErrors()
-                        ## print( UBErrors )
-                    ##print( UB.getVersification () )
-                    ##print( UB.getAddedUnits () )
-                    ##for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
-                        ###print( "Looking for", ref )
-                        ##print( "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )
-                    #if 1: # Test verse lookup
-                        #import VerseReferences
-                        #for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
-                                            #('OT','DAN','1','21'),
-                                            #('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \
-                                            #('DC','BAR','1','1'), ('DC','MA1','1','1'), ('DC','MA2','1','1',), ):
-                            #(t, b, c, v) = reference
-                            #if t=='OT' and len(zb)==27: continue # Don't bother with OT references if it's only a NT
-                            #if t=='NT' and len(zb)==39: continue # Don't bother with NT references if it's only a OT
-                            #if t=='DC' and len(zb)<=66: continue # Don't bother with DC references if it's too small
-                            #svk = VerseReferences.SimpleVerseKey( b, c, v )
-                            ##print( svk, ob.getVerseDataList( reference ) )
-                            #try: print( reference, svk.getShortText(), zb.getVerseText( svk ) )
-                            #except KeyError: print( something, reference, "doesn't exist" )
-                    #if Globals.commandLineOptions.export:
-                        #zb.doAllExports()
-                #else: print( "Sorry, skipping {}.".format( something ) )
-            #if count: print( "\n{} total Zefania Bibles processed.".format( count ) )
-        #else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testBaseFolder ) )
+            ## Demonstrate the XML Bible class
+            #if Globals.verbosityLevel > 1: print( "\nHZ C{}/ Demonstrating the Haggai Bible class...".format( j+1 ) )
+            #if Globals.verbosityLevel > 0: print( "  Test filepath is '{}'".format( testFilepath ) )
+            #zb = HaggaiXMLBible( testFolder, testFilename )
+            #zb.load() # Load and process the XML
+            #print( zb ) # Just print a summary
+            ##print( zb.books['JDE']._processedLines )
+            #if 1: # Test verse lookup
+                #import VerseReferences
+                #for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
+                                    #('OT','DAN','1','21'),
+                                    #('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \
+                                    #('DC','BAR','1','1'), ('DC','MA1','1','1'), ('DC','MA2','1','1',), ):
+                    #(t, b, c, v) = reference
+                    #if t=='OT' and len(zb)==27: continue # Don't bother with OT references if it's only a NT
+                    #if t=='NT' and len(zb)==39: continue # Don't bother with NT references if it's only a OT
+                    #if t=='DC' and len(zb)<=66: continue # Don't bother with DC references if it's too small
+                    #svk = VerseReferences.SimpleVerseKey( b, c, v )
+                    ##print( svk, ob.getVerseDataList( reference ) )
+                    #try: print( reference, svk.getShortText(), zb.getVerseText( svk ) )
+                    #except KeyError: print( testFilename, reference, "doesn't exist" )
 # end of demo
 
 if __name__ == '__main__':
@@ -749,4 +803,4 @@ if __name__ == '__main__':
     demo()
 
     Globals.closedown( ProgName, ProgVersion )
-# end of ZefaniaXMLBible.py
+# end of HaggaiXMLBible.py
