@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-08-08 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-11 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -628,6 +628,128 @@ class BibleWriter( InternalBible ):
         if validationSchema: return xw.validate( validationSchema )
         return True
     # end of BibleWriter.toZefaniaXML
+
+
+
+    def toHaggaiXML( self, outputFolder=None, controlDict=None, validationSchema=None ):
+        """
+        Using settings from the given control file,
+            converts the USFM information to a UTF-8 Haggai XML file.
+
+        This format is roughly documented at http://de.wikipedia.org/wiki/Haggai_XML
+            but more fields can be discovered by looking at downloaded files.
+        """
+        if Globals.verbosityLevel > 1: print( "Running BibleWriter:toHaggaiXML..." )
+        if Globals.debugFlag: assert( self.books )
+
+        if not self.doneSetupGeneric: self.__setupWriter()
+        if not outputFolder: outputFolder = "OutputFiles/BOS_Haggai_Export/"
+        if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
+        if not controlDict:
+            controlDict, defaultControlFilename = {}, "To_Haggai_controls.txt"
+            try:
+                ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
+            except:
+                logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
+        if Globals.debugFlag: assert( controlDict and isinstance( controlDict, dict ) )
+
+        unhandledMarkers = set()
+
+        def writeHeader( writerObject ):
+            """Writes the Haggai header to the Haggai XML writerObject."""
+            writerObject.writeLineOpen( 'INFORMATION' )
+            if "HaggaiTitle" in controlDict and controlDict["HaggaiTitle"]: writerObject.writeLineOpenClose( 'title' , controlDict["HaggaiTitle"] )
+            if "HaggaiSubject" in controlDict and controlDict["HaggaiSubject"]: writerObject.writeLineOpenClose( 'subject', controlDict["HaggaiSubject"] )
+            if "HaggaiDescription" in controlDict and controlDict["HaggaiDescription"]: writerObject.writeLineOpenClose( 'description', controlDict["HaggaiDescription"] )
+            if "HaggaiPublisher" in controlDict and controlDict["HaggaiPublisher"]: writerObject.writeLineOpenClose( 'publisher', controlDict["HaggaiPublisher"] )
+            if "HaggaiContributors" in controlDict and controlDict["HaggaiContributors"]: writerObject.writeLineOpenClose( 'contributors', controlDict["HaggaiContributors"] )
+            if "HaggaiIdentifier" in controlDict and controlDict["HaggaiIdentifier"]: writerObject.writeLineOpenClose( 'identifier', controlDict["HaggaiIdentifier"] )
+            if "HaggaiSource" in controlDict and controlDict["HaggaiSource"]: writerObject.writeLineOpenClose( 'identifier', controlDict["HaggaiSource"] )
+            if "HaggaiCoverage" in controlDict and controlDict["HaggaiCoverage"]: writerObject.writeLineOpenClose( 'coverage', controlDict["HaggaiCoverage"] )
+            writerObject.writeLineOpenClose( 'format', 'Haggai XML Bible Markup Language' )
+            writerObject.writeLineOpenClose( 'date', datetime.now().date().isoformat() )
+            writerObject.writeLineOpenClose( 'creator', 'BibleWriter.py' )
+            writerObject.writeLineOpenClose( 'type', 'bible text' )
+            if "HaggaiLanguage" in controlDict and controlDict["HaggaiLanguage"]: writerObject.writeLineOpenClose( 'language', controlDict["HaggaiLanguage"] )
+            if "HaggaiRights" in controlDict and controlDict["HaggaiRights"]: writerObject.writeLineOpenClose( 'rights', controlDict["HaggaiRights"] )
+            writerObject.writeLineClose( 'INFORMATION' )
+        # end of toHaggaiXML.writeHeader
+
+        def writeBook( writerObject, BBB, bkData ):
+            """Writes a book to the Haggai XML writerObject."""
+            #print( 'BIBLEBOOK', [('bnumber',Globals.BibleBooksCodes.getReferenceNumber(BBB)), ('bname',Globals.BibleBooksCodes.getEnglishName_NR(BBB)), ('bsname',Globals.BibleBooksCodes.getOSISAbbreviation(BBB))] )
+            OSISAbbrev = Globals.BibleBooksCodes.getOSISAbbreviation( BBB )
+            if not OSISAbbrev:
+                logging.error( "toHaggai: Can't write {} Haggai book because no OSIS code available".format( BBB ) ); return
+            writerObject.writeLineOpen( 'BIBLEBOOK', [('bnumber',Globals.BibleBooksCodes.getReferenceNumber(BBB)), ('bname',Globals.BibleBooksCodes.getEnglishName_NR(BBB)), ('bsname',OSISAbbrev)] )
+            haveOpenChapter = haveOpenParagraph = False
+            for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
+                marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getFullText(), verseDataEntry.getExtras()
+                if marker == 'c':
+                    if haveOpenParagraph:
+                        writerObject.writeLineClose ( 'PARAGRAPH' ); haveOpenParagraph = False
+                    if haveOpenChapter:
+                        writerObject.writeLineClose ( 'CHAPTER' )
+                    writerObject.writeLineOpen ( 'CHAPTER', ('cnumber',text) )
+                    haveOpenChapter = True
+                if marker == 'p':
+                    if haveOpenParagraph:
+                        writerObject.writeLineClose ( 'PARAGRAPH' )
+                    writerObject.writeLineOpen ( 'PARAGRAPH' )
+                    haveOpenParagraph = True
+                elif marker == 'v':
+                    #print( "Text '{}'".format( text ) )
+                    if not text: logging.warning( "toHaggaiXML: Missing text for v" ); continue
+                    verseNumberString = text.replace('<','').replace('>','').replace('"','') # Used below but remove anything that'll cause a big XML problem later
+                    #writerObject.writeLineOpenClose ( 'VERS', verseText, ('vnumber',verseNumberString) )
+                elif marker == 'v~':
+                    assert( text or extras )
+                    #print( "Text '{}'".format( text ) )
+                    if not text: logging.warning( "toHaggaiXML: Missing text for v~" ); continue
+                    # TODO: We haven't stripped out character fields from within the verse -- not sure how Haggai handles them yet
+                    if not text: # this is an empty (untranslated) verse
+                        text = '- - -' # but we'll put in a filler
+                    writerObject.writeLineOpenClose ( 'VERSE', text, ('vnumber',verseNumberString) )
+                elif marker == 'p~':
+                    assert( text or extras )
+                    # TODO: We haven't stripped out character fields from within the verse -- not sure how Haggai handles them yet
+                    if text: writerObject.writeLineOpenClose ( 'VERSE', text )
+                elif marker not in ('c#',): # These are the markers that we can safely ignore for this export
+                    unhandledMarkers.add( marker )
+            if haveOpenParagraph:
+                writerObject.writeLineClose ( 'PARAGRAPH' )
+            if haveOpenChapter:
+                writerObject.writeLineClose( 'CHAPTER' )
+            writerObject.writeLineClose( 'BIBLEBOOK' )
+        # end of toHaggaiXML.writeBook
+
+        # Set-up our Bible reference system
+        if controlDict['PublicationCode'] == "GENERIC":
+            BOS = self.genericBOS
+            BRL = self.genericBRL
+        else:
+            BOS = BibleOrganizationalSystem( controlDict["PublicationCode"] )
+            BRL = BibleReferenceList( BOS, BibleObject=None )
+
+        if Globals.verbosityLevel > 1: print( _("Exporting to Haggai format...") )
+        xw = MLWriter( Globals.makeSafeFilename( controlDict["HaggaiOutputFilename"] ), outputFolder )
+        xw.setHumanReadable()
+        xw.start()
+# TODO: Some modules have <XMLBIBLE xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="zef2005.xsd" version="2.0.1.18" status='v' revision="1" type="x-bible" biblename="KJV+">
+        xw.writeLineOpen( 'XMLBible', [('xmlns:xsi',"http://www.w3.org/2001/XMLSchema-instance"), ('type',"x-bible"), ('biblename',controlDict["HaggaiBibleName"]) ] )
+        if True: #if controlDict["HaggaiFiles"]=="byBible":
+            writeHeader( xw )
+            for BBB,bookData in self.books.items():
+                writeBook( xw, BBB, bookData )
+        xw.writeLineClose( 'XMLBible' )
+        xw.close()
+        if unhandledMarkers:
+            logging.warning( "toHaggai: Unhandled markers were {}".format( unhandledMarkers ) )
+            if Globals.verbosityLevel > 1:
+                print( "  " + _("WARNING: Unhandled toHaggai markers were {}").format( unhandledMarkers ) )
+        if validationSchema: return xw.validate( validationSchema )
+        return True
+    # end of BibleWriter.toHaggaiXML
 
 
 
@@ -3693,7 +3815,8 @@ class BibleWriter( InternalBible ):
         MySwOutputFolder = os.path.join( givenOutputFolderName, "BOS_MySword_" + ("Reexport/" if self.objectTypeString=='MySword' else "Export/" ) )
         ESwOutputFolder = os.path.join( givenOutputFolderName, "BOS_e-Sword_" + ("Reexport/" if self.objectTypeString=='e-Sword' else "Export/" ) )
         MWOutputFolder = os.path.join( givenOutputFolderName, "BOS_MediaWiki_" + ("Reexport/" if self.objectTypeString=='MediaWiki' else "Export/" ) )
-        zOutputFolder = os.path.join( givenOutputFolderName, "BOS_Zefania_" + ("Reexport/" if self.objectTypeString=='Zefania' else "Export/" ) )
+        zefOutputFolder = os.path.join( givenOutputFolderName, "BOS_Zefania_" + ("Reexport/" if self.objectTypeString=='Zefania' else "Export/" ) )
+        hagOutputFolder = os.path.join( givenOutputFolderName, "BOS_Haggai_" + ("Reexport/" if self.objectTypeString=='Haggia' else "Export/" ) )
         USXOutputFolder = os.path.join( givenOutputFolderName, "BOS_USX_" + ("Reexport/" if self.objectTypeString=='USX' else "Export/" ) )
         OSISOutputFolder = os.path.join( givenOutputFolderName, "BOS_OSIS_" + ("Reexport/" if self.objectTypeString=='OSIS' else "Export/" ) )
         swOutputFolder = os.path.join( givenOutputFolderName, "BOS_Sword_" + ("Reexport/" if self.objectTypeString=='Sword' else "Export/" ) )
@@ -3711,7 +3834,8 @@ class BibleWriter( InternalBible ):
             PseudoUSFMExportResult = self.toPseudoUSFM( PseudoUSFMOutputFolder )
             USFMExportResult = self.toUSFM( USFMOutputFolder )
             MWExportResult = self.toMediaWiki( MWOutputFolder )
-            zExportResult = self.toZefaniaXML( zOutputFolder )
+            zefExportResult = self.toZefaniaXML( zefOutputFolder )
+            hagExportResult = self.toHaggaiXML( hagOutputFolder )
             USXExportResult = self.toUSXXML( USXOutputFolder )
             OSISExportResult = self.toOSISXML( OSISOutputFolder )
             swExportResult = self.toSwordModule( swOutputFolder )
@@ -3754,11 +3878,16 @@ class BibleWriter( InternalBible ):
                 MWExportResult = False
                 print("BibleWriter.doAllExports.toMediaWiki Unexpected error:", sys.exc_info()[0], err)
                 logging.error( "BibleWriter.doAllExports.toMediaWiki: Oops, failed!" )
-            try: zExportResult = self.toZefaniaXML( zOutputFolder )
+            try: zefExportResult = self.toZefaniaXML( zefOutputFolder )
             except Exception as err:
-                zExportResult = False
+                zefExportResult = False
                 print("BibleWriter.doAllExports.toZefaniaXML Unexpected error:", sys.exc_info()[0], err)
                 logging.error( "BibleWriter.doAllExports.toZefaniaXML: Oops, failed!" )
+            try: hagExportResult = self.toHaggaiXML( hagOutputFolder )
+            except Exception as err:
+                hagExportResult = False
+                print("BibleWriter.doAllExports.toHaggaiXML Unexpected error:", sys.exc_info()[0], err)
+                logging.error( "BibleWriter.doAllExports.toHaggaiXML: Oops, failed!" )
             try: USXExportResult = self.toUSXXML( USXOutputFolder )
             except Exception as err:
                 USXExportResult = False
@@ -3797,13 +3926,15 @@ class BibleWriter( InternalBible ):
 
         if Globals.verbosityLevel > 1:
             if PseudoUSFMExportResult and USFMExportResult and TWExportResult and MySwExportResult and ESwExportResult and MWExportResult \
-            and zExportResult and USXExportResult and OSISExportResult and swExportResult and htmlExportResult:
+            and zefExportResult and hagExportResult and USXExportResult and OSISExportResult and swExportResult and htmlExportResult:
                 print( "BibleWriter.doAllExports finished them all successfully!" )
-            else: print( "BibleWriter.doAllExports finished:  PsUSFM={} USFM={}  TW={} MySw={} eSw={}  MW={}  Zef={}  USX={}  OSIS={}  Sw={}  HTML={}" \
-                    .format( PseudoUSFMExportResult, USFMExportResult, TWExportResult, MySwExportResult, ESwExportResult, MWExportResult, zExportResult, USXExportResult, OSISExportResult, swExportResult, htmlExportResult ) )
+            else: print( "BibleWriter.doAllExports finished:  PsUSFM={} USFM={}  TW={} MySw={} eSw={}  MW={}  Zef={} Hag={}  USX={}  OSIS={}  Sw={}  HTML={}" \
+                    .format( PseudoUSFMExportResult, USFMExportResult, TWExportResult, MySwExportResult, ESwExportResult, \
+                                MWExportResult, zefExportResult, hagExportResult, USXExportResult, OSISExportResult, \
+                                swExportResult, htmlExportResult ) )
         return {'PseudoUSFMExport':PseudoUSFMExportResult, 'USFMExport':USFMExportResult,
                     'TWExport':TWExportResult, 'MySwExport':MySwExportResult, 'ESwExport':ESwExportResult,
-                    'MWExport':MWExportResult, 'zExport':zExportResult,
+                    'MWExport':MWExportResult, 'zefExport':zefExportResult, 'hagExport':hagExportResult,
                     'USXExport':USXExportResult, 'OSISExport':OSISExportResult, 'swExport':swExportResult,
                     'htmlExport':htmlExportResult }
     # end of BibleWriter.doAllExports
