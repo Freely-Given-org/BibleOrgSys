@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # HaggaiXMLBible.py
-#   Last modified: 2013-08-09 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-11 by RJH (also update ProgVersion below)
 #
 # Module handling Haggai XML Bibles
 #
@@ -753,6 +753,8 @@ def demo():
                             except KeyError: print( something, reference, "doesn't exist" )
                     if Globals.commandLineOptions.export:
                         zb.doAllExports()
+                    else:
+                        zb.toHaggaiXML()
                 else: print( "Sorry, skipping {}.".format( something ) )
             if count: print( "\n{} total Haggai Bibles processed.".format( count ) )
         else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testBaseFolder ) )

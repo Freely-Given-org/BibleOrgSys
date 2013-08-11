@@ -3857,7 +3857,8 @@ class BibleWriter( InternalBible ):
                 assert( len(results) == len(self.__outputFolders) )
                 USFMExportResult = results[0]
                 MWExportResult = results[1]
-                zExportResult = results[2]
+                zefExportResult = results[2]
+                hagExportResult = results[2]
                 USXExportResult = results[3]
                 OSISExportResult = results[4]
                 swExportResult = results[5]
