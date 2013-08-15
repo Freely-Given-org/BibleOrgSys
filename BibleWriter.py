@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-08-11 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-15 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -50,7 +50,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.37"
+ProgVersion = "0.38"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -2771,14 +2771,19 @@ class BibleWriter( InternalBible ):
 
                 # Semantic stuff
                 text = text.replace( '\\bk ', '<span class="bookName">' ).replace( '\\bk*', '</span>' )
+                text = text.replace( '\\wj ', '<span class="wordsOfJesus">' ).replace( '\\wj*', '</span>' )
+                text = text.replace( '\\nd ', '<span class="divineName">' ).replace( '\\nd*', '</span>' )
+                text = text.replace( '\\k ', '<span class="keyWord">' ).replace( '\\k*', '</span>' )
 
                 # Direct formatting
                 text = text.replace( '\\bdit ', '<span class="boldItalitc">' ).replace( '\\bdit*', '</span>' )
                 text = text.replace( '\\it ', '<span class="italic">' ).replace( '\\it*', '</span>' )
                 text = text.replace( '\\bd ', '<span class="bold">' ).replace( '\\bd*', '</span>' )
+                text = text.replace( '\\sc ', '<span class="smallCaps">' ).replace( '\\sc*', '</span>' )
 
                 if '\\' in text:
-                    print( "toHTML5.formatText: unprocessed code in {} from {}".format( repr(text), repr(givenText) ) )
+                    if Globals.debugFlag or Globals.verbosityLevel > 2:
+                        print( "toHTML5.formatText: unprocessed code in {} from {}".format( repr(text), repr(givenText) ) )
                     if Globals.debugFlag and debuggingThisModule: halt
                 return text
             # end of formatText
@@ -2807,7 +2812,7 @@ class BibleWriter( InternalBible ):
                 elif marker == 'ip':
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
                     writerObject.writeLineOpen( 'p', ('class','introductoryParagraph') ); haveOpenParagraph = True
-                    if text: writerObject.writeLineText( formatText( text, extras, ourGlobals ) )
+                    if text: writerObject.writeLineText( formatText( text, extras, ourGlobals ), noTextCheck=True )
                 elif marker == 'iot':
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
                     if text: writerObject.writeLineOpenClose( 'h3', text, ('class','outlineTitle') )
@@ -2879,12 +2884,12 @@ class BibleWriter( InternalBible ):
                     if not haveOpenParagraph:
                         logging.warning( "toHTML5: Have verse text {} outside a paragraph in {} {}:{}".format( text, BBB, C, V ) )
                         writerObject.writeLineOpen( 'p', ('class','unknownParagraph') ); haveOpenParagraph = True
-                    if text: writerObject.writeLineText( formatText( text, extras, ourGlobals ) )
+                    if text: writerObject.writeLineText( formatText( text, extras, ourGlobals ), noTextCheck=True )
                 elif marker=='p~':
                     if not haveOpenParagraph:
                         logging.warning( "toHTML5: Have verse text {} outside a paragraph in {} {}:{}".format( text, BBB, C, V ) )
                         writerObject.writeLineOpen( 'p', ('class','unknownParagraph') ); haveOpenParagraph = True
-                    if text: writerObject.writeLineText( formatText( text, extras, ourGlobals ) )
+                    if text: writerObject.writeLineText( formatText( text, extras, ourGlobals ), noTextCheck=True )
                 else: unhandledMarkers.add( marker )
                 if extras and marker not in ('v~','p~',): logging.warning( "toHTML5: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
             if haveOpenList: writerObject.writeLineClose( 'p' ); haveOpenList = False

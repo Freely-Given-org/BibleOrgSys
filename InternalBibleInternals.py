@@ -401,25 +401,26 @@ class InternalBibleIndex:
                 #print( "saveAnythingOutstanding", self.bookReferenceCode, saveCV, saveJ, lineCount, context )
                 #if saveCV == ('0','0'): halt
                 #assert( 1 <= lineCount <= 120 ) # Could potentially be even higher for bridged verses (e.g., 1Chr 11:26-47, Ezra 2:3-20) and where words are stored individually
-                if saveCV in self.indexData and Globals.verbosityLevel > 2:
+                if saveCV in self.indexData:
                     logging.critical( "makeIndex.saveAnythingOutstanding: losing Biblical text by replacing index entry {} {}:{}".format( self.bookReferenceCode, strC, strV ) )
-                    print( saveCV )
-                    try:
-                        iep = self.indexData[(saveCV[0],str(int(saveCV[1])-1))]
-                        logging.error( "  mI:sAO previous {}".format( iep ) )
-                        ix,lc,ct = iep.getEntryIndex(), iep.getEntryCount(), iep.getContext()
+                    if Globals.verbosityLevel > 2:
+                        print( saveCV )
+                        try:
+                            iep = self.indexData[(saveCV[0],str(int(saveCV[1])-1))]
+                            logging.error( "  mI:sAO previous {}".format( iep ) )
+                            ix,lc,ct = iep.getEntryIndex(), iep.getEntryCount(), iep.getContext()
+                            for ixx in range( ix, ix+lc ):
+                                logging.error( "   mI:sAO prev {} {}".format( self.givenBibleEntries[ixx], ct ) )
+                        except: pass
+                        logging.error( "  mI:sAO was {}".format( self.indexData[saveCV] ) )
+                        ie = self.indexData[saveCV]
+                        ix,lc,ct = ie.getEntryIndex(), ie.getEntryCount(), ie.getContext()
                         for ixx in range( ix, ix+lc ):
-                            logging.error( "   mI:sAO prev {} {}".format( self.givenBibleEntries[ixx], ct ) )
-                    except: pass
-                    logging.error( "  mI:sAO was {}".format( self.indexData[saveCV] ) )
-                    ie = self.indexData[saveCV]
-                    ix,lc,ct = ie.getEntryIndex(), ie.getEntryCount(), ie.getContext()
-                    for ixx in range( ix, ix+lc ):
-                        logging.error( "   mI:sAO {} {}".format( self.givenBibleEntries[ixx], ct ) )
-                    logging.error( "  mI:sAO now {}".format( (saveJ,lineCount,context) ) )
-                    for ixx in range( saveJ, saveJ+lineCount ):
-                        logging.error( "   mI:sAO {} {}".format( self.givenBibleEntries[ixx], context ) )
-                    if Globals.debugFlag: halt # This is a serious error that is losing Biblical text
+                            logging.error( "   mI:sAO {} {}".format( self.givenBibleEntries[ixx], ct ) )
+                        logging.error( "  mI:sAO now {}".format( (saveJ,lineCount,context) ) )
+                        for ixx in range( saveJ, saveJ+lineCount ):
+                            logging.error( "   mI:sAO {} {}".format( self.givenBibleEntries[ixx], context ) )
+                        if Globals.debugFlag: halt # This is a serious error that is losing Biblical text
                 self.indexData[saveCV] = InternalBibleIndexEntry( saveJ, lineCount, context )
                 saveCV = saveJ = None
                 lineCount = 0

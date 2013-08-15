@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-08-08 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-15 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -212,7 +212,7 @@ class InternalBibleBook:
                     if self.pntsCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
                         logging.warning( "InternalBibleBook.appendLine: Possibly needed to strip {} {} {}='{}'".format( self.objectTypeString, self.bookReferenceCode, marker, text ) )
                     else: # we've reached our limit
-                        logging.warning( _('Additional "Possible needed to strip" messages suppressed...') )
+                        logging.warning( _('Additional "Possibly needed to strip" messages suppressed...') )
                         self.pntsCount = -1 # So we don't do this again (for this book)
 
         rawLineTuple = ( marker, text )

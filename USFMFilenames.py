@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMFilenames.py
-#   Last modified: 2013-06-24 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-15 by RJH (also update ProgVersion below)
 #
 # Module handling USFM Bible filenames
 #
@@ -28,7 +28,7 @@ Module for creating and manipulating USFM filenames.
 """
 
 ProgName = "USFM Bible filenames handler"
-ProgVersion = "0.59"
+ProgVersion = "0.60"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -52,6 +52,16 @@ BibleditFilenames = ( '1_Genesis', '2_Exodus', '3_Leviticus', '4_Numbers', '5_De
     '67_Front_Matter', '68_Back_Matter', '69_Other_Material', '70_Tobit', '71_Judith', '72_Esther_(Greek)', '73_Wisdom_of_Solomon', '74_Sirach', '75_Baruch',
     '76_Letter_of_Jeremiah', '77_Song_of_the_Three_Children', '78_Susanna', '79_Bel_and_the_Dragon', '80_1_Maccabees', '81_2_Maccabees',
     '82_1_Esdras', '83_Prayer_of_Manasses', '84_Psalm_151', '85_3_Maccabees', '86_2_Esdras', '87_4_Maccabees', '88_Daniel_(Greek)' )
+AlternateFilenames = ( '01-Genesis', '02-Exodus', '03-Leviticus', '04-Numbers', '05-Deuteronomy', '06-Joshua', '07-Judges', '08-Ruth', '09-1 Samuel', '10-2 Samuel',
+    '11-1 Kings', '12-2 Kings', '13-1 Chronicles', '14-2 Chronicles', '15-Ezra', '16-Nehemiah', '17-Esther', '18-Job', '19-Psalms', '20-Proverbs', '21-Ecclesiastes',
+    '22-Song-of-Solomon', '23-Isaiah', '24-Jeremiah', '25-Lamentations', '26-Ezekiel', '27-Daniel', '28-Hosea', '29-Joel', '30-Amos', '31-Obadiah', '32-Jonah',
+    '33-Micah', '34-Nahum', '35-Habakkuk', '36-Zephaniah', '37-Haggai', '38-Zechariah', '39-Malachi',
+    '40-Matthew', '41-Mark', '42-Luke', '43-John', '44-Acts', '45-Romans', '46-1 Corinthians', '47-2 Corinthians', '48-Galatians', '49-Ephesians', '50-Philippians',
+    '51-Colossians', '52-1 Thessalonians', '53-2 Thessalonians', '54-1 Timothy', '55-2Timothy', '56-Titus', '57-Philemon',
+    '58-Hebrews', '59-James', '60-1 Peter', '61-2 Peter', '62-1 John', '63-2 John', '64-3 John', '65-Jude', '66-Revelation',
+    '67-Front-Matter', '68-Back-Matter', '69-Other-Material', '70-Tobit', '71-Judith', '72-Esther-(Greek)', '73-Wisdom-of-Solomon', '74-Sirach', '75-Baruch',
+    '76-Letter-of-Jeremiah', '77-Song-of-the-Three-Children', '78-Susanna', '79-Bel-and-the-Dragon', '80-1 Maccabees', '81-2 Maccabees',
+    '82-1 Esdras', '83-Prayer-of-Manasses', '84-Psalm-151', '85 3-Maccabees', '86-2 Esdras', '87-4 Maccabees', '88-Daniel-(Greek)' )
 
 # All of the following must be all UPPER CASE
 filenamesToIgnore = ('AUTOCORRECT.TXT','HYPHENATEDWORDS.TXT','PRINTDRAFTCHANGES.TXT','README.TXT','BOOK_NAMES.TXT',) # Only needs to include names whose extensions are not listed below
@@ -129,6 +139,18 @@ class USFMFilenames:
                             self.digitsIndex = digitsIndex
                             self.USFMBookCodeIndex = None
                             self.pattern = "Dd_BEName"
+                            self.fileExtension = foundExtBit[1:]
+                            matched = True
+                            break
+            elif '-' in foundFileBit and foundExtBit and foundExtBit[0]=='.': # Check for possible Bibledit filenames first
+                for USFMBookCode,BibleditDigits,bookReferenceCode in self._BibleditBooksCodeNumberTriples:
+                    if foundFileBit in AlternateFilenames and foundExtBit == '.usfm':
+                        if foundFilename[0:2].isdigit:
+                            self.languageIndex = None
+                            self.languageCode = None
+                            self.digitsIndex = 0
+                            self.USFMBookCodeIndex = None
+                            self.pattern = "dd-OEBName"
                             self.fileExtension = foundExtBit[1:]
                             matched = True
                             break
@@ -351,6 +373,13 @@ class USFMFilenames:
                     for BEFilename in BibleditFilenames: # this doesn't seem very efficient, but it does work
                         if BEFilename.startswith( BibleditSignature ):
                             resultList.append( (bookReferenceCode,BEFilename+'.'+self.fileExtension,) )
+                            break
+            elif self.pattern == "dd-OEBName":
+                for USFMBookCode,USFMDigits,bookReferenceCode in self._USFMBooksCodeNumberTriples:
+                    AltSignature = USFMDigits + '-'
+                    for AltFilename in AlternateFilenames: # this doesn't seem very efficient, but it does work
+                        if AltFilename.startswith( AltSignature ):
+                            resultList.append( (bookReferenceCode,AltFilename+'.'+self.fileExtension,) )
                             break
             else: # they are Paratext style
                 for USFMBookCode,USFMDigits,bookReferenceCode in self._USFMBooksCodeNumberTriples:

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ESwordBible.py
-#   Last modified: 2013-08-08 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-11 by RJH (also update ProgVersion below)
 #
 # Module handling "e-Sword" Bible module files
 #
@@ -25,7 +25,7 @@
 
 """
 Module reading and loading e-Sword Bible files.
-These can be downloaded from: http://www.BibleSupport.com
+These can be downloaded from: http://www.BibleSupport.com and http://www.biblemodulesresource.com.
 
 e-Sword Bible modules use RTF internally for formatting.
     See http://en.wikipedia.org/wiki/Rich_Text_Format
@@ -48,7 +48,7 @@ e.g.,
 """
 
 ProgName = "e-Sword Bible format handler"
-ProgVersion = "0.02"
+ProgVersion = "0.03"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -435,7 +435,8 @@ class ESwordBible( Bible ):
                         logging.critical( "ESwordBible.load: Unable to decrypt verse line at {} {}:{} {}".format( BBB, C, V, repr(line) ) )
                         break
                     else:
-                        logging.critical( "ESwordBible.load: Unable to decode verse line at {} {}:{} {} {}".format( BBB, C, V, repr(line), self.settingsDict ) )
+                        logging.critical( "ESwordBible.load: Probably encrypted module: Unable to decode verse line at {} {}:{} {} {}".format( BBB, C, V, repr(line), self.settingsDict ) )
+                        break
                 elif not line: logging.warning( "ESwordBible.load: Found blank verse line at {} {}:{}".format( BBB, C, V ) )
                 else:
                     haveLines = True
