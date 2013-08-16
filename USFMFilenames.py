@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMFilenames.py
-#   Last modified: 2013-08-15 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-16 by RJH (also update ProgVersion below)
 #
 # Module handling USFM Bible filenames
 #
@@ -57,11 +57,12 @@ AlternateFilenames = ( '01-Genesis', '02-Exodus', '03-Leviticus', '04-Numbers', 
     '22-Song-of-Solomon', '23-Isaiah', '24-Jeremiah', '25-Lamentations', '26-Ezekiel', '27-Daniel', '28-Hosea', '29-Joel', '30-Amos', '31-Obadiah', '32-Jonah',
     '33-Micah', '34-Nahum', '35-Habakkuk', '36-Zephaniah', '37-Haggai', '38-Zechariah', '39-Malachi',
     '40-Matthew', '41-Mark', '42-Luke', '43-John', '44-Acts', '45-Romans', '46-1 Corinthians', '47-2 Corinthians', '48-Galatians', '49-Ephesians', '50-Philippians',
-    '51-Colossians', '52-1 Thessalonians', '53-2 Thessalonians', '54-1 Timothy', '55-2Timothy', '56-Titus', '57-Philemon',
+    '51-Colossians', '52-1 Thessalonians', '53-2 Thessalonians', '54-1 Timothy', '55-2 Timothy', '56-Titus', '57-Philemon',
     '58-Hebrews', '59-James', '60-1 Peter', '61-2 Peter', '62-1 John', '63-2 John', '64-3 John', '65-Jude', '66-Revelation',
-    '67-Front-Matter', '68-Back-Matter', '69-Other-Material', '70-Tobit', '71-Judith', '72-Esther-(Greek)', '73-Wisdom-of-Solomon', '74-Sirach', '75-Baruch',
-    '76-Letter-of-Jeremiah', '77-Song-of-the-Three-Children', '78-Susanna', '79-Bel-and-the-Dragon', '80-1 Maccabees', '81-2 Maccabees',
-    '82-1 Esdras', '83-Prayer-of-Manasses', '84-Psalm-151', '85 3-Maccabees', '86-2 Esdras', '87-4 Maccabees', '88-Daniel-(Greek)' )
+    #'67-Front-Matter', '68-Back-Matter', '69-Other-Material', '70-Tobit', '71-Judith', '72-Esther-(Greek)', '73-Wisdom-of-Solomon', '74-Sirach', '75-Baruch',
+    #'76-Letter-of-Jeremiah', '77-Song-of-the-Three-Children', '78-Susanna', '79-Bel-and-the-Dragon', '80-1 Maccabees', '81-2 Maccabees',
+    #'82-1 Esdras', '83-Prayer-of-Manasses', '84-Psalm-151', '85 3-Maccabees', '86-2 Esdras', '87-4 Maccabees', '88-Daniel-(Greek)'
+    )
 
 # All of the following must be all UPPER CASE
 filenamesToIgnore = ('AUTOCORRECT.TXT','HYPHENATEDWORDS.TXT','PRINTDRAFTCHANGES.TXT','README.TXT','BOOK_NAMES.TXT',) # Only needs to include names whose extensions are not listed below
@@ -375,12 +376,9 @@ class USFMFilenames:
                             resultList.append( (bookReferenceCode,BEFilename+'.'+self.fileExtension,) )
                             break
             elif self.pattern == "dd-OEBName":
-                for USFMBookCode,USFMDigits,bookReferenceCode in self._USFMBooksCodeNumberTriples:
-                    AltSignature = USFMDigits + '-'
-                    for AltFilename in AlternateFilenames: # this doesn't seem very efficient, but it does work
-                        if AltFilename.startswith( AltSignature ):
-                            resultList.append( (bookReferenceCode,AltFilename+'.'+self.fileExtension,) )
-                            break
+                for AltFilename in AlternateFilenames:
+                    BBB = Globals.BibleBooksCodes.getBBBFromReferenceNumber( AltFilename[0:2] )
+                    resultList.append( (BBB,AltFilename+'.'+self.fileExtension,) )
             else: # they are Paratext style
                 for USFMBookCode,USFMDigits,bookReferenceCode in self._USFMBooksCodeNumberTriples:
                     filename = '*' * len(self.pattern)
@@ -543,7 +541,10 @@ def demo():
     # These are relative paths -- you can replace these with your test folder(s)
     testFolders = ("Tests/DataFilesForTests/USFMTest1/", "Tests/DataFilesForTests/USFMTest2/",
                    'Tests/DataFilesForTests/USXTest1/', 'Tests/DataFilesForTests/USXTest2/',
-                   "../../../../../SSD/AutoProcesses/Processed/","../../../../../SSD/AutoProcesses/Processed/Test/",)
+                   'Tests/DataFilesForTests/USFM-WEB/', 'Tests/DataFilesForTests/USFM-OEB/',
+                   "../../../../../SSD/AutoProcesses/Processed/","../../../../../SSD/AutoProcesses/Processed/Test/",
+                   'Tests/DataFilesForTests/USFMErrorProject/',
+                   )
     for j, testFolder in enumerate( testFolders ):
         print( '\n{}'.format( j+1 ) )
         if os.access( testFolder, os.R_OK ):
