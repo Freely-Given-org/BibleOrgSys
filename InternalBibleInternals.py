@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleInternals.py
-#   Last modified: 2013-08-08 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-19 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Bible internals handler"
-ProgVersion = "0.14"
+ProgVersion = "0.15"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -80,6 +80,139 @@ MAX_NONCRITICAL_ERRORS_PER_BOOK = 5
 
 
 
+class InternalBibleExtra:
+    """
+    This class represents an entry in the _processedLines list.
+    """
+
+    def __init__( self, myType, index, noteText, cleanNoteText ):
+        """
+        Accept the parameters and double-check them if requested.
+        """
+        if Globals.debugFlag or Globals.strictCheckingFlag:
+            #print( "InternalBibleExtra.__init__( {}, {}, {}, {} )".format( myType, index, repr(noteText), repr(cleanNoteText) ) )
+            assert( myType and isinstance( myType, str ) and myType in ('fn','xr','sr','sn',) ) # Mustn't be blank
+            assert( '\\' not in myType and ' ' not in myType and '*' not in myType )
+            assert( isinstance( index, int ) and index >= 0 )
+            assert( noteText and isinstance( noteText, str ) ) # Mustn't be blank
+            assert( '\n' not in noteText and '\r' not in noteText )
+            for letters in ( 'f', 'x', 'fe', 'ef' ): # footnote, cross-ref, endnotes, studynotes
+                assert( '\\'+letters+' ' not in noteText )
+                assert( '\\'+letters+'*' not in noteText )
+            assert( cleanNoteText and isinstance( cleanNoteText, str ) ) # Mustn't be blank
+            assert( '\\' not in cleanNoteText and '\n' not in cleanNoteText and '\r' not in cleanNoteText )
+        self.myType, self.index, self.noteText, self.cleanNoteText = myType, index, noteText, cleanNoteText
+    # end of InternalBibleExtra.__init__
+
+
+    #def __eq__( self, other ):
+        #if type( other ) is type( self ): return self.__dict__ == other.__dict__
+        #return False
+    #def __ne__(self, other): return not self.__eq__(other)
+
+
+    def __str__( self ):
+        """
+        Just display a very abbreviated form of the entry.
+        """
+        return "InternalBibleExtra object: {} = {}".format( self.myType, repr(self.noteText) )
+    # end of InternalBibleExtra.__str__
+
+
+    def __len__( self ): return 4
+    def __getitem__( self, keyIndex ):
+        if keyIndex==0: return self.myType
+        elif keyIndex==1: return self.index
+        elif keyIndex==2: return self.noteText
+        elif keyIndex==3: return self.cleanNoteText
+        else: raise IndexError
+    # end of InternalBibleExtra.__getitem__
+
+    def getType( self ): return self.myType
+    def getIndex( self ): return self.index
+    def getText( self ): return self.noteText
+    def getCleanText( self ): return self.cleanNoteText
+# end of class InternalBibleExtra
+
+
+
+class InternalBibleExtraList:
+    """
+    This class is a specialised list for holding InternalBibleExtras
+
+    (It's mainly here for extra data validation and the str function for debugging.)
+    """
+
+    def __init__( self, initialData=None ):
+        """
+        """
+        self.data = []
+        if initialData is not None:
+            if isinstance( initialData, list ) or isinstance( initialData, InternalBibleExtraList ):
+                for something in initialData:
+                    self.append( something )
+            else: logging.critical( "InternalBibleExtraList.__init__: Programming error -- unknown parameter type {}".format( repr(initialData) ) )
+        if initialData: assert( len(self.data) == len(initialData) )
+        else: assert( not self.data )
+    # end of InternalBibleExtraList.__init__
+
+
+    #def __eq__( self, other ):
+        #if type( other ) is type( self ): return self.__dict__ == other.__dict__
+        #return False
+    #def __ne__(self, other): return not self.__eq__(other)
+
+
+    def __str__( self ):
+        """
+        Just display a simplified view of the list of entries.
+
+        Only prints the first maxPrinted lines.
+        """
+        maxPrinted = 20
+        result = "InternalBibleExtraList object:"
+        if not self.data: result += "\n  Empty."
+        else:
+            dataLen = len( self.data )
+            for j, entry in enumerate( self.data ):
+                if Globals.debugFlag: assert( isinstance( entry, InternalBibleExtra ) )
+                result += "\n  {} @ {} = {}{}".format( ' ' if j<9 and dataLen>=10 else '', j+1, entry.myType, entry.index, repr(entry.noteText) )
+                if j>=maxPrinted and dataLen>maxPrinted:
+                    result += "\n  ... ({} total entries)".format( dataLen )
+                    break
+        return result
+    # end of InternalBibleExtraList.__str__
+
+
+    def __len__( self ): return len( self.data )
+    def __getitem__( self, keyIndex ):
+        if isinstance( keyIndex, slice ): # Get the start, stop, and step from the slice
+            #print( "ki2", keyIndex )
+            #assert( keyIndex.step is None )
+            #print( "param", *keyIndex.indices(len(self)) )
+            return InternalBibleExtraList( [self.data[ii] for ii in range(*keyIndex.indices(len(self)))] )
+        # Otherwise assume keyIndex is an int
+        return self.data[keyIndex]
+
+
+    def append( self, newExtraEntry ):
+        assert( isinstance( newExtraEntry, InternalBibleExtra ) )
+        self.data.append( newExtraEntry )
+    # end of InternalBibleExtraList.append
+
+    def pop( self ): # Doesn't allow a parameter
+        try: return self.data.pop()
+        except: return None
+    # end of InternalBibleExtraList.append
+
+    def extend( self, newExtraList ):
+        assert( isinstance( newExtraList, InternalBibleExtraList ) )
+        self.data.extend( newExtraList )
+    # end of InternalBibleExtraList.extend
+# end of class InternalBibleExtraList
+
+
+
 class InternalBibleEntry:
     """
     This class represents an entry in the _processedLines list.
@@ -89,7 +222,7 @@ class InternalBibleEntry:
         """
         Accept the parameters and double-check them if requested.
         """
-        if Globals.debugFlag and Globals.strictCheckingFlag:
+        if Globals.debugFlag or Globals.strictCheckingFlag:
             #print( "InternalBibleEntry.__init__( {}, {}, '{}', '{}', {}, '{}' )" \
                     #.format( marker, originalMarker, adjustedText[:35]+('...' if len(adjustedText)>35 else ''), \
                         #cleanText[:35]+('...' if len(cleanText)>35 else ''), extras, \
@@ -103,22 +236,9 @@ class InternalBibleEntry:
             assert( isinstance( cleanText, str ) )
             assert( '\n' not in cleanText and '\r' not in cleanText )
             assert( '\\' not in cleanText )
-            assert( isinstance( extras, list ) )
+            assert( isinstance( extras, InternalBibleExtraList ) )
             assert( isinstance( originalText, str ) )
             assert( '\n' not in originalText and '\r' not in originalText )
-            if extras:
-                #print( "extras:", extras )
-                for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
-                    assert( isinstance( extraType, str ) and extraType in ('fn','xr','sr','sn',) )
-                    assert( isinstance( extraIndex, int ) and extraIndex >= 0 )
-                    assert( isinstance( extraText, str ) and extraText ) # Mustn't be blank
-                    assert( isinstance( cleanExtraText, str ) and cleanExtraText ) # Shouldn't be blank
-                    if '\\' in cleanExtraText: print( "How does a backslash remain in cleanExtraText '{}".format( cleanExtraText ) )
-                    assert( '\\' not in cleanExtraText )
-                    assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
-                    for letters in ( 'f', 'x', 'fe', 'ef' ): # footnote, cross-ref, endnotes, studynotes
-                        assert( '\\'+letters+' ' not in extraText )
-                        assert( '\\'+letters+'*' not in extraText )
             #assert( marker in Globals.USFMMarkers or marker in NON_USFM_MARKERS )
             if marker not in Globals.USFMMarkers and marker not in NON_USFM_MARKERS:
                 print( "InternalBibleEntry doesn't handle '{}' marker yet.".format( marker ) )

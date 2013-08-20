@@ -221,8 +221,8 @@ def makeSafeFilename( someName ):
     Replaces potentially unsafe characters in a name to make it suitable for a filename.
     """
     return someName.replace('/','-') \
-        .replace('\\','_BACKSLASH_').replace(':','_COLON_').replace('#','_HASH_') \
-        .replace('?','_QUESTIONMARK_').replace('*','_ASTERISK_')
+        .replace('\\','_BACKSLASH_').replace(':','_COLON_').replace(';','_SEMICOLON_') \
+        .replace('#','_HASH_').replace('?','_QUESTIONMARK_').replace('*','_ASTERISK_')
 # end of makeSafeFilename
 
 

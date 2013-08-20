@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-08-15 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-19 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.50"
+ProgVersion = "0.51"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -49,7 +49,7 @@ from gettext import gettext as _
 from collections import OrderedDict
 
 import Globals
-from InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry, InternalBibleIndex
+from InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry, InternalBibleIndex, InternalBibleExtra, InternalBibleExtraList
 from BibleReferences import BibleAnchorReference
 
 
@@ -264,7 +264,7 @@ class InternalBibleBook:
                 Returns:
                     adjText: Text without notes and leading/trailing spaces
                     cleanText: adjText without character formatting as well
-                    extras: a list containing
+                    extras: a special list containing
                         extraType: 'fn' or 'xr'
                         extraIndex: the index into adjText above
                         extraText: the text of the note
@@ -345,7 +345,7 @@ class InternalBibleBook:
 
 
             # Prepare for extras
-            extras = []
+            extras = InternalBibleExtraList()
             lcAdjText = adjText.lower()
 
             #print( "QQQ MOVE OUT NOTES" )
@@ -420,7 +420,7 @@ class InternalBibleBook:
                         self.addPriorityError( 81, c, v, _("{} contains unexpected backslash").format( thisOne.title() ) )
                         cleanedNote = cleanedNote.replace( '\\', '' )
                     # Save it all and finish off
-                    extras.append( (this1,ix1,note,cleanedNote) ) # Saves a 4-tuple: type ('fn' or 'xr'), index into the main text line, the actual fn or xref contents, then a cleaned version
+                    extras.append( InternalBibleExtra(this1,ix1,note,cleanedNote) ) # Saves a 4-tuple: type ('fn' or 'xr'), index into the main text line, the actual fn or xref contents, then a cleaned version
                     ixFN = lcAdjText.find( '\\f ' )
                     ixXR = lcAdjText.find( '\\x ' )
                 #if extras: print( "Fix gave '{}' and '{}'".format( adjText, extras ) )
@@ -451,7 +451,7 @@ class InternalBibleBook:
                         stuff = adjText[ixStart+3:ixClose]
                         adjText = adjText[:ixStart] + adjText[ixClose+1:ixEnd] + adjText[ixEnd+4:]
                         #print( "st", "'"+stuff+"'", )
-                        extras.append( ('sr',ixStart+ixEnd-ixClose,stuff,stuff) )
+                        extras.append( InternalBibleExtra('sr',ixStart+ixEnd-ixClose,stuff,stuff) )
                         ixStart += ixEnd-ixClose-1
                     elif remainingText.startswith( '<note ' ):
                         ixClose = adjText.find( '>', ixStart+1 )
@@ -468,7 +468,7 @@ class InternalBibleBook:
                         #print( "st", "'"+stuff+"'", )
                         if stuff == 'type="study"': code = 'sn'
                         else: halt
-                        extras.append( (code,ixStart+ixEnd-ixClose,stuff,stuff) )
+                        extras.append( InternalBibleExtra(code,ixStart+ixEnd-ixClose,stuff,stuff) )
                         #ixStart += 0
                     elif remainingText.startswith('<RF>1<Rf>') or remainingText.startswith('<RF>2<Rf>') \
                     or remainingText.startswith('<RF>3<Rf>') or remainingText.startswith('<RF>4<Rf>'):
@@ -677,7 +677,7 @@ class InternalBibleBook:
 
             if (adjMarker=='b' or adjMarker in Globals.USFMParagraphMarkers) and text:
                 # Separate the verse text from the paragraph markers
-                self._processedLines.append( InternalBibleEntry(adjMarker, originalMarker, '', '', [], '') )
+                self._processedLines.append( InternalBibleEntry(adjMarker, originalMarker, '', '', InternalBibleExtraList(), '') )
                 adjMarker = 'p~'
                 if not text.strip():
                     fixErrors.append( _("{} {}:{} Paragraph marker '{}' seems to contain only whitespace").format( self.bookReferenceCode, c, v, originalMarker ) )
@@ -758,7 +758,7 @@ class InternalBibleBook:
                     logging.error( _("Extra '{}' material in chapter marker {} {}:{}").format( cBits[1], self.bookReferenceCode, c, v ) )
                     self.addPriorityError( 98, c, v, _("Extra '{}' material after chapter marker").format( cBits[1] ) )
                     #print( "Something on c line", "'"+text+"'", "'"+cBits[1]+"'" )
-                    self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, c, c, [], c) ) # Write the chapter number as a separate line
+                    self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, c, c, InternalBibleExtraList(), c) ) # Write the chapter number as a separate line
                     adjustedMarker, text = 'c~', cBits[1]
             elif originalMarker=='v' and text:
                 v = text.split()[0] # Get the actual verse number
@@ -778,18 +778,18 @@ class InternalBibleBook:
                     else: lastAdjustedMarker = lastOriginalMarker = lastAdjustedText = lastCleanText = lastExtras = lastOriginalText = None
                     print( self.bookReferenceCode, "lastMarker (popped) was", lastAdjustedMarker, lastAdjustedText )
                     if lastAdjustedMarker in ('p','q1','m','nb',): # The chapter marker should go before this
-                        self._processedLines.append( InternalBibleEntry('c', 'c', '1', '1', [], '1') ) # Write the explicit chapter number
+                        self._processedLines.append( InternalBibleEntry('c', 'c', '1', '1', InternalBibleExtraList(), '1') ) # Write the explicit chapter number
                         self._processedLines.append( InternalBibleEntry(lastAdjustedMarker, lastOriginalMarker, lastAdjustedText, lastCleanText, lastExtras, lastOriginalText) )
                     else: # Assume that the last marker was part of the introduction, so write it first
                         if lastAdjustedMarker not in ( 'ip', ):
                             logging.info( "{} {}:{} Assumed {} was part of intro after {}".format( self.bookReferenceCode, c, v, lastAdjustedMarker, marker ) )
                             #if v!='13': halt # Just double-checking this code (except for one weird book that starts at v13)
                         self._processedLines.append( InternalBibleEntry(lastAdjustedMarker, lastOriginalMarker, lastAdjustedText, lastCleanText, lastExtras, lastOriginalText) )
-                        self._processedLines.append( InternalBibleEntry('c', 'c', '1', '1', [], '1') ) # Write the explicit chapter number
+                        self._processedLines.append( InternalBibleEntry('c', 'c', '1', '1', InternalBibleExtraList(), '1') ) # Write the explicit chapter number
                     #print( self._processedLines ); halt
 
                 if haveWaitingC: # Add a false chapter number at the place where we normally want it printed
-                    self._processedLines.append( InternalBibleEntry('c#', 'c', haveWaitingC, haveWaitingC, [], haveWaitingC) ) # Write the additional chapter number
+                    self._processedLines.append( InternalBibleEntry('c#', 'c', haveWaitingC, haveWaitingC, InternalBibleExtraList(), haveWaitingC) ) # Write the additional chapter number
                     haveWaitingC = False
 
                 # Convert v markers to milestones only
@@ -823,7 +823,7 @@ class InternalBibleBook:
                         assert( verseNumberBit )
                         assert( ' ' not in verseNumberBit )
                         assert( '\\' not in verseNumberBit )
-                    self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, verseNumberBit, verseNumberBit, [], verseNumberBit) ) # Write the verse number (or range) as a separate line
+                    self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, verseNumberBit, verseNumberBit, InternalBibleExtraList(), verseNumberBit) ) # Write the verse number (or range) as a separate line
                     return # Don't write a blank v~ field
                     #adjustedMarker, text = 'v~', ''
                 else: # there is something following the verse number digits (starting with space or backslash)
@@ -832,7 +832,7 @@ class InternalBibleBook:
                     if Globals.debugFlag:
                         assert( verseNumberBit and verseNumberRest )
                         assert( '\\' not in verseNumberBit )
-                    self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, verseNumberBit, verseNumberBit, [], verseNumberBit) ) # Write the verse number (or range) as a separate line
+                    self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, verseNumberBit, verseNumberBit, InternalBibleExtraList(), verseNumberBit) ) # Write the verse number (or range) as a separate line
                     strippedVerseText = verseNumberRest.lstrip()
                     #print( "QQQ9: lstrip" )
                     if not strippedVerseText:
@@ -906,14 +906,14 @@ class InternalBibleBook:
                             preverseText = afterText[:ixEnd].strip()
                             #print( "QQQ11: strip" ); halt
                             if preverseText.startswith( '<div sID="' ) and preverseText.endswith( '" type="paragraph"/>' ):
-                                self._processedLines.append( InternalBibleEntry('p', originalMarker, '', '', [], originalText) )
+                                self._processedLines.append( InternalBibleEntry('p', originalMarker, '', '', InternalBibleExtraList(), originalText) )
                             else: print( "preverse", "'"+preverseText+"'" )
                             text = beforeText + afterText[ixFinal+1:]
                         elif thisField.startswith( '<div sID="' ) and thisField.endswith( '" type="paragraph"/>' ):
-                            self._processedLines.append( InternalBibleEntry('p', originalMarker, '', '', [], originalText) )
+                            self._processedLines.append( InternalBibleEntry('p', originalMarker, '', '', InternalBibleExtraList(), originalText) )
                             text = beforeText + afterText
                         #elif thisField.startswith( '<div eID="' ) and thisField.endswith( '" type="paragraph"/>' ):
-                            #self._processedLines.append( InternalBibleEntry('m', originalMarker, '', '', []) )
+                            #self._processedLines.append( InternalBibleEntry('m', originalMarker, '', '', InternalBibleExtraList()) )
                             #text = beforeText + afterText
                         elif thisField == '<note>':
                             ixEND = afterText.index( '</note>' )
@@ -927,10 +927,10 @@ class InternalBibleBook:
                             if Globals.debugFlag:
                                 assert( thisField[11] == '"' )
                                 assert( levelDigit.isdigit() )
-                            self._processedLines.append( InternalBibleEntry('q'+levelDigit, originalMarker, '', '', [], originalText) )
+                            self._processedLines.append( InternalBibleEntry('q'+levelDigit, originalMarker, '', '', InternalBibleExtraList(), originalText) )
                             text = beforeText + afterText
                         elif thisField.startswith( '<lg sID="' ) and thisField.endswith( '"/>' ):
-                            self._processedLines.append( InternalBibleEntry('qx', originalMarker, '', '', [], originalText) )
+                            self._processedLines.append( InternalBibleEntry('qx', originalMarker, '', '', InternalBibleExtraList(), originalText) )
                             text = beforeText + afterText
                         elif thisField.startswith( '<chapter osisID="' ) and thisField.endswith( '"/>' ):
                             if 0: # Don't actually need this stuff
@@ -942,7 +942,7 @@ class InternalBibleBook:
                                 #assert( ixDOT != -1 )
                                 chapterDigits = osisID[ixDOT+1:]
                                 #print( "chapter", chapterDigits )
-                                self._processedLines.append( InternalBibleEntry('c~', originalMarker, chapterDigits, chapterDigits, [], originalText) )
+                                self._processedLines.append( InternalBibleEntry('c~', originalMarker, chapterDigits, chapterDigits, InternalBibleExtraList(), originalText) )
                             text = beforeText + afterText
                         elif ( thisField.startswith( '<chapter eID="' ) or thisField.startswith( '<l eID="' ) or thisField.startswith( '<lg eID="' ) or thisField.startswith( '<div eID="' ) ) \
                         and thisField.endswith( '"/>' ):
