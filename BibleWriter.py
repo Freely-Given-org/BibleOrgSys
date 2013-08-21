@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-08-20 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-21 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -57,7 +57,7 @@ ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 debuggingThisModule = False
 
 
-import sys, os, logging
+import sys, os, shutil, logging
 from datetime import datetime
 from gettext import gettext as _
 import re, sqlite3
@@ -3868,6 +3868,9 @@ class BibleWriter( InternalBible ):
         # First determine our format
         columnWidth = 80
         verseByVerse = True
+        markerTranslate = { 'p':'P', 'pi':'PI', 'q1':'Q', 'q2':'QQ', 'q3':'QQQ', 'q4':'QQQQ' }
+        shutil.copy( "ControlFiles/Bible.cls", outputFolder )
+        shutil.copy( "ControlFiles/lettrine.sty", outputFolder )
 
         def writeTeXHeader( writer ):
             """
@@ -3875,7 +3878,7 @@ class BibleWriter( InternalBible ):
                 I had to run "sudo apt-get install fonts-linuxlibertine" first.
             """
             for line in (
-                "\\documentclass{../../ControlFiles/Bible} % use our own Bible document class",
+                "\\documentclass{Bible} % use our own Bible document class found in Bible.cls",
                 "",
                 "\\usepackage{xltxtra} % Extra customizations for XeLaTeX;",
                 "% xltxtra automatically loads fontspec and xunicode, both of which you need",
@@ -3966,9 +3969,10 @@ class BibleWriter( InternalBible ):
                         elif marker=='r':
                             allFile.write( "\\BibleSectionReference{{{}}}\n".format( text ) )
                             bookFile.write( "\\BibleSectionReference{{{}}}\n".format( text ) )
-                        elif marker=='p':
-                            allFile.write( "\\par\n" ); assert( not text )
-                            bookFile.write( "\\par\n" ); assert( not text )
+                        elif marker in ('p','pi','q1','q2','q3','q4'):
+                            assert( not text )
+                            allFile.write( "\\BibleParagraphStyle{}\n".format( markerTranslate[marker] ) )
+                            bookFile.write( "\\BibleParagraphStyle{}\n".format( markerTranslate[marker] ) )
                         elif marker in ('v~','p~'):
                             allFile.write( "{}\n".format( text ) )
                             bookFile.write( "{}\n".format( text ) )

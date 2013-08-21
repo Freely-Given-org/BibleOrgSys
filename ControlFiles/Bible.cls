@@ -1,7 +1,9 @@
-% \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{Bible}[6/6/2013 custom Bible class]
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesClass{Bible}[2013/08/21 custom Bible class]
 \LoadClass{book}
-\RequirePackage{lettrine}
+\RequirePackage{lettrine} % Finds lettrine.sty
+
+
 % \RequirePackage{titlesec}
 
 % \titleformat{\section}
@@ -18,6 +20,7 @@
 %   \newcommand{\datedsection}[2]{
 %   \section[#1]{#1 \hfill #2}
 % }
+
 
 \newcommand{\BibleBook}[1]{
   \newpage
@@ -36,11 +39,33 @@
   \centerline{#1}
 }
 
-\newcommand{\chapterNumber}[1]{\lettrine[lines=3,slope=-4pt,nindent=-4pt]{#1}{~}}
+\newcommand{\chapterNumber}[1]{
+    \lettrine[lines=3,slope=-4pt,nindent=-4pt]{#1}{~}
+}
 % {\em #1}
 
-\newcommand{\verseNumber}[1]{\textsuperscript{#1~}}
+\newcommand{\verseNumber}[1]{
+    \textsuperscript{#1~}
+}
 
+\newcommand{\BibleParagraphStyleP}[0]{
+    \par
+}
+\newcommand{\BibleParagraphStylePI}[0]{
+    \par
+}
+\newcommand{\BibleParagraphStyleQ}[0]{
+    \par
+}
+\newcommand{\BibleParagraphStyleQQ}[0]{
+    \par
+}
+\newcommand{\BibleParagraphStyleQQQ}[0]{
+    \par
+}
+\newcommand{\BibleParagraphStyleQQQQQ}[0]{
+    \par
+}
 
 % \newcommand{\contact}[5]{
 %     #1 {\large\textperiodcentered} #2 {\large\textperiodcentered} #3
