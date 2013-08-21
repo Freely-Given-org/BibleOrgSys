@@ -72,10 +72,17 @@ from USFMMarkers import oftenIgnoredIntroMarkers, removeUSFMCharacterField, repl
 from MLWriter import MLWriter
 
 
-defaultControlFolder = "ControlFiles/" # Relative to the current working directory
 allCharMarkers = Globals.USFMMarkers.getCharacterMarkersList( expandNumberableMarkers=True )
 #print( allCharMarkers ); halt
 
+
+defaultControlFolder = "ControlFiles/" # Relative to the current working directory
+def setDefaultControlFolder( newFolderName ):
+    global defaultControlFolder
+    if Globals.verbosityLevel > 1:
+        print( "defaultControlFolder changed from {} to {}".format( defaultControlFolder, newFolderName ) )
+    defaultControlFolder = newFolderName
+# end of BibleWriter.setDefaultControlFolder
 
 
 
@@ -108,13 +115,6 @@ class BibleWriter( InternalBible ):
         #result += ('\n' if result else '') + "  Number of books = " + str(len(self.books))
         #return result
     ## end of BibleWriter.__str__
-
-
-
-    def setDefaultControlFolder( self, newFolderName ):
-        global defaultControlFolder
-        defaultControlFolder = newFolderName
-    # end of BibleWriter.setDefaultControlFolder
 
 
 
@@ -3869,8 +3869,10 @@ class BibleWriter( InternalBible ):
         columnWidth = 80
         verseByVerse = True
         markerTranslate = { 'p':'P', 'pi':'PI', 'q1':'Q', 'q2':'QQ', 'q3':'QQQ', 'q4':'QQQQ' }
-        shutil.copy( "ControlFiles/Bible.cls", outputFolder )
-        shutil.copy( "ControlFiles/lettrine.sty", outputFolder )
+        for filename in ( "Bible.cls", "lettrine.sty", ):
+            filepath = os.path.join( defaultControlFolder, filename )
+            try: shutil.copy( filepath, outputFolder )
+            except FileNotFoundError: logging.warning( "Unable to find TeX control file: {}".format( filepath ) )
 
         def writeTeXHeader( writer ):
             """
@@ -3978,9 +3980,9 @@ class BibleWriter( InternalBible ):
                             bookFile.write( "{}\n".format( text ) )
                         else: unhandledMarkers.add( marker )
                     bookFile.write( "\\end{document}\n" )
-                makePDF( BBB, filepath, '10s' )
+                makePDF( BBB, filepath, '20s' )
             allFile.write( "\\end{document}\n" )
-        makePDF( 'All', allFilepath, '2m' )
+        makePDF( 'All', allFilepath, '3m' )
         if unhandledMarkers:
             logging.warning( "toTeX: Unhandled markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:
