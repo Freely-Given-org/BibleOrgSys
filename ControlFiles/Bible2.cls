@@ -37,6 +37,11 @@
   \centerline{\Huge{#1}}
 }
 
+\newcommand{\BibleBookTableOfContents}[0]{
+  \tableofcontents
+  \newpage
+}
+
 \newcommand{\BibleIntro}[0]{
   \\ % Was \part but messes things up
 }
@@ -66,13 +71,13 @@
 }
 
 
-% Biblical text styles
+% Biblical introduction paragraph styles
 \newcommand{\BibleParagraphStyleIP}[0]{
     \par
 }
 
 
-% Biblical text styles
+% Biblical text paragraph styles
 \newcommand{\BibleParagraphStyleP}[0]{
     \par
 }
@@ -93,7 +98,29 @@
 }
 
 
-\newcommand{\endBibleBook}[0]{
+% Biblical character styles
+\newcommand{\BibleCharacterStyleBK}[1]{
+    \em{#1}
+}
+
+
+% Biblical footnotes and cross-references
+\newcommand{\BibleFootnote}[1]{
+    \footnote{#1}
+}
+\newcommand{\BibleCrossReference}[1]{
+    \footnote{#1}
+}
+
+
+% Figures
+\newcommand{\BibleFigure}[1]{
+    \footnote{#1}
+}
+
+
+% Finishing up
+\newcommand{\BibleBookEnd}[0]{
     \end{multicols}
 }
 

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-08-21 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-22 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -51,7 +51,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.40"
+ProgVersion = "0.41"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -3866,14 +3866,17 @@ class BibleWriter( InternalBible ):
         unhandledMarkers = set()
 
         # First determine our format
-        verseByVerse = True
-        markerTranslate = { 'p':'P', 'pi':'PI', 'q1':'Q', 'q2':'QQ', 'q3':'QQQ', 'q4':'QQQQ',
-                            'ip':'IP', }
+        #verseByVerse = True
+
         # Copy auxilliary XeTeX files to our output folder
         for filename in ( "lettrine.sty", ):
             filepath = os.path.join( defaultControlFolder, filename )
             try: shutil.copy( filepath, outputFolder )
             except FileNotFoundError: logging.warning( "Unable to find TeX control file: {}".format( filepath ) )
+        pMarkerTranslate = { 'p':'P', 'pi':'PI', 'q1':'Q', 'q2':'QQ', 'q3':'QQQ', 'q4':'QQQQ',
+                            'ip':'IP', }
+        cMarkerTranslate = { 'bk':'BK', 'add':'ADD', 'sig':'SIG', 'nd':'ND', 'it':'IT', 'bd':'BD',
+                            'bdit':'BDIT', 'em':'EM', 'sc':'SC', 'wj':'WJ', 'ior':'IOR', }
 
         def writeTeXHeader( writer ):
             """
@@ -3910,12 +3913,56 @@ class BibleWriter( InternalBible ):
                 #"",
                 ):
                 writer.write( "{}\n".format( line ) )
-        # end of writeTeXHeader
+        # end of toTeX.writeTeXHeader
+
+
+        def texText( givenText ):
+            """
+            Given some text containing possible character formatting,
+                convert it to TeX styles.
+            """
+            text = givenText
+
+            if '\\fig ' in text: # handle figures
+                #ix = text.find( '\\fig ' )
+                #ixEnd = text.find( '\\fig*' )
+                text = text.replace( '\\fig ', '~^~BibleFigure{' ).replace( '\\fig*', '}' ) # temp
+
+            if '\\f ' in text: # handle footnotes
+                #print( 'footnote', repr(givenText) )
+                #ix = text.find( '\\f ' )
+                #ixEnd = text.find( '\\f*' )
+                text = text.replace( '\\f ', '~^~BibleFootnote{' ).replace( '\\f*', '}' ) # temp
+                text = text.replace( '\\fr ', '~^~em{' ).replace( '\\ft ', '}', 1 ) # temp assumes one fr followed by one ft
+                text = text.replace( '\\fq ', '' ).replace( '\\ft ', '' )
+
+            if '\\x ' in text: # handle cross-references
+                #print( 'xref', repr(givenText) )
+                #ix = text.find( '\\x ' )
+                #ixEnd = text.find( '\\x*' )
+                text = text.replace( '\\x ', '~^~BibleCrossReference{' ).replace( '\\x*', '}' ) # temp
+                text = text.replace( '\\xo ', '~^~em{' ).replace( '\\xt ', '}' ) # temp assumes one xo followed by one xt
+
+            # Handle regular character formatting -- this will cause TeX to fail if closing markers are not matched
+            for charMarker in allCharMarkers:
+                fullCharMarker = '\\' + charMarker + ' '
+                if fullCharMarker in text:
+                    endCharMarker = '\\' + charMarker + '*'
+                    text = text.replace( fullCharMarker, '~^~BibleCharacterStyle'+cMarkerTranslate[charMarker]+'{' ) \
+                                .replace( endCharMarker, '}' )
+
+            if '\\' in text: # Catch any left-overs
+                if Globals.debugFlag or Globals.verbosityLevel > 2:
+                    print( "toTeX.texText: unprocessed code in {} from {}".format( repr(text), repr(givenText) ) )
+                if Globals.debugFlag and debuggingThisModule: halt
+                halt
+            return text.replace( '~^~', '\\' )
+        # end of toTeX:texText
 
 
         def makePDFs( BBB, texFilepath, timeout ):
             """
-            Call xelatex to make the PDF file from the .tex file.
+            Call xelatex to make the Bible PDF file(s) from the .tex file.
             """
             assert( texFilepath.endswith( '.tex' ) )
             mainFilepath = texFilepath[:-4] # Remove the .tex bit
@@ -3948,10 +3995,13 @@ class BibleWriter( InternalBible ):
                     programErrorOutputString = programErrorOutputBytes.decode( encoding='utf-8', errors="replace" )
                     #with open( os.path.join( outputFolder, "ScriptErrorOutput.txt" ), 'wt' ) as myFile: myFile.write( programErrorOutputString )
                     print( "pEOS", programErrorOutputString )
+
                 # Rename our PDF (and the log file) according to the style
-                os.replace( mainFilepath+'.log', mainFilepath+'.'+filenamePart+'.log' )
-                os.replace( mainFilepath+'.pdf', mainFilepath+'.'+filenamePart+'.pdf' )
-        # end of makePDFs
+                try: os.replace( mainFilepath+'.log', mainFilepath+'.'+filenamePart+'.log' )
+                except FileNotFoundError: pass # That's fine
+                try: os.replace( mainFilepath+'.pdf', mainFilepath+'.'+filenamePart+'.pdf' )
+                except FileNotFoundError: pass # That's fine
+        # end of toTeX.makePDFs
 
 
         # Write the plain text XeTeX file
@@ -3970,47 +4020,47 @@ class BibleWriter( InternalBible ):
                     writeTeXHeader( bookFile )
                     allFile.write( "\n\\BibleBook{{{}}}\n".format( bookObject.getAssumedBookNames()[0] ) )
                     bookFile.write( "\n\\BibleBook{{{}}}\n".format( bookObject.getAssumedBookNames()[0] ) )
-                    bookFile.write( "\n\\tableofcontents\n\\newpage\n".format( bookObject.getAssumedBookNames()[0] ) )
+                    bookFile.write( "\n\\BibleBookTableOfContents\n".format( bookObject.getAssumedBookNames()[0] ) )
                     for entry in bookObject._processedLines:
-                        marker, text = entry.getMarker(), entry.getCleanText()
+                        marker, text = entry.getMarker(), entry.getFullText()
                         if marker in ('id','ide','rem',): pass # just ignore these markers
                         elif marker=='ip':
                             if not haveIntro:
                                 allFile.write( "\n\\BibleIntro\n" )
                                 bookFile.write( "\n\\BibleIntro\n" )
                                 haveIntro = True
-                            allFile.write( "\\BibleParagraphStyle{}\n".format( markerTranslate[marker] ) )
-                            bookFile.write( "\\BibleParagraphStyle{}\n".format( markerTranslate[marker] ) )
-                            allFile.write( "{}\n".format( text ) )
-                            bookFile.write( "{}\n".format( text ) )
+                            allFile.write( "\\BibleParagraphStyle{}\n".format( pMarkerTranslate[marker] ) )
+                            bookFile.write( "\\BibleParagraphStyle{}\n".format( pMarkerTranslate[marker] ) )
+                            allFile.write( "{}\n".format( texText(text) ) )
+                            bookFile.write( "{}\n".format( texText(text) ) )
                         elif marker=='c':
                             if text == '1': # Assume chapter 1 is the start of the actual Bible text
                                 allFile.write( "\n\\BibleText\n" )
                                 bookFile.write( "\n\\BibleText\n" )
                         elif marker=='c#':
-                            allFile.write( "\\chapterNumber{{{}}}".format( text ) ) # no NL
-                            bookFile.write( "\\chapterNumber{{{}}}".format( text ) ) # no NL
+                            allFile.write( "\\chapterNumber{{{}}}".format( texText(text) ) ) # no NL
+                            bookFile.write( "\\chapterNumber{{{}}}".format( texText(text) ) ) # no NL
                         elif marker=='v':
                             if text != '1': # Don't write verse 1 number
-                                allFile.write( "\\verseNumber{{{}}}".format( text ) ) # no NL
-                                bookFile.write( "\\verseNumber{{{}}}".format( text ) ) # no NL
+                                allFile.write( "\\verseNumber{{{}}}".format( texText(text) ) ) # no NL
+                                bookFile.write( "\\verseNumber{{{}}}".format( texText(text) ) ) # no NL
                         elif marker=='s1':
-                            allFile.write( "\n\\BibleTextSection{{{}}}\n".format( text ) )
-                            bookFile.write( "\n\\BibleTextSection{{{}}}\n".format( text ) )
-                            bookFile.write( "\n\\addcontentsline{{toc}}{{toc}}{{{}}}\n".format( text ) )
+                            allFile.write( "\n\\BibleTextSection{{{}}}\n".format( texText(text) ) )
+                            bookFile.write( "\n\\BibleTextSection{{{}}}\n".format( texText(text) ) )
+                            bookFile.write( "\n\\addcontentsline{{toc}}{{toc}}{{{}}}\n".format( texText(text) ) )
                         elif marker=='r':
-                            allFile.write( "\\BibleSectionReference{{{}}}\n".format( text ) )
-                            bookFile.write( "\\BibleSectionReference{{{}}}\n".format( text ) )
+                            allFile.write( "\\BibleSectionReference{{{}}}\n".format( texText(text) ) )
+                            bookFile.write( "\\BibleSectionReference{{{}}}\n".format( texText(text) ) )
                         elif marker in ('p','pi','q1','q2','q3','q4'):
                             assert( not text )
-                            allFile.write( "\\BibleParagraphStyle{}\n".format( markerTranslate[marker] ) )
-                            bookFile.write( "\\BibleParagraphStyle{}\n".format( markerTranslate[marker] ) )
+                            allFile.write( "\\BibleParagraphStyle{}\n".format( pMarkerTranslate[marker] ) )
+                            bookFile.write( "\\BibleParagraphStyle{}\n".format( pMarkerTranslate[marker] ) )
                         elif marker in ('v~','p~'):
-                            allFile.write( "{}\n".format( text ) )
-                            bookFile.write( "{}\n".format( text ) )
+                            allFile.write( "{}\n".format( texText(text) ) )
+                            bookFile.write( "{}\n".format( texText(text) ) )
                         else: unhandledMarkers.add( marker )
-                    allFile.write( "\\endBibleBook\n" )
-                    bookFile.write( "\\endBibleBook\n" )
+                    allFile.write( "\\BibleBookEnd\n" )
+                    bookFile.write( "\\BibleBookEnd\n" )
                     bookFile.write( "\\end{document}\n" )
                 makePDFs( BBB, filepath, '20s' )
             allFile.write( "\\end{document}\n" )
