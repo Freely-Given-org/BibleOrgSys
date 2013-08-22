@@ -3866,10 +3866,11 @@ class BibleWriter( InternalBible ):
         unhandledMarkers = set()
 
         # First determine our format
-        columnWidth = 80
         verseByVerse = True
-        markerTranslate = { 'p':'P', 'pi':'PI', 'q1':'Q', 'q2':'QQ', 'q3':'QQQ', 'q4':'QQQQ' }
-        for filename in ( "Bible.cls", "lettrine.sty", ):
+        markerTranslate = { 'p':'P', 'pi':'PI', 'q1':'Q', 'q2':'QQ', 'q3':'QQQ', 'q4':'QQQQ',
+                            'ip':'IP', }
+        # Copy auxilliary XeTeX files to our output folder
+        for filename in ( "lettrine.sty", ):
             filepath = os.path.join( defaultControlFolder, filename )
             try: shutil.copy( filepath, outputFolder )
             except FileNotFoundError: logging.warning( "Unable to find TeX control file: {}".format( filepath ) )
@@ -3911,30 +3912,47 @@ class BibleWriter( InternalBible ):
                 writer.write( "{}\n".format( line ) )
         # end of writeTeXHeader
 
-        def makePDF( BBB, texFilepath, timeout ):
+
+        def makePDFs( BBB, texFilepath, timeout ):
             """
             Call xelatex to make the PDF file from the .tex file.
             """
-            parameters = ['/usr/bin/timeout', timeout, '/usr/bin/xelatex', '-interaction=batchmode', os.path.abspath(texFilepath) ]
-            #print( "makeIndividualPDF (xelatex) parameters", parameters )
-            os.chdir( outputFolder ) # So the paths for the Bible.cls file are correct
-            myProcess = subprocess.Popen( parameters, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
-            programOutputBytes, programErrorOutputBytes = myProcess.communicate()
-            os.chdir( cwdSave ) # Restore the path again
-            returnCode = myProcess.returncode
-            if returnCode == 124: # it timed out
-                programErrorOutputBytes += "xelatex {}: Timed out after {}".format( BBB, timeout ).encode( 'utf-8' )
-            # Process the output
-            if programOutputBytes:
-                programOutputString = programOutputBytes.decode( encoding='utf-8', errors="replace" )
-                #programOutputString = programOutputString.replace( baseFolder + ('' if baseFolder[-1]=='/' else '/'), '' ) # Remove long file paths to make it easier for the user to read
-                #with open( os.path.join( outputFolder, "ScriptOutput.txt" ), 'wt' ) as myFile: myFile.write( programOutputString )
-                #print( "pOS", programOutputString )
-            if programErrorOutputBytes:
-                programErrorOutputString = programErrorOutputBytes.decode( encoding='utf-8', errors="replace" )
-                #with open( os.path.join( outputFolder, "ScriptErrorOutput.txt" ), 'wt' ) as myFile: myFile.write( programErrorOutputString )
-                print( "pEOS", programErrorOutputString )
-        # end of makePDF
+            assert( texFilepath.endswith( '.tex' ) )
+            mainFilepath = texFilepath[:-4] # Remove the .tex bit
+
+            # Work through the various class files for different styles of Bible layouts
+            for filenamePart in ( 'Bible1','Bible2', ):
+                filepath = os.path.join( defaultControlFolder, filenamePart+'.cls' )
+                try:
+                    shutil.copy( filepath, outputFolder ) # Copy it under its own name
+                    shutil.copy( filepath, os.path.join( outputFolder, "Bible.cls" ) ) # Copy it also under the generic name
+                except FileNotFoundError: logging.warning( "Unable to find TeX control file: {}".format( filepath ) )
+
+                # Now run xelatex (TeX -> PDF)
+                parameters = ['/usr/bin/timeout', timeout, '/usr/bin/xelatex', '-interaction=batchmode', os.path.abspath(texFilepath) ]
+                #print( "makeIndividualPDF (xelatex) parameters", parameters )
+                os.chdir( outputFolder ) # So the paths for the Bible.cls file are correct
+                myProcess = subprocess.Popen( parameters, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
+                programOutputBytes, programErrorOutputBytes = myProcess.communicate()
+                os.chdir( cwdSave ) # Restore the path again
+                returnCode = myProcess.returncode
+                if returnCode == 124: # it timed out
+                    programErrorOutputBytes += "xelatex {}: Timed out after {}".format( BBB, timeout ).encode( 'utf-8' )
+                # Process the output
+                if programOutputBytes:
+                    programOutputString = programOutputBytes.decode( encoding='utf-8', errors="replace" )
+                    #programOutputString = programOutputString.replace( baseFolder + ('' if baseFolder[-1]=='/' else '/'), '' ) # Remove long file paths to make it easier for the user to read
+                    #with open( os.path.join( outputFolder, "ScriptOutput.txt" ), 'wt' ) as myFile: myFile.write( programOutputString )
+                    #print( "pOS", programOutputString )
+                if programErrorOutputBytes:
+                    programErrorOutputString = programErrorOutputBytes.decode( encoding='utf-8', errors="replace" )
+                    #with open( os.path.join( outputFolder, "ScriptErrorOutput.txt" ), 'wt' ) as myFile: myFile.write( programErrorOutputString )
+                    print( "pEOS", programErrorOutputString )
+                # Rename our PDF (and the log file) according to the style
+                os.replace( mainFilepath+'.log', mainFilepath+'.'+filenamePart+'.log' )
+                os.replace( mainFilepath+'.pdf', mainFilepath+'.'+filenamePart+'.pdf' )
+        # end of makePDFs
+
 
         # Write the plain text XeTeX file
         cwdSave = os.getcwd() # Save the current working directory before changing (below) to the output directory
@@ -3944,6 +3962,7 @@ class BibleWriter( InternalBible ):
         with open( allFilepath, 'wt' ) as allFile:
             writeTeXHeader( allFile )
             for BBB,bookObject in self.books.items():
+                haveIntro = False
                 filename = "BOS-BWr-{}.tex".format( BBB )
                 filepath = os.path.join( outputFolder, Globals.makeSafeFilename( filename ) )
                 if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
@@ -3951,9 +3970,19 @@ class BibleWriter( InternalBible ):
                     writeTeXHeader( bookFile )
                     allFile.write( "\n\\BibleBook{{{}}}\n".format( bookObject.getAssumedBookNames()[0] ) )
                     bookFile.write( "\n\\BibleBook{{{}}}\n".format( bookObject.getAssumedBookNames()[0] ) )
+                    bookFile.write( "\n\\tableofcontents\n\\newpage\n".format( bookObject.getAssumedBookNames()[0] ) )
                     for entry in bookObject._processedLines:
                         marker, text = entry.getMarker(), entry.getCleanText()
                         if marker in ('id','ide','rem',): pass # just ignore these markers
+                        elif marker=='ip':
+                            if not haveIntro:
+                                allFile.write( "\n\\BibleIntro\n" )
+                                bookFile.write( "\n\\BibleIntro\n" )
+                                haveIntro = True
+                            allFile.write( "\\BibleParagraphStyle{}\n".format( markerTranslate[marker] ) )
+                            bookFile.write( "\\BibleParagraphStyle{}\n".format( markerTranslate[marker] ) )
+                            allFile.write( "{}\n".format( text ) )
+                            bookFile.write( "{}\n".format( text ) )
                         elif marker=='c':
                             if text == '1': # Assume chapter 1 is the start of the actual Bible text
                                 allFile.write( "\n\\BibleText\n" )
@@ -3968,6 +3997,7 @@ class BibleWriter( InternalBible ):
                         elif marker=='s1':
                             allFile.write( "\n\\BibleTextSection{{{}}}\n".format( text ) )
                             bookFile.write( "\n\\BibleTextSection{{{}}}\n".format( text ) )
+                            bookFile.write( "\n\\addcontentsline{{toc}}{{toc}}{{{}}}\n".format( text ) )
                         elif marker=='r':
                             allFile.write( "\\BibleSectionReference{{{}}}\n".format( text ) )
                             bookFile.write( "\\BibleSectionReference{{{}}}\n".format( text ) )
@@ -3979,10 +4009,12 @@ class BibleWriter( InternalBible ):
                             allFile.write( "{}\n".format( text ) )
                             bookFile.write( "{}\n".format( text ) )
                         else: unhandledMarkers.add( marker )
+                    allFile.write( "\\endBibleBook\n" )
+                    bookFile.write( "\\endBibleBook\n" )
                     bookFile.write( "\\end{document}\n" )
-                makePDF( BBB, filepath, '20s' )
+                makePDFs( BBB, filepath, '20s' )
             allFile.write( "\\end{document}\n" )
-        makePDF( 'All', allFilepath, '3m' )
+        makePDFs( 'All', allFilepath, '3m' )
         if unhandledMarkers:
             logging.warning( "toTeX: Unhandled markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:

@@ -1,6 +1,16 @@
+% Bible2.cls
+%   Last modified: 2013-08-22 by RJH
+%
+% XeTeX class for layout of two-column Bibles
+%
+% Copyright (C) 2013 Robert Hunt
+% Author: Robert Hunt <robert316@users.sourceforge.net>
+% License: See gpl-3.0.txt
+
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{Bible}[2013/08/21 custom Bible class]
 \LoadClass{book}
+\RequirePackage{multicol}
 \RequirePackage{lettrine} % Finds lettrine.sty
 
 
@@ -27,8 +37,12 @@
   \centerline{\Huge{#1}}
 }
 
+\newcommand{\BibleIntro}[0]{
+  \\ % Was \part but messes things up
+}
 \newcommand{\BibleText}[0]{
-  \part{}
+  \\ % Was \part but messes things up
+  \begin{multicols}{2}
 }
 
 \newcommand{\BibleTextSection}[1]{
@@ -37,8 +51,11 @@
 
 \newcommand{\BibleSectionReference}[1]{
   \centerline{#1}
+  \newline
 }
 
+
+% Chapter and verse numbers
 \newcommand{\chapterNumber}[1]{
     \lettrine[lines=3,slope=-4pt,nindent=-4pt]{#1}{~}
 }
@@ -48,6 +65,14 @@
     \textsuperscript{#1~}
 }
 
+
+% Biblical text styles
+\newcommand{\BibleParagraphStyleIP}[0]{
+    \par
+}
+
+
+% Biblical text styles
 \newcommand{\BibleParagraphStyleP}[0]{
     \par
 }
@@ -65,6 +90,11 @@
 }
 \newcommand{\BibleParagraphStyleQQQQQ}[0]{
     \par
+}
+
+
+\newcommand{\endBibleBook}[0]{
+    \end{multicols}
 }
 
 % \newcommand{\contact}[5]{

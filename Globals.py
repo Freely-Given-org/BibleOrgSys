@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# py
-#   Last modified: 2013-08-07 (also update ProgVersion below)
+# Globals.py
+#   Last modified: 2013-08-07 by RJH (also update ProgVersion below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
