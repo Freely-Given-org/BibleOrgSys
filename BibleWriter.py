@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-08-22 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-24 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -3877,6 +3877,7 @@ class BibleWriter( InternalBible ):
                             'ip':'IP', }
         cMarkerTranslate = { 'bk':'BK', 'add':'ADD', 'sig':'SIG', 'nd':'ND', 'it':'IT', 'bd':'BD',
                             'bdit':'BDIT', 'em':'EM', 'sc':'SC', 'wj':'WJ', 'ior':'IOR', }
+        mtMarkerTranslate = { 'mt1':'BibleMainTitle', 'mt2':'BibleTitleTwo', 'mt3':'BibleTitleThree' }
 
         def writeTeXHeader( writer ):
             """
@@ -3884,25 +3885,22 @@ class BibleWriter( InternalBible ):
                 I had to run "sudo apt-get install fonts-linuxlibertine" first.
             """
             for line in (
-                "\\documentclass{Bible} % use our own Bible document class found in Bible.cls",
+                "\\documentclass[a4paper]{Bible} % use our own Bible document class found in Bible.cls",
                 "",
-                "\\usepackage{xltxtra} % Extra customizations for XeLaTeX;",
-                "% xltxtra automatically loads fontspec and xunicode, both of which you need",
-                #"\\usepackage{xunicode}",
-                #"\\usepackage{fontspec}",
-                #"\\usepackage{xltxtra}",
-                "",
-                "\\setmainfont[Ligatures=TeX]{Charis SIL}",
+                #"\\usepackage{xltxtra} % Extra customizations for XeLaTeX;",
+                #"% xltxtra automatically loads fontspec and xunicode, both of which you need",
+                #"",
+                #"\\setmainfont[Ligatures=TeX]{Charis SIL}",
                 #"\\setromanfont[Mapping=tex-text]{Linux Libertine O}",
                 #"\\setsansfont[Mapping=tex-text]{Myriad Pro}",
                 #"\\setmonofont[Mapping=tex-text]{Courier New}",
-                "",
+                #"",
                 #"\\usepackage{geometry}",
                 #"\\geometry{a4paper}",
-                "",
+                #"",
                 "\\begin{document}",
                 #"\\maketitle",
-                "",
+                #"",
                 #"\\section{Ligatures}",
                 #"\\fontspec[Ligatures={Common, Historical}]{Linux Libertine O Italic}",
                 #"Questo è strano assai!",
@@ -3933,7 +3931,7 @@ class BibleWriter( InternalBible ):
                 #ix = text.find( '\\f ' )
                 #ixEnd = text.find( '\\f*' )
                 text = text.replace( '\\f ', '~^~BibleFootnote{' ).replace( '\\f*', '}' ) # temp
-                text = text.replace( '\\fr ', '~^~em{' ).replace( '\\ft ', '}', 1 ) # temp assumes one fr followed by one ft
+                text = text.replace( '\\fr ', '~^~BibleFootnoteAnchor{' ).replace( '\\ft ', '}', 1 ) # temp assumes one fr followed by one ft
                 text = text.replace( '\\fq ', '' ).replace( '\\ft ', '' )
 
             if '\\x ' in text: # handle cross-references
@@ -3941,7 +3939,7 @@ class BibleWriter( InternalBible ):
                 #ix = text.find( '\\x ' )
                 #ixEnd = text.find( '\\x*' )
                 text = text.replace( '\\x ', '~^~BibleCrossReference{' ).replace( '\\x*', '}' ) # temp
-                text = text.replace( '\\xo ', '~^~em{' ).replace( '\\xt ', '}' ) # temp assumes one xo followed by one xt
+                text = text.replace( '\\xo ', '~^~BibleCrossReferenceAnchor{' ).replace( '\\xt ', '}' ) # temp assumes one xo followed by one xt
 
             # Handle regular character formatting -- this will cause TeX to fail if closing markers are not matched
             for charMarker in allCharMarkers:
@@ -3955,7 +3953,6 @@ class BibleWriter( InternalBible ):
                 if Globals.debugFlag or Globals.verbosityLevel > 2:
                     print( "toTeX.texText: unprocessed code in {} from {}".format( repr(text), repr(givenText) ) )
                 if Globals.debugFlag and debuggingThisModule: halt
-                halt
             return text.replace( '~^~', '\\' )
         # end of toTeX:texText
 
@@ -3994,7 +3991,7 @@ class BibleWriter( InternalBible ):
                 if programErrorOutputBytes:
                     programErrorOutputString = programErrorOutputBytes.decode( encoding='utf-8', errors="replace" )
                     #with open( os.path.join( outputFolder, "ScriptErrorOutput.txt" ), 'wt' ) as myFile: myFile.write( programErrorOutputString )
-                    print( "pEOS", programErrorOutputString )
+                    if Globals.debugFlag: print( "pEOS", programErrorOutputString )
 
                 # Rename our PDF (and the log file) according to the style
                 try: os.replace( mainFilepath+'.log', mainFilepath+'.'+filenamePart+'.log' )
@@ -4012,7 +4009,7 @@ class BibleWriter( InternalBible ):
         with open( allFilepath, 'wt' ) as allFile:
             writeTeXHeader( allFile )
             for BBB,bookObject in self.books.items():
-                haveIntro = False
+                haveTitle = haveIntro = False
                 filename = "BOS-BWr-{}.tex".format( BBB )
                 filepath = os.path.join( outputFolder, Globals.makeSafeFilename( filename ) )
                 if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
@@ -4023,7 +4020,14 @@ class BibleWriter( InternalBible ):
                     bookFile.write( "\n\\BibleBookTableOfContents\n".format( bookObject.getAssumedBookNames()[0] ) )
                     for entry in bookObject._processedLines:
                         marker, text = entry.getMarker(), entry.getFullText()
-                        if marker in ('id','ide','rem',): pass # just ignore these markers
+                        if marker in ('id','ide','rem','toc1','toc2','toc3',): pass # just ignore these markers
+                        elif marker in ('mt1','mt2','mt3'):
+                            if not haveTitle:
+                                allFile.write( "\n\\BibleTitlePage\n" )
+                                bookFile.write( "\n\\BibleTitlePage\n" )
+                                haveTitle = True
+                            allFile.write( "\\{}{{{}}}\n".format( mtMarkerTranslate[marker], texText(text) ) )
+                            bookFile.write( "\\{}{{{}}}\n".format( mtMarkerTranslate[marker], texText(text) ) )
                         elif marker=='ip':
                             if not haveIntro:
                                 allFile.write( "\n\\BibleIntro\n" )

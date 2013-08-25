@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleInternals.py
-#   Last modified: 2013-08-19 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-25 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Bible internals handler"
-ProgVersion = "0.15"
+ProgVersion = "0.16"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -693,9 +693,9 @@ class InternalBibleIndex:
             #print( ixKey ); halt
             C, V = ixKey
             if not C.isdigit():
-                logging.critical( "InternalBibleIndex.checkIndex: Non-digit C entry in {} {}:{}".format( self.bookReferenceCode, repr(C), repr(V) ) )
+                logging.critical( "InternalBibleIndex.checkIndex: Non-digit C entry in {} {} {}:{}".format( self.name, self.bookReferenceCode, repr(C), repr(V) ) )
             if not V.isdigit():
-                logging.critical( "InternalBibleIndex.checkIndex: Non-digit V entry in {} {}:{}".format( self.bookReferenceCode, repr(C), repr(V) ) )
+                logging.critical( "InternalBibleIndex.checkIndex: Non-digit V entry in {} {} {}:{}".format( self.name, self.bookReferenceCode, repr(C), repr(V) ) )
 
         try: sortedIndex = sorted( self.indexData, key=lambda s: int(s[0])*1000+int(s[1]) )
         except ValueError: # non-numbers in C or V -- should already have received notification above
@@ -711,6 +711,7 @@ class InternalBibleIndex:
 
         lastKey = nextKey = nextNextKey = None
         for k, key in enumerate( sortedIndex ):
+            # Try getting the next couple of keys also (if they exist)
             try: nextKey = sortedIndex[k+1]
             except IndexError: nextKey = None
             except KeyError: print( "nextKeyError2", k, len(sortedIndex), repr(key) ); nextKey = None
@@ -739,30 +740,49 @@ class InternalBibleIndex:
             else: # not the book introduction
                 if V == '0':
                     if 'c' not in markers:
-                        logging.critical( "InternalBibleIndex.checkIndex: Probable v0 encoding error (no chapter?) in {} {}:{} {}".format( self.bookReferenceCode, C, V, entries ) )
+                        logging.critical( "InternalBibleIndex.checkIndex: Probable v0 encoding error (no chapter?) in {} {} {}:{} {}".format( self.name, self.bookReferenceCode, C, V, entries ) )
                     if Globals.debugFlag and debuggingThisModule: assert( 'c' in markers )
                 else: assert( 'v' in markers )
                 if 'p' in markers: assert( 'p~' in markers or 'v' in markers )
                 if 'q1' in markers or 'q2' in markers: assert( 'v' in markers or 'p~' in markers )
 
+                previousMarker = nextMarker = None # But these skip over rem (remark markers)
                 for j, marker in enumerate( markers ):
-                    previousMarker = None if j==0 else markers[j-1]
-                    nextMarker = None if j==len(markers)-1 else markers[j+1]
+                    # Work out the next marker (skipping over rem markers)
+                    offset = 1
+                    while True:
+                        try: nextMarker = markers[j+offset]
+                        except: nextMarker = None
+                        if nextMarker != 'rem': break
+                        offset += 1
 
+                    # Check the various series of markers
                     if marker == 'c#': assert( nextMarker == 'v' )
                     if marker == 'v' and markers[-1]!='v' and nextMarker != 'v~':
-                        logging.critical( "InternalBibleIndex.checkIndex: Probable encoding error in {} {}:{} {}".format( self.bookReferenceCode, C, V, entries ) )
+                        logging.critical( "InternalBibleIndex.checkIndex: Probable v encoding error in {} {} {}:{} {}".format( self.name, self.bookReferenceCode, C, V, entries ) )
                         if Globals.debugFlag and debuggingThisModule: halt
                     if anyText or anyExtras: # Mustn't be a blank (unfinished) verse
-                        if marker in ('p','q1') and nextMarker not in ('v','p~','c#',):
+                        if marker=='p' and nextMarker not in ('v','p~','c#',):
                             if lastKey: print( lastKey, self.getEntries( lastKey )[0] )
-                            logging.critical( "InternalBibleIndex.checkIndex: Probable p or q1 encoding error in {} {}:{} {}".format( self.bookReferenceCode, C, V, entries ) )
+                            logging.critical( "InternalBibleIndex.checkIndex: Probable p encoding error in {} {} {}:{} {}".format( self.name, self.bookReferenceCode, C, V, entries ) )
                             if nextKey: print( nextKey, self.getEntries( nextKey )[0] )
                             if nextNextKey: print( nextNextKey, self.getEntries( nextNextKey )[0] )
                             if Globals.debugFlag and debuggingThisModule: halt
-                        if marker in ('q2','q3',) and nextMarker not in ('v','p~','c#',):
-                                logging.critical( "InternalBibleIndex.checkIndex: Probable q2 or q3 encoding error in {} {}:{} {}".format( self.bookReferenceCode, C, V, entries ) )
+                        elif marker=='q1' and nextMarker not in ('v','p~','c#','q1','q2',):
+                            if lastKey: print( lastKey, self.getEntries( lastKey )[0] )
+                            logging.critical( "InternalBibleIndex.checkIndex: Probable q1 encoding error in {} {} {}:{} {}".format( self.name, self.bookReferenceCode, C, V, entries ) )
+                            if nextKey: print( nextKey, self.getEntries( nextKey )[0] )
+                            if nextNextKey: print( nextNextKey, self.getEntries( nextNextKey )[0] )
+                            if Globals.debugFlag and debuggingThisModule: halt
+                        elif marker=='q2' and nextMarker not in ('v','p~','q1','q2','q3',):
+                                logging.critical( "InternalBibleIndex.checkIndex: Probable q2 encoding error in {} {} {}:{} {}".format( self.name, self.bookReferenceCode, C, V, entries ) )
                                 if Globals.debugFlag and debuggingThisModule: halt
+                        elif marker=='q3' and nextMarker not in ('p~','q1','q2','q3','q4',):
+                                logging.critical( "InternalBibleIndex.checkIndex: Probable q3 encoding error in {} {} {}:{} {}".format( self.name, self.bookReferenceCode, C, V, entries ) )
+                                if Globals.debugFlag and debuggingThisModule: halt
+
+                    # Set the previous marker (but skipping over rem markers)
+                    if marker != 'rem': previousMarker = marker
 
             # Now check them
             if C == '0': # the book introduction
@@ -779,7 +799,7 @@ class InternalBibleIndex:
                     #print( " ", newKey, iD, ct )
                     if self.bookReferenceCode=='ACT' and C=='8':
                         if 'p' in markers:
-                            logging.critical( "InternalBibleIndex.checkIndex: Check that text in Acts 8:0 gets processed correctly!" )
+                            logging.critical( "InternalBibleIndex.checkIndex: Check that text in {} Acts 8:0 gets processed correctly!".format( self.name ) )
                         else:
                             if 's1'  in markers or 'r' in markers or 'p' in markers or 'q1' in markers:
                                 print( key, entries )
@@ -790,17 +810,18 @@ class InternalBibleIndex:
                 marker, cleanText = entry.getMarker(), entry.getCleanText()
                 if marker in ( 'c','c#' ):
                     if cleanText != C:
-                        logging.critical( "InternalBibleIndex.checkIndex: wrong {} chapter number '{}' expected '{}'".format( self.bookReferenceCode, cleanText, C ) )
+                        logging.critical( "InternalBibleIndex.checkIndex: wrong {} {} chapter number '{}' expected '{}'".format( self.name, self.bookReferenceCode, cleanText, C ) )
                         #if Globals.debugFlag: halt
                 elif marker == 'v':
                     if cleanText != V:
                         if '-' not in cleanText and ',' not in cleanText: # Handle verse ranges
-                            logging.critical( "InternalBibleIndex.checkIndex: wrong {} {} verse number '{}' expected '{}'".format( self.bookReferenceCode, C, cleanText, V ) )
+                            logging.critical( "InternalBibleIndex.checkIndex: wrong {} {} {} verse number '{}' expected '{}'".format( self.name, self.bookReferenceCode, C, cleanText, V ) )
                             #if Globals.debugFlag: halt
             lastKey = key
         #if self.bookReferenceCode=='FRT': halt
     # end if InternalBibleIndex.checkIndex
 # end of class InternalBibleIndex
+
 
 
 def demo():

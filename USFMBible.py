@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2013-08-15 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-25 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -344,6 +344,7 @@ def demo():
                     UsfmBErrors = UsfmB.getErrors()
                     # print( UBErrors )
                 if Globals.commandLineOptions.export:
+                    #UsfmB.toTeX()
                     UsfmB.doAllExports()
                     if name != "UEP": # Why does this fail to pickle?
                         newObj = Globals.unpickleObject( name + '.pickle' )

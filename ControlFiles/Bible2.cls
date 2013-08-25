@@ -1,5 +1,5 @@
 % Bible2.cls
-%   Last modified: 2013-08-22 by RJH
+%   Last modified: 2013-08-23 by RJH
 %
 % XeTeX class for layout of two-column Bibles
 %
@@ -8,10 +8,24 @@
 % License: See gpl-3.0.txt
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{Bible}[2013/08/21 custom Bible class]
+\ProvidesClass{Bible}[2013/08/23 custom Bible class]
 \LoadClass{book}
-\RequirePackage{multicol}
+\RequirePackage{xltxtra} % Extra customizations for XeLaTeX -- automatically loads fontspec and xunicode
+\RequirePackage{color}
 \RequirePackage{lettrine} % Finds lettrine.sty
+
+\RequirePackage{multicol}
+
+
+\setmainfont[Ligatures=TeX]{Charis SIL}
+
+
+% Colours
+\definecolor{headingColour}{rgb}{1,0.5,0}
+\definecolor{verseNumberColour}{rgb}{0,0.5,1}
+
+
+% \newenvironment{center}{\center}
 
 
 % \RequirePackage{titlesec}
@@ -37,21 +51,31 @@
   \centerline{\Huge{#1}}
 }
 
-\newcommand{\BibleBookTableOfContents}[0]{
+\newcommand{\BibleBookTableOfContents}{
   \tableofcontents
   \newpage
 }
 
-\newcommand{\BibleIntro}[0]{
+
+\newcommand{\BibleTitlePage}{
+  \begin{titlepage}
+  \begin{center}
+}
+\newcommand{\BibleIntro}{
+  \end{center}
+  \end{titlepage}
   \\ % Was \part but messes things up
 }
-\newcommand{\BibleText}[0]{
+\newcommand{\BibleText}{
+%   \end{center} % May give an error if already closed
+%   \end{titlepage}
   \\ % Was \part but messes things up
   \begin{multicols}{2}
 }
 
+
 \newcommand{\BibleTextSection}[1]{
-  \section{#1}
+  \section{\textcolor{headingColour}{#1}}
 }
 
 \newcommand{\BibleSectionReference}[1]{
@@ -62,45 +86,61 @@
 
 % Chapter and verse numbers
 \newcommand{\chapterNumber}[1]{
+%     \chapter{#1}
     \lettrine[lines=3,slope=-4pt,nindent=-4pt]{#1}{~}
 }
 % {\em #1}
 
 \newcommand{\verseNumber}[1]{
-    \textsuperscript{#1~}
+    \textsuperscript{\textcolor{verseNumberColour}{#1}~}
+}
+
+
+% Biblical titlepage paragraph styles
+\newcommand{\BibleMainTitle}[1]{
+    {\Huge {#1}}\\
+}
+\newcommand{\BibleTitleTwo}[1]{
+    {\huge {#1}}\\
+}
+\newcommand{\BibleTitleThree}[1]{
+    {\LARGE {#1}}\\
 }
 
 
 % Biblical introduction paragraph styles
-\newcommand{\BibleParagraphStyleIP}[0]{
-    \par
+\newcommand{\BibleParagraphStyleIP}{
+    \paragraph
 }
 
 
 % Biblical text paragraph styles
-\newcommand{\BibleParagraphStyleP}[0]{
-    \par
+\newcommand{\BibleParagraphStyleP}{
+    \paragraph
 }
-\newcommand{\BibleParagraphStylePI}[0]{
-    \par
+\newcommand{\BibleParagraphStylePI}{
+    \paragraph
 }
-\newcommand{\BibleParagraphStyleQ}[0]{
-    \par
+\newcommand{\BibleParagraphStyleQ}{
+    \paragraph
 }
-\newcommand{\BibleParagraphStyleQQ}[0]{
-    \par
+\newcommand{\BibleParagraphStyleQQ}{
+    \paragraph
 }
-\newcommand{\BibleParagraphStyleQQQ}[0]{
-    \par
+\newcommand{\BibleParagraphStyleQQQ}{
+    \paragraph
 }
-\newcommand{\BibleParagraphStyleQQQQQ}[0]{
-    \par
+\newcommand{\BibleParagraphStyleQQQQQ}{
+    \paragraph
 }
 
 
 % Biblical character styles
-\newcommand{\BibleCharacterStyleBK}[1]{
-    \em{#1}
+\newcommand{\BibleCharacterStyleBK}[1]{ % Book name
+    \emph{#1}
+}
+\newcommand{\BibleCharacterStyleQS}[1]{ % Selah
+    \emph{#1}
 }
 
 
@@ -108,8 +148,14 @@
 \newcommand{\BibleFootnote}[1]{
     \footnote{#1}
 }
+\newcommand{\BibleFootnoteAnchor}[1]{
+    \textbf{#1}
+}
 \newcommand{\BibleCrossReference}[1]{
     \footnote{#1}
+}
+\newcommand{\BibleCrossReferenceAnchor}[1]{
+    \textbf{#1}
 }
 
 
@@ -120,7 +166,7 @@
 
 
 % Finishing up
-\newcommand{\BibleBookEnd}[0]{
+\newcommand{\BibleBookEnd}{
     \end{multicols}
 }
 
