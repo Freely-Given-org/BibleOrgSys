@@ -1,11 +1,24 @@
 % Bible1.cls
-%   Last modified: 2013-08-23 by RJH
+%   Last modified: 2013-08-23 by RJH (also update date in ProvidesClass below)
 %
 % XeTeX class for layout of single-column Bibles
 %
-% Copyright (C) 2013 Robert Hunt
+% Copyright (C) 2010-2013 Robert Hunt
 % Author: Robert Hunt <robert316@users.sourceforge.net>
 % License: See gpl-3.0.txt
+%
+%   This program is free software: you can redistribute it and/or modify
+%   it under the terms of the GNU General Public License as published by
+%   the Free Software Foundation, either version 3 of the License, or
+%   (at your option) any later version.
+%
+%   This program is distributed in the hope that it will be useful,
+%   but WITHOUT ANY WARRANTY; without even the implied warranty of
+%   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%   GNU General Public License for more details.
+%
+%   You should have received a copy of the GNU General Public License
+%   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{Bible}[2013/08/23 custom Bible class]
@@ -183,3 +196,5 @@
 %     \item #3
 %     \end{itemize}
 % }
+
+% end of Bible1.cls

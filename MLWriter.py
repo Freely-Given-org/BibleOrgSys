@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # MLWriter.py
-#   Last modified: 2013-07-12 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-27 by RJH (also update ProgVersion below)
 #
 # Module handling pretty writing of XML (and xHTML) and HTML files
 #
@@ -37,7 +37,7 @@ TODO: Add writeAutoDTD
 """
 
 ProgName = "ML Writer"
-ProgVersion = "0.30"
+ProgVersion = "0.31"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -49,7 +49,7 @@ import Globals
 
 allowedOutputTypes = 'XML','HTML'
 HTMLParaTags = 'p', # Not automatically started on a new line
-HTMLInsideTags = 'a', 'b', 'em', 'i' # Not automatically started on or finished with a new line
+HTMLInsideTags = 'a', 'b', 'em', 'i', 'sup', 'sub', 'span' # Not automatically started on or finished with a new line
 HTMLCombinedTags = HTMLParaTags + HTMLInsideTags
 
 
@@ -384,7 +384,7 @@ class MLWriter:
 
 
     def writeLineClose( self, closeTag ):
-        """ Writes an opening tag on a line. """
+        """ Writes a closing tag on a line. """
         #print( 'writeLineClose', self._openStack )
         if not self._openStack:
              logging.error( _("MLWriter:writeLineClose: closed '{}' tag even though no tags open").format( closeTag ) )
@@ -401,10 +401,11 @@ class MLWriter:
         """ Writes an opening and closing tag on the same line. """
         checkedTag = self.checkTag(tag)
         checkedText = text if noTextCheck else self.checkText(text)
+        noNL = self._outputType=='HTML' and tag in HTMLInsideTags
         if attribInfo is None:
-            return self._autoWrite( '<{}>{}</{}>'.format( checkedTag, checkedText, checkedTag ) )
+            return self._autoWrite( '<{}>{}</{}>'.format( checkedTag, checkedText, checkedTag ), noNL=noNL )
         #else: # have one or more attributes
-        return self._autoWrite( '<{} {}>{}</{}>'.format( checkedTag, self.getAttributes(attribInfo), checkedText, checkedTag ) )
+        return self._autoWrite( '<{} {}>{}</{}>'.format( checkedTag, self.getAttributes(attribInfo), checkedText, checkedTag ), noNL=noNL )
     # end of MLWriter.writeLineOpenClose
 
 

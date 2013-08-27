@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-08-24 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-27 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -51,7 +51,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.41"
+ProgVersion = "0.42"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -3368,13 +3368,21 @@ class BibleWriter( InternalBible ):
                 logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
         if Globals.debugFlag: assert( controlDict and isinstance( controlDict, dict ) )
 
+        # Copy across our css style files
+        for filenamePart in ( 'BibleBook', ):
+            filepath = os.path.join( defaultControlFolder, filenamePart+'.css' )
+            try:
+                shutil.copy( filepath, outputFolder ) # Copy it under its own name
+                #shutil.copy( filepath, os.path.join( outputFolder, "Bible.css" ) ) # Copy it also under the generic name
+            except FileNotFoundError: logging.warning( "Unable to find CSS style file: {}".format( filepath ) )
+
         unhandledMarkers = set()
 
         def writeHeader( writerObject ):
             """Writes the HTML5 header to the HTML writerObject."""
             writerObject.writeLineOpen( 'head' )
             writerObject.writeLineText( '<meta http-equiv="Content-Type" content="text/html;charset=utf-8">', noTextCheck=True )
-            writerObject.writeLineText( '<link rel="stylesheet" type="text/css" href="../CSS/BibleBook.css">', noTextCheck=True )
+            writerObject.writeLineText( '<link rel="stylesheet" type="text/css" href="BibleBook.css">', noTextCheck=True )
             if 'HTML5Title' in controlDict and controlDict['HTML5Title']:
                 writerObject.writeLineOpenClose( 'title' , controlDict['HTML5Title'].replace('__PROJECT_NAME__',self.name) )
             #if "HTML5Subject" in controlDict and controlDict["HTML5Subject"]: writerObject.writeLineOpenClose( 'subject', controlDict["HTML5Subject"] )
@@ -3449,7 +3457,7 @@ class BibleWriter( InternalBible ):
             writerObject.writeLineOpen( 'a', ('href','http://www.w3.org/html/logo/') )
             writerObject.writeLineText( '<img src="http://www.w3.org/html/logo/badge/html5-badge-h-css3-semantics.png" width="165" height="64" alt="HTML5 Powered with CSS3 / Styling, and Semantics" title="HTML5 Powered with CSS3 / Styling, and Semantics">', noTextCheck=True )
             writerObject.writeLineClose( 'a' )
-            writerObject.writeLineText( "This page automatically created by: {} v{} {}".format( ProgName, ProgVersion, datetime.today().strftime("%d-%b-%Y") ) )
+            writerObject.writeLineText( "This page automatically created {} by {} v{}".format( datetime.today().strftime("%d-%b-%Y"), ProgName, ProgVersion ) )
             writerObject.writeLineClose( 'p' )
             writerObject.writeLineClose( 'footer' )
             writerObject.writeLineClose( 'body' )
@@ -3552,7 +3560,7 @@ class BibleWriter( InternalBible ):
                     endHTML5 = '<p id="XRef{}" class="xref">'.format( xrefIndex )
                     if origin: # This only handles CV separator of : so far
                         endHTML5 += '<a title="Go back up to {} in the text" href="{}"><span class="xrefOrigin">{}</span></a>' \
-                                                            .format( originCV, liveCV(originCV), origin )
+                                                            .format( originCV, liveCV(originCV), originCV )
                     endHTML5 += ' <span class="xrefEntry">{}</span>'.format( xrefText )
                     endHTML5 += '</p>'
 
@@ -3752,12 +3760,9 @@ class BibleWriter( InternalBible ):
                     V = text
                     if not haveOpenParagraph:
                         logging.warning( "toHTML5: Have verse number {} outside a paragraph in {} {}:{}".format( text, BBB, C, V ) )
-                    if 1: # no span -- it's simpler so why not!
-                        writerObject.writeLineOpenClose( 'sup', text, [('class','verseNumber'),('id','C'+C+'V'+text)] )
-                    else: # use sup and then span
-                        writerObject.writeLineOpen( 'sup' )
-                        writerObject.writeLineOpenClose( 'span', text, [('class','verseNumber'),('id','C'+C+'V'+text)] )
-                        writerObject.writeLineClose( 'sup' )
+                    writerObject.writeLineOpenClose( 'span', ' ', ('class','verseNumberPrespace') )
+                    writerObject.writeLineOpenClose( 'span', V, [('class','verseNumber'),('id','C'+C+'V'+V)] )
+                    writerObject.writeLineOpenClose( 'span', '&nbsp;', ('class','verseNumberPostspace') )
                 elif marker == 'p':
                     if haveOpenList: writerObject.writeLineClose( 'p' ); haveOpenList = False
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
