@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksNames.py
-#   Last modified: 2013-06-24 (also update ProgVersion below)
+#   Last modified: 2013-08-28 (also update ProgVersion below)
 #
 # Module handling BibleBooksNames
 #
@@ -503,8 +503,7 @@ def demo():
 if __name__ == '__main__':
     # Configure basic set-up
     parser = Globals.setup( ProgName, ProgVersion )
-    parser.add_option("-x", "--expandDemo", action="store_true", dest="expandDemo", default=False, help="expand the input abbreviations to include all unambiguous shorter forms")
-    #parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML files to .py and .h tables suitable for directly including into other programs")
+    parser.add_option("-p", "--expandDemo", action="store_true", dest="expandDemo", default=False, help="expand the input abbreviations to include all unambiguous shorter forms")
     Globals.addStandardOptionsAndProcess( parser )
 
     demo()

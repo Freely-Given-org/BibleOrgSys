@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Bible.py
-#   Last modified: 2013-07-28 (also update ProgVersion below)
+#   Last modified: 2013-08-28 (also update ProgVersion below)
 #
 # Module handling a internal Bible object
 #
@@ -28,7 +28,7 @@ Module handling an internal Bible object.
 """
 
 ProgName = "Bible object handler"
-ProgVersion = "0.05"
+ProgVersion = "0.06"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -359,8 +359,7 @@ def demo():
 if __name__ == '__main__':
     # Configure basic set-up
     parser = Globals.setup( ProgName, ProgVersion )
-    parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
-    Globals.addStandardOptionsAndProcess( parser )
+    Globals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 

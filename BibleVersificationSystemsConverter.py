@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleVersificationSystemsConverter.py
-#   Last modified: 2013-07-25 (also update ProgVersion below)
+#   Last modified: 2013-08-28 (also update ProgVersion below)
 #
 # Module handling BibleVersificationSystem_*.xml to produce C and Python data tables
 #
@@ -661,8 +661,7 @@ def demo():
 if __name__ == '__main__':
     # Configure basic set-up
     parser = Globals.setup( ProgName, ProgVersion )
-    parser.add_option("-e", "--export", action="store_true", dest="export", default=False, help="export the XML file to .py and .h tables suitable for directly including into other programs")
-    Globals.addStandardOptionsAndProcess( parser )
+    Globals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 

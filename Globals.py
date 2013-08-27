@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Globals.py
-#   Last modified: 2013-08-07 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-28 by RJH (also update ProgVersion below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -69,7 +69,7 @@ Contains functions:
 """
 
 ProgName = "Globals"
-ProgVersion = "0.33"
+ProgVersion = "0.34"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -745,7 +745,7 @@ def setLogErrorsFlag( newValue=True ):
 # end of setLogErrorsFlag
 
 
-def addStandardOptionsAndProcess( parserObject ):
+def addStandardOptionsAndProcess( parserObject, exportAvailable=False ):
     """ Adds our standardOptions to the command line parser. """
     global commandLineOptions, commandLineArguments, maxProcesses
 
@@ -754,20 +754,22 @@ def addStandardOptionsAndProcess( parserObject ):
     parserObject.add_option( "-i", "--informative", action="store_const", dest="verbose", const=3, help="output more information to the console" )
     parserObject.add_option( "-v", "--verbose", action="store_const", dest="verbose", const=4, help="output lots of information for the user" )
     parserObject.add_option( "-c", "--strict", action="store_true", dest="strict", default=False, help="perform very strict checking of all input" )
-    parserObject.add_option( "-l", "--log", action="store_true", dest="log", default=False, help="log errors to console" )
-    parserObject.add_option( "-w", "--warn", action="store_true", dest="warn", default=False, help="log warnings and errors to console" )
+    parserObject.add_option( "-e", "--errors", action="store_true", dest="errors", default=False, help="log errors to console" )
+    parserObject.add_option( "-w", "--warnings", action="store_true", dest="warnings", default=False, help="log warnings and errors to console" )
     parserObject.add_option( "-1", "--single", action="store_true", dest="single", default=False, help="don't use multiprocessing" )
     parserObject.add_option( "-d", "--debug", action="store_true", dest="debug", default=False, help="output even more information for the programmer/debugger" )
+    if exportAvailable:
+        parserObject.add_option("-x", "--export", action="store_true", dest="export", default=False, help="export the data file(s)")
     commandLineOptions, commandLineArguments = parserObject.parse_args()
-    if commandLineOptions.log and commandLineOptions.warn:
-        parserObject.error( "options -l and -w are mutually exclusive" )
+    if commandLineOptions.errors and commandLineOptions.warnings:
+        parserObject.error( "options -e and -w are mutually exclusive" )
 
     setVerbosity( commandLineOptions.verbose if commandLineOptions.verbose is not None else 2)
     if commandLineOptions.debug: setDebugFlag()
 
     # Determine console logging levels
-    if commandLineOptions.warn: addConsoleLogging( logging.WARNING if not debugFlag else logging.DEBUG )
-    elif commandLineOptions.log: addConsoleLogging( logging.ERROR )
+    if commandLineOptions.warnings: addConsoleLogging( logging.WARNING if not debugFlag else logging.DEBUG )
+    elif commandLineOptions.errors: addConsoleLogging( logging.ERROR )
     else: addConsoleLogging( logging.CRITICAL ) # default
     if commandLineOptions.strict: setStrictCheckingFlag()
     #if commandLineOptions.log: setLogErrorsFlag()

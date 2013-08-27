@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2013-08-07 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-28 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -44,7 +44,7 @@ and then fills
 """
 
 ProgName = "Internal Bible handler"
-ProgVersion = "0.38"
+ProgVersion = "0.39"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -403,7 +403,7 @@ class InternalBible:
         aggregateResults = {}
         if Globals.debugFlag: assert( 'ALL' not in self.discoveryResults )
         for BBB in self.discoveryResults:
-            #print( "discoveryResults", BBB, self.discoveryResults[BBB] )
+            #print( "discoveryResults for", BBB, len(self.discoveryResults[BBB]), self.discoveryResults[BBB] )
             isOT = isNT = isDC = False
             if Globals.BibleBooksCodes.isOldTestament_NR( BBB ):
                 isOT = True
@@ -463,14 +463,14 @@ class InternalBible:
                     if 'percentageProgressByBook' not in aggregateResults: aggregateResults['percentageProgressByBook'] = value
                     else: aggregateResults['percentageProgressByBook'] += value
                     if isOT:
-                        if 'percentageProgressByOTBook' not in aggregateResults: aggregateResults['percentageProgressByOTBook'] = value
-                        else: aggregateResults['percentageProgressByOTBook'] += value
+                        if 'OTpercentageProgressByBook' not in aggregateResults: aggregateResults['OTpercentageProgressByBook'] = value
+                        else: aggregateResults['OTpercentageProgressByBook'] += value
                     elif isNT:
-                        if 'percentageProgressByNTBook' not in aggregateResults: aggregateResults['percentageProgressByNTBook'] = value
-                        else: aggregateResults['percentageProgressByNTBook'] += value
+                        if 'NTpercentageProgressByBook' not in aggregateResults: aggregateResults['NTpercentageProgressByBook'] = value
+                        else: aggregateResults['NTpercentageProgressByBook'] += value
                     elif isDC:
-                        if 'percentageProgressByDCBook' not in aggregateResults: aggregateResults['percentageProgressByDCBook'] = value
-                        else: aggregateResults['percentageProgressByDCBook'] += value
+                        if 'DCpercentageProgressByBook' not in aggregateResults: aggregateResults['DCpercentageProgressByBook'] = value
+                        else: aggregateResults['DCpercentageProgressByBook'] += value
                     #print( 'xxx', value, aggregateResults['percentageProgressByBook'] )
                 elif isinstance( value, float ):
                     #print( "got", BBB, key, value )
@@ -522,23 +522,24 @@ class InternalBible:
                 del aggregateResults[arKey] # Get rid of the ratio
                 aggregateResults[arKey[:-5]+'Flag'] = aggregateFlag
 
-        #print( 'yyy', "aggregateResults", aggregateResults['percentageProgressByBook'], len(self) )
+        # Now calculate our overall statistics
+        #print( "pre-aggregateResults", len(self), len(aggregateResults), aggregateResults )
         if 'percentageProgressByBook' in aggregateResults:
             aggregateResults['percentageProgressByBook'] = str( round( aggregateResults['percentageProgressByBook'] / len(self) ) ) + '%'
-        if 'percentageProgressByOTBook' in aggregateResults:
-            aggregateResults['percentageProgressByOTBook'] = str( round( aggregateResults['percentageProgressByOTBook'] / 39 ) ) + '%'
-        if 'percentageProgressByNTBook' in aggregateResults:
-            aggregateResults['percentageProgressByNTBook'] = str( round( aggregateResults['percentageProgressByNTBook'] / 27 ) ) + '%'
-        if 'percentageProgressByDCBook' in aggregateResults:
-            aggregateResults['percentageProgressByDCBook'] = str( round( aggregateResults['percentageProgressByDCBook'] / 15 ) ) + '%'
-        if 'percentageProgressByVerse' in aggregateResults:
+        if 'OTpercentageProgressByBook' in aggregateResults:
+            aggregateResults['OTpercentageProgressByBook'] = str( round( aggregateResults['OTpercentageProgressByBook'] / 39 ) ) + '%'
+        if 'NTpercentageProgressByBook' in aggregateResults:
+            aggregateResults['NTpercentageProgressByBook'] = str( round( aggregateResults['NTpercentageProgressByBook'] / 27 ) ) + '%'
+        if 'DCpercentageProgressByBook' in aggregateResults:
+            aggregateResults['DCpercentageProgressByBook'] = str( round( aggregateResults['DCpercentageProgressByBook'] / 15 ) ) + '%'
+        if 'completedVerseCount' in aggregateResults and 'verseCount' in aggregateResults:
             aggregateResults['percentageProgressByVerse'] = str( round( aggregateResults['completedVerseCount'] * 100 / aggregateResults['verseCount'] ) ) + '%'
-        if 'percentageProgressByOTVerse' in aggregateResults:
-            aggregateResults['percentageProgressByOTVerse'] = str( round( aggregateResults['OTcompletedVerseCount'] * 100 / aggregateResults['OTverseCount'] ) ) + '%'
-        if 'percentageProgressByNTVerse' in aggregateResults:
-            aggregateResults['percentageProgressByNTVerse'] = str( round( aggregateResults['NTcompletedVerseCount'] * 100 / aggregateResults['NTverseCount'] ) ) + '%'
-        if 'percentageProgressByDCVerse' in aggregateResults:
-            aggregateResults['percentageProgressByDCVerse'] = str( round( aggregateResults['DCcompletedVerseCount'] * 100 / aggregateResults['DCverseCount'] ) ) + '%'
+        if 'OTcompletedVerseCount' in aggregateResults and 'OTverseCount' in aggregateResults:
+            aggregateResults['OTpercentageProgressByVerse'] = str( round( aggregateResults['OTcompletedVerseCount'] * 100 / aggregateResults['OTverseCount'] ) ) + '%'
+        if 'NTcompletedVerseCount' in aggregateResults and 'NTverseCount' in aggregateResults:
+            aggregateResults['NTpercentageProgressByVerse'] = str( round( aggregateResults['NTcompletedVerseCount'] * 100 / aggregateResults['NTverseCount'] ) ) + '%'
+        if 'DCcompletedVerseCount' in aggregateResults and 'DCverseCount' in aggregateResults:
+            aggregateResults['DCpercentageProgressByVerse'] = str( round( aggregateResults['DCcompletedVerseCount'] * 100 / aggregateResults['DCverseCount'] ) ) + '%'
 
         # Save the results
         self.discoveryResults['ALL'] = aggregateResults
