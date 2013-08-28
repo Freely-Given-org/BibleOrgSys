@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Globals.py
-#   Last modified: 2013-08-28 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-29 by RJH (also update ProgVersion below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -69,7 +69,7 @@ Contains functions:
 """
 
 ProgName = "Globals"
-ProgVersion = "0.34"
+ProgVersion = "0.35"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -753,11 +753,11 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ):
     parserObject.add_option( "-q", "--quiet", action="store_const", dest="verbose", const=1, help="output less information to the console" )
     parserObject.add_option( "-i", "--informative", action="store_const", dest="verbose", const=3, help="output more information to the console" )
     parserObject.add_option( "-v", "--verbose", action="store_const", dest="verbose", const=4, help="output lots of information for the user" )
-    parserObject.add_option( "-c", "--strict", action="store_true", dest="strict", default=False, help="perform very strict checking of all input" )
     parserObject.add_option( "-e", "--errors", action="store_true", dest="errors", default=False, help="log errors to console" )
     parserObject.add_option( "-w", "--warnings", action="store_true", dest="warnings", default=False, help="log warnings and errors to console" )
-    parserObject.add_option( "-1", "--single", action="store_true", dest="single", default=False, help="don't use multiprocessing" )
     parserObject.add_option( "-d", "--debug", action="store_true", dest="debug", default=False, help="output even more information for the programmer/debugger" )
+    parserObject.add_option( "-1", "--single", action="store_true", dest="single", default=False, help="don't use multiprocessing" )
+    parserObject.add_option( "-c", "--strict", action="store_true", dest="strict", default=False, help="perform very strict checking of all input" )
     if exportAvailable:
         parserObject.add_option("-x", "--export", action="store_true", dest="export", default=False, help="export the data file(s)")
     commandLineOptions, commandLineArguments = parserObject.parse_args()

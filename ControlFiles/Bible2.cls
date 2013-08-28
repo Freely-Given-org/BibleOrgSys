@@ -3,7 +3,7 @@
 %
 % XeTeX class for layout of two-column Bibles
 %
-% Copyright (C) 2010-2013 Robert Hunt
+% Copyright (C) 2013 Robert Hunt
 % Author: Robert Hunt <robert316@users.sourceforge.net>
 % License: See gpl-3.0.txt
 %

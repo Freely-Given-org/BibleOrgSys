@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-08-28 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-29 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -1378,15 +1378,15 @@ class BibleWriter( InternalBible ):
                 if '<<' in adjText or '>>' in adjText:
                     logging.warning( _("toOSIS: Unexpected double angle brackets in {}: '{}' field is '{}'").format( toOSISGlobals["verseRef"], marker, textToCheck ) )
                     adjText = adjText.replace('<<','“' ).replace('>>','”' )
-                if '\\add ' in adjText: adjText = checkTextHelper('add',adjText).replace('\\add ','<i>').replace('\\add*','</i>') # temp XXXXXX ...
-                if '\\sig ' in adjText: adjText = checkTextHelper('sig',adjText).replace('\\sig ','<signed>').replace('\\sig*','</signed>')
                 if '\\bk ' in adjText: adjText = checkTextHelper('bk',adjText).replace('\\bk ','<reference type="x-bookName">').replace('\\bk*','</reference>')
+                if '\\add ' in adjText: adjText = checkTextHelper('add',adjText).replace('\\add ','<i>').replace('\\add*','</i>') # temp XXXXXX ...
                 if '\\nd ' in adjText: adjText = checkTextHelper('nd',adjText).replace('\\nd ','<divineName>').replace('\\nd*','</divineName>')
+                if '\\wj ' in adjText: adjText = checkTextHelper('wj',adjText).replace('\\wj ','<hi type="bold">').replace('\\wj*','</hi>') # XXXXXX temp ....
+                if '\\sig ' in adjText: adjText = checkTextHelper('sig',adjText).replace('\\sig ','<signed>').replace('\\sig*','</signed>')
                 if '\\it ' in adjText: adjText = checkTextHelper('it',adjText).replace('\\it ','<hi type="italic">').replace('\\it*','</hi>')
                 if '\\bd ' in adjText: adjText = checkTextHelper('bd',adjText).replace('\\bd ','<hi type="bold">').replace('\\bd*','</hi>')
                 if '\\em ' in adjText: adjText = checkTextHelper('em',adjText).replace('\\em ','<hi type="bold">').replace('\\em*','</hi>')
                 if '\\sc ' in adjText: adjText = checkTextHelper('sc',adjText).replace('\\sc ','<hi type="SMALLCAPS">').replace('\\sc*','</hi>') # XXXXXX temp ....
-                if '\\wj ' in adjText: adjText = checkTextHelper('wj',adjText).replace('\\wj ','<hi type="bold">').replace('\\wj*','</hi>') # XXXXXX temp ....
                 if '\\ior ' in adjText: adjText = checkTextHelper('ior',adjText).replace('\\ior ','<reference>').replace('\\ior*','</reference>')
                 if '\\fig ' in adjText: # Figure is not used in Sword modules so we'll remove it from the OSIS (for now at least)
                     ix1 = adjText.find( '\\fig ' )
@@ -2018,15 +2018,15 @@ class BibleWriter( InternalBible ):
                 if '<<' in adjText or '>>' in adjText:
                     logging.warning( _("toSword: Unexpected double angle brackets in {}: '{}' field is '{}'").format(toOSISGlobals["verseRef"],marker,textToCheck) )
                     adjText = adjText.replace('<<','“' ).replace('>>','”' )
-                if '\\add ' in adjText: adjText = checkTextHelper('add',adjText).replace('\\add ','<i>').replace('\\add*','</i>') # temp XXXXXX ...
-                if '\\sig ' in adjText: adjText = checkTextHelper('sig',adjText).replace('\\sig ','<b>').replace('\\sig*','</b>') # temp... XXXXXXX
                 if '\\bk ' in adjText: adjText = checkTextHelper('bk',adjText).replace('\\bk ','<reference type="x-bookName">').replace('\\bk*','</reference>')
+                if '\\add ' in adjText: adjText = checkTextHelper('add',adjText).replace('\\add ','<i>').replace('\\add*','</i>') # temp XXXXXX ...
                 if '\\nd ' in adjText: adjText = checkTextHelper('nd',adjText).replace('\\nd ','<divineName>').replace('\\nd*','</divineName>')
+                if '\\wj ' in adjText: adjText = checkTextHelper('wj',adjText).replace('\\wj ','<hi type="bold">').replace('\\wj*','</hi>') # XXXXXX temp ....
+                if '\\sig ' in adjText: adjText = checkTextHelper('sig',adjText).replace('\\sig ','<b>').replace('\\sig*','</b>') # temp... XXXXXXX
                 if '\\it ' in adjText: adjText = checkTextHelper('it',adjText).replace('\\it ','<hi type="italic">').replace('\\it*','</hi>')
                 if '\\bd ' in adjText: adjText = checkTextHelper('bd',adjText).replace('\\bd ','<hi type="bold">').replace('\\bd*','</hi>')
                 if '\\em ' in adjText: adjText = checkTextHelper('em',adjText).replace('\\em ','<hi type="bold">').replace('\\em*','</hi>')
                 if '\\sc ' in adjText: adjText = checkTextHelper('sc',adjText).replace('\\sc ','<hi type="SMALLCAPS">').replace('\\sc*','</hi>') # XXXXXX temp ....
-                if '\\wj ' in adjText: adjText = checkTextHelper('wj',adjText).replace('\\wj ','<hi type="bold">').replace('\\wj*','</hi>') # XXXXXX temp ....
                 if '\\' in adjText:
                     logging.error( _("toSword: We still have some unprocessed backslashes for Sword in {}: '{}' field is '{}'").format(toSwordGlobals["verseRef"],marker,textToCheck) )
                     adjText = adjText.replace('\\','ENCODING ERROR HERE ' )
@@ -3403,15 +3403,17 @@ class BibleWriter( InternalBible ):
             writerObject.writeLineOpen( 'body' )
 
             writerObject.writeLineOpen( 'header' )
-            writerObject.writeLineText( 'HEADER STUFF GOES HERE' )
+            writerObject.writeLineOpenClose( 'h1', self.name, ('class','mainHeader') )
+            writerObject.writeLineOpenClose( 'p', 'What else needs to go in here in the header block?' )
             writerObject.writeLineClose( 'header' )
 
+            # Create the nav bar
             writerObject.writeLineOpen( 'nav' )
             writerObject.writeLineOpen( 'p' )
             for bkData in self:
                 BBB = bkData.bookReferenceCode
                 bkName = bkData.getAssumedBookNames()[0]
-                writerObject.writeLineText( '<a href="BIBLE_{}.html">{}</a><br />'.format( BBB, bkName ) )
+                writerObject.writeLineText( '<a class="bookName" href="BIBLE_{}.html">{}</a><br />'.format( BBB, bkName ) )
             writerObject.writeLineClose( 'p' )
             writerObject.writeLineClose( 'nav' )
         # end of toHTML5.writeHeader
@@ -3489,7 +3491,7 @@ class BibleWriter( InternalBible ):
                     #print( "a", analysis )
                     if analysis:
                         link = convertToPageReference(analysis)
-                        if link: result += '<a href="{}">{}</a>'.format( link, ref )
+                        if link: result += '<a class="sectionReferenceLink" href="{}">{}</a>'.format( link, ref )
                         else: result += ref
                     else: result += ref
             #print( "now = '{}'".format( result ) )
@@ -3554,12 +3556,12 @@ class BibleWriter( InternalBible ):
                             logging.error( "toHTML5.processXRef didn't handle xref marker: {}".format( marker ) )
                             xrefText += txt
 
-                    xrefHTML5 = '<a title="{}" href="#XRef{}"><span class="xrefLinkSymbol">[xr]</span></a>' \
+                    xrefHTML5 = '<a class="xrefLinkSymbol" title="{}" href="#XRef{}">[xr]</a>' \
                                     .format( xrefText, xrefIndex )
 
                     endHTML5 = '<p id="XRef{}" class="xref">'.format( xrefIndex )
                     if origin: # This only handles CV separator of : so far
-                        endHTML5 += '<a title="Go back up to {} in the text" href="{}"><span class="xrefOrigin">{}</span></a>' \
+                        endHTML5 += '<a class="xrefOrigin" title="Go back up to {} in the text" href="{}">{}</a>' \
                                                             .format( originCV, liveCV(originCV), originCV )
                     endHTML5 += ' <span class="xrefEntry">{}</span>'.format( xrefText )
                     endHTML5 += '</p>'
@@ -3608,12 +3610,12 @@ class BibleWriter( InternalBible ):
                             logging.error( "toHTML5.processFootnote didn't handle footnote marker: {}".format( marker ) )
                             fnText += txt
 
-                    footnoteHTML5 = '<a title="{}" href="#FNote{}"><span class="footnoteLinkSymbol">[fn]</span></a>' \
+                    footnoteHTML5 = '<a class="footnoteLinkSymbol" title="{}" href="#FNote{}">[fn]</a>' \
                                     .format( fnText, fnIndex )
 
                     endHTML5 = '<p id="FNote{}" class="footnote">'.format( fnIndex )
                     if origin: # This only handles CV separator of : so far
-                        endHTML5 += '<a title="Go back up to {} in the text" href="{}"><span class="footnoteOrigin">{}</span></a>' \
+                        endHTML5 += '<a class="footnoteOrigin" title="Go back up to {} in the text" href="{}">{}</a>' \
                                                             .format( originCV, liveCV(originCV), origin )
                     endHTML5 += ' <span class="footnoteEntry">{}</span>'.format( fnText )
                     endHTML5 += '</p>'
@@ -3668,12 +3670,14 @@ class BibleWriter( InternalBible ):
 
                 # Semantic stuff
                 text = text.replace( '\\bk ', '<span class="bookName">' ).replace( '\\bk*', '</span>' )
-                text = text.replace( '\\wj ', '<span class="wordsOfJesus">' ).replace( '\\wj*', '</span>' )
+                text = text.replace( '\\add ', '<span class="addedText">' ).replace( '\\add*', '</span>' )
                 text = text.replace( '\\nd ', '<span class="divineName">' ).replace( '\\nd*', '</span>' )
+                text = text.replace( '\\wj ', '<span class="wordsOfJesus">' ).replace( '\\wj*', '</span>' )
+                text = text.replace( '\\sig ', '<span class="signature">' ).replace( '\\sig*', '</span>' )
                 text = text.replace( '\\k ', '<span class="keyWord">' ).replace( '\\k*', '</span>' )
 
                 # Direct formatting
-                text = text.replace( '\\bdit ', '<span class="boldItalitc">' ).replace( '\\bdit*', '</span>' )
+                text = text.replace( '\\bdit ', '<span class="boldItalic">' ).replace( '\\bdit*', '</span>' )
                 text = text.replace( '\\it ', '<span class="italic">' ).replace( '\\it*', '</span>' )
                 text = text.replace( '\\bd ', '<span class="bold">' ).replace( '\\bd*', '</span>' )
                 text = text.replace( '\\sc ', '<span class="smallCaps">' ).replace( '\\sc*', '</span>' )
@@ -3697,7 +3701,7 @@ class BibleWriter( InternalBible ):
                     #print( '0', repr(match.group(0)) )
                     #print( '1', repr(match.group(1)) )
                     #print( '2', repr(match.group(2)) )
-                    text = text.replace( match.group(0), '<a href="#C{}V{}">{}</a>'.format( match.group(1), match.group(2), match.group(0) ) )
+                    text = text.replace( match.group(0), '<a class="CVReference" href="#C{}V{}">{}</a>'.format( match.group(1), match.group(2), match.group(0) ) )
                     #print( repr(text) )
                 return text
             # end of liveLocal
@@ -3722,7 +3726,7 @@ class BibleWriter( InternalBible ):
                     if not haveOpenParagraph:
                         logging.warning( "toHTML5: Have main section heading {} outside a paragraph in {}".format( text, BBB ) )
                         writerObject.writeLineOpen( 'p', ('class','unknownParagraph') ); haveOpenParagraph = True
-                    if text: writerObject.writeLineOpenClose( 'h2', text, ('class','mainSectionHeading'+marker[1]) )
+                    if text: writerObject.writeLineOpenClose( 'h2', text, ('class','majorSectionHeading'+marker[1]) )
                 elif marker == 'ip':
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
                     writerObject.writeLineOpen( 'p', ('class','introductoryParagraph') ); haveOpenParagraph = True
@@ -3749,13 +3753,13 @@ class BibleWriter( InternalBible ):
                     if marker == 's1':
                         if haveOpenSection: writerObject.writeLineClose( 'section' ); haveOpenSection = False
                         writerObject.writeLineOpen( 'section', ('class','regularSection') ); haveOpenSection = True
-                    if text: writerObject.writeLineOpenClose( 'h2', text, ('class','sectionHeading'+marker[1]) )
+                    if text: writerObject.writeLineOpenClose( 'h3', text, ('class','sectionHeading'+marker[1]) )
                 elif marker == 'r':
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
                     if not haveOpenSection:
                         logging.warning( "toHTML5: Have section reference {} outside a paragraph in {} {}:{}".format( text, BBB, C, V ) )
                         writerObject.writeLineOpen( 'section', ('class','regularSection') ); haveOpenSection = True
-                    if text: writerObject.writeLineOpenClose( 'span', createSectionReference(text), ('class','sectionReference'), noTextCheck=True )
+                    if text: writerObject.writeLineOpenClose( 'p', createSectionReference(text), ('class','sectionReference'), noTextCheck=True )
                 elif marker == 'v':
                     V = text
                     if not haveOpenParagraph:
@@ -3880,8 +3884,9 @@ class BibleWriter( InternalBible ):
             except FileNotFoundError: logging.warning( "Unable to find TeX control file: {}".format( filepath ) )
         pMarkerTranslate = { 'p':'P', 'pi':'PI', 'q1':'Q', 'q2':'QQ', 'q3':'QQQ', 'q4':'QQQQ',
                             'ip':'IP', }
-        cMarkerTranslate = { 'bk':'BK', 'add':'ADD', 'sig':'SIG', 'nd':'ND', 'it':'IT', 'bd':'BD',
-                            'bdit':'BDIT', 'em':'EM', 'sc':'SC', 'wj':'WJ', 'ior':'IOR', }
+        cMarkerTranslate = { 'bk':'BK', 'add':'ADD', 'nd':'ND', 'wj':'WJ', 'sig':'SIG',
+                            'bdit':'BDIT', 'it':'IT', 'bd':'BD', 'em':'EM', 'sc':'SC',
+                            'ior':'IOR', }
         mtMarkerTranslate = { 'mt1':'BibleMainTitle', 'mt2':'BibleTitleTwo', 'mt3':'BibleTitleThree' }
 
         def writeTeXHeader( writer ):

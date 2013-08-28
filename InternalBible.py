@@ -557,7 +557,7 @@ class InternalBible:
             for key,value in sorted(self.discoveryResults['ALL'].items()):
                 if key.startswith("percentage") or key.endswith("Count") or key.endswith("Flag") or key.endswith("Codes"):
                     print( " ", key, "is", value )
-                else: print( " ", key, "in", value if value<len(self) else "All", "books" )
+                else: print( " ", key, "in", value if value<len(self) else "all", "books" )
     # end of InternalBible.discover
 
 
