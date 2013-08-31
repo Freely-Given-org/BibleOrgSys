@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # UnboundBible.py
-#   Last modified: 2013-07-30 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-30 by RJH (also update ProgVersion below)
 #
 # Module handling Biola University "unbound" Bible files
 #
@@ -86,7 +86,7 @@ and
 """
 
 ProgName = "Unbound Bible format handler"
-ProgVersion = "0.14"
+ProgVersion = "0.15"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -404,14 +404,14 @@ def demo():
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         result1 = UnboundBibleFileCheck( testFolder )
-        if Globals.verbosityLevel > 1: print( "TestA1", result1 )
+        if Globals.verbosityLevel > 1: print( "Unbound TestA1", result1 )
         result2 = UnboundBibleFileCheck( testFolder, autoLoad=True )
-        if Globals.verbosityLevel > 1: print( "TestA2", result2 )
+        if Globals.verbosityLevel > 1: print( "Unbound TestA2", result2 )
         testSubfolder = os.path.join( testFolder, 'asv/' )
         result3 = UnboundBibleFileCheck( testSubfolder )
-        if Globals.verbosityLevel > 1: print( "TestB1", result3 )
+        if Globals.verbosityLevel > 1: print( "Unbound TestB1", result3 )
         result4 = UnboundBibleFileCheck( testSubfolder, autoLoad=True )
-        if Globals.verbosityLevel > 1: print( "TestB2", result4 )
+        if Globals.verbosityLevel > 1: print( "Unbound TestB2", result4 )
 
 
     if 1: # specified modules
@@ -423,7 +423,7 @@ def demo():
         nonEnglish = (  )
         bad = ( )
         for j, testFilename in enumerate( single ): # Choose one of the above: single, good, nonEnglish, bad
-            if Globals.verbosityLevel > 1: print( "\nB{}/ Trying {}".format( j+1, testFilename ) )
+            if Globals.verbosityLevel > 1: print( "\nUnbound C{}/ Trying {}".format( j+1, testFilename ) )
             #myTestFolder = os.path.join( testFolder, testFilename+'/' )
             #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
             testUB( testFilename )
@@ -444,10 +444,11 @@ def demo():
                 assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                if Globals.verbosityLevel > 1: print( "\nC{}/ Trying {}".format( j+1, someFolder ) )
+                if Globals.verbosityLevel > 1: print( "\nUnbound D{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testUB( someFolder )
 # end of demo
+
 
 if __name__ == '__main__':
     # Configure basic set-up

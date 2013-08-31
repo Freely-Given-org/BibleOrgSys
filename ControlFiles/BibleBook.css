@@ -161,7 +161,9 @@ nav ul li {
 /* LINKS */
 
   /* In the nav bar */
-  a.bookName { text-decoration:none; }
+  li.bookNameEntry {}
+  a.bookNameLink { text-decoration:none; }
+  span.currentBookName { color:green; }
 
 
   a.CVReference { text-decoration:none; } /* In the book introduction (and possibly other places also */
@@ -175,6 +177,7 @@ nav ul li {
   /* In the endnotes */
   a.footnoteOrigin { font-weight:bold; text-decoration:none; }
   a.xrefOrigin { font-weight:bold; text-decoration:none; }
+
 
 
 

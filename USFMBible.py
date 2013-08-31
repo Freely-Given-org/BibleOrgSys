@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2013-08-28 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-31 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 """
 
 ProgName = "USFM Bible handler"
-ProgVersion = "0.43"
+ProgVersion = "0.44"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -84,8 +84,8 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
     UFns = USFMFilenames( givenFolderName ) # Assuming they have standard Paratext style filenames
     if Globals.verbosityLevel > 2: print( UFns )
     filenameTuples = UFns.getMaximumPossibleFilenameTuples()
-    if Globals.verbosityLevel > 3: print( "Confirmed:", len(filenameTuples), filenameTuples )
-    if Globals.verbosityLevel > 1 and filenameTuples: print( "Found {} USFM files.".format( len(filenameTuples) ) )
+    if Globals.verbosityLevel > 3: print( "  Confirmed:", len(filenameTuples), filenameTuples )
+    if Globals.verbosityLevel > 1 and filenameTuples: print( "  Found {} USFM file{}.".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
     if filenameTuples:
         SSFs = UFns.getSSFFilenames()
         if SSFs:
@@ -119,9 +119,9 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
         UFns = USFMFilenames( tryFolderName ) # Assuming they have standard Paratext style filenames
         if Globals.verbosityLevel > 2: print( UFns )
         filenameTuples = UFns.getMaximumPossibleFilenameTuples()
-        if Globals.verbosityLevel > 3: print( "Confirmed:", len(filenameTuples), filenameTuples )
+        if Globals.verbosityLevel > 3: print( "  Confirmed:", len(filenameTuples), filenameTuples )
         if Globals.verbosityLevel > 2 and filenameTuples: print( "  Found {} USFM files: {}".format( len(filenameTuples), filenameTuples ) )
-        elif Globals.verbosityLevel > 1 and filenameTuples: print( "  Found {} USFM files".format( len(filenameTuples) ) )
+        elif Globals.verbosityLevel > 1 and filenameTuples: print( "  Found {} USFM file{}".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
         if filenameTuples:
             SSFs = UFns.getSSFFilenames( searchAbove=True )
             if SSFs:

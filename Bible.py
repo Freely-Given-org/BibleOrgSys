@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Bible.py
-#   Last modified: 2013-08-28 (also update ProgVersion below)
+#   Last modified: 2013-08-29 (also update ProgVersion below)
 #
 # Module handling a internal Bible object
 #
@@ -28,7 +28,7 @@ Module handling an internal Bible object.
 """
 
 ProgName = "Bible object handler"
-ProgVersion = "0.06"
+ProgVersion = "0.07"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -178,11 +178,11 @@ class Bible( BibleWriter ):
         self.objectTypeString = "Unknown"
 
         # Add our own extended data stores
-        self.metadata = {}
-        self.frontMatter = []
-        self.divisions = []
-        self.actualBooks = []
-        self.backMatter = []
+        #self.metadata = {}
+        #self.frontMatter = []
+        #self.divisions = []
+        #self.actualBooks = []
+        #self.backMatter = []
 
         # Get the data tables that we need for proper checking
         #self.ISOLanguages = ISO_639_3_Languages().loadData() if Globals.strictCheckingFlag else None

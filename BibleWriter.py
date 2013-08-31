@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-08-29 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-30 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -3378,7 +3378,7 @@ class BibleWriter( InternalBible ):
 
         unhandledMarkers = set()
 
-        def writeHeader( writerObject ):
+        def writeHeader( writerObject, myBBB ):
             """Writes the HTML5 header to the HTML writerObject."""
             writerObject.writeLineOpen( 'head' )
             writerObject.writeLineText( '<meta http-equiv="Content-Type" content="text/html;charset=utf-8">', noTextCheck=True )
@@ -3409,12 +3409,15 @@ class BibleWriter( InternalBible ):
 
             # Create the nav bar
             writerObject.writeLineOpen( 'nav' )
-            writerObject.writeLineOpen( 'p' )
+            writerObject.writeLineOpen( 'ul' )
             for bkData in self:
                 BBB = bkData.bookReferenceCode
                 bkName = bkData.getAssumedBookNames()[0]
-                writerObject.writeLineText( '<a class="bookName" href="BIBLE_{}.html">{}</a><br />'.format( BBB, bkName ) )
-            writerObject.writeLineClose( 'p' )
+                if BBB == myBBB:
+                    writerObject.writeLineText( '<li class="bookNameEntry"><span class="currentBookName">{}</span></li>'.format( bkName ) )
+                else:
+                    writerObject.writeLineText( '<li class="bookNameEntry"><a class="bookNameLink" href="BIBLE_{}.html">{}</a></li>'.format( BBB, bkName ) )
+            writerObject.writeLineClose( 'ul' )
             writerObject.writeLineClose( 'nav' )
         # end of toHTML5.writeHeader
 
@@ -3707,7 +3710,7 @@ class BibleWriter( InternalBible ):
             # end of liveLocal
 
 
-            writeHeader( writerObject )
+            writeHeader( writerObject, BBB )
             haveOpenSection = haveOpenParagraph = haveOpenList = False
             html5Globals['nextFootnoteIndex'] = html5Globals['nextXRefIndex'] = 0
             html5Globals['footnoteHTML5'] = html5Globals['xrefHTML5'] = ''
@@ -4133,6 +4136,7 @@ class BibleWriter( InternalBible ):
         htmlOutputFolder = os.path.join( givenOutputFolderName, "BOS_HTML5_" + "Export/" )
         TeXOutputFolder = os.path.join( givenOutputFolderName, "BOS_TeX_" + "Export/" )
 
+        # Pickle this Bible object
         # NOTE: This must be done before self.__setupWriter is called
         #       because the BRL object has a recursive pointer to self and the pickle fails
         if Globals.verbosityLevel > 1: print( "Running BibleWriter:pickle..." )
@@ -4297,7 +4301,7 @@ def demo():
             if os.access( testFolder, os.R_OK ):
                 UB = USFMBible( testFolder, name )
                 UB.load()
-                if Globals.verbosityLevel > 0: print( '\nA'+str(j+1)+'/', UB )
+                if Globals.verbosityLevel > 0: print( '\nBWr A'+str(j+1)+'/', UB )
                 if Globals.strictCheckingFlag: UB.check()
                 #result = UB.toHTML5()
                 #halt
@@ -4329,7 +4333,7 @@ def demo():
             if os.access( testFolder, os.R_OK ):
                 UB = USXXMLBible( testFolder, name )
                 UB.load()
-                if Globals.verbosityLevel > 0: print( '\nB'+str(j+1)+'/', UB )
+                if Globals.verbosityLevel > 0: print( '\nBWr B'+str(j+1)+'/', UB )
                 if Globals.strictCheckingFlag: UB.check()
                 doaResults = UB.doAllExports()
                 if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
@@ -4372,7 +4376,7 @@ def demo():
             if os.access( testFolder, os.R_OK ):
                 UB = USFMBible( testFolder, name )
                 UB.load()
-                if Globals.verbosityLevel > 0: print( '\nC'+str(j+1)+'/', UB )
+                if Globals.verbosityLevel > 0: print( '\nBWr C'+str(j+1)+'/', UB )
                 #if Globals.strictCheckingFlag: UB.check()
                 #result = UB.totheWord()
                 doaResults = UB.doAllExports()

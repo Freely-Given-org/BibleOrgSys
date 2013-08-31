@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2013-08-28 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-30 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -44,7 +44,7 @@ and then fills
 """
 
 ProgName = "Internal Bible handler"
-ProgVersion = "0.39"
+ProgVersion = "0.40"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -80,11 +80,8 @@ class InternalBible:
         self.ssfFilepath, self.ssfDict, self.settingsDict = '', {}, {}
         self.BBBToNameDict, self.bookNameDict, self.combinedBookNameDict, self.bookAbbrevDict = {}, {}, {}, {} # Used to store book name and abbreviations (pointing to the BBB codes)
         self.reverseDict, self.guesses = {}, '' # A program history
-
-        # Set up filled containers for the object
-        #self.OneChapterBBBBookCodes = Globals.BibleBooksCodes.getSingleChapterBooksList()
-
         self.triedLoadingBook = {}
+        self.divisions = OrderedDict()
     # end of InternalBible.__init_
 
 
@@ -96,14 +93,16 @@ class InternalBible:
         @rtype: string
         """
         result = self.objectNameString
+        indent = 2
         if Globals.debugFlag or Globals.verbosityLevel>2: result += ' v' + ProgVersion
-        if self.name: result += ('\n' if result else '') + "  Name: " + self.name
-        if self.sourceFolder: result += ('\n' if result else '') + "  Source folder: " + self.sourceFolder
-        elif self.sourceFilepath: result += ('\n' if result else '') + "  Source: " + self.sourceFilepath
-        if self.status: result += ('\n' if result else '') + "  Status: " + self.status
-        if self.revision: result += ('\n' if result else '') + "  Revision: " + self.revision
-        if self.version: result += ('\n' if result else '') + "  Version: " + self.version
-        result += ('\n' if result else '') + "  Number of books = " + str(len(self.books))
+        if self.name: result += ('\n' if result else '') + ' '*indent + _("Name: {}").format( self.name )
+        if self.sourceFolder: result += ('\n' if result else '') + ' '*indent + _("Source folder: {}").format( self.sourceFolder )
+        elif self.sourceFilepath: result += ('\n' if result else '') + ' '*indent + _("Source: {}").format( self.sourceFilepath )
+        if self.status: result += ('\n' if result else '') + ' '*indent + _("Status: {}").format( self.status )
+        if self.revision: result += ('\n' if result else '') + ' '*indent + _("Revision: {}").format( self.revision )
+        if self.version: result += ('\n' if result else '') + ' '*indent + _("Version: {}").format( self.version )
+        result += ('\n' if result else '') + ' '*indent + _("Number of books: {}{}") \
+                                        .format( len(self.books), " {}".format( self.getBookList() ) if 0<len(self.books)<5 else '' )
         return result
     # end of InternalBible.__str__
 
@@ -146,6 +145,10 @@ class InternalBible:
         for BBB in self.books:
             yield self.books[BBB]
     # end of InternalBible.__iter__
+
+
+    def getBookList( self ):
+        return [BBB for BBB in self.books]
 
 
     def pickle( self, filename=None, folder=None ):
@@ -550,14 +553,16 @@ class InternalBible:
                 for BBB in self.discoveryResults:
                     if BBB != 'ALL':
                         if 'seemsFinished' in self.discoveryResults[BBB] and self.discoveryResults[BBB]['seemsFinished']:
-                            print( "   ", BBB, "seems finished" ) #, str(self.discoveryResults[BBB]['percentageProgress'])+'%' )
+                            print( "   ", BBB, 'seems finished' ) #, str(self.discoveryResults[BBB]['percentageProgress'])+'%' )
                         elif not self.discoveryResults[BBB]['haveVerseText']:
-                            print( "   ", BBB, "not started" ) #, str(self.discoveryResults[BBB]['percentageProgress'])+'%' )
-                        else: print( "   ", BBB, "in progress", (str(self.discoveryResults[BBB]['percentageProgress'])+'%') if 'percentageProgress' in self.discoveryResults[BBB] else '' )
+                            print( "   ", BBB, 'not started' ) #, str(self.discoveryResults[BBB]['percentageProgress'])+'%' )
+                        else: print( "   ", BBB, 'in progress', (str(self.discoveryResults[BBB]['percentageProgress'])+'%') if 'percentageProgress' in self.discoveryResults[BBB] else '' )
             for key,value in sorted(self.discoveryResults['ALL'].items()):
-                if key.startswith("percentage") or key.endswith("Count") or key.endswith("Flag") or key.endswith("Codes"):
+                if 'percentage' in key or key.endswith('Count') or key.endswith('Flag') or key.endswith('Codes'):
                     print( " ", key, "is", value )
-                else: print( " ", key, "in", value if value<len(self) else "all", "books" )
+                else:
+                    #print( "key", repr(key), "value", repr(value) )
+                    print( " ", key, "in", value if value<len(self) else "all", "books" )
     # end of InternalBible.discover
 
 

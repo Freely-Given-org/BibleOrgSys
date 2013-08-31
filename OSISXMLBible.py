@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # OSISXMLBible.py
-#   Last modified: 2013-07-30 by RJH (also update ProgVersion below)
+#   Last modified: 2013-08-29 by RJH (also update ProgVersion below)
 #
 # Module handling OSIS XML Bibles
 #
@@ -34,7 +34,7 @@ This is a quickly updated version of an early module,
 """
 
 ProgName = "OSIS XML Bible format handler"
-ProgVersion = "0.26"
+ProgVersion = "0.27"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -228,101 +228,6 @@ class OSISXMLBible( Bible ):
         # Get the data tables that we need for proper checking
         self.ISOLanguages = ISO_639_3_Languages().loadData()
     # end of OSISXMLBible.__init__
-    #def x__init__( self, XMLFilepath ):
-        #"""
-        #Constructor: expects the filepath of the source XML file.
-        #Loads (and crudely validates the XML file(s)) into an element tree(s).
-        #"""
-
-        #def processFile( filepath ):
-            #""" Load and convert an OSIS Bible file. """
-            #obc = OSISXMLBible() # Create the empty object
-            #thisBook Data, thisUSFMData = obc.loadValidateExtract( filepath ) # Load the XML
-            #for BBB in thisBook Data:
-                #if BBB in self.bkData: logging.warning( _("Have multiple {} OSIS book data").format( BBB ) )
-                #self.bkData[BBB] = thisBook Data[BBB]
-            #for BBB in thisUSFMData:
-                #if BBB in self.USFMData: logging.warning( _("Have multiple {} OSIS USFM book data").format( BBB ) )
-                #self.USFMData[BBB] = thisUSFMData[BBB]
-            ##result = obc.importDataToPython() # not finished yet ................. XXXXXXXXXXXXXXXXXXXXXX
-            ##for BBB in result:
-            ##    if BBB in self.books: logging.warning( _("Have multiple {} OSIS books").format( BBB ) )
-            ##    self.books[BBB] = result[BBB]
-        ## end of processFile
-
-        ##self.books = {}
-        #self.bkData, self.USFMData = OrderedDict(), OrderedDict()
-        #if os.path.isdir( XMLFilepath ): # We've been given a folder -- see if we can find the files
-            ## There's no standard for OSIS xml file naming
-            #files = os.listdir( XMLFilepath )
-            #print( len(files), files )
-            ## First try looking for OSIS book names
-            #if 1: # new code
-                #for filename in files:
-                    #if filename.lower().endswith('.xml'):
-                        #thisFilepath = os.path.join( XMLFilepath, filename )
-                        #if Globals.debugFlag: print( "Trying {}...".format( thisFilepath ) )
-                        #if os.access( thisFilepath, os.R_OK ): # we can read that file
-                            #processFile( thisFilepath )
-            #else: # old code
-                #print( len(Globals.BibleBooksCodes.getAllOSISBooksCodes()), Globals.BibleBooksCodes.getAllOSISBooksCodes() )
-                #for OSISCode in Globals.BibleBooksCodes.getAllOSISBooksCodes(): # Not necessarily in any useful order
-                    #possibleFilepath = os.path.join( XMLFilepath, OSISCode + '.xml' )
-                    #if Globals.debugFlag: print( "Looking for {}...".format( possibleFilepath ) )
-                    #for filename in files:
-                        #if filename.lower() == (OSISCode + '.xml').lower():
-                            #thisFilepath = os.path.join( XMLFilepath, filename )
-                            #if os.access( thisFilepath, os.R_OK ): # we can read that file
-                                #processFile( thisFilepath )
-                #if not self.USFMData: # Try looking for any .xml files
-                    #for filename in files:
-                        #if filename.lower().endswith('.xml'):
-                            #thisFilepath = os.path.join( XMLFilepath, filename )
-                            #if Globals.debugFlag: print( "Trying {}...".format( thisFilepath ) )
-                            #if os.access( thisFilepath, os.R_OK ): # we can read that file
-                                #processFile( thisFilepath )
-        #else: # it must have been a single filename (but it might contain a single book or multiple books)
-            #processFile( XMLFilepath )
-            ##obc = OSISXMLBible() # Create the empty object
-            ##obc.loadValidateExtract( XMLFilepath ) # Load the XML
-            ##self.books = obc.importDataToPython()
-    ## end of __init__
-
-
-
-    #def x__str__( self ):
-        #"""
-        #This method returns the string representation of a OSIS Bible converter object.
-
-        #@return: the name of a OSIS Bible converter object formatted as a string
-        #@rtype: string
-        #"""
-        #result = "OSIS Bible File Converter object"
-        #if self.title: result += ('\n' if result else '') + "  " + self.title
-        #if self.version: result += ('\n' if result else '') + "  " + _("Version: {} ").format( self.version )
-        #if self.date: result += ('\n' if result else '') + "  " + _("Date: {}").format( self.date )
-        #result += ('\n' if result else '') + "  " + _("Number of '{}' entries = {}").format( self.divTypesString, len(self.divs) )
-        #return result
-    ## end of __str__
-    #def x__str__( self ):
-        #"""
-        #This method returns the string representation of an OSIS Bible.
-
-        #@return: the name of a Bible object formatted as a string
-        #@rtype: string
-        #"""
-        #result = "OSIS Bible object"
-        ##if self.title: result += ('\n' if result else '') + self.title
-        ##if self.version: result += ('\n' if result else '') + "Version: {} ".format( self.version )
-        ##if self.date: result += ('\n' if result else '') + "Date: {}".format( self.date )
-        ##useThis = self.books
-        #useThis = self.bkData
-        #if len(useThis)==1:
-            #for BBB in useThis: break # Just get the first one
-            #result += ('\n' if result else '') + "  " + _("Contains one book: {}").format( BBB )
-        #else: result += ('\n' if result else '') + "  " + _("Number of books = {}").format( len(useThis) )
-        #return result
-    ## end of __str__
 
 
     def load( self ):
@@ -335,17 +240,6 @@ class OSISXMLBible( Bible ):
                 self.loadFile( pathname )
         else: # most often we have all the Bible books in one file
             self.loadFile( self.sourceFilepath )
-
-        #def processFile( filepath ):
-            #""" Load and convert an OSIS Bible file. """
-            #obc = OSISXMLBible() # Create the empty object
-            #thisBook Data, thisUSFMData = obc.loadValidateExtract( filepath ) # Load the XML
-            #for BBB in thisBook Data:
-                #if BBB in self.books: logging.warning( _("Have multiple {} OSIS book data").format( BBB ) )
-                #self.books[BBB] = thisBook Data[BBB]
-            #for BBB in thisUSFMData:
-                #if BBB in self.USFMData: logging.warning( _("Have multiple {} OSIS USFM book data").format( BBB ) )
-                #self.USFMData[BBB] = thisUSFMData[BBB]
     # end of OSISXMLBible.load
 
 
@@ -354,7 +248,7 @@ class OSISXMLBible( Bible ):
         Load a single source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        if Globals.verbosityLevel > 2: print( _("Loading {}...").format( OSISFilepath ) )
+        if Globals.verbosityLevel > 1: print( _("Loading {}...").format( OSISFilepath ) )
         self.tree = ElementTree().parse( OSISFilepath )
         if Globals.debugFlag: assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
 
@@ -410,12 +304,16 @@ class OSISXMLBible( Bible ):
                 if textElement[0].tag == OSISXMLBible.OSISNameSpace + "div":
                     sub2location = "div of " + sublocation
                     # Process the attributes first
-                    div0Type = div0OsisID = None
+                    div0Type = div0OsisID = canonical = None
                     for attrib,value in textElement[0].items():
                         if attrib=='type':
                             div0Type = value
                         elif attrib=='osisID':
                             div0OsisID = value
+                        elif attrib=='canonical':
+                            assert( canonical is None )
+                            canonical = value
+                            assert( canonical in ('true','false') )
                         else:
                             logging.warning( "7j4d Unprocessed {} attribute ({}) in {}".format( attrib, value, sub2location ) )
                     if div0Type == 'front':
@@ -447,9 +345,6 @@ class OSISXMLBible( Bible ):
             logging.error( "Expected to load '{}' but got '{}'".format( OSISXMLBible.treeTag, self.tree.tag ) )
         if self.tree.tail is not None and self.tree.tail.strip():
             logging.error( "Unexpected '{}' tail data after {} element".format( self.tree.tail, self.tree.tag ) )
-
-        #if Globals.commandLineOptions.export: self.exportUSFM()
-        #return self.bkData, self.USFMBooks
     # end of OSISXMLBible.loadFile
 
 
@@ -457,7 +352,7 @@ class OSISXMLBible( Bible ):
         """
         Check/validate the given OSIS header record.
         """
-        if Globals.verbosityLevel > 3: print( _("Validating OSIS header...") )
+        if Globals.verbosityLevel > 3: print( _("Loading OSIS header...") )
         headerlocation = "header"
         Globals.checkXMLNoText( header, headerlocation, '2s90' )
         Globals.checkXMLNoTail( header, headerlocation, '0k6l' )
@@ -589,7 +484,7 @@ class OSISXMLBible( Bible ):
                             elif attrib=="resp":
                                 resp = value
                             else: logging.warning( "6f3d Unprocessed '{}' attribute ({}) in {}".format( attrib, value, sublocation ) )
-                        if descriptionType: assert( descriptionType == 'usfm' )
+                        if descriptionType: assert( descriptionType in ('usfm','x-english','x-lwc',) )
                         if descriptionType or self.description and Globals.verbosityLevel > 2: print( "    Description{} is '{}'".format( " ({})".format(descriptionType) if descriptionType else '', self.description ) )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+"format":
                         sublocation = "format of " + location
@@ -626,7 +521,7 @@ class OSISXMLBible( Bible ):
                                 identifierType = value
                             else: logging.warning( "2d5g Unprocessed '{}' attribute ({}) in {}".format( attrib, value, sublocation ) )
                         #print( identifierType )
-                        if Globals.debugFlag: assert( identifierType in ('OSIS','URL') )
+                        if Globals.debugFlag: assert( identifierType in ('OSIS','URL','x-ebible-id',) )
                         if Globals.verbosityLevel > 2: print( "    Identifier ({}) is '{}'".format( identifierType, self.identifier ) )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+"source":
                         sublocation = "source of " + location
@@ -684,7 +579,7 @@ class OSISXMLBible( Bible ):
                             if attrib=="type":
                                 languageType = value
                             else: logging.warning( "6g4f Unprocessed '{}' attribute ({}) in {}".format( attrib, value, sublocation ) )
-                        if languageType in ('SIL','IETF',):
+                        if languageType in ('SIL','IETF','x-ethnologue','x-in-english','x-vernacular',):
                             if self.ISOLanguages.isValidLanguageCode( self.language ):
                                 if Globals.verbosityLevel > 2: print( "  Language is: {}".format( self.ISOLanguages.getLanguageName( self.language ) ) )
                             else: print( "Discovered an unknown '{}' language".format( self.language ) )
@@ -745,7 +640,7 @@ class OSISXMLBible( Bible ):
         """
         Check/validate the given OSIS front matter (div) record.
         """
-        if Globals.verbosityLevel > 3: print( _("Validating OSIS front matter...") )
+        if Globals.verbosityLevel > 3: print( _("Loading OSIS front matter...") )
         frontMatterLocation = "frontMatter"
         Globals.checkXMLNoText( frontMatter, frontMatterLocation, 'c3a2' )
         Globals.checkXMLNoTail( frontMatter, frontMatterLocation, 'm7s9' )
@@ -825,6 +720,80 @@ class OSISXMLBible( Bible ):
     def validateAndExtractMainDiv( self, div ):
         """
         Check/validate and extract data from the given OSIS div record.
+            This may be a book group, or directly into a book
+        """
+
+        if Globals.verbosityLevel > 3: print( _("Loading OSIS main div...") )
+        haveEIDs = False
+        self.haveBook = False
+
+
+        def validateGroupTitle( element, locationDescription ):
+            """
+            Check/validate and process a OSIS Bible paragraph, including all subfields.
+            """
+            location = "validateGroupTitle: " + locationDescription
+            Globals.checkXMLNoTail( element, location, 'c4vd' )
+            titleText = element.text
+            titleType = titleSubType = titleShort = titleLevel = None
+            for attrib,value in element.items():
+                #if attrib=="type":
+                    #titleType = value
+                #elif attrib=="subType":
+                    #titleSubType = value
+                if attrib=="short":
+                    titleShort = value
+                #elif attrib=="level":
+                    #titleLevel = value # Not used anywhere yet :(
+                else: logging.warning( "vdv3 Unprocessed '{}' attribute ({}) in {} at {}".format( attrib, value, location, verseMilestone ) )
+            #if titleSubType: assert( titleSubType == 'x-preverse' )
+            Globals.checkXMLNoSubelements( element, location+" at book group", 'js21' )
+            if Globals.debugFlag: assert( titleText )
+            if titleText:
+                if Globals.verbosityLevel > 2: print( "    Got book group title", repr(titleText) )
+                self.divisions[titleText] = []
+        # end of OSISXMLBible.validateGroupTitle
+
+
+        # Process the div attributes first
+        mainDivType = mainDivOsisID = mainDivCanonical = None
+        BBB = USFMAbbreviation = USFMNumber = ''
+        for attrib,value in div.items():
+            if attrib=="type":
+                mainDivType = value
+                if mainDivOsisID and Globals.verbosityLevel > 2: print( _("Loading {} {}...").format( mainDivOsisID, mainDivType ) )
+            elif attrib=="osisID":
+                mainDivOsisID = value
+                if mainDivType and Globals.verbosityLevel > 2: print( _("Loading {} {}...").format( mainDivOsisID, mainDivType ) )
+            elif attrib=="canonical":
+                mainDivCanonical = value
+            else: logging.warning( "93f5 Unprocessed '{}' attribute ({}) in main div element".format( attrib, value ) )
+        if not mainDivType or not (mainDivOsisID or mainDivCanonical): logging.warning( "Incomplete mainDivType '{}' and mainDivOsisID '{}' attributes in main div element".format( mainDivType, mainDivOsisID ) )
+
+        if mainDivType == 'bookGroup': # this is all the books lumped in together into one big div
+            if Globals.debugFlag: assert( mainDivCanonical == "true" )
+            # We have to set BBB when we get a chapter reference
+            if Globals.verbosityLevel > 2: print( _("  Loading a book group...") )
+            self.haveBook = False
+            for element in div:
+                if element.tag == OSISXMLBible.OSISNameSpace+"title":
+                    location = "title of {} div".format( mainDivType )
+                    validateGroupTitle( element, location )
+                elif element.tag == OSISXMLBible.OSISNameSpace+"div": # Assume it's a book
+                    self.validateAndExtractBookDiv( element )
+                else: logging.warning( "hfs6 Unprocessed '{}' sub-element ({}) in {} div".format( element.tag, element.text, mainDivType ) )
+        elif mainDivType == 'book': # this is a single book (not in a group)
+            self.validateAndExtractBookDiv( div )
+        else:
+            logging.critical( "What kind of OSIS book div is this? {} {} {}".format( repr(mainDivType), repr(mainDivOsisID), repr(mainDivCanonical) ) )
+            if Globals.debugFlag:  halt
+    # end of OSISXMLBible.validateAndExtractMainDiv
+
+
+    def validateAndExtractBookDiv( self, div ):
+        """
+        Check/validate and extract data from the given OSIS div record.
+            This should be a book division.
         """
 
         def validateChapterElement( element, chapterMilestone, verseMilestone, locationDescription ):
@@ -932,6 +901,7 @@ class OSISXMLBible( Bible ):
                         self.thisBook = BibleBook( self.name, BBB )
                         self.thisBook.objectNameString = "OSIS XML Bible Book object"
                         self.thisBook.objectTypeString = "OSIS"
+                        self.haveBook = True
                     #bookResults.append( ('chapter', chapterMilestone,) )
                     #USFMResults.append( ('c',bits[1],) )
                     self.thisBook.appendLine( 'c', bits[1] )
@@ -1502,12 +1472,23 @@ class OSISXMLBible( Bible ):
                         #bookResults.append( ('title', titleType, titleText,) )
                         #USFMResults.append( ('ms1', titleText,) )
                         self.thisBook.appendLine( 'ms1', titleText )
-            else: # Must be in the introduction if it's before all chapter milestones
+            else:
+            #if self.haveBook: # Must be in the introduction if it's before all chapter milestones
                 #assert( titleText )
                 #bookResults.append( ('title', titleType, titleText,) )
                 #USFMResults.append( ('imt', titleText,) ) # Could it also be 'is'?
                 if titleText:
+                    #print( "title", repr(titleText) )
                     self.thisBook.appendLine( 'imt', titleText ) # Could it also be 'is'?
+            #else: # Must be a book group title
+                #Globals.checkXMLNoSubelements( element, location+" at book group", 'vcw5' )
+                #if Globals.debugFlag: assert( titleText )
+                ##bookResults.append( ('title', titleType, titleText,) )
+                ##USFMResults.append( ('imt', titleText,) ) # Could it also be 'is'?
+                #if titleText:
+                    #if Globals.verbosityLevel > 2: print( "    Got book group title", repr(titleText) )
+                    #self.divisions[titleText] = []
+                    ##self.thisBook.appendLine( 'bgt', titleText ) # Could it also be 'is'?
             for subelement in element.getchildren():
                 if subelement.tag == OSISXMLBible.OSISNameSpace+"title": # section reference(s)
                     sublocation = "validateTitle: title of " + locationDescription
@@ -1545,6 +1526,7 @@ class OSISXMLBible( Bible ):
                             logging.warning( "2d6h Unprocessed '{}' sub3element ({}) in {} at {}".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
         # end of OSISXMLBible.validateTitle
 
+
         def validateParagraph( element, locationDescription, verseMilestone ):
             """
             Check/validate and process a OSIS Bible paragraph, including all subfields.
@@ -1554,10 +1536,13 @@ class OSISXMLBible( Bible ):
             nonlocal chapterMilestone
             #print( "validateParagraph at {} at {}".format( locationDescription, verseMilestone ) )
             location = "validateParagraph: " + locationDescription
-            paragraphType = None
+            paragraphType = canonical = None
             for attrib,value in element.items():
                 if attrib=="type":
                     paragraphType = value
+                elif attrib=="canonical":
+                    canonical = value
+                    assert( canonical in ('true','false',) )
                 else: logging.warning( "6g3f Unprocessed '{}' attribute ({}) in {} element of {} at {}".format( attrib, value, element.tag, location, verseMilestone ) )
             if paragraphType: assert( paragraphType == "x-center" )
             justFinishedLG = False
@@ -1743,9 +1728,9 @@ class OSISXMLBible( Bible ):
         # end of OSISXMLBible.validateParagraph
 
 
-        if Globals.verbosityLevel > 3: print( _("Validating OSIS main div...") )
-        #bookResults, USFMResults = [], []
+        if Globals.verbosityLevel > 3: print( _("Loading OSIS book div...") )
         haveEIDs = False
+        self.haveBook = False
 
         # Process the div attributes first
         mainDivType = mainDivOsisID = mainDivCanonical = None
@@ -1753,10 +1738,10 @@ class OSISXMLBible( Bible ):
         for attrib,value in div.items():
             if attrib=="type":
                 mainDivType = value
-                if mainDivOsisID and Globals.verbosityLevel > 2: print( _("Validating {} {}...").format( mainDivOsisID, mainDivType ) )
+                if mainDivOsisID and Globals.verbosityLevel > 2: print( _("Loading {} {}...").format( mainDivOsisID, mainDivType ) )
             elif attrib=="osisID":
                 mainDivOsisID = value
-                if mainDivType and Globals.verbosityLevel > 2: print( _("Validating {} {}...").format( mainDivOsisID, mainDivType ) )
+                if mainDivType and Globals.verbosityLevel > 2: print( _("Loading {} {}...").format( mainDivOsisID, mainDivType ) )
             elif attrib=="canonical":
                 mainDivCanonical = value
             else: logging.warning( "93f5 Unprocessed '{}' attribute ({}) in main div element".format( attrib, value ) )
@@ -1774,22 +1759,27 @@ class OSISXMLBible( Bible ):
                 if isinstance( BBB, list ): # There must be multiple alternatives for BBB from the OSIS one
                     if Globals.verbosityLevel > 2: print( "Multiple alternatives for OSIS '{}': {} (Choosing the first one)".format( mainDivOsisID, BBB ) )
                     BBB = BBB[0]
-                if Globals.verbosityLevel > 2: print( _("  Validating {}...").format( BBB ) )
+                if Globals.verbosityLevel > 2: print( _("  Loading {}...").format( BBB ) )
                 USFMAbbreviation = Globals.BibleBooksCodes.getUSFMAbbreviation( BBB )
                 USFMNumber = Globals.BibleBooksCodes.getUSFMNumber( BBB )
                 self.thisBook = BibleBook( self.name, BBB )
                 self.thisBook.objectNameString = "OSIS XML Bible Book object"
                 self.thisBook.objectTypeString = "OSIS"
+                self.haveBook = True
             #bookResults.append( (mainDivType+'Div', mainDivOsisID,) )
             #USFMResults.append( ('id',(USFMAbbreviation if USFMAbbreviation else mainDivOsisID).upper() + " converted to USFM from OSIS by {} V{}".format( ProgName, ProgVersion ),) )
             self.thisBook.appendLine( 'id', (USFMAbbreviation if USFMAbbreviation else mainDivOsisID).upper() + " converted to USFM from OSIS by {} V{}".format( ProgName, ProgVersion ) )
             #USFMResults.append( ('h',USFMAbbreviation if USFMAbbreviation else mainDivOsisID,) )
             self.thisBook.appendLine( 'h', USFMAbbreviation if USFMAbbreviation else mainDivOsisID )
-        elif mainDivType=='bookGroup':
-            # This is all the books lumped in together into one big div
-            if Globals.debugFlag: assert( mainDivCanonical == "true" )
-            # We have to set BBB when we get a chapter reference
-            if Globals.verbosityLevel > 2: print( _("  Validating a book group...") )
+        #elif mainDivType=='bookGroup':
+            ## This is all the books lumped in together into one big div
+            #if Globals.debugFlag: assert( mainDivCanonical == "true" )
+            ## We have to set BBB when we get a chapter reference
+            #if Globals.verbosityLevel > 2: print( _("  Loading a book group...") )
+            #self.haveBook = False
+        else:
+            logging.critical( "What kind of OSIS book div is this? {} {} {}".format( repr(mainDivType), repr(mainDivOsisID), repr(mainDivCanonical) ) )
+            if Globals.debugFlag:  halt
 
         chapterMilestone = verseMilestone = ''
         foundH = False
@@ -1952,13 +1942,16 @@ class OSISXMLBible( Bible ):
                         sublocation = "div of " + location
                         Globals.checkXMLNoText( subelement, sublocation+" at "+verseMilestone, 'dcv4' )
                         Globals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, '2c5bv' )
-                        subDivType = subDivScope = subDivSpace = None
+                        subDivType = subDivScope = subDivSpace = canonical = None
                         for attrib,value in subelement.items():
                             if attrib=="type":
                                 subDivType = value
                                 sublocation = value + ' ' + sublocation
                             elif attrib=="scope":
                                 subDivScope = value # Should be an OSIS verse range
+                            elif attrib=="canonical":
+                                canonical = value
+                                assert( canonical in ('true','false',) )
                             elif attrib==self.XMLNameSpace+"space":
                                 subDivSpace = value
                                 if Globals.debugFlag: assert( subDivSpace == 'preserve' )
@@ -2174,7 +2167,7 @@ class OSISXMLBible( Bible ):
                         BBB = newBBB
                         USFMAbbreviation = Globals.BibleBooksCodes.getUSFMAbbreviation( BBB )
                         USFMNumber = Globals.BibleBooksCodes.getUSFMNumber( BBB )
-                        if Globals.verbosityLevel > 1: print( _("  Validating {}...").format( BBB ) )
+                        if Globals.verbosityLevel > 1: print( _("  Loading {}...").format( BBB ) )
                 if chapterMilestone.startswith('chapterContainer.'): # it must have been a container -- process the subelements
                     OSISChapterID = chapterMilestone[17:] # Remove the 'chapterContainer.' prefix
                     chapterBits = OSISChapterID.split( '.' )
@@ -2365,7 +2358,7 @@ class OSISXMLBible( Bible ):
             #if bookResults: self.bkData[BBB] = bookResults
             #if USFMResults: self.USFMBooks[BBB] = USFMResults
             self.saveBook( self.thisBook )
-    # end of OSISXMLBible.validateAndExtractMainDiv
+    # end of OSISXMLBible.validateAndExtractBookDiv
 
 
     #def getVerseDataList( self, reference ):

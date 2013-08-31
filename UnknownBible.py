@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # UnknownBible.py
-#   Last modified: 2013-08-09 (also update ProgVersion below)
+#   Last modified: 2013-08-31 (also update ProgVersion below)
 #
 # Module handling a unknown Bible object
 #
@@ -32,12 +32,12 @@ Given a folder name, analyses the files in it
 Currently aware of the following Bible types:
     USFM
     Unbound Bible (table based), theWord (line based), MySword (SQLite based), e-Sword (SQLite based)
-    OSIS, USX, OpenSong, Zefania, Haggai (all XML)
+    OSIS, USX, USFX, OpenSong, Zefania, Haggai (all XML)
     Sword modules (binary).
 """
 
 ProgName = "Unknown Bible object handler"
-ProgVersion = "0.08"
+ProgVersion = "0.10"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -47,11 +47,12 @@ import logging, os.path
 from gettext import gettext as _
 
 import Globals
-from USFMFilenames import USFMFilenames
-from USXFilenames import USXFilenames
+#from USFMFilenames import USFMFilenames
+#from USXFilenames import USXFilenames
 
 from USFMBible import USFMBibleFileCheck, USFMBible
 from USXXMLBible import USXXMLBibleFileCheck, USXXMLBible
+from USFXXMLBible import USFXXMLBibleFileCheck, USFXXMLBible
 from OpenSongXMLBible import OpenSongXMLBibleFileCheck, OpenSongXMLBible
 from OSISXMLBible import OSISXMLBibleFileCheck, OSISXMLBible
 from ZefaniaXMLBible import ZefaniaXMLBibleFileCheck, ZefaniaXMLBible
@@ -60,7 +61,7 @@ from UnboundBible import UnboundBibleFileCheck, UnboundBible
 from TheWordBible import TheWordBibleFileCheck, TheWordBible
 from MySwordBible import MySwordBibleFileCheck, MySwordBible
 from ESwordBible import ESwordBibleFileCheck, ESwordBible
-#from SwordResources import SwordInterface
+#from SwordResources import SwordInterface # What about these?
 
 
 
@@ -159,6 +160,14 @@ class UnknownBible:
             typesFound.append( 'USX' )
             if Globals.verbosityLevel > 2: print( "UnknownBible.search: USXBibleCount", USXBibleCount )
 
+        # Search for USFX XML Bibles
+        USFXBibleCount = USFXXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+        if USFXBibleCount:
+            totalBibleCount += USFXBibleCount
+            totalBibleTypes += 1
+            typesFound.append( 'USFX' )
+            if Globals.verbosityLevel > 2: print( "UnknownBible.search: USFXBibleCount", USFXBibleCount )
+
         # Search for OSIS XML Bibles
         OSISBibleCount = OSISXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
         if OSISBibleCount:
@@ -229,6 +238,10 @@ class UnknownBible:
             self.foundType = "USX XML Bible"
             if autoLoad: return USXXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad )
             else: return self.foundType, USXBibleCount
+        elif USFXBibleCount == 1:
+            self.foundType = "USFX XML Bible"
+            if autoLoad: return USFXXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad )
+            else: return self.foundType, USFXBibleCount
         elif OSISBibleCount == 1:
             self.foundType = "OSIS XML Bible"
             if autoLoad: return OSISXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad )
@@ -265,16 +278,18 @@ def demo():
                     "../../../../../Data/Work/Matigsalug/Bible/MBTV/",
                     "../../../../../SSD/AutoProcesses/Processed/",
                     "Tests/DataFilesForTests/USFMTest1/", "Tests/DataFilesForTests/USFMTest2/",
+                    "Tests/DataFilesForTests/USFM-OEB/", "Tests/DataFilesForTests/USFM-WEB/",
                     "Tests/DataFilesForTests/USXTest1/", "Tests/DataFilesForTests/USXTest2/",
+                    "Tests/DataFilesForTests/USFXTest1/", "Tests/DataFilesForTests/USFXTest2/",
+                    "Tests/DataFilesForTests/USFX-ASV/", "Tests/DataFilesForTests/USFX-WEB/",
                     "Tests/DataFilesForTests/OSISTest1/", "Tests/DataFilesForTests/OSISTest2/",
-                    "Tests/DataFilesForTests/ZefaniaTest/",
-                    "Tests/DataFilesForTests/theWordTest/",
-                    "Tests/DataFilesForTests/MySwordTest/",
+                    "Tests/DataFilesForTests/ZefaniaTest/", "Tests/DataFilesForTests/HaggaiTest/",
+                    "Tests/DataFilesForTests/theWordTest/", "Tests/DataFilesForTests/MySwordTest/",
                     "Tests/DataFilesForTests/", # Up a level
                     )
     if 1: # Just find the files
         for j, testFolder in enumerate( testFolders ):
-            if Globals.verbosityLevel > 0: print( "\n\nA{}/ Trying {}...".format( j+1, testFolder ) )
+            if Globals.verbosityLevel > 0: print( "\n\nUnknownBible A{}/ Trying {}...".format( j+1, testFolder ) )
             B = UnknownBible( testFolder )
             #print( B )
             result = B.search( autoLoad=False )
@@ -284,7 +299,7 @@ def demo():
 
     if 1: # Just load the files
         for j, testFolder in enumerate( testFolders ):
-            if Globals.verbosityLevel > 0: print( "\n\nB{}/ Loading {}...".format( j+1, testFolder ) )
+            if Globals.verbosityLevel > 0: print( "\n\nUnknownBible B{}/ Loading {}...".format( j+1, testFolder ) )
             B = UnknownBible( testFolder )
             #print( B )
             #result1 = B.search( autoLoad=False )
@@ -294,7 +309,7 @@ def demo():
 
     if 1: # Load, check, and export the files
         for j, testFolder in enumerate( testFolders ):
-            if Globals.verbosityLevel > 0: print( "\n\nC{}/ Processing {}...".format( j+1, testFolder ) )
+            if Globals.verbosityLevel > 0: print( "\n\nUnknownBible C{}/ Processing {}...".format( j+1, testFolder ) )
             B = UnknownBible( testFolder )
             #print( B )
             result = B.search( autoLoad=True )
@@ -306,6 +321,7 @@ def demo():
                 results = result.doAllExports()
                 if Globals.verbosityLevel > 2: print( "  Results are: {}".format( results ) )
 # end of demo
+
 
 if __name__ == '__main__':
     # Configure basic set-up
