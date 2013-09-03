@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # OSISXMLBible.py
-#   Last modified: 2013-08-29 by RJH (also update ProgVersion below)
+#   Last modified: 2013-09-03 by RJH (also update ProgVersion below)
 #
 # Module handling OSIS XML Bibles
 #
@@ -31,10 +31,12 @@ Unfortunately, the OSIS specification (designed by committee for many different 
 
 This is a quickly updated version of an early module,
     and it's both ugly and fragile  :-(
+
+Updated Sept 2013 to also handle Kahunapule's "modified OSIS".
 """
 
 ProgName = "OSIS XML Bible format handler"
-ProgVersion = "0.27"
+ProgVersion = "0.28"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -170,6 +172,17 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
 
 
 
+def clean( elementText ):
+    """
+    Given some text from an XML element (which might be None)
+        return a stripped value and with internal CRLF characters replaced by spaces.
+    """
+    if elementText is not None:
+        return elementText.strip().replace( '\r\n', ' ' ).replace( '\n', ' ' ).replace( '\r', ' ' )
+# end of clean
+
+
+
 class OSISXMLBible( Bible ):
     """
     Class for reading, validating, and converting OSISXMLBible XML.
@@ -272,12 +285,15 @@ class OSISXMLBible( Bible ):
                 Globals.checkXMLNoText( textElement, sublocation, '3b5g' )
                 Globals.checkXMLNoTail( textElement, sublocation, '7h9k' )
                 # Process the attributes first
-                self.osisIDWork = self.osisRefWork = None
+                self.osisIDWork = self.osisRefWork = canonical = None
                 for attrib,value in textElement.items():
                     if attrib=='osisIDWork':
                         self.osisIDWork = value
                     elif attrib=='osisRefWork':
                         self.osisRefWork = value
+                    elif attrib=='canonical':
+                        canonical = value
+                        assert( canonical in ('true','false',) )
                     elif attrib==OSISXMLBible.XMLNameSpace+'lang':
                         self.lang = value
                     else:
@@ -286,10 +302,10 @@ class OSISXMLBible( Bible ):
                     if self.osisRefWork not in ('bible','Bible','defaultReferenceScheme',):
                         logging.warning( "New variety of osisRefWork: '{}'".format( self.osisRefWork ) )
                 if self.lang:
-                    if self.lang in ('en','he','my',): # Only had these ones so far (English, Hebrew, my??)
+                    if self.lang in ('en','he',): # Only specifically recognise these ones so far (English, Hebrew)
                         if Globals.verbosityLevel > 2: print( "    Language is '{}'".format( self.lang ) )
                     else:
-                        logging.warning( "Discovered an unknown '{}' language".format( self.lang ) )
+                        logging.info( "Discovered an unknown '{}' language".format( self.lang ) )
                 if Globals.verbosityLevel > 2: print( "  osisIDWork is '{}'".format( self.osisIDWork ) )
 
                 # Find (and move) the header container
@@ -538,14 +554,16 @@ class OSISXMLBible( Bible ):
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+"publisher":
                         sublocation = "publisher of " + location
                         Globals.checkXMLNoTail( subelement, sublocation, '3z7g' )
-                        Globals.checkXMLNoAttributes( subelement, sublocation, '2d56' )
                         Globals.checkXMLNoSubelements( subelement, sublocation, '8n3x' )
                         self.publisher = subelement.text.replace( '&amp;', '&' )
+                        publisherType = None
                         for attrib,value in subelement.items():
-                            if attrib=="xxxrole":
+                            if attrib=='type':
+                                publisherType = value
+                            elif attrib=="xxxrole":
                                 pass
                             else: logging.warning( "7g5g Unprocessed '{}' attribute ({}) in {}".format( attrib, value, sublocation ) )
-                        if Globals.verbosityLevel > 2: print( "    Publisher is/was '{}'".format( self.publisher ) )
+                        if Globals.verbosityLevel > 2: print( "    Publisher {}is/was '{}'".format( '({}) '.format(publisherType) if publisherType else '', self.publisher ) )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+"scope":
                         sublocation = "scope of " + location
                         Globals.checkXMLNoTail( subelement, sublocation, '1z4i' )
@@ -692,6 +710,7 @@ class OSISXMLBible( Bible ):
                         Globals.checkXMLNoAttributes( subelement, sublocation, '48j6' )
                         Globals.checkXMLNoSubelements( subelement, sublocation, 'l0l0' )
                         date = subelement.text
+                        print( "sdh3 Not handled yet", subelement.text )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+"p":
                         sublocation = "p of " + location
                         Globals.checkXMLNoTail( subelement, sublocation, 'd4d4' )
@@ -827,9 +846,9 @@ class OSISXMLBible( Bible ):
                 if verseMilestone:
                     if haveEIDs: logging.error( _("Unexpected {} chapter milestone while {} verse milestone is still open at {}").format( element.items(), verseMilestone, location ) )
 
-                if OSISChapterID and sID and not eID and OSISChapterID==sID:
+                if OSISChapterID and sID and not eID:
                     chapterMilestone = sID
-                    if not chapterMilestone.count('.')==1: logging.error( "{} chapter milestone seems wrong format for {} at {}".format( chapterMilestone, OSISChapterID, location ) )
+                    #if not chapterMilestone.count('.')==1: logging.warning( "{} chapter milestone seems wrong format for {} at {}".format( chapterMilestone, OSISChapterID, location ) )
                 elif eID and not OSISChapterID and not sID:
                     if chapterMilestone and eID==chapterMilestone: chapterMilestone = ''
                     else:
@@ -838,10 +857,12 @@ class OSISXMLBible( Bible ):
                     if Globals.debugFlag: assert( canonical == "true" )
                     chapterMilestone = OSISChapterID
                 else:
+                    print( repr(OSISChapterID), repr(sID), repr(eID) )
                     logging.error( _("Unrecognized chapter milestone in {}: {} at {}").format( location, element.items(), location ) )
 
                 if chapterMilestone: # Have a chapter milestone like Jas.1
-                    bits = chapterMilestone.split( '.' )
+                    if not OSISChapterID.count('.')==1: logging.error( "{} chapter ID seems wrong format for {} at {}".format( OSISChapterID, chapterMilestone, location ) )
+                    bits = OSISChapterID.split( '.' )
                     if Globals.debugFlag: assert( len(bits) == 2 )
                     cmBBB = None
                     try:
@@ -857,11 +878,9 @@ class OSISXMLBible( Bible ):
                             # Remove the last titles
                             #lastBookResult = bookResults.pop()
                             #if lastBookResult[0]!='sectionTitle':
-                                #bookResults.append( lastBookResult ) # No good -- put it back
                                 #lastBookResult = None
                             #lastUSFMResult = USFMResults.pop()
                             #if lastUSFMResult[0]!='s':
-                                #USFMResults.append( lastUSFMResult ) # No good -- put it back
                                 #lastUSFMResult = None
                             lastLineTuple = self.thisBook._rawLines.pop()
                             if Globals.debugFlag: assert( len(lastLineTuple) == 2 )
@@ -873,20 +892,15 @@ class OSISXMLBible( Bible ):
                             self.saveBook( self.thisBook )
                             #bookResults, USFMResults = [], []
                             #if lastBookResult:
-                                #bookResults.append( ('header',cmBBB,) )
                                 #lastBookResultList = list( lastBookResult )
                                 #lastBookResultList[0] = 'mainTitle'
                                 #adjBookResult = tuple( lastBookResultList )
                                 ##print( lastBookResultList )
-                                #bookResults.append( adjBookResult )
                             #if lastUSFMResult:
-                                #USFMResults.append( ('id',(USFMAbbreviation if USFMAbbreviation else mainDivOsisID).upper() + " converted to USFM from OSIS by {} V{}".format( ProgName, ProgVersion ),) )
-                                #USFMResults.append( ('h',USFMAbbreviation if USFMAbbreviation else mainDivOsisID,) )
                                 #lastUSFMResultList = list( lastUSFMResult )
                                 #lastUSFMResultList[0] = 'mt1'
                                 ##print( lastUSFMResultList )
                                 #adjSFMResult = tuple( lastUSFMResultList )
-                                #USFMResults.append( adjSFMResult )
                             if lastLineTuple:
                                 self.thisBook.appendLine( 'id', (USFMAbbreviation if USFMAbbreviation else mainDivOsisID).upper() + " converted to USFM from OSIS by {} V{}".format( ProgName, ProgVersion ) )
                                 self.thisBook.appendLine( 'h', USFMAbbreviation if USFMAbbreviation else mainDivOsisID )
@@ -902,8 +916,6 @@ class OSISXMLBible( Bible ):
                         self.thisBook.objectNameString = "OSIS XML Bible Book object"
                         self.thisBook.objectTypeString = "OSIS"
                         self.haveBook = True
-                    #bookResults.append( ('chapter', chapterMilestone,) )
-                    #USFMResults.append( ('c',bits[1],) )
                     self.thisBook.appendLine( 'c', bits[1] )
 
                 #print( "validateChapterElement returning milestone:", chapterMilestone )
@@ -947,7 +959,8 @@ class OSISXMLBible( Bible ):
                 else:
                     displayTag = element.tag[len(self.OSISNameSpace):] if element.tag.startswith(self.OSISNameSpace) else element.tag
                     logging.warning( "8jh6 Unprocessed '{}' attribute ({}) in {} subelement of {}".format( attrib, value, displayTag, location ) )
-            if Globals.debugFlag: print( " validateVerseElement attributes: OSISVerseID = '{}' sID = '{}' eID = '{}' n = '{}'".format( OSISVerseID, sID, eID, n ) )
+            if Globals.debugFlag and debuggingThisModule:
+                print( " validateVerseElement attributes: OSISVerseID = '{}' sID = '{}' eID = '{}' n = '{}'".format( OSISVerseID, sID, eID, n ) )
             if sID and eID:
                 logging.critical( _("Invalid combined sID and eID verse attributes in {}: {}").format( location, element.items() ) )
             if sID and not OSISVerseID:
@@ -966,16 +979,20 @@ class OSISXMLBible( Bible ):
                     #        if Globals.debugFlag: assert( len(chunks) == 2 )
                     #        verseMilestone = chunks[0] # Take the start of the range
                     #if not verseMilestone.count('.')==2: logging.error( "validateVerseElement: {} verse milestone seems wrong format for {}".format( verseMilestone, OSISVerseID ) )
+                    vmBits, cmBits = verseMilestone.split( '.' ), chapterMilestone.split( '.' )
+                    #print( "cv milestone stuff", repr(verseMilestone), repr(chapterMilestone), vmBits, cmBits )
                     if chapterMilestone.startswith( 'chapterContainer.' ): # The chapter is a container but the verse is a milestone!
                         if not verseMilestone.startswith( chapterMilestone[17:] ): logging.error( "'{}' verse milestone seems wrong in '{}' chapter milestone at {}".format( verseMilestone, chapterMilestone, location ) )
-                    elif not verseMilestone.startswith( chapterMilestone ): logging.error( "'{}' verse milestone seems wrong in '{}' chapter milestone at {}".format( verseMilestone, chapterMilestone, location ) )
+                    elif vmBits[0:2] != cmBits[0:2]: logging.error( "This '{}' verse milestone seems wrong in '{}' chapter milestone at {}".format( verseMilestone, chapterMilestone, location ) )
                 elif eID and not OSISVerseID and not sID: # we have an end milestone
+                    #print( "here", repr(verseMilestone), repr(OSISVerseID), repr(sID), repr(eID) )
                     haveEIDs = True
                     if verseMilestone:
                         if eID==verseMilestone: pass # Good -- the end milestone matched the open start milestone
                         else:
                             logging.error( "'{}' verse milestone end didn't match last end milestone '{}' at {}".format( verseMilestone, eID, location ) )
-                    logging.critical( "Have '{}' end milestone but no start milestone encountered at {}".format( eID, location ) )
+                    else:
+                        logging.critical( "Have '{}' verse end milestone but no verse start milestone encountered at {}".format( eID, location ) )
                     return '' # end milestone closes any open milestone
                 else:
                     logging.critical( "Unrecognized verse milestone in {}: {}".format( location, element.items() ) )
@@ -994,21 +1011,17 @@ class OSISXMLBible( Bible ):
                         if len(bits2) != 3:
                             logging.error( "Expected three components after hyphen in verse milestone '{}'".format( verseMilestone ) )
                             bits2 = [bits1[0],bits1[1],'999'] # Try to do something intelligent
-                        #bookResults.append( ('verse', verseMilestone,) )
-                        #USFMResults.append( ('v',bits1[2]+'-'+bits2[2],) )
                         self.thisBook.appendLine( 'v', bits1[2]+'-'+bits2[2] )
                     else: # no hyphen
                         bits = verseMilestone.split( '.' )
-                        if Globals.debugFlag: assert( len(bits) == 3 )
-                        #bookResults.append( ('verse', verseMilestone,) )
-                        #USFMResults.append( ('v',bits[2],) )
+                        #print( "sdfssf", verseMilestone, bits )
+                        if Globals.debugFlag: assert( len(bits) >= 3 )
                         self.thisBook.appendLine( 'v', bits[2] )
                     vTail = element.tail
                     if vTail: # This is the main text of the verse (follows the verse milestone)
-                        #bookResults.append( ('verse=',vTail,) )
-                        #USFMResults.append( ('v~',vTail.replace('\n','').strip(),) ) # Newlines and leading spaces are irrelevant to USFM formatting
-                        self.thisBook.appendLine( 'v~', vTail.replace('\n','').strip() ) # Newlines and leading spaces are irrelevant to USFM formatting
+                        self.thisBook.appendLine( 'v~', clean(vTail) ) # Newlines and leading spaces are irrelevant to USFM formatting
                     return verseMilestone
+                halt # Should not happen
 
             else: # not a milestone -- it's verse container
                 Globals.checkXMLNoTail( element, location+" at "+verseMilestone, 's2d4' )
@@ -1027,6 +1040,76 @@ class OSISXMLBible( Bible ):
 
             halt # Should never reach this point in the code
         # end of OSISXMLBible.validateVerseElement
+
+
+        def validateDivineName( element, locationDescription, verseMilestone ):
+            """
+            """
+            location = "validateDivineName: " + locationDescription
+            Globals.checkXMLNoAttributes( element, location+" at "+verseMilestone, '3f7h' )
+            Globals.checkXMLNoSubelements( element, location+" at "+verseMilestone, 'v4g7' )
+            divineName, trailingText = element.text, element.tail
+            self.thisBook.appendToLastLine( '\\nd {}\\nd*'.format( clean(divineName) ) )
+            if trailingText and trailingText.strip(): self.thisBook.appendToLastLine( clean(trailingText) )
+        # end of validateDivineName
+
+
+        def validateSigned( element, locationDescription, verseMilestone ):
+            """
+            """
+            location = "validateSigned: " + locationDescription
+            Globals.checkXMLNoTail( element, location+" at "+verseMilestone, 'fc3v3' )
+            Globals.checkXMLNoAttributes( element, location+" at "+verseMilestone, '9i6h' )
+            Globals.checkXMLNoSubelements( element, location+" at "+verseMilestone, 'vd62' )
+            signedName = subelement.text
+            if Globals.debugFlag and subelement.tail: halt
+            self.thisBook.appendToLastLine( '\\sg {}\\sg*'.format( clean(signedName) ) )
+        # end of validateSigned
+
+
+        def validateHighlight( element, locationDescription, verseMilestone ):
+            """
+            Also handles the tail.
+
+            Might be nested like:
+                <hi type="bold"><hi type="italic">buk</hi></hi> tainoraun ämän
+            Nesting doesn't currently work here.
+            """
+            location = "validateHighlight: " + locationDescription
+            #Globals.checkXMLNoSubelements( element, location+" at "+verseMilestone, 'gb5g' )
+            highlightedText, highlightedTail = element.text, element.tail
+            #if not highlightedText: print( "validateHighlight", repr(highlightedText), repr(highlightedTail), repr(location), repr(verseMilestone) )
+            #if Globals.debugFlag: assert( highlightedText ) # No text if nested!
+            highlightType = None
+            for attrib,value in element.items():
+                if attrib=="type":
+                    highlightType = value
+                else: logging.warning( "7kj3 Unprocessed '{}' attribute ({}) in {} element of {} at {}".format( attrib, value, element.tag, location, verseMilestone ) )
+            if highlightType == 'italic': marker = 'it'
+            elif highlightType == 'bold': marker = 'bd'
+            elif highlightType == 'small-caps': marker = 'sc'
+            elif Globals.debugFlag: print( highlightType ); halt
+            self.thisBook.appendToLastLine( '\\{} {}\\{}*'.format( marker, clean(highlightedText), marker ) )
+            for subelement in element.getchildren():
+                if subelement.tag == OSISXMLBible.OSISNameSpace+"hi":
+                    sublocation = "hi of " + locationDescription
+                    validateHighlight( subelement, sublocation, verseMilestone )
+                else:
+                    logging.warning( "bdhj Unprocessed '{}' sub-element ({}) in {} at {}".format( subelement.tag, subelement.text, location, verseMilestone ) )
+            if highlightedTail and highlightedTail.strip(): self.thisBook.appendToLastLine( clean(highlightedTail) )
+        # end of validateHighlight
+
+
+        def validateLB( element, locationDescription, verseMilestone ):
+            """
+            """
+            location = "validateLB: " + locationDescription
+            Globals.checkXMLNoText( element, location+" at "+verseMilestone, 'cf4g' )
+            Globals.checkXMLNoTail( element, location+" at "+verseMilestone, '3c5f' )
+            Globals.checkXMLNoAttributes( element, location+" at "+verseMilestone, '5t3x' )
+            Globals.checkXMLNoSubelements( element, location+" at "+verseMilestone, 'sn52' )
+            self.thisBook.appendLine( 'm', '' )
+        # end of OSISXMLBible.validateLB
 
 
         def validateCrossReferenceOrFootnote( element, locationDescription, verseMilestone ):
@@ -1051,7 +1134,10 @@ class OSISXMLBible( Bible ):
                 elif attrib=="placement":
                     placement = value
                 else: logging.warning( "2s4d Unprocessed '{}' attribute ({}) in {} sub-element of {} at {}".format( attrib, value, element.tag, location, verseMilestone ) )
-            if Globals.debugFlag: print( "  note attributes: noteType = '{}' noteN = '{}' noteOsisRef = '{}' noteOsisID = '{}' at {}".format( noteType, noteN, noteOsisRef, noteOsisID, verseMilestone ) )
+            #print( placement )
+            if placement and Globals.debugFlag: assert( placement in ('foot','inline',) )
+            if Globals.debugFlag and debuggingThisModule:
+                print( "  note attributes: noteType = '{}' noteN = '{}' noteOsisRef = '{}' noteOsisID = '{}' at {}".format( noteType, noteN, noteOsisRef, noteOsisID, verseMilestone ) )
             guessed = False
             if not noteType: # easier to handle later if we decide what it is now
                 if not element.items(): # it's just a note with NO ATTRIBUTES at all
@@ -1061,25 +1147,27 @@ class OSISXMLBible( Bible ):
                 guessed = True
             #assert( noteType and noteN )
             if noteType == 'crossReference':
-                #print( "  noteType =", noteType, "noteN =", noteN )
-                if Globals.debugFlag: assert( not placement )
+                #print( "  noteType =", noteType, "noteN =", noteN, "placement =", placement )
+                if Globals.debugFlag:
+                    if placement: assert( placement == 'inline' )
                 if not noteN: noteN = '-'
-                #bookResults.append( ('crossReference',noteN,) )
-                #USFMResults.append( ('x',noteN,) )
                 self.thisBook.appendToLastLine( '\\x {}'.format( noteN ) )
             elif noteType == 'footnote':
                 #print( "  noteType =", noteType, "noteN =", noteN )
                 if Globals.debugFlag: assert( not placement )
                 if not noteN: noteN = '~'
-                #bookResults.append( ('footnote',noteN,) )
-                #USFMResults.append( ('f',noteN,) )
                 self.thisBook.appendToLastLine( '\\f {}'.format( noteN ) )
             elif noteType == 'study':
                 #print( "  noteType =", noteType, "noteN =", noteN )
                 if Globals.debugFlag: assert( not placement )
                 if not noteN: noteN = '~'
-                #bookResults.append( ('studyNote',noteN,) )
-                #USFMResults.append( ('f',noteN,) )
+                self.thisBook.appendToLastLine( '\\f {}'.format( noteN ) )
+                #print( "study note1", location, "Type =", noteType, "N =", noteN, "Ref =", noteOsisRef, "ID =", noteOsisID, "p =", placement ); halt
+            elif noteType == 'translation':
+                #print( "  noteType =", noteType, "noteN =", noteN, "placement =", placement )
+                if Globals.debugFlag:
+                    if placement: assert( placement == 'foot' )
+                if not noteN: noteN = '~'
                 self.thisBook.appendToLastLine( '\\f {}'.format( noteN ) )
                 #print( "study note1", location, "Type =", noteType, "N =", noteN, "Ref =", noteOsisRef, "ID =", noteOsisID, "p =", placement ); halt
             elif noteType == 'variant':
@@ -1087,15 +1175,11 @@ class OSISXMLBible( Bible ):
                 if Globals.debugFlag: assert( not placement )
                 # What do we do here ???? XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
                 #if not noteN: noteN = '~'
-                #bookResults.append( ('variant',noteN,) )
-                #USFMResults.append( ('f',noteN,) )
                 self.thisBook.appendLine( 'var', noteN )
             elif noteType == 'x-index':
                 #print( "  noteType =", noteType, "noteN =", noteN )
                 if Globals.debugFlag: assert( placement in ('inline',) )
                 if not noteN: noteN = '~'
-                #bookResults.append( ('index',noteN,) )
-                #USFMResults.append( ('ix',noteN,) )
                 self.thisBook.appendLine( 'ix', noteN )
             else: print( "note1", noteType ); halt
             noteText = element.text
@@ -1106,9 +1190,7 @@ class OSISXMLBible( Bible ):
             if noteText and not noteText.isspace(): # In some OSIS files, this is the anchor reference (in others, that's put in the tail of an enclosed reference subelement)
                 #print( "  noteType = {}, noteText = '{}'".format( noteType, noteText ) )
                 if noteType == 'crossReference': # This could be something like '1:6:' or '1:8: a'
-                    #bookResults.append( ('crossReferenceSource',noteText,) )
-                    #USFMResults.append( ('xt',noteText) )
-                    self.thisBook.appendToLastLine( '\\xt {}'.format( noteText ) )
+                    self.thisBook.appendToLastLine( '\\xt {}'.format( clean(noteText) ) )
                 elif noteType == 'footnote': # This could be something like '4:3 In Greek: some note.' or it could just be random text
                     #print( "  noteType =", noteType, "noteText =", noteText )
                     if Globals.debugFlag: assert( noteText )
@@ -1118,34 +1200,27 @@ class OSISXMLBible( Bible ):
                         sourceText, footnoteText = bits
                         if Globals.debugFlag: assert( sourceText and footnoteText )
                         #print( "  footnoteSource = '{}', sourceText = '{}'".format( footnoteSource, sourceText ) )
-                        #bookResults.append( ('footnoteSource',sourceText,) )
                         if not sourceText[-1] == ' ': sourceText += ' '
-                        #USFMResults.append( ('fr',sourceText) )
-                        #bookResults.append( ('footnoteText',footnoteText,) )
-                        #USFMResults.append( ('ft',footnoteText,) )
                         self.thisBook.appendToLastLine( '\\fr {}'.format( sourceText ) )
                         self.thisBook.appendToLastLine( '\\ft {}'.format( footnoteText )  )
                     else: # Let's assume it's a simple note
-                        #bookResults.append( ('footnoteText',noteText,) )
-                        #USFMResults.append( ('ft',noteText,) )
                         self.thisBook.appendToLastLine( '\\ft {}'.format( noteText ) )
                 elif noteType == 'study':
                     #print( "Need to handle study note properly here" ) # ................. xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-                    #bookResults.append( ('studyNote+',noteText,) )
-                    #USFMResults.append( ('sn+',noteText,) )
-                    self.thisBook.appendToLastLine( '\\sn~ {}'.format( noteText ) )
+                    self.thisBook.appendToLastLine( '\\sn~ {}'.format( clean(noteText) ) )
                     #print( "study note2", location, "Type =", noteType, "N =", noteN, "Ref =", noteOsisRef, "ID =", noteOsisID, "p =", placement ); halt
+                elif noteType == 'translation':
+                    #print( "Need to handle translation note properly here" ) # ................. xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                    self.thisBook.appendToLastLine( '\\sn~ {}'.format( clean(noteText) ) )
                 elif noteType == 'x-index':
                     #print( "Need to handle index note properly here" ) # ................. xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-                    #bookResults.append( ('index+',noteText,) )
-                    #USFMResults.append( ('ix+',noteText,) )
                     self.thisBook.appendLine( 'ix~', noteText )
                 else: print( "note2", noteType ); halt
             for subelement in element.getchildren():
                 if subelement.tag == OSISXMLBible.OSISNameSpace+"reference": # cross-references
                     sublocation = "validateCrossReferenceOrFootnote: reference of " + locationDescription
                     #print( "  Have", sublocation, "7h3f" )
-                    referenceText = subelement.text
+                    referenceText = subelement.text.strip()
                     referenceTail = (subelement.tail if subelement.tail is not None else '').strip()
                     referenceOsisRef = referenceType = None
                     for attrib,value in subelement.items():
@@ -1168,12 +1243,8 @@ class OSISXMLBible( Bible ):
                                 #assert( not noteText and not referenceTail )
                                 if noteText and not noteText.isspace():
                                     logging.error( "What do we do here with the note at {}".format( verseMilestone ) )
-                                #bookResults.append( ('crossReferenceSource',anchor,) )
-                                #USFMResults.append( ('xo',anchor) )
                                 self.thisBook.appendToLastLine( '\\xo {}'.format( anchor ) )
                             elif noteType=='footnote':
-                                #bookResults.append( ('footnoteSource',anchor,) )
-                                #USFMResults.append( ('v~',anchor) ) # There's no USFM for this
                                 self.thisBook.appendLine( 'v~', anchor ) # There's no USFM for this
                             else:
                                 print( sublocation, verseMilestone, noteType, referenceType, referenceText )
@@ -1181,39 +1252,33 @@ class OSISXMLBible( Bible ):
                     if noteType=='crossReference' and referenceType=='source':
                         #assert( not noteText and not referenceTail )
                         if Globals.debugFlag: assert( not noteText or noteText.isspace() )
-                        #bookResults.append( ('crossReferenceSource',referenceText,) )
-                        #USFMResults.append( ('xt',referenceText) )
                         self.thisBook.appendToLastLine( '\\xt {}'.format( referenceText ) )
                     elif noteType=='crossReference' and not referenceType and referenceOsisRef is not None:
-                        #bookResults.append( ('crossReference',referenceText,referenceTail,) )
                         if 0 and USFMResults and USFMResults[-1][0]=='xt': # Combine multiple cross-references into one xt field
-                            #USFMResults.append( ('xt',USFMResults.pop()[1]+referenceText+referenceTail,) )
                             self.thisBook.appendToLastLine( '\\xt {}'.format( USFMResults.pop()[1]+referenceText+referenceTail ) )
                         else:
-                            #USFMResults.append( ('xt',referenceText+referenceTail,) )
-                            self.thisBook.appendToLastLine( '\\xt {}'.format( referenceText+referenceTail ) )
+                            self.thisBook.appendToLastLine( '\\xt {}'.format( clean(referenceText+referenceTail) ) )
                     elif noteType=='footnote' and referenceType=='source':
                         if Globals.debugFlag: assert( referenceText and not noteText )
-                        #bookResults.append( ('footnoteSource',referenceText,) )
                         if not referenceText[-1] == ' ': referenceText += ' '
-                        #USFMResults.append( ('fr',referenceText,) )
-                        self.thisBook.appendToLastLine( '\\fr {}'.format( referenceText ) )
+                        self.thisBook.appendToLastLine( '\\fr {}'.format( clean(referenceText) ) )
                         if Globals.debugFlag: assert( referenceTail )
-                        #bookResults.append( ('footnoteText',referenceTail,) )
-                        #USFMResults.append( ('ft',referenceTail,) )
-                        self.thisBook.appendToLastLine( '\\ft {}'.format( referenceTail ) )
+                        self.thisBook.appendToLastLine( '\\ft {}'.format( clean(referenceTail) ) )
                     elif noteType=='study' and referenceType=='source': # This bit needs fixing up properly ................................xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
                         #print( "rT='{}' nT='{}' rTail='{}'".format( referenceText, noteText, referenceTail ) )
                         if Globals.debugFlag: assert( referenceText and not noteText.strip() )
-                        bookResults.append( ('studySource',referenceText,) )
                         if not referenceText[-1] == ' ': referenceText += ' '
-                        USFMResults.append( ('sr',referenceText,) )
                         if referenceTail:
-                            #bookResults.append( ('studyText',referenceTail,) )
-                            #USFMResults.append( ('st',referenceTail,) )
                             self.thisBook.appendLine( 'st', referenceTail )
                         #else: logging.warning( "How come there's no tail? rT='{}' nT='{}' rTail='{}'".format( referenceText, noteText, referenceTail ) )
                         #print( "study note3", location, "Type =", noteType, "N =", noteN, "Ref =", noteOsisRef, "ID =", noteOsisID, "p =", placement ); halt
+                    elif noteType=='translation' and referenceType=='source': # This bit needs fixing up properly ................................xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                        #print( "rT='{}' nT='{}' rTail='{}'".format( referenceText, noteText, referenceTail ) )
+                        if Globals.debugFlag: assert( referenceText and not noteText )
+                        if not referenceText[-1] == ' ': referenceText += ' '
+                        self.thisBook.appendToLastLine( '\\fr {}'.format( referenceText ) )
+                        #if Globals.debugFlag: assert( referenceTail )
+                        if referenceTail: self.thisBook.appendToLastLine( '\\ft {}'.format( referenceTail ) )
                     else:
                         logging.critical( "Don't know how to handle notetype='{}' and referenceType='{}' yet".format( noteType, referenceType ) )
                     for sub2element in subelement.getchildren(): # Can have nested references in some (horrible) OSIS files)
@@ -1225,33 +1290,36 @@ class OSISXMLBible( Bible ):
                             Globals.checkXMLNoSubelements( sub2element, sub2location+" at "+verseMilestone, '6hnm' )
                             subreferenceText = sub2element.text
                             if Globals.debugFlag: assert( noteType == 'crossReference' )
-                            #bookResults.append( ('crossReferenceSource+',subreferenceText,) )
-                            #USFMResults.append( ('xo+',subreferenceText,) )
                             self.thisBook.appendToLastLine( '\\xo {}'.format( subreferenceText ) )
                         else: logging.warning( "7h45 Unprocessed '{}' sub2element ({}) in {} at {}".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"q":
                     sublocation = "validateCrossReferenceOrFootnote: q of " + locationDescription
-                    Globals.checkXMLNoAttributes( subelement, sublocation+" at "+verseMilestone, '3d4r' )
+                    #Globals.checkXMLNoAttributes( subelement, sublocation+" at "+verseMilestone, '3d4r' )
                     Globals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'n56d' )
-                    if Globals.debugFlag: assert( noteType == 'footnote' )
-                    qText, qTail = subelement.text, subelement.tail
+                    qWho = qReferenceType = None
+                    for attrib,value in subelement.items():
+                        if attrib=="who":
+                            qWho = value
+                        elif attrib=="type":
+                            qReferenceType = value
+                        else:
+                            logging.warning( "3d4r Unprocessed '{}' attribute ({}) in {} sub-element of {} at {}".format( attrib, value, subelement.tag, sublocation, verseMilestone ) )
+                        if qReferenceType: assert( qReferenceType in ('x-footnote',) )
+                    #print( "noteType", repr(noteType) )
+                    if Globals.debugFlag: assert( noteType in ('footnote','translation',) )
+                    qText, qTail = subelement.text.strip(), subelement.tail
                     if Globals.debugFlag: assert( qText )
-                    #bookResults.append( ('footnoteQ',qText,) )
-                    #USFMResults.append( ('fq',qText,) )
                     self.thisBook.appendToLastLine( '\\fq {}'.format( qText ) )
-                    if qTail:
-                        #bookResults.append( ('note+',qTail,) )
-                        #USFMResults.append( ('ft',qTail,) )
-                        self.thisBook.appendToLastLine( '\\ft {}'.format( qTail ) )
+                    if qTail and qTail.strip():
+                        #print( 'qTail', repr(qTail) )
+                        self.thisBook.appendToLastLine( '\\ft {}'.format( clean(qTail) ) )
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"catchWord":
                     sublocation = "validateCrossReferenceOrFootnote: catchWord of " + locationDescription
                     Globals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, 'c48n' )
                     Globals.checkXMLNoAttributes( subelement, sublocation+" at "+verseMilestone, '2w43' )
                     catchWordText = subelement.text
                     if noteType == 'footnote':
-                        #bookResults.append( ('footnoteCatchWord',catchWordText,) )
-                        #USFMResults.append( ('fq',catchWordText,) )
-                        self.thisBook.appendToLastLine( '\\fq {}'.format( catchWordText ) )
+                        self.thisBook.appendToLastLine( '\\fq {}'.format( clean(catchWordText) ) )
                         for sub2element in subelement.getchildren(): # Can have nested catchWords in some (horrible) OSIS files)
                             if sub2element.tag == OSISXMLBible.OSISNameSpace+"catchWord": #
                                 sub2location = "validateCrossReferenceOrFootnote: catchWord of catchWord of " + locationDescription
@@ -1261,34 +1329,21 @@ class OSISXMLBible( Bible ):
                                 Globals.checkXMLNoSubelements( sub2element, sub2location+" at "+verseMilestone, '23c6' )
                                 subCatchWordText = sub2element.text
                                 if Globals.debugFlag: assert( noteType == 'footnote' )
-                                #bookResults.append( ('footnoteCatchWord2',subCatchWordText,) )
-                                #USFMResults.append( ('fq',subCatchWordText,) )
                                 self.thisBook.appendToLastLine( '\\fq {}'.format( subCatchWordText ) )
                             else:
                                 logging.warning( "8j6g Unprocessed '{}' sub2element ({}) in {} at {}".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
+                    elif noteType == 'translation':
+                        self.thisBook.appendToLastLine( '\\fq {}'.format( clean(catchWordText) ) )
+                        Globals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'fh36' )
                     elif noteType == 'variant':
-                        pass # What should we be doing here ??? XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-                    else: print( noteType ); halt
+                        self.thisBook.appendToLastLine( '\\fq {}'.format( clean(catchWordText) ) )
+                        Globals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'fh36' )
+                    else:
+                        print( noteType, "not handled" )
+                        if Globals.debugFlag: halt
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"hi":
                     sublocation = "validateCrossReferenceOrFootnote: hi of " + locationDescription
-                    Globals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, '7j8k' )
-                    highlightedText = subelement.text
-                    if Globals.debugFlag: assert( highlightedText )
-                    highlightType = None
-                    for attrib,value in subelement.items():
-                        if attrib=="type":
-                            highlightType = value
-                            if Globals.debugFlag: assert( highlightType == 'italic' )
-                        else:
-                            logging.warning( "3d5f Unprocessed '{}' attribute ({}) in {} sub2-element of {} at {}".format( attrib, value, subelement.tag, location, verseMilestone ) )
-                    #bookResults.append( (highlightType,highlightedText,) )
-                    #USFMResults.append( ('it',highlightedText,) )
-                    self.thisBook.appendLine( 'it', highlightedText )
-                    pTail = subelement.tail
-                    if pTail:
-                        #bookResults.append( ('note+',pTail,) )
-                        #USFMResults.append( ('note+',pTail,) )
-                        self.thisBook.appendLine( 'note~', pTail )
+                    validateHighlight( subelement, sublocation, verseMilestone ) # Also handles the tail
                     justFinishedLG = False
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"rdg":
                     sublocation = "validateCrossReferenceOrFootnote: rdg of " + locationDescription
@@ -1316,8 +1371,6 @@ class OSISXMLBible( Bible ):
                                     lemma = value
                                     #print( lemma )
                                 else: logging.warning( "6b8m Unprocessed '{}' attribute ({}) in {} sub2-element of {} at {}".format( attrib, value, sub2element.tag, sub2location, verseMilestone ) )
-                            #bookResults.append( ('rdgW',rdgW,) )
-                            #USFMResults.append( ('rdgW',rdgW,) )
                             self.thisBook.appendLine( 'rdgW', rdgW )
                         elif sub2element.tag == OSISXMLBible.OSISNameSpace+"seg": # cross-references
                             sub2location = "validateCrossReferenceOrFootnote: seg of rdg of " + locationDescription
@@ -1332,28 +1385,50 @@ class OSISXMLBible( Bible ):
                                     theType = value
                                     #print( theType )
                                 else: logging.warning( "k6g3 Unprocessed '{}' attribute ({}) in {} sub2-element of {} at {}".format( attrib, value, sub2element.tag, sub2location, verseMilestone ) )
-                            #bookResults.append( ('rdgSeg',rdgSeg,) )
-                            #USFMResults.append( ('rdgSeg',rdgSeg,) )
                             self.thisBook.appendLine( 'rdgSeg', rdgSeg )
                         else:
                             logging.warning( "3dxm Unprocessed '{}' sub2element ({}) in {} at {}".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
                     justFinishedLG = False
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"divineName":
                     sublocation = "validateCrossReferenceOrFootnote: divineName of " + locationDescription
-                    Globals.checkXMLNoAttributes( subelement, sublocation+" at "+verseMilestone, '3r6y' )
-                    Globals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 's2r54' )
-                    divineName, trailingText = subelement.text, subelement.tail
-                    #bookResults.append( ('nd',divineName,) )
-                    #USFMResults.append( ('nd',divineName,) )
-                    self.thisBook.appendLine( 'nd',divineName )
-                    if trailingText:
-                        #bookResults.append( ('nd+',trailingText,) )
-                        #USFMResults.append( ('nd+',trailingText,) )
-                        self.thisBook.appendLine( 'nd+', trailingText )
+                    validateDivineName( subelement, sublocation, verseMilestone )
+                elif subelement.tag == OSISXMLBible.OSISNameSpace+"seg": # cross-references
+                    sublocation = "validateCrossReferenceOrFootnote: seg of " + locationDescription
+                    rdgSeg = subelement.text
+                    #Globals.checkXMLNoText( subelement, sublocation+" at "+verseMilestone, 'kcd5' )
+                    Globals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, 'jnh5' )
+                    Globals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'mjd4' )
+                    # Process the attributes
+                    theType = None
+                    for attrib,value in subelement.items():
+                        if attrib=="type":
+                            theType = value
+                        else: logging.warning( "lj06 Unprocessed '{}' attribute ({}) in {} sub-element of {} at {}".format( attrib, value, subelement.tag, sublocation, verseMilestone ) )
+                    #print( "khf8", "Have", sublocation, repr(element.text), repr(theType) )
+                    if theType == 'verseNumber': marker = 'fv'
+                    elif theType == 'keyword': marker = 'fk'
+                    elif Globals.debugFlag: print(  theType ); halt
+                    self.thisBook.appendToLastLine( '\\fv {}'.format( clean(rdgSeg) ) )
+                elif subelement.tag == OSISXMLBible.OSISNameSpace+"note":
+                    sublocation = "validateCrossReferenceOrFootnote: note of " + locationDescription
+                    noteText = subelement.text
+                    Globals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, 'plq2' )
+                    Globals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'vw24' )
+                    notePlacement = noteOsisRef = noteOsisID = noteType = None
+                    for attrib,value in subelement.items():
+                        if attrib=='type':
+                            noteType = value
+                        elif attrib=='placement':
+                            notePlacement = value
+                        elif attrib=='osisRef':
+                            noteOsisRef = value
+                        elif attrib=="osisID":
+                            noteOsisID = value
+                        else: logging.warning( "f5j3 Unprocessed '{}' attribute ({}) in {} sub-element of {} at {}".format( attrib, value, subelement.tag, sublocation, verseMilestone ) )
+                    print( "odf3 Unprocessed note: {} {} {} {} {}".format( repr(noteText), repr(noteType), repr(notePlacement), repr(noteOsisRef), repr(noteOsisID) ) )
                 else:
                     logging.warning( "1d54 Unprocessed '{}' sub-element ({}) in {} at {}".format( subelement.tag, subelement.text, location, verseMilestone ) )
             #print( "  Note tail = '{}' (will be used later)".format( element.tail ) )
-            #print( "USFMResults =", USFMResults )
         # end of OSISXMLBible.validateCrossReferenceOrFootnote
 
 
@@ -1366,23 +1441,11 @@ class OSISXMLBible( Bible ):
             #print( "validateLG at {} at {}".format( location, verseMilestone ) )
             location = "validateLG: " + locationDescription
             Globals.checkXMLNoText( element, location+" at "+verseMilestone, '3f6v' )
-            #lgText = element.text
-            lgTail = element.tail.strip()
-            for attrib,value in element.items():
-                if attrib=="type":
-                    halt
-                elif attrib=="n":
-                    halt
-                elif attrib=="osisRef":
-                    halt
-                elif attrib=="osisID":
-                    halt
-                else: logging.warning( "9f3k Unprocessed '{}' attribute ({}) in {} element of {} at {}".format( attrib, value, element.tag, location, verseMilestone ) )
+            Globals.checkXMLNoAttributes( element, location+" at "+verseMilestone, 'vdj4' )
             for subelement in element.getchildren():
                 if subelement.tag == OSISXMLBible.OSISNameSpace+"l":
                     sublocation = "validateLG l of " + locationDescription
                     Globals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, '3d56g' )
-                    lText = subelement.text.strip()
                     level3 = None
                     for attrib,value in subelement.items():
                         if attrib=="level":
@@ -1394,9 +1457,7 @@ class OSISXMLBible( Bible ):
                         logging.warning( "No level attribute specified in {} at {}".format( sublocation, verseMilestone ) )
                         level3 = '1' # Dunno what we have here ???
                     if Globals.debugFlag: assert( level3 in ('1','2','3',) )
-                    #bookResults.append( ('lg', level3, lText,) )
-                    #USFMResults.append( ('q'+level3,lText,) )
-                    self.thisBook.appendLine( 'q'+level3, '' if lText is None else lText )
+                    self.thisBook.appendLine( 'q'+level3, '' if subelement.text is None else subelement.text.strip() )
                     for sub2element in subelement.getchildren():
                         if sub2element.tag == OSISXMLBible.OSISNameSpace+"verse":
                             sub2location = "validateLG: verse of l of  " + locationDescription
@@ -1406,40 +1467,138 @@ class OSISXMLBible( Bible ):
                             validateCrossReferenceOrFootnote( sub2element, sub2location, verseMilestone )
                             noteTail = sub2element.tail
                             if noteTail: # This is the main text of the verse (follows the inserted note)
-                                #bookResults.append( ('lverse+', noteTail,) )
-                                adjNoteTail = noteTail.replace('\n','') # XML line formatting is irrelevant to USFM
-                                if adjNoteTail:
-                                    #USFMResults.append( ('lv~',adjNoteTail,) )
-                                    self.thisBook.appendLine( 'v~', adjNoteTail )
+                                self.thisBook.appendLine( 'v~', clean(noteTail) )
                         elif sub2element.tag == OSISXMLBible.OSISNameSpace+"divineName":
                             sub2location = "validateLG: divineName of l of  " + locationDescription
-                            Globals.checkXMLNoAttributes( sub2element, sub2location+" at "+verseMilestone, '3q6y' )
-                            Globals.checkXMLNoSubelements( sub2element, sub2location+" at "+verseMilestone, '4v6g' )
-                            divineName, trailingText = sub2element.text, sub2element.tail
-                            #bookResults.append( ('nd',divineName,) )
-                            #USFMResults.append( ('nd',divineName,) )
-                            self.thisBook.appendLine( 'nd', divineName )
-                            if trailingText:
-                                #bookResults.append( ('nd+',trailingText,) )
-                                #USFMResults.append( ('nd+',trailingText,) )
-                                self.thisBook.appendLine( 'nd~', trailingText )
+                            validateDivineName( sub2element, sub2location, verseMilestone )
+                        elif sub2element.tag == OSISXMLBible.OSISNameSpace+"hi":
+                            sub2location = "validateLG: hi of l of  " + locationDescription
+                            validateHighlight( sub2element, sub2location, verseMilestone ) # Also handles the tail
                         else:
                             logging.warning( "4j12 Unprocessed '{}' sub2element ({}) in {} at {}".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"divineName":
                     sublocation = "validateLG divineName of " + locationDescription
-                    print( "6b3i", sublocation )
-                    Globals.checkXMLNoText( subelement, sublocation+" at "+verseMilestone, '2d5g' )
-                    Globals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, 'v32v' )
-                    Globals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, '2sd5' )
-                    Globals.checkXMLNoAttributes( subelement, sublocation+" at "+verseMilestone, '6y4t' )
+                    validateDivineName( subelement, sublocation, verseMilestone )
                 else:
                     logging.warning( "q2b6 Unprocessed '{}' sub-element ({}) in {} at {}".format( subelement.tag, subelement.text, location, verseMilestone ) )
-            if lgTail: # and lgTail!='\n': # This is the main text of the verse (outside of the quotation indents)
-                #bookResults.append( ('margin',lgTail,) )
-                #USFMResults.append( ('m',lgTail,) )
-                self.thisBook.appendLine( 'm', lgTail )
+            if element.tail: # and lgTail!='\n': # This is the main text of the verse (outside of the quotation indents)
+                self.thisBook.appendLine( 'm', clean(element.tail) )
             return verseMilestone
         # end of OSISXMLBible.validateLG
+
+
+        def validateList( element, locationDescription, verseMilestone, level=None ):
+            """
+            Check/validate and process a OSIS Bible list field, including all subfields.
+
+            Returns a possibly updated verseMilestone.
+            """
+            #print( "validateList for {} at {} at {}".format( self.name, locationDescription, verseMilestone ) )
+            if level is None: level = 1
+            location = "validateList: " + locationDescription
+
+            Globals.checkXMLNoText( element, location+" at "+verseMilestone, '2dx34' )
+            Globals.checkXMLNoTail( element, location+" at "+verseMilestone, '2c5b' )
+            canonical = None
+            for attrib,value in element.items():
+                if attrib== 'canonical':
+                    canonical = value
+                    assert( canonical == 'false' )
+                else: logging.warning( "h2f5 Unprocessed '{}' attribute ({}) in {} element of {} at {}".format( attrib, value, element.tag, location, verseMilestone ) )
+            for subelement in element.getchildren():
+                if subelement.tag == OSISXMLBible.OSISNameSpace+"item":
+                    sublocation = "item of " + location
+                    itemText = subelement.text
+                    #print( "itemText", repr(itemText) )
+                    if chapterMilestone: marker = 'li' + str(level)
+                    else: marker = 'io' + str(level) # No chapter so we're in the introduction
+                    if itemText and itemText.strip(): self.thisBook.appendLine( marker, clean(itemText) )
+                    Globals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, 'ad36' )
+                    Globals.checkXMLNoAttributes( subelement, sublocation+" at "+verseMilestone, 'xf52' )
+                    for sub2element in subelement.getchildren():
+                        if sub2element.tag == OSISXMLBible.OSISNameSpace+"verse":
+                            sub2location = "verse of " + sublocation
+                            verseMilestone = validateVerseElement( sub2element, verseMilestone, chapterMilestone, sub2location )
+                            #verseTail = sub3element.tail
+                            #print( "verseTail", repr(verseTail) )
+                            #Globals.checkXMLNoText( sub3element, sub3location+" at "+verseMilestone, 'cvf4' )
+                            #Globals.checkXMLNoSubelements( sub3element, sub3location+" at "+verseMilestone, 'sdyg' )
+                            #osisID = verseSID = verseEID = verseN = None
+                            #for attrib,value in sub3element.items():
+                                #if attrib=='osisID':
+                                    #osisID = value
+                                #elif attrib=='sID':
+                                    #verseSID = value
+                                #elif attrib=='eID':
+                                    #verseEID = value
+                                #elif attrib=='n':
+                                    #verseN = value
+                                #else: logging.warning( "fghb Unprocessed '{}' attribute ({}) in {} sub3element of {} at {}".format( attrib, value, sub3element.tag, sub2location, verseMilestone ) )
+                            #if osisID: assert( verseSID and verseN and not verseEID )
+                            #elif verseEID: assert( not verseSID and not verseN )
+                            #print( "verseStuff", repr(osisID), repr(verseSID), repr(verseN), repr(verseEID) )
+                            ##self.thisBook.appendLine( 'r~', referenceText+referenceTail )
+                        elif sub2element.tag == OSISXMLBible.OSISNameSpace+"note":
+                            sub2location = "note of " + sublocation
+                            validateCrossReferenceOrFootnote( sub2element, sub2location, verseMilestone )
+                            noteTail = sub2element.tail
+                            if noteTail: # This is the main text of the verse (follows the inserted note)
+                                self.thisBook.appendLine( 'v~', clean(noteTail) )
+                        elif sub2element.tag == OSISXMLBible.OSISNameSpace+"hi":
+                            sub2location = "hi of " + sublocation
+                            validateHighlight( sub2element, sub2location, verseMilestone )
+                        elif sub2element.tag == OSISXMLBible.OSISNameSpace+"list":
+                            sub2location = "list of " + sublocation
+                            verseMilestone = validateList( sub2element, sub2location, verseMilestone, level+1 )
+                        else: logging.warning( "f153 Unprocessed '{}' sub3element ({}) in {} at {}".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
+                else:
+                    logging.warning( "s154 Unprocessed '{}' subelement ({}) in {} at {}".format( subelement.tag, subelement.text, location, verseMilestone ) )
+                    if Globals.debugFlag: halt
+            return verseMilestone
+
+            ##print( "list", divType, subDivType )
+            #Globals.checkXMLNoText( sub2element, sub2location+" at "+verseMilestone, '3x6g' )
+            #Globals.checkXMLNoTail( sub2element, sub2location+" at "+verseMilestone, '8j4g' )
+            #Globals.checkXMLNoAttributes( sub2element, sub2location+" at "+verseMilestone, '7tgf' )
+            #for sub3element in sub2element.getchildren():
+                #if sub3element.tag == OSISXMLBible.OSISNameSpace+"item":
+                    #sub3location = "item of " + sub2location
+                    #Globals.checkXMLNoTail( sub3element, sub3location+" at "+verseMilestone, '3d8n' )
+                    #Globals.checkXMLNoAttributes( sub3element, sub3location+" at "+verseMilestone, '4g7g' )
+                    #item = sub3element.text
+                    #if item and item.strip():
+                        ##print( subDivType )
+                        #if subDivType == 'outline':
+                            #self.thisBook.appendLine( 'io1', item.strip() )
+                        #elif subDivType == 'section':
+                            #self.thisBook.appendLine( 'io1', item.strip() )
+                        #elif Globals.debugFlag: halt
+                    #for sub4element in sub3element.getchildren():
+                        #if sub4element.tag == OSISXMLBible.OSISNameSpace+"list":
+                            #sub4location = "list of " + sub3location
+                            #Globals.checkXMLNoText( sub4element, sub4location+" at "+verseMilestone, '5g3d' )
+                            #Globals.checkXMLNoTail( sub4element, sub4location+" at "+verseMilestone, '4w5x' )
+                            #Globals.checkXMLNoAttributes( sub4element, sub4location+" at "+verseMilestone, '3d45' )
+                            #for sub5element in sub4element.getchildren():
+                                #if sub5element.tag == OSISXMLBible.OSISNameSpace+"item":
+                                    #sub5location = "item of " + sub4location
+                                    #Globals.checkXMLNoTail( sub5element, sub5location+" at "+verseMilestone, '4c5t' )
+                                    #Globals.checkXMLNoAttributes( sub5element, sub5location+" at "+verseMilestone, '2sd1' )
+                                    #Globals.checkXMLNoSubelements( sub5element, sub5location+" at "+verseMilestone, '8j7n' )
+                                    #subItem = sub5element.text
+                                    #if subItem:
+                                        #if subDivType == 'outline':
+                                            #self.thisBook.appendLine( 'io2', clean(subItem) )
+                                        #elif subDivType == 'section':
+                                            #self.thisBook.appendLine( 'io2', clean(subItem) )
+                                        #elif Globals.debugFlag: print( subDivType ); halt
+                                #else: logging.warning( "3kt6 Unprocessed '{}' sub5element ({}) in {} at {}".format( sub5element.tag, sub5element.text, sub4location, verseMilestone ) )
+                        #elif sub4element.tag == OSISXMLBible.OSISNameSpace+"verse":
+                            #sub4location = "list of " + sub3location
+                            #validateVerseElement( sub4element, verseMilestone, chapterMilestone, sub4location )
+                        #else: logging.warning( "2h4s Unprocessed '{}' sub4element ({}) in {} at {}".format( sub4element.tag, sub4element.text, sub3location, verseMilestone ) )
+                #else: logging.warning( "8k4j Unprocessed '{}' sub3element ({}) in {} at {}".format( sub3element.tag, sub3element.text, sub2location, verseMilestone ) )
+        # end of OSISXMLBible.validateList
 
 
         def validateTitle( element, locationDescription, verseMilestone ):
@@ -1449,7 +1608,7 @@ class OSISXMLBible( Bible ):
             location = "validateTitle: " + locationDescription
             Globals.checkXMLNoTail( element, location+" at "+verseMilestone, 'c4vd' )
             titleText = element.text
-            titleType = titleSubType = titleShort = titleLevel = None
+            titleType = titleSubType = titleShort = titleLevel = titleCanonical = None
             for attrib,value in element.items():
                 if attrib=="type":
                     titleType = value
@@ -1458,33 +1617,37 @@ class OSISXMLBible( Bible ):
                 elif attrib=="short":
                     titleShort = value
                 elif attrib=="level":
-                    titleLevel = value # Not used anywhere yet :(
+                    titleLevel = value
+                elif attrib=="canonical":
+                    titleCanonical = value
+                    assert( titleCanonical in ('true','false',) )
                 else: logging.warning( "4b8e Unprocessed '{}' attribute ({}) in {} at {}".format( attrib, value, location, verseMilestone ) )
+            #print( 'vdq2', repr(titleType), repr(titleSubType), repr(titleText) )
+            if titleType: assert( titleType in ('main','scope','sub','parallel',) )
             if titleSubType: assert( titleSubType == 'x-preverse' )
             if chapterMilestone:
-                Globals.checkXMLNoSubelements( element, location+" at "+verseMilestone, '2d45' )
-                if titleText:
+                #print( "title", repr(titleText), repr(titleType), repr(titleSubType), repr(titleShort), repr(titleLevel) )
+                if titleText and titleText.strip():
+                    assert( titleCanonical != 'true' )
                     if not titleType and not titleShort and self.language=='ksw': # it's a Karen alternate chapter number
-                        #bookResults.append( ("alternateChapterNumber",titleText,) )
-                        #USFMResults.append( ('ca',titleText,) )
-                        self.thisBook.appendLine( 'cp', titleText )
+                        self.thisBook.appendLine( 'cp', clean(titleText) )
+                    elif titleType == 'parallel':
+                        self.thisBook.appendLine( 'sr', clean(titleText) )
                     else: # let's guess that it's a section heading
-                        #bookResults.append( ('title', titleType, titleText,) )
-                        #USFMResults.append( ('ms1', titleText,) )
-                        self.thisBook.appendLine( 'ms1', titleText )
-            else:
-            #if self.haveBook: # Must be in the introduction if it's before all chapter milestones
+                        sfm = 's'
+                        if titleLevel:
+                            assert( titleLevel in ('1','2','3') )
+                            sfm += titleLevel
+                        self.thisBook.appendLine( sfm, titleText.strip() )
+            else: # must be in the introduction if it's before all chapter milestones
+            #if self.haveBook:
                 #assert( titleText )
-                #bookResults.append( ('title', titleType, titleText,) )
-                #USFMResults.append( ('imt', titleText,) ) # Could it also be 'is'?
-                if titleText:
+                if titleText and titleText.strip():
                     #print( "title", repr(titleText) )
-                    self.thisBook.appendLine( 'imt', titleText ) # Could it also be 'is'?
+                    self.thisBook.appendLine( 'imt', titleText.strip() ) # Could it also be 'is'?
             #else: # Must be a book group title
                 #Globals.checkXMLNoSubelements( element, location+" at book group", 'vcw5' )
                 #if Globals.debugFlag: assert( titleText )
-                ##bookResults.append( ('title', titleType, titleText,) )
-                ##USFMResults.append( ('imt', titleText,) ) # Could it also be 'is'?
                 #if titleText:
                     #if Globals.verbosityLevel > 2: print( "    Got book group title", repr(titleText) )
                     #self.divisions[titleText] = []
@@ -1493,20 +1656,20 @@ class OSISXMLBible( Bible ):
                 if subelement.tag == OSISXMLBible.OSISNameSpace+"title": # section reference(s)
                     sublocation = "validateTitle: title of " + locationDescription
                     Globals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, '21d5' )
-                    sectionReference = subelement.text
-                    sectionReferenceType = None
+                    titleText = subelement.text
+                    titleType = titleLevel = None
                     for attrib,value in subelement.items():
-                        if attrib=="type":
-                            sectionReferenceType = value
+                        if attrib== 'type':
+                            titleType = value
+                        elif attrib== 'level':
+                            titleLevel = value
                         else:
                             logging.warning( "56v3 Unprocessed '{}' attribute ({}) in {} sub2element of {} at {}".format( attrib, value, subelement.tag, sublocation, verseMilestone ) )
-                    if sectionReference:
-                        #print( divType, self.subDivType, sectionReferenceType ); halt
-                        #assert( divType=='section' and self.subDivType in ('outline',) and sectionReferenceType=='parallel' )
-                        #assert( divType=='section' and sectionReferenceType=='parallel' )
-                        #bookResults.append( ('title',sectionReference,) )
-                        #USFMResults.append( ('r',sectionReference,) )
-                        self.thisBook.appendLine( 'r', sectionReference )
+                    if titleText:
+                        #print( repr(mainDivType), repr(titleType), repr(titleLevel), repr(chapterMilestone) )
+                        if chapterMilestone: marker = 'sr'
+                        else: marker = 'mt{}'.format( titleLevel if titleLevel else '' )
+                        self.thisBook.appendLine( marker, clean(titleText) )
                     for sub2element in subelement.getchildren():
                         if sub2element.tag == OSISXMLBible.OSISNameSpace+"reference":
                             sub2location = "reference of " + sublocation
@@ -1519,11 +1682,20 @@ class OSISXMLBible( Bible ):
                                     referenceOsisRef = value
                                 else: logging.warning( "89n5 Unprocessed '{}' attribute ({}) in {} sub3element of {} at {}".format( attrib, value, sub2element.tag, sublocation, verseMilestone ) )
                             #print( referenceText, referenceOsisRef, referenceTail )
-                            #bookResults.append( ('reference',referenceText,) )
-                            #USFMResults.append( ('r+',referenceText+referenceTail,) )
                             self.thisBook.appendLine( 'r~', referenceText+referenceTail )
                         else:
-                            logging.warning( "2d6h Unprocessed '{}' sub3element ({}) in {} at {}".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
+                            logging.warning( "2d6h Unprocessed '{}' sub2element ({}) in {} at {}".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
+                elif subelement.tag == OSISXMLBible.OSISNameSpace+"hi":
+                    sublocation = "validateTitle: hi of " + locationDescription
+                    validateHighlight( subelement, sublocation, verseMilestone ) # Also handles the tail
+                elif subelement.tag == OSISXMLBible.OSISNameSpace+"note":
+                    sublocation = "validateTitle: note of " + locationDescription
+                    validateCrossReferenceOrFootnote( subelement, sublocation, verseMilestone )
+                    noteTail = element.tail
+                    if noteTail: # This is the main text of the verse (follows the inserted note)
+                        self.thisBook.appendLine( 'v~', clean(noteTail) )
+                else:
+                    logging.warning( "jkd7 Unprocessed '{}' subelement ({}) in {} at {}".format( subelement.tag, subelement.text, locationDescription, verseMilestone ) )
         # end of OSISXMLBible.validateTitle
 
 
@@ -1544,21 +1716,19 @@ class OSISXMLBible( Bible ):
                     canonical = value
                     assert( canonical in ('true','false',) )
                 else: logging.warning( "6g3f Unprocessed '{}' attribute ({}) in {} element of {} at {}".format( attrib, value, element.tag, location, verseMilestone ) )
-            if paragraphType: assert( paragraphType == "x-center" )
+            if paragraphType and Globals.debugFlag:
+                if paragraphType not in ('x-center','x-iex','x-mi','x-pc','x-ph','x-pm','x-qc','x-qm','x-qr','x-sr',): print( paragraphType )
+                assert( paragraphType in ('x-center','x-iex','x-mi','x-pc','x-ph','x-pm','x-qc','x-qm','x-qr','x-sr',) )
             justFinishedLG = False
             if not element.text: # A new paragraph starting
                 p = None
             else: # A new paragraph in the middle of a verse, e.g., James 3:5b
-                p = element.text.strip()
+                p = element.text
                 #if p.isspace(): p = None # Ignore newlines and blank lines in the xml file
             if chapterMilestone:
-                #bookResults.append( ('p',p,) )
-                #USFMResults.append( ('p',p.replace('\n','') if p is not None else p,) )
-                self.thisBook.appendLine( 'p', '' if p is None else p )
+                self.thisBook.appendLine( 'p', '' if p is None else clean(p) )
             else: # Must be in the introduction
-                #bookResults.append( ('ip',p,) )
-                #USFMResults.append( ('ip',p,) )
-                self.thisBook.appendLine( 'ip', '' if p is None else p )
+                self.thisBook.appendLine( 'ip', '' if p is None else clean(p) )
             for subelement in element.getchildren():
                 if subelement.tag == OSISXMLBible.OSISNameSpace+"chapter": # A chapter break within a paragraph (relatively rare)
                     sublocation = "validateParagraph: chapter of " + locationDescription
@@ -1566,7 +1736,6 @@ class OSISXMLBible( Bible ):
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"verse":
                     sublocation = "validateParagraph: verse of " + locationDescription
                     if justFinishedLG: # Have a verse straight after a LG (without an intervening p)
-                        #USFMResults.append( ('m',None,) )
                         self.thisBook.appendLine( 'm', '' )
                         #print( "Added m" )
                     verseMilestone = validateVerseElement( subelement, verseMilestone, chapterMilestone, sublocation )
@@ -1577,12 +1746,10 @@ class OSISXMLBible( Bible ):
                     noteTail = subelement.tail
                     if noteTail and not noteTail.isspace(): # This is the main text of the verse (follows the inserted note)
                         #print( "et '" + element.tail + "'" )
-                        #bookResults.append( ('lverse+', noteTail,) )
                         #adjNoteTail = noteTail.replace('\n','') # XML line formatting is irrelevant to USFM
                         adjNoteTail = noteTail.strip() # XML line formatting is irrelevant to USFM
                         if adjNoteTail:
-                            #USFMResults.append( ('lv~',adjNoteTail,) )
-                            self.thisBook.appendLine( 'v~', adjNoteTail )
+                            self.thisBook.appendLine( 'v~', clean(adjNoteTail) )
                     justFinishedLG = False
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"lg":
                     sublocation = "validateParagraph: lg of " + locationDescription
@@ -1616,8 +1783,6 @@ class OSISXMLBible( Bible ):
                                     logging.warning( "validateParagraph: No level attribute specified in {} at {}".format( sub2location, verseMilestone ) )
                                     level3 = '1' # Dunno what we have here ???
                                 if Globals.debugFlag: assert( level3 in ('1','2','3',) )
-                                #bookResults.append( ('lg', level3, lText,) )
-                                #USFMResults.append( ('q'+level3,lText,) )
                                 self.thisBook.appendLine( 'q'+level3, lText )
                                 for sub3element in sub2element.getchildren():
                                     if sub3element.tag == OSISXMLBible.OSISNameSpace+"verse":
@@ -1634,8 +1799,6 @@ class OSISXMLBible( Bible ):
                                     else: logging.warning( "32df Unprocessed '{}' sub3element ({}) in {} at {}".format( sub3element.tag, sub3element.text, sub2location, verseMilestone ) )
                             else: logging.warning( "5g1e Unprocessed '{}' sub2element ({}) in {} at {}".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
                         if lgTail and lgTail!='\n': # This is the main text of the verse (outside of the quotation indents)
-                            #bookResults.append( ('margin',lgTail,) )
-                            #USFMResults.append( ('m',lgTail,) )
                             self.thisBook.appendLine( 'm', lgTail )
                     justFinishedLG = True
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"reference":
@@ -1649,45 +1812,19 @@ class OSISXMLBible( Bible ):
                         else: logging.warning( "4f5f Unprocessed '{}' attribute ({}) in {} sub2-element of {} at {}".format( attrib, value, subelement.tag, sublocation, verseMilestone ) )
                     if theType:
                         if theType == 'x-bookName':
-                            #bookResults.append( (theType,reference,) )
-                            #USFMResults.append( ('bk',reference,) )
-                            self.thisBook.appendLine( 'bk', reference )
-                        else: halt
+                            self.thisBook.appendToLastLine( '\\bk {}\\bk*'.format( clean(reference) ) )
+                        elif Globals.debugFlag: print( theType ); halt
                     pTail = subelement.tail
-                    if pTail and not pTail.isspace(): # Just ignore XML spacing characters
-                        #bookResults.append( ('paragraph+',pTail,) )
-                        #USFMResults.append( ('p+',pTail,) )
-                        self.thisBook.appendLine( 'p', pTail ) # 'p~'
+                    if pTail and pTail.strip(): # Just ignore XML spacing characters
+                        self.thisBook.appendToLastLine( clean(pTail) )
                     justFinishedLG = False
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"hi":
                     sublocation = "validateParagraph: hi of " + locationDescription
-                    Globals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'gb5gb' )
-                    highlightedText = subelement.text
-                    if Globals.debugFlag: assert( highlightedText )
-                    highlightType = None
-                    for attrib,value in subelement.items():
-                        if attrib=="type":
-                            highlightType = value
-                            if Globals.debugFlag: assert( highlightType == 'italic' )
-                        else: logging.warning( "7kj3 Unprocessed '{}' attribute ({}) in {} sub2-element of {} at {}".format( attrib, value, subelement.tag, sublocation, verseMilestone ) )
-                    #bookResults.append( (highlightType,highlightedText,) )
-                    #USFMResults.append( ('it',highlightedText,) )
-                    self.thisBook.appendLine( 'it', highlightedText )
-                    pTail = subelement.tail
-                    if pTail and not pTail.isspace(): # Just ignore XML spacing characters
-                        #bookResults.append( ('paragraph+',pTail,) )
-                        #USFMResults.append( ('p+',pTail,) )
-                        self.thisBook.appendLine( 'p', pTail ) # 'p~'
+                    validateHighlight( subelement, sublocation, verseMilestone ) # Also handles the tail
                     justFinishedLG = False
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"lb":
                     sublocation = "validateParagraph: lb of " + locationDescription
-                    Globals.checkXMLNoText( subelement, sublocation+" at "+verseMilestone, 'cf4g' )
-                    Globals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, '3c5f' )
-                    Globals.checkXMLNoAttributes( subelement, sublocation+" at "+verseMilestone, '5t3x' )
-                    Globals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone )
-                    #bookResults.append( ('lb',None,) )
-                    #USFMResults.append( ('m',None,) )
-                    self.thisBook.appendLine( 'm', '' )
+                    validateLB( subelement, sublocation, verseMilestone )
                     justFinishedLG = False
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"w":
                     sublocation = "validateParagraph: w of " + locationDescription
@@ -1696,33 +1833,31 @@ class OSISXMLBible( Bible ):
                     word, trailingPunctuation = subelement.text, subelement.tail
                     if trailingPunctuation is None: trailingPunctuation = ''
                     combined = word + trailingPunctuation
-                    #bookResults.append( ('w',combined,) )
-                    #USFMResults.append( ('w+',combined,) )
                     self.thisBook.appendLine( 'w~', combined )
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"signed":
                     sublocation = "validateParagraph: signed of " + locationDescription
-                    Globals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, 'fc3v3' )
-                    Globals.checkXMLNoAttributes( subelement, sublocation+" at "+verseMilestone, '9i6h' )
-                    Globals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone )
-                    signedName = subelement.text
-                    #bookResults.append( ('sig',signedName,) )
-                    #USFMResults.append( ('sig',signedName,) )
-                    self.thisBook.appendLine( 'sig', signedName )
+                    validateSigned( subelement, sublocation, verseMilestone )
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"divineName":
                     sublocation = "validateParagraph: divineName of " + locationDescription
-                    Globals.checkXMLNoAttributes( subelement, sublocation+" at "+verseMilestone, '3f7h' )
-                    Globals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'v4g7' )
-                    divineName, trailingText = subelement.text, subelement.tail
-                    #bookResults.append( ('nd',divineName,) )
-                    #USFMResults.append( ('nd',divineName,) )
-                    self.thisBook.appendLine( 'nd', divineName )
-                    #bookResults.append( ('nd+',trailingText,) )
-                    #USFMResults.append( ('nd+',trailingText,) )
-                    self.thisBook.appendLine( 'nd~', trailingText )
+                    validateDivineName( subelement, sublocation, verseMilestone )
+                elif subelement.tag == OSISXMLBible.OSISNameSpace+"seg":
+                    sublocation = "validateParagraph: seg of " + locationDescription
+                    Globals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'kd52' )
+                    segText, segTail = subelement.text, subelement.tail
+                    segType = None
+                    for attrib,value in subelement.items():
+                        if attrib=="type":
+                            segType = value
+                        else: logging.warning( "bsh2 Unprocessed '{}' attribute ({}) in {} sub2-element of {} at {}".format( attrib, value, subelement.tag, sublocation, verseMilestone ) )
+                    if segType == 'otPassage':
+                        self.thisBook.appendToLastLine( '\\qt {}\\qt*'.format( clean(segText) ) )
+                    elif segType == 'keyword':
+                        self.thisBook.appendToLastLine( '\\k {}\\k*'.format( clean(segText) ) )
+                    elif Globals.debugFlag: print( segType ); halt
+                    if segTail and segTail.strip():
+                        self.thisBook.appendToLastLine( clean(segTail) )
                 else: logging.warning( "3kj6 Unprocessed '{}' sub-element ({}) in {} at {}".format( subelement.tag, subelement.text, location, verseMilestone ) )
             if element.tail and not element.tail.isspace(): # Just ignore XML spacing characters
-                #bookResults.append( ('paragraph+',element.tail,) )
-                #USFMResults.append( ('p+',element.tail,) )
                 self.thisBook.appendLine( 'p', element.tail ) # 'p~'
             return verseMilestone
         # end of OSISXMLBible.validateParagraph
@@ -1766,10 +1901,7 @@ class OSISXMLBible( Bible ):
                 self.thisBook.objectNameString = "OSIS XML Bible Book object"
                 self.thisBook.objectTypeString = "OSIS"
                 self.haveBook = True
-            #bookResults.append( (mainDivType+'Div', mainDivOsisID,) )
-            #USFMResults.append( ('id',(USFMAbbreviation if USFMAbbreviation else mainDivOsisID).upper() + " converted to USFM from OSIS by {} V{}".format( ProgName, ProgVersion ),) )
             self.thisBook.appendLine( 'id', (USFMAbbreviation if USFMAbbreviation else mainDivOsisID).upper() + " converted to USFM from OSIS by {} V{}".format( ProgName, ProgVersion ) )
-            #USFMResults.append( ('h',USFMAbbreviation if USFMAbbreviation else mainDivOsisID,) )
             self.thisBook.appendLine( 'h', USFMAbbreviation if USFMAbbreviation else mainDivOsisID )
         #elif mainDivType=='bookGroup':
             ## This is all the books lumped in together into one big div
@@ -1845,6 +1977,7 @@ class OSISXMLBible( Bible ):
 ########### Div (of the main div) -- most stuff would be expected to be inside a section div inside the book div
             elif element.tag == OSISXMLBible.OSISNameSpace+"div":
                 location = "div of {} div".format( mainDivType )
+                #if verseMilestone is None: print( location, chapterMilestone ); halt
                 Globals.checkXMLNoText( element, location+" at "+verseMilestone, '3f6h' )
                 Globals.checkXMLNoTail( element, location+" at "+verseMilestone, '0j6h' )
                 # Process the attributes
@@ -1857,6 +1990,7 @@ class OSISXMLBible( Bible ):
                         location = value + ' ' + location
                     elif attrib=="canonical":
                         divCanonical = value
+                        assert( divCanonical == 'false' )
                     elif attrib=="scope":
                         divScope = value
                     else: logging.warning( "2h56 Unprocessed '{}' attribute ({}) in {} at {}".format( attrib, value, location, verseMilestone ) )
@@ -1902,8 +2036,7 @@ class OSISXMLBible( Bible ):
                                         #print( divType, self.subDivType, sectionReferenceType ); halt
                                         #assert( divType=='section' and self.subDivType in ('outline',) and sectionReferenceType=='parallel' )
                                         if Globals.debugFlag: assert( divType=='section' and sectionReferenceType=='parallel' )
-                                        bookResults.append( ('title',sectionReference,) )
-                                        USFMResults.append( ('r',sectionReference,) )
+                                        self.thisBook.appendLine( 'sr', clean(sectionReference) )
                                     for sub3element in sub2element.getchildren():
                                         if sub3element.tag == OSISXMLBible.OSISNameSpace+"reference":
                                             sub3location = "reference of " + sub2location
@@ -1926,13 +2059,7 @@ class OSISXMLBible( Bible ):
 ###                 ### list in div
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+"list":
                         sublocation = "list of " + location
-                        Globals.checkXMLNoText( subelement, sublocation+" at "+verseMilestone, '2dx34' )
-                        Globals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, '2c5b' )
-                        Globals.checkXMLNoAttributes( subelement, sublocation+" at "+verseMilestone, '2sd4' )
-                        Globals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'x3f5' )
-                        self.list = subelement.text
-                        for attrib,value in subelement.items():
-                            logging.warning( "7k2a Unprocessed '{}' attribute ({}) in {} subelement of {} at {}".format( attrib, value, subelement.tag, sublocation, verseMilestone ) )
+                        verseMilestone = validateList( subelement, sublocation, verseMilestone )
 ###                 ### lg in div
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+"lg":
                         sublocation = "lg of " + location
@@ -1940,7 +2067,6 @@ class OSISXMLBible( Bible ):
 ###                 ### div in div
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+"div":
                         sublocation = "div of " + location
-                        Globals.checkXMLNoText( subelement, sublocation+" at "+verseMilestone, 'dcv4' )
                         Globals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, '2c5bv' )
                         subDivType = subDivScope = subDivSpace = canonical = None
                         for attrib,value in subelement.items():
@@ -1957,118 +2083,87 @@ class OSISXMLBible( Bible ):
                                 if Globals.debugFlag: assert( subDivSpace == 'preserve' )
                             else: logging.warning( "84kf Unprocessed '{}' attribute ({}) in {} at {}".format( attrib, value, sublocation, verseMilestone ) )
                         #print( "self.subDivType", self.subDivType )
-                        for sub2element in subelement.getchildren():
-                            if sub2element.tag == OSISXMLBible.OSISNameSpace+"title":
-                                sub2location = "title of " + sublocation
-                                Globals.checkXMLNoTail( sub2element, sub2location+" at "+verseMilestone, '4v5g' )
-                                title = sub2element.text
-                                titleType = titleSubType = None
-                                for attrib,value in sub2element.items():
-                                    if attrib=="type":
-                                        titleType = value
-                                    elif attrib=="subType":
-                                        titleSubType = value
-                                    else: logging.warning( "1d4r Unprocessed '{}' attribute ({}) in {} sub2element of {} at {}".format( attrib, value, sub2element.tag, sub2location, verseMilestone ) )
-                                #if titleType: print( "titleType", titleType )
-                                if titleType: assert( titleType in ('psalm','parallel',) )
-                                if titleSubType: assert( titleSubType == 'x-preverse' )
-                                if title:
-                                    #print( divType, subDivType )
-                                    if divType=='introduction' and subDivType in ('section','outline',):
-                                        #bookResults.append( ('title',title,) )
-                                        #USFMResults.append( ('iot' if subDivType == 'outline' else 'is',title,) )
-                                        self.thisBook.appendLine( 'iot' if subDivType == 'outline' else 'is',title )
-                                    elif divType=='majorSection' and subDivType=='section':
-                                        #bookResults.append( ('title',title,) )
-                                        #USFMResults.append( ('xxxx1' if subDivType == 'outline' else 's1',title,) )
-                                        self.thisBook.appendLine( 'xxxx1' if subDivType == 'outline' else 's1',title )
-                                    elif divType=='section' and subDivType=='subSection':
-                                        #bookResults.append( ('title',title,) )
-                                        #USFMResults.append( ('xxxx3' if subDivType == 'outline' else 'xxxx4',title,) )
-                                        self.thisBook.appendLine( 'xxxx3' if subDivType == 'outline' else 's',title )
-                                    elif divType=='section' and subDivType=='outline':
-                                        #bookResults.append( ('title',title,) )
-                                        #USFMResults.append( ('iot',title,) )
-                                        self.thisBook.appendLine( 'iot', title )
-                                    else: halt
-                                for sub3element in sub2element.getchildren():
-                                    if sub3element.tag == OSISXMLBible.OSISNameSpace+"reference":
-                                        sub3location = "reference of " + sub2location
-                                        Globals.checkXMLNoSubelements( sub3element, sub3location+" at "+verseMilestone, 'k6l3' )
-                                        referenceText = sub3element.text
-                                        referenceTail = sub3element.tail
-                                        referenceOsisRef = None
-                                        for attrib,value in sub3element.items():
-                                            if attrib=="osisRef":
-                                                referenceOsisRef = value
-                                            else: logging.warning( "nm46 Unprocessed '{}' attribute ({}) in {} sub3element of {} at {}".format( attrib, value, sub3element.tag, sub2location, verseMilestone ) )
-                                        #print( referenceText, referenceOsisRef, referenceTail )
-                                        #bookResults.append( ('reference',referenceText,) )
-                                        #USFMResults.append( ('r+',referenceText+referenceTail,) )
-                                        self.thisBook.appendLine( 'r~', referenceText+referenceTail )
-                                    elif sub3element.tag == OSISXMLBible.OSISNameSpace+"note":
-                                        sub3location = "note of " + sub2location
-                                        validateCrossReferenceOrFootnote( sub3element, sub3location, verseMilestone )
-                                        noteTail = sub3element.tail
-                                        if noteTail: # This is the main text of the verse (follows the inserted note)
-                                            #bookResults.append( ('lverse+', noteTail,) )
-                                            self.thisBook.appendLine( 'lverse~', noteTail )
-                                            adjNoteTail = noteTail.replace('\n','') # XML line formatting is irrelevant to USFM
-                                            if adjNoteTail: USFMResults.append( ('v~',adjNoteTail,) )
-                                    else: logging.warning( "m4g5 Unprocessed '{}' sub3element ({}) in {} at {}".format( sub3element.tag, sub3element.text, sub2location, verseMilestone ) )
-                            elif sub2element.tag == OSISXMLBible.OSISNameSpace+"p":
-                                sub2location = "p of " + sublocation
-                                verseMilestone = validateParagraph( sub2element, sub2location, verseMilestone )
-                            elif sub2element.tag == OSISXMLBible.OSISNameSpace+"lg":
-                                sub2location = "lg of " + sublocation
-                                verseMilestone = validateLG( sub2element, sub2location, verseMilestone )
-                            elif sub2element.tag == OSISXMLBible.OSISNameSpace+"list":
-                                sub2location = "list of " + sublocation
-                                #print( "list", divType, subDivType )
-                                Globals.checkXMLNoText( sub2element, sub2location+" at "+verseMilestone, '3x6g' )
-                                Globals.checkXMLNoTail( sub2element, sub2location+" at "+verseMilestone, '8j4g' )
-                                Globals.checkXMLNoAttributes( sub2element, sub2location+" at "+verseMilestone, '7tgf' )
-                                for sub3element in sub2element.getchildren():
-                                    if sub3element.tag == OSISXMLBible.OSISNameSpace+"item":
-                                        sub3location = "item of " + sub2location
-                                        Globals.checkXMLNoTail( sub3element, sub3location+" at "+verseMilestone, '3d8n' )
-                                        Globals.checkXMLNoAttributes( sub3element, sub3location+" at "+verseMilestone, '4g7g' )
-                                        item = sub3element.text
-                                        if item:
-                                            if subDivType == 'outline':
-                                                #bookResults.append( ('item',item,) )
-                                                #USFMResults.append( ('io1',item,) )
-                                                self.thisBook.appendLine( 'io1', item )
-                                            else: halt
-                                        for sub4element in sub3element.getchildren():
-                                            if sub4element.tag == OSISXMLBible.OSISNameSpace+"list":
-                                                sub4location = "list of " + sub3location
-                                                Globals.checkXMLNoText( sub4element, sub4location+" at "+verseMilestone, '5g3d' )
-                                                Globals.checkXMLNoTail( sub4element, sub4location+" at "+verseMilestone, '4w5x' )
-                                                Globals.checkXMLNoAttributes( sub4element, sub4location+" at "+verseMilestone, '3d45' )
-                                                for sub5element in sub4element.getchildren():
-                                                    if sub5element.tag == OSISXMLBible.OSISNameSpace+"item":
-                                                        sub5location = "item of " + sub4location
-                                                        Globals.checkXMLNoTail( sub5element, sub5location+" at "+verseMilestone, '4c5t' )
-                                                        Globals.checkXMLNoAttributes( sub5element, sub5location+" at "+verseMilestone, '2sd1' )
-                                                        Globals.checkXMLNoSubelements( sub5element, sub5location+" at "+verseMilestone, '8j7n' )
-                                                        subItem = sub5element.text
-                                                        if subItem:
-                                                            if subDivType == 'outline':
-                                                                #bookResults.append( ('subItem',subItem,) )
-                                                                #USFMResults.append( ('io2',subItem,) )
-                                                                self.thisBook.appendLine( 'io2', subItem )
-                                                            else: halt
-                                                    else: logging.warning( "3kt6 Unprocessed '{}' sub5element ({}) in {} at {}".format( sub5element.tag, sub5element.text, sub4location, verseMilestone ) )
-                                            else: logging.warning( "2h4s Unprocessed '{}' sub4element ({}) in {} at {}".format( sub4element.tag, sub4element.text, sub3location, verseMilestone ) )
-                                    else: logging.warning( "8k4j Unprocessed '{}' sub3element ({}) in {} at {}".format( sub3element.tag, sub3element.text, sub2location, verseMilestone ) )
-                            elif sub2element.tag == OSISXMLBible.OSISNameSpace+"chapter":
-                                sub2location = "chapter of " + sublocation
-                                chapterMilestone = validateChapterElement( sub2element, chapterMilestone, verseMilestone, sub2location )
-                            elif sub2element.tag == OSISXMLBible.OSISNameSpace+"verse":
-                                sub2location = "verse of " + sublocation
-                                verseMilestone = validateVerseElement( sub2element, verseMilestone, chapterMilestone, sub2location )
-                            else: logging.warning( "14k5 Unprocessed '{}' sub2element ({}) in {} at {}".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
+                        if element.text:
+                            self.thisBook.appendLine( 'io1', element.text.strip() )
+                        else:
+                            for sub2element in subelement.getchildren():
+                                if sub2element.tag == OSISXMLBible.OSISNameSpace+"title":
+                                    sub2location = "title of " + sublocation
+                                    Globals.checkXMLNoTail( sub2element, sub2location+" at "+verseMilestone, '4v5g' )
+                                    titleText = sub2element.text
+                                    titleType = titleSubType = titleCanonical = None
+                                    for attrib,value in sub2element.items():
+                                        if attrib=='type':
+                                            titleType = value
+                                        elif attrib=='subType':
+                                            titleSubType = value
+                                        elif attrib=='canonical':
+                                            titleCanonical = value
+                                            assert( titleCanonical == 'false' )
+                                        else: logging.warning( "1d4r Unprocessed '{}' attribute ({}) in {} sub2element of {} at {}".format( attrib, value, sub2element.tag, sub2location, verseMilestone ) )
+                                    #if titleType: print( "titleType", titleType )
+                                    if titleType: assert( titleType in ('psalm','parallel','sub',) )
+                                    if titleSubType: assert( titleSubType == 'x-preverse' )
+                                    if titleText and titleText.strip():
+                                        #print( divType, subDivType )
+                                        if divType=='introduction' and subDivType in ('section','outline',):
+                                            self.thisBook.appendLine( 'iot' if subDivType == 'outline' else 'is',titleText.strip() )
+                                        elif divType=='majorSection' and subDivType=='section':
+                                            self.thisBook.appendLine( 'xxxx1' if subDivType == 'outline' else 's1',titleText.strip() )
+                                        elif divType=='section' and subDivType=='subSection':
+                                            self.thisBook.appendLine( 'xxxx3' if subDivType == 'outline' else 's',titleText.strip() )
+                                        elif divType=='section' and subDivType=='outline':
+                                            self.thisBook.appendLine( 'iot', titleText.strip() )
+                                        else: halt
+                                    for sub3element in sub2element.getchildren():
+                                        if sub3element.tag == OSISXMLBible.OSISNameSpace+"reference":
+                                            sub3location = "reference of " + sub2location
+                                            Globals.checkXMLNoSubelements( sub3element, sub3location+" at "+verseMilestone, 'k6l3' )
+                                            referenceText = sub3element.text
+                                            referenceTail = sub3element.tail
+                                            referenceOsisRef = None
+                                            for attrib,value in sub3element.items():
+                                                if attrib=="osisRef":
+                                                    referenceOsisRef = value
+                                                else: logging.warning( "nm46 Unprocessed '{}' attribute ({}) in {} sub3element of {} at {}".format( attrib, value, sub3element.tag, sub2location, verseMilestone ) )
+                                            #print( referenceText, referenceOsisRef, referenceTail )
+                                            self.thisBook.appendLine( 'r~', referenceText+referenceTail )
+                                        elif sub3element.tag == OSISXMLBible.OSISNameSpace+"note":
+                                            sub3location = "note of " + sub2location
+                                            validateCrossReferenceOrFootnote( sub3element, sub3location, verseMilestone )
+                                            noteTail = sub3element.tail
+                                            if noteTail and noteTail.strip(): # This is the main text of the verse (follows the inserted note)
+                                                self.thisBook.appendLine( 'v~', clean(noteTail) )
+                                        elif sub3element.tag == OSISXMLBible.OSISNameSpace+"hi":
+                                            sub3location = "hi of " + sub2location
+                                            validateHighlight( sub3element, sub3location, verseMilestone ) # Also handles the tail
+                                        else: logging.warning( "m4g5 Unprocessed '{}' sub3element ({}) in {} at {}".format( sub3element.tag, sub3element.text, sub2location, verseMilestone ) )
+                                elif sub2element.tag == OSISXMLBible.OSISNameSpace+"p":
+                                    sub2location = "p of " + sublocation
+                                    verseMilestone = validateParagraph( sub2element, sub2location, verseMilestone )
+                                elif sub2element.tag == OSISXMLBible.OSISNameSpace+"lg":
+                                    sub2location = "lg of " + sublocation
+                                    verseMilestone = validateLG( sub2element, sub2location, verseMilestone )
+                                elif sub2element.tag == OSISXMLBible.OSISNameSpace+"list":
+                                    sub2location = "list of " + sublocation
+                                    verseMilestone = validateList( sub2element, sub2location, verseMilestone )
+                                elif sub2element.tag == OSISXMLBible.OSISNameSpace+"chapter":
+                                    sub2location = "chapter of " + sublocation
+                                    chapterMilestone = validateChapterElement( sub2element, chapterMilestone, verseMilestone, sub2location )
+                                elif sub2element.tag == OSISXMLBible.OSISNameSpace+"verse":
+                                    sub2location = "verse of " + sublocation
+                                    verseMilestone = validateVerseElement( sub2element, verseMilestone, chapterMilestone, sub2location )
+                                elif sub2element.tag == OSISXMLBible.OSISNameSpace+"hi":
+                                    sub2location = "hi of " + sublocation
+                                    validateHighlight( sub2element, sub2location, verseMilestone )
+                                elif sub2element.tag == OSISXMLBible.OSISNameSpace+"lb":
+                                    sub2location = "lb of " + sublocation
+                                    validateLB( sub2element, sub2location, verseMilestone )
+                                else: logging.warning( "14k5 Unprocessed '{}' sub2element ({}) in {} at {}".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
+###                 ### lb in div
+                    elif subelement.tag == OSISXMLBible.OSISNameSpace+"lb":
+                        sublocation = "lb of " + location
+                        validateLB( subelement, sublocation, verseMilestone )
                     else: logging.warning( "3f67 Unprocessed '{}' sub-element ({}) in {} at {}".format( subelement.tag, subelement.text, location, verseMilestone ) )
 ########### P
             elif element.tag == OSISXMLBible.OSISNameSpace+"p":
@@ -2173,8 +2268,6 @@ class OSISXMLBible( Bible ):
                     chapterBits = OSISChapterID.split( '.' )
                     if Globals.debugFlag: assert( len(chapterBits) == 2 )
                     if Globals.debugFlag: assert( chapterBits[1].isdigit() )
-                    #bookResults.append( ('chapter', chapterBits[1],) )
-                    #USFMResults.append( ('c', chapterBits[1],) )
                     self.thisBook.appendLine( 'c', chapterBits[1] )
                     for subelement in element.getchildren():
                         if subelement.tag == OSISXMLBible.OSISNameSpace+"p": # Most scripture data occurs in here
@@ -2189,8 +2282,6 @@ class OSISXMLBible( Bible ):
                             #print( 'vM', verseMilestone ); halt
                             if verseMilestone and verseMilestone.startswith('verseContainer.'): # it must have been a container -- process the subelements
                                 #print( "Yikes!" ) # Why??????????????
-                                #bookResults.append( ('verse', verseMilestone[15:],) ) # Remove the 'verseContainer.' prefix
-                                #USFMResults.append( ('v', verseMilestone[15:],) ) # Remove the 'verseContainer.' prefix
                                 self.thisBook.appendLine( 'v', verseMilestone[15:] ) # Remove the 'verseContainer.' prefix
                                 for sub2element in subelement.getchildren():
                                     if sub2element.tag == OSISXMLBible.OSISNameSpace+"w":
@@ -2215,8 +2306,6 @@ class OSISXMLBible( Bible ):
                                                 for attrib,value in sub3element.items():
                                                     if attrib=="type": segType = value
                                                     else: logging.warning( "963k Unprocessed '{}' attribute ({}) in {} at {}".format( attrib, value, sub3location, verseMilestone ) )
-                                        #bookResults.append( ('word', (word,lemma,),) )
-                                        #USFMResults.append( ('v~', "{} [{}]".format( word,lemma),) )
                                         self.thisBook.appendLine( 'vw', "{} [{}]".format( word,lemma) )
                                     elif sub2element.tag == OSISXMLBible.OSISNameSpace+"seg":
                                         sub2location = "seg of " + sublocation
@@ -2229,18 +2318,13 @@ class OSISXMLBible( Bible ):
                                             if attrib=="type":
                                                 segType = value
                                             else: logging.warning( "5jj2 Unprocessed '{}' attribute ({}) in {} at {}".format( attrib, value, sub2location, verseMilestone ) )
-                                        #bookResults.append( ('segment', (seg,segType,),) )
                                         self.thisBook.appendLine( 'segment', "{} [{}]".format( seg,segType) )
                                     elif sub2element.tag == OSISXMLBible.OSISNameSpace+"note":
                                         sub2location = "note of " + sublocation
                                         validateCrossReferenceOrFootnote( sub2element, sub2location, verseMilestone )
                                         noteTail = sub2element.tail
                                         if noteTail: # This is the main text of the verse (follows the inserted note)
-                                            #bookResults.append( ('lverse+', noteTail,) )
-                                            adjNoteTail = noteTail.replace('\n','') # XML line formatting is irrelevant to USFM
-                                            if adjNoteTail:
-                                                #USFMResults.append( ('lv~',adjNoteTail,) )
-                                                self.thisBook.appendLine( 'v~', adjNoteTail )
+                                            self.thisBook.appendLine( 'v~', clean(noteTail) )
                                         # Now process the subelements
                                         for sub3element in sub2element.getchildren():
                                             if sub3element.tag == OSISXMLBible.OSISNameSpace+"catchWord":
@@ -2293,10 +2377,6 @@ class OSISXMLBible( Bible ):
                                 thisData = bits[1]
                                 if bits[2].strip(): thisData += ' ' + bits[2].replace('\n','')
                                 #assert( bits[2].strip() )
-                                #bookResults.append( ('verse', bits[1],) ) # The verse number
-                                #USFMResults.append( ('v', bits[1],) ) # The verse number
-                                #bookResults.append( ('verse+',bits[2],) )
-                                #USFMResults.append( ('v~',bits[2].replace('\n','').strip(),) ) # Newlines and leading spaces are irrelevant to USFM formatting
                                 self.thisBook.appendLine( 'v', thisData )
                                 #print( USFMResults[-4:] )
                                 print( self.thisBook._rawLines[-4:] )
@@ -2329,9 +2409,7 @@ class OSISXMLBible( Bible ):
                         validateCrossReferenceOrFootnote( subelement, sublocation, verseMilestone )
                         noteTail = subelement.tail
                         if noteTail: # This is the main text of the verse (follows the inserted note)
-                            bookResults.append( ('q+', noteTail,) )
-                            adjNoteTail = noteTail.replace('\n','') # XML line formatting is irrelevant to USFM
-                            if adjNoteTail: USFMResults.append( ('q+',adjNoteTail,) )
+                            self.thisBook.appendLine( 'v~', clean(noteTail) )
                     else: logging.warning( "2f5z Unprocessed '{}' sub-element ({}) in {} at {}".format( subelement.tag, subelement.text, location, verseMilestone ) )
                 if tCTail: # This is the main text of the verse (follows the inserted transChange)
                     bookResults.append( ('tCverse+', tCTail,) )
@@ -2343,9 +2421,11 @@ class OSISXMLBible( Bible ):
                 validateCrossReferenceOrFootnote( element, location, verseMilestone )
                 noteTail = element.tail
                 if noteTail: # This is the main text of the verse (follows the inserted note)
-                    bookResults.append( ('lverse+', noteTail,) )
-                    adjNoteTail = noteTail.replace('\n','') # XML line formatting is irrelevant to USFM
-                    if adjNoteTail: self.thisBook.appendLine( 'v~', adjNoteTail ) # USFMResults.append( ('lv~',adjNoteTail,) )
+                    self.thisBook.appendLine( 'v~', clean(noteTail) )
+########### LB
+            elif element.tag == OSISXMLBible.OSISNameSpace+"lb":
+                location = "lb of {} div".format( mainDivType )
+                validateLB( element, location, verseMilestone )
 ########### Left-overs!
             else: logging.warning( "5ks1 Unprocessed '{}' sub-element ({}) in {} div at {}".format( element.tag, element.text, mainDivType, verseMilestone ) )
             #if element.tail is not None and element.tail.strip(): logging.error( "Unexpected left-over '{}' tail data after {} element in {} div at {}".format( element.tail, element.tag, mainDivType, verseMilestone ) )
@@ -2424,7 +2504,7 @@ def demo():
 
         for j, testFilepath in enumerate( justOne ): # Choose testFilepaths or justOne
             # Demonstrate the OSIS Bible class
-            if Globals.verbosityLevel > 1: print( "\n{}/ Demonstrating the OSIS Bible class...".format( j+1 ) )
+            if Globals.verbosityLevel > 1: print( "\nOSIS {}/ Demonstrating the OSIS Bible class...".format( j+1 ) )
             if Globals.verbosityLevel > 0: print( "  Test filepath is '{}'".format( testFilepath ) )
             oB = OSISXMLBible( testFilepath ) # Load and process the XML
             oB.load()

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleInternals.py
-#   Last modified: 2013-08-25 by RJH (also update ProgVersion below)
+#   Last modified: 2013-09-03 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Bible internals handler"
-ProgVersion = "0.16"
+ProgVersion = "0.17"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -222,6 +222,8 @@ class InternalBibleEntry:
         """
         Accept the parameters and double-check them if requested.
         """
+        if '\\' in cleanText:
+            logging.error( "InternalBibleEntry expects clean text not {}={}".format( marker, repr(cleanText) ) )
         if Globals.debugFlag or Globals.strictCheckingFlag:
             #print( "InternalBibleEntry.__init__( {}, {}, '{}', '{}', {}, '{}' )" \
                     #.format( marker, originalMarker, adjustedText[:35]+('...' if len(adjustedText)>35 else ''), \
@@ -241,7 +243,7 @@ class InternalBibleEntry:
             assert( '\n' not in originalText and '\r' not in originalText )
             #assert( marker in Globals.USFMMarkers or marker in NON_USFM_MARKERS )
             if marker not in Globals.USFMMarkers and marker not in NON_USFM_MARKERS:
-                print( "InternalBibleEntry doesn't handle '{}' marker yet.".format( marker ) )
+                logging.warning( "InternalBibleEntry doesn't handle '{}' marker yet.".format( marker ) )
         self.marker, self.originalMarker, self.adjustedText, self.cleanText, self.extras, self.originalText = marker, originalMarker, adjustedText, cleanText, extras, originalText
 
         if Globals.debugFlag and debuggingThisModule and self.getFullText() != self.originalText.strip():

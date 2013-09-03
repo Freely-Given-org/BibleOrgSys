@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-08-19 by RJH (also update ProgVersion below)
+#   Last modified: 2013-09-03 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.51"
+ProgVersion = "0.53"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -171,19 +171,22 @@ class InternalBibleBook:
             This is a very simple function,
                 but having it allows us to have a single point in order to catch particular bugs or errors.
         """
-        if Globals.debugFlag:
-            if debuggingThisModule: print( "InternalBibleBook.appendLine( {}, {} ) for {} {} {}".format( repr(marker), repr(text), self.objectTypeString, self.name, self.bookReferenceCode ) )
-            #if len(self._rawLines ) > 60: halt
+        forceDebugHere = False
+        if forceDebugHere or Globals.debugFlag:
+            if forceDebugHere or debuggingThisModule: print( "InternalBibleBook.appendLine( {}, {} ) for {} {} {}".format( repr(marker), repr(text), self.objectTypeString, self.name, self.bookReferenceCode ) )
+            #if len(self._rawLines ) > 200: halt
             #if 'xyz' in text: halt
         if text and ( '\n' in text or '\r' in text ):
-            logging.critical( "InternalBibleBook.appendLine found newLine in text: {}={}".format( self.objectTypeString, marker, repr(text) ) )
+            logging.critical( "InternalBibleBook.appendLine found newLine in {} text: {}={}".format( self.objectTypeString, marker, repr(text) ) )
         if Globals.debugFlag:
             assert( not self._processedFlag )
             assert( marker and isinstance( marker, str ) )
-            if text: assert( '\n' not in text and '\r' not in text )
+            if text:
+                assert( isinstance( text, str ) )
+                assert( '\n' not in text and '\r' not in text )
 
         if not ( marker in Globals.USFMMarkers or marker in NON_USFM_MARKERS ):
-            logging.critical( "InternalBibleBook.appendLine marker for {} not in lists: {}={}".format( self.objectTypeString, marker, text ) )
+            logging.critical( "InternalBibleBook.appendLine marker for {} not in lists: {}={}".format( self.objectTypeString, marker, repr(text) ) )
             if marker in self.badMarkers:
                 ix = self.badMarkers.index( marker )
                 assert( 0 <= ix < len(self.badMarkers) )
@@ -196,11 +199,11 @@ class InternalBibleBook:
         if marker not in NON_USFM_MARKERS and not Globals.USFMMarkers.isNewlineMarker( marker ):
             logging.critical( "IBB.appendLine: Not a NL marker: {}='{}'".format( marker, text ) )
             if Globals.debugFlag:
-                print( self )
+                print( self, repr(marker), repr(text) )
                 halt
 
         if text is None:
-            logging.critical( "InternalBibleBook.appendLine: Received {} {} {}={}".format( self.objectTypeString, self.bookReferenceCode, marker, text ) )
+            logging.critical( "InternalBibleBook.appendLine: Received {} {} {}={}".format( self.objectTypeString, self.bookReferenceCode, marker, repr(text) ) )
             if Globals.debugFlag: halt # Programming error in the calling routine, sorry
             text = '' # Try to recover
 
@@ -210,7 +213,7 @@ class InternalBibleBook:
                 if self.pntsCount != -1:
                     self.pntsCount += 1
                     if self.pntsCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
-                        logging.warning( "InternalBibleBook.appendLine: Possibly needed to strip {} {} {}='{}'".format( self.objectTypeString, self.bookReferenceCode, marker, text ) )
+                        logging.warning( "InternalBibleBook.appendLine: Possibly needed to strip {} {} {}={}".format( self.objectTypeString, self.bookReferenceCode, marker, repr(text) ) )
                     else: # we've reached our limit
                         logging.warning( _('Additional "Possibly needed to strip" messages suppressed...') )
                         self.pntsCount = -1 # So we don't do this again (for this book)
@@ -228,14 +231,20 @@ class InternalBibleBook:
             print( " InternalBibleBook.appendToLastLine( {}, {} )".format( repr(additionalText), repr(expectedLastMarker) ) )
             assert( not self._processedFlag )
             assert( self._rawLines )
-        assert( additionalText and isinstance( additionalText, str ) )
-        assert( '\n' not in additionalText )
+        if additionalText and ( '\n' in additionalText or '\r' in additionalText ):
+            logging.critical( "InternalBibleBook.appendToLastLine found newLine in {} additionalText: {}={}".format( self.objectTypeString, expectedLastMarker, repr(additionalText) ) )
+        if Globals.debugFlag:
+            assert( not self._processedFlag )
+            assert( additionalText and isinstance( additionalText, str ) )
+            if additionalText: assert( '\n' not in additionalText and '\r' not in additionalText )
+            if expectedLastMarker: assert( isinstance( expectedLastMarker, str ) )
 
         marker, text = self._rawLines[-1]
         #print( "additionalText for {} '{}' is '{}'".format( marker, text, additionalText ) )
         if expectedLastMarker and marker!=expectedLastMarker: # Not what we were expecting
             logging.critical( _("InternalBibleBook.appendToLastLine: expected \\{} but got \\{}").format( expectedLastMarker, marker ) )
         if expectedLastMarker and Globals.debugFlag: assert( marker == expectedLastMarker )
+        if marker in ('v','c',) and ' ' not in text: text += ' ' # Put a space after the verse or chapter number
         text += additionalText
         #print( "newText for {} is '{}'".format( marker, text ) )
         self._rawLines[-1] = (marker, text,)

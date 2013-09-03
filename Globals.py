@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Globals.py
-#   Last modified: 2013-08-29 by RJH (also update ProgVersion below)
+#   Last modified: 2013-09-02 by RJH (also update ProgVersion below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -46,6 +46,7 @@ Contains functions:
     checkXMLNoTail( element, locationString, idString=None )
     checkXMLNoAttributes( element, locationString, idString=None )
     checkXMLNoSubelements( element, locationString, idString=None )
+    checkXMLNoSubelementsWithText( element, locationString, idString=None )
     getFlattenedXML( element, locationString, idString=None, level=0 )
 
     applyStringAdjustments( originalText, adjustmentList )
@@ -508,18 +509,34 @@ def checkXMLNoText( element, locationString, idString=None ):
     if element.text and element.text.strip():
         logging.warning( "{}Unexpected '{}' element text in {}".format( (idString+' ') if idString else '', element.text, locationString ) )
 
+
 def checkXMLNoTail( element, locationString, idString=None ):
     """ Give a warning if the element tail contains anything other than whitespace. """
     if element.tail and element.tail.strip():
         logging.warning( "{}Unexpected '{}' element tail in {}".format( (idString+' ') if idString else '', element.tail, locationString ) )
 
+
 def checkXMLNoAttributes( element, locationString, idString=None ):
     for attrib,value in element.items():
         logging.warning( "{}Unexpected '{}' attribute ({}) in {}".format( (idString+' ') if idString else '', attrib, value, locationString ) )
 
+
 def checkXMLNoSubelements( element, locationString, idString=None ):
     for subelement in element.getchildren():
         logging.warning( "{}Unexpected '{}' sub-element ({}) in {}".format( (idString+' ') if idString else '', subelement.tag, subelement.text, locationString ) )
+
+
+def checkXMLNoSubelementsWithText( element, locationString, idString=None ):
+    """ Checks that the element doesn't have text AND subelements """
+    if ( element.text and element.text.strip() ) \
+    or ( element.tail and element.tail.strip() ):
+        for subelement in element.getchildren():
+            logging.warning( "{}Unexpected '{}' sub-element ({}) in {} with text/tail {}/{}" \
+                .format( (idString+' ') if idString else '', subelement.tag, subelement.text, locationString,
+                        element.text.strip() if element.text else element.text,
+                        element.tail.strip() if element.tail else element.tail ) )
+# end of Globals.checkXMLNoSubelementsWithText
+
 
 def getFlattenedXML( element, locationString, idString=None, level=0 ):
     """
