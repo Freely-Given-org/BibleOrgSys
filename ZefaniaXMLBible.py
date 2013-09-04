@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ZefaniaXMLBible.py
-#   Last modified: 2013-08-28 by RJH (also update ProgVersion below)
+#   Last modified: 2013-09-04 by RJH (also update ProgVersion below)
 #
 # Module handling Zefania XML Bibles
 #
@@ -59,7 +59,7 @@ or
 """
 
 ProgName = "Zefania XML Bible format handler"
-ProgVersion = "0.23"
+ProgVersion = "0.24"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -77,7 +77,7 @@ from Bible import Bible, BibleBook
 
 
 filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
-extensionsToIgnore = ('ZIP', 'BAK', 'LOG', 'HTM','HTML', 'OSIS', 'USX', 'TXT', 'STY', 'LDS', 'SSF', 'VRS',) # Must be UPPERCASE
+extensionsToIgnore = ('ZIP', 'BAK', 'LOG', 'HTM','HTML', 'OSIS', 'USX', 'TXT', 'STY', 'LDS', 'SSF', 'VRS', 'ASC', 'CSS',) # Must be UPPERCASE
 
 
 
@@ -124,7 +124,7 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False 
         foundFolders.remove( '__MACOSX' )  # don't visit these directories
     #print( 'ff', foundFiles )
 
-    # See if there's an OpenSong project here in this folder
+    # See if there's an Zefania project here in this folder
     numFound = 0
     looksHopeful = False
     lastFilenameFound = None
@@ -173,7 +173,7 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False 
                     foundSubfiles.append( something )
         #print( 'fsf', foundSubfiles )
 
-        # See if there's an OS project here in this folder
+        # See if there's an Zefania project here in this folder
         for thisFilename in sorted( foundSubfiles ):
             if strictCheck or Globals.strictCheckingFlag:
                 firstLines = Globals.peekIntoFile( thisFilename, tryFolderName, numLines=2 )
@@ -739,6 +739,7 @@ def demo():
             #if count: print( "\n{} total Zefania Bibles processed.".format( count ) )
         #else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testBaseFolder ) )
 # end of demo
+
 
 if __name__ == '__main__':
     # Configure basic set-up

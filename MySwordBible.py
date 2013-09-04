@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # MySwordBible.py
-#   Last modified: 2013-08-11 by RJH (also update ProgVersion below)
+#   Last modified: 2013-09-04 by RJH (also update ProgVersion below)
 #
 # Module handling "MySword" Bible module files
 #
@@ -72,7 +72,7 @@ from TheWordBible import handleLine
 filenameEndingsToAccept = ('.MYBIBLE',) # Must be UPPERCASE
 BibleFilenameEndingsToAccept = ('.BBL.MYBIBLE',) # Must be UPPERCASE
 #filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
-#extensionsToIgnore = ('ZIP', 'BAK', 'LOG', 'HTM','HTML', 'XML', 'OSIS', 'USX', 'STY', 'LDS', 'SSF', 'VRS',) # Must be UPPERCASE
+#extensionsToIgnore = ('ZIP', 'BAK', 'LOG', 'HTM','HTML', 'XML', 'OSIS', 'USX', 'STY', 'LDS', 'SSF', 'VRS', 'ASC', 'CSS',) # Must be UPPERCASE
 
 
 

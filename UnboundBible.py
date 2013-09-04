@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # UnboundBible.py
-#   Last modified: 2013-08-30 by RJH (also update ProgVersion below)
+#   Last modified: 2013-09-04 by RJH (also update ProgVersion below)
 #
 # Module handling Biola University "unbound" Bible files
 #
@@ -86,7 +86,7 @@ and
 """
 
 ProgName = "Unbound Bible format handler"
-ProgVersion = "0.15"
+ProgVersion = "0.16"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -101,7 +101,7 @@ from Bible import Bible, BibleBook
 
 
 filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
-extensionsToIgnore = ('ZIP', 'BAK', 'LOG', 'HTM','HTML', 'XML', 'OSIS', 'USX', 'STY', 'LDS', 'SSF', 'VRS',) # Must be UPPERCASE
+extensionsToIgnore = ('ZIP', 'BAK', 'LOG', 'HTM','HTML', 'XML', 'OSIS', 'USX', 'STY', 'LDS', 'SSF', 'VRS', 'ASC', 'CSS',) # Must be UPPERCASE
 
 
 

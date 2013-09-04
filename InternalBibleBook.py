@@ -227,7 +227,8 @@ class InternalBibleBook:
         """ Append some extra text to the previous line in self._rawLines
             Doesn't add any additional spaces.
             (Used by USXXMLBibleBook.py) """
-        if Globals.debugFlag and debuggingThisModule:
+        forceDebugHere = False
+        if forceDebugHere or ( Globals.debugFlag and debuggingThisModule ):
             print( " InternalBibleBook.appendToLastLine( {}, {} )".format( repr(additionalText), repr(expectedLastMarker) ) )
             assert( not self._processedFlag )
             assert( self._rawLines )
@@ -244,9 +245,9 @@ class InternalBibleBook:
         if expectedLastMarker and marker!=expectedLastMarker: # Not what we were expecting
             logging.critical( _("InternalBibleBook.appendToLastLine: expected \\{} but got \\{}").format( expectedLastMarker, marker ) )
         if expectedLastMarker and Globals.debugFlag: assert( marker == expectedLastMarker )
-        if marker in ('v','c',) and ' ' not in text: text += ' ' # Put a space after the verse or chapter number
+        #if marker in ('v','c',) and ' ' not in text: text += ' ' # Put a space after the verse or chapter number
         text += additionalText
-        #print( "newText for {} is '{}'".format( marker, text ) )
+        if forceDebugHere: print( "  newText for {} is {}".format( repr(marker), repr(text) ) )
         self._rawLines[-1] = (marker, text,)
     # end of InternalBibleBook.appendToLastLine
 

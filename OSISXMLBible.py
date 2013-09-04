@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # OSISXMLBible.py
-#   Last modified: 2013-09-03 by RJH (also update ProgVersion below)
+#   Last modified: 2013-09-04 by RJH (also update ProgVersion below)
 #
 # Module handling OSIS XML Bibles
 #
@@ -44,7 +44,6 @@ debuggingThisModule = False
 
 import logging, os
 from gettext import gettext as _
-#from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree
 
 import Globals
@@ -53,7 +52,7 @@ from Bible import Bible, BibleBook
 
 
 filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
-extensionsToIgnore = ('ZIP', 'BAK', 'LOG', 'HTM','HTML', 'USX', 'TXT', 'STY', 'LDS', 'SSF', 'VRS',) # Must be UPPERCASE
+extensionsToIgnore = ('ZIP', 'BAK', 'LOG', 'HTM','HTML', 'USX', 'TXT', 'STY', 'LDS', 'SSF', 'VRS', 'ASC', 'CSS',) # Must be UPPERCASE
 
 
 
@@ -100,7 +99,7 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
         foundFolders.remove( '__MACOSX' )  # don't visit these directories
     #print( 'ff', foundFiles )
 
-    # See if there's an OpenSong project here in this folder
+    # See if there's an OSIS project here in this folder
     numFound = 0
     looksHopeful = False
     lastFilenameFound = None
@@ -146,7 +145,7 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
                     foundSubfiles.append( something )
         #print( 'fsf', foundSubfiles )
 
-        # See if there's an OS project here in this folder
+        # See if there's an OSIS project here in this folder
         for thisFilename in sorted( foundSubfiles ):
             if strictCheck or Globals.strictCheckingFlag:
                 firstLines = Globals.peekIntoFile( thisFilename, tryFolderName, numLines=2 )

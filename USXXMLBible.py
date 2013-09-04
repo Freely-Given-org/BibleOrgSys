@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USXXMLBible.py
-#   Last modified: 2013-08-31 by RJH (also update ProgVersion below)
+#   Last modified: 2013-09-04 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USX Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USX Bibles.
 """
 
 ProgName = "USX XML Bible handler"
-ProgVersion = "0.13"
+ProgVersion = "0.14"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -85,7 +85,7 @@ def USXXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
     if Globals.verbosityLevel > 2: print( UFns )
     filenameTuples = UFns.getConfirmedFilenames()
     if Globals.verbosityLevel > 3: print( "Confirmed:", len(filenameTuples), filenameTuples )
-    if Globals.verbosityLevel > 1 and filenameTuples: print( "  Found {} USX file{}.".format( len(filenameTuples), '' if len(filenameTuples)!=1 else 's' ) )
+    if Globals.verbosityLevel > 1 and filenameTuples: print( "  Found {} USX file{}.".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
     if filenameTuples:
         numFound += 1
     if numFound:
@@ -117,7 +117,7 @@ def USXXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
         filenameTuples = UFns.getConfirmedFilenames()
         if Globals.verbosityLevel > 3: print( "Confirmed:", len(filenameTuples), filenameTuples )
         if Globals.verbosityLevel > 2 and filenameTuples: print( "  Found {} USX files: {}".format( len(filenameTuples), filenameTuples ) )
-        elif Globals.verbosityLevel > 1 and filenameTuples: print( "  Found {} USX file{}".format( len(filenameTuples), '' if len(filenameTuples)!=1 else 's' ) )
+        elif Globals.verbosityLevel > 1 and filenameTuples: print( "  Found {} USX file{}".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
         if filenameTuples:
             foundProjects.append( tryFolderName )
             numFound += 1
