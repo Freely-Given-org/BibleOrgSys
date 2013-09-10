@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleVersificationSystems.py
-#   Last modified: 2013-07-25 (also update ProgVersion below)
+#   Last modified: 2013-09-10 (also update ProgVersion below)
 #
 # Module handling BibleVersificationSystem_*.xml to produce C and Python data tables
 #
@@ -24,7 +24,9 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module handling BibleVersificationSystem_*.xml to produce C and Python data tables.
+Module to load, use, determine, and compare various Bible versification systems.
+    Note that this doesn't just find the maximum verse number in each chapter --
+        it also checks for combined, omitted, and reordered verses.
 """
 
 ProgName = "Bible Chapter-Verse Systems handler"
@@ -833,6 +835,7 @@ def demo():
         for myRange in ((('MAT','2','1',''),('MAT','2','5','')), (('MAT','3','2','b'),('MAT','3','6','a')), (('MAT','3','15',''),('MAT','4','2','')), (('MAT','3','16','b'),('MAT','4','3','a')), (('MAT','3','2',''),('MAT','2','6',''))):
             print( "Expanding {} gives {}".format( myRange, bvs.expandCVRange( myRange[0],myRange[1]) ) )
 # end of demo
+
 
 if __name__ == '__main__':
     # Configure basic set-up

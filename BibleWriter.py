@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-08-30 by RJH (also update ProgVersion below)
+#   Last modified: 2013-09-06 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -26,7 +26,7 @@
 """
 EARLY PROTOTYPE ONLY AT THIS STAGE! (Developmental code not very well structured yet.)
 
-Module for exporting Bibles in various formats including USFM, USX, and OSIS.
+Module for exporting Bibles in various formats including USFM, USX, USFX, and OSIS.
 
 A class which extends InternalBible.
 
@@ -41,6 +41,7 @@ Contains functions:
     toMediaWiki( self, outputFolder=None, controlDict=None, validationSchema=None )
     toZefaniaXML( self, outputFolder=None, controlDict=None, validationSchema=None )
     toUSXXML( self, outputFolder=None, controlDict=None, validationSchema=None )
+    toUSFXXML( self, outputFolder=None, controlDict=None, validationSchema=None )
     toOSISXML( self, outputFolder=None, controlDict=None, validationSchema=None )
     toSwordModule( self, outputFolder=None, controlDict=None, validationSchema=None )
     toHTML5( self, outputFolder=None, controlDict=None, validationSchema=None )
@@ -51,7 +52,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.42"
+ProgVersion = "0.43"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -1188,6 +1189,410 @@ class BibleWriter( InternalBible ):
         if validationSchema: return validationResults
         return True
     # end of BibleWriter.toUSXXML
+
+
+
+    def toUSFXXML( self, outputFolder=None, controlDict=None, validationSchema=None ):
+        """
+        Using settings from the given control file,
+            converts the USFM information to UTF-8 USFX XML files.
+
+        If a schema is given (either a path or URL), the XML output files are validated.
+        """
+        if Globals.verbosityLevel > 1: print( "Running BibleWriter:toUSFXXML..." )
+        if Globals.debugFlag: assert( self.books )
+
+        if not self.doneSetupGeneric: self.__setupWriter()
+        if not outputFolder: outputFolder = "OutputFiles/BOS_USFX_Export/"
+        if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
+        if not controlDict:
+            controlDict, defaultControlFilename = {}, "To_USFX_controls.txt"
+            try:
+                ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
+            except:
+                logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
+        if Globals.debugFlag: assert( controlDict and isinstance( controlDict, dict ) )
+
+        unhandledMarkers = set()
+
+        def writeBook( xw, BBB, bkData ):
+            """ Writes a book to the given USFX XML writerObject. """
+
+            def handleInternalTextMarkersForUSFX( originalText ):
+                """
+                Handles character formatting markers within the originalText.
+                Tries to find pairs of markers and replaces them with html char segments.
+                """
+                if '\\' not in originalText: return originalText
+                if Globals.debugFlag and debuggingThisModule: print( "toUSFXXML:hITM4USFX:", BBB, C, V, marker, "'"+originalText+"'" )
+                markerList = sorted( Globals.USFMMarkers.getMarkerListFromText( originalText ),
+                                            key=lambda s: -len(s[4])) # Sort by longest characterContext first (maximum nesting)
+                for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check for internal markers
+                    pass
+
+                # Old code
+                adjText = originalText
+                haveOpenChar = False
+                for charMarker in allCharMarkers:
+                    #print( "handleInternalTextMarkersForUSFX", charMarker )
+                    # Handle USFM character markers
+                    fullCharMarker = '\\' + charMarker + ' '
+                    if fullCharMarker in adjText:
+                        if haveOpenChar:
+                            adjText = adjText.replace( 'CLOSED_BIT', ' closed="false"' ) # Fix up closed bit since it wasn't closed
+                            logging.info( "toUSFXXML: USFX export had to close automatically in {} {}:{} {}:'{}' now '{}'".format( BBB, C, V, marker, originalText, adjText ) ) # The last marker presumably only had optional closing (or else we just messed up nesting markers)
+                        adjText = adjText.replace( fullCharMarker, '{}<char style="{}"CLOSED_BIT>'.format( '</char>' if haveOpenChar else '', charMarker ) )
+                        haveOpenChar = True
+                    endCharMarker = '\\' + charMarker + '*'
+                    if endCharMarker in adjText:
+                        if not haveOpenChar: # Then we must have a missing open marker (or extra closing marker)
+                            logging.error( "toUSFXXML: Ignored extra '{}' closing marker in {} {}:{} {}:'{}' now '{}'".format( charMarker, BBB, C, V, marker, originalText, adjText ) )
+                            adjText = adjText.replace( endCharMarker, '' ) # Remove the unused marker
+                        else: # looks good
+                            adjText = adjText.replace( 'CLOSED_BIT', '' ) # Fix up closed bit since it was specifically closed
+                            adjText = adjText.replace( endCharMarker, '</char>' )
+                            haveOpenChar = False
+                if haveOpenChar:
+                    adjText = adjText.replace( 'CLOSED_BIT', ' closed="false"' ) # Fix up closed bit since it wasn't closed
+                    adjText += '{}</char>'.format( '' if adjText[-1]==' ' else ' ')
+                    logging.info( "toUSFXXML: Had to close automatically in {} {}:{} {}:'{}' now '{}'".format( BBB, C, V, marker, originalText, adjText ) )
+                if '\\' in adjText: logging.critical( "toUSFXXML: Didn't handle a backslash in {} {}:{} {}:'{}' now '{}'".format( BBB, C, V, marker, originalText, adjText ) )
+                return adjText
+            # end of toUSFXXML.handleInternalTextMarkersForUSFX
+
+            def handleNotes( text, extras ):
+                """ Integrate notes into the text again. """
+
+                def processXRef( USFXxref ):
+                    """
+                    Return the USFX XML for the processed cross-reference (xref).
+
+                    NOTE: The parameter here already has the /x and /x* removed.
+
+                    \\x - \\xo 2:2: \\xt Lib 19:9-10; Diy 24:19.\\xt*\\x* (Backslashes are shown doubled here)
+                        gives
+                    <note style="x" caller="-"><char style="xo" closed="false">1:3: </char><char style="xt">2Kur 4:6.</char></note>
+                    """
+                    USFXxrefXML = '<x '
+                    xoOpen = xtOpen = False
+                    for j,token in enumerate(USFXxref.split('\\')):
+                        #print( "toUSFXXML:processXRef", j, "'"+token+"'", "from", '"'+USFXxref+'"', xoOpen, xtOpen )
+                        lcToken = token.lower()
+                        if j==0: # The first token (but the x has already been removed)
+                            USFXxrefXML += ('caller="{}" style="x">' if version>=2 else 'caller="{}">') \
+                                .format( token.rstrip() )
+                        elif lcToken.startswith('xo '): # xref reference follows
+                            if xoOpen: # We have multiple xo fields one after the other (probably an encoding error)
+                                if Globals.debugFlag: assert( not xtOpen )
+                                USFXxrefXML += ' closed="false">' + adjToken + '</char>'
+                                xoOpen = False
+                            if xtOpen: # if we have multiple cross-references one after the other
+                                USFXxrefXML += ' closed="false">' + adjToken + '</char>'
+                                xtOpen = False
+                            adjToken = token[3:]
+                            USFXxrefXML += '<char style="xo"'
+                            xoOpen = True
+                        elif lcToken.startswith('xo*'):
+                            if Globals.debugFlag: assert( xoOpen and not xtOpen )
+                            USFXxrefXML += '>' + adjToken + '</char>'
+                            xoOpen = False
+                        elif lcToken.startswith('xt '): # xref text follows
+                            if xtOpen: # Multiple xt's in a row
+                                if Globals.debugFlag: assert( not xoOpen )
+                                USFXxrefXML += ' closed="false">' + adjToken + '</char>'
+                            if xoOpen:
+                                USFXxrefXML += ' closed="false">' + adjToken + '</char>'
+                                xoOpen = False
+                            adjToken = token[3:]
+                            USFXxrefXML += '<char style="xt"'
+                            xtOpen = True
+                        elif lcToken.startswith('xt*'):
+                            if Globals.debugFlag: assert( xtOpen and not xoOpen )
+                            USFXxrefXML += '>' + adjToken + '</char>'
+                            xtOpen = False
+                        #elif lcToken in ('xo*','xt*','x*',):
+                        #    pass # We're being lazy here and not checking closing markers properly
+                        else:
+                            logging.warning( _("toUSFXXML: Unprocessed '{}' token in {} {}:{} xref '{}'").format( token, BBB, C, V, USFXxref ) )
+                    if xoOpen:
+                        if Globals.debugFlag: assert( not xtOpen )
+                        USFXxrefXML += ' closed="false">' + adjToken + '</char>'
+                        xoOpen = False
+                    if xtOpen:
+                        USFXxrefXML += ' closed="false">' + adjToken + '</char>'
+                    USFXxrefXML += '</x>'
+                    return USFXxrefXML
+                # end of toUSFXXML.processXRef
+
+                def processFootnote( USFXfootnote ):
+                    """
+                    Return the USFX XML for the processed footnote.
+
+                    NOTE: The parameter here already has the /f and /f* removed.
+
+                    \\f + \\fr 1:20 \\ft Su ka kaluwasan te Nawumi ‘keupianan,’ piru ka kaluwasan te Mara ‘masakit se geyinawa.’\\f* (Backslashes are shown doubled here)
+                        gives
+                    <note style="f" caller="+"><char style="fr" closed="false">2:23 </char><char style="ft">Te Hibruwanen: bayew egpekegsahid ka ngaran te “malitan” wey “lukes.”</char></note>
+                    """
+                    USFXfootnoteXML = '<f '
+                    frOpen = fTextOpen = fCharOpen = False
+                    for j,token in enumerate(USFXfootnote.split('\\')):
+                        #print( "USFX processFootnote", j, "'"+token+"'", frOpen, fTextOpen, fCharOpen, USFXfootnote )
+                        lcToken = token.lower()
+                        if j==0:
+                            USFXfootnoteXML += 'caller="{}">'.format( token.rstrip() )
+                        elif lcToken.startswith('fr '): # footnote reference follows
+                            if frOpen:
+                                if Globals.debugFlag: assert( not fTextOpen )
+                                logging.error( _("toUSFXXML: Two consecutive fr fields in {} {}:{} footnote '{}'").format( token, BBB, C, V, USFXfootnote ) )
+                            if fTextOpen:
+                                if Globals.debugFlag: assert( not frOpen )
+                                USFXfootnoteXML += ' closed="false">' + adjToken + '</char>'
+                                fTextOpen = False
+                            if Globals.debugFlag: assert( not fCharOpen )
+                            adjToken = token[3:]
+                            USFXfootnoteXML += '<char style="fr"'
+                            frOpen = True
+                        elif lcToken.startswith('fr* '):
+                            if Globals.debugFlag: assert( frOpen and not fTextOpen and not fCharOpen )
+                            USFXfootnoteXML += '>' + adjToken + '</char>'
+                            frOpen = False
+                        elif lcToken.startswith('ft ') or lcToken.startswith('fq ') or lcToken.startswith('fqa ') or lcToken.startswith('fv ') or lcToken.startswith('fk '):
+                            if fCharOpen:
+                                if Globals.debugFlag: assert( not frOpen )
+                                USFXfootnoteXML += '>' + adjToken + '</char>'
+                                fCharOpen = False
+                            if frOpen:
+                                if Globals.debugFlag: assert( not fTextOpen )
+                                USFXfootnoteXML += ' closed="false">' + adjToken + '</char>'
+                                frOpen = False
+                            if fTextOpen:
+                                USFXfootnoteXML += ' closed="false">' + adjToken + '</char>'
+                                fTextOpen = False
+                            fMarker = lcToken.split()[0] # Get the bit before the space
+                            USFXfootnoteXML += '<char style="{}"'.format( fMarker )
+                            adjToken = token[len(fMarker)+1:] # Get the bit after the space
+                            #print( "'{}' '{}'".format( fMarker, adjToken ) )
+                            fTextOpen = True
+                        elif lcToken.startswith('ft*') or lcToken.startswith('fq*') or lcToken.startswith('fqa*') or lcToken.startswith('fv*') or lcToken.startswith('fk*'):
+                            if Globals.debugFlag: assert( fTextOpen and not frOpen and not fCharOpen )
+                            USFXfootnoteXML += '>' + adjToken + '</char>'
+                            fTextOpen = False
+                        else: # Could be character formatting (or closing of character formatting)
+                            subTokens = lcToken.split()
+                            firstToken = subTokens[0]
+                            #print( "ft", firstToken )
+                            if firstToken in allCharMarkers: # Yes, confirmed
+                                if fCharOpen: # assume that the last one is closed by this one
+                                    if Globals.debugFlag: assert( not frOpen )
+                                    USFXfootnoteXML += '>' + adjToken + '</char>'
+                                    fCharOpen = False
+                                if frOpen:
+                                    if Globals.debugFlag: assert( not fCharOpen )
+                                    USFXfootnoteXML += ' closed="false">' + adjToken + '</char>'
+                                    frOpen = False
+                                USFXfootnoteXML += '<char style="{}"'.format( firstToken )
+                                adjToken = token[len(firstToken)+1:] # Get the bit after the space
+                                fCharOpen = firstToken
+                            else: # The problem is that a closing marker doesn't have to be followed by a space
+                                if firstToken[-1]=='*' and firstToken[:-1] in allCharMarkers: # it's a closing tag (that was followed by a space)
+                                    if fCharOpen:
+                                        if Globals.debugFlag: assert( not frOpen )
+                                        if not firstToken.startswith( fCharOpen+'*' ): # It's not a matching tag
+                                            logging.warning( _("toUSFXXML: '{}' closing tag doesn't match '{}' in {} {}:{} footnote '{}'").format( firstToken, fCharOpen, BBB, C, V, USFXfootnote ) )
+                                        USFXfootnoteXML += '>' + adjToken + '</char>'
+                                        fCharOpen = False
+                                    logging.warning( _("toUSFXXML: '{}' closing tag doesn't match in {} {}:{} footnote '{}'").format( firstToken, BBB, C, V, USFXfootnote ) )
+                                else:
+                                    ixAS = firstToken.find( '*' )
+                                    #print( firstToken, ixAS, firstToken[:ixAS] if ixAS!=-1 else '' )
+                                    if ixAS!=-1 and ixAS<4 and firstToken[:ixAS] in allCharMarkers: # it's a closing tag
+                                        if fCharOpen:
+                                            if Globals.debugFlag: assert( not frOpen )
+                                            if not firstToken.startswith( fCharOpen+'*' ): # It's not a matching tag
+                                                logging.warning( _("toUSFXXML: '{}' closing tag doesn't match '{}' in {} {}:{} footnote '{}'").format( firstToken, fCharOpen, BBB, C, V, USFXfootnote ) )
+                                            USFXfootnoteXML += '>' + adjToken + '</char>'
+                                            fCharOpen = False
+                                        logging.warning( _("toUSFXXML: '{}' closing tag doesn't match in {} {}:{} footnote '{}'").format( firstToken, BBB, C, V, USFXfootnote ) )
+                                    else:
+                                        logging.warning( _("toUSFXXML: Unprocessed '{}' token in {} {}:{} footnote '{}'").format( firstToken, BBB, C, V, USFXfootnote ) )
+                                        #print( allCharMarkers )
+                                        #halt
+                    #print( "  ", frOpen, fCharOpen, fTextOpen )
+                    if frOpen:
+                        logging.warning( _("toUSFXXML: Unclosed 'fr' token in {} {}:{} footnote '{}'").format( BBB, C, V, USFXfootnote) )
+                        if Globals.debugFlag: assert( not fCharOpen and not fTextOpen )
+                        USFXfootnoteXML += ' closed="false">' + adjToken + '</char>'
+                    if fCharOpen: logging.warning( _("toUSFXXML: Unclosed '{}' token in {} {}:{} footnote '{}'").format( fCharOpen, BBB, C, V, USFXfootnote) )
+                    if fTextOpen: USFXfootnoteXML += ' closed="false">' + adjToken + '</char>'
+                    USFXfootnoteXML += '</f>'
+                    #print( '', USFXfootnote, USFXfootnoteXML )
+                    #if BBB=='EXO' and C=='17' and V=='7': halt
+                    return USFXfootnoteXML
+                # end of toUSFXXML.processFootnote
+
+
+                adjText = text
+                offset = 0
+                for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
+                    #print( "{} {}:{} Text='{}' eT={}, eI={}, eText='{}'".format( BBB, C, V, text, extraType, extraIndex, extraText ) )
+                    adjIndex = extraIndex - offset
+                    lenT = len( adjText )
+                    if adjIndex > lenT: # This can happen if we have verse/space/notes at end (and the space was deleted after the note was separated off)
+                        logging.warning( _("toUSFXXML: Space before note at end of verse in {} {}:{} has been lost").format( BBB, C, V ) )
+                        # No need to adjust adjIndex because the code below still works
+                    elif adjIndex<0 or adjIndex>lenT: # The extras don't appear to fit correctly inside the text
+                        print( "toUSFXXML: Extras don't fit inside verse at {} {}:{}: eI={} o={} len={} aI={}".format( BBB, C, V, extraIndex, offset, len(text), adjIndex ) )
+                        print( "  Verse='{}'".format( text ) )
+                        print( "  Extras='{}'".format( extras ) )
+                    #assert( 0 <= adjIndex <= len(verse) )
+                    #adjText = checkText( extraText, checkLeftovers=False ) # do any general character formatting
+                    #if adjText!=extraText: print( "processXRefsAndFootnotes: {}@{}-{}={} '{}' now '{}'".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
+                    if extraType == 'fn':
+                        extra = processFootnote( extraText )
+                        #print( "fn got", extra )
+                    elif extraType == 'xr':
+                        extra = processXRef( extraText )
+                        #print( "xr got", extra )
+                    else: print( extraType ); halt
+                    #print( "was", verse )
+                    adjText = adjText[:adjIndex] + extra + adjText[adjIndex:]
+                    offset -= len( extra )
+                    #print( "now", verse )
+                return adjText
+            # end of toUSFXXML.handleNotes
+
+            USFXAbbrev = Globals.BibleBooksCodes.getUSFMAbbreviation( BBB ).upper()
+            #USFXNumber = Globals.BibleBooksCodes.getUSFMNumber( BBB )
+            if not USFXAbbrev: logging.error( "toUSFXXML: Can't write {} USFX book because no USFM code available".format( BBB ) ); return
+            #if not USFXNumber: logging.error( "toUSFXXML: Can't write {} USFX book because no USFX number available".format( BBB ) ); return
+
+            version = 2
+            xtra = ' ' if version<2 else ''
+            C = V = '0'
+            xw.writeLineOpen( 'book', ('id',USFXAbbrev) )
+            haveOpenPara = paraJustOpened = False
+            for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
+                marker, originalMarker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getOriginalMarker(), verseDataEntry.getText(), verseDataEntry.getExtras()
+                markerShouldHaveContent = Globals.USFMMarkers.markerShouldHaveContent( marker )
+                #print( BBB, C, V, marker, markerShouldHaveContent, haveOpenPara, paraJustOpened )
+                adjText = handleNotes( text, extras )
+                if marker == 'id':
+                    if haveOpenPara: # This should never happen coz the ID line should have been the first line in the file
+                        logging.error( "toUSFXXML: Book {}{} has a id line inside an open paragraph: '{}'".format( BBB, " ({})".format(USFXAbbrev) if USFXAbbrev!=BBB else '', adjText ) )
+                        xw.removeFinalNewline( True )
+                        xw.writeLineClose( 'p' )
+                        haveOpenPara = False
+                    adjTxLen = len( adjText )
+                    if adjTxLen<3 or (adjTxLen>3 and adjText[3]!=' '): # Doesn't seem to have a standard BBB at the beginning of the ID line
+                        logging.warning( "toUSFXXML: Book {}{} has a non-standard id line: '{}'".format( BBB, " ({})".format(USFXAbbrev) if USFXAbbrev!=BBB else '', adjText ) )
+                    if adjText[0:3] != USFXAbbrev:
+                        logging.error( "toUSFXXML: Book {}{} might be incorrect -- we got: '{}'".format( BBB, " ({})".format(USFXAbbrev) if USFXAbbrev!=BBB else '', adjText[0:3] ) )
+                    adjText = adjText[4:] # Remove the book code from the ID line because it's put in as an attribute
+                    if adjText: xw.writeLineOpenClose( 'id', handleInternalTextMarkersForUSFX(adjText)+xtra, ('code',USFXAbbrev) )
+                    elif not text: logging.error( "toUSFXXML: {} {}:{} has a blank id line that was ignored".format( BBB, C, V ) )
+                elif marker == 'c':
+                    if haveOpenPara:
+                        xw.removeFinalNewline( True )
+                        xw.writeLineClose( 'p' )
+                        haveOpenPara = False
+                    C = adjText
+                    #print( 'c', C )
+                    xw.writeLineOpenSelfclose ( 'c', ('id',C) )
+                elif marker == 'c~': # Don't really know what this stuff is!!!
+                    if not adjText: logging.warning( "toUSFXXML: Missing text for c~" ); continue
+                    # TODO: We haven't stripped out character fields from within the text -- not sure how USFX handles them yet
+                    xw.removeFinalNewline( True )
+                    xw.writeLineText( handleInternalTextMarkersForUSFX(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
+                elif marker == 'c#': # Chapter number added for printing
+                    pass # Just ignore it completely
+                elif marker == 'v':
+                    V = adjText.replace('<','').replace('>','').replace('"','') # Used below but remove anything that'll cause a big XML problem later
+                    if paraJustOpened: paraJustOpened = False
+                    else:
+                        xw.removeFinalNewline( True )
+                    xw.writeLineOpenSelfclose ( 'v', ('id',V) )
+                elif marker == 'v~':
+                    if not adjText: logging.warning( "toUSFXXML: Missing text for v~" ); continue
+                    # TODO: We haven't stripped out character fields from within the verse -- not sure how USFX handles them yet
+                    xw.removeFinalNewline( True )
+                    xw.writeLineText( handleInternalTextMarkersForUSFX(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
+                elif marker == 'p~':
+                    if not adjText: logging.warning( "toUSFXXML: Missing text for p~" ); continue
+                    # TODO: We haven't stripped out character fields from within the verse -- not sure how USFX handles them yet
+                    xw.removeFinalNewline( True )
+                    xw.writeLineText( handleInternalTextMarkersForUSFX(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
+                elif markerShouldHaveContent == 'N': # N = never, e.g., b, nb
+                    if haveOpenPara:
+                        xw.removeFinalNewline( True )
+                        xw.writeLineClose( 'p' )
+                        haveOpenPara = False
+                    if adjText: logging.error( "toUSFXXML: {} {}:{} has a {} line containing text ('{}') that was ignored".format( BBB, C, V, originalMarker, adjText ) )
+                    xw.writeLineOpenSelfclose ( marker )
+                elif markerShouldHaveContent == 'S': # S = sometimes, e.g., p,pi,q,q1,q2,q3,q4,m
+                    if haveOpenPara:
+                        xw.removeFinalNewline( True )
+                        xw.writeLineClose( 'p' )
+                        haveOpenPara = False
+                    if not adjText: xw.writeLineOpen( originalMarker )
+                    else: xw.writeLineOpenText( originalMarker, handleInternalTextMarkersForUSFX(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
+                    haveOpenPara = paraJustOpened = True
+                else:
+                    #assert( markerShouldHaveContent == 'A' ) # A = always, e.g.,  ide, mt, h, s, ip, etc.
+                    if markerShouldHaveContent != 'A':
+                        logging.debug( "BibleWriter.toUSFXXML: ToProgrammer -- should be 'A': '{}' is '{}' Why?".format( marker, markerShouldHaveContent ) )
+                    if haveOpenPara:
+                        xw.removeFinalNewline( True )
+                        xw.writeLineClose( 'p' )
+                        haveOpenPara = False
+                    if 1 or adjText: xw.writeLineOpenClose( marker, handleInternalTextMarkersForUSFX(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
+                    else: logging.info( "toUSFXXML: {} {}:{} has a blank {} line that was ignored".format( BBB, C, V, originalMarker ) )
+            if haveOpenPara:
+                xw.removeFinalNewline( True )
+                xw.writeLineClose( 'p' )
+            xw.writeLineClose( 'book' )
+        # end of toUSFXXML.writeBook
+
+        # Set-up our Bible reference system
+        if controlDict['PublicationCode'] == "GENERIC":
+            BOS = self.genericBOS
+            BRL = self.genericBRL
+        else:
+            BOS = BibleOrganizationalSystem( controlDict["PublicationCode"] )
+            BRL = BibleReferenceList( BOS, BibleObject=None )
+
+        if Globals.verbosityLevel > 2: print( _("  Exporting to USFX XML format...") )
+        #USFXOutputFolder = os.path.join( "OutputFiles/", "USFX output/" )
+        #if not os.access( USFXOutputFolder, os.F_OK ): os.mkdir( USFXOutputFolder ) # Make the empty folder if there wasn't already one there
+
+        xw = MLWriter( Globals.makeSafeFilename( controlDict["usfxOutputFilename"] ), outputFolder )
+        #xw = MLWriter( Globals.makeSafeFilename( USFXNumber+USFXAbbrev+"_usfx.xml" ), outputFolder )
+        xw.setHumanReadable( 'All' ) # Can be set to 'All', 'Header', or 'None' -- one output file went from None/Header=4.7MB to All=5.7MB
+        xw.spaceBeforeSelfcloseTag = True # Try to imitate Haiola output as closely as possible
+        #xw.start( lineEndings='w', writeBOM=True ) # Try to imitate Haiola output as closely as possible
+        xw.start()
+        xw.writeLineOpen( 'usfx', [('xmlns:xsi',"http://eBible.org/usfx.xsd"), ('xsi:noNamespaceSchemaLocation',"usfx-2013-08-05.xsd")] )
+        #print( self.ssfDict, self.settingsDict )
+        languageCode = None
+        if languageCode is None and 'Language' in self.settingsDict and len(self.settingsDict['Language'])==3:
+            languageCode = self.settingsDict['Language']
+        #if languageCode is None and 'Language' in self.ssfDict and len(self.ssfDict['Language'])==3:
+            #languageCode = self.ssfDict['Language']
+        if languageCode: xw.writeLineOpenClose( 'languageCode', languageCode )
+        for BBB,bookData in self.books.items(): # Process each Bible book
+            writeBook( xw, BBB, bookData )
+        xw.writeLineClose( 'usfx' )
+        xw.close()
+        if validationSchema: validationResults = xw.validate( validationSchema )
+
+        if unhandledMarkers:
+            logging.warning( "toUSFXXML: Unhandled markers were {}".format( unhandledMarkers ) )
+            if Globals.verbosityLevel > 1:
+                print( "  " + _("WARNING: Unhandled toUSFX markers were {}").format( unhandledMarkers ) )
+
+        if validationSchema: return validationResults
+        return True
+    # end of BibleWriter.toUSFXXML
 
 
 
@@ -4131,6 +4536,7 @@ class BibleWriter( InternalBible ):
         zefOutputFolder = os.path.join( givenOutputFolderName, "BOS_Zefania_" + ("Reexport/" if self.objectTypeString=='Zefania' else "Export/" ) )
         hagOutputFolder = os.path.join( givenOutputFolderName, "BOS_Haggai_" + ("Reexport/" if self.objectTypeString=='Haggia' else "Export/" ) )
         USXOutputFolder = os.path.join( givenOutputFolderName, "BOS_USX_" + ("Reexport/" if self.objectTypeString=='USX' else "Export/" ) )
+        USFXOutputFolder = os.path.join( givenOutputFolderName, "BOS_USFX_" + ("Reexport/" if self.objectTypeString=='USFX' else "Export/" ) )
         OSISOutputFolder = os.path.join( givenOutputFolderName, "BOS_OSIS_" + ("Reexport/" if self.objectTypeString=='OSIS' else "Export/" ) )
         swOutputFolder = os.path.join( givenOutputFolderName, "BOS_Sword_" + ("Reexport/" if self.objectTypeString=='Sword' else "Export/" ) )
         htmlOutputFolder = os.path.join( givenOutputFolderName, "BOS_HTML5_" + "Export/" )
@@ -4153,6 +4559,7 @@ class BibleWriter( InternalBible ):
             zefExportResult = self.toZefaniaXML( zefOutputFolder )
             hagExportResult = self.toHaggaiXML( hagOutputFolder )
             USXExportResult = self.toUSXXML( USXOutputFolder )
+            USFXExportResult = self.toUSFXXML( USFXOutputFolder )
             OSISExportResult = self.toOSISXML( OSISOutputFolder )
             swExportResult = self.toSwordModule( swOutputFolder )
             TWExportResult = self.totheWord( TWOutputFolder )
@@ -4162,8 +4569,10 @@ class BibleWriter( InternalBible ):
             TeXExportResult = self.toTeX( TeXOutputFolder )
         elif Globals.maxProcesses > 1: # Process all the exports with different threads
             # DON'T KNOW WHY THIS CAUSES A SEGFAULT
-            self.__outputFolders = [USFMOutputFolder, MWOutputFolder, zOutputFolder, USXOutputFolder, OSISOutputFolder, swOutputFolder, htmlOutputFolder]
-            #self.__outputProcesses = [self.toUSFM, self.toMediaWiki, self.toZefaniaXML, self.toUSXXML, self.toOSISXML, self.toSwordModule, self.toHTML5]
+            self.__outputFolders = [USFMOutputFolder, MWOutputFolder, zOutputFolder, USXOutputFolder, USFXOutputFolder,
+                                    OSISOutputFolder, swOutputFolder, htmlOutputFolder]
+            #self.__outputProcesses = [self.toUSFM, self.toMediaWiki, self.toZefaniaXML, self.toUSXXML, self.toUSFXXML,
+                                    #self.toOSISXML, self.toSwordModule, self.toHTML5]
             #assert( len(self.__outputFolders) == len(self.__outputProcesses) )
             print( "here1" )
             with multiprocessing.Pool( processes=Globals.maxProcesses ) as pool: # start worker processes
@@ -4177,6 +4586,7 @@ class BibleWriter( InternalBible ):
                 zefExportResult = results[2]
                 hagExportResult = results[2]
                 USXExportResult = results[3]
+                USFXExportResult = results[3]
                 OSISExportResult = results[4]
                 swExportResult = results[5]
                 htmlExportResult = results[6]
@@ -4217,6 +4627,11 @@ class BibleWriter( InternalBible ):
                 USXExportResult = False
                 print("BibleWriter.doAllExports.toUSXXML Unexpected error:", sys.exc_info()[0], err)
                 logging.error( "BibleWriter.doAllExports.toUSXXML: Oops, failed!" )
+            try: USFXExportResult = self.toUSFXXML( USFXOutputFolder )
+            except Exception as err:
+                USFXExportResult = False
+                print("BibleWriter.doAllExports.toUSFXXML Unexpected error:", sys.exc_info()[0], err)
+                logging.error( "BibleWriter.doAllExports.toUSFXXML: Oops, failed!" )
             try: OSISExportResult = self.toOSISXML( OSISOutputFolder )
             except Exception as err:
                 OSISExportResult = False
@@ -4256,18 +4671,18 @@ class BibleWriter( InternalBible ):
         if Globals.verbosityLevel > 1:
             if PseudoUSFMExportResult and USFMExportResult and TextExportResult \
             and TWExportResult and MySwExportResult and ESwExportResult and MWExportResult \
-            and zefExportResult and hagExportResult and USXExportResult and OSISExportResult and swExportResult \
-            and htmlExportResult and TeXExportResult:
+            and zefExportResult and hagExportResult and USXExportResult and USFXExportResult \
+            and OSISExportResult and swExportResult and htmlExportResult and TeXExportResult:
                 print( "BibleWriter.doAllExports finished them all successfully!" )
-            else: print( "BibleWriter.doAllExports finished:  PsUSFM={} USFM={}  Tx={}  TW={} MySw={} eSw={}  MW={}  Zef={} Hag={}  USX={}  OSIS={}  Sw={}  HTML={} TeX={}" \
+            else: print( "BibleWriter.doAllExports finished:  PsUSFM={} USFM={}  Tx={}  TW={} MySw={} eSw={}  MW={}  Zef={} Hag={}  USX={} USFX={}  OSIS={}  Sw={}  HTML={} TeX={}" \
                     .format( PseudoUSFMExportResult, USFMExportResult, TextExportResult, \
                                 TWExportResult, MySwExportResult, ESwExportResult, \
-                                MWExportResult, zefExportResult, hagExportResult, USXExportResult, OSISExportResult, \
-                                swExportResult, htmlExportResult, TeXExportResult ) )
+                                MWExportResult, zefExportResult, hagExportResult, USXExportResult, USFXExportResult, \
+                                OSISExportResult, swExportResult, htmlExportResult, TeXExportResult ) )
         return {'PseudoUSFMExport':PseudoUSFMExportResult, 'USFMExport':USFMExportResult, 'TextExport':TextExportResult,
                     'TWExport':TWExportResult, 'MySwExport':MySwExportResult, 'ESwExport':ESwExportResult,
                     'MWExport':MWExportResult, 'zefExport':zefExportResult, 'hagExport':hagExportResult,
-                    'USXExport':USXExportResult, 'OSISExport':OSISExportResult, 'swExport':swExportResult,
+                    'USXExport':USXExportResult, 'USFXExport':USFXExportResult, 'OSISExport':OSISExportResult, 'swExport':swExportResult,
                     'htmlExport':htmlExportResult, 'TeXExport':TeXExportResult }
     # end of BibleWriter.doAllExports
 # end of class BibleWriter
@@ -4303,8 +4718,7 @@ def demo():
                 UB.load()
                 if Globals.verbosityLevel > 0: print( '\nBWr A'+str(j+1)+'/', UB )
                 if Globals.strictCheckingFlag: UB.check()
-                #result = UB.toHTML5()
-                #halt
+                #result = UB.toUSFXXML(); halt
                 doaResults = UB.doAllExports()
                 if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
                     outputFolder = "OutputFiles/BOS_USFM_Reexport/"
