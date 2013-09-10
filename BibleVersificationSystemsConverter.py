@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 #
 # BibleVersificationSystemsConverter.py
-#   Last modified: 2013-08-28 (also update ProgVersion below)
+#   Last modified: 2013-09-11 (also update ProgVersion below)
 #
-# Module handling BibleVersificationSystem_*.xml to produce C and Python data tables
+# Module handling loading of BibleVersificationSystem_*.xml to produce C and Python data tables
 #
 # Copyright (C) 2010-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -25,6 +25,9 @@
 
 """
 Module handling BibleVersificationSystem_*.xml to produce C and Python data tables.
+
+NOTE: We still lack a REFERENCE Bible versification system
+        with back-and-forth mappings. This is a MAJOR outstanding deficiency.
 """
 
 ProgName = "Bible Chapter-Verse Systems handler"
@@ -657,6 +660,7 @@ def demo():
     else: # Must be demo mode
         print( bvsc ) # Just print a summary
 # end of demo
+
 
 if __name__ == '__main__':
     # Configure basic set-up

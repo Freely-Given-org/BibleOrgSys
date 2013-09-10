@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 #
 # BibleVersificationSystems.py
-#   Last modified: 2013-09-10 (also update ProgVersion below)
+#   Last modified: 2013-09-11 (also update ProgVersion below)
 #
-# Module handling BibleVersificationSystem_*.xml to produce C and Python data tables
+# Module handling BibleVersificationSystems
 #
 # Copyright (C) 2010-2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -27,6 +27,9 @@
 Module to load, use, determine, and compare various Bible versification systems.
     Note that this doesn't just find the maximum verse number in each chapter --
         it also checks for combined, omitted, and reordered verses.
+
+NOTE: We still lack a REFERENCE Bible versification system
+        with back-and-forth mappings. This is a MAJOR outstanding deficiency.
 """
 
 ProgName = "Bible Chapter-Verse Systems handler"
