@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-09-06 by RJH (also update ProgVersion below)
+#   Last modified: 2013-09-13 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -52,7 +52,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.43"
+ProgVersion = "0.44"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -3819,9 +3819,9 @@ class BibleWriter( InternalBible ):
                 BBB = bkData.bookReferenceCode
                 bkName = bkData.getAssumedBookNames()[0]
                 if BBB == myBBB:
-                    writerObject.writeLineText( '<li class="bookNameEntry"><span class="currentBookName">{}</span></li>'.format( bkName ) )
+                    writerObject.writeLineText( '<li class="bookNameEntry"><span class="currentBookName">{}</span></li>'.format( bkName ), noTextCheck=True )
                 else:
-                    writerObject.writeLineText( '<li class="bookNameEntry"><a class="bookNameLink" href="BIBLE_{}.html">{}</a></li>'.format( BBB, bkName ) )
+                    writerObject.writeLineText( '<li class="bookNameEntry"><a class="bookNameLink" href="BIBLE_{}.html">{}</a></li>'.format( BBB, bkName ), noTextCheck=True )
             writerObject.writeLineClose( 'ul' )
             writerObject.writeLineClose( 'nav' )
         # end of toHTML5.writeHeader
