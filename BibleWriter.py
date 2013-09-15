@@ -3813,10 +3813,18 @@ class BibleWriter( InternalBible ):
 
             writerObject.writeLineOpen( 'header' )
             if myBBB == 'home': writerObject.writeLineOpenClose( 'p', 'Home', ('class','homeNonlink') )
-            else: writerObject.writeLineOpenClose( 'a', 'Home', [('href','home.html'),('class','homeLink')] )
+            else: writerObject.writeLineOpenClose( 'a', 'Home', [('href','index.html'),('class','homeLink')] )
             if myBBB == 'about': writerObject.writeLineOpenClose( 'p', 'About', ('class','homeNonlink') )
             else: writerObject.writeLineOpenClose( 'a', 'About', [('href','about.html'),('class','aboutLink')] )
             writerObject.writeLineOpenClose( 'h1', self.name, ('class','mainHeader') )
+            bkList = self.getBookList()
+            if myBBB  in bkList:
+                ix = bkList.index( myBBB )
+                if ix > 0:
+                    writerObject.writeLineOpenClose( 'a', 'Previous book', [('href',filenameDict[bkList[ix-1]]),('class','bookNav')] )
+                writerObject.writeLineOpenClose( 'a', 'Book start', [('href','#C1V1'),('class','bookNav')] )
+                if ix < len(bkList)-1:
+                    writerObject.writeLineOpenClose( 'a', 'Next book', [('href',filenameDict[bkList[ix+1]]),('class','bookNav')] )
             writerObject.writeLineClose( 'header' )
 
             # Create the nav bar for books
@@ -3832,6 +3840,7 @@ class BibleWriter( InternalBible ):
             writerObject.writeLineClose( 'ul' )
             writerObject.writeLineClose( 'nav' )
         # end of toHTML5.writeHeader
+
 
         def writeEndNotes( writerObject, ourGlobals ):
             """
@@ -3920,8 +3929,8 @@ class BibleWriter( InternalBible ):
 
 
         def writeHomePage():
-            if Globals.verbosityLevel > 1: print( _("    Creating HTML5 home page...") )
-            xw = MLWriter( 'home.html', outputFolder, 'HTML' )
+            if Globals.verbosityLevel > 1: print( _("    Creating HTML5 home/index page...") )
+            xw = MLWriter( 'index.html', outputFolder, 'HTML' )
             xw.setHumanReadable()
             xw.start( noAutoXML=True )
             xw.writeLineText( '<!DOCTYPE html>', noTextCheck=True )
@@ -3986,13 +3995,11 @@ class BibleWriter( InternalBible ):
                         plus
                     <p id="XRef0" class="XRef"><a title="Go back up to 2:2 in the text" href="#C2V2"><span class="ChapterVerse">2:2</span></a> <span class="VernacularCrossReference">Lib 19:9&#x2011;10</span>; <span class="VernacularCrossReference">Diy 24:19</span></p>
                     """
-                    markerDict = Globals.USFMMarkers.getMarkerDictFromText( HTML5xref, includeInitialText=True )
+                    markerList = Globals.USFMMarkers.getMarkerListFromText( HTML5xref, includeInitialText=True )
                     #print( "toHTML5.processXRef( {}, {} ) gives {}".format( repr(HTML5xref), ourGlobals, markerDict ) )
                     xrefIndex = ourGlobals['nextXRefIndex']; ourGlobals['nextXRefIndex'] += 1
                     caller = origin = originCV = xrefText = ''
-                    for marker, info in markerDict.items():
-                        #print( " ", marker, info )
-                        ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt = info
+                    for marker, ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt in markerList:
                         if marker is None:
                             #if txt not in '-+': # just a caller
                             caller = txt
@@ -4042,38 +4049,37 @@ class BibleWriter( InternalBible ):
                     <p id="FNote1" class="Footnote"><a title="Go back up to 3:9 in the text" href="#C3V9"><span class="ChapterVerse">3:9 </span></a><a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">Te</span></a> <a title="prop_n. Hebrew language (Hibru)" href="../../Lexicon/Details/Hibru.htm"><span class="WordLink">Hibruwanen</span></a>: <a title="buni" href="../../Lexicon/Details/buni2.htm"><span class="WordLink">Bunbuni</span></a> <a title="pron. you(sg); by you(sg)" href="../../Lexicon/Details/nu.htm"><span class="WordLink">nu</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="kumbalè" href="../../Lexicon/Details/kumbal%C3%A8.htm"><span class="WordLink">kumbale</span></a> <a title="pron. you(sg); by you(sg)" href="../../Lexicon/Details/nu.htm"><span class="WordLink">nu</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="suluhuanen" href="../../Lexicon/indexLSIM-45.htm#suluh%C3%B9"><span class="WordLink">suluhuanen</span></a> <a title="pron. you(sg); by you(sg)" href="../../Lexicon/Details/nu.htm"><span class="WordLink">nu</span></a>.</p>
                     <p id="FNote2" class="Footnote"><a title="Go back up to 4:11 in the text" href="#C4V11"><span class="ChapterVerse">4:11 </span></a><a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">Kene</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="adj. clear" href="../../Lexicon/Details/klaru.htm"><span class="WordLink">klaru</span></a> <a title="diya" href="../../Lexicon/indexLD-80.htm#diyav"><span class="WordLink">diye</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="adj. true (lehet)" href="../../Lexicon/Details/lehet1.htm"><span class="WordLink">malehet</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="migpuun" href="../../Lexicon/Details/puun.htm"><span class="WordLink">migpuunan</span></a> <a title="ke" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ke</span></a> <a title="n. other" href="../../Lexicon/Details/lein.htm"><span class="WordLink">lein</span></a> <a title="e" href="../../Lexicon/indexLA-77.htm#a"><span class="WordLink">e</span></a> <a title="part. also" href="../../Lexicon/Details/degma.htm"><span class="WordLink">degma</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="n. place" href="../../Lexicon/Details/inged.htm"><span class="WordLink">inged</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <span class="NameWordLink">Iprata</span>. <a title="kahiyen" href="../../Lexicon/Details/kahi.htm"><span class="WordLink">Kahiyen</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="adj. other" href="../../Lexicon/Details/duma.htm"><span class="WordLink">duma</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <span class="NameWordLink">Iprata</span> <a title="dem. that" href="../../Lexicon/Details/iyan.htm"><span class="WordLink">iyan</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="tapey" href="../../Lexicon/indexLT-96.htm#tapey1"><span class="WordLink">tapey</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="n. name" href="../../Lexicon/Details/ngaran.htm"><span class="WordLink">ngaran</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="See glossary entry for Bitlihim" href="../indexGlossary.htm#Bitlihim"><span class="WordLink">Bitlihim</span><span class="GlossaryLinkSymbol"><sup>[gl]</sup></span></a>.</p></div>
                     """
-                    markerDict = Globals.USFMMarkers.getMarkerDictFromText( HTML5footnote, includeInitialText=True )
+                    markerList = Globals.USFMMarkers.getMarkerListFromText( HTML5footnote, includeInitialText=True )
                     #print( "toHTML5.processFootnote( {}, {} ) gives {}".format( repr(HTML5footnote), ourGlobals, markerDict ) )
                     fnIndex = ourGlobals['nextFootnoteIndex']; ourGlobals['nextFootnoteIndex'] += 1
-                    caller = origin = originCV = fnText = ''
+                    caller = origin = originCV = fnText = fnTitle = ''
                     spanOpen = False
-                    for marker, info in markerDict.items():
-                        #print( " ", marker, info )
-                        ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt = info
+                    for marker, ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt in markerList:
+                        if spanOpen: fnText += '</span>'; spanOpen = False
                         if marker is None:
                             #if txt not in '-+': # just a caller
                             caller = txt
                         elif marker == 'fr':
-                            if spanOpen: fnText += '</span>'; spanOpen = False
                             origin = txt
                             originCV = origin
                             if originCV and originCV[-1] in (':','.'): originCV = originCV[:-1]
                             originCV = originCV.strip()
                         elif marker == 'ft':
-                            if spanOpen: fnText += '</span>'; spanOpen = False
                             fnText += txt
+                            fnTitle += txt
                         elif marker == 'fq':
-                            if spanOpen: fnText += '</span>'; spanOpen = False
                             fnText += '<span class="footnoteTranslationQuotation">' + txt
+                            fnTitle += txt
                             spanOpen = True
                         #elif marker == Should handle other internal markers here
                         else:
                             logging.error( "toHTML5.processFootnote didn't handle footnote marker: {}".format( marker ) )
                             fnText += txt
+                            fnTitle += txt
                     if spanOpen: fnText += '</span>'; spanOpen = False
 
                     footnoteHTML5 = '<a class="footnoteLinkSymbol" title="{}" href="#FNote{}">[fn]</a>' \
-                                    .format( fnText, fnIndex )
+                                    .format( fnTitle, fnIndex )
 
                     endHTML5 = '<p id="FNote{}" class="footnote">'.format( fnIndex )
                     if origin: # This only handles CV separator of : so far
@@ -4172,7 +4178,7 @@ class BibleWriter( InternalBible ):
             writeHeader( writerObject, BBB )
             haveOpenSection = haveOpenParagraph = haveOpenList = False
             html5Globals['nextFootnoteIndex'] = html5Globals['nextXRefIndex'] = 0
-            html5Globals['footnoteHTML5'] = html5Globals['xrefHTML5'] = []
+            html5Globals['footnoteHTML5'], html5Globals['xrefHTML5'] = [], []
             C = V = ''
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getText(), verseDataEntry.getExtras()

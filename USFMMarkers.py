@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkers.py
-#   Last modified: 2013-08-03 (also update ProgVersion below)
+#   Last modified: 2013-09-15 (also update ProgVersion below)
 #
 # Module handling USFMMarkers
 #
@@ -34,7 +34,7 @@ Contains the singleton class: USFMMarkers
 """
 
 ProgName = "USFM Markers handler"
-ProgVersion = "0.61"
+ProgVersion = "0.62"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -628,11 +628,13 @@ class USFMMarkers:
             6: STRIPPED text field from the marker until the next USFM
                 but any text preceding the first USFM is not returned anywhere unless includeInitialText is set.
 
+        NOTE: Does not work if text contains any duplicated markers
         NOTE: text is stripped in this function
         """
         myList = self.getMarkerListFromText( text, includeInitialText, verifyMarkers )
         myDict = OrderedDict()
         for marker, ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt in myList:
+            if marker in myDict: logging.critical( "USFMMarkers.getMarkerDictFromText is losing information for repeated {} fields in {}".format( marker, repr(text) ) )
             myDict[marker] = (ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt.strip())
         return myDict
     # end of USFMMarkers.getMarkerDictFromText
