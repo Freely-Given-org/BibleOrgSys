@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-09-13 by RJH (also update ProgVersion below)
+#   Last modified: 2013-09-15 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -52,7 +52,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.44"
+ProgVersion = "0.45"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -3783,8 +3783,12 @@ class BibleWriter( InternalBible ):
 
         unhandledMarkers = set()
 
+
         def writeHeader( writerObject, myBBB ):
-            """Writes the HTML5 header to the HTML writerObject."""
+            """
+            Writes the HTML5 header to the HTML writerObject.
+            MyBBB can be the book code or 'home' or 'about'.
+            """
             writerObject.writeLineOpen( 'head' )
             writerObject.writeLineText( '<meta http-equiv="Content-Type" content="text/html;charset=utf-8">', noTextCheck=True )
             writerObject.writeLineText( '<link rel="stylesheet" type="text/css" href="BibleBook.css">', noTextCheck=True )
@@ -3808,11 +3812,14 @@ class BibleWriter( InternalBible ):
             writerObject.writeLineOpen( 'body' )
 
             writerObject.writeLineOpen( 'header' )
+            if myBBB == 'home': writerObject.writeLineOpenClose( 'p', 'Home', ('class','homeNonlink') )
+            else: writerObject.writeLineOpenClose( 'a', 'Home', [('href','home.html'),('class','homeLink')] )
+            if myBBB == 'about': writerObject.writeLineOpenClose( 'p', 'About', ('class','homeNonlink') )
+            else: writerObject.writeLineOpenClose( 'a', 'About', [('href','about.html'),('class','aboutLink')] )
             writerObject.writeLineOpenClose( 'h1', self.name, ('class','mainHeader') )
-            writerObject.writeLineOpenClose( 'p', 'What else needs to go in here in the header block?' )
             writerObject.writeLineClose( 'header' )
 
-            # Create the nav bar
+            # Create the nav bar for books
             writerObject.writeLineOpen( 'nav' )
             writerObject.writeLineOpen( 'ul' )
             for bkData in self:
@@ -3849,16 +3856,19 @@ class BibleWriter( InternalBible ):
                     writerObject.writeLineOpenSelfclose( 'hr' )
                     writerObject.writeLineOpenClose( 'h3', 'Footnotes', ('class','footnotesHeader') )
                     writerObject.writeLineOpen( 'div', ('class','footerLine') )
-                    writerObject.writeLineText( ourGlobals['footnoteHTML5'] )
+                    for line in ourGlobals['footnoteHTML5']:
+                        writerObject.writeLineText( line, noTextCheck=True )
                     writerObject.writeLineClose( 'div' )
                 if ourGlobals['xrefHTML5']:
                     writerObject.writeLineOpenSelfclose( 'hr' )
                     writerObject.writeLineOpenClose( 'h3', 'Cross References', ('class','xrefsHeader') )
                     writerObject.writeLineOpen( 'div', ('class','xrefSection') )
-                    writerObject.writeLineText( ourGlobals['xrefHTML5'] )
+                    for line in ourGlobals['xrefHTML5']:
+                        writerObject.writeLineText( line, noTextCheck=True )
                     writerObject.writeLineClose( 'div' )
                 writerObject.writeLineClose( 'div' ) # endNotes
         # end of toHTML5.writeEndNotes
+
 
         def writeFooter( writerObject ):
             """Writes the HTML5 footer to the HTML writerObject."""
@@ -3873,12 +3883,14 @@ class BibleWriter( InternalBible ):
             writerObject.writeLineClose( 'body' )
         # end of toHTML5.writeFooter
 
+
         def convertToPageReference( refTuple ):
             assert( refTuple and len(refTuple)==4 )
             assert( refTuple[0] is None or ( refTuple[0] and len(refTuple[0])==3 ) ) #BBB
             if refTuple[0] in filenameDict:
                 return '{}#C{}V{}'.format( filenameDict[refTuple[0]], refTuple[1], refTuple[2] )
         # end of toHTML5.convertToPageReference
+
 
         def createSectionReference( givenRef ):
             """ Returns an HTML string for a section reference. """
@@ -3905,6 +3917,36 @@ class BibleWriter( InternalBible ):
             #print( "now = '{}'".format( result ) )
             return result + bracket
         # end of toHTML5.createSectionReference
+
+
+        def writeHomePage():
+            if Globals.verbosityLevel > 1: print( _("    Creating HTML5 home page...") )
+            xw = MLWriter( 'home.html', outputFolder, 'HTML' )
+            xw.setHumanReadable()
+            xw.start( noAutoXML=True )
+            xw.writeLineText( '<!DOCTYPE html>', noTextCheck=True )
+            xw.writeLineOpen( 'html' )
+            writeHeader( xw, 'home' )
+            writeFooter( xw )
+            xw.writeLineClose( 'html' )
+            xw.close()
+        # end of toHTML5.writeHomePage
+
+
+        def writeAboutPage():
+            if Globals.verbosityLevel > 1: print( _("    Creating HTML5 about page...") )
+            xw = MLWriter( 'about.html', outputFolder, 'HTML' )
+            xw.setHumanReadable()
+            xw.start( noAutoXML=True )
+            xw.writeLineText( '<!DOCTYPE html>', noTextCheck=True )
+            xw.writeLineOpen( 'html' )
+            writeHeader( xw, 'about' )
+            xw.writeLineOpenClose( 'p', 'These pages were created by the BibleWriter module of the Open Scriptures Bible Organisational System.' )
+            writeFooter( xw )
+            xw.writeLineClose( 'html' )
+            xw.close()
+        # end of toHTML5.writeAboutPage
+
 
         def writeBook( writerObject, BBB, bkData, ourGlobals ):
             """Writes a book to the HTML5 writerObject."""
@@ -3959,6 +4001,8 @@ class BibleWriter( InternalBible ):
                             originCV = origin
                             if originCV and originCV[-1] in (':','.'): originCV = originCV[:-1]
                             originCV = originCV.strip()
+                        elif marker == 'xt':
+                            xrefText += txt
                         #elif marker == Should handle other internal markers here
                         else:
                             logging.error( "toHTML5.processXRef didn't handle xref marker: {}".format( marker ) )
@@ -3976,7 +4020,7 @@ class BibleWriter( InternalBible ):
 
                     #print( "xrefHTML5", BBB, xrefHTML5 )
                     #print( "endHTML5", endHTML5 )
-                    ourGlobals['xrefHTML5'] += ('\n' if humanReadable and ourGlobals['xrefHTML5'] else '') + endHTML5
+                    ourGlobals['xrefHTML5'].append( endHTML5 )
                     #if xrefIndex > 2: halt
 
                     return xrefHTML5
@@ -4002,6 +4046,7 @@ class BibleWriter( InternalBible ):
                     #print( "toHTML5.processFootnote( {}, {} ) gives {}".format( repr(HTML5footnote), ourGlobals, markerDict ) )
                     fnIndex = ourGlobals['nextFootnoteIndex']; ourGlobals['nextFootnoteIndex'] += 1
                     caller = origin = originCV = fnText = ''
+                    spanOpen = False
                     for marker, info in markerDict.items():
                         #print( " ", marker, info )
                         ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt = info
@@ -4009,14 +4054,23 @@ class BibleWriter( InternalBible ):
                             #if txt not in '-+': # just a caller
                             caller = txt
                         elif marker == 'fr':
+                            if spanOpen: fnText += '</span>'; spanOpen = False
                             origin = txt
                             originCV = origin
                             if originCV and originCV[-1] in (':','.'): originCV = originCV[:-1]
                             originCV = originCV.strip()
+                        elif marker == 'ft':
+                            if spanOpen: fnText += '</span>'; spanOpen = False
+                            fnText += txt
+                        elif marker == 'fq':
+                            if spanOpen: fnText += '</span>'; spanOpen = False
+                            fnText += '<span class="footnoteTranslationQuotation">' + txt
+                            spanOpen = True
                         #elif marker == Should handle other internal markers here
                         else:
                             logging.error( "toHTML5.processFootnote didn't handle footnote marker: {}".format( marker ) )
                             fnText += txt
+                    if spanOpen: fnText += '</span>'; spanOpen = False
 
                     footnoteHTML5 = '<a class="footnoteLinkSymbol" title="{}" href="#FNote{}">[fn]</a>' \
                                     .format( fnText, fnIndex )
@@ -4030,7 +4084,7 @@ class BibleWriter( InternalBible ):
 
                     #print( "footnoteHTML5", BBB, footnoteHTML5 )
                     #print( "endHTML5", endHTML5 )
-                    ourGlobals['footnoteHTML5'] += ('\n' if humanReadable and ourGlobals['footnoteHTML5'] else '') + endHTML5
+                    ourGlobals['footnoteHTML5'].append( endHTML5 )
                     #if fnIndex > 2: halt
 
                     return footnoteHTML5
@@ -4118,7 +4172,7 @@ class BibleWriter( InternalBible ):
             writeHeader( writerObject, BBB )
             haveOpenSection = haveOpenParagraph = haveOpenList = False
             html5Globals['nextFootnoteIndex'] = html5Globals['nextXRefIndex'] = 0
-            html5Globals['footnoteHTML5'] = html5Globals['xrefHTML5'] = ''
+            html5Globals['footnoteHTML5'] = html5Globals['xrefHTML5'] = []
             C = V = ''
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getText(), verseDataEntry.getExtras()
@@ -4144,7 +4198,7 @@ class BibleWriter( InternalBible ):
                     if text: writerObject.writeLineOpenClose( 'h3', text, ('class','outlineTitle') )
                 elif marker in ('io1','io2','io3',):
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
-                    if text: writerObject.writeLineOpenClose( 'p', liveLocal(text), ('class','outlineEntry'+marker[2]) )
+                    if text: writerObject.writeLineOpenClose( 'p', liveLocal(text), ('class','outlineEntry'+marker[2]), noTextCheck=True )
 
                 # Now markers in the main text
                 elif marker in 'c':
@@ -4256,6 +4310,8 @@ class BibleWriter( InternalBible ):
                         logging.error( "toHTML5: Oops, creating {} failed!".format( BBB ) )
                 xw.writeLineClose( 'html' )
                 xw.close()
+            writeHomePage()
+            writeAboutPage()
         else: halt # not done yet
         if unhandledMarkers:
             logging.warning( "toHTML5: Unhandled markers were {}".format( unhandledMarkers ) )
