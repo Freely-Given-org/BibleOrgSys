@@ -4013,7 +4013,7 @@ class BibleWriter( InternalBible ):
                                 xrefText += txt
                             #elif marker == Should handle other internal markers here
                             else:
-                                logging.error( "toHTML5.processXRef didn't handle xref marker: {}".format( marker ) )
+                                logging.error( "toHTML5.processXRef didn't handle {} {}:{} xref marker: {}".format( BBB, C, V, marker ) )
                                 xrefText += txt
                     else: # there's no USFM markers at all in the xref --  presumably a caller and then straight text
                         if HTML5xref.startswith('+ ') or HTML5xref.startswith('- '):
@@ -4026,7 +4026,9 @@ class BibleWriter( InternalBible ):
                                     .format( xrefText, xrefIndex )
 
                     endHTML5 = '<p id="XRef{}" class="xref">'.format( xrefIndex )
-                    if origin: # This only handles CV separator of : so far
+                    if not origin: # we'll try to make one
+                        originCV = "{}:{}".format( C, V )
+                    if originCV: # This only handles CV separator of : so far
                         endHTML5 += '<a class="xrefOrigin" title="Go back up to {} in the text" href="{}">{}</a>' \
                                                             .format( originCV, liveCV(originCV), originCV )
                     endHTML5 += ' <span class="xrefEntry">{}</span>'.format( xrefText )
@@ -4092,7 +4094,7 @@ class BibleWriter( InternalBible ):
                             spanOpen = True
                         #elif marker == Should handle other internal markers here
                         else:
-                            logging.error( "toHTML5.processFootnote didn't handle footnote marker: {}".format( marker ) )
+                            logging.error( "toHTML5.processFootnote didn't handle {} {}:{} footnote marker: {}".format( BBB, C, V, marker ) )
                             fnText += txt
                             fnTitle += txt
                     if spanOpen: fnText += '</span>'; spanOpen = False
