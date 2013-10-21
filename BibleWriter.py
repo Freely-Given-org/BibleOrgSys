@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-09-15 by RJH (also update ProgVersion below)
+#   Last modified: 2013-10-22 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -52,7 +52,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.45"
+ProgVersion = "0.46"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -3996,24 +3996,31 @@ class BibleWriter( InternalBible ):
                     <p id="XRef0" class="XRef"><a title="Go back up to 2:2 in the text" href="#C2V2"><span class="ChapterVerse">2:2</span></a> <span class="VernacularCrossReference">Lib 19:9&#x2011;10</span>; <span class="VernacularCrossReference">Diy 24:19</span></p>
                     """
                     markerList = Globals.USFMMarkers.getMarkerListFromText( HTML5xref, includeInitialText=True )
-                    #print( "toHTML5.processXRef( {}, {} ) gives {}".format( repr(HTML5xref), ourGlobals, markerDict ) )
+                    #print( "\ntoHTML5.processXRef( {}, {} ) gives {}".format( repr(HTML5xref), "...", markerList ) )
                     xrefIndex = ourGlobals['nextXRefIndex']; ourGlobals['nextXRefIndex'] += 1
                     caller = origin = originCV = xrefText = ''
-                    for marker, ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt in markerList:
-                        if marker is None:
-                            #if txt not in '-+': # just a caller
-                            caller = txt
-                        elif marker == 'xo':
-                            origin = txt
-                            originCV = origin
-                            if originCV and originCV[-1] in (':','.'): originCV = originCV[:-1]
-                            originCV = originCV.strip()
-                        elif marker == 'xt':
-                            xrefText += txt
-                        #elif marker == Should handle other internal markers here
-                        else:
-                            logging.error( "toHTML5.processXRef didn't handle xref marker: {}".format( marker ) )
-                            xrefText += txt
+                    if markerList:
+                        for marker, ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt in markerList:
+                            if marker is None:
+                                #if txt not in '-+': # just a caller
+                                caller = txt
+                            elif marker == 'xo':
+                                origin = txt
+                                originCV = origin
+                                if originCV and originCV[-1] in (':','.'): originCV = originCV[:-1]
+                                originCV = originCV.strip()
+                            elif marker == 'xt':
+                                xrefText += txt
+                            #elif marker == Should handle other internal markers here
+                            else:
+                                logging.error( "toHTML5.processXRef didn't handle xref marker: {}".format( marker ) )
+                                xrefText += txt
+                    else: # there's no USFM markers at all in the xref --  presumably a caller and then straight text
+                        if HTML5xref.startswith('+ ') or HTML5xref.startswith('- '):
+                            caller = HTML5xref[0]
+                            xrefText = HTML5xref[2:].strip()
+                        else: # don't really know what it is -- assume it's all just text
+                            xrefText = HTML5xref.strip()
 
                     xrefHTML5 = '<a class="xrefLinkSymbol" title="{}" href="#XRef{}">[xr]</a>' \
                                     .format( xrefText, xrefIndex )
@@ -4067,8 +4074,20 @@ class BibleWriter( InternalBible ):
                         elif marker == 'ft':
                             fnText += txt
                             fnTitle += txt
+                        elif marker == 'fk':
+                            fnText += '<span class="footnoteKeyword">' + txt
+                            fnTitle += txt
+                            spanOpen = True
                         elif marker == 'fq':
                             fnText += '<span class="footnoteTranslationQuotation">' + txt
+                            fnTitle += txt
+                            spanOpen = True
+                        elif marker == 'fqa':
+                            fnText += '<span class="footnoteAlternateTranslation">' + txt
+                            fnTitle += txt
+                            spanOpen = True
+                        elif marker == 'fl':
+                            fnText += '<span class="footnoteLabel">' + txt
                             fnTitle += txt
                             spanOpen = True
                         #elif marker == Should handle other internal markers here

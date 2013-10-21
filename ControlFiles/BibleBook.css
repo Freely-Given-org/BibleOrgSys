@@ -200,13 +200,19 @@ nav ul li {
 
   /* More character formatting of regular text */
   /* Unknown semantics - hard formatting (not recommended but some texts have it) */
-  span.boldItalic { font-weight:bold; }
-  span.italic {}
+  span.boldItalic { font-weight:bold; font-style:italic; }
+  span.italic { font-style:italic; }
   span.bold { font-weight:bold; }
   span.smallCaps {}
 
-  /* Endnotes */
+  /* Footnotes */
   span.footnoteEntry {}
+  span.footnoteKeyword { font-weight:bold; }
+  span.footnoteLabel { font-weight:bold; }
+  span.footnoteTranslationQuotation { font-style:italic; }
+  span.footnoteAlternateTranslation { font-style:italic; }
+
+  /* Cross-references */
   span.xrefEntry {}
 
 

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # OSISXMLBible.py
-#   Last modified: 2013-09-04 by RJH (also update ProgVersion below)
+#   Last modified: 2013-09-16 by RJH (also update ProgVersion below)
 #
 # Module handling OSIS XML Bibles
 #
@@ -2486,42 +2486,45 @@ def demo():
 
     if 1: # Test OSISXMLBible object
         testFilepaths = (
-            #"Tests/DataFilesForTests/OSISTest1/",
-            #"Tests/DataFilesForTests/OSISTest2/",
+            "Tests/DataFilesForTests/OSISTest1/",
+            "Tests/DataFilesForTests/OSISTest2/",
             #"../morphhb/wlc/Ruth.xml", "../morphhb/wlc/Dan.xml", "../morphhb/wlc/", # Hebrew Ruth, Daniel, Bible
             #"../../../../../Data/Work/Bibles/Formats/OSIS/Crosswire USFM-to-OSIS (Perl)/Matigsalug.osis.xml", # Entire Bible in one file 4.4MB
             #"../../../../../Data/Work/Bibles/Formats/OSIS/kjvxml from DMSmith/kjv.xml", # Entire Bible in one file 23.7MB
             #"../../../../../Data/Work/Bibles/Formats/OSIS/kjvxml from DMSmith/kjvfull.xml", # Entire Bible in one file 24.2MB
             #"../../../../../Data/Work/Bibles/Formats/OSIS/kjvxml from DMSmith/kjvlite.xml", # Entire Bible in one file 7.7MB
-            #"../../MatigsalugOSIS/OSIS-Output/MBTGEN.xml",
+            "../../MatigsalugOSIS/OSIS-Output/MBTGEN.xml",
             "../../MatigsalugOSIS/OSIS-Output/MBTRUT.xml", # Single books
+            "../../MatigsalugOSIS/OSIS-Output/MBTJAS.xml", # Single books
             #    "../../MatigsalugOSIS/OSIS-Output/MBTMRK.xml", "../../MatigsalugOSIS/OSIS-Output/MBTJAS.xml", # Single books
             #    "../../MatigsalugOSIS/OSIS-Output/MBT2PE.xml", # Single book
             #"../../MatigsalugOSIS/OSIS-Output", # Entire folder of single books
             )
         justOne = ( testFilepaths[0], )
 
-        for j, testFilepath in enumerate( justOne ): # Choose testFilepaths or justOne
+        #for j, testFilepath in enumerate( justOne ): # Choose testFilepaths or justOne
+        for j, testFilepath in enumerate( testFilepaths ): # Choose testFilepaths or justOne
             # Demonstrate the OSIS Bible class
             if Globals.verbosityLevel > 1: print( "\nOSIS {}/ Demonstrating the OSIS Bible class...".format( j+1 ) )
             if Globals.verbosityLevel > 0: print( "  Test filepath is '{}'".format( testFilepath ) )
             oB = OSISXMLBible( testFilepath ) # Load and process the XML
             oB.load()
             if Globals.verbosityLevel > 0: print( oB ) # Just print a summary
-            print( 'RUT' in oB )
-            oBB = oB['RUT']
-            try: print( "rawLines", oBB._rawLines[:50] )
-            except: print( "processedLines", oBB._processedLines[:50] )
-            print( "rejected", list(zip( oBB.badMarkers, oBB.badMarkerCounts)) )
-            for j in range( 0, 30 ):
-                print( "  processedLines", oBB._processedLines[j] )
+            #print( 'RUT' in oB )
+            #oBB = oB['RUT']
+            #try: print( "rawLines", oBB._rawLines[:50] )
+            #except: print( "processedLines", oBB._processedLines[:50] )
+            #print( "rejected", list(zip( oBB.badMarkers, oBB.badMarkerCounts)) )
+            #for j in range( 0, 30 ):
+                #print( "  processedLines", oBB._processedLines[j] )
             if 1: # Test verse lookup
                 import VerseReferences
                 for referenceTuple in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'),
                                     ('OT','RUT','1','1'), ('OT','RUT','3','3'),
                                     ('OT','PSA','3','0'), ('OT','PSA','3','1'),
                                     ('OT','DAN','1','21'),
-                                    ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'),
+                                    ('NT','MAT','3','5'), ('NT','JAM','1','6'),
+                                    ('NT','JDE','1','4'), ('NT','REV','22','21'),
                                     ('DC','BAR','1','1'), ('DC','MA1','1','1'), ('DC','MA2','1','1',), ):
                     (t, b, c, v) = referenceTuple
                     if t=='OT' and len(oB)==27: continue # Don't bother with OT references if it's only a NT
