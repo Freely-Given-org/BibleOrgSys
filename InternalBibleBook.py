@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-09-03 by RJH (also update ProgVersion below)
+#   Last modified: 2013-11-06 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -440,7 +440,7 @@ class InternalBibleBook:
                 if '\\f' in lcAdjText or '\\x' in lcAdjText:
                     fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Unable to properly process footnotes and cross-references in \\{}: {}").format( originalMarker, adjText ) )
                     logging.error( _("processLineFix: Unable to properly process footnotes and cross-references {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
-                    self.addPriorityError( 82, c, v, _("Invalid footnotes or cross-refernces") )
+                    self.addPriorityError( 82, c, v, _("Invalid footnotes or cross-references") )
 
             elif self.objectTypeString == 'SwordBibleModule': # Move Sword notes out to extras
                 #print( "\nhere", adjText )

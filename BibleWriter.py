@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-10-22 by RJH (also update ProgVersion below)
+#   Last modified: 2013-11-28 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -4029,9 +4029,9 @@ class BibleWriter( InternalBible ):
                     if not origin: # we'll try to make one
                         originCV = "{}:{}".format( C, V )
                     if originCV: # This only handles CV separator of : so far
-                        endHTML5 += '<a class="xrefOrigin" title="Go back up to {} in the text" href="{}">{}</a>' \
+                        endHTML5 += '<a class="xrefOrigin" title="Go back up to {} in the text" href="{}">{}</a> ' \
                                                             .format( originCV, liveCV(originCV), originCV )
-                    endHTML5 += ' <span class="xrefEntry">{}</span>'.format( xrefText )
+                    endHTML5 += '<span class="xrefEntry">{}</span>'.format( xrefText )
                     endHTML5 += '</p>'
 
                     #print( "xrefHTML5", BBB, xrefHTML5 )
@@ -4103,10 +4103,10 @@ class BibleWriter( InternalBible ):
                                     .format( fnTitle, fnIndex )
 
                     endHTML5 = '<p id="FNote{}" class="footnote">'.format( fnIndex )
-                    if origin: # This only handles CV separator of : so far
-                        endHTML5 += '<a class="footnoteOrigin" title="Go back up to {} in the text" href="{}">{}</a>' \
+                    if originCV: # This only handles CV separator of : so far
+                        endHTML5 += '<a class="footnoteOrigin" title="Go back up to {} in the text" href="{}">{}</a> ' \
                                                             .format( originCV, liveCV(originCV), origin )
-                    endHTML5 += ' <span class="footnoteEntry">{}</span>'.format( fnText )
+                    endHTML5 += '<span class="footnoteEntry">{}</span>'.format( fnText )
                     endHTML5 += '</p>'
 
                     #print( "footnoteHTML5", BBB, footnoteHTML5 )
@@ -4210,7 +4210,7 @@ class BibleWriter( InternalBible ):
                 # Markers usually only found in the introduction
                 elif marker in ('mt1','mt2',):
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
-                    writerObject.writeLineOpenClose( 'h1', text, ('class','mainTitle'+marker[2]) )
+                    if text: writerObject.writeLineOpenClose( 'h1', text, ('class','mainTitle'+marker[2]) )
                 elif marker in ('ms1','ms2',):
                     if not haveOpenParagraph:
                         logging.warning( "toHTML5: Have main section heading {} outside a paragraph in {}".format( text, BBB ) )
@@ -4788,11 +4788,12 @@ def demo():
         from USFMBible import USFMBible
         from USFMFilenames import USFMFilenames
         testData = (
-                ("Matigsalug", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
-                ("MS-BT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
-                ("MS-Notes", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/",),
-                ("WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/",),
-                ("WEB", "../../../../../Data/Work/Bibles/From eBible/WEB/eng-web_usfm 2013-07-18/",),
+                #("Matigsalug", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
+                #("MS-BT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
+                #("MS-Notes", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/",),
+                ("MS-ABT", "../../../../../Data/Work/Matigsalug/Bible/MBTABT/",),
+                #("WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/",),
+                #("WEB", "../../../../../Data/Work/Bibles/From eBible/WEB/eng-web_usfm 2013-07-18/",),
                 ) # You can put your USFM test folder here
 
         for j, (name, testFolder) in enumerate( testData ):
