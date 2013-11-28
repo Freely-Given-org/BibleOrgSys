@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ESwordBible.py
-#   Last modified: 2013-09-04 by RJH (also update ProgVersion below)
+#   Last modified: 2013-11-29 by RJH (also update ProgVersion below)
 #
 # Module handling "e-Sword" Bible module files
 #
@@ -48,7 +48,7 @@ e.g.,
 """
 
 ProgName = "e-Sword Bible format handler"
-ProgVersion = "0.03"
+ProgVersion = "0.04"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -265,13 +265,14 @@ class ESwordBible( Bible ):
         for stuff in ( '\\nosupersub', '\\ulnone', '\\b0', '\\i0', '\\cf0', ):
             if line.endswith( stuff ): line = line[:-len(stuff)]
 
-        # Try to guess some sematic formatting
+        # Try to guess some semantic formatting
         line = re.sub( r'\\b\\i\\f0 (.+?)\\cf0\\b0\\i0\\line', r'~^~s1 \1*#$#', line ) # section heading
         line = re.sub( r'\\cf14 (.+?)\\cf0', r'~^~add \1~^~add*', line )
         line = re.sub( r'\\cf15\\i (.+?)\\cf0\\i0', r'~^~add \1~^~add*', line )
         line = re.sub( r'\\i\\f0 (.+?)\\cf0\\i0', r'~^~add \1~^~add*', line )
 
         # Unfortunately, it's all display formatting, no semantic formatting  :-(
+        line = re.sub( r'{\\i (.+?)}', r'~^~it \1~^~it*', line )
         line = line.replace( '\\b1', '~^~bd ' ).replace( '\\b0', '~^~bd*' )
         line = line.replace( '\\i1', '~^~it ' ).replace( '\\i0', '~^~it*' )
 
@@ -518,7 +519,7 @@ def testeSwB( eSwBfolder, eSwBfilename ):
 
         # Now export the Bible and compare the round trip
         eSwB.toESword()
-        #doaResults = eSwB.doAllExports()
+        doaResults = eSwB.doAllExports()
         if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
             outputFolder = "OutputFiles/BOS_e-Sword_Reexport/"
             if Globals.verbosityLevel > 1: print( "\nComparing original and re-exported e-Sword files..." )
