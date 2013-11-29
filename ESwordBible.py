@@ -277,6 +277,7 @@ class ESwordBible( Bible ):
         line = re.sub( r'{\\qc (.+?)}', r'~^~qc \1~^~qc*', line )
         line = line.replace( '\\b1', '~^~bd ' ).replace( '\\b0', '~^~bd*' )
         line = line.replace( '\\i1', '~^~it ' ).replace( '\\i0', '~^~it*' )
+        line = re.sub( r'{\\cf15 (.+?)}', r'~^~add \1~^~add*', line )
 
         # Not sure what this is
         line = line.replace( '\\cf2  \\cf0', '' ) # LEB
