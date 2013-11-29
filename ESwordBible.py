@@ -272,12 +272,17 @@ class ESwordBible( Bible ):
         line = re.sub( r'\\i\\f0 (.+?)\\cf0\\i0', r'~^~add \1~^~add*', line )
 
         # Unfortunately, it's all display formatting, no semantic formatting  :-(
+        line = re.sub( r'{\\b (.+?)}', r'~^~bd \1~^~bd*', line )
         line = re.sub( r'{\\i (.+?)}', r'~^~it \1~^~it*', line )
+        line = re.sub( r'{\\qc (.+?)}', r'~^~qc \1~^~qc*', line )
         line = line.replace( '\\b1', '~^~bd ' ).replace( '\\b0', '~^~bd*' )
         line = line.replace( '\\i1', '~^~it ' ).replace( '\\i0', '~^~it*' )
 
         # Not sure what this is
         line = line.replace( '\\cf2  \\cf0', '' ) # LEB
+
+        line = line.replace( '\\par\\par', '~^~p' )
+        line = line.replace( '\\par', '~^~p' )
 
         # Check what's left at the end
         line = line.replace( '\\line', '#$#' ) # Use this for our newline marker
@@ -445,10 +450,11 @@ class ESwordBible( Bible ):
                     # Some modules end lines with \r\n or have it in the middle!
                     #   (We just ignore these for now)
                     if '\r' in line or '\n' in line:
-                        logging.warning( "ESwordBible.load: Found CR or LF characters in verse line at {} {}:{}".format( BBB, C, V ) )
+                        if Globals.debugFlag:
+                            logging.warning( "ESwordBible.load: Found CR or LF characters in verse line at {} {}:{}".format( BBB, C, V ) )
                         #print( repr(line) )
-                    while line and line[-1] in '\r\n': line = line[:-1]
-                    line = line.replace( '\r\n', ' ' ).replace( '\r', ' ' ).replace( '\n', ' ' )
+                    while line and line[-1] in '\r\n': line = line[:-1] # Remove CR/LFs from the end
+                    line = line.replace( '\r\n', ' ' ).replace( '\r', ' ' ).replace( '\n', ' ' ) # Replace CR/LFs in the middle
 
             #print( "e-Sword.load", BBB, C, V, repr(line) )
             self.handleLine( self.name, BBB, C, V, line, thisBook, ourGlobals )

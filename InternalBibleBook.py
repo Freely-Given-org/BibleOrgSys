@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-11-06 by RJH (also update ProgVersion below)
+#   Last modified: 2013-11-29 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.53"
+ProgVersion = "0.54"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -794,7 +794,8 @@ class InternalBibleBook:
                         if lastAdjustedMarker not in ( 'ip', ):
                             logging.info( "{} {}:{} Assumed {} was part of intro after {}".format( self.bookReferenceCode, c, v, lastAdjustedMarker, marker ) )
                             #if v!='13': halt # Just double-checking this code (except for one weird book that starts at v13)
-                        self._processedLines.append( InternalBibleEntry(lastAdjustedMarker, lastOriginalMarker, lastAdjustedText, lastCleanText, lastExtras, lastOriginalText) )
+                        if lastOriginalText:
+                            self._processedLines.append( InternalBibleEntry(lastAdjustedMarker, lastOriginalMarker, lastAdjustedText, lastCleanText, lastExtras, lastOriginalText) )
                         self._processedLines.append( InternalBibleEntry('c', 'c', '1', '1', InternalBibleExtraList(), '1') ) # Write the explicit chapter number
                     #print( self._processedLines ); halt
 
