@@ -282,8 +282,8 @@ class ESwordBible( Bible ):
         # Not sure what this is
         line = line.replace( '\\cf2  \\cf0', '' ) # LEB
 
-        line = line.replace( '\\par\\par', '~^~p' )
-        line = line.replace( '\\par', '~^~p' )
+        line = line.replace( '\\par\\par', '#$#~^~p' )
+        line = line.replace( '\\par', '#$#~^~p' )
 
         # Check what's left at the end
         line = line.replace( '\\line', '#$#' ) # Use this for our newline marker

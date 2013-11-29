@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-11-28 by RJH (also update ProgVersion below)
+#   Last modified: 2013-11-29 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -52,7 +52,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.46"
+ProgVersion = "0.47"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -265,6 +265,16 @@ class BibleWriter( InternalBible ):
             filepath = os.path.join( outputFolder, Globals.makeSafeFilename( filename ) )
             if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
             with open( filepath, 'wt' ) as myFile: myFile.write( USFM )
+
+        # Now create a zipped collection
+        if Globals.verbosityLevel > 2: print( "  Zipping USFM files..." )
+        zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllUSFMFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
+        for filename in os.listdir( outputFolder ):
+            if not filename.endswith( '.zip' ):
+                filepath = os.path.join( outputFolder, filename )
+                zf.write( filepath, filename ) # Save in the archive without the path
+        zf.close()
+
         return True
     # end of BibleWriter.toUSFM
 
@@ -304,6 +314,16 @@ class BibleWriter( InternalBible ):
                     #if verseByVerse:
                         #myFile.write( "{} ({}): '{}' '{}' {}\n" \
                             #.format( entry.getMarker(), entry.getOriginalMarker(), entry.getText(), entry.getCleanText(), entry.getExtras() ) )
+
+        # Now create a zipped collection
+        if Globals.verbosityLevel > 2: print( "  Zipping Text files..." )
+        zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllTextFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
+        for filename in os.listdir( outputFolder ):
+            if not filename.endswith( '.zip' ):
+                filepath = os.path.join( outputFolder, filename )
+                zf.write( filepath, filename ) # Save in the archive without the path
+        zf.close()
+
         return True
     # end of BibleWriter.toText
 
@@ -1186,6 +1206,16 @@ class BibleWriter( InternalBible ):
             logging.warning( "toUSXXML: Unhandled markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:
                 print( "  " + _("WARNING: Unhandled toUSX markers were {}").format( unhandledMarkers ) )
+
+        # Now create a zipped collection
+        if Globals.verbosityLevel > 2: print( "  Zipping USX files..." )
+        zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllUSXFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
+        for filename in os.listdir( outputFolder ):
+            if not filename.endswith( '.zip' ):
+                filepath = os.path.join( outputFolder, filename )
+                zf.write( filepath, filename ) # Save in the archive without the path
+        zf.close()
+
         if validationSchema: return validationResults
         return True
     # end of BibleWriter.toUSXXML
@@ -3740,7 +3770,7 @@ class BibleWriter( InternalBible ):
         conn.commit() # save (commit) the changes
         cursor.close()
 
-        # Now create the gzipped file
+        # Now create a zipped version
         if Globals.verbosityLevel > 2: print( "  Zipping {} e-Sword file...".format( filename ) )
         zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
         zf.write( filepath )
@@ -4344,6 +4374,16 @@ class BibleWriter( InternalBible ):
             logging.warning( "toHTML5: Unhandled markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:
                 print( "  " + _("WARNING: Unhandled toHTML5 markers were {}").format( unhandledMarkers ) )
+
+        # Now create a zipped collection
+        if Globals.verbosityLevel > 2: print( "  Zipping HTML5 files..." )
+        zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllWebFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
+        for filename in os.listdir( outputFolder ):
+            if not filename.endswith( '.zip' ):
+                filepath = os.path.join( outputFolder, filename )
+                zf.write( filepath, filename ) # Save in the archive without the path
+        zf.close()
+
         if validationSchema: return xw.validate( validationSchema )
         return True
     # end of BibleWriter.toHTML5
@@ -4574,8 +4614,202 @@ class BibleWriter( InternalBible ):
             logging.warning( "toTeX: Unhandled markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:
                 print( "  " + _("WARNING: Unhandled toTeX markers were {}").format( unhandledMarkers ) )
+
+        # Now create a zipped collection
+        if Globals.verbosityLevel > 2: print( "  Zipping PDF files..." )
+        zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllPDFFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
+        for filename in os.listdir( outputFolder ):
+            if filename.endswith( '.pdf' ):
+                filepath = os.path.join( outputFolder, filename )
+                zf.write( filepath, filename ) # Save in the archive without the path
+        zf.close()
+
         return True
     # end of BibleWriter.toTeX
+
+
+
+    def toSwordSearcher( self, outputFolder=None ):
+        """
+        Write the pseudo USFM out into a TeX (typeset) format.
+            The format varies, depending on whether or not there are paragraph markers in the text.
+        """
+        import subprocess
+        if Globals.verbosityLevel > 1: print( "Running BibleWriter:toSwordSearcher..." )
+        if Globals.debugFlag: assert( self.books )
+
+        if not self.doneSetupGeneric: self.__setupWriter()
+        if not outputFolder: outputFolder = "OutputFiles/BOS_SwordSearcher_Export/"
+        if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
+
+        unhandledMarkers = set()
+        return True
+
+        # First determine our format
+        #verseByVerse = True
+
+
+        def writeTeXHeader( writer ):
+            """
+            Write the XeTeX header data -- the file can be processed with xelatex
+                I had to run "sudo apt-get install fonts-linuxlibertine" first.
+            """
+            for line in (
+                "\\documentclass[a4paper]{Bible} % use our own Bible document class found in Bible.cls",
+                "",
+                #"\\usepackage{xltxtra} % Extra customizations for XeLaTeX;",
+                #"% xltxtra automatically loads fontspec and xunicode, both of which you need",
+                #"",
+                #"\\setmainfont[Ligatures=TeX]{Charis SIL}",
+                #"\\setromanfont[Mapping=tex-text]{Linux Libertine O}",
+                #"\\setsansfont[Mapping=tex-text]{Myriad Pro}",
+                #"\\setmonofont[Mapping=tex-text]{Courier New}",
+                #"",
+                #"\\usepackage{geometry}",
+                #"\\geometry{a4paper}",
+                #"",
+                "\\begin{document}",
+                #"\\maketitle",
+                #"",
+                #"\\section{Ligatures}",
+                #"\\fontspec[Ligatures={Common, Historical}]{Linux Libertine O Italic}",
+                #"Questo è strano assai!",
+                #"",
+                #"\\section{Numerals}",
+                #"\\fontspec[Numbers={OldStyle}]{Linux Libertine O}Old style: 1234567\\",
+                #"\\fontspec[Numbers={Lining}]{Linux Libertine O}Lining: 1234567",
+                #"",
+                ):
+                writer.write( "{}\n".format( line ) )
+        # end of toSwordSearcher.writeTeXHeader
+
+
+        def texText( givenText ):
+            """
+            Given some text containing possible character formatting,
+                convert it to TeX styles.
+            """
+            text = givenText
+
+            if '\\fig ' in text: # handle figures
+                #ix = text.find( '\\fig ' )
+                #ixEnd = text.find( '\\fig*' )
+                text = text.replace( '\\fig ', '~^~BibleFigure{' ).replace( '\\fig*', '}' ) # temp
+
+            if '\\f ' in text: # handle footnotes
+                #print( 'footnote', repr(givenText) )
+                #ix = text.find( '\\f ' )
+                #ixEnd = text.find( '\\f*' )
+                text = text.replace( '\\f ', '~^~BibleFootnote{' ).replace( '\\f*', '}' ) # temp
+                text = text.replace( '\\fr ', '~^~BibleFootnoteAnchor{' ).replace( '\\ft ', '}', 1 ) # temp assumes one fr followed by one ft
+                text = text.replace( '\\fq ', '' ).replace( '\\ft ', '' )
+
+            if '\\x ' in text: # handle cross-references
+                #print( 'xref', repr(givenText) )
+                #ix = text.find( '\\x ' )
+                #ixEnd = text.find( '\\x*' )
+                text = text.replace( '\\x ', '~^~BibleCrossReference{' ).replace( '\\x*', '}' ) # temp
+                text = text.replace( '\\xo ', '~^~BibleCrossReferenceAnchor{' ).replace( '\\xt ', '}' ) # temp assumes one xo followed by one xt
+
+            # Handle regular character formatting -- this will cause TeX to fail if closing markers are not matched
+            for charMarker in allCharMarkers:
+                fullCharMarker = '\\' + charMarker + ' '
+                if fullCharMarker in text:
+                    endCharMarker = '\\' + charMarker + '*'
+                    text = text.replace( fullCharMarker, '~^~BibleCharacterStyle'+cMarkerTranslate[charMarker]+'{' ) \
+                                .replace( endCharMarker, '}' )
+
+            if '\\' in text: # Catch any left-overs
+                if Globals.debugFlag or Globals.verbosityLevel > 2:
+                    print( "toTeX.texText: unprocessed code in {} from {}".format( repr(text), repr(givenText) ) )
+                if Globals.debugFlag and debuggingThisModule: halt
+            return text.replace( '~^~', '\\' )
+        # end of toSwordSearcher:texText
+
+
+        # Write the plain text XeTeX file
+        cwdSave = os.getcwd() # Save the current working directory before changing (below) to the output directory
+        allFilename = "All-BOS-BWr.tex"
+        allFilepath = os.path.join( outputFolder, Globals.makeSafeFilename( allFilename ) )
+        if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( allFilepath ) )
+        with open( allFilepath, 'wt' ) as allFile:
+            writeTeXHeader( allFile )
+            for BBB,bookObject in self.books.items():
+                haveTitle = haveIntro = False
+                filename = "BOS-BWr-{}.tex".format( BBB )
+                filepath = os.path.join( outputFolder, Globals.makeSafeFilename( filename ) )
+                if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
+                with open( filepath, 'wt' ) as bookFile:
+                    writeTeXHeader( bookFile )
+                    allFile.write( "\n\\BibleBook{{{}}}\n".format( bookObject.getAssumedBookNames()[0] ) )
+                    bookFile.write( "\n\\BibleBook{{{}}}\n".format( bookObject.getAssumedBookNames()[0] ) )
+                    bookFile.write( "\n\\BibleBookTableOfContents\n".format( bookObject.getAssumedBookNames()[0] ) )
+                    for entry in bookObject._processedLines:
+                        marker, text = entry.getMarker(), entry.getFullText()
+                        if marker in ('id','ide','rem','toc1','toc2','toc3',): pass # just ignore these markers
+                        elif marker in ('mt1','mt2','mt3'):
+                            if not haveTitle:
+                                allFile.write( "\n\\BibleTitlePage\n" )
+                                bookFile.write( "\n\\BibleTitlePage\n" )
+                                haveTitle = True
+                            allFile.write( "\\{}{{{}}}\n".format( mtMarkerTranslate[marker], texText(text) ) )
+                            bookFile.write( "\\{}{{{}}}\n".format( mtMarkerTranslate[marker], texText(text) ) )
+                        elif marker=='ip':
+                            if not haveIntro:
+                                allFile.write( "\n\\BibleIntro\n" )
+                                bookFile.write( "\n\\BibleIntro\n" )
+                                haveIntro = True
+                            allFile.write( "\\BibleParagraphStyle{}\n".format( pMarkerTranslate[marker] ) )
+                            bookFile.write( "\\BibleParagraphStyle{}\n".format( pMarkerTranslate[marker] ) )
+                            allFile.write( "{}\n".format( texText(text) ) )
+                            bookFile.write( "{}\n".format( texText(text) ) )
+                        elif marker=='c':
+                            if text == '1': # Assume chapter 1 is the start of the actual Bible text
+                                allFile.write( "\n\\BibleText\n" )
+                                bookFile.write( "\n\\BibleText\n" )
+                        elif marker=='c#':
+                            allFile.write( "\\chapterNumber{{{}}}".format( texText(text) ) ) # no NL
+                            bookFile.write( "\\chapterNumber{{{}}}".format( texText(text) ) ) # no NL
+                        elif marker=='v':
+                            if text != '1': # Don't write verse 1 number
+                                allFile.write( "\\verseNumber{{{}}}".format( texText(text) ) ) # no NL
+                                bookFile.write( "\\verseNumber{{{}}}".format( texText(text) ) ) # no NL
+                        elif marker=='s1':
+                            allFile.write( "\n\\BibleTextSection{{{}}}\n".format( texText(text) ) )
+                            bookFile.write( "\n\\BibleTextSection{{{}}}\n".format( texText(text) ) )
+                            bookFile.write( "\n\\addcontentsline{{toc}}{{toc}}{{{}}}\n".format( texText(text) ) )
+                        elif marker=='r':
+                            allFile.write( "\\BibleSectionReference{{{}}}\n".format( texText(text) ) )
+                            bookFile.write( "\\BibleSectionReference{{{}}}\n".format( texText(text) ) )
+                        elif marker in ('p','pi','q1','q2','q3','q4'):
+                            assert( not text )
+                            allFile.write( "\\BibleParagraphStyle{}\n".format( pMarkerTranslate[marker] ) )
+                            bookFile.write( "\\BibleParagraphStyle{}\n".format( pMarkerTranslate[marker] ) )
+                        elif marker in ('v~','p~'):
+                            allFile.write( "{}\n".format( texText(text) ) )
+                            bookFile.write( "{}\n".format( texText(text) ) )
+                        else: unhandledMarkers.add( marker )
+                    allFile.write( "\\BibleBookEnd\n" )
+                    bookFile.write( "\\BibleBookEnd\n" )
+                    bookFile.write( "\\end{document}\n" )
+                makePDFs( BBB, filepath, '20s' )
+            allFile.write( "\\end{document}\n" )
+        if unhandledMarkers:
+            logging.warning( "toSwordSearcher: Unhandled markers were {}".format( unhandledMarkers ) )
+            if Globals.verbosityLevel > 1:
+                print( "  " + _("WARNING: Unhandled toSwordSearcher markers were {}").format( unhandledMarkers ) )
+
+        ## Now create a zipped collection
+        #if Globals.verbosityLevel > 2: print( "  Zipping PDF files..." )
+        #zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllPDFFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
+        #for filename in os.listdir( outputFolder ):
+            #if filename.endswith( '.pdf' ):
+                #filepath = os.path.join( outputFolder, filename )
+                #zf.write( filepath, filename ) # Save in the archive without the path
+        #zf.close()
+
+        return True
+    # end of BibleWriter.toSwordSearcher
 
 
 
@@ -4624,6 +4858,7 @@ class BibleWriter( InternalBible ):
         swOutputFolder = os.path.join( givenOutputFolderName, "BOS_Sword_" + ("Reexport/" if self.objectTypeString=='Sword' else "Export/" ) )
         htmlOutputFolder = os.path.join( givenOutputFolderName, "BOS_HTML5_" + "Export/" )
         TeXOutputFolder = os.path.join( givenOutputFolderName, "BOS_TeX_" + "Export/" )
+        SwSOutputFolder = os.path.join( givenOutputFolderName, "BOS_SwordSearcher_" + "Export/" )
 
         # Pickle this Bible object
         # NOTE: This must be done before self.__setupWriter is called
@@ -4650,6 +4885,7 @@ class BibleWriter( InternalBible ):
             ESwExportResult = self.toESword( ESwOutputFolder )
             htmlExportResult = self.toHTML5( htmlOutputFolder )
             TeXExportResult = self.toTeX( TeXOutputFolder )
+            SwSExportResult = self.toSwordSearcher( SwSOutputFolder )
         elif Globals.maxProcesses > 1: # Process all the exports with different threads
             # DON'T KNOW WHY THIS CAUSES A SEGFAULT
             self.__outputFolders = [USFMOutputFolder, MWOutputFolder, zOutputFolder, USXOutputFolder, USFXOutputFolder,
@@ -4674,6 +4910,7 @@ class BibleWriter( InternalBible ):
                 swExportResult = results[5]
                 htmlExportResult = results[6]
                 TeXExportResult = results[6]
+                SwSExportResult = results[6]
         else: # Just single threaded and not debugging
             try: PseudoUSFMExportResult = self.toPseudoUSFM( PseudoUSFMOutputFolder )
             except Exception as err:
@@ -4750,23 +4987,28 @@ class BibleWriter( InternalBible ):
                 TeXExportResult = False
                 print("BibleWriter.doAllExports.toTeX Unexpected error:", sys.exc_info()[0], err)
                 logging.error( "BibleWriter.doAllExports.toTeX: Oops, failed!" )
+            try: SwSExportResult = self.toSwordSearcher( SwSOutputFolder )
+            except Exception as err:
+                SwSExportResult = False
+                print("BibleWriter.doAllExports.toSwordSearcher Unexpected error:", sys.exc_info()[0], err)
+                logging.error( "BibleWriter.doAllExports.toSwordSearcher: Oops, failed!" )
 
         if Globals.verbosityLevel > 1:
             if PseudoUSFMExportResult and USFMExportResult and TextExportResult \
             and TWExportResult and MySwExportResult and ESwExportResult and MWExportResult \
             and zefExportResult and hagExportResult and USXExportResult and USFXExportResult \
-            and OSISExportResult and swExportResult and htmlExportResult and TeXExportResult:
+            and OSISExportResult and swExportResult and htmlExportResult and TeXExportResult and SwSExportResult:
                 print( "BibleWriter.doAllExports finished them all successfully!" )
-            else: print( "BibleWriter.doAllExports finished:  PsUSFM={} USFM={}  Tx={}  TW={} MySw={} eSw={}  MW={}  Zef={} Hag={}  USX={} USFX={}  OSIS={}  Sw={}  HTML={} TeX={}" \
+            else: print( "BibleWriter.doAllExports finished:  PsUSFM={} USFM={}  Tx={}  TW={} MySw={} eSw={}  MW={}  Zef={} Hag={}  USX={} USFX={}  OSIS={}  Sw={}  HTML={} TeX={} SwS={}" \
                     .format( PseudoUSFMExportResult, USFMExportResult, TextExportResult, \
                                 TWExportResult, MySwExportResult, ESwExportResult, \
                                 MWExportResult, zefExportResult, hagExportResult, USXExportResult, USFXExportResult, \
-                                OSISExportResult, swExportResult, htmlExportResult, TeXExportResult ) )
+                                OSISExportResult, swExportResult, htmlExportResult, TeXExportResult, SwSExportResult ) )
         return {'PseudoUSFMExport':PseudoUSFMExportResult, 'USFMExport':USFMExportResult, 'TextExport':TextExportResult,
                     'TWExport':TWExportResult, 'MySwExport':MySwExportResult, 'ESwExport':ESwExportResult,
                     'MWExport':MWExportResult, 'zefExport':zefExportResult, 'hagExport':hagExportResult,
                     'USXExport':USXExportResult, 'USFXExport':USFXExportResult, 'OSISExport':OSISExportResult, 'swExport':swExportResult,
-                    'htmlExport':htmlExportResult, 'TeXExport':TeXExportResult }
+                    'htmlExport':htmlExportResult, 'TeXExport':TeXExportResult, 'SwSExport':SwSExportResult }
     # end of BibleWriter.doAllExports
 # end of class BibleWriter
 
