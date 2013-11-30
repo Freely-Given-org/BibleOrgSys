@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2013-08-31 by RJH (also update ProgVersion below)
+#   Last modified: 2013-11-30 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 """
 
 ProgName = "USFM Bible handler"
-ProgVersion = "0.44"
+ProgVersion = "0.45"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -145,7 +145,7 @@ class USFMBible( Bible ):
     Class to load and manipulate USFM Bibles.
 
     """
-    def __init__( self, sourceFolder, givenName=None, encoding='utf-8' ):
+    def __init__( self, sourceFolder, givenName=None, givenAbbreviation=None, encoding='utf-8' ):
         """
         Create the internal USFM Bible object.
         """
@@ -155,7 +155,7 @@ class USFMBible( Bible ):
         self.objectTypeString = "USFM"
 
         # Now we can set our object variables
-        self.sourceFolder, self.givenName, self.encoding = sourceFolder, givenName, encoding
+        self.sourceFolder, self.givenName, self.abbreviation, self.encoding = sourceFolder, givenName, givenAbbreviation, encoding
 
         # Do a preliminary check on the contents of our folder
         foundFiles, foundFolders = [], []

@@ -157,7 +157,9 @@ class InternalBible:
             If folder is None (or missing), defaults to the default cache folder specified in Globals.
             Created the folder(s) if necessary.
         """
-        #print( repr(self.abbreviation), repr(self.name) )
+        print( "pickle( *, {}, {} )".format( repr(filename), repr(folder ) ) )
+        print( repr(self.objectNameString), repr(self.objectTypeString) )
+        print( (self.abbreviation), repr(self.name) )
         if filename is None:
             filename = self.abbreviation if self.abbreviation else self.name
         assert( filename )
