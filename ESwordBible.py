@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ESwordBible.py
-#   Last modified: 2013-11-29 by RJH (also update ProgVersion below)
+#   Last modified: 2013-12-01 by RJH (also update ProgVersion below)
 #
 # Module handling "e-Sword" Bible module files
 #
@@ -48,7 +48,7 @@ e.g.,
 """
 
 ProgName = "e-Sword Bible format handler"
-ProgVersion = "0.04"
+ProgVersion = "0.05"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -230,11 +230,11 @@ class ESwordBible( Bible ):
             return
 
         # Now we have to convert RTF codes to our internal codes
-        # We will temporarily use ~^~ instead of backslash so we can distinguish our own codes from the RTF codes
         # First do special characters
         line = line.replace( '\\ldblquote', '“' ).replace( '\\rdblquote', '”' ).replace( '\\lquote', '‘' ).replace( '\\rquote', '’' )
         line = line.replace( '\\emdash', '—' ).replace( '\\endash', '–' )
-        while True:
+        # Now do Unicode characters
+        while True: # Find patterns like \\'d3
             match = re.search( r"\\'[0-9a-f][0-9a-f]", line )
             if not match: break
             #print( originalLine )
@@ -245,21 +245,36 @@ class ESwordBible( Bible ):
             line = line[:match.start()] + chr( i ) + line[match.end():]
             #print( line )
             #print( repr(line) )
-            #halt
+        while True: # Find patterns like \\u253?
+            match = re.search( r"\\u[1-2][0-9][0-9]\?", line )
+            if not match: break
+            #print( originalLine )
+            #print( line )
+            #h1, h2 = line[match.start()+2], line[match.start()+3]
+            i = int( line[match.start()+2:match.end()-1] ) # Convert three digits to decimal
+            #print( h1, h2, i, chr(i) )
+            line = line[:match.start()] + chr( i ) + line[match.end():]
+            #print( line )
+            #print( repr(line) )
+
+        # We will temporarily use ~^~ instead of backslash so we can distinguish our own codes from the RTF codes
+        # Try to guess some semantic formatting
+        #line = re.sub( r'\\cf14 (.+?)\\cf0', r'~^~add \1~^~add*', line )
+        #line = re.sub( r'\\cf15\\i (.+?)\\cf0\\i0', r'~^~add \1~^~add*', line )
 
         # Stuff to just remove -- not sure what most of this is about yet
         while True:
             line = line.lstrip()
             changed = False
-            for stuff in ( '\\viewkind4', '\\uc1', '\\nowidctlpar', \
-                    '\\paperw12240', '\\paperh15840', \
-                    '\\tx720', '\\tx1440', '\\tx2160' '\\tx2880', '\\tx3600', '\\tx4320', '\\tx5040', '\\tx5760', '\\tx6480', '\\tx7200', '\\tx7920', '\\tx8640', '\\tx9360', '\\tx10080', \
-                    '\\margl1440', '\\margt1440', '\\margr1440', '\\margb1440', '\\deftab1134', '\\widowctrl', \
-                    '\\formshade', '\\sectd', \
-                    '\\headery720', '\\footery720', '\\pgwsxn12240', '\\pghsxn15840', '\\marglsxn1800', \
-                    '\\margtsxn1440', '\\margrsxn1800', '\\margbsxn1440', '\\pgbrdropt32', '\\s17', \
-                    '\\itap0', '\\nosupersub', \
-                    '\\cf15', '\\cf14', '\\cf10', '\\lang1030', '\\lang1033', '\\f0', ):
+            for stuff in ( '\\viewkind4', '\\uc1', '\\nowidctlpar',
+                    '\\paperw12240', '\\paperh15840',
+                    '\\tx720', '\\tx1440', '\\tx2160' '\\tx2880', '\\tx3600', '\\tx4320', '\\tx5040', '\\tx5760', '\\tx6480', '\\tx7200', '\\tx7920', '\\tx8640', '\\tx9360', '\\tx10080',
+                    '\\margl1440', '\\margt1440', '\\margr1440', '\\margb1440', '\\deftab1134', '\\widowctrl',
+                    '\\formshade', '\\sectd',
+                    '\\headery720', '\\footery720', '\\pgwsxn12240', '\\pghsxn15840', '\\marglsxn1800',
+                    '\\margtsxn1440', '\\margrsxn1800', '\\margbsxn1440', '\\pgbrdropt32', '\\s17',
+                    '\\itap0', '\\nosupersub', '\\ulnone',
+                    '\\cf15', '\\cf14', '\\cf10', '\\cf0', '\\lang1030', '\\lang1033', '\\f0', '\\i0', '\\b0', ):
                 if line.startswith( stuff ): line = line[len(stuff):]; changed = True
             if not changed: break
         for stuff in ( '\\nosupersub', '\\ulnone', '\\b0', '\\i0', '\\cf0', ):
@@ -272,15 +287,20 @@ class ESwordBible( Bible ):
         line = re.sub( r'\\i\\f0 (.+?)\\cf0\\i0', r'~^~add \1~^~add*', line )
 
         # Unfortunately, it's all display formatting, no semantic formatting  :-(
+        # NOTE: This doesn't handle nesting yet
+        line = re.sub( r'{\\cf10\\b\\i (.+?)\\cf0\\b0\\i0', r'~^~bdit \1~^~bdit*', line )
         line = re.sub( r'{\\b (.+?)}', r'~^~bd \1~^~bd*', line )
+        line = re.sub( r'{\\cf15\\i (.+?)}', r'~^~it \1~^~it*', line )
         line = re.sub( r'{\\i (.+?)}', r'~^~it \1~^~it*', line )
         line = re.sub( r'{\\qc (.+?)}', r'~^~qc \1~^~qc*', line )
+        line = re.sub( r'{\\cf15 (.+?)}', r'~^~add \1~^~add*', line )
         line = line.replace( '\\b1', '~^~bd ' ).replace( '\\b0', '~^~bd*' )
         line = line.replace( '\\i1', '~^~it ' ).replace( '\\i0', '~^~it*' )
-        line = re.sub( r'{\\cf15 (.+?)}', r'~^~add \1~^~add*', line )
 
         # Not sure what this is
         line = line.replace( '\\cf2  \\cf0', '' ) # LEB
+        line = line.replace( '\\cf0 ', '' ) # Calvin
+        line = line.replace( '\\loch\\f0', '' ).replace( '\\hich\\f0', '' ) # Calvin
 
         line = line.replace( '\\par\\par', '#$#~^~p' )
         line = line.replace( '\\par', '#$#~^~p' )
