@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-11-29 by RJH (also update ProgVersion below)
+#   Last modified: 2013-12-03 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -2460,6 +2460,28 @@ class InternalBibleBook:
     # end of InternalBibleBook.doCheckWords
 
 
+    def doCheckFileControls( self ):
+        """Runs a number of checks on headings and section cross-references."""
+        if not self._processedFlag: self.processLines()
+        if Globals.debugFlag: assert( self._processedLines )
+
+        IDList, encodingList = [], []
+        c = v = '0'
+        for entry in self._processedLines:
+            marker, text = entry.getMarker(), entry.getText()
+            # Keep track of where we are for more helpful error messages
+            if marker=='c' and text: c = text.split()[0]; v = '0'
+            elif marker=='v' and text: v = text.split()[0]
+
+            elif marker == 'id': IDList.append( "{} '{}'".format( self.bookReferenceCode, text ) )
+            elif marker == 'ide': encodingList.append( "{} '{}'".format( self.bookReferenceCode, text ) )
+
+        if (IDList or encodingList) and 'Controls' not in self.errorDictionary: self.errorDictionary['Controls'] = OrderedDict() # So we hopefully get the errors first
+        if IDList: self.errorDictionary['Controls']['ID Lines'] = IDList
+        if encodingList: self.errorDictionary['Controls']['Encoding Lines'] = encodingList
+    # end of InternalBibleBook.doCheckFileControls
+
+
     def doCheckHeadings( self, discoveryDict ):
         """Runs a number of checks on headings and section cross-references."""
         if not self._processedFlag: self.processLines()
@@ -2527,7 +2549,7 @@ class InternalBibleBook:
             if marker=='c' and text: c = text.split()[0]; v = '0'
             elif marker=='v' and text: v = text.split()[0]
 
-            if marker in ('imt1','imt2','imt3','imt4',):
+            elif marker in ('imt1','imt2','imt3','imt4',):
                 if marker=='imt1': mainTitleList.append( "{} {}:{} '{}'".format( self.bookReferenceCode, c, v, text ) )
                 else: mainTitleList.append( "{} {}:{} ({}) '{}'".format( self.bookReferenceCode, c, v, marker, text ) )
                 if not cleanText:

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-11-30 by RJH (also update ProgVersion below)
+#   Last modified: 2013-12-03 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -54,7 +54,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.47"
+ProgVersion = "0.48"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -315,13 +315,30 @@ class BibleWriter( InternalBible ):
             filename = "BOS-BWr-{}.txt".format( BBB )
             filepath = os.path.join( outputFolder, Globals.makeSafeFilename( filename ) )
             if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
+            textBuffer = ""
             with open( filepath, 'wt' ) as myFile:
                 for entry in pseudoUSFMData:
                     marker, text = entry.getMarker(), entry.getCleanText()
-                    if marker == 'h1': myFile.write( "{}\n\n".format( text ) )
-                    elif marker in ('mt1','mt2','mt3',): myFile.write( "{}{}\n\n".format( ' '*((columnWidth-len(text))//2), text ) )
-                    elif marker == 'c': myFile.write( "\nChapter {}\n".format( text ) )
-                    elif marker == 'v': myFile.write( " {} ".format( text ) )
+                    if marker in ('id','ide','toc1','toc2','toc3','c#',): pass # Completely ignore these fields
+                    elif marker == 'h1':
+                        if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
+                        myFile.write( "{}\n\n".format( text ) )
+                    elif marker in ('mt1','mt2','mt3',):
+                        if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
+                        myFile.write( "{}{}\n\n".format( ' '*((columnWidth-len(text))//2), text ) )
+                    elif marker in ('is1','is2','is3','ip','ipi','iot','io1','io2','io3',): pass # Drop the introduction
+                    elif marker == 'c':
+                        C = text
+                        if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
+                        myFile.write( "\n\nChapter {}".format( text ) )
+                    elif marker == 'v':
+                        V = text
+                        if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
+                        myFile.write( "\n{} ".format( text ) )
+                    elif marker in ('p','s1','s2','s3',): pass # Drop out these fields
+                    elif text:
+                        textBuffer += (' ' if textBuffer else '') + text
+                if textBuffer: myFile.write( "{}\n".format( textBuffer ) ) # Write the last bit
 
                     #if verseByVerse:
                         #myFile.write( "{} ({}): '{}' '{}' {}\n" \
@@ -4726,7 +4743,7 @@ class BibleWriter( InternalBible ):
             Write the header data
             """
             writer.write( "; TITLE: {}\n".format( self.name ) )
-            writer.write( "; ABBREVIATION: {}\n".format( self.abbreviation ) )
+            if self.abbreviation: writer.write( "; ABBREVIATION: {}\n".format( self.abbreviation ) )
         # end of toSwordSearcher.writeSSHeader
 
 
@@ -4787,7 +4804,7 @@ class BibleWriter( InternalBible ):
         self.pickle( folder=outputFolder )
 
         # Now create a zipped version
-        filename = self.abbreviation if self.abbreviation else self.name + '.pickle' # Same as in InternalBible.pickle()
+        filename = (self.abbreviation if self.abbreviation else self.name) + '.pickle' # Same as in InternalBible.pickle()
         filepath = os.path.join( outputFolder, filename )
         if Globals.verbosityLevel > 2: print( "  Zipping {} pickle file...".format( filename ) )
         zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
