@@ -706,7 +706,7 @@ class InternalBible:
         errors = OrderedDict(); errors['ByBook'] = OrderedDict(); errors['ByCategory'] = OrderedDict()
         for category in ('Priority Errors','Load Errors','Fix Text Errors','Validation Errors','Versification Errors',):
             errors['ByCategory'][category] = [] # get these in a logical order (remember: they might not all occur for each book)
-        for category in ('SFMs','Characters','Words','Headings','Introduction','Notes',): # get these in a logical order
+        for category in ('SFMs','Characters','Words','Headings','Introduction','Notes','Controls',): # get these in a logical order
             errors['ByCategory'][category] = OrderedDict()
         errors['ByBook']['All Books'] = OrderedDict()
 
