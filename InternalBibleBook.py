@@ -2618,7 +2618,7 @@ class InternalBibleBook:
     # end of InternalBibleBook.doCheckIntroduction
 
 
-    def doCheckNotes( self ):
+    def doCheckNotes( self, discoveryDict ):
         """Runs a number of checks on footnotes and cross-references."""
         if not self._processedFlag: self.processLines()
         if Globals.debugFlag: assert( self._processedLines )
@@ -2716,6 +2716,7 @@ class InternalBibleBook:
                 extract = (extraText[:70] + '...' + extraText[-5:]) if len(extraText)>80 else extraText
                 line = "{} {}:{} '{}'".format( self.bookReferenceCode, c, v, extract )
                 if extraType == 'fn':
+                    haveFinalPeriod = True
                     footnoteList.append( line )
                     if cleanExtraText.endswith(' '):
                         footnoteErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Footnote seems to have an extra space at end: '{}'").format( extraText ) )
@@ -2728,9 +2729,16 @@ class InternalBibleBook:
                                                         and not cleanExtraText.endswith('!’') and not cleanExtraText.endswith("!'") and not cleanExtraText.endswith('!›') \
                     and not cleanExtraText.endswith('.)') and not cleanExtraText.endswith('.]'):
                     #and not cleanExtraText.endswith('.&quot;') and not text.endswith('.&#39;'):
-                        footnoteErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Footnote seems to be missing a final period: '{}'").format( extraText ) )
-                        self.addPriorityError( 33, c, v, _("Missing period at end of footnote") )
+                        haveFinalPeriod = False
+                    if discoveryDict and 'footnotesPeriodFlag' in discoveryDict:
+                        if discoveryDict['footnotesPeriodFlag']==True and not haveFinalPeriod:
+                            footnoteErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Footnote seems to be missing a final period: '{}'").format( extraText ) )
+                            self.addPriorityError( 33, c, v, _("Missing period at end of footnote") )
+                        if discoveryDict['footnotesPeriodFlag']==False and haveFinalPeriod:
+                            footnoteErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Footnote seems to include possible unnecessary final period: '{}'").format( extraText ) )
+                            self.addPriorityError( 32, c, v, _("Possible unnecessary period at end of footnote") )
                 elif extraType == 'xr':
+                    haveFinalPeriod = True
                     xrefList.append( line )
                     if cleanExtraText.endswith(' '):
                         xrefErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Cross-reference seems to have an extra space at end: '{}'").format( extraText ) )
@@ -2740,8 +2748,14 @@ class InternalBibleBook:
                     and not cleanExtraText.endswith('.”') and not cleanExtraText.endswith('."') and not cleanExtraText.endswith('.»') \
                     and not cleanExtraText.endswith('.’') and not cleanExtraText.endswith(".'") and not cleanExtraText.endswith('.›'): # \
                     #and not cleanExtraText.endswith('.&quot;') and not text.endswith('.&#39;'):
-                        xrefErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Cross-reference seems to be missing a final period: '{}'").format( extraText ) )
-                        self.addPriorityError( 31, c, v, _("Missing period at end of cross-reference") )
+                        haveFinalPeriod = False
+                    if discoveryDict and 'crossReferencesPeriodFlag' in discoveryDict:
+                        if discoveryDict['crossReferencesPeriodFlag']==True and not haveFinalPeriod:
+                            xrefErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Cross-reference seems to be missing a final period: '{}'").format( extraText ) )
+                            self.addPriorityError( 31, c, v, _("Missing period at end of cross-reference") )
+                        if discoveryDict['crossReferencesPeriodFlag']==False and haveFinalPeriod:
+                            xrefErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Cross-reference seems to include possible unnecessary final period: '{}'").format( extraText ) )
+                            self.addPriorityError( 32, c, v, _("Possible unnecessary period at end of cross-reference") )
 
                 # Check for two identical fields in a row
                 lastNoteMarker = None
@@ -2889,7 +2903,7 @@ class InternalBibleBook:
         self.doCheckWords()
         self.doCheckHeadings( discoveryDict )
         self.doCheckIntroduction()
-        self.doCheckNotes() # footnotes and cross-references
+        self.doCheckNotes( discoveryDict ) # footnotes and cross-references
 
         if self.checkAddedUnitsFlag: # This code is temporary XXXXXXXXXXXXXXXXXXXXXXXX ........................................................................
             if typicalAddedUnitData is None: # Get our recommendations for added units
