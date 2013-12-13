@@ -1330,7 +1330,7 @@ class InternalBibleBook:
         bkDict['haveFootnotes'] = bkDict['haveFootnoteOrigins'] = False
         bkDict['haveCrossReferences'] = bkDict['haveCrossReferenceOrigins'] = False
         bkDict['sectionReferencesCount'] = bkDict['footnotesCount'] = bkDict['crossReferencesCount'] = 0
-        bkDict['sectionReferencesParenthesisRatio'] = bkDict['footnotesPeriodsRatio'] = bkDict['xrefsPeriodsRatio'] = -1.0
+        bkDict['sectionReferencesParenthesisRatio'] = bkDict['footnotesPeriodRatio'] = bkDict['crossReferencesPeriodRatio'] = -1.0
         bkDict['haveIntroductoryText'] = bkDict['haveVerseText'] = False
         bkDict['haveNestedUSFMarkers'] = False
         bkDict['seemsFinished'] = None
@@ -1711,7 +1711,7 @@ class InternalBibleBook:
     # end of InternalBibleBook.doCheckAddedUnits
 
 
-    def doCheckSFMs( self ):
+    def doCheckSFMs( self, discoveryDict ):
         """Runs a number of comprehensive checks on the USFM codes in this Bible book."""
         allAvailableNewlineMarkers = Globals.USFMMarkers.getNewlineMarkersList( 'Numbered' )
         allAvailableCharacterMarkers = Globals.USFMMarkers.getCharacterMarkersList( includeEndMarkers=True )
@@ -1766,7 +1766,9 @@ class InternalBibleBook:
                 #print( section, marker, newSection )
                 if section=='' and newSection!='Header': newlineMarkerErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Missing Header section (went straight to {} section with {} marker)").format( newSection, marker ) )
                 elif section!='' and newSection=='Header': newlineMarkerErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Didn't expect {} section after {} section (with {} marker)").format( newSection, section, marker ) )
-                if section=='Header' and newSection!='Introduction': newlineMarkerErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Missing Introduction section (went straight to {} section with {} marker)").format( newSection, marker ) )
+                if section=='Header' and newSection!='Introduction':
+                    if discoveryDict and 'haveIntroductoryText' in discoveryDict and discoveryDict['haveIntroductoryText']:
+                        newlineMarkerErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Missing Introduction section (went straight to {} section with {} marker)").format( newSection, marker ) )
                 elif section!='Header' and newSection=='Introduction': newlineMarkerErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Didn't expect {} section after {} section (with {} marker)").format( newSection, section, marker ) )
                 if section=='Introduction' and newSection!='Text': newlineMarkerErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Missing Text section (went straight to {} section with {} marker)").format( newSection, marker ) )
                 if section=='Text' and newSection!='Text, Poetry': newlineMarkerErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Unexpected section after {} section (went to {} section with {} marker)").format( section, newSection, marker ) )
@@ -2657,7 +2659,8 @@ class InternalBibleBook:
                 status, myString, lastCode, lastString, extraList = 0, '', '', '', []
                 #print( extraText )
                 adjExtraText = extraText
-                for chMarker in allAvailableCharacterMarkers: adjExtraText = adjExtraText.replace( chMarker, '__' + chMarker[1:].upper() + '__' ) # Change character formatting
+                for chMarker in allAvailableCharacterMarkers:
+                    adjExtraText = adjExtraText.replace( chMarker, '__' + chMarker[1:].upper() + '__' ) # Change character formatting
                 for char in adjExtraText:
                     if status==0: # waiting for leader char
                         if char==' ' and myString:
@@ -2866,11 +2869,13 @@ class InternalBibleBook:
                         break # Only process the first xo field
                 if not haveAnchor:
                     if extraType == 'fn':
-                        footnoteErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Footnote seems to have no anchor reference: '{}'").format( extraText ) )
-                        self.addPriorityError( 39, c, v, _("Missing anchor reference for footnote") )
+                        if discoveryDict and 'haveFootnoteOrigins' in discoveryDict and discoveryDict['haveFootnoteOrigins']:
+                            footnoteErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Footnote seems to have no anchor reference: '{}'").format( extraText ) )
+                            self.addPriorityError( 39, c, v, _("Missing anchor reference for footnote") )
                     elif extraType == 'xr':
-                        xrefErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Cross-reference seems to have no anchor reference: '{}'").format( extraText ) )
-                        self.addPriorityError( 38, c, v, _("Missing anchor reference for cross-reference") )
+                        if discoveryDict and 'haveCrossReferenceOrigins' in discoveryDict and discoveryDict['haveCrossReferenceOrigins']:
+                            xrefErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Cross-reference seems to have no anchor reference: '{}'").format( extraText ) )
+                            self.addPriorityError( 38, c, v, _("Missing anchor reference for cross-reference") )
 
                 # much more yet to be written ................
 
@@ -2897,7 +2902,7 @@ class InternalBibleBook:
         # Ignore the result of these next ones -- just use any errors collected
         #self.getVersification() # This checks CV ordering, etc. at the same time
         # Further checks
-        self.doCheckSFMs()
+        self.doCheckSFMs( discoveryDict )
         self.doCheckCharacters()
         self.doCheckSpeechMarks()
         self.doCheckWords()
