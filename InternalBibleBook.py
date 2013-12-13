@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-12-03 by RJH (also update ProgVersion below)
+#   Last modified: 2013-12-13 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -1330,12 +1330,12 @@ class InternalBibleBook:
         bkDict['haveFootnotes'] = bkDict['haveFootnoteOrigins'] = False
         bkDict['haveCrossReferences'] = bkDict['haveCrossReferenceOrigins'] = False
         bkDict['sectionReferencesCount'] = bkDict['footnotesCount'] = bkDict['crossReferencesCount'] = 0
-        bkDict['sectionReferencesParenthesisRatio'] = -1.0
+        bkDict['sectionReferencesParenthesisRatio'] = bkDict['footnotesPeriodsRatio'] = bkDict['xrefsPeriodsRatio'] = -1.0
         bkDict['haveIntroductoryText'] = bkDict['haveVerseText'] = False
         bkDict['haveNestedUSFMarkers'] = False
         bkDict['seemsFinished'] = None
 
-        sectionRefParenthCount = 0
+        sectionRefParenthCount = footnotesPeriodCount = xrefsPeriodCount = 0
 
         c = v = '0'
         lastMarker = None
@@ -1390,10 +1390,12 @@ class InternalBibleBook:
                     bkDict['haveFootnotes'] = True
                     bkDict['footnotesCount'] += 1
                     if '\\fr' in extraText: bkDict['haveFootnoteOrigins'] = True
+                    if cleanExtraText.endswith('.') or cleanExtraText.endswith('.”'): footnotesPeriodCount += 1
                 elif extraType=='xr':
                     bkDict['haveCrossReferences'] = True
                     bkDict['crossReferencesCount'] += 1
                     if '\\xo' in extraText: bkDict['haveCrossReferenceOrigins'] = True
+                    if cleanExtraText.endswith('.') or cleanExtraText.endswith('.”'): xrefsPeriodCount += 1
             lastMarker = marker
 
         if bkDict['verseCount'] is None: # Things like front and end matter (don't have verse numbers)
@@ -1425,6 +1427,12 @@ class InternalBibleBook:
         if bkDict['sectionReferencesCount']:
             bkDict['sectionReferencesParenthesisRatio'] = sectionRefParenthCount / bkDict['sectionReferencesCount']
             bkDict['sectionReferencesParenthesisFlag'] = bkDict['sectionReferencesParenthesisRatio'] > 0.8
+        if bkDict['footnotesCount']:
+            bkDict['footnotesPeriodRatio'] = footnotesPeriodCount / bkDict['footnotesCount']
+            bkDict['footnotesPeriodFlag'] = bkDict['footnotesPeriodRatio'] > 0.7
+        if bkDict['crossReferencesCount']:
+            bkDict['crossReferencesPeriodRatio'] = xrefsPeriodCount / bkDict['crossReferencesCount']
+            bkDict['crossReferencesPeriodFlag'] = bkDict['crossReferencesPeriodRatio'] > 0.7
         #print( self.bookReferenceCode, bkDict['sectionReferencesParenthesisRatio'] )
 
         # Put the result for this book into the main dictionary

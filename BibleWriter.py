@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-12-03 by RJH (also update ProgVersion below)
+#   Last modified: 2013-12-13 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -4595,8 +4595,7 @@ class BibleWriter( InternalBible ):
                 myProcess = subprocess.Popen( parameters, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
                 programOutputBytes, programErrorOutputBytes = myProcess.communicate()
                 os.chdir( cwdSave ) # Restore the path again
-                returnCode = myProcess.returncode
-                if returnCode == 124: # it timed out
+                if myProcess.returncode == 124: # it timed out
                     programErrorOutputBytes += "xelatex {}: Timed out after {}".format( BBB, timeout ).encode( 'utf-8' )
                 # Process the output
                 if programOutputBytes:
