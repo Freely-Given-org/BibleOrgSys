@@ -859,7 +859,9 @@ class InternalBibleBook:
                             else: # we've reached our limit
                                 logging.error( _('Additional "Only whitespace following verse number" messages suppressed...') )
                                 owfvnCount = -1 # So we don't do this again (for this book)
-                        self.addPriorityError( 91, c, v, _("Only whitespace following verse number in '{}'").format( originalText ) )
+                        # Removed these fix and priority errors, coz it seems to be covered in checkSFMs
+                        # (and especially coz we don't know yet if this is a finished translation)
+                        #self.addPriorityError( 91, c, v, _("Only whitespace following verse number in '{}'").format( originalText ) )
                         return # Don't write a blank v~ field
                     #print( "Ouch", self.bookReferenceCode, c, v )
                     #assert( strippedVerseText )
