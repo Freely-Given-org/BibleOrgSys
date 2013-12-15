@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-12-13 by RJH (also update ProgVersion below)
+#   Last modified: 2013-12-15 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -705,7 +705,7 @@ class InternalBibleBook:
             #print( "marker '{}' text '{}', adjText '{}'".format( adjMarker, text, adjText ) )
             if not adjText and not extras and ( Globals.USFMMarkers.markerShouldHaveContent(adjMarker)=='A' or adjMarker in ('v~','c~','c#',) ): # should always have text
                 #print( "processLine: marker should always have text (ignoring it):", self.bookReferenceCode, c, v, originalMarker, adjMarker, " originally '"+text+"'" )
-                fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Marker '{}' should always have text").format( originalMarker ) )
+                #fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Marker '{}' should always have text").format( originalMarker ) )
                 if self.objectTypeString in ('USFM','USX',):
                     if sahtCount != -1:
                         sahtCount += 1
@@ -714,9 +714,7 @@ class InternalBibleBook:
                         else: # we've reached our limit
                             logging.error( _('doAppend: Additional "Marker should always have text" messages suppressed...') )
                             sahtCount = -1 # So we don't do this again (for this book)
-                self.addPriorityError( 96, c, v, _("Marker \\{} should always have text").format( originalMarker ) )
-                # Don't bother even saving the marker since it's useless
-                # Wrong -- save the empty marker
+                #self.addPriorityError( 96, c, v, _("Marker \\{} should always have text").format( originalMarker ) )
                 if adjMarker != 'v~': # Save all other empty markers
                     self._processedLines.append( InternalBibleEntry(adjMarker, originalMarker, adjText, cleanText, extras, originalText) )
             else:
@@ -1072,7 +1070,9 @@ class InternalBibleBook:
 
         This does a quick check for major SFM errors. It is not as thorough as checkSFMs below.
         """
-        if not self._processedFlag: self.processLines()
+        if not self._processedFlag:
+            print( "InternalBibleBook: processing lines from 'validateMarkers'" )
+            self.processLines()
         if Globals.debugFlag: assert( self._processedLines )
         validationErrors = []
 
@@ -1128,7 +1128,9 @@ class InternalBibleBook:
         """
         Extract a SFM field from the loaded book.
         """
-        if not self._processedFlag: self.processLines()
+        if not self._processedFlag:
+            print( "InternalBibleBook: processing lines from 'getField'" )
+            self.processLines()
         if Globals.debugFlag:
             assert( self._processedLines )
             assert( fieldName and isinstance( fieldName, str ) )
@@ -1147,7 +1149,9 @@ class InternalBibleBook:
         Use the English name as a last resort.
         Returns a list with the best guess first.
         """
-        if not self._processedFlag: self.processLines()
+        if not self._processedFlag:
+            print( "InternalBibleBook: processing lines from 'getAssumedBookNames'" )
+            self.processLines()
         if Globals.debugFlag: assert( self._processedLines )
         results = []
 
@@ -1184,7 +1188,9 @@ class InternalBibleBook:
             The second list contains an entry for each missing verse in the book (not including verses that are missing at the END of a chapter).
         Note that all chapter and verse values are returned as strings not integers.
         """
-        if not self._processedFlag: self.processLines()
+        if not self._processedFlag:
+            print( "InternalBibleBook: processing lines from 'getVersification'" )
+            self.processLines()
         if Globals.debugFlag: assert( self._processedLines )
         versificationErrors = []
 
@@ -1310,13 +1316,17 @@ class InternalBibleBook:
     # end of InternalBibleBook.getVersification
 
 
-    def discover( self, resultDictionary ):
+    def _discover( self, resultDictionary ):
         """
         Do a precheck on the book to try to determine its features.
 
         We later use these discoveries to note when the translation veers from their norm.
+
+        Called from InternalBible.py (which first creates the Bible-wide dictionary).
         """
-        if not self._processedFlag: self.processLines()
+        if not self._processedFlag:
+            print( "InternalBibleBook: processing lines from 'discover'" )
+            self.processLines()
         if Globals.debugFlag: assert( self._processedLines )
         #print( "InternalBibleBook:discover", self.bookReferenceCode )
         if Globals.debugFlag: assert( isinstance( resultDictionary, dict ) )
@@ -1425,19 +1435,19 @@ class InternalBibleBook:
             bkDict['partlyDone'] = bkDict['haveVerseText'] and not bkDict['seemsFinished']
 
         if bkDict['sectionReferencesCount']:
-            bkDict['sectionReferencesParenthesisRatio'] = sectionRefParenthCount / bkDict['sectionReferencesCount']
+            bkDict['sectionReferencesParenthesisRatio'] = round( sectionRefParenthCount / bkDict['sectionReferencesCount'], 2 )
             bkDict['sectionReferencesParenthesisFlag'] = bkDict['sectionReferencesParenthesisRatio'] > 0.8
         if bkDict['footnotesCount']:
-            bkDict['footnotesPeriodRatio'] = footnotesPeriodCount / bkDict['footnotesCount']
+            bkDict['footnotesPeriodRatio'] = round( footnotesPeriodCount / bkDict['footnotesCount'], 2 )
             bkDict['footnotesPeriodFlag'] = bkDict['footnotesPeriodRatio'] > 0.7
         if bkDict['crossReferencesCount']:
-            bkDict['crossReferencesPeriodRatio'] = xrefsPeriodCount / bkDict['crossReferencesCount']
+            bkDict['crossReferencesPeriodRatio'] = round( xrefsPeriodCount / bkDict['crossReferencesCount'], 2 )
             bkDict['crossReferencesPeriodFlag'] = bkDict['crossReferencesPeriodRatio'] > 0.7
         #print( self.bookReferenceCode, bkDict['sectionReferencesParenthesisRatio'] )
 
         # Put the result for this book into the main dictionary
         resultDictionary[self.bookReferenceCode] = bkDict
-    # end of InternalBibleBook.discover
+    # end of InternalBibleBook._discover
 
 
     def getAddedUnits( self ):
@@ -1445,7 +1455,9 @@ class InternalBibleBook:
         Get the units added to the text of the book including paragraph breaks, section headings, and section references.
         Note that all chapter and verse values are returned as strings not integers.
         """
-        if not self._processedFlag: self.processLines()
+        if not self._processedFlag:
+            print( "InternalBibleBook: processing lines from 'getAddedUnits'" )
+            self.processLines()
         if Globals.debugFlag: assert( self._processedLines )
         addedUnitErrors = []
 
@@ -1712,7 +1724,9 @@ class InternalBibleBook:
 
 
     def doCheckSFMs( self, discoveryDict ):
-        """Runs a number of comprehensive checks on the USFM codes in this Bible book."""
+        """
+        Runs a number of comprehensive checks on the USFM codes in this Bible book.
+        """
         allAvailableNewlineMarkers = Globals.USFMMarkers.getNewlineMarkersList( 'Numbered' )
         allAvailableCharacterMarkers = Globals.USFMMarkers.getCharacterMarkersList( includeEndMarkers=True )
 
@@ -1725,7 +1739,7 @@ class InternalBibleBook:
         section, lastMarker = '', ''
         lastMarkerEmpty = True
         for entry in self._processedLines:
-            marker, text = entry.getMarker(), entry.getText()
+            marker, originalMarker, text, extras = entry.getMarker(), entry.getOriginalMarker(), entry.getText(), entry.getExtras()
             markerEmpty = len(text) == 0
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text:
@@ -1741,6 +1755,26 @@ class InternalBibleBook:
                 functionalCounts['Section Headers'] = 1 if 'Section Headers' not in functionalCounts else (functionalCounts['Section Headers'] + 1)
             elif marker=='r':
                 functionalCounts['Section Cross-References'] = 1 if 'Section Cross-References' not in functionalCounts else (functionalCounts['Section Cross-References'] + 1)
+
+            # Check for markers that shouldn't be empty
+            if markerEmpty and not extras and ( Globals.USFMMarkers.markerShouldHaveContent(marker)=='A' or marker in ('v~','c~','c#',) ): # should always have text
+                newlineMarkerErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Marker '{}' should always have text").format( originalMarker ) )
+                #if self.objectTypeString in ('USFM','USX',):
+                    #if sahtCount != -1:
+                        #sahtCount += 1
+                        #if sahtCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
+                            #logging.warning( _("doCheckSFMs: Marker '{}' at {} {}:{} should always have text").format( originalMarker, self.bookReferenceCode, c, v ) )
+                        #else: # we've reached our limit
+                            #logging.warning( _('doCheckSFMs: Additional "Marker should always have text" messages suppressed...') )
+                            #sahtCount = -1 # So we don't do this again (for this book)
+                priority = 96
+                if discoveryDict:
+                    if 'partlyDone' in discoveryDict and discoveryDict['partlyDone']>0: priority = 47
+                    if 'notStarted' in discoveryDict and discoveryDict['notStarted']>0: priority = 17
+                self.addPriorityError( priority, c, v, _("Marker \\{} should always have text").format( originalMarker ) )
+                    #newlineMarkerErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Marker '{}' has no content").format( marker ) )
+                    #logging.warning( _("Marker '{}' has no content after").format( marker ) + " {} {}:{}".format( self.bookReferenceCode, c, v ) )
+                    #self.addPriorityError( 47, c, v, _("Marker {} should have content").format( marker ) )
 
             if marker == 'v~':
                 lastMarker, lastMarkerEmpty = 'v', markerEmpty
@@ -1932,13 +1966,14 @@ class InternalBibleBook:
                     logging.warning( _("Marker(s) {} don't appear to be closed after {} {}:{} in {}: {}").format( openList, self.bookReferenceCode, c, v, marker, text ) )
                     self.addPriorityError( 36, c, v, _("Marker(s) {} should be closed").format( openList ) )
                     if len(openList) == 1: text += '\\' + openList[-1] + '*' # Try closing the last one for them
-            else: # There's no text
-                if markerShouldHaveContent == 'A': # Always
-                    newlineMarkerErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Marker '{}' has no content").format( marker ) )
-                    logging.warning( _("Marker '{}' has no content after").format( marker ) + " {} {}:{}".format( self.bookReferenceCode, c, v ) )
-                    self.addPriorityError( 47, c, v, _("Marker {} should have content").format( marker ) )
+            # The following is handled above
+            #else: # There's no text
+                #if markerShouldHaveContent == 'A': # Always
+                    #newlineMarkerErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Marker '{}' has no content").format( marker ) )
+                    #logging.warning( _("Marker '{}' has no content after").format( marker ) + " {} {}:{}".format( self.bookReferenceCode, c, v ) )
+                    #self.addPriorityError( 47, c, v, _("Marker {} should have content").format( marker ) )
 
-            extras = entry.getExtras()
+            #extras = entry.getExtras()
             if extras:
                 #print( "InternalBibleBook:doCheckSFMs-Extras-A {} {}:{} ".format( self.bookReferenceCode, c, v ), extras )
                 extraMarkers = []
@@ -2472,7 +2507,9 @@ class InternalBibleBook:
 
     def doCheckFileControls( self ):
         """Runs a number of checks on headings and section cross-references."""
-        if not self._processedFlag: self.processLines()
+        if not self._processedFlag:
+            print( "InternalBibleBook: processing lines from 'doCheckFileControls'" )
+            self.processLines()
         if Globals.debugFlag: assert( self._processedLines )
 
         IDList, encodingList = [], []
@@ -2494,7 +2531,9 @@ class InternalBibleBook:
 
     def doCheckHeadings( self, discoveryDict ):
         """Runs a number of checks on headings and section cross-references."""
-        if not self._processedFlag: self.processLines()
+        if not self._processedFlag:
+            print( "InternalBibleBook: processing lines from 'doCheckHeadings'" )
+            self.processLines()
         if Globals.debugFlag: assert( self._processedLines )
 
         titleList, headingList, sectionReferenceList, headingErrors = [], [], [], []
@@ -2547,7 +2586,9 @@ class InternalBibleBook:
 
     def doCheckIntroduction( self ):
         """Runs a number of checks on introductory parts."""
-        if not self._processedFlag: self.processLines()
+        if not self._processedFlag:
+            print( "InternalBibleBook: processing lines from 'doCheckIntroduction'" )
+            self.processLines()
         if Globals.debugFlag: assert( self._processedLines )
 
         mainTitleList, headingList, titleList, outlineList, introductionErrors = [], [], [], [], []
@@ -2622,7 +2663,9 @@ class InternalBibleBook:
 
     def doCheckNotes( self, discoveryDict ):
         """Runs a number of checks on footnotes and cross-references."""
-        if not self._processedFlag: self.processLines()
+        if not self._processedFlag:
+            print( "InternalBibleBook: processing lines from 'doCheckNotes'" )
+            self.processLines()
         if Globals.debugFlag: assert( self._processedLines )
 
         allAvailableCharacterMarkers = Globals.USFMMarkers.getCharacterMarkersList( includeBackslash=True )
@@ -2869,11 +2912,11 @@ class InternalBibleBook:
                         break # Only process the first xo field
                 if not haveAnchor:
                     if extraType == 'fn':
-                        if discoveryDict and 'haveFootnoteOrigins' in discoveryDict and discoveryDict['haveFootnoteOrigins']:
+                        if discoveryDict and 'haveFootnoteOrigins' in discoveryDict and discoveryDict['haveFootnoteOrigins']>0:
                             footnoteErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Footnote seems to have no anchor reference: '{}'").format( extraText ) )
                             self.addPriorityError( 39, c, v, _("Missing anchor reference for footnote") )
                     elif extraType == 'xr':
-                        if discoveryDict and 'haveCrossReferenceOrigins' in discoveryDict and discoveryDict['haveCrossReferenceOrigins']:
+                        if discoveryDict and 'haveCrossReferenceOrigins' in discoveryDict and discoveryDict['haveCrossReferenceOrigins']>0:
                             xrefErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Cross-reference seems to have no anchor reference: '{}'").format( extraText ) )
                             self.addPriorityError( 38, c, v, _("Missing anchor reference for cross-reference") )
 
@@ -2896,7 +2939,9 @@ class InternalBibleBook:
 
     def check( self, discoveryDict=None, typicalAddedUnitData=None ):
         """Runs a number of checks on the book and returns the error dictionary."""
-        if not self._processedFlag: self.processLines()
+        if not self._processedFlag:
+            print( "InternalBibleBook: processing lines from 'check'" )
+            self.processLines()
         if Globals.debugFlag: assert( self._processedLines )
 
         # Ignore the result of these next ones -- just use any errors collected
@@ -2938,7 +2983,9 @@ class InternalBibleBook:
         #print( "InternalBibleBook.getCVRef( {} ) for {}".format( ref, self.bookReferenceCode ) )
         if isinstance( ref, tuple ): assert( ref[0] == self.bookReferenceCode )
         else: assert( ref.getBBB() == self.bookReferenceCode )
-        if not self._processedFlag: self.processLines()
+        if not self._processedFlag:
+            print( "InternalBibleBook: processing lines from 'getCVRef'" )
+            self.processLines()
         if Globals.debugFlag:
             assert( self._processedLines )
             assert( self._indexedFlag )

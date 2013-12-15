@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2013-12-03 by RJH (also update ProgVersion below)
+#   Last modified: 2013-12-15 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -402,7 +402,7 @@ class InternalBible:
         if Globals.verbosityLevel > 2: print( _("Running discover on {}...").format( self.name ) )
         for BBB in self.books: # Do individual book prechecks
             if Globals.verbosityLevel > 3: print( "  " + _("Prechecking {}...").format( BBB ) )
-            self.books[BBB].discover( self.discoveryResults )
+            self.books[BBB]._discover( self.discoveryResults )
 
         # Now get the aggregate results for the entire Bible
         aggregateResults = {}
@@ -519,7 +519,7 @@ class InternalBible:
             if isinstance( aggregateResults[arKey], list ) and isinstance( aggregateResults[arKey][0], float ):
                 if Globals.debugFlag: assert( arKey.endswith( 'Ratio' ) )
                 #print( "this", arKey, aggregateResults[arKey] )
-                aggregateRatio = sum( aggregateResults[arKey] ) / len( aggregateResults[arKey] )
+                aggregateRatio = round( sum( aggregateResults[arKey] ) / len( aggregateResults[arKey] ), 2 )
                 aggregateFlag = None
                 if aggregateRatio > 0.6: aggregateFlag = True
                 if aggregateRatio < 0.4: aggregateFlag = False

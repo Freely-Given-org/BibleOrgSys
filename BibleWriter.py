@@ -2526,7 +2526,7 @@ class BibleWriter( InternalBible ):
             adjustedProjectName = self.projectName.lower().replace( ' ', '_' )
 
             # Read the default conf file
-            with open( os.path.join( defaultControlFolder, 'project.conf' ) ) as myFile: confText = myFile.read()
+            with open( os.path.join( defaultControlFolder, 'SwordProject.conf' ) ) as myFile: confText = myFile.read()
 
             # Do common text replacements
             # Unfortunately, we can only really make wild guesses without more detailed metadata
