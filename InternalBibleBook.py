@@ -816,8 +816,14 @@ class InternalBibleBook:
                     self.addPriorityError( 94, c, v, _("Unexpected backslash touching verse number (missing space?) in '{}'").format( originalText ) )
                 if ix==99999: # There's neither -- not unexpected if this is a translation in progress
                     #print( "processLine had an empty verse field in {} {}:{}: '{}' '{}' {} {} {}".format( self.bookReferenceCode, c, v, originalMarker, originalText, ix, ixSP, ixBS ) )
-                    fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Nothing after verse number: '{}'").format( originalText ) )
+                    # Removed these fix and priority errors, coz it seems to be covered in checkSFMs
+                    # (and especially coz we don't know yet if this is a finished translation)
+                    #fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Nothing after verse number: '{}'").format( originalText ) )
+                    #priority = 92
                     if self.objectTypeString in ('USFM','USX',):
+                        #if nfvnCount == -1:
+                            #priority = 12
+                        #else:
                         if nfvnCount != -1:
                             nfvnCount += 1
                             if nfvnCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
@@ -825,7 +831,8 @@ class InternalBibleBook:
                             else: # we've reached our limit
                                 logging.error( _('Additional "Nothing following verse number" messages suppressed...') )
                                 nfvnCount = -1 # So we don't do this again (for this book)
-                    self.addPriorityError( 92, c, v, _("Nothing following verse number in '{}'").format( originalText ) )
+                                #priority = 12
+                    #self.addPriorityError( priority, c, v, _("Nothing following verse number in '{}'").format( originalText ) )
                     verseNumberBit = text
                     #print( "verseNumberBit is '{}'".format( verseNumberBit ) )
                     if Globals.debugFlag:
@@ -1071,7 +1078,7 @@ class InternalBibleBook:
         This does a quick check for major SFM errors. It is not as thorough as checkSFMs below.
         """
         if not self._processedFlag:
-            print( "InternalBibleBook: processing lines from 'validateMarkers'" )
+            if Globals.verbosityLevel > 2: print( "InternalBibleBook: processing lines from 'validateMarkers'" )
             self.processLines()
         if Globals.debugFlag: assert( self._processedLines )
         validationErrors = []
@@ -2557,7 +2564,11 @@ class InternalBibleBook:
                 else: headingList.append( "{} {}:{} ({}) '{}'".format( self.bookReferenceCode, c, v, marker, text ) )
                 if not text:
                     headingErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Missing heading text for marker {}").format( marker ) )
-                    self.addPriorityError( 58, c, v, _("Missing heading text") )
+                    priority = 58
+                    if discoveryDict:
+                        if 'partlyDone' in discoveryDict and discoveryDict['partlyDone']>0: priority = 28
+                        if 'notStarted' in discoveryDict and discoveryDict['notStarted']>0: priority = 18
+                    self.addPriorityError( priority, c, v, _("Missing heading text") )
                 elif text[-1]=='.':
                     headingErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("{} heading ends with a period: {}").format( marker, text ) )
                     self.addPriorityError( 68, c, v, _("Heading ends with a period") )

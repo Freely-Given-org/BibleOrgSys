@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2013-11-30 by RJH (also update ProgVersion below)
+#   Last modified: 2013-12-15 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -275,7 +275,7 @@ class USFMBible( Bible ):
         UBB = USFMBibleBook( self.name, BBB )
         UBB.load( filename, self.sourceFolder, self.encoding )
         if UBB._rawLines:
-            UBB.validateMarkers()
+            UBB.validateMarkers() # Usually activates InternalBibleBook.processLines()
             self.saveBook( UBB )
         else: logging.info( "USFM book {} was completely blank".format( BBB ) )
     # end of USFMBible.loadBook
@@ -292,7 +292,7 @@ class USFMBible( Bible ):
         if Globals.verbosityLevel > 2 or Globals.debugFlag: print( _("  USFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
         UBB = USFMBibleBook( self.name, BBB )
         UBB.load( self.possibleFilenameDict[BBB], self.sourceFolder, self.encoding )
-        UBB.validateMarkers()
+        UBB.validateMarkers() # Usually activates InternalBibleBook.processLines()
         return UBB
     # end of USFMBible.loadBookMP
 
