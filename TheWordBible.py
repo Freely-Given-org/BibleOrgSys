@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # TheWordBible.py
-#   Last modified: 2013-09-04 by RJH (also update ProgVersion below)
+#   Last modified: 2013-12-18 by RJH (also update ProgVersion below)
 #
 # Module handling "theWord" Bible module files
 #
@@ -70,8 +70,6 @@ BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
 
 
 filenameEndingsToAccept = ('.OT','.NT','.ONT','.OTX','.NTX','.ONTX',) # Must be UPPERCASE
-#filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
-#extensionsToIgnore = ('ZIP', 'BAK', 'LOG', 'HTM','HTML', 'XML', 'OSIS', 'USX', 'STY', 'LDS', 'SSF', 'VRS', 'ASC', 'CSS',) # Must be UPPERCASE
 
 
 # These are the verses per book in the traditional KJV versification (but only for the 66 books)

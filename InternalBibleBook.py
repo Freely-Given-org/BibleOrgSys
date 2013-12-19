@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-12-15 by RJH (also update ProgVersion below)
+#   Last modified: 2013-12-18 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -27,7 +27,7 @@
 Module for defining and manipulating Bible books in our internal USFM-based 'lines' format.
 
 The calling class needs to call this base class __init__ routine and also set:
-    self.objectTypeString (with "OSIS", "USFM", "USX" or "XML")
+    self.objectTypeString (with "OSIS", "USFM", "USX" or "XML", etc.)
     self.objectNameString (with a description of the type of BibleBook object)
 It also needs to provide a "load" routine that sets one or more of:
     self.sourceFolder
@@ -35,6 +35,9 @@ It also needs to provide a "load" routine that sets one or more of:
     self.sourceFilepath = os.path.join( sourceFolder, sourceFilename )
 and then calls
     self.appendLine (in order to fill self._rawLines)
+
+Required improvements:
+    Need to be able to accept encoded cross references as well as text (YET modules).
 """
 
 ProgName = "Internal Bible book handler"

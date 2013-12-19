@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2013-12-15 by RJH (also update ProgVersion below)
+#   Last modified: 2013-12-18 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 """
 
 ProgName = "USFM Bible handler"
-ProgVersion = "0.45"
+ProgVersion = "0.46"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -42,6 +42,11 @@ import Globals
 from USFMFilenames import USFMFilenames
 from USFMBibleBook import USFMBibleBook
 from Bible import Bible
+
+
+
+filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
+extensionsToIgnore = ('ZIP', 'BAK', 'LOG', 'HTM','HTML', 'XML', 'OSIS', 'USX', 'STY', 'LDS', 'SSF', 'VRS', 'ASC', 'CSS', 'ODT','DOC', ) # Must be UPPERCASE
 
 
 
@@ -75,7 +80,15 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
         if os.path.isdir( somepath ): foundFolders.append( something )
-        elif os.path.isfile( somepath ): foundFiles.append( something )
+        elif os.path.isfile( somepath ):
+            somethingUpper = something.upper()
+            somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
+            ignore = False
+            for ending in filenameEndingsToIgnore:
+                if somethingUpper.endswith( ending): ignore=True; break
+            if ignore: continue
+            if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+                foundFiles.append( something )
     if '__MACOSX' in foundFolders:
         foundFolders.remove( '__MACOSX' )  # don't visit these directories
 
@@ -113,7 +126,15 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
         for something in os.listdir( tryFolderName ):
             somepath = os.path.join( givenFolderName, thisFolderName, something )
             if os.path.isdir( somepath ): foundSubfolders.append( something )
-            elif os.path.isfile( somepath ): foundSubfiles.append( something )
+            elif os.path.isfile( somepath ):
+                somethingUpper = something.upper()
+                somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
+                ignore = False
+                for ending in filenameEndingsToIgnore:
+                    if somethingUpper.endswith( ending): ignore=True; break
+                if ignore: continue
+                if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+                    foundSubfiles.append( something )
 
         # See if there's an USFM Bible here in this folder
         UFns = USFMFilenames( tryFolderName ) # Assuming they have standard Paratext style filenames

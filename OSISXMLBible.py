@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # OSISXMLBible.py
-#   Last modified: 2013-09-16 by RJH (also update ProgVersion below)
+#   Last modified: 2013-12-18 by RJH (also update ProgVersion below)
 #
 # Module handling OSIS XML Bibles
 #
@@ -36,7 +36,7 @@ Updated Sept 2013 to also handle Kahunapule's "modified OSIS".
 """
 
 ProgName = "OSIS XML Bible format handler"
-ProgVersion = "0.28"
+ProgVersion = "0.29"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -52,7 +52,7 @@ from Bible import Bible, BibleBook
 
 
 filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
-extensionsToIgnore = ('ZIP', 'BAK', 'LOG', 'HTM','HTML', 'USX', 'TXT', 'STY', 'LDS', 'SSF', 'VRS', 'ASC', 'CSS',) # Must be UPPERCASE
+extensionsToIgnore = ('ZIP', 'BAK', 'LOG', 'HTM','HTML', 'USX', 'STY', 'LDS', 'SSF', 'VRS', 'ASC', 'CSS', 'ODT','DOC','TXT', 'JAR', ) # Must be UPPERCASE
 
 
 
@@ -860,62 +860,66 @@ class OSISXMLBible( Bible ):
                     logging.error( _("Unrecognized chapter milestone in {}: {} at {}").format( location, element.items(), location ) )
 
                 if chapterMilestone: # Have a chapter milestone like Jas.1
-                    if not OSISChapterID.count('.')==1: logging.error( "{} chapter ID seems wrong format for {} at {}".format( OSISChapterID, chapterMilestone, location ) )
-                    bits = OSISChapterID.split( '.' )
-                    if Globals.debugFlag: assert( len(bits) == 2 )
-                    cmBBB = None
-                    try:
-                        cmBBB = Globals.BibleBooksCodes.getBBBFromOSIS( bits[0] )
-                    except:
-                        logging.critical( _("'{}' is not a valid OSIS book identifier").format( bits[0] ) )
-                    if cmBBB and cmBBB != BBB: # We've started on a new book
-                        #if BBB and ( len(bookResults)>20 or len(USFMResults)>20 ): # Save the previous book
-                        if BBB and len(self.thisBook._rawLines) > 5: # Save the previous book
-                            #print( verseMilestone )
-                            if Globals.verbosityLevel > 2: print( "Saving previous {} book into results...".format( BBB ) )
-                            #print( mainDivOsisID, "results", BBB, bookResults[:10], "..." )
-                            # Remove the last titles
-                            #lastBookResult = bookResults.pop()
-                            #if lastBookResult[0]!='sectionTitle':
-                                #lastBookResult = None
-                            #lastUSFMResult = USFMResults.pop()
-                            #if lastUSFMResult[0]!='s':
-                                #lastUSFMResult = None
-                            lastLineTuple = self.thisBook._rawLines.pop()
-                            if Globals.debugFlag: assert( len(lastLineTuple) == 2 )
-                            if lastLineTuple[0] != 's':
-                                self.thisBook._rawLines.append( lastLineTuple ) # No good -- put it back
-                                lastLineTuple = None
-                            #if bookResults: self.bkData[BBB] = bookResults
-                            #if USFMResults: self.USFMBooks[BBB] = USFMResults
-                            self.saveBook( self.thisBook )
-                            #bookResults, USFMResults = [], []
-                            #if lastBookResult:
-                                #lastBookResultList = list( lastBookResult )
-                                #lastBookResultList[0] = 'mainTitle'
-                                #adjBookResult = tuple( lastBookResultList )
-                                ##print( lastBookResultList )
-                            #if lastUSFMResult:
-                                #lastUSFMResultList = list( lastUSFMResult )
-                                #lastUSFMResultList[0] = 'mt1'
-                                ##print( lastUSFMResultList )
-                                #adjSFMResult = tuple( lastUSFMResultList )
-                            if lastLineTuple:
-                                self.thisBook.appendLine( 'id', (USFMAbbreviation if USFMAbbreviation else mainDivOsisID).upper() + " converted to USFM from OSIS by {} V{}".format( ProgName, ProgVersion ) )
-                                self.thisBook.appendLine( 'h', USFMAbbreviation if USFMAbbreviation else mainDivOsisID )
-                                self.thisBook.appendLine( 'mt1', lastLineTuple[1] ) # Change from s to mt1
-                            chapterMilestone = verseMilestone = ''
-                            foundH = False
-                        BBB = cmBBB[0] if isinstance( cmBBB, list) else cmBBB # It can be a list like: ['EZR', 'EZN']
-                        #print( "23f4 BBB is", BBB )
-                        USFMAbbreviation = Globals.BibleBooksCodes.getUSFMAbbreviation( BBB )
-                        USFMNumber = Globals.BibleBooksCodes.getUSFMNumber( BBB )
-                        if Globals.verbosityLevel > 2: print( _("  It seems we have {}...").format( BBB ) )
-                        self.thisBook = BibleBook( self.name, BBB )
-                        self.thisBook.objectNameString = "OSIS XML Bible Book object"
-                        self.thisBook.objectTypeString = "OSIS"
-                        self.haveBook = True
-                    self.thisBook.appendLine( 'c', bits[1] )
+                    if not OSISChapterID:
+                        logging.error( "Missing chapter ID for {} at {}".format( chapterMilestone, location ) )
+                    else:
+                        if not OSISChapterID.count('.')==1:
+                            logging.error( "{} chapter ID seems wrong format for {} at {}".format( OSISChapterID, chapterMilestone, location ) )
+                        bits = OSISChapterID.split( '.' )
+                        if Globals.debugFlag: assert( len(bits) == 2 )
+                        cmBBB = None
+                        try:
+                            cmBBB = Globals.BibleBooksCodes.getBBBFromOSIS( bits[0] )
+                        except:
+                            logging.critical( _("'{}' is not a valid OSIS book identifier").format( bits[0] ) )
+                        if cmBBB and cmBBB != BBB: # We've started on a new book
+                            #if BBB and ( len(bookResults)>20 or len(USFMResults)>20 ): # Save the previous book
+                            if BBB and len(self.thisBook._rawLines) > 5: # Save the previous book
+                                #print( verseMilestone )
+                                if Globals.verbosityLevel > 2: print( "Saving previous {} book into results...".format( BBB ) )
+                                #print( mainDivOsisID, "results", BBB, bookResults[:10], "..." )
+                                # Remove the last titles
+                                #lastBookResult = bookResults.pop()
+                                #if lastBookResult[0]!='sectionTitle':
+                                    #lastBookResult = None
+                                #lastUSFMResult = USFMResults.pop()
+                                #if lastUSFMResult[0]!='s':
+                                    #lastUSFMResult = None
+                                lastLineTuple = self.thisBook._rawLines.pop()
+                                if Globals.debugFlag: assert( len(lastLineTuple) == 2 )
+                                if lastLineTuple[0] != 's':
+                                    self.thisBook._rawLines.append( lastLineTuple ) # No good -- put it back
+                                    lastLineTuple = None
+                                #if bookResults: self.bkData[BBB] = bookResults
+                                #if USFMResults: self.USFMBooks[BBB] = USFMResults
+                                self.saveBook( self.thisBook )
+                                #bookResults, USFMResults = [], []
+                                #if lastBookResult:
+                                    #lastBookResultList = list( lastBookResult )
+                                    #lastBookResultList[0] = 'mainTitle'
+                                    #adjBookResult = tuple( lastBookResultList )
+                                    ##print( lastBookResultList )
+                                #if lastUSFMResult:
+                                    #lastUSFMResultList = list( lastUSFMResult )
+                                    #lastUSFMResultList[0] = 'mt1'
+                                    ##print( lastUSFMResultList )
+                                    #adjSFMResult = tuple( lastUSFMResultList )
+                                if lastLineTuple:
+                                    self.thisBook.appendLine( 'id', (USFMAbbreviation if USFMAbbreviation else mainDivOsisID).upper() + " converted to USFM from OSIS by {} V{}".format( ProgName, ProgVersion ) )
+                                    self.thisBook.appendLine( 'h', USFMAbbreviation if USFMAbbreviation else mainDivOsisID )
+                                    self.thisBook.appendLine( 'mt1', lastLineTuple[1] ) # Change from s to mt1
+                                chapterMilestone = verseMilestone = ''
+                                foundH = False
+                            BBB = cmBBB[0] if isinstance( cmBBB, list) else cmBBB # It can be a list like: ['EZR', 'EZN']
+                            #print( "23f4 BBB is", BBB )
+                            USFMAbbreviation = Globals.BibleBooksCodes.getUSFMAbbreviation( BBB )
+                            USFMNumber = Globals.BibleBooksCodes.getUSFMNumber( BBB )
+                            if Globals.verbosityLevel > 2: print( _("  It seems we have {}...").format( BBB ) )
+                            self.thisBook = BibleBook( self.name, BBB )
+                            self.thisBook.objectNameString = "OSIS XML Bible Book object"
+                            self.thisBook.objectTypeString = "OSIS"
+                            self.haveBook = True
+                        self.thisBook.appendLine( 'c', bits[1] )
 
                 #print( "validateChapterElement returning milestone:", chapterMilestone )
                 return chapterMilestone

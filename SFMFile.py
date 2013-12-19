@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # SFMFile.py
-#   Last modified: 2013-06-24 (also update ProgVersion below)
+#   Last modified: 2013-12-18 (also update ProgVersion below)
 #
 # SFM (Standard Format Marker) data file reader
 #
@@ -135,7 +135,7 @@ class SFMLines:
             except:
                 logging.critical( "Invalid line in " + sfm_filename + " -- line ignored at #" + str(lineCount) )
                 if lineCount > 1: print( 'Previous line was: ', lastLine )
-                print( line )
+                #print( line )
                 #raise
 
             self.lines = result

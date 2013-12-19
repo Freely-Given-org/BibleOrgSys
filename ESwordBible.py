@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ESwordBible.py
-#   Last modified: 2013-12-01 by RJH (also update ProgVersion below)
+#   Last modified: 2013-12-18 by RJH (also update ProgVersion below)
 #
 # Module handling "e-Sword" Bible module files
 #
@@ -68,8 +68,6 @@ from BibleOrganizationalSystems import BibleOrganizationalSystem
 
 filenameEndingsToAccept = ('.BBLX',) # Must be UPPERCASE
 BibleFilenameEndingsToAccept = ('.BBLX',) # Must be UPPERCASE
-#filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
-#extensionsToIgnore = ('ZIP', 'BAK', 'LOG', 'HTM','HTML', 'XML', 'OSIS', 'USX', 'STY', 'LDS', 'SSF', 'VRS', 'ASC', 'CSS',) # Must be UPPERCASE
 
 
 

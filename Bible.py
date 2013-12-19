@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Bible.py
-#   Last modified: 2013-08-29 (also update ProgVersion below)
+#   Last modified: 2013-12-18 (also update ProgVersion below)
 #
 # Module handling a internal Bible object
 #
@@ -97,6 +97,7 @@ from BibleWriter import BibleWriter
 ## end of class BibleDivision
 
 
+
 class BibleBook ( InternalBibleBook ):
     """
     Class for handling a single Bible book.
@@ -123,7 +124,7 @@ class BibleBook ( InternalBibleBook ):
         self.inputAbbreviations = []
         self.text = []
         self.index = {}
-        self.textCodes = ( "ID", "RH1", "MT1", "MT2", "MS1", "MS2", "IOT", "IO1", "IO2", "IS1", "IS2", "InP", "SH1", "SH2", "SXR", "Pgr", "Chp", "Vrs", "Txt", "Qu1", "Qu2", "Qu3", "Qu4", "Blk", "Mar", "FNt", "XRf", "MR" )
+        #self.textCodes = ( "ID", "RH1", "MT1", "MT2", "MS1", "MS2", "IOT", "IO1", "IO2", "IS1", "IS2", "InP", "SH1", "SH2", "SXR", "Pgr", "Chp", "Vrs", "Txt", "Qu1", "Qu2", "Qu3", "Qu4", "Blk", "Mar", "FNt", "XRf", "MR" )
     # end of __init__
 
     def __str__( self ):
@@ -162,6 +163,7 @@ class BibleBook ( InternalBibleBook ):
         ##print( self.index )
     ## end of createIndex
 # end of class BibleBook
+
 
 
 class Bible( BibleWriter ):

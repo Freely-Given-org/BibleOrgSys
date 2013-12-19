@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # UnknownBible.py
-#   Last modified: 2013-08-31 (also update ProgVersion below)
+#   Last modified: 2013-12-19 (also update ProgVersion below)
 #
 # Module handling a unknown Bible object
 #
@@ -37,7 +37,7 @@ Currently aware of the following Bible types:
 """
 
 ProgName = "Unknown Bible object handler"
-ProgVersion = "0.10"
+ProgVersion = "0.12"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -61,6 +61,8 @@ from UnboundBible import UnboundBibleFileCheck, UnboundBible
 from TheWordBible import TheWordBibleFileCheck, TheWordBible
 from MySwordBible import MySwordBibleFileCheck, MySwordBible
 from ESwordBible import ESwordBibleFileCheck, ESwordBible
+from YETBible import YETBibleFileCheck, YETBible
+from PalmDBBible import PalmDBBibleFileCheck, PalmDBBible
 #from SwordResources import SwordInterface # What about these?
 
 
@@ -200,6 +202,22 @@ class UnknownBible:
             typesFound.append( 'Haggai' )
             if Globals.verbosityLevel > 2: print( "UnknownBible.search: HaggaiBibleCount", HaggaiBibleCount )
 
+        # Search for YET Bibles
+        YETBibleCount = YETBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+        if YETBibleCount:
+            totalBibleCount += YETBibleCount
+            totalBibleTypes += 1
+            typesFound.append( 'YET' )
+            if Globals.verbosityLevel > 2: print( "UnknownBible.search: YETBibleCount", YETBibleCount )
+
+        # Search for PalmDB Bibles
+        PDBBibleCount = PalmDBBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+        if PDBBibleCount:
+            totalBibleCount += PDBBibleCount
+            totalBibleTypes += 1
+            typesFound.append( 'PalmDB' )
+            if Globals.verbosityLevel > 2: print( "UnknownBible.search: PDBBibleCount", PDBBibleCount )
+
 
         assert( len(typesFound) == totalBibleTypes )
         if totalBibleCount == 0:
@@ -214,6 +232,7 @@ class UnknownBible:
                     print( "UnknownBible.search: Multiple ({}) Bibles found: {}".format( totalBibleCount, typesFound ) )
                 self.foundType = 'Many found'
 
+        # Put the binary formats first here
         elif theWordBibleCount == 1:
             self.foundType = "theWord Bible"
             if autoLoad: return TheWordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad )
@@ -226,6 +245,10 @@ class UnknownBible:
             self.foundType = "e-Sword Bible"
             if autoLoad: return ESwordBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad )
             else: return self.foundType, ESwordBibleCount
+        elif PDBBibleCount == 1:
+            self.foundType = "PalmDB Bible"
+            if autoLoad: return PalmDBBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad )
+            else: return self.foundType, PDBBibleCount
         elif UnboundBibleCount == 1:
             self.foundType = "Unbound Bible"
             if autoLoad: return UnboundBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad )
@@ -258,6 +281,10 @@ class UnknownBible:
             self.foundType = "Haggai XML Bible"
             if autoLoad: return HaggaiXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad )
             else: return self.foundType, HaggaiBibleCount
+        elif YETBibleCount == 1:
+            self.foundType = "YET Bible"
+            if autoLoad: return YETBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad )
+            else: return self.foundType, YETBibleCount
     # end of UnknownBible.search
 # end of class UnknownBible
 
@@ -270,22 +297,24 @@ def demo():
     if Globals.verbosityLevel > 0: print( "{} V{}".format(ProgName, ProgVersion ) )
 
     # Now demo the class
-    testFolders = ( "/home/robert/Logs",
-                    "../../../../../Data/Work/Bibles/theWord modules/",
-                    "../../../../../Data/Work/Bibles/Biola Unbound modules/",
-                    "../../../../../Data/Work/Bibles/OpenSong Bibles/",
-                    "../../../../../Data/Work/Bibles/Zefania modules/",
-                    "../../../../../Data/Work/Matigsalug/Bible/MBTV/",
-                    "../../../../../SSD/AutoProcesses/Processed/",
-                    "Tests/DataFilesForTests/USFMTest1/", "Tests/DataFilesForTests/USFMTest2/",
-                    "Tests/DataFilesForTests/USFM-OEB/", "Tests/DataFilesForTests/USFM-WEB/",
-                    "Tests/DataFilesForTests/USXTest1/", "Tests/DataFilesForTests/USXTest2/",
-                    "Tests/DataFilesForTests/USFXTest1/", "Tests/DataFilesForTests/USFXTest2/",
-                    "Tests/DataFilesForTests/USFX-ASV/", "Tests/DataFilesForTests/USFX-WEB/",
-                    "Tests/DataFilesForTests/OSISTest1/", "Tests/DataFilesForTests/OSISTest2/",
-                    "Tests/DataFilesForTests/ZefaniaTest/", "Tests/DataFilesForTests/HaggaiTest/",
-                    "Tests/DataFilesForTests/theWordTest/", "Tests/DataFilesForTests/MySwordTest/",
-                    "Tests/DataFilesForTests/", # Up a level
+    testFolders = ( #"/home/robert/Logs",
+                    #"../../../../../Data/Work/Bibles/theWord modules/",
+                    #"../../../../../Data/Work/Bibles/Biola Unbound modules/",
+                    #"../../../../../Data/Work/Bibles/OpenSong Bibles/",
+                    #"../../../../../Data/Work/Bibles/Zefania modules/",
+                    #"../../../../../Data/Work/Bibles/YET modules/",
+                    #"../../../../../Data/Work/Matigsalug/Bible/MBTV/",
+                    #"../../../../../SSD/AutoProcesses/Processed/",
+                    #"Tests/DataFilesForTests/USFMTest1/", "Tests/DataFilesForTests/USFMTest2/",
+                    #"Tests/DataFilesForTests/USFM-OEB/", "Tests/DataFilesForTests/USFM-WEB/",
+                    #"Tests/DataFilesForTests/USXTest1/", "Tests/DataFilesForTests/USXTest2/",
+                    #"Tests/DataFilesForTests/USFXTest1/", "Tests/DataFilesForTests/USFXTest2/",
+                    #"Tests/DataFilesForTests/USFX-ASV/", "Tests/DataFilesForTests/USFX-WEB/",
+                    #"Tests/DataFilesForTests/OSISTest1/", "Tests/DataFilesForTests/OSISTest2/",
+                    #"Tests/DataFilesForTests/ZefaniaTest/", "Tests/DataFilesForTests/HaggaiTest/",
+                    #"Tests/DataFilesForTests/theWordTest/", "Tests/DataFilesForTests/MySwordTest/",
+                    "Tests/DataFilesForTests/YETTest/", "Tests/DataFilesForTests/PDBTest/",
+                    #"Tests/DataFilesForTests/", # Up a level
                     )
     if 1: # Just find the files
         for j, testFolder in enumerate( testFolders ):
