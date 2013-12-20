@@ -58,10 +58,11 @@ from OSISXMLBible import OSISXMLBibleFileCheck, OSISXMLBible
 from ZefaniaXMLBible import ZefaniaXMLBibleFileCheck, ZefaniaXMLBible
 from HaggaiXMLBible import HaggaiXMLBibleFileCheck, HaggaiXMLBible
 from UnboundBible import UnboundBibleFileCheck, UnboundBible
+from DrupalBible import DrupalBibleFileCheck, DrupalBible
+from YETBible import YETBibleFileCheck, YETBible
 from TheWordBible import TheWordBibleFileCheck, TheWordBible
 from MySwordBible import MySwordBibleFileCheck, MySwordBible
 from ESwordBible import ESwordBibleFileCheck, ESwordBible
-from YETBible import YETBibleFileCheck, YETBible
 from PalmDBBible import PalmDBBibleFileCheck, PalmDBBible
 #from SwordResources import SwordInterface # What about these?
 
@@ -138,6 +139,14 @@ class UnknownBible:
             typesFound.append( 'e-Sword' )
             if Globals.verbosityLevel > 2: print( "ESwordBible.search: ESwordBibleCount", ESwordBibleCount )
 
+        # Search for PalmDB Bibles
+        PDBBibleCount = PalmDBBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+        if PDBBibleCount:
+            totalBibleCount += PDBBibleCount
+            totalBibleTypes += 1
+            typesFound.append( 'PalmDB' )
+            if Globals.verbosityLevel > 2: print( "UnknownBible.search: PDBBibleCount", PDBBibleCount )
+
         # Search for Unbound Bibles
         UnboundBibleCount = UnboundBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
         if UnboundBibleCount:
@@ -145,6 +154,22 @@ class UnknownBible:
             totalBibleTypes += 1
             typesFound.append( 'Unbound' )
             if Globals.verbosityLevel > 2: print( "UnknownBible.search: UnboundBibleCount", UnboundBibleCount )
+
+        # Search for Drupal Bibles
+        DrupalBibleCount = DrupalBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+        if DrupalBibleCount:
+            totalBibleCount += DrupalBibleCount
+            totalBibleTypes += 1
+            typesFound.append( 'Drupal' )
+            if Globals.verbosityLevel > 2: print( "UnknownBible.search: DrupalBibleCount", DrupalBibleCount )
+
+        # Search for YET Bibles
+        YETBibleCount = YETBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+        if YETBibleCount:
+            totalBibleCount += YETBibleCount
+            totalBibleTypes += 1
+            typesFound.append( 'YET' )
+            if Globals.verbosityLevel > 2: print( "UnknownBible.search: YETBibleCount", YETBibleCount )
 
         # Search for USFM Bibles
         USFMBibleCount = USFMBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -202,22 +227,6 @@ class UnknownBible:
             typesFound.append( 'Haggai' )
             if Globals.verbosityLevel > 2: print( "UnknownBible.search: HaggaiBibleCount", HaggaiBibleCount )
 
-        # Search for YET Bibles
-        YETBibleCount = YETBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-        if YETBibleCount:
-            totalBibleCount += YETBibleCount
-            totalBibleTypes += 1
-            typesFound.append( 'YET' )
-            if Globals.verbosityLevel > 2: print( "UnknownBible.search: YETBibleCount", YETBibleCount )
-
-        # Search for PalmDB Bibles
-        PDBBibleCount = PalmDBBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
-        if PDBBibleCount:
-            totalBibleCount += PDBBibleCount
-            totalBibleTypes += 1
-            typesFound.append( 'PalmDB' )
-            if Globals.verbosityLevel > 2: print( "UnknownBible.search: PDBBibleCount", PDBBibleCount )
-
 
         assert( len(typesFound) == totalBibleTypes )
         if totalBibleCount == 0:
@@ -249,14 +258,24 @@ class UnknownBible:
             self.foundType = "PalmDB Bible"
             if autoLoad: return PalmDBBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad )
             else: return self.foundType, PDBBibleCount
+        # And now plain text formats
         elif UnboundBibleCount == 1:
             self.foundType = "Unbound Bible"
             if autoLoad: return UnboundBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad )
             else: return self.foundType, UnboundBibleCount
+        elif DrupalBibleCount == 1:
+            self.foundType = "Drupal Bible"
+            if autoLoad: return DrupalBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad )
+            else: return self.foundType, DrupalBibleCount
+        elif YETBibleCount == 1:
+            self.foundType = "YET Bible"
+            if autoLoad: return YETBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad )
+            else: return self.foundType, YETBibleCount
         elif USFMBibleCount == 1:
             self.foundType = "USFM Bible"
             if autoLoad: return USFMBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad )
             else: return self.foundType, USFMBibleCount
+        # And now XML text formats
         elif USXBibleCount == 1:
             self.foundType = "USX XML Bible"
             if autoLoad: return USXXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad )
@@ -281,10 +300,6 @@ class UnknownBible:
             self.foundType = "Haggai XML Bible"
             if autoLoad: return HaggaiXMLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad )
             else: return self.foundType, HaggaiBibleCount
-        elif YETBibleCount == 1:
-            self.foundType = "YET Bible"
-            if autoLoad: return YETBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad )
-            else: return self.foundType, YETBibleCount
     # end of UnknownBible.search
 # end of class UnknownBible
 
@@ -314,6 +329,7 @@ def demo():
                     #"Tests/DataFilesForTests/ZefaniaTest/", "Tests/DataFilesForTests/HaggaiTest/",
                     #"Tests/DataFilesForTests/theWordTest/", "Tests/DataFilesForTests/MySwordTest/",
                     "Tests/DataFilesForTests/YETTest/", "Tests/DataFilesForTests/PDBTest/",
+                    "Tests/DataFilesForTests/DrupalTest/",
                     #"Tests/DataFilesForTests/", # Up a level
                     )
     if 1: # Just find the files
