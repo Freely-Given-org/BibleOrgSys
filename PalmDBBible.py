@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # PalmDBBible.py
-#   Last modified: 2013-12-19 by RJH (also update ProgVersion below)
+#   Last modified: 2013-12-20 by RJH (also update ProgVersion below)
 #
 # Module handling PDB Bible files
 #
@@ -62,7 +62,7 @@ Limitations:
 """
 
 ProgName = "PDB Bible format handler"
-ProgVersion = "0.02"
+ProgVersion = "0.03"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -215,6 +215,21 @@ class PalmDBBible( Bible ):
         Load a single source file and load book elements.
         """
         if Globals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
+        mainIndex = []
+
+        def readRecord( recordNumber, thisFile ):
+            """
+            Uses mainIndex to read in the specified PalmDB record.
+            """
+            assert( recordNumber < len(mainIndex) )
+            dataOffset = mainIndex[recordNumber] # Offset from the beginning of the file
+            thisFile.seek( dataOffset )
+            recordLength = 99999 if recordNumber==len(mainIndex)-1 else (mainIndex[recordNumber+1] - dataOffset)
+            print( "Reading {} bytes from record {} at offset {}".format( recordLength, recordNumber, dataOffset ) )
+            binaryInfo = thisFile.read( recordLength )
+            if recordNumber < len(mainIndex)-1: assert( len(binaryInfo) == recordLength )
+            return binaryInfo
+        # end of readRecord
 
         def getBinaryString( binary, numBytes ):
             """
@@ -229,11 +244,13 @@ class PalmDBBible( Bible ):
 
         def getFileString( thisFile, numBytes ):
             """
+            Used for reading the PalmDB header information from the file.
             """
             return getBinaryString( thisFile.read( numBytes ), numBytes )
         # end of getFileString
 
         with open( self.sourceFilepath, 'rb' ) as myFile: # Automatically closes the file when done
+            # Read the PalmDB header info
             name = getFileString( myFile, 32 )
             binary4 = myFile.read( 4 )
             attributes, version = struct.unpack( ">hh", binary4 )
@@ -248,106 +265,143 @@ class PalmDBBible( Bible ):
             uniqueIDseed = struct.unpack( ">I", binary4 )
             binary6 = myFile.read( 6 )
             nextRecordListID, numRecords = struct.unpack( ">IH", binary6 )
-            print( numRecords )
-            mainIndex = []
+            print( "numRecords =", numRecords )
             for n in range( 0, numRecords ):
                 binary8 = myFile.read( 8 )
                 dataOffset, recordAttributes, id0, id1, id2 = struct.unpack( ">IBBBB", binary8 )
                 #print( '', dataOffset, recordAttributes, id0, id1, id2 )
                 mainIndex.append( dataOffset )
-            for j, dataOffset in enumerate( mainIndex ):
-                myFile.seek( dataOffset )
-                binary = myFile.read( mainIndex[j+1] - dataOffset )
-                if j>2: print( '\n', j, dataOffset, repr( binary ) )
-                if j>=29: halt
 
+            # Now read the first record of actual Bible data which is the Bible header info
+            binary = readRecord( 0, myFile )
+            byteOffset = 0
+            versionName = getBinaryString( binary, 16 ); byteOffset += 16
+            versionInfo = getBinaryString( binary[byteOffset:], 128 ); byteOffset += 128
+            separatorCharacter = getBinaryString( binary[byteOffset:], 1 ); byteOffset += 1
+            print( repr(versionName), repr(versionInfo), repr(separatorCharacter) )
+            versionAttribute, wordIndexIndex, numWordListRecords, numBooks = struct.unpack( ">BHHH",  binary[byteOffset:byteOffset+7] ); byteOffset += 7
+            print( "versionAttribute =",versionAttribute )
+            if versionAttribute & 1: print( " Copy protected!" ); halt
+            if versionAttribute & 2: print( " Not byte shifted." )
+            else: halt # What does byte shifted mean???
+            if versionAttribute & 4: print( " Right-aligned!" ); halt
+            print( "wordIndexIndex = ",wordIndexIndex, "numWordListRecords =",numWordListRecords, "numBooks =",numBooks )
+            bookIndexMetadata = []
+            for n in range(  0, numBooks ):
+                bookNumber, bookRecordLocation, numBookRecords = struct.unpack( ">HHH",  binary[byteOffset:byteOffset+6] ); byteOffset += 6
+                shortName = getBinaryString( binary[byteOffset:], 8 ); byteOffset += 8
+                longName = getBinaryString( binary[byteOffset:], 32 ); byteOffset += 32
+                print( '  BOOK:', n+1, shortName, longName, bookNumber, bookRecordLocation, numBookRecords )
+                bookIndexMetadata.append( (shortName, longName, bookNumber, bookRecordLocation, numBookRecords) )
+            assert( byteOffset == len(binary) )
+
+            # Now read the word index info
+            binary = readRecord( wordIndexIndex, myFile )
+            byteOffset = 0
+            totalIndicesCount, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
+            print( "totalIndicesCount =",totalIndicesCount )
+            wordIndexMetadata = []
+            expectedWords = 0
+            for n in range( 0, totalIndicesCount ):
+                wordLength, numFixedLengthWords, compressedFlag, ignored = struct.unpack( ">HHBB",  binary[byteOffset:byteOffset+6] ); byteOffset += 6
+                print( "wordLength =",wordLength, "numFixedLengthWords =",numFixedLengthWords, "compressedFlag =",compressedFlag )
+                wordIndexMetadata.append( (wordLength, numFixedLengthWords, compressedFlag) )
+                expectedWords += numFixedLengthWords
+            assert( byteOffset == len(binary) )
+            print( "expectedWords =", expectedWords )
+
+            # Now read in the word lists
+            binary = readRecord( wordIndexIndex+1, myFile )
+            byteOffset = 0
+            words = []
+            for wordLength, numFixedLengthWords, compressedFlag in wordIndexMetadata:
+                for n in range( 0, numFixedLengthWords ):
+                    if not compressedFlag:
+                        if len(binary)-byteOffset < wordLength: # Need to continue to the next record
+                            binary += myFile.read( 256 )
+                        word = getBinaryString( binary[byteOffset:], wordLength ); byteOffset += wordLength
+                        #print( wordLength, repr(word) )
+                        if word in ( "In", "the", "beginning", "God", "created" ):
+                            print( word, len(words) )
+                        words.append( word )
+                    else: # it's a compressed word
+                        #print( binary[byteOffset:byteOffset+32] )
+                        #print( "Can't understand compressed words yet" )
+                        #print( "NumWords", len(words) )
+                        #print( words[:256] )
+                        #print( wordLength, numFixedLengthWords, compressedFlag )
+                        continue
+                        word = ''
+                        for m in range( 0, wordLength ):
+                            print( binary[byteOffset:byteOffset+3] )
+                            ix, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
+                            print( ix )
+                            print( ' ', ix, words[ix] )
+                            word += words[ix]
+                        print( word )
+            #print( 'xyz', byteOffset, len(binary) )
+            #assert( byteOffset == len(binary) )
+            numWords = len(words)
+            print( "numWords =", numWords )
+
+            # Now read in the Bible book chapter/verse data
+            #print( bookIndexMetadata )
+            for shortName, longName, bookNumber, bookRecordLocation, numBookRecords in bookIndexMetadata:
+                print( shortName, longName, "bookNumber =",bookNumber, "bookRecordLocation =",bookRecordLocation, "numBookRecords =",numBookRecords )
+                #myFile.seek( mainIndex[bookRecordLocation] )
+                #binary = myFile.read( 102400 )
+                binary = readRecord( bookRecordLocation, myFile )
                 byteOffset = 0
-                if j==0:
-                    versionName = getBinaryString( binary, 16 ); byteOffset += 16
-                    versionInfo = getBinaryString( binary[byteOffset:], 128 ); byteOffset += 128
-                    separatorCharacter = getBinaryString( binary[byteOffset:], 1 ); byteOffset += 1
-                    print( repr(versionName), repr(versionInfo), repr(separatorCharacter) )
-                    versionAttribute, wordIndexIndex, numWordListRecords, numBooks = struct.unpack( ">BHHH",  binary[byteOffset:byteOffset+7] ); byteOffset += 7
-                    print( versionAttribute, wordIndexIndex, numWordListRecords, "numBooks =",numBooks )
-                    bookIndexMetadata = []
-                    for n in range(  0, numBooks ):
-                        bookNumber, bookRecordLocation, numBookRecords = struct.unpack( ">HHH",  binary[byteOffset:byteOffset+6] ); byteOffset += 6
-                        shortName = getBinaryString( binary[byteOffset:], 8 ); byteOffset += 8
-                        longName = getBinaryString( binary[byteOffset:], 32 ); byteOffset += 32
-                        print( ' ', shortName, longName, bookNumber, bookRecordLocation, numBookRecords )
-                        bookIndexMetadata.append( (shortName, longName, bookNumber, bookRecordLocation, numBookRecords) )
-                elif j==wordIndexIndex: # usually 1
-                    totalIndicesCount, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
-                    print( totalIndicesCount )
-                    wordIndexMetadata = []
-                    for n in range( 0, totalIndicesCount ):
-                        wordLength, numWords, compressedFlag, ignored = struct.unpack( ">HHBB",  binary[byteOffset:byteOffset+6] ); byteOffset += 6
-                        print( wordLength, numWords, compressedFlag )
-                        wordIndexMetadata.append( (wordLength, numWords, compressedFlag) )
-                elif j==2:
-                    words = []
-                    for wordLength, numWords, compressedFlag in wordIndexMetadata:
-                        for n in range( 0, numWords ):
-                            if not compressedFlag:
-                                if len(binary)-byteOffset < wordLength: # Need to continue to the next record
-                                    binary += myFile.read( 256 )
-                                word = getBinaryString( binary[byteOffset:], wordLength ); byteOffset += wordLength
-                                #print( wordLength, repr(word) )
-                                if word in ( "In", "the", "beginning", "God", "created" ):
-                                    print( word, len(words) )
-                                words.append( word )
-                            else: # it's a compressed word
-                                #print( "NumWords", len(words) )
-                                #print( words[:256] )
-                                #print( wordLength, numWords, compressedFlag )
-                                continue
-                                word = ''
-                                for m in range( 0, wordLength ):
-                                    print( binary[byteOffset:byteOffset+3] )
-                                    ix, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
-                                    print( ix )
-                                    print( ' ', ix, words[ix] )
-                                    word += words[ix]
-                                print( word )
-                        #if wordLength ==4: halt
-                    print( "NumWords", len(words) )
+                #print( binary )
+                numChapters, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
+                #print( numChapters )
+                for c in range( 0, numChapters ):
+                    accumulatedVerses, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
+                    #print( c+1, accumulatedVerses, "accumulatedVerses" )
+                for c in range( 0, numChapters ):
+                    accumulatedCharsPerChapter, = struct.unpack( ">I",  binary[byteOffset:byteOffset+4] ); byteOffset += 4
+                    #print( c+1, accumulatedCharsPerChapter, "accumulatedCharsPerChapter" )
+                for n in range( 0, accumulatedVerses ):
+                    accumulatedCharsPerVerse, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
+                    #print( n+1, accumulatedCharsPerVerse, "accumulatedCharsPerVerse" )
+                assert( byteOffset == len(binary) )
 
-                else:
-                    #print( bookIndexMetadata )
-                    for shortName, longName, bookNumber, bookRecordLocation, numBookRecords in bookIndexMetadata:
-                        print( shortName, longName, bookNumber, bookRecordLocation, numBookRecords )
-                        myFile.seek( mainIndex[bookRecordLocation] )
-                        binary = myFile.read( 102400 )
-                        #print( binary )
-                        numChapters, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
-                        #print( numChapters )
-                        for c in range( 0, numChapters ):
-                            accumulatedVerses, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
-                            #print( c+1, accumulatedVerses, "accumulatedVerses" )
-                        for c in range( 0, numChapters ):
-                            accumulatedCharsPerChapter, = struct.unpack( ">I",  binary[byteOffset:byteOffset+4] ); byteOffset += 4
-                            #print( c+1, accumulatedCharsPerChapter, "accumulatedCharsPerChapter" )
-                        #for n in range( 0, accumulatedVerses ):
-                        #    accumulatedCharsPerVerse, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
-                            #print( n+1, accumulatedCharsPerVerse, "accumulatedCharsPerVerse" )
-                        print( binary[byteOffset-10:byteOffset+1] )
-                        print( binary[byteOffset:byteOffset+20] )
-                        display = 0
-                        for n in range( 0, 5000 ):
-                            #ix, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
-                            b1, b2, b3, = struct.unpack( ">BBB",  binary[byteOffset:byteOffset+3] ); byteOffset += 3
-                            ix = b1 * 65536 + b2 * 256 + b3
-                            word = str(ix)
-                            if ix<len(words): word = words[ix]
-                            if display or word=='In':
-                                print( ix, word )
-                                display += 1
-                                if display > 5: display = 0
+            # Now read in the Bible word data
+            for shortName, longName, bookNumber, bookRecordLocation, numBookRecords in bookIndexMetadata:
+                print( shortName, longName, "bookNumber =",bookNumber, "bookRecordLocation =",bookRecordLocation, "numBookRecords =",numBookRecords )
+                #myFile.seek( mainIndex[bookRecordLocation] )
+                #binary = myFile.read( 102400 )
+                binary = readRecord( 435, myFile )
+                byteOffset = 0
+                print( len(binary), binary[:32] )
+                for n in range( 0, 20 ):
+                    #print( binary[n], words[binary[n]] )
+                    ix, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
+                    #ix += 1
+                    word = words[ix] if ix<len(words) else str(ix)+'/'+str(numWords)
+                    print( ix, word )
+                    if ix>expectedWords: print( "Too big" ); halt
+                #print( words[:2000] )
+                halt
 
-                        halt
+                #print( binary[byteOffset-10:byteOffset+1] )
+                #print( binary[byteOffset:byteOffset+20] )
+                #display = 0
+                #for n in range( 0, 5000 ):
+                    ##ix, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
+                    #b1, b2, b3, = struct.unpack( ">BBB",  binary[byteOffset:byteOffset+3] ); byteOffset += 3
+                    #ix = b1 * 65536 + b2 * 256 + b3
+                    #word = str(ix)
+                    #if ix<len(words): word = words[ix]
+                    #if display or word=='In':
+                        #print( ix, word )
+                        #display += 1
+                        #if display > 5: display = 0
 
-                    halt
-                    if j>30: halt
+                #halt
+
+            halt
+            if j>30: halt
         halt
     # end of PalmDBBible.load
 # end of PalmDBBible class

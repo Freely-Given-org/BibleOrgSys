@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # OSISXMLBible.py
-#   Last modified: 2013-12-18 by RJH (also update ProgVersion below)
+#   Last modified: 2013-12-21 by RJH (also update ProgVersion below)
 #
 # Module handling OSIS XML Bibles
 #
@@ -36,7 +36,7 @@ Updated Sept 2013 to also handle Kahunapule's "modified OSIS".
 """
 
 ProgName = "OSIS XML Bible format handler"
-ProgVersion = "0.29"
+ProgVersion = "0.30"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -210,7 +210,7 @@ class OSISXMLBible( Bible ):
         self.sourceFilepath, self.givenName, self.encoding  = sourceFilepath, givenName, encoding
 
 
-        self.title = self.version = self.date = None
+        self.title = self.version = self.date = self.source = None
         self.tree = self.header = self.frontMatter = self.divs = self.divTypesString = None
         #self.bkData, self.USFMBooks = OrderedDict(), OrderedDict()
         self.lang = self.language = None
