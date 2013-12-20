@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # UnknownBible.py
-#   Last modified: 2013-12-19 (also update ProgVersion below)
+#   Last modified: 2013-12-21 (also update ProgVersion below)
 #
 # Module handling a unknown Bible object
 #
@@ -37,7 +37,7 @@ Currently aware of the following Bible types:
 """
 
 ProgName = "Unknown Bible object handler"
-ProgVersion = "0.12"
+ProgVersion = "0.13"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -312,25 +312,25 @@ def demo():
     if Globals.verbosityLevel > 0: print( "{} V{}".format(ProgName, ProgVersion ) )
 
     # Now demo the class
-    testFolders = ( #"/home/robert/Logs",
-                    #"../../../../../Data/Work/Bibles/theWord modules/",
-                    #"../../../../../Data/Work/Bibles/Biola Unbound modules/",
-                    #"../../../../../Data/Work/Bibles/OpenSong Bibles/",
-                    #"../../../../../Data/Work/Bibles/Zefania modules/",
-                    #"../../../../../Data/Work/Bibles/YET modules/",
-                    #"../../../../../Data/Work/Matigsalug/Bible/MBTV/",
-                    #"../../../../../SSD/AutoProcesses/Processed/",
-                    #"Tests/DataFilesForTests/USFMTest1/", "Tests/DataFilesForTests/USFMTest2/",
-                    #"Tests/DataFilesForTests/USFM-OEB/", "Tests/DataFilesForTests/USFM-WEB/",
-                    #"Tests/DataFilesForTests/USXTest1/", "Tests/DataFilesForTests/USXTest2/",
-                    #"Tests/DataFilesForTests/USFXTest1/", "Tests/DataFilesForTests/USFXTest2/",
-                    #"Tests/DataFilesForTests/USFX-ASV/", "Tests/DataFilesForTests/USFX-WEB/",
-                    #"Tests/DataFilesForTests/OSISTest1/", "Tests/DataFilesForTests/OSISTest2/",
-                    #"Tests/DataFilesForTests/ZefaniaTest/", "Tests/DataFilesForTests/HaggaiTest/",
-                    #"Tests/DataFilesForTests/theWordTest/", "Tests/DataFilesForTests/MySwordTest/",
+    testFolders = ( "/home/robert/Logs",
+                    "../../../../../Data/Work/Bibles/theWord modules/",
+                    "../../../../../Data/Work/Bibles/Biola Unbound modules/",
+                    "../../../../../Data/Work/Bibles/OpenSong Bibles/",
+                    "../../../../../Data/Work/Bibles/Zefania modules/",
+                    "../../../../../Data/Work/Bibles/YET modules/",
+                    "../../../../../Data/Work/Matigsalug/Bible/MBTV/",
+                    "../../../../../SSD/AutoProcesses/Processed/",
+                    "Tests/DataFilesForTests/USFMTest1/", "Tests/DataFilesForTests/USFMTest2/",
+                    "Tests/DataFilesForTests/USFM-OEB/", "Tests/DataFilesForTests/USFM-WEB/",
+                    "Tests/DataFilesForTests/USXTest1/", "Tests/DataFilesForTests/USXTest2/",
+                    "Tests/DataFilesForTests/USFXTest1/", "Tests/DataFilesForTests/USFXTest2/",
+                    "Tests/DataFilesForTests/USFX-ASV/", "Tests/DataFilesForTests/USFX-WEB/",
+                    "Tests/DataFilesForTests/OSISTest1/", "Tests/DataFilesForTests/OSISTest2/",
+                    "Tests/DataFilesForTests/ZefaniaTest/", "Tests/DataFilesForTests/HaggaiTest/",
+                    "Tests/DataFilesForTests/theWordTest/", "Tests/DataFilesForTests/MySwordTest/",
                     "Tests/DataFilesForTests/YETTest/", "Tests/DataFilesForTests/PDBTest/",
                     "Tests/DataFilesForTests/DrupalTest/",
-                    #"Tests/DataFilesForTests/", # Up a level
+                    "Tests/DataFilesForTests/", # Up a level
                     )
     if 1: # Just find the files
         for j, testFolder in enumerate( testFolders ):

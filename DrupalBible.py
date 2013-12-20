@@ -40,7 +40,7 @@ Limitations:
 """
 
 ProgName = "Drupal Bible format handler"
-ProgVersion = "0.01"
+ProgVersion = "0.02"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -106,7 +106,7 @@ def DrupalBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
         if thisFilename.endswith( '.bc' ):
             if strictCheck or Globals.strictCheckingFlag:
                 firstLine = Globals.peekIntoFile( thisFilename, givenFolderName )
-                if not firstLine.startswith( "*Bible"):
+                if ( not firstLine.startswith( '\ufeff*Bible' ) ) and ( not firstLine.startswith( "*Bible" ) ):
                     if Globals.verbosityLevel > 2: print( "DrupalBible (unexpected) first line was '{}' in {}".format( firstLine, thisFilename ) )
                     continue
             lastFilenameFound = thisFilename
@@ -143,7 +143,7 @@ def DrupalBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
             if thisFilename.endswith( '.bc' ):
                 if strictCheck or Globals.strictCheckingFlag:
                     firstLine = Globals.peekIntoFile( thisFilename, tryFolderName )
-                    if not firstLine.startswith( "*Bible"):
+                    if ( not firstLine.startswith( '\ufeff*Bible' ) ) and ( not firstLine.startswith( "*Bible" ) ):
                         if Globals.verbosityLevel > 2: print( "DrupalBible (unexpected) first line was '{}' in {}".format( firstLine, thisFilname ) ); halt
                         continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
@@ -231,6 +231,7 @@ class DrupalBible( Bible ):
                         bits = line.split( '|' )
                         bookCode, bookFullName, bookShortName, numChapters = bits
                         assert( bookShortName == bookCode )
+                        #BBB = Globals.BibleBooksCodes.getBBBFromDrupalBibleCode( bookCode )
                         BBB = BBBConversionDict[bookCode] if bookCode in BBBConversionDict else bookCode # Temporary hack
                         bookDetails[BBB] = bookFullName, bookShortName, numChapters
 
@@ -239,6 +240,7 @@ class DrupalBible( Bible ):
                     bookCode, chapterNumberString, verseNumberString, lineMark, verseText = bits
                     #chapterNumber, verseNumber = int( chapterNumberString ), int( verseNumberString )
                     if lineMark: print( repr(lineMark) ); halt
+                    #BBB = Globals.BibleBooksCodes.getBBBFromDrupalBibleCode( bookCode )
                     BBB = BBBConversionDict[bookCode] if bookCode in BBBConversionDict else bookCode # Temporary hack
                     if BBB != lastBBB:
                         if lastBBB is not None:
