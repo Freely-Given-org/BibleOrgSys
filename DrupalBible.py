@@ -103,7 +103,7 @@ def DrupalBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
     numFound = 0
     lastFilenameFound = None
     for thisFilename in sorted( foundFiles ):
-        if thisFilename.endswith( '.Drupal' ):
+        if thisFilename.endswith( '.bc' ):
             if strictCheck or Globals.strictCheckingFlag:
                 firstLine = Globals.peekIntoFile( thisFilename, givenFolderName )
                 if not firstLine.startswith( "*Bible"):
@@ -114,7 +114,7 @@ def DrupalBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
     if numFound:
         if Globals.verbosityLevel > 2: print( "DrupalBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and autoLoad:
-            uB = DrupalBible( givenFolderName, lastFilenameFound[:-4] ) # Remove the end of the actual filename ".Drupal"
+            uB = DrupalBible( givenFolderName, lastFilenameFound[:-3] ) # Remove the end of the actual filename ".bc"
             uB.load() # Load and process the file
             return uB
         return numFound
@@ -140,7 +140,7 @@ def DrupalBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
 
         # See if there's an DrupalBible project here in this folder
         for thisFilename in sorted( foundSubfiles ):
-            if thisFilename.endswith( '.Drupal' ):
+            if thisFilename.endswith( '.bc' ):
                 if strictCheck or Globals.strictCheckingFlag:
                     firstLine = Globals.peekIntoFile( thisFilename, tryFolderName )
                     if not firstLine.startswith( "*Bible"):
@@ -176,7 +176,7 @@ class DrupalBible( Bible ):
 
         # Now we can set our object variables
         self.sourceFolder, self.givenName, self.encoding = sourceFolder, givenName, encoding
-        self.sourceFilepath =  os.path.join( self.sourceFolder, self.givenName+'.Drupal' )
+        self.sourceFilepath =  os.path.join( self.sourceFolder, self.givenName+'.bc' )
 
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):
@@ -193,203 +193,80 @@ class DrupalBible( Bible ):
         Load a single source file and load book elements.
         """
         if Globals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
-        mainIndex = []
 
-        def readRecord( recordNumber, thisFile ):
-            """
-            Uses mainIndex to read in the specified Drupal record.
-            """
-            assert( recordNumber < len(mainIndex) )
-            dataOffset = mainIndex[recordNumber] # Offset from the beginning of the file
-            thisFile.seek( dataOffset )
-            recordLength = 99999 if recordNumber==len(mainIndex)-1 else (mainIndex[recordNumber+1] - dataOffset)
-            print( "Reading {} bytes from record {} at offset {}".format( recordLength, recordNumber, dataOffset ) )
-            binaryInfo = thisFile.read( recordLength )
-            if recordNumber < len(mainIndex)-1: assert( len(binaryInfo) == recordLength )
-            return binaryInfo
-        # end of readRecord
+        status = 0 # 1 = getting chapters, 2 = getting verse data
+        lastLine, lineCount = '', 0
+        BBB = lastBBB = None
+        BBBConversionDict = { 'JUG':'JDG', '1SM':'SA1','2SM':'SA2', '1KG':'KI1','2KG':'KI2', '1CH':'CH1','2CH':'CH2',
+                                    'PS':'PSA', 'SON':'SNG', 'EZE':'EZK', 'JOE':'JOL', 'JON':'JNA',
+                             'MAK':'MRK', '1CO':'CO1','2CO':'CO2', 'PHL':'PHP', '1TS':'TH1','2TS':'TH2',
+                                    '1TM':'TI1','2TM':'TI2', '1PE':'PE1','2PE':'PE2', '1JN':'JN1','2JN':'JN2','3JN':'JN3', 'JUD':'JDE' } # Temporary hack
+        bookDetails = {}
+        with open( self.sourceFilepath, encoding=self.encoding ) as myFile: # Automatically closes the file when done
+            for line in myFile:
+                lineCount += 1
+                if lineCount==1 and self.encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF
+                    logging.info( "      DrupalBible.load: Detected UTF-16 Byte Order Marker" )
+                    line = line[1:] # Remove the UTF-8 Byte Order Marker
+                if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
+                if not line: continue # Just discard blank lines
 
-        def getBinaryString( binary, numBytes ):
-            """
-            """
-            if len(binary) < numBytes: halt # Too few bytes provided
-            result = ''
-            for j, value in enumerate( binary ):
-                if j>=numBytes or value==0: break
-                result += chr( value )
-            return result
-        # end of getBinaryString
+                #print ( 'DB file line is "' + line + '"' )
+                if line[0] == '#': continue # Just discard comment lines
+                lastLine = line
+                if lineCount == 1:
+                    if line != '*Bible':
+                        logging.warning( "Unknown DrupalBible first line: {}".format( repr(line) ) )
 
-        def getFileString( thisFile, numBytes ):
-            """
-            Used for reading the Drupal header information from the file.
-            """
-            return getBinaryString( thisFile.read( numBytes ), numBytes )
-        # end of getFileString
+                elif status == 0:
+                    if line == '*Chapter': status = 1
+                    else: # Get the version name details
+                        bits = line.split( '|' )
+                        shortName, fullName, language = bits
+                        self.name = fullName
 
-        with open( self.sourceFilepath, 'rb' ) as myFile: # Automatically closes the file when done
-            # Read the Drupal header info
-            name = getFileString( myFile, 32 )
-            binary4 = myFile.read( 4 )
-            attributes, version = struct.unpack( ">hh", binary4 )
-            binary12 = myFile.read( 12 )
-            creationDate, lastModificationDate, lastBackupDate = struct.unpack( ">III", binary12 )
-            binary12 = myFile.read( 12 )
-            modificationNumber, appInfoID, sortInfoID = struct.unpack( ">III", binary12 )
-            appType = getFileString( myFile, 4 )
-            creator = getFileString( myFile, 4 )
-            print( name, appType, creator )
-            binary4 = myFile.read( 4 )
-            uniqueIDseed = struct.unpack( ">I", binary4 )
-            binary6 = myFile.read( 6 )
-            nextRecordListID, numRecords = struct.unpack( ">IH", binary6 )
-            print( "numRecords =", numRecords )
-            for n in range( 0, numRecords ):
-                binary8 = myFile.read( 8 )
-                dataOffset, recordAttributes, id0, id1, id2 = struct.unpack( ">IBBBB", binary8 )
-                #print( '', dataOffset, recordAttributes, id0, id1, id2 )
-                mainIndex.append( dataOffset )
+                elif status == 1:
+                    if line == '*Context': status = 2
+                    else: # Get the book name details
+                        bits = line.split( '|' )
+                        bookCode, bookFullName, bookShortName, numChapters = bits
+                        assert( bookShortName == bookCode )
+                        BBB = BBBConversionDict[bookCode] if bookCode in BBBConversionDict else bookCode # Temporary hack
+                        bookDetails[BBB] = bookFullName, bookShortName, numChapters
 
-            # Now read the first record of actual Bible data which is the Bible header info
-            binary = readRecord( 0, myFile )
-            byteOffset = 0
-            versionName = getBinaryString( binary, 16 ); byteOffset += 16
-            versionInfo = getBinaryString( binary[byteOffset:], 128 ); byteOffset += 128
-            separatorCharacter = getBinaryString( binary[byteOffset:], 1 ); byteOffset += 1
-            print( repr(versionName), repr(versionInfo), repr(separatorCharacter) )
-            versionAttribute, wordIndexIndex, numWordListRecords, numBooks = struct.unpack( ">BHHH",  binary[byteOffset:byteOffset+7] ); byteOffset += 7
-            print( "versionAttribute =",versionAttribute )
-            if versionAttribute & 1: print( " Copy protected!" ); halt
-            if versionAttribute & 2: print( " Not byte shifted." )
-            else: halt # What does byte shifted mean???
-            if versionAttribute & 4: print( " Right-aligned!" ); halt
-            print( "wordIndexIndex = ",wordIndexIndex, "numWordListRecords =",numWordListRecords, "numBooks =",numBooks )
-            bookIndexMetadata = []
-            for n in range(  0, numBooks ):
-                bookNumber, bookRecordLocation, numBookRecords = struct.unpack( ">HHH",  binary[byteOffset:byteOffset+6] ); byteOffset += 6
-                shortName = getBinaryString( binary[byteOffset:], 8 ); byteOffset += 8
-                longName = getBinaryString( binary[byteOffset:], 32 ); byteOffset += 32
-                print( '  BOOK:', n+1, shortName, longName, bookNumber, bookRecordLocation, numBookRecords )
-                bookIndexMetadata.append( (shortName, longName, bookNumber, bookRecordLocation, numBookRecords) )
-            assert( byteOffset == len(binary) )
+                elif status == 2: # Get the verse text
+                    bits = line.split( '|' )
+                    bookCode, chapterNumberString, verseNumberString, lineMark, verseText = bits
+                    #chapterNumber, verseNumber = int( chapterNumberString ), int( verseNumberString )
+                    if lineMark: print( repr(lineMark) ); halt
+                    BBB = BBBConversionDict[bookCode] if bookCode in BBBConversionDict else bookCode # Temporary hack
+                    if BBB != lastBBB:
+                        if lastBBB is not None:
+                            self.saveBook( thisBook )
+                        thisBook = BibleBook( self.name, BBB )
+                        thisBook.objectNameString = "Drupal Bible Book object"
+                        thisBook.objectTypeString = "Drupal"
+                        lastChapterNumberString = None
+                        lastBBB = BBB
+                    if chapterNumberString != lastChapterNumberString:
+                        thisBook.appendLine( 'c', chapterNumberString )
+                        lastChapterNumberString = chapterNumberString
+                    verseText = verseText.replace( '<', '\\it ' ).replace( '>', '\\it*' )
+                    thisBook.appendLine( 'v', verseNumberString + ' ' + verseText )
 
-            # Now read the word index info
-            binary = readRecord( wordIndexIndex, myFile )
-            byteOffset = 0
-            totalIndicesCount, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
-            print( "totalIndicesCount =",totalIndicesCount )
-            wordIndexMetadata = []
-            expectedWords = 0
-            for n in range( 0, totalIndicesCount ):
-                wordLength, numFixedLengthWords, compressedFlag, ignored = struct.unpack( ">HHBB",  binary[byteOffset:byteOffset+6] ); byteOffset += 6
-                print( "wordLength =",wordLength, "numFixedLengthWords =",numFixedLengthWords, "compressedFlag =",compressedFlag )
-                wordIndexMetadata.append( (wordLength, numFixedLengthWords, compressedFlag) )
-                expectedWords += numFixedLengthWords
-            assert( byteOffset == len(binary) )
-            print( "expectedWords =", expectedWords )
+                else: halt
 
-            # Now read in the word lists
-            binary = readRecord( wordIndexIndex+1, myFile )
-            byteOffset = 0
-            words = []
-            for wordLength, numFixedLengthWords, compressedFlag in wordIndexMetadata:
-                for n in range( 0, numFixedLengthWords ):
-                    if not compressedFlag:
-                        if len(binary)-byteOffset < wordLength: # Need to continue to the next record
-                            binary += myFile.read( 256 )
-                        word = getBinaryString( binary[byteOffset:], wordLength ); byteOffset += wordLength
-                        #print( wordLength, repr(word) )
-                        if word in ( "In", "the", "beginning", "God", "created" ):
-                            print( word, len(words) )
-                        words.append( word )
-                    else: # it's a compressed word
-                        #print( binary[byteOffset:byteOffset+32] )
-                        #print( "Can't understand compressed words yet" )
-                        #print( "NumWords", len(words) )
-                        #print( words[:256] )
-                        #print( wordLength, numFixedLengthWords, compressedFlag )
-                        continue
-                        word = ''
-                        for m in range( 0, wordLength ):
-                            print( binary[byteOffset:byteOffset+3] )
-                            ix, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
-                            print( ix )
-                            print( ' ', ix, words[ix] )
-                            word += words[ix]
-                        print( word )
-            #print( 'xyz', byteOffset, len(binary) )
-            #assert( byteOffset == len(binary) )
-            numWords = len(words)
-            print( "numWords =", numWords )
-
-            # Now read in the Bible book chapter/verse data
-            #print( bookIndexMetadata )
-            for shortName, longName, bookNumber, bookRecordLocation, numBookRecords in bookIndexMetadata:
-                print( shortName, longName, "bookNumber =",bookNumber, "bookRecordLocation =",bookRecordLocation, "numBookRecords =",numBookRecords )
-                #myFile.seek( mainIndex[bookRecordLocation] )
-                #binary = myFile.read( 102400 )
-                binary = readRecord( bookRecordLocation, myFile )
-                byteOffset = 0
-                #print( binary )
-                numChapters, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
-                #print( numChapters )
-                for c in range( 0, numChapters ):
-                    accumulatedVerses, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
-                    #print( c+1, accumulatedVerses, "accumulatedVerses" )
-                for c in range( 0, numChapters ):
-                    accumulatedCharsPerChapter, = struct.unpack( ">I",  binary[byteOffset:byteOffset+4] ); byteOffset += 4
-                    #print( c+1, accumulatedCharsPerChapter, "accumulatedCharsPerChapter" )
-                for n in range( 0, accumulatedVerses ):
-                    accumulatedCharsPerVerse, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
-                    #print( n+1, accumulatedCharsPerVerse, "accumulatedCharsPerVerse" )
-                assert( byteOffset == len(binary) )
-
-            # Now read in the Bible word data
-            for shortName, longName, bookNumber, bookRecordLocation, numBookRecords in bookIndexMetadata:
-                print( shortName, longName, "bookNumber =",bookNumber, "bookRecordLocation =",bookRecordLocation, "numBookRecords =",numBookRecords )
-                #myFile.seek( mainIndex[bookRecordLocation] )
-                #binary = myFile.read( 102400 )
-                binary = readRecord( 435, myFile )
-                byteOffset = 0
-                print( len(binary), binary[:32] )
-                for n in range( 0, 20 ):
-                    #print( binary[n], words[binary[n]] )
-                    ix, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
-                    #ix += 1
-                    word = words[ix] if ix<len(words) else str(ix)+'/'+str(numWords)
-                    print( ix, word )
-                    if ix>expectedWords: print( "Too big" ); halt
-                #print( words[:2000] )
-                halt
-
-                #print( binary[byteOffset-10:byteOffset+1] )
-                #print( binary[byteOffset:byteOffset+20] )
-                #display = 0
-                #for n in range( 0, 5000 ):
-                    ##ix, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
-                    #b1, b2, b3, = struct.unpack( ">BBB",  binary[byteOffset:byteOffset+3] ); byteOffset += 3
-                    #ix = b1 * 65536 + b2 * 256 + b3
-                    #word = str(ix)
-                    #if ix<len(words): word = words[ix]
-                    #if display or word=='In':
-                        #print( ix, word )
-                        #display += 1
-                        #if display > 5: display = 0
-
-                #halt
-
-            halt
-            if j>30: halt
-        halt
+        # Save the final book
+        self.saveBook( thisBook )
     # end of DrupalBible.load
 # end of DrupalBible class
 
 
 
-def testYB( TUBfilename ):
+def testDB( TUBfilename ):
     # Crudely demonstrate the Drupal Bible class
     import VerseReferences
-    TUBfolder = "../../../../../Data/Work/Bibles/Drupal modules/" # Must be the same as below
+    TUBfolder = "../../../../../Data/Work/Bibles/Drupal Bibles/" # Must be the same as below
 
     if Globals.verbosityLevel > 1: print( _("Demonstrating the Drupal Bible class...") )
     if Globals.verbosityLevel > 0: print( "  Test folder is '{}' '{}'".format( TUBfolder, TUBfilename ) )
@@ -412,7 +289,7 @@ def testYB( TUBfilename ):
         except KeyError:
             verseText = "Verse not available!"
         if Globals.verbosityLevel > 1: print( reference, shortText, verseText )
-# end of testYB
+# end of testDB
 
 
 def demo():
@@ -422,7 +299,7 @@ def demo():
     if Globals.verbosityLevel > 0: print( ProgNameVersion )
 
 
-    testFolder = "../../../../../Data/Work/Bibles/PalmBiblePlus/"
+    testFolder = "../../../../../Data/Work/Bibles/Drupal Bibles/"
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
@@ -439,14 +316,14 @@ def demo():
 
     if 1: # specified modules
         single = ( "kjv", )
-        good = ( "kjv", "kjv-red", "in-tsi", )
+        good = ( "kjv", )
         nonEnglish = (  )
         bad = ( )
         for j, testFilename in enumerate( good ): # Choose one of the above: single, good, nonEnglish, bad
             if Globals.verbosityLevel > 1: print( "\nDrupal C{}/ Trying {}".format( j+1, testFilename ) )
             #myTestFolder = os.path.join( testFolder, testFilename+'/' )
             #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
-            testYB( testFilename )
+            testDB( testFilename )
 
 
     if 1: # all discovered modules in the test folder
@@ -460,13 +337,13 @@ def demo():
             if Globals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
             parameters = [folderName for folderName in sorted(foundFolders)]
             with multiprocessing.Pool( processes=Globals.maxProcesses ) as pool: # start worker processes
-                results = pool.map( testYB, parameters ) # have the pool do our loads
+                results = pool.map( testDB, parameters ) # have the pool do our loads
                 assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
                 if Globals.verbosityLevel > 1: print( "\nDrupal D{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
-                testYB( someFolder )
+                testDB( someFolder )
 # end of demo
 
 

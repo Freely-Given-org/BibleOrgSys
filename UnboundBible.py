@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # UnboundBible.py
-#   Last modified: 2013-12-18 by RJH (also update ProgVersion below)
+#   Last modified: 2013-12-21 by RJH (also update ProgVersion below)
 #
 # Module handling Biola University "unbound" Bible files
 #
@@ -355,7 +355,7 @@ class UnboundBible( Bible ):
                 lastVText = vText
                 lastVerseNumber = verseNumber
 
-        # Save the final bookCode
+        # Save the final book
         self.saveBook( thisBook )
     # end of UnboundBible.load
 # end of UnboundBible class

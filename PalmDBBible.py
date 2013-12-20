@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # PalmDBBible.py
-#   Last modified: 2013-12-20 by RJH (also update ProgVersion below)
+#   Last modified: 2013-12-21 by RJH (also update ProgVersion below)
 #
 # Module handling PDB Bible files
 #
@@ -408,10 +408,10 @@ class PalmDBBible( Bible ):
 
 
 
-def testYB( TUBfilename ):
+def testPB( TUBfilename ):
     # Crudely demonstrate the PDB Bible class
     import VerseReferences
-    TUBfolder = "../../../../../Data/Work/Bibles/PDB modules/" # Must be the same as below
+    TUBfolder = "../../../../../Data/Work/Bibles/PalmBiblePlus/" # Must be the same as below
 
     if Globals.verbosityLevel > 1: print( _("Demonstrating the PDB Bible class...") )
     if Globals.verbosityLevel > 0: print( "  Test folder is '{}' '{}'".format( TUBfolder, TUBfilename ) )
@@ -434,7 +434,7 @@ def testYB( TUBfilename ):
         except KeyError:
             verseText = "Verse not available!"
         if Globals.verbosityLevel > 1: print( reference, shortText, verseText )
-# end of testYB
+# end of testPB
 
 
 def demo():
@@ -468,7 +468,7 @@ def demo():
             if Globals.verbosityLevel > 1: print( "\nPDB C{}/ Trying {}".format( j+1, testFilename ) )
             #myTestFolder = os.path.join( testFolder, testFilename+'/' )
             #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
-            testYB( testFilename )
+            testPB( testFilename )
 
 
     if 1: # all discovered modules in the test folder
@@ -482,13 +482,13 @@ def demo():
             if Globals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
             parameters = [folderName for folderName in sorted(foundFolders)]
             with multiprocessing.Pool( processes=Globals.maxProcesses ) as pool: # start worker processes
-                results = pool.map( testYB, parameters ) # have the pool do our loads
+                results = pool.map( testPB, parameters ) # have the pool do our loads
                 assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
                 if Globals.verbosityLevel > 1: print( "\nPDB D{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
-                testYB( someFolder )
+                testPB( someFolder )
 # end of demo
 
 
