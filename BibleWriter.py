@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-12-22 by RJH (also update ProgVersion below)
+#   Last modified: 2013-12-23 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -50,7 +50,7 @@ Contains functions:
     toHTML5( outputFolder=None, controlDict=None, validationSchema=None )
     toTeX( outputFolder=None )
     toSwordSearcher( outputFolder=None )
-    toDrupal( outputFolder=None )
+    toDrupalBible( outputFolder=None )
     doAllExports( givenOutputFolderName=None )
 """
 
@@ -4571,7 +4571,7 @@ class BibleWriter( InternalBible ):
                             'ip':'IP', }
         cMarkerTranslate = { 'bk':'BK', 'add':'ADD', 'nd':'ND', 'wj':'WJ', 'sig':'SIG',
                             'bdit':'BDIT', 'it':'IT', 'bd':'BD', 'em':'EM', 'sc':'SC',
-                            'ior':'IOR', }
+                            'ior':'IOR', 'k':'KW', }
         mtMarkerTranslate = { 'mt1':'BibleMainTitle', 'mt2':'BibleTitleTwo', 'mt3':'BibleTitleThree' }
 
         def writeTeXHeader( writer ):
@@ -4641,8 +4641,12 @@ class BibleWriter( InternalBible ):
                 fullCharMarker = '\\' + charMarker + ' '
                 if fullCharMarker in text:
                     endCharMarker = '\\' + charMarker + '*'
-                    text = text.replace( fullCharMarker, '~^~BibleCharacterStyle'+cMarkerTranslate[charMarker]+'{' ) \
+                    if charMarker in cMarkerTranslate:
+                        text = text.replace( fullCharMarker, '~^~BibleCharacterStyle'+cMarkerTranslate[charMarker]+'{' ) \
                                 .replace( endCharMarker, '}' )
+                    else:
+                        logging.warning( "toTeX: Don't know how to encode '{}' marker".format( charMarker ) )
+                        text = text.replace( fullCharMarker, '' ).replace( endCharMarker, '' )
 
             if '\\' in text: # Catch any left-overs
                 if Globals.debugFlag or Globals.verbosityLevel > 2:
@@ -4869,19 +4873,19 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toDrupal( self, outputFolder=None ):
+    def toDrupalBible( self, outputFolder=None ):
         """
-        Write the pseudo USFM out into the Drupal pre-Forge format.
+        Write the pseudo USFM out into the DrupalBible format.
         """
-        DrupalBBBConversionDict = { 'JUG':'JDG', '1SM':'SA1','2SM':'SA2', '1KG':'KI1','2KG':'KI2', '1CH':'CH1','2CH':'CH2',
+        DrupalBibleBBBConversionDict = { 'JUG':'JDG', '1SM':'SA1','2SM':'SA2', '1KG':'KI1','2KG':'KI2', '1CH':'CH1','2CH':'CH2',
                                     'PS':'PSA', 'SON':'SNG', 'EZE':'EZK', 'JOE':'JOL', 'JON':'JNA',
                              'MAK':'MRK', '1CO':'CO1','2CO':'CO2', 'PHL':'PHP', '1TS':'TH1','2TS':'TH2',
                                     '1TM':'TI1','2TM':'TI2', '1PE':'PE1','2PE':'PE2', '1JN':'JN1','2JN':'JN2','3JN':'JN3', 'JUD':'JDE' } # Temporary hack
-        if Globals.verbosityLevel > 1: print( "Running BibleWriter:toDrupal..." )
+        if Globals.verbosityLevel > 1: print( "Running BibleWriter:toDrupalBible..." )
         if Globals.debugFlag: assert( self.books )
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolder: outputFolder = "OutputFiles/BOS_Drupal_" + ("Reexport/" if self.objectTypeString=="Drupal" else "Export/")
+        if not outputFolder: outputFolder = "OutputFiles/BOS_DrupalBible_" + ("Reexport/" if self.objectTypeString=="DrupalBible" else "Export/")
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
 
         unhandledMarkers = set()
@@ -4893,48 +4897,48 @@ class BibleWriter( InternalBible ):
         #print( '\nsettings', dir(self.settingsDict) )
 
 
-        def getDrupalCode( givenBBB ):
+        def getDrupalBibleCode( givenBBB ):
             """
             Temporary
             """
-            for code,BBB in DrupalBBBConversionDict.items():
+            for code,BBB in DrupalBibleBBBConversionDict.items():
                 if givenBBB == BBB: return code
             return givenBBB
-        # end of getDrupalCode
+        # end of getDrupalBibleCode
 
 
-        def writeDrupalHeader( writer ):
+        def writeDrupalBibleHeader( writer ):
             """
             Write the header data
             """
             writer.write( "\ufeff*Bible\n#shortname fullname language\n" ) # Starts with BOM
             writer.write( "{}|{}|{}\n\n".format( self.name, self.name, 'en' ) )
-        # end of toDrupal.writeDrupalHeader
+        # end of toDrupalBible.writeDrupalBibleHeader
 
 
-        def writeDrupalChapters( writer ):
+        def writeDrupalBibleChapters( writer ):
             """
             Write the header data
             """
             writer.write( "*Chapter\n#book,fullname,shortname,chap-count\n" )
             for BBB,bookObject in self.books.items():
                 numChapters = None
-                bookCode = getDrupalCode( BBB )
+                bookCode = getDrupalBibleCode( BBB )
                 for entry in bookObject._processedLines:
                     marker = entry.getMarker()
                     if marker == 'c': numChapters = entry.getCleanText()
                 if numChapters:
                     writer.write( "{}|{}|{}|{}\n".format( bookCode, bookObject.assumedBookName, bookCode, numChapters ) )
             writer.write( '\n*Context\n#Book,Chapter,Verse,LineMark,Context\n' )
-        # end of toDrupal.writeDrupalChapters
+        # end of toDrupalBible.writeDrupalBibleChapters
 
 
-        def writeDrupalBook( writer, BBB, bookObject ):
+        def writeDrupalBibleBook( writer, BBB, bookObject ):
             """
-            Convert the internal Bible data to Drupal output.
+            Convert the internal Bible data to DrupalBible output.
             """
             pseudoUSFMData = bookObject._processedLines
-            bookCode = getDrupalCode( BBB )
+            bookCode = getDrupalBibleCode( BBB )
             started, accumulator = False, "" # Started flag ignores fields in the book introduction
             linemark = ''
             for entry in pseudoUSFMData:
@@ -4957,33 +4961,33 @@ class BibleWriter( InternalBible ):
                     if started: accumulator += (' ' if accumulator else '') + text
                 else: unhandledMarkers.add( marker )
             if accumulator: writer.write( "{}|{}|{}|{}\{}\n".format( bookCode, C, V, linemark, accumulator ) )
-        # end of toDrupal:writeDrupalBook
+        # end of toDrupalBible:writeDrupalBibleBook
 
 
-        if Globals.verbosityLevel > 2: print( _("  Exporting to Drupal format...") )
+        if Globals.verbosityLevel > 2: print( _("  Exporting to DrupalBible format...") )
         filename = "Bible.txt"
         filepath = os.path.join( outputFolder, Globals.makeSafeFilename( filename ) )
         if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
         with open( filepath, 'wt' ) as myFile:
-            writeDrupalHeader( myFile )
-            writeDrupalChapters( myFile )
+            writeDrupalBibleHeader( myFile )
+            writeDrupalBibleChapters( myFile )
             for BBB,bookObject in self.books.items():
-                try: writeDrupalBook( myFile, BBB, bookObject )
-                except: logging.critical( "BibleWriter.toDrupal: Unable to output {}".format( BBB ) )
+                try: writeDrupalBibleBook( myFile, BBB, bookObject )
+                except: logging.critical( "BibleWriter.toDrupalBible: Unable to output {}".format( BBB ) )
 
         if unhandledMarkers:
-            logging.warning( "toDrupal: Unhandled markers were {}".format( unhandledMarkers ) )
+            logging.warning( "toDrupalBible: Unhandled markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:
-                print( "  " + _("WARNING: Unhandled toDrupal markers were {}").format( unhandledMarkers ) )
+                print( "  " + _("WARNING: Unhandled toDrupalBible markers were {}").format( unhandledMarkers ) )
 
         # Now create a zipped version
-        if Globals.verbosityLevel > 2: print( "  Zipping {} Drupal file...".format( filename ) )
+        if Globals.verbosityLevel > 2: print( "  Zipping {} DrupalBible file...".format( filename ) )
         zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
         zf.write( filepath )
         zf.close()
 
         return True
-    # end of BibleWriter.toDrupal
+    # end of BibleWriter.toDrupalBible
 
 
     def toPickle( self, outputFolder=None ):
@@ -5059,7 +5063,7 @@ class BibleWriter( InternalBible ):
         htmlOutputFolder = os.path.join( givenOutputFolderName, "BOS_HTML5_" + "Export/" )
         TeXOutputFolder = os.path.join( givenOutputFolderName, "BOS_TeX_" + "Export/" )
         SwSOutputFolder = os.path.join( givenOutputFolderName, "BOS_SwordSearcher_" + "Export/" )
-        DrOutputFolder = os.path.join( givenOutputFolderName, "BOS_Drupal_" + ("Reexport/" if self.objectTypeString=='Drupal' else "Export/" ) )
+        DrOutputFolder = os.path.join( givenOutputFolderName, "BOS_DrupalBible_" + ("Reexport/" if self.objectTypeString=='DrupalBible' else "Export/" ) )
 
         # Pickle this Bible object
         # NOTE: This must be done before self.__setupWriter is called
@@ -5087,7 +5091,7 @@ class BibleWriter( InternalBible ):
             ESwExportResult = self.toESword( ESwOutputFolder )
             htmlExportResult = self.toHTML5( htmlOutputFolder )
             SwSExportResult = self.toSwordSearcher( SwSOutputFolder )
-            DrExportResult = self.toDrupal( DrOutputFolder )
+            DrExportResult = self.toDrupalBible( DrOutputFolder )
             TeXExportResult = self.toTeX( TeXOutputFolder ) # Put this last since it's slowest
         elif Globals.maxProcesses > 1: # Process all the exports with different threads
             # DON'T KNOW WHY THIS CAUSES A SEGFAULT
@@ -5191,11 +5195,11 @@ class BibleWriter( InternalBible ):
                 SwSExportResult = False
                 print("BibleWriter.doAllExports.toSwordSearcher Unexpected error:", sys.exc_info()[0], err)
                 logging.error( "BibleWriter.doAllExports.toSwordSearcher: Oops, failed!" )
-            try: DrExportResult = self.toDrupal( DrOutputFolder )
+            try: DrExportResult = self.toDrupalBible( DrOutputFolder )
             except Exception as err:
                 DrExportResult = False
-                print("BibleWriter.doAllExports.toDrupal Unexpected error:", sys.exc_info()[0], err)
-                logging.error( "BibleWriter.doAllExports.toDrupal: Oops, failed!" )
+                print("BibleWriter.doAllExports.toDrupalBible Unexpected error:", sys.exc_info()[0], err)
+                logging.error( "BibleWriter.doAllExports.toDrupalBible: Oops, failed!" )
             # Do TeX export last because it's slowest
             try: TeXExportResult = self.toTeX( TeXOutputFolder )
             except Exception as err:
@@ -5257,7 +5261,7 @@ def demo():
                 UB.load()
                 if Globals.verbosityLevel > 0: print( '\nBWr A'+str(j+1)+'/', UB )
                 if Globals.strictCheckingFlag: UB.check()
-                #result = UB.toDrupal(); halt
+                #result = UB.toDrupalBible(); halt
                 doaResults = UB.doAllExports()
                 if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
                     outputFolder = "OutputFiles/BOS_USFM_Reexport/"

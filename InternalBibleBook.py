@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-12-22 by RJH (also update ProgVersion below)
+#   Last modified: 2013-12-23 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -1162,7 +1162,7 @@ class InternalBibleBook:
         Returns a list with the best guess first.
         """
         if not self._processedFlag:
-            print( "InternalBibleBook: processing lines from 'getAssumedBookNames'" )
+            #print( "InternalBibleBook: processing lines from 'getAssumedBookNames'" ) # This is usually the first call from the Bible Drop Box
             self.processLines()
         if Globals.debugFlag: assert( self._processedLines )
         results = []
@@ -1335,7 +1335,8 @@ class InternalBibleBook:
 
         We later use these discoveries to note when the translation veers from their norm.
 
-        Called from InternalBible.py (which first creates the Bible-wide dictionary).
+        Called from InternalBible.py (which first creates the Bible-wide dictionary
+            and then consolidates the individual results).
         """
         if not self._processedFlag:
             print( "InternalBibleBook: processing lines from 'discover'" )

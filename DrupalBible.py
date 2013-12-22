@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 #
 # DrupalBible.py
-#   Last modified: 2013-12-21 by RJH (also update ProgVersion below)
+#   Last modified: 2013-12-22 by RJH (also update ProgVersion below)
 #
-# Module handling Drupal Bible files
+# Module handling DrupalBible Bible files
 #
 # Copyright (C) 2013 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
@@ -24,7 +24,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module reading and loading Drupal Bible files.
+Module reading and loading DrupalBible Bible files.
 
 
 http://drupalbible.org/node/47
@@ -73,8 +73,8 @@ Limitations:
     Need to do Bible books codes properly -- current implementation is just a hack
 """
 
-ProgName = "Drupal Bible format handler"
-ProgVersion = "0.02"
+ProgName = "DrupalBible Bible format handler"
+ProgVersion = "0.03"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -95,14 +95,14 @@ filenameEndingsToAccept = ('.BC',) # Must be UPPERCASE
 
 def DrupalBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
     """
-    Given a folder, search for Drupal Bible files or folders in the folder and in the next level down.
+    Given a folder, search for DrupalBible Bible files or folders in the folder and in the next level down.
 
     Returns False if an error is found.
 
     if autoLoad is false (default)
         returns None, or the number of Bibles found.
 
-    if autoLoad is true and exactly one Drupal Bible is found,
+    if autoLoad is true and exactly one DrupalBible Bible is found,
         returns the loaded DrupalBible object.
     """
     if Globals.verbosityLevel > 2: print( "DrupalBibleFileCheck( {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad ) )
@@ -203,8 +203,8 @@ class DrupalBible( Bible ):
         """
          # Setup and initialise the base class first
         Bible.__init__( self )
-        self.objectNameString = "Drupal Bible object"
-        self.objectTypeString = "Drupal"
+        self.objectNameString = "DrupalBible Bible object"
+        self.objectTypeString = "DrupalBible"
 
         # Now we can set our object variables
         self.sourceFolder, self.givenName, self.encoding = sourceFolder, givenName, encoding
@@ -278,8 +278,8 @@ class DrupalBible( Bible ):
                         if lastBBB is not None:
                             self.saveBook( thisBook )
                         thisBook = BibleBook( self.name, BBB )
-                        thisBook.objectNameString = "Drupal Bible Book object"
-                        thisBook.objectTypeString = "Drupal"
+                        thisBook.objectNameString = "DrupalBible Bible Book object"
+                        thisBook.objectTypeString = "DrupalBible"
                         lastChapterNumberString = None
                         lastBBB = BBB
                     if chapterNumberString != lastChapterNumberString:
@@ -298,11 +298,11 @@ class DrupalBible( Bible ):
 
 
 def testDB( TUBfilename ):
-    # Crudely demonstrate the Drupal Bible class
+    # Crudely demonstrate the DrupalBible class
     import VerseReferences
-    TUBfolder = "../../../../../Data/Work/Bibles/Drupal Bibles/" # Must be the same as below
+    TUBfolder = "../../../../../Data/Work/Bibles/DrupalBible Bibles/" # Must be the same as below
 
-    if Globals.verbosityLevel > 1: print( _("Demonstrating the Drupal Bible class...") )
+    if Globals.verbosityLevel > 1: print( _("Demonstrating the DrupalBible Bible class...") )
     if Globals.verbosityLevel > 0: print( "  Test folder is '{}' '{}'".format( TUBfolder, TUBfilename ) )
     ub = DrupalBible( TUBfolder, TUBfilename )
     ub.load() # Load and process the file
@@ -333,19 +333,19 @@ def demo():
     if Globals.verbosityLevel > 0: print( ProgNameVersion )
 
 
-    testFolder = "../../../../../Data/Work/Bibles/Drupal Bibles/"
+    testFolder = "../../../../../Data/Work/Bibles/DrupalBible Bibles/"
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         result1 = DrupalBibleFileCheck( testFolder )
-        if Globals.verbosityLevel > 1: print( "Drupal TestA1", result1 )
+        if Globals.verbosityLevel > 1: print( "DrupalBible TestA1", result1 )
         result2 = DrupalBibleFileCheck( testFolder, autoLoad=True )
-        if Globals.verbosityLevel > 1: print( "Drupal TestA2", result2 )
+        if Globals.verbosityLevel > 1: print( "DrupalBible TestA2", result2 )
         #testSubfolder = os.path.join( testFolder, 'kjv/' )
         #result3 = DrupalBibleFileCheck( testSubfolder )
-        #if Globals.verbosityLevel > 1: print( "Drupal TestB1", result3 )
+        #if Globals.verbosityLevel > 1: print( "DrupalBible TestB1", result3 )
         #result4 = DrupalBibleFileCheck( testSubfolder, autoLoad=True )
-        #if Globals.verbosityLevel > 1: print( "Drupal TestB2", result4 )
+        #if Globals.verbosityLevel > 1: print( "DrupalBible TestB2", result4 )
 
 
     if 1: # specified modules
@@ -354,7 +354,7 @@ def demo():
         nonEnglish = (  )
         bad = ( )
         for j, testFilename in enumerate( good ): # Choose one of the above: single, good, nonEnglish, bad
-            if Globals.verbosityLevel > 1: print( "\nDrupal C{}/ Trying {}".format( j+1, testFilename ) )
+            if Globals.verbosityLevel > 1: print( "\nDrupalBible C{}/ Trying {}".format( j+1, testFilename ) )
             #myTestFolder = os.path.join( testFolder, testFilename+'/' )
             #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
             testDB( testFilename )
@@ -375,7 +375,7 @@ def demo():
                 assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                if Globals.verbosityLevel > 1: print( "\nDrupal D{}/ Trying {}".format( j+1, someFolder ) )
+                if Globals.verbosityLevel > 1: print( "\nDrupalBible D{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testDB( someFolder )
 # end of demo
