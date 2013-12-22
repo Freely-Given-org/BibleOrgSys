@@ -50,6 +50,7 @@ Contains functions:
     toHTML5( outputFolder=None, controlDict=None, validationSchema=None )
     toTeX( outputFolder=None )
     toSwordSearcher( outputFolder=None )
+    toDrupal( outputFolder=None )
     doAllExports( givenOutputFolderName=None )
 """
 
@@ -2857,7 +2858,8 @@ class BibleWriter( InternalBible ):
                 #print( " ", haveOpenIntro, haveOpenOutline, haveOpenMajorSection, haveOpenSection, haveOpenSubsection, needChapterEID, haveOpenParagraph, haveOpenVsID, haveOpenLG, haveOpenL )
                 #print( toSwordGlobals['idStack'] )
                 if marker in ( 'id', 'ide', 'h1', 'mt2', 'c#', ): continue # We just ignore these markers
-                if marker=='mt1': writerObject.writeLineOpenClose( 'title', checkText(text) )
+                if marker=='mt1':
+                    if text: writerObject.writeLineOpenClose( 'title', checkText(text) )
                 elif marker=='is1' or marker=='imt1':
                     if haveOpenIntro: # already -- assume it's a second one
                         closeAnyOpenParagraph()
@@ -4758,7 +4760,7 @@ class BibleWriter( InternalBible ):
                     allFile.write( "\\BibleBookEnd\n" )
                     bookFile.write( "\\BibleBookEnd\n" )
                     bookFile.write( "\\end{document}\n" )
-                makePDFs( BBB, filepath, '20s' )
+                makePDFs( BBB, filepath, '30s' )
             allFile.write( "\\end{document}\n" )
         makePDFs( 'All', allFilepath, '3m' )
         if unhandledMarkers:
@@ -4920,7 +4922,7 @@ class BibleWriter( InternalBible ):
                 for entry in bookObject._processedLines:
                     marker = entry.getMarker()
                     if marker == 'c': numChapters = entry.getCleanText()
-                writer.write( "{}|{}|{}|{}\n".format( bookCode, bookObject.name, bookCode, numChapters ) )
+                writer.write( "{}|{}|{}|{}\n".format( bookCode, bookObject.assumedBookName, bookCode, numChapters ) )
             writer.write( '\n*Context\n#Book,Chapter,Verse,LineMark,Context\n' )
         # end of toDrupal.writeDrupalChapters
 
@@ -4937,7 +4939,7 @@ class BibleWriter( InternalBible ):
                 if marker in ( 'id', 'ide', 'h', 'toc1', 'toc2', 'toc3', ): pass # Just ignore these metadata fields
                 elif marker in ( 'mt1', 'mt2', ): pass # Just ignore these book heading fields
                 elif marker in ( 'iot', 'io1', 'io2', 'ip', 'is1', ): pass # Just ignore these introduction fields
-                elif marker in ( 'c#', ): pass # Just ignore these unneeded fields
+                elif marker in ( 'rem', 'c#', ): pass # Just ignore these unneeded fields
                 elif marker == 'c': C, V = text, '1'
                 elif marker == 'v':
                     started = True
@@ -5080,9 +5082,9 @@ class BibleWriter( InternalBible ):
             MySwExportResult = self.toMySword( MySwOutputFolder )
             ESwExportResult = self.toESword( ESwOutputFolder )
             htmlExportResult = self.toHTML5( htmlOutputFolder )
-            TeXExportResult = self.toTeX( TeXOutputFolder )
             SwSExportResult = self.toSwordSearcher( SwSOutputFolder )
             DrExportResult = self.toDrupal( DrOutputFolder )
+            TeXExportResult = self.toTeX( TeXOutputFolder ) # Put this last since it's slowest
         elif Globals.maxProcesses > 1: # Process all the exports with different threads
             # DON'T KNOW WHY THIS CAUSES A SEGFAULT
             self.__outputFolders = [USFMOutputFolder, MWOutputFolder, zOutputFolder, USXOutputFolder, USFXOutputFolder,
@@ -5180,11 +5182,6 @@ class BibleWriter( InternalBible ):
                 htmlExportResult = False
                 print("BibleWriter.doAllExports.toHTML5 Unexpected error:", sys.exc_info()[0], err)
                 logging.error( "BibleWriter.doAllExports.toHTML5: Oops, failed!" )
-            try: TeXExportResult = self.toTeX( TeXOutputFolder )
-            except Exception as err:
-                TeXExportResult = False
-                print("BibleWriter.doAllExports.toTeX Unexpected error:", sys.exc_info()[0], err)
-                logging.error( "BibleWriter.doAllExports.toTeX: Oops, failed!" )
             try: SwSExportResult = self.toSwordSearcher( SwSOutputFolder )
             except Exception as err:
                 SwSExportResult = False
@@ -5195,6 +5192,12 @@ class BibleWriter( InternalBible ):
                 DrExportResult = False
                 print("BibleWriter.doAllExports.toDrupal Unexpected error:", sys.exc_info()[0], err)
                 logging.error( "BibleWriter.doAllExports.toDrupal: Oops, failed!" )
+            # Do TeX export last because it's slowest
+            try: TeXExportResult = self.toTeX( TeXOutputFolder )
+            except Exception as err:
+                TeXExportResult = False
+                print("BibleWriter.doAllExports.toTeX Unexpected error:", sys.exc_info()[0], err)
+                logging.error( "BibleWriter.doAllExports.toTeX: Oops, failed!" )
 
         if Globals.verbosityLevel > 1:
             if pickleResult and PseudoUSFMExportResult and USFMExportResult and TextExportResult \

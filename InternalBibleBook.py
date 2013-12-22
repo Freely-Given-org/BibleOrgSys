@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-12-18 by RJH (also update ProgVersion below)
+#   Last modified: 2013-12-22 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -41,7 +41,7 @@ Required improvements:
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.54"
+ProgVersion = "0.55"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -90,16 +90,16 @@ class InternalBibleBook:
     The load routine (which populates self._rawLines) by calling appendLine must be provided.
     """
 
-    def __init__( self, name, BBB ):
+    def __init__( self, workName, BBB ):
         """
         Create the USFM Bible book object.
 
         Parameters are:
-            name: version name
+            workName: name of the work (e.g., My English Bible)
             BBB: book reference code
         """
         #print( "InternalBibleBook.__init__( {} )".format( BBB ) )
-        self.name, self.bookReferenceCode = name, BBB
+        self.workName, self.bookReferenceCode = workName, BBB
         if Globals.debugFlag: assert( self.bookReferenceCode in Globals.BibleBooksCodes )
 
         self.isSingleChapterBook = Globals.BibleBooksCodes.isSingleChapterBook( self.bookReferenceCode )
@@ -176,7 +176,7 @@ class InternalBibleBook:
         """
         forceDebugHere = False
         if forceDebugHere or Globals.debugFlag:
-            if forceDebugHere or debuggingThisModule: print( "InternalBibleBook.appendLine( {}, {} ) for {} {} {}".format( repr(marker), repr(text), self.objectTypeString, self.name, self.bookReferenceCode ) )
+            if forceDebugHere or debuggingThisModule: print( "InternalBibleBook.appendLine( {}, {} ) for {} {} {}".format( repr(marker), repr(text), self.objectTypeString, self.workName, self.bookReferenceCode ) )
             #if len(self._rawLines ) > 200: halt
             #if 'xyz' in text: halt
         if text and ( '\n' in text or '\r' in text ):
@@ -262,7 +262,7 @@ class InternalBibleBook:
             Uses self._rawLines and fills self._processedLines.
         """
         #if self._processedFlag: return # Can only do it once
-        if Globals.verbosityLevel > 2: print( "  " + _("Processing {} ({} {}) {} lines...").format( self.objectNameString, self.objectTypeString, self.name, self.bookReferenceCode ) )
+        if Globals.verbosityLevel > 2: print( "  " + _("Processing {} ({} {}) {} lines...").format( self.objectNameString, self.objectTypeString, self.workName, self.bookReferenceCode ) )
         if Globals.debugFlag: assert( not self._processedFlag ) # Can only do it once
         if Globals.debugFlag: assert( self._rawLines ) # or else the book was totally blank
         #print( self._rawLines[:20] ); halt
@@ -1038,8 +1038,8 @@ class InternalBibleBook:
             assert( not self._indexedFlag )
         if self._indexedFlag: return # Can only do it once
 
-        if Globals.verbosityLevel > 2: print( "  " + _("Indexing {} {} {} text...").format( self.objectNameString, self.name, self.bookReferenceCode ) )
-        self._CVIndex = InternalBibleIndex( self.name, self.bookReferenceCode )
+        if Globals.verbosityLevel > 2: print( "  " + _("Indexing {} {} {} text...").format( self.objectNameString, self.workName, self.bookReferenceCode ) )
+        self._CVIndex = InternalBibleIndex( self.workName, self.bookReferenceCode )
         self._CVIndex.makeIndex( self._processedLines )
 
         if 0 and self.bookReferenceCode=='GEN':
@@ -1180,6 +1180,7 @@ class InternalBibleBook:
 
         if not results: # no helpful fields in file
             results.append( Globals.BibleBooksCodes.getEnglishName_NR( self.bookReferenceCode ) )
+        self.assumedBookName = results[0]
 
         #if Globals.debugFlag or Globals.verbosityLevel > 3: # Print our level of confidence
         #    if header is not None and header==mt1: assert( bookName == header ); print( "getBookName: header and main title are both '{}'".format( bookName ) )
