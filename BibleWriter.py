@@ -4907,7 +4907,7 @@ class BibleWriter( InternalBible ):
             """
             Write the header data
             """
-            writer.write( "*Bible\n#shortname fullname language\n" )
+            writer.write( "\ufeff*Bible\n#shortname fullname language\n" ) # Starts with BOM
             writer.write( "{}|{}|{}\n\n".format( self.name, self.name, 'en' ) )
         # end of toDrupal.writeDrupalHeader
 
@@ -4918,11 +4918,13 @@ class BibleWriter( InternalBible ):
             """
             writer.write( "*Chapter\n#book,fullname,shortname,chap-count\n" )
             for BBB,bookObject in self.books.items():
+                numChapters = None
                 bookCode = getDrupalCode( BBB )
                 for entry in bookObject._processedLines:
                     marker = entry.getMarker()
                     if marker == 'c': numChapters = entry.getCleanText()
-                writer.write( "{}|{}|{}|{}\n".format( bookCode, bookObject.assumedBookName, bookCode, numChapters ) )
+                if numChapters:
+                    writer.write( "{}|{}|{}|{}\n".format( bookCode, bookObject.assumedBookName, bookCode, numChapters ) )
             writer.write( '\n*Context\n#Book,Chapter,Verse,LineMark,Context\n' )
         # end of toDrupal.writeDrupalChapters
 
