@@ -4934,6 +4934,7 @@ class BibleWriter( InternalBible ):
             pseudoUSFMData = bookObject._processedLines
             bookCode = getDrupalCode( BBB )
             started, accumulator = False, "" # Started flag ignores fields in the book introduction
+            linemark = ''
             for entry in pseudoUSFMData:
                 marker, text = entry.getMarker(), entry.getCleanText()
                 if marker in ( 'id', 'ide', 'h', 'toc1', 'toc2', 'toc3', ): pass # Just ignore these metadata fields
@@ -4944,15 +4945,16 @@ class BibleWriter( InternalBible ):
                 elif marker == 'v':
                     started = True
                     if accumulator:
-                        writer.write( "{}|{}|{}|{}\n".format( bookCode, C, V, accumulator ) )
-                        accumulator = ""
+                        writer.write( "{}|{}|{}|{}|{}\n".format( bookCode, C, V, linemark, accumulator ) )
+                        accumulator, linemark = "", ''
                     V = text
-                elif marker in ( 's1', 's2', 's3', 'r', ): pass # Just ignore these heading fields
+                elif marker in ( 's1', 's2', 's3', ): linemark = '*' + text
+                elif marker in ( 'r', ): pass # Just ignore these reference fields
                 elif marker in ( 'p', 'q1', 'q2', 'q3', 'm', 'b', 'nb', 'li1', 'li2', 'li3', ): pass # Just ignore these paragraph formatting fields
                 elif marker in ('v~', 'p~'):
                     if started: accumulator += (' ' if accumulator else '') + text
                 else: unhandledMarkers.add( marker )
-            if accumulator: writer.write( "{}|{}|{}|{}\n".format( bookCode, C, V, accumulator ) )
+            if accumulator: writer.write( "{}|{}|{}|{}\{}\n".format( bookCode, C, V, linemark, accumulator ) )
         # end of toDrupal:writeDrupalBook
 
 
