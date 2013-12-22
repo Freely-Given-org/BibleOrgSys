@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-12-15 by RJH (also update ProgVersion below)
+#   Last modified: 2013-12-22 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -54,7 +54,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.48"
+ProgVersion = "0.49"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -214,7 +214,7 @@ class BibleWriter( InternalBible ):
         if Globals.debugFlag: assert( self.books )
 
         if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolder: outputFolder = "OutputFiles/BOS_USFM_Export/"
+        if not outputFolder: outputFolder = "OutputFiles/BOS_USFM_" + ("Reexport/" if self.objectTypeString=="USFM" else "Export/")
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         #if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_MediaWiki_controls.txt", controlDict )
         #assert( controlDict and isinstance( controlDict, dict ) )
@@ -4810,9 +4810,6 @@ class BibleWriter( InternalBible ):
 
         unhandledMarkers = set()
 
-        # First determine our format
-        #verseByVerse = True
-
 
         def writeSSHeader( writer ):
             """
@@ -4829,7 +4826,7 @@ class BibleWriter( InternalBible ):
             """
             pseudoUSFMData = bookObject._processedLines
             bookCode = ssBookAbbrevDict[BBB]
-            started, accumulator = False, ""
+            started, accumulator = False, "" # Started flag ignores fields in the book introduction
             for entry in pseudoUSFMData:
                 marker, text = entry.getMarker(), entry.getCleanText()
                 if marker == 'c': C = text
@@ -4867,6 +4864,120 @@ class BibleWriter( InternalBible ):
 
         return True
     # end of BibleWriter.toSwordSearcher
+
+
+
+    def toDrupal( self, outputFolder=None ):
+        """
+        Write the pseudo USFM out into the Drupal pre-Forge format.
+        """
+        DrupalBBBConversionDict = { 'JUG':'JDG', '1SM':'SA1','2SM':'SA2', '1KG':'KI1','2KG':'KI2', '1CH':'CH1','2CH':'CH2',
+                                    'PS':'PSA', 'SON':'SNG', 'EZE':'EZK', 'JOE':'JOL', 'JON':'JNA',
+                             'MAK':'MRK', '1CO':'CO1','2CO':'CO2', 'PHL':'PHP', '1TS':'TH1','2TS':'TH2',
+                                    '1TM':'TI1','2TM':'TI2', '1PE':'PE1','2PE':'PE2', '1JN':'JN1','2JN':'JN2','3JN':'JN3', 'JUD':'JDE' } # Temporary hack
+        if Globals.verbosityLevel > 1: print( "Running BibleWriter:toDrupal..." )
+        if Globals.debugFlag: assert( self.books )
+
+        if not self.doneSetupGeneric: self.__setupWriter()
+        if not outputFolder: outputFolder = "OutputFiles/BOS_Drupal_" + ("Reexport/" if self.objectTypeString=="Drupal" else "Export/")
+        if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
+
+        unhandledMarkers = set()
+
+        #print( 'status' in self ) # False
+        #print( 'status' in dir(self) ) # True
+        #print( '\nself', dir(self) )
+        #print( '\nssf', dir(self.ssfDict) )
+        #print( '\nsettings', dir(self.settingsDict) )
+
+
+        def getDrupalCode( givenBBB ):
+            """
+            Temporary
+            """
+            for code,BBB in DrupalBBBConversionDict.items():
+                if givenBBB == BBB: return code
+            return givenBBB
+        # end of getDrupalCode
+
+
+        def writeDrupalHeader( writer ):
+            """
+            Write the header data
+            """
+            writer.write( "*Bible\n#shortname fullname language\n" )
+            writer.write( "{}|{}|{}\n\n".format( self.name, self.name, 'en' ) )
+        # end of toDrupal.writeDrupalHeader
+
+
+        def writeDrupalChapters( writer ):
+            """
+            Write the header data
+            """
+            writer.write( "*Chapter\n#book,fullname,shortname,chap-count\n" )
+            for BBB,bookObject in self.books.items():
+                bookCode = getDrupalCode( BBB )
+                for entry in bookObject._processedLines:
+                    marker = entry.getMarker()
+                    if marker == 'c': numChapters = entry.getCleanText()
+                writer.write( "{}|{}|{}|{}\n".format( bookCode, bookObject.name, bookCode, numChapters ) )
+            writer.write( '\n*Context\n#Book,Chapter,Verse,LineMark,Context\n' )
+        # end of toDrupal.writeDrupalChapters
+
+
+        def writeDrupalBook( writer, BBB, bookObject ):
+            """
+            Convert the internal Bible data to Drupal output.
+            """
+            pseudoUSFMData = bookObject._processedLines
+            bookCode = getDrupalCode( BBB )
+            started, accumulator = False, "" # Started flag ignores fields in the book introduction
+            for entry in pseudoUSFMData:
+                marker, text = entry.getMarker(), entry.getCleanText()
+                if marker in ( 'id', 'ide', 'h', 'toc1', 'toc2', 'toc3', ): pass # Just ignore these metadata fields
+                elif marker in ( 'mt1', 'mt2', ): pass # Just ignore these book heading fields
+                elif marker in ( 'iot', 'io1', 'io2', 'ip', 'is1', ): pass # Just ignore these introduction fields
+                elif marker in ( 'c#', ): pass # Just ignore these unneeded fields
+                elif marker == 'c': C, V = text, '1'
+                elif marker == 'v':
+                    started = True
+                    if accumulator:
+                        writer.write( "{}|{}|{}|{}\n".format( bookCode, C, V, accumulator ) )
+                        accumulator = ""
+                    V = text
+                elif marker in ( 's1', 's2', 's3', 'r', ): pass # Just ignore these heading fields
+                elif marker in ( 'p', 'q1', 'q2', 'q3', 'm', 'b', 'nb', 'li1', 'li2', 'li3', ): pass # Just ignore these paragraph formatting fields
+                elif marker in ('v~', 'p~'):
+                    if started: accumulator += (' ' if accumulator else '') + text
+                else: unhandledMarkers.add( marker )
+            if accumulator: writer.write( "{}|{}|{}|{}\n".format( bookCode, C, V, accumulator ) )
+        # end of toDrupal:writeDrupalBook
+
+
+        if Globals.verbosityLevel > 2: print( _("  Exporting to Drupal format...") )
+        filename = "Bible.txt"
+        filepath = os.path.join( outputFolder, Globals.makeSafeFilename( filename ) )
+        if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
+        with open( filepath, 'wt' ) as myFile:
+            writeDrupalHeader( myFile )
+            writeDrupalChapters( myFile )
+            for BBB,bookObject in self.books.items():
+                try: writeDrupalBook( myFile, BBB, bookObject )
+                except: logging.critical( "BibleWriter.toDrupal: Unable to output {}".format( BBB ) )
+
+        if unhandledMarkers:
+            logging.warning( "toDrupal: Unhandled markers were {}".format( unhandledMarkers ) )
+            if Globals.verbosityLevel > 1:
+                print( "  " + _("WARNING: Unhandled toDrupal markers were {}").format( unhandledMarkers ) )
+
+        # Now create a zipped version
+        if Globals.verbosityLevel > 2: print( "  Zipping {} Drupal file...".format( filename ) )
+        zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
+        zf.write( filepath )
+        zf.close()
+
+        return True
+    # end of BibleWriter.toDrupal
 
 
     def toPickle( self, outputFolder=None ):
@@ -4942,6 +5053,7 @@ class BibleWriter( InternalBible ):
         htmlOutputFolder = os.path.join( givenOutputFolderName, "BOS_HTML5_" + "Export/" )
         TeXOutputFolder = os.path.join( givenOutputFolderName, "BOS_TeX_" + "Export/" )
         SwSOutputFolder = os.path.join( givenOutputFolderName, "BOS_SwordSearcher_" + "Export/" )
+        DrOutputFolder = os.path.join( givenOutputFolderName, "BOS_Drupal_" + ("Reexport/" if self.objectTypeString=='Drupal' else "Export/" ) )
 
         # Pickle this Bible object
         # NOTE: This must be done before self.__setupWriter is called
@@ -4970,6 +5082,7 @@ class BibleWriter( InternalBible ):
             htmlExportResult = self.toHTML5( htmlOutputFolder )
             TeXExportResult = self.toTeX( TeXOutputFolder )
             SwSExportResult = self.toSwordSearcher( SwSOutputFolder )
+            DrExportResult = self.toDrupal( DrOutputFolder )
         elif Globals.maxProcesses > 1: # Process all the exports with different threads
             # DON'T KNOW WHY THIS CAUSES A SEGFAULT
             self.__outputFolders = [USFMOutputFolder, MWOutputFolder, zOutputFolder, USXOutputFolder, USFXOutputFolder,
@@ -4995,6 +5108,7 @@ class BibleWriter( InternalBible ):
                 htmlExportResult = results[6]
                 TeXExportResult = results[6]
                 SwSExportResult = results[6]
+                DrExportResult = results[7]
         else: # Just single threaded and not debugging
             try: PseudoUSFMExportResult = self.toPseudoUSFM( PseudoUSFMOutputFolder )
             except Exception as err:
@@ -5076,24 +5190,32 @@ class BibleWriter( InternalBible ):
                 SwSExportResult = False
                 print("BibleWriter.doAllExports.toSwordSearcher Unexpected error:", sys.exc_info()[0], err)
                 logging.error( "BibleWriter.doAllExports.toSwordSearcher: Oops, failed!" )
+            try: DrExportResult = self.toDrupal( DrOutputFolder )
+            except Exception as err:
+                DrExportResult = False
+                print("BibleWriter.doAllExports.toDrupal Unexpected error:", sys.exc_info()[0], err)
+                logging.error( "BibleWriter.doAllExports.toDrupal: Oops, failed!" )
 
         if Globals.verbosityLevel > 1:
             if pickleResult and PseudoUSFMExportResult and USFMExportResult and TextExportResult \
             and TWExportResult and MySwExportResult and ESwExportResult and MWExportResult \
             and ZefExportResult and HagExportResult and USXExportResult and USFXExportResult \
-            and OSISExportResult and swExportResult and htmlExportResult and TeXExportResult and SwSExportResult:
+            and OSISExportResult and swExportResult and htmlExportResult and TeXExportResult \
+            and SwSExportResult and DrExportResult:
                 print( "BibleWriter.doAllExports finished them all successfully!" )
-            else: print( "BibleWriter.doAllExports finished:  Pck={}  PsUSFM={} USFM={}  Tx={}  TW={} MySw={} eSw={}  MW={}  Zef={} Hag={}  USX={} USFX={}  OSIS={}  Sw={}  HTML={} TeX={} SwS={}" \
+            else: print( "BibleWriter.doAllExports finished:  Pck={}  PsUSFM={} USFM={}  Tx={}  TW={} MySw={} eSw={}  MW={}  Zef={} Hag={}  USX={} USFX={}  OSIS={}  Sw={}  HTML={} TeX={} SwS={} Dr={}" \
                     .format( pickleResult, PseudoUSFMExportResult, USFMExportResult, TextExportResult,
                                 TWExportResult, MySwExportResult, ESwExportResult,
                                 MWExportResult, ZefExportResult, HagExportResult, USXExportResult, USFXExportResult,
-                                OSISExportResult, swExportResult, htmlExportResult, TeXExportResult, SwSExportResult ) )
+                                OSISExportResult, swExportResult, htmlExportResult, TeXExportResult, SwSExportResult,
+                                DrExportResult ) )
         return { 'Pickle':pickleResult,
                     'PseudoUSFMExport':PseudoUSFMExportResult, 'USFMExport':USFMExportResult, 'TextExport':TextExportResult,
                     'TWExport':TWExportResult, 'MySwExport':MySwExportResult, 'ESwExport':ESwExportResult,
                     'MWExport':MWExportResult, 'ZefExport':ZefExportResult, 'HagExport':HagExportResult,
                     'USXExport':USXExportResult, 'USFXExport':USFXExportResult, 'OSISExport':OSISExportResult, 'swExport':swExportResult,
-                    'htmlExport':htmlExportResult, 'TeXExport':TeXExportResult, 'SwSExport':SwSExportResult }
+                    'htmlExport':htmlExportResult, 'TeXExport':TeXExportResult, 'SwSExport':SwSExportResult,
+                    'DrExport':DrExportResult, }
     # end of BibleWriter.doAllExports
 # end of class BibleWriter
 
@@ -5128,7 +5250,7 @@ def demo():
                 UB.load()
                 if Globals.verbosityLevel > 0: print( '\nBWr A'+str(j+1)+'/', UB )
                 if Globals.strictCheckingFlag: UB.check()
-                #result = UB.toSwordSearcher(); halt
+                #result = UB.toDrupal(); halt
                 doaResults = UB.doAllExports()
                 if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
                     outputFolder = "OutputFiles/BOS_USFM_Reexport/"

@@ -33,10 +33,44 @@ http://drupalbible.mikelee.idv.tw/?q=node/27
 
 
 e.g.,
+    *Bible
+    #shortname fullname language
+    KJaV1|King James(en)|en
+
+    *Chapter
+    #book,fullname,shortname,chap-count
+    GEN|Genesis|GEN|50
+    EXO|Exodus|EXO|40
+    LEV|Leviticus|LEV|27
+    NUM|Numbers|NUM|36
     ...
+    JUD|Jude|JUD|1
+    REV|Revelation|REV|22
+
+    *Context
+    #Book,Chapter,Verse,LineMark,Context
+    GEN|1|1||In the beginning God created the heaven and the earth.
+    GEN|1|2||And the earth was without form, and void; and darkness [was] upon the face of the deep. And the Spirit of God moved upon the face of the waters.
+    GEN|1|3||And God said, Let there be light: and there was light.
+    GEN|1|4||And God saw the light, that [it was] good: and God divided the light from the darkness.
+    GEN|1|5||And God called the light Day, and the darkness he called Night. And the evening and the morning were the first day.
+    ...
+    PS|2|12||Kiss the Son, lest he be angry, and ye perish [from] the way, when his wrath is kindled but a little. Blessed [are] all they that put their trust in him.
+    PS|3|1||<A Psalm of David, when he fled from Absalom his son.> LORD, how are they increased that trouble me! many [are] they that rise up against me.
+    PS|3|2||Many [there be] which say of my soul, [There is] no help for him in God. Selah.
+    ...
+    ROM|16|26||But now is made manifest, and by the scriptures of the prophets, according to the commandment of the everlasting God, made known to all nations for the obedience of faith:
+    ROM|16|27||To God only wise, [be] glory through Jesus Christ for ever. Amen. <Written to the Romans from Corinthus, [and sent] by Phebe servant of the church at Cenchrea.>
+    1CO|1|1||Paul, called [to be] an apostle of Jesus Christ through the will of God, and Sosthenes [our] brother,
+    ...
+    REV|22|19||And if any man shall take away from the words of the book of this prophecy, God shall take away his part out of the book of life, and out of the holy city, and [from] the things which are written in this book.
+    REV|22|20||He which testifieth these things saith, Surely I come quickly. Amen. Even so, come, Lord Jesus.
+    REV|22|21||The grace of our Lord Jesus Christ [be] with you all. Amen.
 
 Limitations:
-    ...
+    Only checked one one file so far kjv.bc
+    <...> were converted to \\it ...\\it* (Psalms and signatures to Paul's letters.)
+    Need to do Bible books codes properly -- current implementation is just a hack
 """
 
 ProgName = "Drupal Bible format handler"
@@ -56,8 +90,6 @@ from Bible import Bible, BibleBook
 
 
 filenameEndingsToAccept = ('.BC',) # Must be UPPERCASE
-#filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
-#extensionsToIgnore = ('ZIP', 'BAK', 'LOG', 'HTM','HTML', 'XML', 'OSIS', 'USX', 'STY', 'LDS', 'SSF', 'VRS', 'ASC', 'CSS', 'ODT','DOC','TXT', 'JAR', ) # Must be UPPERCASE
 
 
 
