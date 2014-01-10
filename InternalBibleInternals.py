@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleInternals.py
-#   Last modified: 2013-12-18 by RJH (also update ProgVersion below)
+#   Last modified: 2013-12-27 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Bible internals handler"
-ProgVersion = "0.17"
+ProgVersion = "0.18"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -224,6 +224,7 @@ class InternalBibleEntry:
         """
         if '\\' in cleanText:
             logging.error( "InternalBibleEntry expects clean text not {}={}".format( marker, repr(cleanText) ) )
+        if 'it*' in originalText and 'it*' not in adjustedText: halt
         if Globals.debugFlag or Globals.strictCheckingFlag:
             #print( "InternalBibleEntry.__init__( {}, {}, '{}', '{}', {}, '{}' )" \
                     #.format( marker, originalMarker, adjustedText[:35]+('...' if len(adjustedText)>35 else ''), \
@@ -247,7 +248,7 @@ class InternalBibleEntry:
         self.marker, self.originalMarker, self.adjustedText, self.cleanText, self.extras, self.originalText = marker, originalMarker, adjustedText, cleanText, extras, originalText
 
         if Globals.debugFlag and debuggingThisModule and self.getFullText() != self.originalText.strip():
-            pass # halt
+            halt # When does this happen?
     # end of InternalBibleEntry.__init__
 
 
@@ -279,7 +280,8 @@ class InternalBibleEntry:
 
     def getMarker( self ): return self.marker
     def getOriginalMarker( self ): return self.originalMarker
-    def getText( self ): return self.adjustedText
+    def getAdjustedText( self ): return self.adjustedText # Notes are removed
+    def getText( self ): return self.adjustedText # Notes are removed
     def getCleanText( self ): return self.cleanText
     def getExtras( self ): return self.extras
     def getOriginalText( self ): return self.originalText
@@ -292,9 +294,8 @@ class InternalBibleEntry:
         Note that some spaces may not be recovered,
             e.g., in 'lamb\f + \fr 18.9 \ft Sheep \f* more text here'
             the space before the close of the footnote is not restored!
+        Otherwise it should be identical to the original text.
         """
-        #return self.originalText
-
         result = self.adjustedText
         offset = 0
         for extraType, extraIndex, extraText, cleanExtraText in self.extras: # do any footnotes and cross-references

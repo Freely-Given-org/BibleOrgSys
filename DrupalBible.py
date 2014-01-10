@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # DrupalBible.py
-#   Last modified: 2013-12-22 by RJH (also update ProgVersion below)
+#   Last modified: 2013-12-26 by RJH (also update ProgVersion below)
 #
 # Module handling DrupalBible Bible files
 #
@@ -74,7 +74,7 @@ Limitations:
 """
 
 ProgName = "DrupalBible Bible format handler"
-ProgVersion = "0.03"
+ProgVersion = "0.04"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -229,10 +229,6 @@ class DrupalBible( Bible ):
         status = 0 # 1 = getting chapters, 2 = getting verse data
         lastLine, lineCount = '', 0
         BBB = lastBBB = None
-        BBBConversionDict = { 'JUG':'JDG', '1SM':'SA1','2SM':'SA2', '1KG':'KI1','2KG':'KI2', '1CH':'CH1','2CH':'CH2',
-                                    'PS':'PSA', 'SON':'SNG', 'EZE':'EZK', 'JOE':'JOL', 'JON':'JNA',
-                             'MAK':'MRK', '1CO':'CO1','2CO':'CO2', 'PHL':'PHP', '1TS':'TH1','2TS':'TH2',
-                                    '1TM':'TI1','2TM':'TI2', '1PE':'PE1','2PE':'PE2', '1JN':'JN1','2JN':'JN2','3JN':'JN3', 'JUD':'JDE' } # Temporary hack
         bookDetails = {}
         with open( self.sourceFilepath, encoding=self.encoding ) as myFile: # Automatically closes the file when done
             for line in myFile:
@@ -263,8 +259,8 @@ class DrupalBible( Bible ):
                         bits = line.split( '|' )
                         bookCode, bookFullName, bookShortName, numChapters = bits
                         assert( bookShortName == bookCode )
-                        #BBB = Globals.BibleBooksCodes.getBBBFromDrupalBibleCode( bookCode )
-                        BBB = BBBConversionDict[bookCode] if bookCode in BBBConversionDict else bookCode # Temporary hack
+                        BBBresult = Globals.BibleBooksCodes.getBBBFromDrupalBibleCode( bookCode )
+                        BBB = BBBresult if isinstance( BBBresult, str ) else BBBresult[0] # Result can be string or list of strings (best guess first)
                         bookDetails[BBB] = bookFullName, bookShortName, numChapters
 
                 elif status == 2: # Get the verse text
@@ -272,8 +268,8 @@ class DrupalBible( Bible ):
                     bookCode, chapterNumberString, verseNumberString, lineMark, verseText = bits
                     #chapterNumber, verseNumber = int( chapterNumberString ), int( verseNumberString )
                     if lineMark: print( repr(lineMark) ); halt
-                    #BBB = Globals.BibleBooksCodes.getBBBFromDrupalBibleCode( bookCode )
-                    BBB = BBBConversionDict[bookCode] if bookCode in BBBConversionDict else bookCode # Temporary hack
+                    BBBresult = Globals.BibleBooksCodes.getBBBFromDrupalBibleCode( bookCode )
+                    BBB = BBBresult if isinstance( BBBresult, str ) else BBBresult[0] # Result can be string or list of strings (best guess first)
                     if BBB != lastBBB:
                         if lastBBB is not None:
                             self.saveBook( thisBook )
@@ -300,26 +296,28 @@ class DrupalBible( Bible ):
 def testDB( TUBfilename ):
     # Crudely demonstrate the DrupalBible class
     import VerseReferences
-    TUBfolder = "../../../../../Data/Work/Bibles/DrupalBible Bibles/" # Must be the same as below
+    TUBfolder = "Tests/DataFilesForTests/DrupalTest/" # Must be the same as below
 
     if Globals.verbosityLevel > 1: print( _("Demonstrating the DrupalBible Bible class...") )
     if Globals.verbosityLevel > 0: print( "  Test folder is '{}' '{}'".format( TUBfolder, TUBfilename ) )
-    ub = DrupalBible( TUBfolder, TUBfilename )
-    ub.load() # Load and process the file
-    if Globals.verbosityLevel > 1: print( ub ) # Just print a summary
+    db = DrupalBible( TUBfolder, TUBfilename )
+    db.load() # Load and process the file
+    if Globals.verbosityLevel > 1: print( db ) # Just print a summary
+    if Globals.strictCheckingFlag: db.check()
+    if Globals.commandLineOptions.export: db.doAllExports()
     for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
                         ('OT','DAN','1','21'),
                         ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \
                         ('DC','BAR','1','1'), ('DC','MA1','1','1'), ('DC','MA2','1','1',), ):
         (t, b, c, v) = reference
-        if t=='OT' and len(ub)==27: continue # Don't bother with OT references if it's only a NT
-        if t=='NT' and len(ub)==39: continue # Don't bother with NT references if it's only a OT
-        if t=='DC' and len(ub)<=66: continue # Don't bother with DC references if it's too small
+        if t=='OT' and len(db)==27: continue # Don't bother with OT references if it's only a NT
+        if t=='NT' and len(db)==39: continue # Don't bother with NT references if it's only a OT
+        if t=='DC' and len(db)<=66: continue # Don't bother with DC references if it's too small
         svk = VerseReferences.SimpleVerseKey( b, c, v )
         #print( svk, ob.getVerseDataList( reference ) )
         shortText = svk.getShortText()
         try:
-            verseText = ub.getVerseText( svk )
+            verseText = db.getVerseText( svk )
         except KeyError:
             verseText = "Verse not available!"
         if Globals.verbosityLevel > 1: print( reference, shortText, verseText )
@@ -333,7 +331,7 @@ def demo():
     if Globals.verbosityLevel > 0: print( ProgNameVersion )
 
 
-    testFolder = "../../../../../Data/Work/Bibles/DrupalBible Bibles/"
+    testFolder = "Tests/DataFilesForTests/DrupalTest/"
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
@@ -384,7 +382,7 @@ def demo():
 if __name__ == '__main__':
     # Configure basic set-up
     parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser )
+    Globals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 

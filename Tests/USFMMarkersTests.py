@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkersTests.py
-#   Last modified: 2013-07-26 (also update ProgVersion below)
+#   Last modified: 2014-01-10 (also update ProgVersion below)
 #
 # Module testing USFMMarkers.py
 #
-# Copyright (C) 2011-2013 Robert Hunt
+# Copyright (C) 2011-2014 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module testing USFMMarkers.py.
 """
 
 ProgName = "USFM Markers tests"
-ProgVersion = "0.58"
+ProgVersion = "0.59"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -134,7 +134,7 @@ class USFMMarkersTests( unittest.TestCase ):
             self.assertTrue( self.UMs.isNewlineMarker(simpleMarker) )
         for numberableMarker in ( 'h', 'q', 'ili', ):
             self.assertTrue( self.UMs.isNewlineMarker(numberableMarker) )
-        for numberedMarker in ( 'h1', 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', ):
+        for numberedMarker in ( 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', ):
             self.assertTrue( self.UMs.isNewlineMarker(numberedMarker) )
         for deprecatedMarker in ( 'ps','pdi','pde', ):
             self.assertTrue( self.UMs.isNewlineMarker(deprecatedMarker) )
@@ -178,7 +178,7 @@ class USFMMarkersTests( unittest.TestCase ):
 
     def test_2070_isCompulsoryMarker( self ):
         """ Test the isCompulsoryMarker function. """
-        for simpleMarker in ( 'id', 'c', 'v', 'h', 'h1', 'h2', ):
+        for simpleMarker in ( 'id', 'c', 'v', 'h', ):
             self.assertTrue( self.UMs.isCompulsoryMarker(simpleMarker) )
         for simpleMarker in ( 'p', 'b', 'toc1', 'f', 'ft', 'x', 'xq', 'em', ):
             self.assertFalse( self.UMs.isCompulsoryMarker(simpleMarker) )
@@ -192,11 +192,11 @@ class USFMMarkersTests( unittest.TestCase ):
 
     def test_2080_isNumberableMarker( self ):
         """ Test the isNumberableMarker function. """
-        for simpleMarker in ( 'h', 's', 'q', 'ili', ):
+        for simpleMarker in ( 's', 'q', 'ili', ):
             self.assertTrue( self.UMs.isNumberableMarker(simpleMarker) )
         for numberedMarker in ( 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', ):
             self.assertTrue( self.UMs.isNumberableMarker(numberedMarker) )
-        for simpleMarker in ( 'p', 'b', 'toc1', 'f', 'ft', 'x', 'xq', 'em', ):
+        for simpleMarker in ( 'h', 'p', 'b', 'toc1', 'f', 'ft', 'x', 'xq', 'em', ):
             self.assertFalse( self.UMs.isNumberableMarker(simpleMarker) )
         for badMarker in ( 'H', 'y', 'Q1', 'q5', 'toc4', 'x*', '\\p', ):
             self.assertFalse( self.UMs.isNumberableMarker(badMarker) )
@@ -258,7 +258,7 @@ class USFMMarkersTests( unittest.TestCase ):
         """ Test the toRawMarker function. """
         for simpleMarker in ( 'h', 'q', 'p', 'c', 'b', 'v', 'toc1', 'em', ):
             self.assertEqual( self.UMs.toRawMarker(simpleMarker), simpleMarker )
-        for numberedMarker in ( 'h1', 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', ):
+        for numberedMarker in ( 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', ):
             self.assertEqual( self.UMs.toRawMarker(numberedMarker), numberedMarker[:-1] )
         for badMarker in ( 'H', 'y', 'Q1', 'q5', 'toc4', 'x*', '\\p', ):
             self.assertRaises( KeyError, self.UMs.toRawMarker, badMarker )
@@ -266,11 +266,11 @@ class USFMMarkersTests( unittest.TestCase ):
 
     def test_2120_toStandardMarker( self ):
         """ Test the toStandardMarker function. """
-        for simpleMarker in ( 'p', 'c', 'b', 'v', 'toc1', 'em', ):
+        for simpleMarker in ( 'h', 'p', 'c', 'b', 'v', 'toc1', 'em', ):
             self.assertEqual( self.UMs.toStandardMarker(simpleMarker), simpleMarker )
-        for numberableMarker in ( 'h', 'q', 'ili', ):
+        for numberableMarker in ( 'q', 'ili', ):
             self.assertEqual( self.UMs.toStandardMarker(numberableMarker), numberableMarker+'1' )
-        for numberedMarker in ( 'h1', 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', ):
+        for numberedMarker in ( 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', ):
             self.assertEqual( self.UMs.toStandardMarker(numberedMarker), numberedMarker )
         for badMarker in ( 'H', 'y', 'Q1', 'q5', 'toc4', 'x*', '\\p', ):
             self.assertRaises( KeyError, self.UMs.toStandardMarker, badMarker )

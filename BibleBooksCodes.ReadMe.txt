@@ -1,7 +1,7 @@
 # BibleBooksCodes.ReadMe.txt
 #   ReadMe.txt for Bible Books Codes
-#   Version 0.68
-#   Last modified: 2013-04-08
+#   Version 0.72
+#   Last modified: 2013-12-26
 #
 #
 # Abbreviations:
@@ -27,7 +27,7 @@
 # Enclosed are four files:
 #
 #   DataFiles/BibleBooksCodes.xml
-#       A UTF-8 XML file encoding SBL, OSIS, USFM/OXES/UBS-Paratext, CCEL, NETBible, and Sword Bible books codes
+#       A UTF-8 XML file encoding SBL, OSIS, USFM/OXES/UBS-Paratext, CCEL, NETBible, DrupalBible, and Sword Bible books codes
 #           The data also includes a new 3-letter UPPER CASE referenceAbbreviation which always starts with a letter and so can be used directly as an XML ID (unlike most of the other fields).
 #               These referenceAbbreviation fields are often put in a variable called BBB (BiBle Book 3-character code) in program code.
 #           The unique 1..255 referenceNumber values are for processing and error messages -- numbers 1..66 are guaranteed to match the normal Protestant Bible.
@@ -46,11 +46,11 @@
 #   DataFiles/BibleBooksCodes.rnc
 #       A RelaxNG Compact Syntax schema file
 #       On Linux, to convert to RNG, use
-#           trang DataFiles/BibleBooksCodes.rnc DerivedFiles/BibleBooksCodes.rng
+#           trang DataFiles/BibleBooksCodes.rnc DataFiles/DerivedFiles/BibleBooksCodes.rng
 #       On Linux, to validate against the .rng file, use
-#           xmllint --noout --relaxng DerivedFiles/BibleBooksCodes.rng DataFiles/BibleBooksCodes.xml
+#           xmllint --noout --relaxng DataFiles/DerivedFiles/BibleBooksCodes.rng DataFiles/BibleBooksCodes.xml
 #       or better still, to validate against both this and the internal DTD, use
-#           xmllint --noout --relaxng DerivedFiles/BibleBooksCodes.rng --valid DataFiles/BibleBooksCodes.xml
+#           xmllint --noout --relaxng DataFiles/DerivedFiles/BibleBooksCodes.rng --valid DataFiles/BibleBooksCodes.xml
 #
 #   BibleBooksCodesConverter.py (for Python 3)
 #       This small program will load and do some very basic checking of the XML data file.
@@ -86,4 +86,4 @@
 #
 # Robert Hunt
 # Hunt.RobertJ@gmail.com
-# October 2010--April 2013.
+# October 2010--December 2013.

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # YETBible.py
-#   Last modified: 2013-12-19 by RJH (also update ProgVersion below)
+#   Last modified: 2013-12-26 by RJH (also update ProgVersion below)
 #
 # Module handling YET Bible files
 #
@@ -62,7 +62,7 @@ Limitations:
 """
 
 ProgName = "YET Bible format handler"
-ProgVersion = "0.01"
+ProgVersion = "0.02"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -467,22 +467,24 @@ def testYB( TUBfilename ):
 
     if Globals.verbosityLevel > 1: print( _("Demonstrating the YET Bible class...") )
     if Globals.verbosityLevel > 0: print( "  Test folder is '{}' '{}'".format( TUBfolder, TUBfilename ) )
-    ub = YETBible( TUBfolder, TUBfilename )
-    ub.load() # Load and process the file
-    if Globals.verbosityLevel > 1: print( ub ) # Just print a summary
+    yb = YETBible( TUBfolder, TUBfilename )
+    yb.load() # Load and process the file
+    if Globals.verbosityLevel > 1: print( yb ) # Just print a summary
+    if Globals.strictCheckingFlag: yb.check()
+    if Globals.commandLineOptions.export: yb.doAllExports()
     for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
                         ('OT','DAN','1','21'),
                         ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \
                         ('DC','BAR','1','1'), ('DC','MA1','1','1'), ('DC','MA2','1','1',), ):
         (t, b, c, v) = reference
-        if t=='OT' and len(ub)==27: continue # Don't bother with OT references if it's only a NT
-        if t=='NT' and len(ub)==39: continue # Don't bother with NT references if it's only a OT
-        if t=='DC' and len(ub)<=66: continue # Don't bother with DC references if it's too small
+        if t=='OT' and len(yb)==27: continue # Don't bother with OT references if it's only a NT
+        if t=='NT' and len(yb)==39: continue # Don't bother with NT references if it's only a OT
+        if t=='DC' and len(yb)<=66: continue # Don't bother with DC references if it's too small
         svk = VerseReferences.SimpleVerseKey( b, c, v )
         #print( svk, ob.getVerseDataList( reference ) )
         shortText = svk.getShortText()
         try:
-            verseText = ub.getVerseText( svk )
+            verseText = yb.getVerseText( svk )
         except KeyError:
             verseText = "Verse not available!"
         if Globals.verbosityLevel > 1: print( reference, shortText, verseText )
@@ -547,7 +549,7 @@ def demo():
 if __name__ == '__main__':
     # Configure basic set-up
     parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser )
+    Globals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 

@@ -1,13 +1,13 @@
 # BibleBooksCodes.rnc           Relax NG Compact Syntax schema file
-#   Version 0.68
-#   Last modified: 2013-04-08 by RJH
+#   Version 0.72
+#   Last modified: 2013-12-26 by RJH
 #
 # On Linux, to convert to RNG, use
-#       trang BibleBooksCodes.rnc DerivedFiles/BibleBooksCodes.rng
+#       trang BibleBooksCodes.rnc DataFiles/DerivedFiles/BibleBooksCodes.rng
 # On Linux, to validate against the .rng file, use
-#       xmllint --noout --relaxng DerivedFiles/BibleBooksCodes.rng BibleBooksCodes.xml
+#       xmllint --noout --relaxng DataFiles/DerivedFiles/BibleBooksCodes.rng BibleBooksCodes.xml
 # or to validate against both this and the internal DTD, use
-#       xmllint --noout --relaxng DerivedFiles/BibleBooksCodes.rng --valid BibleBooksCodes.xml
+#       xmllint --noout --relaxng DataFiles/DerivedFiles/BibleBooksCodes.rng --valid BibleBooksCodes.xml
 #
 # See the supplied ReadMe.txt file for more information.
 #
@@ -54,10 +54,11 @@ BibleBookCodes = element BibleBookCodes
     element CCELNumber { xsd:positiveInteger { totalDigits="2" minInclusive="1" maxInclusive="95" } }?,
     element USFMAbbreviation { xsd:string { length="3" } }?,
     element USFMNumber { xsd:string { length="2" } }?,
-    element USXNumber { xsd:positiveInteger { length="3" totalDigits="3" minInclusive="1" maxExclusive="115" } }?,
+    element USXNumber { xsd:positiveInteger { totalDigits="3" minInclusive="1" maxExclusive="115" } }?,
     element UnboundCode { xsd:string { length="3" } }?,
-    element BibleditNumber { xsd:positiveInteger { length="2" totalDigits="2" minInclusive="1" maxExclusive="89" } }?,
+    element BibleditNumber { xsd:positiveInteger { totalDigits="2" minInclusive="1" maxExclusive="89" } }?,
     element NETBibleAbbreviation { xsd:string { length="3" } }?,
+    element DrupalBibleAbbreviation { xsd:string { length="3" } }?,
     element ByzantineAbbreviation { xsd:string { minLength="2" maxLength="4" } }?,
     element possibleAlternativeBooks { xsd:string { minLength="3" maxLength="19" } }?
 }

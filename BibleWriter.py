@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-12-23 by RJH (also update ProgVersion below)
+#   Last modified: 2013-12-27 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -191,7 +191,7 @@ class BibleWriter( InternalBible ):
             with open( filepath, 'wt' ) as myFile:
                 for entry in pseudoUSFMData:
                     myFile.write( "{} ({}): '{}' '{}' {}\n" \
-                        .format( entry.getMarker(), entry.getOriginalMarker(), entry.getText(), entry.getCleanText(), entry.getExtras() ) )
+                        .format( entry.getMarker(), entry.getOriginalMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras() ) )
 
         # Now create a zipped collection
         if Globals.verbosityLevel > 2: print( "  Zipping PseudoUSFM files..." )
@@ -357,7 +357,7 @@ class BibleWriter( InternalBible ):
 
                     #if verseByVerse:
                         #myFile.write( "{} ({}): '{}' '{}' {}\n" \
-                            #.format( entry.getMarker(), entry.getOriginalMarker(), entry.getText(), entry.getCleanText(), entry.getExtras() ) )
+                            #.format( entry.getMarker(), entry.getOriginalMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras() ) )
 
         # Now create a zipped collection
         if Globals.verbosityLevel > 2: print( "  Zipping Text files..." )
@@ -538,7 +538,7 @@ class BibleWriter( InternalBible ):
             verseText = '' # Do we really need this?
             #chapterNumberString = None
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
-                marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getText(), verseDataEntry.getExtras()
+                marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
                 #print( "toMediaWiki:writeBook", BBB, bookRef, bookName, marker, text, extras )
                 if marker in ('id','h','mt1'):
                     writerObject.writeLineComment( '\\{} {}'.format( marker, text ) )
@@ -688,7 +688,8 @@ class BibleWriter( InternalBible ):
             haveOpenChapter = False
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getFullText(), verseDataEntry.getExtras()
-                if marker == 'c':
+                if marker in ('id', 'ide', 'h', 'toc1','toc2','toc3', ): pass # Just ignore these metadata markers
+                elif marker == 'c':
                     if haveOpenChapter:
                         writerObject.writeLineClose ( 'CHAPTER' )
                     writerObject.writeLineOpen ( 'CHAPTER', ('cnumber',text) )
@@ -811,14 +812,15 @@ class BibleWriter( InternalBible ):
             haveOpenChapter = haveOpenParagraph = False
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getFullText(), verseDataEntry.getExtras()
-                if marker == 'c':
+                if marker in ('id', 'ide', 'h', 'toc1','toc2','toc3', ): pass # Just ignore these metadata markers
+                elif marker == 'c':
                     if haveOpenParagraph:
                         writerObject.writeLineClose ( 'PARAGRAPH' ); haveOpenParagraph = False
                     if haveOpenChapter:
                         writerObject.writeLineClose ( 'CHAPTER' )
                     writerObject.writeLineOpen ( 'CHAPTER', ('cnumber',text) )
                     haveOpenChapter = True
-                if marker == 'p':
+                elif marker == 'p':
                     if haveOpenParagraph:
                         writerObject.writeLineClose ( 'PARAGRAPH' )
                     writerObject.writeLineOpen ( 'PARAGRAPH' )
@@ -1176,7 +1178,7 @@ class BibleWriter( InternalBible ):
             xw.writeLineOpen( 'usx', ('version','2.0') ) if version>=2 else xw.writeLineOpen( 'usx' )
             haveOpenPara = paraJustOpened = False
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
-                marker, originalMarker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getOriginalMarker(), verseDataEntry.getText(), verseDataEntry.getExtras()
+                marker, originalMarker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getOriginalMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
                 markerShouldHaveContent = Globals.USFMMarkers.markerShouldHaveContent( marker )
                 #print( BBB, C, V, marker, markerShouldHaveContent, haveOpenPara, paraJustOpened )
                 adjText = handleNotes( text, extras )
@@ -1586,7 +1588,7 @@ class BibleWriter( InternalBible ):
             xw.writeLineOpen( 'book', ('id',USFXAbbrev) )
             haveOpenPara = paraJustOpened = False
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
-                marker, originalMarker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getOriginalMarker(), verseDataEntry.getText(), verseDataEntry.getExtras()
+                marker, originalMarker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getOriginalMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
                 markerShouldHaveContent = Globals.USFMMarkers.markerShouldHaveContent( marker )
                 #print( BBB, C, V, marker, markerShouldHaveContent, haveOpenPara, paraJustOpened )
                 adjText = handleNotes( text, extras )
@@ -2196,7 +2198,7 @@ class BibleWriter( InternalBible ):
             haveOpenIntro = haveOpenOutline = haveOpenMajorSection = haveOpenSection = haveOpenSubsection = needChapterEID = haveOpenParagraph = haveOpenVsID = haveOpenLG = haveOpenL = False
             lastMarker = unprocessedMarker = ''
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
-                marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getText(), verseDataEntry.getExtras()
+                marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
                 #print( "toOSIS:", marker, originalMarker, text )
                 if marker in ( 'id', 'ide', 'h1', 'mt2' ): continue # We just ignore these markers
                 if marker=='mt1':
@@ -2853,7 +2855,7 @@ class BibleWriter( InternalBible ):
             lastMarker = unprocessedMarker = ''
             #chapterNumberString = None
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
-                marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getText(), verseDataEntry.getExtras()
+                marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
                 #print( BBB, marker, text )
                 #print( " ", haveOpenIntro, haveOpenOutline, haveOpenMajorSection, haveOpenSection, haveOpenSubsection, needChapterEID, haveOpenParagraph, haveOpenVsID, haveOpenLG, haveOpenL )
                 #print( toSwordGlobals['idStack'] )
@@ -4386,7 +4388,7 @@ class BibleWriter( InternalBible ):
             html5Globals['footnoteHTML5'], html5Globals['xrefHTML5'] = [], []
             C = V = ''
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
-                marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getText(), verseDataEntry.getExtras()
+                marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
                 #if BBB=='MRK': print( "writeBook", marker, text )
                 #print( "toHTML5.writeBook", BBB, C, V, marker, text )
                 if marker in oftenIgnoredIntroMarkers: pass # Just ignore these lines
@@ -4513,7 +4515,7 @@ class BibleWriter( InternalBible ):
                 xw.start( noAutoXML=True )
                 xw.writeLineText( '<!DOCTYPE html>', noTextCheck=True )
                 xw.writeLineOpen( 'html' )
-                if Globals.debugFlag: writeBook( xw, BBB, bookData, html5Globals )
+                if Globals.debugFlag: writeBook( xw, BBB, bookData, html5Globals ) # Halts on errors
                 else:
                     try: writeBook( xw, BBB, bookData, html5Globals )
                     except Exception as err:
@@ -4854,8 +4856,10 @@ class BibleWriter( InternalBible ):
         with open( filepath, 'wt' ) as myFile:
             writeSSHeader( myFile )
             for BBB,bookObject in self.books.items():
-                try: writeSSBook( myFile, BBB, bookObject )
-                except: logging.critical( "BibleWriter.toSwordSearcher: Unable to output {}".format( BBB ) )
+                if Globals.debugFlag: writeSSBook( myFile, BBB, bookObject ) # Halts on errors
+                else:
+                    try: writeSSBook( myFile, BBB, bookObject )
+                    except: logging.critical( "BibleWriter.toSwordSearcher: Unable to output {}".format( BBB ) )
 
         if unhandledMarkers:
             logging.warning( "toSwordSearcher: Unhandled markers were {}".format( unhandledMarkers ) )
@@ -4877,10 +4881,6 @@ class BibleWriter( InternalBible ):
         """
         Write the pseudo USFM out into the DrupalBible format.
         """
-        DrupalBibleBBBConversionDict = { 'JUG':'JDG', '1SM':'SA1','2SM':'SA2', '1KG':'KI1','2KG':'KI2', '1CH':'CH1','2CH':'CH2',
-                                    'PS':'PSA', 'SON':'SNG', 'EZE':'EZK', 'JOE':'JOL', 'JON':'JNA',
-                             'MAK':'MRK', '1CO':'CO1','2CO':'CO2', 'PHL':'PHP', '1TS':'TH1','2TS':'TH2',
-                                    '1TM':'TI1','2TM':'TI2', '1PE':'PE1','2PE':'PE2', '1JN':'JN1','2JN':'JN2','3JN':'JN3', 'JUD':'JDE' } # Temporary hack
         if Globals.verbosityLevel > 1: print( "Running BibleWriter:toDrupalBible..." )
         if Globals.debugFlag: assert( self.books )
 
@@ -4895,16 +4895,6 @@ class BibleWriter( InternalBible ):
         #print( '\nself', dir(self) )
         #print( '\nssf', dir(self.ssfDict) )
         #print( '\nsettings', dir(self.settingsDict) )
-
-
-        def getDrupalBibleCode( givenBBB ):
-            """
-            Temporary
-            """
-            for code,BBB in DrupalBibleBBBConversionDict.items():
-                if givenBBB == BBB: return code
-            return givenBBB
-        # end of getDrupalBibleCode
 
 
         def writeDrupalBibleHeader( writer ):
@@ -4923,7 +4913,7 @@ class BibleWriter( InternalBible ):
             writer.write( "*Chapter\n#book,fullname,shortname,chap-count\n" )
             for BBB,bookObject in self.books.items():
                 numChapters = None
-                bookCode = getDrupalBibleCode( BBB )
+                bookCode = Globals.BibleBooksCodes.getDrupalBibleAbbreviation( BBB ).upper()
                 for entry in bookObject._processedLines:
                     marker = entry.getMarker()
                     if marker == 'c': numChapters = entry.getCleanText()
@@ -4933,25 +4923,44 @@ class BibleWriter( InternalBible ):
         # end of toDrupalBible.writeDrupalBibleChapters
 
 
+        def doDrupalTextFormat( givenTextField ):
+            """
+            """
+            textField = givenTextField.replace( '\\it ', '<' ).replace( '\\it*', '>' ).replace( '\\add ', '<' ).replace( '\\add*', '>' )
+            #print( repr(textField) )
+            # These re's should really ensure that the USFM starts with a letter
+            textField = re.sub( r'(\\[a-z0-9]{1,3} )', '', textField ) # Remove any remaining character fields, e.g., '\\s1 '
+            textField = re.sub( r'(\\[a-z0-9]{1,3}\*)', '', textField ) # Remove any remaining character end fields, e.g., '\s1*'
+            if '\\' in textField: # Catch any left-overs
+                if Globals.debugFlag or Globals.verbosityLevel > 2:
+                    print( "toDrupalBible.doDrupalTextFormat: unprocessed code in {} from {}".format( repr(textField), repr(givenTextField) ) )
+                if Globals.debugFlag and debuggingThisModule: halt
+            return textField
+        # end of doDrupalTextFormat
+
+
         def writeDrupalBibleBook( writer, BBB, bookObject ):
             """
             Convert the internal Bible data to DrupalBible output.
             """
-            pseudoUSFMData = bookObject._processedLines
-            bookCode = getDrupalBibleCode( BBB )
+            bookCode = Globals.BibleBooksCodes.getDrupalBibleAbbreviation( BBB ).upper()
             started, accumulator = False, "" # Started flag ignores fields in the book introduction
             linemark = ''
-            for entry in pseudoUSFMData:
-                marker, text = entry.getMarker(), entry.getCleanText()
+            for entry in bookObject._processedLines:
+                marker, text = entry.getMarker(), entry.getAdjustedText()
                 if marker in ( 'id', 'ide', 'h', 'toc1', 'toc2', 'toc3', ): pass # Just ignore these metadata fields
                 elif marker in ( 'mt1', 'mt2', ): pass # Just ignore these book heading fields
                 elif marker in ( 'iot', 'io1', 'io2', 'ip', 'is1', ): pass # Just ignore these introduction fields
                 elif marker in ( 'rem', 'c#', ): pass # Just ignore these unneeded fields
-                elif marker == 'c': C, V = text, '1'
+                elif marker == 'c':
+                    if accumulator:
+                        writer.write( "{}|{}|{}|{}|{}\n".format( bookCode, C, V, linemark, doDrupalTextFormat( accumulator ) ) )
+                        accumulator, linemark = "", ''
+                    C, V = text, '1'
                 elif marker == 'v':
                     started = True
                     if accumulator:
-                        writer.write( "{}|{}|{}|{}|{}\n".format( bookCode, C, V, linemark, accumulator ) )
+                        writer.write( "{}|{}|{}|{}|{}\n".format( bookCode, C, V, linemark, doDrupalTextFormat( accumulator ) ) )
                         accumulator, linemark = "", ''
                     V = text
                 elif marker in ( 's1', 's2', 's3', ): linemark = '*' + text
@@ -4960,7 +4969,7 @@ class BibleWriter( InternalBible ):
                 elif marker in ('v~', 'p~'):
                     if started: accumulator += (' ' if accumulator else '') + text
                 else: unhandledMarkers.add( marker )
-            if accumulator: writer.write( "{}|{}|{}|{}\{}\n".format( bookCode, C, V, linemark, accumulator ) )
+            if accumulator: writer.write( "{}|{}|{}|{}|{}\n".format( bookCode, C, V, linemark, doDrupalTextFormat( accumulator ) ) )
         # end of toDrupalBible:writeDrupalBibleBook
 
 
@@ -4972,8 +4981,10 @@ class BibleWriter( InternalBible ):
             writeDrupalBibleHeader( myFile )
             writeDrupalBibleChapters( myFile )
             for BBB,bookObject in self.books.items():
-                try: writeDrupalBibleBook( myFile, BBB, bookObject )
-                except: logging.critical( "BibleWriter.toDrupalBible: Unable to output {}".format( BBB ) )
+                if Globals.debugFlag: writeDrupalBibleBook( myFile, BBB, bookObject ) # Halts on errors
+                else:
+                    try: writeDrupalBibleBook( myFile, BBB, bookObject )
+                    except: logging.critical( "BibleWriter.toDrupalBible: Unable to output {}".format( BBB ) )
 
         if unhandledMarkers:
             logging.warning( "toDrupalBible: Unhandled markers were {}".format( unhandledMarkers ) )
@@ -4988,6 +4999,7 @@ class BibleWriter( InternalBible ):
 
         return True
     # end of BibleWriter.toDrupalBible
+
 
 
     def toPickle( self, outputFolder=None ):
@@ -5246,13 +5258,16 @@ def demo():
     if 1: # Test reading and writing a USFM Bible
         from USFMBible import USFMBible
         from USFMFilenames import USFMFilenames
-        testData = (
-                ("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
-                ("MS-BT", "MBTBT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
-                ("MS-Notes", "MBTBC", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/",),
-                ("MS-ABT", "MBTABT", "../../../../../Data/Work/Matigsalug/Bible/MBTABT/",),
-                ("WEB", "WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/",),
-                ("WEB", "WEB", "../../../../../Data/Work/Bibles/From eBible/WEB/eng-web_usfm 2013-07-18/",),
+        testData = ( # name, abbreviatino, folder
+                ("XYZ", "XYZ", "Tests/DataFilesForTests/USFMTest1/",),
+                ("Matigsalug", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
+                ("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
+                #("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
+                #("MS-BT", "MBTBT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
+                #("MS-Notes", "MBTBC", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/",),
+                #("MS-ABT", "MBTABT", "../../../../../Data/Work/Matigsalug/Bible/MBTABT/",),
+                #("WEB", "WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/",),
+                #("WEB", "WEB", "../../../../../Data/Work/Bibles/From eBible/WEB/eng-web_usfm 2013-07-18/",),
                 ) # You can put your USFM test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData ):
@@ -5308,7 +5323,7 @@ def demo():
             else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 
 
-    if 1: # Test reading USFM Bibles and exporting to theWord and MySword
+    if 0: # Test reading USFM Bibles and exporting to theWord and MySword
         from USFMBible import USFMBible
         from TheWordBible import theWordFileCompare
         mainFolder = "Tests/DataFilesForTests/theWordRoundtripTestFiles/"

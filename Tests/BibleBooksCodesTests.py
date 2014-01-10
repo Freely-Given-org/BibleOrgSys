@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodesTests.py
-#   Last modified: 2013-07-24 by RJH (also update ProgVersion below)
+#   Last modified: 2014-01-10 by RJH (also update ProgVersion below)
 #
 # Module testing BibleBooksCodes.py
 #
-# Copyright (C) 2011-2013 Robert Hunt
+# Copyright (C) 2011-2014 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module testing BibleBooksCodesConverter.py and BibleBooksCodes.py.
 """
 
 ProgName = "Bible Books Codes tests"
-ProgVersion = "0.69"
+ProgVersion = "0.70"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -63,11 +63,12 @@ class BibleBooksCodesConverterTests( unittest.TestCase ):
         """ Test the importDataToPython function. """
         result = self.bbcsc.importDataToPython()
         self.assertTrue( isinstance( result, dict ) )
-        self.assertEqual( len(result), 16 )
+        self.assertEqual( len(result), 17 )
         for dictName in ("referenceNumberDict","referenceAbbreviationDict","sequenceList",
                         "SBLAbbreviationDict","OSISAbbreviationDict","SwordAbbreviationDict","CCELDict",
                         "USFMAbbreviationDict","USFMNumberDict","USXNumberDict","UnboundCodeDict",
-                        "BibleditNumberDict","NETBibleAbbreviationDict","ByzantineAbbreviationDict","EnglishNameDict",
+                        "BibleditNumberDict","NETBibleAbbreviationDict","DrupalBibleAbbreviationDict",
+                        "ByzantineAbbreviationDict","EnglishNameDict",
                         "allAbbreviationsDict",):
             self.assertTrue( dictName in result )
             self.assertGreater( len(result[dictName]), 20 )

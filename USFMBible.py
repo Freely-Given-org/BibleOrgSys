@@ -352,6 +352,7 @@ def demo():
                                             ("Matigsalug", "utf-8", "Tests/DataFilesForTests/USFMTest1/"), \
                                             ("Matigsalug", "utf-8", "Tests/DataFilesForTests/USFMTest2/"), \
                                             ("UEP", "utf-8", "Tests/DataFilesForTests/USFMErrorProject/"), \
+                                            ("Exported", "utf-8", "Tests/BOS_USFM_Export/"), \
                                             ):
             count += 1
             if os.access( testFolder, os.R_OK ):
@@ -365,7 +366,7 @@ def demo():
                     UsfmBErrors = UsfmB.getErrors()
                     # print( UBErrors )
                 if Globals.commandLineOptions.export:
-                    #UsfmB.toTeX()
+                    ##UsfmB.toDrupalBible()
                     UsfmB.doAllExports()
                     if name != "UEP": # Why does this fail to pickle?
                         newObj = Globals.unpickleObject( name + '.pickle' )
@@ -373,7 +374,7 @@ def demo():
             else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 
 
-    if 1: # Test a whole folder full of folders of USFM Bibles
+    if 0: # Test a whole folder full of folders of USFM Bibles
         def findInfo( somepath ):
             """ Find out info about the project from the included copyright.htm file """
             cFilepath = os.path.join( somepath, "copyright.htm" )
