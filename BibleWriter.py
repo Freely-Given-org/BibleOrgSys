@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2013-12-27 by RJH (also update ProgVersion below)
+#   Last modified: 2014-01-12 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
-# Copyright (C) 2010-2013 Robert Hunt
+# Copyright (C) 2010-2014 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -145,8 +145,8 @@ class BibleWriter( InternalBible ):
         """
         if Globals.debugFlag: assert( existingControlDict and isinstance( existingControlDict, dict ) )
         for entry in existingControlDict:
-            existingControlDict[entry] = existingControlDict[entry] \
-                .replace( '__PROJECT_NAME__', Globals.makeSafeFilename( self.projectName.replace( ' ', '_' ) ) )
+            existingControlDict[entry] = existingControlDict[entry].replace( '__PROJECT_NAME__', self.projectName )
+                #.replace( '__PROJECT_NAME__', Globals.makeSafeFilename( self.projectName.replace( ' ', '_' ) ) )
             #print( entry, repr(existingControlDict[entry]) )
     # end of BibleWriter.__adjustControlDict
 
@@ -408,7 +408,7 @@ class BibleWriter( InternalBible ):
         toWikiMediaGlobals = { "verseRef":'', "XRefNum":0, "FootnoteNum":0, "lastRef":'', "OneChapterOSISBookCodes":Globals.BibleBooksCodes.getOSISSingleChapterBooksList() } # These are our global variables
 
 # TODO: Need to handle footnotes \f + \fr ref \fk key \ft text \f* 	becomes <ref><!--\fr ref \fk key \ft-->text</ref>
-        def writeBook( writerObject, BBB, bkData ):
+        def writeMWBook( writerObject, BBB, bkData ):
             """Writes a book to the MediaWiki writerObject."""
 
             def processXRefsAndFootnotes( verse, extras ):
@@ -539,7 +539,7 @@ class BibleWriter( InternalBible ):
             #chapterNumberString = None
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
-                #print( "toMediaWiki:writeBook", BBB, bookRef, bookName, marker, text, extras )
+                #print( "toMediaWiki:writeMWBook", BBB, bookRef, bookName, marker, text, extras )
                 if marker in ('id','h','mt1'):
                     writerObject.writeLineComment( '\\{} {}'.format( marker, text ) )
                     bookName = text # in case there's no toc2 entry later
@@ -597,7 +597,7 @@ class BibleWriter( InternalBible ):
                     writerObject.writeLineText( '::{}'.format(adjText, noTextCheck=True) )
                 elif marker not in ('c#',): # These are the markers that we can safely ignore for this export
                     unhandledMarkers.add( marker )
-        # end of toMediaWiki.writeBook
+        # end of toMediaWiki.writeMWBook
 
         # Set-up our Bible reference system
         if controlDict['PublicationCode'] == "GENERIC":
@@ -613,7 +613,7 @@ class BibleWriter( InternalBible ):
         xw.setHumanReadable()
         xw.start()
         for BBB,bookData in self.books.items():
-            writeBook( xw, BBB, bookData )
+            writeMWBook( xw, BBB, bookData )
         xw.close()
 
         if unhandledMarkers:
@@ -678,7 +678,7 @@ class BibleWriter( InternalBible ):
             writerObject.writeLineClose( 'INFORMATION' )
         # end of toZefaniaXML.writeHeader
 
-        def writeBook( writerObject, BBB, bkData ):
+        def writeZefBook( writerObject, BBB, bkData ):
             """Writes a book to the Zefania XML writerObject."""
             #print( 'BIBLEBOOK', [('bnumber',Globals.BibleBooksCodes.getReferenceNumber(BBB)), ('bname',Globals.BibleBooksCodes.getEnglishName_NR(BBB)), ('bsname',Globals.BibleBooksCodes.getOSISAbbreviation(BBB))] )
             OSISAbbrev = Globals.BibleBooksCodes.getOSISAbbreviation( BBB )
@@ -716,7 +716,7 @@ class BibleWriter( InternalBible ):
             if haveOpenChapter:
                 writerObject.writeLineClose( 'CHAPTER' )
             writerObject.writeLineClose( 'BIBLEBOOK' )
-        # end of toZefaniaXML.writeBook
+        # end of toZefaniaXML.writeZefBook
 
         # Set-up our Bible reference system
         if controlDict['PublicationCode'] == "GENERIC":
@@ -736,7 +736,7 @@ class BibleWriter( InternalBible ):
         if True: #if controlDict["ZefaniaFiles"]=="byBible":
             writeHeader( xw )
             for BBB,bookData in self.books.items():
-                writeBook( xw, BBB, bookData )
+                writeZefBook( xw, BBB, bookData )
         xw.writeLineClose( 'XMLBible' )
         xw.close()
 
@@ -802,7 +802,7 @@ class BibleWriter( InternalBible ):
             writerObject.writeLineClose( 'INFORMATION' )
         # end of toHaggaiXML.writeHeader
 
-        def writeBook( writerObject, BBB, bkData ):
+        def writeHagBook( writerObject, BBB, bkData ):
             """Writes a book to the Haggai XML writerObject."""
             #print( 'BIBLEBOOK', [('bnumber',Globals.BibleBooksCodes.getReferenceNumber(BBB)), ('bname',Globals.BibleBooksCodes.getEnglishName_NR(BBB)), ('bsname',Globals.BibleBooksCodes.getOSISAbbreviation(BBB))] )
             OSISAbbrev = Globals.BibleBooksCodes.getOSISAbbreviation( BBB )
@@ -849,7 +849,7 @@ class BibleWriter( InternalBible ):
             if haveOpenChapter:
                 writerObject.writeLineClose( 'CHAPTER' )
             writerObject.writeLineClose( 'BIBLEBOOK' )
-        # end of toHaggaiXML.writeBook
+        # end of toHaggaiXML.writeHagBook
 
         # Set-up our Bible reference system
         if controlDict['PublicationCode'] == "GENERIC":
@@ -869,7 +869,7 @@ class BibleWriter( InternalBible ):
         if True: #if controlDict["HaggaiFiles"]=="byBible":
             writeHeader( xw )
             for BBB,bookData in self.books.items():
-                writeBook( xw, BBB, bookData )
+                writeHagBook( xw, BBB, bookData )
         xw.writeLineClose( 'XMLBible' )
         xw.close()
 
@@ -916,7 +916,7 @@ class BibleWriter( InternalBible ):
 
         unhandledMarkers = set()
 
-        def writeBook( BBB, bkData ):
+        def writeUSXBook( BBB, bkData ):
             """ Writes a book to the filesFolder. """
 
             def handleInternalTextMarkersForUSX( originalText ):
@@ -1259,7 +1259,7 @@ class BibleWriter( InternalBible ):
             xw.writeLineClose( 'usx' )
             xw.close( writeFinalNL=True ) # Try to imitate Paratext output as closely as possible
             if validationSchema: return xw.validate( validationSchema )
-        # end of toUSXXML.writeBook
+        # end of toUSXXML.writeUSXBook
 
         # Set-up our Bible reference system
         if controlDict['PublicationCode'] == "GENERIC":
@@ -1275,7 +1275,7 @@ class BibleWriter( InternalBible ):
 
         validationResults = ( 0, '', '', ) # xmllint result code, program output, error output
         for BBB,bookData in self.books.items():
-            bookResults = writeBook( BBB, bookData )
+            bookResults = writeUSXBook( BBB, bookData )
             if validationSchema:
                 if bookResults[0] > validationResults[0]: validationResults = ( bookResults[0], validationResults[1], validationResults[2], )
                 if bookResults[1]: validationResults = ( validationResults[0], validationResults[1] + bookResults[1], validationResults[2], )
@@ -1330,7 +1330,7 @@ class BibleWriter( InternalBible ):
 
         unhandledMarkers = set()
 
-        def writeBook( xw, BBB, bkData ):
+        def writeUSFXBook( xw, BBB, bkData ):
             """ Writes a book to the given USFX XML writerObject. """
 
             def handleInternalTextMarkersForUSFX( originalText ):
@@ -1666,7 +1666,7 @@ class BibleWriter( InternalBible ):
                 xw.removeFinalNewline( True )
                 xw.writeLineClose( 'p' )
             xw.writeLineClose( 'book' )
-        # end of toUSFXXML.writeBook
+        # end of toUSFXXML.writeUSFXBook
 
         # Set-up our Bible reference system
         if controlDict['PublicationCode'] == "GENERIC":
@@ -1696,7 +1696,7 @@ class BibleWriter( InternalBible ):
             #languageCode = self.ssfDict['Language']
         if languageCode: xw.writeLineOpenClose( 'languageCode', languageCode )
         for BBB,bookData in self.books.items(): # Process each Bible book
-            writeBook( xw, BBB, bookData )
+            writeUSFXBook( xw, BBB, bookData )
         xw.writeLineClose( 'usfx' )
         xw.close()
         if validationSchema: validationResults = xw.validate( validationSchema )
@@ -1882,7 +1882,7 @@ class BibleWriter( InternalBible ):
         toOSISGlobals = { "verseRef":'', "XRefNum":0, "FootnoteNum":0, "lastRef":'', "OneChapterOSISBookCodes":Globals.BibleBooksCodes.getOSISSingleChapterBooksList() } # These are our global variables
 
 
-        def writeBook( writerObject, BBB, bkData ):
+        def writeOSISBook( writerObject, BBB, bkData ):
             """Writes a book to the OSIS XML writerObject.
             """
 
@@ -2379,7 +2379,7 @@ class BibleWriter( InternalBible ):
             closeAnyOpenMajorSection()
             writerObject.writeLineClose( 'div' ) # Close book division
             writerObject.writeNewLine()
-        # end of toOSISXML.writeBook
+        # end of toOSISXML.writeOSISBook
 
         if controlDict["osisFiles"]=="byBook": # Write an individual XML file for each book
             if Globals.verbosityLevel > 2: print( _("  Exporting individually to OSIS XML format...") )
@@ -2393,7 +2393,7 @@ class BibleWriter( InternalBible ):
                 xw.setSectionName( 'Header' )
                 writeHeader( xw )
                 xw.setSectionName( 'Main' )
-                writeBook( xw, BBB, bookData )
+                writeOSISBook( xw, BBB, bookData )
                 xw.writeLineClose( 'osisText' )
                 xw.writeLineClose( 'osis' )
                 xw.close()
@@ -2414,7 +2414,7 @@ class BibleWriter( InternalBible ):
             writeHeader( xw )
             xw.setSectionName( 'Main' )
             for BBB,bookData in self.books.items(): # Process each Bible book
-                writeBook( xw, BBB, bookData )
+                writeOSISBook( xw, BBB, bookData )
             xw.writeLineClose( 'osisText' )
             xw.writeLineClose( 'osis' )
             xw.close()
@@ -2583,7 +2583,7 @@ class BibleWriter( InternalBible ):
             toSwordGlobals['length'] = 0 # Reset
         # end of toSwordModule.writeIndexEntry
 
-        def writeBook( writerObject, ix, BBB, bkData ):
+        def writeSwordBook( writerObject, ix, BBB, bkData ):
             """ Writes a Bible book to the output files. """
 
             def checkText( textToCheck ):
@@ -3053,7 +3053,7 @@ class BibleWriter( InternalBible ):
             closeAnyOpenMajorSection()
             writerObject.writeLineClose( 'div' ) # Close book division
             writerObject.writeNewLine()
-        # end of toSwordModule.writeBook
+        # end of toSwordModule.writeSwordBook
 
         # An uncompressed Sword module consists of a .conf file
         #   plus ot and nt XML files with binary indexes ot.vss and nt.vss (containing 6-byte chunks = 4-byte offset, 2-byte length)
@@ -3079,7 +3079,7 @@ class BibleWriter( InternalBible ):
                 else:
                     logging.critical( _("toSwordModule: Sword module writer doesn't know how to encode {} book or appendix").format(BBB) )
                     continue
-                writeBook( xw, ix, BBB, bookData )
+                writeSwordBook( xw, ix, BBB, bookData )
         xwOT.close(); xwNT.close()
         if unhandledMarkers:
             logging.warning( "toSwordModule: Unhandled markers were {}".format( unhandledMarkers ) )
@@ -3120,7 +3120,7 @@ class BibleWriter( InternalBible ):
         #self.__adjustControlDict( controlDict )
 
 
-        def writeBook( writerObject, BBB, ourGlobals ):
+        def writeTWBook( writerObject, BBB, ourGlobals ):
             """
             Writes a book to the theWord writerObject file.
             """
@@ -3177,7 +3177,7 @@ class BibleWriter( InternalBible ):
             assert( '\n' not in ourGlobals['lastLine'] ) # This would mess everything up
             writerObject.write( ourGlobals['lastLine'] + '\n' ) # Write it whether or not we got data
             lineCount += 1
-        # end of totheWord.writeBook
+        # end of totheWord.writeTWBook
 
 
         # Set-up their Bible reference system
@@ -3212,7 +3212,7 @@ class BibleWriter( InternalBible ):
             myFile.write('\ufeff') # theWord needs the BOM
             BBB, bookCount, lineCount, checkCount = startBBB, 0, 0, 0
             while True: # Write each Bible book in the KJV order
-                writeBook( myFile, BBB, mySettings )
+                writeTWBook( myFile, BBB, mySettings )
                 checkCount += checkTotals[bookCount]
                 bookCount += 1
                 if lineCount != checkCount:
@@ -3291,7 +3291,7 @@ class BibleWriter( InternalBible ):
         #self.__adjustControlDict( controlDict )
 
 
-        def writeBook( sqlObject, BBB, ourGlobals ):
+        def writeMSBook( sqlObject, BBB, ourGlobals ):
             """
             Writes a book to the MySword sqlObject file.
             """
@@ -3360,7 +3360,7 @@ class BibleWriter( InternalBible ):
                 sqlObject.execute( 'INSERT INTO "Bible" VALUES(?,?,?,?)', \
                     (ourGlobals['lastBCV'][0],ourGlobals['lastBCV'][1],ourGlobals['lastBCV'][2],ourGlobals['lastLine']) )
                 lineCount += 1
-        # end of toMySword.writeBook
+        # end of toMySword.writeMSBook
 
 
         # Set-up their Bible reference system
@@ -3437,7 +3437,7 @@ class BibleWriter( InternalBible ):
         conn.commit() # save (commit) the changes
         BBB, lineCount = startBBB, 0
         while True: # Write each Bible book in the KJV order
-            writeBook( cursor, BBB, mySettings )
+            writeMSBook( cursor, BBB, mySettings )
             conn.commit() # save (commit) the changes
             if BBB == endBBB: break
             BBB = BOS.getNextBookCode( BBB )
@@ -3763,7 +3763,7 @@ class BibleWriter( InternalBible ):
         # end of toESword.composeVerseLine
 
 
-        def writeBook( sqlObject, BBB, ourGlobals ):
+        def writeESwordBook( sqlObject, BBB, ourGlobals ):
             """
             Writes a book to the e-Sword sqlObject file.
             """
@@ -3831,7 +3831,7 @@ class BibleWriter( InternalBible ):
                 sqlObject.execute( 'INSERT INTO "Bible" VALUES(?,?,?,?)', \
                     (ourGlobals['lastBCV'][0],ourGlobals['lastBCV'][1],ourGlobals['lastBCV'][2],ourGlobals['lastLine']) )
                 lineCount += 1
-        # end of toESword.writeBook
+        # end of toESword.writeESwordBook
 
 
         # Set-up their Bible reference system
@@ -3908,7 +3908,7 @@ class BibleWriter( InternalBible ):
         conn.commit() # save (commit) the changes
         BBB, lineCount = startBBB, 0
         while True: # Write each Bible book in the KJV order
-            writeBook( cursor, BBB, mySettings )
+            writeESwordBook( cursor, BBB, mySettings )
             conn.commit() # save (commit) the changes
             if BBB == endBBB: break
             BBB = BOS.getNextBookCode( BBB )
@@ -3979,7 +3979,7 @@ class BibleWriter( InternalBible ):
             writerObject.writeLineText( '<meta http-equiv="Content-Type" content="text/html;charset=utf-8">', noTextCheck=True )
             writerObject.writeLineText( '<link rel="stylesheet" type="text/css" href="BibleBook.css">', noTextCheck=True )
             if 'HTML5Title' in controlDict and controlDict['HTML5Title']:
-                writerObject.writeLineOpenClose( 'title' , controlDict['HTML5Title'].replace('__PROJECT_NAME__',self.projectName) )
+                writerObject.writeLineOpenClose( 'title' , controlDict['HTML5Title'] )
             #if "HTML5Subject" in controlDict and controlDict["HTML5Subject"]: writerObject.writeLineOpenClose( 'subject', controlDict["HTML5Subject"] )
             #if "HTML5Description" in controlDict and controlDict["HTML5Description"]: writerObject.writeLineOpenClose( 'description', controlDict["HTML5Description"] )
             #if "HTML5Publisher" in controlDict and controlDict["HTML5Publisher"]: writerObject.writeLineOpenClose( 'publisher', controlDict["HTML5Publisher"] )
@@ -4022,7 +4022,7 @@ class BibleWriter( InternalBible ):
                 if BBB == myBBB:
                     writerObject.writeLineText( '<li class="bookNameEntry"><span class="currentBookName">{}</span></li>'.format( bkName ), noTextCheck=True )
                 else:
-                    writerObject.writeLineText( '<li class="bookNameEntry"><a class="bookNameLink" href="BIBLE_{}.html">{}</a></li>'.format( BBB, bkName ), noTextCheck=True )
+                    writerObject.writeLineText( '<li class="bookNameEntry"><a class="bookNameLink" href="{}">{}</a></li>'.format( filenameDict[BBB], bkName ), noTextCheck=True )
             writerObject.writeLineClose( 'ul' )
             writerObject.writeLineClose( 'nav' )
         # end of toHTML5.writeHeader
@@ -4143,7 +4143,7 @@ class BibleWriter( InternalBible ):
         # end of toHTML5.writeAboutPage
 
 
-        def writeBook( writerObject, BBB, bkData, ourGlobals ):
+        def writeHTML5Book( writerObject, BBB, bkData, ourGlobals ):
             """Writes a book to the HTML5 writerObject."""
 
             def handleExtras( text, extras, ourGlobals ):
@@ -4389,8 +4389,8 @@ class BibleWriter( InternalBible ):
             C = V = ''
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
-                #if BBB=='MRK': print( "writeBook", marker, text )
-                #print( "toHTML5.writeBook", BBB, C, V, marker, text )
+                #if BBB=='MRK': print( "writeHTML5Book", marker, text )
+                #print( "toHTML5.writeHTML5Book", BBB, C, V, marker, text )
                 if marker in oftenIgnoredIntroMarkers: pass # Just ignore these lines
 
                 # Markers usually only found in the introduction
@@ -4487,7 +4487,7 @@ class BibleWriter( InternalBible ):
             if haveOpenSection: writerObject.writeLineClose( 'section' ); haveOpenSection = False
             writeEndNotes( writerObject, ourGlobals )
             writeFooter( writerObject )
-        # end of toHTML5.writeBook
+        # end of toHTML5.writeHTML5Book
 
 
         # Set-up our Bible reference system
@@ -4502,22 +4502,21 @@ class BibleWriter( InternalBible ):
         suffix = controlDict['HTML5Suffix'] if 'HTML5Suffix' in controlDict else 'html'
         filenameDict = {}
         for BBB in self.books: # Make a list of filenames
-            filename = controlDict['HTML5OutputFilenameTemplate'].replace('__PROJECT_NAME__','BIBLE') \
-                            .replace('__BOOKCODE__',BBB ).replace('__SUFFIX__',suffix)
-            filenameDict[BBB] = filename
+            filename = controlDict['HTML5OutputFilenameTemplate'].replace('__BOOKCODE__',BBB ).replace('__SUFFIX__',suffix)
+            filenameDict[BBB] = Globals.makeSafeFilename( filename.replace( ' ', '_' ) )
 
         html5Globals = {}
         if controlDict["HTML5Files"]=="byBook":
             for BBB,bookData in self.books.items(): # Now export the books
                 if Globals.verbosityLevel > 2: print( _("    Exporting {} to HTML5 format...").format( BBB ) )
-                xw = MLWriter( Globals.makeSafeFilename( filenameDict[BBB] ), WEBoutputFolder, 'HTML' )
+                xw = MLWriter( filenameDict[BBB], WEBoutputFolder, 'HTML' )
                 xw.setHumanReadable()
                 xw.start( noAutoXML=True )
                 xw.writeLineText( '<!DOCTYPE html>', noTextCheck=True )
                 xw.writeLineOpen( 'html' )
-                if Globals.debugFlag: writeBook( xw, BBB, bookData, html5Globals ) # Halts on errors
+                if Globals.debugFlag: writeHTML5Book( xw, BBB, bookData, html5Globals ) # Halts on errors
                 else:
-                    try: writeBook( xw, BBB, bookData, html5Globals )
+                    try: writeHTML5Book( xw, BBB, bookData, html5Globals )
                     except Exception as err:
                         print( BBB, "Unexpected error:", sys.exc_info()[0], err)
                         logging.error( "toHTML5: Oops, creating {} failed!".format( BBB ) )
@@ -5259,7 +5258,7 @@ def demo():
         from USFMBible import USFMBible
         from USFMFilenames import USFMFilenames
         testData = ( # name, abbreviatino, folder
-                ("XYZ", "XYZ", "Tests/DataFilesForTests/USFMTest1/",),
+                ("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
                 ("Matigsalug", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
                 ("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
                 #("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),

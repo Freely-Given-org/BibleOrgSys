@@ -48,7 +48,7 @@ debuggingThisModule = False
 
 
 import os, logging
-import unicodedata
+#import unicodedata
 from gettext import gettext as _
 from collections import OrderedDict
 

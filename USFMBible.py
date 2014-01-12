@@ -349,11 +349,10 @@ def demo():
     if 1: # Load and process some of our test versions
         count = 0
         for name, encoding, testFolder in ( \
-                                            ("HADİ Çeviri", "utf-8", "/mnt/SSD/AutoProcesses/Processed/BibleDropBox hadi"), \
-                                            #("Matigsalug", "utf-8", "Tests/DataFilesForTests/USFMTest1/"), \
-                                            #("Matigsalug", "utf-8", "Tests/DataFilesForTests/USFMTest2/"), \
-                                            #("UEP", "utf-8", "Tests/DataFilesForTests/USFMErrorProject/"), \
-                                            #("Exported", "utf-8", "Tests/BOS_USFM_Export/"), \
+                                            ("Matigsalug", "utf-8", "Tests/DataFilesForTests/USFMTest1/"), \
+                                            ("Matigsalug", "utf-8", "Tests/DataFilesForTests/USFMTest2/"), \
+                                            ("UEP", "utf-8", "Tests/DataFilesForTests/USFMErrorProject/"), \
+                                            ("Exported", "utf-8", "Tests/BOS_USFM_Export/"), \
                                             ):
             count += 1
             if os.access( testFolder, os.R_OK ):
