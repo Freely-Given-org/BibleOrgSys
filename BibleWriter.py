@@ -37,6 +37,7 @@ Contains functions:
     toPseudoUSFM( outputFolder=None ) -- this is our internal Bible format -- exportable for debugging purposes
             For more details see InternalBible.py, InternalBibleBook.py, InternalBibleInternals.py
     toUSFM( outputFolder=None )
+    toCustomBible( outputFolder=None )
     toText( outputFolder=None )
     toMediaWiki( outputFolder=None, controlDict=None, validationSchema=None )
     toZefaniaXML( outputFolder=None, controlDict=None, validationSchema=None )
@@ -304,6 +305,105 @@ class BibleWriter( InternalBible ):
 
         return True
     # end of BibleWriter.toUSFM
+
+
+
+    def toCustomBible( self, outputFolder=None, removeVerseBridges=False ):
+        """
+        Adjust the pseudo USFM and write the customized USFM files for the (forthcoming) CustomBible (Android) app.
+        """
+        if Globals.verbosityLevel > 1: print( "Running BibleWriter:toCustomBible..." )
+        if Globals.debugFlag: assert( self.books )
+
+        if not self.doneSetupGeneric: self.__setupWriter()
+        if not outputFolder: outputFolder = "OutputFiles/BOS_CustomBible_" + ("Reexport/" if self.objectTypeString=="CustomBible" else "Export/")
+        if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
+        #if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_MediaWiki_controls.txt", controlDict )
+        #assert( controlDict and isinstance( controlDict, dict ) )
+
+        # Adjust the extracted outputs
+        for BBB,bookObject in self.books.items():
+            pseudoUSFMData = bookObject._processedLines
+            #print( "\pseudoUSFMData", pseudoUSFMData[:50] ); halt
+            USFMAbbreviation = Globals.BibleBooksCodes.getUSFMAbbreviation( BBB )
+            USFMNumber = Globals.BibleBooksCodes.getUSFMNumber( BBB )
+
+            USFM = ""
+            inField = None
+            value1 = value2 = None # For printing missing (bridged) verse numbers
+            if Globals.verbosityLevel > 2: print( "  " + _("Adjusting CustomBible USFM output..." ) )
+            for verseDataEntry in pseudoUSFMData:
+                pseudoMarker, value = verseDataEntry.getMarker(), verseDataEntry.getFullText()
+                if (not USFM) and pseudoMarker!='id': # We need to create an initial id line
+                    USFM += '\\id {} -- BibleOrgSys CustomBible export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
+                if pseudoMarker in ('c#',): continue # Ignore our additions
+                #value = cleanText # (temp)
+                #if Globals.debugFlag and debuggingThisModule: print( "toCustomBible: pseudoMarker = '{}' value = '{}'".format( pseudoMarker, value ) )
+                if removeVerseBridges and pseudoMarker in ('v','c',):
+                    if value1 and value2:
+                        for vNum in range( value1+1, value2+1 ): # Fill in missing verse numbers
+                            USFM += '\n\\v {}'.format( vNum )
+                    value1 = value2 = None
+
+                if pseudoMarker in ('v','f','fr','x','xo',): # These fields should always end with a space but the processing will have removed them
+                    if Globals.debugFlag: assert( value )
+                    if pseudoMarker=='v' and removeVerseBridges:
+                        vString = value
+                        for bridgeChar in ('-', '–', '—'): # hyphen, endash, emdash
+                            ix = vString.find( bridgeChar )
+                            if ix != -1:
+                                value = vString[:ix] # Remove verse bridges
+                                vEnd = vString[ix+1:]
+                                #print( BBB, repr(value), repr(vEnd) )
+                                try: value1, value2 = int( value ), int( vEnd )
+                                except ValueError:
+                                    print( "toCustomBible: bridge doesn't seem to be integers in {} {}".format( BBB, repr(vString) ) )
+                                    value1 = value2 = None # One of them isn't an integer
+                                #print( ' ', BBB, repr(value1), repr(value2) )
+                                break
+                    if value and value[-1] != ' ': value += ' ' # Append a space since it didn't have one
+                if pseudoMarker[-1]=='~' or Globals.USFMMarkers.isNewlineMarker(pseudoMarker): # Have a continuation field
+                    if inField is not None:
+                        USFM += '\\{}*'.format( inField ) # Do a close marker for footnotes and cross-references
+                        inField = None
+                if pseudoMarker[-1] == '~':
+                    #print( "psMarker ends with squiggle: '{}'='{}'".format( pseudoMarker, value ) )
+                    if Globals.debugFlag: assert( pseudoMarker[:-1] in ('v','p','c') )
+                    USFM += (' ' if USFM and USFM[-1]!=' ' else '') + value
+                else: # not a continuation marker
+                    adjValue = value
+                    #if pseudoMarker in ('it','bk','ca','nd',): # Character markers to be closed -- had to remove ft and xt from this list for complex footnotes with f fr fq ft fq ft f*
+                    if pseudoMarker in allCharMarkers: # Character markers to be closed
+                        #if (USFM[-2]=='\\' or USFM[-3]=='\\') and USFM[-1]!=' ':
+                        if USFM[-1] != ' ':
+                            USFM += ' ' # Separate markers by a space e.g., \p\bk Revelation
+                            if Globals.debugFlag: print( "toCustomBible: Added space to '{}' before '{}'".format( USFM[-2], pseudoMarker ) )
+                        adjValue += '\\{}*'.format( pseudoMarker ) # Do a close marker
+                    elif pseudoMarker in ('f','x',): inField = pseudoMarker # Remember these so we can close them later
+                    elif pseudoMarker in ('fr','fq','ft','xo',): USFM += '' # These go on the same line just separated by spaces and don't get closed
+                    elif USFM: USFM += '\n' # paragraph markers go on a new line
+                    if not value: USFM += '\\{}'.format( pseudoMarker )
+                    else: USFM += '\\{} {}'.format( pseudoMarker,adjValue )
+                #print( pseudoMarker, USFM[-200:] )
+
+            # Write the CustomBible USFM output
+            #print( "\nUSFM", USFM[:3000] )
+            filename = "CB_{}.SFM".format( BBB )
+            filepath = os.path.join( outputFolder, Globals.makeSafeFilename( filename ) )
+            if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
+            with open( filepath, 'wt' ) as myFile: myFile.write( USFM )
+
+        # Now create a zipped collection
+        if Globals.verbosityLevel > 2: print( "  Zipping CustomBible files..." )
+        zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllCBUSFMFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
+        for filename in os.listdir( outputFolder ):
+            if not filename.endswith( '.zip' ):
+                filepath = os.path.join( outputFolder, filename )
+                zf.write( filepath, filename ) # Save in the archive without the path
+        zf.close()
+
+        return True
+    # end of BibleWriter.toCustomBible
 
 
 
@@ -5060,6 +5160,7 @@ class BibleWriter( InternalBible ):
         pickleOutputFolder = os.path.join( givenOutputFolderName, "BOS_Bible_Object_Pickle/" )
         PseudoUSFMOutputFolder = os.path.join( givenOutputFolderName, "BOS_PseudoUSFM_" + "Export/" )
         USFMOutputFolder = os.path.join( givenOutputFolderName, "BOS_USFM_" + ("Reexport/" if self.objectTypeString=='USFM' else "Export/" ) )
+        CBOutputFolder = os.path.join( givenOutputFolderName, "BOS_CustomBible_" + "Export/" )
         textOutputFolder = os.path.join( givenOutputFolderName, "BOS_PlainText_" + ("Reexport/" if self.objectTypeString=='Text' else "Export/" ) )
         TWOutputFolder = os.path.join( givenOutputFolderName, "BOS_theWord_" + ("Reexport/" if self.objectTypeString=='TheWord' else "Export/" ) )
         MySwOutputFolder = os.path.join( givenOutputFolderName, "BOS_MySword_" + ("Reexport/" if self.objectTypeString=='MySword' else "Export/" ) )
@@ -5089,6 +5190,7 @@ class BibleWriter( InternalBible ):
         if Globals.debugFlag:
             PseudoUSFMExportResult = self.toPseudoUSFM( PseudoUSFMOutputFolder )
             USFMExportResult = self.toUSFM( USFMOutputFolder )
+            CBExportResult = self.toCustomBible( CBOutputFolder )
             TextExportResult = self.toText( textOutputFolder )
             MWExportResult = self.toMediaWiki( MWOutputFolder )
             ZefExportResult = self.toZefaniaXML( zefOutputFolder )
@@ -5106,9 +5208,9 @@ class BibleWriter( InternalBible ):
             TeXExportResult = self.toTeX( TeXOutputFolder ) # Put this last since it's slowest
         elif Globals.maxProcesses > 1: # Process all the exports with different threads
             # DON'T KNOW WHY THIS CAUSES A SEGFAULT
-            self.__outputFolders = [USFMOutputFolder, MWOutputFolder, zOutputFolder, USXOutputFolder, USFXOutputFolder,
+            self.__outputFolders = [USFMOutputFolder, CBOutputFolder, MWOutputFolder, zOutputFolder, USXOutputFolder, USFXOutputFolder,
                                     OSISOutputFolder, swOutputFolder, htmlOutputFolder]
-            #self.__outputProcesses = [self.toUSFM, self.toMediaWiki, self.toZefaniaXML, self.toUSXXML, self.toUSFXXML,
+            #self.__outputProcesses = [self.toUSFM, self.toCustomBible, self.toMediaWiki, self.toZefaniaXML, self.toUSXXML, self.toUSFXXML,
                                     #self.toOSISXML, self.toSwordModule, self.toHTML5]
             #assert( len(self.__outputFolders) == len(self.__outputProcesses) )
             print( "here1" )
@@ -5119,6 +5221,7 @@ class BibleWriter( InternalBible ):
                 print( "got results", len(results) )
                 assert( len(results) == len(self.__outputFolders) )
                 USFMExportResult = results[0]
+                CBExportResult = results[0]
                 MWExportResult = results[1]
                 ZefExportResult = results[2]
                 HagExportResult = results[2]
@@ -5141,6 +5244,11 @@ class BibleWriter( InternalBible ):
                 USFMExportResult = False
                 print("BibleWriter.doAllExports.toUSFM Unexpected error:", sys.exc_info()[0], err)
                 logging.error( "BibleWriter.doAllExports.toUSFM: Oops, failed!" )
+            try: CBExportResult = self.toCustomBible( CBOutputFolder )
+            except Exception as err:
+                CBExportResult = False
+                print("BibleWriter.doAllExports.toCustomBible Unexpected error:", sys.exc_info()[0], err)
+                logging.error( "BibleWriter.doAllExports.toCustomBible: Oops, failed!" )
             try: TextExportResult = self.toText( textOutputFolder )
             except Exception as err:
                 TextExportResult = False
@@ -5219,20 +5327,21 @@ class BibleWriter( InternalBible ):
                 logging.error( "BibleWriter.doAllExports.toTeX: Oops, failed!" )
 
         if Globals.verbosityLevel > 1:
-            if pickleResult and PseudoUSFMExportResult and USFMExportResult and TextExportResult \
+            if pickleResult and PseudoUSFMExportResult and USFMExportResult and CBExportResult and TextExportResult \
             and TWExportResult and MySwExportResult and ESwExportResult and MWExportResult \
             and ZefExportResult and HagExportResult and USXExportResult and USFXExportResult \
             and OSISExportResult and swExportResult and htmlExportResult and TeXExportResult \
             and SwSExportResult and DrExportResult:
                 print( "BibleWriter.doAllExports finished them all successfully!" )
             else: print( "BibleWriter.doAllExports finished:  Pck={}  PsUSFM={} USFM={}  Tx={}  TW={} MySw={} eSw={}  MW={}  Zef={} Hag={}  USX={} USFX={}  OSIS={}  Sw={}  HTML={} TeX={} SwS={} Dr={}" \
-                    .format( pickleResult, PseudoUSFMExportResult, USFMExportResult, TextExportResult,
+                    .format( pickleResult, PseudoUSFMExportResult, USFMExportResult, CBExportResult, TextExportResult,
                                 TWExportResult, MySwExportResult, ESwExportResult,
                                 MWExportResult, ZefExportResult, HagExportResult, USXExportResult, USFXExportResult,
                                 OSISExportResult, swExportResult, htmlExportResult, TeXExportResult, SwSExportResult,
                                 DrExportResult ) )
         return { 'Pickle':pickleResult,
-                    'PseudoUSFMExport':PseudoUSFMExportResult, 'USFMExport':USFMExportResult, 'TextExport':TextExportResult,
+                    'PseudoUSFMExport':PseudoUSFMExportResult, 'USFMExport':USFMExportResult,
+                    'CustomBibleExport':CBExportResult,  'TextExport':TextExportResult,
                     'TWExport':TWExportResult, 'MySwExport':MySwExportResult, 'ESwExport':ESwExportResult,
                     'MWExport':MWExportResult, 'ZefExport':ZefExportResult, 'HagExport':HagExportResult,
                     'USXExport':USXExportResult, 'USFXExport':USFXExportResult, 'OSISExport':OSISExportResult, 'swExport':swExportResult,
