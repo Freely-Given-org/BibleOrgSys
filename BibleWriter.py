@@ -55,7 +55,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.49"
+ProgVersion = "0.50"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
