@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2013-12-23 by RJH (also update ProgVersion below)
+#   Last modified: 2014-01-12 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USFM Bible books
 #
-# Copyright (C) 2010-2013 Robert Hunt
+# Copyright (C) 2010-2014 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -349,10 +349,11 @@ def demo():
     if 1: # Load and process some of our test versions
         count = 0
         for name, encoding, testFolder in ( \
-                                            ("Matigsalug", "utf-8", "Tests/DataFilesForTests/USFMTest1/"), \
-                                            ("Matigsalug", "utf-8", "Tests/DataFilesForTests/USFMTest2/"), \
-                                            ("UEP", "utf-8", "Tests/DataFilesForTests/USFMErrorProject/"), \
-                                            ("Exported", "utf-8", "Tests/BOS_USFM_Export/"), \
+                                            ("HADİ Çeviri", "utf-8", "/mnt/SSD/AutoProcesses/Processed/BibleDropBox hadi"), \
+                                            #("Matigsalug", "utf-8", "Tests/DataFilesForTests/USFMTest1/"), \
+                                            #("Matigsalug", "utf-8", "Tests/DataFilesForTests/USFMTest2/"), \
+                                            #("UEP", "utf-8", "Tests/DataFilesForTests/USFMErrorProject/"), \
+                                            #("Exported", "utf-8", "Tests/BOS_USFM_Export/"), \
                                             ):
             count += 1
             if os.access( testFolder, os.R_OK ):
@@ -375,6 +376,8 @@ def demo():
 
 
     if 0: # Test a whole folder full of folders of USFM Bibles
+        testBaseFolder = "Tests/DataFilesForTests/theWordRoundtripTestFiles/"
+
         def findInfo( somepath ):
             """ Find out info about the project from the included copyright.htm file """
             cFilepath = os.path.join( somepath, "copyright.htm" )
@@ -401,7 +404,6 @@ def demo():
         # end of findInfo
 
 
-        testBaseFolder = "Tests/DataFilesForTests/theWordRoundtripTestFiles/"
         count = totalBooks = 0
         if os.access( testBaseFolder, os.R_OK ): # check that we can read the test data
             for something in sorted( os.listdir( testBaseFolder ) ):

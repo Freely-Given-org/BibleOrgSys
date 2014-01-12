@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2013-12-23 by RJH (also update ProgVersion below)
+#   Last modified: 2014-01-12 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
-# Copyright (C) 2010-2013 Robert Hunt
+# Copyright (C) 2010-2014 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -41,13 +41,14 @@ Required improvements:
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.55"
+ProgVersion = "0.56"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
 
 
 import os, logging
+import unicodedata
 from gettext import gettext as _
 from collections import OrderedDict
 
@@ -359,19 +360,32 @@ class InternalBibleBook:
 
             # Prepare for extras
             extras = InternalBibleExtraList()
-            lcAdjText = adjText.lower()
+            if 1: # New code
+                lcAdjText = adjText # Just use the original -- means USFMs must be correct (lower) case
+                # If this works successfully, just replace lcAdjText with adjText
+            else: # old code
+                lcAdjText = adjText.lower()
+                print( 'A', len(adjText), repr(adjText) )
+                print( 'A', len(lcAdjText), repr(lcAdjText) )
+                if len(lcAdjText) != len(adjText): # We have a Unicode normalization problem
+                    lcAdjText = unicodedata.normalize('NFD', lcAdjText )
+                print( 'B', len(adjText), repr(adjText) )
+                print( 'B', len(lcAdjText), repr(lcAdjText) )
+            assert( len(lcAdjText) == len(adjText) ) # Otherwise our code below will fail
 
             #print( "QQQ MOVE OUT NOTES" )
-            if self.objectTypeString in ('USFM','USX',): # Move USFM footnotes and crossreferences out to extras
+            if self.objectTypeString in ('USFM','USX',): # Move USFM/USX footnotes and crossreferences out to extras
                 ixFN = lcAdjText.find( '\\f ' )
                 ixXR = lcAdjText.find( '\\x ' )
+                #print( 'ixFN =',ixFN, 'ixXR = ',ixXR )
                 while ixFN!=-1 or ixXR!=-1: # We have one or the other
                     if ixFN!=-1 and ixXR!=-1: # We have both
-                        if Globals.debugFlag: assert( ixFN != ixXR )
+                        assert( ixFN != ixXR )
                         ix1 = min( ixFN, ixXR ) # Process the first one
                     else: ix1 = ixFN if ixXR==-1 else ixXR
                     if ix1 == ixFN:
                         ix2 = lcAdjText.find( '\\f*' )
+                        #print( 'A', 'ix1 =',ix1,repr(lcAdjText[ix1]), 'ix2 = ',ix2,repr(lcAdjText[ix2]) )
                         thisOne, this1 = "footnote", "fn"
                         if ixFN and lcAdjText[ixFN-1]==' ':
                             fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Found footnote preceded by a space in \\{}: {}").format( originalMarker, adjText ) )
@@ -392,8 +406,10 @@ class InternalBibleBook:
                         self.addPriorityError( 84, c, v, _("Marker {} is unmatched").format( thisOne ) )
                         ix1, ix2 = ix2, ix1 # swap them then
                     # Remove the footnote or xref
-                    #print( "Found {} at {} {} in '{}'".format( thisOne, ix1, ix2, adjText ) )
+                    #print( "\nFound {} at {} {} in '{}'".format( repr(thisOne), ix1, ix2, repr(adjText) ) )
+                    #print( '\nB', 'ix1 =',ix1,repr(lcAdjText[ix1]), 'ix2 = ',ix2,repr(lcAdjText[ix2]) )
                     note = adjText[ix1+3:ix2] # Get the note text (without the beginning and end markers)
+                    #print( "\nNote is", repr(note) )
                     if not note:
                         fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Found empty {} in \\{}: {}").format( thisOne, originalMarker, adjText ) )
                         logging.error( _("processLineFix: Found empty {} after {} {}:{} in \\{}: {}").format( thisOne, self.bookReferenceCode, c, v, originalMarker, adjText ) )
@@ -416,7 +432,10 @@ class InternalBibleBook:
                             print( "processLineFix: Have an embedded note perhaps! Not handled correctly yet" )
                             note = note.replace( '\\f ', ' ' ).replace( '\\f*','').replace( '\\x ', ' ').replace('\\x*','') # Temporary fix ..................
                     adjText = adjText[:ix1] + adjText[ix2+3:] # Remove the note completely from the text
-                    lcAdjText = adjText.lower()
+                    if 1: # new code
+                        lcAdjText = adjText
+                    else: # old code
+                        lcAdjText = adjText.lower()
                     # Now prepare a cleaned version
                     cleanedNote = note.replace( '&amp;', '&' ).replace( '&#39;', "'" ).replace( '&lt;', '<' ).replace( '&gt;', '>' ).replace( '&quot;', '"' ) # Undo any replacements above
                     for sign in ('- ', '+ '): # Remove common leader characters (and the following space)
