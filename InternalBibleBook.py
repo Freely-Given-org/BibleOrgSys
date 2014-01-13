@@ -365,12 +365,12 @@ class InternalBibleBook:
                 # If this works successfully, just replace lcAdjText with adjText
             else: # old code
                 lcAdjText = adjText.lower()
-                print( 'A', len(adjText), repr(adjText) )
-                print( 'A', len(lcAdjText), repr(lcAdjText) )
-                if len(lcAdjText) != len(adjText): # We have a Unicode normalization problem
-                    lcAdjText = unicodedata.normalize('NFD', lcAdjText )
-                print( 'B', len(adjText), repr(adjText) )
-                print( 'B', len(lcAdjText), repr(lcAdjText) )
+                #print( 'A', len(adjText), repr(adjText) )
+                #print( 'A', len(lcAdjText), repr(lcAdjText) )
+                #if len(lcAdjText) != len(adjText): # We have a Unicode normalization problem
+                    #lcAdjText = unicodedata.normalize('NFD', lcAdjText )
+                #print( 'B', len(adjText), repr(adjText) )
+                #print( 'B', len(lcAdjText), repr(lcAdjText) )
             assert( len(lcAdjText) == len(adjText) ) # Otherwise our code below will fail
 
             #print( "QQQ MOVE OUT NOTES" )

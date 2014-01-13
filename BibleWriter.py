@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-01-12 by RJH (also update ProgVersion below)
+#   Last modified: 2014-01-13 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -65,7 +65,7 @@ debuggingThisModule = False
 import sys, os, shutil, logging
 from datetime import datetime
 from gettext import gettext as _
-import re, sqlite3
+import re, sqlite3, json
 import zipfile, tarfile
 import multiprocessing
 
@@ -321,6 +321,23 @@ class BibleWriter( InternalBible ):
         #if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_MediaWiki_controls.txt", controlDict )
         #assert( controlDict and isinstance( controlDict, dict ) )
 
+        def writeCBBookNames( folder ):
+            """
+            """
+            from collections import OrderedDict
+            bkDict = OrderedDict()
+            for BBB,bookObject in self.books.items():
+                bkDict[BBB] = self.getAssumedBookName( BBB )
+            #print( bkDict )
+
+            filepath = os.path.join( folder, 'BookNameTable.json' )
+            if Globals.verbosityLevel > 1: print( _("Exporting book names to {}...").format( filepath ) )
+            with open( filepath, 'wt' ) as jsonFile:
+                json.dump( bkDict, jsonFile, indent=2 )
+        # end of writeCBBookNames
+
+        writeCBBookNames( outputFolder )
+
         # Adjust the extracted outputs
         for BBB,bookObject in self.books.items():
             pseudoUSFMData = bookObject._processedLines
@@ -336,6 +353,7 @@ class BibleWriter( InternalBible ):
                 pseudoMarker, value = verseDataEntry.getMarker(), verseDataEntry.getFullText()
                 if (not USFM) and pseudoMarker!='id': # We need to create an initial id line
                     USFM += '\\id {} -- BibleOrgSys CustomBible export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
+                if pseudoMarker in ('ide','sts','rem',): continue # Ignore fields that we don't need
                 if pseudoMarker in ('c#',): continue # Ignore our additions
                 #value = cleanText # (temp)
                 #if Globals.debugFlag and debuggingThisModule: print( "toCustomBible: pseudoMarker = '{}' value = '{}'".format( pseudoMarker, value ) )
