@@ -5048,6 +5048,7 @@ class BibleWriter( InternalBible ):
             """
             """
             textField = givenTextField
+            textField = textField.replace( ' ', ' ' ) # Replace non-breaking spaces (temp)
             while '  ' in textField: textField = textField.replace( '  ', ' ' ) # Remove multiple spaces
             textField = textField.replace( '\\it ', '<' ).replace( '\\it*', '>' ) \
                                         .replace( '\\add ', '<' ).replace( '\\add*', '>' )

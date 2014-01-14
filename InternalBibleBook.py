@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2014-01-12 by RJH (also update ProgVersion below)
+#   Last modified: 2014-01-14 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -2150,6 +2150,9 @@ class InternalBibleBook:
             if '  ' in adjText:
                 characterErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Multiple spaces in '{}'").format( adjText ) )
                 self.addPriorityError( 7, c, v, _("Multiple spaces in text line") )
+            if '  ' in adjText:
+                characterErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Multiple non-breaking spaces in '{}'").format( adjText ) )
+                self.addPriorityError( 9, c, v, _("Multiple non-breaking spaces in text line") )
             if adjText[-1].isspace(): # Most trailing spaces have already been removed, but this can happen in a note after the markers have been removed
                 characterErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Trailing space in '{}'").format( adjText ) )
                 self.addPriorityError( 5, c, v, _("Trailing space in text line") )
@@ -2164,6 +2167,7 @@ class InternalBibleBook:
                         except ValueError: lcCharName = lcChar
                     else: # normal verbosity
                         if char==' ': charName = lcCharName = 'Space'
+                        elif char==' ': charName = lcCharName = 'NBSpace'
                         elif char==chr(0): charName = lcCharName = 'Null'
                         else: charName, lcCharName = char, lcChar
                     characterCounts[charName] = 1 if charName not in characterCounts else characterCounts[charName] + 1
@@ -2180,6 +2184,7 @@ class InternalBibleBook:
                         if Globals.verbosityLevel > 2: charName = unicodedata.name( char )
                         else: # normal verbosity
                             if char==' ': charName = 'Space'
+                            elif char==' ': charName = 'NBSpace'
                             elif char==chr(0): charName = 'Null'
                             else: charName = char
                         #print( "{} {}:{} char is '{}' {}".format( char, charName ) )
@@ -2191,6 +2196,7 @@ class InternalBibleBook:
                         if Globals.verbosityLevel > 2: charName = unicodedata.name( char )
                         else: # normal verbosity
                             if char==' ': charName = 'Space'
+                            elif char==' ': charName = 'NBSpace'
                             elif char==chr(0): charName = 'Null'
                             else: charName = char
                         #print( "{} {}:{} char is '{}' {}".format( char, charName ) )
