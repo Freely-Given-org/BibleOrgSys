@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-01-13 by RJH (also update ProgVersion below)
+#   Last modified: 2014-01-14 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -1858,23 +1858,23 @@ class BibleWriter( InternalBible ):
 
             # This second section contains many VERNACULARABBREV=SwordBookAbbrev
             SwLocFile.write( '\n[Book Abbrevs]\n' )
-            abbrevList = []
+            abbreviationList = []
             for BBB in BibleOrganizationalSystem.getBookList(): # First pass writes the full vernacular book names (with and without spaces removed)
                 if BBB in self.books:
                     swordAbbrev = Globals.BibleBooksCodes.getSwordAbbreviation( BBB )
                     vernacularName = getBookNameFunction(BBB).upper()
-                    #assert( vernacularName not in abbrevList )
-                    if vernacularName in abbrevList:
+                    #assert( vernacularName not in abbreviationList )
+                    if vernacularName in abbreviationList:
                         if Globals.debugFlag:
-                            print( "BibleWriter._writeSwordLocale: ToProgrammer -- vernacular name IS in abbrevList -- what does this mean? Why? '{}' {}".format( vernacularName, abbrevList ) )
-                        logging.debug( "BibleWriter._writeSwordLocale: ToProgrammer -- vernacular name IS in abbrevList -- what does this mean? Why? '{}' {}".format( vernacularName, abbrevList ) )
+                            print( "BibleWriter._writeSwordLocale: ToProgrammer -- vernacular name IS in abbreviationList -- what does this mean? Why? '{}' {}".format( vernacularName, abbreviationList ) )
+                        logging.debug( "BibleWriter._writeSwordLocale: ToProgrammer -- vernacular name IS in abbreviationList -- what does this mean? Why? '{}' {}".format( vernacularName, abbreviationList ) )
                     SwLocFile.write( '{}={}\n'.format( vernacularName, swordAbbrev ) ) # Write the UPPER CASE language book name and the Sword abbreviation
-                    abbrevList.append( vernacularName )
+                    abbreviationList.append( vernacularName )
                     if ' ' in vernacularName:
                         vernacularAbbrev = vernacularName.replace( ' ', '' )
-                        if Globals.debugFlag and debuggingThisModule: assert( vernacularAbbrev not in abbrevList )
+                        if Globals.debugFlag and debuggingThisModule: assert( vernacularAbbrev not in abbreviationList )
                         SwLocFile.write( '{}={}\n'.format( vernacularAbbrev, swordAbbrev ) ) # Write the UPPER CASE language book name and the Sword abbreviation
-                        abbrevList.append( vernacularAbbrev )
+                        abbreviationList.append( vernacularAbbrev )
             for BBB in BibleOrganizationalSystem.getBookList(): # Second pass writes the shorter vernacular book abbreviations
                 if BBB in self.books:
                     swordAbbrev = Globals.BibleBooksCodes.getSwordAbbreviation( BBB )
@@ -1882,40 +1882,40 @@ class BibleWriter( InternalBible ):
                     vernacularAbbrev = vernacularName
                     if len(vernacularName)>4  or (len(vernacularName)>3 and not vernacularName[0].isdigit):
                         vernacularAbbrev = vernacularName[:4 if vernacularName[0].isdigit() else 3]
-                        if vernacularAbbrev in abbrevList:
+                        if vernacularAbbrev in abbreviationList:
                             if swordAbbrev == 'Philem':
                                 vernacularAbbrev = vernacularName[:5]
-                                if vernacularAbbrev not in abbrevList:
+                                if vernacularAbbrev not in abbreviationList:
                                     SwLocFile.write( '{}={}\n'.format( vernacularAbbrev, swordAbbrev ) ) # Write the UPPER CASE language book name and the Sword abbreviation
-                                    abbrevList.append( vernacularAbbrev )
+                                    abbreviationList.append( vernacularAbbrev )
                             else: logging.warning( "   Oops, shouldn't have written {} (also could be {}) to Sword locale file".format( vernacularAbbrev, swordAbbrev ) ) # Need to fix this
                         else:
                             SwLocFile.write( '{}={}\n'.format( vernacularAbbrev, swordAbbrev ) ) # Write the UPPER CASE language book name and the Sword abbreviation
-                            abbrevList.append( vernacularAbbrev )
+                            abbreviationList.append( vernacularAbbrev )
                     changed = False
                     for somePunct in ( ".''̉΄" ): # Remove punctuation and glottals (all UPPER CASE here)
                         if somePunct in vernacularAbbrev:
                             vernacularAbbrev = vernacularAbbrev.replace( somePunct, '' )
                             changed = True
                     if changed:
-                        if vernacularAbbrev in abbrevList:
+                        if vernacularAbbrev in abbreviationList:
                             logging.warning( "   Oops, maybe shouldn't have written {} (also could be {}) to Sword locale file".format( vernacularAbbrev, swordAbbrev ) )
                         else:
                             SwLocFile.write( '{}={}\n'.format( vernacularAbbrev, swordAbbrev ) )
-                            abbrevList.append( vernacularAbbrev )
+                            abbreviationList.append( vernacularAbbrev )
                         changed = False
                     for vowel in ( 'AΆÁÂÃÄÅEÈÉÊËIÌÍÎÏOÒÓÔÕÖUÙÚÛÜ' ): # Remove vowels (all UPPER CASE here)
                         if vowel in vernacularAbbrev:
                             vernacularAbbrev = vernacularAbbrev.replace( vowel, '' )
                             changed = True
                     if changed:
-                        if vernacularAbbrev in abbrevList:
+                        if vernacularAbbrev in abbreviationList:
                             logging.warning( "   Oops, maybe shouldn't have written {} (also could be {}) to Sword locale file".format( vernacularAbbrev, swordAbbrev ) )
                         else:
                             SwLocFile.write( '{}={}\n'.format( vernacularAbbrev, swordAbbrev ) )
-                            abbrevList.append( vernacularAbbrev )
+                            abbreviationList.append( vernacularAbbrev )
 
-        if Globals.verbosityLevel > 1: print( _("  Wrote {} book names and {} abbreviations.").format( len(bookList), len(abbrevList) ) )
+        if Globals.verbosityLevel > 1: print( _("  Wrote {} book names and {} abbreviations.").format( len(bookList), len(abbreviationList) ) )
     # end of BibleWriter._writeSwordLocale
 
 
@@ -5018,8 +5018,12 @@ class BibleWriter( InternalBible ):
             """
             Write the header data
             """
-            writer.write( "\ufeff*Bible\n#shortname fullname language\n" ) # Starts with BOM
-            writer.write( "{}|{}|{}\n\n".format( self.name, self.name, 'en' ) )
+            #writer.write( "\ufeff*Bible\n#shortname fullname language\n" ) # Starts with BOM
+            writer.write( "*Bible\n#shortname fullname language\n" ) # No BOM
+            shortName = self.shortName if self.shortName else self.name
+            if self.abbreviation and len(shortName)>5: shortName = self.abbreviation
+            shortName = shortName[:5] # Maximum of five characters
+            writer.write( "{}|{}|{}\n\n".format( shortName, self.name, 'en' ) )
         # end of toDrupalBible.writeDrupalBibleHeader
 
 
@@ -5043,7 +5047,10 @@ class BibleWriter( InternalBible ):
         def doDrupalTextFormat( givenTextField ):
             """
             """
-            textField = givenTextField.replace( '\\it ', '<' ).replace( '\\it*', '>' ).replace( '\\add ', '<' ).replace( '\\add*', '>' )
+            textField = givenTextField
+            while '  ' in textField: textField = textField.replace( '  ', ' ' ) # Remove multiple spaces
+            textField = textField.replace( '\\it ', '<' ).replace( '\\it*', '>' ) \
+                                        .replace( '\\add ', '<' ).replace( '\\add*', '>' )
             #print( repr(textField) )
             # These re's should really ensure that the USFM starts with a letter
             textField = re.sub( r'(\\[a-z0-9]{1,3} )', '', textField ) # Remove any remaining character fields, e.g., '\\s1 '
@@ -5080,7 +5087,14 @@ class BibleWriter( InternalBible ):
                         writer.write( "{}|{}|{}|{}|{}\n".format( bookCode, C, V, linemark, doDrupalTextFormat( accumulator ) ) )
                         accumulator, linemark = "", ''
                     V = text
-                elif marker in ( 's1', 's2', 's3', ): linemark = '*' + text
+                    if not V.isdigit(): # Remove verse bridges
+                        #print( "toDrupalBible V was", repr(V) )
+                        Vcopy, V = V, ''
+                        for char in Vcopy:
+                            if not char.isdigit(): break
+                            V += char
+                        #print( "toDrupalBible V is now", repr(V) )
+                elif marker in ( 's1', 's2', 's3', ): pass # Just ignore these section headings
                 elif marker in ( 'r', ): pass # Just ignore these reference fields
                 elif marker in ( 'p', 'q1', 'q2', 'q3', 'm', 'b', 'nb', 'li1', 'li2', 'li3', ): pass # Just ignore these paragraph formatting fields
                 elif marker in ('v~', 'p~'):
@@ -5384,7 +5398,7 @@ def demo():
     if 1: # Test reading and writing a USFM Bible
         from USFMBible import USFMBible
         from USFMFilenames import USFMFilenames
-        testData = ( # name, abbreviatino, folder
+        testData = ( # name, abbreviation, folder
                 ("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
                 ("Matigsalug", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
                 ("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
