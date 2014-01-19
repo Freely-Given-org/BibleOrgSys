@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-01-14 by RJH (also update ProgVersion below)
+#   Last modified: 2014-01-20 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -56,7 +56,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.50"
+ProgVersion = "0.51"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -65,6 +65,7 @@ debuggingThisModule = False
 import sys, os, shutil, logging
 from datetime import datetime
 from gettext import gettext as _
+from collections import OrderedDict
 import re, sqlite3, json
 import zipfile, tarfile
 import multiprocessing
@@ -321,21 +322,42 @@ class BibleWriter( InternalBible ):
         #if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_MediaWiki_controls.txt", controlDict )
         #assert( controlDict and isinstance( controlDict, dict ) )
 
+        CBDataFormatVersion = 1
+
+        def writeCBHeader( folder ):
+            """
+            """
+            headerDict = OrderedDict()
+            headerDict['Data format version'] = CBDataFormatVersion
+            headerDict['Conversion date'] = datetime.today().strftime("%Y-%m-%d")
+            headerDict['Version name'] = self.name
+            headerDict['Version abbreviation'] = self.abbreviation
+            #print( headerDict )
+
+            filepath = os.path.join( folder, 'CBHeader.json' )
+            if Globals.verbosityLevel > 1: print( _("Exporting CB header to {}...").format( filepath ) )
+            with open( filepath, 'wt' ) as jsonFile:
+                json.dump( headerDict, jsonFile, indent=2 )
+        # end of writeCBHeader
+
         def writeCBBookNames( folder ):
             """
             """
-            from collections import OrderedDict
-            bkDict = OrderedDict()
+            bkData = OrderedDict()
             for BBB,bookObject in self.books.items():
-                bkDict[BBB] = self.getAssumedBookName( BBB )
-            #print( bkDict )
+                bkData[BBB] = self.getAssumedBookName( BBB )
+            bkData = []
+            for BBB,bookObject in self.books.items():
+                bkData.append( (BBB,self.getAssumedBookName( BBB ),) )
+            #print( bkData )
 
-            filepath = os.path.join( folder, 'BookNameTable.json' )
+            filepath = os.path.join( folder, 'BibleBookNames.{}.json'.format( CBDataFormatVersion ) )
             if Globals.verbosityLevel > 1: print( _("Exporting book names to {}...").format( filepath ) )
             with open( filepath, 'wt' ) as jsonFile:
-                json.dump( bkDict, jsonFile, indent=2 )
+                json.dump( bkData, jsonFile, indent=2 )
         # end of writeCBBookNames
 
+        writeCBHeader( outputFolder )
         writeCBBookNames( outputFolder )
 
         # Adjust the extracted outputs
@@ -2482,6 +2504,9 @@ class BibleWriter( InternalBible ):
                 lastMarker = marker
 
             # At the end of everything
+            if haveOpenVsID != False: # Close the last verse
+                writerObject.writeLineOpenSelfclose( 'verse', ('eID',haveOpenVsID) )
+                haveOpenVsID = False
             closeAnyOpenLG() # A file can easily end with a q1 field
             if haveOpenIntro or haveOpenOutline or haveOpenLG or haveOpenL or unprocessedMarker:
                 logging.error( "toOSIS: a {} {} {} {} {}".format( haveOpenIntro, haveOpenOutline, haveOpenLG, haveOpenL, unprocessedMarker ) )
