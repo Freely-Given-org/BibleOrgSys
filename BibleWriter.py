@@ -323,6 +323,9 @@ class BibleWriter( InternalBible ):
         #assert( controlDict and isinstance( controlDict, dict ) )
 
         CBDataFormatVersion = 1
+
+        bookOutputFolder = os.path.join( outputFolder, "ByBook.{}".format( CBDataFormatVersion ) )
+        if not os.access( bookOutputFolder, os.F_OK ): os.makedirs( bookOutputFolder ) # Make the empty folder if there wasn't already one there
         chapterOutputFolder = os.path.join( outputFolder, "ByChapter.{}".format( CBDataFormatVersion ) )
         if not os.access( chapterOutputFolder, os.F_OK ): os.makedirs( chapterOutputFolder ) # Make the empty folder if there wasn't already one there
 
@@ -397,7 +400,7 @@ class BibleWriter( InternalBible ):
                 #print( outputData )
             writeCBChapter( BBB, lastC, chapterOutputData ) # Write the last chapter
 
-            filepath = os.path.join( outputFolder, '{}.{}.json'.format( BBB, CBDataFormatVersion ) )
+            filepath = os.path.join( bookOutputFolder, '{}.{}.json'.format( BBB, CBDataFormatVersion ) )
             if Globals.verbosityLevel > 2: print( "  " + _("Exporting {} book to {}...").format( BBB, filepath ) )
             with open( filepath, 'wt' ) as jsonFile:
                 json.dump( outputData, jsonFile, indent=2 )
@@ -412,79 +415,14 @@ class BibleWriter( InternalBible ):
             pseudoUSFMData = bookObject._processedLines
             writeCBBook( BBB, pseudoUSFMData )
 
-            #inField = None
-            #value1 = value2 = None # For printing missing (bridged) verse numbers
-            #if Globals.verbosityLevel > 2: print( "  " + _("Adjusting CustomBible USFM output..." ) )
-            #for verseDataEntry in pseudoUSFMData:
-                #pseudoMarker, value = verseDataEntry.getMarker(), verseDataEntry.getFullText()
-                #if (not USFM) and pseudoMarker!='id': # We need to create an initial id line
-                    #USFM += '\\id {} -- BibleOrgSys CustomBible export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
-                #if pseudoMarker in ('ide','sts','rem',): continue # Ignore fields that we don't need
-                #if pseudoMarker in ('c#',): continue # Ignore our additions
-                ##value = cleanText # (temp)
-                ##if Globals.debugFlag and debuggingThisModule: print( "toCustomBible: pseudoMarker = '{}' value = '{}'".format( pseudoMarker, value ) )
-                #if removeVerseBridges and pseudoMarker in ('v','c',):
-                    #if value1 and value2:
-                        #for vNum in range( value1+1, value2+1 ): # Fill in missing verse numbers
-                            #USFM += '\n\\v {}'.format( vNum )
-                    #value1 = value2 = None
-
-                #if pseudoMarker in ('v','f','fr','x','xo',): # These fields should always end with a space but the processing will have removed them
-                    #if Globals.debugFlag: assert( value )
-                    #if pseudoMarker=='v' and removeVerseBridges:
-                        #vString = value
-                        #for bridgeChar in ('-', '–', '—'): # hyphen, endash, emdash
-                            #ix = vString.find( bridgeChar )
-                            #if ix != -1:
-                                #value = vString[:ix] # Remove verse bridges
-                                #vEnd = vString[ix+1:]
-                                ##print( BBB, repr(value), repr(vEnd) )
-                                #try: value1, value2 = int( value ), int( vEnd )
-                                #except ValueError:
-                                    #print( "toCustomBible: bridge doesn't seem to be integers in {} {}".format( BBB, repr(vString) ) )
-                                    #value1 = value2 = None # One of them isn't an integer
-                                ##print( ' ', BBB, repr(value1), repr(value2) )
-                                #break
-                    #if value and value[-1] != ' ': value += ' ' # Append a space since it didn't have one
-                #if pseudoMarker[-1]=='~' or Globals.USFMMarkers.isNewlineMarker(pseudoMarker): # Have a continuation field
-                    #if inField is not None:
-                        #USFM += '\\{}*'.format( inField ) # Do a close marker for footnotes and cross-references
-                        #inField = None
-                #if pseudoMarker[-1] == '~':
-                    ##print( "psMarker ends with squiggle: '{}'='{}'".format( pseudoMarker, value ) )
-                    #if Globals.debugFlag: assert( pseudoMarker[:-1] in ('v','p','c') )
-                    #USFM += (' ' if USFM and USFM[-1]!=' ' else '') + value
-                #else: # not a continuation marker
-                    #adjValue = value
-                    ##if pseudoMarker in ('it','bk','ca','nd',): # Character markers to be closed -- had to remove ft and xt from this list for complex footnotes with f fr fq ft fq ft f*
-                    #if pseudoMarker in allCharMarkers: # Character markers to be closed
-                        ##if (USFM[-2]=='\\' or USFM[-3]=='\\') and USFM[-1]!=' ':
-                        #if USFM[-1] != ' ':
-                            #USFM += ' ' # Separate markers by a space e.g., \p\bk Revelation
-                            #if Globals.debugFlag: print( "toCustomBible: Added space to '{}' before '{}'".format( USFM[-2], pseudoMarker ) )
-                        #adjValue += '\\{}*'.format( pseudoMarker ) # Do a close marker
-                    #elif pseudoMarker in ('f','x',): inField = pseudoMarker # Remember these so we can close them later
-                    #elif pseudoMarker in ('fr','fq','ft','xo',): USFM += '' # These go on the same line just separated by spaces and don't get closed
-                    #elif USFM: USFM += '\n' # paragraph markers go on a new line
-                    #if not value: USFM += '\\{}'.format( pseudoMarker )
-                    #else: USFM += '\\{} {}'.format( pseudoMarker,adjValue )
-                ##print( pseudoMarker, USFM[-200:] )
-
-            ## Write the CustomBible USFM output
-            ##print( "\nUSFM", USFM[:3000] )
-            #filename = "CB_{}.SFM".format( BBB )
-            #filepath = os.path.join( outputFolder, Globals.makeSafeFilename( filename ) )
-            #if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
-            #with open( filepath, 'wt' ) as myFile: myFile.write( USFM )
-
-        # Now create a zipped collection
-        if Globals.verbosityLevel > 2: print( "  Zipping CustomBible files..." )
-        zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllCBUSFMFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
-        for filename in os.listdir( outputFolder ):
-            if not filename.endswith( '.zip' ):
-                filepath = os.path.join( outputFolder, filename )
-                zf.write( filepath, filename ) # Save in the archive without the path
-        zf.close()
+        ## Now create a zipped collection
+        #if Globals.verbosityLevel > 2: print( "  Zipping CustomBible files..." )
+        #zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllCBUSFMFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
+        #for filename in os.listdir( outputFolder ):
+            #if not filename.endswith( '.zip' ):
+                #filepath = os.path.join( outputFolder, filename )
+                #zf.write( filepath, filename ) # Save in the archive without the path
+        #zf.close()
 
         return True
     # end of BibleWriter.toCustomBible
