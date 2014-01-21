@@ -336,8 +336,8 @@ class BibleWriter( InternalBible ):
             headerDict = OrderedDict()
             headerDict['Data format version'] = CBDataFormatVersion
             headerDict['Conversion date'] = datetime.today().strftime("%Y-%m-%d")
-            headerDict['Version name'] = self.name
-            headerDict['Version abbreviation'] = self.abbreviation
+            headerDict['Version name'] = self.settingsDict['WorkTitle'] if 'WorkTitle' in self.settingsDict else self.name
+            headerDict['Version abbreviation'] = self.settingsDict['WorkAbbreviation'] if 'WorkAbbreviation' in self.settingsDict else self.abbreviation
             #print( headerDict )
 
             filepath = os.path.join( outputFolder, 'CBHeader.json' )
