@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # USFXXMLBible.py
-#   Last modified: 2013-12-18 by RJH (also update ProgVersion below)
+#   Last modified: 2014-01-25 by RJH (also update ProgVersion below)
 #
 # Module handling USFX XML Bibles
 #
-# Copyright (C) 2013 Robert Hunt
+# Copyright (C) 2013-2014 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -655,7 +655,9 @@ class USFXXMLBible( Bible ):
         for subelement in element:
             sublocation = subelement.tag + " of " + location
             marker, xText, xTail = subelement.tag, clean(subelement.text), clean(subelement.tail)
-            assert( marker in ('xo','xt',) )
+            if Globals.verbosityLevel > 0 and marker not in ('xo','xt'):
+                print( "USFX.loadCrossreference found {}".format( marker ) )
+            if Globals.debugFlag: assert( marker in ('xo','xt',) )
             Globals.checkXMLNoAttributes( subelement, sublocation, 'sc35' )
             Globals.checkXMLNoSubelements( subelement, sublocation, 's1sd' )
             if marker[0] == 'x':
