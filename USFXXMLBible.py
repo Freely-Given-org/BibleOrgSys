@@ -519,8 +519,10 @@ class USFXXMLBible( Bible ):
             elif element.tag == 'table':
                 self.loadTable( element, location )
             elif element.tag == 'f':
+                print( "USFX.loadParagraph Found footnote at", paragraphLocation, C, V, repr(element.text) )
                 self.loadFootnote( element, location )
             elif element.tag == 'x':
+                print( "USFX.loadParagraph Found xref at", paragraphLocation, C, V, repr(element.text) )
                 self.loadCrossreference( element, location )
             elif element.tag in ('add','nd','wj','rq','sig','sls','bk','k','tl','vp','pn','qs','qt','em','it','bd','bdit','sc','no',): # character formatting
                 self.loadCharacterFormatting( element, location )
@@ -627,13 +629,19 @@ class USFXXMLBible( Bible ):
         for subelement in element:
             sublocation = subelement.tag + " of " + location
             marker, fText, fTail = subelement.tag, clean(subelement.text), clean(subelement.tail)
-            #print( marker )
-            if Globals.debugFlag: assert( marker in ('fr','ft','fq','fv','fk','fqa','it','bd','rq',) )
+            print( repr(caller), repr(text), repr(tail), repr(marker), repr(fText), repr(fTail) )
+            if Globals.verbosityLevel > 0 and marker not in ('ref','fr','ft','fq','fv','fk','fqa','it','bd','rq',):
+                print( "USFX.loadFootnote found", repr(caller), repr(marker), repr(fText), repr(fTail) )
+            if Globals.debugFlag: assert( marker in ('ref','fr','ft','fq','fv','fk','fqa','it','bd','rq',) )
             Globals.checkXMLNoAttributes( subelement, sublocation, 'ld02' )
             Globals.checkXMLNoSubelements( subelement, sublocation, 'ls13' )
             if marker[0] == 'f' and not fTail:
                 #print( "tail", repr(fTail) )
                 #Globals.checkXMLNoTail( subelement, sublocation, 'csf3' )
+                self.thisBook.appendToLastLine( ' \\{} {}'.format( marker, fText ) )
+            elif marker == 'ref' and not fTail:
+                #print( "tail", repr(fTail) )
+                #Globals.checkXMLNoTail( subelement, sublocation, 'jd36' )
                 self.thisBook.appendToLastLine( ' \\{} {}'.format( marker, fText ) )
             else: # it's a regular formatting marker
                 self.thisBook.appendToLastLine( ' \\{} {}\\{}*{}'.format( marker, fText, marker, (' '+fTail) if fTail else '' ) )
@@ -643,6 +651,7 @@ class USFXXMLBible( Bible ):
 
     def loadCrossreference( self, element, location ):
         """
+        Has to handle: <x caller="+"><ref tgt="EXO.30.12">Exodus 30:12</ref></x>
         """
         text, tail = clean(element.text), clean(element.tail)
         caller = None
@@ -655,16 +664,19 @@ class USFXXMLBible( Bible ):
         for subelement in element:
             sublocation = subelement.tag + " of " + location
             marker, xText, xTail = subelement.tag, clean(subelement.text), clean(subelement.tail)
-            if Globals.verbosityLevel > 0 and marker not in ('xo','xt'):
-                print( "USFX.loadCrossreference found {}".format( marker ) )
-            if Globals.debugFlag: assert( marker in ('xo','xt',) )
+            print( repr(caller), repr(text), repr(tail), repr(marker), repr(xText), repr(xTail) )
+            if Globals.verbosityLevel > 0 and marker not in ('ref','xo','xt',):
+                print( "USFX.loadCrossreference found", repr(caller), repr(marker), repr(xText), repr(xTail) )
+            if Globals.debugFlag: assert( marker in ('ref','xo','xt',) )
             Globals.checkXMLNoAttributes( subelement, sublocation, 'sc35' )
             Globals.checkXMLNoSubelements( subelement, sublocation, 's1sd' )
-            if marker[0] == 'x':
-                Globals.checkXMLNoTail( subelement, sublocation, 'la31' )
+            if marker[0] == 'x' and not xTail:
+                #Globals.checkXMLNoTail( subelement, sublocation, 'la31' )
+                self.thisBook.appendToLastLine( ' \\{} {}'.format( marker, xText ) )
+            elif marker == 'ref' and not xTail:
+                #Globals.checkXMLNoTail( subelement, sublocation, 'dg63' )
                 self.thisBook.appendToLastLine( ' \\{} {}'.format( marker, xText ) )
             else: # it's a regular formatting marker
-                halt
                 self.thisBook.appendToLastLine( ' \\{} {}\\{}*{}'.format( marker, xText, marker, (' '+xTail) if xTail else '' ) )
         self.thisBook.appendToLastLine( '\\x*{}'.format( (' '+tail) if tail else '' ) )
     #end of USFXXMLBible.loadCrossreference
@@ -679,7 +691,8 @@ def demo():
     if Globals.verbosityLevel > 0: print( ProgNameVersion )
 
     testData = (
-                ("AGM", "../../../../../Data/Work/Bibles/USFX Bibles/Haiola USFX test versions/agm_usfx/",),
+                ("Tst", "../../../../../Data/Work/Bibles/Formats/USFX/",),
+                #("AGM", "../../../../../Data/Work/Bibles/USFX Bibles/Haiola USFX test versions/agm_usfx/",),
                 ) # You can put your USFX test folder here
 
     for name, testFolder in testData:
