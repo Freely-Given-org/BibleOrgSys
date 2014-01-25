@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFX Bibles.
 """
 
 ProgName = "USFX XML Bible handler"
-ProgVersion = "0.03"
+ProgVersion = "0.04"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -519,10 +519,10 @@ class USFXXMLBible( Bible ):
             elif element.tag == 'table':
                 self.loadTable( element, location )
             elif element.tag == 'f':
-                print( "USFX.loadParagraph Found footnote at", paragraphLocation, C, V, repr(element.text) )
+                #print( "USFX.loadParagraph Found footnote at", paragraphLocation, C, V, repr(element.text) )
                 self.loadFootnote( element, location )
             elif element.tag == 'x':
-                print( "USFX.loadParagraph Found xref at", paragraphLocation, C, V, repr(element.text) )
+                #print( "USFX.loadParagraph Found xref at", paragraphLocation, C, V, repr(element.text) )
                 self.loadCrossreference( element, location )
             elif element.tag in ('add','nd','wj','rq','sig','sls','bk','k','tl','vp','pn','qs','qt','em','it','bd','bdit','sc','no',): # character formatting
                 self.loadCharacterFormatting( element, location )
@@ -629,9 +629,9 @@ class USFXXMLBible( Bible ):
         for subelement in element:
             sublocation = subelement.tag + " of " + location
             marker, fText, fTail = subelement.tag, clean(subelement.text), clean(subelement.tail)
-            print( repr(caller), repr(text), repr(tail), repr(marker), repr(fText), repr(fTail) )
-            if Globals.verbosityLevel > 0 and marker not in ('ref','fr','ft','fq','fv','fk','fqa','it','bd','rq',):
-                print( "USFX.loadFootnote found", repr(caller), repr(marker), repr(fText), repr(fTail) )
+            #print( "USFX.loadFootnote", repr(caller), repr(text), repr(tail), repr(marker), repr(fText), repr(fTail) )
+            #if Globals.verbosityLevel > 0 and marker not in ('ref','fr','ft','fq','fv','fk','fqa','it','bd','rq',):
+                #print( "USFX.loadFootnote found", repr(caller), repr(marker), repr(fText), repr(fTail) )
             if Globals.debugFlag: assert( marker in ('ref','fr','ft','fq','fv','fk','fqa','it','bd','rq',) )
             Globals.checkXMLNoAttributes( subelement, sublocation, 'ld02' )
             Globals.checkXMLNoSubelements( subelement, sublocation, 'ls13' )
@@ -664,9 +664,9 @@ class USFXXMLBible( Bible ):
         for subelement in element:
             sublocation = subelement.tag + " of " + location
             marker, xText, xTail = subelement.tag, clean(subelement.text), clean(subelement.tail)
-            print( repr(caller), repr(text), repr(tail), repr(marker), repr(xText), repr(xTail) )
-            if Globals.verbosityLevel > 0 and marker not in ('ref','xo','xt',):
-                print( "USFX.loadCrossreference found", repr(caller), repr(marker), repr(xText), repr(xTail) )
+            #print( "USFX.loadCrossreference", repr(caller), repr(text), repr(tail), repr(marker), repr(xText), repr(xTail) )
+            #if Globals.verbosityLevel > 0 and marker not in ('ref','xo','xt',):
+                #print( "USFX.loadCrossreference found", repr(caller), repr(marker), repr(xText), repr(xTail) )
             if Globals.debugFlag: assert( marker in ('ref','xo','xt',) )
             Globals.checkXMLNoAttributes( subelement, sublocation, 'sc35' )
             Globals.checkXMLNoSubelements( subelement, sublocation, 's1sd' )
@@ -692,7 +692,7 @@ def demo():
 
     testData = (
                 ("Tst", "../../../../../Data/Work/Bibles/Formats/USFX/",),
-                #("AGM", "../../../../../Data/Work/Bibles/USFX Bibles/Haiola USFX test versions/agm_usfx/",),
+                ("AGM", "../../../../../Data/Work/Bibles/USFX Bibles/Haiola USFX test versions/agm_usfx/",),
                 ) # You can put your USFX test folder here
 
     for name, testFolder in testData:
