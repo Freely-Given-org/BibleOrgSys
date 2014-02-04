@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # BibleVersificationSystems.py
-#   Last modified: 2013-09-11 (also update ProgVersion below)
+#   Last modified: 2014-02-05 (also update ProgVersion below)
 #
 # Module handling BibleVersificationSystems
 #
-# Copyright (C) 2010-2013 Robert Hunt
+# Copyright (C) 2010-2014 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -33,7 +33,7 @@ NOTE: We still lack a REFERENCE Bible versification system
 """
 
 ProgName = "Bible Chapter-Verse Systems handler"
-ProgVersion = "0.51"
+ProgVersion = "0.52"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -593,6 +593,8 @@ class BibleVersificationSystem:
 
     def getNumVerses( self, BBB, C ):
         """ Returns the number of verses (int) in the given book and chapter. """
+        if Globals.debugFlag and debuggingThisModule:
+            print( "BibleVersificationSystem.getNumVerses( {}, {} )".format( BBB, repr(C) ) )
         assert( len(BBB) == 3 )
         if isinstance(C, int): # Just double-check the parameter
             logging.debug( _("BibleVersificationSystem.getNumVerses was passed an integer chapter instead of a string with {} {}").format(BBB,C) )
@@ -689,7 +691,8 @@ class BibleVersificationSystem:
 
     def expandCVRange( self, startRef, endRef, referenceString=None, bookOrderSystem=None ):
         """ Returns a list containing all valid references (inclusive) between the given values. """
-        #print( "expandCVRange:", startRef, endRef, referenceString, bookOrderSystem )
+        if Globals.debugFlag and debuggingThisModule:
+            print( "BibleVersificationSystem.expandCVRange:", startRef, endRef, referenceString, bookOrderSystem )
         assert( startRef and len(startRef)==4 )
         assert( endRef and len(endRef)==4 )
 
@@ -779,13 +782,13 @@ class BibleVersificationSystem:
                     endVint = V2int
                 else: # Must be an inbetween chapter
                     startVint = 1
-                    endVint = self.getNumVerses( BBB1, str(Cint) )
+                    endVint = self.getNumVerses( BBB2, str(Cint) )
                 for Vint in range( startVint, endVint+1 ):
                     if Cint==C2int and Vint==V2int: S = S2
                     else: S = ''
                     resultList.append( (BBB2, str(Cint), str(Vint), S,) )
 
-        #print( startRef, endRef, resultList, haveErrors, haveWarnings )
+        if Globals.debugFlag and debuggingThisModule: print( startRef, endRef, resultList, haveErrors, haveWarnings )
         return resultList #, haveErrors, haveWarnings
     # end of BibleVersificationSystem.expandCVRange
 # end of BibleVersificationSystem class

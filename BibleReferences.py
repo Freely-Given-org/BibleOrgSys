@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # BibleReferences.py
-#   Last modified: 2013-08-04 by RJH (also update ProgVersion below)
+#   Last modified: 2014-02-05 by RJH (also update ProgVersion below)
 #
 # Module for handling Bible references including ranges
 #
-# Copyright (C) 2010-2013 Robert Hunt
+# Copyright (C) 2010-2014 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -77,7 +77,7 @@ Technical note: Our Bible reference parsers use state machines rather than regul
 """
 
 ProgName = "Bible References handler"
-ProgVersion = "0.28"
+ProgVersion = "0.29"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -255,9 +255,19 @@ class BibleSingleReference( BibleReferenceBase ):
                     status = 2
                     continue
                 else:
-                    if ' ' in bookNameOrAbbreviation: logging.error( _("Unable to deduce book name from '{}' in Bible reference '{}'").format( bookNameOrAbbreviation, referenceString ) )
-                    else: logging.error( _("Unexpected '{}' character when getting book name at position {} in Bible reference '{}'").format( char, nnn, referenceString ) )
-                    haveErrors = True
+                    if ' ' in bookNameOrAbbreviation:
+                        if bookNameOrAbbreviation.startswith('1 ') or bookNameOrAbbreviation.startswith('2 ') \
+                        or bookNameOrAbbreviation.startswith('I ') or bookNameOrAbbreviation.startswith('II '):
+                            logging.warning( "BibleSingleReference.parseReferenceString " + _("Unexpected space after book number when getting book name in Bible reference '{}'").format( referenceString ) )
+                            haveWarnings = True
+                            ixSP = bookNameOrAbbreviation.index( ' ' )
+                            bookNameOrAbbreviation = bookNameOrAbbreviation[0] + bookNameOrAbbreviation[ixSP+1:] # Remove the space
+                    if ' ' in bookNameOrAbbreviation:
+                        logging.error( "BibleSingleReference.parseReferenceString " + _("Unable to deduce book name from '{}' in Bible reference '{}'").format( bookNameOrAbbreviation, referenceString ) )
+                        haveErrors = True
+                    else:
+                        logging.error( _("Unexpected '{}' character when getting book name at position {} in Bible reference '{}'").format( char, nnn, referenceString ) )
+                        haveErrors = True
                     if len(bookNameOrAbbreviation)>4: break # Best to break here I think since we've been unsuccessful at finding a book name
                     continue
             if status == 1: # Getting book chapter separator
@@ -454,9 +464,19 @@ class BibleSingleReferences( BibleReferenceBase ):
                     status = 2
                     continue
                 else:
-                    if ' ' in bookNameOrAbbreviation: logging.error( _("Unable to deduce book name from '{}' in Bible reference '{}'").format( bookNameOrAbbreviation, referenceString ) )
-                    else: logging.error( _("Unexpected '{}' character when getting book name at position {} in Bible reference '{}'").format( char, nnn, referenceString ) )
-                    haveErrors = True
+                    if ' ' in bookNameOrAbbreviation:
+                        if bookNameOrAbbreviation.startswith('1 ') or bookNameOrAbbreviation.startswith('2 ') \
+                        or bookNameOrAbbreviation.startswith('I ') or bookNameOrAbbreviation.startswith('II '):
+                            logging.warning( "BibleSingleReferences.parseReferenceString " + _("Unexpected space after book number when getting book name in Bible reference '{}'").format( referenceString ) )
+                            haveWarnings = True
+                            ixSP = bookNameOrAbbreviation.index( ' ' )
+                            bookNameOrAbbreviation = bookNameOrAbbreviation[0] + bookNameOrAbbreviation[ixSP+1:] # Remove the space
+                    if ' ' in bookNameOrAbbreviation:
+                        logging.error( "BibleSingleReferences.parseReferenceString " + _("Unable to deduce book name from '{}' in Bible reference '{}'").format( bookNameOrAbbreviation, referenceString ) )
+                        haveErrors = True
+                    else:
+                        logging.error( _("Unexpected '{}' character when getting book name at position {} in Bible reference '{}'").format( char, nnn, referenceString ) )
+                        haveErrors = True
                     if len(bookNameOrAbbreviation)>4: break # Best to break here I think since we've been unsuccessful at finding a book name
                     continue
             if status == 1: # Getting book chapter separator
@@ -709,7 +729,8 @@ class BibleReferenceList( BibleReferenceBase ):
             """
             Checks the reference info then saves it as a referenceTuple in the refList.
             """
-            #print( "saveReferenceRange:", "startTuple =", startTuple, "BBB =", BBB, "C =", C, "V =", V, "S = ", S, "refList =", refList )
+            if Globals.debugFlag and debuggingThisModule:
+                print( "BibleReferences.saveReferenceRange:", "startTuple =", startTuple, "BBB =", BBB, "C =", C, "V =", V, "S = ", S, "refList =", refList )
             if V and not S and V[-1] in ('a','b','c',): # Remove the suffix
                 S = V[-1]; V = V[:-1]
             if V=='3O': V = '30' # Fix a bug in byr-w.usfm
@@ -748,7 +769,8 @@ class BibleReferenceList( BibleReferenceBase ):
 
 
         if location is None: location = '(unknown)'
-        #print( "Processing '{}' from {}".format( referenceString, location ) )
+        if Globals.debugFlag and debuggingThisModule:
+            print( "BibleReferences.parseReferenceString '{}' from {}".format( referenceString, location ) )
         assert( referenceString and isinstance( referenceString, str ) )
         assert( location and isinstance( location, str ) )
         haveWarnings, haveErrors, totalVerseList = False, False, []
@@ -759,15 +781,17 @@ class BibleReferenceList( BibleReferenceBase ):
         adjustedReferenceString = strippedReferenceString
         for value in ignoredSuffixes:
             adjustedReferenceString = adjustedReferenceString.replace( value, '' )
-        #statusList = {0:"gettingBookname", 1:"gettingBCSeparator", 2:"gettingChapter", 3:"gettingVerse", 4:"gettingNextBorC", 5:"gettingBorCorVRange", 6:"gettingBRange", 7:"gettingCRange", 8:"gettingVRange", 9:"finished"}
+        if Globals.debugFlag and debuggingThisModule:
+            statusList = {0:"gettingBookname", 1:"gettingBCSeparator", 2:"gettingChapter", 3:"gettingVerse", 4:"gettingNextBorC", 5:"gettingBorCorVRange", 6:"gettingBRange", 7:"gettingCRange", 8:"gettingVRange", 9:"finished"}
         status, bookNameOrAbbreviation, BBB, C, V, S, spaceCount, startReferenceTuple, self.referenceList = 0, '', None, '', '', '', 0, (), []
         for nn, char in enumerate(adjustedReferenceString):
             nnn = referenceString.find( char, nn ) # Best guess of where this char might be in the original reference string (which we will display to users in error messages)
             if nnn!=nn: # Well the character wasn't exactly where we expected it
                 assert( adjustedReferenceString != referenceString ) # but this can happen if we messed with the string
                 #print( "nnn!=nn", nn, nnn, "'"+referenceString+"'", "'"+adjustedReferenceString+"'" )
-            #if referenceString.startswith('Num 22'):
-            #print( "  BRL status: {}:{} -- got '{}'".format(status, statusList[status],char), haveErrors, haveWarnings, self.referenceList, BBB )
+            if Globals.debugFlag and debuggingThisModule:
+                #if referenceString.startswith('Num 22'):
+                print( "  BRL status: {}:{} -- got '{}'".format(status, statusList[status],char), haveErrors, haveWarnings, self.referenceList, BBB )
             if status == 0: # Getting bookname (with or without punctuation after book abbreviation)
                 if char.isalnum(): # doesn't include spaces
                     if char.isdigit() and bookNameOrAbbreviation: # Could this be the chapter number?
@@ -822,9 +846,22 @@ class BibleReferenceList( BibleReferenceBase ):
                     status = 2
                     continue
                 else:
-                    if ' ' in bookNameOrAbbreviation: logging.error( _("Unable to deduce book name from '{}' in Bible reference '{}'").format( bookNameOrAbbreviation, referenceString ) )
-                    else: logging.error( _("Unexpected '{}' character when getting book name at position {} in Bible reference '{}'").format( char, nnn, referenceString ) )
-                    haveErrors = True
+                    if ' ' in bookNameOrAbbreviation:
+                        if bookNameOrAbbreviation.startswith('1 ') or bookNameOrAbbreviation.startswith('2 ') \
+                        or bookNameOrAbbreviation.startswith('I ') or bookNameOrAbbreviation.startswith('II '):
+                            logging.warning( "BibleReferenceList.parseReferenceString " + _("Unexpected space after book number when getting book name in Bible reference '{}'").format( referenceString ) )
+                            haveWarnings = True
+                            ixSP = bookNameOrAbbreviation.index( ' ' )
+                            bookNameOrAbbreviation = bookNameOrAbbreviation[0] + bookNameOrAbbreviation[ixSP+1:] # Remove the space
+                    if ' ' in bookNameOrAbbreviation:
+                        logging.error( "BibleReferenceList.parseReferenceString " + _("Unable to deduce book name from '{}' in Bible reference '{}'").format( bookNameOrAbbreviation, referenceString ) )
+                        haveErrors = True
+                    elif char == '.':
+                        logging.warning( "BibleReferenceList.parseReferenceString " + _("Unexpected period when getting book name at position {} in Bible reference '{}'").format( nnn, referenceString ) )
+                        haveWarnings = True
+                    else:
+                        logging.error( "BibleReferenceList.parseReferenceString " + _("Unexpected '{}' character when getting book name at position {} in Bible reference '{}'").format( char, nnn, referenceString ) )
+                        haveErrors = True
                     if len(bookNameOrAbbreviation)>4: break # Best to break here I think since we've been unsuccessful at finding a book name
                     continue
             if status == 1: # Getting book chapter separator
@@ -1151,13 +1188,15 @@ class BibleReferenceList( BibleReferenceBase ):
             saveReference( BBB, C, V, S, self.referenceList )
             status = 9
 
-        #print( "BRL final status: {}:{} -- got '{}'from '{}'\n".format(status,statusList[status],self.referenceList,referenceString) )
-        #print( "here", len(totalVerseList), totalVerseList )
+        if Globals.debugFlag and debuggingThisModule:
+            print( "BibleReferences.parseReferenceString BRL final status: {}:{} -- got '{}'from '{}'\n".format(status,statusList[status],self.referenceList,referenceString) )
+            print( "BibleReferences.parseReferenceString here", len(totalVerseList), totalVerseList )
 
         singleVerseSet = set( totalVerseList )
         if len(singleVerseSet) < len(totalVerseList):
-            #print( "Final status: {} -- got '{}'from '{}'\n".format(statusList[status],self.referenceList,referenceString) )
-            #print( "totalVerseList is {}, singleVerseSet is {}".format(totalVerseList, singleVerseSet) )
+            if Globals.debugFlag and debuggingThisModule:
+                print( "BibleReferences.parseReferenceString Final status: {} -- got '{}'from '{}'\n".format(statusList[status],self.referenceList,referenceString) )
+                print( "BibleReferences.parseReferenceString totalVerseList is {}, singleVerseSet is {}".format(totalVerseList, singleVerseSet) )
             for entry in singleVerseSet:
                 if totalVerseList.count(entry) > 1:
                     #print( entry )
@@ -1169,10 +1208,14 @@ class BibleReferenceList( BibleReferenceBase ):
 
     def getFirstReference( self, referenceString, location=None ):
         """
+        Just return the first reference, even if given a range.
+
+        Basically just returns the first result (if any) from parseReferenceString.
         """
+        if Globals.debugFlag and debuggingThisModule: print( "BibleReferences.getFirstReference( {}, {} )".format( repr(referenceString), location ) )
         hE, hW, refList = self.parseReferenceString( referenceString, location )
-        #print( "gFR", hE, hW, refList )
-        for something in refList:
+        if Globals.debugFlag and debuggingThisModule: print( "gFR", hE, hW, refList )
+        for something in refList: # Just return the first one
             if isinstance( something, tuple ):
                 if len(something)==4: return something
                 if len(something)==2 and isinstance( something[0], tuple ) and len(something[0])==4: return something[0]

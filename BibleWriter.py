@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-01-21 by RJH (also update ProgVersion below)
+#   Last modified: 2014-02-05 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -56,7 +56,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.51"
+ProgVersion = "0.52"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -1277,7 +1277,7 @@ class BibleWriter( InternalBible ):
                     elif extraType == 'xr':
                         extra = processXRef( extraText )
                         #print( "xr got", extra )
-                    else: print( extraType ); halt
+                    elif Globals.debugFlag and debuggingThisModule: print( extraType ); halt
                     #print( "was", verse )
                     adjText = adjText[:adjIndex] + extra + adjText[adjIndex:]
                     offset -= len( extra )
@@ -1691,7 +1691,7 @@ class BibleWriter( InternalBible ):
                     elif extraType == 'xr':
                         extra = processXRef( extraText )
                         #print( "xr got", extra )
-                    else: print( extraType ); halt
+                    elif Globals.debugFlag and debuggingThisModule: print( extraType ); halt
                     #print( "was", verse )
                     adjText = adjText[:adjIndex] + extra + adjText[adjIndex:]
                     offset -= len( extra )
@@ -2187,7 +2187,7 @@ class BibleWriter( InternalBible ):
                     elif extraType == 'xr':
                         extra = processXRef( adjText )
                         #print( "xr got", extra )
-                    else: print( extraType ); halt
+                    elif Globals.debugFlag and debuggingThisModule: print( extraType ); halt
                     #print( "was", verse )
                     verse = verse[:adjIndex] + extra + verse[adjIndex:]
                     offset -= len( extra )
@@ -3341,7 +3341,7 @@ class BibleWriter( InternalBible ):
                 checkCount += checkTotals[bookCount]
                 bookCount += 1
                 if lineCount != checkCount:
-                    print( "Wrong number of lines written:", bookCount, BBB, lineCount, checkCount )
+                    logging.critical( "Wrong number of lines written: {} {} {} {}".format( bookCount, BBB, lineCount, checkCount ) )
                     if Globals.debugFlag: halt
                 if BBB == endBBB: break
                 BBB = BOS.getNextBookCode( BBB )
@@ -4205,16 +4205,30 @@ class BibleWriter( InternalBible ):
 
 
         def convertToPageReference( refTuple ):
+            """
+            Given a reference 4-tuple like ('LUK','15','18','')
+                convert it to an HTML link.
+            """
+            #print( "toHTML5.convertToPageReference( {} )".format( refTuple ) )
             assert( refTuple and len(refTuple)==4 )
             assert( refTuple[0] is None or ( refTuple[0] and len(refTuple[0])==3 ) ) #BBB
             if refTuple[0] in filenameDict:
                 return '{}#C{}V{}'.format( filenameDict[refTuple[0]], refTuple[1], refTuple[2] )
+            else: logging.error( "toHTML5.convertToPageReference can't find book: {}".format( repr(refTuple[0]) ) )
         # end of toHTML5.convertToPageReference
 
 
         def createSectionReference( givenRef ):
-            """ Returns an HTML string for a section reference. """
-            #print( "createSectionReference: '{}'".format( givenRef ) )
+            """
+            Returns an HTML string for a section reference.
+
+            Must be able to handle things like:
+                (Mat. 19:9; Mar. 10:11-12; Luk. 16:18)
+                (Luk. 6:27-28,32-36)
+                (Luk. 16:13; 12:22-31)
+                (1 Kru. 11:1-9; 14:1-7)
+            """
+            #print( "toHTML5.createSectionReference: '{}'".format( givenRef ) )
             theRef = givenRef
             result = bracket = ''
             for bracketLeft,bracketRight in (('(',')'),('[',']'),):
@@ -4224,17 +4238,25 @@ class BibleWriter( InternalBible ):
                     theRef = theRef[1:-1] # Remove the brackets
             refs = theRef.split( ';' )
             for j,ref in enumerate(refs):
+                #print( "   ", j, repr(ref) )
                 if j: result += '; '
                 ref = ref.strip()
                 if ref:
+                    if j: # later section refs might not include the book name, e.g., Luk. 16:13; 12:22-31
+                        letterCount = 0
+                        for char in ref:
+                            if char.isalpha(): letterCount += 1
+                        if letterCount < 2:
+                            ref = analysis[0] + ' ' + ref # Prepend the last BBB
+                            #print( "NOW", repr(ref) )
                     analysis = BRL.getFirstReference( ref, "section reference '{}' from '{}'".format( ref, givenRef ) )
-                    #print( "a", analysis )
+                    #print( "      analysis:", analysis )
                     if analysis:
                         link = convertToPageReference(analysis)
                         if link: result += '<a class="sectionReferenceLink" href="{}">{}</a>'.format( link, ref )
                         else: result += ref
                     else: result += ref
-            #print( "now = '{}'".format( result ) )
+            #print( "  Returning '{}'".format( result + bracket ) )
             return result + bracket
         # end of toHTML5.createSectionReference
 
@@ -4451,7 +4473,7 @@ class BibleWriter( InternalBible ):
                     elif extraType == 'xr':
                         extra = processXRef( extraText, ourGlobals )
                         #print( "xr got", extra )
-                    else: print( extraType ); halt
+                    elif Globals.debugFlag and debuggingThisModule: print( extraType ); halt
                     #print( "was", verse )
                     adjText = adjText[:adjIndex] + extra + adjText[adjIndex:]
                     offset -= len( extra )
@@ -4547,7 +4569,8 @@ class BibleWriter( InternalBible ):
                     if not haveOpenParagraph:
                         logging.warning( "toHTML5: Have chapter number {} outside a paragraph in {} {}:{}".format( text, BBB, C, V ) )
                         writerObject.writeLineOpen( 'p', ('class','unknownParagraph') ); haveOpenParagraph = True
-                    writerObject.writeLineOpenClose( 'span', text, ('class','chapterNumber') )
+                    # Put verse 1 id here on the chapter number (since we don't output a v1 number)
+                    writerObject.writeLineOpenClose( 'span', text, [('class','chapterNumber'),('id','C'+text+'V1')] )
                 elif marker in ('s1','s2','s3',):
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
                     if marker == 's1':
@@ -4564,35 +4587,36 @@ class BibleWriter( InternalBible ):
                     V = text
                     if not haveOpenParagraph:
                         logging.warning( "toHTML5: Have verse number {} outside a paragraph in {} {}:{}".format( text, BBB, C, V ) )
-                    writerObject.writeLineOpenClose( 'span', ' ', ('class','verseNumberPrespace') )
-                    writerObject.writeLineOpenClose( 'span', V, [('class','verseNumber'),('id','C'+C+'V'+V)] )
-                    writerObject.writeLineOpenClose( 'span', '&nbsp;', ('class','verseNumberPostspace') )
+                    if V != '1': # Suppress number for verse 1
+                        #writerObject.writeLineOpenClose( 'span', ' ', ('class','verseNumberPrespace') )
+                        writerObject.writeLineOpenClose( 'span', V, [('class','verseNumber'),('id','C'+C+'V'+V)] )
+                        #writerObject.writeLineOpenClose( 'span', '&nbsp;', ('class','verseNumberPostspace') )
                 elif marker == 'p':
                     if haveOpenList: writerObject.writeLineClose( 'p' ); haveOpenList = False
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
                     writerObject.writeLineOpen( 'p', ('class','proseParagraph') ); haveOpenParagraph = True
-                    if text: halt
+                    if text and Globals.debugFlag and debuggingThisModule: halt
                 elif marker == 'pi':
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' )
                     writerObject.writeLineOpen( 'p', ('class','indentedProseParagraph') ); haveOpenParagraph = True
-                    if text: halt
+                    if text and Globals.debugFlag and debuggingThisModule: halt
                 elif marker == 'q1':
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' )
                     writerObject.writeLineOpen( 'p', ('class','poetryParagraph1') ); haveOpenParagraph = True
-                    if text: halt
+                    if text and Globals.debugFlag and debuggingThisModule: halt
                 elif marker == 'q2':
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' )
                     writerObject.writeLineOpen( 'p', ('class','poetryParagraph2') ); haveOpenParagraph = True
-                    if text: halt
+                    if text and Globals.debugFlag and debuggingThisModule: halt
                 elif marker == 'q3':
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' )
                     writerObject.writeLineOpen( 'p', ('class','poetryParagraph3') ); haveOpenParagraph = True
-                    if text: halt
+                    if text and Globals.debugFlag and debuggingThisModule: halt
                 elif marker == 'li1':
                     if not haveOpenList:
                         writerObject.writeLineOpen( 'p', ('class','list') ); haveOpenList = True
                     writerObject.writeLineOpen( 'span', ('class','listItem1') )
-                    if text: halt
+                    if text and Globals.debugFlag and debuggingThisModule: halt
 
                 # Character markers
                 elif marker=='v~':
@@ -4649,7 +4673,7 @@ class BibleWriter( InternalBible ):
                 xw.close()
             writeHomePage()
             writeAboutPage()
-        else: halt # not done yet
+        elif Globals.debugFlag and debuggingThisModule: halt # not done yet
         if unhandledMarkers:
             logging.warning( "toHTML5: Unhandled markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:
@@ -5409,7 +5433,7 @@ def demo():
         testData = ( # name, abbreviation, folder
                 ("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
                 ("Matigsalug", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
-                ("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
+                #("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
                 #("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
                 #("MS-BT", "MBTBT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
                 #("MS-Notes", "MBTBC", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/",),

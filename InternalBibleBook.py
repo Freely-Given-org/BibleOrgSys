@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2014-01-14 by RJH (also update ProgVersion below)
+#   Last modified: 2014-01-25 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -768,7 +768,7 @@ class InternalBibleBook:
                 c, v = cBits[0], '0'
                 if c == '0':
                     fixErrors.append( _("{} {}:{} Chapter zero is not allowed '{}'").format( self.bookReferenceCode, c, v, text ) )
-                    logging.error( _("Found zero '{}' in chapter marker {} {}:{}").format( text, self.bookReferenceCode, c, v ) )
+                    logging.error( "InternalBibleBook.processLine: " + _("Found zero '{}' in chapter marker {} {}:{}").format( text, self.bookReferenceCode, c, v ) )
                     self.addPriorityError( 97, c, v, _("Chapter zero '{}' not allowed").format( text ) )
                     if len(self._processedLines) < 30: # It's near the beginning of the file
                         logging.info( "Converting given chapter zero to chapter one in {}".format( self.bookReferenceCode ) )
@@ -777,7 +777,7 @@ class InternalBibleBook:
                 haveWaitingC = c
                 if len(cBits) > 1: # We have extra stuff on the c line after the chapter number and a space
                     fixErrors.append( _("{} {}:{} Chapter marker seems to contain extra material '{}'").format( self.bookReferenceCode, c, v, cBits[1] ) )
-                    logging.error( _("Extra '{}' material in chapter marker {} {}:{}").format( cBits[1], self.bookReferenceCode, c, v ) )
+                    logging.error( "InternalBibleBook.processLine: " + _("Extra '{}' material in chapter marker {} {}:{}").format( cBits[1], self.bookReferenceCode, c, v ) )
                     self.addPriorityError( 98, c, v, _("Extra '{}' material after chapter marker").format( cBits[1] ) )
                     #print( "Something on c line", "'"+text+"'", "'"+cBits[1]+"'" )
                     self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, c, c, InternalBibleExtraList(), c) ) # Write the chapter number as a separate line
@@ -787,12 +787,12 @@ class InternalBibleBook:
                 if c == '0': # Some single chapter books don't have an explicit chapter 1 marker -- we'll make it explicit here
                     if not self.isSingleChapterBook:
                         fixErrors.append( _("{} {}:{} Chapter marker seems to be missing before first verse").format( self.bookReferenceCode, c, v ) )
-                        logging.error( _("Missing chapter number before first verse {} {}:{}").format( self.bookReferenceCode, c, v ) )
+                        logging.error( "InternalBibleBook.processLine: " + _("Missing chapter number before first verse {} {}:{}").format( self.bookReferenceCode, c, v ) )
                         self.addPriorityError( 98, c, v, _("Missing chapter number before first verse") )
                     c = '1'
                     if self.isSingleChapterBook and v!='1':
                         fixErrors.append( _("{} {}:{} Expected single chapter book to start with verse 1").format( self.bookReferenceCode, c, v ) )
-                        logging.error( _("Expected single chapter book to start with verse 1 at {} {}:{}").format( self.bookReferenceCode, c, v ) )
+                        logging.error( "InternalBibleBook.processLine: " + _("Expected single chapter book to start with verse 1 at {} {}:{}").format( self.bookReferenceCode, c, v ) )
                         self.addPriorityError( 38, c, v, _("Expected single chapter book to start with verse 1") )
                     poppedStuff = self._processedLines.pop()
                     if poppedStuff is not None:
@@ -826,7 +826,7 @@ class InternalBibleBook:
                 if ix<ixSP: # It must have been the backslash first
                     #print( "processLine had an unusual case in {} {}:{}: '{}' '{}'".format( self.bookReferenceCode, c, v, originalMarker, originalText ) )
                     fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Unusual field (after verse number): '{}'").format( originalText ) )
-                    logging.error( _("Unexpected backslash touching verse number (missing space?) after {} {}:{} in \\{}: '{}'").format( self.bookReferenceCode, c, v, originalMarker, originalText ) )
+                    logging.error( "InternalBibleBook.processLine: " + _("Unexpected backslash touching verse number (missing space?) after {} {}:{} in \\{}: '{}'").format( self.bookReferenceCode, c, v, originalMarker, originalText ) )
                     self.addPriorityError( 94, c, v, _("Unexpected backslash touching verse number (missing space?) in '{}'").format( originalText ) )
                 if ix==99999: # There's neither -- not unexpected if this is a translation in progress
                     #print( "processLine had an empty verse field in {} {}:{}: '{}' '{}' {} {} {}".format( self.bookReferenceCode, c, v, originalMarker, originalText, ix, ixSP, ixBS ) )
@@ -841,9 +841,9 @@ class InternalBibleBook:
                         if nfvnCount != -1:
                             nfvnCount += 1
                             if nfvnCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
-                                logging.error( _("Nothing following verse number after {} {}:{} in \\{}: '{}'").format( self.bookReferenceCode, c, v, originalMarker, originalText ) )
+                                logging.error( "InternalBibleBook.processLine: " + _("Nothing following verse number after {} {}:{} in \\{}: '{}'").format( self.bookReferenceCode, c, v, originalMarker, originalText ) )
                             else: # we've reached our limit
-                                logging.error( _('Additional "Nothing following verse number" messages suppressed...') )
+                                logging.error( "InternalBibleBook.processLine: " + _('Additional "Nothing following verse number" messages suppressed...') )
                                 nfvnCount = -1 # So we don't do this again (for this book)
                                 #priority = 12
                     #self.addPriorityError( priority, c, v, _("Nothing following verse number in '{}'").format( originalText ) )
@@ -869,9 +869,9 @@ class InternalBibleBook:
                         if owfvnCount != -1:
                             owfvnCount += 1
                             if owfvnCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
-                                logging.error( _("Only whitespace following verse number after {} {}:{} in \\{}: '{}'").format( self.bookReferenceCode, c, v, originalMarker, originalText ) )
+                                logging.error( "InternalBibleBook.processLine: " + _("Only whitespace following verse number after {} {}:{} in \\{}: '{}'").format( self.bookReferenceCode, c, v, originalMarker, originalText ) )
                             else: # we've reached our limit
-                                logging.error( _('Additional "Only whitespace following verse number" messages suppressed...') )
+                                logging.error( "InternalBibleBook.processLine: " + _('Additional "Only whitespace following verse number" messages suppressed...') )
                                 owfvnCount = -1 # So we don't do this again (for this book)
                         # Removed these fix and priority errors, coz it seems to be covered in checkSFMs
                         # (and especially coz we don't know yet if this is a finished translation)
@@ -889,7 +889,7 @@ class InternalBibleBook:
                         if Globals.USFMMarkers.isNewlineMarker(insideMarker): # Need to split the line for everything else to work properly
                             if ix==0:
                                 fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Marker '{}' shouldn't appear within line in \\{}: '{}'").format( insideMarker, originalMarker, text ) )
-                                logging.error( _("Marker '{}' shouldn't appear within line after {} {}:{} in \\{}: '{}'").format( insideMarker, self.bookReferenceCode, c, v, originalMarker, text ) ) # Only log the first error in the line
+                                logging.error( "InternalBibleBook.processLine: " + _("Marker '{}' shouldn't appear within line after {} {}:{} in \\{}: '{}'").format( insideMarker, self.bookReferenceCode, c, v, originalMarker, text ) ) # Only log the first error in the line
                                 self.addPriorityError( 96, c, v, _("Marker \\{} shouldn't be inside a line").format( insideMarker ) )
                             thisText = text[ix:iMIndex].rstrip()
                             #print( "QQQ10: rstrip" ); halt

@@ -367,10 +367,10 @@ class USFXXMLBible( Bible ):
         self.thisBook.objectNameString = "USFX XML Bible Book object"
         self.thisBook.objectTypeString = "USFX"
 
-        C = V = None
+        C = V = '0'
         for element in bookElement:
             #print( "element", repr(element.tag) )
-            location = element.tag + " of " + mainLocation
+            location = "{} of {} {}:{}".format( element.tag, mainLocation, C, V )
             if element.tag == 'id':
                 idText = clean( element.text )
                 Globals.checkXMLNoTail( element, location, 'vsg3' )
@@ -414,7 +414,7 @@ class USFXXMLBible( Bible ):
                 Globals.checkXMLNoSubelements( element, location, 'kdr3' ) # This is a milestone
                 for attrib,value in element.items():
                     if attrib == 'id':
-                        C = value
+                        C, V = value, '0'
                     else:
                         logging.warning( _("hj52 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
                 self.thisBook.appendLine( 'c', C )
@@ -447,15 +447,15 @@ class USFXXMLBible( Bible ):
                         print( "What is loadBook optionalLineBreak?" )
                     else:
                         logging.warning( _("jx9q Unprocessed {} element after {} {}:{} in {}").format( subelement.tag, BBB, C, V, sublocation ) )
-            elif element.tag in ('p','q',):
-                self.loadParagraph( element, location, C )
+            elif element.tag in ('p','q','d',):
+                V = self.loadParagraph( element, location, C )
             elif element.tag == 'b':
                 Globals.checkXMLNoText( element, location, 'ks35' )
                 Globals.checkXMLNoTail( element, location, 'gs35' )
                 Globals.checkXMLNoAttributes( element, location, 'nd04' )
                 Globals.checkXMLNoSubelements( element, location, 'kdr3' )
                 self.thisBook.appendLine( 'b', '' )
-            elif element.tag in ('d','cl',): # Simple single-line paragraph-level markers
+            elif element.tag in ('cl','cp'): # Simple single-line paragraph-level markers
                 marker, text = element.tag, clean(element.text)
                 Globals.checkXMLNoTail( element, location, 'od01' )
                 Globals.checkXMLNoAttributes( element, location, 'us91' )
@@ -466,6 +466,7 @@ class USFXXMLBible( Bible ):
             else:
                 logging.warning( _("caf2 Unprocessed {} element after {} {}:{} in {}").format( element.tag, BBB, C, V, location ) )
                 #self.addPriorityError( 1, c, v, _("Unprocessed {} element").format( element.tag ) )
+                halt
         self.saveBook( self.thisBook )
     # end of USFXXMLBible.loadBook
 
@@ -474,8 +475,8 @@ class USFXXMLBible( Bible ):
         """
         Load the paragraph (p or q) container from the XML data file.
         """
-        if Globals.verbosityLevel > 3:
-            print( _("USFXXMLBible.loadParagraph: Loading {} from {}...").format( self.name, self.sourceFolder ) )
+        #if Globals.verbosityLevel > 3:
+            #print( _("USFXXMLBible.loadParagraph: Loading {} from {}...").format( self.name, self.sourceFolder ) )
 
         V = None
         pText = paragraphElement.text
@@ -512,8 +513,8 @@ class USFXXMLBible( Bible ):
             elif element.tag == 've': # verse end milestone -- we can just ignore this
                 Globals.checkXMLNoText( element, location, 'lsc3' )
                 Globals.checkXMLNoTail( element, location, 'mfy4' )
-                Globals.checkXMLNoAttributes( element, location, 'ld02' )
-                Globals.checkXMLNoSubelements( element, location, 'ls13' )
+                Globals.checkXMLNoAttributes( element, location, 'bd24' )
+                Globals.checkXMLNoSubelements( element, location, 'ks35' )
             elif element.tag == 'fig':
                 self.loadFigure( element, location )
             elif element.tag == 'table':
@@ -542,12 +543,26 @@ class USFXXMLBible( Bible ):
                 Globals.checkXMLNoAttributes( element, location, 'lkj1' )
                 Globals.checkXMLNoSubelements( element, location, 'da13' )
                 self.thisBook.appendLine( marker, text )
+            elif element.tag == 'ref': # encoded reference -- seems like a USFX hack
+                text, tail = clean(element.text), clean(element.tail)
+                Globals.checkXMLNoSubelements( element, location, 'bd83' )
+                target = None
+                for attrib,value in element.items():
+                    if attrib == 'tgt': target = value
+                    else:
+                        logging.warning( _("be83 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+                #if target not in ('w','ior',): print( "ref sfm got", repr(sfm) )
+                self.thisBook.appendToLastLine( ' \\{} {}\\{}*{}{}'.format( element.tag, target, element.tag, text, (' '+tail) if tail else '' ) )
+                #print( "Saved", '\\{} {}\\{}*{}{}'.format( element.tag, target, element.tag, text, (' '+tail) if tail else '' ) )
             elif element.tag == 'optionalLineBreak':
                 print( "What is loadParagraph optionalLineBreak?" )
+                if Globals.debugFlag: halt
             elif element.tag == 'milestone':
                 print( "What is loadParagraph milestone?" )
+                if Globals.debugFlag: halt
             else:
                 logging.warning( _("df45 Unprocessed {} element after {} {}:{} in {}").format( repr(element.tag), self.thisBook.bookReferenceCode, C, V, location ) )
+        return V
     # end of USFXXMLBible.loadParagraph
 
 
@@ -556,8 +571,17 @@ class USFXXMLBible( Bible ):
         """
         marker, text, tail = element.tag, clean(element.text), clean(element.tail)
         Globals.checkXMLNoAttributes( element, location, 'sd12' )
-        Globals.checkXMLNoSubelements( element, location, 'la14' )
-        self.thisBook.appendToLastLine( ' \\{} {}\\{}*{}'.format( marker, text, marker, (' '+tail) if tail else '' ) )
+        self.thisBook.appendToLastLine( ' \\{} {}'.format( marker, text ) )
+        for subelement in element:
+            sublocation = subelement.tag + " of " + location
+            #print( "element", repr(element.tag) )
+            if subelement.tag == 'f':
+                #print( "USFX.loadParagraph Found footnote at", sublocation, C, V, repr(subelement.text) )
+                self.loadFootnote( subelement, sublocation )
+            else:
+                logging.warning( _("sf31 Unprocessed {} element after {} {}:{} in {}").format( repr(subelement.tag), self.thisBook.bookReferenceCode, C, V, location ) )
+                halt
+        self.thisBook.appendToLastLine( '\\{}*{}'.format( marker, (' '+tail) if tail else '' ) )
     # end of USFXXMLBible.loadCharacterFormatting
 
 
@@ -572,9 +596,9 @@ class USFXXMLBible( Bible ):
             figTag, figText = subelement.tag, clean(subelement.text)
             assert( figTag in figDict )
             figDict[figTag] = '' if figText is None else figText
-            Globals.checkXMLNoTail( subelement, sublocation, 'ld02' )
-            Globals.checkXMLNoAttributes( subelement, sublocation, 'ld02' )
-            Globals.checkXMLNoSubelements( subelement, sublocation, 'ls13' )
+            Globals.checkXMLNoTail( subelement, sublocation, 'jkf5' )
+            Globals.checkXMLNoAttributes( subelement, sublocation, 'ld18' )
+            Globals.checkXMLNoSubelements( subelement, sublocation, 'hb46' )
         newString = ''
         for j,tag in enumerate( ('description', 'catalog', 'size', 'location', 'copyright', 'caption', 'reference',) ):
             newString += ('' if j==0 else '|') + figDict[tag]
@@ -633,18 +657,40 @@ class USFXXMLBible( Bible ):
             #if Globals.verbosityLevel > 0 and marker not in ('ref','fr','ft','fq','fv','fk','fqa','it','bd','rq',):
                 #print( "USFX.loadFootnote found", repr(caller), repr(marker), repr(fText), repr(fTail) )
             if Globals.debugFlag: assert( marker in ('ref','fr','ft','fq','fv','fk','fqa','it','bd','rq',) )
-            Globals.checkXMLNoAttributes( subelement, sublocation, 'ld02' )
-            Globals.checkXMLNoSubelements( subelement, sublocation, 'ls13' )
-            if marker[0] == 'f' and not fTail:
-                #print( "tail", repr(fTail) )
-                #Globals.checkXMLNoTail( subelement, sublocation, 'csf3' )
+            if marker=='ref':
+                assert( fText )
+                Globals.checkXMLNoSubelements( subelement, sublocation, 'ls13' )
+                target = None
+                for attrib,value in subelement.items():
+                    if attrib == 'tgt': target = value
+                    else:
+                        logging.warning( _("gs35 Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
+                if target:
+                    self.thisBook.appendToLastLine( ' \\{} {}\\{}*{}'.format( marker, target, marker, fText ) )
+                else: halt
+            else:
+                Globals.checkXMLNoAttributes( subelement, sublocation, 'dq54' )
                 self.thisBook.appendToLastLine( ' \\{} {}'.format( marker, fText ) )
-            elif marker == 'ref' and not fTail:
-                #print( "tail", repr(fTail) )
-                #Globals.checkXMLNoTail( subelement, sublocation, 'jd36' )
-                self.thisBook.appendToLastLine( ' \\{} {}'.format( marker, fText ) )
-            else: # it's a regular formatting marker
-                self.thisBook.appendToLastLine( ' \\{} {}\\{}*{}'.format( marker, fText, marker, (' '+fTail) if fTail else '' ) )
+                if marker[0] == 'f': # Starts with f, e.g., fr, ft
+                    for sub2element in subelement:
+                        sub2location = sub2element.tag + " of " + sublocation
+                        marker2, fText2, fTail2 = sub2element.tag, clean(sub2element.text), clean(sub2element.tail)
+                        Globals.checkXMLNoSubelements( sub2element, sub2location, 'js72' )
+                        if marker2=='ref':
+                            print( sub2location )
+                            assert( not fText2 )
+                            target = None
+                            for attrib,value in sub2element.items():
+                                if attrib == 'tgt': target = value
+                                else:
+                                    logging.warning( _("hd52 Unprocessed {} attribute ({}) in {}").format( attrib, value, sub2location ) )
+                            if target:
+                                self.thisBook.appendToLastLine( ' \\{} {}'.format( marker2, target ) )
+                            else: halt
+                        else: halt
+                else: halt
+            if fTail:
+                self.thisBook.appendToLastLine( '\\{}*{}'.format( marker, fTail ) )
         self.thisBook.appendToLastLine( '\\f*{}'.format( (' '+tail) if tail else '' ) )
     # end of USFXXMLBible.loadFootnote
 
@@ -664,20 +710,43 @@ class USFXXMLBible( Bible ):
         for subelement in element:
             sublocation = subelement.tag + " of " + location
             marker, xText, xTail = subelement.tag, clean(subelement.text), clean(subelement.tail)
-            #print( "USFX.loadCrossreference", repr(caller), repr(text), repr(tail), repr(marker), repr(xText), repr(xTail) )
+            print( "USFX.loadCrossreference", repr(caller), repr(text), repr(tail), repr(marker), repr(xText), repr(xTail) )
             #if Globals.verbosityLevel > 0 and marker not in ('ref','xo','xt',):
                 #print( "USFX.loadCrossreference found", repr(caller), repr(marker), repr(xText), repr(xTail) )
             if Globals.debugFlag: assert( marker in ('ref','xo','xt',) )
-            Globals.checkXMLNoAttributes( subelement, sublocation, 'sc35' )
-            Globals.checkXMLNoSubelements( subelement, sublocation, 's1sd' )
-            if marker[0] == 'x' and not xTail:
-                #Globals.checkXMLNoTail( subelement, sublocation, 'la31' )
+            if marker=='ref':
+                assert( xText )
+                Globals.checkXMLNoSubelements( subelement, sublocation, 's1sd' )
+                target = None
+                for attrib,value in subelement.items():
+                    if attrib == 'tgt': target = value
+                    else:
+                        logging.warning( _("aj41 Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
+                if target:
+                    self.thisBook.appendToLastLine( ' \\{} {}\\{}*{}'.format( marker, target, marker, xText ) )
+                else: halt
+            else:
+                Globals.checkXMLNoAttributes( subelement, sublocation, 'sc35' )
                 self.thisBook.appendToLastLine( ' \\{} {}'.format( marker, xText ) )
-            elif marker == 'ref' and not xTail:
-                #Globals.checkXMLNoTail( subelement, sublocation, 'dg63' )
-                self.thisBook.appendToLastLine( ' \\{} {}'.format( marker, xText ) )
-            else: # it's a regular formatting marker
-                self.thisBook.appendToLastLine( ' \\{} {}\\{}*{}'.format( marker, xText, marker, (' '+xTail) if xTail else '' ) )
+                if marker[0] == 'x': # Starts with x, e.g., xo, xt
+                    for sub2element in subelement:
+                        sub2location = sub2element.tag + " of " + sublocation
+                        marker2, xText2, xTail2 = sub2element.tag, clean(sub2element.text), clean(sub2element.tail)
+                        Globals.checkXMLNoSubelements( sub2element, sub2location, 'fs63' )
+                        if marker2=='ref':
+                            assert( not xText2 )
+                            target = None
+                            for attrib,value in sub2element.items():
+                                if attrib == 'tgt': target = value
+                                else:
+                                    logging.warning( _("gs34 Unprocessed {} attribute ({}) in {}").format( attrib, value, sub2location ) )
+                            if target:
+                                self.thisBook.appendToLastLine( ' \\{} {}'.format( marker2, target ) )
+                            else: halt
+                        else: halt
+                else: halt
+            if xTail:
+                self.thisBook.appendToLastLine( '\\{}*{}'.format( marker, xTail ) )
         self.thisBook.appendToLastLine( '\\x*{}'.format( (' '+tail) if tail else '' ) )
     #end of USFXXMLBible.loadCrossreference
 # end of class USFXXMLBible
