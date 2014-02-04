@@ -4090,7 +4090,7 @@ class BibleWriter( InternalBible ):
             try:
                 shutil.copy( filepath, WEBoutputFolder ) # Copy it under its own name
                 #shutil.copy( filepath, os.path.join( WEBoutputFolder, "Bible.css" ) ) # Copy it also under the generic name
-            except FileNotFoundError: logging.warning( "Unable to find CSS style file: {}".format( filepath ) )
+            except FileNotFoundError: logging.error( "Unable to find CSS style file: {}".format( filepath ) )
 
         unhandledMarkers = set()
 
@@ -4173,14 +4173,14 @@ class BibleWriter( InternalBible ):
             if ourGlobals['footnoteHTML5'] or ourGlobals['xrefHTML5']:
                 writerObject.writeLineOpen( 'div' ) # endNotes
                 if ourGlobals['footnoteHTML5']:
-                    writerObject.writeLineOpenSelfclose( 'hr' )
+                    #writerObject.writeLineOpenSelfclose( 'hr' )
                     writerObject.writeLineOpenClose( 'h3', 'Footnotes', ('class','footnotesHeader') )
                     writerObject.writeLineOpen( 'div', ('class','footerLine') )
                     for line in ourGlobals['footnoteHTML5']:
                         writerObject.writeLineText( line, noTextCheck=True )
                     writerObject.writeLineClose( 'div' )
                 if ourGlobals['xrefHTML5']:
-                    writerObject.writeLineOpenSelfclose( 'hr' )
+                    #writerObject.writeLineOpenSelfclose( 'hr' )
                     writerObject.writeLineOpenClose( 'h3', 'Cross References', ('class','xrefsHeader') )
                     writerObject.writeLineOpen( 'div', ('class','xrefSection') )
                     for line in ourGlobals['xrefHTML5']:
@@ -4229,33 +4229,28 @@ class BibleWriter( InternalBible ):
                 (1 Kru. 11:1-9; 14:1-7)
             """
             #print( "toHTML5.createSectionReference: '{}'".format( givenRef ) )
-            theRef = givenRef
+            adjRef = givenRef
             result = bracket = ''
             for bracketLeft,bracketRight in (('(',')'),('[',']'),):
-                if theRef and theRef[0]==bracketLeft and theRef[-1]==bracketRight:
+                if adjRef and adjRef[0]==bracketLeft and adjRef[-1]==bracketRight:
                     result += bracketLeft
                     bracket = bracketRight
-                    theRef = theRef[1:-1] # Remove the brackets
-            refs = theRef.split( ';' )
-            for j,ref in enumerate(refs):
-                #print( "   ", j, repr(ref) )
-                if j: result += '; '
-                ref = ref.strip()
+                    adjRef = adjRef[1:-1] # Remove the brackets
+            for j,originalRef in enumerate( adjRef.split( ';' ) ):
+                #print( " ", j, originalRef )
+                if j: result += ';' # Restore the semicolons
+                ref = originalRef.strip()
                 if ref:
                     if j: # later section refs might not include the book name, e.g., Luk. 16:13; 12:22-31
                         letterCount = 0
                         for char in ref:
                             if char.isalpha(): letterCount += 1
-                        if letterCount < 2:
-                            ref = analysis[0] + ' ' + ref # Prepend the last BBB
-                            #print( "NOW", repr(ref) )
+                        if letterCount < 2: # Allows for something like 16:13a but assumes no single letter book abbrevs
+                            ref = ((analysis[0]+' ') if analysis else '' ) + ref # Prepend the last BBB if there was one
                     analysis = BRL.getFirstReference( ref, "section reference '{}' from '{}'".format( ref, givenRef ) )
-                    #print( "      analysis:", analysis )
-                    if analysis:
-                        link = convertToPageReference(analysis)
-                        if link: result += '<a class="sectionReferenceLink" href="{}">{}</a>'.format( link, ref )
-                        else: result += ref
-                    else: result += ref
+                    #print( "a", analysis )
+                    link = convertToPageReference(analysis) if analysis else None
+                    result += '<a class="sectionReferenceLink" href="{}">{}</a>'.format( link, originalRef ) if link else originalRef
             #print( "  Returning '{}'".format( result + bracket ) )
             return result + bracket
         # end of toHTML5.createSectionReference
