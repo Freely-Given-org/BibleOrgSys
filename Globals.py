@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # Globals.py
-#   Last modified: 2013-09-04 by RJH (also update ProgVersion below)
+#   Last modified: 2014-02-06 by RJH (also update ProgVersion below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
-# Copyright (C) 2010-2013 Robert Hunt
+# Copyright (C) 2010-2014 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -34,6 +34,7 @@ Contains functions:
     removeLogfile( projectHandler )
 
     makeSafeFilename( someName )
+    makeSafeXML( someString )
     makeSafeString( someString )
     peekIntoFile( filenameOrFilepath, folder=None, numLines=1 )
 
@@ -70,7 +71,7 @@ Contains functions:
 """
 
 ProgName = "Globals"
-ProgVersion = "0.36"
+ProgVersion = "0.37"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -225,6 +226,19 @@ def makeSafeFilename( someName ):
         .replace('\\','_BACKSLASH_').replace(':','_COLON_').replace(';','_SEMICOLON_') \
         .replace('#','_HASH_').replace('?','_QUESTIONMARK_').replace('*','_ASTERISK_')
 # end of makeSafeFilename
+
+
+##########################################################################################################
+#
+# Make a string safe if it could be used in an XML document
+#
+
+def makeSafeXML( someString ):
+    """
+    Replaces special characters in a string to make it for XML.
+    """
+    return someString.replace('&','&amp;').replace('"','&quot;').replace('<','&lt;').replace('>','&gt;')
+# end of makeSafeXML
 
 
 ##########################################################################################################

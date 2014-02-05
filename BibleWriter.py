@@ -1059,7 +1059,7 @@ class BibleWriter( InternalBible ):
                     assert( text or extras )
                     if not text: # this is an empty (untranslated) verse
                         text = '- - -' # but we'll put in a filler
-                    if startedFlag: accumulator += (' ' if accumulator else '') + text
+                    if startedFlag: accumulator += (' ' if accumulator else '') + Globals.makeSafeXML( text )
                 elif marker == 'c':
                     if accumulator:
                         writerObject.writeLineOpenClose ( 'v', accumulator, ('n',verseNumberString) )
@@ -1076,7 +1076,6 @@ class BibleWriter( InternalBible ):
                     #print( "Text '{}'".format( text ) )
                     if not text: logging.warning( "toOpenSongXML: Missing text for v" ); continue
                     verseNumberString = text.replace('<','').replace('>','').replace('"','') # Used below but remove anything that'll cause a big XML problem later
-                    #writerObject.writeLineOpenClose ( 'VERS', verseText, ('vnumber',verseNumberString) )
                 elif marker not in ('c#',): # These are the markers that we can safely ignore for this export
                     unhandledMarkers.add( marker )
             if accumulator:
@@ -5562,7 +5561,7 @@ def demo():
                 UB.load()
                 if Globals.verbosityLevel > 0: print( '\nBWr A'+str(j+1)+'/', UB )
                 if Globals.strictCheckingFlag: UB.check()
-                #result = UB.toDrupalBible(); halt
+                #result = UB.toOpenSongXML(); halt
                 doaResults = UB.doAllExports()
                 if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
                     outputFolder = "OutputFiles/BOS_USFM_Reexport/"
