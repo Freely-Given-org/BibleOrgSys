@@ -17,7 +17,7 @@ PublicationCode = GENERIC
 # The following values are copied into the output file
 HaggaiLanguage = en
 HaggaiPublisher = __PUBLISHER__
-HaggaiRights = Copyright (C) 2013 __NAME__
+HaggaiRights = Copyright (C) 2014 __NAME__
 HaggaiContributors =
 HaggaiSource = __NAME__
 HaggaiCoverage = People around the world

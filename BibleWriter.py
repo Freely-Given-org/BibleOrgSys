@@ -41,6 +41,8 @@ Contains functions:
     toText( outputFolder=None )
     toMediaWiki( outputFolder=None, controlDict=None, validationSchema=None )
     toZefaniaXML( outputFolder=None, controlDict=None, validationSchema=None )
+    toHaggaiXML( outputFolder=None, controlDict=None, validationSchema=None )
+    toOpenSongXML( outputFolder=None, controlDict=None, validationSchema=None )
     toUSXXML( outputFolder=None, controlDict=None, validationSchema=None )
     toUSFXXML( outputFolder=None, controlDict=None, validationSchema=None )
     toOSISXML( outputFolder=None, controlDict=None, validationSchema=None )
@@ -48,7 +50,7 @@ Contains functions:
     totheWord( outputFolder=None )
     toMySword( outputFolder=None )
     toESword( outputFolder=None )
-    toHTML5( outputFolder=None, controlDict=None, validationSchema=None )
+    toHTML5( outputFolder=None, controlDict=None, validationSchema=None, humanReadable=True )
     toTeX( outputFolder=None )
     toSwordSearcher( outputFolder=None )
     toDrupalBible( outputFolder=None )
@@ -1010,6 +1012,114 @@ class BibleWriter( InternalBible ):
         if validationSchema: return xw.validate( validationSchema )
         return True
     # end of BibleWriter.toHaggaiXML
+
+
+
+    def toOpenSongXML( self, outputFolder=None, controlDict=None, validationSchema=None ):
+        """
+        Using settings from the given control file,
+            converts the USFM information to a UTF-8 OpenSong XML file.
+
+        This format is roughly documented at http://de.wikipedia.org/wiki/OpenSong_XML
+            but more fields can be discovered by looking at downloaded files.
+        """
+        if Globals.verbosityLevel > 1: print( "Running BibleWriter:toOpenSongXML..." )
+        if Globals.debugFlag: assert( self.books )
+
+        if not self.doneSetupGeneric: self.__setupWriter()
+        if not outputFolder: outputFolder = "OutputFiles/BOS_OpenSong_Export/"
+        if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
+        if not controlDict:
+            controlDict, defaultControlFilename = {}, "To_OpenSong_controls.txt"
+            try:
+                ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
+            except:
+                logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
+        self.__adjustControlDict( controlDict )
+
+        unhandledMarkers = set()
+
+        def writeOpenSongBook( writerObject, BBB, bkData ):
+            """Writes a book to the OpenSong XML writerObject."""
+            #print( 'BIBLEBOOK', [('bnumber',Globals.BibleBooksCodes.getReferenceNumber(BBB)), ('bname',Globals.BibleBooksCodes.getEnglishName_NR(BBB)), ('bsname',Globals.BibleBooksCodes.getOSISAbbreviation(BBB))] )
+            OSISAbbrev = Globals.BibleBooksCodes.getOSISAbbreviation( BBB )
+            if not OSISAbbrev:
+                logging.error( "toOpenSongXML: Can't write {} OpenSong book because no OSIS code available".format( BBB ) ); return
+            writerObject.writeLineOpen( 'b', ('n',bkData.getAssumedBookNames()[0]) )
+            haveOpenChapter, startedFlag, accumulator = False, False, ""
+            for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
+                marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getCleanText(), verseDataEntry.getExtras()
+                #print( marker, repr(text) )
+                #if text: assert( text[0] != ' ' )
+                if marker in ('id', 'ide', 'h', 'toc1','toc2','toc3', ): pass # Just ignore these metadata markers
+                elif marker in ( 's1', 's2', 's3', ): pass # Just ignore these section headings
+                elif marker in ( 'r', ): pass # Just ignore these reference fields
+                elif marker in ( 'p', 'q1', 'q2', 'q3', 'm', 'b', 'nb', 'li1', 'li2', 'li3', ): pass # Just ignore these paragraph formatting fields
+                elif marker in ('v~', 'p~'):
+                    assert( text or extras )
+                    if not text: # this is an empty (untranslated) verse
+                        text = '- - -' # but we'll put in a filler
+                    if startedFlag: accumulator += (' ' if accumulator else '') + text
+                elif marker == 'c':
+                    if accumulator:
+                        writerObject.writeLineOpenClose ( 'v', accumulator, ('n',verseNumberString) )
+                        accumulator = ""
+                    if haveOpenChapter:
+                        writerObject.writeLineClose ( 'c' )
+                    writerObject.writeLineOpen ( 'c', ('n',text) )
+                    haveOpenChapter = True
+                elif marker == 'v':
+                    startedFlag = True
+                    if accumulator:
+                        writerObject.writeLineOpenClose ( 'v', accumulator, ('n',verseNumberString) )
+                        accumulator = ""
+                    #print( "Text '{}'".format( text ) )
+                    if not text: logging.warning( "toOpenSongXML: Missing text for v" ); continue
+                    verseNumberString = text.replace('<','').replace('>','').replace('"','') # Used below but remove anything that'll cause a big XML problem later
+                    #writerObject.writeLineOpenClose ( 'VERS', verseText, ('vnumber',verseNumberString) )
+                elif marker not in ('c#',): # These are the markers that we can safely ignore for this export
+                    unhandledMarkers.add( marker )
+            if accumulator:
+                writerObject.writeLineOpenClose ( 'v', accumulator, ('n',verseNumberString) )
+            if haveOpenChapter:
+                writerObject.writeLineClose ( 'c' )
+            writerObject.writeLineClose( 'b' )
+        # end of toOpenSongXML.writeOpenSongBook
+
+        # Set-up our Bible reference system
+        if controlDict['PublicationCode'] == "GENERIC":
+            BOS = self.genericBOS
+            BRL = self.genericBRL
+        else:
+            BOS = BibleOrganizationalSystem( controlDict["PublicationCode"] )
+            BRL = BibleReferenceList( BOS, BibleObject=None )
+
+        if Globals.verbosityLevel > 2: print( _("  Exporting to OpenSong format...") )
+        filename = Globals.makeSafeFilename( controlDict["OpenSongOutputFilename"] )
+        xw = MLWriter( filename, outputFolder )
+        xw.setHumanReadable()
+        xw.start()
+        xw.writeLineOpen( 'Bible' )
+        for BBB,bookData in self.books.items():
+            writeOpenSongBook( xw, BBB, bookData )
+        xw.writeLineClose( 'Bible' )
+        xw.close()
+
+        if unhandledMarkers:
+            logging.warning( "toOpenSongXML: Unhandled markers were {}".format( unhandledMarkers ) )
+            if Globals.verbosityLevel > 1:
+                print( "  " + _("WARNING: Unhandled toOpenSongXML markers were {}").format( unhandledMarkers ) )
+
+        # Now create a zipped version
+        filepath = os.path.join( outputFolder, filename )
+        if Globals.verbosityLevel > 2: print( "  Zipping {} pickle file...".format( filename ) )
+        zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
+        zf.write( filepath, filename )
+        zf.close()
+
+        if validationSchema: return xw.validate( validationSchema )
+        return True
+    # end of BibleWriter.toOpenSongXML
 
 
 
@@ -5228,6 +5338,7 @@ class BibleWriter( InternalBible ):
         MWOutputFolder = os.path.join( givenOutputFolderName, "BOS_MediaWiki_" + ("Reexport/" if self.objectTypeString=='MediaWiki' else "Export/" ) )
         zefOutputFolder = os.path.join( givenOutputFolderName, "BOS_Zefania_" + ("Reexport/" if self.objectTypeString=='Zefania' else "Export/" ) )
         hagOutputFolder = os.path.join( givenOutputFolderName, "BOS_Haggai_" + ("Reexport/" if self.objectTypeString=='Haggia' else "Export/" ) )
+        OSOutputFolder = os.path.join( givenOutputFolderName, "BOS_OpenSong_" + ("Reexport/" if self.objectTypeString=='OpenSong' else "Export/" ) )
         USXOutputFolder = os.path.join( givenOutputFolderName, "BOS_USX_" + ("Reexport/" if self.objectTypeString=='USX' else "Export/" ) )
         USFXOutputFolder = os.path.join( givenOutputFolderName, "BOS_USFX_" + ("Reexport/" if self.objectTypeString=='USFX' else "Export/" ) )
         OSISOutputFolder = os.path.join( givenOutputFolderName, "BOS_OSIS_" + ("Reexport/" if self.objectTypeString=='OSIS' else "Export/" ) )
@@ -5255,6 +5366,7 @@ class BibleWriter( InternalBible ):
             MWExportResult = self.toMediaWiki( MWOutputFolder )
             ZefExportResult = self.toZefaniaXML( zefOutputFolder )
             HagExportResult = self.toHaggaiXML( hagOutputFolder )
+            OSExportResult = self.toOpenSongXML( OSOutputFolder )
             USXExportResult = self.toUSXXML( USXOutputFolder )
             USFXExportResult = self.toUSFXXML( USFXOutputFolder )
             OSISExportResult = self.toOSISXML( OSISOutputFolder )
@@ -5285,6 +5397,7 @@ class BibleWriter( InternalBible ):
                 MWExportResult = results[1]
                 ZefExportResult = results[2]
                 HagExportResult = results[2]
+                OSExportResult = results[2]
                 USXExportResult = results[3]
                 USFXExportResult = results[3]
                 OSISExportResult = results[4]
@@ -5329,6 +5442,11 @@ class BibleWriter( InternalBible ):
                 HagExportResult = False
                 print("BibleWriter.doAllExports.toHaggaiXML Unexpected error:", sys.exc_info()[0], err)
                 logging.error( "BibleWriter.doAllExports.toHaggaiXML: Oops, failed!" )
+            try: OSExportResult = self.toOpenSongXML( OSOutputFolder )
+            except Exception as err:
+                OSExportResult = False
+                print("BibleWriter.doAllExports.toOpenSongXML Unexpected error:", sys.exc_info()[0], err)
+                logging.error( "BibleWriter.doAllExports.toOpenSongXML: Oops, failed!" )
             try: USXExportResult = self.toUSXXML( USXOutputFolder )
             except Exception as err:
                 USXExportResult = False
@@ -5389,21 +5507,21 @@ class BibleWriter( InternalBible ):
         if Globals.verbosityLevel > 1:
             if pickleResult and PseudoUSFMExportResult and USFMExportResult and CBExportResult and TextExportResult \
             and TWExportResult and MySwExportResult and ESwExportResult and MWExportResult \
-            and ZefExportResult and HagExportResult and USXExportResult and USFXExportResult \
+            and ZefExportResult and HagExportResult and OSExportResult and USXExportResult and USFXExportResult \
             and OSISExportResult and swExportResult and htmlExportResult and TeXExportResult \
             and SwSExportResult and DrExportResult:
                 print( "BibleWriter.doAllExports finished them all successfully!" )
             else: print( "BibleWriter.doAllExports finished:  Pck={}  PsUSFM={} USFM={}  Tx={}  TW={} MySw={} eSw={}  MW={}  Zef={} Hag={}  USX={} USFX={}  OSIS={}  Sw={}  HTML={} TeX={} SwS={} Dr={}" \
                     .format( pickleResult, PseudoUSFMExportResult, USFMExportResult, CBExportResult, TextExportResult,
                                 TWExportResult, MySwExportResult, ESwExportResult,
-                                MWExportResult, ZefExportResult, HagExportResult, USXExportResult, USFXExportResult,
+                                MWExportResult, ZefExportResult, HagExportResult, OSExportResult, USXExportResult, USFXExportResult,
                                 OSISExportResult, swExportResult, htmlExportResult, TeXExportResult, SwSExportResult,
                                 DrExportResult ) )
         return { 'Pickle':pickleResult,
                     'PseudoUSFMExport':PseudoUSFMExportResult, 'USFMExport':USFMExportResult,
                     'CustomBibleExport':CBExportResult,  'TextExport':TextExportResult,
                     'TWExport':TWExportResult, 'MySwExport':MySwExportResult, 'ESwExport':ESwExportResult,
-                    'MWExport':MWExportResult, 'ZefExport':ZefExportResult, 'HagExport':HagExportResult,
+                    'MWExport':MWExportResult, 'ZefExport':ZefExportResult, 'HagExport':HagExportResult, 'OSExport':OSExportResult,
                     'USXExport':USXExportResult, 'USFXExport':USFXExportResult, 'OSISExport':OSISExportResult, 'swExport':swExportResult,
                     'htmlExport':htmlExportResult, 'TeXExport':TeXExportResult, 'SwSExport':SwSExportResult,
                     'DrExport':DrExportResult, }

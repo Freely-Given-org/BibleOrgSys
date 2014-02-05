@@ -17,7 +17,7 @@ PublicationCode = GENERIC
 # The following values are copied into the output file
 MediaWikiLanguage = en
 MediaWikiPublisher = __PUBLISHER__
-MediaWikiRights = Copyright (C) 2013 __NAME__
+MediaWikiRights = Copyright (C) 2014 __NAME__
 MediaWikiContributors =
 MediaWikiSource = __NAME__
 MediaWikiCoverage = People around the world

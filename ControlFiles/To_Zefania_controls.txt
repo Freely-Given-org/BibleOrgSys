@@ -17,7 +17,7 @@ PublicationCode = GENERIC
 # The following values are copied into the output file
 ZefaniaLanguage = en
 ZefaniaPublisher = __PUBLISHER__
-ZefaniaRights = Copyright (C) 2013 __NAME__
+ZefaniaRights = Copyright (C) 2014 __NAME__
 ZefaniaContributors =
 ZefaniaSource = __NAME__
 ZefaniaCoverage = People around the world
