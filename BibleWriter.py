@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-02-05 by RJH (also update ProgVersion below)
+#   Last modified: 2014-02-06 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -5511,7 +5511,7 @@ class BibleWriter( InternalBible ):
             and OSISExportResult and swExportResult and htmlExportResult and TeXExportResult \
             and SwSExportResult and DrExportResult:
                 print( "BibleWriter.doAllExports finished them all successfully!" )
-            else: print( "BibleWriter.doAllExports finished:  Pck={}  PsUSFM={} USFM={}  Tx={}  TW={} MySw={} eSw={}  MW={}  Zef={} Hag={}  USX={} USFX={}  OSIS={}  Sw={}  HTML={} TeX={} SwS={} Dr={}" \
+            else: print( "BibleWriter.doAllExports finished:  Pck={}  PsUSFM={} USFM={}  Tx={}  TW={} MySw={} eSw={}  MW={}  Zef={} Hag={} OS={} USX={} USFX={} OSIS={}  Sw={}  HTML={} TeX={} SwS={} Dr={}" \
                     .format( pickleResult, PseudoUSFMExportResult, USFMExportResult, CBExportResult, TextExportResult,
                                 TWExportResult, MySwExportResult, ESwExportResult,
                                 MWExportResult, ZefExportResult, HagExportResult, OSExportResult, USXExportResult, USFXExportResult,
