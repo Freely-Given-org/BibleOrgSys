@@ -4566,6 +4566,7 @@ class BibleWriter( InternalBible ):
                         writerObject.writeLineOpen( 'p', ('class','unknownParagraph') ); haveOpenParagraph = True
                     # Put verse 1 id here on the chapter number (since we don't output a v1 number)
                     writerObject.writeLineOpenClose( 'span', text, [('class','chapterNumber'),('id','C'+text+'V1')] )
+                    writerObject.writeLineOpenClose( 'span', '&nbsp;', ('class','chapterNumberPostspace') )
                 elif marker in ('s1','s2','s3',):
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
                     if marker == 's1':
@@ -4583,9 +4584,9 @@ class BibleWriter( InternalBible ):
                     if not haveOpenParagraph:
                         logging.warning( "toHTML5: Have verse number {} outside a paragraph in {} {}:{}".format( text, BBB, C, V ) )
                     if V != '1': # Suppress number for verse 1
-                        #writerObject.writeLineOpenClose( 'span', ' ', ('class','verseNumberPrespace') )
+                        writerObject.writeLineOpenClose( 'span', ' ', ('class','verseNumberPrespace') )
                         writerObject.writeLineOpenClose( 'span', V, [('class','verseNumber'),('id','C'+C+'V'+V)] )
-                        #writerObject.writeLineOpenClose( 'span', '&nbsp;', ('class','verseNumberPostspace') )
+                        writerObject.writeLineOpenClose( 'span', '&nbsp;', ('class','verseNumberPostspace') )
                 elif marker == 'p':
                     if haveOpenList: writerObject.writeLineClose( 'p' ); haveOpenList = False
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False

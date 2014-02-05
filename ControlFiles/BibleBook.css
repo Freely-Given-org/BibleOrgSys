@@ -184,12 +184,12 @@ nav ul li {
 /* SPANS */
 
   span.chapterNumber { font-size:2em; color:green; }
-  span.chapterNumber:after { content:" "; }
+  span.chapterNumberPostspace { }
 
   /* Subscripts */
-  span.verseNumber:before { content:" "; }
+  span.verseNumberPrespace { font-size:0.7em; }
   span.verseNumber { vertical-align:super; font-size:0.8em; color:red; }
-  span.verseNumber:after { content:" "; vertical-align:super; font-size:0.5em; }
+  span.verseNumberPostspace { font-size:0.5em; }
 
   /* Character formatting of regular text -- by semantics */
   span.bookName {}
