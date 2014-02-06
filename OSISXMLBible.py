@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # OSISXMLBible.py
-#   Last modified: 2013-12-21 by RJH (also update ProgVersion below)
+#   Last modified: 2014-02-06 by RJH (also update ProgVersion below)
 #
 # Module handling OSIS XML Bibles
 #
-# Copyright (C) 2010-2013 Robert Hunt
+# Copyright (C) 2010-2014 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -36,7 +36,7 @@ Updated Sept 2013 to also handle Kahunapule's "modified OSIS".
 """
 
 ProgName = "OSIS XML Bible format handler"
-ProgVersion = "0.30"
+ProgVersion = "0.31"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -190,7 +190,7 @@ class OSISXMLBible( Bible ):
     """
     filenameBase = "OSISXMLBible"
     XMLNameSpace = "{http://www.w3.org/XML/1998/namespace}"
-    OSISNameSpace = "{http://www.bibletechnologies.net/2003/OSIS/namespace}"
+    OSISNameSpace = "{http://ebible.org/2003/OSIS/namespace}"
     treeTag = OSISNameSpace + "osis"
     textTag = OSISNameSpace + "osisText"
     headerTag = OSISNameSpace + "header"

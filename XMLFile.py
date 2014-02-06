@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # XMLFile.py
-#   Last modified: 2013-07-20 by RJH (also update ProgVersion below)
+#   Last modified: 2014-02-06 by RJH (also update ProgVersion below)
 #
 # Module handling simple XML files
 #
-# Copyright (C) 2013 Robert Hunt
+# Copyright (C) 2013-2014 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -27,7 +27,7 @@
 """
 
 ProgName = "XML file handler"
-ProgVersion = "0.02"
+ProgVersion = "0.03"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -174,7 +174,7 @@ def demo():
     if Globals.verbosityLevel > 0: print( ProgNameVersion )
 
     AutoProcessesFolder = "../../"
-    osisSchemaHTTP = 'http://www.bibletechnologies.net/osisCore.2.1.1.xsd'
+    osisSchemaHTTP = 'http://ebible.org/osisCore.2.1.1.xsd'
     osisSchemaFile = os.path.join( AutoProcessesFolder, 'sword-tools/thml2osis/xslt/tests/osisCore.2.1.1.xsd' )
     usxSchemaFile = os.path.join( AutoProcessesFolder, 'VariousScripts/usx 1.rng' )
 

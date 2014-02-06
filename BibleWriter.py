@@ -2622,7 +2622,7 @@ class BibleWriter( InternalBible ):
                 xw = MLWriter( Globals.makeSafeFilename( controlDict["osisOutputFilename"].replace('_Bible',"_Book-{}".format(BBB)) ), outputFolder )
                 xw.setHumanReadable( 'All' ) # Can be set to 'All', 'Header', or 'None' -- one output file went from None/Header=4.7MB to All=5.7MB
                 xw.start()
-                xw.writeLineOpen( 'osis', [('xmlns',"http://www.bibletechnologies.net/2003/OSIS/namespace"), ('xmlns:xsi',"http://www.w3.org/2001/XMLSchema-instance"), ('xsi:schemaLocation',"http://www.bibletechnologies.net/2003/OSIS/namespace http://www.bibletechnologies.net/osisCore.2.1.1.xsd")] )
+                xw.writeLineOpen( 'osis', [('xmlns',"http://ebible.org/2003/OSIS/namespace"), ('xmlns:xsi',"http://www.w3.org/2001/XMLSchema-instance"), ('xsi:schemaLocation',"http://ebible.org/2003/OSIS/namespace http://ebible.org/osisCore.2.1.1.xsd")] )
                 xw.writeLineOpen( 'osisText', [('osisRefWork',"Bible"), ('xml:lang',controlDict["xmlLanguage"]), ('osisIDWork',controlDict["osisIDWork"])] )
                 xw.setSectionName( 'Header' )
                 writeHeader( xw )
@@ -2642,7 +2642,7 @@ class BibleWriter( InternalBible ):
             xw = MLWriter( filename, outputFolder )
             xw.setHumanReadable( 'All' ) # Can be set to 'All', 'Header', or 'None' -- one output file went from None/Header=4.7MB to All=5.7MB
             xw.start()
-            xw.writeLineOpen( 'osis', [('xmlns',"http://www.bibletechnologies.net/2003/OSIS/namespace"), ('xmlns:xsi',"http://www.w3.org/2001/XMLSchema-instance"), ('xsi:schemaLocation',"http://www.bibletechnologies.net/2003/OSIS/namespace http://www.bibletechnologies.net/osisCore.2.1.1.xsd")] )
+            xw.writeLineOpen( 'osis', [('xmlns',"http://ebible.org/2003/OSIS/namespace"), ('xmlns:xsi',"http://www.w3.org/2001/XMLSchema-instance"), ('xsi:schemaLocation',"http://ebible.org/2003/OSIS/namespace http://ebible.org/osisCore.2.1.1.xsd")] )
             xw.writeLineOpen( 'osisText', [('osisRefWork',"Bible"), ('xml:lang',controlDict["xmlLanguage"]), ('osisIDWork',controlDict["osisIDWork"])] )
             xw.setSectionName( 'Header' )
             writeHeader( xw )
