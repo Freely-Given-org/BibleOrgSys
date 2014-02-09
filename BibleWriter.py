@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-02-06 by RJH (also update ProgVersion below)
+#   Last modified: 2014-02-10 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -62,6 +62,10 @@ ProgVersion = "0.52"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
+
+
+OSISNameSpace = "http://www.bibletechnologies.net/2003/OSIS/namespace"
+OSISSchemaLocation = "http://www.crosswire.org/osisCore.2.1.1.xsd"
 
 
 import sys, os, shutil, logging
@@ -2622,7 +2626,7 @@ class BibleWriter( InternalBible ):
                 xw = MLWriter( Globals.makeSafeFilename( controlDict["osisOutputFilename"].replace('_Bible',"_Book-{}".format(BBB)) ), outputFolder )
                 xw.setHumanReadable( 'All' ) # Can be set to 'All', 'Header', or 'None' -- one output file went from None/Header=4.7MB to All=5.7MB
                 xw.start()
-                xw.writeLineOpen( 'osis', [('xmlns',"http://ebible.org/2003/OSIS/namespace"), ('xmlns:xsi',"http://www.w3.org/2001/XMLSchema-instance"), ('xsi:schemaLocation',"http://ebible.org/2003/OSIS/namespace http://ebible.org/osisCore.2.1.1.xsd")] )
+                xw.writeLineOpen( 'osis', [('xmlns',OSISNameSpace), ('xmlns:xsi',"http://www.w3.org/2001/XMLSchema-instance"), ('xsi:schemaLocation',OSISNameSpace+' '+OSISSchemaLocation)] )
                 xw.writeLineOpen( 'osisText', [('osisRefWork',"Bible"), ('xml:lang',controlDict["xmlLanguage"]), ('osisIDWork',controlDict["osisIDWork"])] )
                 xw.setSectionName( 'Header' )
                 writeHeader( xw )
@@ -2642,7 +2646,7 @@ class BibleWriter( InternalBible ):
             xw = MLWriter( filename, outputFolder )
             xw.setHumanReadable( 'All' ) # Can be set to 'All', 'Header', or 'None' -- one output file went from None/Header=4.7MB to All=5.7MB
             xw.start()
-            xw.writeLineOpen( 'osis', [('xmlns',"http://ebible.org/2003/OSIS/namespace"), ('xmlns:xsi',"http://www.w3.org/2001/XMLSchema-instance"), ('xsi:schemaLocation',"http://ebible.org/2003/OSIS/namespace http://ebible.org/osisCore.2.1.1.xsd")] )
+            xw.writeLineOpen( 'osis', [('xmlns',OSISNameSpace), ('xmlns:xsi',"http://www.w3.org/2001/XMLSchema-instance"), ('xsi:schemaLocation',OSISNameSpace+' '+OSISSchemaLocation)] )
             xw.writeLineOpen( 'osisText', [('osisRefWork',"Bible"), ('xml:lang',controlDict["xmlLanguage"]), ('osisIDWork',controlDict["osisIDWork"])] )
             xw.setSectionName( 'Header' )
             writeHeader( xw )
