@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleInternals.py
-#   Last modified: 2013-12-27 by RJH (also update ProgVersion below)
+#   Last modified: 2014-02-10 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for Bible books
 #
-# Copyright (C) 2010-2013 Robert Hunt
+# Copyright (C) 2010-2014 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Bible internals handler"
-ProgVersion = "0.18"
+ProgVersion = "0.19"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -224,7 +224,9 @@ class InternalBibleEntry:
         """
         if '\\' in cleanText:
             logging.error( "InternalBibleEntry expects clean text not {}={}".format( marker, repr(cleanText) ) )
-        if 'it*' in originalText and 'it*' not in adjustedText: halt
+        if 'it*' in originalText and 'it*' not in adjustedText:
+            print( "InternalBibleEntry constructor had problem with it* in {} {} {}".format( marker, repr(originalText), repr(adjustedText) ) )
+            if Globals.debugFlag: halt
         if Globals.debugFlag or Globals.strictCheckingFlag:
             #print( "InternalBibleEntry.__init__( {}, {}, '{}', '{}', {}, '{}' )" \
                     #.format( marker, originalMarker, adjustedText[:35]+('...' if len(adjustedText)>35 else ''), \
