@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-02-10 by RJH (also update ProgVersion below)
+#   Last modified: 2014-02-11 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -65,7 +65,7 @@ debuggingThisModule = False
 
 
 OSISNameSpace = "http://www.bibletechnologies.net/2003/OSIS/namespace"
-OSISSchemaLocation = "http://www.crosswire.org/osisCore.2.1.1.xsd"
+OSISSchemaLocation = "http://www.bibletechnologies.net/osisCore.2.1.1.xsd"
 
 
 import sys, os, shutil, logging
