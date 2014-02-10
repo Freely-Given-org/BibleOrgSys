@@ -2137,6 +2137,7 @@ class InternalBibleBook:
 
         def countCharacters( adjText ):
             """ Counts the characters for the given text (with internal markers already removed). """
+            nonlocal haveNonAsciiChars
             #print( "countCharacters: '{}'".format( adjText ) )
             if '  ' in adjText:
                 characterErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Multiple spaces in '{}'").format( adjText ) )
@@ -2162,8 +2163,12 @@ class InternalBibleBook:
                     try: unicodeLCCharName = unicodedata.name( lcChar )
                     except ValueError: unicodeLCCharName = simpleLCCharName
 
-                    charHex = "0x{0:04x}".format( ord(char) )
-                    #print( repr(char), charHex )
+                    charNum = ord(char)
+                    if charNum > 255 and char not in allWordPunctChars: # Have special characters
+                        haveNonAsciiChars = True
+                    charHex = "0x{0:04x}".format( charNum )
+                    #print( repr(char), repr(simpleCharName), unicodeCharName, charNum, charHex, haveNonAsciiChars )
+                    #if haveNonAsciiChars: halt
 
                     simpleCharacterCounts[simpleCharName] = 1 if simpleCharName not in simpleCharacterCounts \
                                                                 else simpleCharacterCounts[simpleCharName] + 1
@@ -2174,8 +2179,8 @@ class InternalBibleBook:
                     elif not char.isalnum(): # Assume it's punctuation
                         punctuationCounts[simpleCharName] = 1 if simpleCharName not in punctuationCounts else punctuationCounts[simpleCharName] + 1
                         if char not in allWordPunctChars:
-                            characterErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Invalid '{}' word-building character ({})").format( simpleCharName, charHex ) )
-                            self.addPriorityError( 10, c, v, _("Invalid '{}' word-building character ({})").format( simpleCharName, charHex ) )
+                            characterErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Invalid '{}' ({}) word-building character ({})").format( simpleCharName, unicodeCharName, charHex ) )
+                            self.addPriorityError( 10, c, v, _("Invalid '{}' ({}) word-building character ({})").format( simpleCharName, unicodeCharName, charHex ) )
                 for char in leadingWordPunctChars:
                     if char not in trailingWordPunctChars and len(adjText)>1 \
                     and ( adjText[-1]==char or char+' ' in adjText ):
@@ -2185,8 +2190,8 @@ class InternalBibleBook:
                         else: simpleCharName = char
                         unicodeCharName = unicodedata.name( char )
                         #print( "{} {}:{} char is '{}' {}".format( char, simpleCharName ) )
-                        characterErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Misplaced '{}' word leading character").format( simpleCharName ) )
-                        self.addPriorityError( 21, c, v, _("Misplaced '{}' word leading character").format( simpleCharName ) )
+                        characterErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Misplaced '{}' ({}) word leading character").format( simpleCharName, unicodeCharName ) )
+                        self.addPriorityError( 21, c, v, _("Misplaced '{}' ({}) word leading character").format( simpleCharName, unicodeCharName ) )
                 for char in trailingWordPunctChars:
                     if char not in leadingWordPunctChars and len(adjText)>1 \
                     and ( adjText[0]==char or ' '+char in adjText ):
@@ -2196,10 +2201,11 @@ class InternalBibleBook:
                         else: simpleCharName = char
                         unicodeCharName = unicodedata.name( char )
                         #print( "{} {}:{} char is '{}' {}".format( char, simpleCharName ) )
-                        characterErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Misplaced '{}' word trailing character").format( simpleCharName ) )
-                        self.addPriorityError( 20, c, v, _("Misplaced '{}' word trailing character").format( simpleCharName ) )
+                        characterErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Misplaced '{}' ({}) word trailing character").format( simpleCharName, unicodeCharName ) )
+                        self.addPriorityError( 20, c, v, _("Misplaced '{}' ({}) word trailing character").format( simpleCharName, unicodeCharName ) )
         # end of countCharacters
 
+        haveNonAsciiChars = False
         simpleCharacterCounts, unicodeCharacterCounts, letterCounts, punctuationCounts = {}, {}, {}, {} # We don't care about the order in which they appeared
         characterErrors = []
         c = v = '0'
@@ -2240,7 +2246,7 @@ class InternalBibleBook:
             for character in simpleCharacterCounts: total += simpleCharacterCounts[character]
             self.errorDictionary['Characters']['All Character Counts'] = simpleCharacterCounts
             self.errorDictionary['Characters']['All Character Counts']['Total'] = total
-        if unicodeCharacterCounts:
+        if haveNonAsciiChars and unicodeCharacterCounts:
             total = 0
             for character in unicodeCharacterCounts: total += unicodeCharacterCounts[character]
             self.errorDictionary['Characters']['All Unicode Character Counts'] = unicodeCharacterCounts
