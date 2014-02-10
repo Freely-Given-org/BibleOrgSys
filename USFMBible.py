@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2014-01-12 by RJH (also update ProgVersion below)
+#   Last modified: 2014-02-11 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -352,7 +352,7 @@ def demo():
                                             ("Matigsalug", "utf-8", "Tests/DataFilesForTests/USFMTest1/"), \
                                             ("Matigsalug", "utf-8", "Tests/DataFilesForTests/USFMTest2/"), \
                                             ("UEP", "utf-8", "Tests/DataFilesForTests/USFMErrorProject/"), \
-                                            ("Exported", "utf-8", "Tests/BOS_USFM_Export/"), \
+                                            #("Exported", "utf-8", "Tests/BOS_USFM_Export/"), \
                                             ):
             count += 1
             if os.access( testFolder, os.R_OK ):

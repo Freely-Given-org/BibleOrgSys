@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2014-01-25 by RJH (also update ProgVersion below)
+#   Last modified: 2014-02-11 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -41,16 +41,16 @@ Required improvements:
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.56"
+ProgVersion = "0.57"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
 
 
 import os, logging
-#import unicodedata
 from gettext import gettext as _
 from collections import OrderedDict
+import unicodedata
 
 import Globals
 from InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry, InternalBibleIndex, InternalBibleExtra, InternalBibleExtraList
@@ -2134,7 +2134,6 @@ class InternalBibleBook:
 
     def doCheckCharacters( self ):
         """Runs a number of checks on the characters used."""
-        if Globals.verbosityLevel > 2: import unicodedata
 
         def countCharacters( adjText ):
             """ Counts the characters for the given text (with internal markers already removed). """
@@ -2152,51 +2151,53 @@ class InternalBibleBook:
             if Globals.USFMMarkers.isPrinted( marker ): # Only do character counts on lines that will be printed
                 for char in adjText:
                     lcChar = char.lower()
-                    if Globals.verbosityLevel > 2:
-                        try: charName = unicodedata.name( char )
-                        except ValueError: charName = char
-                        try: lcCharName = unicodedata.name( lcChar )
-                        except ValueError: lcCharName = lcChar
-                    else: # normal verbosity
-                        if char==' ': charName = lcCharName = 'Space'
-                        elif char==' ': charName = lcCharName = 'NBSpace'
-                        elif char==chr(0): charName = lcCharName = 'Null'
-                        else: charName, lcCharName = char, lcChar
-                    characterCounts[charName] = 1 if charName not in characterCounts else characterCounts[charName] + 1
+
+                    if char==' ': simpleCharName = simpleLCCharName = 'Space'
+                    elif char==' ': simpleCharName = simpleLCCharName = 'NBSpace'
+                    elif char==chr(0): simpleCharName = simpleLCCharName = 'Null'
+                    else: simpleCharName = simpleLCCharName = char
+
+                    try: unicodeCharName = unicodedata.name( char )
+                    except ValueError: unicodeCharName = simpleCharName
+                    try: unicodeLCCharName = unicodedata.name( lcChar )
+                    except ValueError: unicodeLCCharName = simpleLCCharName
+
+                    charHex = "0x{0:04x}".format( ord(char) )
+                    #print( repr(char), charHex )
+
+                    simpleCharacterCounts[simpleCharName] = 1 if simpleCharName not in simpleCharacterCounts else simpleCharacterCounts[simpleCharName] + 1
                     if char==' ' or char =='-' or char.isalpha():
-                        letterCounts[lcCharName] = 1 if lcCharName not in letterCounts else letterCounts[lcCharName] + 1
+                        letterCounts[simpleLCCharName] = 1 if simpleLCCharName not in letterCounts else letterCounts[simpleLCCharName] + 1
                     elif not char.isalnum(): # Assume it's punctuation
-                        punctuationCounts[charName] = 1 if charName not in punctuationCounts else punctuationCounts[charName] + 1
+                        punctuationCounts[simpleCharName] = 1 if simpleCharName not in punctuationCounts else punctuationCounts[simpleCharName] + 1
                         if char not in allWordPunctChars:
-                            characterErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Invalid '{}' word-building character").format( charName ) )
-                            self.addPriorityError( 10, c, v, _("Invalid '{}' word-building character").format( charName ) )
+                            characterErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Invalid '{}' word-building character ({})").format( simpleCharName, charHex ) )
+                            self.addPriorityError( 10, c, v, _("Invalid '{}' word-building character ({})").format( simpleCharName, charHex ) )
                 for char in leadingWordPunctChars:
                     if char not in trailingWordPunctChars and len(adjText)>1 \
                     and ( adjText[-1]==char or char+' ' in adjText ):
-                        if Globals.verbosityLevel > 2: charName = unicodedata.name( char )
-                        else: # normal verbosity
-                            if char==' ': charName = 'Space'
-                            elif char==' ': charName = 'NBSpace'
-                            elif char==chr(0): charName = 'Null'
-                            else: charName = char
-                        #print( "{} {}:{} char is '{}' {}".format( char, charName ) )
-                        characterErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Misplaced '{}' word leading character").format( charName ) )
-                        self.addPriorityError( 21, c, v, _("Misplaced '{}' word leading character").format( charName ) )
+                        if char==' ': simpleCharName = 'Space'
+                        elif char==' ': simpleCharName = 'NBSpace'
+                        elif char==chr(0): simpleCharName = 'Null'
+                        else: simpleCharName = char
+                        unicodeCharName = unicodedata.name( char )
+                        #print( "{} {}:{} char is '{}' {}".format( char, simpleCharName ) )
+                        characterErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Misplaced '{}' word leading character").format( simpleCharName ) )
+                        self.addPriorityError( 21, c, v, _("Misplaced '{}' word leading character").format( simpleCharName ) )
                 for char in trailingWordPunctChars:
                     if char not in leadingWordPunctChars and len(adjText)>1 \
                     and ( adjText[0]==char or ' '+char in adjText ):
-                        if Globals.verbosityLevel > 2: charName = unicodedata.name( char )
-                        else: # normal verbosity
-                            if char==' ': charName = 'Space'
-                            elif char==' ': charName = 'NBSpace'
-                            elif char==chr(0): charName = 'Null'
-                            else: charName = char
-                        #print( "{} {}:{} char is '{}' {}".format( char, charName ) )
-                        characterErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Misplaced '{}' word trailing character").format( charName ) )
-                        self.addPriorityError( 20, c, v, _("Misplaced '{}' word trailing character").format( charName ) )
+                        if char==' ': simpleCharName = 'Space'
+                        elif char==' ': simpleCharName = 'NBSpace'
+                        elif char==chr(0): simpleCharName = 'Null'
+                        else: simpleCharName = char
+                        unicodeCharName = unicodedata.name( char )
+                        #print( "{} {}:{} char is '{}' {}".format( char, simpleCharName ) )
+                        characterErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Misplaced '{}' word trailing character").format( simpleCharName ) )
+                        self.addPriorityError( 20, c, v, _("Misplaced '{}' word trailing character").format( simpleCharName ) )
         # end of countCharacters
 
-        characterCounts, letterCounts, punctuationCounts = {}, {}, {} # We don't care about the order in which they appeared
+        simpleCharacterCounts, unicodeCharacterCounts, letterCounts, punctuationCounts = {}, {}, {}, {} # We don't care about the order in which they appeared
         characterErrors = []
         c = v = '0'
         for entry in self._processedLines:
@@ -2228,12 +2229,18 @@ class InternalBibleBook:
                 if cleanExtraText: countCharacters( cleanExtraText )
 
         # Add up the totals
-        if (characterErrors or characterCounts or letterCounts or punctuationCounts) and 'Characters' not in self.errorDictionary: self.errorDictionary['Characters'] = OrderedDict()
+        if (characterErrors or simpleCharacterCounts or unicodeCharacterCounts or letterCounts or punctuationCounts) and 'Characters' not in self.errorDictionary:
+            self.errorDictionary['Characters'] = OrderedDict()
         if characterErrors: self.errorDictionary['Characters']['Possible Character Errors'] = characterErrors
-        if characterCounts:
+        if simpleCharacterCounts:
             total = 0
-            for character in characterCounts: total += characterCounts[character]
-            self.errorDictionary['Characters']['All Character Counts'] = characterCounts
+            for character in simpleCharacterCounts: total += simpleCharacterCounts[character]
+            self.errorDictionary['Characters']['All Character Counts'] = simpleCharacterCounts
+            self.errorDictionary['Characters']['All Character Counts']['Total'] = total
+        if unicodeCharacterCounts:
+            total = 0
+            for character in unicodeCharacterCounts: total += unicodeCharacterCounts[character]
+            self.errorDictionary['Characters']['All Character Counts'] = unicodeCharacterCounts
             self.errorDictionary['Characters']['All Character Counts']['Total'] = total
         if letterCounts:
             total = 0
