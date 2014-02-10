@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleInternals.py
-#   Last modified: 2014-02-10 by RJH (also update ProgVersion below)
+#   Last modified: 2014-02-11 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for Bible books
 #
@@ -224,9 +224,9 @@ class InternalBibleEntry:
         """
         if '\\' in cleanText:
             logging.error( "InternalBibleEntry expects clean text not {}={}".format( marker, repr(cleanText) ) )
-        if 'it*' in originalText and 'it*' not in adjustedText:
-            print( "InternalBibleEntry constructor had problem with it* in {} {} {}".format( marker, repr(originalText), repr(adjustedText) ) )
-            if Globals.debugFlag: halt
+        #if 'it*' in originalText and 'it*' not in adjustedText:
+            #print( "InternalBibleEntry constructor had problem with it* (probably in a footnote) in {} {} {}".format( marker, repr(originalText), repr(adjustedText) ) )
+            #halt
         if Globals.debugFlag or Globals.strictCheckingFlag:
             #print( "InternalBibleEntry.__init__( {}, {}, '{}', '{}', {}, '{}' )" \
                     #.format( marker, originalMarker, adjustedText[:35]+('...' if len(adjustedText)>35 else ''), \
