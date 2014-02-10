@@ -2165,7 +2165,10 @@ class InternalBibleBook:
                     charHex = "0x{0:04x}".format( ord(char) )
                     #print( repr(char), charHex )
 
-                    simpleCharacterCounts[simpleCharName] = 1 if simpleCharName not in simpleCharacterCounts else simpleCharacterCounts[simpleCharName] + 1
+                    simpleCharacterCounts[simpleCharName] = 1 if simpleCharName not in simpleCharacterCounts \
+                                                                else simpleCharacterCounts[simpleCharName] + 1
+                    unicodeCharacterCounts[unicodeCharName] = 1 if unicodeCharName not in unicodeCharacterCounts \
+                                                                else unicodeCharacterCounts[unicodeCharName] + 1
                     if char==' ' or char =='-' or char.isalpha():
                         letterCounts[simpleLCCharName] = 1 if simpleLCCharName not in letterCounts else letterCounts[simpleLCCharName] + 1
                     elif not char.isalnum(): # Assume it's punctuation
@@ -2240,8 +2243,8 @@ class InternalBibleBook:
         if unicodeCharacterCounts:
             total = 0
             for character in unicodeCharacterCounts: total += unicodeCharacterCounts[character]
-            self.errorDictionary['Characters']['All Character Counts'] = unicodeCharacterCounts
-            self.errorDictionary['Characters']['All Character Counts']['Total'] = total
+            self.errorDictionary['Characters']['All Unicode Character Counts'] = unicodeCharacterCounts
+            self.errorDictionary['Characters']['All Unicode Character Counts']['Total'] = total
         if letterCounts:
             total = 0
             for character in letterCounts: total += letterCounts[character]
