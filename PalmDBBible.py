@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # PalmDBBible.py
-#   Last modified: 2013-12-21 by RJH (also update ProgVersion below)
+#   Last modified: 2014-02-11 by RJH (also update ProgVersion below)
 #
 # Module handling PDB Bible files
 #
-# Copyright (C) 2013 Robert Hunt
+# Copyright (C) 2013-2014 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -62,7 +62,7 @@ Limitations:
 """
 
 ProgName = "PDB Bible format handler"
-ProgVersion = "0.03"
+ProgVersion = "0.03" # STILL UNFINISHED!!!
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -382,7 +382,7 @@ class PalmDBBible( Bible ):
                     print( ix, word )
                     if ix>expectedWords: print( "Too big" ); halt
                 #print( words[:2000] )
-                halt
+                if Globals.debugFlag: halt
 
                 #print( binary[byteOffset-10:byteOffset+1] )
                 #print( binary[byteOffset:byteOffset+20] )
@@ -400,9 +400,9 @@ class PalmDBBible( Bible ):
 
                 #halt
 
-            halt
-            if j>30: halt
-        halt
+            #halt
+            #if j>30: halt
+        #halt
     # end of PalmDBBible.load
 # end of PalmDBBible class
 

@@ -2172,7 +2172,9 @@ class InternalBibleBook:
 
                     simpleCharacterCounts[simpleCharName] = 1 if simpleCharName not in simpleCharacterCounts \
                                                                 else simpleCharacterCounts[simpleCharName] + 1
-                    isCommon = unicodeCharName in ('SPACE',)
+                    isCommon = unicodeCharName in ('SPACE', 'DIGIT ONE','DIGIT TWO','DIGIT THREE','DIGIT FOUR',
+                                                   'DIGIT FIVE','DIGIT SIX','DIGIT SEVEN','DIGIT EIGHT','DIGIT NINE',
+                                                  'DIGIT ZERO', )
                     if not isCommon:
                         for commonString in ('LATIN SMALL LETTER ','LATIN CAPITAL LETTER ','DIGIT ',):
                             if unicodeCharName.startswith(commonString) \
