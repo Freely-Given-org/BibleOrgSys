@@ -2172,7 +2172,14 @@ class InternalBibleBook:
 
                     simpleCharacterCounts[simpleCharName] = 1 if simpleCharName not in simpleCharacterCounts \
                                                                 else simpleCharacterCounts[simpleCharName] + 1
-                    unicodeCharacterCounts[unicodeCharName] = 1 if unicodeCharName not in unicodeCharacterCounts \
+                    isCommon = unicodeCharName in ('SPACE',)
+                    if not isCommon:
+                        for commonString in ('LATIN SMALL LETTER ','LATIN CAPITAL LETTER ','DIGIT ',):
+                            if unicodeCharName.startswith(commonString) \
+                            and len(unicodeCharName) == len(commonString)+1:
+                                isCommon = True; break
+                    if not isCommon:
+                        unicodeCharacterCounts[unicodeCharName] = 1 if unicodeCharName not in unicodeCharacterCounts \
                                                                 else unicodeCharacterCounts[unicodeCharName] + 1
                     if char==' ' or char =='-' or char.isalpha():
                         letterCounts[simpleLCCharName] = 1 if simpleLCCharName not in letterCounts else letterCounts[simpleLCCharName] + 1
@@ -2249,8 +2256,8 @@ class InternalBibleBook:
         if haveNonAsciiChars and unicodeCharacterCounts:
             total = 0
             for character in unicodeCharacterCounts: total += unicodeCharacterCounts[character]
-            self.errorDictionary['Characters']['All Unicode Character Counts'] = unicodeCharacterCounts
-            self.errorDictionary['Characters']['All Unicode Character Counts']['Total'] = total
+            self.errorDictionary['Characters']['Unicode Character Counts'] = unicodeCharacterCounts
+            self.errorDictionary['Characters']['Unicode Character Counts']['Total'] = total
         if letterCounts:
             total = 0
             for character in letterCounts: total += letterCounts[character]
