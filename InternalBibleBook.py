@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2014-02-11 by RJH (also update ProgVersion below)
+#   Last modified: 2014-02-12 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -41,7 +41,7 @@ Required improvements:
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.57"
+ProgVersion = "0.58"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -2172,13 +2172,14 @@ class InternalBibleBook:
 
                     simpleCharacterCounts[simpleCharName] = 1 if simpleCharName not in simpleCharacterCounts \
                                                                 else simpleCharacterCounts[simpleCharName] + 1
-                    isCommon = unicodeCharName in ('SPACE', 'DIGIT ONE','DIGIT TWO','DIGIT THREE','DIGIT FOUR',
-                                                   'DIGIT FIVE','DIGIT SIX','DIGIT SEVEN','DIGIT EIGHT','DIGIT NINE',
-                                                  'DIGIT ZERO', )
+                    isCommon = unicodeCharName in ('SPACE', 'COMMA', 'FULL STOP', 'COLON', 'SEMICOLON', 'QUESTION MARK',
+                                                   'LEFT PARENTHESIS', 'RIGHT PARENTHESIS',
+                                                   'DIGIT ONE','DIGIT TWO','DIGIT THREE','DIGIT FOUR','DIGIT FIVE',
+                                                   'DIGIT SIX','DIGIT SEVEN','DIGIT EIGHT','DIGIT NINE','DIGIT ZERO', )
                     if not isCommon:
-                        for commonString in ('LATIN SMALL LETTER ','LATIN CAPITAL LETTER ','DIGIT ',):
+                        for commonString in ('LATIN SMALL LETTER ','LATIN CAPITAL LETTER ',):
                             if unicodeCharName.startswith(commonString) \
-                            and len(unicodeCharName) == len(commonString)+1:
+                            and len(unicodeCharName) == len(commonString)+1: # prevents things like letter ENG
                                 isCommon = True; break
                     if not isCommon:
                         unicodeCharacterCounts[unicodeCharName] = 1 if unicodeCharName not in unicodeCharacterCounts \
@@ -2258,8 +2259,8 @@ class InternalBibleBook:
         if haveNonAsciiChars and unicodeCharacterCounts:
             total = 0
             for character in unicodeCharacterCounts: total += unicodeCharacterCounts[character]
-            self.errorDictionary['Characters']['Unicode Character Counts'] = unicodeCharacterCounts
-            self.errorDictionary['Characters']['Unicode Character Counts']['Total'] = total
+            self.errorDictionary['Characters']['Special Character Counts'] = unicodeCharacterCounts
+            self.errorDictionary['Characters']['Special Character Counts']['Total'] = total
         if letterCounts:
             total = 0
             for character in letterCounts: total += letterCounts[character]
