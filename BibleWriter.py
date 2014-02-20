@@ -529,14 +529,16 @@ class BibleWriter( InternalBible ):
         #       Available colors are at http://www.imagemagick.org/script/color.php
         blankFilepath = os.path.join( defaultControlFolder, "yblank-240x320.jpg" )
 
-        def render( commandList, jpegOutputFilepath ):
+        def render( commandList, jpegFilepath ):
             """
             """
+            #print( "render: {} on {}".format( commandList, jpegFilepath ) )
+
             # Run the script on our data
             parameters = ['/usr/bin/timeout', '10s', '/usr/bin/convert' ]
             parameters.extend( commandList )
-            parameters.append( jpegOutputFilepath ) # input file
-            parameters.append( jpegOutputFilepath ) # output file
+            parameters.append( jpegFilepath ) # input file
+            parameters.append( jpegFilepath ) # output file
             #print( "Parameters", repr(parameters) )
             myProcess = subprocess.Popen( parameters, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
             programOutputBytes, programErrorOutputBytes = myProcess.communicate()
@@ -551,6 +553,8 @@ class BibleWriter( InternalBible ):
                 programErrorOutputString = programErrorOutputBytes.decode( encoding="utf-8", errors="replace" )
                 logging.critical( "renderLineE: " + programErrorOutputString )
                 #with open( os.path.join( outputFolder, "UncompressedScriptErrorOutput.txt" ), 'wt' ) as myFile: myFile.write( programErrorOutputString )
+
+            return returnCode
         # end of render
 
         def renderLine( across, down, text, jpegFilepath, fontname=None, fontsize=None, fontcolor=None, leading=None ):
@@ -585,13 +589,14 @@ class BibleWriter( InternalBible ):
             """
                 I need to see a page showing 26-32 characters per line and 13-14 lines per page
             """
-            #print( "renderPage( {}, {}, {}, {}, {} )".format( repr(text), jpegFilepath, fontsize, fontcolor, leading ) )
+            #print( "\nrenderPage( {}, {}, {}, {}, {} )".format( repr(text), jpegFilepath, fontsize, fontcolor, leading ) )
             #print( " In", os.getcwd() )
 
             # Create the blank file
             shutil.copy( blankFilepath, jpegFilepath ) # Copy it under its own name
 
             across, down = leftPadding,0
+            #if fontsize is None: fontsize = defaultFontSize
 
             # Write the heading
             heading = "{} {}".format( self.getAssumedBookName(BBB), '*' if C=='0' else C )
@@ -606,24 +611,28 @@ class BibleWriter( InternalBible ):
             #print( "Have lines:", len(lines) )
             for line in lines:
                 textLineCount += 1
-                #if not line: halt
                 textWordCount = 0
                 lineBuffer = ""
-                words = line.split()
-                for word in words:
-                    #if len(lineBuffer) >= minLineCharacters \
-                    #and len(lineBuffer)+len(word)+1 >= maxLineCharacters:
-                    if len(lineBuffer)+len(word)+1 >= maxLineCharacters:
+                if line:
+                    words = line.split(' ')
+                    for word in words:
+                        word = word.replace( ' ', ' ' ) # Put back normal spaces
+                        #if len(lineBuffer) >= minLineCharacters \
+                        #and len(lineBuffer)+len(word)+1 >= maxLineCharacters:
+                        if len(lineBuffer)+len(word)+1 >= maxLineCharacters:
+                            down, commands = renderLine( across, down, lineBuffer, jpegFilepath )
+                            totalCommands.extend( commands )
+                            outputLineCount += 1
+                            lineBuffer = ""
+                            if outputLineCount >= maxLines: break
+                        lineBuffer += (' ' if lineBuffer else '' ) + word
+                        textWordCount += 1
+                    if lineBuffer: # do the last line
                         down, commands = renderLine( across, down, lineBuffer, jpegFilepath )
                         totalCommands.extend( commands )
                         outputLineCount += 1
-                        lineBuffer = ""
-                        if outputLineCount >= maxLines: break
-                    lineBuffer += (' ' if lineBuffer else '' ) + word
-                    textWordCount += 1
-                if lineBuffer: # do the last line
-                    down, commands = renderLine( across, down, lineBuffer, jpegFilepath )
-                    totalCommands.extend( commands )
+                else: # it's a blank line
+                    down += defaultFontSize / 2 # Leave a blank 1/2 line
                     outputLineCount += 1
                 if outputLineCount >= maxLines: break
 
@@ -635,7 +644,8 @@ class BibleWriter( InternalBible ):
             #print( "wordCount was", textWordCount )
             #print( "lineCount was", textLineCount )
             leftoverText += ' '.join( words[textWordCount:] )
-            leftoverText += '\n'.join( lines[textLineCount:] )
+            if textLineCount < len(lines):
+                leftoverText += '\n' + '\n'.join( lines[textLineCount:] )
 
 
             #print( "leftoverText was", repr(leftoverText) )
@@ -647,7 +657,7 @@ class BibleWriter( InternalBible ):
             """
                 I need to see a page showing 26-32 characters per line and 13-14 lines per page
             """
-            #print( "renderText( {}, {}, {}, {}, {}, {}, {} )".format( BBB, C, repr(text), jpegFoldername, fontsize, fontcolor, leading ) )
+            #print( "\nrenderText( {}, {}, {}, {}, {}, {}, {} )".format( BBB, C, repr(text), jpegFoldername, fontsize, fontcolor, leading ) )
 
             intC = int( C )
             BBBnum = Globals.BibleBooksCodes.getReferenceNumber( BBB )
@@ -687,13 +697,13 @@ class BibleWriter( InternalBible ):
                 if marker in ('id','ide','toc1','toc2','toc3','c#',): pass # Completely ignore these fields
                 elif marker in ('h','mt1','mt2','mt3','s1'):
                     #if textBuffer: textBuffer += '\n'
-                    textBuffer += '\n' + text + '\n'
+                    textBuffer += '\n\n' + text + '\n'
                 elif marker in ('is1','is2','is3','ip','ipi','iot','io1','io2','io3',): pass # Drop the introduction
                 elif marker == 'c':
                     #if text=='3': halt
                     if textBuffer: down = renderText( BBB, C, textBuffer, folderPath ); textBuffer = ""
                     C = text
-                    #if C=='2': halt
+                    #if C=='4': halt
                 elif marker == 'v':
                     V = text
                     textBuffer += (' ' if textBuffer and textBuffer[-1]!='\n' else '') + text + ' '
@@ -704,7 +714,9 @@ class BibleWriter( InternalBible ):
                     textBuffer += '\n' + text
                 elif marker in ('p','q1','q2','q3',): # Just put it on a new line
                     assert( not text )
-                    if textBuffer: textBuffer += '\n' + '  '
+                    textBuffer += '\n' + '  '
+                    if marker == 'q2': textBuffer += ' '
+                    elif marker == 'q3': textBuffer += '  '
                 elif text:
                     textBuffer += (' ' if textBuffer else '') + text
                 elif marker not in ('c#',): # These are the markers that we can safely ignore for this export
