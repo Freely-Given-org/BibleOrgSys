@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-02-11 by RJH (also update ProgVersion below)
+#   Last modified: 2014-02-20 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -39,6 +39,7 @@ Contains functions:
     toUSFM( outputFolder=None )
     toCustomBible( outputFolder=None )
     toText( outputFolder=None )
+    toPhotoBible( outputFolder=None )
     toMediaWiki( outputFolder=None, controlDict=None, validationSchema=None )
     toZefaniaXML( outputFolder=None, controlDict=None, validationSchema=None )
     toHaggaiXML( outputFolder=None, controlDict=None, validationSchema=None )
@@ -58,7 +59,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.52"
+ProgVersion = "0.53"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -74,7 +75,7 @@ from gettext import gettext as _
 from collections import OrderedDict
 import re, sqlite3, json
 import zipfile, tarfile
-import multiprocessing
+import subprocess, multiprocessing
 
 import Globals, ControlFiles
 from InternalBible import InternalBible
@@ -463,7 +464,7 @@ class BibleWriter( InternalBible ):
                 for entry in pseudoUSFMData:
                     marker, text = entry.getMarker(), entry.getCleanText()
                     if marker in ('id','ide','toc1','toc2','toc3','c#',): pass # Completely ignore these fields
-                    elif marker == 'h1':
+                    elif marker == 'h':
                         if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
                         myFile.write( "{}\n\n".format( text ) )
                     elif marker in ('mt1','mt2','mt3',):
@@ -488,7 +489,7 @@ class BibleWriter( InternalBible ):
                             #.format( entry.getMarker(), entry.getOriginalMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras() ) )
 
         # Now create a zipped collection
-        if Globals.verbosityLevel > 2: print( "  Zipping Text files..." )
+        if Globals.verbosityLevel > 2: print( "  Zipping text files..." )
         zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllTextFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
         for filename in os.listdir( outputFolder ):
             if not filename.endswith( '.zip' ):
@@ -498,6 +499,231 @@ class BibleWriter( InternalBible ):
 
         return True
     # end of BibleWriter.toText
+
+
+
+    def toPhotoBible( self, outputFolder=None ):
+        """
+        Write the pseudo USFM out into a simple plain-text format.
+            The format varies, depending on whether or not there are paragraph markers in the text.
+        """
+        if Globals.verbosityLevel > 1: print( "Running BibleWriter:toPhotoBible..." )
+        if Globals.debugFlag: assert( self.books )
+
+        if not self.doneSetupGeneric: self.__setupWriter()
+        if not outputFolder: outputFolder = "OutputFiles/BOS_PhotoBible_Export/"
+        if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
+
+        unhandledMarkers = set()
+
+        # First determine our format
+        pixelWidth, pixelHeight = 240, 320
+        defaultFontSize, defaultLeadingRatio = 14, 1.4
+        leftPadding = 1
+        maxLineCharacters, maxLines = 32, 15
+        blankFilepath = os.path.join( defaultControlFolder, "blank-240x320.jpg" )
+
+        def render( commandList, jpegOutputFilepath ):
+            """
+            """
+            # Run the script on our data
+            parameters = ['/usr/bin/timeout', '10s', '/usr/bin/convert' ]
+            parameters.extend( commandList )
+            parameters.append( jpegOutputFilepath ) # input file
+            parameters.append( jpegOutputFilepath ) # output file
+            #print( "Parameters", repr(parameters) )
+            myProcess = subprocess.Popen( parameters, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
+            programOutputBytes, programErrorOutputBytes = myProcess.communicate()
+            returnCode = myProcess.returncode
+
+            # Process the output
+            if programOutputBytes:
+                programOutputString = programOutputBytes.decode( encoding="utf-8", errors="replace" )
+                logging.critical( "renderLine: " + programOutputString )
+                #with open( os.path.join( outputFolder, "UncompressedScriptOutput.txt" ), 'wt' ) as myFile: myFile.write( programOutputString )
+            if programErrorOutputBytes:
+                programErrorOutputString = programErrorOutputBytes.decode( encoding="utf-8", errors="replace" )
+                logging.critical( "renderLineE: " + programErrorOutputString )
+                #with open( os.path.join( outputFolder, "UncompressedScriptErrorOutput.txt" ), 'wt' ) as myFile: myFile.write( programErrorOutputString )
+        # end of render
+
+        def renderLine( across, down, text, jpegFilepath, fontsize=None, fontcolor=None, leading=None ):
+            """
+                convert -pointsize 36 -fill red -draw 'text 10,10 "Happy Birthday - You old so and so" ' test.jpg test1.jpg
+            """
+            #print( "renderLine( {}, {}, {}, {}, {}, {}, {} )".format( across, down, repr(text), jpegFilepath, fontsize, fontcolor, leading ) )
+
+            if fontsize is None: fontsize = defaultFontSize
+            fc = " -fill {}".format( fontcolor ) if fontcolor is not None else ''
+            if leading is None: leading = int( defaultLeadingRatio * fontsize )
+            #print( "Leading is {} for {}".format( leading, fontsize ) )
+            if down == 0: down = leading # First line on page
+
+            # Run the script on our data
+            commands = []
+            commands.append( '-pointsize' ); commands.append( str(fontsize) )
+            if fontcolor is not None:
+                commands.append( '-fill' ); commands.append( fontcolor )
+            commands.append( '-draw' )
+            commands.append( 'text {},{} {}'.format( across, down, repr(text) ) )
+            #commands.append( jpegFilepath ) # input file
+            #print( "Commands", repr(commands) )
+            #render( commands, jpegFilepath )
+            return down + leading, commands
+        # end of renderLine
+
+        def renderPage( BBB, C, text, jpegFilepath, fontsize=None, fontcolor=None, leading=None ):
+            """
+                I need to see a page showing 26-32 characters per line and 13-14 lines per page
+            """
+            #print( "renderPage( {}, {}, {}, {}, {} )".format( repr(text), jpegFilepath, fontsize, fontcolor, leading ) )
+            #print( " In", os.getcwd() )
+
+            # Create the blank file
+            shutil.copy( blankFilepath, jpegFilepath ) # Copy it under its own name
+
+            across, down = leftPadding,0
+
+            # Write the heading
+            heading = "{} {}".format( self.getAssumedBookName(BBB), '*' if C=='0' else C )
+            down, totalCommands = renderLine( across, down, heading, jpegFilepath )
+
+            # Clean up leading and trailing new lines
+            if text and text[0]=='\n': text = text[1:]
+            if text and text[-1]=='\n': text = text[:-1]
+
+            textLineCount = textWordCount = outputLineCount = 0
+            lines = text.split('\n')
+            #print( "Have lines:", len(lines) )
+            for line in lines:
+                textLineCount += 1
+                #if not line: halt
+                textWordCount = 0
+                lineBuffer = ""
+                words = line.split()
+                for word in words:
+                    #if len(lineBuffer) >= minLineCharacters \
+                    #and len(lineBuffer)+len(word)+1 >= maxLineCharacters:
+                    if len(lineBuffer)+len(word)+1 >= maxLineCharacters:
+                        down, commands = renderLine( across, down, lineBuffer, jpegFilepath )
+                        totalCommands.extend( commands )
+                        outputLineCount += 1
+                        lineBuffer = ""
+                        if outputLineCount >= maxLines: break
+                    lineBuffer += (' ' if lineBuffer else '' ) + word
+                    textWordCount += 1
+                if lineBuffer: # do the last line
+                    down, commands = renderLine( across, down, lineBuffer, jpegFilepath )
+                    totalCommands.extend( commands )
+                    outputLineCount += 1
+                if outputLineCount >= maxLines: break
+
+            # Now render all those commands at once
+            render( totalCommands, jpegFilepath ) # Do all the rendering at once
+
+            # Find the left-over text
+            leftoverText = ''
+            #print( "wordCount was", textWordCount )
+            #print( "lineCount was", textLineCount )
+            leftoverText += ' '.join( words[textWordCount:] )
+            leftoverText += '\n'.join( lines[textLineCount:] )
+
+
+            #print( "leftoverText was", repr(leftoverText) )
+            #if leftoverText: halt
+            return leftoverText
+        # end of renderPage
+
+        def renderText( BBB, C, text, jpegFoldername, fontsize=None, fontcolor=None, leading=None ):
+            """
+                I need to see a page showing 26-32 characters per line and 13-14 lines per page
+            """
+            #print( "renderText( {}, {}, {}, {}, {}, {}, {} )".format( BBB, C, repr(text), jpegFoldername, fontsize, fontcolor, leading ) )
+
+            pagesWritten = 0
+            leftoverText = text
+            while leftoverText:
+                outputFilepath = os.path.join( jpegFoldername, "{:03}-{:03}-{}.jpg".format( int(C), pagesWritten, BBB ) )
+                leftoverText = renderPage( BBB, C, leftoverText, outputFilepath )
+                pagesWritten += 1
+
+            #print( "pagesWritten were", pagesWritten )
+            return pagesWritten
+        # end of renderText
+
+
+        # Write the plain text files
+        for BBB,bookObject in self.books.items():
+            pseudoUSFMData = bookObject._processedLines
+
+            if Globals.BibleBooksCodes.isOldTestament_NR( BBB ):
+                subfolderName = "OT/"
+            elif Globals.BibleBooksCodes.isNewTestament_NR( BBB ):
+                subfolderName = "NT/"
+            else:
+                subfolderName = "Other/"
+            subfolder2Name = BBB  + '/'
+            folderPath = os.path.join( outputFolder, subfolderName, subfolder2Name )
+            if not os.access( folderPath, os.F_OK ): os.makedirs( folderPath ) # Make the empty folder if there wasn't already one there
+
+            # First of all, get the text (by chapter)
+            textBuffer = ""
+            C = V = "0"
+            across, down = 1, 0
+            for entry in pseudoUSFMData:
+                marker, text = entry.getMarker(), entry.getCleanText()
+                #print( marker, repr(text) )
+                if marker in ('id','ide','toc1','toc2','toc3','c#',): pass # Completely ignore these fields
+                elif marker in ('h','mt1','mt2','mt3','s1'):
+                    #if textBuffer: textBuffer += '\n'
+                    textBuffer += text + '\n'
+                elif marker in ('is1','is2','is3','ip','ipi','iot','io1','io2','io3',): pass # Drop the introduction
+                elif marker == 'c':
+                    #if text=='3': halt
+                    if textBuffer: down = renderText( BBB, C, textBuffer, folderPath ); textBuffer = ""
+                    C = text
+                    #if C=='2': halt
+                elif marker == 'v':
+                    V = text
+                    textBuffer += (' ' if textBuffer and textBuffer[-1]!='\n' else '') + text + ' '
+                elif marker in ('p','q1','q2','q3',): # Just put it on a new line
+                    if textBuffer: textBuffer += '\n' + '  '
+                elif text:
+                    textBuffer += (' ' if textBuffer else '') + text
+                elif marker not in ('c#',): # These are the markers that we can safely ignore for this export
+                    unhandledMarkers.add( marker )
+            if textBuffer: down = renderText( BBB, C, textBuffer, folderPath ) # Write the last bit
+
+                    #if verseByVerse:
+                        #myFile.write( "{} ({}): '{}' '{}' {}\n" \
+                            #.format( entry.getMarker(), entry.getOriginalMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras() ) )
+
+        if unhandledMarkers:
+            logging.warning( "toPhotoBible: Unhandled markers were {}".format( unhandledMarkers ) )
+            if Globals.verbosityLevel > 1:
+                print( "  " + _("WARNING: Unhandled toPhotoBible markers were {}").format( unhandledMarkers ) )
+
+        # Now create some zipped collections
+        if Globals.verbosityLevel > 2: print( "  Zipping photo files..." )
+        for subset in ('OT','NT','Other','All'):
+            loadFolder = outputFolder if subset=='All' else os.path.join( outputFolder, subset+'/' )
+            #print( repr(subset), "Load folder =", repr(loadFolder) )
+            if os.path.exists( loadFolder ):
+                zf = zipfile.ZipFile( os.path.join( outputFolder, subset+'PhotoFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
+                for root, dirs, files in os.walk( loadFolder ):
+                    for filename in files:
+                        if not filename.endswith( '.zip' ):
+                            #print( repr(loadFolder), repr(root), repr(dirs), repr(files) )
+                            #print( repr(os.path.relpath(os.path.join(root, filename))), repr(os.path.join(loadFolder, '..')) )
+                            #print( os.path.join(root,filename), os.path.relpath(os.path.join(root, filename), os.path.join(loadFolder, '..')) ) # Save in the archive without the path
+                            #  Save in the archive without the path --
+                            #   parameters are filename to compress, archive name (relative path) to save as
+                            zf.write( os.path.join(root,filename), os.path.relpath(os.path.join(root, filename), os.path.join(loadFolder, '..')) ) # Save in the archive without the path
+                            #zf.write( filepath, filename ) # Save in the archive without the path
+                zf.close()
+
+        return True
+    # end of BibleWriter.toPhotoBible
 
 
 
@@ -2435,7 +2661,7 @@ class BibleWriter( InternalBible ):
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
                 #print( "toOSIS:", marker, originalMarker, text )
-                if marker in ( 'id', 'ide', 'h1', 'mt2' ): continue # We just ignore these markers
+                if marker in ( 'id', 'ide', 'h', 'mt2' ): continue # We just ignore these markers
                 if marker=='mt1':
                     if text: writerObject.writeLineOpenClose( 'title', checkText(text) )
                 elif marker=='is1' or marker=='imt1':
@@ -3097,7 +3323,7 @@ class BibleWriter( InternalBible ):
                 #print( BBB, marker, text )
                 #print( " ", haveOpenIntro, haveOpenOutline, haveOpenMajorSection, haveOpenSection, haveOpenSubsection, needChapterEID, haveOpenParagraph, haveOpenVsID, haveOpenLG, haveOpenL )
                 #print( toSwordGlobals['idStack'] )
-                if marker in ( 'id', 'ide', 'h1', 'mt2', 'c#', ): continue # We just ignore these markers
+                if marker in ( 'id', 'ide', 'h', 'mt2', 'c#', ): continue # We just ignore these markers
                 if marker=='mt1':
                     if text: writerObject.writeLineOpenClose( 'title', checkText(text) )
                 elif marker=='is1' or marker=='imt1':
@@ -4240,7 +4466,7 @@ class BibleWriter( InternalBible ):
             else: writerObject.writeLineOpenClose( 'a', 'Home', [('href','index.html'),('class','homeLink')] )
             if myBBB == 'about': writerObject.writeLineOpenClose( 'p', 'About', ('class','homeNonlink') )
             else: writerObject.writeLineOpenClose( 'a', 'About', [('href','about.html'),('class','aboutLink')] )
-            writerObject.writeLineOpenClose( 'h1', self.name, ('class','mainHeader') )
+            writerObject.writeLineOpenClose( 'h', self.name, ('class','mainHeader') )
             bkList = self.getBookList()
             if myBBB  in bkList:
                 ix = bkList.index( myBBB )
@@ -4651,7 +4877,7 @@ class BibleWriter( InternalBible ):
                 # Markers usually only found in the introduction
                 elif marker in ('mt1','mt2',):
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
-                    if text: writerObject.writeLineOpenClose( 'h1', text, ('class','mainTitle'+marker[2]) )
+                    if text: writerObject.writeLineOpenClose( 'h', text, ('class','mainTitle'+marker[2]) )
                 elif marker in ('ms1','ms2',):
                     if not haveOpenParagraph:
                         logging.warning( "toHTML5: Have main section heading {} outside a paragraph in {}".format( text, BBB ) )
@@ -5335,6 +5561,7 @@ class BibleWriter( InternalBible ):
         USFMOutputFolder = os.path.join( givenOutputFolderName, "BOS_USFM_" + ("Reexport/" if self.objectTypeString=='USFM' else "Export/" ) )
         CBOutputFolder = os.path.join( givenOutputFolderName, "BOS_CustomBible_" + "Export/" )
         textOutputFolder = os.path.join( givenOutputFolderName, "BOS_PlainText_" + ("Reexport/" if self.objectTypeString=='Text' else "Export/" ) )
+        photoOutputFolder = os.path.join( givenOutputFolderName, "BOS_PhotoBible_Export/" )
         TWOutputFolder = os.path.join( givenOutputFolderName, "BOS_theWord_" + ("Reexport/" if self.objectTypeString=='TheWord' else "Export/" ) )
         MySwOutputFolder = os.path.join( givenOutputFolderName, "BOS_MySword_" + ("Reexport/" if self.objectTypeString=='MySword' else "Export/" ) )
         ESwOutputFolder = os.path.join( givenOutputFolderName, "BOS_e-Sword_" + ("Reexport/" if self.objectTypeString=='e-Sword' else "Export/" ) )
@@ -5366,6 +5593,7 @@ class BibleWriter( InternalBible ):
             USFMExportResult = self.toUSFM( USFMOutputFolder )
             CBExportResult = self.toCustomBible( CBOutputFolder )
             TextExportResult = self.toText( textOutputFolder )
+            PhotoExportResult = self.toPhotoBible( photoOutputFolder )
             MWExportResult = self.toMediaWiki( MWOutputFolder )
             ZefExportResult = self.toZefaniaXML( zefOutputFolder )
             HagExportResult = self.toHaggaiXML( hagOutputFolder )
@@ -5397,6 +5625,7 @@ class BibleWriter( InternalBible ):
                 assert( len(results) == len(self.__outputFolders) )
                 USFMExportResult = results[0]
                 CBExportResult = results[0]
+                PhotoExportResult = results[0]
                 MWExportResult = results[1]
                 ZefExportResult = results[2]
                 HagExportResult = results[2]
@@ -5430,6 +5659,11 @@ class BibleWriter( InternalBible ):
                 TextExportResult = False
                 print("BibleWriter.doAllExports.toText Unexpected error:", sys.exc_info()[0], err)
                 logging.error( "BibleWriter.doAllExports.toText: Oops, failed!" )
+            try: PhotoExportResult = self.toPhotoBible( photoOutputFolder )
+            except Exception as err:
+                PhotoExportResult = False
+                print("BibleWriter.doAllExports.toPhotoBible Unexpected error:", sys.exc_info()[0], err)
+                logging.error( "BibleWriter.doAllExports.toPhotoBible: Oops, failed!" )
             try: MWExportResult = self.toMediaWiki( MWOutputFolder )
             except Exception as err:
                 MWExportResult = False
@@ -5508,21 +5742,21 @@ class BibleWriter( InternalBible ):
                 logging.error( "BibleWriter.doAllExports.toTeX: Oops, failed!" )
 
         if Globals.verbosityLevel > 1:
-            if pickleResult and PseudoUSFMExportResult and USFMExportResult and CBExportResult and TextExportResult \
+            if pickleResult and PseudoUSFMExportResult and USFMExportResult and CBExportResult and TextExportResult and PhotoExportResult \
             and TWExportResult and MySwExportResult and ESwExportResult and MWExportResult \
             and ZefExportResult and HagExportResult and OSExportResult and USXExportResult and USFXExportResult \
             and OSISExportResult and swExportResult and htmlExportResult and TeXExportResult \
             and SwSExportResult and DrExportResult:
                 print( "BibleWriter.doAllExports finished them all successfully!" )
-            else: print( "BibleWriter.doAllExports finished:  Pck={}  PsUSFM={} USFM={}  Tx={}  TW={} MySw={} eSw={}  MW={}  Zef={} Hag={} OS={} USX={} USFX={} OSIS={}  Sw={}  HTML={} TeX={} SwS={} Dr={}" \
-                    .format( pickleResult, PseudoUSFMExportResult, USFMExportResult, CBExportResult, TextExportResult,
+            else: print( "BibleWriter.doAllExports finished:  Pck={}  PsUSFM={} USFM={}  Tx={}  PB={} TW={} MySw={} eSw={}  MW={}  Zef={} Hag={} OS={} USX={} USFX={} OSIS={}  Sw={}  HTML={} TeX={} SwS={} Dr={}" \
+                    .format( pickleResult, PseudoUSFMExportResult, USFMExportResult, CBExportResult, TextExportResult, PhotoExportResult,
                                 TWExportResult, MySwExportResult, ESwExportResult,
                                 MWExportResult, ZefExportResult, HagExportResult, OSExportResult, USXExportResult, USFXExportResult,
                                 OSISExportResult, swExportResult, htmlExportResult, TeXExportResult, SwSExportResult,
                                 DrExportResult ) )
         return { 'Pickle':pickleResult,
                     'PseudoUSFMExport':PseudoUSFMExportResult, 'USFMExport':USFMExportResult,
-                    'CustomBibleExport':CBExportResult,  'TextExport':TextExportResult,
+                    'CustomBibleExport':CBExportResult,  'TextExport':TextExportResult, 'PhotoExport':PhotoExportResult,
                     'TWExport':TWExportResult, 'MySwExport':MySwExportResult, 'ESwExport':ESwExportResult,
                     'MWExport':MWExportResult, 'ZefExport':ZefExportResult, 'HagExport':HagExportResult, 'OSExport':OSExportResult,
                     'USXExport':USXExportResult, 'USFXExport':USFXExportResult, 'OSISExport':OSISExportResult, 'swExport':swExportResult,
