@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2014-02-12 by RJH (also update ProgVersion below)
+#   Last modified: 2014-02-20 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -41,7 +41,7 @@ Required improvements:
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.58"
+ProgVersion = "0.59"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -760,11 +760,68 @@ class InternalBibleBook:
                 logging.error( "processLine-check: unknown {} originalMarker = {}".format( self.objectTypeString, originalMarker ) )
                 adjustedMarker = originalMarker # temp....................
 
+            def splitCNumber( inputString ):
+                """
+                Splits a chapter number and returns a list of bits (normally 1, maximum 2)
+                """
+                #print( "splitCNumber( {} )".format( repr(inputString) ) )
+                bit1, bit2 = '', ''
+                snStatus = 0 # 0 = idle, 1 = getting chapter number, 2 = getting rest
+                for char in inputString:
+                    if snStatus == 0:
+                        if char.isdigit(): bit1 += char; snStatus = 1
+                        else: bit2 += char; snStatus = 2
+                    elif snStatus == 1:
+                        if char.isdigit() or char in ('a','b','c','d','e','f'): bit1 += char
+                        else: bit2 += char; snStatus = 2
+                    elif snStatus == 2: bit2 += char
+                    else: halt
+                #nBits = [bit1]
+                #if bit2: nBits.append( bit2 )
+                #print( "  splitNumber is returning:", nBits )
+                return [bit1,bit2] if bit2 else [bit1]
+            # end of splitCNumber
+
+            def splitVNumber( inputString ):
+                """
+                Splits a verse number and returns a list of bits (normally 2, maximum 3 if there's a foonote on the verse number)
+                """
+                #print( "splitVNumber( {} )".format( repr(inputString) ) )
+                bit1, bit2, bit3 = '', '', ''
+                snStatus = 0 # 0 = idle, 1 = getting verseNumber, 2 = getting footnote, 3 = getting rest
+                for char in inputString:
+                    if snStatus == 0:
+                        if char.isdigit(): bit1 += char; snStatus = 1
+                        elif char == '\\': bit2 += char; snStatus = 2
+                        elif char == ' ': snStatus = 3
+                        else: bit3 += char; snStatus = 3
+                    elif snStatus == 1:
+                        if char.isdigit() or char in ('a','b','c','d','e','f'): bit1 += char
+                        elif char == '\\': bit2 += char; snStatus = 2
+                        elif char == ' ': snStatus = 3
+                        else: bit3 += char; snStatus = 3
+                    elif snStatus == 2:
+                        bit2 += char
+                        if char == '*': snStatus = 3
+                    elif snStatus == 3:
+                        if bit3 or char != ' ':
+                            bit3 += char
+                    else: halt
+                nBits = [bit1]
+                if bit2: nBits.append( bit2 )
+                nBits.append( bit3 )
+                #print( "  splitCNumber is returning:", nBits )
+                #if bit2: halt
+                return nBits
+            # end of splitCNumber
+
             # Keep track of where we are
             if originalMarker=='c' and text:
                 if haveWaitingC: logging.warning( "Note: Two c markers with no intervening v markers at {} {}:{}".format( self.bookReferenceCode, c, v ) )
                 #c = text.split()[0]; v = '0'
-                cBits = text.split( None, 1 )
+                cBits = splitCNumber( text )
+                if Globals.debugFlag and debuggingThisModule and len(cBits)>1:
+                    print( "InternalBibleBook.processLine: cbits", cBits )
                 c, v = cBits[0], '0'
                 if c == '0':
                     fixErrors.append( _("{} {}:{} Chapter zero is not allowed '{}'").format( self.bookReferenceCode, c, v, text ) )
@@ -779,11 +836,19 @@ class InternalBibleBook:
                     fixErrors.append( _("{} {}:{} Chapter marker seems to contain extra material '{}'").format( self.bookReferenceCode, c, v, cBits[1] ) )
                     logging.error( "InternalBibleBook.processLine: " + _("Extra '{}' material in chapter marker {} {}:{}").format( cBits[1], self.bookReferenceCode, c, v ) )
                     self.addPriorityError( 98, c, v, _("Extra '{}' material after chapter marker").format( cBits[1] ) )
-                    #print( "Something on c line", "'"+text+"'", "'"+cBits[1]+"'" )
-                    self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, c, c, InternalBibleExtraList(), c) ) # Write the chapter number as a separate line
+                    if Globals.debugFlag and debuggingThisModule:
+                        print( "InternalBibleBook.processLine: Something on c line", repr(text), repr(cBits[1]) )
+                    adjText, cleanText, extras = processLineFix( originalMarker, cBits[1] )
+                    if adjText or cleanText or extras:
+                        print( "InternalBibleBook.processLine: Something on c line", repr(text), repr(cBits[1]) )
+                        if adjText: print( " adjText:", repr(adjText) )
+                        if cleanText: print( " cleanText:", repr(cleanText) )
+                        if extras: print( " extras:", repr(extras) )
+                    self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, c, c, extras, c) ) # Write the chapter number as a separate line
                     adjustedMarker, text = 'c~', cBits[1]
             elif originalMarker=='v' and text:
-                v = text.split()[0] # Get the actual verse number
+                vBits = splitVNumber( text )
+                v = vBits[0] # Get the actual verse number
                 if c == '0': # Some single chapter books don't have an explicit chapter 1 marker -- we'll make it explicit here
                     if not self.isSingleChapterBook:
                         fixErrors.append( _("{} {}:{} Chapter marker seems to be missing before first verse").format( self.bookReferenceCode, c, v ) )
@@ -862,7 +927,16 @@ class InternalBibleBook:
                     if Globals.debugFlag:
                         assert( verseNumberBit and verseNumberRest )
                         assert( '\\' not in verseNumberBit )
-                    self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, verseNumberBit, verseNumberBit, InternalBibleExtraList(), verseNumberBit) ) # Write the verse number (or range) as a separate line
+                    if len(vBits)>2:
+                        adjText, cleanText, extras = processLineFix( originalMarker, vBits[1] )
+                        if adjText or cleanText or extras:
+                            print( "InternalBibleBook.processLine: Something on v line", repr(text), repr(vBits[1]) )
+                            if adjText: print( " adjText:", repr(adjText) )
+                            if cleanText: print( " cleanText:", repr(cleanText) )
+                            if extras: print( " extras:", repr(extras) )
+                        self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, verseNumberBit, verseNumberBit, extras, verseNumberBit) ) # Write the verse number (or range) as a separate line
+                    else:
+                        self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, verseNumberBit, verseNumberBit, InternalBibleExtraList(), verseNumberBit) ) # Write the verse number (or range) as a separate line
                     strippedVerseText = verseNumberRest.lstrip()
                     #print( "QQQ9: lstrip" )
                     if not strippedVerseText:
