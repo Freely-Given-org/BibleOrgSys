@@ -519,8 +519,9 @@ class BibleWriter( InternalBible ):
         # First determine our format
         pixelWidth, pixelHeight = 240, 320
         leftPadding = 1
-        maxLineCharacters, maxLines = 30, 13
-        defaultFontSize, defaultLeadingRatio = 17, 1.2
+        defaultFontSize, defaultLeadingRatio = 20, 1.2
+        maxLineCharacters, maxLines = 26, 12
+        maxDown = pixelHeight - defaultFontSize # Leave one blank line at the bottom
         # Use "identify -list font" or "convert -list font" to see all fonts on the system
         defaultTextFontname, defaultHeadingFontname = "Times-Roman", "FreeSans-Bold"
 
@@ -601,40 +602,62 @@ class BibleWriter( InternalBible ):
             # Write the heading
             heading = "{} {}".format( self.getAssumedBookName(BBB), '*' if C=='0' else C )
             down, totalCommands = renderLine( across, down, heading, jpegFilepath, fontname=defaultHeadingFontname )
+            outputLineCount = 1
 
             # Clean up leading and trailing new lines
             if text and text[0]=='\n': text = text[1:]
             if text and text[-1]=='\n': text = text[:-1]
 
-            textLineCount = textWordCount = outputLineCount = 0
+            textLineCount = textWordCount = 0
             lines = text.split('\n')
             #print( "Have lines:", len(lines) )
             for line in lines:
+                #print( "line", repr(line) )
                 textLineCount += 1
                 textWordCount = 0
                 lineBuffer = ""
                 if line:
                     words = line.split(' ')
+                    #print( "words", words )
                     for word in words:
                         word = word.replace( ' ', ' ' ) # Put back normal spaces
                         #if len(lineBuffer) >= minLineCharacters \
                         #and len(lineBuffer)+len(word)+1 >= maxLineCharacters:
-                        if len(lineBuffer)+len(word)+1 >= maxLineCharacters:
+
+                        # Allow for some letter variations
+                        offset = 1
+                        lbLower = lineBuffer.lower()
+                        if lbLower.count('m')+lbLower.count('w')>3: # Fattest letters
+                            #print( "Increased offset for", repr(lineBuffer) )
+                            offset += 1
+                        if lbLower.count('i')+lbLower.count('l')>3: # Skinniest letters
+                            #print( "Decreased offset for", repr(lineBuffer) )
+                            offset -= 1
+
+                        if len(lineBuffer)+len(word)+offset >= maxLineCharacters:
                             down, commands = renderLine( across, down, lineBuffer, jpegFilepath )
                             totalCommands.extend( commands )
                             outputLineCount += 1
                             lineBuffer = ""
+                            #print( outputLineCount, maxLines, outputLineCount>=maxLines )
                             if outputLineCount >= maxLines: break
+                            if down >= maxDown:
+                                #print( " Broke on down1:", down )
+                                break
                         lineBuffer += (' ' if lineBuffer else '' ) + word
                         textWordCount += 1
                     if lineBuffer: # do the last line
                         down, commands = renderLine( across, down, lineBuffer, jpegFilepath )
                         totalCommands.extend( commands )
                         outputLineCount += 1
-                else: # it's a blank line
-                    down += defaultFontSize / 2 # Leave a blank 1/2 line
-                    outputLineCount += 1
+                elif textLineCount!=1: # it's a blank line (but not the first line on the page)
+                    down += defaultFontSize / 3 # Leave a blank 1/3 line
+                    outputLineCount += 0.33
+                #print( outputLineCount, maxLines, outputLineCount>=maxLines )
                 if outputLineCount >= maxLines: break
+                if down >= maxDown:
+                    #print( " Broke on down2:", down )
+                    break
 
             # Now render all those commands at once
             render( totalCommands, jpegFilepath ) # Do all the rendering at once
@@ -694,8 +717,8 @@ class BibleWriter( InternalBible ):
             for entry in pseudoUSFMData:
                 marker, text = entry.getMarker(), entry.getCleanText()
                 #print( marker, repr(text) )
-                if marker in ('id','ide','toc1','toc2','toc3','c#',): pass # Completely ignore these fields
-                elif marker in ('h','mt1','mt2','mt3','s1'):
+                if marker in ('id','ide','h','toc1','toc2','toc3','c#',): pass # Completely ignore these fields
+                elif marker in ('mt1','mt2','mt3','s1'):
                     #if textBuffer: textBuffer += '\n'
                     textBuffer += '\n\n' + text + '\n'
                 elif marker in ('is1','is2','is3','ip','ipi','iot','io1','io2','io3',): pass # Drop the introduction
