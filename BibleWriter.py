@@ -518,10 +518,15 @@ class BibleWriter( InternalBible ):
 
         # First determine our format
         pixelWidth, pixelHeight = 240, 320
-        defaultFontSize, defaultLeadingRatio = 14, 1.4
         leftPadding = 1
-        maxLineCharacters, maxLines = 31, 15
+        maxLineCharacters, maxLines = 30, 13
+        defaultFontSize, defaultLeadingRatio = 17, 1.2
+        # Use "identify -list font" or "convert -list font" to see all fonts on the system
+        defaultTextFontname, defaultHeadingFontname = "Times-Roman", "FreeSans-Bold"
+
         #blankFilepath = os.path.join( defaultControlFolder, "blank-240x320.jpg" )
+        # Used: convert -fill khaki1 -draw 'rectangle 0,0 240,24' blank-240x320.jpg.jpg yblank-240x320.jpg
+        #       Available colors are at http://www.imagemagick.org/script/color.php
         blankFilepath = os.path.join( defaultControlFolder, "yblank-240x320.jpg" )
 
         def render( commandList, jpegOutputFilepath ):
@@ -548,20 +553,23 @@ class BibleWriter( InternalBible ):
                 #with open( os.path.join( outputFolder, "UncompressedScriptErrorOutput.txt" ), 'wt' ) as myFile: myFile.write( programErrorOutputString )
         # end of render
 
-        def renderLine( across, down, text, jpegFilepath, fontsize=None, fontcolor=None, leading=None ):
+        def renderLine( across, down, text, jpegFilepath, fontname=None, fontsize=None, fontcolor=None, leading=None ):
             """
                 convert -pointsize 36 -fill red -draw 'text 10,10 "Happy Birthday - You old so and so" ' test.jpg test1.jpg
             """
             #print( "renderLine( {}, {}, {}, {}, {}, {}, {} )".format( across, down, repr(text), jpegFilepath, fontsize, fontcolor, leading ) )
 
+            if fontname is None: fontname = defaultTextFontname
             if fontsize is None: fontsize = defaultFontSize
             fc = " -fill {}".format( fontcolor ) if fontcolor is not None else ''
             if leading is None: leading = int( defaultLeadingRatio * fontsize )
             #print( "Leading is {} for {}".format( leading, fontsize ) )
-            if down == 0: down = leading # First line on page
+            if down == 0: down = leading - 2 # First line on page
 
             # Run the script on our data
             commands = []
+            if fontname is not None:
+                commands.append( '-font' ); commands.append( fontname )
             commands.append( '-pointsize' ); commands.append( str(fontsize) )
             if fontcolor is not None:
                 commands.append( '-fill' ); commands.append( fontcolor )
@@ -587,7 +595,7 @@ class BibleWriter( InternalBible ):
 
             # Write the heading
             heading = "{} {}".format( self.getAssumedBookName(BBB), '*' if C=='0' else C )
-            down, totalCommands = renderLine( across, down, heading, jpegFilepath )
+            down, totalCommands = renderLine( across, down, heading, jpegFilepath, fontname=defaultHeadingFontname )
 
             # Clean up leading and trailing new lines
             if text and text[0]=='\n': text = text[1:]
@@ -641,10 +649,12 @@ class BibleWriter( InternalBible ):
             """
             #print( "renderText( {}, {}, {}, {}, {}, {}, {} )".format( BBB, C, repr(text), jpegFoldername, fontsize, fontcolor, leading ) )
 
+            intC = int( C )
+            BBBnum = Globals.BibleBooksCodes.getReferenceNumber( BBB )
             pagesWritten = 0
             leftoverText = text
             while leftoverText:
-                outputFilepath = os.path.join( jpegFoldername, "{:03}-{:03}-{}.jpg".format( int(C), pagesWritten, BBB ) )
+                outputFilepath = os.path.join( jpegFoldername, "{:03}-{:03}-{:02}-{}.jpg".format( BBBnum, intC, pagesWritten, BBB ) )
                 leftoverText = renderPage( BBB, C, leftoverText, outputFilepath )
                 pagesWritten += 1
 
@@ -677,7 +687,7 @@ class BibleWriter( InternalBible ):
                 if marker in ('id','ide','toc1','toc2','toc3','c#',): pass # Completely ignore these fields
                 elif marker in ('h','mt1','mt2','mt3','s1'):
                     #if textBuffer: textBuffer += '\n'
-                    textBuffer += text + '\n'
+                    textBuffer += '\n' + text + '\n'
                 elif marker in ('is1','is2','is3','ip','ipi','iot','io1','io2','io3',): pass # Drop the introduction
                 elif marker == 'c':
                     #if text=='3': halt
@@ -687,7 +697,13 @@ class BibleWriter( InternalBible ):
                 elif marker == 'v':
                     V = text
                     textBuffer += (' ' if textBuffer and textBuffer[-1]!='\n' else '') + text + ' '
+                elif marker == 'b':
+                    assert( not text )
+                    textBuffer += '\n'
+                elif marker == 'nb':
+                    textBuffer += '\n' + text
                 elif marker in ('p','q1','q2','q3',): # Just put it on a new line
+                    assert( not text )
                     if textBuffer: textBuffer += '\n' + '  '
                 elif text:
                     textBuffer += (' ' if textBuffer else '') + text
@@ -5401,7 +5417,8 @@ class BibleWriter( InternalBible ):
             writer.write( "*Chapter\n#book,fullname,shortname,chap-count\n" )
             for BBB,bookObject in self.books.items():
                 numChapters = None
-                bookCode = Globals.BibleBooksCodes.getDrupalBibleAbbreviation( BBB ).upper()
+                try: bookCode = Globals.BibleBooksCodes.getDrupalBibleAbbreviation( BBB ).upper()
+                except: continue # Don't know how to encode this book
                 for entry in bookObject._processedLines:
                     marker = entry.getMarker()
                     if marker == 'c': numChapters = entry.getCleanText()
@@ -5435,7 +5452,10 @@ class BibleWriter( InternalBible ):
             """
             Convert the internal Bible data to DrupalBible output.
             """
-            bookCode = Globals.BibleBooksCodes.getDrupalBibleAbbreviation( BBB ).upper()
+            try: bookCode = Globals.BibleBooksCodes.getDrupalBibleAbbreviation( BBB ).upper()
+            except:
+                logging.error( "writeDrupalBibleBook: don't know how to encode {}".format( BBB ) )
+                return
             started, accumulator = False, "" # Started flag ignores fields in the book introduction
             linemark = ''
             for entry in bookObject._processedLines:
@@ -5749,7 +5769,7 @@ class BibleWriter( InternalBible ):
             and OSISExportResult and swExportResult and htmlExportResult and TeXExportResult \
             and SwSExportResult and DrExportResult:
                 print( "BibleWriter.doAllExports finished them all successfully!" )
-            else: print( "BibleWriter.doAllExports finished:  Pck={}  PsUSFM={} USFM={}  Tx={}  PB={} TW={} MySw={} eSw={}  MW={}  Zef={} Hag={} OS={} USX={} USFX={} OSIS={}  Sw={}  HTML={} TeX={} SwS={} Dr={}" \
+            else: print( "BibleWriter.doAllExports finished:  Pck={}  PsUSFM={} USFM={}  CB={}  Tx={}  PB={} TW={} MySw={} eSw={}  MW={}  Zef={} Hag={} OS={} USX={} USFX={} OSIS={}  Sw={}  HTML={} TeX={} SwS={} Dr={}" \
                     .format( pickleResult, PseudoUSFMExportResult, USFMExportResult, CBExportResult, TextExportResult, PhotoExportResult,
                                 TWExportResult, MySwExportResult, ESwExportResult,
                                 MWExportResult, ZefExportResult, HagExportResult, OSExportResult, USXExportResult, USFXExportResult,
@@ -5783,10 +5803,10 @@ def demo():
         from USFMBible import USFMBible
         from USFMFilenames import USFMFilenames
         testData = ( # name, abbreviation, folder
-                ("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
-                ("Matigsalug", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
+                #("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
+                #("Matigsalug", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
                 #("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
-                #("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
+                ("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
                 #("MS-BT", "MBTBT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
                 #("MS-Notes", "MBTBC", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/",),
                 #("MS-ABT", "MBTABT", "../../../../../Data/Work/Matigsalug/Bible/MBTABT/",),
