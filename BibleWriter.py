@@ -520,8 +520,9 @@ class BibleWriter( InternalBible ):
         pixelWidth, pixelHeight = 240, 320
         defaultFontSize, defaultLeadingRatio = 14, 1.4
         leftPadding = 1
-        maxLineCharacters, maxLines = 32, 15
-        blankFilepath = os.path.join( defaultControlFolder, "blank-240x320.jpg" )
+        maxLineCharacters, maxLines = 31, 15
+        #blankFilepath = os.path.join( defaultControlFolder, "blank-240x320.jpg" )
+        blankFilepath = os.path.join( defaultControlFolder, "yblank-240x320.jpg" )
 
         def render( commandList, jpegOutputFilepath ):
             """
@@ -5782,10 +5783,10 @@ def demo():
         from USFMBible import USFMBible
         from USFMFilenames import USFMFilenames
         testData = ( # name, abbreviation, folder
-                #("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
-                #("Matigsalug", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
+                ("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
+                ("Matigsalug", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
                 #("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
-                ("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
+                #("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
                 #("MS-BT", "MBTBT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
                 #("MS-Notes", "MBTBC", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/",),
                 #("MS-ABT", "MBTABT", "../../../../../Data/Work/Matigsalug/Bible/MBTABT/",),
