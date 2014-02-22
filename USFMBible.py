@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2014-02-11 by RJH (also update ProgVersion below)
+#   Last modified: 2014-02-21 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 """
 
 ProgName = "USFM Bible handler"
-ProgVersion = "0.46"
+ProgVersion = "0.47"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -359,6 +359,10 @@ def demo():
                 if Globals.verbosityLevel > 0: print( "\nUSFM A{}/".format( count ) )
                 UsfmB = USFMBible( testFolder, name, encoding )
                 UsfmB.load()
+                print( "Gen assumed book name:", repr( UsfmB.getAssumedBookName( 'GEN' ) ) )
+                print( "Gen long TOC book name:", repr( UsfmB.getLongTOCName( 'GEN' ) ) )
+                print( "Gen short TOC book name:", repr( UsfmB.getShortTOCName( 'GEN' ) ) )
+                print( "Gen book abbreviation:", repr( UsfmB.getBooknameAbbreviation( 'GEN' ) ) )
                 if Globals.verbosityLevel > 0: print( UsfmB )
                 if Globals.strictCheckingFlag:
                     UsfmB.check()

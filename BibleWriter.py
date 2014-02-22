@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-02-20 by RJH (also update ProgVersion below)
+#   Last modified: 2014-02-22 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -506,6 +506,7 @@ class BibleWriter( InternalBible ):
         """
         Write the pseudo USFM out into a simple plain-text format.
             The format varies, depending on whether or not there are paragraph markers in the text.
+                I need to see a page showing 26-32 characters per line and 13-14 lines per page
         """
         if Globals.verbosityLevel > 1: print( "Running BibleWriter:toPhotoBible..." )
         if Globals.debugFlag: assert( self.books )
@@ -520,10 +521,12 @@ class BibleWriter( InternalBible ):
         pixelWidth, pixelHeight = 240, 320
         leftPadding = 1
         defaultFontSize, defaultLeadingRatio = 20, 1.2
+        defaultLineSize = int( defaultLeadingRatio * defaultFontSize )
         maxLineCharacters, maxLines = 26, 12
-        maxDown = pixelHeight - defaultFontSize # Leave one blank line at the bottom
+        maxDown = pixelHeight-1 - defaultLineSize - 3 # Be sure to leave one blank line at the bottom
         # Use "identify -list font" or "convert -list font" to see all fonts on the system
         defaultTextFontname, defaultHeadingFontname = "Times-Roman", "FreeSans-Bold"
+        maxBooknameLetters = 12 # For the header line -- the chapter number is appended to this
 
         #blankFilepath = os.path.join( defaultControlFolder, "blank-240x320.jpg" )
         # Used: convert -fill khaki1 -draw 'rectangle 0,0 240,24' blank-240x320.jpg.jpg yblank-240x320.jpg
@@ -558,20 +561,14 @@ class BibleWriter( InternalBible ):
             return returnCode
         # end of render
 
-        def renderLine( across, down, text, jpegFilepath, fontname=None, fontsize=None, fontcolor=None, leading=None ):
+        def renderLine( across, down, text, jpegFilepath, fontsize, fontname, fontcolor=None ):
             """
                 convert -pointsize 36 -fill red -draw 'text 10,10 "Happy Birthday - You old so and so" ' test.jpg test1.jpg
             """
             #print( "renderLine( {}, {}, {}, {}, {}, {}, {} )".format( across, down, repr(text), jpegFilepath, fontsize, fontcolor, leading ) )
+            #fc = " -fill {}".format( fontcolor ) if fontcolor is not None else ''
 
-            if fontname is None: fontname = defaultTextFontname
-            if fontsize is None: fontsize = defaultFontSize
-            fc = " -fill {}".format( fontcolor ) if fontcolor is not None else ''
-            if leading is None: leading = int( defaultLeadingRatio * fontsize )
-            #print( "Leading is {} for {}".format( leading, fontsize ) )
-            if down == 0: down = leading - 2 # First line on page
-
-            # Run the script on our data
+            # Prepare the commands to render this line of text on the page
             commands = []
             if fontname is not None:
                 commands.append( '-font' ); commands.append( fontname )
@@ -580,28 +577,32 @@ class BibleWriter( InternalBible ):
                 commands.append( '-fill' ); commands.append( fontcolor )
             commands.append( '-draw' )
             commands.append( 'text {},{} {}'.format( across, down, repr(text) ) )
-            #commands.append( jpegFilepath ) # input file
-            #print( "Commands", repr(commands) )
-            #render( commands, jpegFilepath )
-            return down + leading, commands
+            return commands
         # end of renderLine
 
-        def renderPage( BBB, C, text, jpegFilepath, fontsize=None, fontcolor=None, leading=None ):
+
+        def renderPage( BBB, C, bookName, text, jpegFilepath, fontsize=None ):
             """
                 I need to see a page showing 26-32 characters per line and 13-14 lines per page
             """
             #print( "\nrenderPage( {}, {}, {}, {}, {} )".format( repr(text), jpegFilepath, fontsize, fontcolor, leading ) )
             #print( " In", os.getcwd() )
 
+            #if fontname is None: fontname = defaultTextFontname
+            if fontsize is None: fontsize = defaultFontSize
+            leading = int( defaultLeadingRatio * fontsize )
+            #print( "Leading is {} for {}".format( leading, fontsize ) )
+
             # Create the blank file
             shutil.copy( blankFilepath, jpegFilepath ) # Copy it under its own name
 
-            across, down = leftPadding,0
+            across, down = leftPadding, leading - 2
             #if fontsize is None: fontsize = defaultFontSize
 
             # Write the heading
-            heading = "{} {}".format( self.getAssumedBookName(BBB), '*' if C=='0' else C )
-            down, totalCommands = renderLine( across, down, heading, jpegFilepath, fontname=defaultHeadingFontname )
+            heading = "{}{}".format( bookName, '' if C=='0' else ' '+C )
+            totalCommands = renderLine( across, down, heading, jpegFilepath, fontsize, defaultHeadingFontname )
+            down += leading
             outputLineCount = 1
 
             # Clean up leading and trailing new lines
@@ -609,55 +610,77 @@ class BibleWriter( InternalBible ):
             if text and text[-1]=='\n': text = text[:-1]
 
             textLineCount = textWordCount = 0
+            lastLine = False
             lines = text.split('\n')
             #print( "Have lines:", len(lines) )
             for line in lines:
                 #print( "line", repr(line) )
+                if down >= maxDown - leading \
+                or outputLineCount == maxLines - 1:
+                    lastLine = True
+                if down >= maxDown: break # We're finished
+                #print( BBB, C, textLineCount, outputLineCount, down, maxDown, lastLine, repr(line) )
+
                 textLineCount += 1
                 textWordCount = 0
                 lineBuffer = ""
                 if line:
+                    verseNumberLast = False
                     words = line.split(' ')
                     #print( "words", words )
-                    for word in words:
-                        word = word.replace( ' ', ' ' ) # Put back normal spaces
-                        #if len(lineBuffer) >= minLineCharacters \
-                        #and len(lineBuffer)+len(word)+1 >= maxLineCharacters:
+                    for w,originalWord in enumerate( words ):
+                        word = originalWord.replace( ' ', ' ' ) # Put back normal spaces
+                        isVerseNumber = False
+                        vix = word.find( 'VvV' )
+                        if vix != -1: # This must be a verse number (perhaps preceded by some spaces)
+                            word = word[:vix]+word[vix+3:]; isVerseNumber = True
+                        assert( 'VvV' not in word )
 
-                        # Allow for some letter variations
+                        if down >= maxDown - leading \
+                        or outputLineCount == maxLines - 1: lastLine = True
+                        if down >= maxDown: break # We're finished
+                        #print( '     ', textLineCount, outputLineCount, down, maxDown, lastLine, textWordCount, repr(word) )
+
+                        # Allow for some letter-width variations
+                        #   a bigger offset value will allow less to be added to the line
+                        # NOTE: verse numbers start with VvV
+                        #       and we don't want the last line to end with a verse number
                         offset = 1
-                        lbLower = lineBuffer.lower()
-                        if lbLower.count('m')+lbLower.count('w')>3: # Fattest letters
-                            #print( "Increased offset for", repr(lineBuffer) )
-                            offset += 1
-                        if lbLower.count('i')+lbLower.count('l')>3: # Skinniest letters
-                            #print( "Decreased offset for", repr(lineBuffer) )
-                            offset -= 1
+                        potentialString = lineBuffer + word
+                        potentialStringLower =  potentialString.lower()
+                        offset += (potentialStringLower.count('m')+potentialStringLower.count('w'))/3
+                        offset -= (potentialStringLower.count('i')+potentialString.count('l')+potentialString.count('t'))/3
+                        #if offset != 1:
+                            #print( "Adjusted offset to", offset, "from", repr(potentialString) )
 
-                        if len(lineBuffer)+len(word)+offset >= maxLineCharacters:
-                            down, commands = renderLine( across, down, lineBuffer, jpegFilepath )
-                            totalCommands.extend( commands )
+                        potentialLength = len(lineBuffer) + len(word) + offset
+                        if lastLine and isVerseNumber: # We would have to include the next word also
+                            assert( w < len(words)-1 )
+                            potentialLength += len(words[w+1]) + 1
+                            #print( "Adjusted pL for", BBB, C, repr(word), repr(words[w+1]) )
+                        if potentialLength  >= maxLineCharacters:
+                            # Print this line as we've already got it coz it would be too long if we added the word
+                            totalCommands.extend( renderLine( across, down, lineBuffer, jpegFilepath, fontsize, defaultTextFontname ) )
+                            down += leading
                             outputLineCount += 1
                             lineBuffer = ""
                             #print( outputLineCount, maxLines, outputLineCount>=maxLines )
                             if outputLineCount >= maxLines: break
-                            if down >= maxDown:
-                                #print( " Broke on down1:", down )
-                                break
+                            if down >= maxDown: break # We're finished
+                        # Add the word (without the verse number markers)
                         lineBuffer += (' ' if lineBuffer else '' ) + word
                         textWordCount += 1
+
+                    # Words in this source text line are all processed
                     if lineBuffer: # do the last line
-                        down, commands = renderLine( across, down, lineBuffer, jpegFilepath )
-                        totalCommands.extend( commands )
+                        totalCommands.extend( renderLine( across, down, lineBuffer, jpegFilepath, fontsize, defaultTextFontname ) )
+                        down += leading
                         outputLineCount += 1
                 elif textLineCount!=1: # it's a blank line (but not the first line on the page)
                     down += defaultFontSize / 3 # Leave a blank 1/3 line
-                    outputLineCount += 0.33
+                    outputLineCount += 0.4
                 #print( outputLineCount, maxLines, outputLineCount>=maxLines )
                 if outputLineCount >= maxLines: break
-                if down >= maxDown:
-                    #print( " Broke on down2:", down )
-                    break
 
             # Now render all those commands at once
             render( totalCommands, jpegFilepath ) # Do all the rendering at once
@@ -676,19 +699,33 @@ class BibleWriter( InternalBible ):
             return leftoverText
         # end of renderPage
 
-        def renderText( BBB, C, text, jpegFoldername, fontsize=None, fontcolor=None, leading=None ):
+
+        def renderText( BBB, C, bookName, text, bookFolderName, fontsize=None ):
             """
-                I need to see a page showing 26-32 characters per line and 13-14 lines per page
             """
             #print( "\nrenderText( {}, {}, {}, {}, {}, {}, {} )".format( BBB, C, repr(text), jpegFoldername, fontsize, fontcolor, leading ) )
 
             intC = int( C )
             BBBnum = Globals.BibleBooksCodes.getReferenceNumber( BBB )
+            maxChapters = Globals.BibleBooksCodes.getMaxChapters( BBB )
+            if BBBnum < 100:
+                if maxChapters < 10: formatString1, formatString2 = "{:02}-{:01}-{}/", "{:02}-{:01}-{:02}-{}.jpg"
+                elif maxChapters < 100: formatString1, formatString2 = "{:02}-{:02}-{}/", "{:02}-{:02}-{:02}-{}.jpg"
+                else: formatString1, formatString2 = "{:02}-{:03}-{}/", "{:02}-{:03}-{:02}-{}.jpg"
+            else: # not normally expected
+                if maxChapters < 10: formatString1, formatString2 = "{:03}-{:01}-{}/", "{:03}-{:01}-{:02}-{}.jpg"
+                elif maxChapters < 100: formatString1, formatString2 = "{:03}-{:02}-{}/", "{:03}-{:02}-{:02}-{}.jpg"
+                else: formatString1, formatString2 = "{:03}-{:03}-{}/", "{:03}-{:03}-{:02}-{}.jpg"
+
+            chapterFolderName = formatString1.format( Globals.BibleBooksCodes.getReferenceNumber( BBB ), intC, BBB )
+            chapterFolderPath = os.path.join( bookFolderName, chapterFolderName )
+            if not os.access( chapterFolderPath, os.F_OK ): os.makedirs( chapterFolderPath ) # Make the empty folder if there wasn't already one there
+
             pagesWritten = 0
             leftoverText = text
             while leftoverText:
-                outputFilepath = os.path.join( jpegFoldername, "{:03}-{:03}-{:02}-{}.jpg".format( BBBnum, intC, pagesWritten, BBB ) )
-                leftoverText = renderPage( BBB, C, leftoverText, outputFilepath )
+                jpegOutputFilepath = os.path.join( chapterFolderPath, formatString2.format( BBBnum, intC, pagesWritten, BBB ) )
+                leftoverText = renderPage( BBB, C, bookName, leftoverText, jpegOutputFilepath )
                 pagesWritten += 1
 
             #print( "pagesWritten were", pagesWritten )
@@ -706,9 +743,17 @@ class BibleWriter( InternalBible ):
                 subfolderName = "NT/"
             else:
                 subfolderName = "Other/"
-            subfolder2Name = BBB  + '/'
-            folderPath = os.path.join( outputFolder, subfolderName, subfolder2Name )
-            if not os.access( folderPath, os.F_OK ): os.makedirs( folderPath ) # Make the empty folder if there wasn't already one there
+            BBBnum = Globals.BibleBooksCodes.getReferenceNumber( BBB )
+            if BBBnum < 100: bookFolderName = "{:02}-{}/".format( BBBnum, BBB )
+            else: bookFolderName = "{:03}-{}/".format( BBBnum, BBB ) # Should rarely happen
+            bookFolderPath = os.path.join( outputFolder, subfolderName, bookFolderName )
+            if not os.access( bookFolderPath, os.F_OK ): os.makedirs( bookFolderPath ) # Make the empty folder if there wasn't already one there
+
+            # Find a suitable bookname
+            bookName = self.getAssumedBookName(BBB)
+            for bookName in (self.getAssumedBookName(BBB), self.getLongTOCName(BBB), self.getShortTOCName(BBB), self.getBooknameAbbreviation(BBB), ):
+                #print( "Tried bookName:", repr(bookName) )
+                if bookName is not None and len(bookName)<=maxBooknameLetters: break
 
             # First of all, get the text (by chapter)
             textBuffer = ""
@@ -718,33 +763,37 @@ class BibleWriter( InternalBible ):
                 marker, text = entry.getMarker(), entry.getCleanText()
                 #print( marker, repr(text) )
                 if marker in ('id','ide','h','toc1','toc2','toc3','c#',): pass # Completely ignore these fields
-                elif marker in ('mt1','mt2','mt3','s1'):
+                elif marker in ('mt1','mt2','mt3','s1','s2','s3','is1','is2','is3',): # Simple headings
                     #if textBuffer: textBuffer += '\n'
                     textBuffer += '\n\n' + text + '\n'
-                elif marker in ('is1','is2','is3','ip','ipi','iot','io1','io2','io3',): pass # Drop the introduction
+                elif marker in ('iot','io1','io2','io3',): pass # Drop the introduction
                 elif marker == 'c':
                     #if text=='3': halt
-                    if textBuffer: down = renderText( BBB, C, textBuffer, folderPath ); textBuffer = ""
+                    if textBuffer: down = renderText( BBB, C, bookName, textBuffer, bookFolderPath ); textBuffer = ""
                     C = text
                     #if C=='4': halt
                 elif marker == 'v':
                     V = text
-                    textBuffer += (' ' if textBuffer and textBuffer[-1]!='\n' else '') + text + ' '
+                    textBuffer += (' ' if textBuffer and textBuffer[-1]!='\n' else '') + 'VvV' + text + ' '
                 elif marker == 'b':
                     assert( not text )
                     textBuffer += '\n'
                 elif marker == 'nb':
                     textBuffer += '\n' + text
-                elif marker in ('p','q1','q2','q3',): # Just put it on a new line
-                    assert( not text )
-                    textBuffer += '\n' + '  '
+                elif marker in ('p','ip','ipi','q1','q2','q3',): # Just put it on a new line
+                    #if text and marker not in ('ip','ipi',):
+                        #logging.error( "Lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
+                    textBuffer += '\n' + '  ' # Non-break spaces won't be lost later
+                    if marker in ('ip','ipi'): textBuffer += text
+                    else: assert( not text )
                     if marker == 'q2': textBuffer += ' '
                     elif marker == 'q3': textBuffer += '  '
-                elif text:
-                    textBuffer += (' ' if textBuffer else '') + text
+                elif marker in ('v~','p~',):
+                    #assert( text or extras )
+                    textBuffer += text
                 elif marker not in ('c#',): # These are the markers that we can safely ignore for this export
                     unhandledMarkers.add( marker )
-            if textBuffer: down = renderText( BBB, C, textBuffer, folderPath ) # Write the last bit
+            if textBuffer: down = renderText( BBB, C, bookName, textBuffer, bookFolderPath ) # Write the last bit
 
                     #if verseByVerse:
                         #myFile.write( "{} ({}): '{}' '{}' {}\n" \

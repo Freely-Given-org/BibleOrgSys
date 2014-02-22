@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2013-12-15 by RJH (also update ProgVersion below)
+#   Last modified: 2014-02-21 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
-# Copyright (C) 2010-2013 Robert Hunt
+# Copyright (C) 2010-2014 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -44,7 +44,7 @@ and then fills
 """
 
 ProgName = "Internal Bible handler"
-ProgVersion = "0.40"
+ProgVersion = "0.41"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -174,9 +174,34 @@ class InternalBible:
     def getAssumedBookName( self, BBB ):
         """Gets the book name for the given book reference code."""
         if Globals.debugFlag: assert( BBB in Globals.BibleBooksCodes)
-        #assert( self.books[BBB] )
-        if BBB in self.BBBToNameDict: return self.BBBToNameDict[BBB]
+        #if BBB in self.BBBToNameDict: return self.BBBToNameDict[BBB] # What was this ???
+        try: return self.books[BBB].assumedBookName
+        except: return None
     # end of InternalBible.getAssumedBookName
+
+
+    def getLongTOCName( self, BBB ):
+        """Gets the long table of contents book name for the given book reference code."""
+        if Globals.debugFlag: assert( BBB in Globals.BibleBooksCodes)
+        try: return self.books[BBB].longTOCName
+        except: return None
+    # end of InternalBible.getLongTOCName
+
+
+    def getShortTOCName( self, BBB ):
+        """Gets the short table of contents book name for the given book reference code."""
+        if Globals.debugFlag: assert( BBB in Globals.BibleBooksCodes)
+        try: return self.books[BBB].shortTOCName
+        except: return None
+    # end of InternalBible.getShortTOCName
+
+
+    def getBooknameAbbreviation( self, BBB ):
+        """Gets the book abbreviation for the given book reference code."""
+        if Globals.debugFlag: assert( BBB in Globals.BibleBooksCodes)
+        try: return self.books[BBB].booknameAbbreviation
+        except: return None
+    # end of InternalBible.getBooknameAbbreviation
 
 
     def saveBook( self, bookData ):

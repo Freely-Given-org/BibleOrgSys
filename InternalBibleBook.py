@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2014-02-20 by RJH (also update ProgVersion below)
+#   Last modified: 2014-02-21 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -41,7 +41,7 @@ Required improvements:
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.59"
+ProgVersion = "0.60"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -1242,7 +1242,7 @@ class InternalBibleBook:
 
     def getAssumedBookNames( self ):
         """
-        Attempts to deduce a bookname from the loaded book.
+        Attempts to deduce a bookname and book abbreviations from the loaded book.
         Use the English name as a last resort.
         Returns a list with the best guess first.
         """
@@ -1252,20 +1252,44 @@ class InternalBibleBook:
         if Globals.debugFlag: assert( self._processedLines )
         results = []
 
+        toc1Field = self.getField( 'toc1' ) # Long table of contents text
+        if toc1Field:
+            #print( "Got toc1 of", repr(toc1Field) )
+            #if toc1Field.isupper(): field = toc1Field.title()
+            results.append( toc1Field )
+            self.longTOCName = toc1Field
+
         header = self.getField( 'h' )
         if header:
             if header.isupper(): header = header.title()
             results.append( header )
 
-        if (not header or len(header)<4 or not header[0].isdigit() or header[1]!=' ') and self.getField('mt2') is not None: # Ignore the main title if it's a book like "Corinthians" and there's a mt2 (like "First")
+        if (not header or len(header)<4 or not header[0].isdigit() or header[1]!=' ') and self.getField('mt2') is not None:
+        # Ignore the main title if it's a book like "Corinthians" and there's a mt2 (like "First")
             mt1 = self.getField( 'mt1' )
             if mt1:
                 if mt1.isupper(): mt1 = mt1.title()
+                #print( "Got mt1 of", repr(mt1) )
                 if mt1 not in results: results.append( mt1 )
 
-        if not results: # no helpful fields in file
+        toc2Field = self.getField( 'toc2' ) # Short table of contents text
+        if toc2Field:
+            #print( "Got toc2 of", repr(toc2Field) )
+            #if toc2Field.isupper(): field = toc2Field.title()
+            results.append( toc2Field )
+            self.shortTOCName = toc2Field
+
+        toc3Field = self.getField( 'toc3' ) # Bookname abbreviation
+        if toc3Field:
+            #print( "Got toc3 of", repr(toc3Field) )
+            #if toc3Field.isupper(): toc3Field = toc3Field.title()
+            results.append( toc3Field )
+            self.booknameAbbreviation = toc3Field
+
+        if not results: # no helpful fields in file -- just use an English name
             results.append( Globals.BibleBooksCodes.getEnglishName_NR( self.bookReferenceCode ) )
         self.assumedBookName = results[0]
+        #print( "Got assumedBookName of", repr(self.assumedBookName) )
 
         #if Globals.debugFlag or Globals.verbosityLevel > 3: # Print our level of confidence
         #    if header is not None and header==mt1: assert( bookName == header ); print( "getBookName: header and main title are both '{}'".format( bookName ) )

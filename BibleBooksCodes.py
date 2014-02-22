@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodes.py
-#   Last modified: 2013-12-26 by RJH (also update ProgVersion below)
+#   Last modified: 2014-02-21 by RJH (also update ProgVersion below)
 #
 # Module handling BibleBooksCodes functions
 #
-# Copyright (C) 2010-2013 Robert Hunt
+# Copyright (C) 2010-2014 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling BibleBooksCodes functions.
 """
 
 ProgName = "Bible Books Codes handler"
-ProgVersion = "0.72"
+ProgVersion = "0.73"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -291,6 +291,19 @@ class BibleBooksCodes:
     # end of BibleBooksCodes.getExpectedChaptersList
 
 
+    def getMaxChapters( self, BBB ):
+        """
+        Returns an integer with the maximum number of chapters to be expected for this book.
+        """
+        maxChapters = -1
+        for numChapters in self.getExpectedChaptersList( BBB ):
+            try: intNC = int( numChapters )
+            except: intNC = -1
+            if intNC > maxChapters: maxChapters = intNC
+        return maxChapters
+    # end of getMaxChapters
+
+
     def getSingleChapterBooksList( self ):
         """ Gets a list of single chapter book codes. """
         results = []
@@ -490,6 +503,7 @@ def demo():
     print( bbc ) # Just print a summary
     print( "Esther has {} expected chapters".format(bbc.getExpectedChaptersList("EST")) )
     print( "Apocalypse of Ezra has {} expected chapters".format(bbc.getExpectedChaptersList("EZA")) )
+    print( "Psalms has {} expected chapters".format(bbc.getMaxChapters("PSA")) )
     print( "Names for Genesis are:", bbc.getEnglishNameList_NR("GEN") )
     print( "Names for Sirach are:", bbc.getEnglishNameList_NR('SIR') )
     print( "All BBBs:", len(bbc.getAllReferenceAbbreviations()), bbc.getAllReferenceAbbreviations() )
