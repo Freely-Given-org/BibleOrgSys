@@ -635,7 +635,7 @@ class BibleWriter( InternalBible ):
                 isMainHeading = isSectionHeading = isSectionReference = False
                 if line.startswith('HhH'):
                     if lastLine:
-                        print( BBB, C, "Don't start main heading on last line", repr(line) )
+                        #print( BBB, C, "Don't start main heading on last line", repr(line) )
                         break; # Don't print headings on the last line
                     line = line[3:] # Remove the heading marker
                     #print( "Got main heading:", BBB, C, repr(line) )
@@ -643,7 +643,7 @@ class BibleWriter( InternalBible ):
                     fontcolor = defaultMainHeadingFontcolor
                 elif line.startswith('SsS'):
                     if lastLine:
-                        print( BBB, C, "Don't start section heading on last line", repr(line) )
+                        #print( BBB, C, "Don't start section heading on last line", repr(line) )
                         break; # Don't print headings on the last line
                     line = line[3:] # Remove the heading marker
                     #print( "Got section heading:", BBB, C, repr(line) )
@@ -668,7 +668,7 @@ class BibleWriter( InternalBible ):
                         vix = word.find( 'VvV' )
                         if vix != -1: # This must be a verse number (perhaps preceded by some spaces)
                             word = word[:vix]+word[vix+3:]; isVerseNumber = True
-                        assert( 'VvV' not in word )
+                        #assert( 'VvV' not in word )
 
                         if down >= maxDown - leading \
                         or outputLineCount == maxLines - 1: lastLine = True
