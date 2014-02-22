@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2014-02-21 by RJH (also update ProgVersion below)
+#   Last modified: 2014-02-22 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 """
 
 ProgName = "USFM Bible handler"
-ProgVersion = "0.47"
+ProgVersion = "0.48"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -332,7 +332,12 @@ class USFMBible( Bible ):
                 for bBook in results: self.saveBook( bBook )
         else: # Just single threaded
             # Load the books one by one -- assuming that they have regular Paratext style filenames
-            for BBB,filename in self.maximumPossibleFilenameTuples:
+            try: loadDetails = self.maximumPossibleFilenameTuples
+            except AttributeError:
+                logging.critical( "USFMBible.load " + _("has nothing to load!") )
+                return
+
+            for BBB,filename in loadDetails:
                 loadedBook = self.loadBook( BBB, filename ) # also saves it
     # end of USFMBible.load
 # end of class USFMBible

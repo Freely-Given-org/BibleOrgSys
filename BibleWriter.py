@@ -526,7 +526,10 @@ class BibleWriter( InternalBible ):
         maxDown = pixelHeight-1 - defaultLineSize - 3 # Be sure to leave one blank line at the bottom
         # Use "identify -list font" or "convert -list font" to see all fonts on the system
         defaultTextFontname, defaultHeadingFontname = "Times-Roman", "FreeSans-Bold"
+        topLineColor = "opaque"
+        defaultMainHeadingFontcolor, defaultSectionHeadingFontcolor, defaultSectionReferenceFontcolor = "indigo", "red1", "royalBlue"
         maxBooknameLetters = 12 # For the header line -- the chapter number is appended to this
+        namingFormat = "Short" # "Short" or "Long" -- affects folder and filenames
 
         #blankFilepath = os.path.join( defaultControlFolder, "blank-240x320.jpg" )
         # Used: convert -fill khaki1 -draw 'rectangle 0,0 240,24' blank-240x320.jpg.jpg yblank-240x320.jpg
@@ -561,20 +564,26 @@ class BibleWriter( InternalBible ):
             return returnCode
         # end of render
 
-        def renderLine( across, down, text, jpegFilepath, fontsize, fontname, fontcolor=None ):
+        lastFontcolor = lastFontsize = lastFontname = None
+        def renderLine( across, down, text, jpegFilepath, fontsize, fontname, fontcolor ):
             """
                 convert -pointsize 36 -fill red -draw 'text 10,10 "Happy Birthday - You old so and so" ' test.jpg test1.jpg
             """
+            nonlocal lastFontcolor, lastFontsize, lastFontname
             #print( "renderLine( {}, {}, {}, {}, {}, {}, {} )".format( across, down, repr(text), jpegFilepath, fontsize, fontcolor, leading ) )
             #fc = " -fill {}".format( fontcolor ) if fontcolor is not None else ''
 
             # Prepare the commands to render this line of text on the page
             commands = []
-            if fontname is not None:
+            if fontname != lastFontname:
                 commands.append( '-font' ); commands.append( fontname )
-            commands.append( '-pointsize' ); commands.append( str(fontsize) )
-            if fontcolor is not None:
+                lastFontname = fontname
+            if fontsize != lastFontsize:
+                commands.append( '-pointsize' ); commands.append( str(fontsize) )
+                lastFontsize = fontsize
+            if fontcolor != lastFontcolor:
                 commands.append( '-fill' ); commands.append( fontcolor )
+                lastFontcolor = fontcolor
             commands.append( '-draw' )
             commands.append( 'text {},{} {}'.format( across, down, repr(text) ) )
             return commands
@@ -585,23 +594,22 @@ class BibleWriter( InternalBible ):
             """
                 I need to see a page showing 26-32 characters per line and 13-14 lines per page
             """
-            #print( "\nrenderPage( {}, {}, {}, {}, {} )".format( repr(text), jpegFilepath, fontsize, fontcolor, leading ) )
-            #print( " In", os.getcwd() )
+            nonlocal lastFontcolor, lastFontsize, lastFontname
+            lastFontcolor = lastFontsize = lastFontname = None # So we're sure to get the initial commands in the stream
 
-            #if fontname is None: fontname = defaultTextFontname
-            if fontsize is None: fontsize = defaultFontSize
-            leading = int( defaultLeadingRatio * fontsize )
-            #print( "Leading is {} for {}".format( leading, fontsize ) )
+            #print( "\nrenderPage( {}, {}, {}, {}, {} )".format( repr(text), jpegFilepath, fontsize, fontcolor, leading ) )
 
             # Create the blank file
             shutil.copy( blankFilepath, jpegFilepath ) # Copy it under its own name
 
+            if fontsize is None: fontsize = defaultFontSize
+            leading = int( defaultLeadingRatio * fontsize )
+            #print( "Leading is {} for {}".format( leading, fontsize ) )
             across, down = leftPadding, leading - 2
-            #if fontsize is None: fontsize = defaultFontSize
 
             # Write the heading
             heading = "{}{}".format( bookName, '' if C=='0' else ' '+C )
-            totalCommands = renderLine( across, down, heading, jpegFilepath, fontsize, defaultHeadingFontname )
+            totalCommands = renderLine( across, down, heading, jpegFilepath, fontsize, defaultHeadingFontname, topLineColor )
             down += leading
             outputLineCount = 1
 
@@ -613,13 +621,39 @@ class BibleWriter( InternalBible ):
             lastLine = False
             lines = text.split('\n')
             #print( "Have lines:", len(lines) )
-            for line in lines:
-                #print( "line", repr(line) )
+            for originalLine in lines:
+                #print( "line", repr(originalLine) )
+                line = originalLine
+                fontcolor = "opaque" # gives black
+
                 if down >= maxDown - leading \
                 or outputLineCount == maxLines - 1:
                     lastLine = True
                 if down >= maxDown: break # We're finished
                 #print( BBB, C, textLineCount, outputLineCount, down, maxDown, lastLine, repr(line) )
+
+                isMainHeading = isSectionHeading = isSectionReference = False
+                if line.startswith('HhH'):
+                    if lastLine:
+                        print( BBB, C, "Don't start main heading on last line", repr(line) )
+                        break; # Don't print headings on the last line
+                    line = line[3:] # Remove the heading marker
+                    #print( "Got main heading:", BBB, C, repr(line) )
+                    isMainHeading = True
+                    fontcolor = defaultMainHeadingFontcolor
+                elif line.startswith('SsS'):
+                    if lastLine:
+                        print( BBB, C, "Don't start section heading on last line", repr(line) )
+                        break; # Don't print headings on the last line
+                    line = line[3:] # Remove the heading marker
+                    #print( "Got section heading:", BBB, C, repr(line) )
+                    isSectionHeading = True
+                    fontcolor = defaultSectionHeadingFontcolor
+                elif line.startswith('RrR'):
+                    line = line[3:] # Remove the heading marker
+                    #print( "Got section reference:", BBB, C, repr(line) )
+                    isSectionReference = True
+                    fontcolor = defaultSectionReferenceFontcolor
 
                 textLineCount += 1
                 textWordCount = 0
@@ -648,7 +682,10 @@ class BibleWriter( InternalBible ):
                         offset = 1
                         potentialString = lineBuffer + word
                         potentialStringLower =  potentialString.lower()
-                        offset += (potentialStringLower.count('m')+potentialStringLower.count('w'))/3
+                        capsCount = 0
+                        for letter in potentialString:
+                            if letter.isupper(): capsCount += 1
+                        offset += (potentialStringLower.count('m')+potentialStringLower.count('w')+capsCount)/3
                         offset -= (potentialStringLower.count('i')+potentialString.count('l')+potentialString.count('t'))/3
                         #if offset != 1:
                             #print( "Adjusted offset to", offset, "from", repr(potentialString) )
@@ -660,7 +697,7 @@ class BibleWriter( InternalBible ):
                             #print( "Adjusted pL for", BBB, C, repr(word), repr(words[w+1]) )
                         if potentialLength  >= maxLineCharacters:
                             # Print this line as we've already got it coz it would be too long if we added the word
-                            totalCommands.extend( renderLine( across, down, lineBuffer, jpegFilepath, fontsize, defaultTextFontname ) )
+                            totalCommands.extend( renderLine( across, down, lineBuffer, jpegFilepath, fontsize, defaultTextFontname, fontcolor ) )
                             down += leading
                             outputLineCount += 1
                             lineBuffer = ""
@@ -673,7 +710,7 @@ class BibleWriter( InternalBible ):
 
                     # Words in this source text line are all processed
                     if lineBuffer: # do the last line
-                        totalCommands.extend( renderLine( across, down, lineBuffer, jpegFilepath, fontsize, defaultTextFontname ) )
+                        totalCommands.extend( renderLine( across, down, lineBuffer, jpegFilepath, fontsize, defaultTextFontname, fontcolor ) )
                         down += leading
                         outputLineCount += 1
                 elif textLineCount!=1: # it's a blank line (but not the first line on the page)
@@ -708,23 +745,34 @@ class BibleWriter( InternalBible ):
             intC = int( C )
             BBBnum = Globals.BibleBooksCodes.getReferenceNumber( BBB )
             maxChapters = Globals.BibleBooksCodes.getMaxChapters( BBB )
-            if BBBnum < 100:
-                if maxChapters < 10: formatString1, formatString2 = "{:02}-{:01}-{}/", "{:02}-{:01}-{:02}-{}.jpg"
-                elif maxChapters < 100: formatString1, formatString2 = "{:02}-{:02}-{}/", "{:02}-{:02}-{:02}-{}.jpg"
-                else: formatString1, formatString2 = "{:02}-{:03}-{}/", "{:02}-{:03}-{:02}-{}.jpg"
-            else: # not normally expected
-                if maxChapters < 10: formatString1, formatString2 = "{:03}-{:01}-{}/", "{:03}-{:01}-{:02}-{}.jpg"
-                elif maxChapters < 100: formatString1, formatString2 = "{:03}-{:02}-{}/", "{:03}-{:02}-{:02}-{}.jpg"
-                else: formatString1, formatString2 = "{:03}-{:03}-{}/", "{:03}-{:03}-{:02}-{}.jpg"
+            if namingFormat == "Short":
+                if maxChapters < 10: formatString1 = "{:01}-{}/"
+                elif maxChapters < 100: formatString1 = "{:02}-{}/"
+                else: formatString1 = "{:03}-{}/"
+                chapterFolderName = formatString1.format( intC, BBB )
+                formatString2 = "{:02}.jpg" # Max of 99 pages per chapter
+            elif namingFormat == "Long":
+                if BBBnum < 100:
+                    if maxChapters < 10: formatString1, formatString2 = "{:02}-{:01}-{}/", "{:02}-{:01}-{:02}-{}.jpg"
+                    elif maxChapters < 100: formatString1, formatString2 = "{:02}-{:02}-{}/", "{:02}-{:02}-{:02}-{}.jpg"
+                    else: formatString1, formatString2 = "{:02}-{:03}-{}/", "{:02}-{:03}-{:02}-{}.jpg"
+                else: # not normally expected
+                    if maxChapters < 10: formatString1, formatString2 = "{:03}-{:01}-{}/", "{:03}-{:01}-{:02}-{}.jpg"
+                    elif maxChapters < 100: formatString1, formatString2 = "{:03}-{:02}-{}/", "{:03}-{:02}-{:02}-{}.jpg"
+                    else: formatString1, formatString2 = "{:03}-{:03}-{}/", "{:03}-{:03}-{:02}-{}.jpg"
+                chapterFolderName = formatString1.format( Globals.BibleBooksCodes.getReferenceNumber( BBB ), intC, BBB )
+            else: halt
 
-            chapterFolderName = formatString1.format( Globals.BibleBooksCodes.getReferenceNumber( BBB ), intC, BBB )
             chapterFolderPath = os.path.join( bookFolderName, chapterFolderName )
             if not os.access( chapterFolderPath, os.F_OK ): os.makedirs( chapterFolderPath ) # Make the empty folder if there wasn't already one there
 
             pagesWritten = 0
             leftoverText = text
             while leftoverText:
-                jpegOutputFilepath = os.path.join( chapterFolderPath, formatString2.format( BBBnum, intC, pagesWritten, BBB ) )
+                if namingFormat == "Short":
+                    jpegOutputFilepath = os.path.join( chapterFolderPath, formatString2.format( pagesWritten ) )
+                elif namingFormat == "Long":
+                    jpegOutputFilepath = os.path.join( chapterFolderPath, formatString2.format( BBBnum, intC, pagesWritten, BBB ) )
                 leftoverText = renderPage( BBB, C, bookName, leftoverText, jpegOutputFilepath )
                 pagesWritten += 1
 
@@ -756,25 +804,33 @@ class BibleWriter( InternalBible ):
                 if bookName is not None and len(bookName)<=maxBooknameLetters: break
 
             # First of all, get the text (by chapter)
-            textBuffer = ""
             C = V = "0"
-            across, down = 1, 0
+            textBuffer, lastMarker = "", None
             for entry in pseudoUSFMData:
                 marker, text = entry.getMarker(), entry.getCleanText()
                 #print( marker, repr(text) )
                 if marker in ('id','ide','h','toc1','toc2','toc3','c#',): pass # Completely ignore these fields
-                elif marker in ('mt1','mt2','mt3','s1','s2','s3','is1','is2','is3',): # Simple headings
+                elif marker in ('mt1','mt2','mt3',): # Simple headings
                     #if textBuffer: textBuffer += '\n'
-                    textBuffer += '\n\n' + text + '\n'
+                    textBuffer += '\n\nHhH' + text + '\n'
+                elif marker in ('s1','s2','s3','is1','is2','is3',): # Simple headings
+                    #if textBuffer: textBuffer += '\n'
+                    textBuffer += '\n\nSsS' + text + '\n'
                 elif marker in ('iot','io1','io2','io3',): pass # Drop the introduction
                 elif marker == 'c':
                     #if text=='3': halt
-                    if textBuffer: down = renderText( BBB, C, bookName, textBuffer, bookFolderPath ); textBuffer = ""
+                    if textBuffer: renderText( BBB, C, bookName, textBuffer, bookFolderPath ); textBuffer = ""
                     C = text
                     #if C=='4': halt
                 elif marker == 'v':
                     V = text
                     textBuffer += (' ' if textBuffer and textBuffer[-1]!='\n' else '') + 'VvV' + text + ' '
+                elif marker == 'r':
+                    #numSpaces = ( maxLineCharacters - len(text) ) // 2
+                    #print( BBB, C, len(text), "numSpaces:", numSpaces, repr(text) )
+                    #textBuffer += '\n' + ' '*numSpaces + text # Roughly centred
+                    if lastMarker not in ('s1','s2','s3',): textBuffer += '\n' # Section headings already have one at the end
+                    textBuffer += 'RrR' + ' '*((maxLineCharacters+1-len(text))//2) + text + '\n' # Roughly centred
                 elif marker == 'b':
                     assert( not text )
                     textBuffer += '\n'
@@ -791,9 +847,10 @@ class BibleWriter( InternalBible ):
                 elif marker in ('v~','p~',):
                     #assert( text or extras )
                     textBuffer += text
-                elif marker not in ('c#',): # These are the markers that we can safely ignore for this export
+                elif marker not in ('rem',): # These are the markers that we can safely ignore for this export
                     unhandledMarkers.add( marker )
-            if textBuffer: down = renderText( BBB, C, bookName, textBuffer, bookFolderPath ) # Write the last bit
+                lastMarker = marker
+            if textBuffer: renderText( BBB, C, bookName, textBuffer, bookFolderPath ) # Write the last bit
 
                     #if verseByVerse:
                         #myFile.write( "{} ({}): '{}' '{}' {}\n" \
@@ -1407,7 +1464,7 @@ class BibleWriter( InternalBible ):
                     #print( "Text '{}'".format( text ) )
                     if not text: logging.warning( "toOpenSongXML: Missing text for v" ); continue
                     verseNumberString = text.replace('<','').replace('>','').replace('"','') # Used below but remove anything that'll cause a big XML problem later
-                elif marker not in ('c#',): # These are the markers that we can safely ignore for this export
+                elif marker not in ('c#','rem',): # These are the markers that we can safely ignore for this export
                     unhandledMarkers.add( marker )
             if accumulator:
                 writerObject.writeLineOpenClose ( 'v', accumulator, ('n',verseNumberString) )
@@ -5416,8 +5473,12 @@ class BibleWriter( InternalBible ):
             """
             Convert the internal Bible data to SwordSearcher pre-Forge output.
             """
+            try: bookCode = ssBookAbbrevDict[BBB]
+            except:
+                logging.warning( "toSwordSearcher: ignoring book: {}".format( BBB ) )
+                return
+
             pseudoUSFMData = bookObject._processedLines
-            bookCode = ssBookAbbrevDict[BBB]
             started, accumulator = False, "" # Started flag ignores fields in the book introduction
             for entry in pseudoUSFMData:
                 marker, text = entry.getMarker(), entry.getCleanText()
@@ -5502,7 +5563,9 @@ class BibleWriter( InternalBible ):
             for BBB,bookObject in self.books.items():
                 numChapters = None
                 try: bookCode = Globals.BibleBooksCodes.getDrupalBibleAbbreviation( BBB ).upper()
-                except: continue # Don't know how to encode this book
+                except: # Don't know how to encode this book
+                    logging.warning( "toDrupalBible: ignoring book: {}".format( BBB ) )
+                    continue
                 for entry in bookObject._processedLines:
                     marker = entry.getMarker()
                     if marker == 'c': numChapters = entry.getCleanText()
@@ -5887,10 +5950,11 @@ def demo():
         from USFMBible import USFMBible
         from USFMFilenames import USFMFilenames
         testData = ( # name, abbreviation, folder
+                ("PNG", "PNG", "/mnt/SSD/AutoProcesses/Processed/BibleDropBox_KNTOT 2014-02-20/BibleDropBox_KNTOT 2014-02-20/", ),
                 #("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
                 #("Matigsalug", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
                 #("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
-                ("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
+                #("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
                 #("MS-BT", "MBTBT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
                 #("MS-Notes", "MBTBC", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/",),
                 #("MS-ABT", "MBTABT", "../../../../../Data/Work/Matigsalug/Bible/MBTABT/",),
