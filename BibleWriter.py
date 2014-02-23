@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-02-22 by RJH (also update ProgVersion below)
+#   Last modified: 2014-02-24 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -55,11 +55,11 @@ Contains functions:
     toTeX( outputFolder=None )
     toSwordSearcher( outputFolder=None )
     toDrupalBible( outputFolder=None )
-    doAllExports( givenOutputFolderName=None )
+    doAllExports( givenOutputFolderName=None, wantPhotoBible=False, wantPDFs=False )
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.53"
+ProgVersion = "0.54"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -71,11 +71,11 @@ OSISSchemaLocation = "http://www.bibletechnologies.net/osisCore.2.1.1.xsd"
 
 import sys, os, shutil, logging
 from datetime import datetime
-from gettext import gettext as _
 from collections import OrderedDict
 import re, sqlite3, json
 import zipfile, tarfile
 import subprocess, multiprocessing
+from gettext import gettext as _
 
 import Globals, ControlFiles
 from InternalBible import InternalBible
@@ -5707,20 +5707,24 @@ class BibleWriter( InternalBible ):
     ## end of BibleWriter.doExport
 
 
-    def doAllExports( self, givenOutputFolderName=None ):
+    def doAllExports( self, givenOutputFolderName=None, wantPhotoBible=False, wantPDFs=False ):
         """
         If the output folder is specified, it is expected that it's already created.
         Otherwise a new subfolder is created in the current folder.
+
+        The two very processor intensive exports require explicit inclusion.
         """
-        if Globals.verbosityLevel > 1: print( _("BibleWriter.doAllExports: Exporting {} ({}) to all formats...").format( self.name, self.objectTypeString ) )
+        allWord = "all" if wantPhotoBible and wantPDFs else "most"
+        if Globals.verbosityLevel > 1: print( "BibleWriter.doAllExports: " + _("Exporting {} ({}) to {} formats...").format( self.name, self.objectTypeString, allWord ) )
+
         if givenOutputFolderName == None:
             givenOutputFolderName = "OutputFiles/"
             if not os.access( givenOutputFolderName, os.F_OK ):
-                if Globals.verbosityLevel > 2: print( _("BibleWriter: creating '{}' output folder").format( givenOutputFolderName ) )
+                if Globals.verbosityLevel > 2: print( "BibleWriter.doAllExports: " + _("creating '{}' output folder").format( givenOutputFolderName ) )
                 os.makedirs( givenOutputFolderName ) # Make the empty folder if there wasn't already one there
         if Globals.debugFlag: assert( givenOutputFolderName and isinstance( givenOutputFolderName, str ) )
         if not os.access( givenOutputFolderName, os.W_OK ): # Then our output folder is not writeable!
-            logging.critical( _("BibleWriter.doAllExports: Given '{}' folder is unwritable").format( givenOutputFolderName ) )
+            logging.critical( "BibleWriter.doAllExports: " + _("Given '{}' folder is unwritable").format( givenOutputFolderName ) )
             return False
 
         # Define our various output folders
@@ -5729,7 +5733,6 @@ class BibleWriter( InternalBible ):
         USFMOutputFolder = os.path.join( givenOutputFolderName, "BOS_USFM_" + ("Reexport/" if self.objectTypeString=='USFM' else "Export/" ) )
         CBOutputFolder = os.path.join( givenOutputFolderName, "BOS_CustomBible_" + "Export/" )
         textOutputFolder = os.path.join( givenOutputFolderName, "BOS_PlainText_" + ("Reexport/" if self.objectTypeString=='Text' else "Export/" ) )
-        photoOutputFolder = os.path.join( givenOutputFolderName, "BOS_PhotoBible_Export/" )
         TWOutputFolder = os.path.join( givenOutputFolderName, "BOS_theWord_" + ("Reexport/" if self.objectTypeString=='TheWord' else "Export/" ) )
         MySwOutputFolder = os.path.join( givenOutputFolderName, "BOS_MySword_" + ("Reexport/" if self.objectTypeString=='MySword' else "Export/" ) )
         ESwOutputFolder = os.path.join( givenOutputFolderName, "BOS_e-Sword_" + ("Reexport/" if self.objectTypeString=='e-Sword' else "Export/" ) )
@@ -5742,9 +5745,17 @@ class BibleWriter( InternalBible ):
         OSISOutputFolder = os.path.join( givenOutputFolderName, "BOS_OSIS_" + ("Reexport/" if self.objectTypeString=='OSIS' else "Export/" ) )
         swOutputFolder = os.path.join( givenOutputFolderName, "BOS_Sword_" + ("Reexport/" if self.objectTypeString=='Sword' else "Export/" ) )
         htmlOutputFolder = os.path.join( givenOutputFolderName, "BOS_HTML5_" + "Export/" )
-        TeXOutputFolder = os.path.join( givenOutputFolderName, "BOS_TeX_" + "Export/" )
         SwSOutputFolder = os.path.join( givenOutputFolderName, "BOS_SwordSearcher_" + "Export/" )
         DrOutputFolder = os.path.join( givenOutputFolderName, "BOS_DrupalBible_" + ("Reexport/" if self.objectTypeString=='DrupalBible' else "Export/" ) )
+        photoOutputFolder = os.path.join( givenOutputFolderName, "BOS_PhotoBible_Export/" )
+        TeXOutputFolder = os.path.join( givenOutputFolderName, "BOS_TeX_" + "Export/" )
+
+        if not wantPhotoBible:
+            if Globals.verbosityLevel > 2: print( "BibleWriter.doAllExports: " + _("Skipping PhotoBible export") )
+            PhotoExportResult = None
+        if not wantPDFs:
+            if Globals.verbosityLevel > 2: print( "BibleWriter.doAllExports: " + _("Skipping TeX/PDF export") )
+            TeXExportResult = None
 
         # Pickle this Bible object
         # NOTE: This must be done before self.__setupWriter is called
@@ -5761,7 +5772,6 @@ class BibleWriter( InternalBible ):
             USFMExportResult = self.toUSFM( USFMOutputFolder )
             CBExportResult = self.toCustomBible( CBOutputFolder )
             TextExportResult = self.toText( textOutputFolder )
-            PhotoExportResult = self.toPhotoBible( photoOutputFolder )
             MWExportResult = self.toMediaWiki( MWOutputFolder )
             ZefExportResult = self.toZefaniaXML( zefOutputFolder )
             HagExportResult = self.toHaggaiXML( hagOutputFolder )
@@ -5776,7 +5786,8 @@ class BibleWriter( InternalBible ):
             htmlExportResult = self.toHTML5( htmlOutputFolder )
             SwSExportResult = self.toSwordSearcher( SwSOutputFolder )
             DrExportResult = self.toDrupalBible( DrOutputFolder )
-            TeXExportResult = self.toTeX( TeXOutputFolder ) # Put this last since it's slowest
+            if wantPhotoBible: PhotoExportResult = self.toPhotoBible( photoOutputFolder )
+            if wantPDFs: TeXExportResult = self.toTeX( TeXOutputFolder ) # Put this last since it's slowest
         elif Globals.maxProcesses > 1: # Process all the exports with different threads
             # DON'T KNOW WHY THIS CAUSES A SEGFAULT
             self.__outputFolders = [USFMOutputFolder, CBOutputFolder, MWOutputFolder, zOutputFolder, USXOutputFolder, USFXOutputFolder,
@@ -5793,7 +5804,6 @@ class BibleWriter( InternalBible ):
                 assert( len(results) == len(self.__outputFolders) )
                 USFMExportResult = results[0]
                 CBExportResult = results[0]
-                PhotoExportResult = results[0]
                 MWExportResult = results[1]
                 ZefExportResult = results[2]
                 HagExportResult = results[2]
@@ -5803,9 +5813,10 @@ class BibleWriter( InternalBible ):
                 OSISExportResult = results[4]
                 swExportResult = results[5]
                 htmlExportResult = results[6]
-                TeXExportResult = results[6]
                 SwSExportResult = results[6]
                 DrExportResult = results[7]
+                if wantPhotoBible: PhotoExportResult = results[0]
+                if wantPDFs: TeXExportResult = results[6]
         else: # Just single threaded and not debugging
             try: PseudoUSFMExportResult = self.toPseudoUSFM( PseudoUSFMOutputFolder )
             except Exception as err:
@@ -5827,11 +5838,6 @@ class BibleWriter( InternalBible ):
                 TextExportResult = False
                 print("BibleWriter.doAllExports.toText Unexpected error:", sys.exc_info()[0], err)
                 logging.error( "BibleWriter.doAllExports.toText: Oops, failed!" )
-            try: PhotoExportResult = self.toPhotoBible( photoOutputFolder )
-            except Exception as err:
-                PhotoExportResult = False
-                print("BibleWriter.doAllExports.toPhotoBible Unexpected error:", sys.exc_info()[0], err)
-                logging.error( "BibleWriter.doAllExports.toPhotoBible: Oops, failed!" )
             try: MWExportResult = self.toMediaWiki( MWOutputFolder )
             except Exception as err:
                 MWExportResult = False
@@ -5902,26 +5908,33 @@ class BibleWriter( InternalBible ):
                 DrExportResult = False
                 print("BibleWriter.doAllExports.toDrupalBible Unexpected error:", sys.exc_info()[0], err)
                 logging.error( "BibleWriter.doAllExports.toDrupalBible: Oops, failed!" )
-            # Do TeX export last because it's slowest
-            try: TeXExportResult = self.toTeX( TeXOutputFolder )
-            except Exception as err:
-                TeXExportResult = False
-                print("BibleWriter.doAllExports.toTeX Unexpected error:", sys.exc_info()[0], err)
-                logging.error( "BibleWriter.doAllExports.toTeX: Oops, failed!" )
+            if wantPhotoBible:
+                try: PhotoExportResult = self.toPhotoBible( photoOutputFolder )
+                except Exception as err:
+                    PhotoExportResult = False
+                    print("BibleWriter.doAllExports.toPhotoBible Unexpected error:", sys.exc_info()[0], err)
+                    logging.error( "BibleWriter.doAllExports.toPhotoBible: Oops, failed!" )
+            if wantPDFs: # Do TeX export last because it's slowest
+                try: TeXExportResult = self.toTeX( TeXOutputFolder )
+                except Exception as err:
+                    TeXExportResult = False
+                    print("BibleWriter.doAllExports.toTeX Unexpected error:", sys.exc_info()[0], err)
+                    logging.error( "BibleWriter.doAllExports.toTeX: Oops, failed!" )
 
         if Globals.verbosityLevel > 1:
-            if pickleResult and PseudoUSFMExportResult and USFMExportResult and CBExportResult and TextExportResult and PhotoExportResult \
+            if pickleResult and PseudoUSFMExportResult and USFMExportResult and CBExportResult and TextExportResult \
+            and (PhotoExportResult or not wantPhotoBible) \
             and TWExportResult and MySwExportResult and ESwExportResult and MWExportResult \
             and ZefExportResult and HagExportResult and OSExportResult and USXExportResult and USFXExportResult \
-            and OSISExportResult and swExportResult and htmlExportResult and TeXExportResult \
-            and SwSExportResult and DrExportResult:
+            and OSISExportResult and swExportResult and htmlExportResult and SwSExportResult and DrExportResult \
+            and (TeXExportResult or not wantPDFs):
                 print( "BibleWriter.doAllExports finished them all successfully!" )
             else: print( "BibleWriter.doAllExports finished:  Pck={}  PsUSFM={} USFM={}  CB={}  Tx={}  PB={} TW={} MySw={} eSw={}  MW={}  Zef={} Hag={} OS={} USX={} USFX={} OSIS={}  Sw={}  HTML={} TeX={} SwS={} Dr={}" \
-                    .format( pickleResult, PseudoUSFMExportResult, USFMExportResult, CBExportResult, TextExportResult, PhotoExportResult,
-                                TWExportResult, MySwExportResult, ESwExportResult,
-                                MWExportResult, ZefExportResult, HagExportResult, OSExportResult, USXExportResult, USFXExportResult,
-                                OSISExportResult, swExportResult, htmlExportResult, TeXExportResult, SwSExportResult,
-                                DrExportResult ) )
+                    .format( pickleResult, PseudoUSFMExportResult, USFMExportResult, CBExportResult, TextExportResult,
+                                PhotoExportResult, TWExportResult, MySwExportResult, ESwExportResult, MWExportResult,
+                                ZefExportResult, HagExportResult, OSExportResult, USXExportResult, USFXExportResult,
+                                OSISExportResult, swExportResult, htmlExportResult, TeXExportResult,
+                                SwSExportResult, DrExportResult ) )
         return { 'Pickle':pickleResult,
                     'PseudoUSFMExport':PseudoUSFMExportResult, 'USFMExport':USFMExportResult,
                     'CustomBibleExport':CBExportResult,  'TextExport':TextExportResult, 'PhotoExport':PhotoExportResult,
