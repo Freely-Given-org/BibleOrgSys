@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleInternals.py
-#   Last modified: 2014-02-11 by RJH (also update ProgVersion below)
+#   Last modified: 2014-02-24 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Bible internals handler"
-ProgVersion = "0.19"
+ProgVersion = "0.20"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -91,7 +91,7 @@ class InternalBibleExtra:
         """
         if Globals.debugFlag or Globals.strictCheckingFlag:
             #print( "InternalBibleExtra.__init__( {}, {}, {}, {} )".format( myType, index, repr(noteText), repr(cleanNoteText) ) )
-            assert( myType and isinstance( myType, str ) and myType in ('fn','xr','sr','sn',) ) # Mustn't be blank
+            assert( myType and isinstance( myType, str ) and myType in ('fn','xr','sr','sn','fig',) ) # Mustn't be blank
             assert( '\\' not in myType and ' ' not in myType and '*' not in myType )
             assert( isinstance( index, int ) and index >= 0 )
             assert( noteText and isinstance( noteText, str ) ) # Mustn't be blank
@@ -306,6 +306,7 @@ class InternalBibleEntry:
             ix = extraIndex + offset
             if extraType == 'fn': USFM = 'f'
             elif extraType == 'xr': USFM = 'x'
+            elif extraType == 'fig': USFM = 'fig'
             elif Globals.debugFlag: halt
             result = '{}\\{} {}\\{}*{}'.format( result[:ix], USFM, extraText, USFM, result[ix:] )
             #print( "getFullText:  now '{}'".format( result ) )

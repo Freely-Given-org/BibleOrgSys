@@ -807,46 +807,46 @@ class BibleWriter( InternalBible ):
             C = V = "0"
             textBuffer, lastMarker = "", None
             for entry in pseudoUSFMData:
-                marker, text = entry.getMarker(), entry.getCleanText()
-                #print( marker, repr(text) )
+                marker, cleanText = entry.getMarker(), entry.getCleanText()
+                #print( marker, repr(cleanText) )
                 if marker in ('id','ide','h','toc1','toc2','toc3','c#',): pass # Completely ignore these fields
                 elif marker in ('mt1','mt2','mt3',): # Simple headings
                     #if textBuffer: textBuffer += '\n'
-                    textBuffer += '\n\nHhH' + text + '\n'
+                    textBuffer += '\n\nHhH' + cleanText + '\n'
                 elif marker in ('s1','s2','s3','is1','is2','is3',): # Simple headings
                     #if textBuffer: textBuffer += '\n'
-                    textBuffer += '\n\nSsS' + text + '\n'
+                    textBuffer += '\n\nSsS' + cleanText + '\n'
                 elif marker in ('iot','io1','io2','io3',): pass # Drop the introduction
                 elif marker == 'c':
-                    #if text=='3': halt
+                    #if cleanText=='3': halt
                     if textBuffer: renderText( BBB, C, bookName, textBuffer, bookFolderPath ); textBuffer = ""
-                    C = text
+                    C = cleanText
                     #if C=='4': halt
                 elif marker == 'v':
-                    V = text
-                    textBuffer += (' ' if textBuffer and textBuffer[-1]!='\n' else '') + 'VvV' + text + ' '
+                    V = cleanText
+                    textBuffer += (' ' if textBuffer and textBuffer[-1]!='\n' else '') + 'VvV' + cleanText + ' '
                 elif marker == 'r':
-                    #numSpaces = ( maxLineCharacters - len(text) ) // 2
-                    #print( BBB, C, len(text), "numSpaces:", numSpaces, repr(text) )
-                    #textBuffer += '\n' + ' '*numSpaces + text # Roughly centred
+                    #numSpaces = ( maxLineCharacters - len(cleanText) ) // 2
+                    #print( BBB, C, len(cleanText), "numSpaces:", numSpaces, repr(cleanText) )
+                    #textBuffer += '\n' + ' '*numSpaces + cleanText # Roughly centred
                     if lastMarker not in ('s1','s2','s3',): textBuffer += '\n' # Section headings already have one at the end
-                    textBuffer += 'RrR' + ' '*((maxLineCharacters+1-len(text))//2) + text + '\n' # Roughly centred
+                    textBuffer += 'RrR' + ' '*((maxLineCharacters+1-len(cleanText))//2) + cleanText + '\n' # Roughly centred
                 elif marker == 'b':
-                    assert( not text )
+                    assert( not cleanText )
                     textBuffer += '\n'
                 elif marker == 'nb':
-                    textBuffer += '\n' + text
+                    textBuffer += '\n' + cleanText
                 elif marker in ('p','ip','ipi','q1','q2','q3',): # Just put it on a new line
-                    #if text and marker not in ('ip','ipi',):
-                        #logging.error( "Lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
+                    #if cleanText and marker not in ('ip','ipi',):
+                        #logging.error( "Lost cleanText in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(cleanText) ) )
                     textBuffer += '\n' + '  ' # Non-break spaces won't be lost later
-                    if marker in ('ip','ipi'): textBuffer += text
-                    else: assert( not text )
+                    if marker in ('ip','ipi'): textBuffer += cleanText
+                    else: assert( not cleanText )
                     if marker == 'q2': textBuffer += ' '
                     elif marker == 'q3': textBuffer += '  '
                 elif marker in ('v~','p~',):
-                    #assert( text or extras )
-                    textBuffer += text
+                    #assert( cleanText or extras )
+                    textBuffer += cleanText
                 elif marker not in ('rem',): # These are the markers that we can safely ignore for this export
                     unhandledMarkers.add( marker )
                 lastMarker = marker
@@ -1774,6 +1774,11 @@ class BibleWriter( InternalBible ):
                     elif extraType == 'xr':
                         extra = processXRef( extraText )
                         #print( "xr got", extra )
+                    elif extraType == 'fig':
+                        logging.critical( "USXXML figure not handled yet" )
+                        extra = "" # temp
+                        #extra = processFigure( extraText )
+                        #print( "fig got", extra )
                     elif Globals.debugFlag and debuggingThisModule: print( extraType ); halt
                     #print( "was", verse )
                     adjText = adjText[:adjIndex] + extra + adjText[adjIndex:]
@@ -2188,6 +2193,11 @@ class BibleWriter( InternalBible ):
                     elif extraType == 'xr':
                         extra = processXRef( extraText )
                         #print( "xr got", extra )
+                    elif extraType == 'fig':
+                        logging.critical( "USXFXML figure not handled yet" )
+                        extra = "" # temp
+                        #extra = processFigure( extraText )
+                        #print( "fig got", extra )
                     elif Globals.debugFlag and debuggingThisModule: print( extraType ); halt
                     #print( "was", verse )
                     adjText = adjText[:adjIndex] + extra + adjText[adjIndex:]
@@ -2684,6 +2694,11 @@ class BibleWriter( InternalBible ):
                     elif extraType == 'xr':
                         extra = processXRef( adjText )
                         #print( "xr got", extra )
+                    elif extraType == 'fig':
+                        logging.critical( "OSISXML figure not handled yet" )
+                        extra = "" # temp
+                        #extra = processFigure( extraText )
+                        #print( "fig got", extra )
                     elif Globals.debugFlag and debuggingThisModule: print( extraType ); halt
                     #print( "was", verse )
                     verse = verse[:adjIndex] + extra + verse[adjIndex:]
@@ -4965,6 +4980,11 @@ class BibleWriter( InternalBible ):
                     elif extraType == 'xr':
                         extra = processXRef( extraText, ourGlobals )
                         #print( "xr got", extra )
+                    elif extraType == 'fig':
+                        logging.critical( "HTML5 figure not handled yet" )
+                        extra = "" # temp
+                        #extra = processFigure( extraText )
+                        #print( "fig got", extra )
                     elif Globals.debugFlag and debuggingThisModule: print( extraType ); halt
                     #print( "was", verse )
                     adjText = adjText[:adjIndex] + extra + adjText[adjIndex:]
@@ -5981,8 +6001,7 @@ def demo():
                 UB.load()
                 if Globals.verbosityLevel > 0: print( '\nBWr A'+str(j+1)+'/', UB )
                 if Globals.strictCheckingFlag: UB.check()
-                #result = UB.toOpenSongXML(); halt
-                doaResults = UB.doAllExports()
+                doaResults = UB.doAllExports( wantPhotoBible=True, wantPDFs=True )
                 if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
                     outputFolder = "OutputFiles/BOS_USFM_Reexport/"
                     fN = USFMFilenames( testFolder )
@@ -6012,7 +6031,7 @@ def demo():
                 UB.load()
                 if Globals.verbosityLevel > 0: print( '\nBWr B'+str(j+1)+'/', UB )
                 if Globals.strictCheckingFlag: UB.check()
-                doaResults = UB.doAllExports()
+                doaResults = UB.doAllExports( wantPhotoBible=True, wantPDFs=True )
                 if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
                     outputFolder = "OutputFiles/BOS_USX_Reexport/"
                     fN = USXFilenames( testFolder )
@@ -6056,7 +6075,7 @@ def demo():
                 if Globals.verbosityLevel > 0: print( '\nBWr C'+str(j+1)+'/', UB )
                 #if Globals.strictCheckingFlag: UB.check()
                 #result = UB.totheWord()
-                doaResults = UB.doAllExports()
+                doaResults = UB.doAllExports( wantPhotoBible=True, wantPDFs=True )
                 if Globals.strictCheckingFlag: # Now compare the supplied and the exported theWord modules
                     outputFolder = "OutputFiles/BOS_theWord_Export/"
                     if os.path.exists( os.path.join( mainFolder, name + '.nt' ) ): ext = '.nt'

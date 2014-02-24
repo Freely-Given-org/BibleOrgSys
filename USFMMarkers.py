@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkers.py
-#   Last modified: 2013-09-15 (also update ProgVersion below)
+#   Last modified: 2014-02-24 (also update ProgVersion below)
 #
 # Module handling USFMMarkers
 #
-# Copyright (C) 2011-2013 Robert Hunt
+# Copyright (C) 2011-2014 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -37,7 +37,7 @@ ProgName = "USFM Markers handler"
 ProgVersion = "0.62"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
-debuggingThisModule = False
+debuggingThisModule = True
 
 
 import os, logging
@@ -285,9 +285,9 @@ class USFMMarkers:
 
     def __str__( self ):
         """
-        This method returns the string representation of a Bible book code.
+        This method returns the string representation of the USFM markers object.
 
-        @return: the name of a Bible object formatted as a string
+        @return: the name of a USFM markers object formatted as a string
         @rtype: string
         """
         indent = 2
@@ -297,6 +297,7 @@ class USFMMarkers:
             indent = 4
             result += ('\n' if result else '') + ' '*indent + _("Number of raw new line markers = {}").format( len(self.__DataDict["newlineMarkersList"]) )
             result += ('\n' if result else '') + ' '*indent + _("Number of internal markers = {}").format( len(self.__DataDict["internalMarkersList"]) )
+            result += ('\n' if result else '') + ' '*indent + _("Number of note markers = {}").format( len(self.__DataDict["noteMarkersList"]) )
         return result
     # end of USFMMarkers.__str__
 
@@ -331,6 +332,12 @@ class USFMMarkers:
         """ Return True or False. """
         if marker not in self.__DataDict["combinedMarkerDict"]: return False
         return self.toRawMarker(marker) in self.__DataDict["internalMarkersList"]
+
+
+    def isNoteMarker( self, marker ):
+        """ Return True or False. """
+        if marker not in self.__DataDict["combinedMarkerDict"]: return False
+        return self.toRawMarker(marker) in self.__DataDict["noteMarkersList"]
 
 
     def isDeprecatedMarker( self, marker ):
@@ -444,17 +451,19 @@ class USFMMarkers:
 
     def getInternalMarkersList( self ):
         """ Returns a list of all possible internal markers.
-            This includes character, footnote and xref markers. """
+            This includes character markers, but not footnote and xref markers. """
         return self.__DataDict["internalMarkersList"]
     # end of USFMMarkers.getInternalMarkersList
 
 
     def getCharacterMarkersList( self, includeBackslash=False, includeEndMarkers=False, expandNumberableMarkers=False ):
         """ Returns a list of all possible character markers.
+            These are fields that need to be displayed inline with the text, albeit with special formatting.
             This excludes footnote and xref markers. """
         result = []
         for marker in self.__DataDict["internalMarkersList"]:
-            if marker!='f' and marker!='x' and self.markerOccursIn(marker) in ("Text","Poetry","Table row","Introduction",):
+            #print( marker, self.markerOccursIn(marker) )
+            if self.markerOccursIn(marker) in ("Text","Canonical Text","Poetry","Table row","Introduction",):
                 adjMarker = '\\'+marker if includeBackslash else marker
                 result.append( adjMarker )
                 if includeEndMarkers:
@@ -467,6 +476,14 @@ class USFMMarkers:
                             result.append( adjMarker + digit + '*' )
         return result
     # end of USFMMarkers.getCharacterMarkersList
+
+
+    def getNoteMarkersList( self ):
+        """ Returns a list of all possible note markers.
+            This includes figure, footnote and xref markers.
+            These are fields that should not normally be displayed inline with the text. """
+        return self.__DataDict["noteMarkersList"]
+    # end of USFMMarkers.getNoteMarkersList
 
 
     def getTypicalNoteSets( self, select='All' ):
@@ -607,7 +624,8 @@ class USFMMarkers:
     # end of USFMMarkers.getMarkerListFromText
 
 
-    def getMarkerDictFromText( self, text, includeInitialText=False, verifyMarkers=False ):
+    # This function is faulty and not actually used except in the demo below
+    def XXXgetMarkerDictFromText( self, text, includeInitialText=False, verifyMarkers=False ):
         """
         Given a text, return an OrderedDict of the actual markers
             (along with their positions and other useful derived information).
@@ -634,7 +652,7 @@ class USFMMarkers:
         myList = self.getMarkerListFromText( text, includeInitialText, verifyMarkers )
         myDict = OrderedDict()
         for marker, ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt in myList:
-            if marker in myDict: logging.critical( "USFMMarkers.getMarkerDictFromText is losing information for repeated {} fields in {}".format( marker, repr(text) ) )
+            if marker in myDict: logging.critical( "USFMMarkers.getMarkerDictFromText is losing (overwriting) information for repeated {} fields in {}".format( marker, repr(text) ) )
             myDict[marker] = (ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt.strip())
         return myDict
     # end of USFMMarkers.getMarkerDictFromText
@@ -651,7 +669,7 @@ def demo():
     # Demo the USFMMarkers object
     um = USFMMarkers().loadData() # Doesn't reload the XML unnecessarily :)
     print( um ) # Just print a summary
-    print( "Markers can occurs in", um.getOccursInList() )
+    print( "\nMarkers can occur in", um.getOccursInList() )
     pm = um.getNewlineMarkersList( 'Raw' )
     print( "\nRaw New line markers are", len(pm), pm )
     pm = um.getNewlineMarkersList( 'Numbered' )
@@ -661,10 +679,14 @@ def demo():
     pm = um.getNewlineMarkersList( 'Combined' )
     print( "\nCombined New line markers are", len(pm), pm )
     pm = um.getNewlineMarkersList( 'CanonicalText' )
-    print( "\Canonical text New line markers are", len(pm), pm )
-    cm = um.getInternalMarkersList()
-    print( "\nInternal (character) markers are", len(cm), cm )
-    for m in ('ab', 'h', 'toc1', 'toc4', 'q', 'q1', 'q2', 'q3', 'q4', 'p', 'P', 'f', 'f*' ):
+    print( "\nCanonical text New line markers are", len(pm), pm )
+    im = um.getInternalMarkersList()
+    print( "\nInternal (character) markers are", len(im), im )
+    cm = um.getCharacterMarkersList()
+    print( "\nCharacter markers are", len(cm), cm )
+    nm = um.getNoteMarkersList()
+    print( "\nNote markers are", len(nm), nm )
+    for m in ('ab', 'h', 'toc1', 'toc4', 'toc5', 'q', 'q1', 'q2', 'q3', 'q4', 'q5', 'p', 'p1', 'P', 'f', 'f1', 'f*' ):
         print( _("{} is {}a valid marker").format( m, "" if um.isValidMarker(m) else _("not")+' ' ) )
         if um.isValidMarker(m):
             print( '  ' + "{}: {}".format( um.getMarkerEnglishName(m), um.getMarkerDescription(m) ) )
@@ -681,13 +703,13 @@ def demo():
                  '\\v 6 This \\add contains \\+it embedded codes with all closures missing.',
                  '- \\xo 1:3: \\xt 2Kur 4:6.', # A cross-reference
                  ):
-        print( "For text '{}' got markers:".format( text ) )
+        print( "\nFor text '{}' got markers:".format( text ) )
         print( "         A-L {}".format( um.getMarkerListFromText( text, verifyMarkers=True ) ) )
         print( "         B-L {}".format( um.getMarkerListFromText( text, includeInitialText=True ) ) )
         print( "         C-L {}".format( um.getMarkerListFromText( text, includeInitialText=True, verifyMarkers=True ) ) )
-        print( "         A-D {}".format( um.getMarkerDictFromText( text, verifyMarkers=True ) ) )
-        print( "         B-D {}".format( um.getMarkerDictFromText( text, includeInitialText=True ) ) )
-        print( "         C-D {}".format( um.getMarkerDictFromText( text, includeInitialText=True, verifyMarkers=True ) ) )
+        #print( "         A-D {}".format( um.getMarkerDictFromText( text, verifyMarkers=True ) ) )
+        #print( "         B-D {}".format( um.getMarkerDictFromText( text, includeInitialText=True ) ) )
+        #print( "         C-D {}".format( um.getMarkerDictFromText( text, includeInitialText=True, verifyMarkers=True ) ) )
 
 
     text = "\\v~ \\x - \\xo 12:13 \\xt Cross \wj \wj*reference text.\\x*Main \\add actual\\add* verse text.\\f + \\fr 12:13\\fr* \\ft with footnote.\\f*"

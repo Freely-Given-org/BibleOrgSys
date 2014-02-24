@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkersConverter.py
-#   Last modified: 2013-08-28 (also update ProgVersion below)
+#   Last modified: 2014-02-24 (also update ProgVersion below)
 #
 # Module handling USFMMarkers.xml to produce C and Python data tables
 #
-# Copyright (C) 2011-2013 Robert Hunt
+# Copyright (C) 2011-2014 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling USFMMarkers.xml and to export to JSON, C, and Python data tables
 """
 
 ProgName = "USFM Markers converter"
-ProgVersion = "0.56"
+ProgVersion = "0.62"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -253,7 +253,8 @@ class USFMMarkersConverter:
         rawMarkerDict, numberedMarkerList, combinedMarkerDict, = OrderedDict(), [], {}
         conversionDict, backConversionDict = {}, {}
         newlineMarkersList, numberedNewlineMarkersList, combinedNewlineMarkersList = [], [], []
-        internalMarkersList, numberedInternalMarkersList, combinedInternalMarkersList, deprecatedMarkersList = [], [], [], []
+        internalMarkersList, numberedInternalMarkersList, combinedInternalMarkersList = [], [], []
+        noteMarkersList, deprecatedMarkersList = [], []
         for element in self._XMLtree:
             # Get the required information out of the tree for this element
             # Start with the compulsory elements
@@ -267,6 +268,7 @@ class USFMMarkersConverter:
             compulsoryFlag = compulsory == "Yes"
             if  level == "Newline": newlineMarkersList.append( marker ); combinedNewlineMarkersList.append( marker )
             elif level == "Internal": internalMarkersList.append( marker )
+            elif level == "Note": noteMarkersList.append( marker )
             else: logging.error( _("Unexpected '{}' level field for marker '{}'").format( level, marker ) )
             numberable = element.find("numberable").text
             if  numberable not in ( "Yes", "No" ): logging.error( _("Unexpected '{}' numberable field for marker '{}'").format( numberable, marker ) )
@@ -329,7 +331,7 @@ class USFMMarkersConverter:
                                 "conversionDict":conversionDict, "backConversionDict":backConversionDict,
                                 "newlineMarkersList":newlineMarkersList, "numberedNewlineMarkersList":numberedNewlineMarkersList, "combinedNewlineMarkersList":combinedNewlineMarkersList,
                                 "internalMarkersList":internalMarkersList, "numberedInternalMarkersList":numberedInternalMarkersList, "combinedInternalMarkersList":combinedInternalMarkersList,
-                                "deprecatedMarkersList":deprecatedMarkersList, }
+                                "noteMarkersList":noteMarkersList, "deprecatedMarkersList":deprecatedMarkersList, }
         return self.__DataDicts # Just delete any of the dictionaries that you don't need
     # end of importDataToPython
 
@@ -415,6 +417,7 @@ class USFMMarkersConverter:
                             "internalMarkersList":(exportPythonList, "","rawMarker"),
                             "numberedInternalMarkersList":(exportPythonList, "","rawMarker"),
                             "combinedInternalMarkersList":(exportPythonList, "","rawMarker"),
+                            "noteMarkersList":(exportPythonList, "","rawMarker"),
                             "deprecatedMarkersList":(exportPythonList, "","rawMarker") }
             for dictName in self.__DataDicts:
                 exportFunction, keyComment, fieldsComment = dictInfo[dictName]

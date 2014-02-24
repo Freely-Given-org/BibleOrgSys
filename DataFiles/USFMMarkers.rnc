@@ -1,6 +1,6 @@
 # USFMMarkers.rnc           Relax NG Compact Syntax schema file
-#   Version 0.57
-#   Last modified: 2012-06-28
+#   Version 0.61
+#   Last modified: 2014-02-24
 #
 # On Linux, to convert to RNG, use
 #       trang USFMMarkers.rnc DerivedFiles/USFMMarkers.rng
@@ -46,7 +46,7 @@ USFMMarker = element USFMMarker
 {   element nameEnglish { xsd:string { minLength="5" maxLength="60" } },
     element marker { xsd:string { minLength="1" maxLength="6" } },
     element compulsory { "Yes"|"No" },
-    element level { "Newline"|"Internal" },
+    element level { "Newline"|"Internal"|"Note" },
     element numberable { "Yes"|"No" },
     element nests { "Yes"|"No" },
     element hasContent { "Always"|"Sometimes"|"Never" },
