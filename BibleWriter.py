@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-02-24 by RJH (also update ProgVersion below)
+#   Last modified: 2014-02-26 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -528,8 +528,11 @@ class BibleWriter( InternalBible ):
         defaultTextFontname, defaultHeadingFontname = "Times-Roman", "FreeSans-Bold"
         topLineColor = "opaque"
         defaultMainHeadingFontcolor, defaultSectionHeadingFontcolor, defaultSectionReferenceFontcolor = "indigo", "red1", "royalBlue"
+        defaultVerseNumberFontcolor = "DarkOrange1"
         maxBooknameLetters = 12 # For the header line -- the chapter number is appended to this
         namingFormat = "Short" # "Short" or "Long" -- affects folder and filenames
+        colorVerseNumbersFlag = False
+        #digitSpace = chr(8199) # '\u2007'
 
         #blankFilepath = os.path.join( defaultControlFolder, "blank-240x320.jpg" )
         # Used: convert -fill khaki1 -draw 'rectangle 0,0 240,24' blank-240x320.jpg.jpg yblank-240x320.jpg
@@ -590,6 +593,23 @@ class BibleWriter( InternalBible ):
         # end of renderLine
 
 
+        def renderVerseNumbers( givenAcross, down, vnInfo, jpegFilepath, fontsize, fontname, fontcolor ):
+            """
+            Failed experiment. A space is narrower than a digit. The Unicode digitSpace doesn't work in ImageMagick.
+            """
+            vnLineBuffer = ""
+            vnCommands = []
+            for posn,vn in vnInfo:
+                #print( posn, repr(vn) )
+                vnLineBuffer += ' ' * (posn - len(vnLineBuffer) ) + vn # Space is too narrow
+                print( repr(vnLineBuffer), vnInfo )
+
+                across = givenAcross + posn * fontsize * 3 / 10
+                vnCommands.extend( renderLine( across, down, vn, jpegFilepath, fontsize, fontname, fontcolor ) )
+            return vnCommands
+        # end of renderVerseNumbers
+
+
         def renderPage( BBB, C, bookName, text, jpegFilepath, fontsize=None ):
             """
                 I need to see a page showing 26-32 characters per line and 13-14 lines per page
@@ -624,7 +644,9 @@ class BibleWriter( InternalBible ):
             for originalLine in lines:
                 #print( "line", repr(originalLine) )
                 line = originalLine
-                fontcolor = "opaque" # gives black
+                fontcolor = "opaque" # gives black as default
+
+                verseNumberList = [] # Contains a list of 2-tuples indicating where verse numbers should go
 
                 if down >= maxDown - leading \
                 or outputLineCount == maxLines - 1:
@@ -667,7 +689,8 @@ class BibleWriter( InternalBible ):
                         isVerseNumber = False
                         vix = word.find( 'VvV' )
                         if vix != -1: # This must be a verse number (perhaps preceded by some spaces)
-                            word = word[:vix]+word[vix+3:]; isVerseNumber = True
+                            word = word[:vix]+word[vix+3:]
+                            isVerseNumber = True
                         #assert( 'VvV' not in word )
 
                         if down >= maxDown - leading \
@@ -698,6 +721,10 @@ class BibleWriter( InternalBible ):
                         if potentialLength  >= maxLineCharacters:
                             # Print this line as we've already got it coz it would be too long if we added the word
                             totalCommands.extend( renderLine( across, down, lineBuffer, jpegFilepath, fontsize, defaultTextFontname, fontcolor ) )
+                            if verseNumberList:
+                                print( repr(lineBuffer) )
+                                totalCommands.extend( renderVerseNumbers( across, down, verseNumberList, jpegFilepath, fontsize, defaultTextFontname, defaultVerseNumberFontcolor ) )
+                                verseNumberList = []
                             down += leading
                             outputLineCount += 1
                             lineBuffer = ""
@@ -705,12 +732,20 @@ class BibleWriter( InternalBible ):
                             if outputLineCount >= maxLines: break
                             if down >= maxDown: break # We're finished
                         # Add the word (without the verse number markers)
-                        lineBuffer += (' ' if lineBuffer else '' ) + word
+                        lineBuffer += (' ' if lineBuffer else '')
+                        if isVerseNumber and colorVerseNumbersFlag:
+                            verseNumberList.append( (len(lineBuffer),word,) )
+                            lineBuffer += ' ' * int( 1.6 * len(word) ) # Just put spaces in for place holders for the present
+                        else: lineBuffer += word
                         textWordCount += 1
 
                     # Words in this source text line are all processed
                     if lineBuffer: # do the last line
                         totalCommands.extend( renderLine( across, down, lineBuffer, jpegFilepath, fontsize, defaultTextFontname, fontcolor ) )
+                        if verseNumberList:
+                            print( repr(lineBuffer) )
+                            totalCommands.extend( renderVerseNumbers( across, down, verseNumberList, jpegFilepath, fontsize, defaultTextFontname, defaultVerseNumberFontcolor ) )
+                            verseNumberList = []
                         down += leading
                         outputLineCount += 1
                 elif textLineCount!=1: # it's a blank line (but not the first line on the page)
@@ -737,30 +772,35 @@ class BibleWriter( InternalBible ):
         # end of renderPage
 
 
-        def renderText( BBB, C, bookName, text, bookFolderName, fontsize=None ):
+        def renderText( BBB, BBBnum, bookName, C, maxChapters, numVerses, text, bookFolderName, fontsize=None ):
             """
             """
             #print( "\nrenderText( {}, {}, {}, {}, {}, {}, {} )".format( BBB, C, repr(text), jpegFoldername, fontsize, fontcolor, leading ) )
 
             intC = int( C )
-            BBBnum = Globals.BibleBooksCodes.getReferenceNumber( BBB )
-            maxChapters = Globals.BibleBooksCodes.getMaxChapters( BBB )
             if namingFormat == "Short":
-                if maxChapters < 10: formatString1 = "{:01}-{}/"
-                elif maxChapters < 100: formatString1 = "{:02}-{}/"
-                else: formatString1 = "{:03}-{}/"
-                chapterFolderName = formatString1.format( intC, BBB )
-                formatString2 = "{:02}.jpg" # Max of 99 pages per chapter
+                if maxChapters < 10: chapterFoldernameTemplate = "{:01}-{}/"
+                elif maxChapters < 100: chapterFoldernameTemplate = "{:02}-{}/"
+                else: chapterFoldernameTemplate = "{:03}-{}/"
+                chapterFolderName = chapterFoldernameTemplate.format( intC, BBB )
+                filenameTemplate = "{:02}.jpg" if numVerses < 80 else "{:03}.jpg" # Might go over 99 pages for the chapter
             elif namingFormat == "Long":
                 if BBBnum < 100:
-                    if maxChapters < 10: formatString1, formatString2 = "{:02}-{:01}-{}/", "{:02}-{:01}-{:02}-{}.jpg"
-                    elif maxChapters < 100: formatString1, formatString2 = "{:02}-{:02}-{}/", "{:02}-{:02}-{:02}-{}.jpg"
-                    else: formatString1, formatString2 = "{:02}-{:03}-{}/", "{:02}-{:03}-{:02}-{}.jpg"
+                    if maxChapters < 10:
+                        chapterFoldernameTemplate, filenameTemplate = "{:02}-{:01}-{}/", "{:02}-{:01}-{:02}-{}.jpg"
+                    elif maxChapters < 100:
+                        chapterFoldernameTemplate, filenameTemplate = "{:02}-{:02}-{}/", "{:02}-{:02}-{:02}-{}.jpg"
+                    else:
+                        chapterFoldernameTemplate, filenameTemplate = "{:02}-{:03}-{}/", "{:02}-{:03}-{:02}-{}.jpg"
                 else: # not normally expected
-                    if maxChapters < 10: formatString1, formatString2 = "{:03}-{:01}-{}/", "{:03}-{:01}-{:02}-{}.jpg"
-                    elif maxChapters < 100: formatString1, formatString2 = "{:03}-{:02}-{}/", "{:03}-{:02}-{:02}-{}.jpg"
-                    else: formatString1, formatString2 = "{:03}-{:03}-{}/", "{:03}-{:03}-{:02}-{}.jpg"
-                chapterFolderName = formatString1.format( Globals.BibleBooksCodes.getReferenceNumber( BBB ), intC, BBB )
+                    if maxChapters < 10:
+                        chapterFoldernameTemplate, filenameTemplate = "{:03}-{:01}-{}/", "{:03}-{:01}-{:02}-{}.jpg"
+                    elif maxChapters < 100:
+                        chapterFoldernameTemplate, filenameTemplate = "{:03}-{:02}-{}/", "{:03}-{:02}-{:02}-{}.jpg"
+                    else:
+                        chapterFoldernameTemplate, filenameTemplate = "{:03}-{:03}-{}/", "{:03}-{:03}-{:02}-{}.jpg"
+                chapterFolderName = chapterFoldernameTemplate.format( Globals.BibleBooksCodes.getReferenceNumber( BBB ), intC, BBB )
+                if numVerses > 80: filenameTemplate = filenameTemplate.replace( "{:02}-{}", "{:03}-{}" )
             else: halt
 
             chapterFolderPath = os.path.join( bookFolderName, chapterFolderName )
@@ -770,11 +810,12 @@ class BibleWriter( InternalBible ):
             leftoverText = text
             while leftoverText:
                 if namingFormat == "Short":
-                    jpegOutputFilepath = os.path.join( chapterFolderPath, formatString2.format( pagesWritten ) )
+                    jpegOutputFilepath = os.path.join( chapterFolderPath, filenameTemplate.format( pagesWritten ) )
                 elif namingFormat == "Long":
-                    jpegOutputFilepath = os.path.join( chapterFolderPath, formatString2.format( BBBnum, intC, pagesWritten, BBB ) )
+                    jpegOutputFilepath = os.path.join( chapterFolderPath, filenameTemplate.format( BBBnum, intC, pagesWritten, BBB ) )
                 leftoverText = renderPage( BBB, C, bookName, leftoverText, jpegOutputFilepath )
                 pagesWritten += 1
+            if Globals.debugFlag and pagesWritten>99 and numVerses<=80: halt # Template is probably bad
 
             #print( "pagesWritten were", pagesWritten )
             return pagesWritten
@@ -803,8 +844,12 @@ class BibleWriter( InternalBible ):
                 #print( "Tried bookName:", repr(bookName) )
                 if bookName is not None and len(bookName)<=maxBooknameLetters: break
 
+            BBBnum = Globals.BibleBooksCodes.getReferenceNumber( BBB )
+            maxChapters = Globals.BibleBooksCodes.getMaxChapters( BBB )
+
             # First of all, get the text (by chapter)
             C = V = "0"
+            numVerses = 0
             textBuffer, lastMarker = "", None
             for entry in pseudoUSFMData:
                 marker, cleanText = entry.getMarker(), entry.getCleanText()
@@ -819,12 +864,14 @@ class BibleWriter( InternalBible ):
                 elif marker in ('iot','io1','io2','io3',): pass # Drop the introduction
                 elif marker == 'c':
                     #if cleanText=='3': halt
-                    if textBuffer: renderText( BBB, C, bookName, textBuffer, bookFolderPath ); textBuffer = ""
+                    if textBuffer: renderText( BBB, BBBnum, bookName, C, maxChapters, numVerses, textBuffer, bookFolderPath ); textBuffer = ""
                     C = cleanText
                     #if C=='4': halt
+                    numVerses = 0
                 elif marker == 'v':
                     V = cleanText
                     textBuffer += (' ' if textBuffer and textBuffer[-1]!='\n' else '') + 'VvV' + cleanText + ' '
+                    numVerses += 1
                 elif marker == 'r':
                     #numSpaces = ( maxLineCharacters - len(cleanText) ) // 2
                     #print( BBB, C, len(cleanText), "numSpaces:", numSpaces, repr(cleanText) )
@@ -850,7 +897,7 @@ class BibleWriter( InternalBible ):
                 elif marker not in ('rem',): # These are the markers that we can safely ignore for this export
                     unhandledMarkers.add( marker )
                 lastMarker = marker
-            if textBuffer: renderText( BBB, C, bookName, textBuffer, bookFolderPath ) # Write the last bit
+            if textBuffer: renderText( BBB, BBBnum, bookName, C, maxChapters, numVerses, textBuffer, bookFolderPath ) # Write the last bit
 
                     #if verseByVerse:
                         #myFile.write( "{} ({}): '{}' '{}' {}\n" \
@@ -5983,10 +6030,9 @@ def demo():
         from USFMBible import USFMBible
         from USFMFilenames import USFMFilenames
         testData = ( # name, abbreviation, folder
-                ("PNG", "PNG", "/mnt/SSD/AutoProcesses/Processed/BibleDropBox_KNTOT 2014-02-20/BibleDropBox_KNTOT 2014-02-20/", ),
-                #("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
-                #("Matigsalug", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
-                #("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
+                ("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
+                ("Matigsalug", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
+                ("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
                 #("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
                 #("MS-BT", "MBTBT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
                 #("MS-Notes", "MBTBC", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/",),
@@ -6001,6 +6047,7 @@ def demo():
                 UB.load()
                 if Globals.verbosityLevel > 0: print( '\nBWr A'+str(j+1)+'/', UB )
                 if Globals.strictCheckingFlag: UB.check()
+                #UB.toPhotoBible(); halt
                 doaResults = UB.doAllExports( wantPhotoBible=True, wantPDFs=True )
                 if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
                     outputFolder = "OutputFiles/BOS_USFM_Reexport/"
