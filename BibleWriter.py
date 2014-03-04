@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-02-26 by RJH (also update ProgVersion below)
+#   Last modified: 2014-03-04 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -1872,9 +1872,11 @@ class BibleWriter( InternalBible ):
                         xw.removeFinalNewline( True )
                         xw.writeLineClose( 'para' )
                         haveOpenPara = False
-                    C = adjText
-                    #print( 'c', C )
+                    #print( BBB, 'C', repr(text), repr(adjText) )
+                    C = text # not adjText!
                     xw.writeLineOpenSelfclose ( 'chapter', [('number',C),('style','c')] )
+                    if adjText != text:
+                        logging.warning( "toUSXXML: Lost additional note text on c for {} {}".format( BBB, repr(C) ) )
                 elif marker == 'c~': # Don't really know what this stuff is!!!
                     if not adjText: logging.warning( "toUSXXML: Missing text for c~" ); continue
                     # TODO: We haven't stripped out character fields from within the text -- not sure how USX handles them yet
@@ -2287,9 +2289,11 @@ class BibleWriter( InternalBible ):
                         xw.removeFinalNewline( True )
                         xw.writeLineClose( 'p' )
                         haveOpenPara = False
-                    C = adjText
-                    #print( 'c', C )
+                    #print( BBB, 'C', repr(text), repr(adjText) )
+                    C = text # not adjText!
                     xw.writeLineOpenSelfclose ( 'c', ('id',C) )
+                    if adjText != text:
+                        logging.warning( "toUSFXXML: Lost additional note text on c for {} {}".format( BBB, repr(C) ) )
                 elif marker == 'c~': # Don't really know what this stuff is!!!
                     if not adjText: logging.warning( "toUSFXXML: Missing text for c~" ); continue
                     # TODO: We haven't stripped out character fields from within the text -- not sure how USFX handles them yet
@@ -6030,10 +6034,10 @@ def demo():
         from USFMBible import USFMBible
         from USFMFilenames import USFMFilenames
         testData = ( # name, abbreviation, folder
-                ("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
-                ("Matigsalug", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
-                ("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
-                #("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
+                #("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
+                #("Matigsalug", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
+                #("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
+                ("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
                 #("MS-BT", "MBTBT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
                 #("MS-Notes", "MBTBC", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/",),
                 #("MS-ABT", "MBTABT", "../../../../../Data/Work/Matigsalug/Bible/MBTABT/",),

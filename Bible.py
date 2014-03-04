@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # Bible.py
-#   Last modified: 2013-12-18 (also update ProgVersion below)
+#   Last modified: 2014-03-04 (also update ProgVersion below)
 #
 # Module handling a internal Bible object
 #
-# Copyright (C) 2010-2013 Robert Hunt
+# Copyright (C) 2010-2014 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -311,7 +311,7 @@ class Bible( BibleWriter ):
                 #elif marker== 'iot': bk.append( ('IOT', text,) )
                 #elif marker== 'mt1': bk.append( ('MT1', text,) )
                 #elif marker== 'mt2': bk.append( ('MT2', text,) )
-                #elif marker== 'h1': bk.append( ('RH1', text,) )
+                #elif marker== 'h': bk.append( ('RH1', text,) )
                 #elif marker== 'is1': bk.append( ('IS1', text,) )
                 #elif marker== 'is2': bk.append( ('IS2', text,) )
                 #elif marker== 'm': bk.append( ('Mar', text,) )

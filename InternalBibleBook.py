@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2014-02-24 by RJH (also update ProgVersion below)
+#   Last modified: 2014-03-04 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -1897,7 +1897,7 @@ class InternalBibleBook:
             # Do other useful functional counts
             elif marker=='p':
                 functionalCounts['Paragraphs'] = 1 if 'Paragraphs' not in functionalCounts else (functionalCounts['Paragraphs'] + 1)
-            elif marker=='h1':
+            elif marker=='h':
                 functionalCounts['Section Headers'] = 1 if 'Section Headers' not in functionalCounts else (functionalCounts['Section Headers'] + 1)
             elif marker=='r':
                 functionalCounts['Section Cross-References'] = 1 if 'Section Cross-References' not in functionalCounts else (functionalCounts['Section Cross-References'] + 1)
@@ -1968,7 +1968,7 @@ class InternalBibleBook:
                     # If a marker has =E after it, it must NOT contain data
                     # (If data is optional, enter both sets)
                     # Heading stuff (in order of occurrence)
-                    ('=E','id'), ('id','h1'),('id','ide'), ('ide','h1'), ('h1','toc1'),('h1','mt1'),('h1','mt2'), ('toc1','toc2'), ('toc2','toc3'),('toc2','mt1'),('toc2','mt2'), ('toc3','mt1'),('toc3','mt2'),
+                    ('=E','id'), ('id','h'),('id','ide'), ('ide','h'), ('h','toc1'),('h','mt1'),('h','mt2'), ('toc1','toc2'), ('toc2','toc3'),('toc2','mt1'),('toc2','mt2'), ('toc3','mt1'),('toc3','mt2'),
                     ('mt1','mt2'),('mt1','imt1'),('mt1','is1'), ('mt2','mt1'),('mt2','imt1'),('mt2','is1'),
                     ('imt1','ip'),('is1','ip'), ('ip','ip'),('ip','iot'), ('imt','iot'), ('iot','io1'), ('io1','io1'),('io1','io2'),('io1','c'), ('io2','io1'),('io2','io2'),('io2','c'),
                     # Regular chapter stuff (in alphabetical order)

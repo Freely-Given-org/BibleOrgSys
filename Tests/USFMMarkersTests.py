@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkersTests.py
-#   Last modified: 2014-01-10 (also update ProgVersion below)
+#   Last modified: 2014-03-04 (also update ProgVersion below)
 #
 # Module testing USFMMarkers.py
 #
@@ -154,7 +154,7 @@ class USFMMarkersTests( unittest.TestCase ):
             self.assertFalse( self.UMs.isInternalMarker(simpleMarker) )
         for numberableMarker in ( 'h', 'q', 'ili', ):
             self.assertFalse( self.UMs.isInternalMarker(numberableMarker) )
-        for numberedMarker in ( 'h1', 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', ):
+        for numberedMarker in ( 'h', 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', ):
             self.assertFalse( self.UMs.isInternalMarker(numberedMarker) )
         for badMarker in ( 'H', 'y', 'Q1', 'q5', 'toc4', 'x*', '\\p', ):
             self.assertFalse( self.UMs.isInternalMarker(badMarker) )
@@ -170,7 +170,7 @@ class USFMMarkersTests( unittest.TestCase ):
             self.assertFalse( self.UMs.isDeprecatedMarker(simpleMarker) )
         for numberableMarker in ( 'h', 'q', 'ili', ):
             self.assertFalse( self.UMs.isDeprecatedMarker(numberableMarker) )
-        for numberedMarker in ( 'h1', 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', ):
+        for numberedMarker in ( 'h', 'q1', 'q2', 'q3', 's1', 'ili1', 'ili2', 'ili3', ):
             self.assertFalse( self.UMs.isDeprecatedMarker(numberedMarker) )
         for badMarker in ( 'H', 'y', 'Q1', 'q5', 'toc4', 'x*', '\\p', ):
             self.assertFalse( self.UMs.isDeprecatedMarker(badMarker) )
