@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-03-04 by RJH (also update ProgVersion below)
+#   Last modified: 2014-03-13 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -330,11 +330,97 @@ class BibleWriter( InternalBible ):
         #assert( controlDict and isinstance( controlDict, dict ) )
 
         CBDataFormatVersion = 1
+        jsonIndent = 2 # Keep files small for small phones
 
-        bookOutputFolder = os.path.join( outputFolder, "ByBook.{}".format( CBDataFormatVersion ) )
-        if not os.access( bookOutputFolder, os.F_OK ): os.makedirs( bookOutputFolder ) # Make the empty folder if there wasn't already one there
-        chapterOutputFolder = os.path.join( outputFolder, "ByChapter.{}".format( CBDataFormatVersion ) )
-        if not os.access( chapterOutputFolder, os.F_OK ): os.makedirs( chapterOutputFolder ) # Make the empty folder if there wasn't already one there
+        bookOutputFolderJSON = os.path.join( outputFolder, "ByBook.{}.JSON".format( CBDataFormatVersion ) )
+        if not os.access( bookOutputFolderJSON, os.F_OK ): os.makedirs( bookOutputFolderJSON ) # Make the empty folder if there wasn't already one there
+        chapterOutputFolderJSON = os.path.join( outputFolder, "ByChapter.{}.JSON".format( CBDataFormatVersion ) )
+        if not os.access( chapterOutputFolderJSON, os.F_OK ): os.makedirs( chapterOutputFolderJSON ) # Make the empty folder if there wasn't already one there
+        bookOutputFolderHTML = os.path.join( outputFolder, "ByBook.{}.HTML".format( CBDataFormatVersion ) )
+        if not os.access( bookOutputFolderHTML, os.F_OK ): os.makedirs( bookOutputFolderHTML ) # Make the empty folder if there wasn't already one there
+        #chapterOutputFolderHTML = os.path.join( outputFolder, "ByChapter.{}.HTML".format( CBDataFormatVersion ) )
+        #if not os.access( chapterOutputFolderHTML, os.F_OK ): os.makedirs( chapterOutputFolderHTML ) # Make the empty folder if there wasn't already one there
+        destinationHTMLFilepathTemplate = os.path.join( bookOutputFolderHTML, "CBBook.{}.html" ) # Missing the BBB
+        compressionFilepath = os.path.join( outputFolder, "CBCmprnDict.json" )
+
+        unhandledMarkers = set()
+
+        CBCompressions = (
+            ('@A','<p class="SectionHeading1">'),
+            ('@B','<span class="ChapterNumber">'),
+            ('@C','<span class="VerseNumber">'),
+            ('@D','<span class="VerseText">'),
+            ('@E','<p class="ParagraphP">'),
+            ('@F','<p class="ParagraphQ1">'),
+            ('@G','<p class="ParagraphQ2">'),
+            ('@H','<p class="ParagraphIP">'),
+            ('@p','</p>'),
+            ('@s','</span>'),
+        )
+
+        usageCount = {}
+        codeSet, dataSet, reversedCompressions = [], [], []
+        for shortString, longString in CBCompressions:
+            usageCount[shortString] = 0
+            if shortString in codeSet: # check for duplicates
+                logging.critical( "Duplicate {} in compression dict".format( repr(shortString) ) )
+                print( shortString, codeSet )
+                halt
+            codeSet.append( shortString )
+            if longString in dataSet: # check for duplicates
+                logging.critical( "Duplicate {} in compression dict".format( repr(longString) ) )
+                print( longString, dataSet )
+                halt
+            dataSet.append( longString )
+            if longString != '@':
+                reversedCompressions.append( (longString,shortString,) )
+        reversedCompressions = sorted( reversedCompressions, key=lambda s: -len(s[0]) ) # Longest string length first
+        #print( len(reversedCompressions), reversedCompressions )
+
+
+        bytesRaw = bytesCompressed = 0
+        def compress( entry ):
+            """
+            """
+            nonlocal bytesRaw, bytesCompressed
+            #print( repr(entry) ); halt
+            bytesRaw += len( entry.encode('UTF8') )
+            result = entry
+            if '@' in result:
+                result = result.replace( '@', '~~' )
+                usageCount['~~'] += 1
+            for longString, shortString in reversedCompressions:
+                if longString in result:
+                    result = result.replace( longString, shortString )
+                    usageCount[shortString] += 1
+            bytesCompressed += len( result.encode('UTF8') )
+            return result
+            # end of compress
+
+
+        def decompress( entry ):
+            """
+            """
+            result = entry
+            for shortString, longString in CBCompressions:
+                result = result.replace( shortString, longString )
+            return result
+            # end of decompress
+
+
+        def writeCompressions():
+            """
+            """
+            if Globals.verbosityLevel > 1:
+                print( "  Writing compression entries..." )
+            #filepath = os.path.join( outputFolder, 'CBHeader.json' )
+            if Globals.verbosityLevel > 2: print( "    toCustomBible " +  _("Exporting index to {}...").format( compressionFilepath ) )
+            with open( compressionFilepath, 'wt' ) as jsonFile:
+                #for compression in SDCompressions:
+                    #compFile.write( compression[0] + compression[1] + '\n' )
+                json.dump( CBCompressions, jsonFile, indent=jsonIndent )
+            print( "    {} compression entries written.".format( len(CBCompressions) ) )
+            # end of writeCompressions
 
 
         def writeCBHeader():
@@ -343,6 +429,7 @@ class BibleWriter( InternalBible ):
             headerDict = OrderedDict()
             headerDict['Data format version'] = CBDataFormatVersion
             headerDict['Conversion date'] = datetime.today().strftime("%Y-%m-%d")
+            headerDict['Conversion program'] = ProgNameVersion
             headerDict['Version name'] = self.settingsDict['WorkTitle'] if 'WorkTitle' in self.settingsDict else self.name
             headerDict['Version abbreviation'] = self.settingsDict['WorkAbbreviation'] if 'WorkAbbreviation' in self.settingsDict else self.abbreviation
             #print( headerDict )
@@ -350,7 +437,7 @@ class BibleWriter( InternalBible ):
             filepath = os.path.join( outputFolder, 'CBHeader.json' )
             if Globals.verbosityLevel > 2: print( "  " +  _("Exporting CB header to {}...").format( filepath ) )
             with open( filepath, 'wt' ) as jsonFile:
-                json.dump( headerDict, jsonFile, indent=2 )
+                json.dump( headerDict, jsonFile, indent=jsonIndent )
         # end of writeCBHeader
 
 
@@ -359,30 +446,36 @@ class BibleWriter( InternalBible ):
             """
             bkData = []
             for BBB,bookObject in self.books.items():
-                shortName = ""
+                abbreviation = self.getBooknameAbbreviation( BBB )
+                shortName = self.getShortTOCName( BBB )
                 longName = self.getAssumedBookName( BBB )
                 sectionName = ""
-                numChapters = 10
-                bkData.append( (BBB,shortName,longName,sectionName,numChapters) )
+                if Globals.BibleBooksCodes.isOldTestament_NR( BBB ): sectionName = "Old Testament"
+                elif Globals.BibleBooksCodes.isNewTestament_NR( BBB ): sectionName = "New Testament"
+                numChapters = ""
+                for dataLine in bookObject._processedLines:
+                    if dataLine.getMarker() == 'c':
+                        numChapters = dataLine.getCleanText()
+                bkData.append( (BBB,abbreviation,shortName,longName,sectionName,int(numChapters)) )
             #print( bkData )
 
             filepath = os.path.join( outputFolder, 'BibleBookNames.{}.json'.format( CBDataFormatVersion ) )
             if Globals.verbosityLevel > 2: print( "  " + _("Exporting book names to {}...").format( filepath ) )
             with open( filepath, 'wt' ) as jsonFile:
-                json.dump( bkData, jsonFile, indent=2 )
+                json.dump( bkData, jsonFile, indent=jsonIndent )
         # end of writeCBBookNames
 
 
-        def writeCBBook( BBB, bookData ):
+        def writeCBBookAsJSON( BBB, bookData ):
             """
             """
             def writeCBChapter( BBB, chapter, cData ):
                 """
                 """
-                filepath = os.path.join( chapterOutputFolder, '{}_{}.{}.json'.format( BBB, chapter, CBDataFormatVersion ) )
+                filepath = os.path.join( chapterOutputFolderJSON, '{}_{}.{}.json'.format( BBB, chapter, CBDataFormatVersion ) )
                 if Globals.verbosityLevel > 2: print( "  " + _("Exporting {}_{} chapter to {}...").format( BBB, chapter, filepath ) )
                 with open( filepath, 'wt' ) as jsonFile:
-                    json.dump( cData, jsonFile, indent=2 )
+                    json.dump( cData, jsonFile, indent=jsonIndent )
             # end of writeCBChapter
 
             outputData, chapterOutputData = [], []
@@ -407,20 +500,97 @@ class BibleWriter( InternalBible ):
                 #print( outputData )
             writeCBChapter( BBB, lastC, chapterOutputData ) # Write the last chapter
 
-            filepath = os.path.join( bookOutputFolder, '{}.{}.json'.format( BBB, CBDataFormatVersion ) )
+            filepath = os.path.join( bookOutputFolderJSON, '{}.{}.json'.format( BBB, CBDataFormatVersion ) )
             if Globals.verbosityLevel > 2: print( "  " + _("Exporting {} book to {}...").format( BBB, filepath ) )
             with open( filepath, 'wt' ) as jsonFile:
-                json.dump( outputData, jsonFile, indent=2 )
-        # end of writeCBBook
+                json.dump( outputData, jsonFile, indent=jsonIndent )
+        # end of writeCBBookAsJSON
+
+
+        def writeCBBookAsHTML( BBB, bookData ):
+            """
+            """
+            def handleSection( sectionHTML ):
+                """
+                """
+                #print( "\nSection is:", sectionHTML )
+                assert( sectionHTML )
+                compressedHTML = compress( sectionHTML )
+                checkHTML = decompress( compressedHTML )
+                if checkHTML != sectionHTML: halt
+                if Globals.debugFlag: compressedHTML += '\n'
+                bytesWritten = htmlFile.write( compressedHTML.encode('UTF8') )
+                return bytesWritten
+            # end of handleSection
+
+            htmlFile = open( destinationHTMLFilepathTemplate.format( BBB ), 'wb' )
+
+            lastHTML = sectionHTML = outputHTML = ""
+            lastMarker = None
+            C = V = '0'
+            pOpen = False
+            for dataLine in bookData:
+                thisHTML = ''
+                marker, text, extras = dataLine.getMarker(), dataLine.getAdjustedText(), dataLine.getExtras()
+                if marker in ('id','ide','h','toc1','toc2','toc3'):
+                    pass # just ignore all this stuff
+                elif marker == 'c':
+                    C, V = text, '0'
+                elif marker == 's1':
+                    if sectionHTML:
+                        handleSection( sectionHTML )
+                        sectionHTML = ""
+                    thisHTML = '<p class="SectionHeading1">{}</p>'.format( text )
+                elif marker in ('s2','s3','s4'):
+                    thisHTML = '<p class="SectionHeading{}">{}</p>'.format( marker[1], text )
+                elif marker in ('p','ip','q1','q2','q3','q4',):
+                    if pOpen: thisHTML = '</p>'; pOpen = False
+                    if marker not in ('ip',): assert( not text )
+                    thisHTML += '<p class="Paragraph{}">'.format( marker.upper() )
+                    pOpen = True
+                elif marker == 'c#':
+                    thisHTML = '<span class="ChapterNumber">{}</span>'.format( text )
+                elif marker == 'v':
+                    V = text
+                    thisHTML = '<span class="VerseNumber">{}</span>'.format( text )
+                elif marker == 'v~':
+                    thisHTML = '<span class="VerseText">{}</span>'.format( text )
+                elif marker not in ('rem',): # These are the markers that we can safely ignore for this export
+                    unhandledMarkers.add( marker )
+
+                sectionHTML += lastHTML
+                lastMarker = marker
+                lastHTML = thisHTML
+
+            sectionHTML += lastHTML
+
+            htmlFile.close()
+            if Globals.verbosityLevel > 1:
+                for key,count in usageCount.items():
+                    if count == 0: logging.error( "Compression code {} is unused".format( key ) )
+                    elif count < 20: logging.warning( "Compression code {} is rarely used".format( key ) )
+                    elif count < 100: logging.warning( "Compression code {} is under-used".format( key ) )
+            print( "  Compression ratio: " + str(bytesCompressed / bytesRaw) )
+            print( "    Raw bytes: " + str(bytesRaw) )
+            print( "    Compressed bytes: " + str(bytesCompressed) )
+            print( "Finished", BBB ); halt
+        # end of writeCBBookAsHTML
 
 
         writeCBHeader()
         writeCBBookNames()
+        writeCompressions()
 
         # Write the books
         for BBB,bookObject in self.books.items():
             pseudoUSFMData = bookObject._processedLines
-            writeCBBook( BBB, pseudoUSFMData )
+            writeCBBookAsJSON( BBB, pseudoUSFMData )
+            writeCBBookAsHTML( BBB, pseudoUSFMData )
+
+        if unhandledMarkers:
+            logging.warning( "toCustomBible: Unhandled markers were {}".format( unhandledMarkers ) )
+            if Globals.verbosityLevel > 1:
+                print( "  " + _("WARNING: Unhandled toCustomBible markers were {}").format( unhandledMarkers ) )
 
         ## Now create a zipped collection
         #if Globals.verbosityLevel > 2: print( "  Zipping CustomBible files..." )
@@ -431,6 +601,7 @@ class BibleWriter( InternalBible ):
                 #zf.write( filepath, filename ) # Save in the archive without the path
         #zf.close()
 
+        halt
         return True
     # end of BibleWriter.toCustomBible
 

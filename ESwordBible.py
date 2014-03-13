@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # ESwordBible.py
-#   Last modified: 2013-12-18 by RJH (also update ProgVersion below)
+#   Last modified: 2014-03-14 by RJH (also update ProgVersion below)
 #
 # Module handling "e-Sword" Bible module files
 #
-# Copyright (C) 2013 Robert Hunt
+# Copyright (C) 2013-2014 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -48,7 +48,7 @@ e.g.,
 """
 
 ProgName = "e-Sword Bible format handler"
-ProgVersion = "0.05"
+ProgVersion = "0.07"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -124,6 +124,7 @@ def ESwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
     if numFound:
         if Globals.verbosityLevel > 2: print( "ESwordBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and autoLoad:
+            if Globals.verbosityLevel > 1: print( "{} doing autoload of {}...".format( ProgNameVersion, lastFilenameFound ) )
             twB = ESwordBible( givenFolderName, lastFilenameFound )
             twB.load() # Load and process the file
             return twB
@@ -162,6 +163,7 @@ def ESwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
     if numFound:
         if Globals.verbosityLevel > 2: print( "ESwordBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and autoLoad:
+            if Globals.verbosityLevel > 1: print( "{} doing autoload of {}...".format( ProgNameVersion, foundProjects[0][1] ) )
             if Globals.debugFlag: assert( len(foundProjects) == 1 )
             twB = ESwordBible( foundProjects[0][0], foundProjects[0][1] )
             twB.load() # Load and process the file
@@ -212,12 +214,15 @@ class ESwordBible( Bible ):
 
         Appends pseudo-USFM results to the supplied bookObject.
 
+        NOTE: originalLine can be None here.
+
         NOTE: There are no checks in here yet to discover nested character-formatting markers.  :-(
         """
         if Globals.debugFlag:
             if debuggingThisModule:
                 print( "ESwordBible.handleLine( {} {} {}:{} {} ... {}".format( myName, BBB, C, V, repr(originalLine), myGlobals ) )
-            assert( '\n' not in originalLine and '\r' not in originalLine )
+            assert( originalLine is None or ('\n' not in originalLine and '\r' not in originalLine ) )
+        #print( BBB, C, V, repr(originalLine) )
         line = originalLine
 
         writtenV = False
@@ -277,11 +282,16 @@ class ESwordBible( Bible ):
             if not changed: break
         for stuff in ( '\\nosupersub', '\\ulnone', '\\b0', '\\i0', '\\cf0', ):
             if line.endswith( stuff ): line = line[:-len(stuff)]
+        if Globals.debugFlag: savedLine = line
 
         # Try to guess some semantic formatting
         line = re.sub( r'\\b\\i\\f0 (.+?)\\cf0\\b0\\i0\\line', r'~^~s1 \1*#$#', line ) # section heading
+        line = re.sub( r'\\cf10\\b\\i (.+?)\\cf0\\b0\\i0\\line', r'~^~s1 \1*#$#', line ) # section heading in LEB
         line = re.sub( r'\\cf14 (.+?)\\cf0', r'~^~add \1~^~add*', line )
         line = re.sub( r'\\cf15\\i (.+?)\\cf0\\i0', r'~^~add \1~^~add*', line )
+        line = re.sub( r'\\cf15\\i(.+?)\\cf0\\i0 ', r'~^~add \1~^~add*', line ) # LEB (error???)
+        line = re.sub( r'^\\i (.+?)\\cf0\\i0 ', r'~^~add \1~^~add*', line ) # LEB (error???)
+        line = re.sub( r'{\\cf15 (.+?)}', r'~^~add \1~^~add*', line )
         line = re.sub( r'\\i\\f0 (.+?)\\cf0\\i0', r'~^~add \1~^~add*', line )
 
         # Unfortunately, it's all display formatting, no semantic formatting  :-(
@@ -289,30 +299,43 @@ class ESwordBible( Bible ):
         line = re.sub( r'{\\cf10\\b\\i (.+?)\\cf0\\b0\\i0', r'~^~bdit \1~^~bdit*', line )
         line = re.sub( r'{\\b (.+?)}', r'~^~bd \1~^~bd*', line )
         line = re.sub( r'{\\cf15\\i (.+?)}', r'~^~it \1~^~it*', line )
+        line = re.sub( r'{\\cf10\\i (.+?)}', r'~^~it \1~^~it*', line ) # What is different about these?
+        line = re.sub( r'{\\cf2\\i (.+?)}', r'~^~it \1~^~it*', line )
         line = re.sub( r'{\\i (.+?)}', r'~^~it \1~^~it*', line )
+        line = re.sub( r'{\\i(.+?)}', r'~^~it \1~^~it*', line ) # Also occurs without the space in some modules
         line = re.sub( r'{\\qc (.+?)}', r'~^~qc \1~^~qc*', line )
-        line = re.sub( r'{\\cf15 (.+?)}', r'~^~add \1~^~add*', line )
+
         line = line.replace( '\\b1', '~^~bd ' ).replace( '\\b0', '~^~bd*' )
+        line = line.replace( '\\cf15\\i ', '~^~+it ' ).replace( '\\cf14\\i0', '~^~it*' ) # Attempt to handle some nesting in LEB
         line = line.replace( '\\i1', '~^~it ' ).replace( '\\i0', '~^~it*' )
 
         # Not sure what this is
+        line = re.sub( r'{\\cf2\\super (.+?)}', r'', line ) # Notes like '[2]' -- deleted for now
         line = line.replace( '\\cf2  \\cf0', '' ) # LEB
         line = line.replace( '\\cf0 ', '' ) # Calvin
         line = line.replace( '\\loch\\f0', '' ).replace( '\\hich\\f0', '' ) # Calvin
 
         line = line.replace( '\\par\\par', '#$#~^~p' )
         line = line.replace( '\\par', '#$#~^~p' )
+        line = line.replace( '\\m ', '#$#~^~m ' )
+
+        # Handle module formatting errors -- formatting that goes across verses!
+        line = line.replace( '{\\cf2\\super [ ','[ ' ) # In one module Luke 22:42 -- weird
+        line = line.replace( '{\\cf 2 [','[' ) # In one module John 1:4 -- weird
+        line = line.replace( ']}',']' ) # In one module Luke 22:44; 23:34 -- weird
+        if myName=="Lexham English Bible": line = line.replace( '\\cf14 ','') # Not sure what this is in LEB
 
         # Check what's left at the end
         line = line.replace( '\\line', '#$#' ) # Use this for our newline marker
         line = line.strip() # There seem to be extra spaces in many modules
         if '\\' in line or '{' in line or '}' in line:
-            logging.error( "{} original line: {}".format( myName, repr(originalLine) ) )
+            if Globals.debugFlag:
+                logging.error( "{} original line: {}".format( myName, repr(originalLine) ) )
+                logging.error( "Saved line: {}".format( repr(savedLine) ) )
             logging.error( "ESwordBible.load: Doesn't handle {} {}:{} formatted line yet: {}".format( BBB, C, V, repr(line) ) )
             if 1: # Unhandled stuff -- not done properly yet...............................................
                 line = re.sub( '<(.+?)>', '', line ) # Remove all remaining sets of angle brackets
             if Globals.debugFlag: halt
-            #halt
         line = line.replace( '~^~', '\\' ) # Restore our internal formatting codes
 
 

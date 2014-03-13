@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksNames.py
-#   Last modified: 2013-08-28 (also update ProgVersion below)
+#   Last modified: 2014-03-11 (also update ProgVersion below)
 #
 # Module handling BibleBooksNames
 #
-# Copyright (C) 2010-2013 Robert Hunt
+# Copyright (C) 2010-2014 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -28,8 +28,10 @@ Module handling BibleBooksNames.
 """
 
 ProgName = "Bible Books Names Systems handler"
-ProgVersion = "0.34"
+ProgVersion = "0.35"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+
+debuggingThisModule = False
 
 
 import logging, os
@@ -65,13 +67,16 @@ def expandBibleNamesInputs ( systemName, divisionsNamesDict, booknameLeadersDict
             if not tempString.isdigit() and tempString[-1]!=' ': # Don't allow single digits (even if unambiguous) and gnore any truncated strings that end in a space
                 if tempString in originalDict:
                     if originalDict[tempString] == value:
-                        if Globals.debugFlag: logging.debug( "'{}' is superfluous: won't add to tempDict".format(tempString) )
+                        if Globals.debugFlag and debuggingThisModule:
+                            logging.debug( "'{}' is superfluous: won't add to tempDict".format(tempString) )
                         theAmbigSet.add( tempString )
                     else: # it's a different value
-                        if Globals.debugFlag: logging.debug( "'{}' is ambiguous: won't add to tempDict".format(tempString) )
+                        if Globals.debugFlag and debuggingThisModule:
+                            logging.debug( "'{}' is ambiguous: won't add to tempDict".format(tempString) )
                         theAmbigSet.add( tempString )
                 elif tempString in tempDict and tempDict[tempString]!=value:
-                    if Globals.debugFlag: logging.info( "'{}' is ambiguous: will remove from tempDict".format(tempString) )
+                    if Globals.debugFlag and debuggingThisModule:
+                        logging.info( "'{}' is ambiguous: will remove from tempDict".format(tempString) )
                     theAmbigSet.add( tempString )
                 else:
                     tempDict[tempString] = value
@@ -80,13 +85,16 @@ def expandBibleNamesInputs ( systemName, divisionsNamesDict, booknameLeadersDict
                     tempTempString = tempTempString.replace( " ", "", 1 ) # Remove the first space
                     if tempTempString in originalDict:
                         if originalDict[tempTempString] == value:
-                            if Globals.debugFlag: logging.debug( "'{}' (spaces removed) is superfluous: won't add to tempDict".format(tempTempString) )
+                            if Globals.debugFlag and debuggingThisModule:
+                                logging.debug( "'{}' (spaces removed) is superfluous: won't add to tempDict".format(tempTempString) )
                             theAmbigSet.add( tempTempString )
                         else: # it's a different value
-                            if Globals.debugFlag: logging.debug( "'{}' (spaces removed) is ambiguous: won't add to tempDict".format(tempTempString) )
+                            if Globals.debugFlag and debuggingThisModule:
+                                logging.debug( "'{}' (spaces removed) is ambiguous: won't add to tempDict".format(tempTempString) )
                             theAmbigSet.add( tempTempString )
                     elif tempTempString in tempDict and tempDict[tempTempString]!=value:
-                        if Globals.debugFlag: logging.info( "'{}' (spaces removed) is ambiguous: will remove from tempDict".format(tempTempString) )
+                        if Globals.debugFlag and debuggingThisModule:
+                            logging.info( "'{}' (spaces removed) is ambiguous: will remove from tempDict".format(tempTempString) )
                         theAmbigSet.add( tempTempString )
                     else:
                         tempDict[tempTempString] = value
