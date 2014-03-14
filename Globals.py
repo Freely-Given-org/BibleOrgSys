@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Globals.py
-#   Last modified: 2014-02-06 by RJH (also update ProgVersion below)
+#   Last modified: 2014-03-14 by RJH (also update ProgVersion below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -221,6 +221,8 @@ def removeLogfile( projectHandler ):
 def makeSafeFilename( someName ):
     """
     Replaces potentially unsafe characters in a name to make it suitable for a filename.
+
+    NOTE: This leaves spaces as they were.
     """
     return someName.replace('/','-') \
         .replace('\\','_BACKSLASH_').replace(':','_COLON_').replace(';','_SEMICOLON_') \

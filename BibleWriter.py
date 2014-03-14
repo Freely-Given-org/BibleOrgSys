@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-03-13 by RJH (also update ProgVersion below)
+#   Last modified: 2014-03-14 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -59,7 +59,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.54"
+ProgVersion = "0.55"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -419,7 +419,8 @@ class BibleWriter( InternalBible ):
                 #for compression in SDCompressions:
                     #compFile.write( compression[0] + compression[1] + '\n' )
                 json.dump( CBCompressions, jsonFile, indent=jsonIndent )
-            print( "    {} compression entries written.".format( len(CBCompressions) ) )
+            if Globals.verbosityLevel > 2:
+                print( "    {} compression entries written.".format( len(CBCompressions) ) )
             # end of writeCompressions
 
 
@@ -456,7 +457,11 @@ class BibleWriter( InternalBible ):
                 for dataLine in bookObject._processedLines:
                     if dataLine.getMarker() == 'c':
                         numChapters = dataLine.getCleanText()
-                bkData.append( (BBB,abbreviation,shortName,longName,sectionName,int(numChapters)) )
+                try: intNumChapters = int( numChapters )
+                except:
+                    logging.error( "toCustomBible: no chapters in {}".format( BBB ) )
+                    intNumChapters = 0
+                bkData.append( (BBB,abbreviation,shortName,longName,sectionName,intNumChapters) )
             #print( bkData )
 
             filepath = os.path.join( outputFolder, 'BibleBookNames.{}.json'.format( CBDataFormatVersion ) )
@@ -570,10 +575,11 @@ class BibleWriter( InternalBible ):
                     if count == 0: logging.error( "Compression code {} is unused".format( key ) )
                     elif count < 20: logging.warning( "Compression code {} is rarely used".format( key ) )
                     elif count < 100: logging.warning( "Compression code {} is under-used".format( key ) )
-            print( "  Compression ratio: " + str(bytesCompressed / bytesRaw) )
-            print( "    Raw bytes: " + str(bytesRaw) )
-            print( "    Compressed bytes: " + str(bytesCompressed) )
-            print( "Finished", BBB ); halt
+
+                if bytesRaw: print( "  Compression ratio: " + str( round( bytesCompressed / bytesRaw, 3 ) ) )
+                print( "    {} raw bytes: {}".format( BBB, bytesRaw ) )
+                print( "    Compressed bytes: " + str(bytesCompressed) )
+            #if Globals.debugFlag: print( "Finished", BBB ); halt
         # end of writeCBBookAsHTML
 
 
@@ -601,7 +607,6 @@ class BibleWriter( InternalBible ):
                 #zf.write( filepath, filename ) # Save in the archive without the path
         #zf.close()
 
-        halt
         return True
     # end of BibleWriter.toCustomBible
 
@@ -943,7 +948,7 @@ class BibleWriter( InternalBible ):
         # end of renderPage
 
 
-        def renderText( BBB, BBBnum, bookName, C, maxChapters, numVerses, text, bookFolderName, fontsize=None ):
+        def renderText( BBB, BBBnum, bookName, bookAbbrev, C, maxChapters, numVerses, text, bookFolderName, fontsize=None ):
             """
             """
             #print( "\nrenderText( {}, {}, {}, {}, {}, {}, {} )".format( BBB, C, repr(text), jpegFoldername, fontsize, fontcolor, leading ) )
@@ -953,7 +958,7 @@ class BibleWriter( InternalBible ):
                 if maxChapters < 10: chapterFoldernameTemplate = "{:01}-{}/"
                 elif maxChapters < 100: chapterFoldernameTemplate = "{:02}-{}/"
                 else: chapterFoldernameTemplate = "{:03}-{}/"
-                chapterFolderName = chapterFoldernameTemplate.format( intC, BBB )
+                chapterFolderName = chapterFoldernameTemplate.format( intC, bookAbbrev )
                 filenameTemplate = "{:02}.jpg" if numVerses < 80 else "{:03}.jpg" # Might go over 99 pages for the chapter
             elif namingFormat == "Long":
                 if BBBnum < 100:
@@ -997,26 +1002,28 @@ class BibleWriter( InternalBible ):
         for BBB,bookObject in self.books.items():
             pseudoUSFMData = bookObject._processedLines
 
+            # Find a suitable bookname
+            bookName = self.getAssumedBookName( BBB )
+            for bookName in (self.getAssumedBookName(BBB), self.getLongTOCName(BBB), self.getShortTOCName(BBB), self.getBooknameAbbreviation(BBB), ):
+                #print( "Tried bookName:", repr(bookName) )
+                if bookName is not None and len(bookName)<=maxBooknameLetters: break
+            bookAbbrev = self.getBooknameAbbreviation( BBB )
+            bookAbbrev = BBB if not bookAbbrev else Globals.makeSafeFilename( bookAbbrev.replace( ' ', '' ) )
+
+            BBBnum = Globals.BibleBooksCodes.getReferenceNumber( BBB )
+            maxChapters = Globals.BibleBooksCodes.getMaxChapters( BBB )
+
+            # Find a suitable folder name and make the necessary folder(s)
             if Globals.BibleBooksCodes.isOldTestament_NR( BBB ):
                 subfolderName = "OT/"
             elif Globals.BibleBooksCodes.isNewTestament_NR( BBB ):
                 subfolderName = "NT/"
             else:
                 subfolderName = "Other/"
-            BBBnum = Globals.BibleBooksCodes.getReferenceNumber( BBB )
-            if BBBnum < 100: bookFolderName = "{:02}-{}/".format( BBBnum, BBB )
-            else: bookFolderName = "{:03}-{}/".format( BBBnum, BBB ) # Should rarely happen
+            if BBBnum < 100: bookFolderName = "{:02}-{}/".format( BBBnum, bookAbbrev )
+            else: bookFolderName = "{:03}-{}/".format( BBBnum, bookAbbrev ) # Should rarely happen
             bookFolderPath = os.path.join( outputFolder, subfolderName, bookFolderName )
             if not os.access( bookFolderPath, os.F_OK ): os.makedirs( bookFolderPath ) # Make the empty folder if there wasn't already one there
-
-            # Find a suitable bookname
-            bookName = self.getAssumedBookName(BBB)
-            for bookName in (self.getAssumedBookName(BBB), self.getLongTOCName(BBB), self.getShortTOCName(BBB), self.getBooknameAbbreviation(BBB), ):
-                #print( "Tried bookName:", repr(bookName) )
-                if bookName is not None and len(bookName)<=maxBooknameLetters: break
-
-            BBBnum = Globals.BibleBooksCodes.getReferenceNumber( BBB )
-            maxChapters = Globals.BibleBooksCodes.getMaxChapters( BBB )
 
             # First of all, get the text (by chapter)
             C = V = "0"
@@ -1035,7 +1042,7 @@ class BibleWriter( InternalBible ):
                 elif marker in ('iot','io1','io2','io3',): pass # Drop the introduction
                 elif marker == 'c':
                     #if cleanText=='3': halt
-                    if textBuffer: renderText( BBB, BBBnum, bookName, C, maxChapters, numVerses, textBuffer, bookFolderPath ); textBuffer = ""
+                    if textBuffer: renderText( BBB, BBBnum, bookName, bookAbbrev, C, maxChapters, numVerses, textBuffer, bookFolderPath ); textBuffer = ""
                     C = cleanText
                     #if C=='4': halt
                     numVerses = 0
@@ -1068,7 +1075,7 @@ class BibleWriter( InternalBible ):
                 elif marker not in ('rem',): # These are the markers that we can safely ignore for this export
                     unhandledMarkers.add( marker )
                 lastMarker = marker
-            if textBuffer: renderText( BBB, BBBnum, bookName, C, maxChapters, numVerses, textBuffer, bookFolderPath ) # Write the last bit
+            if textBuffer: renderText( BBB, BBBnum, bookName, bookAbbrev, C, maxChapters, numVerses, textBuffer, bookFolderPath ) # Write the last bit
 
                     #if verseByVerse:
                         #myFile.write( "{} ({}): '{}' '{}' {}\n" \
@@ -6208,12 +6215,13 @@ def demo():
                 #("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
                 #("Matigsalug", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
                 #("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
-                ("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
+                #("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
                 #("MS-BT", "MBTBT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
                 #("MS-Notes", "MBTBC", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/",),
                 #("MS-ABT", "MBTABT", "../../../../../Data/Work/Matigsalug/Bible/MBTABT/",),
                 #("WEB", "WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/",),
                 #("WEB", "WEB", "../../../../../Data/Work/Bibles/From eBible/WEB/eng-web_usfm 2013-07-18/",),
+                ("WEB", "WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-03-05 eng-web_usfm/",),
                 ) # You can put your USFM test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData ):
