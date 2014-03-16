@@ -1259,6 +1259,7 @@ class BibleWriter( InternalBible ):
             lastHTML = sectionHTML = outputHTML = ""
             lastMarker = None
             C = V = '0'
+            BCV = (BBB,C,V)
             sOpen = pOpen = False
             for dataLine in bookData:
                 thisHTML = ''
