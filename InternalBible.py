@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2014-02-21 by RJH (also update ProgVersion below)
+#   Last modified: 2014-03-17 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -44,7 +44,7 @@ and then fills
 """
 
 ProgName = "Internal Bible handler"
-ProgVersion = "0.41"
+ProgVersion = "0.42"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -82,6 +82,8 @@ class InternalBible:
         self.reverseDict, self.guesses = {}, '' # A program history
         self.triedLoadingBook = {}
         self.divisions = OrderedDict()
+        self.errorDictionary = OrderedDict()
+        self.errorDictionary['Priority Errors'] = [] # Put this one first in the ordered dictionary
     # end of InternalBible.__init_
 
 

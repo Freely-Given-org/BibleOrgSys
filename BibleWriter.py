@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-03-14 by RJH (also update ProgVersion below)
+#   Last modified: 2014-03-17 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -37,8 +37,9 @@ Contains functions:
     toPseudoUSFM( outputFolder=None ) -- this is our internal Bible format -- exportable for debugging purposes
             For more details see InternalBible.py, InternalBibleBook.py, InternalBibleInternals.py
     toUSFM( outputFolder=None )
-    toCustomBible( outputFolder=None )
     toText( outputFolder=None )
+    toHTML5( outputFolder=None, controlDict=None, validationSchema=None, humanReadable=True )
+    toCustomBible( outputFolder=None )
     toPhotoBible( outputFolder=None )
     toMediaWiki( outputFolder=None, controlDict=None, validationSchema=None )
     toZefaniaXML( outputFolder=None, controlDict=None, validationSchema=None )
@@ -51,7 +52,6 @@ Contains functions:
     totheWord( outputFolder=None )
     toMySword( outputFolder=None )
     toESword( outputFolder=None )
-    toHTML5( outputFolder=None, controlDict=None, validationSchema=None, humanReadable=True )
     toTeX( outputFolder=None )
     toSwordSearcher( outputFolder=None )
     toDrupalBible( outputFolder=None )
@@ -59,7 +59,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.55"
+ProgVersion = "0.56"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -316,6 +316,699 @@ class BibleWriter( InternalBible ):
 
 
 
+    def toText( self, outputFolder=None ):
+        """
+        Write the pseudo USFM out into a simple plain-text format.
+            The format varies, depending on whether or not there are paragraph markers in the text.
+        """
+        if Globals.verbosityLevel > 1: print( "Running BibleWriter:toText..." )
+        if Globals.debugFlag: assert( self.books )
+
+        if not self.doneSetupGeneric: self.__setupWriter()
+        if not outputFolder: outputFolder = "OutputFiles/BOS_PlainText_Export/"
+        if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
+
+        # First determine our format
+        columnWidth = 80
+        verseByVerse = True
+
+        # Write the plain text files
+        for BBB,bookObject in self.books.items():
+            pseudoUSFMData = bookObject._processedLines
+
+            filename = "BOS-BWr-{}.txt".format( BBB )
+            filepath = os.path.join( outputFolder, Globals.makeSafeFilename( filename ) )
+            if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
+            textBuffer = ""
+            with open( filepath, 'wt' ) as myFile:
+                for entry in pseudoUSFMData:
+                    marker, text = entry.getMarker(), entry.getCleanText()
+                    if marker in ('id','ide','toc1','toc2','toc3','c#',): pass # Completely ignore these fields
+                    elif marker == 'h':
+                        if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
+                        myFile.write( "{}\n\n".format( text ) )
+                    elif marker in ('mt1','mt2','mt3',):
+                        if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
+                        myFile.write( "{}{}\n\n".format( ' '*((columnWidth-len(text))//2), text ) )
+                    elif marker in ('is1','is2','is3','ip','ipi','iot','io1','io2','io3',): pass # Drop the introduction
+                    elif marker == 'c':
+                        C = text
+                        if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
+                        myFile.write( "\n\nChapter {}".format( text ) )
+                    elif marker == 'v':
+                        V = text
+                        if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
+                        myFile.write( "\n{} ".format( text ) )
+                    elif marker in ('p','s1','s2','s3',): pass # Drop out these fields
+                    elif text:
+                        textBuffer += (' ' if textBuffer else '') + text
+                if textBuffer: myFile.write( "{}\n".format( textBuffer ) ) # Write the last bit
+
+                    #if verseByVerse:
+                        #myFile.write( "{} ({}): '{}' '{}' {}\n" \
+                            #.format( entry.getMarker(), entry.getOriginalMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras() ) )
+
+        # Now create a zipped collection
+        if Globals.verbosityLevel > 2: print( "  Zipping text files..." )
+        zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllTextFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
+        for filename in os.listdir( outputFolder ):
+            if not filename.endswith( '.zip' ):
+                filepath = os.path.join( outputFolder, filename )
+                zf.write( filepath, filename ) # Save in the archive without the path
+        zf.close()
+
+        return True
+    # end of BibleWriter.toText
+
+
+    # The following are used by both toHTML5 and toCustomBible
+    ipHTMLClassDict = {'ip':'introductoryParagraph', 'ipi':'introductoryParagraphIndented'}
+    pHTMLClassDict = {'p':'proseParagraph', 'pi':'indentedProseParagraph',
+                      'q1':'poetryParagraph1', 'q2':'poetryParagraph2', 'q3':'poetryParagraph3', 'q4':'poetryParagraph4'}
+
+
+    def __formatHTMLVerseText( BBB, C, V, givenText, extras, ourGlobals ):
+        """
+        Format character codes within the text into HTML
+
+        Called by toHTML5 and toCustomBible
+        """
+        #print( "__formatHTMLVerseText( {}, {}, {} )".format( repr(givenText), len(extras), ourGlobals.keys() ) )
+        if Globals.debugFlag: assert( givenText or extras )
+
+        def handleExtras( text, extras, ourGlobals ):
+            """
+            Returns the HTML5 text with footnotes and xrefs processed.
+            It also accumulates HTML5 in ourGlobals for the end notes.
+            """
+            def liveCV( CV ):
+                """
+                Given a CV text (in the same book), make it live
+                    e.g., given 1:3 return #C1V3
+                        given 17:4-9 return #C17V4
+                """
+                #print( "formatHTMLVerseText.liveCV( {} )".format( repr(CV) ) )
+                result = 'C' + CV.strip().replace( ':', 'V')
+                for bridgeChar in ('-', '–', '—'): # hyphen, endash, emdash
+                    ix = result.find( bridgeChar )
+                    if ix != -1: result = result[:ix] # Remove verse bridges
+                #print( " returns", result )
+                return '#' + result
+            # end of liveCV
+
+            def processXRef( HTML5xref, ourGlobals ):
+                """
+                Return the HTML5 for the processed cross-reference (xref).
+                It also accumulates HTML5 in ourGlobals for the end notes.
+
+                NOTE: The parameter here already has the /x and /x* removed.
+
+                \\x - \\xo 2:2: \\xt Lib 19:9-10; Diy 24:19.\\xt*\\x* (Backslashes are shown doubled here)
+                    gives
+                <a title="Lib 19:9-10; Diy 24:19" href="#XRef0"><span class="XRefLinkSymbol"><sup>[xr]</sup></span></a>
+                <a title="Lib 25:25" href="#XRef1"><span class="XRefLinkSymbol"><sup>[xr]</sup></span></a>
+                <a title="Rut 2:20" href="#XRef2"><span class="XRefLinkSymbol"><sup>[xr]</sup></span></a>
+                    plus
+                <p id="XRef0" class="XRef"><a title="Go back up to 2:2 in the text" href="#C2V2"><span class="ChapterVerse">2:2</span></a> <span class="VernacularCrossReference">Lib 19:9&#x2011;10</span>; <span class="VernacularCrossReference">Diy 24:19</span></p>
+                """
+                markerList = Globals.USFMMarkers.getMarkerListFromText( HTML5xref, includeInitialText=True )
+                #print( "\nformatHTMLVerseText.processXRef( {}, {} ) gives {}".format( repr(HTML5xref), "...", markerList ) )
+                xrefIndex = ourGlobals['nextXRefIndex']; ourGlobals['nextXRefIndex'] += 1
+                caller = origin = originCV = xrefText = ''
+                if markerList:
+                    for marker, ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt in markerList:
+                        if marker is None:
+                            #if txt not in '-+': # just a caller
+                            caller = txt
+                        elif marker == 'xo':
+                            origin = txt
+                            originCV = origin
+                            if originCV and originCV[-1] in (':','.'): originCV = originCV[:-1]
+                            originCV = originCV.strip()
+                        elif marker == 'xt':
+                            xrefText += txt
+                        #elif marker == Should handle other internal markers here
+                        else:
+                            logging.error( "formatHTMLVerseText.processXRef didn't handle {} {}:{} xref marker: {}".format( BBB, C, V, marker ) )
+                            xrefText += txt
+                else: # there's no USFM markers at all in the xref --  presumably a caller and then straight text
+                    if HTML5xref.startswith('+ ') or HTML5xref.startswith('- '):
+                        caller = HTML5xref[0]
+                        xrefText = HTML5xref[2:].strip()
+                    else: # don't really know what it is -- assume it's all just text
+                        xrefText = HTML5xref.strip()
+
+                xrefHTML5 = '<a class="xrefLinkSymbol" title="{}" href="#XRef{}">[xr]</a>' \
+                                .format( xrefText, xrefIndex )
+
+                endHTML5 = '<p id="XRef{}" class="xref">'.format( xrefIndex )
+                if not origin: # we'll try to make one
+                    originCV = "{}:{}".format( C, V )
+                if originCV: # This only handles CV separator of : so far
+                    endHTML5 += '<a class="xrefOrigin" title="Go back up to {} in the text" href="{}">{}</a> ' \
+                                                        .format( originCV, liveCV(originCV), originCV )
+                endHTML5 += '<span class="xrefEntry">{}</span>'.format( xrefText )
+                endHTML5 += '</p>'
+
+                #print( "xrefHTML5", BBB, xrefHTML5 )
+                #print( "endHTML5", endHTML5 )
+                ourGlobals['xrefHTML5'].append( endHTML5 )
+                #if xrefIndex > 2: halt
+
+                return xrefHTML5
+            # end of __formatHTMLVerseText.processXRef
+
+            def processFootnote( HTML5footnote, ourGlobals ):
+                """
+                Return the HTML5 for the processed footnote.
+                It also accumulates HTML5 in ourGlobals for the end notes.
+
+                NOTE: The parameter here already has the /f and /f* removed.
+
+                \\f + \\fr 1:20 \\ft Su ka kaluwasan te Nawumi ‘keupianan,’ piru ka kaluwasan te Mara ‘masakit se geyinawa.’\\f* (Backslashes are shown doubled here)
+                    gives
+                <a title="Su ka kaluwasan te Nawumi &lsquo;keupianan,&rsquo; piru ka kaluwasan te Mara &lsquo;masakit se geyinawa.&rsquo;" href="#FNote0"><span class="FootnoteLinkSymbol"><sup>[fn]</sup></span></a>
+                <note style="f" caller="+"><char style="fr" closed="false">2:23 </char><char style="ft">Te Hibruwanen: bayew egpekegsahid ka ngaran te “malitan” wey “lukes.”</char></note>
+                    plus
+                <p id="FNote0" class="Footnote"><a title="Go back up to 1:20 in the text" href="#C1V20"><span class="ChapterVerse">1:20 </span></a><a title="su" href="../../Lexicon/indexLSIM-45.htm#su1"><span class="WordLink">Su</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="kaluwasan" href="../../Lexicon/indexLLO-67.htm#luwas2"><span class="WordLink">kaluwasan</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <span class="NameWordLink">Nawumi</span> &lsquo;<a title="n. fortunate (upian)" href="../../Lexicon/Details/upian.htm"><span class="WordLink">keupianan</span></a>,&rsquo; <a title="conj. but" href="../../Lexicon/Details/piru.htm"><span class="WordLink">piru</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="kaluwasan" href="../../Lexicon/indexLLO-67.htm#luwas2"><span class="WordLink">kaluwasan</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="mara" href="../../Lexicon/Details/mara.htm"><span class="WordLink">Mara</span></a> &lsquo;<a title="adj. painful (sakit)" href="../../Lexicon/Details/sakit.htm"><span class="WordLink">masakit</span></a> <a title="se" href="../../Lexicon/indexLSE-64.htm#se1"><span class="WordLink">se</span></a> <a title="n. breath" href="../../Lexicon/Details/geyinawa.htm"><span class="WordLink">geyinawa</span></a>.&rsquo;</p>
+                <p id="FNote1" class="Footnote"><a title="Go back up to 3:9 in the text" href="#C3V9"><span class="ChapterVerse">3:9 </span></a><a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">Te</span></a> <a title="prop_n. Hebrew language (Hibru)" href="../../Lexicon/Details/Hibru.htm"><span class="WordLink">Hibruwanen</span></a>: <a title="buni" href="../../Lexicon/Details/buni2.htm"><span class="WordLink">Bunbuni</span></a> <a title="pron. you(sg); by you(sg)" href="../../Lexicon/Details/nu.htm"><span class="WordLink">nu</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="kumbalè" href="../../Lexicon/Details/kumbal%C3%A8.htm"><span class="WordLink">kumbale</span></a> <a title="pron. you(sg); by you(sg)" href="../../Lexicon/Details/nu.htm"><span class="WordLink">nu</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="suluhuanen" href="../../Lexicon/indexLSIM-45.htm#suluh%C3%B9"><span class="WordLink">suluhuanen</span></a> <a title="pron. you(sg); by you(sg)" href="../../Lexicon/Details/nu.htm"><span class="WordLink">nu</span></a>.</p>
+                <p id="FNote2" class="Footnote"><a title="Go back up to 4:11 in the text" href="#C4V11"><span class="ChapterVerse">4:11 </span></a><a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">Kene</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="adj. clear" href="../../Lexicon/Details/klaru.htm"><span class="WordLink">klaru</span></a> <a title="diya" href="../../Lexicon/indexLD-80.htm#diyav"><span class="WordLink">diye</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="adj. true (lehet)" href="../../Lexicon/Details/lehet1.htm"><span class="WordLink">malehet</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="migpuun" href="../../Lexicon/Details/puun.htm"><span class="WordLink">migpuunan</span></a> <a title="ke" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ke</span></a> <a title="n. other" href="../../Lexicon/Details/lein.htm"><span class="WordLink">lein</span></a> <a title="e" href="../../Lexicon/indexLA-77.htm#a"><span class="WordLink">e</span></a> <a title="part. also" href="../../Lexicon/Details/degma.htm"><span class="WordLink">degma</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="n. place" href="../../Lexicon/Details/inged.htm"><span class="WordLink">inged</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <span class="NameWordLink">Iprata</span>. <a title="kahiyen" href="../../Lexicon/Details/kahi.htm"><span class="WordLink">Kahiyen</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="adj. other" href="../../Lexicon/Details/duma.htm"><span class="WordLink">duma</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <span class="NameWordLink">Iprata</span> <a title="dem. that" href="../../Lexicon/Details/iyan.htm"><span class="WordLink">iyan</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="tapey" href="../../Lexicon/indexLT-96.htm#tapey1"><span class="WordLink">tapey</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="n. name" href="../../Lexicon/Details/ngaran.htm"><span class="WordLink">ngaran</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="See glossary entry for Bitlihim" href="../indexGlossary.htm#Bitlihim"><span class="WordLink">Bitlihim</span><span class="GlossaryLinkSymbol"><sup>[gl]</sup></span></a>.</p></div>
+                """
+                markerList = Globals.USFMMarkers.getMarkerListFromText( HTML5footnote, includeInitialText=True )
+                #print( "formatHTMLVerseText.processFootnote( {}, {} ) gives {}".format( repr(HTML5footnote), ourGlobals, markerDict ) )
+                fnIndex = ourGlobals['nextFootnoteIndex']; ourGlobals['nextFootnoteIndex'] += 1
+                caller = origin = originCV = fnText = fnTitle = ''
+                spanOpen = False
+                for marker, ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt in markerList:
+                    if spanOpen: fnText += '</span>'; spanOpen = False
+                    if marker is None:
+                        #if txt not in '-+': # just a caller
+                        caller = txt
+                    elif marker == 'fr':
+                        origin = txt
+                        originCV = origin
+                        if originCV and originCV[-1] in (':','.'): originCV = originCV[:-1]
+                        originCV = originCV.strip()
+                    elif marker == 'ft':
+                        fnText += txt
+                        fnTitle += txt
+                    elif marker == 'fk':
+                        fnText += '<span class="footnoteKeyword">' + txt
+                        fnTitle += txt
+                        spanOpen = True
+                    elif marker == 'fq':
+                        fnText += '<span class="footnoteTranslationQuotation">' + txt
+                        fnTitle += txt
+                        spanOpen = True
+                    elif marker == 'fqa':
+                        fnText += '<span class="footnoteAlternateTranslation">' + txt
+                        fnTitle += txt
+                        spanOpen = True
+                    elif marker == 'fl':
+                        fnText += '<span class="footnoteLabel">' + txt
+                        fnTitle += txt
+                        spanOpen = True
+                    #elif marker == Should handle other internal markers here
+                    else:
+                        logging.error( "formatHTMLVerseText.processFootnote didn't handle {} {}:{} footnote marker: {}".format( BBB, C, V, marker ) )
+                        fnText += txt
+                        fnTitle += txt
+                if spanOpen: fnText += '</span>'; spanOpen = False
+
+                footnoteHTML5 = '<a class="footnoteLinkSymbol" title="{}" href="#FNote{}">[fn]</a>' \
+                                .format( fnTitle, fnIndex )
+
+                endHTML5 = '<p id="FNote{}" class="footnote">'.format( fnIndex )
+                if originCV: # This only handles CV separator of : so far
+                    endHTML5 += '<a class="footnoteOrigin" title="Go back up to {} in the text" href="{}">{}</a> ' \
+                                                        .format( originCV, liveCV(originCV), origin )
+                endHTML5 += '<span class="footnoteEntry">{}</span>'.format( fnText )
+                endHTML5 += '</p>'
+
+                #print( "footnoteHTML5", BBB, footnoteHTML5 )
+                #print( "endHTML5", endHTML5 )
+                ourGlobals['footnoteHTML5'].append( endHTML5 )
+                #if fnIndex > 2: halt
+
+                return footnoteHTML5
+            # end of __formatHTMLVerseText.processFootnote
+
+
+            adjText = text
+            offset = 0
+            for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
+                #print( "{} {}:{} Text='{}' eT={}, eI={}, eText='{}'".format( BBB, C, V, text, extraType, extraIndex, extraText ) )
+                adjIndex = extraIndex - offset
+                lenT = len( adjText )
+                if adjIndex > lenT: # This can happen if we have verse/space/notes at end (and the space was deleted after the note was separated off)
+                    logging.warning( _("formatHTMLVerseText: Space before note at end of verse in {} {}:{} has been lost").format( BBB, C, V ) )
+                    # No need to adjust adjIndex because the code below still works
+                elif adjIndex<0 or adjIndex>lenT: # The extras don't appear to fit correctly inside the text
+                    print( "formatHTMLVerseText: Extras don't fit inside verse at {} {}:{}: eI={} o={} len={} aI={}".format( BBB, C, V, extraIndex, offset, len(text), adjIndex ) )
+                    print( "  Verse='{}'".format( text ) )
+                    print( "  Extras='{}'".format( extras ) )
+                #assert( 0 <= adjIndex <= len(verse) )
+                #adjText = checkText( extraText, checkLeftovers=False ) # do any general character formatting
+                #if adjText!=extraText: print( "processXRefsAndFootnotes: {}@{}-{}={} '{}' now '{}'".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
+                if extraType == 'fn':
+                    extra = processFootnote( extraText, ourGlobals )
+                    #print( "fn got", extra )
+                elif extraType == 'xr':
+                    extra = processXRef( extraText, ourGlobals )
+                    #print( "xr got", extra )
+                elif extraType == 'fig':
+                    logging.critical( "HTML5 figure not handled yet" )
+                    extra = "" # temp
+                    #extra = processFigure( extraText )
+                    #print( "fig got", extra )
+                elif Globals.debugFlag and debuggingThisModule: print( extraType ); halt
+                #print( "was", verse )
+                adjText = adjText[:adjIndex] + extra + adjText[adjIndex:]
+                offset -= len( extra )
+                #print( "now", verse )
+            return adjText
+        # end of __formatHTMLVerseText.handleExtras
+
+
+        # __formatHTMLVerseText main code
+        text = handleExtras( givenText, extras, ourGlobals )
+
+        # Semantic stuff
+        text = text.replace( '\\bk ', '<span class="bookName">' ).replace( '\\bk*', '</span>' )
+        text = text.replace( '\\add ', '<span class="addedText">' ).replace( '\\add*', '</span>' )
+        text = text.replace( '\\nd ', '<span class="divineName">' ).replace( '\\nd*', '</span>' )
+        text = text.replace( '\\wj ', '<span class="wordsOfJesus">' ).replace( '\\wj*', '</span>' )
+        text = text.replace( '\\sig ', '<span class="signature">' ).replace( '\\sig*', '</span>' )
+        text = text.replace( '\\k ', '<span class="keyWord">' ).replace( '\\k*', '</span>' )
+
+        # Direct formatting
+        text = text.replace( '\\bdit ', '<span class="boldItalic">' ).replace( '\\bdit*', '</span>' )
+        text = text.replace( '\\it ', '<span class="italic">' ).replace( '\\it*', '</span>' )
+        text = text.replace( '\\bd ', '<span class="bold">' ).replace( '\\bd*', '</span>' )
+        text = text.replace( '\\sc ', '<span class="smallCaps">' ).replace( '\\sc*', '</span>' )
+
+        if '\\' in text:
+            if Globals.debugFlag or Globals.verbosityLevel > 2:
+                print( "formatHTMLVerseText: unprocessed code in {} from {}".format( repr(text), repr(givenText) ) )
+            if Globals.debugFlag and debuggingThisModule: halt
+        return text
+    # end of __formatHTMLVerseText
+
+
+    def toHTML5( self, outputFolder=None, controlDict=None, validationSchema=None, humanReadable=True ):
+        """
+        Using settings from the given control file,
+            converts the USFM information to UTF-8 HTML files.
+        """
+        if Globals.verbosityLevel > 1: print( "Running BibleWriter:toHTML5..." )
+        if Globals.debugFlag:
+            #print( self )
+            assert( self.books )
+            assert( self.name )
+
+        if not self.doneSetupGeneric: self.__setupWriter()
+        if not outputFolder: outputFolder = "OutputFiles/BOS_HTML5_Export/"
+        WEBoutputFolder = os.path.join( outputFolder, "Website/" )
+        if not os.access( outputFolder, os.F_OK ): os.makedirs( WEBoutputFolder ) # Make the empty folder if there wasn't already one there
+
+        if not controlDict:
+            controlDict, defaultControlFilename = {}, "To_HTML5_controls.txt"
+            try:
+                ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
+            except:
+                logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
+        self.__adjustControlDict( controlDict )
+
+        # Copy across our css style files
+        for filenamePart in ( 'BibleBook', ):
+            filepath = os.path.join( defaultControlFolder, filenamePart+'.css' )
+            try:
+                shutil.copy( filepath, WEBoutputFolder ) # Copy it under its own name
+                #shutil.copy( filepath, os.path.join( WEBoutputFolder, "Bible.css" ) ) # Copy it also under the generic name
+            except FileNotFoundError: logging.error( "Unable to find CSS style file: {}".format( filepath ) )
+
+        unhandledMarkers = set()
+
+
+        def writeHeader( writerObject, myBBB ):
+            """
+            Writes the HTML5 header to the HTML writerObject.
+            MyBBB can be the book code or 'home' or 'about'.
+            """
+            writerObject.writeLineOpen( 'head' )
+            writerObject.writeLineText( '<meta http-equiv="Content-Type" content="text/html;charset=utf-8">', noTextCheck=True )
+            writerObject.writeLineText( '<link rel="stylesheet" type="text/css" href="BibleBook.css">', noTextCheck=True )
+            if 'HTML5Title' in controlDict and controlDict['HTML5Title']:
+                writerObject.writeLineOpenClose( 'title' , controlDict['HTML5Title'] )
+            #if "HTML5Subject" in controlDict and controlDict["HTML5Subject"]: writerObject.writeLineOpenClose( 'subject', controlDict["HTML5Subject"] )
+            #if "HTML5Description" in controlDict and controlDict["HTML5Description"]: writerObject.writeLineOpenClose( 'description', controlDict["HTML5Description"] )
+            #if "HTML5Publisher" in controlDict and controlDict["HTML5Publisher"]: writerObject.writeLineOpenClose( 'publisher', controlDict["HTML5Publisher"] )
+            #if "HTML5Contributors" in controlDict and controlDict["HTML5Contributors"]: writerObject.writeLineOpenClose( 'contributors', controlDict["HTML5Contributors"] )
+            #if "HTML5Identifier" in controlDict and controlDict["HTML5Identifier"]: writerObject.writeLineOpenClose( 'identifier', controlDict["HTML5Identifier"] )
+            #if "HTML5Source" in controlDict and controlDict["HTML5Source"]: writerObject.writeLineOpenClose( 'identifier', controlDict["HTML5Source"] )
+            #if "HTML5Coverage" in controlDict and controlDict["HTML5Coverage"]: writerObject.writeLineOpenClose( 'coverage', controlDict["HTML5Coverage"] )
+            #writerObject.writeLineOpenClose( 'format', 'HTML5 markup language' )
+            #writerObject.writeLineOpenClose( 'date', datetime.now().date().isoformat() )
+            #writerObject.writeLineOpenClose( 'creator', 'BibleWriter.py' )
+            #writerObject.writeLineOpenClose( 'type', 'bible text' )
+            #if "HTML5Language" in controlDict and controlDict["HTML5Language"]: writerObject.writeLineOpenClose( 'language', controlDict["HTML5Language"] )
+            #if "HTML5Rights" in controlDict and controlDict["HTML5Rights"]: writerObject.writeLineOpenClose( 'rights', controlDict["HTML5Rights"] )
+            writerObject.writeLineClose( 'head' )
+
+            writerObject.writeLineOpen( 'body' )
+
+            writerObject.writeLineOpen( 'header' )
+            if myBBB == 'home': writerObject.writeLineOpenClose( 'p', 'Home', ('class','homeNonlink') )
+            else: writerObject.writeLineOpenClose( 'a', 'Home', [('href','index.html'),('class','homeLink')] )
+            if myBBB == 'about': writerObject.writeLineOpenClose( 'p', 'About', ('class','homeNonlink') )
+            else: writerObject.writeLineOpenClose( 'a', 'About', [('href','about.html'),('class','aboutLink')] )
+            writerObject.writeLineOpenClose( 'h', self.name, ('class','mainHeader') )
+            bkList = self.getBookList()
+            if myBBB  in bkList:
+                ix = bkList.index( myBBB )
+                if ix > 0:
+                    writerObject.writeLineOpenClose( 'a', 'Previous book', [('href',filenameDict[bkList[ix-1]]),('class','bookNav')] )
+                writerObject.writeLineOpenClose( 'a', 'Book start', [('href','#C1V1'),('class','bookNav')] )
+                if ix < len(bkList)-1:
+                    writerObject.writeLineOpenClose( 'a', 'Next book', [('href',filenameDict[bkList[ix+1]]),('class','bookNav')] )
+            writerObject.writeLineClose( 'header' )
+
+            # Create the nav bar for books
+            writerObject.writeLineOpen( 'nav' )
+            writerObject.writeLineOpen( 'ul' )
+            for bkData in self:
+                BBB = bkData.bookReferenceCode
+                bkName = bkData.getAssumedBookNames()[0]
+                if BBB == myBBB:
+                    writerObject.writeLineText( '<li class="bookNameEntry"><span class="currentBookName">{}</span></li>'.format( bkName ), noTextCheck=True )
+                else:
+                    writerObject.writeLineText( '<li class="bookNameEntry"><a class="bookNameLink" href="{}">{}</a></li>'.format( filenameDict[BBB], bkName ), noTextCheck=True )
+            writerObject.writeLineClose( 'ul' )
+            writerObject.writeLineClose( 'nav' )
+        # end of toHTML5.writeHeader
+
+
+        def writeEndNotes( writerObject, ourGlobals ):
+            """
+            Writes the HTML5 end notes (footnotes and cross-references) to the HTML writerObject.
+
+            <div id="XRefs- Normal"><h2 class="XRefsHeading">Cross References</h2>
+            <p id="XRef0" class="XRef"><a title="Go back up to 2:2 in the text" href="#C2V2"><span class="ChapterVerse">2:2</span></a> <span class="VernacularCrossReference">Lib 19:9&#x2011;10</span>; <span class="VernacularCrossReference">Diy 24:19</span></p>
+            <p id="XRef1" class="XRef"><a title="Go back up to 2:20 in the text" href="#C2V20"><span class="ChapterVerse">2:20</span></a> <span class="VernacularCrossReference">Lib 25:25</span></p>
+            <p id="XRef2" class="XRef"><a title="Go back up to 3:12 in the text" href="#C3V12"><span class="ChapterVerse">3:12</span></a> <a title="Go to Rut 2:20" href="RUT.htm#C2V20"><span class="VernacularCrossReference">Rut 2:20</span></a></p>
+            <p id="XRef3" class="XRef"><a title="Go back up to 4:7 in the text" href="#C4V7"><span class="ChapterVerse">4:7</span></a> <span class="VernacularCrossReference">Diy 25:9</span></p>
+            <p id="XRef4" class="XRef"><a title="Go back up to 4:10 in the text" href="#C4V10"><span class="ChapterVerse">4:10</span></a> <span class="VernacularCrossReference">Diy 25:5&#x2011;6</span></p>
+            <p id="XRef5" class="XRef"><a title="Go back up to 4:11 in the text" href="#C4V11"><span class="ChapterVerse">4:11</span></a> <a title="Go to Hinisis 29:31" href="GEN.htm#C29V31"><span class="VernacularCrossReference">Hin 29:31</span></a></p>
+            <p id="XRef6" class="XRef"><a title="Go back up to 4:12 in the text" href="#C4V12"><span class="ChapterVerse">4:12</span></a> <a title="Go to Hinisis 38:27" href="GEN.htm#C38V27"><span class="VernacularCrossReference">Hin 38:27&#x2011;30</span></a></p></div>
+            <div id="FNotes"><h2 class="FootnotesHeading">Footnotes</h2>
+            <p id="FNote0" class="Footnote"><a title="Go back up to 1:20 in the text" href="#C1V20"><span class="ChapterVerse">1:20 </span></a><a title="su" href="../../Lexicon/indexLSIM-45.htm#su1"><span class="WordLink">Su</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="kaluwasan" href="../../Lexicon/indexLLO-67.htm#luwas2"><span class="WordLink">kaluwasan</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <span class="NameWordLink">Nawumi</span> &lsquo;<a title="n. fortunate (upian)" href="../../Lexicon/Details/upian.htm"><span class="WordLink">keupianan</span></a>,&rsquo; <a title="conj. but" href="../../Lexicon/Details/piru.htm"><span class="WordLink">piru</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="kaluwasan" href="../../Lexicon/indexLLO-67.htm#luwas2"><span class="WordLink">kaluwasan</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="mara" href="../../Lexicon/Details/mara.htm"><span class="WordLink">Mara</span></a> &lsquo;<a title="adj. painful (sakit)" href="../../Lexicon/Details/sakit.htm"><span class="WordLink">masakit</span></a> <a title="se" href="../../Lexicon/indexLSE-64.htm#se1"><span class="WordLink">se</span></a> <a title="n. breath" href="../../Lexicon/Details/geyinawa.htm"><span class="WordLink">geyinawa</span></a>.&rsquo;</p>
+            <p id="FNote1" class="Footnote"><a title="Go back up to 3:9 in the text" href="#C3V9"><span class="ChapterVerse">3:9 </span></a><a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">Te</span></a> <a title="prop_n. Hebrew language (Hibru)" href="../../Lexicon/Details/Hibru.htm"><span class="WordLink">Hibruwanen</span></a>: <a title="buni" href="../../Lexicon/Details/buni2.htm"><span class="WordLink">Bunbuni</span></a> <a title="pron. you(sg); by you(sg)" href="../../Lexicon/Details/nu.htm"><span class="WordLink">nu</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="kumbalè" href="../../Lexicon/Details/kumbal%C3%A8.htm"><span class="WordLink">kumbale</span></a> <a title="pron. you(sg); by you(sg)" href="../../Lexicon/Details/nu.htm"><span class="WordLink">nu</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="suluhuanen" href="../../Lexicon/indexLSIM-45.htm#suluh%C3%B9"><span class="WordLink">suluhuanen</span></a> <a title="pron. you(sg); by you(sg)" href="../../Lexicon/Details/nu.htm"><span class="WordLink">nu</span></a>.</p>
+            <p id="FNote2" class="Footnote"><a title="Go back up to 4:11 in the text" href="#C4V11"><span class="ChapterVerse">4:11 </span></a><a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">Kene</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="adj. clear" href="../../Lexicon/Details/klaru.htm"><span class="WordLink">klaru</span></a> <a title="diya" href="../../Lexicon/indexLD-80.htm#diyav"><span class="WordLink">diye</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="adj. true (lehet)" href="../../Lexicon/Details/lehet1.htm"><span class="WordLink">malehet</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="migpuun" href="../../Lexicon/Details/puun.htm"><span class="WordLink">migpuunan</span></a> <a title="ke" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ke</span></a> <a title="n. other" href="../../Lexicon/Details/lein.htm"><span class="WordLink">lein</span></a> <a title="e" href="../../Lexicon/indexLA-77.htm#a"><span class="WordLink">e</span></a> <a title="part. also" href="../../Lexicon/Details/degma.htm"><span class="WordLink">degma</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="n. place" href="../../Lexicon/Details/inged.htm"><span class="WordLink">inged</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <span class="NameWordLink">Iprata</span>. <a title="kahiyen" href="../../Lexicon/Details/kahi.htm"><span class="WordLink">Kahiyen</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="adj. other" href="../../Lexicon/Details/duma.htm"><span class="WordLink">duma</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <span class="NameWordLink">Iprata</span> <a title="dem. that" href="../../Lexicon/Details/iyan.htm"><span class="WordLink">iyan</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="tapey" href="../../Lexicon/indexLT-96.htm#tapey1"><span class="WordLink">tapey</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="n. name" href="../../Lexicon/Details/ngaran.htm"><span class="WordLink">ngaran</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="See glossary entry for Bitlihim" href="../indexGlossary.htm#Bitlihim"><span class="WordLink">Bitlihim</span><span class="GlossaryLinkSymbol"><sup>[gl]</sup></span></a>.</p></div>
+            """
+            if ourGlobals['footnoteHTML5'] or ourGlobals['xrefHTML5']:
+                writerObject.writeLineOpen( 'div' ) # endNotes
+                if ourGlobals['footnoteHTML5']:
+                    #writerObject.writeLineOpenSelfclose( 'hr' )
+                    writerObject.writeLineOpenClose( 'h3', 'Footnotes', ('class','footnotesHeader') )
+                    writerObject.writeLineOpen( 'div', ('class','footerLine') )
+                    for line in ourGlobals['footnoteHTML5']:
+                        writerObject.writeLineText( line, noTextCheck=True )
+                    writerObject.writeLineClose( 'div' )
+                if ourGlobals['xrefHTML5']:
+                    #writerObject.writeLineOpenSelfclose( 'hr' )
+                    writerObject.writeLineOpenClose( 'h3', 'Cross References', ('class','xrefsHeader') )
+                    writerObject.writeLineOpen( 'div', ('class','xrefSection') )
+                    for line in ourGlobals['xrefHTML5']:
+                        writerObject.writeLineText( line, noTextCheck=True )
+                    writerObject.writeLineClose( 'div' )
+                writerObject.writeLineClose( 'div' ) # endNotes
+        # end of toHTML5.writeEndNotes
+
+
+        def writeFooter( writerObject ):
+            """Writes the HTML5 footer to the HTML writerObject."""
+            writerObject.writeLineOpen( 'footer' )
+            writerObject.writeLineOpen( 'p', ('class','footerLine') )
+            writerObject.writeLineOpen( 'a', ('href','http://www.w3.org/html/logo/') )
+            writerObject.writeLineText( '<img src="http://www.w3.org/html/logo/badge/html5-badge-h-css3-semantics.png" width="165" height="64" alt="HTML5 Powered with CSS3 / Styling, and Semantics" title="HTML5 Powered with CSS3 / Styling, and Semantics">', noTextCheck=True )
+            writerObject.writeLineClose( 'a' )
+            writerObject.writeLineText( "This page automatically created {} by {} v{}".format( datetime.today().strftime("%d-%b-%Y"), ProgName, ProgVersion ) )
+            writerObject.writeLineClose( 'p' )
+            writerObject.writeLineClose( 'footer' )
+            writerObject.writeLineClose( 'body' )
+        # end of toHTML5.writeFooter
+
+
+        def convertToPageReference( refTuple ):
+            """
+            Given a reference 4-tuple like ('LUK','15','18','')
+                convert it to an HTML link.
+            """
+            #print( "toHTML5.convertToPageReference( {} )".format( refTuple ) )
+            assert( refTuple and len(refTuple)==4 )
+            assert( refTuple[0] is None or ( refTuple[0] and len(refTuple[0])==3 ) ) #BBB
+            if refTuple[0] in filenameDict:
+                return '{}#C{}V{}'.format( filenameDict[refTuple[0]], refTuple[1], refTuple[2] )
+            else: logging.error( "toHTML5.convertToPageReference can't find book: {}".format( repr(refTuple[0]) ) )
+        # end of toHTML5.convertToPageReference
+
+
+        def createSectionCrossReference( givenRef ):
+            """
+            Returns an HTML string for a section cross-reference.
+
+            Must be able to handle things like:
+                (Mat. 19:9; Mar. 10:11-12; Luk. 16:18)
+                (Luk. 6:27-28,32-36)
+                (Luk. 16:13; 12:22-31)
+                (1 Kru. 11:1-9; 14:1-7)
+            """
+            #print( "toHTML5.createSectionCrossReference: '{}'".format( givenRef ) )
+            adjRef = givenRef
+            result = bracket = ''
+            for bracketLeft,bracketRight in (('(',')'),('[',']'),):
+                if adjRef and adjRef[0]==bracketLeft and adjRef[-1]==bracketRight:
+                    result += bracketLeft
+                    bracket = bracketRight
+                    adjRef = adjRef[1:-1] # Remove the brackets
+            for j,originalRef in enumerate( adjRef.split( ';' ) ):
+                #print( " ", j, originalRef )
+                if j: result += ';' # Restore the semicolons
+                ref = originalRef.strip()
+                if ref:
+                    if j: # later section refs might not include the book name, e.g., Luk. 16:13; 12:22-31
+                        letterCount = 0
+                        for char in ref:
+                            if char.isalpha(): letterCount += 1
+                        if letterCount < 2: # Allows for something like 16:13a but assumes no single letter book abbrevs
+                            ref = ((analysis[0]+' ') if analysis else '' ) + ref # Prepend the last BBB if there was one
+                    analysis = BRL.getFirstReference( ref, "section cross-reference '{}' from '{}'".format( ref, givenRef ) )
+                    #print( "a", analysis )
+                    link = convertToPageReference(analysis) if analysis else None
+                    result += '<a class="sectionCrossReferenceLink" href="{}">{}</a>'.format( link, originalRef ) if link else originalRef
+            #print( "  Returning '{}'".format( result + bracket ) )
+            return result + bracket
+        # end of toHTML5.createSectionCrossReference
+
+
+        def writeHomePage():
+            if Globals.verbosityLevel > 1: print( _("    Creating HTML5 home/index page...") )
+            xw = MLWriter( 'index.html', WEBoutputFolder, 'HTML' )
+            xw.setHumanReadable()
+            xw.start( noAutoXML=True )
+            xw.writeLineText( '<!DOCTYPE html>', noTextCheck=True )
+            xw.writeLineOpen( 'html' )
+            writeHeader( xw, 'home' )
+            writeFooter( xw )
+            xw.writeLineClose( 'html' )
+            xw.close()
+        # end of toHTML5.writeHomePage
+
+
+        def writeAboutPage():
+            if Globals.verbosityLevel > 1: print( _("    Creating HTML5 about page...") )
+            xw = MLWriter( 'about.html', WEBoutputFolder, 'HTML' )
+            xw.setHumanReadable()
+            xw.start( noAutoXML=True )
+            xw.writeLineText( '<!DOCTYPE html>', noTextCheck=True )
+            xw.writeLineOpen( 'html' )
+            writeHeader( xw, 'about' )
+            xw.writeLineOpenClose( 'p', 'These pages were created by the BibleWriter module of the Open Scriptures Bible Organisational System.' )
+            writeFooter( xw )
+            xw.writeLineClose( 'html' )
+            xw.close()
+        # end of toHTML5.writeAboutPage
+
+
+        def writeHTML5Book( writerObject, BBB, bkData, ourGlobals ):
+            """Writes a book to the HTML5 writerObject."""
+
+            def liveLocal( text ):
+                """
+                Return the line with live links to the local page.
+
+                Replaces only the first reference.
+                """
+                match = re.search( '([1-9][0-9]{0,2}):([1-9][0-9]{0,2})', text )
+                if match:
+                    #print( '0', repr(match.group(0)) )
+                    #print( '1', repr(match.group(1)) )
+                    #print( '2', repr(match.group(2)) )
+                    text = text.replace( match.group(0), '<a class="CVReference" href="#C{}V{}">{}</a>'.format( match.group(1), match.group(2), match.group(0) ) )
+                    #print( repr(text) )
+                return text
+            # end of liveLocal
+
+
+            writeHeader( writerObject, BBB )
+            haveOpenSection = haveOpenParagraph = haveOpenList = False
+            html5Globals['nextFootnoteIndex'] = html5Globals['nextXRefIndex'] = 0
+            html5Globals['footnoteHTML5'], html5Globals['xrefHTML5'] = [], []
+            C = V = ''
+            for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
+                marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
+                #if BBB=='MRK': print( "writeHTML5Book", marker, text )
+                #print( "toHTML5.writeHTML5Book", BBB, C, V, marker, text )
+                if marker in oftenIgnoredIntroMarkers: pass # Just ignore these lines
+
+                # Markers usually only found in the introduction
+                elif marker in ('mt1','mt2',):
+                    if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
+                    if text: writerObject.writeLineOpenClose( 'h1', text, ('class','mainTitle'+marker[2]) )
+                elif marker in ('ms1','ms2',):
+                    if not haveOpenParagraph:
+                        logging.warning( "toHTML5: Have main section heading {} outside a paragraph in {}".format( text, BBB ) )
+                        writerObject.writeLineOpen( 'p', ('class','unknownParagraph') ); haveOpenParagraph = True
+                    if text: writerObject.writeLineOpenClose( 'h2', text, ('class','majorSectionHeading'+marker[1]) )
+                elif marker in ('ip','ipi',):
+                    if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
+                    if not haveOpenSection:
+                        writerObject.writeLineOpen( 'section', ('class','regularSection') ); haveOpenSection = True
+                    writerObject.writeLineOpen( 'p', ('class',BibleWriter.ipHTMLClassDict[marker]) ); haveOpenParagraph = True
+                    if text or extras:
+                        writerObject.writeLineText( BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, ourGlobals ), noTextCheck=True )
+                elif marker == 'iot':
+                    if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
+                    if text: writerObject.writeLineOpenClose( 'h3', text, ('class','outlineTitle') )
+                elif marker in ('io1','io2','io3',):
+                    if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
+                    if text: writerObject.writeLineOpenClose( 'p', liveLocal(text), ('class','outlineEntry'+marker[2]), noTextCheck=True )
+
+                # Now markers in the main text
+                elif marker in 'c':
+                    # What should we put in here -- we don't need/want to display it, but it's a place to jump to
+                    writerObject.writeLineOpenClose( 'span', ' ', [('class','chapterStart'),('id','C'+text)] )
+                elif marker in 'c#':
+                    C = text
+                    if not haveOpenParagraph:
+                        logging.warning( "toHTML5: Have chapter number {} outside a paragraph in {} {}:{}".format( text, BBB, C, V ) )
+                        writerObject.writeLineOpen( 'p', ('class','unknownParagraph') ); haveOpenParagraph = True
+                    # Put verse 1 id here on the chapter number (since we don't output a v1 number)
+                    writerObject.writeLineOpenClose( 'span', text, [('class','chapterNumber'),('id','C'+text+'V1')] )
+                    writerObject.writeLineOpenClose( 'span', '&nbsp;', ('class','chapterNumberPostspace') )
+                elif marker in ('s1','s2','s3',):
+                    if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
+                    if marker == 's1':
+                        if haveOpenSection: writerObject.writeLineClose( 'section' ); haveOpenSection = False
+                        writerObject.writeLineOpen( 'section', ('class','regularSection') ); haveOpenSection = True
+                    if text: writerObject.writeLineOpenClose( 'h3', text, ('class','sectionHeading'+marker[1]) )
+                elif marker == 'r':
+                    if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
+                    if not haveOpenSection:
+                        logging.warning( "toHTML5: Have section cross reference {} outside a paragraph in {} {}:{}".format( text, BBB, C, V ) )
+                        writerObject.writeLineOpen( 'section', ('class','regularSection') ); haveOpenSection = True
+                    if text: writerObject.writeLineOpenClose( 'p', createSectionCrossReference(text), ('class','sectionCrossReference'), noTextCheck=True )
+                elif marker == 'v':
+                    V = text
+                    if not haveOpenParagraph:
+                        logging.warning( "toHTML5: Have verse number {} outside a paragraph in {} {}:{}".format( text, BBB, C, V ) )
+                    if V != '1': # Suppress number for verse 1
+                        writerObject.writeLineOpenClose( 'span', ' ', ('class','verseNumberPrespace') )
+                        writerObject.writeLineOpenClose( 'span', V, [('class','verseNumber'),('id','C'+C+'V'+V)] )
+                        writerObject.writeLineOpenClose( 'span', '&nbsp;', ('class','verseNumberPostspace') )
+                elif marker in ('p','pi','q1','q2','q3','q4',):
+                    if haveOpenList: writerObject.writeLineClose( 'p' ); haveOpenList = False
+                    if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
+                    writerObject.writeLineOpen( 'p', ('class',BibleWriter.pHTMLClassDict[marker]) ); haveOpenParagraph = True
+                    if text and Globals.debugFlag and debuggingThisModule: halt
+                elif marker == 'li1':
+                    if not haveOpenList:
+                        writerObject.writeLineOpen( 'p', ('class','list') ); haveOpenList = True
+                    writerObject.writeLineOpen( 'span', ('class','listItem1') )
+                    if text and Globals.debugFlag and debuggingThisModule: halt
+
+                # Character markers
+                elif marker in ('v~','p~',):
+                    if not haveOpenParagraph:
+                        logging.warning( "toHTML5: Have verse text {} outside a paragraph in {} {}:{}".format( text, BBB, C, V ) )
+                        writerObject.writeLineOpen( 'p', ('class','unknownParagraph') ); haveOpenParagraph = True
+                    if text or extras:
+                        writerObject.writeLineOpenClose( 'span', BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, ourGlobals ), ('class','verseText'), noTextCheck=True )
+                else: unhandledMarkers.add( marker )
+                if extras and marker not in ('v~','p~',): logging.warning( "toHTML5: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
+            if haveOpenList: writerObject.writeLineClose( 'p' ); haveOpenList = False
+            if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
+            if haveOpenSection: writerObject.writeLineClose( 'section' ); haveOpenSection = False
+            writeEndNotes( writerObject, ourGlobals )
+            writeFooter( writerObject )
+        # end of toHTML5.writeHTML5Book
+
+
+        # Set-up our Bible reference system
+        if controlDict['PublicationCode'] == "GENERIC":
+            BOS = self.genericBOS
+            BRL = self.genericBRL
+        else:
+            BOS = BibleOrganizationalSystem( controlDict["PublicationCode"] )
+            BRL = BibleReferenceList( BOS, BibleObject=None )
+
+        if Globals.verbosityLevel > 2: print( _("  Exporting to HTML5 format...") )
+        suffix = controlDict['HTML5Suffix'] if 'HTML5Suffix' in controlDict else 'html'
+        filenameDict = {}
+        for BBB in self.books: # Make a list of filenames
+            filename = controlDict['HTML5OutputFilenameTemplate'].replace('__BOOKCODE__',BBB ).replace('__SUFFIX__',suffix)
+            filenameDict[BBB] = Globals.makeSafeFilename( filename.replace( ' ', '_' ) )
+
+        html5Globals = {}
+        if controlDict["HTML5Files"]=="byBook":
+            for BBB,bookData in self.books.items(): # Now export the books
+                if Globals.verbosityLevel > 2: print( _("    Exporting {} to HTML5 format...").format( BBB ) )
+                xw = MLWriter( filenameDict[BBB], WEBoutputFolder, 'HTML' )
+                xw.setHumanReadable()
+                xw.start( noAutoXML=True )
+                xw.writeLineText( '<!DOCTYPE html>', noTextCheck=True )
+                xw.writeLineOpen( 'html' )
+                if Globals.debugFlag: writeHTML5Book( xw, BBB, bookData, html5Globals ) # Halts on errors
+                else:
+                    try: writeHTML5Book( xw, BBB, bookData, html5Globals )
+                    except Exception as err:
+                        print( BBB, "Unexpected error:", sys.exc_info()[0], err)
+                        logging.error( "toHTML5: Oops, creating {} failed!".format( BBB ) )
+                xw.writeLineClose( 'html' )
+                xw.close()
+            writeHomePage()
+            writeAboutPage()
+        elif Globals.debugFlag and debuggingThisModule: halt # not done yet
+        if unhandledMarkers:
+            logging.warning( "toHTML5: Unhandled markers were {}".format( unhandledMarkers ) )
+            if Globals.verbosityLevel > 1:
+                print( "  " + _("WARNING: Unhandled toHTML5 markers were {}").format( unhandledMarkers ) )
+
+        # Now create a zipped collection
+        if Globals.verbosityLevel > 2: print( "  Zipping HTML5 files..." )
+        zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllWebFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
+        for filename in os.listdir( WEBoutputFolder ):
+            if not filename.endswith( '.zip' ):
+                filepath = os.path.join( WEBoutputFolder, filename )
+                zf.write( filepath, filename ) # Save in the archive without the path
+        zf.close()
+
+        if validationSchema: return xw.validate( validationSchema )
+        return True
+    # end of BibleWriter.toHTML5
+
+
+
     def toCustomBible( self, outputFolder=None, removeVerseBridges=False ):
         """
         Adjust the pseudo USFM and write the customized USFM files for the (forthcoming) CustomBible (Android) app.
@@ -340,22 +1033,46 @@ class BibleWriter( InternalBible ):
         if not os.access( bookOutputFolderHTML, os.F_OK ): os.makedirs( bookOutputFolderHTML ) # Make the empty folder if there wasn't already one there
         #chapterOutputFolderHTML = os.path.join( outputFolder, "ByChapter.{}.HTML".format( CBDataFormatVersion ) )
         #if not os.access( chapterOutputFolderHTML, os.F_OK ): os.makedirs( chapterOutputFolderHTML ) # Make the empty folder if there wasn't already one there
-        destinationHTMLFilepathTemplate = os.path.join( bookOutputFolderHTML, "CBBook.{}.html" ) # Missing the BBB
-        compressionFilepath = os.path.join( outputFolder, "CBCmprnDict.json" )
+        destinationHTMLFilepathTemplate = os.path.join( bookOutputFolderHTML, "CBBook.{}.{}.html".format( '{}', CBDataFormatVersion ) ) # Missing the BBB
+        destinationIndexFilepath = os.path.join( outputFolder, "CB-BCV-ix.{}.json".format( CBDataFormatVersion ) )
+        compressionFilepath = os.path.join( outputFolder, "CBCmprnDict.{}.json".format( CBDataFormatVersion ) )
 
         unhandledMarkers = set()
 
         CBCompressions = (
-            ('@A','<p class="SectionHeading1">'),
-            ('@B','<span class="ChapterNumber">'),
-            ('@C','<span class="VerseNumber">'),
-            ('@D','<span class="VerseText">'),
-            ('@E','<p class="ParagraphP">'),
-            ('@F','<p class="ParagraphQ1">'),
-            ('@G','<p class="ParagraphQ2">'),
-            ('@H','<p class="ParagraphIP">'),
+            ('@A','<h1 class="mainTitle'),
+            ('@B','<section class="introSection">'),
+            ('@C','<p class="introductoryParagraph">'),
+            #('@C','<section class="regularSection">'),
+            ('@D','<section class="regularSection"><h3 class="sectionHeading1">'),
+            ('@E','<span class="chapterStart" id="C'),
+            #('@F','<p class="sectionHeading1">'),
+            ('@F','<span class="chapterNumber" id="C'),
+            ('@G','</span><span class="chapterNumberPostspace">&nbsp;</span><span class="verseText">'),
+            ('@H','</span><span class="chapterNumberPostspace">&nbsp;</span>'),
+            ('@I','<span class="verseNumberPrespace"> </span><span class="verseNumber" id="C'),
+            #('@Y','</span><span class="verseNumberPrespace"> </span><span class="verseNumber" id="C'), # Makes bigger! Why???
+            ('@J','</span><span class="verseNumberPostspace">&nbsp;</span>'),
+            ('@K','</span><span class="verseNumberPostspace">&nbsp;</span><span class="verseText">'),
+            #('@K','<span class="verseText">'),
+            ('@M','<p class="proseParagraph"><span class="chapterNumber" id="C'),
+            ('@N','<p class="proseParagraph">'),
+            ('@O','<p class="proseParagraph"><span class="verseNumberPrespace"> </span><span class="verseNumber" id="C'),
+            ('@P','</h3><p class="proseParagraph"><span class="verseNumberPrespace"> </span><span class="verseNumber" id="C'),
+            ('@Q','<p class="poetryParagraph1">'),
+            ('@R','<p class="poetryParagraph1"><span class="verseNumberPrespace"> </span><span class="verseNumber" id="C'),
+            ('@S','<p class="poetryParagraph1"><span class="verseText">'),
+            ('@T','<p class="poetryParagraph2">'),
+            #temp('@S','<p class="poetryParagraph3">'),
+            #temp('@T','<p class="poetryParagraph4">'),
+            ('@!','<span class="'), # For character formatting which doesn't deserve its own entry
+            ('@a','</section>'),
+            ('@h','</h1>'),
+            ('@i','</h3>'),
             ('@p','</p>'),
             ('@s','</span>'),
+            ('@t','</span></p>'),
+            ('^','">'),
         )
 
         usageCount = {}
@@ -378,6 +1095,22 @@ class BibleWriter( InternalBible ):
         #print( len(reversedCompressions), reversedCompressions )
 
 
+        def writeCompressions():
+            """
+            """
+            if Globals.verbosityLevel > 1:
+                print( "  Writing compression entries..." )
+            #filepath = os.path.join( outputFolder, 'CBHeader.json' )
+            if Globals.verbosityLevel > 2: print( "    toCustomBible " +  _("Exporting index to {}...").format( compressionFilepath ) )
+            with open( compressionFilepath, 'wt' ) as jsonFile:
+                #for compression in SDCompressions:
+                    #compFile.write( compression[0] + compression[1] + '\n' )
+                json.dump( CBCompressions, jsonFile, indent=jsonIndent )
+            if Globals.verbosityLevel > 2:
+                print( "    {} compression entries written.".format( len(CBCompressions) ) )
+        # end of writeCompressions
+
+
         bytesRaw = bytesCompressed = 0
         def compress( entry ):
             """
@@ -395,7 +1128,7 @@ class BibleWriter( InternalBible ):
                     usageCount[shortString] += 1
             bytesCompressed += len( result.encode('UTF8') )
             return result
-            # end of compress
+        # end of compress
 
 
         def decompress( entry ):
@@ -405,23 +1138,7 @@ class BibleWriter( InternalBible ):
             for shortString, longString in CBCompressions:
                 result = result.replace( shortString, longString )
             return result
-            # end of decompress
-
-
-        def writeCompressions():
-            """
-            """
-            if Globals.verbosityLevel > 1:
-                print( "  Writing compression entries..." )
-            #filepath = os.path.join( outputFolder, 'CBHeader.json' )
-            if Globals.verbosityLevel > 2: print( "    toCustomBible " +  _("Exporting index to {}...").format( compressionFilepath ) )
-            with open( compressionFilepath, 'wt' ) as jsonFile:
-                #for compression in SDCompressions:
-                    #compFile.write( compression[0] + compression[1] + '\n' )
-                json.dump( CBCompressions, jsonFile, indent=jsonIndent )
-            if Globals.verbosityLevel > 2:
-                print( "    {} compression entries written.".format( len(CBCompressions) ) )
-            # end of writeCompressions
+        # end of decompress
 
 
         def writeCBHeader():
@@ -512,54 +1229,98 @@ class BibleWriter( InternalBible ):
         # end of writeCBBookAsJSON
 
 
-        def writeCBBookAsHTML( BBB, bookData ):
+        def writeCBBookAsHTML( BBB, bookData, createdIndex ):
             """
             """
-            def handleSection( sectionHTML ):
+            CBGlobals = {}
+            CBGlobals['nextFootnoteIndex'] = CBGlobals['nextXRefIndex'] = 0
+            CBGlobals['footnoteHTML5'], CBGlobals['xrefHTML5'] = [], []
+
+            def handleSection( sectionCV, sectionHTML, outputFile ):
                 """
+                First parameter is a C,V tuple (C = '0' for introduction)
+                Section parameter is the HTML5 segment for the section
                 """
-                #print( "\nSection is:", sectionHTML )
+                #print( "\ntoCustomBible.handleSection( {} )".format( sectionHTML ) )
                 assert( sectionHTML )
                 compressedHTML = compress( sectionHTML )
                 checkHTML = decompress( compressedHTML )
                 if checkHTML != sectionHTML: halt
+                #if Globals.debugFlag: compressedHTML = sectionHTML # Leave it uncompressed so we can easily look at it
                 if Globals.debugFlag: compressedHTML += '\n'
-                bytesWritten = htmlFile.write( compressedHTML.encode('UTF8') )
+                bytesWritten = outputFile.write( compressedHTML.encode('UTF8') )
                 return bytesWritten
-            # end of handleSection
+            # end of writeCBBookAsHTML.handleSection
 
             htmlFile = open( destinationHTMLFilepathTemplate.format( BBB ), 'wb' )
+            fileOffset = 0
 
+            #createdIndex = []
             lastHTML = sectionHTML = outputHTML = ""
             lastMarker = None
             C = V = '0'
-            pOpen = False
+            sOpen = pOpen = False
             for dataLine in bookData:
                 thisHTML = ''
-                marker, text, extras = dataLine.getMarker(), dataLine.getAdjustedText(), dataLine.getExtras()
+                marker, text, extras = dataLine.getMarker(), dataLine.getAdjustedText(), [] #dataLine.getExtras()
                 if marker in ('id','ide','h','toc1','toc2','toc3'):
                     pass # just ignore all this stuff
+
+                # Markers usually only found in the introduction
+                elif marker in ('mt1','mt2',):
+                    if pOpen: lastHTML += '</p>'; pOpen = False
+                    thisHTML += '<h1 class="mainTitle{}">{}</h1>'.format( marker[2], text )
+                elif marker in ('ms1','ms2',):
+                    if not pOpen:
+                        logging.warning( "toCustomBible: Have main section heading {} outside a paragraph in {}".format( text, BBB ) )
+                        thisHTML += '<p class="unknownParagraph">'
+                        pOpen = True
+                    thisHTML += '<h2 class="majorSectionHeading{}">{}</h2>'.format( marker[1], text )
+                elif marker in ('ip','ipi',):
+                    assert( not pOpen )
+                    if not sOpen:
+                        thisHTML += '<section class="introSection">'; sOpen = True; BCV=(BBB,C,V)
+                    #if not text and not extras: print( "{} at {} {}:{} has nothing!".format( marker, BBB, C, V ) );halt
+                    if text or extras:
+                        thisHTML += '<p class="{}">{}</p>'.format( BibleWriter.ipHTMLClassDict[marker], BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, CBGlobals ) )
+
                 elif marker == 'c':
                     C, V = text, '0'
+                    # What should we put in here -- we don't need/want to display it, but it's a place to jump to
+                    thisHTML = '<span class="chapterStart" id="{}"></span>'.format( 'C'+C )
                 elif marker == 's1':
+                    if pOpen: lastHTML += '</p>'; pOpen = False
+                    if sOpen: lastHTML += '</section>'; sOpen = False
                     if sectionHTML:
-                        handleSection( sectionHTML )
-                        sectionHTML = ""
-                    thisHTML = '<p class="SectionHeading1">{}</p>'.format( text )
+                        sectionHTML += lastHTML
+                        lastHTML = ''
+                        bytesWritten = handleSection( BCV, sectionHTML, htmlFile )
+                        sectionHTML = ''
+                        indexEntry = BCV[0],BCV[1],BCV[2],fileOffset,bytesWritten
+                        createdIndex.append( indexEntry )
+                        fileOffset += bytesWritten
+
+                    thisHTML += '<section class="regularSection">'; sOpen = True; BCV=(BBB,C,V)
+                    thisHTML += '<h3 class="sectionHeading1">{}</h3>'.format( text )
                 elif marker in ('s2','s3','s4'):
-                    thisHTML = '<p class="SectionHeading{}">{}</p>'.format( marker[1], text )
-                elif marker in ('p','ip','q1','q2','q3','q4',):
-                    if pOpen: thisHTML = '</p>'; pOpen = False
-                    if marker not in ('ip',): assert( not text )
-                    thisHTML += '<p class="Paragraph{}">'.format( marker.upper() )
+                    thisHTML = '<h3 class="sectionHeading{}">{}</h3>'.format( marker[1], text )
+                elif marker in ('p','pi','q1','q2','q3','q4',):
+                    if pOpen: thisHTML = '</p>\n'; pOpen = False
+                    assert( not text )
+                    thisHTML += '<p class="{}">'.format( BibleWriter.pHTMLClassDict[marker] )
                     pOpen = True
                 elif marker == 'c#':
-                    thisHTML = '<span class="ChapterNumber">{}</span>'.format( text )
+                    thisHTML += '<span class="chapterNumber" id="{}">{}</span>'.format( 'C'+C+'V1', text )
+                    thisHTML += '<span class="chapterNumberPostspace">&nbsp;</span>'
                 elif marker == 'v':
                     V = text
-                    thisHTML = '<span class="VerseNumber">{}</span>'.format( text )
-                elif marker == 'v~':
-                    thisHTML = '<span class="VerseText">{}</span>'.format( text )
+                    if V != '1': # Suppress number for verse 1
+                        thisHTML += '<span class="verseNumberPrespace"> </span>'
+                        thisHTML += '<span class="verseNumber" id="{}">{}</span>'.format( 'C'+C+'V'+V, text )
+                        thisHTML += '<span class="verseNumberPostspace">&nbsp;</span>'
+                elif marker in ('v~','p~',):
+                    if text or extras:
+                        thisHTML = '<span class="verseText">{}</span>'.format( BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, CBGlobals ) )
                 elif marker not in ('rem',): # These are the markers that we can safely ignore for this export
                     unhandledMarkers.add( marker )
 
@@ -567,31 +1328,62 @@ class BibleWriter( InternalBible ):
                 lastMarker = marker
                 lastHTML = thisHTML
 
+            if pOpen: lastHTML += '</p>'
+            if sOpen: lastHTML += '</section>'
             sectionHTML += lastHTML
+            if sectionHTML:
+                bytesWritten = handleSection( BCV, sectionHTML, htmlFile )
+                indexEntry = BCV[0],BCV[1],BCV[2],fileOffset,bytesWritten
+                createdIndex.append( indexEntry )
 
             htmlFile.close()
-            if Globals.verbosityLevel > 1:
+            if Globals.verbosityLevel > 2 or Globals.debugFlag:
                 for key,count in usageCount.items():
                     if count == 0: logging.error( "Compression code {} is unused".format( key ) )
                     elif count < 20: logging.warning( "Compression code {} is rarely used".format( key ) )
                     elif count < 100: logging.warning( "Compression code {} is under-used".format( key ) )
 
-                if bytesRaw: print( "  Compression ratio: " + str( round( bytesCompressed / bytesRaw, 3 ) ) )
-                print( "    {} raw bytes: {}".format( BBB, bytesRaw ) )
-                print( "    Compressed bytes: " + str(bytesCompressed) )
+                if bytesRaw:
+                    print( "  {} compression ratio: {}".format( BBB, round( bytesCompressed / bytesRaw, 3 ) ) )
+                    if Globals.verbosityLevel > 2:
+                        print( "    {} raw bytes: {}".format( BBB, bytesRaw ) )
+                        print( "    {} compressed bytes: ".format( BBB, bytesCompressed ) )
             #if Globals.debugFlag: print( "Finished", BBB ); halt
         # end of writeCBBookAsHTML
 
 
         writeCBHeader()
         writeCBBookNames()
-        writeCompressions()
 
         # Write the books
+        createdIndex = []
         for BBB,bookObject in self.books.items():
             pseudoUSFMData = bookObject._processedLines
             writeCBBookAsJSON( BBB, pseudoUSFMData )
-            writeCBBookAsHTML( BBB, pseudoUSFMData )
+            writeCBBookAsHTML( BBB, pseudoUSFMData, createdIndex )
+
+        if createdIndex: # Sort the main index and write it
+            if Globals.verbosityLevel > 1:
+                print( "  Fixing and writing main index..." )
+            newIndex = []
+            for B,C,V,fO,rL in createdIndex:
+                intC = int( C )
+                try: intV = int( V )
+                except:
+                    assert( V )
+                    newV = ''
+                    for char in V:
+                        if char.isdigit(): newV += char
+                        else: break
+                    intV = int( newV )
+                newIndex.append( (B,intC,intV,fO,rL) )
+            #createdIndex = sorted(createdIndex)
+            print( "    {} index entries created.".format( len(newIndex) ) )
+            #filepath = os.path.join( outputFolder, 'CBHeader.json' )
+            if Globals.verbosityLevel > 2: print( "    toCustomBible: " +  _("Exporting index to {}...").format( destinationIndexFilepath ) )
+            with open( destinationIndexFilepath, 'wt' ) as jsonFile:
+                json.dump( newIndex, jsonFile, indent=jsonIndent )
+            writeCompressions()
 
         if unhandledMarkers:
             logging.warning( "toCustomBible: Unhandled markers were {}".format( unhandledMarkers ) )
@@ -609,72 +1401,6 @@ class BibleWriter( InternalBible ):
 
         return True
     # end of BibleWriter.toCustomBible
-
-
-
-    def toText( self, outputFolder=None ):
-        """
-        Write the pseudo USFM out into a simple plain-text format.
-            The format varies, depending on whether or not there are paragraph markers in the text.
-        """
-        if Globals.verbosityLevel > 1: print( "Running BibleWriter:toText..." )
-        if Globals.debugFlag: assert( self.books )
-
-        if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolder: outputFolder = "OutputFiles/BOS_PlainText_Export/"
-        if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
-
-        # First determine our format
-        columnWidth = 80
-        verseByVerse = True
-
-        # Write the plain text files
-        for BBB,bookObject in self.books.items():
-            pseudoUSFMData = bookObject._processedLines
-
-            filename = "BOS-BWr-{}.txt".format( BBB )
-            filepath = os.path.join( outputFolder, Globals.makeSafeFilename( filename ) )
-            if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
-            textBuffer = ""
-            with open( filepath, 'wt' ) as myFile:
-                for entry in pseudoUSFMData:
-                    marker, text = entry.getMarker(), entry.getCleanText()
-                    if marker in ('id','ide','toc1','toc2','toc3','c#',): pass # Completely ignore these fields
-                    elif marker == 'h':
-                        if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
-                        myFile.write( "{}\n\n".format( text ) )
-                    elif marker in ('mt1','mt2','mt3',):
-                        if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
-                        myFile.write( "{}{}\n\n".format( ' '*((columnWidth-len(text))//2), text ) )
-                    elif marker in ('is1','is2','is3','ip','ipi','iot','io1','io2','io3',): pass # Drop the introduction
-                    elif marker == 'c':
-                        C = text
-                        if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
-                        myFile.write( "\n\nChapter {}".format( text ) )
-                    elif marker == 'v':
-                        V = text
-                        if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
-                        myFile.write( "\n{} ".format( text ) )
-                    elif marker in ('p','s1','s2','s3',): pass # Drop out these fields
-                    elif text:
-                        textBuffer += (' ' if textBuffer else '') + text
-                if textBuffer: myFile.write( "{}\n".format( textBuffer ) ) # Write the last bit
-
-                    #if verseByVerse:
-                        #myFile.write( "{} ({}): '{}' '{}' {}\n" \
-                            #.format( entry.getMarker(), entry.getOriginalMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras() ) )
-
-        # Now create a zipped collection
-        if Globals.verbosityLevel > 2: print( "  Zipping text files..." )
-        zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllTextFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
-        for filename in os.listdir( outputFolder ):
-            if not filename.endswith( '.zip' ):
-                filepath = os.path.join( outputFolder, filename )
-                zf.write( filepath, filename ) # Save in the archive without the path
-        zf.close()
-
-        return True
-    # end of BibleWriter.toText
 
 
 
@@ -703,7 +1429,7 @@ class BibleWriter( InternalBible ):
         # Use "identify -list font" or "convert -list font" to see all fonts on the system
         defaultTextFontname, defaultHeadingFontname = "Times-Roman", "FreeSans-Bold"
         topLineColor = "opaque"
-        defaultMainHeadingFontcolor, defaultSectionHeadingFontcolor, defaultSectionReferenceFontcolor = "indigo", "red1", "royalBlue"
+        defaultMainHeadingFontcolor, defaultSectionHeadingFontcolor, defaultSectionCrossReferenceFontcolor = "indigo", "red1", "royalBlue"
         defaultVerseNumberFontcolor = "DarkOrange1"
         maxBooknameLetters = 12 # For the header line -- the chapter number is appended to this
         namingFormat = "Short" # "Short" or "Long" -- affects folder and filenames
@@ -830,7 +1556,7 @@ class BibleWriter( InternalBible ):
                 if down >= maxDown: break # We're finished
                 #print( BBB, C, textLineCount, outputLineCount, down, maxDown, lastLine, repr(line) )
 
-                isMainHeading = isSectionHeading = isSectionReference = False
+                isMainHeading = isSectionHeading = isSectionCrossReference = False
                 if line.startswith('HhH'):
                     if lastLine:
                         #print( BBB, C, "Don't start main heading on last line", repr(line) )
@@ -849,9 +1575,9 @@ class BibleWriter( InternalBible ):
                     fontcolor = defaultSectionHeadingFontcolor
                 elif line.startswith('RrR'):
                     line = line[3:] # Remove the heading marker
-                    #print( "Got section reference:", BBB, C, repr(line) )
-                    isSectionReference = True
-                    fontcolor = defaultSectionReferenceFontcolor
+                    #print( "Got section cross-reference:", BBB, C, repr(line) )
+                    isSectionCrossReference = True
+                    fontcolor = defaultSectionCrossReferenceFontcolor
 
                 textLineCount += 1
                 textWordCount = 0
@@ -2069,13 +2795,8 @@ class BibleWriter( InternalBible ):
                         xw.removeFinalNewline( True )
                         if version>=2: xw._writeToBuffer( ' ' ) # Space between verses
                     xw.writeLineOpenSelfclose ( 'verse', [('number',V),('style','v')] )
-                elif marker == 'v~':
-                    if not adjText: logging.warning( "toUSXXML: Missing text for v~" ); continue
-                    # TODO: We haven't stripped out character fields from within the verse -- not sure how USX handles them yet
-                    xw.removeFinalNewline( True )
-                    xw.writeLineText( handleInternalTextMarkersForUSX(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
-                elif marker == 'p~':
-                    if not adjText: logging.warning( "toUSXXML: Missing text for p~" ); continue
+                elif marker in ('v~','p~',):
+                    if not adjText: logging.warning( "toUSXXML: Missing text for {}".format( marker ) ); continue
                     # TODO: We haven't stripped out character fields from within the verse -- not sure how USX handles them yet
                     xw.removeFinalNewline( True )
                     xw.writeLineText( handleInternalTextMarkersForUSX(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
@@ -2485,13 +3206,8 @@ class BibleWriter( InternalBible ):
                     else:
                         xw.removeFinalNewline( True )
                     xw.writeLineOpenSelfclose ( 'v', ('id',V) )
-                elif marker == 'v~':
-                    if not adjText: logging.warning( "toUSFXXML: Missing text for v~" ); continue
-                    # TODO: We haven't stripped out character fields from within the verse -- not sure how USFX handles them yet
-                    xw.removeFinalNewline( True )
-                    xw.writeLineText( handleInternalTextMarkersForUSFX(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
-                elif marker == 'p~':
-                    if not adjText: logging.warning( "toUSFXXML: Missing text for p~" ); continue
+                elif marker in ('v~','p~',):
+                    if not adjText: logging.warning( "toUSFXXML: Missing text for {}".format( marker ) ); continue
                     # TODO: We haven't stripped out character fields from within the verse -- not sure how USFX handles them yet
                     xw.removeFinalNewline( True )
                     xw.writeLineText( handleInternalTextMarkersForUSFX(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
@@ -3177,11 +3893,11 @@ class BibleWriter( InternalBible ):
                 elif marker=='mr':
                     # Should only follow a ms1 I think
                     if haveOpenParagraph or haveOpenSection or not haveOpenMajorSection: logging.error( _("toOSIS: Didn't expect major reference 'mr' marker after {}").format(toOSISGlobals["verseRef"]) )
-                    if text: writerObject.writeLineOpenClose( 'title', checkText(text), ('type',"parallel") ) # Section reference
+                    if text: writerObject.writeLineOpenClose( 'title', checkText(text), ('type',"parallel") ) # Section cross-reference
                 elif marker=='r':
                     # Should only follow a s1 I think
                     if haveOpenParagraph or not haveOpenSection: logging.error( _("toOSIS: Didn't expect reference 'r' marker after {}").format(toOSISGlobals["verseRef"]) )
-                    if text: writerObject.writeLineOpenClose( 'title', checkText(text), ('type',"parallel") ) # Section reference
+                    if text: writerObject.writeLineOpenClose( 'title', checkText(text), ('type',"parallel") ) # Section cross-reference
                 elif marker=='p':
                     closeAnyOpenLG()
                     closeAnyOpenParagraph()
@@ -3196,10 +3912,7 @@ class BibleWriter( InternalBible ):
                     if not haveOpenL: closeAnyOpenLG()
                     writeVerseStart( writerObject, BBB, chapterRef, verseNumberString )
                     closeAnyOpenL()
-                elif marker=='v~':
-                    adjText = processXRefsAndFootnotes( text, extras, 0 )
-                    writerObject.writeLineText( checkText(adjText), noTextCheck=True )
-                elif marker=='p~':
+                elif marker in ('v~','p~',):
                     adjText = processXRefsAndFootnotes( text, extras, 0 )
                     writerObject.writeLineText( checkText(adjText), noTextCheck=True )
                 elif marker in ('q1','q2','q3',):
@@ -3847,11 +4560,11 @@ class BibleWriter( InternalBible ):
                 elif marker=='mr':
                     # Should only follow a ms1 I think
                     if haveOpenParagraph or haveOpenSection or not haveOpenMajorSection: logging.error( _("toSwordModule: Didn't expect major reference 'mr' marker after {}").format(toSwordGlobals["verseRef"]) )
-                    if text: writerObject.writeLineOpenClose( 'title', checkText(text), ('type',"parallel") ) # Section reference
+                    if text: writerObject.writeLineOpenClose( 'title', checkText(text), ('type',"parallel") ) # Section cross-reference
                 elif marker=='r':
                     # Should only follow a s1 I think
                     if haveOpenParagraph or not haveOpenSection: logging.error( _("toSwordModule: Didn't expect reference 'r' marker after {}").format(toSwordGlobals["verseRef"]) )
-                    if text: writerObject.writeLineOpenClose( 'title', checkText(text), ('type',"parallel") ) # Section reference
+                    if text: writerObject.writeLineOpenClose( 'title', checkText(text), ('type',"parallel") ) # Section cross-reference
                 elif marker=='p':
                     closeAnyOpenLG()
                     closeAnyOpenParagraph()
@@ -3869,15 +4582,7 @@ class BibleWriter( InternalBible ):
                     if not haveOpenL: closeAnyOpenLG()
                     writeVerseStart( writerObject, BBB, chapterRef, verseNumberString )
                     #closeAnyOpenL()
-                elif marker=='v~':
-                    #if not haveOpenL: closeAnyOpenLG()
-                    #writeVerseStart( writerObject, ix, BBB, chapterRef, text )
-                    adjText = processXRefsAndFootnotes( text, extras )
-                    writerObject.writeLineText( checkText(adjText), noTextCheck=True )
-                    #writerObject.writeLineOpenSelfclose( 'verse', ('eID',sID) )
-                    writeIndexEntry( writerObject, ix )
-                    closeAnyOpenL()
-                elif marker=='p~':
+                elif marker in ('v~','p~',):
                     #if not haveOpenL: closeAnyOpenLG()
                     #writeVerseStart( writerObject, ix, BBB, chapterRef, text )
                     adjText = processXRefsAndFootnotes( text, extras )
@@ -4801,641 +5506,6 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toHTML5( self, outputFolder=None, controlDict=None, validationSchema=None, humanReadable=True ):
-        """
-        Using settings from the given control file,
-            converts the USFM information to UTF-8 HTML files.
-        """
-        if Globals.verbosityLevel > 1: print( "Running BibleWriter:toHTML5..." )
-        if Globals.debugFlag:
-            #print( self )
-            assert( self.books )
-            assert( self.name )
-
-        if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolder: outputFolder = "OutputFiles/BOS_HTML5_Export/"
-        WEBoutputFolder = os.path.join( outputFolder, "Website/" )
-        if not os.access( outputFolder, os.F_OK ): os.makedirs( WEBoutputFolder ) # Make the empty folder if there wasn't already one there
-
-        if not controlDict:
-            controlDict, defaultControlFilename = {}, "To_HTML5_controls.txt"
-            try:
-                ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
-            except:
-                logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
-        self.__adjustControlDict( controlDict )
-
-        # Copy across our css style files
-        for filenamePart in ( 'BibleBook', ):
-            filepath = os.path.join( defaultControlFolder, filenamePart+'.css' )
-            try:
-                shutil.copy( filepath, WEBoutputFolder ) # Copy it under its own name
-                #shutil.copy( filepath, os.path.join( WEBoutputFolder, "Bible.css" ) ) # Copy it also under the generic name
-            except FileNotFoundError: logging.error( "Unable to find CSS style file: {}".format( filepath ) )
-
-        unhandledMarkers = set()
-
-
-        def writeHeader( writerObject, myBBB ):
-            """
-            Writes the HTML5 header to the HTML writerObject.
-            MyBBB can be the book code or 'home' or 'about'.
-            """
-            writerObject.writeLineOpen( 'head' )
-            writerObject.writeLineText( '<meta http-equiv="Content-Type" content="text/html;charset=utf-8">', noTextCheck=True )
-            writerObject.writeLineText( '<link rel="stylesheet" type="text/css" href="BibleBook.css">', noTextCheck=True )
-            if 'HTML5Title' in controlDict and controlDict['HTML5Title']:
-                writerObject.writeLineOpenClose( 'title' , controlDict['HTML5Title'] )
-            #if "HTML5Subject" in controlDict and controlDict["HTML5Subject"]: writerObject.writeLineOpenClose( 'subject', controlDict["HTML5Subject"] )
-            #if "HTML5Description" in controlDict and controlDict["HTML5Description"]: writerObject.writeLineOpenClose( 'description', controlDict["HTML5Description"] )
-            #if "HTML5Publisher" in controlDict and controlDict["HTML5Publisher"]: writerObject.writeLineOpenClose( 'publisher', controlDict["HTML5Publisher"] )
-            #if "HTML5Contributors" in controlDict and controlDict["HTML5Contributors"]: writerObject.writeLineOpenClose( 'contributors', controlDict["HTML5Contributors"] )
-            #if "HTML5Identifier" in controlDict and controlDict["HTML5Identifier"]: writerObject.writeLineOpenClose( 'identifier', controlDict["HTML5Identifier"] )
-            #if "HTML5Source" in controlDict and controlDict["HTML5Source"]: writerObject.writeLineOpenClose( 'identifier', controlDict["HTML5Source"] )
-            #if "HTML5Coverage" in controlDict and controlDict["HTML5Coverage"]: writerObject.writeLineOpenClose( 'coverage', controlDict["HTML5Coverage"] )
-            #writerObject.writeLineOpenClose( 'format', 'HTML5 markup language' )
-            #writerObject.writeLineOpenClose( 'date', datetime.now().date().isoformat() )
-            #writerObject.writeLineOpenClose( 'creator', 'BibleWriter.py' )
-            #writerObject.writeLineOpenClose( 'type', 'bible text' )
-            #if "HTML5Language" in controlDict and controlDict["HTML5Language"]: writerObject.writeLineOpenClose( 'language', controlDict["HTML5Language"] )
-            #if "HTML5Rights" in controlDict and controlDict["HTML5Rights"]: writerObject.writeLineOpenClose( 'rights', controlDict["HTML5Rights"] )
-            writerObject.writeLineClose( 'head' )
-
-            writerObject.writeLineOpen( 'body' )
-
-            writerObject.writeLineOpen( 'header' )
-            if myBBB == 'home': writerObject.writeLineOpenClose( 'p', 'Home', ('class','homeNonlink') )
-            else: writerObject.writeLineOpenClose( 'a', 'Home', [('href','index.html'),('class','homeLink')] )
-            if myBBB == 'about': writerObject.writeLineOpenClose( 'p', 'About', ('class','homeNonlink') )
-            else: writerObject.writeLineOpenClose( 'a', 'About', [('href','about.html'),('class','aboutLink')] )
-            writerObject.writeLineOpenClose( 'h', self.name, ('class','mainHeader') )
-            bkList = self.getBookList()
-            if myBBB  in bkList:
-                ix = bkList.index( myBBB )
-                if ix > 0:
-                    writerObject.writeLineOpenClose( 'a', 'Previous book', [('href',filenameDict[bkList[ix-1]]),('class','bookNav')] )
-                writerObject.writeLineOpenClose( 'a', 'Book start', [('href','#C1V1'),('class','bookNav')] )
-                if ix < len(bkList)-1:
-                    writerObject.writeLineOpenClose( 'a', 'Next book', [('href',filenameDict[bkList[ix+1]]),('class','bookNav')] )
-            writerObject.writeLineClose( 'header' )
-
-            # Create the nav bar for books
-            writerObject.writeLineOpen( 'nav' )
-            writerObject.writeLineOpen( 'ul' )
-            for bkData in self:
-                BBB = bkData.bookReferenceCode
-                bkName = bkData.getAssumedBookNames()[0]
-                if BBB == myBBB:
-                    writerObject.writeLineText( '<li class="bookNameEntry"><span class="currentBookName">{}</span></li>'.format( bkName ), noTextCheck=True )
-                else:
-                    writerObject.writeLineText( '<li class="bookNameEntry"><a class="bookNameLink" href="{}">{}</a></li>'.format( filenameDict[BBB], bkName ), noTextCheck=True )
-            writerObject.writeLineClose( 'ul' )
-            writerObject.writeLineClose( 'nav' )
-        # end of toHTML5.writeHeader
-
-
-        def writeEndNotes( writerObject, ourGlobals ):
-            """
-            Writes the HTML5 end notes (footnotes and cross-references) to the HTML writerObject.
-
-            <div id="XRefs- Normal"><h2 class="XRefsHeading">Cross References</h2>
-            <p id="XRef0" class="XRef"><a title="Go back up to 2:2 in the text" href="#C2V2"><span class="ChapterVerse">2:2</span></a> <span class="VernacularCrossReference">Lib 19:9&#x2011;10</span>; <span class="VernacularCrossReference">Diy 24:19</span></p>
-            <p id="XRef1" class="XRef"><a title="Go back up to 2:20 in the text" href="#C2V20"><span class="ChapterVerse">2:20</span></a> <span class="VernacularCrossReference">Lib 25:25</span></p>
-            <p id="XRef2" class="XRef"><a title="Go back up to 3:12 in the text" href="#C3V12"><span class="ChapterVerse">3:12</span></a> <a title="Go to Rut 2:20" href="RUT.htm#C2V20"><span class="VernacularCrossReference">Rut 2:20</span></a></p>
-            <p id="XRef3" class="XRef"><a title="Go back up to 4:7 in the text" href="#C4V7"><span class="ChapterVerse">4:7</span></a> <span class="VernacularCrossReference">Diy 25:9</span></p>
-            <p id="XRef4" class="XRef"><a title="Go back up to 4:10 in the text" href="#C4V10"><span class="ChapterVerse">4:10</span></a> <span class="VernacularCrossReference">Diy 25:5&#x2011;6</span></p>
-            <p id="XRef5" class="XRef"><a title="Go back up to 4:11 in the text" href="#C4V11"><span class="ChapterVerse">4:11</span></a> <a title="Go to Hinisis 29:31" href="GEN.htm#C29V31"><span class="VernacularCrossReference">Hin 29:31</span></a></p>
-            <p id="XRef6" class="XRef"><a title="Go back up to 4:12 in the text" href="#C4V12"><span class="ChapterVerse">4:12</span></a> <a title="Go to Hinisis 38:27" href="GEN.htm#C38V27"><span class="VernacularCrossReference">Hin 38:27&#x2011;30</span></a></p></div>
-            <div id="FNotes"><h2 class="FootnotesHeading">Footnotes</h2>
-            <p id="FNote0" class="Footnote"><a title="Go back up to 1:20 in the text" href="#C1V20"><span class="ChapterVerse">1:20 </span></a><a title="su" href="../../Lexicon/indexLSIM-45.htm#su1"><span class="WordLink">Su</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="kaluwasan" href="../../Lexicon/indexLLO-67.htm#luwas2"><span class="WordLink">kaluwasan</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <span class="NameWordLink">Nawumi</span> &lsquo;<a title="n. fortunate (upian)" href="../../Lexicon/Details/upian.htm"><span class="WordLink">keupianan</span></a>,&rsquo; <a title="conj. but" href="../../Lexicon/Details/piru.htm"><span class="WordLink">piru</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="kaluwasan" href="../../Lexicon/indexLLO-67.htm#luwas2"><span class="WordLink">kaluwasan</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="mara" href="../../Lexicon/Details/mara.htm"><span class="WordLink">Mara</span></a> &lsquo;<a title="adj. painful (sakit)" href="../../Lexicon/Details/sakit.htm"><span class="WordLink">masakit</span></a> <a title="se" href="../../Lexicon/indexLSE-64.htm#se1"><span class="WordLink">se</span></a> <a title="n. breath" href="../../Lexicon/Details/geyinawa.htm"><span class="WordLink">geyinawa</span></a>.&rsquo;</p>
-            <p id="FNote1" class="Footnote"><a title="Go back up to 3:9 in the text" href="#C3V9"><span class="ChapterVerse">3:9 </span></a><a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">Te</span></a> <a title="prop_n. Hebrew language (Hibru)" href="../../Lexicon/Details/Hibru.htm"><span class="WordLink">Hibruwanen</span></a>: <a title="buni" href="../../Lexicon/Details/buni2.htm"><span class="WordLink">Bunbuni</span></a> <a title="pron. you(sg); by you(sg)" href="../../Lexicon/Details/nu.htm"><span class="WordLink">nu</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="kumbalè" href="../../Lexicon/Details/kumbal%C3%A8.htm"><span class="WordLink">kumbale</span></a> <a title="pron. you(sg); by you(sg)" href="../../Lexicon/Details/nu.htm"><span class="WordLink">nu</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="suluhuanen" href="../../Lexicon/indexLSIM-45.htm#suluh%C3%B9"><span class="WordLink">suluhuanen</span></a> <a title="pron. you(sg); by you(sg)" href="../../Lexicon/Details/nu.htm"><span class="WordLink">nu</span></a>.</p>
-            <p id="FNote2" class="Footnote"><a title="Go back up to 4:11 in the text" href="#C4V11"><span class="ChapterVerse">4:11 </span></a><a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">Kene</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="adj. clear" href="../../Lexicon/Details/klaru.htm"><span class="WordLink">klaru</span></a> <a title="diya" href="../../Lexicon/indexLD-80.htm#diyav"><span class="WordLink">diye</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="adj. true (lehet)" href="../../Lexicon/Details/lehet1.htm"><span class="WordLink">malehet</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="migpuun" href="../../Lexicon/Details/puun.htm"><span class="WordLink">migpuunan</span></a> <a title="ke" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ke</span></a> <a title="n. other" href="../../Lexicon/Details/lein.htm"><span class="WordLink">lein</span></a> <a title="e" href="../../Lexicon/indexLA-77.htm#a"><span class="WordLink">e</span></a> <a title="part. also" href="../../Lexicon/Details/degma.htm"><span class="WordLink">degma</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="n. place" href="../../Lexicon/Details/inged.htm"><span class="WordLink">inged</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <span class="NameWordLink">Iprata</span>. <a title="kahiyen" href="../../Lexicon/Details/kahi.htm"><span class="WordLink">Kahiyen</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="adj. other" href="../../Lexicon/Details/duma.htm"><span class="WordLink">duma</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <span class="NameWordLink">Iprata</span> <a title="dem. that" href="../../Lexicon/Details/iyan.htm"><span class="WordLink">iyan</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="tapey" href="../../Lexicon/indexLT-96.htm#tapey1"><span class="WordLink">tapey</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="n. name" href="../../Lexicon/Details/ngaran.htm"><span class="WordLink">ngaran</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="See glossary entry for Bitlihim" href="../indexGlossary.htm#Bitlihim"><span class="WordLink">Bitlihim</span><span class="GlossaryLinkSymbol"><sup>[gl]</sup></span></a>.</p></div>
-            """
-            if ourGlobals['footnoteHTML5'] or ourGlobals['xrefHTML5']:
-                writerObject.writeLineOpen( 'div' ) # endNotes
-                if ourGlobals['footnoteHTML5']:
-                    #writerObject.writeLineOpenSelfclose( 'hr' )
-                    writerObject.writeLineOpenClose( 'h3', 'Footnotes', ('class','footnotesHeader') )
-                    writerObject.writeLineOpen( 'div', ('class','footerLine') )
-                    for line in ourGlobals['footnoteHTML5']:
-                        writerObject.writeLineText( line, noTextCheck=True )
-                    writerObject.writeLineClose( 'div' )
-                if ourGlobals['xrefHTML5']:
-                    #writerObject.writeLineOpenSelfclose( 'hr' )
-                    writerObject.writeLineOpenClose( 'h3', 'Cross References', ('class','xrefsHeader') )
-                    writerObject.writeLineOpen( 'div', ('class','xrefSection') )
-                    for line in ourGlobals['xrefHTML5']:
-                        writerObject.writeLineText( line, noTextCheck=True )
-                    writerObject.writeLineClose( 'div' )
-                writerObject.writeLineClose( 'div' ) # endNotes
-        # end of toHTML5.writeEndNotes
-
-
-        def writeFooter( writerObject ):
-            """Writes the HTML5 footer to the HTML writerObject."""
-            writerObject.writeLineOpen( 'footer' )
-            writerObject.writeLineOpen( 'p', ('class','footerLine') )
-            writerObject.writeLineOpen( 'a', ('href','http://www.w3.org/html/logo/') )
-            writerObject.writeLineText( '<img src="http://www.w3.org/html/logo/badge/html5-badge-h-css3-semantics.png" width="165" height="64" alt="HTML5 Powered with CSS3 / Styling, and Semantics" title="HTML5 Powered with CSS3 / Styling, and Semantics">', noTextCheck=True )
-            writerObject.writeLineClose( 'a' )
-            writerObject.writeLineText( "This page automatically created {} by {} v{}".format( datetime.today().strftime("%d-%b-%Y"), ProgName, ProgVersion ) )
-            writerObject.writeLineClose( 'p' )
-            writerObject.writeLineClose( 'footer' )
-            writerObject.writeLineClose( 'body' )
-        # end of toHTML5.writeFooter
-
-
-        def convertToPageReference( refTuple ):
-            """
-            Given a reference 4-tuple like ('LUK','15','18','')
-                convert it to an HTML link.
-            """
-            #print( "toHTML5.convertToPageReference( {} )".format( refTuple ) )
-            assert( refTuple and len(refTuple)==4 )
-            assert( refTuple[0] is None or ( refTuple[0] and len(refTuple[0])==3 ) ) #BBB
-            if refTuple[0] in filenameDict:
-                return '{}#C{}V{}'.format( filenameDict[refTuple[0]], refTuple[1], refTuple[2] )
-            else: logging.error( "toHTML5.convertToPageReference can't find book: {}".format( repr(refTuple[0]) ) )
-        # end of toHTML5.convertToPageReference
-
-
-        def createSectionReference( givenRef ):
-            """
-            Returns an HTML string for a section reference.
-
-            Must be able to handle things like:
-                (Mat. 19:9; Mar. 10:11-12; Luk. 16:18)
-                (Luk. 6:27-28,32-36)
-                (Luk. 16:13; 12:22-31)
-                (1 Kru. 11:1-9; 14:1-7)
-            """
-            #print( "toHTML5.createSectionReference: '{}'".format( givenRef ) )
-            adjRef = givenRef
-            result = bracket = ''
-            for bracketLeft,bracketRight in (('(',')'),('[',']'),):
-                if adjRef and adjRef[0]==bracketLeft and adjRef[-1]==bracketRight:
-                    result += bracketLeft
-                    bracket = bracketRight
-                    adjRef = adjRef[1:-1] # Remove the brackets
-            for j,originalRef in enumerate( adjRef.split( ';' ) ):
-                #print( " ", j, originalRef )
-                if j: result += ';' # Restore the semicolons
-                ref = originalRef.strip()
-                if ref:
-                    if j: # later section refs might not include the book name, e.g., Luk. 16:13; 12:22-31
-                        letterCount = 0
-                        for char in ref:
-                            if char.isalpha(): letterCount += 1
-                        if letterCount < 2: # Allows for something like 16:13a but assumes no single letter book abbrevs
-                            ref = ((analysis[0]+' ') if analysis else '' ) + ref # Prepend the last BBB if there was one
-                    analysis = BRL.getFirstReference( ref, "section reference '{}' from '{}'".format( ref, givenRef ) )
-                    #print( "a", analysis )
-                    link = convertToPageReference(analysis) if analysis else None
-                    result += '<a class="sectionReferenceLink" href="{}">{}</a>'.format( link, originalRef ) if link else originalRef
-            #print( "  Returning '{}'".format( result + bracket ) )
-            return result + bracket
-        # end of toHTML5.createSectionReference
-
-
-        def writeHomePage():
-            if Globals.verbosityLevel > 1: print( _("    Creating HTML5 home/index page...") )
-            xw = MLWriter( 'index.html', WEBoutputFolder, 'HTML' )
-            xw.setHumanReadable()
-            xw.start( noAutoXML=True )
-            xw.writeLineText( '<!DOCTYPE html>', noTextCheck=True )
-            xw.writeLineOpen( 'html' )
-            writeHeader( xw, 'home' )
-            writeFooter( xw )
-            xw.writeLineClose( 'html' )
-            xw.close()
-        # end of toHTML5.writeHomePage
-
-
-        def writeAboutPage():
-            if Globals.verbosityLevel > 1: print( _("    Creating HTML5 about page...") )
-            xw = MLWriter( 'about.html', WEBoutputFolder, 'HTML' )
-            xw.setHumanReadable()
-            xw.start( noAutoXML=True )
-            xw.writeLineText( '<!DOCTYPE html>', noTextCheck=True )
-            xw.writeLineOpen( 'html' )
-            writeHeader( xw, 'about' )
-            xw.writeLineOpenClose( 'p', 'These pages were created by the BibleWriter module of the Open Scriptures Bible Organisational System.' )
-            writeFooter( xw )
-            xw.writeLineClose( 'html' )
-            xw.close()
-        # end of toHTML5.writeAboutPage
-
-
-        def writeHTML5Book( writerObject, BBB, bkData, ourGlobals ):
-            """Writes a book to the HTML5 writerObject."""
-
-            def handleExtras( text, extras, ourGlobals ):
-                """
-                Returns the HTML5 text with footnotes and xrefs processed.
-                It also accumulates HTML5 in ourGlobals for the end notes.
-                """
-                def liveCV( CV ):
-                    """
-                    Given a CV text (in the same book), make it live
-                        e.g., given 1:3 return #C1V3
-                            given 17:4-9 return #C17V4
-                    """
-                    #print( "liveCV( {} )".format( repr(CV) ) )
-                    result = 'C' + CV.strip().replace( ':', 'V')
-                    for bridgeChar in ('-', '–', '—'): # hyphen, endash, emdash
-                        ix = result.find( bridgeChar )
-                        if ix != -1: result = result[:ix] # Remove verse bridges
-                    #print( " returns", result )
-                    return '#' + result
-                # end of liveCV
-
-                def processXRef( HTML5xref, ourGlobals ):
-                    """
-                    Return the HTML5 for the processed cross-reference (xref).
-                    It also accumulates HTML5 in ourGlobals for the end notes.
-
-                    NOTE: The parameter here already has the /x and /x* removed.
-
-                    \\x - \\xo 2:2: \\xt Lib 19:9-10; Diy 24:19.\\xt*\\x* (Backslashes are shown doubled here)
-                        gives
-                    <a title="Lib 19:9-10; Diy 24:19" href="#XRef0"><span class="XRefLinkSymbol"><sup>[xr]</sup></span></a>
-                    <a title="Lib 25:25" href="#XRef1"><span class="XRefLinkSymbol"><sup>[xr]</sup></span></a>
-                    <a title="Rut 2:20" href="#XRef2"><span class="XRefLinkSymbol"><sup>[xr]</sup></span></a>
-                        plus
-                    <p id="XRef0" class="XRef"><a title="Go back up to 2:2 in the text" href="#C2V2"><span class="ChapterVerse">2:2</span></a> <span class="VernacularCrossReference">Lib 19:9&#x2011;10</span>; <span class="VernacularCrossReference">Diy 24:19</span></p>
-                    """
-                    markerList = Globals.USFMMarkers.getMarkerListFromText( HTML5xref, includeInitialText=True )
-                    #print( "\ntoHTML5.processXRef( {}, {} ) gives {}".format( repr(HTML5xref), "...", markerList ) )
-                    xrefIndex = ourGlobals['nextXRefIndex']; ourGlobals['nextXRefIndex'] += 1
-                    caller = origin = originCV = xrefText = ''
-                    if markerList:
-                        for marker, ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt in markerList:
-                            if marker is None:
-                                #if txt not in '-+': # just a caller
-                                caller = txt
-                            elif marker == 'xo':
-                                origin = txt
-                                originCV = origin
-                                if originCV and originCV[-1] in (':','.'): originCV = originCV[:-1]
-                                originCV = originCV.strip()
-                            elif marker == 'xt':
-                                xrefText += txt
-                            #elif marker == Should handle other internal markers here
-                            else:
-                                logging.error( "toHTML5.processXRef didn't handle {} {}:{} xref marker: {}".format( BBB, C, V, marker ) )
-                                xrefText += txt
-                    else: # there's no USFM markers at all in the xref --  presumably a caller and then straight text
-                        if HTML5xref.startswith('+ ') or HTML5xref.startswith('- '):
-                            caller = HTML5xref[0]
-                            xrefText = HTML5xref[2:].strip()
-                        else: # don't really know what it is -- assume it's all just text
-                            xrefText = HTML5xref.strip()
-
-                    xrefHTML5 = '<a class="xrefLinkSymbol" title="{}" href="#XRef{}">[xr]</a>' \
-                                    .format( xrefText, xrefIndex )
-
-                    endHTML5 = '<p id="XRef{}" class="xref">'.format( xrefIndex )
-                    if not origin: # we'll try to make one
-                        originCV = "{}:{}".format( C, V )
-                    if originCV: # This only handles CV separator of : so far
-                        endHTML5 += '<a class="xrefOrigin" title="Go back up to {} in the text" href="{}">{}</a> ' \
-                                                            .format( originCV, liveCV(originCV), originCV )
-                    endHTML5 += '<span class="xrefEntry">{}</span>'.format( xrefText )
-                    endHTML5 += '</p>'
-
-                    #print( "xrefHTML5", BBB, xrefHTML5 )
-                    #print( "endHTML5", endHTML5 )
-                    ourGlobals['xrefHTML5'].append( endHTML5 )
-                    #if xrefIndex > 2: halt
-
-                    return xrefHTML5
-                # end of toHTML5.processXRef
-
-                def processFootnote( HTML5footnote, ourGlobals ):
-                    """
-                    Return the HTML5 for the processed footnote.
-                    It also accumulates HTML5 in ourGlobals for the end notes.
-
-                    NOTE: The parameter here already has the /f and /f* removed.
-
-                    \\f + \\fr 1:20 \\ft Su ka kaluwasan te Nawumi ‘keupianan,’ piru ka kaluwasan te Mara ‘masakit se geyinawa.’\\f* (Backslashes are shown doubled here)
-                        gives
-                    <a title="Su ka kaluwasan te Nawumi &lsquo;keupianan,&rsquo; piru ka kaluwasan te Mara &lsquo;masakit se geyinawa.&rsquo;" href="#FNote0"><span class="FootnoteLinkSymbol"><sup>[fn]</sup></span></a>
-                    <note style="f" caller="+"><char style="fr" closed="false">2:23 </char><char style="ft">Te Hibruwanen: bayew egpekegsahid ka ngaran te “malitan” wey “lukes.”</char></note>
-                        plus
-                    <p id="FNote0" class="Footnote"><a title="Go back up to 1:20 in the text" href="#C1V20"><span class="ChapterVerse">1:20 </span></a><a title="su" href="../../Lexicon/indexLSIM-45.htm#su1"><span class="WordLink">Su</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="kaluwasan" href="../../Lexicon/indexLLO-67.htm#luwas2"><span class="WordLink">kaluwasan</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <span class="NameWordLink">Nawumi</span> &lsquo;<a title="n. fortunate (upian)" href="../../Lexicon/Details/upian.htm"><span class="WordLink">keupianan</span></a>,&rsquo; <a title="conj. but" href="../../Lexicon/Details/piru.htm"><span class="WordLink">piru</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="kaluwasan" href="../../Lexicon/indexLLO-67.htm#luwas2"><span class="WordLink">kaluwasan</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="mara" href="../../Lexicon/Details/mara.htm"><span class="WordLink">Mara</span></a> &lsquo;<a title="adj. painful (sakit)" href="../../Lexicon/Details/sakit.htm"><span class="WordLink">masakit</span></a> <a title="se" href="../../Lexicon/indexLSE-64.htm#se1"><span class="WordLink">se</span></a> <a title="n. breath" href="../../Lexicon/Details/geyinawa.htm"><span class="WordLink">geyinawa</span></a>.&rsquo;</p>
-                    <p id="FNote1" class="Footnote"><a title="Go back up to 3:9 in the text" href="#C3V9"><span class="ChapterVerse">3:9 </span></a><a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">Te</span></a> <a title="prop_n. Hebrew language (Hibru)" href="../../Lexicon/Details/Hibru.htm"><span class="WordLink">Hibruwanen</span></a>: <a title="buni" href="../../Lexicon/Details/buni2.htm"><span class="WordLink">Bunbuni</span></a> <a title="pron. you(sg); by you(sg)" href="../../Lexicon/Details/nu.htm"><span class="WordLink">nu</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="kumbalè" href="../../Lexicon/Details/kumbal%C3%A8.htm"><span class="WordLink">kumbale</span></a> <a title="pron. you(sg); by you(sg)" href="../../Lexicon/Details/nu.htm"><span class="WordLink">nu</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="suluhuanen" href="../../Lexicon/indexLSIM-45.htm#suluh%C3%B9"><span class="WordLink">suluhuanen</span></a> <a title="pron. you(sg); by you(sg)" href="../../Lexicon/Details/nu.htm"><span class="WordLink">nu</span></a>.</p>
-                    <p id="FNote2" class="Footnote"><a title="Go back up to 4:11 in the text" href="#C4V11"><span class="ChapterVerse">4:11 </span></a><a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">Kene</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="adj. clear" href="../../Lexicon/Details/klaru.htm"><span class="WordLink">klaru</span></a> <a title="diya" href="../../Lexicon/indexLD-80.htm#diyav"><span class="WordLink">diye</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="adj. true (lehet)" href="../../Lexicon/Details/lehet1.htm"><span class="WordLink">malehet</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="migpuun" href="../../Lexicon/Details/puun.htm"><span class="WordLink">migpuunan</span></a> <a title="ke" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ke</span></a> <a title="n. other" href="../../Lexicon/Details/lein.htm"><span class="WordLink">lein</span></a> <a title="e" href="../../Lexicon/indexLA-77.htm#a"><span class="WordLink">e</span></a> <a title="part. also" href="../../Lexicon/Details/degma.htm"><span class="WordLink">degma</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="n. place" href="../../Lexicon/Details/inged.htm"><span class="WordLink">inged</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <span class="NameWordLink">Iprata</span>. <a title="kahiyen" href="../../Lexicon/Details/kahi.htm"><span class="WordLink">Kahiyen</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="adj. other" href="../../Lexicon/Details/duma.htm"><span class="WordLink">duma</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <span class="NameWordLink">Iprata</span> <a title="dem. that" href="../../Lexicon/Details/iyan.htm"><span class="WordLink">iyan</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="tapey" href="../../Lexicon/indexLT-96.htm#tapey1"><span class="WordLink">tapey</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="n. name" href="../../Lexicon/Details/ngaran.htm"><span class="WordLink">ngaran</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="See glossary entry for Bitlihim" href="../indexGlossary.htm#Bitlihim"><span class="WordLink">Bitlihim</span><span class="GlossaryLinkSymbol"><sup>[gl]</sup></span></a>.</p></div>
-                    """
-                    markerList = Globals.USFMMarkers.getMarkerListFromText( HTML5footnote, includeInitialText=True )
-                    #print( "toHTML5.processFootnote( {}, {} ) gives {}".format( repr(HTML5footnote), ourGlobals, markerDict ) )
-                    fnIndex = ourGlobals['nextFootnoteIndex']; ourGlobals['nextFootnoteIndex'] += 1
-                    caller = origin = originCV = fnText = fnTitle = ''
-                    spanOpen = False
-                    for marker, ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt in markerList:
-                        if spanOpen: fnText += '</span>'; spanOpen = False
-                        if marker is None:
-                            #if txt not in '-+': # just a caller
-                            caller = txt
-                        elif marker == 'fr':
-                            origin = txt
-                            originCV = origin
-                            if originCV and originCV[-1] in (':','.'): originCV = originCV[:-1]
-                            originCV = originCV.strip()
-                        elif marker == 'ft':
-                            fnText += txt
-                            fnTitle += txt
-                        elif marker == 'fk':
-                            fnText += '<span class="footnoteKeyword">' + txt
-                            fnTitle += txt
-                            spanOpen = True
-                        elif marker == 'fq':
-                            fnText += '<span class="footnoteTranslationQuotation">' + txt
-                            fnTitle += txt
-                            spanOpen = True
-                        elif marker == 'fqa':
-                            fnText += '<span class="footnoteAlternateTranslation">' + txt
-                            fnTitle += txt
-                            spanOpen = True
-                        elif marker == 'fl':
-                            fnText += '<span class="footnoteLabel">' + txt
-                            fnTitle += txt
-                            spanOpen = True
-                        #elif marker == Should handle other internal markers here
-                        else:
-                            logging.error( "toHTML5.processFootnote didn't handle {} {}:{} footnote marker: {}".format( BBB, C, V, marker ) )
-                            fnText += txt
-                            fnTitle += txt
-                    if spanOpen: fnText += '</span>'; spanOpen = False
-
-                    footnoteHTML5 = '<a class="footnoteLinkSymbol" title="{}" href="#FNote{}">[fn]</a>' \
-                                    .format( fnTitle, fnIndex )
-
-                    endHTML5 = '<p id="FNote{}" class="footnote">'.format( fnIndex )
-                    if originCV: # This only handles CV separator of : so far
-                        endHTML5 += '<a class="footnoteOrigin" title="Go back up to {} in the text" href="{}">{}</a> ' \
-                                                            .format( originCV, liveCV(originCV), origin )
-                    endHTML5 += '<span class="footnoteEntry">{}</span>'.format( fnText )
-                    endHTML5 += '</p>'
-
-                    #print( "footnoteHTML5", BBB, footnoteHTML5 )
-                    #print( "endHTML5", endHTML5 )
-                    ourGlobals['footnoteHTML5'].append( endHTML5 )
-                    #if fnIndex > 2: halt
-
-                    return footnoteHTML5
-                # end of toHTML5.processFootnote
-
-
-                adjText = text
-                offset = 0
-                for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
-                    #print( "{} {}:{} Text='{}' eT={}, eI={}, eText='{}'".format( BBB, C, V, text, extraType, extraIndex, extraText ) )
-                    adjIndex = extraIndex - offset
-                    lenT = len( adjText )
-                    if adjIndex > lenT: # This can happen if we have verse/space/notes at end (and the space was deleted after the note was separated off)
-                        logging.warning( _("toHTML5: Space before note at end of verse in {} {}:{} has been lost").format( BBB, C, V ) )
-                        # No need to adjust adjIndex because the code below still works
-                    elif adjIndex<0 or adjIndex>lenT: # The extras don't appear to fit correctly inside the text
-                        print( "toHTML5: Extras don't fit inside verse at {} {}:{}: eI={} o={} len={} aI={}".format( BBB, C, V, extraIndex, offset, len(text), adjIndex ) )
-                        print( "  Verse='{}'".format( text ) )
-                        print( "  Extras='{}'".format( extras ) )
-                    #assert( 0 <= adjIndex <= len(verse) )
-                    #adjText = checkText( extraText, checkLeftovers=False ) # do any general character formatting
-                    #if adjText!=extraText: print( "processXRefsAndFootnotes: {}@{}-{}={} '{}' now '{}'".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
-                    if extraType == 'fn':
-                        extra = processFootnote( extraText, ourGlobals )
-                        #print( "fn got", extra )
-                    elif extraType == 'xr':
-                        extra = processXRef( extraText, ourGlobals )
-                        #print( "xr got", extra )
-                    elif extraType == 'fig':
-                        logging.critical( "HTML5 figure not handled yet" )
-                        extra = "" # temp
-                        #extra = processFigure( extraText )
-                        #print( "fig got", extra )
-                    elif Globals.debugFlag and debuggingThisModule: print( extraType ); halt
-                    #print( "was", verse )
-                    adjText = adjText[:adjIndex] + extra + adjText[adjIndex:]
-                    offset -= len( extra )
-                    #print( "now", verse )
-                return adjText
-            # end of toHTML5.handleExtras
-
-
-            def formatText( givenText, extras, ourGlobals ):
-                """
-                Format character codes within the text
-                """
-                #print( "toHTML5.formatText( {}, {}, {} )".format( repr(givenText), len(extras), ourGlobals.keys() ) )
-                assert( givenText )
-                text = handleExtras( givenText, extras, ourGlobals )
-
-                # Semantic stuff
-                text = text.replace( '\\bk ', '<span class="bookName">' ).replace( '\\bk*', '</span>' )
-                text = text.replace( '\\add ', '<span class="addedText">' ).replace( '\\add*', '</span>' )
-                text = text.replace( '\\nd ', '<span class="divineName">' ).replace( '\\nd*', '</span>' )
-                text = text.replace( '\\wj ', '<span class="wordsOfJesus">' ).replace( '\\wj*', '</span>' )
-                text = text.replace( '\\sig ', '<span class="signature">' ).replace( '\\sig*', '</span>' )
-                text = text.replace( '\\k ', '<span class="keyWord">' ).replace( '\\k*', '</span>' )
-
-                # Direct formatting
-                text = text.replace( '\\bdit ', '<span class="boldItalic">' ).replace( '\\bdit*', '</span>' )
-                text = text.replace( '\\it ', '<span class="italic">' ).replace( '\\it*', '</span>' )
-                text = text.replace( '\\bd ', '<span class="bold">' ).replace( '\\bd*', '</span>' )
-                text = text.replace( '\\sc ', '<span class="smallCaps">' ).replace( '\\sc*', '</span>' )
-
-                if '\\' in text:
-                    if Globals.debugFlag or Globals.verbosityLevel > 2:
-                        print( "toHTML5.formatText: unprocessed code in {} from {}".format( repr(text), repr(givenText) ) )
-                    if Globals.debugFlag and debuggingThisModule: halt
-                return text
-            # end of formatText
-
-
-            def liveLocal( text ):
-                """
-                Return the line with live links to the local page.
-
-                Replaces only the first reference.
-                """
-                match = re.search( '([1-9][0-9]{0,2}):([1-9][0-9]{0,2})', text )
-                if match:
-                    #print( '0', repr(match.group(0)) )
-                    #print( '1', repr(match.group(1)) )
-                    #print( '2', repr(match.group(2)) )
-                    text = text.replace( match.group(0), '<a class="CVReference" href="#C{}V{}">{}</a>'.format( match.group(1), match.group(2), match.group(0) ) )
-                    #print( repr(text) )
-                return text
-            # end of liveLocal
-
-
-            writeHeader( writerObject, BBB )
-            haveOpenSection = haveOpenParagraph = haveOpenList = False
-            html5Globals['nextFootnoteIndex'] = html5Globals['nextXRefIndex'] = 0
-            html5Globals['footnoteHTML5'], html5Globals['xrefHTML5'] = [], []
-            C = V = ''
-            for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
-                marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
-                #if BBB=='MRK': print( "writeHTML5Book", marker, text )
-                #print( "toHTML5.writeHTML5Book", BBB, C, V, marker, text )
-                if marker in oftenIgnoredIntroMarkers: pass # Just ignore these lines
-
-                # Markers usually only found in the introduction
-                elif marker in ('mt1','mt2',):
-                    if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
-                    if text: writerObject.writeLineOpenClose( 'h', text, ('class','mainTitle'+marker[2]) )
-                elif marker in ('ms1','ms2',):
-                    if not haveOpenParagraph:
-                        logging.warning( "toHTML5: Have main section heading {} outside a paragraph in {}".format( text, BBB ) )
-                        writerObject.writeLineOpen( 'p', ('class','unknownParagraph') ); haveOpenParagraph = True
-                    if text: writerObject.writeLineOpenClose( 'h2', text, ('class','majorSectionHeading'+marker[1]) )
-                elif marker == 'ip':
-                    if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
-                    writerObject.writeLineOpen( 'p', ('class','introductoryParagraph') ); haveOpenParagraph = True
-                    if text: writerObject.writeLineText( formatText( text, extras, ourGlobals ), noTextCheck=True )
-                elif marker == 'iot':
-                    if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
-                    if text: writerObject.writeLineOpenClose( 'h3', text, ('class','outlineTitle') )
-                elif marker in ('io1','io2','io3',):
-                    if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
-                    if text: writerObject.writeLineOpenClose( 'p', liveLocal(text), ('class','outlineEntry'+marker[2]), noTextCheck=True )
-
-                # Now markers in the main text
-                elif marker in 'c':
-                    # What should we put in here -- we don't need/want to display it, but it's a place to jump to
-                    writerObject.writeLineOpenClose( 'span', ' ', [('class','chapterStart'),('id','C'+text)] )
-                elif marker in 'c#':
-                    C = text
-                    if not haveOpenParagraph:
-                        logging.warning( "toHTML5: Have chapter number {} outside a paragraph in {} {}:{}".format( text, BBB, C, V ) )
-                        writerObject.writeLineOpen( 'p', ('class','unknownParagraph') ); haveOpenParagraph = True
-                    # Put verse 1 id here on the chapter number (since we don't output a v1 number)
-                    writerObject.writeLineOpenClose( 'span', text, [('class','chapterNumber'),('id','C'+text+'V1')] )
-                    writerObject.writeLineOpenClose( 'span', '&nbsp;', ('class','chapterNumberPostspace') )
-                elif marker in ('s1','s2','s3',):
-                    if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
-                    if marker == 's1':
-                        if haveOpenSection: writerObject.writeLineClose( 'section' ); haveOpenSection = False
-                        writerObject.writeLineOpen( 'section', ('class','regularSection') ); haveOpenSection = True
-                    if text: writerObject.writeLineOpenClose( 'h3', text, ('class','sectionHeading'+marker[1]) )
-                elif marker == 'r':
-                    if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
-                    if not haveOpenSection:
-                        logging.warning( "toHTML5: Have section reference {} outside a paragraph in {} {}:{}".format( text, BBB, C, V ) )
-                        writerObject.writeLineOpen( 'section', ('class','regularSection') ); haveOpenSection = True
-                    if text: writerObject.writeLineOpenClose( 'p', createSectionReference(text), ('class','sectionReference'), noTextCheck=True )
-                elif marker == 'v':
-                    V = text
-                    if not haveOpenParagraph:
-                        logging.warning( "toHTML5: Have verse number {} outside a paragraph in {} {}:{}".format( text, BBB, C, V ) )
-                    if V != '1': # Suppress number for verse 1
-                        writerObject.writeLineOpenClose( 'span', ' ', ('class','verseNumberPrespace') )
-                        writerObject.writeLineOpenClose( 'span', V, [('class','verseNumber'),('id','C'+C+'V'+V)] )
-                        writerObject.writeLineOpenClose( 'span', '&nbsp;', ('class','verseNumberPostspace') )
-                elif marker == 'p':
-                    if haveOpenList: writerObject.writeLineClose( 'p' ); haveOpenList = False
-                    if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
-                    writerObject.writeLineOpen( 'p', ('class','proseParagraph') ); haveOpenParagraph = True
-                    if text and Globals.debugFlag and debuggingThisModule: halt
-                elif marker == 'pi':
-                    if haveOpenParagraph: writerObject.writeLineClose( 'p' )
-                    writerObject.writeLineOpen( 'p', ('class','indentedProseParagraph') ); haveOpenParagraph = True
-                    if text and Globals.debugFlag and debuggingThisModule: halt
-                elif marker == 'q1':
-                    if haveOpenParagraph: writerObject.writeLineClose( 'p' )
-                    writerObject.writeLineOpen( 'p', ('class','poetryParagraph1') ); haveOpenParagraph = True
-                    if text and Globals.debugFlag and debuggingThisModule: halt
-                elif marker == 'q2':
-                    if haveOpenParagraph: writerObject.writeLineClose( 'p' )
-                    writerObject.writeLineOpen( 'p', ('class','poetryParagraph2') ); haveOpenParagraph = True
-                    if text and Globals.debugFlag and debuggingThisModule: halt
-                elif marker == 'q3':
-                    if haveOpenParagraph: writerObject.writeLineClose( 'p' )
-                    writerObject.writeLineOpen( 'p', ('class','poetryParagraph3') ); haveOpenParagraph = True
-                    if text and Globals.debugFlag and debuggingThisModule: halt
-                elif marker == 'li1':
-                    if not haveOpenList:
-                        writerObject.writeLineOpen( 'p', ('class','list') ); haveOpenList = True
-                    writerObject.writeLineOpen( 'span', ('class','listItem1') )
-                    if text and Globals.debugFlag and debuggingThisModule: halt
-
-                # Character markers
-                elif marker=='v~':
-                    if not haveOpenParagraph:
-                        logging.warning( "toHTML5: Have verse text {} outside a paragraph in {} {}:{}".format( text, BBB, C, V ) )
-                        writerObject.writeLineOpen( 'p', ('class','unknownParagraph') ); haveOpenParagraph = True
-                    if text: writerObject.writeLineText( formatText( text, extras, ourGlobals ), noTextCheck=True )
-                elif marker=='p~':
-                    if not haveOpenParagraph:
-                        logging.warning( "toHTML5: Have verse text {} outside a paragraph in {} {}:{}".format( text, BBB, C, V ) )
-                        writerObject.writeLineOpen( 'p', ('class','unknownParagraph') ); haveOpenParagraph = True
-                    if text: writerObject.writeLineText( formatText( text, extras, ourGlobals ), noTextCheck=True )
-                else: unhandledMarkers.add( marker )
-                if extras and marker not in ('v~','p~',): logging.warning( "toHTML5: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
-            if haveOpenList: writerObject.writeLineClose( 'p' ); haveOpenList = False
-            if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
-            if haveOpenSection: writerObject.writeLineClose( 'section' ); haveOpenSection = False
-            writeEndNotes( writerObject, ourGlobals )
-            writeFooter( writerObject )
-        # end of toHTML5.writeHTML5Book
-
-
-        # Set-up our Bible reference system
-        if controlDict['PublicationCode'] == "GENERIC":
-            BOS = self.genericBOS
-            BRL = self.genericBRL
-        else:
-            BOS = BibleOrganizationalSystem( controlDict["PublicationCode"] )
-            BRL = BibleReferenceList( BOS, BibleObject=None )
-
-        if Globals.verbosityLevel > 2: print( _("  Exporting to HTML5 format...") )
-        suffix = controlDict['HTML5Suffix'] if 'HTML5Suffix' in controlDict else 'html'
-        filenameDict = {}
-        for BBB in self.books: # Make a list of filenames
-            filename = controlDict['HTML5OutputFilenameTemplate'].replace('__BOOKCODE__',BBB ).replace('__SUFFIX__',suffix)
-            filenameDict[BBB] = Globals.makeSafeFilename( filename.replace( ' ', '_' ) )
-
-        html5Globals = {}
-        if controlDict["HTML5Files"]=="byBook":
-            for BBB,bookData in self.books.items(): # Now export the books
-                if Globals.verbosityLevel > 2: print( _("    Exporting {} to HTML5 format...").format( BBB ) )
-                xw = MLWriter( filenameDict[BBB], WEBoutputFolder, 'HTML' )
-                xw.setHumanReadable()
-                xw.start( noAutoXML=True )
-                xw.writeLineText( '<!DOCTYPE html>', noTextCheck=True )
-                xw.writeLineOpen( 'html' )
-                if Globals.debugFlag: writeHTML5Book( xw, BBB, bookData, html5Globals ) # Halts on errors
-                else:
-                    try: writeHTML5Book( xw, BBB, bookData, html5Globals )
-                    except Exception as err:
-                        print( BBB, "Unexpected error:", sys.exc_info()[0], err)
-                        logging.error( "toHTML5: Oops, creating {} failed!".format( BBB ) )
-                xw.writeLineClose( 'html' )
-                xw.close()
-            writeHomePage()
-            writeAboutPage()
-        elif Globals.debugFlag and debuggingThisModule: halt # not done yet
-        if unhandledMarkers:
-            logging.warning( "toHTML5: Unhandled markers were {}".format( unhandledMarkers ) )
-            if Globals.verbosityLevel > 1:
-                print( "  " + _("WARNING: Unhandled toHTML5 markers were {}").format( unhandledMarkers ) )
-
-        # Now create a zipped collection
-        if Globals.verbosityLevel > 2: print( "  Zipping HTML5 files..." )
-        zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllWebFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
-        for filename in os.listdir( WEBoutputFolder ):
-            if not filename.endswith( '.zip' ):
-                filepath = os.path.join( WEBoutputFolder, filename )
-                zf.write( filepath, filename ) # Save in the archive without the path
-        zf.close()
-
-        if validationSchema: return xw.validate( validationSchema )
-        return True
-    # end of BibleWriter.toHTML5
-
-
-
     def toTeX( self, outputFolder=None ):
         """
         Write the pseudo USFM out into a TeX (typeset) format.
@@ -5643,8 +5713,8 @@ class BibleWriter( InternalBible ):
                             bookFile.write( "\n\\BibleTextSection{{{}}}\n".format( texText(text) ) )
                             bookFile.write( "\n\\addcontentsline{{toc}}{{toc}}{{{}}}\n".format( texText(text) ) )
                         elif marker=='r':
-                            allFile.write( "\\BibleSectionReference{{{}}}\n".format( texText(text) ) )
-                            bookFile.write( "\\BibleSectionReference{{{}}}\n".format( texText(text) ) )
+                            allFile.write( "\\BibleSectionCrossReference{{{}}}\n".format( texText(text) ) )
+                            bookFile.write( "\\BibleSectionCrossReference{{{}}}\n".format( texText(text) ) )
                         elif marker in ('p','pi','q1','q2','q3','q4'):
                             assert( not text )
                             allFile.write( "\\BibleParagraphStyle{}\n".format( pMarkerTranslate[marker] ) )
@@ -5980,8 +6050,9 @@ class BibleWriter( InternalBible ):
         pickleOutputFolder = os.path.join( givenOutputFolderName, "BOS_Bible_Object_Pickle/" )
         PseudoUSFMOutputFolder = os.path.join( givenOutputFolderName, "BOS_PseudoUSFM_" + "Export/" )
         USFMOutputFolder = os.path.join( givenOutputFolderName, "BOS_USFM_" + ("Reexport/" if self.objectTypeString=='USFM' else "Export/" ) )
-        CBOutputFolder = os.path.join( givenOutputFolderName, "BOS_CustomBible_" + "Export/" )
         textOutputFolder = os.path.join( givenOutputFolderName, "BOS_PlainText_" + ("Reexport/" if self.objectTypeString=='Text' else "Export/" ) )
+        htmlOutputFolder = os.path.join( givenOutputFolderName, "BOS_HTML5_" + "Export/" )
+        CBOutputFolder = os.path.join( givenOutputFolderName, "BOS_CustomBible_" + "Export/" )
         TWOutputFolder = os.path.join( givenOutputFolderName, "BOS_theWord_" + ("Reexport/" if self.objectTypeString=='TheWord' else "Export/" ) )
         MySwOutputFolder = os.path.join( givenOutputFolderName, "BOS_MySword_" + ("Reexport/" if self.objectTypeString=='MySword' else "Export/" ) )
         ESwOutputFolder = os.path.join( givenOutputFolderName, "BOS_e-Sword_" + ("Reexport/" if self.objectTypeString=='e-Sword' else "Export/" ) )
@@ -5993,7 +6064,6 @@ class BibleWriter( InternalBible ):
         USFXOutputFolder = os.path.join( givenOutputFolderName, "BOS_USFX_" + ("Reexport/" if self.objectTypeString=='USFX' else "Export/" ) )
         OSISOutputFolder = os.path.join( givenOutputFolderName, "BOS_OSIS_" + ("Reexport/" if self.objectTypeString=='OSIS' else "Export/" ) )
         swOutputFolder = os.path.join( givenOutputFolderName, "BOS_Sword_" + ("Reexport/" if self.objectTypeString=='Sword' else "Export/" ) )
-        htmlOutputFolder = os.path.join( givenOutputFolderName, "BOS_HTML5_" + "Export/" )
         SwSOutputFolder = os.path.join( givenOutputFolderName, "BOS_SwordSearcher_" + "Export/" )
         DrOutputFolder = os.path.join( givenOutputFolderName, "BOS_DrupalBible_" + ("Reexport/" if self.objectTypeString=='DrupalBible' else "Export/" ) )
         photoOutputFolder = os.path.join( givenOutputFolderName, "BOS_PhotoBible_Export/" )
@@ -6019,8 +6089,9 @@ class BibleWriter( InternalBible ):
         if Globals.debugFlag:
             PseudoUSFMExportResult = self.toPseudoUSFM( PseudoUSFMOutputFolder )
             USFMExportResult = self.toUSFM( USFMOutputFolder )
-            CBExportResult = self.toCustomBible( CBOutputFolder )
             TextExportResult = self.toText( textOutputFolder )
+            htmlExportResult = self.toHTML5( htmlOutputFolder )
+            CBExportResult = self.toCustomBible( CBOutputFolder )
             MWExportResult = self.toMediaWiki( MWOutputFolder )
             ZefExportResult = self.toZefaniaXML( zefOutputFolder )
             HagExportResult = self.toHaggaiXML( hagOutputFolder )
@@ -6032,7 +6103,6 @@ class BibleWriter( InternalBible ):
             TWExportResult = self.totheWord( TWOutputFolder )
             MySwExportResult = self.toMySword( MySwOutputFolder )
             ESwExportResult = self.toESword( ESwOutputFolder )
-            htmlExportResult = self.toHTML5( htmlOutputFolder )
             SwSExportResult = self.toSwordSearcher( SwSOutputFolder )
             DrExportResult = self.toDrupalBible( DrOutputFolder )
             if wantPhotoBible: PhotoExportResult = self.toPhotoBible( photoOutputFolder )
@@ -6077,16 +6147,21 @@ class BibleWriter( InternalBible ):
                 USFMExportResult = False
                 print("BibleWriter.doAllExports.toUSFM Unexpected error:", sys.exc_info()[0], err)
                 logging.error( "BibleWriter.doAllExports.toUSFM: Oops, failed!" )
-            try: CBExportResult = self.toCustomBible( CBOutputFolder )
-            except Exception as err:
-                CBExportResult = False
-                print("BibleWriter.doAllExports.toCustomBible Unexpected error:", sys.exc_info()[0], err)
-                logging.error( "BibleWriter.doAllExports.toCustomBible: Oops, failed!" )
             try: TextExportResult = self.toText( textOutputFolder )
             except Exception as err:
                 TextExportResult = False
                 print("BibleWriter.doAllExports.toText Unexpected error:", sys.exc_info()[0], err)
                 logging.error( "BibleWriter.doAllExports.toText: Oops, failed!" )
+            try: htmlExportResult = self.toHTML5( htmlOutputFolder )
+            except Exception as err:
+                htmlExportResult = False
+                print("BibleWriter.doAllExports.toHTML5 Unexpected error:", sys.exc_info()[0], err)
+                logging.error( "BibleWriter.doAllExports.toHTML5: Oops, failed!" )
+            try: CBExportResult = self.toCustomBible( CBOutputFolder )
+            except Exception as err:
+                CBExportResult = False
+                print("BibleWriter.doAllExports.toCustomBible Unexpected error:", sys.exc_info()[0], err)
+                logging.error( "BibleWriter.doAllExports.toCustomBible: Oops, failed!" )
             try: MWExportResult = self.toMediaWiki( MWOutputFolder )
             except Exception as err:
                 MWExportResult = False
@@ -6142,11 +6217,6 @@ class BibleWriter( InternalBible ):
                 ESwExportResult = False
                 print("BibleWriter.doAllExports.toESword Unexpected error:", sys.exc_info()[0], err)
                 logging.error( "BibleWriter.doAllExports.toESword: Oops, failed!" )
-            try: htmlExportResult = self.toHTML5( htmlOutputFolder )
-            except Exception as err:
-                htmlExportResult = False
-                print("BibleWriter.doAllExports.toHTML5 Unexpected error:", sys.exc_info()[0], err)
-                logging.error( "BibleWriter.doAllExports.toHTML5: Oops, failed!" )
             try: SwSExportResult = self.toSwordSearcher( SwSOutputFolder )
             except Exception as err:
                 SwSExportResult = False
@@ -6215,13 +6285,13 @@ def demo():
                 #("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
                 #("Matigsalug", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
                 #("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
-                #("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
+                ("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
                 #("MS-BT", "MBTBT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
                 #("MS-Notes", "MBTBC", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/",),
                 #("MS-ABT", "MBTABT", "../../../../../Data/Work/Matigsalug/Bible/MBTABT/",),
                 #("WEB", "WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/",),
                 #("WEB", "WEB", "../../../../../Data/Work/Bibles/From eBible/WEB/eng-web_usfm 2013-07-18/",),
-                ("WEB", "WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-03-05 eng-web_usfm/",),
+                #("WEB", "WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-03-05 eng-web_usfm/",),
                 ) # You can put your USFM test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData ):

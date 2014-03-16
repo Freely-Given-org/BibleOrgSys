@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ESwordBible.py
-#   Last modified: 2014-03-14 by RJH (also update ProgVersion below)
+#   Last modified: 2014-03-17 by RJH (also update ProgVersion below)
 #
 # Module handling "e-Sword" Bible module files
 #
@@ -48,7 +48,7 @@ e.g.,
 """
 
 ProgName = "e-Sword Bible format handler"
-ProgVersion = "0.07"
+ProgVersion = "0.08"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -335,7 +335,7 @@ class ESwordBible( Bible ):
             logging.error( "ESwordBible.load: Doesn't handle {} {}:{} formatted line yet: {}".format( BBB, C, V, repr(line) ) )
             if 1: # Unhandled stuff -- not done properly yet...............................................
                 line = re.sub( '<(.+?)>', '', line ) # Remove all remaining sets of angle brackets
-            if Globals.debugFlag: halt
+            if 0 and Globals.debugFlag: halt
         line = line.replace( '~^~', '\\' ) # Restore our internal formatting codes
 
 
@@ -417,6 +417,7 @@ class ESwordBible( Bible ):
         Load a single source file and load book elements.
         """
         if Globals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
+        loadErrors = []
 
         fileExtensionUpper = self.fileExtension.upper()
         if fileExtensionUpper not in filenameEndingsToAccept:
@@ -439,6 +440,20 @@ class ESwordBible( Bible ):
         if 'encryption' in self.settingsDict: logging.critical( "{} is encrypted: level {}".format( self.sourceFilename, self.settingsDict['encryption'] ) )
 
 
+        # Just get some information from the file
+        cursor.execute( 'select * from Bible' )
+        rows = cursor.fetchall()
+        numRows = len(rows)
+        if Globals.debugFlag or Globals.verbosityLevel>2: print( '{} rows found'.format( numRows ) )
+        BBBn1 = rows[0][0]
+        if Globals.debugFlag or Globals.verbosityLevel>2: print( 'First book number is {}'.format( BBBn1 ) )
+        del rows
+        BBB1 = None
+        if BBBn1 <= 66: BBB1 = Globals.BibleBooksCodes.getBBBFromReferenceNumber( BBBn1 )
+
+
+        testament = BBB = None
+        booksExpected = textLineCountExpected = 0
         if self.settingsDict['OT'] and self.settingsDict['NT']:
             testament, BBB = 'BOTH', 'GEN'
             booksExpected, textLineCountExpected = 66, 31102
@@ -448,6 +463,38 @@ class ESwordBible( Bible ):
         elif self.settingsDict['NT']:
             testament, BBB = 'NT', 'MAT'
             booksExpected, textLineCountExpected = 27, 7957
+        elif self.settingsDict['Abbreviation'] == 'VIN2011': # Handle encoding error
+            logging.critical( "e-Sword settings encoding error -- no testament set: {}".format( self.settingsDict ) )
+            loadErrors.append( "e-Sword settings encoding error -- no testament set: {}".format( self.settingsDict ) )
+            testament, BBB = 'BOTH', 'GEN'
+            booksExpected, textLineCountExpected = 66, 31102
+        elif self.settingsDict['Apocrypha']: # incomplete
+            testament, BBB = 'AP', 'XXX'
+            booksExpected, textLineCountExpected = 99, 999999
+            halt
+        if not BBB:
+            logging.critical( "e-Sword settings encoding error -- no testament set: {}".format( self.settingsDict ) )
+            loadErrors.append( "e-Sword settings encoding error -- no testament set: {}".format( self.settingsDict ) )
+            if 0:
+                cursor.execute( 'select * from Bible' )
+                rows = cursor.fetchall()
+                print( "rows", len(rows) )
+                for row in rows:
+                    assert( len(row) == 4 )
+                    BBBn, C, V, text = row # First three are integers, the last is a string
+                    print( BBBn, C, V, repr(text) )
+                    if C==2: break
+                del rows # Takes a lot of memory
+        if Globals.debugFlag or Globals.verbosityLevel>2:
+            print( "Testament={} BBB={} BBB1={}, bE={}, tLCE={} nR={}".format( testament, BBB, BBB1, booksExpected, textLineCountExpected, numRows ) )
+        if BBB1 != BBB:
+            logging.critical( "First book seems wrong: {} instead of {}".format( BBB1, BBB ) )
+            loadErrors.append( "First book seems wrong: {} instead of {}".format( BBB1, BBB ) )
+            if not BBB: BBB = BBB1
+        if numRows != textLineCountExpected:
+            logging.critical( "Row count seems wrong: {} instead of {}".format( numRows, textLineCountExpected ) )
+            loadErrors.append( "Row count seems wrong: {} instead of {}".format( numRows, textLineCountExpected ) )
+        #halt
 
         BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
 
@@ -533,6 +580,7 @@ class ESwordBible( Bible ):
 
         if Globals.strictCheckingFlag or Globals.debugFlag: self.checkForExtraMaterial( cursor, BOS )
         cursor.close()
+        if loadErrors: self.errorDictionary['Load Errors'] = loadErrors
     # end of ESwordBible.load
 # end of ESwordBible class
 
