@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Globals.py
-#   Last modified: 2014-03-19 by RJH (also update ProgVersion below)
+#   Last modified: 2014-03-24 by RJH (also update ProgVersion below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -71,10 +71,10 @@ Contains functions:
 """
 
 ProgName = "Globals"
-ProgVersion = "0.38"
+ProgVersion = "0.39"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
-debuggingThisModule = False
+debuggingThisModule = True
 
 
 import logging, os.path, pickle
@@ -95,7 +95,8 @@ verbosityString = 'Normal'
 
 defaultLogFolder = 'Logs/' # Relative path
 defaultcacheFolder = 'ObjectCache/' # Relative path
-
+if debuggingThisModule:
+    loggingNameDict = {logging.DEBUG:'DEBUG', logging.INFO:'INFO', logging.WARNING:'WARNING', logging.ERROR:'ERROR', logging.CRITICAL:'CRITICAL'}
 
 
 # Some language independant punctuation help
@@ -132,8 +133,13 @@ loggingShortFormat = '%(levelname)8s: %(message)s'
 loggingLongFormat = '%(asctime)s %(levelname)8s: %(message)s'
 
 def setupLoggingToFile( ProgName, ProgVersion, folder=None ):
-    """Sets up the main logfile for the program and returns the full pathname."""
-    # Gets called from our demo() function when program starts up
+    """
+    Sets up the main logfile for the program and returns the full pathname.
+
+    Gets called from our demo() function when program starts up.
+    """
+    if debuggingThisModule:
+        print( "Globals.setupLoggingToFile( {}, {}, {} )".format( repr(ProgName), repr(ProgVersion), repr(folder) ) )
     filename = ProgName.replace('/','-').replace(':','_').replace('\\','_') + '_log.txt'
     if folder is None: folder = defaultLogFolder # relative path
     filepath = os.path.join( folder, filename )
@@ -144,14 +150,16 @@ def setupLoggingToFile( ProgName, ProgVersion, folder=None ):
 
     # Rename the existing file to a backup copy if it already exists
     if os.access( filepath, os.F_OK ):
-        if __name__ == '__main__':
-            print ( filepath, 'already exists -- renaming it first!' )
+        if debuggingThisModule or __name__ == '__main__':
+            print ( "setupLoggingToFile: {} already exists -- renaming it first!".format( repr(filepath) ) )
         if os.access( filepath+'.bak', os.F_OK ):
             os.remove( filepath+'.bak' )
         os.rename( filepath, filepath+'.bak' )
 
     # Now setup our new log file
     setLevel = logging.DEBUG if debugFlag else logging.INFO
+    if debuggingThisModule:
+        print( "Globals.setBasicConfig( {}, {}={}, {}, {} )".format( filepath, setLevel, loggingNameDict[setLevel], repr(loggingLongFormat), repr(loggingDateFormat) ) )
     logging.basicConfig( filename=filepath, level=setLevel, format=loggingLongFormat, datefmt=loggingDateFormat )
 
     return filepath
@@ -159,7 +167,11 @@ def setupLoggingToFile( ProgName, ProgVersion, folder=None ):
 
 
 def addConsoleLogging( consoleLoggingLevel=None ):
-    # Now add a handler to also send ERROR and higher to console (depending on verbosity)
+    """
+    Adds a handler to also send ERROR and higher to console (depending on verbosity)
+    """
+    if debuggingThisModule:
+        print( "Globals.addConsoleLogging( {}={} )".format( consoleLoggingLevel, loggingNameDict[consoleLoggingLevel] ) )
     stderrHandler = logging.StreamHandler() # StreamHandler with no parameters defaults to sys.stderr
     stderrHandler.setFormatter( logging.Formatter( loggingConsoleFormat, None ) )
     if consoleLoggingLevel is not None:
@@ -177,7 +189,10 @@ def addConsoleLogging( consoleLoggingLevel=None ):
 
 
 def addLogfile( projectName, folder=None ):
-    """Adds an extra project specific log file to the logger."""
+    """
+    Adds an extra project specific log file to the logger.
+    """
+    if debuggingThisModule: print( "Globals.addLogfile( {}, {} )".format( projectName, folder ) )
     filename = projectName + '_log.txt'
     if folder is None: folder = defaultLogFolder # relative path
     filepath = os.path.join( folder, filename )
@@ -204,7 +219,10 @@ def addLogfile( projectName, folder=None ):
 
 
 def removeLogfile( projectHandler ):
-    """Removes the project specific logger."""
+    """
+    Removes the project specific logger.
+    """
+    if debuggingThisModule: print( "Globals.removeLogfile( {} )".format( projectHandler ) )
     root = logging.getLogger()  # No param means get the root logger
     root.removeHandler( projectHandler )
 # end of removeLogfile
