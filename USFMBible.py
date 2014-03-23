@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2014-02-22 by RJH (also update ProgVersion below)
+#   Last modified: 2014-03-24 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -28,10 +28,10 @@ Module for defining and manipulating complete or partial USFM Bibles.
 """
 
 ProgName = "USFM Bible handler"
-ProgVersion = "0.48"
+ProgVersion = "0.49"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
-debuggingThisModule = False
+debuggingThisModule = True
 
 
 import os, logging
@@ -46,8 +46,24 @@ from Bible import Bible
 
 
 filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
-extensionsToIgnore = ('ZIP', 'BAK', 'LOG', 'HTM','HTML', 'XML', 'OSIS', 'USX', 'BBLX', 'STY', 'LDS', 'SSF', 'VRS', 'ASC', 'CSS', 'ODT','DOC', ) # Must be UPPERCASE
+extensionsToIgnore = ( 'ASC', 'BAK', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', 'HTM','HTML', 'JAR',
+                    'LDS', 'LOG', 'MYBIBLE', 'NT','NTX', 'ODT', 'ONT','ONTX', 'OSIS', 'OT','OTX', 'PDB',
+                    'STY', 'SSF', 'USX', 'VRS', 'YET', 'XML', 'ZIP', ) # Must be UPPERCASE and NOT begin with a dot
 
+
+#def removeUnwantedTupleExtensions( fnTuples ):
+    #"""
+    #Given a container of (BBB,filename) 2-tuples,
+        #results a list without any of the above file extensions.
+    #"""
+    #resultList = []
+    #for BBB,filename in fnTuples:
+        #ignoreFlag = False
+        #for ignoreExtension in extensionsToIgnore:
+            #if filename.upper().endswith( ignoreExtension ): ignoreFlag = True; break
+        #if not ignoreFlag: resultList.append( (BBB,filename) )
+    #return resultList
+## end of removeUnwantedTupleExtensions
 
 
 def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
@@ -96,7 +112,7 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
     numFound = 0
     UFns = USFMFilenames( givenFolderName ) # Assuming they have standard Paratext style filenames
     if Globals.verbosityLevel > 2: print( UFns )
-    filenameTuples = UFns.getMaximumPossibleFilenameTuples()
+    filenameTuples = UFns.getMaximumPossibleFilenameTuples() # Returns (BBB,filename) 2-tuples
     if Globals.verbosityLevel > 3: print( "  Confirmed:", len(filenameTuples), filenameTuples )
     if Globals.verbosityLevel > 1 and filenameTuples: print( "  Found {} USFM file{}.".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
     if filenameTuples:
@@ -139,7 +155,7 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
         # See if there's an USFM Bible here in this folder
         UFns = USFMFilenames( tryFolderName ) # Assuming they have standard Paratext style filenames
         if Globals.verbosityLevel > 2: print( UFns )
-        filenameTuples = UFns.getMaximumPossibleFilenameTuples()
+        filenameTuples = UFns.getMaximumPossibleFilenameTuples() # Returns (BBB,filename) 2-tuples
         if Globals.verbosityLevel > 3: print( "  Confirmed:", len(filenameTuples), filenameTuples )
         if Globals.verbosityLevel > 2 and filenameTuples: print( "  Found {} USFM files: {}".format( len(filenameTuples), filenameTuples ) )
         elif Globals.verbosityLevel > 1 and filenameTuples: print( "  Found {} USFM file{}".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
@@ -210,7 +226,7 @@ class USFMBible( Bible ):
         if not self.name: self.name = "USFM Bible"
 
         # Find the filenames of all our books
-        self.maximumPossibleFilenameTuples = self.USFMFilenamesObject.getMaximumPossibleFilenameTuples()
+        self.maximumPossibleFilenameTuples = self.USFMFilenamesObject.getMaximumPossibleFilenameTuples() # Returns (BBB,filename) 2-tuples
         self.possibleFilenameDict = {}
         for BBB, filename in self.maximumPossibleFilenameTuples:
             self.possibleFilenameDict[BBB] = filename
@@ -354,9 +370,10 @@ def demo():
     if 1: # Load and process some of our test versions
         count = 0
         for name, encoding, testFolder in ( \
-                                            ("Matigsalug", "utf-8", "Tests/DataFilesForTests/USFMTest1/"), \
-                                            ("Matigsalug", "utf-8", "Tests/DataFilesForTests/USFMTest2/"), \
-                                            ("UEP", "utf-8", "Tests/DataFilesForTests/USFMErrorProject/"), \
+                                            #("Matigsalug", "utf-8", "Tests/DataFilesForTests/USFMTest1/"), \
+                                            #("Matigsalug", "utf-8", "Tests/DataFilesForTests/USFMTest2/"), \
+                                            #("UEP", "utf-8", "Tests/DataFilesForTests/USFMErrorProject/"), \
+                                            ("Dummy","utf-8","/mnt/Data/Websites/Freely-Given.org/Software/BibleDropBox/PrivatePage/Spanish_Bible_Translation.2014-03-23_20.58_0.93099800_1395561481/YourSourceFiles/Unzipped/"), \
                                             #("Exported", "utf-8", "Tests/BOS_USFM_Export/"), \
                                             ):
             count += 1

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMFilenames.py
-#   Last modified: 2013-12-18 by RJH (also update ProgVersion below)
+#   Last modified: 2014-03-24 by RJH (also update ProgVersion below)
 #
 # Module handling USFM Bible filenames
 #
@@ -28,7 +28,7 @@ Module for creating and manipulating USFM filenames.
 """
 
 ProgName = "USFM Bible filenames handler"
-ProgVersion = "0.61"
+ProgVersion = "0.62"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -68,7 +68,9 @@ AlternateFilenames = ( '01-Genesis', '02-Exodus', '03-Leviticus', '04-Numbers', 
 filenamesToIgnore = ('AUTOCORRECT.TXT','HYPHENATEDWORDS.TXT','PRINTDRAFTCHANGES.TXT','README.TXT','BOOK_NAMES.TXT',) # Only needs to include names whose extensions are not listed below
 filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must begin with a dot
 # NOTE: Extensions ending in ~ are also ignored
-extensionsToIgnore = ('ZIP', 'BAK', 'LOG', 'HTM','HTML', 'XML', 'OSIS', 'USX', 'STY', 'LDS', 'SSF', 'VRS', 'ASC', 'CSS', 'ODT','DOC', 'JAR', ) # Must NOT begin with a dot
+extensionsToIgnore = ( 'ASC', 'BAK', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', 'HTM','HTML', 'JAR',
+                    'LDS', 'LOG', 'MYBIBLE', 'NT','NTX', 'ODT', 'ONT','ONTX', 'OSIS', 'OT','OTX', 'PDB',
+                    'STY', 'SSF', 'USX', 'VRS', 'YET', 'XML', 'ZIP', ) # Must be UPPERCASE and NOT begin with a dot
 
 
 
@@ -424,7 +426,7 @@ class USFMFilenames:
 
     def getPossibleFilenameTuplesExt( self ):
         """ Return a list of filename tuples just derived from the list of files in the folder,
-                i.e., look only external at the filenames.
+                i.e., look only externally at the filenames.
             The result is a list of 2-tuples in the default rough sequence order from the BibleBooksCodes module.
                 Each tuple contains ( BBB, filename ) not including the folder path.
         """

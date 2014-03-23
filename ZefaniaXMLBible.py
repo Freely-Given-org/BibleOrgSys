@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # ZefaniaXMLBible.py
-#   Last modified: 2013-12-18 by RJH (also update ProgVersion below)
+#   Last modified: 2014-03-24 by RJH (also update ProgVersion below)
 #
 # Module handling Zefania XML Bibles
 #
-# Copyright (C) 2013 Robert Hunt
+# Copyright (C) 2013-2014 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -59,7 +59,7 @@ or
 """
 
 ProgName = "Zefania XML Bible format handler"
-ProgVersion = "0.24"
+ProgVersion = "0.25"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -77,7 +77,9 @@ from Bible import Bible, BibleBook
 
 
 filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
-extensionsToIgnore = ('ZIP', 'BAK', 'LOG', 'HTM','HTML', 'OSIS', 'USX', 'STY', 'LDS', 'SSF', 'VRS', 'ASC', 'CSS', 'ODT','DOC','TXT', 'JAR', ) # Must be UPPERCASE
+extensionsToIgnore = ( 'ASC', 'BAK', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', 'HTM','HTML', 'JAR',
+                    'LDS', 'LOG', 'MYBIBLE', 'NT','NTX', 'ODT', 'ONT','ONTX', 'OSIS', 'OT','OTX', 'PDB',
+                    'STY', 'SSF', 'TXT', 'USFM', 'USX', 'VRS', 'YET', 'ZIP', ) # Must be UPPERCASE and NOT begin with a dot
 
 
 

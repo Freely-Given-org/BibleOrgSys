@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # UnknownBible.py
-#   Last modified: 2014-02-11 (also update ProgVersion below)
+#   Last modified: 2014-03-24 (also update ProgVersion below)
 #
 # Module handling a unknown Bible object
 #
@@ -326,14 +326,14 @@ def demo():
     if Globals.verbosityLevel > 0: print( "{} V{}".format(ProgName, ProgVersion ) )
 
     # Now demo the class
-    testFolders = ( "/home/robert/Logs",
-                    "../../../../../Data/Work/Bibles/theWord modules/",
-                    "../../../../../Data/Work/Bibles/Biola Unbound modules/",
-                    "../../../../../Data/Work/Bibles/OpenSong Bibles/",
-                    "../../../../../Data/Work/Bibles/Zefania modules/",
-                    "../../../../../Data/Work/Bibles/YET modules/",
-                    "../../../../../Data/Work/Matigsalug/Bible/MBTV/",
-                    "../../../../../SSD/AutoProcesses/Processed/",
+    testFolders = ( "/home/robert/Logs", # Shouldn't have any Bibles here
+                    #"../../../../../Data/Work/Bibles/theWord modules/",
+                    #"../../../../../Data/Work/Bibles/Biola Unbound modules/",
+                    #"../../../../../Data/Work/Bibles/OpenSong Bibles/",
+                    #"../../../../../Data/Work/Bibles/Zefania modules/",
+                    #"../../../../../Data/Work/Bibles/YET modules/",
+                    #"../../../../../Data/Work/Matigsalug/Bible/MBTV/",
+                    #"../../../../../SSD/AutoProcesses/Processed/",
                     "Tests/DataFilesForTests/USFMTest1/", "Tests/DataFilesForTests/USFMTest2/",
                     "Tests/DataFilesForTests/USFM-OEB/", "Tests/DataFilesForTests/USFM-WEB/",
                     "Tests/DataFilesForTests/USXTest1/", "Tests/DataFilesForTests/USXTest2/",
@@ -341,6 +341,7 @@ def demo():
                     "Tests/DataFilesForTests/USFX-ASV/", "Tests/DataFilesForTests/USFX-WEB/",
                     "Tests/DataFilesForTests/OSISTest1/", "Tests/DataFilesForTests/OSISTest2/",
                     "Tests/DataFilesForTests/ZefaniaTest/", "Tests/DataFilesForTests/HaggaiTest/",
+                    "Tests/DataFilesForTests/e-SwordTest/",
                     "Tests/DataFilesForTests/theWordTest/", "Tests/DataFilesForTests/MySwordTest/",
                     "Tests/DataFilesForTests/YETTest/", "Tests/DataFilesForTests/PDBTest/",
                     "Tests/DataFilesForTests/DrupalTest/",
@@ -349,35 +350,35 @@ def demo():
     if 1: # Just find the files
         for j, testFolder in enumerate( testFolders ):
             if Globals.verbosityLevel > 0: print( "\n\nUnknownBible A{}/ Trying {}...".format( j+1, testFolder ) )
-            B = UnknownBible( testFolder )
-            result = B.search( autoLoad=False )
-            #result2 = B.search( autoLoad=True ) if result1 else None
+            uB = UnknownBible( testFolder )
+            result = uB.search( autoLoad=False )
+            #result2 = uB.search( autoLoad=True ) if result1 else None
             if Globals.verbosityLevel > 2: print( "  Result is: {}".format( result ) )
-            if Globals.verbosityLevel > 0: print( B )
+            if Globals.verbosityLevel > 0: print( uB )
 
     if 1: # Just load the files (only if exactly one found)
         for j, testFolder in enumerate( testFolders ):
             if Globals.verbosityLevel > 0: print( "\n\nUnknownBible B{}/ Single loading {}...".format( j+1, testFolder ) )
-            B = UnknownBible( testFolder )
-            result = B.search( autoLoad=True )
+            uB = UnknownBible( testFolder )
+            result = uB.search( autoLoad=True )
             if Globals.verbosityLevel > 2: print( "  Result is: {}".format( result ) )
-            if Globals.verbosityLevel > 0: print( B )
+            if Globals.verbosityLevel > 0: print( uB )
 
     if 1: # Always load the files
         for j, testFolder in enumerate( testFolders ):
             if Globals.verbosityLevel > 0: print( "\n\nUnknownBible C{}/ Always loading {}...".format( j+1, testFolder ) )
-            B = UnknownBible( testFolder )
-            result = B.search( autoLoadAlways=True )
+            uB = UnknownBible( testFolder )
+            result = uB.search( autoLoadAlways=True )
             if Globals.verbosityLevel > 2: print( "  Result is: {}".format( result ) )
-            if Globals.verbosityLevel > 0: print( B )
+            if Globals.verbosityLevel > 0: print( uB )
 
     if 0: # Load, check, and export the files
         for j, testFolder in enumerate( testFolders ):
             if Globals.verbosityLevel > 0: print( "\n\nUnknownBible D{}/ Processing {}...".format( j+1, testFolder ) )
-            B = UnknownBible( testFolder )
-            result = B.search( autoLoad=True )
+            uB = UnknownBible( testFolder )
+            result = uB.search( autoLoad=True )
             #if Globals.verbosityLevel > 2: print( "  Results are: {} and {}".format( result1, result2 ) )
-            if Globals.verbosityLevel > 0: print( B )
+            if Globals.verbosityLevel > 0: print( uB )
             if result:
                 result.check()
                 results = result.doAllExports()

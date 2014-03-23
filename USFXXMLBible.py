@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFXXMLBible.py
-#   Last modified: 2014-02-11 by RJH (also update ProgVersion below)
+#   Last modified: 2014-03-24 by RJH (also update ProgVersion below)
 #
 # Module handling USFX XML Bibles
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFX Bibles.
 """
 
 ProgName = "USFX XML Bible handler"
-ProgVersion = "0.05"
+ProgVersion = "0.06"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -44,7 +44,9 @@ from Bible import Bible, BibleBook
 
 
 filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
-extensionsToIgnore = ('ZIP', 'BAK', 'LOG', 'HTM','HTML', 'USX', 'STY', 'LDS', 'SSF', 'VRS', 'ASC', 'CSS', 'ODT','DOC','TXT', 'JAR', ) # Must be UPPERCASE
+extensionsToIgnore = ( 'ASC', 'BAK', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', 'HTM','HTML', 'JAR',
+                    'LDS', 'LOG', 'MYBIBLE', 'NT','NTX', 'ODT', 'ONT','ONTX', 'OSIS', 'OT','OTX', 'PDB',
+                    'STY', 'SSF', 'TXT', 'USFM', 'USX', 'VRS', 'YET', 'ZIP', ) # Must be UPPERCASE and NOT begin with a dot
 
 
 

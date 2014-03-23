@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # OpenSongXMLBible.py
-#   Last modified: 2013-12-18 by RJH (also update ProgVersion below)
+#   Last modified: 2014-03-24 by RJH (also update ProgVersion below)
 #
 # Module handling OpenSong XML Bibles
 #
@@ -34,7 +34,7 @@ Module reading and loading OpenSong XML Bibles:
 """
 
 ProgName = "OpenSong XML Bible format handler"
-ProgVersion = "0.25"
+ProgVersion = "0.26"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -51,7 +51,9 @@ from Bible import Bible, BibleBook
 
 
 filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
-extensionsToIgnore = ('ZIP', 'BAK', 'LOG', 'HTM','HTML', 'OSIS', 'USX', 'STY', 'LDS', 'SSF', 'VRS', 'ASC', 'CSS', 'ODT','DOC','TXT', 'JAR', ) # Must be UPPERCASE
+extensionsToIgnore = ( 'ASC', 'BAK', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', 'HTM','HTML', 'JAR',
+                    'LDS', 'LOG', 'MYBIBLE', 'NT','NTX', 'ODT', 'ONT','ONTX', 'OSIS', 'OT','OTX', 'PDB',
+                    'STY', 'SSF', 'TXT', 'USFM', 'USX', 'VRS', 'YET', 'XML', 'ZIP', ) # Must be UPPERCASE and NOT begin with a dot
 
 
 

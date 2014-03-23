@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-03-17 by RJH (also update ProgVersion below)
+#   Last modified: 2014-03-19 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -59,7 +59,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.56"
+ProgVersion = "0.57"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -1033,9 +1033,12 @@ class BibleWriter( InternalBible ):
         if not os.access( bookOutputFolderHTML, os.F_OK ): os.makedirs( bookOutputFolderHTML ) # Make the empty folder if there wasn't already one there
         #chapterOutputFolderHTML = os.path.join( outputFolder, "ByChapter.{}.HTML".format( CBDataFormatVersion ) )
         #if not os.access( chapterOutputFolderHTML, os.F_OK ): os.makedirs( chapterOutputFolderHTML ) # Make the empty folder if there wasn't already one there
-        destinationHTMLFilepathTemplate = os.path.join( bookOutputFolderHTML, "CBBook.{}.{}.html".format( '{}', CBDataFormatVersion ) ) # Missing the BBB
+
+        headerFilepath = os.path.join( outputFolder, 'CBHeader.json' )
+        booknamesFilepath = os.path.join( outputFolder, 'CBBookNames.{}.json'.format( CBDataFormatVersion ) )
+        compressionDictFilepath = os.path.join( outputFolder, "CBCmprnDict.{}.json".format( CBDataFormatVersion ) )
         destinationIndexFilepath = os.path.join( outputFolder, "CB-BCV-ix.{}.json".format( CBDataFormatVersion ) )
-        compressionFilepath = os.path.join( outputFolder, "CBCmprnDict.{}.json".format( CBDataFormatVersion ) )
+        destinationHTMLFilepathTemplate = os.path.join( bookOutputFolderHTML, "CBBook.{}.{}.html".format( '{}', CBDataFormatVersion ) ) # Missing the BBB
 
         unhandledMarkers = set()
 
@@ -1043,7 +1046,7 @@ class BibleWriter( InternalBible ):
             ('@A','<h1 class="mainTitle'),
             ('@B','<section class="introSection">'),
             ('@C','<p class="introductoryParagraph">'),
-            #('@C','<section class="regularSection">'),
+            ('@X','<section class="regularSection">'),
             ('@D','<section class="regularSection"><h3 class="sectionHeading1">'),
             ('@E','<span class="chapterStart" id="C'),
             #('@F','<p class="sectionHeading1">'),
@@ -1054,7 +1057,7 @@ class BibleWriter( InternalBible ):
             #('@Y','</span><span class="verseNumberPrespace"> </span><span class="verseNumber" id="C'), # Makes bigger! Why???
             ('@J','</span><span class="verseNumberPostspace">&nbsp;</span>'),
             ('@K','</span><span class="verseNumberPostspace">&nbsp;</span><span class="verseText">'),
-            #('@K','<span class="verseText">'),
+            ('@Y','<span class="verseText">'),
             ('@M','<p class="proseParagraph"><span class="chapterNumber" id="C'),
             ('@N','<p class="proseParagraph">'),
             ('@O','<p class="proseParagraph"><span class="verseNumberPrespace"> </span><span class="verseNumber" id="C'),
@@ -1102,7 +1105,7 @@ class BibleWriter( InternalBible ):
                 print( "  Writing compression entries..." )
             #filepath = os.path.join( outputFolder, 'CBHeader.json' )
             if Globals.verbosityLevel > 2: print( "    toCustomBible " +  _("Exporting index to {}...").format( compressionFilepath ) )
-            with open( compressionFilepath, 'wt' ) as jsonFile:
+            with open( compressionDictFilepath, 'wt' ) as jsonFile:
                 #for compression in SDCompressions:
                     #compFile.write( compression[0] + compression[1] + '\n' )
                 json.dump( CBCompressions, jsonFile, indent=jsonIndent )
@@ -1152,9 +1155,8 @@ class BibleWriter( InternalBible ):
             headerDict['Version abbreviation'] = self.settingsDict['WorkAbbreviation'] if 'WorkAbbreviation' in self.settingsDict else self.abbreviation
             #print( headerDict )
 
-            filepath = os.path.join( outputFolder, 'CBHeader.json' )
-            if Globals.verbosityLevel > 2: print( "  " +  _("Exporting CB header to {}...").format( filepath ) )
-            with open( filepath, 'wt' ) as jsonFile:
+            if Globals.verbosityLevel > 2: print( "  " +  _("Exporting CB header to {}...").format( headerFilepath ) )
+            with open( headerFilepath, 'wt' ) as jsonFile:
                 json.dump( headerDict, jsonFile, indent=jsonIndent )
         # end of writeCBHeader
 
@@ -1181,9 +1183,8 @@ class BibleWriter( InternalBible ):
                 bkData.append( (BBB,abbreviation,shortName,longName,sectionName,intNumChapters) )
             #print( bkData )
 
-            filepath = os.path.join( outputFolder, 'BibleBookNames.{}.json'.format( CBDataFormatVersion ) )
-            if Globals.verbosityLevel > 2: print( "  " + _("Exporting book names to {}...").format( filepath ) )
-            with open( filepath, 'wt' ) as jsonFile:
+            if Globals.verbosityLevel > 2: print( "  " + _("Exporting book names to {}...").format( booknamesFilepath ) )
+            with open( booknamesFilepath, 'wt' ) as jsonFile:
                 json.dump( bkData, jsonFile, indent=jsonIndent )
         # end of writeCBBookNames
 
@@ -1287,6 +1288,9 @@ class BibleWriter( InternalBible ):
 
                 elif marker == 'c':
                     C, V = text, '0'
+                    if C=='1':
+                        if pOpen: lastHTML += '</p>'; pOpen = False
+                        if sOpen: lastHTML += '</section>'; sOpen = False
                     # What should we put in here -- we don't need/want to display it, but it's a place to jump to
                     thisHTML = '<span class="chapterStart" id="{}"></span>'.format( 'C'+C )
                 elif marker == 's1':
@@ -1300,13 +1304,24 @@ class BibleWriter( InternalBible ):
                         indexEntry = BCV[0],BCV[1],BCV[2],fileOffset,bytesWritten
                         createdIndex.append( indexEntry )
                         fileOffset += bytesWritten
-
                     thisHTML += '<section class="regularSection">'; sOpen = True; BCV=(BBB,C,V)
                     thisHTML += '<h3 class="sectionHeading1">{}</h3>'.format( text )
                 elif marker in ('s2','s3','s4'):
                     thisHTML = '<h3 class="sectionHeading{}">{}</h3>'.format( marker[1], text )
                 elif marker in ('p','pi','q1','q2','q3','q4',):
-                    if pOpen: thisHTML = '</p>\n'; pOpen = False
+                    if pOpen:
+                        assert( sOpen )
+                        thisHTML += '</p>\n'; pOpen = False
+                    elif not sOpen:
+                        if sectionHTML:
+                            sectionHTML += lastHTML
+                            lastHTML = ''
+                            bytesWritten = handleSection( BCV, sectionHTML, htmlFile )
+                            sectionHTML = ''
+                            indexEntry = BCV[0],BCV[1],BCV[2],fileOffset,bytesWritten
+                            createdIndex.append( indexEntry )
+                            fileOffset += bytesWritten
+                        thisHTML += '<section class="regularSection">'; sOpen = True; BCV=(BBB,C,V)
                     assert( not text )
                     thisHTML += '<p class="{}">'.format( BibleWriter.pHTMLClassDict[marker] )
                     pOpen = True

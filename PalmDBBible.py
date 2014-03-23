@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # PalmDBBible.py
-#   Last modified: 2014-02-11 by RJH (also update ProgVersion below)
+#   Last modified: 2014-03-24 by RJH (also update ProgVersion below)
 #
 # Module handling PDB Bible files
 #
@@ -62,7 +62,7 @@ Limitations:
 """
 
 ProgName = "PDB Bible format handler"
-ProgVersion = "0.03" # STILL UNFINISHED!!!
+ProgVersion = "0.04" # STILL UNFINISHED!!!
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -78,8 +78,6 @@ from Bible import Bible, BibleBook
 
 
 filenameEndingsToAccept = ('.PDB',) # Must be UPPERCASE
-#filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
-#extensionsToIgnore = ('ZIP', 'BAK', 'LOG', 'HTM','HTML', 'XML', 'OSIS', 'USX', 'STY', 'LDS', 'SSF', 'VRS', 'ASC', 'CSS', 'ODT','DOC','TXT', 'JAR', ) # Must be UPPERCASE
 
 
 

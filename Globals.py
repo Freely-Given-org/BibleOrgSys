@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Globals.py
-#   Last modified: 2014-03-14 by RJH (also update ProgVersion below)
+#   Last modified: 2014-03-19 by RJH (also update ProgVersion below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -71,14 +71,13 @@ Contains functions:
 """
 
 ProgName = "Globals"
-ProgVersion = "0.37"
+ProgVersion = "0.38"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
 
 
 import logging, os.path, pickle
-import multiprocessing
 from optparse import OptionParser
 from gettext import gettext as _
 
@@ -659,7 +658,7 @@ def pickleObject( theObject, filename, folder=None, disassembleObjectFlag=False 
             else: print( '  skip' )
 
     with open( filepath, 'wb' ) as pickleOutputFile:
-        pickle.dump( theObject, pickleOutputFile )
+        pickle.dump( theObject, pickleOutputFile, pickle.HIGHEST_PROTOCOL )
 # end of pickle
 
 
@@ -814,7 +813,7 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ):
     #if commandLineOptions.log: setLogErrorsFlag()
 
     # Determine multiprocessing strategy
-    if 0: maxProcesses = multiprocessing.cpu_count()
+    if 0: maxProcesses = os.cpu_count()
     #if maxProcesses > 1: maxProcesses -= 1 # Leave one CPU alone (normally)
     if maxProcesses > 1: maxProcesses = maxProcesses * 8 // 10 # Use 80% of them so other things keep working also
     if commandLineOptions.single: maxProcesses = 1
@@ -870,7 +869,10 @@ def demo():
     text = "The quick brown fox jumped over the lazy brown dog."
     adjustments = [(36,'lazy','fat'),(0,'The','A'),(20,'jumped','tripped'),(4,'','very '),(10,'brown','orange')]
     print( "\n{}->{}".format( repr(text), repr( applyStringAdjustments( text, adjustments ) ) ) )
+
+    print( "\ncpu_count", os.cpu_count() )
 # end of demo
+
 
 setVerbosity( verbosityString )
 if __name__ != '__main__': # Load global Bible data sets
@@ -892,6 +894,8 @@ if __name__ != '__main__': # Load global Bible data sets
     #print( len(USFMParagraphMarkers), sorted(USFMParagraphMarkers) ); halt
 
 if __name__ == '__main__':
+    import multiprocessing
+
     # Configure basic set-up
     parser = setup( ProgName, ProgVersion )
     addStandardOptionsAndProcess( parser )

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ESwordBible.py
-#   Last modified: 2014-03-17 by RJH (also update ProgVersion below)
+#   Last modified: 2014-03-23 by RJH (also update ProgVersion below)
 #
 # Module handling "e-Sword" Bible module files
 #
@@ -632,7 +632,7 @@ def demo():
     if Globals.verbosityLevel > 0: print( ProgNameVersion )
 
 
-    if 0: # demo the file checking code -- first with the whole folder and then with only one folder
+    if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         testFolder = "Tests/DataFilesForTests/e-SwordTest/"
         result1 = ESwordBibleFileCheck( testFolder )
         if Globals.verbosityLevel > 1: print( "TestA1", result1 )
@@ -650,7 +650,7 @@ def demo():
             #halt
 
 
-    if 0: # individual modules in the output folder
+    if 1: # individual modules in the output folder
         testFolder = "OutputFiles/BOS_e-SwordExport"
         names = ("Matigsalug",)
         for j, name in enumerate( names):
@@ -684,8 +684,8 @@ def demo():
                 testeSwB( testFolder, someFile )
                 #break # only do the first one.........temp
 
-    if 1: # all discovered modules in the test folder
-        testFolder = "../../../../../Data/Work/Bibles/e-Sword modules/"
+    if 0: # all discovered modules in the test folder
+        testFolder = "../../../../../Data/Work/Bibles/e-Sword modules/" # Put your test folder here
         foundFolders, foundFiles = [], []
         for something in os.listdir( testFolder ):
             somepath = os.path.join( testFolder, something )
