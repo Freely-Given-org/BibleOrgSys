@@ -31,7 +31,7 @@ ProgName = "USFM Bible handler"
 ProgVersion = "0.49"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
-debuggingThisModule = True
+debuggingThisModule = False
 
 
 import os, logging

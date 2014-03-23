@@ -544,7 +544,7 @@ def demo():
     testFolders = ("Tests/DataFilesForTests/USFMTest1/", "Tests/DataFilesForTests/USFMTest2/",
                    'Tests/DataFilesForTests/USXTest1/', 'Tests/DataFilesForTests/USXTest2/',
                    'Tests/DataFilesForTests/USFM-WEB/', 'Tests/DataFilesForTests/USFM-OEB/',
-                   "../../../../../SSD/AutoProcesses/Processed/","../../../../../SSD/AutoProcesses/Processed/Test/",
+                   "../../../../AutoProcesses/Processed/","../../../../AutoProcesses/Processed/Test/",
                    'Tests/DataFilesForTests/USFMErrorProject/',
                    )
     for j, testFolder in enumerate( testFolders ):

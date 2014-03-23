@@ -333,7 +333,7 @@ def demo():
                     #"../../../../../Data/Work/Bibles/Zefania modules/",
                     #"../../../../../Data/Work/Bibles/YET modules/",
                     #"../../../../../Data/Work/Matigsalug/Bible/MBTV/",
-                    #"../../../../../SSD/AutoProcesses/Processed/",
+                    #"../../../../AutoProcesses/Processed/",
                     "Tests/DataFilesForTests/USFMTest1/", "Tests/DataFilesForTests/USFMTest2/",
                     "Tests/DataFilesForTests/USFM-OEB/", "Tests/DataFilesForTests/USFM-WEB/",
                     "Tests/DataFilesForTests/USXTest1/", "Tests/DataFilesForTests/USXTest2/",

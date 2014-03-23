@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkers.py
-#   Last modified: 2014-03-04 (also update ProgVersion below)
+#   Last modified: 2014-03-24 (also update ProgVersion below)
 #
 # Module handling USFMMarkers
 #
@@ -37,7 +37,7 @@ ProgName = "USFM Markers handler"
 ProgVersion = "0.62"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
-debuggingThisModule = True
+debuggingThisModule = False
 
 
 import os, logging
