@@ -370,11 +370,10 @@ def demo():
     if 1: # Load and process some of our test versions
         count = 0
         for name, encoding, testFolder in ( \
-                                            #("Matigsalug", "utf-8", "Tests/DataFilesForTests/USFMTest1/"), \
-                                            #("Matigsalug", "utf-8", "Tests/DataFilesForTests/USFMTest2/"), \
-                                            #("UEP", "utf-8", "Tests/DataFilesForTests/USFMErrorProject/"), \
-                                            ("Dummy","utf-8","/mnt/Data/Websites/Freely-Given.org/Software/BibleDropBox/PrivatePage/Spanish_Bible_Translation.2014-03-23_20.58_0.93099800_1395561481/YourSourceFiles/Unzipped/"), \
-                                            #("Exported", "utf-8", "Tests/BOS_USFM_Export/"), \
+                                            ("Matigsalug", "utf-8", "Tests/DataFilesForTests/USFMTest1/"), \
+                                            ("Matigsalug", "utf-8", "Tests/DataFilesForTests/USFMTest2/"), \
+                                            ("UEP", "utf-8", "Tests/DataFilesForTests/USFMErrorProject/"), \
+                                            ("Exported", "utf-8", "Tests/BOS_USFM_Export/"), \
                                             ):
             count += 1
             if os.access( testFolder, os.R_OK ):
