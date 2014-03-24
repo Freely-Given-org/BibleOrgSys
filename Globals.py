@@ -60,7 +60,6 @@ Contains functions:
     setVerbosity( verbosityLevelParameter )
     setDebugFlag( newValue=True )
     setStrictCheckingFlag( newValue=True )
-    setLogErrorsFlag( newValue=True )
 
     addStandardOptionsAndProcess( parserObject )
     printAllGlobals( indent=None )
@@ -71,10 +70,10 @@ Contains functions:
 """
 
 ProgName = "Globals"
-ProgVersion = "0.39"
+ProgVersion = "0.40"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
-debuggingThisModule = True
+debuggingThisModule = False
 
 
 import logging, os.path, pickle
@@ -87,7 +86,7 @@ from gettext import gettext as _
 
 commandLineOptions, commandLineArguments = None, None
 
-strictCheckingFlag = logErrorsFlag = debugFlag = False
+strictCheckingFlag = debugFlag = False
 maxProcesses = 1
 verbosityLevel = None
 verbosityString = 'Normal'
@@ -156,14 +155,15 @@ def setupLoggingToFile( ProgName, ProgVersion, folder=None ):
             os.remove( filepath+'.bak' )
         os.rename( filepath, filepath+'.bak' )
 
-    # Now setup our new log file
+    # Now setup our new log file -- DOESN'T SEEM TO WORK IN WINDOWS!!!
+    # In Windows, doesn't seem to create the log file, even if given a filename rather than a filepath
     setLevel = logging.DEBUG if debugFlag else logging.INFO
     if debuggingThisModule:
-        print( "Globals.setBasicConfig( {}, {}={}, {}, {} )".format( filepath, setLevel, loggingNameDict[setLevel], repr(loggingLongFormat), repr(loggingDateFormat) ) )
+        print( "Globals.setBasicConfig( {}, {}={}, {}, {} )".format( repr(filepath), setLevel, loggingNameDict[setLevel], repr(loggingLongFormat), repr(loggingDateFormat) ) )
     logging.basicConfig( filename=filepath, level=setLevel, format=loggingLongFormat, datefmt=loggingDateFormat )
 
-    return filepath
-# end of setupLogging
+    #return filepath
+# end of setupLoggingToFile
 
 
 def addConsoleLogging( consoleLoggingLevel=None ):
@@ -791,19 +791,13 @@ def setStrictCheckingFlag( newValue=True ):
 # end of setStrictCheckingFlag
 
 
-def setLogErrorsFlag( newValue=True ):
-    """ See the error logging checking flag. """
-    global logErrorsFlag
-    logErrorsFlag = newValue
-    if (logErrorsFlag and verbosityLevel> 2) or verbosityLevel>3:
-        print( '  logErrorsFlag =', logErrorsFlag )
-    if  logErrorsFlag: addConsoleLogging()
-# end of setLogErrorsFlag
-
-
 def addStandardOptionsAndProcess( parserObject, exportAvailable=False ):
-    """ Adds our standardOptions to the command line parser. """
+    """
+    Adds our standardOptions to the command line parser.
+    """
     global commandLineOptions, commandLineArguments, maxProcesses
+    if debuggingThisModule:
+        print( "Globals.addStandardOptionsAndProcess( ..., {} )".format( exportAvailable ) )
 
     parserObject.add_option( "-s", "--silent", action="store_const", dest="verbose", const=0, help="output no information to the console" )
     parserObject.add_option( "-q", "--quiet", action="store_const", dest="verbose", const=1, help="output less information to the console" )
@@ -828,7 +822,6 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ):
     elif commandLineOptions.errors: addConsoleLogging( logging.ERROR )
     else: addConsoleLogging( logging.CRITICAL ) # default
     if commandLineOptions.strict: setStrictCheckingFlag()
-    #if commandLineOptions.log: setLogErrorsFlag()
 
     # Determine multiprocessing strategy
     if 0: maxProcesses = os.cpu_count()
@@ -852,7 +845,6 @@ def printAllGlobals( indent=None ):
     print( "{}verbosityString: {}".format( ' '*indent, verbosityString ) )
     print( "{}verbosityLevel: {}".format( ' '*indent, verbosityLevel ) )
     print( "{}strictCheckingFlag: {}".format( ' '*indent, strictCheckingFlag ) )
-    print( "{}logErrorsFlag: {}".format( ' '*indent, logErrorsFlag ) )
 # end of printAllGlobals
 
 
