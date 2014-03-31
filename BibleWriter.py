@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-03-26 by RJH (also update ProgVersion below)
+#   Last modified: 2014-04-01 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -59,7 +59,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.58"
+ProgVersion = "0.59"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -590,7 +590,7 @@ class BibleWriter( InternalBible ):
                     extra = "" # temp
                     #extra = processFigure( extraText )
                     #print( "fig got", extra )
-                elif Globals.debugFlag and debuggingThisModule: print( extraType ); halt
+                elif Globals.debugFlag and debuggingThisModule: print( 'eT', extraType ); halt
                 #print( "was", verse )
                 adjText = adjText[:adjIndex] + extra + adjText[adjIndex:]
                 offset -= len( extra )
@@ -606,9 +606,12 @@ class BibleWriter( InternalBible ):
         text = text.replace( '\\bk ', '<span class="bookName">' ).replace( '\\bk*', '</span>' )
         text = text.replace( '\\add ', '<span class="addedText">' ).replace( '\\add*', '</span>' )
         text = text.replace( '\\nd ', '<span class="divineName">' ).replace( '\\nd*', '</span>' )
+        text = text.replace( '\\+nd ', '<span class="divineName">' ).replace( '\\+nd*', '</span>' )
         text = text.replace( '\\wj ', '<span class="wordsOfJesus">' ).replace( '\\wj*', '</span>' )
         text = text.replace( '\\sig ', '<span class="signature">' ).replace( '\\sig*', '</span>' )
         text = text.replace( '\\k ', '<span class="keyWord">' ).replace( '\\k*', '</span>' )
+        text = text.replace( '\\rq ', '<span class="quotationReference">' ).replace( '\\rq*', '</span>' )
+        text = text.replace( '\\qs ', '<span class="Selah">' ).replace( '\\qs*', '</span>' )
 
         # Direct formatting
         text = text.replace( '\\bdit ', '<span class="boldItalic">' ).replace( '\\bdit*', '</span>' )
@@ -908,13 +911,22 @@ class BibleWriter( InternalBible ):
                     assert( not haveOpenParagraph )
                     #if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
                     if text: writerObject.writeLineOpenClose( 'p', liveLocal(text), ('class','outlineEntry'+marker[2]), noTextCheck=True )
+                elif marker == 'periph':
+                    if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
+                    if Globals.debugFlag: assert( BBB in ('FRT','INT','BAK','OTH',) )
+                    assert( text and not extras )
+                    writerObject.writeLineOpenClose( 'p', ' ', ('class','peripheralContent') )
+                elif marker in ('mte1','mte2','mte3','mte4',):
+                    if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
+                    if text: writerObject.writeLineOpenClose( 'h1', text, ('class','endTitle'+marker[3]) )
 
                 # Now markers in the main text
-                elif marker in 'c':
+                elif marker == 'c':
                     if extras: print( "toHTML5: have extras at c at",BBB,C)
                     # What should we put in here -- we don't need/want to display it, but it's a place to jump to
                     writerObject.writeLineOpenClose( 'span', ' ', [('class','chapterStart'),('id','C'+text)] )
-                elif marker in 'c#':
+                elif marker == 'cp': pass # ignore this for now
+                elif marker == 'c#':
                     if extras: print( "toHTML5: have extras at c# at",BBB,C)
                     C = text
                     if not haveOpenParagraph:
@@ -931,7 +943,7 @@ class BibleWriter( InternalBible ):
                     if marker == 's1':
                         if haveOpenSection: writerObject.writeLineClose( 'section' ); haveOpenSection = False
                         writerObject.writeLineOpen( 'section', ('class','regularSection') ); haveOpenSection = True
-                    if text: writerObject.writeLineOpenClose( 'h3', text, ('class','sectionHeading'+marker[1]) )
+                    if text or extras: writerObject.writeLineOpenClose( 'h3', BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, ourGlobals ), ('class','sectionHeading'+marker[1]) )
                 elif marker in ('r', 'sr', 'mr',):
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
                     if not haveOpenSection:
@@ -942,6 +954,10 @@ class BibleWriter( InternalBible ):
                     elif marker == 'sr': rClass = 'sectionReferenceRange'
                     elif marker == 'mr': rClass = 'majorSectionReferenceRange'
                     if text: writerObject.writeLineOpenClose( 'p', createSectionCrossReference(text), ('class',rClass), noTextCheck=True )
+                elif marker == 'd': # descriptive title or Hebrew subtitle
+                    if text or extras: writerObject.writeLineOpenClose( 'p', BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, ourGlobals ), ('class','descriptiveTitle') )
+                elif marker == 'sp': # speaker
+                    if text: writerObject.writeLineOpenClose( 'p', text, ('class','speaker') )
                 elif marker == 'v':
                     V = text
                     if not haveOpenParagraph:
@@ -952,15 +968,17 @@ class BibleWriter( InternalBible ):
                         writerObject.writeLineOpenClose( 'span', '&nbsp;', ('class','verseNumberPostspace') )
                 elif marker in ('p','m','pmo','pm','pmc','pmr','pi1','pi2','pi3','pi4','mi','cls','pc','pr','ph1','ph2','ph3','ph4',) \
                 or marker in ('q1','q2','q3','q4','qr','qc','qm1','qm2','qm3','qm4',):
-                    for lx in (4,3,2,1): # Close any open lists
+                    for lx in ('4','3','2','1',): # Close any open lists
                         if haveOpenList and lx in haveOpenList and haveOpenList[lx]: writerObject.writeLineClose( 'p' ); haveOpenList[lx] = False
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
                     writerObject.writeLineOpen( 'p', ('class',BibleWriter.pqHTMLClassDict[marker]) ); haveOpenParagraph = True
                     if text and Globals.debugFlag and debuggingThisModule: halt
-                elif marker in ('li1','li2','li3','li4',):
-                    if not haveOpenList or marker[2] not in haveOpenList or not haveOpenList[marker[2]]:
-                        writerObject.writeLineOpen( 'p', ('class','list'+marker[2]) ); haveOpenList[marker[2]] = True
-                    writerObject.writeLineOpen( 'span', ('class','listItem'+marker[2]) )
+                elif marker in ('li1','li2','li3','li4','ili1','ili2','ili3','ili4',):
+                    if marker.startswith('li'): m, pClass, iClass = marker[2], 'list'+marker[2], 'listItem'+marker[2]
+                    else: m, pClass, iClass = marker[3], 'introductionList'+marker[3], 'introductionListItem'+marker[3]
+                    if not haveOpenList or m not in haveOpenList or not haveOpenList[m]:
+                        writerObject.writeLineOpen( 'p', ('class',pClass) ); haveOpenList[m] = True
+                    writerObject.writeLineOpen( 'span', ('class',iClass) )
                     if text and Globals.debugFlag and debuggingThisModule: halt
                 elif marker == 'b':
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
@@ -977,11 +995,19 @@ class BibleWriter( InternalBible ):
 
                 elif marker in ('nb',): # These are the markers that we can safely ignore for this export
                     assert( not text and not extras )
-                else: unhandledMarkers.add( marker )
+                else:
+                    if text:
+                        logging.critical( "toHTML5: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
+                        if Globals.debugFlag: halt
+                    if extras:
+                        logging.critical( "toHTML5: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
+                        #if Globals.debugFlag: halt
+                    unhandledMarkers.add( marker )
+                if extras and marker not in ('v~','p~','s1','s2','s3','s4','d',):
+                    logging.critical( "toHTML5: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
+                    #if Globals.debugFlag: halt
 
-                if extras and marker not in ('v~','p~',): logging.warning( "toHTML5: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
-
-            for lx in (4,3,2,1): # Close any open lists
+            for lx in ('4','3','2','1',): # Close any open lists
                 if haveOpenList and lx in haveOpenList and haveOpenList[lx]: writerObject.writeLineClose( 'p' ); haveOpenList[lx] = False
             if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
             if haveOpenSection: writerObject.writeLineClose( 'section' ); haveOpenSection = False
@@ -1080,45 +1106,55 @@ class BibleWriter( InternalBible ):
 
         CBCompressions = (
             ('@A','<h1 class="mainTitle'), # numbered
-            ('@z','<h2 class="introductionSectionHeading'), # numbered
-            ('@B','<section class="introSection">'),
-            ('@C','<p class="introductoryParagraph">'),
-            ('@b','<h3 class="outlineTitle">'),
-            ('@c','<p class="outlineEntry'), # numbered
-            ('@X','<section class="regularSection">'),
-            ('@D','<section class="regularSection"><h3 class="sectionHeading1">'),
-            ('@e','<p class="sectionCrossReference">'),
-            ('@E','<span class="chapterStart" id="C'),
+            ('@B','<h2 class="introductionSectionHeading'), # numbered
+            ('@C','<section class="introSection">'),
+            ('@D','<p class="introductoryParagraph">'),
+            ('@E','<h3 class="outlineTitle">'),
+            ('@F','<p class="outlineEntry'), # numbered
+            ('@G','<section class="regularSection">'),
+            ('@H','<section class="regularSection"><h3 class="sectionHeading1">'),
+            ('@I','<p class="sectionCrossReference">'),
+            ('@J','<span class="chapterStart" id="C'),
             #('@F','<p class="sectionHeading1">'),
-            ('@F','<span class="chapterNumber" id="C'),
-            ('@G','</span><span class="chapterNumberPostspace">&nbsp;</span><span class="verseText">'),
-            ('@H','</span><span class="chapterNumberPostspace">&nbsp;</span>'),
-            ('@I','<span class="verseNumberPrespace"> </span><span class="verseNumber" id="C'),
+            ('@K','<span class="chapterNumber" id="C'),
+            ('@L','</span><span class="chapterNumberPostspace">&nbsp;</span><span class="verseText">'),
+            ('@M','</span><span class="chapterNumberPostspace">&nbsp;</span>'),
+            ('@N','<span class="verseNumberPrespace"> </span><span class="verseNumber" id="C'),
             #('@Y','</span><span class="verseNumberPrespace"> </span><span class="verseNumber" id="C'), # Makes bigger! Why???
-            ('@J','</span><span class="verseNumberPostspace">&nbsp;</span>'),
-            ('@K','</span><span class="verseNumberPostspace">&nbsp;</span><span class="verseText">'),
-            ('@Y','<span class="verseText">'),
-            ('@M','<p class="proseParagraph"><span class="chapterNumber" id="C'),
-            ('@N','<p class="proseParagraph">'),
-            ('@O','<p class="proseParagraph"><span class="verseNumberPrespace"> </span><span class="verseNumber" id="C'),
-            ('@P','</h3><p class="proseParagraph"><span class="verseNumberPrespace"> </span><span class="verseNumber" id="C'),
-            ('@Q','<p class="poetryParagraph1">'),
-            ('@R','<p class="poetryParagraph1"><span class="verseNumberPrespace"> </span><span class="verseNumber" id="C'),
-            ('@S','<p class="poetryParagraph1"><span class="verseText">'),
-            ('@T','<p class="poetryParagraph2">'),
-            ('@p','<p class="poetryParagraph3">'),
-            ('@q','<p class="poetryParagraph4">'),
-            ('@d','<p class="flushLeftParagraph">'),
-            ('@U','<p class="list'), # numbered
-            ('@V','<span class="listItem'), # numbered
-            ('@!','<span class="'), # For relatively rare character formatting which doesn't deserve its own compression entry
-            ('@a','</section>'),
-            ('@h','</h1>'),
-            ('@i','</h3>'),
-            ('@p','</p>'),
-            ('@s','</span>'),
-            ('@t','</span></p>'),
+            ('@O','</span><span class="verseNumberPostspace">&nbsp;</span>'),
+            ('@P','</span><span class="verseNumberPostspace">&nbsp;</span><span class="verseText">'),
+            ('@Q','<span class="verseText">'),
+            ('@R','<p class="proseParagraph"><span class="chapterNumber" id="C'),
+            ('@S','<p class="proseParagraph">'),
+            ('@T','<p class="proseParagraph"><span class="verseNumberPrespace"> </span><span class="verseNumber" id="C'),
+            ('@U','</h3><p class="proseParagraph"><span class="verseNumberPrespace"> </span><span class="verseNumber" id="C'),
+            ('@V','<p class="poetryParagraph1">'),
+            ('@W','<p class="poetryParagraph1"><span class="verseNumberPrespace"> </span><span class="verseNumber" id="C'),
+            ('@X','<p class="poetryParagraph1"><span class="verseText">'),
+            ('@Y','<p class="poetryParagraph2">'),
+            ('@Z','<p class="poetryParagraph3">'),
+            ('@a','<p class="poetryParagraph4">'),
+            ('@b','<p class="flushLeftParagraph">'),
+            ('@c','<p class="list'), # numbered
+            ('@d','<span class="listItem'), # numbered
+
+            ('@e','<a class="footnoteLinkSymbol" title="'),
+            ('@f','" href="#FNote'),
+            ('@g','">[fn]</a>'),
+            ('@h','<a class="xrefLinkSymbol" title="'),
+            ('@i','" href="#XRef'),
+            ('@j','">[xr]</a>'),
+
+            ('@k','<span class="'), # For relatively rare character formatting which doesn't deserve its own compression entry
+            ('@l','</section>'),
+            ('@m','</h1>'),
+            ('@n','</h3>'),
+            ('@o','</p>'),
+            ('@p','</span>'),
+            ('@q','</span></p>'),
             ('^','">'),
+
+            ('~~','@'), # Must be last
         )
 
         usageCount = {}
@@ -1166,6 +1202,7 @@ class BibleWriter( InternalBible ):
             bytesRaw += len( entry.encode('UTF8') )
             result = entry
             if '@' in result:
+                #print( 'have@', entry )
                 result = result.replace( '@', '~~' )
                 usageCount['~~'] += 1
             for longString, shortString in reversedCompressions:
@@ -1308,7 +1345,7 @@ class BibleWriter( InternalBible ):
             listOpen = {}
             for dataLine in bookData:
                 thisHTML = ''
-                marker, text, extras = dataLine.getMarker(), dataLine.getAdjustedText(), [] #dataLine.getExtras()
+                marker, text, extras = dataLine.getMarker(), dataLine.getAdjustedText(), dataLine.getExtras()
 
                 # Markers usually only found in the introduction
                 if marker in oftenIgnoredIntroMarkers: pass # Just ignore these lines
@@ -1337,6 +1374,21 @@ class BibleWriter( InternalBible ):
                 elif marker in ('io1','io2','io3',):
                     assert( sOpen and not pOpen )
                     thisHTML += '<p class="outlineEntry{}">{}</p>'.format( marker[2], text )
+                elif marker == 'periph':
+                    if pOpen:
+                        assert( sOpen )
+                        thisHTML += '</p>'; pOpen = False
+                        if Globals.debugFlag: thisHTML += '\n'
+                    if Globals.debugFlag: assert( BBB in ('FRT','INT','BAK','OTH',) )
+                    assert( text and not extras )
+                    thisHTML += '<p class="peripheralContent">{}</p>'.format( text )
+                elif marker in ('mte1','mte2','mte3','mte4',):
+                    if pOpen:
+                        assert( sOpen )
+                        thisHTML += '</p>'; pOpen = False
+                        if Globals.debugFlag: thisHTML += '\n'
+                    assert( sOpen )
+                    thisHTML += '<h1 class="endTitle{}">{}</h1>'.format( marker[3], text )
 
                 # Now markers in the main text
                 elif marker == 'c':
@@ -1347,6 +1399,7 @@ class BibleWriter( InternalBible ):
                         if sOpen: lastHTML += '</section>'; sOpen = False
                     # What should we put in here -- we don't need/want to display it, but it's a place to jump to
                     thisHTML = '<span class="chapterStart" id="{}"></span>'.format( 'C'+C )
+                elif marker == 'cp': pass # ignore this for now
                 elif marker in ('ms1','ms2','ms3',):
                     if pOpen: lastHTML += '</p>'; pOpen = False
                     if sOpen: lastHTML += '</section>'; sOpen = False
@@ -1359,21 +1412,21 @@ class BibleWriter( InternalBible ):
                         createdIndex.append( indexEntry )
                         fileOffset += bytesWritten
                     thisHTML += '<h2 class="majorSectionHeading{}">{}</h2>'.format( marker[2], text )
-                elif marker == 's1':
-                    if pOpen: lastHTML += '</p>'; pOpen = False
-                    if sOpen: lastHTML += '</section>'; sOpen = False
-                    if sectionHTML:
-                        sectionHTML += lastHTML
-                        lastHTML = ''
-                        bytesWritten = handleSection( BCV, sectionHTML, htmlFile )
-                        sectionHTML = ''
-                        indexEntry = BCV[0],BCV[1],BCV[2],fileOffset,bytesWritten
-                        createdIndex.append( indexEntry )
-                        fileOffset += bytesWritten
-                    thisHTML += '<section class="regularSection">'; sOpen = True; BCV=(BBB,C,V)
-                    thisHTML += '<h3 class="sectionHeading1">{}</h3>'.format( text )
-                elif marker in ('s2','s3','s4'):
-                    thisHTML = '<h3 class="sectionHeading{}">{}</h3>'.format( marker[1], text )
+                elif marker in ('s1','s2','s3','s4'):
+                    if marker == 's1':
+                        if pOpen: lastHTML += '</p>'; pOpen = False
+                        if sOpen: lastHTML += '</section>'; sOpen = False
+                        if sectionHTML:
+                            sectionHTML += lastHTML
+                            lastHTML = ''
+                            bytesWritten = handleSection( BCV, sectionHTML, htmlFile )
+                            sectionHTML = ''
+                            indexEntry = BCV[0],BCV[1],BCV[2],fileOffset,bytesWritten
+                            createdIndex.append( indexEntry )
+                            fileOffset += bytesWritten
+                        thisHTML += '<section class="regularSection">'; sOpen = True; BCV=(BBB,C,V)
+                    if text or extras:
+                        thisHTML += '<h3 class="sectionHeading{}">{}</h3>'.format( marker[1], BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, CBGlobals ) )
                 elif marker in ('r', 'sr', 'mr',):
                     if pOpen: lastHTML += '</p>'; pOpen = False
                     if not sOpen:
@@ -1383,17 +1436,23 @@ class BibleWriter( InternalBible ):
                     elif marker == 'sr': rClass = 'sectionReferenceRange'
                     elif marker == 'mr': rClass = 'majorSectionReferenceRange'
                     thisHTML += '<p class="{}">{}</p>'.format( rClass, text )
+                elif marker == 'd': # descriptive title or Hebrew subtitle
+                    thisHTML = '<p class="descriptiveTitle">{}</p>'.format( BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, CBGlobals ) )
+                elif marker == 'sp': # speaker
+                    thisHTML = '<p class="speaker">{}</p>'.format( text )
+
                 elif marker == 'c#':
                     #if extras: print( "have extras at c# at",BBB,C); halt
                     thisHTML += '<span class="chapterNumber" id="{}">{}</span>'.format( 'C'+C+'V1', text )
                     thisHTML += '<span class="chapterNumberPostspace">&nbsp;</span>'
                 elif marker in ('p','m','pmo','pm','pmc','pmr','pi1','pi2','pi3','pi4','mi','cls','pc','pr','ph1','ph2','ph3','ph4',) \
                 or marker in ('q1','q2','q3','q4','qr','qc','qm1','qm2','qm3','qm4',):
-                    for lx in (4,3,2,1): # Close any open lists
-                        if listOpen and lx in listOpen and listOpen[lx]: writerObject.writeLineClose( 'p' ); listOpen[lx] = False
+                    for lx in ('4','3','2','1'): # Close any open lists
+                        if listOpen and lx in listOpen and listOpen[lx]: thisHTML += '</p>'; listOpen[lx] = False
                     if pOpen:
                         assert( sOpen )
-                        thisHTML += '</p>\n'; pOpen = False
+                        thisHTML += '</p>'; pOpen = False
+                        if Globals.debugFlag: thisHTML += '\n'
                     elif not sOpen:
                         if sectionHTML:
                             sectionHTML += lastHTML
@@ -1416,27 +1475,40 @@ class BibleWriter( InternalBible ):
                 elif marker in ('v~','p~',):
                     if text or extras:
                         thisHTML = '<span class="verseText">{}</span>'.format( BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, CBGlobals ) )
-                elif marker in ('li1','li2','li3','li4',):
-                    if not listOpen or marker[2] not in listOpen or not listOpen[marker[2]]:
-                        thisHTML += '<p class="list{}">'.format( marker[2] ); listOpen[marker[2]] = True
-                    thisHTML += '<span class="listItem{}">'.format( marker[2] )
+                elif marker in ('li1','li2','li3','li4','ili1','ili2','ili3','ili4',):
+                    if marker.startswith('li'): m, pClass, iClass = marker[2], 'list'+marker[2], 'listItem'+marker[2]
+                    else: m, pClass, iClass = marker[3], 'introductionList'+marker[3], 'introductionListItem'+marker[3]
+                    if not listOpen or m not in listOpen or not listOpen[m]:
+                        thisHTML += '<p class="{}">'.format( pClass ); listOpen[m] = True
+                    thisHTML += '<span class="{}">'.format( iClass )
                 elif marker == 'b':
                     if pOpen:
                         assert( sOpen )
-                        thisHTML += '</p>\n'; pOpen = False
+                        thisHTML += '</p>'; pOpen = False
+                        if Globals.debugFlag: thisHTML += '\n'
                     assert( not text )
                     thisHTML += '<p class="blankParagraph"></p>'
 
                 elif marker in ('nb',): # These are the markers that we can safely ignore for this export
                     assert( not text and not extras )
-                else: unhandledMarkers.add( marker )
+                else:
+                    if text:
+                        logging.critical( "toCustomBible: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
+                        if Globals.debugFlag: halt
+                    if extras:
+                        logging.critical( "toCustomBible: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
+                        if Globals.debugFlag: halt
+                    unhandledMarkers.add( marker )
+                if extras and marker not in ('v~','p~','s1','s2','s3','s4','d',):
+                    logging.critical( "toCustomBible: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
+                    if Globals.debugFlag: halt
 
                 sectionHTML += lastHTML
                 lastMarker = marker
                 lastHTML = thisHTML
 
-            for lx in (4,3,2,1): # Close any open lists
-                if listOpen and lx in listOpen and listOpen[lx]: writerObject.writeLineClose( 'p' ); listOpen[lx] = False
+            for lx in ('4','3','2','1'): # Close any open lists
+                if listOpen and lx in listOpen and listOpen[lx]: lastHTML += '</p>'; listOpen[lx] = False
             if pOpen: lastHTML += '</p>'
             if sOpen: lastHTML += '</section>'
             sectionHTML += lastHTML
@@ -1638,6 +1710,13 @@ class BibleWriter( InternalBible ):
             #print( "Leading is {} for {}".format( leading, fontsize ) )
             across, down = leftPadding, leading - 2
 
+            # extraLineIndent is using for indented paragraphs
+            extraLineIndent = 0
+            if '_I1_' in text: extraLineIndent = 1; text = text.replace( '_I1_', '' )
+            elif '_I2_' in text: extraLineIndent = 2; text = text.replace( '_I2_', '' )
+            elif '_I3_' in text: extraLineIndent = 3; text = text.replace( '_I3_', '' )
+            elif '_I4_' in text: extraLineIndent = 4; text = text.replace( '_I4_', '' )
+
             # Write the heading
             heading = "{}{}".format( bookName, '' if C=='0' else ' '+C )
             totalCommands = renderLine( across, down, heading, jpegFilepath, fontsize, defaultHeadingFontname, topLineColor )
@@ -1738,7 +1817,7 @@ class BibleWriter( InternalBible ):
                                 verseNumberList = []
                             down += leading
                             outputLineCount += 1
-                            lineBuffer = ""
+                            lineBuffer = ' ' * extraLineIndent # Handle indented paragraphs
                             #print( outputLineCount, maxLines, outputLineCount>=maxLines )
                             if outputLineCount >= maxLines: break
                             if down >= maxDown: break # We're finished
@@ -1826,7 +1905,7 @@ class BibleWriter( InternalBible ):
                     jpegOutputFilepath = os.path.join( chapterFolderPath, filenameTemplate.format( BBBnum, intC, pagesWritten, BBB ) )
                 leftoverText = renderPage( BBB, C, bookName, leftoverText, jpegOutputFilepath )
                 pagesWritten += 1
-            if Globals.debugFlag and pagesWritten>99 and numVerses<=80: halt # Template is probably bad
+            if Globals.debugFlag and BBB not in ('FRT','GLS',) and pagesWritten>99 and numVerses<65: halt # Template is probably bad
 
             #print( "pagesWritten were", pagesWritten )
             return pagesWritten
@@ -1866,9 +1945,9 @@ class BibleWriter( InternalBible ):
             textBuffer, lastMarker = "", None
             for entry in pseudoUSFMData:
                 marker, cleanText = entry.getMarker(), entry.getCleanText()
-                #print( marker, repr(cleanText) )
+                #print( BBB, C, V, marker, repr(cleanText) )
                 if marker in oftenIgnoredIntroMarkers: pass # Just ignore these lines
-                elif marker in ('mt1','mt2','mt3','mt4',): # Simple headings
+                elif marker in ('mt1','mt2','mt3','mt4','periph',): # Simple headings
                     #if textBuffer: textBuffer += '\n'
                     textBuffer += '\n\nHhH' + cleanText + '\n'
                 elif marker in ('s1','s2','s3','s4', 'is1','is2','is3',): # Simple headings
@@ -1896,19 +1975,28 @@ class BibleWriter( InternalBible ):
                     textBuffer += '\n'
                 elif marker == 'nb':
                     textBuffer += '\n' + cleanText
-                elif marker in ('p','ip','ipi','q1','q2','q3',): # Just put it on a new line
-                    #if cleanText and marker not in ('ip','ipi',):
-                        #logging.error( "Lost cleanText in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(cleanText) ) )
-                    textBuffer += '\n' + '  ' # Non-break spaces won't be lost later
+                elif marker in ('p','pi1','pi2','pi3','pi4','ip','ipi','q1','q2','q3','q4','m','mi','ph1','ph2','ph3','ph4','pc',): # Just put it on a new line
+                    textBuffer += '\n'
+                    if marker not in ('m','mi','ph1','ph2','ph3','ph4',): textBuffer += '  ' # Non-break spaces won't be lost later
+                    if marker in ('ipi','pi1','q1','ph1','mi',): textBuffer += '_I1_'
+                    elif marker in ('pi2','q2','ph2',): textBuffer += '_I2_'
+                    elif marker in ('pi3','q3','ph3',): textBuffer += '_I3_'
+                    elif marker in ('pi4','q4','ph4',): textBuffer += '_I4_'
+                    #if marker == 'q2': textBuffer += ' '
+                    #elif marker == 'q3': textBuffer += '  '
                     if marker in ('ip','ipi'): textBuffer += cleanText
                     else: assert( not cleanText )
-                    if marker == 'q2': textBuffer += ' '
-                    elif marker == 'q3': textBuffer += '  '
-                elif marker in ('v~','p~',):
+                elif marker in ('v~','p~','d',):
                     #assert( cleanText or extras )
                     textBuffer += cleanText
                 elif marker not in ('c#',): # These are the markers that we can safely ignore for this export
+                    if cleanText:
+                        logging.critical( "toPhotoBible: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(cleanText) ) )
+                        if Globals.debugFlag: halt
                     unhandledMarkers.add( marker )
+                #if extras and marker not in ('v~','p~',):
+                    #logging.critical( "toPhotoBible: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
+                    #if Globals.debugFlag: halt
                 lastMarker = marker
             if textBuffer: renderText( BBB, BBBnum, bookName, bookAbbrev, C, maxChapters, numVerses, textBuffer, bookFolderPath ) # Write the last bit
 
@@ -2107,22 +2195,26 @@ class BibleWriter( InternalBible ):
                 print( "Doesn't encode OSIS '{}' book yet".format( BBB ) )
                 return
             bookName = None
+            C = V = "0"
             verseText = '' # Do we really need this?
             #chapterNumberString = None
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
                 #print( "toMediaWiki:writeMWBook", BBB, bookRef, bookName, marker, text, extras )
-                if marker in ('id','h','mt1'):
+                if marker in ('id','h','mt1','mt2','mt3',):
                     writerObject.writeLineComment( '\\{} {}'.format( marker, text ) )
                     bookName = text # in case there's no toc2 entry later
                 elif marker == 'toc2':
                     bookName = text
+                elif marker in oftenIgnoredIntroMarkers: pass # Just ignore these lines
+
                 elif marker == 'li':
                     # :<!-- \li -->text
                     writerObject.writeLineText( ":" )
                     writerObject.writeLineComment( '\\li' )
                     writerObject.writeLineText( text )
                 elif marker == 'c':
+                    C, V = text, "0"
                     chapterNumberString = text
                     chapterRef = bookRef + '.' + chapterNumberString
                     # Bible:BookName_#
@@ -2140,6 +2232,7 @@ class BibleWriter( InternalBible ):
                     #    if Globals.debugFlag: assert( BBB in Globals.BibleBooksCodes.getSingleChapterBooksList() )
                     #    chapterNumberString = '1'
                     #    chapterRef = bookRef + '.' + chapterNumberString
+                    V = text
                     verseNumberString = text # Gets written with in the v~ line
                     # <span id="chapter#_#"><sup>#</sup> text</span>
                     #writerObject.writeLineOpenClose( 'span', '<sup>{}</sup> {}'.format(verseNumberString,adjText), ('id',"chapter{}_{}".format(chapterNumberString, verseNumberString) ), noTextCheck=True )
@@ -2168,7 +2261,14 @@ class BibleWriter( InternalBible ):
                     adjText = processXRefsAndFootnotes( verseText, extras )
                     writerObject.writeLineText( '::{}'.format(adjText, noTextCheck=True) )
                 elif marker not in ('c#',): # These are the markers that we can safely ignore for this export
+                    if text:
+                        logging.error( "toMediaWiki: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
+                        #if Globals.debugFlag: halt
+                    if extras:
+                        logging.error( "toMediaWiki: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
+                        #if Globals.debugFlag: halt
                     unhandledMarkers.add( marker )
+                if extras and marker not in ('v~','p~',): logging.critical( "toMediaWiki: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
         # end of toMediaWiki.writeMWBook
 
         # Set-up our Bible reference system
@@ -2258,15 +2358,18 @@ class BibleWriter( InternalBible ):
                 logging.error( "toZefania: Can't write {} Zefania book because no OSIS code available".format( BBB ) ); return
             writerObject.writeLineOpen( 'BIBLEBOOK', [('bnumber',Globals.BibleBooksCodes.getReferenceNumber(BBB)), ('bname',Globals.BibleBooksCodes.getEnglishName_NR(BBB)), ('bsname',OSISAbbrev)] )
             haveOpenChapter = False
+            C = V = "0"
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getFullText(), verseDataEntry.getExtras()
                 if marker in ('id', 'ide', 'h', 'toc1','toc2','toc3', ): pass # Just ignore these metadata markers
                 elif marker == 'c':
+                    C, V = text, "0"
                     if haveOpenChapter:
                         writerObject.writeLineClose ( 'CHAPTER' )
                     writerObject.writeLineOpen ( 'CHAPTER', ('cnumber',text) )
                     haveOpenChapter = True
                 elif marker == 'v':
+                    V = text
                     #print( "Text '{}'".format( text ) )
                     if not text: logging.warning( "toZefaniaXML: Missing text for v" ); continue
                     verseNumberString = text.replace('<','').replace('>','').replace('"','') # Used below but remove anything that'll cause a big XML problem later
@@ -2284,7 +2387,14 @@ class BibleWriter( InternalBible ):
                     # TODO: We haven't stripped out character fields from within the verse -- not sure how Zefania handles them yet
                     if text: writerObject.writeLineOpenClose ( 'VERS', text )
                 elif marker not in ('c#',): # These are the markers that we can safely ignore for this export
+                    if text:
+                        logging.error( "toZefania: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
+                        #if Globals.debugFlag: halt
+                    if extras:
+                        logging.error( "toZefania: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
+                        #if Globals.debugFlag: halt
                     unhandledMarkers.add( marker )
+                if extras and marker not in ('v~','p~',): logging.critical( "toZefania: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
             if haveOpenChapter:
                 writerObject.writeLineClose( 'CHAPTER' )
             writerObject.writeLineClose( 'BIBLEBOOK' )
@@ -2382,10 +2492,12 @@ class BibleWriter( InternalBible ):
                 logging.error( "toHaggai: Can't write {} Haggai book because no OSIS code available".format( BBB ) ); return
             writerObject.writeLineOpen( 'BIBLEBOOK', [('bnumber',Globals.BibleBooksCodes.getReferenceNumber(BBB)), ('bname',Globals.BibleBooksCodes.getEnglishName_NR(BBB)), ('bsname',OSISAbbrev)] )
             haveOpenChapter = haveOpenParagraph = False
+            C = V = "0"
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getFullText(), verseDataEntry.getExtras()
                 if marker in ('id', 'ide', 'h', 'toc1','toc2','toc3', ): pass # Just ignore these metadata markers
                 elif marker == 'c':
+                    C, V = text, "0"
                     if haveOpenParagraph:
                         writerObject.writeLineClose ( 'PARAGRAPH' ); haveOpenParagraph = False
                     if haveOpenChapter:
@@ -2398,6 +2510,7 @@ class BibleWriter( InternalBible ):
                     writerObject.writeLineOpen ( 'PARAGRAPH' )
                     haveOpenParagraph = True
                 elif marker == 'v':
+                    V = text
                     #print( "Text '{}'".format( text ) )
                     if not text: logging.warning( "toHaggaiXML: Missing text for v" ); continue
                     verseNumberString = text.replace('<','').replace('>','').replace('"','') # Used below but remove anything that'll cause a big XML problem later
@@ -2415,7 +2528,14 @@ class BibleWriter( InternalBible ):
                     # TODO: We haven't stripped out character fields from within the verse -- not sure how Haggai handles them yet
                     if text: writerObject.writeLineOpenClose ( 'VERSE', text )
                 elif marker not in ('c#',): # These are the markers that we can safely ignore for this export
+                    if text:
+                        logging.error( "toHaggai: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
+                        #if Globals.debugFlag: halt
+                    if extras:
+                        logging.error( "toHaggai: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
+                        #if Globals.debugFlag: halt
                     unhandledMarkers.add( marker )
+                if extras and marker not in ('v~','p~',): logging.critical( "toHaggai: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
             if haveOpenParagraph:
                 writerObject.writeLineClose ( 'PARAGRAPH' )
             if haveOpenChapter:
@@ -2492,9 +2612,10 @@ class BibleWriter( InternalBible ):
             #print( 'BIBLEBOOK', [('bnumber',Globals.BibleBooksCodes.getReferenceNumber(BBB)), ('bname',Globals.BibleBooksCodes.getEnglishName_NR(BBB)), ('bsname',Globals.BibleBooksCodes.getOSISAbbreviation(BBB))] )
             OSISAbbrev = Globals.BibleBooksCodes.getOSISAbbreviation( BBB )
             if not OSISAbbrev:
-                logging.error( "toOpenSongXML: Can't write {} OpenSong book because no OSIS code available".format( BBB ) ); return
+                logging.error( "toOpenSong: Can't write {} OpenSong book because no OSIS code available".format( BBB ) ); return
             writerObject.writeLineOpen( 'b', ('n',bkData.getAssumedBookNames()[0]) )
             haveOpenChapter, startedFlag, accumulator = False, False, ""
+            C = V = "0"
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getCleanText(), verseDataEntry.getExtras()
                 #print( marker, repr(text) )
@@ -2514,9 +2635,11 @@ class BibleWriter( InternalBible ):
                         accumulator = ""
                     if haveOpenChapter:
                         writerObject.writeLineClose ( 'c' )
+                    C, V = text, "0"
                     writerObject.writeLineOpen ( 'c', ('n',text) )
                     haveOpenChapter = True
                 elif marker == 'v':
+                    V = text
                     startedFlag = True
                     if accumulator:
                         writerObject.writeLineOpenClose ( 'v', accumulator, ('n',verseNumberString) )
@@ -2525,7 +2648,14 @@ class BibleWriter( InternalBible ):
                     if not text: logging.warning( "toOpenSongXML: Missing text for v" ); continue
                     verseNumberString = text.replace('<','').replace('>','').replace('"','') # Used below but remove anything that'll cause a big XML problem later
                 elif marker not in ('c#',): # These are the markers that we can safely ignore for this export
+                    if text:
+                        logging.warning( "toOpenSong: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
+                        #if Globals.debugFlag: halt
+                    if extras:
+                        logging.warning( "toOpenSong: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
+                        #if Globals.debugFlag: halt
                     unhandledMarkers.add( marker )
+                if extras and marker not in ('v~','p~',): logging.critical( "toOpenSong: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
             if accumulator:
                 writerObject.writeLineOpenClose ( 'v', accumulator, ('n',verseNumberString) )
             if haveOpenChapter:
@@ -3885,11 +4015,15 @@ class BibleWriter( InternalBible ):
             writerObject.writeLineOpen( 'div', [('type',"book"), ('osisID',bookRef)] )
             haveOpenIntro = haveOpenOutline = haveOpenMajorSection = haveOpenSection = haveOpenSubsection = needChapterEID = haveOpenParagraph = haveOpenVsID = haveOpenLG = haveOpenL = False
             lastMarker = unprocessedMarker = ''
+            C = V = "0"
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
                 #print( "toOSIS:", marker, originalMarker, text )
-                if marker in ( 'id', 'ide', 'h', 'mt2' ): continue # We just ignore these markers
-                if marker=='mt1':
+                if marker in oftenIgnoredIntroMarkers: continue # Just ignore these lines
+                #if marker in ( 'id', 'ide', 'h', 'mt2' ): continue # We just ignore these markers
+                elif marker=='mt1':
+                    if text: writerObject.writeLineOpenClose( 'title', checkText(text) )
+                elif marker=='mt2':
                     if text: writerObject.writeLineOpenClose( 'title', checkText(text) )
                 elif marker=='is1' or marker=='imt1':
                     #print( marker, "'"+text+"'" )
@@ -3952,6 +4086,7 @@ class BibleWriter( InternalBible ):
                     closeAnyOpenLG()
                     if needChapterEID:
                         writerObject.writeLineOpenSelfclose( 'chapter', ('eID',chapterRef) ) # This is an end milestone marker
+                    C, V = text, "0"
                     currentChapterNumberString, verseNumberString = text, '0'
                     if not currentChapterNumberString.isdigit(): logging.critical( _("toOSIS: Can't handle non-digit '{}' chapter number yet").format(text) )
                     chapterRef = bookRef + '.' + checkText(currentChapterNumberString)
@@ -3999,6 +4134,15 @@ class BibleWriter( InternalBible ):
                     haveOpenSubsection = True
                     if text: writerObject.writeLineOpenClose( 'title',checkText(text) ) # Section heading
                     logging.info( _("toOSIS: {} Blank s2 section heading encountered").format( toOSISGlobals["verseRef"] ) )
+                elif marker=='s3':
+                    if haveOpenParagraph:
+                        closeAnyOpenLG()
+                        closeAnyOpenParagraph()
+                    closeAnyOpenSubsection()
+                    writerObject.writeLineOpen( 'div', ('type', "subSection") )
+                    haveOpenSubsection = True
+                    if text: writerObject.writeLineOpenClose( 'title',checkText(text) ) # Section heading
+                    logging.info( _("toOSIS: {} Blank s3 section heading encountered").format( toOSISGlobals["verseRef"] ) )
                 elif marker=='mr':
                     # Should only follow a ms1 I think
                     if haveOpenParagraph or haveOpenSection or not haveOpenMajorSection: logging.error( _("toOSIS: Didn't expect major reference 'mr' marker after {}").format(toOSISGlobals["verseRef"]) )
@@ -4019,6 +4163,7 @@ class BibleWriter( InternalBible ):
                 elif marker=='v':
                     verseNumberString = text
                     if not haveOpenL: closeAnyOpenLG()
+                    V = text
                     writeVerseStart( writerObject, BBB, chapterRef, verseNumberString )
                     closeAnyOpenL()
                 elif marker in ('v~','p~',):
@@ -4043,9 +4188,16 @@ class BibleWriter( InternalBible ):
                 elif marker=='b': # Blank line
                         # Doesn't seem that OSIS has a way to encode this presentation element
                         writerObject.writeNewLine() # We'll do this for now
-                else: unhandledMarkers.add( marker )
+                else:
+                    if text:
+                        logging.critical( "toOSIS: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
+                        #if Globals.debugFlag: halt
+                    if extras:
+                        logging.critical( "toOSIS: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
+                        #if Globals.debugFlag: halt
+                    unhandledMarkers.add( marker )
                 if marker not in ('v','v~','p','p~','q1','q2','q3','s1',) and extras:
-                    logging.error( "toOSIS: Programming note: Didn't handle '{}' extras: {}".format( marker, extras ) )
+                    logging.critical( "toOSIS: Programming note: Didn't handle '{}' extras: {}".format( marker, extras ) )
                 lastMarker = marker
 
             # At the end of everything
@@ -4542,13 +4694,17 @@ class BibleWriter( InternalBible ):
             haveOpenIntro = haveOpenOutline = haveOpenMajorSection = haveOpenSection = haveOpenSubsection = needChapterEID = haveOpenParagraph = haveOpenVsID = haveOpenLG = haveOpenL = False
             lastMarker = unprocessedMarker = ''
             #chapterNumberString = None
+            C = V = "0"
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
                 #print( BBB, marker, text )
                 #print( " ", haveOpenIntro, haveOpenOutline, haveOpenMajorSection, haveOpenSection, haveOpenSubsection, needChapterEID, haveOpenParagraph, haveOpenVsID, haveOpenLG, haveOpenL )
                 #print( toSwordGlobals['idStack'] )
-                if marker in ( 'id', 'ide', 'h', 'mt2', 'c#', ): continue # We just ignore these markers
-                if marker=='mt1':
+                if marker in oftenIgnoredIntroMarkers: continue # Just ignore these lines
+                #if marker in ( 'id', 'ide', 'h', 'mt2', 'c#', ): continue # We just ignore these markers
+                elif marker=='mt1':
+                    if text: writerObject.writeLineOpenClose( 'title', checkText(text) )
+                elif marker=='mt2':
                     if text: writerObject.writeLineOpenClose( 'title', checkText(text) )
                 elif marker=='is1' or marker=='imt1':
                     if haveOpenIntro: # already -- assume it's a second one
@@ -4626,6 +4782,7 @@ class BibleWriter( InternalBible ):
                     if needChapterEID:
                         writerObject.writeLineOpenSelfclose( 'chapter', ('eID',chapterRef) ) # This is an end milestone marker
                     writeIndexEntry( writerObject, ix )
+                    C, V = text, "0"
                     currentChapterNumberString, verseNumberString = text, '0'
                     if not currentChapterNumberString.isdigit():
                         logging.critical( _("toSwordModule: Can't handle non-digit '{}' chapter number yet").format(text) )
@@ -4633,6 +4790,8 @@ class BibleWriter( InternalBible ):
                     writerObject.writeLineOpenSelfclose( 'chapter', [('osisID',chapterRef), ('sID',chapterRef)] ) # This is a milestone marker
                     needChapterEID = True
                     writeIndexEntry( writerObject, ix )
+                elif marker == 'c#': # Chapter number added for printing
+                    pass # Just ignore it completely
                 elif marker=='ms1':
                     if haveOpenParagraph:
                         closeAnyOpenLG()
@@ -4666,6 +4825,16 @@ class BibleWriter( InternalBible ):
                     if text: writerObject.writeLineOpenClose( 'title', checkText(text) ) # Section heading
                     else:
                         logging.info( _("toSwordModule: Blank s2 section heading encountered after {}:{}").format( currentChapterNumberString, verseNumberString ) )
+                elif marker=='s3':
+                    if haveOpenParagraph:
+                        closeAnyOpenLG()
+                        closeAnyOpenParagraph()
+                    closeAnyOpenSubsection()
+                    writerObject.writeLineOpen( 'div', ('type', "subSection") )
+                    haveOpenSubsection = True
+                    if text: writerObject.writeLineOpenClose( 'title', checkText(text) ) # Section heading
+                    else:
+                        logging.info( _("toSwordModule: Blank s3 section heading encountered after {}:{}").format( currentChapterNumberString, verseNumberString ) )
                 elif marker=='mr':
                     # Should only follow a ms1 I think
                     if haveOpenParagraph or haveOpenSection or not haveOpenMajorSection: logging.error( _("toSwordModule: Didn't expect major reference 'mr' marker after {}").format(toSwordGlobals["verseRef"]) )
@@ -4689,6 +4858,7 @@ class BibleWriter( InternalBible ):
                     #    if Globals.debugFlag: assert( BBB in Globals.BibleBooksCodes.getSingleChapterBooksList() )
                     verseNumberString = text
                     if not haveOpenL: closeAnyOpenLG()
+                    V = text
                     writeVerseStart( writerObject, BBB, chapterRef, verseNumberString )
                     #closeAnyOpenL()
                 elif marker in ('v~','p~',):
@@ -4717,7 +4887,15 @@ class BibleWriter( InternalBible ):
                 elif marker=='b': # Blank line
                         # Doesn't seem that OSIS has a way to encode this presentation element
                         writerObject.writeNewLine() # We'll do this for now
-                else: unhandledMarkers.add( marker )
+                else:
+                    if text:
+                        logging.critical( "toSwordModule: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
+                        #if Globals.debugFlag: halt
+                    if extras:
+                        logging.critical( "toSwordModule: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
+                        #if Globals.debugFlag: halt
+                    unhandledMarkers.add( marker )
+                if extras and marker not in ('v~','p~',): logging.critical( "toSwordModule: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
                 lastMarker = marker
             if (haveOpenIntro or haveOpenOutline or haveOpenLG or haveOpenL or unprocessedMarker):
                 logging.error( "toSwordModule: a {} {} {} {} {}".format( haveOpenIntro, haveOpenOutline, haveOpenLG, haveOpenL, unprocessedMarker ) )
@@ -5698,7 +5876,7 @@ class BibleWriter( InternalBible ):
                 #ixEnd = text.find( '\\f*' )
                 text = text.replace( '\\f ', '~^~BibleFootnote{' ).replace( '\\f*', '}' ) # temp
                 text = text.replace( '\\fr ', '~^~BibleFootnoteAnchor{' ).replace( '\\ft ', '}', 1 ) # temp assumes one fr followed by one ft
-                text = text.replace( '\\fq ', '' ).replace( '\\ft ', '' )
+                text = text.replace( '\\fq ', '' ).replace( '\\ft ', '' ).replace( '\\fk ', '' ) # Just remove these ones
 
             if '\\x ' in text: # handle cross-references
                 #print( 'xref', repr(givenText) )
@@ -5787,6 +5965,7 @@ class BibleWriter( InternalBible ):
                     allFile.write( "\n\\BibleBook{{{}}}\n".format( bookObject.getAssumedBookNames()[0] ) )
                     bookFile.write( "\n\\BibleBook{{{}}}\n".format( bookObject.getAssumedBookNames()[0] ) )
                     bookFile.write( "\n\\BibleBookTableOfContents\n".format( bookObject.getAssumedBookNames()[0] ) )
+                    C = V = "0"
                     for entry in bookObject._processedLines:
                         marker, text = entry.getMarker(), entry.getFullText()
                         if marker in oftenIgnoredIntroMarkers: pass # Just ignore these lines
@@ -5807,6 +5986,7 @@ class BibleWriter( InternalBible ):
                             allFile.write( "{}\n".format( texText(text) ) )
                             bookFile.write( "{}\n".format( texText(text) ) )
                         elif marker=='c':
+                            C, V = text, "0"
                             if text == '1': # Assume chapter 1 is the start of the actual Bible text
                                 allFile.write( "\n\\BibleText\n" )
                                 bookFile.write( "\n\\BibleText\n" )
@@ -5814,6 +5994,7 @@ class BibleWriter( InternalBible ):
                             allFile.write( "\\chapterNumber{{{}}}".format( texText(text) ) ) # no NL
                             bookFile.write( "\\chapterNumber{{{}}}".format( texText(text) ) ) # no NL
                         elif marker=='v':
+                            V = text
                             if text != '1': # Don't write verse 1 number
                                 allFile.write( "\\verseNumber{{{}}}".format( texText(text) ) ) # no NL
                                 bookFile.write( "\\verseNumber{{{}}}".format( texText(text) ) ) # no NL
@@ -5831,7 +6012,12 @@ class BibleWriter( InternalBible ):
                         elif marker in ('v~','p~'):
                             allFile.write( "{}\n".format( texText(text) ) )
                             bookFile.write( "{}\n".format( texText(text) ) )
-                        else: unhandledMarkers.add( marker )
+                        else:
+                            if text:
+                                logging.error( "toTeX: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
+                                #if Globals.debugFlag: halt
+                            unhandledMarkers.add( marker )
+                        #if extras and marker not in ('v~','p~',): logging.critical( "toHTML5: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
                     allFile.write( "\\BibleBookEnd\n" )
                     bookFile.write( "\\BibleBookEnd\n" )
                     bookFile.write( "\\end{document}\n" )
@@ -5908,16 +6094,24 @@ class BibleWriter( InternalBible ):
 
             pseudoUSFMData = bookObject._processedLines
             started, accumulator = False, "" # Started flag ignores fields in the book introduction
+            C = V = "0"
             for entry in pseudoUSFMData:
                 marker, text = entry.getMarker(), entry.getCleanText()
-                if marker == 'c': C = text
+                if marker in oftenIgnoredIntroMarkers: pass # Just ignore these lines
+                elif marker == 'c': C, V = text, "0"
                 elif marker == 'v':
+                    V = text
                     started = True
                     if accumulator: writer.write( "{}\n".format( accumulator ) ); accumulator = ""
                     writer.write( "$$ {} {}:{}\n".format( bookCode, C, text ) )
                 elif marker in ('v~', 'p~'):
                     if started: accumulator += (' ' if accumulator else '') + text
-                else: unhandledMarkers.add( marker )
+                elif marker not in ('c#',):
+                    if text:
+                        logging.error( "toSwordSearcher: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
+                        #if Globals.debugFlag: halt
+                    unhandledMarkers.add( marker )
+                #if extras and marker not in ('v~','p~',): logging.critical( "toHTML5: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
             if accumulator: writer.write( "{}\n".format( accumulator ) )
         # end of toSwordSearcher:writeSSBook
 
@@ -6033,6 +6227,7 @@ class BibleWriter( InternalBible ):
                 return
             started, accumulator = False, "" # Started flag ignores fields in the book introduction
             linemark = ''
+            C = V = "0"
             for entry in bookObject._processedLines:
                 marker, text = entry.getMarker(), entry.getAdjustedText()
                 if marker in oftenIgnoredIntroMarkers: pass # Just ignore these lines
@@ -6043,7 +6238,7 @@ class BibleWriter( InternalBible ):
                     if accumulator:
                         writer.write( "{}|{}|{}|{}|{}\n".format( bookCode, C, V, linemark, doDrupalTextFormat( accumulator ) ) )
                         accumulator, linemark = "", ''
-                    C, V = text, '1'
+                    C, V = text, "0"
                 elif marker == 'v':
                     started = True
                     if accumulator:
@@ -6062,7 +6257,12 @@ class BibleWriter( InternalBible ):
                 elif marker in ( 'p', 'q1', 'q2', 'q3', 'm', 'b', 'nb', 'li1', 'li2', 'li3', ): pass # Just ignore these paragraph formatting fields
                 elif marker in ('v~', 'p~'):
                     if started: accumulator += (' ' if accumulator else '') + text
-                else: unhandledMarkers.add( marker )
+                else:
+                    if text:
+                        logging.critical( "toDrupalBible: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
+                        #if Globals.debugFlag: halt
+                    unhandledMarkers.add( marker )
+                #if extras and marker not in ('v~','p~',): logging.critical( "toHTML5: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
             if accumulator: writer.write( "{}|{}|{}|{}|{}\n".format( bookCode, C, V, linemark, doDrupalTextFormat( accumulator ) ) )
         # end of toDrupalBible:writeDrupalBibleBook
 
@@ -6391,13 +6591,13 @@ def demo():
         from USFMBible import USFMBible
         from USFMFilenames import USFMFilenames
         testData = ( # name, abbreviation, folder
-                #("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
-                #("Matigsalug", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
-                #("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
+                ("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
+                ("Matigsalug", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
+                ("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
                 ("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
-                #("MS-BT", "MBTBT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
-                #("MS-Notes", "MBTBC", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/",),
-                #("MS-ABT", "MBTABT", "../../../../../Data/Work/Matigsalug/Bible/MBTABT/",),
+                ("MS-BT", "MBTBT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
+                ("MS-Notes", "MBTBC", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/",),
+                ("MS-ABT", "MBTABT", "../../../../../Data/Work/Matigsalug/Bible/MBTABT/",),
                 #("WEB", "WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/",),
                 #("WEB", "WEB", "../../../../../Data/Work/Bibles/From eBible/WEB/eng-web_usfm 2013-07-18/",),
                 #("WEB", "WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-03-05 eng-web_usfm/",),

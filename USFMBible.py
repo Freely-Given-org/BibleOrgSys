@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2014-03-24 by RJH (also update ProgVersion below)
+#   Last modified: 2014-03-31 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 """
 
 ProgName = "USFM Bible handler"
-ProgVersion = "0.49"
+ProgVersion = "0.50"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -201,7 +201,14 @@ class USFMBible( Bible ):
             if os.path.isdir( somepath ): foundFolders.append( something )
             elif os.path.isfile( somepath ): foundFiles.append( something )
             else: logging.error( "Not sure what '{}' is in {}!".format( somepath, self.sourceFolder ) )
-        if foundFolders: logging.info( "USFMBible.load: Surprised to see subfolders in '{}': {}".format( self.sourceFolder, foundFolders ) )
+        if foundFolders:
+            unexpectedFolders = []
+            for folderName in foundFolders:
+                if folderName.startswith( 'Interlinear_'): continue
+                if folderName in ('__MACOSX'): continue
+                unexpectedFolders.append( folderName )
+            if unexpectedFolders:
+                logging.info( "USFMBible.load: Surprised to see subfolders in '{}': {}".format( self.sourceFolder, unexpectedFolders ) )
         if not foundFiles:
             if Globals.verbosityLevel > 0: print( "USFMBible: Couldn't find any files in '{}'".format( self.sourceFolder ) )
             return # No use continuing

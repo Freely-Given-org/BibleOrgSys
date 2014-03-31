@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleInternals.py
-#   Last modified: 2014-02-24 by RJH (also update ProgVersion below)
+#   Last modified: 2014-03-31 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Bible internals handler"
-ProgVersion = "0.20"
+ProgVersion = "0.21"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -763,10 +763,12 @@ class InternalBibleIndex:
                         offset += 1
 
                     # Check the various series of markers
+                    if marker == 'cp': assert( previousMarker in ('c','c~',) )
                     if marker == 'c#': assert( nextMarker == 'v' )
                     if marker == 'v' and markers[-1]!='v' and nextMarker != 'v~':
                         logging.critical( "InternalBibleIndex.checkIndex: Probable v encoding error in {} {} {}:{} {}".format( self.name, self.bookReferenceCode, C, V, entries ) )
                         if Globals.debugFlag and debuggingThisModule: halt
+                    if marker == 'vp': assert( previousMarker == 'v' )
                     if anyText or anyExtras: # Mustn't be a blank (unfinished) verse
                         if marker=='p' and nextMarker not in ('v','p~','c#',):
                             if lastKey: print( lastKey, self.getEntries( lastKey )[0] )

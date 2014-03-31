@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2014-03-04 by RJH (also update ProgVersion below)
+#   Last modified: 2014-03-31 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -41,7 +41,7 @@ Required improvements:
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.61"
+ProgVersion = "0.62"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -869,6 +869,10 @@ class InternalBibleBook:
                         if extras: print( " extras:", repr(extras) )
                     self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, c, c, extras, c) ) # Write the chapter number as a separate line
                     adjustedMarker, text = 'c~', cBits[1]
+            elif originalMarker=='cp' and text:
+                v = '0'
+                if Globals.debugFlag: assert( haveWaitingC ) # coz this should follow the c and precede the v
+                haveWaitingC = text # We need to use this one instead of the c text
             elif originalMarker=='v' and text:
                 vBits = splitVNumber( text )
                 v = vBits[0] # Get the actual verse number
