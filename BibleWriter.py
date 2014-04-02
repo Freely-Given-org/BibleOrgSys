@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-04-02 by RJH (also update ProgVersion below)
+#   Last modified: 2014-04-03 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -59,7 +59,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.60"
+ProgVersion = "0.61"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -1746,7 +1746,7 @@ class BibleWriter( InternalBible ):
                 elif '_I2_' in line: indenter, extraLineIndent = '_I2_', 2; line = line.replace( '_I2_', '' )
                 elif '_I3_' in line: indenter, extraLineIndent = '_I3_', 3; line = line.replace( '_I3_', '' )
                 elif '_I4_' in line: indenter, extraLineIndent = '_I4_', 4; line = line.replace( '_I4_', '' )
-                assert( '_I' not in line ) # Should only be one
+                if Globals.debugFlag: assert( '_I' not in line ) # Should only be one
 
                 verseNumberList = [] # Contains a list of 2-tuples indicating where verse numbers should go
 
@@ -6629,13 +6629,13 @@ def demo():
         from USFMBible import USFMBible
         from USFMFilenames import USFMFilenames
         testData = ( # name, abbreviation, folder
-                #("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
-                #("USFMTest2", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
-                #("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
+                ("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
+                ("USFMTest2", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
+                ("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
                 ("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
-                #("MS-BT", "MBTBT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
-                #("MS-Notes", "MBTBC", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/",),
-                #("MS-ABT", "MBTABT", "../../../../../Data/Work/Matigsalug/Bible/MBTABT/",),
+                ("MS-BT", "MBTBT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
+                ("MS-Notes", "MBTBC", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/",),
+                ("MS-ABT", "MBTABT", "../../../../../Data/Work/Matigsalug/Bible/MBTABT/",),
                 #("WEB", "WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/",),
                 #("WEB", "WEB", "../../../../../Data/Work/Bibles/From eBible/WEB/eng-web_usfm 2013-07-18/",),
                 #("WEB", "WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-03-05 eng-web_usfm/",),
