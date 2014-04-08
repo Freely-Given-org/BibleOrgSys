@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-04-05 by RJH (also update ProgVersion below)
+#   Last modified: 2014-04-08 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -59,7 +59,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.62"
+ProgVersion = "0.63"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -425,67 +425,6 @@ class BibleWriter( InternalBible ):
                 return '#' + result
             # end of liveCV
 
-            def processXRef( HTML5xref, ourGlobals ):
-                """
-                Return the HTML5 for the processed cross-reference (xref).
-                It also accumulates HTML5 in ourGlobals for the end notes.
-
-                NOTE: The parameter here already has the /x and /x* removed.
-
-                \\x - \\xo 2:2: \\xt Lib 19:9-10; Diy 24:19.\\xt*\\x* (Backslashes are shown doubled here)
-                    gives
-                <a title="Lib 19:9-10; Diy 24:19" href="#XRef0"><span class="XRefLinkSymbol"><sup>[xr]</sup></span></a>
-                <a title="Lib 25:25" href="#XRef1"><span class="XRefLinkSymbol"><sup>[xr]</sup></span></a>
-                <a title="Rut 2:20" href="#XRef2"><span class="XRefLinkSymbol"><sup>[xr]</sup></span></a>
-                    plus
-                <p id="XRef0" class="XRef"><a title="Go back up to 2:2 in the text" href="#C2V2"><span class="ChapterVerse">2:2</span></a> <span class="VernacularCrossReference">Lib 19:9&#x2011;10</span>; <span class="VernacularCrossReference">Diy 24:19</span></p>
-                """
-                markerList = Globals.USFMMarkers.getMarkerListFromText( HTML5xref, includeInitialText=True )
-                #print( "\nformatHTMLVerseText.processXRef( {}, {} ) gives {}".format( repr(HTML5xref), "...", markerList ) )
-                xrefIndex = ourGlobals['nextXRefIndex']; ourGlobals['nextXRefIndex'] += 1
-                caller = origin = originCV = xrefText = ''
-                if markerList:
-                    for marker, ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt in markerList:
-                        if marker is None:
-                            #if txt not in '-+': # just a caller
-                            caller = txt
-                        elif marker == 'xo':
-                            origin = txt
-                            originCV = origin
-                            if originCV and originCV[-1] in (':','.'): originCV = originCV[:-1]
-                            originCV = originCV.strip()
-                        elif marker == 'xt':
-                            xrefText += txt
-                        #elif marker == Should handle other internal markers here
-                        else:
-                            logging.error( "formatHTMLVerseText.processXRef didn't handle {} {}:{} xref marker: {}".format( BBB, C, V, marker ) )
-                            xrefText += txt
-                else: # there's no USFM markers at all in the xref --  presumably a caller and then straight text
-                    if HTML5xref.startswith('+ ') or HTML5xref.startswith('- '):
-                        caller = HTML5xref[0]
-                        xrefText = HTML5xref[2:].strip()
-                    else: # don't really know what it is -- assume it's all just text
-                        xrefText = HTML5xref.strip()
-
-                xrefHTML5 = '<a class="xrefLinkSymbol" title="{}" href="#XRef{}">[xr]</a>' \
-                                .format( xrefText, xrefIndex )
-
-                endHTML5 = '<p id="XRef{}" class="xref">'.format( xrefIndex )
-                if not origin: # we'll try to make one
-                    originCV = "{}:{}".format( C, V )
-                if originCV: # This only handles CV separator of : so far
-                    endHTML5 += '<a class="xrefOrigin" title="Go back up to {} in the text" href="{}">{}</a> ' \
-                                                        .format( originCV, liveCV(originCV), originCV )
-                endHTML5 += '<span class="xrefEntry">{}</span>'.format( xrefText )
-                endHTML5 += '</p>'
-
-                #print( "xrefHTML5", BBB, xrefHTML5 )
-                #print( "endHTML5", endHTML5 )
-                ourGlobals['xrefHTML5'].append( endHTML5 )
-                #if xrefIndex > 2: halt
-
-                return xrefHTML5
-            # end of __formatHTMLVerseText.processXRef
 
             def processFootnote( HTML5footnote, ourGlobals ):
                 """
@@ -563,6 +502,96 @@ class BibleWriter( InternalBible ):
             # end of __formatHTMLVerseText.processFootnote
 
 
+            def processXRef( HTML5xref, ourGlobals ):
+                """
+                Return the HTML5 for the processed cross-reference (xref).
+                It also accumulates HTML5 in ourGlobals for the end notes.
+
+                NOTE: The parameter here already has the /x and /x* removed.
+
+                \\x - \\xo 2:2: \\xt Lib 19:9-10; Diy 24:19.\\xt*\\x* (Backslashes are shown doubled here)
+                    gives
+                <a title="Lib 19:9-10; Diy 24:19" href="#XRef0"><span class="XRefLinkSymbol"><sup>[xr]</sup></span></a>
+                <a title="Lib 25:25" href="#XRef1"><span class="XRefLinkSymbol"><sup>[xr]</sup></span></a>
+                <a title="Rut 2:20" href="#XRef2"><span class="XRefLinkSymbol"><sup>[xr]</sup></span></a>
+                    plus
+                <p id="XRef0" class="XRef"><a title="Go back up to 2:2 in the text" href="#C2V2"><span class="ChapterVerse">2:2</span></a> <span class="VernacularCrossReference">Lib 19:9&#x2011;10</span>; <span class="VernacularCrossReference">Diy 24:19</span></p>
+                """
+                markerList = Globals.USFMMarkers.getMarkerListFromText( HTML5xref, includeInitialText=True )
+                #print( "\nformatHTMLVerseText.processXRef( {}, {} ) gives {}".format( repr(HTML5xref), "...", markerList ) )
+                xrefIndex = ourGlobals['nextXRefIndex']; ourGlobals['nextXRefIndex'] += 1
+                caller = origin = originCV = xrefText = ''
+                if markerList:
+                    for marker, ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt in markerList:
+                        if marker is None:
+                            #if txt not in '-+': # just a caller
+                            caller = txt
+                        elif marker == 'xo':
+                            origin = txt
+                            originCV = origin
+                            if originCV and originCV[-1] in (':','.'): originCV = originCV[:-1]
+                            originCV = originCV.strip()
+                        elif marker == 'xt':
+                            xrefText += txt
+                        #elif marker == Should handle other internal markers here
+                        else:
+                            logging.error( "formatHTMLVerseText.processXRef didn't handle {} {}:{} xref marker: {}".format( BBB, C, V, marker ) )
+                            xrefText += txt
+                else: # there's no USFM markers at all in the xref --  presumably a caller and then straight text
+                    if HTML5xref.startswith('+ ') or HTML5xref.startswith('- '):
+                        caller = HTML5xref[0]
+                        xrefText = HTML5xref[2:].strip()
+                    else: # don't really know what it is -- assume it's all just text
+                        xrefText = HTML5xref.strip()
+
+                xrefHTML5 = '<a class="xrefLinkSymbol" title="{}" href="#XRef{}">[xr]</a>' \
+                                .format( xrefText, xrefIndex )
+
+                endHTML5 = '<p id="XRef{}" class="xref">'.format( xrefIndex )
+                if not origin: # we'll try to make one
+                    originCV = "{}:{}".format( C, V )
+                if originCV: # This only handles CV separator of : so far
+                    endHTML5 += '<a class="xrefOrigin" title="Go back up to {} in the text" href="{}">{}</a> ' \
+                                                        .format( originCV, liveCV(originCV), originCV )
+                endHTML5 += '<span class="xrefEntry">{}</span>'.format( xrefText )
+                endHTML5 += '</p>'
+
+                #print( "xrefHTML5", BBB, xrefHTML5 )
+                #print( "endHTML5", endHTML5 )
+                ourGlobals['xrefHTML5'].append( endHTML5 )
+                #if xrefIndex > 2: halt
+
+                return xrefHTML5
+            # end of __formatHTMLVerseText.processXRef
+
+
+            def processFigure( HTML5figure, ourGlobals ):
+                """
+                Return the HTML5 for the processed figure.
+
+                NOTE: The parameter here already has the /fig and /fig* removed.
+                """
+                logging.critical( "toHTML5: figure not handled yet at {} {}:{} {}".format( BBB, C, V, repr(HTML5figure) ) )
+                figureHTML5 = ''
+                #footnoteHTML5 = '<a class="footnoteLinkSymbol" title="{}" href="#FNote{}">[fn]</a>' \
+                                #.format( fnTitle, fnIndex )
+
+                #endHTML5 = '<p id="FNote{}" class="footnote">'.format( fnIndex )
+                #if originCV: # This only handles CV separator of : so far
+                    #endHTML5 += '<a class="footnoteOrigin" title="Go back up to {} in the text" href="{}">{}</a> ' \
+                                                        #.format( originCV, liveCV(originCV), origin )
+                #endHTML5 += '<span class="footnoteEntry">{}</span>'.format( fnText )
+                #endHTML5 += '</p>'
+
+                ##print( "footnoteHTML5", BBB, footnoteHTML5 )
+                ##print( "endHTML5", endHTML5 )
+                #ourGlobals['footnoteHTML5'].append( endHTML5 )
+                ##if fnIndex > 2: halt
+
+                return figureHTML5
+            # end of __formatHTMLVerseText.processFigure
+
+
             adjText = text
             offset = 0
             for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
@@ -586,9 +615,7 @@ class BibleWriter( InternalBible ):
                     extra = processXRef( extraText, ourGlobals )
                     #print( "xr got", extra )
                 elif extraType == 'fig':
-                    logging.critical( "HTML5 figure not handled yet" )
-                    extra = "" # temp
-                    #extra = processFigure( extraText )
+                    extra = processFigure( extraText, ourGlobals )
                     #print( "fig got", extra )
                 elif Globals.debugFlag and debuggingThisModule: print( 'eT', extraType ); halt
                 #print( "was", verse )
@@ -694,7 +721,7 @@ class BibleWriter( InternalBible ):
             else: writerObject.writeLineOpenClose( 'a', 'Home', [('href','index.html'),('class','homeLink')] )
             if myBBB == 'about': writerObject.writeLineOpenClose( 'p', 'About', ('class','homeNonlink') )
             else: writerObject.writeLineOpenClose( 'a', 'About', [('href','about.html'),('class','aboutLink')] )
-            writerObject.writeLineOpenClose( 'h', self.name, ('class','mainHeader') )
+            writerObject.writeLineOpenClose( 'h1', self.name, ('class','mainHeader') )
             bkList = self.getBookList()
             if myBBB  in bkList:
                 ix = bkList.index( myBBB )
@@ -873,7 +900,7 @@ class BibleWriter( InternalBible ):
 
 
             writeHeader( writerObject, BBB )
-            haveOpenSection = haveOpenParagraph = haveOpenListItem = False
+            haveOpenSection = haveOpenParagraph = haveOpenListItem = haveOpenVerse = False
             haveOpenList = {}
             html5Globals['nextFootnoteIndex'] = html5Globals['nextXRefIndex'] = 0
             html5Globals['footnoteHTML5'], html5Globals['xrefHTML5'] = [], []
@@ -927,6 +954,7 @@ class BibleWriter( InternalBible ):
 
                 # Now markers in the main text
                 elif marker == 'c':
+                    if haveOpenVerse: writerObject.writeLineClose( 'span' ); haveOpenVerse = False
                     if extras: print( "toHTML5: have extras at c at",BBB,C)
                     # What should we put in here -- we don't need/want to display it, but it's a place to jump to
                     writerObject.writeLineOpenClose( 'span', ' ', [('class','chapterStart'),('id','C'+text)] )
@@ -941,15 +969,18 @@ class BibleWriter( InternalBible ):
                     writerObject.writeLineOpenClose( 'span', text, [('class','chapterNumber'),('id','C'+text+'V1')] )
                     writerObject.writeLineOpenClose( 'span', '&nbsp;', ('class','chapterNumberPostspace') )
                 elif marker in ('ms1','ms2','ms3','ms4',):
+                    if haveOpenVerse: writerObject.writeLineClose( 'span' ); haveOpenVerse = False
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
                     if text: writerObject.writeLineOpenClose( 'h2', text, ('class','majorSectionHeading'+marker[2]) )
                 elif marker in ('s1','s2','s3','s4',):
+                    if haveOpenVerse: writerObject.writeLineClose( 'span' ); haveOpenVerse = False
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
                     if marker == 's1':
                         if haveOpenSection: writerObject.writeLineClose( 'section' ); haveOpenSection = False
                         writerObject.writeLineOpen( 'section', ('class','regularSection') ); haveOpenSection = True
                     if text or extras: writerObject.writeLineOpenClose( 'h3', BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, ourGlobals ), ('class','sectionHeading'+marker[1]) )
                 elif marker in ('r', 'sr', 'mr',):
+                    if Globals.debugFlag: assert( not haveOpenVerse )
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
                     if not haveOpenSection:
                         logging.warning( "toHTML5: Have {} section reference {} outside a section in {} {}:{}".format( marker, text, BBB, C, V ) )
@@ -964,9 +995,11 @@ class BibleWriter( InternalBible ):
                 elif marker == 'sp': # speaker
                     if text: writerObject.writeLineOpenClose( 'p', text, ('class','speaker') )
                 elif marker == 'v':
+                    if haveOpenVerse: writerObject.writeLineClose( 'span' ); haveOpenVerse = False
                     V = text
                     if not haveOpenParagraph:
                         logging.warning( "toHTML5: Have verse number {} outside a paragraph in {} {}:{}".format( text, BBB, C, V ) )
+                    writerObject.writeLineOpen( 'span', ('class','verse') ); haveOpenVerse = True
                     if V != '1': # Suppress number for verse 1
                         writerObject.writeLineOpenClose( 'span', ' ', ('class','verseNumberPrespace') )
                         writerObject.writeLineOpenClose( 'span', V, [('class','verseNumber'),('id','C'+C+'V'+V)] )
@@ -977,6 +1010,7 @@ class BibleWriter( InternalBible ):
                     if haveOpenList:
                         for lx in ('4','3','2','1',): # Close any open lists
                             if lx in haveOpenList and haveOpenList[lx]: writerObject.writeLineClose( 'p' ); del haveOpenList[lx]
+                    if haveOpenVerse: writerObject.writeLineClose( 'span' ); haveOpenVerse = False
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
                     writerObject.writeLineOpen( 'p', ('class',BibleWriter.pqHTMLClassDict[marker]) ); haveOpenParagraph = True
                     if text and Globals.debugFlag and debuggingThisModule: halt
@@ -990,12 +1024,14 @@ class BibleWriter( InternalBible ):
                         writerObject.writeLineOpen( 'span', ('class',iClass) ); haveOpenListItem = True
                     elif text: writerObject.writeLineOpenClose( 'span', text, ('class',iClass) )
                 elif marker == 'b':
+                    if haveOpenVerse: writerObject.writeLineClose( 'span' ); haveOpenVerse = False
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
                     if Globals.debugFlag: assert( not text )
                     writerObject.writeLineOpenClose( 'p', ' ', ('class','blankParagraph') )
 
                 # Character markers
                 elif marker in ('v~','p~',):
+                    if Globals.debugFlag and marker=='v~': assert( haveOpenVerse )
                     if not haveOpenParagraph:
                         logging.warning( "toHTML5: Have verse text {} outside a paragraph in {} {}:{}".format( text, BBB, C, V ) )
                         writerObject.writeLineOpen( 'p', ('class','unknownParagraph') ); haveOpenParagraph = True
@@ -1020,8 +1056,9 @@ class BibleWriter( InternalBible ):
             if haveOpenList:
                 for lx in ('4','3','2','1',): # Close any open lists
                     if lx in haveOpenList and haveOpenList[lx]: writerObject.writeLineClose( 'p' ); del haveOpenList[lx]
-            if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
-            if haveOpenSection: writerObject.writeLineClose( 'section' ); haveOpenSection = False
+            if haveOpenVerse: writerObject.writeLineClose( 'span' )
+            if haveOpenParagraph: writerObject.writeLineClose( 'p' )
+            if haveOpenSection: writerObject.writeLineClose( 'section' )
             writeEndNotes( writerObject, ourGlobals )
             writeFooter( writerObject )
         # end of toHTML5.writeHTML5Book
@@ -1108,7 +1145,8 @@ class BibleWriter( InternalBible ):
         #if not os.access( chapterOutputFolderHTML, os.F_OK ): os.makedirs( chapterOutputFolderHTML ) # Make the empty folder if there wasn't already one there
 
         headerFilepath = os.path.join( outputFolder, 'CBHeader.json' )
-        booknamesFilepath = os.path.join( outputFolder, 'CBBookNames.{}.json'.format( CBDataFormatVersion ) )
+        sectionNamesFilepath = os.path.join( outputFolder, 'CBSectionNames.{}.json'.format( CBDataFormatVersion ) )
+        bookNamesFilepath = os.path.join( outputFolder, 'CBBookNames.{}.json'.format( CBDataFormatVersion ) )
         compressionDictFilepath = os.path.join( outputFolder, "CBCmprnDict.{}.json".format( CBDataFormatVersion ) )
         destinationIndexFilepath = os.path.join( outputFolder, "CB-BCV-ix.{}.json".format( CBDataFormatVersion ) )
         destinationHTMLFilepathTemplate = os.path.join( bookOutputFolderHTML, "CBBook.{}.{}.html".format( '{}', CBDataFormatVersion ) ) # Missing the BBB
@@ -1128,23 +1166,29 @@ class BibleWriter( InternalBible ):
             ('@J','<span class="chapterStart" id="C'),
             #('@F','<p class="sectionHeading1">'),
             ('@K','<span class="chapterNumber" id="C'),
-            ('@L','</span><span class="chapterNumberPostspace">&nbsp;</span><span class="verseText">'),
-            ('@M','</span><span class="chapterNumberPostspace">&nbsp;</span>'),
-            ('@N','<span class="verseNumberPrespace"> </span><span class="verseNumber" id="C'),
+            ('@L','</span><span class="chapterNumberPostspace">&nbsp;</span><span class="verse" id="C'),
+            #('@M','</span><span class="chapterNumberPostspace">&nbsp;</span>'),
+            ('@M','</span></span><span class="verse" id="C'),
+            ('@s','<span class="verse" id="C'),
+            ('@N','"><span class="verseNumberPrespace"> </span><span class="verseNumber">'),
             #('@Y','</span><span class="verseNumberPrespace"> </span><span class="verseNumber" id="C'), # Makes bigger! Why???
             ('@O','</span><span class="verseNumberPostspace">&nbsp;</span>'),
             ('@P','</span><span class="verseNumberPostspace">&nbsp;</span><span class="verseText">'),
             ('@Q','<span class="verseText">'),
             ('@R','<p class="proseParagraph"><span class="chapterNumber" id="C'),
             ('@S','<p class="proseParagraph">'),
-            ('@T','<p class="proseParagraph"><span class="verseNumberPrespace"> </span><span class="verseNumber" id="C'),
-            ('@U','</h3><p class="proseParagraph"><span class="verseNumberPrespace"> </span><span class="verseNumber" id="C'),
+            ('@T','<p class="proseParagraph"><span class="verse" id="C'),
+            #('@T','<p class="proseParagraph"><span class="verseNumberPrespace"> </span><span class="verseNumber" id="C'),
+            ('@U','</h3><p class="proseParagraph"><span class="verse" id="C'),
+            #('@U','</h3><p class="proseParagraph"><span class="verseNumberPrespace"> </span><span class="verseNumber" id="C'),
             ('@V','<p class="poetryParagraph1">'),
-            ('@W','<p class="poetryParagraph1"><span class="verseNumberPrespace"> </span><span class="verseNumber" id="C'),
+            ('@W','<p class="poetryParagraph1"><span class="verse" id="C'),
+            #('@W','<p class="poetryParagraph1"><span class="verseNumberPrespace"> </span><span class="verseNumber" id="C'),
             ('@X','<p class="poetryParagraph1"><span class="verseText">'),
             ('@Y','<p class="poetryParagraph2">'),
             ('@Z','<p class="poetryParagraph3">'),
             ('@a','<p class="poetryParagraph4">'),
+            ('@r','<p class="flushLeftParagraph"><span class="verse" id="C'),
             ('@b','<p class="flushLeftParagraph">'),
             ('@c','<p class="list'), # numbered
             ('@d','<span class="listItem'), # numbered
@@ -1163,6 +1207,7 @@ class BibleWriter( InternalBible ):
             ('@o','</p>'),
             ('@p','</span>'),
             ('@q','</span></p>'),
+            ('@t','</span></span></p>'),
             ('^','">'),
 
             ('~~','@'), # Must be last
@@ -1194,7 +1239,7 @@ class BibleWriter( InternalBible ):
             if Globals.verbosityLevel > 1:
                 print( "  Writing compression entries..." )
             #filepath = os.path.join( outputFolder, 'CBHeader.json' )
-            if Globals.verbosityLevel > 2: print( "    toCustomBible " +  _("Exporting index to {}...").format( compressionFilepath ) )
+            if Globals.verbosityLevel > 2: print( "    toCustomBible " +  _("Exporting index to {}...").format( compressionDictFilepath ) )
             with open( compressionDictFilepath, 'wt' ) as jsonFile:
                 #for compression in SDCompressions:
                     #compFile.write( compression[0] + compression[1] + '\n' )
@@ -1254,15 +1299,49 @@ class BibleWriter( InternalBible ):
 
         def writeCBBookNames():
             """
+            Writes the two files:
+                list of section names
+                list of book names and abbreviations
             """
+            def getSectionName( BBB, doneAny=None, doneBooks=None ):
+                """ Given a book code, return the section name. """
+                result = ""
+                if Globals.BibleBooksCodes.isOldTestament_NR( BBB ) or BBB == 'PS2':
+                    result = self.settingsDict['OldTestamentName'] if "OldTestamentName" in self.settingsDict else "Old Testament"
+                elif Globals.BibleBooksCodes.isNewTestament_NR( BBB ):
+                    result = self.settingsDict['NewTestamentName'] if "NewTestamentName" in self.settingsDict else "New Testament"
+                elif Globals.BibleBooksCodes.isDeuterocanon_NR( BBB ) or BBB in ('MA3','MA4'):
+                    result = self.settingsDict['DeuterocanonName'] if "DeuterocanonName" in self.settingsDict else "Deuterocanon"
+                elif doneAny == False:
+                    result = self.settingsDict['FrontMatterName'] if "FrontMatterName" in self.settingsDict else "Front Matter"
+                elif doneBooks == True:
+                    result = self.settingsDict['BackMatterName'] if "BackMatterName" in self.settingsDict else "Back Matter"
+                return result
+            # end of getSectionName
+
+            # Make a list of section names and write them to a very small JSON file
+            sectionData = []
+            doneAny = doneBooks = False
+            for BBB,bookObject in self.books.items():
+                sectionName = getSectionName( BBB, doneAny, doneBooks )
+                if sectionName and sectionName not in sectionData:
+                    sectionData.append( sectionName )
+                if Globals.BibleBooksCodes.isOldTestament_NR(BBB) or Globals.BibleBooksCodes.isNewTestament_NR(BBB) or Globals.BibleBooksCodes.isDeuterocanon_NR(BBB):
+                    doneAny = doneBooks = True
+            #print( sectionData )
+            if Globals.verbosityLevel > 2: print( "  " + _("Exporting section names to {}...").format( sectionNamesFilepath ) )
+            with open( sectionNamesFilepath, 'wt' ) as jsonFile:
+                json.dump( sectionData, jsonFile, indent=jsonIndent )
+
+            # Make a list of book data including names and abbreviations and write them to a JSON file
             bkData = []
+            doneAny = doneBooks = False
             for BBB,bookObject in self.books.items():
                 abbreviation = self.getBooknameAbbreviation( BBB )
                 shortName = self.getShortTOCName( BBB )
                 longName = self.getAssumedBookName( BBB )
-                sectionName = ""
-                if Globals.BibleBooksCodes.isOldTestament_NR( BBB ): sectionName = "Old Testament"
-                elif Globals.BibleBooksCodes.isNewTestament_NR( BBB ): sectionName = "New Testament"
+                try: sectionNumber = sectionData.index( getSectionName( BBB, doneAny, doneBooks ) )
+                except: sectionNumber = -1
                 numChapters = ""
                 for dataLine in bookObject._processedLines:
                     if dataLine.getMarker() == 'c':
@@ -1271,11 +1350,12 @@ class BibleWriter( InternalBible ):
                 except:
                     logging.error( "toCustomBible: no chapters in {}".format( BBB ) )
                     intNumChapters = 0
-                bkData.append( (BBB,abbreviation,shortName,longName,sectionName,intNumChapters) )
+                bkData.append( (BBB,abbreviation,shortName,longName,intNumChapters,sectionNumber) )
+                if Globals.BibleBooksCodes.isOldTestament_NR(BBB) or Globals.BibleBooksCodes.isNewTestament_NR(BBB) or Globals.BibleBooksCodes.isDeuterocanon_NR(BBB):
+                    doneAny = doneBooks = True
             #print( bkData )
-
-            if Globals.verbosityLevel > 2: print( "  " + _("Exporting book names to {}...").format( booknamesFilepath ) )
-            with open( booknamesFilepath, 'wt' ) as jsonFile:
+            if Globals.verbosityLevel > 2: print( "  " + _("Exporting book names to {}...").format( bookNamesFilepath ) )
+            with open( bookNamesFilepath, 'wt' ) as jsonFile:
                 json.dump( bkData, jsonFile, indent=jsonIndent )
         # end of writeCBBookNames
 
@@ -1352,11 +1432,12 @@ class BibleWriter( InternalBible ):
             lastMarker = None
             C = V = '0'
             BCV = (BBB,C,V)
-            sOpen = pOpen = False
+            sOpen = pOpen = vOpen = False
             listOpen = {}
             for dataLine in bookData:
                 thisHTML = ''
                 marker, text, extras = dataLine.getMarker(), dataLine.getAdjustedText(), dataLine.getExtras()
+                #print( "toCB: {}:{}".format( marker, repr(text) ) )
 
                 # Markers usually only found in the introduction
                 if marker in oftenIgnoredIntroMarkers: pass # Just ignore these lines
@@ -1418,6 +1499,7 @@ class BibleWriter( InternalBible ):
 
                 # Now markers in the main text
                 elif marker == 'c':
+                    if vOpen: lastHTML += '</span>'; vOpen = False
                     #if extras: print( "have extras at c at",BBB,C); halt
                     C, V = text, '0'
                     if C=='1':
@@ -1427,6 +1509,7 @@ class BibleWriter( InternalBible ):
                     thisHTML = '<span class="chapterStart" id="{}"></span>'.format( 'C'+C )
                 elif marker == 'cp': pass # ignore this for now
                 elif marker in ('ms1','ms2','ms3','ms4',):
+                    if vOpen: lastHTML += '</span>'; vOpen = False
                     if pOpen: lastHTML += '</p>'; pOpen = False
                     if sOpen: lastHTML += '</section>'; sOpen = False
                     if sectionHTML:
@@ -1439,6 +1522,7 @@ class BibleWriter( InternalBible ):
                         fileOffset += bytesWritten
                     thisHTML += '<h2 class="majorSectionHeading{}">{}</h2>'.format( marker[2], text )
                 elif marker in ('s1','s2','s3','s4'):
+                    if vOpen: lastHTML += '</span>'; vOpen = False
                     if marker == 's1':
                         if pOpen: lastHTML += '</p>'; pOpen = False
                         if sOpen: lastHTML += '</section>'; sOpen = False
@@ -1454,6 +1538,7 @@ class BibleWriter( InternalBible ):
                     if text or extras:
                         thisHTML += '<h3 class="sectionHeading{}">{}</h3>'.format( marker[1], BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, CBGlobals ) )
                 elif marker in ('r', 'sr', 'mr',):
+                    if Globals.debugFlag: assert( not vOpen )
                     if pOpen: lastHTML += '</p>'; pOpen = False
                     if not sOpen:
                         logging.warning( "toCustomBible: Have {} section reference {} outside a section in {} {}:{}".format( marker, text, BBB, C, V ) )
@@ -1475,6 +1560,7 @@ class BibleWriter( InternalBible ):
                 or marker in ('q1','q2','q3','q4','qr','qc','qm1','qm2','qm3','qm4',):
                     for lx in ('4','3','2','1'): # Close any open lists
                         if listOpen and lx in listOpen and listOpen[lx]: thisHTML += '</p>'; del listOpen[lx]
+                    if vOpen: lastHTML += '</span>'; vOpen = False
                     if pOpen:
                         if Globals.debugFlag: assert( sOpen )
                         thisHTML += '</p>'; pOpen = False
@@ -1493,12 +1579,15 @@ class BibleWriter( InternalBible ):
                     thisHTML += '<p class="{}">'.format( BibleWriter.pqHTMLClassDict[marker] )
                     pOpen = True
                 elif marker == 'v':
+                    if vOpen: lastHTML += '</span>'; vOpen = False
                     V = text
+                    thisHTML += '<span class="verse" id="{}">'.format( 'C'+C+'V'+V ); vOpen = True
                     if V != '1': # Suppress number for verse 1
                         thisHTML += '<span class="verseNumberPrespace"> </span>'
-                        thisHTML += '<span class="verseNumber" id="{}">{}</span>'.format( 'C'+C+'V'+V, text )
+                        thisHTML += '<span class="verseNumber">{}</span>'.format( text )
                         thisHTML += '<span class="verseNumberPostspace">&nbsp;</span>'
                 elif marker in ('v~','p~',):
+                    if Globals.debugFlag and marker=='v~': assert( vOpen )
                     if text or extras:
                         thisHTML = '<span class="verseText">{}</span>'.format( BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, CBGlobals ) )
                 elif marker in ('li1','li2','li3','li4','ili1','ili2','ili3','ili4',):
@@ -1511,6 +1600,7 @@ class BibleWriter( InternalBible ):
                         thisHTML += '<span class="{}">'.format( iClass )
                     elif text: thisHTML += '<span class="{}">{}</span>'.format( iClass, text )
                 elif marker == 'b':
+                    if vOpen: lastHTML += '</span>'; vOpen = False
                     if pOpen:
                         if Globals.debugFlag: assert( sOpen )
                         thisHTML += '</p>'; pOpen = False
@@ -1538,6 +1628,7 @@ class BibleWriter( InternalBible ):
 
             for lx in ('4','3','2','1'): # Close any open lists
                 if listOpen and lx in listOpen and listOpen[lx]: lastHTML += '</p>'; del listOpen[lx]
+            if vOpen: lastHTML += '</span>'
             if pOpen: lastHTML += '</p>'
             if sOpen: lastHTML += '</section>'
             sectionHTML += lastHTML
@@ -1547,17 +1638,17 @@ class BibleWriter( InternalBible ):
                 createdIndex.append( indexEntry )
 
             htmlFile.close()
-            if Globals.verbosityLevel > 2 or Globals.debugFlag:
-                for key,count in usageCount.items():
-                    if count == 0: logging.error( "Compression code {} is unused".format( key ) )
-                    elif count < 20: logging.warning( "Compression code {} is rarely used".format( key ) )
-                    elif count < 100: logging.warning( "Compression code {} is under-used".format( key ) )
+            #if Globals.verbosityLevel > 2 or Globals.debugFlag:
+                #for key,count in usageCount.items():
+                    #if count == 0: logging.error( "Compression code {} is unused".format( key ) )
+                    #elif count < 20: logging.warning( "Compression code {} is rarely used".format( key ) )
+                    #elif count < 100: logging.warning( "Compression code {} is under-used".format( key ) )
 
-                if bytesRaw and Globals.verbosityLevel > 2:
-                    print( "  {} compression ratio: {}".format( BBB, round( bytesCompressed / bytesRaw, 3 ) ) )
-                    if Globals.verbosityLevel > 2:
-                        print( "    {} raw bytes: {}".format( BBB, bytesRaw ) )
-                        print( "    {} compressed bytes: ".format( BBB, bytesCompressed ) )
+                #if bytesRaw and Globals.verbosityLevel > 2:
+                    #print( "  {} compression ratio: {}".format( BBB, round( bytesCompressed / bytesRaw, 3 ) ) )
+                    #if Globals.verbosityLevel > 2:
+                        #print( "    {} raw bytes: {}".format( BBB, bytesRaw ) )
+                        #print( "    {} compressed bytes: {}".format( BBB, bytesCompressed ) )
             #if Globals.debugFlag: print( "Finished", BBB ); halt
         # end of writeCBBookAsHTML
 
@@ -1599,6 +1690,18 @@ class BibleWriter( InternalBible ):
             logging.warning( "toCustomBible: Unhandled markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:
                 print( "  " + _("WARNING: Unhandled toCustomBible markers were {}").format( unhandledMarkers ) )
+
+        # Display compression info
+        if Globals.verbosityLevel > 2 or Globals.debugFlag:
+            for key,count in usageCount.items():
+                if count == 0: logging.error( "Compression code {} is unused".format( key ) )
+                elif count < 20: logging.warning( "Compression code {} is rarely used".format( key ) )
+                elif count < 100: logging.warning( "Compression code {} is under-used".format( key ) )
+            if bytesRaw and Globals.verbosityLevel > 2:
+                print( "  Compression ratio: {}".format( round( bytesCompressed / bytesRaw, 3 ) ) )
+                if Globals.verbosityLevel > 2:
+                    print( "    Raw bytes: {}".format( bytesRaw ) )
+                    print( "    Compressed bytes: {}".format( bytesCompressed ) )
 
         ## Now create a zipped collection
         #if Globals.verbosityLevel > 2: print( "  Zipping CustomBible files..." )
@@ -6661,9 +6764,9 @@ def demo():
                 ("MS-BT", "MBTBT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
                 ("MS-Notes", "MBTBC", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/",),
                 ("MS-ABT", "MBTABT", "../../../../../Data/Work/Matigsalug/Bible/MBTABT/",),
-                #("WEB", "WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/",),
-                #("WEB", "WEB", "../../../../../Data/Work/Bibles/From eBible/WEB/eng-web_usfm 2013-07-18/",),
-                #("WEB", "WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-03-05 eng-web_usfm/",),
+                ("WEB", "WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/",),
+                ("WEB", "WEB", "../../../../../Data/Work/Bibles/From eBible/WEB/eng-web_usfm 2013-07-18/",),
+                ("WEB", "WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-03-05 eng-web_usfm/",),
                 ) # You can put your USFM test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData ):

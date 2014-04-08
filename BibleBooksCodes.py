@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodes.py
-#   Last modified: 2014-02-21 by RJH (also update ProgVersion below)
+#   Last modified: 2014-03-08 by RJH (also update ProgVersion below)
 #
 # Module handling BibleBooksCodes functions
 #
@@ -448,7 +448,7 @@ class BibleBooksCodes:
     #           i.e., they assume English language or European book order conventions
     #       They are included because they might be necessary for error messages or similar uses
     #           (where the precisely correct information is unknown)
-    def getEnglishName_NR( self, BBB ): # NR = not recommended
+    def getEnglishName_NR( self, BBB ): # NR = not recommended (because not completely general/international)
         """
         Returns the first English name for a book.
 
@@ -459,7 +459,7 @@ class BibleBooksCodes:
         return self.__DataDicts["referenceAbbreviationDict"][BBB]["nameEnglish"].split('/',1)[0].strip()
     # end of BibleBooksCodes.getEnglishName_NR
 
-    def getEnglishNameList_NR( self, BBB ): # NR = not recommended
+    def getEnglishNameList_NR( self, BBB ): # NR = not recommended (because not completely general/international)
         """
         Returns a list of possible English names for a book.
 
@@ -471,19 +471,19 @@ class BibleBooksCodes:
         return [name.strip() for name in names.split('/')]
     # end of BibleBooksCodes.getEnglishNameList_NR
 
-    def isOldTestament_NR( self, BBB ): # NR = not recommended
+    def isOldTestament_NR( self, BBB ): # NR = not recommended (because not completely general/international)
         """ Returns True if the given referenceAbbreviation indicates a European Protestant Old Testament book (39).
             NOTE: This is not truly international so it's not a recommended function. """
         return 1 <= self.getReferenceNumber(BBB) <= 39
     # end of BibleBooksCodes.isOldTestament_NR
 
-    def isNewTestament_NR( self, BBB ): # NR = not recommended
+    def isNewTestament_NR( self, BBB ): # NR = not recommended (because not completely general/international)
         """ Returns True if the given referenceAbbreviation indicates a European Protestant New Testament book (27).
             NOTE: This is not truly international so it's not a recommended function. """
         return 40 <= self.getReferenceNumber(BBB) <= 66
     # end of BibleBooksCodes.isNewTestament_NR
 
-    def isDeuterocanon_NR( self, BBB ): # NR = not recommended
+    def isDeuterocanon_NR( self, BBB ): # NR = not recommended (because not completely general/international)
         """ Returns True if the given referenceAbbreviation indicates a European Deuterocanon/Apocrypha book (15).
             NOTE: This is not truly international so it's not a recommended function. """
         return BBB in ('TOB','JDT','ESG','WIS','SIR','BAR','LJE','PAZ','SUS','BEL','MA1','MA2','GES','LES','MAN',)
