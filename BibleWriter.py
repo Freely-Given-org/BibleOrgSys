@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-04-08 by RJH (also update ProgVersion below)
+#   Last modified: 2014-04-10 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -1035,6 +1035,8 @@ class BibleWriter( InternalBible ):
                     if not haveOpenParagraph:
                         logging.warning( "toHTML5: Have verse text {} outside a paragraph in {} {}:{}".format( text, BBB, C, V ) )
                         writerObject.writeLineOpen( 'p', ('class','unknownParagraph') ); haveOpenParagraph = True
+                    if not haveOpenVerse:
+                        writerObject.writeLineOpen( 'span', ('class','verse') ); haveOpenVerse = True
                     if text or extras:
                         writerObject.writeLineOpenClose( 'span', BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, ourGlobals ), ('class','verseText'), noTextCheck=True )
 
@@ -1132,14 +1134,14 @@ class BibleWriter( InternalBible ):
         #if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_MediaWiki_controls.txt", controlDict )
         #assert( controlDict and isinstance( controlDict, dict ) )
 
-        CBDataFormatVersion = 1
-        jsonIndent = 2 # Keep files small for small phones
+        CBDataFormatVersion = 1 # Increment this when the data files / arrays change
+        jsonIndent = 1 # Keep files small for small phones
 
         bookOutputFolderJSON = os.path.join( outputFolder, "ByBook.{}.JSON".format( CBDataFormatVersion ) )
         if not os.access( bookOutputFolderJSON, os.F_OK ): os.makedirs( bookOutputFolderJSON ) # Make the empty folder if there wasn't already one there
         chapterOutputFolderJSON = os.path.join( outputFolder, "ByChapter.{}.JSON".format( CBDataFormatVersion ) )
         if not os.access( chapterOutputFolderJSON, os.F_OK ): os.makedirs( chapterOutputFolderJSON ) # Make the empty folder if there wasn't already one there
-        bookOutputFolderHTML = os.path.join( outputFolder, "ByBook.{}.HTML".format( CBDataFormatVersion ) )
+        bookOutputFolderHTML = os.path.join( outputFolder, "BySection.{}.HTML".format( CBDataFormatVersion ) )
         if not os.access( bookOutputFolderHTML, os.F_OK ): os.makedirs( bookOutputFolderHTML ) # Make the empty folder if there wasn't already one there
         #chapterOutputFolderHTML = os.path.join( outputFolder, "ByChapter.{}.HTML".format( CBDataFormatVersion ) )
         #if not os.access( chapterOutputFolderHTML, os.F_OK ): os.makedirs( chapterOutputFolderHTML ) # Make the empty folder if there wasn't already one there
@@ -1148,7 +1150,7 @@ class BibleWriter( InternalBible ):
         sectionNamesFilepath = os.path.join( outputFolder, 'CBSectionNames.{}.json'.format( CBDataFormatVersion ) )
         bookNamesFilepath = os.path.join( outputFolder, 'CBBookNames.{}.json'.format( CBDataFormatVersion ) )
         compressionDictFilepath = os.path.join( outputFolder, "CBCmprnDict.{}.json".format( CBDataFormatVersion ) )
-        destinationIndexFilepath = os.path.join( outputFolder, "CB-BCV-ix.{}.json".format( CBDataFormatVersion ) )
+        destinationIndexFilepath = os.path.join( outputFolder, "CB-BCV-index.{}.json".format( CBDataFormatVersion ) )
         destinationHTMLFilepathTemplate = os.path.join( bookOutputFolderHTML, "CBBook.{}.{}.html".format( '{}', CBDataFormatVersion ) ) # Missing the BBB
 
         unhandledMarkers = set()
@@ -1254,7 +1256,8 @@ class BibleWriter( InternalBible ):
             """
             """
             nonlocal bytesRaw, bytesCompressed
-            #print( repr(entry) ); halt
+            #print( '\n', entry )
+            #if C=='4': halt
             bytesRaw += len( entry.encode('UTF8') )
             result = entry
             if '@' in result:
@@ -1401,7 +1404,7 @@ class BibleWriter( InternalBible ):
         # end of writeCBBookAsJSON
 
 
-        def writeCBBookAsHTML( BBB, bookData, createdIndex ):
+        def writeCBBookAsHTML( BBB, bookData, currentIndex ):
             """
             """
             CBGlobals = {}
@@ -1427,12 +1430,12 @@ class BibleWriter( InternalBible ):
             htmlFile = open( destinationHTMLFilepathTemplate.format( BBB ), 'wb' )
             fileOffset = 0
 
-            #createdIndex = []
             lastHTML = sectionHTML = outputHTML = ""
             lastMarker = None
-            C = V = '0'
+            C = lastC = V = '0'
+            lastV = '999' # For introduction section
             BCV = (BBB,C,V)
-            sOpen = pOpen = vOpen = False
+            sOpen = sJustOpened = pOpen = vOpen = False
             listOpen = {}
             for dataLine in bookData:
                 thisHTML = ''
@@ -1444,7 +1447,7 @@ class BibleWriter( InternalBible ):
                 elif marker in ('mt1','mt2','mt3','mt4',):
                     if Globals.debugFlag: assert( not pOpen )
                     if not sOpen:
-                        thisHTML += '<section class="introSection">'; sOpen = True; BCV=(BBB,C,V)
+                        thisHTML += '<section class="introSection">'; sOpen = sJustOpened = True; BCV=(BBB,C,V)
                     thisHTML += '<h1 class="mainTitle{}">{}</h1>'.format( marker[2], text )
                 elif marker in ('is1','is2','is3','is4',):
                     if pOpen:
@@ -1452,7 +1455,7 @@ class BibleWriter( InternalBible ):
                         thisHTML += '</p>'; pOpen = False
                         if Globals.debugFlag: thisHTML += '\n'
                     if not sOpen:
-                        thisHTML += '<section class="introSection">'; sOpen = True; BCV=(BBB,C,V)
+                        thisHTML += '<section class="introSection">'; sOpen = sJustOpened = True; BCV=(BBB,C,V)
                     thisHTML += '<h2 class="introductionSectionHeading{}">{}</h2>'.format( marker[2], text )
                 elif marker in ('ip','ipi',):
                     if pOpen:
@@ -1460,7 +1463,7 @@ class BibleWriter( InternalBible ):
                         thisHTML += '</p>'; pOpen = False
                         if Globals.debugFlag: thisHTML += '\n'
                     if not sOpen:
-                        thisHTML += '<section class="introSection">'; sOpen = True; BCV=(BBB,C,V)
+                        thisHTML += '<section class="introSection">'; sOpen = sJustOpened = True; BCV=(BBB,C,V)
                     #if not text and not extras: print( "{} at {} {}:{} has nothing!".format( marker, BBB, C, V ) );halt
                     if text or extras:
                         thisHTML += '<p class="{}">{}</p>'.format( BibleWriter.ipHTMLClassDict[marker], BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, CBGlobals ) )
@@ -1470,7 +1473,7 @@ class BibleWriter( InternalBible ):
                         thisHTML += '</p>'; pOpen = False
                         if Globals.debugFlag: thisHTML += '\n'
                     if not sOpen:
-                        thisHTML += '<section class="introSection">'; sOpen = True; BCV=(BBB,C,V)
+                        thisHTML += '<section class="introSection">'; sOpen = sJustOpened = True; BCV=(BBB,C,V)
                     thisHTML += '<h3 class="outlineTitle">{}</h3>'.format( text )
                 elif marker in ('io1','io2','io3','io4',):
                     if pOpen:
@@ -1478,7 +1481,7 @@ class BibleWriter( InternalBible ):
                         thisHTML += '</p>'; pOpen = False
                         if Globals.debugFlag: thisHTML += '\n'
                     if not sOpen:
-                        thisHTML += '<section class="introSection">'; sOpen = True; BCV=(BBB,C,V)
+                        thisHTML += '<section class="introSection">'; sOpen = sJustOpened = True; BCV=(BBB,C,V)
                     thisHTML += '<p class="outlineEntry{}">{}</p>'.format( marker[2], text )
                 elif marker == 'periph':
                     if pOpen:
@@ -1502,12 +1505,14 @@ class BibleWriter( InternalBible ):
                     if vOpen: lastHTML += '</span>'; vOpen = False
                     #if extras: print( "have extras at c at",BBB,C); halt
                     C, V = text, '0'
-                    if C=='1':
+                    if C=='1': # Must be the end of the introduction -- so close that section
                         if pOpen: lastHTML += '</p>'; pOpen = False
                         if sOpen: lastHTML += '</section>'; sOpen = False
                     # What should we put in here -- we don't need/want to display it, but it's a place to jump to
-                    thisHTML = '<span class="chapterStart" id="{}"></span>'.format( 'C'+C )
-                elif marker == 'cp': pass # ignore this for now
+                    # NOTE: If we include the next line, it usually goes at the end of a section where it's no use
+                    #thisHTML = '<span class="chapterStart" id="{}"></span>'.format( 'C'+C )
+                elif marker == 'cp': # ignore this for now
+                    logging.error( "toCustomBible: ignored cp field {} for {}".format( repr(text), C ) )
                 elif marker in ('ms1','ms2','ms3','ms4',):
                     if vOpen: lastHTML += '</span>'; vOpen = False
                     if pOpen: lastHTML += '</p>'; pOpen = False
@@ -1517,8 +1522,8 @@ class BibleWriter( InternalBible ):
                         lastHTML = ''
                         bytesWritten = handleSection( BCV, sectionHTML, htmlFile )
                         sectionHTML = ''
-                        indexEntry = BCV[0],BCV[1],BCV[2],fileOffset,bytesWritten
-                        createdIndex.append( indexEntry )
+                        indexEntry = BCV[0],BCV[1],BCV[2],lastC,lastV,fileOffset,bytesWritten
+                        currentIndex.append( indexEntry )
                         fileOffset += bytesWritten
                     thisHTML += '<h2 class="majorSectionHeading{}">{}</h2>'.format( marker[2], text )
                 elif marker in ('s1','s2','s3','s4'):
@@ -1531,18 +1536,19 @@ class BibleWriter( InternalBible ):
                             lastHTML = ''
                             bytesWritten = handleSection( BCV, sectionHTML, htmlFile )
                             sectionHTML = ''
-                            indexEntry = BCV[0],BCV[1],BCV[2],fileOffset,bytesWritten
-                            createdIndex.append( indexEntry )
+                            indexEntry = BCV[0],BCV[1],BCV[2],lastC,lastV,fileOffset,bytesWritten
+                            currentIndex.append( indexEntry )
                             fileOffset += bytesWritten
-                        thisHTML += '<section class="regularSection">'; sOpen = True; BCV=(BBB,C,V)
+                        thisHTML += '<section class="regularSection">'; sOpen = sJustOpened = True; BCV=(BBB,C,V)
                     if text or extras:
                         thisHTML += '<h3 class="sectionHeading{}">{}</h3>'.format( marker[1], BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, CBGlobals ) )
+                        if Globals.debugFlag: thisHTML += '\n'
                 elif marker in ('r', 'sr', 'mr',):
                     if Globals.debugFlag: assert( not vOpen )
                     if pOpen: lastHTML += '</p>'; pOpen = False
                     if not sOpen:
                         logging.warning( "toCustomBible: Have {} section reference {} outside a section in {} {}:{}".format( marker, text, BBB, C, V ) )
-                        thisHTML += '<section class="regularSection">'; sOpen = True; BCV=(BBB,C,V)
+                        thisHTML += '<section class="regularSection">'; sOpen = sJustOpened = True; BCV=(BBB,C,V)
                     if marker == 'r': rClass = 'sectionCrossReference'
                     elif marker == 'sr': rClass = 'sectionReferenceRange'
                     elif marker == 'mr': rClass = 'majorSectionReferenceRange'
@@ -1554,7 +1560,8 @@ class BibleWriter( InternalBible ):
 
                 elif marker == 'c#':
                     #if extras: print( "have extras at c# at",BBB,C); halt
-                    thisHTML += '<span class="chapterNumber" id="{}">{}</span>'.format( 'C'+C+'V1', text )
+                    #thisHTML += '<span class="chapterNumber" id="{}">{}</span>'.format( 'C'+C+'V1', text )
+                    thisHTML += '<span class="chapterNumber">{}</span>'.format( text )
                     thisHTML += '<span class="chapterNumberPostspace">&nbsp;</span>'
                 elif marker in ('p','m','pmo','pm','pmc','pmr','pi1','pi2','pi3','pi4','mi','cls','pc','pr','ph1','ph2','ph3','ph4',) \
                 or marker in ('q1','q2','q3','q4','qr','qc','qm1','qm2','qm3','qm4',):
@@ -1571,25 +1578,31 @@ class BibleWriter( InternalBible ):
                             lastHTML = ''
                             bytesWritten = handleSection( BCV, sectionHTML, htmlFile )
                             sectionHTML = ''
-                            indexEntry = BCV[0],BCV[1],BCV[2],fileOffset,bytesWritten
-                            createdIndex.append( indexEntry )
+                            indexEntry = BCV[0],BCV[1],BCV[2],lastC,lastV,fileOffset,bytesWritten
+                            currentIndex.append( indexEntry )
                             fileOffset += bytesWritten
-                        thisHTML += '<section class="regularSection">'; sOpen = True; BCV=(BBB,C,V)
+                        thisHTML += '<section class="regularSection">'; sOpen = sJustOpened = True; BCV=(BBB,C,V)
                     if Globals.debugFlag: assert( not text )
                     thisHTML += '<p class="{}">'.format( BibleWriter.pqHTMLClassDict[marker] )
                     pOpen = True
                 elif marker == 'v':
                     if vOpen: lastHTML += '</span>'; vOpen = False
                     V = text
+                    if sJustOpened: BCV=(BBB,C,V)
                     thisHTML += '<span class="verse" id="{}">'.format( 'C'+C+'V'+V ); vOpen = True
                     if V != '1': # Suppress number for verse 1
                         thisHTML += '<span class="verseNumberPrespace"> </span>'
                         thisHTML += '<span class="verseNumber">{}</span>'.format( text )
                         thisHTML += '<span class="verseNumberPostspace">&nbsp;</span>'
+                    sJustOpened = False
+                    lastC, lastV = C, V
                 elif marker in ('v~','p~',):
                     if Globals.debugFlag and marker=='v~': assert( vOpen )
                     if text or extras:
-                        thisHTML = '<span class="verseText">{}</span>'.format( BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, CBGlobals ) )
+                        if not vOpen:
+                            thisHTML += '<span class="verse" id="{}">'.format( 'C'+C+'V'+V+'b' ); vOpen = True
+                        thisHTML += '<span class="verseText">{}</span>'.format( BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, CBGlobals ) )
+                    sJustOpened = False
                 elif marker in ('li1','li2','li3','li4','ili1','ili2','ili3','ili4',):
                     if marker.startswith('li'): m, pClass, iClass = marker[2], 'list'+marker[2], 'listItem'+marker[2]
                     else: m, pClass, iClass = marker[3], 'introductionList'+marker[3], 'introductionListItem'+marker[3]
@@ -1599,6 +1612,7 @@ class BibleWriter( InternalBible ):
                         if Globals.debugFlag: assert( not text )
                         thisHTML += '<span class="{}">'.format( iClass )
                     elif text: thisHTML += '<span class="{}">{}</span>'.format( iClass, text )
+                    sJustOpened = False
                 elif marker == 'b':
                     if vOpen: lastHTML += '</span>'; vOpen = False
                     if pOpen:
@@ -1623,8 +1637,7 @@ class BibleWriter( InternalBible ):
                     #if Globals.debugFlag: halt
 
                 sectionHTML += lastHTML
-                lastMarker = marker
-                lastHTML = thisHTML
+                lastMarker, lastHTML = marker, thisHTML
 
             for lx in ('4','3','2','1'): # Close any open lists
                 if listOpen and lx in listOpen and listOpen[lx]: lastHTML += '</p>'; del listOpen[lx]
@@ -1634,8 +1647,8 @@ class BibleWriter( InternalBible ):
             sectionHTML += lastHTML
             if sectionHTML:
                 bytesWritten = handleSection( BCV, sectionHTML, htmlFile )
-                indexEntry = BCV[0],BCV[1],BCV[2],fileOffset,bytesWritten
-                createdIndex.append( indexEntry )
+                indexEntry = BCV[0],BCV[1],BCV[2],lastC,lastV,fileOffset,bytesWritten
+                currentIndex.append( indexEntry )
 
             htmlFile.close()
             #if Globals.verbosityLevel > 2 or Globals.debugFlag:
@@ -1657,33 +1670,38 @@ class BibleWriter( InternalBible ):
         writeCBBookNames()
 
         # Write the books
-        createdIndex = []
+        createdHTMLIndex = []
         for BBB,bookObject in self.books.items():
             pseudoUSFMData = bookObject._processedLines
             writeCBBookAsJSON( BBB, pseudoUSFMData )
-            writeCBBookAsHTML( BBB, pseudoUSFMData, createdIndex )
+            writeCBBookAsHTML( BBB, pseudoUSFMData, createdHTMLIndex )
 
-        if createdIndex: # Sort the main index and write it
+        if createdHTMLIndex: # Sort the main index and write it
             if Globals.verbosityLevel > 1:
                 print( "  Fixing and writing main index..." )
-            newIndex = []
-            for B,C,V,fO,rL in createdIndex:
-                intC = int( C )
-                try: intV = int( V )
+
+            def toInt( CVstring ):
+                try: return int( CVstring )
                 except:
-                    if Globals.debugFlag: assert( V )
-                    newV = ''
-                    for char in V:
-                        if char.isdigit(): newV += char
+                    if Globals.debugFlag: assert( CVstring )
+                    newCV = '0'
+                    for char in CVstring:
+                        if char.isdigit(): newCV += char
                         else: break
-                    intV = int( newV )
-                newIndex.append( (B,intC,intV,fO,rL) )
-            #createdIndex = sorted(createdIndex)
-            print( "    {} index entries created.".format( len(newIndex) ) )
+                    return int( newCV )
+            # end of toInt
+
+            newHTMLIndex = []
+            for B,C1,V1,C2,V2,fO,rL in createdHTMLIndex: # Convert strings to integers for the JSON index
+                intC1, intC2 = toInt( C1 ), toInt( C2 )
+                intV1, intV2 = toInt( V1 ), toInt( V2 )
+                newHTMLIndex.append( (B,intC1,intV1,intC2,intV2,fO,rL) )
+            #createdHTMLIndex = sorted(createdHTMLIndex)
+            print( "    {} index entries created.".format( len(newHTMLIndex) ) )
             #filepath = os.path.join( outputFolder, 'CBHeader.json' )
             if Globals.verbosityLevel > 2: print( "    toCustomBible: " +  _("Exporting index to {}...").format( destinationIndexFilepath ) )
             with open( destinationIndexFilepath, 'wt' ) as jsonFile:
-                json.dump( newIndex, jsonFile, indent=jsonIndent )
+                json.dump( newHTMLIndex, jsonFile, indent=jsonIndent )
             writeCompressions()
 
         if unhandledMarkers:
@@ -6757,16 +6775,16 @@ def demo():
         from USFMBible import USFMBible
         from USFMFilenames import USFMFilenames
         testData = ( # name, abbreviation, folder
-                ("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
-                ("USFMTest2", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
-                ("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
+                #("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
+                #("USFMTest2", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
+                #("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
                 ("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
-                ("MS-BT", "MBTBT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
-                ("MS-Notes", "MBTBC", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/",),
-                ("MS-ABT", "MBTABT", "../../../../../Data/Work/Matigsalug/Bible/MBTABT/",),
-                ("WEB", "WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/",),
-                ("WEB", "WEB", "../../../../../Data/Work/Bibles/From eBible/WEB/eng-web_usfm 2013-07-18/",),
-                ("WEB", "WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-03-05 eng-web_usfm/",),
+                #("MS-BT", "MBTBT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
+                #("MS-Notes", "MBTBC", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/",),
+                #("MS-ABT", "MBTABT", "../../../../../Data/Work/Matigsalug/Bible/MBTABT/",),
+                #("WEB", "WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/",),
+                #("WEB", "WEB", "../../../../../Data/Work/Bibles/From eBible/WEB/eng-web_usfm 2013-07-18/",),
+                #("WEB", "WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-03-05 eng-web_usfm/",),
                 ) # You can put your USFM test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData ):
