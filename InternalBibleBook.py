@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2014-04-20 by RJH (also update ProgVersion below)
+#   Last modified: 2014-04-21 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -41,7 +41,7 @@ Required improvements:
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.63"
+ProgVersion = "0.64"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -361,26 +361,24 @@ class InternalBibleBook:
             extras = InternalBibleExtraList() # Prepare for extras
 
             #print( "QQQ MOVE OUT NOTES" )
-            if self.objectTypeString in ('USFM','USX',): # Move USFM/USX footnotes and cross-references out to extras
+            if self.objectTypeString in ('USFM','USX',): # Move USFM/USX footnotes, endnotes, cross-references and figures out to extras
                 # This particular little piece of code can also mostly handle it if the markers are UPPER CASE
+                dummyValue = 99999
                 ixFN = adjText.find( '\\f ' )
                 if ixFN == -1: ixFN = adjText.find( '\\F ' )
+                if ixFN == -1: ixFN = dummyValue
+                ixEN = adjText.find( '\\fe ' )
+                if ixEN == -1: ixEN = adjText.find( '\\FE ' )
+                if ixEN == -1: ixEN = dummyValue
                 ixXR = adjText.find( '\\x ' )
                 if ixXR == -1: ixXR = adjText.find( '\\X ' )
+                if ixXR == -1: ixXR = dummyValue
                 ixFIG = adjText.find( '\\fig ' )
                 if ixFIG == -1: ixFIG = adjText.find( '\\FIG ' )
-                #print( 'ixFN =',ixFN, 'ixXR = ',ixXR )
-                while ixFN!=-1 or ixXR!=-1 or ixFIG!=-1: # We have one or the other
-                    if ixFN!=-1 and ixXR!=-1: # We have both
-                        assert( ixFN != ixXR )
-                        ix1 = min( ixFN, ixXR ) # Process the first one
-                    else: ix1 = ixFN if ixXR==-1 else ixXR
-                    if ix1!=-1 and ixFIG!=-1: # We have both again
-                        assert( ix1 != ixFIG )
-                        ix1 = min( ix1, ixFIG ) # Process the first one
-                    else: ix1 = ix1 if ixFIG==-1 else ixFIG
-                    #print( "Got", ix1, " from ", ixFN, ixXR, ixFIG )
-
+                if ixFIG == -1: ixFIG = dummyValue
+                #print( 'ixFN =',ixFN, ixEN, 'ixXR = ',ixXR, ixFIG )
+                ix1 = min( ixFN, ixEN, ixXR, ixFIG )
+                while ix1 < dummyValue: # We have one or the other
                     if ix1 == ixFN:
                         ix2 = adjText.find( '\\f*' )
                         if ix2 == -1: ix2 = adjText.find( '\\F*' )
@@ -390,6 +388,15 @@ class InternalBibleBook:
                             fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Found footnote preceded by a space in \\{}: {}").format( originalMarker, adjText ) )
                             logging.error( _("processLineFix: Found footnote preceded by a space after {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
                             self.addPriorityError( 52, c, v, _("Footnote is preceded by a space") )
+                    elif ix1 == ixEN:
+                        ix2 = adjText.find( '\\fe*' )
+                        if ix2 == -1: ix2 = adjText.find( '\\FE*' )
+                        #print( 'A', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
+                        noteSFM, lenSFM, thisOne, this1 = 'fe', 2, 'endnote', 'en'
+                        if ixEN and adjText[ixEN-1]==' ':
+                            fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Found endnote preceded by a space in \\{}: {}").format( originalMarker, adjText ) )
+                            logging.error( _("processLineFix: Found endnote preceded by a space after {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
+                            self.addPriorityError( 52, c, v, _("Endnote is preceded by a space") )
                     elif ix1 == ixXR:
                         ix2 = adjText.find( '\\x*' )
                         if ix2 == -1: ix2 = adjText.find( '\\X*' )
@@ -411,7 +418,7 @@ class InternalBibleBook:
                         logging.error( _("processLineFix: Found unmatched {} after {} {}:{} in \\{}: {}").format( thisOne, self.bookReferenceCode, c, v, thisOne, originalMarker, adjText ) )
                         self.addPriorityError( 84, c, v, _("Marker {} is unmatched").format( thisOne ) )
                         ix1, ix2 = ix2, ix1 # swap them then
-                    # Remove the footnote or xref or figure
+                    # Remove the footnote or endnote or xref or figure
                     #print( "\nFound {} at {} {} in '{}'".format( repr(thisOne), ix1, ix2, repr(adjText) ) )
                     #print( '\nB', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
                     note = adjText[ix1+lenSFM+2:ix2] # Get the note text (without the beginning and end markers)
@@ -457,10 +464,17 @@ class InternalBibleBook:
                     extras.append( InternalBibleExtra(this1,ix1,note,cleanedNote) ) # Saves a 4-tuple: type ('fn' or 'xr'), index into the main text line, the actual fn or xref contents, then a cleaned version
                     ixFN = adjText.find( '\\f ' )
                     if ixFN == -1: ixFN = adjText.find( '\\F ' )
+                    if ixFN == -1: ixFN = dummyValue
+                    ixEN = adjText.find( '\\fe ' )
+                    if ixEN == -1: ixEN = adjText.find( '\\FE ' )
+                    if ixEN == -1: ixEN = dummyValue
                     ixXR = adjText.find( '\\x ' )
                     if ixXR == -1: ixXR = adjText.find( '\\X ' )
+                    if ixXR == -1: ixXR = dummyValue
                     ixFIG = adjText.find( '\\fig ' )
                     if ixFIG == -1: ixFIG = adjText.find( '\\FIG ' )
+                    if ixFIG == -1: ixFIG = dummyValue
+                    ix1 = min( ixFN, ixEN, ixXR, ixFIG )
                 #if extras: print( "Fix gave '{}' and '{}'".format( adjText, extras ) )
                 #if len(extras)>1: print( "Mutiple fix gave '{}' and '{}'".format( adjText, extras ) )
 

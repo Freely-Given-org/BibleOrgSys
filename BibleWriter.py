@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-04-20 by RJH (also update ProgVersion below)
+#   Last modified: 2014-04-21 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -60,7 +60,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.64"
+ProgVersion = "0.65"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -230,12 +230,14 @@ class BibleWriter( InternalBible ):
                 with open( filepathPortion+'csv', 'wt' ) as csvFile:
                     with open( filepathPortion+'xml', 'wt' ) as xmlFile:
                         xmlFile.write( '<?xml version="1.0" encoding="utf-8"?>\n' ) # Write the xml header
+                        xmlFile.write( '<entries>\n' ) # root element
                         for word in sortedWords:
                             if Globals.debugFlag: assert( ' ' not in word )
                             txtFile.write( "{} {}\n".format( word, dictionary[word] ) )
                             csvFile.write( "{},{}\n".format( repr(word) if ',' in word else word, dictionary[word] ) )
                             if Globals.debugFlag: assert( '<' not in word and '>' not in word and '"' not in word )
                             xmlFile.write( "<entry><word>{}</word><count>{}</count></entry>\n".format( word, dictionary[word] ) )
+                        xmlFile.write( '</entries>' ) # close root element
             filenamePortion = typeString + "_sorted_by_count."
             filepathPortion = os.path.join( outputFolder, Globals.makeSafeFilename( filenamePortion ) )
             if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}*'...").format( filepathPortion ) )
@@ -243,12 +245,14 @@ class BibleWriter( InternalBible ):
                 with open( filepathPortion+'csv', 'wt' ) as csvFile:
                     with open( filepathPortion+'xml', 'wt' ) as xmlFile:
                         xmlFile.write( '<?xml version="1.0" encoding="utf-8"?>\n' ) # Write the xml header
+                        xmlFile.write( '<entries>\n' ) # root element
                         for word in sorted(sortedWords, key=dictionary.get):
                             if Globals.debugFlag: assert( ' ' not in word )
                             txtFile.write( "{} {}\n".format( word, dictionary[word] ) )
                             csvFile.write( "{},{}\n".format( repr(word) if ',' in word else word, dictionary[word] ) )
                             if Globals.debugFlag: assert( '<' not in word and '>' not in word and '"' not in word )
                             xmlFile.write( "<entry><word>{}</word><count>{}</count></entry>\n".format( word, dictionary[word] ) )
+                        xmlFile.write( '</entries>' ) # close root element
         # end of printWordCounts
 
 
@@ -374,6 +378,7 @@ class BibleWriter( InternalBible ):
             if Globals.verbosityLevel > 2: print( "  " + _("Adjusting USFM output..." ) )
             for verseDataEntry in pseudoUSFMData:
                 pseudoMarker, value = verseDataEntry.getMarker(), verseDataEntry.getFullText()
+                #print( BBB, pseudoMarker, repr(value) )
                 if (not USFM) and pseudoMarker!='id': # We need to create an initial id line
                     USFM += '\\id {} -- BibleOrgSys USFM export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
                 if pseudoMarker in ('c#',): continue # Ignore our additions
@@ -1404,6 +1409,9 @@ class BibleWriter( InternalBible ):
                 #print( 'have@', entry )
                 result = result.replace( '@', '~~' )
                 usageCount['~~'] += 1
+            if '^' in result:
+                print( 'have^', entry )
+                halt # CustomBible compression will fail!
             for longString, shortString in reversedCompressions:
                 if longString in result:
                     result = result.replace( longString, shortString )
@@ -1561,8 +1569,16 @@ class BibleWriter( InternalBible ):
                 #print( "\ntoCustomBible.handleSection( {} )".format( sectionHTML ) )
                 assert( sectionHTML )
                 compressedHTML = compress( sectionHTML )
-                checkHTML = decompress( compressedHTML )
-                if checkHTML != sectionHTML: halt
+                if Globals.debugFlag:
+                    checkHTML = decompress( compressedHTML )
+                    if checkHTML != sectionHTML:
+                        print( "\noriginal: {} {}".format( len(sectionHTML), repr(sectionHTML) ) )
+                        print( "\ndecompressed: {} {}".format( len(checkHTML), repr(checkHTML) ) )
+                        for ix in range( 0, min( len(sectionHTML), len(checkHTML) ) ):
+                            if checkHTML[ix] != sectionHTML[ix]:
+                                if ix > 10: print( '\n', repr(sectionHTML[ix-10:ix+2]), '\n', repr(checkHTML[ix-10:ix+2]) )
+                                print( ix, repr(sectionHTML[ix]), repr(checkHTML[ix]) ); break
+                        halt
                 #if Globals.debugFlag: compressedHTML = sectionHTML # Leave it uncompressed so we can easily look at it
                 if Globals.debugFlag: compressedHTML += '\n'
                 bytesWritten = outputFile.write( compressedHTML.encode('UTF8') )
@@ -6945,6 +6961,7 @@ def demo():
         from USFMBible import USFMBible
         from USFMFilenames import USFMFilenames
         testData = ( # name, abbreviation, folder
+                ("X","X","/mnt/SSD/AutoProcesses/Processed/BibleDropBox_Buk 2014-04-19/",),
                 #("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
                 #("USFMTest2", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
                 #("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
@@ -6954,7 +6971,7 @@ def demo():
                 #("MS-ABT", "MBTABT", "../../../../../Data/Work/Matigsalug/Bible/MBTABT/",),
                 #("WEB", "WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/",),
                 #("WEB", "WEB", "../../../../../Data/Work/Bibles/From eBible/WEB/eng-web_usfm 2013-07-18/",),
-                ("WEB", "WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-03-05 eng-web_usfm/",),
+                #("WEB", "WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-03-05 eng-web_usfm/",),
                 ) # You can put your USFM test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData ):
