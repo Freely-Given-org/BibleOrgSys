@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-04-10 by RJH (also update ProgVersion below)
+#   Last modified: 2014-04-20 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -59,7 +59,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.63"
+ProgVersion = "0.64"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -144,6 +144,7 @@ class BibleWriter( InternalBible ):
             # because unfortunately it causes a recursive linking of objects
         self.projectName = "Unknown"
         if self.name: self.projectName = self.name
+        self.discover() # Find out stats about the Bible
         self.doneSetupGeneric = True
     # end of BibleWriter.__setupWriter
 
@@ -158,6 +159,134 @@ class BibleWriter( InternalBible ):
                 #.replace( '__PROJECT_NAME__', Globals.makeSafeFilename( self.projectName.replace( ' ', '_' ) ) )
             #print( entry, repr(existingControlDict[entry]) )
     # end of BibleWriter.__adjustControlDict
+
+
+    def makeLists( self, outputFolder=None ):
+        """
+        Write the pseudo USFM out directly (for debugging, etc.).
+            May write the rawLines 2-tuples to .rSFM files (if _rawLines still exists)
+            Always writes the processed 5-tuples to .pSFM files (from _processedLines).
+        """
+        import InternalBibleBook
+        if Globals.verbosityLevel > 1: print( "Running BibleWriter:makeLists..." )
+        if Globals.debugFlag: assert( self.books )
+
+        if not self.doneSetupGeneric: self.__setupWriter()
+        if not outputFolder: outputFolder = "OutputFiles/BOS_Lists/"
+        if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
+
+
+        def countWords( marker, segment, location ):
+            """Breaks the segment into words and counts them.
+            """
+            def stripWordPunctuation( word ):
+                """Removes leading and trailing punctuation from a word.
+                    Returns the "clean" word."""
+                while word and word[0] in InternalBibleBook.leadingWordPunctChars:
+                    word = word[1:] # Remove leading punctuation
+                while word and word[-1] in InternalBibleBook.trailingWordPunctChars:
+                    word = word[:-1] # Remove trailing punctuation
+                return word
+            # end of stripWordPunctuation
+
+            words = segment.replace('—',' ').replace('–',' ').split() # Treat em-dash and en-dash as word break characters
+            for j,rawWord in enumerate(words):
+                if marker=='c' or marker=='v' and j==1 and rawWord.isdigit(): continue # Ignore the chapter and verse numbers (except ones like 6a)
+                word = rawWord
+                for internalMarker in InternalBibleBook.INTERNAL_SFMS_TO_REMOVE: word = word.replace( internalMarker, '' )
+                word = stripWordPunctuation( word )
+                if word and not word[0].isalnum():
+                    #print( word, stripWordPunctuation( word ) )
+                    if Globals.debugFlag: print( "{} {}:{} ".format( BBB, c, v ) + _("Have unexpected character starting word '{}'").format( word ) )
+                    word = word[1:]
+                if word: # There's still some characters remaining after all that stripping
+                    if Globals.verbosityLevel > 3: # why???
+                        for k,char in enumerate(word):
+                            if not char.isalnum() and (k==0 or k==len(word)-1 or char not in InternalBibleBook.medialWordPunctChars):
+                                if Globals.debugFlag: print( "{} {}:{} ".format( BBB, c, v ) + _("Have unexpected '{}' in word '{}'").format( char, word ) )
+                    lcWord = word.lower()
+                    isAReferenceOrNumber = True
+                    for char in word:
+                        if not char.isdigit() and char!=':' and char!='-' and char!=',': isAReferenceOrNumber = False; break
+                    if not isAReferenceOrNumber:
+                        allWordCounts[word] = 1 if word not in allWordCounts else allWordCounts[word] + 1
+                        allCaseInsensitiveWordCounts[lcWord] = 1 if lcWord not in allCaseInsensitiveWordCounts else allCaseInsensitiveWordCounts[lcWord] + 1
+                        if location == "main":
+                            mainTextWordCounts[word] = 1 if word not in mainTextWordCounts else mainTextWordCounts[word] + 1
+                            mainTextCaseInsensitiveWordCounts[lcWord] = 1 if lcWord not in mainTextCaseInsensitiveWordCounts else mainTextCaseInsensitiveWordCounts[lcWord] + 1
+                    #else: print( "excluded reference or number", word )
+        # end of countWords
+
+
+        def printWordCounts( typeString, dictionary ):
+            filenamePortion = typeString + "_sorted_by_word."
+            filepathPortion = os.path.join( outputFolder, Globals.makeSafeFilename( filenamePortion ) )
+            if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}*'...").format( filepathPortion ) )
+            sortedWords = sorted(dictionary)
+            with open( filepathPortion+'txt', 'wt' ) as txtFile:
+                with open( filepathPortion+'csv', 'wt' ) as csvFile:
+                    with open( filepathPortion+'xml', 'wt' ) as xmlFile:
+                        for word in sortedWords:
+                            if Globals.debugFlag: assert( ' ' not in word )
+                            txtFile.write( "{} {}\n".format( word, dictionary[word] ) )
+                            if Globals.debugFlag: assert( ',' not in word )
+                            csvFile.write( "{},{}\n".format( word, dictionary[word] ) )
+                            if Globals.debugFlag: assert( '<' not in word and '>' not in word and '"' not in word )
+                            xmlFile.write( "<entry><word>{}</word><count>{}</count></entry>\n".format( word, dictionary[word] ) )
+            filenamePortion = typeString + "_sorted_by_count."
+            filepathPortion = os.path.join( outputFolder, Globals.makeSafeFilename( filenamePortion ) )
+            if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}*'...").format( filepathPortion ) )
+            with open( filepathPortion+'txt', 'wt' ) as txtFile:
+                with open( filepathPortion+'csv', 'wt' ) as csvFile:
+                    with open( filepathPortion+'xml', 'wt' ) as xmlFile:
+                        for word in sorted(sortedWords, key=dictionary.get):
+                            if Globals.debugFlag: assert( ' ' not in word )
+                            txtFile.write( "{} {}\n".format( word, dictionary[word] ) )
+                            if Globals.debugFlag: assert( ',' not in word )
+                            csvFile.write( "{},{}\n".format( word, dictionary[word] ) )
+                            if Globals.debugFlag: assert( '<' not in word and '>' not in word and '"' not in word )
+                            xmlFile.write( "<entry><word>{}</word><count>{}</count></entry>\n".format( word, dictionary[word] ) )
+        # end of printWordCounts
+
+
+        # Initialise all our counters
+        allWordCounts, allCaseInsensitiveWordCounts = {}, {}
+        mainTextWordCounts, mainTextCaseInsensitiveWordCounts = {}, {}
+
+
+        # Determine all the counts
+        for BBB,bookObject in self.books.items():
+            c = v = '0' # Just for error messages
+            for entry in bookObject._processedLines:
+                marker, text, cleanText = entry.getMarker(), entry.getText(), entry.getCleanText()
+
+                # Keep track of where we are for more helpful error messages
+                if marker=='c' and text: c = text.split()[0]; v = '0'
+                elif marker=='v' and text: v = text.split()[0]
+
+                if text and Globals.USFMMarkers.isPrinted(marker): # process this main text
+                    countWords( marker, cleanText, "main" )
+
+                for extraType, extraIndex, extraText, cleanExtraText in entry.getExtras(): # do any footnotes and cross-references
+                    if Globals.debugFlag:
+                        assert( extraText ) # Shouldn't be blank
+                        #assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
+                        assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
+                        #print( extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
+                        assert( extraIndex >= 0 )
+                        #assert( 0 <= extraIndex <= len(text)+3 )
+                        assert( extraType in ('fn','xr',) )
+                        assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
+                    countWords( extraType, cleanExtraText, "notes" )
+
+        # Now sort the lists and write them each twice (sorted by word and sorted by count)
+        printWordCounts( "all_wordcounts", allWordCounts )
+        printWordCounts( "main_text_wordcounts", mainTextWordCounts )
+        printWordCounts( "all_wordcounts_case_insensitive", allCaseInsensitiveWordCounts )
+        printWordCounts( "main_text_wordcounts_case_insensitive", mainTextCaseInsensitiveWordCounts )
+
+        return True
+    # end of BibleWriter.makeLists
 
 
     def toPseudoUSFM( self, outputFolder=None ):
@@ -957,7 +1086,7 @@ class BibleWriter( InternalBible ):
                     if haveOpenVerse: writerObject.writeLineClose( 'span' ); haveOpenVerse = False
                     if extras: print( "toHTML5: have extras at c at",BBB,C)
                     # What should we put in here -- we don't need/want to display it, but it's a place to jump to
-                    writerObject.writeLineOpenClose( 'span', ' ', [('class','chapterStart'),('id','C'+text)] )
+                    writerObject.writeLineOpenClose( 'span', ' ', [('class','chapterStart'),('id','CS'+text)] )
                 elif marker == 'cp': pass # ignore this for now
                 elif marker == 'c#':
                     if extras: print( "toHTML5: have extras at c# at",BBB,C)
@@ -966,7 +1095,7 @@ class BibleWriter( InternalBible ):
                         logging.warning( "toHTML5: Have chapter number {} outside a paragraph in {} {}:{}".format( text, BBB, C, V ) )
                         writerObject.writeLineOpen( 'p', ('class','unknownParagraph') ); haveOpenParagraph = True
                     # Put verse 1 id here on the chapter number (since we don't output a v1 number)
-                    writerObject.writeLineOpenClose( 'span', text, [('class','chapterNumber'),('id','C'+text+'V1')] )
+                    writerObject.writeLineOpenClose( 'span', text, [('class','chapterNumber'),('id','CT'+text)] )
                     writerObject.writeLineOpenClose( 'span', '&nbsp;', ('class','chapterNumberPostspace') )
                 elif marker in ('ms1','ms2','ms3','ms4',):
                     if haveOpenVerse: writerObject.writeLineClose( 'span' ); haveOpenVerse = False
@@ -1000,7 +1129,11 @@ class BibleWriter( InternalBible ):
                     if not haveOpenParagraph:
                         logging.warning( "toHTML5: Have verse number {} outside a paragraph in {} {}:{}".format( text, BBB, C, V ) )
                     writerObject.writeLineOpen( 'span', ('class','verse') ); haveOpenVerse = True
-                    if V != '1': # Suppress number for verse 1
+                    if V == '1': # Different treatment for verse 1
+                        writerObject.writeLineOpenClose( 'span', ' ', ('class','verseOnePrespace') )
+                        writerObject.writeLineOpenClose( 'span', V, [('class','verseOneNumber'),('id','C'+C+'V'+V)] )
+                        writerObject.writeLineOpenClose( 'span', '&nbsp;', ('class','verseOnePostspace') )
+                    else: # not verse one
                         writerObject.writeLineOpenClose( 'span', ' ', ('class','verseNumberPrespace') )
                         writerObject.writeLineOpenClose( 'span', V, [('class','verseNumber'),('id','C'+C+'V'+V)] )
                         writerObject.writeLineOpenClose( 'span', '&nbsp;', ('class','verseNumberPostspace') )
@@ -1172,21 +1305,23 @@ class BibleWriter( InternalBible ):
             #('@M','</span><span class="chapterNumberPostspace">&nbsp;</span>'),
             ('@M','</span></span><span class="verse" id="C'),
             ('@s','<span class="verse" id="C'),
-            ('@N','"><span class="verseNumberPrespace"> </span><span class="verseNumber">'),
+            ('@N','"><span class="verseOnePrespace"> </span><span class="verseOneNumber">1</span><span class="verseOnePostspace">&nbsp;</span>'),
+            ('@z','"><span class="verseNumberPrespace"> </span><span class="verseNumber">'),
             #('@Y','</span><span class="verseNumberPrespace"> </span><span class="verseNumber" id="C'), # Makes bigger! Why???
             ('@O','</span><span class="verseNumberPostspace">&nbsp;</span>'),
             ('@P','</span><span class="verseNumberPostspace">&nbsp;</span><span class="verseText">'),
+            ('@U','</span><span class="verseNumberPostspace">&nbsp;</span><span class="verseText"><a class="xrefLinkSymbol" title="'),
             ('@Q','<span class="verseText">'),
             ('@R','<p class="proseParagraph"><span class="chapterNumber" id="C'),
             ('@S','<p class="proseParagraph">'),
             ('@T','<p class="proseParagraph"><span class="verse" id="C'),
             #('@T','<p class="proseParagraph"><span class="verseNumberPrespace"> </span><span class="verseNumber" id="C'),
-            ('@U','</h3><p class="proseParagraph"><span class="verse" id="C'),
+            #('@U','</h3><p class="proseParagraph"><span class="verse" id="C'),
             #('@U','</h3><p class="proseParagraph"><span class="verseNumberPrespace"> </span><span class="verseNumber" id="C'),
             ('@V','<p class="poetryParagraph1">'),
             ('@W','<p class="poetryParagraph1"><span class="verse" id="C'),
             #('@W','<p class="poetryParagraph1"><span class="verseNumberPrespace"> </span><span class="verseNumber" id="C'),
-            ('@X','<p class="poetryParagraph1"><span class="verseText">'),
+            #('@X','<p class="poetryParagraph1"><span class="verseText">'),
             ('@Y','<p class="poetryParagraph2">'),
             ('@Z','<p class="poetryParagraph3">'),
             ('@a','<p class="poetryParagraph4">'),
@@ -1208,6 +1343,7 @@ class BibleWriter( InternalBible ):
             ('@n','</h3>'),
             ('@o','</p>'),
             ('@p','</span>'),
+            ('@y','</span></span>'),
             ('@q','</span></p>'),
             ('@t','</span></span></p>'),
             ('^','">'),
@@ -1406,6 +1542,8 @@ class BibleWriter( InternalBible ):
 
         def writeCBBookAsHTML( BBB, bookData, currentIndex ):
             """
+            If the book has section headings, breaks it by section
+                otherwise breaks the book by chapter.
             """
             CBGlobals = {}
             CBGlobals['nextFootnoteIndex'] = CBGlobals['nextXRefIndex'] = 0
@@ -1426,6 +1564,10 @@ class BibleWriter( InternalBible ):
                 bytesWritten = outputFile.write( compressedHTML.encode('UTF8') )
                 return bytesWritten
             # end of writeCBBookAsHTML.handleSection
+
+            try: haveSectionHeadings = self.discoveryResults[BBB]['haveSectionHeadings']
+            except: haveSectionHeadings = False
+            #print( haveSectionHeadings, self.discoveryResults[BBB] ); halt
 
             htmlFile = open( destinationHTMLFilepathTemplate.format( BBB ), 'wb' )
             fileOffset = 0
@@ -1510,7 +1652,7 @@ class BibleWriter( InternalBible ):
                         if sOpen: lastHTML += '</section>'; sOpen = False
                     # What should we put in here -- we don't need/want to display it, but it's a place to jump to
                     # NOTE: If we include the next line, it usually goes at the end of a section where it's no use
-                    #thisHTML = '<span class="chapterStart" id="{}"></span>'.format( 'C'+C )
+                    thisHTML = '<span class="chapterStart" id="{}"></span>'.format( 'CT'+C )
                 elif marker == 'cp': # ignore this for now
                     logging.error( "toCustomBible: ignored cp field {} for {}".format( repr(text), C ) )
                 elif marker in ('ms1','ms2','ms3','ms4',):
@@ -1560,8 +1702,8 @@ class BibleWriter( InternalBible ):
 
                 elif marker == 'c#':
                     #if extras: print( "have extras at c# at",BBB,C); halt
-                    #thisHTML += '<span class="chapterNumber" id="{}">{}</span>'.format( 'C'+C+'V1', text )
-                    thisHTML += '<span class="chapterNumber">{}</span>'.format( text )
+                    thisHTML += '<span class="chapterNumber" id="{}">{}</span>'.format( 'CS'+C, text )
+                    #thisHTML += '<span class="chapterNumber">{}</span>'.format( text )
                     thisHTML += '<span class="chapterNumberPostspace">&nbsp;</span>'
                 elif marker in ('p','m','pmo','pm','pmc','pmr','pi1','pi2','pi3','pi4','mi','cls','pc','pr','ph1','ph2','ph3','ph4',) \
                 or marker in ('q1','q2','q3','q4','qr','qc','qm1','qm2','qm3','qm4',):
@@ -1590,7 +1732,11 @@ class BibleWriter( InternalBible ):
                     V = text
                     if sJustOpened: BCV=(BBB,C,V)
                     thisHTML += '<span class="verse" id="{}">'.format( 'C'+C+'V'+V ); vOpen = True
-                    if V != '1': # Suppress number for verse 1
+                    if V == '1': # Different treatment for verse 1
+                        thisHTML += '<span class="verseOnePrespace"> </span>'
+                        thisHTML += '<span class="verseOneNumber">{}</span>'.format( text )
+                        thisHTML += '<span class="verseOnePostspace">&nbsp;</span>'
+                    else: # not verse one
                         thisHTML += '<span class="verseNumberPrespace"> </span>'
                         thisHTML += '<span class="verseNumber">{}</span>'.format( text )
                         thisHTML += '<span class="verseNumberPostspace">&nbsp;</span>'
@@ -6541,7 +6687,8 @@ class BibleWriter( InternalBible ):
 
         # Define our various output folders
         pickleOutputFolder = os.path.join( givenOutputFolderName, "BOS_Bible_Object_Pickle/" )
-        PseudoUSFMOutputFolder = os.path.join( givenOutputFolderName, "BOS_PseudoUSFM_" + "Export/" )
+        listOutputFolder = os.path.join( givenOutputFolderName, "BOS_Lists/" )
+        pseudoUSFMOutputFolder = os.path.join( givenOutputFolderName, "BOS_PseudoUSFM_" + "Export/" )
         USFMOutputFolder = os.path.join( givenOutputFolderName, "BOS_USFM_" + ("Reexport/" if self.objectTypeString=='USFM' else "Export/" ) )
         textOutputFolder = os.path.join( givenOutputFolderName, "BOS_PlainText_" + ("Reexport/" if self.objectTypeString=='Text' else "Export/" ) )
         htmlOutputFolder = os.path.join( givenOutputFolderName, "BOS_HTML5_" + "Export/" )
@@ -6564,7 +6711,7 @@ class BibleWriter( InternalBible ):
 
         if not wantPhotoBible:
             if Globals.verbosityLevel > 2: print( "BibleWriter.doAllExports: " + _("Skipping PhotoBible export") )
-            PhotoExportResult = None
+            PhotoBibleExportResult = None
         if not wantPDFs:
             if Globals.verbosityLevel > 2: print( "BibleWriter.doAllExports: " + _("Skipping TeX/PDF export") )
             TeXExportResult = None
@@ -6580,9 +6727,10 @@ class BibleWriter( InternalBible ):
                 print( "BibleWriter.doAllExports: pickle( {} ) failed.".format( pickleOutputFolder ) )
 
         if Globals.debugFlag:
-            PseudoUSFMExportResult = self.toPseudoUSFM( PseudoUSFMOutputFolder )
+            listOutputResult = self.makeLists( listOutputFolder )
+            pseudoUSFMExportResult = self.toPseudoUSFM( pseudoUSFMOutputFolder )
             USFMExportResult = self.toUSFM( USFMOutputFolder )
-            TextExportResult = self.toText( textOutputFolder )
+            textExportResult = self.toText( textOutputFolder )
             htmlExportResult = self.toHTML5( htmlOutputFolder )
             CBExportResult = self.toCustomBible( CBOutputFolder )
             MWExportResult = self.toMediaWiki( MWOutputFolder )
@@ -6598,7 +6746,7 @@ class BibleWriter( InternalBible ):
             ESwExportResult = self.toESword( ESwOutputFolder )
             SwSExportResult = self.toSwordSearcher( SwSOutputFolder )
             DrExportResult = self.toDrupalBible( DrOutputFolder )
-            if wantPhotoBible: PhotoExportResult = self.toPhotoBible( photoOutputFolder )
+            if wantPhotoBible: PhotoBibleExportResult = self.toPhotoBible( photoOutputFolder )
             if wantPDFs: TeXExportResult = self.toTeX( TeXOutputFolder ) # Put this last since it's slowest
         elif Globals.maxProcesses > 1: # Process all the exports with different threads
             # DON'T KNOW WHY THIS CAUSES A SEGFAULT
@@ -6627,12 +6775,17 @@ class BibleWriter( InternalBible ):
                 htmlExportResult = results[6]
                 SwSExportResult = results[6]
                 DrExportResult = results[7]
-                if wantPhotoBible: PhotoExportResult = results[0]
+                if wantPhotoBible: PhotoBibleExportResult = results[0]
                 if wantPDFs: TeXExportResult = results[6]
         else: # Just single threaded and not debugging
-            try: PseudoUSFMExportResult = self.toPseudoUSFM( PseudoUSFMOutputFolder )
+            try: listOutputResult = self.makeLists( listOutputFolder )
             except Exception as err:
-                PseudoUSFMExportResult = False
+                listOutputResult = False
+                print("BibleWriter.doAllExports.makeLists Unexpected error:", sys.exc_info()[0], err)
+                logging.error( "BibleWriter.doAllExports.makeLists: Oops, failed!" )
+            try: pseudoUSFMExportResult = self.toPseudoUSFM( pseudoUSFMOutputFolder )
+            except Exception as err:
+                pseudoUSFMExportResult = False
                 print("BibleWriter.doAllExports.toPseudoUSFM Unexpected error:", sys.exc_info()[0], err)
                 logging.error( "BibleWriter.doAllExports.toPseudoUSFM: Oops, failed!" )
             try: USFMExportResult = self.toUSFM( USFMOutputFolder )
@@ -6640,9 +6793,9 @@ class BibleWriter( InternalBible ):
                 USFMExportResult = False
                 print("BibleWriter.doAllExports.toUSFM Unexpected error:", sys.exc_info()[0], err)
                 logging.error( "BibleWriter.doAllExports.toUSFM: Oops, failed!" )
-            try: TextExportResult = self.toText( textOutputFolder )
+            try: textExportResult = self.toText( textOutputFolder )
             except Exception as err:
-                TextExportResult = False
+                textExportResult = False
                 print("BibleWriter.doAllExports.toText Unexpected error:", sys.exc_info()[0], err)
                 logging.error( "BibleWriter.doAllExports.toText: Oops, failed!" )
             try: htmlExportResult = self.toHTML5( htmlOutputFolder )
@@ -6721,9 +6874,9 @@ class BibleWriter( InternalBible ):
                 print("BibleWriter.doAllExports.toDrupalBible Unexpected error:", sys.exc_info()[0], err)
                 logging.error( "BibleWriter.doAllExports.toDrupalBible: Oops, failed!" )
             if wantPhotoBible:
-                try: PhotoExportResult = self.toPhotoBible( photoOutputFolder )
+                try: PhotoBibleExportResult = self.toPhotoBible( photoOutputFolder )
                 except Exception as err:
-                    PhotoExportResult = False
+                    PhotoBibleExportResult = False
                     print("BibleWriter.doAllExports.toPhotoBible Unexpected error:", sys.exc_info()[0], err)
                     logging.error( "BibleWriter.doAllExports.toPhotoBible: Oops, failed!" )
             if wantPDFs: # Do TeX export last because it's slowest
@@ -6734,22 +6887,22 @@ class BibleWriter( InternalBible ):
                     logging.error( "BibleWriter.doAllExports.toTeX: Oops, failed!" )
 
         if Globals.verbosityLevel > 1:
-            if pickleResult and PseudoUSFMExportResult and USFMExportResult and CBExportResult and TextExportResult \
-            and (PhotoExportResult or not wantPhotoBible) \
+            if pickleResult and listOutputResult and pseudoUSFMExportResult and USFMExportResult and CBExportResult \
+            and textExportResult and (PhotoBibleExportResult or not wantPhotoBible) \
             and TWExportResult and MySwExportResult and ESwExportResult and MWExportResult \
             and ZefExportResult and HagExportResult and OSExportResult and USXExportResult and USFXExportResult \
             and OSISExportResult and swExportResult and htmlExportResult and SwSExportResult and DrExportResult \
             and (TeXExportResult or not wantPDFs):
                 print( "BibleWriter.doAllExports finished them all successfully!" )
-            else: print( "BibleWriter.doAllExports finished:  Pck={}  PsUSFM={} USFM={}  CB={}  Tx={}  PB={} TW={} MySw={} eSw={}  MW={}  Zef={} Hag={} OS={} USX={} USFX={} OSIS={}  Sw={}  HTML={} TeX={} SwS={} Dr={}" \
-                    .format( pickleResult, PseudoUSFMExportResult, USFMExportResult, CBExportResult, TextExportResult,
-                                PhotoExportResult, TWExportResult, MySwExportResult, ESwExportResult, MWExportResult,
+            else: print( "BibleWriter.doAllExports finished:  Pck={}  Lst={}  PsUSFM={} USFM={}  CB={}  Tx={}  PB={} TW={} MySw={} eSw={}  MW={}  Zef={} Hag={} OS={} USX={} USFX={} OSIS={}  Sw={}  HTML={} TeX={} SwS={} Dr={}" \
+                    .format( pickleResult, listOutputResult, pseudoUSFMExportResult, USFMExportResult, CBExportResult,
+                                textExportResult, PhotoBibleExportResult, TWExportResult, MySwExportResult, ESwExportResult, MWExportResult,
                                 ZefExportResult, HagExportResult, OSExportResult, USXExportResult, USFXExportResult,
                                 OSISExportResult, swExportResult, htmlExportResult, TeXExportResult,
                                 SwSExportResult, DrExportResult ) )
         return { 'Pickle':pickleResult,
-                    'PseudoUSFMExport':PseudoUSFMExportResult, 'USFMExport':USFMExportResult,
-                    'CustomBibleExport':CBExportResult,  'TextExport':TextExportResult, 'PhotoExport':PhotoExportResult,
+                    'listOutput':listOutputResult, 'pseudoUSFMExport':pseudoUSFMExportResult, 'USFMExport':USFMExportResult,
+                    'CustomBibleExport':CBExportResult,  'textExport':textExportResult, 'PhotoBibleExport':PhotoBibleExportResult,
                     'TWExport':TWExportResult, 'MySwExport':MySwExportResult, 'ESwExport':ESwExportResult,
                     'MWExport':MWExportResult, 'ZefExport':ZefExportResult, 'HagExport':HagExportResult, 'OSExport':OSExportResult,
                     'USXExport':USXExportResult, 'USFXExport':USFXExportResult, 'OSISExport':OSISExportResult, 'swExport':swExportResult,

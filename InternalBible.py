@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2014-03-17 by RJH (also update ProgVersion below)
+#   Last modified: 2014-04-17 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -415,7 +415,7 @@ class InternalBible:
     def discover( self ):
         """Runs a series of checks and count on each book of the Bible
             in order to try to determine what are the normal standards."""
-        #print( "\nInternalBible:discover" )
+        print( "InternalBible:discover" )
         self.discoveryResults = OrderedDict()
 
         # Get our recommendations for added units -- only load this once per Bible
