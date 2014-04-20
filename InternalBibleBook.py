@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2014-03-31 by RJH (also update ProgVersion below)
+#   Last modified: 2014-04-20 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -41,7 +41,7 @@ Required improvements:
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.62"
+ProgVersion = "0.63"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -65,7 +65,7 @@ trailingWordPunctChars = """,.”»"’›'?)!;:]}>"""
 allWordPunctChars = leadingWordPunctChars + medialWordPunctChars + dashes + trailingWordPunctChars
 
 
-PSEUDO_USFM_MARKERS = ( 'c~', 'c#', 'v-', 'v+', 'v~', 'vw', 'g', 'p~', )
+PSEUDO_USFM_MARKERS = ( 'c~', 'c#', 'v-', 'v+', 'v~', 'vw', 'g', 'p~', 'cl=', )
 """
     c~  anything after the chapter number on a \c line
     c#  the chapter number (duplicated) in the correct position to be printed -- can be ignored for exporting
@@ -873,6 +873,10 @@ class InternalBibleBook:
                 v = '0'
                 if Globals.debugFlag: assert( haveWaitingC ) # coz this should follow the c and precede the v
                 haveWaitingC = text # We need to use this one instead of the c text
+            elif originalMarker=='cl' and text:
+                if Globals.debugFlag: assert( v == '0' ) # coz this should precede the first c, or follow the c and precede the v
+                if c == '0': # it's before the first c
+                    adjustedMarker = 'cl=' # to distinguish it from the ones after the c's
             elif originalMarker=='v' and text:
                 vBits = splitVNumber( text )
                 v = vBits[0] # Get the actual verse number
@@ -1258,7 +1262,7 @@ class InternalBibleBook:
         if Globals.debugFlag:
             assert( self._processedLines )
             assert( fieldName and isinstance( fieldName, str ) )
-        adjFieldName = Globals.USFMMarkers.toStandardMarker( fieldName )
+        adjFieldName = fieldName if fieldName in ('cl=',) else Globals.USFMMarkers.toStandardMarker( fieldName )
 
         for entry in self._processedLines:
             if entry.getMarker() == adjFieldName:
@@ -1312,6 +1316,11 @@ class InternalBibleBook:
             #if toc3Field.isupper(): toc3Field = toc3Field.title()
             results.append( toc3Field )
             self.booknameAbbreviation = toc3Field
+
+        clField = self.getField( 'cl=' ) # Chapter label for whole book (cl before ch.1 -> cl= in processLine)
+        if clField:
+            #print( "Got cl of", repr(clField) )
+            self.chapterLabel = clField
 
         if not results: # no helpful fields in file -- just use an English name
             results.append( Globals.BibleBooksCodes.getEnglishName_NR( self.bookReferenceCode ) )
@@ -2620,7 +2629,7 @@ class InternalBibleBook:
                     lcWord = word.lower()
                     isAReferenceOrNumber = True
                     for char in word:
-                        if not char.isdigit() and char!=':' and char!='-' and char!=',': isAReferenceOrNumber = False; break
+                        if not char.isdigit() and char not in ':-,.': isAReferenceOrNumber = False; break
                     if not isAReferenceOrNumber:
                         wordCounts[word] = 1 if word not in wordCounts else wordCounts[word] + 1
                         caseInsensitiveWordCounts[lcWord] = 1 if lcWord not in caseInsensitiveWordCounts else caseInsensitiveWordCounts[lcWord] + 1

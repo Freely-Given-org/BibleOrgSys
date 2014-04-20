@@ -34,6 +34,7 @@ This is intended to be a virtual class, i.e., to be extended further
     by classes which load particular kinds of Bibles (e.g., OSIS, USFM, USX, etc.)
 
 Contains functions:
+    makeLists( outputFolder=None )
     toPseudoUSFM( outputFolder=None ) -- this is our internal Bible format -- exportable for debugging purposes
             For more details see InternalBible.py, InternalBibleBook.py, InternalBibleInternals.py
     toUSFM( outputFolder=None )
@@ -177,7 +178,7 @@ class BibleWriter( InternalBible ):
 
 
         def countWords( marker, segment, location ):
-            """Breaks the segment into words and counts them.
+            """ Breaks the segment into words and counts them.
             """
             def stripWordPunctuation( word ):
                 """Removes leading and trailing punctuation from a word.
@@ -207,7 +208,7 @@ class BibleWriter( InternalBible ):
                     lcWord = word.lower()
                     isAReferenceOrNumber = True
                     for char in word:
-                        if not char.isdigit() and char!=':' and char!='-' and char!=',': isAReferenceOrNumber = False; break
+                        if not char.isdigit() and char not in ':-,.': isAReferenceOrNumber = False; break
                     if not isAReferenceOrNumber:
                         allWordCounts[word] = 1 if word not in allWordCounts else allWordCounts[word] + 1
                         allCaseInsensitiveWordCounts[lcWord] = 1 if lcWord not in allCaseInsensitiveWordCounts else allCaseInsensitiveWordCounts[lcWord] + 1
@@ -219,6 +220,8 @@ class BibleWriter( InternalBible ):
 
 
         def printWordCounts( typeString, dictionary ):
+            """ Given a description and a dictionary,
+                    sorts and writes the word count data to text, csv, and xml files. """
             filenamePortion = typeString + "_sorted_by_word."
             filepathPortion = os.path.join( outputFolder, Globals.makeSafeFilename( filenamePortion ) )
             if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}*'...").format( filepathPortion ) )
@@ -230,8 +233,7 @@ class BibleWriter( InternalBible ):
                         for word in sortedWords:
                             if Globals.debugFlag: assert( ' ' not in word )
                             txtFile.write( "{} {}\n".format( word, dictionary[word] ) )
-                            if Globals.debugFlag: assert( ',' not in word )
-                            csvFile.write( "{},{}\n".format( word, dictionary[word] ) )
+                            csvFile.write( "{},{}\n".format( repr(word) if ',' in word else word, dictionary[word] ) )
                             if Globals.debugFlag: assert( '<' not in word and '>' not in word and '"' not in word )
                             xmlFile.write( "<entry><word>{}</word><count>{}</count></entry>\n".format( word, dictionary[word] ) )
             filenamePortion = typeString + "_sorted_by_count."
@@ -244,8 +246,7 @@ class BibleWriter( InternalBible ):
                         for word in sorted(sortedWords, key=dictionary.get):
                             if Globals.debugFlag: assert( ' ' not in word )
                             txtFile.write( "{} {}\n".format( word, dictionary[word] ) )
-                            if Globals.debugFlag: assert( ',' not in word )
-                            csvFile.write( "{},{}\n".format( word, dictionary[word] ) )
+                            csvFile.write( "{},{}\n".format( repr(word) if ',' in word else word, dictionary[word] ) )
                             if Globals.debugFlag: assert( '<' not in word and '>' not in word and '"' not in word )
                             xmlFile.write( "<entry><word>{}</word><count>{}</count></entry>\n".format( word, dictionary[word] ) )
         # end of printWordCounts
@@ -1175,8 +1176,8 @@ class BibleWriter( InternalBible ):
                     if text or extras:
                         writerObject.writeLineOpenClose( 'span', BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, ourGlobals ), ('class','verseText'), noTextCheck=True )
 
-                elif marker in ('nb',): # These are the markers that we can safely ignore for this export
-                    if Globals.debugFlag: assert( not text and not extras )
+                elif marker in ('nb','cl=','cl',): # These are the markers that we can safely ignore for this export
+                    if Globals.debugFlag and marker=='nb': assert( not text and not extras )
                 else:
                     if text:
                         logging.critical( "toHTML5: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
@@ -1298,6 +1299,7 @@ class BibleWriter( InternalBible ):
             ('@E','<h3 class="outlineTitle">'),
             ('@F','<p class="outlineEntry'), # numbered
             ('@G','<section class="regularSection">'),
+            ('@u','<section class="chapterSection">'),
             ('@H','<section class="regularSection"><h3 class="sectionHeading1">'),
             ('@I','<p class="sectionCrossReference">'),
             ('@J','<span class="chapterStart" id="C'),
@@ -1569,7 +1571,7 @@ class BibleWriter( InternalBible ):
 
             try: haveSectionHeadings = self.discoveryResults[BBB]['haveSectionHeadings']
             except: haveSectionHeadings = False
-            #print( haveSectionHeadings, self.discoveryResults[BBB] ); halt
+            #print( haveSectionHeadings, BBB ) #, self.discoveryResults[BBB] )
 
             htmlFile = open( destinationHTMLFilepathTemplate.format( BBB ), 'wb' )
             fileOffset = 0
@@ -1584,7 +1586,7 @@ class BibleWriter( InternalBible ):
             for dataLine in bookData:
                 thisHTML = ''
                 marker, text, extras = dataLine.getMarker(), dataLine.getAdjustedText(), dataLine.getExtras()
-                #print( "toCB: {}:{}".format( marker, repr(text) ) )
+                #print( " toCB: {} {}:{} {}:{}".format( BBB, C, V, marker, repr(text) ) )
 
                 # Markers usually only found in the introduction
                 if marker in oftenIgnoredIntroMarkers: pass # Just ignore these lines
@@ -1649,19 +1651,31 @@ class BibleWriter( InternalBible ):
                     if vOpen: lastHTML += '</span>'; vOpen = False
                     #if extras: print( "have extras at c at",BBB,C); halt
                     C, V = text, '0'
-                    if C=='1': # Must be the end of the introduction -- so close that section
+                    if not haveSectionHeadings: # Treat each chapter as a new section
+                        if pOpen: lastHTML += '</p>'; pOpen = False
+                        if sOpen: lastHTML += '</section>'; sOpen = False
+                        if lastHTML or sectionHTML:
+                            sectionHTML += lastHTML
+                            lastHTML = ''
+                            bytesWritten = handleSection( BCV, sectionHTML, htmlFile )
+                            sectionHTML = ''
+                            indexEntry = BCV[0],BCV[1],BCV[2],lastC,lastV,fileOffset,bytesWritten
+                            currentIndex.append( indexEntry )
+                            fileOffset += bytesWritten
+                        thisHTML += '<section class="chapterSection">'; sOpen = sJustOpened = True; BCV=(BBB,C,V)
+                    elif C=='1': # Must be the end of the introduction -- so close that section
                         if pOpen: lastHTML += '</p>'; pOpen = False
                         if sOpen: lastHTML += '</section>'; sOpen = False
                     # What should we put in here -- we don't need/want to display it, but it's a place to jump to
                     # NOTE: If we include the next line, it usually goes at the end of a section where it's no use
-                    thisHTML = '<span class="chapterStart" id="{}"></span>'.format( 'CT'+C )
+                    thisHTML += '<span class="chapterStart" id="{}"></span>'.format( 'CT'+C )
                 elif marker == 'cp': # ignore this for now
                     logging.error( "toCustomBible: ignored cp field {} for {}".format( repr(text), C ) )
                 elif marker in ('ms1','ms2','ms3','ms4',):
                     if vOpen: lastHTML += '</span>'; vOpen = False
                     if pOpen: lastHTML += '</p>'; pOpen = False
                     if sOpen: lastHTML += '</section>'; sOpen = False
-                    if sectionHTML:
+                    if lastHTML or sectionHTML:
                         sectionHTML += lastHTML
                         lastHTML = ''
                         bytesWritten = handleSection( BCV, sectionHTML, htmlFile )
@@ -1671,11 +1685,12 @@ class BibleWriter( InternalBible ):
                         fileOffset += bytesWritten
                     thisHTML += '<h2 class="majorSectionHeading{}">{}</h2>'.format( marker[2], text )
                 elif marker in ('s1','s2','s3','s4'):
+                    if Globals.debugFlag: assert( haveSectionHeadings )
                     if vOpen: lastHTML += '</span>'; vOpen = False
                     if marker == 's1':
                         if pOpen: lastHTML += '</p>'; pOpen = False
                         if sOpen: lastHTML += '</section>'; sOpen = False
-                        if sectionHTML:
+                        if lastHTML or sectionHTML:
                             sectionHTML += lastHTML
                             lastHTML = ''
                             bytesWritten = handleSection( BCV, sectionHTML, htmlFile )
@@ -1717,7 +1732,7 @@ class BibleWriter( InternalBible ):
                         thisHTML += '</p>'; pOpen = False
                         if Globals.debugFlag: thisHTML += '\n'
                     elif not sOpen:
-                        if sectionHTML:
+                        if lastHTML or sectionHTML:
                             sectionHTML += lastHTML
                             lastHTML = ''
                             bytesWritten = handleSection( BCV, sectionHTML, htmlFile )
@@ -1770,8 +1785,8 @@ class BibleWriter( InternalBible ):
                     if Globals.debugFlag: assert( not text )
                     thisHTML += '<p class="blankParagraph"></p>'
 
-                elif marker in ('nb',): # These are the markers that we can safely ignore for this export
-                    if Globals.debugFlag: assert( not text and not extras )
+                elif marker in ('nb','cl=','cl',): # These are the markers that we can safely ignore for this export
+                    if Globals.debugFlag and marker=='nb': assert( not text and not extras )
                 else:
                     if text:
                         logging.critical( "toCustomBible: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
@@ -6933,13 +6948,13 @@ def demo():
                 #("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
                 #("USFMTest2", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
                 #("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
-                ("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
+                #("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
                 #("MS-BT", "MBTBT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
                 #("MS-Notes", "MBTBC", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/",),
                 #("MS-ABT", "MBTABT", "../../../../../Data/Work/Matigsalug/Bible/MBTABT/",),
                 #("WEB", "WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/",),
                 #("WEB", "WEB", "../../../../../Data/Work/Bibles/From eBible/WEB/eng-web_usfm 2013-07-18/",),
-                #("WEB", "WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-03-05 eng-web_usfm/",),
+                ("WEB", "WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-03-05 eng-web_usfm/",),
                 ) # You can put your USFM test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData ):
