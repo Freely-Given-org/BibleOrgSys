@@ -226,6 +226,7 @@ class BibleWriter( InternalBible ):
             with open( filepathPortion+'txt', 'wt' ) as txtFile:
                 with open( filepathPortion+'csv', 'wt' ) as csvFile:
                     with open( filepathPortion+'xml', 'wt' ) as xmlFile:
+                        xmlFile.write( '<?xml version="1.0" encoding="utf-8"?>\n' ) # Write the xml header
                         for word in sortedWords:
                             if Globals.debugFlag: assert( ' ' not in word )
                             txtFile.write( "{} {}\n".format( word, dictionary[word] ) )
@@ -239,6 +240,7 @@ class BibleWriter( InternalBible ):
             with open( filepathPortion+'txt', 'wt' ) as txtFile:
                 with open( filepathPortion+'csv', 'wt' ) as csvFile:
                     with open( filepathPortion+'xml', 'wt' ) as xmlFile:
+                        xmlFile.write( '<?xml version="1.0" encoding="utf-8"?>\n' ) # Write the xml header
                         for word in sorted(sortedWords, key=dictionary.get):
                             if Globals.debugFlag: assert( ' ' not in word )
                             txtFile.write( "{} {}\n".format( word, dictionary[word] ) )
