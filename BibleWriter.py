@@ -580,51 +580,58 @@ class BibleWriter( InternalBible ):
                 <p id="FNote2" class="Footnote"><a title="Go back up to 4:11 in the text" href="#C4V11"><span class="ChapterVerse">4:11 </span></a><a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">Kene</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="adj. clear" href="../../Lexicon/Details/klaru.htm"><span class="WordLink">klaru</span></a> <a title="diya" href="../../Lexicon/indexLD-80.htm#diyav"><span class="WordLink">diye</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="adj. true (lehet)" href="../../Lexicon/Details/lehet1.htm"><span class="WordLink">malehet</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="migpuun" href="../../Lexicon/Details/puun.htm"><span class="WordLink">migpuunan</span></a> <a title="ke" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ke</span></a> <a title="n. other" href="../../Lexicon/Details/lein.htm"><span class="WordLink">lein</span></a> <a title="e" href="../../Lexicon/indexLA-77.htm#a"><span class="WordLink">e</span></a> <a title="part. also" href="../../Lexicon/Details/degma.htm"><span class="WordLink">degma</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="n. place" href="../../Lexicon/Details/inged.htm"><span class="WordLink">inged</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <span class="NameWordLink">Iprata</span>. <a title="kahiyen" href="../../Lexicon/Details/kahi.htm"><span class="WordLink">Kahiyen</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="adj. other" href="../../Lexicon/Details/duma.htm"><span class="WordLink">duma</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <span class="NameWordLink">Iprata</span> <a title="dem. that" href="../../Lexicon/Details/iyan.htm"><span class="WordLink">iyan</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="tapey" href="../../Lexicon/indexLT-96.htm#tapey1"><span class="WordLink">tapey</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="n. name" href="../../Lexicon/Details/ngaran.htm"><span class="WordLink">ngaran</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="See glossary entry for Bitlihim" href="../indexGlossary.htm#Bitlihim"><span class="WordLink">Bitlihim</span><span class="GlossaryLinkSymbol"><sup>[gl]</sup></span></a>.</p></div>
                 """
                 markerList = Globals.USFMMarkers.getMarkerListFromText( HTML5footnote, includeInitialText=True )
-                #print( "formatHTMLVerseText.processFootnote( {}, {} ) gives {}".format( repr(HTML5footnote), ourGlobals, markerDict ) )
+                #print( "formatHTMLVerseText.processFootnote( {}, {} ) found {}".format( repr(HTML5footnote), ourGlobals, markerList ) )
                 fnIndex = ourGlobals['nextFootnoteIndex']; ourGlobals['nextFootnoteIndex'] += 1
                 caller = origin = originCV = fnText = fnTitle = ''
-                spanOpen = False
-                for marker, ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt in markerList:
+                if markerList: # We found some internal footnote markers
+                    spanOpen = False
+                    for marker, ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt in markerList:
+                        if spanOpen: fnText += '</span>'; spanOpen = False
+                        if marker is None:
+                            #if txt not in '-+': # just a caller
+                            caller = txt
+                        elif marker == 'fr':
+                            origin = txt
+                            originCV = origin
+                            if originCV and originCV[-1] in (':','.'): originCV = originCV[:-1]
+                            originCV = originCV.strip()
+                        elif marker == 'ft':
+                            fnText += txt
+                            fnTitle += txt
+                        elif marker == 'fk':
+                            fnText += '<span class="footnoteKeyword">' + txt
+                            fnTitle += txt
+                            spanOpen = True
+                        elif marker == 'fq':
+                            fnText += '<span class="footnoteTranslationQuotation">' + txt
+                            fnTitle += txt
+                            spanOpen = True
+                        elif marker == 'fqa':
+                            fnText += '<span class="footnoteAlternateTranslation">' + txt
+                            fnTitle += txt
+                            spanOpen = True
+                        elif marker == 'fl':
+                            fnText += '<span class="footnoteLabel">' + txt
+                            fnTitle += txt
+                            spanOpen = True
+                        #elif marker == Should handle other internal markers here
+                        else:
+                            logging.error( "formatHTMLVerseText.processFootnote didn't handle {} {}:{} footnote marker: {}".format( BBB, C, V, marker ) )
+                            fnText += txt
+                            fnTitle += txt
                     if spanOpen: fnText += '</span>'; spanOpen = False
-                    if marker is None:
-                        #if txt not in '-+': # just a caller
-                        caller = txt
-                    elif marker == 'fr':
-                        origin = txt
-                        originCV = origin
-                        if originCV and originCV[-1] in (':','.'): originCV = originCV[:-1]
-                        originCV = originCV.strip()
-                    elif marker == 'ft':
-                        fnText += txt
-                        fnTitle += txt
-                    elif marker == 'fk':
-                        fnText += '<span class="footnoteKeyword">' + txt
-                        fnTitle += txt
-                        spanOpen = True
-                    elif marker == 'fq':
-                        fnText += '<span class="footnoteTranslationQuotation">' + txt
-                        fnTitle += txt
-                        spanOpen = True
-                    elif marker == 'fqa':
-                        fnText += '<span class="footnoteAlternateTranslation">' + txt
-                        fnTitle += txt
-                        spanOpen = True
-                    elif marker == 'fl':
-                        fnText += '<span class="footnoteLabel">' + txt
-                        fnTitle += txt
-                        spanOpen = True
-                    #elif marker == Should handle other internal markers here
-                    else:
-                        logging.error( "formatHTMLVerseText.processFootnote didn't handle {} {}:{} footnote marker: {}".format( BBB, C, V, marker ) )
-                        fnText += txt
-                        fnTitle += txt
-                if spanOpen: fnText += '</span>'; spanOpen = False
-
+                else: # no internal markers found
+                    bits = HTML5footnote.split( ' ', 1 )
+                    if len(bits)==2: # assume the caller is the first bit
+                        caller = bits[0]
+                        fnText = fnTitle = bits[1]
+                    else: # no idea really what the format was
+                        fnText = fnTitle = HTML5footnote
                 footnoteHTML5 = '<a class="footnoteLinkSymbol" title="{}" href="#FNote{}">[fn]</a>' \
                                 .format( fnTitle, fnIndex )
 
                 endHTML5 = '<p id="FNote{}" class="footnote">'.format( fnIndex )
-                if originCV: # This only handles CV separator of : so far
+                if originCV:
                     endHTML5 += '<a class="footnoteOrigin" title="Go back up to {} in the text" href="{}">{}</a> ' \
                                                         .format( originCV, liveCV(originCV), origin )
                 endHTML5 += '<span class="footnoteEntry">{}</span>'.format( fnText )
@@ -2325,7 +2332,7 @@ class BibleWriter( InternalBible ):
                 elif marker in ('d','sp',):
                     #assert( cleanText or extras )
                     textBuffer += '\n' + cleanText
-                elif marker not in ('c#',): # These are the markers that we can safely ignore for this export
+                elif marker not in ('c#','cl=',): # These are the markers that we can safely ignore for this export
                     if cleanText:
                         logging.critical( "toPhotoBible: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(cleanText) ) )
                         if Globals.debugFlag: halt
@@ -6961,11 +6968,10 @@ def demo():
         from USFMBible import USFMBible
         from USFMFilenames import USFMFilenames
         testData = ( # name, abbreviation, folder
-                ("X","X","/mnt/SSD/AutoProcesses/Processed/BibleDropBox_Buk 2014-04-19/",),
                 #("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
                 #("USFMTest2", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
                 #("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
-                #("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
+                ("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
                 #("MS-BT", "MBTBT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
                 #("MS-Notes", "MBTBC", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/",),
                 #("MS-ABT", "MBTABT", "../../../../../Data/Work/Matigsalug/Bible/MBTABT/",),
