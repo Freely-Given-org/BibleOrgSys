@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2014-04-21 by RJH (also update ProgVersion below)
+#   Last modified: 2014-04-23 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -41,7 +41,7 @@ Required improvements:
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.64"
+ProgVersion = "0.65"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -1237,6 +1237,7 @@ class InternalBibleBook:
                     logging.error( _("Missing verse number after") + " {} {}:{}".format( self.bookReferenceCode, c, v ) )
 
             # Temporarily substitute some markers just to make this check go easier
+            if marker == 'c~': marker = 'v'
             if marker == 'v~': marker = 'v'
             if marker == 'p~': marker = 'v'
 
@@ -1244,23 +1245,28 @@ class InternalBibleBook:
             if marker=='id' and j!=0:
                 validationErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Marker 'id' should only appear as the first marker in a book but found on line {} in {}: {}").format( j+1, marker, text ) )
                 logging.error( _("Marker 'id' should only appear as the first marker in a book but found on line {} after {} {}:{} in {}: {}").format( j+1, self.bookReferenceCode, c, v, marker, text ) )
+                self.addPriorityError( 99, c, v, _("'id' marker should only be in first line of file") )
             if not Globals.USFMMarkers.isNewlineMarker( marker ) and marker not in ('c#',):
                 validationErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Unexpected '\\{}' newline marker in Bible book (Text is '{}')").format( marker, text ) )
                 logging.warning( _("Unexpected '\\{}' newline marker in Bible book after {} {}:{} (Text is '{}')").format( marker, self.bookReferenceCode, c, v, text ) )
+                self.addPriorityError( 80, c, v, _("Marker {} not expected at beginning of line".format( repr(marker) ) ) )
             if Globals.USFMMarkers.isDeprecatedMarker( marker ):
                 validationErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Deprecated '\\{}' newline marker in Bible book (Text is '{}')").format( marker, text ) )
                 logging.warning( _("Deprecated '\\{}' newline marker in Bible book after {} {}:{} (Text is '{}')").format( marker, self.bookReferenceCode, c, v, text ) )
+                self.addPriorityError( 90, c, v, _("Newline marker {} is deprecated in USFM standard".format( repr(marker) ) ) )
             markerList = Globals.USFMMarkers.getMarkerListFromText( text )
             #if markerList: print( "\nText = {}:'{}'".format(marker,text)); print( markerList )
             for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check character markers
                 if Globals.USFMMarkers.isDeprecatedMarker( insideMarker ):
                     validationErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Deprecated '\\{}' internal marker in Bible book (Text is '{}')").format( insideMarker, text ) )
                     logging.warning( _("Deprecated '\\{}' internal marker in Bible book after {} {}:{} (Text is '{}')").format( insideMarker, self.bookReferenceCode, c, v, text ) )
+                    self.addPriorityError( 89, c, v, _("Internal marker {} is deprecated in USFM standard".format( repr(insideMarker) ) ) )
             ix = 0
             for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check newline markers
                 if Globals.USFMMarkers.isNewlineMarker(insideMarker):
                     validationErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Marker '\\{}' must not appear within line in {}: {}").format( insideMarker, marker, text ) )
                     logging.error( _("Marker '\\{}' must not appear within line after {} {}:{} in {}: {}").format( insideMarker, self.bookReferenceCode, c, v, marker, text ) )
+                    self.addPriorityError( 90, c, v, _("Newline marker {} should be at start of line".format( repr(insideMarker) ) ) )
 
         if validationErrors: self.errorDictionary['Validation Errors'] = validationErrors
     # end of InternalBibleBook.validateMarkers

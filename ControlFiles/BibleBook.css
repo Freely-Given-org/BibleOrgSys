@@ -273,5 +273,14 @@ nav ul li {
 
 
 /* LISTS */
+  .listItem1 { margin-left:1em; }
+  .introductionListItem1 { margin-left:1em; }
+  .listItem2 { margin-left:2em; }
+  .introductionListItem2 { margin-left:2em; }
+  .listItem3 { margin-left:3em; }
+  .introductionListItem3 { margin-left:3em; }
+  .listItem4 { margin-left:4em; }
+  .introductionListItem4 { margin-left:4em; }
+
 
 /* end of BibleBook.css */* end of BibleBook.css */
