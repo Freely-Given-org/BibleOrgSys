@@ -128,7 +128,7 @@ class InternalBible:
         lineCount, continuedFlag = 0, False
         with open( mdFilepath, 'rt' ) as mdFile:
             for line in mdFile:
-                while line and line[-1] in '\n\r': line=line[:-1] # Removing trailing newline characters (Linux or Windows)
+                while line and line[-1] in '\n\r': line=line[:-1] # Remove trailing newline characters (Linux or Windows)
                 #print( "MD line: '{}'".format( line ) )
                 if not line: continue # Just discard additional blank lines
                 lineCount += 1
@@ -141,7 +141,9 @@ class InternalBible:
                         assert( len(bits) == 2 )
                         fieldName = bits[0]
                         fieldContents = bits[1]
-                        if line.endswith( '\\' ): continuedFlag = True
+                        if line.endswith( '\\' ):
+                            continuedFlag = True
+                            line = line[:-1] # Remove the continuation character
                         else: saveMD( fieldName, fieldContents )
                 else: # continuedFlag
                     fieldContents += line
