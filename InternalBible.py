@@ -101,6 +101,65 @@ class InternalBible:
     # end of doPostLoadProcessing
 
 
+    def loadMetadataFile( self, mdFilepath ):
+        """
+        Load the fields from the given metadata text file.
+        """
+        def saveMD( fieldName, contents ):
+            """
+            Save an entry in the settings dictionary
+                but check for duplicates first.
+            """
+            if fieldName in self.settingsDict: # We have a duplicate
+                logging.warning("About to replace {}={} from metadata file".format( repr(fieldName), repr(self.settingsDict[fieldName]) ) )
+            else: # Also check for "duplicates" with a different case
+                ucFieldName = fieldName.upper()
+                for key in self.settingsDict:
+                    ucKey = key.upper()
+                    if ucKey == ucFieldName:
+                        logging.warning("About to add {} from metadata file even though already have {}".format( repr(fieldName), repr(key) ) )
+                        break
+            self.settingsDict[fieldName] = Globals.makeSafeString( contents )
+        # end of saveMD
+
+        logging.info( "Loading supplied project metadata..." )
+        if Globals.verbosityLevel > 1: print( "Loading supplied project metadata..." )
+        if Globals.verbosityLevel > 2: print( "Old metadata settings", len(self.settingsDict), self.settingsDict )
+        lineCount, continuedFlag = 0, False
+        with open( mdFilepath, 'rt' ) as mdFile:
+            for line in mdFile:
+                while line and line[-1] in '\n\r': line=line[:-1] # Removing trailing newline characters (Linux or Windows)
+                #print( "MD line: '{}'".format( line ) )
+                if not line: continue # Just discard additional blank lines
+                lineCount += 1
+                if line[0] == '#': continue # Just discard comment lines
+                if not continuedFlag:
+                    if '=' not in line:
+                        logging.warning( "Missing equals sign from metadata line (ignored): {}".format( repr(line) ) )
+                    else: # Seems like a field=something type line
+                        bits = line.split( '=', 1 )
+                        assert( len(bits) == 2 )
+                        fieldName = bits[0]
+                        fieldContents = bits[1]
+                        if line.endswith( '\\' ): continuedFlag = True
+                        else: saveMD( fieldName, fieldContents )
+                else: # continuedFlag
+                    fieldContents += line
+                    if not line.endswith( '\\' ):
+                        saveMD( fieldName, fieldContents )
+                        continuedFlag = False
+            if Globals.verbosityLevel > 1: print( "  {} non-blank lines read from uploaded metadata file".format( lineCount ) )
+        if Globals.verbosityLevel > 2: print( "New metadata settings", len(self.settingsDict), self.settingsDict )
+
+        # Try to improve our names
+        if not self.abbreviation and 'WorkAbbreviation' in self.settingsDict:
+            self.abbreviation = self.settingsDict['WorkAbbreviation']
+        self.projectName = self.name if self.name else "Unknown"
+    # end of loadMetadataFile
+
+
+
+
     def __str__( self ):
         """
         This method returns the string representation of a Bible.
@@ -629,7 +688,7 @@ class InternalBible:
             if Globals.verbosityLevel > 3: print( "  " + _("Checking {}...").format( BBB ) )
             self.books[BBB].check( self.discoveryResults['ALL'], typicalAddedUnitData )
 
-        # Do overall Bible checks
+        # Do overall Bible checks here
         # xxxxxxxxxxxxxxxxx ......................................
     # end of InternalBible.check
 
