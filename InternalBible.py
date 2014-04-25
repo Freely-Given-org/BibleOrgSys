@@ -87,16 +87,25 @@ class InternalBible:
     # end of InternalBible.__init_
 
 
+    def __getNames( self ):
+        """
+        Try to improve our names.
+        """
+        if not self.abbreviation and 'WorkAbbreviation' in self.settingsDict: self.abbreviation = self.settingsDict['WorkAbbreviation']
+        if not self.name and 'FullName' in self.ssfDict: self.name = self.ssfDict['FullName']
+        if not self.shortName and 'Name' in self.ssfDict: self.shortName = self.ssfDict['Name']
+        self.projectName = self.name if self.name else "Unknown"
+    # end of __getNames
+
+
     def doPostLoadProcessing( self ):
         """
         This method should be called once all books are loaded.
         """
-        # Try to improve our names (also in loadMetadataFile)
-        if not self.abbreviation and 'WorkAbbreviation' in self.settingsDict:
-            self.abbreviation = self.settingsDict['WorkAbbreviation']
-        self.projectName = self.name if self.name else "Unknown"
+        # Try to improve our names (may also be called from loadMetadataFile)
+        self.__getNames()
 
-        # Discover what we've got so we don't have to worry about doing it later
+        # Discover what we've got loaded so we don't have to worry about doing it later
         self.discover()
     # end of doPostLoadProcessing
 
@@ -153,10 +162,8 @@ class InternalBible:
             if Globals.verbosityLevel > 1: print( "  {} non-blank lines read from uploaded metadata file".format( lineCount ) )
         if Globals.verbosityLevel > 2: print( "New metadata settings", len(self.settingsDict), self.settingsDict )
 
-        # Try to improve our names (also in doPostLoadProcessing)
-        if not self.abbreviation and 'WorkAbbreviation' in self.settingsDict:
-            self.abbreviation = self.settingsDict['WorkAbbreviation']
-        self.projectName = self.name if self.name else "Unknown"
+        # Try to improve our names (also called earlier from doPostLoadProcessing)
+        self.__getNames()
     # end of loadMetadataFile
 
 
