@@ -150,15 +150,15 @@ class InternalBible:
                         assert( len(bits) == 2 )
                         fieldName = bits[0]
                         fieldContents = bits[1]
-                        if line.endswith( '\\' ):
+                        if fieldContents.endswith( '\\' ):
                             continuedFlag = True
-                            line = line[:-1] # Remove the continuation character
+                            fieldContents = fieldContents[:-1] # Remove the continuation character
                         else: saveMD( fieldName, fieldContents )
                 else: # continuedFlag
+                    if line.endswith( '\\' ): line = line[:-1] # Remove the continuation character
+                    else: continuedFlag = False
                     fieldContents += line
-                    if not line.endswith( '\\' ):
-                        saveMD( fieldName, fieldContents )
-                        continuedFlag = False
+                    if not continuedFlag: saveMD( fieldName, fieldContents )
             if Globals.verbosityLevel > 1: print( "  {} non-blank lines read from uploaded metadata file".format( lineCount ) )
         if Globals.verbosityLevel > 2: print( "New metadata settings", len(self.settingsDict), self.settingsDict )
 
