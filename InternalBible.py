@@ -91,7 +91,7 @@ class InternalBible:
         """
         This method should be called once all books are loaded.
         """
-        # Try to improve our names
+        # Try to improve our names (also in loadMetadataFile)
         if not self.abbreviation and 'WorkAbbreviation' in self.settingsDict:
             self.abbreviation = self.settingsDict['WorkAbbreviation']
         self.projectName = self.name if self.name else "Unknown"
@@ -151,7 +151,7 @@ class InternalBible:
             if Globals.verbosityLevel > 1: print( "  {} non-blank lines read from uploaded metadata file".format( lineCount ) )
         if Globals.verbosityLevel > 2: print( "New metadata settings", len(self.settingsDict), self.settingsDict )
 
-        # Try to improve our names
+        # Try to improve our names (also in doPostLoadProcessing)
         if not self.abbreviation and 'WorkAbbreviation' in self.settingsDict:
             self.abbreviation = self.settingsDict['WorkAbbreviation']
         self.projectName = self.name if self.name else "Unknown"
@@ -682,7 +682,7 @@ class InternalBible:
         with open( pickleFilepath, 'rb' ) as pickleFile:
             typicalAddedUnitData = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
 
-        self.discover() # Try to automatically determine our norms
+        #self.discover() # Try to automatically determine our norms
         if Globals.verbosityLevel > 2: print( _("Running checks on {}...").format( self.name ) )
         for BBB in self.books: # Do individual book checks
             if Globals.verbosityLevel > 3: print( "  " + _("Checking {}...").format( BBB ) )
