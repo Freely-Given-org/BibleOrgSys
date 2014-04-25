@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleInternals.py
-#   Last modified: 2014-03-31 by RJH (also update ProgVersion below)
+#   Last modified: 2014-04-25 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Bible internals handler"
-ProgVersion = "0.21"
+ProgVersion = "0.22"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -754,6 +754,8 @@ class InternalBibleIndex:
 
                 previousMarker = nextMarker = None # But these skip over rem (remark markers)
                 for j, marker in enumerate( markers ):
+                    #print( self.bookReferenceCode, C, V, j, marker, previousMarker, nextMarker )
+
                     # Work out the next marker (skipping over rem markers)
                     offset = 1
                     while True:
@@ -763,7 +765,7 @@ class InternalBibleIndex:
                         offset += 1
 
                     # Check the various series of markers
-                    if marker == 'cp': assert( previousMarker in ('c','c~',) )
+                    if marker == 'cp': assert( previousMarker in ('c','c~',None) ) # WEB Ps 151 gives None -- not totally sure why yet?
                     if marker == 'c#': assert( nextMarker == 'v' )
                     if marker == 'v' and markers[-1]!='v' and nextMarker != 'v~':
                         logging.critical( "InternalBibleIndex.checkIndex: Probable v encoding error in {} {} {}:{} {}".format( self.name, self.bookReferenceCode, C, V, entries ) )
