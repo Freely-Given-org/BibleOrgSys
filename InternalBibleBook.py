@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2014-04-23 by RJH (also update ProgVersion below)
+#   Last modified: 2014-04-25 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -41,7 +41,7 @@ Required improvements:
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.65"
+ProgVersion = "0.66"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -865,24 +865,33 @@ class InternalBibleBook:
                     logging.error( "InternalBibleBook.processLine: " + _("Found zero '{}' in chapter marker {} {}:{}").format( text, self.bookReferenceCode, c, v ) )
                     self.addPriorityError( 97, c, v, _("Chapter zero '{}' not allowed").format( text ) )
                     if len(self._processedLines) < 30: # It's near the beginning of the file
-                        logging.info( "Converting given chapter zero to chapter one in {}".format( self.bookReferenceCode ) )
+                        logging.warning( "Converting given chapter zero to chapter one in {}".format( self.bookReferenceCode ) )
                         c = '1' # Our best guess
                         text = c + text[1:]
                 haveWaitingC = c
-                if len(cBits) > 1: # We have extra stuff on the c line after the chapter number and a space
-                    fixErrors.append( _("{} {}:{} Chapter marker seems to contain extra material '{}'").format( self.bookReferenceCode, c, v, cBits[1] ) )
-                    logging.error( "InternalBibleBook.processLine: " + _("Extra '{}' material in chapter marker {} {}:{}").format( cBits[1], self.bookReferenceCode, c, v ) )
-                    self.addPriorityError( 98, c, v, _("Extra '{}' material after chapter marker").format( cBits[1] ) )
-                    if Globals.debugFlag and debuggingThisModule:
-                        print( "InternalBibleBook.processLine: Something on c line", repr(text), repr(cBits[1]) )
-                    adjText, cleanText, extras = processLineFix( originalMarker, cBits[1] )
-                    if adjText or cleanText or extras:
-                        print( "InternalBibleBook.processLine: Something on c line", repr(text), repr(cBits[1]) )
-                        if adjText: print( " adjText:", repr(adjText) )
-                        if cleanText: print( " cleanText:", repr(cleanText) )
-                        if extras: print( " extras:", repr(extras) )
-                    self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, c, c, extras, c) ) # Write the chapter number as a separate line
-                    adjustedMarker, text = 'c~', cBits[1]
+                if len(cBits) > 1: # We have extra stuff on the c line after the chapter number
+                    if cBits[1] == ' ': # It's just a space
+                        fixErrors.append( _("{} {}:{} Extra space after chapter marker").format( self.bookReferenceCode, c, v ) )
+                        logging.error( "InternalBibleBook.processLine: " + _("Extra space after chapter marker {} {}:{}").format( self.bookReferenceCode, c, v ) )
+                        self.addPriorityError( 10, c, v, _("Extra space after chapter marker") )
+                    elif not cBits[1].strip(): # It's more than a space but just whitespace
+                        fixErrors.append( _("{} {}:{} Extra whitespace after chapter marker").format( self.bookReferenceCode, c, v ) )
+                        logging.error( "InternalBibleBook.processLine: " + _("Extra whitespace after chapter marker {} {}:{}").format( self.bookReferenceCode, c, v ) )
+                        self.addPriorityError( 20, c, v, _("Extra whitespace after chapter marker") )
+                    else: # it's more than just whitespace
+                        fixErrors.append( _("{} {}:{} Chapter marker seems to contain extra material '{}'").format( self.bookReferenceCode, c, v, cBits[1] ) )
+                        logging.error( "InternalBibleBook.processLine: " + _("Extra '{}' material in chapter marker {} {}:{}").format( cBits[1], self.bookReferenceCode, c, v ) )
+                        self.addPriorityError( 30 if '\f ' in cBits[1] else 98, c, v, _("Extra '{}' material after chapter marker").format( cBits[1] ) )
+                        if Globals.debugFlag and debuggingThisModule:
+                            print( "InternalBibleBook.processLine: Something on c line", repr(text), repr(cBits[1]) )
+                        adjText, cleanText, extras = processLineFix( originalMarker, cBits[1] )
+                        if adjText or cleanText or extras:
+                            print( "InternalBibleBook.processLine: Something on c line", repr(text), repr(cBits[1]) )
+                            if adjText: print( " adjText:", repr(adjText) )
+                            if cleanText: print( " cleanText:", repr(cleanText) )
+                            if extras: print( " extras:", repr(extras) )
+                        self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, c, c, extras, c) ) # Write the chapter number as a separate line
+                        adjustedMarker, text = 'c~', cBits[1]
             elif originalMarker=='cp' and text:
                 v = '0'
                 if Globals.debugFlag: assert( haveWaitingC ) # coz this should follow the c and precede the v

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-04-23 by RJH (also update ProgVersion below)
+#   Last modified: 2014-04-24 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -1306,7 +1306,7 @@ class BibleWriter( InternalBible ):
         #if not os.access( chapterOutputFolderHTML, os.F_OK ): os.makedirs( chapterOutputFolderHTML ) # Make the empty folder if there wasn't already one there
 
         headerFilepath = os.path.join( outputFolder, 'CBHeader.json' )
-        testamentNamesFilepath = os.path.join( outputFolder, 'CBTestamentNames.{}.json'.format( CBDataFormatVersion ) )
+        divisionNamesFilepath = os.path.join( outputFolder, 'CBDivisionNames.{}.json'.format( CBDataFormatVersion ) )
         bookNamesFilepath = os.path.join( outputFolder, 'CBBookNames.{}.json'.format( CBDataFormatVersion ) )
         compressionDictFilepath = os.path.join( outputFolder, "CBCmprnDict.{}.json".format( CBDataFormatVersion ) )
         destinationIndexFilepath = os.path.join( outputFolder, "CB-BCV-index.{}.json".format( CBDataFormatVersion ) )
@@ -1469,11 +1469,11 @@ class BibleWriter( InternalBible ):
         def writeCBBookNames():
             """
             Writes the two files:
-                list of testament section names
+                list of division names
                 list of book names and abbreviations
             """
-            def getTestamentName( BBB, doneAny=None, doneBooks=None ):
-                """ Given a book code, return the testament section name. """
+            def getDivisionName( BBB, doneAny=None, doneBooks=None ):
+                """ Given a book code, return the division name. """
                 result = ""
                 if Globals.BibleBooksCodes.isOldTestament_NR( BBB ) or BBB == 'PS2':
                     result = self.settingsDict['OldTestamentName'] if "OldTestamentName" in self.settingsDict else "Old Testament"
@@ -1486,21 +1486,21 @@ class BibleWriter( InternalBible ):
                 elif doneBooks == True:
                     result = self.settingsDict['BackMatterName'] if "BackMatterName" in self.settingsDict else "Back Matter"
                 return result
-            # end of getTestamentName
+            # end of getDivisionName
 
-            # Make a list of testament names and write them to a very small JSON file
-            testamentData = []
+            # Make a list of division names and write them to a very small JSON file
+            divisionData = []
             doneAny = doneBooks = False
             for BBB,bookObject in self.books.items():
-                testamentName = getTestamentName( BBB, doneAny, doneBooks )
-                if testamentName and testamentName not in testamentData:
-                    testamentData.append( testamentName )
+                divisionName = getDivisionName( BBB, doneAny, doneBooks )
+                if divisionName and divisionName not in divisionData:
+                    divisionData.append( divisionName )
                 if Globals.BibleBooksCodes.isOldTestament_NR(BBB) or Globals.BibleBooksCodes.isNewTestament_NR(BBB) or Globals.BibleBooksCodes.isDeuterocanon_NR(BBB):
                     doneAny = doneBooks = True
-            #print( testamentData )
-            if Globals.verbosityLevel > 2: print( "  " + _("Exporting testament section names to {}...").format( testamentNamesFilepath ) )
-            with open( testamentNamesFilepath, 'wt' ) as jsonFile:
-                json.dump( testamentData, jsonFile, indent=jsonIndent )
+            #print( divisionData )
+            if Globals.verbosityLevel > 2: print( "  " + _("Exporting division names to {}...").format( divisionNamesFilepath ) )
+            with open( divisionNamesFilepath, 'wt' ) as jsonFile:
+                json.dump( divisionData, jsonFile, indent=jsonIndent )
 
             # Make a list of book data including names and abbreviations and write them to a JSON file
             bkData = []
@@ -1509,8 +1509,8 @@ class BibleWriter( InternalBible ):
                 abbreviation = self.getBooknameAbbreviation( BBB )
                 shortName = self.getShortTOCName( BBB )
                 longName = self.getAssumedBookName( BBB )
-                try: testamentNumber = testamentData.index( getTestamentName( BBB, doneAny, doneBooks ) )
-                except: testamentNumber = -1
+                try: divisionNumber = divisionData.index( getDivisionName( BBB, doneAny, doneBooks ) )
+                except: divisionNumber = -1
                 numChapters = ""
                 for dataLine in bookObject._processedLines:
                     if dataLine.getMarker() == 'c':
@@ -1519,7 +1519,7 @@ class BibleWriter( InternalBible ):
                 except:
                     logging.error( "toCustomBible: no chapters in {}".format( BBB ) )
                     intNumChapters = 0
-                bkData.append( (BBB,abbreviation,shortName,longName,intNumChapters,numSectionsDict[BBB],testamentNumber) )
+                bkData.append( (BBB,abbreviation,shortName,longName,intNumChapters,numSectionsDict[BBB],divisionNumber) )
                 if Globals.BibleBooksCodes.isOldTestament_NR(BBB) or Globals.BibleBooksCodes.isNewTestament_NR(BBB) or Globals.BibleBooksCodes.isDeuterocanon_NR(BBB):
                     doneAny = doneBooks = True
             #print( bkData )
@@ -1773,7 +1773,8 @@ class BibleWriter( InternalBible ):
                     elif marker == 'mr': rClass = 'majorSectionReferenceRange'
                     thisHTML += '<p class="{}">{}</p>'.format( rClass, text )
                 elif marker == 'd': # descriptive title or Hebrew subtitle
-                    thisHTML = '<p class="descriptiveTitle">{}</p>'.format( BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, CBGlobals ) )
+                    if text or extras:
+                        thisHTML = '<p class="descriptiveTitle">{}</p>'.format( BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, CBGlobals ) )
                 elif marker == 'sp': # speaker
                     thisHTML = '<p class="speaker">{}</p>'.format( text )
 
@@ -2416,6 +2417,16 @@ class BibleWriter( InternalBible ):
                             zf.write( os.path.join(root,filename), os.path.relpath(os.path.join(root, filename), os.path.join(loadFolder, '..')) ) # Save in the archive without the path
                             #zf.write( filepath, filename ) # Save in the archive without the path
                 zf.close()
+        if self.abbreviation in ('MBTV','WEB','OEB',): # Do a special zip file of just Matthew as a test download
+            zf = zipfile.ZipFile( os.path.join( outputFolder, 'MatthewPhotoFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
+            loadFolder = os.path.join( outputFolder, 'NT/' )
+            for root, dirs, files in os.walk( loadFolder ):
+                for filename in files:
+                    #print( root, filename )
+                    if '40-MAT' in root and not filename.endswith( '.zip' ): #  Save in the archive without the path --
+                        #   parameters are filename to compress, archive name (relative path) to save as
+                        zf.write( os.path.join(root,filename), os.path.relpath(os.path.join(root, filename), os.path.join(loadFolder, '..')) ) # Save in the archive without the path
+            zf.close()
 
         return True
     # end of BibleWriter.toPhotoBible
@@ -7024,7 +7035,8 @@ def demo():
                 #("MS-ABT", "MBTABT", "../../../../../Data/Work/Matigsalug/Bible/MBTABT/",),
                 #("WEB", "WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/",),
                 #("WEB", "WEB", "../../../../../Data/Work/Bibles/From eBible/WEB/eng-web_usfm 2013-07-18/",),
-                ("WEB", "WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-03-05 eng-web_usfm/",),
+                #("WEB", "WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-03-05 eng-web_usfm/",),
+                ("WEB", "WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-04-23 eng-web_usfm/",),
                 ) # You can put your USFM test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData ):
