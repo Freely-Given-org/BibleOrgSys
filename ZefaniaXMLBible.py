@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ZefaniaXMLBible.py
-#   Last modified: 2014-03-24 by RJH (also update ProgVersion below)
+#   Last modified: 2014-04-25 by RJH (also update ProgVersion below)
 #
 # Module handling Zefania XML Bibles
 #
@@ -59,7 +59,7 @@ or
 """
 
 ProgName = "Zefania XML Bible format handler"
-ProgVersion = "0.25"
+ProgVersion = "0.26"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -306,6 +306,7 @@ class ZefaniaXMLBible( Bible ):
                     self.__validateAndExtractBook( element )
                 else: logging.error( "Expected to find '{}' but got '{}'".format( ZefaniaXMLBible.bookTag, element.tag ) )
         else: logging.error( "Expected to load '{}' but got '{}'".format( ZefaniaXMLBible.treeTag, self.tree.tag ) )
+        self.doPostLoadProcessing()
     # end of ZefaniaXMLBible.load
 
 

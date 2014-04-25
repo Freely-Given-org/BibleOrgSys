@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # YETBible.py
-#   Last modified: 2014-03-24 by RJH (also update ProgVersion below)
+#   Last modified: 2014-04-25 by RJH (also update ProgVersion below)
 #
 # Module handling YET Bible files
 #
-# Copyright (C) 2013 Robert Hunt
+# Copyright (C) 2013-2014 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -62,7 +62,7 @@ Limitations:
 """
 
 ProgName = "YET Bible format handler"
-ProgVersion = "0.03"
+ProgVersion = "0.04"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -453,6 +453,7 @@ class YETBible( Bible ):
                         #print( "mV", marker, repr(bit), repr(verseString) )
                         thisBook.appendLine( marker, bit.rstrip() )
             self.saveBook( thisBook )
+        self.doPostLoadProcessing()
     # end of YETBible.load
 # end of YETBible class
 

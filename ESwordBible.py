@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ESwordBible.py
-#   Last modified: 2014-03-23 by RJH (also update ProgVersion below)
+#   Last modified: 2014-04-25 by RJH (also update ProgVersion below)
 #
 # Module handling "e-Sword" Bible module files
 #
@@ -48,7 +48,7 @@ e.g.,
 """
 
 ProgName = "e-Sword Bible format handler"
-ProgVersion = "0.08"
+ProgVersion = "0.09"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -581,6 +581,7 @@ class ESwordBible( Bible ):
         if Globals.strictCheckingFlag or Globals.debugFlag: self.checkForExtraMaterial( cursor, BOS )
         cursor.close()
         if loadErrors: self.errorDictionary['Load Errors'] = loadErrors
+        self.doPostLoadProcessing()
     # end of ESwordBible.load
 # end of ESwordBible class
 

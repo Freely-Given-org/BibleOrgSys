@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2014-04-17 by RJH (also update ProgVersion below)
+#   Last modified: 2014-04-25 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -44,7 +44,7 @@ and then fills
 """
 
 ProgName = "Internal Bible handler"
-ProgVersion = "0.42"
+ProgVersion = "0.43"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -85,6 +85,20 @@ class InternalBible:
         self.errorDictionary = OrderedDict()
         self.errorDictionary['Priority Errors'] = [] # Put this one first in the ordered dictionary
     # end of InternalBible.__init_
+
+
+    def doPostLoadProcessing( self ):
+        """
+        This method should be called once all books are loaded.
+        """
+        # Try to improve our names
+        if not self.abbreviation and 'WorkAbbreviation' in self.settingsDict:
+            self.abbreviation = self.settingsDict['WorkAbbreviation']
+        self.projectName = self.name if self.name else "Unknown"
+
+        # Discover what we've got so we don't have to worry about doing it later
+        self.discover()
+    # end of doPostLoadProcessing
 
 
     def __str__( self ):
@@ -415,7 +429,9 @@ class InternalBible:
     def discover( self ):
         """Runs a series of checks and count on each book of the Bible
             in order to try to determine what are the normal standards."""
-        print( "InternalBible:discover" )
+        print( "InternalBible:discover()" )
+        if Globals.debugFlag and  'discoveryResults' in dir(self): halt # We've already called this once
+
         self.discoveryResults = OrderedDict()
 
         # Get our recommendations for added units -- only load this once per Bible
@@ -716,6 +732,7 @@ class InternalBible:
                 for word in wordDict:
                     if word.lower()==lcWord and word not in ( lcWord, tcWord, TcWord, tCWord, UCWord ):
                         tempResult.append( (wordDict[word],word,) ); total += wordDict[word]
+                        # Seems we don't know the BCV reference here unfortunately
                         if 'Possible Word Errors' not in errors['ByBook']['All Books']['Words']: errors['ByBook']['All Books']['Words']['Possible Word Errors'] = []
                         errors['ByBook']['All Books']['Words']['Possible Word Errors'].append( _("Word '{}' appears to have unusual capitalization").format( word ) )
                         if total == lcTotal: break # no more to find

@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # MySwordBible.py
-#   Last modified: 2013-12-18 by RJH (also update ProgVersion below)
+#   Last modified: 2014-04-25 by RJH (also update ProgVersion below)
 #
 # Module handling "MySword" Bible module files
 #
-# Copyright (C) 2013 Robert Hunt
+# Copyright (C) 2013-2014 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -51,7 +51,7 @@ e.g.,
 """
 
 ProgName = "MySword Bible format handler"
-ProgVersion = "0.10"
+ProgVersion = "0.11"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -320,6 +320,7 @@ class MySwordBible( Bible ):
                 thisBook.appendLine( 'p', '' )
                 ourGlobals['haveParagraph'] = False
         cursor.close()
+        self.doPostLoadProcessing()
     # end of MySwordBible.load
 # end of MySwordBible class
 

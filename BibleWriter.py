@@ -128,9 +128,6 @@ class BibleWriter( InternalBible ):
             self.genericBOS = BibleOrganizationalSystem( "GENERIC-KJV-81" )
             self.genericBRL = BibleReferenceList( self.genericBOS, BibleObject=self ) # this prevents pickling!
                 # because unfortunately it causes a recursive linking of objects
-            self.projectName = "Unknown"
-            if self.name: self.projectName = self.name
-            self.discover() # Find out stats about the Bible
             self.doneSetupGeneric = True
     # end of BibleWriter.__setupWriter
 
@@ -782,7 +779,10 @@ class BibleWriter( InternalBible ):
         text = text.replace( '\\+nd ', '<span class="divineName">' ).replace( '\\+nd*', '</span>' )
         text = text.replace( '\\wj ', '<span class="wordsOfJesus">' ).replace( '\\wj*', '</span>' )
         text = text.replace( '\\sig ', '<span class="signature">' ).replace( '\\sig*', '</span>' )
-        text = text.replace( '\\k ', '<span class="keyWord">' ).replace( '\\k*', '</span>' )
+        if BBB in ('GLS',): # it's a glossary keyword entry
+            text = text.replace( '\\k ', '<span class="glossaryKeyword">' ).replace( '\\k*', '</span>' )
+        else: # it's a keyword in context
+            text = text.replace( '\\k ', '<span class="keyword">' ).replace( '\\k*', '</span>' )
         text = text.replace( '\\rq ', '<span class="quotationReference">' ).replace( '\\rq*', '</span>' )
         text = text.replace( '\\qs ', '<span class="Selah">' ).replace( '\\qs*', '</span>' )
 
@@ -2400,12 +2400,12 @@ class BibleWriter( InternalBible ):
                 print( "  " + _("WARNING: Unhandled toPhotoBible markers were {}").format( unhandledMarkers ) )
 
         # Now create some zipped collections
-        if Globals.verbosityLevel > 2: print( "  Zipping photo files..." )
+        if Globals.verbosityLevel > 2: print( "  Zipping PhotoBible files..." )
         for subset in ('OT','NT','Other','All'):
             loadFolder = outputFolder if subset=='All' else os.path.join( outputFolder, subset+'/' )
             #print( repr(subset), "Load folder =", repr(loadFolder) )
             if os.path.exists( loadFolder ):
-                zf = zipfile.ZipFile( os.path.join( outputFolder, subset+'PhotoFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
+                zf = zipfile.ZipFile( os.path.join( outputFolder, subset+'PhotoBible.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
                 for root, dirs, files in os.walk( loadFolder ):
                     for filename in files:
                         if not filename.endswith( '.zip' ):
@@ -2418,7 +2418,7 @@ class BibleWriter( InternalBible ):
                             #zf.write( filepath, filename ) # Save in the archive without the path
                 zf.close()
         if self.abbreviation in ('MBTV','WEB','OEB',): # Do a special zip file of just Matthew as a test download
-            zf = zipfile.ZipFile( os.path.join( outputFolder, 'MatthewPhotoFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
+            zf = zipfile.ZipFile( os.path.join( outputFolder, 'MatthewPhotoBible.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
             loadFolder = os.path.join( outputFolder, 'NT/' )
             for root, dirs, files in os.walk( loadFolder ):
                 for filename in files:

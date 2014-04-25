@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # DrupalBible.py
-#   Last modified: 2013-12-26 by RJH (also update ProgVersion below)
+#   Last modified: 2014-04-25 by RJH (also update ProgVersion below)
 #
 # Module handling DrupalBible Bible files
 #
-# Copyright (C) 2013 Robert Hunt
+# Copyright (C) 2013-2014 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -74,7 +74,7 @@ Limitations:
 """
 
 ProgName = "DrupalBible Bible format handler"
-ProgVersion = "0.04"
+ProgVersion = "0.05"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -288,6 +288,7 @@ class DrupalBible( Bible ):
 
         # Save the final book
         self.saveBook( thisBook )
+        self.doPostLoadProcessing()
     # end of DrupalBible.load
 # end of DrupalBible class
 

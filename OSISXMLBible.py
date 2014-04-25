@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # OSISXMLBible.py
-#   Last modified: 2014-03-24 by RJH (also update ProgVersion below)
+#   Last modified: 2014-04-25 by RJH (also update ProgVersion below)
 #
 # Module handling OSIS XML Bibles
 #
@@ -36,7 +36,7 @@ Updated Sept 2013 to also handle Kahunapule's "modified OSIS".
 """
 
 ProgName = "OSIS XML Bible format handler"
-ProgVersion = "0.32"
+ProgVersion = "0.33"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -232,7 +232,7 @@ class OSISXMLBible( Bible ):
                     if os.access( thisFilepath, os.R_OK ): # we can read that file
                         self.possibleFilenames.append( filename )
         elif not os.access( self.sourceFilepath, os.R_OK ):
-            logging.critical( "OSISXMLBible: File '{}' is unreadable".format( self.sourceFilepath ) )
+            logging.critical( "OSISXMLBible: File {} is unreadable".format( repr(self.sourceFilepath) ) )
             return # No use continuing
 
         self.name = self.givenName
@@ -252,8 +252,10 @@ class OSISXMLBible( Bible ):
             for filename in self.possibleFilenames:
                 pathname = os.path.join( self.sourceFilepath, filename )
                 self.loadFile( pathname )
-        else: # most often we have all the Bible books in one file
+        elif os.path.isfile( self.sourceFilepath ): # most often we have all the Bible books in one file
             self.loadFile( self.sourceFilepath )
+        else: logging.critical( "OSISXMLBible: Didn't find anything to load at {}".format( repr(self.sourceFilepath) ) )
+        self.doPostLoadProcessing()
     # end of OSISXMLBible.load
 
 

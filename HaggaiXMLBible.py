@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # HaggaiXMLBible.py
-#   Last modified: 2014-03-24 by RJH (also update ProgVersion below)
+#   Last modified: 2014-04-25 by RJH (also update ProgVersion below)
 #
 # Module handling Haggai XML Bibles
 #
@@ -59,7 +59,7 @@ or
 """
 
 ProgName = "Haggai XML Bible format handler"
-ProgVersion = "0.26"
+ProgVersion = "0.27"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -299,6 +299,7 @@ class HaggaiXMLBible( Bible ):
                     self.__validateAndExtractBook( element )
                 else: logging.error( "Expected to find '{}' but got '{}'".format( HaggaiXMLBible.bookTag, element.tag ) )
         else: logging.error( "Expected to load '{}' but got '{}'".format( HaggaiXMLBible.treeTag, self.tree.tag ) )
+        self.doPostLoadProcessing()
     # end of HaggaiXMLBible.load
 
 

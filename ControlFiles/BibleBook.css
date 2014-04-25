@@ -201,6 +201,17 @@ nav ul li {
   p.endnoteLine {}
 
 
+/* LISTS */
+  .listItem1 { margin-left:1em; }
+  .introductionListItem1 { margin-left:1em; }
+  .listItem2 { margin-left:2em; }
+  .introductionListItem2 { margin-left:2em; }
+  .listItem3 { margin-left:3em; }
+  .introductionListItem3 { margin-left:3em; }
+  .listItem4 { margin-left:4em; }
+  .introductionListItem4 { margin-left:4em; }
+
+
 
 /* LINKS */
 
@@ -247,7 +258,8 @@ nav ul li {
   span.divineName { font-variant: small-caps; }
   span.wordsOfJesus { color:red; } /* How could I make it so the user can switch this off and on? */
   span.signature {}
-  span.keyWord {} /* Dotted underline */
+  span.keyword { border-bottom:1px dotted; } /* Dotted underline in text */
+  span.glossaryKeyword { font-weight:bold; }
 
   /* More character formatting of regular text */
   /* Unknown semantics - hard formatting (not recommended but some texts have it) */
@@ -270,17 +282,6 @@ nav ul li {
 
   /* Cross-references */
   span.xrefEntry {}
-
-
-/* LISTS */
-  .listItem1 { margin-left:1em; }
-  .introductionListItem1 { margin-left:1em; }
-  .listItem2 { margin-left:2em; }
-  .introductionListItem2 { margin-left:2em; }
-  .listItem3 { margin-left:3em; }
-  .introductionListItem3 { margin-left:3em; }
-  .listItem4 { margin-left:4em; }
-  .introductionListItem4 { margin-left:4em; }
 
 
 /* end of BibleBook.css */* end of BibleBook.css */

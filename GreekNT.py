@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # GreekNT.py
-#   Last modified: 2013-08-28 (also update ProgVersion below)
+#   Last modified: 2014-04-25 (also update ProgVersion below)
 #
 # Module handling GreekNT.xml
 #
-# Copyright (C) 2012-2013 Robert Hunt
+# Copyright (C) 2012-2014 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -44,7 +44,7 @@ Module handling xxx to produce C and Python data tables.
 """
 
 ProgName = "Greek NT format handler"
-ProgVersion = "0.05"
+ProgVersion = "0.06"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -136,6 +136,7 @@ class GreekNT( Bible ):
                 #self.loadBook( pathname )
         #else: # most often we have all the Bible books in one file
             #self.loadFile( self.sourceFilepath )
+        self.doPostLoadProcessing()
     # end of load
 
 

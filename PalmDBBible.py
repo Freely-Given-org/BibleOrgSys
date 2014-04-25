@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # PalmDBBible.py
-#   Last modified: 2014-03-24 by RJH (also update ProgVersion below)
+#   Last modified: 2014-04-25 by RJH (also update ProgVersion below)
 #
 # Module handling PDB Bible files
 #
@@ -62,7 +62,7 @@ Limitations:
 """
 
 ProgName = "PDB Bible format handler"
-ProgVersion = "0.04" # STILL UNFINISHED!!!
+ProgVersion = "0.05" # STILL UNFINISHED!!!
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -401,6 +401,7 @@ class PalmDBBible( Bible ):
             #halt
             #if j>30: halt
         #halt
+        self.doPostLoadProcessing()
     # end of PalmDBBible.load
 # end of PalmDBBible class
 

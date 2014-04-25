@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # UnboundBible.py
-#   Last modified: 2013-12-21 by RJH (also update ProgVersion below)
+#   Last modified: 2014-04-25 by RJH (also update ProgVersion below)
 #
 # Module handling Biola University "unbound" Bible files
 #
-# Copyright (C) 2013 Robert Hunt
+# Copyright (C) 2013-2014 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -86,7 +86,7 @@ and
 """
 
 ProgName = "Unbound Bible format handler"
-ProgVersion = "0.16"
+ProgVersion = "0.17"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -357,6 +357,7 @@ class UnboundBible( Bible ):
 
         # Save the final book
         self.saveBook( thisBook )
+        self.doPostLoadProcessing()
     # end of UnboundBible.load
 # end of UnboundBible class
 

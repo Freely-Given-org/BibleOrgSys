@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFXXMLBible.py
-#   Last modified: 2014-03-24 by RJH (also update ProgVersion below)
+#   Last modified: 2014-04-25 by RJH (also update ProgVersion below)
 #
 # Module handling USFX XML Bibles
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFX Bibles.
 """
 
 ProgName = "USFX XML Bible handler"
-ProgVersion = "0.06"
+ProgVersion = "0.07"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -338,6 +338,7 @@ class USFXXMLBible( Bible ):
                         self.combinedBookNameDict[assumedBookNameLower] = BBB # Store the deduced book name (just lower case)
                         if ' ' in assumedBookNameLower: self.combinedBookNameDict[assumedBookNameLower.replace(' ','')] = BBB # Store the deduced book name (lower case without spaces)
             if self.books: print( "USFXXMLBible.load: Found {} irregularly named USFX files".format( len(self.books) ) )
+        self.doPostLoadProcessing()
     # end of USFXXMLBible.load
 
 
