@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-04-24 by RJH (also update ProgVersion below)
+#   Last modified: 2014-04-27 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -1302,8 +1302,8 @@ class BibleWriter( InternalBible ):
         if not os.access( chapterOutputFolderJSON, os.F_OK ): os.makedirs( chapterOutputFolderJSON ) # Make the empty folder if there wasn't already one there
         bookOutputFolderHTML = os.path.join( outputFolder, "BySection.{}.HTML".format( CBDataFormatVersion ) )
         if not os.access( bookOutputFolderHTML, os.F_OK ): os.makedirs( bookOutputFolderHTML ) # Make the empty folder if there wasn't already one there
-        #chapterOutputFolderHTML = os.path.join( outputFolder, "ByChapter.{}.HTML".format( CBDataFormatVersion ) )
-        #if not os.access( chapterOutputFolderHTML, os.F_OK ): os.makedirs( chapterOutputFolderHTML ) # Make the empty folder if there wasn't already one there
+        debugBookOutputFolderHTML = os.path.join( outputFolder, "BySection.{}.debug.HTML".format( CBDataFormatVersion ) )
+        if not os.access( debugBookOutputFolderHTML, os.F_OK ): os.makedirs( debugBookOutputFolderHTML ) # Make the empty folder if there wasn't already one there
 
         headerFilepath = os.path.join( outputFolder, 'CBHeader.json' )
         divisionNamesFilepath = os.path.join( outputFolder, 'CBDivisionNames.{}.json'.format( CBDataFormatVersion ) )
@@ -1311,6 +1311,7 @@ class BibleWriter( InternalBible ):
         compressionDictFilepath = os.path.join( outputFolder, "CBCmprnDict.{}.json".format( CBDataFormatVersion ) )
         destinationIndexFilepath = os.path.join( outputFolder, "CB-BCV-index.{}.json".format( CBDataFormatVersion ) )
         destinationHTMLFilepathTemplate = os.path.join( bookOutputFolderHTML, "CBBook.{}.{}.html".format( '{}', CBDataFormatVersion ) ) # Missing the BBB
+        debugDestinationHTMLFilepathTemplate = os.path.join( debugBookOutputFolderHTML, "CBBook.{}C{}V{}.{}.html".format( '{}', '{}', '{}', CBDataFormatVersion ) ) # Missing the BBB, C, V
 
         unhandledMarkers = set()
 
@@ -1582,13 +1583,14 @@ class BibleWriter( InternalBible ):
             CBGlobals['nextFootnoteIndex'] = CBGlobals['nextXRefIndex'] = 0
             CBGlobals['footnoteHTML5'], CBGlobals['endnoteHTML5'], CBGlobals['xrefHTML5'] = [], [], []
 
-            def handleSection( sectionCV, sectionHTML, outputFile ):
+            def handleSection( sectionHTML, outputFile ):
                 """
-                First parameter is a C,V tuple (C = '0' for introduction)
-                Section parameter is the HTML5 segment for the section
+                First parameter is the HTML5 segment for the section
+
+                Also uses surrounding BBB,C,V variables.
                 """
                 nonlocal numCBSections
-                #print( "  toCustomBible.handleSection( {} ) {} haveSectionHeadings={}".format( sectionCV, BBB, haveSectionHeadings ) )
+                #print( "  toCustomBible.handleSection() {} haveSectionHeadings={}".format( BBB, haveSectionHeadings ) )
                 assert( sectionHTML )
                 numCBSections += 1
                 #if BBB == 'GLS': print( BBB, sectionHTML ); halt
@@ -1600,7 +1602,10 @@ class BibleWriter( InternalBible ):
                         print( "toCustomBible: unprocessed backslash code in {} {}:{} section: ...{}...".format( BBB, C, V, repr(segment) ) )
                     if Globals.debugFlag and debuggingThisModule: halt
                 compressedHTML = compress( sectionHTML )
-                if Globals.debugFlag:
+                if Globals.debugFlag: # Write this HTML section uncompressed in a separate folder (for debugging)
+                    with open( debugDestinationHTMLFilepathTemplate.format( BBB, C, V ), 'wt' ) as debugOutputFile:
+                        debugOutputFile.write( '<html><head><meta http-equiv="Content-Type" content="text/html;charset=utf-8"><link rel="stylesheet" type="text/css" href="BibleBook.css"><title>Bible Section</title></head><body>' \
+                                            + sectionHTML + '</body></html>' )
                     checkHTML = decompress( compressedHTML )
                     if checkHTML != sectionHTML:
                         print( "\noriginal: {} {}".format( len(sectionHTML), repr(sectionHTML) ) )
@@ -1620,7 +1625,7 @@ class BibleWriter( InternalBible ):
             except: haveSectionHeadings = False
             #print( haveSectionHeadings, BBB ) #, self.discoveryResults[BBB] )
 
-            htmlFile = open( destinationHTMLFilepathTemplate.format( BBB ), 'wb' )
+            htmlFile = open( destinationHTMLFilepathTemplate.format( BBB ), 'wb' ) # Note: binary not text
             fileOffset = 0
 
             lastHTML = sectionHTML = outputHTML = ""
@@ -1652,7 +1657,7 @@ class BibleWriter( InternalBible ):
                         if lastHTML or sectionHTML:
                             sectionHTML += lastHTML
                             lastHTML = ''
-                            bytesWritten = handleSection( BCV, sectionHTML, htmlFile )
+                            bytesWritten = handleSection( sectionHTML, htmlFile )
                             sectionHTML = ''
                             indexEntry = BCV[0],BCV[1],BCV[2],lastC,lastV,fileOffset,bytesWritten
                             currentIndex.append( indexEntry )
@@ -1717,7 +1722,7 @@ class BibleWriter( InternalBible ):
                         if lastHTML or sectionHTML:
                             sectionHTML += lastHTML
                             lastHTML = ''
-                            bytesWritten = handleSection( BCV, sectionHTML, htmlFile )
+                            bytesWritten = handleSection( sectionHTML, htmlFile )
                             sectionHTML = ''
                             indexEntry = BCV[0],BCV[1],BCV[2],lastC,lastV,fileOffset,bytesWritten
                             currentIndex.append( indexEntry )
@@ -1738,7 +1743,7 @@ class BibleWriter( InternalBible ):
                     if lastHTML or sectionHTML:
                         sectionHTML += lastHTML
                         lastHTML = ''
-                        bytesWritten = handleSection( BCV, sectionHTML, htmlFile )
+                        bytesWritten = handleSection( sectionHTML, htmlFile )
                         sectionHTML = ''
                         indexEntry = BCV[0],BCV[1],BCV[2],lastC,lastV,fileOffset,bytesWritten
                         currentIndex.append( indexEntry )
@@ -1753,7 +1758,7 @@ class BibleWriter( InternalBible ):
                         if lastHTML or sectionHTML:
                             sectionHTML += lastHTML
                             lastHTML = ''
-                            bytesWritten = handleSection( BCV, sectionHTML, htmlFile )
+                            bytesWritten = handleSection( sectionHTML, htmlFile )
                             sectionHTML = ''
                             indexEntry = BCV[0],BCV[1],BCV[2],lastC,lastV,fileOffset,bytesWritten
                             currentIndex.append( indexEntry )
@@ -1796,7 +1801,7 @@ class BibleWriter( InternalBible ):
                         if lastHTML or sectionHTML:
                             sectionHTML += lastHTML
                             lastHTML = ''
-                            bytesWritten = handleSection( BCV, sectionHTML, htmlFile )
+                            bytesWritten = handleSection( sectionHTML, htmlFile )
                             sectionHTML = ''
                             indexEntry = BCV[0],BCV[1],BCV[2],lastC,lastV,fileOffset,bytesWritten
                             currentIndex.append( indexEntry )
@@ -1875,7 +1880,7 @@ class BibleWriter( InternalBible ):
             if sOpen: lastHTML += '</section>'
             sectionHTML += lastHTML
             if sectionHTML:
-                bytesWritten = handleSection( BCV, sectionHTML, htmlFile )
+                bytesWritten = handleSection( sectionHTML, htmlFile )
                 indexEntry = BCV[0],BCV[1],BCV[2],lastC,lastV,fileOffset,bytesWritten
                 currentIndex.append( indexEntry )
 
