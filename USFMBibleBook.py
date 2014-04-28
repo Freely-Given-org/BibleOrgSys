@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBibleBook.py
-#   Last modified: 2013-07-30 by RJH (also update ProgVersion below)
+#   Last modified: 2014-04-29 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
-# Copyright (C) 2010-2013 Robert Hunt
+# Copyright (C) 2010-2014 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating USFM Bible books.
 """
 
 ProgName = "USFM Bible book handler"
-ProgVersion = "0.37"
+ProgVersion = "0.38"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -81,7 +81,11 @@ class USFMBibleBook( BibleBook ):
                 markerList = Globals.USFMMarkers.getMarkerListFromText( text )
                 ix = 0
                 for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check paragraph markers
-                    if Globals.USFMMarkers.isNewlineMarker(insideMarker): # Need to split the line for everything else to work properly
+                    if insideMarker == '\\': # it's a free-standing backspace
+                        loadErrors.append( _("{} {}:{} Improper free-standing backspace character within line in \\{}: '{}'").format( self.bookReferenceCode, c, v, marker, text ) )
+                        logging.error( _("Improper free-standing backspace character within line after {} {}:{} in \\{}: '{}'").format( self.bookReferenceCode, c, v, marker, text ) ) # Only log the first error in the line
+                        self.addPriorityError( 100, c, v, _("Improper free-standing backspace character inside a line") )
+                    elif Globals.USFMMarkers.isNewlineMarker(insideMarker): # Need to split the line for everything else to work properly
                         if ix==0:
                             loadErrors.append( _("{} {}:{} NewLine marker '{}' shouldn't appear within line in \\{}: '{}'").format( self.bookReferenceCode, c, v, insideMarker, marker, text ) )
                             logging.error( _("NewLine marker '{}' shouldn't appear within line after {} {}:{} in \\{}: '{}'").format( insideMarker, self.bookReferenceCode, c, v, marker, text ) ) # Only log the first error in the line

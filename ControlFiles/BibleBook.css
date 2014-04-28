@@ -155,12 +155,14 @@ nav ul li {
   p.introductionFlushLeftParagraph {} /* im */
   p.introductionIndentedFlushLeftParagraph { margin-left:2em; } /* imi */
 
-  p.outlineEntry1 {}
-  p.outlineEntry2 {}
+  p.outlineEntry1 { margin-left:1em; } /* io1 */
+  p.outlineEntry2 { margin-left:2em; } /* io2 */
+  p.outlineEntry3 { margin-left:3em; } /* io3 */
+  p.outlineEntry4 { margin-left:4em; } /* io4 */
 
-  p.sectionCrossReference { text-align:center; }
-  p.sectionReferenceRange { text-align:center; }
-  p.majorSectionReferenceRange { text-align:center; }
+  p.sectionCrossReference { text-align:center; } /* r */
+  p.sectionReferenceRange { text-align:center; } /* sr */
+  p.majorSectionReferenceRange { text-align:center; } /* mr */
 
 /* Main text */
 
@@ -180,13 +182,13 @@ nav ul li {
 
   p.closureParagraph { text-align:right; } /* cls */
 
-  p.centeredProseParagraph { text-align:center; }
-  p.rightAlignedProseParagraph { text-align:right; }
+  p.centeredProseParagraph { text-align:center; } /* pc */
+  p.rightAlignedProseParagraph { text-align:right; } /* pr */
 
-  p.hangingProseParagraph1 { padding-left:2em; text-indent:-2em; }
-  p.hangingProseParagraph2 { padding-left:4em; text-indent:-2em; }
-  p.hangingProseParagraph3 { padding-left:6em; text-indent:-2em; }
-  p.hangingProseParagraph4 { padding-left:8em; text-indent:-2em; }
+  p.hangingProseParagraph1 { padding-left:2em; text-indent:-2em; } /* ph1 */
+  p.hangingProseParagraph2 { padding-left:4em; text-indent:-2em; } /* ph2 */
+  p.hangingProseParagraph3 { padding-left:6em; text-indent:-2em; } /* ph3 */
+  p.hangingProseParagraph4 { padding-left:8em; text-indent:-2em; } /* ph4 */
 
 
   /* These are paragraphs used for poetry, and each should be successively more indented */
@@ -215,14 +217,15 @@ nav ul li {
 
 
 /* LISTS */
-  .listItem1 { margin-left:1em; }
-  .introductionListItem1 { margin-left:1em; }
-  .listItem2 { margin-left:2em; }
-  .introductionListItem2 { margin-left:2em; }
-  .listItem3 { margin-left:3em; }
-  .introductionListItem3 { margin-left:3em; }
-  .listItem4 { margin-left:4em; }
-  .introductionListItem4 { margin-left:4em; }
+  .introductionListItem1 { margin-left:1em; } /* ili1 */
+  .introductionListItem2 { margin-left:2em; } /* ili2 */
+  .introductionListItem3 { margin-left:3em; } /* ili3 */
+  .introductionListItem4 { margin-left:4em; } /* ili4 */
+
+  .listItem1 { margin-left:1em; } /* li1 */
+  .listItem2 { margin-left:2em; } /* li2 */
+  .listItem3 { margin-left:3em; } /* li3 */
+  .listItem4 { margin-left:4em; } /* li4 */
 
 
 

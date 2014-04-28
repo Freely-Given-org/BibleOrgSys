@@ -2425,12 +2425,12 @@ class BibleWriter( InternalBible ):
                             zf.write( os.path.join(root,filename), os.path.relpath(os.path.join(root, filename), os.path.join(loadFolder, '..')) ) # Save in the archive without the path
                             #zf.write( filepath, filename ) # Save in the archive without the path
                 zf.close()
-        if self.abbreviation in ('MBTV','WEB','OEB',): # Do a special zip file of just Matthew as a test download
+        #if self.abbreviation in ('MBTV','WEB','OEB',): # Do a special zip file of just Matthew as a test download
+        if 'MAT' in self: # Do a zip file of just Matthew as a smaller download for testers
             zf = zipfile.ZipFile( os.path.join( outputFolder, 'MatthewPhotoBible.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
             loadFolder = os.path.join( outputFolder, 'NT/' )
             for root, dirs, files in os.walk( loadFolder ):
                 for filename in files:
-                    #print( root, filename )
                     if '40-Mat' in root and not filename.endswith( '.zip' ): #  Save in the archive without the path --
                         #   parameters are filename to compress, archive name (relative path) to save as
                         zf.write( os.path.join(root,filename), os.path.relpath(os.path.join(root, filename), os.path.join(loadFolder, '..')) ) # Save in the archive without the path
