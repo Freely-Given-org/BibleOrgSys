@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-04-27 by RJH (also update ProgVersion below)
+#   Last modified: 2014-04-28 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -60,7 +60,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.66"
+ProgVersion = "0.67"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -502,7 +502,8 @@ class BibleWriter( InternalBible ):
 
 
     # The following are used by both toHTML5 and toCustomBible
-    ipHTMLClassDict = {'ip':'introductoryParagraph', 'ipi':'introductoryParagraphIndented'}
+    ipHTMLClassDict = {'ip':'introductionParagraph', 'ipi':'introductionParagraphIndented',
+                       'im':'introductionFlushLeftParagraph', 'imi':'introductionIndentedFlushLeftParagraph'}
     pqHTMLClassDict = {'p':'proseParagraph', 'm':'flushLeftParagraph',
                        'pmo':'embeddedOpeningParagraph', 'pm':'embeddedParagraph', 'pmc':'embeddedClosingParagraph',
                        'pmr':'embeddedRefrainParagraph',
@@ -1067,17 +1068,18 @@ class BibleWriter( InternalBible ):
 
                 # Markers usually only found in the introduction
                 if marker in oftenIgnoredIntroMarkers: pass # Just ignore these lines
-                elif marker in ('mt1','mt2','mt3','mt4',):
+                elif marker in ('mt1','mt2','mt3','mt4', 'imt1','imt2','imt3','imt4',):
                     if Globals.debugFlag: assert( not haveOpenParagraph )
                     #if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
-                    if text: writerObject.writeLineOpenClose( 'h1', text, ('class','mainTitle'+marker[2]) )
+                    tClass = 'mainTitle' if marker in ('mt1','mt2','mt3','mt4',) else 'introductionMainTitle'
+                    if text: writerObject.writeLineOpenClose( 'h1', text, ('class',tClass+marker[2]) )
                 elif marker in ('is1','is2','is3','is4',):
                     if Globals.debugFlag: assert( not haveOpenParagraph )
                     #if not haveOpenParagraph:
                         #logging.warning( "toHTML5: Have {} introduction section heading {} outside a paragraph in {}".format( marker, text, BBB ) )
                         #writerObject.writeLineOpen( 'p', ('class','unknownParagraph') ); haveOpenParagraph = True
                     if text: writerObject.writeLineOpenClose( 'h3', text, ('class','introductionSectionHeading'+marker[2]) )
-                elif marker in ('ip','ipi',):
+                elif marker in ('ip','ipi', 'im','imi',):
                     if haveOpenParagraph:
                         logging.error( "toHTML5: didn't expect {} field with paragraph still open at {} {}:{}".format( marker, BBB, C, V ) )
                         writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
@@ -1092,7 +1094,7 @@ class BibleWriter( InternalBible ):
                         logging.error( "toHTML5: didn't expect {} field with paragraph still open at {} {}:{}".format( marker, BBB, C, V ) )
                         writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
                     #if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
-                    if text: writerObject.writeLineOpenClose( 'h3', text, ('class','outlineTitle') )
+                    if text: writerObject.writeLineOpenClose( 'h3', text, ('class','introductionOutlineTitle') )
                 elif marker in ('io1','io2','io3','io4',):
                     if Globals.debugFlag: assert( not haveOpenParagraph )
                     #if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
@@ -1642,11 +1644,12 @@ class BibleWriter( InternalBible ):
 
                 # Markers usually only found in the introduction
                 if marker in oftenIgnoredIntroMarkers: pass # Just ignore these lines
-                elif marker in ('mt1','mt2','mt3','mt4',):
+                elif marker in ('mt1','mt2','mt3','mt4', 'imt1','imt2','imt3','imt4',):
                     if Globals.debugFlag: assert( not pOpen )
                     if not sOpen:
                         thisHTML += '<section class="introSection">'; sOpen = sJustOpened = True; BCV=(BBB,C,V)
-                    thisHTML += '<h1 class="mainTitle{}">{}</h1>'.format( marker[2], text )
+                    tClass = 'mainTitle' if marker in ('mt1','mt2','mt3','mt4',) else 'introductionMainTitle'
+                    thisHTML += '<h1 class="{}{}">{}</h1>'.format( tClass, marker[2], text )
                 elif marker in ('is1','is2','is3','is4',):
                     if pOpen:
                         logging.warning( "toCustomBible: didn't expect {} field with paragraph still open at {} {}:{}".format( marker, BBB, C, V ) )
@@ -1665,7 +1668,7 @@ class BibleWriter( InternalBible ):
                     if not sOpen:
                         thisHTML += '<section class="introSection">'; sOpen = sJustOpened = True; BCV=(BBB,C,V)
                     thisHTML += '<h2 class="introductionSectionHeading{}">{}</h2>'.format( marker[2], text )
-                elif marker in ('ip','ipi',):
+                elif marker in ('ip','ipi', 'im','imi',):
                     for lx in ('4','3','2','1'): # Close any open lists
                         if listOpen and lx in listOpen and listOpen[lx]: thisHTML += '</p>'; del listOpen[lx]
                     if pOpen:
@@ -2339,13 +2342,13 @@ class BibleWriter( InternalBible ):
                 marker, cleanText = entry.getMarker(), entry.getCleanText()
                 #print( BBB, C, V, marker, repr(cleanText) )
                 if marker in oftenIgnoredIntroMarkers: pass # Just ignore these lines
-                elif marker in ('mt1','mt2','mt3','mt4','mte1','mte2','mte3','mte4','periph',): # Simple headings
+                elif marker in ('mt1','mt2','mt3','mt4','mte1','mte2','mte3','mte4', 'imt1','imt2','imt3','imt4', 'periph',): # Simple headings
                     #if textBuffer: textBuffer += '\n'
                     textBuffer += '\n\nHhH' + cleanText + '\n'
-                elif marker in ('s1','s2','s3','s4', 'is1','is2','is3','is4','ms1','ms2','ms3','ms4', 'sr',): # Simple headings
+                elif marker in ('s1','s2','s3','s4', 'is1','is2','is3','is4', 'ms1','ms2','ms3','ms4', 'sr',): # Simple headings
                     #if textBuffer: textBuffer += '\n'
                     textBuffer += '\n\nSsS' + cleanText + '\n'
-                elif marker in ('iot','io1','io2','io3','io4',): pass # Drop the introduction
+                elif marker in ('iot', 'io1','io2','io3','io4',): pass # Drop the introduction
                 elif marker in ('c','cp',): # cp should follow (and thus override) c
                     if textBuffer: renderText( BBB, BBBnum, bookName, bookAbbrev, C, maxChapters, numVerses, textBuffer, bookFolderPath ); textBuffer = ""
                     C = cleanText
@@ -2365,12 +2368,12 @@ class BibleWriter( InternalBible ):
                     textBuffer += '\n'
                 elif marker == 'nb':
                     textBuffer += '\n' + cleanText
-                elif marker in ('p', 'pi1','pi2','pi3','pi4', 'q1','q2','q3','q4', 'm','mi', 'ph1','ph2','ph3','ph4','pc',
+                elif marker in ('p', 'pi1','pi2','pi3','pi4', 'q1','q2','q3','q4', 'm','mi','im','imi', 'ph1','ph2','ph3','ph4','pc',
                                 'li1','li2','li3','li4', 'ip','ipi', 'ili1','ili2','ili3','ili4',): # Just put it on a new line
                     textBuffer += '\n'
-                    if marker not in ('m','mi','ph1','ph2','ph3','ph4',): textBuffer += '  ' # Non-break spaces won't be lost later
+                    if marker not in ('m','mi','im','imi','ph1','ph2','ph3','ph4',): textBuffer += '  ' # Non-break spaces won't be lost later
                     if marker in ('li1','li2','li3','li4', 'ili1','ili2','ili3','ili4',): textBuffer += '• '
-                    if marker in ('ipi','pi1','q1','ph1','mi','li1','ili1',): textBuffer += '_I1_'
+                    if marker in ('ipi','pi1','q1','ph1','mi','imi','li1','ili1',): textBuffer += '_I1_'
                     elif marker in ('pi2','q2','ph2','li2','ili2',): textBuffer += '_I2_'
                     elif marker in ('pi3','q3','ph3','li3','ili3',): textBuffer += '_I3_'
                     elif marker in ('pi4','q4','ph4','li4','ili4',): textBuffer += '_I4_'
