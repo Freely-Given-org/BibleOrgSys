@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # OSISXMLBible.py
-#   Last modified: 2014-04-25 by RJH (also update ProgVersion below)
+#   Last modified: 2014-05-02 by RJH (also update ProgVersion below)
 #
 # Module handling OSIS XML Bibles
 #
@@ -36,7 +36,7 @@ Updated Sept 2013 to also handle Kahunapule's "modified OSIS".
 """
 
 ProgName = "OSIS XML Bible format handler"
-ProgVersion = "0.33"
+ProgVersion = "0.34"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -192,7 +192,8 @@ class OSISXMLBible( Bible ):
     """
     filenameBase = "OSISXMLBible"
     XMLNameSpace = "{http://www.w3.org/XML/1998/namespace}"
-    OSISNameSpace = "{http://ebible.org/2003/OSIS/namespace}"
+    #OSISNameSpace = "{http://ebible.org/2003/OSIS/namespace}"
+    OSISNameSpace = "{http://www.bibletechnologies.net/2003/OSIS/namespace}"
     treeTag = OSISNameSpace + "osis"
     textTag = OSISNameSpace + "osisText"
     headerTag = OSISNameSpace + "header"
@@ -1629,9 +1630,9 @@ class OSISXMLBible( Bible ):
                     titleCanonical = value
                     assert( titleCanonical in ('true','false',) )
                 else: logging.warning( "4b8e Unprocessed '{}' attribute ({}) in {} at {}".format( attrib, value, location, verseMilestone ) )
-            #print( 'vdq2', repr(titleType), repr(titleSubType), repr(titleText) )
-            if titleType: assert( titleType in ('main','scope','sub','parallel',) )
-            if titleSubType: assert( titleSubType == 'x-preverse' )
+            #print( 'vdq2', repr(titleType), repr(titleSubType), repr(titleText), titleLevel, titleCanonical )
+            if Globals.debugFlag and titleType: assert( titleType in ('main','chapter','psalm','scope','sub','parallel','acrostic',) )
+            if Globals.debugFlag and titleSubType: assert( titleSubType == 'x-preverse' )
             if chapterMilestone:
                 #print( "title", repr(titleText), repr(titleType), repr(titleSubType), repr(titleShort), repr(titleLevel) )
                 if titleText and titleText.strip():
@@ -1688,7 +1689,9 @@ class OSISXMLBible( Bible ):
                                 if attrib=="osisRef":
                                     referenceOsisRef = value
                                 else: logging.warning( "89n5 Unprocessed '{}' attribute ({}) in {} sub3element of {} at {}".format( attrib, value, sub2element.tag, sublocation, verseMilestone ) )
-                            #print( referenceText, referenceOsisRef, referenceTail )
+                            if Globals.debugFlag:
+                                print( referenceText, referenceOsisRef, referenceTail )
+                                halt
                             self.thisBook.appendLine( 'r~', referenceText+referenceTail )
                         else:
                             logging.warning( "2d6h Unprocessed '{}' sub2element ({}) in {} at {}".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
@@ -2133,7 +2136,9 @@ class OSISXMLBible( Bible ):
                                                 if attrib=="osisRef":
                                                     referenceOsisRef = value
                                                 else: logging.warning( "nm46 Unprocessed '{}' attribute ({}) in {} sub3element of {} at {}".format( attrib, value, sub3element.tag, sub2location, verseMilestone ) )
-                                            #print( referenceText, referenceOsisRef, referenceTail )
+                                            if Globals.debugFlag:
+                                                print( referenceText, referenceOsisRef, referenceTail )
+                                                halt
                                             self.thisBook.appendLine( 'r~', referenceText+referenceTail )
                                         elif sub3element.tag == OSISXMLBible.OSISNameSpace+"note":
                                             sub3location = "note of " + sub2location
@@ -2494,8 +2499,9 @@ def demo():
 
     if 1: # Test OSISXMLBible object
         testFilepaths = (
-            "Tests/DataFilesForTests/OSISTest1/",
-            "Tests/DataFilesForTests/OSISTest2/",
+            "/mnt/SSD/AutoProcesses/Processed/BibleDropBox_kjvfull.xml",
+            #"Tests/DataFilesForTests/OSISTest1/",
+            #"Tests/DataFilesForTests/OSISTest2/",
             #"../morphhb/wlc/Ruth.xml", "../morphhb/wlc/Dan.xml", "../morphhb/wlc/", # Hebrew Ruth, Daniel, Bible
             #"../../../../../Data/Work/Bibles/Formats/OSIS/Crosswire USFM-to-OSIS (Perl)/Matigsalug.osis.xml", # Entire Bible in one file 4.4MB
             #"../../../../../Data/Work/Bibles/Formats/OSIS/kjvxml from DMSmith/kjv.xml", # Entire Bible in one file 23.7MB

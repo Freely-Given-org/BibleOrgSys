@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-04-28 by RJH (also update ProgVersion below)
+#   Last modified: 2014-05-02 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -1981,6 +1981,9 @@ class BibleWriter( InternalBible ):
         Write the pseudo USFM out into a simple plain-text format.
             The format varies, depending on whether or not there are paragraph markers in the text.
                 I need to see a page showing 26-32 characters per line and 13-14 lines per page
+
+        Although this code could be made to handle different fonts,
+            ImageMagick convert is unable to handle complex scripts.  :(
         """
         if Globals.verbosityLevel > 1: print( "Running BibleWriter:toPhotoBible..." )
         if Globals.debugFlag: assert( self.books )
@@ -1998,8 +2001,9 @@ class BibleWriter( InternalBible ):
         defaultLineSize = int( defaultLeadingRatio * defaultFontSize )
         maxLineCharacters, maxLines = 26, 12
         maxDown = pixelHeight-1 - defaultLineSize - 3 # Be sure to leave one blank line at the bottom
-        # Use "identify -list font" or "convert -list font" to see all fonts on the system
+        # Use "identify -list font" or "convert -list font" to see all fonts on the system (use the Font field, not the family field)
         defaultTextFontname, defaultHeadingFontname = "Times-Roman", "FreeSans-Bold"
+        #defaultTextFontname = defaultHeadingFontname = "Lohit-Telugu-Regular"
         topLineColor = "opaque"
         defaultMainHeadingFontcolor, defaultSectionHeadingFontcolor, defaultSectionCrossReferenceFontcolor = "indigo", "red1", "royalBlue"
         defaultVerseNumberFontcolor = "DarkOrange1"
