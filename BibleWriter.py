@@ -2003,7 +2003,6 @@ class BibleWriter( InternalBible ):
         maxDown = pixelHeight-1 - defaultLineSize - 3 # Be sure to leave one blank line at the bottom
         # Use "identify -list font" or "convert -list font" to see all fonts on the system (use the Font field, not the family field)
         defaultTextFontname, defaultHeadingFontname = "Times-Roman", "FreeSans-Bold"
-        #defaultTextFontname = defaultHeadingFontname = "Lohit-Telugu-Regular"
         topLineColor = "opaque"
         defaultMainHeadingFontcolor, defaultSectionHeadingFontcolor, defaultSectionCrossReferenceFontcolor = "indigo", "red1", "royalBlue"
         defaultVerseNumberFontcolor = "DarkOrange1"

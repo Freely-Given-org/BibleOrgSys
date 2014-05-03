@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Globals.py
-#   Last modified: 2014-03-24 by RJH (also update ProgVersion below)
+#   Last modified: 2014-05-03 by RJH (also update ProgVersion below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -70,7 +70,7 @@ Contains functions:
 """
 
 ProgName = "Globals"
-ProgVersion = "0.40"
+ProgVersion = "0.41"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -540,9 +540,9 @@ def fileCompareXML( filename1, filename2, folder1=None, folder2=None, printFlag=
 haltOnWarning = False # Used for XML debugging
 
 def checkXMLNoText( element, locationString, idString=None ):
-    """ Give a warning if the element text contains anything other than whitespace. """
+    """ Give an error if the element text contains anything other than whitespace. """
     if element.text and element.text.strip():
-        logging.warning( "{}Unexpected '{}' element text in {}".format( (idString+' ') if idString else '', element.text, locationString ) )
+        logging.error( "{}Unexpected '{}' element text in {}".format( (idString+' ') if idString else '', element.text, locationString ) )
         if debugFlag and haltOnWarning: halt
 
 def checkXMLNoTail( element, locationString, idString=None ):
@@ -553,14 +553,16 @@ def checkXMLNoTail( element, locationString, idString=None ):
 
 
 def checkXMLNoAttributes( element, locationString, idString=None ):
+    """ Give a warning if the element contains any attributes. """
     for attrib,value in element.items():
         logging.warning( "{}Unexpected '{}' attribute ({}) in {}".format( (idString+' ') if idString else '', attrib, value, locationString ) )
         if debugFlag and haltOnWarning: halt
 
 
 def checkXMLNoSubelements( element, locationString, idString=None ):
+    """ Give an error if the element contains any sub-elements. """
     for subelement in element.getchildren():
-        logging.warning( "{}Unexpected '{}' sub-element ({}) in {}".format( (idString+' ') if idString else '', subelement.tag, subelement.text, locationString ) )
+        logging.error( "{}Unexpected '{}' sub-element ({}) in {}".format( (idString+' ') if idString else '', subelement.tag, subelement.text, locationString ) )
         if debugFlag and haltOnWarning: halt
 
 
