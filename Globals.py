@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Globals.py
-#   Last modified: 2014-05-04 by RJH (also update ProgVersion below)
+#   Last modified: 2014-05-05 by RJH (also update ProgVersion below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -70,7 +70,7 @@ Contains functions:
 """
 
 ProgName = "Globals"
-ProgVersion = "0.44"
+ProgVersion = "0.45"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -888,8 +888,10 @@ def demo():
     line1c = peekIntoFile( "DataFiles/BibleBooksCodes.xml" ) # Filepath
     print( "BibleBooksCodes.xml starts with {}".format( repr(line1c) ) )
 
-    print( "\nFirst one made filename safe: {}".format( repr( makeSafeFilename( line1a[0] ) ) ) )
+    print( "\nFirst one made string safe: {}".format( repr( makeSafeString( line1a[0] ) ) ) )
+    print( "First one made filename safe: {}".format( repr( makeSafeFilename( line1a[0] ) ) ) )
     print( "Last one made string safe: {}".format( repr( makeSafeString( line1c ) ) ) )
+    print( "Last one made filename safe: {}".format( repr( makeSafeFilename( line1c ) ) ) )
 
     text = "The quick brown fox jumped over the lazy brown dog."
     adjustments = [(36,'lazy','fat'),(0,'The','A'),(20,'jumped','tripped'),(4,'','very '),(10,'brown','orange')]

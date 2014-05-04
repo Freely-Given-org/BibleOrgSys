@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2014-04-25 by RJH (also update ProgVersion below)
+#   Last modified: 2014-05-05 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -44,7 +44,7 @@ and then fills
 """
 
 ProgName = "Internal Bible handler"
-ProgVersion = "0.43"
+ProgVersion = "0.44"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -246,7 +246,7 @@ class InternalBible:
         #print( (self.abbreviation), repr(self.name) )
         if filename is None:
             filename = self.abbreviation if self.abbreviation else self.name
-        assert( filename )
+        if Globals.debugFlag: assert( filename )
         filename = Globals.makeSafeFilename( filename ) + '.pickle'
         if Globals.verbosityLevel > 2:
             print( _("InternalBible.pickle: Saving {} to {}...") \

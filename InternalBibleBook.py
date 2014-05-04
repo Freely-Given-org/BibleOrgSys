@@ -1575,7 +1575,7 @@ class InternalBibleBook:
                     #print( extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
                     assert( extraIndex >= 0 )
                     #assert( 0 <= extraIndex <= len(text)+3 )
-                    assert( extraType in ('fn','xr',) )
+                    assert( extraType in EXTRA_TYPES )
                 if extraType=='fn':
                     bkDict['haveFootnotes'] = True
                     bkDict['footnotesCount'] += 1

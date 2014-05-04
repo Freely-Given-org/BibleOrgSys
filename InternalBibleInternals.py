@@ -307,13 +307,15 @@ class InternalBibleEntry:
             #print( "getFullText: {} at {} = '{}' ({})".format( extraType, extraIndex, extraText, cleanExtraText ) )
             #print( "getFullText:  was '{}'".format( result ) )
             ix = extraIndex + offset
-            if extraType == 'fn': USFM = 'f'
-            elif extraType == 'xr': USFM = 'x'
-            elif extraType == 'fig': USFM = 'fig'
+            if extraType == 'fn': USFM, lenUSFM = 'f', 1
+            elif extraType == 'xr': USFM, lenUSFM = 'x', 1
+            elif extraType == 'fig': USFM, lenUSFM = 'fig', 3
+            elif extraType == 'str': USFM, lenUSFM = None, 3 # Ignore Strong's numbers since no way to encode them in USFM
             elif Globals.debugFlag: halt
-            result = '{}\\{} {}\\{}*{}'.format( result[:ix], USFM, extraText, USFM, result[ix:] )
+            if USFM:
+                result = '{}\\{} {}\\{}*{}'.format( result[:ix], USFM, extraText, USFM, result[ix:] )
             #print( "getFullText:  now '{}'".format( result ) )
-            offset += len(extraText ) + 2*len(USFM) + 4
+            offset += len(extraText ) + 2*lenUSFM + 4
 
         #if result != self.adjustedText:
             #if len(self.extras) > 1:

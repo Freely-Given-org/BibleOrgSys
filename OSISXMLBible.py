@@ -51,11 +51,14 @@ from ISO_639_3_Languages import ISO_639_3_Languages
 from Bible import Bible, BibleBook
 
 
-filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
-extensionsToIgnore = ( 'ASC', 'BAK', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', 'HTM','HTML', 'JAR',
+FILENAME_ENDINGS_TO_IGNORE = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
+EXTENSIONS_TO_IGNORE = ( 'ASC', 'BAK', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', 'HTM','HTML', 'JAR',
                     'LDS', 'LOG', 'MYBIBLE', 'NT','NTX', 'ODT', 'ONT','ONTX', 'OSIS', 'OT','OTX', 'PDB',
                     'STY', 'SSF', 'TXT', 'USFM', 'USX', 'VRS', 'YET', 'ZIP', ) # Must be UPPERCASE and NOT begin with a dot
 
+
+# Get the data tables that we need for proper checking
+ISOLanguages = ISO_639_3_Languages().loadData()
 
 
 def OSISXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
@@ -92,10 +95,10 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
             somethingUpper = something.upper()
             somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
             ignore = False
-            for ending in filenameEndingsToIgnore:
+            for ending in FILENAME_ENDINGS_TO_IGNORE:
                 if somethingUpper.endswith( ending): ignore=True; break
             if ignore: continue
-            if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+            if not somethingUpperExt[1:] in EXTENSIONS_TO_IGNORE: # Compare without the first dot
                 foundFiles.append( something )
     if '__MACOSX' in foundFolders:
         foundFolders.remove( '__MACOSX' )  # don't visit these directories
@@ -140,10 +143,10 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
                 somethingUpper = something.upper()
                 somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
                 ignore = False
-                for ending in filenameEndingsToIgnore:
+                for ending in FILENAME_ENDINGS_TO_IGNORE:
                     if somethingUpper.endswith( ending): ignore=True; break
                 if ignore: continue
-                if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+                if not somethingUpperExt[1:] in EXTENSIONS_TO_IGNORE: # Compare without the first dot
                     foundSubfiles.append( something )
         #print( 'fsf', foundSubfiles )
 
@@ -239,9 +242,6 @@ class OSISXMLBible( Bible ):
         self.name = self.givenName
         #if self.name is None:
             #pass
-
-        # Get the data tables that we need for proper checking
-        self.ISOLanguages = ISO_639_3_Languages().loadData()
     # end of OSISXMLBible.__init__
 
 
@@ -353,6 +353,7 @@ class OSISXMLBible( Bible ):
                         divType = element.get( "type" )
                         if divType is None:
                             logging.error( "Missing div type in OSIS file" )
+                            loadErrors.append( "Missing div type in OSIS file" )
                         if divType != self.divTypesString:
                             if not self.divTypesString: self.divTypesString = divType
                             else: self.divTypesString = 'MixedTypes'
@@ -531,21 +532,32 @@ class OSISXMLBible( Bible ):
                         typeType = None
                         for attrib,value in subelement.items():
                             if attrib=="type": typeType = value
-                            else: logging.warning( "7j3f Unprocessed '{}' attribute ({}) in {}".format( attrib, value, sublocation ) )
+                            else:
+                                logging.warning( "7j3f Unprocessed '{}' attribute ({}) in {}".format( attrib, value, sublocation ) )
+                                loadErrors.append( "Unprocessed '{}' attribute ({}) in {} (7j3f)".format( attrib, value, sublocation ) )
                         if Globals.debugFlag: assert( typeType == 'OSIS' )
                         if Globals.verbosityLevel > 2: print( "    Type ({}) is '{}'".format( typeType, self.type ) )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+"identifier":
                         sublocation = "identifier of " + location
                         Globals.checkXMLNoTail( subelement, sublocation, '5a2m', loadErrors )
                         Globals.checkXMLNoSubelements( subelement, sublocation, '2x6e', loadErrors )
-                        self.identifier = subelement.text
+                        identifier = subelement.text
                         identifierType = None
                         for attrib,value in subelement.items():
                             if attrib=="type": identifierType = value
-                            else: logging.warning( "2d5g Unprocessed '{}' attribute ({}) in {}".format( attrib, value, sublocation ) )
-                        #print( identifierType )
+                            else:
+                                logging.warning( "2d5g Unprocessed '{}' attribute ({}) in {}".format( attrib, value, sublocation ) )
+                                loadErrors.append( "Unprocessed '{}' attribute ({}) in {} (2d5g)".format( attrib, value, sublocation ) )
+                        #print( "id", repr(identifierType) )
                         if Globals.debugFlag: assert( identifierType in ('OSIS','URL','x-ebible-id',) )
                         if Globals.verbosityLevel > 2: print( "    Identifier ({}) is '{}'".format( identifierType, self.identifier ) )
+                        #print( "Here vds1", repr(self.name), repr(self.abbreviation) )
+                        if identifierType=='OSIS':
+                            if not self.name: self.name = identifier
+                            if identifier.startswith( 'Bible.' ) and not self.abbreviation:
+                                self.abbreviation = identifier[6:]
+                        self.identifier = identifier
+                        #print( "Here vds2", repr(self.name), repr(self.abbreviation) )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+"source":
                         sublocation = "source of " + location
                         Globals.checkXMLNoTail( subelement, sublocation, '1i8p', loadErrors )
@@ -555,7 +567,9 @@ class OSISXMLBible( Bible ):
                         sourceRole = None
                         for attrib,value in subelement.items():
                             if attrib=="role": sourceRole = value
-                            else: logging.warning( "6h7h Unprocessed '{}' attribute ({}) in {}".format( attrib, value, sublocation ) )
+                            else:
+                                logging.warning( "6h7h Unprocessed '{}' attribute ({}) in {}".format( attrib, value, sublocation ) )
+                                loadErrors.append( "Unprocessed '{}' attribute ({}) in {} (6h7h)".format( attrib, value, sublocation ) )
                         if Globals.verbosityLevel > 2: print( "    Source{} was '{}'".format( " ({})".format(sourceRole) if sourceRole else '', self.source ) )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+"publisher":
                         sublocation = "publisher of " + location
@@ -565,7 +579,9 @@ class OSISXMLBible( Bible ):
                         publisherType = None
                         for attrib,value in subelement.items():
                             if attrib=='type': publisherType = value
-                            else: logging.warning( "7g5g Unprocessed '{}' attribute ({}) in {}".format( attrib, value, sublocation ) )
+                            else:
+                                logging.warning( "7g5g Unprocessed '{}' attribute ({}) in {}".format( attrib, value, sublocation ) )
+                                loadErrors.append( "Unprocessed '{}' attribute ({}) in {} (7g5g)".format( attrib, value, sublocation ) )
                         if Globals.verbosityLevel > 2: print( "    Publisher {}is/was '{}'".format( '({}) '.format(publisherType) if publisherType else '', self.publisher ) )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+"scope":
                         sublocation = "scope of " + location
@@ -600,10 +616,12 @@ class OSISXMLBible( Bible ):
                         languageType = None
                         for attrib,value in subelement.items():
                             if attrib=="type": languageType = value
-                            else: logging.warning( "6g4f Unprocessed '{}' attribute ({}) in {}".format( attrib, value, sublocation ) )
+                            else:
+                                logging.warning( "6g4f Unprocessed '{}' attribute ({}) in {}".format( attrib, value, sublocation ) )
+                                loadErrors.append( "Unprocessed '{}' attribute ({}) in {} (6g4f)".format( attrib, value, sublocation ) )
                         if languageType in ('SIL','IETF','x-ethnologue','x-in-english','x-vernacular',):
-                            if self.ISOLanguages.isValidLanguageCode( self.language ):
-                                if Globals.verbosityLevel > 2: print( "  Language is: {}".format( self.ISOLanguages.getLanguageName( self.language ) ) )
+                            if ISOLanguages.isValidLanguageCode( self.language ):
+                                if Globals.verbosityLevel > 2: print( "  Language is: {}".format( ISOLanguages.getLanguageName( self.language ) ) )
                             else: print( "Discovered an unknown '{}' language".format( self.language ) )
                         else: print( "Discovered an unknown '{}' languageType".format( languageType ) )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+"rights":
@@ -614,7 +632,9 @@ class OSISXMLBible( Bible ):
                         copyrightType = None
                         for attrib,value in subelement.items():
                             if attrib=="type": copyrightType = value
-                            else: logging.warning( "1s3d Unprocessed '{}' attribute ({}) in {}".format( attrib, value, sublocation ) )
+                            else:
+                                logging.warning( "1s3d Unprocessed '{}' attribute ({}) in {}".format( attrib, value, sublocation ) )
+                                loadErrors.append( "Unprocessed '{}' attribute ({}) in {} (1s3d)".format( attrib, value, sublocation ) )
                         if Globals.debugFlag: assert( copyrightType in (None,'x-copyright','x-license','x-license-url',) )
                         if Globals.verbosityLevel > 2: print( "    Rights{} are/were '{}'".format( " ({})".format(copyrightType) if copyrightType else '', self.rights ) )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+"relation":
@@ -639,7 +659,9 @@ class OSISXMLBible( Bible ):
                 for attrib,value in element.items():
                     if attrib=="path": workPrefixPath = value
                     elif attrib=="osisWork": workPrefixWork = value
-                    else: logging.warning( "7yh4 Unprocessed {} attribute ({}) in workPrefix element".format( attrib, value ) )
+                    else:
+                        logging.warning( "7yh4 Unprocessed {} attribute ({}) in workPrefix element".format( attrib, value ) )
+                        loadErrors.append( "Unprocessed {} attribute ({}) in workPrefix element (7yh4)".format( attrib, value ) )
                 # Now process the subelements
                 for subelement in element.getchildren():
                     if subelement.tag == OSISXMLBible.OSISNameSpace+"revisionDesc":
@@ -651,9 +673,15 @@ class OSISXMLBible( Bible ):
                         #self.something = subelement.text
                         for attrib,value in subelement.items():
                             logging.warning( "3h6r Unprocessed '{}' attribute ({}) in {} subelement of workPrefix element".format( attrib, value, subelement.tag ) )
-                    else: logging.error( "8h4g Unprocessed '{}' sub-element ({}) in workPrefix element".format( subelement.tag, subelement.text ) )
-            else: logging.error( "Expected to load '{}' but got '{}'".format( OSISXMLBible.OSISNameSpace+"work", element.tag ) )
-            if element.tail is not None and element.tail.strip(): logging.error( "Unexpected '{}' tail data after {} element in header element".format( element.tail, element.tag ) )
+                    else:
+                        logging.error( "8h4g Unprocessed '{}' sub-element ({}) in workPrefix element".format( subelement.tag, subelement.text ) )
+                        loadErrors.append( "Unprocessed '{}' sub-element ({}) in workPrefix element (8h4g)".format( subelement.tag, subelement.text ) )
+            else:
+                logging.error( "Expected to load '{}' but got '{}'".format( OSISXMLBible.OSISNameSpace+"work", element.tag ) )
+                loadErrors.append( "Expected to load '{}' but got '{}'".format( OSISXMLBible.OSISNameSpace+"work", element.tag ) )
+            if element.tail is not None and element.tail.strip():
+                logging.error( "Unexpected '{}' tail data after {} element in header element".format( element.tail, element.tag ) )
+                loadError.append( "Unexpected '{}' tail data after {} element in header element".format( element.tail, element.tag ) )
         if not numWorks:
             logging.warning( "OSIS header doesn't specify any work records." )
             loadErrors.append( "OSIS header doesn't specify any work records." )
@@ -875,7 +903,9 @@ class OSISXMLBible( Bible ):
             if len(element)==0 and ( sID or eID or OSISChapterID): # it's a chapter milestone (no sub-elements)
                 # No verse milestone should be open because verses can't cross chapter boundaries
                 if verseMilestone:
-                    if haveEIDs: logging.error( _("Unexpected {} chapter milestone while {} verse milestone is still open at {}").format( element.items(), verseMilestone, location ) )
+                    if haveEIDs:
+                        logging.error( _("Unexpected {} chapter milestone while {} verse milestone is still open at {}").format( element.items(), verseMilestone, location ) )
+                        loadErrors.append( _("Unexpected {} chapter milestone while {} verse milestone is still open at {}").format( element.items(), verseMilestone, location ) )
 
                 if OSISChapterID and sID and not eID:
                     chapterMilestone = sID
@@ -884,19 +914,23 @@ class OSISXMLBible( Bible ):
                     if chapterMilestone and eID==chapterMilestone: chapterMilestone = ''
                     else:
                         logging.error( _("Chapter milestone {} end didn't match {} at {}").format( eID, chapterMilestone, location ) )
+                        loadErrors.append( _("Chapter milestone {} end didn't match {} at {}").format( eID, chapterMilestone, location ) )
                 elif OSISChapterID and not (sID or eID): # some OSIS formats use this
                     if Globals.debugFlag: assert( canonical == "true" )
                     chapterMilestone = OSISChapterID
                 else:
                     print( repr(OSISChapterID), repr(sID), repr(eID) )
                     logging.error( _("Unrecognized chapter milestone in {}: {} at {}").format( location, element.items(), location ) )
+                    loadErrors.append( _("Unrecognized chapter milestone in {}: {} at {}").format( location, element.items(), location ) )
 
                 if chapterMilestone: # Have a chapter milestone like Jas.1
                     if not OSISChapterID:
                         logging.error( "Missing chapter ID for {} at {}".format( chapterMilestone, location ) )
+                        loadErrors.append( "Missing chapter ID for {} at {}".format( chapterMilestone, location ) )
                     else:
                         if not OSISChapterID.count('.')==1:
                             logging.error( "{} chapter ID seems wrong format for {} at {}".format( OSISChapterID, chapterMilestone, location ) )
+                            loadErrors.append( "{} chapter ID seems wrong format for {} at {}".format( OSISChapterID, chapterMilestone, location ) )
                         bits = OSISChapterID.split( '.' )
                         if Globals.debugFlag: assert( len(bits) == 2 )
                         cmBBB = None
@@ -904,6 +938,7 @@ class OSISXMLBible( Bible ):
                             cmBBB = Globals.BibleBooksCodes.getBBBFromOSIS( bits[0] )
                         except:
                             logging.critical( _("'{}' is not a valid OSIS book identifier").format( bits[0] ) )
+                            loadErrors.append( _("'{}' is not a valid OSIS book identifier").format( bits[0] ) )
                         if cmBBB and cmBBB != BBB: # We've started on a new book
                             #if BBB and ( len(bookResults)>20 or len(USFMResults)>20 ): # Save the previous book
                             if BBB and len(self.thisBook._rawLines) > 5: # Save the previous book
@@ -1007,7 +1042,9 @@ class OSISXMLBible( Bible ):
                 if Globals.debugFlag: assert( not verseText )
                 if sID and OSISVerseID and not eID: # we have a start milestone
                     if verseMilestone: # but we already have an open milestone
-                        if haveEIDs: logging.error( "Got a {} verse milestone while {} is still open at {}".format( sID, verseMilestone, location ) )
+                        if haveEIDs:
+                            logging.error( "Got a {} verse milestone while {} is still open at {}".format( sID, verseMilestone, location ) )
+                            loadErrors.append( "Got a {} verse milestone while {} is still open at {}".format( sID, verseMilestone, location ) )
                     verseMilestone = sID
                     #for char in (' ','-',):
                     #    if char in verseMilestone: # it contains a range like 'Mark.6.17 Mark.6.18' or 'Mark.6.17-Mark.6.18'
@@ -2750,9 +2787,9 @@ def demo():
 
     if 1: # Test OSISXMLBible object
         testFilepaths = (
-            "../../../../AutoProcesses/Processed/BibleDropBox_kjvfull.xml",
             #"Tests/DataFilesForTests/OSISTest1/",
             #"Tests/DataFilesForTests/OSISTest2/",
+            "../../../../AutoProcesses/Processed/BibleDropBox_kjvfull.xml",
             #"../morphhb/wlc/Ruth.xml", "../morphhb/wlc/Dan.xml", "../morphhb/wlc/", # Hebrew Ruth, Daniel, Bible
             #"../../../../../Data/Work/Bibles/Formats/OSIS/Crosswire USFM-to-OSIS (Perl)/Matigsalug.osis.xml", # Entire Bible in one file 4.4MB
             #"../../../../../Data/Work/Bibles/Formats/OSIS/kjvxml from DMSmith/kjv.xml", # Entire Bible in one file 23.7MB
@@ -2798,6 +2835,8 @@ def demo():
                     svk = VerseReferences.SimpleVerseKey( b, c, v )
                     #print( svk, oB.getVerseDataList( svk ) )
                     print( svk, oB.getVerseText( svk ) )
+            #oB.toHTML5()
+            oB.doAllExports( wantPhotoBible=True, wantPDFs=True )
 # end of demo
 
 if __name__ == '__main__':

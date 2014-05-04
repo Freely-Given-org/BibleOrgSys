@@ -169,6 +169,7 @@ class BibleWriter( InternalBible ):
                     word = word[1:] # Remove leading punctuation
                 while word and word[-1] in InternalBibleBook.TRAILING_WORD_PUNCT_CHARS:
                     word = word[:-1] # Remove trailing punctuation
+                if  '<' in word or '>' in word or '"' in word: print( "Here 3s42", BBB, c, v, repr(word) )
                 return word
             # end of stripWordPunctuation
 
@@ -218,8 +219,9 @@ class BibleWriter( InternalBible ):
                             if Globals.debugFlag: assert( ' ' not in word )
                             txtFile.write( "{} {}\n".format( word, dictionary[word] ) )
                             csvFile.write( "{},{}\n".format( repr(word) if ',' in word else word, dictionary[word] ) )
-                            if Globals.debugFlag: assert( '<' not in word and '>' not in word and '"' not in word )
-                            xmlFile.write( "<entry><word>{}</word><count>{}</count></entry>\n".format( word, dictionary[word] ) )
+                            #if  '<' in word or '>' in word or '"' in word: print( "Here 3s42", repr(word) )
+                            #if Globals.debugFlag: assert( '<' not in word and '>' not in word and '"' not in word )
+                            xmlFile.write( "<entry><word>{}</word><count>{}</count></entry>\n".format( Globals.makeSafeXML(word), dictionary[word] ) )
                         xmlFile.write( '</entries>' ) # close root element
             filenamePortion = typeString + "_sorted_by_count."
             filepathPortion = os.path.join( outputFolder, Globals.makeSafeFilename( filenamePortion ) )
@@ -233,8 +235,8 @@ class BibleWriter( InternalBible ):
                             if Globals.debugFlag: assert( ' ' not in word )
                             txtFile.write( "{} {}\n".format( word, dictionary[word] ) )
                             csvFile.write( "{},{}\n".format( repr(word) if ',' in word else word, dictionary[word] ) )
-                            if Globals.debugFlag: assert( '<' not in word and '>' not in word and '"' not in word )
-                            xmlFile.write( "<entry><word>{}</word><count>{}</count></entry>\n".format( word, dictionary[word] ) )
+                            #if Globals.debugFlag: assert( '<' not in word and '>' not in word and '"' not in word )
+                            xmlFile.write( "<entry><word>{}</word><count>{}</count></entry>\n".format( Globals.makeSafeXML(word), dictionary[word] ) )
                         xmlFile.write( '</entries>' ) # close root element
         # end of printWordCounts
 
@@ -265,7 +267,7 @@ class BibleWriter( InternalBible ):
                         #print( extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
                         assert( extraIndex >= 0 )
                         #assert( 0 <= extraIndex <= len(text)+3 )
-                        assert( extraType in ('fn','xr',) )
+                        #assert( extraType in ('fn','xr',) )
                         assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
                     countWords( extraType, cleanExtraText, "notes" )
 
@@ -760,6 +762,8 @@ class BibleWriter( InternalBible ):
                 elif extraType == 'fig':
                     extra = processFigure( extraText, ourGlobals )
                     #print( "fig got", extra )
+                elif extraType == 'str':
+                    extra = ""
                 elif Globals.debugFlag and debuggingThisModule: print( 'eT', extraType ); halt
                 #print( "was", verse )
                 adjText = adjText[:adjIndex] + extra + adjText[adjIndex:]
@@ -1120,7 +1124,7 @@ class BibleWriter( InternalBible ):
                     if extras: print( "toHTML5: have extras at c# at",BBB,C)
                     C = text
                     if not haveOpenParagraph:
-                        logging.warning( "toHTML5: Have chapter number {} outside a paragraph in {} {}:{}".format( text, BBB, C, V ) )
+                        #logging.warning( "toHTML5: Have chapter number {} outside a paragraph in {} {}:{}".format( text, BBB, C, V ) )
                         writerObject.writeLineOpen( 'p', ('class','unknownParagraph') ); haveOpenParagraph = True
                     # Put verse 1 id here on the chapter number (since we don't output a v1 number)
                     writerObject.writeLineOpenClose( 'span', text, [('class','chapterNumber'),('id','CT'+text)] )
@@ -1192,7 +1196,7 @@ class BibleWriter( InternalBible ):
 
                 # Character markers
                 elif marker in ('v~','p~',):
-                    if Globals.debugFlag and marker=='v~': assert( haveOpenVerse )
+                    #if Globals.debugFlag and marker=='v~': assert( haveOpenVerse )
                     if not haveOpenParagraph:
                         logging.warning( "toHTML5: Have verse text {} outside a paragraph in {} {}:{}".format( text, BBB, C, V ) )
                         writerObject.writeLineOpen( 'p', ('class','unknownParagraph') ); haveOpenParagraph = True
@@ -1829,7 +1833,7 @@ class BibleWriter( InternalBible ):
                     sJustOpened = False
                     lastC, lastV = C, V
                 elif marker in ('v~','p~',):
-                    if Globals.debugFlag and marker=='v~': assert( vOpen )
+                    #if Globals.debugFlag and marker=='v~': assert( vOpen )
                     if text or extras:
                         if not vOpen:
                             thisHTML += '<span class="verse" id="{}">'.format( 'C'+C+'V'+V+'b' ); vOpen = True
@@ -3380,6 +3384,8 @@ class BibleWriter( InternalBible ):
                         extra = "" # temp
                         #extra = processFigure( extraText )
                         #print( "fig got", extra )
+                    elif extraType == 'str':
+                        extra = "" # temp
                     elif Globals.debugFlag and debuggingThisModule: print( extraType ); halt
                     #print( "was", verse )
                     adjText = adjText[:adjIndex] + extra + adjText[adjIndex:]
@@ -3796,6 +3802,8 @@ class BibleWriter( InternalBible ):
                         extra = "" # temp
                         #extra = processFigure( extraText )
                         #print( "fig got", extra )
+                    elif extraType == 'str':
+                        extra = "" # temp
                     elif Globals.debugFlag and debuggingThisModule: print( extraType ); halt
                     #print( "was", verse )
                     adjText = adjText[:adjIndex] + extra + adjText[adjIndex:]
@@ -4294,6 +4302,8 @@ class BibleWriter( InternalBible ):
                         extra = "" # temp
                         #extra = processFigure( extraText )
                         #print( "fig got", extra )
+                    elif extraType == 'str':
+                        extra = "" # temp
                     elif Globals.debugFlag and debuggingThisModule: print( extraType ); halt
                     #print( "was", verse )
                     verse = verse[:adjIndex] + extra + verse[adjIndex:]
