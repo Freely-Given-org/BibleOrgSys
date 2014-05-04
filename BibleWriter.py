@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-05-02 by RJH (also update ProgVersion below)
+#   Last modified: 2014-05-05 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -60,7 +60,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.67"
+ProgVersion = "0.68"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -86,8 +86,8 @@ from USFMMarkers import oftenIgnoredIntroMarkers, removeUSFMCharacterField, repl
 from MLWriter import MLWriter
 
 
-allCharMarkers = Globals.USFMMarkers.getCharacterMarkersList( expandNumberableMarkers=True )
-#print( allCharMarkers ); halt
+ALL_CHAR_MARKERS = Globals.USFMMarkers.getCharacterMarkersList( expandNumberableMarkers=True )
+#print( ALL_CHAR_MARKERS ); halt
 
 
 defaultControlFolder = "ControlFiles/" # Relative to the current working directory
@@ -165,9 +165,9 @@ class BibleWriter( InternalBible ):
             def stripWordPunctuation( word ):
                 """Removes leading and trailing punctuation from a word.
                     Returns the "clean" word."""
-                while word and word[0] in InternalBibleBook.leadingWordPunctChars:
+                while word and word[0] in InternalBibleBook.LEADING_WORD_PUNCT_CHARS:
                     word = word[1:] # Remove leading punctuation
-                while word and word[-1] in InternalBibleBook.trailingWordPunctChars:
+                while word and word[-1] in InternalBibleBook.TRAILING_WORD_PUNCT_CHARS:
                     word = word[:-1] # Remove trailing punctuation
                 return word
             # end of stripWordPunctuation
@@ -401,7 +401,7 @@ class BibleWriter( InternalBible ):
                 else: # not a continuation marker
                     adjValue = value
                     #if pseudoMarker in ('it','bk','ca','nd',): # Character markers to be closed -- had to remove ft and xt from this list for complex footnotes with f fr fq ft fq ft f*
-                    if pseudoMarker in allCharMarkers: # Character markers to be closed
+                    if pseudoMarker in ALL_CHAR_MARKERS: # Character markers to be closed
                         #if (USFM[-2]=='\\' or USFM[-3]=='\\') and USFM[-1]!=' ':
                         if USFM[-1] != ' ':
                             USFM += ' ' # Separate markers by a space e.g., \p\bk Revelation
@@ -3154,7 +3154,7 @@ class BibleWriter( InternalBible ):
                 # Old code
                 adjText = originalText
                 haveOpenChar = False
-                for charMarker in allCharMarkers:
+                for charMarker in ALL_CHAR_MARKERS:
                     #print( "handleInternalTextMarkersForUSX", charMarker )
                     # Handle USFM character markers
                     fullCharMarker = '\\' + charMarker + ' '
@@ -3303,7 +3303,7 @@ class BibleWriter( InternalBible ):
                             subTokens = lcToken.split()
                             firstToken = subTokens[0]
                             #print( "ft", firstToken )
-                            if firstToken in allCharMarkers: # Yes, confirmed
+                            if firstToken in ALL_CHAR_MARKERS: # Yes, confirmed
                                 if fCharOpen: # assume that the last one is closed by this one
                                     if Globals.debugFlag: assert( not frOpen )
                                     USXfootnoteXML += '>' + adjToken + '</char>'
@@ -3316,7 +3316,7 @@ class BibleWriter( InternalBible ):
                                 adjToken = token[len(firstToken)+1:] # Get the bit after the space
                                 fCharOpen = firstToken
                             else: # The problem is that a closing marker doesn't have to be followed by a space
-                                if firstToken[-1]=='*' and firstToken[:-1] in allCharMarkers: # it's a closing tag (that was followed by a space)
+                                if firstToken[-1]=='*' and firstToken[:-1] in ALL_CHAR_MARKERS: # it's a closing tag (that was followed by a space)
                                     if fCharOpen:
                                         if Globals.debugFlag: assert( not frOpen )
                                         if not firstToken.startswith( fCharOpen+'*' ): # It's not a matching tag
@@ -3327,7 +3327,7 @@ class BibleWriter( InternalBible ):
                                 else:
                                     ixAS = firstToken.find( '*' )
                                     #print( firstToken, ixAS, firstToken[:ixAS] if ixAS!=-1 else '' )
-                                    if ixAS!=-1 and ixAS<4 and firstToken[:ixAS] in allCharMarkers: # it's a closing tag
+                                    if ixAS!=-1 and ixAS<4 and firstToken[:ixAS] in ALL_CHAR_MARKERS: # it's a closing tag
                                         if fCharOpen:
                                             if Globals.debugFlag: assert( not frOpen )
                                             if not firstToken.startswith( fCharOpen+'*' ): # It's not a matching tag
@@ -3337,7 +3337,7 @@ class BibleWriter( InternalBible ):
                                         logging.warning( _("toUSXXML: '{}' closing tag doesn't match in {} {}:{} footnote '{}'").format( firstToken, BBB, C, V, USXfootnote ) )
                                     else:
                                         logging.warning( _("toUSXXML: Unprocessed '{}' token in {} {}:{} footnote '{}'").format( firstToken, BBB, C, V, USXfootnote ) )
-                                        #print( allCharMarkers )
+                                        #print( ALL_CHAR_MARKERS )
                                         #halt
                     #print( "  ", frOpen, fCharOpen, fTextOpen )
                     if frOpen:
@@ -3570,7 +3570,7 @@ class BibleWriter( InternalBible ):
                 # Old code
                 adjText = originalText
                 haveOpenChar = False
-                for charMarker in allCharMarkers:
+                for charMarker in ALL_CHAR_MARKERS:
                     #print( "handleInternalTextMarkersForUSFX", charMarker )
                     # Handle USFM character markers
                     fullCharMarker = '\\' + charMarker + ' '
@@ -3719,7 +3719,7 @@ class BibleWriter( InternalBible ):
                             subTokens = lcToken.split()
                             firstToken = subTokens[0]
                             #print( "ft", firstToken )
-                            if firstToken in allCharMarkers: # Yes, confirmed
+                            if firstToken in ALL_CHAR_MARKERS: # Yes, confirmed
                                 if fCharOpen: # assume that the last one is closed by this one
                                     if Globals.debugFlag: assert( not frOpen )
                                     USFXfootnoteXML += '>' + adjToken + '</char>'
@@ -3732,7 +3732,7 @@ class BibleWriter( InternalBible ):
                                 adjToken = token[len(firstToken)+1:] # Get the bit after the space
                                 fCharOpen = firstToken
                             else: # The problem is that a closing marker doesn't have to be followed by a space
-                                if firstToken[-1]=='*' and firstToken[:-1] in allCharMarkers: # it's a closing tag (that was followed by a space)
+                                if firstToken[-1]=='*' and firstToken[:-1] in ALL_CHAR_MARKERS: # it's a closing tag (that was followed by a space)
                                     if fCharOpen:
                                         if Globals.debugFlag: assert( not frOpen )
                                         if not firstToken.startswith( fCharOpen+'*' ): # It's not a matching tag
@@ -3743,7 +3743,7 @@ class BibleWriter( InternalBible ):
                                 else:
                                     ixAS = firstToken.find( '*' )
                                     #print( firstToken, ixAS, firstToken[:ixAS] if ixAS!=-1 else '' )
-                                    if ixAS!=-1 and ixAS<4 and firstToken[:ixAS] in allCharMarkers: # it's a closing tag
+                                    if ixAS!=-1 and ixAS<4 and firstToken[:ixAS] in ALL_CHAR_MARKERS: # it's a closing tag
                                         if fCharOpen:
                                             if Globals.debugFlag: assert( not frOpen )
                                             if not firstToken.startswith( fCharOpen+'*' ): # It's not a matching tag
@@ -3753,7 +3753,7 @@ class BibleWriter( InternalBible ):
                                         logging.warning( _("toUSFXXML: '{}' closing tag doesn't match in {} {}:{} footnote '{}'").format( firstToken, BBB, C, V, USFXfootnote ) )
                                     else:
                                         logging.warning( _("toUSFXXML: Unprocessed '{}' token in {} {}:{} footnote '{}'").format( firstToken, BBB, C, V, USFXfootnote ) )
-                                        #print( allCharMarkers )
+                                        #print( ALL_CHAR_MARKERS )
                                         #halt
                     #print( "  ", frOpen, fCharOpen, fTextOpen )
                     if frOpen:
@@ -6324,7 +6324,7 @@ class BibleWriter( InternalBible ):
                 text = text.replace( '\\xo ', '~^~BibleCrossReferenceAnchor{' ).replace( '\\xt ', '}' ) # temp assumes one xo followed by one xt
 
             # Handle regular character formatting -- this will cause TeX to fail if closing markers are not matched
-            for charMarker in allCharMarkers:
+            for charMarker in ALL_CHAR_MARKERS:
                 fullCharMarker = '\\' + charMarker + ' '
                 if fullCharMarker in text:
                     endCharMarker = '\\' + charMarker + '*'

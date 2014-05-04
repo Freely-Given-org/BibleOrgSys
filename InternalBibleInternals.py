@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleInternals.py
-#   Last modified: 2014-04-25 by RJH (also update ProgVersion below)
+#   Last modified: 2014-05-05 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Bible internals handler"
-ProgVersion = "0.22"
+ProgVersion = "0.24"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -53,14 +53,14 @@ from BibleReferences import BibleAnchorReference
 
 
 # Define allowed punctuation
-leadingWordPunctChars = """“«"‘‹'([{<"""
-medialWordPunctChars = '-'
-dashes = '—–' # em-dash and en-dash
-trailingWordPunctChars = """,.”»"’›'?)!;:]}>"""
-allWordPunctChars = leadingWordPunctChars + medialWordPunctChars + dashes + trailingWordPunctChars
+LEADING_WORD_PUNCT_CHARS = """“«"‘‹'([{<"""
+MEDIAL_WORD_PUNCT_CHARS = '-'
+DASH_CHARS = '—–' # em-dash and en-dash
+TRAILING_WORD_PUNCT_CHARS = """,.”»"’›'?)!;:]}>"""
+ALL_WORD_PUNCT_CHARS = LEADING_WORD_PUNCT_CHARS + MEDIAL_WORD_PUNCT_CHARS + DASH_CHARS + TRAILING_WORD_PUNCT_CHARS
 
 
-PSEUDO_USFM_MARKERS = ( 'c~', 'c#', 'v-', 'v+', 'v~', 'vw', 'g', 'p~', )
+PSEUDO_USFM_NEWLINE_MARKERS = ( 'c~', 'c#', 'v-', 'v+', 'v~', 'vw', 'g', 'p~', 'cl=', )
 """
     c~  anything after the chapter number on a \c line
     c#  the chapter number (duplicated) in the correct position to be printed -- can be ignored for exporting
@@ -71,9 +71,12 @@ PSEUDO_USFM_MARKERS = ( 'c~', 'c#', 'v-', 'v+', 'v~', 'vw', 'g', 'p~', )
     vw  ???
     g   ???
     p~  verse text -- anything that was on a paragraph line (e.g., \p \q, etc.)
+    cl=
 """
 PSEUDO_OSIS_MARKERS = ( 'pp+', )
-NON_USFM_MARKERS = PSEUDO_USFM_MARKERS + PSEUDO_OSIS_MARKERS
+NON_USFM_MARKERS = PSEUDO_USFM_NEWLINE_MARKERS + PSEUDO_OSIS_MARKERS
+
+EXTRA_TYPES = ( 'fn', 'en', 'xr', 'sr', 'sn', 'fig', 'str', )
 
 
 MAX_NONCRITICAL_ERRORS_PER_BOOK = 5
@@ -91,7 +94,7 @@ class InternalBibleExtra:
         """
         if Globals.debugFlag or Globals.strictCheckingFlag:
             #print( "InternalBibleExtra.__init__( {}, {}, {}, {} )".format( myType, index, repr(noteText), repr(cleanNoteText) ) )
-            assert( myType and isinstance( myType, str ) and myType in ('fn','xr','sr','sn','fig',) ) # Mustn't be blank
+            assert( myType and isinstance( myType, str ) and myType in EXTRA_TYPES ) # Mustn't be blank
             assert( '\\' not in myType and ' ' not in myType and '*' not in myType )
             assert( isinstance( index, int ) and index >= 0 )
             assert( noteText and isinstance( noteText, str ) ) # Mustn't be blank

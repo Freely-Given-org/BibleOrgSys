@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2014-04-25 by RJH (also update ProgVersion below)
+#   Last modified: 2014-05-05 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -41,7 +41,7 @@ Required improvements:
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.66"
+ProgVersion = "0.68"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -53,32 +53,11 @@ from collections import OrderedDict
 import unicodedata
 
 import Globals
-from InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry, InternalBibleIndex, InternalBibleExtra, InternalBibleExtraList
+from InternalBibleInternals import NON_USFM_MARKERS, EXTRA_TYPES, \
+    LEADING_WORD_PUNCT_CHARS, TRAILING_WORD_PUNCT_CHARS, \
+    InternalBibleEntryList, InternalBibleEntry, InternalBibleIndex, InternalBibleExtra, InternalBibleExtraList
 from BibleReferences import BibleAnchorReference
 
-
-# Define allowed punctuation
-leadingWordPunctChars = """“«"‘‹'([{<"""
-medialWordPunctChars = '-'
-dashes = '—–' # em-dash and en-dash
-trailingWordPunctChars = """,.”»"’›'?)!;:]}>"""
-allWordPunctChars = leadingWordPunctChars + medialWordPunctChars + dashes + trailingWordPunctChars
-
-
-PSEUDO_USFM_MARKERS = ( 'c~', 'c#', 'v-', 'v+', 'v~', 'vw', 'g', 'p~', 'cl=', )
-"""
-    c~  anything after the chapter number on a \c line
-    c#  the chapter number (duplicated) in the correct position to be printed -- can be ignored for exporting
-    v-  ???
-    v+  ???
-    v~  verse text -- anything after the verse number on a \v line
-            or anything on a \p or \q line
-    vw  ???
-    g   ???
-    p~  verse text -- anything that was on a paragraph line (e.g., \p \q, etc.)
-"""
-PSEUDO_OSIS_MARKERS = ( 'pp+', )
-NON_USFM_MARKERS = PSEUDO_USFM_MARKERS + PSEUDO_OSIS_MARKERS
 
 INTERNAL_SFMS_TO_REMOVE = Globals.USFMMarkers.getCharacterMarkersList( includeBackslash=True, includeEndMarkers=True )
 INTERNAL_SFMS_TO_REMOVE = sorted( INTERNAL_SFMS_TO_REMOVE, key=len, reverse=True ) # List longest first
@@ -273,15 +252,17 @@ class InternalBibleBook:
 
         def processLineFix( originalMarker, text ):
             """
-            Does character fixes on a specific line and moves footnotes, cross-references and figures out of the main text.
-                Returns:
-                    adjText: Text without notes and leading/trailing spaces
-                    cleanText: adjText without character formatting as well
-                    extras: a special list containing
-                        extraType: 'fn' or 'xr' or 'fig'
-                        extraIndex: the index into adjText above
-                        extraText: the text of the note
-                        cleanExtraText: extraText without character formatting as well
+            Does character fixes on a specific line and moves the following out of the main text:
+                footnotes, cross-references, and figures,
+                Strongs numbers.
+            Returns:
+                adjText: Text without notes and leading/trailing spaces
+                cleanText: adjText without character formatting as well
+                extras: a special list containing
+                    extraType: 'fn' or 'xr' or 'fig'
+                    extraIndex: the index into adjText above
+                    extraText: the text of the note
+                    cleanExtraText: extraText without character formatting as well
 
             NOTE: You must NOT strip the text any more AFTER calling this (or the note insert indices will be incorrect!
             """
@@ -357,11 +338,11 @@ class InternalBibleBook:
                     adjText = adjText.replace( '"', '&quot;' )
 
 
-            # Move all footnotes and cross-references from the main text out to extras
+            # Move all footnotes and cross-references, etc. from the main text out to extras
             extras = InternalBibleExtraList() # Prepare for extras
 
             #print( "QQQ MOVE OUT NOTES" )
-            if self.objectTypeString in ('USFM','USX',): # Move USFM/USX footnotes, endnotes, cross-references and figures out to extras
+            if 1 or self.objectTypeString in ('USFM','USX',): # Move USFM/USX footnotes, endnotes, cross-references and figures out to extras
                 # This particular little piece of code can also mostly handle it if the markers are UPPER CASE
                 dummyValue = 99999
                 ixFN = adjText.find( '\\f ' )
@@ -376,8 +357,11 @@ class InternalBibleBook:
                 ixFIG = adjText.find( '\\fig ' )
                 if ixFIG == -1: ixFIG = adjText.find( '\\FIG ' )
                 if ixFIG == -1: ixFIG = dummyValue
-                #print( 'ixFN =',ixFN, ixEN, 'ixXR = ',ixXR, ixFIG )
-                ix1 = min( ixFN, ixEN, ixXR, ixFIG )
+                ixSTR = adjText.find( '\\str ' )
+                if ixSTR == -1: ixSTR = adjText.find( '\\STR ' )
+                if ixSTR == -1: ixSTR = dummyValue
+                #print( 'ixFN =',ixFN, ixEN, 'ixXR = ',ixXR, ixFIG, ixSTR )
+                ix1 = min( ixFN, ixEN, ixXR, ixFIG, ixSTR )
                 while ix1 < dummyValue: # We have one or the other
                     if ix1 == ixFN:
                         ix2 = adjText.find( '\\f*' )
@@ -407,6 +391,11 @@ class InternalBibleBook:
                         if ix2 == -1: ix2 = adjText.find( '\\FIG*' )
                         #print( 'C', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
                         noteSFM, lenSFM, thisOne, this1 = 'fig', 3, 'figure', 'fig'
+                    elif ix1 == ixSTR:
+                        ix2 = adjText.find( '\\str*' )
+                        if ix2 == -1: ix2 = adjText.find( '\\STR*' )
+                        #print( 'C', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
+                        noteSFM, lenSFM, thisOne, this1 = 'str', 3, 'Strongs-number', 'str'
                     else: halt
                     if ix2 == -1: # no closing marker
                         fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Found unmatched {} open in \\{}: {}").format( thisOne, originalMarker, adjText ) )
@@ -444,7 +433,7 @@ class InternalBibleBook:
                             print( "processLineFix: {} {}:{} What went wrong here: '{}' from \\{} '{}' (Is it an embedded note?)".format( self.bookReferenceCode, c, v, note, originalMarker, text ) )
                             print( "processLineFix: Have an embedded note perhaps! Not handled correctly yet" )
                             note = note.replace( '\\f ', ' ' ).replace( '\\f*','').replace( '\\x ', ' ').replace('\\x*','') # Temporary fix ..................
-                    adjText = adjText[:ix1] + adjText[ix2+3:] # Remove the note completely from the text
+                    adjText = adjText[:ix1] + adjText[ix2+lenSFM+2:] # Remove the note completely from the text
                     # Now prepare a cleaned version
                     cleanedNote = note.replace( '&amp;', '&' ).replace( '&#39;', "'" ).replace( '&lt;', '<' ).replace( '&gt;', '>' ).replace( '&quot;', '"' ) # Undo any replacements above
                     for sign in ('- ', '+ '): # Remove common leader characters (and the following space)
@@ -474,7 +463,10 @@ class InternalBibleBook:
                     ixFIG = adjText.find( '\\fig ' )
                     if ixFIG == -1: ixFIG = adjText.find( '\\FIG ' )
                     if ixFIG == -1: ixFIG = dummyValue
-                    ix1 = min( ixFN, ixEN, ixXR, ixFIG )
+                    ixSTR = adjText.find( '\\str ' )
+                    if ixSTR == -1: ixSTR = adjText.find( '\\STR ' )
+                    if ixSTR == -1: ixSTR = dummyValue
+                    ix1 = min( ixFN, ixEN, ixXR, ixFIG, ixSTR )
                 #if extras: print( "Fix gave '{}' and '{}'".format( adjText, extras ) )
                 #if len(extras)>1: print( "Mutiple fix gave '{}' and '{}'".format( adjText, extras ) )
 
@@ -718,7 +710,7 @@ class InternalBibleBook:
                     assert( extraIndex >= 0 )
                     # This can happen with multiple notes at the end separated by spaces
                     #if extraIndex > len(adjText)+1: print( "Programming Note: extraIndex {} is way more than text length of {} with '{}'".format( extraIndex, len(adjText), text ) )
-                    assert( extraType in ('fn','xr','sr','sn','fig',) )
+                    assert( extraType in EXTRA_TYPES )
                     assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
 
             return adjText, cleanText, extras
@@ -2354,8 +2346,8 @@ class InternalBibleBook:
                         if char not in allWordPunctChars:
                             characterErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Invalid '{}' ({}) word-building character ({})").format( simpleCharName, unicodeCharName, charHex ) )
                             self.addPriorityError( 10, c, v, _("Invalid '{}' ({}) word-building character ({})").format( simpleCharName, unicodeCharName, charHex ) )
-                for char in leadingWordPunctChars:
-                    if char not in trailingWordPunctChars and len(adjText)>1 \
+                for char in LEADING_WORD_PUNCT_CHARS:
+                    if char not in TRAILING_WORD_PUNCT_CHARS and len(adjText)>1 \
                     and ( adjText[-1]==char or char+' ' in adjText ):
                         if char==' ': simpleCharName = 'Space'
                         elif char==' ': simpleCharName = 'NBSpace'
@@ -2365,8 +2357,8 @@ class InternalBibleBook:
                         #print( "{} {}:{} char is '{}' {}".format( char, simpleCharName ) )
                         characterErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Misplaced '{}' ({}) word leading character").format( simpleCharName, unicodeCharName ) )
                         self.addPriorityError( 21, c, v, _("Misplaced '{}' ({}) word leading character").format( simpleCharName, unicodeCharName ) )
-                for char in trailingWordPunctChars:
-                    if char not in leadingWordPunctChars and len(adjText)>1 \
+                for char in TRAILING_WORD_PUNCT_CHARS:
+                    if char not in LEADING_WORD_PUNCT_CHARS and len(adjText)>1 \
                     and ( adjText[0]==char or ' '+char in adjText ):
                         if char==' ': simpleCharName = 'Space'
                         elif char==' ': simpleCharName = 'NBSpace'
@@ -2626,9 +2618,9 @@ class InternalBibleBook:
             def stripWordPunctuation( word ):
                 """Removes leading and trailing punctuation from a word.
                     Returns the "clean" word."""
-                while word and word[0] in leadingWordPunctChars:
+                while word and word[0] in LEADING_WORD_PUNCT_CHARS:
                     word = word[1:] # Remove leading punctuation
-                while word and word[-1] in trailingWordPunctChars:
+                while word and word[-1] in TRAILING_WORD_PUNCT_CHARS:
                     word = word[:-1] # Remove trailing punctuation
                 return word
             # end of stripWordPunctuation

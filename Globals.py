@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Globals.py
-#   Last modified: 2014-05-03 by RJH (also update ProgVersion below)
+#   Last modified: 2014-05-04 by RJH (also update ProgVersion below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -70,7 +70,7 @@ Contains functions:
 """
 
 ProgName = "Globals"
-ProgVersion = "0.41"
+ProgVersion = "0.44"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -87,6 +87,7 @@ from gettext import gettext as _
 commandLineOptions, commandLineArguments = None, None
 
 strictCheckingFlag = debugFlag = False
+haltOnXMLWarning = True # Used for XML debugging
 maxProcesses = 1
 verbosityLevel = None
 verbosityString = 'Normal'
@@ -537,45 +538,57 @@ def fileCompareXML( filename1, filename2, folder1=None, folder2=None, printFlag=
 # Validating XML fields (from element tree)
 #
 
-haltOnWarning = False # Used for XML debugging
-
-def checkXMLNoText( element, locationString, idString=None ):
+def checkXMLNoText( element, locationString, idString=None, loadErrorsDict=None ):
     """ Give an error if the element text contains anything other than whitespace. """
     if element.text and element.text.strip():
-        logging.error( "{}Unexpected '{}' element text in {}".format( (idString+' ') if idString else '', element.text, locationString ) )
-        if debugFlag and haltOnWarning: halt
+        errorString = "{}Unexpected {} element text in {}" \
+                        .format( (idString+' ') if idString else '', repr(element.text), locationString )
+        logging.error( errorString )
+        if loadErrorsDict is not None: loadErrorsDict.append( errorString )
+        if debugFlag and haltOnXMLWarning: halt
 
-def checkXMLNoTail( element, locationString, idString=None ):
+def checkXMLNoTail( element, locationString, idString=None, loadErrorsDict=None ):
     """ Give a warning if the element tail contains anything other than whitespace. """
     if element.tail and element.tail.strip():
-        logging.warning( "{}Unexpected '{}' element tail in {}".format( (idString+' ') if idString else '', element.tail, locationString ) )
-        if debugFlag and haltOnWarning: halt
+        warningString = "{}Unexpected {} element tail in {}" \
+                        .format( (idString+' ') if idString else '', repr(element.tail), locationString )
+        logging.warning( warningString )
+        if loadErrorsDict is not None: loadErrorsDict.append( warningString )
+        if debugFlag and haltOnXMLWarning: halt
 
 
-def checkXMLNoAttributes( element, locationString, idString=None ):
+def checkXMLNoAttributes( element, locationString, idString=None, loadErrorsDict=None ):
     """ Give a warning if the element contains any attributes. """
     for attrib,value in element.items():
-        logging.warning( "{}Unexpected '{}' attribute ({}) in {}".format( (idString+' ') if idString else '', attrib, value, locationString ) )
-        if debugFlag and haltOnWarning: halt
+        warningString = "{}Unexpected {} attribute ({}) in {}" \
+                        .format( (idString+' ') if idString else '', repr(attrib), value, locationString )
+        logging.warning( warningString )
+        if loadErrorsDict is not None: loadErrorsDict.append( warningString )
+        if debugFlag and haltOnXMLWarning: halt
 
 
-def checkXMLNoSubelements( element, locationString, idString=None ):
+def checkXMLNoSubelements( element, locationString, idString=None, loadErrorsDict=None ):
     """ Give an error if the element contains any sub-elements. """
     for subelement in element.getchildren():
-        logging.error( "{}Unexpected '{}' sub-element ({}) in {}".format( (idString+' ') if idString else '', subelement.tag, subelement.text, locationString ) )
-        if debugFlag and haltOnWarning: halt
+        errorString = "{}Unexpected {} sub-element ({}) in {}" \
+                        .format( (idString+' ') if idString else '', repr(subelement.tag), subelement.text, locationString )
+        logging.error( errorString )
+        if loadErrorsDict is not None: loadErrorsDict.append( errorString )
+        if debugFlag and haltOnXMLWarning: halt
 
 
-def checkXMLNoSubelementsWithText( element, locationString, idString=None ):
+def checkXMLNoSubelementsWithText( element, locationString, idString=None, loadErrorsDict=None ):
     """ Checks that the element doesn't have text AND subelements """
     if ( element.text and element.text.strip() ) \
     or ( element.tail and element.tail.strip() ):
         for subelement in element.getchildren():
-            logging.warning( "{}Unexpected '{}' sub-element ({}) in {} with text/tail {}/{}" \
-                .format( (idString+' ') if idString else '', subelement.tag, subelement.text, locationString,
-                        element.text.strip() if element.text else element.text,
-                        element.tail.strip() if element.tail else element.tail ) )
-            if debugFlag and haltOnWarning: halt
+            warningString = "{}Unexpected {} sub-element ({}) in {} with text/tail {}/{}" \
+                            .format( (idString+' ') if idString else '', repr(subelement.tag), subelement.text, locationString,
+                                element.text.strip() if element.text else element.text,
+                                element.tail.strip() if element.tail else element.tail )
+            logging.warning( warningString )
+            if loadErrorsDict is not None: loadErrorsDict.append( warningString )
+            if debugFlag and haltOnXMLWarning: halt
 # end of Globals.checkXMLNoSubelementsWithText
 
 
