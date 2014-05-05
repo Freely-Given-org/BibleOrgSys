@@ -225,6 +225,8 @@ class OSISXMLBible( Bible ):
         # Do a preliminary check on the readability of our file(s)
         self.possibleFilenames = []
         if os.path.isdir( self.sourceFilepath ): # We've been given a folder -- see if we can find the files
+            self.sourceFolder = self.sourceFilepath
+            #print( 'src1', self.sourceFolder ); halt
             # There's no standard for OSIS xml file naming
             fileList = os.listdir( self.sourceFilepath )
             #print( len(fileList), fileList )
@@ -235,13 +237,14 @@ class OSISXMLBible( Bible ):
                     if Globals.debugFlag: print( "Trying {}...".format( thisFilepath ) )
                     if os.access( thisFilepath, os.R_OK ): # we can read that file
                         self.possibleFilenames.append( filename )
-        elif not os.access( self.sourceFilepath, os.R_OK ):
-            logging.critical( "OSISXMLBible: File {} is unreadable".format( repr(self.sourceFilepath) ) )
-            return # No use continuing
+        else: # it's presumably a file name
+            self.sourceFolder = os.path.dirname( self.sourceFilepath )
+            #print( 'src2', self.sourceFolder ); halt
+            if not os.access( self.sourceFilepath, os.R_OK ):
+                logging.critical( "OSISXMLBible: File {} is unreadable".format( repr(self.sourceFilepath) ) )
+                return # No use continuing
 
         self.name = self.givenName
-        #if self.name is None:
-            #pass
     # end of OSISXMLBible.__init__
 
 
@@ -253,9 +256,9 @@ class OSISXMLBible( Bible ):
         if self.possibleFilenames: # then we possibly have multiple files, probably one for each book
             for filename in self.possibleFilenames:
                 pathname = os.path.join( self.sourceFilepath, filename )
-                self.loadFile( pathname, loadErrors )
+                self.__loadFile( pathname, loadErrors )
         elif os.path.isfile( self.sourceFilepath ): # most often we have all the Bible books in one file
-            self.loadFile( self.sourceFilepath, loadErrors )
+            self.__loadFile( self.sourceFilepath, loadErrors )
         else:
             logging.critical( "OSISXMLBible: Didn't find anything to load at {}".format( repr(self.sourceFilepath) ) )
             loadErrors.append( _("OSISXMLBible: Didn't find anything to load at {}").format( repr(self.sourceFilepath) ) )
@@ -266,7 +269,7 @@ class OSISXMLBible( Bible ):
     # end of OSISXMLBible.load
 
 
-    def loadFile( self, OSISFilepath, loadErrors ):
+    def __loadFile( self, OSISFilepath, loadErrors ):
         """
         Load a single source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
