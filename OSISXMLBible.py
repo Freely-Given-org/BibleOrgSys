@@ -233,7 +233,7 @@ class OSISXMLBible( Bible ):
                 if filename.lower().endswith('.xml'):
                     self.sourceFilepath = os.path.join( self.sourceFolder, filename )
                     if Globals.debugFlag: print( "Trying {}...".format( self.sourceFilepath ) )
-                    if os.access( thisFilepath, os.R_OK ): # we can read that file
+                    if os.access( self.sourceFilepath, os.R_OK ): # we can read that file
                         self.possibleFilenames.append( self.sourceFilepath )
         else: # it's presumably a file name
             self.sourceFolder = os.path.dirname( self.sourceFilepath )
