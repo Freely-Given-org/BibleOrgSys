@@ -565,7 +565,7 @@ class OSISXMLBible( Bible ):
                                 loadErrors.append( "Unprocessed '{}' attribute ({}) in {} (2d5g)".format( attrib, value, sublocation ) )
                         #print( "id", repr(identifierType) )
                         if Globals.debugFlag: assert( identifierType in ('OSIS','URL','x-ebible-id',) )
-                        if Globals.verbosityLevel > 2: print( "    Identifier ({}) is '{}'".format( identifierType, self.identifier ) )
+                        if Globals.verbosityLevel > 2: print( "    Identifier ({}) is '{}'".format( identifierType, identifier ) )
                         #print( "Here vds1", repr(self.name), repr(self.abbreviation) )
                         if identifierType=='OSIS':
                             if not self.name: self.name = identifier
