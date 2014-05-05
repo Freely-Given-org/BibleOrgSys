@@ -54,7 +54,7 @@ import unicodedata
 
 import Globals
 from InternalBibleInternals import NON_USFM_MARKERS, EXTRA_TYPES, \
-    LEADING_WORD_PUNCT_CHARS, TRAILING_WORD_PUNCT_CHARS, \
+    LEADING_WORD_PUNCT_CHARS, TRAILING_WORD_PUNCT_CHARS, ALL_WORD_PUNCT_CHARS, \
     InternalBibleEntryList, InternalBibleEntry, InternalBibleIndex, InternalBibleExtra, InternalBibleExtraList
 from BibleReferences import BibleAnchorReference
 
@@ -2166,7 +2166,7 @@ class InternalBibleBook:
                         print( "InternalBibleBook:doCheckSFMs-Extras-B {} {}:{} ".format( self.bookReferenceCode, c, v ), extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
                         assert( extraIndex >= 0 )
                         #assert( 0 <= extraIndex <= len(text)+3 )
-                        assert( extraType in ('fn','xr',) )
+                        assert( extraType in EXTRA_TYPES )
                     extraName = 'footnote' if extraType=='fn' else 'cross-reference'
                     if '\\f ' in extraText or '\\f*' in extraText or '\\x ' in extraText or '\\x*' in extraText: # Only the contents of these fields should be in extras
                         newlineMarkerErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Programming error with extras: {}").format( extraText ) )
@@ -2319,7 +2319,7 @@ class InternalBibleBook:
                     except ValueError: unicodeLCCharName = simpleLCCharName
 
                     charNum = ord(char)
-                    if charNum > 255 and char not in allWordPunctChars: # Have special characters
+                    if charNum > 255 and char not in ALL_WORD_PUNCT_CHARS: # Have special characters
                         haveNonAsciiChars = True
                     charHex = "0x{0:04x}".format( charNum )
                     #print( repr(char), repr(simpleCharName), unicodeCharName, charNum, charHex, haveNonAsciiChars )
@@ -2343,7 +2343,7 @@ class InternalBibleBook:
                         letterCounts[simpleLCCharName] = 1 if simpleLCCharName not in letterCounts else letterCounts[simpleLCCharName] + 1
                     elif not char.isalnum(): # Assume it's punctuation
                         punctuationCounts[simpleCharName] = 1 if simpleCharName not in punctuationCounts else punctuationCounts[simpleCharName] + 1
-                        if char not in allWordPunctChars:
+                        if char not in ALL_WORD_PUNCT_CHARS:
                             characterErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Invalid '{}' ({}) word-building character ({})").format( simpleCharName, unicodeCharName, charHex ) )
                             self.addPriorityError( 10, c, v, _("Invalid '{}' ({}) word-building character ({})").format( simpleCharName, unicodeCharName, charHex ) )
                 for char in LEADING_WORD_PUNCT_CHARS:
@@ -2391,7 +2391,7 @@ class InternalBibleBook:
                     #print( extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
                     assert( extraIndex >= 0 )
                     #assert( 0 <= extraIndex <= len(text)+3 )
-                    assert( extraType in ('fn','xr',) )
+                    assert( extraType in EXTRA_TYPES )
                     assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
                 #cleanExtraText = extraText
                 #for sign in ('- ', '+ '): # Remove common leader characters (and the following space)
@@ -2562,7 +2562,7 @@ class InternalBibleBook:
                     #print( "InternalBibleBook:doCheckSpeechMarks {} {}:{} ".format( self.bookReferenceCode, c, v ), extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
                     assert( extraIndex >= 0 )
                     #assert( 0 <= extraIndex <= len(text)+3 )
-                    assert( extraType in ('fn','xr',) )
+                    assert( extraType in EXTRA_TYPES )
                     assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
                 extraOpenChars = []
                 for char in extraText:
@@ -2687,7 +2687,7 @@ class InternalBibleBook:
                     #print( extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
                     assert( extraIndex >= 0 )
                     #assert( 0 <= extraIndex <= len(text)+3 )
-                    assert( extraType in ('fn','xr',) )
+                    assert( extraType in EXTRA_TYPES )
                     assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
                 #cleanExtraText = extraText
                 #for sign in ('- ', '+ '): # Remove common leader characters (and the following space)
@@ -2899,7 +2899,7 @@ class InternalBibleBook:
                     #assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
                     assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
                     #assert( 0 <= extraIndex <= len(text) ) -- not necessarily true for multiple notes
-                    assert( extraType in ('fn','xr',) )
+                    assert( extraType in EXTRA_TYPES )
                     assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the CONTENTS of these fields should be in extras
 
                 # Get a copy of the note text without any formatting

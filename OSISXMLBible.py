@@ -234,7 +234,7 @@ class OSISXMLBible( Bible ):
                     self.sourceFilepath = os.path.join( self.sourceFolder, filename )
                     if Globals.debugFlag: print( "Trying {}...".format( self.sourceFilepath ) )
                     if os.access( self.sourceFilepath, os.R_OK ): # we can read that file
-                        self.possibleFilenames.append( self.sourceFilepath )
+                        self.possibleFilenames.append( filename )
         else: # it's presumably a file name
             self.sourceFolder = os.path.dirname( self.sourceFilepath )
             if not os.access( self.sourceFilepath, os.R_OK ):
@@ -2921,7 +2921,7 @@ def demo():
         testFilepaths = (
             #"Tests/DataFilesForTests/OSISTest1/",
             #"Tests/DataFilesForTests/OSISTest2/",
-            "../../../../AutoProcesses/Processed/BibleDropBox_kjvfull.xml",
+            "../../../../AutoProcesses/Processed/BibleDropBox_kjvfull.xml/",
             #"../morphhb/wlc/Ruth.xml", "../morphhb/wlc/Dan.xml", "../morphhb/wlc/", # Hebrew Ruth, Daniel, Bible
             #"../../../../../Data/Work/Bibles/Formats/OSIS/Crosswire USFM-to-OSIS (Perl)/Matigsalug.osis.xml", # Entire Bible in one file 4.4MB
             #"../../../../../Data/Work/Bibles/Formats/OSIS/kjvxml from DMSmith/kjv.xml", # Entire Bible in one file 23.7MB
@@ -2967,6 +2967,7 @@ def demo():
                     svk = VerseReferences.SimpleVerseKey( b, c, v )
                     #print( svk, oB.getVerseDataList( svk ) )
                     print( svk, oB.getVerseText( svk ) )
+            oB.check()
             #oB.toHTML5()
             oB.doAllExports( wantPhotoBible=True, wantPDFs=True )
 # end of demo
