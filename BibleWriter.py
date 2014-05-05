@@ -187,7 +187,7 @@ class BibleWriter( InternalBible ):
                 if word: # There's still some characters remaining after all that stripping
                     if Globals.verbosityLevel > 3: # why???
                         for k,char in enumerate(word):
-                            if not char.isalnum() and (k==0 or k==len(word)-1 or char not in InternalBibleBook.medialWordPunctChars):
+                            if not char.isalnum() and (k==0 or k==len(word)-1 or char not in InternalBibleBook.MEDIAL_WORD_PUNCT_CHARS):
                                 if Globals.debugFlag: print( "{} {}:{} ".format( BBB, c, v ) + _("Have unexpected '{}' in word '{}'").format( char, word ) )
                     lcWord = word.lower()
                     isAReferenceOrNumber = True
