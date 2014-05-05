@@ -54,7 +54,7 @@ import unicodedata
 
 import Globals
 from InternalBibleInternals import NON_USFM_MARKERS, EXTRA_TYPES, \
-    LEADING_WORD_PUNCT_CHARS, TRAILING_WORD_PUNCT_CHARS, ALL_WORD_PUNCT_CHARS, \
+    LEADING_WORD_PUNCT_CHARS, MEDIAL_WORD_PUNCT_CHARS, TRAILING_WORD_PUNCT_CHARS, ALL_WORD_PUNCT_CHARS, \
     InternalBibleEntryList, InternalBibleEntry, InternalBibleIndex, InternalBibleExtra, InternalBibleExtraList
 from BibleReferences import BibleAnchorReference
 
@@ -2645,7 +2645,7 @@ class InternalBibleBook:
                 if word: # There's still some characters remaining after all that stripping
                     if Globals.verbosityLevel > 3: # why???
                         for k,char in enumerate(word):
-                            if not char.isalnum() and (k==0 or k==len(word)-1 or char not in medialWordPunctChars):
+                            if not char.isalnum() and (k==0 or k==len(word)-1 or char not in MEDIAL_WORD_PUNCT_CHARS):
                                 wordErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Have unexpected '{}' in word '{}'").format( char, word ) )
                     lcWord = word.lower()
                     isAReferenceOrNumber = True
