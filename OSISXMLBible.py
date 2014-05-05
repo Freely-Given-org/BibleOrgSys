@@ -226,20 +226,17 @@ class OSISXMLBible( Bible ):
         self.possibleFilenames = []
         if os.path.isdir( self.sourceFilepath ): # We've been given a folder -- see if we can find the files
             self.sourceFolder = self.sourceFilepath
-            #print( 'src1', self.sourceFolder ); halt
             # There's no standard for OSIS xml file naming
             fileList = os.listdir( self.sourceFilepath )
-            #print( len(fileList), fileList )
             # First try looking for OSIS book names
             for filename in fileList:
                 if filename.lower().endswith('.xml'):
-                    thisFilepath = os.path.join( self.sourceFilepath, filename )
-                    if Globals.debugFlag: print( "Trying {}...".format( thisFilepath ) )
+                    self.sourceFilepath = os.path.join( self.sourceFolder, filename )
+                    if Globals.debugFlag: print( "Trying {}...".format( self.sourceFilepath ) )
                     if os.access( thisFilepath, os.R_OK ): # we can read that file
-                        self.possibleFilenames.append( filename )
+                        self.possibleFilenames.append( self.sourceFilepath )
         else: # it's presumably a file name
             self.sourceFolder = os.path.dirname( self.sourceFilepath )
-            #print( 'src2', self.sourceFolder ); halt
             if not os.access( self.sourceFilepath, os.R_OK ):
                 logging.critical( "OSISXMLBible: File {} is unreadable".format( repr(self.sourceFilepath) ) )
                 return # No use continuing
@@ -255,7 +252,7 @@ class OSISXMLBible( Bible ):
         loadErrors = []
         if self.possibleFilenames: # then we possibly have multiple files, probably one for each book
             for filename in self.possibleFilenames:
-                pathname = os.path.join( self.sourceFilepath, filename )
+                pathname = os.path.join( self.sourceFolder, filename )
                 self.__loadFile( pathname, loadErrors )
         elif os.path.isfile( self.sourceFilepath ): # most often we have all the Bible books in one file
             self.__loadFile( self.sourceFilepath, loadErrors )
