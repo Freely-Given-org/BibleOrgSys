@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-05-05 by RJH (also update ProgVersion below)
+#   Last modified: 2014-05-06 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -60,7 +60,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.68"
+ProgVersion = "0.69"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -158,6 +158,13 @@ class BibleWriter( InternalBible ):
         if not outputFolder: outputFolder = "OutputFiles/BOS_Lists/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
 
+        # Create separate sub-folders
+        txtOutputFolder = os.path.join( outputFolder, "TXT/" )
+        if not os.access( txtOutputFolder, os.F_OK ): os.makedirs( txtOutputFolder ) # Make the empty folder if there wasn't already one there
+        csvOutputFolder = os.path.join( outputFolder, "CSV/" )
+        if not os.access( csvOutputFolder, os.F_OK ): os.makedirs( csvOutputFolder ) # Make the empty folder if there wasn't already one there
+        xmlOutputFolder = os.path.join( outputFolder, "XML/" )
+        if not os.access( xmlOutputFolder, os.F_OK ): os.makedirs( xmlOutputFolder ) # Make the empty folder if there wasn't already one there
 
         def countWords( marker, segment, location ):
             """ Breaks the segment into words and counts them.
@@ -206,13 +213,12 @@ class BibleWriter( InternalBible ):
         def printWordCounts( typeString, dictionary ):
             """ Given a description and a dictionary,
                     sorts and writes the word count data to text, csv, and xml files. """
-            filenamePortion = typeString + "_sorted_by_word."
-            filepathPortion = os.path.join( outputFolder, Globals.makeSafeFilename( filenamePortion ) )
-            if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}*'...").format( filepathPortion ) )
+            filenamePortion = Globals.makeSafeFilename( typeString + "_sorted_by_word." )
+            if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}*'...").format( filenamePortion ) )
             sortedWords = sorted(dictionary)
-            with open( filepathPortion+'txt', 'wt' ) as txtFile:
-                with open( filepathPortion+'csv', 'wt' ) as csvFile:
-                    with open( filepathPortion+'xml', 'wt' ) as xmlFile:
+            with open( os.path.join( txtOutputFolder, filenamePortion )+'txt', 'wt' ) as txtFile:
+                with open( os.path.join( csvOutputFolder, filenamePortion )+'csv', 'wt' ) as csvFile:
+                    with open( os.path.join( xmlOutputFolder, filenamePortion )+'xml', 'wt' ) as xmlFile:
                         xmlFile.write( '<?xml version="1.0" encoding="utf-8"?>\n' ) # Write the xml header
                         xmlFile.write( '<entries>\n' ) # root element
                         for word in sortedWords:
@@ -223,12 +229,11 @@ class BibleWriter( InternalBible ):
                             #if Globals.debugFlag: assert( '<' not in word and '>' not in word and '"' not in word )
                             xmlFile.write( "<entry><word>{}</word><count>{}</count></entry>\n".format( Globals.makeSafeXML(word), dictionary[word] ) )
                         xmlFile.write( '</entries>' ) # close root element
-            filenamePortion = typeString + "_sorted_by_count."
-            filepathPortion = os.path.join( outputFolder, Globals.makeSafeFilename( filenamePortion ) )
+            filenamePortion = Globals.makeSafeFilename( typeString + "_sorted_by_count." )
             if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}*'...").format( filepathPortion ) )
-            with open( filepathPortion+'txt', 'wt' ) as txtFile:
-                with open( filepathPortion+'csv', 'wt' ) as csvFile:
-                    with open( filepathPortion+'xml', 'wt' ) as xmlFile:
+            with open( os.path.join( txtOutputFolder, filenamePortion )+'txt', 'wt' ) as txtFile:
+                with open( os.path.join( csvOutputFolder, filenamePortion )+'csv', 'wt' ) as csvFile:
+                    with open( os.path.join( xmlOutputFolder, filenamePortion )+'xml', 'wt' ) as xmlFile:
                         xmlFile.write( '<?xml version="1.0" encoding="utf-8"?>\n' ) # Write the xml header
                         xmlFile.write( '<entries>\n' ) # root element
                         for word in sorted(sortedWords, key=dictionary.get):

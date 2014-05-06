@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2014-04-25 by RJH (also update ProgVersion below)
+#   Last modified: 2014-05-06 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 """
 
 ProgName = "USFM Bible handler"
-ProgVersion = "0.51"
+ProgVersion = "0.52"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -380,6 +380,7 @@ def demo():
         for name, encoding, testFolder in ( \
                                             ("Matigsalug", "utf-8", "Tests/DataFilesForTests/USFMTest1/"), \
                                             ("Matigsalug", "utf-8", "Tests/DataFilesForTests/USFMTest2/"), \
+                                            ("WEB+", "utf-8", "Tests/DataFilesForTests/USFMAllMarkersProject/"), \
                                             ("UEP", "utf-8", "Tests/DataFilesForTests/USFMErrorProject/"), \
                                             ("Exported", "utf-8", "Tests/BOS_USFM_Export/"), \
                                             ):
@@ -400,7 +401,7 @@ def demo():
                     # print( UBErrors )
                 if Globals.commandLineOptions.export:
                     ##UsfmB.toDrupalBible()
-                    UsfmB.doAllExports()
+                    UsfmB.doAllExports( wantPhotoBible=False, wantPDFs=False)
                     if name != "UEP": # Why does this fail to pickle?
                         newObj = Globals.unpickleObject( name + '.pickle' )
                         if Globals.verbosityLevel > 0: print( "newObj is", newObj )
