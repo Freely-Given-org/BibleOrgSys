@@ -230,7 +230,7 @@ class BibleWriter( InternalBible ):
                             xmlFile.write( "<entry><word>{}</word><count>{}</count></entry>\n".format( Globals.makeSafeXML(word), dictionary[word] ) )
                         xmlFile.write( '</entries>' ) # close root element
             filenamePortion = Globals.makeSafeFilename( typeString + "_sorted_by_count." )
-            if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}*'...").format( filepathPortion ) )
+            if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}*'...").format( filenamePortion ) )
             with open( os.path.join( txtOutputFolder, filenamePortion )+'txt', 'wt' ) as txtFile:
                 with open( os.path.join( csvOutputFolder, filenamePortion )+'csv', 'wt' ) as csvFile:
                     with open( os.path.join( xmlOutputFolder, filenamePortion )+'xml', 'wt' ) as xmlFile:

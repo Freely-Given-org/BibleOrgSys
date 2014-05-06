@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2014-05-05 by RJH (also update ProgVersion below)
+#   Last modified: 2014-05-06 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -41,7 +41,7 @@ Required improvements:
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.68"
+ProgVersion = "0.69"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -1138,6 +1138,62 @@ class InternalBibleBook:
         # end of InternalBibleBook.processLines.processLine
 
 
+        def reorderRawLines():
+            """
+            Using self._rawLines, reorder them before further processing.
+
+            For OSIS, change lines like:
+                1/ p = ''
+                2/ p = ''
+            to remove one of the duplicates XXX NOT NEEDED
+            and
+                1/ v = '51'
+                2/ p = ''
+                3/ v~ = 'Ahaziah the son of Ahab began to reign over Israel... king of Judah, and reigned two years over Israel.' + extras
+            to put the p before the verse number
+            and
+                1/ p = ''
+                2/ v = '49'
+                3/ q = ''
+                4/ v~ = 'I was daily with you in the temple teaching, and y...took me not: but the scriptures must be fulfilled.' + extras
+            to put the q1 before the verse number instead of the p.
+            """
+            #print( 'RO-1', len(self._rawLines) )
+            assert( self.objectTypeString == 'OSIS' )
+            newLines = []
+            lastJ = len(self._rawLines) - 1
+            lastMarker = lastText = None
+            skip = False
+            for j,(marker,text) in enumerate( self._rawLines ):
+                #if lastMarker=='p' and lastText=='' and marker=='p' and text=='':
+                    #print( " ", j, "skipped" )
+                    #halt
+                    #continue # Ignore the duplicate
+                if skip: skip = False; continue # skip this empty p or q marker completely now
+                nextMarker, nextText = self._rawLines[j+1] if j<lastJ else (None,None,)
+
+                if lastMarker=='p' and lastText=='' and marker=='v' and text and nextMarker in ('p','q','q1',) and nextText=='':
+                    lastMarker, lastText = nextMarker, ''
+                    skip = True
+                    #print( " ", j, "swapped and skipped" )
+                elif lastMarker=='v' and marker=='p' and text=='' and nextMarker=='v~':
+                    # Swap this empty p line with the last one
+                    marker, text = lastMarker, lastText
+                    lastMarker, lastText = 'p', ''
+                    #print( " ", j, "swapped" )
+
+                # Always save one line behind
+                if lastMarker is not None: newLines.append( (lastMarker,lastText) )
+                lastMarker, lastText = marker, text
+
+            newLines.append( (lastMarker,lastText) ) # Save the very last line
+            self._rawLines = newLines # replace the old set
+            #print( 'RO-2', len(self._rawLines) )
+        # end of InternalBibleBook.processLines.reorderRawLines
+
+
+        # This is the main processLines code
+        if self.objectTypeString == 'OSIS': reorderRawLines()
         nfvnCount = owfvnCount = rtsCount = sahtCount = 0
         fixErrors = []
         self._processedLines = InternalBibleEntryList() # Contains more-processed tuples which contain the actual Bible text -- see below
@@ -1163,6 +1219,7 @@ class InternalBibleBook:
         """
         Index the lines for faster reference.
 
+        Works by calling makeIndex in InternalBibleInternals.py
         """
         if Globals.debugFlag:
             assert( self._processedFlag )
@@ -1173,24 +1230,24 @@ class InternalBibleBook:
         self._CVIndex = InternalBibleIndex( self.workName, self.bookReferenceCode )
         self._CVIndex.makeIndex( self._processedLines )
 
-        if 0 and self.bookReferenceCode=='GEN':
-            for j, entry in enumerate( self._processedLines):
-                cleanText = entry.getCleanText()
-                print( j, entry.getMarker(), cleanText[:60] + ('' if len(cleanText)<60 else '...') )
-                #if j>breakAt: break
-            def getKey( CVALX ):
-                CV, ALX = CVALX
-                C, V = CV
-                try: Ci = int(C)
-                except: Ci = 300
-                try: Vi = int(V)
-                except: Vi = 300
-                return Ci*1000 + Vi
-            for CV,ALX in sorted(self._CVIndex.items(), key=getKey): #lambda s: int(s[0][0])*1000+int(s[0][1])): # Sort by C*1000+V
-                C, V = CV
-                #A, L, X = ALX
-                print( "{}:{}={},{},{}".format( C, V, ALX.getEntryIndex(), ALX.getEntryCount(), ALX.getContext() ), end='  ' )
-            halt
+        #if self.bookReferenceCode=='GEN':
+            #for j, entry in enumerate( self._processedLines):
+                #cleanText = entry.getCleanText()
+                #print( j, entry.getMarker(), cleanText[:60] + ('' if len(cleanText)<60 else '...') )
+                ##if j>breakAt: break
+            #def getKey( CVALX ):
+                #CV, ALX = CVALX
+                #C, V = CV
+                #try: Ci = int(C)
+                #except: Ci = 300
+                #try: Vi = int(V)
+                #except: Vi = 300
+                #return Ci*1000 + Vi
+            #for CV,ALX in sorted(self._CVIndex.items(), key=getKey): #lambda s: int(s[0][0])*1000+int(s[0][1])): # Sort by C*1000+V
+                #C, V = CV
+                ##A, L, X = ALX
+                #print( "{}:{}={},{},{}".format( C, V, ALX.getEntryIndex(), ALX.getEntryCount(), ALX.getContext() ), end='  ' )
+            #halt
         self._indexedFlag = True
     # end of InternalBibleBook.makeIndex
 

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleInternals.py
-#   Last modified: 2014-05-05 by RJH (also update ProgVersion below)
+#   Last modified: 2014-05-06 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Bible internals handler"
-ProgVersion = "0.24"
+ProgVersion = "0.25"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -450,7 +450,7 @@ class InternalBibleIndex:
     """
     def __init__( self, name, bookReferenceCode ):
         """
-        Creates the index for a Bible book.
+        Creates the index object for a Bible book.
 
         The book code is stored to enable better error messages.
         """
