@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-05-06 by RJH (also update ProgVersion below)
+#   Last modified: 2014-05-13 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -39,6 +39,7 @@ Contains functions:
             For more details see InternalBible.py, InternalBibleBook.py, InternalBibleInternals.py
     toUSFM( outputFolder=None )
     toText( outputFolder=None )
+    toMarkdown( outputFolder=None )
     toHTML5( outputFolder=None, controlDict=None, validationSchema=None, humanReadable=True )
     toCustomBible( outputFolder=None )
     toPhotoBible( outputFolder=None )
@@ -53,14 +54,15 @@ Contains functions:
     totheWord( outputFolder=None )
     toMySword( outputFolder=None )
     toESword( outputFolder=None )
-    toTeX( outputFolder=None )
     toSwordSearcher( outputFolder=None )
     toDrupalBible( outputFolder=None )
+    toODF( outputFolder=None )
+    toTeX( outputFolder=None )
     doAllExports( givenOutputFolderName=None, wantPhotoBible=False, wantPDFs=False )
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.69"
+ProgVersion = "0.70"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -308,7 +310,7 @@ class BibleWriter( InternalBible ):
                 USFMAbbreviation = Globals.BibleBooksCodes.getUSFMAbbreviation( BBB )
                 USFMNumber = Globals.BibleBooksCodes.getUSFMNumber( BBB )
 
-                filename = "{}{}BWr.rSFM".format( USFMNumber, USFMAbbreviation.upper() ) # BWr = BibleWriter
+                filename = "{}{}BibleWriter.rSFM".format( USFMNumber, USFMAbbreviation.upper() ) # BibleWriter = BibleWriter
                 filepath = os.path.join( outputFolder, Globals.makeSafeFilename( filename ) )
                 if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
                 with open( filepath, 'wt' ) as myFile:
@@ -320,7 +322,7 @@ class BibleWriter( InternalBible ):
             USFMAbbreviation = Globals.BibleBooksCodes.getUSFMAbbreviation( BBB )
             USFMNumber = Globals.BibleBooksCodes.getUSFMNumber( BBB )
 
-            filename = "{}{}BWr.pSFM".format( USFMNumber, USFMAbbreviation.upper() ) # BWr = BibleWriter
+            filename = "{}{}BibleWriter.pSFM".format( USFMNumber, USFMAbbreviation.upper() ) # BibleWriter = BibleWriter
             filepath = os.path.join( outputFolder, Globals.makeSafeFilename( filename ) )
             if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
             with open( filepath, 'wt' ) as myFile:
@@ -423,7 +425,7 @@ class BibleWriter( InternalBible ):
 
             # Write the USFM output
             #print( "\nUSFM", USFM[:3000] )
-            filename = "{}{}BWr.SFM".format( USFMNumber, USFMAbbreviation.upper() ) # This seems to be the undocumented standard filename format (and BWr = BibleWriter)
+            filename = "{}{}BibleWriter.SFM".format( USFMNumber, USFMAbbreviation.upper() ) # This seems to be the undocumented standard filename format (and BibleWriter = BibleWriter)
             #if not os.path.exists( USFMOutputFolder ): os.makedirs( USFMOutputFolder )
             filepath = os.path.join( outputFolder, Globals.makeSafeFilename( filename ) )
             if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
@@ -463,14 +465,15 @@ class BibleWriter( InternalBible ):
         for BBB,bookObject in self.books.items():
             pseudoUSFMData = bookObject._processedLines
 
-            filename = "BOS-BWr-{}.txt".format( BBB )
+            filename = "BOS-BibleWriter-{}.txt".format( BBB )
             filepath = os.path.join( outputFolder, Globals.makeSafeFilename( filename ) )
             if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
             textBuffer = ""
             with open( filepath, 'wt' ) as myFile:
                 for entry in pseudoUSFMData:
                     marker, text = entry.getMarker(), entry.getCleanText()
-                    if marker in ('id','ide','toc1','toc2','toc3','c#',): pass # Completely ignore these fields
+                    #if marker in ('id','ide','toc1','toc2','toc3','c#',): pass # Completely ignore these fields
+                    if marker in oftenIgnoredIntroMarkers: pass # Just ignore these lines
                     elif marker == 'h':
                         if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
                         myFile.write( "{}\n\n".format( text ) )
@@ -506,6 +509,364 @@ class BibleWriter( InternalBible ):
 
         return True
     # end of BibleWriter.toText
+
+
+
+    def toMarkdown( self, outputFolder=None ):
+        """
+        Write the Bible data out into GFM markdown format.
+            The format varies, depending on whether or not there are paragraph markers in the text.
+        """
+        if Globals.verbosityLevel > 1: print( "Running BibleWriter:toMarkdown..." )
+        if Globals.debugFlag: assert( self.books )
+
+        if not self.doneSetupGeneric: self.__setupWriter()
+        if not outputFolder: outputFolder = "OutputFiles/BOS_Markdown_Export/"
+        if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
+
+
+        def __formatMarkdownVerseText( BBB, C, V, givenText, extras ):
+            """
+            Format character codes within the text into Markdown
+            """
+            #print( "__formatMarkdownVerseText( {}, {}, {} )".format( repr(givenText), len(extras), ourGlobals.keys() ) )
+            if Globals.debugFlag: assert( givenText or extras )
+
+            def handleExtras( text, extras ):
+                """
+                Returns the MD text with footnotes and xrefs processed.
+                It also accumulates MD in ourGlobals for the end notes.
+                """
+                def liveCV( CV ):
+                    """
+                    Given a CV text (in the same book), make it live
+                        e.g., given 1:3 return #C1V3
+                            given 17:4-9 return #C17V4
+                            given 1:1-3:19 return #C1V1
+                    """
+                    #print( "formatMarkdownVerseText.liveCV( {} )".format( repr(CV) ) )
+                    if len(CV) < 3: return ''
+                    if CV and CV[-1]==':': CV = CV[:-1]
+
+                    result = 'C' + CV.strip().replace( ':', 'V')
+                    for bridgeChar in ('-', '–', '—'): # hyphen, endash, emdash
+                        ix = result.find( bridgeChar )
+                        if ix != -1: result = result[:ix] # Remove verse bridges
+                    #print( " returns", result )
+                    if Globals.debugFlag and (result.count('C')>1 or result.count('V')>1): halt
+                    return '#' + result
+                # end of liveCV
+
+
+                def processNote( rawFootnoteContents, noteType ):
+                    """
+                    Return the MD for the processed footnote or endnote.
+                    It also accumulates MD in ourGlobals for the end notes.
+
+                    NOTE: The first parameter here already has the /f or (/fe) and /f* (or /fe*) removed.
+
+                    \\f + \\fr 1:20 \\ft Su ka kaluwasan te Nawumi ‘keupianan,’ piru ka kaluwasan te Mara ‘masakit se geyinawa.’\\f* (Backslashes are shown doubled here)
+                        gives
+                    <a title="Su ka kaluwasan te Nawumi &lsquo;keupianan,&rsquo; piru ka kaluwasan te Mara &lsquo;masakit se geyinawa.&rsquo;" href="#FNote0"><span class="FootnoteLinkSymbol"><sup>[fn]</sup></span></a>
+                    <note style="f" caller="+"><char style="fr" closed="false">2:23 </char><char style="ft">Te Hibruwanen: bayew egpekegsahid ka ngaran te “malitan” wey “lukes.”</char></note>
+                        plus
+                    <p id="FNote0" class="footnote"><a title="Go back up to 1:20 in the text" href="#C1V20"><span class="ChapterVerse">1:20 </span></a><a title="su" href="../../Lexicon/indexLSIM-45.htm#su1"><span class="WordLink">Su</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="kaluwasan" href="../../Lexicon/indexLLO-67.htm#luwas2"><span class="WordLink">kaluwasan</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <span class="NameWordLink">Nawumi</span> &lsquo;<a title="n. fortunate (upian)" href="../../Lexicon/Details/upian.htm"><span class="WordLink">keupianan</span></a>,&rsquo; <a title="conj. but" href="../../Lexicon/Details/piru.htm"><span class="WordLink">piru</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="kaluwasan" href="../../Lexicon/indexLLO-67.htm#luwas2"><span class="WordLink">kaluwasan</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="mara" href="../../Lexicon/Details/mara.htm"><span class="WordLink">Mara</span></a> &lsquo;<a title="adj. painful (sakit)" href="../../Lexicon/Details/sakit.htm"><span class="WordLink">masakit</span></a> <a title="se" href="../../Lexicon/indexLSE-64.htm#se1"><span class="WordLink">se</span></a> <a title="n. breath" href="../../Lexicon/Details/geyinawa.htm"><span class="WordLink">geyinawa</span></a>.&rsquo;</p>
+                    <p id="FNote1" class="footnote"><a title="Go back up to 3:9 in the text" href="#C3V9"><span class="ChapterVerse">3:9 </span></a><a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">Te</span></a> <a title="prop_n. Hebrew language (Hibru)" href="../../Lexicon/Details/Hibru.htm"><span class="WordLink">Hibruwanen</span></a>: <a title="buni" href="../../Lexicon/Details/buni2.htm"><span class="WordLink">Bunbuni</span></a> <a title="pron. you(sg); by you(sg)" href="../../Lexicon/Details/nu.htm"><span class="WordLink">nu</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="kumbalè" href="../../Lexicon/Details/kumbal%C3%A8.htm"><span class="WordLink">kumbale</span></a> <a title="pron. you(sg); by you(sg)" href="../../Lexicon/Details/nu.htm"><span class="WordLink">nu</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="suluhuanen" href="../../Lexicon/indexLSIM-45.htm#suluh%C3%B9"><span class="WordLink">suluhuanen</span></a> <a title="pron. you(sg); by you(sg)" href="../../Lexicon/Details/nu.htm"><span class="WordLink">nu</span></a>.</p>
+                    <p id="FNote2" class="footnote"><a title="Go back up to 4:11 in the text" href="#C4V11"><span class="ChapterVerse">4:11 </span></a><a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">Kene</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="adj. clear" href="../../Lexicon/Details/klaru.htm"><span class="WordLink">klaru</span></a> <a title="diya" href="../../Lexicon/indexLD-80.htm#diyav"><span class="WordLink">diye</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="adj. true (lehet)" href="../../Lexicon/Details/lehet1.htm"><span class="WordLink">malehet</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="migpuun" href="../../Lexicon/Details/puun.htm"><span class="WordLink">migpuunan</span></a> <a title="ke" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ke</span></a> <a title="n. other" href="../../Lexicon/Details/lein.htm"><span class="WordLink">lein</span></a> <a title="e" href="../../Lexicon/indexLA-77.htm#a"><span class="WordLink">e</span></a> <a title="part. also" href="../../Lexicon/Details/degma.htm"><span class="WordLink">degma</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="n. place" href="../../Lexicon/Details/inged.htm"><span class="WordLink">inged</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <span class="NameWordLink">Iprata</span>. <a title="kahiyen" href="../../Lexicon/Details/kahi.htm"><span class="WordLink">Kahiyen</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="adj. other" href="../../Lexicon/Details/duma.htm"><span class="WordLink">duma</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <span class="NameWordLink">Iprata</span> <a title="dem. that" href="../../Lexicon/Details/iyan.htm"><span class="WordLink">iyan</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="tapey" href="../../Lexicon/indexLT-96.htm#tapey1"><span class="WordLink">tapey</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="n. name" href="../../Lexicon/Details/ngaran.htm"><span class="WordLink">ngaran</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="See glossary entry for Bitlihim" href="../indexGlossary.htm#Bitlihim"><span class="WordLink">Bitlihim</span><span class="GlossaryLinkSymbol"><sup>[gl]</sup></span></a>.</p></div>
+                    """
+                    assert( noteType in ('footnote','endnote',) )
+                    markerList = Globals.USFMMarkers.getMarkerListFromText( rawFootnoteContents, includeInitialText=True )
+                    #print( "formatMarkdownVerseText.processFootnote( {}, {} ) found {}".format( repr(rawFootnoteContents), ourGlobals, markerList ) )
+                    if noteType == 'footnote':
+                        fnIndex = ourGlobals['nextFootnoteIndex']; ourGlobals['nextFootnoteIndex'] += 1
+                    elif noteType == 'endnote':
+                        fnIndex = ourGlobals['nextEndnoteIndex']; ourGlobals['nextEndnoteIndex'] += 1
+                    caller = origin = originCV = fnText = fnTitle = ''
+                    if markerList: # We found some internal footnote markers
+                        spanOpen = False
+                        for marker, ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt in markerList:
+                            if spanOpen: fnText += '</span>'; spanOpen = False
+                            if marker is None:
+                                #if txt not in '-+': # just a caller
+                                caller = txt
+                            elif marker == 'fr':
+                                origin = txt
+                                originCV = origin
+                                if originCV and originCV[-1] in (':','.'): originCV = originCV[:-1]
+                                originCV = originCV.strip()
+                            elif marker == 'ft':
+                                fnText += txt
+                                fnTitle += txt
+                            elif marker == 'fk':
+                                fnText += '<span class="{}Keyword">'.format( noteType ) + txt
+                                fnTitle += txt
+                                spanOpen = True
+                            elif marker == 'fq':
+                                fnText += '<span class="{}TranslationQuotation">'.format( noteType ) + txt
+                                fnTitle += txt
+                                spanOpen = True
+                            elif marker == 'fqa':
+                                fnText += '<span class="{}AlternateTranslation">'.format( noteType ) + txt
+                                fnTitle += txt
+                                spanOpen = True
+                            elif marker == 'fl':
+                                fnText += '<span class="{}Label">'.format( noteType ) + txt
+                                fnTitle += txt
+                                spanOpen = True
+                            #elif marker == Should handle other internal markers here
+                            else:
+                                logging.error( "formatMarkdownVerseText.processNote didn't handle {} {}:{} {} marker: {}".format( BBB, C, V, noteType, marker ) )
+                                fnText += txt
+                                fnTitle += txt
+                        if spanOpen: fnText += '</span>'; spanOpen = False
+                    else: # no internal markers found
+                        bits = rawFootnoteContents.split( ' ', 1 )
+                        if len(bits)==2: # assume the caller is the first bit
+                            caller = bits[0]
+                            if Globals.debugFlag: assert( len(caller) == 1 ) # Normally a +
+                            fnText = fnTitle = bits[1]
+                        else: # no idea really what the format was
+                            fnText = fnTitle = rawFootnoteContents
+
+                    idName = "{}{}".format( 'FNote' if noteType=='footnote' else 'ENote', fnIndex )
+                    noteMD = '[fn{}]({})'.format( noteType, idName )
+
+                    endMD = '<p id="{}" class="{}">'.format( idName, noteType )
+                    if originCV:
+                        endMD += '<a class="{}Origin" title="Go back up to {} in the text" href="{}">{}</a> ' \
+                                                            .format( noteType, originCV, liveCV(originCV), origin )
+                    endMD += '<span class="{}Entry">{}</span>'.format( noteType, fnText )
+                    endMD += '</p>'
+
+                    #print( "noteMD", BBB, noteMD )
+                    #print( "endMD", endMD )
+                    ourGlobals['footnoteMD' if noteType=='footnote' else 'endnoteMD'].append( endMD )
+                    #if fnIndex > 2: halt
+
+                    return noteMD
+                # end of __formatMarkdownVerseText.processNote
+
+
+                def processXRef( MDxref ):
+                    """
+                    Return the MD for the processed cross-reference (xref).
+                    It also accumulates MD in ourGlobals for the end notes.
+
+                    NOTE: The parameter here already has the /x and /x* removed.
+
+                    \\x - \\xo 2:2: \\xt Lib 19:9-10; Diy 24:19.\\xt*\\x* (Backslashes are shown doubled here)
+                        gives
+                    <a title="Lib 19:9-10; Diy 24:19" href="#XRef0"><span class="XRefLinkSymbol"><sup>[xr]</sup></span></a>
+                    <a title="Lib 25:25" href="#XRef1"><span class="XRefLinkSymbol"><sup>[xr]</sup></span></a>
+                    <a title="Rut 2:20" href="#XRef2"><span class="XRefLinkSymbol"><sup>[xr]</sup></span></a>
+                        plus
+                    <p id="XRef0" class="XRef"><a title="Go back up to 2:2 in the text" href="#C2V2"><span class="ChapterVerse">2:2</span></a> <span class="VernacularCrossReference">Lib 19:9&#x2011;10</span>; <span class="VernacularCrossReference">Diy 24:19</span></p>
+                    """
+                    markerList = Globals.USFMMarkers.getMarkerListFromText( MDxref, includeInitialText=True )
+                    #print( "\nformatMarkdownVerseText.processXRef( {}, {} ) gives {}".format( repr(MDxref), "...", markerList ) )
+                    xrefIndex = ourGlobals['nextXRefIndex']; ourGlobals['nextXRefIndex'] += 1
+                    caller = origin = originCV = xrefText = ''
+                    if markerList:
+                        for marker, ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt in markerList:
+                            if marker is None:
+                                #if txt not in '-+': # just a caller
+                                caller = txt
+                            elif marker == 'xo':
+                                origin = txt
+                                originCV = origin
+                                originCV = originCV.strip()
+                                if originCV and originCV[-1] in (':','.'): originCV = originCV[:-1]
+                            elif marker == 'xt':
+                                xrefText += txt
+                            #elif marker == Should handle other internal markers here
+                            else:
+                                logging.error( "formatMarkdownVerseText.processXRef didn't handle {} {}:{} xref marker: {}".format( BBB, C, V, marker ) )
+                                xrefText += txt
+                    else: # there's no USFM markers at all in the xref --  presumably a caller and then straight text
+                        if MDxref.startswith('+ ') or MDxref.startswith('- '):
+                            caller = MDxref[0]
+                            xrefText = MDxref[2:].strip()
+                        else: # don't really know what it is -- assume it's all just text
+                            xrefText = MDxref.strip()
+
+                    xrefMD = '[xr{}]({})'.format( xrefIndex, xrefText )
+
+                    endMD = '<p id="XRef{}" class="xref">'.format( xrefIndex )
+                    if not origin: # we'll try to make one
+                        originCV = "{}:{}".format( C, V )
+                    if originCV: # This only handles CV separator of : so far
+                        endMD += '<a class="xrefOrigin" title="Go back up to {} in the text" href="{}">{}</a> ' \
+                                                            .format( originCV, liveCV(originCV), originCV )
+                    endMD += '<span class="xrefEntry">{}</span>'.format( xrefText )
+                    endMD += '</p>'
+
+                    #print( "xrefMD", BBB, xrefMD )
+                    #print( "endMD", endMD )
+                    ourGlobals['xrefMD'].append( endMD )
+                    #if xrefIndex > 2: halt
+
+                    return xrefMD
+                # end of __formatMarkdownVerseText.processXRef
+
+
+                def processFigure( MDfigure ):
+                    """
+                    Return the MD for the processed figure.
+
+                    NOTE: The parameter here already has the /fig and /fig* removed.
+                    """
+                    logging.critical( "toMD: figure not handled yet at {} {}:{} {}".format( BBB, C, V, repr(MDfigure) ) )
+                    figureMD = ''
+                    #footnoteMD = '<a class="footnoteLinkSymbol" title="{}" href="#FNote{}">[fn]</a>' \
+                                    #.format( fnTitle, fnIndex )
+
+                    #endMD = '<p id="FNote{}" class="footnote">'.format( fnIndex )
+                    #if originCV: # This only handles CV separator of : so far
+                        #endMD += '<a class="footnoteOrigin" title="Go back up to {} in the text" href="{}">{}</a> ' \
+                                                            #.format( originCV, liveCV(originCV), origin )
+                    #endMD += '<span class="footnoteEntry">{}</span>'.format( fnText )
+                    #endMD += '</p>'
+
+                    ##print( "footnoteMD", BBB, footnoteMD )
+                    ##print( "endMD", endMD )
+                    #ourGlobals['footnoteMD'].append( endMD )
+                    ##if fnIndex > 2: halt
+
+                    return figureMD
+                # end of __formatMarkdownVerseText.processFigure
+
+
+                adjText = text
+                offset = 0
+                for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
+                    #print( "{} {}:{} Text='{}' eT={}, eI={}, eText='{}'".format( BBB, C, V, text, extraType, extraIndex, extraText ) )
+                    adjIndex = extraIndex - offset
+                    lenT = len( adjText )
+                    if adjIndex > lenT: # This can happen if we have verse/space/notes at end (and the space was deleted after the note was separated off)
+                        logging.warning( _("formatMarkdownVerseText: Space before note at end of verse in {} {}:{} has been lost").format( BBB, C, V ) )
+                        # No need to adjust adjIndex because the code below still works
+                    elif adjIndex<0 or adjIndex>lenT: # The extras don't appear to fit correctly inside the text
+                        print( "formatMarkdownVerseText: Extras don't fit inside verse at {} {}:{}: eI={} o={} len={} aI={}".format( BBB, C, V, extraIndex, offset, len(text), adjIndex ) )
+                        print( "  Verse='{}'".format( text ) )
+                        print( "  Extras='{}'".format( extras ) )
+                    #assert( 0 <= adjIndex <= len(verse) )
+                    #adjText = checkText( extraText, checkLeftovers=False ) # do any general character formatting
+                    #if adjText!=extraText: print( "processXRefsAndFootnotes: {}@{}-{}={} '{}' now '{}'".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
+                    if extraType == 'fn':
+                        extra = processNote( extraText, 'footnote' )
+                        #print( "fn got", extra )
+                    elif extraType == 'en':
+                        extra = processNote( extraText, 'endnote' )
+                        #print( "en got", extra )
+                    elif extraType == 'xr':
+                        extra = processXRef( extraText )
+                        #print( "xr got", extra )
+                    elif extraType == 'fig':
+                        extra = processFigure( extraText )
+                        #print( "fig got", extra )
+                    elif extraType == 'str':
+                        extra = ""
+                    elif Globals.debugFlag and debuggingThisModule: print( 'eT', extraType ); halt
+                    #print( "was", verse )
+                    adjText = adjText[:adjIndex] + extra + adjText[adjIndex:]
+                    offset -= len( extra )
+                    #print( "now", verse )
+                return adjText
+            # end of __formatMarkdownVerseText.handleExtras
+
+
+            # __formatMarkdownVerseText main code
+            text = handleExtras( givenText, extras )
+
+            # Semantic stuff
+            text = text.replace( '\\ior ', '[' ).replace( '\\ior*', ']' )
+            text = text.replace( '\\bk ', '_' ).replace( '\\bk*', '_' )
+            text = text.replace( '\\add ', '_' ).replace( '\\add*', '_' )
+            text = text.replace( '\\nd ', '' ).replace( '\\nd*', '' )
+            text = text.replace( '\\+nd ', '' ).replace( '\\+nd*', '' )
+            text = text.replace( '\\wj ', '' ).replace( '\\wj*', '' )
+            text = text.replace( '\\sig ', '' ).replace( '\\sig*', '' )
+            if BBB in ('GLS',): # it's a glossary keyword entry
+                text = text.replace( '\\k ', '' ).replace( '\\k*', '' )
+            else: # it's a keyword in context
+                text = text.replace( '\\k ', '' ).replace( '\\k*', '' )
+            text = text.replace( '\\rq ', '' ).replace( '\\rq*', '' )
+            text = text.replace( '\\qs ', '' ).replace( '\\qs*', '' )
+
+            # Direct formatting
+            text = text.replace( '\\bdit ', '*_' ).replace( '\\bdit*', '_*' )
+            text = text.replace( '\\it ', '_' ).replace( '\\it*', '_' )
+            text = text.replace( '\\bd ', '*' ).replace( '\\bd*', '*' )
+            text = text.replace( '\\sc ', '' ).replace( '\\sc*', '' )
+
+            if '\\' in text or '<' in text or '>' in text:
+                logging.error( "formatMarkdownVerseText programming error: unprocessed code in {} from {} at {} {}:{}".format( repr(text), repr(givenText), BBB, C, V ) )
+                if Globals.debugFlag or Globals.verbosityLevel > 2:
+                    print( "formatMarkdownVerseText: unprocessed code in {} from {} at {} {}:{}".format( repr(text), repr(givenText), BBB, C, V ) )
+                if Globals.debugFlag and debuggingThisModule: halt
+            return text
+        # end of __formatMarkdownVerseText
+
+
+        # First determine our format
+        verseByVerse = True
+
+        # Write the plain text files
+        for BBB,bookObject in self.books.items():
+            pseudoUSFMData = bookObject._processedLines
+
+            filename = "BOS-BibleWriter-{}.md".format( BBB )
+            filepath = os.path.join( outputFolder, Globals.makeSafeFilename( filename ) )
+            if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
+            ourGlobals = {}
+            ourGlobals['nextFootnoteIndex'] = ourGlobals['nextXRefIndex'] = 0
+            ourGlobals['footnoteMD'], ourGlobals['endnoteMD'], ourGlobals['xrefMD'] = [], [], []
+            C = V = '0'
+            textBuffer = ""
+            with open( filepath, 'wt' ) as myFile:
+                for entry in pseudoUSFMData:
+                    marker, adjText, extras = entry.getMarker(), entry.getAdjustedText(), entry.getExtras()
+                    #if marker in ('id','ide','toc1','toc2','toc3','c#',): pass # Completely ignore these fields
+                    if marker in oftenIgnoredIntroMarkers: pass # Just ignore these lines
+                    #elif marker == 'h': pass
+                    elif marker in ('mt1','mt2','mt3','mt4', 'imt1','imt2','imt3','imt4',):
+                        if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
+                        level = int( marker[-1] )
+                        myFile.write( "\n{} {}\n".format( '#'*level, adjText ) )
+                    elif marker in ('s1','s2','s3','s4', 'is1','is2','is3','is4',):
+                        if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
+                        level = int( marker[-1] ) + 2 # so s1 becomes header #3
+                        myFile.write( "\n{} {}\n".format( '#'*level, adjText ) )
+                    #elif marker in ('is1','is2','is3','is4','ip','ipi','iot','io1','io2','io3','io4',): pass # Drop the introduction
+                    elif marker == 'c':
+                        C = adjText
+                        if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
+                        myFile.write( "\n\nChapter {}".format( adjText ) )
+                    elif marker == 'v':
+                        V = adjText
+                        if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
+                        myFile.write( "\n{} ".format( adjText ) )
+                    elif marker in ('p',): pass # Drop out these fields
+                    elif adjText:
+                        textBuffer += (' ' if textBuffer else '') + __formatMarkdownVerseText( BBB, C, V, adjText, extras )
+                if textBuffer: myFile.write( "{}\n".format( textBuffer ) ) # Write the last bit
+
+                    #if verseByVerse:
+                        #myFile.write( "{} ({}): '{}' '{}' {}\n" \
+                            #.format( entry.getMarker(), entry.getOriginalMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras() ) )
+
+        # Now create a zipped collection
+        if Globals.verbosityLevel > 2: print( "  Zipping markdown files..." )
+        zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllMarkdownFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
+        for filename in os.listdir( outputFolder ):
+            if not filename.endswith( '.zip' ):
+                filepath = os.path.join( outputFolder, filename )
+                zf.write( filepath, filename ) # Save in the archive without the path
+        zf.close()
+
+        return True
+    # end of BibleWriter.toMarkdown
+
 
 
     # The following are used by both toHTML5 and toCustomBible
@@ -1107,7 +1468,7 @@ class BibleWriter( InternalBible ):
                 elif marker in ('io1','io2','io3','io4',):
                     if Globals.debugFlag: assert( not haveOpenParagraph )
                     #if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
-                    if text: writerObject.writeLineOpenClose( 'p', liveLocal(text), ('class','outlineEntry'+marker[2]), noTextCheck=True )
+                    if text: writerObject.writeLineOpenClose( 'p', liveLocal(text), ('class','introductionOutlineEntry'+marker[2]), noTextCheck=True )
                 elif marker == 'periph':
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
                     if Globals.debugFlag:
@@ -1705,7 +2066,7 @@ class BibleWriter( InternalBible ):
                     if not sOpen:
                         thisHTML += '<section class="introSection">'; sOpen = sJustOpened = True; BCV=(BBB,C,V)
                     if text or extras:
-                        thisHTML += '<p class="outlineEntry{}">{}</p>'.format( marker[2], BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, CBGlobals ) )
+                        thisHTML += '<p class="introductionOutlineEntry{}">{}</p>'.format( marker[2], BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, CBGlobals ) )
                 elif marker == 'periph':
                     if pOpen:
                         if Globals.debugFlag: assert( sOpen )
@@ -2619,32 +2980,33 @@ class BibleWriter( InternalBible ):
             verseText = '' # Do we really need this?
             #chapterNumberString = None
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
-                marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
-                #print( "toMediaWiki:writeMWBook", BBB, bookRef, bookName, marker, text, extras )
+                marker, adjText, extras = verseDataEntry.getMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
+                #print( "toMediaWiki:writeMWBook", BBB, bookRef, bookName, marker, adjText, extras )
+                #if marker in oftenIgnoredIntroMarkers: pass # Just ignore these lines
                 if marker in ('id','h','mt1','mt2','mt3','mt4',):
-                    writerObject.writeLineComment( '\\{} {}'.format( marker, text ) )
-                    bookName = text # in case there's no toc2 entry later
+                    writerObject.writeLineComment( '\\{} {}'.format( marker, adjText ) )
+                    bookName = adjText # in case there's no toc2 entry later
                 elif marker == 'toc2':
-                    bookName = text
+                    bookName = adjText
                 elif marker in oftenIgnoredIntroMarkers: pass # Just ignore these lines
 
                 elif marker == 'li':
-                    # :<!-- \li -->text
+                    # :<!-- \li -->adjText
                     writerObject.writeLineText( ":" )
                     writerObject.writeLineComment( '\\li' )
-                    writerObject.writeLineText( text )
+                    writerObject.writeLineText( adjText )
                 elif marker == 'c':
-                    C, V = text, "0"
-                    chapterNumberString = text
+                    C, V = adjText, "0"
+                    chapterNumberString = adjText
                     chapterRef = bookRef + '.' + chapterNumberString
                     # Bible:BookName_#
                     if bookName: writerObject.writeLineText( 'Bible:{}_{}'.format(bookName, chapterNumberString) )
                 elif marker == 's1':
-                    # === text ===
-                    writerObject.writeLineText( '=== {} ==='.format(text) )
+                    # === adjText ===
+                    writerObject.writeLineText( '=== {} ==='.format(adjText) )
                 elif marker == 'r':
-                    # <span class="srefs">text</span>
-                    if text: writerObject.writeLineOpenClose( 'span', text, ('class','srefs') )
+                    # <span class="srefs">adjText</span>
+                    if adjText: writerObject.writeLineOpenClose( 'span', adjText, ('class','srefs') )
                 elif marker == 'p':
                     writerObject.writeNewLine( 2 );
                 elif marker == 'v':
@@ -2652,24 +3014,24 @@ class BibleWriter( InternalBible ):
                     #    if Globals.debugFlag: assert( BBB in Globals.BibleBooksCodes.getSingleChapterBooksList() )
                     #    chapterNumberString = '1'
                     #    chapterRef = bookRef + '.' + chapterNumberString
-                    V = text
-                    verseNumberString = text # Gets written with in the v~ line
-                    # <span id="chapter#_#"><sup>#</sup> text</span>
+                    V = adjText
+                    verseNumberString = adjText # Gets written with in the v~ line
+                    # <span id="chapter#_#"><sup>#</sup> adjText</span>
                     #writerObject.writeLineOpenClose( 'span', '<sup>{}</sup> {}'.format(verseNumberString,adjText), ('id',"chapter{}_{}".format(chapterNumberString, verseNumberString) ), noTextCheck=True )
                 elif marker == 'v~':
-                    #print( "Oomph", marker, repr(text), chapterRef, verseNumberString )
-                    assert( text or extras )
+                    #print( "Oomph", marker, repr(adjText), chapterRef, verseNumberString )
+                    assert( adjText or extras )
                     # TODO: We haven't stripped out character fields from within the verse -- not sure how MediaWiki handles them yet
-                    if not text: # this is an empty (untranslated) verse
+                    if not adjText: # this is an empty (untranslated) verse
                         adjText = '- - -' # but we'll put in a filler
-                    else: adjText = processXRefsAndFootnotes( text, extras )
-                    # <span id="chapter#_#"><sup>#</sup> text</span>
+                    else: adjText = processXRefsAndFootnotes( adjText, extras )
+                    # <span id="chapter#_#"><sup>#</sup> adjText</span>
                     writerObject.writeLineOpenClose( 'span', '<sup>{}</sup> {}'.format(verseNumberString,adjText), ('id',"chapter{}_{}".format(chapterNumberString, verseNumberString) ), noTextCheck=True )
                 elif marker == 'p~':
-                    #print( "Ouch", marker, repr(text), chapterRef, verseNumberString )
-                    assert( text or extras )
+                    #print( "Ouch", marker, repr(adjText), chapterRef, verseNumberString )
+                    assert( adjText or extras )
                     # TODO: We haven't stripped out character fields from within the verse -- not sure how MediaWiki handles them yet
-                    adjText = processXRefsAndFootnotes( text, extras )
+                    adjText = processXRefsAndFootnotes( adjText, extras )
                     writerObject.writeLineText( ':{}'.format(adjText, noTextCheck=True) ) # No check so it doesn't choke on embedded xref and footnote fields
                 elif marker == 'q1':
                     adjText = processXRefsAndFootnotes( verseText, extras )
@@ -2681,8 +3043,8 @@ class BibleWriter( InternalBible ):
                     adjText = processXRefsAndFootnotes( verseText, extras )
                     writerObject.writeLineText( '::{}'.format(adjText, noTextCheck=True) )
                 elif marker not in ('c#',): # These are the markers that we can safely ignore for this export
-                    if text:
-                        logging.error( "toMediaWiki: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
+                    if adjText:
+                        logging.error( "toMediaWiki: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(adjText) ) )
                         #if Globals.debugFlag: halt
                     if extras:
                         logging.error( "toMediaWiki: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
@@ -2781,7 +3143,8 @@ class BibleWriter( InternalBible ):
             C = V = "0"
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getFullText(), verseDataEntry.getExtras()
-                if marker in ('id', 'ide', 'h', 'toc1','toc2','toc3', ): pass # Just ignore these metadata markers
+                #if marker in ('id', 'ide', 'h', 'toc1','toc2','toc3', ): pass # Just ignore these metadata markers
+                if marker in oftenIgnoredIntroMarkers: pass # Just ignore these lines
                 elif marker == 'c':
                     C, V = text, "0"
                     if haveOpenChapter:
@@ -2915,7 +3278,8 @@ class BibleWriter( InternalBible ):
             C = V = "0"
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getFullText(), verseDataEntry.getExtras()
-                if marker in ('id', 'ide', 'h', 'toc1','toc2','toc3', ): pass # Just ignore these metadata markers
+                #if marker in ('id', 'ide', 'h', 'toc1','toc2','toc3', ): pass # Just ignore these metadata markers
+                if marker in oftenIgnoredIntroMarkers: pass # Just ignore these lines
                 elif marker == 'c':
                     C, V = text, "0"
                     if haveOpenParagraph:
@@ -6246,262 +6610,6 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toTeX( self, outputFolder=None ):
-        """
-        Write the pseudo USFM out into a TeX (typeset) format.
-            The format varies, depending on whether or not there are paragraph markers in the text.
-        """
-        import subprocess
-        if Globals.verbosityLevel > 1: print( "Running BibleWriter:toTeX..." )
-        if Globals.debugFlag: assert( self.books )
-
-        if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolder: outputFolder = "OutputFiles/BOS_TeX_Export/"
-        if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
-
-        unhandledMarkers = set()
-
-        # First determine our format
-        #verseByVerse = True
-
-        # Copy auxilliary XeTeX files to our output folder
-        for filename in ( "lettrine.sty", ):
-            filepath = os.path.join( defaultControlFolder, filename )
-            try: shutil.copy( filepath, outputFolder )
-            except FileNotFoundError: logging.warning( "Unable to find TeX control file: {}".format( filepath ) )
-        pMarkerTranslate = { 'p':'P', 'pi':'PI', 'q1':'Q', 'q2':'QQ', 'q3':'QQQ', 'q4':'QQQQ',
-                            'ip':'IP', }
-        cMarkerTranslate = { 'bk':'BK', 'add':'ADD', 'nd':'ND', 'wj':'WJ', 'sig':'SIG',
-                            'bdit':'BDIT', 'it':'IT', 'bd':'BD', 'em':'EM', 'sc':'SC',
-                            'ior':'IOR', 'k':'KW', }
-        mtMarkerTranslate = { 'mt1':'BibleMainTitle', 'mt2':'BibleTitleTwo', 'mt3':'BibleTitleThree', 'mt4':'BibleTitleFour' }
-
-        def writeTeXHeader( writer ):
-            """
-            Write the XeTeX header data -- the file can be processed with xelatex
-                I had to run "sudo apt-get install fonts-linuxlibertine" first.
-            """
-            for line in (
-                "\\documentclass[a4paper]{Bible} % use our own Bible document class found in Bible.cls",
-                "",
-                #"\\usepackage{xltxtra} % Extra customizations for XeLaTeX;",
-                #"% xltxtra automatically loads fontspec and xunicode, both of which you need",
-                #"",
-                #"\\setmainfont[Ligatures=TeX]{Charis SIL}",
-                #"\\setromanfont[Mapping=tex-text]{Linux Libertine O}",
-                #"\\setsansfont[Mapping=tex-text]{Myriad Pro}",
-                #"\\setmonofont[Mapping=tex-text]{Courier New}",
-                #"",
-                #"\\usepackage{geometry}",
-                #"\\geometry{a4paper}",
-                #"",
-                "\\begin{document}",
-                #"\\maketitle",
-                #"",
-                #"\\section{Ligatures}",
-                #"\\fontspec[Ligatures={Common, Historical}]{Linux Libertine O Italic}",
-                #"Questo è strano assai!",
-                #"",
-                #"\\section{Numerals}",
-                #"\\fontspec[Numbers={OldStyle}]{Linux Libertine O}Old style: 1234567\\",
-                #"\\fontspec[Numbers={Lining}]{Linux Libertine O}Lining: 1234567",
-                #"",
-                ):
-                writer.write( "{}\n".format( line ) )
-        # end of toTeX.writeTeXHeader
-
-
-        def texText( givenText ):
-            """
-            Given some text containing possible character formatting,
-                convert it to TeX styles.
-            """
-            text = givenText
-
-            if '\\fig ' in text: # handle figures
-                #ix = text.find( '\\fig ' )
-                #ixEnd = text.find( '\\fig*' )
-                text = text.replace( '\\fig ', '~^~BibleFigure{' ).replace( '\\fig*', '}' ) # temp
-
-            if '\\f ' in text: # handle footnotes
-                #print( 'footnote', repr(givenText) )
-                #ix = text.find( '\\f ' )
-                #ixEnd = text.find( '\\f*' )
-                text = text.replace( '\\f ', '~^~BibleFootnote{' ).replace( '\\f*', '}' ) # temp
-                text = text.replace( '\\fr ', '~^~BibleFootnoteAnchor{' ).replace( '\\ft ', '}', 1 ) # temp assumes one fr followed by one ft
-                text = text.replace( '\\fq ', '' ).replace( '\\ft ', '' ).replace( '\\fk ', '' ) # Just remove these ones
-
-            if '\\x ' in text: # handle cross-references
-                #print( 'xref', repr(givenText) )
-                #ix = text.find( '\\x ' )
-                #ixEnd = text.find( '\\x*' )
-                text = text.replace( '\\x ', '~^~BibleCrossReference{' ).replace( '\\x*', '}' ) # temp
-                text = text.replace( '\\xo ', '~^~BibleCrossReferenceAnchor{' ).replace( '\\xt ', '}' ) # temp assumes one xo followed by one xt
-
-            # Handle regular character formatting -- this will cause TeX to fail if closing markers are not matched
-            for charMarker in ALL_CHAR_MARKERS:
-                fullCharMarker = '\\' + charMarker + ' '
-                if fullCharMarker in text:
-                    endCharMarker = '\\' + charMarker + '*'
-                    if charMarker in cMarkerTranslate:
-                        text = text.replace( fullCharMarker, '~^~BibleCharacterStyle'+cMarkerTranslate[charMarker]+'{' ) \
-                                .replace( endCharMarker, '}' )
-                    else:
-                        logging.warning( "toTeX: Don't know how to encode '{}' marker".format( charMarker ) )
-                        text = text.replace( fullCharMarker, '' ).replace( endCharMarker, '' )
-
-            if '\\' in text: # Catch any left-overs
-                if Globals.debugFlag or Globals.verbosityLevel > 2:
-                    print( "toTeX.texText: unprocessed code in {} from {}".format( repr(text), repr(givenText) ) )
-                if Globals.debugFlag and debuggingThisModule: halt
-            return text.replace( '~^~', '\\' )
-        # end of toTeX:texText
-
-
-        def makePDFs( BBB, texFilepath, timeout ):
-            """
-            Call xelatex to make the Bible PDF file(s) from the .tex file.
-            """
-            assert( texFilepath.endswith( '.tex' ) )
-            mainFilepath = texFilepath[:-4] # Remove the .tex bit
-
-            # Work through the various class files for different styles of Bible layouts
-            for filenamePart in ( 'Bible1','Bible2', ):
-                filepath = os.path.join( defaultControlFolder, filenamePart+'.cls' )
-                try:
-                    shutil.copy( filepath, outputFolder ) # Copy it under its own name
-                    shutil.copy( filepath, os.path.join( outputFolder, "Bible.cls" ) ) # Copy it also under the generic name
-                except FileNotFoundError: logging.warning( "Unable to find TeX control file: {}".format( filepath ) )
-
-                # Now run xelatex (TeX -> PDF)
-                parameters = ['/usr/bin/timeout', timeout, '/usr/bin/xelatex', '-interaction=batchmode', os.path.abspath(texFilepath) ]
-                #print( "makeIndividualPDF (xelatex) parameters", parameters )
-                os.chdir( outputFolder ) # So the paths for the Bible.cls file are correct
-                myProcess = subprocess.Popen( parameters, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
-                programOutputBytes, programErrorOutputBytes = myProcess.communicate()
-                os.chdir( cwdSave ) # Restore the path again
-                if myProcess.returncode == 124: # it timed out
-                    programErrorOutputBytes += "xelatex {}: Timed out after {}".format( BBB, timeout ).encode( 'utf-8' )
-                # Process the output
-                if programOutputBytes:
-                    programOutputString = programOutputBytes.decode( encoding='utf-8', errors="replace" )
-                    #programOutputString = programOutputString.replace( baseFolder + ('' if baseFolder[-1]=='/' else '/'), '' ) # Remove long file paths to make it easier for the user to read
-                    #with open( os.path.join( outputFolder, "ScriptOutput.txt" ), 'wt' ) as myFile: myFile.write( programOutputString )
-                    #print( "pOS", programOutputString )
-                if programErrorOutputBytes:
-                    programErrorOutputString = programErrorOutputBytes.decode( encoding='utf-8', errors="replace" )
-                    #with open( os.path.join( outputFolder, "ScriptErrorOutput.txt" ), 'wt' ) as myFile: myFile.write( programErrorOutputString )
-                    if Globals.debugFlag: print( "pEOS", programErrorOutputString )
-
-                # Rename our PDF (and the log file) according to the style
-                try: os.replace( mainFilepath+'.log', mainFilepath+'.'+filenamePart+'.log' )
-                except FileNotFoundError: pass # That's fine
-                try: os.replace( mainFilepath+'.pdf', mainFilepath+'.'+filenamePart+'.pdf' )
-                except FileNotFoundError: pass # That's fine
-        # end of toTeX.makePDFs
-
-
-        # Write the plain text XeTeX file
-        cwdSave = os.getcwd() # Save the current working directory before changing (below) to the output directory
-        allFilename = "All-BOS-BWr.tex"
-        allFilepath = os.path.join( outputFolder, Globals.makeSafeFilename( allFilename ) )
-        if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( allFilepath ) )
-        with open( allFilepath, 'wt' ) as allFile:
-            writeTeXHeader( allFile )
-            for BBB,bookObject in self.books.items():
-                haveTitle = haveIntro = False
-                filename = "BOS-BWr-{}.tex".format( BBB )
-                filepath = os.path.join( outputFolder, Globals.makeSafeFilename( filename ) )
-                if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
-                with open( filepath, 'wt' ) as bookFile:
-                    writeTeXHeader( bookFile )
-                    allFile.write( "\n\\BibleBook{{{}}}\n".format( bookObject.getAssumedBookNames()[0] ) )
-                    bookFile.write( "\n\\BibleBook{{{}}}\n".format( bookObject.getAssumedBookNames()[0] ) )
-                    bookFile.write( "\n\\BibleBookTableOfContents\n".format( bookObject.getAssumedBookNames()[0] ) )
-                    C = V = "0"
-                    for entry in bookObject._processedLines:
-                        marker, text = entry.getMarker(), entry.getFullText()
-                        if marker in oftenIgnoredIntroMarkers: pass # Just ignore these lines
-                        elif marker in ('mt1','mt2','mt3','mt4',):
-                            if not haveTitle:
-                                allFile.write( "\n\\BibleTitlePage\n" )
-                                bookFile.write( "\n\\BibleTitlePage\n" )
-                                haveTitle = True
-                            allFile.write( "\\{}{{{}}}\n".format( mtMarkerTranslate[marker], texText(text) ) )
-                            bookFile.write( "\\{}{{{}}}\n".format( mtMarkerTranslate[marker], texText(text) ) )
-                        elif marker=='ip':
-                            if not haveIntro:
-                                allFile.write( "\n\\BibleIntro\n" )
-                                bookFile.write( "\n\\BibleIntro\n" )
-                                haveIntro = True
-                            allFile.write( "\\BibleParagraphStyle{}\n".format( pMarkerTranslate[marker] ) )
-                            bookFile.write( "\\BibleParagraphStyle{}\n".format( pMarkerTranslate[marker] ) )
-                            allFile.write( "{}\n".format( texText(text) ) )
-                            bookFile.write( "{}\n".format( texText(text) ) )
-                        elif marker=='c':
-                            C, V = text, "0"
-                            if text == '1': # Assume chapter 1 is the start of the actual Bible text
-                                allFile.write( "\n\\BibleText\n" )
-                                bookFile.write( "\n\\BibleText\n" )
-                        elif marker=='c#':
-                            allFile.write( "\\chapterNumber{{{}}}".format( texText(text) ) ) # no NL
-                            bookFile.write( "\\chapterNumber{{{}}}".format( texText(text) ) ) # no NL
-                        elif marker=='v':
-                            V = text
-                            if text != '1': # Don't write verse 1 number
-                                allFile.write( "\\verseNumber{{{}}}".format( texText(text) ) ) # no NL
-                                bookFile.write( "\\verseNumber{{{}}}".format( texText(text) ) ) # no NL
-                        elif marker=='s1':
-                            allFile.write( "\n\\BibleTextSection{{{}}}\n".format( texText(text) ) )
-                            bookFile.write( "\n\\BibleTextSection{{{}}}\n".format( texText(text) ) )
-                            bookFile.write( "\n\\addcontentsline{{toc}}{{toc}}{{{}}}\n".format( texText(text) ) )
-                        elif marker=='r':
-                            allFile.write( "\\BibleSectionCrossReference{{{}}}\n".format( texText(text) ) )
-                            bookFile.write( "\\BibleSectionCrossReference{{{}}}\n".format( texText(text) ) )
-                        elif marker in ('p','pi','q1','q2','q3','q4'):
-                            assert( not text )
-                            allFile.write( "\\BibleParagraphStyle{}\n".format( pMarkerTranslate[marker] ) )
-                            bookFile.write( "\\BibleParagraphStyle{}\n".format( pMarkerTranslate[marker] ) )
-                        elif marker in ('v~','p~'):
-                            allFile.write( "{}\n".format( texText(text) ) )
-                            bookFile.write( "{}\n".format( texText(text) ) )
-                        else:
-                            if text:
-                                logging.error( "toTeX: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
-                                #if Globals.debugFlag: halt
-                            unhandledMarkers.add( marker )
-                        #if extras and marker not in ('v~','p~',): logging.critical( "toHTML5: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
-                    allFile.write( "\\BibleBookEnd\n" )
-                    bookFile.write( "\\BibleBookEnd\n" )
-                    bookFile.write( "\\end{document}\n" )
-                makePDFs( BBB, filepath, '30s' )
-            allFile.write( "\\end{document}\n" )
-        makePDFs( 'All', allFilepath, '3m' )
-        if unhandledMarkers:
-            logging.warning( "toTeX: Unhandled markers were {}".format( unhandledMarkers ) )
-            if Globals.verbosityLevel > 1:
-                print( "  " + _("WARNING: Unhandled toTeX markers were {}").format( unhandledMarkers ) )
-
-        # Now create a zipped collection
-        if Globals.verbosityLevel > 2: print( "  Zipping PDF files..." )
-        zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllBible1PDFFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
-        for filename in os.listdir( outputFolder ):
-            if filename.endswith( '.Bible1.pdf' ):
-                filepath = os.path.join( outputFolder, filename )
-                zf.write( filepath, filename ) # Save in the archive without the path
-        zf.close()
-        zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllBible2PDFFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
-        for filename in os.listdir( outputFolder ):
-            if filename.endswith( '.Bible2.pdf' ):
-                filepath = os.path.join( outputFolder, filename )
-                zf.write( filepath, filename ) # Save in the archive without the path
-        zf.close()
-
-        return True
-    # end of BibleWriter.toTeX
-
-
-
     def toSwordSearcher( self, outputFolder=None ):
         """
         Write the pseudo USFM out into the SwordSearcher pre-Forge format.
@@ -6749,6 +6857,897 @@ class BibleWriter( InternalBible ):
 
 
 
+    def toTeX( self, outputFolder=None ):
+        """
+        Write the pseudo USFM out into a TeX (typeset) format.
+            The format varies, depending on whether or not there are paragraph markers in the text.
+        """
+        import subprocess
+        if Globals.verbosityLevel > 1: print( "Running BibleWriter:toTeX..." )
+        if Globals.debugFlag: assert( self.books )
+
+        if not self.doneSetupGeneric: self.__setupWriter()
+        if not outputFolder: outputFolder = "OutputFiles/BOS_TeX_Export/"
+        if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
+
+        unhandledMarkers = set()
+
+        # First determine our format
+        #verseByVerse = True
+
+        # Copy auxilliary XeTeX files to our output folder
+        for filename in ( "lettrine.sty", ):
+            filepath = os.path.join( defaultControlFolder, filename )
+            try: shutil.copy( filepath, outputFolder )
+            except FileNotFoundError: logging.warning( "Unable to find TeX control file: {}".format( filepath ) )
+        pMarkerTranslate = { 'p':'P', 'pi':'PI', 'q1':'Q', 'q2':'QQ', 'q3':'QQQ', 'q4':'QQQQ',
+                            'ip':'IP', }
+        cMarkerTranslate = { 'bk':'BK', 'add':'ADD', 'nd':'ND', 'wj':'WJ', 'sig':'SIG',
+                            'bdit':'BDIT', 'it':'IT', 'bd':'BD', 'em':'EM', 'sc':'SC',
+                            'ior':'IOR', 'k':'KW', }
+        mtMarkerTranslate = { 'mt1':'BibleMainTitle', 'mt2':'BibleTitleTwo', 'mt3':'BibleTitleThree', 'mt4':'BibleTitleFour' }
+
+        def writeTeXHeader( writer ):
+            """
+            Write the XeTeX header data -- the file can be processed with xelatex
+                I had to run "sudo apt-get install fonts-linuxlibertine" first.
+            """
+            for line in (
+                "\\documentclass[a4paper]{Bible} % use our own Bible document class found in Bible.cls",
+                "",
+                #"\\usepackage{xltxtra} % Extra customizations for XeLaTeX;",
+                #"% xltxtra automatically loads fontspec and xunicode, both of which you need",
+                #"",
+                #"\\setmainfont[Ligatures=TeX]{Charis SIL}",
+                #"\\setromanfont[Mapping=tex-text]{Linux Libertine O}",
+                #"\\setsansfont[Mapping=tex-text]{Myriad Pro}",
+                #"\\setmonofont[Mapping=tex-text]{Courier New}",
+                #"",
+                #"\\usepackage{geometry}",
+                #"\\geometry{a4paper}",
+                #"",
+                "\\begin{document}",
+                #"\\maketitle",
+                #"",
+                #"\\section{Ligatures}",
+                #"\\fontspec[Ligatures={Common, Historical}]{Linux Libertine O Italic}",
+                #"Questo è strano assai!",
+                #"",
+                #"\\section{Numerals}",
+                #"\\fontspec[Numbers={OldStyle}]{Linux Libertine O}Old style: 1234567\\",
+                #"\\fontspec[Numbers={Lining}]{Linux Libertine O}Lining: 1234567",
+                #"",
+                ):
+                writer.write( "{}\n".format( line ) )
+        # end of toTeX.writeTeXHeader
+
+
+        def texText( givenText ):
+            """
+            Given some text containing possible character formatting,
+                convert it to TeX styles.
+            """
+            text = givenText
+
+            if '\\fig ' in text: # handle figures
+                #ix = text.find( '\\fig ' )
+                #ixEnd = text.find( '\\fig*' )
+                text = text.replace( '\\fig ', '~^~BibleFigure{' ).replace( '\\fig*', '}' ) # temp
+
+            if '\\f ' in text: # handle footnotes
+                #print( 'footnote', repr(givenText) )
+                #ix = text.find( '\\f ' )
+                #ixEnd = text.find( '\\f*' )
+                text = text.replace( '\\f ', '~^~BibleFootnote{' ).replace( '\\f*', '}' ) # temp
+                text = text.replace( '\\fr ', '~^~BibleFootnoteAnchor{' ).replace( '\\ft ', '}', 1 ) # temp assumes one fr followed by one ft
+                text = text.replace( '\\fq ', '' ).replace( '\\ft ', '' ).replace( '\\fk ', '' ) # Just remove these ones
+
+            if '\\x ' in text: # handle cross-references
+                #print( 'xref', repr(givenText) )
+                #ix = text.find( '\\x ' )
+                #ixEnd = text.find( '\\x*' )
+                text = text.replace( '\\x ', '~^~BibleCrossReference{' ).replace( '\\x*', '}' ) # temp
+                text = text.replace( '\\xo ', '~^~BibleCrossReferenceAnchor{' ).replace( '\\xt ', '}' ) # temp assumes one xo followed by one xt
+
+            # Handle regular character formatting -- this will cause TeX to fail if closing markers are not matched
+            for charMarker in ALL_CHAR_MARKERS:
+                fullCharMarker = '\\' + charMarker + ' '
+                if fullCharMarker in text:
+                    endCharMarker = '\\' + charMarker + '*'
+                    if charMarker in cMarkerTranslate:
+                        text = text.replace( fullCharMarker, '~^~BibleCharacterStyle'+cMarkerTranslate[charMarker]+'{' ) \
+                                .replace( endCharMarker, '}' )
+                    else:
+                        logging.warning( "toTeX: Don't know how to encode '{}' marker".format( charMarker ) )
+                        text = text.replace( fullCharMarker, '' ).replace( endCharMarker, '' )
+
+            if '\\' in text: # Catch any left-overs
+                if Globals.debugFlag or Globals.verbosityLevel > 2:
+                    print( "toTeX.texText: unprocessed code in {} from {}".format( repr(text), repr(givenText) ) )
+                if Globals.debugFlag and debuggingThisModule: halt
+            return text.replace( '~^~', '\\' )
+        # end of toTeX:texText
+
+
+        def makePDFs( BBB, texFilepath, timeout ):
+            """
+            Call xelatex to make the Bible PDF file(s) from the .tex file.
+            """
+            assert( texFilepath.endswith( '.tex' ) )
+            mainFilepath = texFilepath[:-4] # Remove the .tex bit
+
+            # Work through the various class files for different styles of Bible layouts
+            for filenamePart in ( 'Bible1','Bible2', ):
+                filepath = os.path.join( defaultControlFolder, filenamePart+'.cls' )
+                try:
+                    shutil.copy( filepath, outputFolder ) # Copy it under its own name
+                    shutil.copy( filepath, os.path.join( outputFolder, "Bible.cls" ) ) # Copy it also under the generic name
+                except FileNotFoundError: logging.warning( "Unable to find TeX control file: {}".format( filepath ) )
+
+                # Now run xelatex (TeX -> PDF)
+                parameters = ['/usr/bin/timeout', timeout, '/usr/bin/xelatex', '-interaction=batchmode', os.path.abspath(texFilepath) ]
+                #print( "makeIndividualPDF (xelatex) parameters", parameters )
+                os.chdir( outputFolder ) # So the paths for the Bible.cls file are correct
+                myProcess = subprocess.Popen( parameters, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
+                programOutputBytes, programErrorOutputBytes = myProcess.communicate()
+                os.chdir( cwdSave ) # Restore the path again
+                if myProcess.returncode == 124: # it timed out
+                    programErrorOutputBytes += "xelatex {}: Timed out after {}".format( BBB, timeout ).encode( 'utf-8' )
+                # Process the output
+                if programOutputBytes:
+                    programOutputString = programOutputBytes.decode( encoding='utf-8', errors="replace" )
+                    #programOutputString = programOutputString.replace( baseFolder + ('' if baseFolder[-1]=='/' else '/'), '' ) # Remove long file paths to make it easier for the user to read
+                    #with open( os.path.join( outputFolder, "ScriptOutput.txt" ), 'wt' ) as myFile: myFile.write( programOutputString )
+                    #print( "pOS", programOutputString )
+                if programErrorOutputBytes:
+                    programErrorOutputString = programErrorOutputBytes.decode( encoding='utf-8', errors="replace" )
+                    #with open( os.path.join( outputFolder, "ScriptErrorOutput.txt" ), 'wt' ) as myFile: myFile.write( programErrorOutputString )
+                    if Globals.debugFlag: print( "pEOS", programErrorOutputString )
+
+                # Rename our PDF (and the log file) according to the style
+                try: os.replace( mainFilepath+'.log', mainFilepath+'.'+filenamePart+'.log' )
+                except FileNotFoundError: pass # That's fine
+                try: os.replace( mainFilepath+'.pdf', mainFilepath+'.'+filenamePart+'.pdf' )
+                except FileNotFoundError: pass # That's fine
+        # end of toTeX.makePDFs
+
+
+        # Write the plain text XeTeX file
+        cwdSave = os.getcwd() # Save the current working directory before changing (below) to the output directory
+        allFilename = "All-BOS-BibleWriter.tex"
+        allFilepath = os.path.join( outputFolder, Globals.makeSafeFilename( allFilename ) )
+        if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( allFilepath ) )
+        with open( allFilepath, 'wt' ) as allFile:
+            writeTeXHeader( allFile )
+            for BBB,bookObject in self.books.items():
+                haveTitle = haveIntro = False
+                filename = "BOS-BibleWriter-{}.tex".format( BBB )
+                filepath = os.path.join( outputFolder, Globals.makeSafeFilename( filename ) )
+                if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
+                with open( filepath, 'wt' ) as bookFile:
+                    writeTeXHeader( bookFile )
+                    allFile.write( "\n\\BibleBook{{{}}}\n".format( bookObject.getAssumedBookNames()[0] ) )
+                    bookFile.write( "\n\\BibleBook{{{}}}\n".format( bookObject.getAssumedBookNames()[0] ) )
+                    bookFile.write( "\n\\BibleBookTableOfContents\n".format( bookObject.getAssumedBookNames()[0] ) )
+                    C = V = "0"
+                    for entry in bookObject._processedLines:
+                        marker, text = entry.getMarker(), entry.getFullText()
+                        if marker in oftenIgnoredIntroMarkers: pass # Just ignore these lines
+                        elif marker in ('mt1','mt2','mt3','mt4',):
+                            if not haveTitle:
+                                allFile.write( "\n\\BibleTitlePage\n" )
+                                bookFile.write( "\n\\BibleTitlePage\n" )
+                                haveTitle = True
+                            allFile.write( "\\{}{{{}}}\n".format( mtMarkerTranslate[marker], texText(text) ) )
+                            bookFile.write( "\\{}{{{}}}\n".format( mtMarkerTranslate[marker], texText(text) ) )
+                        elif marker=='ip':
+                            if not haveIntro:
+                                allFile.write( "\n\\BibleIntro\n" )
+                                bookFile.write( "\n\\BibleIntro\n" )
+                                haveIntro = True
+                            allFile.write( "\\BibleParagraphStyle{}\n".format( pMarkerTranslate[marker] ) )
+                            bookFile.write( "\\BibleParagraphStyle{}\n".format( pMarkerTranslate[marker] ) )
+                            allFile.write( "{}\n".format( texText(text) ) )
+                            bookFile.write( "{}\n".format( texText(text) ) )
+                        elif marker=='c':
+                            C, V = text, "0"
+                            if text == '1': # Assume chapter 1 is the start of the actual Bible text
+                                allFile.write( "\n\\BibleText\n" )
+                                bookFile.write( "\n\\BibleText\n" )
+                        elif marker=='c#':
+                            allFile.write( "\\chapterNumber{{{}}}".format( texText(text) ) ) # no NL
+                            bookFile.write( "\\chapterNumber{{{}}}".format( texText(text) ) ) # no NL
+                        elif marker=='v':
+                            V = text
+                            if text != '1': # Don't write verse 1 number
+                                allFile.write( "\\verseNumber{{{}}}".format( texText(text) ) ) # no NL
+                                bookFile.write( "\\verseNumber{{{}}}".format( texText(text) ) ) # no NL
+                        elif marker=='s1':
+                            allFile.write( "\n\\BibleTextSection{{{}}}\n".format( texText(text) ) )
+                            bookFile.write( "\n\\BibleTextSection{{{}}}\n".format( texText(text) ) )
+                            bookFile.write( "\n\\addcontentsline{{toc}}{{toc}}{{{}}}\n".format( texText(text) ) )
+                        elif marker=='r':
+                            allFile.write( "\\BibleSectionCrossReference{{{}}}\n".format( texText(text) ) )
+                            bookFile.write( "\\BibleSectionCrossReference{{{}}}\n".format( texText(text) ) )
+                        elif marker in ('p','pi','q1','q2','q3','q4'):
+                            assert( not text )
+                            allFile.write( "\\BibleParagraphStyle{}\n".format( pMarkerTranslate[marker] ) )
+                            bookFile.write( "\\BibleParagraphStyle{}\n".format( pMarkerTranslate[marker] ) )
+                        elif marker in ('v~','p~'):
+                            allFile.write( "{}\n".format( texText(text) ) )
+                            bookFile.write( "{}\n".format( texText(text) ) )
+                        else:
+                            if text:
+                                logging.error( "toTeX: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
+                                #if Globals.debugFlag: halt
+                            unhandledMarkers.add( marker )
+                        #if extras and marker not in ('v~','p~',): logging.critical( "toHTML5: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
+                    allFile.write( "\\BibleBookEnd\n" )
+                    bookFile.write( "\\BibleBookEnd\n" )
+                    bookFile.write( "\\end{document}\n" )
+                makePDFs( BBB, filepath, '30s' )
+            allFile.write( "\\end{document}\n" )
+        makePDFs( 'All', allFilepath, '3m' )
+        if unhandledMarkers:
+            logging.warning( "toTeX: Unhandled markers were {}".format( unhandledMarkers ) )
+            if Globals.verbosityLevel > 1:
+                print( "  " + _("WARNING: Unhandled toTeX markers were {}").format( unhandledMarkers ) )
+
+        # Now create a zipped collection
+        if Globals.verbosityLevel > 2: print( "  Zipping PDF files..." )
+        zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllBible1PDFFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
+        for filename in os.listdir( outputFolder ):
+            if filename.endswith( '.Bible1.pdf' ):
+                filepath = os.path.join( outputFolder, filename )
+                zf.write( filepath, filename ) # Save in the archive without the path
+        zf.close()
+        zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllBible2PDFFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
+        for filename in os.listdir( outputFolder ):
+            if filename.endswith( '.Bible2.pdf' ):
+                filepath = os.path.join( outputFolder, filename )
+                zf.write( filepath, filename ) # Save in the archive without the path
+        zf.close()
+
+        return True
+    # end of BibleWriter.toTeX
+
+
+
+    def toODF( self, outputFolder=None ):
+        """
+        Write the pseudo USFM out into a TeX (typeset) format.
+            The format varies, depending on whether or not there are paragraph markers in the text.
+        """
+        import uno
+        from time import sleep
+
+        if Globals.verbosityLevel > 1: print( "Running BibleWriter:toODF..." )
+        if Globals.debugFlag: assert( self.books )
+
+        if not self.doneSetupGeneric: self.__setupWriter()
+        if not outputFolder: outputFolder = "OutputFiles/BOS_ODF_Export/"
+        if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
+
+        if 0:
+            # Start LibreOffice
+            #       Either: libreoffice --accept="socket,host=localhost,port=2002;urp;StarOffice.ServiceManager"
+            #       Or: /usr/bin/libreoffice --accept="socket,host=localhost,port=2002;urp;StarOffice.ServiceManager" -norestore -nofirstwizard -nologo -headless
+            parameters = ['/usr/bin/libreoffice', '--accept="socket,host=localhost,port=2002;urp;StarOffice.ServiceManager"']
+            print( "Parameters", repr(parameters) )
+            myProcess = subprocess.Popen( parameters, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
+            sleep( 5 ) # Wait 50msec
+            #programOutputBytes, programErrorOutputBytes = myProcess.communicate()
+            #returnCode = myProcess.returncode
+            #print( "returnCode", returnCode )
+
+        # Set-up LibreOffice
+        local = uno.getComponentContext()
+        resolver = local.ServiceManager.createInstanceWithContext("com.sun.star.bridge.UnoUrlResolver", local)
+        context = resolver.resolve("uno:socket,host=localhost,port=2002;urp;StarOffice.ComponentContext")
+        desktop = context.ServiceManager.createInstanceWithContext("com.sun.star.frame.Desktop", context)
+
+        # Locate our empty source file that we'll start from
+        #sourceURL = "private:factory/swriter" # Blank document
+        templateFilepath = os.path.join( os.getcwd(), defaultControlFolder, "BibleBook.ott" )
+        sourceURL = "file://{}".format( templateFilepath ) # Blank template (all styles already built)
+
+        #document = desktop.loadComponentFromURL("private:factory/swriter", "_blank", 0, ())
+        #cursor = document.Text.createTextCursor()
+        #document.Text.insertString(cursor, "This text is being added to openoffice using python and uno package.", 0)
+        #document.Text.insertString(cursor, "\n\nThis is a new paragraph.", 0)
+        #document.Text.insertString(cursor, "\n\n\tAnd this is another new paragraph.", 0)
+        #cursor.setPropertyValue("CharHeight", 20)
+        #cursor.setPropertyValue("CharFontName", "Arial")
+        #cursor.setPropertyValue("CharWeight", 150)
+        #document.Text.insertString(cursor, "\n\nThis is another new paragraph.", 0)
+        #filepath = os.path.join( os.getcwd(), outputFolder, "TestFile.odt" )
+        #print( "filepath", repr(filepath) )
+        #document.storeAsURL( "file://{}".format( filepath ), () )
+        #document.dispose()
+
+        unhandledMarkers = set()
+
+        ipODFClassDict = {'ip':'Introduction Paragraph', 'ipi':'Introduction Paragraph Indented',
+                        'im':'Introduction Flush Left Paragraph', 'imi':'Introduction Indented Flush Left Paragraph',
+
+                        'iot':'Introduction Outline Title',
+                        'io1':'Introduction Outline Entry 1', 'io2':'Introduction Outline Entry 2', 'io3':'Introduction Outline Entry 3', 'io4':'Introduction Outline Entry 4'}
+
+        pqODFClassDict = {'p':'Prose Paragraph', 'm':'Flush Left Paragraph',
+                        'pmo':'Embedded Opening Paragraph', 'pm':'Embedded Paragraph', 'pmc':'Embedded Closing Paragraph',
+                        'pmr':'Embedded Refrain Paragraph',
+                        'pi1':'Indented Prose Paragraph 1','pi2':'Indented Prose Paragraph 2','pi3':'Indented Prose Paragraph 3','pi4':'Indented Prose Paragraph 4',
+                        'mi':'Indented Flush Left Paragraph', 'cls':'Closure Paragraph',
+                        'pc':'Centered Prose Paragraph', 'pr':' Right Aligned Prose Paragraph',
+                        'ph1':'Hanging Prose Paragraph 1','ph2':'Hanging Prose Paragraph 2','ph3':'Hanging Prose Paragraph 3','ph4':'Hanging Prose Paragraph 4',
+
+                        'q1':'Poetry Paragraph 1','q2':'Poetry Paragraph 2','q3':'Poetry Paragraph 3','q4':'Poetry Paragraph 4',
+                        'qr':'Right Aligned Poetry Paragraph', 'qc':'Centered Poetry Paragraph',
+                        'qm1':'Embedded Poetry Paragraph 1','qm2':'Embedded Poetry Paragraph 2','qm3':'Embedded Poetry Paragraph 3','qm4':'Embedded Poetry Paragraph 4'}
+
+
+        def insertFormattedODFText( BBB, C, V, givenText, extras, documentText, cursor ):
+            """
+            Format character codes within the text into ODF
+            """
+            #print( "insertFormattedODFText( {}, {}, {} )".format( repr(givenText), len(extras), ourGlobals.keys() ) )
+            if Globals.debugFlag: assert( givenText or extras )
+
+            def handleExtras( text, extras ):
+                """
+                Returns the MD text with footnotes and xrefs processed.
+                It also accumulates MD in ourGlobals for the end notes.
+                """
+                def liveCV( CV ):
+                    """
+                    Given a CV text (in the same book), make it live
+                        e.g., given 1:3 return #C1V3
+                            given 17:4-9 return #C17V4
+                            given 1:1-3:19 return #C1V1
+                    """
+                    #print( "formatODFVerseText.liveCV( {} )".format( repr(CV) ) )
+                    if len(CV) < 3: return ''
+                    if CV and CV[-1]==':': CV = CV[:-1]
+
+                    result = 'C' + CV.strip().replace( ':', 'V')
+                    for bridgeChar in ('-', '–', '—'): # hyphen, endash, emdash
+                        ix = result.find( bridgeChar )
+                        if ix != -1: result = result[:ix] # Remove verse bridges
+                    #print( " returns", result )
+                    if Globals.debugFlag and (result.count('C')>1 or result.count('V')>1): halt
+                    return '#' + result
+                # end of liveCV
+
+
+                def processNote( rawFootnoteContents, noteType ):
+                    """
+                    Return the MD for the processed footnote or endnote.
+                    It also accumulates MD in ourGlobals for the end notes.
+
+                    NOTE: The first parameter here already has the /f or (/fe) and /f* (or /fe*) removed.
+
+                    \\f + \\fr 1:20 \\ft Su ka kaluwasan te Nawumi ‘keupianan,’ piru ka kaluwasan te Mara ‘masakit se geyinawa.’\\f* (Backslashes are shown doubled here)
+                        gives
+                    <a title="Su ka kaluwasan te Nawumi &lsquo;keupianan,&rsquo; piru ka kaluwasan te Mara &lsquo;masakit se geyinawa.&rsquo;" href="#FNote0"><span class="FootnoteLinkSymbol"><sup>[fn]</sup></span></a>
+                    <note style="f" caller="+"><char style="fr" closed="false">2:23 </char><char style="ft">Te Hibruwanen: bayew egpekegsahid ka ngaran te “malitan” wey “lukes.”</char></note>
+                        plus
+                    <p id="FNote0" class="footnote"><a title="Go back up to 1:20 in the text" href="#C1V20"><span class="ChapterVerse">1:20 </span></a><a title="su" href="../../Lexicon/indexLSIM-45.htm#su1"><span class="WordLink">Su</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="kaluwasan" href="../../Lexicon/indexLLO-67.htm#luwas2"><span class="WordLink">kaluwasan</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <span class="NameWordLink">Nawumi</span> &lsquo;<a title="n. fortunate (upian)" href="../../Lexicon/Details/upian.htm"><span class="WordLink">keupianan</span></a>,&rsquo; <a title="conj. but" href="../../Lexicon/Details/piru.htm"><span class="WordLink">piru</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="kaluwasan" href="../../Lexicon/indexLLO-67.htm#luwas2"><span class="WordLink">kaluwasan</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="mara" href="../../Lexicon/Details/mara.htm"><span class="WordLink">Mara</span></a> &lsquo;<a title="adj. painful (sakit)" href="../../Lexicon/Details/sakit.htm"><span class="WordLink">masakit</span></a> <a title="se" href="../../Lexicon/indexLSE-64.htm#se1"><span class="WordLink">se</span></a> <a title="n. breath" href="../../Lexicon/Details/geyinawa.htm"><span class="WordLink">geyinawa</span></a>.&rsquo;</p>
+                    <p id="FNote1" class="footnote"><a title="Go back up to 3:9 in the text" href="#C3V9"><span class="ChapterVerse">3:9 </span></a><a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">Te</span></a> <a title="prop_n. Hebrew language (Hibru)" href="../../Lexicon/Details/Hibru.htm"><span class="WordLink">Hibruwanen</span></a>: <a title="buni" href="../../Lexicon/Details/buni2.htm"><span class="WordLink">Bunbuni</span></a> <a title="pron. you(sg); by you(sg)" href="../../Lexicon/Details/nu.htm"><span class="WordLink">nu</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="kumbalè" href="../../Lexicon/Details/kumbal%C3%A8.htm"><span class="WordLink">kumbale</span></a> <a title="pron. you(sg); by you(sg)" href="../../Lexicon/Details/nu.htm"><span class="WordLink">nu</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="suluhuanen" href="../../Lexicon/indexLSIM-45.htm#suluh%C3%B9"><span class="WordLink">suluhuanen</span></a> <a title="pron. you(sg); by you(sg)" href="../../Lexicon/Details/nu.htm"><span class="WordLink">nu</span></a>.</p>
+                    <p id="FNote2" class="footnote"><a title="Go back up to 4:11 in the text" href="#C4V11"><span class="ChapterVerse">4:11 </span></a><a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">Kene</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="adj. clear" href="../../Lexicon/Details/klaru.htm"><span class="WordLink">klaru</span></a> <a title="diya" href="../../Lexicon/indexLD-80.htm#diyav"><span class="WordLink">diye</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="adj. true (lehet)" href="../../Lexicon/Details/lehet1.htm"><span class="WordLink">malehet</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="migpuun" href="../../Lexicon/Details/puun.htm"><span class="WordLink">migpuunan</span></a> <a title="ke" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ke</span></a> <a title="n. other" href="../../Lexicon/Details/lein.htm"><span class="WordLink">lein</span></a> <a title="e" href="../../Lexicon/indexLA-77.htm#a"><span class="WordLink">e</span></a> <a title="part. also" href="../../Lexicon/Details/degma.htm"><span class="WordLink">degma</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="n. place" href="../../Lexicon/Details/inged.htm"><span class="WordLink">inged</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <span class="NameWordLink">Iprata</span>. <a title="kahiyen" href="../../Lexicon/Details/kahi.htm"><span class="WordLink">Kahiyen</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="adj. other" href="../../Lexicon/Details/duma.htm"><span class="WordLink">duma</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <span class="NameWordLink">Iprata</span> <a title="dem. that" href="../../Lexicon/Details/iyan.htm"><span class="WordLink">iyan</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="tapey" href="../../Lexicon/indexLT-96.htm#tapey1"><span class="WordLink">tapey</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="n. name" href="../../Lexicon/Details/ngaran.htm"><span class="WordLink">ngaran</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="See glossary entry for Bitlihim" href="../indexGlossary.htm#Bitlihim"><span class="WordLink">Bitlihim</span><span class="GlossaryLinkSymbol"><sup>[gl]</sup></span></a>.</p></div>
+                    """
+                    assert( noteType in ('footnote','endnote',) )
+                    markerList = Globals.USFMMarkers.getMarkerListFromText( rawFootnoteContents, includeInitialText=True )
+                    #print( "formatODFVerseText.processFootnote( {}, {} ) found {}".format( repr(rawFootnoteContents), ourGlobals, markerList ) )
+                    if noteType == 'footnote':
+                        fnIndex = ourGlobals['nextFootnoteIndex']; ourGlobals['nextFootnoteIndex'] += 1
+                    elif noteType == 'endnote':
+                        fnIndex = ourGlobals['nextEndnoteIndex']; ourGlobals['nextEndnoteIndex'] += 1
+                    caller = origin = originCV = fnText = fnTitle = ''
+                    if markerList: # We found some internal footnote markers
+                        spanOpen = False
+                        for marker, ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt in markerList:
+                            if spanOpen: fnText += '</span>'; spanOpen = False
+                            if marker is None:
+                                #if txt not in '-+': # just a caller
+                                caller = txt
+                            elif marker == 'fr':
+                                origin = txt
+                                originCV = origin
+                                if originCV and originCV[-1] in (':','.'): originCV = originCV[:-1]
+                                originCV = originCV.strip()
+                            elif marker == 'ft':
+                                fnText += txt
+                                fnTitle += txt
+                            elif marker == 'fk':
+                                fnText += '<span class="{}Keyword">'.format( noteType ) + txt
+                                fnTitle += txt
+                                spanOpen = True
+                            elif marker == 'fq':
+                                fnText += '<span class="{}TranslationQuotation">'.format( noteType ) + txt
+                                fnTitle += txt
+                                spanOpen = True
+                            elif marker == 'fqa':
+                                fnText += '<span class="{}AlternateTranslation">'.format( noteType ) + txt
+                                fnTitle += txt
+                                spanOpen = True
+                            elif marker == 'fl':
+                                fnText += '<span class="{}Label">'.format( noteType ) + txt
+                                fnTitle += txt
+                                spanOpen = True
+                            #elif marker == Should handle other internal markers here
+                            else:
+                                logging.error( "formatODFVerseText.processNote didn't handle {} {}:{} {} marker: {}".format( BBB, C, V, noteType, marker ) )
+                                fnText += txt
+                                fnTitle += txt
+                        if spanOpen: fnText += '</span>'; spanOpen = False
+                    else: # no internal markers found
+                        bits = rawFootnoteContents.split( ' ', 1 )
+                        if len(bits)==2: # assume the caller is the first bit
+                            caller = bits[0]
+                            if Globals.debugFlag: assert( len(caller) == 1 ) # Normally a +
+                            fnText = fnTitle = bits[1]
+                        else: # no idea really what the format was
+                            fnText = fnTitle = rawFootnoteContents
+
+                    idName = "{}{}".format( 'FNote' if noteType=='footnote' else 'ENote', fnIndex )
+                    noteMD = '[fn{}]({})'.format( noteType, idName )
+
+                    endMD = '<p id="{}" class="{}">'.format( idName, noteType )
+                    if originCV:
+                        endMD += '<a class="{}Origin" title="Go back up to {} in the text" href="{}">{}</a> ' \
+                                                            .format( noteType, originCV, liveCV(originCV), origin )
+                    endMD += '<span class="{}Entry">{}</span>'.format( noteType, fnText )
+                    endMD += '</p>'
+
+                    #print( "noteMD", BBB, noteMD )
+                    #print( "endMD", endMD )
+                    ourGlobals['footnoteMD' if noteType=='footnote' else 'endnoteMD'].append( endMD )
+                    #if fnIndex > 2: halt
+
+                    return noteMD
+                # end of __formatODFVerseText.processNote
+
+
+                def processXRef( MDxref ):
+                    """
+                    Return the MD for the processed cross-reference (xref).
+                    It also accumulates MD in ourGlobals for the end notes.
+
+                    NOTE: The parameter here already has the /x and /x* removed.
+
+                    \\x - \\xo 2:2: \\xt Lib 19:9-10; Diy 24:19.\\xt*\\x* (Backslashes are shown doubled here)
+                        gives
+                    <a title="Lib 19:9-10; Diy 24:19" href="#XRef0"><span class="XRefLinkSymbol"><sup>[xr]</sup></span></a>
+                    <a title="Lib 25:25" href="#XRef1"><span class="XRefLinkSymbol"><sup>[xr]</sup></span></a>
+                    <a title="Rut 2:20" href="#XRef2"><span class="XRefLinkSymbol"><sup>[xr]</sup></span></a>
+                        plus
+                    <p id="XRef0" class="XRef"><a title="Go back up to 2:2 in the text" href="#C2V2"><span class="ChapterVerse">2:2</span></a> <span class="VernacularCrossReference">Lib 19:9&#x2011;10</span>; <span class="VernacularCrossReference">Diy 24:19</span></p>
+                    """
+                    markerList = Globals.USFMMarkers.getMarkerListFromText( MDxref, includeInitialText=True )
+                    #print( "\nformatODFVerseText.processXRef( {}, {} ) gives {}".format( repr(MDxref), "...", markerList ) )
+                    xrefIndex = ourGlobals['nextXRefIndex']; ourGlobals['nextXRefIndex'] += 1
+                    caller = origin = originCV = xrefText = ''
+                    if markerList:
+                        for marker, ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt in markerList:
+                            if marker is None:
+                                #if txt not in '-+': # just a caller
+                                caller = txt
+                            elif marker == 'xo':
+                                origin = txt
+                                originCV = origin
+                                originCV = originCV.strip()
+                                if originCV and originCV[-1] in (':','.'): originCV = originCV[:-1]
+                            elif marker == 'xt':
+                                xrefText += txt
+                            #elif marker == Should handle other internal markers here
+                            else:
+                                logging.error( "formatODFVerseText.processXRef didn't handle {} {}:{} xref marker: {}".format( BBB, C, V, marker ) )
+                                xrefText += txt
+                    else: # there's no USFM markers at all in the xref --  presumably a caller and then straight text
+                        if MDxref.startswith('+ ') or MDxref.startswith('- '):
+                            caller = MDxref[0]
+                            xrefText = MDxref[2:].strip()
+                        else: # don't really know what it is -- assume it's all just text
+                            xrefText = MDxref.strip()
+
+                    xrefMD = '[xr{}]({})'.format( xrefIndex, xrefText )
+
+                    endMD = '<p id="XRef{}" class="xref">'.format( xrefIndex )
+                    if not origin: # we'll try to make one
+                        originCV = "{}:{}".format( C, V )
+                    if originCV: # This only handles CV separator of : so far
+                        endMD += '<a class="xrefOrigin" title="Go back up to {} in the text" href="{}">{}</a> ' \
+                                                            .format( originCV, liveCV(originCV), originCV )
+                    endMD += '<span class="xrefEntry">{}</span>'.format( xrefText )
+                    endMD += '</p>'
+
+                    #print( "xrefMD", BBB, xrefMD )
+                    #print( "endMD", endMD )
+                    ourGlobals['xrefMD'].append( endMD )
+                    #if xrefIndex > 2: halt
+
+                    return xrefMD
+                # end of insertFormattedODFText.processXRef
+
+
+                def processFigure( MDfigure ):
+                    """
+                    Return the MD for the processed figure.
+
+                    NOTE: The parameter here already has the /fig and /fig* removed.
+                    """
+                    logging.critical( "toMD: figure not handled yet at {} {}:{} {}".format( BBB, C, V, repr(MDfigure) ) )
+                    figureMD = ''
+                    #footnoteMD = '<a class="footnoteLinkSymbol" title="{}" href="#FNote{}">[fn]</a>' \
+                                    #.format( fnTitle, fnIndex )
+
+                    #endMD = '<p id="FNote{}" class="footnote">'.format( fnIndex )
+                    #if originCV: # This only handles CV separator of : so far
+                        #endMD += '<a class="footnoteOrigin" title="Go back up to {} in the text" href="{}">{}</a> ' \
+                                                            #.format( originCV, liveCV(originCV), origin )
+                    #endMD += '<span class="footnoteEntry">{}</span>'.format( fnText )
+                    #endMD += '</p>'
+
+                    ##print( "footnoteMD", BBB, footnoteMD )
+                    ##print( "endMD", endMD )
+                    #ourGlobals['footnoteMD'].append( endMD )
+                    ##if fnIndex > 2: halt
+
+                    return figureMD
+                # end of insertFormattedODFText.processFigure
+
+
+                adjText = text
+                offset = 0
+                for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
+                    #print( "{} {}:{} Text='{}' eT={}, eI={}, eText='{}'".format( BBB, C, V, text, extraType, extraIndex, extraText ) )
+                    adjIndex = extraIndex - offset
+                    lenT = len( adjText )
+                    if adjIndex > lenT: # This can happen if we have verse/space/notes at end (and the space was deleted after the note was separated off)
+                        logging.warning( _("formatODFVerseText: Space before note at end of verse in {} {}:{} has been lost").format( BBB, C, V ) )
+                        # No need to adjust adjIndex because the code below still works
+                    elif adjIndex<0 or adjIndex>lenT: # The extras don't appear to fit correctly inside the text
+                        print( "formatODFVerseText: Extras don't fit inside verse at {} {}:{}: eI={} o={} len={} aI={}".format( BBB, C, V, extraIndex, offset, len(text), adjIndex ) )
+                        print( "  Verse='{}'".format( text ) )
+                        print( "  Extras='{}'".format( extras ) )
+                    #assert( 0 <= adjIndex <= len(verse) )
+                    #adjText = checkText( extraText, checkLeftovers=False ) # do any general character formatting
+                    #if adjText!=extraText: print( "processXRefsAndFootnotes: {}@{}-{}={} '{}' now '{}'".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
+                    if extraType == 'fn':
+                        extra = processNote( extraText, 'footnote' )
+                        #print( "fn got", extra )
+                    elif extraType == 'en':
+                        extra = processNote( extraText, 'endnote' )
+                        #print( "en got", extra )
+                    elif extraType == 'xr':
+                        extra = processXRef( extraText )
+                        #print( "xr got", extra )
+                    elif extraType == 'fig':
+                        extra = processFigure( extraText )
+                        #print( "fig got", extra )
+                    elif extraType == 'str':
+                        extra = ""
+                    elif Globals.debugFlag and debuggingThisModule: print( 'eT', extraType ); halt
+                    #print( "was", verse )
+                    adjText = adjText[:adjIndex] + extra + adjText[adjIndex:]
+                    offset -= len( extra )
+                    #print( "now", verse )
+                return adjText
+            # end of insertFormattedODFText.handleExtras
+
+
+            # insertFormattedODFText main code
+            text = handleExtras( givenText, extras )
+
+            # Semantic stuff
+            text = text.replace( '\\ior ', '[' ).replace( '\\ior*', ']' )
+            text = text.replace( '\\bk ', '_' ).replace( '\\bk*', '_' )
+            text = text.replace( '\\add ', '_' ).replace( '\\add*', '_' )
+            text = text.replace( '\\nd ', '' ).replace( '\\nd*', '' )
+            text = text.replace( '\\+nd ', '' ).replace( '\\+nd*', '' )
+            text = text.replace( '\\wj ', '' ).replace( '\\wj*', '' )
+            text = text.replace( '\\sig ', '' ).replace( '\\sig*', '' )
+            if BBB in ('GLS',): # it's a glossary keyword entry
+                text = text.replace( '\\k ', '' ).replace( '\\k*', '' )
+            else: # it's a keyword in context
+                text = text.replace( '\\k ', '' ).replace( '\\k*', '' )
+            text = text.replace( '\\rq ', '' ).replace( '\\rq*', '' )
+            text = text.replace( '\\qs ', '' ).replace( '\\qs*', '' )
+
+            # Direct formatting
+            text = text.replace( '\\bdit ', '*_' ).replace( '\\bdit*', '_*' )
+            text = text.replace( '\\it ', '_' ).replace( '\\it*', '_' )
+            text = text.replace( '\\bd ', '*' ).replace( '\\bd*', '*' )
+            text = text.replace( '\\sc ', '' ).replace( '\\sc*', '' )
+
+            if '\\' in text or '<' in text or '>' in text:
+                logging.error( "formatODFVerseText programming error: unprocessed code in {} from {} at {} {}:{}".format( repr(text), repr(givenText), BBB, C, V ) )
+                if Globals.debugFlag or Globals.verbosityLevel > 2:
+                    print( "formatODFVerseText: unprocessed code in {} from {} at {} {}:{}".format( repr(text), repr(givenText), BBB, C, V ) )
+                if Globals.debugFlag and debuggingThisModule: halt
+
+            documentText.insertString( cursor, text, 0 )
+        # end of toODF.insertFormattedODFText
+
+
+        # First determine our format
+        verseByVerse = True
+
+
+        # Create and save the ODF files
+        for j, (BBB,bookObject) in enumerate( self.books.items() ):
+            pseudoUSFMData = bookObject._processedLines
+
+            # Create the blank document
+            filename = "{:02}-BOS-BibleWriter-{}.odt".format( j, BBB )
+            filepath = os.path.join( os.getcwd(), outputFolder, Globals.makeSafeFilename( filename ) )
+            if Globals.verbosityLevel > 2: print( "  " + _("Creating '{}'...").format( filename ) )
+            document = desktop.loadComponentFromURL( sourceURL, "_blank", 0, () )
+            documentText = document.Text
+            cursor = documentText.createTextCursor()
+
+            ourGlobals = {}
+            ourGlobals['nextFootnoteIndex'] = ourGlobals['nextXRefIndex'] = 0
+            ourGlobals['footnoteMD'], ourGlobals['endnoteMD'], ourGlobals['xrefMD'] = [], [], []
+
+            #documentText.insertString(cursor, "This text is being added to openoffice using python and uno package.", 0)
+            #documentText.insertString(cursor, "\n\nThis is a new paragraph.", 0)
+            #documentText.insertString(cursor, "\n\n\tAnd this is another new paragraph.", 0)
+            #cursor.setPropertyValue("CharHeight", 20)
+            #cursor.setPropertyValue("CharFontName", "Arial")
+            #cursor.setPropertyValue("CharWeight", 150)
+            #documentText.insertString(cursor, "\n\nThis is another new paragraph.", 0)
+
+            #document.Text.insertString(cursor, "This text gets the footnote.", 0)
+            #footnote = document.createInstance("com.sun.star.text.Footnote")
+            #document.Text.insertTextContent(cursor, footnote, 0)
+            #footnotecursor = footnote.Text.createTextCursor()
+            #footnote.insertString(footnotecursor, "This is the actual footnote.", 0)
+            #document.Text.insertString(cursor, " And here is more text following the footnote", 0)
+
+            #families = document.StyleFamilies.getByName("ParagraphStyles")
+
+            if 0: # Create initial styles (not required or allowed if we use the template)
+                families = document.StyleFamilies.getByName("ParagraphStyles")
+
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Main Title", style) # Base style only
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Main Title 1", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Main Title 2", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Main Title 3", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Main Title 4", style)
+
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Introduction Section Heading", style) # Base style only
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Introduction Section Heading 1", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Introduction Section Heading 2", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Introduction Section Heading 3", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Introduction Section Heading 4", style)
+
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Introduction Outline Title", style)
+
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Introduction Outline Entry", style) # Base style only
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Introduction Outline Entry 1", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Introduction Outline Entry 2", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Introduction Outline Entry 3", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Introduction Outline Entry 4", style)
+
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Introduction Paragraph", style) # Base and actual style
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Introduction Paragraph Indented", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Introduction Flush Left Paragraph", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Introduction Indented Flush Left Paragraph", style)
+
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Bible Paragraph", style) # Base style only
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Prose Paragraph", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Flush Left Paragraph", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Embedded Opening Paragraph", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Embedded Paragraph", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Embedded Closing Paragraph", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Embedded Refrain Paragraph", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Indented Prose Paragraph 1", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Indented Prose Paragraph 2", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Indented Prose Paragraph 3", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Indented Prose Paragraph 4", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Indented Flush Left Paragraph", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Closure Paragraph", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Centered Prose Paragraph", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Right Aligned Prose Paragraph", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Hanging Prose Paragraph 1", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Hanging Prose Paragraph 2", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Hanging Prose Paragraph 3", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Hanging Prose Paragraph 4", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Poetry Paragraph 1", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Poetry Paragraph 2", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Poetry Paragraph 3", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Poetry Paragraph 4", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Right Aligned Poetry Paragraph", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Centered Poetry Paragraph", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Embedded  Poetry Paragraph 1", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Embedded  Poetry Paragraph 2", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Embedded  Poetry Paragraph 3", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Embedded  Poetry Paragraph 4", style)
+
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Section Heading", style) # Base style only
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Section Heading 1", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Section Heading 2", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Section Heading 3", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Section Heading 4", style)
+
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Section CrossReference", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Section Reference Range", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                families.insertByName("Major Section Reference Range", style)
+
+
+                families = document.StyleFamilies.getByName("CharacterStyles")
+
+                style = document.createInstance("com.sun.star.style.CharacterStyle")
+                families.insertByName("Chapter Number", style)
+                style = document.createInstance("com.sun.star.style.CharacterStyle")
+                families.insertByName("Chapter Number Postspace", style)
+                style = document.createInstance("com.sun.star.style.CharacterStyle")
+                families.insertByName("Verse Number Prespace", style)
+                style = document.createInstance("com.sun.star.style.CharacterStyle")
+                families.insertByName("Verse Number", style)
+                style = document.createInstance("com.sun.star.style.CharacterStyle")
+                families.insertByName("Verse Number Postspace", style)
+                style = document.createInstance("com.sun.star.style.CharacterStyle")
+                families.insertByName("Verse Text", style)
+
+            if 0: # Just some test / example code
+                documentText.insertString(cursor, "Here is some text", 0)
+                cursor.setPropertyValue("CharStyleName", "Verse Text") # Base and actual style
+                documentText.insertString(cursor, " followed by some styled text ", 0)
+                cursor.setPropertyValue("CharStyleName", "Verse Number")
+                documentText.insertString(cursor, "27", 0)
+                cursor.setPropertyValue("CharStyleName", "Default Style")
+                documentText.insertString(cursor, "and then some more text with default styling", 0)
+
+            def insertODFParagraph( BBB, C, V, styleName, text, extras, documentText, cursor ):
+                documentText.insertControlCharacter( cursor, uno.getConstantByName("com.sun.star.text.ControlCharacter.PARAGRAPH_BREAK"), 0 );
+                cursor.setPropertyValue( "ParaStyleName", styleName )
+                if adjText or extras:
+                    insertFormattedODFText( BBB, C, V, text, extras, documentText, cursor )
+            # end of insertODFParagraph
+
+            C = V = '0'
+            for entry in pseudoUSFMData:
+                marker, adjText, extras = entry.getMarker(), entry.getAdjustedText(), entry.getExtras()
+                #print( j, BBB, C, V, marker, repr(adjText) )
+                if marker in oftenIgnoredIntroMarkers: pass # Just ignore these lines
+                elif marker in ('mt1','mt2','mt3','mt4','imt1','imt2','imt3','imt4',):
+                    styleName = "Introduction " if marker[0]=='i' else ""
+                    styleName += "Main Title {}".format( marker[-1] )
+                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, cursor )
+                elif marker in ('ip','ipi', 'im','imi', 'iot', 'io1','io2','io3','io4',):
+                    styleName = ipODFClassDict[marker]
+                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, cursor )
+                elif marker in ('s1','s2','s3','s4','is1','is2','is3','is4',):
+                    styleName = "Introduction " if marker[0]=='i' else ""
+                    styleName += "Section Heading {}".format( marker[-1] )
+                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, cursor )
+                elif marker in ('r','sr','mr',):
+                    if marker == 'r': styleName = 'Section CrossReference'
+                    elif marker == 'sr': styleName = 'Section Reference Range'
+                    elif marker == 'mr': styleName = 'Major Section Reference Range'
+                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, cursor )
+                elif marker == 'c':
+                    C = adjText
+                elif marker == 'c#':
+                    cursor.setPropertyValue( "CharStyleName", "Chapter Number" )
+                    documentText.insertString( cursor, C, 0 )
+                    cursor.setPropertyValue( "CharStyleName", "Chapter Number Postspace" )
+                    documentText.insertString( cursor, " ", 0 )
+                    cursor.setPropertyValue( "CharStyleName", "Verse Text" )
+                elif marker == 'v':
+                    V = adjText
+                    cursor.setPropertyValue( "CharStyleName", "Verse Number Prespace" )
+                    documentText.insertString( cursor, " ", 0 )
+                    cursor.setPropertyValue( "CharStyleName", "Verse Number" )
+                    documentText.insertString( cursor, V, 0 )
+                    cursor.setPropertyValue( "CharStyleName", "Verse Number Postspace" )
+                    documentText.insertString( cursor, " ", 0 )
+                    cursor.setPropertyValue( "CharStyleName", "Verse Text" )
+                elif marker in ('p','m','pmo','pm','pmc','pmr','pi1','pi2','pi3','pi4','mi','cls','pc','pr','ph1','ph2','ph3','ph4',) \
+                or marker in ('q1','q2','q3','q4','qr','qc','qm1','qm2','qm3','qm4',):
+                    styleName = pqODFClassDict[marker]
+                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, cursor )
+                elif marker in ('v~','p~',):
+                    if adjText or extras:
+                        insertFormattedODFText( BBB, C, V, adjText, extras, documentText, cursor )
+                else:
+                    if adjText:
+                        logging.critical( "toODF: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(adjText) ) )
+                        #if Globals.debugFlag: halt
+                    if extras:
+                        logging.critical( "toODF: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
+                        #if Globals.debugFlag: halt
+                    unhandledMarkers.add( marker )
+
+                #if verseByVerse:
+                    #myFile.write( "{} ({}): '{}' '{}' {}\n" \
+                        #.format( entry.getMarker(), entry.getOriginalMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras() ) )
+
+            # Save the created document
+            #print( j, "filepath", repr(filepath) )
+            document.storeAsURL( "file://{}".format( filepath ), () )
+            document.dispose() # Close the document
+            #if j>=1: halt
+
+        if unhandledMarkers:
+            logging.warning( "toODF: Unhandled markers were {}".format( unhandledMarkers ) )
+            if Globals.verbosityLevel > 1:
+                print( "  " + _("WARNING: Unhandled toODF markers were {}").format( unhandledMarkers ) )
+
+        # Now create a zipped collection
+        if Globals.verbosityLevel > 2: print( "  Zipping ODF files..." )
+        zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllODFFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
+        for filename in os.listdir( outputFolder ):
+            if not filename.endswith( '.zip' ):
+                filepath = os.path.join( outputFolder, filename )
+                zf.write( filepath, filename ) # Save in the archive without the path
+        zf.close()
+
+
+        return True
+    # end of BibleWriter.toODF
+
+
+
     def toPickle( self, outputFolder=None ):
         """
         Saves this Python object as a pickle file (plus a zipped version for downloading).
@@ -6811,10 +7810,11 @@ class BibleWriter( InternalBible ):
         # Define our various output folders
         pickleOutputFolder = os.path.join( givenOutputFolderName, "BOS_Bible_Object_Pickle/" )
         listOutputFolder = os.path.join( givenOutputFolderName, "BOS_Lists/" )
-        pseudoUSFMOutputFolder = os.path.join( givenOutputFolderName, "BOS_PseudoUSFM_" + "Export/" )
+        pseudoUSFMOutputFolder = os.path.join( givenOutputFolderName, "BOS_PseudoUSFM_Export/" )
         USFMOutputFolder = os.path.join( givenOutputFolderName, "BOS_USFM_" + ("Reexport/" if self.objectTypeString=='USFM' else "Export/" ) )
         textOutputFolder = os.path.join( givenOutputFolderName, "BOS_PlainText_" + ("Reexport/" if self.objectTypeString=='Text' else "Export/" ) )
-        htmlOutputFolder = os.path.join( givenOutputFolderName, "BOS_HTML5_" + "Export/" )
+        markdownOutputFolder = os.path.join( givenOutputFolderName, "BOS_Markdown_Export/" )
+        htmlOutputFolder = os.path.join( givenOutputFolderName, "BOS_HTML5_Export/" )
         CBOutputFolder = os.path.join( givenOutputFolderName, "BOS_CustomBible_" + "Export/" )
         TWOutputFolder = os.path.join( givenOutputFolderName, "BOS_theWord_" + ("Reexport/" if self.objectTypeString=='TheWord' else "Export/" ) )
         MySwOutputFolder = os.path.join( givenOutputFolderName, "BOS_MySword_" + ("Reexport/" if self.objectTypeString=='MySword' else "Export/" ) )
@@ -6827,10 +7827,11 @@ class BibleWriter( InternalBible ):
         USFXOutputFolder = os.path.join( givenOutputFolderName, "BOS_USFX_" + ("Reexport/" if self.objectTypeString=='USFX' else "Export/" ) )
         OSISOutputFolder = os.path.join( givenOutputFolderName, "BOS_OSIS_" + ("Reexport/" if self.objectTypeString=='OSIS' else "Export/" ) )
         swOutputFolder = os.path.join( givenOutputFolderName, "BOS_Sword_" + ("Reexport/" if self.objectTypeString=='Sword' else "Export/" ) )
-        SwSOutputFolder = os.path.join( givenOutputFolderName, "BOS_SwordSearcher_" + "Export/" )
+        SwSOutputFolder = os.path.join( givenOutputFolderName, "BOS_SwordSearcher_Export/" )
         DrOutputFolder = os.path.join( givenOutputFolderName, "BOS_DrupalBible_" + ("Reexport/" if self.objectTypeString=='DrupalBible' else "Export/" ) )
         photoOutputFolder = os.path.join( givenOutputFolderName, "BOS_PhotoBible_Export/" )
-        TeXOutputFolder = os.path.join( givenOutputFolderName, "BOS_TeX_" + "Export/" )
+        ODFOutputFolder = os.path.join( givenOutputFolderName, "BOS_ODF_Export/" )
+        TeXOutputFolder = os.path.join( givenOutputFolderName, "BOS_TeX_Export/" )
 
         if not wantPhotoBible:
             if Globals.verbosityLevel > 2: print( "BibleWriter.doAllExports: " + _("Skipping PhotoBible export") )
@@ -6854,6 +7855,7 @@ class BibleWriter( InternalBible ):
             pseudoUSFMExportResult = self.toPseudoUSFM( pseudoUSFMOutputFolder )
             USFMExportResult = self.toUSFM( USFMOutputFolder )
             textExportResult = self.toText( textOutputFolder )
+            markdownExportResult = self.toMarkdown( markdownOutputFolder )
             htmlExportResult = self.toHTML5( htmlOutputFolder )
             CBExportResult = self.toCustomBible( CBOutputFolder )
             MWExportResult = self.toMediaWiki( MWOutputFolder )
@@ -6870,6 +7872,7 @@ class BibleWriter( InternalBible ):
             SwSExportResult = self.toSwordSearcher( SwSOutputFolder )
             DrExportResult = self.toDrupalBible( DrOutputFolder )
             if wantPhotoBible: PhotoBibleExportResult = self.toPhotoBible( photoOutputFolder )
+            ODFExportResult = self.toODF( ODFOutputFolder )
             if wantPDFs: TeXExportResult = self.toTeX( TeXOutputFolder ) # Put this last since it's slowest
         elif Globals.maxProcesses > 1: # Process all the exports with different threads
             # DON'T KNOW WHY THIS CAUSES A SEGFAULT
@@ -6899,6 +7902,7 @@ class BibleWriter( InternalBible ):
                 SwSExportResult = results[6]
                 DrExportResult = results[7]
                 if wantPhotoBible: PhotoBibleExportResult = results[0]
+                ODFExportResult = results[7]
                 if wantPDFs: TeXExportResult = results[6]
         else: # Just single threaded and not debugging
             try: listOutputResult = self.makeLists( listOutputFolder )
@@ -6921,6 +7925,11 @@ class BibleWriter( InternalBible ):
                 textExportResult = False
                 print("BibleWriter.doAllExports.toText Unexpected error:", sys.exc_info()[0], err)
                 logging.error( "BibleWriter.doAllExports.toText: Oops, failed!" )
+            try: markdownExportResult = self.toMarkdown( markdownOutputFolder )
+            except Exception as err:
+                markdownExportResult = False
+                print("BibleWriter.doAllExports.toMarkdown Unexpected error:", sys.exc_info()[0], err)
+                logging.error( "BibleWriter.doAllExports.toMarkdown: Oops, failed!" )
             try: htmlExportResult = self.toHTML5( htmlOutputFolder )
             except Exception as err:
                 htmlExportResult = False
@@ -7002,6 +8011,11 @@ class BibleWriter( InternalBible ):
                     PhotoBibleExportResult = False
                     print("BibleWriter.doAllExports.toPhotoBible Unexpected error:", sys.exc_info()[0], err)
                     logging.error( "BibleWriter.doAllExports.toPhotoBible: Oops, failed!" )
+            try: ODFExportResult = self.toODF( ODFOutputFolder )
+            except Exception as err:
+                ODFExportResult = False
+                print("BibleWriter.doAllExports.toODF Unexpected error:", sys.exc_info()[0], err)
+                logging.error( "BibleWriter.doAllExports.toODF: Oops, failed!" )
             if wantPDFs: # Do TeX export last because it's slowest
                 try: TeXExportResult = self.toTeX( TeXOutputFolder )
                 except Exception as err:
@@ -7011,25 +8025,25 @@ class BibleWriter( InternalBible ):
 
         if Globals.verbosityLevel > 1:
             if pickleResult and listOutputResult and pseudoUSFMExportResult and USFMExportResult and CBExportResult \
-            and textExportResult and (PhotoBibleExportResult or not wantPhotoBible) \
+            and textExportResult and markdownExportResult and (PhotoBibleExportResult or not wantPhotoBible) \
             and TWExportResult and MySwExportResult and ESwExportResult and MWExportResult \
             and ZefExportResult and HagExportResult and OSExportResult and USXExportResult and USFXExportResult \
             and OSISExportResult and swExportResult and htmlExportResult and SwSExportResult and DrExportResult \
-            and (TeXExportResult or not wantPDFs):
+            and ODFExportResult and (TeXExportResult or not wantPDFs):
                 print( "BibleWriter.doAllExports finished them all successfully!" )
-            else: print( "BibleWriter.doAllExports finished:  Pck={}  Lst={}  PsUSFM={} USFM={}  CB={}  Tx={}  PB={} TW={} MySw={} eSw={}  MW={}  Zef={} Hag={} OS={} USX={} USFX={} OSIS={}  Sw={}  HTML={} TeX={} SwS={} Dr={}" \
+            else: print( "BibleWriter.doAllExports finished:  Pck={}  Lst={}  PsUSFM={} USFM={}  CB={}  Tx={}  md={}  PB={} TW={} MySw={} eSw={}  MW={}  Zef={} Hag={} OS={} USX={} USFX={} OSIS={}  Sw={}  HTML={} ODF={} TeX={} SwS={} Dr={}" \
                     .format( pickleResult, listOutputResult, pseudoUSFMExportResult, USFMExportResult, CBExportResult,
-                                textExportResult, PhotoBibleExportResult, TWExportResult, MySwExportResult, ESwExportResult, MWExportResult,
+                                textExportResult, markdownExportResult, PhotoBibleExportResult, TWExportResult, MySwExportResult, ESwExportResult, MWExportResult,
                                 ZefExportResult, HagExportResult, OSExportResult, USXExportResult, USFXExportResult,
-                                OSISExportResult, swExportResult, htmlExportResult, TeXExportResult,
+                                OSISExportResult, swExportResult, htmlExportResult, ODFExportResult, TeXExportResult,
                                 SwSExportResult, DrExportResult ) )
         return { 'Pickle':pickleResult,
                     'listOutput':listOutputResult, 'pseudoUSFMExport':pseudoUSFMExportResult, 'USFMExport':USFMExportResult,
-                    'CustomBibleExport':CBExportResult,  'textExport':textExportResult, 'PhotoBibleExport':PhotoBibleExportResult,
-                    'TWExport':TWExportResult, 'MySwExport':MySwExportResult, 'ESwExport':ESwExportResult,
+                    'CustomBibleExport':CBExportResult,  'textExport':textExportResult, 'markdownExport':markdownExportResult,
+                    'PhotoBibleExport':PhotoBibleExportResult, 'TWExport':TWExportResult, 'MySwExport':MySwExportResult, 'ESwExport':ESwExportResult,
                     'MWExport':MWExportResult, 'ZefExport':ZefExportResult, 'HagExport':HagExportResult, 'OSExport':OSExportResult,
                     'USXExport':USXExportResult, 'USFXExport':USFXExportResult, 'OSISExport':OSISExportResult, 'swExport':swExportResult,
-                    'htmlExport':htmlExportResult, 'TeXExport':TeXExportResult, 'SwSExport':SwSExportResult,
+                    'htmlExport':htmlExportResult, 'ODFExport':ODFExportResult, 'TeXExport':TeXExportResult, 'SwSExport':SwSExportResult,
                     'DrExport':DrExportResult, }
     # end of BibleWriter.doAllExports
 # end of class BibleWriter
@@ -7069,10 +8083,10 @@ def demo():
             if os.access( testFolder, os.R_OK ):
                 UB = USFMBible( testFolder, name, abbrev )
                 UB.load()
-                if Globals.verbosityLevel > 0: print( '\nBWr A'+str(j+1)+'/', UB )
+                if Globals.verbosityLevel > 0: print( '\nBibleWriter A'+str(j+1)+'/', UB )
                 if Globals.strictCheckingFlag: UB.check()
-                #UB.toPhotoBible(); halt
-                doaResults = UB.doAllExports( wantPhotoBible=True, wantPDFs=True )
+                UB.toODF(); halt
+                doaResults = UB.doAllExports( wantPhotoBible=False, wantPDFs=False )
                 if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
                     outputFolder = "OutputFiles/BOS_USFM_Reexport/"
                     fN = USFMFilenames( testFolder )
@@ -7100,7 +8114,7 @@ def demo():
             if os.access( testFolder, os.R_OK ):
                 UB = USXXMLBible( testFolder, name )
                 UB.load()
-                if Globals.verbosityLevel > 0: print( '\nBWr B'+str(j+1)+'/', UB )
+                if Globals.verbosityLevel > 0: print( '\nBibleWriter B'+str(j+1)+'/', UB )
                 if Globals.strictCheckingFlag: UB.check()
                 doaResults = UB.doAllExports( wantPhotoBible=True, wantPDFs=True )
                 if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
@@ -7143,7 +8157,7 @@ def demo():
             if os.access( testFolder, os.R_OK ):
                 UB = USFMBible( testFolder, name )
                 UB.load()
-                if Globals.verbosityLevel > 0: print( '\nBWr C'+str(j+1)+'/', UB )
+                if Globals.verbosityLevel > 0: print( '\nBibleWriter C'+str(j+1)+'/', UB )
                 #if Globals.strictCheckingFlag: UB.check()
                 #result = UB.totheWord()
                 doaResults = UB.doAllExports( wantPhotoBible=True, wantPDFs=True )
