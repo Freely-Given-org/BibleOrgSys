@@ -2740,7 +2740,8 @@ class BibleWriter( InternalBible ):
                     if Globals.debugFlag: assert( not cleanText )
                     textBuffer += '\n'
                 elif marker == 'nb':
-                    textBuffer += '\n' + cleanText
+                    if Globals.debugFlag: assert( not cleanText )
+                    textBuffer += '\n'
                 elif marker in ('p', 'pi1','pi2','pi3','pi4', 'q1','q2','q3','q4', 'm','mi','im','imi', 'ph1','ph2','ph3','ph4','pc',
                                 'li1','li2','li3','li4', 'ip','ipi', 'ili1','ili2','ili3','ili4',): # Just put it on a new line
                     textBuffer += '\n'
@@ -7140,6 +7141,13 @@ class BibleWriter( InternalBible ):
             #returnCode = myProcess.returncode
             #print( "returnCode", returnCode )
 
+        ODF_PARAGRAPH_BREAK = uno.getConstantByName( "com.sun.star.text.ControlCharacter.PARAGRAPH_BREAK" )
+        ODF_LINE_BREAK = uno.getConstantByName( "com.sun.star.text.ControlCharacter.LINE_BREAK" )
+        #ODF_HARD_HYPHEN = uno.getConstantByName( "com.sun.star.text.ControlCharacter.HARD_HYPHEN" )
+        #ODF_SOFT_HYPHEN = uno.getConstantByName( "com.sun.star.text.ControlCharacter.SOFT_HYPHEN" )
+        #ODF_HARD_SPACE = uno.getConstantByName( "com.sun.star.text.ControlCharacter.HARD_SPACE" )
+        #ODF_APPEND_PARAGRAPH = uno.getConstantByName( "com.sun.star.text.ControlCharacter.APPEND_PARAGRAPH" )
+
         # Set-up LibreOffice
         local = uno.getComponentContext()
         resolver = local.ServiceManager.createInstanceWithContext("com.sun.star.bridge.UnoUrlResolver", local)
@@ -7151,29 +7159,15 @@ class BibleWriter( InternalBible ):
         templateFilepath = os.path.join( os.getcwd(), defaultControlFolder, "BibleBook.ott" )
         sourceURL = "file://{}".format( templateFilepath ) # Blank template (all styles already built)
 
-        #document = desktop.loadComponentFromURL("private:factory/swriter", "_blank", 0, ())
-        #cursor = document.Text.createTextCursor()
-        #document.Text.insertString(cursor, "This text is being added to openoffice using python and uno package.", 0)
-        #document.Text.insertString(cursor, "\n\nThis is a new paragraph.", 0)
-        #document.Text.insertString(cursor, "\n\n\tAnd this is another new paragraph.", 0)
-        #cursor.setPropertyValue("CharHeight", 20)
-        #cursor.setPropertyValue("CharFontName", "Arial")
-        #cursor.setPropertyValue("CharWeight", 150)
-        #document.Text.insertString(cursor, "\n\nThis is another new paragraph.", 0)
-        #filepath = os.path.join( os.getcwd(), outputFolder, "TestFile.odt" )
-        #print( "filepath", repr(filepath) )
-        #document.storeAsURL( "file://{}".format( filepath ), () )
-        #document.dispose()
-
         unhandledMarkers = set()
 
-        ipODFClassDict = {'ip':'Introduction Paragraph', 'ipi':'Introduction Paragraph Indented',
+        ipODFStyleDict = {'ip':'Introduction Paragraph', 'ipi':'Introduction Paragraph Indented',
                         'im':'Introduction Flush Left Paragraph', 'imi':'Introduction Indented Flush Left Paragraph',
 
                         'iot':'Introduction Outline Title',
                         'io1':'Introduction Outline Entry 1', 'io2':'Introduction Outline Entry 2', 'io3':'Introduction Outline Entry 3', 'io4':'Introduction Outline Entry 4'}
 
-        pqODFClassDict = {'p':'Prose Paragraph', 'm':'Flush Left Paragraph',
+        pqODFStyleDict = {'p':'Prose Paragraph', 'm':'Flush Left Paragraph',
                         'pmo':'Embedded Opening Paragraph', 'pm':'Embedded Paragraph', 'pmc':'Embedded Closing Paragraph',
                         'pmr':'Embedded Refrain Paragraph',
                         'pi1':'Indented Prose Paragraph 1','pi2':'Indented Prose Paragraph 2','pi3':'Indented Prose Paragraph 3','pi4':'Indented Prose Paragraph 4',
@@ -7185,8 +7179,11 @@ class BibleWriter( InternalBible ):
                         'qr':'Right Aligned Poetry Paragraph', 'qc':'Centered Poetry Paragraph',
                         'qm1':'Embedded Poetry Paragraph 1','qm2':'Embedded Poetry Paragraph 2','qm3':'Embedded Poetry Paragraph 3','qm4':'Embedded Poetry Paragraph 4'}
 
+        charODFStyleDict = {'bk':'Book Name', 'ior':'Introduction Outline Reference',
+                            'add':'Added Words', 'nd':'Divine Name', 'wj':'Words of Jesus',
+                            'bd':'Bold Text', 'it':'Italic Text', 'bdit':'Bold Italic Text', 'sc':'Small Caps Text', }
 
-        def insertFormattedODFText( BBB, C, V, givenText, extras, documentText, cursor ):
+        def insertFormattedODFText( BBB, C, V, givenText, extras, documentText, textCursor, defaultCharacterStyleName ):
             """
             Format character codes within the text into ODF
             """
@@ -7437,15 +7434,29 @@ class BibleWriter( InternalBible ):
 
 
             # insertFormattedODFText main code
-            text = handleExtras( givenText, extras )
+            #text = handleExtras( givenText, extras )
+            text = givenText # temp......................................ZZZZZZZZZZZZZZZZZZZZZZZXXXXXXXXXXXXXXXXXXXXX
+            markerList = Globals.USFMMarkers.getMarkerListFromText( text, includeInitialText=True )
+            if markerList: # we found character formatting within the text
+                #print( BBB, C, V, "toODF.insertFormattedODFText: {} found {}".format( repr(text), markerList ) )
+                for marker, ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt in markerList:
+                    #print( "loop", marker, ixBS, repr(nextSignificantChar), repr(fullMarkerText), context, ixEnd, repr(txt) )
+                    if nextSignificantChar == ' ' and marker in charODFStyleDict: # it's an opening marker
+                        textCursor.setPropertyValue( "CharStyleName", charODFStyleDict[marker] )
+                        documentText.insertString( textCursor, txt, 0 )
+                    elif marker is None or not context:
+                        textCursor.setPropertyValue( "CharStyleName", defaultCharacterStyleName )
+                        documentText.insertString( textCursor, txt, 0 )
+                    else:
+                        logging.critical( "toODF: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(givenText) ) )
+                        unhandledMarkers.add( marker )
+                        halt
+            else: # No character formatting here
+                documentText.insertString( textCursor, text, 0 )
+            return
 
             # Semantic stuff
-            text = text.replace( '\\ior ', '[' ).replace( '\\ior*', ']' )
-            text = text.replace( '\\bk ', '_' ).replace( '\\bk*', '_' )
-            text = text.replace( '\\add ', '_' ).replace( '\\add*', '_' )
-            text = text.replace( '\\nd ', '' ).replace( '\\nd*', '' )
             text = text.replace( '\\+nd ', '' ).replace( '\\+nd*', '' )
-            text = text.replace( '\\wj ', '' ).replace( '\\wj*', '' )
             text = text.replace( '\\sig ', '' ).replace( '\\sig*', '' )
             if BBB in ('GLS',): # it's a glossary keyword entry
                 text = text.replace( '\\k ', '' ).replace( '\\k*', '' )
@@ -7453,20 +7464,6 @@ class BibleWriter( InternalBible ):
                 text = text.replace( '\\k ', '' ).replace( '\\k*', '' )
             text = text.replace( '\\rq ', '' ).replace( '\\rq*', '' )
             text = text.replace( '\\qs ', '' ).replace( '\\qs*', '' )
-
-            # Direct formatting
-            text = text.replace( '\\bdit ', '*_' ).replace( '\\bdit*', '_*' )
-            text = text.replace( '\\it ', '_' ).replace( '\\it*', '_' )
-            text = text.replace( '\\bd ', '*' ).replace( '\\bd*', '*' )
-            text = text.replace( '\\sc ', '' ).replace( '\\sc*', '' )
-
-            if '\\' in text or '<' in text or '>' in text:
-                logging.error( "formatODFVerseText programming error: unprocessed code in {} from {} at {} {}:{}".format( repr(text), repr(givenText), BBB, C, V ) )
-                if Globals.debugFlag or Globals.verbosityLevel > 2:
-                    print( "formatODFVerseText: unprocessed code in {} from {} at {} {}:{}".format( repr(text), repr(givenText), BBB, C, V ) )
-                if Globals.debugFlag and debuggingThisModule: halt
-
-            documentText.insertString( cursor, text, 0 )
         # end of toODF.insertFormattedODFText
 
 
@@ -7484,184 +7481,275 @@ class BibleWriter( InternalBible ):
             if Globals.verbosityLevel > 2: print( "  " + _("Creating '{}'...").format( filename ) )
             document = desktop.loadComponentFromURL( sourceURL, "_blank", 0, () )
             documentText = document.Text
-            cursor = documentText.createTextCursor()
+            textCursor = documentText.createTextCursor()
 
             ourGlobals = {}
             ourGlobals['nextFootnoteIndex'] = ourGlobals['nextXRefIndex'] = 0
             ourGlobals['footnoteMD'], ourGlobals['endnoteMD'], ourGlobals['xrefMD'] = [], [], []
 
-            #documentText.insertString(cursor, "This text is being added to openoffice using python and uno package.", 0)
-            #documentText.insertString(cursor, "\n\nThis is a new paragraph.", 0)
-            #documentText.insertString(cursor, "\n\n\tAnd this is another new paragraph.", 0)
-            #cursor.setPropertyValue("CharHeight", 20)
-            #cursor.setPropertyValue("CharFontName", "Arial")
-            #cursor.setPropertyValue("CharWeight", 150)
-            #documentText.insertString(cursor, "\n\nThis is another new paragraph.", 0)
+            #documentText.insertString(textCursor, "This text is being added to openoffice using python and uno package.", 0)
+            #documentText.insertString(textCursor, "\n\nThis is a new paragraph.", 0)
+            #documentText.insertString(textCursor, "\n\n\tAnd this is another new paragraph.", 0)
+            #textCursor.setPropertyValue("CharHeight", 20)
+            #textCursor.setPropertyValue("CharFontName", "Arial")
+            #textCursor.setPropertyValue("CharWeight", 150) # == bold
+            #documentText.insertString(textCursor, "\n\nThis is another new paragraph.", 0)
 
-            #document.Text.insertString(cursor, "This text gets the footnote.", 0)
+            #document.Text.insertString(textCursor, "This text gets the footnote.", 0)
             #footnote = document.createInstance("com.sun.star.text.Footnote")
-            #document.Text.insertTextContent(cursor, footnote, 0)
+            #document.Text.insertTextContent(textCursor, footnote, 0)
             #footnotecursor = footnote.Text.createTextCursor()
             #footnote.insertString(footnotecursor, "This is the actual footnote.", 0)
-            #document.Text.insertString(cursor, " And here is more text following the footnote", 0)
+            #document.Text.insertString(textCursor, " And here is more text following the footnote", 0)
 
-            #families = document.StyleFamilies.getByName("ParagraphStyles")
+            ##character color
+            #tRange.setPropertyValue( "CharColor", 255 )
+            ## CharPosture receives an enum
+            #tRange.CharPosture = uno.getConstantByName("com.sun.star.awt.FontSlant.ITALIC")
+            ## tRange.setPropertyValue( "CharShadowed", uno.Bool(1) )
+            ## tRange.setPropertyValue( "CharWeight", 150)
+            #style.setPropertyValue("CharDiffHeight", -3)
+
+            styleFamilies = document.StyleFamilies
+            paragraphStyles = styleFamilies.getByName("ParagraphStyles")
+
+            #style = document.createInstance("com.sun.star.style.ParagraphStyle")
+            #paragraphStyles.insertByName("Blank Line Paragraph", style)
+
+            characterStyles = styleFamilies.getByName( "CharacterStyles" )
+
+            #style = document.createInstance("com.sun.star.style.CharacterStyle")
+            #characterStyles.insertByName("Introduction Outline Reference", style)
+
 
             if 0: # Create initial styles (not required or allowed if we use the template)
-                families = document.StyleFamilies.getByName("ParagraphStyles")
+                paragraphStyles = styleFamilies.getByName("ParagraphStyles")
 
                 style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Main Title", style) # Base style only
+                paragraphStyles.insertByName("Main Title", style) # Base style only
                 style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Main Title 1", style)
+                paragraphStyles.insertByName("Main Title 1", style)
                 style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Main Title 2", style)
+                paragraphStyles.insertByName("Main Title 2", style)
                 style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Main Title 3", style)
+                paragraphStyles.insertByName("Main Title 3", style)
                 style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Main Title 4", style)
+                paragraphStyles.insertByName("Main Title 4", style)
 
                 style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Introduction Section Heading", style) # Base style only
+                paragraphStyles.insertByName("Introduction Section Heading", style) # Base style only
                 style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Introduction Section Heading 1", style)
+                paragraphStyles.insertByName("Introduction Section Heading 1", style)
                 style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Introduction Section Heading 2", style)
+                paragraphStyles.insertByName("Introduction Section Heading 2", style)
                 style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Introduction Section Heading 3", style)
+                paragraphStyles.insertByName("Introduction Section Heading 3", style)
                 style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Introduction Section Heading 4", style)
+                paragraphStyles.insertByName("Introduction Section Heading 4", style)
 
                 style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Introduction Outline Title", style)
+                paragraphStyles.insertByName("Introduction Outline Title", style)
 
                 style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Introduction Outline Entry", style) # Base style only
+                paragraphStyles.insertByName("Introduction Outline Entry", style) # Base style only
                 style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Introduction Outline Entry 1", style)
+                paragraphStyles.insertByName("Introduction Outline Entry 1", style)
                 style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Introduction Outline Entry 2", style)
+                paragraphStyles.insertByName("Introduction Outline Entry 2", style)
                 style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Introduction Outline Entry 3", style)
+                paragraphStyles.insertByName("Introduction Outline Entry 3", style)
                 style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Introduction Outline Entry 4", style)
+                paragraphStyles.insertByName("Introduction Outline Entry 4", style)
 
                 style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Introduction Paragraph", style) # Base and actual style
+                paragraphStyles.insertByName("Introduction Paragraph", style) # Base and actual style
                 style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Introduction Paragraph Indented", style)
+                paragraphStyles.insertByName("Introduction Paragraph Indented", style)
                 style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Introduction Flush Left Paragraph", style)
+                paragraphStyles.insertByName("Introduction Flush Left Paragraph", style)
                 style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Introduction Indented Flush Left Paragraph", style)
+                paragraphStyles.insertByName("Introduction Indented Flush Left Paragraph", style)
 
                 style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Bible Paragraph", style) # Base style only
+                paragraphStyles.insertByName("Introduction List Item", style) #Base style only
                 style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Prose Paragraph", style)
+                paragraphStyles.insertByName("Introduction List Item 1", style)
                 style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Flush Left Paragraph", style)
+                paragraphStyles.insertByName("Introduction List Item 2", style)
                 style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Embedded Opening Paragraph", style)
+                paragraphStyles.insertByName("Introduction List Item 3", style)
                 style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Embedded Paragraph", style)
-                style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Embedded Closing Paragraph", style)
-                style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Embedded Refrain Paragraph", style)
-                style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Indented Prose Paragraph 1", style)
-                style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Indented Prose Paragraph 2", style)
-                style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Indented Prose Paragraph 3", style)
-                style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Indented Prose Paragraph 4", style)
-                style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Indented Flush Left Paragraph", style)
-                style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Closure Paragraph", style)
-                style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Centered Prose Paragraph", style)
-                style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Right Aligned Prose Paragraph", style)
-                style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Hanging Prose Paragraph 1", style)
-                style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Hanging Prose Paragraph 2", style)
-                style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Hanging Prose Paragraph 3", style)
-                style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Hanging Prose Paragraph 4", style)
-                style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Poetry Paragraph 1", style)
-                style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Poetry Paragraph 2", style)
-                style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Poetry Paragraph 3", style)
-                style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Poetry Paragraph 4", style)
-                style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Right Aligned Poetry Paragraph", style)
-                style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Centered Poetry Paragraph", style)
-                style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Embedded  Poetry Paragraph 1", style)
-                style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Embedded  Poetry Paragraph 2", style)
-                style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Embedded  Poetry Paragraph 3", style)
-                style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Embedded  Poetry Paragraph 4", style)
+                paragraphStyles.insertByName("Introduction List Item 4", style)
 
                 style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Section Heading", style) # Base style only
+                paragraphStyles.insertByName("Major Section Heading", style) # Base style only
                 style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Section Heading 1", style)
+                paragraphStyles.insertByName("Major Section Heading 1", style)
                 style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Section Heading 2", style)
+                paragraphStyles.insertByName("Major Section Heading 2", style)
                 style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Section Heading 3", style)
+                paragraphStyles.insertByName("Major Section Heading 3", style)
                 style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Section Heading 4", style)
+                paragraphStyles.insertByName("Major Section Heading 4", style)
 
                 style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Section CrossReference", style)
+                paragraphStyles.insertByName("Section Heading", style) # Base style only
                 style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Section Reference Range", style)
+                paragraphStyles.insertByName("Section Heading 1", style)
                 style = document.createInstance("com.sun.star.style.ParagraphStyle")
-                families.insertByName("Major Section Reference Range", style)
+                paragraphStyles.insertByName("Section Heading 2", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Section Heading 3", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Section Heading 4", style)
+
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Section CrossReference", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Section Reference Range", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Major Section Reference Range", style)
+
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Descriptive Title", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Speaker Identification", style)
+
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Bible Paragraph", style) # Base style only
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Prose Paragraph", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Flush Left Paragraph", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Embedded Opening Paragraph", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Embedded Paragraph", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Embedded Closing Paragraph", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Embedded Refrain Paragraph", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Indented Prose Paragraph 1", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Indented Prose Paragraph 2", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Indented Prose Paragraph 3", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Indented Prose Paragraph 4", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Indented Flush Left Paragraph", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Centered Prose Paragraph", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Right Aligned Prose Paragraph", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Hanging Prose Paragraph 1", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Hanging Prose Paragraph 2", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Hanging Prose Paragraph 3", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Hanging Prose Paragraph 4", style)
+
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Poetry Paragraph", style) # Base style only
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Poetry Paragraph 1", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Poetry Paragraph 2", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Poetry Paragraph 3", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Poetry Paragraph 4", style)
+
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Right Aligned Poetry Paragraph", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Centered Poetry Paragraph", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Embedded  Poetry Paragraph 1", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Embedded  Poetry Paragraph 2", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Embedded  Poetry Paragraph 3", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Embedded  Poetry Paragraph 4", style)
+
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("List Item", style) #Base style only
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("List Item 1", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("List Item 2", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("List Item 3", style)
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("List Item 4", style)
+
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Blank Line Paragraph", style)
+
+                style = document.createInstance("com.sun.star.style.ParagraphStyle")
+                paragraphStyles.insertByName("Closure Paragraph", style)
 
 
-                families = document.StyleFamilies.getByName("CharacterStyles")
+                #textItalic = uno.getConstantByName( "com.sun.star.awt.FontSlant.ITALIC" )
+                characterStyles = styleFamilies.getByName("CharacterStyles")
 
                 style = document.createInstance("com.sun.star.style.CharacterStyle")
-                families.insertByName("Chapter Number", style)
+                characterStyles.insertByName("Chapter Number", style)
                 style = document.createInstance("com.sun.star.style.CharacterStyle")
-                families.insertByName("Chapter Number Postspace", style)
+                characterStyles.insertByName("Chapter Number Postspace", style)
                 style = document.createInstance("com.sun.star.style.CharacterStyle")
-                families.insertByName("Verse Number Prespace", style)
+                characterStyles.insertByName("Verse Number Prespace", style)
                 style = document.createInstance("com.sun.star.style.CharacterStyle")
-                families.insertByName("Verse Number", style)
+                characterStyles.insertByName("Verse Number", style)
                 style = document.createInstance("com.sun.star.style.CharacterStyle")
-                families.insertByName("Verse Number Postspace", style)
+                characterStyles.insertByName("Verse Number Postspace", style)
                 style = document.createInstance("com.sun.star.style.CharacterStyle")
-                families.insertByName("Verse Text", style)
+                characterStyles.insertByName("Verse Text", style)
+
+                style = document.createInstance("com.sun.star.style.CharacterStyle")
+                #style.setPropertyValue("CharPosture", textItalic )
+                characterStyles.insertByName("Book Name", style)
+                style = document.createInstance("com.sun.star.style.CharacterStyle")
+                characterStyles.insertByName("Introduction Outline Reference", style)
+                style = document.createInstance("com.sun.star.style.CharacterStyle")
+                characterStyles.insertByName("Added Words", style)
+                style = document.createInstance("com.sun.star.style.CharacterStyle")
+                characterStyles.insertByName("Divine Name", style)
+                style = document.createInstance("com.sun.star.style.CharacterStyle")
+                characterStyles.insertByName("Words of Jesus", style)
+
+                style = document.createInstance("com.sun.star.style.CharacterStyle")
+                style.setPropertyValue("CharWeight", 150) # bold
+                characterStyles.insertByName("Bold Text", style)
+                style = document.createInstance("com.sun.star.style.CharacterStyle")
+                #style.setPropertyValue("CharPosture", textItalic )
+                characterStyles.insertByName("Italic Text", style)
+                style = document.createInstance("com.sun.star.style.CharacterStyle")
+                style.setPropertyValue("CharWeight", 150) # bold
+                #style.setPropertyValue("CharPosture", textItalic )
+                characterStyles.insertByName("Bold Italic Text", style)
+                style = document.createInstance("com.sun.star.style.CharacterStyle")
+                characterStyles.insertByName("Small Caps Text", style)
+
 
             if 0: # Just some test / example code
-                documentText.insertString(cursor, "Here is some text", 0)
-                cursor.setPropertyValue("CharStyleName", "Verse Text") # Base and actual style
-                documentText.insertString(cursor, " followed by some styled text ", 0)
-                cursor.setPropertyValue("CharStyleName", "Verse Number")
-                documentText.insertString(cursor, "27", 0)
-                cursor.setPropertyValue("CharStyleName", "Default Style")
-                documentText.insertString(cursor, "and then some more text with default styling", 0)
+                documentText.insertString(textCursor, "Here is some text", 0)
+                textCursor.setPropertyValue("CharStyleName", "Verse Text") # Base and actual style
+                documentText.insertString(textCursor, " followed by some styled text ", 0)
+                textCursor.setPropertyValue("CharStyleName", "Verse Number")
+                documentText.insertString(textCursor, "27", 0)
+                textCursor.setPropertyValue("CharStyleName", "Default Style")
+                documentText.insertString(textCursor, "and then some more text with default styling", 0)
 
-            def insertODFParagraph( BBB, C, V, styleName, text, extras, documentText, cursor ):
-                documentText.insertControlCharacter( cursor, uno.getConstantByName("com.sun.star.text.ControlCharacter.PARAGRAPH_BREAK"), 0 );
-                cursor.setPropertyValue( "ParaStyleName", styleName )
+            def insertODFParagraph( BBB, C, V, styleName, text, extras, documentText, textCursor, defaultCharacterStyleName ):
+                documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, 0 );
+                textCursor.setPropertyValue( "ParaStyleName", styleName )
                 if adjText or extras:
-                    insertFormattedODFText( BBB, C, V, text, extras, documentText, cursor )
+                    insertFormattedODFText( BBB, C, V, text, extras, documentText, textCursor, defaultCharacterStyleName )
             # end of insertODFParagraph
 
             C = V = '0'
@@ -7669,46 +7757,62 @@ class BibleWriter( InternalBible ):
                 marker, adjText, extras = entry.getMarker(), entry.getAdjustedText(), entry.getExtras()
                 #print( j, BBB, C, V, marker, repr(adjText) )
                 if marker in oftenIgnoredIntroMarkers: pass # Just ignore these lines
-                elif marker in ('mt1','mt2','mt3','mt4','imt1','imt2','imt3','imt4',):
+                elif marker in ('mt1','mt2','mt3','mt4', 'imt1','imt2','imt3','imt4',):
                     styleName = "Introduction " if marker[0]=='i' else ""
                     styleName += "Main Title {}".format( marker[-1] )
-                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, cursor )
+                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
+                elif marker in ('ms1','ms2','ms3','ms4',):
+                    styleName = "Major Section Heading {}".format( marker[-1] )
+                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
                 elif marker in ('ip','ipi', 'im','imi', 'iot', 'io1','io2','io3','io4',):
-                    styleName = ipODFClassDict[marker]
-                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, cursor )
-                elif marker in ('s1','s2','s3','s4','is1','is2','is3','is4',):
+                    styleName = ipODFStyleDict[marker]
+                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
+                elif marker in ('s1','s2','s3','s4', 'is1','is2','is3','is4',):
                     styleName = "Introduction " if marker[0]=='i' else ""
                     styleName += "Section Heading {}".format( marker[-1] )
-                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, cursor )
+                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
                 elif marker in ('r','sr','mr',):
                     if marker == 'r': styleName = 'Section CrossReference'
                     elif marker == 'sr': styleName = 'Section Reference Range'
                     elif marker == 'mr': styleName = 'Major Section Reference Range'
-                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, cursor )
+                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
                 elif marker == 'c':
                     C = adjText
                 elif marker == 'c#':
-                    cursor.setPropertyValue( "CharStyleName", "Chapter Number" )
-                    documentText.insertString( cursor, C, 0 )
-                    cursor.setPropertyValue( "CharStyleName", "Chapter Number Postspace" )
-                    documentText.insertString( cursor, " ", 0 )
-                    cursor.setPropertyValue( "CharStyleName", "Verse Text" )
+                    textCursor.setPropertyValue( "CharStyleName", "Chapter Number" )
+                    documentText.insertString( textCursor, C, 0 )
+                    textCursor.setPropertyValue( "CharStyleName", "Chapter Number Postspace" )
+                    documentText.insertString( textCursor, " ", 0 )
+                    textCursor.setPropertyValue( "CharStyleName", "Verse Text" )
                 elif marker == 'v':
                     V = adjText
-                    cursor.setPropertyValue( "CharStyleName", "Verse Number Prespace" )
-                    documentText.insertString( cursor, " ", 0 )
-                    cursor.setPropertyValue( "CharStyleName", "Verse Number" )
-                    documentText.insertString( cursor, V, 0 )
-                    cursor.setPropertyValue( "CharStyleName", "Verse Number Postspace" )
-                    documentText.insertString( cursor, " ", 0 )
-                    cursor.setPropertyValue( "CharStyleName", "Verse Text" )
-                elif marker in ('p','m','pmo','pm','pmc','pmr','pi1','pi2','pi3','pi4','mi','cls','pc','pr','ph1','ph2','ph3','ph4',) \
-                or marker in ('q1','q2','q3','q4','qr','qc','qm1','qm2','qm3','qm4',):
-                    styleName = pqODFClassDict[marker]
-                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, cursor )
+                    textCursor.setPropertyValue( "CharStyleName", "Verse Number Prespace" )
+                    documentText.insertString( textCursor, " ", 0 )
+                    textCursor.setPropertyValue( "CharStyleName", "Verse Number" )
+                    documentText.insertString( textCursor, V, 0 )
+                    textCursor.setPropertyValue( "CharStyleName", "Verse Number Postspace" )
+                    documentText.insertString( textCursor, " ", 0 )
+                    textCursor.setPropertyValue( "CharStyleName", "Verse Text" )
+                elif marker == 'd':
+                    insertODFParagraph( BBB, C, V, "Descriptive Title", adjText, extras, documentText, textCursor, "Default Style" )
+                elif marker == 'sp':
+                    insertODFParagraph( BBB, C, V, "Speaker Identification", adjText, extras, documentText, textCursor, "Default Style" )
+                elif marker in ('p','m','pmo','pm','pmc','pmr', 'pi1','pi2','pi3','pi4', 'mi','cls','pc','pr', 'ph1','ph2','ph3','ph4',) \
+                or marker in ('q1','q2','q3','q4', 'qr','qc', 'qm1','qm2','qm3','qm4',):
+                    styleName = pqODFStyleDict[marker]
+                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
+                elif marker in ('li1','li2','li3','li4', 'ili1','ili2','ili3','ili4',):
+                    styleName = "Introduction " if marker[0]=='i' else ""
+                    styleName += "List Item {}".format( marker[-1] )
+                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
                 elif marker in ('v~','p~',):
                     if adjText or extras:
-                        insertFormattedODFText( BBB, C, V, adjText, extras, documentText, cursor )
+                        insertFormattedODFText( BBB, C, V, adjText, extras, documentText, textCursor, "Default Style" )
+                elif marker == 'b':
+                    documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, 0 );
+                    textCursor.setPropertyValue( "ParaStyleName", "Blank Line Paragraph" )
+                elif marker == 'nb': # no-break with previous paragraph -- I don't think we have to do anything here
+                    if Globals.debugFlag: assert( not adjText and not extras )
                 else:
                     if adjText:
                         logging.critical( "toODF: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(adjText) ) )
@@ -7725,8 +7829,11 @@ class BibleWriter( InternalBible ):
             # Save the created document
             #print( j, "filepath", repr(filepath) )
             document.storeAsURL( "file://{}".format( filepath ), () )
-            document.dispose() # Close the document
-            #if j>=1: halt
+            if BBB!='GEN':
+                document.dispose() # Close the document
+            if j>=65:
+                print( "Unhandled markers:", unhandledMarkers )
+                halt
 
         if unhandledMarkers:
             logging.warning( "toODF: Unhandled markers were {}".format( unhandledMarkers ) )
