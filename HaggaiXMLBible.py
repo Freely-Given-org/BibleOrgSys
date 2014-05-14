@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # HaggaiXMLBible.py
-#   Last modified: 2014-04-25 by RJH (also update ProgVersion below)
+#   Last modified: 2014-05-15 by RJH (also update ProgVersion below)
 #
 # Module handling Haggai XML Bibles
 #
@@ -25,41 +25,41 @@
 
 """
 Module reading and loading Haggai XML Bibles:
-    <?xml version="1.0" encoding="utf-8"?>
-    <XMLBIBLE xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="zef2005.xsd" version="2.0.1.18" status="v" biblename="King James Version" type="x-bible" revision="0">
+    <?xml version="1.0" encoding="UTF-8"?>
+    <XMLBIBLE xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="haggai_20130620.xsd" biblename="Elberfelder 1871" status="v" version="haggai_3.0.0.9.1" revision="0">
     <INFORMATION>
-        <title>King James Version</title>
-        <creator></creator>
-        <subject>The Holy Bible</subject>
-        <description>In 1604, King James I of England authorized that a new translation of the Bible into English be started. It was finished in 1611, just 85 years after the first translation of the New Testament into English appeared (Tyndale, 1526). The Authorized Version, or King James Version, quickly became the standard for English-speaking Protestants. Its flowing language and prose rhythm has had a profound influence on the literature of the past 300 years.</description>
-        <publisher>FREE BIBLE SOFTWARE GROUP</publisher>
-        <contributors />
-        <date>2009-01-23</date>
-        <type>Bible</type>
+        <title>Elberfelder 1871</title>
+        <creator>Stephan Kreutzer, Michael Ott, Michael Mustun, Markus Oehler, Thomas Laidler, Wolfgang Schultz, Hans Jürgen Herbst, Claas-Fridtjof Lisowski</creator>
+        <description>Elberfelder-Bibel von 1871</description>
+        <publisher>http://www.freie-bibel.de</publisher>
+        <contributor>John Nelson Darby</contributor>
+        <contributor>Julius Anton Eugen von Poseck</contributor>
+        <contributor>Carl Friedrich Wilhelm Brockhaus</contributor>
+        <contributor>Hermanus Cornelis Voorhoeve</contributor>
+        <date>2013-08-03</date>
+        <type>Text</type>
         <format>Haggai XML Bible Markup Language</format>
-        <identifier>kjv</identifier>
-        <source>http://www.unboundbible.com/zips/index.cfm?lang=English</source>
-        <language>ENG</language>
-        <coverage>provide the Bible to the nations of the world</coverage>
-        <rights>We believe that this Bible is found in the Public Domain.</rights>
+        <identifier>elberfelder_1871</identifier>
+        <source>Elberfelder 1871, 3. durchgesehene Ausgabe NT</source>
+        <language>de-DE</language>
+        <coverage>Matthäus, Johannes 1, Apostelgeschichte 1-2, Hebräer, Jakobus</coverage>
+        <rights>
+        Gemeinfrei seit 1972-01-01.
+        </rights>
     </INFORMATION>
-    <BIBLEBOOK bnumber="1" bname="Genesis" bsname="Gen">
+    <BIBLEBOOK bnumber="40" bname="Matthäus">
+        <CAPTION>Evangelium nach Matthäus.</CAPTION>
         <CHAPTER cnumber="1">
-        <VERS vnumber="1">In the beginning God created the heaven and the earth.</VERS>
-        <VERS vnumber="2">And the earth was without form, and void; and darkness was upon the face of the deep. And the Spirit of God moved upon the face of the waters.</VERS>
-
-or
-
-    <CHAPTER cnumber="3">
-      <CAPTION vref="1">A Psalm of David, when he fled from Absalom his son.</CAPTION>
-      <VERS vnumber="1">LORD, how are they increased that trouble me! many are they that rise up against me.</VERS>
-
-or
-      <VERS vnumber="3">to snap their bondsand fling their cords away? <BR art="x-nl" /></VERS>
+        <PARAGRAPH>
+            <VERSE vnumber="1">Das Buch des Geschlechtes Jesu Christi, Sohnes Davids, Sohnes Abrahams.</VERSE>
+        </PARAGRAPH>
+        <PARAGRAPH>
+            <VERSE vnumber="2">Abraham zeugte Isaak, Isaak aber zeugte Jakob, Jakob aber zeugte Juda und seine Brüder,</VERSE>
+            <VERSE vnumber="3">Juda aber zeugte Phares und Zarah von der Thamar, Phares aber zeugte Hezron, Hezron aber zeugte Aram,</VERSE>
 """
 
 ProgName = "Haggai XML Bible format handler"
-ProgVersion = "0.27"
+ProgVersion = "0.28"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -79,7 +79,7 @@ from Bible import Bible, BibleBook
 filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
 extensionsToIgnore = ( 'ASC', 'BAK', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', 'HTM','HTML', 'JAR',
                     'LDS', 'LOG', 'MYBIBLE', 'NT','NTX', 'ODT', 'ONT','ONTX', 'OSIS', 'OT','OTX', 'PDB',
-                    'STY', 'SSF', 'TXT', 'USFM', 'USX', 'VRS', 'YET', 'ZIP', ) # Must be UPPERCASE and NOT begin with a dot
+                    'STY', 'SSF', 'TXT', 'USFM', 'USFX', 'USX', 'VRS', 'YET', 'ZIP', ) # Must be UPPERCASE and NOT begin with a dot
 
 
 

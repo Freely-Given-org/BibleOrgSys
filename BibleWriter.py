@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-05-13 by RJH (also update ProgVersion below)
+#   Last modified: 2014-05-14 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -62,7 +62,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.70"
+ProgVersion = "0.71"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -7129,17 +7129,25 @@ class BibleWriter( InternalBible ):
         if not outputFolder: outputFolder = "OutputFiles/BOS_ODF_Export/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
 
+        # Start LibreOffice
+        #       Either: /usr/bin/libreoffice --accept="socket,host=localhost,port=2002;urp;StarOffice.ServiceManager"
+        #       Or: /usr/bin/libreoffice --accept="socket,host=localhost,port=2002;urp;StarOffice.ServiceManager" --norestore --nologo --headless
+        if Globals.debugFlag and debuggingThisModule:
+            os.system( '/usr/bin/libreoffice --accept="socket,host=localhost,port=2002;urp;StarOffice.ServiceManager" &' )
+        else: # run LibreOffice headless
+            os.system( '/usr/bin/libreoffice --accept="socket,host=localhost,port=2002;urp;StarOffice.ServiceManager --norestore --nologo --headless" &' )
         if 0:
-            # Start LibreOffice
-            #       Either: libreoffice --accept="socket,host=localhost,port=2002;urp;StarOffice.ServiceManager"
-            #       Or: /usr/bin/libreoffice --accept="socket,host=localhost,port=2002;urp;StarOffice.ServiceManager" -norestore -nofirstwizard -nologo -headless
-            parameters = ['/usr/bin/libreoffice', '--accept="socket,host=localhost,port=2002;urp;StarOffice.ServiceManager"']
+            parameters = ['/usr/bin/libreoffice', '--accept="socket,host=localhost,port=2002;urp;StarOffice.ServiceManager"','--norestore','--nologo','--headless']
             print( "Parameters", repr(parameters) )
             myProcess = subprocess.Popen( parameters, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
             sleep( 5 ) # Wait 50msec
             #programOutputBytes, programErrorOutputBytes = myProcess.communicate()
             #returnCode = myProcess.returncode
             #print( "returnCode", returnCode )
+            # Why does this give:
+            #   context = resolver.resolve("uno:socket,host=localhost,port=2002;urp;StarOffice.ComponentContext")
+            #   BibleWriter.NoConnectException: Connector : couldn't connect to socket (Success)
+        sleep( 0.25 ) # Wait 250msec for LibreOffice to start up
 
         ODF_PARAGRAPH_BREAK = uno.getConstantByName( "com.sun.star.text.ControlCharacter.PARAGRAPH_BREAK" )
         ODF_LINE_BREAK = uno.getConstantByName( "com.sun.star.text.ControlCharacter.LINE_BREAK" )
@@ -7450,7 +7458,7 @@ class BibleWriter( InternalBible ):
                     else:
                         logging.critical( "toODF: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(givenText) ) )
                         unhandledMarkers.add( marker )
-                        halt
+                        if Globals.debugFlag: halt
             else: # No character formatting here
                 documentText.insertString( textCursor, text, 0 )
             return
@@ -7473,10 +7481,11 @@ class BibleWriter( InternalBible ):
 
         # Create and save the ODF files
         for j, (BBB,bookObject) in enumerate( self.books.items() ):
+            if Globals.verbosityLevel > 2: print( "  Creating ODF file for {}...".format( BBB ) )
             pseudoUSFMData = bookObject._processedLines
 
             # Create the blank document
-            filename = "{:02}-BOS-BibleWriter-{}.odt".format( j, BBB )
+            filename = "{:02}-{}_BOS-BibleWriter.odt".format( j, BBB )
             filepath = os.path.join( os.getcwd(), outputFolder, Globals.makeSafeFilename( filename ) )
             if Globals.verbosityLevel > 2: print( "  " + _("Creating '{}'...").format( filename ) )
             document = desktop.loadComponentFromURL( sourceURL, "_blank", 0, () )
@@ -7827,13 +7836,25 @@ class BibleWriter( InternalBible ):
                         #.format( entry.getMarker(), entry.getOriginalMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras() ) )
 
             # Save the created document
-            #print( j, "filepath", repr(filepath) )
             document.storeAsURL( "file://{}".format( filepath ), () )
-            if BBB!='GEN':
-                document.dispose() # Close the document
-            if j>=65:
-                print( "Unhandled markers:", unhandledMarkers )
-                halt
+            #if BBB!='GEN':
+            document.dispose() # Close the document (even though it might be a headless server anyway)
+            #if j>=2:
+                #break
+                #print( "Unhandled markers:", unhandledMarkers )
+                #halt
+
+        if not Globals.debugFlag: # Now kill our LibreOffice server -- NOTE: Linux-only code!!!
+            import signal
+            p = subprocess.Popen(['ps', 'xa'], stdout=subprocess.PIPE)
+            out, err = p.communicate()
+            for lineBytes in out.splitlines():
+                line = bytes.decode( lineBytes )
+                print( "line", repr(line) )
+                if 'libreoffice' in line and "ServiceManager" in line:
+                    pid = int( line.split(None, 1)[0] )
+                    print( "pid", pid )
+                    os.kill( pid, signal.SIGKILL )
 
         if unhandledMarkers:
             logging.warning( "toODF: Unhandled markers were {}".format( unhandledMarkers ) )
@@ -7848,7 +7869,6 @@ class BibleWriter( InternalBible ):
                 filepath = os.path.join( outputFolder, filename )
                 zf.write( filepath, filename ) # Save in the archive without the path
         zf.close()
-
 
         return True
     # end of BibleWriter.toODF

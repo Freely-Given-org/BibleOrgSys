@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ZefaniaXMLBible.py
-#   Last modified: 2014-04-25 by RJH (also update ProgVersion below)
+#   Last modified: 2014-05-15 by RJH (also update ProgVersion below)
 #
 # Module handling Zefania XML Bibles
 #
@@ -26,6 +26,11 @@
 """
 Module reading and loading Zefania XML Bibles:
     <?xml version="1.0" encoding="utf-8"?>
+    <!--Nice Viewer for this file are found here-->     # May or may not have these editor lines
+    <!--http://www.theword.gr-->
+    <!--http://www.mybible.de-->
+    <!--http://bgfdb.de/zefaniaxml/bml/-->
+    <!--Visit the online documentation for Zefania XML Markup-->
     <XMLBIBLE xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="zef2005.xsd" version="2.0.1.18" status="v" biblename="King James Version" type="x-bible" revision="0">
     <INFORMATION>
         <title>King James Version</title>
@@ -59,7 +64,7 @@ or
 """
 
 ProgName = "Zefania XML Bible format handler"
-ProgVersion = "0.26"
+ProgVersion = "0.27"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -79,7 +84,7 @@ from Bible import Bible, BibleBook
 filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
 extensionsToIgnore = ( 'ASC', 'BAK', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', 'HTM','HTML', 'JAR',
                     'LDS', 'LOG', 'MYBIBLE', 'NT','NTX', 'ODT', 'ONT','ONTX', 'OSIS', 'OT','OTX', 'PDB',
-                    'STY', 'SSF', 'TXT', 'USFM', 'USX', 'VRS', 'YET', 'ZIP', ) # Must be UPPERCASE and NOT begin with a dot
+                    'STY', 'SSF', 'TXT', 'USFM', 'USFX', 'USX', 'VRS', 'YET', 'ZIP', ) # Must be UPPERCASE and NOT begin with a dot
 
 
 
@@ -138,7 +143,8 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False 
             and not firstLines[0].startswith( '\ufeff<?xml version="1.0"' ): # same but with BOM
                 if Globals.verbosityLevel > 2: print( "ZB (unexpected) first line was '{}' in {}".format( firstLines, thisFilename ) )
                 continue
-            if not firstLines[1].startswith( '<!--Nice Viewer' ) \
+            if not firstLines[1].startswith( '<XMLBIBLE' ) \
+            and not firstLines[1].startswith( '<!--Nice Viewer' ) \
             and not firstLines[1].startswith( '<!--Builded with' ) \
             and not firstLines[1].startswith( '<!--For Programmers' ) \
             and not firstLines[1].startswith( '<!--http://zefania' ):
@@ -184,7 +190,8 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False 
                 and not firstLines[0].startswith( '\ufeff<?xml version="1.0"' ): # same but with BOM
                     if Globals.verbosityLevel > 2: print( "ZB (unexpected) first line was '{}' in {}".format( firstLines, thisFilename ) )
                     continue
-                if not firstLines[1].startswith( '<!--Nice Viewer' ) \
+                if not firstLines[1].startswith( '<XMLBIBLE' ) \
+                and not firstLines[1].startswith( '<!--Nice Viewer' ) \
                 and not firstLines[1].startswith( '<!--Builded with' ) \
                 and not firstLines[1].startswith( '<!--For Programmers' ) \
                 and not firstLines[1].startswith( '<!--http://zefania' ):
@@ -657,13 +664,14 @@ def demo():
     if Globals.verbosityLevel > 0: print( ProgNameVersion )
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
-        testFolder = "../../../../../Data/Work/Bibles/Zefania modules/"
+        testFolder = "Tests/DataFilesForTests/ZefaniaTest/"
+        #testFolder = "../../../../../Data/Work/Bibles/Zefania modules/"
         print( "TestA1", ZefaniaXMLBibleFileCheck( testFolder ) )
         print( "TestA2", ZefaniaXMLBibleFileCheck( testFolder, autoLoad=True ) )
         #testSubfolder = os.path.join( testFolder, 'something/' )
         #print( "TestB1", ZefaniaXMLBibleFileCheck( testSubfolder ) )
         #print( "TestB2", ZefaniaXMLBibleFileCheck( testSubfolder, autoLoad=True ) )
-
+    halt
 
     if 1:
         testFolder = "../../../../../Data/Work/Bibles/Zefania modules/"
