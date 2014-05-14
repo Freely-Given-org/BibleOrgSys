@@ -64,7 +64,7 @@ or
 """
 
 ProgName = "Zefania XML Bible format handler"
-ProgVersion = "0.27"
+ProgVersion = "0.28"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -271,7 +271,7 @@ class ZefaniaXMLBible( Bible ):
             Globals.checkXMLNoTail( self.tree, location, '1wk8' )
 
             schema = None
-            name = status = BibleType = revision = lgid = None
+            name = status = BibleType = revision = version = lgid = None
             for attrib,value in self.tree.items():
                 if attrib == ZefaniaXMLBible.XMLNameSpace + 'noNamespaceSchemaLocation':
                     schema = value
