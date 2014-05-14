@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-05-14 by RJH (also update ProgVersion below)
+#   Last modified: 2014-05-15 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -7135,7 +7135,7 @@ class BibleWriter( InternalBible ):
         if Globals.debugFlag and debuggingThisModule:
             os.system( '/usr/bin/libreoffice --accept="socket,host=localhost,port=2002;urp;StarOffice.ServiceManager" &' )
         else: # run LibreOffice headless
-            os.system( '/usr/bin/libreoffice --accept="socket,host=localhost,port=2002;urp;StarOffice.ServiceManager --norestore --nologo --headless" &' )
+            os.system( '/usr/bin/libreoffice --accept="socket,host=localhost,port=2002;urp;StarOffice.ServiceManager" --norestore --nologo --headless &' )
         if 0:
             parameters = ['/usr/bin/libreoffice', '--accept="socket,host=localhost,port=2002;urp;StarOffice.ServiceManager"','--norestore','--nologo','--headless']
             print( "Parameters", repr(parameters) )
@@ -7147,7 +7147,7 @@ class BibleWriter( InternalBible ):
             # Why does this give:
             #   context = resolver.resolve("uno:socket,host=localhost,port=2002;urp;StarOffice.ComponentContext")
             #   BibleWriter.NoConnectException: Connector : couldn't connect to socket (Success)
-        sleep( 0.25 ) # Wait 250msec for LibreOffice to start up
+        sleep( 1 ) # Wait a second to get sure that LibreOffice has time to start up
 
         ODF_PARAGRAPH_BREAK = uno.getConstantByName( "com.sun.star.text.ControlCharacter.PARAGRAPH_BREAK" )
         ODF_LINE_BREAK = uno.getConstantByName( "com.sun.star.text.ControlCharacter.LINE_BREAK" )
