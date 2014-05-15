@@ -7129,25 +7129,25 @@ class BibleWriter( InternalBible ):
         if not outputFolder: outputFolder = "OutputFiles/BOS_ODF_Export/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
 
-        # Start LibreOffice
-        #       Either: /usr/bin/libreoffice --accept="socket,host=localhost,port=2002;urp;StarOffice.ServiceManager"
-        #       Or: /usr/bin/libreoffice --accept="socket,host=localhost,port=2002;urp;StarOffice.ServiceManager" --norestore --nologo --headless
-        if Globals.debugFlag and debuggingThisModule:
-            os.system( '/usr/bin/libreoffice --accept="socket,host=localhost,port=2002;urp;StarOffice.ServiceManager" &' )
-        else: # run LibreOffice headless
-            os.system( '/usr/bin/libreoffice --accept="socket,host=localhost,port=2002;urp;StarOffice.ServiceManager" --norestore --nologo --headless &' )
-        if 0:
-            parameters = ['/usr/bin/libreoffice', '--accept="socket,host=localhost,port=2002;urp;StarOffice.ServiceManager"','--norestore','--nologo','--headless']
-            print( "Parameters", repr(parameters) )
-            myProcess = subprocess.Popen( parameters, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
-            sleep( 5 ) # Wait 50msec
-            #programOutputBytes, programErrorOutputBytes = myProcess.communicate()
-            #returnCode = myProcess.returncode
-            #print( "returnCode", returnCode )
-            # Why does this give:
-            #   context = resolver.resolve("uno:socket,host=localhost,port=2002;urp;StarOffice.ComponentContext")
-            #   BibleWriter.NoConnectException: Connector : couldn't connect to socket (Success)
-        sleep( 1 ) # Wait a second to get sure that LibreOffice has time to start up
+        if 0: # Start LibreOffice
+            #       Either: /usr/bin/libreoffice --accept="socket,host=localhost,port=2002;urp;StarOffice.ServiceManager"
+            #       Or: /usr/bin/libreoffice --accept="socket,host=localhost,port=2002;urp;StarOffice.ServiceManager" --norestore --nologo --headless
+            if Globals.debugFlag and debuggingThisModule:
+                os.system( '/usr/bin/libreoffice --accept="socket,host=localhost,port=2002;urp;StarOffice.ServiceManager" &' )
+            else: # run LibreOffice headless
+                os.system( '/usr/bin/libreoffice --accept="socket,host=localhost,port=2002;urp;StarOffice.ServiceManager" --norestore --nologo --headless &' )
+            if 0:
+                parameters = ['/usr/bin/libreoffice', '--accept="socket,host=localhost,port=2002;urp;StarOffice.ServiceManager"','--norestore','--nologo','--headless']
+                print( "Parameters", repr(parameters) )
+                myProcess = subprocess.Popen( parameters, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
+                sleep( 5 ) # Wait 50msec
+                #programOutputBytes, programErrorOutputBytes = myProcess.communicate()
+                #returnCode = myProcess.returncode
+                #print( "returnCode", returnCode )
+                # Why does this give:
+                #   context = resolver.resolve("uno:socket,host=localhost,port=2002;urp;StarOffice.ComponentContext")
+                #   BibleWriter.NoConnectException: Connector : couldn't connect to socket (Success)
+            sleep( 1 ) # Wait a second to get sure that LibreOffice has time to start up
 
         ODF_PARAGRAPH_BREAK = uno.getConstantByName( "com.sun.star.text.ControlCharacter.PARAGRAPH_BREAK" )
         ODF_LINE_BREAK = uno.getConstantByName( "com.sun.star.text.ControlCharacter.LINE_BREAK" )
