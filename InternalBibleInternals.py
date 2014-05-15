@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleInternals.py
-#   Last modified: 2014-05-06 by RJH (also update ProgVersion below)
+#   Last modified: 2014-05-15 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Bible internals handler"
-ProgVersion = "0.25"
+ProgVersion = "0.26"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -551,7 +551,7 @@ class InternalBibleIndex:
                         logging.error( "  mI:sAO now {}".format( (saveJ,lineCount,context) ) )
                         for ixx in range( saveJ, saveJ+lineCount ):
                             logging.error( "   mI:sAO {} {}".format( self.givenBibleEntries[ixx], context ) )
-                        if Globals.debugFlag: halt # This is a serious error that is losing Biblical text
+                        if Globals.debugFlag and debuggingThisModule: halt # This is a serious error that is losing Biblical text
                 self.indexData[saveCV] = InternalBibleIndexEntry( saveJ, lineCount, context )
                 saveCV = saveJ = None
                 lineCount = 0
