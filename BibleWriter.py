@@ -7399,59 +7399,17 @@ class BibleWriter( InternalBible ):
             if Globals.verbosityLevel > 2: print( "  " + _("Creating '{}'...").format( filename ) )
             document = frameDesktop.loadComponentFromURL( sourceURL, "_blank", 0, () )
             documentText = document.Text
-            textCursor = documentText.createTextCursor()
-
-            ourGlobals = {}
-            ourGlobals['nextFootnoteIndex'] = ourGlobals['nextXRefIndex'] = 0
-            ourGlobals['footnoteMD'], ourGlobals['endnoteMD'], ourGlobals['xrefMD'] = [], [], []
-
-            #textCursor.setPropertyValue("CharHeight", 20)
-            #textCursor.setPropertyValue("CharFontName", "Arial")
-            #textCursor.setPropertyValue("CharWeight", 150) # == bold
-
-            #document.Text.insertString(textCursor, "This text gets the footnote.", 0)
-            #footnote = document.createInstance( "com.sun.star.text.Footnote")
-            #document.Text.insertTextContent(textCursor, footnote, 0)
-            #footnotecursor = footnote.Text.createTextCursor()
-            #footnote.insertString(footnotecursor, "This is the actual footnote.", 0)
-            #document.Text.insertString(textCursor, " And here is more text following the footnote", 0)
-
-            ##character color
-            #tRange.setPropertyValue( "CharColor", 255 )
-            ## CharPosture receives an enum
-            #tRange.CharPosture = uno.getConstantByName("com.sun.star.awt.FontSlant.ITALIC")
-            ## tRange.setPropertyValue( "CharShadowed", uno.Bool(1) )
-            ## tRange.setPropertyValue( "CharWeight", 150)
-            #style.setPropertyValue("CharDiffHeight", -3)
-
-            #xPropertySet.setPropertyValue("CharWeight", new Float( com.sun.star.awt.FontWeight.BOLD ) );
-            #System.out.println( "set the font attribute 'Bold'" );
-
-            #xPropertySet.setPropertyValue("CharAutoKerning", new Boolean( true ) );
-            #System.out.println( "set the paragraph attribute 'AutoKerning'" );
-
-            #xPropertySet.setPropertyValue("ParaFirstLineIndent", new Integer( 0 ) );
-            #System.out.println( "set the first line indent to 0 cm" );
-
-            #xPropertySet.setPropertyValue("BreakType", com.sun.star.style.BreakType.PAGE_AFTER );
-            #System.out.println( "set the paragraph attribute Breaktype to PageAfter" );
-
+            initialTextCursor = documentText.createTextCursor()
+            textCursor = initialTextCursor
 
             styleFamilies = document.StyleFamilies
-            if 1: # This is how we introduce new styles to the template
+            if 0: # This is how we add new styles to the existing template
                 paragraphStyles = styleFamilies.getByName("ParagraphStyles")
 
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Footnote" )
-                paragraphStyles.insertByName( "Bible Footnote", style )
-
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Endnote" )
-                paragraphStyles.insertByName( "Bible Endnote", style )
-
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Footnote" )
-                paragraphStyles.insertByName( "Verse Cross Reference", style )
+                #style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                #style.setParentStyle( "Bible Paragraph" )
+                #style.setPropertyValue( "ParaKeepTogether", True )
+                #paragraphStyles.insertByName( "Temp Rubbish", style )
 
                 characterStyles = styleFamilies.getByName( "CharacterStyles" )
                 ITALIC_TEXT_POSTURE = uno.Enum( "com.sun.star.awt.FontSlant", "ITALIC" )
@@ -7462,6 +7420,7 @@ class BibleWriter( InternalBible ):
                 #characterStyles.insertByName( "Footnote Origin", style )
 
             if not startWithTemplate: # Create initial styles (not required or allowed if we use the template)
+                # PARAGRAPH STYLES
                 paragraphStyles = styleFamilies.getByName("ParagraphStyles")
                 CENTER_PARAGRAPH = uno.Enum( "com.sun.star.style.ParagraphAdjust", "CENTER" )
                 RIGHT_PARAGRAPH = uno.Enum( "com.sun.star.style.ParagraphAdjust", "RIGHT" )
@@ -7470,6 +7429,7 @@ class BibleWriter( InternalBible ):
                 style.setPropertyValue( "CharHeight", 20 )
                 style.setPropertyValue( "CharWeight", 150 ) # bold
                 style.setPropertyValue( "ParaAdjust", CENTER_PARAGRAPH )
+                style.setPropertyValue( "ParaKeepTogether", True )
                 paragraphStyles.insertByName( "Main Title", style ) # Base style only
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 style.setParentStyle( "Main Title" )
@@ -7486,6 +7446,7 @@ class BibleWriter( InternalBible ):
 
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 style.setPropertyValue( "CharWeight", 150 ) # bold
+                style.setPropertyValue( "ParaKeepTogether", True )
                 paragraphStyles.insertByName( "Introduction Section Heading", style ) # Base style only
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 style.setParentStyle( "Introduction Section Heading" )
@@ -7502,6 +7463,7 @@ class BibleWriter( InternalBible ):
 
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 style.setPropertyValue( "CharWeight", 150 ) # bold
+                style.setPropertyValue( "ParaKeepTogether", True )
                 paragraphStyles.insertByName( "Introduction Outline Title", style )
 
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
@@ -7548,6 +7510,7 @@ class BibleWriter( InternalBible ):
 
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 style.setPropertyValue( "CharWeight", 150 ) # bold
+                style.setPropertyValue( "ParaKeepTogether", True )
                 paragraphStyles.insertByName( "Major Section Heading", style ) # Base style only
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 style.setParentStyle( "Major Section Heading" )
@@ -7565,6 +7528,7 @@ class BibleWriter( InternalBible ):
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 style.setPropertyValue( "CharWeight", 150 ) # bold
                 style.setPropertyValue( "ParaAdjust", CENTER_PARAGRAPH )
+                style.setPropertyValue( "ParaKeepTogether", True )
                 paragraphStyles.insertByName( "Section Heading", style ) # Base style only
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 style.setParentStyle( "Section Heading" )
@@ -7581,6 +7545,7 @@ class BibleWriter( InternalBible ):
 
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 style.setPropertyValue( "ParaAdjust", CENTER_PARAGRAPH )
+                style.setPropertyValue( "ParaKeepTogether", True )
                 paragraphStyles.insertByName( "Section CrossReference", style )
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 style.setPropertyValue( "ParaAdjust", CENTER_PARAGRAPH )
@@ -7711,7 +7676,20 @@ class BibleWriter( InternalBible ):
                 style.setParentStyle( "Prose Paragraph" )
                 paragraphStyles.insertByName( "Closure Paragraph", style )
 
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Footnote" )
+                paragraphStyles.insertByName( "Bible Footnote", style )
 
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Endnote" )
+                paragraphStyles.insertByName( "Bible Endnote", style )
+
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Footnote" )
+                paragraphStyles.insertByName( "Verse Cross Reference", style )
+
+
+                # CHARACTER STYLES
                 characterStyles = styleFamilies.getByName("CharacterStyles")
                 ITALIC_TEXT_POSTURE = uno.Enum( "com.sun.star.awt.FontSlant", "ITALIC" )
 
@@ -7828,7 +7806,8 @@ class BibleWriter( InternalBible ):
                     start a new paragraph and insert the text.
                 """
                 nonlocal firstEverParagraphFlag
-                if not firstEverParagraphFlag: documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, False );
+                if not firstEverParagraphFlag: # Don't want a blank paragraph at the start of the document
+                    documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, False );
                 textCursor.setPropertyValue( "ParaStyleName", paragraphStyleName )
                 if adjText or extras:
                     insertFormattedODFText( BBB, C, V, text, extras, documentText, textCursor, defaultCharacterStyleName )
@@ -7862,6 +7841,30 @@ class BibleWriter( InternalBible ):
                     insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
                 elif marker == 'c':
                     C = adjText
+                    if C == '1': # It's the beginning of the actual Bible text -- make a new double-column section
+                        if not firstEverParagraphFlag: # leave a space between the introduction and the chapter text
+                            documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, False );
+                            textCursor.setPropertyValue( "ParaStyleName", "Blank Line Paragraph" )
+                            documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, False );
+
+                        # Create a new text section and insert it into the document
+                        chapterSection = document.createInstance( "com.sun.star.text.TextSection" )
+                        documentText.insertTextContent( initialTextCursor, chapterSection, False )
+
+                        # Create a column object with two columns
+                        columns = document.createInstance( "com.sun.star.text.TextColumns" )
+                        columns.setColumnCount( 2 )
+                        columns.setPropertyValue( "AutomaticDistance", 300 ) # Not sure of the unit here
+
+                        # Insert columns into the text section
+                        chapterSection.setPropertyValue( "TextColumns", columns )
+                        #chapterSection.setPropertyValue( "DontBalanceTextColumns", True )
+
+                        anchor = chapterSection.getAnchor()
+                        columnCursor = documentText.createTextCursorByRange( anchor )
+
+                        textCursor = columnCursor # So that future inserts go in here
+                        firstEverParagraphFlag = True
                 elif marker == 'c#':
                     textCursor.setPropertyValue( "CharStyleName", "Chapter Number" )
                     documentText.insertString( textCursor, C, False )
