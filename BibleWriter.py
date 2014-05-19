@@ -7129,7 +7129,7 @@ class BibleWriter( InternalBible ):
         if not outputFolder: outputFolder = "OutputFiles/BOS_ODF_Export/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
 
-        startWithTemplate = True # Start with template (all styles already built) or just a blank document
+        startWithTemplate = True # Start with template (all styles already built) or just a blank document (MUCH slower)
 
         ODF_PARAGRAPH_BREAK = uno.getConstantByName( "com.sun.star.text.ControlCharacter.PARAGRAPH_BREAK" )
         ODF_LINE_BREAK = uno.getConstantByName( "com.sun.star.text.ControlCharacter.LINE_BREAK" )
@@ -7403,6 +7403,13 @@ class BibleWriter( InternalBible ):
             textCursor = initialTextCursor
 
             styleFamilies = document.StyleFamilies
+            pageStyles = styleFamilies.getByName( "PageStyles" )
+            defaultPageStyle = pageStyles.getByName( "Default Style" )
+            headerText = defaultPageStyle.getPropertyValue( "HeaderText" )
+            headerCursor = headerText.createTextCursor()
+            #headerText.insertString( headerCursor, "Test Header", False )
+
+
             if 0: # This is how we add new styles to the existing template
                 paragraphStyles = styleFamilies.getByName("ParagraphStyles")
 
@@ -7419,7 +7426,52 @@ class BibleWriter( InternalBible ):
                 #style.setPropertyValue( "CharBackColor", 0x00FFFF00 ) # alpha/R/G/B = yellow
                 #characterStyles.insertByName( "Footnote Origin", style )
 
+
             if not startWithTemplate: # Create initial styles (not required or allowed if we use the template)
+
+                ## PAGE STYLES
+                #pageStyles = styleFamilies.getByName( "PageStyles" )
+                #pageStyles = styleFamilies.getByName( "PageStyles" )
+                #defaultPageStyle = pageStyles.getByName( "Default Style" )
+                #defaultPageStyle.setPropertyValue( "HeaderIsOn", True )
+                #defaultPageStyle.setPropertyValue( "FooterIsOn", True )
+
+                #leftPageStyle = pageStyles.getByName( "Left Page" )
+                #rightPageStyle= pageStyles.getByName( "Right Page" )
+                #leftPageStyle.setPropertyValue( "HeaderIsOn", True )
+                #rightPageStyle.setPropertyValue( "HeaderIsOn", True )
+                #leftPageStyle.setPropertyValue( "FooterIsOn", True )
+                #rightPageStyle.setPropertyValue( "FooterIsOn", True )
+                #leftPageStyle = pageStyles.getByName( "Left Page" )
+                #leftPageStyle.FollowStyle = ( "Right Page" )
+                #rightPageStyle= pageStyles.getByName( "Right Page" )
+                #rightPageStyle.FollowStyle = ( "Left Page" )
+                #headerTextRight = rightPageStyle.getPropertyValue( "HeaderTextRight" )
+                #headerTextLeft = leftPageStyle.getPropertyValue( "HeaderTextLeft" )
+                #headerCursorRight = headerTextRight.createTextCursor()
+                #headerCursorLeft = headerTextLeft.createTextCursor()
+
+                #PN = doc.createInstance("com.sun.star.text.textfield.PageNumber")
+                #PC = doc.createInstance("com.sun.star.text.textfield.PageCount")
+                #PN.NumberingType=4
+                #PN.SubType="CURRENT"
+                #PC.NumberingType=4
+                #Logo_OO=doc.createInstance( "com.sun.star.text.TextGraphicObject" )
+                #Logo_OO.AnchorType = "AT_PARAGRAPH"
+                #Logo_OO.GraphicURL = "file:///home/beranger/Documents/FE_Rapport/logo_OO.png"
+                #Logo_OO.HoriOrient=3
+                #Logo_OO.SurroundAnchorOnly = False
+
+                #headerTextRight.insertString(headerCursorRight,"Un truc à inclure dans le header Right", False)
+                #headerTextLeft.insertString(headerCursorLeft,"Un truc à inclure dans le header left", False)
+
+                #FooterTextRight.insertTextContent(FooterCursorRight, Logo_OO, False )
+
+                #FooterTextLeft.insertTextContent(FooterCursorLeft,PN, False)
+                #FooterTextLeft.insertString(FooterCursorLeft,"/", False)
+                #FooterTextLeft.insertTextContent(FooterCursorLeft,PC, False)
+
+
                 # PARAGRAPH STYLES
                 paragraphStyles = styleFamilies.getByName("ParagraphStyles")
                 CENTER_PARAGRAPH = uno.Enum( "com.sun.star.style.ParagraphAdjust", "CENTER" )
@@ -7798,6 +7850,18 @@ class BibleWriter( InternalBible ):
                 style = document.createInstance( "com.sun.star.style.CharacterStyle" )
                 characterStyles.insertByName( "Small Caps Text", style )
 
+            ## Setup PAGE STYLES
+            #pageStyles = styleFamilies.getByName( "PageStyles" )
+            #defaultPageStyle = pageStyles.getByName( "Default Style" )
+            #defaultPageStyle.setPropertyValue( "HeaderIsOn", True )
+            #defaultPageStyle.setPropertyValue( "FooterIsOn", True )
+
+            #headerTextRight = rightPageStyle.getPropertyValue( "HeaderTextRight" )
+            #headerTextLeft = leftPageStyle.getPropertyValue( "HeaderTextLeft" )
+            #headerCursorRight = headerTextRight.createTextCursor()
+            #headerCursorLeft = headerTextLeft.createTextCursor()
+
+
 
             firstEverParagraphFlag = True
             def insertODFParagraph( BBB, C, V, paragraphStyleName, text, extras, documentText, textCursor, defaultCharacterStyleName ):
@@ -7862,6 +7926,10 @@ class BibleWriter( InternalBible ):
 
                         anchor = chapterSection.getAnchor()
                         columnCursor = documentText.createTextCursorByRange( anchor )
+
+                        try: headerField = bookObject.longTOCName
+                        except: headerField = bookObject.assumedBookName
+                        headerText.insertString( headerCursor, headerField, False )
 
                         textCursor = columnCursor # So that future inserts go in here
                         firstEverParagraphFlag = True
