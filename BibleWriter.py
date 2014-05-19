@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-05-15 by RJH (also update ProgVersion below)
+#   Last modified: 2014-05-19 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -62,7 +62,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.71"
+ProgVersion = "0.72"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -7139,17 +7139,18 @@ class BibleWriter( InternalBible ):
         ODF_APPEND_PARAGRAPH = uno.getConstantByName( "com.sun.star.text.ControlCharacter.APPEND_PARAGRAPH" )
 
         weStartedLibreOffice = False
+        DEFAULT_OPENOFFICE_PORT = 2002
         if 0: # Seems to work better is this is started manually (as a normal user) and left running
             # Start LibreOffice
             #       Either: /usr/bin/libreoffice --accept="socket,host=localhost,port=2002;urp;StarOffice.ServiceManager"
             #       Or: /usr/bin/libreoffice --accept="socket,host=localhost,port=2002;urp;StarOffice.ServiceManager" --norestore --nologo --headless
             if Globals.debugFlag and debuggingThisModule:
-                os.system( '/usr/bin/libreoffice --accept="socket,host=localhost,port=2002;urp;StarOffice.ServiceManager" &' )
+                os.system( '/usr/bin/libreoffice --accept="socket,host=localhost,port={};urp;StarOffice.ServiceManager" &'.format( DEFAULT_OPENOFFICE_PORT ) )
             else: # run LibreOffice headless
-                os.system( '/usr/bin/libreoffice --accept="socket,host=localhost,port=2002;urp;StarOffice.ServiceManager" --norestore --nologo --headless &' )
+                os.system( '/usr/bin/libreoffice --accept="socket,host=localhost,port={};urp;StarOffice.ServiceManager" --norestore --nologo --headless &'.format( DEFAULT_OPENOFFICE_PORT ) )
             weStartedLibreOffice = True
             if 0:
-                parameters = ['/usr/bin/libreoffice', '--accept="socket,host=localhost,port=2002;urp;StarOffice.ServiceManager"','--norestore','--nologo','--headless']
+                parameters = ['/usr/bin/libreoffice', '--accept="socket,host=localhost,port={};urp;StarOffice.ServiceManager"'.format( DEFAULT_OPENOFFICE_PORT ),'--norestore','--nologo','--headless']
                 print( "Parameters", repr(parameters) )
                 myProcess = subprocess.Popen( parameters, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
                 sleep( 5 ) # Wait 50msec
@@ -7163,9 +7164,10 @@ class BibleWriter( InternalBible ):
 
         # Set-up LibreOffice
         local = uno.getComponentContext()
-        resolver = local.ServiceManager.createInstanceWithContext("com.sun.star.bridge.UnoUrlResolver", local)
-        context = resolver.resolve("uno:socket,host=localhost,port=2002;urp;StarOffice.ComponentContext")
-        desktop = context.ServiceManager.createInstanceWithContext("com.sun.star.frame.Desktop", context)
+        urlResolver = local.ServiceManager.createInstanceWithContext( "com.sun.star.bridge.UnoUrlResolver", local )
+        componentContext = urlResolver.resolve( "uno:socket,host=localhost,port={};urp;StarOffice.ComponentContext".format( DEFAULT_OPENOFFICE_PORT ) )
+        serviceManager = componentContext.ServiceManager
+        frameDesktop = serviceManager.createInstanceWithContext( "com.sun.star.frame.Desktop", componentContext )
 
         # Locate our empty source file that we'll start from
         templateFilepath = os.path.join( os.getcwd(), defaultControlFolder, "BibleBook.ott" )
@@ -7226,252 +7228,159 @@ class BibleWriter( InternalBible ):
                     #print( " returns", result )
                     if Globals.debugFlag and (result.count('C')>1 or result.count('V')>1): halt
                     return '#' + result
-                # end of liveCV
+                # end of insertFormattedODFText.liveCV
 
 
-                def processNote( rawFootnoteContents, noteType ):
-                    """
-                    Return the MD for the processed footnote or endnote.
-                    It also accumulates MD in ourGlobals for the end notes.
+            def processNote( noteType, rawFootnoteContents, documentText, textCursor ):
+                """
+                Inserts the footnote or endnote into the ODF document.
 
-                    NOTE: The first parameter here already has the /f or (/fe) and /f* (or /fe*) removed.
+                NOTE: The first parameter here already has the /f or (/fe) and /f* (or /fe*) removed.
 
-                    \\f + \\fr 1:20 \\ft Su ka kaluwasan te Nawumi ‘keupianan,’ piru ka kaluwasan te Mara ‘masakit se geyinawa.’\\f* (Backslashes are shown doubled here)
-                        gives
-                    <a title="Su ka kaluwasan te Nawumi &lsquo;keupianan,&rsquo; piru ka kaluwasan te Mara &lsquo;masakit se geyinawa.&rsquo;" href="#FNote0"><span class="FootnoteLinkSymbol"><sup>[fn]</sup></span></a>
-                    <note style="f" caller="+"><char style="fr" closed="false">2:23 </char><char style="ft">Te Hibruwanen: bayew egpekegsahid ka ngaran te “malitan” wey “lukes.”</char></note>
-                        plus
-                    <p id="FNote0" class="footnote"><a title="Go back up to 1:20 in the text" href="#C1V20"><span class="ChapterVerse">1:20 </span></a><a title="su" href="../../Lexicon/indexLSIM-45.htm#su1"><span class="WordLink">Su</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="kaluwasan" href="../../Lexicon/indexLLO-67.htm#luwas2"><span class="WordLink">kaluwasan</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <span class="NameWordLink">Nawumi</span> &lsquo;<a title="n. fortunate (upian)" href="../../Lexicon/Details/upian.htm"><span class="WordLink">keupianan</span></a>,&rsquo; <a title="conj. but" href="../../Lexicon/Details/piru.htm"><span class="WordLink">piru</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="kaluwasan" href="../../Lexicon/indexLLO-67.htm#luwas2"><span class="WordLink">kaluwasan</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="mara" href="../../Lexicon/Details/mara.htm"><span class="WordLink">Mara</span></a> &lsquo;<a title="adj. painful (sakit)" href="../../Lexicon/Details/sakit.htm"><span class="WordLink">masakit</span></a> <a title="se" href="../../Lexicon/indexLSE-64.htm#se1"><span class="WordLink">se</span></a> <a title="n. breath" href="../../Lexicon/Details/geyinawa.htm"><span class="WordLink">geyinawa</span></a>.&rsquo;</p>
-                    <p id="FNote1" class="footnote"><a title="Go back up to 3:9 in the text" href="#C3V9"><span class="ChapterVerse">3:9 </span></a><a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">Te</span></a> <a title="prop_n. Hebrew language (Hibru)" href="../../Lexicon/Details/Hibru.htm"><span class="WordLink">Hibruwanen</span></a>: <a title="buni" href="../../Lexicon/Details/buni2.htm"><span class="WordLink">Bunbuni</span></a> <a title="pron. you(sg); by you(sg)" href="../../Lexicon/Details/nu.htm"><span class="WordLink">nu</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="kumbalè" href="../../Lexicon/Details/kumbal%C3%A8.htm"><span class="WordLink">kumbale</span></a> <a title="pron. you(sg); by you(sg)" href="../../Lexicon/Details/nu.htm"><span class="WordLink">nu</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="suluhuanen" href="../../Lexicon/indexLSIM-45.htm#suluh%C3%B9"><span class="WordLink">suluhuanen</span></a> <a title="pron. you(sg); by you(sg)" href="../../Lexicon/Details/nu.htm"><span class="WordLink">nu</span></a>.</p>
-                    <p id="FNote2" class="footnote"><a title="Go back up to 4:11 in the text" href="#C4V11"><span class="ChapterVerse">4:11 </span></a><a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">Kene</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="adj. clear" href="../../Lexicon/Details/klaru.htm"><span class="WordLink">klaru</span></a> <a title="diya" href="../../Lexicon/indexLD-80.htm#diyav"><span class="WordLink">diye</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="adj. true (lehet)" href="../../Lexicon/Details/lehet1.htm"><span class="WordLink">malehet</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="migpuun" href="../../Lexicon/Details/puun.htm"><span class="WordLink">migpuunan</span></a> <a title="ke" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ke</span></a> <a title="n. other" href="../../Lexicon/Details/lein.htm"><span class="WordLink">lein</span></a> <a title="e" href="../../Lexicon/indexLA-77.htm#a"><span class="WordLink">e</span></a> <a title="part. also" href="../../Lexicon/Details/degma.htm"><span class="WordLink">degma</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="n. place" href="../../Lexicon/Details/inged.htm"><span class="WordLink">inged</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <span class="NameWordLink">Iprata</span>. <a title="kahiyen" href="../../Lexicon/Details/kahi.htm"><span class="WordLink">Kahiyen</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="adj. other" href="../../Lexicon/Details/duma.htm"><span class="WordLink">duma</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <span class="NameWordLink">Iprata</span> <a title="dem. that" href="../../Lexicon/Details/iyan.htm"><span class="WordLink">iyan</span></a> <a title="ka" href="../../Lexicon/indexLK-87.htm#ka"><span class="WordLink">ka</span></a> <a title="tapey" href="../../Lexicon/indexLT-96.htm#tapey1"><span class="WordLink">tapey</span></a> <a title="ne" href="../../Lexicon/indexLN-90.htm#ne1a"><span class="WordLink">ne</span></a> <a title="n. name" href="../../Lexicon/Details/ngaran.htm"><span class="WordLink">ngaran</span></a> <a title="te" href="../../Lexicon/indexLT-96.htm#ta"><span class="WordLink">te</span></a> <a title="See glossary entry for Bitlihim" href="../indexGlossary.htm#Bitlihim"><span class="WordLink">Bitlihim</span><span class="GlossaryLinkSymbol"><sup>[gl]</sup></span></a>.</p></div>
-                    """
-                    assert( noteType in ('footnote','endnote',) )
-                    markerList = Globals.USFMMarkers.getMarkerListFromText( rawFootnoteContents, includeInitialText=True )
-                    #print( "formatODFVerseText.processFootnote( {}, {} ) found {}".format( repr(rawFootnoteContents), ourGlobals, markerList ) )
-                    if noteType == 'footnote':
-                        fnIndex = ourGlobals['nextFootnoteIndex']; ourGlobals['nextFootnoteIndex'] += 1
-                    elif noteType == 'endnote':
-                        fnIndex = ourGlobals['nextEndnoteIndex']; ourGlobals['nextEndnoteIndex'] += 1
-                    caller = origin = originCV = fnText = fnTitle = ''
-                    if markerList: # We found some internal footnote markers
-                        spanOpen = False
-                        for marker, ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt in markerList:
-                            if spanOpen: fnText += '</span>'; spanOpen = False
-                            if marker is None:
-                                #if txt not in '-+': # just a caller
-                                caller = txt
-                            elif marker == 'fr':
-                                origin = txt
-                                originCV = origin
-                                if originCV and originCV[-1] in (':','.'): originCV = originCV[:-1]
-                                originCV = originCV.strip()
-                            elif marker == 'ft':
-                                fnText += txt
-                                fnTitle += txt
-                            elif marker == 'fk':
-                                fnText += '<span class="{}Keyword">'.format( noteType ) + txt
-                                fnTitle += txt
-                                spanOpen = True
-                            elif marker == 'fq':
-                                fnText += '<span class="{}TranslationQuotation">'.format( noteType ) + txt
-                                fnTitle += txt
-                                spanOpen = True
-                            elif marker == 'fqa':
-                                fnText += '<span class="{}AlternateTranslation">'.format( noteType ) + txt
-                                fnTitle += txt
-                                spanOpen = True
-                            elif marker == 'fl':
-                                fnText += '<span class="{}Label">'.format( noteType ) + txt
-                                fnTitle += txt
-                                spanOpen = True
-                            #elif marker == Should handle other internal markers here
-                            else:
-                                logging.error( "formatODFVerseText.processNote didn't handle {} {}:{} {} marker: {}".format( BBB, C, V, noteType, marker ) )
-                                fnText += txt
-                                fnTitle += txt
-                        if spanOpen: fnText += '</span>'; spanOpen = False
-                    else: # no internal markers found
-                        bits = rawFootnoteContents.split( ' ', 1 )
-                        if len(bits)==2: # assume the caller is the first bit
-                            caller = bits[0]
-                            if Globals.debugFlag: assert( len(caller) == 1 ) # Normally a +
-                            fnText = fnTitle = bits[1]
-                        else: # no idea really what the format was
-                            fnText = fnTitle = rawFootnoteContents
+                \\f + \\fr 1:20 \\ft Su ka kaluwasan te Nawumi ‘keupianan,’ piru ka kaluwasan te Mara ‘masakit se geyinawa.’\\f* (Backslashes are shown doubled here)
+                """
+                assert( noteType in ('fn','en',) )
+                markerList = Globals.USFMMarkers.getMarkerListFromText( rawFootnoteContents, includeInitialText=True )
+                #print( "formatODFVerseText.processFootnote( {}, {} ) found {}".format( repr(rawFootnoteContents), ourGlobals, markerList ) )
+                note = document.createInstance( "com.sun.star.text.Footnote" if noteType=='fn' else "com.sun.star.text.Endnote" )
+                documentText.insertTextContent( textCursor, note, False )
+                noteCursor = note.Text.createTextCursor()
+                noteCursor.setPropertyValue( "ParaStyleName", "Bible Footnote" if noteType=='fn' else "Bible Endnote" )
 
-                    idName = "{}{}".format( 'FNote' if noteType=='footnote' else 'ENote', fnIndex )
-                    noteMD = '[fn{}]({})'.format( noteType, idName )
+                noteStyleDict = { 'fr':'Footnote Origin', 'fk':'Footnote Keyword', 'fq':'Footnote Quotation',
+                                'fqa':'Footnote Alternate Translation', 'fl':'Footnote Label',
+                                'fp':'Footnote Paragraph', 'fv':'Footnote Verse Number',
+                                'ft':'Footnote Text', 'fdc':'Footnote Deuterocanonical',
+                                'fm':'Footnote Mark' }
 
-                    endMD = '<p id="{}" class="{}">'.format( idName, noteType )
-                    if originCV:
-                        endMD += '<a class="{}Origin" title="Go back up to {} in the text" href="{}">{}</a> ' \
-                                                            .format( noteType, originCV, liveCV(originCV), origin )
-                    endMD += '<span class="{}Entry">{}</span>'.format( noteType, fnText )
-                    endMD += '</p>'
-
-                    #print( "noteMD", BBB, noteMD )
-                    #print( "endMD", endMD )
-                    ourGlobals['footnoteMD' if noteType=='footnote' else 'endnoteMD'].append( endMD )
-                    #if fnIndex > 2: halt
-
-                    return noteMD
-                # end of __formatODFVerseText.processNote
+                caller = origin = originCV = fnText = fnTitle = '' # Probably no longer needed
+                if markerList: # We found some internal footnote markers
+                    for marker, ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt in markerList:
+                        if marker is None:
+                            #if txt not in '-+': # just a caller
+                            caller = txt
+                        elif marker in noteStyleDict:
+                            noteCursor.setPropertyValue( "CharStyleName", noteStyleDict[marker] )
+                            note.insertString( noteCursor, txt,  False )
+                        else:
+                            logging.error( "formatODFVerseText.processNote didn't handle {} {}:{} {} marker: {}".format( BBB, C, V, noteType, marker ) )
+                else: # no internal markers found
+                    noteCursor.setPropertyValue( "CharStyleName", "Footnote Text" )
+                    bits = rawFootnoteContents.split( ' ', 1 )
+                    if len(bits)==2: # assume the caller is the first bit
+                        caller = bits[0]
+                        if Globals.debugFlag: assert( len(caller) == 1 ) # Normally a +
+                        note.insertString( noteCursor, bits[1],  False )
+                    else: # no idea really what the format was
+                        note.insertString( noteCursor, rawFootnoteContents,  False )
+            # end of insertFormattedODFText.processNote
 
 
-                def processXRef( MDxref ):
-                    """
-                    Return the MD for the processed cross-reference (xref).
-                    It also accumulates MD in ourGlobals for the end notes.
+            def processCrossReference( rawXRef, documentText, textCursor ):
+                """
+                Inserts the cross-reference into the ODF document as a footnote.
 
-                    NOTE: The parameter here already has the /x and /x* removed.
+                NOTE: The parameter here already has the /x and /x* removed.
 
-                    \\x - \\xo 2:2: \\xt Lib 19:9-10; Diy 24:19.\\xt*\\x* (Backslashes are shown doubled here)
-                        gives
-                    <a title="Lib 19:9-10; Diy 24:19" href="#XRef0"><span class="XRefLinkSymbol"><sup>[xr]</sup></span></a>
-                    <a title="Lib 25:25" href="#XRef1"><span class="XRefLinkSymbol"><sup>[xr]</sup></span></a>
-                    <a title="Rut 2:20" href="#XRef2"><span class="XRefLinkSymbol"><sup>[xr]</sup></span></a>
-                        plus
-                    <p id="XRef0" class="XRef"><a title="Go back up to 2:2 in the text" href="#C2V2"><span class="ChapterVerse">2:2</span></a> <span class="VernacularCrossReference">Lib 19:9&#x2011;10</span>; <span class="VernacularCrossReference">Diy 24:19</span></p>
-                    """
-                    markerList = Globals.USFMMarkers.getMarkerListFromText( MDxref, includeInitialText=True )
-                    #print( "\nformatODFVerseText.processXRef( {}, {} ) gives {}".format( repr(MDxref), "...", markerList ) )
-                    xrefIndex = ourGlobals['nextXRefIndex']; ourGlobals['nextXRefIndex'] += 1
-                    caller = origin = originCV = xrefText = ''
-                    if markerList:
-                        for marker, ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt in markerList:
-                            if marker is None:
-                                #if txt not in '-+': # just a caller
-                                caller = txt
-                            elif marker == 'xo':
-                                origin = txt
-                                originCV = origin
-                                originCV = originCV.strip()
-                                if originCV and originCV[-1] in (':','.'): originCV = originCV[:-1]
-                            elif marker == 'xt':
-                                xrefText += txt
-                            #elif marker == Should handle other internal markers here
-                            else:
-                                logging.error( "formatODFVerseText.processXRef didn't handle {} {}:{} xref marker: {}".format( BBB, C, V, marker ) )
-                                xrefText += txt
-                    else: # there's no USFM markers at all in the xref --  presumably a caller and then straight text
-                        if MDxref.startswith('+ ') or MDxref.startswith('- '):
-                            caller = MDxref[0]
-                            xrefText = MDxref[2:].strip()
-                        else: # don't really know what it is -- assume it's all just text
-                            xrefText = MDxref.strip()
+                \\x - \\xo 2:2: \\xt Lib 19:9-10; Diy 24:19.\\xt*\\x* (Backslashes are shown doubled here)
+                """
+                markerList = Globals.USFMMarkers.getMarkerListFromText( rawXRef, includeInitialText=True )
+                #print( "\nformatODFVerseText.processCrossReference( {}, {} ) gives {}".format( repr(rawXRef), "...", markerList ) )
 
-                    xrefMD = '[xr{}]({})'.format( xrefIndex, xrefText )
+                xrefNote = document.createInstance( "com.sun.star.text.Footnote" )
+                documentText.insertTextContent( textCursor, xrefNote, False )
+                noteCursor = xrefNote.Text.createTextCursor()
+                noteCursor.setPropertyValue( "ParaStyleName", "Verse Cross Reference" )
 
-                    endMD = '<p id="XRef{}" class="xref">'.format( xrefIndex )
-                    if not origin: # we'll try to make one
-                        originCV = "{}:{}".format( C, V )
-                    if originCV: # This only handles CV separator of : so far
-                        endMD += '<a class="xrefOrigin" title="Go back up to {} in the text" href="{}">{}</a> ' \
-                                                            .format( originCV, liveCV(originCV), originCV )
-                    endMD += '<span class="xrefEntry">{}</span>'.format( xrefText )
-                    endMD += '</p>'
+                xrefStyleDict = { 'xo':'Cross Reference Origin', 'xk':'Cross Reference Keyword',
+                                 'xq':'Cross Reference Quotation', 'xt':'Cross Reference Target',
+                                 'xot':'Cross Reference OT Target', 'xnt':'Cross Reference NT Target',
+                                 'xdc':'Cross Reference Deuterocanon Target' }
 
-                    #print( "xrefMD", BBB, xrefMD )
-                    #print( "endMD", endMD )
-                    ourGlobals['xrefMD'].append( endMD )
-                    #if xrefIndex > 2: halt
-
-                    return xrefMD
-                # end of insertFormattedODFText.processXRef
+                caller = origin = originCV = xrefText = '' # Probably no longer needed
+                if markerList:
+                    for marker, ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt in markerList:
+                        if marker is None:
+                            #if txt not in '-+': # just a caller
+                            caller = txt
+                        elif marker in xrefStyleDict:
+                            noteCursor.setPropertyValue( "CharStyleName", xrefStyleDict[marker] )
+                            xrefNote.insertString( noteCursor, txt,  False )
+                        else:
+                            logging.error( "formatODFVerseText.processCrossReference didn't handle {} {}:{} xref marker: {}".format( BBB, C, V, marker ) )
+                else: # there's no USFM markers at all in the xref --  presumably a caller and then straight text
+                    if rawXRef.startswith('+ ') or rawXRef.startswith('- '):
+                        caller = rawXRef[0]
+                        xrefText = rawXRef[2:].strip()
+                    else: # don't really know what it is -- assume it's all just text
+                        xrefText = rawXRef.strip()
+                    noteCursor.setPropertyValue( "CharStyleName", "Footnote Text" )
+                    xrefNote.insertString( noteCursor, xrefText,  False )
+            # end of insertFormattedODFText.processCrossReference
 
 
-                def processFigure( MDfigure ):
-                    """
-                    Return the MD for the processed figure.
+            def processFigure( rawFigure ):
+                """
+                Inserts the figure into the ODF document.
 
-                    NOTE: The parameter here already has the /fig and /fig* removed.
-                    """
-                    logging.critical( "toMD: figure not handled yet at {} {}:{} {}".format( BBB, C, V, repr(MDfigure) ) )
-                    figureMD = ''
-                    #footnoteMD = '<a class="footnoteLinkSymbol" title="{}" href="#FNote{}">[fn]</a>' \
-                                    #.format( fnTitle, fnIndex )
+                NOTE: The parameter here already has the /fig and /fig* removed.
+                """
+                logging.critical( "toODF: figure not handled yet at {} {}:{} {}".format( BBB, C, V, repr(rawFigure) ) )
+                figureMD = ''
+                #footnoteMD = '<a class="footnoteLinkSymbol" title="{}" href="#FNote{}">[fn]</a>' \
+                                #.format( fnTitle, fnIndex )
 
-                    #endMD = '<p id="FNote{}" class="footnote">'.format( fnIndex )
-                    #if originCV: # This only handles CV separator of : so far
-                        #endMD += '<a class="footnoteOrigin" title="Go back up to {} in the text" href="{}">{}</a> ' \
-                                                            #.format( originCV, liveCV(originCV), origin )
-                    #endMD += '<span class="footnoteEntry">{}</span>'.format( fnText )
-                    #endMD += '</p>'
+                #endMD = '<p id="FNote{}" class="footnote">'.format( fnIndex )
+                #if originCV: # This only handles CV separator of : so far
+                    #endMD += '<a class="footnoteOrigin" title="Go back up to {} in the text" href="{}">{}</a> ' \
+                                                        #.format( originCV, liveCV(originCV), origin )
+                #endMD += '<span class="footnoteEntry">{}</span>'.format( fnText )
+                #endMD += '</p>'
 
-                    ##print( "footnoteMD", BBB, footnoteMD )
-                    ##print( "endMD", endMD )
-                    #ourGlobals['footnoteMD'].append( endMD )
-                    ##if fnIndex > 2: halt
-
-                    return figureMD
-                # end of insertFormattedODFText.processFigure
+                ##print( "footnoteMD", BBB, footnoteMD )
+                ##print( "endMD", endMD )
+                #ourGlobals['footnoteMD'].append( endMD )
+                ##if fnIndex > 2: halt
+            # end of insertFormattedODFText.processFigure
 
 
-                adjText = text
-                offset = 0
-                for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
-                    #print( "{} {}:{} Text='{}' eT={}, eI={}, eText='{}'".format( BBB, C, V, text, extraType, extraIndex, extraText ) )
-                    adjIndex = extraIndex - offset
-                    lenT = len( adjText )
-                    if adjIndex > lenT: # This can happen if we have verse/space/notes at end (and the space was deleted after the note was separated off)
-                        logging.warning( _("formatODFVerseText: Space before note at end of verse in {} {}:{} has been lost").format( BBB, C, V ) )
-                        # No need to adjust adjIndex because the code below still works
-                    elif adjIndex<0 or adjIndex>lenT: # The extras don't appear to fit correctly inside the text
-                        print( "formatODFVerseText: Extras don't fit inside verse at {} {}:{}: eI={} o={} len={} aI={}".format( BBB, C, V, extraIndex, offset, len(text), adjIndex ) )
-                        print( "  Verse='{}'".format( text ) )
-                        print( "  Extras='{}'".format( extras ) )
-                    #assert( 0 <= adjIndex <= len(verse) )
-                    #adjText = checkText( extraText, checkLeftovers=False ) # do any general character formatting
-                    #if adjText!=extraText: print( "processXRefsAndFootnotes: {}@{}-{}={} '{}' now '{}'".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
-                    if extraType == 'fn':
-                        extra = processNote( extraText, 'footnote' )
-                        #print( "fn got", extra )
-                    elif extraType == 'en':
-                        extra = processNote( extraText, 'endnote' )
-                        #print( "en got", extra )
-                    elif extraType == 'xr':
-                        extra = processXRef( extraText )
-                        #print( "xr got", extra )
-                    elif extraType == 'fig':
-                        extra = processFigure( extraText )
-                        #print( "fig got", extra )
-                    elif extraType == 'str':
-                        extra = ""
-                    elif Globals.debugFlag and debuggingThisModule: print( 'eT', extraType ); halt
-                    #print( "was", verse )
-                    adjText = adjText[:adjIndex] + extra + adjText[adjIndex:]
-                    offset -= len( extra )
-                    #print( "now", verse )
-                return adjText
-            # end of insertFormattedODFText.handleExtras
-
+            def handleTextSegment( textSegment ):
+                markerList = Globals.USFMMarkers.getMarkerListFromText( textSegment, includeInitialText=True )
+                if markerList: # we found character formatting within the text
+                    #print( BBB, C, V, "toODF.insertFormattedODFText: {} found {}".format( repr(text), markerList ) )
+                    for marker, ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt in markerList:
+                        #print( "loop", marker, ixBS, repr(nextSignificantChar), repr(fullMarkerText), context, ixEnd, repr(txt) )
+                        if marker in charODFStyleDict and nextSignificantChar == ' ': # it's an opening marker
+                            textCursor.setPropertyValue( "CharStyleName", charODFStyleDict[marker] )
+                            documentText.insertString( textCursor, txt, 0 )
+                        elif marker == 'k' and nextSignificantChar == ' ':
+                            textCursor.setPropertyValue( "CharStyleName", 'Main Entry Keyword' if BBB in ('GLS',) else 'Keyword Text' )
+                            documentText.insertString( textCursor, txt, 0 )
+                        elif marker is None or (marker=='no' and nextSignificantChar==' ') or not context:
+                            # Normal text
+                            textCursor.setPropertyValue( "CharStyleName", defaultCharacterStyleName )
+                            documentText.insertString( textCursor, txt, 0 )
+                        else:
+                            logging.critical( "toODF: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(textSegment) ) )
+                            unhandledMarkers.add( marker )
+                            if Globals.debugFlag: halt
+                else: # No character formatting here
+                    documentText.insertString( textCursor, textSegment, 0 )
+            # end of handleTextSegment
 
             # insertFormattedODFText main code
-            #text = handleExtras( givenText, extras )
-            text = givenText # temp......................................ZZZZZZZZZZZZZZZZZZZZZZZXXXXXXXXXXXXXXXXXXXXX
-            markerList = Globals.USFMMarkers.getMarkerListFromText( text, includeInitialText=True )
-            if markerList: # we found character formatting within the text
-                #print( BBB, C, V, "toODF.insertFormattedODFText: {} found {}".format( repr(text), markerList ) )
-                for marker, ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt in markerList:
-                    #print( "loop", marker, ixBS, repr(nextSignificantChar), repr(fullMarkerText), context, ixEnd, repr(txt) )
-                    if marker in charODFStyleDict and nextSignificantChar == ' ': # it's an opening marker
-                        textCursor.setPropertyValue( "CharStyleName", charODFStyleDict[marker] )
-                        documentText.insertString( textCursor, txt, 0 )
-                    elif marker == 'k' and nextSignificantChar == ' ':
-                        textCursor.setPropertyValue( "CharStyleName", 'Main Entry Keyword' if BBB in ('GLS',) else 'Keyword Text' )
-                        documentText.insertString( textCursor, txt, 0 )
-                    elif marker is None or (marker=='no' and nextSignificantChar==' ') or not context:
-                        # Normal text
-                        textCursor.setPropertyValue( "CharStyleName", defaultCharacterStyleName )
-                        documentText.insertString( textCursor, txt, 0 )
-                    else:
-                        logging.critical( "toODF: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(givenText) ) )
-                        unhandledMarkers.add( marker )
-                        if Globals.debugFlag: halt
-            else: # No character formatting here
-                documentText.insertString( textCursor, text, 0 )
-
-            #text = text.replace( '\\+nd ', '' ).replace( '\\+nd*', '' )
+            if extras:
+                lastIndex = 0
+                for extraType, extraIndex, extraText, cleanExtraText in extras: # find any footnotes and cross-references
+                    handleTextSegment( givenText[lastIndex:extraIndex] )
+                    if extraType in ('fn','en',): processNote( extraType, extraText, documentText, textCursor )
+                    elif extraType == 'xr': processCrossReference( extraText, documentText, textCursor )
+                    elif extraType == 'fig': processFigure( extraText, documentText, textCursor )
+                    else: halt
+                    lastIndex = extraIndex
+                handleTextSegment( givenText[lastIndex:] )
+            else: # no footnotes, etc.
+                handleTextSegment( givenText )
         # end of toODF.insertFormattedODFText
 
 
@@ -7488,7 +7397,7 @@ class BibleWriter( InternalBible ):
             filename = "{:02}-{}_BOS-BibleWriter.odt".format( j, BBB )
             filepath = os.path.join( os.getcwd(), outputFolder, Globals.makeSafeFilename( filename ) )
             if Globals.verbosityLevel > 2: print( "  " + _("Creating '{}'...").format( filename ) )
-            document = desktop.loadComponentFromURL( sourceURL, "_blank", 0, () )
+            document = frameDesktop.loadComponentFromURL( sourceURL, "_blank", 0, () )
             documentText = document.Text
             textCursor = documentText.createTextCursor()
 
@@ -7532,14 +7441,25 @@ class BibleWriter( InternalBible ):
             if 1: # This is how we introduce new styles to the template
                 paragraphStyles = styleFamilies.getByName("ParagraphStyles")
 
-                #style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                #paragraphStyles.insertByName( "Blank Line Paragraph", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Footnote" )
+                paragraphStyles.insertByName( "Bible Footnote", style )
+
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Endnote" )
+                paragraphStyles.insertByName( "Bible Endnote", style )
+
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Footnote" )
+                paragraphStyles.insertByName( "Verse Cross Reference", style )
 
                 characterStyles = styleFamilies.getByName( "CharacterStyles" )
+                ITALIC_TEXT_POSTURE = uno.Enum( "com.sun.star.awt.FontSlant", "ITALIC" )
 
                 #style = document.createInstance( "com.sun.star.style.CharacterStyle" )
-                #characterStyles.insertByName( "Emphasis Text", style )
-
+                #style.setPropertyValue( "CharWeight", 150 ) # bold
+                #style.setPropertyValue( "CharBackColor", 0x00FFFF00 ) # alpha/R/G/B = yellow
+                #characterStyles.insertByName( "Footnote Origin", style )
 
             if not startWithTemplate: # Create initial styles (not required or allowed if we use the template)
                 paragraphStyles = styleFamilies.getByName("ParagraphStyles")
@@ -7549,6 +7469,7 @@ class BibleWriter( InternalBible ):
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 style.setPropertyValue( "CharHeight", 20 )
                 style.setPropertyValue( "CharWeight", 150 ) # bold
+                style.setPropertyValue( "ParaAdjust", CENTER_PARAGRAPH )
                 paragraphStyles.insertByName( "Main Title", style ) # Base style only
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 style.setParentStyle( "Main Title" )
@@ -7831,7 +7752,59 @@ class BibleWriter( InternalBible ):
                 style = document.createInstance( "com.sun.star.style.CharacterStyle" )
                 characterStyles.insertByName( "Main Entry Keyword", style ) # in glossary
 
-                # "hard" formatting
+                # Footnotes
+                style = document.createInstance( "com.sun.star.style.CharacterStyle" )
+                style.setPropertyValue( "CharWeight", 150 ) # bold
+                style.setPropertyValue( "CharBackColor", 0x00FFFF00 ) # alpha/R/G/B = yellow
+                characterStyles.insertByName( "Footnote Origin", style )
+                style = document.createInstance( "com.sun.star.style.CharacterStyle" )
+                style.setPropertyValue("CharPosture", ITALIC_TEXT_POSTURE )
+                characterStyles.insertByName( "Footnote Keyword", style )
+                style = document.createInstance( "com.sun.star.style.CharacterStyle" )
+                style.setPropertyValue("CharPosture", ITALIC_TEXT_POSTURE )
+                characterStyles.insertByName( "Footnote Quotation", style )
+                style = document.createInstance( "com.sun.star.style.CharacterStyle" )
+                style.setPropertyValue("CharPosture", ITALIC_TEXT_POSTURE )
+                characterStyles.insertByName( "Footnote Alternate Translation", style )
+                style = document.createInstance( "com.sun.star.style.CharacterStyle" )
+                style.setPropertyValue("CharPosture", ITALIC_TEXT_POSTURE )
+                characterStyles.insertByName( "Footnote Label", style )
+                style = document.createInstance( "com.sun.star.style.CharacterStyle" )
+                characterStyles.insertByName( "Footnote Paragraph", style )
+                style = document.createInstance( "com.sun.star.style.CharacterStyle" )
+                characterStyles.insertByName( "Footnote Verse Number", style )
+                style = document.createInstance( "com.sun.star.style.CharacterStyle" )
+                characterStyles.insertByName( "Footnote Text", style )
+                style = document.createInstance( "com.sun.star.style.CharacterStyle" )
+                characterStyles.insertByName( "Footnote Deuterocanonical", style )
+                style = document.createInstance( "com.sun.star.style.CharacterStyle" )
+                style.setPropertyValue("CharPosture", ITALIC_TEXT_POSTURE )
+                characterStyles.insertByName( "Footnote Mark", style )
+
+                # Cross references
+                style = document.createInstance( "com.sun.star.style.CharacterStyle" )
+                style.setPropertyValue( "CharWeight", 150 ) # bold
+                style.setPropertyValue( "CharBackColor", 0x0000FF00 ) # alpha/R/G/B = green
+                characterStyles.insertByName( "Cross Reference Origin", style )
+                style = document.createInstance( "com.sun.star.style.CharacterStyle" )
+                style.setPropertyValue("CharPosture", ITALIC_TEXT_POSTURE )
+                characterStyles.insertByName( "Cross Reference Keyword", style )
+                style = document.createInstance( "com.sun.star.style.CharacterStyle" )
+                style.setPropertyValue("CharPosture", ITALIC_TEXT_POSTURE )
+                characterStyles.insertByName( "Cross Reference Quotation", style )
+                style = document.createInstance( "com.sun.star.style.CharacterStyle" )
+                characterStyles.insertByName( "Cross Reference Target", style )
+                style = document.createInstance( "com.sun.star.style.CharacterStyle" )
+                style.setParentStyle( "Cross Reference Target" )
+                characterStyles.insertByName( "Cross Reference OT Target", style )
+                style = document.createInstance( "com.sun.star.style.CharacterStyle" )
+                style.setParentStyle( "Cross Reference Target" )
+                characterStyles.insertByName( "Cross Reference NT Target", style )
+                style = document.createInstance( "com.sun.star.style.CharacterStyle" )
+                style.setParentStyle( "Cross Reference Target" )
+                characterStyles.insertByName( "Cross Reference Deuterocanon Target", style )
+
+                # "Hard" formatting
                 style = document.createInstance( "com.sun.star.style.CharacterStyle" )
                 characterStyles.insertByName( "Emphasis Text", style )
                 style = document.createInstance( "com.sun.star.style.CharacterStyle" )
@@ -7847,17 +7820,22 @@ class BibleWriter( InternalBible ):
                 style = document.createInstance( "com.sun.star.style.CharacterStyle" )
                 characterStyles.insertByName( "Small Caps Text", style )
 
+
+            firstEverParagraphFlag = True
             def insertODFParagraph( BBB, C, V, paragraphStyleName, text, extras, documentText, textCursor, defaultCharacterStyleName ):
                 """
                 Given some text and the paragraph stylename (and the default character stylename)
                     start a new paragraph and insert the text.
                 """
-                documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, 0 );
+                nonlocal firstEverParagraphFlag
+                if not firstEverParagraphFlag: documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, False );
                 textCursor.setPropertyValue( "ParaStyleName", paragraphStyleName )
                 if adjText or extras:
                     insertFormattedODFText( BBB, C, V, text, extras, documentText, textCursor, defaultCharacterStyleName )
+                firstEverParagraphFlag = False
             # end of insertODFParagraph
 
+            startingNewParagraphFlag = True
             C = V = '0'
             for entry in pseudoUSFMData:
                 marker, adjText, extras = entry.getMarker(), entry.getAdjustedText(), entry.getExtras()
@@ -7886,25 +7864,29 @@ class BibleWriter( InternalBible ):
                     C = adjText
                 elif marker == 'c#':
                     textCursor.setPropertyValue( "CharStyleName", "Chapter Number" )
-                    documentText.insertString( textCursor, C, 0 )
+                    documentText.insertString( textCursor, C, False )
                     textCursor.setPropertyValue( "CharStyleName", "Chapter Number Postspace" )
-                    documentText.insertString( textCursor, " ", 0 )
+                    documentText.insertString( textCursor, " ", False )
                     textCursor.setPropertyValue( "CharStyleName", "Verse Text" )
                 elif marker == 'v':
                     V = adjText
-                    textCursor.setPropertyValue( "CharStyleName", "Verse Number Prespace" )
-                    documentText.insertString( textCursor, " ", 0 )
-                    textCursor.setPropertyValue( "CharStyleName", "Verse Number" )
-                    documentText.insertString( textCursor, V, 0 )
-                    textCursor.setPropertyValue( "CharStyleName", "Verse Number Postspace" )
-                    documentText.insertString( textCursor, " ", 0 )
-                    textCursor.setPropertyValue( "CharStyleName", "Verse Text" )
+                    if V != '1':
+                        if not startingNewParagraphFlag:
+                            textCursor.setPropertyValue( "CharStyleName", "Verse Number Prespace" )
+                            documentText.insertString( textCursor, " ", False )
+                        textCursor.setPropertyValue( "CharStyleName", "Verse Number" )
+                        documentText.insertString( textCursor, V, False )
+                        textCursor.setPropertyValue( "CharStyleName", "Verse Number Postspace" )
+                        documentText.insertString( textCursor, " ", False )
+                        textCursor.setPropertyValue( "CharStyleName", "Verse Text" )
+                        startingNewParagraphFlag = False
                 elif marker == 'd':
                     insertODFParagraph( BBB, C, V, "Descriptive Title", adjText, extras, documentText, textCursor, "Default Style" )
                 elif marker == 'sp':
                     insertODFParagraph( BBB, C, V, "Speaker Identification", adjText, extras, documentText, textCursor, "Default Style" )
                 elif marker in ('p','m','pmo','pm','pmc','pmr', 'pi1','pi2','pi3','pi4', 'mi','cls','pc','pr', 'ph1','ph2','ph3','ph4',) \
                 or marker in ('q1','q2','q3','q4', 'qr','qc', 'qm1','qm2','qm3','qm4',):
+                    startingNewParagraphFlag = True
                     styleName = pqODFStyleDict[marker]
                     insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
                 elif marker in ('li1','li2','li3','li4', 'ili1','ili2','ili3','ili4',):
@@ -7914,8 +7896,9 @@ class BibleWriter( InternalBible ):
                 elif marker in ('v~','p~',):
                     if adjText or extras:
                         insertFormattedODFText( BBB, C, V, adjText, extras, documentText, textCursor, "Default Style" )
+                    startingNewParagraphFlag = False
                 elif marker == 'b':
-                    documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, 0 );
+                    documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, False );
                     textCursor.setPropertyValue( "ParaStyleName", "Blank Line Paragraph" )
                 elif marker == 'nb': # no-break with previous paragraph -- I don't think we have to do anything here
                     if Globals.debugFlag: assert( not adjText and not extras )
