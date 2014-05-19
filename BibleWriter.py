@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-05-19 by RJH (also update ProgVersion below)
+#   Last modified: 2014-05-20 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -7132,11 +7132,11 @@ class BibleWriter( InternalBible ):
         startWithTemplate = True # Start with template (all styles already built) or just a blank document (MUCH slower)
 
         ODF_PARAGRAPH_BREAK = uno.getConstantByName( "com.sun.star.text.ControlCharacter.PARAGRAPH_BREAK" )
-        ODF_LINE_BREAK = uno.getConstantByName( "com.sun.star.text.ControlCharacter.LINE_BREAK" )
-        ODF_HARD_HYPHEN = uno.getConstantByName( "com.sun.star.text.ControlCharacter.HARD_HYPHEN" )
-        ODF_SOFT_HYPHEN = uno.getConstantByName( "com.sun.star.text.ControlCharacter.SOFT_HYPHEN" )
-        ODF_HARD_SPACE = uno.getConstantByName( "com.sun.star.text.ControlCharacter.HARD_SPACE" )
-        ODF_APPEND_PARAGRAPH = uno.getConstantByName( "com.sun.star.text.ControlCharacter.APPEND_PARAGRAPH" )
+        #ODF_LINE_BREAK = uno.getConstantByName( "com.sun.star.text.ControlCharacter.LINE_BREAK" )
+        #ODF_HARD_HYPHEN = uno.getConstantByName( "com.sun.star.text.ControlCharacter.HARD_HYPHEN" )
+        #ODF_SOFT_HYPHEN = uno.getConstantByName( "com.sun.star.text.ControlCharacter.SOFT_HYPHEN" )
+        #ODF_HARD_SPACE = uno.getConstantByName( "com.sun.star.text.ControlCharacter.HARD_SPACE" )
+        #ODF_APPEND_PARAGRAPH = uno.getConstantByName( "com.sun.star.text.ControlCharacter.APPEND_PARAGRAPH" )
 
         weStartedLibreOffice = False
         DEFAULT_OPENOFFICE_PORT = 2002
@@ -7163,11 +7163,12 @@ class BibleWriter( InternalBible ):
             sleep( 1 ) # Wait a second to get sure that LibreOffice has time to start up
 
         # Set-up LibreOffice
-        local = uno.getComponentContext()
-        urlResolver = local.ServiceManager.createInstanceWithContext( "com.sun.star.bridge.UnoUrlResolver", local )
+        localContext = uno.getComponentContext()
+        urlResolver = localContext.ServiceManager.createInstanceWithContext( "com.sun.star.bridge.UnoUrlResolver", localContext )
         componentContext = urlResolver.resolve( "uno:socket,host=localhost,port={};urp;StarOffice.ComponentContext".format( DEFAULT_OPENOFFICE_PORT ) )
         serviceManager = componentContext.ServiceManager
         frameDesktop = serviceManager.createInstanceWithContext( "com.sun.star.frame.Desktop", componentContext )
+        #model = frameDesktop.getCurrentComponent()
 
         # Locate our empty source file that we'll start from
         templateFilepath = os.path.join( os.getcwd(), defaultControlFolder, "BibleBook.ott" )
@@ -7403,11 +7404,11 @@ class BibleWriter( InternalBible ):
             textCursor = initialTextCursor
 
             styleFamilies = document.StyleFamilies
-            pageStyles = styleFamilies.getByName( "PageStyles" )
-            defaultPageStyle = pageStyles.getByName( "Default Style" )
-            headerText = defaultPageStyle.getPropertyValue( "HeaderText" )
-            headerCursor = headerText.createTextCursor()
-            #headerText.insertString( headerCursor, "Test Header", False )
+            #pageStyles = styleFamilies.getByName( "PageStyles" )
+            #defaultPageStyle = pageStyles.getByName( "Default Style" )
+            #headerText = defaultPageStyle.getPropertyValue( "HeaderText" )
+            #headerCursor = headerText.createTextCursor()
+            runningHeaderField = document.TextFieldMasters.getByName( "com.sun.star.text.FieldMaster.User.BibleHeader" )
 
 
             if 0: # This is how we add new styles to the existing template
@@ -7862,7 +7863,6 @@ class BibleWriter( InternalBible ):
             #headerCursorLeft = headerTextLeft.createTextCursor()
 
 
-
             firstEverParagraphFlag = True
             def insertODFParagraph( BBB, C, V, paragraphStyleName, text, extras, documentText, textCursor, defaultCharacterStyleName ):
                 """
@@ -7878,6 +7878,9 @@ class BibleWriter( InternalBible ):
                 firstEverParagraphFlag = False
             # end of insertODFParagraph
 
+
+            try: headerField = bookObject.longTOCName
+            except: headerField = bookObject.assumedBookName
             startingNewParagraphFlag = True
             C = V = '0'
             for entry in pseudoUSFMData:
@@ -7904,6 +7907,7 @@ class BibleWriter( InternalBible ):
                     elif marker == 'mr': styleName = 'Major Section Reference Range'
                     insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
                 elif marker == 'c':
+                    if C == '0': runningHeaderField.setPropertyValue( "Content", headerField )
                     C = adjText
                     if C == '1': # It's the beginning of the actual Bible text -- make a new double-column section
                         if not firstEverParagraphFlag: # leave a space between the introduction and the chapter text
@@ -7927,12 +7931,10 @@ class BibleWriter( InternalBible ):
                         anchor = chapterSection.getAnchor()
                         columnCursor = documentText.createTextCursorByRange( anchor )
 
-                        try: headerField = bookObject.longTOCName
-                        except: headerField = bookObject.assumedBookName
-                        headerText.insertString( headerCursor, headerField, False )
-
                         textCursor = columnCursor # So that future inserts go in here
                         firstEverParagraphFlag = True
+                    # Put in our running header -- WHY DOESN'T THIS WORK PROPERLY IN LIBREOFFICE???
+                    #runningHeaderField.setPropertyValue( "Content", "{} {}".format( headerField, C ) )
                 elif marker == 'c#':
                     textCursor.setPropertyValue( "CharStyleName", "Chapter Number" )
                     documentText.insertString( textCursor, C, False )
@@ -8345,9 +8347,9 @@ def demo():
         from USFMFilenames import USFMFilenames
         testData = ( # name, abbreviation, folder for USFM files
                 #("CustomTest", "Custom", ".../",),
-                #("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
-                #("USFMTest2", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
-                #("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
+                ("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
+                ("USFMTest2", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
+                ("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
                 ("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
                 #("MS-BT", "MBTBT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
                 #("MS-Notes", "MBTBC", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/",),
@@ -8364,7 +8366,7 @@ def demo():
                 UB.load()
                 if Globals.verbosityLevel > 0: print( '\nBibleWriter A'+str(j+1)+'/', UB )
                 if Globals.strictCheckingFlag: UB.check()
-                UB.toODF(); halt
+                #UB.toODF(); halt
                 doaResults = UB.doAllExports( wantPhotoBible=False, wantPDFs=False )
                 if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
                     outputFolder = "OutputFiles/BOS_USFM_Reexport/"
