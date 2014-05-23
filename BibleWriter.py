@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-05-20 by RJH (also update ProgVersion below)
+#   Last modified: 2014-05-21 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -62,7 +62,7 @@ Contains functions:
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.72"
+ProgVersion = "0.73"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -7020,9 +7020,9 @@ class BibleWriter( InternalBible ):
         if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( allFilepath ) )
         with open( allFilepath, 'wt' ) as allFile:
             writeTeXHeader( allFile )
-            for BBB,bookObject in self.books.items():
+            for j, (BBB,bookObject) in enumerate( self.books.items() ):
                 haveTitle = haveIntro = False
-                filename = "BOS-BibleWriter-{}.tex".format( BBB )
+                filename = "{:02}-{}_BOS-BibleWriter.tex".format( j, BBB )
                 filepath = os.path.join( outputFolder, Globals.makeSafeFilename( filename ) )
                 if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
                 with open( filepath, 'wt' ) as bookFile:
@@ -7386,7 +7386,7 @@ class BibleWriter( InternalBible ):
 
 
         # First determine our format
-        verseByVerse = True
+        #verseByVerse = True
 
 
         # Create and save the ODF files
@@ -7984,22 +7984,13 @@ class BibleWriter( InternalBible ):
                         #if Globals.debugFlag: halt
                     unhandledMarkers.add( marker )
 
-                #if verseByVerse:
-                    #myFile.write( "{} ({}): '{}' '{}' {}\n" \
-                        #.format( entry.getMarker(), entry.getOriginalMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras() ) )
-
             # Save the created document
             document.storeAsURL( "file://{}".format( filepath ), () )
-            if BBB!='GEN':
-                document.dispose() # Close the document (even though it might be a headless server anyway)
-            #if j>=2:
-                #break
-                #print( "Unhandled markers:", unhandledMarkers )
-                #halt
+            document.dispose() # Close the document (even though it might be a headless server anyway)
 
-        if weStartedLibreOffice and not Globals.debugFlag: # Now kill our LibreOffice server -- NOTE: Linux-only code!!!
+        if weStartedLibreOffice and not Globals.debugFlag: # Now kill our LibreOffice server
             import signal
-            p = subprocess.Popen(['ps', 'xa'], stdout=subprocess.PIPE)
+            p = subprocess.Popen(['ps', 'xa'], stdout=subprocess.PIPE) # NOTE: Linux-only code!!!
             out, err = p.communicate()
             for lineBytes in out.splitlines():
                 line = bytes.decode( lineBytes )
@@ -8346,11 +8337,12 @@ def demo():
         from USFMBible import USFMBible
         from USFMFilenames import USFMFilenames
         testData = ( # name, abbreviation, folder for USFM files
+                ("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
                 #("CustomTest", "Custom", ".../",),
                 ("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
                 ("USFMTest2", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
                 ("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
-                ("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
+                #("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
                 #("MS-BT", "MBTBT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
                 #("MS-Notes", "MBTBC", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/",),
                 #("MS-ABT", "MBTABT", "../../../../../Data/Work/Matigsalug/Bible/MBTABT/",),
@@ -8366,7 +8358,7 @@ def demo():
                 UB.load()
                 if Globals.verbosityLevel > 0: print( '\nBibleWriter A'+str(j+1)+'/', UB )
                 if Globals.strictCheckingFlag: UB.check()
-                #UB.toODF(); halt
+                UB.toTeX(); halt
                 doaResults = UB.doAllExports( wantPhotoBible=False, wantPDFs=False )
                 if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
                     outputFolder = "OutputFiles/BOS_USFM_Reexport/"

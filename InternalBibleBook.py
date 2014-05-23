@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2014-05-06 by RJH (also update ProgVersion below)
+#   Last modified: 2014-05-23 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -41,7 +41,7 @@ Required improvements:
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.69"
+ProgVersion = "0.70"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -1986,10 +1986,12 @@ class InternalBibleBook:
                 v = text.split()[0]
                 functionalCounts['Verses'] = 1 if 'Verses' not in functionalCounts else (functionalCounts['Verses'] + 1)
             # Do other useful functional counts
+            elif marker=='id':
+                functionalCounts['Book ID'] = 1 if 'Book ID' not in functionalCounts else (functionalCounts['Book ID'] + 1)
+            elif marker=='h':
+                functionalCounts['Book Header'] = 1 if 'Book Header' not in functionalCounts else (functionalCounts['Book Header'] + 1)
             elif marker=='p':
                 functionalCounts['Paragraphs'] = 1 if 'Paragraphs' not in functionalCounts else (functionalCounts['Paragraphs'] + 1)
-            elif marker=='h':
-                functionalCounts['Section Headers'] = 1 if 'Section Headers' not in functionalCounts else (functionalCounts['Section Headers'] + 1)
             elif marker=='r':
                 functionalCounts['Section Cross-References'] = 1 if 'Section Cross-References' not in functionalCounts else (functionalCounts['Section Cross-References'] + 1)
 
@@ -2307,9 +2309,24 @@ class InternalBibleBook:
 
         # Check the relative ordering of newline markers
         #print( "modifiedMarkerList", modifiedMarkerList, self.bookReferenceCode )
-        if self.objectTypeString in ('USFM','USX') and modifiedMarkerList and modifiedMarkerList[0] != 'id':
-            newlineMarkerErrors.append( _("{} First USFM field in file should have been 'id' not '{}'").format( self.bookReferenceCode, modifiedMarkerList[0] ) )
-            self.addPriorityError( 100, '', '', _("id line not first in file") )
+        if self.objectTypeString in ('USFM','USX'):
+            if 'Book ID' not in functionalCounts or functionalCounts['Book ID']==0:
+                newlineMarkerErrors.append( _("{} Missing 'id' USFM field in file").format( self.bookReferenceCode ) )
+                self.addPriorityError( 100, '', '', _("No id line in file") )
+            elif modifiedMarkerList and modifiedMarkerList[0] != 'id':
+                newlineMarkerErrors.append( _("{} First USFM field in file should have been 'id' not '{}'").format( self.bookReferenceCode, modifiedMarkerList[0] ) )
+                self.addPriorityError( 100, '', '', _("id line not first in file") )
+            if 'Book ID' in functionalCounts and functionalCounts['Book ID']>1:
+                newlineMarkerErrors.append( _("{} Multiple 'id' USFM fields in file").format( self.bookReferenceCode ) )
+                self.addPriorityError( 100, '', '', _("Multiple id lines in file") )
+
+            if 'Book Header' not in functionalCounts or functionalCounts['Book Header']==0:
+                newlineMarkerErrors.append( _("{} Missing 'h' USFM field in file").format( self.bookReferenceCode ) )
+                self.addPriorityError( 99, '', '', _("No h line in file") )
+            elif 'Book Header' in functionalCounts and functionalCounts['Book Header']>1:
+                newlineMarkerErrors.append( _("{} Multiple 'h' USFM fields in file").format( self.bookReferenceCode ) )
+                self.addPriorityError( 100, '', '', _("Multiple h lines in file") )
+
         for otherHeaderMarker in ( 'ide','sts', ):
             if otherHeaderMarker in modifiedMarkerList and modifiedMarkerList.index(otherHeaderMarker) > 8:
                 newlineMarkerErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("USFM '{}' field in file should have been earlier in {}...").format( otherHeaderMarker, modifiedMarkerList[:10] ) )
