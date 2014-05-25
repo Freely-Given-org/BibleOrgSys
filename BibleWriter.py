@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-05-21 by RJH (also update ProgVersion below)
+#   Last modified: 2014-05-25 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -7176,6 +7176,9 @@ class BibleWriter( InternalBible ):
 
         unhandledMarkers = set()
 
+        titleODFStyleDict = {'imt1':'Introduction Major Title 1', 'imt2':'Introduction Major Title 2', 'imt3':'Introduction Major Title 3', 'imt4':'Introduction Major Title 4',
+                          'mt1':'Major Title 1','mt2':'Major Title 2', 'mt3':'Major Title 3', 'mt4':'Major Title 4',
+                          'mte1':'Major Title at Ending 1','mte2':'Major Title at Ending 2', 'mte3':'Major Title at Ending 3', 'mte4':'Major Title at Ending 4', }
         ipODFStyleDict = {'ip':'Introduction Paragraph', 'ipi':'Introduction Paragraph Indented',
                         'im':'Introduction Flush Left Paragraph', 'imi':'Introduction Indented Flush Left Paragraph',
 
@@ -7350,7 +7353,7 @@ class BibleWriter( InternalBible ):
                 if markerList: # we found character formatting within the text
                     #print( BBB, C, V, "toODF.insertFormattedODFText: {} found {}".format( repr(text), markerList ) )
                     for marker, ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt in markerList:
-                        #print( "loop", marker, ixBS, repr(nextSignificantChar), repr(fullMarkerText), context, ixEnd, repr(txt) )
+                        print( "loop", marker, ixBS, repr(nextSignificantChar), repr(fullMarkerText), context, ixEnd, repr(txt) )
                         if marker in charODFStyleDict and nextSignificantChar == ' ': # it's an opening marker
                             textCursor.setPropertyValue( "CharStyleName", charODFStyleDict[marker] )
                             documentText.insertString( textCursor, txt, 0 )
@@ -7361,9 +7364,12 @@ class BibleWriter( InternalBible ):
                             # Normal text
                             textCursor.setPropertyValue( "CharStyleName", defaultCharacterStyleName )
                             documentText.insertString( textCursor, txt, 0 )
+                        elif marker in charODFStyleDict and not nextSignificantChar: # it's at the end of a line
+                            assert( not txt )
+                            logging.warning( "toODF: ignored {} field at end of line in {} {}:{}".format( marker, BBB, C, V ) )
                         else:
                             logging.critical( "toODF: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(textSegment) ) )
-                            unhandledMarkers.add( marker )
+                            unhandledMarkers.add( "{} (char)".format( marker ) )
                             if Globals.debugFlag: halt
                 else: # No character formatting here
                     documentText.insertString( textCursor, textSegment, 0 )
@@ -7377,6 +7383,7 @@ class BibleWriter( InternalBible ):
                     if extraType in ('fn','en',): processNote( extraType, extraText, documentText, textCursor )
                     elif extraType == 'xr': processCrossReference( extraText, documentText, textCursor )
                     elif extraType == 'fig': processFigure( extraText, documentText, textCursor )
+                    elif extraType == 'vp': pass # it's already been converted to a newline field
                     else: halt
                     lastIndex = extraIndex
                 handleTextSegment( givenText[lastIndex:] )
@@ -7413,6 +7420,16 @@ class BibleWriter( InternalBible ):
 
             if 0: # This is how we add new styles to the existing template
                 paragraphStyles = styleFamilies.getByName("ParagraphStyles")
+                CENTER_PARAGRAPH = uno.Enum( "com.sun.star.style.ParagraphAdjust", "CENTER" )
+                RIGHT_PARAGRAPH = uno.Enum( "com.sun.star.style.ParagraphAdjust", "RIGHT" )
+
+                #style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                #style.setParentStyle( "Heading" )
+                #style.setPropertyValue( "CharHeight", 20 )
+                #style.setPropertyValue( "CharWeight", 150 ) # bold
+                #style.setPropertyValue( "ParaAdjust", CENTER_PARAGRAPH )
+                #style.setPropertyValue( "ParaKeepTogether", True )
+                #paragraphStyles.insertByName( "Major Title", style ) # Base style only
 
                 #style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 #style.setParentStyle( "Bible Paragraph" )
@@ -7479,23 +7496,73 @@ class BibleWriter( InternalBible ):
                 RIGHT_PARAGRAPH = uno.Enum( "com.sun.star.style.ParagraphAdjust", "RIGHT" )
 
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Heading" )
                 style.setPropertyValue( "CharHeight", 20 )
                 style.setPropertyValue( "CharWeight", 150 ) # bold
                 style.setPropertyValue( "ParaAdjust", CENTER_PARAGRAPH )
                 style.setPropertyValue( "ParaKeepTogether", True )
-                paragraphStyles.insertByName( "Main Title", style ) # Base style only
+                paragraphStyles.insertByName( "Major Title", style ) # Base style only
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Main Title" )
-                paragraphStyles.insertByName( "Main Title 1", style )
+                style.setParentStyle( "Major Title" )
+                paragraphStyles.insertByName( "Major Title 1", style )
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Main Title" )
-                paragraphStyles.insertByName( "Main Title 2", style )
+                style.setParentStyle( "Major Title" )
+                style.setPropertyValue( "CharDiffHeight", -2 )
+                paragraphStyles.insertByName( "Major Title 2", style )
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Main Title" )
-                paragraphStyles.insertByName( "Main Title 3", style )
+                style.setParentStyle( "Major Title" )
+                style.setPropertyValue( "CharDiffHeight", -2 )
+                paragraphStyles.insertByName( "Major Title 3", style )
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Main Title" )
-                paragraphStyles.insertByName( "Main Title 4", style )
+                style.setParentStyle( "Major Title" )
+                style.setPropertyValue( "CharDiffHeight", -1 )
+                paragraphStyles.insertByName( "Major Title 4", style )
+
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Heading" )
+                style.setPropertyValue( "CharHeight", 20 )
+                style.setPropertyValue( "CharWeight", 150 ) # bold
+                style.setPropertyValue( "ParaAdjust", CENTER_PARAGRAPH )
+                style.setPropertyValue( "ParaKeepTogether", True )
+                paragraphStyles.insertByName( "Major Title at Ending", style ) # Base style only
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Major Title at Ending" )
+                paragraphStyles.insertByName( "Major Title at Ending 1", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Major Title at Ending" )
+                style.setPropertyValue( "CharDiffHeight", -2 )
+                paragraphStyles.insertByName( "Major Title at Ending 2", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Major Title at Ending" )
+                style.setPropertyValue( "CharDiffHeight", -2 )
+                paragraphStyles.insertByName( "Major Title at Ending 3", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Major Title at Ending" )
+                style.setPropertyValue( "CharDiffHeight", -1 )
+                paragraphStyles.insertByName( "Major Title at Ending 4", style )
+
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Heading" )
+                style.setPropertyValue( "CharHeight", 20 )
+                style.setPropertyValue( "CharWeight", 150 ) # bold
+                style.setPropertyValue( "ParaAdjust", CENTER_PARAGRAPH )
+                style.setPropertyValue( "ParaKeepTogether", True )
+                paragraphStyles.insertByName( "Introduction Major Title", style ) # Base style only
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Major Title" )
+                paragraphStyles.insertByName( "Introduction Major Title 1", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Major Title" )
+                style.setPropertyValue( "CharDiffHeight", -2 )
+                paragraphStyles.insertByName( "Introduction Major Title 2", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Major Title" )
+                style.setPropertyValue( "CharDiffHeight", -2 )
+                paragraphStyles.insertByName( "Introduction Major Title 3", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Major Title" )
+                style.setPropertyValue( "CharDiffHeight", -1 )
+                paragraphStyles.insertByName( "Introduction Major Title 4", style )
 
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 style.setPropertyValue( "CharWeight", 150 ) # bold
@@ -7882,14 +7949,14 @@ class BibleWriter( InternalBible ):
             try: headerField = bookObject.longTOCName
             except: headerField = bookObject.assumedBookName
             startingNewParagraphFlag = True
+            lastMarker = None
             C = V = '0'
             for entry in pseudoUSFMData:
                 marker, adjText, extras = entry.getMarker(), entry.getAdjustedText(), entry.getExtras()
                 #print( j, BBB, C, V, marker, repr(adjText) )
                 if marker in oftenIgnoredIntroMarkers: pass # Just ignore these lines
-                elif marker in ('mt1','mt2','mt3','mt4', 'imt1','imt2','imt3','imt4',):
-                    styleName = "Introduction " if marker[0]=='i' else ""
-                    styleName += "Main Title {}".format( marker[-1] )
+                elif marker in ('mt1','mt2','mt3','mt4', 'imt1','imt2','imt3','imt4', 'mte1','mte2','mte3','mte4',):
+                    styleName = titleODFStyleDict[marker]
                     insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
                 elif marker in ('ms1','ms2','ms3','ms4',):
                     styleName = "Major Section Heading {}".format( marker[-1] )
@@ -7898,9 +7965,10 @@ class BibleWriter( InternalBible ):
                     styleName = ipODFStyleDict[marker]
                     insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
                 elif marker in ('s1','s2','s3','s4', 'is1','is2','is3','is4',):
-                    styleName = "Introduction " if marker[0]=='i' else ""
-                    styleName += "Section Heading {}".format( marker[-1] )
-                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
+                    if adjText or extras: #OEB has blank s fields
+                        styleName = "Introduction " if marker[0]=='i' else ""
+                        styleName += "Section Heading {}".format( marker[-1] )
+                        insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
                 elif marker in ('r','sr','mr',):
                     if marker == 'r': styleName = 'Section CrossReference'
                     elif marker == 'sr': styleName = 'Section Reference Range'
@@ -7943,6 +8011,10 @@ class BibleWriter( InternalBible ):
                     textCursor.setPropertyValue( "CharStyleName", "Verse Text" )
                 elif marker == 'v':
                     V = adjText
+                    if lastMarker == 's1': # hack for OEB which has some empty s fields immediately followed by v fields
+                        documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, False );
+                        textCursor.setPropertyValue( "ParaStyleName", "Prose Paragraph" )
+                        startingNewParagraphFlag = True
                     if V != '1':
                         if not startingNewParagraphFlag:
                             textCursor.setPropertyValue( "CharStyleName", "Verse Number Prespace" )
@@ -7975,6 +8047,8 @@ class BibleWriter( InternalBible ):
                     textCursor.setPropertyValue( "ParaStyleName", "Blank Line Paragraph" )
                 elif marker == 'nb': # no-break with previous paragraph -- I don't think we have to do anything here
                     if Globals.debugFlag: assert( not adjText and not extras )
+                elif marker in ('cl=','cp',): # We can safely ignore these markers for the ODF export
+                    pass
                 else:
                     if adjText:
                         logging.critical( "toODF: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(adjText) ) )
@@ -7983,10 +8057,12 @@ class BibleWriter( InternalBible ):
                         logging.critical( "toODF: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
                         #if Globals.debugFlag: halt
                     unhandledMarkers.add( marker )
+                lastMarker = marker
 
             # Save the created document
             document.storeAsURL( "file://{}".format( filepath ), () )
-            document.dispose() # Close the document (even though it might be a headless server anyway)
+            if BBB!='GEN':
+                document.dispose() # Close the document (even though it might be a headless server anyway)
 
         if weStartedLibreOffice and not Globals.debugFlag: # Now kill our LibreOffice server
             import signal
@@ -8337,11 +8413,12 @@ def demo():
         from USFMBible import USFMBible
         from USFMFilenames import USFMFilenames
         testData = ( # name, abbreviation, folder for USFM files
-                ("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
+                #("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
                 #("CustomTest", "Custom", ".../",),
-                ("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
-                ("USFMTest2", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
-                ("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
+                #("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
+                #("USFMTest2", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
+                #("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
+                ("OEB", "OEB", "Tests/DataFilesForTests/USFM-OEB/",),
                 #("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
                 #("MS-BT", "MBTBT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
                 #("MS-Notes", "MBTBC", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/",),
@@ -8358,7 +8435,7 @@ def demo():
                 UB.load()
                 if Globals.verbosityLevel > 0: print( '\nBibleWriter A'+str(j+1)+'/', UB )
                 if Globals.strictCheckingFlag: UB.check()
-                UB.toTeX(); halt
+                UB.toODF(); halt
                 doaResults = UB.doAllExports( wantPhotoBible=False, wantPDFs=False )
                 if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
                     outputFolder = "OutputFiles/BOS_USFM_Reexport/"

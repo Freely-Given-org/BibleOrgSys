@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBibleBook.py
-#   Last modified: 2014-04-29 by RJH (also update ProgVersion below)
+#   Last modified: 2014-05-25 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating USFM Bible books.
 """
 
 ProgName = "USFM Bible book handler"
-ProgVersion = "0.38"
+ProgVersion = "0.39"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -37,7 +37,8 @@ debuggingThisModule = False
 import os, logging
 from gettext import gettext as _
 
-import Globals, SFMFile
+import Globals
+from USFMFile import USFMFile
 from Bible import BibleBook
 
 
@@ -77,6 +78,7 @@ class USFMBibleBook( BibleBook ):
             """ Check for newLine markers within the line (if so, break the line)
                     and save the information in our database. """
             #originalMarker, originalText = marker, text # Only needed for the debug print line below
+            #print( "doAppendLine( {}, {} )".format( repr(marker), repr(text) ) )
             if '\\' in text: # Check markers inside the lines
                 markerList = Globals.USFMMarkers.getMarkerListFromText( text )
                 ix = 0
@@ -107,7 +109,7 @@ class USFMBibleBook( BibleBook ):
         self.sourceFilename = filename
         self.sourceFolder = folder
         self.sourceFilepath = os.path.join( folder, filename ) if folder else filename
-        originalBook = SFMFile.SFMLines()
+        originalBook = USFMFile()
         originalBook.read( self.sourceFilepath, encoding=encoding )
 
         # Do some important cleaning up before we save the data
@@ -137,6 +139,18 @@ class USFMBibleBook( BibleBook ):
                     loadErrors.append( _("{} {}:{} Found '\\{}' internal marker at beginning of line (with no text)").format( self.bookReferenceCode, c, v, marker ) )
                     logging.warning( _("Found '\\{}' internal marker after {} {}:{} at beginning of line (with no text)").format( marker, self.bookReferenceCode, c, v ) )
                 self.addPriorityError( 27, c, v, _("Found \\{} internal marker on new line in file").format( marker ) )
+                if not lastText.endswith(' '): lastText += ' ' # Not always good to add a space, but it's their fault!
+                lastText +=  '\\' + marker + ' ' + text
+                if Globals.verbosityLevel > 3: print( "{} {} {} Appended {}:'{}' to get combined line {}:'{}'".format( self.bookReferenceCode, c, v, marker, text, lastMarker, lastText ) )
+            elif Globals.USFMMarkers.isNoteMarker( marker ) \
+            or marker.endswith('*') and Globals.USFMMarkers.isNoteMarker( marker[:-1] ): # the line begins with a note marker -- append it to the previous line
+                if text:
+                    loadErrors.append( _("{} {}:{} Found '\\{}' note marker at beginning of line with text: {}").format( self.bookReferenceCode, c, v, marker, text ) )
+                    logging.warning( _("Found '\\{}' note marker after {} {}:{} at beginning of line with text: {}").format( marker, self.bookReferenceCode, c, v, text ) )
+                else: # no text
+                    loadErrors.append( _("{} {}:{} Found '\\{}' note marker at beginning of line (with no text)").format( self.bookReferenceCode, c, v, marker ) )
+                    logging.warning( _("Found '\\{}' note marker after {} {}:{} at beginning of line (with no text)").format( marker, self.bookReferenceCode, c, v ) )
+                self.addPriorityError( 26, c, v, _("Found \\{} note marker on new line in file").format( marker ) )
                 if not lastText.endswith(' ') and marker!='f': lastText += ' ' # Not always good to add a space, but it's their fault! Don't do it for footnotes, though.
                 lastText +=  '\\' + marker + ' ' + text
                 if Globals.verbosityLevel > 3: print( "{} {} {} Appended {}:'{}' to get combined line {}:'{}'".format( self.bookReferenceCode, c, v, marker, text, lastMarker, lastText ) )

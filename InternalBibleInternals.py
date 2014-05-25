@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleInternals.py
-#   Last modified: 2014-05-15 by RJH (also update ProgVersion below)
+#   Last modified: 2014-05-25 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Bible internals handler"
-ProgVersion = "0.26"
+ProgVersion = "0.27"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -60,23 +60,25 @@ TRAILING_WORD_PUNCT_CHARS = """,.”»"’›'?)!;:]}>"""
 ALL_WORD_PUNCT_CHARS = LEADING_WORD_PUNCT_CHARS + MEDIAL_WORD_PUNCT_CHARS + DASH_CHARS + TRAILING_WORD_PUNCT_CHARS
 
 
-PSEUDO_USFM_NEWLINE_MARKERS = ( 'c~', 'c#', 'v-', 'v+', 'v~', 'vw', 'g', 'p~', 'cl=', )
+PSEUDO_USFM_NEWLINE_MARKERS = ( 'c~', 'c#', 'v-', 'v+', 'v~', 'vw', 'g', 'p~', 'cl=', 'vp~', )
 """
     c~  anything after the chapter number on a \c line
-    c#  the chapter number (duplicated) in the correct position to be printed -- can be ignored for exporting
+    c#  the chapter number in the correct position to be printed
+            This is usually a duplicate of the c field, but may have come from the cp field instead
+            Usually only one of c or c# is used for exports
     v-  ???
     v+  ???
     v~  verse text -- anything after the verse number on a \v line
-            or anything on a \p or \q line
+    p~  verse text -- anything that was on a paragraph line (e.g., \p, \q, \q2, etc.)
     vw  ???
     g   ???
-    p~  verse text -- anything that was on a paragraph line (e.g., \p \q, etc.)
-    cl=
+    cl= used for cl markers BEFORE the '\c 1' marker -- represents the text for "chapter" to be used throughout the book
+    vp~ used for the vp (character field) when it is converted to a separate field
 """
 PSEUDO_OSIS_MARKERS = ( 'pp+', )
 NON_USFM_MARKERS = PSEUDO_USFM_NEWLINE_MARKERS + PSEUDO_OSIS_MARKERS
 
-EXTRA_TYPES = ( 'fn', 'en', 'xr', 'sr', 'sn', 'fig', 'str', )
+EXTRA_TYPES = ( 'fn', 'en', 'xr', 'sr', 'sn', 'fig', 'str', 'vp', )
 
 
 MAX_NONCRITICAL_ERRORS_PER_BOOK = 5
@@ -771,11 +773,13 @@ class InternalBibleIndex:
 
                     # Check the various series of markers
                     if marker == 'cp': assert( previousMarker in ('c','c~',None) ) # WEB Ps 151 gives None -- not totally sure why yet?
-                    if marker == 'c#': assert( nextMarker == 'v' )
-                    if marker == 'v' and markers[-1]!='v' and nextMarker != 'v~':
-                        logging.critical( "InternalBibleIndex.checkIndex: Probable v encoding error in {} {} {}:{} {}".format( self.name, self.bookReferenceCode, C, V, entries ) )
-                        if Globals.debugFlag and debuggingThisModule: halt
-                    if marker == 'vp': assert( previousMarker == 'v' )
+                    elif marker == 'c#': assert( nextMarker == 'v' )
+                    elif marker == 'v':
+                        if markers[-1] != 'v' and nextMarker != 'v~':
+                            logging.critical( "InternalBibleIndex.checkIndex: Probable v encoding error in {} {} {}:{} {}".format( self.name, self.bookReferenceCode, C, V, entries ) )
+                            if Globals.debugFlag and debuggingThisModule: halt
+                    elif marker == 'vp~': assert( previousMarker == 'v' )
+                    
                     if anyText or anyExtras: # Mustn't be a blank (unfinished) verse
                         if marker=='p' and nextMarker not in ('v','p~','c#',):
                             if lastKey: print( lastKey, self.getEntries( lastKey )[0] )

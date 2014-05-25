@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2014-05-23 by RJH (also update ProgVersion below)
+#   Last modified: 2014-05-25 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -41,7 +41,7 @@ Required improvements:
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.70"
+ProgVersion = "0.71"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -250,6 +250,7 @@ class InternalBibleBook:
         #print( self._rawLines[:20] ); halt
 
 
+        needToInsertVP = None
         def processLineFix( originalMarker, text ):
             """
             Does character fixes on a specific line and moves the following out of the main text:
@@ -266,7 +267,7 @@ class InternalBibleBook:
 
             NOTE: You must NOT strip the text any more AFTER calling this (or the note insert indices will be incorrect!
             """
-            nonlocal rtsCount
+            nonlocal rtsCount, needToInsertVP
             #print( "InternalBibleBook.processLineFix( {}, '{}' ) for {} ({})".format( originalMarker, text, self.bookReferenceCode, self.objectTypeString ) )
             if Globals.debugFlag:
                 assert( originalMarker and isinstance( originalMarker, str ) )
@@ -360,8 +361,11 @@ class InternalBibleBook:
                 ixSTR = adjText.find( '\\str ' )
                 if ixSTR == -1: ixSTR = adjText.find( '\\STR ' )
                 if ixSTR == -1: ixSTR = dummyValue
+                ixVP = adjText.find( '\\vp ' )
+                if ixVP == -1: ixVP = adjText.find( '\\VP ' )
+                if ixVP == -1: ixVP = dummyValue
                 #print( 'ixFN =',ixFN, ixEN, 'ixXR = ',ixXR, ixFIG, ixSTR )
-                ix1 = min( ixFN, ixEN, ixXR, ixFIG, ixSTR )
+                ix1 = min( ixFN, ixEN, ixXR, ixFIG, ixSTR, ixVP )
                 while ix1 < dummyValue: # We have one or the other
                     if ix1 == ixFN:
                         ix2 = adjText.find( '\\f*' )
@@ -370,7 +374,7 @@ class InternalBibleBook:
                         noteSFM, lenSFM, thisOne, this1 = 'f', 1, 'footnote', 'fn'
                         if ixFN and adjText[ixFN-1]==' ':
                             fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Found footnote preceded by a space in \\{}: {}").format( originalMarker, adjText ) )
-                            logging.error( _("processLineFix: Found footnote preceded by a space after {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
+                            logging.warning( _("processLineFix: Found footnote preceded by a space after {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
                             self.addPriorityError( 52, c, v, _("Footnote is preceded by a space") )
                     elif ix1 == ixEN:
                         ix2 = adjText.find( '\\fe*' )
@@ -379,7 +383,7 @@ class InternalBibleBook:
                         noteSFM, lenSFM, thisOne, this1 = 'fe', 2, 'endnote', 'en'
                         if ixEN and adjText[ixEN-1]==' ':
                             fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Found endnote preceded by a space in \\{}: {}").format( originalMarker, adjText ) )
-                            logging.error( _("processLineFix: Found endnote preceded by a space after {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
+                            logging.warning( _("processLineFix: Found endnote preceded by a space after {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
                             self.addPriorityError( 52, c, v, _("Endnote is preceded by a space") )
                     elif ix1 == ixXR:
                         ix2 = adjText.find( '\\x*' )
@@ -396,6 +400,11 @@ class InternalBibleBook:
                         if ix2 == -1: ix2 = adjText.find( '\\STR*' )
                         #print( 'C', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
                         noteSFM, lenSFM, thisOne, this1 = 'str', 3, 'Strongs-number', 'str'
+                    elif ix1 == ixVP:
+                        ix2 = adjText.find( '\\vp*' )
+                        if ix2 == -1: ix2 = adjText.find( '\\VP*' )
+                        #print( 'C', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
+                        noteSFM, lenSFM, thisOne, this1 = 'vp', 2, 'verse-character', 'vp'
                     else: halt
                     if ix2 == -1: # no closing marker
                         fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Found unmatched {} open in \\{}: {}").format( thisOne, originalMarker, adjText ) )
@@ -419,13 +428,13 @@ class InternalBibleBook:
                     else: # there is a note
                         if note[0].isspace():
                             fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Found {} starting with space in \\{}: {}").format( thisOne, originalMarker, adjText ) )
-                            logging.error( _("processLineFix: Found {} starting with space after {} {}:{} in \\{}: {}").format( thisOne, self.bookReferenceCode, c, v, originalMarker, adjText ) )
+                            logging.warning( _("processLineFix: Found {} starting with space after {} {}:{} in \\{}: {}").format( thisOne, self.bookReferenceCode, c, v, originalMarker, adjText ) )
                             self.addPriorityError( 12, c, v, _("{} starts with space").format( thisOne.title() ) )
                             note = note.lstrip()
                             #print( "QQQ2: lstrip in note" ); halt
                         if note and note[-1].isspace():
                             fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Found {} ending with space in \\{}: {}").format( thisOne, originalMarker, adjText ) )
-                            logging.error( _("processLineFix: Found {} ending with space after {} {}:{} in \\{}: {}").format( thisOne, self.bookReferenceCode, c, v, originalMarker, adjText ) )
+                            logging.warning( _("processLineFix: Found {} ending with space after {} {}:{} in \\{}: {}").format( thisOne, self.bookReferenceCode, c, v, originalMarker, adjText ) )
                             self.addPriorityError( 11, c, v, _("{} ends with space").format( thisOne.title() ) )
                             note = note.rstrip()
                             #print( "QQQ3: rstrip in note" )
@@ -451,6 +460,7 @@ class InternalBibleBook:
                         cleanedNote = cleanedNote.replace( '\\', '' )
                     # Save it all and finish off
                     extras.append( InternalBibleExtra(this1,ix1,note,cleanedNote) ) # Saves a 4-tuple: type ('fn' or 'xr'), index into the main text line, the actual fn or xref contents, then a cleaned version
+                    if this1=='vp': needToInsertVP = cleanedNote
                     ixFN = adjText.find( '\\f ' )
                     if ixFN == -1: ixFN = adjText.find( '\\F ' )
                     if ixFN == -1: ixFN = dummyValue
@@ -466,7 +476,10 @@ class InternalBibleBook:
                     ixSTR = adjText.find( '\\str ' )
                     if ixSTR == -1: ixSTR = adjText.find( '\\STR ' )
                     if ixSTR == -1: ixSTR = dummyValue
-                    ix1 = min( ixFN, ixEN, ixXR, ixFIG, ixSTR )
+                    ixVP = adjText.find( '\\vp ' )
+                    if ixVP == -1: ixVP = adjText.find( '\\VP ' )
+                    if ixVP == -1: ixVP = dummyValue
+                    ix1 = min( ixFN, ixEN, ixXR, ixFIG, ixSTR, ixVP )
                 #if extras: print( "Fix gave '{}' and '{}'".format( adjText, extras ) )
                 #if len(extras)>1: print( "Mutiple fix gave '{}' and '{}'".format( adjText, extras ) )
 
@@ -721,7 +734,7 @@ class InternalBibleBook:
             """
             Append the entry to self._processedLines
             """
-            nonlocal sahtCount
+            nonlocal sahtCount, needToInsertVP
 
             if adjMarker=='b' and text:
                 fixErrors.append( _("{} {}:{} Paragraph marker '{}' should not contain text").format( self.bookReferenceCode, c, v, originalMarker ) )
@@ -743,8 +756,15 @@ class InternalBibleBook:
             #if adjMarker=='v~' and not cleanText:
                 #if text or adjText:
                     #print( "Suppressed blank v~ for", self.bookReferenceCode, c, v, "'"+text+"'", "'"+adjText+"'" ); halt
-
             # From here on, we use adjText (not text)
+
+            if needToInsertVP: # we are converting the USFM vp character marker field into a separate vp~ field.
+                if Globals.debugFlag:
+                    assert( originalMarker == 'v' )
+                    assert( adjMarker == 'v~' )
+                self._processedLines.append( InternalBibleEntry('vp~', 'vp', needToInsertVP, needToInsertVP, InternalBibleExtraList(), needToInsertVP) )
+                needToInsertVP = None
+
             #print( "marker '{}' text '{}', adjText '{}'".format( adjMarker, text, adjText ) )
             if not adjText and not extras and ( Globals.USFMMarkers.markerShouldHaveContent(adjMarker)=='A' or adjMarker in ('v~','c~','c#',) ): # should always have text
                 #print( "processLine: marker should always have text (ignoring it):", self.bookReferenceCode, c, v, originalMarker, adjMarker, " originally '"+text+"'" )
@@ -760,7 +780,7 @@ class InternalBibleBook:
                 #self.addPriorityError( 96, c, v, _("Marker \\{} should always have text").format( originalMarker ) )
                 if adjMarker != 'v~': # Save all other empty markers
                     self._processedLines.append( InternalBibleEntry(adjMarker, originalMarker, adjText, cleanText, extras, originalText) )
-            else:
+            else: # it's not an empty field
                 #if c=='5' and v=='29': print( "processLine: {} '{}' to {} aT='{}' cT='{}' {}".format( originalMarker, text, adjMarker, adjText, cleanText, extras ) );halt
                 self._processedLines.append( InternalBibleEntry(adjMarker, originalMarker, adjText, cleanText, extras, originalText) )
         # end of doAppend
@@ -864,11 +884,11 @@ class InternalBibleBook:
                 if len(cBits) > 1: # We have extra stuff on the c line after the chapter number
                     if cBits[1] == ' ': # It's just a space
                         fixErrors.append( _("{} {}:{} Extra space after chapter marker").format( self.bookReferenceCode, c, v ) )
-                        logging.error( "InternalBibleBook.processLine: " + _("Extra space after chapter marker {} {}:{}").format( self.bookReferenceCode, c, v ) )
+                        logging.warning( "InternalBibleBook.processLine: " + _("Extra space after chapter marker {} {}:{}").format( self.bookReferenceCode, c, v ) )
                         self.addPriorityError( 10, c, v, _("Extra space after chapter marker") )
                     elif not cBits[1].strip(): # It's more than a space but just whitespace
                         fixErrors.append( _("{} {}:{} Extra whitespace after chapter marker").format( self.bookReferenceCode, c, v ) )
-                        logging.error( "InternalBibleBook.processLine: " + _("Extra whitespace after chapter marker {} {}:{}").format( self.bookReferenceCode, c, v ) )
+                        logging.warning( "InternalBibleBook.processLine: " + _("Extra whitespace after chapter marker {} {}:{}").format( self.bookReferenceCode, c, v ) )
                         self.addPriorityError( 20, c, v, _("Extra whitespace after chapter marker") )
                     else: # it's more than just whitespace
                         fixErrors.append( _("{} {}:{} Chapter marker seems to contain extra material '{}'").format( self.bookReferenceCode, c, v, cBits[1] ) )
