@@ -7353,7 +7353,7 @@ class BibleWriter( InternalBible ):
                 if markerList: # we found character formatting within the text
                     #print( BBB, C, V, "toODF.insertFormattedODFText: {} found {}".format( repr(text), markerList ) )
                     for marker, ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt in markerList:
-                        print( "loop", marker, ixBS, repr(nextSignificantChar), repr(fullMarkerText), context, ixEnd, repr(txt) )
+                        #print( "loop", marker, ixBS, repr(nextSignificantChar), repr(fullMarkerText), context, ixEnd, repr(txt) )
                         if marker in charODFStyleDict and nextSignificantChar == ' ': # it's an opening marker
                             textCursor.setPropertyValue( "CharStyleName", charODFStyleDict[marker] )
                             documentText.insertString( textCursor, txt, 0 )
@@ -8413,12 +8413,12 @@ def demo():
         from USFMBible import USFMBible
         from USFMFilenames import USFMFilenames
         testData = ( # name, abbreviation, folder for USFM files
-                #("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
+                ("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
                 #("CustomTest", "Custom", ".../",),
                 #("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
                 #("USFMTest2", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
                 #("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
-                ("OEB", "OEB", "Tests/DataFilesForTests/USFM-OEB/",),
+                #("OEB", "OEB", "Tests/DataFilesForTests/USFM-OEB/",),
                 #("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
                 #("MS-BT", "MBTBT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
                 #("MS-Notes", "MBTBC", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/",),
