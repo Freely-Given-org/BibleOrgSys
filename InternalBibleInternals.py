@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleInternals.py
-#   Last modified: 2014-05-25 by RJH (also update ProgVersion below)
+#   Last modified: 2014-05-28 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Bible internals handler"
-ProgVersion = "0.27"
+ProgVersion = "0.29"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -74,6 +74,7 @@ PSEUDO_USFM_NEWLINE_MARKERS = ( 'c~', 'c#', 'v-', 'v+', 'v~', 'vw', 'g', 'p~', '
     g   ???
     cl= used for cl markers BEFORE the '\c 1' marker -- represents the text for "chapter" to be used throughout the book
     vp~ used for the vp (character field) when it is converted to a separate field
+            This is inserted BEFORE the v (and v~) marker(s)
 """
 PSEUDO_OSIS_MARKERS = ( 'pp+', )
 NON_USFM_MARKERS = PSEUDO_USFM_NEWLINE_MARKERS + PSEUDO_OSIS_MARKERS
@@ -313,6 +314,7 @@ class InternalBibleEntry:
             elif extraType == 'xr': USFM, lenUSFM = 'x', 1
             elif extraType == 'fig': USFM, lenUSFM = 'fig', 3
             elif extraType == 'str': USFM, lenUSFM = None, 3 # Ignore Strong's numbers since no way to encode them in USFM
+            elif extraType == 'vp': USFM, lenUSFM = 'vp', 2
             elif Globals.debugFlag: halt
             if USFM:
                 result = '{}\\{} {}\\{}*{}'.format( result[:ix], USFM, extraText, USFM, result[ix:] )
@@ -778,8 +780,8 @@ class InternalBibleIndex:
                         if markers[-1] != 'v' and nextMarker != 'v~':
                             logging.critical( "InternalBibleIndex.checkIndex: Probable v encoding error in {} {} {}:{} {}".format( self.name, self.bookReferenceCode, C, V, entries ) )
                             if Globals.debugFlag and debuggingThisModule: halt
-                    elif marker == 'vp~': assert( previousMarker == 'v' )
-                    
+                    elif marker == 'vp~': assert( nextMarker == 'v' )
+
                     if anyText or anyExtras: # Mustn't be a blank (unfinished) verse
                         if marker=='p' and nextMarker not in ('v','p~','c#',):
                             if lastKey: print( lastKey, self.getEntries( lastKey )[0] )

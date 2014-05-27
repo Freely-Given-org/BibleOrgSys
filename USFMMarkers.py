@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkers.py
-#   Last modified: 2014-03-24 (also update ProgVersion below)
+#   Last modified: 2014-05-28 (also update ProgVersion below)
 #
 # Module handling USFMMarkers
 #
@@ -34,7 +34,7 @@ Contains the singleton class: USFMMarkers
 """
 
 ProgName = "USFM Markers handler"
-ProgVersion = "0.62"
+ProgVersion = "0.63"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -48,7 +48,7 @@ from singleton import singleton
 import Globals
 
 
-oftenIgnoredIntroMarkers = ('id','ide','sts','rem','h','toc1','toc2','toc3',)
+oftenIgnoredUSFMHeaderMarkers = ( 'id','ide', 'sts','rem','h', 'toc1','toc2','toc3', 'cl=', )
 
 
 def removeUSFMCharacterField( marker, originalText, closed ):

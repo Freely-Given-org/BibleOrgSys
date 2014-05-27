@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # TheWordBible.py
-#   Last modified: 2014-04-25 by RJH (also update ProgVersion below)
+#   Last modified: 2014-05-28 by RJH (also update ProgVersion below)
 #
 # Module handling "theWord" Bible module files
 #
@@ -51,7 +51,7 @@ e.g.,
 """
 
 ProgName = "theWord Bible format handler"
-ProgVersion = "0.16"
+ProgVersion = "0.17"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -62,7 +62,7 @@ from gettext import gettext as _
 import multiprocessing
 
 import Globals
-from USFMMarkers import oftenIgnoredIntroMarkers, removeUSFMCharacterField, replaceUSFMCharacterFields
+from USFMMarkers import oftenIgnoredUSFMHeaderMarkers, removeUSFMCharacterField, replaceUSFMCharacterFields
 from BibleOrganizationalSystems import BibleOrganizationalSystem
 
 
@@ -325,7 +325,7 @@ def theWordFileCompare( filename1, filename2, folder1=None, folder2=None, printF
 
 
 # These next three functions are used both by theWord and MySword exports
-theWordIgnoredIntroMarkers = oftenIgnoredIntroMarkers + (
+theWordIgnoredIntroMarkers = oftenIgnoredUSFMHeaderMarkers + (
     'imt1','imt2','imt3','is1','is2','is3',
     'ip','ipi','im','imi','ipq','imq','ir','iq1','iq2','iq3','ib','ili',
     'iot','io1','io2','io3','ir','iex','iqt','imte','ie','mte',)

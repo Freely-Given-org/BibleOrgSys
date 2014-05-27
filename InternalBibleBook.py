@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2014-05-25 by RJH (also update ProgVersion below)
+#   Last modified: 2014-05-28 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -41,7 +41,7 @@ Required improvements:
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.71"
+ProgVersion = "0.72"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -183,9 +183,7 @@ class InternalBibleBook:
 
         if marker not in NON_USFM_MARKERS and not Globals.USFMMarkers.isNewlineMarker( marker ):
             logging.critical( "IBB.appendLine: Not a NL marker: {}='{}'".format( marker, text ) )
-            if Globals.debugFlag:
-                print( self, repr(marker), repr(text) )
-                halt
+            if Globals.debugFlag: print( self, repr(marker), repr(text) ); halt # How did this happen?
 
         if text is None:
             logging.critical( "InternalBibleBook.appendLine: Received {} {} {}={}".format( self.objectTypeString, self.bookReferenceCode, marker, repr(text) ) )
@@ -247,10 +245,9 @@ class InternalBibleBook:
         if Globals.verbosityLevel > 2: print( "  " + _("Processing {} ({} {}) {} lines...").format( self.objectNameString, self.objectTypeString, self.workName, self.bookReferenceCode ) )
         if Globals.debugFlag: assert( not self._processedFlag ) # Can only do it once
         if Globals.debugFlag: assert( self._rawLines ) # or else the book was totally blank
-        #print( self._rawLines[:20] ); halt
+        #print( self._rawLines[:20] ); halt # for debugging
 
 
-        needToInsertVP = None
         def processLineFix( originalMarker, text ):
             """
             Does character fixes on a specific line and moves the following out of the main text:
@@ -267,13 +264,13 @@ class InternalBibleBook:
 
             NOTE: You must NOT strip the text any more AFTER calling this (or the note insert indices will be incorrect!
             """
-            nonlocal rtsCount, needToInsertVP
+            nonlocal rtsCount
             #print( "InternalBibleBook.processLineFix( {}, '{}' ) for {} ({})".format( originalMarker, text, self.bookReferenceCode, self.objectTypeString ) )
             if Globals.debugFlag:
                 assert( originalMarker and isinstance( originalMarker, str ) )
                 assert( isinstance( text, str ) )
             adjText = text
-            cleanText = text.replace( 'xa0', ' ' ) # Replace non-break spaces
+            cleanText = text.replace( 'xa0', ' ' ) # Replace non-break spaces for this
 
             # Remove trailing spaces
             if adjText and adjText[-1].isspace():
@@ -401,11 +398,15 @@ class InternalBibleBook:
                         #print( 'C', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
                         noteSFM, lenSFM, thisOne, this1 = 'str', 3, 'Strongs-number', 'str'
                     elif ix1 == ixVP:
+                        if originalMarker != 'v~': # We only expect vp fields in v (now converted to v~) lines
+                            fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Found unexpected 'vp' field in \\{} line: {}").format( originalMarker, adjText ) )
+                            logging.error( _("processLineFix: Found unexpected 'vp' fieldafter {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, thisOne, originalMarker, adjText ) )
+                            self.addPriorityError( 95, c, v, _("Misplaced 'vp' field") )
                         ix2 = adjText.find( '\\vp*' )
                         if ix2 == -1: ix2 = adjText.find( '\\VP*' )
                         #print( 'C', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
                         noteSFM, lenSFM, thisOne, this1 = 'vp', 2, 'verse-character', 'vp'
-                    else: halt
+                    elif Globals.debugFlag: halt # programming error
                     if ix2 == -1: # no closing marker
                         fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Found unmatched {} open in \\{}: {}").format( thisOne, originalMarker, adjText ) )
                         logging.error( _("processLineFix: Found unmatched {} open after {} {}:{} in \\{}: {}").format( thisOne, self.bookReferenceCode, c, v, originalMarker, adjText ) )
@@ -458,9 +459,16 @@ class InternalBibleBook:
                         logging.error( _("processLineFix: Found unexpected backslash after {} {}:{} in {}: {}").format( self.bookReferenceCode, c, v, thisOne, cleanedNote ) )
                         self.addPriorityError( 81, c, v, _("{} contains unexpected backslash").format( thisOne.title() ) )
                         cleanedNote = cleanedNote.replace( '\\', '' )
+
                     # Save it all and finish off
-                    extras.append( InternalBibleExtra(this1,ix1,note,cleanedNote) ) # Saves a 4-tuple: type ('fn' or 'xr'), index into the main text line, the actual fn or xref contents, then a cleaned version
-                    if this1=='vp': needToInsertVP = cleanedNote
+                    extras.append( InternalBibleExtra(this1,ix1,note,cleanedNote) ) # Saves a 4-tuple: type ('fn' or 'xr', etc.), index into the main text line, the actual fn or xref contents, then a cleaned version
+                    if this1 == 'vp': # Insert a new pseudo vp~ newline entry BEFORE the v field that it presumably came from
+                        #print( "InternalBibleBook.processLineFix insertVP~ (before)", self.bookReferenceCode, c, v, repr(originalMarker), repr(cleanedNote) )
+                        if Globals.debugFlag: assert( originalMarker == 'v~' ) # Shouldn't occur in other fields
+                        vEntry = self._processedLines.pop() # because the v field has already been written
+                        self._processedLines.append( InternalBibleEntry('vp~', 'vp', cleanedNote, cleanedNote, InternalBibleExtraList(), cleanedNote) )
+                        self._processedLines.append( vEntry ) # Put the original v entry back afterwards
+                    # Get ready for the next loop
                     ixFN = adjText.find( '\\f ' )
                     if ixFN == -1: ixFN = adjText.find( '\\F ' )
                     if ixFN == -1: ixFN = dummyValue
@@ -525,7 +533,7 @@ class InternalBibleBook:
                         #print( "now" "'"+adjText+"'" )
                         #print( "st", "'"+stuff+"'", )
                         if stuff == 'type="study"': code = 'sn'
-                        else: halt
+                        else: halt # programming error
                         extras.append( InternalBibleExtra(code,ixStart+ixEnd-ixClose,stuff,stuff) )
                         #ixStart += 0
                     elif remainingText.startswith('<RF>1<Rf>') or remainingText.startswith('<RF>2<Rf>') \
@@ -637,7 +645,6 @@ class InternalBibleBook:
                 #print( "aT", adjText )
                 #print( "ex", extras )
                 #adjText = adjText.replace( '<transChange type="added">', '<it>' ).replace( '</transChange>', '</it>' )
-                #halt
 
             # Check trailing spaces again now
             if adjText and adjText[-1].isspace():
@@ -665,7 +672,6 @@ class InternalBibleBook:
                 if '<' in cleanText or '>' in cleanText:
                     print( "\nFrom:", c, v, text )
                     print( " Still have angle brackets left in:", cleanText )
-                    #halt
             else: # not Sword
                 #print( Globals.USFMMarkers.getCharacterMarkersList() )
                 cleanText = adjText.replace( '&amp;', '&' ).replace( '&#39;', "'" ).replace( '&lt;', '<' ).replace( '&gt;', '>' ).replace( '&quot;', '"' ) # Undo any replacements above
@@ -707,12 +713,9 @@ class InternalBibleBook:
                             cleanText = cleanText[:ixBS].rstrip()
                             #print( "QQQ7: rstrip" ); halt
                             #print( "cleanText: '{}'".format( cleanText ) )
-                    if '\\' in cleanText: logging.error( "processLineFix: Why do we still have a backslash in '{}' from '{}'?".format( cleanText, adjText ) ); halt
-            #if "|Cook" in adjText:
-                #print( "Done" )
-                #print( "adjT", repr(adjText) )
-                #print( "clT", repr(cleanText) )
-                #halt
+                    if '\\' in cleanText:
+                        logging.critical( "processLineFix: Why do we still have a backslash in '{}' from '{}'?".format( cleanText, adjText ) )
+                        if Globals.debugFlag: halt
 
             if Globals.debugFlag: # Now do a final check that we did everything right
                 for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
@@ -730,15 +733,15 @@ class InternalBibleBook:
         # end of InternalBibleBook.processLines.processLineFix
 
 
-        def doAppend( adjMarker, originalMarker, text, originalText ):
+        def __doAppendEntry( adjMarker, originalMarker, text, originalText ):
             """
             Append the entry to self._processedLines
             """
-            nonlocal sahtCount, needToInsertVP
+            nonlocal sahtCount
 
             if adjMarker=='b' and text:
                 fixErrors.append( _("{} {}:{} Paragraph marker '{}' should not contain text").format( self.bookReferenceCode, c, v, originalMarker ) )
-                logging.error( _("doAppend: Illegal text for '{}' paragraph marker {} {}:{}").format( originalMarker, self.bookReferenceCode, c, v ) )
+                logging.error( _("doAppendEntry: Illegal text for '{}' paragraph marker {} {}:{}").format( originalMarker, self.bookReferenceCode, c, v ) )
                 self.addPriorityError( 97, c, v, _("Should not have text following character marker '{}").format( originalMarker ) )
 
             if (adjMarker=='b' or adjMarker in Globals.USFMParagraphMarkers) and text:
@@ -747,7 +750,7 @@ class InternalBibleBook:
                 adjMarker = 'p~'
                 if not text.strip():
                     fixErrors.append( _("{} {}:{} Paragraph marker '{}' seems to contain only whitespace").format( self.bookReferenceCode, c, v, originalMarker ) )
-                    logging.error( _("doAppend: Only whitespace for '{}' paragraph marker {} {}:{}").format( originalMarker, self.bookReferenceCode, c, v ) )
+                    logging.error( _("doAppendEntry: Only whitespace for '{}' paragraph marker {} {}:{}").format( originalMarker, self.bookReferenceCode, c, v ) )
                     self.addPriorityError( 68, c, v, _("Only whitespace following character marker '{}").format( originalMarker ) )
                     return # nothing more to do here
 
@@ -758,13 +761,6 @@ class InternalBibleBook:
                     #print( "Suppressed blank v~ for", self.bookReferenceCode, c, v, "'"+text+"'", "'"+adjText+"'" ); halt
             # From here on, we use adjText (not text)
 
-            if needToInsertVP: # we are converting the USFM vp character marker field into a separate vp~ field.
-                if Globals.debugFlag:
-                    assert( originalMarker == 'v' )
-                    assert( adjMarker == 'v~' )
-                self._processedLines.append( InternalBibleEntry('vp~', 'vp', needToInsertVP, needToInsertVP, InternalBibleExtraList(), needToInsertVP) )
-                needToInsertVP = None
-
             #print( "marker '{}' text '{}', adjText '{}'".format( adjMarker, text, adjText ) )
             if not adjText and not extras and ( Globals.USFMMarkers.markerShouldHaveContent(adjMarker)=='A' or adjMarker in ('v~','c~','c#',) ): # should always have text
                 #print( "processLine: marker should always have text (ignoring it):", self.bookReferenceCode, c, v, originalMarker, adjMarker, " originally '"+text+"'" )
@@ -773,9 +769,9 @@ class InternalBibleBook:
                     if sahtCount != -1:
                         sahtCount += 1
                         if sahtCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
-                            logging.error( _("doAppend: Marker '{}' at {} {}:{} should always have text").format( originalMarker, self.bookReferenceCode, c, v ) )
+                            logging.error( _("doAppendEntry: Marker '{}' at {} {}:{} should always have text").format( originalMarker, self.bookReferenceCode, c, v ) )
                         else: # we've reached our limit
-                            logging.error( _('doAppend: Additional "Marker should always have text" messages suppressed...') )
+                            logging.error( _('doAppendEntry: Additional "Marker should always have text" messages suppressed...') )
                             sahtCount = -1 # So we don't do this again (for this book)
                 #self.addPriorityError( 96, c, v, _("Marker \\{} should always have text").format( originalMarker ) )
                 if adjMarker != 'v~': # Save all other empty markers
@@ -783,7 +779,7 @@ class InternalBibleBook:
             else: # it's not an empty field
                 #if c=='5' and v=='29': print( "processLine: {} '{}' to {} aT='{}' cT='{}' {}".format( originalMarker, text, adjMarker, adjText, cleanText, extras ) );halt
                 self._processedLines.append( InternalBibleEntry(adjMarker, originalMarker, adjText, cleanText, extras, originalText) )
-        # end of doAppend
+        # end of __doAppendEntry
 
 
         def processLine( originalMarker, originalText ):
@@ -824,7 +820,7 @@ class InternalBibleBook:
                         if char.isdigit() or char in ('a','b','c','d','e','f'): bit1 += char
                         else: bit2 += char; snStatus = 2
                     elif snStatus == 2: bit2 += char
-                    else: halt
+                    else: halt # programming error
                 #nBits = [bit1]
                 #if bit2: nBits.append( bit2 )
                 #print( "  splitNumber is returning:", nBits )
@@ -855,7 +851,7 @@ class InternalBibleBook:
                     elif snStatus == 3:
                         if bit3 or char != ' ':
                             bit3 += char
-                    else: halt
+                    else: halt # programming error
                 nBits = [bit1]
                 if bit2: nBits.append( bit2 )
                 nBits.append( bit3 )
@@ -940,7 +936,6 @@ class InternalBibleBook:
                         if lastOriginalText:
                             self._processedLines.append( InternalBibleEntry(lastAdjustedMarker, lastOriginalMarker, lastAdjustedText, lastCleanText, lastExtras, lastOriginalText) )
                         self._processedLines.append( InternalBibleEntry('c', 'c', '1', '1', InternalBibleExtraList(), '1') ) # Write the explicit chapter number
-                    #print( self._processedLines ); halt
 
                 if haveWaitingC: # Add a false chapter number at the place where we normally want it printed
                     self._processedLines.append( InternalBibleEntry('c#', 'c', haveWaitingC, haveWaitingC, InternalBibleExtraList(), haveWaitingC) ) # Write the additional chapter number
@@ -993,7 +988,7 @@ class InternalBibleBook:
                     if Globals.debugFlag:
                         assert( verseNumberBit and verseNumberRest )
                         assert( '\\' not in verseNumberBit )
-                    if len(vBits)>2:
+                    if len(vBits)>2: # rarely happens
                         adjText, cleanText, extras = processLineFix( originalMarker, vBits[1] )
                         if adjText or cleanText or extras:
                             print( "InternalBibleBook.processLine: Something on v line", repr(text), repr(vBits[1]) )
@@ -1120,41 +1115,10 @@ class InternalBibleBook:
                         and thisField.endswith( '"/>' ):
                             text = beforeText + afterText # We just ignore it
                         ixLT = text.find( '<', ixLT+1 )
-            #if v == '5':
-                #for n in range( 0, 30 ): print( "\n{}: {}".format( n, self._processedLines[n] ) )
-                #halt
 
-            #print( "doAppend", adjustedMarker, originalMarker, repr(text), repr(originalText) )
+            #print( "__doAppendEntry", adjustedMarker, originalMarker, repr(text), repr(originalText) )
             #print( " ", verseNumberRest if originalMarker=='v' and adjustedMarker=='v~' else originalText )
-            doAppend( adjustedMarker, originalMarker, text, verseNumberRest if originalMarker=='v' and adjustedMarker=='v~' else originalText )
-            ## Separate out the notes (footnotes and cross-references)
-            #adjText, cleanText, extras = processLineFix( originalMarker, text )
-
-            ##if adjustedMarker=='v~' and not cleanText:
-                ##if text or adjText:
-                    ##print( "Suppressed blank v~ for", self.bookReferenceCode, c, v, "'"+text+"'", "'"+adjText+"'" ); halt
-
-            ## From here on, we use adjText (not text)
-            ##print( "marker '{}' text '{}', adjText '{}'".format( adjustedMarker, text, adjText ) )
-            #if not adjText and not extras and ( Globals.USFMMarkers.markerShouldHaveContent(adjustedMarker)=='A' or adjustedMarker in ('v~','c~','c#',) ): # should always have text
-                ##print( "processLine: marker should always have text (ignoring it):", self.bookReferenceCode, c, v, originalMarker, adjustedMarker, " originally '"+text+"'" )
-                #fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Marker '{}' should always have text").format( originalMarker ) )
-                #if self.objectTypeString in ('USFM','USX',):
-                    #if sahtCount != -1:
-                        #sahtCount += 1
-                        #if sahtCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
-                            #logging.error( _("Marker '{}' at {} {}:{} should always have text").format( originalMarker, self.bookReferenceCode, c, v ) )
-                        #else: # we've reached our limit
-                            #logging.error( _('Additional "Marker should always have text" messages suppressed...') )
-                            #sahtCount = -1 # So we don't do this again (for this book)
-                #self.addPriorityError( 96, c, v, _("Marker \\{} should always have text").format( originalMarker ) )
-                ## Don't bother even saving the marker since it's useless
-                ## Wrong -- save the empty marker
-                #if adjustedMarker != 'v~': # Save all other empty markers
-                    #self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, adjText, cleanText, extras) )
-            #else:
-                ##if c=='5' and v=='29': print( "processLine: {} '{}' to {} aT='{}' cT='{}' {}".format( originalMarker, text, adjustedMarker, adjText, cleanText, extras ) );halt
-                #self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, adjText, cleanText, extras) )
+            __doAppendEntry( adjustedMarker, originalMarker, text, verseNumberRest if originalMarker=='v' and adjustedMarker=='v~' else originalText )
         # end of InternalBibleBook.processLines.processLine
 
 

@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # SFMFile.py
-#   Last modified: 2013-12-18 (also update ProgVersion below)
+#   Last modified: 2014-05-28 (also update ProgVersion below)
 #
 # SFM (Standard Format Marker) data file reader
 #
-# Copyright (C) 2010-2013 Robert Hunt
+# Copyright (C) 2010-2014 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -40,11 +40,11 @@ There are three kinds of SFM encoded files which can be loaded:
 
 
 ProgName = "SFM Files loader"
-ProgVersion = "0.82"
+ProgVersion = "0.83"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
-import logging
+import logging, sys
 
 import Globals
 
@@ -132,7 +132,9 @@ class SFMLines:
 
                     if marker not in ignoreSFMs:
                         result.append( (marker, text) )
-            except:
+
+            except UnicodeError as err:
+                print( "Unicode error:", sys.exc_info()[0], err )
                 logging.critical( "Invalid line in " + sfm_filename + " -- line ignored at #" + str(lineCount) )
                 if lineCount > 1: print( 'Previous line was: ', lastLine )
                 #print( line )
@@ -255,7 +257,9 @@ class SFMRecords:
                         record = []
                     # Save the current marker and text
                     record.append( (marker, text) )
-            except:
+
+            except UnicodeError as err:
+                print( "Unicode error:", sys.exc_info()[0], err )
                 logging.critical( "Invalid line in " + sfm_filename + " -- line ignored at " + str(lineCount) )
                 if lineCount > 1: print( 'Previous line was: ', lastLine )
                 else: print( 'Possible encoding error -- expected', encoding )

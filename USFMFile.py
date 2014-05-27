@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMFile.py
-#   Last modified: 2014-05-25 (also update ProgVersion below)
+#   Last modified: 2014-05-28 (also update ProgVersion below)
 #
 # SFM (Standard Format Marker) data file reader
 #
@@ -36,11 +36,11 @@ Module for reading UTF-8 USFM (Unified Standard Format Marker) Bible file.
 
 
 ProgName = "USFM File loader"
-ProgVersion = "0.82"
+ProgVersion = "0.83"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
-import logging
+import logging, sys
 
 import Globals
 
@@ -142,7 +142,8 @@ class USFMFile:
                     if marker not in ignoreSFMs:
                         result.append( (marker, text) )
 
-            except:
+            except UnicodeError as err:
+                print( "Unicode error:", sys.exc_info()[0], err )
                 logging.critical( "Invalid line in " + sfm_filename + " -- line ignored at #" + str(lineCount) )
                 if lineCount > 1: print( 'Previous line was: ', lastLine )
                 #print( line )

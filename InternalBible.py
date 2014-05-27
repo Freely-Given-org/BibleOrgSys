@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2014-05-05 by RJH (also update ProgVersion below)
+#   Last modified: 2014-05-28 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -225,7 +225,7 @@ class InternalBible:
 
 
     def __iter__( self ):
-        """ Yields the next book. """
+        """ Yields the next book object. """
         for BBB in self.books:
             yield self.books[BBB]
     # end of InternalBible.__iter__
