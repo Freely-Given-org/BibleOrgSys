@@ -3238,7 +3238,7 @@ class BibleWriter( InternalBible ):
 
         # Now create a zipped version
         filepath = os.path.join( outputFolder, filename )
-        if Globals.verbosityLevel > 2: print( "  Zipping {} pickle file...".format( filename ) )
+        if Globals.verbosityLevel > 2: print( "  Zipping {} Zefania file...".format( filename ) )
         zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
         zf.write( filepath, filename )
         zf.close()
@@ -3388,7 +3388,7 @@ class BibleWriter( InternalBible ):
 
         # Now create a zipped version
         filepath = os.path.join( outputFolder, filename )
-        if Globals.verbosityLevel > 2: print( "  Zipping {} pickle file...".format( filename ) )
+        if Globals.verbosityLevel > 2: print( "  Zipping {} Haggai file...".format( filename ) )
         zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
         zf.write( filepath, filename )
         zf.close()
@@ -3511,7 +3511,7 @@ class BibleWriter( InternalBible ):
 
         # Now create a zipped version
         filepath = os.path.join( outputFolder, filename )
-        if Globals.verbosityLevel > 2: print( "  Zipping {} pickle file...".format( filename ) )
+        if Globals.verbosityLevel > 2: print( "  Zipping {} OpenSong file...".format( filename ) )
         zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
         zf.write( filepath, filename )
         zf.close()
@@ -4366,7 +4366,7 @@ class BibleWriter( InternalBible ):
 
         # Now create a zipped version
         filepath = os.path.join( outputFolder, filename )
-        if Globals.verbosityLevel > 2: print( "  Zipping {} pickle file...".format( filename ) )
+        if Globals.verbosityLevel > 2: print( "  Zipping {} USFX file...".format( filename ) )
         zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
         zf.write( filepath, filename )
         zf.close()
@@ -5124,7 +5124,7 @@ class BibleWriter( InternalBible ):
             xw.close()
             # Now create a zipped version
             filepath = os.path.join( outputFolder, filename )
-            if Globals.verbosityLevel > 2: print( "  Zipping {} pickle file...".format( filename ) )
+            if Globals.verbosityLevel > 2: print( "  Zipping {} OSIS file...".format( filename ) )
             zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
             zf.write( filepath, filename )
             zf.close()
@@ -8217,6 +8217,7 @@ class BibleWriter( InternalBible ):
 
         # Now create a zipped version
         filename = (self.abbreviation if self.abbreviation else self.name) + '.pickle' # Same as in InternalBible.pickle()
+        filename = Globals.makeSafeFilename( filename )
         filepath = os.path.join( outputFolder, filename )
         if Globals.verbosityLevel > 2: print( "  Zipping {} pickle file...".format( filename ) )
         zf = zipfile.ZipFile( filepath+'.zip', 'w', compression=zipfile.ZIP_DEFLATED )
