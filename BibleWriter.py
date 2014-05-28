@@ -2724,7 +2724,7 @@ class BibleWriter( InternalBible ):
             # First of all, get the text (by chapter)
             C = V = "0"
             numVerses = 0
-            textBuffer, lastMarker = "", None
+            textBuffer, lastMarker, gotVP = "", None, None
             for entry in pseudoUSFMData:
                 marker, cleanText = entry.getMarker(), entry.getCleanText()
                 #print( BBB, C, V, marker, repr(cleanText) )
@@ -2740,8 +2740,13 @@ class BibleWriter( InternalBible ):
                     if textBuffer: renderText( BBB, BBBnum, bookName, bookAbbrev, C, maxChapters, numVerses, textBuffer, bookFolderPath ); textBuffer = ""
                     C = cleanText
                     numVerses = 0
+                elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
+                    gotVP = text # Just remember it for now
                 elif marker == 'v':
                     V = cleanText
+                    if gotVP: # this is a replacement verse number for publishing
+                        cleanText = gotVP
+                        gotVP = None
                     textBuffer += (' ' if textBuffer and textBuffer[-1]!='\n' else '') + 'VvV' + cleanText + ' '
                     numVerses += 1
                 elif marker in ('r','mr',):
@@ -2777,8 +2782,8 @@ class BibleWriter( InternalBible ):
                     textBuffer += '\n' + cleanText
                 elif marker not in ('c#',): # These are the markers that we can safely ignore for this export
                     if cleanText:
-                        logging.critical( "toPhotoBible: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(cleanText) ) )
-                        if Globals.debugFlag: halt
+                        logging.error( "toPhotoBible: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(cleanText) ) )
+                        #if Globals.debugFlag: halt
                     unhandledMarkers.add( marker )
                 #if extras and marker not in ('v~','p~',):
                     #logging.critical( "toPhotoBible: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
