@@ -5276,7 +5276,7 @@ class BibleWriter( InternalBible ):
             confText = confText.replace( '__LANGUAGE__', 'UNKNOWN' )
 
             # Write the new file
-            confFilename = adjustedProjectName + '.conf'
+            confFilename = Globals.makeSafeFilename( adjustedProjectName + '.conf' )
             confFilepath = os.path.join( modsdFolder, confFilename )
             with open( confFilepath, 'wt' ) as myFile: myFile.write( confText )
         # end of makeConfFile
