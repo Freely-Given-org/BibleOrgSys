@@ -775,7 +775,7 @@ class InternalBibleIndex:
 
                     # Check the various series of markers
                     if marker == 'cp': assert( previousMarker in ('c','c~',None) ) # WEB Ps 151 gives None -- not totally sure why yet?
-                    elif marker == 'c#': assert( nextMarker == 'v' )
+                    elif marker == 'c#': assert( nextMarker in ( 'v', 'vp~', ) )
                     elif marker == 'v':
                         if markers[-1] != 'v' and nextMarker != 'v~':
                             logging.critical( "InternalBibleIndex.checkIndex: Probable v encoding error in {} {} {}:{} {}".format( self.name, self.bookReferenceCode, C, V, entries ) )
