@@ -2011,6 +2011,9 @@ class InternalBibleBook:
             elif marker == 'c#':
                 lastMarker, lastMarkerEmpty = 'c', markerEmpty
                 continue
+            elif marker == 'vp~':
+                lastMarker, lastMarkerEmpty = 'v', markerEmpty
+                continue
             else: # it's not our (non-USFM) c~,c#,v~ markers
                 if marker not in allAvailableNewlineMarkers: print( "Unexpected marker is '{}'".format( marker ) )
                 if Globals.debugFlag: assert( marker in allAvailableNewlineMarkers ) # Should have been checked at load time
