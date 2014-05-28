@@ -2741,7 +2741,7 @@ class BibleWriter( InternalBible ):
                     C = cleanText
                     numVerses = 0
                 elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
-                    gotVP = text # Just remember it for now
+                    gotVP = cleanText # Just remember it for now
                 elif marker == 'v':
                     V = cleanText
                     if gotVP: # this is a replacement verse number for publishing
