@@ -5225,7 +5225,7 @@ class BibleWriter( InternalBible ):
         if not os.access( textsFolder, os.F_OK ): os.mkdir( textsFolder ) # Make the empty folder if there wasn't already one there
         rawTextFolder = os.path.join( textsFolder, "rawtext" )
         if not os.access( rawTextFolder, os.F_OK ): os.mkdir( rawTextFolder ) # Make the empty folder if there wasn't already one there
-        lgFolder = os.path.join( rawTextFolder, controlDict["osisWork"].lower() )
+        lgFolder = os.path.join( rawTextFolder, Globals.makeSafeFilename( controlDict["osisWork"].lower() ) )
         if not os.access( lgFolder, os.F_OK ): os.mkdir( lgFolder ) # Make the empty folder if there wasn't already one there
 
         toSwordGlobals = { 'currentID':0, "idStack":[], "verseRef":'', "XRefNum":0, "FootnoteNum":0, "lastRef":'', 'offset':0, 'length':0, "OneChapterOSISBookCodes":Globals.BibleBooksCodes.getOSISSingleChapterBooksList() } # These are our global variables
