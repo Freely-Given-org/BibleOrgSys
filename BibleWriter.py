@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-05-28 by RJH (also update ProgVersion below)
+#   Last modified: 2014-05-29 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -65,7 +65,7 @@ Note that not all exports export all books.
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.73"
+ProgVersion = "0.74"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -460,6 +460,8 @@ class BibleWriter( InternalBible ):
         if not outputFolder: outputFolder = "OutputFiles/BOS_PlainText_Export/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
 
+        ignoredMarkers = set()
+
         # First determine our format
         columnWidth = 80
         verseByVerse = True
@@ -475,15 +477,16 @@ class BibleWriter( InternalBible ):
             with open( filepath, 'wt' ) as myFile:
                 for entry in pseudoUSFMData:
                     marker, text = entry.getMarker(), entry.getCleanText()
-                    #if marker in ('id','ide','toc1','toc2','toc3','c#',): pass # Completely ignore these fields
-                    if marker in oftenIgnoredUSFMHeaderMarkers: pass # Just ignore these lines
+                    if marker in oftenIgnoredUSFMHeaderMarkers: # Just ignore these lines
+                        ignoredMarkers.add( marker )
                     elif marker == 'h':
                         if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
                         myFile.write( "{}\n\n".format( text ) )
                     elif marker in ('mt1','mt2','mt3','mt4',):
                         if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
                         myFile.write( "{}{}\n\n".format( ' '*((columnWidth-len(text))//2), text ) )
-                    elif marker in ('is1','is2','is3','is4','ip','ipi','iot','io1','io2','io3','io4',): pass # Drop the introduction
+                    elif marker in ('is1','is2','is3','is4','ip','ipi','iot','io1','io2','io3','io4',): # Drop the introduction
+                        ignoredMarkers.add( marker )
                     elif marker == 'c':
                         C = text
                         if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
@@ -492,7 +495,8 @@ class BibleWriter( InternalBible ):
                         V = text
                         if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
                         myFile.write( "\n{} ".format( text ) )
-                    elif marker in ('p','s1','s2','s3','s4',): pass # Drop out these fields
+                    elif marker in ('p','s1','s2','s3','s4',): # Drop out these fields
+                        ignoredMarkers.add( marker )
                     elif text:
                         textBuffer += (' ' if textBuffer else '') + text
                 if textBuffer: myFile.write( "{}\n".format( textBuffer ) ) # Write the last bit
@@ -500,6 +504,11 @@ class BibleWriter( InternalBible ):
                     #if verseByVerse:
                         #myFile.write( "{} ({}): '{}' '{}' {}\n" \
                             #.format( entry.getMarker(), entry.getOriginalMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras() ) )
+
+        if ignoredMarkers:
+            logging.info( "toText: Ignored markers were {}".format( ignoredMarkers ) )
+            if Globals.verbosityLevel > 2:
+                print( "  " + _("WARNING: Ignored toText markers were {}").format( ignoredMarkers ) )
 
         # Now create a zipped collection
         if Globals.verbosityLevel > 2: print( "  Zipping text files..." )
@@ -527,6 +536,7 @@ class BibleWriter( InternalBible ):
         if not outputFolder: outputFolder = "OutputFiles/BOS_Markdown_Export/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
 
+        ignoredMarkers = set()
 
         def __formatMarkdownVerseText( BBB, C, V, givenText, extras ):
             """
@@ -832,9 +842,8 @@ class BibleWriter( InternalBible ):
             with open( filepath, 'wt' ) as myFile:
                 for entry in pseudoUSFMData:
                     marker, adjText, extras = entry.getMarker(), entry.getAdjustedText(), entry.getExtras()
-                    #if marker in ('id','ide','toc1','toc2','toc3','c#',): pass # Completely ignore these fields
-                    if marker in oftenIgnoredUSFMHeaderMarkers: pass # Just ignore these lines
-                    #elif marker == 'h': pass
+                    if marker in oftenIgnoredUSFMHeaderMarkers: # Just ignore these lines
+                        ignoredMarkers.add( marker )
                     elif marker in ('mt1','mt2','mt3','mt4', 'imt1','imt2','imt3','imt4',):
                         if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
                         level = int( marker[-1] )
@@ -843,7 +852,6 @@ class BibleWriter( InternalBible ):
                         if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
                         level = int( marker[-1] ) + 2 # so s1 becomes header #3
                         myFile.write( "\n{} {}\n".format( '#'*level, adjText ) )
-                    #elif marker in ('is1','is2','is3','is4','ip','ipi','iot','io1','io2','io3','io4',): pass # Drop the introduction
                     elif marker == 'c':
                         C = adjText
                         if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
@@ -852,7 +860,8 @@ class BibleWriter( InternalBible ):
                         V = adjText
                         if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
                         myFile.write( "\n{} ".format( adjText ) )
-                    elif marker in ('p',): pass # Drop out these fields
+                    elif marker in ('p',): # Drop out these fields
+                        ignoredMarkers.add( marker )
                     elif adjText:
                         textBuffer += (' ' if textBuffer else '') + __formatMarkdownVerseText( BBB, C, V, adjText, extras )
                 if textBuffer: myFile.write( "{}\n".format( textBuffer ) ) # Write the last bit
@@ -860,6 +869,11 @@ class BibleWriter( InternalBible ):
                     #if verseByVerse:
                         #myFile.write( "{} ({}): '{}' '{}' {}\n" \
                             #.format( entry.getMarker(), entry.getOriginalMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras() ) )
+
+        if ignoredMarkers:
+            logging.info( "toText: Ignored markers were {}".format( ignoredMarkers ) )
+            if Globals.verbosityLevel > 2:
+                print( "  " + _("WARNING: Ignored toText markers were {}").format( ignoredMarkers ) )
 
         # Now create a zipped collection
         if Globals.verbosityLevel > 2: print( "  Zipping markdown files..." )
@@ -1212,7 +1226,7 @@ class BibleWriter( InternalBible ):
                 #shutil.copy( filepath, os.path.join( WEBoutputFolder, "Bible.css" ) ) # Copy it also under the generic name
             except FileNotFoundError: logging.error( "Unable to find CSS style file: {}".format( filepath ) )
 
-        unhandledMarkers = set()
+        ignoredMarkers, unhandledMarkers = set(), set()
 
 
         def writeHeader( writerObject, myBBB ):
@@ -1445,7 +1459,8 @@ class BibleWriter( InternalBible ):
                 #print( "toHTML5.writeHTML5Book", BBB, C, V, marker, text )
 
                 # Markers usually only found in the introduction
-                if marker in oftenIgnoredUSFMHeaderMarkers: pass # Just ignore these lines
+                if marker in oftenIgnoredUSFMHeaderMarkers: # Just ignore these lines
+                    ignoredMarkers.add( marker )
                 elif marker in ('mt1','mt2','mt3','mt4', 'imt1','imt2','imt3','imt4',):
                     if Globals.debugFlag: assert( not haveOpenParagraph )
                     #if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
@@ -1493,7 +1508,8 @@ class BibleWriter( InternalBible ):
                     if extras: print( "toHTML5: have extras at c at",BBB,C)
                     # What should we put in here -- we don't need/want to display it, but it's a place to jump to
                     writerObject.writeLineOpenClose( 'span', ' ', [('class','chapterStart'),('id','CS'+text)] )
-                elif marker == 'cp': pass # ignore this for now
+                elif marker == 'cp': # ignore this for now
+                    ignoredMarkers.add( marker )
                 elif marker == 'c#':
                     if extras: print( "toHTML5: have extras at c# at",BBB,C)
                     C = text
@@ -1581,6 +1597,7 @@ class BibleWriter( InternalBible ):
 
                 elif marker in ('nb','cl','vp~',): # These are the markers that we can safely ignore for this export
                     if Globals.debugFlag and marker=='nb': assert( not text and not extras )
+                    ignoredMarkers.add( marker )
                 else:
                     if text:
                         logging.critical( "toHTML5: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
@@ -1640,6 +1657,11 @@ class BibleWriter( InternalBible ):
             writeHomePage()
             writeAboutPage()
         elif Globals.debugFlag and debuggingThisModule: halt # not done yet
+
+        if ignoredMarkers:
+            logging.info( "toHTML5: Ignored markers were {}".format( ignoredMarkers ) )
+            if Globals.verbosityLevel > 2:
+                print( "  " + _("WARNING: Ignored toHTML5 markers were {}").format( ignoredMarkers ) )
         if unhandledMarkers:
             logging.warning( "toHTML5: Unhandled markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:
@@ -1693,7 +1715,7 @@ class BibleWriter( InternalBible ):
         destinationHTMLFilepathTemplate = os.path.join( bookOutputFolderHTML, "CBBook.{}.{}.html".format( '{}', CBDataFormatVersion ) ) # Missing the BBB
         debugDestinationHTMLFilepathTemplate = os.path.join( debugBookOutputFolderHTML, "CBBook.{}C{}V{}.{}.html".format( '{}', '{}', '{}', CBDataFormatVersion ) ) # Missing the BBB, C, V
 
-        unhandledMarkers = set()
+        ignoredMarkers, unhandledMarkers = set(), set()
 
         CBCompressions = (
             ('@A','<h1 class="mainTitle'), # numbered
@@ -2022,7 +2044,8 @@ class BibleWriter( InternalBible ):
                 #print( " toCB: {} {}:{} {}:{}".format( BBB, C, V, marker, repr(text) ) )
 
                 # Markers usually only found in the introduction
-                if marker in oftenIgnoredUSFMHeaderMarkers: pass # Just ignore these lines
+                if marker in oftenIgnoredUSFMHeaderMarkers: # Just ignore these lines
+                    ignoredMarkers.add( marker )
                 elif marker in ('mt1','mt2','mt3','mt4', 'imt1','imt2','imt3','imt4',):
                     if Globals.debugFlag: assert( not pOpen )
                     if not sOpen:
@@ -2329,6 +2352,10 @@ class BibleWriter( InternalBible ):
                 json.dump( newHTMLIndex, jsonFile, indent=jsonIndent )
             writeCompressions()
 
+        if ignoredMarkers:
+            logging.info( "toCustomBible: Ignored markers were {}".format( ignoredMarkers ) )
+            if Globals.verbosityLevel > 2:
+                print( "  " + _("WARNING: Ignored toCustomBible markers were {}").format( ignoredMarkers ) )
         if unhandledMarkers:
             logging.warning( "toCustomBible: Unhandled markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:
@@ -2376,7 +2403,7 @@ class BibleWriter( InternalBible ):
         if not outputFolder: outputFolder = "OutputFiles/BOS_PhotoBible_Export/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
 
-        unhandledMarkers = set()
+        ignoredMarkers, unhandledMarkers = set(), set()
 
         # First determine our format
         pixelWidth, pixelHeight = 240, 320
@@ -2728,14 +2755,16 @@ class BibleWriter( InternalBible ):
             for entry in pseudoUSFMData:
                 marker, cleanText = entry.getMarker(), entry.getCleanText()
                 #print( BBB, C, V, marker, repr(cleanText) )
-                if marker in oftenIgnoredUSFMHeaderMarkers: pass # Just ignore these lines
+                if marker in oftenIgnoredUSFMHeaderMarkers: # Just ignore these lines
+                    ignoredMarkers.add( marker )
                 elif marker in ('mt1','mt2','mt3','mt4','mte1','mte2','mte3','mte4', 'imt1','imt2','imt3','imt4', 'periph',): # Simple headings
                     #if textBuffer: textBuffer += '\n'
                     textBuffer += '\n\nHhH' + cleanText + '\n'
                 elif marker in ('s1','s2','s3','s4', 'is1','is2','is3','is4', 'ms1','ms2','ms3','ms4', 'sr',): # Simple headings
                     #if textBuffer: textBuffer += '\n'
                     textBuffer += '\n\nSsS' + cleanText + '\n'
-                elif marker in ('iot', 'io1','io2','io3','io4',): pass # Drop the introduction
+                elif marker in ('iot', 'io1','io2','io3','io4',): # Drop the introduction
+                    ignoredMarkers.add( marker )
                 elif marker in ('c','cp',): # cp should follow (and thus override) c
                     if textBuffer: renderText( BBB, BBBnum, bookName, bookAbbrev, C, maxChapters, numVerses, textBuffer, bookFolderPath ); textBuffer = ""
                     C = cleanText
@@ -2780,7 +2809,9 @@ class BibleWriter( InternalBible ):
                 elif marker in ('d','sp',):
                     #assert( cleanText or extras )
                     textBuffer += '\n' + cleanText
-                elif marker not in ('c#',): # These are the markers that we can safely ignore for this export
+                elif marker in ('c#',): # These are the markers that we can safely ignore for this export
+                    ignoredMarkers.add( marker )
+                else:
                     if cleanText:
                         logging.error( "toPhotoBible: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(cleanText) ) )
                         #if Globals.debugFlag: halt
@@ -2795,6 +2826,10 @@ class BibleWriter( InternalBible ):
                         #myFile.write( "{} ({}): '{}' '{}' {}\n" \
                             #.format( entry.getMarker(), entry.getOriginalMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras() ) )
 
+        if ignoredMarkers:
+            logging.info( "toPhotoBible: Ignored markers were {}".format( ignoredMarkers ) )
+            if Globals.verbosityLevel > 2:
+                print( "  " + _("WARNING: Ignored toPhotoBible markers were {}").format( ignoredMarkers ) )
         if unhandledMarkers:
             logging.warning( "toPhotoBible: Unhandled markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:
@@ -2853,7 +2888,7 @@ class BibleWriter( InternalBible ):
                 logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
         self.__adjustControlDict( controlDict )
 
-        unhandledMarkers, unhandledBooks = set(), []
+        ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
 
         bookAbbrevDict, bookNameDict, bookAbbrevNameDict = {}, {}, {}
         for BBB in Globals.BibleBooksCodes.getAllReferenceAbbreviations(): # Pre-process the language booknames
@@ -3003,14 +3038,13 @@ class BibleWriter( InternalBible ):
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, adjText, extras = verseDataEntry.getMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
                 #print( "toMediaWiki:writeMWBook", BBB, bookRef, bookName, marker, adjText, extras )
-                #if marker in oftenIgnoredUSFMHeaderMarkers: pass # Just ignore these lines
                 if marker in ('id','h','mt1','mt2','mt3','mt4',):
                     writerObject.writeLineComment( '\\{} {}'.format( marker, adjText ) )
                     bookName = adjText # in case there's no toc2 entry later
                 elif marker == 'toc2':
                     bookName = adjText
-                elif marker in oftenIgnoredUSFMHeaderMarkers: pass # Just ignore these lines
-
+                elif marker in oftenIgnoredUSFMHeaderMarkers: # Just ignore these lines
+                    ignoredMarkers.add( marker )
                 elif marker == 'li':
                     # :<!-- \li -->adjText
                     writerObject.writeLineText( ":" )
@@ -3063,7 +3097,9 @@ class BibleWriter( InternalBible ):
                 elif marker == 'm': # Margin/Flush-left paragraph
                     adjText = processXRefsAndFootnotes( verseText, extras )
                     writerObject.writeLineText( '::{}'.format(adjText, noTextCheck=True) )
-                elif marker not in ('c#',): # These are the markers that we can safely ignore for this export
+                elif marker in ('c#',): # These are the markers that we can safely ignore for this export
+                    ignoredMarkers.add( marker )
+                else:
                     if adjText:
                         logging.error( "toMediaWiki: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(adjText) ) )
                         #if Globals.debugFlag: halt
@@ -3091,6 +3127,10 @@ class BibleWriter( InternalBible ):
             writeMWBook( xw, BBB, bookData )
         xw.close()
 
+        if ignoredMarkers:
+            logging.info( "toMediaWiki: Ignored markers were {}".format( ignoredMarkers ) )
+            if Globals.verbosityLevel > 2:
+                print( "  " + _("WARNING: Ignored toMediaWiki markers were {}").format( ignoredMarkers ) )
         if unhandledMarkers:
             logging.warning( "toMediaWiki: Unhandled markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:
@@ -3135,7 +3175,7 @@ class BibleWriter( InternalBible ):
                 logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
         self.__adjustControlDict( controlDict )
 
-        unhandledMarkers, unhandledBooks = set(), []
+        ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
 
         def writeHeader( writerObject ):
             """Writes the Zefania header to the Zefania XML writerObject."""
@@ -3171,7 +3211,8 @@ class BibleWriter( InternalBible ):
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getFullText(), verseDataEntry.getExtras()
                 #if marker in ('id', 'ide', 'h', 'toc1','toc2','toc3', ): pass # Just ignore these metadata markers
-                if marker in oftenIgnoredUSFMHeaderMarkers: pass # Just ignore these lines
+                if marker in oftenIgnoredUSFMHeaderMarkers: # Just ignore these lines
+                    ignoredMarkers.add( marker )
                 elif marker == 'c':
                     C, V = text, "0"
                     if haveOpenChapter:
@@ -3184,6 +3225,12 @@ class BibleWriter( InternalBible ):
                     if not text: logging.warning( "toZefaniaXML: Missing text for v" ); continue
                     verseNumberString = text.replace('<','').replace('>','').replace('"','') # Used below but remove anything that'll cause a big XML problem later
                     #writerObject.writeLineOpenClose ( 'VERS', verseText, ('vnumber',verseNumberString) )
+                elif marker in ('is1','is2','is3','is4','ip','ipi','iot','io1','io2','io3','io4', 'ili1','ili2','ili3','ili4',) \
+                or marker in ('s1','s2','s3','s4', 'r','sr', 'd','sp', ) \
+                or marker in ('p','m','pmo','pm','pmc','pmr','pi1','pi2','pi3','pi4','mi','cls','pc','pr','ph1','ph2','ph3','ph4',) \
+                or marker in ('q1','q2','q3','q4','qr','qc','qm1','qm2','qm3','qm4',) \
+                or marker in ('li1','li2','li3','li4',):
+                    ignoredMarkers.add( marker )
                 elif marker == 'v~':
                     if Globals.debugFlag: assert( text or extras )
                     #print( "Text '{}'".format( text ) )
@@ -3196,7 +3243,9 @@ class BibleWriter( InternalBible ):
                     if Globals.debugFlag: assert( text or extras )
                     # TODO: We haven't stripped out character fields from within the verse -- not sure how Zefania handles them yet
                     if text: writerObject.writeLineOpenClose ( 'VERS', text )
-                elif marker not in ('c#',): # These are the markers that we can safely ignore for this export
+                elif marker in ('c#',): # These are the markers that we can safely ignore for this export
+                    ignoredMarkers.add( marker )
+                else:
                     if text:
                         logging.error( "toZefania: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
                         #if Globals.debugFlag: halt
@@ -3232,6 +3281,10 @@ class BibleWriter( InternalBible ):
         xw.writeLineClose( 'XMLBible' )
         xw.close()
 
+        if ignoredMarkers:
+            logging.info( "toZefania: Ignored markers were {}".format( ignoredMarkers ) )
+            if Globals.verbosityLevel > 2:
+                print( "  " + _("WARNING: Ignored toZefania markers were {}").format( ignoredMarkers ) )
         if unhandledMarkers:
             logging.warning( "toZefania: Unhandled markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:
@@ -3276,7 +3329,7 @@ class BibleWriter( InternalBible ):
                 logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
         self.__adjustControlDict( controlDict )
 
-        unhandledMarkers, unhandledBooks = set(), []
+        ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
 
         def writeHeader( writerObject ):
             """Writes the Haggai header to the Haggai XML writerObject."""
@@ -3312,7 +3365,8 @@ class BibleWriter( InternalBible ):
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getFullText(), verseDataEntry.getExtras()
                 #if marker in ('id', 'ide', 'h', 'toc1','toc2','toc3', ): pass # Just ignore these metadata markers
-                if marker in oftenIgnoredUSFMHeaderMarkers: pass # Just ignore these lines
+                if marker in oftenIgnoredUSFMHeaderMarkers: # Just ignore these lines
+                    ignoredMarkers.add( marker )
                 elif marker == 'c':
                     C, V = text, "0"
                     if haveOpenParagraph:
@@ -3332,6 +3386,12 @@ class BibleWriter( InternalBible ):
                     if not text: logging.warning( "toHaggaiXML: Missing text for v" ); continue
                     verseNumberString = text.replace('<','').replace('>','').replace('"','') # Used below but remove anything that'll cause a big XML problem later
                     #writerObject.writeLineOpenClose ( 'VERS', verseText, ('vnumber',verseNumberString) )
+                elif marker in ('is1','is2','is3','is4','ip','ipi','iot','io1','io2','io3','io4', 'ili1','ili2','ili3','ili4',) \
+                or marker in ('s1','s2','s3','s4', 'r','sr', 'd','sp', ) \
+                or marker in ('p','m','pmo','pm','pmc','pmr','pi1','pi2','pi3','pi4','mi','cls','pc','pr','ph1','ph2','ph3','ph4',) \
+                or marker in ('q1','q2','q3','q4','qr','qc','qm1','qm2','qm3','qm4',) \
+                or marker in ('li1','li2','li3','li4',):
+                    ignoredMarkers.add( marker )
                 elif marker == 'v~':
                     if Globals.debugFlag: assert( text or extras )
                     #print( "Text '{}'".format( text ) )
@@ -3344,7 +3404,9 @@ class BibleWriter( InternalBible ):
                     if Globals.debugFlag: assert( text or extras )
                     # TODO: We haven't stripped out character fields from within the verse -- not sure how Haggai handles them yet
                     if text: writerObject.writeLineOpenClose ( 'VERSE', text )
-                elif marker not in ('c#',): # These are the markers that we can safely ignore for this export
+                elif marker in ('c#',): # These are the markers that we can safely ignore for this export
+                    ignoredMarkers.add( marker )
+                else:
                     if text:
                         logging.error( "toHaggai: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
                         #if Globals.debugFlag: halt
@@ -3382,6 +3444,10 @@ class BibleWriter( InternalBible ):
         xw.writeLineClose( 'XMLBible' )
         xw.close()
 
+        if ignoredMarkers:
+            logging.info( "toHaggai: Ignored markers were {}".format( ignoredMarkers ) )
+            if Globals.verbosityLevel > 2:
+                print( "  " + _("WARNING: Ignored toHaggai markers were {}").format( ignoredMarkers ) )
         if unhandledMarkers:
             logging.warning( "toHaggai: Unhandled markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:
@@ -3426,7 +3492,7 @@ class BibleWriter( InternalBible ):
                 logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
         self.__adjustControlDict( controlDict )
 
-        unhandledMarkers, unhandledBooks = set(), []
+        ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
 
         def writeOpenSongBook( writerObject, BBB, bkData ):
             """Writes a book to the OpenSong XML writerObject."""
@@ -3443,10 +3509,19 @@ class BibleWriter( InternalBible ):
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getCleanText(), verseDataEntry.getExtras()
                 #print( marker, repr(text) )
                 #if text: assert( text[0] != ' ' )
-                if marker in oftenIgnoredUSFMHeaderMarkers: pass # Just ignore these lines
-                elif marker in ( 's1', 's2', 's3', 's4', ): pass # Just ignore these section headings
-                elif marker in ( 'r', ): pass # Just ignore these reference fields
-                elif marker in ( 'p', 'q1','q2','q3','q4', 'm', 'b', 'nb', 'li1','li2','li3','li4', ): pass # Just ignore these paragraph formatting fields
+                if marker in oftenIgnoredUSFMHeaderMarkers: # Just ignore these lines
+                    ignoredMarkers.add( marker )
+                elif marker in ('mt1','mt2','mt3','mt4', 'imt1','imt2','imt3','imt4', 'mte1','mte2','mte3','mte4', ) \
+                or marker in ('is1','is2','is3','is4', 'ip','ipi','iot','io1','io2','io3','io4', 'ili1','ili2','ili3','ili4',):
+                    ignoredMarkers.add( marker ) # drop the introduction
+                elif marker in ( 's1', 's2', 's3', 's4', ): # Just ignore these section headings
+                    ignoredMarkers.add( marker )
+                elif marker in ( 'r','sr',  'd','sp',): # Just ignore these reference fields
+                    ignoredMarkers.add( marker )
+                elif marker in ('p','m','pmo','pm','pmc','pmr','pi1','pi2','pi3','pi4','mi','cls','pc','pr','ph1','ph2','ph3','ph4',) \
+                or marker in ('q1','q2','q3','q4','qr','qc','qm1','qm2','qm3','qm4',) \
+                or marker in ('li1','li2','li3','li4','ili1','ili2','ili3','ili4',):
+                    ignoredMarkers.add( marker ) # Just ignore these paragraph markers
                 elif marker in ('v~', 'p~',):
                     if Globals.debugFlag: assert( text or extras )
                     if not text: # this is an empty (untranslated) verse
@@ -3470,7 +3545,9 @@ class BibleWriter( InternalBible ):
                     #print( "Text '{}'".format( text ) )
                     if not text: logging.warning( "toOpenSongXML: Missing text for v" ); continue
                     verseNumberString = text.replace('<','').replace('>','').replace('"','') # Used below but remove anything that'll cause a big XML problem later
-                elif marker not in ('c#',): # These are the markers that we can safely ignore for this export
+                elif marker in ('c#',): # These are the markers that we can safely ignore for this export
+                    ignoredMarkers.add( marker )
+                else:
                     if text:
                         logging.warning( "toOpenSong: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
                         #if Globals.debugFlag: halt
@@ -3505,6 +3582,10 @@ class BibleWriter( InternalBible ):
         xw.writeLineClose( 'Bible' )
         xw.close()
 
+        if ignoredMarkers:
+            logging.info( "toOpenSongXML: Ignored markers were {}".format( ignoredMarkers ) )
+            if Globals.verbosityLevel > 2:
+                print( "  " + _("WARNING: Ignored toOpenSongXML markers were {}").format( ignoredMarkers ) )
         if unhandledMarkers:
             logging.warning( "toOpenSongXML: Unhandled markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:
@@ -3550,7 +3631,7 @@ class BibleWriter( InternalBible ):
                 logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
         self.__adjustControlDict( controlDict )
 
-        unhandledMarkers, unhandledBooks = set(), []
+        ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
 
         def writeUSXBook( BBB, bkData ):
             """ Writes a book to the filesFolder. """
@@ -3863,7 +3944,7 @@ class BibleWriter( InternalBible ):
                     xw.removeFinalNewline( True )
                     xw.writeLineText( handleInternalTextMarkersForUSX(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
                 elif marker == 'c#': # Chapter number added for printing
-                    pass # Just ignore it completely
+                    ignoredMarkers.add( marker ) # Just ignore it completely
                 elif marker == 'v':
                     V = adjText.replace('<','').replace('>','').replace('"','') # Used below but remove anything that'll cause a big XML problem later
                     if paraJustOpened: paraJustOpened = False
@@ -3928,6 +4009,11 @@ class BibleWriter( InternalBible ):
                 if bookResults[0] > validationResults[0]: validationResults = ( bookResults[0], validationResults[1], validationResults[2], )
                 if bookResults[1]: validationResults = ( validationResults[0], validationResults[1] + bookResults[1], validationResults[2], )
                 if bookResults[2]: validationResults = ( validationResults[0], validationResults[1], validationResults[2] + bookResults[2], )
+
+        if ignoredMarkers:
+            logging.info( "toUSXXML: Ignored markers were {}".format( ignoredMarkers ) )
+            if Globals.verbosityLevel > 2:
+                print( "  " + _("ERROR: Ignored toUSXXML markers were {}").format( ignoredMarkers ) )
         if unhandledMarkers:
             logging.error( "toUSXXML: Unhandled markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:
@@ -3980,7 +4066,7 @@ class BibleWriter( InternalBible ):
                 logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
         self.__adjustControlDict( controlDict )
 
-        unhandledMarkers, unhandledBooks = set(), []
+        ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
 
         def writeUSFXBook( xw, BBB, bkData ):
             """ Writes a book to the given USFX XML writerObject. """
@@ -4284,7 +4370,7 @@ class BibleWriter( InternalBible ):
                     xw.removeFinalNewline( True )
                     xw.writeLineText( handleInternalTextMarkersForUSFX(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
                 elif marker == 'c#': # Chapter number added for printing
-                    pass # Just ignore it completely
+                    ignoredMarkers.add( marker ) # Just ignore it completely
                 elif marker == 'v':
                     V = adjText.replace('<','').replace('>','').replace('"','') # Used below but remove anything that'll cause a big XML problem later
                     if paraJustOpened: paraJustOpened = False
@@ -4360,6 +4446,10 @@ class BibleWriter( InternalBible ):
         xw.close()
         if validationSchema: validationResults = xw.validate( validationSchema )
 
+        if ignoredMarkers:
+            logging.info( "toUSFXXML: Ignored markers were {}".format( ignoredMarkers ) )
+            if Globals.verbosityLevel > 2:
+                print( "  " + _("WARNING: Ignored toUSFXXML markers were {}").format( ignoredMarkers ) )
         if unhandledMarkers:
             logging.warning( "toUSFXXML: Unhandled markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:
@@ -4505,7 +4595,7 @@ class BibleWriter( InternalBible ):
             getBookNameFunction = self.getAssumedBookName # from USFMBible (which gets it from USFMBibleBook)
             getBookAbbreviationFunction = Globals.BibleBooksCodes.getOSISAbbreviation
 
-        unhandledMarkers, unhandledBooks = set(), []
+        ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
 
         # Let's write a Sword locale while we're at it -- might be useful if we make a Sword module from this OSIS file
         self._writeSwordLocale( controlDict["xmlLanguage"], controlDict["LanguageName"], BOS, getBookNameFunction, os.path.join( outputFolder, "SwLocale-utf8.conf" ) )
@@ -4874,12 +4964,11 @@ class BibleWriter( InternalBible ):
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
                 #print( "toOSIS:", marker, originalMarker, text )
-                if marker in oftenIgnoredUSFMHeaderMarkers: continue # Just ignore these lines
-                #if marker in ( 'id', 'ide', 'h', 'mt2' ): continue # We just ignore these markers
-                elif marker=='mt1':
-                    if text: writerObject.writeLineOpenClose( 'title', checkText(text) )
-                elif marker=='mt2':
-                    if text: writerObject.writeLineOpenClose( 'title', checkText(text) )
+                if marker in oftenIgnoredUSFMHeaderMarkers:
+                    ignoredMarkers.add( marker )
+                    continue # Just ignore these lines
+                elif marker in ('mt1','mt2','mt3','mt4',):
+                    if text: writerObject.writeLineOpenClose( 'title', checkText(text), ('canonical',"false") )
                 elif marker=='is1' or marker=='imt1':
                     #print( marker, "'"+text+"'" )
                     if not haveOpenIntro:
@@ -4951,7 +5040,7 @@ class BibleWriter( InternalBible ):
                     adjText = processXRefsAndFootnotes( text, extras, 0 )
                     writerObject.writeLineText( checkText(adjText), noTextCheck=True )
                 elif marker == 'c#': # Chapter number added for printing
-                    pass # Just ignore it completely
+                    ignoredMarkers.add( marker ) # Just ignore it completely
                 elif marker=='ms1':
                     if haveOpenParagraph:
                         closeAnyOpenLG()
@@ -5136,6 +5225,11 @@ class BibleWriter( InternalBible ):
             if validationSchema: validationResults = xw.validate( validationSchema )
         else:
             logging.critical( "Unrecognized toOSIS control \"osisFiles\" = '{}'".format( controlDict["osisFiles"] ) )
+
+        if ignoredMarkers:
+            logging.info( "toOSISXML: Ignored markers were {}".format( ignoredMarkers ) )
+            if Globals.verbosityLevel > 2:
+                print( "  " + _("ERROR: Ignored toOSISXML markers were {}").format( ignoredMarkers ) )
         if unhandledMarkers:
             logging.error( "toOSISXML: Unhandled markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:
@@ -5202,7 +5296,7 @@ class BibleWriter( InternalBible ):
                     if ' ' in bookAbbrev: bookAbbrevDict[bookAbbrev.replace(' ','',1)] = BBB # Duplicate entries without the first space (presumably between a number and a name like 1 Kings)
                     if ' ' in bookName: bookNameDict[bookName.replace(' ','',1)] = BBB # Duplicate entries without the first space
 
-        unhandledMarkers, unhandledBooks = set(), []
+        ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
 
 
         # Let's write a Sword locale while we're at it
@@ -5573,7 +5667,9 @@ class BibleWriter( InternalBible ):
                 #print( BBB, marker, text )
                 #print( " ", haveOpenIntro, haveOpenOutline, haveOpenMajorSection, haveOpenSection, haveOpenSubsection, needChapterEID, haveOpenParagraph, haveOpenVsID, haveOpenLG, haveOpenL )
                 #print( toSwordGlobals['idStack'] )
-                if marker in oftenIgnoredUSFMHeaderMarkers: continue # Just ignore these lines
+                if marker in oftenIgnoredUSFMHeaderMarkers:
+                    ignoredMarkers.add( marker )
+                    continue # Just ignore these lines
                 #if marker in ( 'id', 'ide', 'h', 'mt2', 'c#', ): continue # We just ignore these markers
                 elif marker=='mt1':
                     if text: writerObject.writeLineOpenClose( 'title', checkText(text) )
@@ -5664,7 +5760,7 @@ class BibleWriter( InternalBible ):
                     needChapterEID = True
                     writeIndexEntry( writerObject, ix )
                 elif marker == 'c#': # Chapter number added for printing
-                    pass # Just ignore it completely
+                    ignoredMarkers.add( marker ) # Just ignore it completely
                 elif marker=='ms1':
                     if haveOpenParagraph:
                         closeAnyOpenLG()
@@ -5823,6 +5919,11 @@ class BibleWriter( InternalBible ):
                     continue
                 writeSwordBook( xw, ix, BBB, bookData )
         xwOT.close(); xwNT.close()
+
+        if ignoredMarkers:
+            logging.info( "toSwordModule: Ignored markers were {}".format( ignoredMarkers ) )
+            if Globals.verbosityLevel > 2:
+                print( "  " + _("ERROR: Ignored toSwordModule markers were {}").format( ignoredMarkers ) )
         if unhandledMarkers:
             logging.error( "toSwordModule: Unhandled markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:
@@ -6732,7 +6833,7 @@ class BibleWriter( InternalBible ):
         if not outputFolder: outputFolder = "OutputFiles/BOS_SwordSearcher_Export/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
 
-        unhandledMarkers, unhandledBooks = set(), []
+        ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
 
 
         def writeSSHeader( writer ):
@@ -6759,7 +6860,8 @@ class BibleWriter( InternalBible ):
             C = V = "0"
             for entry in pseudoUSFMData:
                 marker, text = entry.getMarker(), entry.getCleanText()
-                if marker in oftenIgnoredUSFMHeaderMarkers: pass # Just ignore these lines
+                if marker in oftenIgnoredUSFMHeaderMarkers: # Just ignore these lines
+                    ignoredMarkers.add( marker )
                 elif marker == 'c': C, V = text, "0"
                 elif marker == 'v':
                     V = text
@@ -6768,7 +6870,9 @@ class BibleWriter( InternalBible ):
                     writer.write( "$$ {} {}:{}\n".format( bookCode, C, text ) )
                 elif marker in ('v~', 'p~',):
                     if started: accumulator += (' ' if accumulator else '') + text
-                elif marker not in ('c#',):
+                elif marker in ('c#',):
+                    ignoredMarkers.add( marker )
+                else:
                     if text:
                         logging.error( "toSwordSearcher: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
                         #if Globals.debugFlag: halt
@@ -6790,6 +6894,10 @@ class BibleWriter( InternalBible ):
                     try: writeSSBook( myFile, BBB, bookObject )
                     except: logging.critical( "BibleWriter.toSwordSearcher: Unable to output {}".format( BBB ) )
 
+        if ignoredMarkers:
+            logging.info( "toSwordSearcher: Ignored markers were {}".format( ignoredMarkers ) )
+            if Globals.verbosityLevel > 2:
+                print( "  " + _("WARNING: Ignored toSwordSearcher markers were {}").format( ignoredMarkers ) )
         if unhandledMarkers:
             logging.warning( "toSwordSearcher: Unhandled markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:
@@ -6821,7 +6929,7 @@ class BibleWriter( InternalBible ):
         if not outputFolder: outputFolder = "OutputFiles/BOS_DrupalBible_" + ("Reexport/" if self.objectTypeString=="DrupalBible" else "Export/")
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
 
-        unhandledMarkers, unhandledBooks = set(), []
+        ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
 
         #print( 'status' in self ) # False
         #print( 'status' in dir(self) ) # True
@@ -6897,10 +7005,14 @@ class BibleWriter( InternalBible ):
             C = V = "0"
             for entry in bookObject._processedLines:
                 marker, text = entry.getMarker(), entry.getAdjustedText()
-                if marker in oftenIgnoredUSFMHeaderMarkers: pass # Just ignore these lines
-                elif marker in ( 'mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4',): pass # Just ignore these book heading fields
-                elif marker in ( 'iot', 'io1','io2','io3','io4', 'ip', 'is1','is2','is3','is4', ): pass # Just ignore these introduction fields
-                elif marker in ( 'c#', ): pass # Just ignore these unneeded fields
+                if marker in oftenIgnoredUSFMHeaderMarkers: # Just ignore these lines
+                    ignoredMarkers.add( marker )
+                elif marker in ( 'mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4',): # Just ignore these book heading fields
+                    ignoredMarkers.add( marker )
+                elif marker in ( 'imt1','imt2','imt3','imt4', 'iot', 'io1','io2','io3','io4', 'ip','ipi', 'is1','is2','is3','is4', 'ili1','ili2','ili3','ili4', ): # Just ignore these introduction fields
+                    ignoredMarkers.add( marker )
+                elif marker in ( 'c#', ): # Just ignore these unneeded fields
+                    ignoredMarkers.add( marker )
                 elif marker == 'c':
                     if accumulator:
                         writer.write( "{}|{}|{}|{}|{}\n".format( bookCode, C, V, linemark, doDrupalTextFormat( accumulator ) ) )
@@ -6919,9 +7031,12 @@ class BibleWriter( InternalBible ):
                             if not char.isdigit(): break
                             V += char
                         #print( "toDrupalBible V is now", repr(V) )
-                elif marker in ( 'ms1','ms2','ms3','ms4', 's1','s2','s3','s4', ): pass # Just ignore these section headings
-                elif marker in ( 'r', 'sr', ): pass # Just ignore these reference fields
-                elif marker in ( 'p', 'pi1','pi2','pi3','pi4', 'q1','q2','q3','q4', 'm', 'b', 'nb', 'li1','li2','li3','li4', ): pass # Just ignore these paragraph formatting fields
+                elif marker in ( 'ms1','ms2','ms3','ms4', 's1','s2','s3','s4', ): # Just ignore these section headings
+                    ignoredMarkers.add( marker )
+                elif marker in ( 'r', 'sr',  'd','sp', ): # Just ignore these reference fields
+                    ignoredMarkers.add( marker )
+                elif marker in ( 'p', 'pi1','pi2','pi3','pi4', 'q1','q2','q3','q4', 'm', 'b', 'nb', 'li1','li2','li3','li4', ): # Just ignore these paragraph formatting fields
+                    ignoredMarkers.add( marker )
                 elif marker in ('v~', 'p~',):
                     if started: accumulator += (' ' if accumulator else '') + text
                 else:
@@ -6947,6 +7062,10 @@ class BibleWriter( InternalBible ):
                     try: writeDrupalBibleBook( myFile, BBB, bookObject )
                     except: logging.critical( "BibleWriter.toDrupalBible: Unable to output {}".format( BBB ) )
 
+        if ignoredMarkers:
+            logging.info( "toDrupalBible: Ignored markers were {}".format( ignoredMarkers ) )
+            if Globals.verbosityLevel > 2:
+                print( "  " + _("WARNING: Ignored toDrupalBible markers were {}").format( ignoredMarkers ) )
         if unhandledMarkers:
             logging.warning( "toDrupalBible: Unhandled markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:
@@ -6980,7 +7099,7 @@ class BibleWriter( InternalBible ):
         if not outputFolder: outputFolder = "OutputFiles/BOS_TeX_Export/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
 
-        unhandledMarkers = set()
+        ignoredMarkers, unhandledMarkers = set(), set()
 
         # First determine our format
         #verseByVerse = True
@@ -6990,12 +7109,15 @@ class BibleWriter( InternalBible ):
             filepath = os.path.join( defaultControlFolder, filename )
             try: shutil.copy( filepath, outputFolder )
             except FileNotFoundError: logging.warning( "Unable to find TeX control file: {}".format( filepath ) )
-        pMarkerTranslate = { 'p':'P', 'pi1':'PI', 'q1':'Q', 'q2':'QQ', 'q3':'QQQ', 'q4':'QQQQ',
-                            'ip':'IP', }
+        pMarkerTranslate = { 'p':'P', 'pi1':'PI','pi2':'PI','pi3':'PI','pi4':'PI',
+                            'q1':'Q','q2':'QQ','q3':'QQQ','q4':'QQQQ',
+                            'ip':'IP', 'ipi':'IPI', }
         cMarkerTranslate = { 'bk':'BK', 'add':'ADD', 'nd':'ND', 'wj':'WJ', 'sig':'SIG',
                             'bdit':'BDIT', 'it':'IT', 'bd':'BD', 'em':'EM', 'sc':'SC',
                             'ior':'IOR', 'k':'KW', }
-        mtMarkerTranslate = { 'mt1':'BibleMainTitle', 'mt2':'BibleTitleTwo', 'mt3':'BibleTitleThree', 'mt4':'BibleTitleFour' }
+        mtMarkerTranslate = { 'mt1':'BibleMainTitle', 'mt2':'BibleTitleTwo', 'mt3':'BibleTitleThree', 'mt4':'BibleTitleFour',
+                             'imt1':'BibleIntroTitle', 'imt2':'BibleIntroTitleTwo', 'imt3':'BibleIntroTitleThree', 'imt4':'BibleIntroTitleFour',
+                             'mte1':'BibleMainEndTitle', 'mte2':'BibleEndTitleTwo', 'mte3':'BibleEndTitleThree', 'mte4':'BibleEndTitleFour', }
 
         def writeTeXHeader( writer ):
             """
@@ -7142,12 +7264,20 @@ class BibleWriter( InternalBible ):
                     C = V = "0"
                     for entry in bookObject._processedLines:
                         marker, text = entry.getMarker(), entry.getFullText()
-                        if marker in oftenIgnoredUSFMHeaderMarkers: pass # Just ignore these lines
-                        elif marker in ('mt1','mt2','mt3','mt4',):
+                        if marker in oftenIgnoredUSFMHeaderMarkers: # Just ignore these lines
+                            ignoredMarkers.add( marker )
+                        elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4', ):
                             if not haveTitle:
                                 allFile.write( "\n\\BibleTitlePage\n" )
                                 bookFile.write( "\n\\BibleTitlePage\n" )
                                 haveTitle = True
+                            allFile.write( "\\{}{{{}}}\n".format( mtMarkerTranslate[marker], texText(text) ) )
+                            bookFile.write( "\\{}{{{}}}\n".format( mtMarkerTranslate[marker], texText(text) ) )
+                        elif marker in ('imt1','imt2','imt3','imt4', ):
+                            if not haveIntro:
+                                allFile.write( "\n\\BibleIntro\n" )
+                                bookFile.write( "\n\\BibleIntro\n" )
+                                haveIntro = True
                             allFile.write( "\\{}{{{}}}\n".format( mtMarkerTranslate[marker], texText(text) ) )
                             bookFile.write( "\\{}{{{}}}\n".format( mtMarkerTranslate[marker], texText(text) ) )
                         elif marker=='ip':
@@ -7198,6 +7328,11 @@ class BibleWriter( InternalBible ):
                 makePDFs( BBB, filepath, '30s' )
             allFile.write( "\\end{document}\n" )
         makePDFs( 'All', allFilepath, '3m' )
+
+        if ignoredMarkers:
+            logging.info( "toTeX: Ignored markers were {}".format( ignoredMarkers ) )
+            if Globals.verbosityLevel > 2:
+                print( "  " + _("WARNING: Ignored toTeX markers were {}").format( ignoredMarkers ) )
         if unhandledMarkers:
             logging.warning( "toTeX: Unhandled markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:
@@ -7283,7 +7418,7 @@ class BibleWriter( InternalBible ):
         templateFilepath = os.path.join( os.getcwd(), defaultControlFolder, "BibleBook.ott" )
         sourceURL = "file://{}".format( templateFilepath ) if startWithTemplate else "private:factory/swriter"
 
-        unhandledMarkers = set()
+        ignoredMarkers, unhandledMarkers = set(), set()
 
         titleODFStyleDict = {'imt1':'Introduction Major Title 1', 'imt2':'Introduction Major Title 2', 'imt3':'Introduction Major Title 3', 'imt4':'Introduction Major Title 4',
                           'mt1':'Major Title 1','mt2':'Major Title 2', 'mt3':'Major Title 3', 'mt4':'Major Title 4',
@@ -8064,7 +8199,8 @@ class BibleWriter( InternalBible ):
             for entry in pseudoUSFMData:
                 marker, adjText, extras = entry.getMarker(), entry.getAdjustedText(), entry.getExtras()
                 #print( j, BBB, C, V, marker, repr(adjText) )
-                if marker in oftenIgnoredUSFMHeaderMarkers: pass # Just ignore these lines
+                if marker in oftenIgnoredUSFMHeaderMarkers: # Just ignore these lines
+                    ignoredMarkers.add( marker )
                 elif marker in ('mt1','mt2','mt3','mt4', 'imt1','imt2','imt3','imt4', 'mte1','mte2','mte3','mte4',):
                     styleName = titleODFStyleDict[marker]
                     insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
@@ -8162,8 +8298,9 @@ class BibleWriter( InternalBible ):
                     textCursor.setPropertyValue( "ParaStyleName", "Blank Line Paragraph" )
                 elif marker == 'nb': # no-break with previous paragraph -- I don't think we have to do anything here
                     if Globals.debugFlag: assert( not adjText and not extras )
+                    ignoredMarkers.add( marker )
                 elif marker in ('cp',): # We can safely ignore these markers for the ODF export
-                    pass
+                    ignoredMarkers.add( marker )
                 else:
                     if adjText:
                         logging.error( "toODF: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(adjText) ) )
@@ -8191,6 +8328,10 @@ class BibleWriter( InternalBible ):
                     if Globals.verbosityLevel > 1: logging.info( "Killing {}".format( repr(line) ) )
                     os.kill( pid, signal.SIGKILL )
 
+        if ignoredMarkers:
+            logging.info( "toODF: Ignored markers were {}".format( ignoredMarkers ) )
+            if Globals.verbosityLevel > 2:
+                print( "  " + _("WARNING: Ignored toODF markers were {}").format( ignoredMarkers ) )
         if unhandledMarkers:
             logging.warning( "toODF: Unhandled markers were {}".format( unhandledMarkers ) )
             if Globals.verbosityLevel > 1:
