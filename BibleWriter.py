@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-05-29 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-02 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -65,7 +65,7 @@ Note that not all exports export all books.
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.74"
+ProgVersion = "0.75"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -360,6 +360,8 @@ class BibleWriter( InternalBible ):
         #if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_MediaWiki_controls.txt", controlDict )
         #assert( controlDict and isinstance( controlDict, dict ) )
 
+        ignoredMarkers = set()
+
         # Adjust the extracted outputs
         for BBB,bookObject in self.books.items():
             pseudoUSFMData = bookObject._processedLines
@@ -376,7 +378,8 @@ class BibleWriter( InternalBible ):
                 #print( BBB, pseudoMarker, repr(value) )
                 if (not USFM) and pseudoMarker!='id': # We need to create an initial id line
                     USFM += '\\id {} -- BibleOrgSys USFM export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
-                if pseudoMarker in ('c#','vp~',): continue # Ignore our additions
+                if pseudoMarker in ('c#','vp~',):
+                    ignoredMarkers.add( pseudoMarker )
                 #value = cleanText # (temp)
                 #if Globals.debugFlag and debuggingThisModule: print( "toUSFM: pseudoMarker = '{}' value = '{}'".format( pseudoMarker, value ) )
                 if removeVerseBridges and pseudoMarker in ('v','c',):
@@ -385,7 +388,8 @@ class BibleWriter( InternalBible ):
                             USFM += '\n\\v {}'.format( vNum )
                     value1 = value2 = None
 
-                if pseudoMarker in ('v','f','fr','x','xo',): # These fields should always end with a space but the processing will have removed them
+                if pseudoMarker == 'vp~': continue
+                elif pseudoMarker in ('v','f','fr','x','xo',): # These fields should always end with a space but the processing will have removed them
                     if Globals.debugFlag: assert( value )
                     if pseudoMarker=='v' and removeVerseBridges:
                         vString = value
@@ -402,10 +406,11 @@ class BibleWriter( InternalBible ):
                                 #print( ' ', BBB, repr(value1), repr(value2) )
                                 break
                     if value and value[-1] != ' ': value += ' ' # Append a space since it didn't have one
-                if pseudoMarker[-1]=='~' or Globals.USFMMarkers.isNewlineMarker(pseudoMarker): # Have a continuation field
+                elif pseudoMarker[-1]=='~' or Globals.USFMMarkers.isNewlineMarker(pseudoMarker): # Have a continuation field
                     if inField is not None:
                         USFM += '\\{}*'.format( inField ) # Do a close marker for footnotes and cross-references
                         inField = None
+
                 if pseudoMarker[-1] == '~':
                     #print( "psMarker ends with squiggle: '{}'='{}'".format( pseudoMarker, value ) )
                     if Globals.debugFlag: assert( pseudoMarker[:-1] in ('v','p','c') )
@@ -433,6 +438,11 @@ class BibleWriter( InternalBible ):
             filepath = os.path.join( outputFolder, Globals.makeSafeFilename( filename ) )
             if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
             with open( filepath, 'wt' ) as myFile: myFile.write( USFM )
+
+        if ignoredMarkers:
+            logging.info( "toUSFM: Ignored markers were {}".format( ignoredMarkers ) )
+            if Globals.verbosityLevel > 2:
+                print( "  " + _("WARNING: Ignored toUSFM markers were {}").format( ignoredMarkers ) )
 
         # Now create a zipped collection
         if Globals.verbosityLevel > 2: print( "  Zipping USFM files..." )
@@ -475,6 +485,7 @@ class BibleWriter( InternalBible ):
             if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
             textBuffer = ""
             with open( filepath, 'wt' ) as myFile:
+                gotVP = None
                 for entry in pseudoUSFMData:
                     marker, text = entry.getMarker(), entry.getCleanText()
                     if marker in oftenIgnoredUSFMHeaderMarkers: # Just ignore these lines
@@ -482,20 +493,25 @@ class BibleWriter( InternalBible ):
                     elif marker == 'h':
                         if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
                         myFile.write( "{}\n\n".format( text ) )
-                    elif marker in ('mt1','mt2','mt3','mt4',):
+                    elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4',):
                         if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
                         myFile.write( "{}{}\n\n".format( ' '*((columnWidth-len(text))//2), text ) )
-                    elif marker in ('is1','is2','is3','is4','ip','ipi','iot','io1','io2','io3','io4',): # Drop the introduction
+                    elif marker in ('imt1','imt2','imt3','imt4', 'is1','is2','is3','is4', 'ip','ipi', 'iot','io1','io2','io3','io4',): # Drop the introduction
                         ignoredMarkers.add( marker )
                     elif marker == 'c':
                         C = text
                         if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
                         myFile.write( "\n\nChapter {}".format( text ) )
+                    elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
+                        gotVP = text # Just remember it for now
                     elif marker == 'v':
                         V = text
+                        if gotVP: # this is the verse number to be published
+                            text = gotVP
+                            gotVP = None
                         if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
                         myFile.write( "\n{} ".format( text ) )
-                    elif marker in ('p','s1','s2','s3','s4',): # Drop out these fields
+                    elif marker in ('p','pi1','pi2','pi3','pi4', 's1','s2','s3','s4', 'ms1','ms2','ms3','ms4',): # Drop out these fields
                         ignoredMarkers.add( marker )
                     elif text:
                         textBuffer += (' ' if textBuffer else '') + text
@@ -840,6 +856,7 @@ class BibleWriter( InternalBible ):
             C = V = '0'
             textBuffer = ""
             with open( filepath, 'wt' ) as myFile:
+                gotVP = None
                 for entry in pseudoUSFMData:
                     marker, adjText, extras = entry.getMarker(), entry.getAdjustedText(), entry.getExtras()
                     if marker in oftenIgnoredUSFMHeaderMarkers: # Just ignore these lines
@@ -848,7 +865,7 @@ class BibleWriter( InternalBible ):
                         if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
                         level = int( marker[-1] )
                         myFile.write( "\n{} {}\n".format( '#'*level, adjText ) )
-                    elif marker in ('s1','s2','s3','s4', 'is1','is2','is3','is4',):
+                    elif marker in ('s1','s2','s3','s4', 'is1','is2','is3','is4', 'ms1','ms2','ms3','ms4', ):
                         if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
                         level = int( marker[-1] ) + 2 # so s1 becomes header #3
                         myFile.write( "\n{} {}\n".format( '#'*level, adjText ) )
@@ -856,8 +873,13 @@ class BibleWriter( InternalBible ):
                         C = adjText
                         if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
                         myFile.write( "\n\nChapter {}".format( adjText ) )
+                    elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
+                        gotVP = adjText # Just remember it for now
                     elif marker == 'v':
                         V = adjText
+                        if gotVP: # this is the verse number to be published
+                            adjText = gotVP
+                            gotVP = None
                         if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
                         myFile.write( "\n{} ".format( adjText ) )
                     elif marker in ('p',): # Drop out these fields
@@ -1452,6 +1474,7 @@ class BibleWriter( InternalBible ):
             haveOpenList = {}
             html5Globals['nextFootnoteIndex'] = html5Globals['nextXRefIndex'] = 0
             html5Globals['footnoteHTML5'], html5Globals['endnoteHTML5'], html5Globals['xrefHTML5'] = [], [], []
+            gotVP = None
             C = V = '0'
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
@@ -1508,7 +1531,7 @@ class BibleWriter( InternalBible ):
                     if extras: print( "toHTML5: have extras at c at",BBB,C)
                     # What should we put in here -- we don't need/want to display it, but it's a place to jump to
                     writerObject.writeLineOpenClose( 'span', ' ', [('class','chapterStart'),('id','CS'+text)] )
-                elif marker == 'cp': # ignore this for now
+                elif marker == 'cp': # ignore this for now.............................XXXXXXXXXXXXXXXXXXXXXXXXX
                     ignoredMarkers.add( marker )
                 elif marker == 'c#':
                     if extras: print( "toHTML5: have extras at c# at",BBB,C)
@@ -1519,6 +1542,26 @@ class BibleWriter( InternalBible ):
                     # Put verse 1 id here on the chapter number (since we don't output a v1 number)
                     writerObject.writeLineOpenClose( 'span', text, [('class','chapterNumber'),('id','CT'+text)] )
                     writerObject.writeLineOpenClose( 'span', '&nbsp;', ('class','chapterNumberPostspace') )
+                elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
+                    gotVP = text # Just remember it for now
+                elif marker == 'v':
+                    if haveOpenVerse: writerObject.writeLineClose( 'span' ); haveOpenVerse = False
+                    V = text
+                    if gotVP: # this is the verse number to be published
+                        text = gotVP
+                        gotVP = None
+                    if not haveOpenParagraph:
+                        logging.warning( "toHTML5: Have verse number {} outside a paragraph in {} {}:{}".format( text, BBB, C, V ) )
+                    writerObject.writeLineOpen( 'span', [('class','verse'),('id','C'+C+'V'+V)] ); haveOpenVerse = True
+                    if V == '1': # Different treatment for verse 1
+                        writerObject.writeLineOpenClose( 'span', ' ', ('class','verseOnePrespace') )
+                        writerObject.writeLineOpenClose( 'span', V, ('class','verseOneNumber') )
+                        writerObject.writeLineOpenClose( 'span', '&nbsp;', ('class','verseOnePostspace') )
+                    else: # not verse one
+                        writerObject.writeLineOpenClose( 'span', ' ', ('class','verseNumberPrespace') )
+                        writerObject.writeLineOpenClose( 'span', V, ('class','verseNumber') )
+                        writerObject.writeLineOpenClose( 'span', '&nbsp;', ('class','verseNumberPostspace') )
+
                 elif marker in ('ms1','ms2','ms3','ms4',):
                     if haveOpenVerse: writerObject.writeLineClose( 'span' ); haveOpenVerse = False
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
@@ -1545,20 +1588,6 @@ class BibleWriter( InternalBible ):
                     if text or extras: writerObject.writeLineOpenClose( 'p', BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, ourGlobals ), ('class','descriptiveTitle') )
                 elif marker == 'sp': # speaker
                     if text: writerObject.writeLineOpenClose( 'p', text, ('class','speaker') )
-                elif marker == 'v':
-                    if haveOpenVerse: writerObject.writeLineClose( 'span' ); haveOpenVerse = False
-                    V = text
-                    if not haveOpenParagraph:
-                        logging.warning( "toHTML5: Have verse number {} outside a paragraph in {} {}:{}".format( text, BBB, C, V ) )
-                    writerObject.writeLineOpen( 'span', [('class','verse'),('id','C'+C+'V'+V)] ); haveOpenVerse = True
-                    if V == '1': # Different treatment for verse 1
-                        writerObject.writeLineOpenClose( 'span', ' ', ('class','verseOnePrespace') )
-                        writerObject.writeLineOpenClose( 'span', V, ('class','verseOneNumber') )
-                        writerObject.writeLineOpenClose( 'span', '&nbsp;', ('class','verseOnePostspace') )
-                    else: # not verse one
-                        writerObject.writeLineOpenClose( 'span', ' ', ('class','verseNumberPrespace') )
-                        writerObject.writeLineOpenClose( 'span', V, ('class','verseNumber') )
-                        writerObject.writeLineOpenClose( 'span', '&nbsp;', ('class','verseNumberPostspace') )
                 elif marker in ('p','m','pmo','pm','pmc','pmr','pi1','pi2','pi3','pi4','mi','cls','pc','pr','ph1','ph2','ph3','ph4',) \
                 or marker in ('q1','q2','q3','q4','qr','qc','qm1','qm2','qm3','qm4',):
                     if haveOpenListItem: writerObject.writeLineClose( 'span' ); haveOpenListItem = False
@@ -2031,8 +2060,7 @@ class BibleWriter( InternalBible ):
             fileOffset = 0
 
             lastHTML = sectionHTML = outputHTML = ""
-            gotVP = None
-            lastMarker = None
+            lastMarker = gotVP = None
             C = lastC = V = '0'
             lastV = '999' # For introduction section
             BCV = (BBB,C,V)
@@ -2140,7 +2168,33 @@ class BibleWriter( InternalBible ):
                     # NOTE: If we include the next line, it usually goes at the end of a section where it's no use
                     thisHTML += '<span class="chapterStart" id="{}"></span>'.format( 'CT'+C )
                 elif marker == 'cp': # ignore this for now
-                    logging.error( "toCustomBible: ignored cp field {} for {}".format( repr(text), C ) )
+                    ignoredMarkers.add( marker )
+                elif marker == 'c#':
+                    #if extras: print( "have extras at c# at",BBB,C); halt
+                    thisHTML += '<span class="chapterNumber" id="{}">{}</span>'.format( 'CS'+C, text )
+                    #thisHTML += '<span class="chapterNumber">{}</span>'.format( text )
+                    thisHTML += '<span class="chapterNumberPostspace">&nbsp;</span>'
+                elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
+                    gotVP = text # Just remember it for now
+                elif marker == 'v':
+                    if vOpen: lastHTML += '</span>'; vOpen = False
+                    V = text
+                    if gotVP: # this is a replacement verse number for publishing
+                        text = gotVP
+                        gotVP = None
+                    if sJustOpened: BCV=(BBB,C,V)
+                    thisHTML += '<span class="verse" id="{}">'.format( 'C'+C+'V'+V ); vOpen = True
+                    if V == '1': # Different treatment for verse 1
+                        thisHTML += '<span class="verseOnePrespace"> </span>'
+                        thisHTML += '<span class="verseOneNumber">{}</span>'.format( text )
+                        thisHTML += '<span class="verseOnePostspace">&nbsp;</span>'
+                    else: # not verse one
+                        thisHTML += '<span class="verseNumberPrespace"> </span>'
+                        thisHTML += '<span class="verseNumber">{}</span>'.format( text )
+                        thisHTML += '<span class="verseNumberPostspace">&nbsp;</span>'
+                    sJustOpened = False
+                    lastC, lastV = C, V
+
                 elif marker in ('ms1','ms2','ms3','ms4',):
                     if vOpen: lastHTML += '</span>'; vOpen = False
                     if pOpen: lastHTML += '</p>'; pOpen = False
@@ -2188,11 +2242,6 @@ class BibleWriter( InternalBible ):
                 elif marker == 'sp': # speaker
                     thisHTML = '<p class="speaker">{}</p>'.format( text )
 
-                elif marker == 'c#':
-                    #if extras: print( "have extras at c# at",BBB,C); halt
-                    thisHTML += '<span class="chapterNumber" id="{}">{}</span>'.format( 'CS'+C, text )
-                    #thisHTML += '<span class="chapterNumber">{}</span>'.format( text )
-                    thisHTML += '<span class="chapterNumberPostspace">&nbsp;</span>'
                 elif marker in ('p','m','pmo','pm','pmc','pmr','pi1','pi2','pi3','pi4','mi','cls','pc','pr','ph1','ph2','ph3','ph4',) \
                 or marker in ('q1','q2','q3','q4','qr','qc','qm1','qm2','qm3','qm4',):
                     for lx in ('4','3','2','1'): # Close any open lists
@@ -2215,26 +2264,6 @@ class BibleWriter( InternalBible ):
                     if Globals.debugFlag: assert( not text )
                     thisHTML += '<p class="{}">'.format( BibleWriter.pqHTMLClassDict[marker] )
                     pOpen = True
-                elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
-                    gotVP = text # Just remember it for now
-                elif marker == 'v':
-                    if vOpen: lastHTML += '</span>'; vOpen = False
-                    V = text
-                    if gotVP: # this is a replacement verse number for publishing
-                        text = gotVP
-                        gotVP = None
-                    if sJustOpened: BCV=(BBB,C,V)
-                    thisHTML += '<span class="verse" id="{}">'.format( 'C'+C+'V'+V ); vOpen = True
-                    if V == '1': # Different treatment for verse 1
-                        thisHTML += '<span class="verseOnePrespace"> </span>'
-                        thisHTML += '<span class="verseOneNumber">{}</span>'.format( text )
-                        thisHTML += '<span class="verseOnePostspace">&nbsp;</span>'
-                    else: # not verse one
-                        thisHTML += '<span class="verseNumberPrespace"> </span>'
-                        thisHTML += '<span class="verseNumber">{}</span>'.format( text )
-                        thisHTML += '<span class="verseNumberPostspace">&nbsp;</span>'
-                    sJustOpened = False
-                    lastC, lastV = C, V
                 elif marker in ('v~','p~',):
                     #if Globals.debugFlag and marker=='v~': assert( vOpen )
                     if text or extras:
@@ -2765,10 +2794,13 @@ class BibleWriter( InternalBible ):
                     textBuffer += '\n\nSsS' + cleanText + '\n'
                 elif marker in ('iot', 'io1','io2','io3','io4',): # Drop the introduction
                     ignoredMarkers.add( marker )
+
                 elif marker in ('c','cp',): # cp should follow (and thus override) c
                     if textBuffer: renderText( BBB, BBBnum, bookName, bookAbbrev, C, maxChapters, numVerses, textBuffer, bookFolderPath ); textBuffer = ""
                     C = cleanText
                     numVerses = 0
+                elif marker in ('c#',): # These are the markers that we can safely ignore for this export
+                    ignoredMarkers.add( marker )
                 elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
                     gotVP = cleanText # Just remember it for now
                 elif marker == 'v':
@@ -2778,7 +2810,8 @@ class BibleWriter( InternalBible ):
                         gotVP = None
                     textBuffer += (' ' if textBuffer and textBuffer[-1]!='\n' else '') + 'VvV' + cleanText + ' '
                     numVerses += 1
-                elif marker in ('r','mr',):
+
+                elif marker in ('r','sr','mr',):
                     #numSpaces = ( maxLineCharacters - len(cleanText) ) // 2
                     #print( BBB, C, len(cleanText), "numSpaces:", numSpaces, repr(cleanText) )
                     #textBuffer += '\n' + ' '*numSpaces + cleanText # Roughly centred
@@ -2809,8 +2842,6 @@ class BibleWriter( InternalBible ):
                 elif marker in ('d','sp',):
                     #assert( cleanText or extras )
                     textBuffer += '\n' + cleanText
-                elif marker in ('c#',): # These are the markers that we can safely ignore for this export
-                    ignoredMarkers.add( marker )
                 else:
                     if cleanText:
                         logging.error( "toPhotoBible: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(cleanText) ) )
@@ -3031,31 +3062,44 @@ class BibleWriter( InternalBible ):
                 logging.warning( "toMediaWiki: Doesn't know how to encode OSIS '{}' book yet".format( BBB ) )
                 unhandledBooks.append( BBB )
                 return
-            bookName = None
+            bookName = gotVP = None
             C = V = "0"
             verseText = '' # Do we really need this?
             #chapterNumberString = None
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, adjText, extras = verseDataEntry.getMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
                 #print( "toMediaWiki:writeMWBook", BBB, bookRef, bookName, marker, adjText, extras )
-                if marker in ('id','h','mt1','mt2','mt3','mt4',):
+                if marker in ('id','h', 'mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4', ):
                     writerObject.writeLineComment( '\\{} {}'.format( marker, adjText ) )
                     bookName = adjText # in case there's no toc2 entry later
                 elif marker == 'toc2':
                     bookName = adjText
                 elif marker in oftenIgnoredUSFMHeaderMarkers: # Just ignore these lines
                     ignoredMarkers.add( marker )
-                elif marker == 'li':
-                    # :<!-- \li -->adjText
-                    writerObject.writeLineText( ":" )
-                    writerObject.writeLineComment( '\\li' )
-                    writerObject.writeLineText( adjText )
+
                 elif marker == 'c':
                     C, V = adjText, "0"
                     chapterNumberString = adjText
                     chapterRef = bookRef + '.' + chapterNumberString
                     # Bible:BookName_#
                     if bookName: writerObject.writeLineText( 'Bible:{}_{}'.format(bookName, chapterNumberString) )
+                elif marker in ('c#',): # These are the markers that we can safely ignore for this export
+                    ignoredMarkers.add( marker )
+                elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
+                    gotVP = adjText # Just remember it for now
+                elif marker == 'v':
+                    #if not chapterNumberString: # some single chapter books don't have a chapter number marker in them
+                    #    if Globals.debugFlag: assert( BBB in Globals.BibleBooksCodes.getSingleChapterBooksList() )
+                    #    chapterNumberString = '1'
+                    #    chapterRef = bookRef + '.' + chapterNumberString
+                    V = adjText
+                    if gotVP: # this is the verse number to be published
+                        adjText = gotVP
+                        gotVP = None
+                    verseNumberString = adjText # Gets written with in the v~ line
+                    # <span id="chapter#_#"><sup>#</sup> adjText</span>
+                    #writerObject.writeLineOpenClose( 'span', '<sup>{}</sup> {}'.format(verseNumberString,adjText), ('id',"chapter{}_{}".format(chapterNumberString, verseNumberString) ), noTextCheck=True )
+
                 elif marker == 's1':
                     # === adjText ===
                     writerObject.writeLineText( '=== {} ==='.format(adjText) )
@@ -3064,15 +3108,6 @@ class BibleWriter( InternalBible ):
                     if adjText: writerObject.writeLineOpenClose( 'span', adjText, ('class','srefs') )
                 elif marker == 'p':
                     writerObject.writeNewLine( 2 );
-                elif marker == 'v':
-                    #if not chapterNumberString: # some single chapter books don't have a chapter number marker in them
-                    #    if Globals.debugFlag: assert( BBB in Globals.BibleBooksCodes.getSingleChapterBooksList() )
-                    #    chapterNumberString = '1'
-                    #    chapterRef = bookRef + '.' + chapterNumberString
-                    V = adjText
-                    verseNumberString = adjText # Gets written with in the v~ line
-                    # <span id="chapter#_#"><sup>#</sup> adjText</span>
-                    #writerObject.writeLineOpenClose( 'span', '<sup>{}</sup> {}'.format(verseNumberString,adjText), ('id',"chapter{}_{}".format(chapterNumberString, verseNumberString) ), noTextCheck=True )
                 elif marker == 'v~':
                     #print( "Oomph", marker, repr(adjText), chapterRef, verseNumberString )
                     assert( adjText or extras )
@@ -3087,18 +3122,16 @@ class BibleWriter( InternalBible ):
                     assert( adjText or extras )
                     # TODO: We haven't stripped out character fields from within the verse -- not sure how MediaWiki handles them yet
                     adjText = processXRefsAndFootnotes( adjText, extras )
-                    writerObject.writeLineText( ':{}'.format(adjText, noTextCheck=True) ) # No check so it doesn't choke on embedded xref and footnote fields
-                elif marker == 'q1':
+                    writerObject.writeLineText( ':{}'.format(adjText), noTextCheck=True ) # No check so it doesn't choke on embedded xref and footnote fields
+                elif marker in ( 'q1','q2','q3','q4', ):
                     adjText = processXRefsAndFootnotes( verseText, extras )
-                    writerObject.writeLineText( ':{}'.format(adjText, noTextCheck=True) ) # No check so it doesn't choke on embedded xref and footnote fields
-                elif marker == 'q2':
-                    adjText = processXRefsAndFootnotes( verseText, extras )
-                    writerObject.writeLineText( '::{}'.format(adjText, noTextCheck=True) )
+                    writerObject.writeLineText( ':{}'.format(adjText), noTextCheck=True ) # No check so it doesn't choke on embedded xref and footnote fields
                 elif marker == 'm': # Margin/Flush-left paragraph
                     adjText = processXRefsAndFootnotes( verseText, extras )
-                    writerObject.writeLineText( '::{}'.format(adjText, noTextCheck=True) )
-                elif marker in ('c#',): # These are the markers that we can safely ignore for this export
-                    ignoredMarkers.add( marker )
+                    writerObject.writeLineText( '::{}'.format(adjText), noTextCheck=True )
+                elif marker in ( 'li1','li2','li3','li4', ):
+                    adjText = processXRefsAndFootnotes( verseText, extras )
+                    writerObject.writeLineText( ':{}'.format(adjText), noTextCheck=True ) # No check so it doesn't choke on embedded xref and footnote fields
                 else:
                     if adjText:
                         logging.error( "toMediaWiki: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(adjText) ) )
@@ -3206,30 +3239,45 @@ class BibleWriter( InternalBible ):
                 unhandledBooks.append( BBB )
                 return
             writerObject.writeLineOpen( 'BIBLEBOOK', [('bnumber',Globals.BibleBooksCodes.getReferenceNumber(BBB)), ('bname',Globals.BibleBooksCodes.getEnglishName_NR(BBB)), ('bsname',OSISAbbrev)] )
-            haveOpenChapter = False
+            haveOpenChapter, gotVP = False, None
             C = V = "0"
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getFullText(), verseDataEntry.getExtras()
                 #if marker in ('id', 'ide', 'h', 'toc1','toc2','toc3', ): pass # Just ignore these metadata markers
                 if marker in oftenIgnoredUSFMHeaderMarkers: # Just ignore these lines
                     ignoredMarkers.add( marker )
+
                 elif marker == 'c':
                     C, V = text, "0"
                     if haveOpenChapter:
                         writerObject.writeLineClose ( 'CHAPTER' )
                     writerObject.writeLineOpen ( 'CHAPTER', ('cnumber',text) )
                     haveOpenChapter = True
+                elif marker in ('c#',): # These are the markers that we can safely ignore for this export
+                    ignoredMarkers.add( marker )
+                elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
+                    gotVP = text # Just remember it for now
                 elif marker == 'v':
                     V = text
+                    if gotVP: # this is the verse number to be published
+                        text = gotVP
+                        gotVP = None
                     #print( "Text '{}'".format( text ) )
                     if not text: logging.warning( "toZefaniaXML: Missing text for v" ); continue
                     verseNumberString = text.replace('<','').replace('>','').replace('"','') # Used below but remove anything that'll cause a big XML problem later
                     #writerObject.writeLineOpenClose ( 'VERS', verseText, ('vnumber',verseNumberString) )
-                elif marker in ('is1','is2','is3','is4','ip','ipi','iot','io1','io2','io3','io4', 'ili1','ili2','ili3','ili4',) \
-                or marker in ('s1','s2','s3','s4', 'r','sr', 'd','sp', ) \
-                or marker in ('p','m','pmo','pm','pmc','pmr','pi1','pi2','pi3','pi4','mi','cls','pc','pr','ph1','ph2','ph3','ph4',) \
-                or marker in ('q1','q2','q3','q4','qr','qc','qm1','qm2','qm3','qm4',) \
+
+                elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4', 'ms1','ms2','ms3','ms4',) \
+                or marker in ('imt1','imt2','imt3','imt4', 'is1','is2','is3','is4', 'ip','ipi', 'iot','io1','io2','io3','io4', 'ili1','ili2','ili3','ili4', ) \
+                or marker in ('s1','s2','s3','s4', 'r','sr','mr', 'd','sp', ):
+                    ignoredMarkers.add( marker )
+                elif marker in ('p','m','pmo','pm','pmc','pmr','pi1','pi2','pi3','pi4','mi','cls','pc','pr','ph1','ph2','ph3','ph4', ) \
+                or marker in ('q1','q2','q3','q4', 'qr','qc',' qm1','qm2','qm3','qm4',) \
                 or marker in ('li1','li2','li3','li4',):
+                    if Globals.debugFlag: assert( not text and not extras )
+                    ignoredMarkers.add( marker )
+                elif marker in ('b', 'nb' ):
+                    if Globals.debugFlag: assert( not text and not extras )
                     ignoredMarkers.add( marker )
                 elif marker == 'v~':
                     if Globals.debugFlag: assert( text or extras )
@@ -3243,8 +3291,6 @@ class BibleWriter( InternalBible ):
                     if Globals.debugFlag: assert( text or extras )
                     # TODO: We haven't stripped out character fields from within the verse -- not sure how Zefania handles them yet
                     if text: writerObject.writeLineOpenClose ( 'VERS', text )
-                elif marker in ('c#',): # These are the markers that we can safely ignore for this export
-                    ignoredMarkers.add( marker )
                 else:
                     if text:
                         logging.error( "toZefania: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
@@ -3361,12 +3407,14 @@ class BibleWriter( InternalBible ):
                 return
             writerObject.writeLineOpen( 'BIBLEBOOK', [('bnumber',Globals.BibleBooksCodes.getReferenceNumber(BBB)), ('bname',Globals.BibleBooksCodes.getEnglishName_NR(BBB)), ('bsname',OSISAbbrev)] )
             haveOpenChapter = haveOpenParagraph = False
+            gotVP = None
             C = V = "0"
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getFullText(), verseDataEntry.getExtras()
                 #if marker in ('id', 'ide', 'h', 'toc1','toc2','toc3', ): pass # Just ignore these metadata markers
                 if marker in oftenIgnoredUSFMHeaderMarkers: # Just ignore these lines
                     ignoredMarkers.add( marker )
+
                 elif marker == 'c':
                     C, V = text, "0"
                     if haveOpenParagraph:
@@ -3375,22 +3423,36 @@ class BibleWriter( InternalBible ):
                         writerObject.writeLineClose ( 'CHAPTER' )
                     writerObject.writeLineOpen ( 'CHAPTER', ('cnumber',text) )
                     haveOpenChapter = True
-                elif marker == 'p':
-                    if haveOpenParagraph:
-                        writerObject.writeLineClose ( 'PARAGRAPH' )
-                    writerObject.writeLineOpen ( 'PARAGRAPH' )
-                    haveOpenParagraph = True
+                elif marker in ('c#',): # These are the markers that we can safely ignore for this export
+                    ignoredMarkers.add( marker )
+                elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
+                    gotVP = text # Just remember it for now
                 elif marker == 'v':
                     V = text
+                    if gotVP: # this is the verse number to be published
+                        text = gotVP
+                        gotVP = None
                     #print( "Text '{}'".format( text ) )
                     if not text: logging.warning( "toHaggaiXML: Missing text for v" ); continue
                     verseNumberString = text.replace('<','').replace('>','').replace('"','') # Used below but remove anything that'll cause a big XML problem later
                     #writerObject.writeLineOpenClose ( 'VERS', verseText, ('vnumber',verseNumberString) )
-                elif marker in ('is1','is2','is3','is4','ip','ipi','iot','io1','io2','io3','io4', 'ili1','ili2','ili3','ili4',) \
-                or marker in ('s1','s2','s3','s4', 'r','sr', 'd','sp', ) \
-                or marker in ('p','m','pmo','pm','pmc','pmr','pi1','pi2','pi3','pi4','mi','cls','pc','pr','ph1','ph2','ph3','ph4',) \
-                or marker in ('q1','q2','q3','q4','qr','qc','qm1','qm2','qm3','qm4',) \
-                or marker in ('li1','li2','li3','li4',):
+
+                elif marker in ('p', 'pi1','pi2','pi3','pi4', ):
+                    if haveOpenParagraph:
+                        writerObject.writeLineClose ( 'PARAGRAPH' )
+                    writerObject.writeLineOpen ( 'PARAGRAPH' )
+                    haveOpenParagraph = True
+                elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4', 'ms1','ms2','ms3','ms4', ) \
+                or marker in ('imt1','imt2','imt3','imt4', 'is1','is2','is3','is4', 'ip','ipi', 'iot','io1','io2','io3','io4', 'ili1','ili2','ili3','ili4', ) \
+                or marker in ('s1','s2','s3','s4', 'r','sr','mr', 'd','sp', ):
+                    ignoredMarkers.add( marker )
+                elif marker in ('m','pmo','pm','pmc','pmr', 'mi','cls','pc','pr', 'ph1','ph2','ph3','ph4', ) \
+                or marker in ('q1','q2','q3','q4', 'qr','qc', 'qm1','qm2','qm3','qm4', ) \
+                or marker in ('li1','li2','li3','li4', ):
+                    if Globals.debugFlag: assert( not text and not extras )
+                    ignoredMarkers.add( marker )
+                elif marker in ('b', 'nb' ):
+                    if Globals.debugFlag: assert( not text and not extras )
                     ignoredMarkers.add( marker )
                 elif marker == 'v~':
                     if Globals.debugFlag: assert( text or extras )
@@ -3404,8 +3466,6 @@ class BibleWriter( InternalBible ):
                     if Globals.debugFlag: assert( text or extras )
                     # TODO: We haven't stripped out character fields from within the verse -- not sure how Haggai handles them yet
                     if text: writerObject.writeLineOpenClose ( 'VERSE', text )
-                elif marker in ('c#',): # These are the markers that we can safely ignore for this export
-                    ignoredMarkers.add( marker )
                 else:
                     if text:
                         logging.error( "toHaggai: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
@@ -3503,7 +3563,7 @@ class BibleWriter( InternalBible ):
                 unhandledBooks.append( BBB )
                 return
             writerObject.writeLineOpen( 'b', ('n',bkData.getAssumedBookNames()[0]) )
-            haveOpenChapter, startedFlag, accumulator = False, False, ""
+            haveOpenChapter, startedFlag, gotVP, accumulator = False, False, None, ""
             C = V = "0"
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getCleanText(), verseDataEntry.getExtras()
@@ -3511,22 +3571,7 @@ class BibleWriter( InternalBible ):
                 #if text: assert( text[0] != ' ' )
                 if marker in oftenIgnoredUSFMHeaderMarkers: # Just ignore these lines
                     ignoredMarkers.add( marker )
-                elif marker in ('mt1','mt2','mt3','mt4', 'imt1','imt2','imt3','imt4', 'mte1','mte2','mte3','mte4', ) \
-                or marker in ('is1','is2','is3','is4', 'ip','ipi','iot','io1','io2','io3','io4', 'ili1','ili2','ili3','ili4',):
-                    ignoredMarkers.add( marker ) # drop the introduction
-                elif marker in ( 's1', 's2', 's3', 's4', ): # Just ignore these section headings
-                    ignoredMarkers.add( marker )
-                elif marker in ( 'r','sr',  'd','sp',): # Just ignore these reference fields
-                    ignoredMarkers.add( marker )
-                elif marker in ('p','m','pmo','pm','pmc','pmr','pi1','pi2','pi3','pi4','mi','cls','pc','pr','ph1','ph2','ph3','ph4',) \
-                or marker in ('q1','q2','q3','q4','qr','qc','qm1','qm2','qm3','qm4',) \
-                or marker in ('li1','li2','li3','li4','ili1','ili2','ili3','ili4',):
-                    ignoredMarkers.add( marker ) # Just ignore these paragraph markers
-                elif marker in ('v~', 'p~',):
-                    if Globals.debugFlag: assert( text or extras )
-                    if not text: # this is an empty (untranslated) verse
-                        text = '- - -' # but we'll put in a filler
-                    if startedFlag: accumulator += (' ' if accumulator else '') + Globals.makeSafeXML( text )
+
                 elif marker == 'c':
                     if accumulator:
                         writerObject.writeLineOpenClose ( 'v', accumulator, ('n',verseNumberString) )
@@ -3536,8 +3581,15 @@ class BibleWriter( InternalBible ):
                     C, V = text, "0"
                     writerObject.writeLineOpen ( 'c', ('n',text) )
                     haveOpenChapter = True
+                elif marker in ('c#',): # These are the markers that we can safely ignore for this export
+                    ignoredMarkers.add( marker )
+                elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
+                    gotVP = text # Just remember it for now
                 elif marker == 'v':
                     V = text
+                    if gotVP: # this is the verse number to be published
+                        text = gotVP
+                        gotVP = None
                     startedFlag = True
                     if accumulator:
                         writerObject.writeLineOpenClose ( 'v', accumulator, ('n',verseNumberString) )
@@ -3545,8 +3597,24 @@ class BibleWriter( InternalBible ):
                     #print( "Text '{}'".format( text ) )
                     if not text: logging.warning( "toOpenSongXML: Missing text for v" ); continue
                     verseNumberString = text.replace('<','').replace('>','').replace('"','') # Used below but remove anything that'll cause a big XML problem later
-                elif marker in ('c#',): # These are the markers that we can safely ignore for this export
+
+                elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4', 'ms1','ms2','ms3','ms4', ) \
+                or marker in ('imt1','imt2','imt3','imt4', 'is1','is2','is3','is4', 'ip','ipi', 'iot','io1','io2','io3','io4', 'ili1','ili2','ili3','ili4', ) \
+                or marker in ('s1','s2','s3','s4', 'r','sr','mr', 'd','sp', ):
                     ignoredMarkers.add( marker )
+                elif marker in ('p','m','pmo','pm','pmc','pmr','pi1','pi2','pi3','pi4','mi','cls','pc','pr','ph1','ph2','ph3','ph4', ) \
+                or marker in ('q1','q2','q3','q4','qr','qc','qm1','qm2','qm3','qm4', ) \
+                or marker in ('li1','li2','li3','li4', ):
+                    if Globals.debugFlag: assert( not text and not extras )
+                    ignoredMarkers.add( marker )
+                elif marker in ('b', 'nb' ):
+                    if Globals.debugFlag: assert( not text and not extras )
+                    ignoredMarkers.add( marker )
+                elif marker in ('v~', 'p~',):
+                    if Globals.debugFlag: assert( text or extras )
+                    if not text: # this is an empty (untranslated) verse
+                        text = '- - -' # but we'll put in a filler
+                    if startedFlag: accumulator += (' ' if accumulator else '') + Globals.makeSafeXML( text )
                 else:
                     if text:
                         logging.warning( "toOpenSong: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
@@ -3909,6 +3977,7 @@ class BibleWriter( InternalBible ):
             xw.start( lineEndings='w', writeBOM=True ) # Try to imitate Paratext output as closely as possible
             xw.writeLineOpen( 'usx', ('version','2.0') ) if version>=2 else xw.writeLineOpen( 'usx' )
             haveOpenPara = paraJustOpened = False
+            gotVP = None
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, originalMarker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getOriginalMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
                 markerShouldHaveContent = Globals.USFMMarkers.markerShouldHaveContent( marker )
@@ -3928,6 +3997,7 @@ class BibleWriter( InternalBible ):
                     adjText = adjText[4:] # Remove the book code from the ID line because it's put in as an attribute
                     if adjText: xw.writeLineOpenClose( 'book', handleInternalTextMarkersForUSX(adjText)+xtra, [('code',USXAbbrev),('style',marker)] )
                     elif not text: logging.error( "toUSXXML: {} {}:{} has a blank id line that was ignored".format( BBB, C, V ) )
+
                 elif marker == 'c':
                     if haveOpenPara:
                         xw.removeFinalNewline( True )
@@ -3945,13 +4015,20 @@ class BibleWriter( InternalBible ):
                     xw.writeLineText( handleInternalTextMarkersForUSX(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
                 elif marker == 'c#': # Chapter number added for printing
                     ignoredMarkers.add( marker ) # Just ignore it completely
+                elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
+                    gotVP = adjText # Just remember it for now
                 elif marker == 'v':
-                    V = adjText.replace('<','').replace('>','').replace('"','') # Used below but remove anything that'll cause a big XML problem later
+                    V = adjText
+                    if gotVP: # this is the verse number to be published
+                        adjText = gotVP
+                        gotVP = None
                     if paraJustOpened: paraJustOpened = False
                     else:
                         xw.removeFinalNewline( True )
                         if version>=2: xw._writeToBuffer( ' ' ) # Space between verses
-                    xw.writeLineOpenSelfclose ( 'verse', [('number',V),('style','v')] )
+                     # Remove anything that'll cause a big XML problem later
+                    xw.writeLineOpenSelfclose ( 'verse', [('number',adjText.replace('<','').replace('>','').replace('"','')),('style','v')] )
+
                 elif marker in ('v~','p~',):
                     if not adjText: logging.warning( "toUSXXML: Missing text for {}".format( marker ) ); continue
                     # TODO: We haven't stripped out character fields from within the verse -- not sure how USX handles them yet
@@ -4335,6 +4412,7 @@ class BibleWriter( InternalBible ):
             C = V = '0'
             xw.writeLineOpen( 'book', ('id',USFXAbbrev) )
             haveOpenPara = paraJustOpened = False
+            gotVP = None
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, originalMarker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getOriginalMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
                 markerShouldHaveContent = Globals.USFMMarkers.markerShouldHaveContent( marker )
@@ -4354,6 +4432,7 @@ class BibleWriter( InternalBible ):
                     adjText = adjText[4:] # Remove the book code from the ID line because it's put in as an attribute
                     if adjText: xw.writeLineOpenClose( 'id', handleInternalTextMarkersForUSFX(adjText)+xtra, ('code',USFXAbbrev) )
                     elif not text: logging.error( "toUSFXXML: {} {}:{} has a blank id line that was ignored".format( BBB, C, V ) )
+
                 elif marker == 'c':
                     if haveOpenPara:
                         xw.removeFinalNewline( True )
@@ -4371,12 +4450,19 @@ class BibleWriter( InternalBible ):
                     xw.writeLineText( handleInternalTextMarkersForUSFX(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
                 elif marker == 'c#': # Chapter number added for printing
                     ignoredMarkers.add( marker ) # Just ignore it completely
+                elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
+                    gotVP = adjText # Just remember it for now
                 elif marker == 'v':
-                    V = adjText.replace('<','').replace('>','').replace('"','') # Used below but remove anything that'll cause a big XML problem later
+                    V = adjText
+                    if gotVP: # this is the verse number to be published
+                        adjText = gotVP
+                        gotVP = None
                     if paraJustOpened: paraJustOpened = False
                     else:
                         xw.removeFinalNewline( True )
-                    xw.writeLineOpenSelfclose ( 'v', ('id',V) )
+                     # Remove anything that'll cause a big XML problem later
+                    xw.writeLineOpenSelfclose ( 'v', ('id',adjText.replace('<','').replace('>','').replace('"','')) )
+
                 elif marker in ('v~','p~',):
                     if not adjText: logging.warning( "toUSFXXML: Missing text for {}".format( marker ) ); continue
                     # TODO: We haven't stripped out character fields from within the verse -- not sure how USFX handles them yet
@@ -4960,6 +5046,7 @@ class BibleWriter( InternalBible ):
             writerObject.writeLineOpen( 'div', [('type',"book"), ('osisID',bookRef)] )
             haveOpenIntro = haveOpenOutline = haveOpenMajorSection = haveOpenSection = haveOpenSubsection = needChapterEID = haveOpenParagraph = haveOpenVsID = haveOpenLG = haveOpenL = False
             lastMarker = unprocessedMarker = ''
+            gotVP = None
             C = V = "0"
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
@@ -4967,7 +5054,7 @@ class BibleWriter( InternalBible ):
                 if marker in oftenIgnoredUSFMHeaderMarkers:
                     ignoredMarkers.add( marker )
                     continue # Just ignore these lines
-                elif marker in ('mt1','mt2','mt3','mt4',):
+                elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4',):
                     if text: writerObject.writeLineOpenClose( 'title', checkText(text), ('canonical',"false") )
                 elif marker=='is1' or marker=='imt1':
                     #print( marker, "'"+text+"'" )
@@ -5013,6 +5100,7 @@ class BibleWriter( InternalBible ):
                     if not haveOpenOutline:
                         logging.error( _("toOSIS: {} Have an io2 not in an outline section").format( toOSISGlobals["verseRef"] ) )
                     if text: writerObject.writeLineOpenClose( 'item', checkText(text) ) # TODO: Shouldn't this be different from an io1???
+
                 elif marker=='c':
                     if haveOpenVsID != False: # Close the previous verse
                         writerObject.writeLineOpenSelfclose( 'verse', ('eID',haveOpenVsID) )
@@ -5041,6 +5129,18 @@ class BibleWriter( InternalBible ):
                     writerObject.writeLineText( checkText(adjText), noTextCheck=True )
                 elif marker == 'c#': # Chapter number added for printing
                     ignoredMarkers.add( marker ) # Just ignore it completely
+                elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
+                    gotVP = text # Just remember it for now
+                elif marker=='v':
+                    if gotVP: # this is the verse number to be published
+                        text = gotVP
+                        gotVP = None
+                    verseNumberString = text
+                    if not haveOpenL: closeAnyOpenLG()
+                    V = text
+                    writeVerseStart( writerObject, BBB, chapterRef, verseNumberString )
+                    closeAnyOpenL()
+
                 elif marker=='ms1':
                     if haveOpenParagraph:
                         closeAnyOpenLG()
@@ -5118,12 +5218,6 @@ class BibleWriter( InternalBible ):
                     adjustedText = processXRefsAndFootnotes( text, extras )
                     writerObject.writeLineOpenText( 'p', checkText(adjustedText), noTextCheck=True ) # Sometimes there's text
                     haveOpenParagraph = True
-                elif marker=='v':
-                    verseNumberString = text
-                    if not haveOpenL: closeAnyOpenLG()
-                    V = text
-                    writeVerseStart( writerObject, BBB, chapterRef, verseNumberString )
-                    closeAnyOpenL()
                 elif marker in ('v~','p~',):
                     adjText = processXRefsAndFootnotes( text, extras, 0 )
                     writerObject.writeLineText( checkText(adjText), noTextCheck=True )
@@ -5660,21 +5754,17 @@ class BibleWriter( InternalBible ):
             writerObject.writeLineOpen( 'div', [('osisID',bookRef), getSID(), ('type',"book")] )
             haveOpenIntro = haveOpenOutline = haveOpenMajorSection = haveOpenSection = haveOpenSubsection = needChapterEID = haveOpenParagraph = haveOpenVsID = haveOpenLG = haveOpenL = False
             lastMarker = unprocessedMarker = ''
-            #chapterNumberString = None
+            gotVP = None
             C = V = "0"
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
                 #print( BBB, marker, text )
                 #print( " ", haveOpenIntro, haveOpenOutline, haveOpenMajorSection, haveOpenSection, haveOpenSubsection, needChapterEID, haveOpenParagraph, haveOpenVsID, haveOpenLG, haveOpenL )
                 #print( toSwordGlobals['idStack'] )
-                if marker in oftenIgnoredUSFMHeaderMarkers:
+                if marker in oftenIgnoredUSFMHeaderMarkers: # Just ignore these lines
                     ignoredMarkers.add( marker )
-                    continue # Just ignore these lines
-                #if marker in ( 'id', 'ide', 'h', 'mt2', 'c#', ): continue # We just ignore these markers
-                elif marker=='mt1':
-                    if text: writerObject.writeLineOpenClose( 'title', checkText(text) )
-                elif marker=='mt2':
-                    if text: writerObject.writeLineOpenClose( 'title', checkText(text) )
+                elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4',):
+                    if text: writerObject.writeLineOpenClose( 'title', checkText(text), ('canonical',"false") )
                 elif marker=='is1' or marker=='imt1':
                     if haveOpenIntro: # already -- assume it's a second one
                         closeAnyOpenParagraph()
@@ -5734,6 +5824,7 @@ class BibleWriter( InternalBible ):
                     if not haveOpenOutline:
                         logging.error( _("toSwordModule: {} Have an io2 not in an outline section").format( toSwordGlobals["verseRef"] ) )
                     if text: writerObject.writeLineOpenClose( 'item', checkText(text) ) # TODO: Shouldn't this be different from an io1???
+
                 elif marker=='c':
                     if haveOpenOutline:
                         if text!='1' and not text.startswith('1 '):
@@ -5761,6 +5852,20 @@ class BibleWriter( InternalBible ):
                     writeIndexEntry( writerObject, ix )
                 elif marker == 'c#': # Chapter number added for printing
                     ignoredMarkers.add( marker ) # Just ignore it completely
+                elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
+                    gotVP = text # Just remember it for now
+                elif marker=='v':
+                    if gotVP: # this is the verse number to be published
+                        text = gotVP
+                        gotVP = None
+                    #if not chapterNumberString: # Some single chapter books don't have an explicit c marker
+                    #    if Globals.debugFlag: assert( BBB in Globals.BibleBooksCodes.getSingleChapterBooksList() )
+                    verseNumberString = text
+                    if not haveOpenL: closeAnyOpenLG()
+                    V = text
+                    writeVerseStart( writerObject, BBB, chapterRef, verseNumberString )
+                    #closeAnyOpenL()
+
                 elif marker=='ms1':
                     if haveOpenParagraph:
                         closeAnyOpenLG()
@@ -5832,14 +5937,6 @@ class BibleWriter( InternalBible ):
                     writerObject.writeLineOpenSelfclose( 'div', [getSID(), ('type',"paragraph")] )
                     writerObject.writeLineText( checkText(adjustedText), noTextCheck=True ) # Sometimes there's text
                     haveOpenParagraph = True
-                elif marker=='v':
-                    #if not chapterNumberString: # Some single chapter books don't have an explicit c marker
-                    #    if Globals.debugFlag: assert( BBB in Globals.BibleBooksCodes.getSingleChapterBooksList() )
-                    verseNumberString = text
-                    if not haveOpenL: closeAnyOpenLG()
-                    V = text
-                    writeVerseStart( writerObject, BBB, chapterRef, verseNumberString )
-                    #closeAnyOpenL()
                 elif marker in ('v~','p~',):
                     #if not haveOpenL: closeAnyOpenLG()
                     #writeVerseStart( writerObject, ix, BBB, chapterRef, text )
@@ -6451,10 +6548,10 @@ class BibleWriter( InternalBible ):
                 assert( len(verseData ) == 1 ) # in the introductory section
                 marker, text = verseData[0].getMarker(), verseData[0].getFullText()
                 if marker not in theWordIgnoredIntroMarkers:
-                    if marker=='mt1': composedLine += '<TS1>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
-                    elif marker=='mt2': composedLine += '<TS2>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
-                    elif marker=='mt3': composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
-                    elif marker=='mt4': composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
+                    if   marker in ('mt1','mte1',): composedLine += '<TS1>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
+                    elif marker in ('mt2','mte2',): composedLine += '<TS2>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
+                    elif marker in ('mt3','mte3',): composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
+                    elif marker in ('mt4','mte4',): composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
                     elif marker=='ms1': composedLine += '<TS2>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
                     elif marker=='ms2': composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
                     elif marker=='ms3': composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
@@ -6497,13 +6594,15 @@ class BibleWriter( InternalBible ):
             #marker = text = None
 
             vCount = 0
-            lastMarker = None
+            lastMarker = gotVP = None
             #if BBB=='MAT' and C==4 and 14<V<18: print( BBB, C, V, ourGlobals, verseData )
             for verseDataEntry in verseData:
                 marker, text = verseDataEntry.getMarker(), verseDataEntry.getFullText()
                 if marker in ('c','c#','cl','cp','rem',): lastMarker = marker; continue  # ignore all of these for this
 
-                if marker == 'v': # handle versification differences here
+                if marker == 'vp~': # This precedes a v field and has the verse number to be printed
+                    gotVP = text # Just remember it for now
+                elif marker == 'v': # handle versification differences here
                     vCount += 1
                     if vCount == 1: # Handle verse bridges
                         if text != str(V):
@@ -6525,7 +6624,7 @@ class BibleWriter( InternalBible ):
                         ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '\\line ' # append the new paragraph marker to the previous line
                     composedLine += '~^~b~^~i~^~f0 '+adjustLine(BBB,C,V,text)+'~^~cf0~^~b0~^~i0~^~line '
                 elif marker == 's2': composedLine += '~^~b~^~i~^~f0 '+adjustLine(BBB,C,V,text)+'~^~cf0~^~b0~^~i0~^~line '
-                elif marker in ( 's3','s4', 'sr', 'd', ): composedLine += '~^~b~^~i~^~f0 '+adjustLine(BBB,C,V,text)+'~^~b~^~i~^~f0 '
+                elif marker in ( 's3','s4', 'sr','mr', 'd', ): composedLine += '~^~b~^~i~^~f0 '+adjustLine(BBB,C,V,text)+'~^~b~^~i~^~f0 '
                 elif marker in ( 'qa', 'r', ):
                     if marker=='r' and text and text[0]!='(' and text[-1]!=')': # Put parenthesis around this if not already there
                         text = '(' + text + ')'
@@ -6561,7 +6660,7 @@ class BibleWriter( InternalBible ):
                     assert( not text )
                 elif marker in ( 'pr', 'pmr', 'cls', ):
                     assert( not text )
-                elif marker in ( 'b', 'mi', 'pm', 'pmo', ):
+                elif marker in ( 'b','nb', 'mi', 'pm', 'pmo', ):
                     assert( not text )
                 elif marker in ( 'q1', 'qm1', ):
                     assert( not text )
@@ -6856,22 +6955,41 @@ class BibleWriter( InternalBible ):
                 return
 
             pseudoUSFMData = bookObject._processedLines
-            started, accumulator = False, "" # Started flag ignores fields in the book introduction
+            started, gotVP, accumulator = False, None, "" # Started flag ignores fields in the book introduction
             C = V = "0"
             for entry in pseudoUSFMData:
                 marker, text = entry.getMarker(), entry.getCleanText()
                 if marker in oftenIgnoredUSFMHeaderMarkers: # Just ignore these lines
                     ignoredMarkers.add( marker )
+
                 elif marker == 'c': C, V = text, "0"
+                elif marker in ('c#',):
+                    ignoredMarkers.add( marker )
+                elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
+                    gotVP = text # Just remember it for now
                 elif marker == 'v':
                     V = text
+                    if gotVP: # this is the verse number to be published
+                        text = gotVP
+                        gotVP = None
                     started = True
                     if accumulator: writer.write( "{}\n".format( accumulator ) ); accumulator = ""
                     writer.write( "$$ {} {}:{}\n".format( bookCode, C, text ) )
+
+                elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4', 'ms1','ms2','ms3','ms4', ) \
+                or marker in ('imt1','imt2','imt3','imt4', 'is1','is2','is3','is4', 'ip','ipi', 'iot','io1','io2','io3','io4', 'ili1','ili2','ili3','ili4', ) \
+                or marker in ('s1','s2','s3','s4', 'r','sr','mr', 'd','sp', ):
+                    ignoredMarkers.add( marker )
+                elif marker in ('p','m','pmo','pm','pmc','pmr','pi1','pi2','pi3','pi4','mi','cls','pc','pr','ph1','ph2','ph3','ph4', ) \
+                or marker in ('q1','q2','q3','q4','qr','qc','qm1','qm2','qm3','qm4', ) \
+                or marker in ('li1','li2','li3','li4', ):
+                    if Globals.debugFlag: assert( not text )
+                    ignoredMarkers.add( marker )
+                elif marker in ('b', 'nb' ):
+                    if Globals.debugFlag: assert( not text )
+                    ignoredMarkers.add( marker )
                 elif marker in ('v~', 'p~',):
                     if started: accumulator += (' ' if accumulator else '') + text
-                elif marker in ('c#',):
-                    ignoredMarkers.add( marker )
                 else:
                     if text:
                         logging.error( "toSwordSearcher: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
@@ -7000,30 +7118,32 @@ class BibleWriter( InternalBible ):
                 logging.error( "writeDrupalBibleBook: don't know how to encode {}".format( BBB ) )
                 unhandledBooks.append( BBB )
                 return
-            started, accumulator = False, "" # Started flag ignores fields in the book introduction
+            started, gotVP, accumulator = False, None, "" # Started flag ignores fields in the book introduction
             linemark = ''
             C = V = "0"
             for entry in bookObject._processedLines:
                 marker, text = entry.getMarker(), entry.getAdjustedText()
                 if marker in oftenIgnoredUSFMHeaderMarkers: # Just ignore these lines
                     ignoredMarkers.add( marker )
-                elif marker in ( 'mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4',): # Just ignore these book heading fields
-                    ignoredMarkers.add( marker )
-                elif marker in ( 'imt1','imt2','imt3','imt4', 'iot', 'io1','io2','io3','io4', 'ip','ipi', 'is1','is2','is3','is4', 'ili1','ili2','ili3','ili4', ): # Just ignore these introduction fields
-                    ignoredMarkers.add( marker )
-                elif marker in ( 'c#', ): # Just ignore these unneeded fields
-                    ignoredMarkers.add( marker )
+
                 elif marker == 'c':
                     if accumulator:
                         writer.write( "{}|{}|{}|{}|{}\n".format( bookCode, C, V, linemark, doDrupalTextFormat( accumulator ) ) )
                         accumulator, linemark = "", ''
                     C, V = text, "0"
+                elif marker in ( 'c#', ): # Just ignore these unneeded fields
+                    ignoredMarkers.add( marker )
+                elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
+                    gotVP = text # Just remember it for now
                 elif marker == 'v':
                     started = True
                     if accumulator:
                         writer.write( "{}|{}|{}|{}|{}\n".format( bookCode, C, V, linemark, doDrupalTextFormat( accumulator ) ) )
                         accumulator, linemark = "", ''
                     V = text
+                    if gotVP: # this is the verse number to be published
+                        V = gotVP
+                        gotVP = None
                     if not V.isdigit(): # Remove verse bridges
                         #print( "toDrupalBible V was", repr(V) )
                         Vcopy, V = V, ''
@@ -7031,11 +7151,18 @@ class BibleWriter( InternalBible ):
                             if not char.isdigit(): break
                             V += char
                         #print( "toDrupalBible V is now", repr(V) )
-                elif marker in ( 'ms1','ms2','ms3','ms4', 's1','s2','s3','s4', ): # Just ignore these section headings
+
+                elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4', 'ms1','ms2','ms3','ms4', ) \
+                or marker in ('imt1','imt2','imt3','imt4', 'is1','is2','is3','is4', 'ip','ipi', 'iot','io1','io2','io3','io4', 'ili1','ili2','ili3','ili4', ) \
+                or marker in ('s1','s2','s3','s4', 'r','sr','mr', 'd','sp', ):
                     ignoredMarkers.add( marker )
-                elif marker in ( 'r', 'sr',  'd','sp', ): # Just ignore these reference fields
+                elif marker in ('p','m','pmo','pm','pmc','pmr','pi1','pi2','pi3','pi4','mi','cls','pc','pr','ph1','ph2','ph3','ph4', ) \
+                or marker in ('q1','q2','q3','q4','qr','qc','qm1','qm2','qm3','qm4', ) \
+                or marker in ('li1','li2','li3','li4', ):
+                    if Globals.debugFlag: assert( not text )
                     ignoredMarkers.add( marker )
-                elif marker in ( 'p', 'pi1','pi2','pi3','pi4', 'q1','q2','q3','q4', 'm', 'b', 'nb', 'li1','li2','li3','li4', ): # Just ignore these paragraph formatting fields
+                elif marker in ('b', 'nb' ):
+                    if Globals.debugFlag: assert( not text )
                     ignoredMarkers.add( marker )
                 elif marker in ('v~', 'p~',):
                     if started: accumulator += (' ' if accumulator else '') + text
@@ -7117,7 +7244,8 @@ class BibleWriter( InternalBible ):
                             'ior':'IOR', 'k':'KW', }
         mtMarkerTranslate = { 'mt1':'BibleMainTitle', 'mt2':'BibleTitleTwo', 'mt3':'BibleTitleThree', 'mt4':'BibleTitleFour',
                              'imt1':'BibleIntroTitle', 'imt2':'BibleIntroTitleTwo', 'imt3':'BibleIntroTitleThree', 'imt4':'BibleIntroTitleFour',
-                             'mte1':'BibleMainEndTitle', 'mte2':'BibleEndTitleTwo', 'mte3':'BibleEndTitleThree', 'mte4':'BibleEndTitleFour', }
+                             'mte1':'BibleMainEndTitle', 'mte2':'BibleEndTitleTwo', 'mte3':'BibleEndTitleThree', 'mte4':'BibleEndTitleFour',
+                             'ms1':'BibleMainSectionHeading', 'ms2':'BibleMainSectionHeadingTwo', 'ms3':'BibleMainSectionHeadingThree', 'ms4':'BibleMainSectionHeadingFour', }
 
         def writeTeXHeader( writer ):
             """
@@ -7261,12 +7389,13 @@ class BibleWriter( InternalBible ):
                     allFile.write( "\n\\BibleBook{{{}}}\n".format( bookObject.getAssumedBookNames()[0] ) )
                     bookFile.write( "\n\\BibleBook{{{}}}\n".format( bookObject.getAssumedBookNames()[0] ) )
                     bookFile.write( "\n\\BibleBookTableOfContents\n".format( bookObject.getAssumedBookNames()[0] ) )
+                    gotVP = None
                     C = V = "0"
                     for entry in bookObject._processedLines:
                         marker, text = entry.getMarker(), entry.getFullText()
                         if marker in oftenIgnoredUSFMHeaderMarkers: # Just ignore these lines
                             ignoredMarkers.add( marker )
-                        elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4', ):
+                        elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4', 'ms1','ms2','ms3','ms4',):
                             if not haveTitle:
                                 allFile.write( "\n\\BibleTitlePage\n" )
                                 bookFile.write( "\n\\BibleTitlePage\n" )
@@ -7289,6 +7418,7 @@ class BibleWriter( InternalBible ):
                             bookFile.write( "\\BibleParagraphStyle{}\n".format( pMarkerTranslate[marker] ) )
                             allFile.write( "{}\n".format( texText(text) ) )
                             bookFile.write( "{}\n".format( texText(text) ) )
+
                         elif marker=='c':
                             C, V = text, "0"
                             if text == '1': # Assume chapter 1 is the start of the actual Bible text
@@ -7297,11 +7427,17 @@ class BibleWriter( InternalBible ):
                         elif marker=='c#':
                             allFile.write( "\\chapterNumber{{{}}}".format( texText(text) ) ) # no NL
                             bookFile.write( "\\chapterNumber{{{}}}".format( texText(text) ) ) # no NL
+                        elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
+                            gotVP = text # Just remember it for now
                         elif marker=='v':
                             V = text
+                            if gotVP: # this is the verse number to be published
+                                text = gotVP
+                                gotVP = None
                             if text != '1': # Don't write verse 1 number
                                 allFile.write( "\\verseNumber{{{}}}".format( texText(text) ) ) # no NL
                                 bookFile.write( "\\verseNumber{{{}}}".format( texText(text) ) ) # no NL
+
                         elif marker=='s1':
                             allFile.write( "\n\\BibleTextSection{{{}}}\n".format( texText(text) ) )
                             bookFile.write( "\n\\BibleTextSection{{{}}}\n".format( texText(text) ) )
@@ -8193,33 +8329,14 @@ class BibleWriter( InternalBible ):
             try: headerField = bookObject.longTOCName
             except: headerField = bookObject.assumedBookName
             startingNewParagraphFlag = True
-            gotVP = None
-            lastMarker = None
+            lastMarker = gotVP = None
             C = V = '0'
             for entry in pseudoUSFMData:
                 marker, adjText, extras = entry.getMarker(), entry.getAdjustedText(), entry.getExtras()
                 #print( j, BBB, C, V, marker, repr(adjText) )
                 if marker in oftenIgnoredUSFMHeaderMarkers: # Just ignore these lines
                     ignoredMarkers.add( marker )
-                elif marker in ('mt1','mt2','mt3','mt4', 'imt1','imt2','imt3','imt4', 'mte1','mte2','mte3','mte4',):
-                    styleName = titleODFStyleDict[marker]
-                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
-                elif marker in ('ms1','ms2','ms3','ms4',):
-                    styleName = "Major Section Heading {}".format( marker[-1] )
-                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
-                elif marker in ('ip','ipi', 'im','imi', 'iot', 'io1','io2','io3','io4',):
-                    styleName = ipODFStyleDict[marker]
-                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
-                elif marker in ('s1','s2','s3','s4', 'is1','is2','is3','is4',):
-                    if adjText or extras: #OEB has blank s fields
-                        styleName = "Introduction " if marker[0]=='i' else ""
-                        styleName += "Section Heading {}".format( marker[-1] )
-                        insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
-                elif marker in ('r','sr','mr',):
-                    if marker == 'r': styleName = 'Section CrossReference'
-                    elif marker == 'sr': styleName = 'Section Reference Range'
-                    elif marker == 'mr': styleName = 'Major Section Reference Range'
-                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
+
                 elif marker == 'c':
                     if C == '0': runningHeaderField.setPropertyValue( "Content", headerField )
                     C = adjText
@@ -8276,6 +8393,26 @@ class BibleWriter( InternalBible ):
                         documentText.insertString( textCursor, " ", False )
                         textCursor.setPropertyValue( "CharStyleName", "Verse Text" )
                         startingNewParagraphFlag = False
+
+                elif marker in ('mt1','mt2','mt3','mt4', 'imt1','imt2','imt3','imt4', 'mte1','mte2','mte3','mte4',):
+                    styleName = titleODFStyleDict[marker]
+                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
+                elif marker in ('ms1','ms2','ms3','ms4',):
+                    styleName = "Major Section Heading {}".format( marker[-1] )
+                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
+                elif marker in ('ip','ipi', 'im','imi', 'iot', 'io1','io2','io3','io4',):
+                    styleName = ipODFStyleDict[marker]
+                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
+                elif marker in ('s1','s2','s3','s4', 'is1','is2','is3','is4',):
+                    if adjText or extras: #OEB has blank s fields
+                        styleName = "Introduction " if marker[0]=='i' else ""
+                        styleName += "Section Heading {}".format( marker[-1] )
+                        insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
+                elif marker in ('r','sr','mr',):
+                    if marker == 'r': styleName = 'Section CrossReference'
+                    elif marker == 'sr': styleName = 'Section Reference Range'
+                    elif marker == 'mr': styleName = 'Major Section Reference Range'
+                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
                 elif marker == 'd':
                     insertODFParagraph( BBB, C, V, "Descriptive Title", adjText, extras, documentText, textCursor, "Default Style" )
                 elif marker == 'sp':

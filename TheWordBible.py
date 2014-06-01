@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # TheWordBible.py
-#   Last modified: 2014-05-28 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-02 by RJH (also update ProgVersion below)
 #
 # Module handling "theWord" Bible module files
 #
@@ -51,7 +51,7 @@ e.g.,
 """
 
 ProgName = "theWord Bible format handler"
-ProgVersion = "0.17"
+ProgVersion = "0.18"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -326,9 +326,9 @@ def theWordFileCompare( filename1, filename2, folder1=None, folder2=None, printF
 
 # These next three functions are used both by theWord and MySword exports
 theWordIgnoredIntroMarkers = oftenIgnoredUSFMHeaderMarkers + (
-    'imt1','imt2','imt3','is1','is2','is3',
-    'ip','ipi','im','imi','ipq','imq','ir','iq1','iq2','iq3','ib','ili',
-    'iot','io1','io2','io3','ir','iex','iqt','imte','ie','mte',)
+    'imt1','imt2','imt3','imt4', 'is1','is2','is3','is4',
+    'ip','ipi','im','imi','ipq','imq','ir', 'iq1','iq2','iq3','iq4', 'ib','ili',
+    'iot','io1','io2','io3','io4', 'ir','iex','iqt','imte','ie', 'mte1','mte2','mte3','mte4',)
 
 def theWordHandleIntroduction( BBB, bookData, ourGlobals ):
     """
@@ -350,11 +350,14 @@ def theWordHandleIntroduction( BBB, bookData, ourGlobals ):
         assert( len(verseData ) == 1 ) # in the introductory section
         marker, text = verseData[0].getMarker(), verseData[0].getFullText()
         if marker not in theWordIgnoredIntroMarkers:
-            if marker=='mt1': composedLine += '<TS1>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-            elif marker=='mt2': composedLine += '<TS2>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-            elif marker=='mt3': composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
+            if marker in ('mt1','mte1'): composedLine += '<TS1>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
+            elif marker in ('mt2','mte2'): composedLine += '<TS2>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
+            elif marker in ('mt3','mte3'): composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
+            elif marker in ('mt4','mte4'): composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
             elif marker=='ms1': composedLine += '<TS2>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
             elif marker=='ms2': composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
+            elif marker=='ms3': composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
+            elif marker=='ms4': composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
             elif marker=='mr': composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
             else:
                 logging.warning( "theWordHandleIntroduction: doesn't handle {} '{}' yet".format( BBB, marker ) )
