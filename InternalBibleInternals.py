@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleInternals.py
-#   Last modified: 2014-05-28 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-04 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Bible internals handler"
-ProgVersion = "0.29"
+ProgVersion = "0.31"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -73,14 +73,21 @@ PSEUDO_USFM_NEWLINE_MARKERS = ( 'c~', 'c#', 'v-', 'v+', 'v~', 'vw', 'g', 'p~', '
     vw  ???
     g   ???
     cl= used for cl markers BEFORE the '\c 1' marker -- represents the text for "chapter" to be used throughout the book
-    vp~ used for the vp (character field) when it is converted to a separate field
+    vp~ used for the vp (character field) when it is converted to a separate (newline) field
             This is inserted BEFORE the v (and v~) marker(s)
 """
 PSEUDO_OSIS_MARKERS = ( 'pp+', )
 NON_USFM_MARKERS = PSEUDO_USFM_NEWLINE_MARKERS + PSEUDO_OSIS_MARKERS
 
-EXTRA_TYPES = ( 'fn', 'en', 'xr', 'sr', 'sn', 'fig', 'str', 'vp', )
-
+EXTRA_TYPES = ( 'fn', 'en', 'xr', 'fig', 'str', 'vp', )
+"""
+    fn  footnote
+    en  endnote
+    xr  cross-reference
+    fig figure
+    str Strongs' number
+    vp  published verse number
+"""
 
 MAX_NONCRITICAL_ERRORS_PER_BOOK = 5
 
@@ -256,7 +263,9 @@ class InternalBibleEntry:
         self.marker, self.originalMarker, self.adjustedText, self.cleanText, self.extras, self.originalText = marker, originalMarker, adjustedText, cleanText, extras, originalText
 
         if Globals.debugFlag and debuggingThisModule and self.getFullText() != self.originalText.strip():
-            halt # When does this happen?
+            print( "InternalBibleEntry.Full", repr(self.getFullText()) ) # Has footnote in wrong place on verse numbers (before instead of after)
+            print( "InternalBibleEntry.Orig", repr(self.originalText.strip()) ) # Has missing footnotes on verse numbers
+            #halt # When does this happen?
     # end of InternalBibleEntry.__init__
 
 
@@ -311,9 +320,10 @@ class InternalBibleEntry:
             #print( "getFullText:  was '{}'".format( result ) )
             ix = extraIndex + offset
             if extraType == 'fn': USFM, lenUSFM = 'f', 1
+            elif extraType == 'en': USFM, lenUSFM = 'fe', 2
             elif extraType == 'xr': USFM, lenUSFM = 'x', 1
             elif extraType == 'fig': USFM, lenUSFM = 'fig', 3
-            elif extraType == 'str': USFM, lenUSFM = None, 3 # Ignore Strong's numbers since no way to encode them in USFM
+            elif extraType == 'str': USFM, lenUSFM = 'str', 3 # Ignore Strong's numbers since no way to encode them in USFM
             elif extraType == 'vp': USFM, lenUSFM = 'vp', 2
             elif Globals.debugFlag: halt
             if USFM:
@@ -444,7 +454,7 @@ class InternalBibleIndexEntry:
     def getNextEntryIndex( self ): return self.indexNext
     def getEntryCount( self ): return self.entryCount
     def getContext( self ): return self.context
-# end if class InternalBibleIndexEntry
+# end of class InternalBibleIndexEntry
 
 
 
@@ -729,7 +739,7 @@ class InternalBibleIndex:
             # Try getting the next couple of keys also (if they exist)
             try: nextKey = sortedIndex[k+1]
             except IndexError: nextKey = None
-            except KeyError: print( "nextKeyError2", k, len(sortedIndex), repr(key) ); nextKey = None
+            except KeyError: print( "nextKeyError1", k, len(sortedIndex), repr(key) ); nextKey = None
             try: nextNextKey = sortedIndex[k+2]
             except IndexError: nextNextKey = None
             except KeyError: print( "nextKeyError2", k, len(sortedIndex), repr(key) ); nextKey = None
@@ -781,24 +791,28 @@ class InternalBibleIndex:
                             logging.critical( "InternalBibleIndex.checkIndex: Probable v encoding error in {} {} {}:{} {}".format( self.name, self.bookReferenceCode, C, V, entries ) )
                             if Globals.debugFlag and debuggingThisModule: halt
                     elif marker == 'vp~': assert( nextMarker == 'v' )
+                    elif marker in ('v~','p~',):
+                        if nextMarker in ('v~','p~',): # These don't usually follow each other
+                            logging.critical( "InternalBibleIndex.checkIndex: Probable {} encoding error in {} {} {}:{} {}".format( marker, self.name, self.bookReferenceCode, C, V, entries ) )
+                            if Globals.debugFlag and debuggingThisModule: halt
 
                     if anyText or anyExtras: # Mustn't be a blank (unfinished) verse
                         if marker=='p' and nextMarker not in ('v','p~','c#',):
-                            if lastKey: print( lastKey, self.getEntries( lastKey )[0] )
+                            if lastKey: print( "InternalBibleIndex.checkIndex: lastKey1", self.bookReferenceCode, lastKey, self.getEntries( lastKey )[0] )
                             logging.critical( "InternalBibleIndex.checkIndex: Probable p encoding error in {} {} {}:{} {}".format( self.name, self.bookReferenceCode, C, V, entries ) )
-                            if nextKey: print( nextKey, self.getEntries( nextKey )[0] )
-                            if nextNextKey: print( nextNextKey, self.getEntries( nextNextKey )[0] )
+                            if nextKey: print( "  InternalBibleIndex.checkIndex: nextKey1", self.bookReferenceCode, nextKey, self.getEntries( nextKey )[0] )
+                            if nextNextKey: print( "  InternalBibleIndex.checkIndex: nextNextKey1", self.bookReferenceCode, nextNextKey, self.getEntries( nextNextKey )[0] )
                             if Globals.debugFlag and debuggingThisModule: halt
                         elif marker=='q1' and nextMarker not in ('v','p~','c#','q1','q2',):
-                            if lastKey: print( lastKey, self.getEntries( lastKey )[0] )
+                            if lastKey: print( "InternalBibleIndex.checkIndex: lastKey2", self.bookReferenceCode, lastKey, self.getEntries( lastKey )[0] )
                             logging.critical( "InternalBibleIndex.checkIndex: Probable q1 encoding error in {} {} {}:{} {}".format( self.name, self.bookReferenceCode, C, V, entries ) )
-                            if nextKey: print( nextKey, self.getEntries( nextKey )[0] )
-                            if nextNextKey: print( nextNextKey, self.getEntries( nextNextKey )[0] )
+                            if nextKey: print( "  InternalBibleIndex.checkIndex: nextKey2", self.bookReferenceCode, nextKey, self.getEntries( nextKey )[0] )
+                            if nextNextKey: print( "  InternalBibleIndex.checkIndex: nextNextKey2", self.bookReferenceCode, nextNextKey, self.getEntries( nextNextKey )[0] )
                             if Globals.debugFlag and debuggingThisModule: halt
-                        elif marker=='q2' and nextMarker not in ('v','p~','q1','q2','q3',):
+                        elif marker=='q2' and nextMarker not in ('v','p~', 'q1','q2','q3','q4', ):
                                 logging.critical( "InternalBibleIndex.checkIndex: Probable q2 encoding error in {} {} {}:{} {}".format( self.name, self.bookReferenceCode, C, V, entries ) )
                                 if Globals.debugFlag and debuggingThisModule: halt
-                        elif marker=='q3' and nextMarker not in ('p~','q1','q2','q3','q4',):
+                        elif marker=='q3' and nextMarker not in ('p~', 'q1','q2','q3','q4',):
                                 logging.critical( "InternalBibleIndex.checkIndex: Probable q3 encoding error in {} {} {}:{} {}".format( self.name, self.bookReferenceCode, C, V, entries ) )
                                 if Globals.debugFlag and debuggingThisModule: halt
 
@@ -823,7 +837,7 @@ class InternalBibleIndex:
                             logging.critical( "InternalBibleIndex.checkIndex: Check that text in {} Acts 8:0 gets processed correctly!".format( self.name ) )
                         else:
                             if 's1'  in markers or 'r' in markers or 'p' in markers or 'q1' in markers:
-                                print( key, entries )
+                                print( "xyz", key, entries )
                             assert( 's1' not in markers and 'r' not in markers and 'p' not in markers and 'q1' not in markers )
 
             # Check that C,V entries match
@@ -840,7 +854,7 @@ class InternalBibleIndex:
                             #if Globals.debugFlag: halt
             lastKey = key
         #if self.bookReferenceCode=='FRT': halt
-    # end if InternalBibleIndex.checkIndex
+    # end of InternalBibleIndex.checkIndex
 # end of class InternalBibleIndex
 
 

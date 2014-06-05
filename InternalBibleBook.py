@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2014-05-28 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-04 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -41,7 +41,7 @@ Required improvements:
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.72"
+ProgVersion = "0.73"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -53,6 +53,7 @@ from collections import OrderedDict
 import unicodedata
 
 import Globals
+from USFMMarkers import USFMBibleParagraphMarkers
 from InternalBibleInternals import NON_USFM_MARKERS, EXTRA_TYPES, \
     LEADING_WORD_PUNCT_CHARS, MEDIAL_WORD_PUNCT_CHARS, TRAILING_WORD_PUNCT_CHARS, ALL_WORD_PUNCT_CHARS, \
     InternalBibleEntryList, InternalBibleEntry, InternalBibleIndex, InternalBibleExtra, InternalBibleExtraList
@@ -400,7 +401,7 @@ class InternalBibleBook:
                     elif ix1 == ixVP:
                         if originalMarker != 'v~': # We only expect vp fields in v (now converted to v~) lines
                             fixErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Found unexpected 'vp' field in \\{} line: {}").format( originalMarker, adjText ) )
-                            logging.error( _("processLineFix: Found unexpected 'vp' fieldafter {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, thisOne, originalMarker, adjText ) )
+                            logging.error( _("processLineFix: Found unexpected 'vp' fieldafter {} {}:{} in \\{}: {}").format( self.bookReferenceCode, c, v, originalMarker, adjText ) )
                             self.addPriorityError( 95, c, v, _("Misplaced 'vp' field") )
                         ix2 = adjText.find( '\\vp*' )
                         if ix2 == -1: ix2 = adjText.find( '\\VP*' )
@@ -891,13 +892,13 @@ class InternalBibleBook:
                         logging.error( "InternalBibleBook.processLine: " + _("Extra '{}' material in chapter marker {} {}:{}").format( cBits[1], self.bookReferenceCode, c, v ) )
                         self.addPriorityError( 30 if '\f ' in cBits[1] else 98, c, v, _("Extra '{}' material after chapter marker").format( cBits[1] ) )
                         if Globals.debugFlag and debuggingThisModule:
-                            print( "InternalBibleBook.processLine: Something on c line", repr(text), repr(cBits[1]) )
+                            print( "InternalBibleBook.processLine: Something on c line", self.bookReferenceCode, c, v, repr(text), repr(cBits[1]) )
                         adjText, cleanText, extras = processLineFix( originalMarker, cBits[1] )
-                        if adjText or cleanText or extras:
-                            print( "InternalBibleBook.processLine: Something on c line", repr(text), repr(cBits[1]) )
+                        if (adjText or cleanText or extras) and Globals.debugFlag:
+                            print( "InternalBibleBook.processLine: Something on c line", self.bookReferenceCode, c, v, repr(text), repr(cBits[1]) )
                             if adjText: print( " adjText:", repr(adjText) )
                             if cleanText: print( " cleanText:", repr(cleanText) )
-                            if extras: print( " extras:", repr(extras) )
+                            if extras: print( " extras:", extras )
                         self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, c, c, extras, c) ) # Write the chapter number as a separate line
                         adjustedMarker, text = 'c~', cBits[1]
             elif originalMarker=='cp' and text:
@@ -990,11 +991,11 @@ class InternalBibleBook:
                         assert( '\\' not in verseNumberBit )
                     if len(vBits)>2: # rarely happens
                         adjText, cleanText, extras = processLineFix( originalMarker, vBits[1] )
-                        if adjText or cleanText or extras:
-                            print( "InternalBibleBook.processLine: Something on v line", repr(text), repr(vBits[1]) )
+                        if (adjText or cleanText or extras) and Globals.debugFlag:
+                            print( "InternalBibleBook.processLine: Something on v line", self.bookReferenceCode, c, v, repr(text), repr(vBits[1]) )
                             if adjText: print( " adjText:", repr(adjText) )
                             if cleanText: print( " cleanText:", repr(cleanText) )
-                            if extras: print( " extras:", repr(extras) )
+                            if extras: print( " extras:", extras )
                         self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, verseNumberBit, verseNumberBit, extras, verseNumberBit) ) # Write the verse number (or range) as a separate line
                     else:
                         self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, verseNumberBit, verseNumberBit, InternalBibleExtraList(), verseNumberBit) ) # Write the verse number (or range) as a separate line
@@ -1124,55 +1125,230 @@ class InternalBibleBook:
 
         def reorderRawLines():
             """
-            Using self._rawLines, reorder them before further processing.
+            Using self._rawLines from OSIS input, reorder them before further processing.
+            This is because processing the XML provides the markers in a different order from USFM
+                and our internal format is more aligned to the USFM way of doing things.
 
+            Footnotes etc have not yet been extracted from any of the lines
+                but there are already v~ (and a few p~) lines created as the XML was extracted.
+            """
+            assert( self.objectTypeString == 'OSIS' )
+            #print( "\n", self.bookReferenceCode )
+            #print( 'RO-0', len(self._rawLines) )
+
+            #if self.bookReferenceCode=='JHN':
+                #print( self.bookReferenceCode, "RL" )
+                #for j in range( 1960, len(self._rawLines) ):
+                    #marker, text = self._rawLines[j]
+                    #print( "", j, marker, repr(text) )
+                    #if marker=='c' and text=='22': halt
+
+            """
             For OSIS, change lines like:
                 1/ p = ''
-                2/ p = ''
-            to remove one of the duplicates XXX NOT NEEDED
-            and
-                1/ v = '51'
-                2/ p = ''
-                3/ v~ = 'Ahaziah the son of Ahab began to reign over Israel... king of Judah, and reigned two years over Israel.' + extras
-            to put the p before the verse number
-            and
+                2/ v = 17
+                3/ p = ''
+                4/ q1 = Text of verse 17.
+            to
                 1/ p = ''
-                2/ v = '49'
-                3/ q = ''
-                4/ v~ = 'I was daily with you in the temple teaching, and y...took me not: but the scriptures must be fulfilled.' + extras
-            to put the q1 before the verse number instead of the p.
+                2/ v = 17
+                3/ q1 = Text of verse 17.
             """
-            #print( 'RO-1', len(self._rawLines) )
-            assert( self.objectTypeString == 'OSIS' )
             newLines = []
-            lastJ = len(self._rawLines) - 1
             lastMarker = lastText = None
-            skip = False
+            C = V = '0'
             for j,(marker,text) in enumerate( self._rawLines ):
-                #if lastMarker=='p' and lastText=='' and marker=='p' and text=='':
-                    #print( " ", j, "skipped" )
-                    #halt
-                    #continue # Ignore the duplicate
-                if skip: skip = False; continue # skip this empty p or q marker completely now
-                nextMarker, nextText = self._rawLines[j+1] if j<lastJ else (None,None,)
+                # Keep track of where we are
+                #if marker == 'c': C, V = text, '0'
+                #elif marker == 'v': V = text
 
-                if lastMarker=='p' and lastText=='' and marker=='v' and text and nextMarker in ('p','q','q1',) and nextText=='':
-                    lastMarker, lastText = nextMarker, ''
-                    skip = True
-                    #print( " ", j, "swapped and skipped" )
-                elif lastMarker=='v' and marker=='p' and text=='' and nextMarker=='v~':
-                    # Swap this empty p line with the last one
-                    marker, text = lastMarker, lastText
-                    lastMarker, lastText = 'p', ''
-                    #print( " ", j, "swapped" )
+                if lastMarker in USFMBibleParagraphMarkers and not lastText and marker in USFMBibleParagraphMarkers:
+                    #if self.bookReferenceCode=='JHN':
+                        #print( "zap: {} {}:{} lines: {}={} {}={}".format( self.bookReferenceCode, C, V, lastMarker, lastText, marker, text ) )
+                    lastMarker = None
 
                 # Always save one line behind
                 if lastMarker is not None: newLines.append( (lastMarker,lastText) )
                 lastMarker, lastText = marker, text
 
-            newLines.append( (lastMarker,lastText) ) # Save the very last line
+            if lastMarker is not None: newLines.append( (lastMarker,lastText) ) # Save the very last line
+            self._rawLines = newLines # replace the old set
+            #print( 'RO-1', len(self._rawLines) )
+
+            """
+            For OSIS, change lines like:
+                1/ v = 2 Text of verse 2.
+                2/ v = 3
+                3/ p = Text of verse 3.
+            to
+                1/ v = 2 Text of verse 2.
+                2/ p = ''
+                2/ v = 3
+                3/ v~ = Text of verse 3.
+            """
+            newLines = []
+            #lastJ = len(self._rawLines) - 1
+            lastMarker = lastText = None
+            #skip = False
+            C = V = '0'
+            for j,(marker,text) in enumerate( self._rawLines ):
+                # Keep track of where we are
+                #if marker == 'c': C, V = text, '0'
+                #elif marker == 'v': V = text
+
+                #if skip:
+                    #assert( not text )
+                    #skip = False
+                    #continue # skip this empty p or q marker completely now
+
+                #nextMarker, nextText = self._rawLines[j+1] if j<lastJ else (None,None,)
+
+                if lastMarker=='v' and marker in USFMBibleParagraphMarkers and text:
+                    #print( "increase: {} {}:{} lines: {}={} {}={}".format( self.bookReferenceCode, C, V, lastMarker, lastText, marker, text ) )
+                    newLines.append( (marker,'') ) # Put the new blank paragraph marker before the v
+                    marker = 'v~' # Change the p marker to v~
+
+                # Always save one line behind
+                if lastMarker is not None: newLines.append( (lastMarker,lastText) )
+                lastMarker, lastText = marker, text
+
+            if lastMarker is not None: newLines.append( (lastMarker,lastText) ) # Save the very last line
             self._rawLines = newLines # replace the old set
             #print( 'RO-2', len(self._rawLines) )
+            #print( self.bookReferenceCode, "RL" )
+            #for j in range( 0, 50 ): print( "", j, self._rawLines[j] )
+
+            """
+            For OSIS, change lines like:
+                1/ p = ''
+                2/ q1 = ''
+                3/ v = 3 Text of verse 3.
+            to
+                1/ q1 = ''
+                2/ v = 3 Text of verse 3.
+            Seems to only occur in the NT of the KJV
+            Also change
+                1/ v = 25
+                2/ v~ = Some text
+                3/ p = '' (last line in file)
+            to remove that last line.
+            """
+            newLines = []
+            #lastJ = len(self._rawLines) - 1
+            lastMarker = lastText = None
+            #skip = False
+            C = V = '0'
+            for j,(marker,text) in enumerate( self._rawLines ):
+                # Keep track of where we are
+                #if marker == 'c': C, V = text, '0'
+                #elif marker == 'v': V = text[:3]
+
+                #if skip:
+                    #assert( not text )
+                    #skip = False
+                    #continue # skip this empty p or q marker completely now
+
+                #nextMarker, nextText = self._rawLines[j+1] if j<lastJ else (None,None,)
+
+                if lastMarker in USFMBibleParagraphMarkers and not lastText:
+                    if marker in USFMBibleParagraphMarkers and not text:
+                        #print( "reduce: {} {}:{} lines: {}={} {}={}".format( self.bookReferenceCode, C, V, lastMarker, lastText, marker, text ) )
+                        lastMarker = None
+                    if marker=='c':
+                        #print( "remove: {} {}:{} lines: {}={} {}={}".format( self.bookReferenceCode, C, V, lastMarker, lastText, marker, text ) )
+                        lastMarker = None
+
+                # Always save one line behind
+                if lastMarker is not None: newLines.append( (lastMarker,lastText) )
+                lastMarker, lastText = marker, text
+
+            if lastMarker is not None \
+            and (lastText or lastMarker not in USFMBibleParagraphMarkers): # Don't write a blank p type marker at the end of the book
+                newLines.append( (lastMarker,lastText) )
+            self._rawLines = newLines # replace the old set
+            #print( 'RO-3', len(self._rawLines) )
+            #print( self.bookReferenceCode, "RL" )
+            #for j in range( 0, 50 ): print( "", j, self._rawLines[j] )
+
+            #if 0: # No longer needed
+                ## In the first pass, just remove empty p markers followed by c or by other empty paragraph markers
+                ## Also combine consecutive v~/p~ markers
+                #newLines = []
+                #lastMarker = lastText = None
+                #for j,(marker,text) in enumerate( self._rawLines ):
+                    #if lastMarker in USFMBibleParagraphMarkers and not lastText: # empty p type marker
+                        #if marker=='c' or (marker in USFMBibleParagraphMarkers and not text):
+                            #lastMarker = None # just drop out the first empty p type field
+                            #halt
+                    #elif lastMarker in ('v~','p~') and marker in ('v~','p~'):
+                        #print( "reorder: {} bad v~/p~ lines: {}={} {}={}".format( self.bookReferenceCode, lastMarker, lastText, marker, text ) )
+                        #halt
+
+                    ## Always save one line behind
+                    #if lastMarker is not None: newLines.append( (lastMarker,lastText) )
+                    #lastMarker, lastText = marker, text
+
+                #if lastMarker is not None \
+                #and (lastText or lastMarker not in USFMBibleParagraphMarkers): # Don't write a blank p type marker at the end of the book
+                    #newLines.append( (lastMarker,lastText) ) # Save the very last line
+                #self._rawLines = newLines # replace the old set
+                ##print( 'RO-1', len(self._rawLines) )
+                #halt
+
+            #if 0: # NO LONGER NEEDED # Now do the next passes
+                #neededAgain = True
+                #while neededAgain:
+                    #neededAgain = False
+                    #newLines = []
+                    #lastJ = len(self._rawLines) - 1
+                    #lastMarker = lastText = None
+                    #skip = False
+                    #C = V = '0'
+                    #for j,(marker,text) in enumerate( self._rawLines ):
+                        ## Keep track of where we are
+                        ##if marker == 'c': C, V = text, '0'
+                        ##elif marker == 'v': V = text
+
+                        #if skip:
+                            #assert( not text )
+                            #skip = False
+                            #continue # skip this empty p or q marker completely now
+
+                        #nextMarker, nextText = self._rawLines[j+1] if j<lastJ else (None,None,)
+
+                        ## This code fails to help if there is nextText but it's only a footnote and nothing else
+                        #if lastMarker in USFMBibleParagraphMarkers and not lastText: # empty p type marker
+                            #if marker=='v' and text and nextMarker in USFMBibleParagraphMarkers and not nextText:
+                                ##print( "s->s", self.bookReferenceCode, C, V, lastMarker, repr(lastText), marker, repr(text), nextMarker, repr(nextText) )
+                                #lastMarker, lastText = nextMarker, ''
+                                #skip = True
+                                ##print( " ", j, "swapped and skipped" )
+                                #neededAgain = True
+                                #halt
+                            #elif marker=='c':
+                                ##print( "p->c", self.bookReferenceCode, C, V, lastMarker, repr(lastText), marker, repr(text), nextMarker, repr(nextText) )
+                                #lastMarker = None # just drop out the p field
+                                #neededAgain = True
+                                #halt
+                        #elif lastMarker=='v' and marker in USFMBibleParagraphMarkers and text=='' and nextMarker=='v~':
+                            ##print( "swp", self.bookReferenceCode, C, V, lastMarker, repr(lastText), marker, repr(text), nextMarker, repr(nextText) )
+                            ## Swap this empty p type line with the last one
+                            #lastMarker, lastText, marker, text = marker, text, lastMarker, lastText
+                            ##print( " ", j, "swapped" )
+                            #neededAgain = True
+                            #halt
+
+                        ## Always save one line behind
+                        #if lastMarker is not None: newLines.append( (lastMarker,lastText) )
+                        #lastMarker, lastText = marker, text
+
+                    #if lastMarker is not None: newLines.append( (lastMarker,lastText) ) # Save the very last line
+                    #self._rawLines = newLines # replace the old set
+                    ##print( 'RO-n', len(self._rawLines) )
+                ##if self.bookReferenceCode == 'MAT':
+                    ##print( self.bookReferenceCode, "RL" )
+                    ##for j in range( 600, 800 ): print( "", j, self._rawLines[j] )
+                #halt
         # end of InternalBibleBook.processLines.reorderRawLines
 
 
@@ -2209,7 +2385,8 @@ class InternalBibleBook:
                         #assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
                         assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
                         #print( extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
-                        print( "InternalBibleBook:doCheckSFMs-Extras-B {} {}:{} ".format( self.bookReferenceCode, c, v ), extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
+                        if debuggingThisModule:
+                            print( "InternalBibleBook:doCheckSFMs-Extras-B {} {}:{} ".format( self.bookReferenceCode, c, v ), extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
                         assert( extraIndex >= 0 )
                         #assert( 0 <= extraIndex <= len(text)+3 )
                         assert( extraType in EXTRA_TYPES )
@@ -2270,7 +2447,7 @@ class InternalBibleBook:
                     adjExtraMarkers = thisExtraMarkers
                     for uninterestingMarker in allAvailableCharacterMarkers: # Remove character formatting markers so we can check the footnote/xref hierarchy
                         while uninterestingMarker in adjExtraMarkers: adjExtraMarkers.remove( uninterestingMarker )
-                    if adjExtraMarkers not in Globals.USFMMarkers.getTypicalNoteSets( extraType ):
+                    if adjExtraMarkers and adjExtraMarkers not in Globals.USFMMarkers.getTypicalNoteSets( extraType ):
                         #print( "Got", extraType, extraText, thisExtraMarkers )
                         if thisExtraMarkers: noteMarkerErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Unusual {} marker set: {} in {}").format( extraName, thisExtraMarkers, extraText ) )
                         else: noteMarkerErrors.append( "{} {}:{} ".format( self.bookReferenceCode, c, v ) + _("Missing {} formatting in {}").format( extraName, extraText ) )

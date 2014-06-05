@@ -610,9 +610,10 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
             elif lastMarker == 'm': composedLine += '<CL>' # We had a continuation paragraph
             elif lastMarker in Globals.USFMParagraphMarkers: pass # Did we need to do anything here???
             elif lastMarker != 'v':
-                print( BBB, C, V, marker, lastMarker, verseData )
                 composedLine += theWordAdjustLine(BBB,C,V, text )
-                if Globals.debugFlag and debuggingThisModule: halt # This should never happen -- probably a b marker with text
+                if Globals.debugFlag and debuggingThisModule:
+                    print( "theWordComposeVerseLine:", BBB, C, V, marker, lastMarker, verseData )
+                    halt # This should never happen -- probably a b marker with text
             #if ourGlobals['pi1']: composedLine += '<PI>'
             #elif ourGlobals['pi2']: composedLine += '<PI2>'
             #elif ourGlobals['pi3']: composedLine += '<PI3>'

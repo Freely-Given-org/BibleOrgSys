@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-06-02 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-05 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -87,7 +87,7 @@ import Globals, ControlFiles
 from InternalBible import InternalBible
 from BibleOrganizationalSystems import BibleOrganizationalSystem
 from BibleReferences import BibleReferenceList
-from USFMMarkers import oftenIgnoredUSFMHeaderMarkers, removeUSFMCharacterField, replaceUSFMCharacterFields
+from USFMMarkers import oftenIgnoredUSFMHeaderMarkers, USFMIntroductionMarkers, USFMBibleParagraphMarkers, removeUSFMCharacterField, replaceUSFMCharacterFields
 from MLWriter import MLWriter
 
 
@@ -181,7 +181,7 @@ class BibleWriter( InternalBible ):
                     word = word[1:] # Remove leading punctuation
                 while word and word[-1] in InternalBibleBook.TRAILING_WORD_PUNCT_CHARS:
                     word = word[:-1] # Remove trailing punctuation
-                if  '<' in word or '>' in word or '"' in word: print( "Here 3s42", BBB, c, v, repr(word) )
+                if  '<' in word or '>' in word or '"' in word: print( "BibleWriter.makeLists: Need to escape HTML chars here 3s42", BBB, c, v, repr(word) )
                 return word
             # end of stripWordPunctuation
 
@@ -230,7 +230,7 @@ class BibleWriter( InternalBible ):
                             if Globals.debugFlag: assert( ' ' not in word )
                             txtFile.write( "{} {}\n".format( word, dictionary[word] ) )
                             csvFile.write( "{},{}\n".format( repr(word) if ',' in word else word, dictionary[word] ) )
-                            #if  '<' in word or '>' in word or '"' in word: print( "Here 3s42", repr(word) )
+                            #if  '<' in word or '>' in word or '"' in word: print( "BibleWriter.makeLists: Here 3g5d", repr(word) )
                             #if Globals.debugFlag: assert( '<' not in word and '>' not in word and '"' not in word )
                             xmlFile.write( "<entry><word>{}</word><count>{}</count></entry>\n".format( Globals.makeSafeXML(word), dictionary[word] ) )
                         xmlFile.write( '</entries>' ) # close root element
@@ -496,7 +496,7 @@ class BibleWriter( InternalBible ):
                     elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4',):
                         if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
                         myFile.write( "{}{}\n\n".format( ' '*((columnWidth-len(text))//2), text ) )
-                    elif marker in ('imt1','imt2','imt3','imt4', 'is1','is2','is3','is4', 'ip','ipi', 'iot','io1','io2','io3','io4',): # Drop the introduction
+                    elif marker in USFMIntroductionMarkers: # Drop the introduction
                         ignoredMarkers.add( marker )
                     elif marker == 'c':
                         C = text
@@ -2792,7 +2792,7 @@ class BibleWriter( InternalBible ):
                 elif marker in ('s1','s2','s3','s4', 'is1','is2','is3','is4', 'ms1','ms2','ms3','ms4', 'sr',): # Simple headings
                     #if textBuffer: textBuffer += '\n'
                     textBuffer += '\n\nSsS' + cleanText + '\n'
-                elif marker in ('iot', 'io1','io2','io3','io4',): # Drop the introduction
+                elif marker in USFMIntroductionMarkers: # Drop the introduction
                     ignoredMarkers.add( marker )
 
                 elif marker in ('c','cp',): # cp should follow (and thus override) c
@@ -3063,8 +3063,8 @@ class BibleWriter( InternalBible ):
                 unhandledBooks.append( BBB )
                 return
             bookName = gotVP = None
-            C = V = "0"
-            verseText = '' # Do we really need this?
+            C = V = '0'
+            #verseText = '' # Do we really need this?
             #chapterNumberString = None
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, adjText, extras = verseDataEntry.getMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
@@ -3078,12 +3078,12 @@ class BibleWriter( InternalBible ):
                     ignoredMarkers.add( marker )
 
                 elif marker == 'c':
-                    C, V = adjText, "0"
+                    C, V = adjText, '0'
                     chapterNumberString = adjText
                     chapterRef = bookRef + '.' + chapterNumberString
                     # Bible:BookName_#
                     if bookName: writerObject.writeLineText( 'Bible:{}_{}'.format(bookName, chapterNumberString) )
-                elif marker in ('c#',): # These are the markers that we can safely ignore for this export
+                elif marker == 'c#': # These are the markers that we can safely ignore for this export
                     ignoredMarkers.add( marker )
                 elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
                     gotVP = adjText # Just remember it for now
@@ -3102,12 +3102,16 @@ class BibleWriter( InternalBible ):
 
                 elif marker == 's1':
                     # === adjText ===
+                    adjText = processXRefsAndFootnotes( adjText, extras )
                     writerObject.writeLineText( '=== {} ==='.format(adjText) )
                 elif marker == 'r':
                     # <span class="srefs">adjText</span>
                     if adjText: writerObject.writeLineOpenClose( 'span', adjText, ('class','srefs') )
-                elif marker == 'p':
+                elif marker in ('p','pi1','pi2',):
                     writerObject.writeNewLine( 2 );
+                elif marker in ( 'q1','q2','q3','q4', ):
+                    adjText = processXRefsAndFootnotes( adjText, extras )
+                    writerObject.writeLineText( ':{}'.format(adjText), noTextCheck=True ) # No check so it doesn't choke on embedded xref and footnote fields
                 elif marker == 'v~':
                     #print( "Oomph", marker, repr(adjText), chapterRef, verseNumberString )
                     assert( adjText or extras )
@@ -3123,14 +3127,11 @@ class BibleWriter( InternalBible ):
                     # TODO: We haven't stripped out character fields from within the verse -- not sure how MediaWiki handles them yet
                     adjText = processXRefsAndFootnotes( adjText, extras )
                     writerObject.writeLineText( ':{}'.format(adjText), noTextCheck=True ) # No check so it doesn't choke on embedded xref and footnote fields
-                elif marker in ( 'q1','q2','q3','q4', ):
-                    adjText = processXRefsAndFootnotes( verseText, extras )
-                    writerObject.writeLineText( ':{}'.format(adjText), noTextCheck=True ) # No check so it doesn't choke on embedded xref and footnote fields
                 elif marker == 'm': # Margin/Flush-left paragraph
-                    adjText = processXRefsAndFootnotes( verseText, extras )
+                    adjText = processXRefsAndFootnotes( adjText, extras )
                     writerObject.writeLineText( '::{}'.format(adjText), noTextCheck=True )
                 elif marker in ( 'li1','li2','li3','li4', ):
-                    adjText = processXRefsAndFootnotes( verseText, extras )
+                    adjText = processXRefsAndFootnotes( adjText, extras )
                     writerObject.writeLineText( ':{}'.format(adjText), noTextCheck=True ) # No check so it doesn't choke on embedded xref and footnote fields
                 else:
                     if adjText:
@@ -3140,7 +3141,7 @@ class BibleWriter( InternalBible ):
                         logging.error( "toMediaWiki: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
                         #if Globals.debugFlag: halt
                     unhandledMarkers.add( marker )
-                if extras and marker not in ('v~','p~',): logging.critical( "toMediaWiki: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
+                if extras and marker not in ('v~','p~','s1','q1','q2','q3','q4','m','li1','li2','li3','li4',): logging.critical( "toMediaWiki: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
         # end of toMediaWiki.writeMWBook
 
         # Set-up our Bible reference system
@@ -3253,7 +3254,7 @@ class BibleWriter( InternalBible ):
                         writerObject.writeLineClose ( 'CHAPTER' )
                     writerObject.writeLineOpen ( 'CHAPTER', ('cnumber',text) )
                     haveOpenChapter = True
-                elif marker in ('c#',): # These are the markers that we can safely ignore for this export
+                elif marker == 'c#': # These are the markers that we can safely ignore for this export
                     ignoredMarkers.add( marker )
                 elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
                     gotVP = text # Just remember it for now
@@ -3268,12 +3269,10 @@ class BibleWriter( InternalBible ):
                     #writerObject.writeLineOpenClose ( 'VERS', verseText, ('vnumber',verseNumberString) )
 
                 elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4', 'ms1','ms2','ms3','ms4',) \
-                or marker in ('imt1','imt2','imt3','imt4', 'is1','is2','is3','is4', 'ip','ipi', 'iot','io1','io2','io3','io4', 'ili1','ili2','ili3','ili4', ) \
+                or marker in USFMIntroductionMarkers \
                 or marker in ('s1','s2','s3','s4', 'r','sr','mr', 'd','sp', ):
                     ignoredMarkers.add( marker )
-                elif marker in ('p','m','pmo','pm','pmc','pmr','pi1','pi2','pi3','pi4','mi','cls','pc','pr','ph1','ph2','ph3','ph4', ) \
-                or marker in ('q1','q2','q3','q4', 'qr','qc',' qm1','qm2','qm3','qm4',) \
-                or marker in ('li1','li2','li3','li4',):
+                elif marker in USFMBibleParagraphMarkers:
                     if Globals.debugFlag: assert( not text and not extras )
                     ignoredMarkers.add( marker )
                 elif marker in ('b', 'nb' ):
@@ -3299,7 +3298,8 @@ class BibleWriter( InternalBible ):
                         logging.error( "toZefania: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
                         #if Globals.debugFlag: halt
                     unhandledMarkers.add( marker )
-                if extras and marker not in ('v~','p~',): logging.critical( "toZefania: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
+                if extras and marker not in ('v~','p~',) and marker not in ignoredMarkers:
+                    logging.critical( "toZefania: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
             if haveOpenChapter:
                 writerObject.writeLineClose( 'CHAPTER' )
             writerObject.writeLineClose( 'BIBLEBOOK' )
@@ -3443,12 +3443,10 @@ class BibleWriter( InternalBible ):
                     writerObject.writeLineOpen ( 'PARAGRAPH' )
                     haveOpenParagraph = True
                 elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4', 'ms1','ms2','ms3','ms4', ) \
-                or marker in ('imt1','imt2','imt3','imt4', 'is1','is2','is3','is4', 'ip','ipi', 'iot','io1','io2','io3','io4', 'ili1','ili2','ili3','ili4', ) \
+                or marker in USFMIntroductionMarkers \
                 or marker in ('s1','s2','s3','s4', 'r','sr','mr', 'd','sp', ):
                     ignoredMarkers.add( marker )
-                elif marker in ('m','pmo','pm','pmc','pmr', 'mi','cls','pc','pr', 'ph1','ph2','ph3','ph4', ) \
-                or marker in ('q1','q2','q3','q4', 'qr','qc', 'qm1','qm2','qm3','qm4', ) \
-                or marker in ('li1','li2','li3','li4', ):
+                elif marker in USFMBibleParagraphMarkers:
                     if Globals.debugFlag: assert( not text and not extras )
                     ignoredMarkers.add( marker )
                 elif marker in ('b', 'nb' ):
@@ -3474,7 +3472,8 @@ class BibleWriter( InternalBible ):
                         logging.error( "toHaggai: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
                         #if Globals.debugFlag: halt
                     unhandledMarkers.add( marker )
-                if extras and marker not in ('v~','p~',): logging.critical( "toHaggai: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
+                if extras and marker not in ('v~','p~',) and marker not in ignoredMarkers:
+                    logging.critical( "toHaggai: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
             if haveOpenParagraph:
                 writerObject.writeLineClose ( 'PARAGRAPH' )
             if haveOpenChapter:
@@ -3599,12 +3598,10 @@ class BibleWriter( InternalBible ):
                     verseNumberString = text.replace('<','').replace('>','').replace('"','') # Used below but remove anything that'll cause a big XML problem later
 
                 elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4', 'ms1','ms2','ms3','ms4', ) \
-                or marker in ('imt1','imt2','imt3','imt4', 'is1','is2','is3','is4', 'ip','ipi', 'iot','io1','io2','io3','io4', 'ili1','ili2','ili3','ili4', ) \
+                or marker in USFMIntroductionMarkers \
                 or marker in ('s1','s2','s3','s4', 'r','sr','mr', 'd','sp', ):
                     ignoredMarkers.add( marker )
-                elif marker in ('p','m','pmo','pm','pmc','pmr','pi1','pi2','pi3','pi4','mi','cls','pc','pr','ph1','ph2','ph3','ph4', ) \
-                or marker in ('q1','q2','q3','q4','qr','qc','qm1','qm2','qm3','qm4', ) \
-                or marker in ('li1','li2','li3','li4', ):
+                elif marker in USFMBibleParagraphMarkers:
                     if Globals.debugFlag: assert( not text and not extras )
                     ignoredMarkers.add( marker )
                 elif marker in ('b', 'nb' ):
@@ -3623,7 +3620,8 @@ class BibleWriter( InternalBible ):
                         logging.warning( "toOpenSong: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
                         #if Globals.debugFlag: halt
                     unhandledMarkers.add( marker )
-                if extras and marker not in ('v~','p~',): logging.critical( "toOpenSong: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
+                if extras and marker not in ('v~','p~',) and marker not in ignoredMarkers:
+                    logging.critical( "toOpenSong: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
             if accumulator:
                 writerObject.writeLineOpenClose ( 'v', accumulator, ('n',verseNumberString) )
             if haveOpenChapter:
@@ -5886,7 +5884,12 @@ class BibleWriter( InternalBible ):
                     closeAnyOpenSection()
                     writerObject.writeLineOpen( 'div', [getSID(), ('type',"section")] )
                     haveOpenSection = True
-                    if text: writerObject.writeLineOpenClose( 'title', checkText(text) ) # Section heading
+                    flag = False # Set this flag if the text already contains XML formatting
+                    for format in ('\\nd ','\\bd ', '\\sc ', ):
+                        if format in text: flag = True; break
+                    if extras: flag = True
+                    adjustedText = processXRefsAndFootnotes( text, extras )
+                    if text: writerObject.writeLineOpenClose( 'title', checkText(adjustedText), noTextCheck=flag ) # Section heading
                     else:
                         logging.info( _("toSwordModule: Blank s1 section heading encountered after {}:{}").format( currentChapterNumberString, verseNumberString ) )
                 elif marker=='s2':
@@ -5971,7 +5974,7 @@ class BibleWriter( InternalBible ):
                         logging.critical( "toSwordModule: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
                         #if Globals.debugFlag: halt
                     unhandledMarkers.add( marker )
-                if extras and marker not in ('v~','p~',): logging.critical( "toSwordModule: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
+                if extras and marker not in ('v~','p~','s1',): logging.critical( "toSwordModule: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
                 lastMarker = marker
             if (haveOpenIntro or haveOpenOutline or haveOpenLG or haveOpenL or unprocessedMarker):
                 logging.error( "toSwordModule: a {} {} {} {} {}".format( haveOpenIntro, haveOpenOutline, haveOpenLG, haveOpenL, unprocessedMarker ) )
@@ -6977,12 +6980,10 @@ class BibleWriter( InternalBible ):
                     writer.write( "$$ {} {}:{}\n".format( bookCode, C, text ) )
 
                 elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4', 'ms1','ms2','ms3','ms4', ) \
-                or marker in ('imt1','imt2','imt3','imt4', 'is1','is2','is3','is4', 'ip','ipi', 'iot','io1','io2','io3','io4', 'ili1','ili2','ili3','ili4', ) \
+                or marker in USFMIntroductionMarkers \
                 or marker in ('s1','s2','s3','s4', 'r','sr','mr', 'd','sp', ):
                     ignoredMarkers.add( marker )
-                elif marker in ('p','m','pmo','pm','pmc','pmr','pi1','pi2','pi3','pi4','mi','cls','pc','pr','ph1','ph2','ph3','ph4', ) \
-                or marker in ('q1','q2','q3','q4','qr','qc','qm1','qm2','qm3','qm4', ) \
-                or marker in ('li1','li2','li3','li4', ):
+                elif marker in USFMBibleParagraphMarkers:
                     if Globals.debugFlag: assert( not text )
                     ignoredMarkers.add( marker )
                 elif marker in ('b', 'nb' ):
@@ -7153,12 +7154,10 @@ class BibleWriter( InternalBible ):
                         #print( "toDrupalBible V is now", repr(V) )
 
                 elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4', 'ms1','ms2','ms3','ms4', ) \
-                or marker in ('imt1','imt2','imt3','imt4', 'is1','is2','is3','is4', 'ip','ipi', 'iot','io1','io2','io3','io4', 'ili1','ili2','ili3','ili4', ) \
+                or marker in USFMIntroductionMarkers \
                 or marker in ('s1','s2','s3','s4', 'r','sr','mr', 'd','sp', ):
                     ignoredMarkers.add( marker )
-                elif marker in ('p','m','pmo','pm','pmc','pmr','pi1','pi2','pi3','pi4','mi','cls','pc','pr','ph1','ph2','ph3','ph4', ) \
-                or marker in ('q1','q2','q3','q4','qr','qc','qm1','qm2','qm3','qm4', ) \
-                or marker in ('li1','li2','li3','li4', ):
+                elif marker in USFMBibleParagraphMarkers:
                     if Globals.debugFlag: assert( not text )
                     ignoredMarkers.add( marker )
                 elif marker in ('b', 'nb' ):
@@ -7729,6 +7728,9 @@ class BibleWriter( InternalBible ):
 
 
             def handleTextSegment( textSegment ):
+                """
+                Insert a text segment, complete with the correct character styles if any.
+                """
                 markerList = Globals.USFMMarkers.getMarkerListFromText( textSegment, includeInitialText=True )
                 if markerList: # we found character formatting within the text
                     #print( BBB, C, V, "toODF.insertFormattedODFText: {} found {}".format( repr(text), markerList ) )
@@ -7751,7 +7753,8 @@ class BibleWriter( InternalBible ):
                             logging.critical( "toODF: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(textSegment) ) )
                             unhandledMarkers.add( "{} (char)".format( marker ) )
                             if Globals.debugFlag: halt
-                else: # No character formatting here
+                elif textSegment: # No character formatting here
+                    #print( "BibleWriter.toODF: 3dc5", BBB, C, V, repr(textSegment) )
                     documentText.insertString( textCursor, textSegment, 0 )
             # end of handleTextSegment
 
@@ -7763,6 +7766,7 @@ class BibleWriter( InternalBible ):
                     if extraType in ('fn','en',): processNote( extraType, extraText, documentText, textCursor )
                     elif extraType == 'xr': processCrossReference( extraText, documentText, textCursor )
                     elif extraType == 'fig': processFigure( extraText, documentText, textCursor )
+                    elif extraType == 'str': pass # don't know how to encode this yet
                     elif extraType == 'vp': pass # it's already been converted to a newline field
                     else: halt
                     lastIndex = extraIndex
@@ -8806,11 +8810,11 @@ def demo():
         from USFMBible import USFMBible
         from USFMFilenames import USFMFilenames
         testData = ( # name, abbreviation, folder for USFM files
-                #("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
+                ("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
                 #("CustomTest", "Custom", ".../",),
                 #("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
                 #("USFMTest2", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
-                ("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
+                #("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
                 #("OEB", "OEB", "Tests/DataFilesForTests/USFM-OEB/",),
                 #("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
                 #("MS-BT", "MBTBT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),

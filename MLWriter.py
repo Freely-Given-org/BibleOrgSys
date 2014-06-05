@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # MLWriter.py
-#   Last modified: 2013-08-27 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-03 by RJH (also update ProgVersion below)
 #
 # Module handling pretty writing of XML (and xHTML) and HTML files
 #
-# Copyright (C) 2010-2013 Robert Hunt
+# Copyright (C) 2010-2014 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -331,7 +331,7 @@ class MLWriter:
                 if result: result += ' '
                 result += '{}="{}"'.format( self.checkAttribName(attrib), self.checkAttribValue(value) )
         return result
-    # end if MLWriter.getAttributes
+    # end of MLWriter.getAttributes
 
 
     def writeNewLine( self, count=1 ):

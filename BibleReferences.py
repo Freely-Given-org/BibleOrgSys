@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleReferences.py
-#   Last modified: 2014-02-05 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-03 by RJH (also update ProgVersion below)
 #
 # Module for handling Bible references including ranges
 #
@@ -1219,7 +1219,7 @@ class BibleReferenceList( BibleReferenceBase ):
             if isinstance( something, tuple ):
                 if len(something)==4: return something
                 if len(something)==2 and isinstance( something[0], tuple ) and len(something[0])==4: return something[0]
-    # end if BibleReferenceList.getFirstReference
+    # end of BibleReferenceList.getFirstReference
 
 
     def parseOSISReferenceString( self, referenceString ):

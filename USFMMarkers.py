@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkers.py
-#   Last modified: 2014-05-28 (also update ProgVersion below)
+#   Last modified: 2014-06-04 (also update ProgVersion below)
 #
 # Module handling USFMMarkers
 #
@@ -34,7 +34,7 @@ Contains the singleton class: USFMMarkers
 """
 
 ProgName = "USFM Markers handler"
-ProgVersion = "0.63"
+ProgVersion = "0.64"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -49,6 +49,12 @@ import Globals
 
 
 oftenIgnoredUSFMHeaderMarkers = ( 'id','ide', 'sts','rem','h', 'toc1','toc2','toc3', 'cl=', )
+USFMIntroductionMarkers = ( 'imt1','imt2','imt3','imt4', 'is1','is2','is3','is4', 'ip','ipi', 'iot', 'io1','io2','io3','io4', 'ili1','ili2','ili3','ili4', )
+USFMBibleParagraphMarkers = ( 'p','pc','pr', 'm','mi', 'pm','pmo','pmc','pmr', 'cls',
+                             'pi1','pi2','pi3','pi4', 'ph1','ph2','ph3','ph4',
+                            'q1','q2','q3','q4', 'qr','qc',' qm1','qm2','qm3','qm4',
+                            'li1','li2','li3','li4', ) # Doesn't include nb and qa
+
 
 
 def removeUSFMCharacterField( marker, originalText, closed ):
