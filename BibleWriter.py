@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-06-05 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-07 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -65,7 +65,7 @@ Note that not all exports export all books.
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.75"
+ProgVersion = "0.76"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -493,11 +493,14 @@ class BibleWriter( InternalBible ):
                     elif marker == 'h':
                         if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
                         myFile.write( "{}\n\n".format( text ) )
-                    elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4',):
-                        if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
-                        myFile.write( "{}{}\n\n".format( ' '*((columnWidth-len(text))//2), text ) )
                     elif marker in USFMIntroductionMarkers: # Drop the introduction
                         ignoredMarkers.add( marker )
+                    elif marker in ('mt1','mt2','mt3','mt4', 'imt1','imt2','imt3','imt4',):
+                        if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
+                        myFile.write( "\n{}{}\n".format( ' '*((columnWidth-len(text))//2), text ) )
+                    elif marker in ('mte1','mte2','mte3','mte4', 'imte1','imte2','imte3','imte4',):
+                        if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
+                        myFile.write( "\n{}{}\n\n".format( ' '*((columnWidth-len(text))//2), text ) )
                     elif marker == 'c':
                         C = text
                         if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
@@ -865,6 +868,10 @@ class BibleWriter( InternalBible ):
                         if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
                         level = int( marker[-1] )
                         myFile.write( "\n{} {}\n".format( '#'*level, adjText ) )
+                    elif marker in ('mte1','mte2','mte3','mte4', 'imte1','imte2','imte3','imte4',):
+                        if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
+                        level = int( marker[-1] )
+                        myFile.write( "\n{} {}\n\n".format( '#'*level, adjText ) )
                     elif marker in ('s1','s2','s3','s4', 'is1','is2','is3','is4', 'ms1','ms2','ms3','ms4', ):
                         if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
                         level = int( marker[-1] ) + 2 # so s1 becomes header #3
@@ -893,9 +900,9 @@ class BibleWriter( InternalBible ):
                             #.format( entry.getMarker(), entry.getOriginalMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras() ) )
 
         if ignoredMarkers:
-            logging.info( "toText: Ignored markers were {}".format( ignoredMarkers ) )
+            logging.info( "toMarkdown: Ignored markers were {}".format( ignoredMarkers ) )
             if Globals.verbosityLevel > 2:
-                print( "  " + _("WARNING: Ignored toText markers were {}").format( ignoredMarkers ) )
+                print( "  " + _("WARNING: Ignored toMarkdown markers were {}").format( ignoredMarkers ) )
 
         # Now create a zipped collection
         if Globals.verbosityLevel > 2: print( "  Zipping markdown files..." )
@@ -1522,7 +1529,7 @@ class BibleWriter( InternalBible ):
                         assert( BBB in ('FRT','INT','BAK','OTH',) )
                         assert( text and not extras )
                     writerObject.writeLineOpenClose( 'p', ' ', ('class','peripheralContent') )
-                elif marker in ('mte1','mte2','mte3','mte4',):
+                elif marker in ('mte1','mte2','mte3','mte4', 'imte1','imte2','imte3','imte4',):
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
                     if text: writerObject.writeLineOpenClose( 'h1', text, ('class','endTitle'+marker[3]) )
 
@@ -2138,7 +2145,7 @@ class BibleWriter( InternalBible ):
                         assert( BBB in ('FRT','INT','BAK','OTH',) )
                         assert( text and not extras )
                     thisHTML += '<p class="peripheralContent">{}</p>'.format( text )
-                elif marker in ('mte1','mte2','mte3','mte4',):
+                elif marker in ('mte1','mte2','mte3','mte4', 'imte1','imte2','imte3','imte4',):
                     if pOpen:
                         if Globals.debugFlag: assert( sOpen )
                         thisHTML += '</p>'; pOpen = False
@@ -2788,7 +2795,8 @@ class BibleWriter( InternalBible ):
                 #print( BBB, C, V, marker, repr(cleanText) )
                 if marker in oftenIgnoredUSFMHeaderMarkers: # Just ignore these lines
                     ignoredMarkers.add( marker )
-                elif marker in ('mt1','mt2','mt3','mt4','mte1','mte2','mte3','mte4', 'imt1','imt2','imt3','imt4', 'periph',): # Simple headings
+                elif marker in ('mt1','mt2','mt3','mt4','mte1','mte2','mte3','mte4',
+                                'imt1','imt2','imt3','imt4', 'imte1','imte2','imte3','imte4', 'periph',): # Simple headings
                     #if textBuffer: textBuffer += '\n'
                     textBuffer += '\n\nHhH' + cleanText + '\n'
                 elif marker in ('s1','s2','s3','s4', 'is1','is2','is3','is4', 'ms1','ms2','ms3','ms4', 'sr',): # Simple headings
@@ -5056,7 +5064,7 @@ class BibleWriter( InternalBible ):
                     continue # Just ignore these lines
                 elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4',):
                     if text: writerObject.writeLineOpenClose( 'title', checkText(text), ('canonical',"false") )
-                elif marker=='is1' or marker=='imt1':
+                elif marker in ('is1','imt1','imte1',):
                     #print( marker, "'"+text+"'" )
                     if not haveOpenIntro:
                         writerObject.writeLineOpen( 'div', [('type',"introduction"),('canonical',"false")] )
@@ -5765,7 +5773,7 @@ class BibleWriter( InternalBible ):
                     ignoredMarkers.add( marker )
                 elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4',):
                     if text: writerObject.writeLineOpenClose( 'title', checkText(text), ('canonical',"false") )
-                elif marker=='is1' or marker=='imt1':
+                elif marker in ('is1','imt1','imte1',):
                     if haveOpenIntro: # already -- assume it's a second one
                         closeAnyOpenParagraph()
                         writerObject.writeLineOpenSelfclose( 'div', [('eID',toSwordGlobals['idStack'].pop()), ('type',"introduction")] )
@@ -7246,6 +7254,7 @@ class BibleWriter( InternalBible ):
         mtMarkerTranslate = { 'mt1':'BibleMainTitle', 'mt2':'BibleTitleTwo', 'mt3':'BibleTitleThree', 'mt4':'BibleTitleFour',
                              'imt1':'BibleIntroTitle', 'imt2':'BibleIntroTitleTwo', 'imt3':'BibleIntroTitleThree', 'imt4':'BibleIntroTitleFour',
                              'mte1':'BibleMainEndTitle', 'mte2':'BibleEndTitleTwo', 'mte3':'BibleEndTitleThree', 'mte4':'BibleEndTitleFour',
+                             'imte1':'BibleIntroMainEndTitle', 'imte2':'BibleIntroEndTitleTwo', 'imte3':'BibleIntroEndTitleThree', 'imte4':'BibleIntroEndTitleFour',
                              'ms1':'BibleMainSectionHeading', 'ms2':'BibleMainSectionHeadingTwo', 'ms3':'BibleMainSectionHeadingThree', 'ms4':'BibleMainSectionHeadingFour', }
 
         def writeTeXHeader( writer ):
@@ -7403,7 +7412,7 @@ class BibleWriter( InternalBible ):
                                 haveTitle = True
                             allFile.write( "\\{}{{{}}}\n".format( mtMarkerTranslate[marker], texText(text) ) )
                             bookFile.write( "\\{}{{{}}}\n".format( mtMarkerTranslate[marker], texText(text) ) )
-                        elif marker in ('imt1','imt2','imt3','imt4', ):
+                        elif marker in ('imt1','imt2','imt3','imt4', 'imte1','imte2','imte3','imte4',):
                             if not haveIntro:
                                 allFile.write( "\n\\BibleIntro\n" )
                                 bookFile.write( "\n\\BibleIntro\n" )
@@ -7561,10 +7570,33 @@ class BibleWriter( InternalBible ):
         def setupStyles( styleFamilies ):
             """
             """
-            if 0: # This is how we add new styles to the existing template
+            if 1: # This is how we add new styles to the existing template
                 paragraphStyles = styleFamilies.getByName("ParagraphStyles")
                 CENTER_PARAGRAPH = uno.Enum( "com.sun.star.style.ParagraphAdjust", "CENTER" )
                 RIGHT_PARAGRAPH = uno.Enum( "com.sun.star.style.ParagraphAdjust", "RIGHT" )
+
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Heading" )
+                style.setPropertyValue( "CharHeight", 20 )
+                style.setPropertyValue( "CharWeight", 150 ) # bold
+                style.setPropertyValue( "ParaAdjust", CENTER_PARAGRAPH )
+                style.setPropertyValue( "ParaKeepTogether", True )
+                paragraphStyles.insertByName( "Introduction Major Title at Ending", style ) # Base style only
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Major Title at Ending" )
+                paragraphStyles.insertByName( "Introduction Major Title at Ending 1", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Major Title at Ending" )
+                style.setPropertyValue( "CharDiffHeight", -2 )
+                paragraphStyles.insertByName( "Introduction Major Title at Ending 2", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Major Title at Ending" )
+                style.setPropertyValue( "CharDiffHeight", -2 )
+                paragraphStyles.insertByName( "Introduction Major Title at Ending 3", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Major Title at Ending" )
+                style.setPropertyValue( "CharDiffHeight", -1 )
+                paragraphStyles.insertByName( "Introduction Major Title at Ending 4", style )
 
                 #style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 #style.setParentStyle( "Heading" )
@@ -7683,6 +7715,29 @@ class BibleWriter( InternalBible ):
                 style.setParentStyle( "Major Title at Ending" )
                 style.setPropertyValue( "CharDiffHeight", -1 )
                 paragraphStyles.insertByName( "Major Title at Ending 4", style )
+
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Heading" )
+                style.setPropertyValue( "CharHeight", 20 )
+                style.setPropertyValue( "CharWeight", 150 ) # bold
+                style.setPropertyValue( "ParaAdjust", CENTER_PARAGRAPH )
+                style.setPropertyValue( "ParaKeepTogether", True )
+                paragraphStyles.insertByName( "Introduction Major Title at Ending", style ) # Base style only
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Major Title at Ending" )
+                paragraphStyles.insertByName( "Introduction Major Title at Ending 1", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Major Title at Ending" )
+                style.setPropertyValue( "CharDiffHeight", -2 )
+                paragraphStyles.insertByName( "Introduction Major Title at Ending 2", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Major Title at Ending" )
+                style.setPropertyValue( "CharDiffHeight", -2 )
+                paragraphStyles.insertByName( "Introduction Major Title at Ending 3", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Major Title at Ending" )
+                style.setPropertyValue( "CharDiffHeight", -1 )
+                paragraphStyles.insertByName( "Introduction Major Title at Ending 4", style )
 
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 style.setParentStyle( "Heading" )
@@ -8075,6 +8130,7 @@ class BibleWriter( InternalBible ):
 
 
         titleODFStyleDict = {'imt1':'Introduction Major Title 1', 'imt2':'Introduction Major Title 2', 'imt3':'Introduction Major Title 3', 'imt4':'Introduction Major Title 4',
+                          'imte1':'Introduction Major Title at Ending 1','imte2':'Introduction Major Title at Ending 2', 'imte3':'Introduction Major Title at Ending 3', 'imte4':'Introduction Major Title at Ending 4',
                           'mt1':'Major Title 1','mt2':'Major Title 2', 'mt3':'Major Title 3', 'mt4':'Major Title 4',
                           'mte1':'Major Title at Ending 1','mte2':'Major Title at Ending 2', 'mte3':'Major Title at Ending 3', 'mte4':'Major Title at Ending 4', }
         ipODFStyleDict = {'ip':'Introduction Paragraph', 'ipi':'Introduction Paragraph Indented',
@@ -8423,7 +8479,7 @@ class BibleWriter( InternalBible ):
                         textCursor.setPropertyValue( "CharStyleName", "Verse Text" )
                         startingNewParagraphFlag = False
 
-                elif marker in ('mt1','mt2','mt3','mt4', 'imt1','imt2','imt3','imt4', 'mte1','mte2','mte3','mte4',):
+                elif marker in ('mt1','mt2','mt3','mt4', 'imt1','imt2','imt3','imt4', 'mte1','mte2','mte3','mte4', 'imte1','imte2','imte3','imte4',):
                     styleName = titleODFStyleDict[marker]
                     insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
                 elif marker in ('ms1','ms2','ms3','ms4',):
