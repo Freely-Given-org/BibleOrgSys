@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # OSISXMLBible.py
-#   Last modified: 2014-06-04 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-06 by RJH (also update ProgVersion below)
 #
 # Module handling OSIS XML Bibles
 #
@@ -298,7 +298,9 @@ class OSISXMLBible( Bible ):
                 # Process the attributes first
                 self.osisIDWork = self.osisRefWork = canonical = None
                 for attrib,value in textElement.items():
-                    if attrib=='osisIDWork': self.osisIDWork = value
+                    if attrib=='osisIDWork':
+                        self.osisIDWork = value
+                        if not self.name: self.name = value
                     elif attrib=='osisRefWork': self.osisRefWork = value
                     elif attrib=='canonical':
                         canonical = value
@@ -1123,9 +1125,9 @@ class OSISXMLBible( Bible ):
                         #print( "sdfssf", verseMilestone, bits )
                         if Globals.debugFlag: assert( len(bits) >= 3 )
                         self.thisBook.appendLine( 'v', bits[2]+' ' )
-                    vTail = element.tail
+                    vTail = clean(element.tail) # Newlines and leading spaces are irrelevant to USFM formatting
                     if vTail: # This is the main text of the verse (follows the verse milestone)
-                        self.thisBook.appendToLastLine( clean(vTail) ) # Newlines and leading spaces are irrelevant to USFM formatting
+                        self.thisBook.appendToLastLine( vTail )
                     return verseMilestone
                 halt # Should not happen
 
@@ -2308,7 +2310,7 @@ class OSISXMLBible( Bible ):
                                 logging.warning( "84kf Unprocessed '{}' attribute ({}) in {} at {}".format( attrib, value, sublocation, verseMilestone ) )
                                 loadErrors.append( "Unprocessed '{}' attribute ({}) in {} at {} (84kf)".format( attrib, value, sublocation, verseMilestone ) )
                         #print( "self.subDivType", self.subDivType )
-                        if element.text:
+                        if 0 and element.text:
                             self.thisBook.appendLine( 'io1', element.text.strip() )
                         else:
                             for sub2element in subelement.getchildren():
@@ -2925,14 +2927,10 @@ def demo():
 
     if 1: # Test OSISXMLBible object
         testFilepaths = (
-            #"Tests/DataFilesForTests/OSISTest1/",
-            #"Tests/DataFilesForTests/OSISTest2/",
-            "../../../../AutoProcesses/Processed/BibleDropBox_kjvfull.xml/",
+            #"Tests/DataFilesForTests/OSISTest1/", # Matigsalug test sample
+            "Tests/DataFilesForTests/OSISTest2/", # Full KJV from Crosswire
             #"../morphhb/wlc/Ruth.xml", "../morphhb/wlc/Dan.xml", "../morphhb/wlc/", # Hebrew Ruth, Daniel, Bible
             #"../../../../../Data/Work/Bibles/Formats/OSIS/Crosswire USFM-to-OSIS (Perl)/Matigsalug.osis.xml", # Entire Bible in one file 4.4MB
-            #"../../../../../Data/Work/Bibles/Formats/OSIS/kjvxml from DMSmith/kjv.xml", # Entire Bible in one file 23.7MB
-            #"../../../../../Data/Work/Bibles/Formats/OSIS/kjvxml from DMSmith/kjvfull.xml", # Entire Bible in one file 24.2MB
-            #"../../../../../Data/Work/Bibles/Formats/OSIS/kjvxml from DMSmith/kjvlite.xml", # Entire Bible in one file 7.7MB
             #"../../MatigsalugOSIS/OSIS-Output/MBTGEN.xml",
             #"../../MatigsalugOSIS/OSIS-Output/MBTRUT.xml", # Single books
             #"../../MatigsalugOSIS/OSIS-Output/MBTJAS.xml", # Single books
@@ -2942,21 +2940,15 @@ def demo():
             )
         justOne = ( testFilepaths[0], )
 
+        # Demonstrate the OSIS Bible class
         #for j, testFilepath in enumerate( justOne ): # Choose testFilepaths or justOne
         for j, testFilepath in enumerate( testFilepaths ): # Choose testFilepaths or justOne
-            # Demonstrate the OSIS Bible class
             if Globals.verbosityLevel > 1: print( "\nOSIS {}/ Demonstrating the OSIS Bible class...".format( j+1 ) )
             if Globals.verbosityLevel > 0: print( "  Test filepath is '{}'".format( testFilepath ) )
             oB = OSISXMLBible( testFilepath ) # Load and process the XML
             oB.load()
             if Globals.verbosityLevel > 0: print( oB ) # Just print a summary
-            #print( 'RUT' in oB )
-            #oBB = oB['RUT']
-            #try: print( "rawLines", oBB._rawLines[:50] )
-            #except: print( "processedLines", oBB._processedLines[:50] )
-            #print( "rejected", list(zip( oBB.badMarkers, oBB.badMarkerCounts)) )
-            #for j in range( 0, 30 ):
-                #print( "  processedLines", oBB._processedLines[j] )
+
             if 1: # Test verse lookup
                 import VerseReferences
                 for referenceTuple in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'),
@@ -2970,11 +2962,16 @@ def demo():
                     if t=='OT' and len(oB)==27: continue # Don't bother with OT references if it's only a NT
                     if t=='NT' and len(oB)==39: continue # Don't bother with NT references if it's only a OT
                     if t=='DC' and len(oB)<=66: continue # Don't bother with DC references if it's too small
-                    svk = VerseReferences.SimpleVerseKey( b, c, v )
-                    #print( svk, oB.getVerseDataList( svk ) )
-                    print( "OSISXMLBible.demo:", svk, oB.getVerseText( svk ) )
-            oB.check()
-            #oB.toHTML5()
+                    try:
+                        svk = VerseReferences.SimpleVerseKey( b, c, v )
+                        #print( svk, oB.getVerseDataList( svk ) )
+                        print( "OSISXMLBible.demo:", svk, oB.getVerseText( svk ) )
+                    except KeyError:
+                        print( "OSISXMLBible.demo: {} {}:{} can't be found!".format( b, c, v ) )
+
+            if Globals.strictCheckingFlag or Globals.debugFlag:
+                oB.check()
+            #oB.toODF(); halt
             oB.doAllExports( wantPhotoBible=True, wantPDFs=True )
 # end of demo
 

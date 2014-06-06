@@ -62,7 +62,7 @@ class USXFilenames:
                         break
                 matched = False
                 if foundLength>=6 and containsDigits and foundExtBit=='.'+self.fileExtension:
-                    for USXBookCode,USXDigits,bookReferenceCode in Globals.BibleBooksCodes.getAllUSXBooksCodeNumberTriples():
+                    for USXBookCode,USXDigits,BBB in Globals.BibleBooksCodes.getAllUSXBooksCodeNumberTriples():
                         if USXDigits in foundFileBit and (USXBookCode in foundFileBit or USXBookCode.upper() in foundFileBit):
                             digitsIndex = foundFileBit.index( USXDigits )
                             USXBookCodeIndex = foundFileBit.index(USXBookCode) if USXBookCode in foundFileBit else foundFileBit.index(USXBookCode.upper())
@@ -113,13 +113,13 @@ class USXFilenames:
         """
         resultList = []
         if self.pattern:
-            for USFMBookCode,USXDigits,bookReferenceCode in Globals.BibleBooksCodes.getAllUSXBooksCodeNumberTriples():
+            for USFMBookCode,USXDigits,BBB in Globals.BibleBooksCodes.getAllUSXBooksCodeNumberTriples():
                 filename = "------" # Six characters
                 filename = filename[:self.digitsIndex] + USXDigits + filename[self.digitsIndex+len(USXDigits):]
                 filename = filename[:self.USXBookCodeIndex] + ( USFMBookCode.upper() if 'BBB' in self.pattern else USFMBookCode ) + filename[self.USXBookCodeIndex+len(USFMBookCode):]
                 filename += '.' + self.fileExtension
                 #print( "getPossibleFilenames: Filename is '{}'".format( filename ) )
-                resultList.append( (bookReferenceCode,filename,) )
+                resultList.append( (BBB,filename,) )
         return Globals.BibleBooksCodes.getSequenceList( resultList )
     # end of getPossibleFilenames
 
@@ -130,12 +130,12 @@ class USXFilenames:
                 Each tuple contains ( BBB, filename ) not including the folder path.
         """
         resultList = []
-        for bookReferenceCode,possibleFilename in self.getPossibleFilenames():
+        for BBB,possibleFilename in self.getPossibleFilenames():
             possibleFilepath = os.path.join( self.folder, possibleFilename )
             #print( '  Looking for: ' + possibleFilename )
             if os.access( possibleFilepath, os.R_OK ):
                 #USXBookCode = possibleFilename[self.USXBookCodeIndex:self.USXBookCodeIndex+3].upper()
-                resultList.append( (bookReferenceCode, possibleFilename,) )
+                resultList.append( (BBB, possibleFilename,) )
         return resultList # No need to sort these, coz the above call produce sorted results
     # end of getConfirmedFilenames
 
@@ -146,7 +146,7 @@ class USXFilenames:
         folderFilenames = os.listdir( self.folder )
         actualFilenames = self.getConfirmedFilenames()
         filelist = []
-        for bookReferenceCode,actualFilename in actualFilenames:
+        for BBB,actualFilename in actualFilenames:
             folderFilenames.remove( actualFilename )
         return folderFilenames
     # end of getUnusedFilenames

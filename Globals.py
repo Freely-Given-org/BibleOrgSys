@@ -684,7 +684,7 @@ def pickleObject( theObject, filename, folder=None, disassembleObjectFlag=False 
                     for bn in a:
                         print( '     ', bn )
                         b = a[bn]
-                        print( b.bookReferenceCode )
+                        print( b.BBB )
                         pickleObject( b, f, folder )
                 else:
                     pickleObject( a, f, folder, disassembleObjectFlag=True )

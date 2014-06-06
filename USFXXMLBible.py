@@ -296,8 +296,8 @@ class USFXXMLBible( Bible ):
                     #idField = bookStyle = None
                     #for attrib,value in element.items():
                         #if attrib=='id' or attrib=='code':
-                            #idField = value # Should be USFM bookcode (not like bookReferenceCode which is BibleOrgSys BBB bookcode)
-                            ##if idField != bookReferenceCode:
+                            #idField = value # Should be USFM bookcode (not like BBB which is BibleOrgSys BBB bookcode)
+                            ##if idField != BBB:
                             ##    logging.warning( _("Unexpected book code ({}) in {}").format( idField, sublocation ) )
                         #elif attrib=='style':
                             #bookStyle = value
@@ -564,7 +564,7 @@ class USFXXMLBible( Bible ):
                 print( "What is loadParagraph milestone?" )
                 if Globals.debugFlag: halt
             else:
-                logging.warning( _("df45 Unprocessed {} element after {} {}:{} in {}").format( repr(element.tag), self.thisBook.bookReferenceCode, C, V, location ) )
+                logging.warning( _("df45 Unprocessed {} element after {} {}:{} in {}").format( repr(element.tag), self.thisBook.BBB, C, V, location ) )
         return V
     # end of USFXXMLBible.loadParagraph
 
@@ -582,7 +582,7 @@ class USFXXMLBible( Bible ):
                 #print( "USFX.loadParagraph Found footnote at", sublocation, C, V, repr(subelement.text) )
                 self.loadFootnote( subelement, sublocation )
             else:
-                logging.warning( _("sf31 Unprocessed {} element after {} {}:{} in {}").format( repr(subelement.tag), self.thisBook.bookReferenceCode, C, V, location ) )
+                logging.warning( _("sf31 Unprocessed {} element after {} {}:{} in {}").format( repr(subelement.tag), self.thisBook.BBB, C, V, location ) )
                 halt
         self.thisBook.appendToLastLine( '\\{}*{}'.format( marker, (' '+tail) if tail else '' ) )
     # end of USFXXMLBible.loadCharacterFormatting
@@ -638,7 +638,7 @@ class USFXXMLBible( Bible ):
                     marker = tag + (level if level else '')
                     self.thisBook.appendToLastLine( ' \\{} {}'.format( marker, text ) )
             else:
-                logging.warning( _("kv64 Unprocessed {} element after {} {}:{} in {}").format( subelement.tag, self.thisBook.bookReferenceCode, C, V, sublocation ) )
+                logging.warning( _("kv64 Unprocessed {} element after {} {}:{} in {}").format( subelement.tag, self.thisBook.BBB, C, V, sublocation ) )
     # end of USFXXMLBible.loadTable
 
 

@@ -56,8 +56,8 @@ Contains functions:
     toESword( outputFolder=None )
     toSwordSearcher( outputFolder=None )
     toDrupalBible( outputFolder=None )
-    toODF( outputFolder=None )
-    toTeX( outputFolder=None )
+    toODF( outputFolder=None ) for LibreOffice/OpenOffice exports
+    toTeX( outputFolder=None ) and thence to PDF
     doAllExports( givenOutputFolderName=None, wantPhotoBible=False, wantPDFs=False )
 
 Note that not all exports export all books.
@@ -181,7 +181,7 @@ class BibleWriter( InternalBible ):
                     word = word[1:] # Remove leading punctuation
                 while word and word[-1] in InternalBibleBook.TRAILING_WORD_PUNCT_CHARS:
                     word = word[:-1] # Remove trailing punctuation
-                if  '<' in word or '>' in word or '"' in word: print( "BibleWriter.makeLists: Need to escape HTML chars here 3s42", BBB, c, v, repr(word) )
+                if  '<' in word or '>' in word or '"' in word: print( "BibleWriter.makeLists: Need to escape HTML chars here 3s42", BBB, C, V, repr(word) )
                 return word
             # end of stripWordPunctuation
 
@@ -194,13 +194,13 @@ class BibleWriter( InternalBible ):
                 if word and not word[0].isalnum():
                     #print( word, stripWordPunctuation( word ) )
                     if len(word) > 1:
-                        if Globals.debugFlag: print( "{} {}:{} ".format( BBB, c, v ) + _("Have unexpected character starting word '{}'").format( word ) )
+                        if Globals.debugFlag: print( "{} {}:{} ".format( BBB, C, V ) + _("Have unexpected character starting word '{}'").format( word ) )
                         word = word[1:]
                 if word: # There's still some characters remaining after all that stripping
                     if Globals.verbosityLevel > 3: # why???
                         for k,char in enumerate(word):
                             if not char.isalnum() and (k==0 or k==len(word)-1 or char not in InternalBibleBook.MEDIAL_WORD_PUNCT_CHARS):
-                                if Globals.debugFlag: print( "{} {}:{} ".format( BBB, c, v ) + _("Have unexpected '{}' in word '{}'").format( char, word ) )
+                                if Globals.debugFlag: print( "{} {}:{} ".format( BBB, C, V ) + _("Have unexpected '{}' in word '{}'").format( char, word ) )
                     lcWord = word.lower()
                     isAReferenceOrNumber = True
                     for char in word:
@@ -258,13 +258,13 @@ class BibleWriter( InternalBible ):
 
         # Determine all the counts
         for BBB,bookObject in self.books.items():
-            c = v = '0' # Just for error messages
+            C = V = '0' # Just for error messages
             for entry in bookObject._processedLines:
                 marker, text, cleanText = entry.getMarker(), entry.getText(), entry.getCleanText()
 
                 # Keep track of where we are for more helpful error messages
-                if marker=='c' and text: c = text.split()[0]; v = '0'
-                elif marker=='v' and text: v = text.split()[0]
+                if marker=='c' and text: C, V = text.split()[0], '0'
+                elif marker=='v' and text: V = text.split()[0]
 
                 if text and Globals.USFMMarkers.isPrinted(marker): # process this main text
                     countWords( marker, cleanText, "main" )
@@ -870,7 +870,7 @@ class BibleWriter( InternalBible ):
                         level = int( marker[-1] ) + 2 # so s1 becomes header #3
                         myFile.write( "\n{} {}\n".format( '#'*level, adjText ) )
                     elif marker == 'c':
-                        C = adjText
+                        C, V = adjText, '0'
                         if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
                         myFile.write( "\n\nChapter {}".format( adjText ) )
                     elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
@@ -957,7 +957,8 @@ class BibleWriter( InternalBible ):
                     ix = result.find( bridgeChar )
                     if ix != -1: result = result[:ix] # Remove verse bridges
                 #print( " returns", result )
-                if Globals.debugFlag and (result.count('C')>1 or result.count('V')>1): halt
+                if Globals.debugFlag and (result.count('C')>1 or result.count('V')>1):
+                    print( "formatHTMLVerseText.liveCV: programming error: Didn't handle reference correctly: {} -> {}".format( repr(CV), repr(result) ) )
                 return '#' + result
             # end of liveCV
 
@@ -1298,7 +1299,7 @@ class BibleWriter( InternalBible ):
             writerObject.writeLineOpen( 'nav' )
             writerObject.writeLineOpen( 'ul' )
             for bkData in self:
-                BBB = bkData.bookReferenceCode
+                BBB = bkData.BBB
                 bkName = bkData.getAssumedBookNames()[0]
                 if BBB == myBBB:
                     writerObject.writeLineText( '<li class="bookNameEntry"><span class="currentBookName">{}</span></li>'.format( bkName ), noTextCheck=True )
@@ -1527,6 +1528,7 @@ class BibleWriter( InternalBible ):
 
                 # Now markers in the main text
                 elif marker == 'c':
+                    V = '0'
                     if haveOpenVerse: writerObject.writeLineClose( 'span' ); haveOpenVerse = False
                     if extras: print( "toHTML5: have extras at c at",BBB,C)
                     # What should we put in here -- we don't need/want to display it, but it's a place to jump to
@@ -2778,7 +2780,7 @@ class BibleWriter( InternalBible ):
             if not os.access( bookFolderPath, os.F_OK ): os.makedirs( bookFolderPath ) # Make the empty folder if there wasn't already one there
 
             # First of all, get the text (by chapter)
-            C = V = "0"
+            C = V = '0'
             numVerses = 0
             textBuffer, lastMarker, gotVP = "", None, None
             for entry in pseudoUSFMData:
@@ -2797,7 +2799,7 @@ class BibleWriter( InternalBible ):
 
                 elif marker in ('c','cp',): # cp should follow (and thus override) c
                     if textBuffer: renderText( BBB, BBBnum, bookName, bookAbbrev, C, maxChapters, numVerses, textBuffer, bookFolderPath ); textBuffer = ""
-                    C = cleanText
+                    C, V = cleanText, '0'
                     numVerses = 0
                 elif marker in ('c#',): # These are the markers that we can safely ignore for this export
                     ignoredMarkers.add( marker )
@@ -3241,7 +3243,7 @@ class BibleWriter( InternalBible ):
                 return
             writerObject.writeLineOpen( 'BIBLEBOOK', [('bnumber',Globals.BibleBooksCodes.getReferenceNumber(BBB)), ('bname',Globals.BibleBooksCodes.getEnglishName_NR(BBB)), ('bsname',OSISAbbrev)] )
             haveOpenChapter, gotVP = False, None
-            C = V = "0"
+            C = V = '0'
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getFullText(), verseDataEntry.getExtras()
                 #if marker in ('id', 'ide', 'h', 'toc1','toc2','toc3', ): pass # Just ignore these metadata markers
@@ -3249,7 +3251,7 @@ class BibleWriter( InternalBible ):
                     ignoredMarkers.add( marker )
 
                 elif marker == 'c':
-                    C, V = text, "0"
+                    C, V = text, '0'
                     if haveOpenChapter:
                         writerObject.writeLineClose ( 'CHAPTER' )
                     writerObject.writeLineOpen ( 'CHAPTER', ('cnumber',text) )
@@ -3408,7 +3410,7 @@ class BibleWriter( InternalBible ):
             writerObject.writeLineOpen( 'BIBLEBOOK', [('bnumber',Globals.BibleBooksCodes.getReferenceNumber(BBB)), ('bname',Globals.BibleBooksCodes.getEnglishName_NR(BBB)), ('bsname',OSISAbbrev)] )
             haveOpenChapter = haveOpenParagraph = False
             gotVP = None
-            C = V = "0"
+            C = V = '0'
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getFullText(), verseDataEntry.getExtras()
                 #if marker in ('id', 'ide', 'h', 'toc1','toc2','toc3', ): pass # Just ignore these metadata markers
@@ -3416,7 +3418,7 @@ class BibleWriter( InternalBible ):
                     ignoredMarkers.add( marker )
 
                 elif marker == 'c':
-                    C, V = text, "0"
+                    C, V = text, '0'
                     if haveOpenParagraph:
                         writerObject.writeLineClose ( 'PARAGRAPH' ); haveOpenParagraph = False
                     if haveOpenChapter:
@@ -3563,7 +3565,7 @@ class BibleWriter( InternalBible ):
                 return
             writerObject.writeLineOpen( 'b', ('n',bkData.getAssumedBookNames()[0]) )
             haveOpenChapter, startedFlag, gotVP, accumulator = False, False, None, ""
-            C = V = "0"
+            C = V = '0'
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getCleanText(), verseDataEntry.getExtras()
                 #print( marker, repr(text) )
@@ -3577,7 +3579,7 @@ class BibleWriter( InternalBible ):
                         accumulator = ""
                     if haveOpenChapter:
                         writerObject.writeLineClose ( 'c' )
-                    C, V = text, "0"
+                    C, V = text, '0'
                     writerObject.writeLineOpen ( 'c', ('n',text) )
                     haveOpenChapter = True
                 elif marker in ('c#',): # These are the markers that we can safely ignore for this export
@@ -4002,7 +4004,7 @@ class BibleWriter( InternalBible ):
                         xw.writeLineClose( 'para' )
                         haveOpenPara = False
                     #print( BBB, 'C', repr(text), repr(adjText) )
-                    C = text # not adjText!
+                    C, V = text, '0' # not adjText!
                     xw.writeLineOpenSelfclose ( 'chapter', [('number',C),('style','c')] )
                     if adjText != text:
                         logging.warning( "toUSXXML: Lost additional note text on c for {} {}".format( BBB, repr(C) ) )
@@ -4437,7 +4439,7 @@ class BibleWriter( InternalBible ):
                         xw.writeLineClose( 'p' )
                         haveOpenPara = False
                     #print( BBB, 'C', repr(text), repr(adjText) )
-                    C = text # not adjText!
+                    C, V = text, '0' # not adjText!
                     xw.writeLineOpenSelfclose ( 'c', ('id',C) )
                     if adjText != text:
                         logging.warning( "toUSFXXML: Lost additional note text on c for {} {}".format( BBB, repr(C) ) )
@@ -5045,7 +5047,7 @@ class BibleWriter( InternalBible ):
             haveOpenIntro = haveOpenOutline = haveOpenMajorSection = haveOpenSection = haveOpenSubsection = needChapterEID = haveOpenParagraph = haveOpenVsID = haveOpenLG = haveOpenL = False
             lastMarker = unprocessedMarker = ''
             gotVP = None
-            C = V = "0"
+            C = V = '0'
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
                 #print( "toOSIS:", marker, originalMarker, text )
@@ -5116,7 +5118,7 @@ class BibleWriter( InternalBible ):
                     closeAnyOpenLG()
                     if needChapterEID:
                         writerObject.writeLineOpenSelfclose( 'chapter', ('eID',chapterRef) ) # This is an end milestone marker
-                    C, V = text, "0"
+                    C, V = text, '0'
                     currentChapterNumberString, verseNumberString = text, '0'
                     if not currentChapterNumberString.isdigit(): logging.critical( _("toOSIS: Can't handle non-digit '{}' chapter number yet").format(text) )
                     chapterRef = bookRef + '.' + checkText(currentChapterNumberString)
@@ -5753,7 +5755,7 @@ class BibleWriter( InternalBible ):
             haveOpenIntro = haveOpenOutline = haveOpenMajorSection = haveOpenSection = haveOpenSubsection = needChapterEID = haveOpenParagraph = haveOpenVsID = haveOpenLG = haveOpenL = False
             lastMarker = unprocessedMarker = ''
             gotVP = None
-            C = V = "0"
+            C = V = '0'
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
                 #print( BBB, marker, text )
@@ -5840,7 +5842,7 @@ class BibleWriter( InternalBible ):
                     if needChapterEID:
                         writerObject.writeLineOpenSelfclose( 'chapter', ('eID',chapterRef) ) # This is an end milestone marker
                     writeIndexEntry( writerObject, ix )
-                    C, V = text, "0"
+                    C, V = text, '0'
                     currentChapterNumberString, verseNumberString = text, '0'
                     if not currentChapterNumberString.isdigit():
                         logging.critical( _("toSwordModule: Can't handle non-digit '{}' chapter number yet").format(text) )
@@ -6959,13 +6961,13 @@ class BibleWriter( InternalBible ):
 
             pseudoUSFMData = bookObject._processedLines
             started, gotVP, accumulator = False, None, "" # Started flag ignores fields in the book introduction
-            C = V = "0"
+            C = V = '0'
             for entry in pseudoUSFMData:
                 marker, text = entry.getMarker(), entry.getCleanText()
                 if marker in oftenIgnoredUSFMHeaderMarkers: # Just ignore these lines
                     ignoredMarkers.add( marker )
 
-                elif marker == 'c': C, V = text, "0"
+                elif marker == 'c': C, V = text, '0'
                 elif marker in ('c#',):
                     ignoredMarkers.add( marker )
                 elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
@@ -7121,7 +7123,7 @@ class BibleWriter( InternalBible ):
                 return
             started, gotVP, accumulator = False, None, "" # Started flag ignores fields in the book introduction
             linemark = ''
-            C = V = "0"
+            C = V = '0'
             for entry in bookObject._processedLines:
                 marker, text = entry.getMarker(), entry.getAdjustedText()
                 if marker in oftenIgnoredUSFMHeaderMarkers: # Just ignore these lines
@@ -7131,7 +7133,7 @@ class BibleWriter( InternalBible ):
                     if accumulator:
                         writer.write( "{}|{}|{}|{}|{}\n".format( bookCode, C, V, linemark, doDrupalTextFormat( accumulator ) ) )
                         accumulator, linemark = "", ''
-                    C, V = text, "0"
+                    C, V = text, '0'
                 elif marker in ( 'c#', ): # Just ignore these unneeded fields
                     ignoredMarkers.add( marker )
                 elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
@@ -7389,7 +7391,7 @@ class BibleWriter( InternalBible ):
                     bookFile.write( "\n\\BibleBook{{{}}}\n".format( bookObject.getAssumedBookNames()[0] ) )
                     bookFile.write( "\n\\BibleBookTableOfContents\n".format( bookObject.getAssumedBookNames()[0] ) )
                     gotVP = None
-                    C = V = "0"
+                    C = V = '0'
                     for entry in bookObject._processedLines:
                         marker, text = entry.getMarker(), entry.getFullText()
                         if marker in oftenIgnoredUSFMHeaderMarkers: # Just ignore these lines
@@ -7419,7 +7421,7 @@ class BibleWriter( InternalBible ):
                             bookFile.write( "{}\n".format( texText(text) ) )
 
                         elif marker=='c':
-                            C, V = text, "0"
+                            C, V = text, '0'
                             if text == '1': # Assume chapter 1 is the start of the actual Bible text
                                 allFile.write( "\n\\BibleText\n" )
                                 bookFile.write( "\n\\BibleText\n" )
@@ -7495,8 +7497,8 @@ class BibleWriter( InternalBible ):
 
     def toODF( self, outputFolder=None ):
         """
-        Write the pseudo USFM out into a TeX (typeset) format.
-            The format varies, depending on whether or not there are paragraph markers in the text.
+        Write the internal Bible format out into Open Document Format (ODF)
+            suitable for opening in LibreOffice or OpenOffice.
         """
         import uno
         from time import sleep
@@ -7555,253 +7557,10 @@ class BibleWriter( InternalBible ):
 
         ignoredMarkers, unhandledMarkers = set(), set()
 
-        titleODFStyleDict = {'imt1':'Introduction Major Title 1', 'imt2':'Introduction Major Title 2', 'imt3':'Introduction Major Title 3', 'imt4':'Introduction Major Title 4',
-                          'mt1':'Major Title 1','mt2':'Major Title 2', 'mt3':'Major Title 3', 'mt4':'Major Title 4',
-                          'mte1':'Major Title at Ending 1','mte2':'Major Title at Ending 2', 'mte3':'Major Title at Ending 3', 'mte4':'Major Title at Ending 4', }
-        ipODFStyleDict = {'ip':'Introduction Paragraph', 'ipi':'Introduction Paragraph Indented',
-                        'im':'Introduction Flush Left Paragraph', 'imi':'Introduction Indented Flush Left Paragraph',
 
-                        'iot':'Introduction Outline Title',
-                        'io1':'Introduction Outline Entry 1', 'io2':'Introduction Outline Entry 2', 'io3':'Introduction Outline Entry 3', 'io4':'Introduction Outline Entry 4'}
-
-        pqODFStyleDict = {'p':'Prose Paragraph', 'm':'Flush Left Paragraph',
-                        'pmo':'Embedded Opening Paragraph', 'pm':'Embedded Paragraph', 'pmc':'Embedded Closing Paragraph',
-                        'pmr':'Embedded Refrain Paragraph',
-                        'pi1':'Indented Prose Paragraph 1','pi2':'Indented Prose Paragraph 2','pi3':'Indented Prose Paragraph 3','pi4':'Indented Prose Paragraph 4',
-                        'mi':'Indented Flush Left Paragraph', 'cls':'Closure Paragraph',
-                        'pc':'Centered Prose Paragraph', 'pr':' Right Aligned Prose Paragraph',
-                        'ph1':'Hanging Prose Paragraph 1','ph2':'Hanging Prose Paragraph 2','ph3':'Hanging Prose Paragraph 3','ph4':'Hanging Prose Paragraph 4',
-
-                        'q1':'Poetry Paragraph 1','q2':'Poetry Paragraph 2','q3':'Poetry Paragraph 3','q4':'Poetry Paragraph 4',
-                        'qr':'Right Aligned Poetry Paragraph', 'qc':'Centered Poetry Paragraph',
-                        'qm1':'Embedded Poetry Paragraph 1','qm2':'Embedded Poetry Paragraph 2','qm3':'Embedded Poetry Paragraph 3','qm4':'Embedded Poetry Paragraph 4'}
-
-        charODFStyleDict = {'bk':'Book Name', 'ior':'Introduction Outline Reference',
-                            'add':'Added Words', 'nd':'Divine Name', 'wj':'Words of Jesus', 'sig':'Author Signature',
-                            'rq':'Inline Quotation Reference', 'qs':'Selah Text',
-                            'em':'Emphasis Text', 'bd':'Bold Text', 'it':'Italic Text', 'bdit':'Bold Italic Text', 'sc':'Small Caps Text', }
-
-        def insertFormattedODFText( BBB, C, V, givenText, extras, documentText, textCursor, defaultCharacterStyleName ):
+        def setupStyles( styleFamilies ):
             """
-            Format character codes within the text into ODF
             """
-            #print( "insertFormattedODFText( {}, {}, {} )".format( repr(givenText), len(extras), ourGlobals.keys() ) )
-            if Globals.debugFlag: assert( givenText or extras )
-
-            def handleExtras( text, extras ):
-                """
-                Returns the MD text with footnotes and xrefs processed.
-                It also accumulates MD in ourGlobals for the end notes.
-                """
-                def liveCV( CV ):
-                    """
-                    Given a CV text (in the same book), make it live
-                        e.g., given 1:3 return #C1V3
-                            given 17:4-9 return #C17V4
-                            given 1:1-3:19 return #C1V1
-                    """
-                    #print( "formatODFVerseText.liveCV( {} )".format( repr(CV) ) )
-                    if len(CV) < 3: return ''
-                    if CV and CV[-1]==':': CV = CV[:-1]
-
-                    result = 'C' + CV.strip().replace( ':', 'V')
-                    for bridgeChar in ('-', '–', '—'): # hyphen, endash, emdash
-                        ix = result.find( bridgeChar )
-                        if ix != -1: result = result[:ix] # Remove verse bridges
-                    #print( " returns", result )
-                    if Globals.debugFlag and (result.count('C')>1 or result.count('V')>1): halt
-                    return '#' + result
-                # end of insertFormattedODFText.liveCV
-
-
-            def processNote( noteType, rawFootnoteContents, documentText, textCursor ):
-                """
-                Inserts the footnote or endnote into the ODF document.
-
-                NOTE: The first parameter here already has the /f or (/fe) and /f* (or /fe*) removed.
-
-                \\f + \\fr 1:20 \\ft Su ka kaluwasan te Nawumi ‘keupianan,’ piru ka kaluwasan te Mara ‘masakit se geyinawa.’\\f* (Backslashes are shown doubled here)
-                """
-                assert( noteType in ('fn','en',) )
-                markerList = Globals.USFMMarkers.getMarkerListFromText( rawFootnoteContents, includeInitialText=True )
-                #print( "formatODFVerseText.processFootnote( {}, {} ) found {}".format( repr(rawFootnoteContents), ourGlobals, markerList ) )
-                note = document.createInstance( "com.sun.star.text.Footnote" if noteType=='fn' else "com.sun.star.text.Endnote" )
-                documentText.insertTextContent( textCursor, note, False )
-                noteCursor = note.Text.createTextCursor()
-                noteCursor.setPropertyValue( "ParaStyleName", "Bible Footnote" if noteType=='fn' else "Bible Endnote" )
-
-                noteStyleDict = { 'fr':'Footnote Origin', 'fk':'Footnote Keyword', 'fq':'Footnote Quotation',
-                                'fqa':'Footnote Alternate Translation', 'fl':'Footnote Label',
-                                'fp':'Footnote Paragraph', 'fv':'Footnote Verse Number',
-                                'ft':'Footnote Text', 'fdc':'Footnote Deuterocanonical',
-                                'fm':'Footnote Mark' }
-
-                caller = origin = originCV = fnText = fnTitle = '' # Probably no longer needed
-                if markerList: # We found some internal footnote markers
-                    for marker, ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt in markerList:
-                        if marker is None:
-                            #if txt not in '-+': # just a caller
-                            caller = txt
-                        elif marker in noteStyleDict:
-                            noteCursor.setPropertyValue( "CharStyleName", noteStyleDict[marker] )
-                            note.insertString( noteCursor, txt,  False )
-                        else:
-                            logging.error( "formatODFVerseText.processNote didn't handle {} {}:{} {} marker: {}".format( BBB, C, V, noteType, marker ) )
-                else: # no internal markers found
-                    noteCursor.setPropertyValue( "CharStyleName", "Footnote Text" )
-                    bits = rawFootnoteContents.split( ' ', 1 )
-                    if len(bits)==2: # assume the caller is the first bit
-                        caller = bits[0]
-                        if Globals.debugFlag: assert( len(caller) == 1 ) # Normally a +
-                        note.insertString( noteCursor, bits[1],  False )
-                    else: # no idea really what the format was
-                        note.insertString( noteCursor, rawFootnoteContents,  False )
-            # end of insertFormattedODFText.processNote
-
-
-            def processCrossReference( rawXRef, documentText, textCursor ):
-                """
-                Inserts the cross-reference into the ODF document as a footnote.
-
-                NOTE: The parameter here already has the /x and /x* removed.
-
-                \\x - \\xo 2:2: \\xt Lib 19:9-10; Diy 24:19.\\xt*\\x* (Backslashes are shown doubled here)
-                """
-                markerList = Globals.USFMMarkers.getMarkerListFromText( rawXRef, includeInitialText=True )
-                #print( "\nformatODFVerseText.processCrossReference( {}, {} ) gives {}".format( repr(rawXRef), "...", markerList ) )
-
-                xrefNote = document.createInstance( "com.sun.star.text.Footnote" )
-                documentText.insertTextContent( textCursor, xrefNote, False )
-                noteCursor = xrefNote.Text.createTextCursor()
-                noteCursor.setPropertyValue( "ParaStyleName", "Verse Cross Reference" )
-
-                xrefStyleDict = { 'xo':'Cross Reference Origin', 'xk':'Cross Reference Keyword',
-                                 'xq':'Cross Reference Quotation', 'xt':'Cross Reference Target',
-                                 'xot':'Cross Reference OT Target', 'xnt':'Cross Reference NT Target',
-                                 'xdc':'Cross Reference Deuterocanon Target' }
-
-                caller = origin = originCV = xrefText = '' # Probably no longer needed
-                if markerList:
-                    for marker, ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt in markerList:
-                        if marker is None:
-                            #if txt not in '-+': # just a caller
-                            caller = txt
-                        elif marker in xrefStyleDict:
-                            noteCursor.setPropertyValue( "CharStyleName", xrefStyleDict[marker] )
-                            xrefNote.insertString( noteCursor, txt,  False )
-                        else:
-                            logging.error( "formatODFVerseText.processCrossReference didn't handle {} {}:{} xref marker: {}".format( BBB, C, V, marker ) )
-                else: # there's no USFM markers at all in the xref --  presumably a caller and then straight text
-                    if rawXRef.startswith('+ ') or rawXRef.startswith('- '):
-                        caller = rawXRef[0]
-                        xrefText = rawXRef[2:].strip()
-                    else: # don't really know what it is -- assume it's all just text
-                        xrefText = rawXRef.strip()
-                    noteCursor.setPropertyValue( "CharStyleName", "Footnote Text" )
-                    xrefNote.insertString( noteCursor, xrefText,  False )
-            # end of insertFormattedODFText.processCrossReference
-
-
-            def processFigure( rawFigure ):
-                """
-                Inserts the figure into the ODF document.
-
-                NOTE: The parameter here already has the /fig and /fig* removed.
-                """
-                logging.critical( "toODF: figure not handled yet at {} {}:{} {}".format( BBB, C, V, repr(rawFigure) ) )
-                figureMD = ''
-                #footnoteMD = '<a class="footnoteLinkSymbol" title="{}" href="#FNote{}">[fn]</a>' \
-                                #.format( fnTitle, fnIndex )
-
-                #endMD = '<p id="FNote{}" class="footnote">'.format( fnIndex )
-                #if originCV: # This only handles CV separator of : so far
-                    #endMD += '<a class="footnoteOrigin" title="Go back up to {} in the text" href="{}">{}</a> ' \
-                                                        #.format( originCV, liveCV(originCV), origin )
-                #endMD += '<span class="footnoteEntry">{}</span>'.format( fnText )
-                #endMD += '</p>'
-
-                ##print( "footnoteMD", BBB, footnoteMD )
-                ##print( "endMD", endMD )
-                #ourGlobals['footnoteMD'].append( endMD )
-                ##if fnIndex > 2: halt
-            # end of insertFormattedODFText.processFigure
-
-
-            def handleTextSegment( textSegment ):
-                """
-                Insert a text segment, complete with the correct character styles if any.
-                """
-                markerList = Globals.USFMMarkers.getMarkerListFromText( textSegment, includeInitialText=True )
-                if markerList: # we found character formatting within the text
-                    #print( BBB, C, V, "toODF.insertFormattedODFText: {} found {}".format( repr(text), markerList ) )
-                    for marker, ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt in markerList:
-                        #print( "loop", marker, ixBS, repr(nextSignificantChar), repr(fullMarkerText), context, ixEnd, repr(txt) )
-                        if marker in charODFStyleDict and nextSignificantChar == ' ': # it's an opening marker
-                            textCursor.setPropertyValue( "CharStyleName", charODFStyleDict[marker] )
-                            documentText.insertString( textCursor, txt, 0 )
-                        elif marker == 'k' and nextSignificantChar == ' ':
-                            textCursor.setPropertyValue( "CharStyleName", 'Main Entry Keyword' if BBB in ('GLS',) else 'Keyword Text' )
-                            documentText.insertString( textCursor, txt, 0 )
-                        elif marker is None or (marker=='no' and nextSignificantChar==' ') or not context:
-                            # Normal text
-                            textCursor.setPropertyValue( "CharStyleName", defaultCharacterStyleName )
-                            documentText.insertString( textCursor, txt, 0 )
-                        elif marker in charODFStyleDict and not nextSignificantChar: # it's at the end of a line
-                            assert( not txt )
-                            logging.warning( "toODF: ignored {} field at end of line in {} {}:{}".format( marker, BBB, C, V ) )
-                        else:
-                            logging.critical( "toODF: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(textSegment) ) )
-                            unhandledMarkers.add( "{} (char)".format( marker ) )
-                            if Globals.debugFlag: halt
-                elif textSegment: # No character formatting here
-                    #print( "BibleWriter.toODF: 3dc5", BBB, C, V, repr(textSegment) )
-                    documentText.insertString( textCursor, textSegment, 0 )
-            # end of handleTextSegment
-
-            # insertFormattedODFText main code
-            if extras:
-                lastIndex = 0
-                for extraType, extraIndex, extraText, cleanExtraText in extras: # find any footnotes and cross-references
-                    handleTextSegment( givenText[lastIndex:extraIndex] )
-                    if extraType in ('fn','en',): processNote( extraType, extraText, documentText, textCursor )
-                    elif extraType == 'xr': processCrossReference( extraText, documentText, textCursor )
-                    elif extraType == 'fig': processFigure( extraText, documentText, textCursor )
-                    elif extraType == 'str': pass # don't know how to encode this yet
-                    elif extraType == 'vp': pass # it's already been converted to a newline field
-                    else: halt
-                    lastIndex = extraIndex
-                handleTextSegment( givenText[lastIndex:] )
-            else: # no footnotes, etc.
-                handleTextSegment( givenText )
-        # end of toODF.insertFormattedODFText
-
-
-        # First determine our format
-        #verseByVerse = True
-
-
-        # Create and save the ODF files
-        for j, (BBB,bookObject) in enumerate( self.books.items() ):
-            if Globals.verbosityLevel > 2: print( "  Creating ODF file for {}...".format( BBB ) )
-            pseudoUSFMData = bookObject._processedLines
-
-            # Create the blank document
-            filename = "{:02}-{}_BOS-BibleWriter.odt".format( j, BBB )
-            filepath = os.path.join( os.getcwd(), outputFolder, Globals.makeSafeFilename( filename ) )
-            if Globals.verbosityLevel > 2: print( "  " + _("Creating '{}'...").format( filename ) )
-            document = frameDesktop.loadComponentFromURL( sourceURL, "_blank", 0, () )
-            documentText = document.Text
-            initialTextCursor = documentText.createTextCursor()
-            textCursor = initialTextCursor
-
-            styleFamilies = document.StyleFamilies
-            #pageStyles = styleFamilies.getByName( "PageStyles" )
-            #defaultPageStyle = pageStyles.getByName( "Default Style" )
-            #headerText = defaultPageStyle.getPropertyValue( "HeaderText" )
-            #headerCursor = headerText.createTextCursor()
-            runningHeaderField = document.TextFieldMasters.getByName( "com.sun.star.text.FieldMaster.User.BibleHeader" )
-
-
             if 0: # This is how we add new styles to the existing template
                 paragraphStyles = styleFamilies.getByName("ParagraphStyles")
                 CENTER_PARAGRAPH = uno.Enum( "com.sun.star.style.ParagraphAdjust", "CENTER" )
@@ -8312,7 +8071,267 @@ class BibleWriter( InternalBible ):
             #headerTextLeft = leftPageStyle.getPropertyValue( "HeaderTextLeft" )
             #headerCursorRight = headerTextRight.createTextCursor()
             #headerCursorLeft = headerTextLeft.createTextCursor()
+        # end of toODF.setupStyles
 
+
+        titleODFStyleDict = {'imt1':'Introduction Major Title 1', 'imt2':'Introduction Major Title 2', 'imt3':'Introduction Major Title 3', 'imt4':'Introduction Major Title 4',
+                          'mt1':'Major Title 1','mt2':'Major Title 2', 'mt3':'Major Title 3', 'mt4':'Major Title 4',
+                          'mte1':'Major Title at Ending 1','mte2':'Major Title at Ending 2', 'mte3':'Major Title at Ending 3', 'mte4':'Major Title at Ending 4', }
+        ipODFStyleDict = {'ip':'Introduction Paragraph', 'ipi':'Introduction Paragraph Indented',
+                        'im':'Introduction Flush Left Paragraph', 'imi':'Introduction Indented Flush Left Paragraph',
+
+                        'iot':'Introduction Outline Title',
+                        'io1':'Introduction Outline Entry 1', 'io2':'Introduction Outline Entry 2', 'io3':'Introduction Outline Entry 3', 'io4':'Introduction Outline Entry 4'}
+
+        pqODFStyleDict = {'p':'Prose Paragraph', 'm':'Flush Left Paragraph',
+                        'pmo':'Embedded Opening Paragraph', 'pm':'Embedded Paragraph', 'pmc':'Embedded Closing Paragraph',
+                        'pmr':'Embedded Refrain Paragraph',
+                        'pi1':'Indented Prose Paragraph 1','pi2':'Indented Prose Paragraph 2','pi3':'Indented Prose Paragraph 3','pi4':'Indented Prose Paragraph 4',
+                        'mi':'Indented Flush Left Paragraph', 'cls':'Closure Paragraph',
+                        'pc':'Centered Prose Paragraph', 'pr':' Right Aligned Prose Paragraph',
+                        'ph1':'Hanging Prose Paragraph 1','ph2':'Hanging Prose Paragraph 2','ph3':'Hanging Prose Paragraph 3','ph4':'Hanging Prose Paragraph 4',
+
+                        'q1':'Poetry Paragraph 1','q2':'Poetry Paragraph 2','q3':'Poetry Paragraph 3','q4':'Poetry Paragraph 4',
+                        'qr':'Right Aligned Poetry Paragraph', 'qc':'Centered Poetry Paragraph',
+                        'qm1':'Embedded Poetry Paragraph 1','qm2':'Embedded Poetry Paragraph 2','qm3':'Embedded Poetry Paragraph 3','qm4':'Embedded Poetry Paragraph 4'}
+
+        charODFStyleDict = {'bk':'Book Name', 'ior':'Introduction Outline Reference',
+                            'add':'Added Words', 'nd':'Divine Name', 'wj':'Words of Jesus', 'sig':'Author Signature',
+                            'rq':'Inline Quotation Reference', 'qs':'Selah Text',
+                            'em':'Emphasis Text', 'bd':'Bold Text', 'it':'Italic Text', 'bdit':'Bold Italic Text', 'sc':'Small Caps Text', }
+
+        def insertFormattedODFText( BBB, C, V, givenText, extras, documentText, textCursor, defaultCharacterStyleName ):
+            """
+            Format character codes within the text into ODF
+            """
+            #print( "insertFormattedODFText( {}, {}, {} )".format( repr(givenText), len(extras), ourGlobals.keys() ) )
+            if Globals.debugFlag: assert( givenText or extras )
+
+            def handleExtras( text, extras ):
+                """
+                Returns the MD text with footnotes and xrefs processed.
+                It also accumulates MD in ourGlobals for the end notes.
+                """
+                def liveCV( CV ):
+                    """
+                    Given a CV text (in the same book), make it live
+                        e.g., given 1:3 return #C1V3
+                            given 17:4-9 return #C17V4
+                            given 1:1-3:19 return #C1V1
+                    """
+                    #print( "formatODFVerseText.liveCV( {} )".format( repr(CV) ) )
+                    if len(CV) < 3: return ''
+                    if CV and CV[-1]==':': CV = CV[:-1]
+
+                    result = 'C' + CV.strip().replace( ':', 'V')
+                    for bridgeChar in ('-', '–', '—'): # hyphen, endash, emdash
+                        ix = result.find( bridgeChar )
+                        if ix != -1: result = result[:ix] # Remove verse bridges
+                    #print( " returns", result )
+                    if Globals.debugFlag and (result.count('C')>1 or result.count('V')>1): halt
+                    return '#' + result
+                # end of insertFormattedODFText.liveCV
+
+
+            def processNote( noteType, rawFootnoteContents, documentText, textCursor ):
+                """
+                Inserts the footnote or endnote into the ODF document.
+
+                NOTE: The first parameter here already has the /f or (/fe) and /f* (or /fe*) removed.
+
+                \\f + \\fr 1:20 \\ft Su ka kaluwasan te Nawumi ‘keupianan,’ piru ka kaluwasan te Mara ‘masakit se geyinawa.’\\f* (Backslashes are shown doubled here)
+                """
+                assert( noteType in ('fn','en',) )
+                markerList = Globals.USFMMarkers.getMarkerListFromText( rawFootnoteContents, includeInitialText=True )
+                #print( "formatODFVerseText.processFootnote( {}, {} ) found {}".format( repr(rawFootnoteContents), ourGlobals, markerList ) )
+                note = document.createInstance( "com.sun.star.text.Footnote" if noteType=='fn' else "com.sun.star.text.Endnote" )
+                documentText.insertTextContent( textCursor, note, False )
+                noteCursor = note.Text.createTextCursor()
+                noteCursor.setPropertyValue( "ParaStyleName", "Bible Footnote" if noteType=='fn' else "Bible Endnote" )
+
+                noteStyleDict = { 'fr':'Footnote Origin', 'fk':'Footnote Keyword', 'fq':'Footnote Quotation',
+                                'fqa':'Footnote Alternate Translation', 'fl':'Footnote Label',
+                                'fp':'Footnote Paragraph', 'fv':'Footnote Verse Number',
+                                'ft':'Footnote Text', 'fdc':'Footnote Deuterocanonical',
+                                'fm':'Footnote Mark' }
+
+                caller = origin = originCV = fnText = fnTitle = '' # Probably no longer needed
+                if markerList: # We found some internal footnote markers
+                    for marker, ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt in markerList:
+                        if marker is None:
+                            #if txt not in '-+': # just a caller
+                            caller = txt
+                        elif marker in noteStyleDict:
+                            noteCursor.setPropertyValue( "CharStyleName", noteStyleDict[marker] )
+                            note.insertString( noteCursor, txt,  False )
+                        else:
+                            logging.error( "formatODFVerseText.processNote didn't handle {} {}:{} {} marker: {}".format( BBB, C, V, noteType, marker ) )
+                else: # no internal markers found
+                    noteCursor.setPropertyValue( "CharStyleName", "Footnote Text" )
+                    bits = rawFootnoteContents.split( ' ', 1 )
+                    if len(bits)==2: # assume the caller is the first bit
+                        caller = bits[0]
+                        if Globals.debugFlag: assert( len(caller) == 1 ) # Normally a +
+                        note.insertString( noteCursor, bits[1],  False )
+                    else: # no idea really what the format was
+                        note.insertString( noteCursor, rawFootnoteContents,  False )
+            # end of insertFormattedODFText.processNote
+
+
+            def processCrossReference( rawXRef, documentText, textCursor ):
+                """
+                Inserts the cross-reference into the ODF document as a footnote.
+
+                NOTE: The parameter here already has the /x and /x* removed.
+
+                \\x - \\xo 2:2: \\xt Lib 19:9-10; Diy 24:19.\\xt*\\x* (Backslashes are shown doubled here)
+                """
+                markerList = Globals.USFMMarkers.getMarkerListFromText( rawXRef, includeInitialText=True )
+                #print( "\nformatODFVerseText.processCrossReference( {}, {} ) gives {}".format( repr(rawXRef), "...", markerList ) )
+
+                xrefNote = document.createInstance( "com.sun.star.text.Footnote" )
+                documentText.insertTextContent( textCursor, xrefNote, False )
+                noteCursor = xrefNote.Text.createTextCursor()
+                noteCursor.setPropertyValue( "ParaStyleName", "Verse Cross Reference" )
+
+                xrefStyleDict = { 'xo':'Cross Reference Origin', 'xk':'Cross Reference Keyword',
+                                 'xq':'Cross Reference Quotation', 'xt':'Cross Reference Target',
+                                 'xot':'Cross Reference OT Target', 'xnt':'Cross Reference NT Target',
+                                 'xdc':'Cross Reference Deuterocanon Target' }
+
+                caller = origin = originCV = xrefText = '' # Probably no longer needed
+                if markerList:
+                    for marker, ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt in markerList:
+                        if marker is None:
+                            #if txt not in '-+': # just a caller
+                            caller = txt
+                        elif marker in xrefStyleDict:
+                            noteCursor.setPropertyValue( "CharStyleName", xrefStyleDict[marker] )
+                            xrefNote.insertString( noteCursor, txt,  False )
+                        else:
+                            logging.error( "formatODFVerseText.processCrossReference didn't handle {} {}:{} xref marker: {}".format( BBB, C, V, marker ) )
+                else: # there's no USFM markers at all in the xref --  presumably a caller and then straight text
+                    if rawXRef.startswith('+ ') or rawXRef.startswith('- '):
+                        caller = rawXRef[0]
+                        xrefText = rawXRef[2:].strip()
+                    else: # don't really know what it is -- assume it's all just text
+                        xrefText = rawXRef.strip()
+                    noteCursor.setPropertyValue( "CharStyleName", "Footnote Text" )
+                    xrefNote.insertString( noteCursor, xrefText,  False )
+            # end of insertFormattedODFText.processCrossReference
+
+
+            def processFigure( rawFigure ):
+                """
+                Inserts the figure into the ODF document.
+
+                NOTE: The parameter here already has the /fig and /fig* removed.
+                """
+                logging.critical( "toODF: figure not handled yet at {} {}:{} {}".format( BBB, C, V, repr(rawFigure) ) )
+                figureMD = ''
+                #footnoteMD = '<a class="footnoteLinkSymbol" title="{}" href="#FNote{}">[fn]</a>' \
+                                #.format( fnTitle, fnIndex )
+
+                #endMD = '<p id="FNote{}" class="footnote">'.format( fnIndex )
+                #if originCV: # This only handles CV separator of : so far
+                    #endMD += '<a class="footnoteOrigin" title="Go back up to {} in the text" href="{}">{}</a> ' \
+                                                        #.format( originCV, liveCV(originCV), origin )
+                #endMD += '<span class="footnoteEntry">{}</span>'.format( fnText )
+                #endMD += '</p>'
+
+                ##print( "footnoteMD", BBB, footnoteMD )
+                ##print( "endMD", endMD )
+                #ourGlobals['footnoteMD'].append( endMD )
+                ##if fnIndex > 2: halt
+            # end of insertFormattedODFText.processFigure
+
+
+            def handleTextSegment( textSegment ):
+                """
+                Insert a text segment, complete with the correct character styles if any.
+                """
+                #print( "BibleWriter.toODF.handleTextSegment( {} ) for {} {}:{}".format( repr(textSegment), BBB, C, V ) )
+                markerList = Globals.USFMMarkers.getMarkerListFromText( textSegment, includeInitialText=True )
+                if markerList: # we found character formatting within the text
+                    #print( BBB, C, V, "toODF.insertFormattedODFText: {} found {}".format( repr(textSegment), markerList ) )
+                    for marker, ixBS, nextSignificantChar, fullMarkerText, context, ixEnd, txt in markerList:
+                        #print( "loop", marker, ixBS, repr(nextSignificantChar), repr(fullMarkerText), context, ixEnd, repr(txt) )
+                        if marker in charODFStyleDict and nextSignificantChar == ' ': # it's an opening marker
+                            #print( "  BibleWriter.toODF: 3dc2", BBB, C, V, charODFStyleDict[marker], repr(txt) )
+                            textCursor.setPropertyValue( "CharStyleName", charODFStyleDict[marker] )
+                            documentText.insertString( textCursor, txt, 0 )
+                        elif marker == 'k' and nextSignificantChar == ' ':
+                            #print( "  BibleWriter.toODF: 3dc3", BBB, C, V, repr(txt) )
+                            textCursor.setPropertyValue( "CharStyleName", 'Main Entry Keyword' if BBB in ('GLS',) else 'Keyword Text' )
+                            documentText.insertString( textCursor, txt, 0 )
+                        elif marker is None or (marker=='no' and nextSignificantChar==' ') or not context:
+                            # Normal text
+                            #print( "  BibleWriter.toODF: 3dc4", BBB, C, V, defaultCharacterStyleName, repr(txt) )
+                            textCursor.setPropertyValue( "CharStyleName", defaultCharacterStyleName )
+                            documentText.insertString( textCursor, txt, 0 )
+                        elif marker in charODFStyleDict and not nextSignificantChar: # it's at the end of a line
+                            assert( not txt )
+                            logging.warning( "toODF: ignored {} field at end of line in {} {}:{}".format( marker, BBB, C, V ) )
+                        else:
+                            logging.critical( "toODF: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(textSegment) ) )
+                            unhandledMarkers.add( "{} (char)".format( marker ) )
+                            if Globals.debugFlag: halt
+                elif textSegment: # No character formatting here
+                    #print( "BibleWriter.toODF: 3dc5", BBB, C, V, repr(textSegment) )
+                    documentText.insertString( textCursor, textSegment, 0 )
+            # end of handleTextSegment
+
+            # insertFormattedODFText main code
+            if extras:
+                haveUsefulExtras = False
+                for extraType, extraIndex, extraText, cleanExtraText in extras: # find any footnotes and cross-references
+                    # We don't care about str and vp fields here
+                    if extraType in ('fn','en','xr','fig',): haveUsefulExtras = True; break
+                if haveUsefulExtras:
+                    lastIndex = 0
+                    for extraType, extraIndex, extraText, cleanExtraText in extras: # find any footnotes and cross-references
+                        handleTextSegment( givenText[lastIndex:extraIndex] )
+                        if extraType in ('fn','en',): processNote( extraType, extraText, documentText, textCursor )
+                        elif extraType == 'xr': processCrossReference( extraText, documentText, textCursor )
+                        elif extraType == 'fig': processFigure( extraText, documentText, textCursor )
+                        elif extraType == 'str': pass # don't know how to encode this yet
+                        elif extraType == 'vp': pass # it's already been converted to a newline field
+                        else: halt
+                        lastIndex = extraIndex
+                    handleTextSegment( givenText[lastIndex:] )
+                else: # no useful extras like footnotes, etc.
+                    handleTextSegment( givenText )
+            else: # no extras at all like footnotes, etc.
+                handleTextSegment( givenText )
+        # end of toODF.insertFormattedODFText
+
+
+        # First determine our format
+        #verseByVerse = True
+
+
+        # Create and save the ODF files
+        for j, (BBB,bookObject) in enumerate( self.books.items() ):
+            if Globals.verbosityLevel > 2: print( "  Creating ODF file for {}...".format( BBB ) )
+            pseudoUSFMData = bookObject._processedLines
+
+            # Create the blank document
+            filename = "{:02}-{}_BOS-BibleWriter.odt".format( j, BBB )
+            filepath = os.path.join( os.getcwd(), outputFolder, Globals.makeSafeFilename( filename ) )
+            if Globals.verbosityLevel > 2: print( "  " + _("Creating '{}'...").format( filename ) )
+            document = frameDesktop.loadComponentFromURL( sourceURL, "_blank", 0, () )
+            documentText = document.Text
+            initialTextCursor = documentText.createTextCursor()
+            textCursor = initialTextCursor
+
+            styleFamilies = document.StyleFamilies
+            #pageStyles = styleFamilies.getByName( "PageStyles" )
+            #defaultPageStyle = pageStyles.getByName( "Default Style" )
+            #headerText = defaultPageStyle.getPropertyValue( "HeaderText" )
+            #headerCursor = headerText.createTextCursor()
+            runningHeaderField = document.TextFieldMasters.getByName( "com.sun.star.text.FieldMaster.User.BibleHeader" )
+
+            setupStyles( styleFamilies )
 
             firstEverParagraphFlag = True
             def insertODFParagraph( BBB, C, V, paragraphStyleName, text, extras, documentText, textCursor, defaultCharacterStyleName ):
@@ -8333,6 +8352,7 @@ class BibleWriter( InternalBible ):
             try: headerField = bookObject.longTOCName
             except: headerField = bookObject.assumedBookName
             startingNewParagraphFlag = True
+            inTextParagraph = False
             lastMarker = gotVP = None
             C = V = '0'
             for entry in pseudoUSFMData:
@@ -8343,7 +8363,7 @@ class BibleWriter( InternalBible ):
 
                 elif marker == 'c':
                     if C == '0': runningHeaderField.setPropertyValue( "Content", headerField )
-                    C = adjText
+                    C, V = adjText, '0'
                     if C == '1': # It's the beginning of the actual Bible text -- make a new double-column section
                         if not firstEverParagraphFlag: # leave a space between the introduction and the chapter text
                             documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, False );
@@ -8367,10 +8387,14 @@ class BibleWriter( InternalBible ):
                         columnCursor = documentText.createTextCursorByRange( anchor )
 
                         textCursor = columnCursor # So that future inserts go in here
-                        firstEverParagraphFlag = True
+                        startingNewParagraphFlag = firstEverParagraphFlag = True
                     # Put in our running header -- WHY DOESN'T THIS WORK PROPERLY IN LIBREOFFICE???
                     #runningHeaderField.setPropertyValue( "Content", "{} {}".format( headerField, C ) )
                 elif marker == 'c#':
+                    if not inTextParagraph: # Not all translations have paragraph markers
+                        documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, False );
+                        textCursor.setPropertyValue( "ParaStyleName", "Prose Paragraph" )
+                        inTextParagraph = startingNewParagraphFlag = True
                     textCursor.setPropertyValue( "CharStyleName", "Chapter Number" )
                     documentText.insertString( textCursor, C, False )
                     textCursor.setPropertyValue( "CharStyleName", "Chapter Number Postspace" )
@@ -8383,10 +8407,11 @@ class BibleWriter( InternalBible ):
                     if gotVP: # this is the verse number to be published
                         adjText = gotVP
                         gotVP = None
-                    if lastMarker == 's1': # hack for OEB which has some empty s fields immediately followed by v fields
+                    if not inTextParagraph: # Not all translations have paragraph markers
+                    #if lastMarker == 's1': # hack for OEB which has some empty s fields immediately followed by v fields
                         documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, False );
                         textCursor.setPropertyValue( "ParaStyleName", "Prose Paragraph" )
-                        startingNewParagraphFlag = True
+                        inTextParagraph = startingNewParagraphFlag = True
                     if V != '1':
                         if not startingNewParagraphFlag:
                             textCursor.setPropertyValue( "CharStyleName", "Verse Number Prespace" )
@@ -8404,6 +8429,7 @@ class BibleWriter( InternalBible ):
                 elif marker in ('ms1','ms2','ms3','ms4',):
                     styleName = "Major Section Heading {}".format( marker[-1] )
                     insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
+                    inTextParagraph = False
                 elif marker in ('ip','ipi', 'im','imi', 'iot', 'io1','io2','io3','io4',):
                     styleName = ipODFStyleDict[marker]
                     insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
@@ -8412,25 +8438,31 @@ class BibleWriter( InternalBible ):
                         styleName = "Introduction " if marker[0]=='i' else ""
                         styleName += "Section Heading {}".format( marker[-1] )
                         insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
+                    inTextParagraph = False
                 elif marker in ('r','sr','mr',):
                     if marker == 'r': styleName = 'Section CrossReference'
                     elif marker == 'sr': styleName = 'Section Reference Range'
                     elif marker == 'mr': styleName = 'Major Section Reference Range'
                     insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
+                    inTextParagraph = False
                 elif marker == 'd':
                     insertODFParagraph( BBB, C, V, "Descriptive Title", adjText, extras, documentText, textCursor, "Default Style" )
+                    inTextParagraph = False
                 elif marker == 'sp':
                     insertODFParagraph( BBB, C, V, "Speaker Identification", adjText, extras, documentText, textCursor, "Default Style" )
+                    inTextParagraph = False
                 elif marker in ('p','m','pmo','pm','pmc','pmr', 'pi1','pi2','pi3','pi4', 'mi','cls','pc','pr', 'ph1','ph2','ph3','ph4',) \
                 or marker in ('q1','q2','q3','q4', 'qr','qc', 'qm1','qm2','qm3','qm4',):
                     startingNewParagraphFlag = True
                     styleName = pqODFStyleDict[marker]
                     insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
+                    inTextParagraph = True
                 elif marker in ('li1','li2','li3','li4', 'ili1','ili2','ili3','ili4',):
                     styleName = "Introduction " if marker[0]=='i' else ""
                     styleName += "List Item {}".format( marker[-1] )
                     insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
                 elif marker in ('v~','p~',):
+                    if Globals.debugFlag: assert( inTextParagraph )
                     if adjText or extras:
                         insertFormattedODFText( BBB, C, V, adjText, extras, documentText, textCursor, "Default Style" )
                     startingNewParagraphFlag = False

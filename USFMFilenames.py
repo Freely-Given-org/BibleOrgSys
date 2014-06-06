@@ -132,7 +132,7 @@ class USFMFilenames:
             #print( foundFileBit, foundExtBit )
             matched = False
             if '_' in foundFileBit and foundExtBit and foundExtBit[0]=='.': # Check for possible Bibledit filenames first
-                for USFMBookCode,BibleditDigits,bookReferenceCode in self._BibleditBooksCodeNumberTriples:
+                for USFMBookCode,BibleditDigits,BBB in self._BibleditBooksCodeNumberTriples:
                     BibleditSignature = BibleditDigits + '_'
                     if BibleditSignature in foundFileBit and foundFileBit in BibleditFilenames and foundExtBit == '.usfm':
                         digitsIndex = foundFileBit.index( BibleditSignature )
@@ -146,7 +146,7 @@ class USFMFilenames:
                             matched = True
                             break
             elif '-' in foundFileBit and foundExtBit and foundExtBit[0]=='.': # Check for possible Bibledit filenames first
-                for USFMBookCode,BibleditDigits,bookReferenceCode in self._BibleditBooksCodeNumberTriples:
+                for USFMBookCode,BibleditDigits,BBB in self._BibleditBooksCodeNumberTriples:
                     if foundFileBit in AlternateFilenames and foundExtBit == '.usfm':
                         if foundFilename[0:2].isdigit:
                             self.languageIndex = None
@@ -166,7 +166,7 @@ class USFMFilenames:
                     containsDigits = True
                     break
             if containsDigits and foundExtBit and foundExtBit[0]=='.':
-                for USFMBookCode,USFMDigits,bookReferenceCode in self._USFMBooksCodeNumberTriples:
+                for USFMBookCode,USFMDigits,BBB in self._USFMBooksCodeNumberTriples:
                     if USFMDigits in foundFileBit and (USFMBookCode in foundFileBit or USFMBookCode.upper() in foundFileBit):
                         digitsIndex = foundFileBit.index( USFMDigits )
                         USFMBookCodeIndex = foundFileBit.index(USFMBookCode) if USFMBookCode in foundFileBit else foundFileBit.index(USFMBookCode.upper())
@@ -371,18 +371,18 @@ class USFMFilenames:
         resultList = []
         if self.pattern and self.fileExtension.upper() not in extensionsToIgnore:
             if self.pattern == "Dd_BEName": # they are Bibledit style
-                for USFMBookCode,BibleditDigits,bookReferenceCode in self._BibleditBooksCodeNumberTriples:
+                for USFMBookCode,BibleditDigits,BBB in self._BibleditBooksCodeNumberTriples:
                     BibleditSignature = BibleditDigits + '_'
                     for BEFilename in BibleditFilenames: # this doesn't seem very efficient, but it does work
                         if BEFilename.startswith( BibleditSignature ):
-                            resultList.append( (bookReferenceCode,BEFilename+'.'+self.fileExtension,) )
+                            resultList.append( (BBB,BEFilename+'.'+self.fileExtension,) )
                             break
             elif self.pattern == "dd-OEBName":
                 for AltFilename in AlternateFilenames:
                     BBB = Globals.BibleBooksCodes.getBBBFromReferenceNumber( AltFilename[0:2] )
                     resultList.append( (BBB,AltFilename+'.'+self.fileExtension,) )
             else: # they are Paratext style
-                for USFMBookCode,USFMDigits,bookReferenceCode in self._USFMBooksCodeNumberTriples:
+                for USFMBookCode,USFMDigits,BBB in self._USFMBooksCodeNumberTriples:
                     filename = '*' * len(self.pattern)
                     if self.digitsIndex is not None: filename = filename[:self.digitsIndex] + USFMDigits + filename[self.digitsIndex+len(USFMDigits):]
                     filename = filename[:self.USFMBookCodeIndex] + ( USFMBookCode.upper() if 'BBB' in self.pattern else USFMBookCode ) + filename[self.USFMBookCodeIndex+len(USFMBookCode):]
@@ -391,7 +391,7 @@ class USFMFilenames:
                     for ix in range( 0, len(filename)): # See if there's any constant characters in the pattern that we need to grab
                         if filename[ix]=='*' and self.pattern[ix]!='*':
                             filename = filename[:ix] + self.pattern[ix] + filename[ix+1:]
-                    self.doListAppend( bookReferenceCode, filename, resultList, "getDerivedFilenameTuples" )
+                    self.doListAppend( BBB, filename, resultList, "getDerivedFilenameTuples" )
         return Globals.BibleBooksCodes.getSequenceList( resultList )
     # end of getDerivedFilenameTuples
 
@@ -405,20 +405,20 @@ class USFMFilenames:
                 Each tuple contains ( BBB, filename ) not including the folder path.
         """
         resultList = []
-        for bookReferenceCode,derivedFilename in self.getDerivedFilenameTuples():
+        for BBB,derivedFilename in self.getDerivedFilenameTuples():
             derivedFilepath = os.path.join( self.givenFolderName, derivedFilename )
             if Globals.debugFlag and debuggingThisModule: print( '  getConfirmedFilenameTuples: Checking for existence of: ' + derivedFilename )
             if os.access( derivedFilepath, os.R_OK ):
                 if doubleCheck:
                     USFMId = self.getUSFMIDFromFile( self.givenFolderName, derivedFilename, derivedFilepath )
                     if USFMId is None:
-                        logging.error( "getConfirmedFilenameTuples: internal USFM Id missing for {} in {}".format( bookReferenceCode, derivedFilename ) )
+                        logging.error( "getConfirmedFilenameTuples: internal USFM Id missing for {} in {}".format( BBB, derivedFilename ) )
                         continue # so it doesn't get added
                     BBB = Globals.BibleBooksCodes.getBBBFromUSFM( USFMId )
-                    if BBB != bookReferenceCode:
-                        logging.error( "getConfirmedFilenameTuples: internal USFM Id ({}{}) doesn't match {} for {}".format( USFMId, '' if BBB==USFMId else " -> {}".format(BBB), bookReferenceCode, derivedFilename ) )
+                    if BBB != BBB:
+                        logging.error( "getConfirmedFilenameTuples: internal USFM Id ({}{}) doesn't match {} for {}".format( USFMId, '' if BBB==USFMId else " -> {}".format(BBB), BBB, derivedFilename ) )
                         continue # so it doesn't get added
-                self.doListAppend( bookReferenceCode, derivedFilename, resultList, "getConfirmedFilenameTuples" )
+                self.doListAppend( BBB, derivedFilename, resultList, "getConfirmedFilenameTuples" )
         self.lastTupleList = resultList
         return resultList # No need to sort these because the derived ones are sorted
     # end of getConfirmedFilenameTuples
@@ -435,7 +435,7 @@ class USFMFilenames:
             pFUpper = possibleFilename.upper()
             if pFUpper in filenamesToIgnore: continue
             pFUpperProper, pFUpperExt = os.path.splitext( pFUpper )
-            for USFMBookCode,USFMDigits,bookReferenceCode in self._USFMBooksCodeNumberTriples:
+            for USFMBookCode,USFMDigits,BBB in self._USFMBooksCodeNumberTriples:
                 ignore = False
                 for ending in filenameEndingsToIgnore:
                     if pFUpper.endswith( ending): ignore=True; break
@@ -493,8 +493,8 @@ class USFMFilenames:
         folderFilenames = os.listdir( self.givenFolderName )
         if self.lastTupleList is None: return None # Not sure what list they're after here
         #print( len(self.lastTupleList), self.lastTupleList )
-        for bookReferenceCode,actualFilename in self.lastTupleList:
-            #print( bookReferenceCode, actualFilename )
+        for BBB,actualFilename in self.lastTupleList:
+            #print( BBB, actualFilename )
             if actualFilename in folderFilenames: folderFilenames.remove( actualFilename ) # Sometimes it can be removed already if we had (invalid) duplicates in the lastTupleList
         return folderFilenames
     # end of getUnusedFilenames

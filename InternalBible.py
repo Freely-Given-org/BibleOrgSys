@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2014-05-28 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-06 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -213,7 +213,7 @@ class InternalBible:
         """
         Given an index integer, return the book object (or raise an IndexError)
 
-        This function also accepts a BBB so you can use it to get a book from the Bible by bookReferenceCode.
+        This function also accepts a BBB so you can use it to get a book from the Bible by BBB.
         """
         #print( "InternalBible.__getitem__( {} )".format( keyIndex ) )
         #print( list(self.books.items()) )
@@ -294,7 +294,7 @@ class InternalBible:
             and uupdate our indexes.
         """
         #print( "saveBook( {} )".format( bookData ) )
-        BBB = bookData.bookReferenceCode
+        BBB = bookData.BBB
         self.books[BBB] = bookData
         # Make up our book name dictionaries while we're at it
         assumedBookNames = bookData.getAssumedBookNames()
@@ -460,12 +460,12 @@ class InternalBible:
         """
         if Globals.debugFlag: assert( self.books )
         totalVersification, totalOmittedVerses, totalCombinedVerses, totalReorderedVerses = OrderedDict(), OrderedDict(), OrderedDict(), OrderedDict()
-        for bookReferenceCode in self.books.keys():
-            versification, omittedVerses, combinedVerses, reorderedVerses = self.books[bookReferenceCode].getVersification()
-            totalVersification[bookReferenceCode] = versification
-            if omittedVerses: totalOmittedVerses[bookReferenceCode] = omittedVerses # Only add an entry if there are some
-            if combinedVerses: totalCombinedVerses[bookReferenceCode] = combinedVerses
-            if reorderedVerses: totalReorderedVerses[bookReferenceCode] = reorderedVerses
+        for BBB in self.books.keys():
+            versification, omittedVerses, combinedVerses, reorderedVerses = self.books[BBB].getVersification()
+            totalVersification[BBB] = versification
+            if omittedVerses: totalOmittedVerses[BBB] = omittedVerses # Only add an entry if there are some
+            if combinedVerses: totalCombinedVerses[BBB] = combinedVerses
+            if reorderedVerses: totalReorderedVerses[BBB] = reorderedVerses
         return totalVersification, totalOmittedVerses, totalCombinedVerses, totalReorderedVerses
     # end of InternalBible.getVersification
 
@@ -948,6 +948,8 @@ class InternalBible:
         First miserable attempt at converting (USFM-like) verseData into a string.
 
         Uses uncommon Unicode symbols to represent various formatted styles
+
+        Raises a key error if the key isn't found/valid.
         """
         result = self.getBCVRef( key )
         if result is not None:

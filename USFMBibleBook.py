@@ -84,13 +84,13 @@ class USFMBibleBook( BibleBook ):
                 ix = 0
                 for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check paragraph markers
                     if insideMarker == '\\': # it's a free-standing backspace
-                        loadErrors.append( _("{} {}:{} Improper free-standing backspace character within line in \\{}: '{}'").format( self.bookReferenceCode, c, v, marker, text ) )
-                        logging.error( _("Improper free-standing backspace character within line after {} {}:{} in \\{}: '{}'").format( self.bookReferenceCode, c, v, marker, text ) ) # Only log the first error in the line
+                        loadErrors.append( _("{} {}:{} Improper free-standing backspace character within line in \\{}: '{}'").format( self.BBB, c, v, marker, text ) )
+                        logging.error( _("Improper free-standing backspace character within line after {} {}:{} in \\{}: '{}'").format( self.BBB, c, v, marker, text ) ) # Only log the first error in the line
                         self.addPriorityError( 100, c, v, _("Improper free-standing backspace character inside a line") )
                     elif Globals.USFMMarkers.isNewlineMarker(insideMarker): # Need to split the line for everything else to work properly
                         if ix==0:
-                            loadErrors.append( _("{} {}:{} NewLine marker '{}' shouldn't appear within line in \\{}: '{}'").format( self.bookReferenceCode, c, v, insideMarker, marker, text ) )
-                            logging.error( _("NewLine marker '{}' shouldn't appear within line after {} {}:{} in \\{}: '{}'").format( insideMarker, self.bookReferenceCode, c, v, marker, text ) ) # Only log the first error in the line
+                            loadErrors.append( _("{} {}:{} NewLine marker '{}' shouldn't appear within line in \\{}: '{}'").format( self.BBB, c, v, insideMarker, marker, text ) )
+                            logging.error( _("NewLine marker '{}' shouldn't appear within line after {} {}:{} in \\{}: '{}'").format( insideMarker, self.BBB, c, v, marker, text ) ) # Only log the first error in the line
                             self.addPriorityError( 96, c, v, _("NewLine marker \\{} shouldn't be inside a line").format( insideMarker ) )
                         thisText = text[ix:iMIndex].rstrip()
                         self.appendLine( marker, thisText )
@@ -104,8 +104,8 @@ class USFMBibleBook( BibleBook ):
 
 
         if Globals.verbosityLevel > 2: print( "  " + _("Loading {}...").format( filename ) )
-        #self.bookReferenceCode = bookReferenceCode
-        #self.isSingleChapterBook = Globals.BibleBooksCodes.isSingleChapterBook( bookReferenceCode )
+        #self.BBB = BBB
+        #self.isSingleChapterBook = Globals.BibleBooksCodes.isSingleChapterBook( BBB )
         self.sourceFilename = filename
         self.sourceFolder = folder
         self.sourceFilepath = os.path.join( folder, filename ) if folder else filename
@@ -117,7 +117,7 @@ class USFMBibleBook( BibleBook ):
         lastMarker = lastText = ''
         loadErrors = []
         for marker,text in originalBook.lines: # Always process a line behind in case we have to combine lines
-            #print( "After {} {}:{} \\{} '{}'".format( bookReferenceCode, c, v, marker, text ) )
+            #print( "After {} {}:{} \\{} '{}'".format( BBB, c, v, marker, text ) )
 
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text: c, v = text.split()[0], '0'
@@ -133,48 +133,48 @@ class USFMBibleBook( BibleBook ):
             elif Globals.USFMMarkers.isInternalMarker( marker ) \
             or marker.endswith('*') and Globals.USFMMarkers.isInternalMarker( marker[:-1] ): # the line begins with an internal marker -- append it to the previous line
                 if text:
-                    loadErrors.append( _("{} {}:{} Found '\\{}' internal marker at beginning of line with text: {}").format( self.bookReferenceCode, c, v, marker, text ) )
-                    logging.warning( _("Found '\\{}' internal marker after {} {}:{} at beginning of line with text: {}").format( marker, self.bookReferenceCode, c, v, text ) )
+                    loadErrors.append( _("{} {}:{} Found '\\{}' internal marker at beginning of line with text: {}").format( self.BBB, c, v, marker, text ) )
+                    logging.warning( _("Found '\\{}' internal marker after {} {}:{} at beginning of line with text: {}").format( marker, self.BBB, c, v, text ) )
                 else: # no text
-                    loadErrors.append( _("{} {}:{} Found '\\{}' internal marker at beginning of line (with no text)").format( self.bookReferenceCode, c, v, marker ) )
-                    logging.warning( _("Found '\\{}' internal marker after {} {}:{} at beginning of line (with no text)").format( marker, self.bookReferenceCode, c, v ) )
+                    loadErrors.append( _("{} {}:{} Found '\\{}' internal marker at beginning of line (with no text)").format( self.BBB, c, v, marker ) )
+                    logging.warning( _("Found '\\{}' internal marker after {} {}:{} at beginning of line (with no text)").format( marker, self.BBB, c, v ) )
                 self.addPriorityError( 27, c, v, _("Found \\{} internal marker on new line in file").format( marker ) )
                 if not lastText.endswith(' '): lastText += ' ' # Not always good to add a space, but it's their fault!
                 lastText +=  '\\' + marker + ' ' + text
-                if Globals.verbosityLevel > 3: print( "{} {} {} Appended {}:'{}' to get combined line {}:'{}'".format( self.bookReferenceCode, c, v, marker, text, lastMarker, lastText ) )
+                if Globals.verbosityLevel > 3: print( "{} {} {} Appended {}:'{}' to get combined line {}:'{}'".format( self.BBB, c, v, marker, text, lastMarker, lastText ) )
             elif Globals.USFMMarkers.isNoteMarker( marker ) \
             or marker.endswith('*') and Globals.USFMMarkers.isNoteMarker( marker[:-1] ): # the line begins with a note marker -- append it to the previous line
                 if text:
-                    loadErrors.append( _("{} {}:{} Found '\\{}' note marker at beginning of line with text: {}").format( self.bookReferenceCode, c, v, marker, text ) )
-                    logging.warning( _("Found '\\{}' note marker after {} {}:{} at beginning of line with text: {}").format( marker, self.bookReferenceCode, c, v, text ) )
+                    loadErrors.append( _("{} {}:{} Found '\\{}' note marker at beginning of line with text: {}").format( self.BBB, c, v, marker, text ) )
+                    logging.warning( _("Found '\\{}' note marker after {} {}:{} at beginning of line with text: {}").format( marker, self.BBB, c, v, text ) )
                 else: # no text
-                    loadErrors.append( _("{} {}:{} Found '\\{}' note marker at beginning of line (with no text)").format( self.bookReferenceCode, c, v, marker ) )
-                    logging.warning( _("Found '\\{}' note marker after {} {}:{} at beginning of line (with no text)").format( marker, self.bookReferenceCode, c, v ) )
+                    loadErrors.append( _("{} {}:{} Found '\\{}' note marker at beginning of line (with no text)").format( self.BBB, c, v, marker ) )
+                    logging.warning( _("Found '\\{}' note marker after {} {}:{} at beginning of line (with no text)").format( marker, self.BBB, c, v ) )
                 self.addPriorityError( 26, c, v, _("Found \\{} note marker on new line in file").format( marker ) )
                 if not lastText.endswith(' ') and marker!='f': lastText += ' ' # Not always good to add a space, but it's their fault! Don't do it for footnotes, though.
                 lastText +=  '\\' + marker + ' ' + text
-                if Globals.verbosityLevel > 3: print( "{} {} {} Appended {}:'{}' to get combined line {}:'{}'".format( self.bookReferenceCode, c, v, marker, text, lastMarker, lastText ) )
+                if Globals.verbosityLevel > 3: print( "{} {} {} Appended {}:'{}' to get combined line {}:'{}'".format( self.BBB, c, v, marker, text, lastMarker, lastText ) )
             else: # the line begins with an unknown marker
                 if text:
-                    loadErrors.append( _("{} {}:{} Found '\\{}' unknown marker at beginning of line with text: {}").format( self.bookReferenceCode, c, v, marker, text ) )
-                    logging.error( _("Found '\\{}' unknown marker after {} {}:{} at beginning of line with text: {}").format( marker, self.bookReferenceCode, c, v, text ) )
+                    loadErrors.append( _("{} {}:{} Found '\\{}' unknown marker at beginning of line with text: {}").format( self.BBB, c, v, marker, text ) )
+                    logging.error( _("Found '\\{}' unknown marker after {} {}:{} at beginning of line with text: {}").format( marker, self.BBB, c, v, text ) )
                 else: # no text
-                    loadErrors.append( _("{} {}:{} Found '\\{}' unknown marker at beginning of line (with no text").format( self.bookReferenceCode, c, v, marker ) )
-                    logging.error( _("Found '\\{}' unknown marker after {} {}:{} at beginning of line (with no text)").format( marker, self.bookReferenceCode, c, v ) )
+                    loadErrors.append( _("{} {}:{} Found '\\{}' unknown marker at beginning of line (with no text").format( self.BBB, c, v, marker ) )
+                    logging.error( _("Found '\\{}' unknown marker after {} {}:{} at beginning of line (with no text)").format( marker, self.BBB, c, v ) )
                 self.addPriorityError( 100, c, v, _("Found \\{} unknown marker on new line in file").format( marker ) )
                 for tryMarker in sortedNLMarkers: # Try to do something intelligent here -- it might be just a missing space
                     if marker.startswith( tryMarker ): # Let's try changing it
                         if lastMarker: doAppendLine( lastMarker, lastText )
                         lastMarker, lastText = tryMarker, marker[len(tryMarker):] + ' ' + text
-                        loadErrors.append( _("{} {}:{} Changed '\\{}' unknown marker to '{}' at beginning of line: {}").format( self.bookReferenceCode, c, v, marker, tryMarker, text ) )
-                        logging.warning( _("Changed '\\{}' unknown marker to '{}' after {} {}:{} at beginning of line: {}").format( marker, tryMarker, self.bookReferenceCode, c, v, text ) )
+                        loadErrors.append( _("{} {}:{} Changed '\\{}' unknown marker to '{}' at beginning of line: {}").format( self.BBB, c, v, marker, tryMarker, text ) )
+                        logging.warning( _("Changed '\\{}' unknown marker to '{}' after {} {}:{} at beginning of line: {}").format( marker, tryMarker, self.BBB, c, v, text ) )
                         break
                 # Otherwise, don't bother processing this line -- it'll just cause more problems later on
         if lastMarker: doAppendLine( lastMarker, lastText ) # Process the final line
 
         if not originalBook.lines: # There were no lines!!!
-            loadErrors.append( _("{} This USFM file was totally empty: {}").format( self.bookReferenceCode, self.sourceFilename ) )
-            logging.error( _("USFM file for {} was totally empty: {}").format( self.bookReferenceCode, self.sourceFilename ) )
+            loadErrors.append( _("{} This USFM file was totally empty: {}").format( self.BBB, self.sourceFilename ) )
+            logging.error( _("USFM file for {} was totally empty: {}").format( self.BBB, self.sourceFilename ) )
             lastMarker, lastText = 'rem', 'This (USFM) file was completely empty' # Save something since we had a file at least
 
         if loadErrors: self.errorDictionary['Load Errors'] = loadErrors
@@ -191,9 +191,9 @@ def demo():
     if Globals.verbosityLevel > 0: print( ProgNameVersion )
 
 
-    def demoFile( name, filename, folder, bookReferenceCode ):
-        if Globals.verbosityLevel > 1: print( _("Loading {} from {}...").format( bookReferenceCode, filename ) )
-        UBB = USFMBibleBook( name, bookReferenceCode )
+    def demoFile( name, filename, folder, BBB ):
+        if Globals.verbosityLevel > 1: print( _("Loading {} from {}...").format( BBB, filename ) )
+        UBB = USFMBibleBook( name, BBB )
         UBB.load( filename, folder, encoding )
         if Globals.verbosityLevel > 1: print( "  ID is '{}'".format( UBB.getField( 'id' ) ) )
         if Globals.verbosityLevel > 1: print( "  Header is '{}'".format( UBB.getField( 'h' ) ) )
@@ -216,14 +216,14 @@ def demo():
     import USFMFilenames
 
     if 1: # Test individual files
-        #name, encoding, testFolder, filename, bookReferenceCode = "WEB", "utf-8", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/", "06-JOS.usfm", "JOS" # You can put your test file here
-        #name, encoding, testFolder, filename, bookReferenceCode = "WEB", "utf-8", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/", "44-SIR.usfm", "SIR" # You can put your test file here
-        #name, encoding, testFolder, filename, bookReferenceCode = "Matigsalug", "utf-8", "../../../../../Data/Work/Matigsalug/Bible/MBTV/", "MBT102SA.SCP", "SA2" # You can put your test file here
-        #name, encoding, testFolder, filename, bookReferenceCode = "Matigsalug", "utf-8", "../../../../../Data/Work/Matigsalug/Bible/MBTV/", "MBT15EZR.SCP", "EZR" # You can put your test file here
-        name, encoding, testFolder, filename, bookReferenceCode = "Matigsalug", "utf-8", "../../../../../Data/Work/Matigsalug/Bible/MBTV/", "MBT41MAT.SCP", "MAT" # You can put your test file here
-        #name, encoding, testFolder, filename, bookReferenceCode = "Matigsalug", "utf-8", "../../../../../Data/Work/Matigsalug/Bible/MBTV/", "MBT67REV.SCP", "REV" # You can put your test file here
+        #name, encoding, testFolder, filename, BBB = "WEB", "utf-8", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/", "06-JOS.usfm", "JOS" # You can put your test file here
+        #name, encoding, testFolder, filename, BBB = "WEB", "utf-8", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/", "44-SIR.usfm", "SIR" # You can put your test file here
+        #name, encoding, testFolder, filename, BBB = "Matigsalug", "utf-8", "../../../../../Data/Work/Matigsalug/Bible/MBTV/", "MBT102SA.SCP", "SA2" # You can put your test file here
+        #name, encoding, testFolder, filename, BBB = "Matigsalug", "utf-8", "../../../../../Data/Work/Matigsalug/Bible/MBTV/", "MBT15EZR.SCP", "EZR" # You can put your test file here
+        name, encoding, testFolder, filename, BBB = "Matigsalug", "utf-8", "../../../../../Data/Work/Matigsalug/Bible/MBTV/", "MBT41MAT.SCP", "MAT" # You can put your test file here
+        #name, encoding, testFolder, filename, BBB = "Matigsalug", "utf-8", "../../../../../Data/Work/Matigsalug/Bible/MBTV/", "MBT67REV.SCP", "REV" # You can put your test file here
         if os.access( testFolder, os.R_OK ):
-            demoFile( name, filename, testFolder, bookReferenceCode )
+            demoFile( name, filename, testFolder, BBB )
         else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
 
     if 1: # Test a whole folder full of files
@@ -232,8 +232,8 @@ def demo():
         if os.access( testFolder, os.R_OK ):
             if Globals.verbosityLevel > 1: print( _("Scanning {} from {}...").format( name, testFolder ) )
             fileList = USFMFilenames.USFMFilenames( testFolder ).getMaximumPossibleFilenameTuples()
-            for bookReferenceCode,filename in fileList:
-                demoFile( name, filename, testFolder, bookReferenceCode )
+            for BBB,filename in fileList:
+                demoFile( name, filename, testFolder, BBB )
         else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
 # end of demo
 

@@ -287,9 +287,9 @@ class Bible( BibleWriter ):
         ##import Bible
         ##B = Bible.Bible()
         #unhandledMarkers = set()
-        #for bookReferenceCode,bookData in self.books.items():
+        #for BBB,bookData in self.books.items():
             #if Globals.verbosityLevel > 2: print( bookData )
-            #bk = B.addBook( bookReferenceCode )
+            #bk = B.addBook( BBB )
             #for marker,text,extras in bookData.lines:
                 ##print( marker, text )
                 #if marker == 'p': bk.append( ('Pgr', text,) )
