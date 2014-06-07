@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # TheWordBible.py
-#   Last modified: 2014-06-02 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-07 by RJH (also update ProgVersion below)
 #
 # Module handling "theWord" Bible module files
 #
@@ -51,7 +51,7 @@ e.g.,
 """
 
 ProgName = "theWord Bible format handler"
-ProgVersion = "0.18"
+ProgVersion = "0.19"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -326,9 +326,9 @@ def theWordFileCompare( filename1, filename2, folder1=None, folder2=None, printF
 
 # These next three functions are used both by theWord and MySword exports
 theWordIgnoredIntroMarkers = oftenIgnoredUSFMHeaderMarkers + (
-    'imt1','imt2','imt3','imt4', 'is1','is2','is3','is4',
+    'imt1','imt2','imt3','imt4', 'imte1','imte2','imte3','imte4', 'is1','is2','is3','is4',
     'ip','ipi','im','imi','ipq','imq','ir', 'iq1','iq2','iq3','iq4', 'ib','ili',
-    'iot','io1','io2','io3','io4', 'ir','iex','iqt','imte','ie', 'mte1','mte2','mte3','mte4',)
+    'iot','io1','io2','io3','io4', 'ir','iex','iqt','ie', 'mte1','mte2','mte3','mte4',)
 
 def theWordHandleIntroduction( BBB, bookData, ourGlobals ):
     """
@@ -355,9 +355,7 @@ def theWordHandleIntroduction( BBB, bookData, ourGlobals ):
             elif marker in ('mt3','mte3'): composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
             elif marker in ('mt4','mte4'): composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
             elif marker=='ms1': composedLine += '<TS2>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-            elif marker=='ms2': composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-            elif marker=='ms3': composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-            elif marker=='ms4': composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
+            elif marker in ('ms2','ms3','ms4'): composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
             elif marker=='mr': composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
             else:
                 logging.warning( "theWordHandleIntroduction: doesn't handle {} '{}' yet".format( BBB, marker ) )
@@ -516,7 +514,10 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
             print( "theWordComposeVerseLine:", BBB, C, V, marker, text, verseData )
             if Globals.debugFlag and debuggingThisModule: assert( marker not in theWordIgnoredIntroMarkers ) # these markers shouldn't occur in verses
 
-        if marker == 's1':
+        if marker=='ms1': composedLine += '<TS2>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
+        elif marker in ('ms2','ms3','ms4'): composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
+        elif marker=='mr': composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
+        elif marker == 's1':
             if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
                 ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '<CM>' # append the new paragraph marker to the previous line
             composedLine += '<TS1>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'

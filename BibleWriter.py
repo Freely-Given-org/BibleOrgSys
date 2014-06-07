@@ -3110,7 +3110,11 @@ class BibleWriter( InternalBible ):
                     # <span id="chapter#_#"><sup>#</sup> adjText</span>
                     #writerObject.writeLineOpenClose( 'span', '<sup>{}</sup> {}'.format(verseNumberString,adjText), ('id',"chapter{}_{}".format(chapterNumberString, verseNumberString) ), noTextCheck=True )
 
-                elif marker == 's1':
+                elif marker in ('ms1','ms2','ms3','ms4'):
+                    # === adjText ===
+                    adjText = processXRefsAndFootnotes( adjText, extras )
+                    writerObject.writeLineText( '=== {} ==='.format(adjText) )
+                elif marker in ('s1','s2','s3','s4'):
                     # === adjText ===
                     adjText = processXRefsAndFootnotes( adjText, extras )
                     writerObject.writeLineText( '=== {} ==='.format(adjText) )
@@ -5052,13 +5056,19 @@ class BibleWriter( InternalBible ):
             chapterRef = bookRef + '.0' # Not used by OSIS
             toOSISGlobals["verseRef"] = chapterRef + '.0' # Not used by OSIS
             writerObject.writeLineOpen( 'div', [('type',"book"), ('osisID',bookRef)] )
-            haveOpenIntro = haveOpenOutline = haveOpenMajorSection = haveOpenSection = haveOpenSubsection = needChapterEID = haveOpenParagraph = haveOpenVsID = haveOpenLG = haveOpenL = False
+            haveOpenIntro = haveOpenOutline = haveOpenMajorSection = haveOpenSection = haveOpenSubsection = False
+            needChapterEID = haveOpenParagraph = haveOpenVsID = haveOpenLG = haveOpenL = haveOpenList = False
             lastMarker = unprocessedMarker = ''
             gotVP = None
             C = V = '0'
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
                 #print( "BibleWriter.toOSIS: {} {}:{} {}={}{}".format( BBB, C, V, marker, repr(text), " + extras" if extras else "" ) )
+
+                if haveOpenList and marker not in ('li1','li2','li3','li4', 'ili1','ili2','ili3','ili4',):
+                    writerObject.writeLineClose( 'list' )
+                    haveOpenList = False
+
                 if marker in oftenIgnoredUSFMHeaderMarkers:
                     ignoredMarkers.add( marker )
                     continue # Just ignore these lines
@@ -5166,8 +5176,8 @@ class BibleWriter( InternalBible ):
                     if haveOpenParagraph or haveOpenSection or not haveOpenMajorSection: logging.error( _("toOSIS: Didn't expect major reference 'mr' marker after {}").format(toOSISGlobals["verseRef"]) )
                     if text: writerObject.writeLineOpenClose( 'title', checkText(text), ('type',"scope") )
                 elif marker == 'd':
-                    if Globals.debugFlag:
-                        pass
+                    #if Globals.debugFlag:
+                        #pass
                     flag = '\\' in text or extras # Set this flag if the text already contains XML formatting
                     adjustedText = processXRefsAndFootnotes( text, extras )
                     if adjustedText:
@@ -5200,7 +5210,7 @@ class BibleWriter( InternalBible ):
                         writerObject.writeLineClose( 'title' )
                 elif marker == 'sp':
                     if text: writerObject.writeLineOpenClose( 'speaker', checkText(text) )
-                elif marker=='p':
+                elif marker == 'p':
                     closeAnyOpenLG()
                     closeAnyOpenParagraph()
                     if not haveOpenSection:
@@ -5209,6 +5219,12 @@ class BibleWriter( InternalBible ):
                     adjustedText = processXRefsAndFootnotes( text, extras )
                     writerObject.writeLineOpenText( 'p', checkText(adjustedText), noTextCheck=True ) # Sometimes there's text
                     haveOpenParagraph = True
+                elif marker in ('li1','li2','li3','li4', 'ili1','ili2','ili3','ili4',):
+                    if not haveOpenList:
+                        writerObject.writeLineOpen( 'list' )
+                        haveOpenList = True
+                    adjustedText = processXRefsAndFootnotes( text, extras, 0 )
+                    writerObject.writeLineOpenClose( 'item', checkText(adjustedText), ('type','x-indent-'+marker[-1]), noTextCheck=True )
                 elif marker in ('v~','p~',):
                     adjText = processXRefsAndFootnotes( text, extras, 0 )
                     writerObject.writeLineText( checkText(adjText), noTextCheck=True )
@@ -5749,7 +5765,8 @@ class BibleWriter( InternalBible ):
 
             bookRef = Globals.BibleBooksCodes.getOSISAbbreviation( BBB ) # OSIS book name
             writerObject.writeLineOpen( 'div', [('osisID',bookRef), getSID(), ('type',"book")] )
-            haveOpenIntro = haveOpenOutline = haveOpenMajorSection = haveOpenSection = haveOpenSubsection = needChapterEID = haveOpenParagraph = haveOpenVsID = haveOpenLG = haveOpenL = False
+            haveOpenIntro = haveOpenOutline = haveOpenMajorSection = haveOpenSection = haveOpenSubsection = False
+            needChapterEID = haveOpenParagraph = haveOpenVsID = haveOpenLG = haveOpenL = haveOpenList = False
             lastMarker = unprocessedMarker = ''
             gotVP = None
             C = V = '0'
@@ -5758,6 +5775,11 @@ class BibleWriter( InternalBible ):
                 #print( BBB, marker, text )
                 #print( " ", haveOpenIntro, haveOpenOutline, haveOpenMajorSection, haveOpenSection, haveOpenSubsection, needChapterEID, haveOpenParagraph, haveOpenVsID, haveOpenLG, haveOpenL )
                 #print( toSwordGlobals['idStack'] )
+
+                if haveOpenList and marker not in ('li1','li2','li3','li4', 'ili1','ili2','ili3','ili4',):
+                    writerObject.writeLineClose( 'list' )
+                    haveOpenList = False
+
                 if marker in oftenIgnoredUSFMHeaderMarkers: # Just ignore these lines
                     ignoredMarkers.add( marker )
                 elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4',):
@@ -5863,7 +5885,7 @@ class BibleWriter( InternalBible ):
                     writeVerseStart( writerObject, BBB, chapterRef, verseNumberString )
                     #closeAnyOpenL()
 
-                elif marker=='ms1':
+                elif marker in ('ms1','ms2','ms3','ms4',):
                     if haveOpenParagraph:
                         closeAnyOpenLG()
                         closeAnyOpenParagraph()
@@ -5872,10 +5894,22 @@ class BibleWriter( InternalBible ):
                     closeAnyOpenMajorSection()
                     writerObject.writeLineOpen( 'div', ('type',"majorSection") )
                     haveOpenMajorSection = True
-                    if text: writerObject.writeLineOpenClose( 'title', checkText(text) ) # Section heading
+                    if text: writerObject.writeLineOpenClose( 'title', checkText(text) ) # Major section heading
                     else:
-                        logging.info( _("toSwordModule: Blank ms1 section heading encountered after {}").format( toSwordGlobals["verseRef"] ) )
-                elif marker=='s1':
+                        logging.info( _("toOSIS: {} Blank ms1 section heading encountered").format( toOSISGlobals["verseRef"] ) )
+                elif marker=='mr':
+                    # Should only follow a ms1 I think
+                    if haveOpenParagraph or haveOpenSection or not haveOpenMajorSection: logging.error( _("toOSIS: Didn't expect major reference 'mr' marker after {}").format(toOSISGlobals["verseRef"]) )
+                    if text: writerObject.writeLineOpenClose( 'title', checkText(text), ('type',"scope") )
+                elif marker == 'd':
+                    #if Globals.debugFlag:
+                        #pass
+                    flag = '\\' in text or extras # Set this flag if the text already contains XML formatting
+                    adjustedText = processXRefsAndFootnotes( text, extras )
+                    if adjustedText:
+                        if Globals.debugFlag: assert( BBB == 'PSA' )
+                        writerObject.writeLineOpenClose( 'title', checkText(adjustedText), [('canonical','true'),('type','psalm')], noTextCheck=flag )
+                elif marker in ('s1','s2','s3','s4'):
                     if haveOpenParagraph:
                         closeAnyOpenLG()
                         closeAnyOpenParagraph()
@@ -5889,46 +5923,19 @@ class BibleWriter( InternalBible ):
                     if extras: flag = True
                     adjustedText = processXRefsAndFootnotes( text, extras )
                     if text: writerObject.writeLineOpenClose( 'title', checkText(adjustedText), noTextCheck=flag ) # Section heading
-                    else:
-                        logging.info( _("toSwordModule: Blank s1 section heading encountered after {}:{}").format( currentChapterNumberString, verseNumberString ) )
-                elif marker=='s2':
-                    if haveOpenParagraph:
-                        closeAnyOpenLG()
-                        closeAnyOpenParagraph()
-                    closeAnyOpenSubsection()
-                    writerObject.writeLineOpen( 'div', ('type', "subSection") )
-                    haveOpenSubsection = True
-                    if text: writerObject.writeLineOpenClose( 'title', checkText(text) ) # Section heading
-                    else:
-                        logging.info( _("toSwordModule: Blank s2 section heading encountered after {}:{}").format( currentChapterNumberString, verseNumberString ) )
-                elif marker=='s3':
-                    if haveOpenParagraph:
-                        closeAnyOpenLG()
-                        closeAnyOpenParagraph()
-                    closeAnyOpenSubsection()
-                    writerObject.writeLineOpen( 'div', ('type', "subSection") )
-                    haveOpenSubsection = True
-                    if text: writerObject.writeLineOpenClose( 'title', checkText(text) ) # Section heading
-                    else:
-                        logging.info( _("toSwordModule: Blank s3 section heading encountered after {}:{}").format( currentChapterNumberString, verseNumberString ) )
-                elif marker=='s4':
-                    if haveOpenParagraph:
-                        closeAnyOpenLG()
-                        closeAnyOpenParagraph()
-                    closeAnyOpenSubsection()
-                    writerObject.writeLineOpen( 'div', ('type', "subSection") )
-                    haveOpenSubsection = True
-                    if text: writerObject.writeLineOpenClose( 'title', checkText(text) ) # Section heading
-                    else:
-                        logging.info( _("toSwordModule: Blank s4 section heading encountered after {}:{}").format( currentChapterNumberString, verseNumberString ) )
-                elif marker=='mr':
-                    # Should only follow a ms1 I think
-                    if haveOpenParagraph or haveOpenSection or not haveOpenMajorSection: logging.error( _("toSwordModule: Didn't expect major reference 'mr' marker after {}").format(toSwordGlobals["verseRef"]) )
-                    if text: writerObject.writeLineOpenClose( 'title', checkText(text), ('type',"parallel") ) # Section cross-reference
                 elif marker=='r':
                     # Should only follow a s1 I think
                     if haveOpenParagraph or not haveOpenSection: logging.error( _("toSwordModule: Didn't expect reference 'r' marker after {}").format(toSwordGlobals["verseRef"]) )
                     if text: writerObject.writeLineOpenClose( 'title', checkText(text), ('type',"parallel") ) # Section cross-reference
+                elif marker=='sr':
+                    # Should only follow a s1 I think
+                    if haveOpenParagraph or not haveOpenSection: logging.error( _("toOSIS: Didn't expect reference 'sr' marker after {}").format(toOSISGlobals["verseRef"]) )
+                    if text:
+                        writerObject.writeLineOpen( 'title', ('type','scope') )
+                        writerObject.writeLineOpenClose( 'reference', checkText(text) )
+                        writerObject.writeLineClose( 'title' )
+                elif marker == 'sp':
+                    if text: writerObject.writeLineOpenClose( 'speaker', checkText(text) )
                 elif marker=='p':
                     closeAnyOpenLG()
                     closeAnyOpenParagraph()
@@ -5939,6 +5946,12 @@ class BibleWriter( InternalBible ):
                     writerObject.writeLineOpenSelfclose( 'div', [getSID(), ('type',"paragraph")] )
                     writerObject.writeLineText( checkText(adjustedText), noTextCheck=True ) # Sometimes there's text
                     haveOpenParagraph = True
+                elif marker in ('li1','li2','li3','li4', 'ili1','ili2','ili3','ili4',):
+                    if not haveOpenList:
+                        writerObject.writeLineOpen( 'list' )
+                        haveOpenList = True
+                    adjustedText = processXRefsAndFootnotes( text, extras, 0 )
+                    writerObject.writeLineOpenClose( 'item', checkText(adjustedText), ('type','x-indent-'+marker[-1]), noTextCheck=True )
                 elif marker in ('v~','p~',):
                     #if not haveOpenL: closeAnyOpenLG()
                     #writeVerseStart( writerObject, ix, BBB, chapterRef, text )
@@ -6556,9 +6569,7 @@ class BibleWriter( InternalBible ):
                     elif marker in ('mt3','mte3',): composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
                     elif marker in ('mt4','mte4',): composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
                     elif marker=='ms1': composedLine += '<TS2>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
-                    elif marker=='ms2': composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
-                    elif marker=='ms3': composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
-                    elif marker=='ms4': composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
+                    elif marker in ('ms2','ms3','ms4'): composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
                     elif marker=='mr': composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
                     else:
                         logging.warning( "toESword.handleIntroduction: doesn't handle {} '{}' yet".format( BBB, marker ) )
@@ -6622,7 +6633,9 @@ class BibleWriter( InternalBible ):
                     print( "toESword.composeVerseLine:", BBB, C, V, marker, text, verseData )
                     if Globals.debugFlag and debuggingThisModule: assert( marker not in theWordIgnoredIntroMarkers ) # these markers shouldn't occur in verses
 
-                if marker == 's1':
+                if marker == 'ms1': composedLine += '<TS2>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
+                elif marker in ('ms2','ms3','ms4'): composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
+                elif marker == 's1':
                     if ourGlobals['lastLine'] is not None and not composedLine: # i.e., don't do it for the very first line
                         ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '\\line ' # append the new paragraph marker to the previous line
                     composedLine += '~^~b~^~i~^~f0 '+adjustLine(BBB,C,V,text)+'~^~cf0~^~b0~^~i0~^~line '
