@@ -816,6 +816,8 @@ class BibleWriter( InternalBible ):
             # Semantic stuff
             text = text.replace( '\\ior ', '[' ).replace( '\\ior*', ']' )
             text = text.replace( '\\bk ', '_' ).replace( '\\bk*', '_' )
+            text = text.replace( '\\iqt ', '_' ).replace( '\\iqt*', '_' )
+
             text = text.replace( '\\add ', '_' ).replace( '\\add*', '_' )
             text = text.replace( '\\nd ', '' ).replace( '\\nd*', '' )
             text = text.replace( '\\+nd ', '' ).replace( '\\+nd*', '' )
@@ -825,6 +827,7 @@ class BibleWriter( InternalBible ):
                 text = text.replace( '\\k ', '' ).replace( '\\k*', '' )
             else: # it's a keyword in context
                 text = text.replace( '\\k ', '' ).replace( '\\k*', '' )
+            text = text.replace( '\\w ', '_' ).replace( '\\w*', '_' )
             text = text.replace( '\\rq ', '' ).replace( '\\rq*', '' )
             text = text.replace( '\\qs ', '' ).replace( '\\qs*', '' )
 
@@ -920,7 +923,11 @@ class BibleWriter( InternalBible ):
 
     # The following are used by both toHTML5 and toCustomBible
     ipHTMLClassDict = {'ip':'introductionParagraph', 'ipi':'introductionParagraphIndented',
-                       'im':'introductionFlushLeftParagraph', 'imi':'introductionIndentedFlushLeftParagraph'}
+                       'ipq':'introductionQuoteParagraph', 'ipr':'introductionRightAlignedParagraph',
+                       'im':'introductionFlushLeftParagraph', 'imi':'introductionIndentedFlushLeftParagraph',
+                       'imq':'introductionFlushLeftQuoteParagraph',
+                       'iq1':'introductionPoetryParagraph1','iq2':'introductionPoetryParagraph2','iq3':'introductionPoetryParagraph3','iq4':'introductionPoetryParagraph4',
+                       'iex':'introductionExplanation', }
     pqHTMLClassDict = {'p':'proseParagraph', 'm':'flushLeftParagraph',
                        'pmo':'embeddedOpeningParagraph', 'pm':'embeddedParagraph', 'pmc':'embeddedClosingParagraph',
                        'pmr':'embeddedRefrainParagraph',
@@ -931,7 +938,7 @@ class BibleWriter( InternalBible ):
 
                        'q1':'poetryParagraph1','q2':'poetryParagraph2','q3':'poetryParagraph3','q4':'poetryParagraph4',
                        'qr':'rightAlignedPoetryParagraph', 'qc':'centeredPoetryParagraph',
-                       'qm1':'embeddedPoetryParagraph1','qm2':'embeddedPoetryParagraph2','qm3':'embeddedPoetryParagraph3','qm4':'embeddedPoetryParagraph4'}
+                       'qm1':'embeddedPoetryParagraph1','qm2':'embeddedPoetryParagraph2','qm3':'embeddedPoetryParagraph3','qm4':'embeddedPoetryParagraph4', }
 
 
     def __formatHTMLVerseText( BBB, C, V, givenText, extras, ourGlobals ):
@@ -1197,6 +1204,8 @@ class BibleWriter( InternalBible ):
         # Semantic stuff
         text = text.replace( '\\ior ', '<span class="outlineReferenceRange">' ).replace( '\\ior*', '</span>' )
         text = text.replace( '\\bk ', '<span class="bookName">' ).replace( '\\bk*', '</span>' )
+        text = text.replace( '\\iqt ', '<span class="introductionQuotedText">' ).replace( '\\iqt*', '</span>' )
+
         text = text.replace( '\\add ', '<span class="addedText">' ).replace( '\\add*', '</span>' )
         text = text.replace( '\\nd ', '<span class="divineName">' ).replace( '\\nd*', '</span>' )
         text = text.replace( '\\+nd ', '<span class="divineName">' ).replace( '\\+nd*', '</span>' )
@@ -1206,6 +1215,7 @@ class BibleWriter( InternalBible ):
             text = text.replace( '\\k ', '<span class="glossaryKeyword">' ).replace( '\\k*', '</span>' )
         else: # it's a keyword in context
             text = text.replace( '\\k ', '<span class="keyword">' ).replace( '\\k*', '</span>' )
+        text = text.replace( '\\w ', '<span class="wordlistEntry">' ).replace( '\\w*', '</span>' )
         text = text.replace( '\\rq ', '<span class="quotationReference">' ).replace( '\\rq*', '</span>' )
         text = text.replace( '\\qs ', '<span class="Selah">' ).replace( '\\qs*', '</span>' )
 
@@ -1490,7 +1500,7 @@ class BibleWriter( InternalBible ):
                 #print( "toHTML5.writeHTML5Book", BBB, C, V, marker, text )
 
                 # Markers usually only found in the introduction
-                if marker in oftenIgnoredUSFMHeaderMarkers: # Just ignore these lines
+                if marker in oftenIgnoredUSFMHeaderMarkers or marker in ('ie',): # Just ignore these lines
                     ignoredMarkers.add( marker )
                 elif marker in ('mt1','mt2','mt3','mt4', 'imt1','imt2','imt3','imt4',):
                     if Globals.debugFlag: assert( not haveOpenParagraph )
@@ -1503,7 +1513,7 @@ class BibleWriter( InternalBible ):
                         #logging.warning( "toHTML5: Have {} introduction section heading {} outside a paragraph in {}".format( marker, text, BBB ) )
                         #writerObject.writeLineOpen( 'p', ('class','unknownParagraph') ); haveOpenParagraph = True
                     if text: writerObject.writeLineOpenClose( 'h3', text, ('class','introductionSectionHeading'+marker[2]) )
-                elif marker in ('ip','ipi', 'im','imi',):
+                elif marker in ('ip','ipi','ipq','ipr', 'im','imi','imq', 'iq1','iq2','iq3','iq4', 'iex', ):
                     if haveOpenParagraph:
                         logging.error( "toHTML5: didn't expect {} field with paragraph still open at {} {}:{}".format( marker, BBB, C, V ) )
                         writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
@@ -1523,6 +1533,9 @@ class BibleWriter( InternalBible ):
                     if Globals.debugFlag: assert( not haveOpenParagraph )
                     #if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
                     if text: writerObject.writeLineOpenClose( 'p', liveLocal(text), ('class','introductionOutlineEntry'+marker[2]), noTextCheck=True )
+                elif marker == 'ib':
+                    if Globals.debugFlag: assert( not text and not extras )
+                    writerObject.writeLineOpenClose( 'p', ' ', ('class','introductionBlankParagraph') )
                 elif marker == 'periph':
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
                     if Globals.debugFlag:
@@ -2081,7 +2094,7 @@ class BibleWriter( InternalBible ):
                 #print( " toCB: {} {}:{} {}:{}".format( BBB, C, V, marker, repr(text) ) )
 
                 # Markers usually only found in the introduction
-                if marker in oftenIgnoredUSFMHeaderMarkers: # Just ignore these lines
+                if marker in oftenIgnoredUSFMHeaderMarkers or marker in ('ie',): # Just ignore these lines
                     ignoredMarkers.add( marker )
                 elif marker in ('mt1','mt2','mt3','mt4', 'imt1','imt2','imt3','imt4',):
                     if Globals.debugFlag: assert( not pOpen )
@@ -2107,7 +2120,7 @@ class BibleWriter( InternalBible ):
                     if not sOpen:
                         thisHTML += '<section class="introSection">'; sOpen = sJustOpened = True; BCV=(BBB,C,V)
                     thisHTML += '<h2 class="introductionSectionHeading{}">{}</h2>'.format( marker[2], text )
-                elif marker in ('ip','ipi', 'im','imi',):
+                elif marker in ('ip','ipi','ipq','ipr', 'im','imi','imq', 'iq1','iq2','iq3','iq4', 'iex', ):
                     for lx in ('4','3','2','1'): # Close any open lists
                         if listOpen and lx in listOpen and listOpen[lx]: thisHTML += '</p>'; del listOpen[lx]
                     if pOpen:
@@ -2136,6 +2149,9 @@ class BibleWriter( InternalBible ):
                         thisHTML += '<section class="introSection">'; sOpen = sJustOpened = True; BCV=(BBB,C,V)
                     if text or extras:
                         thisHTML += '<p class="introductionOutlineEntry{}">{}</p>'.format( marker[2], BibleWriter.__formatHTMLVerseText( BBB, C, V, text, extras, CBGlobals ) )
+                elif marker == 'ib':
+                    if Globals.debugFlag: assert( not text and not extras )
+                    thisHTML += '<p class="introductionBlankParagraph"></p>'
                 elif marker == 'periph':
                     if pOpen:
                         if Globals.debugFlag: assert( sOpen )
@@ -8902,12 +8918,13 @@ def demo():
         from USFMBible import USFMBible
         from USFMFilenames import USFMFilenames
         testData = ( # name, abbreviation, folder for USFM files
+                ("USFM-AllMarkers", "USFM-All", "Tests/DataFilesForTests/USFMAllMarkersProject/",),
                 #("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
                 #("CustomTest", "Custom", ".../",),
                 #("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
                 #("USFMTest2", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
                 #("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
-                ("OEB", "OEB", "Tests/DataFilesForTests/USFM-OEB/",),
+                #("OEB", "OEB", "Tests/DataFilesForTests/USFM-OEB/",),
                 #("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
                 #("MS-BT", "MBTBT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
                 #("MS-Notes", "MBTBC", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/",),
