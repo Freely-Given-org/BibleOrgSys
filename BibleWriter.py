@@ -1619,7 +1619,7 @@ class BibleWriter( InternalBible ):
                 elif marker == 'b':
                     if haveOpenVerse: writerObject.writeLineClose( 'span' ); haveOpenVerse = False
                     if haveOpenParagraph: writerObject.writeLineClose( 'p' ); haveOpenParagraph = False
-                    if Globals.debugFlag: assert( not text )
+                    if Globals.debugFlag: assert( not text and not extras )
                     writerObject.writeLineOpenClose( 'p', ' ', ('class','blankParagraph') )
 
                 # Character markers
@@ -2301,7 +2301,7 @@ class BibleWriter( InternalBible ):
                         if Globals.debugFlag: assert( sOpen )
                         thisHTML += '</p>'; pOpen = False
                         if Globals.debugFlag: thisHTML += '\n'
-                    if Globals.debugFlag: assert( not text )
+                    if Globals.debugFlag: assert( not text and not extras )
                     thisHTML += '<p class="blankParagraph"></p>'
 
                 elif marker in ('nb','cl',): # These are the markers that we can safely ignore for this export
@@ -5058,12 +5058,12 @@ class BibleWriter( InternalBible ):
             C = V = '0'
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
-                #print( "toOSIS:", marker, originalMarker, text )
+                #print( "BibleWriter.toOSIS: {} {}:{} {}={}{}".format( BBB, C, V, marker, repr(text), " + extras" if extras else "" ) )
                 if marker in oftenIgnoredUSFMHeaderMarkers:
                     ignoredMarkers.add( marker )
                     continue # Just ignore these lines
                 elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4',):
-                    if text: writerObject.writeLineOpenClose( 'title', checkText(text), ('canonical',"false") )
+                    if text: writerObject.writeLineOpenClose( 'title', checkText(text), [('type','main'),('level',marker[-1]),('canonical',"false")] )
                 elif marker in ('is1','imt1','imte1',):
                     #print( marker, "'"+text+"'" )
                     if not haveOpenIntro:
@@ -5149,7 +5149,7 @@ class BibleWriter( InternalBible ):
                     writeVerseStart( writerObject, BBB, chapterRef, verseNumberString )
                     closeAnyOpenL()
 
-                elif marker=='ms1':
+                elif marker in ('ms1','ms2','ms3','ms4',):
                     if haveOpenParagraph:
                         closeAnyOpenLG()
                         closeAnyOpenParagraph()
@@ -5161,7 +5161,19 @@ class BibleWriter( InternalBible ):
                     if text: writerObject.writeLineOpenClose( 'title', checkText(text) ) # Section heading
                     else:
                         logging.info( _("toOSIS: {} Blank ms1 section heading encountered").format( toOSISGlobals["verseRef"] ) )
-                elif marker=='s1':
+                elif marker=='mr':
+                    # Should only follow a ms1 I think
+                    if haveOpenParagraph or haveOpenSection or not haveOpenMajorSection: logging.error( _("toOSIS: Didn't expect major reference 'mr' marker after {}").format(toOSISGlobals["verseRef"]) )
+                    if text: writerObject.writeLineOpenClose( 'title', checkText(text), ('type',"scope") )
+                elif marker == 'd':
+                    if Globals.debugFlag:
+                        pass
+                    flag = '\\' in text or extras # Set this flag if the text already contains XML formatting
+                    adjustedText = processXRefsAndFootnotes( text, extras )
+                    if adjustedText:
+                        if Globals.debugFlag: assert( BBB == 'PSA' )
+                        writerObject.writeLineOpenClose( 'title', checkText(adjustedText), [('canonical','true'),('type','psalm')], noTextCheck=flag )
+                elif marker in ('s1','s2','s3','s4',):
                     if haveOpenParagraph:
                         closeAnyOpenLG()
                         closeAnyOpenParagraph()
@@ -5171,52 +5183,23 @@ class BibleWriter( InternalBible ):
                     haveOpenSection = True
                     #print( "{} {}:{}".format( BBB, currentChapterNumberString, verseNumberString ) )
                     #print( "{} = '{}'".format( marker, text ) )
-                    flag = False # Set this flag if the text already contains XML formatting
-                    for format in ('\\nd ','\\bd ', '\\sc ', ):
-                        if format in text: flag = True; break
-                    if extras: flag = True
+                    flag = '\\' in text or extras # Set this flag if the text already contains XML formatting
                     adjustedText = processXRefsAndFootnotes( text, extras )
-                    if text: writerObject.writeLineOpenClose( 'title', checkText(adjustedText), noTextCheck=flag ) # Section heading
-                    else:
-                        logging.info( _("toOSIS: {} Blank s1 section heading encountered").format( toOSISGlobals["verseRef"] ) )
-                elif marker=='s2':
-                    if haveOpenParagraph:
-                        closeAnyOpenLG()
-                        closeAnyOpenParagraph()
-                    closeAnyOpenSubsection()
-                    writerObject.writeLineOpen( 'div', ('type', "subSection") )
-                    haveOpenSubsection = True
-                    if text: writerObject.writeLineOpenClose( 'title',checkText(text) ) # Section heading
-                    else:
-                        logging.info( _("toOSIS: {} Blank s2 section heading encountered").format( toOSISGlobals["verseRef"] ) )
-                elif marker=='s3':
-                    if haveOpenParagraph:
-                        closeAnyOpenLG()
-                        closeAnyOpenParagraph()
-                    closeAnyOpenSubsection()
-                    writerObject.writeLineOpen( 'div', ('type', "subSection") )
-                    haveOpenSubsection = True
-                    if text: writerObject.writeLineOpenClose( 'title',checkText(text) ) # Section heading
-                    else:
-                        logging.info( _("toOSIS: {} Blank s3 section heading encountered").format( toOSISGlobals["verseRef"] ) )
-                elif marker=='s4':
-                    if haveOpenParagraph:
-                        closeAnyOpenLG()
-                        closeAnyOpenParagraph()
-                    closeAnyOpenSubsection()
-                    writerObject.writeLineOpen( 'div', ('type', "subSection") )
-                    haveOpenSubsection = True
-                    if text: writerObject.writeLineOpenClose( 'title',checkText(text) ) # Section heading
-                    else:
-                        logging.info( _("toOSIS: {} Blank s4 section heading encountered").format( toOSISGlobals["verseRef"] ) )
-                elif marker=='mr':
-                    # Should only follow a ms1 I think
-                    if haveOpenParagraph or haveOpenSection or not haveOpenMajorSection: logging.error( _("toOSIS: Didn't expect major reference 'mr' marker after {}").format(toOSISGlobals["verseRef"]) )
-                    if text: writerObject.writeLineOpenClose( 'title', checkText(text), ('type',"parallel") ) # Section cross-reference
+                    if adjustedText:
+                        writerObject.writeLineOpenClose( 'title', checkText(adjustedText), noTextCheck=flag ) # Section heading
                 elif marker=='r':
                     # Should only follow a s1 I think
                     if haveOpenParagraph or not haveOpenSection: logging.error( _("toOSIS: Didn't expect reference 'r' marker after {}").format(toOSISGlobals["verseRef"]) )
                     if text: writerObject.writeLineOpenClose( 'title', checkText(text), ('type',"parallel") ) # Section cross-reference
+                elif marker=='sr':
+                    # Should only follow a s1 I think
+                    if haveOpenParagraph or not haveOpenSection: logging.error( _("toOSIS: Didn't expect reference 'sr' marker after {}").format(toOSISGlobals["verseRef"]) )
+                    if text:
+                        writerObject.writeLineOpen( 'title', ('type','scope') )
+                        writerObject.writeLineOpenClose( 'reference', checkText(text) )
+                        writerObject.writeLineClose( 'title' )
+                elif marker == 'sp':
+                    if text: writerObject.writeLineOpenClose( 'speaker', checkText(text) )
                 elif marker=='p':
                     closeAnyOpenLG()
                     closeAnyOpenParagraph()
@@ -5246,8 +5229,14 @@ class BibleWriter( InternalBible ):
                     closeAnyOpenLG()
                     if text: writerObject.writeLineText( checkText(text), noTextCheck=True )
                 elif marker=='b': # Blank line
-                        # Doesn't seem that OSIS has a way to encode this presentation element
-                        writerObject.writeNewLine() # We'll do this for now
+                    #print( 'b', BBB, C, V )
+                    if Globals.debugFlag: assert( not text and not extras )
+                    # Doesn't seem that OSIS has a way to encode this presentation element
+                    writerObject.writeNewLine() # We'll do this for now
+                elif marker=='nb': # No-break
+                    print( 'nb', BBB, C, V ); halt
+                    if Globals.debugFlag: assert( not text and not extras )
+                    pass
                 else:
                     if text:
                         logging.critical( "toOSIS: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
@@ -5256,7 +5245,7 @@ class BibleWriter( InternalBible ):
                         logging.critical( "toOSIS: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
                         #if Globals.debugFlag: halt
                     unhandledMarkers.add( marker )
-                if marker not in ('v','v~','p','p~','q1','q2','q3','q4','s1',) and extras:
+                if marker not in ('v','v~','p','p~','q1','q2','q3','q4','s1','s2','s3','s4','d',) and extras:
                     logging.critical( "toOSIS: Programming note: Didn't handle '{}' extras: {}".format( marker, extras ) )
                 lastMarker = marker
 
@@ -5974,8 +5963,9 @@ class BibleWriter( InternalBible ):
                     closeAnyOpenLG()
                     if text: writerObject.writeLineText( checkText(text) )
                 elif marker=='b': # Blank line
-                        # Doesn't seem that OSIS has a way to encode this presentation element
-                        writerObject.writeNewLine() # We'll do this for now
+                    if Globals.debugFlag: assert( not text and not extras )
+                    # Doesn't seem that OSIS has a way to encode this presentation element
+                    writerObject.writeNewLine() # We'll do this for now
                 else:
                     if text:
                         logging.critical( "toSwordModule: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
@@ -8523,6 +8513,7 @@ class BibleWriter( InternalBible ):
                         insertFormattedODFText( BBB, C, V, adjText, extras, documentText, textCursor, "Default Style" )
                     startingNewParagraphFlag = False
                 elif marker == 'b':
+                    if Globals.debugFlag: assert( not adjText and not extras )
                     documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, False );
                     textCursor.setPropertyValue( "ParaStyleName", "Blank Line Paragraph" )
                 elif marker == 'nb': # no-break with previous paragraph -- I don't think we have to do anything here
@@ -8920,7 +8911,7 @@ def demo():
                 UB.load()
                 if Globals.verbosityLevel > 0: print( '\nBibleWriter A'+str(j+1)+'/', UB )
                 if Globals.strictCheckingFlag: UB.check()
-                #UB.toODF(); halt
+                UB.toOSISXML(); halt
                 doaResults = UB.doAllExports( wantPhotoBible=False, wantPDFs=False )
                 if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
                     outputFolder = "OutputFiles/BOS_USFM_Reexport/"
