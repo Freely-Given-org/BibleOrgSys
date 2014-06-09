@@ -6875,6 +6875,36 @@ class BibleWriter( InternalBible ):
 
         ignoredMarkers, unhandledMarkers = set(), set()
 
+######## UNHANDLED: 'ipq', 'imq', 'ipr'
+        titleODFStyleDict = {'imt1':'Introduction Major Title 1', 'imt2':'Introduction Major Title 2', 'imt3':'Introduction Major Title 3', 'imt4':'Introduction Major Title 4',
+                          'imte1':'Introduction Major Title at Ending 1','imte2':'Introduction Major Title at Ending 2', 'imte3':'Introduction Major Title at Ending 3', 'imte4':'Introduction Major Title at Ending 4',
+                          'mt1':'Major Title 1','mt2':'Major Title 2', 'mt3':'Major Title 3', 'mt4':'Major Title 4',
+                          'mte1':'Major Title at Ending 1','mte2':'Major Title at Ending 2', 'mte3':'Major Title at Ending 3', 'mte4':'Major Title at Ending 4', }
+        ipODFStyleDict = {'ip':'Introduction Paragraph', 'ipi':'Introduction Paragraph Indented', 'ipr':'Introduction Right Aligned Paragraph',
+                        'im':'Introduction Flush Left Paragraph', 'imi':'Introduction Indented Flush Left Paragraph',
+                        'iex':'Introduction Explanation', 'iot':'Introduction Outline Title',
+                        'io1':'Introduction Outline Entry 1', 'io2':'Introduction Outline Entry 2', 'io3':'Introduction Outline Entry 3', 'io4':'Introduction Outline Entry 4',
+                        'iq1':'Introduction Poetry Paragraph 1','iq2':'Introduction Poetry Paragraph 2','iq3':'Introduction Poetry Paragraph 3','iq4':'Introduction Poetry Paragraph 4',
+                        'ipq':'Introduction Quote Paragraph', 'imq':'Introduction Flush Left Quote Paragraph', }
+
+        pqODFStyleDict = {'p':'Prose Paragraph', 'm':'Flush Left Paragraph',
+                        'pmo':'Embedded Opening Paragraph', 'pm':'Embedded Paragraph', 'pmc':'Embedded Closing Paragraph',
+                        'pmr':'Embedded Refrain Paragraph',
+                        'pi1':'Indented Prose Paragraph 1','pi2':'Indented Prose Paragraph 2','pi3':'Indented Prose Paragraph 3','pi4':'Indented Prose Paragraph 4',
+                        'mi':'Indented Flush Left Paragraph', 'cls':'Closure Paragraph',
+                        'pc':'Centered Prose Paragraph', 'pr':' Right Aligned Prose Paragraph',
+                        'ph1':'Hanging Prose Paragraph 1','ph2':'Hanging Prose Paragraph 2','ph3':'Hanging Prose Paragraph 3','ph4':'Hanging Prose Paragraph 4',
+
+                        'q1':'Poetry Paragraph 1','q2':'Poetry Paragraph 2','q3':'Poetry Paragraph 3','q4':'Poetry Paragraph 4',
+                        'qr':'Right Aligned Poetry Paragraph', 'qc':'Centered Poetry Paragraph',
+                        'qm1':'Embedded Poetry Paragraph 1','qm2':'Embedded Poetry Paragraph 2','qm3':'Embedded Poetry Paragraph 3','qm4':'Embedded Poetry Paragraph 4'}
+
+        charODFStyleDict = {'bk':'Book Name', 'ior':'Introduction Outline Reference',
+                            'add':'Added Words', 'nd':'Divine Name', 'wj':'Words of Jesus', 'sig':'Author Signature',
+                            'rq':'Inline Quotation Reference', 'qs':'Selah Text',
+                            'w':'Wordlist Entry', 'iqt':'Introduction Quoted Text',
+                            'em':'Emphasis Text', 'bd':'Bold Text', 'it':'Italic Text', 'bdit':'Bold Italic Text', 'sc':'Small Caps Text', }
+
 
         def setupStyles( styleFamilies ):
             """
@@ -6906,6 +6936,42 @@ class BibleWriter( InternalBible ):
                 style.setParentStyle( "Major Title at Ending" )
                 style.setPropertyValue( "CharDiffHeight", -1 )
                 paragraphStyles.insertByName( "Introduction Major Title at Ending 4", style )
+
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Paragraph" )
+                paragraphStyles.insertByName( "Introduction Poetry Paragraph", style ) # Base style only
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Poetry Paragraph" )
+                paragraphStyles.insertByName( "Introduction Poetry Paragraph 1", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Poetry Paragraph" )
+                paragraphStyles.insertByName( "Introduction Poetry Paragraph 2", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Poetry Paragraph" )
+                paragraphStyles.insertByName( "Introduction Poetry Paragraph 3", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Poetry Paragraph" )
+                paragraphStyles.insertByName( "Introduction Poetry Paragraph 4", style )
+
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Paragraph" )
+                paragraphStyles.insertByName( "Introduction Quote Paragraph", style )
+
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Paragraph" )
+                paragraphStyles.insertByName( "Introduction Flush Left Quote Paragraph", style )
+
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Paragraph" )
+                paragraphStyles.insertByName( "Introduction Right Aligned Paragraph", style )
+
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Paragraph" )
+                paragraphStyles.insertByName( "Introduction Explanation", style )
+
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Paragraph" )
+                paragraphStyles.insertByName( "Introduction Blank Line Paragraph", style )
 
                 #style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 #style.setParentStyle( "Heading" )
@@ -6981,11 +7047,6 @@ class BibleWriter( InternalBible ):
                 paragraphStyles = styleFamilies.getByName("ParagraphStyles")
                 CENTER_PARAGRAPH = uno.Enum( "com.sun.star.style.ParagraphAdjust", "CENTER" )
                 RIGHT_PARAGRAPH = uno.Enum( "com.sun.star.style.ParagraphAdjust", "RIGHT" )
-
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Introduction Paragraph" )
-                #style.setPropertyValue( "CharDiffHeight", -1 )
-                paragraphStyles.insertByName( "Introduction Explanation", style )
 
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 style.setParentStyle( "Heading" )
@@ -7446,36 +7507,6 @@ class BibleWriter( InternalBible ):
         # end of toODF.setupStyles
 
 
-        titleODFStyleDict = {'imt1':'Introduction Major Title 1', 'imt2':'Introduction Major Title 2', 'imt3':'Introduction Major Title 3', 'imt4':'Introduction Major Title 4',
-                          'imte1':'Introduction Major Title at Ending 1','imte2':'Introduction Major Title at Ending 2', 'imte3':'Introduction Major Title at Ending 3', 'imte4':'Introduction Major Title at Ending 4',
-                          'mt1':'Major Title 1','mt2':'Major Title 2', 'mt3':'Major Title 3', 'mt4':'Major Title 4',
-                          'mte1':'Major Title at Ending 1','mte2':'Major Title at Ending 2', 'mte3':'Major Title at Ending 3', 'mte4':'Major Title at Ending 4', }
-        ipODFStyleDict = {'ip':'Introduction Paragraph', 'ipi':'Introduction Paragraph Indented',
-                        'im':'Introduction Flush Left Paragraph', 'imi':'Introduction Indented Flush Left Paragraph',
-
-                        'iot':'Introduction Outline Title',
-                        'io1':'Introduction Outline Entry 1', 'io2':'Introduction Outline Entry 2', 'io3':'Introduction Outline Entry 3', 'io4':'Introduction Outline Entry 4',
-
-                        'iex':'Introduction Explanation', 'iqt':'Introduction Quoted Text', }
-
-        pqODFStyleDict = {'p':'Prose Paragraph', 'm':'Flush Left Paragraph',
-                        'pmo':'Embedded Opening Paragraph', 'pm':'Embedded Paragraph', 'pmc':'Embedded Closing Paragraph',
-                        'pmr':'Embedded Refrain Paragraph',
-                        'pi1':'Indented Prose Paragraph 1','pi2':'Indented Prose Paragraph 2','pi3':'Indented Prose Paragraph 3','pi4':'Indented Prose Paragraph 4',
-                        'mi':'Indented Flush Left Paragraph', 'cls':'Closure Paragraph',
-                        'pc':'Centered Prose Paragraph', 'pr':' Right Aligned Prose Paragraph',
-                        'ph1':'Hanging Prose Paragraph 1','ph2':'Hanging Prose Paragraph 2','ph3':'Hanging Prose Paragraph 3','ph4':'Hanging Prose Paragraph 4',
-
-                        'q1':'Poetry Paragraph 1','q2':'Poetry Paragraph 2','q3':'Poetry Paragraph 3','q4':'Poetry Paragraph 4',
-                        'qr':'Right Aligned Poetry Paragraph', 'qc':'Centered Poetry Paragraph',
-                        'qm1':'Embedded Poetry Paragraph 1','qm2':'Embedded Poetry Paragraph 2','qm3':'Embedded Poetry Paragraph 3','qm4':'Embedded Poetry Paragraph 4'}
-
-        charODFStyleDict = {'bk':'Book Name', 'ior':'Introduction Outline Reference',
-                            'add':'Added Words', 'nd':'Divine Name', 'wj':'Words of Jesus', 'sig':'Author Signature',
-                            'rq':'Inline Quotation Reference', 'qs':'Selah Text',
-                            'w':'Wordlist Entry',
-                            'em':'Emphasis Text', 'bd':'Bold Text', 'it':'Italic Text', 'bdit':'Bold Italic Text', 'sc':'Small Caps Text', }
-
         def insertFormattedODFText( BBB, C, V, givenText, extras, documentText, textCursor, defaultCharacterStyleName ):
             """
             Format character codes within the text into ODF
@@ -7846,10 +7877,10 @@ class BibleWriter( InternalBible ):
                     if adjText or extras:
                         insertFormattedODFText( BBB, C, V, adjText, extras, documentText, textCursor, "Default Style" )
                     startingNewParagraphFlag = False
-                elif marker == 'b':
+                elif marker in ( 'b', 'ib', ):
                     if Globals.debugFlag: assert( not adjText and not extras )
                     documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, False );
-                    textCursor.setPropertyValue( "ParaStyleName", "Blank Line Paragraph" )
+                    textCursor.setPropertyValue( "ParaStyleName", 'Blank Line Paragraph' if marker=='b' else 'Introduction Blank Line Paragraph' )
                 elif marker == 'nb': # no-break with previous paragraph -- I don't think we have to do anything here
                     if Globals.debugFlag: assert( not adjText and not extras )
                     ignoredMarkers.add( marker )
@@ -8686,6 +8717,8 @@ class BibleWriter( InternalBible ):
         """
         if Globals.verbosityLevel > 2: print( "BibleWriter.doExportHelper( {} )".format( ff ) )
         function, folder = ff
+        if function is None: return None # Some exports are not always requested
+
         try: result = function( folder )
         except Exception as err: # Got to catch and report the exceptions here
             print( "BibleWriter.doExportHelper: Unexpected error in {} using {}:".format( function, folder ), sys.exc_info()[0], err)
@@ -8789,33 +8822,28 @@ class BibleWriter( InternalBible ):
                                     self.toUSXXML, self.toUSFXXML, self.toOSISXML,
                                     self.toZefaniaXML, self.toHaggaiXML, self.toOpenSongXML,
                                     self.toSwordModule, self.totheWord, self.toMySword, self.toESword,
-                                    self.toSwordSearcher, self.toDrupalBible, self.toODF]
-            if wantPhotoBible: self.__outputProcesses.append( self.toPhotoBible )
-            if wantPDFs: self.__outputProcesses.append( self.toTeX )
+                                    self.toSwordSearcher, self.toDrupalBible, self.toODF,
+                                    self.toPhotoBible if wantPhotoBible else None,
+                                    self.toTeX if wantPDFs else None]
             self.__outputFolders = [listOutputFolder, pseudoUSFMOutputFolder, USFMOutputFolder, textOutputFolder,
                                     markdownOutputFolder, D43OutputFolder, htmlOutputFolder, CBOutputFolder,
                                     USXOutputFolder, USFXOutputFolder, OSISOutputFolder,
                                     zefOutputFolder, hagOutputFolder, OSOutputFolder,
                                     swOutputFolder, TWOutputFolder, MySwOutputFolder, ESwOutputFolder,
-                                    SwSOutputFolder, DrOutputFolder, ODFOutputFolder]
-            if wantPhotoBible: self.__outputFolders.append( photoOutputFolder )
-            if wantPDFs: self.__outputFolders.append( TeXOutputFolder )
+                                    SwSOutputFolder, DrOutputFolder,
+                                    ODFOutputFolder, photoOutputFolder, TeXOutputFolder]
             assert( len(self.__outputFolders) == len(self.__outputProcesses) )
-            assert( 21 <= len(self.__outputFolders) <= 23 ) # there's two optional ones
             print( "BibleWriter.doAllExports: Running {} exports on {} CPUs".format( len(self.__outputProcesses), Globals.maxProcesses ) )
             print( "  NOTE: Outputs (including error and warning messages) from various exports may be interspersed." )
             with multiprocessing.Pool( processes=Globals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( self.doExportHelper, zip(self.__outputProcesses,self.__outputFolders) ) # have the pool do our loads
                 print( "BibleWriter.doAllExports: Got {} results".format( len(results) ) )
-                assert( 21 <= len(results) <= 23 ) # there's two optional ones
                 assert( len(results) == len(self.__outputFolders) )
                 listOutputResult, pseudoUSFMExportResult, USFMExportResult, textExportResult, \
                     markdownExportResult, D43ExportResult, htmlExportResult, CBExportResult, \
                     USXExportResult, USFXExportResult, OSISExportResult, ZefExportResult, HagExportResult, OSExportResult, \
                     swExportResult, TWExportResult, MySwExportResult, ESwExportResult, SwSExportResult, DrExportResult, \
-                    ODFExportResult = results[0:21]
-                if wantPhotoBible: PhotoBibleExportResult = results[21]
-                if wantPDFs: TeXExportResult = results[22]
+                    ODFExportResult, PhotoBibleExportResult, TeXExportResult = results
 
         else: # Just single threaded and not debugging
             try: listOutputResult = self.makeLists( listOutputFolder )
@@ -9009,7 +9037,7 @@ def demo():
                 if Globals.verbosityLevel > 0: print( '\nBibleWriter A'+str(j+1)+'/', UB )
                 if Globals.strictCheckingFlag: UB.check()
                 #UB.toOSISXML(); halt
-                doaResults = UB.doAllExports( wantPhotoBible=False, wantPDFs=True )
+                doaResults = UB.doAllExports( wantPhotoBible=True, wantPDFs=False )
                 if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
                     outputFolder = "OutputFiles/BOS_USFM_Reexport/"
                     fN = USFMFilenames( testFolder )
@@ -9039,7 +9067,7 @@ def demo():
                 UB.load()
                 if Globals.verbosityLevel > 0: print( '\nBibleWriter B'+str(j+1)+'/', UB )
                 if Globals.strictCheckingFlag: UB.check()
-                doaResults = UB.doAllExports( wantPhotoBible=True, wantPDFs=True )
+                doaResults = UB.doAllExports( wantPhotoBible=True, wantPDFs=False )
                 if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
                     outputFolder = "OutputFiles/BOS_USX_Reexport/"
                     fN = USXFilenames( testFolder )
