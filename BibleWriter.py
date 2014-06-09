@@ -5100,7 +5100,7 @@ class BibleWriter( InternalBible ):
 
                 adjText = textToCheck
                 if '<<' in adjText or '>>' in adjText:
-                    logging.warning( _("toSwordModule: Unexpected double angle brackets in {}: '{}' field is '{}'").format(toOSISGlobals["verseRef"],marker,textToCheck) )
+                    logging.warning( _("toSwordModule: Unexpected double angle brackets in {}: '{}' field is '{}'").format(toSwordGlobals["verseRef"],marker,textToCheck) )
                     adjText = adjText.replace('<<','“' ).replace('>>','”' )
                 if '\\bk ' in adjText: adjText = checkTextHelper('bk',adjText).replace('\\bk ','<reference type="x-bookName">').replace('\\bk*','</reference>')
                 if '\\add ' in adjText: adjText = checkTextHelper('add',adjText).replace('\\add ','<i>').replace('\\add*','</i>') # temp XXXXXX ...
@@ -5472,10 +5472,10 @@ class BibleWriter( InternalBible ):
                     haveOpenMajorSection = True
                     if text: writerObject.writeLineOpenClose( 'title', checkText(text) ) # Major section heading
                     else:
-                        logging.info( _("toOSIS: {} Blank ms1 section heading encountered").format( toOSISGlobals["verseRef"] ) )
+                        logging.info( _("toSwordModule: {} Blank ms1 section heading encountered").format( toSwordGlobals["verseRef"] ) )
                 elif marker=='mr':
                     # Should only follow a ms1 I think
-                    if haveOpenParagraph or haveOpenSection or not haveOpenMajorSection: logging.error( _("toOSIS: Didn't expect major reference 'mr' marker after {}").format(toOSISGlobals["verseRef"]) )
+                    if haveOpenParagraph or haveOpenSection or not haveOpenMajorSection: logging.error( _("toSwordModule: Didn't expect major reference 'mr' marker after {}").format(toSwordGlobals["verseRef"]) )
                     if text: writerObject.writeLineOpenClose( 'title', checkText(text), ('type',"scope") )
                 elif marker == 'd':
                     #if Globals.debugFlag:
@@ -5505,7 +5505,7 @@ class BibleWriter( InternalBible ):
                     if text: writerObject.writeLineOpenClose( 'title', checkText(text), ('type',"parallel") ) # Section cross-reference
                 elif marker=='sr':
                     # Should only follow a s1 I think
-                    if haveOpenParagraph or not haveOpenSection: logging.error( _("toOSIS: Didn't expect reference 'sr' marker after {}").format(toOSISGlobals["verseRef"]) )
+                    if haveOpenParagraph or not haveOpenSection: logging.error( _("toSwordModule: Didn't expect reference 'sr' marker after {}").format(toSwordGlobals["verseRef"]) )
                     if text:
                         writerObject.writeLineOpen( 'title', ('type','scope') )
                         writerObject.writeLineOpenClose( 'reference', checkText(text) )
@@ -9013,8 +9013,8 @@ def demo():
         from USFMBible import USFMBible
         from USFMFilenames import USFMFilenames
         testData = ( # name, abbreviation, folder for USFM files
-                ("USFM-AllMarkers", "USFM-All", "Tests/DataFilesForTests/USFMAllMarkersProject/",),
-                #("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
+                #("USFM-AllMarkers", "USFM-All", "Tests/DataFilesForTests/USFMAllMarkersProject/",),
+                ("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
                 #("CustomTest", "Custom", ".../",),
                 #("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
                 #("USFMTest2", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
