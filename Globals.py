@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Globals.py
-#   Last modified: 2014-05-05 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-09 by RJH (also update ProgVersion below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -70,7 +70,7 @@ Contains functions:
 """
 
 ProgName = "Globals"
-ProgVersion = "0.45"
+ProgVersion = "0.46"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -839,8 +839,7 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ):
     if commandLineOptions.strict: setStrictCheckingFlag()
 
     # Determine multiprocessing strategy
-    if 0: maxProcesses = os.cpu_count()
-    #if maxProcesses > 1: maxProcesses -= 1 # Leave one CPU alone (normally)
+    maxProcesses = os.cpu_count()
     if maxProcesses > 1: maxProcesses = maxProcesses * 8 // 10 # Use 80% of them so other things keep working also
     if commandLineOptions.single: maxProcesses = 1
     if debugFlag:

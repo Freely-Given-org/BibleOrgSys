@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # TheWordBible.py
-#   Last modified: 2014-06-07 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-08 by RJH (also update ProgVersion below)
 #
 # Module handling "theWord" Bible module files
 #
@@ -51,7 +51,7 @@ e.g.,
 """
 
 ProgName = "theWord Bible format handler"
-ProgVersion = "0.19"
+ProgVersion = "0.20"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -328,7 +328,7 @@ def theWordFileCompare( filename1, filename2, folder1=None, folder2=None, printF
 theWordIgnoredIntroMarkers = oftenIgnoredUSFMHeaderMarkers + (
     'imt1','imt2','imt3','imt4', 'imte1','imte2','imte3','imte4', 'is1','is2','is3','is4',
     'ip','ipi','im','imi','ipq','imq','ir', 'iq1','iq2','iq3','iq4', 'ib','ili',
-    'iot','io1','io2','io3','io4', 'ir','iex','iqt','ie', 'mte1','mte2','mte3','mte4',)
+    'iot','io1','io2','io3','io4', 'ir','iex','iqt', 'mte1','mte2','mte3','mte4', 'ie', )
 
 def theWordHandleIntroduction( BBB, bookData, ourGlobals ):
     """
@@ -423,7 +423,7 @@ def theWordAdjustLine( BBB, C, V, originalLine ):
             ( ('qt',), '<FO>','<Fo>' ),
             ( ('wj',), '<FR>','<Fr>' ),
             ( ('bdit',), '<b><i>','</i></b>' ),
-            ( ('bd','em','k',), '<b>','</b>' ),
+            ( ('bd','em','k','w'), '<b>','</b>' ),
             ( ('it','rq','bk','dc','qs','sig','sls','tl',), '<i>','</i>' ),
             ( ('nd','sc',), '<font size=-1>','</font>' ),
             )
@@ -522,7 +522,7 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
                 ourGlobals['lastLine'] = ourGlobals['lastLine'].rstrip() + '<CM>' # append the new paragraph marker to the previous line
             composedLine += '<TS1>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
         elif marker == 's2': composedLine += '<TS2>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-        elif marker in ( 's3', 'sr', 'd', ): composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
+        elif marker in ( 's3', 's4', 'sr', 'd', ): composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
         elif marker in ( 'qa', 'r', ):
             if marker=='r' and text and text[0]!='(' and text[-1]!=')': # Put parenthesis around this if not already there
                 text = '(' + text + ')'
@@ -623,6 +623,8 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
             #elif ourGlobals['pi6']: composedLine += '<PI6>'
             #elif ourGlobals['pi7']: composedLine += '<PI7>'
             composedLine += theWordAdjustLine(BBB,C,V, text )
+        elif marker in ('nb',): # Just ignore these ones
+            pass
         else:
             logging.warning( "theWordComposeVerseLine: doesn't handle '{}' yet".format( marker ) )
             if Globals.debugFlag and debuggingThisModule:

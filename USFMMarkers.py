@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkers.py
-#   Last modified: 2014-06-07 (also update ProgVersion below)
+#   Last modified: 2014-06-08 (also update ProgVersion below)
 #
 # Module handling USFMMarkers
 #
@@ -51,7 +51,7 @@ import Globals
 oftenIgnoredUSFMHeaderMarkers = ( 'id','ide', 'sts','rem','h', 'toc1','toc2','toc3', 'cl=', )
 USFMIntroductionMarkers = ( 'imt1','imt2','imt3','imt4', 'imte1','imte2','imte3','imte4', 'is1','is2','is3','is4',
                            'ip','ipi', 'im','imi', 'ipq','imq','ipr', 'iq1','iq2','iq3','iq4',
-                           'iot', 'io1','io2','io3','io4', 'ili1','ili2','ili3','ili4', ) # Doesn't include iex iqt ie
+                           'iot', 'io1','io2','io3','io4', 'ili1','ili2','ili3','ili4', 'iex','iqt',) # Doesn't include ie
 USFMBibleParagraphMarkers = ( 'p','pc','pr', 'm','mi', 'pm','pmo','pmc','pmr', 'cls',
                              'pi1','pi2','pi3','pi4', 'ph1','ph2','ph3','ph4',
                             'q1','q2','q3','q4', 'qr','qc',' qm1','qm2','qm3','qm4',
