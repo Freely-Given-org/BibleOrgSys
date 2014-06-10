@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-06-09 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-10 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -1118,7 +1118,7 @@ class BibleWriter( InternalBible ):
 
             bookRef = Globals.BibleBooksCodes.getOSISAbbreviation( BBB ) # OSIS book name
             if bookRef is None:
-                logging.warning( "toDoor43: Doesn't know how to encode OSIS '{}' book yet".format( BBB ) )
+                logging.warning( "toDoor43: Doesn't know how to encode '{}' book yet".format( BBB ) )
                 unhandledBooks.append( BBB )
                 return
             bookName = gotVP = None
@@ -1136,6 +1136,10 @@ class BibleWriter( InternalBible ):
                     bookName = adjText
                 elif marker in oftenIgnoredUSFMHeaderMarkers or marker in ('nb','b','ib','ie',): # Just ignore these lines
                     ignoredMarkers.add( marker )
+                elif marker == 'iot': # outline title
+                    if adjText: writerObject.writeLineOpenClose( 'p', adjText, )
+                elif marker in ('io1','io2','io3','io4',): # outline entries
+                    if adjText: writerObject.writeLineOpenClose( 'p', adjText, )
 
                 elif marker == 'c':
                     C, V = adjText, '0'
@@ -1168,9 +1172,15 @@ class BibleWriter( InternalBible ):
                     # === adjText ===
                     adjText = processXRefsAndFootnotes( adjText, extras )
                     writerObject.writeLineText( '=== {} ==='.format(adjText) )
-                elif marker == 'r':
+                elif marker in ('r', 'sr', 'mr',):
                     # <span class="srefs">adjText</span>
                     if adjText: writerObject.writeLineOpenClose( 'span', adjText, ('class','srefs') )
+                elif marker == 'd': # descriptive title or Hebrew subtitle
+                    if adjText or extras:
+                        adjText = processXRefsAndFootnotes( adjText, extras )
+                        writerObject.writeLineOpenClose( 'p', adjText, ('class','descriptiveTitle') )
+                elif marker == 'sp': # speaker
+                    if adjText: writerObject.writeLineOpenClose( 'p', adjText, ('class','speaker') )
                 elif marker in ('p','pi1','pi2','pi3','pi4', 'ph1','ph2','ph3','ph4', 'pr','pq',) \
                 or marker in ('ip','ipi','ipr','ipq', 'iex',):
                     writerObject.writeNewLine( 2 );
@@ -1206,7 +1216,7 @@ class BibleWriter( InternalBible ):
                         logging.error( "toDoor43: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
                         #if Globals.debugFlag: halt
                     unhandledMarkers.add( marker )
-                if extras and marker not in ('v~','p~','s1','q1','q2','q3','q4','m','li1','li2','li3','li4',): logging.critical( "toDoor43: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
+                if extras and marker not in ('v~','p~','s1','s2','s3','s4','d', 'q1','q2','q3','q4', 'm','li1','li2','li3','li4',): logging.critical( "toDoor43: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
         # end of toDoor43.writeD43Book
 
         # Set-up our Bible reference system
@@ -1989,7 +1999,7 @@ class BibleWriter( InternalBible ):
                         logging.critical( "toHTML5: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
                         #if Globals.debugFlag: halt
                     unhandledMarkers.add( marker )
-                if extras and marker not in ('v~','p~','s1','s2','s3','s4','d',):
+                if extras and marker not in ('v~','p~','s1','s2','s3','s4','d', 'ip','ipi','ipq','ipr', 'im','imi','imq', 'iq1','iq2','iq3','iq4', 'iex',):
                     logging.critical( "toHTML5: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
                     #if Globals.debugFlag: halt
 
@@ -2664,7 +2674,7 @@ class BibleWriter( InternalBible ):
                         logging.critical( "toCustomBible: lost extras in {} field in {} {}:{}".format( marker, BBB, C, V ) )
                         if Globals.debugFlag: halt
                     unhandledMarkers.add( marker )
-                if extras and marker not in ('v~','p~','s1','s2','s3','s4','d',):
+                if extras and marker not in ('v~','p~','s1','s2','s3','s4','d', 'ip','ipi','ipq','ipr', 'im','imi','imq', 'iq1','iq2','iq3','iq4', 'iex',):
                     logging.critical( "toCustomBible: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
                     #if Globals.debugFlag: halt
 
@@ -4339,7 +4349,7 @@ class BibleWriter( InternalBible ):
                 elif marker=='nb': # No-break
                     #print( 'nb', BBB, C, V ); halt
                     if Globals.debugFlag: assert( not text and not extras )
-                    pass
+                    ignoredMarkers.add( marker )
                 else:
                     if text:
                         logging.critical( "toOSIS: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
@@ -5555,6 +5565,10 @@ class BibleWriter( InternalBible ):
                     if Globals.debugFlag: assert( not text and not extras )
                     # Doesn't seem that OSIS has a way to encode this presentation element
                     writerObject.writeNewLine() # We'll do this for now
+                elif marker=='nb': # No-break
+                    #print( 'nb', BBB, C, V ); halt
+                    if Globals.debugFlag: assert( not text and not extras )
+                    ignoredMarkers.add( marker )
                 else:
                     if text:
                         logging.critical( "toSwordModule: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
@@ -8817,21 +8831,24 @@ class BibleWriter( InternalBible ):
             if wantPDFs: TeXExportResult = self.toTeX( TeXOutputFolder ) # Put this last since it's slowest
 
         elif Globals.maxProcesses > 1: # Process all the exports with different threads
-            self.__outputProcesses = [self.makeLists, self.toPseudoUSFM, self.toUSFM, self.toText,
+            # We move the three longest processes to the top here,
+            #   so they start first to help us get finished quicker on multiCPU systems.
+            self.__outputProcesses = [self.toODF,
+                                    self.toPhotoBible if wantPhotoBible else None,
+                                    self.toTeX if wantPDFs else None,
+                                    self.makeLists, self.toPseudoUSFM, self.toUSFM, self.toText,
                                     self.toMarkdown, self.toDoor43, self.toHTML5, self.toCustomBible,
                                     self.toUSXXML, self.toUSFXXML, self.toOSISXML,
                                     self.toZefaniaXML, self.toHaggaiXML, self.toOpenSongXML,
                                     self.toSwordModule, self.totheWord, self.toMySword, self.toESword,
-                                    self.toSwordSearcher, self.toDrupalBible, self.toODF,
-                                    self.toPhotoBible if wantPhotoBible else None,
-                                    self.toTeX if wantPDFs else None]
-            self.__outputFolders = [listOutputFolder, pseudoUSFMOutputFolder, USFMOutputFolder, textOutputFolder,
+                                    self.toSwordSearcher, self.toDrupalBible, ]
+            self.__outputFolders = [ODFOutputFolder, photoOutputFolder, TeXOutputFolder,
+                                    listOutputFolder, pseudoUSFMOutputFolder, USFMOutputFolder, textOutputFolder,
                                     markdownOutputFolder, D43OutputFolder, htmlOutputFolder, CBOutputFolder,
                                     USXOutputFolder, USFXOutputFolder, OSISOutputFolder,
                                     zefOutputFolder, hagOutputFolder, OSOutputFolder,
                                     swOutputFolder, TWOutputFolder, MySwOutputFolder, ESwOutputFolder,
-                                    SwSOutputFolder, DrOutputFolder,
-                                    ODFOutputFolder, photoOutputFolder, TeXOutputFolder]
+                                    SwSOutputFolder, DrOutputFolder, ]
             assert( len(self.__outputFolders) == len(self.__outputProcesses) )
             print( "BibleWriter.doAllExports: Running {} exports on {} CPUs".format( len(self.__outputProcesses), Globals.maxProcesses ) )
             print( "  NOTE: Outputs (including error and warning messages) from various exports may be interspersed." )
@@ -8839,11 +8856,12 @@ class BibleWriter( InternalBible ):
                 results = pool.map( self.doExportHelper, zip(self.__outputProcesses,self.__outputFolders) ) # have the pool do our loads
                 print( "BibleWriter.doAllExports: Got {} results".format( len(results) ) )
                 assert( len(results) == len(self.__outputFolders) )
-                listOutputResult, pseudoUSFMExportResult, USFMExportResult, textExportResult, \
+                ODFExportResult, PhotoBibleExportResult, TeXExportResult, \
+                    listOutputResult, pseudoUSFMExportResult, USFMExportResult, textExportResult, \
                     markdownExportResult, D43ExportResult, htmlExportResult, CBExportResult, \
                     USXExportResult, USFXExportResult, OSISExportResult, ZefExportResult, HagExportResult, OSExportResult, \
                     swExportResult, TWExportResult, MySwExportResult, ESwExportResult, SwSExportResult, DrExportResult, \
-                    ODFExportResult, PhotoBibleExportResult, TeXExportResult = results
+                        = results
 
         else: # Just single threaded and not debugging
             try: listOutputResult = self.makeLists( listOutputFolder )
@@ -9037,7 +9055,7 @@ def demo():
                 if Globals.verbosityLevel > 0: print( '\nBibleWriter A'+str(j+1)+'/', UB )
                 if Globals.strictCheckingFlag: UB.check()
                 #UB.toOSISXML(); halt
-                doaResults = UB.doAllExports( wantPhotoBible=True, wantPDFs=False )
+                doaResults = UB.doAllExports( wantPhotoBible=False, wantPDFs=False )
                 if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
                     outputFolder = "OutputFiles/BOS_USFM_Reexport/"
                     fN = USFMFilenames( testFolder )
