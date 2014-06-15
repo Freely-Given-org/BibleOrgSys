@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFXXMLBible.py
-#   Last modified: 2014-04-25 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-15 by RJH (also update ProgVersion below)
 #
 # Module handling USFX XML Bibles
 #
@@ -773,7 +773,7 @@ def demo():
             UB.load()
             if Globals.verbosityLevel > 0: print( UB )
             if Globals.strictCheckingFlag: UB.check()
-            if Globals.commandLineOptions.export: UB.doAllExports()
+            if Globals.commandLineOptions.export: UB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
             #UBErrors = UB.getErrors()
             # print( UBErrors )
             #print( UB.getVersification () )

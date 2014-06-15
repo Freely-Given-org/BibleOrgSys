@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # OSISXMLBible.py
-#   Last modified: 2014-06-06 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-15 by RJH (also update ProgVersion below)
 #
 # Module handling OSIS XML Bibles
 #
@@ -2972,7 +2972,7 @@ def demo():
             if Globals.strictCheckingFlag or Globals.debugFlag:
                 oB.check()
             #oB.toODF(); halt
-            oB.doAllExports( wantPhotoBible=True, wantPDFs=True )
+            oB.doAllExports( wantPhotoBible=True, wantODFs=True, wantPDFs=True )
 # end of demo
 
 if __name__ == '__main__':

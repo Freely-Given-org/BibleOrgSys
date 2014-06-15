@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2014-05-06 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-15 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -325,18 +325,23 @@ class USFMBible( Bible ):
     # end of USFMBible.loadBook
 
 
-    def loadBookMP( self, BBB ):
+    def _loadBookMP( self, BBB_Filename ):
         """
         Multiprocessing version!
-        Load the requested book if it's not already loaded.
+        Load the requested book if it's not already loaded (but doesn't save it as that is not safe for multiprocessing)
+
+        Parameter is a 2-tuple containing BBB and the filename.
         """
-        if Globals.verbosityLevel > 2: print( "USFMBible.loadBookMP( {} )".format( BBB ) )
+        if Globals.verbosityLevel > 3: print( "USFMBible.loadBookMP( {} )".format( BBB_Filename ) )
+        BBB, filename = BBB_Filename
         assert( BBB not in self.books )
         self.triedLoadingBook[BBB] = True
-        if Globals.verbosityLevel > 2 or Globals.debugFlag: print( _("  USFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
+        if Globals.verbosityLevel > 1 or Globals.debugFlag:
+            print( _("  USFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
         UBB = USFMBibleBook( self.name, BBB )
         UBB.load( self.possibleFilenameDict[BBB], self.sourceFolder, self.encoding )
         UBB.validateMarkers() # Usually activates InternalBibleBook.processLines()
+        if Globals.verbosityLevel > 2 or Globals.debugFlag: print( _("    Finishing loading USFM book {}.").format( BBB ) )
         return UBB
     # end of USFMBible.loadBookMP
 
@@ -347,21 +352,23 @@ class USFMBible( Bible ):
         """
         if Globals.verbosityLevel > 1: print( _("USFMBible: Loading {} from {}...").format( self.name, self.sourceFolder ) )
 
-        if Globals.maxProcesses > 1: # Load all the books as quickly as possible
-            parameters = [BBB for BBB,filename in self.maximumPossibleFilenameTuples] # Can only pass a single parameter to map
-            with multiprocessing.Pool( processes=Globals.maxProcesses ) as pool: # start worker processes
-                results = pool.map( self.loadBookMP, parameters ) # have the pool do our loads
-                assert( len(results) == len(parameters) )
-                for bBook in results: self.saveBook( bBook )
-        else: # Just single threaded
-            # Load the books one by one -- assuming that they have regular Paratext style filenames
-            try: loadDetails = self.maximumPossibleFilenameTuples
-            except AttributeError:
-                logging.critical( "USFMBible.load " + _("has nothing to load!") )
-                return
-
-            for BBB,filename in loadDetails:
-                loadedBook = self.loadBook( BBB, filename ) # also saves it
+        if self.maximumPossibleFilenameTuples:
+            if Globals.maxProcesses > 1: # Load all the books as quickly as possible
+                #parameters = [BBB for BBB,filename in self.maximumPossibleFilenameTuples] # Can only pass a single parameter to map
+                if Globals.verbosityLevel > 1: print( _("USFMBible: Loading {} books using {} CPUs...").format( len(self.maximumPossibleFilenameTuples), Globals.maxProcesses ) )
+                with multiprocessing.Pool( processes=Globals.maxProcesses ) as pool: # start worker processes
+                    results = pool.map( self._loadBookMP, self.maximumPossibleFilenameTuples ) # have the pool do our loads
+                    assert( len(results) == len(self.maximumPossibleFilenameTuples) )
+                    for bBook in results: self.saveBook( bBook ) # Saves them in the correct order
+            else: # Just single threaded
+                # Load the books one by one -- assuming that they have regular Paratext style filenames
+                for BBB,filename in self.maximumPossibleFilenameTuples:
+                    if Globals.verbosityLevel > 1 or Globals.debugFlag:
+                        print( _("  USFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
+                    loadedBook = self.loadBook( BBB, filename ) # also saves it
+        else:
+            logging.critical( _("USFMBible: No books to load in {}!").format( self.sourceFolder ) )
+        #print( self.getBookList() )
         self.doPostLoadProcessing()
     # end of USFMBible.load
 # end of class USFMBible
@@ -401,7 +408,7 @@ def demo():
                     # print( UBErrors )
                 if Globals.commandLineOptions.export:
                     ##UsfmB.toDrupalBible()
-                    UsfmB.doAllExports( wantPhotoBible=False, wantPDFs=False)
+                    UsfmB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                     if name != "UEP": # Why does this fail to pickle?
                         newObj = Globals.unpickleObject( name + '.pickle' )
                         if Globals.verbosityLevel > 0: print( "newObj is", newObj )
@@ -459,7 +466,7 @@ def demo():
                             UsfmB.check()
                             UsfmBErrors = UsfmB.getErrors()
                             #print( UsfmBErrors )
-                        if Globals.commandLineOptions.export: UsfmB.doAllExports()
+                        if Globals.commandLineOptions.export: UsfmB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                     else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
             if count: print( "\n{} total USFM (partial) Bibles processed.".format( count ) )
             if totalBooks: print( "{} total books ({} average per folder)".format( totalBooks, round(totalBooks/count) ) )

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # HaggaiXMLBible.py
-#   Last modified: 2014-05-15 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-15 by RJH (also update ProgVersion below)
 #
 # Module handling Haggai XML Bibles
 #
@@ -755,7 +755,7 @@ def demo():
                             try: print( reference, svk.getShortText(), zb.getVerseText( svk ) )
                             except KeyError: print( something, reference, "doesn't exist" )
                     if Globals.commandLineOptions.export:
-                        zb.doAllExports()
+                        zb.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                     else:
                         zb.toHaggaiXML()
                 else: print( "Sorry, skipping {}.".format( something ) )

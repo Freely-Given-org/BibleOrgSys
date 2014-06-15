@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Bible.py
-#   Last modified: 2014-03-04 (also update ProgVersion below)
+#   Last modified: 2014-06-15 (also update ProgVersion below)
 #
 # Module handling a internal Bible object
 #
@@ -354,7 +354,7 @@ def demo():
             if Globals.verbosityLevel > 0: print( UB )
             if Globals.strictCheckingFlag:
                 UB.check()
-            UB.doAllExports( "OutputFiles" )
+            UB.doAllExports( "OutputFiles", wantPhotoBible=False, wantODFs=False, wantPDFs=False )
         else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 # end of demo
 

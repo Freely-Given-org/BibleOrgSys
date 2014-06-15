@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # TheWordBible.py
-#   Last modified: 2014-06-08 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-15 by RJH (also update ProgVersion below)
 #
 # Module handling "theWord" Bible module files
 #
@@ -51,7 +51,7 @@ e.g.,
 """
 
 ProgName = "theWord Bible format handler"
-ProgVersion = "0.20"
+ProgVersion = "0.30"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -62,7 +62,7 @@ from gettext import gettext as _
 import multiprocessing
 
 import Globals
-from USFMMarkers import oftenIgnoredUSFMHeaderMarkers, removeUSFMCharacterField, replaceUSFMCharacterFields
+from USFMMarkers import OFTEN_IGNORED_USFM_HEADER_MARKERS, removeUSFMCharacterField, replaceUSFMCharacterFields
 from BibleOrganizationalSystems import BibleOrganizationalSystem
 
 
@@ -325,7 +325,7 @@ def theWordFileCompare( filename1, filename2, folder1=None, folder2=None, printF
 
 
 # These next three functions are used both by theWord and MySword exports
-theWordIgnoredIntroMarkers = oftenIgnoredUSFMHeaderMarkers + (
+theWordIgnoredIntroMarkers = OFTEN_IGNORED_USFM_HEADER_MARKERS + (
     'imt1','imt2','imt3','imt4', 'imte1','imte2','imte3','imte4', 'is1','is2','is3','is4',
     'ip','ipi','im','imi','ipq','imq','ir', 'iq1','iq2','iq3','iq4', 'ib','ili',
     'iot','io1','io2','io3','io4', 'ir','iex','iqt', 'mte1','mte2','mte3','mte4', 'ie', )
@@ -340,30 +340,30 @@ def theWordHandleIntroduction( BBB, bookData, ourGlobals ):
 
     Returns the information in a composed line string.
     """
-    C = V = 0
+    intC = intV = 0
     composedLine = ''
     while True:
-        #print( "theWordHandleIntroduction", BBB, C, V )
-        try: result = bookData.getCVRef( (BBB,'0',str(V),) ) # Currently this only gets one line
+        #print( "theWordHandleIntroduction", BBB, intC, intV )
+        try: result = bookData.getCVRef( (BBB,'0',str(intV),) ) # Currently this only gets one line
         except KeyError: break # Reached the end of the introduction
         verseData, context = result
         assert( len(verseData ) == 1 ) # in the introductory section
         marker, text = verseData[0].getMarker(), verseData[0].getFullText()
-        if marker not in theWordIgnoredIntroMarkers:
-            if marker in ('mt1','mte1'): composedLine += '<TS1>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-            elif marker in ('mt2','mte2'): composedLine += '<TS2>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-            elif marker in ('mt3','mte3'): composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-            elif marker in ('mt4','mte4'): composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-            elif marker=='ms1': composedLine += '<TS2>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-            elif marker in ('ms2','ms3','ms4'): composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
-            elif marker=='mr': composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
+        if marker not in theWordIgnoredIntroMarkers and '¬' not in marker: # don't need end markers here either
+            if marker in ('mt1','mte1'): composedLine += '<TS1>'+theWordAdjustLine(BBB,intC,intV,text)+'<Ts>'
+            elif marker in ('mt2','mte2'): composedLine += '<TS2>'+theWordAdjustLine(BBB,intC,intV,text)+'<Ts>'
+            elif marker in ('mt3','mte3'): composedLine += '<TS3>'+theWordAdjustLine(BBB,intC,intV,text)+'<Ts>'
+            elif marker in ('mt4','mte4'): composedLine += '<TS3>'+theWordAdjustLine(BBB,intC,intV,text)+'<Ts>'
+            elif marker=='ms1': composedLine += '<TS2>'+theWordAdjustLine(BBB,intC,intV,text)+'<Ts>'
+            elif marker in ('ms2','ms3','ms4'): composedLine += '<TS3>'+theWordAdjustLine(BBB,intC,intV,text)+'<Ts>'
+            elif marker=='mr': composedLine += '<TS3>'+theWordAdjustLine(BBB,intC,intV,text)+'<Ts>'
             else:
                 logging.warning( "theWordHandleIntroduction: doesn't handle {} '{}' yet".format( BBB, marker ) )
                 if Globals.debugFlag and debuggingThisModule:
                     print( "theWordHandleIntroduction: doesn't handle {} '{}' yet".format( BBB, marker ) )
                     halt
                 ourGlobals['unhandledMarkers'].add( marker + ' (in intro)' )
-        V += 1 # Step to the next introductory section "verse"
+        intV += 1 # Step to the next introductory section "verse"
 
     # Check what's left at the end
     if '\\' in composedLine:
@@ -495,6 +495,7 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
     #if BBB=='MAT' and C==4 and 14<V<18: print( BBB, C, V, ourGlobals, verseData )
     for verseDataEntry in verseData:
         marker, text = verseDataEntry.getMarker(), verseDataEntry.getFullText()
+        if '¬' in marker: continue # Just ignore end markers -- not needed here
         if marker in ('c','c#','cl','cp','rem',): lastMarker = marker; continue  # ignore all of these for this
 
         if marker == 'v': # handle versification differences here
@@ -1132,7 +1133,7 @@ def testTWB( TWBfolder, TWBfilename ):
 
         # Now export the Bible and compare the round trip
         tWb.totheWord()
-        #doaResults = tWb.doAllExports()
+        #doaResults = tWb.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
         if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
             outputFolder = "OutputFiles/BOS_theWord_Reexport/"
             if Globals.verbosityLevel > 1: print( "\nComparing original and re-exported theWord files..." )

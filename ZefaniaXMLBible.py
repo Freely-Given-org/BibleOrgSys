@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ZefaniaXMLBible.py
-#   Last modified: 2014-05-15 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-15 by RJH (also update ProgVersion below)
 #
 # Module handling Zefania XML Bibles
 #
@@ -745,7 +745,7 @@ def demo():
                             #try: print( reference, svk.getShortText(), zb.getVerseText( svk ) )
                             #except KeyError: print( something, reference, "doesn't exist" )
                     #if Globals.commandLineOptions.export:
-                        #zb.doAllExports()
+                        #zb.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                 #else: print( "Sorry, skipping {}.".format( something ) )
             #if count: print( "\n{} total Zefania Bibles processed.".format( count ) )
         #else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testBaseFolder ) )

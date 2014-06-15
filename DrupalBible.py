@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # DrupalBible.py
-#   Last modified: 2014-04-25 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-15 by RJH (also update ProgVersion below)
 #
 # Module handling DrupalBible Bible files
 #
@@ -305,7 +305,7 @@ def testDB( TUBfilename ):
     db.load() # Load and process the file
     if Globals.verbosityLevel > 1: print( db ) # Just print a summary
     if Globals.strictCheckingFlag: db.check()
-    if Globals.commandLineOptions.export: db.doAllExports()
+    if Globals.commandLineOptions.export: db.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
     for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
                         ('OT','DAN','1','21'),
                         ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleInternals.py
-#   Last modified: 2014-06-04 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-15 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for Bible books
 #
@@ -38,10 +38,11 @@ and then calls
 """
 
 ProgName = "Bible internals handler"
-ProgVersion = "0.31"
+ProgVersion = "0.40"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
+MAX_NONCRITICAL_ERRORS_PER_BOOK = 5
 
 
 import os, logging
@@ -60,7 +61,7 @@ TRAILING_WORD_PUNCT_CHARS = """,.”»"’›'?)!;:]}>"""
 ALL_WORD_PUNCT_CHARS = LEADING_WORD_PUNCT_CHARS + MEDIAL_WORD_PUNCT_CHARS + DASH_CHARS + TRAILING_WORD_PUNCT_CHARS
 
 
-PSEUDO_USFM_NEWLINE_MARKERS = ( 'c~', 'c#', 'v-', 'v+', 'v~', 'vw', 'g', 'p~', 'cl=', 'vp~', )
+BOS_NEWLINE_MARKERS = ( 'c~', 'c#', 'v-', 'v+', 'v~', 'vw', 'g', 'p~', 'cl=', 'vp~', )
 """
     c~  anything after the chapter number on a \c line
     c#  the chapter number in the correct position to be printed
@@ -76,8 +77,10 @@ PSEUDO_USFM_NEWLINE_MARKERS = ( 'c~', 'c#', 'v-', 'v+', 'v~', 'vw', 'g', 'p~', '
     vp~ used for the vp (character field) when it is converted to a separate (newline) field
             This is inserted BEFORE the v (and v~) marker(s)
 """
-PSEUDO_OSIS_MARKERS = ( 'pp+', )
-NON_USFM_MARKERS = PSEUDO_USFM_NEWLINE_MARKERS + PSEUDO_OSIS_MARKERS
+
+BOS_END_MARKERS = ('c¬', 'v¬', )
+
+BOS_MARKERS = BOS_NEWLINE_MARKERS + BOS_END_MARKERS
 
 EXTRA_TYPES = ( 'fn', 'en', 'xr', 'fig', 'str', 'vp', )
 """
@@ -88,8 +91,6 @@ EXTRA_TYPES = ( 'fn', 'en', 'xr', 'fig', 'str', 'vp', )
     str Strongs' number
     vp  published verse number
 """
-
-MAX_NONCRITICAL_ERRORS_PER_BOOK = 5
 
 
 
@@ -234,8 +235,12 @@ class InternalBibleEntry:
     def __init__( self, marker, originalMarker, adjustedText, cleanText, extras, originalText ):
         """
         Accept the parameters and double-check them if requested.
+
+        Normally all of the parameters are strings.
+        But for end markers, only the marker parameter and cleanText are strings
+            and the other parameters must all be None.
         """
-        if '\\' in cleanText:
+        if cleanText is not None and '\\' in cleanText:
             logging.error( "InternalBibleEntry expects clean text not {}={}".format( marker, repr(cleanText) ) )
         #if 'it*' in originalText and 'it*' not in adjustedText:
             #print( "InternalBibleEntry constructor had problem with it* (probably in a footnote) in {} {} {}".format( marker, repr(originalText), repr(adjustedText) ) )
@@ -247,22 +252,27 @@ class InternalBibleEntry:
                         #originalText[:35]+('...' if len(originalText)>35 else '') ) )
             assert( marker and isinstance( marker, str ) ) # Mustn't be blank
             assert( '\\' not in marker and ' ' not in marker and '*' not in marker )
-            assert( originalMarker and isinstance( originalMarker, str ) ) # Mustn't be blank
-            assert( '\\' not in originalMarker and ' ' not in originalMarker and '*' not in originalMarker )
-            assert( isinstance( adjustedText, str ) )
-            assert( '\n' not in adjustedText and '\r' not in adjustedText )
             assert( isinstance( cleanText, str ) )
             assert( '\n' not in cleanText and '\r' not in cleanText )
-            assert( '\\' not in cleanText )
-            assert( isinstance( extras, InternalBibleExtraList ) )
-            assert( isinstance( originalText, str ) )
-            assert( '\n' not in originalText and '\r' not in originalText )
-            #assert( marker in Globals.USFMMarkers or marker in NON_USFM_MARKERS )
-            if marker not in Globals.USFMMarkers and marker not in NON_USFM_MARKERS:
-                logging.warning( "InternalBibleEntry doesn't handle '{}' marker yet.".format( marker ) )
+
+            if marker[0] == '¬': # It's an end marker
+                assert( originalMarker is None and adjustedText is None and extras is None and originalText is None )
+            else: # it's not an end marker
+                assert( originalMarker and isinstance( originalMarker, str ) ) # Mustn't be blank
+                assert( '\\' not in originalMarker and ' ' not in originalMarker and '*' not in originalMarker )
+                assert( isinstance( adjustedText, str ) )
+                assert( '\n' not in adjustedText and '\r' not in adjustedText )
+                assert( '\\' not in cleanText )
+                assert( extras is None or isinstance( extras, InternalBibleExtraList ) )
+                assert( isinstance( originalText, str ) )
+                assert( '\n' not in originalText and '\r' not in originalText )
+                #assert( marker in Globals.USFMMarkers or marker in BOS_NEWLINE_MARKERS )
+                if marker not in Globals.USFMMarkers and marker not in BOS_NEWLINE_MARKERS:
+                    logging.warning( "InternalBibleEntry doesn't handle '{}' marker yet.".format( marker ) )
         self.marker, self.originalMarker, self.adjustedText, self.cleanText, self.extras, self.originalText = marker, originalMarker, adjustedText, cleanText, extras, originalText
 
-        if Globals.debugFlag and debuggingThisModule and self.getFullText() != self.originalText.strip():
+        if Globals.debugFlag and debuggingThisModule \
+        and self.originalText is not None and self.getFullText() != self.originalText.strip():
             print( "InternalBibleEntry.Full", repr(self.getFullText()) ) # Has footnote in wrong place on verse numbers (before instead of after)
             print( "InternalBibleEntry.Orig", repr(self.originalText.strip()) ) # Has missing footnotes on verse numbers
             #halt # When does this happen?
@@ -315,21 +325,22 @@ class InternalBibleEntry:
         """
         result = self.adjustedText
         offset = 0
-        for extraType, extraIndex, extraText, cleanExtraText in self.extras: # do any footnotes and cross-references
-            #print( "getFullText: {} at {} = '{}' ({})".format( extraType, extraIndex, extraText, cleanExtraText ) )
-            #print( "getFullText:  was '{}'".format( result ) )
-            ix = extraIndex + offset
-            if extraType == 'fn': USFM, lenUSFM = 'f', 1
-            elif extraType == 'en': USFM, lenUSFM = 'fe', 2
-            elif extraType == 'xr': USFM, lenUSFM = 'x', 1
-            elif extraType == 'fig': USFM, lenUSFM = 'fig', 3
-            elif extraType == 'str': USFM, lenUSFM = 'str', 3 # Ignore Strong's numbers since no way to encode them in USFM
-            elif extraType == 'vp': USFM, lenUSFM = 'vp', 2
-            elif Globals.debugFlag: halt
-            if USFM:
-                result = '{}\\{} {}\\{}*{}'.format( result[:ix], USFM, extraText, USFM, result[ix:] )
-            #print( "getFullText:  now '{}'".format( result ) )
-            offset += len(extraText ) + 2*lenUSFM + 4
+        if self.extras:
+            for extraType, extraIndex, extraText, cleanExtraText in self.extras: # do any footnotes and cross-references
+                #print( "getFullText: {} at {} = '{}' ({})".format( extraType, extraIndex, extraText, cleanExtraText ) )
+                #print( "getFullText:  was '{}'".format( result ) )
+                ix = extraIndex + offset
+                if extraType == 'fn': USFM, lenUSFM = 'f', 1
+                elif extraType == 'en': USFM, lenUSFM = 'fe', 2
+                elif extraType == 'xr': USFM, lenUSFM = 'x', 1
+                elif extraType == 'fig': USFM, lenUSFM = 'fig', 3
+                elif extraType == 'str': USFM, lenUSFM = 'str', 3 # Ignore Strong's numbers since no way to encode them in USFM
+                elif extraType == 'vp': USFM, lenUSFM = 'vp', 2
+                elif Globals.debugFlag: halt
+                if USFM:
+                    result = '{}\\{} {}\\{}*{}'.format( result[:ix], USFM, extraText, USFM, result[ix:] )
+                #print( "getFullText:  now '{}'".format( result ) )
+                offset += len(extraText ) + 2*lenUSFM + 4
 
         #if result != self.adjustedText:
             #if len(self.extras) > 1:
@@ -390,7 +401,8 @@ class InternalBibleEntryList:
             dataLen = len( self.data )
             for j, entry in enumerate( self.data ):
                 if Globals.debugFlag: assert( isinstance( entry, InternalBibleEntry ) )
-                cleanAbbreviation = entry.cleanText if len(entry.cleanText)<100 else (entry.cleanText[:50]+'...'+entry.cleanText[-50:])
+                cleanAbbreviation = entry.cleanText if entry.cleanText is None or len(entry.cleanText)<100 \
+                                                    else (entry.cleanText[:50]+'...'+entry.cleanText[-50:])
                 result += "\n  {}{}/ {} = {}{}".format( ' ' if j<9 and dataLen>=10 else '', j+1, entry.marker, repr(cleanAbbreviation), " + extras" if entry.extras else '' )
                 if j>=maxPrinted and dataLen>maxPrinted:
                     result += "\n  ... ({} total entries)".format( dataLen )
@@ -787,7 +799,7 @@ class InternalBibleIndex:
                     if marker == 'cp': assert( previousMarker in ('c','c~',None) ) # WEB Ps 151 gives None -- not totally sure why yet?
                     elif marker == 'c#': assert( nextMarker in ( 'v', 'vp~', ) )
                     elif marker == 'v':
-                        if markers[-1] != 'v' and nextMarker != 'v~':
+                        if markers[-1] != 'v' and nextMarker not in ('v~','¬v',): # end marker if verse is blank
                             logging.critical( "InternalBibleIndex.checkIndex: Probable v encoding error in {} {} {}:{} {}".format( self.name, self.BBB, C, V, entries ) )
                             if Globals.debugFlag and debuggingThisModule: halt
                     elif marker == 'vp~': assert( nextMarker == 'v' )
@@ -797,22 +809,25 @@ class InternalBibleIndex:
                             if Globals.debugFlag and debuggingThisModule: halt
 
                     if anyText or anyExtras: # Mustn't be a blank (unfinished) verse
-                        if marker=='p' and nextMarker not in ('v','p~','c#',):
+                        if marker=='p' and nextMarker not in ('v','p~','c#','¬p'):
                             if lastKey: print( "InternalBibleIndex.checkIndex: lastKey1", self.BBB, lastKey, self.getEntries( lastKey )[0] )
                             logging.critical( "InternalBibleIndex.checkIndex: Probable p encoding error in {} {} {}:{} {}".format( self.name, self.BBB, C, V, entries ) )
                             if nextKey: print( "  InternalBibleIndex.checkIndex: nextKey1", self.BBB, nextKey, self.getEntries( nextKey )[0] )
                             if nextNextKey: print( "  InternalBibleIndex.checkIndex: nextNextKey1", self.BBB, nextNextKey, self.getEntries( nextNextKey )[0] )
                             if Globals.debugFlag and debuggingThisModule: halt
-                        elif marker=='q1' and nextMarker not in ('v','p~','c#','q1','q2',):
+                        elif marker=='q1' and nextMarker not in ('v','p~','c#','¬q1',):
                             if lastKey: print( "InternalBibleIndex.checkIndex: lastKey2", self.BBB, lastKey, self.getEntries( lastKey )[0] )
                             logging.critical( "InternalBibleIndex.checkIndex: Probable q1 encoding error in {} {} {}:{} {}".format( self.name, self.BBB, C, V, entries ) )
                             if nextKey: print( "  InternalBibleIndex.checkIndex: nextKey2", self.BBB, nextKey, self.getEntries( nextKey )[0] )
                             if nextNextKey: print( "  InternalBibleIndex.checkIndex: nextNextKey2", self.BBB, nextNextKey, self.getEntries( nextNextKey )[0] )
                             if Globals.debugFlag and debuggingThisModule: halt
-                        elif marker=='q2' and nextMarker not in ('v','p~', 'q1','q2','q3','q4', ):
+                        elif marker=='q2' and nextMarker not in ('v','p~', '¬q2' ):
                                 logging.critical( "InternalBibleIndex.checkIndex: Probable q2 encoding error in {} {} {}:{} {}".format( self.name, self.BBB, C, V, entries ) )
                                 if Globals.debugFlag and debuggingThisModule: halt
-                        elif marker=='q3' and nextMarker not in ('p~', 'q1','q2','q3','q4',):
+                        elif marker=='q3' and nextMarker not in ('p~', '¬q3'):
+                                logging.critical( "InternalBibleIndex.checkIndex: Probable q3 encoding error in {} {} {}:{} {}".format( self.name, self.BBB, C, V, entries ) )
+                                if Globals.debugFlag and debuggingThisModule: halt
+                        elif marker=='q4' and nextMarker not in ('p~', '¬q3'):
                                 logging.critical( "InternalBibleIndex.checkIndex: Probable q3 encoding error in {} {} {}:{} {}".format( self.name, self.BBB, C, V, entries ) )
                                 if Globals.debugFlag and debuggingThisModule: halt
 

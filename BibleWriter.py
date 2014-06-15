@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-06-10 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-15 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -59,14 +59,14 @@ Contains functions:
     toODF( outputFolder=None ) for LibreOffice/OpenOffice exports
     toPhotoBible( outputFolder=None )
     toTeX( outputFolder=None ) and thence to PDF
-    doAllExports( givenOutputFolderName=None, wantPhotoBible=False, wantPDFs=False )
+    doAllExports( givenOutputFolderName=None, wantPhotoBible=False, wantODFs=False, wantPDFs=False )
 
 Note that not all exports export all books.
     Some formats only handle subsets, e.g. may not handle front or back matter, glossaries, or deuterocanonical books
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.77"
+ProgVersion = "0.80"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -88,7 +88,7 @@ import Globals, ControlFiles
 from InternalBible import InternalBible
 from BibleOrganizationalSystems import BibleOrganizationalSystem
 from BibleReferences import BibleReferenceList
-from USFMMarkers import oftenIgnoredUSFMHeaderMarkers, USFMIntroductionMarkers, USFMBibleParagraphMarkers, removeUSFMCharacterField, replaceUSFMCharacterFields
+from USFMMarkers import OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS, removeUSFMCharacterField, replaceUSFMCharacterFields
 from MLWriter import MLWriter
 
 
@@ -288,7 +288,8 @@ class BibleWriter( InternalBible ):
         for BBB,bookObject in self.books.items():
             C = V = '0' # Just for error messages
             for entry in bookObject._processedLines:
-                marker, text, cleanText = entry.getMarker(), entry.getText(), entry.getCleanText()
+                marker, text, cleanText, extras = entry.getMarker(), entry.getText(), entry.getCleanText(), entry.getExtras()
+                if '¬' in marker: continue # Just ignore end markers -- not needed here
 
                 # Keep track of where we are for more helpful error messages
                 if marker=='c' and text: C, V = text.split()[0], '0'
@@ -297,17 +298,18 @@ class BibleWriter( InternalBible ):
                 if text and Globals.USFMMarkers.isPrinted(marker): # process this main text
                     countWords( marker, cleanText, "main" )
 
-                for extraType, extraIndex, extraText, cleanExtraText in entry.getExtras(): # do any footnotes and cross-references
-                    if Globals.debugFlag:
-                        assert( extraText ) # Shouldn't be blank
-                        #assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
-                        assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
-                        #print( extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
-                        assert( extraIndex >= 0 )
-                        #assert( 0 <= extraIndex <= len(text)+3 )
-                        #assert( extraType in ('fn','xr',) )
-                        assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
-                    countWords( extraType, cleanExtraText, "notes" )
+                if extras:
+                    for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
+                        if Globals.debugFlag:
+                            assert( extraText ) # Shouldn't be blank
+                            #assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
+                            assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
+                            #print( extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
+                            assert( extraIndex >= 0 )
+                            #assert( 0 <= extraIndex <= len(text)+3 )
+                            #assert( extraType in ('fn','xr',) )
+                            assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
+                        countWords( extraType, cleanExtraText, "notes" )
 
         # Now sort the lists and write them each twice (sorted by word and sorted by count)
         printWordCounts( "all_wordcounts", allWordCounts )
@@ -522,12 +524,12 @@ class BibleWriter( InternalBible ):
                 gotVP = None
                 for entry in pseudoUSFMData:
                     marker, text = entry.getMarker(), entry.getCleanText()
-                    if marker in oftenIgnoredUSFMHeaderMarkers or marker in ('ie',): # Just ignore these lines
+                    if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
                         ignoredMarkers.add( marker )
                     elif marker == 'h':
                         if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
                         myFile.write( "{}\n\n".format( text ) )
-                    elif marker in USFMIntroductionMarkers: # Drop the introduction
+                    elif marker in USFM_INTRODUCTION_MARKERS: # Drop the introduction
                         ignoredMarkers.add( marker )
                     elif marker in ('mt1','mt2','mt3','mt4', 'imt1','imt2','imt3','imt4',):
                         if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
@@ -805,43 +807,44 @@ class BibleWriter( InternalBible ):
 
 
                 adjText = text
-                offset = 0
-                for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
-                    #print( "{} {}:{} Text='{}' eT={}, eI={}, eText='{}'".format( BBB, C, V, text, extraType, extraIndex, extraText ) )
-                    adjIndex = extraIndex - offset
-                    lenT = len( adjText )
-                    if adjIndex > lenT: # This can happen if we have verse/space/notes at end (and the space was deleted after the note was separated off)
-                        logging.warning( _("formatMarkdownVerseText: Space before note at end of verse in {} {}:{} has been lost").format( BBB, C, V ) )
-                        # No need to adjust adjIndex because the code below still works
-                    elif adjIndex<0 or adjIndex>lenT: # The extras don't appear to fit correctly inside the text
-                        print( "formatMarkdownVerseText: Extras don't fit inside verse at {} {}:{}: eI={} o={} len={} aI={}".format( BBB, C, V, extraIndex, offset, len(text), adjIndex ) )
-                        print( "  Verse='{}'".format( text ) )
-                        print( "  Extras='{}'".format( extras ) )
-                    #assert( 0 <= adjIndex <= len(verse) )
-                    #adjText = checkText( extraText, checkLeftovers=False ) # do any general character formatting
-                    #if adjText!=extraText: print( "processXRefsAndFootnotes: {}@{}-{}={} '{}' now '{}'".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
-                    if extraType == 'fn':
-                        extra = processNote( extraText, 'footnote' )
-                        #print( "fn got", extra )
-                    elif extraType == 'en':
-                        extra = processNote( extraText, 'endnote' )
-                        #print( "en got", extra )
-                    elif extraType == 'xr':
-                        extra = processXRef( extraText )
-                        #print( "xr got", extra )
-                    elif extraType == 'fig':
-                        extra = processFigure( extraText )
-                        #print( "fig got", extra )
-                    elif extraType == 'str':
-                        extra = ""
-                    elif extraType == 'vp':
-                        extra = "\\vp {}\\vp*".format( extraText ) # Will be handled later
-                    elif Globals.debugFlag and debuggingThisModule: print( 'eT', extraType ); halt
-                    #print( "was", verse )
-                    if extra:
-                        adjText = adjText[:adjIndex] + extra + adjText[adjIndex:]
-                        offset -= len( extra )
-                    #print( "now", verse )
+                if extras:
+                    offset = 0
+                    for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
+                        #print( "{} {}:{} Text='{}' eT={}, eI={}, eText='{}'".format( BBB, C, V, text, extraType, extraIndex, extraText ) )
+                        adjIndex = extraIndex - offset
+                        lenT = len( adjText )
+                        if adjIndex > lenT: # This can happen if we have verse/space/notes at end (and the space was deleted after the note was separated off)
+                            logging.warning( _("formatMarkdownVerseText: Space before note at end of verse in {} {}:{} has been lost").format( BBB, C, V ) )
+                            # No need to adjust adjIndex because the code below still works
+                        elif adjIndex<0 or adjIndex>lenT: # The extras don't appear to fit correctly inside the text
+                            print( "formatMarkdownVerseText: Extras don't fit inside verse at {} {}:{}: eI={} o={} len={} aI={}".format( BBB, C, V, extraIndex, offset, len(text), adjIndex ) )
+                            print( "  Verse='{}'".format( text ) )
+                            print( "  Extras='{}'".format( extras ) )
+                        #assert( 0 <= adjIndex <= len(verse) )
+                        #adjText = checkText( extraText, checkLeftovers=False ) # do any general character formatting
+                        #if adjText!=extraText: print( "processXRefsAndFootnotes: {}@{}-{}={} '{}' now '{}'".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
+                        if extraType == 'fn':
+                            extra = processNote( extraText, 'footnote' )
+                            #print( "fn got", extra )
+                        elif extraType == 'en':
+                            extra = processNote( extraText, 'endnote' )
+                            #print( "en got", extra )
+                        elif extraType == 'xr':
+                            extra = processXRef( extraText )
+                            #print( "xr got", extra )
+                        elif extraType == 'fig':
+                            extra = processFigure( extraText )
+                            #print( "fig got", extra )
+                        elif extraType == 'str':
+                            extra = ""
+                        elif extraType == 'vp':
+                            extra = "\\vp {}\\vp*".format( extraText ) # Will be handled later
+                        elif Globals.debugFlag and debuggingThisModule: print( 'eT', extraType ); halt
+                        #print( "was", verse )
+                        if extra:
+                            adjText = adjText[:adjIndex] + extra + adjText[adjIndex:]
+                            offset -= len( extra )
+                        #print( "now", verse )
                 return adjText
             # end of __formatMarkdownVerseText.handleExtras
 
@@ -901,7 +904,7 @@ class BibleWriter( InternalBible ):
                 gotVP = None
                 for entry in pseudoUSFMData:
                     marker, adjText, extras = entry.getMarker(), entry.getAdjustedText(), entry.getExtras()
-                    if marker in oftenIgnoredUSFMHeaderMarkers or marker in ('ie',): # Just ignore these lines
+                    if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
                         ignoredMarkers.add( marker )
                     elif marker in ('mt1','mt2','mt3','mt4', 'imt1','imt2','imt3','imt4',):
                         if textBuffer: myFile.write( "{}".format( textBuffer ) ); textBuffer = ""
@@ -1128,13 +1131,14 @@ class BibleWriter( InternalBible ):
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, adjText, extras = verseDataEntry.getMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
                 #print( "toDoor43:writeD43Book", BBB, bookRef, bookName, marker, adjText, extras )
+                if '¬' in marker: continue # Just ignore end markers -- not needed here
                 if marker in ('id','h', 'mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4',
                               'imt1','imt2','imt3','imt4', 'imte1','imte2','imte3','imte4',):
                     writerObject.writeLineComment( '\\{} {}'.format( marker, adjText ) )
                     bookName = adjText # in case there's no toc2 entry later
                 elif marker == 'toc2':
                     bookName = adjText
-                elif marker in oftenIgnoredUSFMHeaderMarkers or marker in ('nb','b','ib','ie',): # Just ignore these lines
+                elif marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('nb','b','ib','ie',): # Just ignore these lines
                     ignoredMarkers.add( marker )
                 elif marker == 'iot': # outline title
                     if adjText: writerObject.writeLineOpenClose( 'p', adjText, )
@@ -1842,7 +1846,8 @@ class BibleWriter( InternalBible ):
                 #print( "toHTML5.writeHTML5Book", BBB, C, V, marker, text )
 
                 # Markers usually only found in the introduction
-                if marker in oftenIgnoredUSFMHeaderMarkers or marker in ('ie',): # Just ignore these lines
+                if '¬' in marker: continue # Just ignore end markers -- not needed here
+                if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
                     ignoredMarkers.add( marker )
                 elif marker in ('mt1','mt2','mt3','mt4', 'imt1','imt2','imt3','imt4',):
                     if Globals.debugFlag: assert( not haveOpenParagraph )
@@ -2349,9 +2354,10 @@ class BibleWriter( InternalBible ):
                     chapterOutputData = [] # Start afresh
                     lastC = C
                 extrasList = []
-                for extra in extras:
-                    extrasList.append( (extra.getType(),extra.getIndex(),extra.getText()) )
-                    #print( extra )
+                if extras:
+                    for extra in extras:
+                        extrasList.append( (extra.getType(),extra.getIndex(),extra.getText()) )
+                        #print( extra )
                 if extrasList:
                     chapterOutputData.append( (marker,text,extrasList) )
                     outputData.append( (marker,text,extrasList) )
@@ -2438,7 +2444,8 @@ class BibleWriter( InternalBible ):
                 #print( " toCB: {} {}:{} {}:{}".format( BBB, C, V, marker, repr(text) ) )
 
                 # Markers usually only found in the introduction
-                if marker in oftenIgnoredUSFMHeaderMarkers or marker in ('ie',): # Just ignore these lines
+                if '¬' in marker: continue # Just ignore end markers -- not needed here
+                if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
                     ignoredMarkers.add( marker )
                 elif marker in ('mt1','mt2','mt3','mt4', 'imt1','imt2','imt3','imt4',):
                     if Globals.debugFlag: assert( not pOpen )
@@ -2743,7 +2750,7 @@ class BibleWriter( InternalBible ):
                 intV1, intV2 = toInt( V1 ), toInt( V2 )
                 newHTMLIndex.append( (B,intC1,intV1,intC2,intV2,fO,rL) )
             #createdHTMLIndex = sorted(createdHTMLIndex)
-            print( "    {} index entries created.".format( len(newHTMLIndex) ) )
+            #print( "    toCustomBible: {} index entries created.".format( len(newHTMLIndex) ) )
             #filepath = os.path.join( outputFolder, 'CBHeader.json' )
             if Globals.verbosityLevel > 2: print( "    toCustomBible: " +  _("Exporting index to {}...").format( destinationIndexFilepath ) )
             with open( destinationIndexFilepath, 'wt' ) as jsonFile:
@@ -2820,6 +2827,7 @@ class BibleWriter( InternalBible ):
                 Handles character formatting markers within the originalText.
                 Tries to find pairs of markers and replaces them with html char segments.
                 """
+                if not originalText: return ''
                 if '\\' not in originalText: return originalText
                 if Globals.debugFlag and debuggingThisModule: print( "toUSXXML:hITM4USX:", BBB, C, V, marker, "'"+originalText+"'" )
                 markerList = sorted( Globals.USFMMarkers.getMarkerListFromText( originalText ),
@@ -3030,41 +3038,42 @@ class BibleWriter( InternalBible ):
 
 
                 adjText = text
-                offset = 0
-                for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
-                    #print( "{} {}:{} Text='{}' eT={}, eI={}, eText='{}'".format( BBB, C, V, text, extraType, extraIndex, extraText ) )
-                    adjIndex = extraIndex - offset
-                    lenT = len( adjText )
-                    if adjIndex > lenT: # This can happen if we have verse/space/notes at end (and the space was deleted after the note was separated off)
-                        logging.warning( _("toUSXXML: Space before note at end of verse in {} {}:{} has been lost").format( BBB, C, V ) )
-                        # No need to adjust adjIndex because the code below still works
-                    elif adjIndex<0 or adjIndex>lenT: # The extras don't appear to fit correctly inside the text
-                        print( "toUSXXML: Extras don't fit inside verse at {} {}:{}: eI={} o={} len={} aI={}".format( BBB, C, V, extraIndex, offset, len(text), adjIndex ) )
-                        print( "  Verse='{}'".format( text ) )
-                        print( "  Extras='{}'".format( extras ) )
-                    #assert( 0 <= adjIndex <= len(verse) )
-                    #adjText = checkText( extraText, checkLeftovers=False ) # do any general character formatting
-                    #if adjText!=extraText: print( "processXRefsAndFootnotes: {}@{}-{}={} '{}' now '{}'".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
-                    if extraType == 'fn':
-                        extra = processFootnote( extraText )
-                        #print( "fn got", extra )
-                    elif extraType == 'xr':
-                        extra = processXRef( extraText )
-                        #print( "xr got", extra )
-                    elif extraType == 'fig':
-                        logging.critical( "USXXML figure not handled yet" )
-                        extra = "" # temp
-                        #extra = processFigure( extraText )
-                        #print( "fig got", extra )
-                    elif extraType == 'str':
-                        extra = "" # temp
-                    elif extraType == 'vp':
-                        extra = "\\vp {}\\vp*".format( extraText ) # Will be handled later
-                    elif Globals.debugFlag and debuggingThisModule: print( extraType ); halt
-                    #print( "was", verse )
-                    adjText = adjText[:adjIndex] + extra + adjText[adjIndex:]
-                    offset -= len( extra )
-                    #print( "now", verse )
+                if extras:
+                    offset = 0
+                    for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
+                        #print( "{} {}:{} Text='{}' eT={}, eI={}, eText='{}'".format( BBB, C, V, text, extraType, extraIndex, extraText ) )
+                        adjIndex = extraIndex - offset
+                        lenT = len( adjText )
+                        if adjIndex > lenT: # This can happen if we have verse/space/notes at end (and the space was deleted after the note was separated off)
+                            logging.warning( _("toUSXXML: Space before note at end of verse in {} {}:{} has been lost").format( BBB, C, V ) )
+                            # No need to adjust adjIndex because the code below still works
+                        elif adjIndex<0 or adjIndex>lenT: # The extras don't appear to fit correctly inside the text
+                            print( "toUSXXML: Extras don't fit inside verse at {} {}:{}: eI={} o={} len={} aI={}".format( BBB, C, V, extraIndex, offset, len(text), adjIndex ) )
+                            print( "  Verse='{}'".format( text ) )
+                            print( "  Extras='{}'".format( extras ) )
+                        #assert( 0 <= adjIndex <= len(verse) )
+                        #adjText = checkText( extraText, checkLeftovers=False ) # do any general character formatting
+                        #if adjText!=extraText: print( "processXRefsAndFootnotes: {}@{}-{}={} '{}' now '{}'".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
+                        if extraType == 'fn':
+                            extra = processFootnote( extraText )
+                            #print( "fn got", extra )
+                        elif extraType == 'xr':
+                            extra = processXRef( extraText )
+                            #print( "xr got", extra )
+                        elif extraType == 'fig':
+                            logging.critical( "USXXML figure not handled yet" )
+                            extra = "" # temp
+                            #extra = processFigure( extraText )
+                            #print( "fig got", extra )
+                        elif extraType == 'str':
+                            extra = "" # temp
+                        elif extraType == 'vp':
+                            extra = "\\vp {}\\vp*".format( extraText ) # Will be handled later
+                        elif Globals.debugFlag and debuggingThisModule: print( extraType ); halt
+                        #print( "was", verse )
+                        adjText = adjText[:adjIndex] + extra + adjText[adjIndex:]
+                        offset -= len( extra )
+                        #print( "now", verse )
                 return adjText
             # end of toUSXXML.handleNotes
 
@@ -3091,6 +3100,7 @@ class BibleWriter( InternalBible ):
             gotVP = None
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, originalMarker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getOriginalMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
+                if '¬' in marker: continue # Just ignore end markers -- not needed here
                 markerShouldHaveContent = Globals.USFMMarkers.markerShouldHaveContent( marker )
                 #print( BBB, C, V, marker, markerShouldHaveContent, haveOpenPara, paraJustOpened )
                 adjText = handleNotes( text, extras )
@@ -3266,6 +3276,7 @@ class BibleWriter( InternalBible ):
                 Handles character formatting markers within the originalText.
                 Tries to find pairs of markers and replaces them with html char segments.
                 """
+                if not originalText: return ''
                 if '\\' not in originalText: return originalText
                 if Globals.debugFlag and debuggingThisModule: print( "toUSFXXML:hITM4USFX:", BBB, C, V, marker, "'"+originalText+"'" )
                 markerList = sorted( Globals.USFMMarkers.getMarkerListFromText( originalText ),
@@ -3476,41 +3487,42 @@ class BibleWriter( InternalBible ):
 
 
                 adjText = text
-                offset = 0
-                for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
-                    #print( "{} {}:{} Text='{}' eT={}, eI={}, eText='{}'".format( BBB, C, V, text, extraType, extraIndex, extraText ) )
-                    adjIndex = extraIndex - offset
-                    lenT = len( adjText )
-                    if adjIndex > lenT: # This can happen if we have verse/space/notes at end (and the space was deleted after the note was separated off)
-                        logging.warning( _("toUSFXXML: Space before note at end of verse in {} {}:{} has been lost").format( BBB, C, V ) )
-                        # No need to adjust adjIndex because the code below still works
-                    elif adjIndex<0 or adjIndex>lenT: # The extras don't appear to fit correctly inside the text
-                        print( "toUSFXXML: Extras don't fit inside verse at {} {}:{}: eI={} o={} len={} aI={}".format( BBB, C, V, extraIndex, offset, len(text), adjIndex ) )
-                        print( "  Verse='{}'".format( text ) )
-                        print( "  Extras='{}'".format( extras ) )
-                    #assert( 0 <= adjIndex <= len(verse) )
-                    #adjText = checkText( extraText, checkLeftovers=False ) # do any general character formatting
-                    #if adjText!=extraText: print( "processXRefsAndFootnotes: {}@{}-{}={} '{}' now '{}'".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
-                    if extraType == 'fn':
-                        extra = processFootnote( extraText )
-                        #print( "fn got", extra )
-                    elif extraType == 'xr':
-                        extra = processXRef( extraText )
-                        #print( "xr got", extra )
-                    elif extraType == 'fig':
-                        logging.critical( "USXFXML figure not handled yet" )
-                        extra = "" # temp
-                        #extra = processFigure( extraText )
-                        #print( "fig got", extra )
-                    elif extraType == 'str':
-                        extra = "" # temp
-                    elif extraType == 'vp':
-                        extra = "\\vp {}\\vp*".format( extraText ) # Will be handled later
-                    elif Globals.debugFlag and debuggingThisModule: print( extraType ); halt
-                    #print( "was", verse )
-                    adjText = adjText[:adjIndex] + extra + adjText[adjIndex:]
-                    offset -= len( extra )
-                    #print( "now", verse )
+                if extras:
+                    offset = 0
+                    for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
+                        #print( "{} {}:{} Text='{}' eT={}, eI={}, eText='{}'".format( BBB, C, V, text, extraType, extraIndex, extraText ) )
+                        adjIndex = extraIndex - offset
+                        lenT = len( adjText )
+                        if adjIndex > lenT: # This can happen if we have verse/space/notes at end (and the space was deleted after the note was separated off)
+                            logging.warning( _("toUSFXXML: Space before note at end of verse in {} {}:{} has been lost").format( BBB, C, V ) )
+                            # No need to adjust adjIndex because the code below still works
+                        elif adjIndex<0 or adjIndex>lenT: # The extras don't appear to fit correctly inside the text
+                            print( "toUSFXXML: Extras don't fit inside verse at {} {}:{}: eI={} o={} len={} aI={}".format( BBB, C, V, extraIndex, offset, len(text), adjIndex ) )
+                            print( "  Verse='{}'".format( text ) )
+                            print( "  Extras='{}'".format( extras ) )
+                        #assert( 0 <= adjIndex <= len(verse) )
+                        #adjText = checkText( extraText, checkLeftovers=False ) # do any general character formatting
+                        #if adjText!=extraText: print( "processXRefsAndFootnotes: {}@{}-{}={} '{}' now '{}'".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
+                        if extraType == 'fn':
+                            extra = processFootnote( extraText )
+                            #print( "fn got", extra )
+                        elif extraType == 'xr':
+                            extra = processXRef( extraText )
+                            #print( "xr got", extra )
+                        elif extraType == 'fig':
+                            logging.critical( "USXFXML figure not handled yet" )
+                            extra = "" # temp
+                            #extra = processFigure( extraText )
+                            #print( "fig got", extra )
+                        elif extraType == 'str':
+                            extra = "" # temp
+                        elif extraType == 'vp':
+                            extra = "\\vp {}\\vp*".format( extraText ) # Will be handled later
+                        elif Globals.debugFlag and debuggingThisModule: print( extraType ); halt
+                        #print( "was", verse )
+                        adjText = adjText[:adjIndex] + extra + adjText[adjIndex:]
+                        offset -= len( extra )
+                        #print( "now", verse )
                 return adjText
             # end of toUSFXXML.handleNotes
 
@@ -3528,6 +3540,7 @@ class BibleWriter( InternalBible ):
             gotVP = None
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, originalMarker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getOriginalMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
+                if '¬' in marker: continue # Just ignore end markers -- not needed here
                 markerShouldHaveContent = Globals.USFMMarkers.markerShouldHaveContent( marker )
                 #print( BBB, C, V, marker, markerShouldHaveContent, haveOpenPara, paraJustOpened )
                 adjText = handleNotes( text, extras )
@@ -3998,41 +4011,42 @@ class BibleWriter( InternalBible ):
                     return OSISfootnote
                 # end of toOSISXML.processFootnote
 
-                #if extras: print( '\n', chapterRef )
-                if Globals.debugFlag: assert( offset >= 0 )
-                for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
-                    adjIndex = extraIndex - offset
-                    lenV = len( verse )
-                    if adjIndex > lenV: # This can happen if we have verse/space/notes at end (and the space was deleted after the note was separated off)
-                        logging.warning( _("toOSIS: Space before note at end of verse in {} has been lost").format( toOSISGlobals["verseRef"] ) )
-                        # No need to adjust adjIndex because the code below still works
-                    elif adjIndex<0 or adjIndex>lenV: # The extras don't appear to fit correctly inside the verse
-                        print( "toOSIS: Extras don't fit inside verse at {}: eI={} o={} len={} aI={}".format( toOSISGlobals["verseRef"], extraIndex, offset, len(verse), adjIndex ) )
-                        print( "  Verse='{}'".format( verse ) )
-                        print( "  Extras='{}'".format( extras ) )
-                    #assert( 0 <= adjIndex <= len(verse) )
-                    adjText = checkText( extraText, checkLeftovers=False ) # do any general character formatting on the notes
-                    #if adjText!=extraText: print( "processXRefsAndFootnotes: {}@{}-{}={} '{}' now '{}'".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
-                    if extraType == 'fn':
-                        extra = processFootnote( adjText )
-                        #print( "fn got", extra )
-                    elif extraType == 'xr':
-                        extra = processXRef( adjText )
-                        #print( "xr got", extra )
-                    elif extraType == 'fig':
-                        logging.critical( "OSISXML figure not handled yet" )
-                        extra = "" # temp
-                        #extra = processFigure( extraText )
-                        #print( "fig got", extra )
-                    elif extraType == 'str':
-                        extra = "" # temp
-                    elif extraType == 'vp':
-                        extra = "\\vp {}\\vp*".format( extraText ) # Will be handled later
-                    elif Globals.debugFlag and debuggingThisModule: print( extraType ); halt
-                    #print( "was", verse )
-                    verse = verse[:adjIndex] + extra + verse[adjIndex:]
-                    offset -= len( extra )
-                    #print( "now", verse )
+                if extras:
+                    #print( '\n', chapterRef )
+                    if Globals.debugFlag: assert( offset >= 0 )
+                    for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
+                        adjIndex = extraIndex - offset
+                        lenV = len( verse )
+                        if adjIndex > lenV: # This can happen if we have verse/space/notes at end (and the space was deleted after the note was separated off)
+                            logging.warning( _("toOSIS: Space before note at end of verse in {} has been lost").format( toOSISGlobals["verseRef"] ) )
+                            # No need to adjust adjIndex because the code below still works
+                        elif adjIndex<0 or adjIndex>lenV: # The extras don't appear to fit correctly inside the verse
+                            print( "toOSIS: Extras don't fit inside verse at {}: eI={} o={} len={} aI={}".format( toOSISGlobals["verseRef"], extraIndex, offset, len(verse), adjIndex ) )
+                            print( "  Verse='{}'".format( verse ) )
+                            print( "  Extras='{}'".format( extras ) )
+                        #assert( 0 <= adjIndex <= len(verse) )
+                        adjText = checkText( extraText, checkLeftovers=False ) # do any general character formatting on the notes
+                        #if adjText!=extraText: print( "processXRefsAndFootnotes: {}@{}-{}={} '{}' now '{}'".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
+                        if extraType == 'fn':
+                            extra = processFootnote( adjText )
+                            #print( "fn got", extra )
+                        elif extraType == 'xr':
+                            extra = processXRef( adjText )
+                            #print( "xr got", extra )
+                        elif extraType == 'fig':
+                            logging.critical( "OSISXML figure not handled yet" )
+                            extra = "" # temp
+                            #extra = processFigure( extraText )
+                            #print( "fig got", extra )
+                        elif extraType == 'str':
+                            extra = "" # temp
+                        elif extraType == 'vp':
+                            extra = "\\vp {}\\vp*".format( extraText ) # Will be handled later
+                        elif Globals.debugFlag and debuggingThisModule: print( extraType ); halt
+                        #print( "was", verse )
+                        verse = verse[:adjIndex] + extra + verse[adjIndex:]
+                        offset -= len( extra )
+                        #print( "now", verse )
                 return verse
             # end of toOSISXML.processXRefsAndFootnotes
 
@@ -4166,13 +4180,14 @@ class BibleWriter( InternalBible ):
             C = V = '0'
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
+                if '¬' in marker: continue # Just ignore end markers -- not needed here
                 #print( "BibleWriter.toOSIS: {} {}:{} {}={}{}".format( BBB, C, V, marker, repr(text), " + extras" if extras else "" ) )
 
                 if haveOpenList and marker not in ('li1','li2','li3','li4', 'ili1','ili2','ili3','ili4',):
                     writerObject.writeLineClose( 'list' )
                     haveOpenList = False
 
-                if marker in oftenIgnoredUSFMHeaderMarkers or marker in ('ie',):
+                if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',):
                     ignoredMarkers.add( marker )
                     continue # Just ignore these lines
                 elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4',):
@@ -4510,7 +4525,8 @@ class BibleWriter( InternalBible ):
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getFullText(), verseDataEntry.getExtras()
                 #if marker in ('id', 'ide', 'h', 'toc1','toc2','toc3', ): pass # Just ignore these metadata markers
-                if marker in oftenIgnoredUSFMHeaderMarkers or marker in ('ie',): # Just ignore these lines
+                if '¬' in marker: continue # Just ignore end markers -- not needed here
+                if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
                     ignoredMarkers.add( marker )
 
                 elif marker == 'c':
@@ -4534,10 +4550,10 @@ class BibleWriter( InternalBible ):
                     #writerObject.writeLineOpenClose ( 'VERS', verseText, ('vnumber',verseNumberString) )
 
                 elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4', 'ms1','ms2','ms3','ms4',) \
-                or marker in USFMIntroductionMarkers \
+                or marker in USFM_INTRODUCTION_MARKERS \
                 or marker in ('s1','s2','s3','s4', 'r','sr','mr', 'd','sp', ):
                     ignoredMarkers.add( marker )
-                elif marker in USFMBibleParagraphMarkers:
+                elif marker in USFM_BIBLE_PARAGRAPH_MARKERS:
                     if Globals.debugFlag: assert( not text and not extras )
                     ignoredMarkers.add( marker )
                 elif marker in ('b', 'nb', 'ib', ):
@@ -4679,7 +4695,8 @@ class BibleWriter( InternalBible ):
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getFullText(), verseDataEntry.getExtras()
                 #if marker in ('id', 'ide', 'h', 'toc1','toc2','toc3', ): pass # Just ignore these metadata markers
-                if marker in oftenIgnoredUSFMHeaderMarkers or marker in ('ie',): # Just ignore these lines
+                if '¬' in marker: continue # Just ignore end markers -- not needed here
+                if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
                     ignoredMarkers.add( marker )
 
                 elif marker == 'c':
@@ -4710,10 +4727,10 @@ class BibleWriter( InternalBible ):
                     writerObject.writeLineOpen ( 'PARAGRAPH' )
                     haveOpenParagraph = True
                 elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4', 'ms1','ms2','ms3','ms4', ) \
-                or marker in USFMIntroductionMarkers \
+                or marker in USFM_INTRODUCTION_MARKERS \
                 or marker in ('s1','s2','s3','s4', 'r','sr','mr', 'd','sp', ):
                     ignoredMarkers.add( marker )
-                elif marker in USFMBibleParagraphMarkers:
+                elif marker in USFM_BIBLE_PARAGRAPH_MARKERS:
                     if Globals.debugFlag: assert( not text and not extras )
                     ignoredMarkers.add( marker )
                 elif marker in ('b', 'nb', 'ib', ):
@@ -4837,7 +4854,8 @@ class BibleWriter( InternalBible ):
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getCleanText(), verseDataEntry.getExtras()
                 #print( marker, repr(text) )
                 #if text: assert( text[0] != ' ' )
-                if marker in oftenIgnoredUSFMHeaderMarkers or marker in ('ie',): # Just ignore these lines
+                if '¬' in marker: continue # Just ignore end markers -- not needed here
+                if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
                     ignoredMarkers.add( marker )
 
                 elif marker == 'c':
@@ -4867,10 +4885,10 @@ class BibleWriter( InternalBible ):
                     verseNumberString = text.replace('<','').replace('>','').replace('"','') # Used below but remove anything that'll cause a big XML problem later
 
                 elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4', 'ms1','ms2','ms3','ms4', ) \
-                or marker in USFMIntroductionMarkers \
+                or marker in USFM_INTRODUCTION_MARKERS \
                 or marker in ('s1','s2','s3','s4', 'r','sr','mr', 'd','sp', ):
                     ignoredMarkers.add( marker )
-                elif marker in USFMBibleParagraphMarkers:
+                elif marker in USFM_BIBLE_PARAGRAPH_MARKERS:
                     if Globals.debugFlag: assert( not text and not extras )
                     ignoredMarkers.add( marker )
                 elif marker in ('b', 'nb', 'ib', ):
@@ -5364,6 +5382,7 @@ class BibleWriter( InternalBible ):
             C = V = '0'
             for verseDataEntry in bkData._processedLines: # Process internal Bible data lines
                 marker, text, extras = verseDataEntry.getMarker(), verseDataEntry.getAdjustedText(), verseDataEntry.getExtras()
+                if '¬' in marker: continue # Just ignore end markers -- not needed here
                 #print( BBB, marker, text )
                 #print( " ", haveOpenIntro, haveOpenOutline, haveOpenMajorSection, haveOpenSection, haveOpenSubsection, needChapterEID, haveOpenParagraph, haveOpenVsID, haveOpenLG, haveOpenL )
                 #print( toSwordGlobals['idStack'] )
@@ -5372,7 +5391,7 @@ class BibleWriter( InternalBible ):
                     writerObject.writeLineClose( 'list' )
                     haveOpenList = False
 
-                if marker in oftenIgnoredUSFMHeaderMarkers or marker in ('ie',): # Just ignore these lines
+                if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
                     ignoredMarkers.add( marker )
                 elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4',):
                     if text: writerObject.writeLineOpenClose( 'title', checkText(text), ('canonical',"false") )
@@ -6159,7 +6178,7 @@ class BibleWriter( InternalBible ):
                 verseData, context = result
                 assert( len(verseData ) == 1 ) # in the introductory section
                 marker, text = verseData[0].getMarker(), verseData[0].getFullText()
-                if marker not in theWordIgnoredIntroMarkers:
+                if marker not in theWordIgnoredIntroMarkers and '¬' not in marker: # don't need end markers here either
                     if   marker in ('mt1','mte1',): composedLine += '<TS1>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
                     elif marker in ('mt2','mte2',): composedLine += '<TS2>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
                     elif marker in ('mt3','mte3',): composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
@@ -6208,6 +6227,7 @@ class BibleWriter( InternalBible ):
             #if BBB=='MAT' and C==4 and 14<V<18: print( BBB, C, V, ourGlobals, verseData )
             for verseDataEntry in verseData:
                 marker, text = verseDataEntry.getMarker(), verseDataEntry.getFullText()
+                if '¬' in marker: continue # Just ignore end markers -- not needed here
                 if marker in ('c','c#','cl','cp','rem',): lastMarker = marker; continue  # ignore all of these for this
 
                 if marker == 'vp~': # This precedes a v field and has the verse number to be printed
@@ -6573,7 +6593,8 @@ class BibleWriter( InternalBible ):
             C = V = '0'
             for entry in pseudoUSFMData:
                 marker, text = entry.getMarker(), entry.getCleanText()
-                if marker in oftenIgnoredUSFMHeaderMarkers or marker in ('ie',): # Just ignore these lines
+                if '¬' in marker: continue # Just ignore end markers -- not needed here
+                if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
                     ignoredMarkers.add( marker )
 
                 elif marker == 'c': C, V = text, '0'
@@ -6591,10 +6612,10 @@ class BibleWriter( InternalBible ):
                     writer.write( "$$ {} {}:{}\n".format( bookCode, C, text ) )
 
                 elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4', 'ms1','ms2','ms3','ms4', ) \
-                or marker in USFMIntroductionMarkers \
+                or marker in USFM_INTRODUCTION_MARKERS \
                 or marker in ('s1','s2','s3','s4', 'r','sr','mr', 'd','sp', ):
                     ignoredMarkers.add( marker )
-                elif marker in USFMBibleParagraphMarkers:
+                elif marker in USFM_BIBLE_PARAGRAPH_MARKERS:
                     if Globals.debugFlag: assert( not text )
                     ignoredMarkers.add( marker )
                 elif marker in ('b', 'nb', 'ib', ):
@@ -6737,7 +6758,8 @@ class BibleWriter( InternalBible ):
             C = V = '0'
             for entry in bookObject._processedLines:
                 marker, text = entry.getMarker(), entry.getAdjustedText()
-                if marker in oftenIgnoredUSFMHeaderMarkers or marker in ('ie',): # Just ignore these lines
+                if '¬' in marker: continue # Just ignore end markers -- not needed here
+                if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
                     ignoredMarkers.add( marker )
 
                 elif marker == 'c':
@@ -6767,10 +6789,10 @@ class BibleWriter( InternalBible ):
                         #print( "toDrupalBible V is now", repr(V) )
 
                 elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4', 'ms1','ms2','ms3','ms4', ) \
-                or marker in USFMIntroductionMarkers \
+                or marker in USFM_INTRODUCTION_MARKERS \
                 or marker in ('s1','s2','s3','s4', 'r','sr','mr', 'd','sp', ):
                     ignoredMarkers.add( marker )
-                elif marker in USFMBibleParagraphMarkers:
+                elif marker in USFM_BIBLE_PARAGRAPH_MARKERS:
                     if Globals.debugFlag: assert( not text )
                     ignoredMarkers.add( marker )
                 elif marker in ('b', 'nb', 'ib', ):
@@ -7784,7 +7806,8 @@ class BibleWriter( InternalBible ):
             for entry in pseudoUSFMData:
                 marker, adjText, extras = entry.getMarker(), entry.getAdjustedText(), entry.getExtras()
                 #print( j, BBB, C, V, marker, repr(adjText) )
-                if marker in oftenIgnoredUSFMHeaderMarkers or marker in ('ie',): # Just ignore these lines
+                if '¬' in marker: continue # Just ignore end markers -- not needed here
+                if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
                     ignoredMarkers.add( marker )
 
                 elif marker == 'c':
@@ -8320,7 +8343,8 @@ class BibleWriter( InternalBible ):
             for entry in pseudoUSFMData:
                 marker, cleanText = entry.getMarker(), entry.getCleanText()
                 #print( BBB, C, V, marker, repr(cleanText) )
-                if marker in oftenIgnoredUSFMHeaderMarkers or marker in ('ie',): # Just ignore these lines
+                if '¬' in marker: continue # Just ignore end markers -- not needed here
+                if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
                     ignoredMarkers.add( marker )
                 elif marker in ('mt1','mt2','mt3','mt4','mte1','mte2','mte3','mte4',
                                 'imt1','imt2','imt3','imt4', 'imte1','imte2','imte3','imte4', 'periph',): # Simple headings
@@ -8329,7 +8353,7 @@ class BibleWriter( InternalBible ):
                 elif marker in ('s1','s2','s3','s4', 'is1','is2','is3','is4', 'ms1','ms2','ms3','ms4', 'sr',): # Simple headings
                     #if textBuffer: textBuffer += '\n'
                     textBuffer += '\n\nSsS' + cleanText + '\n'
-                elif marker in USFMIntroductionMarkers: # Drop the introduction
+                elif marker in USFM_INTRODUCTION_MARKERS: # Drop the introduction
                     ignoredMarkers.add( marker )
 
                 elif marker in ('c','cp',): # cp should follow (and thus override) c
@@ -8620,7 +8644,8 @@ class BibleWriter( InternalBible ):
                     C = V = '0'
                     for entry in bookObject._processedLines:
                         marker, text = entry.getMarker(), entry.getFullText()
-                        if marker in oftenIgnoredUSFMHeaderMarkers or marker in ('ie',): # Just ignore these lines
+                        if '¬' in marker: continue # Just ignore end markers -- not needed here
+                        if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
                             ignoredMarkers.add( marker )
                         elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4', 'ms1','ms2','ms3','ms4',):
                             if not haveTitle:
@@ -8741,15 +8766,16 @@ class BibleWriter( InternalBible ):
     # end of BibleWriter.doExportHelper
 
 
-    def doAllExports( self, givenOutputFolderName=None, wantPhotoBible=False, wantPDFs=False ):
+    def doAllExports( self, givenOutputFolderName=None, wantPhotoBible=None, wantODFs=None, wantPDFs=None ):
         """
         If the output folder is specified, it is expected that it's already created.
         Otherwise a new subfolder is created in the current folder.
 
         The two very processor intensive exports require explicit inclusion.
         """
-        allWord = "all" if wantPhotoBible and wantPDFs else "most"
-        if Globals.verbosityLevel > 1: print( "BibleWriter.doAllExports: " + _("Exporting {} ({}) to {} formats...").format( self.name, self.objectTypeString, allWord ) )
+        allWord = "all" if wantPhotoBible and wantODFs and wantPDFs else "most"
+        if Globals.verbosityLevel > 1:
+            print( "BibleWriterV{}.doAllExports: ".format(ProgVersion) + _("Exporting {} ({}) to {} formats...").format( self.name, self.objectTypeString, allWord ) )
 
         if givenOutputFolderName == None:
             givenOutputFolderName = "OutputFiles/"
@@ -8790,6 +8816,9 @@ class BibleWriter( InternalBible ):
         if not wantPhotoBible:
             if Globals.verbosityLevel > 2: print( "BibleWriter.doAllExports: " + _("Skipping PhotoBible export") )
             PhotoBibleExportResult = None
+        if not wantODFs:
+            if Globals.verbosityLevel > 2: print( "BibleWriter.doAllExports: " + _("Skipping ODF export") )
+            ODFExportResult = None
         if not wantPDFs:
             if Globals.verbosityLevel > 2: print( "BibleWriter.doAllExports: " + _("Skipping TeX/PDF export") )
             TeXExportResult = None
@@ -8826,14 +8855,14 @@ class BibleWriter( InternalBible ):
             ESwExportResult = self.toESword( ESwOutputFolder )
             SwSExportResult = self.toSwordSearcher( SwSOutputFolder )
             DrExportResult = self.toDrupalBible( DrOutputFolder )
-            ODFExportResult = self.toODF( ODFOutputFolder )
+            if wantODFs: ODFExportResult = self.toODF( ODFOutputFolder )
             if wantPhotoBible: PhotoBibleExportResult = self.toPhotoBible( photoOutputFolder )
             if wantPDFs: TeXExportResult = self.toTeX( TeXOutputFolder ) # Put this last since it's slowest
 
         elif Globals.maxProcesses > 1: # Process all the exports with different threads
             # We move the three longest processes to the top here,
             #   so they start first to help us get finished quicker on multiCPU systems.
-            self.__outputProcesses = [self.toODF,
+            self.__outputProcesses = [self.toODF if wantODFs else None,
                                     self.toPhotoBible if wantPhotoBible else None,
                                     self.toTeX if wantPDFs else None,
                                     self.makeLists, self.toPseudoUSFM, self.toUSFM, self.toText,
@@ -8850,11 +8879,12 @@ class BibleWriter( InternalBible ):
                                     swOutputFolder, TWOutputFolder, MySwOutputFolder, ESwOutputFolder,
                                     SwSOutputFolder, DrOutputFolder, ]
             assert( len(self.__outputFolders) == len(self.__outputProcesses) )
-            print( "BibleWriter.doAllExports: Running {} exports on {} CPUs".format( len(self.__outputProcesses), Globals.maxProcesses ) )
-            print( "  NOTE: Outputs (including error and warning messages) from various exports may be interspersed." )
+            if Globals.verbosityLevel > 0:
+                print( "BibleWriter.doAllExports: Running {} exports on {} CPUs".format( len(self.__outputProcesses), Globals.maxProcesses ) )
+                print( "  NOTE: Outputs (including error and warning messages) from various exports may be interspersed." )
             with multiprocessing.Pool( processes=Globals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( self.doExportHelper, zip(self.__outputProcesses,self.__outputFolders) ) # have the pool do our loads
-                print( "BibleWriter.doAllExports: Got {} results".format( len(results) ) )
+                if Globals.verbosityLevel > 0: print( "BibleWriter.doAllExports: Got {} results".format( len(results) ) )
                 assert( len(results) == len(self.__outputFolders) )
                 ODFExportResult, PhotoBibleExportResult, TeXExportResult, \
                     listOutputResult, pseudoUSFMExportResult, USFMExportResult, textExportResult, \
@@ -8964,11 +8994,12 @@ class BibleWriter( InternalBible ):
                 DrExportResult = False
                 print("BibleWriter.doAllExports.toDrupalBible Unexpected error:", sys.exc_info()[0], err)
                 logging.error( "BibleWriter.doAllExports.toDrupalBible: Oops, failed!" )
-            try: ODFExportResult = self.toODF( ODFOutputFolder )
-            except Exception as err:
-                ODFExportResult = False
-                print("BibleWriter.doAllExports.toODF Unexpected error:", sys.exc_info()[0], err)
-                logging.error( "BibleWriter.doAllExports.toODF: Oops, failed!" )
+            if wantODFs:
+                try: ODFExportResult = self.toODF( ODFOutputFolder )
+                except Exception as err:
+                    ODFExportResult = False
+                    print("BibleWriter.doAllExports.toODF Unexpected error:", sys.exc_info()[0], err)
+                    logging.error( "BibleWriter.doAllExports.toODF: Oops, failed!" )
             if wantPhotoBible:
                 try: PhotoBibleExportResult = self.toPhotoBible( photoOutputFolder )
                 except Exception as err:
@@ -8989,7 +9020,7 @@ class BibleWriter( InternalBible ):
             and ZefExportResult and HagExportResult and OSExportResult \
             and swExportResult and TWExportResult and MySwExportResult and ESwExportResult \
             and SwSExportResult and DrExportResult \
-            and ODFExportResult and (PhotoBibleExportResult or not wantPhotoBible) and (TeXExportResult or not wantPDFs):
+            and (ODFExportResult or not wantODFs) and (PhotoBibleExportResult or not wantPhotoBible) and (TeXExportResult or not wantPDFs):
                 print( "BibleWriter.doAllExports finished them all successfully!" )
             else: print( "BibleWriter.doAllExports finished:  Pck={}  Lst={}  PsUSFM={} USFM={} Tx={}  md={} D43={}  "
                     "HTML={} CB={}  USX={} USFX={} OSIS={}  Zef={} Hag={} OS={}  Sw={}  "
@@ -9046,6 +9077,7 @@ def demo():
                 #("WEB", "WEB", "../../../../../Data/Work/Bibles/From eBible/WEB/eng-web_usfm 2013-07-18/",),
                 #("WEB", "WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-03-05 eng-web_usfm/",),
                 #("WEB", "WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2014-04-23 eng-web_usfm/",),
+                #("OSISTest1", "OSIS1", "Tests/DataFilesForTests/OSISTest1/",),
                 ) # You can put your USFM test folder here
 
         for j, (name, abbrev, testFolder) in enumerate( testData ):
@@ -9055,7 +9087,7 @@ def demo():
                 if Globals.verbosityLevel > 0: print( '\nBibleWriter A'+str(j+1)+'/', UB )
                 if Globals.strictCheckingFlag: UB.check()
                 #UB.toOSISXML(); halt
-                doaResults = UB.doAllExports( wantPhotoBible=False, wantPDFs=False )
+                doaResults = UB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                 if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
                     outputFolder = "OutputFiles/BOS_USFM_Reexport/"
                     fN = USFMFilenames( testFolder )
@@ -9085,7 +9117,7 @@ def demo():
                 UB.load()
                 if Globals.verbosityLevel > 0: print( '\nBibleWriter B'+str(j+1)+'/', UB )
                 if Globals.strictCheckingFlag: UB.check()
-                doaResults = UB.doAllExports( wantPhotoBible=True, wantPDFs=False )
+                doaResults = UB.doAllExports( wantPhotoBible=True, wantODFs=False, wantPDFs=False )
                 if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
                     outputFolder = "OutputFiles/BOS_USX_Reexport/"
                     fN = USXFilenames( testFolder )
@@ -9129,7 +9161,7 @@ def demo():
                 if Globals.verbosityLevel > 0: print( '\nBibleWriter C'+str(j+1)+'/', UB )
                 #if Globals.strictCheckingFlag: UB.check()
                 #result = UB.totheWord()
-                doaResults = UB.doAllExports( wantPhotoBible=True, wantPDFs=True )
+                doaResults = UB.doAllExports( wantPhotoBible=True, wantODFs=True, wantPDFs=True )
                 if Globals.strictCheckingFlag: # Now compare the supplied and the exported theWord modules
                     outputFolder = "OutputFiles/BOS_theWord_Export/"
                     if os.path.exists( os.path.join( mainFolder, name + '.nt' ) ): ext = '.nt'

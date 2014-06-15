@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # UnknownBible.py
-#   Last modified: 2014-03-24 (also update ProgVersion below)
+#   Last modified: 2014-06-15 (also update ProgVersion below)
 #
 # Module handling a unknown Bible object
 #
@@ -381,7 +381,7 @@ def demo():
             if Globals.verbosityLevel > 0: print( uB )
             if result:
                 result.check()
-                results = result.doAllExports()
+                results = result.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                 if Globals.verbosityLevel > 2: print( "  Results are: {}".format( results ) )
 # end of demo
 

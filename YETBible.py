@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # YETBible.py
-#   Last modified: 2014-04-25 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-15 by RJH (also update ProgVersion below)
 #
 # Module handling YET Bible files
 #
@@ -470,7 +470,7 @@ def testYB( TUBfilename ):
     yb.load() # Load and process the file
     if Globals.verbosityLevel > 1: print( yb ) # Just print a summary
     if Globals.strictCheckingFlag: yb.check()
-    if Globals.commandLineOptions.export: yb.doAllExports()
+    if Globals.commandLineOptions.export: yb.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
     for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
                         ('OT','DAN','1','21'),
                         ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \
