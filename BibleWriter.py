@@ -56,8 +56,8 @@ Contains functions:
     toESword( outputFolder=None )
     toSwordSearcher( outputFolder=None )
     toDrupalBible( outputFolder=None )
-    toODF( outputFolder=None ) for LibreOffice/OpenOffice exports
     toPhotoBible( outputFolder=None )
+    toODF( outputFolder=None ) for LibreOffice/OpenOffice exports
     toTeX( outputFolder=None ) and thence to PDF
     doAllExports( givenOutputFolderName=None, wantPhotoBible=False, wantODFs=False, wantPDFs=False )
 
@@ -6849,6 +6849,493 @@ class BibleWriter( InternalBible ):
 
 
 
+    def toPhotoBible( self, outputFolder=None ):
+        """
+        Write the pseudo USFM out into a simple plain-text format.
+            The format varies, depending on whether or not there are paragraph markers in the text.
+                I need to see a page showing 26-32 characters per line and 13-14 lines per page
+
+        Although this code could be made to handle different fonts,
+            ImageMagick convert is unable to handle complex scripts.  :(
+        """
+        if Globals.verbosityLevel > 1: print( "Running BibleWriter:toPhotoBible..." )
+        if Globals.debugFlag: assert( self.books )
+
+        if not self.doneSetupGeneric: self.__setupWriter()
+        if not outputFolder: outputFolder = "OutputFiles/BOS_PhotoBible_Export/"
+        if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
+
+        ignoredMarkers, unhandledMarkers = set(), set()
+
+        # First determine our format
+        pixelWidth, pixelHeight = 240, 320
+        leftPadding = 1
+        defaultFontSize, defaultLeadingRatio = 20, 1.2
+        defaultLineSize = int( defaultLeadingRatio * defaultFontSize )
+        maxLineCharacters, maxLines = 26, 12
+        maxDown = pixelHeight-1 - defaultLineSize - 3 # Be sure to leave one blank line at the bottom
+        # Use "identify -list font" or "convert -list font" to see all fonts on the system (use the Font field, not the family field)
+        defaultTextFontname, defaultHeadingFontname = "Times-Roman", "FreeSans-Bold"
+        topLineColor = "opaque"
+        defaultMainHeadingFontcolor, defaultSectionHeadingFontcolor, defaultSectionCrossReferenceFontcolor = "indigo", "red1", "royalBlue"
+        defaultVerseNumberFontcolor = "DarkOrange1"
+        maxBooknameLetters = 12 # For the header line -- the chapter number is appended to this
+        namingFormat = "Short" # "Short" or "Long" -- affects folder and filenames
+        colorVerseNumbersFlag = False
+        #digitSpace = chr(8199) # '\u2007'
+
+        #blankFilepath = os.path.join( defaultControlFolder, "blank-240x320.jpg" )
+        # Used: convert -fill khaki1 -draw 'rectangle 0,0 240,24' blank-240x320.jpg.jpg yblank-240x320.jpg
+        #       Available colors are at http://www.imagemagick.org/script/color.php
+        blankFilepath = os.path.join( defaultControlFolder, "yblank-240x320.jpg" )
+
+        def render( commandList, jpegFilepath ):
+            """
+            """
+            #print( "render: {} on {}".format( commandList, jpegFilepath ) )
+
+            # Run the script on our data
+            parameters = ['/usr/bin/timeout', '10s', '/usr/bin/convert' ]
+            parameters.extend( commandList )
+            parameters.append( jpegFilepath ) # input file
+            parameters.append( jpegFilepath ) # output file
+            #print( "Parameters", repr(parameters) )
+            myProcess = subprocess.Popen( parameters, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
+            programOutputBytes, programErrorOutputBytes = myProcess.communicate()
+            returnCode = myProcess.returncode
+
+            # Process the output
+            if programOutputBytes:
+                programOutputString = programOutputBytes.decode( encoding="utf-8", errors="replace" )
+                logging.critical( "renderLine: " + programOutputString )
+                #with open( os.path.join( outputFolder, "UncompressedScriptOutput.txt" ), 'wt' ) as myFile: myFile.write( programOutputString )
+            if programErrorOutputBytes:
+                programErrorOutputString = programErrorOutputBytes.decode( encoding="utf-8", errors="replace" )
+                logging.critical( "renderLineE: " + programErrorOutputString )
+                #with open( os.path.join( outputFolder, "UncompressedScriptErrorOutput.txt" ), 'wt' ) as myFile: myFile.write( programErrorOutputString )
+
+            return returnCode
+        # end of render
+
+        lastFontcolor = lastFontsize = lastFontname = None
+        def renderLine( across, down, text, jpegFilepath, fontsize, fontname, fontcolor ):
+            """
+                convert -pointsize 36 -fill red -draw 'text 10,10 "Happy Birthday - You old so and so" ' test.jpg test1.jpg
+            """
+            nonlocal lastFontcolor, lastFontsize, lastFontname
+            #print( "renderLine( {}, {}, {}, {}, {}, {}, {} )".format( across, down, repr(text), jpegFilepath, fontsize, fontcolor, leading ) )
+            #fc = " -fill {}".format( fontcolor ) if fontcolor is not None else ''
+
+            # Prepare the commands to render this line of text on the page
+            commands = []
+            if fontname != lastFontname:
+                commands.append( '-font' ); commands.append( fontname )
+                lastFontname = fontname
+            if fontsize != lastFontsize:
+                commands.append( '-pointsize' ); commands.append( str(fontsize) )
+                lastFontsize = fontsize
+            if fontcolor != lastFontcolor:
+                commands.append( '-fill' ); commands.append( fontcolor )
+                lastFontcolor = fontcolor
+            commands.append( '-draw' )
+            commands.append( 'text {},{} {}'.format( across, down, repr(text) ) )
+            return commands
+        # end of renderLine
+
+
+        def renderVerseNumbers( givenAcross, down, vnInfo, jpegFilepath, fontsize, fontname, fontcolor ):
+            """
+            Failed experiment. A space is narrower than a digit. The Unicode digitSpace doesn't work in ImageMagick.
+            """
+            vnLineBuffer = ""
+            vnCommands = []
+            for posn,vn in vnInfo:
+                #print( posn, repr(vn) )
+                vnLineBuffer += ' ' * (posn - len(vnLineBuffer) ) + vn # Space is too narrow
+                print( repr(vnLineBuffer), vnInfo )
+
+                across = givenAcross + posn * fontsize * 3 / 10
+                vnCommands.extend( renderLine( across, down, vn, jpegFilepath, fontsize, fontname, fontcolor ) )
+            return vnCommands
+        # end of renderVerseNumbers
+
+
+        def renderPage( BBB, C, bookName, text, jpegFilepath, fontsize=None ):
+            """
+                I need to see a page showing 26-32 characters per line and 13-14 lines per page
+            """
+            nonlocal lastFontcolor, lastFontsize, lastFontname
+            lastFontcolor = lastFontsize = lastFontname = None # So we're sure to get the initial commands in the stream
+
+            #print( "\nrenderPage( {}, {}, {}, {}, {}, {} )".format( BBB, C, repr(bookName), repr(text), jpegFilepath, fontsize ) )
+
+            # Create the blank file
+            shutil.copy( blankFilepath, jpegFilepath ) # Copy it under its own name
+
+            if fontsize is None: fontsize = defaultFontSize
+            leading = int( defaultLeadingRatio * fontsize )
+            #print( "Leading is {} for {}".format( leading, fontsize ) )
+            across, down = leftPadding, leading - 2
+
+            # Write the heading
+            heading = "{}{}".format( bookName, '' if C=='0' else ' '+C )
+            totalCommands = renderLine( across, down, heading, jpegFilepath, fontsize, defaultHeadingFontname, topLineColor )
+            down += leading
+            outputLineCount = 1
+
+            # Clean up by removing any leading and trailing new lines
+            if text and text[0]=='\n': text = text[1:]
+            if text and text[-1]=='\n': text = text[:-1]
+
+            indenter, extraLineIndent = '', 0
+            textLineCount = textWordCount = 0
+            lastLine = False
+            lines = text.split('\n')
+            #print( "Have lines:", len(lines) )
+            for originalLine in lines:
+                #print( textLineCount, "line", repr(originalLine) )
+                line = originalLine
+                fontcolor = "opaque" # gives black as default
+
+                # extraLineIndent is used for indented text
+                indenter, extraLineIndent = '', 0
+                if '_I1_' in line: indenter, extraLineIndent = '_I1_', 1; line = line.replace( '_I1_', '', 1 )
+                elif '_I2_' in line: indenter, extraLineIndent = '_I2_', 2; line = line.replace( '_I2_', '', 1 )
+                elif '_I3_' in line: indenter, extraLineIndent = '_I3_', 3; line = line.replace( '_I3_', '', 1 )
+                elif '_I4_' in line: indenter, extraLineIndent = '_I4_', 4; line = line.replace( '_I4_', '', 1 )
+                if Globals.debugFlag: # Should only be one
+                    assert( '_I1_' not in line and '_I2_' not in line and '_I3_' not in line and '_I4_' not in line )
+
+                verseNumberList = [] # Contains a list of 2-tuples indicating where verse numbers should go
+
+                if down >= maxDown - leading \
+                or outputLineCount == maxLines - 1:
+                    lastLine = True
+                if down >= maxDown: break # We're finished
+                #print( BBB, C, textLineCount, outputLineCount, down, maxDown, lastLine, repr(line) )
+
+                isMainHeading = isSectionHeading = isSectionCrossReference = False
+                if line.startswith('HhH'):
+                    if lastLine:
+                        #print( BBB, C, "Don't start main heading on last line", repr(line) )
+                        break; # Don't print headings on the last line
+                    line = line[3:] # Remove the heading marker
+                    #print( "Got main heading:", BBB, C, repr(line) )
+                    isMainHeading = True
+                    fontcolor = defaultMainHeadingFontcolor
+                elif line.startswith('SsS'):
+                    if lastLine:
+                        #print( BBB, C, "Don't start section heading on last line", repr(line) )
+                        break; # Don't print headings on the last line
+                    line = line[3:] # Remove the SsS heading marker
+                    #print( "Got section heading:", BBB, C, repr(line) )
+                    isSectionHeading = True
+                    fontcolor = defaultSectionHeadingFontcolor
+                elif line.startswith('RrR'):
+                    line = line[3:] # Remove the RrR heading marker
+                    #print( "Got section cross-reference:", BBB, C, repr(line) )
+                    isSectionCrossReference = True
+                    fontcolor = defaultSectionCrossReferenceFontcolor
+
+                textLineCount += 1
+                textWordCount = 0
+                lineBuffer = ' ' * extraLineIndent # Handle indented paragraphs
+                words = [] # Just in case the line is blank
+                if line:
+                    verseNumberLast = False
+                    words = line.split(' ')
+                    #print( textWordCount, "words", words )
+                    for w,originalWord in enumerate( words ):
+                        word = originalWord.replace( ' ', ' ' ) # Put back normal spaces
+                        isVerseNumber = False
+                        vix = word.find( 'VvV' )
+                        if vix != -1: # This must be a verse number (perhaps preceded by some spaces)
+                            word = word[:vix]+word[vix+3:]
+                            isVerseNumber = True
+                        #assert( 'VvV' not in word )
+
+                        if down >= maxDown - leading \
+                        or outputLineCount == maxLines - 1: lastLine = True
+                        if down >= maxDown: break # We're finished
+                        #print( '     ', textLineCount, outputLineCount, down, maxDown, lastLine, textWordCount, repr(word) )
+
+                        # Allow for some letter-width variations
+                        #   a bigger offset value will allow less to be added to the line
+                        # NOTE: verse numbers start with VvV
+                        #       and we don't want the last line to end with a verse number
+                        offset = 1
+                        potentialString = lineBuffer + word
+                        potentialStringLower =  potentialString.lower()
+                        capsCount = 0
+                        for letter in potentialString:
+                            if letter.isupper(): capsCount += 1
+                        offset += (potentialStringLower.count('m')+potentialStringLower.count('w')+potentialStringLower.count('—')+capsCount)/3
+                        offset -= (potentialStringLower.count(' ')+potentialStringLower.count('i')+potentialString.count('l')+potentialString.count('t'))/4
+                        #if offset != 1:
+                            #print( "Adjusted offset to", offset, "from", repr(potentialString) )
+
+                        potentialLength = len(lineBuffer) + len(word) + offset
+                        if lastLine and isVerseNumber: # We would have to include the next word also
+                            if Globals.debugFlag: assert( w < len(words)-1 )
+                            potentialLength += len(words[w+1]) + 1
+                            #print( "Adjusted pL for", BBB, C, repr(word), repr(words[w+1]) )
+                        if potentialLength  >= maxLineCharacters:
+                            # Print this line as we've already got it coz it would be too long if we added the word
+                            totalCommands.extend( renderLine( across, down, lineBuffer, jpegFilepath, fontsize, defaultTextFontname, fontcolor ) )
+                            if verseNumberList:
+                                print( repr(lineBuffer) )
+                                totalCommands.extend( renderVerseNumbers( across, down, verseNumberList, jpegFilepath, fontsize, defaultTextFontname, defaultVerseNumberFontcolor ) )
+                                verseNumberList = []
+                            down += leading
+                            outputLineCount += 1
+                            lineBuffer = ' ' * extraLineIndent # Handle indented paragraphs
+                            #print( outputLineCount, maxLines, outputLineCount>=maxLines )
+                            if outputLineCount >= maxLines: break
+                            if down >= maxDown: break # We're finished
+                        # Add the word (without the verse number markers)
+                        lineBuffer += (' ' if lineBuffer.lstrip() else '')
+                        if isVerseNumber and colorVerseNumbersFlag:
+                            verseNumberList.append( (len(lineBuffer),word,) )
+                            lineBuffer += ' ' * int( 1.6 * len(word) ) # Just put spaces in for place holders for the present
+                        else: lineBuffer += word
+                        textWordCount += 1
+
+                    # Words in this source text line are all processed
+                    if lineBuffer.lstrip(): # do the last line
+                        totalCommands.extend( renderLine( across, down, lineBuffer, jpegFilepath, fontsize, defaultTextFontname, fontcolor ) )
+                        if verseNumberList:
+                            print( repr(lineBuffer) )
+                            totalCommands.extend( renderVerseNumbers( across, down, verseNumberList, jpegFilepath, fontsize, defaultTextFontname, defaultVerseNumberFontcolor ) )
+                            verseNumberList = []
+                        down += leading
+                        outputLineCount += 1
+                elif textLineCount!=1: # it's a blank line (but not the first line on the page)
+                    down += defaultFontSize / 3 # Leave a blank 1/3 line
+                    outputLineCount += 0.4
+                #print( outputLineCount, maxLines, outputLineCount>=maxLines )
+                if outputLineCount >= maxLines: break
+
+            # Now render all those commands at once
+            render( totalCommands, jpegFilepath ) # Do all the rendering at once
+
+            # Find the left-over text
+            leftoverText = ''
+            #print( "textWordCount was", textWordCount, len(words) )
+            #print( "textLineCount was", textLineCount, len(lines) )
+            leftoverText += ' '.join( words[textWordCount:] )
+            if textLineCount < len(lines):
+                leftoverText += '\n' + '\n'.join( lines[textLineCount:] )
+
+
+            #print( "leftoverText was", repr(leftoverText) )
+            #if 'Impanalanginan te Manama si Nuwi' in text: halt
+            return indenter+leftoverText if leftoverText else ''
+        # end of renderPage
+
+
+        def renderText( BBB, BBBnum, bookName, bookAbbrev, C, maxChapters, numVerses, text, bookFolderName, fontsize=None ):
+            """
+            """
+            #print( "\nrenderText( {}, {}, {}, {}, {}, {}, {} )".format( BBB, C, repr(text), jpegFoldername, fontsize, fontcolor, leading ) )
+
+            intC = int( C )
+            if namingFormat == "Short":
+                if maxChapters < 10: chapterFoldernameTemplate = "{:01}-{}/"
+                elif maxChapters < 100: chapterFoldernameTemplate = "{:02}-{}/"
+                else: chapterFoldernameTemplate = "{:03}-{}/"
+                chapterFolderName = chapterFoldernameTemplate.format( intC, bookAbbrev )
+                filenameTemplate = "{:02}.jpg" if numVerses < 80 else "{:03}.jpg" # Might go over 99 pages for the chapter
+            elif namingFormat == "Long":
+                if BBBnum < 100:
+                    if maxChapters < 10:
+                        chapterFoldernameTemplate, filenameTemplate = "{:02}-{:01}-{}/", "{:02}-{:01}-{:02}-{}.jpg"
+                    elif maxChapters < 100:
+                        chapterFoldernameTemplate, filenameTemplate = "{:02}-{:02}-{}/", "{:02}-{:02}-{:02}-{}.jpg"
+                    else:
+                        chapterFoldernameTemplate, filenameTemplate = "{:02}-{:03}-{}/", "{:02}-{:03}-{:02}-{}.jpg"
+                else: # not normally expected
+                    if maxChapters < 10:
+                        chapterFoldernameTemplate, filenameTemplate = "{:03}-{:01}-{}/", "{:03}-{:01}-{:02}-{}.jpg"
+                    elif maxChapters < 100:
+                        chapterFoldernameTemplate, filenameTemplate = "{:03}-{:02}-{}/", "{:03}-{:02}-{:02}-{}.jpg"
+                    else:
+                        chapterFoldernameTemplate, filenameTemplate = "{:03}-{:03}-{}/", "{:03}-{:03}-{:02}-{}.jpg"
+                chapterFolderName = chapterFoldernameTemplate.format( Globals.BibleBooksCodes.getReferenceNumber( BBB ), intC, BBB )
+                if numVerses > 80: filenameTemplate = filenameTemplate.replace( "{:02}-{}", "{:03}-{}" )
+            else: halt
+
+            chapterFolderPath = os.path.join( bookFolderName, chapterFolderName )
+            if not os.access( chapterFolderPath, os.F_OK ): os.makedirs( chapterFolderPath ) # Make the empty folder if there wasn't already one there
+
+            pagesWritten = 0
+            leftoverText = text
+            while leftoverText:
+                if namingFormat == "Short":
+                    jpegOutputFilepath = os.path.join( chapterFolderPath, filenameTemplate.format( pagesWritten ) )
+                elif namingFormat == "Long":
+                    jpegOutputFilepath = os.path.join( chapterFolderPath, filenameTemplate.format( BBBnum, intC, pagesWritten, BBB ) )
+                leftoverText = renderPage( BBB, C, bookName, leftoverText, jpegOutputFilepath )
+                pagesWritten += 1
+            if Globals.debugFlag and debuggingThisModule and BBB not in ('FRT','GLS',) and pagesWritten>99 and numVerses<65: halt # Template is probably bad
+
+            #print( "pagesWritten were", pagesWritten )
+            return pagesWritten
+        # end of renderText
+
+
+        # Write the plain text files
+        for BBB,bookObject in self.books.items():
+            pseudoUSFMData = bookObject._processedLines
+
+            # Find a suitable bookname
+            bookName = self.getAssumedBookName( BBB )
+            for bookName in (self.getAssumedBookName(BBB), self.getLongTOCName(BBB), self.getShortTOCName(BBB), self.getBooknameAbbreviation(BBB), ):
+                #print( "Tried bookName:", repr(bookName) )
+                if bookName is not None and len(bookName)<=maxBooknameLetters: break
+            bookAbbrev = self.getBooknameAbbreviation( BBB )
+            bookAbbrev = BBB if not bookAbbrev else Globals.makeSafeFilename( bookAbbrev.replace( ' ', '' ) )
+
+            BBBnum = Globals.BibleBooksCodes.getReferenceNumber( BBB )
+            maxChapters = Globals.BibleBooksCodes.getMaxChapters( BBB )
+
+            # Find a suitable folder name and make the necessary folder(s)
+            if Globals.BibleBooksCodes.isOldTestament_NR( BBB ):
+                subfolderName = "OT/"
+            elif Globals.BibleBooksCodes.isNewTestament_NR( BBB ):
+                subfolderName = "NT/"
+            else:
+                subfolderName = "Other/"
+            if BBBnum < 100: bookFolderName = "{:02}-{}/".format( BBBnum, bookAbbrev )
+            else: bookFolderName = "{:03}-{}/".format( BBBnum, bookAbbrev ) # Should rarely happen
+            bookFolderPath = os.path.join( outputFolder, subfolderName, bookFolderName )
+            if not os.access( bookFolderPath, os.F_OK ): os.makedirs( bookFolderPath ) # Make the empty folder if there wasn't already one there
+
+            # First of all, get the text (by chapter)
+            C = V = '0'
+            numVerses = 0
+            textBuffer, lastMarker, gotVP = "", None, None
+            for entry in pseudoUSFMData:
+                marker, cleanText = entry.getMarker(), entry.getCleanText()
+                #print( BBB, C, V, marker, repr(cleanText) )
+                if '¬' in marker: continue # Just ignore end markers -- not needed here
+                if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
+                    ignoredMarkers.add( marker )
+                elif marker in ('mt1','mt2','mt3','mt4','mte1','mte2','mte3','mte4',
+                                'imt1','imt2','imt3','imt4', 'imte1','imte2','imte3','imte4', 'periph',): # Simple headings
+                    #if textBuffer: textBuffer += '\n'
+                    textBuffer += '\n\nHhH' + cleanText + '\n'
+                elif marker in ('s1','s2','s3','s4', 'is1','is2','is3','is4', 'ms1','ms2','ms3','ms4', 'sr',): # Simple headings
+                    #if textBuffer: textBuffer += '\n'
+                    textBuffer += '\n\nSsS' + cleanText + '\n'
+                elif marker in USFM_INTRODUCTION_MARKERS: # Drop the introduction
+                    ignoredMarkers.add( marker )
+
+                elif marker in ('c','cp',): # cp should follow (and thus override) c
+                    if textBuffer: renderText( BBB, BBBnum, bookName, bookAbbrev, C, maxChapters, numVerses, textBuffer, bookFolderPath ); textBuffer = ""
+                    C, V = cleanText, '0'
+                    numVerses = 0
+                elif marker in ('c#',): # These are the markers that we can safely ignore for this export
+                    ignoredMarkers.add( marker )
+                elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
+                    gotVP = cleanText # Just remember it for now
+                elif marker == 'v':
+                    V = cleanText
+                    if gotVP: # this is a replacement verse number for publishing
+                        cleanText = gotVP
+                        gotVP = None
+                    textBuffer += (' ' if textBuffer and textBuffer[-1]!='\n' else '') + 'VvV' + cleanText + ' '
+                    numVerses += 1
+
+                elif marker in ('d','sp',):
+                    #assert( cleanText or extras )
+                    textBuffer += '\n' + cleanText
+                elif marker in ('r','sr','mr',):
+                    #numSpaces = ( maxLineCharacters - len(cleanText) ) // 2
+                    #print( BBB, C, len(cleanText), "numSpaces:", numSpaces, repr(cleanText) )
+                    #textBuffer += '\n' + ' '*numSpaces + cleanText # Roughly centred
+                    if lastMarker not in ('s1','s2','s3','s4',): textBuffer += '\n' # Section headings already have one at the end
+                    textBuffer += 'RrR' + ' '*((maxLineCharacters+1-len(cleanText))//2) + cleanText + '\n' # Roughly centred
+                elif marker in ('p', 'pi1','pi2','pi3','pi4', 'q1','q2','q3','q4', 'm','mi','im','imi', 'ph1','ph2','ph3','ph4','pc',
+                                'li1','li2','li3','li4', 'ip','ipi', 'ili1','ili2','ili3','ili4', 'iex',):
+                    # Just put it on a new line
+                    textBuffer += '\n'
+                    if marker not in ('m','mi','im','imi','ph1','ph2','ph3','ph4',): textBuffer += '  ' # Non-break spaces won't be lost later
+                    if marker in ('li1','li2','li3','li4', 'ili1','ili2','ili3','ili4',): textBuffer += '• '
+                    if marker in ('ipi','pi1','q1','ph1','mi','imi','li1','ili1',): textBuffer += '_I1_'
+                    elif marker in ('pi2','q2','ph2','li2','ili2',): textBuffer += '_I2_'
+                    elif marker in ('pi3','q3','ph3','li3','ili3',): textBuffer += '_I3_'
+                    elif marker in ('pi4','q4','ph4','li4','ili4',): textBuffer += '_I4_'
+                    #if marker == 'q2': textBuffer += ' '
+                    #elif marker == 'q3': textBuffer += '  '
+                    if marker in ('ip','ipi','ili1','ili2','ili3','ili4',): textBuffer += cleanText
+                    elif Globals.debugFlag: assert( not cleanText )
+                elif marker in ('v~','p~',):
+                    #assert( cleanText or extras )
+                    textBuffer += cleanText
+                elif marker in ('b','nb','ib',):
+                    if Globals.debugFlag: assert( not cleanText )
+                    textBuffer += '\n'
+                    textBuffer += '\n'
+                else:
+                    if cleanText:
+                        logging.error( "toPhotoBible: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(cleanText) ) )
+                        #if Globals.debugFlag: halt
+                    unhandledMarkers.add( marker )
+                #if extras and marker not in ('v~','p~',):
+                    #logging.critical( "toPhotoBible: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
+                    #if Globals.debugFlag: halt
+                lastMarker = marker
+            if textBuffer: renderText( BBB, BBBnum, bookName, bookAbbrev, C, maxChapters, numVerses, textBuffer, bookFolderPath ) # Write the last bit
+
+                    #if verseByVerse:
+                        #myFile.write( "{} ({}): '{}' '{}' {}\n" \
+                            #.format( entry.getMarker(), entry.getOriginalMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras() ) )
+
+        if ignoredMarkers:
+            logging.info( "toPhotoBible: Ignored markers were {}".format( ignoredMarkers ) )
+            if Globals.verbosityLevel > 2:
+                print( "  " + _("WARNING: Ignored toPhotoBible markers were {}").format( ignoredMarkers ) )
+        if unhandledMarkers:
+            logging.warning( "toPhotoBible: Unhandled markers were {}".format( unhandledMarkers ) )
+            if Globals.verbosityLevel > 1:
+                print( "  " + _("WARNING: Unhandled toPhotoBible markers were {}").format( unhandledMarkers ) )
+
+        # Now create some zipped collections
+        if Globals.verbosityLevel > 2: print( "  Zipping PhotoBible files..." )
+        for subset in ('OT','NT','Other','All'):
+            loadFolder = outputFolder if subset=='All' else os.path.join( outputFolder, subset+'/' )
+            #print( repr(subset), "Load folder =", repr(loadFolder) )
+            if os.path.exists( loadFolder ):
+                zf = zipfile.ZipFile( os.path.join( outputFolder, subset+'PhotoBible.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
+                for root, dirs, files in os.walk( loadFolder ):
+                    for filename in files:
+                        if not filename.endswith( '.zip' ):
+                            #print( repr(loadFolder), repr(root), repr(dirs), repr(files) )
+                            #print( repr(os.path.relpath(os.path.join(root, filename))), repr(os.path.join(loadFolder, '..')) )
+                            #print( os.path.join(root,filename), os.path.relpath(os.path.join(root, filename), os.path.join(loadFolder, '..')) ) # Save in the archive without the path
+                            #  Save in the archive without the path --
+                            #   parameters are filename to compress, archive name (relative path) to save as
+                            zf.write( os.path.join(root,filename), os.path.relpath(os.path.join(root, filename), os.path.join(loadFolder, '..')) ) # Save in the archive without the path
+                            #zf.write( filepath, filename ) # Save in the archive without the path
+                zf.close()
+        #if self.abbreviation in ('MBTV','WEB','OEB',): # Do a special zip file of just Matthew as a test download
+        if 'MAT' in self: # Do a zip file of just Matthew as a smaller download for testers
+            zf = zipfile.ZipFile( os.path.join( outputFolder, 'MatthewPhotoBible.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
+            loadFolder = os.path.join( outputFolder, 'NT/' )
+            for root, dirs, files in os.walk( loadFolder ):
+                for filename in files:
+                    if '40-Mat' in root and not filename.endswith( '.zip' ): #  Save in the archive without the path --
+                        #   parameters are filename to compress, archive name (relative path) to save as
+                        zf.write( os.path.join(root,filename), os.path.relpath(os.path.join(root, filename), os.path.join(loadFolder, '..')) ) # Save in the archive without the path
+            zf.close()
+
+        if Globals.verbosityLevel > 0 and Globals.maxProcesses > 1:
+            print( "  BibleWriter.toPhotoBible finished successfully." )
+        return True
+    # end of BibleWriter.toPhotoBible
+
+
+
     def toODF( self, outputFolder=None ):
         """
         Write the internal Bible format out into Open Document Format (ODF)
@@ -7975,493 +8462,6 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toPhotoBible( self, outputFolder=None ):
-        """
-        Write the pseudo USFM out into a simple plain-text format.
-            The format varies, depending on whether or not there are paragraph markers in the text.
-                I need to see a page showing 26-32 characters per line and 13-14 lines per page
-
-        Although this code could be made to handle different fonts,
-            ImageMagick convert is unable to handle complex scripts.  :(
-        """
-        if Globals.verbosityLevel > 1: print( "Running BibleWriter:toPhotoBible..." )
-        if Globals.debugFlag: assert( self.books )
-
-        if not self.doneSetupGeneric: self.__setupWriter()
-        if not outputFolder: outputFolder = "OutputFiles/BOS_PhotoBible_Export/"
-        if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
-
-        ignoredMarkers, unhandledMarkers = set(), set()
-
-        # First determine our format
-        pixelWidth, pixelHeight = 240, 320
-        leftPadding = 1
-        defaultFontSize, defaultLeadingRatio = 20, 1.2
-        defaultLineSize = int( defaultLeadingRatio * defaultFontSize )
-        maxLineCharacters, maxLines = 26, 12
-        maxDown = pixelHeight-1 - defaultLineSize - 3 # Be sure to leave one blank line at the bottom
-        # Use "identify -list font" or "convert -list font" to see all fonts on the system (use the Font field, not the family field)
-        defaultTextFontname, defaultHeadingFontname = "Times-Roman", "FreeSans-Bold"
-        topLineColor = "opaque"
-        defaultMainHeadingFontcolor, defaultSectionHeadingFontcolor, defaultSectionCrossReferenceFontcolor = "indigo", "red1", "royalBlue"
-        defaultVerseNumberFontcolor = "DarkOrange1"
-        maxBooknameLetters = 12 # For the header line -- the chapter number is appended to this
-        namingFormat = "Short" # "Short" or "Long" -- affects folder and filenames
-        colorVerseNumbersFlag = False
-        #digitSpace = chr(8199) # '\u2007'
-
-        #blankFilepath = os.path.join( defaultControlFolder, "blank-240x320.jpg" )
-        # Used: convert -fill khaki1 -draw 'rectangle 0,0 240,24' blank-240x320.jpg.jpg yblank-240x320.jpg
-        #       Available colors are at http://www.imagemagick.org/script/color.php
-        blankFilepath = os.path.join( defaultControlFolder, "yblank-240x320.jpg" )
-
-        def render( commandList, jpegFilepath ):
-            """
-            """
-            #print( "render: {} on {}".format( commandList, jpegFilepath ) )
-
-            # Run the script on our data
-            parameters = ['/usr/bin/timeout', '10s', '/usr/bin/convert' ]
-            parameters.extend( commandList )
-            parameters.append( jpegFilepath ) # input file
-            parameters.append( jpegFilepath ) # output file
-            #print( "Parameters", repr(parameters) )
-            myProcess = subprocess.Popen( parameters, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
-            programOutputBytes, programErrorOutputBytes = myProcess.communicate()
-            returnCode = myProcess.returncode
-
-            # Process the output
-            if programOutputBytes:
-                programOutputString = programOutputBytes.decode( encoding="utf-8", errors="replace" )
-                logging.critical( "renderLine: " + programOutputString )
-                #with open( os.path.join( outputFolder, "UncompressedScriptOutput.txt" ), 'wt' ) as myFile: myFile.write( programOutputString )
-            if programErrorOutputBytes:
-                programErrorOutputString = programErrorOutputBytes.decode( encoding="utf-8", errors="replace" )
-                logging.critical( "renderLineE: " + programErrorOutputString )
-                #with open( os.path.join( outputFolder, "UncompressedScriptErrorOutput.txt" ), 'wt' ) as myFile: myFile.write( programErrorOutputString )
-
-            return returnCode
-        # end of render
-
-        lastFontcolor = lastFontsize = lastFontname = None
-        def renderLine( across, down, text, jpegFilepath, fontsize, fontname, fontcolor ):
-            """
-                convert -pointsize 36 -fill red -draw 'text 10,10 "Happy Birthday - You old so and so" ' test.jpg test1.jpg
-            """
-            nonlocal lastFontcolor, lastFontsize, lastFontname
-            #print( "renderLine( {}, {}, {}, {}, {}, {}, {} )".format( across, down, repr(text), jpegFilepath, fontsize, fontcolor, leading ) )
-            #fc = " -fill {}".format( fontcolor ) if fontcolor is not None else ''
-
-            # Prepare the commands to render this line of text on the page
-            commands = []
-            if fontname != lastFontname:
-                commands.append( '-font' ); commands.append( fontname )
-                lastFontname = fontname
-            if fontsize != lastFontsize:
-                commands.append( '-pointsize' ); commands.append( str(fontsize) )
-                lastFontsize = fontsize
-            if fontcolor != lastFontcolor:
-                commands.append( '-fill' ); commands.append( fontcolor )
-                lastFontcolor = fontcolor
-            commands.append( '-draw' )
-            commands.append( 'text {},{} {}'.format( across, down, repr(text) ) )
-            return commands
-        # end of renderLine
-
-
-        def renderVerseNumbers( givenAcross, down, vnInfo, jpegFilepath, fontsize, fontname, fontcolor ):
-            """
-            Failed experiment. A space is narrower than a digit. The Unicode digitSpace doesn't work in ImageMagick.
-            """
-            vnLineBuffer = ""
-            vnCommands = []
-            for posn,vn in vnInfo:
-                #print( posn, repr(vn) )
-                vnLineBuffer += ' ' * (posn - len(vnLineBuffer) ) + vn # Space is too narrow
-                print( repr(vnLineBuffer), vnInfo )
-
-                across = givenAcross + posn * fontsize * 3 / 10
-                vnCommands.extend( renderLine( across, down, vn, jpegFilepath, fontsize, fontname, fontcolor ) )
-            return vnCommands
-        # end of renderVerseNumbers
-
-
-        def renderPage( BBB, C, bookName, text, jpegFilepath, fontsize=None ):
-            """
-                I need to see a page showing 26-32 characters per line and 13-14 lines per page
-            """
-            nonlocal lastFontcolor, lastFontsize, lastFontname
-            lastFontcolor = lastFontsize = lastFontname = None # So we're sure to get the initial commands in the stream
-
-            #print( "\nrenderPage( {}, {}, {}, {}, {}, {} )".format( BBB, C, repr(bookName), repr(text), jpegFilepath, fontsize ) )
-
-            # Create the blank file
-            shutil.copy( blankFilepath, jpegFilepath ) # Copy it under its own name
-
-            if fontsize is None: fontsize = defaultFontSize
-            leading = int( defaultLeadingRatio * fontsize )
-            #print( "Leading is {} for {}".format( leading, fontsize ) )
-            across, down = leftPadding, leading - 2
-
-            # Write the heading
-            heading = "{}{}".format( bookName, '' if C=='0' else ' '+C )
-            totalCommands = renderLine( across, down, heading, jpegFilepath, fontsize, defaultHeadingFontname, topLineColor )
-            down += leading
-            outputLineCount = 1
-
-            # Clean up by removing any leading and trailing new lines
-            if text and text[0]=='\n': text = text[1:]
-            if text and text[-1]=='\n': text = text[:-1]
-
-            indenter, extraLineIndent = '', 0
-            textLineCount = textWordCount = 0
-            lastLine = False
-            lines = text.split('\n')
-            #print( "Have lines:", len(lines) )
-            for originalLine in lines:
-                #print( textLineCount, "line", repr(originalLine) )
-                line = originalLine
-                fontcolor = "opaque" # gives black as default
-
-                # extraLineIndent is used for indented text
-                indenter, extraLineIndent = '', 0
-                if '_I1_' in line: indenter, extraLineIndent = '_I1_', 1; line = line.replace( '_I1_', '', 1 )
-                elif '_I2_' in line: indenter, extraLineIndent = '_I2_', 2; line = line.replace( '_I2_', '', 1 )
-                elif '_I3_' in line: indenter, extraLineIndent = '_I3_', 3; line = line.replace( '_I3_', '', 1 )
-                elif '_I4_' in line: indenter, extraLineIndent = '_I4_', 4; line = line.replace( '_I4_', '', 1 )
-                if Globals.debugFlag: # Should only be one
-                    assert( '_I1_' not in line and '_I2_' not in line and '_I3_' not in line and '_I4_' not in line )
-
-                verseNumberList = [] # Contains a list of 2-tuples indicating where verse numbers should go
-
-                if down >= maxDown - leading \
-                or outputLineCount == maxLines - 1:
-                    lastLine = True
-                if down >= maxDown: break # We're finished
-                #print( BBB, C, textLineCount, outputLineCount, down, maxDown, lastLine, repr(line) )
-
-                isMainHeading = isSectionHeading = isSectionCrossReference = False
-                if line.startswith('HhH'):
-                    if lastLine:
-                        #print( BBB, C, "Don't start main heading on last line", repr(line) )
-                        break; # Don't print headings on the last line
-                    line = line[3:] # Remove the heading marker
-                    #print( "Got main heading:", BBB, C, repr(line) )
-                    isMainHeading = True
-                    fontcolor = defaultMainHeadingFontcolor
-                elif line.startswith('SsS'):
-                    if lastLine:
-                        #print( BBB, C, "Don't start section heading on last line", repr(line) )
-                        break; # Don't print headings on the last line
-                    line = line[3:] # Remove the SsS heading marker
-                    #print( "Got section heading:", BBB, C, repr(line) )
-                    isSectionHeading = True
-                    fontcolor = defaultSectionHeadingFontcolor
-                elif line.startswith('RrR'):
-                    line = line[3:] # Remove the RrR heading marker
-                    #print( "Got section cross-reference:", BBB, C, repr(line) )
-                    isSectionCrossReference = True
-                    fontcolor = defaultSectionCrossReferenceFontcolor
-
-                textLineCount += 1
-                textWordCount = 0
-                lineBuffer = ' ' * extraLineIndent # Handle indented paragraphs
-                words = [] # Just in case the line is blank
-                if line:
-                    verseNumberLast = False
-                    words = line.split(' ')
-                    #print( textWordCount, "words", words )
-                    for w,originalWord in enumerate( words ):
-                        word = originalWord.replace( ' ', ' ' ) # Put back normal spaces
-                        isVerseNumber = False
-                        vix = word.find( 'VvV' )
-                        if vix != -1: # This must be a verse number (perhaps preceded by some spaces)
-                            word = word[:vix]+word[vix+3:]
-                            isVerseNumber = True
-                        #assert( 'VvV' not in word )
-
-                        if down >= maxDown - leading \
-                        or outputLineCount == maxLines - 1: lastLine = True
-                        if down >= maxDown: break # We're finished
-                        #print( '     ', textLineCount, outputLineCount, down, maxDown, lastLine, textWordCount, repr(word) )
-
-                        # Allow for some letter-width variations
-                        #   a bigger offset value will allow less to be added to the line
-                        # NOTE: verse numbers start with VvV
-                        #       and we don't want the last line to end with a verse number
-                        offset = 1
-                        potentialString = lineBuffer + word
-                        potentialStringLower =  potentialString.lower()
-                        capsCount = 0
-                        for letter in potentialString:
-                            if letter.isupper(): capsCount += 1
-                        offset += (potentialStringLower.count('m')+potentialStringLower.count('w')+potentialStringLower.count('—')+capsCount)/3
-                        offset -= (potentialStringLower.count(' ')+potentialStringLower.count('i')+potentialString.count('l')+potentialString.count('t'))/4
-                        #if offset != 1:
-                            #print( "Adjusted offset to", offset, "from", repr(potentialString) )
-
-                        potentialLength = len(lineBuffer) + len(word) + offset
-                        if lastLine and isVerseNumber: # We would have to include the next word also
-                            if Globals.debugFlag: assert( w < len(words)-1 )
-                            potentialLength += len(words[w+1]) + 1
-                            #print( "Adjusted pL for", BBB, C, repr(word), repr(words[w+1]) )
-                        if potentialLength  >= maxLineCharacters:
-                            # Print this line as we've already got it coz it would be too long if we added the word
-                            totalCommands.extend( renderLine( across, down, lineBuffer, jpegFilepath, fontsize, defaultTextFontname, fontcolor ) )
-                            if verseNumberList:
-                                print( repr(lineBuffer) )
-                                totalCommands.extend( renderVerseNumbers( across, down, verseNumberList, jpegFilepath, fontsize, defaultTextFontname, defaultVerseNumberFontcolor ) )
-                                verseNumberList = []
-                            down += leading
-                            outputLineCount += 1
-                            lineBuffer = ' ' * extraLineIndent # Handle indented paragraphs
-                            #print( outputLineCount, maxLines, outputLineCount>=maxLines )
-                            if outputLineCount >= maxLines: break
-                            if down >= maxDown: break # We're finished
-                        # Add the word (without the verse number markers)
-                        lineBuffer += (' ' if lineBuffer.lstrip() else '')
-                        if isVerseNumber and colorVerseNumbersFlag:
-                            verseNumberList.append( (len(lineBuffer),word,) )
-                            lineBuffer += ' ' * int( 1.6 * len(word) ) # Just put spaces in for place holders for the present
-                        else: lineBuffer += word
-                        textWordCount += 1
-
-                    # Words in this source text line are all processed
-                    if lineBuffer.lstrip(): # do the last line
-                        totalCommands.extend( renderLine( across, down, lineBuffer, jpegFilepath, fontsize, defaultTextFontname, fontcolor ) )
-                        if verseNumberList:
-                            print( repr(lineBuffer) )
-                            totalCommands.extend( renderVerseNumbers( across, down, verseNumberList, jpegFilepath, fontsize, defaultTextFontname, defaultVerseNumberFontcolor ) )
-                            verseNumberList = []
-                        down += leading
-                        outputLineCount += 1
-                elif textLineCount!=1: # it's a blank line (but not the first line on the page)
-                    down += defaultFontSize / 3 # Leave a blank 1/3 line
-                    outputLineCount += 0.4
-                #print( outputLineCount, maxLines, outputLineCount>=maxLines )
-                if outputLineCount >= maxLines: break
-
-            # Now render all those commands at once
-            render( totalCommands, jpegFilepath ) # Do all the rendering at once
-
-            # Find the left-over text
-            leftoverText = ''
-            #print( "textWordCount was", textWordCount, len(words) )
-            #print( "textLineCount was", textLineCount, len(lines) )
-            leftoverText += ' '.join( words[textWordCount:] )
-            if textLineCount < len(lines):
-                leftoverText += '\n' + '\n'.join( lines[textLineCount:] )
-
-
-            #print( "leftoverText was", repr(leftoverText) )
-            #if 'Impanalanginan te Manama si Nuwi' in text: halt
-            return indenter+leftoverText if leftoverText else ''
-        # end of renderPage
-
-
-        def renderText( BBB, BBBnum, bookName, bookAbbrev, C, maxChapters, numVerses, text, bookFolderName, fontsize=None ):
-            """
-            """
-            #print( "\nrenderText( {}, {}, {}, {}, {}, {}, {} )".format( BBB, C, repr(text), jpegFoldername, fontsize, fontcolor, leading ) )
-
-            intC = int( C )
-            if namingFormat == "Short":
-                if maxChapters < 10: chapterFoldernameTemplate = "{:01}-{}/"
-                elif maxChapters < 100: chapterFoldernameTemplate = "{:02}-{}/"
-                else: chapterFoldernameTemplate = "{:03}-{}/"
-                chapterFolderName = chapterFoldernameTemplate.format( intC, bookAbbrev )
-                filenameTemplate = "{:02}.jpg" if numVerses < 80 else "{:03}.jpg" # Might go over 99 pages for the chapter
-            elif namingFormat == "Long":
-                if BBBnum < 100:
-                    if maxChapters < 10:
-                        chapterFoldernameTemplate, filenameTemplate = "{:02}-{:01}-{}/", "{:02}-{:01}-{:02}-{}.jpg"
-                    elif maxChapters < 100:
-                        chapterFoldernameTemplate, filenameTemplate = "{:02}-{:02}-{}/", "{:02}-{:02}-{:02}-{}.jpg"
-                    else:
-                        chapterFoldernameTemplate, filenameTemplate = "{:02}-{:03}-{}/", "{:02}-{:03}-{:02}-{}.jpg"
-                else: # not normally expected
-                    if maxChapters < 10:
-                        chapterFoldernameTemplate, filenameTemplate = "{:03}-{:01}-{}/", "{:03}-{:01}-{:02}-{}.jpg"
-                    elif maxChapters < 100:
-                        chapterFoldernameTemplate, filenameTemplate = "{:03}-{:02}-{}/", "{:03}-{:02}-{:02}-{}.jpg"
-                    else:
-                        chapterFoldernameTemplate, filenameTemplate = "{:03}-{:03}-{}/", "{:03}-{:03}-{:02}-{}.jpg"
-                chapterFolderName = chapterFoldernameTemplate.format( Globals.BibleBooksCodes.getReferenceNumber( BBB ), intC, BBB )
-                if numVerses > 80: filenameTemplate = filenameTemplate.replace( "{:02}-{}", "{:03}-{}" )
-            else: halt
-
-            chapterFolderPath = os.path.join( bookFolderName, chapterFolderName )
-            if not os.access( chapterFolderPath, os.F_OK ): os.makedirs( chapterFolderPath ) # Make the empty folder if there wasn't already one there
-
-            pagesWritten = 0
-            leftoverText = text
-            while leftoverText:
-                if namingFormat == "Short":
-                    jpegOutputFilepath = os.path.join( chapterFolderPath, filenameTemplate.format( pagesWritten ) )
-                elif namingFormat == "Long":
-                    jpegOutputFilepath = os.path.join( chapterFolderPath, filenameTemplate.format( BBBnum, intC, pagesWritten, BBB ) )
-                leftoverText = renderPage( BBB, C, bookName, leftoverText, jpegOutputFilepath )
-                pagesWritten += 1
-            if Globals.debugFlag and debuggingThisModule and BBB not in ('FRT','GLS',) and pagesWritten>99 and numVerses<65: halt # Template is probably bad
-
-            #print( "pagesWritten were", pagesWritten )
-            return pagesWritten
-        # end of renderText
-
-
-        # Write the plain text files
-        for BBB,bookObject in self.books.items():
-            pseudoUSFMData = bookObject._processedLines
-
-            # Find a suitable bookname
-            bookName = self.getAssumedBookName( BBB )
-            for bookName in (self.getAssumedBookName(BBB), self.getLongTOCName(BBB), self.getShortTOCName(BBB), self.getBooknameAbbreviation(BBB), ):
-                #print( "Tried bookName:", repr(bookName) )
-                if bookName is not None and len(bookName)<=maxBooknameLetters: break
-            bookAbbrev = self.getBooknameAbbreviation( BBB )
-            bookAbbrev = BBB if not bookAbbrev else Globals.makeSafeFilename( bookAbbrev.replace( ' ', '' ) )
-
-            BBBnum = Globals.BibleBooksCodes.getReferenceNumber( BBB )
-            maxChapters = Globals.BibleBooksCodes.getMaxChapters( BBB )
-
-            # Find a suitable folder name and make the necessary folder(s)
-            if Globals.BibleBooksCodes.isOldTestament_NR( BBB ):
-                subfolderName = "OT/"
-            elif Globals.BibleBooksCodes.isNewTestament_NR( BBB ):
-                subfolderName = "NT/"
-            else:
-                subfolderName = "Other/"
-            if BBBnum < 100: bookFolderName = "{:02}-{}/".format( BBBnum, bookAbbrev )
-            else: bookFolderName = "{:03}-{}/".format( BBBnum, bookAbbrev ) # Should rarely happen
-            bookFolderPath = os.path.join( outputFolder, subfolderName, bookFolderName )
-            if not os.access( bookFolderPath, os.F_OK ): os.makedirs( bookFolderPath ) # Make the empty folder if there wasn't already one there
-
-            # First of all, get the text (by chapter)
-            C = V = '0'
-            numVerses = 0
-            textBuffer, lastMarker, gotVP = "", None, None
-            for entry in pseudoUSFMData:
-                marker, cleanText = entry.getMarker(), entry.getCleanText()
-                #print( BBB, C, V, marker, repr(cleanText) )
-                if '¬' in marker: continue # Just ignore end markers -- not needed here
-                if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
-                    ignoredMarkers.add( marker )
-                elif marker in ('mt1','mt2','mt3','mt4','mte1','mte2','mte3','mte4',
-                                'imt1','imt2','imt3','imt4', 'imte1','imte2','imte3','imte4', 'periph',): # Simple headings
-                    #if textBuffer: textBuffer += '\n'
-                    textBuffer += '\n\nHhH' + cleanText + '\n'
-                elif marker in ('s1','s2','s3','s4', 'is1','is2','is3','is4', 'ms1','ms2','ms3','ms4', 'sr',): # Simple headings
-                    #if textBuffer: textBuffer += '\n'
-                    textBuffer += '\n\nSsS' + cleanText + '\n'
-                elif marker in USFM_INTRODUCTION_MARKERS: # Drop the introduction
-                    ignoredMarkers.add( marker )
-
-                elif marker in ('c','cp',): # cp should follow (and thus override) c
-                    if textBuffer: renderText( BBB, BBBnum, bookName, bookAbbrev, C, maxChapters, numVerses, textBuffer, bookFolderPath ); textBuffer = ""
-                    C, V = cleanText, '0'
-                    numVerses = 0
-                elif marker in ('c#',): # These are the markers that we can safely ignore for this export
-                    ignoredMarkers.add( marker )
-                elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
-                    gotVP = cleanText # Just remember it for now
-                elif marker == 'v':
-                    V = cleanText
-                    if gotVP: # this is a replacement verse number for publishing
-                        cleanText = gotVP
-                        gotVP = None
-                    textBuffer += (' ' if textBuffer and textBuffer[-1]!='\n' else '') + 'VvV' + cleanText + ' '
-                    numVerses += 1
-
-                elif marker in ('d','sp',):
-                    #assert( cleanText or extras )
-                    textBuffer += '\n' + cleanText
-                elif marker in ('r','sr','mr',):
-                    #numSpaces = ( maxLineCharacters - len(cleanText) ) // 2
-                    #print( BBB, C, len(cleanText), "numSpaces:", numSpaces, repr(cleanText) )
-                    #textBuffer += '\n' + ' '*numSpaces + cleanText # Roughly centred
-                    if lastMarker not in ('s1','s2','s3','s4',): textBuffer += '\n' # Section headings already have one at the end
-                    textBuffer += 'RrR' + ' '*((maxLineCharacters+1-len(cleanText))//2) + cleanText + '\n' # Roughly centred
-                elif marker in ('p', 'pi1','pi2','pi3','pi4', 'q1','q2','q3','q4', 'm','mi','im','imi', 'ph1','ph2','ph3','ph4','pc',
-                                'li1','li2','li3','li4', 'ip','ipi', 'ili1','ili2','ili3','ili4', 'iex',):
-                    # Just put it on a new line
-                    textBuffer += '\n'
-                    if marker not in ('m','mi','im','imi','ph1','ph2','ph3','ph4',): textBuffer += '  ' # Non-break spaces won't be lost later
-                    if marker in ('li1','li2','li3','li4', 'ili1','ili2','ili3','ili4',): textBuffer += '• '
-                    if marker in ('ipi','pi1','q1','ph1','mi','imi','li1','ili1',): textBuffer += '_I1_'
-                    elif marker in ('pi2','q2','ph2','li2','ili2',): textBuffer += '_I2_'
-                    elif marker in ('pi3','q3','ph3','li3','ili3',): textBuffer += '_I3_'
-                    elif marker in ('pi4','q4','ph4','li4','ili4',): textBuffer += '_I4_'
-                    #if marker == 'q2': textBuffer += ' '
-                    #elif marker == 'q3': textBuffer += '  '
-                    if marker in ('ip','ipi','ili1','ili2','ili3','ili4',): textBuffer += cleanText
-                    elif Globals.debugFlag: assert( not cleanText )
-                elif marker in ('v~','p~',):
-                    #assert( cleanText or extras )
-                    textBuffer += cleanText
-                elif marker in ('b','nb','ib',):
-                    if Globals.debugFlag: assert( not cleanText )
-                    textBuffer += '\n'
-                    textBuffer += '\n'
-                else:
-                    if cleanText:
-                        logging.error( "toPhotoBible: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(cleanText) ) )
-                        #if Globals.debugFlag: halt
-                    unhandledMarkers.add( marker )
-                #if extras and marker not in ('v~','p~',):
-                    #logging.critical( "toPhotoBible: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
-                    #if Globals.debugFlag: halt
-                lastMarker = marker
-            if textBuffer: renderText( BBB, BBBnum, bookName, bookAbbrev, C, maxChapters, numVerses, textBuffer, bookFolderPath ) # Write the last bit
-
-                    #if verseByVerse:
-                        #myFile.write( "{} ({}): '{}' '{}' {}\n" \
-                            #.format( entry.getMarker(), entry.getOriginalMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras() ) )
-
-        if ignoredMarkers:
-            logging.info( "toPhotoBible: Ignored markers were {}".format( ignoredMarkers ) )
-            if Globals.verbosityLevel > 2:
-                print( "  " + _("WARNING: Ignored toPhotoBible markers were {}").format( ignoredMarkers ) )
-        if unhandledMarkers:
-            logging.warning( "toPhotoBible: Unhandled markers were {}".format( unhandledMarkers ) )
-            if Globals.verbosityLevel > 1:
-                print( "  " + _("WARNING: Unhandled toPhotoBible markers were {}").format( unhandledMarkers ) )
-
-        # Now create some zipped collections
-        if Globals.verbosityLevel > 2: print( "  Zipping PhotoBible files..." )
-        for subset in ('OT','NT','Other','All'):
-            loadFolder = outputFolder if subset=='All' else os.path.join( outputFolder, subset+'/' )
-            #print( repr(subset), "Load folder =", repr(loadFolder) )
-            if os.path.exists( loadFolder ):
-                zf = zipfile.ZipFile( os.path.join( outputFolder, subset+'PhotoBible.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
-                for root, dirs, files in os.walk( loadFolder ):
-                    for filename in files:
-                        if not filename.endswith( '.zip' ):
-                            #print( repr(loadFolder), repr(root), repr(dirs), repr(files) )
-                            #print( repr(os.path.relpath(os.path.join(root, filename))), repr(os.path.join(loadFolder, '..')) )
-                            #print( os.path.join(root,filename), os.path.relpath(os.path.join(root, filename), os.path.join(loadFolder, '..')) ) # Save in the archive without the path
-                            #  Save in the archive without the path --
-                            #   parameters are filename to compress, archive name (relative path) to save as
-                            zf.write( os.path.join(root,filename), os.path.relpath(os.path.join(root, filename), os.path.join(loadFolder, '..')) ) # Save in the archive without the path
-                            #zf.write( filepath, filename ) # Save in the archive without the path
-                zf.close()
-        #if self.abbreviation in ('MBTV','WEB','OEB',): # Do a special zip file of just Matthew as a test download
-        if 'MAT' in self: # Do a zip file of just Matthew as a smaller download for testers
-            zf = zipfile.ZipFile( os.path.join( outputFolder, 'MatthewPhotoBible.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
-            loadFolder = os.path.join( outputFolder, 'NT/' )
-            for root, dirs, files in os.walk( loadFolder ):
-                for filename in files:
-                    if '40-Mat' in root and not filename.endswith( '.zip' ): #  Save in the archive without the path --
-                        #   parameters are filename to compress, archive name (relative path) to save as
-                        zf.write( os.path.join(root,filename), os.path.relpath(os.path.join(root, filename), os.path.join(loadFolder, '..')) ) # Save in the archive without the path
-            zf.close()
-
-        if Globals.verbosityLevel > 0 and Globals.maxProcesses > 1:
-            print( "  BibleWriter.toPhotoBible finished successfully." )
-        return True
-    # end of BibleWriter.toPhotoBible
-
-
-
     def toTeX( self, outputFolder=None ):
         """
         Write the pseudo USFM out into a TeX (typeset) format.
@@ -8809,8 +8809,8 @@ class BibleWriter( InternalBible ):
         ESwOutputFolder = os.path.join( givenOutputFolderName, "BOS_e-Sword_" + ("Reexport/" if self.objectTypeString=='e-Sword' else "Export/" ) )
         SwSOutputFolder = os.path.join( givenOutputFolderName, "BOS_SwordSearcher_Export/" )
         DrOutputFolder = os.path.join( givenOutputFolderName, "BOS_DrupalBible_" + ("Reexport/" if self.objectTypeString=='DrupalBible' else "Export/" ) )
-        ODFOutputFolder = os.path.join( givenOutputFolderName, "BOS_ODF_Export/" )
         photoOutputFolder = os.path.join( givenOutputFolderName, "BOS_PhotoBible_Export/" )
+        ODFOutputFolder = os.path.join( givenOutputFolderName, "BOS_ODF_Export/" )
         TeXOutputFolder = os.path.join( givenOutputFolderName, "BOS_TeX_Export/" )
 
         if not wantPhotoBible:
@@ -8855,15 +8855,15 @@ class BibleWriter( InternalBible ):
             ESwExportResult = self.toESword( ESwOutputFolder )
             SwSExportResult = self.toSwordSearcher( SwSOutputFolder )
             DrExportResult = self.toDrupalBible( DrOutputFolder )
-            if wantODFs: ODFExportResult = self.toODF( ODFOutputFolder )
             if wantPhotoBible: PhotoBibleExportResult = self.toPhotoBible( photoOutputFolder )
+            if wantODFs: ODFExportResult = self.toODF( ODFOutputFolder )
             if wantPDFs: TeXExportResult = self.toTeX( TeXOutputFolder ) # Put this last since it's slowest
 
         elif Globals.maxProcesses > 1: # Process all the exports with different threads
             # We move the three longest processes to the top here,
             #   so they start first to help us get finished quicker on multiCPU systems.
-            self.__outputProcesses = [self.toODF if wantODFs else None,
-                                    self.toPhotoBible if wantPhotoBible else None,
+            self.__outputProcesses = [self.toPhotoBible if wantPhotoBible else None,
+                                    self.toODF if wantODFs else None,
                                     self.toTeX if wantPDFs else None,
                                     self.makeLists, self.toPseudoUSFM, self.toUSFM, self.toText,
                                     self.toMarkdown, self.toDoor43, self.toHTML5, self.toCustomBible,
@@ -8871,7 +8871,7 @@ class BibleWriter( InternalBible ):
                                     self.toZefaniaXML, self.toHaggaiXML, self.toOpenSongXML,
                                     self.toSwordModule, self.totheWord, self.toMySword, self.toESword,
                                     self.toSwordSearcher, self.toDrupalBible, ]
-            self.__outputFolders = [ODFOutputFolder, photoOutputFolder, TeXOutputFolder,
+            self.__outputFolders = [photoOutputFolder, ODFOutputFolder, TeXOutputFolder,
                                     listOutputFolder, pseudoUSFMOutputFolder, USFMOutputFolder, textOutputFolder,
                                     markdownOutputFolder, D43OutputFolder, htmlOutputFolder, CBOutputFolder,
                                     USXOutputFolder, USFXOutputFolder, OSISOutputFolder,
@@ -8886,7 +8886,7 @@ class BibleWriter( InternalBible ):
                 results = pool.map( self.doExportHelper, zip(self.__outputProcesses,self.__outputFolders) ) # have the pool do our loads
                 if Globals.verbosityLevel > 0: print( "BibleWriter.doAllExports: Got {} results".format( len(results) ) )
                 assert( len(results) == len(self.__outputFolders) )
-                ODFExportResult, PhotoBibleExportResult, TeXExportResult, \
+                PhotoBibleExportResult, ODFExportResult, TeXExportResult, \
                     listOutputResult, pseudoUSFMExportResult, USFMExportResult, textExportResult, \
                     markdownExportResult, D43ExportResult, htmlExportResult, CBExportResult, \
                     USXExportResult, USFXExportResult, OSISExportResult, ZefExportResult, HagExportResult, OSExportResult, \
@@ -8994,18 +8994,18 @@ class BibleWriter( InternalBible ):
                 DrExportResult = False
                 print("BibleWriter.doAllExports.toDrupalBible Unexpected error:", sys.exc_info()[0], err)
                 logging.error( "BibleWriter.doAllExports.toDrupalBible: Oops, failed!" )
-            if wantODFs:
-                try: ODFExportResult = self.toODF( ODFOutputFolder )
-                except Exception as err:
-                    ODFExportResult = False
-                    print("BibleWriter.doAllExports.toODF Unexpected error:", sys.exc_info()[0], err)
-                    logging.error( "BibleWriter.doAllExports.toODF: Oops, failed!" )
             if wantPhotoBible:
                 try: PhotoBibleExportResult = self.toPhotoBible( photoOutputFolder )
                 except Exception as err:
                     PhotoBibleExportResult = False
                     print("BibleWriter.doAllExports.toPhotoBible Unexpected error:", sys.exc_info()[0], err)
                     logging.error( "BibleWriter.doAllExports.toPhotoBible: Oops, failed!" )
+            if wantODFs:
+                try: ODFExportResult = self.toODF( ODFOutputFolder )
+                except Exception as err:
+                    ODFExportResult = False
+                    print("BibleWriter.doAllExports.toODF Unexpected error:", sys.exc_info()[0], err)
+                    logging.error( "BibleWriter.doAllExports.toODF: Oops, failed!" )
             if wantPDFs: # Do TeX export last because it's slowest
                 try: TeXExportResult = self.toTeX( TeXOutputFolder )
                 except Exception as err:
@@ -9020,18 +9020,18 @@ class BibleWriter( InternalBible ):
             and ZefExportResult and HagExportResult and OSExportResult \
             and swExportResult and TWExportResult and MySwExportResult and ESwExportResult \
             and SwSExportResult and DrExportResult \
-            and (ODFExportResult or not wantODFs) and (PhotoBibleExportResult or not wantPhotoBible) and (TeXExportResult or not wantPDFs):
+            and (PhotoBibleExportResult or not wantPhotoBible) and (ODFExportResult or not wantODFs) and (TeXExportResult or not wantPDFs):
                 print( "BibleWriter.doAllExports finished them all successfully!" )
             else: print( "BibleWriter.doAllExports finished:  Pck={}  Lst={}  PsUSFM={} USFM={} Tx={}  md={} D43={}  "
                     "HTML={} CB={}  USX={} USFX={} OSIS={}  Zef={} Hag={} OS={}  Sw={}  "
-                    "TW={} MySw={} eSw={}  SwS={} Dr={}  ODF={} PB={} TeX={}" \
+                    "TW={} MySw={} eSw={}  SwS={} Dr={}  PB={} ODF={} TeX={}" \
                     .format( pickleResult, listOutputResult, pseudoUSFMExportResult, USFMExportResult, textExportResult,
                             markdownExportResult, D43ExportResult, htmlExportResult, CBExportResult,
                             USXExportResult, USFXExportResult, OSISExportResult,
                             ZefExportResult, HagExportResult, OSExportResult,
                             swExportResult, TWExportResult, MySwExportResult, ESwExportResult,
                             SwSExportResult, DrExportResult,
-                            ODFExportResult, PhotoBibleExportResult, TeXExportResult ) )
+                            PhotoBibleExportResult, ODFExportResult, TeXExportResult ) )
         return { 'Pickle':pickleResult, 'listOutput':listOutputResult,
                 'pseudoUSFMExport':pseudoUSFMExportResult, 'USFMExport':USFMExportResult, 'textExport':textExportResult,
                 'markdownExport':markdownExportResult, 'D43Export':D43ExportResult,
@@ -9041,7 +9041,7 @@ class BibleWriter( InternalBible ):
                 'swExport':swExportResult,
                 'TWExport':TWExportResult, 'MySwExport':MySwExportResult, 'ESwExport':ESwExportResult,
                 'SwSExport':SwSExportResult, 'DrExport':DrExportResult,
-                'ODFExport':ODFExportResult, 'PhotoBibleExport':PhotoBibleExportResult, 'TeXExport':TeXExportResult, }
+                'PhotoBibleExport':PhotoBibleExportResult, 'ODFExport':ODFExportResult, 'TeXExport':TeXExportResult, }
     # end of BibleWriter.doAllExports
 # end of class BibleWriter
 
