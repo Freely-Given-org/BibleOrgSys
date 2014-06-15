@@ -8881,7 +8881,8 @@ class BibleWriter( InternalBible ):
             assert( len(self.__outputFolders) == len(self.__outputProcesses) )
             if Globals.verbosityLevel > 0:
                 print( "BibleWriter.doAllExports: Running {} exports on {} CPUs".format( len(self.__outputProcesses), Globals.maxProcesses ) )
-                print( "  NOTE: Outputs (including error and warning messages) from various exports may be interspersed." )
+                if Globals.verbosityLevel > 1:
+                    print( "  NOTE: Outputs (including error and warning messages) from various exports may be interspersed." )
             with multiprocessing.Pool( processes=Globals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( self.doExportHelper, zip(self.__outputProcesses,self.__outputFolders) ) # have the pool do our loads
                 if Globals.verbosityLevel > 0: print( "BibleWriter.doAllExports: Got {} results".format( len(results) ) )
@@ -9095,11 +9096,16 @@ def demo():
                     f2 = os.listdir( outputFolder ) # Derived
                     if Globals.verbosityLevel > 1: print( "\nComparing original and re-exported USFM files..." )
                     for j, (BBB,filename) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
+                        print( j, BBB, filename )
                         if filename in f1 and filename in f2:
-                            #print( "\n{}: {} {}".format( j+1, BBB, filename ) )
+                            print( "\n{}: {} {}".format( j+1, BBB, filename ) )
                             result = Globals.fileCompare( filename, filename, testFolder, outputFolder )
+                            print( "  result", result )
                             if Globals.debugFlag:
                                 if not result: halt
+                        else:
+                            if filename not in f1: print( "  Couldn't find {} in {}".format( filename, f1 ) )
+                            if filename not in f2: print( "  Couldn't find {} in {}".format( filename, f2 ) )
             else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 
 

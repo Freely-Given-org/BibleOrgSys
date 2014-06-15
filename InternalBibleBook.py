@@ -2281,7 +2281,7 @@ class InternalBibleBook:
         lastMarkerEmpty = True
         for entry in self._processedLines:
             marker, originalMarker, text, extras = entry.getMarker(), entry.getOriginalMarker(), entry.getText(), entry.getExtras()
-            markerEmpty = len(text) == 0
+            markerEmpty = not text
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text:
                 C, V = text.split()[0], '0'
@@ -2319,119 +2319,120 @@ class InternalBibleBook:
                     #logging.warning( _("Marker '{}' has no content after").format( marker ) + " {} {}:{}".format( self.BBB, C, V ) )
                     #self.addPriorityError( 47, C, V, _("Marker {} should have content").format( marker ) )
 
-            if marker == 'v~':
-                lastMarker, lastMarkerEmpty = 'v', markerEmpty
-                continue
-            elif marker == 'p~':
-                lastMarker, lastMarkerEmpty = 'p', markerEmpty # not sure if this is correct here ?????
-                continue
-            elif marker == 'c~':
-                lastMarker, lastMarkerEmpty = 'c', markerEmpty
-                continue
-            elif marker == 'c#':
-                lastMarker, lastMarkerEmpty = 'c', markerEmpty
-                continue
-            elif marker == 'vp~':
-                lastMarker, lastMarkerEmpty = 'v', markerEmpty
-                continue
-            else: # it's not our (non-USFM) c~,c#,v~ markers
-                if marker not in allAvailableNewlineMarkers: print( "Unexpected marker is '{}'".format( marker ) )
-                if Globals.debugFlag: assert( marker in allAvailableNewlineMarkers ) # Should have been checked at load time
-                newlineMarkerCounts[marker] = 1 if marker not in newlineMarkerCounts else (newlineMarkerCounts[marker] + 1)
+            if marker[0] != '¬':
+                if marker == 'v~':
+                    lastMarker, lastMarkerEmpty = 'v', markerEmpty
+                    continue
+                elif marker == 'p~':
+                    lastMarker, lastMarkerEmpty = 'p', markerEmpty # not sure if this is correct here ?????
+                    continue
+                elif marker == 'c~':
+                    lastMarker, lastMarkerEmpty = 'c', markerEmpty
+                    continue
+                elif marker == 'c#':
+                    lastMarker, lastMarkerEmpty = 'c', markerEmpty
+                    continue
+                elif marker == 'vp~':
+                    lastMarker, lastMarkerEmpty = 'v', markerEmpty
+                    continue
+                else: # it's not our (non-USFM) c~,c#,v~ markers
+                    if marker not in allAvailableNewlineMarkers: print( "Unexpected marker is '{}'".format( marker ) )
+                    if Globals.debugFlag: assert( marker in allAvailableNewlineMarkers ) # Should have been checked at load time
+                    newlineMarkerCounts[marker] = 1 if marker not in newlineMarkerCounts else (newlineMarkerCounts[marker] + 1)
 
-            # Check the progression through the various sections
-            try: newSection = Globals.USFMMarkers.markerOccursIn( marker if marker!='v~' else 'v' )
-            except: logging.error( "IBB:doCheckSFMs: markerOccursIn failed for '{}'".format( marker ) )
-            if newSection != section: # Check changes into new sections
-                #print( section, marker, newSection )
-                if section=='' and newSection!='Header': newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing Header section (went straight to {} section with {} marker)").format( newSection, marker ) )
-                elif section!='' and newSection=='Header': newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Didn't expect {} section after {} section (with {} marker)").format( newSection, section, marker ) )
-                if section=='Header' and newSection!='Introduction':
-                    if discoveryDict and 'haveIntroductoryText' in discoveryDict and discoveryDict['haveIntroductoryText']:
-                        newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing Introduction section (went straight to {} section with {} marker)").format( newSection, marker ) )
-                elif section!='Header' and newSection=='Introduction': newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Didn't expect {} section after {} section (with {} marker)").format( newSection, section, marker ) )
-                if section=='Introduction' and newSection!='Text': newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing Text section (went straight to {} section with {} marker)").format( newSection, marker ) )
-                if section=='Text' and newSection!='Text, Poetry': newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unexpected section after {} section (went to {} section with {} marker)").format( section, newSection, marker ) )
-                elif section!='Text' and newSection=='Text, Poetry': newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Didn't expect {} section after {} section (with {} marker)").format( newSection, section, marker ) )
-                if section!='Introduction' and section!='Text, Poetry' and newSection=='Text': newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Didn't expect {} section after {} section (with {} marker)").format( newSection, section, marker ) )
-                #print( "section", newSection )
-                section = newSection
+                # Check the progression through the various sections
+                try: newSection = Globals.USFMMarkers.markerOccursIn( marker if marker!='v~' else 'v' )
+                except: logging.error( "IBB:doCheckSFMs: markerOccursIn failed for '{}'".format( marker ) )
+                if newSection != section: # Check changes into new sections
+                    #print( section, marker, newSection )
+                    if section=='' and newSection!='Header': newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing Header section (went straight to {} section with {} marker)").format( newSection, marker ) )
+                    elif section!='' and newSection=='Header': newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Didn't expect {} section after {} section (with {} marker)").format( newSection, section, marker ) )
+                    if section=='Header' and newSection!='Introduction':
+                        if discoveryDict and 'haveIntroductoryText' in discoveryDict and discoveryDict['haveIntroductoryText']:
+                            newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing Introduction section (went straight to {} section with {} marker)").format( newSection, marker ) )
+                    elif section!='Header' and newSection=='Introduction': newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Didn't expect {} section after {} section (with {} marker)").format( newSection, section, marker ) )
+                    if section=='Introduction' and newSection!='Text': newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing Text section (went straight to {} section with {} marker)").format( newSection, marker ) )
+                    if section=='Text' and newSection!='Text, Poetry': newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unexpected section after {} section (went to {} section with {} marker)").format( section, newSection, marker ) )
+                    elif section!='Text' and newSection=='Text, Poetry': newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Didn't expect {} section after {} section (with {} marker)").format( newSection, section, marker ) )
+                    if section!='Introduction' and section!='Text, Poetry' and newSection=='Text': newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Didn't expect {} section after {} section (with {} marker)").format( newSection, section, marker ) )
+                    #print( "section", newSection )
+                    section = newSection
 
-            # Note the newline SFM order -- create a list of markers in order (with duplicates combined, e.g., \v \v -> \v)
-            if not modifiedMarkerList or modifiedMarkerList[-1] != marker: modifiedMarkerList.append( marker )
-            # Check for known bad combinations
-            if marker=='nb' and lastMarker in ('s','s1','s2','s3','s4','s5'):
-                newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("'nb' not allowed immediately after '{}' section heading").format( marker ) )
-            if self.checkUSFMSequencesFlag: # Check for known good combinations
-                commonGoodNewlineMarkerCombinations = (
-                    # If a marker has nothing after it, it must contain data
-                    # If a marker has =E after it, it must NOT contain data
-                    # (If data is optional, enter both sets)
-                    # Heading stuff (in order of occurrence)
-                    ('=E','id'), ('id','h'),('id','ide'), ('ide','h'), ('h','toc1'),('h','mt1'),('h','mt2'), ('toc1','toc2'), ('toc2','toc3'),('toc2','mt1'),('toc2','mt2'), ('toc3','mt1'),('toc3','mt2'),
-                    ('mt1','mt2'),('mt1','imt1'),('mt1','is1'), ('mt2','mt1'),('mt2','imt1'),('mt2','is1'),
-                    ('imt1','ip'),('is1','ip'), ('ip','ip'),('ip','iot'), ('imt','iot'), ('iot','io1'), ('io1','io1'),('io1','io2'),('io1','c'), ('io2','io1'),('io2','io2'),('io2','c'),
-                    # Regular chapter stuff (in alphabetical order)
-                    ('b=E','q1'),('b=E','q1=E'),
-                    ('c','p=E'),('c','q1=E'),('c','s1'),('c','s2'),('c','s3'),
-                    ('m=E','p'),('m=E','v'),
-                    ('p','c'),('p','p=E'),('p=E','q1'),('p','s1'),('p','v'),('p=E','v'),
-                    ('pi1','c'),('pi1','pi1=E'), ('pi1','s1'),('pi1','v'),('pi1=E','v'),
-                    ('q1','b=E'),('q1','c'),('q1','m=E'),('q1','p=E'),('q1','q1'),('q1','q1=E'),('q1','q2'),('q1','q2=E'),('q1','s1'),('q1','v'),('q1=E','v'),
-                    ('q2','b=E'),('q2','c'),('q2','m=E'),('q2','p=E'),('q2','q1'),('q2','q1=E'),('q2','q2'),('q2','q2=E'),('q2','q3'),('q2','s1'),('q2','v'),('q2=E','v'),
-                    ('q3','b=E'),('q3','c'),('q3','m=E'),('q3','p=E'),('q3','q2'),('q3','q3'),('q3','s1'),('q3','v'),('q3=E','v'),
-                    ('li1','li1'),('li1','v'),('li1=E','v'),('li1','p=E'),
-                    ('r','p=E'),
-                    ('s1','p=E'),('s1','q1=E'),('s1','r'),
-                    ('s2','p=E'),('s2','q1=E'),('s2','r'),
-                    ('s3','p=E'),('s3','q1=E'),('s3','r'),
-                    ('v','c'),('v','li1'),('v','m'),
-                    ('v','p'),('v','p=E'), ('v','pi1'),('v','pi1=E'),('v','pc'),
-                    ('v','q1'),('v','q1=E'),('v','q2'),('v','q2=E'),('v','q3'),('v','q3=E'),
-                    ('v','s1'),('v','s2'),('v','s3'),
-                    ('v','v'), )
-                rarerGoodNewlineMarkerCombinations = (
-                    ('mt2','mt3'), ('mt3','mt1'), ('io1','cl'), ('io2','cl'), ('ip','c'),
-                    ('c','cl'), ('cl','c'),('cl','p=E'),('cl','q1=E'),('cl','s1'),('cl','s2'),('cl','s3'),
-                    ('m','c'),('m','p=E'),('m','q1'),('m','v'),
-                    ('p','p'),('p','q1'),
-                    ('q1','m'),('q1','q3'), ('q2','m'), ('q3','q1'),
-                    ('r','p'), ('s1','p'),('s1','pi1=E'), ('v','b=E'),('v','m=E'), )
-                #for tuple2 in rarerGoodNewlineMarkerCombinations: print( tuple2); assert( tuple2 not in commonGoodNewlineMarkerCombinations ) # Just check our tables for unwanted duplicates
-                for tuple2 in rarerGoodNewlineMarkerCombinations: assert( tuple2 not in commonGoodNewlineMarkerCombinations ) # Just check our tables for unwanted duplicates
-                # We allow rem (remark) markers to be anywhere without a warning
-                if lastMarkerEmpty and markerEmpty:
-                    if (lastMarker+'=E',marker+'=E') not in commonGoodNewlineMarkerCombinations:
-                        if (lastMarker+'=E',marker+'=E') in rarerGoodNewlineMarkerCombinations:
-                            newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) Empty '{}' not commonly used following empty '{}' marker").format( marker, lastMarker ) )
-                            #print( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) Empty '{}' not commonly used following empty '{}' marker").format( marker, lastMarker ) )
-                        else:
-                            newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Empty '{}' not normally used following empty '{}' marker").format( marker, lastMarker ) )
-                            #print( "{} {}:{} ".format( self.BBB, C, V ) + _("Empty '{}' not normally used following empty '{}' marker").format( marker, lastMarker ) )
-                elif lastMarkerEmpty and not markerEmpty and marker!='rem':
-                    if (lastMarker+'=E',marker) not in commonGoodNewlineMarkerCombinations:
-                        if (lastMarker+'=E',marker) in rarerGoodNewlineMarkerCombinations:
-                            newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) '{}' with text not commonly used following empty '{}' marker").format( marker, lastMarker ) )
-                            #print( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) '{}' with text not commonly used following empty '{}' marker").format( marker, lastMarker ) )
-                        else:
-                            newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("'{}' with text not normally used following empty '{}' marker").format( marker, lastMarker ) )
-                            #print( "{} {}:{} ".format( self.BBB, C, V ) + _("'{}' with text not normally used following empty '{}' marker").format( marker, lastMarker ) )
-                elif not lastMarkerEmpty and markerEmpty and lastMarker!='rem':
-                    if (lastMarker,marker+'=E') not in commonGoodNewlineMarkerCombinations:
-                        if (lastMarker,marker+'=E') in rarerGoodNewlineMarkerCombinations:
-                            newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) Empty '{}' not commonly used following '{}' with text").format( marker, lastMarker ) )
-                            #print( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) Empty '{}' not commonly used following '{}' with text").format( marker, lastMarker ) )
-                        else:
-                            newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Empty '{}' not normally used following '{}' with text").format( marker, lastMarker ) )
-                            #print( "{} {}:{} ".format( self.BBB, C, V ) + _("Empty '{}' not normally used following '{}' with text").format( marker, lastMarker ) )
-                elif lastMarker!='rem' and marker!='rem': # both not empty
-                    if (lastMarker,marker) not in commonGoodNewlineMarkerCombinations:
-                        if (lastMarker,marker) in rarerGoodNewlineMarkerCombinations:
-                            newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) '{}' with text not commonly used following '{}' with text").format( marker, lastMarker ) )
-                            #print( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) '{}' with text not commonly used following '{}' with text").format( marker, lastMarker ) )
-                        else:
-                            newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("'{}' with text not normally used following '{}' with text").format( marker, lastMarker ) )
-                            #print( "{} {}:{} ".format( self.BBB, C, V ) + _("'{}' with text not normally used following '{}' with text").format( marker, lastMarker ) )
+                # Note the newline SFM order -- create a list of markers in order (with duplicates combined, e.g., \v \v -> \v)
+                if not modifiedMarkerList or modifiedMarkerList[-1] != marker: modifiedMarkerList.append( marker )
+                # Check for known bad combinations
+                if marker=='nb' and lastMarker in ('s','s1','s2','s3','s4','s5'):
+                    newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("'nb' not allowed immediately after '{}' section heading").format( marker ) )
+                if self.checkUSFMSequencesFlag: # Check for known good combinations
+                    commonGoodNewlineMarkerCombinations = (
+                        # If a marker has nothing after it, it must contain data
+                        # If a marker has =E after it, it must NOT contain data
+                        # (If data is optional, enter both sets)
+                        # Heading stuff (in order of occurrence)
+                        ('=E','id'), ('id','h'),('id','ide'), ('ide','h'), ('h','toc1'),('h','mt1'),('h','mt2'), ('toc1','toc2'), ('toc2','toc3'),('toc2','mt1'),('toc2','mt2'), ('toc3','mt1'),('toc3','mt2'),
+                        ('mt1','mt2'),('mt1','imt1'),('mt1','is1'), ('mt2','mt1'),('mt2','imt1'),('mt2','is1'),
+                        ('imt1','ip'),('is1','ip'), ('ip','ip'),('ip','iot'), ('imt','iot'), ('iot','io1'), ('io1','io1'),('io1','io2'),('io1','c'), ('io2','io1'),('io2','io2'),('io2','c'),
+                        # Regular chapter stuff (in alphabetical order)
+                        ('b=E','q1'),('b=E','q1=E'),
+                        ('c','p=E'),('c','q1=E'),('c','s1'),('c','s2'),('c','s3'),
+                        ('m=E','p'),('m=E','v'),
+                        ('p','c'),('p','p=E'),('p=E','q1'),('p','s1'),('p','v'),('p=E','v'),
+                        ('pi1','c'),('pi1','pi1=E'), ('pi1','s1'),('pi1','v'),('pi1=E','v'),
+                        ('q1','b=E'),('q1','c'),('q1','m=E'),('q1','p=E'),('q1','q1'),('q1','q1=E'),('q1','q2'),('q1','q2=E'),('q1','s1'),('q1','v'),('q1=E','v'),
+                        ('q2','b=E'),('q2','c'),('q2','m=E'),('q2','p=E'),('q2','q1'),('q2','q1=E'),('q2','q2'),('q2','q2=E'),('q2','q3'),('q2','s1'),('q2','v'),('q2=E','v'),
+                        ('q3','b=E'),('q3','c'),('q3','m=E'),('q3','p=E'),('q3','q2'),('q3','q3'),('q3','s1'),('q3','v'),('q3=E','v'),
+                        ('li1','li1'),('li1','v'),('li1=E','v'),('li1','p=E'),
+                        ('r','p=E'),
+                        ('s1','p=E'),('s1','q1=E'),('s1','r'),
+                        ('s2','p=E'),('s2','q1=E'),('s2','r'),
+                        ('s3','p=E'),('s3','q1=E'),('s3','r'),
+                        ('v','c'),('v','li1'),('v','m'),
+                        ('v','p'),('v','p=E'), ('v','pi1'),('v','pi1=E'),('v','pc'),
+                        ('v','q1'),('v','q1=E'),('v','q2'),('v','q2=E'),('v','q3'),('v','q3=E'),
+                        ('v','s1'),('v','s2'),('v','s3'),
+                        ('v','v'), )
+                    rarerGoodNewlineMarkerCombinations = (
+                        ('mt2','mt3'), ('mt3','mt1'), ('io1','cl'), ('io2','cl'), ('ip','c'),
+                        ('c','cl'), ('cl','c'),('cl','p=E'),('cl','q1=E'),('cl','s1'),('cl','s2'),('cl','s3'),
+                        ('m','c'),('m','p=E'),('m','q1'),('m','v'),
+                        ('p','p'),('p','q1'),
+                        ('q1','m'),('q1','q3'), ('q2','m'), ('q3','q1'),
+                        ('r','p'), ('s1','p'),('s1','pi1=E'), ('v','b=E'),('v','m=E'), )
+                    #for tuple2 in rarerGoodNewlineMarkerCombinations: print( tuple2); assert( tuple2 not in commonGoodNewlineMarkerCombinations ) # Just check our tables for unwanted duplicates
+                    for tuple2 in rarerGoodNewlineMarkerCombinations: assert( tuple2 not in commonGoodNewlineMarkerCombinations ) # Just check our tables for unwanted duplicates
+                    # We allow rem (remark) markers to be anywhere without a warning
+                    if lastMarkerEmpty and markerEmpty:
+                        if (lastMarker+'=E',marker+'=E') not in commonGoodNewlineMarkerCombinations:
+                            if (lastMarker+'=E',marker+'=E') in rarerGoodNewlineMarkerCombinations:
+                                newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) Empty '{}' not commonly used following empty '{}' marker").format( marker, lastMarker ) )
+                                #print( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) Empty '{}' not commonly used following empty '{}' marker").format( marker, lastMarker ) )
+                            else:
+                                newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Empty '{}' not normally used following empty '{}' marker").format( marker, lastMarker ) )
+                                #print( "{} {}:{} ".format( self.BBB, C, V ) + _("Empty '{}' not normally used following empty '{}' marker").format( marker, lastMarker ) )
+                    elif lastMarkerEmpty and not markerEmpty and marker!='rem':
+                        if (lastMarker+'=E',marker) not in commonGoodNewlineMarkerCombinations:
+                            if (lastMarker+'=E',marker) in rarerGoodNewlineMarkerCombinations:
+                                newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) '{}' with text not commonly used following empty '{}' marker").format( marker, lastMarker ) )
+                                #print( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) '{}' with text not commonly used following empty '{}' marker").format( marker, lastMarker ) )
+                            else:
+                                newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("'{}' with text not normally used following empty '{}' marker").format( marker, lastMarker ) )
+                                #print( "{} {}:{} ".format( self.BBB, C, V ) + _("'{}' with text not normally used following empty '{}' marker").format( marker, lastMarker ) )
+                    elif not lastMarkerEmpty and markerEmpty and lastMarker!='rem':
+                        if (lastMarker,marker+'=E') not in commonGoodNewlineMarkerCombinations:
+                            if (lastMarker,marker+'=E') in rarerGoodNewlineMarkerCombinations:
+                                newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) Empty '{}' not commonly used following '{}' with text").format( marker, lastMarker ) )
+                                #print( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) Empty '{}' not commonly used following '{}' with text").format( marker, lastMarker ) )
+                            else:
+                                newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Empty '{}' not normally used following '{}' with text").format( marker, lastMarker ) )
+                                #print( "{} {}:{} ".format( self.BBB, C, V ) + _("Empty '{}' not normally used following '{}' with text").format( marker, lastMarker ) )
+                    elif lastMarker!='rem' and marker!='rem': # both not empty
+                        if (lastMarker,marker) not in commonGoodNewlineMarkerCombinations:
+                            if (lastMarker,marker) in rarerGoodNewlineMarkerCombinations:
+                                newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) '{}' with text not commonly used following '{}' with text").format( marker, lastMarker ) )
+                                #print( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) '{}' with text not commonly used following '{}' with text").format( marker, lastMarker ) )
+                            else:
+                                newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("'{}' with text not normally used following '{}' with text").format( marker, lastMarker ) )
+                                #print( "{} {}:{} ".format( self.BBB, C, V ) + _("'{}' with text not normally used following '{}' with text").format( marker, lastMarker ) )
 
             markerShouldHaveContent = Globals.USFMMarkers.markerShouldHaveContent( marker )
             if text:
@@ -2519,7 +2520,6 @@ class InternalBibleBook:
                     #logging.warning( _("Marker '{}' has no content after").format( marker ) + " {} {}:{}".format( self.BBB, C, V ) )
                     #self.addPriorityError( 47, C, V, _("Marker {} should have content").format( marker ) )
 
-            #extras = entry.getExtras()
             if extras:
                 #print( "InternalBibleBook:doCheckSFMs-Extras-A {} {}:{} ".format( self.BBB, C, V ), extras )
                 extraMarkers = []
@@ -2765,22 +2765,24 @@ class InternalBibleBook:
 
             if cleanText: countCharacters( cleanText )
 
-            for extraType, extraIndex, extraText, cleanExtraText in entry.getExtras(): # Now process the characters in the notes
-                if Globals.debugFlag:
-                    assert( extraText ) # Shouldn't be blank
-                    #assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
-                    assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
-                    #print( extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
-                    assert( extraIndex >= 0 )
-                    #assert( 0 <= extraIndex <= len(text)+3 )
-                    assert( extraType in EXTRA_TYPES )
-                    assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
-                #cleanExtraText = extraText
-                #for sign in ('- ', '+ '): # Remove common leader characters (and the following space)
-                #    cleanExtraText = cleanExtraText.replace( sign, '' )
-                #for marker in ['\\xo*','\\xo ','\\xt*','\\xt ','\\xdc*','\\xdc ','\\fr*','\\fr ','\\ft*','\\ft ','\\fq*','\\fq ','\\fv*','\\fv ','\\fk*','\\fk ',] + INTERNAL_SFMS_TO_REMOVE:
-                #    cleanExtraText = cleanExtraText.replace( marker, '' )
-                if cleanExtraText: countCharacters( cleanExtraText )
+            extras = entry.getExtras()
+            if extras:
+                for extraType, extraIndex, extraText, cleanExtraText in extras: # Now process the characters in the notes
+                    if Globals.debugFlag:
+                        assert( extraText ) # Shouldn't be blank
+                        #assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
+                        assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
+                        #print( extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
+                        assert( extraIndex >= 0 )
+                        #assert( 0 <= extraIndex <= len(text)+3 )
+                        assert( extraType in EXTRA_TYPES )
+                        assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
+                    #cleanExtraText = extraText
+                    #for sign in ('- ', '+ '): # Remove common leader characters (and the following space)
+                    #    cleanExtraText = cleanExtraText.replace( sign, '' )
+                    #for marker in ['\\xo*','\\xo ','\\xt*','\\xt ','\\xdc*','\\xdc ','\\fr*','\\fr ','\\ft*','\\ft ','\\fq*','\\fq ','\\fv*','\\fv ','\\fk*','\\fk ',] + INTERNAL_SFMS_TO_REMOVE:
+                    #    cleanExtraText = cleanExtraText.replace( marker, '' )
+                    if cleanExtraText: countCharacters( cleanExtraText )
 
         # Add up the totals
         if (characterErrors or simpleCharacterCounts or unicodeCharacterCounts or letterCounts or punctuationCounts) and 'Characters' not in self.errorDictionary:
@@ -2935,46 +2937,47 @@ class InternalBibleBook:
             bitMarker = ''
 
             #if C=='9': halt
-            # Check the notes also -- each note is complete in itself so it's much simpler
-            for extraType, extraIndex, extraText, cleanExtraText in entry.getExtras(): # Now process the characters in the notes
-                if Globals.debugFlag:
-                    assert( extraText ) # Shouldn't be blank
-                    #assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
-                    assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
-                    #print( "InternalBibleBook:doCheckSpeechMarks {} {}:{} ".format( self.BBB, C, V ), extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
-                    assert( extraIndex >= 0 )
-                    #assert( 0 <= extraIndex <= len(text)+3 )
-                    assert( extraType in EXTRA_TYPES )
-                    assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
-                extraOpenChars = []
-                for char in extraText:
-                    if char in openingSpeechChars:
-                        if extraOpenChars and char==extraOpenChars[-1]:
-                            speechMarkErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Improperly nested speech marks {} after {} in note").format( char, extraOpenChars ) )
-                            logging.error( _("Improperly nested speech marks {} after {} in note in").format( char, extraOpenChars ) \
-                                                                    + " {} {}:{}".format( self.BBB, C, V ) )
-                            self.addPriorityError( 45, C, V, _("Improperly nested speech marks {} after {} in note").format( char, extraOpenChars ) )
-                        extraOpenChars.append( char )
-                    elif char in closingSpeechChars:
-                        closeIndex = closingSpeechChars.index( char )
-                        if not extraOpenChars:
-                            #print( "here1 with ", char, C, V, extraOpenChars )
-                            speechMarkErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unexpected '{}' speech closing character in note").format( char ) )
-                            logging.error( _("Unexpected '{}' speech closing character in note in").format( char ) + " {} {}:{}".format( self.BBB, C, V ) )
-                            self.addPriorityError( 43, C, V, _("Unexpected '{}' speech closing character in note").format( char ) )
-                        elif closeIndex==openingSpeechChars.index(extraOpenChars[-1]): # A good closing match
-                            #print( "here2 with ", char, C, V )
-                            extraOpenChars.pop()
-                        else: # We have closing marker that doesn't match
-                            #print( "here3 with ", char, C, V, extraOpenChars )
-                            speechMarkErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Mismatched '{}' speech closing character after {} in note").format( char, extraOpenChars ) )
-                            logging.error( _("Mismatched '{}' speech closing character after {} in note in").format( char, extraOpenChars ) \
+            extras = entry.getExtras()
+            if extras: # Check the notes also -- each note is complete in itself so it's much simpler
+                for extraType, extraIndex, extraText, cleanExtraText in extras: # Now process the characters in the notes
+                    if Globals.debugFlag:
+                        assert( extraText ) # Shouldn't be blank
+                        #assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
+                        assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
+                        #print( "InternalBibleBook:doCheckSpeechMarks {} {}:{} ".format( self.BBB, C, V ), extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
+                        assert( extraIndex >= 0 )
+                        #assert( 0 <= extraIndex <= len(text)+3 )
+                        assert( extraType in EXTRA_TYPES )
+                        assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
+                    extraOpenChars = []
+                    for char in extraText:
+                        if char in openingSpeechChars:
+                            if extraOpenChars and char==extraOpenChars[-1]:
+                                speechMarkErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Improperly nested speech marks {} after {} in note").format( char, extraOpenChars ) )
+                                logging.error( _("Improperly nested speech marks {} after {} in note in").format( char, extraOpenChars ) \
                                                                         + " {} {}:{}".format( self.BBB, C, V ) )
-                            self.addPriorityError( 42, C, V, _("Mismatched '{}' speech closing character after {} in note").format( char, extraOpenChars ) )
-                if extraOpenChars: # We've finished the note but some things weren't closed
-                    speechMarkErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unclosed {} speech marks at end of note").format( extraOpenChars ) )
-                    logging.error( _("Unclosed {} speech marks at end of note in").format( extraOpenChars ) + " {} {}:{}".format( self.BBB, C, V ) )
-                    self.addPriorityError( 47, C, V, _("Unclosed {} speech marks at end of note").format( extraOpenChars ) )
+                                self.addPriorityError( 45, C, V, _("Improperly nested speech marks {} after {} in note").format( char, extraOpenChars ) )
+                            extraOpenChars.append( char )
+                        elif char in closingSpeechChars:
+                            closeIndex = closingSpeechChars.index( char )
+                            if not extraOpenChars:
+                                #print( "here1 with ", char, C, V, extraOpenChars )
+                                speechMarkErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unexpected '{}' speech closing character in note").format( char ) )
+                                logging.error( _("Unexpected '{}' speech closing character in note in").format( char ) + " {} {}:{}".format( self.BBB, C, V ) )
+                                self.addPriorityError( 43, C, V, _("Unexpected '{}' speech closing character in note").format( char ) )
+                            elif closeIndex==openingSpeechChars.index(extraOpenChars[-1]): # A good closing match
+                                #print( "here2 with ", char, C, V )
+                                extraOpenChars.pop()
+                            else: # We have closing marker that doesn't match
+                                #print( "here3 with ", char, C, V, extraOpenChars )
+                                speechMarkErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Mismatched '{}' speech closing character after {} in note").format( char, extraOpenChars ) )
+                                logging.error( _("Mismatched '{}' speech closing character after {} in note in").format( char, extraOpenChars ) \
+                                                                            + " {} {}:{}".format( self.BBB, C, V ) )
+                                self.addPriorityError( 42, C, V, _("Mismatched '{}' speech closing character after {} in note").format( char, extraOpenChars ) )
+                    if extraOpenChars: # We've finished the note but some things weren't closed
+                        speechMarkErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unclosed {} speech marks at end of note").format( extraOpenChars ) )
+                        logging.error( _("Unclosed {} speech marks at end of note in").format( extraOpenChars ) + " {} {}:{}".format( self.BBB, C, V ) )
+                        self.addPriorityError( 47, C, V, _("Unclosed {} speech marks at end of note").format( extraOpenChars ) )
 
         if openChars: # We've finished the book but some things weren't closed
             #print( "here9 with ", openChars )
@@ -3061,22 +3064,24 @@ class InternalBibleBook:
             if text and Globals.USFMMarkers.isPrinted(marker): # process this main text
                 lastTextWordTuple = countWords( marker, cleanText, lastTextWordTuple )
 
-            for extraType, extraIndex, extraText, cleanExtraText in entry.getExtras(): # do any footnotes and cross-references
-                if Globals.debugFlag:
-                    assert( extraText ) # Shouldn't be blank
-                    #assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
-                    assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
-                    #print( extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
-                    assert( extraIndex >= 0 )
-                    #assert( 0 <= extraIndex <= len(text)+3 )
-                    assert( extraType in EXTRA_TYPES )
-                    assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
-                #cleanExtraText = extraText
-                #for sign in ('- ', '+ '): # Remove common leader characters (and the following space)
-                #    cleanExtraText = cleanExtraText.replace( sign, '' )
-                #for marker in ('\\xo*','\\xo ','\\xt*','\\xt ','\\xdc*','\\xdc ','\\fr*','\\fr ','\\ft*','\\ft ','\\fq*','\\fq ','\\fv*','\\fv ','\\fk*','\\fk ',):
-                #    cleanExtraText = cleanExtraText.replace( marker, '' )
-                countWords( extraType, cleanExtraText )
+            extras = entry.getExtras()
+            if extras:
+                for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
+                    if Globals.debugFlag:
+                        assert( extraText ) # Shouldn't be blank
+                        #assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
+                        assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
+                        #print( extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
+                        assert( extraIndex >= 0 )
+                        #assert( 0 <= extraIndex <= len(text)+3 )
+                        assert( extraType in EXTRA_TYPES )
+                        assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
+                    #cleanExtraText = extraText
+                    #for sign in ('- ', '+ '): # Remove common leader characters (and the following space)
+                    #    cleanExtraText = cleanExtraText.replace( sign, '' )
+                    #for marker in ('\\xo*','\\xo ','\\xt*','\\xt ','\\xdc*','\\xdc ','\\fr*','\\fr ','\\ft*','\\ft ','\\fq*','\\fq ','\\fv*','\\fv ','\\fk*','\\fk ',):
+                    #    cleanExtraText = cleanExtraText.replace( marker, '' )
+                    countWords( extraType, cleanExtraText )
 
         # Add up the totals
         if (wordErrors or wordCounts or caseInsensitiveWordCounts) and 'Words' not in self.errorDictionary: self.errorDictionary['Words'] = OrderedDict() # So we hopefully get the errors first
@@ -3275,245 +3280,247 @@ class InternalBibleBook:
             if marker=='c' and text: C, V = text.split()[0], '0'
             elif marker=='v' and text: V = text.split()[0]
 
-            for extraType, extraIndex, extraText, cleanExtraText in entry.getExtras(): # do any footnotes and cross-references
-                if Globals.debugFlag:
-                    assert( extraText ) # Shouldn't be blank
-                    #assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
-                    assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
-                    #assert( 0 <= extraIndex <= len(text) ) -- not necessarily true for multiple notes
-                    assert( extraType in EXTRA_TYPES )
-                    assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the CONTENTS of these fields should be in extras
+            extras = entry.getExtras()
+            if extras:
+                for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
+                    if Globals.debugFlag:
+                        assert( extraText ) # Shouldn't be blank
+                        #assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
+                        assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
+                        #assert( 0 <= extraIndex <= len(text) ) -- not necessarily true for multiple notes
+                        assert( extraType in EXTRA_TYPES )
+                        assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the CONTENTS of these fields should be in extras
 
-                # Get a copy of the note text without any formatting
-                #cleanExtraText = extraText
-                #for sign in ('- ', '+ '): # Remove common leader characters (and the following space)
-                #    cleanExtraText = cleanExtraText.replace( sign, '' )
-                #for marker in ('\\xo*','\\xo ','\\xt*','\\xt ','\\xdc*','\\xdc ','\\fr*','\\fr ','\\ft*','\\ft ','\\fq*','\\fq ','\\fv*','\\fv ','\\fk*','\\fk ',):
-                #    cleanExtraText = cleanExtraText.replace( marker, '' )
+                    # Get a copy of the note text without any formatting
+                    #cleanExtraText = extraText
+                    #for sign in ('- ', '+ '): # Remove common leader characters (and the following space)
+                    #    cleanExtraText = cleanExtraText.replace( sign, '' )
+                    #for marker in ('\\xo*','\\xo ','\\xt*','\\xt ','\\xdc*','\\xdc ','\\fr*','\\fr ','\\ft*','\\ft ','\\fq*','\\fq ','\\fv*','\\fv ','\\fk*','\\fk ',):
+                    #    cleanExtraText = cleanExtraText.replace( marker, '' )
 
-                # Create a list of markers and their contents
-                status, myString, lastCode, lastString, extraList = 0, '', '', '', []
-                #print( extraText )
-                adjExtraText = extraText
-                for chMarker in allAvailableCharacterMarkers:
-                    adjExtraText = adjExtraText.replace( chMarker, '__' + chMarker[1:].upper() + '__' ) # Change character formatting
-                for char in adjExtraText:
-                    if status==0: # waiting for leader char
-                        if char==' ' and myString:
-                            extraList.append( ('leader',myString,) )
-                            status, myString = 1, ''
-                        else: myString += char
-                    elif status==1: # waiting for a backslash code
-                        if Globals.debugFlag: assert( not lastCode )
-                        if char=='\\':
-                            if myString and myString!=' ':
-                                #print( "Something funny in", extraText, extraList, myString ) # Perhaps a fv field embedded in another field???
-                                #assert( len(extraList)>=2 and extraList[-2][1] == '' ) # If so, the second to last field is often blank
-                                extraList.append( ('',myString.rstrip(),) ) # Handle it by listing a blank field
-                            status, myString = 2, ''
-                        else: myString += char
-                    elif status==2: # getting a backslash code
-                        if char==' ' and myString and not lastCode:
-                            lastCode = myString
-                            status, myString = 3, ''
-                        #elif char=='*' and lastCode and lastString and myString==lastCode: # closed a marker
-                        #    extraList.append( (lastCode,lastString,) )
-                        else: myString += char
-                    elif status==3: # getting a backslash code entry text
-                        if char=='\\' and lastCode and myString: # getting the next backslash code
-                            extraList.append( (lastCode,myString.rstrip(),) )
-                            status, myString = 4, ''
-                        elif char=='\\' and lastCode and not myString: # Getting another (embedded?) backslash code instead
-                            #print( "here", lastCode, extraList, extraText )
-                            extraList.append( (lastCode,'',) )
-                            status, myString, lastCode = 4, '', ''
-                        else: myString += char
-                    elif status==4: # getting the backslash closing code or the next code
-                        if char=='*':
-                            if myString==lastCode: # closed the last one
-                                status, myString, lastCode = 1, '', ''
-                            else:
-                                if extraType == 'fn':
-                                    footnoteErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Footnote markers don't match: '{}' and '{}'").format( lastCode, myString+'*' ) )
-                                    self.addPriorityError( 32, C, V, _("Mismatching footnote markers") )
-                                elif extraType == 'xr':
-                                    xrefErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Cross-reference don't match: '{}' and '{}'").format( lastCode, myString+'*' ) )
-                                    self.addPriorityError( 31, C, V, _("Mismatching cross-reference markers") )
-                                #print( "checkNotes: error with", lastCode, extraList, myString, self.BBB, C, V, ); halt
-                                status, myString, lastCode = 1, '', '' # Treat the last one as closed
-                        elif char==' ' and myString:
-                            lastCode = myString
-                            status, myString = 3, ''
-                        else: myString += char
-                    else: raise KeyError
-                if lastCode and myString: extraList.append( (lastCode,myString.rstrip(),) ) # Append the final part of the note
-                #if len(extraList)<3 or '\\ft \\fq' in extraText:
-                #print( "extraList", extraList, "'"+extraText+"'" )
+                    # Create a list of markers and their contents
+                    status, myString, lastCode, lastString, extraList = 0, '', '', '', []
+                    #print( extraText )
+                    adjExtraText = extraText
+                    for chMarker in allAvailableCharacterMarkers:
+                        adjExtraText = adjExtraText.replace( chMarker, '__' + chMarker[1:].upper() + '__' ) # Change character formatting
+                    for char in adjExtraText:
+                        if status==0: # waiting for leader char
+                            if char==' ' and myString:
+                                extraList.append( ('leader',myString,) )
+                                status, myString = 1, ''
+                            else: myString += char
+                        elif status==1: # waiting for a backslash code
+                            if Globals.debugFlag: assert( not lastCode )
+                            if char=='\\':
+                                if myString and myString!=' ':
+                                    #print( "Something funny in", extraText, extraList, myString ) # Perhaps a fv field embedded in another field???
+                                    #assert( len(extraList)>=2 and extraList[-2][1] == '' ) # If so, the second to last field is often blank
+                                    extraList.append( ('',myString.rstrip(),) ) # Handle it by listing a blank field
+                                status, myString = 2, ''
+                            else: myString += char
+                        elif status==2: # getting a backslash code
+                            if char==' ' and myString and not lastCode:
+                                lastCode = myString
+                                status, myString = 3, ''
+                            #elif char=='*' and lastCode and lastString and myString==lastCode: # closed a marker
+                            #    extraList.append( (lastCode,lastString,) )
+                            else: myString += char
+                        elif status==3: # getting a backslash code entry text
+                            if char=='\\' and lastCode and myString: # getting the next backslash code
+                                extraList.append( (lastCode,myString.rstrip(),) )
+                                status, myString = 4, ''
+                            elif char=='\\' and lastCode and not myString: # Getting another (embedded?) backslash code instead
+                                #print( "here", lastCode, extraList, extraText )
+                                extraList.append( (lastCode,'',) )
+                                status, myString, lastCode = 4, '', ''
+                            else: myString += char
+                        elif status==4: # getting the backslash closing code or the next code
+                            if char=='*':
+                                if myString==lastCode: # closed the last one
+                                    status, myString, lastCode = 1, '', ''
+                                else:
+                                    if extraType == 'fn':
+                                        footnoteErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Footnote markers don't match: '{}' and '{}'").format( lastCode, myString+'*' ) )
+                                        self.addPriorityError( 32, C, V, _("Mismatching footnote markers") )
+                                    elif extraType == 'xr':
+                                        xrefErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Cross-reference don't match: '{}' and '{}'").format( lastCode, myString+'*' ) )
+                                        self.addPriorityError( 31, C, V, _("Mismatching cross-reference markers") )
+                                    #print( "checkNotes: error with", lastCode, extraList, myString, self.BBB, C, V, ); halt
+                                    status, myString, lastCode = 1, '', '' # Treat the last one as closed
+                            elif char==' ' and myString:
+                                lastCode = myString
+                                status, myString = 3, ''
+                            else: myString += char
+                        else: raise KeyError
+                    if lastCode and myString: extraList.append( (lastCode,myString.rstrip(),) ) # Append the final part of the note
+                    #if len(extraList)<3 or '\\ft \\fq' in extraText:
+                    #print( "extraList", extraList, "'"+extraText+"'" )
 
-                # List all of the similar types of notes
-                #   plus check which ones end with a period
-                extract = (extraText[:70] + '...' + extraText[-5:]) if len(extraText)>80 else extraText
-                line = "{} {}:{} '{}'".format( self.BBB, C, V, extract )
-                if extraType == 'fn':
-                    haveFinalPeriod = True
-                    footnoteList.append( line )
-                    if cleanExtraText.endswith(' '):
-                        footnoteErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Footnote seems to have an extra space at end: '{}'").format( extraText ) )
-                        self.addPriorityError( 32, C, V, _("Extra space at end of footnote") )
-                    elif not cleanExtraText.endswith('.') and not cleanExtraText.endswith('.”') and not cleanExtraText.endswith('."') and not cleanExtraText.endswith('.»') \
-                                                        and not cleanExtraText.endswith('.’') and not cleanExtraText.endswith(".'") and not cleanExtraText.endswith('.›') \
-                    and not cleanExtraText.endswith('?') and not cleanExtraText.endswith('?”') and not cleanExtraText.endswith('?"') and not cleanExtraText.endswith('?»') \
-                                                        and not cleanExtraText.endswith('?’') and not cleanExtraText.endswith("?'") and not cleanExtraText.endswith('?›') \
-                    and not cleanExtraText.endswith('!') and not cleanExtraText.endswith('!”') and not cleanExtraText.endswith('!"') and not cleanExtraText.endswith('!»') \
-                                                        and not cleanExtraText.endswith('!’') and not cleanExtraText.endswith("!'") and not cleanExtraText.endswith('!›') \
-                    and not cleanExtraText.endswith('.)') and not cleanExtraText.endswith('.]'):
-                    #and not cleanExtraText.endswith('.&quot;') and not text.endswith('.&#39;'):
-                        haveFinalPeriod = False
-                    if discoveryDict and 'footnotesPeriodFlag' in discoveryDict:
-                        if discoveryDict['footnotesPeriodFlag']==True and not haveFinalPeriod:
-                            footnoteErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Footnote seems to be missing a final period: '{}'").format( extraText ) )
-                            self.addPriorityError( 33, C, V, _("Missing period at end of footnote") )
-                        if discoveryDict['footnotesPeriodFlag']==False and haveFinalPeriod:
-                            footnoteErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Footnote seems to include possible unnecessary final period: '{}'").format( extraText ) )
-                            self.addPriorityError( 32, C, V, _("Possible unnecessary period at end of footnote") )
-                elif extraType == 'xr':
-                    haveFinalPeriod = True
-                    xrefList.append( line )
-                    if cleanExtraText.endswith(' '):
-                        xrefErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Cross-reference seems to have an extra space at end: '{}'").format( extraText ) )
-                        self.addPriorityError( 30, C, V, _("Extra space at end of cross-reference") )
-                    elif not cleanExtraText.endswith('.') and not cleanExtraText.endswith('?') and not cleanExtraText.endswith('!') \
-                    and not cleanExtraText.endswith('.)') and not cleanExtraText.endswith('.]') \
-                    and not cleanExtraText.endswith('.”') and not cleanExtraText.endswith('."') and not cleanExtraText.endswith('.»') \
-                    and not cleanExtraText.endswith('.’') and not cleanExtraText.endswith(".'") and not cleanExtraText.endswith('.›'): # \
-                    #and not cleanExtraText.endswith('.&quot;') and not text.endswith('.&#39;'):
-                        haveFinalPeriod = False
-                    if discoveryDict and 'crossReferencesPeriodFlag' in discoveryDict:
-                        if discoveryDict['crossReferencesPeriodFlag']==True and not haveFinalPeriod:
-                            xrefErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Cross-reference seems to be missing a final period: '{}'").format( extraText ) )
-                            self.addPriorityError( 31, C, V, _("Missing period at end of cross-reference") )
-                        if discoveryDict['crossReferencesPeriodFlag']==False and haveFinalPeriod:
-                            xrefErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Cross-reference seems to include possible unnecessary final period: '{}'").format( extraText ) )
-                            self.addPriorityError( 32, C, V, _("Possible unnecessary period at end of cross-reference") )
+                    # List all of the similar types of notes
+                    #   plus check which ones end with a period
+                    extract = (extraText[:70] + '...' + extraText[-5:]) if len(extraText)>80 else extraText
+                    line = "{} {}:{} '{}'".format( self.BBB, C, V, extract )
+                    if extraType == 'fn':
+                        haveFinalPeriod = True
+                        footnoteList.append( line )
+                        if cleanExtraText.endswith(' '):
+                            footnoteErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Footnote seems to have an extra space at end: '{}'").format( extraText ) )
+                            self.addPriorityError( 32, C, V, _("Extra space at end of footnote") )
+                        elif not cleanExtraText.endswith('.') and not cleanExtraText.endswith('.”') and not cleanExtraText.endswith('."') and not cleanExtraText.endswith('.»') \
+                                                            and not cleanExtraText.endswith('.’') and not cleanExtraText.endswith(".'") and not cleanExtraText.endswith('.›') \
+                        and not cleanExtraText.endswith('?') and not cleanExtraText.endswith('?”') and not cleanExtraText.endswith('?"') and not cleanExtraText.endswith('?»') \
+                                                            and not cleanExtraText.endswith('?’') and not cleanExtraText.endswith("?'") and not cleanExtraText.endswith('?›') \
+                        and not cleanExtraText.endswith('!') and not cleanExtraText.endswith('!”') and not cleanExtraText.endswith('!"') and not cleanExtraText.endswith('!»') \
+                                                            and not cleanExtraText.endswith('!’') and not cleanExtraText.endswith("!'") and not cleanExtraText.endswith('!›') \
+                        and not cleanExtraText.endswith('.)') and not cleanExtraText.endswith('.]'):
+                        #and not cleanExtraText.endswith('.&quot;') and not text.endswith('.&#39;'):
+                            haveFinalPeriod = False
+                        if discoveryDict and 'footnotesPeriodFlag' in discoveryDict:
+                            if discoveryDict['footnotesPeriodFlag']==True and not haveFinalPeriod:
+                                footnoteErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Footnote seems to be missing a final period: '{}'").format( extraText ) )
+                                self.addPriorityError( 33, C, V, _("Missing period at end of footnote") )
+                            if discoveryDict['footnotesPeriodFlag']==False and haveFinalPeriod:
+                                footnoteErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Footnote seems to include possible unnecessary final period: '{}'").format( extraText ) )
+                                self.addPriorityError( 32, C, V, _("Possible unnecessary period at end of footnote") )
+                    elif extraType == 'xr':
+                        haveFinalPeriod = True
+                        xrefList.append( line )
+                        if cleanExtraText.endswith(' '):
+                            xrefErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Cross-reference seems to have an extra space at end: '{}'").format( extraText ) )
+                            self.addPriorityError( 30, C, V, _("Extra space at end of cross-reference") )
+                        elif not cleanExtraText.endswith('.') and not cleanExtraText.endswith('?') and not cleanExtraText.endswith('!') \
+                        and not cleanExtraText.endswith('.)') and not cleanExtraText.endswith('.]') \
+                        and not cleanExtraText.endswith('.”') and not cleanExtraText.endswith('."') and not cleanExtraText.endswith('.»') \
+                        and not cleanExtraText.endswith('.’') and not cleanExtraText.endswith(".'") and not cleanExtraText.endswith('.›'): # \
+                        #and not cleanExtraText.endswith('.&quot;') and not text.endswith('.&#39;'):
+                            haveFinalPeriod = False
+                        if discoveryDict and 'crossReferencesPeriodFlag' in discoveryDict:
+                            if discoveryDict['crossReferencesPeriodFlag']==True and not haveFinalPeriod:
+                                xrefErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Cross-reference seems to be missing a final period: '{}'").format( extraText ) )
+                                self.addPriorityError( 31, C, V, _("Missing period at end of cross-reference") )
+                            if discoveryDict['crossReferencesPeriodFlag']==False and haveFinalPeriod:
+                                xrefErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Cross-reference seems to include possible unnecessary final period: '{}'").format( extraText ) )
+                                self.addPriorityError( 32, C, V, _("Possible unnecessary period at end of cross-reference") )
 
-                # Check for two identical fields in a row
-                lastNoteMarker = None
-                for noteMarker,noteText in extraList:
-                    if noteMarker == lastNoteMarker: # Have two identical fields in a row
+                    # Check for two identical fields in a row
+                    lastNoteMarker = None
+                    for noteMarker,noteText in extraList:
+                        if noteMarker == lastNoteMarker: # Have two identical fields in a row
+                            if extraType == 'fn':
+                                footnoteErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Consecutive {} fields in footnote: '{}'").format( noteMarker, extraText ) )
+                                self.addPriorityError( 35, C, V, _("Consecutive {} fields in footnote").format( noteMarker ) )
+                            elif extraType == 'xr':
+                                xrefErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Consecutive {} fields in cross-reference: '{}'").format( noteMarker, extraText ) )
+                                self.addPriorityError( 35, C, V, _("Consecutive {} fields in cross-reference").format( noteMarker ) )
+                            #print( "Consecutive fields in '{}'".format( extraText ) )
+                        lastNoteMarker = noteMarker
+
+                    # Check leader characters
+                    leader = ''
+                    if len(extraText) > 2 and extraText[0]!='\\':
+                        if extraText[1] == ' ':
+                            leader = extraText[0] # Leader character should be followed by a space
+                        elif len(extraText) > 3 and extraText[2] == ' ':
+                            leader = extraText[:2] # Leader character should be followed by a space
+                    if leader:
                         if extraType == 'fn':
-                            footnoteErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Consecutive {} fields in footnote: '{}'").format( noteMarker, extraText ) )
-                            self.addPriorityError( 35, C, V, _("Consecutive {} fields in footnote").format( noteMarker ) )
+                            leaderCounts['Footnotes'] = 1 if 'Footnotes' not in leaderCounts else (leaderCounts['Footnotes'] + 1)
+                            leaderName = "Footnote leader '{}'".format( leader )
+                            leaderCounts[leaderName] = 1 if leaderName not in leaderCounts else (leaderCounts[leaderName] + 1)
+                            if leader not in footnoteLeaderList: footnoteLeaderList.append( leader )
                         elif extraType == 'xr':
-                            xrefErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Consecutive {} fields in cross-reference: '{}'").format( noteMarker, extraText ) )
-                            self.addPriorityError( 35, C, V, _("Consecutive {} fields in cross-reference").format( noteMarker ) )
-                        #print( "Consecutive fields in '{}'".format( extraText ) )
-                    lastNoteMarker = noteMarker
+                            leaderCounts['Cross-References'] = 1 if 'Cross-References' not in leaderCounts else (leaderCounts['Cross-References'] + 1)
+                            leaderName = "Cross-reference leader '{}'".format( leader )
+                            leaderCounts[leaderName] = 1 if leaderName not in leaderCounts else (leaderCounts[leaderName] + 1)
+                            if leader not in xrefLeaderList: xrefLeaderList.append( leader )
+                    else: noteMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("{} seems to be missing a leader character in {}").format( extraType, extraText ) )
 
-                # Check leader characters
-                leader = ''
-                if len(extraText) > 2 and extraText[0]!='\\':
-                    if extraText[1] == ' ':
-                        leader = extraText[0] # Leader character should be followed by a space
-                    elif len(extraText) > 3 and extraText[2] == ' ':
-                        leader = extraText[:2] # Leader character should be followed by a space
-                if leader:
-                    if extraType == 'fn':
-                        leaderCounts['Footnotes'] = 1 if 'Footnotes' not in leaderCounts else (leaderCounts['Footnotes'] + 1)
-                        leaderName = "Footnote leader '{}'".format( leader )
-                        leaderCounts[leaderName] = 1 if leaderName not in leaderCounts else (leaderCounts[leaderName] + 1)
-                        if leader not in footnoteLeaderList: footnoteLeaderList.append( leader )
-                    elif extraType == 'xr':
-                        leaderCounts['Cross-References'] = 1 if 'Cross-References' not in leaderCounts else (leaderCounts['Cross-References'] + 1)
-                        leaderName = "Cross-reference leader '{}'".format( leader )
-                        leaderCounts[leaderName] = 1 if leaderName not in leaderCounts else (leaderCounts[leaderName] + 1)
-                        if leader not in xrefLeaderList: xrefLeaderList.append( leader )
-                else: noteMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("{} seems to be missing a leader character in {}").format( extraType, extraText ) )
-
-                # Find, count and check CVSeparators
-                #  and also check that the references match
-                fnCVSeparator = xrCVSeparator = fnTrailer = xrTrailer = ''
-                haveAnchor = False
-                for noteMarker,noteText in extraList:
-                    if noteMarker=='fr':
-                        haveAnchor = True
-                        if 1: # new code
-                            anchor = BibleAnchorReference( self.BBB, C, V )
-                            #print( "here at BibleAnchorReference", self.BBB, C, V, anchor )
-                            if not anchor.matchesAnchorString( noteText, 'footnote' ):
-                                footnoteErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Footnote anchor reference seems not to match: '{}'").format( noteText ) )
-                                logging.error( _("Footnote anchor reference seems not to match after {} {}:{} in '{}'").format( self.BBB, C, V, noteText ) )
-                                self.addPriorityError( 42, C, V, _("Footnote anchor reference mismatch") )
-                                #print( self.BBB, C, V, 'FN0', '"'+noteText+'"' )
-                        else: # old code
-                            for j,char in enumerate(noteText):
-                                if not char.isdigit() and j<len(noteText)-1: # Got a non-digit and it's not at the end of the reference
-                                    fnCVSeparator = char
-                                    leaderName = "Footnote CV separator '{}'".format( char )
-                                    leaderCounts[leaderName] = 1 if leaderName not in leaderCounts else (leaderCounts[leaderName] + 1)
-                                    if char not in CVSeparatorList: CVSeparatorList.append( char )
-                                    break
-                            if not noteText[-1].isdigit(): fnTrailer = noteText[-1] # Sometimes these references end with a trailer character like a colon
-                            myV = V # Temporary copy
-                            if myV.isdigit() and marker=='s1': myV=str(int(myV)+1) # Assume that a section heading goes with the next verse (bad assumption if the break is in the middle of a verse)
-                            CV1 = (C + fnCVSeparator + myV) if fnCVSeparator and fnCVSeparator in noteText else myV # Make up our own reference string
-                            CV2 = CV1 + fnTrailer # Make up our own reference string
-                            if CV2 != noteText:
-                                if CV1 not in noteText and noteText not in CV2: # This crudely handles a range in either the verse number or the anchor (as long as the individual one is at the start of the range)
-                                    #print( "{} fn m='{}' V={} myV={} CV1='{}' CV2='{}' nT='{}'".format( self.BBB, marker, V, myV, CV1, CV2, noteText ) )
+                    # Find, count and check CVSeparators
+                    #  and also check that the references match
+                    fnCVSeparator = xrCVSeparator = fnTrailer = xrTrailer = ''
+                    haveAnchor = False
+                    for noteMarker,noteText in extraList:
+                        if noteMarker=='fr':
+                            haveAnchor = True
+                            if 1: # new code
+                                anchor = BibleAnchorReference( self.BBB, C, V )
+                                #print( "here at BibleAnchorReference", self.BBB, C, V, anchor )
+                                if not anchor.matchesAnchorString( noteText, 'footnote' ):
                                     footnoteErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Footnote anchor reference seems not to match: '{}'").format( noteText ) )
+                                    logging.error( _("Footnote anchor reference seems not to match after {} {}:{} in '{}'").format( self.BBB, C, V, noteText ) )
                                     self.addPriorityError( 42, C, V, _("Footnote anchor reference mismatch") )
-                                    print( self.BBB, 'FN1', '"'+noteText+'"', "'"+fnCVSeparator+"'", "'"+fnTrailer+"'", CV1, CV2 )
-                                else:
-                                    footnoteErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Footnote anchor reference possibly does not match: '{}'").format( noteText ) )
-                                    print( self.BBB, 'FN2', '"'+noteText+'"', "'"+fnCVSeparator+"'", "'"+fnTrailer+"'", CV1, CV2 )
-                        break # Only process the first fr field
-                    elif noteMarker=='xo':
-                        haveAnchor = True
-                        if 1: # new code
-                            anchor = BibleAnchorReference( self.BBB, C, V )
-                            if not anchor.matchesAnchorString( noteText, 'cross-reference' ):
-                                footnoteErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Cross-reference anchor reference seems not to match: '{}'").format( noteText ) )
-                                logging.error( _("Cross-reference anchor reference seems not to match after {} {}:{} in '{}'").format( self.BBB, C, V, noteText ) )
-                                self.addPriorityError( 41, C, V, _("Cross-reference anchor reference mismatch") )
-                                #print( self.BBB, C, V, 'XR0', '"'+noteText+'"' )
-                        else: # old code
-                            for j,char in enumerate(noteText):
-                                if not char.isdigit() and j<len(noteText)-1: # Got a non-digit and it's not at the end of the reference
-                                    xrCVSeparator = char
-                                    leaderName = "Cross-reference CV separator '{}'".format( char )
-                                    leaderCounts[leaderName] = 1 if leaderName not in leaderCounts else (leaderCounts[leaderName] + 1)
-                                    if char not in CVSeparatorList: CVSeparatorList.append( char )
-                                    break
-                            if not noteText[-1].isalnum(): xrTrailer = noteText[-1] # Sometimes these references end with a trailer character like a colon
-                            elif len(noteText)>3 and noteText[-2:]==' a' and not noteText[-3].isalnum(): xrTrailer = noteText[-3:] # This is a hack to handle something like "12:5: a"
-                            CV1 = (C + xrCVSeparator + V) if xrCVSeparator and xrCVSeparator in noteText else V # Make up our own reference string
-                            CV2 = CV1 + xrTrailer # Make up our own reference string
-                            if CV2 != noteText:
-                                #print( "V='{}'  xrT='{}'  CV1='{}'  CV2='{}'  NT='{}'".format( V, xrTrailer, CV1, CV2, noteText ) )
-                                if CV1 not in noteText and noteText not in CV2: # This crudely handles a range in either the verse number or the anchor (as long as the individual one is at the start of the range)
-                                    #print( 'xr', CV1, noteText )
-                                    xrefErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Cross-reference anchor reference seems not to match: '{}'").format( noteText ) )
+                                    #print( self.BBB, C, V, 'FN0', '"'+noteText+'"' )
+                            else: # old code
+                                for j,char in enumerate(noteText):
+                                    if not char.isdigit() and j<len(noteText)-1: # Got a non-digit and it's not at the end of the reference
+                                        fnCVSeparator = char
+                                        leaderName = "Footnote CV separator '{}'".format( char )
+                                        leaderCounts[leaderName] = 1 if leaderName not in leaderCounts else (leaderCounts[leaderName] + 1)
+                                        if char not in CVSeparatorList: CVSeparatorList.append( char )
+                                        break
+                                if not noteText[-1].isdigit(): fnTrailer = noteText[-1] # Sometimes these references end with a trailer character like a colon
+                                myV = V # Temporary copy
+                                if myV.isdigit() and marker=='s1': myV=str(int(myV)+1) # Assume that a section heading goes with the next verse (bad assumption if the break is in the middle of a verse)
+                                CV1 = (C + fnCVSeparator + myV) if fnCVSeparator and fnCVSeparator in noteText else myV # Make up our own reference string
+                                CV2 = CV1 + fnTrailer # Make up our own reference string
+                                if CV2 != noteText:
+                                    if CV1 not in noteText and noteText not in CV2: # This crudely handles a range in either the verse number or the anchor (as long as the individual one is at the start of the range)
+                                        #print( "{} fn m='{}' V={} myV={} CV1='{}' CV2='{}' nT='{}'".format( self.BBB, marker, V, myV, CV1, CV2, noteText ) )
+                                        footnoteErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Footnote anchor reference seems not to match: '{}'").format( noteText ) )
+                                        self.addPriorityError( 42, C, V, _("Footnote anchor reference mismatch") )
+                                        print( self.BBB, 'FN1', '"'+noteText+'"', "'"+fnCVSeparator+"'", "'"+fnTrailer+"'", CV1, CV2 )
+                                    else:
+                                        footnoteErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Footnote anchor reference possibly does not match: '{}'").format( noteText ) )
+                                        print( self.BBB, 'FN2', '"'+noteText+'"', "'"+fnCVSeparator+"'", "'"+fnTrailer+"'", CV1, CV2 )
+                            break # Only process the first fr field
+                        elif noteMarker=='xo':
+                            haveAnchor = True
+                            if 1: # new code
+                                anchor = BibleAnchorReference( self.BBB, C, V )
+                                if not anchor.matchesAnchorString( noteText, 'cross-reference' ):
+                                    footnoteErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Cross-reference anchor reference seems not to match: '{}'").format( noteText ) )
+                                    logging.error( _("Cross-reference anchor reference seems not to match after {} {}:{} in '{}'").format( self.BBB, C, V, noteText ) )
                                     self.addPriorityError( 41, C, V, _("Cross-reference anchor reference mismatch") )
-                                    print( self.BBB, 'XR1', '"'+noteText+'"', "'"+xrCVSeparator+"'", "'"+xrTrailer+"'", CV1, CV2 )
-                                elif noteText.startswith(CV2) or noteText.startswith(CV1+',') or noteText.startswith(CV1+'-'):
-                                    #print( "  ok" )
-                                    pass # it seems that the reference is contained there in the anchor
-                                    #print( self.BBB, 'XR2', '"'+noteText+'"', "'"+xrCVSeparator+"'", "'"+xrTrailer+"'", CV1, CV2 )
-                                else:
-                                    xrefErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Cross-reference anchor reference possibly does not match: '{}'").format( noteText ) )
-                                    print( self.BBB, 'XR3', '"'+noteText+'"', "'"+xrCVSeparator+"'", "'"+xrTrailer+"'", CV1, CV2 )
-                        break # Only process the first xo field
-                if not haveAnchor:
-                    if extraType == 'fn':
-                        if discoveryDict and 'haveFootnoteOrigins' in discoveryDict and discoveryDict['haveFootnoteOrigins']>0:
-                            footnoteErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Footnote seems to have no anchor reference: '{}'").format( extraText ) )
-                            self.addPriorityError( 39, C, V, _("Missing anchor reference for footnote") )
-                    elif extraType == 'xr':
-                        if discoveryDict and 'haveCrossReferenceOrigins' in discoveryDict and discoveryDict['haveCrossReferenceOrigins']>0:
-                            xrefErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Cross-reference seems to have no anchor reference: '{}'").format( extraText ) )
-                            self.addPriorityError( 38, C, V, _("Missing anchor reference for cross-reference") )
+                                    #print( self.BBB, C, V, 'XR0', '"'+noteText+'"' )
+                            else: # old code
+                                for j,char in enumerate(noteText):
+                                    if not char.isdigit() and j<len(noteText)-1: # Got a non-digit and it's not at the end of the reference
+                                        xrCVSeparator = char
+                                        leaderName = "Cross-reference CV separator '{}'".format( char )
+                                        leaderCounts[leaderName] = 1 if leaderName not in leaderCounts else (leaderCounts[leaderName] + 1)
+                                        if char not in CVSeparatorList: CVSeparatorList.append( char )
+                                        break
+                                if not noteText[-1].isalnum(): xrTrailer = noteText[-1] # Sometimes these references end with a trailer character like a colon
+                                elif len(noteText)>3 and noteText[-2:]==' a' and not noteText[-3].isalnum(): xrTrailer = noteText[-3:] # This is a hack to handle something like "12:5: a"
+                                CV1 = (C + xrCVSeparator + V) if xrCVSeparator and xrCVSeparator in noteText else V # Make up our own reference string
+                                CV2 = CV1 + xrTrailer # Make up our own reference string
+                                if CV2 != noteText:
+                                    #print( "V='{}'  xrT='{}'  CV1='{}'  CV2='{}'  NT='{}'".format( V, xrTrailer, CV1, CV2, noteText ) )
+                                    if CV1 not in noteText and noteText not in CV2: # This crudely handles a range in either the verse number or the anchor (as long as the individual one is at the start of the range)
+                                        #print( 'xr', CV1, noteText )
+                                        xrefErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Cross-reference anchor reference seems not to match: '{}'").format( noteText ) )
+                                        self.addPriorityError( 41, C, V, _("Cross-reference anchor reference mismatch") )
+                                        print( self.BBB, 'XR1', '"'+noteText+'"', "'"+xrCVSeparator+"'", "'"+xrTrailer+"'", CV1, CV2 )
+                                    elif noteText.startswith(CV2) or noteText.startswith(CV1+',') or noteText.startswith(CV1+'-'):
+                                        #print( "  ok" )
+                                        pass # it seems that the reference is contained there in the anchor
+                                        #print( self.BBB, 'XR2', '"'+noteText+'"', "'"+xrCVSeparator+"'", "'"+xrTrailer+"'", CV1, CV2 )
+                                    else:
+                                        xrefErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Cross-reference anchor reference possibly does not match: '{}'").format( noteText ) )
+                                        print( self.BBB, 'XR3', '"'+noteText+'"', "'"+xrCVSeparator+"'", "'"+xrTrailer+"'", CV1, CV2 )
+                            break # Only process the first xo field
+                    if not haveAnchor:
+                        if extraType == 'fn':
+                            if discoveryDict and 'haveFootnoteOrigins' in discoveryDict and discoveryDict['haveFootnoteOrigins']>0:
+                                footnoteErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Footnote seems to have no anchor reference: '{}'").format( extraText ) )
+                                self.addPriorityError( 39, C, V, _("Missing anchor reference for footnote") )
+                        elif extraType == 'xr':
+                            if discoveryDict and 'haveCrossReferenceOrigins' in discoveryDict and discoveryDict['haveCrossReferenceOrigins']>0:
+                                xrefErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Cross-reference seems to have no anchor reference: '{}'").format( extraText ) )
+                                self.addPriorityError( 38, C, V, _("Missing anchor reference for cross-reference") )
 
-                # much more yet to be written ................
+                    # much more yet to be written ................
 
         if (footnoteErrors or xrefErrors or noteMarkerErrors or footnoteList or xrefList or leaderCounts) and 'Notes' not in self.errorDictionary:
             self.errorDictionary['Notes'] = OrderedDict() # So we hopefully get the errors first
