@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-06-15 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-16 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -142,7 +142,7 @@ class BibleWriter( InternalBible ):
         zf.close()
 
         if Globals.verbosityLevel > 0 and Globals.maxProcesses > 1:
-            print( "BibleWriter.toPickle finished successfully." )
+            print( "  BibleWriter.toPickle finished successfully." )
         return True
     # end of BibleWriter.toPickle
 
@@ -318,7 +318,7 @@ class BibleWriter( InternalBible ):
         printWordCounts( "main_text_wordcounts_case_insensitive", mainTextCaseInsensitiveWordCounts )
 
         if Globals.verbosityLevel > 0 and Globals.maxProcesses > 1:
-            print( "BibleWriter.makeLists finished successfully." )
+            print( "  BibleWriter.makeLists finished successfully." )
         return True
     # end of BibleWriter.makeLists
 
@@ -375,7 +375,7 @@ class BibleWriter( InternalBible ):
         zf.close()
 
         if Globals.verbosityLevel > 0 and Globals.maxProcesses > 1:
-            print( "BibleWriter.toPseudoUSFM finished successfully." )
+            print( "  BibleWriter.toPseudoUSFM finished successfully." )
         return True
     # end of BibleWriter.toPseudoUSFM
 
@@ -488,7 +488,7 @@ class BibleWriter( InternalBible ):
         zf.close()
 
         if Globals.verbosityLevel > 0 and Globals.maxProcesses > 1:
-            print( "BibleWriter.toUSFM finished successfully." )
+            print( "  BibleWriter.toUSFM finished successfully." )
         return True
     # end of BibleWriter.toUSFM
 
@@ -575,7 +575,7 @@ class BibleWriter( InternalBible ):
         zf.close()
 
         if Globals.verbosityLevel > 0 and Globals.maxProcesses > 1:
-            print( "BibleWriter.toText finished successfully." )
+            print( "  BibleWriter.toText finished successfully." )
         return True
     # end of BibleWriter.toText
 
@@ -956,7 +956,7 @@ class BibleWriter( InternalBible ):
         zf.close()
 
         if Globals.verbosityLevel > 0 and Globals.maxProcesses > 1:
-            print( "BibleWriter.toMarkdown finished successfully." )
+            print( "  BibleWriter.toMarkdown finished successfully." )
         return True
     # end of BibleWriter.toMarkdown
 
@@ -1262,7 +1262,7 @@ class BibleWriter( InternalBible ):
 
         if validationSchema: return xw.validate( validationSchema )
         if Globals.verbosityLevel > 0 and Globals.maxProcesses > 1:
-            print( "BibleWriter.toDoor43 finished successfully." )
+            print( "  BibleWriter.toDoor43 finished successfully." )
         return True
     # end of BibleWriter.toDoor43
 
@@ -2076,7 +2076,7 @@ class BibleWriter( InternalBible ):
 
         if validationSchema: return xw.validate( validationSchema )
         if Globals.verbosityLevel > 0 and Globals.maxProcesses > 1:
-            print( "BibleWriter.toHTML5 finished successfully." )
+            print( "  BibleWriter.toHTML5 finished successfully." )
         return True
     # end of BibleWriter.toHTML5
 
@@ -2788,7 +2788,7 @@ class BibleWriter( InternalBible ):
         #zf.close()
 
         if Globals.verbosityLevel > 0 and Globals.maxProcesses > 1:
-            print( "BibleWriter.toCustomBible finished successfully." )
+            print( "  BibleWriter.toCustomBible finished successfully." )
         return True
     # end of BibleWriter.toCustomBible
 
@@ -3239,7 +3239,7 @@ class BibleWriter( InternalBible ):
 
         if validationSchema: return validationResults
         if Globals.verbosityLevel > 0 and Globals.maxProcesses > 1:
-            print( "BibleWriter.toUSXXML finished successfully." )
+            print( "  BibleWriter.toUSXXML finished successfully." )
         return True
     # end of BibleWriter.toUSXXML
 
@@ -3680,7 +3680,7 @@ class BibleWriter( InternalBible ):
 
         if validationSchema: return validationResults
         if Globals.verbosityLevel > 0 and Globals.maxProcesses > 1:
-            print( "BibleWriter.toUSFXXML finished successfully." )
+            print( "  BibleWriter.toUSFXXML finished successfully." )
         return True
     # end of BibleWriter.toUSFXXML
 
@@ -4461,7 +4461,7 @@ class BibleWriter( InternalBible ):
             print( "Need to find and look at an example where a new chapter isn't a new <p> to see how chapter eIDs should be handled there" )
         if validationSchema: return validationResults
         if Globals.verbosityLevel > 0 and Globals.maxProcesses > 1:
-            print( "BibleWriter.toOSISXML finished successfully." )
+            print( "  BibleWriter.toOSISXML finished successfully." )
         return True
     # end of BibleWriter.toOSISXML
 
@@ -4630,7 +4630,7 @@ class BibleWriter( InternalBible ):
 
         if validationSchema: return xw.validate( validationSchema )
         if Globals.verbosityLevel > 0 and Globals.maxProcesses > 1:
-            print( "BibleWriter.toZefaniaXML finished successfully." )
+            print( "  BibleWriter.toZefaniaXML finished successfully." )
         return True
     # end of BibleWriter.toZefaniaXML
 
@@ -4809,7 +4809,7 @@ class BibleWriter( InternalBible ):
 
         if validationSchema: return xw.validate( validationSchema )
         if Globals.verbosityLevel > 0 and Globals.maxProcesses > 1:
-            print( "BibleWriter.toHaggaiXML finished successfully." )
+            print( "  BibleWriter.toHaggaiXML finished successfully." )
         return True
     # end of BibleWriter.toHaggaiXML
 
@@ -4957,7 +4957,7 @@ class BibleWriter( InternalBible ):
 
         if validationSchema: return xw.validate( validationSchema )
         if Globals.verbosityLevel > 0 and Globals.maxProcesses > 1:
-            print( "BibleWriter.toOpenSongXML finished successfully." )
+            print( "  BibleWriter.toOpenSongXML finished successfully." )
         return True
     # end of BibleWriter.toOpenSongXML
 
@@ -5660,7 +5660,7 @@ class BibleWriter( InternalBible ):
             NTresults= xwNT.validate( validationSchema )
             return OTresults and NTresults
         if Globals.verbosityLevel > 0 and Globals.maxProcesses > 1:
-            print( "BibleWriter.toSwordModule finished successfully." )
+            print( "  BibleWriter.toSwordModule finished successfully." )
         return True
     #end of BibleWriter.toSwordModule
 
@@ -5842,7 +5842,7 @@ class BibleWriter( InternalBible ):
         zf.close()
 
         if Globals.verbosityLevel > 0 and Globals.maxProcesses > 1:
-            print( "BibleWriter.totheWord finished successfully." )
+            print( "  BibleWriter.totheWord finished successfully." )
         return True
     # end of BibleWriter.totheWord
 
@@ -6047,7 +6047,7 @@ class BibleWriter( InternalBible ):
         tar.close()
 
         if Globals.verbosityLevel > 0 and Globals.maxProcesses > 1:
-            print( "BibleWriter.toMySword finished successfully." )
+            print( "  BibleWriter.toMySword finished successfully." )
         return True
     # end of BibleWriter.toMySword
 
@@ -6352,8 +6352,8 @@ class BibleWriter( InternalBible ):
             #while '  ' in composedLine: # remove double spaces
                 #composedLine = composedLine.replace( '  ', ' ' )
 
-            # Check what's left at the end
-            if '\\' in composedLine:
+            # Check what's left at the end (but hide e-Sword \line markers first)
+            if '\\' in composedLine.replace( '\\line ', '' ):
                 logging.warning( "toESword.composeVerseLine: Doesn't handle formatted line yet: {} {}:{} '{}'".format( BBB, C, V, composedLine ) )
                 if Globals.debugFlag and debuggingThisModule:
                     print( "toESword.composeVerseLine: Doesn't handle formatted line yet: {} {}:{} '{}'".format( BBB, C, V, composedLine ) )
@@ -6538,7 +6538,7 @@ class BibleWriter( InternalBible ):
         zf.close()
 
         if Globals.verbosityLevel > 0 and Globals.maxProcesses > 1:
-            print( "BibleWriter.toESword finished successfully." )
+            print( "  BibleWriter.toESword finished successfully." )
         return True
     # end of BibleWriter.toESword
 
@@ -6665,7 +6665,7 @@ class BibleWriter( InternalBible ):
         zf.close()
 
         if Globals.verbosityLevel > 0 and Globals.maxProcesses > 1:
-            print( "BibleWriter.toSwordSearcher finished successfully." )
+            print( "  BibleWriter.toSwordSearcher finished successfully." )
         return True
     # end of BibleWriter.toSwordSearcher
 
@@ -6843,7 +6843,7 @@ class BibleWriter( InternalBible ):
         zf.close()
 
         if Globals.verbosityLevel > 0 and Globals.maxProcesses > 1:
-            print( "BibleWriter.toDrupalBible finished successfully." )
+            print( "  BibleWriter.toDrupalBible finished successfully." )
         return True
     # end of BibleWriter.toDrupalBible
 
@@ -7969,7 +7969,7 @@ class BibleWriter( InternalBible ):
         zf.close()
 
         if Globals.verbosityLevel > 0 and Globals.maxProcesses > 1:
-            print( "BibleWriter.toODF finished successfully." )
+            print( "  BibleWriter.toODF finished successfully." )
         return True
     # end of BibleWriter.toODF
 
@@ -8456,7 +8456,7 @@ class BibleWriter( InternalBible ):
             zf.close()
 
         if Globals.verbosityLevel > 0 and Globals.maxProcesses > 1:
-            print( "BibleWriter.toPhotoBible finished successfully." )
+            print( "  BibleWriter.toPhotoBible finished successfully." )
         return True
     # end of BibleWriter.toPhotoBible
 
@@ -8742,7 +8742,7 @@ class BibleWriter( InternalBible ):
         zf.close()
 
         if Globals.verbosityLevel > 0 and Globals.maxProcesses > 1:
-            print( "BibleWriter.toTeX finished successfully." )
+            print( "  BibleWriter.toTeX finished successfully." )
         return True
     # end of BibleWriter.toTeX
 
