@@ -314,7 +314,7 @@ class USFMBible( Bible ):
             logging.warning( "We had already tried loading USFM {} for {}".format( BBB, self.name ) )
             return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
-        if Globals.verbosityLevel > 2 or Globals.debugFlag: print( _("  USFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
+        if Globals.verbosityLevel > 1 or Globals.debugFlag: print( _("  USFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
         if filename is None: filename = self.possibleFilenameDict[BBB]
         UBB = USFMBibleBook( self.name, BBB )
         UBB.load( filename, self.sourceFolder, self.encoding )
@@ -365,8 +365,8 @@ class USFMBible( Bible ):
             else: # Just single threaded
                 # Load the books one by one -- assuming that they have regular Paratext style filenames
                 for BBB,filename in self.maximumPossibleFilenameTuples:
-                    if Globals.verbosityLevel > 1 or Globals.debugFlag:
-                        print( _("  USFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
+                    #if Globals.verbosityLevel > 1 or Globals.debugFlag:
+                        #print( _("  USFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
                     loadedBook = self.loadBook( BBB, filename ) # also saves it
         else:
             logging.critical( _("USFMBible: No books to load in {}!").format( self.sourceFolder ) )

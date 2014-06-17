@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkers.py
-#   Last modified: 2014-06-13 (also update ProgVersion below)
+#   Last modified: 2014-06-16 (also update ProgVersion below)
 #
 # Module handling USFMMarkers
 #
@@ -49,6 +49,7 @@ import Globals
 
 
 OFTEN_IGNORED_USFM_HEADER_MARKERS = ( 'id','ide', 'sts','rem','h', 'toc1','toc2','toc3', 'cl=', )
+# NOTE: the following sets include unnumbered markers, e.g., q, as well as q1
 USFM_INTRODUCTION_MARKERS = ( 'imt','imt1','imt2','imt3','imt4', 'imte','imte1','imte2','imte3','imte4',
                             'is','is1','is2','is3','is4',
                            'ip','ipi', 'im','imi', 'ipq','imq','ipr', 'iq','iq1','iq2','iq3','iq4',
@@ -57,7 +58,7 @@ USFM_INTRODUCTION_MARKERS = ( 'imt','imt1','imt2','imt3','imt4', 'imte','imte1',
 USFM_BIBLE_PARAGRAPH_MARKERS = ( 'p','pc','pr', 'm','mi', 'pm','pmo','pmc','pmr', 'cls',
                             'pi','pi1','pi2','pi3','pi4', 'ph','ph1','ph2','ph3','ph4',
                             'q','q1','q2','q3','q4', 'qr','qc', 'qm','qm1','qm2','qm3','qm4',
-                            'li', 'li1','li2','li3','li4', ) # Doesn't include nb and qa
+                            'li','li1','li2','li3','li4', ) # Doesn't include nb and qa
 
 
 

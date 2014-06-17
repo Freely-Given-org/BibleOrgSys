@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleInternals.py
-#   Last modified: 2014-06-15 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-17 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Bible internals handler"
-ProgVersion = "0.40"
+ProgVersion = "0.41"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -255,7 +255,8 @@ class InternalBibleEntry:
             assert( isinstance( cleanText, str ) )
             assert( '\n' not in cleanText and '\r' not in cleanText )
 
-            if marker[0] == '¬': # It's an end marker
+            if marker[0] == '¬' \
+            or marker in ('iot','ilist','list',) and originalMarker is None: # It's an end marker or an added marker
                 assert( originalMarker is None and adjustedText is None and extras is None and originalText is None )
             else: # it's not an end marker
                 assert( originalMarker and isinstance( originalMarker, str ) ) # Mustn't be blank

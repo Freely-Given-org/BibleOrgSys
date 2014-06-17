@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # TheWordBible.py
-#   Last modified: 2014-06-15 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-17 by RJH (also update ProgVersion below)
 #
 # Module handling "theWord" Bible module files
 #
@@ -349,7 +349,7 @@ def theWordHandleIntroduction( BBB, bookData, ourGlobals ):
         verseData, context = result
         assert( len(verseData ) == 1 ) # in the introductory section
         marker, text = verseData[0].getMarker(), verseData[0].getFullText()
-        if marker not in theWordIgnoredIntroMarkers and '¬' not in marker: # don't need end markers here either
+        if marker not in theWordIgnoredIntroMarkers and '¬' not in marker and marker!='ilist': # don't need end markers here either
             if marker in ('mt1','mte1'): composedLine += '<TS1>'+theWordAdjustLine(BBB,intC,intV,text)+'<Ts>'
             elif marker in ('mt2','mte2'): composedLine += '<TS2>'+theWordAdjustLine(BBB,intC,intV,text)+'<Ts>'
             elif marker in ('mt3','mte3'): composedLine += '<TS3>'+theWordAdjustLine(BBB,intC,intV,text)+'<Ts>'
@@ -495,7 +495,7 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
     #if BBB=='MAT' and C==4 and 14<V<18: print( BBB, C, V, ourGlobals, verseData )
     for verseDataEntry in verseData:
         marker, text = verseDataEntry.getMarker(), verseDataEntry.getFullText()
-        if '¬' in marker: continue # Just ignore end markers -- not needed here
+        if '¬' in marker or marker in ('list','ilist',): continue # Just ignore added markers -- not needed here
         if marker in ('c','c#','cl','cp','rem',): lastMarker = marker; continue  # ignore all of these for this
 
         if marker == 'v': # handle versification differences here

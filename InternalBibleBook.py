@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2014-06-16 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-17 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -1351,12 +1351,19 @@ class InternalBibleBook:
         # end of InternalBibleBook.processLines.reorderRawLines
 
 
-        def addEndMarkers():
+        def addNestingMarkers():
             """
             Go through self._processedLines and add entries
                 for the end of verses, chapters, etc.
+            End markers start with not sign ¬.
 
-            End markers finish with not sign.
+            We put matching end markers on c and v markers,
+                paragraph markers, e.g., p, q,
+                section headings, e.g., s1
+                iot section (enclosing io fields), and
+                lists (and intro lists).
+
+            Example:
                 p
                 v       7
                 v~      Verse seven text
@@ -1395,11 +1402,14 @@ class InternalBibleBook:
                 newLines.append( InternalBibleEntry('¬'+openMarkers.pop( ie ), None, None, withText, None, None) )
             # end of closeOpenMarker
 
-            ourHeadingMarkers = ('s','s1','s2','s3','s4', 'is','is1','is2','is3','is4', )
+            ourHeadingMarkers = ( 's','s1','s2','s3','s4', 'is','is1','is2','is3','is4', )
+            ourIntroOutlineMarkers = ( 'io','io1','io2','io3','io4', )
+            ourIntroListMarkers = ( 'ili','ili1','ili2','ili3','ili4', )
+            ourMainListMarkers = ( 'li','li1','li2','li3','li4', )
             haveIntro = False
             C = V = '0'
             lastJ = len(self._processedLines) - 1
-            lastPMarker = lastSMarker = None
+            lastMarker = lastPMarker = lastSMarker = None
             for j,dataLine in enumerate( self._processedLines ):
 
                 def verseEnded( currentIndex ):
@@ -1426,10 +1436,29 @@ class InternalBibleBook:
                     return None
                 # end of findNextRelevantMarker
 
+                def findNextRelevantListMarker( currentIndex ):
+                    for k in range( currentIndex+1, len(self._processedLines) ):
+                        nextRelevantListMarker = self._processedLines[k].getMarker()
+                        if nextRelevantListMarker not in ( 'c', 'v', 'v~','p~', ):
+                            #print( "  nRLM1 =", nextRelevantListMarker )
+                            return nextRelevantListMarker # Found one
+                    return None
+                # end of findNextRelevantListMarker
+
                 marker, text = dataLine.getMarker(), dataLine.getCleanText()
                 nextDataLine = self._processedLines[j+1] if j<lastJ else None
                 nextMarker = nextDataLine.getMarker() if nextDataLine is not None else None
-                #print( "InternalBibleBook.processLines.addEndMarkers: {} {} {}:{} {}={} then {} now have {}".format( j, self.BBB, C, V, marker, repr(text), nextMarker, openMarkers ) )
+                #print( "InternalBibleBook.processLines.addNestingMarkers: {} {} {}:{} {}={} then {} now have {}".format( j, self.BBB, C, V, marker, repr(text), nextMarker, openMarkers ) )
+
+                if marker not in ourIntroOutlineMarkers and 'iot' in openMarkers: closeOpenMarker( 'iot' )
+                if marker not in ourIntroListMarkers and 'ilist' in openMarkers: closeOpenMarker( 'ilist' )
+                if marker not in ourMainListMarkers and marker not in ('v~','p~',) and 'list' in openMarkers:
+                    # This is more complex coz can cross v and c boundaries
+                    #print( "Shall we close", marker, findNextRelevantListMarker(j), findNextRelevantMarker(j) )
+                    if findNextRelevantListMarker(j) not in ourMainListMarkers:
+                        #print( "Close list at", C, V, "before", marker )
+                        closeOpenMarker( 'list' )
+                        #print( newLines[-20:] )
 
                 if marker == 'c':
                     if haveIntro:
@@ -1457,6 +1486,20 @@ class InternalBibleBook:
                         closeOpenMarker( 'v', V )
                     V = text
                     openMarkers.append( marker )
+                elif marker in ourIntroOutlineMarkers:
+                    if lastMarker!='iot' and lastMarker not in ourIntroOutlineMarkers:
+                        #print( "InternalBibleBook.processLines.addNestingMarkers: {} {}:{} Adding iot marker before {}".format( self.BBB, C, V, marker ) )
+                        if Globals.debugFlag: assert( 'iot' not in openMarkers )
+                        newLines.append( InternalBibleEntry('iot', None, None, '', None, None) )
+                        openMarkers.append( 'iot' )
+                    haveIntro = True
+                elif marker in ourIntroListMarkers:
+                    if lastMarker not in ourIntroListMarkers:
+                        #print( "InternalBibleBook.processLines.addNestingMarkers: {} {}:{} Adding ilist marker before {} after {}".format( self.BBB, C, V, marker, lastMarker ) )
+                        if Globals.debugFlag: assert( 'ilist' not in openMarkers )
+                        newLines.append( InternalBibleEntry('ilist', None, None, '', None, None) )
+                        openMarkers.append( 'ilist' )
+                    haveIntro = True
                 elif marker in USFM_INTRODUCTION_MARKERS:
                     haveIntro = True
                 elif marker in ourHeadingMarkers:
@@ -1465,27 +1508,45 @@ class InternalBibleBook:
                     if lastSMarker in openMarkers: closeOpenMarker( lastSMarker ); lastSMarker = None
                     openMarkers.append( marker )
                     lastSMarker = marker
+                elif marker in ourMainListMarkers:
+                    assert( not text )
+                    if 'v' in openMarkers and verseEnded( j ): closeOpenMarker( 'v', V )
+                    if lastPMarker in openMarkers: closeOpenMarker( lastPMarker ); lastPMarker = None
+                    if 'list' not in openMarkers:
+                        #print( newLines[-20:] )
+                        #print( "InternalBibleBook.processLines.addNestingMarkers: {} {}:{} Adding list marker before {}".format( self.BBB, C, V, marker ) )
+                        if Globals.debugFlag: assert( 'list' not in openMarkers )
+                        newLines.append( InternalBibleEntry('list', None, None, '', None, None) )
+                        openMarkers.append( 'list' )
+                    openMarkers.append( marker )
+                    lastPMarker = marker
                 elif marker in USFM_BIBLE_PARAGRAPH_MARKERS:
                     assert( not text )
                     if 'v' in openMarkers and verseEnded( j ): closeOpenMarker( 'v', V )
                     if lastPMarker in openMarkers: closeOpenMarker( lastPMarker ); lastPMarker = None
+                    #if 'list' in openMarkers: closeOpenMarker( 'list' ); halt
                     openMarkers.append( marker )
                     lastPMarker = marker
+                #else: print( "  Ignore {}={}".format( marker, repr(text) ) )
 
                 newLines.append( dataLine )
-                if Globals.debugFlag and len(openMarkers) > 4: # Should only be 4: e.g., c s1 p v
+                if Globals.debugFlag and len(openMarkers) > 5: # Should only be 5: e.g., c s1 v list li1
                     print( newLines[-20:] )
                     print(openMarkers); halt
+                lastMarker = marker
 
             if openMarkers: # Close any left-over open markers
-                #print( "InternalBibleBook.processLines.addEndMarkers: stillOpen", self.BBB, openMarkers )
+                if 'list' in openMarkers or 'ilist' in openMarkers or 'iot' in openMarkers:
+                    print( "InternalBibleBook.processLines.addNestingMarkers: stillOpen", self.BBB, openMarkers )
+                    if Globals.debugFlag: halt
                 for lMarker in openMarkers[::-1]: # Get a reversed copy (coz we are deleting members)
                     if lMarker == 'v': closeLastOpenMarker( V )
                     elif lMarker == 'c': closeLastOpenMarker( C )
                     else: closeLastOpenMarker()
             assert( not openMarkers )
             self._processedLines = newLines # replace the old set
-        # end of InternalBibleBook.processLines.addEndMarkers
+            #if self.BBB == 'NUM': halt
+        # end of InternalBibleBook.processLines.addNestingMarkers
 
 
         # This is the main processLines code
@@ -1500,7 +1561,7 @@ class InternalBibleBook:
             if self.objectTypeString=='USX' and text and text[-1]==' ': text = text[:-1] # Removing extra trailing space from USX files
             processLine( marker, text ) # Saves its results in self._processedLines
         #self.debugPrint(); halt
-        addEndMarkers()
+        addNestingMarkers()
         #self.debugPrint(); halt
 
         # Get rid of data that we don't need
@@ -1923,7 +1984,7 @@ class InternalBibleBook:
                 bkDict['haveIntroductoryMarkers'] = True
                 if text: bkDict['haveIntroductoryText'] = True
 
-            if '\\+' in text: bkDict['haveNestedUSFMarkers'] = True
+            if text and '\\+' in text: bkDict['haveNestedUSFMarkers'] = True
             if lastMarker=='v' and (marker!='v~' or not text): bkDict['seemsFinished'] = False
 
             extras = entry.getExtras()
