@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2014-06-17 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-18 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -863,7 +863,7 @@ class InternalBibleBook:
             # Keep track of where we are
             if originalMarker=='c' and text:
                 if haveWaitingC: logging.warning( "Note: Two c markers with no intervening v markers at {} {}:{}".format( self.BBB, C, V ) )
-                #c = text.split()[0]; V = '0'
+                #C = text.split()[0]; V = '0'
                 cBits = splitCNumber( text )
                 if Globals.debugFlag and debuggingThisModule and len(cBits)>1:
                     print( "InternalBibleBook.processLine: cbits", cBits )
@@ -898,7 +898,7 @@ class InternalBibleBook:
                             if adjText: print( " adjText:", repr(adjText) )
                             if cleanText: print( " cleanText:", repr(cleanText) )
                             if extras: print( " extras:", extras )
-                        self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, c, c, extras, c) ) # Write the chapter number as a separate line
+                        self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, C, C, extras, C) ) # Write the chapter number as a separate line
                         adjustedMarker, text = 'c~', cBits[1]
             elif originalMarker=='cp' and text:
                 V = '0'

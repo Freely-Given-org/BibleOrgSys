@@ -8491,8 +8491,11 @@ class BibleWriter( InternalBible ):
                             'iex':'IEX', }
         ipListMarkerTranslate = { 'ili1':'ILI','ili2':'ILII','ili3':'ILIII','ili4':'ILIIII', }
         listMarkerTranslate = { 'li1':'LI','li2':'LII','li3':'LIII','li4':'LIIII', }
-        pMarkerTranslate = { 'p':'P', 'pi1':'PI','pi2':'PII','pi3':'PIII','pi4':'PIIII',
-                            'q1':'Q','q2':'QQ','q3':'QQQ','q4':'QQQQ', }
+        pMarkerTranslate = { 'p':'P','pc':'PC','pr':'PR', 'm':'M','mi':'MI',
+                            'pmo':'PMO','pmc':'PMC','pmr':'PMR',
+                            'pi1':'PI','pi2':'PII','pi3':'PIII','pi4':'PIIII', 'ph1':'PH','ph2':'PHH','ph3':'PHHH','ph4':'PHHHH',
+                            'q1':'Q','q2':'QQ','q3':'QQQ','q4':'QQQQ',
+                            'cls':'CLS', }
         cMarkerTranslate = { 'bk':'BK', 'add':'ADD', 'nd':'ND', 'wj':'WJ', 'sig':'SIG',
                             'bdit':'BDIT', 'it':'IT', 'bd':'BD', 'em':'EM', 'sc':'SC',
                             'ior':'IOR', 'k':'KW', }
