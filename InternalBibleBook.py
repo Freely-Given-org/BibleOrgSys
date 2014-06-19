@@ -1666,7 +1666,7 @@ class InternalBibleBook:
                 logging.error( _("Marker 'id' should only appear as the first marker in a book but found on line {} after {} {}:{} in {}: {}").format( j+1, self.BBB, C, V, marker, text ) )
                 self.addPriorityError( 99, C, V, _("'id' marker should only be in first line of file") )
             if ( marker[0]=='¬' and marker not in ('¬ilist','¬list',) and not Globals.USFMMarkers.isNewlineMarker( marker[1:] ) ) \
-            or ( marker[0]!='¬' and marker not in ('c#','ilist','list',) and not Globals.USFMMarkers.isNewlineMarker( marker ) ):
+            or ( marker[0]!='¬' and marker not in ('c#','vp~','ilist','list',) and not Globals.USFMMarkers.isNewlineMarker( marker ) ):
                 validationErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unexpected '{}' newline marker in Bible book (Text is '{}')").format( marker, text ) )
                 logging.warning( _("Unexpected '{}' newline marker in Bible book after {} {}:{} (Text is '{}')").format( marker, self.BBB, C, V, text ) )
                 self.addPriorityError( 80, C, V, _("Marker {} not expected at beginning of line".format( repr(marker) ) ) )
@@ -2734,17 +2734,21 @@ class InternalBibleBook:
         """Runs a number of checks on the characters used."""
 
         def countCharacters( adjText ):
-            """ Counts the characters for the given text (with internal markers already removed). """
+            """
+            Counts the characters for the given text (with internal markers already removed).
+
+            Displays multiple spaces as middle-dots so more visible.
+            """
             nonlocal haveNonAsciiChars
             #print( "countCharacters: '{}'".format( adjText ) )
             if '  ' in adjText:
-                characterErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Multiple spaces in '{}'").format( adjText ) )
+                characterErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Multiple spaces in {}").format( repr(adjText.replace( '  ', '··' )) ) )
                 self.addPriorityError( 7, C, V, _("Multiple spaces in text line") )
             if '  ' in adjText:
-                characterErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Multiple non-breaking spaces in '{}'").format( adjText ) )
+                characterErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Multiple non-breaking spaces in {}").format( repr(adjText.replace( '  ', '··' )) ) )
                 self.addPriorityError( 9, C, V, _("Multiple non-breaking spaces in text line") )
             if adjText[-1].isspace(): # Most trailing spaces have already been removed, but this can happen in a note after the markers have been removed
-                characterErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Trailing space in '{}'").format( adjText ) )
+                characterErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Trailing space in {}").format( repr(adjText) ) )
                 self.addPriorityError( 5, C, V, _("Trailing space in text line") )
                 #print( "{} {}:{} ".format( self.BBB, C, V ) + _("Trailing space in {} '{}'").format( marker, adjText ) )
             if Globals.USFMMarkers.isPrinted( marker ): # Only do character counts on lines that will be printed

@@ -116,7 +116,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
   <header>
     <work>
       <version>0.72</version>
-      <date>2013-12-26</date>
+      <date>2014-06-18</date>
       <title>Bible books codes list</title>
       <contributor role="com">Robert Hunt</contributor>
       <identifier type="URL">http://www.sbl-site.org/publications/publishingwithsbl.aspx</identifier>
@@ -2954,6 +2954,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <referenceNumber>700</referenceNumber>
     <sequenceNumber>5</sequenceNumber>
     <USFMAbbreviation>Frt</USFMAbbreviation>
+    <USFMNumber>A0</USFMNumber> <!-- Not actually a decimal number! -->
     <USXNumber>100</USXNumber>
     <BibleditNumber>67</BibleditNumber>
     <typicalSection>FRT</typicalSection>
@@ -2995,7 +2996,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <referenceNumber>725</referenceNumber>
     <sequenceNumber>800</sequenceNumber>
     <USFMAbbreviation>Glo</USFMAbbreviation>
-    <!-- <USFMNumber>110</USFMNumber> Is this for real? A 3-digit USFM number? -->
+    <USFMNumber>A9</USFMNumber> <!-- Not actually a decimal number! -->
     <USXNumber>109</USXNumber>
     <typicalSection>BAK</typicalSection>
   </BibleBookCodes>

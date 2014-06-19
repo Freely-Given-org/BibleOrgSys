@@ -66,7 +66,7 @@ Note that not all exports export all books.
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.80"
+ProgVersion = "0.81"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -337,15 +337,15 @@ class BibleWriter( InternalBible ):
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
 
         # Write the raw and pseudo-USFM files
-        for BBB,bookObject in self.books.items():
+        for j, (BBB,bookObject) in enumerate( self.books.items() ):
             try: rawUSFMData = bookObject._rawLines
             except: rawUSFMData = None # it's been deleted  :-(
             if rawUSFMData:
                 #print( "\pseudoUSFMData", pseudoUSFMData[:50] ); halt
-                USFMAbbreviation = Globals.BibleBooksCodes.getUSFMAbbreviation( BBB )
-                USFMNumber = Globals.BibleBooksCodes.getUSFMNumber( BBB )
+                #USFMAbbreviation = Globals.BibleBooksCodes.getUSFMAbbreviation( BBB )
+                #USFMNumber = Globals.BibleBooksCodes.getUSFMNumber( BBB )
 
-                filename = "{}{}BibleWriter.rSFM".format( USFMNumber, USFMAbbreviation.upper() ) # BibleWriter = BibleWriter
+                filename = "{:02}_{}_BibleWriter.rSFM".format( j, BBB )
                 filepath = os.path.join( outputFolder, Globals.makeSafeFilename( filename ) )
                 if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
                 with open( filepath, 'wt' ) as myFile:
@@ -357,7 +357,7 @@ class BibleWriter( InternalBible ):
             USFMAbbreviation = Globals.BibleBooksCodes.getUSFMAbbreviation( BBB )
             USFMNumber = Globals.BibleBooksCodes.getUSFMNumber( BBB )
 
-            filename = "{}{}BibleWriter.pSFM".format( USFMNumber, USFMAbbreviation.upper() ) # BibleWriter = BibleWriter
+            filename = "{:02}_{}_BibleWriter.pSFM".format( j, BBB )
             filepath = os.path.join( outputFolder, Globals.makeSafeFilename( filename ) )
             if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
             with open( filepath, 'wt' ) as myFile:
@@ -412,8 +412,10 @@ class BibleWriter( InternalBible ):
                 #print( BBB, pseudoMarker, repr(value) )
                 if (not USFM) and pseudoMarker!='id': # We need to create an initial id line
                     USFM += '\\id {} -- BibleOrgSys USFM export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
+                if '¬' in pseudoMarker or pseudoMarker in ('list','ilist',): continue # Just ignore added markers -- not needed here
                 if pseudoMarker in ('c#','vp~',):
                     ignoredMarkers.add( pseudoMarker )
+                    continue
                 #value = cleanText # (temp)
                 #if Globals.debugFlag and debuggingThisModule: print( "toUSFM: pseudoMarker = '{}' value = '{}'".format( pseudoMarker, value ) )
                 if removeVerseBridges and pseudoMarker in ('v','c',):
@@ -459,7 +461,7 @@ class BibleWriter( InternalBible ):
                             if Globals.debugFlag: print( "toUSFM: Added space to '{}' before '{}'".format( USFM[-2], pseudoMarker ) )
                         adjValue += '\\{}*'.format( pseudoMarker ) # Do a close marker
                     elif pseudoMarker in ('f','x',): inField = pseudoMarker # Remember these so we can close them later
-                    elif pseudoMarker in ('fr','fq','ft','xo',): USFM += '' # These go on the same line just separated by spaces and don't get closed
+                    elif pseudoMarker in ('fr','fq','ft','xo',): USFM += ' ' # These go on the same line just separated by spaces and don't get closed
                     elif USFM: USFM += '\n' # paragraph markers go on a new line
                     if not value: USFM += '\\{}'.format( pseudoMarker )
                     else: USFM += '\\{} {}'.format( pseudoMarker,adjValue )
@@ -467,7 +469,7 @@ class BibleWriter( InternalBible ):
 
             # Write the USFM output
             #print( "\nUSFM", USFM[:3000] )
-            filename = "{}{}BibleWriter.SFM".format( USFMNumber, USFMAbbreviation.upper() ) # This seems to be the undocumented standard filename format (and BibleWriter = BibleWriter)
+            filename = "{}{}BibleWriter.SFM".format( USFMNumber, USFMAbbreviation.upper() ) # This seems to be the undocumented standard filename format even though it's so ugly with digits running into each other, e.g., 102SA...
             #if not os.path.exists( USFMOutputFolder ): os.makedirs( USFMOutputFolder )
             filepath = os.path.join( outputFolder, Globals.makeSafeFilename( filename ) )
             if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
@@ -9081,6 +9083,7 @@ def demo():
     BW.objectNameString = "Dummy test Bible Writer object"
     if Globals.verbosityLevel > 0: print( BW ); print()
 
+
     if 1: # Test reading and writing a USFM Bible
         from USFMBible import USFMBible
         from USFMFilenames import USFMFilenames
@@ -9110,25 +9113,32 @@ def demo():
                 if Globals.verbosityLevel > 0: print( '\nBibleWriter A'+str(j+1)+'/', UB )
                 if Globals.strictCheckingFlag: UB.check()
                 #UB.toOSISXML(); halt
-                doaResults = UB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=True )
-                if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
+                doaResults = UB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+                if Globals.strictCheckingFlag: # Now compare the original and the exported USFM files
                     outputFolder = "OutputFiles/BOS_USFM_Reexport/"
                     fN = USFMFilenames( testFolder )
-                    f1 = os.listdir( testFolder ) # Originals
-                    f2 = os.listdir( outputFolder ) # Derived
+                    folderContents1 = os.listdir( testFolder ) # Originals
+                    folderContents2 = os.listdir( outputFolder ) # Derived
                     if Globals.verbosityLevel > 1: print( "\nComparing original and re-exported USFM files..." )
-                    for j, (BBB,filename) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
-                        print( j, BBB, filename )
-                        if filename in f1 and filename in f2:
-                            print( "\n{}: {} {}".format( j+1, BBB, filename ) )
-                            result = Globals.fileCompare( filename, filename, testFolder, outputFolder )
-                            print( "  result", result )
-                            if Globals.debugFlag:
-                                if not result: halt
+                    for j, (BBB,filename1) in enumerate( fN.getMaximumPossibleFilenameTuples() ):
+                        #print( j, BBB, filename1 )
+                        UUU, nn = Globals.BibleBooksCodes.getUSFMAbbreviation( BBB ).upper(), Globals.BibleBooksCodes.getUSFMNumber( BBB )
+                        #print( j, BBB, filename1, UUU )
+                        filename2 = None
+                        for fn in folderContents2:
+                            if nn in fn and UUU in fn: filename2 = fn; break
+                        if filename1 in folderContents1 and filename2 in folderContents2:
+                            if Globals.verbosityLevel > 2:
+                                print( "\nAbout to compare {}: {} {} with {}...".format( j+1, BBB, filename1, filename2 ) )
+                            result = Globals.fileCompareUSFM( filename1, filename2, testFolder, outputFolder )
+                            if result and Globals.verbosityLevel > 2: print( "  Matched." )
+                            #print( "  result", result )
+                            #if Globals.debugFlag:
+                                #if not result: halt
                         else:
-                            if filename not in f1: print( "  Couldn't find {} in {}".format( filename, f1 ) )
-                            if filename not in f2: print( "  Couldn't find {} in {}".format( filename, f2 ) )
-            else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
+                            if filename1 not in folderContents1: logging.warning( "  1/Couldn't find {} ({}) in {}".format( filename1, BBB, folderContents1 ) )
+                            if filename2 not in folderContents2: logging.warning( "  2/Couldn't find {} ({}) in {}".format( filename2, UUU, folderContents2 ) )
+            else: logging.error( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 
 
     if 0: # Test reading and writing a USX Bible
@@ -9149,11 +9159,11 @@ def demo():
                 if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
                     outputFolder = "OutputFiles/BOS_USX_Reexport/"
                     fN = USXFilenames( testFolder )
-                    f1 = os.listdir( testFolder ) # Originals
-                    f2 = os.listdir( outputFolder ) # Derived
+                    folderContents1 = os.listdir( testFolder ) # Originals
+                    folderContents2 = os.listdir( outputFolder ) # Derived
                     if Globals.verbosityLevel > 1: print( "\nComparing original and re-exported USX files..." )
                     for j, (BBB,filename) in enumerate( fN.getPossibleFilenames() ):
-                        if filename in f1 and filename in f2:
+                        if filename in folderContents1 and filename in folderContents2:
                             #print( "\n{}: {} {}".format( j+1, BBB, filename ) )
                             result = Globals.fileCompareXML( filename, filename, testFolder, outputFolder )
                             if Globals.debugFlag:
