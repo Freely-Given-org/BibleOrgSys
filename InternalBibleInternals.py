@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleInternals.py
-#   Last modified: 2014-06-22 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-23 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for Bible books
 #
@@ -74,7 +74,7 @@ BOS_CONTENT_MARKERS = ( 'c~', 'c#', 'v~', 'p~', 'cl=', 'vp~', )
             This is inserted BEFORE the v (and v~) marker(s)
 """
 
-BOS_ADDED_MARKERS = ( 'intro', 'iot', 'ilist', 'chapters', 'list', )
+BOS_ADDED_MARKERS = ( 'intro', 'ilist', 'chapters', 'list', )
 """
     intro       Inserted at the start of book introductions
     ilist       Inserted at the start of introduction lists (before ili markers)
