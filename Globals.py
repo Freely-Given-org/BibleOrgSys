@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Globals.py
-#   Last modified: 2014-06-18 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-21 by RJH (also update ProgVersion below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -71,7 +71,7 @@ Contains functions:
 """
 
 ProgName = "Globals"
-ProgVersion = "0.47"
+ProgVersion = "0.48"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -480,11 +480,14 @@ def fileCompareUSFM( filename1, filename2, folder1=None, folder2=None, printFlag
 
     # Now compare the actual lines
     diffCount = 0
+    C = V = '0'
     for k in range( 0, min( len1, len2 ) ):
         originalLine1, originalLine2 = lines1[k], lines2[k]
         adjustedLine1, adjustedLine2 = originalLine1, originalLine2
         while adjustedLine1 and adjustedLine1[-1]==' ': adjustedLine1 = adjustedLine1[:-1] # Remove the final space
         while adjustedLine2 and adjustedLine2[-1]==' ': adjustedLine2 = adjustedLine2[:-1] # Remove the final space
+        if adjustedLine1.startswith( '\\c '): C = adjustedLine1[3:]
+        if adjustedLine1.startswith( '\\v '): V = adjustedLine1[3:].split()[0]
         for unnumbered,numbered in ( ('mt','mt1'),('mte','mte1'), ('imt','imt1'),('imte','imte1'),
                                     ('is','is1'), ('iq','iq1'), ('io','io1'), ('ili','ili1'),
                                     ('ms','ms1'), ('s','s1'), ('li','li1'), ('q','q1'), ('pi','pi1'), ('ph','ph1'), ):
@@ -494,8 +497,8 @@ def fileCompareUSFM( filename1, filename2, folder1=None, folder2=None, printFlag
             else: adjustedLine2 = adjustedLine2.replace( '\\'+unnumbered+' ', '\\'+numbered+' ' )
         if adjustedLine1 != adjustedLine2:
             if printFlag:
-                print( "  {}a:{} ({} chars)\n  {}b:{} ({} chars)" \
-                    .format( k+1, repr(originalLine1), len(originalLine1), k+1, repr(originalLine2), len(originalLine1) ) )
+                print( "  {}:{} {}a:{} ({} chars)\n  {}:{} {}b:{} ({} chars)" \
+                    .format( C, V, k+1, repr(originalLine1), len(originalLine1), C, V, k+1, repr(originalLine2), len(originalLine1) ) )
             equalFlag = False
             diffCount += 1
             if diffCount > exitCount:

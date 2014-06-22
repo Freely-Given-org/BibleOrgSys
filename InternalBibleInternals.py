@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleInternals.py
-#   Last modified: 2014-06-17 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-22 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Bible internals handler"
-ProgVersion = "0.41"
+ProgVersion = "0.43"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -61,26 +61,39 @@ TRAILING_WORD_PUNCT_CHARS = """,.”»"’›'?)!;:]}>"""
 ALL_WORD_PUNCT_CHARS = LEADING_WORD_PUNCT_CHARS + MEDIAL_WORD_PUNCT_CHARS + DASH_CHARS + TRAILING_WORD_PUNCT_CHARS
 
 
-BOS_NEWLINE_MARKERS = ( 'c~', 'c#', 'v-', 'v+', 'v~', 'vw', 'g', 'p~', 'cl=', 'vp~', )
+BOS_CONTENT_MARKERS = ( 'c~', 'c#', 'v~', 'p~', 'cl=', 'vp~', )
 """
     c~  anything after the chapter number on a \c line
     c#  the chapter number in the correct position to be printed
             This is usually a duplicate of the c field, but may have come from the cp field instead
             Usually only one of c or c# is used for exports
-    v-  ???
-    v+  ???
     v~  verse text -- anything after the verse number on a \v line
     p~  verse text -- anything that was on a paragraph line (e.g., \p, \q, \q2, etc.)
-    vw  ???
-    g   ???
     cl= used for cl markers BEFORE the '\c 1' marker -- represents the text for "chapter" to be used throughout the book
     vp~ used for the vp (character field) when it is converted to a separate (newline) field
             This is inserted BEFORE the v (and v~) marker(s)
 """
 
-BOS_END_MARKERS = ('c¬', 'v¬', )
+BOS_ADDED_MARKERS = ( 'intro', 'iot', 'ilist', 'chapters', 'list', )
+"""
+    intro       Inserted at the start of book introductions
+    ilist       Inserted at the start of introduction lists (before ili markers)
+    chapters    Inserted after the introduction (if any) and before the first Bible content (usually immediately before chapter 1 marker)
+    list       Inserted at the start of lists (before li markers)
+"""
 
-BOS_MARKERS = BOS_NEWLINE_MARKERS + BOS_END_MARKERS
+BOS_ALL_ADDED_MARKERS = BOS_ADDED_MARKERS + ('iot',)
+"""
+    intro       Inserted at the start of book introductions
+    iot         Inserted before introduction outline (io markers) IF IT'S NOT ALREADY IN THE FILE
+    ilist       Inserted at the start of introduction lists (before ili markers)
+    chapters    Inserted after the introduction (if any) and before the first Bible content (usually immediately before chapter 1 marker)
+    list       Inserted at the start of lists (before li markers)
+"""
+
+BOS_END_MARKERS = ('¬intro', '¬iot', '¬ilist', '¬chapters', '¬c', '¬v', '¬list', )
+
+#BOS_MARKERS = BOS_CONTENT_MARKERS + BOS_ALL_ADDED_MARKERS + BOS_END_MARKERS
 
 EXTRA_TYPES = ( 'fn', 'en', 'xr', 'fig', 'str', 'vp', )
 """
@@ -190,15 +203,15 @@ class InternalBibleExtraList:
             dataLen = len( self.data )
             for j, entry in enumerate( self.data ):
                 if Globals.debugFlag: assert( isinstance( entry, InternalBibleExtra ) )
-                result += "\n  {} @ {} = {}{}".format( ' ' if j<9 and dataLen>=10 else '', j+1, entry.myType, entry.index, repr(entry.noteText) )
+                result += "\n  {} {} @ {} = {}".format( ' ' if j<9 and dataLen>=10 else '', j+1, entry.myType, entry.index, repr(entry.noteText) )
                 if j>=maxPrinted and dataLen>maxPrinted:
                     result += "\n  ... ({} total entries)".format( dataLen )
                     break
         return result
     # end of InternalBibleExtraList.__str__
 
-
     def __len__( self ): return len( self.data )
+
     def __getitem__( self, keyIndex ):
         if isinstance( keyIndex, slice ): # Get the start, stop, and step from the slice
             #print( "ki2", keyIndex )
@@ -207,7 +220,22 @@ class InternalBibleExtraList:
             return InternalBibleExtraList( [self.data[ii] for ii in range(*keyIndex.indices(len(self)))] )
         # Otherwise assume keyIndex is an int
         return self.data[keyIndex]
+    # end of InternalBibleExtraList.__getitem__
 
+    def summary( self ):
+        """
+        Like __str__ but just returns a one-line string summary.
+        """
+        if not self.data: return "NO_EXTRAS"
+        if len( self.data ) == 1:
+            entry = self.data[0]
+            return "EXTRA( {} @ {} = {})".format( entry.myType, entry.index, repr(entry.noteText) )
+        # Multiple extras
+        resultString = "EXTRAS( "
+        for j, entry in enumerate( self.data ):
+            resultString += "{}{} @ {}".format( ", " if j>0 else "", entry.myType, entry.index )
+        return resultString + " )"
+    # end of InternalBibleExtraList.summary
 
     def append( self, newExtraEntry ):
         assert( isinstance( newExtraEntry, InternalBibleExtra ) )
@@ -256,7 +284,7 @@ class InternalBibleEntry:
             assert( '\n' not in cleanText and '\r' not in cleanText )
 
             if marker[0] == '¬' \
-            or marker in ('iot','ilist','list',) and originalMarker is None: # It's an end marker or an added marker
+            or marker in BOS_ALL_ADDED_MARKERS and originalMarker is None: # It's an end marker or an added marker
                 assert( originalMarker is None and adjustedText is None and extras is None and originalText is None )
             else: # it's not an end marker
                 assert( originalMarker and isinstance( originalMarker, str ) ) # Mustn't be blank
@@ -267,8 +295,8 @@ class InternalBibleEntry:
                 assert( extras is None or isinstance( extras, InternalBibleExtraList ) )
                 assert( isinstance( originalText, str ) )
                 assert( '\n' not in originalText and '\r' not in originalText )
-                #assert( marker in Globals.USFMMarkers or marker in BOS_NEWLINE_MARKERS )
-                if marker not in Globals.USFMMarkers and marker not in BOS_NEWLINE_MARKERS:
+                #assert( marker in Globals.USFMMarkers or marker in BOS_CONTENT_MARKERS )
+                if marker not in Globals.USFMMarkers and marker not in BOS_CONTENT_MARKERS:
                     logging.warning( "InternalBibleEntry doesn't handle '{}' marker yet.".format( marker ) )
         self.marker, self.originalMarker, self.adjustedText, self.cleanText, self.extras, self.originalText = marker, originalMarker, adjustedText, cleanText, extras, originalText
 

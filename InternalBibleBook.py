@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2014-06-18 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-22 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -41,7 +41,7 @@ Required improvements:
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.80"
+ProgVersion = "0.81"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -54,7 +54,7 @@ import unicodedata
 
 import Globals
 from USFMMarkers import USFM_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS
-from InternalBibleInternals import BOS_NEWLINE_MARKERS, EXTRA_TYPES, \
+from InternalBibleInternals import BOS_CONTENT_MARKERS, BOS_ADDED_MARKERS, BOS_END_MARKERS, EXTRA_TYPES, \
     LEADING_WORD_PUNCT_CHARS, MEDIAL_WORD_PUNCT_CHARS, TRAILING_WORD_PUNCT_CHARS, ALL_WORD_PUNCT_CHARS, \
     InternalBibleEntryList, InternalBibleEntry, InternalBibleIndex, InternalBibleExtra, InternalBibleExtraList
 from BibleReferences import BibleAnchorReference
@@ -171,7 +171,7 @@ class InternalBibleBook:
                 assert( isinstance( text, str ) )
                 assert( '\n' not in text and '\r' not in text )
 
-        if not ( marker in Globals.USFMMarkers or marker in BOS_NEWLINE_MARKERS ):
+        if not ( marker in Globals.USFMMarkers or marker in BOS_CONTENT_MARKERS ):
             logging.critical( "InternalBibleBook.appendLine marker for {} not in lists: {}={}".format( self.objectTypeString, marker, repr(text) ) )
             if marker in self.badMarkers:
                 ix = self.badMarkers.index( marker )
@@ -180,9 +180,9 @@ class InternalBibleBook:
             else:
                 self.badMarkers.append( marker )
                 self.badMarkerCounts.append( 1 )
-        if Globals.debugFlag: assert( marker in Globals.USFMMarkers or marker in BOS_NEWLINE_MARKERS )
+        if Globals.debugFlag: assert( marker in Globals.USFMMarkers or marker in BOS_CONTENT_MARKERS )
 
-        if marker not in BOS_NEWLINE_MARKERS and not Globals.USFMMarkers.isNewlineMarker( marker ):
+        if marker not in BOS_CONTENT_MARKERS and not Globals.USFMMarkers.isNewlineMarker( marker ):
             logging.critical( "IBB.appendLine: Not a NL marker: {}='{}'".format( marker, text ) )
             if Globals.debugFlag: print( self, repr(marker), repr(text) ); halt # How did this happen?
 
@@ -800,7 +800,7 @@ class InternalBibleBook:
 
             # Convert USFM markers like s to standard markers like s1
             try:
-                adjustedMarker = originalMarker if originalMarker in BOS_NEWLINE_MARKERS else Globals.USFMMarkers.toStandardMarker( originalMarker )
+                adjustedMarker = originalMarker if originalMarker in BOS_CONTENT_MARKERS else Globals.USFMMarkers.toStandardMarker( originalMarker )
             except KeyError: # unknown marker
                 logging.error( "processLine-check: unknown {} originalMarker = {}".format( self.objectTypeString, originalMarker ) )
                 adjustedMarker = originalMarker # temp....................
@@ -1387,6 +1387,13 @@ class InternalBibleBook:
             newLines = InternalBibleEntryList()
             openMarkers = []
 
+            def openMarker( newMarker ):
+                """ Insert a new open marker into the book. """
+                if Globals.debugFlag: assert( newMarker not in openMarkers )
+                newLines.append( InternalBibleEntry(newMarker, None, None, '', None, None) )
+                openMarkers.append( newMarker )
+            # end of openMarker
+
             def closeLastOpenMarker( withText='' ):
                 """ Close the last marker (with the "not" sign) and pop it off our list """
                 #print( "InternalBibleBook.processLines.closeLastOpenMarker( {} ) for {} from {}".format( repr(withText), openMarkers[-1], openMarkers ) )
@@ -1450,32 +1457,34 @@ class InternalBibleBook:
                 nextMarker = nextDataLine.getMarker() if nextDataLine is not None else None
                 #print( "InternalBibleBook.processLines.addNestingMarkers: {} {} {}:{} {}={} then {} now have {}".format( j, self.BBB, C, V, marker, repr(text), nextMarker, openMarkers ) )
 
+                if marker in USFM_INTRODUCTION_MARKERS and not haveIntro:
+                    openMarker( 'intro' )
+                    haveIntro = True
+
                 if marker not in ourIntroOutlineMarkers and 'iot' in openMarkers: closeOpenMarker( 'iot' )
                 if marker not in ourIntroListMarkers and 'ilist' in openMarkers: closeOpenMarker( 'ilist' )
                 if marker not in ourMainListMarkers and marker not in ('v~','p~',) and 'list' in openMarkers:
                     # This is more complex coz can cross v and c boundaries
                     #print( "Shall we close", marker, findNextRelevantListMarker(j), findNextRelevantMarker(j) )
                     if findNextRelevantListMarker(j) not in ourMainListMarkers:
-                        #print( "Close list at", C, V, "before", marker )
                         closeOpenMarker( 'list' )
-                        #print( newLines[-20:] )
 
                 if marker == 'c':
                     if haveIntro:
-                        #print( "  add ¬ie" )
-                        newLines.append( InternalBibleEntry('¬ie', None, None, '', None, None) )
+                        for lMarker in openMarkers[::-1]: # Get a reversed copy (coz we are deleting members)
+                            closeLastOpenMarker()
                         haveIntro = False # Just so we don't repeat this
                     if openMarkers and openMarkers[-1]=='v': closeLastOpenMarker( V )
                     elif 'v' in openMarkers: closeOpenMarker( 'v', V )
-                    if 'c' in openMarkers: # we're not just starting chapter one
+                    if 'c' not in openMarkers: # we're just starting chapter one
+                        openMarker( 'chapters' )
+                    else: # we're not just starting chapter one
                         nextRelevantMarker = findNextRelevantMarker( j )
                         if openMarkers[-1] in USFM_BIBLE_PARAGRAPH_MARKERS \
                         and (nextRelevantMarker in USFM_BIBLE_PARAGRAPH_MARKERS or nextRelevantMarker in ourHeadingMarkers):
                             # New paragraph starts immediately in next chapter, so close this paragraph now
-                            #print( "  close1", openMarkers[-1] )
                             closeLastOpenMarker() # Close whatever paragraph marker that was
                         if openMarkers[-1] in ourHeadingMarkers and nextRelevantMarker in ourHeadingMarkers:
-                            #print( "  close2", openMarkers[-1] )
                             closeLastOpenMarker() # Close whatever heading marker that was
                     if openMarkers and openMarkers[-1]=='c': closeLastOpenMarker( C )
                     elif 'c' in openMarkers: closeOpenMarker( 'c', C )
@@ -1487,50 +1496,45 @@ class InternalBibleBook:
                     V = text
                     openMarkers.append( marker )
                 elif marker in ourIntroOutlineMarkers:
-                    if lastMarker!='iot' and lastMarker not in ourIntroOutlineMarkers:
-                        #print( "InternalBibleBook.processLines.addNestingMarkers: {} {}:{} Adding iot marker before {}".format( self.BBB, C, V, marker ) )
-                        if Globals.debugFlag: assert( 'iot' not in openMarkers )
-                        newLines.append( InternalBibleEntry('iot', None, None, '', None, None) )
-                        openMarkers.append( 'iot' )
+                    if lastMarker not in ourIntroOutlineMarkers:
+                        if lastMarker == 'iot':
+                            openMarkers.append( 'iot' ) # to ensure that we add an iot closing marker later
+                        else: # Seems we didn't have an iot in the file :-(
+                            #print( "InternalBibleBook.processLines.addNestingMarkers: {} {}:{} Adding iot marker before {}".format( self.BBB, C, V, marker ) )
+                            openMarker( 'iot' )
                     haveIntro = True
                 elif marker in ourIntroListMarkers:
                     if lastMarker not in ourIntroListMarkers:
                         #print( "InternalBibleBook.processLines.addNestingMarkers: {} {}:{} Adding ilist marker before {} after {}".format( self.BBB, C, V, marker, lastMarker ) )
-                        if Globals.debugFlag: assert( 'ilist' not in openMarkers )
-                        newLines.append( InternalBibleEntry('ilist', None, None, '', None, None) )
-                        openMarkers.append( 'ilist' )
+                        openMarker( 'ilist' )
                     haveIntro = True
-                elif marker in USFM_INTRODUCTION_MARKERS:
-                    haveIntro = True
-                elif marker in ourHeadingMarkers:
+                elif marker in ourHeadingMarkers: # must be checked BEFORE USFM_INTRODUCTION_MARKERS because they overlap
                     if 'v' in openMarkers and verseEnded( j ): closeOpenMarker( 'v', V )
                     if lastPMarker in openMarkers: closeOpenMarker( lastPMarker ); lastPMarker = None
                     if lastSMarker in openMarkers: closeOpenMarker( lastSMarker ); lastSMarker = None
                     openMarkers.append( marker )
                     lastSMarker = marker
+                elif marker in USFM_INTRODUCTION_MARKERS:
+                    haveIntro = True
                 elif marker in ourMainListMarkers:
                     assert( not text )
                     if 'v' in openMarkers and verseEnded( j ): closeOpenMarker( 'v', V )
                     if lastPMarker in openMarkers: closeOpenMarker( lastPMarker ); lastPMarker = None
                     if 'list' not in openMarkers:
-                        #print( newLines[-20:] )
                         #print( "InternalBibleBook.processLines.addNestingMarkers: {} {}:{} Adding list marker before {}".format( self.BBB, C, V, marker ) )
-                        if Globals.debugFlag: assert( 'list' not in openMarkers )
-                        newLines.append( InternalBibleEntry('list', None, None, '', None, None) )
-                        openMarkers.append( 'list' )
+                        openMarker( 'list' )
                     openMarkers.append( marker )
                     lastPMarker = marker
                 elif marker in USFM_BIBLE_PARAGRAPH_MARKERS:
                     assert( not text )
                     if 'v' in openMarkers and verseEnded( j ): closeOpenMarker( 'v', V )
                     if lastPMarker in openMarkers: closeOpenMarker( lastPMarker ); lastPMarker = None
-                    #if 'list' in openMarkers: closeOpenMarker( 'list' ); halt
                     openMarkers.append( marker )
                     lastPMarker = marker
                 #else: print( "  Ignore {}={}".format( marker, repr(text) ) )
 
                 newLines.append( dataLine )
-                if Globals.debugFlag and len(openMarkers) > 5: # Should only be 5: e.g., c s1 v list li1
+                if Globals.debugFlag and len(openMarkers) > 6: # Should only be 6: e.g., chapters c s1 v list li1
                     print( newLines[-20:] )
                     print(openMarkers); halt
                 lastMarker = marker
@@ -1545,7 +1549,6 @@ class InternalBibleBook:
                     else: closeLastOpenMarker()
             assert( not openMarkers )
             self._processedLines = newLines # replace the old set
-            #if self.BBB == 'NUM': halt
         # end of InternalBibleBook.processLines.addNestingMarkers
 
 
@@ -1560,15 +1563,13 @@ class InternalBibleBook:
             #print( "\nQQQ" )
             if self.objectTypeString=='USX' and text and text[-1]==' ': text = text[:-1] # Removing extra trailing space from USX files
             processLine( marker, text ) # Saves its results in self._processedLines
-        #self.debugPrint(); halt
         addNestingMarkers()
-        #self.debugPrint(); halt
 
         # Get rid of data that we don't need
         #if not Globals.debugFlag:
         del self._rawLines # if short of memory
         try: del self.tree # for xml Bible types (some Bible books caused a segfault when pickled with this data)
-        except AttributeError: pass
+        except AttributeError: pass # we didn't have an xml tree to delete
 
         if fixErrors: self.errorDictionary['Fix Text Errors'] = fixErrors
         self._processedFlag = True
@@ -1665,8 +1666,8 @@ class InternalBibleBook:
                 validationErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Marker 'id' should only appear as the first marker in a book but found on line {} in {}: {}").format( j+1, marker, text ) )
                 logging.error( _("Marker 'id' should only appear as the first marker in a book but found on line {} after {} {}:{} in {}: {}").format( j+1, self.BBB, C, V, marker, text ) )
                 self.addPriorityError( 99, C, V, _("'id' marker should only be in first line of file") )
-            if ( marker[0]=='¬' and marker not in ('¬ilist','¬list',) and not Globals.USFMMarkers.isNewlineMarker( marker[1:] ) ) \
-            or ( marker[0]!='¬' and marker not in ('c#','vp~','ilist','list',) and not Globals.USFMMarkers.isNewlineMarker( marker ) ):
+            if ( marker[0]=='¬' and marker not in BOS_END_MARKERS and not Globals.USFMMarkers.isNewlineMarker( marker[1:] ) ) \
+            or ( marker[0]!='¬' and marker not in ('c#','vp~',) and marker not in BOS_ADDED_MARKERS and not Globals.USFMMarkers.isNewlineMarker( marker ) ):
                 validationErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unexpected '{}' newline marker in Bible book (Text is '{}')").format( marker, text ) )
                 logging.warning( _("Unexpected '{}' newline marker in Bible book after {} {}:{} (Text is '{}')").format( marker, self.BBB, C, V, text ) )
                 self.addPriorityError( 80, C, V, _("Marker {} not expected at beginning of line".format( repr(marker) ) ) )
@@ -2380,120 +2381,121 @@ class InternalBibleBook:
                     #logging.warning( _("Marker '{}' has no content after").format( marker ) + " {} {}:{}".format( self.BBB, C, V ) )
                     #self.addPriorityError( 47, C, V, _("Marker {} should have content").format( marker ) )
 
-            if marker[0] != '¬':
-                if marker == 'v~':
-                    lastMarker, lastMarkerEmpty = 'v', markerEmpty
-                    continue
-                elif marker == 'p~':
-                    lastMarker, lastMarkerEmpty = 'p', markerEmpty # not sure if this is correct here ?????
-                    continue
-                elif marker == 'c~':
-                    lastMarker, lastMarkerEmpty = 'c', markerEmpty
-                    continue
-                elif marker == 'c#':
-                    lastMarker, lastMarkerEmpty = 'c', markerEmpty
-                    continue
-                elif marker == 'vp~':
-                    lastMarker, lastMarkerEmpty = 'v', markerEmpty
-                    continue
-                else: # it's not our (non-USFM) c~,c#,v~ markers
-                    if marker not in allAvailableNewlineMarkers: print( "Unexpected marker is '{}'".format( marker ) )
-                    if Globals.debugFlag: assert( marker in allAvailableNewlineMarkers ) or marker in ('ilist','list',) # Should have been checked at load time
-                    newlineMarkerCounts[marker] = 1 if marker not in newlineMarkerCounts else (newlineMarkerCounts[marker] + 1)
+            if marker[0] == '¬' or marker in BOS_ADDED_MARKERS: # Just ignore these added markers
+                continue
+            elif marker == 'v~':
+                lastMarker, lastMarkerEmpty = 'v', markerEmpty
+                continue
+            elif marker == 'p~':
+                lastMarker, lastMarkerEmpty = 'p', markerEmpty # not sure if this is correct here ?????
+                continue
+            elif marker == 'c~':
+                lastMarker, lastMarkerEmpty = 'c', markerEmpty
+                continue
+            elif marker == 'c#':
+                lastMarker, lastMarkerEmpty = 'c', markerEmpty
+                continue
+            elif marker == 'vp~':
+                lastMarker, lastMarkerEmpty = 'v', markerEmpty
+                continue
+            else: # it's not our (non-USFM) c~,c#,v~ markers
+                if marker not in allAvailableNewlineMarkers: print( "Unexpected marker is '{}'".format( marker ) )
+                if Globals.debugFlag: assert( marker in allAvailableNewlineMarkers or marker in BOS_ADDED_MARKERS ) # Should have been checked at load time
+                newlineMarkerCounts[marker] = 1 if marker not in newlineMarkerCounts else (newlineMarkerCounts[marker] + 1)
 
-                # Check the progression through the various sections
-                try: newSection = Globals.USFMMarkers.markerOccursIn( marker if marker!='v~' else 'v' )
-                except: logging.error( "IBB:doCheckSFMs: markerOccursIn failed for '{}'".format( marker ) )
-                if newSection != section: # Check changes into new sections
-                    #print( section, marker, newSection )
-                    if section=='' and newSection!='Header': newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing Header section (went straight to {} section with {} marker)").format( newSection, marker ) )
-                    elif section!='' and newSection=='Header': newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Didn't expect {} section after {} section (with {} marker)").format( newSection, section, marker ) )
-                    if section=='Header' and newSection!='Introduction':
-                        if discoveryDict and 'haveIntroductoryText' in discoveryDict and discoveryDict['haveIntroductoryText']:
-                            newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing Introduction section (went straight to {} section with {} marker)").format( newSection, marker ) )
-                    elif section!='Header' and newSection=='Introduction': newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Didn't expect {} section after {} section (with {} marker)").format( newSection, section, marker ) )
-                    if section=='Introduction' and newSection!='Text': newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing Text section (went straight to {} section with {} marker)").format( newSection, marker ) )
-                    if section=='Text' and newSection!='Text, Poetry': newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unexpected section after {} section (went to {} section with {} marker)").format( section, newSection, marker ) )
-                    elif section!='Text' and newSection=='Text, Poetry': newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Didn't expect {} section after {} section (with {} marker)").format( newSection, section, marker ) )
-                    if section!='Introduction' and section!='Text, Poetry' and newSection=='Text': newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Didn't expect {} section after {} section (with {} marker)").format( newSection, section, marker ) )
-                    #print( "section", newSection )
-                    section = newSection
+            # Check the progression through the various sections
+            try: newSection = Globals.USFMMarkers.markerOccursIn( marker if marker!='v~' else 'v' )
+            except: logging.error( "IBB:doCheckSFMs: markerOccursIn failed for '{}'".format( marker ) )
+            if newSection != section: # Check changes into new sections
+                #print( section, marker, newSection )
+                if section=='' and newSection!='Header': newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing Header section (went straight to {} section with {} marker)").format( newSection, marker ) )
+                elif section!='' and newSection=='Header': newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Didn't expect {} section after {} section (with {} marker)").format( newSection, section, marker ) )
+                if section=='Header' and newSection!='Introduction':
+                    if discoveryDict and 'haveIntroductoryText' in discoveryDict and discoveryDict['haveIntroductoryText']:
+                        newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing Introduction section (went straight to {} section with {} marker)").format( newSection, marker ) )
+                elif section!='Header' and newSection=='Introduction': newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Didn't expect {} section after {} section (with {} marker)").format( newSection, section, marker ) )
+                if section=='Introduction' and newSection!='Text': newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing Text section (went straight to {} section with {} marker)").format( newSection, marker ) )
+                if section=='Text' and newSection!='Text, Poetry': newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unexpected section after {} section (went to {} section with {} marker)").format( section, newSection, marker ) )
+                elif section!='Text' and newSection=='Text, Poetry': newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Didn't expect {} section after {} section (with {} marker)").format( newSection, section, marker ) )
+                if section!='Introduction' and section!='Text, Poetry' and newSection=='Text': newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Didn't expect {} section after {} section (with {} marker)").format( newSection, section, marker ) )
+                #print( "section", newSection )
+                section = newSection
 
-                # Note the newline SFM order -- create a list of markers in order (with duplicates combined, e.g., \v \v -> \v)
-                if not modifiedMarkerList or modifiedMarkerList[-1] != marker: modifiedMarkerList.append( marker )
-                # Check for known bad combinations
-                if marker=='nb' and lastMarker in ('s','s1','s2','s3','s4','s5'):
-                    newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("'nb' not allowed immediately after '{}' section heading").format( marker ) )
-                if self.checkUSFMSequencesFlag: # Check for known good combinations
-                    commonGoodNewlineMarkerCombinations = (
-                        # If a marker has nothing after it, it must contain data
-                        # If a marker has =E after it, it must NOT contain data
-                        # (If data is optional, enter both sets)
-                        # Heading stuff (in order of occurrence)
-                        ('=E','id'), ('id','h'),('id','ide'), ('ide','h'), ('h','toc1'),('h','mt1'),('h','mt2'), ('toc1','toc2'), ('toc2','toc3'),('toc2','mt1'),('toc2','mt2'), ('toc3','mt1'),('toc3','mt2'),
-                        ('mt1','mt2'),('mt1','imt1'),('mt1','is1'), ('mt2','mt1'),('mt2','imt1'),('mt2','is1'),
-                        ('imt1','ip'),('is1','ip'), ('ip','ip'),('ip','iot'), ('imt','iot'), ('iot','io1'), ('io1','io1'),('io1','io2'),('io1','c'), ('io2','io1'),('io2','io2'),('io2','c'),
-                        # Regular chapter stuff (in alphabetical order)
-                        ('b=E','q1'),('b=E','q1=E'),
-                        ('c','p=E'),('c','q1=E'),('c','s1'),('c','s2'),('c','s3'),
-                        ('m=E','p'),('m=E','v'),
-                        ('p','c'),('p','p=E'),('p=E','q1'),('p','s1'),('p','v'),('p=E','v'),
-                        ('pi1','c'),('pi1','pi1=E'), ('pi1','s1'),('pi1','v'),('pi1=E','v'),
-                        ('q1','b=E'),('q1','c'),('q1','m=E'),('q1','p=E'),('q1','q1'),('q1','q1=E'),('q1','q2'),('q1','q2=E'),('q1','s1'),('q1','v'),('q1=E','v'),
-                        ('q2','b=E'),('q2','c'),('q2','m=E'),('q2','p=E'),('q2','q1'),('q2','q1=E'),('q2','q2'),('q2','q2=E'),('q2','q3'),('q2','s1'),('q2','v'),('q2=E','v'),
-                        ('q3','b=E'),('q3','c'),('q3','m=E'),('q3','p=E'),('q3','q2'),('q3','q3'),('q3','s1'),('q3','v'),('q3=E','v'),
-                        ('li1','li1'),('li1','v'),('li1=E','v'),('li1','p=E'),
-                        ('r','p=E'),
-                        ('s1','p=E'),('s1','q1=E'),('s1','r'),
-                        ('s2','p=E'),('s2','q1=E'),('s2','r'),
-                        ('s3','p=E'),('s3','q1=E'),('s3','r'),
-                        ('v','c'),('v','li1'),('v','m'),
-                        ('v','p'),('v','p=E'), ('v','pi1'),('v','pi1=E'),('v','pc'),
-                        ('v','q1'),('v','q1=E'),('v','q2'),('v','q2=E'),('v','q3'),('v','q3=E'),
-                        ('v','s1'),('v','s2'),('v','s3'),
-                        ('v','v'), )
-                    rarerGoodNewlineMarkerCombinations = (
-                        ('mt2','mt3'), ('mt3','mt1'), ('io1','cl'), ('io2','cl'), ('ip','c'),
-                        ('c','cl'), ('cl','c'),('cl','p=E'),('cl','q1=E'),('cl','s1'),('cl','s2'),('cl','s3'),
-                        ('m','c'),('m','p=E'),('m','q1'),('m','v'),
-                        ('p','p'),('p','q1'),
-                        ('q1','m'),('q1','q3'), ('q2','m'), ('q3','q1'),
-                        ('r','p'), ('s1','p'),('s1','pi1=E'), ('v','b=E'),('v','m=E'), )
-                    #for tuple2 in rarerGoodNewlineMarkerCombinations: print( tuple2); assert( tuple2 not in commonGoodNewlineMarkerCombinations ) # Just check our tables for unwanted duplicates
-                    for tuple2 in rarerGoodNewlineMarkerCombinations: assert( tuple2 not in commonGoodNewlineMarkerCombinations ) # Just check our tables for unwanted duplicates
-                    # We allow rem (remark) markers to be anywhere without a warning
-                    if lastMarkerEmpty and markerEmpty:
-                        if (lastMarker+'=E',marker+'=E') not in commonGoodNewlineMarkerCombinations:
-                            if (lastMarker+'=E',marker+'=E') in rarerGoodNewlineMarkerCombinations:
-                                newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) Empty '{}' not commonly used following empty '{}' marker").format( marker, lastMarker ) )
-                                #print( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) Empty '{}' not commonly used following empty '{}' marker").format( marker, lastMarker ) )
-                            else:
-                                newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Empty '{}' not normally used following empty '{}' marker").format( marker, lastMarker ) )
-                                #print( "{} {}:{} ".format( self.BBB, C, V ) + _("Empty '{}' not normally used following empty '{}' marker").format( marker, lastMarker ) )
-                    elif lastMarkerEmpty and not markerEmpty and marker!='rem':
-                        if (lastMarker+'=E',marker) not in commonGoodNewlineMarkerCombinations:
-                            if (lastMarker+'=E',marker) in rarerGoodNewlineMarkerCombinations:
-                                newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) '{}' with text not commonly used following empty '{}' marker").format( marker, lastMarker ) )
-                                #print( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) '{}' with text not commonly used following empty '{}' marker").format( marker, lastMarker ) )
-                            else:
-                                newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("'{}' with text not normally used following empty '{}' marker").format( marker, lastMarker ) )
-                                #print( "{} {}:{} ".format( self.BBB, C, V ) + _("'{}' with text not normally used following empty '{}' marker").format( marker, lastMarker ) )
-                    elif not lastMarkerEmpty and markerEmpty and lastMarker!='rem':
-                        if (lastMarker,marker+'=E') not in commonGoodNewlineMarkerCombinations:
-                            if (lastMarker,marker+'=E') in rarerGoodNewlineMarkerCombinations:
-                                newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) Empty '{}' not commonly used following '{}' with text").format( marker, lastMarker ) )
-                                #print( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) Empty '{}' not commonly used following '{}' with text").format( marker, lastMarker ) )
-                            else:
-                                newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Empty '{}' not normally used following '{}' with text").format( marker, lastMarker ) )
-                                #print( "{} {}:{} ".format( self.BBB, C, V ) + _("Empty '{}' not normally used following '{}' with text").format( marker, lastMarker ) )
-                    elif lastMarker!='rem' and marker!='rem': # both not empty
-                        if (lastMarker,marker) not in commonGoodNewlineMarkerCombinations:
-                            if (lastMarker,marker) in rarerGoodNewlineMarkerCombinations:
-                                newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) '{}' with text not commonly used following '{}' with text").format( marker, lastMarker ) )
-                                #print( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) '{}' with text not commonly used following '{}' with text").format( marker, lastMarker ) )
-                            else:
-                                newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("'{}' with text not normally used following '{}' with text").format( marker, lastMarker ) )
-                                #print( "{} {}:{} ".format( self.BBB, C, V ) + _("'{}' with text not normally used following '{}' with text").format( marker, lastMarker ) )
+            # Note the newline SFM order -- create a list of markers in order (with duplicates combined, e.g., \v \v -> \v)
+            if not modifiedMarkerList or modifiedMarkerList[-1] != marker: modifiedMarkerList.append( marker )
+            # Check for known bad combinations
+            if marker=='nb' and lastMarker in ('s','s1','s2','s3','s4','s5'):
+                newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("'nb' not allowed immediately after '{}' section heading").format( marker ) )
+            if self.checkUSFMSequencesFlag: # Check for known good combinations
+                commonGoodNewlineMarkerCombinations = (
+                    # If a marker has nothing after it, it must contain data
+                    # If a marker has =E after it, it must NOT contain data
+                    # (If data is optional, enter both sets)
+                    # Heading stuff (in order of occurrence)
+                    ('=E','id'), ('id','h'),('id','ide'), ('ide','h'), ('h','toc1'),('h','mt1'),('h','mt2'), ('toc1','toc2'), ('toc2','toc3'),('toc2','mt1'),('toc2','mt2'), ('toc3','mt1'),('toc3','mt2'),
+                    ('mt1','mt2'),('mt1','imt1'),('mt1','is1'), ('mt2','mt1'),('mt2','imt1'),('mt2','is1'),
+                    ('imt1','ip'),('is1','ip'), ('ip','ip'),('ip','iot'), ('imt','iot'), ('iot','io1'), ('io1','io1'),('io1','io2'),('io1','c'), ('io2','io1'),('io2','io2'),('io2','c'),
+                    # Regular chapter stuff (in alphabetical order)
+                    ('b=E','q1'),('b=E','q1=E'),
+                    ('c','p=E'),('c','q1=E'),('c','s1'),('c','s2'),('c','s3'),
+                    ('m=E','p'),('m=E','v'),
+                    ('p','c'),('p','p=E'),('p=E','q1'),('p','s1'),('p','v'),('p=E','v'),
+                    ('pi1','c'),('pi1','pi1=E'), ('pi1','s1'),('pi1','v'),('pi1=E','v'),
+                    ('q1','b=E'),('q1','c'),('q1','m=E'),('q1','p=E'),('q1','q1'),('q1','q1=E'),('q1','q2'),('q1','q2=E'),('q1','s1'),('q1','v'),('q1=E','v'),
+                    ('q2','b=E'),('q2','c'),('q2','m=E'),('q2','p=E'),('q2','q1'),('q2','q1=E'),('q2','q2'),('q2','q2=E'),('q2','q3'),('q2','s1'),('q2','v'),('q2=E','v'),
+                    ('q3','b=E'),('q3','c'),('q3','m=E'),('q3','p=E'),('q3','q2'),('q3','q3'),('q3','s1'),('q3','v'),('q3=E','v'),
+                    ('li1','li1'),('li1','v'),('li1=E','v'),('li1','p=E'),
+                    ('r','p=E'),
+                    ('s1','p=E'),('s1','q1=E'),('s1','r'),
+                    ('s2','p=E'),('s2','q1=E'),('s2','r'),
+                    ('s3','p=E'),('s3','q1=E'),('s3','r'),
+                    ('v','c'),('v','li1'),('v','m'),
+                    ('v','p'),('v','p=E'), ('v','pi1'),('v','pi1=E'),('v','pc'),
+                    ('v','q1'),('v','q1=E'),('v','q2'),('v','q2=E'),('v','q3'),('v','q3=E'),
+                    ('v','s1'),('v','s2'),('v','s3'),
+                    ('v','v'), )
+                rarerGoodNewlineMarkerCombinations = (
+                    ('mt2','mt3'), ('mt3','mt1'), ('io1','cl'), ('io2','cl'), ('ip','c'),
+                    ('c','cl'), ('cl','c'),('cl','p=E'),('cl','q1=E'),('cl','s1'),('cl','s2'),('cl','s3'),
+                    ('m','c'),('m','p=E'),('m','q1'),('m','v'),
+                    ('p','p'),('p','q1'),
+                    ('q1','m'),('q1','q3'), ('q2','m'), ('q3','q1'),
+                    ('r','p'), ('s1','p'),('s1','pi1=E'), ('v','b=E'),('v','m=E'), )
+                #for tuple2 in rarerGoodNewlineMarkerCombinations: print( tuple2); assert( tuple2 not in commonGoodNewlineMarkerCombinations ) # Just check our tables for unwanted duplicates
+                for tuple2 in rarerGoodNewlineMarkerCombinations: assert( tuple2 not in commonGoodNewlineMarkerCombinations ) # Just check our tables for unwanted duplicates
+                # We allow rem (remark) markers to be anywhere without a warning
+                if lastMarkerEmpty and markerEmpty:
+                    if (lastMarker+'=E',marker+'=E') not in commonGoodNewlineMarkerCombinations:
+                        if (lastMarker+'=E',marker+'=E') in rarerGoodNewlineMarkerCombinations:
+                            newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) Empty '{}' not commonly used following empty '{}' marker").format( marker, lastMarker ) )
+                            #print( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) Empty '{}' not commonly used following empty '{}' marker").format( marker, lastMarker ) )
+                        else:
+                            newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Empty '{}' not normally used following empty '{}' marker").format( marker, lastMarker ) )
+                            #print( "{} {}:{} ".format( self.BBB, C, V ) + _("Empty '{}' not normally used following empty '{}' marker").format( marker, lastMarker ) )
+                elif lastMarkerEmpty and not markerEmpty and marker!='rem':
+                    if (lastMarker+'=E',marker) not in commonGoodNewlineMarkerCombinations:
+                        if (lastMarker+'=E',marker) in rarerGoodNewlineMarkerCombinations:
+                            newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) '{}' with text not commonly used following empty '{}' marker").format( marker, lastMarker ) )
+                            #print( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) '{}' with text not commonly used following empty '{}' marker").format( marker, lastMarker ) )
+                        else:
+                            newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("'{}' with text not normally used following empty '{}' marker").format( marker, lastMarker ) )
+                            #print( "{} {}:{} ".format( self.BBB, C, V ) + _("'{}' with text not normally used following empty '{}' marker").format( marker, lastMarker ) )
+                elif not lastMarkerEmpty and markerEmpty and lastMarker!='rem':
+                    if (lastMarker,marker+'=E') not in commonGoodNewlineMarkerCombinations:
+                        if (lastMarker,marker+'=E') in rarerGoodNewlineMarkerCombinations:
+                            newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) Empty '{}' not commonly used following '{}' with text").format( marker, lastMarker ) )
+                            #print( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) Empty '{}' not commonly used following '{}' with text").format( marker, lastMarker ) )
+                        else:
+                            newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Empty '{}' not normally used following '{}' with text").format( marker, lastMarker ) )
+                            #print( "{} {}:{} ".format( self.BBB, C, V ) + _("Empty '{}' not normally used following '{}' with text").format( marker, lastMarker ) )
+                elif lastMarker!='rem' and marker!='rem': # both not empty
+                    if (lastMarker,marker) not in commonGoodNewlineMarkerCombinations:
+                        if (lastMarker,marker) in rarerGoodNewlineMarkerCombinations:
+                            newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) '{}' with text not commonly used following '{}' with text").format( marker, lastMarker ) )
+                            #print( "{} {}:{} ".format( self.BBB, C, V ) + _("(Warning only) '{}' with text not commonly used following '{}' with text").format( marker, lastMarker ) )
+                        else:
+                            newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("'{}' with text not normally used following '{}' with text").format( marker, lastMarker ) )
+                            #print( "{} {}:{} ".format( self.BBB, C, V ) + _("'{}' with text not normally used following '{}' with text").format( marker, lastMarker ) )
 
             markerShouldHaveContent = Globals.USFMMarkers.markerShouldHaveContent( marker )
             if text:

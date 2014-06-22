@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-06-18 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-22 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -85,6 +85,7 @@ import subprocess, multiprocessing
 from gettext import gettext as _
 
 import Globals, ControlFiles
+from InternalBibleInternals import BOS_ALL_ADDED_MARKERS
 from InternalBible import InternalBible
 from BibleOrganizationalSystems import BibleOrganizationalSystem
 from BibleReferences import BibleReferenceList
@@ -357,13 +358,25 @@ class BibleWriter( InternalBible ):
             USFMAbbreviation = Globals.BibleBooksCodes.getUSFMAbbreviation( BBB )
             USFMNumber = Globals.BibleBooksCodes.getUSFMNumber( BBB )
 
+            indent = 3
             filename = "{:02}_{}_BibleWriter.pSFM".format( j, BBB )
             filepath = os.path.join( outputFolder, Globals.makeSafeFilename( filename ) )
             if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
+            indentLevel = 0
             with open( filepath, 'wt' ) as myFile:
                 for entry in pseudoUSFMData:
-                    myFile.write( "{} ({}): '{}' '{}' {}\n" \
-                        .format( entry.getMarker(), entry.getOriginalMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras() ) )
+                    marker, adjText, cleanText, extras = entry.getMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras()
+                    myFile.write( "{}{}{} = {} {} {}\n".format( ' '*indent*indentLevel, ' ' if len(marker)<2 else '',
+                                marker, repr(adjText) if adjText is not None else '',
+                                repr(cleanText) if cleanText and cleanText!=adjText else '',
+                                entry.getExtras().summary() if extras else '' ) )
+                    if marker in ('c','v', 's1','s2','s3','s4', 'is1','is2','is3','is4', ) \
+                    or marker in BOS_ALL_ADDED_MARKERS \
+                    or marker in USFM_BIBLE_PARAGRAPH_MARKERS:
+                        indentLevel += 1
+                    elif indentLevel and marker[0]=='¬': indentLevel -= 1
+                    if Globals.debugFlag: assert( indentLevel <= 6 ) # Should only be 6: e.g., chapters c s1 v list li1
+            if Globals.debugFlag: assert( indentLevel == 0 )
 
         # Now create a zipped collection
         if Globals.verbosityLevel > 2: print( "  Zipping PseudoUSFM files..." )
@@ -412,7 +425,7 @@ class BibleWriter( InternalBible ):
                 #print( BBB, pseudoMarker, repr(value) )
                 if (not USFM) and pseudoMarker!='id': # We need to create an initial id line
                     USFM += '\\id {} -- BibleOrgSys USFM export v{}'.format( USFMAbbreviation.upper(), ProgVersion )
-                if '¬' in pseudoMarker or pseudoMarker in ('list','ilist',): continue # Just ignore added markers -- not needed here
+                if '¬' in pseudoMarker or pseudoMarker in ('intro','ilist','chapters','list',): continue # Just ignore added markers -- not needed here
                 if pseudoMarker in ('c#','vp~',):
                     ignoredMarkers.add( pseudoMarker )
                     continue
