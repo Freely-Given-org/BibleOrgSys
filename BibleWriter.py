@@ -7365,6 +7365,7 @@ class BibleWriter( InternalBible ):
         if not self.doneSetupGeneric: self.__setupWriter()
         if not outputFolder: outputFolder = "OutputFiles/BOS_ODF_Export/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
+        os.chmod( outputFolder, 0o777 ) # Allow all users to write to this folder (ServiceManager might run as a different user)
 
         startWithTemplate = True # Start with template (all styles already built) or just a blank document (MUCH slower)
 
@@ -9126,7 +9127,7 @@ def demo():
                 if Globals.verbosityLevel > 0: print( '\nBibleWriter A'+str(j+1)+'/', UB )
                 if Globals.strictCheckingFlag: UB.check()
                 #UB.toOSISXML(); halt
-                doaResults = UB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+                doaResults = UB.doAllExports( wantPhotoBible=False, wantODFs=True, wantPDFs=False )
                 if Globals.strictCheckingFlag: # Now compare the original and the exported USFM files
                     outputFolder = "OutputFiles/BOS_USFM_Reexport/"
                     fN = USFMFilenames( testFolder )
