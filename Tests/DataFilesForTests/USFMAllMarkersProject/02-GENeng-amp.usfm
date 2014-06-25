@@ -10,6 +10,7 @@
 \mt1 Genesis
 \rem This translation doesn't have introductions
 \c 1
+\cl Chapter One
 \rem This translation doesn't have section headings
 \p
 \v 1 In the beginning, God\f + The Hebrew word rendered “God” is “אֱלֹהִ֑ים”
@@ -944,6 +945,7 @@ nor when she got up.
 \v 37 The firstborn bore a son, and named him Moab. He is the father of the Moabites to this day.
 \v 38 The younger also bore a son, and called his name Ben Ammi. He is the father of the children of Ammon to this day.
 \c 20
+\cl Table Chapter
 \p
 \v 1 Abraham traveled from there toward the land of the South, and lived between Kadesh and Shur. He lived as a foreigner in
 Gerar.
@@ -967,15 +969,15 @@ brought on me and on my kingdom a great sin? You have done deeds to me that ough
 \v 10 Abimelech said to Abraham, “What did you see, that you have done this thing?”
 \p
 \v 11 Abraham said, “Because I thought, ‘Surely the fear of God is not in this place. They will kill me for my wife’s sake.’
-\v 12 Besides, she is indeed my sister, the daughter of my father, but not the daughter of my mother; and she became my wife.
-\v 13 When God caused me to wander from my father’s house, I said to her, ‘This is your kindness which you shall show to me.
-Everywhere that we go, say of me, “He is my brother.”’”
 \p
-\v 14 Abimelech took sheep and cattle, male servants and female servants, and gave them to Abraham, and restored Sarah, his
-wife, to him.
-\v 15 Abimelech said, “Behold, my land is before you. Dwell where it pleases you.”
-\v 16 To Sarah he said, “Behold, I have given your brother a thousand pieces of silver. Behold, it is for you a covering of the
-eyes to all that are with you. In front of all you are vindicated.”
+\v 12-16 They presented their offerings in the following order:
+\tr \th1 Day \th2 Tribe \th3 Leader \thr4 Extra
+\tr \tcr1 1st \tc2 Judah \tc3 Nahshon son of Amminadab \tcr4 None
+\tr \tcr1 2nd \tc2 Issachar \tc3 Nethanel son of Zuar \tcr4 None
+\tr \tcr1 3rd \tc2 Zebulun \tc3 Eliab son of Helon \tcr4 None
+\tr \tcr1 4th \tc2 Reuben \tc3 Elizur son of Shedeur \tcr4 None
+\tr \tcr1 5th \tc2 Simeon \tc3 Shelumiel son of Zurishaddai \tcr4 None
+\tr \tcr1 \tc2 \tcr3 TOTAL \tcr4 Zero
 \p
 \v 17 Abraham prayed to God. God healed Abimelech, and his wife, and his female servants, and they bore children.
 \v 18 For Yahweh had closed up tight all the wombs of the house of Abimelech, because of Sarah, Abraham’s wife.

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleInternals.py
-#   Last modified: 2014-06-23 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-25 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Bible internals handler"
-ProgVersion = "0.43"
+ProgVersion = "0.44"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -74,15 +74,16 @@ BOS_CONTENT_MARKERS = ( 'c~', 'c#', 'v~', 'p~', 'cl=', 'vp~', )
             This is inserted BEFORE the v (and v~) marker(s)
 """
 
-BOS_ADDED_MARKERS = ( 'intro', 'ilist', 'chapters', 'list', )
+BOS_NESTING_MARKERS = ( 'intro', 'ilist', 'chapters', 'list', )
 """
     intro       Inserted at the start of book introductions
     ilist       Inserted at the start of introduction lists (before ili markers)
     chapters    Inserted after the introduction (if any) and before the first Bible content (usually immediately before chapter 1 marker)
     list       Inserted at the start of lists (before li markers)
 """
+BOS_ALL_ADDED_MARKERS = BOS_CONTENT_MARKERS + BOS_NESTING_MARKERS
 
-BOS_ALL_ADDED_MARKERS = BOS_ADDED_MARKERS + ('iot',)
+BOS_ALL_ADDED_NESTING_MARKERS = BOS_NESTING_MARKERS + ('iot',)
 """
     intro       Inserted at the start of book introductions
     iot         Inserted before introduction outline (io markers) IF IT'S NOT ALREADY IN THE FILE
@@ -93,7 +94,7 @@ BOS_ALL_ADDED_MARKERS = BOS_ADDED_MARKERS + ('iot',)
 
 BOS_END_MARKERS = ('¬intro', '¬iot', '¬ilist', '¬chapters', '¬c', '¬v', '¬list', )
 
-#BOS_MARKERS = BOS_CONTENT_MARKERS + BOS_ALL_ADDED_MARKERS + BOS_END_MARKERS
+#BOS_MARKERS = BOS_CONTENT_MARKERS + BOS_ALL_ADDED_NESTING_MARKERS + BOS_END_MARKERS
 
 EXTRA_TYPES = ( 'fn', 'en', 'xr', 'fig', 'str', 'vp', )
 """
@@ -284,7 +285,7 @@ class InternalBibleEntry:
             assert( '\n' not in cleanText and '\r' not in cleanText )
 
             if marker[0] == '¬' \
-            or marker in BOS_ALL_ADDED_MARKERS and originalMarker is None: # It's an end marker or an added marker
+            or marker in BOS_ALL_ADDED_NESTING_MARKERS and originalMarker is None: # It's an end marker or an added marker
                 assert( originalMarker is None and adjustedText is None and extras is None and originalText is None )
             else: # it's not an end marker
                 assert( originalMarker and isinstance( originalMarker, str ) ) # Mustn't be blank

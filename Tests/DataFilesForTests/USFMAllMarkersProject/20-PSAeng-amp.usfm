@@ -9,7 +9,9 @@
 \mt The Psalms
 \cl Psalm
 \c 1
+\cl Psalm One
 \ms BOOK 1
+\mr (Psalms 1–41)
 \q
 \v 1 Blessed is the man who doesn’t walk in the counsel of the wicked,
 \q2 nor stand on the path of sinners,
@@ -33,6 +35,7 @@ translations.\f* law.
 \v 6 For Yahweh knows the way of the righteous,
 \q2 but the way of the wicked shall perish.
 \c 2
+\ms2 Major section heading 2
 \q
 \v 1 Why do the nations rage,
 \q2 and the peoples plot a vain thing?
@@ -73,6 +76,7 @@ translations.\f* law.
 \q2 for his wrath will soon be kindled.
 \q2 Blessed are all those who take refuge in him.
 \c 3
+\ms3 Major section heading 3
 \d A Psalm by David, when he fled from Absalom his son.
 \q
 \v 1 Yahweh, how my adversaries have increased!
@@ -81,12 +85,14 @@ translations.\f* law.
 \v 2 Many there are who say of my soul,
 \q2 “There is no help for him in God.”\f + The Hebrew word rendered “God” is “אֱלֹהִ֑ים”
 (Elohim).\f* \qs Selah.\qs*
+\b
 \q
 \v 3 But you, Yahweh, are a shield around me,
 \q2 my glory, and the one who lifts up my head.
 \q
 \v 4 I cry to Yahweh with my voice,
 \q2 and he answers me out of his holy hill. \qs Selah.\qs*
+\b
 \q
 \v 5 I laid myself down and slept.
 \q2 I awakened; for Yahweh sustains me.
@@ -102,6 +108,7 @@ translations.\f* law.
 \v 8 Salvation belongs to Yahweh.
 \q2 Your blessing be on your people. \qs Selah.\qs*
 \c 4
+\ms4 Major section heading 4
 \d For the Chief Musician; on stringed instruments. A Psalm by David.
 \q
 \v 1 Answer me when I call, God of my righteousness.
@@ -2753,19 +2760,22 @@ house.”
 \q2 then Jacob shall rejoice,
 \q2 and Israel shall be glad.
 \c 54
-\d For the Chief Musician. On stringed instruments. A contemplation by David, when the Ziphites came and said to Saul, “Isn’t
-David hiding himself among us?”
-\q
-\v 1 Save me, God, by your name.
-\q2 Vindicate me in your might.
-\q
-\v 2 Hear my prayer, God.
-\q2 Listen to the words of my mouth.
+\ca 53\ca*
+\s1 A Prayer for Protection from Enemies
+\d \va 1\va* A poem by David, \va 2\va* after the men from
+Ziph went to Saul and told him that David was hiding in their
+territory.
+\q1
+\v 1 \va 3\va* Save me by your power, O God;
+\q2 set me free by your might!
+\q1
+\v 2 \va 4\va* Hear my prayer, O God;
+\q2 listen to my words!
 \q
 \v 3 For strangers have risen up against me.
 \q2 Violent men have sought after my soul.
 \q2 They haven’t set God before them. \qs Selah.\qs*
-\q
+\q1
 \v 4 Behold, God is my helper.
 \q2 The Lord is the one who sustains my soul.
 \q
@@ -3791,12 +3801,12 @@ Naharaim and with Aram Zobah, and Joab returned, and killed twelve thousand of E
 \q
 \v 19 Blessed be his glorious name forever!
 \q2 Let the whole earth be filled with his glory!
-\q Amen and amen.
+\qc Amen and amen.
 \b
 \p
 \v 20 This ends the prayers by David, the son of Jesse.
 \c 73
-\ms BOOK 3
+\ms1 BOOK 3
 \d A Psalm by Asaph.
 \q
 \v 1 Surely God\f + The Hebrew word rendered “God” is “אֱלֹהִ֑ים”
@@ -6702,7 +6712,7 @@ the alphabet (ordered from Alef to Tav).\f*
 \v 29 Oh give thanks to Yahweh, for he is good,
 \q2 for his loving kindness endures forever.
 \c 119
-\d ALEPH
+\qa ALEPH
 \q
 \v 1 Blessed are those whose ways are blameless,
 \q2 who walk according to Yahweh’s law.
@@ -6727,7 +6737,7 @@ the alphabet (ordered from Alef to Tav).\f*
 \q
 \v 8 I will observe your statutes.
 \q2 Don’t utterly forsake me.
-\d BET
+\qa BET
 \q
 \v 9 How can a young man keep his way pure?
 \q2 By living according to your word.
@@ -6752,7 +6762,7 @@ the alphabet (ordered from Alef to Tav).\f*
 \q
 \v 16 I will delight myself in your statutes.
 \q2 I will not forget your word.
-\d GIMEL
+\qa GIMEL
 \q
 \v 17 Do good to your servant.
 \q2 I will live and I will obey your word.
@@ -6776,7 +6786,7 @@ the alphabet (ordered from Alef to Tav).\f*
 \q
 \v 24 Indeed your statutes are my delight,
 \q2 and my counselors.
-\d DALED
+\qa DALED
 \q
 \v 25 My soul is laid low in the dust.
 \q2 Revive me according to your word!
@@ -6801,7 +6811,7 @@ the alphabet (ordered from Alef to Tav).\f*
 \q
 \v 32 I run in the path of your commandments,
 \q2 for you have set my heart free.
-\d HEY
+\qa HEY
 \q
 \v 33 Teach me, Yahweh, the way of your statutes.
 \q2 I will keep them to the end.
@@ -6826,7 +6836,7 @@ the alphabet (ordered from Alef to Tav).\f*
 \q
 \v 40 Behold, I long for your precepts!
 \q2 Revive me in your righteousness.
-\d WAW
+\qa WAW
 \q
 \v 41 Let your loving kindness also come to me, Yahweh,
 \q2 your salvation, according to your word.
@@ -6851,7 +6861,7 @@ the alphabet (ordered from Alef to Tav).\f*
 \q
 \v 48 I reach out my hands for your commandments, which I love.
 \q2 I will meditate on your statutes.
-\d ZAYIN
+\qa ZAYIN
 \q
 \v 49 Remember your word to your servant,
 \q2 because you gave me hope.
@@ -6876,7 +6886,7 @@ the alphabet (ordered from Alef to Tav).\f*
 \q
 \v 56 This is my way,
 \q2 that I keep your precepts.
-\d CHET
+\qa CHET
 \q
 \v 57 Yahweh is my portion.
 \q2 I promised to obey your words.
@@ -6901,7 +6911,7 @@ the alphabet (ordered from Alef to Tav).\f*
 \q
 \v 64 The earth is full of your loving kindness, Yahweh.
 \q2 Teach me your statutes.
-\d TET
+\qa TET
 \q
 \v 65 Do good to your servant,
 \q2 according to your word, Yahweh.
@@ -6925,7 +6935,7 @@ the alphabet (ordered from Alef to Tav).\f*
 \q2 that I may learn your statutes.
 \q
 \v 72 The law of your mouth is better to me than thousands of pieces of gold and silver.
-\d YUD
+\qa YUD
 \q
 \v 73 Your hands have made me and formed me.
 \q2 Give me understanding, that I may learn your commandments.
@@ -6950,7 +6960,7 @@ the alphabet (ordered from Alef to Tav).\f*
 \q
 \v 80 Let my heart be blameless toward your decrees,
 \q2 that I may not be disappointed.
-\d KAF
+\qa KAF
 \q
 \v 81 My soul faints for your salvation.
 \q2 I hope in your word.
@@ -6976,7 +6986,7 @@ the alphabet (ordered from Alef to Tav).\f*
 \q
 \v 88 Preserve my life according to your loving kindness,
 \q2 so I will obey the statutes of your mouth.
-\d LAMED
+\qa LAMED
 \q
 \v 89 Yahweh, your word is settled in heaven forever.
 \q
@@ -7000,7 +7010,7 @@ the alphabet (ordered from Alef to Tav).\f*
 \q
 \v 96 I have seen a limit to all perfection,
 \q2 but your commands are boundless.
-\d MEM
+\qa MEM
 \q
 \v 97 How I love your law!
 \q2 It is my meditation all day.
@@ -7025,7 +7035,7 @@ the alphabet (ordered from Alef to Tav).\f*
 \q
 \v 104 Through your precepts, I get understanding;
 \q2 therefore I hate every false way.
-\d NUN
+\qa NUN
 \q
 \v 105 Your word is a lamp to my feet,
 \q2 and a light for my path.
@@ -7050,7 +7060,7 @@ the alphabet (ordered from Alef to Tav).\f*
 \q
 \v 112 I have set my heart to perform your statutes forever,
 \q2 even to the end.
-\d SAMEKH
+\qa SAMEKH
 \q
 \v 113 I hate double-minded men,
 \q2 but I love your law.
@@ -7075,7 +7085,7 @@ the alphabet (ordered from Alef to Tav).\f*
 \q
 \v 120 My flesh trembles for fear of you.
 \q2 I am afraid of your judgments.
-\d AYIN
+\qa AYIN
 \q
 \v 121 I have done what is just and righteous.
 \q2 Don’t leave me to my oppressors.
@@ -7100,7 +7110,7 @@ the alphabet (ordered from Alef to Tav).\f*
 \q
 \v 128 Therefore I consider all of your precepts to be right.
 \q2 I hate every false way.
-\d PEY
+\qa PEY
 \q
 \v 129 Your testimonies are wonderful,
 \q2 therefore my soul keeps them.
@@ -7125,7 +7135,7 @@ the alphabet (ordered from Alef to Tav).\f*
 \q
 \v 136 Streams of tears run down my eyes,
 \q2 because they don’t observe your law.
-\d TZADI
+\qa TZADI
 \q
 \v 137 You are righteous, Yahweh.
 \q2 Your judgments are upright.
@@ -7150,7 +7160,7 @@ the alphabet (ordered from Alef to Tav).\f*
 \q
 \v 144 Your testimonies are righteous forever.
 \q2 Give me understanding, that I may live.
-\d KUF
+\qa KUF
 \q
 \v 145 I have called with my whole heart.
 \q2 Answer me, Yahweh!
@@ -7176,7 +7186,7 @@ the alphabet (ordered from Alef to Tav).\f*
 \q
 \v 152 Of old I have known from your testimonies,
 \q2 that you have founded them forever.
-\d RESH
+\qa RESH
 \q
 \v 153 Consider my affliction, and deliver me,
 \q2 for I don’t forget your law.
@@ -7201,7 +7211,7 @@ the alphabet (ordered from Alef to Tav).\f*
 \q
 \v 160 All of your words are truth.
 \q2 Every one of your righteous ordinances endures forever.
-\d SIN AND SHIN
+\qa SIN AND SHIN
 \q
 \v 161 Princes have persecuted me without a cause,
 \q2 but my heart stands in awe of your words.
@@ -7226,7 +7236,7 @@ the alphabet (ordered from Alef to Tav).\f*
 \q
 \v 168 I have obeyed your precepts and your testimonies,
 \q2 for all my ways are before you.
-\d TAV
+\qa TAV
 \q
 \v 169 Let my cry come before you, Yahweh.
 \q2 Give me understanding according to your word.
@@ -7277,14 +7287,14 @@ the alphabet (ordered from Alef to Tav).\f*
 \c 121
 \d A Song of Ascents.
 \q
-\v 1 I will lift up my eyes to the hills.
+\v 1 \qac alef\qac*I will lift up my eyes to the hills.
 \q2 Where does my help come from?
 \q
-\v 2 My help comes from Yahweh,
+\v 2 \qac bet\qac*My help comes from Yahweh,
 \q2 who made heaven and earth.
 \b
 \q
-\v 3 He will not allow your foot to be moved.
+\v 3 \qac gimel\qac*He will not allow your foot to be moved.
 \q2 He who keeps you will not slumber.
 \q
 \v 4 Behold, he who keeps Israel
@@ -7672,82 +7682,82 @@ the alphabet (ordered from Alef to Tav).\f*
 \c 136
 \q
 \v 1 Give thanks to Yahweh, for he is good;
-\q2 for his loving kindness endures forever.
+\qr for his loving kindness endures forever.
 \q
 \v 2 Give thanks to the God of gods;
-\q2 for his loving kindness endures forever.
+\qr for his loving kindness endures forever.
 \q
 \v 3 Give thanks to the Lord of lords;
-\q2 for his loving kindness endures forever:
+\qr for his loving kindness endures forever:
 \q
 \v 4 To him who alone does great wonders;
-\q2 for his loving kindness endures forever:
+\qr for his loving kindness endures forever:
 \q
 \v 5 To him who by understanding made the heavens;
-\q2 for his loving kindness endures forever:
+\qr for his loving kindness endures forever:
 \q
 \v 6 To him who spread out the earth above the waters;
-\q2 for his loving kindness endures forever:
+\qr for his loving kindness endures forever:
 \q
 \v 7 To him who made the great lights;
-\q2 for his loving kindness endures forever:
+\qr for his loving kindness endures forever:
 \q
 \v 8 The sun to rule by day;
-\q2 for his loving kindness endures forever;
+\qr for his loving kindness endures forever;
 \q
 \v 9 The moon and stars to rule by night;
-\q2 for his loving kindness endures forever:
+\qr for his loving kindness endures forever:
 \q
 \v 10 To him who struck down the Egyptian firstborn;
-\q2 for his loving kindness endures forever;
+\qr for his loving kindness endures forever;
 \q
 \v 11 And brought out Israel from among them;
-\q2 for his loving kindness endures forever;
+\qr for his loving kindness endures forever;
 \q
 \v 12 With a strong hand, and with an outstretched arm;
-\q2 for his loving kindness endures forever:
+\qr for his loving kindness endures forever:
 \q
 \v 13 To him who divided the Red Sea apart;
-\q2 for his loving kindness endures forever;
+\qr for his loving kindness endures forever;
 \q
 \v 14 And made Israel to pass through the middle of it;
-\q2 for his loving kindness endures forever;
+\qr for his loving kindness endures forever;
 \q
 \v 15 But overthrew Pharaoh and his army in the Red Sea;
-\q2 for his loving kindness endures forever:
+\qr for his loving kindness endures forever:
 \q
 \v 16 To him who led his people through the wilderness;
-\q2 for his loving kindness endures forever:
+\qr for his loving kindness endures forever:
 \q
 \v 17 To him who struck great kings;
-\q2 for his loving kindness endures forever;
+\qr for his loving kindness endures forever;
 \q
 \v 18 And killed mighty kings;
-\q2 for his loving kindness endures forever:
+\qr for his loving kindness endures forever:
 \q
 \v 19 Sihon king of the Amorites;
-\q2 for his loving kindness endures forever;
+\qr for his loving kindness endures forever;
 \q
 \v 20 Og king of Bashan;
-\q2 for his loving kindness endures forever;
+\qr for his loving kindness endures forever;
 \q
 \v 21 And gave their land as an inheritance;
-\q2 for his loving kindness endures forever;
+\qr for his loving kindness endures forever;
 \q
 \v 22 Even a heritage to Israel his servant;
-\q2 for his loving kindness endures forever:
+\qr for his loving kindness endures forever:
 \q
 \v 23 Who remembered us in our low estate;
-\q2 for his loving kindness endures forever;
+\qr for his loving kindness endures forever;
 \q
 \v 24 And has delivered us from our adversaries;
-\q2 for his loving kindness endures forever:
+\qr for his loving kindness endures forever:
 \q
 \v 25 Who gives food to every creature;
-\q2 for his loving kindness endures forever.
+\qr for his loving kindness endures forever.
 \q
 \v 26 Oh give thanks to the God of heaven;
-\q2 for his loving kindness endures forever.
+\qr for his loving kindness endures forever.
 \c 137
 \q
 \v 1 By the rivers of Babylon, there we sat down.

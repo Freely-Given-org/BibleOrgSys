@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2014-06-22 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-25 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -54,8 +54,8 @@ import unicodedata
 
 import Globals
 from USFMMarkers import USFM_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS
-from InternalBibleInternals import BOS_CONTENT_MARKERS, BOS_ADDED_MARKERS, BOS_END_MARKERS, EXTRA_TYPES, \
-    LEADING_WORD_PUNCT_CHARS, MEDIAL_WORD_PUNCT_CHARS, TRAILING_WORD_PUNCT_CHARS, ALL_WORD_PUNCT_CHARS, \
+from InternalBibleInternals import BOS_CONTENT_MARKERS, BOS_NESTING_MARKERS, BOS_END_MARKERS, BOS_ALL_ADDED_MARKERS, \
+    EXTRA_TYPES, LEADING_WORD_PUNCT_CHARS, MEDIAL_WORD_PUNCT_CHARS, TRAILING_WORD_PUNCT_CHARS, ALL_WORD_PUNCT_CHARS, \
     InternalBibleEntryList, InternalBibleEntry, InternalBibleIndex, InternalBibleExtra, InternalBibleExtraList
 from BibleReferences import BibleAnchorReference
 
@@ -1489,17 +1489,24 @@ class InternalBibleBook:
                     if openMarkers and openMarkers[-1]=='c': closeLastOpenMarker( C )
                     elif 'c' in openMarkers: closeOpenMarker( 'c', C )
                     C, V = text, '0'
+                    if Globals.debugFlag: assert( marker not in openMarkers )
                     openMarkers.append( marker )
+                elif marker == 'vp~':
+                    if Globals.debugFlag: assert( nextMarker == 'v' )
+                    if 'v' in openMarkers: # we're not starting the first verse
+                        closeOpenMarker( 'v', V )
                 elif marker == 'v':
                     if 'v' in openMarkers: # we're not starting the first verse
                         closeOpenMarker( 'v', V )
                     V = text
+                    if Globals.debugFlag: assert( marker not in openMarkers )
                     openMarkers.append( marker )
+                elif marker == 'iot':
+                    if Globals.debugFlag: assert( 'iot' not in openMarkers )
+                    openMarkers.append( 'iot' ) # to ensure that we add an iot closing marker later
                 elif marker in ourIntroOutlineMarkers:
                     if lastMarker not in ourIntroOutlineMarkers:
-                        if lastMarker == 'iot':
-                            openMarkers.append( 'iot' ) # to ensure that we add an iot closing marker later
-                        else: # Seems we didn't have an iot in the file :-(
+                        if lastMarker != 'iot': # Seems we didn't have an iot in the file :-(
                             #print( "InternalBibleBook.processLines.addNestingMarkers: {} {}:{} Adding iot marker before {}".format( self.BBB, C, V, marker ) )
                             openMarker( 'iot' )
                     haveIntro = True
@@ -1512,6 +1519,7 @@ class InternalBibleBook:
                     if 'v' in openMarkers and verseEnded( j ): closeOpenMarker( 'v', V )
                     if lastPMarker in openMarkers: closeOpenMarker( lastPMarker ); lastPMarker = None
                     if lastSMarker in openMarkers: closeOpenMarker( lastSMarker ); lastSMarker = None
+                    if Globals.debugFlag: assert( marker not in openMarkers )
                     openMarkers.append( marker )
                     lastSMarker = marker
                 elif marker in USFM_INTRODUCTION_MARKERS:
@@ -1523,18 +1531,20 @@ class InternalBibleBook:
                     if 'list' not in openMarkers:
                         #print( "InternalBibleBook.processLines.addNestingMarkers: {} {}:{} Adding list marker before {}".format( self.BBB, C, V, marker ) )
                         openMarker( 'list' )
+                    if Globals.debugFlag: assert( marker not in openMarkers )
                     openMarkers.append( marker )
                     lastPMarker = marker
                 elif marker in USFM_BIBLE_PARAGRAPH_MARKERS:
                     assert( not text )
                     if 'v' in openMarkers and verseEnded( j ): closeOpenMarker( 'v', V )
                     if lastPMarker in openMarkers: closeOpenMarker( lastPMarker ); lastPMarker = None
+                    if Globals.debugFlag: assert( marker not in openMarkers )
                     openMarkers.append( marker )
                     lastPMarker = marker
                 #else: print( "  Ignore {}={}".format( marker, repr(text) ) )
 
                 newLines.append( dataLine )
-                if Globals.debugFlag and len(openMarkers) > 6: # Should only be 6: e.g., chapters c s1 v list li1
+                if Globals.debugFlag and len(openMarkers) > 7: # Should only be 7: e.g., chapters c s1 p v list li1
                     print( newLines[-20:] )
                     print(openMarkers); halt
                 lastMarker = marker
@@ -1667,7 +1677,7 @@ class InternalBibleBook:
                 logging.error( _("Marker 'id' should only appear as the first marker in a book but found on line {} after {} {}:{} in {}: {}").format( j+1, self.BBB, C, V, marker, text ) )
                 self.addPriorityError( 99, C, V, _("'id' marker should only be in first line of file") )
             if ( marker[0]=='¬' and marker not in BOS_END_MARKERS and not Globals.USFMMarkers.isNewlineMarker( marker[1:] ) ) \
-            or ( marker[0]!='¬' and marker not in ('c#','vp~',) and marker not in BOS_ADDED_MARKERS and not Globals.USFMMarkers.isNewlineMarker( marker ) ):
+            or ( marker[0]!='¬' and marker not in ('c#','vp~',) and marker not in BOS_NESTING_MARKERS and not Globals.USFMMarkers.isNewlineMarker( marker ) ):
                 validationErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unexpected '{}' newline marker in Bible book (Text is '{}')").format( marker, text ) )
                 logging.warning( _("Unexpected '{}' newline marker in Bible book after {} {}:{} (Text is '{}')").format( marker, self.BBB, C, V, text ) )
                 self.addPriorityError( 80, C, V, _("Marker {} not expected at beginning of line".format( repr(marker) ) ) )
@@ -2381,7 +2391,7 @@ class InternalBibleBook:
                     #logging.warning( _("Marker '{}' has no content after").format( marker ) + " {} {}:{}".format( self.BBB, C, V ) )
                     #self.addPriorityError( 47, C, V, _("Marker {} should have content").format( marker ) )
 
-            if marker[0] == '¬' or marker in BOS_ADDED_MARKERS: # Just ignore these added markers
+            if marker[0] == '¬' or marker in BOS_NESTING_MARKERS: # Just ignore these added markers
                 continue
             elif marker == 'v~':
                 lastMarker, lastMarkerEmpty = 'v', markerEmpty
@@ -2400,7 +2410,7 @@ class InternalBibleBook:
                 continue
             else: # it's not our (non-USFM) c~,c#,v~ markers
                 if marker not in allAvailableNewlineMarkers: print( "Unexpected marker is '{}'".format( marker ) )
-                if Globals.debugFlag: assert( marker in allAvailableNewlineMarkers or marker in BOS_ADDED_MARKERS ) # Should have been checked at load time
+                if Globals.debugFlag: assert( marker in allAvailableNewlineMarkers or marker in BOS_ALL_ADDED_MARKERS ) # Should have been checked at load time
                 newlineMarkerCounts[marker] = 1 if marker not in newlineMarkerCounts else (newlineMarkerCounts[marker] + 1)
 
             # Check the progression through the various sections
