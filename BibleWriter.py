@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-06-25 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-27 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -300,7 +300,8 @@ class BibleWriter( InternalBible ):
                     countWords( marker, cleanText, "main" )
 
                 if extras:
-                    for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
+                    for extra in extras: # do any footnotes and cross-references
+                        extraType, extraIndex, extraText, cleanExtraText = extra
                         if Globals.debugFlag:
                             assert( extraText ) # Shouldn't be blank
                             #assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
@@ -830,7 +831,8 @@ class BibleWriter( InternalBible ):
                 adjText = text
                 if extras:
                     offset = 0
-                    for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
+                    for extra in extras: # do any footnotes and cross-references
+                        extraType, extraIndex, extraText, cleanExtraText = extra
                         #print( "{} {}:{} Text='{}' eT={}, eI={}, eText='{}'".format( BBB, C, V, text, extraType, extraIndex, extraText ) )
                         adjIndex = extraIndex - offset
                         lenT = len( adjText )
@@ -863,7 +865,7 @@ class BibleWriter( InternalBible ):
                         elif Globals.debugFlag and debuggingThisModule: print( 'eT', extraType ); halt
                         #print( "was", verse )
                         if extra:
-                            adjText = adjText[:adjIndex] + extra + adjText[adjIndex:]
+                            adjText = adjText[:adjIndex] + str(extra) + adjText[adjIndex:]
                             offset -= len( extra )
                         #print( "now", verse )
                 return adjText
@@ -917,7 +919,7 @@ class BibleWriter( InternalBible ):
             filepath = os.path.join( outputFolder, Globals.makeSafeFilename( filename ) )
             if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
             ourGlobals = {}
-            ourGlobals['nextFootnoteIndex'] = ourGlobals['nextXRefIndex'] = 0
+            ourGlobals['nextFootnoteIndex'] = ourGlobals['nextEndnoteIndex'] = ourGlobals['nextXRefIndex'] = 0
             ourGlobals['footnoteMD'], ourGlobals['endnoteMD'], ourGlobals['xrefMD'] = [], [], []
             C = V = '0'
             textBuffer = ""
@@ -1559,7 +1561,7 @@ class BibleWriter( InternalBible ):
                     extra = "\\vp {}\\vp*".format( extraText ) # Will be handled later
                 elif Globals.debugFlag and debuggingThisModule: print( 'eT', extraType ); halt
                 #print( "was", verse )
-                adjText = adjText[:adjIndex] + extra + adjText[adjIndex:]
+                adjText = adjText[:adjIndex] + str(extra) + adjText[adjIndex:]
                 offset -= len( extra )
                 #print( "now", verse )
             return adjText
@@ -1857,7 +1859,7 @@ class BibleWriter( InternalBible ):
             writeHeader( writerObject, BBB )
             haveOpenSection = haveOpenParagraph = haveOpenListItem = haveOpenVerse = False
             haveOpenList = {}
-            html5Globals['nextFootnoteIndex'] = html5Globals['nextXRefIndex'] = 0
+            html5Globals['nextFootnoteIndex'] = html5Globals['nextEndnoteIndex'] = html5Globals['nextXRefIndex'] = 0
             html5Globals['footnoteHTML5'], html5Globals['endnoteHTML5'], html5Globals['xrefHTML5'] = [], [], []
             gotVP = None
             C = V = '0'
@@ -2404,7 +2406,7 @@ class BibleWriter( InternalBible ):
             """
             numCBSections = 0
             CBGlobals = {}
-            CBGlobals['nextFootnoteIndex'] = CBGlobals['nextXRefIndex'] = 0
+            CBGlobals['nextFootnoteIndex'] = CBGlobals['nextEndnoteIndex'] = CBGlobals['nextXRefIndex'] = 0
             CBGlobals['footnoteHTML5'], CBGlobals['endnoteHTML5'], CBGlobals['xrefHTML5'] = [], [], []
 
             def handleSection( sectionHTML, outputFile ):
@@ -3061,7 +3063,8 @@ class BibleWriter( InternalBible ):
                 adjText = text
                 if extras:
                     offset = 0
-                    for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
+                    for extra in extras: # do any footnotes and cross-references
+                        extraType, extraIndex, extraText, cleanExtraText = extra
                         #print( "{} {}:{} Text='{}' eT={}, eI={}, eText='{}'".format( BBB, C, V, text, extraType, extraIndex, extraText ) )
                         adjIndex = extraIndex - offset
                         lenT = len( adjText )
@@ -3092,7 +3095,7 @@ class BibleWriter( InternalBible ):
                             extra = "\\vp {}\\vp*".format( extraText ) # Will be handled later
                         elif Globals.debugFlag and debuggingThisModule: print( extraType ); halt
                         #print( "was", verse )
-                        adjText = adjText[:adjIndex] + extra + adjText[adjIndex:]
+                        adjText = adjText[:adjIndex] + str(extra) + adjText[adjIndex:]
                         offset -= len( extra )
                         #print( "now", verse )
                 return adjText
@@ -3510,7 +3513,8 @@ class BibleWriter( InternalBible ):
                 adjText = text
                 if extras:
                     offset = 0
-                    for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
+                    for extra in extras: # do any footnotes and cross-references
+                        extraType, extraIndex, extraText, cleanExtraText = extra
                         #print( "{} {}:{} Text='{}' eT={}, eI={}, eText='{}'".format( BBB, C, V, text, extraType, extraIndex, extraText ) )
                         adjIndex = extraIndex - offset
                         lenT = len( adjText )
@@ -3541,7 +3545,7 @@ class BibleWriter( InternalBible ):
                             extra = "\\vp {}\\vp*".format( extraText ) # Will be handled later
                         elif Globals.debugFlag and debuggingThisModule: print( extraType ); halt
                         #print( "was", verse )
-                        adjText = adjText[:adjIndex] + extra + adjText[adjIndex:]
+                        adjText = adjText[:adjIndex] + str(extra) + adjText[adjIndex:]
                         offset -= len( extra )
                         #print( "now", verse )
                 return adjText
@@ -4035,7 +4039,8 @@ class BibleWriter( InternalBible ):
                 if extras:
                     #print( '\n', chapterRef )
                     if Globals.debugFlag: assert( offset >= 0 )
-                    for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
+                    for extra in extras: # do any footnotes and cross-references
+                        extraType, extraIndex, extraText, cleanExtraText = extra
                         adjIndex = extraIndex - offset
                         lenV = len( verse )
                         if adjIndex > lenV: # This can happen if we have verse/space/notes at end (and the space was deleted after the note was separated off)
@@ -4065,7 +4070,7 @@ class BibleWriter( InternalBible ):
                             extra = "\\vp {}\\vp*".format( extraText ) # Will be handled later
                         elif Globals.debugFlag and debuggingThisModule: print( extraType ); halt
                         #print( "was", verse )
-                        verse = verse[:adjIndex] + extra + verse[adjIndex:]
+                        verse = verse[:adjIndex] + str(extra) + verse[adjIndex:]
                         offset -= len( extra )
                         #print( "now", verse )
                 return verse
@@ -8242,12 +8247,14 @@ class BibleWriter( InternalBible ):
             # insertFormattedODFText main code
             if extras:
                 haveUsefulExtras = False
-                for extraType, extraIndex, extraText, cleanExtraText in extras: # find any footnotes and cross-references
+                for extra in extras: # find any footnotes and cross-references
+                    extraType, extraIndex, extraText, cleanExtraText = extra
                     # We don't care about str and vp fields here
                     if extraType in ('fn','en','xr','fig',): haveUsefulExtras = True; break
                 if haveUsefulExtras:
                     lastIndex = 0
-                    for extraType, extraIndex, extraText, cleanExtraText in extras: # find any footnotes and cross-references
+                    for extra in extras: # find any footnotes and cross-references
+                        extraType, extraIndex, extraText, cleanExtraText = extra
                         handleTextSegment( givenText[lastIndex:extraIndex] )
                         if extraType in ('fn','en',): processNote( extraType, extraText, documentText, textCursor )
                         elif extraType == 'xr': processCrossReference( extraText, documentText, textCursor )
@@ -9109,8 +9116,8 @@ def demo():
         from USFMBible import USFMBible
         from USFMFilenames import USFMFilenames
         testData = ( # name, abbreviation, folder for USFM files
-                #("USFM-AllMarkers", "USFM-All", "Tests/DataFilesForTests/USFMAllMarkersProject/",),
-                ("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
+                ("USFM-AllMarkers", "USFM-All", "Tests/DataFilesForTests/USFMAllMarkersProject/",),
+                #("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
                 #("CustomTest", "Custom", ".../",),
                 #("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
                 #("USFMTest2", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
