@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-06-27 by RJH (also update ProgVersion below)
+#   Last modified: 2014-07-01 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -892,6 +892,7 @@ class BibleWriter( InternalBible ):
             text = text.replace( '\\w ', '_' ).replace( '\\w*', '_' )
             text = text.replace( '\\rq ', '' ).replace( '\\rq*', '' )
             text = text.replace( '\\qs ', '' ).replace( '\\qs*', '' )
+            text = text.replace( '\\va ', '(' ).replace( '\\va*', ')' )
 
             # Direct formatting
             text = text.replace( '\\bdit ', '*_' ).replace( '\\bdit*', '_*' )
@@ -1588,6 +1589,8 @@ class BibleWriter( InternalBible ):
         text = text.replace( '\\w ', '<span class="wordlistEntry">' ).replace( '\\w*', '</span>' )
         text = text.replace( '\\rq ', '<span class="quotationReference">' ).replace( '\\rq*', '</span>' )
         text = text.replace( '\\qs ', '<span class="Selah">' ).replace( '\\qs*', '</span>' )
+        text = text.replace( '\\ca ', '<span class="alternativeChapterNumber">(' ).replace( '\\ca*', ')</span>' )
+        text = text.replace( '\\va ', '<span class="alternativeVerseNumber">(' ).replace( '\\va*', ')</span>' )
 
         # Direct formatting
         text = text.replace( '\\bdit ', '<span class="boldItalic">' ).replace( '\\bdit*', '</span>' )
@@ -4577,7 +4580,7 @@ class BibleWriter( InternalBible ):
 
                 elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4', 'ms1','ms2','ms3','ms4',) \
                 or marker in USFM_INTRODUCTION_MARKERS \
-                or marker in ('s1','s2','s3','s4', 'r','sr','mr', 'd','sp', ):
+                or marker in ('s1','s2','s3','s4', 'r','sr','mr', 'd','sp','cd', 'cl','lit', ):
                     ignoredMarkers.add( marker )
                 elif marker in USFM_BIBLE_PARAGRAPH_MARKERS:
                     if Globals.debugFlag: assert( not text and not extras )
@@ -4754,7 +4757,7 @@ class BibleWriter( InternalBible ):
                     haveOpenParagraph = True
                 elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4', 'ms1','ms2','ms3','ms4', ) \
                 or marker in USFM_INTRODUCTION_MARKERS \
-                or marker in ('s1','s2','s3','s4', 'r','sr','mr', 'd','sp', ):
+                or marker in ('s1','s2','s3','s4', 'r','sr','mr', 'd','sp','cd', 'cl','lit', ):
                     ignoredMarkers.add( marker )
                 elif marker in USFM_BIBLE_PARAGRAPH_MARKERS:
                     if Globals.debugFlag: assert( not text and not extras )
@@ -4912,7 +4915,7 @@ class BibleWriter( InternalBible ):
 
                 elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4', 'ms1','ms2','ms3','ms4', ) \
                 or marker in USFM_INTRODUCTION_MARKERS \
-                or marker in ('s1','s2','s3','s4', 'r','sr','mr', 'd','sp', ):
+                or marker in ('s1','s2','s3','s4', 'r','sr','mr', 'd','sp','cd', 'cl','lit', ):
                     ignoredMarkers.add( marker )
                 elif marker in USFM_BIBLE_PARAGRAPH_MARKERS:
                     if Globals.debugFlag: assert( not text and not extras )
@@ -6118,12 +6121,12 @@ class BibleWriter( InternalBible ):
 
             if '\\x' in line: # Remove cross-references completely (why???)
                 #line = line.replace('\\x ','<RX>').replace('\\x*','<Rx>')
-                line = removeUSFMCharacterField( 'x', line, closed=True ).lstrip() # Remove superfluous spaces
+                line = removeUSFMCharacterField( 'x', line, closedFlag=True ).lstrip() # Remove superfluous spaces
 
             if '\\f' in line: # Handle footnotes
-                line = removeUSFMCharacterField( 'f', line, closed=True ).lstrip() # Remove superfluous spaces
+                line = removeUSFMCharacterField( 'f', line, closedFlag=True ).lstrip() # Remove superfluous spaces
                 #for marker in ( 'fr', 'fm', ): # simply remove these whole field
-                    #line = removeUSFMCharacterField( marker, line, closed=None )
+                    #line = removeUSFMCharacterField( marker, line, closedFlag=None )
                 #for marker in ( 'fq', 'fqa', 'fl', 'fk', ): # italicise these ones
                     #while '\\'+marker+' ' in line:
                         ##print( BBB, C, V, marker, line.count('\\'+marker+' '), line )
@@ -6140,7 +6143,7 @@ class BibleWriter( InternalBible ):
                 #for marker in ( 'ft', ): # simply remove these markers (but leave behind the text field)
                     #line = line.replace( '\\'+marker+' ', '' ).replace( '\\'+marker+'*', '' )
                 ##for caller in '+*abcdefghijklmnopqrstuvwxyz': line.replace('\\f '+caller+' ','<RF>') # Handle single-character callers
-                #line = re.sub( r'(\\f [a-z+*]{1,3} )', '<RF>', line ) # Handle one to three character callers
+                #line = re.sub( r'(\\f [a-z+*]{1,4} )', '<RF>', line ) # Handle one to three character callers
                 #line = line.replace('\\f ','<RF>').replace('\\f*','<Rf>') # Must be after the italicisation
                 ##if '\\f' in originalLine:
                     ##print( "o", originalLine )
@@ -6148,11 +6151,12 @@ class BibleWriter( InternalBible ):
                     ##halt
 
             if '\\' in line: # Handle character formatting fields
-                line = removeUSFMCharacterField( 'fig', line, closed=True ) # Remove figures
+                line = removeUSFMCharacterField( 'fig', line, closedFlag=True ) # Remove figures
                 replacements = (
                     ( ('add',), '~^~cf15~^~i','~^~cf0~^~i0' ),
                     ( ('qt',), '<FO>','<Fo>' ),
                     ( ('wj',), '<FR>','<Fr>' ),
+                    ( ('ca','va',), '(',')' ),
                     ( ('bdit',), '<b><i>','</i></b>' ),
                     ( ('bd','em','k',), '<b>','</b>' ),
                     ( ('it','rq','bk','dc','qs','sig','sls','tl',), '<i>','</i>' ),
@@ -6640,7 +6644,7 @@ class BibleWriter( InternalBible ):
 
                 elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4', 'ms1','ms2','ms3','ms4', ) \
                 or marker in USFM_INTRODUCTION_MARKERS \
-                or marker in ('s1','s2','s3','s4', 'r','sr','mr', 'd','sp', ):
+                or marker in ('s1','s2','s3','s4', 'r','sr','mr', 'd','sp','cd', 'cl','lit', ):
                     ignoredMarkers.add( marker )
                 elif marker in USFM_BIBLE_PARAGRAPH_MARKERS:
                     if Globals.debugFlag: assert( not text )
@@ -6655,7 +6659,7 @@ class BibleWriter( InternalBible ):
                         logging.error( "toSwordSearcher: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
                         #if Globals.debugFlag: halt
                     unhandledMarkers.add( marker )
-                #if extras and marker not in ('v~','p~',): logging.critical( "toHTML5: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
+                #if extras and marker not in ('v~','p~',): logging.critical( "toSwordSearcher: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
             if accumulator: writer.write( "{}\n".format( accumulator ) )
         # end of toSwordSearcher:writeSSBook
 
@@ -6760,9 +6764,10 @@ class BibleWriter( InternalBible ):
             textField = textField.replace( '\\it ', '<' ).replace( '\\it*', '>' ) \
                                         .replace( '\\add ', '<' ).replace( '\\add*', '>' )
             #print( repr(textField) )
-            # These re's should really ensure that the USFM starts with a letter
-            textField = re.sub( r'(\\[a-z0-9]{1,3} )', '', textField ) # Remove any remaining character fields, e.g., '\\s1 '
-            textField = re.sub( r'(\\[a-z0-9]{1,3}\*)', '', textField ) # Remove any remaining character end fields, e.g., '\s1*'
+            #textField = re.sub( r'(\\[a-z][a-z0-9]{0,3} )', '', textField ) # Remove any remaining character fields, e.g., '\tcr1 '
+            #textField = re.sub( r'(\\[a-z][a-z0-9]{0,3}\*)', '', textField ) # Remove any remaining character end fields, e.g., '\tcr1*'
+            #textField = re.sub( r'(\\\+?[a-z][a-z0-9]{0,3} )', '', textField ) # Remove any remaining character fields, e.g., '\+add '
+            textField = re.sub( r'(\\\+?[a-z][a-z0-9]{0,3}[ \*])', '', textField ) # Remove any remaining character end fields, e.g., '\+add*'
             if '\\' in textField: # Catch any left-overs
                 if Globals.debugFlag or Globals.verbosityLevel > 2:
                     print( "toDrupalBible.doDrupalTextFormat: unprocessed code in {} from {}".format( repr(textField), repr(givenTextField) ) )
@@ -6817,7 +6822,7 @@ class BibleWriter( InternalBible ):
 
                 elif marker in ('mt1','mt2','mt3','mt4', 'mte1','mte2','mte3','mte4', 'ms1','ms2','ms3','ms4', ) \
                 or marker in USFM_INTRODUCTION_MARKERS \
-                or marker in ('s1','s2','s3','s4', 'r','sr','mr', 'd','sp', ):
+                or marker in ('s1','s2','s3','s4', 'r','sr','mr', 'd','sp','cd', 'cl','lit', ):
                     ignoredMarkers.add( marker )
                 elif marker in USFM_BIBLE_PARAGRAPH_MARKERS:
                     if Globals.debugFlag: assert( not text )
@@ -6825,14 +6830,14 @@ class BibleWriter( InternalBible ):
                 elif marker in ('b', 'nb', 'ib', ):
                     if Globals.debugFlag: assert( not text )
                     ignoredMarkers.add( marker )
-                elif marker in ('v~', 'p~',):
+                elif marker in ('v~', 'p~', 'tr',):
                     if started: accumulator += (' ' if accumulator else '') + text
                 else:
                     if text:
                         logging.warning( "toDrupalBible: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
                         #if Globals.debugFlag: halt
                     unhandledMarkers.add( marker )
-                #if extras and marker not in ('v~','p~',): logging.critical( "toHTML5: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
+                #if extras and marker not in ('v~','p~',): logging.critical( "toDrupalBible: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
             if accumulator: writer.write( "{}|{}|{}|{}|{}\n".format( bookCode, C, V, linemark, doDrupalTextFormat( accumulator ) ) )
         # end of toDrupalBible:writeDrupalBibleBook
 
@@ -6970,7 +6975,7 @@ class BibleWriter( InternalBible ):
         # end of renderLine
 
 
-        def renderVerseNumbers( givenAcross, down, vnInfo, jpegFilepath, fontsize, fontname, fontcolor ):
+        def XXXrenderVerseNumbers( givenAcross, down, vnInfo, jpegFilepath, fontsize, fontname, fontcolor ):
             """
             Failed experiment. A space is narrower than a digit. The Unicode digitSpace doesn't work in ImageMagick.
             """
@@ -7160,12 +7165,12 @@ class BibleWriter( InternalBible ):
         # end of renderPage
 
 
-        def renderText( BBB, BBBnum, bookName, bookAbbrev, C, maxChapters, numVerses, text, bookFolderName, fontsize=None ):
+        def renderText( BBB, BBBnum, bookName, bookAbbrev, C, intC, maxChapters, numVerses, text, bookFolderName, fontsize=None ):
             """
             """
             #print( "\nrenderText( {}, {}, {}, {}, {}, {}, {} )".format( BBB, C, repr(text), jpegFoldername, fontsize, fontcolor, leading ) )
 
-            intC = int( C )
+            #intC = int( C )
             if namingFormat == "Short":
                 if maxChapters < 10: chapterFoldernameTemplate = "{:01}-{}/"
                 elif maxChapters < 100: chapterFoldernameTemplate = "{:02}-{}/"
@@ -7239,6 +7244,7 @@ class BibleWriter( InternalBible ):
 
             # First of all, get the text (by chapter)
             C = V = '0'
+            intC = 0
             numVerses = 0
             textBuffer, lastMarker, gotVP = "", None, None
             for entry in pseudoUSFMData:
@@ -7258,9 +7264,14 @@ class BibleWriter( InternalBible ):
                     ignoredMarkers.add( marker )
 
                 elif marker in ('c','cp',): # cp should follow (and thus override) c
-                    if textBuffer: renderText( BBB, BBBnum, bookName, bookAbbrev, C, maxChapters, numVerses, textBuffer, bookFolderPath ); textBuffer = ""
+                    if textBuffer: renderText( BBB, BBBnum, bookName, bookAbbrev, C, intC, maxChapters, numVerses, textBuffer, bookFolderPath ); textBuffer = ""
                     C, V = cleanText, '0'
+                    if marker == 'c':
+                        try: intC = int( C ) # But cp text might not be an integer
+                        except: logging.critical( "toPhotoBible: will overwrite chapter {} of {} (couldn't process {})".format( intC, BBB, repr(C) ) )
                     numVerses = 0
+                elif marker == 'cl': # specific chapter label
+                    textBuffer += '\n' + cleanText
                 elif marker in ('c#',): # These are the markers that we can safely ignore for this export
                     ignoredMarkers.add( marker )
                 elif marker == 'vp~': # This precedes a v field and has the verse number to be printed
@@ -7273,7 +7284,7 @@ class BibleWriter( InternalBible ):
                     textBuffer += (' ' if textBuffer and textBuffer[-1]!='\n' else '') + 'VvV' + cleanText + ' '
                     numVerses += 1
 
-                elif marker in ('d','sp',):
+                elif marker in ('d','sp','cd', 'lit',):
                     #assert( cleanText or extras )
                     textBuffer += '\n' + cleanText
                 elif marker in ('r','sr','mr',):
@@ -7296,6 +7307,9 @@ class BibleWriter( InternalBible ):
                     #elif marker == 'q3': textBuffer += '  '
                     if marker in ('ip','ipi','ili1','ili2','ili3','ili4',): textBuffer += cleanText
                     elif Globals.debugFlag: assert( not cleanText )
+                elif marker == 'tr':
+                    #assert( cleanText or extras )
+                    textBuffer += '\n' + cleanText
                 elif marker in ('v~','p~',):
                     #assert( cleanText or extras )
                     textBuffer += cleanText
@@ -7306,13 +7320,13 @@ class BibleWriter( InternalBible ):
                 else:
                     if cleanText:
                         logging.error( "toPhotoBible: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(cleanText) ) )
-                        #if Globals.debugFlag: halt
+                        if Globals.debugFlag and debuggingThisModule: halt
                     unhandledMarkers.add( marker )
                 #if extras and marker not in ('v~','p~',):
                     #logging.critical( "toPhotoBible: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
                     #if Globals.debugFlag: halt
                 lastMarker = marker
-            if textBuffer: renderText( BBB, BBBnum, bookName, bookAbbrev, C, maxChapters, numVerses, textBuffer, bookFolderPath ) # Write the last bit
+            if textBuffer: renderText( BBB, BBBnum, bookName, bookAbbrev, C, intC, maxChapters, numVerses, textBuffer, bookFolderPath ) # Write the last bit
 
                     #if verseByVerse:
                         #myFile.write( "{} ({}): '{}' '{}' {}\n" \
@@ -7382,7 +7396,7 @@ class BibleWriter( InternalBible ):
         startWithTemplate = True # Start with template (all styles already built) or just a blank document (MUCH slower)
 
         ODF_PARAGRAPH_BREAK = uno.getConstantByName( "com.sun.star.text.ControlCharacter.PARAGRAPH_BREAK" )
-        #ODF_LINE_BREAK = uno.getConstantByName( "com.sun.star.text.ControlCharacter.LINE_BREAK" )
+        ODF_LINE_BREAK = uno.getConstantByName( "com.sun.star.text.ControlCharacter.LINE_BREAK" )
         #ODF_HARD_HYPHEN = uno.getConstantByName( "com.sun.star.text.ControlCharacter.HARD_HYPHEN" )
         #ODF_SOFT_HYPHEN = uno.getConstantByName( "com.sun.star.text.ControlCharacter.SOFT_HYPHEN" )
         #ODF_HARD_SPACE = uno.getConstantByName( "com.sun.star.text.ControlCharacter.HARD_SPACE" )
@@ -7443,12 +7457,14 @@ class BibleWriter( InternalBible ):
                         'pmr':'Embedded Refrain Paragraph',
                         'pi1':'Indented Prose Paragraph 1','pi2':'Indented Prose Paragraph 2','pi3':'Indented Prose Paragraph 3','pi4':'Indented Prose Paragraph 4',
                         'mi':'Indented Flush Left Paragraph', 'cls':'Closure Paragraph',
-                        'pc':'Centered Prose Paragraph', 'pr':' Right Aligned Prose Paragraph',
+                        'pc':'Centered Prose Paragraph', 'pr':'Right Aligned Prose Paragraph',
                         'ph1':'Hanging Prose Paragraph 1','ph2':'Hanging Prose Paragraph 2','ph3':'Hanging Prose Paragraph 3','ph4':'Hanging Prose Paragraph 4',
 
                         'q1':'Poetry Paragraph 1','q2':'Poetry Paragraph 2','q3':'Poetry Paragraph 3','q4':'Poetry Paragraph 4',
                         'qr':'Right Aligned Poetry Paragraph', 'qc':'Centered Poetry Paragraph',
                         'qm1':'Embedded Poetry Paragraph 1','qm2':'Embedded Poetry Paragraph 2','qm3':'Embedded Poetry Paragraph 3','qm4':'Embedded Poetry Paragraph 4'}
+
+        miscODFStyleDict = {'d':'Descriptive Title', 'sp':'Speaker Identification', 'cl':'Chapter Label', }
 
         charODFStyleDict = {'bk':'Book Name', 'ior':'Introduction Outline Reference',
                             'add':'Added Words', 'nd':'Divine Name', 'wj':'Words of Jesus', 'sig':'Author Signature',
@@ -7460,72 +7476,13 @@ class BibleWriter( InternalBible ):
         def setupStyles( styleFamilies ):
             """
             """
-            if 1: # This is how we add new styles to the existing template
+            if 0: # This is how we add new styles to the existing template
                 paragraphStyles = styleFamilies.getByName("ParagraphStyles")
                 CENTER_PARAGRAPH = uno.Enum( "com.sun.star.style.ParagraphAdjust", "CENTER" )
                 RIGHT_PARAGRAPH = uno.Enum( "com.sun.star.style.ParagraphAdjust", "RIGHT" )
 
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Heading" )
-                style.setPropertyValue( "CharHeight", 20 )
-                style.setPropertyValue( "CharWeight", 150 ) # bold
-                style.setPropertyValue( "ParaAdjust", CENTER_PARAGRAPH )
-                style.setPropertyValue( "ParaKeepTogether", True )
-                paragraphStyles.insertByName( "Introduction Major Title at Ending", style ) # Base style only
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Major Title at Ending" )
-                paragraphStyles.insertByName( "Introduction Major Title at Ending 1", style )
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Major Title at Ending" )
-                style.setPropertyValue( "CharDiffHeight", -2 )
-                paragraphStyles.insertByName( "Introduction Major Title at Ending 2", style )
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Major Title at Ending" )
-                style.setPropertyValue( "CharDiffHeight", -2 )
-                paragraphStyles.insertByName( "Introduction Major Title at Ending 3", style )
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Major Title at Ending" )
-                style.setPropertyValue( "CharDiffHeight", -1 )
-                paragraphStyles.insertByName( "Introduction Major Title at Ending 4", style )
-
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Introduction Paragraph" )
-                paragraphStyles.insertByName( "Introduction Poetry Paragraph", style ) # Base style only
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Introduction Poetry Paragraph" )
-                paragraphStyles.insertByName( "Introduction Poetry Paragraph 1", style )
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Introduction Poetry Paragraph" )
-                paragraphStyles.insertByName( "Introduction Poetry Paragraph 2", style )
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Introduction Poetry Paragraph" )
-                paragraphStyles.insertByName( "Introduction Poetry Paragraph 3", style )
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Introduction Poetry Paragraph" )
-                paragraphStyles.insertByName( "Introduction Poetry Paragraph 4", style )
-
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Introduction Paragraph" )
-                paragraphStyles.insertByName( "Introduction Quote Paragraph", style )
-
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Introduction Paragraph" )
-                paragraphStyles.insertByName( "Introduction Flush Left Quote Paragraph", style )
-
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Introduction Paragraph" )
-                paragraphStyles.insertByName( "Introduction Right Aligned Paragraph", style )
-
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Introduction Paragraph" )
-                paragraphStyles.insertByName( "Introduction Explanation", style )
-
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Introduction Paragraph" )
-                paragraphStyles.insertByName( "Introduction Blank Line Paragraph", style )
-
                 #style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                #style.setParentStyle( "Heading" )
+                #style.setParentStyle( "Bible Heading" )
                 #style.setPropertyValue( "CharHeight", 20 )
                 #style.setPropertyValue( "CharWeight", 150 ) # bold
                 #style.setPropertyValue( "ParaAdjust", CENTER_PARAGRAPH )
@@ -7540,13 +7497,21 @@ class BibleWriter( InternalBible ):
                 characterStyles = styleFamilies.getByName( "CharacterStyles" )
                 ITALIC_TEXT_POSTURE = uno.Enum( "com.sun.star.awt.FontSlant", "ITALIC" )
 
-                style = document.createInstance( "com.sun.star.style.CharacterStyle" )
-                style.setPropertyValue( "CharBackColor", 0x00E0E0E0 ) # alpha/R/G/B = light gray
-                characterStyles.insertByName( "Wordlist Entry", style )
+                #style = document.createInstance( "com.sun.star.style.CharacterStyle" )
+                #style.setPropertyValue( "CharBackColor", 0x00E0E0E0 ) # alpha/R/G/B = light gray
+                #characterStyles.insertByName( "Wordlist Entry", style )
 
-                style = document.createInstance( "com.sun.star.style.CharacterStyle" )
-                style.setPropertyValue("CharPosture", ITALIC_TEXT_POSTURE )
-                characterStyles.insertByName( "Introduction Quoted Text", style )
+                #style = document.createInstance( "com.sun.star.style.CharacterStyle" )
+                #style.setPropertyValue("CharPosture", ITALIC_TEXT_POSTURE )
+                #characterStyles.insertByName( "Introduction Quoted Text", style )
+
+                #style = document.createInstance( "com.sun.star.style.CharacterStyle" )
+                #style.setPropertyValue("CharPosture", ITALIC_TEXT_POSTURE )
+                #characterStyles.insertByName( "Alternative Chapter Number", style )
+
+                #style = document.createInstance( "com.sun.star.style.CharacterStyle" )
+                #style.setPropertyValue("CharPosture", ITALIC_TEXT_POSTURE )
+                #characterStyles.insertByName( "Alternative Verse Number", style )
 
 
             if not startWithTemplate: # Create initial styles (not required or allowed if we use the template)
@@ -7599,13 +7564,61 @@ class BibleWriter( InternalBible ):
                 CENTER_PARAGRAPH = uno.Enum( "com.sun.star.style.ParagraphAdjust", "CENTER" )
                 RIGHT_PARAGRAPH = uno.Enum( "com.sun.star.style.ParagraphAdjust", "RIGHT" )
 
+                # Main base paragraph styles
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                paragraphStyles.insertByName( "Bible Paragraph", style ) # Main base style only
+
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 style.setParentStyle( "Heading" )
-                style.setPropertyValue( "CharHeight", 20 )
                 style.setPropertyValue( "CharWeight", 150 ) # bold
                 style.setPropertyValue( "ParaAdjust", CENTER_PARAGRAPH )
                 style.setPropertyValue( "ParaKeepTogether", True )
+                paragraphStyles.insertByName( "Bible Heading", style ) # Main base style only
+
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Header" )
+                paragraphStyles.insertByName( "BibleHeader", style ) # Main base style only
+
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Footer" )
+                paragraphStyles.insertByName( "BibleFooter", style ) # Main base style only
+
+                # Other base paragraph styles
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Bible Paragraph" )
+                paragraphStyles.insertByName( "Prose Paragraph", style ) # Base and actual style
+
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Bible Paragraph" )
+                paragraphStyles.insertByName( "Poetry Paragraph", style ) # Base style only
+
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Bible Paragraph" )
+                paragraphStyles.insertByName( "Introduction Paragraph", style ) # Base and actual style
+
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Bible Paragraph" )
+                paragraphStyles.insertByName( "Introduction Poetry Paragraph", style ) # Base style only
+
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Bible Heading" )
+                style.setPropertyValue( "CharHeight", 20 )
                 paragraphStyles.insertByName( "Major Title", style ) # Base style only
+
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Bible Heading" )
+                style.setPropertyValue( "CharHeight", 20 )
+                paragraphStyles.insertByName( "Introduction Major Title", style ) # Base style only
+
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Bible Heading" )
+                paragraphStyles.insertByName( "Major Section Heading", style ) # Base style only
+
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Bible Heading" )
+                paragraphStyles.insertByName( "Section Heading", style ) # Base style only
+
+                # Title paragraph styles
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 style.setParentStyle( "Major Title" )
                 paragraphStyles.insertByName( "Major Title 1", style )
@@ -7623,11 +7636,7 @@ class BibleWriter( InternalBible ):
                 paragraphStyles.insertByName( "Major Title 4", style )
 
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Heading" )
-                style.setPropertyValue( "CharHeight", 20 )
-                style.setPropertyValue( "CharWeight", 150 ) # bold
-                style.setPropertyValue( "ParaAdjust", CENTER_PARAGRAPH )
-                style.setPropertyValue( "ParaKeepTogether", True )
+                style.setParentStyle( "Major Title" )
                 paragraphStyles.insertByName( "Major Title at Ending", style ) # Base style only
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 style.setParentStyle( "Major Title at Ending" )
@@ -7645,120 +7654,7 @@ class BibleWriter( InternalBible ):
                 style.setPropertyValue( "CharDiffHeight", -1 )
                 paragraphStyles.insertByName( "Major Title at Ending 4", style )
 
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Heading" )
-                style.setPropertyValue( "CharHeight", 20 )
-                style.setPropertyValue( "CharWeight", 150 ) # bold
-                style.setPropertyValue( "ParaAdjust", CENTER_PARAGRAPH )
-                style.setPropertyValue( "ParaKeepTogether", True )
-                paragraphStyles.insertByName( "Introduction Major Title at Ending", style ) # Base style only
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Major Title at Ending" )
-                paragraphStyles.insertByName( "Introduction Major Title at Ending 1", style )
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Major Title at Ending" )
-                style.setPropertyValue( "CharDiffHeight", -2 )
-                paragraphStyles.insertByName( "Introduction Major Title at Ending 2", style )
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Major Title at Ending" )
-                style.setPropertyValue( "CharDiffHeight", -2 )
-                paragraphStyles.insertByName( "Introduction Major Title at Ending 3", style )
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Major Title at Ending" )
-                style.setPropertyValue( "CharDiffHeight", -1 )
-                paragraphStyles.insertByName( "Introduction Major Title at Ending 4", style )
-
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Heading" )
-                style.setPropertyValue( "CharHeight", 20 )
-                style.setPropertyValue( "CharWeight", 150 ) # bold
-                style.setPropertyValue( "ParaAdjust", CENTER_PARAGRAPH )
-                style.setPropertyValue( "ParaKeepTogether", True )
-                paragraphStyles.insertByName( "Introduction Major Title", style ) # Base style only
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Introduction Major Title" )
-                paragraphStyles.insertByName( "Introduction Major Title 1", style )
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Introduction Major Title" )
-                style.setPropertyValue( "CharDiffHeight", -2 )
-                paragraphStyles.insertByName( "Introduction Major Title 2", style )
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Introduction Major Title" )
-                style.setPropertyValue( "CharDiffHeight", -2 )
-                paragraphStyles.insertByName( "Introduction Major Title 3", style )
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Introduction Major Title" )
-                style.setPropertyValue( "CharDiffHeight", -1 )
-                paragraphStyles.insertByName( "Introduction Major Title 4", style )
-
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setPropertyValue( "CharWeight", 150 ) # bold
-                style.setPropertyValue( "ParaKeepTogether", True )
-                paragraphStyles.insertByName( "Introduction Section Heading", style ) # Base style only
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Introduction Section Heading" )
-                paragraphStyles.insertByName( "Introduction Section Heading 1", style )
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Introduction Section Heading" )
-                paragraphStyles.insertByName( "Introduction Section Heading 2", style )
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Introduction Section Heading" )
-                paragraphStyles.insertByName( "Introduction Section Heading 3", style )
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Introduction Section Heading" )
-                paragraphStyles.insertByName( "Introduction Section Heading 4", style )
-
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setPropertyValue( "CharWeight", 150 ) # bold
-                style.setPropertyValue( "ParaKeepTogether", True )
-                paragraphStyles.insertByName( "Introduction Outline Title", style )
-
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                paragraphStyles.insertByName( "Introduction Outline Entry", style ) # Base style only
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Introduction Outline Entry" )
-                paragraphStyles.insertByName( "Introduction Outline Entry 1", style )
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Introduction Outline Entry" )
-                paragraphStyles.insertByName( "Introduction Outline Entry 2", style )
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Introduction Outline Entry" )
-                paragraphStyles.insertByName( "Introduction Outline Entry 3", style )
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Introduction Outline Entry" )
-                paragraphStyles.insertByName( "Introduction Outline Entry 4", style )
-
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                paragraphStyles.insertByName( "Introduction Paragraph", style ) # Base and actual style
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Introduction Paragraph" )
-                paragraphStyles.insertByName( "Introduction Paragraph Indented", style )
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Introduction Paragraph" )
-                paragraphStyles.insertByName( "Introduction Flush Left Paragraph", style )
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Introduction Paragraph" )
-                paragraphStyles.insertByName( "Introduction Indented Flush Left Paragraph", style )
-
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                paragraphStyles.insertByName( "Introduction List Item", style ) #Base style only
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Introduction List Item" )
-                paragraphStyles.insertByName( "Introduction List Item 1", style )
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Introduction List Item" )
-                paragraphStyles.insertByName( "Introduction List Item 2", style )
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Introduction List Item" )
-                paragraphStyles.insertByName( "Introduction List Item 3", style )
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Introduction List Item" )
-                paragraphStyles.insertByName( "Introduction List Item 4", style )
-
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setPropertyValue( "CharWeight", 150 ) # bold
-                style.setPropertyValue( "ParaKeepTogether", True )
-                paragraphStyles.insertByName( "Major Section Heading", style ) # Base style only
+                # Section heading paragraph styles
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 style.setParentStyle( "Major Section Heading" )
                 paragraphStyles.insertByName( "Major Section Heading 1", style )
@@ -7773,11 +7669,6 @@ class BibleWriter( InternalBible ):
                 paragraphStyles.insertByName( "Major Section Heading 4", style )
 
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setPropertyValue( "CharWeight", 150 ) # bold
-                style.setPropertyValue( "ParaAdjust", CENTER_PARAGRAPH )
-                style.setPropertyValue( "ParaKeepTogether", True )
-                paragraphStyles.insertByName( "Section Heading", style ) # Base style only
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 style.setParentStyle( "Section Heading" )
                 paragraphStyles.insertByName( "Section Heading 1", style )
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
@@ -7791,80 +7682,108 @@ class BibleWriter( InternalBible ):
                 paragraphStyles.insertByName( "Section Heading 4", style )
 
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Bible Paragraph" )
                 style.setPropertyValue( "ParaAdjust", CENTER_PARAGRAPH )
                 style.setPropertyValue( "ParaKeepTogether", True )
                 paragraphStyles.insertByName( "Section CrossReference", style )
+
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Bible Paragraph" )
                 style.setPropertyValue( "ParaAdjust", CENTER_PARAGRAPH )
                 paragraphStyles.insertByName( "Section Reference Range", style )
+
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Bible Paragraph" )
                 style.setPropertyValue( "ParaAdjust", CENTER_PARAGRAPH )
                 paragraphStyles.insertByName( "Major Section Reference Range", style )
 
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Prose Paragraph" )
                 paragraphStyles.insertByName( "Descriptive Title", style )
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Prose Paragraph" )
                 paragraphStyles.insertByName( "Speaker Identification", style )
 
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                paragraphStyles.insertByName( "Bible Paragraph", style ) # Base style only
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Bible Paragraph" )
-                paragraphStyles.insertByName( "Prose Paragraph", style )
+                style.setParentStyle( "Section Heading" )
+                paragraphStyles.insertByName( "Chapter Label", style )
+
+                # Prose paragraph styles
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 style.setParentStyle( "Prose Paragraph" )
                 paragraphStyles.insertByName( "Flush Left Paragraph", style )
+
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 style.setParentStyle( "Prose Paragraph" )
                 paragraphStyles.insertByName( "Embedded Opening Paragraph", style )
+
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 style.setParentStyle( "Prose Paragraph" )
                 paragraphStyles.insertByName( "Embedded Paragraph", style )
+
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 style.setParentStyle( "Prose Paragraph" )
                 paragraphStyles.insertByName( "Embedded Closing Paragraph", style )
+
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 style.setParentStyle( "Prose Paragraph" )
                 paragraphStyles.insertByName( "Embedded Refrain Paragraph", style )
+
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 style.setParentStyle( "Prose Paragraph" )
+                paragraphStyles.insertByName( "Indented Prose Paragraph", style ) # Base style only
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Indented Prose Paragraph" )
                 paragraphStyles.insertByName( "Indented Prose Paragraph 1", style )
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Prose Paragraph" )
+                style.setParentStyle( "Indented Prose Paragraph" )
                 paragraphStyles.insertByName( "Indented Prose Paragraph 2", style )
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Prose Paragraph" )
+                style.setParentStyle( "Indented Prose Paragraph" )
                 paragraphStyles.insertByName( "Indented Prose Paragraph 3", style )
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Prose Paragraph" )
+                style.setParentStyle( "Indented Prose Paragraph" )
                 paragraphStyles.insertByName( "Indented Prose Paragraph 4", style )
+
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 style.setParentStyle( "Prose Paragraph" )
                 paragraphStyles.insertByName( "Indented Flush Left Paragraph", style )
+
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 style.setParentStyle( "Prose Paragraph" )
                 style.setPropertyValue( "ParaAdjust", CENTER_PARAGRAPH )
                 paragraphStyles.insertByName( "Centered Prose Paragraph", style )
+
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 style.setParentStyle( "Prose Paragraph" )
                 style.setPropertyValue( "ParaAdjust", RIGHT_PARAGRAPH )
                 paragraphStyles.insertByName( "Right Aligned Prose Paragraph", style )
+
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 style.setParentStyle( "Prose Paragraph" )
+                paragraphStyles.insertByName( "Hanging Prose Paragraph", style ) # Base style only
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Hanging Prose Paragraph" )
                 paragraphStyles.insertByName( "Hanging Prose Paragraph 1", style )
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Prose Paragraph" )
+                style.setParentStyle( "Hanging Prose Paragraph" )
                 paragraphStyles.insertByName( "Hanging Prose Paragraph 2", style )
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Prose Paragraph" )
+                style.setParentStyle( "Hanging Prose Paragraph" )
                 paragraphStyles.insertByName( "Hanging Prose Paragraph 3", style )
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Prose Paragraph" )
+                style.setParentStyle( "Hanging Prose Paragraph" )
                 paragraphStyles.insertByName( "Hanging Prose Paragraph 4", style )
 
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Bible Paragraph" )
-                paragraphStyles.insertByName( "Poetry Paragraph", style ) # Base style only
+                style.setParentStyle( "Prose Paragraph" )
+                paragraphStyles.insertByName( "Blank Line Paragraph", style )
+
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Prose Paragraph" )
+                paragraphStyles.insertByName( "Closure Paragraph", style )
+
+                # Poetry paragraph styles
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 style.setParentStyle( "Poetry Paragraph" )
                 paragraphStyles.insertByName( "Poetry Paragraph 1", style )
@@ -7882,25 +7801,31 @@ class BibleWriter( InternalBible ):
                 style.setParentStyle( "Poetry Paragraph" )
                 style.setPropertyValue( "ParaAdjust", RIGHT_PARAGRAPH )
                 paragraphStyles.insertByName( "Right Aligned Poetry Paragraph", style )
+
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 style.setParentStyle( "Poetry Paragraph" )
                 style.setPropertyValue( "ParaAdjust", CENTER_PARAGRAPH )
                 paragraphStyles.insertByName( "Centered Poetry Paragraph", style )
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Poetry Paragraph" )
-                paragraphStyles.insertByName( "Embedded  Poetry Paragraph 1", style )
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Poetry Paragraph" )
-                paragraphStyles.insertByName( "Embedded  Poetry Paragraph 2", style )
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Poetry Paragraph" )
-                paragraphStyles.insertByName( "Embedded  Poetry Paragraph 3", style )
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Poetry Paragraph" )
-                paragraphStyles.insertByName( "Embedded  Poetry Paragraph 4", style )
 
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Bible Paragraph" )
+                style.setParentStyle( "Poetry Paragraph" )
+                paragraphStyles.insertByName( "Embedded Poetry Paragraph", style ) # Base style only
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Embedded Poetry Paragraph" )
+                paragraphStyles.insertByName( "Embedded Poetry Paragraph 1", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Embedded Poetry Paragraph" )
+                paragraphStyles.insertByName( "Embedded Poetry Paragraph 2", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Embedded Poetry Paragraph" )
+                paragraphStyles.insertByName( "Embedded Poetry Paragraph 3", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Embedded Poetry Paragraph" )
+                paragraphStyles.insertByName( "Embedded Poetry Paragraph 4", style )
+
+                # List styles
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Prose Paragraph" )
                 paragraphStyles.insertByName( "List Item", style ) #Base style only
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 style.setParentStyle( "List Item" )
@@ -7915,14 +7840,7 @@ class BibleWriter( InternalBible ):
                 style.setParentStyle( "List Item" )
                 paragraphStyles.insertByName( "List Item 4", style )
 
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Prose Paragraph" )
-                paragraphStyles.insertByName( "Blank Line Paragraph", style )
-
-                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
-                style.setParentStyle( "Prose Paragraph" )
-                paragraphStyles.insertByName( "Closure Paragraph", style )
-
+                # Note styles
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 style.setParentStyle( "Footnote" )
                 paragraphStyles.insertByName( "Bible Footnote", style )
@@ -7934,6 +7852,139 @@ class BibleWriter( InternalBible ):
                 style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
                 style.setParentStyle( "Footnote" )
                 paragraphStyles.insertByName( "Verse Cross Reference", style )
+
+                # Introduction styles
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Major Title" )
+                paragraphStyles.insertByName( "Introduction Major Title 1", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Major Title" )
+                style.setPropertyValue( "CharDiffHeight", -2 )
+                paragraphStyles.insertByName( "Introduction Major Title 2", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Major Title" )
+                style.setPropertyValue( "CharDiffHeight", -2 )
+                paragraphStyles.insertByName( "Introduction Major Title 3", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Major Title" )
+                style.setPropertyValue( "CharDiffHeight", -1 )
+                paragraphStyles.insertByName( "Introduction Major Title 4", style )
+
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Major Title" )
+                paragraphStyles.insertByName( "Introduction Major Title at Ending", style ) # Base style only
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Major Title at Ending" )
+                paragraphStyles.insertByName( "Introduction Major Title at Ending 1", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Major Title at Ending" )
+                style.setPropertyValue( "CharDiffHeight", -2 )
+                paragraphStyles.insertByName( "Introduction Major Title at Ending 2", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Major Title at Ending" )
+                style.setPropertyValue( "CharDiffHeight", -2 )
+                paragraphStyles.insertByName( "Introduction Major Title at Ending 3", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Major Title at Ending" )
+                style.setPropertyValue( "CharDiffHeight", -1 )
+                paragraphStyles.insertByName( "Introduction Major Title at Ending 4", style )
+
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Bible Heading" )
+                paragraphStyles.insertByName( "Introduction Section Heading", style ) # Base style only
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Section Heading" )
+                paragraphStyles.insertByName( "Introduction Section Heading 1", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Section Heading" )
+                paragraphStyles.insertByName( "Introduction Section Heading 2", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Section Heading" )
+                paragraphStyles.insertByName( "Introduction Section Heading 3", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Section Heading" )
+                paragraphStyles.insertByName( "Introduction Section Heading 4", style )
+
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Paragraph" )
+                paragraphStyles.insertByName( "Introduction Paragraph Indented", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Paragraph" )
+                paragraphStyles.insertByName( "Introduction Flush Left Paragraph", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Paragraph" )
+                paragraphStyles.insertByName( "Introduction Indented Flush Left Paragraph", style )
+
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Poetry Paragraph" )
+                paragraphStyles.insertByName( "Introduction Poetry Paragraph 1", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Poetry Paragraph" )
+                paragraphStyles.insertByName( "Introduction Poetry Paragraph 2", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Poetry Paragraph" )
+                paragraphStyles.insertByName( "Introduction Poetry Paragraph 3", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Poetry Paragraph" )
+                paragraphStyles.insertByName( "Introduction Poetry Paragraph 4", style )
+
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Paragraph" )
+                paragraphStyles.insertByName( "Introduction Quote Paragraph", style )
+
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Paragraph" )
+                paragraphStyles.insertByName( "Introduction Flush Left Quote Paragraph", style )
+
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Paragraph" )
+                paragraphStyles.insertByName( "Introduction Right Aligned Paragraph", style )
+
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Paragraph" )
+                paragraphStyles.insertByName( "Introduction Explanation", style )
+
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Paragraph" )
+                paragraphStyles.insertByName( "Introduction Blank Line Paragraph", style )
+
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Paragraph" )
+                style.setPropertyValue( "CharWeight", 150 ) # bold
+                style.setPropertyValue( "ParaKeepTogether", True )
+                paragraphStyles.insertByName( "Introduction Outline Title", style )
+
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Paragraph" )
+                paragraphStyles.insertByName( "Introduction Outline Entry", style ) # Base style only
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Outline Entry" )
+                paragraphStyles.insertByName( "Introduction Outline Entry 1", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Outline Entry" )
+                paragraphStyles.insertByName( "Introduction Outline Entry 2", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Outline Entry" )
+                paragraphStyles.insertByName( "Introduction Outline Entry 3", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Outline Entry" )
+                paragraphStyles.insertByName( "Introduction Outline Entry 4", style )
+
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction Paragraph" )
+                paragraphStyles.insertByName( "Introduction List Item", style ) #Base style only
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction List Item" )
+                paragraphStyles.insertByName( "Introduction List Item 1", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction List Item" )
+                paragraphStyles.insertByName( "Introduction List Item 2", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction List Item" )
+                paragraphStyles.insertByName( "Introduction List Item 3", style )
+                style = document.createInstance( "com.sun.star.style.ParagraphStyle" )
+                style.setParentStyle( "Introduction List Item" )
+                paragraphStyles.insertByName( "Introduction List Item 4", style )
 
 
                 # CHARACTER STYLES
@@ -7976,6 +8027,22 @@ class BibleWriter( InternalBible ):
                 characterStyles.insertByName( "Keyword Text", style ) # in Bible text
                 style = document.createInstance( "com.sun.star.style.CharacterStyle" )
                 characterStyles.insertByName( "Main Entry Keyword", style ) # in glossary
+
+                style = document.createInstance( "com.sun.star.style.CharacterStyle" )
+                style.setPropertyValue( "CharBackColor", 0x00E0E0E0 ) # alpha/R/G/B = light gray
+                characterStyles.insertByName( "Wordlist Entry", style )
+
+                style = document.createInstance( "com.sun.star.style.CharacterStyle" )
+                style.setPropertyValue("CharPosture", ITALIC_TEXT_POSTURE )
+                characterStyles.insertByName( "Introduction Quoted Text", style )
+
+                style = document.createInstance( "com.sun.star.style.CharacterStyle" )
+                style.setPropertyValue("CharPosture", ITALIC_TEXT_POSTURE )
+                characterStyles.insertByName( "Alternative Chapter Number", style )
+
+                style = document.createInstance( "com.sun.star.style.CharacterStyle" )
+                style.setPropertyValue("CharPosture", ITALIC_TEXT_POSTURE )
+                characterStyles.insertByName( "Alternative Verse Number", style )
 
                 # Footnotes
                 style = document.createInstance( "com.sun.star.style.CharacterStyle" )
@@ -8179,13 +8246,13 @@ class BibleWriter( InternalBible ):
             # end of insertFormattedODFText.processCrossReference
 
 
-            def processFigure( rawFigure ):
+            def processFigure( extraText, documentText, textCursor ):
                 """
                 Inserts the figure into the ODF document.
 
                 NOTE: The parameter here already has the /fig and /fig* removed.
                 """
-                logging.critical( "toODF: figure not handled yet at {} {}:{} {}".format( BBB, C, V, repr(rawFigure) ) )
+                logging.critical( "toODF: figure not handled yet at {} {}:{} {}".format( BBB, C, V, repr(extraText) ) )
                 figureMD = ''
                 #footnoteMD = '<a class="footnoteLinkSymbol" title="{}" href="#FNote{}">[fn]</a>' \
                                 #.format( fnTitle, fnIndex )
@@ -8204,11 +8271,11 @@ class BibleWriter( InternalBible ):
             # end of insertFormattedODFText.processFigure
 
 
-            def handleTextSegment( textSegment ):
+            def handleTextSubsegment( textSegment ):
                 """
                 Insert a text segment, complete with the correct character styles if any.
                 """
-                #print( "BibleWriter.toODF.handleTextSegment( {} ) for {} {}:{}".format( repr(textSegment), BBB, C, V ) )
+                #print( "BibleWriter.toODF.handleTextSubsegment( {} ) for {} {}:{}".format( repr(textSegment), BBB, C, V ) )
                 markerList = Globals.USFMMarkers.getMarkerListFromText( textSegment, includeInitialText=True )
                 if markerList: # we found character formatting within the text
                     #print( BBB, C, V, "toODF.insertFormattedODFText: {} found {}".format( repr(textSegment), markerList ) )
@@ -8232,16 +8299,37 @@ class BibleWriter( InternalBible ):
                             #print( "  BibleWriter.toODF: 3dc4", BBB, C, V, defaultCharacterStyleName, repr(txt) )
                             textCursor.setPropertyValue( "CharStyleName", defaultCharacterStyleName )
                             documentText.insertString( textCursor, txt, 0 )
+                        elif marker in ('ca','va',) and nextSignificantChar in (' ','+'): # it's an opening marker
+                            textCursor.setPropertyValue( "CharStyleName", 'Alternative Chapter Number' if marker=='ca' else 'Alternative Verse Number' )
+                            documentText.insertString( textCursor, '('+txt+')', 0 )
                         elif marker in charODFStyleDict and not nextSignificantChar: # it's at the end of a line
                             assert( not txt )
                             logging.warning( "toODF: ignored blank {} field at end of line in {} {}:{}".format( marker, BBB, C, V ) )
                         else:
                             logging.critical( "toODF: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(textSegment) ) )
                             unhandledMarkers.add( "{} (char)".format( marker ) )
-                            if Globals.debugFlag: halt
+                            if Globals.debugFlag and debuggingThisModule: halt
                 elif textSegment: # No character formatting here
                     #print( "BibleWriter.toODF: 3dc5", BBB, C, V, repr(textSegment) )
                     documentText.insertString( textCursor, textSegment, 0 )
+            # end of handleTextSubsegment
+
+            def handleTextSegment( textSegment ):
+                """
+                Insert a text segment, complete with the correct character styles if any.
+                """
+                #print( "BibleWriter.toODF.handleTextSegment( {} ) for {} {}:{}".format( repr(textSegment), BBB, C, V ) )
+                if '//' in textSegment: # indicates a manual new line marker
+                    sx = 0
+                    ix = textSegment.find( '//' )
+                    while ix != -1:
+                        handleTextSubsegment( textSegment[sx:ix] )
+                        documentText.insertControlCharacter( textCursor, ODF_LINE_BREAK, False );
+                        lx = ix + 2
+                        ix = textSegment.find( '//', lx )
+                    handleTextSubsegment( textSegment[lx:] )
+                else: # no manual line breaks
+                    handleTextSubsegment( textSegment )
             # end of handleTextSegment
 
             # insertFormattedODFText main code
@@ -8290,13 +8378,14 @@ class BibleWriter( InternalBible ):
             textCursor = initialTextCursor
 
             styleFamilies = document.StyleFamilies
+            setupStyles( styleFamilies )
+
             #pageStyles = styleFamilies.getByName( "PageStyles" )
             #defaultPageStyle = pageStyles.getByName( "Default Style" )
             #headerText = defaultPageStyle.getPropertyValue( "HeaderText" )
             #headerCursor = headerText.createTextCursor()
-            runningHeaderField = document.TextFieldMasters.getByName( "com.sun.star.text.FieldMaster.User.BibleHeader" )
-
-            setupStyles( styleFamilies )
+            if startWithTemplate: runningHeaderField = document.TextFieldMasters.getByName( "com.sun.star.text.FieldMaster.User.BookHeader" )
+            else: logging.critical( "toODF: Don't know how to set up running header user text field programmatically yet" )
 
             firstEverParagraphFlag = True
             def insertODFParagraph( BBB, C, V, paragraphStyleName, text, extras, documentText, textCursor, defaultCharacterStyleName ):
@@ -8307,7 +8396,10 @@ class BibleWriter( InternalBible ):
                 nonlocal firstEverParagraphFlag
                 if not firstEverParagraphFlag: # Don't want a blank paragraph at the start of the document
                     documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, False );
-                textCursor.setPropertyValue( "ParaStyleName", paragraphStyleName )
+                try: textCursor.setPropertyValue( "ParaStyleName", paragraphStyleName )
+                except:
+                    logging.critical( "toODF: {} paragraph style doesn't seem to exist".format( repr(paragraphStyleName) ) )
+                    halt
                 if adjText or extras:
                     insertFormattedODFText( BBB, C, V, text, extras, documentText, textCursor, defaultCharacterStyleName )
                 firstEverParagraphFlag = False
@@ -8328,7 +8420,7 @@ class BibleWriter( InternalBible ):
                     ignoredMarkers.add( marker )
 
                 elif marker == 'c':
-                    if C == '0': runningHeaderField.setPropertyValue( "Content", headerField )
+                    if C == '0' and startWithTemplate: runningHeaderField.setPropertyValue( "Content", headerField )
                     C, V = adjText, '0'
                     if C == '1': # It's the beginning of the actual Bible text -- make a new double-column section
                         if not firstEverParagraphFlag: # leave a space between the introduction and the chapter text
@@ -8411,13 +8503,11 @@ class BibleWriter( InternalBible ):
                     elif marker == 'mr': styleName = 'Major Section Reference Range'
                     insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
                     inTextParagraph = False
-                elif marker == 'd':
-                    insertODFParagraph( BBB, C, V, "Descriptive Title", adjText, extras, documentText, textCursor, "Default Style" )
+                elif marker in miscODFStyleDict: # things like d, sp, cl that have text
+                    styleName = miscODFStyleDict[marker]
+                    insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
                     inTextParagraph = False
-                elif marker == 'sp':
-                    insertODFParagraph( BBB, C, V, "Speaker Identification", adjText, extras, documentText, textCursor, "Default Style" )
-                    inTextParagraph = False
-                elif marker in pqODFStyleDict:
+                elif marker in pqODFStyleDict: # things like p, q1 that don't have text
                     startingNewParagraphFlag = True
                     styleName = pqODFStyleDict[marker]
                     insertODFParagraph( BBB, C, V, styleName, adjText, extras, documentText, textCursor, "Default Style" )
@@ -8761,7 +8851,7 @@ class BibleWriter( InternalBible ):
                                 logging.error( "toTeX: lost text in {} field in {} {}:{} {}".format( marker, BBB, C, V, repr(text) ) )
                                 #if Globals.debugFlag: halt
                             unhandledMarkers.add( marker )
-                        #if extras and marker not in ('v~','p~',): logging.critical( "toHTML5: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
+                        #if extras and marker not in ('v~','p~',): logging.critical( "toTeX: extras not handled for {} at {} {}:{}".format( marker, BBB, C, V ) )
                     allFile.write( "\\BibleBookEnd\n" )
                     bookFile.write( "\\BibleBookEnd\n" )
                     bookFile.write( "\\end{document}\n" )
@@ -9141,7 +9231,8 @@ def demo():
                 if Globals.verbosityLevel > 0: print( '\nBibleWriter A'+str(j+1)+'/', UB )
                 if Globals.strictCheckingFlag: UB.check()
                 #UB.toOSISXML(); halt
-                doaResults = UB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+                myFlag = Globals.verbosityLevel > 3
+                doaResults = UB.doAllExports( wantPhotoBible=False, wantODFs=myFlag, wantPDFs=False )
                 if Globals.strictCheckingFlag: # Now compare the original and the exported USFM files
                     outputFolder = "OutputFiles/BOS_USFM_Reexport/"
                     fN = USFMFilenames( testFolder )

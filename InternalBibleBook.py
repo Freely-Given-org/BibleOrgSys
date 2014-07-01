@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2014-06-25 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-30 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -270,7 +270,7 @@ class InternalBibleBook:
                 assert( originalMarker and isinstance( originalMarker, str ) )
                 assert( isinstance( text, str ) )
             adjText = text
-            cleanText = text.replace( 'xa0', ' ' ) # Replace non-break spaces for this
+            cleanText = text.replace( ' ', ' ' ) # Replace non-break spaces for this
 
             # Remove trailing spaces
             if adjText and adjText[-1].isspace():

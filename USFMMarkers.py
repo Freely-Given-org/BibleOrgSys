@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkers.py
-#   Last modified: 2014-06-16 (also update ProgVersion below)
+#   Last modified: 2014-06-30 (also update ProgVersion below)
 #
 # Module handling USFMMarkers
 #
@@ -62,24 +62,24 @@ USFM_BIBLE_PARAGRAPH_MARKERS = ( 'p','pc','pr', 'm','mi', 'pm','pmo','pmc','pmr'
 
 
 
-def removeUSFMCharacterField( marker, originalText, closed ):
+def removeUSFMCharacterField( marker, originalText, closedFlag ):
     """
     Removes all instances of the marker (if it exists) and its contents from the originalText.
 
-    marker should not contain the backslash or the following space.
+    marker parameter should not contain the backslash or the following space.
 
-    If closed=True, expects a close marker (otherwise does nothing )
-    If closed=False, goes to the next marker or end of line.
-    If closed=None (unknown), stops at the first of closing marker, next marker, or end of line.
+    If closedFlag=True, expects a close marker (otherwise does nothing )
+    If closedFlag=False, goes to the next marker or end of line.
+    If closedFlag=None (unknown), stops at the first of closing marker, next marker, or end of line.
     """
-    #print( "removeUSFMCharacterField( {}, {}, {} )".format( originalText, marker, closed ) )
+    #print( "removeUSFMCharacterField( {}, {}, {} )".format( originalText, marker, closedFlag ) )
     assert( '\\' not in marker and ' ' not in marker and '*' not in marker )
     text = originalText
     mLen = len( marker )
     ix = text.find( '\\'+marker+' ' )
     while ix != -1:
         tLen = len( text )
-        if closed is None:
+        if closedFlag is None:
             ixEnd = text.find( '\\', ix+mLen+2 )
             if ixEnd == -1: # remove until end of line
                 text = text[:ix]
@@ -88,13 +88,13 @@ def removeUSFMCharacterField( marker, originalText, closed ):
             else: # leave the next marker in place
                 text = text[:ix] + text[ixEnd:]
             #print( "                         ", text ); halt
-        elif closed == True:
+        elif closedFlag == True:
             ixEnd = text.find( '\\'+marker+'*', ix+mLen+2 )
             if ixEnd == -1:
                 logging.error( "removeUSFMCharacterField: no end marker for '{}' in '{}'".format( marker, originalText ) )
                 break
             text = text[:ix] + text[ixEnd+mLen+2:]
-        elif closed == False:
+        elif closedFlag == False:
             ixEnd = text.find( '\\', ix+mLen+2 )
             if ixEnd == -1: # remove until end of line
                 text = text[:ix]

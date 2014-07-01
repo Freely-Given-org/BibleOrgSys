@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBibleBook.py
-#   Last modified: 2014-06-15 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-30 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating USFM Bible books.
 """
 
 ProgName = "USFM Bible book handler"
-ProgVersion = "0.40"
+ProgVersion = "0.41"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -74,11 +74,14 @@ class USFMBibleBook( BibleBook ):
                 we don't need to worry about that here.
         """
 
-        def doAppendLine( marker, text ):
-            """ Check for newLine markers within the line (if so, break the line)
-                    and save the information in our database. """
-            #originalMarker, originalText = marker, text # Only needed for the debug print line below
-            #print( "doAppendLine( {}, {} )".format( repr(marker), repr(text) ) )
+        def doAppendLine( originalMarker, originalText ):
+            """
+            Check for newLine markers within the line (if so, break the line) and save the information in our database.
+
+            Also convert ~ to a proper non-break space.
+            """
+            #print( "doAppendLine( {}, {} )".format( repr(originalMarker), repr(originalText) ) )
+            marker, text = originalMarker, originalText.replace( '~', ' ' )
             if '\\' in text: # Check markers inside the lines
                 markerList = Globals.USFMMarkers.getMarkerListFromText( text )
                 ix = 0

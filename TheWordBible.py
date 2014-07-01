@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # TheWordBible.py
-#   Last modified: 2014-06-25 by RJH (also update ProgVersion below)
+#   Last modified: 2014-06-30 by RJH (also update ProgVersion below)
 #
 # Module handling "theWord" Bible module files
 #
@@ -51,7 +51,7 @@ e.g.,
 """
 
 ProgName = "theWord Bible format handler"
-ProgVersion = "0.30"
+ProgVersion = "0.31"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -328,8 +328,8 @@ def theWordFileCompare( filename1, filename2, folder1=None, folder2=None, printF
 # These next three functions are used both by theWord and MySword exports
 theWordIgnoredIntroMarkers = OFTEN_IGNORED_USFM_HEADER_MARKERS + (
     'imt1','imt2','imt3','imt4', 'imte1','imte2','imte3','imte4', 'is1','is2','is3','is4',
-    'ip','ipi','im','imi','ipq','imq','ir', 'iq1','iq2','iq3','iq4', 'ib','ili',
-    'iot','io1','io2','io3','io4', 'ir','iex','iqt', 'mte1','mte2','mte3','mte4', 'ie', )
+    'ip','ipi','im','imi','ipq','imq','ipr', 'iq1','iq2','iq3','iq4', 'ib', 'ili1','ili2','ili3','ili4',
+    'iot','io1','io2','io3','io4', 'ir','iex','iqt', 'ie', )
 
 def theWordHandleIntroduction( BBB, bookData, ourGlobals ):
     """
@@ -389,11 +389,11 @@ def theWordAdjustLine( BBB, C, V, originalLine ):
 
     if '\\x' in line: # Remove cross-references completely (why???)
         #line = line.replace('\\x ','<RX>').replace('\\x*','<Rx>')
-        line = removeUSFMCharacterField( 'x', line, closed=True ).lstrip() # Remove superfluous spaces
+        line = removeUSFMCharacterField( 'x', line, closedFlag=True ).lstrip() # Remove superfluous spaces
 
     if '\\f' in line: # Handle footnotes
         for marker in ( 'fr', 'fm', ): # simply remove these whole field
-            line = removeUSFMCharacterField( marker, line, closed=None )
+            line = removeUSFMCharacterField( marker, line, closedFlag=None )
         for marker in ( 'fq', 'fqa', 'fl', 'fk', ): # italicise these ones
             while '\\'+marker+' ' in line:
                 #print( BBB, C, V, marker, line.count('\\'+marker+' '), line )
@@ -418,15 +418,17 @@ def theWordAdjustLine( BBB, C, V, originalLine ):
             #halt
 
     if '\\' in line: # Handle character formatting fields
-        line = removeUSFMCharacterField( 'fig', line, closed=True ) # Remove figures
+        line = removeUSFMCharacterField( 'fig', line, closedFlag=True ) # Remove figures
         replacements = (
             ( ('add',), '<FI>','<Fi>' ),
             ( ('qt',), '<FO>','<Fo>' ),
             ( ('wj',), '<FR>','<Fr>' ),
+            ( ('va',), '(',')' ),
             ( ('bdit',), '<b><i>','</i></b>' ),
             ( ('bd','em','k','w'), '<b>','</b>' ),
             ( ('it','rq','bk','dc','qs','sig','sls','tl',), '<i>','</i>' ),
             ( ('nd','sc',), '<font size=-1>','</font>' ),
+            ( ('pn','ord',), '','' ),
             )
         line = replaceUSFMCharacterFields( replacements, line ) # This function also handles USFM 2.4 nested character markers
         if '\\nd' not in originalLine and '\\+nd' not in originalLine:
@@ -516,7 +518,11 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
             print( "theWordComposeVerseLine:", BBB, C, V, marker, text, verseData )
             if Globals.debugFlag and debuggingThisModule: assert( marker not in theWordIgnoredIntroMarkers ) # these markers shouldn't occur in verses
 
-        if marker=='ms1': composedLine += '<TS2>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
+        if marker in ('mt1','mte1'): composedLine += '<TS1>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
+        elif marker in ('mt2','mte2'): composedLine += '<TS2>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
+        elif marker in ('mt3','mte3'): composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
+        elif marker in ('mt4','mte4'): composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
+        elif marker=='ms1': composedLine += '<TS2>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
         elif marker in ('ms2','ms3','ms4'): composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
         elif marker=='mr': composedLine += '<TS3>'+theWordAdjustLine(BBB,C,V,text)+'<Ts>'
         elif marker == 's1':
@@ -630,8 +636,7 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
         else:
             logging.warning( "theWordComposeVerseLine: doesn't handle '{}' yet".format( marker ) )
             if Globals.debugFlag and debuggingThisModule:
-                print( "theWordComposeVerseLine: doesn't handle '{}' yet".format( marker ) )
-                halt
+                print( "theWordComposeVerseLine: doesn't handle '{}' yet".format( marker ) ); halt
             ourGlobals['unhandledMarkers'].add( marker )
         lastMarker = marker
 
