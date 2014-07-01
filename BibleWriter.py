@@ -7383,6 +7383,7 @@ class BibleWriter( InternalBible ):
             suitable for opening in LibreOffice or OpenOffice.
         """
         import uno
+        from com.sun.star.lang import IllegalArgumentException
         from time import sleep
 
         if Globals.verbosityLevel > 1: print( "Running BibleWriter:toODF..." )
@@ -7393,7 +7394,7 @@ class BibleWriter( InternalBible ):
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         os.chmod( outputFolder, 0o777 ) # Allow all users to write to this folder (ServiceManager might run as a different user)
 
-        startWithTemplate = True # Start with template (all styles already built) or just a blank document (MUCH slower)
+        startWithTemplate = True # Start with template (all styles already built) or just a blank document (much slower)
 
         ODF_PARAGRAPH_BREAK = uno.getConstantByName( "com.sun.star.text.ControlCharacter.PARAGRAPH_BREAK" )
         ODF_LINE_BREAK = uno.getConstantByName( "com.sun.star.text.ControlCharacter.LINE_BREAK" )
@@ -7440,7 +7441,6 @@ class BibleWriter( InternalBible ):
 
         ignoredMarkers, unhandledMarkers = set(), set()
 
-######## UNHANDLED: 'ipq', 'imq', 'ipr'
         titleODFStyleDict = {'imt1':'Introduction Major Title 1', 'imt2':'Introduction Major Title 2', 'imt3':'Introduction Major Title 3', 'imt4':'Introduction Major Title 4',
                           'imte1':'Introduction Major Title at Ending 1','imte2':'Introduction Major Title at Ending 2', 'imte3':'Introduction Major Title at Ending 3', 'imte4':'Introduction Major Title at Ending 4',
                           'mt1':'Major Title 1','mt2':'Major Title 2', 'mt3':'Major Title 3', 'mt4':'Major Title 4',
@@ -7475,6 +7475,12 @@ class BibleWriter( InternalBible ):
 
         def setupStyles( styleFamilies ):
             """
+            Defines new styles that are not in the template (yet).
+
+            Or it can create our hierarchical styles from scratch if startWithTemplate is not set
+                (but we don't know how to make superscripts or how to put custom fields into the running header).
+
+            But if everything is going well/normally, this function does absolutely nothing.
             """
             if 0: # This is how we add new styles to the existing template
                 paragraphStyles = styleFamilies.getByName("ParagraphStyles")
@@ -7992,6 +7998,9 @@ class BibleWriter( InternalBible ):
                 ITALIC_TEXT_POSTURE = uno.Enum( "com.sun.star.awt.FontSlant", "ITALIC" )
 
                 style = document.createInstance( "com.sun.star.style.CharacterStyle" )
+                style.setPropertyValue( "CharHeight", 16 )
+                style.setPropertyValue( "CharWeight", 150 ) # bold
+                style.setPropertyValue( "CharColor", 0x00000080 ) # alpha/R/G/B = navy blue
                 characterStyles.insertByName( "Chapter Number", style )
                 style = document.createInstance( "com.sun.star.style.CharacterStyle" )
                 characterStyles.insertByName( "Chapter Number Postspace", style )
@@ -7999,6 +8008,7 @@ class BibleWriter( InternalBible ):
                 characterStyles.insertByName( "Verse Number Prespace", style )
                 style = document.createInstance( "com.sun.star.style.CharacterStyle" )
                 characterStyles.insertByName( "Verse Number", style )
+                style.setPropertyValue( "CharColor", 0x00808000 ) # alpha/R/G/B = olive
                 style = document.createInstance( "com.sun.star.style.CharacterStyle" )
                 characterStyles.insertByName( "Verse Number Postspace", style )
                 style = document.createInstance( "com.sun.star.style.CharacterStyle" )
@@ -8300,7 +8310,10 @@ class BibleWriter( InternalBible ):
                             textCursor.setPropertyValue( "CharStyleName", defaultCharacterStyleName )
                             documentText.insertString( textCursor, txt, 0 )
                         elif marker in ('ca','va',) and nextSignificantChar in (' ','+'): # it's an opening marker
-                            textCursor.setPropertyValue( "CharStyleName", 'Alternative Chapter Number' if marker=='ca' else 'Alternative Verse Number' )
+                            csn = 'Alternative Chapter Number' if marker=='ca' else 'Alternative Verse Number'
+                            try: textCursor.setPropertyValue( "CharStyleName", csn )
+                            except IllegalArgumentException:
+                                logging.critical( "toODF: {} character style doesn't seem to exist".format( repr(csn) ) )
                             documentText.insertString( textCursor, '('+txt+')', 0 )
                         elif marker in charODFStyleDict and not nextSignificantChar: # it's at the end of a line
                             assert( not txt )
@@ -8384,7 +8397,10 @@ class BibleWriter( InternalBible ):
             #defaultPageStyle = pageStyles.getByName( "Default Style" )
             #headerText = defaultPageStyle.getPropertyValue( "HeaderText" )
             #headerCursor = headerText.createTextCursor()
-            if startWithTemplate: runningHeaderField = document.TextFieldMasters.getByName( "com.sun.star.text.FieldMaster.User.BookHeader" )
+            runningHeaderField = None
+            if startWithTemplate:
+                try: runningHeaderField = document.TextFieldMasters.getByName( "com.sun.star.text.FieldMaster.User.BookHeader" )
+                except IllegalArgumentException: logging.critical( "toODF: Can't set up running header user text field" )
             else: logging.critical( "toODF: Don't know how to set up running header user text field programmatically yet" )
 
             firstEverParagraphFlag = True
@@ -8397,9 +8413,8 @@ class BibleWriter( InternalBible ):
                 if not firstEverParagraphFlag: # Don't want a blank paragraph at the start of the document
                     documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, False );
                 try: textCursor.setPropertyValue( "ParaStyleName", paragraphStyleName )
-                except:
+                except IllegalArgumentException:
                     logging.critical( "toODF: {} paragraph style doesn't seem to exist".format( repr(paragraphStyleName) ) )
-                    halt
                 if adjText or extras:
                     insertFormattedODFText( BBB, C, V, text, extras, documentText, textCursor, defaultCharacterStyleName )
                 firstEverParagraphFlag = False
@@ -8420,7 +8435,7 @@ class BibleWriter( InternalBible ):
                     ignoredMarkers.add( marker )
 
                 elif marker == 'c':
-                    if C == '0' and startWithTemplate: runningHeaderField.setPropertyValue( "Content", headerField )
+                    if C == '0' and runningHeaderField: runningHeaderField.setPropertyValue( "Content", headerField )
                     C, V = adjText, '0'
                     if C == '1': # It's the beginning of the actual Bible text -- make a new double-column section
                         if not firstEverParagraphFlag: # leave a space between the introduction and the chapter text
