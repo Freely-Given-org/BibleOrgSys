@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # UnknownBible.py
-#   Last modified: 2014-06-15 (also update ProgVersion below)
+#   Last modified: 2014-07-02 (also update ProgVersion below)
 #
 # Module handling a unknown Bible object
 #
@@ -37,7 +37,7 @@ Currently aware of the following Bible types:
 """
 
 ProgName = "Unknown Bible object handler"
-ProgVersion = "0.14"
+ProgVersion = "0.15"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -47,6 +47,7 @@ import logging, os.path
 from gettext import gettext as _
 
 import Globals
+from ESFMBible import ESFMBibleFileCheck, ESFMBible
 from USFMBible import USFMBibleFileCheck, USFMBible
 from USXXMLBible import USXXMLBibleFileCheck, USXXMLBible
 from USFXXMLBible import USFXXMLBibleFileCheck, USFXXMLBible
@@ -180,6 +181,14 @@ class UnknownBible:
             typesFound.append( 'YET:' + str(YETBibleCount) )
             if Globals.verbosityLevel > 2: print( "UnknownBible.search: YETBibleCount", YETBibleCount )
 
+        # Search for ESFM Bibles
+        ESFMBibleCount = ESFMBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+        if ESFMBibleCount:
+            totalBibleCount += ESFMBibleCount
+            totalBibleTypes += 1
+            typesFound.append( 'ESFM:' + str(ESFMBibleCount) )
+            if Globals.verbosityLevel > 2: print( "UnknownBible.search: ESFMBibleCount", ESFMBibleCount )
+
         # Search for USFM Bibles
         USFMBibleCount = USFMBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
         if USFMBibleCount:
@@ -284,6 +293,10 @@ class UnknownBible:
                 self.foundType = "YET Bible"
                 if autoLoad: return YETBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad )
                 else: return self.foundType
+            elif ESFMBibleCount == 1:
+                self.foundType = "ESFM Bible"
+                if autoLoad: return ESFMBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad )
+                else: return self.foundType
             elif USFMBibleCount == 1:
                 self.foundType = "USFM Bible"
                 if autoLoad: return USFMBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad )
@@ -336,6 +349,7 @@ def demo():
                     #"../../../../AutoProcesses/Processed/",
                     "Tests/DataFilesForTests/USFMTest1/", "Tests/DataFilesForTests/USFMTest2/",
                     "Tests/DataFilesForTests/USFM-OEB/", "Tests/DataFilesForTests/USFM-WEB/",
+                    "Tests/DataFilesForTests/ESFMTest1/", "Tests/DataFilesForTests/ESFMTest2/",
                     "Tests/DataFilesForTests/USXTest1/", "Tests/DataFilesForTests/USXTest2/",
                     "Tests/DataFilesForTests/USFXTest1/", "Tests/DataFilesForTests/USFXTest2/",
                     "Tests/DataFilesForTests/USFX-ASV/", "Tests/DataFilesForTests/USFX-WEB/",

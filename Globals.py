@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Globals.py
-#   Last modified: 2014-06-21 by RJH (also update ProgVersion below)
+#   Last modified: 2014-07-02 by RJH (also update ProgVersion below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -71,7 +71,7 @@ Contains functions:
 """
 
 ProgName = "Globals"
-ProgVersion = "0.48"
+ProgVersion = "0.49"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -245,7 +245,8 @@ def makeSafeFilename( someName ):
     """
     return someName.replace('/','-') \
         .replace('\\','_BACKSLASH_').replace(':','_COLON_').replace(';','_SEMICOLON_') \
-        .replace('#','_HASH_').replace('?','_QUESTIONMARK_').replace('*','_ASTERISK_')
+        .replace('#','_HASH_').replace('?','_QUESTIONMARK_').replace('*','_ASTERISK_') \
+        .replace('<','_LT_').replace('>','_GT_')
 # end of Globals.makeSafeFilename
 
 

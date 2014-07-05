@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USXXMLBible.py
-#   Last modified: 2014-06-15 by RJH (also update ProgVersion below)
+#   Last modified: 2014-07-02 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USX Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USX Bibles.
 """
 
 ProgName = "USX XML Bible handler"
-ProgVersion = "0.15"
+ProgVersion = "0.16"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -282,7 +282,7 @@ class USXXMLBible( Bible ):
 
         # Load the books one by one -- assuming that they have regular Paratext style filenames
         # DON'T KNOW WHY THIS DOESN'T WORK
-        if Globals.maxProcesses > 1: # Load all the books as quickly as possible
+        if 0 and Globals.maxProcesses > 1: # Load all the books as quickly as possible
             parameters = []
             for BBB,filename in self.USXFilenamesObject.getConfirmedFilenames():
                 parameters.append( BBB )

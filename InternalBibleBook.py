@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2014-06-30 by RJH (also update ProgVersion below)
+#   Last modified: 2014-07-05 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -41,7 +41,7 @@ Required improvements:
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.81"
+ProgVersion = "0.82"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -271,6 +271,7 @@ class InternalBibleBook:
                 assert( isinstance( text, str ) )
             adjText = text
             cleanText = text.replace( ' ', ' ' ) # Replace non-break spaces for this
+            if self.objectTypeString == 'ESFM': cleanText = cleanText.replace( '_', ' ' ) # Replace underlines/underscores for this
 
             # Remove trailing spaces
             if adjText and adjText[-1].isspace():

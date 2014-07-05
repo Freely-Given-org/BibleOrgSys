@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleReferences.py
-#   Last modified: 2014-06-03 by RJH (also update ProgVersion below)
+#   Last modified: 2014-07-02 by RJH (also update ProgVersion below)
 #
 # Module for handling Bible references including ranges
 #
@@ -77,7 +77,7 @@ Technical note: Our Bible reference parsers use state machines rather than regul
 """
 
 ProgName = "Bible References handler"
-ProgVersion = "0.29"
+ProgVersion = "0.30"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -1373,6 +1373,7 @@ class BibleReferenceList( BibleReferenceBase ):
                 if len(refTuple) == 2: # it's a range
                     startRefTuple, endRefTuple = refTuple
                     expandedList = self._BibleOrganizationalSystem.expandCVRange( startRefTuple, endRefTuple, bookOrderSystem=self._BibleOrganizationalSystem )
+                    if not expandedList: return False
                     if myRefTuple in expandedList: return True
                     elif S is None:
                         for refTuple in expandedList:
