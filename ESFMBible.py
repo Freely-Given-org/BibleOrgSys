@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ESFMBible.py
-#   Last modified: 2014-07-05 by RJH (also update ProgVersion below)
+#   Last modified: 2014-07-06 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of ESFM Bible books
 #
@@ -45,10 +45,12 @@ from Bible import Bible
 
 
 
-filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
-extensionsToIgnore = ( 'ASC', 'BAK', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', 'HTM','HTML', 'JAR',
-                    'LDS', 'LOG', 'MYBIBLE', 'NT','NTX', 'ODT', 'ONT','ONTX', 'OSIS', 'OT','OTX', 'PDB',
-                    'STY', 'SSF', 'USFX', 'USX', 'VRS', 'YET', 'XML', 'ZIP', ) # Must be UPPERCASE and NOT begin with a dot
+#filenameEndingsToIgnore = ('.ZIP.GO', '.ZIP.DATA',) # Must be UPPERCASE
+#extensionsToIgnore = ( 'ASC', 'BAK', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', 'HTM','HTML', 'JAR',
+                    #'LDS', 'LOG', 'MYBIBLE', 'NT','NTX', 'ODT', 'ONT','ONTX', 'OSIS', 'OT','OTX', 'PDB',
+                    #'STY', 'SSF', 'USFX', 'USX', 'VRS', 'YET', 'XML', 'ZIP', ) # Must be UPPERCASE and NOT begin with a dot
+filenameEndingsToAccept = ('.ESFM',) # Must be UPPERCASE here
+#BibleFilenameEndingsToAccept = ('.ESFM',) # Must be UPPERCASE here
 
 
 #def removeUnwantedTupleExtensions( fnTuples ):
@@ -99,11 +101,13 @@ def ESFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
         elif os.path.isfile( somepath ):
             somethingUpper = something.upper()
             somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
-            ignore = False
-            for ending in filenameEndingsToIgnore:
-                if somethingUpper.endswith( ending): ignore=True; break
-            if ignore: continue
-            if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+            #ignore = False
+            #for ending in filenameEndingsToIgnore:
+                #if somethingUpper.endswith( ending): ignore=True; break
+            #if ignore: continue
+            #if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+                #foundFiles.append( something )
+            if somethingUpperExt in filenameEndingsToAccept:
                 foundFiles.append( something )
     if '__MACOSX' in foundFolders:
         foundFolders.remove( '__MACOSX' )  # don't visit these directories
@@ -113,6 +117,11 @@ def ESFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
     UFns = USFMFilenames( givenFolderName ) # Assuming they have standard Paratext style filenames
     if Globals.verbosityLevel > 2: print( UFns )
     filenameTuples = UFns.getMaximumPossibleFilenameTuples() # Returns (BBB,filename) 2-tuples
+    for BBB,fn in filenameTuples[:]: # Only accept our specific file extensions
+        acceptFlag = False
+        for fna in filenameEndingsToAccept:
+            if fn.endswith( fna ): acceptFlag = True
+        if not acceptFlag: filenameTuples.remove( (BBB,fn) )
     if Globals.verbosityLevel > 3: print( "  Confirmed:", len(filenameTuples), filenameTuples )
     if Globals.verbosityLevel > 1 and filenameTuples: print( "  Found {} ESFM file{}.".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
     if filenameTuples:
@@ -124,9 +133,9 @@ def ESFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
     if numFound:
         if Globals.verbosityLevel > 2: print( "ESFMBibleFileCheck got", numFound, givenFolderName )
         if numFound == 1 and autoLoad:
-            uB = ESFMBible( givenFolderName )
-            uB.load() # Load and process the file
-            return uB
+            eB = ESFMBible( givenFolderName )
+            eB.load() # Load and process the file
+            return eB
         return numFound
 
     # Look one level down
@@ -145,11 +154,13 @@ def ESFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
             elif os.path.isfile( somepath ):
                 somethingUpper = something.upper()
                 somethingUpperProper, somethingUpperExt = os.path.splitext( somethingUpper )
-                ignore = False
-                for ending in filenameEndingsToIgnore:
-                    if somethingUpper.endswith( ending): ignore=True; break
-                if ignore: continue
-                if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+                #ignore = False
+                #for ending in filenameEndingsToIgnore:
+                    #if somethingUpper.endswith( ending): ignore=True; break
+                #if ignore: continue
+                #if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
+                    #foundSubfiles.append( something )
+                if somethingUpperExt in filenameEndingsToAccept:
                     foundSubfiles.append( something )
 
         # See if there's an ESFM Bible here in this folder
@@ -387,31 +398,32 @@ def demo():
     if 1: # Load and process some of our test versions
         count = 0
         for name, abbreviation, testFolder in ( # name, abbreviation, folder
-                                    ("Open English Translation—Literal Version", "OET-LV", "../../../../../Data/Work/Matigsalug/Bible/OET-LV/",),
-                                    #("ESFM Test 1", "OET-LV", "Tests/DataFilesForTests/ESFMTest1/"),
-                                    #("ESFM Test 2", "OET-RV", "Tests/DataFilesForTests/ESFMTest2/"),
-                                    #("All Markers Project", "WEB+", "Tests/DataFilesForTests/USFMAllMarkersProject/"),
-                                    #("USFM Error Project", "UEP", "Tests/DataFilesForTests/USFMErrorProject/"),
-                                    #("BOS Exported Files", "Exported", "Tests/BOS_USFM_Export/"),
-                                    ):
+                    ("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
+                    #("Open English Translation—Literal Version", "OET-LV", "../../../../../Data/Work/Matigsalug/Bible/OET-LV/",),
+                    #("ESFM Test 1", "OET-LV", "Tests/DataFilesForTests/ESFMTest1/"),
+                    #("ESFM Test 2", "OET-RV", "Tests/DataFilesForTests/ESFMTest2/"),
+                    #("All Markers Project", "WEB+", "Tests/DataFilesForTests/USFMAllMarkersProject/"),
+                    #("USFM Error Project", "UEP", "Tests/DataFilesForTests/USFMErrorProject/"),
+                    #("BOS Exported Files", "Exported", "Tests/BOS_USFM_Export/"),
+                    ):
             count += 1
             if os.access( testFolder, os.R_OK ):
                 if Globals.verbosityLevel > 0: print( "\nESFM A{}/".format( count ) )
-                UsfmB = ESFMBible( testFolder, name, abbreviation )
-                UsfmB.load()
-                print( "Gen assumed book name:", repr( UsfmB.getAssumedBookName( 'GEN' ) ) )
-                print( "Gen long TOC book name:", repr( UsfmB.getLongTOCName( 'GEN' ) ) )
-                print( "Gen short TOC book name:", repr( UsfmB.getShortTOCName( 'GEN' ) ) )
-                print( "Gen book abbreviation:", repr( UsfmB.getBooknameAbbreviation( 'GEN' ) ) )
-                if Globals.verbosityLevel > 0: print( UsfmB )
+                EsfmB = ESFMBible( testFolder, name, abbreviation )
+                EsfmB.load()
+                print( "Gen assumed book name:", repr( EsfmB.getAssumedBookName( 'GEN' ) ) )
+                print( "Gen long TOC book name:", repr( EsfmB.getLongTOCName( 'GEN' ) ) )
+                print( "Gen short TOC book name:", repr( EsfmB.getShortTOCName( 'GEN' ) ) )
+                print( "Gen book abbreviation:", repr( EsfmB.getBooknameAbbreviation( 'GEN' ) ) )
+                if Globals.verbosityLevel > 0: print( EsfmB )
                 if Globals.strictCheckingFlag:
-                    UsfmB.check()
-                    #print( UsfmB.books['GEN']._processedLines[0:40] )
-                    UsfmBErrors = UsfmB.getErrors()
+                    EsfmB.check()
+                    #print( EsfmB.books['GEN']._processedLines[0:40] )
+                    EsfmBErrors = EsfmB.getErrors()
                     # print( UBErrors )
                 if Globals.commandLineOptions.export:
-                    ##UsfmB.toDrupalBible()
-                    UsfmB.doAllExports( wantPhotoBible=False, wantODFs=True, wantPDFs=True )
+                    ##EsfmB.toDrupalBible()
+                    EsfmB.doAllExports( wantPhotoBible=False, wantODFs=True, wantPDFs=True )
                     newObj = Globals.unpickleObject( Globals.makeSafeFilename(abbreviation) + '.pickle', os.path.join( "OutputFiles/", "BOS_Bible_Object_Pickle/" ) )
                     if Globals.verbosityLevel > 0: print( "newObj is", newObj )
             else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
@@ -461,14 +473,14 @@ def demo():
                     name, encoding, testFolder = title, "utf-8", somepath
                     if os.access( testFolder, os.R_OK ):
                         if Globals.verbosityLevel > 0: print( "\nESFM B{}/".format( count ) )
-                        UsfmB = ESFMBible( testFolder, name )
-                        UsfmB.load()
-                        if Globals.verbosityLevel > 0: print( UsfmB )
+                        EsfmB = ESFMBible( testFolder, name )
+                        EsfmB.load()
+                        if Globals.verbosityLevel > 0: print( EsfmB )
                         if Globals.strictCheckingFlag:
-                            UsfmB.check()
-                            UsfmBErrors = UsfmB.getErrors()
-                            #print( UsfmBErrors )
-                        if Globals.commandLineOptions.export: UsfmB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+                            EsfmB.check()
+                            EsfmBErrors = EsfmB.getErrors()
+                            #print( EsfmBErrors )
+                        if Globals.commandLineOptions.export: EsfmB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                     else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
             if count: print( "\n{} total ESFM (partial) Bibles processed.".format( count ) )
             if totalBooks: print( "{} total books ({} average per folder)".format( totalBooks, round(totalBooks/count) ) )

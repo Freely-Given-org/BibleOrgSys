@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ESwordBible.py
-#   Last modified: 2014-06-15 by RJH (also update ProgVersion below)
+#   Last modified: 2014-07-06 by RJH (also update ProgVersion below)
 #
 # Module handling "e-Sword" Bible module files
 #
@@ -66,8 +66,8 @@ from BibleOrganizationalSystems import BibleOrganizationalSystem
 
 
 
-filenameEndingsToAccept = ('.BBLX',) # Must be UPPERCASE
-BibleFilenameEndingsToAccept = ('.BBLX',) # Must be UPPERCASE
+filenameEndingsToAccept = ('.BBLX',) # Must be UPPERCASE here
+BibleFilenameEndingsToAccept = ('.BBLX',) # Must be UPPERCASE here
 
 
 

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-07-05 by RJH (also update ProgVersion below)
+#   Last modified: 2014-07-06 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -38,12 +38,13 @@ Contains functions:
     makeLists( outputFolder=None )
     toPseudoUSFM( outputFolder=None ) -- this is our internal Bible format -- exportable for debugging purposes
             For more details see InternalBible.py, InternalBibleBook.py, InternalBibleInternals.py
-    toUSFM( outputFolder=None )
+    toUSFM( outputFolder=None. removeVerseBridges=False )
+    toESFM( outputFolder=None )
     toText( outputFolder=None )
     toMarkdown( outputFolder=None )
     toDoor43( outputFolder=None, controlDict=None, validationSchema=None )
     toHTML5( outputFolder=None, controlDict=None, validationSchema=None, humanReadable=True )
-    toCustomBible( outputFolder=None )
+    toCustomBible( outputFolder=None, removeVerseBridges=False )
     toUSXXML( outputFolder=None, controlDict=None, validationSchema=None )
     toUSFXXML( outputFolder=None, controlDict=None, validationSchema=None )
     toOSISXML( outputFolder=None, controlDict=None, validationSchema=None )
@@ -516,7 +517,7 @@ class BibleWriter( InternalBible ):
 
 
 
-    def toESFM( self, outputFolder=None, removeVerseBridges=False ):
+    def toESFM( self, outputFolder=None ): #, removeVerseBridges=False ):
         """
         Adjust the pseudo ESFM and write the ESFM files.
         """
@@ -553,7 +554,7 @@ class BibleWriter( InternalBible ):
                     continue
                 #value = cleanText # (temp)
                 #if Globals.debugFlag and debuggingThisModule: print( "toESFM: pseudoMarker = '{}' value = '{}'".format( pseudoMarker, value ) )
-                if removeVerseBridges and pseudoMarker in ('v','c',):
+                if 0 and removeVerseBridges and pseudoMarker in ('v','c',):
                     if value1 and value2:
                         for vNum in range( value1+1, value2+1 ): # Fill in missing verse numbers
                             ESFM += '\n\\v {}'.format( vNum )
@@ -562,7 +563,7 @@ class BibleWriter( InternalBible ):
                 if pseudoMarker == 'vp~': continue
                 elif pseudoMarker in ('v','f','fr','x','xo',): # These fields should always end with a space but the processing will have removed them
                     if Globals.debugFlag: assert( value )
-                    if pseudoMarker=='v' and removeVerseBridges:
+                    if pseudoMarker=='v' and 0 and removeVerseBridges:
                         vString = value
                         for bridgeChar in ('-', '–', '—'): # hyphen, endash, emdash
                             ix = vString.find( bridgeChar )

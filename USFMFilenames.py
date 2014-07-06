@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMFilenames.py
-#   Last modified: 2014-03-24 by RJH (also update ProgVersion below)
+#   Last modified: 2014-07-06 by RJH (also update ProgVersion below)
 #
 # Module handling USFM Bible filenames
 #
@@ -421,7 +421,7 @@ class USFMFilenames:
                 self.doListAppend( BBB, derivedFilename, resultList, "getConfirmedFilenameTuples" )
         self.lastTupleList = resultList
         return resultList # No need to sort these because the derived ones are sorted
-    # end of getConfirmedFilenameTuples
+    # end of USFMFilenames.getConfirmedFilenameTuples
 
 
     def getPossibleFilenameTuplesExt( self ):
@@ -445,7 +445,7 @@ class USFMFilenames:
                         self.doListAppend( Globals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
         self.lastTupleList = resultList
         return Globals.BibleBooksCodes.getSequenceList( resultList )
-    # end of getPossibleFilenameTuplesExt
+    # end of USFMFilenames.getPossibleFilenameTuplesExt
 
 
     def getPossibleFilenameTuplesInt( self ):
@@ -464,7 +464,7 @@ class USFMFilenames:
                 self.doListAppend( self._fileDictionary[(folder,filename,)], filename, resultList, "getPossibleFilenameTuplesInt2" )
         self.lastTupleList = resultList
         return Globals.BibleBooksCodes.getSequenceList( resultList )
-    # end of getPossibleFilenameTuplesInt
+    # end of USFMFilenames.getPossibleFilenameTuplesInt
 
 
     def getMaximumPossibleFilenameTuples( self ):
@@ -483,7 +483,7 @@ class USFMFilenames:
         self.lastTupleList = resultList
         #print( "getMaximumPossibleFilenameTuples is returning", resultList )
         return resultList # No need to sort these, coz all the above calls produce sorted results
-    # end of getMaximumPossibleFilenameTuples
+    # end of USFMFilenames.getMaximumPossibleFilenameTuples
 
 
     def getUnusedFilenames( self ):
