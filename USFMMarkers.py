@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkers.py
-#   Last modified: 2014-06-30 (also update ProgVersion below)
+#   Last modified: 2014-07-07 (also update ProgVersion below)
 #
 # Module handling USFMMarkers
 #
@@ -450,7 +450,13 @@ class USFMMarkers:
 
 
     def getNewlineMarkersList( self, option ):
-        """ Returns a list of all possible new line markers. """
+        """
+        Returns a list of all possible new line markers depending on the parameter:
+            'Raw'
+            'Numbered'
+            'Combined'
+            'CanonicalText'
+        """
         assert( option in ('Raw','Numbered','Combined','CanonicalText') )
         if option=='Combined': return self.__DataDict["combinedNewlineMarkersList"] # Includes q, q1, q2, ...
         elif option=='Raw': return self.__DataDict["newlineMarkersList"] # Doesn't include q1, q2, ...

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ESFMBible.py
-#   Last modified: 2014-07-06 by RJH (also update ProgVersion below)
+#   Last modified: 2014-07-12 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of ESFM Bible books
 #
@@ -40,7 +40,8 @@ import multiprocessing
 
 import Globals
 from USFMFilenames import USFMFilenames
-from ESFMBibleBook import ESFMBibleBook
+from ESFMFile import ESFMFile
+from ESFMBibleBook import ESFMBibleBook, ESFM_SEMANTIC_TAGS
 from Bible import Bible
 
 
@@ -248,6 +249,9 @@ class ESFMBible( Bible ):
         self.possibleFilenameDict = {}
         for BBB, filename in self.maximumPossibleFilenameTuples:
             self.possibleFilenameDict[BBB] = filename
+
+        self.dontLoadBook = []
+        self.spellingDict, self.StrongsDict, self.hyphenationDict, self.semanticDict = {}, {}, {}, {}
     # end of ESFMBible.__init_
 
 
@@ -315,19 +319,89 @@ class ESFMBible( Bible ):
     # end of ESFMBible.loadSSFData
 
 
+    def loadSemanticDictionary( self, BBB, filename ):
+        """
+        """
+        if Globals.verbosityLevel > 1: print( "    " + _("Loading possible semantic dictionary from {}...").format( filename ) )
+        sourceFilepath = os.path.join( self.sourceFolder, filename )
+        originalBook = ESFMFile()
+        originalBook.read( sourceFilepath, encoding='utf-8' )
+
+        count = 0
+        for marker,originalText in originalBook.lines:
+            #print( marker, repr(originalText) )
+            if marker == 'rem' and originalText.startswith('ESFM '):
+                if ' SEM' not in originalText: return
+            elif marker == 'gl':
+                if originalText[0] in ESFM_SEMANTIC_TAGS \
+                and originalText[1] == ' ' \
+                and len(originalText)>2:
+                    tagMarker = originalText[0]
+                    tagContent = originalText[2:]
+                    if tagMarker not in self.semanticDict: self.semanticDict[tagMarker] = {}
+                    if tagContent not in self.semanticDict[tagMarker]: self.semanticDict[tagMarker][tagContent] = []
+                    count += 1
+        self.dontLoadBook.append( BBB )
+        if Globals.verbosityLevel > 1:
+            if count: print( "{} semantic entries added in {} categories".format( count, len(self.semanticDict) ) )
+            else: print( "No semantic entries found." )
+    # end of ESFMBible.loadSemanticDictionary
+
+
+    def loadStrongsDictionary( self, BBB, filename ):
+        """
+        """
+        if Globals.verbosityLevel > 1: print( "    " + _("Loading possible Strong's dictionary from {}...").format( filename ) )
+        sourceFilepath = os.path.join( self.sourceFolder, filename )
+        originalBook = ESFMFile()
+        originalBook.read( sourceFilepath, encoding='utf-8' )
+
+        count = 0
+        for marker,originalText in originalBook.lines:
+            #print( marker, repr(originalText) )
+            if marker == 'rem' and originalText.startswith('ESFM '):
+                if ' STR' not in originalText: return
+            elif marker == 'gl':
+                if originalText[0] in 'HG':
+                    tagMarker = originalText[0]
+                    sNumber = originalText[1:]
+            elif marker == 'html':
+                dictEntry = originalText
+                if tagMarker not in self.StrongsDict: self.StrongsDict[tagMarker] = {}
+                if sNumber not in self.StrongsDict[tagMarker]: self.StrongsDict[tagMarker][sNumber] = dictEntry
+                count += 1
+        self.dontLoadBook.append( BBB )
+        if Globals.verbosityLevel > 1:
+            if count: print( "{} Strong's entries added in {} categories".format( count, len(self.StrongsDict) ) )
+            else: print( "No Strong's entries found." )
+    # end of ESFMBible.loadStrongsDictionary
+
+
+    def loadDictionaries( self ):
+        """
+        Attempts to load the spelling, hyphenation, and semantic dictionaries if they exist.
+        """
+        if Globals.verbosityLevel > 1: print( "  " + _("Loading any dictionaries...") )
+        for BBB,filename in self.maximumPossibleFilenameTuples:
+            if BBB=='XXD': self.loadSemanticDictionary( BBB, filename )
+            elif BBB=='XXE': self.loadStrongsDictionary( BBB, filename )
+    # end of ESFMBible.loadDictionaries
+
+
     def loadBook( self, BBB, filename=None ):
         """
         Load the requested book if it's not already loaded.
         """
         if Globals.verbosityLevel > 2: print( "ESFMBible.loadBook( {}, {} )".format( BBB, filename ) )
         if BBB in self.books: return # Already loaded
+        if BBB in dontLoadBook: return # Must be a dictionary that's already loaded
         if BBB in self.triedLoadingBook:
             logging.warning( "We had already tried loading ESFM {} for {}".format( BBB, self.name ) )
             return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
         if Globals.verbosityLevel > 1 or Globals.debugFlag: print( _("  ESFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
         if filename is None: filename = self.possibleFilenameDict[BBB]
-        EBB = ESFMBibleBook( self.name, BBB )
+        EBB = ESFMBibleBook( self, BBB )
         EBB.load( filename, self.sourceFolder )
         if EBB._rawLines:
             EBB.validateMarkers() # Usually activates InternalBibleBook.processLines()
@@ -346,14 +420,15 @@ class ESFMBible( Bible ):
         if Globals.verbosityLevel > 3: print( "ESFMBible.loadBookMP( {} )".format( BBB_Filename ) )
         BBB, filename = BBB_Filename
         assert( BBB not in self.books )
+        if BBB in self.dontLoadBook: return None
         self.triedLoadingBook[BBB] = True
         if Globals.verbosityLevel > 1 or Globals.debugFlag:
             print( _("  ESFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
-        UBB = ESFMBibleBook( self.name, BBB )
-        UBB.load( self.possibleFilenameDict[BBB], self.sourceFolder, self.encoding )
-        UBB.validateMarkers() # Usually activates InternalBibleBook.processLines()
+        EBB = ESFMBibleBook( self, BBB )
+        EBB.load( self.possibleFilenameDict[BBB], self.sourceFolder )
+        EBB.validateMarkers() # Usually activates InternalBibleBook.processLines()
         if Globals.verbosityLevel > 2 or Globals.debugFlag: print( _("    Finishing loading ESFM book {}.").format( BBB ) )
-        return UBB
+        return EBB
     # end of ESFMBible.loadBookMP
 
 
@@ -364,6 +439,9 @@ class ESFMBible( Bible ):
         if Globals.verbosityLevel > 1: print( _("ESFMBible: Loading {} from {}...").format( self.name, self.sourceFolder ) )
 
         if self.maximumPossibleFilenameTuples:
+            # First try to load the dictionaries
+            self.loadDictionaries()
+            # Now load the books
             if Globals.maxProcesses > 1: # Load all the books as quickly as possible
                 #parameters = [BBB for BBB,filename in self.maximumPossibleFilenameTuples] # Can only pass a single parameter to map
                 if Globals.verbosityLevel > 1:
@@ -372,16 +450,20 @@ class ESFMBible( Bible ):
                 with multiprocessing.Pool( processes=Globals.maxProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookMP, self.maximumPossibleFilenameTuples ) # have the pool do our loads
                     assert( len(results) == len(self.maximumPossibleFilenameTuples) )
-                    for bBook in results: self.saveBook( bBook ) # Saves them in the correct order
+                    for bBook in results:
+                        if bBook is not None: self.saveBook( bBook ) # Saves them in the correct order
             else: # Just single threaded
                 # Load the books one by one -- assuming that they have regular Paratext style filenames
                 for BBB,filename in self.maximumPossibleFilenameTuples:
                     #if Globals.verbosityLevel > 1 or Globals.debugFlag:
                         #print( _("  ESFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
-                    loadedBook = self.loadBook( BBB, filename ) # also saves it
+                    if BBB not in self.dontLoadBook:
+                        loadedBook = self.loadBook( BBB, filename ) # also saves it
         else:
             logging.critical( _("ESFMBible: No books to load in {}!").format( self.sourceFolder ) )
         #print( self.getBookList() )
+        if 'Tag errors' in self.semanticDict: print( "Tag errors:", self.semanticDict['Tag errors'] )
+        if 'Missing' in self.semanticDict: print( "Missing:", self.semanticDict['Missing'] )
         self.doPostLoadProcessing()
     # end of ESFMBible.load
 # end of class ESFMBible
@@ -398,8 +480,8 @@ def demo():
     if 1: # Load and process some of our test versions
         count = 0
         for name, abbreviation, testFolder in ( # name, abbreviation, folder
-                    ("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
-                    #("Open English Translation—Literal Version", "OET-LV", "../../../../../Data/Work/Matigsalug/Bible/OET-LV/",),
+                    ("Open English Translation—Literal Version", "OET-LV", "../../../../../Data/Work/Matigsalug/Bible/OET-LV/",),
+                    #("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
                     #("ESFM Test 1", "OET-LV", "Tests/DataFilesForTests/ESFMTest1/"),
                     #("ESFM Test 2", "OET-RV", "Tests/DataFilesForTests/ESFMTest2/"),
                     #("All Markers Project", "WEB+", "Tests/DataFilesForTests/USFMAllMarkersProject/"),

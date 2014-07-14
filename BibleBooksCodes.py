@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodes.py
-#   Last modified: 2014-03-08 by RJH (also update ProgVersion below)
+#   Last modified: 2014-07-08 by RJH (also update ProgVersion below)
 #
 # Module handling BibleBooksCodes functions
 #
@@ -28,7 +28,7 @@ Module handling BibleBooksCodes functions.
 """
 
 ProgName = "Bible Books Codes handler"
-ProgVersion = "0.73"
+ProgVersion = "0.74"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -484,10 +484,29 @@ class BibleBooksCodes:
     # end of BibleBooksCodes.isNewTestament_NR
 
     def isDeuterocanon_NR( self, BBB ): # NR = not recommended (because not completely general/international)
-        """ Returns True if the given referenceAbbreviation indicates a European Deuterocanon/Apocrypha book (15).
-            NOTE: This is not truly international so it's not a recommended function. """
+        """
+        Returns True if the given referenceAbbreviation indicates a European Deuterocanon/Apocrypha book (15).
+            NOTE: This is not truly international so it's not a recommended function.
+        """
         return BBB in ('TOB','JDT','ESG','WIS','SIR','BAR','LJE','PAZ','SUS','BEL','MA1','MA2','GES','LES','MAN',)
     # end of BibleBooksCodes.isDeuterocanon_NR
+
+    def createLists( self, outputFolder=None ):
+        """
+        Writes a list of Bible Books Codes to a text file in the OutputFiles folder
+            and also to an HTML-formatted table.
+        """
+        if not outputFolder: outputFolder = "OutputFiles/"
+        if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
+        with open( os.path.join( outputFolder, "BOS_Books_Codes.txt" ), 'wt' ) as txtFile:
+            with open( os.path.join( outputFolder, "BOS_Books_Codes.html" ), 'wt' ) as htmlFile:
+                txtFile.write( "NUM BBB English name\n" )
+                htmlFile.write( '<html><body><table border="1">\n<tr><th>NUM</th><th>BBB</th><th>English name</th></tr>\n' )
+                for BBB in self.__DataDicts["referenceAbbreviationDict"]:
+                    txtFile.write( "{:3} {} {}\n".format( self.getReferenceNumber(BBB), BBB, self.getEnglishName_NR(BBB) ) )
+                    htmlFile.write( '<tr><td>{}</td><td>{}</td><td>{}</td></tr>\n'.format( self.getReferenceNumber(BBB), BBB, self.getEnglishName_NR(BBB) ) )
+                htmlFile.write( "</table></body></html>\n" )
+    # end of BibleBooksCodes.createLists
 # end of BibleBooksCodes class
 
 

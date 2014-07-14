@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2014-07-05 by RJH (also update ProgVersion below)
+#   Last modified: 2014-07-13 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -41,7 +41,7 @@ Required improvements:
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.82"
+ProgVersion = "0.83"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -54,8 +54,8 @@ import unicodedata
 
 import Globals
 from USFMMarkers import USFM_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS
-from InternalBibleInternals import BOS_CONTENT_MARKERS, BOS_NESTING_MARKERS, BOS_END_MARKERS, BOS_ALL_ADDED_MARKERS, \
-    EXTRA_TYPES, LEADING_WORD_PUNCT_CHARS, MEDIAL_WORD_PUNCT_CHARS, TRAILING_WORD_PUNCT_CHARS, ALL_WORD_PUNCT_CHARS, \
+from InternalBibleInternals import BOS_ADDED_CONTENT_MARKERS, BOS_ADDED_NESTING_MARKERS, BOS_END_MARKERS, BOS_ALL_ADDED_MARKERS, \
+    BOS_EXTRA_TYPES, LEADING_WORD_PUNCT_CHARS, MEDIAL_WORD_PUNCT_CHARS, TRAILING_WORD_PUNCT_CHARS, ALL_WORD_PUNCT_CHARS, \
     InternalBibleEntryList, InternalBibleEntry, InternalBibleIndex, InternalBibleExtra, InternalBibleExtraList
 from BibleReferences import BibleAnchorReference
 
@@ -171,7 +171,7 @@ class InternalBibleBook:
                 assert( isinstance( text, str ) )
                 assert( '\n' not in text and '\r' not in text )
 
-        if not ( marker in Globals.USFMMarkers or marker in BOS_CONTENT_MARKERS ):
+        if not ( marker in Globals.USFMMarkers or marker in BOS_ADDED_CONTENT_MARKERS ):
             logging.critical( "InternalBibleBook.appendLine marker for {} not in lists: {}={}".format( self.objectTypeString, marker, repr(text) ) )
             if marker in self.badMarkers:
                 ix = self.badMarkers.index( marker )
@@ -180,9 +180,9 @@ class InternalBibleBook:
             else:
                 self.badMarkers.append( marker )
                 self.badMarkerCounts.append( 1 )
-        if Globals.debugFlag: assert( marker in Globals.USFMMarkers or marker in BOS_CONTENT_MARKERS )
+        if Globals.debugFlag: assert( marker in Globals.USFMMarkers or marker in BOS_ADDED_CONTENT_MARKERS )
 
-        if marker not in BOS_CONTENT_MARKERS and not Globals.USFMMarkers.isNewlineMarker( marker ):
+        if marker not in BOS_ADDED_CONTENT_MARKERS and not Globals.USFMMarkers.isNewlineMarker( marker ):
             logging.critical( "IBB.appendLine: Not a NL marker: {}='{}'".format( marker, text ) )
             if Globals.debugFlag: print( self, repr(marker), repr(text) ); halt # How did this happen?
 
@@ -341,9 +341,142 @@ class InternalBibleBook:
             extras = InternalBibleExtraList() # Prepare for extras
 
             #print( "QQQ MOVE OUT NOTES" )
-            if 1 or self.objectTypeString in ('USFM','USX',): # Move USFM/USX footnotes, endnotes, cross-references and figures out to extras
-                # This particular little piece of code can also mostly handle it if the markers are UPPER CASE
-                dummyValue = 99999
+            # This particular little piece of code can also mostly handle it if the markers are UPPER CASE
+            dummyValue = 99999
+            ixFN = adjText.find( '\\f ' )
+            if ixFN == -1: ixFN = adjText.find( '\\F ' )
+            if ixFN == -1: ixFN = dummyValue
+            ixEN = adjText.find( '\\fe ' )
+            if ixEN == -1: ixEN = adjText.find( '\\FE ' )
+            if ixEN == -1: ixEN = dummyValue
+            ixXR = adjText.find( '\\x ' )
+            if ixXR == -1: ixXR = adjText.find( '\\X ' )
+            if ixXR == -1: ixXR = dummyValue
+            ixFIG = adjText.find( '\\fig ' )
+            if ixFIG == -1: ixFIG = adjText.find( '\\FIG ' )
+            if ixFIG == -1: ixFIG = dummyValue
+            ixSTR = adjText.find( '\\str ' )
+            if ixSTR == -1: ixSTR = adjText.find( '\\STR ' )
+            if ixSTR == -1: ixSTR = dummyValue
+            ixSEM = adjText.find( '\\sem ' )
+            if ixSEM == -1: ixSEM = adjText.find( '\\SEM ' )
+            if ixSEM == -1: ixSEM = dummyValue
+            ixVP = adjText.find( '\\vp ' )
+            if ixVP == -1: ixVP = adjText.find( '\\VP ' )
+            if ixVP == -1: ixVP = dummyValue
+            #print( 'ixFN =',ixFN, ixEN, 'ixXR = ',ixXR, ixFIG, ixSTR )
+            ix1 = min( ixFN, ixEN, ixXR, ixFIG, ixSTR, ixSEM, ixVP )
+            while ix1 < dummyValue: # We have one or the other
+                if ix1 == ixFN:
+                    ix2 = adjText.find( '\\f*' )
+                    if ix2 == -1: ix2 = adjText.find( '\\F*' )
+                    #print( 'A', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
+                    noteSFM, lenSFM, thisOne, this1 = 'f', 1, 'footnote', 'fn'
+                    if ixFN and adjText[ixFN-1]==' ':
+                        fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found footnote preceded by a space in \\{}: {}").format( originalMarker, adjText ) )
+                        logging.warning( _("processLineFix: Found footnote preceded by a space after {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
+                        self.addPriorityError( 52, C, V, _("Footnote is preceded by a space") )
+                elif ix1 == ixEN:
+                    ix2 = adjText.find( '\\fe*' )
+                    if ix2 == -1: ix2 = adjText.find( '\\FE*' )
+                    #print( 'A', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
+                    noteSFM, lenSFM, thisOne, this1 = 'fe', 2, 'endnote', 'en'
+                    if ixEN and adjText[ixEN-1]==' ':
+                        fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found endnote preceded by a space in \\{}: {}").format( originalMarker, adjText ) )
+                        logging.warning( _("processLineFix: Found endnote preceded by a space after {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
+                        self.addPriorityError( 52, C, V, _("Endnote is preceded by a space") )
+                elif ix1 == ixXR:
+                    ix2 = adjText.find( '\\x*' )
+                    if ix2 == -1: ix2 = adjText.find( '\\X*' )
+                    #print( 'B', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
+                    noteSFM, lenSFM, thisOne, this1 = 'x', 1, 'cross-reference', 'xr'
+                elif ix1 == ixFIG:
+                    ix2 = adjText.find( '\\fig*' )
+                    if ix2 == -1: ix2 = adjText.find( '\\FIG*' )
+                    #print( 'C', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
+                    noteSFM, lenSFM, thisOne, this1 = 'fig', 3, 'figure', 'fig'
+                elif ix1 == ixSTR:
+                    ix2 = adjText.find( '\\str*' )
+                    if ix2 == -1: ix2 = adjText.find( '\\STR*' )
+                    #print( 'C', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
+                    noteSFM, lenSFM, thisOne, this1 = 'str', 3, 'Strongs-number', 'str'
+                elif ix1 == ixSEM:
+                    ix2 = adjText.find( '\\sem*' )
+                    if ix2 == -1: ix2 = adjText.find( '\\SEM*' )
+                    #print( 'C', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
+                    noteSFM, lenSFM, thisOne, this1 = 'sem', 3, 'Semantic info', 'sem'
+                elif ix1 == ixVP:
+                    if originalMarker != 'v~': # We only expect vp fields in v (now converted to v~) lines
+                        fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found unexpected 'vp' field in \\{} line: {}").format( originalMarker, adjText ) )
+                        logging.error( _("processLineFix: Found unexpected 'vp' fieldafter {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
+                        self.addPriorityError( 95, C, V, _("Misplaced 'vp' field") )
+                    ix2 = adjText.find( '\\vp*' )
+                    if ix2 == -1: ix2 = adjText.find( '\\VP*' )
+                    #print( 'C', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
+                    noteSFM, lenSFM, thisOne, this1 = 'vp', 2, 'verse-character', 'vp'
+                elif Globals.debugFlag: halt # programming error
+                if ix2 == -1: # no closing marker
+                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found unmatched {} open in \\{}: {}").format( thisOne, originalMarker, adjText ) )
+                    logging.error( _("processLineFix: Found unmatched {} open after {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
+                    self.addPriorityError( 84, C, V, _("Marker {} is unmatched").format( thisOne ) )
+                    ix2 = 99999 # Go to the end
+                elif ix2 < ix1: # closing marker is before opening marker
+                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found unmatched {} in \\{}: {}").format( thisOne, originalMarker, adjText ) )
+                    logging.error( _("processLineFix: Found unmatched {} after {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, thisOne, originalMarker, adjText ) )
+                    self.addPriorityError( 84, C, V, _("Marker {} is unmatched").format( thisOne ) )
+                    ix1, ix2 = ix2, ix1 # swap them then
+                # Remove the footnote or endnote or xref or figure
+                #print( "\nFound {} at {} {} in '{}'".format( repr(thisOne), ix1, ix2, repr(adjText) ) )
+                #print( '\nB', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
+                note = adjText[ix1+lenSFM+2:ix2] # Get the note text (without the beginning and end markers)
+                #print( "\nNote is", repr(note) )
+                if not note:
+                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found empty {} in \\{}: {}").format( thisOne, originalMarker, adjText ) )
+                    logging.error( _("processLineFix: Found empty {} after {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
+                    self.addPriorityError( 53, C, V, _("Empty {}").format( thisOne ) )
+                else: # there is a note
+                    if note[0].isspace():
+                        fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found {} starting with space in \\{}: {}").format( thisOne, originalMarker, adjText ) )
+                        logging.warning( _("processLineFix: Found {} starting with space after {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
+                        self.addPriorityError( 12, C, V, _("{} starts with space").format( thisOne.title() ) )
+                        note = note.lstrip()
+                        #print( "QQQ2: lstrip in note" ); halt
+                    if note and note[-1].isspace():
+                        fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found {} ending with space in \\{}: {}").format( thisOne, originalMarker, adjText ) )
+                        logging.warning( _("processLineFix: Found {} ending with space after {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
+                        self.addPriorityError( 11, C, V, _("{} ends with space").format( thisOne.title() ) )
+                        note = note.rstrip()
+                        #print( "QQQ3: rstrip in note" )
+                    if '\\f ' in note or '\\f*' in note or '\\x ' in note or '\\x*' in note: # Only the contents of these fields should be here now
+                        print( "processLineFix: {} {}:{} What went wrong here: '{}' from \\{} '{}' (Is it an embedded note?)".format( self.BBB, C, V, note, originalMarker, text ) )
+                        print( "processLineFix: Have an embedded note perhaps! Not handled correctly yet" )
+                        note = note.replace( '\\f ', ' ' ).replace( '\\f*','').replace( '\\x ', ' ').replace('\\x*','') # Temporary fix ..................
+                adjText = adjText[:ix1] + adjText[ix2+lenSFM+2:] # Remove the note completely from the text
+                # Now prepare a cleaned version
+                cleanedNote = note.replace( '&amp;', '&' ).replace( '&#39;', "'" ).replace( '&lt;', '<' ).replace( '&gt;', '>' ).replace( '&quot;', '"' ) # Undo any replacements above
+                for sign in ('- ', '+ '): # Remove common leader characters (and the following space)
+                    cleanedNote = cleanedNote.replace( sign, '' )
+                for marker in ['\\xo*','\\xo ', '\\xt*','\\xt ', '\\xk*','\\xk ', '\\xq*','\\xq ',
+                                '\\xot*','\\xot ', '\\xnt*','\\xnt ', '\\xdc*','\\xdc ',
+                                '\\fr*','\\fr ','\\ft*','\\ft ','\\fqa*','\\fqa ','\\fq*','\\fq ',
+                                '\\fv*','\\fv ','\\fk*','\\fk ','\\fl*','\\fl ','\\fdc*','\\fdc ',] \
+                                    + INTERNAL_SFMS_TO_REMOVE:
+                    cleanedNote = cleanedNote.replace( marker, '' )
+                if '\\' in cleanedNote:
+                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found unexpected backslash in {}: {}").format( thisOne, cleanedNote ) )
+                    logging.error( _("processLineFix: Found unexpected backslash after {} {}:{} in {}: {}").format( self.BBB, C, V, thisOne, cleanedNote ) )
+                    self.addPriorityError( 81, C, V, _("{} contains unexpected backslash").format( thisOne.title() ) )
+                    cleanedNote = cleanedNote.replace( '\\', '' )
+
+                # Save it all and finish off
+                extras.append( InternalBibleExtra(this1,ix1,note,cleanedNote) ) # Saves a 4-tuple: type ('fn' or 'xr', etc.), index into the main text line, the actual fn or xref contents, then a cleaned version
+                if this1 == 'vp': # Insert a new pseudo vp~ newline entry BEFORE the v field that it presumably came from
+                    #print( "InternalBibleBook.processLineFix insertVP~ (before)", self.BBB, C, V, repr(originalMarker), repr(cleanedNote) )
+                    if Globals.debugFlag: assert( originalMarker == 'v~' ) # Shouldn't occur in other fields
+                    vEntry = self._processedLines.pop() # because the v field has already been written
+                    self._processedLines.append( InternalBibleEntry('vp~', 'vp', cleanedNote, cleanedNote, None, cleanedNote) )
+                    self._processedLines.append( vEntry ) # Put the original v entry back afterwards
+                # Get ready for the next loop
                 ixFN = adjText.find( '\\f ' )
                 if ixFN == -1: ixFN = adjText.find( '\\F ' )
                 if ixFN == -1: ixFN = dummyValue
@@ -359,147 +492,24 @@ class InternalBibleBook:
                 ixSTR = adjText.find( '\\str ' )
                 if ixSTR == -1: ixSTR = adjText.find( '\\STR ' )
                 if ixSTR == -1: ixSTR = dummyValue
+                ixSEM = adjText.find( '\\sem ' )
+                if ixSEM == -1: ixSEM = adjText.find( '\\SEM ' )
+                if ixSEM == -1: ixSEM = dummyValue
                 ixVP = adjText.find( '\\vp ' )
                 if ixVP == -1: ixVP = adjText.find( '\\VP ' )
                 if ixVP == -1: ixVP = dummyValue
-                #print( 'ixFN =',ixFN, ixEN, 'ixXR = ',ixXR, ixFIG, ixSTR )
-                ix1 = min( ixFN, ixEN, ixXR, ixFIG, ixSTR, ixVP )
-                while ix1 < dummyValue: # We have one or the other
-                    if ix1 == ixFN:
-                        ix2 = adjText.find( '\\f*' )
-                        if ix2 == -1: ix2 = adjText.find( '\\F*' )
-                        #print( 'A', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
-                        noteSFM, lenSFM, thisOne, this1 = 'f', 1, 'footnote', 'fn'
-                        if ixFN and adjText[ixFN-1]==' ':
-                            fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found footnote preceded by a space in \\{}: {}").format( originalMarker, adjText ) )
-                            logging.warning( _("processLineFix: Found footnote preceded by a space after {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
-                            self.addPriorityError( 52, C, V, _("Footnote is preceded by a space") )
-                    elif ix1 == ixEN:
-                        ix2 = adjText.find( '\\fe*' )
-                        if ix2 == -1: ix2 = adjText.find( '\\FE*' )
-                        #print( 'A', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
-                        noteSFM, lenSFM, thisOne, this1 = 'fe', 2, 'endnote', 'en'
-                        if ixEN and adjText[ixEN-1]==' ':
-                            fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found endnote preceded by a space in \\{}: {}").format( originalMarker, adjText ) )
-                            logging.warning( _("processLineFix: Found endnote preceded by a space after {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
-                            self.addPriorityError( 52, C, V, _("Endnote is preceded by a space") )
-                    elif ix1 == ixXR:
-                        ix2 = adjText.find( '\\x*' )
-                        if ix2 == -1: ix2 = adjText.find( '\\X*' )
-                        #print( 'B', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
-                        noteSFM, lenSFM, thisOne, this1 = 'x', 1, 'cross-reference', 'xr'
-                    elif ix1 == ixFIG:
-                        ix2 = adjText.find( '\\fig*' )
-                        if ix2 == -1: ix2 = adjText.find( '\\FIG*' )
-                        #print( 'C', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
-                        noteSFM, lenSFM, thisOne, this1 = 'fig', 3, 'figure', 'fig'
-                    elif ix1 == ixSTR:
-                        ix2 = adjText.find( '\\str*' )
-                        if ix2 == -1: ix2 = adjText.find( '\\STR*' )
-                        #print( 'C', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
-                        noteSFM, lenSFM, thisOne, this1 = 'str', 3, 'Strongs-number', 'str'
-                    elif ix1 == ixVP:
-                        if originalMarker != 'v~': # We only expect vp fields in v (now converted to v~) lines
-                            fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found unexpected 'vp' field in \\{} line: {}").format( originalMarker, adjText ) )
-                            logging.error( _("processLineFix: Found unexpected 'vp' fieldafter {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
-                            self.addPriorityError( 95, C, V, _("Misplaced 'vp' field") )
-                        ix2 = adjText.find( '\\vp*' )
-                        if ix2 == -1: ix2 = adjText.find( '\\VP*' )
-                        #print( 'C', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
-                        noteSFM, lenSFM, thisOne, this1 = 'vp', 2, 'verse-character', 'vp'
-                    elif Globals.debugFlag: halt # programming error
-                    if ix2 == -1: # no closing marker
-                        fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found unmatched {} open in \\{}: {}").format( thisOne, originalMarker, adjText ) )
-                        logging.error( _("processLineFix: Found unmatched {} open after {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
-                        self.addPriorityError( 84, C, V, _("Marker {} is unmatched").format( thisOne ) )
-                        ix2 = 99999 # Go to the end
-                    elif ix2 < ix1: # closing marker is before opening marker
-                        fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found unmatched {} in \\{}: {}").format( thisOne, originalMarker, adjText ) )
-                        logging.error( _("processLineFix: Found unmatched {} after {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, thisOne, originalMarker, adjText ) )
-                        self.addPriorityError( 84, C, V, _("Marker {} is unmatched").format( thisOne ) )
-                        ix1, ix2 = ix2, ix1 # swap them then
-                    # Remove the footnote or endnote or xref or figure
-                    #print( "\nFound {} at {} {} in '{}'".format( repr(thisOne), ix1, ix2, repr(adjText) ) )
-                    #print( '\nB', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
-                    note = adjText[ix1+lenSFM+2:ix2] # Get the note text (without the beginning and end markers)
-                    #print( "\nNote is", repr(note) )
-                    if not note:
-                        fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found empty {} in \\{}: {}").format( thisOne, originalMarker, adjText ) )
-                        logging.error( _("processLineFix: Found empty {} after {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
-                        self.addPriorityError( 53, C, V, _("Empty {}").format( thisOne ) )
-                    else: # there is a note
-                        if note[0].isspace():
-                            fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found {} starting with space in \\{}: {}").format( thisOne, originalMarker, adjText ) )
-                            logging.warning( _("processLineFix: Found {} starting with space after {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
-                            self.addPriorityError( 12, C, V, _("{} starts with space").format( thisOne.title() ) )
-                            note = note.lstrip()
-                            #print( "QQQ2: lstrip in note" ); halt
-                        if note and note[-1].isspace():
-                            fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found {} ending with space in \\{}: {}").format( thisOne, originalMarker, adjText ) )
-                            logging.warning( _("processLineFix: Found {} ending with space after {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
-                            self.addPriorityError( 11, C, V, _("{} ends with space").format( thisOne.title() ) )
-                            note = note.rstrip()
-                            #print( "QQQ3: rstrip in note" )
-                        if '\\f ' in note or '\\f*' in note or '\\x ' in note or '\\x*' in note: # Only the contents of these fields should be here now
-                            print( "processLineFix: {} {}:{} What went wrong here: '{}' from \\{} '{}' (Is it an embedded note?)".format( self.BBB, C, V, note, originalMarker, text ) )
-                            print( "processLineFix: Have an embedded note perhaps! Not handled correctly yet" )
-                            note = note.replace( '\\f ', ' ' ).replace( '\\f*','').replace( '\\x ', ' ').replace('\\x*','') # Temporary fix ..................
-                    adjText = adjText[:ix1] + adjText[ix2+lenSFM+2:] # Remove the note completely from the text
-                    # Now prepare a cleaned version
-                    cleanedNote = note.replace( '&amp;', '&' ).replace( '&#39;', "'" ).replace( '&lt;', '<' ).replace( '&gt;', '>' ).replace( '&quot;', '"' ) # Undo any replacements above
-                    for sign in ('- ', '+ '): # Remove common leader characters (and the following space)
-                        cleanedNote = cleanedNote.replace( sign, '' )
-                    for marker in ['\\xo*','\\xo ', '\\xt*','\\xt ', '\\xk*','\\xk ', '\\xq*','\\xq ',
-                                   '\\xot*','\\xot ', '\\xnt*','\\xnt ', '\\xdc*','\\xdc ',
-                                   '\\fr*','\\fr ','\\ft*','\\ft ','\\fqa*','\\fqa ','\\fq*','\\fq ',
-                                   '\\fv*','\\fv ','\\fk*','\\fk ','\\fl*','\\fl ','\\fdc*','\\fdc ',] \
-                                       + INTERNAL_SFMS_TO_REMOVE:
-                        cleanedNote = cleanedNote.replace( marker, '' )
-                    if '\\' in cleanedNote:
-                        fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found unexpected backslash in {}: {}").format( thisOne, cleanedNote ) )
-                        logging.error( _("processLineFix: Found unexpected backslash after {} {}:{} in {}: {}").format( self.BBB, C, V, thisOne, cleanedNote ) )
-                        self.addPriorityError( 81, C, V, _("{} contains unexpected backslash").format( thisOne.title() ) )
-                        cleanedNote = cleanedNote.replace( '\\', '' )
+                ix1 = min( ixFN, ixEN, ixXR, ixFIG, ixSTR, ixSEM, ixVP )
+            #if extras: print( "Fix gave '{}' and '{}'".format( adjText, extras ) )
+            #if len(extras)>1: print( "Mutiple fix gave '{}' and '{}'".format( adjText, extras ) )
 
-                    # Save it all and finish off
-                    extras.append( InternalBibleExtra(this1,ix1,note,cleanedNote) ) # Saves a 4-tuple: type ('fn' or 'xr', etc.), index into the main text line, the actual fn or xref contents, then a cleaned version
-                    if this1 == 'vp': # Insert a new pseudo vp~ newline entry BEFORE the v field that it presumably came from
-                        #print( "InternalBibleBook.processLineFix insertVP~ (before)", self.BBB, C, V, repr(originalMarker), repr(cleanedNote) )
-                        if Globals.debugFlag: assert( originalMarker == 'v~' ) # Shouldn't occur in other fields
-                        vEntry = self._processedLines.pop() # because the v field has already been written
-                        self._processedLines.append( InternalBibleEntry('vp~', 'vp', cleanedNote, cleanedNote, None, cleanedNote) )
-                        self._processedLines.append( vEntry ) # Put the original v entry back afterwards
-                    # Get ready for the next loop
-                    ixFN = adjText.find( '\\f ' )
-                    if ixFN == -1: ixFN = adjText.find( '\\F ' )
-                    if ixFN == -1: ixFN = dummyValue
-                    ixEN = adjText.find( '\\fe ' )
-                    if ixEN == -1: ixEN = adjText.find( '\\FE ' )
-                    if ixEN == -1: ixEN = dummyValue
-                    ixXR = adjText.find( '\\x ' )
-                    if ixXR == -1: ixXR = adjText.find( '\\X ' )
-                    if ixXR == -1: ixXR = dummyValue
-                    ixFIG = adjText.find( '\\fig ' )
-                    if ixFIG == -1: ixFIG = adjText.find( '\\FIG ' )
-                    if ixFIG == -1: ixFIG = dummyValue
-                    ixSTR = adjText.find( '\\str ' )
-                    if ixSTR == -1: ixSTR = adjText.find( '\\STR ' )
-                    if ixSTR == -1: ixSTR = dummyValue
-                    ixVP = adjText.find( '\\vp ' )
-                    if ixVP == -1: ixVP = adjText.find( '\\VP ' )
-                    if ixVP == -1: ixVP = dummyValue
-                    ix1 = min( ixFN, ixEN, ixXR, ixFIG, ixSTR, ixVP )
-                #if extras: print( "Fix gave '{}' and '{}'".format( adjText, extras ) )
-                #if len(extras)>1: print( "Mutiple fix gave '{}' and '{}'".format( adjText, extras ) )
-
-                # Check for anything left over
-                if '\\f' in adjText or '\\x' in adjText:
-                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unable to properly process footnotes and cross-references in \\{}: {}").format( originalMarker, adjText ) )
-                    logging.error( _("processLineFix: Unable to properly process footnotes and cross-references {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
-                    self.addPriorityError( 82, C, V, _("Invalid footnotes or cross-references") )
+            # Check for anything left over
+            if '\\f' in adjText or '\\x' in adjText:
+                fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unable to properly process footnotes and cross-references in \\{}: {}").format( originalMarker, adjText ) )
+                logging.error( _("processLineFix: Unable to properly process footnotes and cross-references {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
+                self.addPriorityError( 82, C, V, _("Invalid footnotes or cross-references") )
 
 
-            elif self.objectTypeString == 'SwordBibleModule': # Move Sword notes out to extras
+            if self.objectTypeString == 'SwordBibleModule': # Move Sword notes out to extras
                 #print( "\nhere", adjText )
                 ixStart = 0 # Start searching from here
                 indexDigits = [] # For Sword <RF>n<Rf> note markers
@@ -727,7 +737,7 @@ class InternalBibleBook:
                     assert( extraIndex >= 0 )
                     # This can happen with multiple notes at the end separated by spaces
                     #if extraIndex > len(adjText)+1: print( "Programming Note: extraIndex {} is way more than text length of {} with '{}'".format( extraIndex, len(adjText), text ) )
-                    assert( extraType in EXTRA_TYPES )
+                    assert( extraType in BOS_EXTRA_TYPES )
                     assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
 
             return adjText, cleanText, extras
@@ -801,7 +811,7 @@ class InternalBibleBook:
 
             # Convert USFM markers like s to standard markers like s1
             try:
-                adjustedMarker = originalMarker if originalMarker in BOS_CONTENT_MARKERS else Globals.USFMMarkers.toStandardMarker( originalMarker )
+                adjustedMarker = originalMarker if originalMarker in BOS_ADDED_CONTENT_MARKERS else Globals.USFMMarkers.toStandardMarker( originalMarker )
             except KeyError: # unknown marker
                 logging.error( "processLine-check: unknown {} originalMarker = {}".format( self.objectTypeString, originalMarker ) )
                 adjustedMarker = originalMarker # temp....................
@@ -1678,7 +1688,7 @@ class InternalBibleBook:
                 logging.error( _("Marker 'id' should only appear as the first marker in a book but found on line {} after {} {}:{} in {}: {}").format( j+1, self.BBB, C, V, marker, text ) )
                 self.addPriorityError( 99, C, V, _("'id' marker should only be in first line of file") )
             if ( marker[0]=='¬' and marker not in BOS_END_MARKERS and not Globals.USFMMarkers.isNewlineMarker( marker[1:] ) ) \
-            or ( marker[0]!='¬' and marker not in ('c#','vp~',) and marker not in BOS_NESTING_MARKERS and not Globals.USFMMarkers.isNewlineMarker( marker ) ):
+            or ( marker[0]!='¬' and marker not in ('c#','vp~',) and marker not in BOS_ADDED_NESTING_MARKERS and not Globals.USFMMarkers.isNewlineMarker( marker ) ):
                 validationErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unexpected '{}' newline marker in Bible book (Text is '{}')").format( marker, text ) )
                 logging.warning( _("Unexpected '{}' newline marker in Bible book after {} {}:{} (Text is '{}')").format( marker, self.BBB, C, V, text ) )
                 self.addPriorityError( 80, C, V, _("Marker {} not expected at beginning of line".format( repr(marker) ) ) )
@@ -2009,7 +2019,7 @@ class InternalBibleBook:
                         #print( extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
                         assert( extraIndex >= 0 )
                         #assert( 0 <= extraIndex <= len(text)+3 )
-                        assert( extraType in EXTRA_TYPES )
+                        assert( extraType in BOS_EXTRA_TYPES )
                     if extraType=='fn':
                         bkDict['haveFootnotes'] = True
                         bkDict['footnotesCount'] += 1
@@ -2392,7 +2402,7 @@ class InternalBibleBook:
                     #logging.warning( _("Marker '{}' has no content after").format( marker ) + " {} {}:{}".format( self.BBB, C, V ) )
                     #self.addPriorityError( 47, C, V, _("Marker {} should have content").format( marker ) )
 
-            if marker[0] == '¬' or marker in BOS_NESTING_MARKERS: # Just ignore these added markers
+            if marker[0] == '¬' or marker in BOS_ADDED_NESTING_MARKERS: # Just ignore these added markers
                 continue
             elif marker == 'v~':
                 lastMarker, lastMarkerEmpty = 'v', markerEmpty
@@ -2607,7 +2617,7 @@ class InternalBibleBook:
                             print( "InternalBibleBook:doCheckSFMs-Extras-B {} {}:{} ".format( self.BBB, C, V ), extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
                         assert( extraIndex >= 0 )
                         #assert( 0 <= extraIndex <= len(text)+3 )
-                        assert( extraType in EXTRA_TYPES )
+                        assert( extraType in BOS_EXTRA_TYPES )
                     extraName = 'footnote' if extraType=='fn' else 'cross-reference'
                     if '\\f ' in extraText or '\\f*' in extraText or '\\x ' in extraText or '\\x*' in extraText: # Only the contents of these fields should be in extras
                         newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Programming error with extras: {}").format( extraText ) )
@@ -2853,7 +2863,7 @@ class InternalBibleBook:
                         #print( extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
                         assert( extraIndex >= 0 )
                         #assert( 0 <= extraIndex <= len(text)+3 )
-                        assert( extraType in EXTRA_TYPES )
+                        assert( extraType in BOS_EXTRA_TYPES )
                         assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
                     #cleanExtraText = extraText
                     #for sign in ('- ', '+ '): # Remove common leader characters (and the following space)
@@ -3025,7 +3035,7 @@ class InternalBibleBook:
                         #print( "InternalBibleBook:doCheckSpeechMarks {} {}:{} ".format( self.BBB, C, V ), extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
                         assert( extraIndex >= 0 )
                         #assert( 0 <= extraIndex <= len(text)+3 )
-                        assert( extraType in EXTRA_TYPES )
+                        assert( extraType in BOS_EXTRA_TYPES )
                         assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
                     extraOpenChars = []
                     for char in extraText:
@@ -3152,7 +3162,7 @@ class InternalBibleBook:
                         #print( extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
                         assert( extraIndex >= 0 )
                         #assert( 0 <= extraIndex <= len(text)+3 )
-                        assert( extraType in EXTRA_TYPES )
+                        assert( extraType in BOS_EXTRA_TYPES )
                         assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
                     #cleanExtraText = extraText
                     #for sign in ('- ', '+ '): # Remove common leader characters (and the following space)
@@ -3366,7 +3376,7 @@ class InternalBibleBook:
                         #assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
                         assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
                         #assert( 0 <= extraIndex <= len(text) ) -- not necessarily true for multiple notes
-                        assert( extraType in EXTRA_TYPES )
+                        assert( extraType in BOS_EXTRA_TYPES )
                         assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the CONTENTS of these fields should be in extras
 
                     # Get a copy of the note text without any formatting

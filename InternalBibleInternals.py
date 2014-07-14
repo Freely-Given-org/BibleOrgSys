@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleInternals.py
-#   Last modified: 2014-06-25 by RJH (also update ProgVersion below)
+#   Last modified: 2014-07-13 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Bible internals handler"
-ProgVersion = "0.44"
+ProgVersion = "0.45"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -61,7 +61,7 @@ TRAILING_WORD_PUNCT_CHARS = """,.”»"’›'?)!;:]}>"""
 ALL_WORD_PUNCT_CHARS = LEADING_WORD_PUNCT_CHARS + MEDIAL_WORD_PUNCT_CHARS + DASH_CHARS + TRAILING_WORD_PUNCT_CHARS
 
 
-BOS_CONTENT_MARKERS = ( 'c~', 'c#', 'v~', 'p~', 'cl=', 'vp~', )
+BOS_ADDED_CONTENT_MARKERS = ( 'c~', 'c#', 'v~', 'p~', 'cl=', 'vp~', )
 """
     c~  anything after the chapter number on a \c line
     c#  the chapter number in the correct position to be printed
@@ -74,16 +74,16 @@ BOS_CONTENT_MARKERS = ( 'c~', 'c#', 'v~', 'p~', 'cl=', 'vp~', )
             This is inserted BEFORE the v (and v~) marker(s)
 """
 
-BOS_NESTING_MARKERS = ( 'intro', 'ilist', 'chapters', 'list', )
+BOS_ADDED_NESTING_MARKERS = ( 'intro', 'ilist', 'chapters', 'list', )
 """
     intro       Inserted at the start of book introductions
     ilist       Inserted at the start of introduction lists (before ili markers)
     chapters    Inserted after the introduction (if any) and before the first Bible content (usually immediately before chapter 1 marker)
     list       Inserted at the start of lists (before li markers)
 """
-BOS_ALL_ADDED_MARKERS = BOS_CONTENT_MARKERS + BOS_NESTING_MARKERS
+BOS_ALL_ADDED_MARKERS = BOS_ADDED_CONTENT_MARKERS + BOS_ADDED_NESTING_MARKERS
 
-BOS_ALL_ADDED_NESTING_MARKERS = BOS_NESTING_MARKERS + ('iot',)
+BOS_ALL_ADDED_NESTING_MARKERS = BOS_ADDED_NESTING_MARKERS + ('iot',)
 """
     intro       Inserted at the start of book introductions
     iot         Inserted before introduction outline (io markers) IF IT'S NOT ALREADY IN THE FILE
@@ -94,15 +94,16 @@ BOS_ALL_ADDED_NESTING_MARKERS = BOS_NESTING_MARKERS + ('iot',)
 
 BOS_END_MARKERS = ('¬intro', '¬iot', '¬ilist', '¬chapters', '¬c', '¬v', '¬list', )
 
-#BOS_MARKERS = BOS_CONTENT_MARKERS + BOS_ALL_ADDED_NESTING_MARKERS + BOS_END_MARKERS
+#BOS_MARKERS = BOS_ADDED_CONTENT_MARKERS + BOS_ALL_ADDED_NESTING_MARKERS + BOS_END_MARKERS
 
-EXTRA_TYPES = ( 'fn', 'en', 'xr', 'fig', 'str', 'vp', )
+BOS_EXTRA_TYPES = ( 'fn', 'en', 'xr', 'fig', 'str', 'sem', 'vp', )
 """
     fn  footnote
     en  endnote
     xr  cross-reference
     fig figure
     str Strongs' number
+    sem semantic and other translation-related markers
     vp  published verse number
 """
 
@@ -119,7 +120,7 @@ class InternalBibleExtra:
         """
         if Globals.debugFlag or Globals.strictCheckingFlag:
             #print( "InternalBibleExtra.__init__( {}, {}, {}, {} )".format( myType, index, repr(noteText), repr(cleanNoteText) ) )
-            assert( myType and isinstance( myType, str ) and myType in EXTRA_TYPES ) # Mustn't be blank
+            assert( myType and isinstance( myType, str ) and myType in BOS_EXTRA_TYPES ) # Mustn't be blank
             assert( '\\' not in myType and ' ' not in myType and '*' not in myType )
             assert( isinstance( index, int ) and index >= 0 )
             assert( noteText and isinstance( noteText, str ) ) # Mustn't be blank
@@ -296,8 +297,8 @@ class InternalBibleEntry:
                 assert( extras is None or isinstance( extras, InternalBibleExtraList ) )
                 assert( isinstance( originalText, str ) )
                 assert( '\n' not in originalText and '\r' not in originalText )
-                #assert( marker in Globals.USFMMarkers or marker in BOS_CONTENT_MARKERS )
-                if marker not in Globals.USFMMarkers and marker not in BOS_CONTENT_MARKERS:
+                #assert( marker in Globals.USFMMarkers or marker in BOS_ADDED_CONTENT_MARKERS )
+                if marker not in Globals.USFMMarkers and marker not in BOS_ADDED_CONTENT_MARKERS:
                     logging.warning( "InternalBibleEntry doesn't handle '{}' marker yet.".format( marker ) )
         self.marker, self.originalMarker, self.adjustedText, self.cleanText, self.extras, self.originalText = marker, originalMarker, adjustedText, cleanText, extras, originalText
 
@@ -364,7 +365,8 @@ class InternalBibleEntry:
                 elif extraType == 'en': USFM, lenUSFM = 'fe', 2
                 elif extraType == 'xr': USFM, lenUSFM = 'x', 1
                 elif extraType == 'fig': USFM, lenUSFM = 'fig', 3
-                elif extraType == 'str': USFM, lenUSFM = 'str', 3 # Ignore Strong's numbers since no way to encode them in USFM
+                elif extraType == 'str': USFM, lenUSFM = 'str', 3
+                elif extraType == 'sem': USFM, lenUSFM = 'sem', 3
                 elif extraType == 'vp': USFM, lenUSFM = 'vp', 2
                 elif Globals.debugFlag: halt
                 if USFM:

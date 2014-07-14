@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # TheWordBible.py
-#   Last modified: 2014-06-30 by RJH (also update ProgVersion below)
+#   Last modified: 2014-07-13 by RJH (also update ProgVersion below)
 #
 # Module handling "theWord" Bible module files
 #
@@ -51,7 +51,7 @@ e.g.,
 """
 
 ProgName = "theWord Bible format handler"
-ProgVersion = "0.31"
+ProgVersion = "0.32"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -62,7 +62,7 @@ from gettext import gettext as _
 import multiprocessing
 
 import Globals
-from InternalBibleInternals import BOS_NESTING_MARKERS
+from InternalBibleInternals import BOS_ADDED_NESTING_MARKERS
 from USFMMarkers import OFTEN_IGNORED_USFM_HEADER_MARKERS, removeUSFMCharacterField, replaceUSFMCharacterFields
 from BibleOrganizationalSystems import BibleOrganizationalSystem
 
@@ -350,7 +350,7 @@ def theWordHandleIntroduction( BBB, bookData, ourGlobals ):
         verseData, context = result
         assert( len(verseData ) == 1 ) # in the introductory section
         marker, text = verseData[0].getMarker(), verseData[0].getFullText()
-        if marker not in theWordIgnoredIntroMarkers and '¬' not in marker and marker not in BOS_NESTING_MARKERS: # don't need end markers here either
+        if marker not in theWordIgnoredIntroMarkers and '¬' not in marker and marker not in BOS_ADDED_NESTING_MARKERS: # don't need end markers here either
             if marker in ('mt1','mte1'): composedLine += '<TS1>'+theWordAdjustLine(BBB,intC,intV,text)+'<Ts>'
             elif marker in ('mt2','mte2'): composedLine += '<TS2>'+theWordAdjustLine(BBB,intC,intV,text)+'<Ts>'
             elif marker in ('mt3','mte3'): composedLine += '<TS3>'+theWordAdjustLine(BBB,intC,intV,text)+'<Ts>'
@@ -419,6 +419,8 @@ def theWordAdjustLine( BBB, C, V, originalLine ):
 
     if '\\' in line: # Handle character formatting fields
         line = removeUSFMCharacterField( 'fig', line, closedFlag=True ) # Remove figures
+        line = removeUSFMCharacterField( 'str', line, closedFlag=True ) # Remove Strong's numbers
+        line = removeUSFMCharacterField( 'sem', line, closedFlag=True ) # Remove semantic tagging
         replacements = (
             ( ('add',), '<FI>','<Fi>' ),
             ( ('qt',), '<FO>','<Fo>' ),
@@ -498,7 +500,7 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
     #if BBB=='MAT' and C==4 and 14<V<18: print( BBB, C, V, ourGlobals, verseData )
     for verseDataEntry in verseData:
         marker, text = verseDataEntry.getMarker(), verseDataEntry.getFullText()
-        if '¬' in marker or marker in BOS_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
+        if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
         if marker in ('c','c#','cl','cp','rem',): lastMarker = marker; continue  # ignore all of these for this
 
         if marker == 'v': # handle versification differences here

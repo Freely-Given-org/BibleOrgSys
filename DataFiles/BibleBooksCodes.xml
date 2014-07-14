@@ -4,7 +4,7 @@
 This file gives a table of Bible booknames codes including
 these four compulsory fields:
     An English book name (as a comment only)
-    A three character reference code (upper case, no spaces, begins with a letter)
+    A three-character reference code (upper case, no spaces, begins with a letter)
         This reference code should reflect book contents (not book names) and is used to link to other tables.
         These reference codes are guaranteed to be stable after V1.00
             i.e., they will not change or be reused for different books.
@@ -115,8 +115,8 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
 
   <header>
     <work>
-      <version>0.72</version>
-      <date>2014-06-18</date>
+      <version>0.73</version>
+      <date>2014-07-14</date>
       <title>Bible books codes list</title>
       <contributor role="com">Robert Hunt</contributor>
       <identifier type="URL">http://www.sbl-site.org/publications/publishingwithsbl.aspx</identifier>
@@ -3068,6 +3068,43 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <typicalSection>BAK</typicalSection>
   </BibleBookCodes>
 
+  <!-- Reference dictionaries and databases (not usually published) -->
+  <BibleBookCodes>
+    <nameEnglish>Spelling dictionary / word list</nameEnglish>
+    <referenceAbbreviation>WRD</referenceAbbreviation>
+    <referenceNumber>880</referenceNumber>
+    <sequenceNumber>980</sequenceNumber>
+    <typicalSection>BAK</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish> Word definitions dictionary</nameEnglish>
+    <referenceAbbreviation>WDF</referenceAbbreviation>
+    <referenceNumber>882</referenceNumber>
+    <sequenceNumber>982</sequenceNumber>
+    <typicalSection>BAK</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Hyphenation dictionary</nameEnglish>
+    <referenceAbbreviation>HYP</referenceAbbreviation>
+    <referenceNumber>884</referenceNumber>
+    <sequenceNumber>984</sequenceNumber>
+    <typicalSection>BAK</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Strong's Database</nameEnglish>
+    <referenceAbbreviation>STR</referenceAbbreviation>
+    <referenceNumber>888</referenceNumber>
+    <sequenceNumber>988</sequenceNumber>
+    <typicalSection>BAK</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <nameEnglish>Semantic Database</nameEnglish>
+    <referenceAbbreviation>SEM</referenceAbbreviation>
+    <referenceNumber>890</referenceNumber>
+    <sequenceNumber>990</sequenceNumber>
+    <typicalSection>BAK</typicalSection>
+  </BibleBookCodes>
+
   <!-- Paratext USFM XXA-XXG codes.
      It would be preferable to use the labelled codes above,
         rather than these generic, undefined codes
@@ -3078,6 +3115,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <referenceNumber>800</referenceNumber>
     <sequenceNumber>900</sequenceNumber>
     <USFMAbbreviation>XXA</USFMAbbreviation>
+    <USFMNumber>94</USFMNumber>
     <USXNumber>093</USXNumber>
     <BibleditNumber>69</BibleditNumber>
     <typicalSection>BAK</typicalSection>
@@ -3088,6 +3126,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <referenceNumber>810</referenceNumber>
     <sequenceNumber>910</sequenceNumber>
     <USFMAbbreviation>XXB</USFMAbbreviation>
+    <USFMNumber>95</USFMNumber>
     <USXNumber>094</USXNumber>
     <typicalSection>BAK</typicalSection>
   </BibleBookCodes>
@@ -3097,6 +3136,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <referenceNumber>820</referenceNumber>
     <sequenceNumber>920</sequenceNumber>
     <USFMAbbreviation>XXC</USFMAbbreviation>
+    <USFMNumber>96</USFMNumber>
     <USXNumber>095</USXNumber>
     <typicalSection>BAK</typicalSection>
   </BibleBookCodes>
@@ -3106,6 +3146,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <referenceNumber>830</referenceNumber>
     <sequenceNumber>930</sequenceNumber>
     <USFMAbbreviation>XXD</USFMAbbreviation>
+    <USFMNumber>97</USFMNumber>
     <USXNumber>096</USXNumber>
     <typicalSection>BAK</typicalSection>
   </BibleBookCodes>
@@ -3115,6 +3156,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <referenceNumber>840</referenceNumber>
     <sequenceNumber>940</sequenceNumber>
     <USFMAbbreviation>XXE</USFMAbbreviation>
+    <USFMNumber>98</USFMNumber>
     <USXNumber>097</USXNumber>
     <typicalSection>BAK</typicalSection>
   </BibleBookCodes>
@@ -3124,6 +3166,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <referenceNumber>850</referenceNumber>
     <sequenceNumber>950</sequenceNumber>
     <USFMAbbreviation>XXF</USFMAbbreviation>
+    <USFMNumber>99</USFMNumber>
     <USXNumber>098</USXNumber>
     <typicalSection>BAK</typicalSection>
   </BibleBookCodes>
@@ -3133,6 +3176,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <referenceNumber>860</referenceNumber>
     <sequenceNumber>960</sequenceNumber>
     <USFMAbbreviation>XXG</USFMAbbreviation>
+    <!-- <USFMNumber>100</USFMNumber> Is this for real? A 3-digit USFM number? -->
     <USXNumber>099</USXNumber>
     <typicalSection>BAK</typicalSection>
   </BibleBookCodes>
