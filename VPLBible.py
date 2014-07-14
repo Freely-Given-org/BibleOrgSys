@@ -1,12 +1,12 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# UnboundBible.py
+# VPLBible.py
 #   Last modified: 2014-07-15 by RJH (also update ProgVersion below)
 #
-# Module handling Biola University "unbound" Bible files
+# Module handling verse-per-line text Bible files
 #
-# Copyright (C) 2013-2014 Robert Hunt
+# Copyright (C) 2014 Robert Hunt
 # Author: Robert Hunt <robert316@users.sourceforge.net>
 # License: See gpl-3.0.txt
 #
@@ -24,69 +24,20 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module reading and loading Biola University Unbound Bible files.
-These can be downloaded from: http://unbound.biola.edu/index.cfm?method=downloads.showDownloadMain
-
-Note that some modules have repeated lines (as at April 2013).  :-(
-There also seem to be a range of other errors so these UB modules are not reliably checked.  :-(
-
-A typical Unbound Bible file starts with lines beginning with #
-    which contain some meta-data
-    and then the main data lines are separated by tabs.
-Different versions have different numbers of tab-separated fields.
+Module reading and loading verse-per-line text Bible files.
 
 e.g.,
-    #THE UNBOUND BIBLE (www.unboundbible.org)
-    #name   English: King James Version
-    #filetype       Unmapped-BCVS
-    #copyright      Public Domain
-    #abbreviation
-    #language       eng
-    #note
-    #columns        orig_book_index orig_chapter    orig_verse      orig_subverse   order_by        text
-    01O     1       1               10      In the beginning God created the heaven and the earth.
-    01O     1       2               20      And the earth was without form, and void; and darkness was upon the face of the deep. And the Spirit of God moved upon the face of the waters.
-    01O     1       3               30      And God said, Let there be light: and there was light.
-and
-    #THE UNBOUND BIBLE (www.unboundbible.org)
-    #name   English: American Standard Version
-    #filetype       Unmapped-BCVS
-    #copyright      Published 1901. Public Domain.
-    #abbreviation
-    #language       eng
-    #note
-    #columns        orig_book_index orig_chapter    orig_verse      orig_subverse   order_by        text
-    01O     1       1               10      In the beginning God created the heavens and the earth.
-    01O     1       2               20      And the earth was waste and void; and darkness was upon the face of the deep: and the Spirit of God moved upon the face of the waters
-    01O     1       3               30      And God said, Let there be light: and there was light.
-and
-    #THE UNBOUND BIBLE (www.unboundbible.org)
-    #name   Maori
-    #filetype       Unmapped-BCVS
-    #copyright
-    #abbreviation
-    #language       mbf
-    #note
-    #columns        orig_book_index orig_chapter    orig_verse      orig_subverse   order_by        text
-    01O     1       1               10      ¶ He mea hanga na te atua i te timatanga te rangi me te whenua.
-    01O     1       2               20      A kahore he ahua o te whenua, i takoto kau; he pouri ano a runga i te mata o te hohonu. Na ka whakapaho te Wairua o te Atua i runga i te kare o nga wai.
-    01O     1       3               30      ¶ A ka ki te Atua, Kia marama: na ka marama.
-    01O     1       4               40      A ka kite te Atua i te marama, he pai: a ka wehea e te Atua te marama i te pouri.
-and
-    #THE UNBOUND BIBLE (www.unboundbible.org)
-    #name   Albanian
-    #filetype       Unmapped-BCV
-    #copyright
-    #abbreviation
-    #language       aln
-    #note
-    #columns        orig_book_index orig_chapter    orig_verse      text
-    01O     1       1       Në fillim Perëndia krijoi qiejt dhe tokën.
-    01O     1       2       Toka ishte pa trajtë, e zbrazët dhe errësira mbulonte sipërfaqen e humnerës; dhe Fryma e Perëndisë fluturonte mbi sipërfaqen e ujërave.
+    Ge 1:1 En el principio creó Dios el cielo y la tierra.
+    Ge 1:2 Y la tierra estaba desordenada y vacía, y las tinieblas [estaban] sobre la faz del abismo, y el Espíritu de Dios se movía sobre la faz de las aguas.
+    Ge 1:3 Y dijo Dios: Sea la luz; y fue la luz.
+    ...
+    Re 22:19 Y si alguno quitare de las palabras del libro de esta profecía, Dios quitará su parte del libro de la vida, y de la santa ciudad, y de las cosas que están escritas en este libro.
+    Re 22:20 El que da testimonio de estas cosas, dice: <Ciertamente vengo en breve.> Amén, así sea. Ven: Señor Jesús.
+    Re 22:21 La gracia de nuestro Señor Jesucristo [sea] con todos vosotros. Amén.
 """
 
-ProgName = "Unbound Bible format handler"
-ProgVersion = "0.18"
+ProgName = "VPL Bible format handler"
+ProgVersion = "0.17"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -105,32 +56,32 @@ extensionsToIgnore = ('ZIP', 'BAK', 'LOG', 'HTM','HTML', 'XML', 'OSIS', 'USX', '
 
 
 
-def UnboundBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
+def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
     """
-    Given a folder, search for Unbound Bible files or folders in the folder and in the next level down.
+    Given a folder, search for VPL Bible files or folders in the folder and in the next level down.
 
     Returns False if an error is found.
 
     if autoLoad is false (default)
         returns None, or the number of Bibles found.
 
-    if autoLoad is true and exactly one Unbound Bible is found,
-        returns the loaded UnboundBible object.
+    if autoLoad is true and exactly one VPL Bible is found,
+        returns the loaded VPLBible object.
     """
-    if Globals.verbosityLevel > 2: print( "UnboundBibleFileCheck( {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad ) )
+    if Globals.verbosityLevel > 2: print( "VPLBibleFileCheck( {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad ) )
     if Globals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
     if Globals.debugFlag: assert( autoLoad in (True,False,) )
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
-        logging.critical( _("UnboundBibleFileCheck: Given '{}' folder is unreadable").format( givenFolderName ) )
+        logging.critical( _("VPLBibleFileCheck: Given {} folder is unreadable").format( repr(givenFolderName) ) )
         return False
     if not os.path.isdir( givenFolderName ):
-        logging.critical( _("UnboundBibleFileCheck: Given '{}' path is not a folder").format( givenFolderName ) )
+        logging.critical( _("VPLBibleFileCheck: Given {} path is not a folder").format( repr(givenFolderName) ) )
         return False
 
     # Find all the files and folders in this folder
-    if Globals.verbosityLevel > 3: print( " UnboundBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    if Globals.verbosityLevel > 3: print( " VPLBibleFileCheck: Looking for files in given {}".format( repr(givenFolderName) ) )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -147,24 +98,24 @@ def UnboundBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
     if '__MACOSX' in foundFolders:
         foundFolders.remove( '__MACOSX' )  # don't visit these directories
 
-    # See if there's an UnboundBible project here in this given folder
+    # See if there's an VPLBible project here in this given folder
     numFound = 0
     looksHopeful = False
     lastFilenameFound = None
     for thisFilename in sorted( foundFiles ):
         if thisFilename in ('book_names.txt','Readme.txt' ): looksHopeful = True
-        elif thisFilename.endswith( '_utf8.txt' ):
+        elif thisFilename.endswith( '.txt' ):
             if strictCheck or Globals.strictCheckingFlag:
                 firstLine = Globals.peekIntoFile( thisFilename, givenFolderName )
-                if firstLine != "#THE UNBOUND BIBLE (www.unboundbible.org)":
+                if not firstLine.startswith( "Ge 1:1 " ):
                     if Globals.verbosityLevel > 2: print( "UB (unexpected) first line was '{}' in {}".format( firstLine, thisFilename ) )
                     continue
             lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
-        if Globals.verbosityLevel > 2: print( "UnboundBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
+        if Globals.verbosityLevel > 2: print( "VPLBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and autoLoad:
-            uB = UnboundBible( givenFolderName, lastFilenameFound[:-9] ) # Remove the end of the actual filename "_utf8.txt"
+            uB = VPLBible( givenFolderName, lastFilenameFound[:-4] ) # Remove the end of the actual filename ".txt"
             uB.load() # Load and process the file
             return uB
         return numFound
@@ -176,9 +127,9 @@ def UnboundBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
-            logging.warning( _("UnboundBibleFileCheck: '{}' subfolder is unreadable").format( tryFolderName ) )
+            logging.warning( _("VPLBibleFileCheck: '{}' subfolder is unreadable").format( tryFolderName ) )
             continue
-        if Globals.verbosityLevel > 3: print( "    UnboundBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        if Globals.verbosityLevel > 3: print( "    VPLBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
         for something in os.listdir( tryFolderName ):
             somepath = os.path.join( givenFolderName, thisFolderName, something )
@@ -195,30 +146,30 @@ def UnboundBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
 
         # See if there's an UB project here in this folder
         for thisFilename in sorted( foundSubfiles ):
-            if thisFilename.endswith( '_utf8.txt' ):
+            if thisFilename.endswith( '.txt' ):
                 if strictCheck or Globals.strictCheckingFlag:
                     firstLine = Globals.peekIntoFile( thisFilename, tryFolderName )
-                    if firstLine != "#THE UNBOUND BIBLE (www.unboundbible.org)":
+                    if not firstLine.startswith( "Ge 1:1 " ):
                         if Globals.verbosityLevel > 2: print( "UB (unexpected) first line was '{}' in {}".format( firstLine, thisFilname ) ); halt
                         continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
                 lastFilenameFound = thisFilename
                 numFound += 1
     if numFound:
-        if Globals.verbosityLevel > 2: print( "UnboundBibleFileCheck foundProjects", numFound, foundProjects )
+        if Globals.verbosityLevel > 2: print( "VPLBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and autoLoad:
             if Globals.debugFlag: assert( len(foundProjects) == 1 )
-            uB = UnboundBible( foundProjects[0][0], foundProjects[0][1][:-9] ) # Remove the end of the actual filename "_utf8.txt"
+            uB = VPLBible( foundProjects[0][0], foundProjects[0][1][:-4] ) # Remove the end of the actual filename ".txt"
             uB.load() # Load and process the file
             return uB
         return numFound
-# end of UnboundBibleFileCheck
+# end of VPLBibleFileCheck
 
 
 
-class UnboundBible( Bible ):
+class VPLBible( Bible ):
     """
-    Class for reading, validating, and converting UnboundBible files.
+    Class for reading, validating, and converting VPLBible files.
     """
     def __init__( self, sourceFolder, givenName, encoding='utf-8' ):
         """
@@ -226,21 +177,21 @@ class UnboundBible( Bible ):
         """
          # Setup and initialise the base class first
         Bible.__init__( self )
-        self.objectNameString = "Unbound Bible object"
-        self.objectTypeString = "Unbound"
+        self.objectNameString = "VPL Bible object"
+        self.objectTypeString = "VPL"
 
         # Now we can set our object variables
         self.sourceFolder, self.givenName, self.encoding = sourceFolder, givenName, encoding
-        self.sourceFilepath =  os.path.join( self.sourceFolder, self.givenName+'_utf8.txt' )
+        self.sourceFilepath =  os.path.join( self.sourceFolder, self.givenName+'.txt' )
 
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):
-            logging.critical( _("UnboundBible: File '{}' is unreadable").format( self.sourceFilepath ) )
+            logging.critical( _("VPLBible: File '{}' is unreadable").format( self.sourceFilepath ) )
 
         self.name = self.givenName
         #if self.name is None:
             #pass
-    # end of UnboundBible.__init__
+    # end of VPLBible.__init__
 
 
     def load( self ):
@@ -251,81 +202,52 @@ class UnboundBible( Bible ):
 
         lastLine, lineCount = '', 0
         BBB = None
-        NRSVA_bookCode = NRSVA_chapterNumberString = NRSVA_verseNumberString = None
-        subverseNumberString = sequenceNumberString = None
-        lastBookCode = lastChapterNumber = lastVerseNumber = lastSequence = -1
+        lastBookCode = lastChapterNumber = lastVerseNumber = -1
         lastVText = ''
         with open( self.sourceFilepath, encoding=self.encoding ) as myFile: # Automatically closes the file when done
             for line in myFile:
                 lineCount += 1
                 #if lineCount==1 and self.encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF
-                    #logging.info( "      UnboundBible.load: Detected UTF-16 Byte Order Marker" )
+                    #logging.info( "      VPLBible.load: Detected UTF-16 Byte Order Marker" )
                     #line = line[1:] # Remove the UTF-8 Byte Order Marker
                 if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 if not line: continue # Just discard blank lines
                 lastLine = line
                 #print ( 'UB file line is "' + line + '"' )
-                if line[0]=='#':
-                    hashBits = line[1:].split( '\t' )
-                    if len(hashBits)==2 and hashBits[1]: # We have some valid meta-data
-                        if hashBits[0] == 'name': self.name = hashBits[1]
-                        elif hashBits[0] == 'filetype': self.filetype = hashBits[1]
-                        elif hashBits[0] == 'copyright': self.copyright = hashBits[1]
-                        elif hashBits[0] == 'abbreviation': self.abbreviation = hashBits[1]
-                        elif hashBits[0] == 'language': self.language = hashBits[1]
-                        elif hashBits[0] == 'note': self.note = hashBits[1]
-                        elif hashBits[0] == 'columns': self.columns = hashBits[1]
-# Should some of these be placed into self.settingsDict???
-                        logging.warning( "Unknown UnboundBible meta-data field '{}' = '{}'".format( hashBits[0], hashBits[1] ) )
-                    continue # Just discard comment lines
+                if line[0]=='#': continue # Just discard comment lines
 
-                bits = line.split( '\t' )
+                bits = line.split( ' ', 2 )
                 #print( self.givenName, BBB, bits )
-                if len(bits) == 4:
-                    bookCode, chapterNumberString, verseNumberString, vText = bits
-                elif len(bits) == 6:
-                    bookCode, chapterNumberString, verseNumberString, subverseNumberString, sequenceNumberString, vText = bits
-                elif len(bits) == 9:
-                    NRSVA_bookCode, NRSVA_chapterNumberString, NRSVA_verseNumberString, bookCode, chapterNumberString, verseNumberString, subverseNumberString, sequenceNumberString, vText = bits
-                elif len(bits) == 1 and self.givenName.startswith( 'lxx_a_parsing_' ):
-                    logging.warning( _("Skipping bad '{}' line in {} {} {} {}:{}").format( line, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
-                    continue
+                if len(bits) == 3 and ':' in bits[1]:
+                    bookCode, CVString, vText = bits
+                    chapterNumberString, verseNumberString = CVString.split( ':' )
                 else: print( "Unexpected number of bits", self.givenName, BBB, bookCode, chapterNumberString, verseNumberString, len(bits), bits ); halt
-
-                if NRSVA_bookCode: assert( len(NRSVA_bookCode) == 3 )
-                if NRSVA_chapterNumberString: assert( NRSVA_chapterNumberString.isdigit() )
-                if NRSVA_verseNumberString: assert( NRSVA_verseNumberString.isdigit() )
 
                 if not bookCode and not chapterNumberString and not verseNumberString:
                     print( "Skipping empty line in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                     continue
-                if Globals.debugFlag: assert( len(bookCode) == 3 )
+                if Globals.debugFlag: assert( 2  <= len(bookCode) <= 4 )
                 if Globals.debugFlag: assert( chapterNumberString.isdigit() )
                 if Globals.debugFlag: assert( verseNumberString.isdigit() )
-
-                if subverseNumberString:
-                    logging.warning( _("subverseNumberString '{}' in {} {} {}:{}").format( subverseNumberString, BBB, bookCode, chapterNumberString, verseNumberString ) )
-
-                vText = vText.strip() # Remove leading and trailing spaces
-                if not vText: continue # Just ignore blank verses I think
-                if vText == '+': continue # Not sure what this means in basic_english JHN 1:38
-
                 chapterNumber = int( chapterNumberString )
                 verseNumber = int( verseNumberString )
-                if sequenceNumberString:
-                    if Globals.debugFlag: assert( sequenceNumberString.isdigit() )
-                    sequenceNumber = int( sequenceNumberString )
-                    if Globals.debugFlag: assert( sequenceNumber > lastSequence or \
-                        self.givenName in ('gothic_latin', 'hebrew_bhs_consonants', 'hebrew_bhs_vowels', 'latvian_nt', 'ukrainian_1871',) ) # Why???
-                    lastSequence = sequenceNumber
 
                 if bookCode != lastBookCode: # We've started a new book
                     if lastBookCode != -1: # Better save the last book
                         self.saveBook( thisBook )
-                    BBB = Globals.BibleBooksCodes.getBBBFromUnboundBibleCode( bookCode )
+                    if bookCode == 'Ge': BBB = 'GEN'
+                    elif bookCode == 'Le': BBB = 'LEV'
+                    elif bookCode == 'Jud': BBB = 'JDG'
+                    elif bookCode == 'Es': BBB = 'EST'
+                    elif bookCode == 'Pr': BBB = 'PRO'
+                    elif bookCode == 'So': BBB = 'SNG'
+                    elif bookCode == 'La': BBB = 'LAM'
+                    elif bookCode == 'Jude': BBB = 'JDE'
+                    else: BBB = Globals.BibleBooksCodes.getBBB( bookCode )  # Try to guess
+                    assert( BBB )
                     thisBook = BibleBook( self.name, BBB )
-                    thisBook.objectNameString = "Unbound Bible Book object"
-                    thisBook.objectTypeString = "Unbound"
+                    thisBook.objectNameString = "VPL Bible Book object"
+                    thisBook.objectTypeString = "VPL"
                     lastBookCode = bookCode
                     lastChapterNumber = lastVerseNumber = -1
 
@@ -336,6 +258,19 @@ class UnboundBible( Bible ):
                     thisBook.appendLine( 'c', chapterNumberString )
                     lastChapterNumber = chapterNumber
                     lastVerseNumber = -1
+
+                # Handle special formatting
+                #   [brackets] are for Italicized words
+                #   <brackets> are for the Words of Christ in Red
+                #   «brackets»  are for the Titles in the Book  of Psalms.
+                vText = vText.replace( '[', '\\add ' ).replace( ']', '\\add*' ) \
+                    .replace( '<', '\\wj ' ).replace( '>', '\\wj*' )
+                if vText and vText[0]=='«':
+                    assert( BBB=='PSA' and verseNumberString=='1' )
+                    vBits = vText[1:].split( '»' )
+                    #print( "vBits", vBits )
+                    thisBook.appendLine( 'd', vBits[0] ) # Psalm title
+                    vText = vBits[1].lstrip()
 
                 # Handle the verse info
                 if verseNumber==lastVerseNumber and vText==lastVText:
@@ -358,20 +293,20 @@ class UnboundBible( Bible ):
         # Save the final book
         self.saveBook( thisBook )
         self.doPostLoadProcessing()
-    # end of UnboundBible.load
-# end of UnboundBible class
+    # end of VPLBible.load
+# end of VPLBible class
 
 
 
-def testUB( TUBfilename ):
-    # Crudely demonstrate the Unbound Bible class
+def testVPL( VPLfilename ):
+    # Crudely demonstrate the VPL Bible class
     import VerseReferences
-    testFolder = "../../../../../Data/Work/Bibles/Biola Unbound modules/" # Must be the same as below
+    testFolder = "Tests/DataFilesForTests/VPLTest1/" # Must be the same as below
 
-    TUBfolder = os.path.join( testFolder, TUBfilename+'/' )
-    if Globals.verbosityLevel > 1: print( _("Demonstrating the Unbound Bible class...") )
-    if Globals.verbosityLevel > 0: print( "  Test folder is '{}' '{}'".format( TUBfolder, TUBfilename ) )
-    ub = UnboundBible( TUBfolder, TUBfilename )
+    TUBfolder = os.path.join( testFolder, VPLfilename+'/' )
+    if Globals.verbosityLevel > 1: print( _("Demonstrating the VPL Bible class...") )
+    if Globals.verbosityLevel > 0: print( "  Test folder is '{}' '{}'".format( TUBfolder, VPLfilename ) )
+    ub = VPLBible( TUBfolder, VPLfilename )
     ub.load() # Load and process the file
     if Globals.verbosityLevel > 1: print( ub ) # Just print a summary
     for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
@@ -390,7 +325,7 @@ def testUB( TUBfilename ):
         except KeyError:
             verseText = "Verse not available!"
         if Globals.verbosityLevel > 1: print( reference, shortText, verseText )
-# end of testUB
+# end of testVPL
 
 
 def demo():
@@ -400,37 +335,17 @@ def demo():
     if Globals.verbosityLevel > 0: print( ProgNameVersion )
 
 
-    testFolder = "../../../../../Data/Work/Bibles/Biola Unbound modules/"
+    testFolder = "Tests/DataFilesForTests/VPLTest1/"
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
-        result1 = UnboundBibleFileCheck( testFolder )
-        if Globals.verbosityLevel > 1: print( "Unbound TestA1", result1 )
-        result2 = UnboundBibleFileCheck( testFolder, autoLoad=True )
-        if Globals.verbosityLevel > 1: print( "Unbound TestA2", result2 )
-        testSubfolder = os.path.join( testFolder, 'asv/' )
-        result3 = UnboundBibleFileCheck( testSubfolder )
-        if Globals.verbosityLevel > 1: print( "Unbound TestB1", result3 )
-        result4 = UnboundBibleFileCheck( testSubfolder, autoLoad=True )
-        if Globals.verbosityLevel > 1: print( "Unbound TestB2", result4 )
+        result1 = VPLBibleFileCheck( testFolder )
+        if Globals.verbosityLevel > 1: print( "VPL TestA1", result1 )
+        result2 = VPLBibleFileCheck( testFolder, autoLoad=True )
+        if Globals.verbosityLevel > 1: print( "VPL TestA2", result2 )
 
 
-    if 1: # specified modules
-        single = ( "kjv_apocrypha", )
-        good = ( "afrikaans_1953", "albanian", "aleppo", "amharic", "arabic_svd", "armenian_eastern", \
-                "armenian_western_1853", "asv", "basic_english", "danish", "darby", "douay_rheims", "dutch_svv", \
-                "esperanto", "estonian", "kjv_apocrypha", "korean", "manx_gaelic", "maori", "myanmar_judson_1835", \
-                "norwegian", "peshitta", "portuguese", "potawatomi", "romani", )
-        nonEnglish = (  )
-        bad = ( )
-        for j, testFilename in enumerate( single ): # Choose one of the above: single, good, nonEnglish, bad
-            if Globals.verbosityLevel > 1: print( "\nUnbound C{}/ Trying {}".format( j+1, testFilename ) )
-            #myTestFolder = os.path.join( testFolder, testFilename+'/' )
-            #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
-            testUB( testFilename )
-
-
-    if 1: # all discovered modules in the test folder
+    if 0: # all discovered modules in the test folder
         foundFolders, foundFiles = [], []
         for something in os.listdir( testFolder ):
             somepath = os.path.join( testFolder, something )
@@ -441,13 +356,13 @@ def demo():
             if Globals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
             parameters = [folderName for folderName in sorted(foundFolders)]
             with multiprocessing.Pool( processes=Globals.maxProcesses ) as pool: # start worker processes
-                results = pool.map( testUB, parameters ) # have the pool do our loads
+                results = pool.map( testVPL, parameters ) # have the pool do our loads
                 assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
                 if Globals.verbosityLevel > 1: print( "\nUnbound D{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
-                testUB( someFolder )
+                testVPL( someFolder )
 # end of demo
 
 
@@ -461,4 +376,4 @@ if __name__ == '__main__':
     demo()
 
     Globals.closedown( ProgName, ProgVersion )
-# end of UnboundBible.py
+# end of VPLBible.py

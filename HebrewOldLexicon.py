@@ -24,7 +24,8 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module handling the OpenScriptures Hebrew lexicon.
+Module handling the OpenScriptures Hebrew lexicon
+    which contains 10,761 entries.
 
 Currently this version doesn't yet store (and return) many of the fields -- only usage and a couple of others.
 """
@@ -72,7 +73,6 @@ class HebrewOldLexiconFileConverter:
         """
         self.title, self.version, self.date = None, None, None
         self.tree, self.header, self.entries = None, None, None
-        self.books = OrderedDict()
     # end of __init__
 
 
@@ -593,185 +593,14 @@ class HebrewOldLexiconFileConverter:
         """
         assert( len ( self.tree ) )
         assert( self.entries )
-        return self.entries
-
-        notDone
-
-        # We'll create a number of dictionaries with different elements as the key
-        myIDDict,myRADict, mySBLDict,myOADict,mySwDict,myCCELDict,myPADict,myPNDict,myNETDict,myBzDict, myENDict = OrderedDict(),OrderedDict(), {},{},{},{},{},{},{},{}, {}
-        for element in self.tree:
-            # Get the required information out of the tree for this element
-            # Start with the compulsory elements
-            nameEnglish = element.find("nameEnglish").text # This name is really just a comment element
-            referenceAbbreviation = element.find("referenceAbbreviation").text
-            if referenceAbbreviation.upper() != referenceAbbreviation:
-                logging.error( "Reference abbreviation '{}' should be UPPER CASE".format( referenceAbbreviation ) )
-            ID = element.find("referenceNumber").text
-            intID = int( ID )
-            # The optional elements are set to None if they don't exist
-            expectedChapters = None if element.find("expectedChapters") is None else element.find("expectedChapters").text
-            SBLAbbreviation = None if element.find("SBLAbbreviation") is None else element.find("SBLAbbreviation").text
-            OSISAbbreviation = None if element.find("OSISAbbreviation") is None else element.find("OSISAbbreviation").text
-            SwordAbbreviation = None if element.find("SwordAbbreviation") is None else element.find("SwordAbbreviation").text
-            CCELNumberString = None if element.find("CCELNumber") is None else element.find("CCELNumber").text
-            #CCELNumber = int( CCELNumberString ) if CCELNumberString else -1
-            ParatextAbbreviation = None if element.find("ParatextAbbreviation") is None else element.find("ParatextAbbreviation").text
-            ParatextNumberString = None if element.find("ParatextNumber") is None else element.find("ParatextNumber").text
-            #ParatextNumber = int( ParatextNumberString ) if ParatextNumberString else -1
-            NETBibleAbbreviation = None if element.find("NETBibleAbbreviation") is None else element.find("NETBibleAbbreviation").text
-            ByzantineAbbreviation = None if element.find("ByzantineAbbreviation") is None else element.find("ByzantineAbbreviation").text
-            possibleAlternativeBooks = None if element.find("possibleAlternativeBooks") is None else element.find("possibleAlternativeBooks").text
-
-            # Now put it into my dictionaries for easy access
-            # This part should be customized or added to for however you need to process the data
-            #   Add .upper() if you require the abbreviations to be uppercase (or .lower() for lower case)
-            #   The referenceAbbreviation is UPPER CASE by definition
-            if "referenceAbbreviation" in HebrewOldLexiconFileConverter.compulsoryElements or referenceAbbreviation:
-                if "referenceAbbreviation" in HebrewOldLexiconFileConverter.uniqueElements: assert( referenceAbbreviation not in myRADict ) # Shouldn't be any duplicates
-                myRADict[referenceAbbreviation] = ( intID, SBLAbbreviation, OSISAbbreviation, SwordAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, NETBibleAbbreviation, ByzantineAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish, )
-            if "referenceNumber" in HebrewOldLexiconFileConverter.compulsoryElements or ID:
-                if "referenceNumber" in HebrewOldLexiconFileConverter.uniqueElements: assert( intID not in myIDDict ) # Shouldn't be any duplicates
-                myIDDict[intID] = ( referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, SwordAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, NETBibleAbbreviation, ByzantineAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish, )
-            if "SBLAbbreviation" in HebrewOldLexiconFileConverter.compulsoryElements or SBLAbbreviation:
-                if "SBLAbbreviation" in HebrewOldLexiconFileConverter.uniqueElements: ssert( SBLAbbreviation not in myOADict ) # Shouldn't be any duplicates
-                mySBLDict[SBLAbbreviation] = ( intID, referenceAbbreviation, )
-            if "OSISAbbreviation" in HebrewOldLexiconFileConverter.compulsoryElements or OSISAbbreviation:
-                if "OSISAbbreviation" in HebrewOldLexiconFileConverter.uniqueElements: assert( OSISAbbreviation not in myOADict ) # Shouldn't be any duplicates
-                myOADict[OSISAbbreviation] = ( intID, referenceAbbreviation )
-            if "SwordAbbreviation" in HebrewOldLexiconFileConverter.compulsoryElements or SwordAbbreviation:
-                if "SwordAbbreviation" in HebrewOldLexiconFileConverter.uniqueElements: assert( SwordAbbreviation not in mySwDict ) # Shouldn't be any duplicates
-                mySwDict[SwordAbbreviation] = ( intID, referenceAbbreviation, )
-            if "CCELNumberString" in HebrewOldLexiconFileConverter.compulsoryElements or CCELNumberString:
-                if "CCELNumberString" in HebrewOldLexiconFileConverter.uniqueElements: assert( CCELNumberString not in myCCELDict ) # Shouldn't be any duplicates
-                myCCELDict[CCELNumberString] = ( intID, referenceAbbreviation, )
-            if "ParatextAbbreviation" in HebrewOldLexiconFileConverter.compulsoryElements or ParatextAbbreviation:
-                if "ParatextAbbreviation" in HebrewOldLexiconFileConverter.uniqueElements: assert( ParatextAbbreviation not in myPADict ) # Shouldn't be any duplicates
-                myPADict[ParatextAbbreviation] = ( intID, referenceAbbreviation, ParatextNumberString, )
-            if "ParatextNumberString" in HebrewOldLexiconFileConverter.compulsoryElements or ParatextNumberString:
-                if "ParatextNumberString" in HebrewOldLexiconFileConverter.uniqueElements: assert( ParatextNumberString not in myPNDict ) # Shouldn't be any duplicates
-                myPNDict[ParatextNumberString] = ( intID, referenceAbbreviation, ParatextAbbreviation, )
-            if "NETBibleAbbreviation" in HebrewOldLexiconFileConverter.compulsoryElements or NETBibleAbbreviation:
-                if "NETBibleAbbreviation" in HebrewOldLexiconFileConverter.uniqueElements: assert( NETBibleAbbreviation not in myBzDict ) # Shouldn't be any duplicates
-                myNETDict[NETBibleAbbreviation] = ( intID, referenceAbbreviation, )
-            if "ByzantineAbbreviation" in HebrewOldLexiconFileConverter.compulsoryElements or ByzantineAbbreviation:
-                if "ByzantineAbbreviation" in HebrewOldLexiconFileConverter.uniqueElements: assert( ByzantineAbbreviation not in myBzDict ) # Shouldn't be any duplicates
-                myBzDict[ByzantineAbbreviation] = ( intID, referenceAbbreviation, )
-            if "nameEnglish" in HebrewOldLexiconFileConverter.compulsoryElements or ParatextNumberString:
-                if "nameEnglish" in HebrewOldLexiconFileConverter.uniqueElements: assert( nameEnglish not in myENDict ) # Shouldn't be any duplicates
-                myENDict[nameEnglish] = ( intID, referenceAbbreviation )
-        return myIDDict, myRADict, mySBLDict, myOADict, mySwDict, myCCELDict, myPADict, myPNDict, myNETDict, myBzDict, myENDict # Just throw away any of the dictionaries that you don't need
+        return self.entries # temp................................XXXXXXXXXXXXXXXXXXXXXXXXXXXXX......................
     # end of importDataToPython
-
-    def exportDataToPython( self, filepath=None ):
-        notDone
-        """
-        Writes the information tables to a .py file that can be cut and pasted into a Python program.
-        """
-        def exportPythonDict( theFile, theDict, dictName, keyComment, fieldsComment ):
-            """Exports theDict to theFile."""
-            for dictKey in theDict.keys(): # Have to iterate this :(
-                fieldsCount = len( theDict[dictKey] )
-                break # We only check the first (random) entry we get
-            theFile.write( "{} = {\n  # Key is {}\n  # Fields ({}) are: {}\n".format( dictName, keyComment, fieldsCount, fieldsComment ) )
-            for dictKey in sorted(theDict.keys()):
-                theFile.write( '  {}: {},\n'.format( repr(dictKey), theDict[dictKey] ) )
-            theFile.write( "}\n# end of {} ({} entries)\n\n".format( dictName, len(theDict) ) )
-        # end of exportPythonDict
-
-        from datetime import datetime
-
-        assert( len ( self.tree ) )
-        if not filepath: filepath = os.path.join( "DerivedFiles", HebrewOldLexiconFileConverter.filenameBase + "_Tables.py" )
-        print( "Exporting to {}...".format( filepath ) )
-
-        IDDict, RADict, SBLDict, OADict, SwDict, CCELDict, PADict, PNDict, NETDict, BzDict, ENDict = self.importDataToPython()
-        with open( filepath, 'wt' ) as myFile:
-            myFile.write( "# {}\n#\n".format( filepath ) )
-            myFile.write( "# This UTF-8 file was automatically generated by HebrewOldLexicon.py V{} on {}\n#\n".format( ProgVersion, datetime.now() ) )
-            if self.title: myFile.write( "# {} data\n".format( self.title ) )
-            if self.version: myFile.write( "#  Version: {}\n".format( self.version ) )
-            if self.date: myFile.write( "#  Date: {}\n#\n".format( self.date ) )
-            myFile.write( "#   {} {} loaded from the original XML file.\n#\n\n".format( len(self.tree), HebrewOldLexiconFileConverter.treeTag ) )
-            exportPythonDict( myFile, IDDict, "IDDict", "referenceNumber", "referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, SwordAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, NETBibleAbbreviation, ByzantineAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
-            exportPythonDict( myFile, RADict, "RADict", "referenceAbbreviation", "referenceNumber, SBLAbbreviation, OSISAbbreviation, SwordAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, NETBibleAbbreviation, ByzantineAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
-            exportPythonDict( myFile, SBLDict, "SBLDict", "SBLAbbreviation", "referenceNumber, ReferenceAbbreviation" )
-            exportPythonDict( myFile, OADict, "OADict", "OSISAbbreviation", "referenceNumber, ReferenceAbbreviation" )
-            exportPythonDict( myFile, SwDict, "SwDict", "SwordAbbreviation", "referenceNumber, referenceAbbreviation" )
-            exportPythonDict( myFile, CCELDict, "CCELDict", "CCELNumberString", "referenceNumber, referenceAbbreviation" )
-            exportPythonDict( myFile, PADict, "PADict", "ParatextAbbreviation", "referenceNumber, referenceAbbreviation, ParatextNumberString" )
-            exportPythonDict( myFile, PNDict, "PNDict", "ParatextNumberString", "referenceNumber, referenceAbbreviation, ParatextAbbreviation" )
-            exportPythonDict( myFile, NETDict, "NETDict", "NETBibleAbbreviation", "referenceNumber, referenceAbbreviation" )
-            exportPythonDict( myFile, BzDict, "BzDict", "ByzantineAbbreviation", "referenceNumber, referenceAbbreviation" )
-            exportPythonDict( myFile, ENDict, "ENDict", "nameEnglish", "referenceNumber, referenceAbbreviation" )
-    # end of exportDataToPython
-
-    def exportDataToC( self, filepath=None ):
-        notDone
-        """
-        Writes the information tables to a .h file that can be included in c and c++ programs.
-        """
-        def exportPythonDict( theFile, theDict, dictName, structName, fieldsComment ):
-            """Exports theDict to theFile."""
-            def convertEntry( entry ):
-                """Convert special characters in an entry..."""
-                result = ""
-                for field in entry:
-                    if result: result += ", " # Separate the fields
-                    if field is None: result += '""'
-                    elif isinstance( field, str): result += '"' + str(field).replace('"','\\"') + '"'
-                    elif isinstance( field, int): result += str(field)
-                    else: logging.error( "Cannot convert unknown field type '{}' in entry '{}'".format( field, entry ) )
-                return result
-
-            for dictKey in theDict.keys(): # Have to iterate this :(
-                fieldsCount = len( theDict[dictKey] ) + 1 # Add one since we include the key in the count
-                break # We only check the first (random) entry we get
-            theFile.write( "static struct {}\n {}[] = {\n  // Fields ({}) are {}\n".format( structName, dictName, fieldsCount, fieldsComment ) )
-            for dictKey in sorted(theDict.keys()):
-                if isinstance( dictKey, str ):
-                    theFile.write( "  {\"{}\", {}},\n".format( dictKey, convertEntry(theDict[dictKey]) ) )
-                elif isinstance( dictKey, int ):
-                    theFile.write( "  {{}, {}},\n".format( dictKey, convertEntry(theDict[dictKey]) ) )
-                else:
-                    logging.error( "Can't handle this type of key data yet: {}".format( dictKey ) )
-            theFile.write( "}; // {} ({} entries)\n\n".format( dictName, len(theDict) ) )
-        # end of exportPythonDict
-
-        from datetime import datetime
-
-        assert( len ( self.tree ) )
-        if not filepath: filepath = os.path.join( "DerivedFiles", HebrewOldLexiconFileConverter.filenameBase + "_Tables.h" )
-        print( "Exporting to {}...".format( filepath ) )
-        raise "All fields aren't properly handled yet, esp NETBible and Byzantine. Also we need to create both .h and .c files"
-
-        IDDict, RADict, SBLDict, OADict, SwDict, CCELDict, PADict, PNDict, NETDict, BzDict, ENDict = self.importDataToPython()
-        ifdefName = HebrewOldLexiconFileConverter.filenameBase.upper() + "_Tables_h"
-        with open( filepath, 'wt' ) as myFile:
-            myFile.write( "// {}\n//\n".format( filepath ) )
-            myFile.write( "// This UTF-8 file was automatically generated by HebrewOldLexicon.py V{} on {}\n//\n".format( ProgVersion, datetime.now() ) )
-            if self.title: myFile.write( "// {} data\n".format( self.title ) )
-            if self.version: myFile.write( "//  Version: {}\n".format( self.version ) )
-            if self.date: myFile.write( "//  Date: {}\n//\n".format( self.date ) )
-            myFile.write( "//   {} {} loaded from the original XML file.\n//\n\n".format( len(self.tree), HebrewOldLexiconFileConverter.treeTag ) )
-            myFile.write( "#ifndef {}\n#define {}\n\n".format( ifdefName, ifdefName ) )
-            exportPythonDict( myFile, IDDict, "IDDict", "{int referenceNumber; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; char* CCELNumStr; char* PTAbbrev; char* PTNumStr; char* SwAbbrev; char *expChps; char *possAltBks; char* EngName;}", "referenceNumber (sorted), referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, SwordAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
-            exportPythonDict( myFile, RADict, "RADict", "{char* refAbbrev; int referenceNumber; char* SBLAbbrev; char* OSISAbbrev; char* CCELNumStr; char* PTAbbrev; char* PTNumStr; char* SwAbbrev; char *expChps; char *possAltBks; char* EngName;}", "referenceAbbreviation (sorted), referenceNumber, SBLAbbreviation, OSISAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, SwordAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
-            exportPythonDict( myFile, SBLDict, "SBLDict", "{char* SBLAbbrev; int referenceNumber; char* refAbbrev; char* OSISAbbrev; char* CCELNumStr; char* PTAbbrev; char* PTNumStr; char* SwAbbrev; char *expChps; char *possAltBks; char* EngName;}", "SBLAbbreviation (sorted), referenceNumber, referenceAbbreviation, OSISAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, SwordAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
-            exportPythonDict( myFile, OADict, "OADict", "{char* OSISAbbrev; int referenceNumber; char* refAbbrev; char* SBLAbbrev; char* CCELNumStr; char* PTAbbrev; char* PTNumStr; char* SwAbbrev; char *expChps; char *possAltBks; char* EngName;}", "OSISAbbreviation (sorted), referenceNumber, referenceAbbreviation, SBLAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, SwordAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
-            exportPythonDict( myFile, SwDict, "SwDict", "{char* SwAbbrev; int referenceNumber; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; char* CCELNumStr; char* PTAbbrev; char* PTNumStr; char *expChps; char *possAltBks; char* EngName;}", "SwordAbbreviation (sorted), referenceNumber, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
-            exportPythonDict( myFile, CCELDict, "CCELDict", "{char* CCELNumStr; int referenceNumber; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; char* PTAbbrev; char* PTNumStr; char* SwAbbrev; char *expChps; char *possAltBks; char* EngName;}", "CCELNumberString (sorted), referenceNumber, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, ParatextAbbreviation, ParatextNumberString, SwordAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
-            exportPythonDict( myFile, PADict, "PADict", "{char* PTAbbrev; int referenceNumber; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; char* CCELNumStr; char* PTNumStr; char* SwAbbrev; char *expChps; char *possAltBks; char* EngName;}", "ParatextAbbreviation (sorted), referenceNumber, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumberString, ParatextNumberString, SwordAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
-            exportPythonDict( myFile, PNDict, "PNDict", "{char* PTNumStr; int referenceNumber; char* PTAbbrev; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; char* CCELNumStr; char* SwAbbrev; char *expChps; char *possAltBks; char* EngName;}", "ParatextNumberString (sorted), referenceNumber, ParatextAbbreviation, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumberString, SwordAbbreviation, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
-            exportPythonDict( myFile, NETDict, "NETDict", "{char* SwAbbrev; int referenceNumber; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; char* CCELNumStr; char* PTAbbrev; char* PTNumStr; char *expChps; char *possAltBks; char* EngName;}", "SwordAbbreviation (sorted), referenceNumber, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
-            exportPythonDict( myFile, BzDict, "BzDict", "{char* SwAbbrev; int referenceNumber; char* refAbbrev; char* SBLAbbrev; char* OSISAbbrev; char* CCELNumStr; char* PTAbbrev; char* PTNumStr; char *expChps; char *possAltBks; char* EngName;}", "SwordAbbreviation (sorted), referenceNumber, referenceAbbreviation, SBLAbbreviation, OSISAbbreviation, CCELNumberString, ParatextAbbreviation, ParatextNumberString, expectedChapters, possibleAlternativeBooks, nameEnglish (comment only)" )
-            myFile.write( "#endif // {}\n".format( ifdefName ) )
-    # end of exportDataToC
 # end of HebrewOldLexiconFileConverter class
 
 
 class HebrewOldLexicon:
     """
-    Class for handling an Old Hebrew Lexicon (which may contain one or more Bible books)
+    Class for handling an Old Hebrew Lexicon
 
     This class doesn't deal at all with XML, only with Python dictionaries, etc.
 
@@ -832,7 +661,7 @@ def demo():
     """
     if Globals.verbosityLevel > 0: print( ProgNameVersion )
 
-    testFolder = "../HebrewLexicon/OldLexicon" # Old Hebrew Lexicon folder
+    testFolder = "../HebrewLexicon/OldLexicon/" # Old Hebrew Lexicon folder
 
     # Demonstrate the Old Hebrew Lexicon converter class
     if Globals.verbosityLevel > 1: print( "\nDemonstrating the Old Hebrew Lexicon converter class..." )
@@ -840,9 +669,9 @@ def demo():
     hlc.loadAndValidate( testFolder ) # Load the XML
     print( hlc ) # Just print a summary
 
-    if Globals.commandLineOptions.export:
-        hlc.exportDataToPython() # Produce the .py tables
-        hlc.exportDataToC() # Produce the .h tables
+    #if Globals.commandLineOptions.export:
+        #hlc.exportDataToPython() # Produce the .py tables
+        #hlc.exportDataToC() # Produce the .h tables
 
     # Demonstrate the Old Hebrew Lexicon class
     if Globals.verbosityLevel > 1: print( "\nDemonstrating the Old Hebrew Lexicon class..." )
@@ -857,7 +686,7 @@ def demo():
 if __name__ == '__main__':
     # Configure basic set-up
     parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser, exportAvailable=True )
+    Globals.addStandardOptionsAndProcess( parser, exportAvailable=False )
 
     demo()
 

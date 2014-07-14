@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # UnknownBible.py
-#   Last modified: 2014-07-02 (also update ProgVersion below)
+#   Last modified: 2014-07-15 (also update ProgVersion below)
 #
 # Module handling a unknown Bible object
 #
@@ -37,7 +37,7 @@ Currently aware of the following Bible types:
 """
 
 ProgName = "Unknown Bible object handler"
-ProgVersion = "0.15"
+ProgVersion = "0.16"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -62,6 +62,7 @@ from TheWordBible import TheWordBibleFileCheck, TheWordBible
 from MySwordBible import MySwordBibleFileCheck, MySwordBible
 from ESwordBible import ESwordBibleFileCheck, ESwordBible
 from PalmDBBible import PalmDBBibleFileCheck, PalmDBBible
+from VPLBible import VPLBibleFileCheck, VPLBible
 #from SwordResources import SwordInterface # What about these?
 
 
@@ -245,6 +246,14 @@ class UnknownBible:
             typesFound.append( 'Haggai:' + str(HaggaiBibleCount) )
             if Globals.verbosityLevel > 2: print( "UnknownBible.search: HaggaiBibleCount", HaggaiBibleCount )
 
+        # Search for VPL text Bibles
+        VPLBibleCount = VPLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+        if VPLBibleCount:
+            totalBibleCount += VPLBibleCount
+            totalBibleTypes += 1
+            typesFound.append( 'VPL:' + str(VPLBibleCount) )
+            if Globals.verbosityLevel > 2: print( "UnknownBible.search: VPLBibleCount", VPLBibleCount )
+
 
         assert( len(typesFound) == totalBibleTypes )
         if totalBibleCount == 0:
@@ -300,6 +309,10 @@ class UnknownBible:
             elif USFMBibleCount == 1:
                 self.foundType = "USFM Bible"
                 if autoLoad: return USFMBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad )
+                else: return self.foundType
+            elif VPLBibleCount == 1:
+                self.foundType = "VPL Bible"
+                if autoLoad: return VPLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad )
                 else: return self.foundType
             # And now XML text formats
             elif USXBibleCount == 1:
@@ -359,6 +372,7 @@ def demo():
                     "Tests/DataFilesForTests/theWordTest/", "Tests/DataFilesForTests/MySwordTest/",
                     "Tests/DataFilesForTests/YETTest/", "Tests/DataFilesForTests/PDBTest/",
                     "Tests/DataFilesForTests/DrupalTest/",
+                    "Tests/DataFilesForTests/VPLTest1/","Tests/DataFilesForTests/VPLTest2/"
                     "Tests/DataFilesForTests/", # Up a level
                     )
     if 1: # Just find the files

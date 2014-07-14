@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodes.py
-#   Last modified: 2014-07-08 by RJH (also update ProgVersion below)
+#   Last modified: 2014-07-15 by RJH (also update ProgVersion below)
 #
 # Module handling BibleBooksCodes functions
 #
@@ -28,7 +28,7 @@ Module handling BibleBooksCodes functions.
 """
 
 ProgName = "Bible Books Codes handler"
-ProgVersion = "0.74"
+ProgVersion = "0.75"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -268,6 +268,17 @@ class BibleBooksCodes:
             #return self.__DataDicts["referenceNumberDict"][int(someText)]["referenceAbbreviation"]
         if UCSomeText in self.__DataDicts["allAbbreviationsDict"]:
             return self.__DataDicts["allAbbreviationsDict"][UCSomeText]
+
+        # Ok, let's try guessing
+        matchCount, foundBBB = 0, None
+        for BBB in self.__DataDicts["referenceAbbreviationDict"]:
+            if BBB.startswith( UCSomeText ):
+                #print( BBB, UCSomeText )
+                matchCount += 1
+                foundBBB = BBB
+        #print( matchCount, foundBBB )
+        if matchCount == 1: return foundBBB # it's non-ambiguous
+        #print( sorted(self.__DataDicts["allAbbreviationsDict"]) )
     # end of BibleBooksCodes.getBBB
 
 
