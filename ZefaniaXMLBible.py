@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 #
 # ZefaniaXMLBible.py
-#   Last modified: 2014-06-15 by RJH (also update ProgVersion below)
+#   Last modified: 2014-07-16 by RJH (also update ProgVersion below)
 #
 # Module handling Zefania XML Bibles
 #
 # Copyright (C) 2013-2014 Robert Hunt
-# Author: Robert Hunt <robert316@users.sourceforge.net>
+# Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -64,7 +64,7 @@ or
 """
 
 ProgName = "Zefania XML Bible format handler"
-ProgVersion = "0.28"
+ProgVersion = "0.29"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -469,7 +469,7 @@ class ZefaniaXMLBible( Bible ):
 
         if BBB:
             if Globals.verbosityLevel > 2: print( _("Validating {} {}...").format( BBB, bookName ) )
-            thisBook = BibleBook( self.name, BBB )
+            thisBook = BibleBook( self, BBB )
             thisBook.objectNameString = "Zefania XML Bible Book object"
             thisBook.objectTypeString = "Zefania"
             #thisBook.sourceFilepath = self.sourceFilepath
@@ -671,7 +671,6 @@ def demo():
         #testSubfolder = os.path.join( testFolder, 'something/' )
         #print( "TestB1", ZefaniaXMLBibleFileCheck( testSubfolder ) )
         #print( "TestB2", ZefaniaXMLBibleFileCheck( testSubfolder, autoLoad=True ) )
-    halt
 
     if 1:
         testFolder = "../../../../../Data/Work/Bibles/Zefania modules/"

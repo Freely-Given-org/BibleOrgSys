@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 #
 # GreekNT.py
-#   Last modified: 2014-04-25 (also update ProgVersion below)
+#   Last modified: 2014-07-16 (also update ProgVersion below)
 #
 # Module handling GreekNT.xml
 #
 # Copyright (C) 2012-2014 Robert Hunt
-# Author: Robert Hunt <robert316@users.sourceforge.net>
+# Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -44,7 +44,7 @@ Module handling xxx to produce C and Python data tables.
 """
 
 ProgName = "Greek NT format handler"
-ProgVersion = "0.06"
+ProgVersion = "0.07"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -186,7 +186,7 @@ class GreekNT( Bible ):
             return (bn,cn,vn,), (POSCode,parsingCode,), (bits[3],bits[4],bits[5],bits[6],)
         # end of unpackLine
 
-        self.thisBook = BibleBook( self.name, BBB )
+        self.thisBook = BibleBook( self, BBB )
         self.thisBook.objectNameString = "Morph Greek NT Bible Book object"
         self.thisBook.objectTypeString = "MorphGNT"
         filepath = os.path.join( self.sourceFilepath, filename )

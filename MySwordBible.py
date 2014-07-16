@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 #
 # MySwordBible.py
-#   Last modified: 2014-06-15 by RJH (also update ProgVersion below)
+#   Last modified: 2014-07-16 by RJH (also update ProgVersion below)
 #
 # Module handling "MySword" Bible module files
 #
 # Copyright (C) 2013-2014 Robert Hunt
-# Author: Robert Hunt <robert316@users.sourceforge.net>
+# Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -51,7 +51,7 @@ e.g.,
 """
 
 ProgName = "MySword Bible format handler"
-ProgVersion = "0.11"
+ProgVersion = "0.12"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -244,7 +244,7 @@ class MySwordBible( Bible ):
         BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
 
         # Create the first book
-        thisBook = BibleBook( self.name, BBB )
+        thisBook = BibleBook( self, BBB )
         thisBook.objectNameString = "MySword Bible Book object"
         thisBook.objectTypeString = "MySword"
 
@@ -301,7 +301,7 @@ class MySwordBible( Bible ):
                     if bookCount >= booksExpected: break
                     BBB = BOS.getNextBookCode( BBB )
                     # Create the next book
-                    thisBook = BibleBook( self.name, BBB )
+                    thisBook = BibleBook( self, BBB )
                     thisBook.objectNameString = "MySword Bible Book object"
                     thisBook.objectTypeString = "MySword"
                     haveLines = False

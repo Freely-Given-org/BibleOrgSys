@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2014-07-05 by RJH (also update ProgVersion below)
+#   Last modified: 2014-07-16 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USFM Bible books
 #
 # Copyright (C) 2010-2014 Robert Hunt
-# Author: Robert Hunt <robert316@users.sourceforge.net>
+# Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 """
 
 ProgName = "USFM Bible handler"
-ProgVersion = "0.53"
+ProgVersion = "0.54"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -316,7 +316,7 @@ class USFMBible( Bible ):
         self.triedLoadingBook[BBB] = True
         if Globals.verbosityLevel > 1 or Globals.debugFlag: print( _("  USFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
         if filename is None: filename = self.possibleFilenameDict[BBB]
-        UBB = USFMBibleBook( self.name, BBB )
+        UBB = USFMBibleBook( self, BBB )
         UBB.load( filename, self.sourceFolder, self.encoding )
         if UBB._rawLines:
             UBB.validateMarkers() # Usually activates InternalBibleBook.processLines()
@@ -338,7 +338,7 @@ class USFMBible( Bible ):
         self.triedLoadingBook[BBB] = True
         if Globals.verbosityLevel > 1 or Globals.debugFlag:
             print( _("  USFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
-        UBB = USFMBibleBook( self.name, BBB )
+        UBB = USFMBibleBook( self, BBB )
         UBB.load( self.possibleFilenameDict[BBB], self.sourceFolder, self.encoding )
         UBB.validateMarkers() # Usually activates InternalBibleBook.processLines()
         if Globals.verbosityLevel > 2 or Globals.debugFlag: print( _("    Finishing loading USFM book {}.").format( BBB ) )
@@ -467,7 +467,8 @@ def demo():
                             UsfmB.check()
                             UsfmBErrors = UsfmB.getErrors()
                             #print( UsfmBErrors )
-                        if Globals.commandLineOptions.export: UsfmB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+                        if Globals.commandLineOptions.export:
+                            UsfmB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                     else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
             if count: print( "\n{} total USFM (partial) Bibles processed.".format( count ) )
             if totalBooks: print( "{} total books ({} average per folder)".format( totalBooks, round(totalBooks/count) ) )

@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 #
 # VPLBible.py
-#   Last modified: 2014-07-15 by RJH (also update ProgVersion below)
+#   Last modified: 2014-07-16 by RJH (also update ProgVersion below)
 #
 # Module handling verse-per-line text Bible files
 #
 # Copyright (C) 2014 Robert Hunt
-# Author: Robert Hunt <robert316@users.sourceforge.net>
+# Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -37,7 +37,7 @@ e.g.,
 """
 
 ProgName = "VPL Bible format handler"
-ProgVersion = "0.17"
+ProgVersion = "0.21"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -245,7 +245,7 @@ class VPLBible( Bible ):
                     elif bookCode == 'Jude': BBB = 'JDE'
                     else: BBB = Globals.BibleBooksCodes.getBBB( bookCode )  # Try to guess
                     assert( BBB )
-                    thisBook = BibleBook( self.name, BBB )
+                    thisBook = BibleBook( self, BBB )
                     thisBook.objectNameString = "VPL Bible Book object"
                     thisBook.objectTypeString = "VPL"
                     lastBookCode = bookCode
@@ -298,30 +298,36 @@ class VPLBible( Bible ):
 
 
 
-def testVPL( VPLfilename ):
+def testVPL( VPLfolder ):
     # Crudely demonstrate the VPL Bible class
     import VerseReferences
-    testFolder = "Tests/DataFilesForTests/VPLTest1/" # Must be the same as below
 
-    TUBfolder = os.path.join( testFolder, VPLfilename+'/' )
     if Globals.verbosityLevel > 1: print( _("Demonstrating the VPL Bible class...") )
-    if Globals.verbosityLevel > 0: print( "  Test folder is '{}' '{}'".format( TUBfolder, VPLfilename ) )
-    ub = VPLBible( TUBfolder, VPLfilename )
-    ub.load() # Load and process the file
-    if Globals.verbosityLevel > 1: print( ub ) # Just print a summary
+    if Globals.verbosityLevel > 0: print( "  Test folder is '{}'".format( VPLfolder ) )
+    vb = VPLBible( VPLfolder, "demo" )
+    vb.load() # Load and process the file
+    if Globals.verbosityLevel > 1: print( vb ) # Just print a summary
+    if Globals.strictCheckingFlag:
+        vb.check()
+        #print( UsfmB.books['GEN']._processedLines[0:40] )
+        vBErrors = vb.getErrors()
+        # print( vBErrors )
+    if Globals.commandLineOptions.export:
+        ##vb.toDrupalBible()
+        vb.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
     for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
                         ('OT','DAN','1','21'),
                         ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \
                         ('DC','BAR','1','1'), ('DC','MA1','1','1'), ('DC','MA2','1','1',), ):
         (t, b, c, v) = reference
-        if t=='OT' and len(ub)==27: continue # Don't bother with OT references if it's only a NT
-        if t=='NT' and len(ub)==39: continue # Don't bother with NT references if it's only a OT
-        if t=='DC' and len(ub)<=66: continue # Don't bother with DC references if it's too small
+        if t=='OT' and len(vb)==27: continue # Don't bother with OT references if it's only a NT
+        if t=='NT' and len(vb)==39: continue # Don't bother with NT references if it's only a OT
+        if t=='DC' and len(vb)<=66: continue # Don't bother with DC references if it's too small
         svk = VerseReferences.SimpleVerseKey( b, c, v )
         #print( svk, ob.getVerseDataList( reference ) )
         shortText = svk.getShortText()
         try:
-            verseText = ub.getVerseText( svk )
+            verseText = vb.getVerseText( svk )
         except KeyError:
             verseText = "Verse not available!"
         if Globals.verbosityLevel > 1: print( reference, shortText, verseText )
@@ -344,6 +350,15 @@ def demo():
         result2 = VPLBibleFileCheck( testFolder, autoLoad=True )
         if Globals.verbosityLevel > 1: print( "VPL TestA2", result2 )
 
+        if Globals.strictCheckingFlag:
+            result2.check()
+            #print( UsfmB.books['GEN']._processedLines[0:40] )
+            vBErrors = result2.getErrors()
+            # print( vBErrors )
+        if Globals.commandLineOptions.export:
+            ##result2.toDrupalBible()
+            result2.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
+
 
     if 0: # all discovered modules in the test folder
         foundFolders, foundFiles = [], []
@@ -360,7 +375,7 @@ def demo():
                 assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                if Globals.verbosityLevel > 1: print( "\nUnbound D{}/ Trying {}".format( j+1, someFolder ) )
+                if Globals.verbosityLevel > 1: print( "\nVPL D{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testVPL( someFolder )
 # end of demo
@@ -369,7 +384,7 @@ def demo():
 if __name__ == '__main__':
     # Configure basic set-up
     parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser )
+    Globals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 

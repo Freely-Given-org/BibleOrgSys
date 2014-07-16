@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 #
 # ESFMBibleBook.py
-#   Last modified: 2014-07-13 by RJH (also update ProgVersion below)
+#   Last modified: 2014-07-16 by RJH (also update ProgVersion below)
 #
 # Module handling the ESFM markers for Bible books
 #
 # Copyright (C) 2010-2014 Robert Hunt
-# Author: Robert Hunt <robert316@users.sourceforge.net>
+# Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@ Module for defining and manipulating ESFM Bible books.
 """
 
 ProgName = "ESFM Bible book handler"
-ProgVersion = "0.42"
+ProgVersion = "0.43"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -58,10 +58,9 @@ class ESFMBibleBook( BibleBook ):
         """
         Create the ESFM Bible book object.
         """
-        BibleBook.__init__( self, containerBibleObject.name, BBB ) # Initialise the base class
+        BibleBook.__init__( self, containerBibleObject, BBB ) # Initialise the base class
         self.objectNameString = "ESFM Bible Book object"
         self.objectTypeString = "ESFM"
-        self.containerBibleObject = containerBibleObject
     # end of __init__
 
 
@@ -450,27 +449,27 @@ def demo():
 
     def demoFile( name, filename, folder, BBB ):
         if Globals.verbosityLevel > 1: print( _("Loading {} from {}...").format( BBB, filename ) )
-        UBB = ESFMBibleBook( name, BBB )
-        UBB.load( filename, folder, encoding )
-        if Globals.verbosityLevel > 1: print( "  ID is '{}'".format( UBB.getField( 'id' ) ) )
-        if Globals.verbosityLevel > 1: print( "  Header is '{}'".format( UBB.getField( 'h' ) ) )
-        if Globals.verbosityLevel > 1: print( "  Main titles are '{}' and '{}'".format( UBB.getField( 'mt1' ), UBB.getField( 'mt2' ) ) )
-        #if Globals.verbosityLevel > 0: print( UBB )
-        UBB.validateMarkers()
-        UBBVersification = UBB.getVersification ()
-        if Globals.verbosityLevel > 2: print( UBBVersification )
-        UBBAddedUnits = UBB.getAddedUnits ()
+        EBB = ESFMBibleBook( name, BBB )
+        EBB.load( filename, folder )
+        if Globals.verbosityLevel > 1: print( "  ID is '{}'".format( EBB.getField( 'id' ) ) )
+        if Globals.verbosityLevel > 1: print( "  Header is '{}'".format( EBB.getField( 'h' ) ) )
+        if Globals.verbosityLevel > 1: print( "  Main titles are '{}' and '{}'".format( EBB.getField( 'mt1' ), EBB.getField( 'mt2' ) ) )
+        #if Globals.verbosityLevel > 0: print( EBB )
+        EBB.validateMarkers()
+        EBBVersification = EBB.getVersification ()
+        if Globals.verbosityLevel > 2: print( EBBVersification )
+        UBBAddedUnits = EBB.getAddedUnits ()
         if Globals.verbosityLevel > 2: print( UBBAddedUnits )
         discoveryDict = {}
-        UBB.discover( discoveryDict )
+        EBB._discover( discoveryDict )
         #print( "discoveryDict", discoveryDict )
-        UBB.check()
-        UBErrors = UBB.getErrors()
-        if Globals.verbosityLevel > 2: print( UBErrors )
+        EBB.check()
+        EBErrors = EBB.getErrors()
+        if Globals.verbosityLevel > 2: print( EBErrors )
     # end of demoFile
 
 
-    import ESFMFilenames
+    import USFMFilenames
 
     if 1: # Test individual files
         #name, encoding, testFolder, filename, BBB = "WEB", "utf-8", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/", "06-JOS.usfm", "JOS" # You can put your test file here
@@ -488,7 +487,7 @@ def demo():
         #name, encoding, testFolder = "WEB", "utf-8", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/" # You can put your test folder here
         if os.access( testFolder, os.R_OK ):
             if Globals.verbosityLevel > 1: print( _("Scanning {} from {}...").format( name, testFolder ) )
-            fileList = ESFMFilenames.ESFMFilenames( testFolder ).getMaximumPossibleFilenameTuples()
+            fileList = USFMFilenames.USFMFilenames( testFolder ).getMaximumPossibleFilenameTuples()
             for BBB,filename in fileList:
                 demoFile( name, filename, testFolder, BBB )
         else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )

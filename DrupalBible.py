@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 #
 # DrupalBible.py
-#   Last modified: 2014-06-15 by RJH (also update ProgVersion below)
+#   Last modified: 2014-07-16 by RJH (also update ProgVersion below)
 #
 # Module handling DrupalBible Bible files
 #
 # Copyright (C) 2013-2014 Robert Hunt
-# Author: Robert Hunt <robert316@users.sourceforge.net>
+# Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -74,7 +74,7 @@ Limitations:
 """
 
 ProgName = "DrupalBible Bible format handler"
-ProgVersion = "0.05"
+ProgVersion = "0.06"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -273,7 +273,7 @@ class DrupalBible( Bible ):
                     if BBB != lastBBB:
                         if lastBBB is not None:
                             self.saveBook( thisBook )
-                        thisBook = BibleBook( self.name, BBB )
+                        thisBook = BibleBook( self, BBB )
                         thisBook.objectNameString = "DrupalBible Bible Book object"
                         thisBook.objectTypeString = "DrupalBible"
                         lastChapterNumberString = None

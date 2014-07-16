@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 #
 # Bible.py
-#   Last modified: 2014-06-15 (also update ProgVersion below)
+#   Last modified: 2014-07-16 (also update ProgVersion below)
 #
 # Module handling a internal Bible object
 #
 # Copyright (C) 2010-2014 Robert Hunt
-# Author: Robert Hunt <robert316@users.sourceforge.net>
+# Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@ Module handling an internal Bible object.
 """
 
 ProgName = "Bible object handler"
-ProgVersion = "0.07"
+ProgVersion = "0.08"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -113,11 +113,11 @@ class BibleBook ( InternalBibleBook ):
             This means that the index has to be updated if the data is updated.
     """
 
-    def __init__( self, name, BBB ):
+    def __init__( self, containerBibleObject, BBB ):
         """
         Constructor: creates an empty Bible book.
         """
-        InternalBibleBook.__init__( self, name, BBB )
+        InternalBibleBook.__init__( self, containerBibleObject, BBB )
 
         # Define our added data stores
         self.shortName, self.longName = '', ''

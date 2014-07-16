@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 #
 # OpenSongXMLBible.py
-#   Last modified: 2014-04-25 by RJH (also update ProgVersion below)
+#   Last modified: 2014-07-16 by RJH (also update ProgVersion below)
 #
 # Module handling OpenSong XML Bibles
 #
 # Copyright (C) 2013-2014 Robert Hunt
-# Author: Robert Hunt <robert316@users.sourceforge.net>
+# Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -34,7 +34,7 @@ Module reading and loading OpenSong XML Bibles:
 """
 
 ProgName = "OpenSong XML Bible format handler"
-ProgVersion = "0.27"
+ProgVersion = "0.28"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -268,7 +268,7 @@ class OpenSongXMLBible( Bible ):
             BBB = self.genericBOS.getBBB( bookName )
             if BBB:
                 if Globals.verbosityLevel > 2: print( _("Validating {} {}...").format( BBB, bookName ) )
-                thisBook = BibleBook( self.name, BBB )
+                thisBook = BibleBook( self, BBB )
                 thisBook.objectNameString = "OpenSong XML Bible Book object"
                 thisBook.objectTypeString = "OpenSong"
                 #thisBook.sourceFilepath = self.sourceFilepath

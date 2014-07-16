@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 #
 # OSISXMLBible.py
-#   Last modified: 2014-06-15 by RJH (also update ProgVersion below)
+#   Last modified: 2014-07-16 by RJH (also update ProgVersion below)
 #
 # Module handling OSIS XML Bibles
 #
 # Copyright (C) 2010-2014 Robert Hunt
-# Author: Robert Hunt <robert316@users.sourceforge.net>
+# Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -36,7 +36,7 @@ Updated Sept 2013 to also handle Kahunapule's "modified OSIS".
 """
 
 ProgName = "OSIS XML Bible format handler"
-ProgVersion = "0.39"
+ProgVersion = "0.40"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -1005,7 +1005,7 @@ class OSISXMLBible( Bible ):
                             USFMAbbreviation = Globals.BibleBooksCodes.getUSFMAbbreviation( BBB )
                             USFMNumber = Globals.BibleBooksCodes.getUSFMNumber( BBB )
                             if Globals.verbosityLevel > 2: print( _("  It seems we have {}...").format( BBB ) )
-                            self.thisBook = BibleBook( self.name, BBB )
+                            self.thisBook = BibleBook( self, BBB )
                             self.thisBook.objectNameString = "OSIS XML Bible Book object"
                             self.thisBook.objectTypeString = "OSIS"
                             self.haveBook = True
@@ -2164,7 +2164,7 @@ class OSISXMLBible( Bible ):
                 if Globals.verbosityLevel > 2: print( _("  Loading {}...").format( BBB ) )
                 USFMAbbreviation = Globals.BibleBooksCodes.getUSFMAbbreviation( BBB )
                 USFMNumber = Globals.BibleBooksCodes.getUSFMNumber( BBB )
-                self.thisBook = BibleBook( self.name, BBB )
+                self.thisBook = BibleBook( self, BBB )
                 self.thisBook.objectNameString = "OSIS XML Bible Book object"
                 self.thisBook.objectTypeString = "OSIS"
                 self.haveBook = True
@@ -2927,7 +2927,7 @@ def demo():
 
     if 1: # Test OSISXMLBible object
         testFilepaths = (
-            #"Tests/DataFilesForTests/OSISTest1/", # Matigsalug test sample
+            "Tests/DataFilesForTests/OSISTest1/", # Matigsalug test sample
             "Tests/DataFilesForTests/OSISTest2/", # Full KJV from Crosswire
             #"../morphhb/wlc/Ruth.xml", "../morphhb/wlc/Dan.xml", "../morphhb/wlc/", # Hebrew Ruth, Daniel, Bible
             #"../../../../../Data/Work/Bibles/Formats/OSIS/Crosswire USFM-to-OSIS (Perl)/Matigsalug.osis.xml", # Entire Bible in one file 4.4MB
@@ -2971,14 +2971,15 @@ def demo():
 
             if Globals.strictCheckingFlag or Globals.debugFlag:
                 oB.check()
-            #oB.toODF(); halt
-            oB.doAllExports( wantPhotoBible=True, wantODFs=True, wantPDFs=True )
+            if Globals.commandLineOptions.export:
+                #oB.toODF(); halt
+                oB.doAllExports( wantPhotoBible=True, wantODFs=True, wantPDFs=True )
 # end of demo
 
 if __name__ == '__main__':
     # Configure basic set-up
     parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser )
+    Globals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 

@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 #
 # TheWordBible.py
-#   Last modified: 2014-07-13 by RJH (also update ProgVersion below)
+#   Last modified: 2014-07-16 by RJH (also update ProgVersion below)
 #
 # Module handling "theWord" Bible module files
 #
 # Copyright (C) 2013-2014 Robert Hunt
-# Author: Robert Hunt <robert316@users.sourceforge.net>
+# Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -51,7 +51,7 @@ e.g.,
 """
 
 ProgName = "theWord Bible format handler"
-ProgVersion = "0.32"
+ProgVersion = "0.33"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -1015,7 +1015,7 @@ class TheWordBible( Bible ):
             booksExpected, textLineCountExpected = theWordNTBookCount, theWordOTTotalLines
 
         # Create the first book
-        thisBook = BibleBook( self.name, BBB )
+        thisBook = BibleBook( self, BBB )
         thisBook.objectNameString = "theWord Bible Book object"
         thisBook.objectTypeString = "theWord"
 
@@ -1057,7 +1057,7 @@ class TheWordBible( Bible ):
                                     if bookCount >= booksExpected: break
                                     BBB = BOS.getNextBookCode( BBB )
                                     # Create the next book
-                                    thisBook = BibleBook( self.name, BBB )
+                                    thisBook = BibleBook( self, BBB )
                                     thisBook.objectNameString = "theWord Bible Book object"
                                     thisBook.objectTypeString = "theWord"
 

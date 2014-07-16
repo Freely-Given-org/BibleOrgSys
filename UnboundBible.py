@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 #
 # UnboundBible.py
-#   Last modified: 2014-07-15 by RJH (also update ProgVersion below)
+#   Last modified: 2014-07-16 by RJH (also update ProgVersion below)
 #
 # Module handling Biola University "unbound" Bible files
 #
 # Copyright (C) 2013-2014 Robert Hunt
-# Author: Robert Hunt <robert316@users.sourceforge.net>
+# Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -86,7 +86,7 @@ and
 """
 
 ProgName = "Unbound Bible format handler"
-ProgVersion = "0.18"
+ProgVersion = "0.21"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -323,7 +323,7 @@ class UnboundBible( Bible ):
                     if lastBookCode != -1: # Better save the last book
                         self.saveBook( thisBook )
                     BBB = Globals.BibleBooksCodes.getBBBFromUnboundBibleCode( bookCode )
-                    thisBook = BibleBook( self.name, BBB )
+                    thisBook = BibleBook( self, BBB )
                     thisBook.objectNameString = "Unbound Bible Book object"
                     thisBook.objectTypeString = "Unbound"
                     lastBookCode = bookCode
@@ -374,6 +374,14 @@ def testUB( TUBfilename ):
     ub = UnboundBible( TUBfolder, TUBfilename )
     ub.load() # Load and process the file
     if Globals.verbosityLevel > 1: print( ub ) # Just print a summary
+    if Globals.strictCheckingFlag:
+        ub.check()
+        #print( UsfmB.books['GEN']._processedLines[0:40] )
+        uBErrors = ub.getErrors()
+        # print( uBErrors )
+    if Globals.commandLineOptions.export:
+        ##ub.toDrupalBible()
+        ub.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
     for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
                         ('OT','DAN','1','21'),
                         ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \
@@ -454,7 +462,7 @@ def demo():
 if __name__ == '__main__':
     # Configure basic set-up
     parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser )
+    Globals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 

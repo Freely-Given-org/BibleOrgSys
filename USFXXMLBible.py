@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 #
 # USFXXMLBible.py
-#   Last modified: 2014-06-15 by RJH (also update ProgVersion below)
+#   Last modified: 2014-07-16 by RJH (also update ProgVersion below)
 #
 # Module handling USFX XML Bibles
 #
 # Copyright (C) 2013-2014 Robert Hunt
-# Author: Robert Hunt <robert316@users.sourceforge.net>
+# Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFX Bibles.
 """
 
 ProgName = "USFX XML Bible handler"
-ProgVersion = "0.07"
+ProgVersion = "0.08"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -254,7 +254,7 @@ class USFXXMLBible( Bible ):
             print( _("USFXXMLBible: Loading {} from {}...").format( self.name, self.sourceFolder ) )
 
                                 #if Globals.verbosityLevel > 2: print( _("  It seems we have {}...").format( BBB ) )
-                        #self.thisBook = BibleBook( self.name, BBB )
+                        #self.thisBook = BibleBook( self, BBB )
                         #self.thisBook.objectNameString = "OSIS XML Bible Book object"
                         #self.thisBook.objectTypeString = "OSIS"
                         #self.haveBook = True
@@ -324,7 +324,7 @@ class USFXXMLBible( Bible ):
                             isUSFX = True
                         break # We only look at the first line
                 if isUSFX:
-                    UBB = USFXXMLBibleBook( self.name, BBB )
+                    UBB = USFXXMLBibleBook( self, BBB )
                     UBB.load( self.sourceFolder, thisFilename, self.encoding )
                     UBB.validateMarkers()
                     print( UBB )
@@ -366,7 +366,7 @@ class USFXXMLBible( Bible ):
         Globals.checkXMLNoTail( self.tree, mainLocation, '1wk8' )
 
         # Now create our actual book
-        self.thisBook = BibleBook( self.name, BBB )
+        self.thisBook = BibleBook( self, BBB )
         self.thisBook.objectNameString = "USFX XML Bible Book object"
         self.thisBook.objectTypeString = "USFX"
 

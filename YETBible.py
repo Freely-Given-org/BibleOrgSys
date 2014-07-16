@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 #
 # YETBible.py
-#   Last modified: 2014-06-15 by RJH (also update ProgVersion below)
+#   Last modified: 2014-07-16 by RJH (also update ProgVersion below)
 #
 # Module handling YET Bible files
 #
 # Copyright (C) 2013-2014 Robert Hunt
-# Author: Robert Hunt <robert316@users.sourceforge.net>
+# Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -62,7 +62,7 @@ Limitations:
 """
 
 ProgName = "YET Bible format handler"
-ProgVersion = "0.04"
+ProgVersion = "0.05"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -357,7 +357,7 @@ class YETBible( Bible ):
                     #if lastBookCode != -1: # Better save the last book
                         #self.saveBook( thisBook )
                     #BBB = Globals.BibleBooksCodes.getBBBFromYETBibleCode( bookCode )
-                    #thisBook = BibleBook( self.name, BBB )
+                    #thisBook = BibleBook( self, BBB )
                     #thisBook.objectNameString = "YET Bible Book object"
                     #thisBook.objectTypeString = "YET"
                     #lastBookCode = bookCode
@@ -392,7 +392,7 @@ class YETBible( Bible ):
         # Now process the books
         for BBB,bkData in bookDict.items():
             #print( "Processing", BBB )
-            thisBook = BibleBook( self.name, BBB )
+            thisBook = BibleBook( self, BBB )
             thisBook.objectNameString = "YET Bible Book object"
             thisBook.objectTypeString = "YET"
             lastChapterNumberString = None

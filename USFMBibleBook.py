@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBibleBook.py
-#   Last modified: 2014-06-30 by RJH (also update ProgVersion below)
+#   Last modified: 2014-07-16 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
 # Copyright (C) 2010-2014 Robert Hunt
-# Author: Robert Hunt <robert316@users.sourceforge.net>
+# Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@ Module for defining and manipulating USFM Bible books.
 """
 
 ProgName = "USFM Bible book handler"
-ProgVersion = "0.41"
+ProgVersion = "0.42"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -51,11 +51,11 @@ class USFMBibleBook( BibleBook ):
     Class to load and manipulate a single USFM file / book.
     """
 
-    def __init__( self, name, BBB ):
+    def __init__( self, containerBibleObject, BBB ):
         """
         Create the USFM Bible book object.
         """
-        BibleBook.__init__( self, name, BBB ) # Initialise the base class
+        BibleBook.__init__( self, containerBibleObject, BBB ) # Initialise the base class
         self.objectNameString = "USFM Bible Book object"
         self.objectTypeString = "USFM"
     # end of __init__
@@ -208,7 +208,7 @@ def demo():
         UBBAddedUnits = UBB.getAddedUnits ()
         if Globals.verbosityLevel > 2: print( UBBAddedUnits )
         discoveryDict = {}
-        UBB.discover( discoveryDict )
+        UBB._discover( discoveryDict )
         #print( "discoveryDict", discoveryDict )
         UBB.check()
         UBErrors = UBB.getErrors()

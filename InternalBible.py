@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2014-07-15 by RJH (also update ProgVersion below)
+#   Last modified: 2014-07-16 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
 # Copyright (C) 2010-2014 Robert Hunt
-# Author: Robert Hunt <robert316@users.sourceforge.net>
+# Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -91,11 +91,13 @@ class InternalBible:
         """
         Try to improve our names.
         """
+        print( "InternalBible.__getNames()" )
+        print( "  Num books =", len(self.books) )
         if not self.abbreviation and 'WorkAbbreviation' in self.settingsDict: self.abbreviation = self.settingsDict['WorkAbbreviation']
         if not self.name and 'FullName' in self.ssfDict: self.name = self.ssfDict['FullName']
         if not self.shortName and 'Name' in self.ssfDict: self.shortName = self.ssfDict['Name']
         self.projectName = self.name if self.name else "Unknown"
-    # end of __getNames
+    # end of InternalBible.__getNames
 
 
     def doPostLoadProcessing( self ):
@@ -107,7 +109,7 @@ class InternalBible:
 
         # Discover what we've got loaded so we don't have to worry about doing it later
         self.discover()
-    # end of doPostLoadProcessing
+    # end of InternalBible.doPostLoadProcessing
 
 
     def loadMetadataFile( self, mdFilepath ):
@@ -129,7 +131,7 @@ class InternalBible:
                         logging.warning("About to add {} from metadata file even though already have {}".format( repr(fieldName), repr(key) ) )
                         break
             self.settingsDict[fieldName] = Globals.makeSafeString( contents )
-        # end of saveMD
+        # end of loadMetadataFile.saveMD
 
         logging.info( "Loading supplied project metadata..." )
         if Globals.verbosityLevel > 1: print( "Loading supplied project metadata..." )
@@ -164,9 +166,7 @@ class InternalBible:
 
         # Try to improve our names (also called earlier from doPostLoadProcessing)
         self.__getNames()
-    # end of loadMetadataFile
-
-
+    # end of InternalBible.loadMetadataFile
 
 
     def __str__( self ):

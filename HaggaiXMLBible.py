@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 #
 # HaggaiXMLBible.py
-#   Last modified: 2014-06-15 by RJH (also update ProgVersion below)
+#   Last modified: 2014-07-16 by RJH (also update ProgVersion below)
 #
 # Module handling Haggai XML Bibles
 #
 # Copyright (C) 2013-2014 Robert Hunt
-# Author: Robert Hunt <robert316@users.sourceforge.net>
+# Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -59,7 +59,7 @@ Module reading and loading Haggai XML Bibles:
 """
 
 ProgName = "Haggai XML Bible format handler"
-ProgVersion = "0.28"
+ProgVersion = "0.29"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -463,7 +463,7 @@ class HaggaiXMLBible( Bible ):
 
         if BBB:
             if Globals.verbosityLevel > 2: print( _("Validating {} {}...").format( BBB, bookName ) )
-            thisBook = BibleBook( self.name, BBB )
+            thisBook = BibleBook( self, BBB )
             thisBook.objectNameString = "Haggai XML Bible Book object"
             thisBook.objectTypeString = "Haggai"
             #thisBook.sourceFilepath = self.sourceFilepath

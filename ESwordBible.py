@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 #
 # ESwordBible.py
-#   Last modified: 2014-07-06 by RJH (also update ProgVersion below)
+#   Last modified: 2014-07-16 by RJH (also update ProgVersion below)
 #
 # Module handling "e-Sword" Bible module files
 #
 # Copyright (C) 2013-2014 Robert Hunt
-# Author: Robert Hunt <robert316@users.sourceforge.net>
+# Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
 #   This program is free software: you can redistribute it and/or modify
@@ -48,7 +48,7 @@ e.g.,
 """
 
 ProgName = "e-Sword Bible format handler"
-ProgVersion = "0.09"
+ProgVersion = "0.10"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -499,7 +499,7 @@ class ESwordBible( Bible ):
         BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
 
         # Create the first book
-        thisBook = BibleBook( self.name, BBB )
+        thisBook = BibleBook( self, BBB )
         thisBook.objectNameString = "e-Sword Bible Book object"
         thisBook.objectTypeString = "e-Sword"
 
@@ -559,7 +559,7 @@ class ESwordBible( Bible ):
                     if bookCount >= booksExpected: break
                     BBB = BOS.getNextBookCode( BBB )
                     # Create the next book
-                    thisBook = BibleBook( self.name, BBB )
+                    thisBook = BibleBook( self, BBB )
                     thisBook.objectNameString = "e-Sword Bible Book object"
                     thisBook.objectTypeString = "e-Sword"
                     haveLines = False
