@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2014-07-16 by RJH (also update ProgVersion below)
+#   Last modified: 2014-07-17 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -44,7 +44,7 @@ and then fills
 """
 
 ProgName = "Internal Bible handler"
-ProgVersion = "0.46"
+ProgVersion = "0.47"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -90,13 +90,22 @@ class InternalBible:
     def __getNames( self ):
         """
         Try to improve our names.
+
+        This method should be called once all books are loaded.
+        May be called again if external metadata is also loaded.
         """
-        print( "InternalBible.__getNames()" )
-        print( "  Num books =", len(self.books) )
+        #print( "InternalBible.__getNames()" )
         if not self.abbreviation and 'WorkAbbreviation' in self.settingsDict: self.abbreviation = self.settingsDict['WorkAbbreviation']
         if not self.name and 'FullName' in self.ssfDict: self.name = self.ssfDict['FullName']
         if not self.shortName and 'Name' in self.ssfDict: self.shortName = self.ssfDict['Name']
         self.projectName = self.name if self.name else "Unknown"
+
+        if self.settingsDict: # we have metadata loaded
+            for BBB in self.books:
+                for fieldName in self.settingsDict:
+                    if fieldName.startswith( BBB ):
+                        self.books[BBB].getAssumedBookNames() # don't need the returned result
+                        break
     # end of InternalBible.__getNames
 
 
@@ -155,12 +164,17 @@ class InternalBible:
                         if fieldContents.endswith( '\\' ):
                             continuedFlag = True
                             fieldContents = fieldContents[:-1] # Remove the continuation character
-                        else: saveMD( fieldName, fieldContents )
+                        else:
+                            if not fieldContents:
+                                logging.warning( "Metadata line has a blank entry for {}".format( repr(fieldName) ) )
+                            saveMD( fieldName, fieldContents )
                 else: # continuedFlag
                     if line.endswith( '\\' ): line = line[:-1] # Remove the continuation character
                     else: continuedFlag = False
                     fieldContents += line
-                    if not continuedFlag: saveMD( fieldName, fieldContents )
+                    if not continuedFlag:
+                        logging.warning( "Metadata lines result in a blank entry for {}".format( repr(fieldName) ) )
+                        saveMD( fieldName, fieldContents )
             if Globals.verbosityLevel > 1: print( "  {} non-blank lines read from uploaded metadata file".format( lineCount ) )
         if Globals.verbosityLevel > 2: print( "New metadata settings", len(self.settingsDict), self.settingsDict )
 

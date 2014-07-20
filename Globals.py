@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Globals.py
-#   Last modified: 2014-07-02 by RJH (also update ProgVersion below)
+#   Last modified: 2014-07-19 by RJH (also update ProgVersion below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -71,7 +71,7 @@ Contains functions:
 """
 
 ProgName = "Globals"
-ProgVersion = "0.49"
+ProgVersion = "0.50"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -682,6 +682,8 @@ def checkXMLNoSubelementsWithText( element, locationString, idString=None, loadE
 def getFlattenedXML( element, locationString, idString=None, level=0 ):
     """
     Return the XML nested inside the element as a text string.
+
+    The last two parameters are used for handling recursion.
     """
     result = ''
     if level: result += '<' + element.tag + '>' # For lower levels (other than the called one) need to add the tags

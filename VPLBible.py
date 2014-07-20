@@ -347,9 +347,10 @@ def demo():
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         result1 = VPLBibleFileCheck( testFolder )
         if Globals.verbosityLevel > 1: print( "VPL TestA1", result1 )
+
         result2 = VPLBibleFileCheck( testFolder, autoLoad=True )
         if Globals.verbosityLevel > 1: print( "VPL TestA2", result2 )
-
+        result2.loadMetadataFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
         if Globals.strictCheckingFlag:
             result2.check()
             #print( UsfmB.books['GEN']._processedLines[0:40] )

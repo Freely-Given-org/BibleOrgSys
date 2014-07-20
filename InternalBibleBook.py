@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2014-07-16 by RJH (also update ProgVersion below)
+#   Last modified: 2014-07-17 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -1746,8 +1746,15 @@ class InternalBibleBook:
         """
         Attempts to deduce a bookname and book abbreviations from the loaded book.
         Use the English name as a last resort.
-        Returns a list with the best guess first.
+
+        Sets:   self.longTOCName
+                self.shortTOCName
+                self.booknameAbbreviation
+                self.chapterLabel
+
+        Returns a list with the best guess for the bookname first.
         """
+        #print( "InternalBibleBook.getAssumedBookNames()" )
         if not self._processedFlag:
             #print( "InternalBibleBook: processing lines from 'getAssumedBookNames'" ) # This is usually the first call from the Bible Drop Box
             self.processLines()
@@ -1760,6 +1767,9 @@ class InternalBibleBook:
             #if toc1Field.isupper(): field = toc1Field.title()
             results.append( toc1Field )
             self.longTOCName = toc1Field
+        elif self.containerBibleObject and self.BBB+'LongName' in self.containerBibleObject.settingsDict:
+            self.longTOCName = self.containerBibleObject.settingsDict[self.BBB+'LongName']
+            results.append( self.longTOCName )
 
         header = self.getField( 'h' )
         if header:
@@ -1780,6 +1790,9 @@ class InternalBibleBook:
             #if toc2Field.isupper(): field = toc2Field.title()
             results.append( toc2Field )
             self.shortTOCName = toc2Field
+        elif self.containerBibleObject and self.BBB+'ShortName' in self.containerBibleObject.settingsDict:
+            self.shortTOCName = self.containerBibleObject.settingsDict[self.BBB+'ShortName']
+            results.append( self.shortTOCName )
 
         toc3Field = self.getField( 'toc3' ) # Bookname abbreviation
         if toc3Field:
@@ -1787,6 +1800,9 @@ class InternalBibleBook:
             #if toc3Field.isupper(): toc3Field = toc3Field.title()
             results.append( toc3Field )
             self.booknameAbbreviation = toc3Field
+        elif self.containerBibleObject and self.BBB+'Abbreviation' in self.containerBibleObject.settingsDict:
+            self.booknameAbbreviation = self.containerBibleObject.settingsDict[self.BBB+'Abbreviation']
+            results.append( self.booknameAbbreviation )
 
         clField = self.getField( 'cl=' ) # Chapter label for whole book (cl before ch.1 -> cl= in processLine)
         if clField:
