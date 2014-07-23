@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # HebrewLexicon.py
-#   Last modified: 2014-07-20 (also update ProgVersion below)
+#   Last modified: 2014-07-23 (also update ProgVersion below)
 #
 # Module handling the Hebrew lexicon
 #
@@ -26,11 +26,15 @@
 """
 Module handling the OpenScriptures Hebrew lexicon.
 
-Currently this version doesn't yet store (and return) many of the fieldNames -- only usage and a couple of others.
+    The first classes are the ones that read and parse the XML source files.
+
+    The later classes are the ones for users to
+        access the Strongs and Brown, Driver, Briggs lexical entries
+        via various keys and in various formats.
 """
 
 ProgName = "Hebrew Lexicon format handler"
-ProgVersion = "0.09"
+ProgVersion = "0.11"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -475,23 +479,20 @@ class HebrewStrongsFileConverter:
             elif element.tag == HebrewStrongsFileConverter.HebLexNameSpace+"source":
                 source = Globals.getFlattenedXML( element, entryID ) \
                             .replace( HebrewStrongsFileConverter.HebLexNameSpace, '' )
-                #if entryID in ('H71','H1101','H1340','H2490','H2560','H2687','H2778','H2820','H5329','H5882','H7270','H7893','H8127','H8543',): source = source.replace( '\t', '' ) # Fix a mistake
-                #if entryID in ('H5882',): source = source.replace( '\n', '' ) # Fix a mistake
-                #print( "source", repr(source) )
-                if Globals.debugFlag: assert( '\t' not in source and '\n' not in source )
+                #print( entryID, "source", repr(source) )
+                if Globals.debugFlag and entryID!='H5223': assert( source and '\t' not in source and '\n' not in source )
                 entryResults['source'] = source
             elif element.tag == HebrewStrongsFileConverter.HebLexNameSpace+"meaning":
                 meaning = Globals.getFlattenedXML( element, entryID ) \
                             .replace( HebrewStrongsFileConverter.HebLexNameSpace, '' )
-                #if entryID in ('H1928','H2941','H4151','H6282','H6465','H7916','H8261','H8337',): meaning = meaning.replace( '\t', '' ) # Fix a mistake
-                #print( "meaning", repr(meaning) )
-                if Globals.debugFlag: assert( '\t' not in meaning and '\n' not in meaning )
+                #print( entryID, "meaning", repr(meaning) )
+                if Globals.debugFlag: assert( meaning and '\t' not in meaning and '\n' not in meaning )
                 entryResults['meaning'] = meaning
             elif element.tag == HebrewStrongsFileConverter.HebLexNameSpace+"usage":
                 usage = Globals.getFlattenedXML( element, entryID ) \
                             .replace( HebrewStrongsFileConverter.HebLexNameSpace, '' )
                 #print( "usage", repr(usage) )
-                if Globals.debugFlag: assert( '\t' not in usage and '\n' not in usage )
+                if Globals.debugFlag: assert( usage and '\t' not in usage and '\n' not in usage )
                 entryResults['usage'] = usage
             elif element.tag == HebrewStrongsFileConverter.HebLexNameSpace+"note":
                 if Globals.debugFlag: assert( element.text )
@@ -503,8 +504,9 @@ class HebrewStrongsFileConverter:
             else: logging.error( "2d4f Unprocessed '{}' element ({}) in entry".format( element.tag, element.text ) ); halt
             if element.tail is not None and element.tail.strip(): logging.error( "Unexpected '{}' tail data after {} element in entry".format( element.tail, element.tag ) )
 
-        #print( entryResults )
-        self.entries[entryID] = entryResults
+        #print( entryID, entryResults )
+        assert( entryID and entryID[0]=='H' and entryID[1:].isdigit() )
+        self.entries[entryID[1:]] = entryResults # leave off the H
     # end of HebrewStrongsFileConverter.validateEntry
 
 
@@ -717,8 +719,6 @@ class HebrewLexiconIndex:
     Class for handling an Hebrew Lexicon
 
     This class doesn't deal at all with XML, only with Python dictionaries, etc.
-
-    Note: BBB is used in this class to represent the three-character referenceAbbreviation.
     """
     def __init__( self, XMLFolder ):
         """
@@ -759,6 +759,7 @@ class HebrewLexiconIndex:
         Returns a lexicon internal code like 'acd'.
         """
         if key and key[0]=='H': key = key[1:] # Remove any leading 'H'
+        keyDigits = key[1:]
         if key in self.IndexEntries1: return self.IndexEntries1[key]
     # end of HebrewLexiconIndex.getLexiconCodeFromStrongsNumber
 
@@ -777,6 +778,7 @@ class HebrewLexiconIndex:
 
         Returns a Hebrew Strong's number (but only the digits -- no preceding H)
         """
+        keyDigits = key[1:]
         if key in self.IndexEntries['heb']: return self.IndexEntries['heb'][key][4]
         if key in self.IndexEntries['arc']: return self.IndexEntries['arc'][key][4]
     # end of HebrewLexiconIndex.getStrongsNumberFromLexiconCode2
@@ -787,6 +789,7 @@ class HebrewLexiconIndex:
 
         Returns a Hebrew Strong's number (but only the digits -- no preceding H)
         """
+        keyDigits = key[1:]
         if Globals.debugFlag:
             result1 = self._getStrongsNumberFromLexiconCode1( key )
             result2 = self._getStrongsNumberFromLexiconCode2( key )
@@ -802,6 +805,7 @@ class HebrewLexiconIndex:
 
         Returns a BDB code, e.g., 'm.ba.aa'
         """
+        keyDigits = key[1:]
         if key in self.IndexEntries['heb']: return self.IndexEntries['heb'][key][3]
         if key in self.IndexEntries['arc']: return self.IndexEntries['arc'][key][3]
     # end of HebrewLexiconIndex.getBDBCodeFromLexiconCode
@@ -812,6 +816,7 @@ class HebrewLexiconIndex:
 
         Returns a BDB code, e.g., '4a'
         """
+        keyDigits = key[1:]
         if key in self.IndexEntries['heb']: return self.IndexEntries['heb'][key][6]
         if key in self.IndexEntries['arc']: return self.IndexEntries['arc'][key][6]
     # end of HebrewLexiconIndex.getTWOTCodeFromLexiconCode
@@ -826,8 +831,6 @@ class HebrewLexicon:
     Class for handling an Hebrew Lexicon
 
     This class doesn't deal at all with XML, only with Python dictionaries, etc.
-
-    Note: BBB is used in this class to represent the three-character referenceAbbreviation.
     """
     def __init__( self, XMLFolder ):
         """
@@ -854,7 +857,7 @@ class HebrewLexicon:
         #if self.title: result += ('\n' if result else '') + self.title
         #if self.version: result += ('\n' if result else '') + "Version: {} ".format( self.version )
         #if self.date: result += ('\n' if result else '') + "Date: {}".format( self.date )
-        result += ('\n' if result else '') + "  " + _("Number of Strong's entries = {}").format( len(self.StrongsEntries) )
+        result += ('\n' if result else '') + "  " + _("Number of Strong's Hebrew entries = {}").format( len(self.StrongsEntries) )
         result += ('\n' if result else '') + "  " + _("Number of BDB Hebrew entries = {}").format( len(self.BrownDriverBriggsEntries['heb']) )
         result += ('\n' if result else '') + "  " + _("Number of BDB Aramaic entries = {}").format( len(self.BrownDriverBriggsEntries['arc']) )
         return result
@@ -871,7 +874,8 @@ class HebrewLexicon:
         Returns None if the key is not found.
         """
         if Globals.debugFlag: assert( key and key[0]=='H' and key[1:].isdigit() )
-        if key in self.StrongsEntries: return self.StrongsEntries[key]
+        keyDigits = key[1:]
+        if keyDigits in self.StrongsEntries: return self.StrongsEntries[keyDigits]
     # end of HebrewLexicon.getStrongsEntryData
 
 
@@ -884,10 +888,11 @@ class HebrewLexicon:
         Returns None if the key or fieldName is not found.
         """
         if Globals.debugFlag: assert( key and key[0]=='H' and key[1:].isdigit() )
-        if key in self.StrongsEntries:
-            #for f,d in self.StrongsEntries[key]:
+        keyDigits = key[1:]
+        if keyDigits in self.StrongsEntries:
+            #for f,d in self.StrongsEntries[keyDigits]:
                 #if f==fieldName: return d
-            if fieldName in self.StrongsEntries[key]: return self.StrongsEntries[key][fieldName]
+            if fieldName in self.StrongsEntries[keyDigits]: return self.StrongsEntries[keyDigits][fieldName]
     # end of HebrewLexicon.getStrongsEntryField
 
 
@@ -910,18 +915,19 @@ class HebrewLexicon:
 
         """
         if Globals.debugFlag: assert( key and key[0]=='H' and key[1:].isdigit() )
+        keyDigits = key[1:]
         #if key == 'H1':
             #print( "Should be:" )
             #print( 'sHTML: <li value="1" id="ot:1"><i title="{awb}" xml:lang="hbo">אָב</i> a primitive word; father, in a literal and immediate, or figurative and remote application): <span class="kjv_def">chief, (fore-)father(-less), X patrimony, principal</span>. Compare names in "Abi-".</li>' )
-        if key in self.StrongsEntries:
-            entry = self.StrongsEntries[key]
+        if keyDigits in self.StrongsEntries:
+            entry = self.StrongsEntries[keyDigits]
             source = '{}'.format( entry['source'].replace('<w>','<span class="word">').replace('</w>','</span>').replace('<def>','<span class="def">').replace('</def>','</span>') ) \
                         if 'source' in entry else ''
             meaning = '{}'.format( entry['meaning'].replace('<def>','<span class="def">').replace('</def>','</span>') ) \
                         if 'meaning' in entry else ''
             usage = '<span class="kjv_def">{}</span>'.format( entry['usage'] ) if 'usage' in entry else ''
             html = '<li value="{}" id="ot:{}"><span class="originalWord" title="{{{}}}" xml:lang="hbo">{}</span> {} {} {}</li>' \
-                .format( key[1:], key[1:], entry['word'][2], entry['word'][0], source, meaning, usage )
+                .format( keyDigits, keyDigits, entry['word'][2], entry['word'][0], source, meaning, usage )
             #for j, subentry in enumerate(entry):
                 #print( "{} {}={}".format( j, subentry, repr(entry[subentry]) ) )
             return html

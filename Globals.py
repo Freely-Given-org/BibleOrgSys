@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Globals.py
-#   Last modified: 2014-07-19 by RJH (also update ProgVersion below)
+#   Last modified: 2014-07-23 by RJH (also update ProgVersion below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -684,16 +684,27 @@ def getFlattenedXML( element, locationString, idString=None, level=0 ):
     Return the XML nested inside the element as a text string.
 
     The last two parameters are used for handling recursion.
+
+    Strips the tail (which often contains excess nl characters).
     """
     result = ''
-    if level: result += '<' + element.tag + '>' # For lower levels (other than the called one) need to add the tags
+    # Get attributes
+    attributes = ''
+    for attribName,attribValue in element.items():
+        attributes += '{}{}="{}"'.format( ' ' if attributes else '', attribName, attribValue )
+    if level: # For lower levels (other than the called one) need to add the tags
+        result += '<' + element.tag
+        if attributes: result += ' ' + attributes
+        result += '>'
+    elif attributes:
+        #print( "We are losing attributes here:", attributes ); halt
+        result += '<' + attributes + '>'
     if element.text: result += element.text
-    # We ignore attributes here
     for subelement in element:
         result += getFlattenedXML( subelement, subelement.tag + ' in ' + locationString, idString, level+1 ) # Recursive call
     if level:
         result += '</' + element.tag + '>'
-        if element.tail: result += element.tail
+    if element.tail and element.tail.strip(): result += ' ' + element.tail.strip()
     #else: print( "getFlattenedXML: Result is '{}'".format( result ) )
     return result
 # end of Globals.getFlattenedXML
