@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-07-16 by RJH (also update ProgVersion below)
+#   Last modified: 2014-07-28 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -8568,6 +8568,7 @@ class BibleWriter( InternalBible ):
                     start a new paragraph and insert the text.
                 """
                 nonlocal firstEverParagraphFlag
+                #print( "toODF.insertODFParagraph( {} {}:{}, {}, {} ...)".format( BBB, C, V, repr(paragraphStyleName), repr(text) ) )
                 if not firstEverParagraphFlag: # Don't want a blank paragraph at the start of the document
                     documentText.insertControlCharacter( textCursor, ODF_PARAGRAPH_BREAK, False );
                 try: textCursor.setPropertyValue( "ParaStyleName", paragraphStyleName )
@@ -8588,6 +8589,8 @@ class BibleWriter( InternalBible ):
             for entry in pseudoUSFMData:
                 marker, adjText, extras = entry.getMarker(), entry.getAdjustedText(), entry.getExtras()
                 #print( "toODF:", j, BBB, C, V, marker, repr(adjText) )
+############################################################################## XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+                if self.abbreviation=='MBTV' and BBB=='MAT' and C=='23': break  #  Don't know why this currently crashes
                 if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
                 if marker in OFTEN_IGNORED_USFM_HEADER_MARKERS or marker in ('ie',): # Just ignore these lines
                     ignoredMarkers.add( marker )
@@ -9387,8 +9390,8 @@ def demo():
         from USFMBible import USFMBible
         from USFMFilenames import USFMFilenames
         testData = ( # name, abbreviation, folder for USFM files
-                ("USFM-AllMarkers", "USFM-All", "Tests/DataFilesForTests/USFMAllMarkersProject/",),
-                #("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
+                #("USFM-AllMarkers", "USFM-All", "Tests/DataFilesForTests/USFMAllMarkersProject/",),
+                ("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
                 #("CustomTest", "Custom", ".../",),
                 #("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
                 #("USFMTest2", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
@@ -9411,7 +9414,7 @@ def demo():
                 UB.load()
                 if Globals.verbosityLevel > 0: print( '\nBibleWriter A'+str(j+1)+'/', UB )
                 if Globals.strictCheckingFlag: UB.check()
-                #UB.toODF(); halt
+                UB.toODF(); halt
                 myFlag = Globals.verbosityLevel > 3
                 doaResults = UB.doAllExports( wantPhotoBible=myFlag, wantODFs=myFlag, wantPDFs=myFlag )
                 if Globals.strictCheckingFlag: # Now compare the original and the exported USFM files

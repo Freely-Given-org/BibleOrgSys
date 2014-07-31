@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # HebrewLexicon.py
-#   Last modified: 2014-07-23 (also update ProgVersion below)
+#   Last modified: 2014-07-24 (also update ProgVersion below)
 #
 # Module handling the Hebrew lexicon
 #
@@ -34,13 +34,13 @@ Module handling the OpenScriptures Hebrew lexicon.
 """
 
 ProgName = "Hebrew Lexicon format handler"
-ProgVersion = "0.11"
+ProgVersion = "0.12"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
 
 
-import logging, os.path
+import logging, os.path, re
 from gettext import gettext as _
 from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree
@@ -681,21 +681,22 @@ class BrownDriverBriggsFileConverter:
                             .replace( BrownDriverBriggsFileConverter.HebLexNameSpace, '' ) \
                             .replace( '\t', '' ).replace( '\n', '' )
         if entryID == "m.ba.ab": flattenedXML = flattenedXML.rstrip() # Seems to have a space at the start of the XML line
-        if flattenedXML.endswith( '</status>' ):
-            bits = flattenedXML.split( '<status>' )
-            if Globals.debugFlag: assert( len(bits) == 2)
-            resultXML = bits[0]
-            if Globals.debugFlag: assert( bits[1].endswith( '</status>' ) )
-            status = bits[1][:-9]
-            #print( "st", repr(status) )
+        #print( entryID, repr(flattenedXML) )
+        match = re.search( '<status p="(\d{1,4})">(.+?)</status>', flattenedXML )
+        if match:
+            #logging.warning( "Removed {} status field {} from {}" \
+                #.format( entryID, repr(flattenedXML[match.start():match.end()]), repr(flattenedXML) ) )
+            resultXML = flattenedXML[:match.start()] + flattenedXML[match.end():]
+            statusP, status = match.group(1), match.group(2)
+            #print( "statusP", repr(statusP), "st", repr(status) )
             if Globals.debugFlag: assert( status in ('new','made','base','ref','added','done',) )
         else:
-            logging.warning( "Missing status in BDB entry: {}".format( repr(flattenedXML) ) )
+            logging.warning( "Missing status in {} BDB entry: {}".format( entryID, repr(flattenedXML) ) )
             resultXML = flattenedXML
 
         #print( repr(partID), repr(sectionID), repr(title), repr(lang) )
         #print( entryID, status, repr(resultXML) )
-        self.entries[lang][entryID] = (resultXML,status,)
+        self.entries[lang][entryID] = (resultXML,statusP,status,)
     # end of BrownDriverBriggsFileConverter.validateEntry
 
 
@@ -960,7 +961,7 @@ class HebrewLexicon:
         if Globals.debugFlag: assert( key and key.count('.')==2 )
         entry =  self.getBDBEntryData( key )
         if entry:
-            if fieldName == 'status': return entry[1]
+            if fieldName == 'status': return entry[2]
     # end of HebrewLexicon.getBDBEntryField
 
 

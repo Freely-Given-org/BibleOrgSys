@@ -24,17 +24,17 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module handling the OpenScriptures Greek lexicon.
+Module handling the morphgnt Greek lexicon.
 
-    The first classes are the ones that read and parse the XML source files.
+    The first class is the one that reads and parses the XML source file.
 
-    The later classes are the ones for users to
+    The later class is the one for users to
         access the Strongs lexical entries
         via various keys and in various formats.
 """
 
 ProgName = "Greek Lexicon format handler"
-ProgVersion = "0.10"
+ProgVersion = "0.11"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -77,7 +77,6 @@ class GreekStrongsFileConverter:
         </entries></strongsdictionary>
     """
     databaseFilename = "strongsgreek.xml"
-    XMLNameSpace = "{http://www.w3.org/XML/1998/namespace}"
     treeTag = "strongsdictionary"
 
 
@@ -185,7 +184,6 @@ class GreekStrongsFileConverter:
                 # Process the attributes
                 translit = greek = beta = None
                 for attrib,value in element.items():
-                    #print( attrib, value )
                     if attrib=="translit": translit = value
                     elif attrib=="unicode": greek = value
                     elif attrib=="BETA": beta = value
@@ -207,7 +205,6 @@ class GreekStrongsFileConverter:
                 # Process the attributes
                 pronunciation = None
                 for attrib,value in element.items():
-                    #print( attrib, value )
                     if attrib=="strongs": pronunciation = value
                     else: logging.warning( "scs4 Unprocessed '{}' attribute ({}) in {}".format( attrib, value, location ) )
                 if gettingEssentials:
@@ -228,8 +225,6 @@ class GreekStrongsFileConverter:
                 #print( strongs5, "derivation", repr(derivation) )
                 if Globals.debugFlag:
                     assert( derivation and '\t' not in derivation and '\n' not in derivation )
-                    #assert( 'derivation' not in entryResults )
-                #entryResults['derivation'] = derivation
                 entryString +=  derivation
             elif element.tag == "strongs_def":
                 location = "strongs_def in Strongs " + strongs5
@@ -239,8 +234,6 @@ class GreekStrongsFileConverter:
                 #print( strongs5, "definition", repr(definition) )
                 if Globals.debugFlag:
                     assert( definition and '\t' not in definition and '\n' not in definition )
-                    #assert( 'definition' not in entryResults )
-                #entryResults['definition'] = definition
                 entryString += definition
             elif element.tag == "kjv_def":
                 location = "kjv_def in Strongs " + strongs5
@@ -250,7 +243,6 @@ class GreekStrongsFileConverter:
                 KJVdefinition = Globals.getFlattenedXML( element, strongs5 ).replace( '\n', '' )
                 #print( strongs5, "KJVdefinition", repr(KJVdefinition), repr(entryString) )
                 if Globals.debugFlag: assert( KJVdefinition and '\t' not in KJVdefinition and '\n' not in KJVdefinition )
-                #entryResults['KJVdefinition'] = KJVdefinition
                 entryString += KJVdefinition
             elif element.tag == "strongsref":
                 location = "strongsref in Strongs " + strongs5
@@ -259,8 +251,6 @@ class GreekStrongsFileConverter:
                 strongsRef = Globals.getFlattenedXML( element, strongs5 ).replace( '\n', '' )
                 if Globals.debugFlag:
                     assert( strongsRef and '\t' not in strongsRef and '\n' not in strongsRef )
-                    #assert( 'strongsRef' not in entryResults )
-                #entryResults['strongsRef'] = strongsRef
                 strongsRef = re.sub( '<language="GREEK" strongs="(\d{1,5})">', r'<StrongsRef>G\1</StrongsRef>', strongsRef )
                 strongsRef = re.sub( '<strongs="(\d{1,5})" language="GREEK">', r'<StrongsRef>G\1</StrongsRef>', strongsRef )
                 #strongsRef = re.sub( '<language="HEBREW" strongs="(\d{1,5})">', r'<StrongsRef>H\1</StrongsRef>', strongsRef )
@@ -275,7 +265,6 @@ class GreekStrongsFileConverter:
                 # Process the attributes
                 seeLanguage = seeStrongsNumber = None
                 for attrib,value in element.items():
-                    #print( attrib, value )
                     if attrib == "language": seeLanguage = value
                     elif attrib == "strongs": seeStrongsNumber = value # Note: No leading zeroes here
                     else: logging.warning( "scs4 Unprocessed '{}' attribute ({}) in {}".format( attrib, value, location ) )
@@ -285,7 +274,6 @@ class GreekStrongsFileConverter:
                 if 'see' not in entryResults: entryResults['see'] = []
                 entryResults['see'].append( ('G' if seeLanguage=='GREEK' else 'H') + seeStrongsNumber )
             else: logging.error( "2d4f Unprocessed '{}' element ({}) in entry".format( element.tag, element.text ) )
-            #if element.tail is not None and element.tail.strip(): entryString += ' ' + element.tail.strip().replace( '\n', '' )
 
         if entryString:
             #print( strongs5, "entryString", repr(entryString) )
@@ -341,12 +329,12 @@ class GreekLexicon:
 
     def __str__( self ):
         """
-        This method returns the string representation of a Bible book code.
+        This method returns the string representation of the GreekLexicon object.
 
-        @return: the name of a Bible object formatted as a string
+        @return: the name of the object formatted as a string
         @rtype: string
         """
-        result = "Greek Lexicon object"
+        result = "Greek Strongs Lexicon object"
         #if self.title: result += ('\n' if result else '') + self.title
         #if self.version: result += ('\n' if result else '') + "Version: {} ".format( self.version )
         #if self.date: result += ('\n' if result else '') + "Date: {}".format( self.date )
@@ -394,30 +382,24 @@ class GreekLexicon:
         Returns an HTML li entry for the given key.
         Returns None if the key is not found.
 
-        e.g., for H1, returns:
-            <li value="1" id="ot:1"><i title="{awb}" xml:lang="hbo">אָב</i> a primitive word;
-                father, in a literal and immediate, or figurative and remote application):
-                <span class="kjv_def">chief, (fore-)father(-less), X patrimony, principal</span>.
-                Compare names in "Abi-".</li>
-            <li value="165" id="ot:165"><i title="{e-hee'}" xml:lang="hbo">אֱהִי</i> apparently an
-                orthographical variation for <a href="#ot:346"><i title="{ah-yay'}" xml:lang="hbo">אַיֵּה</i></a>;
-                where: <span class="kjv_def">I will be (Hos</span>. 13:10, 14) (which is often the rendering of
-                the same Greek form from <a href="#ot:1961"><i title="{haw-yaw}" xml:lang="hbo">הָיָה</i></a>).</li>
-
+        e.g., for G1, returns:
+            <li value="1" id="nt:1">
+            <span class="originalWord" title="{A}" xml:lang="grk">Α</span>
+                of Hebrew origin; the first letter of the alphabet; figuratively, only (from its use as a numeral) the first:
+                --Alpha. Often used (usually <translit="án" unicode="ἄν" BETA="A)/N">,
+                before a vowel) also in composition (as a contraction from <span class="StrongsRef">G427</span> )
+                in the sense of privation; so, in many words, beginning with this letter;
+                occasionally in the sense of union (as a contraction of <span class="StrongsRef">G260</span> ).
+            </li>
         """
         if Globals.debugFlag: assert( key and key[0]=='G' and key[1:].isdigit() )
         keyDigits = key[1:]
-        #if keyDigits == 'H1':
-            #print( "Should be:" )
-            #print( 'sHTML: <li value="1" id="ot:1"><i title="{awb}" xml:lang="hbo">אָב</i> a primitive word; father, in a literal and immediate, or figurative and remote application): <span class="kjv_def">chief, (fore-)father(-less), X patrimony, principal</span>. Compare names in "Abi-".</li>' )
         if keyDigits in self.StrongsEntries:
             entry = self.StrongsEntries[keyDigits]
             wordEntry = '{}'.format( entry['Entry'].replace('<StrongsRef>','<span class="StrongsRef">').replace('</StrongsRef>','</span>').replace('<def>','<span class="def">').replace('</def>','</span>') ) \
                         if 'Entry' in entry else ''
             html = '<li value="{}" id="nt:{}"><span class="originalWord" title="{{{}}}" xml:lang="grk">{}</span> {}</li>' \
                 .format( keyDigits, keyDigits, entry['word'][1], entry['word'][0], wordEntry )
-            #for j, subentry in enumerate(entry):
-                #print( "{} {}={}".format( j, subentry, repr(entry[subentry]) ) )
             return html
     # end of GreekLexicon.getStrongsEntryHTML
 # end of GreekLexicon class
