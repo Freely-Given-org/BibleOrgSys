@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ESFMBibleBook.py
-#   Last modified: 2014-07-16 by RJH (also update ProgVersion below)
+#   Last modified: 2014-08-05 by RJH (also update ProgVersion below)
 #
 # Module handling the ESFM markers for Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating ESFM Bible books.
 """
 
 ProgName = "ESFM Bible book handler"
-ProgVersion = "0.43"
+ProgVersion = "0.44"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -215,28 +215,34 @@ class ESFMBibleBook( BibleBook ):
                         if char == '}': bracedGroupFlag = False
                         else: bracedGroup += char if char!=' ' else '_'
                     if tag:
+                        if Globals.debugFlag: assert( tag[0] == '=' )
                         if char in ' _=' or char in ALL_WORD_PUNCT_CHARS: # Note: A forward slash is permitted
                             if underlineGroupFlag:
                                 underlineGroup += word
                                 if char == '_': underlineGroup += char
                                 else: underlineGroupFlag = False
-                            if tag[1]=='S':
-                                text += saveStrongsTag( BBB, C, V, underlineGroup if underlineGroup else word, tag )
-                                underlineGroup = ''
-                                underlineGroupFlag = hangingUnderlineFlag = False
+                            if len(tag) > 1:
+                                if tag[1]=='S':
+                                    text += saveStrongsTag( BBB, C, V, underlineGroup if underlineGroup else word, tag )
+                                    underlineGroup = ''
+                                    underlineGroupFlag = hangingUnderlineFlag = False
+                                else:
+                                    text += saveSemanticTag( BBB, C, V, bracedGroup if bracedGroup else word, tag )
+                                if char == '_':
+                                    if not underlineGroupFlag: # it's just starting now
+                                        underlineGroup += word + char
+                                        underlineGroupFlag = True
+                                    char = ' ' # to go into text
+                                elif char != '=': underlineGroupFlag = False
+                                if char == '=': tag = char # Started a new consecutive tag
+                                else:
+                                    if word: saveWord( BBB, C, V, word )
+                                    word = bracedGroup = tag = ''
+                                    if char!='}': text += char
                             else:
-                                text += saveSemanticTag( BBB, C, V, bracedGroup if bracedGroup else word, tag )
-                            if char == '_':
-                                if not underlineGroupFlag: # it's just starting now
-                                    underlineGroup += word + char
-                                    underlineGroupFlag = True
-                                char = ' ' # to go into text
-                            elif char != '=': underlineGroupFlag = False
-                            if char == '=': tag = char # Started a new consecutive tag
-                            else:
-                                if word: saveWord( BBB, C, V, word )
-                                word = bracedGroup = tag = ''
-                                if char!='}': text += char
+                                loadErrors.append( _("{} {}:{} unexpected short ESFM tag at {}={} in {}").format( self.BBB, C, V, j, repr(originalChar), repr(originalText) ) )
+                                logging.error( "ESFM tagging error in {} {}:{}: unexpected short tag at {}={} in {}".format( BBB, C, V, j, repr(originalChar), repr(originalText) ) )
+                                self.addPriorityError( 21, C, V, _("Unexpected ESFM short tag") )
                         else: # still in tag
                             tag += char
                     else: # not in tag
@@ -355,7 +361,7 @@ class ESFMBibleBook( BibleBook ):
         lastMarker = lastText = ''
         loadErrors = []
         for marker,originalText in originalBook.lines: # Always process a line behind in case we have to combine lines
-            #print( "After {} {}:{} \\{} '{}'".format( BBB, C, V, marker, originalText ) )
+            #print( "After {} {}:{} \\{} '{}'".format( self.BBB, C, V, marker, originalText ) )
 
             # Keep track of where we are for more helpful error messages
             if marker=='c' and originalText: C, V = originalText.split()[0], '0'
@@ -418,7 +424,7 @@ class ESFMBibleBook( BibleBook ):
             lastMarker, lastText = 'rem', 'This (ESFM) file was completely empty' # Save something since we had a file at least
 
         if loadErrors: self.errorDictionary['Load Errors'] = loadErrors
-        if Globals.debugFlag and self.BBB=='JNA':
+        if 0 and Globals.debugFlag and self.BBB=='JNA':
             for name,thisDict in  ( ('SEM',self.containerBibleObject.semanticDict), ('STR',self.containerBibleObject.StrongsDict) ):
                 if 'Tag errors' in thisDict:
                     print( "\n{} Tag errors: {}".format( name, thisDict['Tag errors'] ) )

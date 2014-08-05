@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ESFMBible.py
-#   Last modified: 2014-07-12 by RJH (also update ProgVersion below)
+#   Last modified: 2014-08-05 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of ESFM Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial ESFM Bibles.
 """
 
 ProgName = "ESFM Bible handler"
-ProgVersion = "0.52"
+ProgVersion = "0.53"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -394,7 +394,7 @@ class ESFMBible( Bible ):
         """
         if Globals.verbosityLevel > 2: print( "ESFMBible.loadBook( {}, {} )".format( BBB, filename ) )
         if BBB in self.books: return # Already loaded
-        if BBB in dontLoadBook: return # Must be a dictionary that's already loaded
+        if BBB in self.dontLoadBook: return # Must be a dictionary that's already loaded
         if BBB in self.triedLoadingBook:
             logging.warning( "We had already tried loading ESFM {} for {}".format( BBB, self.name ) )
             return # We've already attempted to load this book
