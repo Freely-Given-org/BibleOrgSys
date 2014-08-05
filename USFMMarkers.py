@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkers.py
-#   Last modified: 2014-07-07 (also update ProgVersion below)
+#   Last modified: 2014-08-05 (also update ProgVersion below)
 #
 # Module handling USFMMarkers
 #
@@ -27,14 +27,14 @@
 Module handling USFMMarkers.
 
 Contains functions:
-    removeUSFMCharacterField( marker, originalText, closed )
+    removeUSFMCharacterField( marker, originalText, closedFlag )
     replaceUSFMCharacterFields( replacements, originalText )
 
 Contains the singleton class: USFMMarkers
 """
 
 ProgName = "USFM Markers handler"
-ProgVersion = "0.65"
+ProgVersion = "0.66"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -732,13 +732,13 @@ def demo():
 
     text = "\\v~ \\x - \\xo 12:13 \\xt Cross \wj \wj*reference text.\\x*Main \\add actual\\add* verse text.\\f + \\fr 12:13\\fr* \\ft with footnote.\\f*"
     print( "\nFor text: '{}'".format( text ) )
-    print( "  remove whole xref = '{}'".format( removeUSFMCharacterField( 'x', text, closed=True ) ) )
-    print( "  remove xo = '{}'".format( removeUSFMCharacterField( 'xo', text, closed=False ) ) )
-    print( "  remove xref part = '{}'".format( removeUSFMCharacterField( 'x', text, closed=None ) ) )
-    print( "  remove fr = '{}'".format( removeUSFMCharacterField( 'fr', text, closed=None ) ) )
-    print( "  remove ft = '{}'".format( removeUSFMCharacterField( 'ft', text, closed=None ) ) )
-    print( "  remove ft = '{}'".format( removeUSFMCharacterField( 'ft', text, closed=False ) ) )
-    print( "  remove wj = '{}'".format( removeUSFMCharacterField( 'wj', text, closed=True ) ) )
+    print( "  remove whole xref = '{}'".format( removeUSFMCharacterField( 'x', text, closedFlag=True ) ) )
+    print( "  remove xo = '{}'".format( removeUSFMCharacterField( 'xo', text, closedFlag=False ) ) )
+    print( "  remove xref part = '{}'".format( removeUSFMCharacterField( 'x', text, closedFlag=None ) ) )
+    print( "  remove fr = '{}'".format( removeUSFMCharacterField( 'fr', text, closedFlag=None ) ) )
+    print( "  remove ft = '{}'".format( removeUSFMCharacterField( 'ft', text, closedFlag=None ) ) )
+    print( "  remove ft = '{}'".format( removeUSFMCharacterField( 'ft', text, closedFlag=False ) ) )
+    print( "  remove wj = '{}'".format( removeUSFMCharacterField( 'wj', text, closedFlag=True ) ) )
 
     print( "\nFor text: '{}'".format( text ) )
     replacements = ( (('add',),'<span>','</span>'), (('wj',),'<i>','</i>'), )

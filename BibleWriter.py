@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-07-28 by RJH (also update ProgVersion below)
+#   Last modified: 2014-08-05 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -86,7 +86,7 @@ import subprocess, multiprocessing
 from gettext import gettext as _
 
 import Globals, ControlFiles
-from InternalBibleInternals import BOS_ADDED_NESTING_MARKERS, BOS_ALL_ADDED_NESTING_MARKERS
+from InternalBibleInternals import BOS_ADDED_NESTING_MARKERS, BOS_ALL_ADDED_NESTING_MARKERS, BOS_NESTING_MARKERS
 from InternalBible import InternalBible
 from BibleOrganizationalSystems import BibleOrganizationalSystem
 from BibleReferences import BibleReferenceList
@@ -377,9 +377,7 @@ class BibleWriter( InternalBible ):
                                 repr(cleanText) if cleanText and cleanText!=adjText else '',
                                 entry.getExtras().summary() if extras else '' ) )
 
-                    if marker in ('c','v', 's1','s2','s3','s4', 'is1','is2','is3','is4', ) \
-                    or marker in BOS_ALL_ADDED_NESTING_MARKERS \
-                    or marker in USFM_BIBLE_PARAGRAPH_MARKERS:
+                    if marker in BOS_NESTING_MARKERS:
                         indentLevel += 1
                     elif indentLevel and marker[0]=='¬': indentLevel -= 1
                     if indentLevel > 7: print( "BibleWriter.toPseudoUSFM: {} {}:{} indentLevel={} marker={}".format( BBB, C, V, indentLevel, marker ) )
@@ -547,96 +545,105 @@ class BibleWriter( InternalBible ):
             inField = None
             value1 = value2 = None # For printing missing (bridged) verse numbers
             initialMarkers = [verseDataEntry.getMarker() for verseDataEntry in pseudoUSFMData[:4]]
-            #print( initialMarkers ); halt
+            #print( BBB, initialMarkers )
             if Globals.verbosityLevel > 2: print( "  " + _("Adjusting ESFM output..." ) )
             with open( filepath, 'wt' ) as myFile:
                 if 'id' not in initialMarkers:
+                    #print( "Write ID" )
                     myFile.write( '\\id {} -- BibleOrgSys ESFM export v{}\n'.format( USFMAbbreviation.upper(), ProgVersion ) )
                 if 'ide' not in initialMarkers:
+                    #print( "Write IDE" )
                     myFile.write( '\\ide UTF-8\n' )
                     if 'rem' not in initialMarkers:
+                        #print( "Write REM" )
                         myFile.write( '\\rem ESFM v0.5 {}\n'.format( BBB ) )
                 for j, verseDataEntry in enumerate( pseudoUSFMData ):
                     pseudoMarker, value = verseDataEntry.getMarker(), verseDataEntry.getFullText()
-                    #print( BBB, pseudoMarker, repr(value) )
+                    #print( BBB, j, pseudoMarker, repr(value) )
                     if j==1 and pseudoMarker=='ide':
+                        #print( "Write IDE 1" )
                         myFile.write( '\\ide UTF-8\n' )
                         if 'rem' not in initialMarkers:
+                            #print( "Write REM 2" )
                             myFile.write( '\\rem ESFM v0.5 {}\n'.format( BBB ) )
+                        ESFMLine = ''
                     elif j==2 and pseudoMarker=='rem':
-                        doneMarkers.append( 'rem' )
+                        #print( "Write REM 3" )
+                        if value != 'ESFM v0.5 {}'.format( BBB ):
+                            logging.info( "Updating {} ESFM rem line from {} to v0.5".format( BBB, repr(value) ) )
+                        ESFMLine = '\\rem ESFM v0.5 {}'.format( BBB )
+                    else:
+                        if '¬' in pseudoMarker:
+                            if indentLevel > 0:
+                                indentLevel -= 1
+                            else:
+                                logging.error( "toESFM: Indent level can't go negative at {} {} {} {}".format( BBB, j, pseudoMarker, repr(value) ) )
+                                if Globals.debugFlag: halt
+                        ESFMLine = ' ' * indentLevel * indentSize
 
-                    if '¬' in pseudoMarker:
-                        if indentLevel > 0:
-                            indentLevel -= 1
-                    ESFMLine = ' ' * indentLevel * indentSize
+                        if pseudoMarker in ('c#','vp~',):
+                            ignoredMarkers.add( pseudoMarker )
+                            continue
 
-                    if pseudoMarker in ('c#','vp~',):
-                        ignoredMarkers.add( pseudoMarker )
-                        continue
+                        #value = cleanText # (temp)
+                        #if Globals.debugFlag and debuggingThisModule: print( "toESFM: pseudoMarker = '{}' value = '{}'".format( pseudoMarker, value ) )
+                        if 0 and removeVerseBridges and pseudoMarker in ('v','c',):
+                            if value1 and value2:
+                                for vNum in range( value1+1, value2+1 ): # Fill in missing verse numbers
+                                    ESFMLine += '\n\\v {}'.format( vNum )
+                            value1 = value2 = None
 
-                    #value = cleanText # (temp)
-                    #if Globals.debugFlag and debuggingThisModule: print( "toESFM: pseudoMarker = '{}' value = '{}'".format( pseudoMarker, value ) )
-                    if 0 and removeVerseBridges and pseudoMarker in ('v','c',):
-                        if value1 and value2:
-                            for vNum in range( value1+1, value2+1 ): # Fill in missing verse numbers
-                                ESFMLine += '\n\\v {}'.format( vNum )
-                        value1 = value2 = None
+                        if pseudoMarker == 'vp~': continue
+                        elif pseudoMarker in ('v','f','fr','x','xo',): # These fields should always end with a space but the processing will have removed them
+                            if Globals.debugFlag: assert( value )
+                            if pseudoMarker=='v' and 0 and removeVerseBridges:
+                                vString = value
+                                for bridgeChar in ('-', '–', '—'): # hyphen, endash, emdash
+                                    ix = vString.find( bridgeChar )
+                                    if ix != -1:
+                                        value = vString[:ix] # Remove verse bridges
+                                        vEnd = vString[ix+1:]
+                                        #print( BBB, repr(value), repr(vEnd) )
+                                        try: value1, value2 = int( value ), int( vEnd )
+                                        except ValueError:
+                                            print( "toESFM: bridge doesn't seem to be integers in {} {}".format( BBB, repr(vString) ) )
+                                            value1 = value2 = None # One of them isn't an integer
+                                        #print( ' ', BBB, repr(value1), repr(value2) )
+                                        break
+                            if value and value[-1] != ' ': value += ' ' # Append a space since it didn't have one
+                        elif pseudoMarker[-1]=='~' or Globals.USFMMarkers.isNewlineMarker(pseudoMarker): # Have a continuation field
+                            if inField is not None:
+                                ESFMLine += '\\{}*'.format( inField ) # Do a close marker for footnotes and cross-references
+                                inField = None
 
-                    if pseudoMarker == 'vp~': continue
-                    elif pseudoMarker in ('v','f','fr','x','xo',): # These fields should always end with a space but the processing will have removed them
-                        if Globals.debugFlag: assert( value )
-                        if pseudoMarker=='v' and 0 and removeVerseBridges:
-                            vString = value
-                            for bridgeChar in ('-', '–', '—'): # hyphen, endash, emdash
-                                ix = vString.find( bridgeChar )
-                                if ix != -1:
-                                    value = vString[:ix] # Remove verse bridges
-                                    vEnd = vString[ix+1:]
-                                    #print( BBB, repr(value), repr(vEnd) )
-                                    try: value1, value2 = int( value ), int( vEnd )
-                                    except ValueError:
-                                        print( "toESFM: bridge doesn't seem to be integers in {} {}".format( BBB, repr(vString) ) )
-                                        value1 = value2 = None # One of them isn't an integer
-                                    #print( ' ', BBB, repr(value1), repr(value2) )
-                                    break
-                        if value and value[-1] != ' ': value += ' ' # Append a space since it didn't have one
-                    elif pseudoMarker[-1]=='~' or Globals.USFMMarkers.isNewlineMarker(pseudoMarker): # Have a continuation field
-                        if inField is not None:
-                            ESFMLine += '\\{}*'.format( inField ) # Do a close marker for footnotes and cross-references
-                            inField = None
+                        if pseudoMarker[-1] == '~':
+                            #print( "psMarker ends with squiggle: '{}'='{}'".format( pseudoMarker, value ) )
+                            if Globals.debugFlag: assert( pseudoMarker[:-1] in ('v','p','c') )
+                            ESFMLine += (' ' if ESFMLine and ESFMLine[-1]!=' ' else '') + value
+                        else: # not a continuation marker
+                            adjValue = value
+                            #if pseudoMarker in ('it','bk','ca','nd',): # Character markers to be closed -- had to remove ft and xt from this list for complex footnotes with f fr fq ft fq ft f*
+                            if pseudoMarker in ALL_CHAR_MARKERS: # Character markers to be closed
+                                #if (ESFMLine[-2]=='\\' or ESFMLine[-3]=='\\') and ESFMLine[-1]!=' ':
+                                if ESFMLine[-1] != ' ':
+                                    ESFMLine += ' ' # Separate markers by a space e.g., \p\bk Revelation
+                                    if Globals.debugFlag: print( "toESFM: Added space to '{}' before '{}'".format( ESFMLine[-2], pseudoMarker ) )
+                                adjValue += '\\{}*'.format( pseudoMarker ) # Do a close marker
+                            elif pseudoMarker in ('f','x',): inField = pseudoMarker # Remember these so we can close them later
+                            elif pseudoMarker in ('fr','fq','ft','xo',): ESFMLine += ' ' # These go on the same line just separated by spaces and don't get closed
+                            #elif ESFMLine: ESFMLine += '\n' # paragraph markers go on a new line
+                            if not value: ESFMLine += '\\{}'.format( pseudoMarker )
+                            else: ESFMLine += '\\{} {}'.format( pseudoMarker,adjValue )
 
-                    if pseudoMarker[-1] == '~':
-                        #print( "psMarker ends with squiggle: '{}'='{}'".format( pseudoMarker, value ) )
-                        if Globals.debugFlag: assert( pseudoMarker[:-1] in ('v','p','c') )
-                        ESFMLine += (' ' if ESFMLine and ESFMLine[-1]!=' ' else '') + value
-                    else: # not a continuation marker
-                        adjValue = value
-                        #if pseudoMarker in ('it','bk','ca','nd',): # Character markers to be closed -- had to remove ft and xt from this list for complex footnotes with f fr fq ft fq ft f*
-                        if pseudoMarker in ALL_CHAR_MARKERS: # Character markers to be closed
-                            #if (ESFMLine[-2]=='\\' or ESFMLine[-3]=='\\') and ESFMLine[-1]!=' ':
-                            if ESFMLine[-1] != ' ':
-                                ESFMLine += ' ' # Separate markers by a space e.g., \p\bk Revelation
-                                if Globals.debugFlag: print( "toESFM: Added space to '{}' before '{}'".format( ESFMLine[-2], pseudoMarker ) )
-                            adjValue += '\\{}*'.format( pseudoMarker ) # Do a close marker
-                        elif pseudoMarker in ('f','x',): inField = pseudoMarker # Remember these so we can close them later
-                        elif pseudoMarker in ('fr','fq','ft','xo',): ESFMLine += ' ' # These go on the same line just separated by spaces and don't get closed
-                        elif ESFMLine: ESFMLine += '\n' # paragraph markers go on a new line
-                        if not value: ESFMLine += '\\{}'.format( pseudoMarker )
-                        else: ESFMLine += '\\{} {}'.format( pseudoMarker,adjValue )
-                    #print( pseudoMarker, ESFM[-200:] )
-                    myFile.write( '{}\n'.format( ESFMLine ) )
-                    if pseudoMarker in ('chapters','c',) or pseudoMarker in BOS_ADDED_NESTING_MARKERS:
+                    #print( BBB, pseudoMarker, repr(ESFMLine) )
+                    #if BBB=='GEN' and j > 20: halt
+                    if ESFMLine: myFile.write( '{}\n'.format( ESFMLine ) )
+                    if pseudoMarker in BOS_NESTING_MARKERS:
                         indentLevel += 1
+                        #print( pseudoMarker, indentLevel )
 
-            if 0: # old code
-                # Write the ESFM output
-                #print( "\nESFM", ESFM[:3000] )
-                filename = "{}{}BibleWriter.ESFM".format( USFMNumber, USFMAbbreviation.upper() )
-                #if not os.path.exists( ESFMOutputFolder ): os.makedirs( ESFMOutputFolder )
-                filepath = os.path.join( outputFolder, Globals.makeSafeFilename( filename ) )
-                if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
-                with open( filepath, 'wt' ) as myFile: myFile.write( ESFM )
+        if indentLevel !=  0:
+            logging.error( "toESFM: Ended with wrong indent level of {}".format( indentLevel ) );  halt
 
         if ignoredMarkers:
             logging.info( "toESFM: Ignored markers were {}".format( ignoredMarkers ) )
@@ -4475,7 +4482,8 @@ class BibleWriter( InternalBible ):
                     flag = '\\' in text or extras # Set this flag if the text already contains XML formatting
                     adjustedText = processXRefsAndFootnotes( text, extras )
                     if adjustedText:
-                        if Globals.debugFlag: assert( BBB == 'PSA' )
+                        #print( BBB, C, V, repr(adjustedText) )
+                        if Globals.debugFlag: assert( BBB in ('PSA','PS2',) )
                         writerObject.writeLineOpenClose( 'title', checkText(adjustedText), [('canonical','true'),('type','psalm')], noTextCheck=flag )
                 elif marker in ('s1','s2','s3','s4',):
                     if haveOpenParagraph:
@@ -9391,11 +9399,12 @@ def demo():
         from USFMFilenames import USFMFilenames
         testData = ( # name, abbreviation, folder for USFM files
                 #("USFM-AllMarkers", "USFM-All", "Tests/DataFilesForTests/USFMAllMarkersProject/",),
-                ("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
                 #("CustomTest", "Custom", ".../",),
                 #("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
                 #("USFMTest2", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
-                #("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
+                #("ESFMTest1", "ESFM1", "Tests/DataFilesForTests/ESFMTest1/",),
+                #("ESFMTest2", "ESFM2", "Tests/DataFilesForTests/ESFMTest2/",),
+                ("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
                 #("OEB", "OEB", "Tests/DataFilesForTests/USFM-OEB/",),
                 #("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
                 #("MS-BT", "MBTBT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
@@ -9414,7 +9423,7 @@ def demo():
                 UB.load()
                 if Globals.verbosityLevel > 0: print( '\nBibleWriter A'+str(j+1)+'/', UB )
                 if Globals.strictCheckingFlag: UB.check()
-                UB.toODF(); halt
+                #UB.toODF(); halt
                 myFlag = Globals.verbosityLevel > 3
                 doaResults = UB.doAllExports( wantPhotoBible=myFlag, wantODFs=myFlag, wantPDFs=myFlag )
                 if Globals.strictCheckingFlag: # Now compare the original and the exported USFM files

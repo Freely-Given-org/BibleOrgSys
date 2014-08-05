@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleInternals.py
-#   Last modified: 2014-07-13 by RJH (also update ProgVersion below)
+#   Last modified: 2014-08-05 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Bible internals handler"
-ProgVersion = "0.45"
+ProgVersion = "0.46"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -50,6 +50,7 @@ from gettext import gettext as _
 from collections import OrderedDict
 
 import Globals
+from USFMMarkers import USFM_BIBLE_PARAGRAPH_MARKERS # OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_INTRODUCTION_MARKERS
 from BibleReferences import BibleAnchorReference
 
 
@@ -74,6 +75,8 @@ BOS_ADDED_CONTENT_MARKERS = ( 'c~', 'c#', 'v~', 'p~', 'cl=', 'vp~', )
             This is inserted BEFORE the v (and v~) marker(s)
 """
 
+BOS_REGULAR_NESTING_MARKERS = ('c','v', 's1','s2','s3','s4', 'is1','is2','is3','is4', )
+
 BOS_ADDED_NESTING_MARKERS = ( 'intro', 'ilist', 'chapters', 'list', )
 """
     intro       Inserted at the start of book introductions
@@ -91,6 +94,8 @@ BOS_ALL_ADDED_NESTING_MARKERS = BOS_ADDED_NESTING_MARKERS + ('iot',)
     chapters    Inserted after the introduction (if any) and before the first Bible content (usually immediately before chapter 1 marker)
     list       Inserted at the start of lists (before li markers)
 """
+
+BOS_NESTING_MARKERS = BOS_REGULAR_NESTING_MARKERS + BOS_ALL_ADDED_NESTING_MARKERS + USFM_BIBLE_PARAGRAPH_MARKERS
 
 BOS_END_MARKERS = ('¬intro', '¬iot', '¬ilist', '¬chapters', '¬c', '¬v', '¬list', )
 
