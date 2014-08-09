@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-08-05 by RJH (also update ProgVersion below)
+#   Last modified: 2014-08-09 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -67,7 +67,7 @@ Note that not all exports export all books.
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.83"
+ProgVersion = "0.84"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -200,6 +200,8 @@ class BibleWriter( InternalBible ):
         if not os.access( csvOutputFolder, os.F_OK ): os.makedirs( csvOutputFolder ) # Make the empty folder if there wasn't already one there
         xmlOutputFolder = os.path.join( outputFolder, "XML/" )
         if not os.access( xmlOutputFolder, os.F_OK ): os.makedirs( xmlOutputFolder ) # Make the empty folder if there wasn't already one there
+        htmlOutputFolder = os.path.join( outputFolder, "HTML/" )
+        if not os.access( htmlOutputFolder, os.F_OK ): os.makedirs( htmlOutputFolder ) # Make the empty folder if there wasn't already one there
 
         def countWords( marker, segment, location ):
             """ Breaks the segment into words and counts them.
@@ -224,13 +226,13 @@ class BibleWriter( InternalBible ):
                 if word and not word[0].isalnum():
                     #print( word, stripWordPunctuation( word ) )
                     if len(word) > 1:
-                        if Globals.debugFlag: print( "{} {}:{} ".format( BBB, C, V ) + _("Have unexpected character starting word '{}'").format( word ) )
+                        if Globals.debugFlag: print( "BibleWriter.makeLists: {} {}:{} ".format( BBB, C, V ) + _("Have unexpected character starting word '{}'").format( word ) )
                         word = word[1:]
                 if word: # There's still some characters remaining after all that stripping
                     if Globals.verbosityLevel > 3: # why???
                         for k,char in enumerate(word):
                             if not char.isalnum() and (k==0 or k==len(word)-1 or char not in InternalBibleBook.MEDIAL_WORD_PUNCT_CHARS):
-                                if Globals.debugFlag: print( "{} {}:{} ".format( BBB, C, V ) + _("Have unexpected '{}' in word '{}'").format( char, word ) )
+                                if Globals.debugFlag: print( "BibleWriter.makeLists: {} {}:{} ".format( BBB, C, V ) + _("Have unexpected '{}' in word '{}'").format( char, word ) )
                     lcWord = word.lower()
                     isAReferenceOrNumber = True
                     for char in word:
@@ -248,36 +250,50 @@ class BibleWriter( InternalBible ):
         def printWordCounts( typeString, dictionary ):
             """ Given a description and a dictionary,
                     sorts and writes the word count data to text, csv, and xml files. """
+            title = Globals.makeSafeXML( typeString.replace('_',' ') + " sorted by word" )
             filenamePortion = Globals.makeSafeFilename( typeString + "_sorted_by_word." )
             if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}*'...").format( filenamePortion ) )
             sortedWords = sorted(dictionary)
             with open( os.path.join( txtOutputFolder, filenamePortion )+'txt', 'wt' ) as txtFile:
                 with open( os.path.join( csvOutputFolder, filenamePortion )+'csv', 'wt' ) as csvFile:
                     with open( os.path.join( xmlOutputFolder, filenamePortion )+'xml', 'wt' ) as xmlFile:
-                        xmlFile.write( '<?xml version="1.0" encoding="utf-8"?>\n' ) # Write the xml header
-                        xmlFile.write( '<entries>\n' ) # root element
-                        for word in sortedWords:
-                            if Globals.debugFlag: assert( ' ' not in word )
-                            txtFile.write( "{} {}\n".format( word, dictionary[word] ) )
-                            csvFile.write( "{},{}\n".format( repr(word) if ',' in word else word, dictionary[word] ) )
-                            #if  '<' in word or '>' in word or '"' in word: print( "BibleWriter.makeLists: Here 3g5d", repr(word) )
-                            #if Globals.debugFlag: assert( '<' not in word and '>' not in word and '"' not in word )
-                            xmlFile.write( "<entry><word>{}</word><count>{}</count></entry>\n".format( Globals.makeSafeXML(word), dictionary[word] ) )
-                        xmlFile.write( '</entries>' ) # close root element
+                        with open( os.path.join( htmlOutputFolder, filenamePortion )+'html', 'wt' ) as htmlFile:
+                            xmlFile.write( '<?xml version="1.0" encoding="utf-8"?>\n' ) # Write the xml header
+                            xmlFile.write( '<entries>\n' ) # root element
+                            htmlFile.write( '<html><header><title>{}</title></header>\n'.format( title ) ) # Write the html header
+                            htmlFile.write( '<body><h1>{}</h1>\n'.format( title ) ) # Write the header
+                            htmlFile.write( '<table><tr><th>Word</th><th>Count</th></tr>\n' )
+                            for word in sortedWords:
+                                if Globals.debugFlag: assert( ' ' not in word )
+                                txtFile.write( "{} {}\n".format( word, dictionary[word] ) )
+                                csvFile.write( "{},{}\n".format( repr(word) if ',' in word else word, dictionary[word] ) )
+                                #if  '<' in word or '>' in word or '"' in word: print( "BibleWriter.makeLists: Here 3g5d", repr(word) )
+                                #if Globals.debugFlag: assert( '<' not in word and '>' not in word and '"' not in word )
+                                xmlFile.write( "<entry><word>{}</word><count>{}</count></entry>\n".format( Globals.makeSafeXML(word), dictionary[word] ) )
+                                htmlFile.write( "<tr><td>{}</td><td>{}</td></tr>\n".format( Globals.makeSafeXML(word), dictionary[word] ) )
+                            xmlFile.write( '</entries>' ) # close root element
+                            htmlFile.write( '</table></body></html>' ) # close open elements
+            title = Globals.makeSafeXML( typeString.replace('_',' ') + " sorted by count" )
             filenamePortion = Globals.makeSafeFilename( typeString + "_sorted_by_count." )
             if Globals.verbosityLevel > 2: print( "  " + _("Writing '{}*'...").format( filenamePortion ) )
             with open( os.path.join( txtOutputFolder, filenamePortion )+'txt', 'wt' ) as txtFile:
                 with open( os.path.join( csvOutputFolder, filenamePortion )+'csv', 'wt' ) as csvFile:
                     with open( os.path.join( xmlOutputFolder, filenamePortion )+'xml', 'wt' ) as xmlFile:
-                        xmlFile.write( '<?xml version="1.0" encoding="utf-8"?>\n' ) # Write the xml header
-                        xmlFile.write( '<entries>\n' ) # root element
-                        for word in sorted(sortedWords, key=dictionary.get):
-                            if Globals.debugFlag: assert( ' ' not in word )
-                            txtFile.write( "{} {}\n".format( word, dictionary[word] ) )
-                            csvFile.write( "{},{}\n".format( repr(word) if ',' in word else word, dictionary[word] ) )
-                            #if Globals.debugFlag: assert( '<' not in word and '>' not in word and '"' not in word )
-                            xmlFile.write( "<entry><word>{}</word><count>{}</count></entry>\n".format( Globals.makeSafeXML(word), dictionary[word] ) )
-                        xmlFile.write( '</entries>' ) # close root element
+                        with open( os.path.join( htmlOutputFolder, filenamePortion )+'html', 'wt' ) as htmlFile:
+                            xmlFile.write( '<?xml version="1.0" encoding="utf-8"?>\n' ) # Write the xml header
+                            xmlFile.write( '<entries>\n' ) # root element
+                            htmlFile.write( '<html><header><title>{}</title></header>\n'.format( title ) ) # Write the html header
+                            htmlFile.write( '<body><h1>{}</h1>\n'.format( title ) ) # Write the header
+                            htmlFile.write( '<table><tr><th>Word</th><th>Count</th></tr>\n' )
+                            for word in sorted(sortedWords, key=dictionary.get):
+                                if Globals.debugFlag: assert( ' ' not in word )
+                                txtFile.write( "{} {}\n".format( word, dictionary[word] ) )
+                                csvFile.write( "{},{}\n".format( repr(word) if ',' in word else word, dictionary[word] ) )
+                                #if Globals.debugFlag: assert( '<' not in word and '>' not in word and '"' not in word )
+                                xmlFile.write( "<entry><word>{}</word><count>{}</count></entry>\n".format( Globals.makeSafeXML(word), dictionary[word] ) )
+                                htmlFile.write( "<tr><td>{}</td><td>{}</td></tr>\n".format( Globals.makeSafeXML(word), dictionary[word] ) )
+                            xmlFile.write( '</entries>' ) # close root element
+                            htmlFile.write( '</table></body></html>' ) # close open elements
         # end of printWordCounts
 
 
@@ -315,10 +331,10 @@ class BibleWriter( InternalBible ):
                         countWords( extraType, cleanExtraText, "notes" )
 
         # Now sort the lists and write them each twice (sorted by word and sorted by count)
-        printWordCounts( "all_wordcounts", allWordCounts )
-        printWordCounts( "main_text_wordcounts", mainTextWordCounts )
-        printWordCounts( "all_wordcounts_case_insensitive", allCaseInsensitiveWordCounts )
-        printWordCounts( "main_text_wordcounts_case_insensitive", mainTextCaseInsensitiveWordCounts )
+        printWordCounts( "All_wordcounts", allWordCounts )
+        printWordCounts( "Main_text_wordcounts", mainTextWordCounts )
+        printWordCounts( "All_wordcounts_case_insensitive", allCaseInsensitiveWordCounts )
+        printWordCounts( "Main_text_wordcounts_case_insensitive", mainTextCaseInsensitiveWordCounts )
 
         if Globals.verbosityLevel > 0 and Globals.maxProcesses > 1:
             print( "  BibleWriter.makeLists finished successfully." )
@@ -9423,7 +9439,7 @@ def demo():
                 UB.load()
                 if Globals.verbosityLevel > 0: print( '\nBibleWriter A'+str(j+1)+'/', UB )
                 if Globals.strictCheckingFlag: UB.check()
-                #UB.toODF(); halt
+                #UB.makeLists(); halt
                 myFlag = Globals.verbosityLevel > 3
                 doaResults = UB.doAllExports( wantPhotoBible=myFlag, wantODFs=myFlag, wantPDFs=myFlag )
                 if Globals.strictCheckingFlag: # Now compare the original and the exported USFM files
