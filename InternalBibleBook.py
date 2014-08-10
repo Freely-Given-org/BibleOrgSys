@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2014-08-10 by RJH (also update ProgVersion below)
+#   Last modified: 2014-08-11 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -54,8 +54,9 @@ import unicodedata
 
 import Globals
 from USFMMarkers import USFM_INTRODUCTION_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS
-from InternalBibleInternals import BOS_ADDED_CONTENT_MARKERS, BOS_ADDED_NESTING_MARKERS, BOS_END_MARKERS, BOS_ALL_ADDED_MARKERS, \
-    BOS_EXTRA_TYPES, LEADING_WORD_PUNCT_CHARS, MEDIAL_WORD_PUNCT_CHARS, TRAILING_WORD_PUNCT_CHARS, ALL_WORD_PUNCT_CHARS, \
+from InternalBibleInternals import BOS_ADDED_CONTENT_MARKERS, BOS_PRINTABLE_MARKERS, BOS_ADDED_NESTING_MARKERS, \
+    BOS_END_MARKERS, BOS_ALL_ADDED_MARKERS, BOS_EXTRA_TYPES, \
+    LEADING_WORD_PUNCT_CHARS, MEDIAL_WORD_PUNCT_CHARS, TRAILING_WORD_PUNCT_CHARS, ALL_WORD_PUNCT_CHARS, \
     InternalBibleEntryList, InternalBibleEntry, InternalBibleIndex, InternalBibleExtra, InternalBibleExtraList
 from BibleReferences import BibleAnchorReference
 
@@ -1995,7 +1996,7 @@ class InternalBibleBook:
         sectionRefParenthCount = footnotesPeriodCount = xrefsPeriodCount = 0
 
         # Initialise all our word counters
-        bkDict['wordCount'] = bkDict['uniqueWordCount'] = 0
+        bkDict['wordCount'] = 0 #bkDict['uniqueWordCount'] = 0
         bkDict['allWordCounts'], bkDict['allCaseInsensitiveWordCounts'] = {}, {}
         bkDict['mainTextWordCounts'], bkDict['mainTextCaseInsensitiveWordCounts'] = {}, {}
 
@@ -2036,11 +2037,11 @@ class InternalBibleBook:
                         if not char.isdigit() and char not in ':-,.': isAReferenceOrNumber = False; break
                     if not isAReferenceOrNumber:
                         bkDict['wordCount'] += 1
-                        if word not in bkDict['allWordCounts']:
-                            bkDict['uniqueWordCount'] += 1
-                            bkDict['allWordCounts'][word] = 1
-                        else: bkDict['allWordCounts'][word] + 1
-                        #bkDict['allWordCounts'][word] = 1 if word not in bkDict['allWordCounts'] else bkDict['allWordCounts'][word] + 1
+                        #if word not in bkDict['allWordCounts']:
+                            #bkDict['uniqueWordCount'] += 1
+                            #bkDict['allWordCounts'][word] = 1
+                        #else: bkDict['allWordCounts'][word] += 1
+                        bkDict['allWordCounts'][word] = 1 if word not in bkDict['allWordCounts'] else bkDict['allWordCounts'][word] + 1
                         bkDict['allCaseInsensitiveWordCounts'][lcWord] = 1 if lcWord not in bkDict['allCaseInsensitiveWordCounts'] else bkDict['allCaseInsensitiveWordCounts'][lcWord] + 1
                         if location == "main":
                             bkDict['mainTextWordCounts'][word] = 1 if word not in bkDict['mainTextWordCounts'] else bkDict['mainTextWordCounts'][word] + 1
@@ -2095,8 +2096,9 @@ class InternalBibleBook:
             if text and '\\+' in text: bkDict['haveNestedUSFMarkers'] = True
             if lastMarker=='v' and (marker!='v~' or not text): bkDict['seemsFinished'] = False
 
-            if text and Globals.USFMMarkers.isPrinted(marker): # process this main text
+            if text and marker in BOS_PRINTABLE_MARKERS: # process this main text
                 countWords( marker, cleanText, "main" )
+            #elif text: print( "Ignoring {} {}:{} {}={}".format( self.BBB, C, V, marker, repr(text) ) )
 
             if extras:
                 for extraType, extraIndex, extraText, cleanExtraText in extras:
@@ -2120,6 +2122,9 @@ class InternalBibleBook:
                         if cleanExtraText.endswith('.') or cleanExtraText.endswith('.”'): xrefsPeriodCount += 1
                     countWords( extraType, cleanExtraText, "notes" )
             lastMarker = marker
+        #print( 'wordCount', self.BBB, bkDict['wordCount'] )
+        #print( 'uniqueWordCount', self.BBB, bkDict['uniqueWordCount'] )
+        bkDict['uniqueWordCount'] = len( bkDict['allWordCounts'] )
 
         if bkDict['verseCount'] is None: # Things like front and end matter (don't have verse numbers)
             for aKey in ('verseCount','seemsFinished','chapterCount','percentageProgress',):

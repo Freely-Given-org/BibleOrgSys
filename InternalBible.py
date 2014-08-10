@@ -555,6 +555,7 @@ class InternalBible:
 
             for key,value in self.discoveryResults[BBB].items():
                 # Create some lists of books
+                #if key == 'wordCount': print( BBB, key, value )
                 if key=='notStarted' and value:
                     if 'NotStartedBookCodes' not in aggregateResults: aggregateResults['NotStartedBookCodes'] = [BBB]
                     else: aggregateResults['NotStartedBookCodes'].append( BBB )

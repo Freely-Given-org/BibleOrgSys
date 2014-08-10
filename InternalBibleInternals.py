@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleInternals.py
-#   Last modified: 2014-08-05 by RJH (also update ProgVersion below)
+#   Last modified: 2014-08-11 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Bible internals handler"
-ProgVersion = "0.46"
+ProgVersion = "0.47"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -50,7 +50,8 @@ from gettext import gettext as _
 from collections import OrderedDict
 
 import Globals
-from USFMMarkers import USFM_BIBLE_PARAGRAPH_MARKERS # OFTEN_IGNORED_USFM_HEADER_MARKERS, USFM_INTRODUCTION_MARKERS
+from USFMMarkers import USFM_TITLE_MARKERS, USFM_INTRODUCTION_MARKERS, \
+                        USFM_SECTION_HEADING_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS # OFTEN_IGNORED_USFM_HEADER_MARKERS
 from BibleReferences import BibleAnchorReference
 
 
@@ -74,8 +75,9 @@ BOS_ADDED_CONTENT_MARKERS = ( 'c~', 'c#', 'v~', 'p~', 'cl=', 'vp~', )
     vp~ used for the vp (character field) when it is converted to a separate (newline) field
             This is inserted BEFORE the v (and v~) marker(s)
 """
+BOS_PRINTABLE_MARKERS = USFM_TITLE_MARKERS + USFM_INTRODUCTION_MARKERS + USFM_SECTION_HEADING_MARKERS + ('v~', 'p~', ) # Should c~ and c# be in here???
 
-BOS_REGULAR_NESTING_MARKERS = ('c','v', 's1','s2','s3','s4', 'is1','is2','is3','is4', )
+BOS_REGULAR_NESTING_MARKERS = USFM_SECTION_HEADING_MARKERS + ('c','v' )
 
 BOS_ADDED_NESTING_MARKERS = ( 'intro', 'ilist', 'chapters', 'list', )
 """
