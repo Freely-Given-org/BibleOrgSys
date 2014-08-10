@@ -554,6 +554,7 @@ class InternalBible:
                 else: aggregateResults['OtherBookCount'] += 1; aggregateResults['OtherBookCodes'].append( BBB )
 
             for key,value in self.discoveryResults[BBB].items():
+                # Create some lists of books
                 if key=='notStarted' and value:
                     if 'NotStartedBookCodes' not in aggregateResults: aggregateResults['NotStartedBookCodes'] = [BBB]
                     else: aggregateResults['NotStartedBookCodes'].append( BBB )
@@ -591,7 +592,8 @@ class InternalBible:
                         if 'DCPartlyDoneBookCodes' not in aggregateResults: aggregateResults['DCPartlyDoneBookCodes'] = [BBB]
                         else: aggregateResults['DCPartlyDoneBookCodes'].append( BBB )
 
-                if key=='percentageProgress':
+                # Aggregate book statistics into a whole
+                if key == 'percentageProgress':
                     if 'percentageProgressByBook' not in aggregateResults: aggregateResults['percentageProgressByBook'] = value
                     else: aggregateResults['percentageProgressByBook'] += value
                     if isOT:
@@ -604,12 +606,23 @@ class InternalBible:
                         if 'DCpercentageProgressByBook' not in aggregateResults: aggregateResults['DCpercentageProgressByBook'] = value
                         else: aggregateResults['DCpercentageProgressByBook'] += value
                     #print( 'xxx', value, aggregateResults['percentageProgressByBook'] )
-                elif isinstance( value, float ):
-                    #print( "got", BBB, key, value )
+                elif key == 'uniqueWordCount': pass # Makes no sense to aggregate this
+                elif key.endswith( 'WordCounts' ): # We need to combine these word count dictionaries
+                    #print( "wcGot", BBB, key )
+                    if key not in aggregateResults: aggregateResults[key] = {}
+                    assert( isinstance( value, dict ) )
+                    for word in value:
+                        assert( isinstance( word, str ) )
+                        assert( isinstance( value[word], int ) )
+                        if word not in aggregateResults[key]: aggregateResults[key][word] = 0
+                        aggregateResults[key][word] += value[word]
+                elif isinstance( value, float ): # e.g., crossReferencesPeriodRatio
+                    #print( "fgot", BBB, key, value )
                     if 0.0 <= value <= 1.0:
                         if key not in aggregateResults: aggregateResults[key] = [value]
                         else: aggregateResults[key].append( value )
-                elif isinstance( value, int ):
+                    elif value != -1.0: logging.warning( "InternalBible.discover: " + _("invalid ratio (float) {} {} {}").format( BBB, key, repr(value) ) )
+                elif isinstance( value, int ): # e.g., completedVerseCount and also booleans such as havePopulatedCVmarkers
                     #print( "igot", BBB, key, value )
                     if key not in aggregateResults: aggregateResults[key] = value
                     else: aggregateResults[key] += value
@@ -622,23 +635,27 @@ class InternalBible:
                     elif isDC:
                         if 'DC'+key not in aggregateResults: aggregateResults['DC'+key] = value
                         else: aggregateResults['DC'+key] += value
-                elif value==True: # This test must come below the isinstance tests
-                    #print( "tgot", BBB, key, value )
-                    if key not in aggregateResults: aggregateResults[key] = 1
-                    else: aggregateResults[key] += 1
-                    if isOT:
-                        if 'OT'+key not in aggregateResults: aggregateResults['OT'+key] = 1
-                        else: aggregateResults['OT'+key] += 1
-                    elif isNT:
-                        if 'NT'+key not in aggregateResults: aggregateResults['NT'+key] = 1
-                        else: aggregateResults['NT'+key] += 1
-                    elif isDC:
-                        if 'DC'+key not in aggregateResults: aggregateResults['DC'+key] = 1
-                        else: aggregateResults['DC'+key] += 1
-                elif value==False:
-                    pass # No action needed here
+                    else: # front-back matter
+                        if 'OTHER'+key not in aggregateResults: aggregateResults['OTHER'+key] = value
+                        else: aggregateResults['OTHER'+key] += value
+                #elif value==True: # This test must come below the isinstance tests
+                    #print( "tgot", BBB, key, value ); halt
+                    #if key not in aggregateResults: aggregateResults[key] = 1
+                    #else: aggregateResults[key] += 1
+                    #if isOT:
+                        #if 'OT'+key not in aggregateResults: aggregateResults['OT'+key] = 1
+                        #else: aggregateResults['OT'+key] += 1
+                    #elif isNT:
+                        #if 'NT'+key not in aggregateResults: aggregateResults['NT'+key] = 1
+                        #else: aggregateResults['NT'+key] += 1
+                    #elif isDC:
+                        #if 'DC'+key not in aggregateResults: aggregateResults['DC'+key] = 1
+                        #else: aggregateResults['DC'+key] += 1
+                #elif value==False:
+                    #halt
+                    #pass # No action needed here
                 else:
-                    print( "WARNING: unactioned discovery result", BBB, key, value )
+                    logging.warning( "InternalBible.discover: " + _("unactioned discovery result {} {} {}").format( BBB, key, repr(value) ) )
 
         for arKey in list(aggregateResults.keys()): # Make a list first so we can delete entries later
             # Create summaries of lists with entries for various books
@@ -674,6 +691,9 @@ class InternalBible:
             aggregateResults['DCpercentageProgressByVerse'] = str( round( aggregateResults['DCcompletedVerseCount'] * 100 / aggregateResults['DCverseCount'] ) ) + '%'
 
         # Save the results
+        #print( "ALL discoveryResults", aggregateResults ); halt
+        #for key,value in aggregateResults.items():
+            #if key.endswith( 'ordCount' ): print( key, value )
         self.discoveryResults['ALL'] = aggregateResults
 
         if Globals.verbosityLevel > 2: # or self.name=="Matigsalug": # Display some of these results

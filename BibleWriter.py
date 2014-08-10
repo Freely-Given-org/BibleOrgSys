@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-08-09 by RJH (also update ProgVersion below)
+#   Last modified: 2014-08-10 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -67,7 +67,7 @@ Note that not all exports export all books.
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.84"
+ProgVersion = "0.85"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -203,48 +203,48 @@ class BibleWriter( InternalBible ):
         htmlOutputFolder = os.path.join( outputFolder, "HTML/" )
         if not os.access( htmlOutputFolder, os.F_OK ): os.makedirs( htmlOutputFolder ) # Make the empty folder if there wasn't already one there
 
-        def countWords( marker, segment, location ):
-            """ Breaks the segment into words and counts them.
-            """
-            def stripWordPunctuation( word ):
-                """Removes leading and trailing punctuation from a word.
-                    Returns the "clean" word."""
-                while word and word[0] in InternalBibleBook.LEADING_WORD_PUNCT_CHARS:
-                    word = word[1:] # Remove leading punctuation
-                while word and word[-1] in InternalBibleBook.TRAILING_WORD_PUNCT_CHARS:
-                    word = word[:-1] # Remove trailing punctuation
-                if  '<' in word or '>' in word or '"' in word: print( "BibleWriter.makeLists: Need to escape HTML chars here 3s42", BBB, C, V, repr(word) )
-                return word
-            # end of stripWordPunctuation
+        #def countWords( marker, segment, location ):
+            #""" Breaks the segment into words and counts them.
+            #"""
+            #def stripWordPunctuation( word ):
+                #"""Removes leading and trailing punctuation from a word.
+                    #Returns the "clean" word."""
+                #while word and word[0] in InternalBibleBook.LEADING_WORD_PUNCT_CHARS:
+                    #word = word[1:] # Remove leading punctuation
+                #while word and word[-1] in InternalBibleBook.TRAILING_WORD_PUNCT_CHARS:
+                    #word = word[:-1] # Remove trailing punctuation
+                #if  '<' in word or '>' in word or '"' in word: print( "BibleWriter.makeLists: Need to escape HTML chars here 3s42", BBB, C, V, repr(word) )
+                #return word
+            ## end of stripWordPunctuation
 
-            words = segment.replace('—',' ').replace('–',' ').split() # Treat em-dash and en-dash as word break characters
-            for j,rawWord in enumerate(words):
-                if marker=='c' or marker=='v' and j==1 and rawWord.isdigit(): continue # Ignore the chapter and verse numbers (except ones like 6a)
-                word = rawWord
-                for internalMarker in InternalBibleBook.INTERNAL_SFMS_TO_REMOVE: word = word.replace( internalMarker, '' )
-                word = stripWordPunctuation( word )
-                if word and not word[0].isalnum():
-                    #print( word, stripWordPunctuation( word ) )
-                    if len(word) > 1:
-                        if Globals.debugFlag: print( "BibleWriter.makeLists: {} {}:{} ".format( BBB, C, V ) + _("Have unexpected character starting word '{}'").format( word ) )
-                        word = word[1:]
-                if word: # There's still some characters remaining after all that stripping
-                    if Globals.verbosityLevel > 3: # why???
-                        for k,char in enumerate(word):
-                            if not char.isalnum() and (k==0 or k==len(word)-1 or char not in InternalBibleBook.MEDIAL_WORD_PUNCT_CHARS):
-                                if Globals.debugFlag: print( "BibleWriter.makeLists: {} {}:{} ".format( BBB, C, V ) + _("Have unexpected '{}' in word '{}'").format( char, word ) )
-                    lcWord = word.lower()
-                    isAReferenceOrNumber = True
-                    for char in word:
-                        if not char.isdigit() and char not in ':-,.': isAReferenceOrNumber = False; break
-                    if not isAReferenceOrNumber:
-                        allWordCounts[word] = 1 if word not in allWordCounts else allWordCounts[word] + 1
-                        allCaseInsensitiveWordCounts[lcWord] = 1 if lcWord not in allCaseInsensitiveWordCounts else allCaseInsensitiveWordCounts[lcWord] + 1
-                        if location == "main":
-                            mainTextWordCounts[word] = 1 if word not in mainTextWordCounts else mainTextWordCounts[word] + 1
-                            mainTextCaseInsensitiveWordCounts[lcWord] = 1 if lcWord not in mainTextCaseInsensitiveWordCounts else mainTextCaseInsensitiveWordCounts[lcWord] + 1
-                    #else: print( "excluded reference or number", word )
-        # end of countWords
+            #words = segment.replace('—',' ').replace('–',' ').split() # Treat em-dash and en-dash as word break characters
+            #for j,rawWord in enumerate(words):
+                #if marker=='c' or marker=='v' and j==1 and rawWord.isdigit(): continue # Ignore the chapter and verse numbers (except ones like 6a)
+                #word = rawWord
+                #for internalMarker in InternalBibleBook.INTERNAL_SFMS_TO_REMOVE: word = word.replace( internalMarker, '' )
+                #word = stripWordPunctuation( word )
+                #if word and not word[0].isalnum():
+                    ##print( word, stripWordPunctuation( word ) )
+                    #if len(word) > 1:
+                        #if Globals.debugFlag: print( "BibleWriter.makeLists: {} {}:{} ".format( BBB, C, V ) + _("Have unexpected character starting word '{}'").format( word ) )
+                        #word = word[1:]
+                #if word: # There's still some characters remaining after all that stripping
+                    #if Globals.verbosityLevel > 3: # why???
+                        #for k,char in enumerate(word):
+                            #if not char.isalnum() and (k==0 or k==len(word)-1 or char not in InternalBibleBook.MEDIAL_WORD_PUNCT_CHARS):
+                                #if Globals.debugFlag: print( "BibleWriter.makeLists: {} {}:{} ".format( BBB, C, V ) + _("Have unexpected '{}' in word '{}'").format( char, word ) )
+                    #lcWord = word.lower()
+                    #isAReferenceOrNumber = True
+                    #for char in word:
+                        #if not char.isdigit() and char not in ':-,.': isAReferenceOrNumber = False; break
+                    #if not isAReferenceOrNumber:
+                        #allWordCounts[word] = 1 if word not in allWordCounts else allWordCounts[word] + 1
+                        #allCaseInsensitiveWordCounts[lcWord] = 1 if lcWord not in allCaseInsensitiveWordCounts else allCaseInsensitiveWordCounts[lcWord] + 1
+                        #if location == "main":
+                            #mainTextWordCounts[word] = 1 if word not in mainTextWordCounts else mainTextWordCounts[word] + 1
+                            #mainTextCaseInsensitiveWordCounts[lcWord] = 1 if lcWord not in mainTextCaseInsensitiveWordCounts else mainTextCaseInsensitiveWordCounts[lcWord] + 1
+                    ##else: print( "excluded reference or number", word )
+        ## end of countWords
 
 
         def printWordCounts( typeString, dictionary ):
@@ -297,44 +297,44 @@ class BibleWriter( InternalBible ):
         # end of printWordCounts
 
 
-        # Initialise all our counters
-        allWordCounts, allCaseInsensitiveWordCounts = {}, {}
-        mainTextWordCounts, mainTextCaseInsensitiveWordCounts = {}, {}
+        ## Initialise all our counters
+        #allWordCounts, allCaseInsensitiveWordCounts = {}, {}
+        #mainTextWordCounts, mainTextCaseInsensitiveWordCounts = {}, {}
 
 
-        # Determine all the counts
-        for BBB,bookObject in self.books.items():
-            C = V = '0' # Just for error messages
-            for entry in bookObject._processedLines:
-                marker, text, cleanText, extras = entry.getMarker(), entry.getText(), entry.getCleanText(), entry.getExtras()
-                if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
+        ## Determine all the counts
+        #for BBB,bookObject in self.books.items():
+            #C = V = '0' # Just for error messages
+            #for entry in bookObject._processedLines:
+                #marker, text, cleanText, extras = entry.getMarker(), entry.getText(), entry.getCleanText(), entry.getExtras()
+                #if '¬' in marker or marker in BOS_ADDED_NESTING_MARKERS: continue # Just ignore added markers -- not needed here
 
-                # Keep track of where we are for more helpful error messages
-                if marker=='c' and text: C, V = text.split()[0], '0'
-                elif marker=='v' and text: V = text.split()[0]
+                ## Keep track of where we are for more helpful error messages
+                #if marker=='c' and text: C, V = text.split()[0], '0'
+                #elif marker=='v' and text: V = text.split()[0]
 
-                if text and Globals.USFMMarkers.isPrinted(marker): # process this main text
-                    countWords( marker, cleanText, "main" )
+                #if text and Globals.USFMMarkers.isPrinted(marker): # process this main text
+                    #countWords( marker, cleanText, "main" )
 
-                if extras:
-                    for extra in extras: # do any footnotes and cross-references
-                        extraType, extraIndex, extraText, cleanExtraText = extra
-                        if Globals.debugFlag:
-                            assert( extraText ) # Shouldn't be blank
-                            #assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
-                            assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
-                            #print( extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
-                            assert( extraIndex >= 0 )
-                            #assert( 0 <= extraIndex <= len(text)+3 )
-                            #assert( extraType in ('fn','xr',) )
-                            assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
-                        countWords( extraType, cleanExtraText, "notes" )
+                #if extras:
+                    #for extra in extras: # do any footnotes and cross-references
+                        #extraType, extraIndex, extraText, cleanExtraText = extra
+                        #if Globals.debugFlag:
+                            #assert( extraText ) # Shouldn't be blank
+                            ##assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
+                            #assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
+                            ##print( extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
+                            #assert( extraIndex >= 0 )
+                            ##assert( 0 <= extraIndex <= len(text)+3 )
+                            ##assert( extraType in ('fn','xr',) )
+                            #assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
+                        #countWords( extraType, cleanExtraText, "notes" )
 
         # Now sort the lists and write them each twice (sorted by word and sorted by count)
-        printWordCounts( "All_wordcounts", allWordCounts )
-        printWordCounts( "Main_text_wordcounts", mainTextWordCounts )
-        printWordCounts( "All_wordcounts_case_insensitive", allCaseInsensitiveWordCounts )
-        printWordCounts( "Main_text_wordcounts_case_insensitive", mainTextCaseInsensitiveWordCounts )
+        printWordCounts( "All_wordcounts", self.discoveryResults['ALL']['allWordCounts'] )
+        printWordCounts( "Main_text_wordcounts", self.discoveryResults['ALL']['mainTextWordCounts'] )
+        printWordCounts( "All_wordcounts_case_insensitive", self.discoveryResults['ALL']['allCaseInsensitiveWordCounts'] )
+        printWordCounts( "Main_text_wordcounts_case_insensitive", self.discoveryResults['ALL']['mainTextCaseInsensitiveWordCounts'] )
 
         if Globals.verbosityLevel > 0 and Globals.maxProcesses > 1:
             print( "  BibleWriter.makeLists finished successfully." )
@@ -9420,9 +9420,9 @@ def demo():
                 #("USFMTest2", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
                 #("ESFMTest1", "ESFM1", "Tests/DataFilesForTests/ESFMTest1/",),
                 #("ESFMTest2", "ESFM2", "Tests/DataFilesForTests/ESFMTest2/",),
-                ("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
+                #("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
                 #("OEB", "OEB", "Tests/DataFilesForTests/USFM-OEB/",),
-                #("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
+                ("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
                 #("MS-BT", "MBTBT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
                 #("MS-Notes", "MBTBC", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/",),
                 #("MS-ABT", "MBTABT", "../../../../../Data/Work/Matigsalug/Bible/MBTABT/",),

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2014-07-17 by RJH (also update ProgVersion below)
+#   Last modified: 2014-08-10 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -41,7 +41,7 @@ Required improvements:
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.85"
+ProgVersion = "0.86"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -1994,11 +1994,68 @@ class InternalBibleBook:
 
         sectionRefParenthCount = footnotesPeriodCount = xrefsPeriodCount = 0
 
+        # Initialise all our word counters
+        bkDict['wordCount'] = bkDict['uniqueWordCount'] = 0
+        bkDict['allWordCounts'], bkDict['allCaseInsensitiveWordCounts'] = {}, {}
+        bkDict['mainTextWordCounts'], bkDict['mainTextCaseInsensitiveWordCounts'] = {}, {}
+
+
+        def countWords( marker, segment, location ):
+            """ Breaks the segment into words and counts them.
+            """
+            def stripWordPunctuation( word ):
+                """Removes leading and trailing punctuation from a word.
+                    Returns the "clean" word."""
+                while word and word[0] in LEADING_WORD_PUNCT_CHARS:
+                    word = word[1:] # Remove leading punctuation
+                while word and word[-1] in TRAILING_WORD_PUNCT_CHARS:
+                    word = word[:-1] # Remove trailing punctuation
+                if  '<' in word or '>' in word or '"' in word: print( "InternalBibleBook.discover: Need to escape HTML chars here 3s42", self.BBB, C, V, repr(word) )
+                return word
+            # end of stripWordPunctuation
+
+            words = segment.replace('—',' ').replace('–',' ').split() # Treat em-dash and en-dash as word break characters
+            for j,rawWord in enumerate(words):
+                if marker=='c' or marker=='v' and j==1 and rawWord.isdigit(): continue # Ignore the chapter and verse numbers (except ones like 6a)
+                word = rawWord
+                for internalMarker in INTERNAL_SFMS_TO_REMOVE: word = word.replace( internalMarker, '' )
+                word = stripWordPunctuation( word )
+                if word and not word[0].isalnum():
+                    #print( word, stripWordPunctuation( word ) )
+                    if len(word) > 1:
+                        if Globals.debugFlag: print( "InternalBibleBook.discover: {} {}:{} ".format( self.BBB, C, V ) + _("Have unexpected character starting word '{}'").format( word ) )
+                        word = word[1:]
+                if word: # There's still some characters remaining after all that stripping
+                    if Globals.verbosityLevel > 3: # why???
+                        for k,char in enumerate(word):
+                            if not char.isalnum() and (k==0 or k==len(word)-1 or char not in MEDIAL_WORD_PUNCT_CHARS):
+                                if Globals.debugFlag: print( "InternalBibleBook.discover: {} {}:{} ".format( self.BBB, C, V ) + _("Have unexpected '{}' in word '{}'").format( char, word ) )
+                    lcWord = word.lower()
+                    isAReferenceOrNumber = True
+                    for char in word:
+                        if not char.isdigit() and char not in ':-,.': isAReferenceOrNumber = False; break
+                    if not isAReferenceOrNumber:
+                        bkDict['wordCount'] += 1
+                        if word not in bkDict['allWordCounts']:
+                            bkDict['uniqueWordCount'] += 1
+                            bkDict['allWordCounts'][word] = 1
+                        else: bkDict['allWordCounts'][word] + 1
+                        #bkDict['allWordCounts'][word] = 1 if word not in bkDict['allWordCounts'] else bkDict['allWordCounts'][word] + 1
+                        bkDict['allCaseInsensitiveWordCounts'][lcWord] = 1 if lcWord not in bkDict['allCaseInsensitiveWordCounts'] else bkDict['allCaseInsensitiveWordCounts'][lcWord] + 1
+                        if location == "main":
+                            bkDict['mainTextWordCounts'][word] = 1 if word not in bkDict['mainTextWordCounts'] else bkDict['mainTextWordCounts'][word] + 1
+                            bkDict['mainTextCaseInsensitiveWordCounts'][lcWord] = 1 if lcWord not in bkDict['mainTextCaseInsensitiveWordCounts'] else bkDict['mainTextCaseInsensitiveWordCounts'][lcWord] + 1
+                    #else: print( "excluded reference or number", word )
+        # end of countWords
+
+
+        # discover main code
         C = V = '0'
         lastMarker = None
         for entry in self._processedLines:
-            marker, text, cleanText = entry.getMarker(), entry.getText(), entry.getCleanText()
+            marker = entry.getMarker()
             if '¬' in marker: continue # Just ignore end markers -- not needed here
+            text, cleanText, extras = entry.getText(), entry.getCleanText(), entry.getExtras()
 
             # Keep track of where we are for more helpful error messages
             if marker=='c' and text:
@@ -2038,7 +2095,9 @@ class InternalBibleBook:
             if text and '\\+' in text: bkDict['haveNestedUSFMarkers'] = True
             if lastMarker=='v' and (marker!='v~' or not text): bkDict['seemsFinished'] = False
 
-            extras = entry.getExtras()
+            if text and Globals.USFMMarkers.isPrinted(marker): # process this main text
+                countWords( marker, cleanText, "main" )
+
             if extras:
                 for extraType, extraIndex, extraText, cleanExtraText in extras:
                     if Globals.debugFlag:
@@ -2059,6 +2118,7 @@ class InternalBibleBook:
                         bkDict['crossReferencesCount'] += 1
                         if '\\xo' in extraText: bkDict['haveCrossReferenceOrigins'] = True
                         if cleanExtraText.endswith('.') or cleanExtraText.endswith('.”'): xrefsPeriodCount += 1
+                    countWords( extraType, cleanExtraText, "notes" )
             lastMarker = marker
 
         if bkDict['verseCount'] is None: # Things like front and end matter (don't have verse numbers)
