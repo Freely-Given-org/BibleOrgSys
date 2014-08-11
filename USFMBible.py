@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2014-07-16 by RJH (also update ProgVersion below)
+#   Last modified: 2014-08-11 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -314,7 +314,7 @@ class USFMBible( Bible ):
             logging.warning( "We had already tried loading USFM {} for {}".format( BBB, self.name ) )
             return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
-        if Globals.verbosityLevel > 1 or Globals.debugFlag: print( _("  USFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
+        if Globals.verbosityLevel > 2 or Globals.debugFlag: print( _("  USFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
         if filename is None: filename = self.possibleFilenameDict[BBB]
         UBB = USFMBibleBook( self, BBB )
         UBB.load( filename, self.sourceFolder, self.encoding )
