@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # OpenSongXMLBible.py
-#   Last modified: 2014-07-16 by RJH (also update ProgVersion below)
+#   Last modified: 2014-09-03 by RJH (also update ProgVersion below)
 #
 # Module handling OpenSong XML Bibles
 #
@@ -34,7 +34,7 @@ Module reading and loading OpenSong XML Bibles:
 """
 
 ProgName = "OpenSong XML Bible format handler"
-ProgVersion = "0.28"
+ProgVersion = "0.29"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -247,6 +247,7 @@ class OpenSongXMLBible( Bible ):
                     pass
                 else: logging.error( "Expected to find '{}' but got '{}'".format( OpenSongXMLBible.bookTag, element.tag ) )
         else: logging.error( "Expected to load '{}' but got '{}'".format( OpenSongXMLBible.treeTag, self.tree.tag ) )
+        self.doPostLoadProcessing()
     # end of OpenSongXMLBible.load
 
 
@@ -272,6 +273,9 @@ class OpenSongXMLBible( Bible ):
                 thisBook.objectNameString = "OpenSong XML Bible Book object"
                 thisBook.objectTypeString = "OpenSong"
                 #thisBook.sourceFilepath = self.sourceFilepath
+                thisBook.appendLine( 'id', '{} imported by {}'.format( BBB, ProgNameVersion ) )
+                thisBook.appendLine( 'h', bookName )
+                thisBook.appendLine( 'mt1', bookName )
                 for element in book:
                     if element.tag == OpenSongXMLBible.chapterTag:
                         sublocation = "chapter in {}".format( BBB )
@@ -281,8 +285,8 @@ class OpenSongXMLBible( Bible ):
                     else: logging.error( "Expected to find '{}' but got '{}'".format( OpenSongXMLBible.chapterTag, element.tag ) )
                 if Globals.verbosityLevel > 2: print( "  Saving {} into results...".format( BBB ) )
                 self.saveBook( thisBook )
-            logging.error( _("OpenSong load doesn't recognize book name: '{}'").format( bookName ) )
-        logging.error( _("OpenSong load can't find a book name") )
+            else: logging.error( _("OpenSong load doesn't recognize book name: '{}'").format( bookName ) ) # no BBB
+        else: logging.error( _("OpenSong load can't find a book name") ) # no bookName
     # end of OpenSongXMLBible.__validateAndExtractBook
 
 
