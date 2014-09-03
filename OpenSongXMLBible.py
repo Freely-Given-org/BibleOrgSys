@@ -34,7 +34,7 @@ Module reading and loading OpenSong XML Bibles:
 """
 
 ProgName = "OpenSong XML Bible format handler"
-ProgVersion = "0.29"
+ProgVersion = "0.30"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -273,7 +273,8 @@ class OpenSongXMLBible( Bible ):
                 thisBook.objectNameString = "OpenSong XML Bible Book object"
                 thisBook.objectTypeString = "OpenSong"
                 #thisBook.sourceFilepath = self.sourceFilepath
-                thisBook.appendLine( 'id', '{} imported by {}'.format( BBB, ProgNameVersion ) )
+                USFMAbbreviation = Globals.BibleBooksCodes.getUSFMAbbreviation( BBB )
+                thisBook.appendLine( 'id', '{} imported by {}'.format( USFMAbbreviation, ProgNameVersion ) )
                 thisBook.appendLine( 'h', bookName )
                 thisBook.appendLine( 'mt1', bookName )
                 for element in book:
