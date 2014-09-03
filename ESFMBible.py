@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ESFMBible.py
-#   Last modified: 2014-08-05 by RJH (also update ProgVersion below)
+#   Last modified: 2014-08-23 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of ESFM Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial ESFM Bibles.
 """
 
 ProgName = "ESFM Bible handler"
-ProgVersion = "0.53"
+ProgVersion = "0.54"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -168,6 +168,11 @@ def ESFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
         UFns = USFMFilenames( tryFolderName ) # Assuming they have standard Paratext style filenames
         if Globals.verbosityLevel > 2: print( UFns )
         filenameTuples = UFns.getMaximumPossibleFilenameTuples() # Returns (BBB,filename) 2-tuples
+        for BBB,fn in filenameTuples[:]: # Only accept our specific file extensions
+            acceptFlag = False
+            for fna in filenameEndingsToAccept:
+                if fn.endswith( fna ): acceptFlag = True
+            if not acceptFlag: filenameTuples.remove( (BBB,fn) )
         if Globals.verbosityLevel > 3: print( "  Confirmed:", len(filenameTuples), filenameTuples )
         if Globals.verbosityLevel > 2 and filenameTuples: print( "  Found {} ESFM files: {}".format( len(filenameTuples), filenameTuples ) )
         elif Globals.verbosityLevel > 1 and filenameTuples: print( "  Found {} ESFM file{}".format( len(filenameTuples), '' if len(filenameTuples)==1 else 's' ) )
