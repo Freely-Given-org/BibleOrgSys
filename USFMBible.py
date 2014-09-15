@@ -223,7 +223,7 @@ class USFMBible( Bible ):
         if len(ssfFilepathList) == 1: # Seems we found the right one
             self.ssfFilepath = ssfFilepathList[0]
             self.loadSSFData( self.ssfFilepath )
-            if 'Encoding' in self.ssfDict:
+            if self.encoding is None and 'Encoding' in self.ssfDict: # See if the SSF file gives some help to us
                 ssfEncoding = self.ssfDict['Encoding']
                 if ssfEncoding == '65001': self.encoding = 'utf-8'
                 else:

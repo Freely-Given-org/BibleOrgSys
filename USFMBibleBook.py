@@ -113,6 +113,7 @@ class USFMBibleBook( BibleBook ):
         self.sourceFolder = folder
         self.sourceFilepath = os.path.join( folder, filename ) if folder else filename
         originalBook = USFMFile()
+        if encoding is None: encoding = 'utf-8'
         originalBook.read( self.sourceFilepath, encoding=encoding )
 
         # Do some important cleaning up before we save the data

@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# USFMFile.py
+# ESFMFile.py
 #   Last modified: 2014-09-15 (also update ProgVersion below)
 #
 # ESFM (Enhanced Standard Format Marker) data file reader
@@ -36,7 +36,7 @@ Module for reading UTF-8 ESFM (Enhanced Standard Format Marker) Bible file.
 
 
 ProgName = "ESFM File loader"
-ProgVersion = "0.84"
+ProgVersion = "0.85"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -59,7 +59,7 @@ class ESFMFile:
         """
         This method returns the string representation of a SFM lines object.
 
-        @return: the name of a USFM field object formatted as a string
+        @return: the name of a ESFM field object formatted as a string
         @rtype: string
         """
         result = "ESFM File Object"
@@ -68,7 +68,7 @@ class ESFMFile:
             result += ('\n' if result else '') + str( line )
         return result
 
-    def read( self, sfm_filename, ignoreSFMs=None, encoding='utf-8' ):
+    def read( self, sfm_filename, ignoreSFMs=None ):
         """Read a simple ESFM (Enhanced Standard Format Marker) file into a list of tuples.
 
         @param sfm_filename: The filename
@@ -78,24 +78,24 @@ class ESFMFile:
         @rtype: list
         @return: list of lists containing the records
         """
-        #print( "USFMFile.read( {}, {}, {} )".format( repr(sfm_filename), repr(ignoreSFMs), repr(encoding) ) )
+        #print( "ESFMFile.read( {}, {}, {} )".format( repr(sfm_filename), repr(ignoreSFMs), repr(encoding) ) )
 
         # Check/handle parameters
         if ignoreSFMs is None: ignoreSFMs = ()
 
         dummyValue = 999999 # Some number bigger than the number of characters in a line
         lastLine, lineCount, result = '', 0, []
-        with open( sfm_filename, encoding=encoding ) as ourFile: # Automatically closes the file when done
+        with open( sfm_filename, encoding='utf-8' ) as ourFile: # Automatically closes the file when done
             try:
                 for line in ourFile:
                     lineCount += 1
                     if lineCount==1 and encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF
-                        logging.info( "USFMFile: Detected UTF-16 Byte Order Marker in {}".format( sfm_filename ) )
+                        logging.info( "ESFMFile: Detected UTF-16 Byte Order Marker in {}".format( sfm_filename ) )
                         line = line[1:] # Remove the UTF-8 Byte Order Marker
                     if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines
                     lastLine = line
-                    #print ( 'USFM file line is "' + line + '"' )
+                    #print ( 'ESFM file line is "' + line + '"' )
                     #if line[0:2]=='\\_': continue # Just discard Toolbox header lines
                     if line[0]=='#': continue # Just discard comment lines
 
@@ -103,7 +103,7 @@ class ESFMFile:
                     if line and line[0]!='\\': # Not a SFM line
                         if len(result)==0: # We don't have any SFM data lines yet
                             if Globals.verbosityLevel > 2:
-                                logging.error( "Non-USFM line in " + sfm_filename + " -- line ignored at #" + str(lineCount) )
+                                logging.error( "Non-ESFM line in " + sfm_filename + " -- line ignored at #" + str(lineCount) )
                             #print( "SFMFile.py: XXZXResult is", result, len(line) )
                             #for x in range(0, min(6,len(line))):
                                 #print( x, "'" + str(ord(line[x])) + "'" )
@@ -151,14 +151,14 @@ class ESFMFile:
                 #raise
 
             self.lines = result
-    # end of USFMFile.read
-# end of class USFMFile
+    # end of ESFMFile.read
+# end of class ESFMFile
 
 
 
 def demo():
     """
-    Demonstrate reading and processing some UTF-8 SFM databases.
+    Demonstrate reading and processing some UTF-8 ESFM files.
     """
     if Globals.verbosityLevel > 1: print( ProgNameVersion )
 
@@ -166,7 +166,7 @@ def demo():
     filepath = os.path.join( 'Tests/DataFilesForTests/', 'MatigsalugDictionaryA.sfm' )
     if Globals.verbosityLevel > 2: print( "Using {} as test file...".format( filepath ) )
 
-    linesDB = USFMFile()
+    linesDB = ESFMFile()
     linesDB.read( filepath, ignoreSFMs=('mn','aMU','aMW','cu','cp') )
     print( len(linesDB.lines), 'lines read from file', filepath )
     for i, r in enumerate(linesDB.lines):
@@ -183,4 +183,4 @@ if __name__ == '__main__':
     demo()
 
     Globals.closedown( ProgName, ProgVersion )
-# end of USFMFile.py
+# end of ESFMFile.py

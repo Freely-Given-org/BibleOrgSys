@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMFile.py
-#   Last modified: 2014-05-28 (also update ProgVersion below)
+#   Last modified: 2014-09-15 (also update ProgVersion below)
 #
 # SFM (Standard Format Marker) data file reader
 #
@@ -36,7 +36,7 @@ Module for reading UTF-8 USFM (Unified Standard Format Marker) Bible file.
 
 
 ProgName = "USFM File loader"
-ProgVersion = "0.83"
+ProgVersion = "0.84"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -68,7 +68,7 @@ class USFMFile:
             result += ('\n' if result else '') + str( line )
         return result
 
-    def read( self, sfm_filename, ignoreSFMs=None, encoding='utf-8' ):
+    def read( self, sfm_filename, ignoreSFMs=None, encoding=None ):
         """Read a simple USFM (Unified Standard Format Marker) file into a list of tuples.
 
         @param sfm_filename: The filename
@@ -82,6 +82,7 @@ class USFMFile:
 
         # Check/handle parameters
         if ignoreSFMs is None: ignoreSFMs = ()
+        if encoding is None: encoding = 'utf-8'
 
         dummyValue = 999999 # Some number bigger than the number of characters in a line
         lastLine, lineCount, result = '', 0, []
@@ -157,7 +158,7 @@ class USFMFile:
 
 def demo():
     """
-    Demonstrate reading and processing some UTF-8 SFM databases.
+    Demonstrate reading and processing some UTF-8 USFM files.
     """
     if Globals.verbosityLevel > 1: print( ProgNameVersion )
 
