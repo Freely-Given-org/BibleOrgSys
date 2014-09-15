@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBibleBook.py
-#   Last modified: 2014-07-16 by RJH (also update ProgVersion below)
+#   Last modified: 2014-09-15 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating USFM Bible books.
 """
 
 ProgName = "USFM Bible book handler"
-ProgVersion = "0.42"
+ProgVersion = "0.43"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -61,7 +61,7 @@ class USFMBibleBook( BibleBook ):
     # end of __init__
 
 
-    def load( self, filename, folder=None, encoding='utf-8' ):
+    def load( self, filename, folder=None, encoding=None ):
         """
         Load the USFM Bible book from a file.
 

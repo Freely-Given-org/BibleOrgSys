@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ESFMBible.py
-#   Last modified: 2014-08-23 by RJH (also update ProgVersion below)
+#   Last modified: 2014-09-15 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of ESFM Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial ESFM Bibles.
 """
 
 ProgName = "ESFM Bible handler"
-ProgVersion = "0.54"
+ProgVersion = "0.55"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -260,12 +260,12 @@ class ESFMBible( Bible ):
     # end of ESFMBible.__init_
 
 
-    def loadSSFData( self, ssfFilepath, encoding='utf-8' ):
+    def loadSSFData( self, ssfFilepath ):
         """Process the SSF data from the given filepath.
             Returns a dictionary."""
         if Globals.verbosityLevel > 2: print( _("Loading SSF data from '{}'").format( ssfFilepath ) )
         lastLine, lineCount, status, settingsDict = '', 0, 0, {}
-        with open( ssfFilepath, encoding=encoding ) as myFile: # Automatically closes the file when done
+        with open( ssfFilepath, encoding='utf-8' ) as myFile: # Automatically closes the file when done
             for line in myFile:
                 lineCount += 1
                 if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
@@ -330,7 +330,7 @@ class ESFMBible( Bible ):
         if Globals.verbosityLevel > 1: print( "    " + _("Loading possible semantic dictionary from {}...").format( filename ) )
         sourceFilepath = os.path.join( self.sourceFolder, filename )
         originalBook = ESFMFile()
-        originalBook.read( sourceFilepath, encoding='utf-8' )
+        originalBook.read( sourceFilepath )
 
         count = 0
         for marker,originalText in originalBook.lines:
@@ -359,7 +359,7 @@ class ESFMBible( Bible ):
         if Globals.verbosityLevel > 1: print( "    " + _("Loading possible Strong's dictionary from {}...").format( filename ) )
         sourceFilepath = os.path.join( self.sourceFolder, filename )
         originalBook = ESFMFile()
-        originalBook.read( sourceFilepath, encoding='utf-8' )
+        originalBook.read( sourceFilepath )
 
         count = 0
         for marker,originalText in originalBook.lines:
@@ -404,7 +404,7 @@ class ESFMBible( Bible ):
             logging.warning( "We had already tried loading ESFM {} for {}".format( BBB, self.name ) )
             return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
-        if Globals.verbosityLevel > 1 or Globals.debugFlag: print( _("  ESFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
+        if Globals.verbosityLevel > 2 or Globals.debugFlag: print( _("  ESFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
         if filename is None: filename = self.possibleFilenameDict[BBB]
         EBB = ESFMBibleBook( self, BBB )
         EBB.load( filename, self.sourceFolder )
@@ -427,7 +427,7 @@ class ESFMBible( Bible ):
         assert( BBB not in self.books )
         if BBB in self.dontLoadBook: return None
         self.triedLoadingBook[BBB] = True
-        if Globals.verbosityLevel > 1 or Globals.debugFlag:
+        if Globals.verbosityLevel > 2 or Globals.debugFlag:
             print( _("  ESFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
         EBB = ESFMBibleBook( self, BBB )
         EBB.load( self.possibleFilenameDict[BBB], self.sourceFolder )
@@ -513,7 +513,7 @@ def demo():
                     EsfmB.doAllExports( wantPhotoBible=False, wantODFs=True, wantPDFs=True )
                     newObj = Globals.unpickleObject( Globals.makeSafeFilename(abbreviation) + '.pickle', os.path.join( "OutputFiles/", "BOS_Bible_Object_Pickle/" ) )
                     if Globals.verbosityLevel > 0: print( "newObj is", newObj )
-            else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
+            else: print( "\nSorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 
 
     if 0: # Test a whole folder full of folders of ESFM Bibles
@@ -523,7 +523,7 @@ def demo():
             """ Find out info about the project from the included copyright.htm file """
             cFilepath = os.path.join( somepath, "copyright.htm" )
             if not os.path.exists( cFilepath ): return
-            with open( cFilepath ) as myFile: # Automatically closes the file when done
+            with open( cFilepath, encoding='utf-8' ) as myFile: # Automatically closes the file when done
                 lastLine, lineCount = None, 0
                 title, nameDict = None, {}
                 for line in myFile:
@@ -557,7 +557,7 @@ def demo():
                     findInfoResult = findInfo( somepath )
                     if findInfoResult: title, bookNameDict = findInfoResult
                     if title is None: title = something[:-5] if something.endswith("_usfm") else something
-                    name, encoding, testFolder = title, "utf-8", somepath
+                    name, testFolder = title, somepath
                     if os.access( testFolder, os.R_OK ):
                         if Globals.verbosityLevel > 0: print( "\nESFM B{}/".format( count ) )
                         EsfmB = ESFMBible( testFolder, name )
@@ -568,10 +568,10 @@ def demo():
                             EsfmBErrors = EsfmB.getErrors()
                             #print( EsfmBErrors )
                         if Globals.commandLineOptions.export: EsfmB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
-                    else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
+                    else: print( "\nSorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
             if count: print( "\n{} total ESFM (partial) Bibles processed.".format( count ) )
             if totalBooks: print( "{} total books ({} average per folder)".format( totalBooks, round(totalBooks/count) ) )
-        else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testBaseFolder ) )
+        else: print( "\nSorry, test folder '{}' is not readable on this computer.".format( testBaseFolder ) )
 #end of demo
 
 if __name__ == '__main__':

@@ -274,7 +274,7 @@ class OpenSongXMLBible( Bible ):
                 thisBook.objectTypeString = "OpenSong"
                 #thisBook.sourceFilepath = self.sourceFilepath
                 USFMAbbreviation = Globals.BibleBooksCodes.getUSFMAbbreviation( BBB )
-                thisBook.appendLine( 'id', '{} imported by {}'.format( USFMAbbreviation, ProgNameVersion ) )
+                thisBook.appendLine( 'id', '{} imported by {}'.format( USFMAbbreviation.upper(), ProgNameVersion ) )
                 thisBook.appendLine( 'h', bookName )
                 thisBook.appendLine( 'mt1', bookName )
                 for element in book:

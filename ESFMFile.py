@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMFile.py
-#   Last modified: 2014-07-10 (also update ProgVersion below)
+#   Last modified: 2014-09-15 (also update ProgVersion below)
 #
 # ESFM (Enhanced Standard Format Marker) data file reader
 #
@@ -36,7 +36,7 @@ Module for reading UTF-8 ESFM (Enhanced Standard Format Marker) Bible file.
 
 
 ProgName = "ESFM File loader"
-ProgVersion = "0.83"
+ProgVersion = "0.84"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -100,7 +100,7 @@ class ESFMFile:
                     if line[0]=='#': continue # Just discard comment lines
 
                     while line and line[0]==' ': line = line[1:] # Remove leading spaces
-                    if line[0]!='\\': # Not a SFM line
+                    if line and line[0]!='\\': # Not a SFM line
                         if len(result)==0: # We don't have any SFM data lines yet
                             if Globals.verbosityLevel > 2:
                                 logging.error( "Non-USFM line in " + sfm_filename + " -- line ignored at #" + str(lineCount) )

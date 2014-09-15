@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ESFMBibleBook.py
-#   Last modified: 2014-08-05 by RJH (also update ProgVersion below)
+#   Last modified: 2014-09-15 by RJH (also update ProgVersion below)
 #
 # Module handling the ESFM markers for Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating ESFM Bible books.
 """
 
 ProgName = "ESFM Bible book handler"
-ProgVersion = "0.44"
+ProgVersion = "0.45"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -354,7 +354,7 @@ class ESFMBibleBook( BibleBook ):
         self.sourceFolder = folder
         self.sourceFilepath = os.path.join( folder, filename ) if folder else filename
         originalBook = ESFMFile()
-        originalBook.read( self.sourceFilepath, encoding='utf-8' )
+        originalBook.read( self.sourceFilepath )
 
         # Do some important cleaning up before we save the data
         C = V = '0'
@@ -478,19 +478,19 @@ def demo():
     import USFMFilenames
 
     if 1: # Test individual files
-        #name, encoding, testFolder, filename, BBB = "WEB", "utf-8", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/", "06-JOS.usfm", "JOS" # You can put your test file here
-        #name, encoding, testFolder, filename, BBB = "WEB", "utf-8", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/", "44-SIR.usfm", "SIR" # You can put your test file here
-        #name, encoding, testFolder, filename, BBB = "Matigsalug", "utf-8", "../../../../../Data/Work/Matigsalug/Bible/MBTV/", "MBT102SA.SCP", "SA2" # You can put your test file here
-        #name, encoding, testFolder, filename, BBB = "Matigsalug", "utf-8", "../../../../../Data/Work/Matigsalug/Bible/MBTV/", "MBT15EZR.SCP", "EZR" # You can put your test file here
-        name, encoding, testFolder, filename, BBB = "Matigsalug", "utf-8", "../../../../../Data/Work/Matigsalug/Bible/MBTV/", "MBT41MAT.SCP", "MAT" # You can put your test file here
-        #name, encoding, testFolder, filename, BBB = "Matigsalug", "utf-8", "../../../../../Data/Work/Matigsalug/Bible/MBTV/", "MBT67REV.SCP", "REV" # You can put your test file here
+        #name, testFolder, filename, BBB = "WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/", "06-JOS.usfm", "JOS" # You can put your test file here
+        #name, testFolder, filename, BBB = "WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/", "44-SIR.usfm", "SIR" # You can put your test file here
+        #name, testFolder, filename, BBB = "Matigsalug", "../../../../../Data/Work/Matigsalug/Bible/MBTV/", "MBT102SA.SCP", "SA2" # You can put your test file here
+        #name, testFolder, filename, BBB = "Matigsalug", "../../../../../Data/Work/Matigsalug/Bible/MBTV/", "MBT15EZR.SCP", "EZR" # You can put your test file here
+        name, testFolder, filename, BBB = "Matigsalug", "../../../../../Data/Work/Matigsalug/Bible/MBTV/", "MBT41MAT.SCP", "MAT" # You can put your test file here
+        #name, testFolder, filename, BBB = "Matigsalug", "../../../../../Data/Work/Matigsalug/Bible/MBTV/", "MBT67REV.SCP", "REV" # You can put your test file here
         if os.access( testFolder, os.R_OK ):
             demoFile( name, filename, testFolder, BBB )
         else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
 
     if 1: # Test a whole folder full of files
-        name, encoding, testFolder = "Matigsalug", "utf-8", "../../../../../Data/Work/Matigsalug/Bible/MBTV/" # You can put your test folder here
-        #name, encoding, testFolder = "WEB", "utf-8", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/" # You can put your test folder here
+        name, testFolder = "Matigsalug", "../../../../../Data/Work/Matigsalug/Bible/MBTV/" # You can put your test folder here
+        #name, testFolder = "WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/" # You can put your test folder here
         if os.access( testFolder, os.R_OK ):
             if Globals.verbosityLevel > 1: print( _("Scanning {} from {}...").format( name, testFolder ) )
             fileList = USFMFilenames.USFMFilenames( testFolder ).getMaximumPossibleFilenameTuples()

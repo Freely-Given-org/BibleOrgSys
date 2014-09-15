@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2014-08-11 by RJH (also update ProgVersion below)
+#   Last modified: 2014-09-15 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 """
 
 ProgName = "USFM Bible handler"
-ProgVersion = "0.54"
+ProgVersion = "0.55"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -182,7 +182,7 @@ class USFMBible( Bible ):
     Class to load and manipulate USFM Bibles.
 
     """
-    def __init__( self, sourceFolder, givenName=None, givenAbbreviation=None, encoding='utf-8' ):
+    def __init__( self, sourceFolder, givenName=None, givenAbbreviation=None, encoding=None ):
         """
         Create the internal USFM Bible object.
         """
@@ -200,7 +200,7 @@ class USFMBible( Bible ):
             somepath = os.path.join( self.sourceFolder, something )
             if os.path.isdir( somepath ): foundFolders.append( something )
             elif os.path.isfile( somepath ): foundFiles.append( something )
-            else: logging.error( "Not sure what '{}' is in {}!".format( somepath, self.sourceFolder ) )
+            else: logging.error( "USFMBible.__init__: Not sure what '{}' is in {}!".format( somepath, self.sourceFolder ) )
         if foundFolders:
             unexpectedFolders = []
             for folderName in foundFolders:
@@ -208,9 +208,9 @@ class USFMBible( Bible ):
                 if folderName in ('__MACOSX'): continue
                 unexpectedFolders.append( folderName )
             if unexpectedFolders:
-                logging.info( "USFMBible.load: Surprised to see subfolders in '{}': {}".format( self.sourceFolder, unexpectedFolders ) )
+                logging.info( "USFMBible.__init__: Surprised to see subfolders in '{}': {}".format( self.sourceFolder, unexpectedFolders ) )
         if not foundFiles:
-            if Globals.verbosityLevel > 0: print( "USFMBible: Couldn't find any files in '{}'".format( self.sourceFolder ) )
+            if Globals.verbosityLevel > 0: print( "USFMBible.__init__: Couldn't find any files in '{}'".format( self.sourceFolder ) )
             return # No use continuing
 
         self.USFMFilenamesObject = USFMFilenames( self.sourceFolder )
@@ -223,6 +223,19 @@ class USFMBible( Bible ):
         if len(ssfFilepathList) == 1: # Seems we found the right one
             self.ssfFilepath = ssfFilepathList[0]
             self.loadSSFData( self.ssfFilepath )
+            if 'Encoding' in self.ssfDict:
+                ssfEncoding = self.ssfDict['Encoding']
+                if ssfEncoding == '65001': self.encoding = 'utf-8'
+                else:
+                    if Globals.verbosityLevel > 0:
+                        print( "USFMBible.__init__: File encoding in SSF is set to '{}'".format( ssfEncoding ) )
+                    if ssfEncoding.isdigit():
+                        self.encoding = 'cp' + ssfEncoding
+                        if Globals.verbosityLevel > 0:
+                            print( "USFMBible.__init__: Switched to '{}' file encoding".format( self.encoding ) )
+                    else:
+                        logging.critical( "USFMBible.__init__: Unsure how to handle '{}' file encoding".format( ssfEncoding ) )
+
 
         self.name = self.givenName
         if self.name is None:
@@ -336,7 +349,7 @@ class USFMBible( Bible ):
         BBB, filename = BBB_Filename
         assert( BBB not in self.books )
         self.triedLoadingBook[BBB] = True
-        if Globals.verbosityLevel > 1 or Globals.debugFlag:
+        if Globals.verbosityLevel > 2 or Globals.debugFlag:
             print( _("  USFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
         UBB = USFMBibleBook( self, BBB )
         UBB.load( self.possibleFilenameDict[BBB], self.sourceFolder, self.encoding )
@@ -413,7 +426,7 @@ def demo():
                     UsfmB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                     newObj = Globals.unpickleObject( Globals.makeSafeFilename(name) + '.pickle', os.path.join( "OutputFiles/", "BOS_Bible_Object_Pickle/" ) )
                     if Globals.verbosityLevel > 0: print( "newObj is", newObj )
-            else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
+            else: print( "\nSorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
 
 
     if 0: # Test a whole folder full of folders of USFM Bibles
@@ -469,10 +482,10 @@ def demo():
                             #print( UsfmBErrors )
                         if Globals.commandLineOptions.export:
                             UsfmB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
-                    else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
+                    else: print( "\nSorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
             if count: print( "\n{} total USFM (partial) Bibles processed.".format( count ) )
             if totalBooks: print( "{} total books ({} average per folder)".format( totalBooks, round(totalBooks/count) ) )
-        else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testBaseFolder ) )
+        else: print( "\nSorry, test folder '{}' is not readable on this computer.".format( testBaseFolder ) )
 #end of demo
 
 if __name__ == '__main__':
