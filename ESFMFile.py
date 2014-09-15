@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ESFMFile.py
-#   Last modified: 2014-09-15 (also update ProgVersion below)
+#   Last modified: 2014-09-16 (also update ProgVersion below)
 #
 # ESFM (Enhanced Standard Format Marker) data file reader
 #
@@ -89,7 +89,7 @@ class ESFMFile:
             try:
                 for line in ourFile:
                     lineCount += 1
-                    if lineCount==1 and encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF
+                    if lineCount==1 and line[0]==chr(65279): #U+FEFF
                         logging.info( "ESFMFile: Detected UTF-16 Byte Order Marker in {}".format( sfm_filename ) )
                         line = line[1:] # Remove the UTF-8 Byte Order Marker
                     if line[-1]=='\n': line=line[:-1] # Removing trailing newline character

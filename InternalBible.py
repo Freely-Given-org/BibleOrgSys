@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2014-08-10 by RJH (also update ProgVersion below)
+#   Last modified: 2014-09-16 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -44,7 +44,7 @@ and then fills
 """
 
 ProgName = "Internal Bible handler"
-ProgVersion = "0.48"
+ProgVersion = "0.49"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -57,6 +57,14 @@ from collections import OrderedDict
 import Globals
 from InternalBibleInternals import InternalBibleEntryList
 
+
+OT39BookList = ( 'GEN', 'EXO', 'LEV', 'NUM', 'DEU', 'JOS', 'JDG', 'RUT', 'SA1', 'SA2', 'KI1', 'KI2', 'CH1', 'CH2', \
+        'EZR', 'NEH', 'EST', 'JOB', 'PSA', 'PRO', 'ECC', 'SNG', 'ISA', 'JER', 'LAM', 'EZK', 'DAN', \
+        'HOS', 'JOL', 'AMO', 'OBA', 'JNA', 'MIC', 'NAH', 'HAB', 'ZEP', 'HAG', 'ZEC', 'MAL' )
+assert( len(OT39BookList) == 39 )
+NT27BookList = ( 'MAT', 'MRK', 'LUK', 'JHN', 'ACT', 'ROM', 'CO1', 'CO2', 'GAL', 'EPH', 'PHP', 'COL', \
+        'TH1', 'TH2', 'TI1', 'TI2', 'TIT', 'PHM', 'HEB', 'JAM', 'PE1', 'PE2', 'JN1', 'JN2', 'JN3', 'JDE', 'REV' )
+assert( len(NT27BookList) == 27 )
 
 
 class InternalBible:
@@ -85,6 +93,26 @@ class InternalBible:
         self.errorDictionary = OrderedDict()
         self.errorDictionary['Priority Errors'] = [] # Put this one first in the ordered dictionary
     # end of InternalBible.__init_
+
+
+    def containsAnyOT39Books( self ):
+        """
+        Returns True if any of the 39 common OT books are present.
+        """
+        for BBB in OT39BookList:
+            if BBB in self: return True
+        return False
+    #end of InternalBible.containsAnyOT39Books
+
+
+    def containsAnyNT27Books( self ):
+        """
+        Returns True if any of the 27 common NT books are present.
+        """
+        for BBB in NT27BookList:
+            if BBB in self: return True
+        return False
+    #end of InternalBible.containsAnyNT27Books
 
 
     def __getNames( self ):

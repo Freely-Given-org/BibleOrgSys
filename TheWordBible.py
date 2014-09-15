@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # TheWordBible.py
-#   Last modified: 2014-07-16 by RJH (also update ProgVersion below)
+#   Last modified: 2014-09-16 by RJH (also update ProgVersion below)
 #
 # Module handling "theWord" Bible module files
 #
@@ -51,7 +51,7 @@ e.g.,
 """
 
 ProgName = "theWord Bible format handler"
-ProgVersion = "0.33"
+ProgVersion = "0.34"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -62,6 +62,7 @@ from gettext import gettext as _
 import multiprocessing
 
 import Globals
+from InternalBible import OT39BookList, NT27BookList
 from InternalBibleInternals import BOS_ADDED_NESTING_MARKERS
 from USFMMarkers import OFTEN_IGNORED_USFM_HEADER_MARKERS, removeUSFMCharacterField, replaceUSFMCharacterFields
 from BibleOrganizationalSystems import BibleOrganizationalSystem
@@ -76,9 +77,7 @@ filenameEndingsToAccept = ('.OT','.NT','.ONT','.OTX','.NTX','.ONTX',) # Must be 
 # These are the verses per book in the traditional KJV versification (but only for the 66 books)
 #       (They must precede the Bible import)
 theWordOTBookCount = 39
-theWordOTBooks = ( 'GEN', 'EXO', 'LEV', 'NUM', 'DEU', 'JOS', 'JDG', 'RUT', 'SA1', 'SA2', 'KI1', 'KI2', 'CH1', 'CH2',
-                    'EZR', 'NEH', 'EST', 'JOB', 'PSA', 'PRO', 'ECC', 'SNG', 'ISA', 'JER', 'LAM', 'EZK', 'DAN', 'HOS',
-                    'JOL', 'AMO', 'OBA', 'JNA', 'MIC', 'NAH', 'HAB', 'ZEP', 'HAG', 'ZEC', 'MAL', )
+theWordOTBooks = OT39BookList
 assert( len( theWordOTBooks ) == theWordOTBookCount )
 theWordOTTotalLines = 23145
 theWordOTBookLines = ( 1533, 1213, 859, 1288, 959, 658, 618, 85, 810, 695, 816, 719, 942, 822, 280, 406, 167, 1070, 2461,
@@ -89,8 +88,7 @@ for count in theWordOTBookLines: total += count
 assert( total == theWordOTTotalLines )
 
 theWordNTBookCount = 27
-theWordNTBooks = ( 'MAT', 'MRK', 'LUK', 'JHN', 'ACT', 'ROM', 'CO1', 'CO2', 'GAL', 'EPH', 'PHP', 'COL', 'TH1', 'TH2',
-                        'TI1', 'TI2', 'TIT', 'PHM', 'HEB', 'JAM', 'PE1', 'PE2', 'JN1', 'JN2', 'JN3', 'JDE', 'REV', )
+theWordNTBooks = NT27BookList
 assert( len( theWordNTBooks ) == theWordNTBookCount )
 theWordNTTotalLines = 7957
 theWordNTBookLines = ( 1071, 678, 1151, 879, 1007, 433, 437, 257, 149, 155, 104, 95, 89, 47, 113, 83, 46, 25, 303, 108, 105, 61, 105, 13, 14, 25, 404 )

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleInternals.py
-#   Last modified: 2014-08-11 by RJH (also update ProgVersion below)
+#   Last modified: 2014-09-16 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Bible internals handler"
-ProgVersion = "0.47"
+ProgVersion = "0.48"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -649,7 +649,7 @@ class InternalBibleIndex:
                     if revertToJ >= 1: # we have a processedLine to go back to
                         aM,cT = self.givenBibleEntries[revertToJ-1].getMarker(), self.givenBibleEntries[revertToJ-1].getCleanText()
                         if 1: # new code
-                            while revertToJ >= 1 and aM not in ('c','v', 'v~','p~'):
+                            while revertToJ >= 1 and aM not in ('c','v', 'v~','p~') and not aM.startswith('¬'):
                                 # Anything else gets pulled down into this next verse
                                 #   especially p & q markers and section heading & references
                                 revertToJ -= 1
@@ -657,32 +657,6 @@ class InternalBibleIndex:
                                 lineCount -= 1
                                 if revertToJ==0: print( "InternalBibleIndex.makeIndex: Get out of here" ); break
                                 aM,cT = self.givenBibleEntries[revertToJ-1].getMarker(), self.givenBibleEntries[revertToJ-1].getCleanText()
-                        else: # old code
-                            if aM == 'c#':
-                                assert( cT ) # Should have a chapter number here
-                                revertToJ -= 1
-                                assert( lineCount > 0 )
-                                lineCount -= 1
-                                #print( "going to", revertToJ-1 )
-                                aM,cT = self.givenBibleEntries[revertToJ-1].getMarker(), self.givenBibleEntries[revertToJ-1].getCleanText()
-                            if revertToJ >= 1 and aM in Globals.USFMParagraphMarkers and not cT:
-                                # These markers apply to the next line, i.e., to our current v line
-                                revertToJ -= 1
-                                assert( lineCount > 0 )
-                                lineCount -= 1
-                                aM,cT = self.givenBibleEntries[revertToJ-1].getMarker(), self.givenBibleEntries[revertToJ-1].getCleanText()
-                                while revertToJ >= 1 and aM not in ('c','v~','p~'): # was in ('s1','s2','s3','r','p','q1','p~',):
-                                    #assert( cT ) # Should have text (for a completed Bible at least)
-                                    revertToJ -= 1
-                                    assert( lineCount > 0 )
-                                    lineCount -= 1
-                                    if revertToJ==0: print( "InternalBibleIndex.makeIndex: Get out of here" ); break
-                                    aM,cT = self.givenBibleEntries[revertToJ-1].getMarker(), self.givenBibleEntries[revertToJ-1].getCleanText()
-                            elif aM not in ('c','v~','p~'): # was in ('s1','s2','s3','r','p','q1','p~',): # Shouldn't happen but just in case
-                                if Globals.debugFlag: print( "InternalBibleIndex.makeIndex: just in case", aM, self.BBB, strC, strV )
-                                revertToJ = j - 1
-                                assert( lineCount > 0 )
-                                lineCount -= 1
                     saveAnythingOutstanding() # with the adjusted lineCount
                     # Remove verse ranges, etc. and then save the verse number
                     strV = entry.getCleanText()
@@ -708,6 +682,7 @@ class InternalBibleIndex:
                     lineCount += 1
                 #if j > 10: break
             saveAnythingOutstanding()
+
         else: # it's a front or back book (which may or may not have a c=1 and possibly a v=1 line in it)
             saveCV = saveJ = None
             lineCount, context = 0, None # lineCount is the number of datalines pointed to by this index entry

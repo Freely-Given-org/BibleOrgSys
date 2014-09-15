@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2014-08-11 by RJH (also update ProgVersion below)
+#   Last modified: 2014-09-16 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -3780,29 +3780,9 @@ class InternalBibleBook:
             assert( self._processedLines )
             assert( self._indexedFlag )
         if isinstance( ref, tuple ): C, V = ref[1], ref[2]
-        else: C,V = ref.getChapterNumberStr(), ref.getVerseNumberStr()
-        #print( "CV", repr(C), repr(V) )
-        #if (C,V,) in self._CVIndex:
-        return self._CVIndex.getEntries( (C,V,) )
-        #else: # old code
-            #startIndex, count, context = self._CVIndex[ C,V ]
-            ##print( "data", ref, startIndex, count, context, InternalBibleEntryList(self._processedLines[startIndex:startIndex+count]) )
-            ##print( "IBB getRef:", ref, startIndex, self._processedLines[startIndex:startIndex+5] )
-            ##if 0: # old stuff
-                ##result = []
-                ##for index in range( startIndex, len(self._processedLines) ):
-                    ##stuff = self._processedLines[index]
-                    ##adjustedMarker, originalMarker, adjText, cleanText, extras = stuff
-                    ##if adjustedMarker== 'c' and cleanText!=C: break # Gone past our chapter
-                    ##if adjustedMarker== 'v' and cleanText!=V: break # Gone past our verse
-                    ##result.append( stuff )
-                ### Remove any empty final paragraph (that belongs with the next verse )
-                ##if result[-1][0]=='p' and not result[-1][3]: result.pop()
-                ###print( ref, result )
-                ##return result
-            #return InternalBibleEntryList( self._processedLines[startIndex:startIndex+count] ), context
-        #else: raise KeyError( "{}:{} not found in  {} index".format( C, V, self.BBB ) )
-        #else: print( self.BBB, C, V, "not in index", self._CVIndex )
+        else: # assume it's a SimpleVerseKey or similar
+            C,V = ref.getChapterNumberStr(), ref.getVerseNumberStr()
+        return self._CVIndex.getEntries( (C,V,) ) # Gives a KeyError if not found
     # end of InternalBibleBook.getCVRef
 # end of class InternalBibleBook
 
