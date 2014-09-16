@@ -461,7 +461,7 @@ class BibleWriter( InternalBible ):
 
                 if pseudoMarker == 'vp~': continue
                 elif pseudoMarker in ('v','f','fr','x','xo',): # These fields should always end with a space but the processing will have removed them
-                    if Globals.debugFlag: assert( value )
+                    #if Globals.debugFlag: assert( value )
                     if pseudoMarker=='v' and removeVerseBridges:
                         vString = value
                         for bridgeChar in ('-', '–', '—'): # hyphen, endash, emdash
@@ -611,7 +611,7 @@ class BibleWriter( InternalBible ):
 
                         if pseudoMarker == 'vp~': continue
                         elif pseudoMarker in ('v','f','fr','x','xo',): # These fields should always end with a space but the processing will have removed them
-                            if Globals.debugFlag: assert( value )
+                            #if Globals.debugFlag: assert( value )
                             if pseudoMarker=='v' and 0 and removeVerseBridges:
                                 vString = value
                                 for bridgeChar in ('-', '–', '—'): # hyphen, endash, emdash
@@ -2122,7 +2122,7 @@ class BibleWriter( InternalBible ):
                         writerObject.writeLineOpenClose( 'span', ' ', ('class','verseOnePrespace') )
                         writerObject.writeLineOpenClose( 'span', V, ('class','verseOneNumber') )
                         writerObject.writeLineOpenClose( 'span', '&nbsp;', ('class','verseOnePostspace') )
-                    else: # not verse one
+                    elif V: # not verse one and not blank
                         writerObject.writeLineOpenClose( 'span', ' ', ('class','verseNumberPrespace') )
                         writerObject.writeLineOpenClose( 'span', V, ('class','verseNumber') )
                         writerObject.writeLineOpenClose( 'span', '&nbsp;', ('class','verseNumberPostspace') )
@@ -2932,7 +2932,7 @@ class BibleWriter( InternalBible ):
             def toInt( CVstring ):
                 try: return int( CVstring )
                 except:
-                    if Globals.debugFlag: assert( CVstring )
+                    #if Globals.debugFlag: assert( CVstring )
                     newCV = '0'
                     for char in CVstring:
                         if char.isdigit(): newCV += char
@@ -3347,7 +3347,8 @@ class BibleWriter( InternalBible ):
                         xw.removeFinalNewline( True )
                         if version>=2: xw._writeToBuffer( ' ' ) # Space between verses
                      # Remove anything that'll cause a big XML problem later
-                    xw.writeLineOpenSelfclose ( 'verse', [('number',adjText.replace('<','').replace('>','').replace('"','')),('style','v')] )
+                    if adjText:
+                        xw.writeLineOpenSelfclose ( 'verse', [('number',adjText.replace('<','').replace('>','').replace('"','')),('style','v')] )
 
                 elif marker in ('v~','p~',):
                     if not adjText: logging.warning( "toUSXXML: Missing text for {}".format( marker ) ); continue
@@ -3359,7 +3360,8 @@ class BibleWriter( InternalBible ):
                         xw.removeFinalNewline( True )
                         xw.writeLineClose( 'para' )
                         haveOpenPara = False
-                    if adjText: logging.error( "toUSXXML: {} {}:{} has a {} line containing text ('{}') that was ignored".format( BBB, C, V, originalMarker, adjText ) )
+                    if adjText:
+                        logging.error( "toUSXXML: {} {}:{} has a {} line containing text ('{}') that was ignored".format( BBB, C, V, originalMarker, adjText ) )
                     xw.writeLineOpenSelfclose ( 'para', ('style',marker) )
                 elif markerShouldHaveContent == 'S': # S = sometimes, e.g., p,pi,q,q1,q2,q3,q4,m
                     if haveOpenPara:
@@ -3367,7 +3369,8 @@ class BibleWriter( InternalBible ):
                         xw.writeLineClose( 'para' )
                         haveOpenPara = False
                     if not adjText: xw.writeLineOpen( 'para', ('style',originalMarker) )
-                    else: xw.writeLineOpenText( 'para', handleInternalTextMarkersForUSX(adjText)+xtra, ('style',originalMarker), noTextCheck=True ) # no checks coz might already have embedded XML
+                    else:
+                        xw.writeLineOpenText( 'para', handleInternalTextMarkersForUSX(adjText)+xtra, ('style',originalMarker), noTextCheck=True ) # no checks coz might already have embedded XML
                     haveOpenPara = paraJustOpened = True
                 else:
                     #assert( markerShouldHaveContent == 'A' ) # A = always, e.g.,  ide, mt, h, s, ip, etc.
@@ -3377,8 +3380,10 @@ class BibleWriter( InternalBible ):
                         xw.removeFinalNewline( True )
                         xw.writeLineClose( 'para' )
                         haveOpenPara = False
-                    if 1 or adjText: xw.writeLineOpenClose( 'para', handleInternalTextMarkersForUSX(adjText)+xtra, ('style',originalMarker if originalMarker else marker), noTextCheck=True ) # no checks coz might already have embedded XML
-                    else: logging.info( "toUSXXML: {} {}:{} has a blank {} line that was ignored".format( BBB, C, V, originalMarker ) )
+                    if 1 or adjText:
+                        xw.writeLineOpenClose( 'para', handleInternalTextMarkersForUSX(adjText)+xtra, ('style',originalMarker if originalMarker else marker), noTextCheck=True ) # no checks coz might already have embedded XML
+                    else:
+                        logging.info( "toUSXXML: {} {}:{} has a blank {} line that was ignored".format( BBB, C, V, originalMarker ) )
             if haveOpenPara:
                 xw.removeFinalNewline( True )
                 xw.writeLineClose( 'para' )
@@ -3789,7 +3794,8 @@ class BibleWriter( InternalBible ):
                     else:
                         xw.removeFinalNewline( True )
                      # Remove anything that'll cause a big XML problem later
-                    xw.writeLineOpenSelfclose ( 'v', ('id',adjText.replace('<','').replace('>','').replace('"','')) )
+                    if adjText:
+                        xw.writeLineOpenSelfclose ( 'v', ('id',adjText.replace('<','').replace('>','').replace('"','')) )
 
                 elif marker in ('v~','p~',):
                     if not adjText: logging.warning( "toUSFXXML: Missing text for {}".format( marker ) ); continue
@@ -3801,7 +3807,8 @@ class BibleWriter( InternalBible ):
                         xw.removeFinalNewline( True )
                         xw.writeLineClose( 'p' )
                         haveOpenPara = False
-                    if adjText: logging.error( "toUSFXXML: {} {}:{} has a {} line containing text ('{}') that was ignored".format( BBB, C, V, originalMarker, adjText ) )
+                    if adjText:
+                        logging.error( "toUSFXXML: {} {}:{} has a {} line containing text ('{}') that was ignored".format( BBB, C, V, originalMarker, adjText ) )
                     xw.writeLineOpenSelfclose ( marker )
                 elif markerShouldHaveContent == 'S': # S = sometimes, e.g., p,pi,q,q1,q2,q3,q4,m
                     if haveOpenPara:
@@ -3809,7 +3816,8 @@ class BibleWriter( InternalBible ):
                         xw.writeLineClose( 'p' )
                         haveOpenPara = False
                     if not adjText: xw.writeLineOpen( originalMarker )
-                    else: xw.writeLineOpenText( originalMarker, handleInternalTextMarkersForUSFX(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
+                    else:
+                        xw.writeLineOpenText( originalMarker, handleInternalTextMarkersForUSFX(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
                     haveOpenPara = paraJustOpened = True
                 else:
                     #assert( markerShouldHaveContent == 'A' ) # A = always, e.g.,  ide, mt, h, s, ip, etc.
@@ -3819,8 +3827,10 @@ class BibleWriter( InternalBible ):
                         xw.removeFinalNewline( True )
                         xw.writeLineClose( 'p' )
                         haveOpenPara = False
-                    if 1 or adjText: xw.writeLineOpenClose( marker, handleInternalTextMarkersForUSFX(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
-                    else: logging.info( "toUSFXXML: {} {}:{} has a blank {} line that was ignored".format( BBB, C, V, originalMarker ) )
+                    if 1 or adjText:
+                        xw.writeLineOpenClose( marker, handleInternalTextMarkersForUSFX(adjText)+xtra, noTextCheck=True ) # no checks coz might already have embedded XML
+                    else:
+                        logging.info( "toUSFXXML: {} {}:{} has a blank {} line that was ignored".format( BBB, C, V, originalMarker ) )
             if haveOpenPara:
                 xw.removeFinalNewline( True )
                 xw.writeLineClose( 'p' )
@@ -5967,10 +5977,10 @@ class BibleWriter( InternalBible ):
         #BRL = BibleReferenceList( BOS, BibleObject=None )
 
         # Try to figure out if it's an OT/NT or what (allow for up to 6 extra books like FRT,GLO, etc.)
-        if len(self) <= (39+6) and 'GEN' in self and 'MAT' not in self:
+        if len(self) <= (39+6) and self.containsAnyOT39Books() and not self.containsAnyNT27Books():
             testament, extension, startBBB, endBBB = 'OT', '.ot', 'GEN', 'MAL'
             booksExpected, textLineCountExpected, checkTotals = 39, 23145, theWordOTBookLines
-        elif len(self) <= (27+6) and 'MAT' in self and 'GEN' not in self:
+        elif len(self) <= (27+6) and self.containsAnyNT27Books() and not self.containsAnyOT39Books():
             testament, extension, startBBB, endBBB = 'NT', '.nt', 'MAT', 'REV'
             booksExpected, textLineCountExpected, checkTotals = 27, 7957, theWordNTBookLines
         else: # assume it's an entire Bible
@@ -6158,10 +6168,10 @@ class BibleWriter( InternalBible ):
         #BRL = BibleReferenceList( BOS, BibleObject=None )
 
         # Try to figure out if it's an OT/NT or what (allow for up to 4 extra books like FRT,GLO, etc.)
-        if len(self) <= (39+4) and not self.containsAnyNT27Books():
+        if len(self) <= (39+4) and self.containsAnyOT39Books() and not self.containsAnyNT27Books():
             testament, startBBB, endBBB = 'OT', 'GEN', 'MAL'
             booksExpected, textLineCountExpected, checkTotals = 39, 23145, theWordOTBookLines
-        elif len(self) <= (27+4) and not self.containsAnyOT39Books():
+        elif len(self) <= (27+4) and self.containsAnyNT27Books() and not self.containsAnyOT39Books():
             testament, startBBB, endBBB = 'NT', 'MAT', 'REV'
             booksExpected, textLineCountExpected, checkTotals = 27, 7957, theWordNTBookLines
         else: # assume it's an entire Bible
@@ -6650,10 +6660,10 @@ class BibleWriter( InternalBible ):
         #BRL = BibleReferenceList( BOS, BibleObject=None )
 
         # Try to figure out if it's an OT/NT or what (allow for up to 4 extra books like FRT,GLO, etc.)
-        if len(self) <= (39+4) and 'MAT' not in self:
+        if len(self) <= (39+4) and self.containsAnyOT39Books() and not self.containsAnyNT27Books():
             testament, startBBB, endBBB = 'OT', 'GEN', 'MAL'
             booksExpected, textLineCountExpected, checkTotals = 39, 23145, theWordOTBookLines
-        elif len(self) <= (27+4) and 'GEN' not in self:
+        elif len(self) <= (27+4) and self.containsAnyNT27Books() and not self.containsAnyOT39Books():
             testament, startBBB, endBBB = 'NT', 'MAT', 'REV'
             booksExpected, textLineCountExpected, checkTotals = 27, 7957, theWordNTBookLines
         else: # assume it's an entire Bible
@@ -9414,7 +9424,6 @@ def demo():
         from USFMBible import USFMBible
         from USFMFilenames import USFMFilenames
         testData = ( # name, abbreviation, folder for USFM files
-                ("MK","MK","/mnt/Data/Websites/Freely-Given.org/Software/BibleDropBox/PrivatePage/Mek_Kosarek.2014-09-11_19.00_0.43591300_1410418805/YourSourceFiles/Unzipped",),
                 #("USFM-AllMarkers", "USFM-All", "Tests/DataFilesForTests/USFMAllMarkersProject/",),
                 #("CustomTest", "Custom", ".../",),
                 #("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
@@ -9423,7 +9432,7 @@ def demo():
                 #("ESFMTest2", "ESFM2", "Tests/DataFilesForTests/ESFMTest2/",),
                 #("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
                 #("OEB", "OEB", "Tests/DataFilesForTests/USFM-OEB/",),
-                #("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
+                ("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
                 #("MS-BT", "MBTBT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
                 #("MS-Notes", "MBTBC", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/",),
                 #("MS-ABT", "MBTABT", "../../../../../Data/Work/Matigsalug/Bible/MBTABT/",),
@@ -9440,7 +9449,7 @@ def demo():
                 UB.load()
                 if Globals.verbosityLevel > 0: print( '\nBibleWriter A'+str(j+1)+'/', UB )
                 if Globals.strictCheckingFlag: UB.check()
-                UB.toMySword(); halt
+                #UB.toMySword(); halt
                 myFlag = Globals.verbosityLevel > 3
                 doaResults = UB.doAllExports( wantPhotoBible=myFlag, wantODFs=myFlag, wantPDFs=myFlag )
                 if Globals.strictCheckingFlag: # Now compare the original and the exported USFM files
