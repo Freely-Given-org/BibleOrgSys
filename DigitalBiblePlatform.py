@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # DigitalBiblePlatform.py
-#   Last modified: 2013-06-24 (also update ProgVersion below)
+#   Last modified: 2014-09-23 (also update ProgVersion below)
 #
 # Module handling online DBP resources
 #
-# Copyright (C) 2013 Robert Hunt
+# Copyright (C) 2013-2014 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -36,7 +36,7 @@ More details are available from http://www.DigitalBiblePlatform.com.
 """
 
 ProgName = "Digital Bible Platform handler"
-ProgVersion = "0.02"
+ProgVersion = "0.03"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -205,8 +205,12 @@ class DBPBible:
         self.URLTest = "api/apiversion"
         self.onlineVersion = None
         result = self.getOnlineData( self.URLTest )
-        if 'Version' in result: self.onlineVersion = result['Version']
-
+        if result:
+            if 'Version' in result: self.onlineVersion = result['Version']
+        else:
+            logging.critical( "DPBBible.__init__: Digital Bible Platform appears to be offline" )
+            raise FileNotFoundError # What should this really be?
+        
         self.bookList = None
         if self.onlineVersion: # Check that this particular resource is available by getting a list of books
             bookList = self.getOnlineData( "library/book", "dam_id="+self.damRoot ) # Get an ordered list of dictionaries -- one for each book

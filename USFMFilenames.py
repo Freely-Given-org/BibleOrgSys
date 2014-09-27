@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMFilenames.py
-#   Last modified: 2014-07-06 by RJH (also update ProgVersion below)
+#   Last modified: 2014-09-23 by RJH (also update ProgVersion below)
 #
 # Module handling USFM Bible filenames
 #
@@ -28,17 +28,29 @@ Module for creating and manipulating USFM filenames.
 """
 
 ProgName = "USFM Bible filenames handler"
-ProgVersion = "0.62"
+ProgVersion = "0.63"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
-
 
 import os, logging
 from gettext import gettext as _
 
 
 import Globals
+
+
+def t( messageString ):
+    """
+    Prepends the module name to a error or warning message string
+        if we are in debug mode.
+    Returns the new string.
+    """
+    try: nameBit, errorBit = messageString.split( ': ', 1 )
+    except ValueError: nameBit, errorBit = '', messageString
+    if Globals.debugFlag or debuggingThisModule:
+        nameBit = '{}{}{}: '.format( __name__, '.' if nameBit else '', nameBit )
+    return '{}{}'.format( nameBit, _(errorBit) )
 
 
 # The filenames produced by the Bibledit program seem to have a .usfm extension (Info below is from gtk/src/bookdata.cpp 2012-07-11)
@@ -230,7 +242,7 @@ class USFMFilenames:
         @return: the name of a Bible object formatted as a string
         @rtype: string
         """
-        result = "USFM Filenames object"
+        result = "USFM Filenames object:"
         indent = 2
         if self.givenFolderName: result += ('\n' if result else '') + ' '*indent + _("Folder: {}").format( self.givenFolderName )
         if self.pattern: result += ('\n' if result else '') + ' '*indent + _("Filename pattern: {}").format( self.pattern )
@@ -252,11 +264,13 @@ class USFMFilenames:
     # end of __len___
 
 
-    def getUSFMIDFromFile( self, folder, thisFilename, filepath ):
+    def getUSFMIDFromFile( self, folder, thisFilename, filepath, encoding=None ):
         """ Try to intelligently get the USFMId from the first line in the file (which should be the \\id line). """
+        #print( t("getUSFMIDFromFile( {} {} {} {} )").format( repr(folder), repr(thisFilename), repr(filepath), encoding ) )
+        if encoding is None: encoding = 'utf-8'
         # Look for the USFM id in the ID line (which should be the first line in a USFM file)
         try:
-            with open( filepath, 'rt' ) as possibleUSFMFile: # Automatically closes the file when done
+            with open( filepath, 'rt', encoding=encoding ) as possibleUSFMFile: # Automatically closes the file when done
                 lineNumber = 0
                 for line in possibleUSFMFile:
                     lineNumber += 1
@@ -288,7 +302,7 @@ class USFMFilenames:
                     if lineNumber >= 2: break # We only look at the first one or two lines
         except UnicodeDecodeError:
             if thisFilename != 'usfm-color.sty': # Seems this file isn't UTF-8, but we don't need it here anyway so ignore it
-                logging.warning( _("Seems we couldn't decode Unicode in '{}'").format( filepath ) ) # Could be binary or a different encoding
+                logging.warning( t("getUSFMIDFromFile: Seems we couldn't decode Unicode in '{}'").format( filepath ) ) # Could be binary or a different encoding
         return None
     # end of getUSFMIDFromFile
 
@@ -298,6 +312,8 @@ class USFMFilenames:
                 Populates the two dictionaries.
                 Returns the number of files found. """
         # Empty the two dictionaries
+        if Globals.debugFlag:
+            print( t("getUSFMIDsFromFiles( {} )").format( repr(givenFolder) ) )
         self._fileDictionary = {} # The keys are 2-tuples of folder, filename, the values are all valid BBB values
         self._BBBDictionary = {} # The keys are valid BBB values, the values are all 2-tuples of folder, filename
         folderFilenames = os.listdir( givenFolder )
@@ -317,7 +333,7 @@ class USFMFilenames:
                         assert( filepath not in self._fileDictionary )
                         BBB = Globals.BibleBooksCodes.getBBBFromUSFM( USFMId )
                         self._fileDictionary[(givenFolder,possibleFilename,)] = BBB
-                        if BBB in self._BBBDictionary: logging.error( "getUSFMIDsFromFiles: Oops, already found '{}' in {}, now we have a duplicate in {}".format( BBB, self._BBBDictionary[BBB], possibleFilename ) )
+                        if BBB in self._BBBDictionary: logging.error( "{}Oops, already found '{}' in {}, now we have a duplicate in {}".format( 'getUSFMIDsFromFiles: ' if Globals.debugFlag else '', BBB, self._BBBDictionary[BBB], possibleFilename ) )
                         self._BBBDictionary[BBB] = (givenFolder,possibleFilename,)
         if len(self._fileDictionary) != len(self._BBBDictionary):
             logging.warning( "getUSFMIDsFromFiles: Oops, something went wrong because dictionaries have {} and {} entries".format( len(self._fileDictionary), len(self._BBBDictionary) ) )
@@ -412,11 +428,11 @@ class USFMFilenames:
                 if doubleCheck:
                     USFMId = self.getUSFMIDFromFile( self.givenFolderName, derivedFilename, derivedFilepath )
                     if USFMId is None:
-                        logging.error( "getConfirmedFilenameTuples: internal USFM Id missing for {} in {}".format( BBB, derivedFilename ) )
+                        logging.error( "{}internal USFM Id missing for {} in {}".format( 'getConfirmedFilenameTuples: ' if Globals.debugFlag else '', BBB, derivedFilename ) )
                         continue # so it doesn't get added
                     BBB = Globals.BibleBooksCodes.getBBBFromUSFM( USFMId )
                     if BBB != BBB:
-                        logging.error( "getConfirmedFilenameTuples: internal USFM Id ({}{}) doesn't match {} for {}".format( USFMId, '' if BBB==USFMId else " -> {}".format(BBB), BBB, derivedFilename ) )
+                        logging.error( "{}Internal USFM Id ({}{}) doesn't match {} for {}".format( 'getConfirmedFilenameTuples: ' if Globals.debugFlag else '', USFMId, '' if BBB==USFMId else " -> {}".format(BBB), BBB, derivedFilename ) )
                         continue # so it doesn't get added
                 self.doListAppend( BBB, derivedFilename, resultList, "getConfirmedFilenameTuples" )
         self.lastTupleList = resultList

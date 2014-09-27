@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2014-09-16 by RJH (also update ProgVersion below)
+#   Last modified: 2014-09-24 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -44,7 +44,7 @@ and then fills
 """
 
 ProgName = "Internal Bible handler"
-ProgVersion = "0.49"
+ProgVersion = "0.50"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -56,6 +56,19 @@ from collections import OrderedDict
 
 import Globals
 from InternalBibleInternals import InternalBibleEntryList
+
+
+def t( messageString ):
+    """
+    Prepends the module name to a error or warning message string
+        if we are in debug mode.
+    Returns the new string.
+    """
+    try: nameBit, errorBit = messageString.split( ': ', 1 )
+    except ValueError: nameBit, errorBit = '', messageString
+    if Globals.debugFlag or debuggingThisModule:
+        nameBit = '{}{}{}: '.format( ProgName, '.' if nameBit else '', nameBit )
+    return '{}{}'.format( nameBit, _(errorBit) )
 
 
 OT39BookList = ( 'GEN', 'EXO', 'LEV', 'NUM', 'DEU', 'JOS', 'JDG', 'RUT', 'SA1', 'SA2', 'KI1', 'KI2', 'CH1', 'CH2', \
@@ -183,7 +196,7 @@ class InternalBible:
                 if line[0] == '#': continue # Just discard comment lines
                 if not continuedFlag:
                     if '=' not in line:
-                        logging.warning( "Missing equals sign from metadata line (ignored): {}".format( repr(line) ) )
+                        logging.warning( t("loadMetadataFile: Missing equals sign from metadata line (ignored): {}").format( repr(line) ) )
                     else: # Seems like a field=something type line
                         bits = line.split( '=', 1 )
                         assert( len(bits) == 2 )
@@ -201,7 +214,7 @@ class InternalBible:
                     else: continuedFlag = False
                     fieldContents += line
                     if not continuedFlag:
-                        logging.warning( "Metadata lines result in a blank entry for {}".format( repr(fieldName) ) )
+                        logging.warning( t("loadMetadataFile: Metadata lines result in a blank entry for {}").format( repr(fieldName) ) )
                         saveMD( fieldName, fieldContents )
             if Globals.verbosityLevel > 1: print( "  {} non-blank lines read from uploaded metadata file".format( lineCount ) )
         if Globals.verbosityLevel > 2: print( "New metadata settings", len(self.settingsDict), self.settingsDict )
@@ -257,7 +270,7 @@ class InternalBible:
 
         This function also accepts a BBB so you can use it to get a book from the Bible by BBB.
         """
-        #print( "InternalBible.__getitem__( {} )".format( keyIndex ) )
+        #print( t("__getitem__( {} )").format( keyIndex ) )
         #print( list(self.books.items()) )
         if isinstance( keyIndex, int ):
             return list(self.books.items())[keyIndex][1] # element 0 is BBB, element 1 is the book object
@@ -291,7 +304,7 @@ class InternalBible:
         if Globals.debugFlag: assert( filename )
         filename = Globals.makeSafeFilename( filename ) + '.pickle'
         if Globals.verbosityLevel > 2:
-            print( _("InternalBible.pickle: Saving {} to {}...") \
+            print( t("pickle: Saving {} to {}...") \
                 .format( self.objectNameString, filename if folder is None else os.path.join( folder, filename ) ) )
         Globals.pickleObject( self, filename, folder )
     # end of InternalBible.pickle
@@ -338,7 +351,7 @@ class InternalBible:
         #print( "saveBook( {} )".format( bookData ) )
         BBB = bookData.BBB
         if BBB in self.books: # already
-            logging.critical( "InternalBible.saveBook: " + _("overwriting already existing {} book!").format( BBB ) )
+            logging.critical( t("saveBook: overwriting already existing {} book!").format( BBB ) )
         self.books[BBB] = bookData
         # Make up our book name dictionaries while we're at it
         assumedBookNames = bookData.getAssumedBookNames()
@@ -401,7 +414,7 @@ class InternalBible:
                 self.reverseDict[BBB] = referenceString
                 return BBB
         if Globals.debugFlag and debuggingThisModule and count > 1:
-            print( "  getXRefBBB has multiple startswith matches for '{}' in {}".format( adjRefString, self.combinedBookNameDict ) )
+            print( t("  guessXRefBBB has multiple startswith matches for '{}' in {}").format( adjRefString, self.combinedBookNameDict ) )
         if count == 0:
             if Globals.debugFlag and debuggingThisModule: print( "  getXRefBBB using startswith2..." )
             for bookName in self.combinedBookNameDict:
@@ -440,11 +453,11 @@ class InternalBible:
                 self.reverseDict[BBB] = referenceString
                 return BBB
             if Globals.debugFlag and debuggingThisModule and count > 1:
-                print( "  getXRefBBB has multiple startswith matches for '{}' in {}".format( adjRefString, self.bookNameDict ) )
+                print( t("  guessXRefBBB has multiple startswith matches for '{}' in {}").format( adjRefString, self.bookNameDict ) )
 
         # See if a book name starts with the same letter plus contains the letters in this string (slow)
         if count == 0:
-            if Globals.debugFlag and debuggingThisModule: print ("  getXRefBBB using first plus other characters..." )
+            if Globals.debugFlag and debuggingThisModule: print( t("  guessXRefBBB using first plus other characters...") )
             for bookName in self.bookNameDict:
                 if not bookName: print( self.bookNameDict ); halt # temp...
                 #print( "aRS='{}', bN='{}'".format( adjRefString, bookName ) )
@@ -463,7 +476,7 @@ class InternalBible:
                 self.guesses += ('\n' if self.guesses else '') + "Guessed '{}' to be {} (firstletter+)".format( referenceString, BBB )
                 return BBB
             if Globals.debugFlag and debuggingThisModule and count > 1:
-                print( "  getXRefBBB has first and other character multiple matches for '{}' in {}".format( adjRefString, self.bookNameDict ) )
+                print( t("  guessXRefBBB has first and other character multiple matches for '{}' in {}").format( adjRefString, self.bookNameDict ) )
 
         if 0: # Too error prone!!!
             # See if a book name contains the letters in this string (slow)
@@ -484,10 +497,10 @@ class InternalBible:
                     self.guesses += ('\n' if self.guesses else '') + "Guessed '{}' to be {} (letters)".format( referenceString, BBB )
                     return BBB
                 if Globals.debugFlag and debuggingThisModule and count > 1:
-                    print( "  getXRefBBB has character multiple matches for '{}' in {}".format( adjRefString, self.bookNameDict ) )
+                    print( t("  guessXRefBBB has character multiple matches for '{}' in {}").format( adjRefString, self.bookNameDict ) )
 
         if Globals.debugFlag and debuggingThisModule or Globals.verbosityLevel>2:
-            print( "  getXRefBBB failed for '{}' with {} and {}".format( referenceString, self.bookNameDict, self.bookAbbrevDict ) )
+            print( t("  guessXRefBBB failed for '{}' with {} and {}").format( referenceString, self.bookNameDict, self.bookAbbrevDict ) )
         string = "Couldn't guess '{}'".format( referenceString[:5] )
         if string not in self.guesses: self.guesses += ('\n' if self.guesses else '') + string
     # end of InternalBible.guessXRefBBB
@@ -550,13 +563,13 @@ class InternalBible:
         #import pickle
         #folder = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/" ) # Relative to module, not cwd
         #filepath = os.path.join( folder, "AddedUnitData.pickle" )
-        #if Globals.verbosityLevel > 3: print( _("Importing from {}...").format( filepath ) )
+        #if Globals.verbosityLevel > 3: print( t("Importing from {}...").format( filepath ) )
         #with open( filepath, 'rb' ) as pickleFile:
         #    typicalAddedUnits = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
 
-        if Globals.verbosityLevel > 2: print( _("Running discover on {}...").format( self.name ) )
+        if Globals.verbosityLevel > 2: print( t("Running discover on {}...").format( self.name ) )
         for BBB in self.books: # Do individual book prechecks
-            if Globals.verbosityLevel > 3: print( "  " + _("Prechecking {}...").format( BBB ) )
+            if Globals.verbosityLevel > 3: print( "  " + t("Prechecking {}...").format( BBB ) )
             self.books[BBB]._discover( self.discoveryResults )
 
         # Now get the aggregate results for the entire Bible
@@ -650,7 +663,7 @@ class InternalBible:
                     if 0.0 <= value <= 1.0:
                         if key not in aggregateResults: aggregateResults[key] = [value]
                         else: aggregateResults[key].append( value )
-                    elif value != -1.0: logging.warning( "InternalBible.discover: " + _("invalid ratio (float) {} {} {}").format( BBB, key, repr(value) ) )
+                    elif value != -1.0: logging.warning( t("discover: invalid ratio (float) {} {} {}").format( BBB, key, repr(value) ) )
                 elif isinstance( value, int ): # e.g., completedVerseCount and also booleans such as havePopulatedCVmarkers
                     #print( "igot", BBB, key, value )
                     if key not in aggregateResults: aggregateResults[key] = value
@@ -684,7 +697,7 @@ class InternalBible:
                     #halt
                     #pass # No action needed here
                 else:
-                    logging.warning( "InternalBible.discover: " + _("unactioned discovery result {} {} {}").format( BBB, key, repr(value) ) )
+                    logging.warning( t("discover: unactioned discovery result {} {} {}").format( BBB, key, repr(value) ) )
 
         for arKey in list(aggregateResults.keys()): # Make a list first so we can delete entries later
             # Create summaries of lists with entries for various books
@@ -749,18 +762,18 @@ class InternalBible:
         """Runs a series of individual checks (and counts) on each book of the Bible
             and then a number of overall checks on the entire Bible."""
         # Get our recommendations for added units -- only load this once per Bible
-        if Globals.verbosityLevel > 1: print( _("Checking {} Bible...").format( self.name ) )
+        if Globals.verbosityLevel > 1: print( t("Checking {} Bible...").format( self.name ) )
         import pickle
         pickleFolder = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/" ) # Relative to module, not cwd
         pickleFilepath = os.path.join( pickleFolder, "AddedUnitData.pickle" )
-        if Globals.verbosityLevel > 3: print( _("Importing from {}...").format( pickleFilepath ) )
+        if Globals.verbosityLevel > 3: print( t("Importing from {}...").format( pickleFilepath ) )
         with open( pickleFilepath, 'rb' ) as pickleFile:
             typicalAddedUnitData = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
 
         #self.discover() # Try to automatically determine our norms
-        if Globals.verbosityLevel > 2: print( _("Running checks on {}...").format( self.name ) )
+        if Globals.verbosityLevel > 2: print( t("Running checks on {}...").format( self.name ) )
         for BBB in self.books: # Do individual book checks
-            if Globals.verbosityLevel > 3: print( "  " + _("Checking {}...").format( BBB ) )
+            if Globals.verbosityLevel > 3: print( "  " + t("Checking {}...").format( BBB ) )
             self.books[BBB].check( self.discoveryResults['ALL'], typicalAddedUnitData )
 
         # Do overall Bible checks here

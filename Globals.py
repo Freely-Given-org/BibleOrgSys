@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Globals.py
-#   Last modified: 2014-07-23 by RJH (also update ProgVersion below)
+#   Last modified: 2014-09-23 by RJH (also update ProgVersion below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -71,7 +71,7 @@ Contains functions:
 """
 
 ProgName = "Globals"
-ProgVersion = "0.50"
+ProgVersion = "0.51"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -283,17 +283,18 @@ def makeSafeString( someString ):
 #
 # Peek at the first line(s) of a file
 
-def peekIntoFile( filenameOrFilepath, folder=None, numLines=1 ):
+def peekIntoFile( filenameOrFilepath, folder=None, numLines=1, encoding=None ):
     """
     Reads and returns the first line of a text file as a string
         unless more than one line is requested
         in which case a list of strings is returned (including empty strings for empty lines).
     """
-    assert( 1 <= numLines < 5 )
+    if debugFlag: assert( 1 <= numLines < 5 )
+    if encoding is None: encoding = 'utf-8'
     filepath = os.path.join( folder, filenameOrFilepath ) if folder else filenameOrFilepath
     lines = []
     try:
-        with open( filepath, 'rt' ) as possibleUSFMFile: # Automatically closes the file when done
+        with open( filepath, 'rt', encoding=encoding ) as possibleUSFMFile: # Automatically closes the file when done
             lineNumber = 0
             for line in possibleUSFMFile:
                 lineNumber += 1
@@ -304,7 +305,7 @@ def peekIntoFile( filenameOrFilepath, folder=None, numLines=1 ):
                 if lineNumber >= numLines: return lines
     except UnicodeDecodeError:
         #if not filepath.lower().endswith( 'usfm-color.sty' ): # Seems this file isn't UTF-8, but we don't need it here anyway so ignore it
-        logging.warning( "Seems we couldn't decode Unicode in '{}'".format( filepath ) ) # Could be binary or a different encoding
+        logging.warning( "{}Seems we couldn't decode Unicode in '{}'".format( 'Globals.peekIntoFile: ' if debugFlag else '', filepath ) ) # Could be binary or a different encoding
 # end of Globals.peekIntoFile
 
 

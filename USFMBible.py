@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2014-09-15 by RJH (also update ProgVersion below)
+#   Last modified: 2014-09-24 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 """
 
 ProgName = "USFM Bible handler"
-ProgVersion = "0.55"
+ProgVersion = "0.56"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -42,6 +42,19 @@ import Globals
 from USFMFilenames import USFMFilenames
 from USFMBibleBook import USFMBibleBook
 from Bible import Bible
+
+
+def t( messageString ):
+    """
+    Prepends the module name to a error or warning message string
+        if we are in debug mode.
+    Returns the new string.
+    """
+    try: nameBit, errorBit = messageString.split( ': ', 1 )
+    except ValueError: nameBit, errorBit = '', messageString
+    if Globals.debugFlag or debuggingThisModule:
+        nameBit = '{}{}{}: '.format( ProgName, '.' if nameBit else '', nameBit )
+    return '{}{}'.format( nameBit, _(errorBit) )
 
 
 
@@ -84,10 +97,10 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
-        logging.critical( _("USFMBibleFileCheck: Given '{}' folder is unreadable").format( givenFolderName ) )
+        logging.critical( t("USFMBibleFileCheck: Given '{}' folder is unreadable").format( givenFolderName ) )
         return False
     if not os.path.isdir( givenFolderName ):
-        logging.critical( _("USFMBibleFileCheck: Given '{}' path is not a folder").format( givenFolderName ) )
+        logging.critical( t("USFMBibleFileCheck: Given '{}' path is not a folder").format( givenFolderName ) )
         return False
 
     # Find all the files and folders in this folder
@@ -122,7 +135,7 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
             ssfFilepath = os.path.join( givenFolderName, SSFs[0] )
         numFound += 1
     if numFound:
-        if Globals.verbosityLevel > 2: print( "USFMBibleFileCheck got", numFound, givenFolderName )
+        if Globals.verbosityLevel > 2: print( t("USFMBibleFileCheck got {} in {}").format( numFound, givenFolderName ) )
         if numFound == 1 and autoLoad:
             uB = USFMBible( givenFolderName )
             uB.load() # Load and process the file
@@ -167,7 +180,7 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
             foundProjects.append( tryFolderName )
             numFound += 1
     if numFound:
-        if Globals.verbosityLevel > 2: print( "USFMBibleFileCheck foundProjects", numFound, foundProjects )
+        if Globals.verbosityLevel > 2: print( t("USFMBibleFileCheck foundProjects {} {}").format( numFound, foundProjects ) )
         if numFound == 1 and autoLoad:
             uB = USFMBible( foundProjects[0] )
             uB.load() # Load and process the file
@@ -200,7 +213,7 @@ class USFMBible( Bible ):
             somepath = os.path.join( self.sourceFolder, something )
             if os.path.isdir( somepath ): foundFolders.append( something )
             elif os.path.isfile( somepath ): foundFiles.append( something )
-            else: logging.error( "USFMBible.__init__: Not sure what '{}' is in {}!".format( somepath, self.sourceFolder ) )
+            else: logging.error( t("__init__: Not sure what '{}' is in {}!").format( somepath, self.sourceFolder ) )
         if foundFolders:
             unexpectedFolders = []
             for folderName in foundFolders:
@@ -208,15 +221,15 @@ class USFMBible( Bible ):
                 if folderName in ('__MACOSX'): continue
                 unexpectedFolders.append( folderName )
             if unexpectedFolders:
-                logging.info( "USFMBible.__init__: Surprised to see subfolders in '{}': {}".format( self.sourceFolder, unexpectedFolders ) )
+                logging.info( t("__init__: Surprised to see subfolders in '{}': {}").format( self.sourceFolder, unexpectedFolders ) )
         if not foundFiles:
-            if Globals.verbosityLevel > 0: print( "USFMBible.__init__: Couldn't find any files in '{}'".format( self.sourceFolder ) )
-            return # No use continuing
+            if Globals.verbosityLevel > 0: print( t("__init__: Couldn't find any files in '{}'").format( self.sourceFolder ) )
+            raise FileNotFoundError # No use continuing
 
         self.USFMFilenamesObject = USFMFilenames( self.sourceFolder )
         if Globals.verbosityLevel > 3 or (Globals.debugFlag and debuggingThisModule):
-            print( self.USFMFilenamesObject )
-
+            print( "USFMFilenamesObject", self.USFMFilenamesObject )
+        
         # Attempt to load the SSF file
         self.ssfFilepath, self.settingsDict = {}, {}
         ssfFilepathList = self.USFMFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
@@ -228,13 +241,13 @@ class USFMBible( Bible ):
                 if ssfEncoding == '65001': self.encoding = 'utf-8'
                 else:
                     if Globals.verbosityLevel > 0:
-                        print( "USFMBible.__init__: File encoding in SSF is set to '{}'".format( ssfEncoding ) )
+                        print( t("__init__: File encoding in SSF is set to '{}'").format( ssfEncoding ) )
                     if ssfEncoding.isdigit():
                         self.encoding = 'cp' + ssfEncoding
                         if Globals.verbosityLevel > 0:
-                            print( "USFMBible.__init__: Switched to '{}' file encoding".format( self.encoding ) )
+                            print( t("__init__: Switched to '{}' file encoding").format( self.encoding ) )
                     else:
-                        logging.critical( "USFMBible.__init__: Unsure how to handle '{}' file encoding".format( ssfEncoding ) )
+                        logging.critical( t("__init__: Unsure how to handle '{}' file encoding").format( ssfEncoding ) )
 
 
         self.name = self.givenName
@@ -253,16 +266,17 @@ class USFMBible( Bible ):
     # end of USFMBible.__init_
 
 
-    def loadSSFData( self, ssfFilepath, encoding='utf-8' ):
+    def loadSSFData( self, ssfFilepath, encoding=None ):
         """Process the SSF data from the given filepath.
             Returns a dictionary."""
-        if Globals.verbosityLevel > 2: print( _("Loading SSF data from '{}'").format( ssfFilepath ) )
+        if Globals.verbosityLevel > 2: print( t("Loading SSF data from '{}' ({})").format( ssfFilepath, encoding ) )
+        if encoding is None: encoding = 'utf-8'
         lastLine, lineCount, status, settingsDict = '', 0, 0, {}
         with open( ssfFilepath, encoding=encoding ) as myFile: # Automatically closes the file when done
             for line in myFile:
                 lineCount += 1
                 if lineCount==1 and line and line[0]==chr(65279): #U+FEFF
-                    logging.info( "USFMBible.loadSSFData: Detected UTF-16 Byte Order Marker in {}".format( ssfFilepath ) )
+                    logging.info( t("loadSSFData: Detected UTF-16 Byte Order Marker in {}").format( ssfFilepath ) )
                     line = line[1:] # Remove the Byte Order Marker
                 if line[-1]=='\n': line = line[:-1] # Remove trailing newline character
                 line = line.strip() # Remove leading and trailing whitespace
@@ -306,12 +320,13 @@ class USFMBible( Bible ):
                             if line[ix2+2:-1]==fieldname:
                                 settingsDict[fieldname] = (contents, attributes)
                                 processed = True
-                if not processed: print( "ERROR: Unexpected '{}' line in SSF file".format( line ) )
+                if not processed: print( t("ERROR: Unexpected '{}' line in SSF file").format( line ) )
         if Globals.verbosityLevel > 2:
-            print( "  " + _("Got {} SSF entries:").format( len(settingsDict) ) )
+            print( "  " + t("Got {} SSF entries:").format( len(settingsDict) ) )
             if Globals.verbosityLevel > 3:
                 for key in sorted(settingsDict):
-                    print( "    {}: {}".format( key, settingsDict[key] ) )
+                    try: print( "    {}: {}".format( key, settingsDict[key] ) )
+                    except UnicodeEncodeError: print( "    {}: UNICODE ENCODING ERROR".format( key ) )
         self.ssfDict = settingsDict # We'll keep a copy of just the SSF settings
         self.settingsDict = settingsDict.copy() # This will be all the combined settings
     # end of USFMBible.loadSSFData
@@ -345,12 +360,12 @@ class USFMBible( Bible ):
 
         Parameter is a 2-tuple containing BBB and the filename.
         """
-        if Globals.verbosityLevel > 3: print( "USFMBible.loadBookMP( {} )".format( BBB_Filename ) )
+        if Globals.verbosityLevel > 3: print( t("loadBookMP( {} )").format( BBB_Filename ) )
         BBB, filename = BBB_Filename
         assert( BBB not in self.books )
         self.triedLoadingBook[BBB] = True
         if Globals.verbosityLevel > 2 or Globals.debugFlag:
-            print( _("  USFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
+            print( '  ' + t("Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
         UBB = USFMBibleBook( self, BBB )
         UBB.load( self.possibleFilenameDict[BBB], self.sourceFolder, self.encoding )
         UBB.validateMarkers() # Usually activates InternalBibleBook.processLines()
@@ -363,13 +378,13 @@ class USFMBible( Bible ):
         """
         Load all the books.
         """
-        if Globals.verbosityLevel > 1: print( _("USFMBible: Loading {} from {}...").format( self.name, self.sourceFolder ) )
+        if Globals.verbosityLevel > 1: print( t("Loading {} from {}...").format( self.name, self.sourceFolder ) )
 
         if self.maximumPossibleFilenameTuples:
             if Globals.maxProcesses > 1: # Load all the books as quickly as possible
                 #parameters = [BBB for BBB,filename in self.maximumPossibleFilenameTuples] # Can only pass a single parameter to map
                 if Globals.verbosityLevel > 1:
-                    print( _("USFMBible: Loading {} books using {} CPUs...").format( len(self.maximumPossibleFilenameTuples), Globals.maxProcesses ) )
+                    print( t("Loading {} books using {} CPUs...").format( len(self.maximumPossibleFilenameTuples), Globals.maxProcesses ) )
                     print( "  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed." )
                 with multiprocessing.Pool( processes=Globals.maxProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookMP, self.maximumPossibleFilenameTuples ) # have the pool do our loads
@@ -382,7 +397,7 @@ class USFMBible( Bible ):
                         #print( _("  USFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
                     loadedBook = self.loadBook( BBB, filename ) # also saves it
         else:
-            logging.critical( _("USFMBible: No books to load in {}!").format( self.sourceFolder ) )
+            logging.critical( t("No books to load in {}!").format( self.sourceFolder ) )
         #print( self.getBookList() )
         self.doPostLoadProcessing()
     # end of USFMBible.load

@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # SwordResources.py
-#   Last modified: 2013-07-24 (also update ProgVersion below)
+#   Last modified: 2014-09-23 (also update ProgVersion below)
 #
 # Module handling Sword resources using the Sword engine
 #
-# Copyright (C) 2013 Robert Hunt
+# Copyright (C) 2013-2014 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -30,10 +30,10 @@ This module uses the Sword engine (libsword) via the Python SWIG bindings.
 """
 
 ProgName = "Sword resource handler"
-ProgVersion = "0.04"
+ProgVersion = "0.05"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
-debuggingThisModule = False
+debuggingThisModule = True
 
 
 #from singleton import singleton
@@ -49,10 +49,11 @@ try:
     import Sword
     SwordType = "CrosswireLibrary"
 except: # Sword library (dll and python bindings) seem to be not available
-    if 0: # Warn the user that this won't work
+    SwordType = None
+    if 1: # Warn the user that this won't work
         logging.critical( _("You need to install the Sword library on your computer in order to use this module.") )
         logging.info( _("Alternatively, you can try the all-Python SwordModules module.") )
-        sys.exit( 1 )
+        #sys.exit( 1 )
     else: # Use our own Python3 code instead
         import SwordModules
         SwordType = "OurCode"
@@ -79,7 +80,7 @@ class SwordInterface():
             self.library = Sword.SWMgr()
             #self.keyCache = {}
             #self.verseCache = {}
-        else:
+        elif SwordType == "OurCode":
             self.library = SwordModules.SwordModules() # Loads all of conf files that it can find
             #print( self.library )
 
@@ -88,8 +89,8 @@ class SwordInterface():
         if SwordType == "CrosswireLibrary":
             #print( "gM", module.getName() )
             return self.library.getModule( moduleAbbreviation )
-        else:
-            try:result = self.library.loadModule( moduleAbbreviation ) # e.g., KJV
+        elif SwordType == "OurCode":
+            try: result = self.library.loadModule( moduleAbbreviation ) # e.g., KJV
             except KeyError: result = self.library.loadModule( moduleAbbreviation.lower() ) # needs kjv??? why? what changed?
             #print( moduleAbbreviation, result ); halt
             return result
