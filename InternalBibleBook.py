@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2014-09-16 by RJH (also update ProgVersion below)
+#   Last modified: 2014-09-17 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -41,7 +41,7 @@ Required improvements:
 """
 
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.86"
+ProgVersion = "0.87"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -2114,12 +2114,14 @@ class InternalBibleBook:
                         bkDict['haveFootnotes'] = True
                         bkDict['footnotesCount'] += 1
                         if '\\fr' in extraText: bkDict['haveFootnoteOrigins'] = True
-                        if cleanExtraText.endswith('.') or cleanExtraText.endswith('.”'): footnotesPeriodCount += 1
+                        if cleanExtraText and cleanExtraText[-1] in '.።' or cleanExtraText.endswith('.”'):
+                            footnotesPeriodCount += 1
                     elif extraType=='xr':
                         bkDict['haveCrossReferences'] = True
                         bkDict['crossReferencesCount'] += 1
                         if '\\xo' in extraText: bkDict['haveCrossReferenceOrigins'] = True
-                        if cleanExtraText.endswith('.') or cleanExtraText.endswith('.”'): xrefsPeriodCount += 1
+                        if cleanExtraText and cleanExtraText[-1] in '.።' or cleanExtraText.endswith('.”'):
+                            xrefsPeriodCount += 1
                     countWords( extraType, cleanExtraText, "notes" )
             lastMarker = marker
         #print( 'wordCount', self.BBB, bkDict['wordCount'] )
@@ -3332,7 +3334,7 @@ class InternalBibleBook:
                 if not text:
                     headingErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing title text for marker {}").format( marker ) )
                     self.addPriorityError( 59, C, V, _("Missing title text") )
-                elif text[-1]=='.':
+                elif text[-1] in '.።':
                     headingErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("{} title ends with a period: {}").format( marker, text ) )
                     self.addPriorityError( 69, C, V, _("Title ends with a period") )
             elif marker in ('s1','s2','s3','s4',):
@@ -3345,7 +3347,7 @@ class InternalBibleBook:
                         if 'partlyDone' in discoveryDict and discoveryDict['partlyDone']>0: priority = 28
                         if 'notStarted' in discoveryDict and discoveryDict['notStarted']>0: priority = 18
                     self.addPriorityError( priority, C, V, _("Missing heading text") )
-                elif text[-1]=='.':
+                elif text[-1] in '.።':
                     headingErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("{} heading ends with a period: {}").format( marker, text ) )
                     self.addPriorityError( 68, C, V, _("Heading ends with a period") )
             elif marker=='r':
@@ -3393,7 +3395,7 @@ class InternalBibleBook:
                 if not cleanText:
                     introductionErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing heading text for marker {}").format( marker ) )
                     self.addPriorityError( 39, C, V, _("Missing heading text") )
-                elif cleanText[-1]=='.':
+                elif cleanText[-1] in '.።':
                     introductionErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("{} heading ends with a period: {}").format( marker, text ) )
                     self.addPriorityError( 49, C, V, _("Heading ends with a period") )
             elif marker in ('is1','is2','is3','is4',):
@@ -3402,7 +3404,7 @@ class InternalBibleBook:
                 if not cleanText:
                     introductionErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing heading text for marker {}").format( marker ) )
                     self.addPriorityError( 39, C, V, _("Missing heading text") )
-                elif cleanText[-1]=='.':
+                elif cleanText[-1] in '.።':
                     introductionErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("{} heading ends with a period: {}").format( marker, text ) )
                     self.addPriorityError( 49, C, V, _("Heading ends with a period") )
             elif marker=='iot':
@@ -3410,7 +3412,7 @@ class InternalBibleBook:
                 if not cleanText:
                     introductionErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing outline title text for marker {}").format( marker ) )
                     self.addPriorityError( 38, C, V, _("Missing outline title text") )
-                elif cleanText[-1]=='.':
+                elif cleanText[-1] in '.።':
                     introductionErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("{} heading ends with a period: {}").format( marker, text ) )
                     self.addPriorityError( 48, C, V, _("Heading ends with a period") )
             elif marker in ('io1','io2','io3','io4',):
@@ -3419,14 +3421,14 @@ class InternalBibleBook:
                 if not cleanText:
                     introductionErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing outline text for marker {}").format( marker ) )
                     self.addPriorityError( 37, C, V, _("Missing outline text") )
-                elif cleanText[-1]=='.':
+                elif cleanText[-1] in '.።':
                     introductionErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("{} outline entry ends with a period: {}").format( marker, text ) )
                     self.addPriorityError( 47, C, V, _("Outline entry ends with a period") )
             elif marker in ('ip','ipi','im','imi',):
                 if not cleanText:
                     introductionErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing introduction text for marker {}").format( marker ) )
                     self.addPriorityError( 36, C, V, _("Missing introduction text") )
-                elif not cleanText.endswith('.') and not cleanText.endswith('.)') and not cleanText.endswith('.]') \
+                elif cleanText[-1] not in '.።' and not cleanText.endswith('.)') and not cleanText.endswith('.]') \
                 and not cleanText.endswith('."') and not cleanText.endswith(".'") \
                 and not cleanText.endswith('.”') and not cleanText.endswith('.’') \
                 and not cleanText.endswith('.»') and not cleanText.endswith('.›'): # \
@@ -3557,7 +3559,7 @@ class InternalBibleBook:
                             if cleanExtraText.endswith(' '):
                                 footnoteErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Footnote seems to have an extra space at end: '{}'").format( extraText ) )
                                 self.addPriorityError( 32, C, V, _("Extra space at end of footnote") )
-                            elif not cleanExtraText.endswith('.') and not cleanExtraText.endswith('.”') and not cleanExtraText.endswith('."') and not cleanExtraText.endswith('.»') \
+                            elif cleanExtraText and cleanExtraText[-1] not in '.።' and not cleanExtraText.endswith('.”') and not cleanExtraText.endswith('."') and not cleanExtraText.endswith('.»') \
                                                                 and not cleanExtraText.endswith('.’') and not cleanExtraText.endswith(".'") and not cleanExtraText.endswith('.›') \
                             and not cleanExtraText.endswith('?') and not cleanExtraText.endswith('?”') and not cleanExtraText.endswith('?"') and not cleanExtraText.endswith('?»') \
                                                                 and not cleanExtraText.endswith('?’') and not cleanExtraText.endswith("?'") and not cleanExtraText.endswith('?›') \
@@ -3579,7 +3581,7 @@ class InternalBibleBook:
                             if cleanExtraText.endswith(' '):
                                 xrefErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Cross-reference seems to have an extra space at end: '{}'").format( extraText ) )
                                 self.addPriorityError( 30, C, V, _("Extra space at end of cross-reference") )
-                            elif not cleanExtraText.endswith('.') and not cleanExtraText.endswith('?') and not cleanExtraText.endswith('!') \
+                            elif cleanExtraText and cleanExtraText[-1] not in '.።' and not cleanExtraText.endswith('?') and not cleanExtraText.endswith('!') \
                             and not cleanExtraText.endswith('.)') and not cleanExtraText.endswith('.]') \
                             and not cleanExtraText.endswith('.”') and not cleanExtraText.endswith('."') and not cleanExtraText.endswith('.»') \
                             and not cleanExtraText.endswith('.’') and not cleanExtraText.endswith(".'") and not cleanExtraText.endswith('.›'): # \

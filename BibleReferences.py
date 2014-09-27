@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleReferences.py
-#   Last modified: 2014-07-02 by RJH (also update ProgVersion below)
+#   Last modified: 2014-09-20 by RJH (also update ProgVersion below)
 #
 # Module for handling Bible references including ranges
 #
@@ -46,7 +46,7 @@ We can see that
         All letters are UPPERCASE
     2/ We use an underline character as the book / chapter separator
     3/ We use a colon as the chapter / verse separator
-    4/ We treat all chapter and verse fields as strings
+    4/ We treat all chapter and verse "number" fields as strings
     5/ Verse numbers can include a lowercase letter suffix a..d
         representing very approximate portions of a verse
             a = first half of a verse
@@ -58,16 +58,19 @@ Internally, we represent it as a Bible reference tuple (BBB,C,V,S,) where
     BBB is the three-character UPPERCASE reference abbreviation
     C is the chapter number string (There are some examples of letters being used for chapter "numbers")
     V is the verse number string
-    S is the single lowercase letter suffix (see above)
+    S is the suffix --  this can be:
+        a single lowercase letter a-d (see above)
+        W with a word number (first word is W1) or WxWy for an inclusive range (not including the surrounding spaces)
+        L with a letter number (first letter is L1) or LxLy for an inclusive range.
 
-OSIS defines reference ranges
+OSIS defines reference ranges with hyphens
     e.g., Gen.1.1-Gen.1.2 or Gen.1.1-Gen.2.3 (inclusive)
 
 Our ranges are slightly different (also inclusive)
     e.g., Gen_1:1-Gen_1:2 but Gen_1:1–Gen_2:3
     i.e., using a hyphen for a verse span but en-dash (–) for a span that crosses chapters or books.
 
-OXES is different again and tends to remove the second (redundant) book identifier
+OXES is different again using hyphens but tends to remove the second (redundant) book identifier
     e.g., Gen.1.1-1.2 (if I remember correctly)
 
 Technical note: Our Bible reference parsers use state machines rather than regular expressions.

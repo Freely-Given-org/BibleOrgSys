@@ -26,7 +26,7 @@
 """
 EARLY PROTOTYPE ONLY AT THIS STAGE! (Developmental code not very well structured yet.)
 
-Module for exporting Bibles in various formats including USFM, USX, USFX, and OSIS.
+Module for exporting Bibles in various formats listed below.
 
 A class which extends InternalBible.
 
@@ -63,7 +63,7 @@ Contains functions:
     doAllExports( givenOutputFolderName=None, wantPhotoBible=False, wantODFs=False, wantPDFs=False )
 
 Note that not all exports export all books.
-    Some formats only handle subsets, e.g. may not handle front or back matter, glossaries, or deuterocanonical books
+    Some formats only handle subsets, e.g. may not handle front or back matter, glossaries, or deuterocanonical books.
 """
 
 ProgName = "Bible writer"
