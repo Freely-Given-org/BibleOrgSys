@@ -4,7 +4,7 @@
 # CSVBible.py
 #   Last modified: 2014-09-30 by RJH (also update ProgVersion below)
 #
-# Module handling verse-per-line text Bible files
+# Module handling comma-separated-values text Bible files
 #
 # Copyright (C) 2014 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
@@ -24,7 +24,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module reading and loading verse-per-line text Bible files.
+Module reading and loading comma-separated-values text Bible files.
 
 e.g.,
     "Book","Chapter","Verse","Scripture"
@@ -38,13 +38,13 @@ e.g.,
 """
 
 ProgName = "CSV Bible format handler"
-ProgVersion = "0.21"
+ProgVersion = "0.23"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
 
 
-import logging, os
+import logging, os, re
 from gettext import gettext as _
 import multiprocessing
 
@@ -223,17 +223,13 @@ class CSVBible( Bible ):
                 if len(bits) == 4:
                     bString, chapterNumberString, verseNumberString, vText = bits
                     #print( "bString, chapterNumberString, verseNumberString, vText", bString, chapterNumberString, verseNumberString, vText )
-                else: print( "Unexpected number of bits", self.givenName, BBB, bString, chapterNumberString, verseNumberString, vText, len(bits), bits ); halt
+                else: print( "Unexpected number of bits", self.givenName, BBB, bString, chapterNumberString, verseNumberString, vText, len(bits), bits )
 
                 # Remove quote marks from these strings
-                if bString and bString[0] in '"\'': bString = bString[1:]
-                if bString and bString[-1] in '"\'': bString = bString[:-1]
-                if chapterNumberString and chapterNumberString[0] in '"\'': chapterNumberString = chapterNumberString[1:]
-                if chapterNumberString and chapterNumberString[-1] in '"\'': chapterNumberString = chapterNumberString[:-1]
-                if verseNumberString and verseNumberString[0] in '"\'': verseNumberString = verseNumberString[1:]
-                if verseNumberString and verseNumberString[-1] in '"\'': verseNumberString = verseNumberString[:-1]
-                if vText and vText[0] in '"\'': vText = vText[1:]
-                if vText and vText[-1] in '"\'': vText = vText[:-1]
+                if len(bString)>=2 and bString[0]==bString[-1] and bString[0] in '"\'': bString = bString[1:-1]
+                if len(chapterNumberString)>=2 and chapterNumberString[0]==chapterNumberString[-1] and chapterNumberString[0] in '"\'': chapterNumberString = chapterNumberString[1:-1]
+                if len(verseNumberString)>=2 and verseNumberString[0]==verseNumberString[-1] and verseNumberString[0] in '"\'': verseNumberString = verseNumberString[1:-1]
+                if len(vText)>=2 and vText[0]==vText[-1] and vText[0] in '"\'': vText = vText[1:-1]
                 #print( "bString, chapterNumberString, verseNumberString, vText", bString, chapterNumberString, verseNumberString, vText )
 
                 #if not bookCode and not chapterNumberString and not verseNumberString:
@@ -264,6 +260,24 @@ class CSVBible( Bible ):
                     thisBook.appendLine( 'c', chapterNumberString )
                     lastChapterNumber = chapterNumber
                     lastVerseNumber = -1
+
+                # Now we have to convert any possible RTF codes to our internal codes
+                vTextOriginal = vText
+                # First do special characters
+                vText = vText.replace( '\\ldblquote', '“' ).replace( '\\rdblquote', '”' ).replace( '\\lquote', '‘' ).replace( '\\rquote', '’' )
+                vText = vText.replace( '\\emdash', '—' ).replace( '\\endash', '–' )
+                # Now do Unicode characters
+                while True: # Find patterns like \\'d3
+                    match = re.search( r"\\'[0-9a-f][0-9a-f]", vText )
+                    if not match: break
+                    i = int( vText[match.start()+2:match.end()], 16 ) # Convert two hex characters to decimal
+                    vText = vText[:match.start()] + chr( i ) + vText[match.end():]
+                while True: # Find patterns like \\u253?
+                    match = re.search( r"\\u[1-2][0-9][0-9]\?", vText )
+                    if not match: break
+                    i = int( vText[match.start()+2:match.end()-1] ) # Convert three digits to decimal
+                    vText = vText[:match.start()] + chr( i ) + vText[match.end():]
+                #if vText != vTextOriginal: print( repr(vTextOriginal) ); print( repr(vText) )
 
                 ## Handle special formatting
                 ##   [brackets] are for Italicized words

@@ -37,7 +37,7 @@ e.g.,
 """
 
 ProgName = "VPL Bible format handler"
-ProgVersion = "0.22"
+ProgVersion = "0.23"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -221,7 +221,7 @@ class VPLBible( Bible ):
                 if len(bits) == 3 and ':' in bits[1]:
                     bookCode, CVString, vText = bits
                     chapterNumberString, verseNumberString = CVString.split( ':' )
-                else: print( "Unexpected number of bits", self.givenName, BBB, bookCode, chapterNumberString, verseNumberString, len(bits), bits ); halt
+                else: print( "Unexpected number of bits", self.givenName, BBB, bookCode, chapterNumberString, verseNumberString, len(bits), bits )
 
                 if not bookCode and not chapterNumberString and not verseNumberString:
                     print( "Skipping empty line in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
