@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2014-09-24 by RJH (also update ProgVersion below)
+#   Last modified: 2014-09-28 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -43,6 +43,7 @@ and then fills
         self.BBBToNameDict, self.bookNameDict, self.combinedBookNameDict
 """
 
+ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = "0.50"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
@@ -67,7 +68,7 @@ def t( messageString ):
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if Globals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}: '.format( ProgName, '.' if nameBit else '', nameBit )
+        nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit, _(errorBit) )
 
 

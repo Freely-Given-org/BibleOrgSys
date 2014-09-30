@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2014-09-24 by RJH (also update ProgVersion below)
+#   Last modified: 2014-09-28 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -27,6 +27,7 @@
 Module for defining and manipulating complete or partial USFM Bibles.
 """
 
+ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = "0.56"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
@@ -53,7 +54,7 @@ def t( messageString ):
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if Globals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}: '.format( ProgName, '.' if nameBit else '', nameBit )
+        nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit, _(errorBit) )
 
 
@@ -229,7 +230,7 @@ class USFMBible( Bible ):
         self.USFMFilenamesObject = USFMFilenames( self.sourceFolder )
         if Globals.verbosityLevel > 3 or (Globals.debugFlag and debuggingThisModule):
             print( "USFMFilenamesObject", self.USFMFilenamesObject )
-        
+
         # Attempt to load the SSF file
         self.ssfFilepath, self.settingsDict = {}, {}
         ssfFilepathList = self.USFMFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )

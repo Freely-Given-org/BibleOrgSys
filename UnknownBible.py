@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # UnknownBible.py
-#   Last modified: 2014-07-15 (also update ProgVersion below)
+#   Last modified: 2014-09-30 (also update ProgVersion below)
 #
 # Module handling a unknown Bible object
 #
@@ -37,7 +37,7 @@ Currently aware of the following Bible types:
 """
 
 ProgName = "Unknown Bible object handler"
-ProgVersion = "0.16"
+ProgVersion = "0.17"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -62,6 +62,7 @@ from TheWordBible import TheWordBibleFileCheck, TheWordBible
 from MySwordBible import MySwordBibleFileCheck, MySwordBible
 from ESwordBible import ESwordBibleFileCheck, ESwordBible
 from PalmDBBible import PalmDBBibleFileCheck, PalmDBBible
+from CSVBible import CSVBibleFileCheck, CSVBible
 from VPLBible import VPLBibleFileCheck, VPLBible
 #from SwordResources import SwordInterface # What about these?
 
@@ -246,6 +247,14 @@ class UnknownBible:
             typesFound.append( 'Haggai:' + str(HaggaiBibleCount) )
             if Globals.verbosityLevel > 2: print( "UnknownBible.search: HaggaiBibleCount", HaggaiBibleCount )
 
+        # Search for CSV text Bibles
+        CSVBibleCount = CSVBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+        if CSVBibleCount:
+            totalBibleCount += CSVBibleCount
+            totalBibleTypes += 1
+            typesFound.append( 'CSV:' + str(CSVBibleCount) )
+            if Globals.verbosityLevel > 2: print( "UnknownBible.search: CSVBibleCount", CSVBibleCount )
+
         # Search for VPL text Bibles
         VPLBibleCount = VPLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
         if VPLBibleCount:
@@ -310,6 +319,10 @@ class UnknownBible:
                 self.foundType = "USFM Bible"
                 if autoLoad: return USFMBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad )
                 else: return self.foundType
+            elif CSVBibleCount == 1:
+                self.foundType = "CSV Bible"
+                if autoLoad: return CSVBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad )
+                else: return self.foundType
             elif VPLBibleCount == 1:
                 self.foundType = "VPL Bible"
                 if autoLoad: return VPLBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad )
@@ -372,6 +385,7 @@ def demo():
                     "Tests/DataFilesForTests/theWordTest/", "Tests/DataFilesForTests/MySwordTest/",
                     "Tests/DataFilesForTests/YETTest/", "Tests/DataFilesForTests/PDBTest/",
                     "Tests/DataFilesForTests/DrupalTest/",
+                    "Tests/DataFilesForTests/CSVTest1/","Tests/DataFilesForTests/CSVTest2/"
                     "Tests/DataFilesForTests/VPLTest1/","Tests/DataFilesForTests/VPLTest2/"
                     "Tests/DataFilesForTests/", # Up a level
                     )

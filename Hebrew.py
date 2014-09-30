@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # Hebrew.py
-#   Last modified: 2013-08-28 (also update ProgVersion below)
+#   Last modified: 2014-09-28 (also update ProgVersion below)
 #
 # Module handling Hebrew language
 #
-# Copyright (C) 2011-2013 Robert Hunt
+# Copyright (C) 2011-2014 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,8 +28,10 @@ Module handling Hebrew language particularities.
 """
 
 ProgName = "Hebrew language handler"
-ProgVersion = "0.04"
+ProgVersion = "0.05"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+
+debuggingThisModule = False
 
 
 import os, unicodedata
@@ -135,7 +137,7 @@ cantillationMarks = ( etnahta, segolAccent, shalshelet, zaqefQatan, zaqefGadol, 
 sofPasuq = '׃'
 
 
-if Globals.debugFlag: # Check that our tables have no obvious errors
+if Globals.debugFlag and debuggingThisModule: # Check that our tables have no obvious errors
     for j,letter in enumerate( consonants ):
         #print( j, letter )
         assert( consonants.count(letter)==1 )
@@ -161,8 +163,8 @@ if Globals.debugFlag: # Check that our tables have no obvious errors
         assert( mark not in vowelPoints )
         assert( mark not in otherMarks )
 
-    printUnicodeInfo( vowelPoints, "Vowel points" )
-    printUnicodeInfo( cantillationMarks, "Cantillation marks" )
+    Globals.printUnicodeInfo( vowelPoints, "Vowel points" )
+    Globals.printUnicodeInfo( cantillationMarks, "Cantillation marks" )
 
 
 

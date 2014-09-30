@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # DigitalBiblePlatform.py
-#   Last modified: 2014-09-23 (also update ProgVersion below)
+#   Last modified: 2014-09-28 (also update ProgVersion below)
 #
 # Module handling online DBP resources
 #
@@ -35,9 +35,12 @@ In this module, we use:
 More details are available from http://www.DigitalBiblePlatform.com.
 """
 
+ShortProgName = "DigitalBiblePlatform"
 ProgName = "Digital Bible Platform handler"
-ProgVersion = "0.03"
+ProgVersion = "0.04"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+
+debuggingThisModule = False
 
 
 from singleton import singleton
@@ -51,7 +54,40 @@ from VerseReferences import SimpleVerseKey
 
 
 URLBase = "http://dbt.io/"
+KEY_FILENAME = "DBPKey.txt"
 MAX_CACHED_VERSES = 100 # Per Bible version in use
+
+
+
+def t( messageString ):
+    """
+    Prepends the module name to a error or warning message string
+        if we are in debug mode.
+    Returns the new string.
+    """
+    try: nameBit, errorBit = messageString.split( ': ', 1 )
+    except ValueError: nameBit, errorBit = '', messageString
+    if Globals.debugFlag or debuggingThisModule:
+        nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
+    return '{}{}'.format( nameBit, _(errorBit) )
+
+
+
+def getSecurityKey():
+    """
+    See if we can find the personal key code either in the current folder
+        or in other potential folders.
+
+    Returns the contents of the file.
+    """
+    for keyPath in ( KEY_FILENAME, os.path.join( "../BibleOrgSys/", KEY_FILENAME ) ):
+        if os.path.exists( keyPath ): # in our current folder
+            if Globals.verbosityLevel > 2:
+                print( t("getSecurityKey: found key file in {}").format( repr(keyPath) ) )
+            with open( keyPath, "rt" ) as keyFile:
+                return keyFile.read() # Our personal key
+    raise FileNotFoundError( t("Cannot find key file {}").format( repr(KEY_FILENAME) ) )
+# end of getSecurityKey
 
 
 
@@ -65,8 +101,7 @@ class DBPBibles:
         """
         Create the internal Bible object.
         """
-        with open( "DBPKey.txt", "rt" ) as keyFile:
-            self.key = keyFile.read() # Our personal key
+        self.key = getSecurityKey() # Our personal key
         self.URLFixedData = "?v=2&key=" + self.key
 
         # See if the site is online by making a small call to get the API version
@@ -160,6 +195,10 @@ class DBPBibles:
 
     def getDAM( self, refNumber ):
         """
+        DAM = Digital Asset Management – the software system for users to administer the volumes contained in the DBP.
+        DAM ID – the unique id by which an individual volume is identified.
+
+        Returns the DAM ID which is typically something like: ENGNLVN2ET
         """
         return self.volumeList[refNumber]['dam_id']
     # end of DBPBibles.getDAM
@@ -174,7 +213,10 @@ class DBPBibles:
             if searchTextUC in name.upper():
                 for refNumber in self.volumeNameList[name]:
                     DAM = self.getDAM(refNumber)
-                    assert( DAM.endswith( '2ET' ) ) # O2 (OT) or N2 (NT), plus ET for text
+                    if Globals.debugFlag:
+                        print( t("DAM: {}").format( DAM ) )
+                        if Globals.debugFlag:
+                            assert( DAM.endswith('2ET') or DAM.endswith('1ET') ) # O2 (OT) or N2 (NT), plus ET for text
                     results.append( (refNumber,DAM,) )
         return results
     # end of DBPBibles.searchNames
@@ -197,8 +239,7 @@ class DBPBible:
          # Setup and initialise the base class first
         #USXXMLBible.__init__( self, givenFolderName, givenName, encoding )
 
-        with open( "DBPKey.txt", "rt" ) as keyFile:
-            self.key = keyFile.read() # Our personal key
+        self.key = getSecurityKey() # Our personal key
         self.URLFixedData = "?v=2&key=" + self.key
 
         # See if the site is online by making a small call to get the API version
@@ -210,7 +251,7 @@ class DBPBible:
         else:
             logging.critical( "DPBBible.__init__: Digital Bible Platform appears to be offline" )
             raise FileNotFoundError # What should this really be?
-        
+
         self.bookList = None
         if self.onlineVersion: # Check that this particular resource is available by getting a list of books
             bookList = self.getOnlineData( "library/book", "dam_id="+self.damRoot ) # Get an ordered list of dictionaries -- one for each book
@@ -302,8 +343,9 @@ class DBPBible:
     def getVerseData( self, key ):
         """
         """
-        if Globals.debugFlag: print( "DBPBible.getVerseData( {} ) for {}".format( key, self.damRoot ) )
+        if Globals.debugFlag: print( t("DBPBible.getVerseData( {} ) for {})").format( key, self.damRoot ) )
         if str(key) in self.cache:
+            if Globals.debugFlag: print( "  " + t("Retrieved from cache") )
             self.cache.move_to_end( str(key) )
             return self.cache[str(key)]
         BBB = key.getBBB()
@@ -339,9 +381,13 @@ def demo():
         print()
         dbpBibles = DBPBibles()
         print( dbpBibles )
-        #if 0:
-            #for someName in dbpBibles.volumeNameList:
-                #if 'English' in someName: print( "English:", someName, dbpBibles.volumeNameList[someName] )
+        if 1:
+            for j, someName in enumerate( dbpBibles.volumeNameList ):
+                if 'English' in someName:
+                    print( "English:", someName, dbpBibles.volumeNameList[someName] )
+                print( j, someName, dbpBibles.volumeNameList[someName] )
+                if 'English' in someName:
+                    print( "  English:", someName, dbpBibles.volumeNameList[someName] )
         print( "English search", dbpBibles.searchNames( "English" ) )
         print( "MS search", dbpBibles.searchNames( "Salug" ) )
 
@@ -352,6 +398,11 @@ def demo():
         for verseKey in (SimpleVerseKey('GEN','1','1'),SimpleVerseKey('MAT','1','1'),SimpleVerseKey('JHN','3','16'),):
             print( verseKey )
             print( dbpBible1.getVerseData( verseKey ) )
+         # Now tTest the DBPBible class caching
+        for verseKey in (SimpleVerseKey('GEN','1','1'),SimpleVerseKey('MAT','1','1'),SimpleVerseKey('JHN','3','16'),):
+            print( verseKey )
+            print( dbpBible1.getVerseData( verseKey ) )
+
 
     if 1: # Test the DBPBible class
         print()

@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # Greek.py
-#   Last modified: 2013-08-28 (also update ProgVersion below)
+#   Last modified: 2014-09-28 (also update ProgVersion below)
 #
 # Module handling Greek language
 #
-# Copyright (C) 2012-2013 Robert Hunt
+# Copyright (C) 2012-2014 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,8 +28,10 @@ Module handling Greek language particularities.
 """
 
 ProgName = "Greek language handler"
-ProgVersion = "0.01"
+ProgVersion = "0.02"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+
+debuggingThisModule = False
 
 
 import os, unicodedata
@@ -51,18 +53,18 @@ assert( len(normalConsonants) == 3 )
 
 
 # Other marks
-dageshOrMapiq = 'ּ'
-rafe = 'ֿ'
-paseq = '׀'
-shinDot = 'ׁ'
-sinDot = 'ׂ'
-upperDot = 'ׄ'
-lowerDot = 'ׅ'
-qamatzQatan = 'ׇ'
-otherMarks = ( dageshOrMapiq, rafe, paseq, shinDot, sinDot, upperDot, lowerDot, qamatzQatan, )
+#dageshOrMapiq = 'ּ'
+#rafe = 'ֿ'
+#paseq = '׀'
+#shinDot = 'ׁ'
+#sinDot = 'ׂ'
+#upperDot = 'ׄ'
+#lowerDot = 'ׅ'
+#qamatzQatan = 'ׇ'
+#otherMarks = ( dageshOrMapiq, rafe, paseq, shinDot, sinDot, upperDot, lowerDot, qamatzQatan, )
 
 
-if Globals.debugFlag: # Check that our tables have no obvious errors
+if 0 and Globals.debugFlag: # Check that our tables have no obvious errors
     for j,letter in enumerate( normalConsonants ):
         #print( j, letter )
         assert( normalConsonants.count(letter)==1 )
@@ -170,11 +172,11 @@ class Greek():
     def printUnicodeData( self, text=None ):
         if text is None: text = self.currentText
         print( "unicodedata", unicodedata.unidata_version )
-        def printUnicodeInfo( text, description ):
-            print( "{}:".format( description ) )
-            for j,char in enumerate(text):
-                print( "{:2} {:04x} {} '{}'   (cat={} bid={} comb={} mirr={})" \
-                    .format(j, ord(char), unicodedata.name(char), char, unicodedata.category(char), unicodedata.bidirectional(char), unicodedata.combining(char), unicodedata.mirrored(char) ) )
+        #def printUnicodeInfo( text, description ):
+            #print( "{}:".format( description ) )
+            #for j,char in enumerate(text):
+                #print( "{:2} {:04x} {} '{}'   (cat={} bid={} comb={} mirr={})" \
+                    #.format(j, ord(char), unicodedata.name(char), char, unicodedata.category(char), unicodedata.bidirectional(char), unicodedata.combining(char), unicodedata.mirrored(char) ) )
     # end of printUnicodeData
 
     def removeOtherMarks( self, text=None ):
@@ -183,7 +185,7 @@ class Greek():
             self.currentText = self.removeOtherMarks( self.currentText ) # recursive call
             return self.currentText
         # else we were given some text to process
-        for otherMark in otherMarks: text = text.replace(otherMark, '')
+        #for otherMark in otherMarks: text = text.replace(otherMark, '')
         return text
 # end of Greek class
 

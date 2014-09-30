@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# VPLBible.py
+# CSVBible.py
 #   Last modified: 2014-09-30 by RJH (also update ProgVersion below)
 #
 # Module handling verse-per-line text Bible files
@@ -27,17 +27,18 @@
 Module reading and loading verse-per-line text Bible files.
 
 e.g.,
-    Ge 1:1 En el principio creó Dios el cielo y la tierra.
-    Ge 1:2 Y la tierra estaba desordenada y vacía, y las tinieblas [estaban] sobre la faz del abismo, y el Espíritu de Dios se movía sobre la faz de las aguas.
-    Ge 1:3 Y dijo Dios: Sea la luz; y fue la luz.
+    "Book","Chapter","Verse","Scripture"
+    "1","1","1","Cuando Dios, en el principio, creó* los cielos y la tierra,"
+    "1","1","2","la tierra era una masa caótica* y las tinieblas cubrían el abismo, mientras un viento impetuoso sacudía la superficie de las aguas."
+    "1","1","3","Entonces dijo Dios: — ¡Que exista la luz! Y la luz existió."
     ...
-    Re 22:19 Y si alguno quitare de las palabras del libro de esta profecía, Dios quitará su parte del libro de la vida, y de la santa ciudad, y de las cosas que están escritas en este libro.
-    Re 22:20 El que da testimonio de estas cosas, dice: <Ciertamente vengo en breve.> Amén, así sea. Ven: Señor Jesús.
-    Re 22:21 La gracia de nuestro Señor Jesucristo [sea] con todos vosotros. Amén.
+    "66","22","19","Si suprime algo del mensaje profético del libro, Dios lo desgajará del árbol de la vida y lo excluirá de la ciudad santa descritos en este libro."
+    "66","22","20","El que da fe de todo esto proclama: — Sí, estoy a punto de llegar. ¡Amén! ¡Ven, Señor Jesús!"
+    "66","22","21","Que la gracia de Jesús, el Señor, esté con todos. Amén."
 """
 
-ProgName = "VPL Bible format handler"
-ProgVersion = "0.22"
+ProgName = "CSV Bible format handler"
+ProgVersion = "0.21"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -56,32 +57,32 @@ extensionsToIgnore = ('ZIP', 'BAK', 'LOG', 'HTM','HTML', 'XML', 'OSIS', 'USX', '
 
 
 
-def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
+def CSVBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
     """
-    Given a folder, search for VPL Bible files or folders in the folder and in the next level down.
+    Given a folder, search for CSV Bible files or folders in the folder and in the next level down.
 
     Returns False if an error is found.
 
     if autoLoad is false (default)
         returns None, or the number of Bibles found.
 
-    if autoLoad is true and exactly one VPL Bible is found,
-        returns the loaded VPLBible object.
+    if autoLoad is true and exactly one CSV Bible is found,
+        returns the loaded CSVBible object.
     """
-    if Globals.verbosityLevel > 2: print( "VPLBibleFileCheck( {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad ) )
+    if Globals.verbosityLevel > 2: print( "CSVBibleFileCheck( {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad ) )
     if Globals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
     if Globals.debugFlag: assert( autoLoad in (True,False,) )
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
-        logging.critical( _("VPLBibleFileCheck: Given {} folder is unreadable").format( repr(givenFolderName) ) )
+        logging.critical( _("CSVBibleFileCheck: Given {} folder is unreadable").format( repr(givenFolderName) ) )
         return False
     if not os.path.isdir( givenFolderName ):
-        logging.critical( _("VPLBibleFileCheck: Given {} path is not a folder").format( repr(givenFolderName) ) )
+        logging.critical( _("CSVBibleFileCheck: Given {} path is not a folder").format( repr(givenFolderName) ) )
         return False
 
     # Find all the files and folders in this folder
-    if Globals.verbosityLevel > 3: print( " VPLBibleFileCheck: Looking for files in given {}".format( repr(givenFolderName) ) )
+    if Globals.verbosityLevel > 3: print( " CSVBibleFileCheck: Looking for files in given {}".format( repr(givenFolderName) ) )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -98,7 +99,7 @@ def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
     if '__MACOSX' in foundFolders:
         foundFolders.remove( '__MACOSX' )  # don't visit these directories
 
-    # See if there's an VPLBible project here in this given folder
+    # See if there's an CSV Bible here in this given folder
     numFound = 0
     looksHopeful = False
     lastFilenameFound = None
@@ -107,15 +108,15 @@ def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
         elif thisFilename.endswith( '.txt' ):
             if strictCheck or Globals.strictCheckingFlag:
                 firstLine = Globals.peekIntoFile( thisFilename, givenFolderName )
-                if not firstLine.startswith( "Ge 1:1 " ):
-                    if Globals.verbosityLevel > 2: print( "VPLBibleFileCheck: (unexpected) first line was '{}' in {}".format( firstLine, thisFilename ) )
+                if not firstLine.startswith( '"Book","Chapter","Verse",' ) and not firstLine.startswith( '"1","1","1",'):
+                    if Globals.verbosityLevel > 2: print( "CSVBibleFileCheck: (unexpected) first line was '{}' in {}".format( firstLine, thisFilename ) )
                     continue
             lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
-        if Globals.verbosityLevel > 2: print( "VPLBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
+        if Globals.verbosityLevel > 2: print( "CSVBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and autoLoad:
-            uB = VPLBible( givenFolderName, lastFilenameFound[:-4] ) # Remove the end of the actual filename ".txt"
+            uB = CSVBible( givenFolderName, lastFilenameFound[:-4] ) # Remove the end of the actual filename ".txt"
             uB.load() # Load and process the file
             return uB
         return numFound
@@ -127,9 +128,9 @@ def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
-            logging.warning( _("VPLBibleFileCheck: '{}' subfolder is unreadable").format( tryFolderName ) )
+            logging.warning( _("CSVBibleFileCheck: '{}' subfolder is unreadable").format( tryFolderName ) )
             continue
-        if Globals.verbosityLevel > 3: print( "    VPLBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        if Globals.verbosityLevel > 3: print( "    CSVBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
         for something in os.listdir( tryFolderName ):
             somepath = os.path.join( givenFolderName, thisFolderName, something )
@@ -144,32 +145,32 @@ def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
                 if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
                     foundSubfiles.append( something )
 
-        # See if there's an VPLBible here in this folder
+        # See if there's an CSV Bible here in this folder
         for thisFilename in sorted( foundSubfiles ):
             if thisFilename.endswith( '.txt' ):
                 if strictCheck or Globals.strictCheckingFlag:
                     firstLine = Globals.peekIntoFile( thisFilename, tryFolderName )
                     if not firstLine.startswith( "Ge 1:1 " ):
-                        if Globals.verbosityLevel > 2: print( "VPLBibleFileCheck: (unexpected) first line was '{}' in {}".format( firstLine, thisFilname ) ); halt
+                        if Globals.verbosityLevel > 2: print( "CSVBibleFileCheck: (unexpected) first line was '{}' in {}".format( firstLine, thisFilname ) ); halt
                         continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
                 lastFilenameFound = thisFilename
                 numFound += 1
     if numFound:
-        if Globals.verbosityLevel > 2: print( "VPLBibleFileCheck foundProjects", numFound, foundProjects )
+        if Globals.verbosityLevel > 2: print( "CSVBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and autoLoad:
             if Globals.debugFlag: assert( len(foundProjects) == 1 )
-            uB = VPLBible( foundProjects[0][0], foundProjects[0][1][:-4] ) # Remove the end of the actual filename ".txt"
+            uB = CSVBible( foundProjects[0][0], foundProjects[0][1][:-4] ) # Remove the end of the actual filename ".txt"
             uB.load() # Load and process the file
             return uB
         return numFound
-# end of VPLBibleFileCheck
+# end of CSVBibleFileCheck
 
 
 
-class VPLBible( Bible ):
+class CSVBible( Bible ):
     """
-    Class for reading, validating, and converting VPLBible files.
+    Class for reading, validating, and converting CSVBible files.
     """
     def __init__( self, sourceFolder, givenName, encoding='utf-8' ):
         """
@@ -177,8 +178,8 @@ class VPLBible( Bible ):
         """
          # Setup and initialise the base class first
         Bible.__init__( self )
-        self.objectNameString = "VPL Bible object"
-        self.objectTypeString = "VPL"
+        self.objectNameString = "CSV Bible object"
+        self.objectTypeString = "CSV"
 
         # Now we can set our object variables
         self.sourceFolder, self.givenName, self.encoding = sourceFolder, givenName, encoding
@@ -186,12 +187,12 @@ class VPLBible( Bible ):
 
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):
-            logging.critical( _("VPLBible: File '{}' is unreadable").format( self.sourceFilepath ) )
+            logging.critical( _("CSVBible: File '{}' is unreadable").format( self.sourceFilepath ) )
 
         self.name = self.givenName
         #if self.name is None:
             #pass
-    # end of VPLBible.__init__
+    # end of CSVBible.__init__
 
 
     def load( self ):
@@ -202,75 +203,80 @@ class VPLBible( Bible ):
 
         lastLine, lineCount = '', 0
         BBB = None
-        lastBookCode = lastChapterNumber = lastVerseNumber = -1
+        lastBookNumber = lastChapterNumber = lastVerseNumber = -1
         lastVText = ''
         with open( self.sourceFilepath, encoding=self.encoding ) as myFile: # Automatically closes the file when done
             for line in myFile:
                 lineCount += 1
                 #if lineCount==1 and self.encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF
-                    #logging.info( "      VPLBible.load: Detected UTF-16 Byte Order Marker" )
+                    #logging.info( "      CSVBible.load: Detected UTF-16 Byte Order Marker" )
                     #line = line[1:] # Remove the UTF-8 Byte Order Marker
                 if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 if not line: continue # Just discard blank lines
                 lastLine = line
-                #print ( 'VLP file line is "' + line + '"' )
+                #print ( "CSV file line {} is {}".format( lineCount, repr(line) ) )
                 if line[0]=='#': continue # Just discard comment lines
+                if lineCount==1 and line.startswith( '"Book",' ): continue # Just discard header line
 
-                bits = line.split( ' ', 2 )
-                #print( self.givenName, BBB, bits )
-                if len(bits) == 3 and ':' in bits[1]:
-                    bookCode, CVString, vText = bits
-                    chapterNumberString, verseNumberString = CVString.split( ':' )
-                else: print( "Unexpected number of bits", self.givenName, BBB, bookCode, chapterNumberString, verseNumberString, len(bits), bits ); halt
+                bits = line.split( ',', 3 )
+                #print( lineCount, self.givenName, BBB, bits )
+                if len(bits) == 4:
+                    bString, chapterNumberString, verseNumberString, vText = bits
+                    #print( "bString, chapterNumberString, verseNumberString, vText", bString, chapterNumberString, verseNumberString, vText )
+                else: print( "Unexpected number of bits", self.givenName, BBB, bString, chapterNumberString, verseNumberString, vText, len(bits), bits ); halt
 
-                if not bookCode and not chapterNumberString and not verseNumberString:
-                    print( "Skipping empty line in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
-                    continue
-                if Globals.debugFlag: assert( 2  <= len(bookCode) <= 4 )
-                if Globals.debugFlag: assert( chapterNumberString.isdigit() )
-                if Globals.debugFlag: assert( verseNumberString.isdigit() )
+                # Remove quote marks from these strings
+                if bString and bString[0] in '"\'': bString = bString[1:]
+                if bString and bString[-1] in '"\'': bString = bString[:-1]
+                if chapterNumberString and chapterNumberString[0] in '"\'': chapterNumberString = chapterNumberString[1:]
+                if chapterNumberString and chapterNumberString[-1] in '"\'': chapterNumberString = chapterNumberString[:-1]
+                if verseNumberString and verseNumberString[0] in '"\'': verseNumberString = verseNumberString[1:]
+                if verseNumberString and verseNumberString[-1] in '"\'': verseNumberString = verseNumberString[:-1]
+                if vText and vText[0] in '"\'': vText = vText[1:]
+                if vText and vText[-1] in '"\'': vText = vText[:-1]
+                #print( "bString, chapterNumberString, verseNumberString, vText", bString, chapterNumberString, verseNumberString, vText )
+
+                #if not bookCode and not chapterNumberString and not verseNumberString:
+                    #print( "Skipping empty line in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                    #continue
+                #if Globals.debugFlag: assert( 2  <= len(bookCode) <= 4 )
+                #if Globals.debugFlag: assert( chapterNumberString.isdigit() )
+                #if Globals.debugFlag: assert( verseNumberString.isdigit() )
+                bookNumber = int( bString )
                 chapterNumber = int( chapterNumberString )
                 verseNumber = int( verseNumberString )
 
-                if bookCode != lastBookCode: # We've started a new book
-                    if lastBookCode != -1: # Better save the last book
+                if bookNumber != lastBookNumber: # We've started a new book
+                    if lastBookNumber != -1: # Better save the last book
                         self.saveBook( thisBook )
-                    if bookCode == 'Ge': BBB = 'GEN'
-                    elif bookCode == 'Le': BBB = 'LEV'
-                    elif bookCode == 'Jud': BBB = 'JDG'
-                    elif bookCode == 'Es': BBB = 'EST'
-                    elif bookCode == 'Pr': BBB = 'PRO'
-                    elif bookCode == 'So': BBB = 'SNG'
-                    elif bookCode == 'La': BBB = 'LAM'
-                    elif bookCode == 'Jude': BBB = 'JDE'
-                    else: BBB = Globals.BibleBooksCodes.getBBB( bookCode )  # Try to guess
+                    BBB = Globals.BibleBooksCodes.getBBBFromReferenceNumber( bookNumber )  # Try to guess
                     assert( BBB )
                     thisBook = BibleBook( self, BBB )
-                    thisBook.objectNameString = "VPL Bible Book object"
-                    thisBook.objectTypeString = "VPL"
-                    lastBookCode = bookCode
+                    thisBook.objectNameString = "CSV Bible Book object"
+                    thisBook.objectTypeString = "CSV"
+                    lastBookNumber = bookNumber
                     lastChapterNumber = lastVerseNumber = -1
 
                 if chapterNumber != lastChapterNumber: # We've started a new chapter
                     if Globals.debugFlag: assert( chapterNumber > lastChapterNumber or BBB=='ESG' ) # Esther Greek might be an exception
                     if chapterNumber == 0:
-                        logging.info( "Have chapter zero in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                        logging.info( "Have chapter zero in {} {} {} {}:{}".format( self.givenName, BBB, bookNumber, chapterNumberString, verseNumberString ) )
                     thisBook.appendLine( 'c', chapterNumberString )
                     lastChapterNumber = chapterNumber
                     lastVerseNumber = -1
 
-                # Handle special formatting
-                #   [brackets] are for Italicized words
-                #   <brackets> are for the Words of Christ in Red
-                #   «brackets»  are for the Titles in the Book  of Psalms.
-                vText = vText.replace( '[', '\\add ' ).replace( ']', '\\add*' ) \
-                    .replace( '<', '\\wj ' ).replace( '>', '\\wj*' )
-                if vText and vText[0]=='«':
-                    assert( BBB=='PSA' and verseNumberString=='1' )
-                    vBits = vText[1:].split( '»' )
-                    #print( "vBits", vBits )
-                    thisBook.appendLine( 'd', vBits[0] ) # Psalm title
-                    vText = vBits[1].lstrip()
+                ## Handle special formatting
+                ##   [brackets] are for Italicized words
+                ##   <brackets> are for the Words of Christ in Red
+                ##   «brackets»  are for the Titles in the Book  of Psalms.
+                #vText = vText.replace( '[', '\\add ' ).replace( ']', '\\add*' ) \
+                    #.replace( '<', '\\wj ' ).replace( '>', '\\wj*' )
+                #if vText and vText[0]=='«':
+                    #assert( BBB=='PSA' and verseNumberString=='1' )
+                    #vBits = vText[1:].split( '»' )
+                    ##print( "vBits", vBits )
+                    #thisBook.appendLine( 'd', vBits[0] ) # Psalm title
+                    #vText = vBits[1].lstrip()
 
                 # Handle the verse info
                 if verseNumber==lastVerseNumber and vText==lastVText:
@@ -293,18 +299,18 @@ class VPLBible( Bible ):
         # Save the final book
         self.saveBook( thisBook )
         self.doPostLoadProcessing()
-    # end of VPLBible.load
-# end of VPLBible class
+    # end of CSVBible.load
+# end of CSVBible class
 
 
 
-def testVPL( VPLfolder ):
-    # Crudely demonstrate the VPL Bible class
+def testCSV( CSVfolder ):
+    # Crudely demonstrate the CSV Bible class
     import VerseReferences
 
-    if Globals.verbosityLevel > 1: print( _("Demonstrating the VPL Bible class...") )
-    if Globals.verbosityLevel > 0: print( "  Test folder is '{}'".format( VPLfolder ) )
-    vb = VPLBible( VPLfolder, "demo" )
+    if Globals.verbosityLevel > 1: print( _("Demonstrating the CSV Bible class...") )
+    if Globals.verbosityLevel > 0: print( "  Test folder is '{}'".format( CSVfolder ) )
+    vb = CSVBible( CSVfolder, "demo" )
     vb.load() # Load and process the file
     if Globals.verbosityLevel > 1: print( vb ) # Just print a summary
     if Globals.strictCheckingFlag:
@@ -331,7 +337,7 @@ def testVPL( VPLfolder ):
         except KeyError:
             verseText = "Verse not available!"
         if Globals.verbosityLevel > 1: print( reference, shortText, verseText )
-# end of testVPL
+# end of testCSV
 
 
 def demo():
@@ -341,16 +347,16 @@ def demo():
     if Globals.verbosityLevel > 0: print( ProgNameVersion )
 
 
-    testFolder = "Tests/DataFilesForTests/VPLTest1/"
+    testFolder = "Tests/DataFilesForTests/CSVTest1/"
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
-        result1 = VPLBibleFileCheck( testFolder )
-        if Globals.verbosityLevel > 1: print( "VPL TestA1", result1 )
+        result1 = CSVBibleFileCheck( testFolder )
+        if Globals.verbosityLevel > 1: print( "CSV TestA1", result1 )
 
-        result2 = VPLBibleFileCheck( testFolder, autoLoad=True )
-        if Globals.verbosityLevel > 1: print( "VPL TestA2", result2 )
-        result2.loadMetadataFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
+        result2 = CSVBibleFileCheck( testFolder, autoLoad=True )
+        if Globals.verbosityLevel > 1: print( "CSV TestA2", result2 )
+        #result2.loadMetadataFile( os.path.join( testFolder, "BooknamesMetadata.txt" ) )
         if Globals.strictCheckingFlag:
             result2.check()
             #print( UsfmB.books['GEN']._processedLines[0:40] )
@@ -372,13 +378,13 @@ def demo():
             if Globals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
             parameters = [folderName for folderName in sorted(foundFolders)]
             with multiprocessing.Pool( processes=Globals.maxProcesses ) as pool: # start worker processes
-                results = pool.map( testVPL, parameters ) # have the pool do our loads
+                results = pool.map( testCSV, parameters ) # have the pool do our loads
                 assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                if Globals.verbosityLevel > 1: print( "\nVPL D{}/ Trying {}".format( j+1, someFolder ) )
+                if Globals.verbosityLevel > 1: print( "\nCSV D{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
-                testVPL( someFolder )
+                testCSV( someFolder )
 # end of demo
 
 
@@ -392,4 +398,4 @@ if __name__ == '__main__':
     demo()
 
     Globals.closedown( ProgName, ProgVersion )
-# end of VPLBible.py
+# end of CSVBible.py

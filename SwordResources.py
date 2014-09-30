@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # SwordResources.py
-#   Last modified: 2014-09-23 (also update ProgVersion below)
+#   Last modified: 2014-09-28 (also update ProgVersion below)
 #
 # Module handling Sword resources using the Sword engine
 #
@@ -29,6 +29,7 @@ This module uses the Sword engine (libsword) via the Python SWIG bindings.
 (If you don't want to install that, consider our SwordModules module.)
 """
 
+ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
 ProgVersion = "0.05"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )

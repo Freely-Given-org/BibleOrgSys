@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Globals.py
-#   Last modified: 2014-09-23 by RJH (also update ProgVersion below)
+#   Last modified: 2014-09-28 by RJH (also update ProgVersion below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -71,7 +71,7 @@ Contains functions:
 """
 
 ProgName = "Globals"
-ProgVersion = "0.51"
+ProgVersion = "0.52"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -229,6 +229,18 @@ def removeLogfile( projectHandler ):
     root.removeHandler( projectHandler )
 # end of Globals.removeLogfile
 
+
+##########################################################################################################
+#
+
+def printUnicodeInfo( text, description ):
+    """
+    """
+    import unicodedata
+    print( "{}:".format( description ) )
+    for j,char in enumerate(text):
+        print( "{:2} {:04x} {} '{}'   (cat={} bid={} comb={} mirr={})" \
+            .format(j, ord(char), unicodedata.name(char), char, unicodedata.category(char), unicodedata.bidirectional(char), unicodedata.combining(char), unicodedata.mirrored(char) ) )
 
 ##########################################################################################################
 #

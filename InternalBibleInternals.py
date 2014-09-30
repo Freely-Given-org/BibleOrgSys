@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleInternals.py
-#   Last modified: 2014-09-16 by RJH (also update ProgVersion below)
+#   Last modified: 2014-09-30 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Bible internals handler"
-ProgVersion = "0.48"
+ProgVersion = "0.49"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -56,7 +56,7 @@ from BibleReferences import BibleAnchorReference
 
 
 # Define allowed punctuation
-LEADING_WORD_PUNCT_CHARS = """“«"‘‹'([{<"""
+LEADING_WORD_PUNCT_CHARS = """“«"‘¿¡‹'([{<"""
 MEDIAL_WORD_PUNCT_CHARS = '-'
 DASH_CHARS = '—–' # em-dash and en-dash
 TRAILING_WORD_PUNCT_CHARS = """,.”»"’›'?)!;:]}>"""
