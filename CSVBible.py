@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # CSVBible.py
-#   Last modified: 2014-09-30 by RJH (also update ProgVersion below)
+#   Last modified: 2014-10-01 by RJH (also update ProgVersion below)
 #
 # Module handling comma-separated-values text Bible files
 #
@@ -38,7 +38,7 @@ e.g.,
 """
 
 ProgName = "CSV Bible format handler"
-ProgVersion = "0.23"
+ProgVersion = "0.24"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -108,7 +108,8 @@ def CSVBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
         elif thisFilename.endswith( '.txt' ):
             if strictCheck or Globals.strictCheckingFlag:
                 firstLine = Globals.peekIntoFile( thisFilename, givenFolderName )
-                if not firstLine.startswith( '"Book","Chapter","Verse",' ) and not firstLine.startswith( '"1","1","1",'):
+                if not firstLine.startswith( '"Book","Chapter","Verse",' ) and not firstLine.startswith( '"1","1","1",') \
+                and not firstLine.startswith( 'Book,Chapter,Verse,' ) and not firstLine.startswith( '1,1,1,'):
                     if Globals.verbosityLevel > 2: print( "CSVBibleFileCheck: (unexpected) first line was '{}' in {}".format( firstLine, thisFilename ) )
                     continue
             lastFilenameFound = thisFilename
@@ -205,6 +206,7 @@ class CSVBible( Bible ):
         BBB = None
         lastBookNumber = lastChapterNumber = lastVerseNumber = -1
         lastVText = ''
+        quoted = None
         with open( self.sourceFilepath, encoding=self.encoding ) as myFile: # Automatically closes the file when done
             for line in myFile:
                 lineCount += 1
@@ -213,10 +215,17 @@ class CSVBible( Bible ):
                     #line = line[1:] # Remove the UTF-8 Byte Order Marker
                 if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 if not line: continue # Just discard blank lines
+                if line==' ': continue # Handle special case which has blanks on every second line -- HACK
                 lastLine = line
                 #print ( "CSV file line {} is {}".format( lineCount, repr(line) ) )
                 if line[0]=='#': continue # Just discard comment lines
-                if lineCount==1 and line.startswith( '"Book",' ): continue # Just discard header line
+                if lineCount==1:
+                    if line.startswith( '"Book",' ):
+                        quoted = True
+                        continue # Just discard header line
+                    elif line.startswith( 'Book,' ):
+                        quoted = False
+                        continue # Just discard header line
 
                 bits = line.split( ',', 3 )
                 #print( lineCount, self.givenName, BBB, bits )
@@ -226,11 +235,12 @@ class CSVBible( Bible ):
                 else: print( "Unexpected number of bits", self.givenName, BBB, bString, chapterNumberString, verseNumberString, vText, len(bits), bits )
 
                 # Remove quote marks from these strings
-                if len(bString)>=2 and bString[0]==bString[-1] and bString[0] in '"\'': bString = bString[1:-1]
-                if len(chapterNumberString)>=2 and chapterNumberString[0]==chapterNumberString[-1] and chapterNumberString[0] in '"\'': chapterNumberString = chapterNumberString[1:-1]
-                if len(verseNumberString)>=2 and verseNumberString[0]==verseNumberString[-1] and verseNumberString[0] in '"\'': verseNumberString = verseNumberString[1:-1]
-                if len(vText)>=2 and vText[0]==vText[-1] and vText[0] in '"\'': vText = vText[1:-1]
-                #print( "bString, chapterNumberString, verseNumberString, vText", bString, chapterNumberString, verseNumberString, vText )
+                if quoted:
+                    if len(bString)>=2 and bString[0]==bString[-1] and bString[0] in '"\'': bString = bString[1:-1]
+                    if len(chapterNumberString)>=2 and chapterNumberString[0]==chapterNumberString[-1] and chapterNumberString[0] in '"\'': chapterNumberString = chapterNumberString[1:-1]
+                    if len(verseNumberString)>=2 and verseNumberString[0]==verseNumberString[-1] and verseNumberString[0] in '"\'': verseNumberString = verseNumberString[1:-1]
+                    if len(vText)>=2 and vText[0]==vText[-1] and vText[0] in '"\'': vText = vText[1:-1]
+                    #print( "bString, chapterNumberString, verseNumberString, vText", bString, chapterNumberString, verseNumberString, vText )
 
                 #if not bookCode and not chapterNumberString and not verseNumberString:
                     #print( "Skipping empty line in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
@@ -362,6 +372,7 @@ def demo():
 
 
     testFolder = "Tests/DataFilesForTests/CSVTest1/"
+    #testFolder = "Tests/DataFilesForTests/CSVTest2/"
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
