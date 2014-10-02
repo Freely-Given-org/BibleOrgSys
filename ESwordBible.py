@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ESwordBible.py
-#   Last modified: 2014-07-16 by RJH (also update ProgVersion below)
+#   Last modified: 2014-10-03 by RJH (also update ProgVersion below)
 #
 # Module handling "e-Sword" Bible module files
 #
@@ -48,7 +48,7 @@ e.g.,
 """
 
 ProgName = "e-Sword Bible format handler"
-ProgVersion = "0.10"
+ProgVersion = "0.11"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -71,7 +71,7 @@ BibleFilenameEndingsToAccept = ('.BBLX',) # Must be UPPERCASE here
 
 
 
-def ESwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
+def ESwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
     """
     Given a folder, search for e-Sword Bible files or folders in the folder and in the next level down.
 
@@ -123,10 +123,10 @@ def ESwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
         numFound += 1
     if numFound:
         if Globals.verbosityLevel > 2: print( "ESwordBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
-        if numFound == 1 and autoLoad:
+        if numFound == 1 and (autoLoad or autoLoadBooks):
             if Globals.verbosityLevel > 1: print( "{} doing autoload of {}...".format( ProgNameVersion, lastFilenameFound ) )
             twB = ESwordBible( givenFolderName, lastFilenameFound )
-            twB.load() # Load and process the file
+            if autoLoadBooks: twB.load() # Load and process the file
             return twB
         return numFound
     elif looksHopeful and Globals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
@@ -162,11 +162,11 @@ def ESwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
             numFound += 1
     if numFound:
         if Globals.verbosityLevel > 2: print( "ESwordBibleFileCheck foundProjects", numFound, foundProjects )
-        if numFound == 1 and autoLoad:
+        if numFound == 1 and (autoLoad and autoLoadBooks):
             if Globals.verbosityLevel > 1: print( "{} doing autoload of {}...".format( ProgNameVersion, foundProjects[0][1] ) )
             if Globals.debugFlag: assert( len(foundProjects) == 1 )
             twB = ESwordBible( foundProjects[0][0], foundProjects[0][1] )
-            twB.load() # Load and process the file
+            if autoLoadBooks: twB.load() # Load and process the file
             return twB
         return numFound
 # end of ESwordBibleFileCheck

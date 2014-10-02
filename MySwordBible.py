@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # MySwordBible.py
-#   Last modified: 2014-07-16 by RJH (also update ProgVersion below)
+#   Last modified: 2014-10-03 by RJH (also update ProgVersion below)
 #
 # Module handling "MySword" Bible module files
 #
@@ -51,7 +51,7 @@ e.g.,
 """
 
 ProgName = "MySword Bible format handler"
-ProgVersion = "0.12"
+ProgVersion = "0.13"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -74,7 +74,7 @@ BibleFilenameEndingsToAccept = ('.BBL.MYBIBLE',) # Must be UPPERCASE
 
 
 
-def MySwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
+def MySwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
     """
     Given a folder, search for MySword Bible files or folders in the folder and in the next level down.
 
@@ -126,9 +126,9 @@ def MySwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
         numFound += 1
     if numFound:
         if Globals.verbosityLevel > 2: print( "MySwordBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
-        if numFound == 1 and autoLoad:
+        if numFound == 1 and (autoLoad or autoLoadBooks):
             twB = MySwordBible( givenFolderName, lastFilenameFound )
-            twB.load() # Load and process the file
+            if autoLoadBooks: twB.load() # Load and process the file
             return twB
         return numFound
     elif looksHopeful and Globals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
@@ -164,10 +164,10 @@ def MySwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
             numFound += 1
     if numFound:
         if Globals.verbosityLevel > 2: print( "MySwordBibleFileCheck foundProjects", numFound, foundProjects )
-        if numFound == 1 and autoLoad:
+        if numFound == 1 and (autoLoad or autoLoadBooks):
             if Globals.debugFlag: assert( len(foundProjects) == 1 )
             twB = MySwordBible( foundProjects[0][0], foundProjects[0][1] )
-            twB.load() # Load and process the file
+            if autoLoadBooks: twB.load() # Load and process the file
             return twB
         return numFound
 # end of MySwordBibleFileCheck

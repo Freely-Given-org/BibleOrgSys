@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # UnboundBible.py
-#   Last modified: 2014-07-16 by RJH (also update ProgVersion below)
+#   Last modified: 2014-10-03 by RJH (also update ProgVersion below)
 #
 # Module handling Biola University "unbound" Bible files
 #
@@ -86,7 +86,7 @@ and
 """
 
 ProgName = "Unbound Bible format handler"
-ProgVersion = "0.21"
+ProgVersion = "0.22"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -105,7 +105,7 @@ extensionsToIgnore = ('ZIP', 'BAK', 'LOG', 'HTM','HTML', 'XML', 'OSIS', 'USX', '
 
 
 
-def UnboundBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
+def UnboundBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
     """
     Given a folder, search for Unbound Bible files or folders in the folder and in the next level down.
 
@@ -163,9 +163,9 @@ def UnboundBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
             numFound += 1
     if numFound:
         if Globals.verbosityLevel > 2: print( "UnboundBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
-        if numFound == 1 and autoLoad:
+        if numFound == 1 and (autoLoad or autoLoadBooks):
             uB = UnboundBible( givenFolderName, lastFilenameFound[:-9] ) # Remove the end of the actual filename "_utf8.txt"
-            uB.load() # Load and process the file
+            if autoLoadBooks: uB.load() # Load and process the file
             return uB
         return numFound
     elif looksHopeful and Globals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
@@ -206,10 +206,10 @@ def UnboundBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
                 numFound += 1
     if numFound:
         if Globals.verbosityLevel > 2: print( "UnboundBibleFileCheck foundProjects", numFound, foundProjects )
-        if numFound == 1 and autoLoad:
+        if numFound == 1 and (autoLoad or autoLoadBooks):
             if Globals.debugFlag: assert( len(foundProjects) == 1 )
             uB = UnboundBible( foundProjects[0][0], foundProjects[0][1][:-9] ) # Remove the end of the actual filename "_utf8.txt"
-            uB.load() # Load and process the file
+            if autoLoadBooks: uB.load() # Load and process the file
             return uB
         return numFound
 # end of UnboundBibleFileCheck

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # SwordResources.py
-#   Last modified: 2014-09-28 (also update ProgVersion below)
+#   Last modified: 2014-09-30 (also update ProgVersion below)
 #
 # Module handling Sword resources using the Sword engine
 #
@@ -31,7 +31,7 @@ This module uses the Sword engine (libsword) via the Python SWIG bindings.
 
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
-ProgVersion = "0.05"
+ProgVersion = "0.06"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = True
@@ -76,6 +76,10 @@ class SwordKey( SimpleVerseKey ):
 
 
 class SwordInterface():
+    """
+    This is the interface class that we use between our higher level code
+        and the code reading the actual installed Sword modules.
+    """
     def __init__( self ):
         if SwordType == "CrosswireLibrary":
             self.library = Sword.SWMgr()
@@ -91,10 +95,12 @@ class SwordInterface():
             #print( "gM", module.getName() )
             return self.library.getModule( moduleAbbreviation )
         elif SwordType == "OurCode":
-            try: result = self.library.loadModule( moduleAbbreviation ) # e.g., KJV
-            except KeyError: result = self.library.loadModule( moduleAbbreviation.lower() ) # needs kjv??? why? what changed?
-            #print( moduleAbbreviation, result ); halt
-            return result
+            lmResult = self.library.loadModule( moduleAbbreviation ) # e.g., KJV
+            #except KeyError: lmResult = self.library.loadModule( moduleAbbreviation.lower() ) # needs kjv??? why? what changed?
+            #print( moduleAbbreviation, lmResult ); halt
+            resultFlag, theModule = lmResult
+            if not resultFlag: print( "failed here!" ); halt
+            return theModule
     # end of SwordInterface.getModule
 
 

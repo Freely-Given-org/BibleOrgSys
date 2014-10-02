@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # VPLBible.py
-#   Last modified: 2014-09-30 by RJH (also update ProgVersion below)
+#   Last modified: 2014-10-03 by RJH (also update ProgVersion below)
 #
 # Module handling verse-per-line text Bible files
 #
@@ -37,7 +37,7 @@ e.g.,
 """
 
 ProgName = "VPL Bible format handler"
-ProgVersion = "0.23"
+ProgVersion = "0.24"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -56,7 +56,7 @@ extensionsToIgnore = ('ZIP', 'BAK', 'LOG', 'HTM','HTML', 'XML', 'OSIS', 'USX', '
 
 
 
-def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
+def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
     """
     Given a folder, search for VPL Bible files or folders in the folder and in the next level down.
 
@@ -107,6 +107,7 @@ def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
         elif thisFilename.endswith( '.txt' ):
             if strictCheck or Globals.strictCheckingFlag:
                 firstLine = Globals.peekIntoFile( thisFilename, givenFolderName )
+                if firstLine is None: continue # seems we couldn't decode the file
                 if not firstLine.startswith( "Ge 1:1 " ):
                     if Globals.verbosityLevel > 2: print( "VPLBibleFileCheck: (unexpected) first line was '{}' in {}".format( firstLine, thisFilename ) )
                     continue
@@ -114,9 +115,9 @@ def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
             numFound += 1
     if numFound:
         if Globals.verbosityLevel > 2: print( "VPLBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
-        if numFound == 1 and autoLoad:
+        if numFound == 1 and (autoLoad or autoLoadBooks):
             uB = VPLBible( givenFolderName, lastFilenameFound[:-4] ) # Remove the end of the actual filename ".txt"
-            uB.load() # Load and process the file
+            if autoLoadBooks: uB.load() # Load and process the file
             return uB
         return numFound
     elif looksHopeful and Globals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
@@ -149,6 +150,7 @@ def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
             if thisFilename.endswith( '.txt' ):
                 if strictCheck or Globals.strictCheckingFlag:
                     firstLine = Globals.peekIntoFile( thisFilename, tryFolderName )
+                    if firstLine is None: continue # seems we couldn't decode the file
                     if not firstLine.startswith( "Ge 1:1 " ):
                         if Globals.verbosityLevel > 2: print( "VPLBibleFileCheck: (unexpected) first line was '{}' in {}".format( firstLine, thisFilname ) ); halt
                         continue
@@ -157,10 +159,10 @@ def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
                 numFound += 1
     if numFound:
         if Globals.verbosityLevel > 2: print( "VPLBibleFileCheck foundProjects", numFound, foundProjects )
-        if numFound == 1 and autoLoad:
+        if numFound == 1 and (autoLoad or autoLoadBooks):
             if Globals.debugFlag: assert( len(foundProjects) == 1 )
             uB = VPLBible( foundProjects[0][0], foundProjects[0][1][:-4] ) # Remove the end of the actual filename ".txt"
-            uB.load() # Load and process the file
+            if autoLoadBooks: uB.load() # Load and process the file
             return uB
         return numFound
 # end of VPLBibleFileCheck

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # TheWordBible.py
-#   Last modified: 2014-09-16 by RJH (also update ProgVersion below)
+#   Last modified: 2014-10-03 by RJH (also update ProgVersion below)
 #
 # Module handling "theWord" Bible module files
 #
@@ -51,7 +51,7 @@ e.g.,
 """
 
 ProgName = "theWord Bible format handler"
-ProgVersion = "0.34"
+ProgVersion = "0.35"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -108,7 +108,7 @@ for count in theWordBookLines: total += count
 assert( total == theWordTotalLines )
 
 
-def TheWordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
+def TheWordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
     """
     Given a folder, search for theWord Bible files or folders in the folder and in the next level down.
 
@@ -160,9 +160,9 @@ def TheWordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
         numFound += 1
     if numFound:
         if Globals.verbosityLevel > 2: print( "TheWordBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
-        if numFound == 1 and autoLoad:
+        if numFound == 1 and (autoLoad or autoLoadBooks):
             twB = TheWordBible( givenFolderName, lastFilenameFound )
-            twB.load() # Load and process the file
+            if autoLoadBooks: twB.load() # Load and process the file
             return twB
         return numFound
     elif looksHopeful and Globals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
@@ -198,10 +198,10 @@ def TheWordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
             numFound += 1
     if numFound:
         if Globals.verbosityLevel > 2: print( "TheWordBibleFileCheck foundProjects", numFound, foundProjects )
-        if numFound == 1 and autoLoad:
+        if numFound == 1 and (autoLoad or autoLoadBooks):
             if Globals.debugFlag: assert( len(foundProjects) == 1 )
             twB = TheWordBible( foundProjects[0][0], foundProjects[0][1] )
-            twB.load() # Load and process the file
+            if autoLoadBooks: twB.load() # Load and process the file
             return twB
         return numFound
 # end of TheWordBibleFileCheck

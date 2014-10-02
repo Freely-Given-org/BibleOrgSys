@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # CSVBible.py
-#   Last modified: 2014-10-01 by RJH (also update ProgVersion below)
+#   Last modified: 2014-10-03 by RJH (also update ProgVersion below)
 #
 # Module handling comma-separated-values text Bible files
 #
@@ -38,7 +38,7 @@ e.g.,
 """
 
 ProgName = "CSV Bible format handler"
-ProgVersion = "0.24"
+ProgVersion = "0.25"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -57,7 +57,7 @@ extensionsToIgnore = ('ZIP', 'BAK', 'LOG', 'HTM','HTML', 'XML', 'OSIS', 'USX', '
 
 
 
-def CSVBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
+def CSVBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
     """
     Given a folder, search for CSV Bible files or folders in the folder and in the next level down.
 
@@ -71,7 +71,7 @@ def CSVBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
     """
     if Globals.verbosityLevel > 2: print( "CSVBibleFileCheck( {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad ) )
     if Globals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
-    if Globals.debugFlag: assert( autoLoad in (True,False,) )
+    if Globals.debugFlag: assert( autoLoad in (True,False,) and autoLoadBooks in (True,False,) )
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
@@ -108,6 +108,7 @@ def CSVBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
         elif thisFilename.endswith( '.txt' ):
             if strictCheck or Globals.strictCheckingFlag:
                 firstLine = Globals.peekIntoFile( thisFilename, givenFolderName )
+                if firstLine is None: continue # seems we couldn't decode the file
                 if not firstLine.startswith( '"Book","Chapter","Verse",' ) and not firstLine.startswith( '"1","1","1",') \
                 and not firstLine.startswith( 'Book,Chapter,Verse,' ) and not firstLine.startswith( '1,1,1,'):
                     if Globals.verbosityLevel > 2: print( "CSVBibleFileCheck: (unexpected) first line was '{}' in {}".format( firstLine, thisFilename ) )
@@ -116,9 +117,9 @@ def CSVBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
             numFound += 1
     if numFound:
         if Globals.verbosityLevel > 2: print( "CSVBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
-        if numFound == 1 and autoLoad:
+        if numFound == 1 and (autoLoad or autoLoadBooks):
             uB = CSVBible( givenFolderName, lastFilenameFound[:-4] ) # Remove the end of the actual filename ".txt"
-            uB.load() # Load and process the file
+            if autoLoadBooks: uB.load() # Load and process the file
             return uB
         return numFound
     elif looksHopeful and Globals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
@@ -151,6 +152,7 @@ def CSVBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
             if thisFilename.endswith( '.txt' ):
                 if strictCheck or Globals.strictCheckingFlag:
                     firstLine = Globals.peekIntoFile( thisFilename, tryFolderName )
+                    if firstLine is None: continue # seems we couldn't decode the file
                     if not firstLine.startswith( "Ge 1:1 " ):
                         if Globals.verbosityLevel > 2: print( "CSVBibleFileCheck: (unexpected) first line was '{}' in {}".format( firstLine, thisFilname ) ); halt
                         continue
@@ -159,10 +161,10 @@ def CSVBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
                 numFound += 1
     if numFound:
         if Globals.verbosityLevel > 2: print( "CSVBibleFileCheck foundProjects", numFound, foundProjects )
-        if numFound == 1 and autoLoad:
+        if numFound == 1 and (autoLoad or autoLoadBooks):
             if Globals.debugFlag: assert( len(foundProjects) == 1 )
             uB = CSVBible( foundProjects[0][0], foundProjects[0][1][:-4] ) # Remove the end of the actual filename ".txt"
-            uB.load() # Load and process the file
+            if autoLoadBooks: uB.load() # Load and process the file
             return uB
         return numFound
 # end of CSVBibleFileCheck

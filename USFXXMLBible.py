@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFXXMLBible.py
-#   Last modified: 2014-08-04 by RJH (also update ProgVersion below)
+#   Last modified: 2014-10-03 by RJH (also update ProgVersion below)
 #
 # Module handling USFX XML Bibles
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFX Bibles.
 """
 
 ProgName = "USFX XML Bible handler"
-ProgVersion = "0.09"
+ProgVersion = "0.10"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -50,7 +50,7 @@ extensionsToIgnore = ( 'ASC', 'BAK', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', '
 
 
 
-def USFXXMLBibleFileCheck( sourceFolder, strictCheck=True, autoLoad=False ):
+def USFXXMLBibleFileCheck( sourceFolder, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
     """
     Given a folder, search for USFX XML Bible files or folders in the folder and in the next level down.
 
@@ -111,9 +111,9 @@ def USFXXMLBibleFileCheck( sourceFolder, strictCheck=True, autoLoad=False ):
         numFound += 1
     if numFound:
         if Globals.verbosityLevel > 2: print( "USFXXMLBibleFileCheck got", numFound, sourceFolder, lastFilenameFound )
-        if numFound == 1 and autoLoad:
+        if numFound == 1 and (autoLoad or autoLoadBooks):
             ub = USFXXMLBible( sourceFolder, lastFilenameFound )
-            ub.load() # Load and process the file
+            if autoLoadBooks: ub.load() # Load and process the file
             return ub
         return numFound
     elif looksHopeful and Globals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
@@ -155,10 +155,10 @@ def USFXXMLBibleFileCheck( sourceFolder, strictCheck=True, autoLoad=False ):
             numFound += 1
     if numFound:
         if Globals.verbosityLevel > 2: print( "USFXXMLBibleFileCheck foundProjects", numFound, foundProjects )
-        if numFound == 1 and autoLoad:
+        if numFound == 1 and (autoLoad or autoLoadBooks):
             if Globals.debugFlag: assert( len(foundProjects) == 1 )
             ub = USFXXMLBible( foundProjects[0][0], foundProjects[0][1] ) # Folder and filename
-            ub.load() # Load and process the file
+            if autoLoadBooks: ub.load() # Load and process the file
             return ub
         return numFound
 # end of USFXXMLBibleFileCheck
@@ -467,7 +467,7 @@ class USFXXMLBible( Bible ):
             elif element.tag == 'table':
                 self.loadTable( element, location )
             else:
-                logging.warning( _("caf2 Unprocessed {} element after {} {}:{} in {}").format( element.tag, BBB, C, V, location ) )
+                logging.critical( _("caf2 Unprocessed {} element after {} {}:{} in {}").format( element.tag, BBB, C, V, location ) )
                 #self.addPriorityError( 1, c, v, _("Unprocessed {} element").format( element.tag ) )
                 if Globals.debugFlag: halt
         self.saveBook( self.thisBook )

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # OSISXMLBible.py
-#   Last modified: 2014-07-16 by RJH (also update ProgVersion below)
+#   Last modified: 2014-10-03 by RJH (also update ProgVersion below)
 #
 # Module handling OSIS XML Bibles
 #
@@ -36,7 +36,7 @@ Updated Sept 2013 to also handle Kahunapule's "modified OSIS".
 """
 
 ProgName = "OSIS XML Bible format handler"
-ProgVersion = "0.40"
+ProgVersion = "0.41"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -61,7 +61,7 @@ EXTENSIONS_TO_IGNORE = ( 'ASC', 'BAK', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS',
 ISOLanguages = ISO_639_3_Languages().loadData()
 
 
-def OSISXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
+def OSISXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
     """
     Given a folder, search for OSIS XML Bible files or folders in the folder and in the next level down.
 
@@ -122,9 +122,9 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
         numFound += 1
     if numFound:
         if Globals.verbosityLevel > 2: print( "OSISXMLBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
-        if numFound == 1 and autoLoad:
+        if numFound == 1 and (autoLoad or autoLoadBooks):
             ub = OSISXMLBible( givenFolderName, lastFilenameFound )
-            ub.load() # Load and process the file
+            if autoLoadBooks: ub.load() # Load and process the file
             return ub
         return numFound
     elif looksHopeful and Globals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
@@ -166,10 +166,10 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
             numFound += 1
     if numFound:
         if Globals.verbosityLevel > 2: print( "OSISXMLBibleFileCheck foundProjects", numFound, foundProjects )
-        if numFound == 1 and autoLoad:
+        if numFound == 1 and (autoLoad or autoLoadBooks):
             if Globals.debugFlag: assert( len(foundProjects) == 1 )
             ub = OSISXMLBible( foundProjects[0][0], foundProjects[0][1] ) # Folder and filename
-            ub.load() # Load and process the file
+            if autoLoadBooks: ub.load() # Load and process the file
             return ub
         return numFound
 # end of OSISXMLBibleFileCheck

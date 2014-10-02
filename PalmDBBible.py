@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # PalmDBBible.py
-#   Last modified: 2014-04-25 by RJH (also update ProgVersion below)
+#   Last modified: 2014-10-03 by RJH (also update ProgVersion below)
 #
 # Module handling PDB Bible files
 #
@@ -62,7 +62,7 @@ Limitations:
 """
 
 ProgName = "PDB Bible format handler"
-ProgVersion = "0.05" # STILL UNFINISHED!!!
+ProgVersion = "0.06" # STILL UNFINISHED!!!
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -81,7 +81,7 @@ filenameEndingsToAccept = ('.PDB',) # Must be UPPERCASE
 
 
 
-def PalmDBBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
+def PalmDBBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
     """
     Given a folder, search for PDB Bible files or folders in the folder and in the next level down.
 
@@ -133,9 +133,9 @@ def PalmDBBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
             numFound += 1
     if numFound:
         if Globals.verbosityLevel > 2: print( "PalmDBBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
-        if numFound == 1 and autoLoad:
+        if numFound == 1 and (autoLoad or autoLoadBooks):
             uB = PalmDBBible( givenFolderName, lastFilenameFound[:-4] ) # Remove the end of the actual filename ".PDB"
-            uB.load() # Load and process the file
+            if autoLoadBooks: uB.load() # Load and process the file
             return uB
         return numFound
 
@@ -171,10 +171,10 @@ def PalmDBBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
                 numFound += 1
     if numFound:
         if Globals.verbosityLevel > 2: print( "PalmDBBibleFileCheck foundProjects", numFound, foundProjects )
-        if numFound == 1 and autoLoad:
+        if numFound == 1 and (autoLoad or autoLoadBooks):
             if Globals.debugFlag: assert( len(foundProjects) == 1 )
             uB = PalmDBBible( foundProjects[0][0], foundProjects[0][1][:-9] ) # Remove the end of the actual filename "_utf8.txt"
-            uB.load() # Load and process the file
+            if autoLoadBooks: uB.load() # Load and process the file
             return uB
         return numFound
 # end of PalmDBBibleFileCheck

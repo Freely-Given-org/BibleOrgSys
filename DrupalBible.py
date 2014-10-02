@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # DrupalBible.py
-#   Last modified: 2014-07-16 by RJH (also update ProgVersion below)
+#   Last modified: 2014-10-03 by RJH (also update ProgVersion below)
 #
 # Module handling DrupalBible Bible files
 #
@@ -74,7 +74,7 @@ Limitations:
 """
 
 ProgName = "DrupalBible Bible format handler"
-ProgVersion = "0.06"
+ProgVersion = "0.07"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -93,7 +93,7 @@ filenameEndingsToAccept = ('.BC',) # Must be UPPERCASE
 
 
 
-def DrupalBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
+def DrupalBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
     """
     Given a folder, search for DrupalBible Bible files or folders in the folder and in the next level down.
 
@@ -145,9 +145,9 @@ def DrupalBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
             numFound += 1
     if numFound:
         if Globals.verbosityLevel > 2: print( "DrupalBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
-        if numFound == 1 and autoLoad:
+        if numFound == 1 and (autoLoad or autoLoadBooks):
             uB = DrupalBible( givenFolderName, lastFilenameFound[:-3] ) # Remove the end of the actual filename ".bc"
-            uB.load() # Load and process the file
+            if autoLoadBooks: uB.load() # Load and process the file
             return uB
         return numFound
 
@@ -183,10 +183,10 @@ def DrupalBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
                 numFound += 1
     if numFound:
         if Globals.verbosityLevel > 2: print( "DrupalBibleFileCheck foundProjects", numFound, foundProjects )
-        if numFound == 1 and autoLoad:
+        if numFound == 1 and (autoLoad or autoLoadBooks):
             if Globals.debugFlag: assert( len(foundProjects) == 1 )
             uB = DrupalBible( foundProjects[0][0], foundProjects[0][1][:-9] ) # Remove the end of the actual filename "_utf8.txt"
-            uB.load() # Load and process the file
+            if autoLoadBooks: uB.load() # Load and process the file
             return uB
         return numFound
 # end of DrupalBibleFileCheck

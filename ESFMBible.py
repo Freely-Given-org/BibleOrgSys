@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ESFMBible.py
-#   Last modified: 2014-09-15 by RJH (also update ProgVersion below)
+#   Last modified: 2014-10-03 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of ESFM Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial ESFM Bibles.
 """
 
 ProgName = "ESFM Bible handler"
-ProgVersion = "0.55"
+ProgVersion = "0.56"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -69,7 +69,7 @@ filenameEndingsToAccept = ('.ESFM',) # Must be UPPERCASE here
 ## end of removeUnwantedTupleExtensions
 
 
-def ESFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
+def ESFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
     """
     Given a folder, search for ESFM Bible files or folders in the folder and in the next level down.
 
@@ -83,7 +83,7 @@ def ESFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
     """
     if Globals.verbosityLevel > 2: print( "ESFMBibleFileCheck( {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad ) )
     if Globals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
-    if Globals.debugFlag: assert( autoLoad in (True,False,) )
+    if Globals.debugFlag: assert( autoLoad in (True,False,) and autoLoadBooks in (True,False) )
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
@@ -133,9 +133,9 @@ def ESFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
         numFound += 1
     if numFound:
         if Globals.verbosityLevel > 2: print( "ESFMBibleFileCheck got", numFound, givenFolderName )
-        if numFound == 1 and autoLoad:
+        if numFound == 1 and (autoLoad or autoLoadBooks):
             eB = ESFMBible( givenFolderName )
-            eB.load() # Load and process the file
+            if autoLoadBooks: eB.load() # Load and process the file
             return eB
         return numFound
 
@@ -185,9 +185,9 @@ def ESFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
             numFound += 1
     if numFound:
         if Globals.verbosityLevel > 2: print( "ESFMBibleFileCheck foundProjects", numFound, foundProjects )
-        if numFound == 1 and autoLoad:
+        if numFound == 1 and (autoLoad or autoLoadBooks):
             uB = ESFMBible( foundProjects[0] )
-            uB.load() # Load and process the file
+            if autoLoadBooks: uB.load() # Load and process the file
             return uB
         return numFound
 # end of ESFMBibleFileCheck

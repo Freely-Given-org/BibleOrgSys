@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ZefaniaXMLBible.py
-#   Last modified: 2014-07-16 by RJH (also update ProgVersion below)
+#   Last modified: 2014-10-03 by RJH (also update ProgVersion below)
 #
 # Module handling Zefania XML Bibles
 #
@@ -64,7 +64,7 @@ or
 """
 
 ProgName = "Zefania XML Bible format handler"
-ProgVersion = "0.29"
+ProgVersion = "0.30"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -88,7 +88,7 @@ extensionsToIgnore = ( 'ASC', 'BAK', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', '
 
 
 
-def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
+def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
     """
     Given a folder, search for Zefania XML Bible files or folders in the folder and in the next level down.
 
@@ -153,9 +153,9 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False 
         numFound += 1
     if numFound:
         if Globals.verbosityLevel > 2: print( "ZefaniaXMLBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
-        if numFound == 1 and autoLoad:
+        if numFound == 1 and (autoLoad or autoLoadBooks):
             ub = ZefaniaXMLBible( givenFolderName, lastFilenameFound )
-            ub.load() # Load and process the file
+            if autoLoadBooks: ub.load() # Load and process the file
             return ub
         return numFound
     elif looksHopeful and Globals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
@@ -201,10 +201,10 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False 
             numFound += 1
     if numFound:
         if Globals.verbosityLevel > 2: print( "ZefaniaXMLBibleFileCheck foundProjects", numFound, foundProjects )
-        if numFound == 1 and autoLoad:
+        if numFound == 1 and (autoLoad or autoLoadBooks):
             if Globals.debugFlag: assert( len(foundProjects) == 1 )
             ub = ZefaniaXMLBible( foundProjects[0][0], foundProjects[0][1] ) # Folder and filename
-            ub.load() # Load and process the file
+            if autoLoadBooks: ub.load() # Load and process the file
             return ub
         return numFound
 # end of ZefaniaXMLBibleFileCheck

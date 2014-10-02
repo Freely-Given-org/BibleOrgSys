@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2014-09-28 by RJH (also update ProgVersion below)
+#   Last modified: 2014-10-03 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -29,7 +29,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
-ProgVersion = "0.56"
+ProgVersion = "0.58"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -80,7 +80,7 @@ extensionsToIgnore = ( 'ASC', 'BAK', 'BBLX', 'BC', 'CCT', 'CSS', 'DOC', 'DTS', '
 ## end of removeUnwantedTupleExtensions
 
 
-def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
+def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLoadBooks=False ):
     """
     Given a folder, search for USFM Bible files or folders in the folder and in the next level down.
 
@@ -94,7 +94,7 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
     """
     if Globals.verbosityLevel > 2: print( "USFMBibleFileCheck( {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad ) )
     if Globals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
-    if Globals.debugFlag: assert( autoLoad in (True,False,) )
+    if Globals.debugFlag: assert( autoLoad in (True,False,) and autoLoadBooks in (True,False,) )
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
@@ -137,9 +137,9 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
         numFound += 1
     if numFound:
         if Globals.verbosityLevel > 2: print( t("USFMBibleFileCheck got {} in {}").format( numFound, givenFolderName ) )
-        if numFound == 1 and autoLoad:
+        if numFound == 1 and (autoLoad or autoLoadBooks):
             uB = USFMBible( givenFolderName )
-            uB.load() # Load and process the file
+            if autoLoadBooks: uB.load() # Load and process the file
             return uB
         return numFound
 
@@ -182,9 +182,9 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False ):
             numFound += 1
     if numFound:
         if Globals.verbosityLevel > 2: print( t("USFMBibleFileCheck foundProjects {} {}").format( numFound, foundProjects ) )
-        if numFound == 1 and autoLoad:
+        if numFound == 1 and (autoLoad or autoLoadBooks):
             uB = USFMBible( foundProjects[0] )
-            uB.load() # Load and process the file
+            if autoLoadBooks: uB.load() # Load and process the file
             return uB
         return numFound
 # end of USFMBibleFileCheck
@@ -344,7 +344,8 @@ class USFMBible( Bible ):
             return # We've already attempted to load this book
         self.triedLoadingBook[BBB] = True
         if Globals.verbosityLevel > 2 or Globals.debugFlag: print( _("  USFMBible: Loading {} from {} from {}...").format( BBB, self.name, self.sourceFolder ) )
-        if filename is None: filename = self.possibleFilenameDict[BBB]
+        if filename is None and BBB in self.possibleFilenameDict: filename = self.possibleFilenameDict[BBB]
+        if filename is None: raise FileNotFoundError( "USFMBible.loadBook: Unable to find file for {}".format( BBB ) )
         UBB = USFMBibleBook( self, BBB )
         UBB.load( filename, self.sourceFolder, self.encoding )
         if UBB._rawLines:

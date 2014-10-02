@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2014-09-28 by RJH (also update ProgVersion below)
+#   Last modified: 2014-10-02 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -45,7 +45,7 @@ and then fills
 
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
-ProgVersion = "0.50"
+ProgVersion = "0.51"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -993,7 +993,7 @@ class InternalBible:
         #print( " ", BBB in self.books )
         if BBB not in self.books and BBB not in self.triedLoadingBook:
             try: self.loadBook( BBB ) # Some types of Bibles have this function (so an entire Bible doesn't have to be loaded at startup)
-            except AttributeError: logging.info( "Unable to load individual Bible book: {}".format( BBB ) ) # Ignore errors
+            except FileNotFoundError: logging.info( "Unable to load individual Bible book: {}".format( BBB ) ) # Ignore errors
             self.triedLoadingBook[BBB] = True
         if BBB in self.books: return self.books[BBB].getCVRef( ref )
         #else: print( "InternalBible {} doesn't have {}".format( self.name, BBB ) ); halt

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMFilenames.py
-#   Last modified: 2014-09-23 by RJH (also update ProgVersion below)
+#   Last modified: 2014-10-03 by RJH (also update ProgVersion below)
 #
 # Module handling USFM Bible filenames
 #
@@ -28,10 +28,11 @@ Module for creating and manipulating USFM filenames.
 """
 
 ProgName = "USFM Bible filenames handler"
-ProgVersion = "0.63"
+ProgVersion = "0.64"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
+
 
 import os, logging
 from gettext import gettext as _
@@ -312,8 +313,7 @@ class USFMFilenames:
                 Populates the two dictionaries.
                 Returns the number of files found. """
         # Empty the two dictionaries
-        if Globals.debugFlag:
-            print( t("getUSFMIDsFromFiles( {} )").format( repr(givenFolder) ) )
+        if Globals.debugFlag and debuggingThisModule: print( t("getUSFMIDsFromFiles( {} )").format( repr(givenFolder) ) )
         self._fileDictionary = {} # The keys are 2-tuples of folder, filename, the values are all valid BBB values
         self._BBBDictionary = {} # The keys are valid BBB values, the values are all 2-tuples of folder, filename
         folderFilenames = os.listdir( givenFolder )
