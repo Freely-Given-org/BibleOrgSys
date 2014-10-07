@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBookOrders.py
-#   Last modified: 2013-08-28 (also update ProgVersion below)
+#   Last modified: 2014-10-07 (also update ProgVersion below)
 #
 # Module handling BibleBookOrderSystems
 #
-# Copyright (C) 2010-2013 Robert Hunt
+# Copyright (C) 2010-2014 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -27,8 +27,9 @@
 Module handling BibleBookOrder systems.
 """
 
+ShortProgName = "BibleBookOrders"
 ProgName = "Bible Book Order Systems handler"
-ProgVersion = "0.86"
+ProgVersion = "0.87"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -225,6 +226,7 @@ class BibleBookOrderSystems:
 # end of BibleBookOrderSystems class
 
 
+
 class BibleBookOrderSystem:
     """
     Class for handling an individual Bible book order system.
@@ -305,6 +307,13 @@ class BibleBookOrderSystem:
         return self.__BookOrderList
     # end of getBookOrderList
 
+    def getPreviousBookCode( self, BBB ):
+        """ Returns the book (if any) before the given one. """
+        assert( len(BBB)==3 )
+        previousPosition = self.__BookOrderBookDict[BBB] - 1
+        if previousPosition in self.__BookOrderNumberDict: return self.__BookOrderNumberDict[previousPosition]
+    # end of BibleBookOrderSystem.getNextBookCode
+
     def getNextBookCode( self, BBB ):
         """ Returns the book (if any) after the given one. """
         assert( len(BBB)==3 )
@@ -319,6 +328,7 @@ class BibleBookOrderSystem:
         return self.__BookOrderBookDict[BBB1] < self.__BookOrderBookDict[BBB2]
     # end of BibleBookOrderSystem.correctlyOrdered
 # end of BibleBookOrderSystem class
+
 
 
 def demo():

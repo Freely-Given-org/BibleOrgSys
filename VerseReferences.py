@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # VerseReferences.py
-#   Last modified: 2013-06-24 (also update ProgVersion below)
+#   Last modified: 2014-10-07 (also update ProgVersion below)
 #
 # Module handling Bible verse references
 #
-# Copyright (C) 2013 Robert Hunt
+# Copyright (C) 2013-2014 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -66,17 +66,32 @@ OXES is different again and tends to remove the second (redundant) book identifi
     e.g., Gen.1.1-1.2 (if I remember correctly)
 """
 
+ShortProgName = "VerseReferences"
 ProgName = "Bible verse reference handler"
-ProgVersion = "0.01"
+ProgVersion = "0.10"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
 
 
 import os, logging
-#from gettext import gettext as _
+from gettext import gettext as _
 
 import Globals
+
+
+
+def t( messageString ):
+    """
+    Prepends the module name to a error or warning message string
+        if we are in debug mode.
+    Returns the new string.
+    """
+    try: nameBit, errorBit = messageString.split( ': ', 1 )
+    except ValueError: nameBit, errorBit = '', messageString
+    if Globals.debugFlag or debuggingThisModule:
+        nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
+    return '{}{}'.format( nameBit, _(errorBit) )
 
 
 
@@ -106,13 +121,14 @@ class SimpleVerseKey():
             assert( checkChar not in V )
             assert( checkChar not in S )
         self.BBB, self.C, self.V, self.S = BBB, C, V, S
-    # end of verseKey.__init__
+    # end of SimpleVerseKey.__init__
 
     def __eq__( self, other ):
         if type( other ) is type( self ): return self.__dict__ == other.__dict__
         return False
     def __ne__(self, other): return not self.__eq__(other)
 
+    def getShortText( self ): return "{} {}:{}{}".format( self.BBB, self.C, self.V, self.S )
     def __str__( self ): return "SimpleVerseKey object: {}".format( self.getShortText() )
 
     def __len__( self ): return 4
@@ -130,15 +146,32 @@ class SimpleVerseKey():
     def getVerseNumberStr( self ): return self.V
     def getVerseSuffix( self ): return self.S
 
+    def getBCV( self ): return self.BBB, self.C, self.V
+    def getBCVS( self ): return self.BBB, self.C, self.V, self.S
+
     def getChapterNumberInt( self ):
         try: return( int( self.C ) )
-        except: return -1
+        except:
+            logging.warning( t("getChapterNumberInt: Unusual C value: {}").format( repr(self.C) ) )
+            if self.C and self.C[0].isdigit():
+                digitCount = 0
+                for char in self.C:
+                    if char.isdigit(): digitCount += 1
+                return( int( self.C[:digitCount] ) )
+            return None
+    # end of SimpleVerseKey.getChapterNumberInt
+
     def getVerseNumberInt( self ):
         try: return( int( self.V ) )
-        except: return -1
-
-    def getShortText( self ):
-        return "{} {}:{}{}".format( self.BBB, self.C, self.V, self.S )
+        except:
+            logging.warning( t("getVerseNumberInt: Unusual V value: {}").format( repr(self.V) ) )
+            if self.V and self.V[0].isdigit():
+                digitCount = 0
+                for char in self.V:
+                    if char.isdigit(): digitCount += 1
+                return( int( self.V[:digitCount] ) )
+            return None
+    # end of SimpleVerseKey.getVerseNumberInt
 
     def getOSISBookAbbreviation( self ):
         return Globals.BibleBooksCodes.getOSISAbbreviation( self.BBB )

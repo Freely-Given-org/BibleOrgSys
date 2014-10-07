@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # BibleOrganizationalSystems.py
-#   Last modified: 2013-07-31 by RJH (also update ProgVersion below)
+#   Last modified: 2014-10-07 by RJH (also update ProgVersion below)
 #
 # Module handling BibleOrganizationalSystems
 #
-# Copyright (C) 2010-2013 Robert Hunt
+# Copyright (C) 2010-2014 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -27,8 +27,9 @@
 Module handling BibleOrganizationalSystems.
 """
 
+ShortProgName = "BibleOrganizationalSystems"
 ProgName = "Bible Organization Systems handler"
-ProgVersion = "0.27"
+ProgVersion = "0.28"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -351,11 +352,20 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         Return the BBB code for the first book
             otherwise returns None.
         """
-        bookList = self.getOrganizationalSystemValue( "includesBooks" )
-# I think this is wrong! Should use BookOrderSystem -- see next function
-        if bookList is None: return None
-        return bookList[0]
+        if 1: return BibleBookOrderSystem.getBookAtOrderPosition( self, 1 )
+        else: # I think this is wrong! Should use BookOrderSystem -- see next function
+            bookList = self.getOrganizationalSystemValue( "includesBooks" )
+            if bookList is None: return None
+            return bookList[0]
     # end of BibleOrganizationalSystem.getFirstBookCode
+
+    def getPreviousBookCode( self, BBB ):
+        """ Returns the book (if any) before the given one. """
+        while True:
+            previousCode = BibleBookOrderSystem.getPreviousBookCode( self, BBB )
+            if self.containsBook( previousCode ): return previousCode
+            BBB = previousCode
+    # end of BibleOrganizationalSystem.getNextBookCode
 
     def getNextBookCode( self, BBB ):
         """ Returns the book (if any) after the given one. """
@@ -404,6 +414,7 @@ def demo():
             print( "\nTrying: '{}'".format( testString ) )
             bos = BibleOrganizationalSystem( testString )
             print( 'bos', bos ) # Just print a summary
+            print( "First book", bos.getFirstBookCode() )
             #print( "Book order list ({} entries) is {}".format( len(bos.getBookOrderList()), bos.getBookOrderList() ) )
             #print( "Book list ({} entries) is {}".format( len(bos.getBookList()), bos.getBookList() ) )
             print( "This type is {}. More basic types are: {}".format(bos.getOrganizationalSystemType(),bos.getMoreBasicTypes()) )
