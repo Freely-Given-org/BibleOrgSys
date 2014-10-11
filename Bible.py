@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Bible.py
-#   Last modified: 2014-07-16 (also update ProgVersion below)
+#   Last modified: 2014-10-11 (also update ProgVersion below)
 #
 # Module handling a internal Bible object
 #
@@ -25,6 +25,8 @@
 
 """
 Module handling an internal Bible object.
+
+A class which extends BibleWriter (which itself extends InternalBible).
 """
 
 ProgName = "Bible object handler"
@@ -41,6 +43,7 @@ from xml.etree.ElementTree import ElementTree
 import Globals
 from InternalBibleBook import InternalBibleBook
 from BibleWriter import BibleWriter
+
 
 
 #class BibleExtra:
@@ -169,6 +172,9 @@ class BibleBook ( InternalBibleBook ):
 class Bible( BibleWriter ):
     """
     Class for handling an entire Bible.
+
+    All the various different flavours of Bible (e.g., USFM, OSIS XML, CSV)
+        are based on this class.
     """
 
     def __init__( self ):
@@ -179,6 +185,7 @@ class Bible( BibleWriter ):
         self.objectNameString = "Bible object (generic/unknown type)"
         self.objectTypeString = "Unknown"
 
+        self.BibleOrganisationalSystem = None
         # Add our own extended data stores
         #self.metadata = {}
         #self.frontMatter = []

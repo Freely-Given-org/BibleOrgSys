@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # VerseReferences.py
-#   Last modified: 2014-10-07 (also update ProgVersion below)
+#   Last modified: 2014-10-11 (also update ProgVersion below)
 #
 # Module handling Bible verse references
 #
@@ -68,7 +68,7 @@ OXES is different again and tends to remove the second (redundant) book identifi
 
 ShortProgName = "VerseReferences"
 ProgName = "Bible verse reference handler"
-ProgVersion = "0.10"
+ProgVersion = "0.11"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -107,19 +107,22 @@ class SimpleVerseKey():
         and no checking is done on the validity of the CV values.
     """
     def __init__( self, BBB, C, V, S=None ):
+        if Globals.debugFlag and debuggingThisModule:
+            print( t("__init__( {} {} {} {} )").format( BBB, repr(C), repr(V), repr(S) ) )
         if S is None: S = ''
-        if isinstance( C, int ): C = str( C )
+        if isinstance( C, int ): C = str( C ) # Make sure we have strings
         if isinstance( V, int ): V = str( V )
-        assert( isinstance( BBB, str ) and len(BBB) == 3 )
-        assert( isinstance( C, str ) and 1<=len(C)<=3 )
-        assert( isinstance( V, str ) and 1<=len(V)<=3 )
-        assert( isinstance( S, str ) and len(S)<3 )
-        assert( BBB in Globals.BibleBooksCodes )
-        for checkChar in ( ' -,.:' ):
-            assert( checkChar not in BBB )
-            assert( checkChar not in C )
-            assert( checkChar not in V )
-            assert( checkChar not in S )
+        if Globals.debugFlag:
+            assert( isinstance( BBB, str ) and len(BBB) == 3 )
+            assert( isinstance( C, str ) and 1<=len(C)<=3 )
+            assert( isinstance( V, str ) and 1<=len(V)<=3 )
+            assert( isinstance( S, str ) and len(S)<3 )
+            assert( BBB in Globals.BibleBooksCodes )
+            for checkChar in ( ' -,.:' ):
+                assert( checkChar not in BBB )
+                assert( checkChar not in C )
+                assert( checkChar not in V or ( C=='0' and V=='-1' ) ) # 0:-1 means the last bit of the book intro
+                assert( checkChar not in S )
         self.BBB, self.C, self.V, self.S = BBB, C, V, S
     # end of SimpleVerseKey.__init__
 

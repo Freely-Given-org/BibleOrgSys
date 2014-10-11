@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2014-10-02 by RJH (also update ProgVersion below)
+#   Last modified: 2014-10-11 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -45,7 +45,7 @@ and then fills
 
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
-ProgVersion = "0.51"
+ProgVersion = "0.52"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -81,9 +81,12 @@ NT27BookList = ( 'MAT', 'MRK', 'LUK', 'JHN', 'ACT', 'ROM', 'CO1', 'CO2', 'GAL', 
 assert( len(NT27BookList) == 27 )
 
 
+
 class InternalBible:
     """
     Class to define and manipulate InternalBibles.
+
+    The BibleWriter class is based on this class.
 
     This class contains no load function -- that is expected to be supplied by the superclass.
     """
@@ -976,6 +979,48 @@ class InternalBible:
     # end of InternalBible.getErrors
 
 
+    def loadBookIfNecessary( self, BBB ):
+        """
+        """
+        if BBB not in self.books and BBB not in self.triedLoadingBook:
+            try: self.loadBook( BBB ) # Some types of Bibles have this function (so an entire Bible doesn't have to be loaded at startup)
+            except FileNotFoundError: logging.info( "Unable to load individual Bible book: {}".format( BBB ) ) # Ignore errors
+            self.triedLoadingBook[BBB] = True
+    # end of InternalBible.loadBookIfNecessary
+
+
+    def getNumChapters( self, BBB ):
+        """
+        Returns the number of chapters (int) in the given book.
+        Returns None if we don't have that book.
+        """
+        if Globals.debugFlag and debuggingThisModule: print( t("getNumChapters( {} )").format( BBB ) )
+        assert( len(BBB) == 3 )
+        if not Globals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): raise KeyError
+        self.loadBookIfNecessary( BBB )
+        if BBB in self:
+            return self.books[BBB].getNumChapters()
+        # else return None
+    # end of InternalBible.getNumChapters
+
+
+    def getNumVerses( self, BBB, C ):
+        """
+        Returns the number of verses (int) in the given book and chapter.
+        Returns None if we don't have that book.
+        """
+        if Globals.debugFlag and debuggingThisModule: print( t("getNumVerses( {}, {} )").format( BBB, repr(C) ) )
+        assert( len(BBB) == 3 )
+        if not Globals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): raise KeyError
+        self.loadBookIfNecessary( BBB )
+        if BBB in self:
+            if isinstance( C, int ): # Just double-check the parameter
+                logging.debug( t("getNumVerses was passed an integer chapter instead of a string with {} {}").format( BBB, C ) )
+                C = str( C )
+            return self.books[BBB].getNumVerses( C )
+    # end of InternalBible.getNumVerses
+
+
     def getBCVRef( self, ref ):
         """
         Search for a Bible reference
@@ -985,16 +1030,13 @@ class InternalBible:
             but also copes with a (B,C,V,S) tuple.
 
         Returns None if there is no information for this book.
-        Raises a KeyError if there is no CV reference.
+        Raises a KeyError if there is no such CV reference.
         """
         #print( "InternalBible.getBCVRef( {} )".format( ref ) )
         if isinstance( ref, tuple ): BBB = ref[0]
         else: BBB = ref.getBBB() # Assume it's a SimpleVerseKeyObject
         #print( " ", BBB in self.books )
-        if BBB not in self.books and BBB not in self.triedLoadingBook:
-            try: self.loadBook( BBB ) # Some types of Bibles have this function (so an entire Bible doesn't have to be loaded at startup)
-            except FileNotFoundError: logging.info( "Unable to load individual Bible book: {}".format( BBB ) ) # Ignore errors
-            self.triedLoadingBook[BBB] = True
+        self.loadBookIfNecessary( BBB )
         if BBB in self.books: return self.books[BBB].getCVRef( ref )
         #else: print( "InternalBible {} doesn't have {}".format( self.name, BBB ) ); halt
     # end of InternalBible.getBCVRef

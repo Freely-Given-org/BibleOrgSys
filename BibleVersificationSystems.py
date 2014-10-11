@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleVersificationSystems.py
-#   Last modified: 2014-02-05 (also update ProgVersion below)
+#   Last modified: 2014-10-11 (also update ProgVersion below)
 #
 # Module handling BibleVersificationSystems
 #
@@ -580,38 +580,43 @@ class BibleVersificationSystem:
 
 
     def getNumChapters( self, BBB ):
-        """ Returns the number of chapters (int) in the given book.
-            Returns None if we don't have any chapter information for this book. """
+        """
+        Returns the number of chapters (int) in the given book.
+        Returns None if we don't have any chapter information for this book.
+        """
         assert( len(BBB) == 3 )
         if not Globals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): raise KeyError
         if BBB in self.__chapterDataDict:
             return int( self.__chapterDataDict[BBB]['numChapters'] )
-        # else
-        return None
+        # else return None
     # end of BibleVersificationSystem.getNumChapters
 
 
     def getNumVerses( self, BBB, C ):
-        """ Returns the number of verses (int) in the given book and chapter. """
+        """
+        Returns the number of verses (int) in the given book and chapter.
+        """
         if Globals.debugFlag and debuggingThisModule:
             print( "BibleVersificationSystem.getNumVerses( {}, {} )".format( BBB, repr(C) ) )
         assert( len(BBB) == 3 )
-        if isinstance(C, int): # Just double-check the parameter
-            logging.debug( _("BibleVersificationSystem.getNumVerses was passed an integer chapter instead of a string with {} {}").format(BBB,C) )
+        if not Globals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): raise KeyError
+        if isinstance( C, int ): # Just double-check the parameter
+            logging.debug( _("BibleVersificationSystem.getNumVerses was passed an integer chapter instead of a string with {} {}").format( BBB, C ) )
             C = str( C )
         return int( self.__chapterDataDict[BBB][C] )
     # end of BibleVersificationSystem.getNumVerses
 
 
     def isSingleChapterBook( self, BBB ):
-        """ Returns True/False to indicate if this book only contains a single chapter.
-            Returns None if we don't have any chapter information for this book. """
+        """
+        Returns True/False to indicate if this book only contains a single chapter.
+        Returns None if we don't have any chapter information for this book.
+        """
         assert( len(BBB) == 3 )
         if not Globals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): raise KeyError
         if BBB in self.__chapterDataDict:
             return self.__chapterDataDict[BBB]['numChapters'] == '1'
-        # else
-        return None
+        # else return None
     # end of BibleVersificationSystem.isSingleChapterBook
 
 
@@ -662,9 +667,11 @@ class BibleVersificationSystem:
     def isValidBCVRef( self, referenceTuple, referenceString=None, extended=False ):
         """
         Returns True/False indicating if the given reference is valid in this system.
-        Extended flag allows chapter and verse numbers of zero.
+        Extended flag allows chapter and verse numbers of zero
+            but it allows almost any number of verses in chapter zero (up to 199).
         """
-        #print( "BibleVersificationSystem.isValidBCVRef( {}, {}, {}, {} )".format( referenceTuple, referenceString, extended ) )
+        if Globals.debugFlag and debuggingThisModule:
+            print( "BibleVersificationSystem.isValidBCVRef( {}, {}, {}, {} )".format( referenceTuple, referenceString, extended ) )
         BBB, C, V, S = referenceTuple
         assert( len(BBB) == 3 )
         if C and not C.isdigit(): # Should be no suffix on C (although it can be blank if the reference is for a whole book)
@@ -674,7 +681,7 @@ class BibleVersificationSystem:
         myReferenceString = " (from '{}')".format(referenceString) if referenceString is not None else ''
 
         if BBB in self.__chapterDataDict:
-            if extended and C=='0': return 0 <= int(V) < 20 # Don't check the verse number range accurately
+            if extended and C=='0': return 0 <= int(V) <= 199 # Don't check the verse number range accurately
             if C in self.__chapterDataDict[BBB]:
                 if not V: return True # NOTE: This allows blank verse numbers (as a reference can refer to an entire chapter)
                 if extended and V=='0': return True

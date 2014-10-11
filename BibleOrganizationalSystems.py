@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleOrganizationalSystems.py
-#   Last modified: 2014-10-07 by RJH (also update ProgVersion below)
+#   Last modified: 2014-10-11 by RJH (also update ProgVersion below)
 #
 # Module handling BibleOrganizationalSystems
 #
@@ -45,6 +45,19 @@ from BibleBookOrders import BibleBookOrderSystem
 from BiblePunctuationSystems import BiblePunctuationSystem
 from BibleVersificationSystems import BibleVersificationSystem
 from BibleBooksNames import BibleBooksNamesSystem
+
+
+def t( messageString ):
+    """
+    Prepends the module name to a error or warning message string
+        if we are in debug mode.
+    Returns the new string.
+    """
+    try: nameBit, errorBit = messageString.split( ': ', 1 )
+    except ValueError: nameBit, errorBit = '', messageString
+    if Globals.debugFlag or debuggingThisModule:
+        nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
+    return '{}{}'.format( nameBit, _(errorBit) )
 
 
 
@@ -90,6 +103,7 @@ class BibleOrganizationalSystems:
         return self
     # end of BibleOrganizationalSystems.loadData
 
+
     def __str__( self ):
         """
         This method returns the string representation of a Bible organisational system.
@@ -109,6 +123,7 @@ class BibleOrganizationalSystems:
         return result
     # end of BibleOrganizationalSystems.__str__
 
+
     def __len__( self ):
         """
         Return the number of loaded systems.
@@ -118,6 +133,7 @@ class BibleOrganizationalSystems:
         #print( '3', len(self.__combinedIndexDict) )
         return len( self.__dataDict )
     # end of BibleOrganizationalSystems.__len__
+
 
     def getAvailableOrganizationalSystemNames( self, extended=False ):
         """ Returns a list of available system name strings. """
@@ -129,6 +145,7 @@ class BibleOrganizationalSystems:
         # else:
         return [x for x in self.__indexDict]
     # end of BibleOrganizationalSystems.getAvailableOrganizationalSystemNames
+
 
     def getOrganizationalSystem( self, systemName ):
         """ Returns the system dictionary.
@@ -153,6 +170,7 @@ class BibleOrganizationalSystems:
         logging.error( _("No '{}' system in Bible Organisational Systems").format( systemName ) )
         if Globals.verbosityLevel>2: logging.error( _("Available systems are {}").format( self.getAvailableOrganizationalSystemNames( extended=True ) ) )
     # end of BibleOrganizationalSystems.getOrganizationalSystem
+
 
     def getOrganizationalSystemValue( self, systemName, valueName ):
         """ Gets a value for the system. """
@@ -181,6 +199,7 @@ class BibleOrganizationalSystems:
             logging.error( _("{} Bible Organizational System has no {} specified").format( systemName, valueName ) )
     # end of BibleOrganizationalSystems.getOrganizationalSystemValue
 # end of BibleOrganizationalSystems class
+
 
 
 class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem, BiblePunctuationSystem, BibleBooksNamesSystem ):
@@ -262,6 +281,7 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
                     logging.error( _("Book '{}' is included in {} system but missing from {} book order system").format( BBB, self.__systemName, BibleBookOrderSystem.getBookOrderSystemName( self ) ) )
     # end of BibleOrganizationalSystem.__init__
 
+
     def __str__( self ):
         """
         This method returns the string representation of a Bible organisational system.
@@ -279,11 +299,13 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         return result
     # end of BibleOrganizationalSystem.__str__
 
+
     def getOrganizationalSystemName( self ):
         """ Return the system name. """
         assert( self.__systemName )
         return self.__systemName
     # end of BibleOrganizationalSystem.getOrganizationalSystemName
+
 
     def getOrganizationalSystemType( self ):
         """ Return the system type. """
@@ -291,11 +313,13 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         return self.__dataDict["type"]
     # end of BibleOrganizationalSystem.getOrganizationalSystemType
 
+
     def getMoreBasicTypes( self ):
         """ Returns a list of more basic (original) types. """
         ix = allowedTypes.index( self.__dataDict["type"] )
         return allowedTypes[ix+1:]
     # end of BibleOrganizationalSystem.getMoreBasicTypes
+
 
     def getOrganizationalSystemValue( self, valueName ):
         """ Gets a value for the system. """
@@ -331,6 +355,7 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         logging.error( _("{} Bible Organizational System has no {} specified").format(self.getOrganizationalSystemName(),valueName) )
     # end of BibleOrganizationalSystem.getOrganizationalSystemValue
 
+
     def getBookList( self ):
         """
         Returns the list of book reference codes (BBB) for books in this system.
@@ -341,11 +366,13 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         else: return result
     # end of BibleOrganizationalSystem.getBookList
 
+
     def containsBook( self, BBB ):
         """ Returns True or False if this book is in this system. """
         assert( BBB and isinstance( BBB, str ) and len(BBB)==3 )
         return BBB in self.getBookList()
     # end of BibleOrganizationalSystem.containsBook
+
 
     def getFirstBookCode( self ):
         """
@@ -359,6 +386,7 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
             return bookList[0]
     # end of BibleOrganizationalSystem.getFirstBookCode
 
+
     def getPreviousBookCode( self, BBB ):
         """ Returns the book (if any) before the given one. """
         while True:
@@ -366,6 +394,7 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
             if self.containsBook( previousCode ): return previousCode
             BBB = previousCode
     # end of BibleOrganizationalSystem.getNextBookCode
+
 
     def getNextBookCode( self, BBB ):
         """ Returns the book (if any) after the given one. """
@@ -381,7 +410,8 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         Returns True/False indicating if the given reference is valid in this system.
         Extended flag allows chapter and verse numbers of zero.
         """
-        #print( "BibleOrganizationalSystem.isValidBCVRef( {}, {}, {}, {} )".format( referenceTuple, referenceString, extended ) )
+        if Globals.debugFlag and debuggingThisModule:
+            print( t("isValidBCVRef( {}, {}, {}, {} )").format( referenceTuple, referenceString, extended ) )
         BBB, C, V, S = referenceTuple
         if BBB is None or not BBB: return False
         assert( len(BBB) == 3 )
@@ -395,6 +425,7 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         return False
     # end of BibleOrganizationalSystem.isValidBCVRef
 # end of BibleOrganizationalSystem class
+
 
 
 def demo():

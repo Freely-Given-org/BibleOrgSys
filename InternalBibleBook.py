@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2014-09-17 by RJH (also update ProgVersion below)
+#   Last modified: 2014-10-11 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -40,8 +40,9 @@ Required improvements:
     Need to be able to accept encoded cross references as well as text (YET modules).
 """
 
+ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.87"
+ProgVersion = "0.88"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -65,6 +66,19 @@ INTERNAL_SFMS_TO_REMOVE = Globals.USFMMarkers.getCharacterMarkersList( includeBa
 INTERNAL_SFMS_TO_REMOVE = sorted( INTERNAL_SFMS_TO_REMOVE, key=len, reverse=True ) # List longest first
 
 MAX_NONCRITICAL_ERRORS_PER_BOOK = 5
+
+
+def t( messageString ):
+    """
+    Prepends the module name to a error or warning message string
+        if we are in debug mode.
+    Returns the new string.
+    """
+    try: nameBit, errorBit = messageString.split( ': ', 1 )
+    except ValueError: nameBit, errorBit = '', messageString
+    if Globals.debugFlag or debuggingThisModule:
+        nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
+    return '{}{}'.format( nameBit, _(errorBit) )
 
 
 
@@ -109,6 +123,7 @@ class InternalBibleBook:
         self.replaceAngleBracketsFlag, self.replaceStraightDoubleQuotesFlag = True, False
 
         self.badMarkers, self.badMarkerCounts = [], []
+        self.versificationList = self.omittedVersesList = self.combinedVersesList = self.reorderedVersesList = None
         self.pntsCount = 0
     # end of InternalBibleBook.__init__
 
@@ -1829,9 +1844,11 @@ class InternalBibleBook:
 
     def getVersification( self ):
         """
-        Get the versification of the book into a two lists of (C, V) tuples.
+        Get the versification of the book into four lists of (C, V) tuples.
             The first list contains an entry for each chapter in the book showing the number of verses.
             The second list contains an entry for each missing verse in the book (not including verses that are missing at the END of a chapter).
+            The third list contains an entry for all combined verses in the book.
+            The fourth list contains an entry for all reordered verse in the book.
         Note that all chapter and verse values are returned as strings not integers.
         """
         if not self._processedFlag:
@@ -1843,11 +1860,13 @@ class InternalBibleBook:
         versification, omittedVerses, combinedVerses, reorderedVerses = [], [], [], []
         chapterText, chapterNumber, lastChapterNumber = '0', 0, 0
         verseText = verseNumberString = lastVerseNumberString = '0'
-        for entry in self._processedLines:
+        for j, entry in enumerate( self._processedLines ):
             marker, text = entry.getMarker(), entry.getText()
             #print( marker, text )
             if marker == 'c':
-                if chapterNumber > 0:
+                if chapterNumber == 0: # it's the book introduction
+                    versification.append( (chapterText, str(j-1),) ) # Count each line as a 'verse'
+                else: # it's a regular chapter
                     versification.append( (chapterText, lastVerseNumberString,) )
                 chapterText = text.strip()
                 if ' ' in chapterText: # Seems that we can have footnotes here :)
@@ -1960,6 +1979,23 @@ class InternalBibleBook:
         if versificationErrors: self.errorDictionary['Versification Errors'] = versificationErrors
         return versification, omittedVerses, combinedVerses, reorderedVerses
     # end of InternalBibleBook.getVersification
+
+
+    def getVersificationIfNecessary( self ):
+        """
+        Obtain the versification for this book if we haven't done it already.
+
+        Stores it in self.versification and self.missingVersesList
+        """
+        if Globals.debugFlag and debuggingThisModule: print( t("getVersificationIfNecessary()") )
+        if self.versificationList is None:
+            assert( self.omittedVersesList is None and self.combinedVersesList is None and self.reorderedVersesList is None ) # also
+            versificationResult = self.getVersification()
+            #print( self.BBB, versificationResult )
+            if versificationResult is None: logging.critical( t("getVersificationIfNecessary() got nothing!") )
+            else:
+                self.versificationList, self.omittedVersesList, self.combinedVersesList, self.reorderedVersesList = versificationResult
+    # end of InternalBibleBook.getVersificationIfNecessary
 
 
     def _discover( self, resultDictionary ):
@@ -3764,6 +3800,38 @@ class InternalBibleBook:
         if 'Priority Errors' in self.errorDictionary and not self.errorDictionary['Priority Errors']:
             self.errorDictionary.pop( 'Priority Errors' ) # Remove empty dictionary entry if unused
         return self.errorDictionary
+    # end of InternalBibleBook.getErrors
+
+
+    def getNumChapters( self ):
+        """
+        Returns the number of chapters (int) in this book.
+        """
+        if Globals.debugFlag and debuggingThisModule: print( t("getNumChapters()") )
+        self.getVersificationIfNecessary()
+        print( self.getVersification() )
+        lastChapterNumberString =  self.versificationList[-1][0] # The last chapter number
+        print( "NumChapters", lastChapterNumberString )
+        return int( lastChapterNumberString )
+    # end of InternalBibleBook.getNumChapters
+
+
+    def getNumVerses( self, C ):
+        """
+        Returns the number of verses (int) in the given chapter.
+
+        Also works for chapter zero (the book introduction).
+        """
+        if Globals.debugFlag and debuggingThisModule: print( t("getNumVerses( {} )").format( repr(C) ) )
+        if isinstance( C, int ): # Just double-check the parameter
+            logging.debug( t("getNumVerses was passed an integer chapter instead of a string with {} {}").format( self.BBB, C ) )
+            C = str( C )
+        self.getVersificationIfNecessary()
+        for thisC,thisNumVerses in self.versificationList:
+            if thisC == C:
+                print( "NumVerses", thisNumVerses )
+                return int( thisNumVerses )
+    # end of InternalBibleBook.getNumVerses
 
 
     def getCVRef( self, ref ):

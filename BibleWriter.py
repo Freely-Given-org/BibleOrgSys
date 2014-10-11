@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-09-16 by RJH (also update ProgVersion below)
+#   Last modified: 2014-10-11 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -112,6 +112,7 @@ class BibleWriter( InternalBible ):
     """
     Class to export Bibles.
 
+    The Bible class is based on this class.
     """
     def __init__( self ):
         """
