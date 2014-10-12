@@ -3829,7 +3829,7 @@ class InternalBibleBook:
         self.getVersificationIfNecessary()
         for thisC,thisNumVerses in self.versificationList:
             if thisC == C:
-                print( "NumVerses", thisNumVerses )
+                #print( "NumVerses", thisNumVerses )
                 return int( thisNumVerses )
     # end of InternalBibleBook.getNumVerses
 
