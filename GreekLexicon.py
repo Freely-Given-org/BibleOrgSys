@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # GreekLexicon.py
-#   Last modified: 2014-07-23 (also update ProgVersion below)
+#   Last modified: 2014-10-14 (also update ProgVersion below)
 #
 # Module handling the Greek lexicon
 #
@@ -33,11 +33,12 @@ Module handling the morphgnt Greek lexicon.
         via various keys and in various formats.
 """
 
+ShortProgName = "GreekLexicon"
 ProgName = "Greek Lexicon format handler"
-ProgVersion = "0.11"
+ProgVersion = "0.12"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
-debuggingThisModule = False
+debuggingThisModule = True
 
 
 import logging, os.path, re
@@ -48,6 +49,19 @@ from xml.etree.ElementTree import ElementTree
 import Globals
 
 
+
+
+def t( messageString ):
+    """
+    Prepends the module name to a error or warning message string
+        if we are in debug mode.
+    Returns the new string.
+    """
+    try: nameBit, errorBit = messageString.split( ': ', 1 )
+    except ValueError: nameBit, errorBit = '', messageString
+    if Globals.debugFlag or debuggingThisModule:
+        nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
+    return '{}{}'.format( nameBit, _(errorBit) )
 
 
 class GreekStrongsFileConverter:
@@ -84,6 +98,8 @@ class GreekStrongsFileConverter:
         """
         Constructor: just sets up the file converter object.
         """
+        if Globals.debugFlag and debuggingThisModule:
+            print( t("GreekStrongsFileConverter.__init__()") )
         self.title = self.version = self.date = None
         self.tree = self.header = self.entries = None
     # end of GreekStrongsFileConverter.__init__
@@ -113,7 +129,10 @@ class GreekStrongsFileConverter:
         if Globals.verbosityLevel > 2: print( _("Loading from {}...").format( XMLFolder ) )
         self.XMLFolder = XMLFolder
         XMLFilepath = os.path.join( XMLFolder, GreekStrongsFileConverter.databaseFilename )
-        self.tree = ElementTree().parse( XMLFilepath )
+        try: self.tree = ElementTree().parse( XMLFilepath )
+        except FileNotFoundError:
+            logging.critical( t("GreekStrongsFileConverter could not find database at {}").format( XMLFilepath ) )
+            raise FileNotFoundError
         if Globals.debugFlag: assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
 
         if self.tree.tag == GreekStrongsFileConverter.treeTag:
@@ -321,6 +340,8 @@ class GreekLexicon:
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.
         """
+        if Globals.debugFlag and debuggingThisModule:
+            print( t("GreekLexicon.__init__( {} )").format( XMLFolder ) )
         gStr = GreekStrongsFileConverter() # Create the empty object
         gStr.loadAndValidate( XMLFolder ) # Load the XML
         self.StrongsEntries = gStr.importDataToPython()

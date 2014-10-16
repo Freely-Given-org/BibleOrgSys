@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # SwordResources.py
-#   Last modified: 2014-09-30 (also update ProgVersion below)
+#   Last modified: 2014-10-14 (also update ProgVersion below)
 #
 # Module handling Sword resources using the Sword engine
 #
@@ -31,7 +31,7 @@ This module uses the Sword engine (libsword) via the Python SWIG bindings.
 
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
-ProgVersion = "0.06"
+ProgVersion = "0.08"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = True
@@ -44,20 +44,35 @@ from gettext import gettext as _
 
 import Globals
 from VerseReferences import SimpleVerseKey
+from InternalBibleInternals import InternalBibleEntryList
 
 
 try:
-    import Sword
+    import Swordx
     SwordType = "CrosswireLibrary"
 except: # Sword library (dll and python bindings) seem to be not available
     SwordType = None
-    if 1: # Warn the user that this won't work
+    if 0: # Warn the user that this won't work
         logging.critical( _("You need to install the Sword library on your computer in order to use this module.") )
         logging.info( _("Alternatively, you can try the all-Python SwordModules module.") )
         #sys.exit( 1 )
     else: # Use our own Python3 code instead
         import SwordModules
         SwordType = "OurCode"
+
+
+
+def t( messageString ):
+    """
+    Prepends the module name to a error or warning message string
+        if we are in debug mode.
+    Returns the new string.
+    """
+    try: nameBit, errorBit = messageString.split( ': ', 1 )
+    except ValueError: nameBit, errorBit = '', messageString
+    if Globals.debugFlag or debuggingThisModule:
+        nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
+    return '{}{}'.format( nameBit, _(errorBit) )
 
 
 
@@ -87,7 +102,8 @@ class SwordInterface():
             #self.verseCache = {}
         elif SwordType == "OurCode":
             self.library = SwordModules.SwordModules() # Loads all of conf files that it can find
-            #print( self.library )
+            if Globals.debugFlag and debuggingThisModule:
+                print( "Sword library", self.library )
 
     def getModule( self, moduleAbbreviation='KJV' ):
         if Globals.debugFlag: print( "SwordResources.getModule({})".format( moduleAbbreviation ) )
@@ -144,15 +160,19 @@ class SwordInterface():
             verseData.append( ('v','v', v, v, [],) )
             verseData.append( ('v~','v~', verseText, verseText, [],) )
         else:
-            #print( "module", module )
-            verseData = module.getBCVRef( key )
-            #print( "gVD", module.getName(), key, verseData )
-            if verseData is None:
-                print( "SI.gVD no VD", module.getName(), key, verseData )
+            #print( t("module"), module )
+            stuff = module.getBCVRef( key )
+            #print( t("gVD={} key={}, st={}").format( module.getName(), key, stuff ) )
+            if stuff is None:
+                print( "SI.gVD no VD", module.getName(), key, stuff )
                 assert( key.getChapter()==0 or key.getVerse()==0 )
             else:
-                assert( isinstance( verseData, list ) )
-                assert( 1 <= len(verseData) <= 5 )
+                verseData, context = stuff
+                #print( "vD", verseData )
+                #assert( isinstance( verseData, InternalBibleEntryList ) or isinstance( verseData, list ) )
+                assert( isinstance( verseData, InternalBibleEntryList ) )
+                #assert( isinstance( verseData, list ) )
+                assert( 1 <= len(verseData) <= 6 )
         #print( verseData ); halt
         return verseData
     # end of SwordInterface.getVerseData

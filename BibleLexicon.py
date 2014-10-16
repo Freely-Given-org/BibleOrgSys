@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleLexicon.py
-#   Last modified: 2014-08-04 (also update ProgVersion below)
+#   Last modified: 2014-10-14 (also update ProgVersion below)
 #
 # Module handling the Hebrew and Greek lexicons
 #
@@ -30,11 +30,12 @@ Module handling the OpenScriptures Hebrew and morphgnt Greek lexicons.
     Greek has Strongs only.
 """
 
+ShortProgName = "BibleLexicon"
 ProgName = "Bible Lexicon format handler"
-ProgVersion = "0.20"
+ProgVersion = "0.21"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
-debuggingThisModule = False
+debuggingThisModule = True
 
 
 import logging, os.path
@@ -42,6 +43,20 @@ from gettext import gettext as _
 
 import Globals
 import HebrewLexicon, GreekLexicon
+
+
+
+def t( messageString ):
+    """
+    Prepends the module name to a error or warning message string
+        if we are in debug mode.
+    Returns the new string.
+    """
+    try: nameBit, errorBit = messageString.split( ': ', 1 )
+    except ValueError: nameBit, errorBit = '', messageString
+    if Globals.debugFlag or debuggingThisModule:
+        nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
+    return '{}{}'.format( nameBit, _(errorBit) )
 
 
 
@@ -56,9 +71,12 @@ class BibleLexiconIndex:
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.
         """
+        if Globals.debugFlag and debuggingThisModule:
+            print( t("BibleLexiconIndex.__init__( {}, {} )").format( HebrewXMLFolder, GreekXMLFolder ) )
         self.HebrewXMLFolder, self.GreekXMLFolder = HebrewXMLFolder, GreekXMLFolder
         self.hIndex = HebrewLexicon.HebrewLexiconIndex( self.HebrewXMLFolder ) # Create the object
     # end of BibleLexiconIndex.__init__
+
 
     def __str__( self ):
         """
@@ -77,6 +95,7 @@ class BibleLexiconIndex:
         return result
     # end of BibleLexiconIndex.__str__
 
+
     def getLexiconCodeFromStrongsNumber( self, key ):
         """
         The key is a digit string like '172' (optional preceding H).
@@ -85,6 +104,7 @@ class BibleLexiconIndex:
         """
         if key.startswith( 'H' ): return self.hIndex.getLexiconCodeFromStrongsNumber( key )
     # end of BibleLexiconIndex.getLexiconCodeFromStrongsNumber
+
 
     def _getStrongsNumberFromLexiconCode1( self, key ):
         """
@@ -95,6 +115,7 @@ class BibleLexiconIndex:
         if key.startswith( 'H' ): return self.hIndex._getStrongsNumberFromLexiconCode1( key )
     # end of BibleLexiconIndex.getStrongsNumberFromLexiconCode1
 
+
     def _getStrongsNumberFromLexiconCode2( self, key ):
         """
         The key is a three letter code like 'aac'.
@@ -103,6 +124,7 @@ class BibleLexiconIndex:
         """
         if key.startswith( 'H' ): return self.hIndex._getStrongsNumberFromLexiconCode2( key )
     # end of BibleLexiconIndex.getStrongsNumberFromLexiconCode2
+
 
     def getStrongsNumberFromLexiconCode( self, key ):
         """
@@ -113,6 +135,7 @@ class BibleLexiconIndex:
         if key.startswith( 'H' ): return self.hIndex.getStrongsNumberFromLexiconCode( key )
     # end of BibleLexiconIndex.getStrongsNumberFromLexiconCode
 
+
     def getBDBCodeFromLexiconCode( self, key ):
         """
         The key is a three letter code like 'aac'.
@@ -122,6 +145,7 @@ class BibleLexiconIndex:
         if key.startswith( 'H' ): return self.hIndex.getBDBCodeFromLexiconCode( key )
     # end of BibleLexiconIndex.getBDBCodeFromLexiconCode
 
+
     def getTWOTCodeFromLexiconCode( self, key ):
         """
         The key is a three letter code like 'aac'.
@@ -130,9 +154,7 @@ class BibleLexiconIndex:
         """
         if key.startswith( 'H' ): return self.hIndex.getTWOTCodeFromLexiconCode( key )
     # end of BibleLexiconIndex.getTWOTCodeFromLexiconCode
-
 # end of BibleLexiconIndex class
-
 
 
 
@@ -147,9 +169,21 @@ class BibleLexicon:
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.
         """
+        if Globals.debugFlag and debuggingThisModule:
+            print( t("BibleLexicon.__init__( {}, {} )").format( HebrewXMLFolder, GreekXMLFolder ) )
         self.HebrewXMLFolder, self.GreekXMLFolder = HebrewXMLFolder, GreekXMLFolder
-        self.hLexicon = HebrewLexicon.HebrewLexicon( self.HebrewXMLFolder ) # Create the object
-        self.gLexicon = GreekLexicon.GreekLexicon( self.GreekXMLFolder ) # Create the object
+        fnfCount = 0
+        try: self.hLexicon = HebrewLexicon.HebrewLexicon( self.HebrewXMLFolder ) # Create the object
+        except FileNotFoundError:
+            logging.critical( t("BibleLexicon could not find Hebrew lexicon at {}").format( HebrewXMLFolder ) )
+            fnfCount += 1
+            self.hLexicon = None
+        try: self.gLexicon = GreekLexicon.GreekLexicon( self.GreekXMLFolder ) # Create the object
+        except FileNotFoundError:
+            logging.critical( t("BibleLexicon could not find Greek lexicon at {}").format( GreekXMLFolder ) )
+            fnfCount += 1
+            self.gLexicon = None
+        if fnfCount >= 2: raise FileNotFoundError
     # end of BibleLexicon.__init__
 
 
@@ -256,8 +290,69 @@ class BibleLexicon:
         """
         return self.hLexicon.getBDBEntryHTML( key )
     # end of BibleLexicon.getBDBEntryHTML
-# end of BibleLexicon class
 
+
+    def getEntryData( self, key ):
+        """
+        The key can be a Strong's number (string) like 'H1979'.
+
+        Returns an entry for the given key.
+            This is a dictionary containing fields, e.g., ['usage'] = 'company, going, walk, way.'
+
+        Returns None if the key is not found.
+        """
+        if Globals.debugFlag and debuggingThisModule:
+            print( t("BibleLexicon.getEntryData( {} )").format( repr(key) ) )
+        if not key: return
+        if key[0]=='H' and key[1:].isdigit(): return self.hLexicon.getStrongsEntryData( key )
+        if key[0]=='G' and key[1:].isdigit(): return self.gLexicon.getStrongsEntryData( key )
+        if '.' in key: return self.hLexicon.getBDBEntryData( key )
+    # end of BibleLexicon.getEntryData
+
+
+    def getEntryField( self, key, fieldName ):
+        """
+        The key can be a Hebrew Strong's number (string) like 'H1979'.
+        The fieldName is a name (string) like 'usage'.
+
+        Returns a string for the given key and fieldName names.
+        Returns None if the key or fieldName is not found.
+        """
+        if Globals.debugFlag and debuggingThisModule:
+            print( t("BibleLexicon.getEntryField( {}, {} )").format( repr(key), repr(fieldName) ) )
+        if not key: return
+        if key[0]=='H' and key[1:].isdigit(): return self.hLexicon.getStrongsEntryField( key, fieldName )
+        if key[0]=='G' and key[1:].isdigit(): return self.gLexicon.getStrongsEntryField( key, fieldName )
+        if '.' in key: return self.hLexicon.getBDBEntryField( key, fieldName )
+    # end of BibleLexicon.getEntryField
+
+
+    def getEntryHTML( self, key ):
+        """
+        The key can be a Hebrew Strong's number (string) like 'H1979'.
+
+        Returns an HTML li entry for the given key.
+        Returns None if the key is not found.
+
+        e.g., for H1, returns:
+            <li value="1" id="ot:1"><i title="{awb}" xml:lang="hbo">אָב</i> a primitive word;
+                father, in a literal and immediate, or figurative and remote application):
+                <span class="kjv_def">chief, (fore-)father(-less), X patrimony, principal</span>.
+                Compare names in "Abi-".</li>
+            <li value="165" id="ot:165"><i title="{e-hee'}" xml:lang="hbo">אֱהִי</i> apparently an
+                orthographical variation for <a href="#ot:346"><i title="{ah-yay'}" xml:lang="hbo">אַיֵּה</i></a>;
+                where: <span class="kjv_def">I will be (Hos</span>. 13:10, 14) (which is often the rendering of
+                the same Hebrew form from <a href="#ot:1961"><i title="{haw-yaw}" xml:lang="hbo">הָיָה</i></a>).</li>
+
+        """
+        if Globals.debugFlag and debuggingThisModule:
+            print( t("BibleLexicon.getEntryHTML( {} )").format( repr(key) ) )
+        if not key: return
+        if key[0]=='H' and key[1:].isdigit(): return self.hLexicon.getStrongsEntryHTML( key )
+        if key[0]=='G' and key[1:].isdigit(): return self.gLexicon.getStrongsEntryHTML( key )
+        if '.' in key: return self.hLexicon.getBDBEntryHTML( key )
+    # end of BibleLexicon.getEntryHTML
+# end of BibleLexicon class
 
 
 

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # HebrewLexicon.py
-#   Last modified: 2014-09-25 (also update ProgVersion below)
+#   Last modified: 2014-10-14 (also update ProgVersion below)
 #
 # Module handling the Hebrew lexicon
 #
@@ -33,11 +33,12 @@ Module handling the OpenScriptures Hebrew lexicon.
         via various keys and in various formats.
 """
 
+ShortProgName = "HebrewLexicon"
 ProgName = "Hebrew Lexicon format handler"
-ProgVersion = "0.13"
+ProgVersion = "0.14"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
-debuggingThisModule = False
+debuggingThisModule = True
 
 
 import logging, os.path, re
@@ -47,6 +48,20 @@ from xml.etree.ElementTree import ElementTree
 
 import Globals
 
+
+
+
+def t( messageString ):
+    """
+    Prepends the module name to a error or warning message string
+        if we are in debug mode.
+    Returns the new string.
+    """
+    try: nameBit, errorBit = messageString.split( ': ', 1 )
+    except ValueError: nameBit, errorBit = '', messageString
+    if Globals.debugFlag or debuggingThisModule:
+        nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
+    return '{}{}'.format( nameBit, _(errorBit) )
 
 
 
@@ -77,6 +92,8 @@ class AugmentedStrongsIndexFileConverter:
         """
         Constructor: just sets up the Hebrew Index file converter object.
         """
+        if Globals.debugFlag and debuggingThisModule:
+            print( t("AugmentedStrongsIndexFileConverter.__init__()") )
         self.title = self.version = self.date = None
         self.tree = self.header = self.entries1 = self.entries2 = None
     # end of AugmentedStrongsIndexFileConverter.__init__
@@ -192,6 +209,8 @@ class LexicalIndexFileConverter:
         """
         Constructor: just sets up the Hebrew Index file converter object.
         """
+        if Globals.debugFlag and debuggingThisModule:
+            print( t("LexicalIndexFileConverter.__init__()") )
         self.title = self.version = self.date = None
         self.tree = self.header = self.entries = None
     # end of LexicalIndexFileConverter.__init__
@@ -388,6 +407,8 @@ class HebrewStrongsFileConverter:
         """
         Constructor: just sets up the file converter object.
         """
+        if Globals.debugFlag and debuggingThisModule:
+            print( t("HebrewStrongsFileConverter.__init__()") )
         self.title = self.version = self.date = None
         self.tree = self.header = self.entries = None
     # end of HebrewStrongsFileConverter.__init__
@@ -562,6 +583,8 @@ class BrownDriverBriggsFileConverter:
         """
         Constructor: just sets up the file converter object.
         """
+        if Globals.debugFlag and debuggingThisModule:
+            print( t("BrownDriverBriggsFileConverter.__init__()") )
         self.title = self.version = self.date = None
         self.tree = self.header = self.entries = None
     # end of BrownDriverBriggsFileConverter.__init__
@@ -726,6 +749,8 @@ class HebrewLexiconIndex:
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.
         """
+        if Globals.debugFlag and debuggingThisModule:
+            print( t("HebrewLexiconIndex.__init__( {} )").format( XMLFolder ) )
         hASIndex = AugmentedStrongsIndexFileConverter() # Create the empty object
         hASIndex.loadAndValidate( XMLFolder ) # Load the XML
         self.IndexEntries1, self.IndexEntries2 = hASIndex.importDataToPython()
@@ -859,6 +884,8 @@ class HebrewLexiconSimple:
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.
         """
+        if Globals.debugFlag and debuggingThisModule:
+            print( t("HebrewLexiconSimple.__init__( {} )").format( XMLFolder ) )
         hStr = HebrewStrongsFileConverter() # Create the empty object
         hStr.loadAndValidate( XMLFolder ) # Load the XML
         self.StrongsEntries = hStr.importDataToPython()
@@ -1022,6 +1049,8 @@ class HebrewLexicon( HebrewLexiconSimple ):
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.
         """
+        if Globals.debugFlag and debuggingThisModule:
+            print( t("HebrewLexicon.__init__( {} )").format( XMLFolder ) )
         HebrewLexiconSimple.__init__( self, XMLFolder )
         self.hix = HebrewLexiconIndex( XMLFolder ) # Load and process the XML
     # end of HebrewLexicon.__init__
@@ -1131,7 +1160,7 @@ class HebrewLexicon( HebrewLexiconSimple ):
         """
         if '.' not in key: # assume it's a Strongs code then
             key = self.hix.getBDBCodeFromStrongsNumber( key )
-        return HebrewLexiconSimple.getBDBEntryData( key )
+        return HebrewLexiconSimple.getBDBEntryData( self, key )
     # end of HebrewLexicon.getBDBEntryData
 
 
@@ -1146,7 +1175,7 @@ class HebrewLexicon( HebrewLexiconSimple ):
         """
         if '.' not in key: # assume it's a Strongs code then
             key = self.hix.getBDBCodeFromStrongsNumber( key )
-        return HebrewLexiconSimple.getBDBEntryField( key, fieldName )
+        return HebrewLexiconSimple.getBDBEntryField( self, key, fieldName )
     # end of HebrewLexicon.getBDBEntryField
 
 
@@ -1160,7 +1189,7 @@ class HebrewLexicon( HebrewLexiconSimple ):
         """
         if '.' not in key: # assume it's a Strongs code then
             key = self.hix.getBDBCodeFromStrongsNumber( key )
-        return HebrewLexiconSimple.getBDBEntryHTML( key )
+        return HebrewLexiconSimple.getBDBEntryHTML( self, key )
     # end of HebrewLexicon.getBDBEntryHTML
 # end of HebrewLexicon class
 

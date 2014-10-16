@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2014-10-04 by RJH (also update ProgVersion below)
+#   Last modified: 2014-10-16 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -29,7 +29,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
-ProgVersion = "0.59"
+ProgVersion = "0.60"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -211,6 +211,23 @@ class USFMBible( Bible ):
         # Now we can set our object variables
         self.sourceFolder, self.givenName, self.abbreviation, self.encoding = sourceFolder, givenName, givenAbbreviation, encoding
 
+        self.ssfFilepath, self.ssfDict, self.settingsDict = None, {}, {}
+        if sourceFolder is not None:
+            self.preload( sourceFolder )
+    # end of USFMBible.__init_
+
+
+    def preload( self, sourceFolder, givenName=None, givenAbbreviation=None, encoding=None ):
+        """
+        """
+        if Globals.debugFlag or Globals.verbosityLevel > 2:
+            print( t("preload( {} {} {} {} )").format( sourceFolder, givenName, givenAbbreviation, encoding ) )
+        if Globals.debugFlag: assert( sourceFolder )
+        self.sourceFolder = sourceFolder
+        if givenName: self.givenName = givenName
+        if givenAbbreviation: self.givenAbbreviation = givenAbbreviation
+        if encoding: self.encoding = encoding
+
         # Do a preliminary check on the contents of our folder
         foundFiles, foundFolders = [], []
         for something in os.listdir( self.sourceFolder ):
@@ -234,25 +251,12 @@ class USFMBible( Bible ):
         if Globals.verbosityLevel > 3 or (Globals.debugFlag and debuggingThisModule):
             print( "USFMFilenamesObject", self.USFMFilenamesObject )
 
-        # Attempt to load the SSF file
-        self.ssfFilepath, self.settingsDict = {}, {}
-        ssfFilepathList = self.USFMFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
-        if len(ssfFilepathList) == 1: # Seems we found the right one
-            self.ssfFilepath = ssfFilepathList[0]
-            self.loadSSFData( self.ssfFilepath )
-            if self.encoding is None and 'Encoding' in self.ssfDict: # See if the SSF file gives some help to us
-                ssfEncoding = self.ssfDict['Encoding']
-                if ssfEncoding == '65001': self.encoding = 'utf-8'
-                else:
-                    if Globals.verbosityLevel > 0:
-                        print( t("__init__: File encoding in SSF is set to '{}'").format( ssfEncoding ) )
-                    if ssfEncoding.isdigit():
-                        self.encoding = 'cp' + ssfEncoding
-                        if Globals.verbosityLevel > 0:
-                            print( t("__init__: Switched to '{}' file encoding").format( self.encoding ) )
-                    else:
-                        logging.critical( t("__init__: Unsure how to handle '{}' file encoding").format( ssfEncoding ) )
-
+        if self.ssfFilepath is None: # it might have been loaded first
+            # Attempt to load the SSF file
+            self.ssfDict, self.settingsDict = {}, {}
+            ssfFilepathList = self.USFMFilenamesObject.getSSFFilenames( searchAbove=True, auto=True )
+            if len(ssfFilepathList) == 1: # Seems we found the right one
+                self.loadSSFData( ssfFilepathList[0] )
 
         self.name = self.givenName
         if self.name is None:
@@ -267,14 +271,16 @@ class USFMBible( Bible ):
         self.possibleFilenameDict = {}
         for BBB, filename in self.maximumPossibleFilenameTuples:
             self.possibleFilenameDict[BBB] = filename
-    # end of USFMBible.__init_
+    # end of USFMBible.preload
 
 
     def loadSSFData( self, ssfFilepath, encoding=None ):
         """Process the SSF data from the given filepath.
             Returns a dictionary."""
-        if Globals.verbosityLevel > 2: print( t("Loading SSF data from '{}' ({})").format( ssfFilepath, encoding ) )
+        if Globals.debugFlag or Globals.verbosityLevel > 2:
+            print( t("Loading SSF data from '{}' ({})").format( ssfFilepath, encoding ) )
         if encoding is None: encoding = 'utf-8'
+        self.ssfFilepath = ssfFilepath
         lastLine, lineCount, status, settingsDict = '', 0, 0, {}
         with open( ssfFilepath, encoding=encoding ) as myFile: # Automatically closes the file when done
             for line in myFile:
@@ -333,6 +339,20 @@ class USFMBible( Bible ):
                     except UnicodeEncodeError: print( "    {}: UNICODE ENCODING ERROR".format( key ) )
         self.ssfDict = settingsDict # We'll keep a copy of just the SSF settings
         self.settingsDict = settingsDict.copy() # This will be all the combined settings
+
+        # Determine our encoding while we're at it
+        if self.encoding is None and 'Encoding' in self.ssfDict: # See if the SSF file gives some help to us
+            ssfEncoding = self.ssfDict['Encoding']
+            if ssfEncoding == '65001': self.encoding = 'utf-8'
+            else:
+                if Globals.verbosityLevel > 0:
+                    print( t("__init__: File encoding in SSF is set to '{}'").format( ssfEncoding ) )
+                if ssfEncoding.isdigit():
+                    self.encoding = 'cp' + ssfEncoding
+                    if Globals.verbosityLevel > 0:
+                        print( t("__init__: Switched to '{}' file encoding").format( self.encoding ) )
+                else:
+                    logging.critical( t("__init__: Unsure how to handle '{}' file encoding").format( ssfEncoding ) )
     # end of USFMBible.loadSSFData
 
 

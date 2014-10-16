@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # DigitalBiblePlatform.py
-#   Last modified: 2014-10-02 (also update ProgVersion below)
+#   Last modified: 2014-10-14 (also update ProgVersion below)
 #
 # Module handling online DBP resources
 #
@@ -65,7 +65,7 @@ More details are available from http://www.DigitalBiblePlatform.com.
 
 ShortProgName = "DigitalBiblePlatform"
 ProgName = "Digital Bible Platform handler"
-ProgVersion = "0.11"
+ProgVersion = "0.12"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -137,7 +137,7 @@ class DBPBibles:
         self.URLTest = "api/apiversion"
         self.onlineVersion = None
         result = self.getOnlineData( self.URLTest )
-        if 'Version' in result: self.onlineVersion = result['Version']
+        if result and 'Version' in result: self.onlineVersion = result['Version']
 
         self.languageList = self.versionList = self.volumeList = self.volumeNameDict = self.EnglishVolumeNameDict = None
     # end of DBPBibles.__init__
