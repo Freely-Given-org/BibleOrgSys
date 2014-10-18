@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMFile.py
-#   Last modified: 2014-09-15 (also update ProgVersion below)
+#   Last modified: 2014-10-18 (also update ProgVersion below)
 #
 # SFM (Standard Format Marker) data file reader
 #
@@ -26,23 +26,65 @@
 """
 Module for reading UTF-8 USFM (Unified Standard Format Marker) Bible file.
 
-  USFMFile: A "flat" file, read line by line into a list.
-            This could be any kind of SFM data.
+  USFMFile: A "flat" text file, read line by line into a list.
 
   The USFM and its data field are read into a 2-tuple and saved (in order) in the list.
 
-  Gives a fatal error (IOError) if file doesn't exist.
+  Raises an IOError error if file doesn't exist.
 """
 
 
+ShortProgName = "USFMFile"
 ProgName = "USFM File loader"
-ProgVersion = "0.84"
+ProgVersion = "0.85"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
 import logging, sys
 
 import Globals
+
+
+DUMMY_VALUE = 999999 # Some number bigger than the number of characters in a line
+
+
+
+def splitMarkerText( line ):
+    """
+    Given a line of text (may be empty),
+        returns a backslash marker and the text.
+
+    Returns None for the backslash marker if there isn't one.
+    Returns an empty string for the text if there isn't any.
+    """
+    if not line: return None, ''
+    if line[0] != '\\': return None, line # Not a USFM line
+
+    # We have a line that starts with a backslash
+    # The marker can end with a space, asterisk, or another marker
+    lineAfterBackslash = line[1:]
+    si1 = lineAfterBackslash.find( ' ' )
+    si2 = lineAfterBackslash.find( '*' )
+    si3 = lineAfterBackslash.find( '\\' )
+    if si1==-1: si1 = DUMMY_VALUE
+    if si2==-1: si2 = DUMMY_VALUE
+    if si3==-1: si3 = DUMMY_VALUE
+    si = min( si1, si2, si3 ) # Find the first terminating character (if any)
+
+    if si == DUMMY_VALUE: # The line is only the marker
+        return lineAfterBackslash, ''
+    else:
+        if si == si3: # Marker stops before a backslash
+            marker = lineAfterBackslash[:si3]
+            text = lineAfterBackslash[si3:]
+        elif si == si2: # Marker stops at an asterisk
+            marker = lineAfterBackslash[:si2+1]
+            text = lineAfterBackslash[si2+1:]
+        elif si == si1: # Marker stops before a space
+            marker = lineAfterBackslash[:si1]
+            text = lineAfterBackslash[si1+1:] # We drop the space completely
+    return marker, text
+# end if splitMarkerText
 
 
 
@@ -54,6 +96,8 @@ class USFMFile:
 
     def __init__(self):
         self.lines = []
+    # end of USFMFile.__init__
+
 
     def __str__(self):
         """
@@ -67,31 +111,32 @@ class USFMFile:
         for line in self.lines:
             result += ('\n' if result else '') + str( line )
         return result
+    # end of USFMFile.__str__
 
-    def read( self, sfm_filename, ignoreSFMs=None, encoding=None ):
+
+    def read( self, usfm_filename, ignoreSFMs=None, encoding=None ):
         """Read a simple USFM (Unified Standard Format Marker) file into a list of tuples.
 
-        @param sfm_filename: The filename
-        @type sfm_filename: string
+        @param usfm_filename: The filename
+        @type usfm_filename: string
         @param key: The SFM record marker (not including the backslash)
         @type encoding: string
         @rtype: list
         @return: list of lists containing the records
         """
-        #print( "USFMFile.read( {}, {}, {} )".format( repr(sfm_filename), repr(ignoreSFMs), repr(encoding) ) )
+        #print( "USFMFile.read( {}, {}, {} )".format( repr(usfm_filename), repr(ignoreSFMs), repr(encoding) ) )
 
         # Check/handle parameters
         if ignoreSFMs is None: ignoreSFMs = ()
         if encoding is None: encoding = 'utf-8'
 
-        dummyValue = 999999 # Some number bigger than the number of characters in a line
         lastLine, lineCount, result = '', 0, []
-        with open( sfm_filename, encoding=encoding ) as ourFile: # Automatically closes the file when done
+        with open( usfm_filename, encoding=encoding ) as ourFile: # Automatically closes the file when done
             try:
                 for line in ourFile:
                     lineCount += 1
                     if lineCount==1 and encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF
-                        logging.info( "USFMFile: Detected UTF-16 Byte Order Marker in {}".format( sfm_filename ) )
+                        logging.info( "USFMFile: Detected UTF-16 Byte Order Marker in {}".format( usfm_filename ) )
                         line = line[1:] # Remove the UTF-8 Byte Order Marker
                     if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                     if not line: continue # Just discard blank lines
@@ -103,7 +148,7 @@ class USFMFile:
                     if line[0]!='\\': # Not a SFM line
                         if len(result)==0: # We don't have any SFM data lines yet
                             if Globals.verbosityLevel > 2:
-                                logging.error( "Non-USFM line in " + sfm_filename + " -- line ignored at #" + str(lineCount) )
+                                logging.error( "Non-USFM line in " + usfm_filename + " -- line ignored at #" + str(lineCount) )
                             #print( "SFMFile.py: XXZXResult is", result, len(line) )
                             #for x in range(0, min(6,len(line))):
                                 #print( x, "'" + str(ord(line[x])) + "'" )
@@ -120,12 +165,12 @@ class USFMFile:
                     si1 = lineAfterBackslash.find( ' ' )
                     si2 = lineAfterBackslash.find( '*' )
                     si3 = lineAfterBackslash.find( '\\' )
-                    if si1==-1: si1 = dummyValue
-                    if si2==-1: si2 = dummyValue
-                    if si3==-1: si3 = dummyValue
+                    if si1==-1: si1 = DUMMY_VALUE
+                    if si2==-1: si2 = DUMMY_VALUE
+                    if si3==-1: si3 = DUMMY_VALUE
                     si = min( si1, si2, si3 )
 
-                    if si != dummyValue:
+                    if si != DUMMY_VALUE:
                         if si == si3: # Marker stops before a backslash
                             marker = lineAfterBackslash[:si3]
                             text = lineAfterBackslash[si3:]
@@ -145,7 +190,7 @@ class USFMFile:
 
             except UnicodeError as err:
                 print( "Unicode error:", sys.exc_info()[0], err )
-                logging.critical( "Invalid line in " + sfm_filename + " -- line ignored at #" + str(lineCount) )
+                logging.critical( "Invalid line in " + usfm_filename + " -- line ignored at #" + str(lineCount) )
                 if lineCount > 1: print( 'Previous line was: ', lastLine )
                 #print( line )
                 #raise

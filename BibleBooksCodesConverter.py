@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodesConverter.py
-#   Last modified: 2014-01-26 by RJH (also update ProgVersion below)
+#   Last modified: 2014-10-18 by RJH (also update ProgVersion below)
 #
 # Module handling BibleBooksCodes.xml to produce C and Python data tables
 #
@@ -27,8 +27,9 @@
 Module handling BibleBooksCodes.xml and to export to JSON, C, and Python data tables.
 """
 
+ShortProgName = "BibleBooksCodesConverter"
 ProgName = "Bible Books Codes converter"
-ProgVersion = "0.72"
+ProgVersion = "0.73"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -295,8 +296,6 @@ class BibleBooksCodesConverter:
             intID = int( ID )
             sequenceNumber = element.find("sequenceNumber").text
             intSequenceNumber = int( sequenceNumber )
-            typicalSection = element.find("typicalSection").text
-            if Globals.debugFlag: assert( typicalSection in ('OT','OT+','NT','NT+','DC','PS','FRT','BAK',) )
             # The optional elements are set to None if they don't exist
             expectedChapters = None if element.find("expectedChapters") is None else element.find("expectedChapters").text
             SBLAbbreviation = None if element.find("SBLAbbreviation") is None else element.find("SBLAbbreviation").text
@@ -314,6 +313,10 @@ class BibleBooksCodesConverter:
             DrupalBibleAbbreviation = None if element.find("DrupalBibleAbbreviation") is None else element.find("DrupalBibleAbbreviation").text
             ByzantineAbbreviation = None if element.find("ByzantineAbbreviation") is None else element.find("ByzantineAbbreviation").text
             possibleAlternativeBooks = None if element.find("possibleAlternativeBooks") is None else element.find("possibleAlternativeBooks").text.split(',')
+            if element.find("typicalSection") is None: typicalSection = None
+            else:
+                typicalSection = element.find("typicalSection").text
+                if Globals.debugFlag: assert( typicalSection in ('OT','OT+','NT','NT+','DC','PS','FRT','BAK',) )
 
             # Now put it into my dictionaries for easy access
             # This part should be customized or added to for however you need to process the data

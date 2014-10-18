@@ -117,7 +117,7 @@ class SimpleVerseKey():
             assert( isinstance( C, str ) and 1<=len(C)<=3 )
             assert( isinstance( V, str ) and 1<=len(V)<=3 )
             assert( isinstance( S, str ) and len(S)<3 )
-            assert( BBB in Globals.BibleBooksCodes )
+            assert( BBB in Globals.BibleBooksCodes or BBB=='   ' )
             for checkChar in ( ' -,.:' ):
                 assert( checkChar not in BBB )
                 assert( checkChar not in C )
