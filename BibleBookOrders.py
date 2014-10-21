@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBookOrders.py
-#   Last modified: 2014-10-07 (also update ProgVersion below)
+#   Last modified: 2014-10-19 (also update ProgVersion below)
 #
 # Module handling BibleBookOrderSystems
 #
@@ -29,7 +29,7 @@ Module handling BibleBookOrder systems.
 
 ShortProgName = "BibleBookOrders"
 ProgName = "Bible Book Order Systems handler"
-ProgVersion = "0.87"
+ProgVersion = "0.88"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -41,6 +41,20 @@ from gettext import gettext as _
 #from singleton import singleton
 
 import Globals
+
+
+
+def t( messageString ):
+    """
+    Prepends the module name to a error or warning message string
+        if we are in debug mode.
+    Returns the new string.
+    """
+    try: nameBit, errorBit = messageString.split( ': ', 1 )
+    except ValueError: nameBit, errorBit = '', messageString
+    if Globals.debugFlag or debuggingThisModule:
+        nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
+    return '{}{}'.format( nameBit, _(errorBit) )
 
 
 
@@ -60,7 +74,8 @@ class BibleBookOrderSystems:
         """
         if Globals.debugFlag and debuggingThisModule: print( "BibleBookOrderSystems:__init__()" )
         self.__DataDicts = self.__DataLists = None # We'll import into these in loadData
-    # end of __init__
+    # end of BibleBookOrderSystems.__init__
+
 
     def loadData( self, XMLFolder=None ):
         """ Loads the XML data file and imports it to dictionary format (if not done already). """
@@ -96,7 +111,8 @@ class BibleBookOrderSystems:
         if (Globals.debugFlag and debuggingThisModule) or Globals.verbosityLevel > 3:
             print( "BibleBookOrderSystems:loadData({}) loaded {} systems".format( XMLFolder, len(self.__DataDicts) ) )
         return self
-    # end of loadData
+    # end of BibleBookOrderSystems.loadData
+
 
     def __str__( self ):
         """
@@ -108,23 +124,27 @@ class BibleBookOrderSystems:
         result = "BibleBookOrders object"
         result += ('\n' if result else '') + "  Number of systems = {}".format( len(self.__DataDicts) )
         return result
-    # end of __str__
+    # end of BibleBookOrderSystems.__str__
+
 
     def __len__( self ):
         """ Returns the number of systems loaded. """
         assert( len(self.__DataDicts) == len(self.__DataLists) )
         return len( self.__DataDicts )
-    # end of __len__
+    # end of BibleBookOrderSystems.__len__
+
 
     def __contains__( self, name ):
         """ Returns True/False if the name is in this system. """
         return name in self.__DataLists
-    # end of __contains__
+    # end of BibleBookOrderSystems.__contains__
+
 
     def getAvailableBookOrderSystemNames( self ):
         """ Returns a list of available system name strings. """
         return [x for x in self.__DataLists]
-    # end of getAvailableBookOrderSystemNames
+    # end of BibleBookOrderSystems.getAvailableBookOrderSystemNames
+
 
     def getBookOrderSystem( self, systemName ):
         """ Returns two dictionaries and a list object."""
@@ -133,22 +153,26 @@ class BibleBookOrderSystems:
         # else
         logging.error( _("No '{}' system in Bible Book Orders").format( systemName ) )
         if Globals.verbosityLevel > 2: logging.error( _("Available systems are {}").format( self.getAvailableBookOrderSystemNames() ) )
-    # end of getBookOrderSystem
+    # end of BibleBookOrderSystems.getBookOrderSystem
+
 
     def numBooks( self, systemName ):
         """ Returns the number of books in this system. """
         return len( self.__DataLists[systemName] )
-    # end of numBooks
+    # end of BibleBookOrderSystems.numBooks
+
 
     def containsBook( self, systemName, BBB ):
         """ Return True if the book is in this system. """
         return BBB in self.__DataLists[systemName]
-    # end of containsBook
+    # end of BibleBookOrderSystems.containsBook
+
 
     def getBookOrderList( self, systemName ):
         """ Returns the list of BBB book reference abbreviations in the correct order. """
         return self.__DataLists[systemName]
-    # end of getBookOrderList
+    # end of BibleBookOrderSystems.getBookOrderList
+
 
     def checkBookOrderSystem( self, thisSystemName, bookOrderSchemeToCheck ):
         """
@@ -222,7 +246,7 @@ class BibleBookOrderSystems:
                 myFile.write( "</BibleBookOrderSystem>" )
 
         return systemMatchCount
-    # end of checkBookOrderSystem
+    # end of BibleBookOrderSystems.checkBookOrderSystem
 # end of BibleBookOrderSystems class
 
 
@@ -248,7 +272,8 @@ class BibleBookOrderSystem:
             print( "BibleBookOrderSystem:__init__({}) failed!".format( systemName ) )
             self.__BookOrderBookDict = self.__BookOrderNumberDict = self.__BookOrderList = None
         else: self.__BookOrderBookDict, self.__BookOrderNumberDict, self.__BookOrderList = results
-    # end of __init__
+    # end of BibleBookOrderSystem.__init__
+
 
     def __str__( self ):
         """
@@ -261,58 +286,70 @@ class BibleBookOrderSystem:
         result += ('\n' if result else '') + " {} book order system".format( self.__systemName )
         result += ('\n' if result else '') + "  Number of books = {}".format( self.numBooks() )
         return result
-    # end of __str__
+    # end of BibleBookOrderSystem.__str__
+
 
     def __len__( self ):
         """ Returns the number of books in this system. """
         try: return len( self.__BookOrderList )
         except: return None
-    # end of __len__
+    # end of BibleBookOrderSystem.__len__
+
 
     def numBooks( self ):
         """ Returns the number of books in this system. """
         return len( self.__BookOrderList )
-    # end of numBooks
+    # end of BibleBookOrderSystem.numBooks
+
 
     def __contains__( self, BBB ):
         """ Returns True/False if the book is in this system. """
         assert( len(BBB) == 3 )
         return BBB in self.__BookOrderList
-    # end of __contains__
+    # end of BibleBookOrderSystem.__contains__
+
 
     def containsBook( self, BBB ):
         """ Return True/False if the book is in this system. """
         assert( len(BBB) == 3 )
         return BBB in self.__BookOrderList
-    # end of containsBook
+    # end of BibleBookOrderSystem.containsBook
+
 
     def getBookOrderSystemName( self ):
         """ Return the book order system name. """
         return self.__systemName
-    # end of getBookOrderSystemName
+    # end of BibleBookOrderSystem.getBookOrderSystemName
 
     def getBookOrderPosition( self, BBB ):
         """ Returns the book position number (1..n). """
         assert( len(BBB) == 3 )
         return self.__BookOrderBookDict[BBB]
-    # end of getBookOrderPosition
+    # end of BibleBookOrderSystem.getBookOrderPosition
+
 
     def getBookAtOrderPosition( self, n ):
         """ Returns the BBB book reference abbreviation for the position number (1..n). """
         return self.__BookOrderNumberDict[n]
-    # end of getBookAtOrderPosition
+    # end of BibleBookOrderSystem.getBookAtOrderPosition
+
 
     def getBookOrderList( self ):
         """ Returns the list of BBB book reference abbreviations in the correct order. """
         return self.__BookOrderList
-    # end of getBookOrderList
+    # end of BibleBookOrderSystem.getBookOrderList
+
 
     def getPreviousBookCode( self, BBB ):
-        """ Returns the book (if any) before the given one. """
+        """
+        Returns the book (if any) before the given one.
+        Otherwise returns None.
+        """
         assert( len(BBB)==3 )
         previousPosition = self.__BookOrderBookDict[BBB] - 1
         if previousPosition in self.__BookOrderNumberDict: return self.__BookOrderNumberDict[previousPosition]
     # end of BibleBookOrderSystem.getNextBookCode
+
 
     def getNextBookCode( self, BBB ):
         """ Returns the book (if any) after the given one. """
@@ -320,6 +357,7 @@ class BibleBookOrderSystem:
         nextPosition = self.__BookOrderBookDict[BBB] + 1
         if nextPosition in self.__BookOrderNumberDict: return self.__BookOrderNumberDict[nextPosition]
     # end of BibleBookOrderSystem.getNextBookCode
+
 
     def correctlyOrdered( self, BBB1, BBB2 ):
         """ Returns True/False if the two books are in the correct order. """
