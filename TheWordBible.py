@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # TheWordBible.py
-#   Last modified: 2014-10-03 by RJH (also update ProgVersion below)
+#   Last modified: 2014-10-25 by RJH (also update ProgVersion below)
 #
 # Module handling "theWord" Bible module files
 #
@@ -51,7 +51,7 @@ e.g.,
 """
 
 ProgName = "theWord Bible format handler"
-ProgVersion = "0.35"
+ProgVersion = "0.36"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -68,8 +68,7 @@ from USFMMarkers import OFTEN_IGNORED_USFM_HEADER_MARKERS, removeUSFMCharacterFi
 from BibleOrganizationalSystems import BibleOrganizationalSystem
 
 
-BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
-
+BOS = None
 
 filenameEndingsToAccept = ('.OT','.NT','.ONT','.OTX','.NTX','.ONTX',) # Must be UPPERCASE
 
@@ -219,6 +218,9 @@ def theWordGetBBBCV( lineNumber, volumeType='BOTH' ):
     """
     assert( 0 <= lineNumber < 32000 )
     assert( volumeType in ('OT','NT','BOTH',) )
+
+    global BOS
+    if BOS is None: BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
 
     if volumeType == 'OT':
         bookCount, books, totalLines, bookLines = theWordOTBookCount, theWordOTBooks, theWordOTTotalLines, theWordOTBookLines
@@ -995,6 +997,9 @@ class TheWordBible( Bible ):
         Load a single source file and load book elements.
         """
         if Globals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
+
+        global BOS
+        if BOS is None: BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
 
         fileExtensionUpper = self.fileExtension.upper()
         assert( fileExtensionUpper in filenameEndingsToAccept )

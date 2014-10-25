@@ -63,14 +63,14 @@ See the supplied ReadMe.txt for more details.
   <header>
     <work>
       <version>0.23</version>
-      <date>2013-04-07</date>
+      <date>2014-10-23</date>
       <title>Bible organizational systems list</title>
       <contributor role="com">Robert Hunt</contributor>
       <rights>Public Domain</rights>
       <identifier type="URL">http://en.wikipedia.org/wiki/English_translations_of_the_Bible</identifier>
       <identifier type="URL">http://en.wikipedia.org/wiki/List_of_English_Bible_translations</identifier>
       <identifier type="URL">http://www.biblicaltraining.org/history-english-bible/daniel-wallace/foundations</identifier>
-    </work>
+</work>
   </header>
 
 
@@ -372,11 +372,13 @@ See the supplied ReadMe.txt for more details.
     <referenceAbbreviation>CB</referenceAbbreviation>
     <languageCode>eng</languageCode>
     <name>Coverdale Bible</name>
+    <comment>Title was "Biblia, The Bible, that is to say, the Holy Scriptures of Old and New Testament"</comment>
     <translator>Myles Coverdale</translator>
     <derivedFrom>LUT</derivedFrom>
     <derivedFrom>VUL</derivedFrom>
     <derivedFrom>TYN</derivedFrom>
-    <publicationDate>1535</publicationDate>
+    <comment>Also derived from: the Latin version of Paginus, the Zurich version</comment>
+    <publicationDate>October 4, 1535</publicationDate>
     <versificationSystem>None</versificationSystem>
     <punctuationSystem>English</punctuationSystem>
     <bookOrderSystem>EuropeanBible</bookOrderSystem>
@@ -386,6 +388,7 @@ See the supplied ReadMe.txt for more details.
                     MAT MRK LUK JHN ACT ROM CO1 CO2 GAL EPH PHP COL TH1 TH2 TI1 TI2 TIT PHM HEB JAM PE1 PE2 JN1 JN2 JN3 JDE REV</includesBooks>
     <url>http://en.wikipedia.org/wiki/Myles_Coverdale</url>
     <url>http://en.wikipedia.org/wiki/Coverdale_Bible</url>
+    <url>http://creation.com/coverdale</url>
   </BibleOrganizationalSystem>
 
   <BibleOrganizationalSystem type="revision">

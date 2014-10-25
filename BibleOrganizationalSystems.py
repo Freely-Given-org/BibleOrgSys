@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleOrganizationalSystems.py
-#   Last modified: 2014-10-11 by RJH (also update ProgVersion below)
+#   Last modified: 2014-10-22 by RJH (also update ProgVersion below)
 #
 # Module handling BibleOrganizationalSystems
 #
@@ -29,7 +29,7 @@ Module handling BibleOrganizationalSystems.
 
 ShortProgName = "BibleOrganizationalSystems"
 ProgName = "Bible Organization Systems handler"
-ProgVersion = "0.28"
+ProgVersion = "0.29"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -391,6 +391,7 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         """ Returns the book (if any) before the given one. """
         while True:
             previousCode = BibleBookOrderSystem.getPreviousBookCode( self, BBB )
+            if previousCode is None: return None
             if self.containsBook( previousCode ): return previousCode
             BBB = previousCode
     # end of BibleOrganizationalSystem.getNextBookCode
@@ -400,6 +401,7 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         """ Returns the book (if any) after the given one. """
         while True:
             nextCode = BibleBookOrderSystem.getNextBookCode( self, BBB )
+            if nextCode is None: return None
             if self.containsBook( nextCode ): return nextCode
             BBB = nextCode
     # end of BibleOrganizationalSystem.getNextBookCode
