@@ -77,7 +77,7 @@ debuggingThisModule = False
 import os, logging
 from gettext import gettext as _
 
-import Globals
+import BibleOrgSysGlobals
 
 
 
@@ -89,7 +89,7 @@ def t( messageString ):
     """
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
-    if Globals.debugFlag or debuggingThisModule:
+    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit, _(errorBit) )
 
@@ -107,17 +107,17 @@ class SimpleVerseKey():
         and no checking is done on the validity of the CV values.
     """
     def __init__( self, BBB, C, V, S=None ):
-        if Globals.debugFlag and debuggingThisModule:
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( t("__init__( {} {} {} {} )").format( BBB, repr(C), repr(V), repr(S) ) )
         if S is None: S = ''
         if isinstance( C, int ): C = str( C ) # Make sure we have strings
         if isinstance( V, int ): V = str( V )
-        if Globals.debugFlag:
+        if BibleOrgSysGlobals.debugFlag:
             assert( isinstance( BBB, str ) and len(BBB) == 3 )
             assert( isinstance( C, str ) and 1<=len(C)<=3 )
             assert( isinstance( V, str ) and 1<=len(V)<=3 )
             assert( isinstance( S, str ) and len(S)<3 )
-            assert( BBB in Globals.BibleBooksCodes or BBB=='   ' )
+            assert( BBB in BibleOrgSysGlobals.BibleBooksCodes or BBB=='   ' )
             for checkChar in ( ' -,.:' ):
                 assert( checkChar not in BBB )
                 assert( checkChar not in C )
@@ -177,7 +177,7 @@ class SimpleVerseKey():
     # end of SimpleVerseKey.getVerseNumberInt
 
     def getOSISBookAbbreviation( self ):
-        return Globals.BibleBooksCodes.getOSISAbbreviation( self.BBB )
+        return BibleOrgSysGlobals.BibleBooksCodes.getOSISAbbreviation( self.BBB )
     def getOSISReference( self ):
         return "{}.{}.{}".format( self.getOSISBookAbbreviation(), self.C, self.V )
 # end of class SimpleVerseKey
@@ -188,7 +188,7 @@ def demo():
     """
     Short program to demonstrate/test the above class(es).
     """
-    if Globals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
     vK = SimpleVerseKey( 'GEN', '1', '1' )
     print( vK, "and", vK.getOSISReference() )
@@ -197,10 +197,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of VerseReferences.py

@@ -38,7 +38,7 @@ from gettext import gettext as _
 from xml.etree.ElementTree import ElementTree, ParseError
 import urllib.request
 
-import Globals
+import BibleOrgSysGlobals
 
 
 xmllintError = ("No error", "Unclassified", "Error in DTD", "Validation error", "Validation error", "Error in schema compilation", "Error writing output", "Error in pattern", "Error in reader registration", "Out of memory")
@@ -93,7 +93,7 @@ class XMLFile():
         @rtype: string
         """
         result = "XML file object"
-        if Globals.debugFlag or Globals.verbosityLevel>2: result += ' v' + ProgVersion
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: result += ' v' + ProgVersion
         if self.sourceFilename: result += ('\n' if result else '') + "  Source filename: " + self.sourceFilename
         if self.sourceFolder: result += ('\n' if result else '') + "  Source folder: " + self.sourceFolder
         if self.sourceFilepath: result += ('\n' if result else '') + "  Source filepath: " + self.sourceFilepath
@@ -111,11 +111,11 @@ class XMLFile():
         """
         errorString = None
 
-        if Globals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
         try:
             self.tree = ElementTree().parse( self.sourceFilepath )
             assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
-            if Globals.verbosityLevel > 2: print( "  ElementTree loaded the xml file {}.".format( self.sourceFilepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  ElementTree loaded the xml file {}.".format( self.sourceFilepath ) )
             self.validatedByLoading = True
         except FileNotFoundError:
             errorString = sys.exc_info()[1]
@@ -148,15 +148,15 @@ class XMLFile():
             checkProgramErrorOutputString = checkProgramErrorOutputBytes.decode( encoding="utf-8", errors="replace" )
 
         if checkProcess.returncode != 0:
-            if Globals.verbosityLevel > 1: print( "  WARNING: xmllint gave an error on the {} XML file: {} = {}" \
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "  WARNING: xmllint gave an error on the {} XML file: {} = {}" \
                             .format( self.sourceFilepath, checkProcess.returncode, xmllintError[checkProcess.returncode] ) )
             self.validatedWithLint = False
         else:
-            if Globals.verbosityLevel > 2: print( "  xmllint validated the xml file {}.".format( self.sourceFilepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  xmllint validated the xml file {}.".format( self.sourceFilepath ) )
             self.validatedWithLint = True
 
-        if Globals.debugFlag: print( "cPOS  = '{}'".format( checkProgramOutputString ) )
-        if Globals.debugFlag: print( "cPEOS = '{}'".format( checkProgramErrorOutputString ) )
+        if BibleOrgSysGlobals.debugFlag: print( "cPOS  = '{}'".format( checkProgramOutputString ) )
+        if BibleOrgSysGlobals.debugFlag: print( "cPEOS = '{}'".format( checkProgramErrorOutputString ) )
         return self.validatedWithLint, checkProgramOutputString, checkProgramErrorOutputString
     # end of XMLFile.validateWithLint
 
@@ -171,7 +171,7 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
     AutoProcessesFolder = "../../"
     osisSchemaHTTP = 'http://ebible.org/osisCore.2.1.1.xsd'
@@ -181,7 +181,7 @@ def demo():
     def doTest( folder, filenameList, schema=None ):
         for testFilename in filenameList:
             #testFilepath = os.path.join( folder, testFilename )
-            #if Globals.verbosityLevel > 0: print( "\n  Test filepath is '{}'".format( testFilepath ) )
+            #if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n  Test filepath is '{}'".format( testFilepath ) )
 
             # Demonstrate the XML file class
             #xf = XMLFile( testFilepath, schema=schema )
@@ -202,27 +202,27 @@ def demo():
             "Vietnamese Bible.xmm", )
         bad = ( "EPS99", )
         allOfThem = good + nonEnglish + bad
-        if Globals.verbosityLevel > 1: print( "\n\nDemonstrating the XMLFile class with OpenSong Bibles..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\n\nDemonstrating the XMLFile class with OpenSong Bibles..." )
         doTest( testFolder, allOfThem )
 
     if 1: # Test some OSIS Bibles
         testFolder = "../../../../../Data/Work/Bibles/Formats/OSIS/kjvxml from DMSmith/"
         testNames = ( "kjv.xml", "kjvfull.xml", "kjvlite.xml", )
-        if Globals.verbosityLevel > 1: print( "\n\nDemonstrating the XMLFile class with OSIS Bibles (no schema)..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\n\nDemonstrating the XMLFile class with OSIS Bibles (no schema)..." )
         doTest( testFolder, testNames )
-        if Globals.verbosityLevel > 1: print( "\n\nDemonstrating the XMLFile class with OSIS Bibles (file schema)..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\n\nDemonstrating the XMLFile class with OSIS Bibles (file schema)..." )
         doTest( testFolder, testNames, schema=osisSchemaFile )
-        if Globals.verbosityLevel > 1: print( "\n\nDemonstrating the XMLFile class with OSIS Bibles (web schema)..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\n\nDemonstrating the XMLFile class with OSIS Bibles (web schema)..." )
         doTest( testFolder, (testNames[0],), schema=osisSchemaHTTP )
 # end of demo
 
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of XMLFile.py

@@ -35,7 +35,7 @@ ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 import os
 from gettext import gettext as _
 
-import Globals, Hebrew
+import BibleOrgSysGlobals, Hebrew
 from OSISXMLBible import OSISXMLBible
 from InternalBibleBook import InternalBibleEntry, InternalBibleEntryList
 
@@ -138,7 +138,7 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
     from VerseReferences import SimpleVerseKey
 
@@ -147,7 +147,7 @@ def demo():
     testFile = "../morphhb/wlc/Dan.xml" # Hebrew Daniel
     testReference = ('DAN', '1', '5')
     testKey = SimpleVerseKey( testReference[0], testReference[1], testReference[2] )
-    if Globals.verbosityLevel > 1: print( "\nDemonstrating the Hebrew WLC class..." )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDemonstrating the Hebrew WLC class..." )
     #print( testFile, testReference )
     wlc = HebrewWLC( testFile )
     wlc.load() # Load and process the XML
@@ -174,10 +174,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser, exportAvailable=True )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of HebrewWLC.py

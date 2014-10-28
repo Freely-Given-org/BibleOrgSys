@@ -36,7 +36,7 @@ import os, logging
 from gettext import gettext as _
 
 
-import Globals
+import BibleOrgSysGlobals
 
 
 class USXFilenames:
@@ -62,7 +62,7 @@ class USXFilenames:
                         break
                 matched = False
                 if foundLength>=6 and containsDigits and foundExtBit=='.'+self.fileExtension:
-                    for USXBookCode,USXDigits,BBB in Globals.BibleBooksCodes.getAllUSXBooksCodeNumberTriples():
+                    for USXBookCode,USXDigits,BBB in BibleOrgSysGlobals.BibleBooksCodes.getAllUSXBooksCodeNumberTriples():
                         if USXDigits in foundFileBit and (USXBookCode in foundFileBit or USXBookCode.upper() in foundFileBit):
                             digitsIndex = foundFileBit.index( USXDigits )
                             USXBookCodeIndex = foundFileBit.index(USXBookCode) if USXBookCode in foundFileBit else foundFileBit.index(USXBookCode.upper())
@@ -77,7 +77,7 @@ class USXFilenames:
                             matched = True
                             break
                 if matched: break
-        if Globals.verbosityLevel>2 and not matched: logging.info( _("Unable to recognize valid USX files in ") + folder )
+        if BibleOrgSysGlobals.verbosityLevel>2 and not matched: logging.info( _("Unable to recognize valid USX files in ") + folder )
         #print( "USXFilenames: pattern='{}' fileExtension='{}'".format( self.pattern, self.fileExtension ) )
     # end of __init__
 
@@ -113,14 +113,14 @@ class USXFilenames:
         """
         resultList = []
         if self.pattern:
-            for USFMBookCode,USXDigits,BBB in Globals.BibleBooksCodes.getAllUSXBooksCodeNumberTriples():
+            for USFMBookCode,USXDigits,BBB in BibleOrgSysGlobals.BibleBooksCodes.getAllUSXBooksCodeNumberTriples():
                 filename = "------" # Six characters
                 filename = filename[:self.digitsIndex] + USXDigits + filename[self.digitsIndex+len(USXDigits):]
                 filename = filename[:self.USXBookCodeIndex] + ( USFMBookCode.upper() if 'BBB' in self.pattern else USFMBookCode ) + filename[self.USXBookCodeIndex+len(USFMBookCode):]
                 filename += '.' + self.fileExtension
                 #print( "getPossibleFilenames: Filename is '{}'".format( filename ) )
                 resultList.append( (BBB,filename,) )
-        return Globals.BibleBooksCodes.getSequenceList( resultList )
+        return BibleOrgSysGlobals.BibleBooksCodes.getSequenceList( resultList )
     # end of getPossibleFilenames
 
 
@@ -190,7 +190,7 @@ class USXFilenames:
 
 def demo():
     """ Demonstrate finding files in some USX Bible folders. """
-    if Globals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
     # These are relative paths -- you can replace these with your test folder(s)
     testFolders = ('Tests/DataFilesForTests/USXTest1/', 'Tests/DataFilesForTests/USXTest2/',
@@ -208,10 +208,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of USXFilenames.py

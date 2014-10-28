@@ -37,7 +37,7 @@ debuggingThisModule = False
 import os, unicodedata
 from gettext import gettext as _
 
-import Globals
+import BibleOrgSysGlobals
 
 
 # Consonants
@@ -137,7 +137,7 @@ cantillationMarks = ( etnahta, segolAccent, shalshelet, zaqefQatan, zaqefGadol, 
 sofPasuq = '׃'
 
 
-if Globals.debugFlag and debuggingThisModule: # Check that our tables have no obvious errors
+if BibleOrgSysGlobals.debugFlag and debuggingThisModule: # Check that our tables have no obvious errors
     for j,letter in enumerate( consonants ):
         #print( j, letter )
         assert( consonants.count(letter)==1 )
@@ -163,8 +163,8 @@ if Globals.debugFlag and debuggingThisModule: # Check that our tables have no ob
         assert( mark not in vowelPoints )
         assert( mark not in otherMarks )
 
-    Globals.printUnicodeInfo( vowelPoints, "Vowel points" )
-    Globals.printUnicodeInfo( cantillationMarks, "Cantillation marks" )
+    BibleOrgSysGlobals.printUnicodeInfo( vowelPoints, "Vowel points" )
+    BibleOrgSysGlobals.printUnicodeInfo( cantillationMarks, "Cantillation marks" )
 
 
 
@@ -303,7 +303,7 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
     # Demonstrate the Hebrew class
     print( "These all display left-to-right in the terminal unfortunately  :-(" )
@@ -340,10 +340,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser, exportAvailable=True )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of Hebrew.py

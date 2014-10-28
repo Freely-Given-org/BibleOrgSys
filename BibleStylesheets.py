@@ -39,7 +39,7 @@ import os, logging
 from gettext import gettext as _
 #from collections import OrderedDict
 
-import Globals
+import BibleOrgSysGlobals
 import SFMFile
 
 
@@ -52,7 +52,7 @@ def t( messageString ):
     """
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
-    if Globals.debugFlag or debuggingThisModule:
+    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit, _(errorBit) )
 # end of t
@@ -152,19 +152,19 @@ class BibleStylesheet():
     def validate( self ):
         from InternalBibleInternals import BOS_ALL_ADDED_MARKERS
         for USFMMarker, styleData in self.dataDict.items():
-            if Globals.debugFlag and debuggingThisModule: print( t("validate"), USFMMarker, styleData )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( t("validate"), USFMMarker, styleData )
             if USFMMarker[0] == '*': USFMMarker = USFMMarker[1:] # Remove any leading asterisk for the check
-            assert( USFMMarker in Globals.USFMMarkers or USFMMarker in BOS_ALL_ADDED_MARKERS )
+            assert( USFMMarker in BibleOrgSysGlobals.USFMMarkers or USFMMarker in BOS_ALL_ADDED_MARKERS )
     # end of BibleStylesheet.load
 
 
     def importParatextStylesheet( self, folder, filename, encoding='utf-8' ):
-        if Globals.verbosityLevel > 1: print( "Importing {} Paratext stylesheet...".format( filename ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Importing {} Paratext stylesheet...".format( filename ) )
         PTSS = ParatextStylesheet().load( folder, filename, encoding )
         self.name = PTSS.name
         self.filepath = PTSS.filepath
         self.dataDict = {}
-        for marker in Globals.USFMMarkers:
+        for marker in BibleOrgSysGlobals.USFMMarkers:
             #print( marker )
             try: PTFormatting = PTSS.getDict( marker )
             except: PTFormatting = None # Just ignore the error
@@ -173,7 +173,7 @@ class BibleStylesheet():
                 for field, value in PTFormatting.items():
                     print( marker, field, value )
                 self.dataDict[marker] = formatSpecification
-            elif Globals.debugFlag: print( "USFM {} marker not included in {} Paratext stylesheet".format( marker, filename ) )
+            elif BibleOrgSysGlobals.debugFlag: print( "USFM {} marker not included in {} Paratext stylesheet".format( marker, filename ) )
             #export the marker
     # end of BibleStylesheet.importParatextStylesheet
 
@@ -195,18 +195,18 @@ class BibleStylesheet():
         @rtype: string
         """
         result = "BibleStylesheet object"
-        if Globals.debugFlag or Globals.verbosityLevel>2: result += ' v' + ProgVersion
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: result += ' v' + ProgVersion
         if self.name: result += ('\n' if result else '') + "  Name: " + self.name
         if self.filepath: result += ('\n' if result else '') + "  From: " + self.filepath
         if self.dataDict:
             result += ('\n' if result else '') + "  Number of records = " + str( len(self.dataDict) )
-        if Globals.debugFlag or Globals.verbosityLevel>2:
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
             if self.smallestSize:
                 result += ('\n' if result else '') + "  Smallest record size: {} markers".format( self.smallestSize )
             if self.largestSize:
                 result += ('\n' if result else '') + "  Largest record size: {} markers".format( self.largestSize )
             if self.markerList: result += ('\n' if result else '') + "  Marker list: {}".format( self.markerList )
-            if Globals.debugFlag or Globals.verbosityLevel>3:
+            if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
                 if self.markerSets: result += ('\n' if result else '') + "  Marker sets: {}".format( self.markerSets )
         return result
     # end of BibleStylesheet.__str__
@@ -278,7 +278,7 @@ class ParatextStylesheet():
     def validate( self ):
         for USFMMarker in self.dataDict:
             #print( USFMMarker )
-            if USFMMarker not in Globals.USFMMarkers:
+            if USFMMarker not in BibleOrgSysGlobals.USFMMarkers:
                 logging.warning( t("ParatextStylesheet validate: found unexpected '{}' marker").format( USFMMarker ) )
     # end of ParatextStylesheet.load
 
@@ -301,18 +301,18 @@ class ParatextStylesheet():
         @rtype: string
         """
         result = "ParatextStylesheet object"
-        if Globals.debugFlag or Globals.verbosityLevel>2: result += ' v' + ProgVersion
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: result += ' v' + ProgVersion
         if self.name: result += ('\n' if result else '') + "  Name: " + self.name
         if self.filepath: result += ('\n' if result else '') + "  From: " + self.filepath
         if self.dataDict:
             result += ('\n' if result else '') + "  Number of records = " + str( len(self.dataDict) )
-        if Globals.debugFlag or Globals.verbosityLevel>2:
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
             if self.smallestSize:
                 result += ('\n' if result else '') + "  Smallest record size: {} markers".format( self.smallestSize )
             if self.largestSize:
                 result += ('\n' if result else '') + "  Largest record size: {} markers".format( self.largestSize )
             if self.markerList: result += ('\n' if result else '') + "  Marker list: {}".format( self.markerList )
-            if Globals.debugFlag or Globals.verbosityLevel>3:
+            if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>3:
                 if self.markerSets: result += ('\n' if result else '') + "  Marker sets: {}".format( self.markerSets )
         return result
     # end of ParatextStylesheet.__str__
@@ -342,7 +342,7 @@ def demo():
     """
     Short program to demonstrate/test the above class(es).
     """
-    if Globals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
     if 1: # Try the default one
         print( "\nTrying default Bible stylesheet..." )
@@ -390,10 +390,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of BibleStylesheets.py

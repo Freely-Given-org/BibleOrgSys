@@ -39,7 +39,7 @@ from gettext import gettext as _
 from collections import OrderedDict
 
 from singleton import singleton
-import Globals
+import BibleOrgSysGlobals
 
 
 @singleton # Can only ever have one instance
@@ -67,7 +67,7 @@ class ISO_639_3_Languages:
         @rtype: string
         """
         result = "ISO_639_3_Languages object"
-        if Globals.debugFlag: assert( len(self.__IDDict) == len(self.__NameDict) )
+        if BibleOrgSysGlobals.debugFlag: assert( len(self.__IDDict) == len(self.__NameDict) )
         result += ('\n' if result else '') + "  Number of entries = {}".format( len(self.__IDDict) )
         return result
     # end of ISO_639_3_Languages.__str__
@@ -84,7 +84,7 @@ class ISO_639_3_Languages:
             and os.stat(standardPickleFilepath)[8] > os.stat(standardXMLFilepath)[8] \
             and os.stat(standardPickleFilepath)[9] > os.stat(standardXMLFilepath)[9]: # There's a newer pickle file
                 import pickle
-                if Globals.verbosityLevel > 2: print( "Loading pickle file {}...".format( standardPickleFilepath ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}...".format( standardPickleFilepath ) )
                 with open( standardPickleFilepath, 'rb') as pickleFile:
                     self.__IDDict, self.__NameDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
             else: # We have to load the XML
@@ -157,7 +157,7 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
 
     # Demo the languages object
     lg = ISO_639_3_Languages().loadData() # Doesn't reload the XML unnecessarily :)
@@ -189,10 +189,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of ISO_639_3_Languages.py

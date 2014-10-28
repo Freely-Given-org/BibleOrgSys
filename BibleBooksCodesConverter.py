@@ -42,7 +42,7 @@ from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree
 
 from singleton import singleton
-import Globals
+import BibleOrgSysGlobals
 
 
 
@@ -95,7 +95,7 @@ class BibleBooksCodesConverter:
             if XMLFilepath is None:
                 XMLFilepath = os.path.join( os.path.dirname(__file__), "DataFiles", self._filenameBase + ".xml" ) # Relative to module, not cwd
             self.__load( XMLFilepath )
-            if Globals.strictCheckingFlag:
+            if BibleOrgSysGlobals.strictCheckingFlag:
                 self.__validate()
         else: # The data must have been already loaded
             if XMLFilepath is not None and XMLFilepath!=self.__XMLFilepath: logging.error( _("Bible books codes are already loaded -- your different filepath of '{}' was ignored").format( XMLFilepath ) )
@@ -112,7 +112,7 @@ class BibleBooksCodesConverter:
         self.__XMLFilepath = XMLFilepath
         assert( self._XMLtree is None or len(self._XMLtree)==0 ) # Make sure we're not doing this twice
 
-        if Globals.verbosityLevel > 2: print( _("Loading BibleBooksCodes XML file from '{}'...").format( self.__XMLFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading BibleBooksCodes XML file from '{}'...").format( self.__XMLFilepath ) )
         self._XMLtree = ElementTree().parse( self.__XMLFilepath )
         assert( self._XMLtree ) # Fail here if we didn't load anything at all
 
@@ -121,18 +121,18 @@ class BibleBooksCodesConverter:
             if header.tag == self._headerTag:
                 self.XMLheader = header
                 self._XMLtree.remove( header )
-                Globals.checkXMLNoText( header, "header" )
-                Globals.checkXMLNoTail( header, "header" )
-                Globals.checkXMLNoAttributes( header, "header" )
+                BibleOrgSysGlobals.checkXMLNoText( header, "header" )
+                BibleOrgSysGlobals.checkXMLNoTail( header, "header" )
+                BibleOrgSysGlobals.checkXMLNoAttributes( header, "header" )
                 if len(header)>1:
                     logging.info( _("Unexpected elements in header") )
                 elif len(header)==0:
                     logging.info( _("Missing work element in header") )
                 else:
                     work = header[0]
-                    Globals.checkXMLNoText( work, "work in header" )
-                    Globals.checkXMLNoTail( work, "work in header" )
-                    Globals.checkXMLNoAttributes( work, "work in header" )
+                    BibleOrgSysGlobals.checkXMLNoText( work, "work in header" )
+                    BibleOrgSysGlobals.checkXMLNoTail( work, "work in header" )
+                    BibleOrgSysGlobals.checkXMLNoAttributes( work, "work in header" )
                     if work.tag == "work":
                         self.ProgVersion = work.find("version").text
                         self.dateString = work.find("date").text
@@ -160,10 +160,10 @@ class BibleBooksCodesConverter:
         expectedID = 1
         for j,element in enumerate(self._XMLtree):
             if element.tag == self._mainElementTag:
-                Globals.checkXMLNoText( element, element.tag )
-                Globals.checkXMLNoTail( element, element.tag )
-                if not self._compulsoryAttributes and not self._optionalAttributes: Globals.checkXMLNoAttributes( element, element.tag )
-                if not self._compulsoryElements and not self._optionalElements: Globals.checkXMLNoSubelements( element, element.tag )
+                BibleOrgSysGlobals.checkXMLNoText( element, element.tag )
+                BibleOrgSysGlobals.checkXMLNoTail( element, element.tag )
+                if not self._compulsoryAttributes and not self._optionalAttributes: BibleOrgSysGlobals.checkXMLNoAttributes( element, element.tag )
+                if not self._compulsoryElements and not self._optionalElements: BibleOrgSysGlobals.checkXMLNoSubelements( element, element.tag )
 
                 # Check compulsory attributes on this main element
                 for attributeName in self._compulsoryAttributes:
@@ -203,9 +203,9 @@ class BibleBooksCodesConverter:
                     if foundElement is None:
                         logging.error( _("Compulsory '{}' element is missing in record with ID '{}' (record {})").format( elementName, ID, j ) )
                     else:
-                        Globals.checkXMLNoTail( foundElement, foundElement.tag + " in " + element.tag )
-                        Globals.checkXMLNoAttributes( foundElement, foundElement.tag + " in " + element.tag )
-                        Globals.checkXMLNoSubelements( foundElement, foundElement.tag + " in " + element.tag )
+                        BibleOrgSysGlobals.checkXMLNoTail( foundElement, foundElement.tag + " in " + element.tag )
+                        BibleOrgSysGlobals.checkXMLNoAttributes( foundElement, foundElement.tag + " in " + element.tag )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( foundElement, foundElement.tag + " in " + element.tag )
                         if not foundElement.text:
                             logging.warning( _("Compulsory '{}' element is blank in record with ID '{}' (record {})").format( elementName, ID, j ) )
 
@@ -213,9 +213,9 @@ class BibleBooksCodesConverter:
                 for elementName in self._optionalElements:
                     foundElement = element.find( elementName )
                     if foundElement is not None:
-                        Globals.checkXMLNoTail( foundElement, foundElement.tag + " in " + element.tag )
-                        Globals.checkXMLNoAttributes( foundElement, foundElement.tag + " in " + element.tag )
-                        Globals.checkXMLNoSubelements( foundElement, foundElement.tag + " in " + element.tag )
+                        BibleOrgSysGlobals.checkXMLNoTail( foundElement, foundElement.tag + " in " + element.tag )
+                        BibleOrgSysGlobals.checkXMLNoAttributes( foundElement, foundElement.tag + " in " + element.tag )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( foundElement, foundElement.tag + " in " + element.tag )
                         if not foundElement.text:
                             logging.warning( _("Optional '{}' element is blank in record with ID '{}' (record {})").format( elementName, ID, j ) )
 
@@ -316,7 +316,7 @@ class BibleBooksCodesConverter:
             if element.find("typicalSection") is None: typicalSection = None
             else:
                 typicalSection = element.find("typicalSection").text
-                if Globals.debugFlag: assert( typicalSection in ('OT','OT+','NT','NT+','DC','PS','FRT','BAK',) )
+                if BibleOrgSysGlobals.debugFlag: assert( typicalSection in ('OT','OT+','NT','NT+','DC','PS','FRT','BAK',) )
 
             # Now put it into my dictionaries for easy access
             # This part should be customized or added to for however you need to process the data
@@ -510,7 +510,7 @@ class BibleBooksCodesConverter:
             folder = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles/" )
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + "_Tables.pickle" )
-        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.__DataDicts, myFile )
     # end of BibleBooksCodesConverter.pickle
@@ -542,7 +542,7 @@ class BibleBooksCodesConverter:
             folder = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles/" )
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + "_Tables.py" )
-        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
         with open( filepath, 'wt' ) as myFile:
             myFile.write( "# {}\n#\n".format( filepath ) )
             myFile.write( "# This UTF-8 file was automatically generated by BibleBooksCodes.py V{} on {}\n#\n".format( ProgVersion, datetime.now() ) )
@@ -583,7 +583,7 @@ class BibleBooksCodesConverter:
             folder = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles/" )
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + "_Tables.json" )
-        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
         with open( filepath, 'wt' ) as myFile:
             json.dump( self.__DataDicts, myFile, indent=2 )
     # end of BibleBooksCodesConverter.exportDataToJSON
@@ -657,7 +657,7 @@ class BibleBooksCodesConverter:
             filepath = os.path.join( folder, self._filenameBase + "_Tables" )
         hFilepath = filepath + '.h'
         cFilepath = filepath + '.c'
-        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( cFilepath ) ) # Don't bother telling them about the .h file
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( cFilepath ) ) # Don't bother telling them about the .h file
         ifdefName = self._filenameBase.upper() + "_Tables_h"
 
         with open( hFilepath, 'wt' ) as myHFile, open( cFilepath, 'wt' ) as myCFile:
@@ -718,9 +718,9 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
 
-    if Globals.commandLineOptions.export:
+    if BibleOrgSysGlobals.commandLineOptions.export:
         bbcc = BibleBooksCodesConverter().loadAndValidate() # Load the XML
         bbcc.pickle() # Produce a pickle output file
         bbcc.exportDataToPython() # Produce the .py tables
@@ -735,10 +735,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser, exportAvailable=True )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of BibleBooksCodesConverter.py

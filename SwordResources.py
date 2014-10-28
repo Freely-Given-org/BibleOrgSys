@@ -42,7 +42,7 @@ import os, logging
 from gettext import gettext as _
 #from collections import OrderedDict
 
-import Globals
+import BibleOrgSysGlobals
 from VerseReferences import SimpleVerseKey
 from InternalBibleInternals import InternalBibleEntryList
 
@@ -70,7 +70,7 @@ def t( messageString ):
     """
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
-    if Globals.debugFlag or debuggingThisModule:
+    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit, _(errorBit) )
 
@@ -102,11 +102,11 @@ class SwordInterface():
             #self.verseCache = {}
         elif SwordType == "OurCode":
             self.library = SwordModules.SwordModules() # Loads all of conf files that it can find
-            if Globals.debugFlag and debuggingThisModule:
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                 print( "Sword library", self.library )
 
     def getModule( self, moduleAbbreviation='KJV' ):
-        if Globals.debugFlag: print( "SwordResources.getModule({})".format( moduleAbbreviation ) )
+        if BibleOrgSysGlobals.debugFlag: print( "SwordResources.getModule({})".format( moduleAbbreviation ) )
         if SwordType == "CrosswireLibrary":
             #print( "gM", module.getName() )
             return self.library.getModule( moduleAbbreviation )
@@ -121,12 +121,12 @@ class SwordInterface():
 
 
     def makeKey( self, BBB, C, V ):
-        #if Globals.debugFlag: print( "SwordResources.makeKey({})".format( BCV ) )
+        #if BibleOrgSysGlobals.debugFlag: print( "SwordResources.makeKey({})".format( BCV ) )
         #if BCV  in self.keyCache:
             #print( "Cached", BCV )
             #return self.keyCache[BCV]
         if SwordType == "CrosswireLibrary":
-            B = Globals.BibleBooksCodes.getOSISAbbreviation( BBB )
+            B = BibleOrgSysGlobals.BibleBooksCodes.getOSISAbbreviation( BBB )
             refString = "{} {}:{}".format( B, C, V )
             #print( 'refString', refString )
             verseKey = Sword.VerseKey( refString )
@@ -183,7 +183,7 @@ class SwordInterface():
         #if cacheKey in self.verseCache:
             #print( "Cached", cacheKey )
             #return self.verseCache[cacheKey]
-        #if Globals.debugFlag: print( "SwordResources.getVerseText({},{})".format( module.getName(), key.getText() ) )
+        #if BibleOrgSysGlobals.debugFlag: print( "SwordResources.getVerseText({},{})".format( module.getName(), key.getText() ) )
         if SwordType == "CrosswireLibrary":
             try: verseText = module.stripText( key )
             except UnicodeDecodeError:
@@ -211,7 +211,7 @@ class SwordInterface():
 
 
 def getBCV( BCV, moduleAbbreviation='KJV' ): # Very slow -- for testing only
-    if Globals.debugFlag: print( "SwordResources.getBCV({},{})".format( BCV, moduleAbbreviation ) )
+    if BibleOrgSysGlobals.debugFlag: print( "SwordResources.getBCV({},{})".format( BCV, moduleAbbreviation ) )
     library = Sword.SWMgr()
     module = library.getModule( moduleAbbreviation )
     refString = "{} {}:{}".format( BCV[0][:3], BCV[1], BCV[2] )
@@ -225,7 +225,7 @@ def demo():
     """
     Sword
     """
-    if Globals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
     #print( "\ndir Sword", dir(Sword) )
 
@@ -389,10 +389,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of SwordResources.py

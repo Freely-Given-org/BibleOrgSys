@@ -51,7 +51,7 @@ ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 import os, logging
 from gettext import gettext as _
 
-import Globals, Greek
+import BibleOrgSysGlobals, Greek
 from Bible import Bible, BibleBook
 from VerseReferences import SimpleVerseKey
 
@@ -91,7 +91,7 @@ class GreekNT( Bible ):
             for filename in fileList:
                 if filename.lower().endswith('.txt'):
                     thisFilepath = os.path.join( self.sourceFilepath, filename )
-                    #if Globals.debugFlag: print( "Trying {}...".format( thisFilepath ) )
+                    #if BibleOrgSysGlobals.debugFlag: print( "Trying {}...".format( thisFilepath ) )
                     if os.access( thisFilepath, os.R_OK ): # we can read that file
                         self.possibleFilenames.append( filename )
         elif not os.access( self.sourceFilepath, os.R_OK ):
@@ -126,10 +126,10 @@ class GreekNT( Bible ):
 
 
     def load( self ):
-        if Globals.verbosityLevel > 2: print( "Loading Greek NT from {}...".format( self.sourceFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading Greek NT from {}...".format( self.sourceFilepath ) )
         for BBB in Greek.morphgntBooks:
             self.loadBook( BBB, Greek.morphgntFilenames[BBB] )
-        if Globals.verbosityLevel > 3: print( "{} books loaded.".format( len(self.books) ) )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( "{} books loaded.".format( len(self.books) ) )
         #if self.possibleFilenames: # then we possibly have multiple files, probably one for each book
             #for filename in self.possibleFilenames:
                 #pathname = os.path.join( self.sourceFilepath, filename )
@@ -190,7 +190,7 @@ class GreekNT( Bible ):
         self.thisBook.objectNameString = "Morph Greek NT Bible Book object"
         self.thisBook.objectTypeString = "MorphGNT"
         filepath = os.path.join( self.sourceFilepath, filename )
-        if Globals.verbosityLevel > 2: print( "  Loading {}...".format( filename ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Loading {}...".format( filename ) )
         lastLine, lineCount = '', 0
         lastC = lastV = None
         with open( filepath, encoding=encoding ) as myFile: # Automatically closes the file when done
@@ -227,7 +227,7 @@ class GreekNT( Bible ):
                 if lineCount > 1: print( 'Previous line was: ', lastLine )
                 else: print( 'Possible encoding error -- expected', encoding )
         if self.thisBook:
-            if Globals.verbosityLevel > 3: print( "    {} words loaded from {}".format( len(self.thisBook), filename ) )
+            if BibleOrgSysGlobals.verbosityLevel > 3: print( "    {} words loaded from {}".format( len(self.thisBook), filename ) )
             self.saveBook( self.thisBook )
             #self.books[BBB] = self.thisBook
     # end of loadBook
@@ -235,7 +235,7 @@ class GreekNT( Bible ):
 
     def xanalyzeWords( self ):
         """ Go through the NT data and do some filing and sorting of the Greek words. """
-        if Globals.verbosityLevel > 3: print( "analyzeWords: have {} books in the loaded NT".format( len(self.books) ) )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( "analyzeWords: have {} books in the loaded NT".format( len(self.books) ) )
         self.wordCounts = {} # Wordcount organized by BBB
         self.wordCounts['Total'] = 0
         self.actualWordsToNormalized, self.normalizedWordsToActual, self.normalizedWordsToParsing, self.lemmasToNormalizedWords = {}, {}, {}, {}
@@ -243,7 +243,7 @@ class GreekNT( Bible ):
             wordCount = len(self.books[BBB])
             self.wordCounts[BBB] = wordCount
             self.wordCounts['Total'] += wordCount
-            if Globals.verbosityLevel > 3: print( "  analyzeWords: {} has {} Greek words".format( BBB, wordCount ) )
+            if BibleOrgSysGlobals.verbosityLevel > 3: print( "  analyzeWords: {} has {} Greek words".format( BBB, wordCount ) )
             for reference,parsing,(punctuatedWord,actualWord,normalizedWord,lemma) in self.books[BBB]: # Stuff is: reference,parsing,words
                 # File the actual words
                 if actualWord not in self.actualWordsToNormalized:
@@ -345,24 +345,24 @@ class GreekNT( Bible ):
                     if changed:
                         self.lemmasToNormalizedWords[lemma] = newList
                         #print( "  now have", newList )
-        if Globals.verbosityLevel > 2: print( "analyzeWords: NT has {} Greek words".format( self.wordCounts['Total'] ) )
-        if Globals.verbosityLevel > 2: print( "analyzeWords: NT has {} actual Greek words".format( len(self.actualWordsToNormalized) ) )
-        if Globals.verbosityLevel > 3:
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "analyzeWords: NT has {} Greek words".format( self.wordCounts['Total'] ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "analyzeWords: NT has {} actual Greek words".format( len(self.actualWordsToNormalized) ) )
+        if BibleOrgSysGlobals.verbosityLevel > 3:
             for j,aW in enumerate( self.actualWordsToNormalized.keys() ):
                 print( "  ", aW, self.actualWordsToNormalized[aW] )
                 if j==6: break
-        if Globals.verbosityLevel > 2: print( "analyzeWords: NT has {} normalized Greek words".format( len(self.normalizedWordsToActual) ) )
-        if Globals.verbosityLevel > 3:
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "analyzeWords: NT has {} normalized Greek words".format( len(self.normalizedWordsToActual) ) )
+        if BibleOrgSysGlobals.verbosityLevel > 3:
             for j,nW in enumerate( self.normalizedWordsToActual.keys() ):
                 print( "  ", nW, self.normalizedWordsToActual[nW] )
                 if j==6: break
-        if Globals.verbosityLevel > 2: print( "analyzeWords: NT has {} normalized Greek words".format( len(self.normalizedWordsToParsing) ) )
-        if Globals.verbosityLevel > 3:
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "analyzeWords: NT has {} normalized Greek words".format( len(self.normalizedWordsToParsing) ) )
+        if BibleOrgSysGlobals.verbosityLevel > 3:
             for j,nW in enumerate( self.normalizedWordsToParsing.keys() ):
                 print( "  ", nW, self.normalizedWordsToParsing[nW] )
                 if j==6: break
-        if Globals.verbosityLevel > 2: print( "analyzeWords: NT has {} Greek self.lemmasToNormalizedWords".format( len(self.lemmasToNormalizedWords) ) )
-        if Globals.verbosityLevel > 3:
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "analyzeWords: NT has {} Greek self.lemmasToNormalizedWords".format( len(self.lemmasToNormalizedWords) ) )
+        if BibleOrgSysGlobals.verbosityLevel > 3:
             for j,lem in enumerate( self.lemmasToNormalizedWords.keys() ):
                 print( "  ", lem, self.lemmasToNormalizedWords[lem] )
                 if j==6: break
@@ -381,7 +381,7 @@ class GreekNT( Bible ):
         #assert( len(reference) == 3 ) # BBB,C,V
         #BBB, chapterString, verseString = reference
         #assert( isinstance(BBB,str) and len(BBB)==3 )
-        #assert( BBB in Globals.BibleBooksCodes )
+        #assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
         #assert( isinstance( chapterString, str ) )
         #assert( isinstance( verseString, str ) )
         #data = []
@@ -420,12 +420,12 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
     fileFolder = "../../../ExternalPrograms/morphgnt/sblgnt/"
 
     # Demonstrate the Greek NT class
-    if Globals.verbosityLevel > 1: print( "\nDemonstrating the Greek NT class..." )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDemonstrating the Greek NT class..." )
     testReference = SimpleVerseKey('MAT', '1', '1')
     #print( testFolder, testReference )
     gNT = GreekNT( fileFolder ) # Load and process the XML
@@ -444,10 +444,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser, exportAvailable=True )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of GreekNT.py

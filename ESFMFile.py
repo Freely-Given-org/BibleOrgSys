@@ -41,7 +41,7 @@ ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 import logging, sys
 
-import Globals
+import BibleOrgSysGlobals
 
 
 
@@ -108,7 +108,7 @@ class ESFMFile:
         @rtype: string
         """
         result = "ESFM File Object"
-        if Globals.debugFlag or Globals.verbosityLevel>2: result += ' v' + ProgVersion
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: result += ' v' + ProgVersion
         for line in self.lines:
             result += ('\n' if result else '') + str( line )
         return result
@@ -148,7 +148,7 @@ class ESFMFile:
                     while line and line[0]==' ': line = line[1:] # Remove leading spaces
                     if line and line[0]!='\\': # Not a SFM line
                         if len(result)==0: # We don't have any SFM data lines yet
-                            if Globals.verbosityLevel > 2:
+                            if BibleOrgSysGlobals.verbosityLevel > 2:
                                 logging.error( "Non-ESFM line in " + esfm_filename + " -- line ignored at #" + str(lineCount) )
                             #print( "SFMFile.py: XXZXResult is", result, len(line) )
                             #for x in range(0, min(6,len(line))):
@@ -206,11 +206,11 @@ def demo():
     """
     Demonstrate reading and processing some UTF-8 ESFM files.
     """
-    if Globals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
 
     import os.path
     filepath = os.path.join( 'Tests/DataFilesForTests/', 'MatigsalugDictionaryA.sfm' )
-    if Globals.verbosityLevel > 2: print( "Using {} as test file...".format( filepath ) )
+    if BibleOrgSysGlobals.verbosityLevel > 2: print( "Using {} as test file...".format( filepath ) )
 
     linesDB = ESFMFile()
     linesDB.read( filepath, ignoreSFMs=('mn','aMU','aMW','cu','cp') )
@@ -223,10 +223,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of ESFMFile.py

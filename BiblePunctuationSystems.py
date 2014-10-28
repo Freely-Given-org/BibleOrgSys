@@ -37,7 +37,7 @@ from gettext import gettext as _
 from collections import OrderedDict
 
 #from singleton import singleton
-import Globals
+import BibleOrgSysGlobals
 
 
 #@singleton # Can only ever have one instance
@@ -75,7 +75,7 @@ class BiblePunctuationSystems:
                         picklesGood = False; break
             if picklesGood:
                 import pickle
-                if Globals.verbosityLevel > 2: print( "Loading pickle file {}...".format( standardPickleFilepath ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}...".format( standardPickleFilepath ) )
                 with open( standardPickleFilepath, 'rb') as pickleFile:
                     self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
             else: # We have to load the XML (much slower)
@@ -131,7 +131,7 @@ class BiblePunctuationSystems:
             return self.__DataDict[systemName]
         # else
         logging.error( _("No '{}' system in Bible Punctuation Systems").format(systemName) )
-        if Globals.verbosityLevel>2: logging.error( "  " + _("Available systems are {}").format(self.getAvailablePunctuationSystemNames()) )
+        if BibleOrgSysGlobals.verbosityLevel>2: logging.error( "  " + _("Available systems are {}").format(self.getAvailablePunctuationSystemNames()) )
     # end of getPunctuationSystem
 
     def checkPunctuationSystem( self, systemName, punctuationSchemeToCheck, exportFlag=False, debugFlag=False ):
@@ -177,7 +177,7 @@ class BiblePunctuationSystems:
 
         if exportFlag and not systemMatchCount: # Write a new file
             outputFilepath = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/", "BiblePunctuation_"+systemName + ".xml" )
-            if Globals.verbosityLevel > 1: print( _("Writing {} books to {}...").format( len(punctuationSchemeToCheck), outputFilepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Writing {} books to {}...").format( len(punctuationSchemeToCheck), outputFilepath ) )
             with open( outputFilepath, 'wt' ) as myFile:
                 for n,BBB in enumerate(punctuationSchemeToCheck):
                     myFile.write( '  <book id="{}">{}</book>\n'.format( n+1,BBB ) )
@@ -214,7 +214,7 @@ class BiblePunctuationSystem:
         result = "BiblePunctuationSystem object"
         result += ('\n' if result else '') + "  " + _("{} Bible punctuation system").format( self.__systemName )
         result += ('\n' if result else '') + "  " + _("Number of values = {}").format( len(self.__punctuationDict) )
-        if Globals.verbosityLevel > 2:
+        if BibleOrgSysGlobals.verbosityLevel > 2:
             for key in self.__punctuationDict.keys(): # List the contents of the dictionary
                 result += ('\n' if result else '') + "    " + _("{} is '{}'").format( key, self.__punctuationDict[key] )
         return result
@@ -253,7 +253,7 @@ class BiblePunctuationSystem:
         ##print( "yyy", self.__punctuationDict )
         #if name in self.__punctuationDict: return self.__punctuationDict[name]
         #logging.error( _("No '{}' value in {} punctuation system").format(name,self.__systemName) )
-        #if Globals.verbosityLevel > 3: logging.error( "  " + _("Available values are: {}").format(self.getAvailablePunctuationValueNames()) )
+        #if BibleOrgSysGlobals.verbosityLevel > 3: logging.error( "  " + _("Available values are: {}").format(self.getAvailablePunctuationValueNames()) )
     # end of getPunctuationValue
 # end of BiblePunctuationSystem class
 
@@ -262,7 +262,7 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
     # Demo the BiblePunctuationSystems object
     bpss = BiblePunctuationSystems().loadData() # Doesn't reload the XML unnecessarily :)
@@ -279,10 +279,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of BiblePunctuationSystems.py

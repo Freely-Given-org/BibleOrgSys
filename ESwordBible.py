@@ -59,7 +59,7 @@ from gettext import gettext as _
 import sqlite3
 import multiprocessing
 
-import Globals
+import BibleOrgSysGlobals
 from Bible import Bible, BibleBook
 from BibleOrganizationalSystems import BibleOrganizationalSystem
 #from TheWordBible import handleLine
@@ -83,9 +83,9 @@ def ESwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
     if autoLoad is true and exactly one e-Sword Bible is found,
         returns the loaded ESwordBible object.
     """
-    if Globals.verbosityLevel > 2: print( "ESwordBibleFileCheck( {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad ) )
-    if Globals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
-    if Globals.debugFlag: assert( autoLoad in (True,False,) )
+    if BibleOrgSysGlobals.verbosityLevel > 2: print( "ESwordBibleFileCheck( {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad ) )
+    if BibleOrgSysGlobals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
+    if BibleOrgSysGlobals.debugFlag: assert( autoLoad in (True,False,) )
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
@@ -96,7 +96,7 @@ def ESwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
         return False
 
     # Find all the files and folders in this folder
-    if Globals.verbosityLevel > 3: print( " ESwordBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    if BibleOrgSysGlobals.verbosityLevel > 3: print( " ESwordBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -122,14 +122,14 @@ def ESwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
         lastFilenameFound = thisFilename
         numFound += 1
     if numFound:
-        if Globals.verbosityLevel > 2: print( "ESwordBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "ESwordBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and (autoLoad or autoLoadBooks):
-            if Globals.verbosityLevel > 1: print( "{} doing autoload of {}...".format( ProgNameVersion, lastFilenameFound ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "{} doing autoload of {}...".format( ProgNameVersion, lastFilenameFound ) )
             twB = ESwordBible( givenFolderName, lastFilenameFound )
             if autoLoadBooks: twB.load() # Load and process the file
             return twB
         return numFound
-    elif looksHopeful and Globals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
+    elif looksHopeful and BibleOrgSysGlobals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
 
     # Look one level down
     numFound = 0
@@ -139,7 +139,7 @@ def ESwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
             logging.warning( _("ESwordBibleFileCheck: {} subfolder is unreadable").format( repr(tryFolderName) ) )
             continue
-        if Globals.verbosityLevel > 3: print( "    ESwordBibleFileCheck: Looking for files in {}".format( repr(tryFolderName) ) )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( "    ESwordBibleFileCheck: Looking for files in {}".format( repr(tryFolderName) ) )
         foundSubfolders, foundSubfiles = [], []
         for something in os.listdir( tryFolderName ):
             somepath = os.path.join( givenFolderName, thisFolderName, something )
@@ -161,10 +161,10 @@ def ESwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
             lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
-        if Globals.verbosityLevel > 2: print( "ESwordBibleFileCheck foundProjects", numFound, foundProjects )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "ESwordBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad and autoLoadBooks):
-            if Globals.verbosityLevel > 1: print( "{} doing autoload of {}...".format( ProgNameVersion, foundProjects[0][1] ) )
-            if Globals.debugFlag: assert( len(foundProjects) == 1 )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "{} doing autoload of {}...".format( ProgNameVersion, foundProjects[0][1] ) )
+            if BibleOrgSysGlobals.debugFlag: assert( len(foundProjects) == 1 )
             twB = ESwordBible( foundProjects[0][0], foundProjects[0][1] )
             if autoLoadBooks: twB.load() # Load and process the file
             return twB
@@ -218,7 +218,7 @@ class ESwordBible( Bible ):
 
         NOTE: There are no checks in here yet to discover nested character-formatting markers.  :-(
         """
-        if Globals.debugFlag:
+        if BibleOrgSysGlobals.debugFlag:
             if debuggingThisModule:
                 print( "ESwordBible.handleLine( {} {} {}:{} {} ... {}".format( myName, BBB, C, V, repr(originalLine), myGlobals ) )
             assert( originalLine is None or ('\n' not in originalLine and '\r' not in originalLine ) )
@@ -282,7 +282,7 @@ class ESwordBible( Bible ):
             if not changed: break
         for stuff in ( '\\nosupersub', '\\ulnone', '\\b0', '\\i0', '\\cf0', ):
             if line.endswith( stuff ): line = line[:-len(stuff)]
-        if Globals.debugFlag: savedLine = line
+        if BibleOrgSysGlobals.debugFlag: savedLine = line
 
         # Try to guess some semantic formatting
         line = re.sub( r'\\b\\i\\f0 (.+?)\\cf0\\b0\\i0\\line', r'~^~s1 \1*#$#', line ) # section heading
@@ -329,13 +329,13 @@ class ESwordBible( Bible ):
         line = line.replace( '\\line', '#$#' ) # Use this for our newline marker
         line = line.strip() # There seem to be extra spaces in many modules
         if '\\' in line or '{' in line or '}' in line:
-            if Globals.debugFlag:
+            if BibleOrgSysGlobals.debugFlag:
                 logging.error( "{} original line: {}".format( myName, repr(originalLine) ) )
                 logging.error( "Saved line: {}".format( repr(savedLine) ) )
             logging.error( "ESwordBible.load: Doesn't handle {} {}:{} formatted line yet: {}".format( BBB, C, V, repr(line) ) )
             if 1: # Unhandled stuff -- not done properly yet...............................................
                 line = re.sub( '<(.+?)>', '', line ) # Remove all remaining sets of angle brackets
-            if 0 and Globals.debugFlag: halt
+            if 0 and BibleOrgSysGlobals.debugFlag: halt
         line = line.replace( '~^~', '\\' ) # Restore our internal formatting codes
 
 
@@ -352,7 +352,7 @@ class ESwordBible( Bible ):
                     marker = bits[0][1:]
                     if len(bits) == 1:
                         #if bits[0] in ('\\p','\\b'):
-                        if Globals.USFMMarkers.isNewlineMarker( marker ):
+                        if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
                             if C==1 and V==1 and not appendedCFlag: bookObject.appendLine( 'c', str(C) ); appendedCFlag = True
                             bookObject.appendLine( marker, '' )
                         else:
@@ -360,7 +360,7 @@ class ESwordBible( Bible ):
                             #halt
                     else:
                         assert( len(bits) == 2 )
-                        if Globals.debugFlag and debuggingThisModule:
+                        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                             print( "\n{} {}:{} '{}'".format( BBB, C, V, originalLine ) )
                             print( "line", repr(line) )
                             print( "seg", repr(segment) )
@@ -369,7 +369,7 @@ class ESwordBible( Bible ):
                             print( "marker", marker )
                             print( "leftovers", repr(leftovers) )
                             assert( marker in ('mt1','mt2','mt3', 's1','s2','s3', 'q1','q2','q3', 'r') )
-                        if Globals.USFMMarkers.isNewlineMarker( marker ):
+                        if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
                             bookObject.appendLine( marker, bits[1] )
                         elif not writtenV:
                             bookObject.appendLine( 'v', '{} {}'.format( V, segment ) )
@@ -387,7 +387,7 @@ class ESwordBible( Bible ):
                         #bookObject.appendLine( 'p', '' )
                         #myGlobals['haveParagraph'] = False
             if leftovers: logging.critical( "Had leftovers {}".format( repr(leftovers) ) )
-            if Globals.debugFlag: assert( not leftovers )
+            if BibleOrgSysGlobals.debugFlag: assert( not leftovers )
             #halt
         else: # no newlines in the middle
             if C==1 and V==1 and not appendedCFlag: bookObject.appendLine( 'c', str(C) ); appendedCFlag = True
@@ -397,7 +397,7 @@ class ESwordBible( Bible ):
 
 
     def checkForExtraMaterial( self, cursor, BOS ):
-        if Globals.verbosityLevel > 0: print( _("Checking {} for extra material...").format( self.sourceFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( _("Checking {} for extra material...").format( self.sourceFilepath ) )
 
         cursor.execute('select * from Bible' )
         for row in cursor:
@@ -405,10 +405,10 @@ class ESwordBible( Bible ):
             BBBn, C, V, text = row # First three are integers, the last is a string
             #print( repr(BBBn), repr(C), repr(V), repr(text) )
             if BBBn<1 or BBBn>66: print( "Found book number {}".format( BBBn ) )
-            BBB = Globals.BibleBooksCodes.getBBBFromReferenceNumber( BBBn )
+            BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( BBBn )
             if not BOS.isValidBCVRef( (BBB,str(C),str(V),''), 'checkForExtraMaterial' ):
                 logging.error( "checkForExtraMaterial: {} contains {} {}:{} {}".format( self.name, BBB, C, V, repr(text) ) )
-                if Globals.debugFlag and debuggingThisModule: halt
+                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
     # end of ESwordBible.checkForExtraMaterial
 
 
@@ -416,7 +416,7 @@ class ESwordBible( Bible ):
         """
         Load a single source file and load book elements.
         """
-        if Globals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
         loadErrors = []
 
         fileExtensionUpper = self.fileExtension.upper()
@@ -444,12 +444,12 @@ class ESwordBible( Bible ):
         cursor.execute( 'select * from Bible' )
         rows = cursor.fetchall()
         numRows = len(rows)
-        if Globals.debugFlag or Globals.verbosityLevel>2: print( '{} rows found'.format( numRows ) )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: print( '{} rows found'.format( numRows ) )
         BBBn1 = rows[0][0]
-        if Globals.debugFlag or Globals.verbosityLevel>2: print( 'First book number is {}'.format( BBBn1 ) )
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: print( 'First book number is {}'.format( BBBn1 ) )
         del rows
         BBB1 = None
-        if BBBn1 <= 66: BBB1 = Globals.BibleBooksCodes.getBBBFromReferenceNumber( BBBn1 )
+        if BBBn1 <= 66: BBB1 = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( BBBn1 )
 
 
         testament = BBB = None
@@ -485,7 +485,7 @@ class ESwordBible( Bible ):
                     print( BBBn, C, V, repr(text) )
                     if C==2: break
                 del rows # Takes a lot of memory
-        if Globals.debugFlag or Globals.verbosityLevel>2:
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2:
             print( "Testament={} BBB={} BBB1={}, bE={}, tLCE={} nR={}".format( testament, BBB, BBB1, booksExpected, textLineCountExpected, numRows ) )
         if BBB1 != BBB:
             logging.critical( "First book seems wrong: {} instead of {}".format( BBB1, BBB ) )
@@ -505,7 +505,7 @@ class ESwordBible( Bible ):
 
         verseList = BOS.getNumVersesList( BBB )
         numC, numV = len(verseList), verseList[0]
-        nBBB = Globals.BibleBooksCodes.getReferenceNumber( BBB )
+        nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
         C = V = 1
 
         bookCount = 0
@@ -519,7 +519,7 @@ class ESwordBible( Bible ):
                 line = row[0]
             except: # This reference is missing
                 #print( "something wrong at", BBB, C, V )
-                #if Globals.debugFlag: halt
+                #if BibleOrgSysGlobals.debugFlag: halt
                 #print( row )
                 line = None
             #print ( nBBB, BBB, C, V, 'e-Sw file line is "' + line + '"' )
@@ -539,7 +539,7 @@ class ESwordBible( Bible ):
                     # Some modules end lines with \r\n or have it in the middle!
                     #   (We just ignore these for now)
                     if '\r' in line or '\n' in line:
-                        if Globals.debugFlag:
+                        if BibleOrgSysGlobals.debugFlag:
                             logging.warning( "ESwordBible.load: Found CR or LF characters in verse line at {} {}:{}".format( BBB, C, V ) )
                         #print( repr(line) )
                     while line and line[-1] in '\r\n': line = line[:-1] # Remove CR/LFs from the end
@@ -552,7 +552,7 @@ class ESwordBible( Bible ):
                 C += 1
                 if C > numC: # Save this book now
                     if haveLines:
-                        if Globals.verbosityLevel > 3: print( "Saving", BBB, bookCount+1 )
+                        if BibleOrgSysGlobals.verbosityLevel > 3: print( "Saving", BBB, bookCount+1 )
                         self.saveBook( thisBook )
                     #else: print( "Not saving", BBB )
                     bookCount += 1 # Not the number saved but the number we attempted to process
@@ -566,7 +566,7 @@ class ESwordBible( Bible ):
 
                     verseList = BOS.getNumVersesList( BBB )
                     numC, numV = len(verseList), verseList[0]
-                    nBBB = Globals.BibleBooksCodes.getReferenceNumber( BBB )
+                    nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
                     C = V = 1
                     #thisBook.appendLine( 'c', str(C) )
                 else: # next chapter only
@@ -578,7 +578,7 @@ class ESwordBible( Bible ):
                 thisBook.appendLine( 'p', '' )
                 ourGlobals['haveParagraph'] = False
 
-        if Globals.strictCheckingFlag or Globals.debugFlag: self.checkForExtraMaterial( cursor, BOS )
+        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: self.checkForExtraMaterial( cursor, BOS )
         cursor.close()
         if loadErrors: self.errorDictionary['Load Errors'] = loadErrors
         self.doPostLoadProcessing()
@@ -593,14 +593,14 @@ def testeSwB( eSwBfolder, eSwBfilename ):
     #testFolder = "../../../../../Data/Work/Bibles/e-Sword modules/" # Must be the same as below
 
     #TUBfolder = os.path.join( eSwBfolder, eSwBfilename )
-    if Globals.verbosityLevel > 1: print( _("Demonstrating the e-Sword Bible class...") )
-    if Globals.verbosityLevel > 0: print( "  Test folder is {} {}".format( repr(eSwBfolder), repr(eSwBfilename) ) )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the e-Sword Bible class...") )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is {} {}".format( repr(eSwBfolder), repr(eSwBfilename) ) )
     eSwB = ESwordBible( eSwBfolder, eSwBfilename )
     eSwB.load() # Load and process the file
-    if Globals.verbosityLevel > 1: print( eSwB ) # Just print a summary
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( eSwB ) # Just print a summary
     #print( eSwB.settingsDict )
     if 0 and eSwB:
-        if Globals.strictCheckingFlag: eSwB.check()
+        if BibleOrgSysGlobals.strictCheckingFlag: eSwB.check()
         for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
                             ('OT','DAN','1','21'),
                             ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \
@@ -612,16 +612,16 @@ def testeSwB( eSwBfolder, eSwBfilename ):
             svk = VerseReferences.SimpleVerseKey( b, c, v )
             #print( svk, ob.getVerseDataList( reference ) )
             shortText, verseText = svk.getShortText(), eSwB.getVerseText( svk )
-            if Globals.verbosityLevel > 1: print( reference, shortText, verseText )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( reference, shortText, verseText )
 
         # Now export the Bible and compare the round trip
         eSwB.toESword()
         doaResults = eSwB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
-        if Globals.strictCheckingFlag: # Now compare the original and the derived USX XML files
+        if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the derived USX XML files
             outputFolder = "OutputFiles/BOS_e-Sword_Reexport/"
-            if Globals.verbosityLevel > 1: print( "\nComparing original and re-exported e-Sword files..." )
-            result = Globals.fileCompare( eSwBfilename, eSwBfilename, eSwBfolder, outputFolder )
-            if Globals.debugFlag:
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nComparing original and re-exported e-Sword files..." )
+            result = BibleOrgSysGlobals.fileCompare( eSwBfilename, eSwBfilename, eSwBfolder, outputFolder )
+            if BibleOrgSysGlobals.debugFlag:
                 if not result: halt
 # end of testeSwB
 
@@ -630,15 +630,15 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         testFolder = "Tests/DataFilesForTests/e-SwordTest/"
         result1 = ESwordBibleFileCheck( testFolder )
-        if Globals.verbosityLevel > 1: print( "TestA1", result1 )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "TestA1", result1 )
         result2 = ESwordBibleFileCheck( testFolder, autoLoad=True )
-        if Globals.verbosityLevel > 1: print( "TestA2", result2 )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "TestA2", result2 )
 
 
     if 0: # individual modules in the test folder
@@ -646,7 +646,7 @@ def demo():
         names = ('LEB','Dansk_1819','Miles Coverdale (1535)',)
         for j, name in enumerate( names):
             fullname = name + '.bblx'
-            if Globals.verbosityLevel > 1: print( "\neSw B{}/ Trying {}".format( j+1, fullname ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\neSw B{}/ Trying {}".format( j+1, fullname ) )
             testeSwB( testFolder, fullname )
             #halt
 
@@ -658,7 +658,7 @@ def demo():
             fullname = name + '.bblx'
             pathname = os.path.join( testFolder, fullname )
             if os.path.exists( pathname ):
-                if Globals.verbosityLevel > 1: print( "\neSw C{}/ Trying {}".format( j+1, fullname ) )
+                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\neSw C{}/ Trying {}".format( j+1, fullname ) )
                 testeSwB( testFolder, fullname )
 
 
@@ -672,15 +672,15 @@ def demo():
                 if something != 'acc.bblx': # has a corrupted file it seems
                     foundFiles.append( something )
 
-        if Globals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            if Globals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
+        if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
             parameters = [filename for filename in sorted(foundFiles)]
             with multiprocessing.Pool( processes=Globals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( testeSwB, parameters ) # have the pool do our loads
                 assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFile in enumerate( sorted( foundFiles ) ):
-                if Globals.verbosityLevel > 1: print( "\neSw D{}/ Trying {}".format( j+1, someFile ) )
+                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\neSw D{}/ Trying {}".format( j+1, someFile ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testeSwB( testFolder, someFile )
                 #break # only do the first one.........temp
@@ -693,15 +693,15 @@ def demo():
             if os.path.isdir( somepath ): foundFolders.append( something )
             elif os.path.isfile( somepath ) and somepath.endswith('.bblx'): foundFiles.append( something )
 
-        if Globals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            if Globals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
+        if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
             parameters = [filename for filename in sorted(foundFiles)]
             with multiprocessing.Pool( processes=Globals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( testeSwB, parameters ) # have the pool do our loads
                 assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFile in enumerate( sorted( foundFiles ) ):
-                if Globals.verbosityLevel > 1: print( "\neSw E{}/ Trying {}".format( j+1, someFile ) )
+                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\neSw E{}/ Trying {}".format( j+1, someFile ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testeSwB( testFolder, someFile )
                 #break # only do the first one.........temp
@@ -709,12 +709,12 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of ESwordBible.py

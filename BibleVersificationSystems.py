@@ -43,7 +43,7 @@ import os, logging
 from gettext import gettext as _
 #from singleton import singleton
 
-import Globals
+import BibleOrgSysGlobals
 
 
 
@@ -85,7 +85,7 @@ class BibleVersificationSystems:
                         picklesGood = False; break
             if picklesGood:
                 import pickle
-                if Globals.verbosityLevel > 2: print( "Loading pickle file {}...".format( standardPickleFilepath ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}...".format( standardPickleFilepath ) )
                 with open( standardPickleFilepath, 'rb') as pickleFile:
                     self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
             else: # We have to load the XML (much slower)
@@ -108,11 +108,11 @@ class BibleVersificationSystems:
         """
         result = "BibleVersificationSystems object"
         result += ('\n' if result else '') + "  " + _("Number of systems = {}").format( len(self.__DataDict) )
-        if Globals.verbosityLevel > 2:
+        if BibleOrgSysGlobals.verbosityLevel > 2:
             for systemName in self.__DataDict:
                 CVData, OVData, CombVData, ReordVData = self.__DataDict[systemName]['CV'], self.__DataDict[systemName]['omitted'], self.__DataDict[systemName]['combined'], self.__DataDict[systemName]['reordered']
                 # No longer true: assert( len(CVData) == len(OVData) == len(CombVData) == len(ReordVData) )
-                if Globals.verbosityLevel > 3:
+                if BibleOrgSysGlobals.verbosityLevel > 3:
                     numChapters = 0
                     for BBB,bookData in CVData.items():
                         numChapters += int( bookData['numChapters'] )
@@ -159,7 +159,7 @@ class BibleVersificationSystems:
             return self.__DataDict[systemName]
         # else
         logging.error( _("No '{}' system in Bible Versification Systems").format( systemName ) )
-        if Globals.verbosityLevel > 2: logging.error( _("Available systems are {}").format( self.getAvailableVersificationSystemNames() ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: logging.error( _("Available systems are {}").format( self.getAvailableVersificationSystemNames() ) )
     # end of BibleVersificationSystems.getVersificationSystem
 
 
@@ -182,13 +182,13 @@ class BibleVersificationSystems:
         else: raise Exception( "compareVersificationSystems parameter error" )
 
         displayCount = 3
-        if Globals.verbosityLevel > 2: displayCount = 10
-        if Globals.verbosityLevel > 3: displayCount = 0 # infinite
+        if BibleOrgSysGlobals.verbosityLevel > 2: displayCount = 10
+        if BibleOrgSysGlobals.verbosityLevel > 3: displayCount = 0 # infinite
 
         numComparesDone, numExactMatches, numCloseMatches, result = 0, 0, 0, ''
         for compareSystemName in compareList:
             if compareSystemName == system1Name: continue # Don't check against yourself
-            if Globals.verbosityLevel > 2 or len(compareList)>1:
+            if BibleOrgSysGlobals.verbosityLevel > 2 or len(compareList)>1:
                 result += ('\n' if result else '') + "  " + _("Comparing {} against {}...").format( system1Name, compareSystemName )
             CVData1, OVData1, CoVData1, RVData1 = self.__DataDict[system1Name]['CV'], self.__DataDict[system1Name]['omitted'], self.__DataDict[system1Name]['combined'], self.__DataDict[system1Name]['reordered']
             CVData2, OVData2, CoVData2, RVData2 = self.__DataDict[compareSystemName]['CV'], self.__DataDict[compareSystemName]['omitted'], self.__DataDict[compareSystemName]['combined'], self.__DataDict[compareSystemName]['reordered']
@@ -196,7 +196,7 @@ class BibleVersificationSystems:
             CVErrorCount, booksWithMajorDifferences, booksWithOnlyMinorDifferences, booksMatchExactly = 0, 0, 0, 0
             numBooks1 = len( CVData1 ); numBooks2 = len( CVData2 )
             if numBooks1 != numBooks2: result += ('\n' if result else '') + "    " + _("{} has information for {} books; {} has information for {} books").format( system1Name, numBooks1, compareSystemName, numBooks2 )
-            elif Globals.verbosityLevel>1: result += ('\n' if result else '') + "    " + _("Both systems have information for {} books").format( numBooks1 )
+            elif BibleOrgSysGlobals.verbosityLevel>1: result += ('\n' if result else '') + "    " + _("Both systems have information for {} books").format( numBooks1 )
             if OVData1 and not OVData2: result += ('\n' if result else '') + "      " + _("Only {} has omitted verse information").format( system1Name )
             if not OVData1 and OVData2: result += ('\n' if result else '') + "      " + _("{} has no omitted verse information (but {} does)").format( system1Name, compareSystemName )
             if CoVData1 and not CoVData2: result += ('\n' if result else '') + "      " + _("Only {} has combined verse information").format( system1Name )
@@ -288,10 +288,10 @@ class BibleVersificationSystems:
                 numCloseMatches += 1
                 if not haveMinorDifferences: numExactMatches += 1
             numComparesDone += 1
-        if Globals.verbosityLevel > 1 or numExactMatches!=numComparesDone:
+        if BibleOrgSysGlobals.verbosityLevel > 1 or numExactMatches!=numComparesDone:
             if numComparesDone==1: print( '\n' + _("Compared {} against {} (with {} exact system matches, {} close matches)").format( system1Name, system2Name, numExactMatches, numCloseMatches ) )
             else: print( '\n' + _("Compared {} against {} other systems (with {} exact system matches, {} close matches)").format( system1Name, numComparesDone, numExactMatches, numCloseMatches ) )
-            if Globals.verbosityLevel > 1 and (booksMatchExactly or booksWithOnlyMinorDifferences):
+            if BibleOrgSysGlobals.verbosityLevel > 1 and (booksMatchExactly or booksWithOnlyMinorDifferences):
                 print( _("There were {} books that matched exactly, and another {} with only minor differences. ({} books checked that had major differences.)") \
                                 .format( booksMatchExactly, booksWithOnlyMinorDifferences, booksWithMajorDifferences ) )
             print( result )
@@ -419,32 +419,32 @@ class BibleVersificationSystems:
                     thisError = "    " + _("Doesn't match '{}' system ({} book mismatches, {} chapter mismatches, {} verse mismatches, {} omitted-verse mismatches)").format( versificationSystemCode, bookMismatchCount, chapterMismatchCount, verseMismatchCount,omittedVerseMismatchCount )
                     if omittedVerseMismatchCount == 1:
                         thisError += "\n      " + _("Omitted verse mismatch was {} {}:{} omitted in {} but present in {}").format(rememberedOmission[0],rememberedOmission[1],rememberedOmission[2],rememberedOmission[3],rememberedOmission[4])
-                    elif Globals.verbosityLevel>2 and bookMismatchCount==0 and chapterMismatchCount==0 and omittedVerseMismatchCount>0:
+                    elif BibleOrgSysGlobals.verbosityLevel>2 and bookMismatchCount==0 and chapterMismatchCount==0 and omittedVerseMismatchCount>0:
                         thisError += "\n      " + _("First omitted verse mismatch was {} {}:{} omitted in {} but present in {}").format(rememberedOmission[0],rememberedOmission[1],rememberedOmission[2],rememberedOmission[3],rememberedOmission[4])
                 elif combinedVersesToCheck: # only display one of these systems
                     thisError = "    " + _("Doesn't match '{}' system ({} book mismatches, {} chapter mismatches, {} verse mismatches, {} combined-verse mismatches)").format( versificationSystemCode, bookMismatchCount, chapterMismatchCount, verseMismatchCount,omittedVerseMismatchCount )
                     if combinedVerseMismatchCount == 1:
                         thisError += "\n      " + _("Combined verse mismatch was {} {}:{} between {} and {}").format(rememberedCombination[0],rememberedCombination[1],rememberedCombination[2],rememberedCombination[3],rememberedCombination[4])
-                    elif Globals.verbosityLevel>2 and bookMismatchCount==0 and chapterMismatchCount==0 and combinedVerseMismatchCount>0:
+                    elif BibleOrgSysGlobals.verbosityLevel>2 and bookMismatchCount==0 and chapterMismatchCount==0 and combinedVerseMismatchCount>0:
                         thisError += "\n      " + _("First combined verse mismatch was {} {}:{} omitted in {} but present in {}").format(rememberedCombination[0],rememberedCombination[1],rememberedCombination[2],rememberedCombination[3],rememberedCombination[4])
                 elif reorderedVersesToCheck:
                     thisError = "    " + _("Doesn't match '{}' system ({} book mismatches, {} chapter mismatches, {} verse mismatches, {} reordered-verse mismatches)").format( versificationSystemCode, bookMismatchCount, chapterMismatchCount, verseMismatchCount,omittedVerseMismatchCount )
                     if reorderedVerseMismatchCount == 1:
                         thisError += "\n      " + _("Reordered verse mismatch was {} {}:{} between {} and {}").format(rememberedReordering[0],rememberedReordering[1],rememberedReordering[2],rememberedReordering[3],rememberedReordering[4])
-                    elif Globals.verbosityLevel>2 and bookMismatchCount==0 and chapterMismatchCount==0 and reorderedVerseMismatchCount>0: thisError += "\n      " + _("First reordered verse mismatch was {} {}:{} omitted in {} but present in {}").format(rememberedReordering[0],rememberedReordering[1],rememberedReordering[2],rememberedReordering[3],rememberedReordering[4])
+                    elif BibleOrgSysGlobals.verbosityLevel>2 and bookMismatchCount==0 and chapterMismatchCount==0 and reorderedVerseMismatchCount>0: thisError += "\n      " + _("First reordered verse mismatch was {} {}:{} omitted in {} but present in {}").format(rememberedReordering[0],rememberedReordering[1],rememberedReordering[2],rememberedReordering[3],rememberedReordering[4])
                 else:
                     thisError = "    " + _("Doesn't match '{}' system ({} book mismatches, {} chapter mismatches, {} verse mismatches)").format( versificationSystemCode, bookMismatchCount, chapterMismatchCount, verseMismatchCount )
                 if bookMismatchCount==0 and chapterMismatchCount==0 and verseMismatchCount==1:
                     thisError += "\n      " + _("{} {} chapter {} had {} verses but {} had {}").format(thisSystemName, rememberedBBB, rememberedChapter, rememberedVerses2, versificationSystemCode, rememberedVerses1)
                 theseErrors += ("\n" if theseErrors else "") + thisError
-                if bookMismatchCount==0 or Globals.verbosityLevel>2:
+                if bookMismatchCount==0 or BibleOrgSysGlobals.verbosityLevel>2:
                     errorSummary += ("\n" if errorSummary else "") + thisError
                 systemMismatchCount += 1
             else:
                 #print( "  Matches '{}' system".format( versificationSystemCode ) )
                 systemMatchCount += 1
                 matchedVersificationSystemCodes.append( versificationSystemCode )
-            if Globals.commandLineOptions.debug and chapterMismatchCount==0 and 0<verseMismatchCount<8 and omittedVerseMismatchCount<10: print( theseErrors )
+            if BibleOrgSysGlobals.commandLineOptions.debug and chapterMismatchCount==0 and 0<verseMismatchCount<8 and omittedVerseMismatchCount<10: print( theseErrors )
             allErrors += ("\n" if allErrors else "") + theseErrors
 
         if badOVList:
@@ -457,27 +457,27 @@ class BibleVersificationSystems:
         if systemMatchCount == 1: # What we hope for
             if badOVList: print( "  " + _("{} roughly matched {} versification (with these {} books)").format( thisSystemName, matchedVersificationSystemCodes[0], len(versificationSchemeToCheck) ) )
             else: print( "  " + _("{} matched {} versification (with these {} books)").format( thisSystemName, matchedVersificationSystemCodes[0], len(versificationSchemeToCheck) ) )
-            if Globals.commandLineOptions.debug: print( errorSummary )
+            if BibleOrgSysGlobals.commandLineOptions.debug: print( errorSummary )
         elif systemMatchCount == 0: # No matches
             print( "  " + _("{} mismatched {} versification systems (with these {} books)").format( thisSystemName, systemMismatchCount, len(versificationSchemeToCheck) ) )
-            toPrint = allErrors if Globals.commandLineOptions.debug else errorSummary
+            toPrint = allErrors if BibleOrgSysGlobals.commandLineOptions.debug else errorSummary
             if toPrint: print( toPrint )
         else: # Multiple matches
             print( "  " + _("{} matched {} versification system(s): {} (with these {} books)").format( thisSystemName, systemMatchCount, matchedVersificationSystemCodes, len(versificationSchemeToCheck) ) )
-            if Globals.commandLineOptions.debug: print( errorSummary )
+            if BibleOrgSysGlobals.commandLineOptions.debug: print( errorSummary )
 
-        if Globals.commandLineOptions.export and not systemMatchCount: # Write a new file
+        if BibleOrgSysGlobals.commandLineOptions.export and not systemMatchCount: # Write a new file
             outputFilepath = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/", "BibleVersificationSystem_"+thisSystemName + ".xml" )
-            if Globals.verbosityLevel > 1: print( _("Writing {} books to {}...").format( len(versificationSchemeToCheck), outputFilepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Writing {} books to {}...").format( len(versificationSchemeToCheck), outputFilepath ) )
             if omittedVersesToCheck:
                 totalOmittedVerses = 0
                 for BBB in omittedVersesToCheck.keys():
                     totalOmittedVerses += len( omittedVersesToCheck[BBB] )
-                if Globals.verbosityLevel > 2: print( _("  Have {} omitted verses for {} books").format( totalOmittedVerses, len(omittedVersesToCheck) ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Have {} omitted verses for {} books").format( totalOmittedVerses, len(omittedVersesToCheck) ) )
             with open( outputFilepath, 'wt' ) as myFile:
                 for BBB in versificationSchemeToCheck:
                     myFile.write( "  <BibleBookVersification>\n" )
-                    myFile.write( "    <nameEnglish>{}</nameEnglish>\n".format( Globals.BibleBooksCodes.getEnglishName_NR(BBB) ) ) # the English book name from the BibleBooksCodes.xml file
+                    myFile.write( "    <nameEnglish>{}</nameEnglish>\n".format( BibleOrgSysGlobals.BibleBooksCodes.getEnglishName_NR(BBB) ) ) # the English book name from the BibleBooksCodes.xml file
                     myFile.write( "    <referenceAbbreviation>{}</referenceAbbreviation>\n".format( BBB ) )
                     myFile.write( "    <numChapters>{}</numChapters>\n".format( len(versificationSchemeToCheck[BBB]) ) )
                     for c,numV in versificationSchemeToCheck[BBB]:
@@ -487,7 +487,7 @@ class BibleVersificationSystems:
                                 if oc == c: # It's this chapter
                                     omittedVerseString += (',' if omittedVerseString else '') + str(ov)
                         if omittedVerseString:
-                            if Globals.verbosityLevel > 3 or Globals.commandLineOptions.debug: print( '   ', BBB, c+':'+omittedVerseString )
+                            if BibleOrgSysGlobals.verbosityLevel > 3 or BibleOrgSysGlobals.commandLineOptions.debug: print( '   ', BBB, c+':'+omittedVerseString )
                             myFile.write( '    <numVerses chapter="{}" omittedVerses="{}">{}</numVerses>\n'.format( c, omittedVerseString, numV ) )
                         else:
                             myFile.write( '    <numVerses chapter="{}">{}</numVerses>\n'.format( c, numV ) )
@@ -529,11 +529,11 @@ class BibleVersificationSystem:
         @rtype: string
         """
         result = "BibleVersificationSystem object"
-        if Globals.verbosityLevel > 2:
+        if BibleOrgSysGlobals.verbosityLevel > 2:
             numChapters = 0
             for BBB,bookData in self.__chapterDataDict.items():
                 numChapters += int( bookData['numChapters'] )
-            if Globals.verbosityLevel > 3:
+            if BibleOrgSysGlobals.verbosityLevel > 3:
                 result += ('\n' if result else '') + "  " + _("{} Bible versification system (data for {} books):").format( self._systemName, len(self.__chapterDataDict) )
                 result += ('\n' if result else '') + "    " + _("Chapter/verse data for {} total chapters").format( numChapters )
                 numOV = 0
@@ -585,7 +585,7 @@ class BibleVersificationSystem:
         Returns None if we don't have any chapter information for this book.
         """
         assert( len(BBB) == 3 )
-        if not Globals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): raise KeyError
+        if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): raise KeyError
         if BBB in self.__chapterDataDict:
             return int( self.__chapterDataDict[BBB]['numChapters'] )
         # else return None
@@ -596,10 +596,10 @@ class BibleVersificationSystem:
         """
         Returns the number of verses (int) in the given book and chapter.
         """
-        if Globals.debugFlag and debuggingThisModule:
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( "BibleVersificationSystem.getNumVerses( {}, {} )".format( BBB, repr(C) ) )
         assert( len(BBB) == 3 )
-        if not Globals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): raise KeyError
+        if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): raise KeyError
         if isinstance( C, int ): # Just double-check the parameter
             logging.debug( _("BibleVersificationSystem.getNumVerses was passed an integer chapter instead of a string with {} {}").format( BBB, C ) )
             C = str( C )
@@ -613,7 +613,7 @@ class BibleVersificationSystem:
         Returns None if we don't have any chapter information for this book.
         """
         assert( len(BBB) == 3 )
-        if not Globals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): raise KeyError
+        if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): raise KeyError
         if BBB in self.__chapterDataDict:
             return self.__chapterDataDict[BBB]['numChapters'] == '1'
         # else return None
@@ -670,7 +670,7 @@ class BibleVersificationSystem:
         Extended flag allows chapter and verse numbers of zero
             but it allows almost any number of verses in chapter zero (up to 199).
         """
-        if Globals.debugFlag and debuggingThisModule:
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( "BibleVersificationSystem.isValidBCVRef( {}, {}, {}, {} )".format( referenceTuple, referenceString, extended ) )
         BBB, C, V, S = referenceTuple
         assert( len(BBB) == 3 )
@@ -698,7 +698,7 @@ class BibleVersificationSystem:
 
     def expandCVRange( self, startRef, endRef, referenceString=None, bookOrderSystem=None ):
         """ Returns a list containing all valid references (inclusive) between the given values. """
-        if Globals.debugFlag and debuggingThisModule:
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( "BibleVersificationSystem.expandCVRange:", startRef, endRef, referenceString, bookOrderSystem )
         assert( startRef and len(startRef)==4 )
         assert( endRef and len(endRef)==4 )
@@ -795,7 +795,7 @@ class BibleVersificationSystem:
                     else: S = ''
                     resultList.append( (BBB2, str(Cint), str(Vint), S,) )
 
-        if Globals.debugFlag and debuggingThisModule: print( startRef, endRef, resultList, haveErrors, haveWarnings )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( startRef, endRef, resultList, haveErrors, haveWarnings )
         return resultList #, haveErrors, haveWarnings
     # end of BibleVersificationSystem.expandCVRange
 
@@ -832,7 +832,7 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
 
     # Demo the BibleVersificationSystems object
     bvss = BibleVersificationSystems().loadData() # Doesn't reload the XML unnecessarily :)
@@ -878,10 +878,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of BibleVersificationSystems.py

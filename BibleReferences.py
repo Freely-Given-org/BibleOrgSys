@@ -89,7 +89,7 @@ debuggingThisModule = False
 import os, logging
 from gettext import gettext as _
 
-import Globals
+import BibleOrgSysGlobals
 from BibleOrganizationalSystems import BibleOrganizationalSystem
 
 
@@ -112,7 +112,7 @@ class BibleReferenceBase:
         """
         assert( BOSObject )
         self._BibleOrganizationalSystem = BOSObject
-        if Globals.debugFlag: print( "BibleReferenceBase: org={}".format( BOSObject.getOrganizationalSystemName() ) )
+        if BibleOrgSysGlobals.debugFlag: print( "BibleReferenceBase: org={}".format( BOSObject.getOrganizationalSystemName() ) )
 
         # Handle things differently if we don't know the punctuation system
         punctuationSystemName = BOSObject.getOrganizationalSystemValue( 'punctuationSystem' )
@@ -120,7 +120,7 @@ class BibleReferenceBase:
         if punctuationSystemName and punctuationSystemName!='None' and punctuationSystemName!='Unknown': # default (if we know the punctuation system)
             assert( BibleObject is None )
             self.punctuationDict = self._BibleOrganizationalSystem.getPunctuationDict()
-            if Globals.debugFlag: print( "BibleReferenceBase: punct={}".format( BOSObject.getPunctuationSystemName() ) )
+            if BibleOrgSysGlobals.debugFlag: print( "BibleReferenceBase: punct={}".format( BOSObject.getPunctuationSystemName() ) )
         else: # else use a very generic punctuation system
             assert( BibleObject )
             self.punctuationDict = { 'spaceAllowedAfterBCS': 'E',
@@ -143,7 +143,7 @@ class BibleReferenceBase:
             self.getBookNameFunction = self._BibleOrganizationalSystem.getBookName
             getBookAbbreviationFunction = self._BibleOrganizationalSystem.getBookAbbreviation
             self.getBBB = self._BibleOrganizationalSystem.getBBB # This is the function that finds a book code from the vernacular name or abbreviation
-            if Globals.debugFlag: print( "BibleReferenceBase: bns={}".format( BOSObject.getBookNamesSystemName() ) )
+            if BibleOrgSysGlobals.debugFlag: print( "BibleReferenceBase: bns={}".format( BOSObject.getBookNamesSystemName() ) )
         else: # else use our local functions from our deduced book names
             assert( BibleObject )
             self.getBookNameFunction = BibleObject.getAssumedBookName # from InternalBible (which gets it from InternalBibleBook)
@@ -732,7 +732,7 @@ class BibleReferenceList( BibleReferenceBase ):
             """
             Checks the reference info then saves it as a referenceTuple in the refList.
             """
-            if Globals.debugFlag and debuggingThisModule:
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                 print( "BibleReferences.saveReferenceRange:", "startTuple =", startTuple, "BBB =", BBB, "C =", C, "V =", V, "S = ", S, "refList =", refList )
             if V and not S and V[-1] in ('a','b','c',): # Remove the suffix
                 S = V[-1]; V = V[:-1]
@@ -747,7 +747,7 @@ class BibleReferenceList( BibleReferenceBase ):
                 logging.error( _("saveReferenceRange: Missing V parameter from {} Bible reference '{}'").format( BBB, referenceString ) )
             elif not V.isdigit():
                 logging.error( _("saveReferenceRange: Non-digit {} V parameter from {} Bible reference '{}'").format( repr(V), BBB, referenceString ) )
-            if Globals.debugFlag and debuggingThisModule:
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                 assert( BBB is None or len(BBB) == 3 )
                 assert( not C or C.isdigit() ) # Should be no suffix on C (although it can be blank if the reference is for a whole book)
                 assert( not V or V.isdigit() ) # Should be no suffix on V (although it can be blank if the reference is for a whole chapter)
@@ -772,7 +772,7 @@ class BibleReferenceList( BibleReferenceBase ):
 
 
         if location is None: location = '(unknown)'
-        if Globals.debugFlag and debuggingThisModule:
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( "BibleReferences.parseReferenceString '{}' from {}".format( referenceString, location ) )
         assert( referenceString and isinstance( referenceString, str ) )
         assert( location and isinstance( location, str ) )
@@ -784,7 +784,7 @@ class BibleReferenceList( BibleReferenceBase ):
         adjustedReferenceString = strippedReferenceString
         for value in ignoredSuffixes:
             adjustedReferenceString = adjustedReferenceString.replace( value, '' )
-        if Globals.debugFlag and debuggingThisModule:
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             statusList = {0:"gettingBookname", 1:"gettingBCSeparator", 2:"gettingChapter", 3:"gettingVerse", 4:"gettingNextBorC", 5:"gettingBorCorVRange", 6:"gettingBRange", 7:"gettingCRange", 8:"gettingVRange", 9:"finished"}
         status, bookNameOrAbbreviation, BBB, C, V, S, spaceCount, startReferenceTuple, self.referenceList = 0, '', None, '', '', '', 0, (), []
         for nn, char in enumerate(adjustedReferenceString):
@@ -792,7 +792,7 @@ class BibleReferenceList( BibleReferenceBase ):
             if nnn!=nn: # Well the character wasn't exactly where we expected it
                 assert( adjustedReferenceString != referenceString ) # but this can happen if we messed with the string
                 #print( "nnn!=nn", nn, nnn, "'"+referenceString+"'", "'"+adjustedReferenceString+"'" )
-            if Globals.debugFlag and debuggingThisModule:
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                 #if referenceString.startswith('Num 22'):
                 print( "  BRL status: {}:{} -- got '{}'".format(status, statusList[status],char), haveErrors, haveWarnings, self.referenceList, BBB )
             if status == 0: # Getting bookname (with or without punctuation after book abbreviation)
@@ -1191,13 +1191,13 @@ class BibleReferenceList( BibleReferenceBase ):
             saveReference( BBB, C, V, S, self.referenceList )
             status = 9
 
-        if Globals.debugFlag and debuggingThisModule:
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( "BibleReferences.parseReferenceString BRL final status: {}:{} -- got '{}'from '{}'\n".format(status,statusList[status],self.referenceList,referenceString) )
             print( "BibleReferences.parseReferenceString here", len(totalVerseList), totalVerseList )
 
         singleVerseSet = set( totalVerseList )
         if len(singleVerseSet) < len(totalVerseList):
-            if Globals.debugFlag and debuggingThisModule:
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                 print( "BibleReferences.parseReferenceString Final status: {} -- got '{}'from '{}'\n".format(statusList[status],self.referenceList,referenceString) )
                 print( "BibleReferences.parseReferenceString totalVerseList is {}, singleVerseSet is {}".format(totalVerseList, singleVerseSet) )
             for entry in singleVerseSet:
@@ -1215,9 +1215,9 @@ class BibleReferenceList( BibleReferenceBase ):
 
         Basically just returns the first result (if any) from parseReferenceString.
         """
-        if Globals.debugFlag and debuggingThisModule: print( "BibleReferences.getFirstReference( {}, {} )".format( repr(referenceString), location ) )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "BibleReferences.getFirstReference( {}, {} )".format( repr(referenceString), location ) )
         hE, hW, refList = self.parseReferenceString( referenceString, location )
-        if Globals.debugFlag and debuggingThisModule: print( "gFR", hE, hW, refList )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "gFR", hE, hW, refList )
         for something in refList: # Just return the first one
             if isinstance( something, tuple ):
                 if len(something)==4: return something
@@ -1236,8 +1236,8 @@ class BibleReferenceList( BibleReferenceBase ):
         """
         # Set things up for OSIS system e.g., 1Cor.3.5-1Cor.3.9
         self.punctuationDict = {'booknameCase': 'M', 'booknameLength': 'M', 'spaceAllowedAfterBCS': 'N', 'punctuationAfterBookAbbreviation': '', 'chapterVerseSeparator': '.', 'bookChapterSeparator': '.', 'chapterSeparator': ';', 'bookBridgeCharacter': '-', 'chapterBridgeCharacter': '-', 'verseBridgeCharacter': '-', 'bookSeparator': ';', 'verseSeparator': ',', 'allowedVerseSuffixes': ''}
-        OSISList = Globals.BibleBooksCodes.getAllOSISBooksCodes()
-        self.getBBB = lambda s: Globals.BibleBooksCodes.getBBBFromOSIS(s)
+        OSISList = BibleOrgSysGlobals.BibleBooksCodes.getAllOSISBooksCodes()
+        self.getBBB = lambda s: BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSIS(s)
 
         # Now do the actual parsing using the standard routine
         sucessFlag, haveWarnings, resultList = self.parseReferenceString( referenceString )
@@ -1282,8 +1282,8 @@ class BibleReferenceList( BibleReferenceBase ):
             if result: result += self.punctuationDict['bookSeparator'] + ' ' # The separator between multiple references
             if len(refOrRefRange) == 2: # it must be a range (start and end tuples)
                 (BBB1, C1, V1, S1), (BBB2, C2, V2, S2) = refOrRefRange
-                Bk1 = Globals.BibleBooksCodes.getOSISAbbreviation( BBB1 )
-                Bk2 = Globals.BibleBooksCodes.getOSISAbbreviation( BBB2 )
+                Bk1 = BibleOrgSysGlobals.BibleBooksCodes.getOSISAbbreviation( BBB1 )
+                Bk2 = BibleOrgSysGlobals.BibleBooksCodes.getOSISAbbreviation( BBB2 )
                 if V1 and V2: result += "{}.{}.{}-{}.{}.{}".format(Bk1,C1,V1,Bk2,C2,V2)
                 elif not V1 and not V2: result += "{}.{}-{}.{}".format(Bk1,C1,Bk2,C2)
                 elif V2: result += "{}.{}.1-{}.{}.{}".format(Bk1,C1,Bk2,C2,V2)
@@ -1291,7 +1291,7 @@ class BibleReferenceList( BibleReferenceBase ):
                 lastBk, lastC, lastV = Bk2, C2, V2
             else: # It must be a single reference
                 BBB, C, V, S = refOrRefRange
-                Bk = Globals.BibleBooksCodes.getOSISAbbreviation( BBB )
+                Bk = BibleOrgSysGlobals.BibleBooksCodes.getOSISAbbreviation( BBB )
                 if V: result += "{}.{}.{}".format(Bk,C,V)
                 else: result += "{}.{}".format(Bk,C)
                 lastBk, lastC, lastV = Bk, C, V
@@ -1327,7 +1327,7 @@ class BibleReferenceList( BibleReferenceBase ):
 
     def containsReference( self, BBB, C, V, S=None ):
         """ Returns True/False if the internal reference list contains the given reference. """
-        #if Globals.verbosityLevel > 3: print( "BibleReferenceList.containsReference( {}, {}, {}, {} )".format( BBB, C, V, S ) )
+        #if BibleOrgSysGlobals.verbosityLevel > 3: print( "BibleReferenceList.containsReference( {}, {}, {}, {} )".format( BBB, C, V, S ) )
         assert( BBB and len(BBB)==3 )
         assert( C )
         if not C.isdigit(): print( "BibleReferenceList.containsReference( {}, {}, {}, {} ) expected C to be digits".format( BBB, C, V, S ) )
@@ -1426,8 +1426,8 @@ class BibleAnchorReference:
         self.suffixString = '' if suffixString is None else suffixString
         self.homeTuple = (self.BBB,self.chapterString,self.verseString,self.suffixString,)
 
-        assert( Globals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ) )
-        self.isSingleChapterBook = BBB in Globals.BibleBooksCodes.getSingleChapterBooksList()
+        assert( BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ) )
+        self.isSingleChapterBook = BBB in BibleOrgSysGlobals.BibleBooksCodes.getSingleChapterBooksList()
         self.allowedVerseSuffixes = ( 'a', 'b', 'c', 'd', 'e', )
         self.allowedCVSeparators = ( ':', '.', )
         self.allowedVerseSeparators = ( ',', '-', )
@@ -1863,7 +1863,7 @@ def demo():
     """
     Demonstrate parsing some Bible reference strings.
     """
-    if Globals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
 
     ourBOS = BibleOrganizationalSystem( "RSV" )
     printProcessingMessages = True
@@ -1984,10 +1984,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of BibleReferences.py

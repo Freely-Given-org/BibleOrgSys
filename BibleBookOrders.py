@@ -40,7 +40,7 @@ import os, logging
 from gettext import gettext as _
 #from singleton import singleton
 
-import Globals
+import BibleOrgSysGlobals
 
 
 
@@ -52,7 +52,7 @@ def t( messageString ):
     """
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
-    if Globals.debugFlag or debuggingThisModule:
+    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit, _(errorBit) )
 
@@ -72,7 +72,7 @@ class BibleBookOrderSystems:
         """
         Constructor:
         """
-        if Globals.debugFlag and debuggingThisModule: print( "BibleBookOrderSystems:__init__()" )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "BibleBookOrderSystems:__init__()" )
         self.__DataDicts = self.__DataLists = None # We'll import into these in loadData
     # end of BibleBookOrderSystems.__init__
 
@@ -97,7 +97,7 @@ class BibleBookOrderSystems:
                         picklesGood = False; break
             if picklesGood:
                 import pickle
-                if Globals.verbosityLevel > 2: print( "Loading pickle file {}...".format( standardPickleFilepath ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}...".format( standardPickleFilepath ) )
                 with open( standardPickleFilepath, 'rb') as pickleFile:
                     self.__DataDicts = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
                     self.__DataLists = pickle.load( pickleFile )
@@ -108,7 +108,7 @@ class BibleBookOrderSystems:
                 bboc.loadSystems( XMLFolder ) # Load the XML (if not done already)
                 self.__DataDicts, self.__DataLists = bboc.importDataToPython() # Get the various dictionaries organised for quick lookup
         assert( len(self.__DataDicts) == len(self.__DataLists) )
-        if (Globals.debugFlag and debuggingThisModule) or Globals.verbosityLevel > 3:
+        if (BibleOrgSysGlobals.debugFlag and debuggingThisModule) or BibleOrgSysGlobals.verbosityLevel > 3:
             print( "BibleBookOrderSystems:loadData({}) loaded {} systems".format( XMLFolder, len(self.__DataDicts) ) )
         return self
     # end of BibleBookOrderSystems.loadData
@@ -152,7 +152,7 @@ class BibleBookOrderSystems:
             return self.__DataDicts[systemName][0], self.__DataDicts[systemName][1], self.__DataLists[systemName]
         # else
         logging.error( _("No '{}' system in Bible Book Orders").format( systemName ) )
-        if Globals.verbosityLevel > 2: logging.error( _("Available systems are {}").format( self.getAvailableBookOrderSystemNames() ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: logging.error( _("Available systems are {}").format( self.getAvailableBookOrderSystemNames() ) )
     # end of BibleBookOrderSystems.getBookOrderSystem
 
 
@@ -185,7 +185,7 @@ class BibleBookOrderSystems:
         assert( self.__DataLists )
         #print( thisSystemName, bookOrderSchemeToCheck )
         for BBB in bookOrderSchemeToCheck:
-            if not Globals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): logging.error( "Invalid '{}' book code".format( BBB ) )
+            if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): logging.error( "Invalid '{}' book code".format( BBB ) )
 
         matchedBookOrderSystemCodes = []
         exactMatchCount, subsetMatchCount, systemMismatchCount, allErrors, errorSummary = 0, 0, 0, '', ''
@@ -229,15 +229,15 @@ class BibleBookOrderSystems:
         systemMismatchCount = len(self.__DataLists) - systemMatchCount
         if systemMatchCount == 1: # What we hope for
             print("  " + _("{} matched {} book order (with these {} books)").format( thisSystemName, matchedBookOrderSystemCodes[0], len(bookOrderSchemeToCheck) ) )
-            if Globals.commandLineOptions.debug: print( errorSummary )
+            if BibleOrgSysGlobals.commandLineOptions.debug: print( errorSummary )
         elif systemMatchCount == 0: # No matches
             print( "  " + _("{} mismatched {} book order systems (with these {} books)").format( thisSystemName, systemMismatchCount, len(bookOrderSchemeToCheck) ) )
-            print( allErrors if Globals.commandLineOptions.debug or Globals.verbosityLevel>2 else errorSummary )
+            print( allErrors if BibleOrgSysGlobals.commandLineOptions.debug or BibleOrgSysGlobals.verbosityLevel>2 else errorSummary )
         else: # Multiple matches
             print( "  " + _("{} matched {} book order system(s): {} (with these {} books)").format( thisSystemName, systemMatchCount, matchedBookOrderSystemCodes, len(bookOrderSchemeToCheck) ) )
-            if Globals.commandLineOptions.debug: print( errorSummary )
+            if BibleOrgSysGlobals.commandLineOptions.debug: print( errorSummary )
 
-        if Globals.commandLineOptions.export and not systemMatchCount: # Write a new file
+        if BibleOrgSysGlobals.commandLineOptions.export and not systemMatchCount: # Write a new file
             outputFilepath = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/", "BibleBookOrder_"+thisSystemName + ".xml" )
             print( _("Writing {} {} books to {}...").format( len(bookOrderSchemeToCheck), thisSystemName, outputFilepath ) )
             with open( outputFilepath, 'wt' ) as myFile:
@@ -264,7 +264,7 @@ class BibleBookOrderSystem:
         """
         Constructor:
         """
-        if Globals.debugFlag and debuggingThisModule: print( "BibleBookOrderSystem:__init__({})".format( systemName ) )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "BibleBookOrderSystem:__init__({})".format( systemName ) )
         self.__systemName = systemName
         self.__bbos = BibleBookOrderSystems().loadData() # Doesn't reload the XML unnecessarily :)
         results = self.__bbos.getBookOrderSystem( self.__systemName )
@@ -373,7 +373,7 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
 
     # Demo the BibleBookOrders object
     bboss = BibleBookOrderSystems().loadData() # Doesn't reload the XML unnecessarily :)
@@ -409,10 +409,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser, exportAvailable=True )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of BibleBookOrders.py

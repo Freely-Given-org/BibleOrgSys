@@ -49,7 +49,7 @@ import os, logging
 from gettext import gettext as _
 from collections import OrderedDict
 
-import Globals
+import BibleOrgSysGlobals
 from USFMMarkers import USFM_TITLE_MARKERS, USFM_INTRODUCTION_MARKERS, \
                         USFM_SECTION_HEADING_MARKERS, USFM_BIBLE_PARAGRAPH_MARKERS # OFTEN_IGNORED_USFM_HEADER_MARKERS
 from BibleReferences import BibleAnchorReference
@@ -125,7 +125,7 @@ class InternalBibleExtra:
         """
         Accept the parameters and double-check them if requested.
         """
-        if Globals.debugFlag or Globals.strictCheckingFlag:
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             #print( "InternalBibleExtra.__init__( {}, {}, {}, {} )".format( myType, index, repr(noteText), repr(cleanNoteText) ) )
             assert( myType and isinstance( myType, str ) and myType in BOS_EXTRA_TYPES ) # Mustn't be blank
             assert( '\\' not in myType and ' ' not in myType and '*' not in myType )
@@ -211,7 +211,7 @@ class InternalBibleExtraList:
         else:
             dataLen = len( self.data )
             for j, entry in enumerate( self.data ):
-                if Globals.debugFlag: assert( isinstance( entry, InternalBibleExtra ) )
+                if BibleOrgSysGlobals.debugFlag: assert( isinstance( entry, InternalBibleExtra ) )
                 result += "\n  {} {} @ {} = {}".format( ' ' if j<9 and dataLen>=10 else '', j+1, entry.myType, entry.index, repr(entry.noteText) )
                 if j>=maxPrinted and dataLen>maxPrinted:
                     result += "\n  ... ({} total entries)".format( dataLen )
@@ -282,7 +282,7 @@ class InternalBibleEntry:
         #if 'it*' in originalText and 'it*' not in adjustedText:
             #print( "InternalBibleEntry constructor had problem with it* (probably in a footnote) in {} {} {}".format( marker, repr(originalText), repr(adjustedText) ) )
             #halt
-        if Globals.debugFlag or Globals.strictCheckingFlag:
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
             #print( "InternalBibleEntry.__init__( {}, {}, '{}', '{}', {}, '{}' )" \
                     #.format( marker, originalMarker, adjustedText[:35]+('...' if len(adjustedText)>35 else ''), \
                         #cleanText[:35]+('...' if len(cleanText)>35 else ''), extras, \
@@ -304,12 +304,12 @@ class InternalBibleEntry:
                 assert( extras is None or isinstance( extras, InternalBibleExtraList ) )
                 assert( isinstance( originalText, str ) )
                 assert( '\n' not in originalText and '\r' not in originalText )
-                #assert( marker in Globals.USFMMarkers or marker in BOS_ADDED_CONTENT_MARKERS )
-                if marker not in Globals.USFMMarkers and marker not in BOS_ADDED_CONTENT_MARKERS:
+                #assert( marker in BibleOrgSysGlobals.USFMMarkers or marker in BOS_ADDED_CONTENT_MARKERS )
+                if marker not in BibleOrgSysGlobals.USFMMarkers and marker not in BOS_ADDED_CONTENT_MARKERS:
                     logging.warning( "InternalBibleEntry doesn't handle '{}' marker yet.".format( marker ) )
         self.marker, self.originalMarker, self.adjustedText, self.cleanText, self.extras, self.originalText = marker, originalMarker, adjustedText, cleanText, extras, originalText
 
-        if Globals.debugFlag and debuggingThisModule \
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule \
         and self.originalText is not None and self.getFullText() != self.originalText.strip():
             print( "InternalBibleEntry.Full", repr(self.getFullText()) ) # Has footnote in wrong place on verse numbers (before instead of after)
             print( "InternalBibleEntry.Orig", repr(self.originalText.strip()) ) # Has missing footnotes on verse numbers
@@ -375,7 +375,7 @@ class InternalBibleEntry:
                 elif extraType == 'str': USFM, lenUSFM = 'str', 3
                 elif extraType == 'sem': USFM, lenUSFM = 'sem', 3
                 elif extraType == 'vp': USFM, lenUSFM = 'vp', 2
-                elif Globals.debugFlag: halt
+                elif BibleOrgSysGlobals.debugFlag: halt
                 if USFM:
                     result = '{}\\{} {}\\{}*{}'.format( result[:ix], USFM, extraText, USFM, result[ix:] )
                 #print( "getFullText:  now '{}'".format( result ) )
@@ -392,7 +392,7 @@ class InternalBibleEntry:
             #print( "\nWe're giving '{}'".format( result ) )
             #print( "   Should be '{}'".format( self.originalText.strip() ) )
             #print( "        From '{}'".format( self.originalText ) )
-        #if Globals.debugFlag: assert( result == self.originalText.strip() )
+        #if BibleOrgSysGlobals.debugFlag: assert( result == self.originalText.strip() )
         return result
     # end of InternalBibleEntry.getFullText
 # end of class InternalBibleEntry
@@ -439,7 +439,7 @@ class InternalBibleEntryList:
         else:
             dataLen = len( self.data )
             for j, entry in enumerate( self.data ):
-                if Globals.debugFlag: assert( isinstance( entry, InternalBibleEntry ) )
+                if BibleOrgSysGlobals.debugFlag: assert( isinstance( entry, InternalBibleEntry ) )
                 cleanAbbreviation = entry.cleanText if entry.cleanText is None or len(entry.cleanText)<100 \
                                                     else (entry.cleanText[:50]+'...'+entry.cleanText[-50:])
                 result += "\n  {}{}/ {} = {}{}".format( ' ' if j<9 and dataLen>=10 else '', j+1, entry.marker, repr(cleanAbbreviation), " + extras" if entry.extras else '' )
@@ -532,7 +532,7 @@ class InternalBibleIndex:
         except: result += "\n  Index is empty"
         try: result += " created from {} data entries".format( len( self.givenBibleEntries ) )
         except: pass # ignore it
-        if Globals.verbosityLevel > 2:
+        if BibleOrgSysGlobals.verbosityLevel > 2:
             try: result += "\n  {} average data entries per index entry".format( round( len(self.givenBibleEntries)/len(self.indexData), 1 ) )
             except: pass # ignore it
         #try:
@@ -599,7 +599,7 @@ class InternalBibleIndex:
                 #assert( 1 <= lineCount <= 120 ) # Could potentially be even higher for bridged verses (e.g., 1Chr 11:26-47, Ezra 2:3-20) and where words are stored individually
                 if saveCV in self.indexData:
                     logging.critical( "makeIndex.saveAnythingOutstanding: losing Biblical text by replacing index entry {} {}:{}".format( self.BBB, strC, strV ) )
-                    if Globals.verbosityLevel > 2:
+                    if BibleOrgSysGlobals.verbosityLevel > 2:
                         print( saveCV )
                         try:
                             iep = self.indexData[(saveCV[0],str(int(saveCV[1])-1))]
@@ -616,14 +616,14 @@ class InternalBibleIndex:
                         logging.error( "  mI:sAO now {}".format( (saveJ,lineCount,context) ) )
                         for ixx in range( saveJ, saveJ+lineCount ):
                             logging.error( "   mI:sAO {} {}".format( self.givenBibleEntries[ixx], context ) )
-                        if Globals.debugFlag and debuggingThisModule: halt # This is a serious error that is losing Biblical text
+                        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt # This is a serious error that is losing Biblical text
                 self.indexData[saveCV] = InternalBibleIndexEntry( saveJ, lineCount, context )
                 saveCV = saveJ = None
                 lineCount = 0
         # end of saveAnythingOutstanding
 
 
-        if Globals.verbosityLevel > 3: print( "    " + _("Indexing {} {} {} entries...").format( len(self.givenBibleEntries), self.name, self.BBB ) )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( "    " + _("Indexing {} {} {} entries...").format( len(self.givenBibleEntries), self.name, self.BBB ) )
         if self.BBB not in ('FRT','PRF','ACK','INT','TOC','GLS','CNC','NDX','TDX','BAK','OTH', \
                                                 'XXA','XXB','XXC','XXD','XXE','XXF','XXG',):
             # Assume it's a C/V book
@@ -633,7 +633,7 @@ class InternalBibleIndex:
             for j, entry in enumerate( self.givenBibleEntries):
                 #print( "  makeIndex1", j, "saveCV =", saveCV, "saveJ =", saveJ, "this =", entry.getMarker(), entry.getCleanText()[:20] + ('' if len(entry.getCleanText())<20 else '...') )
                 marker = entry.getMarker()
-                if Globals.debugFlag and marker in Globals.USFMParagraphMarkers:
+                if BibleOrgSysGlobals.debugFlag and marker in BibleOrgSysGlobals.USFMParagraphMarkers:
                     assert( not entry.getText() and not entry.getCleanText() and not entry.getExtras() )
                 if marker == 'c': # A new chapter always means that it's a clean new index entry
                     saveAnythingOutstanding()
@@ -664,7 +664,7 @@ class InternalBibleIndex:
                     for char in strV:
                         if char.isdigit(): digitV += char
                         else: # the first non-digit in the verse "number"
-                            if Globals.verbosityLevel > 3: print( "Ignored non-digits in verse for index: {} {}:{}".format( self.BBB, strC, strV ) )
+                            if BibleOrgSysGlobals.verbosityLevel > 3: print( "Ignored non-digits in verse for index: {} {}:{}".format( self.BBB, strC, strV ) )
                             break # ignore the rest
                     #assert( strV != '0' or self.BBB=='PSA' ) # Not really handled properly yet
                     saveCV, saveJ = (strC,digitV,), revertToJ
@@ -690,7 +690,7 @@ class InternalBibleIndex:
             for j, entry in enumerate( self.givenBibleEntries):
                 #print( "  makeIndex2", j, "saveCV =", saveCV, "saveJ =", saveJ, "this =", entry.getMarker(), entry.getCleanText()[:20] + ('' if len(entry.getCleanText())<20 else '...') )
                 marker = entry.getMarker()
-                if Globals.debugFlag and marker in Globals.USFMParagraphMarkers:
+                if BibleOrgSysGlobals.debugFlag and marker in BibleOrgSysGlobals.USFMParagraphMarkers:
                     assert( not entry.getText() and not entry.getCleanText() and not entry.getExtras() )
                 if marker == 'c': # A new chapter always means that it's a clean new index entry
                     saveAnythingOutstanding()
@@ -711,7 +711,7 @@ class InternalBibleIndex:
                         for char in strV:
                             if char.isdigit(): digitV += char
                             else: # the first non-digit in the verse "number"
-                                if Globals.verbosityLevel > 3: print( "Ignored non-digits in verse for index: {} {}:{}".format( self.BBB, strC, strV ) )
+                                if BibleOrgSysGlobals.verbosityLevel > 3: print( "Ignored non-digits in verse for index: {} {}:{}".format( self.BBB, strC, strV ) )
                                 break # ignore the rest
                         #assert( strV != '0' or self.BBB=='PSA' ) # Not really handled properly yet
                         saveCV, saveJ = (strC,digitV,), revertToJ
@@ -729,7 +729,7 @@ class InternalBibleIndex:
             saveAnythingOutstanding()
 
         self._indexedFlag = True
-        if Globals.strictCheckingFlag or Globals.debugFlag: self.checkIndex()
+        if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: self.checkIndex()
     # end of InternalBibleIndex.makeIndex
 
 
@@ -737,8 +737,8 @@ class InternalBibleIndex:
         """
         Just run a quick internal check on the index.
         """
-        if Globals.verbosityLevel > 2: print(  "  " + _("Checking {} {} {} index entries...").format( len(self.indexData), self.name, self.BBB ) )
-        if Globals.verbosityLevel > 3: print( self )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print(  "  " + _("Checking {} {} {} index entries...").format( len(self.indexData), self.name, self.BBB ) )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( self )
 
         for ixKey in self.indexData:
             #print( ixKey ); halt
@@ -792,7 +792,7 @@ class InternalBibleIndex:
                 if V == '0':
                     if 'c' not in markers:
                         logging.critical( "InternalBibleIndex.checkIndex: Probable v0 encoding error (no chapter?) in {} {} {}:{} {}".format( self.name, self.BBB, C, V, entries ) )
-                    if Globals.debugFlag and debuggingThisModule: assert( 'c' in markers )
+                    if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert( 'c' in markers )
                 else: assert( 'v' in markers )
                 if 'p' in markers: assert( 'p~' in markers or 'v' in markers )
                 if 'q1' in markers or 'q2' in markers: assert( 'v' in markers or 'p~' in markers )
@@ -815,12 +815,12 @@ class InternalBibleIndex:
                     elif marker == 'v':
                         if markers[-1] != 'v' and nextMarker not in ('v~','¬v',): # end marker if verse is blank
                             logging.critical( "InternalBibleIndex.checkIndex: Probable v encoding error in {} {} {}:{} {}".format( self.name, self.BBB, C, V, entries ) )
-                            if Globals.debugFlag and debuggingThisModule: halt
+                            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                     elif marker == 'vp~': assert( nextMarker == 'v' )
                     elif marker in ('v~','p~',):
                         if nextMarker in ('v~','p~',): # These don't usually follow each other
                             logging.critical( "InternalBibleIndex.checkIndex: Probable {} encoding error in {} {} {}:{} {}".format( marker, self.name, self.BBB, C, V, entries ) )
-                            if Globals.debugFlag and debuggingThisModule: halt
+                            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
 
                     if anyText or anyExtras: # Mustn't be a blank (unfinished) verse
                         if marker=='p' and nextMarker not in ('v','p~','c#','¬p'):
@@ -828,22 +828,22 @@ class InternalBibleIndex:
                             logging.critical( "InternalBibleIndex.checkIndex: Probable p encoding error in {} {} {}:{} {}".format( self.name, self.BBB, C, V, entries ) )
                             if nextKey: print( "  InternalBibleIndex.checkIndex: nextKey1", self.BBB, nextKey, self.getEntries( nextKey )[0] )
                             if nextNextKey: print( "  InternalBibleIndex.checkIndex: nextNextKey1", self.BBB, nextNextKey, self.getEntries( nextNextKey )[0] )
-                            if Globals.debugFlag and debuggingThisModule: halt
+                            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                         elif marker=='q1' and nextMarker not in ('v','p~','c#','¬q1',):
                             if lastKey: print( "InternalBibleIndex.checkIndex: lastKey2", self.BBB, lastKey, self.getEntries( lastKey )[0] )
                             logging.critical( "InternalBibleIndex.checkIndex: Probable q1 encoding error in {} {} {}:{} {}".format( self.name, self.BBB, C, V, entries ) )
                             if nextKey: print( "  InternalBibleIndex.checkIndex: nextKey2", self.BBB, nextKey, self.getEntries( nextKey )[0] )
                             if nextNextKey: print( "  InternalBibleIndex.checkIndex: nextNextKey2", self.BBB, nextNextKey, self.getEntries( nextNextKey )[0] )
-                            if Globals.debugFlag and debuggingThisModule: halt
+                            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                         elif marker=='q2' and nextMarker not in ('v','p~', '¬q2' ):
                                 logging.critical( "InternalBibleIndex.checkIndex: Probable q2 encoding error in {} {} {}:{} {}".format( self.name, self.BBB, C, V, entries ) )
-                                if Globals.debugFlag and debuggingThisModule: halt
+                                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                         elif marker=='q3' and nextMarker not in ('p~', '¬q3'):
                                 logging.critical( "InternalBibleIndex.checkIndex: Probable q3 encoding error in {} {} {}:{} {}".format( self.name, self.BBB, C, V, entries ) )
-                                if Globals.debugFlag and debuggingThisModule: halt
+                                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                         elif marker=='q4' and nextMarker not in ('p~', '¬q3'):
                                 logging.critical( "InternalBibleIndex.checkIndex: Probable q3 encoding error in {} {} {}:{} {}".format( self.name, self.BBB, C, V, entries ) )
-                                if Globals.debugFlag and debuggingThisModule: halt
+                                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
 
                     # Set the previous marker (but skipping over rem markers)
                     if marker != 'rem': previousMarker = marker
@@ -875,12 +875,12 @@ class InternalBibleIndex:
                 if marker in ( 'c','c#' ):
                     if cleanText != C:
                         logging.critical( "InternalBibleIndex.checkIndex: wrong {} {} chapter number '{}' expected '{}'".format( self.name, self.BBB, cleanText, C ) )
-                        #if Globals.debugFlag: halt
+                        #if BibleOrgSysGlobals.debugFlag: halt
                 elif marker == 'v':
                     if cleanText != V:
                         if '-' not in cleanText and ',' not in cleanText: # Handle verse ranges
                             logging.critical( "InternalBibleIndex.checkIndex: wrong {} {} {} verse number '{}' expected '{}'".format( self.name, self.BBB, C, cleanText, V ) )
-                            #if Globals.debugFlag: halt
+                            #if BibleOrgSysGlobals.debugFlag: halt
             lastKey = key
         #if self.BBB=='FRT': halt
     # end of InternalBibleIndex.checkIndex
@@ -892,7 +892,7 @@ def demo():
     """
     Demonstrate reading and processing some Bible databases.
     """
-    if Globals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
     print( "Since these are only helper classes, they can't actually do much at all." )
     print( "  Try running USFMBibleBook or USXXMLBibleBook which use these classes." )
@@ -902,16 +902,16 @@ def demo():
     #IBB.objectNameString = "Dummy test Internal Bible Book object"
     #IBB.objectTypeString = "DUMMY"
     #IBB.sourceFilepath = "Nowhere"
-    #if Globals.verbosityLevel > 0: print( IBB )
+    #if BibleOrgSysGlobals.verbosityLevel > 0: print( IBB )
 # end of demo
 
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of InternalBibleInternals.py

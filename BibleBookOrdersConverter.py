@@ -39,7 +39,7 @@ from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree
 
 from singleton import singleton
-import Globals
+import BibleOrgSysGlobals
 
 
 
@@ -81,13 +81,13 @@ class BibleBookOrdersConverter:
         if not self._XMLSystems: # Only ever do this once
             if XMLFolder==None: XMLFolder = os.path.join( os.path.dirname(__file__), "DataFiles", "BookOrders" ) # Relative to module, not cwd
             self.__XMLFolder = XMLFolder
-            if Globals.verbosityLevel > 2: print( _("Loading book order systems from {}...").format( self.__XMLFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading book order systems from {}...").format( self.__XMLFolder ) )
             filenamePrefix = "BIBLEBOOKORDER_"
             for filename in os.listdir( self.__XMLFolder ):
                 filepart, extension = os.path.splitext( filename )
                 if extension.upper() == '.XML' and filepart.upper().startswith(filenamePrefix):
                     bookOrderSystemCode = filepart[len(filenamePrefix):]
-                    if Globals.verbosityLevel > 3: print( _("  Loading{} book order system from {}...").format( bookOrderSystemCode, filename ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 3: print( _("  Loading{} book order system from {}...").format( bookOrderSystemCode, filename ) )
                     self._XMLSystems[bookOrderSystemCode] = {}
                     self._XMLSystems[bookOrderSystemCode]["tree"] = ElementTree().parse( os.path.join( self.__XMLFolder, filename ) )
                     assert( self._XMLSystems[bookOrderSystemCode]["tree"] ) # Fail here if we didn't load anything at all
@@ -98,18 +98,18 @@ class BibleBookOrdersConverter:
                         if header.tag == self.headerTag:
                             self._XMLSystems[bookOrderSystemCode]["header"] = header
                             self._XMLSystems[bookOrderSystemCode]["tree"].remove( header )
-                            Globals.checkXMLNoText( header, "header" )
-                            Globals.checkXMLNoTail( header, "header" )
-                            Globals.checkXMLNoAttributes( header, "header" )
+                            BibleOrgSysGlobals.checkXMLNoText( header, "header" )
+                            BibleOrgSysGlobals.checkXMLNoTail( header, "header" )
+                            BibleOrgSysGlobals.checkXMLNoAttributes( header, "header" )
                             if len(header)>1:
                                 logging.info( _("Unexpected elements in header") )
                             elif len(header)==0:
                                 logging.info( _("Missing work element in header") )
                             else:
                                 work = header[0]
-                                Globals.checkXMLNoText( work, "work in header" )
-                                Globals.checkXMLNoTail( work, "work in header" )
-                                Globals.checkXMLNoAttributes( work, "work in header" )
+                                BibleOrgSysGlobals.checkXMLNoText( work, "work in header" )
+                                BibleOrgSysGlobals.checkXMLNoTail( work, "work in header" )
+                                BibleOrgSysGlobals.checkXMLNoAttributes( work, "work in header" )
                                 if work.tag == "work":
                                     self._XMLSystems[bookOrderSystemCode]["version"] = work.find("version").text
                                     self._XMLSystems[bookOrderSystemCode]["date"] = work.find("date").text
@@ -125,7 +125,7 @@ class BibleBookOrdersConverter:
                         bookCount += 1
                     logging.info( _("    Loaded {} books").format( bookCount ) )
 
-                if Globals.strictCheckingFlag:
+                if BibleOrgSysGlobals.strictCheckingFlag:
                     self.__validateSystem( self._XMLSystems[bookOrderSystemCode]["tree"], bookOrderSystemCode )
         else: # The data must have been already loaded
             if XMLFolder is not None and XMLFolder!=self.__XMLFolder: logging.error( _("Bible book order systems are already loaded -- your different folder of '{}' was ignored").format( self.__XMLFolder ) )
@@ -143,9 +143,9 @@ class BibleBookOrdersConverter:
         expectedID = 1
         for k,element in enumerate(bookOrderTree):
             if element.tag == self.mainElementTag:
-                Globals.checkXMLNoTail( element, element.tag )
-                if not self.compulsoryAttributes and not self.optionalAttributes: Globals.checkXMLNoAttributes( element, element.tag )
-                if not self.compulsoryElements and not self.optionalElements: Globals.checkXMLNoSubelements( element, element.tag )
+                BibleOrgSysGlobals.checkXMLNoTail( element, element.tag )
+                if not self.compulsoryAttributes and not self.optionalAttributes: BibleOrgSysGlobals.checkXMLNoAttributes( element, element.tag )
+                if not self.compulsoryElements and not self.optionalElements: BibleOrgSysGlobals.checkXMLNoSubelements( element, element.tag )
 
                 # Check ascending ID field
                 ID = element.get("id")
@@ -227,7 +227,7 @@ class BibleBookOrdersConverter:
         """
         result = "BibleBookOrdersConverter object"
         result += ('\n' if result else '') + "  Number of book order systems loaded = {}".format( len(self._XMLSystems) )
-        if Globals.verbosityLevel > 2: # Make it verbose
+        if BibleOrgSysGlobals.verbosityLevel > 2: # Make it verbose
             for x in self._XMLSystems:
                 result += ('\n' if result else '') + " {}".format( x )
                 title = self._XMLSystems[x]["title"]
@@ -262,7 +262,7 @@ class BibleBookOrdersConverter:
                 bookRA = bookElement.text
                 ID = bookElement.get( "id" )
                 intID = int( ID )
-                if not Globals.BibleBooksCodes.isValidReferenceAbbreviation( bookRA ):
+                if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( bookRA ):
                     logging.error( _("Unrecognized '{}' book abbreviation in '{}' book order system").format( bookRA, bookOrderSystemCode ) )
                 # Save it by book reference abbreviation
                 if bookRA in bookDataDict:
@@ -275,7 +275,7 @@ class BibleBookOrdersConverter:
             assert( len(bookDataDict) == len(idDataDict) )
             assert( len(bookDataDict) == len(BBBList) )
 
-            if Globals.strictCheckingFlag: # check for duplicates
+            if BibleOrgSysGlobals.strictCheckingFlag: # check for duplicates
                 for checkSystemCode in self.__DataLists:
                     if self.__DataLists[checkSystemCode] == BBBList:
                         logging.error( _("{} and {} book order systems are identical ({} books)").format( bookOrderSystemCode, checkSystemCode, len(BBBList) ) )
@@ -284,7 +284,7 @@ class BibleBookOrdersConverter:
             self.__DataDicts[bookOrderSystemCode] = bookDataDict, idDataDict
             self.__DataLists[bookOrderSystemCode] = BBBList # Don't explicitly include the book index numbers, but otherwise the same information in a different form
 
-        if Globals.strictCheckingFlag: # check for subsets
+        if BibleOrgSysGlobals.strictCheckingFlag: # check for subsets
             for checkSystemCode in self.__DataLists:
                 for otherSystemCode in self.__DataLists:
                     if checkSystemCode != otherSystemCode:
@@ -314,7 +314,7 @@ class BibleBookOrdersConverter:
             folder = os.path.join( self.__XMLFolder, "../", "DerivedFiles/" )
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self.__filenameBase + "_Tables.pickle" )
-        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
         with open( filepath, 'wb' ) as pickleFile:
             pickle.dump( self.__DataDicts, pickleFile )
             pickle.dump( self.__DataLists, pickleFile )
@@ -338,7 +338,7 @@ class BibleBookOrdersConverter:
         assert( self.__DataDicts and self.__DataLists )
 
         if not filepath: filepath = os.path.join( self.__XMLFolder, "../", "DerivedFiles", self.__filenameBase + "_Tables.py" )
-        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
 
         # Split into two dictionaries
         with open( filepath, 'wt' ) as myFile:
@@ -376,7 +376,7 @@ class BibleBookOrdersConverter:
         assert( self.__DataDicts and self.__DataLists )
 
         if not filepath: filepath = os.path.join( self.__XMLFolder, "../", "DerivedFiles", self.__filenameBase + "_Tables.json" )
-        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
         with open( filepath, 'wt' ) as myFile:
             json.dump( self.__DataDicts, myFile, indent=2 )
     # end of exportDataToJSON
@@ -435,7 +435,7 @@ class BibleBookOrdersConverter:
         if not filepath: filepath = os.path.join( self.__XMLFolder, "../", "DerivedFiles", self.__filenameBase + "_Tables" )
         hFilepath = filepath + '.h'
         cFilepath = filepath + '.c'
-        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( cFilepath ) ) # Don't bother telling them about the .h file
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( cFilepath ) ) # Don't bother telling them about the .h file
         ifdefName = self.__filenameBase.upper() + "_Tables_h"
 
         with open( hFilepath, 'wt' ) as myHFile, open( cFilepath, 'wt' ) as myCFile:
@@ -506,15 +506,15 @@ class BibleBookOrdersConverter:
         #if systemMatchCount:
             #if systemMatchCount == 1: # What we hope for
                 #print( _("  {} matched {} book order (with these {} books)").format( systemName, matchedBookOrderSystemCodes[0], len(bookOrderSchemeToCheck) ) )
-                #if Globals.commandLineOptions.debug: print( errorSummary )
+                #if BibleOrgSysGlobals.commandLineOptions.debug: print( errorSummary )
             #else:
                 #print( _("  {} matched {} book order system(s): {} (with these {} books)").format( systemName, systemMatchCount, matchedBookOrderSystemCodes, len(bookOrderSchemeToCheck) ) )
-                #if Globals.commandLineOptions.debug: print( errorSummary )
+                #if BibleOrgSysGlobals.commandLineOptions.debug: print( errorSummary )
         #else:
             #print( _("  {} mismatched {} book order systems (with these {} books)").format( systemName, systemMismatchCount, len(bookOrderSchemeToCheck) ) )
-            #print( allErrors if Globals.commandLineOptions.debug else errorSummary )
+            #print( allErrors if BibleOrgSysGlobals.commandLineOptions.debug else errorSummary )
 
-        #if Globals.commandLineOptions.export and not systemMatchCount: # Write a new file
+        #if BibleOrgSysGlobals.commandLineOptions.export and not systemMatchCount: # Write a new file
             #outputFilepath = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/", "BibleBookOrder_"+systemName + ".xml" )
             #print( _("Writing {} {} books to {}...").format( len(bookOrderSchemeToCheck), systemName, outputFilepath ) )
             #with open( outputFilepath, 'wt' ) as myFile:
@@ -530,9 +530,9 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
 
-    if Globals.commandLineOptions.export:
+    if BibleOrgSysGlobals.commandLineOptions.export:
         bbosc = BibleBookOrdersConverter().loadSystems() # Load the XML
         bbosc.pickle() # Produce the .pickle file
         bbosc.exportDataToPython() # Produce the .py tables
@@ -547,10 +547,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser, exportAvailable=True )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of BibleBookOrdersConverter.py

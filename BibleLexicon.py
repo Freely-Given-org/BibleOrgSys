@@ -41,7 +41,7 @@ debuggingThisModule = True
 import logging, os.path
 from gettext import gettext as _
 
-import Globals
+import BibleOrgSysGlobals
 import HebrewLexicon, GreekLexicon
 
 
@@ -54,7 +54,7 @@ def t( messageString ):
     """
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
-    if Globals.debugFlag or debuggingThisModule:
+    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit, _(errorBit) )
 
@@ -71,7 +71,7 @@ class BibleLexiconIndex:
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.
         """
-        if Globals.debugFlag and debuggingThisModule:
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( t("BibleLexiconIndex.__init__( {}, {} )").format( HebrewXMLFolder, GreekXMLFolder ) )
         self.HebrewXMLFolder, self.GreekXMLFolder = HebrewXMLFolder, GreekXMLFolder
         self.hIndex = HebrewLexicon.HebrewLexiconIndex( self.HebrewXMLFolder ) # Create the object
@@ -169,7 +169,7 @@ class BibleLexicon:
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.
         """
-        if Globals.debugFlag and debuggingThisModule:
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( t("BibleLexicon.__init__( {}, {} )").format( HebrewXMLFolder, GreekXMLFolder ) )
         self.HebrewXMLFolder, self.GreekXMLFolder = HebrewXMLFolder, GreekXMLFolder
         fnfCount = 0
@@ -301,7 +301,7 @@ class BibleLexicon:
 
         Returns None if the key is not found.
         """
-        if Globals.debugFlag and debuggingThisModule:
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( t("BibleLexicon.getEntryData( {} )").format( repr(key) ) )
         if not key: return
         if key[0]=='H' and key[1:].isdigit(): return self.hLexicon.getStrongsEntryData( key )
@@ -318,7 +318,7 @@ class BibleLexicon:
         Returns a string for the given key and fieldName names.
         Returns None if the key or fieldName is not found.
         """
-        if Globals.debugFlag and debuggingThisModule:
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( t("BibleLexicon.getEntryField( {}, {} )").format( repr(key), repr(fieldName) ) )
         if not key: return
         if key[0]=='H' and key[1:].isdigit(): return self.hLexicon.getStrongsEntryField( key, fieldName )
@@ -345,7 +345,7 @@ class BibleLexicon:
                 the same Hebrew form from <a href="#ot:1961"><i title="{haw-yaw}" xml:lang="hbo">הָיָה</i></a>).</li>
 
         """
-        if Globals.debugFlag and debuggingThisModule:
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( t("BibleLexicon.getEntryHTML( {} )").format( repr(key) ) )
         if not key: return
         if key[0]=='H' and key[1:].isdigit(): return self.hLexicon.getStrongsEntryHTML( key )
@@ -360,14 +360,14 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
     HebrewLexiconFolder = "../HebrewLexicon/" # Open Scriptures Hebrew lexicon folder
     GreekLexiconFolder = "../../../ExternalPrograms/morphgnt/strongs-dictionary-xml/" # morphgnt Greek lexicon folder
 
 
     if 1: # demonstrate the Bible Lexicon Index class
-        if Globals.verbosityLevel > 1: print( "\nDemonstrating the Bible Lexicon Index class..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDemonstrating the Bible Lexicon Index class..." )
         blix = BibleLexiconIndex( HebrewLexiconFolder, GreekLexiconFolder ) # Load and process the XML
         print( blix ) # Just print a summary
         print()
@@ -381,7 +381,7 @@ def demo():
 
 
     if 1: # demonstrate the Bible Lexicon class
-        if Globals.verbosityLevel > 1: print( "\nDemonstrating the Bible Lexicon class..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDemonstrating the Bible Lexicon class..." )
         bl = BibleLexicon( HebrewLexiconFolder, GreekLexiconFolder ) # Load and process the XML
         print( bl ) # Just print a summary
         print()
@@ -400,10 +400,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser, exportAvailable=False )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=False )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of BibleLexicon.py

@@ -39,7 +39,7 @@ from gettext import gettext as _
 from collections import OrderedDict
 
 from singleton import singleton
-import Globals
+import BibleOrgSysGlobals
 
 
 
@@ -73,7 +73,7 @@ class BibleBooksCodes:
             and os.stat(standardPickleFilepath)[8] > os.stat(standardXMLFilepath)[8] \
             and os.stat(standardPickleFilepath)[9] > os.stat(standardXMLFilepath)[9]: # There's a newer pickle file
                 import pickle
-                if Globals.verbosityLevel > 2: print( "Loading pickle file {}...".format( standardPickleFilepath ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}...".format( standardPickleFilepath ) )
                 with open( standardPickleFilepath, 'rb') as pickleFile:
                     self.__DataDicts = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
             else: # We have to load the XML (much slower)
@@ -260,7 +260,7 @@ class BibleBooksCodes:
     def getBBB( self, someText ):
         """ Attempt to return the BBB reference abbreviation string for the given book information (text).
             Returns BBB or None. """
-        if Globals.debugFlag: assert( someText and isinstance( someText, str ) )
+        if BibleOrgSysGlobals.debugFlag: assert( someText and isinstance( someText, str ) )
         UCSomeText = someText.upper()
         if UCSomeText in self.__DataDicts["referenceAbbreviationDict"]:
             return UCSomeText # it's already a BBB code
@@ -526,7 +526,7 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
 
     # Demo the BibleBooksCodes object
     bbc = BibleBooksCodes().loadData() # Doesn't reload the XML unnecessarily :)
@@ -565,10 +565,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of BibleBooksCodes.py

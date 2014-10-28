@@ -45,7 +45,7 @@ from gettext import gettext as _
 from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree
 
-import Globals
+import BibleOrgSysGlobals
 from BibleOrganizationalSystems import BibleOrganizationalSystem
 from Bible import Bible, BibleBook
 
@@ -69,9 +69,9 @@ def OpenSongXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False
     if autoLoad is true and exactly one OpenSong Bible is found,
         returns the loaded OpenSongXMLBible object.
     """
-    if Globals.verbosityLevel > 2: print( "OpenSongXMLBibleFileCheck( {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad ) )
-    if Globals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
-    if Globals.debugFlag: assert( autoLoad in (True,False,) )
+    if BibleOrgSysGlobals.verbosityLevel > 2: print( "OpenSongXMLBibleFileCheck( {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad ) )
+    if BibleOrgSysGlobals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
+    if BibleOrgSysGlobals.debugFlag: assert( autoLoad in (True,False,) )
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
@@ -82,7 +82,7 @@ def OpenSongXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False
         return False
 
     # Find all the files and folders in this folder
-    if Globals.verbosityLevel > 3: print( " OpenSongXMLBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    if BibleOrgSysGlobals.verbosityLevel > 3: print( " OpenSongXMLBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -105,32 +105,32 @@ def OpenSongXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False
     looksHopeful = False
     lastFilenameFound = None
     for thisFilename in sorted( foundFiles ):
-        if strictCheck or Globals.strictCheckingFlag:
-            firstLines = Globals.peekIntoFile( thisFilename, givenFolderName, numLines=2 )
+        if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
+            firstLines = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName, numLines=2 )
             if not firstLines or len(firstLines)<2: continue
             if not firstLines[0].startswith( '<?xml version="1.0"' ) \
             and not firstLines[0].startswith( '\ufeff<?xml version="1.0"' ): # same but with BOM
-                if Globals.verbosityLevel > 2: print( "OSB (unexpected) first line was '{}' in {}".format( firstLines, thisFilename ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "OSB (unexpected) first line was '{}' in {}".format( firstLines, thisFilename ) )
                 continue
             if not firstLines[1].startswith( '<bible>' ):
                 continue
         lastFilenameFound = thisFilename
         numFound += 1
     if numFound:
-        if Globals.verbosityLevel > 2: print( "OpenSongXMLBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "OpenSongXMLBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and autoLoad:
             ub = OpenSongXMLBible( givenFolderName, lastFilenameFound )
             ub.load() # Load and process the file
             return ub
         return numFound
-    elif looksHopeful and Globals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
+    elif looksHopeful and BibleOrgSysGlobals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
 
     # Look one level down
     numFound = 0
     foundProjects = []
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
-        if Globals.verbosityLevel > 3: print( "    OpenSongXMLBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( "    OpenSongXMLBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
         for something in os.listdir( tryFolderName ):
             somepath = os.path.join( givenFolderName, thisFolderName, something )
@@ -148,12 +148,12 @@ def OpenSongXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False
 
         # See if there's an OS project here in this folder
         for thisFilename in sorted( foundSubfiles ):
-            if strictCheck or Globals.strictCheckingFlag:
-                firstLines = Globals.peekIntoFile( thisFilename, tryFolderName, numLines=2 )
+            if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
+                firstLines = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName, numLines=2 )
                 if not firstLines or len(firstLines)<2: continue
                 if not firstLines[0].startswith( '<?xml version="1.0"' ) \
                 and not firstLines[0].startswith( '\ufeff<?xml version="1.0"' ): # same but with BOM
-                    if Globals.verbosityLevel > 2: print( "OSB (unexpected) first line was '{}' in {}".format( firstLines, thisFilename ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "OSB (unexpected) first line was '{}' in {}".format( firstLines, thisFilename ) )
                     continue
                 if not firstLines[1].startswith( '<bible>' ):
                     continue
@@ -161,9 +161,9 @@ def OpenSongXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False
             lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
-        if Globals.verbosityLevel > 2: print( "OpenSongXMLBibleFileCheck foundProjects", numFound, foundProjects )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "OpenSongXMLBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and autoLoad:
-            if Globals.debugFlag: assert( len(foundProjects) == 1 )
+            if BibleOrgSysGlobals.debugFlag: assert( len(foundProjects) == 1 )
             ub = OpenSongXMLBible( foundProjects[0][0], foundProjects[0][1] ) # Folder and filename
             ub.load() # Load and process the file
             return ub
@@ -187,7 +187,7 @@ class OpenSongXMLBible( Bible ):
         Constructor: just sets up the XML Bible file converter object.
         """
         # Setup and initialise the base class first
-        if Globals.debugFlag: print( "OpenSongXMLBible( {}, {}, {} )".format( sourceFolder, givenName, encoding ) )
+        if BibleOrgSysGlobals.debugFlag: print( "OpenSongXMLBible( {}, {}, {} )".format( sourceFolder, givenName, encoding ) )
         Bible.__init__( self )
         self.objectNameString = "OpenSong XML Bible object"
         self.objectTypeString = "OpenSong"
@@ -216,15 +216,15 @@ class OpenSongXMLBible( Bible ):
         """
         Load a single source XML file and load book elements.
         """
-        if Globals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
         self.tree = ElementTree().parse( self.sourceFilepath )
-        if Globals.debugFlag: assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
+        if BibleOrgSysGlobals.debugFlag: assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
 
         # Find the main (bible) container
         if self.tree.tag == OpenSongXMLBible.treeTag:
             location = "XML file"
-            Globals.checkXMLNoText( self.tree, location, '4f6h' )
-            Globals.checkXMLNoTail( self.tree, location, '1wk8' )
+            BibleOrgSysGlobals.checkXMLNoText( self.tree, location, '4f6h' )
+            BibleOrgSysGlobals.checkXMLNoTail( self.tree, location, '1wk8' )
 
             name = shortName = None
             for attrib,value in self.tree.items():
@@ -238,8 +238,8 @@ class OpenSongXMLBible( Bible ):
             for element in self.tree:
                 if element.tag == OpenSongXMLBible.bookTag:
                     sublocation = "book in " + location
-                    Globals.checkXMLNoText( element, sublocation, 'g3g5' )
-                    Globals.checkXMLNoTail( element, sublocation, 'd3f6' )
+                    BibleOrgSysGlobals.checkXMLNoText( element, sublocation, 'g3g5' )
+                    BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'd3f6' )
                     self.__validateAndExtractBook( element )
                 elif element.tag == 'OT':
                     pass
@@ -257,7 +257,7 @@ class OpenSongXMLBible( Bible ):
             finding chapter subelements.
         """
 
-        if Globals.verbosityLevel > 3: print( _("Validating OpenSong XML book...") )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Validating OpenSong XML book...") )
 
         # Process the div attributes first
         BBB = bookName = None
@@ -268,23 +268,23 @@ class OpenSongXMLBible( Bible ):
         if bookName:
             BBB = self.genericBOS.getBBB( bookName )
             if BBB:
-                if Globals.verbosityLevel > 2: print( _("Validating {} {}...").format( BBB, bookName ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Validating {} {}...").format( BBB, bookName ) )
                 thisBook = BibleBook( self, BBB )
                 thisBook.objectNameString = "OpenSong XML Bible Book object"
                 thisBook.objectTypeString = "OpenSong"
                 #thisBook.sourceFilepath = self.sourceFilepath
-                USFMAbbreviation = Globals.BibleBooksCodes.getUSFMAbbreviation( BBB )
+                USFMAbbreviation = BibleOrgSysGlobals.BibleBooksCodes.getUSFMAbbreviation( BBB )
                 thisBook.appendLine( 'id', '{} imported by {}'.format( USFMAbbreviation.upper(), ProgNameVersion ) )
                 thisBook.appendLine( 'h', bookName )
                 thisBook.appendLine( 'mt1', bookName )
                 for element in book:
                     if element.tag == OpenSongXMLBible.chapterTag:
                         sublocation = "chapter in {}".format( BBB )
-                        Globals.checkXMLNoText( element, sublocation, 'j3jd' )
-                        Globals.checkXMLNoTail( element, sublocation, 'al1d' )
+                        BibleOrgSysGlobals.checkXMLNoText( element, sublocation, 'j3jd' )
+                        BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                         self.__validateAndExtractChapter( BBB, thisBook, element )
                     else: logging.error( "Expected to find '{}' but got '{}'".format( OpenSongXMLBible.chapterTag, element.tag ) )
-                if Globals.verbosityLevel > 2: print( "  Saving {} into results...".format( BBB ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Saving {} into results...".format( BBB ) )
                 self.saveBook( thisBook )
             else: logging.error( _("OpenSong load doesn't recognize book name: '{}'").format( bookName ) ) # no BBB
         else: logging.error( _("OpenSong load can't find a book name") ) # no bookName
@@ -298,7 +298,7 @@ class OpenSongXMLBible( Bible ):
             finding and saving verse elements.
         """
 
-        if Globals.verbosityLevel > 3: print( _("Validating XML chapter...") )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Validating XML chapter...") )
 
         # Process the div attributes first
         chapterNumber = numVerses = None
@@ -317,8 +317,8 @@ class OpenSongXMLBible( Bible ):
         for element in chapter:
             if element.tag == OpenSongXMLBible.verseTag:
                 sublocation = "verse in {} {}".format( BBB, chapterNumber )
-                Globals.checkXMLNoTail( element, sublocation, 'l5ks' )
-                Globals.checkXMLNoSubelements( element, sublocation, '5f7h' )
+                BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'l5ks' )
+                BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5f7h' )
                 verseNumber = toVerseNumber = None
                 for attrib,value in element.items():
                     if attrib=="n":
@@ -326,7 +326,7 @@ class OpenSongXMLBible( Bible ):
                     elif attrib=="t":
                         toVerseNumber = value
                     else: logging.warning( "Unprocessed '{}' attribute ({}) in verse element".format( attrib, value ) )
-                if Globals.debugFlag: assert( verseNumber )
+                if BibleOrgSysGlobals.debugFlag: assert( verseNumber )
                 #thisBook.appendLine( 'v', verseNumber )
                 vText = element.text
                 if not vText:
@@ -351,7 +351,7 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
     testFolder = "../../../../../Data/Work/Bibles//OpenSong Bibles/"
     single1 = ( "KJV.xmm", )
@@ -367,27 +367,27 @@ def demo():
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         resultA1 = OpenSongXMLBibleFileCheck( testFolder )
-        if Globals.verbosityLevel > 0: print( "TestA1", resultA1 )
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( "TestA1", resultA1 )
         resultA2 = OpenSongXMLBibleFileCheck( testFolder, autoLoad=True )
-        if Globals.verbosityLevel > 0: print( "TestA2", resultA2 )
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( "TestA2", resultA2 )
         testSubfolder = os.path.join( testFolder, 'nrsv_update/' )
         resultB1 = OpenSongXMLBibleFileCheck( testSubfolder )
-        if Globals.verbosityLevel > 0: print( "TestB1", resultB1 )
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( "TestB1", resultB1 )
         resultB2 = OpenSongXMLBibleFileCheck( testSubfolder, autoLoad=True )
-        if Globals.verbosityLevel > 0: print( "TestB2", resultB2 )
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( "TestB2", resultB2 )
 
 
     if 1:
         for j, testFilename in enumerate( allOfThem ):
-            if Globals.verbosityLevel > 0: print( "\n\nOpnSng B{}/ {}".format( j+1, testFilename ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n\nOpnSng B{}/ {}".format( j+1, testFilename ) )
             testFilepath = os.path.join( testFolder, testFilename )
 
             # Demonstrate the OpenSong XML Bible class
-            if Globals.verbosityLevel > 1: print( "Demonstrating the OpenSong XML Bible class..." )
-            if Globals.verbosityLevel > 0: print( "  Test filepath is '{}'".format( testFilepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "Demonstrating the OpenSong XML Bible class..." )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test filepath is '{}'".format( testFilepath ) )
             xb = OpenSongXMLBible( testFolder, testFilename )
             xb.load() # Load and process the XML
-            if Globals.verbosityLevel > 0: print( xb ) # Just print a summary
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( xb ) # Just print a summary
             #print( xb.books['JDE']._processedLines )
             if 1: # Test verse lookup
                 import VerseReferences
@@ -401,16 +401,16 @@ def demo():
                     if t=='DC' and len(xb)<=66: continue # Don't bother with DC references if it's too small
                     svk = VerseReferences.SimpleVerseKey( b, c, v )
                     #print( svk, ob.getVerseDataList( reference ) )
-                    if Globals.verbosityLevel > 1: print( reference, svk.getShortText(), xb.getVerseText( svk ) )
-            if Globals.debugFlag and not xb: halt # if no books
+                    if BibleOrgSysGlobals.verbosityLevel > 1: print( reference, svk.getShortText(), xb.getVerseText( svk ) )
+            if BibleOrgSysGlobals.debugFlag and not xb: halt # if no books
 # end of demo
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of OpenSongXMLBible.py

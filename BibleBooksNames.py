@@ -40,7 +40,7 @@ from collections import OrderedDict
 
 #from singleton import singleton
 
-import Globals
+import BibleOrgSysGlobals
 
 
 
@@ -67,15 +67,15 @@ def expandBibleNamesInputs ( systemName, divisionsNamesDict, booknameLeadersDict
             if not tempString.isdigit() and tempString[-1]!=' ': # Don't allow single digits (even if unambiguous) and gnore any truncated strings that end in a space
                 if tempString in originalDict:
                     if originalDict[tempString] == value:
-                        if Globals.debugFlag and debuggingThisModule:
+                        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                             logging.debug( "'{}' is superfluous: won't add to tempDict".format(tempString) )
                         theAmbigSet.add( tempString )
                     else: # it's a different value
-                        if Globals.debugFlag and debuggingThisModule:
+                        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                             logging.debug( "'{}' is ambiguous: won't add to tempDict".format(tempString) )
                         theAmbigSet.add( tempString )
                 elif tempString in tempDict and tempDict[tempString]!=value:
-                    if Globals.debugFlag and debuggingThisModule:
+                    if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                         logging.info( "'{}' is ambiguous: will remove from tempDict".format(tempString) )
                     theAmbigSet.add( tempString )
                 else:
@@ -85,15 +85,15 @@ def expandBibleNamesInputs ( systemName, divisionsNamesDict, booknameLeadersDict
                     tempTempString = tempTempString.replace( " ", "", 1 ) # Remove the first space
                     if tempTempString in originalDict:
                         if originalDict[tempTempString] == value:
-                            if Globals.debugFlag and debuggingThisModule:
+                            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                                 logging.debug( "'{}' (spaces removed) is superfluous: won't add to tempDict".format(tempTempString) )
                             theAmbigSet.add( tempTempString )
                         else: # it's a different value
-                            if Globals.debugFlag and debuggingThisModule:
+                            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                                 logging.debug( "'{}' (spaces removed) is ambiguous: won't add to tempDict".format(tempTempString) )
                             theAmbigSet.add( tempTempString )
                     elif tempTempString in tempDict and tempDict[tempTempString]!=value:
-                        if Globals.debugFlag and debuggingThisModule:
+                        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                             logging.info( "'{}' (spaces removed) is ambiguous: will remove from tempDict".format(tempTempString) )
                         theAmbigSet.add( tempTempString )
                     else:
@@ -105,7 +105,7 @@ def expandBibleNamesInputs ( systemName, divisionsNamesDict, booknameLeadersDict
     assert( divisionsNamesDict ); assert( booknameLeadersDict ); assert( bookNamesDict )
     assert( bookList )
 
-    if Globals.verbosityLevel > 2: print( _("  Expanding {} input abbreviations (for {} books)...").format( systemName, len(bookList) ) )
+    if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Expanding {} input abbreviations (for {} books)...").format( systemName, len(bookList) ) )
 
     # Firstly, make a new UPPER CASE leaders dictionary., e.g., Saint/Snt goes to SAINT/SNT
     UCBNLeadersDict = {}
@@ -233,7 +233,7 @@ class BibleBooksNamesSystems:
                         picklesGood = False; break
             if picklesGood:
                 import pickle
-                if Globals.verbosityLevel > 2: print( "Loading pickle file {}...".format( standardPickleFilepath ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}...".format( standardPickleFilepath ) )
                 with open( standardPickleFilepath, 'rb') as pickleFile:
                     self.__DataDicts = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
                     #self.__ExpandedDicts = pickle.load( pickleFile )
@@ -298,7 +298,7 @@ class BibleBooksNamesSystems:
         """ Returns two dictionaries and a list object."""
         if bookList is not None:
             for BBB in bookList: # Just check this list is valid
-                if not Globals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ):
+                if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ):
                     logging.error( _("Invalid '{}' in booklist requested for {} books names system").format(BBB,systemName) )
 
         if systemName in self.__DataDicts:
@@ -327,7 +327,7 @@ class BibleBooksNamesSystems:
             for BBB in bookList:
                 bookNamesDictCopy[BBB] = bookNamesDict[BBB]
 
-            if Globals.strictCheckingFlag: # check that this system contains all the books we need
+            if BibleOrgSysGlobals.strictCheckingFlag: # check that this system contains all the books we need
                 missingList = []
                 for BBB in bookList:
                     if BBB not in bookNamesDictCopy: missingList.append( BBB )
@@ -343,7 +343,7 @@ class BibleBooksNamesSystems:
 
         # else we couldn't find the requested system name
         logging.error( _("No '{}' system in Bible Books Names Systems").format(systemName) )
-        if Globals.verbosityLevel > 2:
+        if BibleOrgSysGlobals.verbosityLevel > 2:
             logging.error( _("Available systems are {}").format(self.getAvailableBooksNamesSystemNames()) )
     # end of getBooksNamesSystem
 # end of BibleBooksNamesSystems class
@@ -384,7 +384,7 @@ class BibleBooksNamesSystem:
         result = "BibleBooksNamesSystem object"
         result += ('\n' if result else '') + "  " + _("{} Bible books names system").format( self.__systemName )
         result += ('\n' if result else '') + "  " + _("Language code = {}").format( self.__languageCode )
-        if Globals.verbosityLevel > 2: # Make it verbose
+        if BibleOrgSysGlobals.verbosityLevel > 2: # Make it verbose
             result += ('\n' if result else '') + "    " + _("Number of divisions = {}").format( len(self.__divisionsNamesDict) )
             result += ('\n' if result else '') + "    " + _("Number of bookname leaders = {}").format( len(self.__booknameLeadersDict) )
             result += ('\n' if result else '') + "    " + _("Number of books = {}").format( len(self.__bookNamesDict) )
@@ -402,14 +402,14 @@ class BibleBooksNamesSystem:
 
     def getBookName( self, BBB ):
         """ Get the default book name from the given referenceAbbreviation. """
-        if Globals.debugFlag: assert( len(BBB) == 3 )
+        if BibleOrgSysGlobals.debugFlag: assert( len(BBB) == 3 )
         return self.__bookNamesDict[BBB]['defaultName']
     # end of BibleBooksNamesSystem.getBookName
 
 
     def getBookAbbreviation( self, BBB ):
         """ Get the default book abbreviation from the given referenceAbbreviation. """
-        if Globals.debugFlag: assert( len(BBB) == 3 )
+        if BibleOrgSysGlobals.debugFlag: assert( len(BBB) == 3 )
         return self.__bookNamesDict[BBB]['defaultAbbreviation']
     # end of BibleBooksNamesSystem.getBookAbbreviation
 
@@ -417,7 +417,7 @@ class BibleBooksNamesSystem:
     def getBBB( self, bookNameOrAbbreviation ):
         """ Get the referenceAbbreviation from the given book name or abbreviation.
                 (Automatically converts to upper case before comparing strings.) """
-        if Globals.debugFlag: assert( bookNameOrAbbreviation )
+        if BibleOrgSysGlobals.debugFlag: assert( bookNameOrAbbreviation )
         upperCaseBookNameOrAbbreviation = bookNameOrAbbreviation.upper()
         try:
             if upperCaseBookNameOrAbbreviation in self.__sortedBookNamesDict:
@@ -425,7 +425,7 @@ class BibleBooksNamesSystem:
         except AttributeError:
             logging.critical( "No bookname dictionary in BibleBooksNamesSystem" )
             return None
-        if Globals.commandLineOptions.debug:
+        if BibleOrgSysGlobals.commandLineOptions.debug:
             # It failed so print what the closest alternatives were
             print( "BibleBooksNamesSystem.getBBB( {} ) {}".format( repr(bookNameOrAbbreviation), upperCaseBookNameOrAbbreviation ) )
             #print( self.__sortedBookNamesDict )
@@ -441,12 +441,12 @@ class BibleBooksNamesSystem:
     def getDivisionAbbreviation( self, divisionNameOrAbbreviation ):
         """ Get the division standardAbbreviation from the given division name or abbreviation.
                 (Automatically converts to upper case before comparing strings.) """
-        if Globals.debugFlag: assert( divisionNameOrAbbreviation )
+        if BibleOrgSysGlobals.debugFlag: assert( divisionNameOrAbbreviation )
         upperCaseDivisionNameOrAbbreviation = divisionNameOrAbbreviation.upper()
         if upperCaseDivisionNameOrAbbreviation in self.__sortedDivisionNamesDict:
             #print( self.__sortedDivisionNamesDict[upperCaseDivisionNameOrAbbreviation], self.__divisionsNamesDict[self.__sortedDivisionNamesDict[upperCaseDivisionNameOrAbbreviation]]['defaultAbbreviation'] )
             return self.__sortedDivisionNamesDict[upperCaseDivisionNameOrAbbreviation]
-        if Globals.commandLineOptions.debug:
+        if BibleOrgSysGlobals.commandLineOptions.debug:
             # It failed so print what the closest alternatives were
             print( "getDivisionAbbrev", divisionNameOrAbbreviation, upperCaseDivisionNameOrAbbreviation )
             myList, thisLen = [], len(upperCaseDivisionNameOrAbbreviation)
@@ -459,7 +459,7 @@ class BibleBooksNamesSystem:
     def getDivisionBooklist( self, divisionAbbreviation ):
         """ Returns the booklist for the division given the division standardAbbreviation
                                                 or else given a vernacular inputAbbreviation. """
-        if Globals.debugFlag: assert( divisionAbbreviation )
+        if BibleOrgSysGlobals.debugFlag: assert( divisionAbbreviation )
         if divisionAbbreviation in self.__divisionsNamesDict:
             return self.__divisionsNamesDict[divisionAbbreviation]['includedBooks']
         # else it might be a vernacular value
@@ -475,7 +475,7 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
 
     sampleBookList = ['GEN','JDG','SA1','SA2','KI1','KI2','MA4','MAT','MRK','LUK','JHN','ACT','ROM','CO1','CO2','PE1','PE2','JDE','REV']
     #sampleBookList = ['GEN','JDG','SA1','SA2','KI1','KI2','MA1','MA2']
@@ -510,11 +510,11 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     parser.add_option("-p", "--expandDemo", action="store_true", dest="expandDemo", default=False, help="expand the input abbreviations to include all unambiguous shorter forms")
-    Globals.addStandardOptionsAndProcess( parser )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of BibleBooksNames.py

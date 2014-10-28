@@ -39,7 +39,7 @@ import logging, os
 from gettext import gettext as _
 #from singleton import singleton
 
-import Globals
+import BibleOrgSysGlobals
 from BibleOrganizationalSystemsConverter import BibleOrganizationalSystemsConverter, allowedTypes
 from BibleBookOrders import BibleBookOrderSystem
 from BiblePunctuationSystems import BiblePunctuationSystem
@@ -55,7 +55,7 @@ def t( messageString ):
     """
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
-    if Globals.debugFlag or debuggingThisModule:
+    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit, _(errorBit) )
 
@@ -89,7 +89,7 @@ class BibleOrganizationalSystems:
             and os.stat(standardPickleFilepath)[8] > os.stat(standardXMLFilepath)[8] \
             and os.stat(standardPickleFilepath)[9] > os.stat(standardXMLFilepath)[9]: # There's a newer pickle file
                 import pickle
-                if Globals.verbosityLevel > 2: print( "Loading pickle file {}...".format( standardPickleFilepath ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}...".format( standardPickleFilepath ) )
                 with open( standardPickleFilepath, 'rb') as pickleFile:
                     result = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
             else: # We have to load the XML (much slower)
@@ -113,7 +113,7 @@ class BibleOrganizationalSystems:
         """
         result = "BibleOrganizationalSystems object"
         result += ('\n' if result else '') + "  Number of entries = {}".format( len(self.__dataDict) )
-        if Globals.verbosityLevel > 1: # Do a bit of extra analysis
+        if BibleOrgSysGlobals.verbosityLevel > 1: # Do a bit of extra analysis
             counters = {}
             for possibleType in allowedTypes: counters[possibleType] = 0
             for systemName, data in self.__dataDict.items():
@@ -168,7 +168,7 @@ class BibleOrganizationalSystems:
                 if x in self.__dataDict: return self.__dataDict[x]
         # else
         logging.error( _("No '{}' system in Bible Organisational Systems").format( systemName ) )
-        if Globals.verbosityLevel>2: logging.error( _("Available systems are {}").format( self.getAvailableOrganizationalSystemNames( extended=True ) ) )
+        if BibleOrgSysGlobals.verbosityLevel>2: logging.error( _("Available systems are {}").format( self.getAvailableOrganizationalSystemNames( extended=True ) ) )
     # end of BibleOrganizationalSystems.getOrganizationalSystem
 
 
@@ -237,7 +237,7 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
                 if 'derivedFrom' in self.__dataDict:
                     trySystemName = self.__dataDict['derivedFrom']
                     if isinstance( trySystemName, str ):
-                        if Globals.debugFlag: print( "trySystemName for 'derivedFrom' is a string: '{}'".format( trySystemName ) )
+                        if BibleOrgSysGlobals.debugFlag: print( "trySystemName for 'derivedFrom' is a string: '{}'".format( trySystemName ) )
                     elif isinstance( trySystemName, list ):
                         #print( "trySystemName for 'derivedFrom' is a list: '{}'".format( trySystemName ) )
                         trySystemName = trySystemName[0] # Take the first string from the list
@@ -267,7 +267,7 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         versificationSystemName = self.getOrganizationalSystemValue( 'versificationSystem' )
         punctuationSystemName = self.getOrganizationalSystemValue( 'punctuationSystem' )
         booksNamesSystemName = self.getOrganizationalSystemValue( 'booksNamesSystem' )
-        if Globals.debugFlag: print( "Got organisation bits: BOS={}, VS={}, PS={}, BNS={}".format( bookOrderSystemName, versificationSystemName, punctuationSystemName, booksNamesSystemName ) )
+        if BibleOrgSysGlobals.debugFlag: print( "Got organisation bits: BOS={}, VS={}, PS={}, BNS={}".format( bookOrderSystemName, versificationSystemName, punctuationSystemName, booksNamesSystemName ) )
         if bookOrderSystemName and bookOrderSystemName!='None' and bookOrderSystemName!='Unknown': BibleBookOrderSystem.__init__( self, bookOrderSystemName )
         if versificationSystemName and versificationSystemName!='None' and versificationSystemName!='Unknown': BibleVersificationSystem.__init__( self, versificationSystemName )
         if punctuationSystemName and punctuationSystemName!='None' and punctuationSystemName!='Unknown': BiblePunctuationSystem.__init__( self, punctuationSystemName )
@@ -295,7 +295,7 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
             result += ('\n' if result else '') + "  Type = {}".format( self.__dataDict["type"] )
             result += ('\n' if result else '') + "  Name(s) = {}".format( self.__dataDict["name"] )
             result += ('\n' if result else '') + "  Number of entry lines = {}".format( len(self.__dataDict) )
-            if Globals.verbosityLevel > 3: result += ('\n' if result else '') + "  Entries are: {}".format( self.__dataDict )
+            if BibleOrgSysGlobals.verbosityLevel > 3: result += ('\n' if result else '') + "  Entries are: {}".format( self.__dataDict )
         return result
     # end of BibleOrganizationalSystem.__str__
 
@@ -334,7 +334,7 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
             if 'usesText' in self.__dataDict:
                 for trySystemName in self.__dataDict['usesText']:
                     if isinstance( trySystemName, str ):
-                        if Globals.debugFlag: print( "trySystemName for 'usesText' is a string: '{}'".format( trySystemName ) )
+                        if BibleOrgSysGlobals.debugFlag: print( "trySystemName for 'usesText' is a string: '{}'".format( trySystemName ) )
                     elif isinstance( trySystemName, list ):
                         #print( "trySystemName for 'usesText' is a list: '{}'".format( trySystemName ) )
                         trySystemName = trySystemName[0] # Take the first string from the list
@@ -344,7 +344,7 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
             if 'derivedFrom' in self.__dataDict:
                 trySystemName = self.__dataDict['derivedFrom']
                 if isinstance( trySystemName, str ):
-                    if Globals.debugFlag: print( "trySystemName for 'derivedFrom' is a string: '{}'".format( trySystemName ) )
+                    if BibleOrgSysGlobals.debugFlag: print( "trySystemName for 'derivedFrom' is a string: '{}'".format( trySystemName ) )
                 elif isinstance( trySystemName, list ):
                     #print( "trySystemName for 'derivedFrom' is a list: '{}'".format( trySystemName ) )
                     trySystemName = trySystemName[0] # Take the first string from the list
@@ -412,7 +412,7 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         Returns True/False indicating if the given reference is valid in this system.
         Extended flag allows chapter and verse numbers of zero.
         """
-        if Globals.debugFlag and debuggingThisModule:
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( t("isValidBCVRef( {}, {}, {}, {} )").format( referenceTuple, referenceString, extended ) )
         BBB, C, V, S = referenceTuple
         if BBB is None or not BBB: return False
@@ -434,7 +434,7 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
 
     if 1: # Demo the BibleOrganizationalSystems object
         print()
@@ -459,10 +459,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of BibleOrganizationalSystems.py

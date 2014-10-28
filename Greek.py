@@ -38,7 +38,7 @@ import os, unicodedata
 from gettext import gettext as _
 from collections import OrderedDict
 
-import Globals
+import BibleOrgSysGlobals
 
 
 # Consonants
@@ -64,7 +64,7 @@ assert( len(normalConsonants) == 3 )
 #otherMarks = ( dageshOrMapiq, rafe, paseq, shinDot, sinDot, upperDot, lowerDot, qamatzQatan, )
 
 
-if 0 and Globals.debugFlag: # Check that our tables have no obvious errors
+if 0 and BibleOrgSysGlobals.debugFlag: # Check that our tables have no obvious errors
     for j,letter in enumerate( normalConsonants ):
         #print( j, letter )
         assert( normalConsonants.count(letter)==1 )
@@ -195,7 +195,7 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
     # Demonstrate the Greek class
     dan11 = "בִּשְׁנַ֣ת שָׁל֔וֹשׁ לְמַלְכ֖וּת יְהוֹיָקִ֣ים מֶֽלֶךְ־יְהוּדָ֑ה בָּ֣א נְבוּכַדְנֶאצַּ֧ר מֶֽלֶךְ־בָּבֶ֛ל יְרוּשָׁלִַ֖ם וַיָּ֥צַר עָלֶֽיהָ ׃"
@@ -216,10 +216,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser, exportAvailable=True )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of Greek.py

@@ -45,7 +45,7 @@ from gettext import gettext as _
 from collections import OrderedDict
 
 from singleton import singleton
-import Globals
+import BibleOrgSysGlobals
 
 
 OFTEN_IGNORED_USFM_HEADER_MARKERS = ( 'id','ide', 'sts','rem','h', 'toc1','toc2','toc3', 'cl=', )
@@ -284,7 +284,7 @@ class USFMMarkers:
             and os.stat(standardPickleFilepath)[8] > os.stat(standardXMLFilepath)[8] \
             and os.stat(standardPickleFilepath)[9] > os.stat(standardXMLFilepath)[9]: # There's a newer pickle file
                 import pickle
-                if Globals.verbosityLevel > 2: print( "Loading pickle file {}...".format( standardPickleFilepath ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}...".format( standardPickleFilepath ) )
                 with open( standardPickleFilepath, 'rb') as pickleFile:
                     self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
             else: # We have to load the XML (much slower)
@@ -307,7 +307,7 @@ class USFMMarkers:
         indent = 2
         result = "USFM Markers object"
         result += ('\n' if result else '') + ' '*indent + _("Number of entries = {}").format( len(self.__DataDict["rawMarkerDict"]) )
-        if Globals.verbosityLevel > 2:
+        if BibleOrgSysGlobals.verbosityLevel > 2:
             indent = 4
             result += ('\n' if result else '') + ' '*indent + _("Number of raw new line markers = {}").format( len(self.__DataDict["newlineMarkersList"]) )
             result += ('\n' if result else '') + ' '*indent + _("Number of internal markers = {}").format( len(self.__DataDict["internalMarkersList"]) )
@@ -535,7 +535,7 @@ class USFMMarkers:
             7: text field from the marker until the next USFM
                 but any text preceding the first USFM is not returned anywhere unless includeInitialText is set.
         """
-        #if Globals.verbosityLevel > 2: print( "USFMMarkers.getMarkerListFromText( {}, {} )".format( repr(text), verifyMarkers ) )
+        #if BibleOrgSysGlobals.verbosityLevel > 2: print( "USFMMarkers.getMarkerListFromText( {}, {} )".format( repr(text), verifyMarkers ) )
         if not text: return []
         firstResult = [] # A list of 4-tuples containing ( 1, 2, 3, 4 ) above
         textLength = len( text )
@@ -599,7 +599,7 @@ class USFMMarkers:
             else:
                 print( "USFMMarkers.getMarkerListFromText: Shouldn't happen", firstResult, secondResult,
                       '\n', j, repr(m), ix, repr(x), mx, cx )
-                if Globals.debugFlag: halt
+                if BibleOrgSysGlobals.debugFlag: halt
             if j>= rLen-1: tx = text[ix+len(mx):]
             else: tx=text[ix+len(mx):firstResult[j+1][1]]
             #print( 'second', j, m, ix, repr(x), repr(mx), cx, repr(tx) )
@@ -685,7 +685,7 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
 
     # Demo the USFMMarkers object
     um = USFMMarkers().loadData() # Doesn't reload the XML unnecessarily :)
@@ -711,7 +711,7 @@ def demo():
         print( _("{} is {}a valid marker").format( m, "" if um.isValidMarker(m) else _("not")+' ' ) )
         if um.isValidMarker(m):
             print( '  ' + "{}: {}".format( um.getMarkerEnglishName(m), um.getMarkerDescription(m) ) )
-            if Globals.verbosityLevel > 2:
+            if BibleOrgSysGlobals.verbosityLevel > 2:
                 print( '  ' + _("Compulsory:{}, Numberable:{}, Occurs in: {}").format( um.isCompulsoryMarker(m), um.isNumberableMarker(m), um.markerOccursIn(m) ) )
                 print( '  ' + _("{} is {}a new line marker").format( m, "" if um.isNewlineMarker(m) else _("not")+' ' ) )
                 print( '  ' + _("{} is {}an internal (character) marker").format( m, "" if um.isInternalMarker(m) else _("not")+' ' ) )
@@ -750,10 +750,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of USFMMarkers.py

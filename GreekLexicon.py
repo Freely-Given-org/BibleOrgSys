@@ -46,7 +46,7 @@ from gettext import gettext as _
 from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree
 
-import Globals
+import BibleOrgSysGlobals
 
 
 
@@ -59,7 +59,7 @@ def t( messageString ):
     """
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
-    if Globals.debugFlag or debuggingThisModule:
+    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit, _(errorBit) )
 
@@ -98,7 +98,7 @@ class GreekStrongsFileConverter:
         """
         Constructor: just sets up the file converter object.
         """
-        if Globals.debugFlag and debuggingThisModule:
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( t("GreekStrongsFileConverter.__init__()") )
         self.title = self.version = self.date = None
         self.tree = self.header = self.entries = None
@@ -126,14 +126,14 @@ class GreekStrongsFileConverter:
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        if Globals.verbosityLevel > 2: print( _("Loading from {}...").format( XMLFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading from {}...").format( XMLFolder ) )
         self.XMLFolder = XMLFolder
         XMLFilepath = os.path.join( XMLFolder, GreekStrongsFileConverter.databaseFilename )
         try: self.tree = ElementTree().parse( XMLFilepath )
         except FileNotFoundError:
             logging.critical( t("GreekStrongsFileConverter could not find database at {}").format( XMLFilepath ) )
             raise FileNotFoundError
-        if Globals.debugFlag: assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
+        if BibleOrgSysGlobals.debugFlag: assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
 
         if self.tree.tag == GreekStrongsFileConverter.treeTag:
             for segment in self.tree:
@@ -152,10 +152,10 @@ class GreekStrongsFileConverter:
         """
         Check/validate the given Strongs lexicon entries.
         """
-        if Globals.debugFlag: assert( segment.tag == "entries" )
-        Globals.checkXMLNoText( segment, segment.tag, "kw99" )
-        Globals.checkXMLNoTail( segment, segment.tag, "ls90" )
-        Globals.checkXMLNoAttributes( segment, segment.tag, "hsj2" )
+        if BibleOrgSysGlobals.debugFlag: assert( segment.tag == "entries" )
+        BibleOrgSysGlobals.checkXMLNoText( segment, segment.tag, "kw99" )
+        BibleOrgSysGlobals.checkXMLNoTail( segment, segment.tag, "ls90" )
+        BibleOrgSysGlobals.checkXMLNoAttributes( segment, segment.tag, "hsj2" )
 
         self.entries = {}
         for element in segment:
@@ -168,18 +168,18 @@ class GreekStrongsFileConverter:
         """
         Check/validate the given Strongs Greek lexicon entry.
         """
-        if Globals.debugFlag: assert( entry.tag == "entry" )
-        Globals.checkXMLNoText( entry, entry.tag, "na19" )
-        Globals.checkXMLNoTail( entry, entry.tag, "kaq9" )
+        if BibleOrgSysGlobals.debugFlag: assert( entry.tag == "entry" )
+        BibleOrgSysGlobals.checkXMLNoText( entry, entry.tag, "na19" )
+        BibleOrgSysGlobals.checkXMLNoTail( entry, entry.tag, "kaq9" )
 
         # Process the entry attributes first
         strongs5 = None
         for attrib,value in entry.items():
             if attrib ==  "strongs":
                 strongs5 = value
-                if Globals.verbosityLevel > 2: print( "Validating {} entry...".format( strongs5 ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Validating {} entry...".format( strongs5 ) )
             else: logging.warning( "Unprocessed '{}' attribute ({}) in main entry element".format( attrib, value ) )
-        if Globals.debugFlag: assert( len(strongs5)==5 and strongs5.isdigit() )
+        if BibleOrgSysGlobals.debugFlag: assert( len(strongs5)==5 and strongs5.isdigit() )
 
         entryResults = {}
         entryString = ""
@@ -187,19 +187,19 @@ class GreekStrongsFileConverter:
         for j, element in enumerate( entry ):
             #print( strongs5, j, element.tag, repr(entryString) )
             if element.tag == "strongs":
-                if Globals.debugFlag: assert( gettingEssentials and j==0 and element.text )
-                Globals.checkXMLNoAttributes( element, element.tag, "md3d" )
+                if BibleOrgSysGlobals.debugFlag: assert( gettingEssentials and j==0 and element.text )
+                BibleOrgSysGlobals.checkXMLNoAttributes( element, element.tag, "md3d" )
                 if strongs5!='02717' and (3203 > int(strongs5) > 3302):
-                    Globals.checkXMLNoTail( element, element.tag, "f3g7" )
-                Globals.checkXMLNoSubelements( element, element.tag, "m56g" )
+                    BibleOrgSysGlobals.checkXMLNoTail( element, element.tag, "f3g7" )
+                BibleOrgSysGlobals.checkXMLNoSubelements( element, element.tag, "m56g" )
                 strongs = element.text
-                if Globals.debugFlag: assert( strongs5.endswith( strongs ) )
+                if BibleOrgSysGlobals.debugFlag: assert( strongs5.endswith( strongs ) )
                 if element.tail and element.tail.strip(): entryString += element.tail.strip()
             elif element.tag == "greek":
                 location = "greek in Strongs " + strongs5
-                Globals.checkXMLNoText( element, location, "jke0" )
+                BibleOrgSysGlobals.checkXMLNoText( element, location, "jke0" )
                 #Globals.checkXMLNoTail( element, location, "ks24" )
-                Globals.checkXMLNoSubelements( element, location, "df35" )
+                BibleOrgSysGlobals.checkXMLNoSubelements( element, location, "df35" )
                 # Process the attributes
                 translit = greek = beta = None
                 for attrib,value in element.items():
@@ -207,20 +207,20 @@ class GreekStrongsFileConverter:
                     elif attrib=="unicode": greek = value
                     elif attrib=="BETA": beta = value
                     else: logging.warning( "scs4 Unprocessed '{}' attribute ({}) in {}".format( attrib, value, location ) )
-                if Globals.debugFlag: assert( greek and translit and beta )
+                if BibleOrgSysGlobals.debugFlag: assert( greek and translit and beta )
                 if 'word' not in entryResults: # This is the first/main entry
-                    if Globals.debugFlag: assert( gettingEssentials and j==1 )
-                    Globals.checkXMLNoTail( element, location, "ks24" )
+                    if BibleOrgSysGlobals.debugFlag: assert( gettingEssentials and j==1 )
+                    BibleOrgSysGlobals.checkXMLNoTail( element, location, "ks24" )
                     entryResults['word'] = (greek, translit, beta)
                 else:
                     #print( "Have multiple greek entries in " + strongs5 )
-                    if Globals.debugFlag: assert( j > 2 )
+                    if BibleOrgSysGlobals.debugFlag: assert( j > 2 )
                     gettingEssentials = False
-                    entryString += ' ' + Globals.getFlattenedXML( element, strongs5 ) #.replace( '\n', '' )
+                    entryString += ' ' + BibleOrgSysGlobals.getFlattenedXML( element, strongs5 ) #.replace( '\n', '' )
             elif element.tag == "pronunciation":
                 location = "pronunciation in Strongs " + strongs5
-                Globals.checkXMLNoText( element, location, "iw9k" )
-                Globals.checkXMLNoSubelements( element, location, "0s20" )
+                BibleOrgSysGlobals.checkXMLNoText( element, location, "iw9k" )
+                BibleOrgSysGlobals.checkXMLNoSubelements( element, location, "0s20" )
                 # Process the attributes
                 pronunciation = None
                 for attrib,value in element.items():
@@ -228,47 +228,47 @@ class GreekStrongsFileConverter:
                     else: logging.warning( "scs4 Unprocessed '{}' attribute ({}) in {}".format( attrib, value, location ) )
                 if gettingEssentials:
                     #Globals.checkXMLNoTail( element, location, "kd02" )
-                    if Globals.debugFlag:
+                    if BibleOrgSysGlobals.debugFlag:
                         assert( j == 2 )
                         assert( pronunciation )
                         assert( 'pronunciation' not in entryResults )
                     entryResults['pronunciation'] = pronunciation
                 else:
-                    if Globals.debugFlag: assert( j>2 and not gettingEssentials )
+                    if BibleOrgSysGlobals.debugFlag: assert( j>2 and not gettingEssentials )
                     if element.tail and element.tail.strip(): entryString += element.tail.strip().replace( '\n', '' )
             elif element.tag == "strongs_derivation":
                 location = "strongs_derivation in Strongs " + strongs5
-                Globals.checkXMLNoAttributes( element, location, "jke0" )
-                Globals.checkXMLNoTail( element, location, "ks24" )
-                derivation = Globals.getFlattenedXML( element, strongs5 ).replace( '\n', '' )
+                BibleOrgSysGlobals.checkXMLNoAttributes( element, location, "jke0" )
+                BibleOrgSysGlobals.checkXMLNoTail( element, location, "ks24" )
+                derivation = BibleOrgSysGlobals.getFlattenedXML( element, strongs5 ).replace( '\n', '' )
                 #print( strongs5, "derivation", repr(derivation) )
-                if Globals.debugFlag:
+                if BibleOrgSysGlobals.debugFlag:
                     assert( derivation and '\t' not in derivation and '\n' not in derivation )
                 entryString +=  derivation
             elif element.tag == "strongs_def":
                 location = "strongs_def in Strongs " + strongs5
-                Globals.checkXMLNoAttributes( element, location, "jke0" )
-                Globals.checkXMLNoTail( element, location, "jd28" )
-                definition = Globals.getFlattenedXML( element, strongs5 ).replace( '\n', '' )
+                BibleOrgSysGlobals.checkXMLNoAttributes( element, location, "jke0" )
+                BibleOrgSysGlobals.checkXMLNoTail( element, location, "jd28" )
+                definition = BibleOrgSysGlobals.getFlattenedXML( element, strongs5 ).replace( '\n', '' )
                 #print( strongs5, "definition", repr(definition) )
-                if Globals.debugFlag:
+                if BibleOrgSysGlobals.debugFlag:
                     assert( definition and '\t' not in definition and '\n' not in definition )
                 entryString += definition
             elif element.tag == "kjv_def":
                 location = "kjv_def in Strongs " + strongs5
-                Globals.checkXMLNoAttributes( element, location, "jke0" )
+                BibleOrgSysGlobals.checkXMLNoAttributes( element, location, "jke0" )
                 #Globals.checkXMLNoTail( element, location, "8s2s" )
                 #Globals.checkXMLNoSubelements( element, location, "dvb2" )
-                KJVdefinition = Globals.getFlattenedXML( element, strongs5 ).replace( '\n', '' )
+                KJVdefinition = BibleOrgSysGlobals.getFlattenedXML( element, strongs5 ).replace( '\n', '' )
                 #print( strongs5, "KJVdefinition", repr(KJVdefinition), repr(entryString) )
-                if Globals.debugFlag: assert( KJVdefinition and '\t' not in KJVdefinition and '\n' not in KJVdefinition )
+                if BibleOrgSysGlobals.debugFlag: assert( KJVdefinition and '\t' not in KJVdefinition and '\n' not in KJVdefinition )
                 entryString += KJVdefinition
             elif element.tag == "strongsref":
                 location = "strongsref in Strongs " + strongs5
-                Globals.checkXMLNoText( element, location, "kls2" )
-                Globals.checkXMLNoSubelements( element, location, "ks24" )
-                strongsRef = Globals.getFlattenedXML( element, strongs5 ).replace( '\n', '' )
-                if Globals.debugFlag:
+                BibleOrgSysGlobals.checkXMLNoText( element, location, "kls2" )
+                BibleOrgSysGlobals.checkXMLNoSubelements( element, location, "ks24" )
+                strongsRef = BibleOrgSysGlobals.getFlattenedXML( element, strongs5 ).replace( '\n', '' )
+                if BibleOrgSysGlobals.debugFlag:
                     assert( strongsRef and '\t' not in strongsRef and '\n' not in strongsRef )
                 strongsRef = re.sub( '<language="GREEK" strongs="(\d{1,5})">', r'<StrongsRef>G\1</StrongsRef>', strongsRef )
                 strongsRef = re.sub( '<strongs="(\d{1,5})" language="GREEK">', r'<StrongsRef>G\1</StrongsRef>', strongsRef )
@@ -278,16 +278,16 @@ class GreekStrongsFileConverter:
                 entryString += ' ' + strongsRef
             elif element.tag == "see":
                 location = "see in Strongs " + strongs5
-                Globals.checkXMLNoText( element, location, "iw9k" )
-                Globals.checkXMLNoTail( element, location, "kd02" )
-                Globals.checkXMLNoSubelements( element, location, "0s20" )
+                BibleOrgSysGlobals.checkXMLNoText( element, location, "iw9k" )
+                BibleOrgSysGlobals.checkXMLNoTail( element, location, "kd02" )
+                BibleOrgSysGlobals.checkXMLNoSubelements( element, location, "0s20" )
                 # Process the attributes
                 seeLanguage = seeStrongsNumber = None
                 for attrib,value in element.items():
                     if attrib == "language": seeLanguage = value
                     elif attrib == "strongs": seeStrongsNumber = value # Note: No leading zeroes here
                     else: logging.warning( "scs4 Unprocessed '{}' attribute ({}) in {}".format( attrib, value, location ) )
-                if Globals.debugFlag:
+                if BibleOrgSysGlobals.debugFlag:
                     assert( seeLanguage and seeStrongsNumber and seeStrongsNumber.isdigit() )
                     assert( seeLanguage in ('GREEK','HEBREW',) )
                 if 'see' not in entryResults: entryResults['see'] = []
@@ -296,7 +296,7 @@ class GreekStrongsFileConverter:
 
         if entryString:
             #print( strongs5, "entryString", repr(entryString) )
-            if Globals.debugFlag:
+            if BibleOrgSysGlobals.debugFlag:
                 assert( '\t' not in entryString and '\n' not in entryString )
             entryString = re.sub( '<strongsref language="GREEK" strongs="(\d{1,5})"></strongsref>',
                                 r'<StrongsRef>G\1</StrongsRef>', entryString )
@@ -306,7 +306,7 @@ class GreekStrongsFileConverter:
                                 r'<StrongsRef>H\1</StrongsRef>', entryString )
             entryString = re.sub( '<strongsref strongs="(\d{1,5})" language="HEBREW"></strongsref>',
                                 r'<StrongsRef>H\1</StrongsRef>', entryString )
-            if Globals.debugFlag:
+            if BibleOrgSysGlobals.debugFlag:
                 assert( 'strongsref' not in entryString )
             entryResults['Entry'] = entryString
         #print( "entryResults", entryResults )
@@ -319,7 +319,7 @@ class GreekStrongsFileConverter:
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
         (Of course, you can just use the elementTree in self.tree if you prefer.)
         """
-        if Globals.debugFlag:
+        if BibleOrgSysGlobals.debugFlag:
             assert( len ( self.tree ) )
             assert( self.entries )
         return self.entries # temp................................XXXXXXXXXXXXXXXXXXXXXXXXXXXXX......................
@@ -340,7 +340,7 @@ class GreekLexicon:
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.
         """
-        if Globals.debugFlag and debuggingThisModule:
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( t("GreekLexicon.__init__( {} )").format( XMLFolder ) )
         gStr = GreekStrongsFileConverter() # Create the empty object
         gStr.loadAndValidate( XMLFolder ) # Load the XML
@@ -373,7 +373,7 @@ class GreekLexicon:
 
         Returns None if the key is not found.
         """
-        if Globals.debugFlag: assert( key and key[0]=='G' and key[1:].isdigit() )
+        if BibleOrgSysGlobals.debugFlag: assert( key and key[0]=='G' and key[1:].isdigit() )
         keyDigits = key[1:]
         if keyDigits in self.StrongsEntries: return self.StrongsEntries[keyDigits]
     # end of GreekLexicon.getStrongsEntryData
@@ -387,7 +387,7 @@ class GreekLexicon:
         Returns a string for the given key and fieldName names.
         Returns None if the key or fieldName is not found.
         """
-        if Globals.debugFlag: assert( key and key[0]=='G' and key[1:].isdigit() )
+        if BibleOrgSysGlobals.debugFlag: assert( key and key[0]=='G' and key[1:].isdigit() )
         keyDigits = key[1:]
         if keyDigits in self.StrongsEntries:
             #for f,d in self.StrongsEntries[keyDigits]:
@@ -413,7 +413,7 @@ class GreekLexicon:
                 occasionally in the sense of union (as a contraction of <span class="StrongsRef">G260</span> ).
             </li>
         """
-        if Globals.debugFlag: assert( key and key[0]=='G' and key[1:].isdigit() )
+        if BibleOrgSysGlobals.debugFlag: assert( key and key[0]=='G' and key[1:].isdigit() )
         keyDigits = key[1:]
         if keyDigits in self.StrongsEntries:
             entry = self.StrongsEntries[keyDigits]
@@ -432,20 +432,20 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
     testFolder = "../../../ExternalPrograms/morphgnt/strongs-dictionary-xml/" # Greek lexicon folder
 
 
     if 1: # demonstrate the Greek Lexicon converter classes
-        if Globals.verbosityLevel > 1: print( "\nDemonstrating the converter classes..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDemonstrating the converter classes..." )
 
         print()
         gsc = GreekStrongsFileConverter()
         gsc.loadAndValidate( testFolder ) # Load the XML
         print( gsc ) # Just print a summary
 
-        if Globals.commandLineOptions.export:
+        if BibleOrgSysGlobals.commandLineOptions.export:
             print( "Exports aren't written yet!" )
             #hlc.exportDataToPython() # Produce the .py tables
             #hlc.exportDataToC() # Produce the .h tables
@@ -453,7 +453,7 @@ def demo():
 
 
     if 1: # demonstrate the Greek Lexicon class
-        if Globals.verbosityLevel > 1: print( "\nDemonstrating the Greek Lexicon class..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDemonstrating the Greek Lexicon class..." )
         hl = GreekLexicon( testFolder ) # Load and process the XML
         print( hl ) # Just print a summary
         print()
@@ -466,10 +466,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser, exportAvailable=True )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of GreekLexicon.py

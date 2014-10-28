@@ -77,7 +77,7 @@ from gettext import gettext as _
 import urllib.request, json
 from collections import OrderedDict
 
-import Globals
+import BibleOrgSysGlobals
 from VerseReferences import SimpleVerseKey
 
 
@@ -97,7 +97,7 @@ def t( messageString ):
     """
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
-    if Globals.debugFlag or debuggingThisModule:
+    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit, _(errorBit) )
 
@@ -112,7 +112,7 @@ def getSecurityKey():
     """
     for keyPath in KEY_SEARCH_PATHS:
         if os.path.exists( keyPath ): # in our current folder
-            if Globals.verbosityLevel > 2: print( t("getSecurityKey: found key file in {}").format( repr(keyPath) ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( t("getSecurityKey: found key file in {}").format( repr(keyPath) ) )
             with open( keyPath, "rt" ) as keyFile:
                 return keyFile.read() # Our personal key
     raise FileNotFoundError( t("Cannot find key file {}").format( repr(KEY_FILENAME) ) )
@@ -166,11 +166,11 @@ class DBPBibles:
                 'english_name': 'Zuni', 'language_code': 'ZUN', 'language_iso_2B': 'zun', 'language_iso': 'zun',
                 'language_iso_1': '', 'language_iso_2T': 'zun'}
         """
-        if Globals.verbosityLevel > 2: print( t("Downloading list of available languages from FCBH...") )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( t("Downloading list of available languages from FCBH...") )
 
         if self.onlineVersion: # Get a list of available data sets
             self.languageList = self.getOnlineData( "library/language" ) # Get an alphabetically ordered list of dictionaries -- one for each language
-            if Globals.debugFlag: print( "languageList", len(self.languageList) )#, self.languageList )
+            if BibleOrgSysGlobals.debugFlag: print( "languageList", len(self.languageList) )#, self.languageList )
         return self.languageList
     # end of DBPBibles.fetchAllLanguages
 
@@ -196,11 +196,11 @@ class DBPBibles:
             {'version_name': 'Yessan-Mayo Yawu', 'version_code': 'YWV', 'english_name': 'Yessan-Mayo Yawu'}
             {'version_name': 'Ze Zoo Zersion', 'version_code': 'ZZQ', 'english_name': 'Ze Zoo Zersion'}
         """
-        if Globals.verbosityLevel > 2: print( t("Downloading list of available versions from FCBH...") )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( t("Downloading list of available versions from FCBH...") )
 
         if self.onlineVersion: # Get a list of available data sets
             self.versionList = self.getOnlineData( "library/version" ) # Get an alphabetically ordered list of dictionaries -- one for each version
-            if Globals.debugFlag: print( "versionList", len(self.versionList) )#, self.versionList )
+            if BibleOrgSysGlobals.debugFlag: print( "versionList", len(self.versionList) )#, self.versionList )
         return self.versionList
     # end of DBPBibles.fetchAllVersions
 
@@ -258,11 +258,11 @@ class DBPBibles:
                 'language_name': 'Zapoteco de Yatee', 'right_to_left': 'false', 'num_art': '0', 'version_code': 'TBL',
                 'collection_code': 'NT'}
         """
-        if Globals.verbosityLevel > 2: print( t("Downloading list of available volumes from FCBH...") )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( t("Downloading list of available volumes from FCBH...") )
 
         if self.onlineVersion: # Get a list of available data sets
             self.volumeList = self.getOnlineData( "library/volume" ) # Get an alphabetically ordered list of dictionaries -- one for each volume
-            if Globals.debugFlag: print( "volumeList", len(self.volumeList) )#, self.volumeList )
+            if BibleOrgSysGlobals.debugFlag: print( "volumeList", len(self.volumeList) )#, self.volumeList )
         return self.volumeList
     # end of DBPBibles.fetchAllVolumes
 
@@ -289,7 +289,7 @@ class DBPBibles:
             'Mam, Northern 1993 Edition' [825, 826]
             'Русский 1876 Synodal Bible' [1246, 1247]
         """
-        if Globals.verbosityLevel > 2: print( t("Creating list of available text volumes from FCBH...") )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( t("Creating list of available text volumes from FCBH...") )
 
         if self.volumeList is None:
             self.fetchAllVolumes()
@@ -317,9 +317,9 @@ class DBPBibles:
                             self.volumeNameDict[ourName].append( j )
                         else: self.volumeNameDict[ourName] = [j]
                     #else: print( j, repr(volume['language_name']), repr(volume['volume_name']) )
-                    elif Globals.verbosityLevel > 2: print( "No web delivery in", repr(ourName), "only", volume['delivery'] )
+                    elif BibleOrgSysGlobals.verbosityLevel > 2: print( "No web delivery in", repr(ourName), "only", volume['delivery'] )
                 elif volume['media'] not in ('audio','video'): print( "No text in", ourName, volume['media'] )
-        if Globals.debugFlag: print( "volumeNameDict", len(self.volumeNameDict)) #, self.volumeNameDict )
+        if BibleOrgSysGlobals.debugFlag: print( "volumeNameDict", len(self.volumeNameDict)) #, self.volumeNameDict )
         return self.volumeNameDict
     # end of DBPBibles.fetchAllTextVolumes
 
@@ -346,7 +346,7 @@ class DBPBibles:
             'Mam, Northern 1993 Edition' [825, 826]
             'Русский 1876 Synodal Bible' [1246, 1247]
         """
-        if Globals.verbosityLevel > 2: print( t("Creating list of available English text volumes from FCBH...") )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( t("Creating list of available English text volumes from FCBH...") )
 
         if self.volumeList is None:
             self.fetchAllVolumes()
@@ -365,9 +365,9 @@ class DBPBibles:
                             self.EnglishVolumeNameDict[ourName] = volume['dam_id'][:6] # Just remember the 6-character damRoot
                             #if ourName in self.EnglishVolumeNameDict: self.EnglishVolumeNameDict[ourName].append( j )
                             #else: self.EnglishVolumeNameDict[ourName] = [j]
-                        elif Globals.verbosityLevel > 2: print( "No web delivery in", repr(ourName), "only", volume['delivery'] )
+                        elif BibleOrgSysGlobals.verbosityLevel > 2: print( "No web delivery in", repr(ourName), "only", volume['delivery'] )
                     elif volume['media'] not in ('audio','video'): print( "No text in", ourName, volume['media'] )
-        if Globals.debugFlag: print( "EnglishVolumeNameDict", len(self.EnglishVolumeNameDict))#, self.EnglishVolumeNameDict )
+        if BibleOrgSysGlobals.debugFlag: print( "EnglishVolumeNameDict", len(self.EnglishVolumeNameDict))#, self.EnglishVolumeNameDict )
         return self.EnglishVolumeNameDict
     # end of DBPBibles.fetchAllEnglishTextVolumes
 
@@ -380,7 +380,7 @@ class DBPBibles:
 
         #Populates self.languageList, self.versionList, self.volumeList, self.volumeNameDict
         #"""
-        #if Globals.verbosityLevel > 1: print( t("load: Loading list of available text volumes from FCBH...") )
+        #if BibleOrgSysGlobals.verbosityLevel > 1: print( t("load: Loading list of available text volumes from FCBH...") )
 
         #if self.onlineVersion: # Get a list of available data sets
             #self.fetchAllTextVolumes()
@@ -422,7 +422,7 @@ class DBPBibles:
 
         Returns None if the data cannot be fetched.
         """
-        if Globals.debugFlag and debuggingThisModule: print( t("getOnlineData( {} {} )").format( repr(fieldREST), repr(additionalParameters) ) )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( t("getOnlineData( {} {} )").format( repr(fieldREST), repr(additionalParameters) ) )
         requestString = "{}{}{}{}".format( URL_BASE, fieldREST, self.URLFixedData, '&'+additionalParameters if additionalParameters else '' )
         #print( "Request string is", repr(requestString) )
         try: responseJSON = urllib.request.urlopen( requestString )
@@ -441,7 +441,7 @@ class DBPBibles:
 
         Returns the DAM ID which is typically something like: ENGNLVN2ET
         """
-        if Globals.debugFlag: print( t("getDAM( {} )").format( repr(refNumber) ) )
+        if BibleOrgSysGlobals.debugFlag: print( t("getDAM( {} )").format( repr(refNumber) ) )
         return self.volumeList[refNumber]['dam_id']
     # end of DBPBibles.getDAM
 
@@ -455,9 +455,9 @@ class DBPBibles:
             if searchTextUC in name.upper():
                 for refNumber in self.volumeNameDict[name]:
                     DAM = self.getDAM(refNumber)
-                    if Globals.debugFlag:
+                    if BibleOrgSysGlobals.debugFlag:
                         print( t("DAM: {}").format( DAM ) )
-                        if Globals.debugFlag:
+                        if BibleOrgSysGlobals.debugFlag:
                             assert( DAM.endswith('2ET') or DAM.endswith('1ET') ) # O2 (OT) or N2 (NT), plus ET for text
                     resultsList.append( (refNumber,DAM,) )
         return resultsList
@@ -478,7 +478,7 @@ class DBPBible:
                 1-3: Language code, e.g., ENG
                 4-6: Version code, e.g., ESV
         """
-        if Globals.debugFlag and debuggingThisModule: print( t("DBPBible.__init__( {} )").format( repr(damRoot) ) )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( t("DBPBible.__init__( {} )").format( repr(damRoot) ) )
         assert( damRoot and isinstance( damRoot, str ) and len(damRoot)==6 )
         self.damRoot = damRoot
 
@@ -501,7 +501,7 @@ class DBPBible:
         self.bookList = None
         if self.onlineVersion: # Check that this particular resource is available by getting a list of books
             bookList = self.getOnlineData( "library/book", "dam_id="+self.damRoot ) # Get an ordered list of dictionaries -- one for each book
-            if Globals.debugFlag and debuggingThisModule: print( "DBPBible.__init__: bookList", len(bookList))#, bookList )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "DBPBible.__init__: bookList", len(bookList))#, bookList )
 
             #if 0:# Get all book codes and English names
                 #bookCodeDictList = self.getOnlineData( "library/bookname", "language_code=ENG" )
@@ -516,7 +516,7 @@ class DBPBible:
             for bookDict in bookList:
                 OSISCode = bookDict['book_id']
                 #print( "OSIS", OSISCode )
-                BBB = Globals.BibleBooksCodes.getBBBFromOSIS( OSISCode )
+                BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSIS( OSISCode )
                 if isinstance( BBB, list ): BBB = BBB[0] # Take the first one if we get something like ['EZR','EZN']
                 #print( "BBB", BBB )
                 #print( bookDict )
@@ -553,7 +553,7 @@ class DBPBible:
         This method checks whether the Bible contains the BBB book.
         Returns True or False.
         """
-        if Globals.debugFlag: assert( isinstance(BBB,str) and len(BBB)==3 )
+        if BibleOrgSysGlobals.debugFlag: assert( isinstance(BBB,str) and len(BBB)==3 )
         return BBB in self.books
     # end of DBPBible.__contains__
 
@@ -562,7 +562,7 @@ class DBPBible:
         """
         Given an index, return the book object (or raise an IndexError)
         """
-        if Globals.debugFlag and debuggingThisModule: print( t("DBPBible.__getitem__( {} )").format( repr(keyIndex) ) )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( t("DBPBible.__getitem__( {} )").format( repr(keyIndex) ) )
         return list(self.books.items())[keyIndex][1] # element 0 is BBB, element 1 is the book object
     # end of DBPBible.__getitem__
 
@@ -577,13 +577,13 @@ class DBPBible:
             Returns the dictionary.
         Returns None if the data cannot be fetched.
         """
-        if Globals.debugFlag and debuggingThisModule: print( t("DBPBible.getOnlineData( {} {} )").format( repr(fieldREST), repr(additionalParameters) ) )
-        if Globals.verbosityLevel > 2: print( "Requesting data from {} for {}...".format( URL_BASE, self.damRoot ) )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( t("DBPBible.getOnlineData( {} {} )").format( repr(fieldREST), repr(additionalParameters) ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "Requesting data from {} for {}...".format( URL_BASE, self.damRoot ) )
         requestString = "{}{}{}{}".format( URL_BASE, fieldREST, self.URLFixedData, '&'+additionalParameters if additionalParameters else '' )
         #print( "Request string is", repr(requestString) )
         try: responseJSON = urllib.request.urlopen( requestString )
         except urllib.error.URLError:
-            if Globals.debugFlag: logging.critical( "DBPBible.getOnlineData: error fetching {} {}".format( repr(fieldREST), repr(additionalParameters) ) )
+            if BibleOrgSysGlobals.debugFlag: logging.critical( "DBPBible.getOnlineData: error fetching {} {}".format( repr(fieldREST), repr(additionalParameters) ) )
             return None
         responseSTR = responseJSON.readall().decode('utf-8')
         return( json.loads( responseSTR ) )
@@ -593,9 +593,9 @@ class DBPBible:
     def getVerseData( self, key ):
         """
         """
-        if Globals.debugFlag and debuggingThisModule: print( t("DBPBible.getVerseData( {} ) for {})").format( repr(key), repr(self.damRoot) ) )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( t("DBPBible.getVerseData( {} ) for {})").format( repr(key), repr(self.damRoot) ) )
         if str(key) in self.cache:
-            if Globals.debugFlag and debuggingThisModule: print( "  " + t("Retrieved from cache") )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "  " + t("Retrieved from cache") )
             self.cache.move_to_end( str(key) )
             return self.cache[str(key)]
         BBB = key.getBBB()
@@ -625,7 +625,7 @@ def demo():
     """
     Demonstrate how some of the above classes can be used.
     """
-    if Globals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
     if 1: # Test the DBPBibles class
         print()
@@ -702,12 +702,12 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of DigitalBiblePlatform.py

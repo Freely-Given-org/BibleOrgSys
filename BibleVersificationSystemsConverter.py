@@ -42,7 +42,7 @@ from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree
 from singleton import singleton
 
-import Globals
+import BibleOrgSysGlobals
 
 
 
@@ -83,13 +83,13 @@ class BibleVersificationSystemsConverter:
         if not self.__XMLSystems: # Only ever do this once
             if XMLFolder==None: XMLFolder = os.path.join( os.path.dirname(__file__), "DataFiles", "VersificationSystems" ) # Relative to module, not cwd
             self.__XMLFolder = XMLFolder
-            if Globals.verbosityLevel > 2: print( _("Loading versification systems from {}...").format( XMLFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading versification systems from {}...").format( XMLFolder ) )
             filenamePrefix = "BIBLEVERSIFICATIONSYSTEM_"
             for filename in os.listdir( XMLFolder ):
                 filepart, extension = os.path.splitext( filename )
                 if extension.upper() == '.XML' and filepart.upper().startswith(filenamePrefix):
                     versificationSystemCode = filepart[len(filenamePrefix):]
-                    if Globals.verbosityLevel > 3: print( _("Loading{} versification system from {}...").format( versificationSystemCode, filename ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Loading{} versification system from {}...").format( versificationSystemCode, filename ) )
                     self.__XMLSystems[versificationSystemCode] = {}
                     self.__XMLSystems[versificationSystemCode]["tree"] = ElementTree().parse( os.path.join( XMLFolder, filename ) )
                     assert( self.__XMLSystems[versificationSystemCode]["tree"] ) # Fail here if we didn't load anything at all
@@ -119,9 +119,9 @@ class BibleVersificationSystemsConverter:
                     bookCount = 0 # There must be an easier way to do this
                     for subelement in self.__XMLSystems[versificationSystemCode]["tree"]:
                         bookCount += 1
-                    if Globals.verbosityLevel > 2: print( _("    Loaded {} books for {}").format( bookCount, versificationSystemCode ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( _("    Loaded {} books for {}").format( bookCount, versificationSystemCode ) )
 
-                    if Globals.strictCheckingFlag:
+                    if BibleOrgSysGlobals.strictCheckingFlag:
                         self._validateSystem( self.__XMLSystems[versificationSystemCode]["tree"] )
         else: # The data must have been already loaded
             if XMLFolder is not None and XMLFolder!=self.__XMLFolder: logging.error( _("Bible versification systems are already loaded -- your different folder of '{}' was ignored").format( XMLFolder ) )
@@ -266,13 +266,13 @@ class BibleVersificationSystemsConverter:
             for bookElement in self.__XMLSystems[versificationSystemCode]["tree"]:
                 BBB = bookElement.find("referenceAbbreviation").text
                 #print( BBB )
-                if not Globals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ):
+                if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ):
                     logging.error( _("Unrecognized '{}' book abbreviation in '{}' versification system").format( BBB, versificationSystemCode ) )
                 numChapters = bookElement.find("numChapters").text # This is a string
 
                 # Check the chapter data against the expected chapters in the BibleBooksCodes data
-                if numChapters not in Globals.BibleBooksCodes.getExpectedChaptersList(BBB):
-                    logging.info( _("Expected number of chapters for {} is {} but we got '{}' for {}").format(BBB, Globals.BibleBooksCodes.getExpectedChaptersList(BBB), numChapters, versificationSystemCode ) )
+                if numChapters not in BibleOrgSysGlobals.BibleBooksCodes.getExpectedChaptersList(BBB):
+                    logging.info( _("Expected number of chapters for {} is {} but we got '{}' for {}").format(BBB, BibleOrgSysGlobals.BibleBooksCodes.getExpectedChaptersList(BBB), numChapters, versificationSystemCode ) )
 
                 chapterData, omittedVersesData, combinedVersesData, reorderedVersesData = OrderedDict(), [], [], []
                 chapterData['numChapters'] = numChapters
@@ -304,7 +304,7 @@ class BibleVersificationSystemsConverter:
                 if combinedVersesData: combinedVersesDict[BBB] = combinedVersesData
                 if reorderedVersesData: reorderedVersesDict[BBB] = reorderedVersesData
 
-            if Globals.strictCheckingFlag: # check for duplicates
+            if BibleOrgSysGlobals.strictCheckingFlag: # check for duplicates
                 for checkSystemCode in self.__DataDict:
                     checkChapterDataDict, checkOmittedVersesDict, checkCombinedVersesDict, checkReorderedVersesDict = self.__DataDict[checkSystemCode]['CV'], self.__DataDict[checkSystemCode]['omitted'], self.__DataDict[checkSystemCode]['combined'], self.__DataDict[checkSystemCode]['reordered']
                     if checkChapterDataDict==chapterDataDict:
@@ -334,7 +334,7 @@ class BibleVersificationSystemsConverter:
             # Now put it into my dictionaries for easy access
             self.__DataDict[versificationSystemCode] = {'CV':chapterDataDict, 'omitted':omittedVersesDict, 'combined':combinedVersesDict, 'reordered':reorderedVersesDict }
 
-        if Globals.strictCheckingFlag:
+        if BibleOrgSysGlobals.strictCheckingFlag:
             self._validateSystems()
         return self.__DataDict
     # end of BibleVersificationSystemsConverter.importDataToPython
@@ -401,7 +401,7 @@ class BibleVersificationSystemsConverter:
             folder = os.path.join( self.__XMLFolder, "../", "DerivedFiles/" )
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self.__filenameBase + "_Tables.pickle" )
-        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
         with open( filepath, 'wb' ) as pickleFile:
             pickle.dump( self.__DataDict, pickleFile )
     # end of BibleVersificationSystemsConverter.pickle
@@ -425,7 +425,7 @@ class BibleVersificationSystemsConverter:
         assert( self.__DataDict )
 
         if not filepath: filepath = os.path.join( self.__XMLFolder, "../", "DerivedFiles", self.__filenameBase + "_Tables.py" )
-        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
         versificationSystemDict = self.importDataToPython()
         # Split into two dictionaries
         with open( filepath, 'wt' ) as myFile:
@@ -468,7 +468,7 @@ class BibleVersificationSystemsConverter:
         assert( self.__DataDict )
 
         if not filepath: filepath = os.path.join( self.__XMLFolder, "../", "DerivedFiles", self.__filenameBase + "_Tables.json" )
-        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
         with open( filepath, 'wt' ) as myFile:
             #myFile.write( "#{}\n#\n".format( filepath ) ) # Not sure yet if these comment fields are allowed in JSON
             #myFile.write( "# This UTF-8 file was automatically generated by BibleVersificationSystems.py V{} on {}\n#\n".format( ProgVersion, datetime.now() ) )
@@ -577,7 +577,7 @@ class BibleVersificationSystemsConverter:
         if not filepath: filepath = os.path.join( self.__XMLFolder, "../", "DerivedFiles", self.__filenameBase + "_Tables" )
         hFilepath = filepath + '.h'
         cFilepath = filepath + '.c'
-        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( cFilepath ) ) # Don't bother telling them about the .h file
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( cFilepath ) ) # Don't bother telling them about the .h file
         ifdefName = self.__filenameBase.upper() + "_Tables_h"
 
         with open( hFilepath, 'wt' ) as myHFile, open( cFilepath, 'wt' ) as myCFile:
@@ -648,10 +648,10 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
 
     bvsc = BibleVersificationSystemsConverter().loadSystems() # Load the XML
-    if Globals.commandLineOptions.export:
+    if BibleOrgSysGlobals.commandLineOptions.export:
         bvsc.pickle() # Produce the .pickle file
         bvsc.exportDataToPython() # Produce the .py tables
         bvsc.exportDataToJSON() # Produce a json output file
@@ -664,10 +664,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser, exportAvailable=True )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of BibleVersificationSystemsConverter.py

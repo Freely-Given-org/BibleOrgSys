@@ -46,7 +46,7 @@ import logging, os
 from gettext import gettext as _
 from xml.etree.ElementTree import ElementTree
 
-import Globals
+import BibleOrgSysGlobals
 from ISO_639_3_Languages import ISO_639_3_Languages
 from Bible import Bible, BibleBook
 
@@ -73,9 +73,9 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
     if autoLoad is true and exactly one OSIS Bible is found,
         returns the loaded OSISXMLBible object.
     """
-    if Globals.verbosityLevel > 2: print( "OSISXMLBibleFileCheck( {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad ) )
-    if Globals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
-    if Globals.debugFlag: assert( autoLoad in (True,False,) )
+    if BibleOrgSysGlobals.verbosityLevel > 2: print( "OSISXMLBibleFileCheck( {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad ) )
+    if BibleOrgSysGlobals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
+    if BibleOrgSysGlobals.debugFlag: assert( autoLoad in (True,False,) )
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
@@ -86,7 +86,7 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
         return False
 
     # Find all the files and folders in this folder
-    if Globals.verbosityLevel > 3: print( " OSISXMLBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    if BibleOrgSysGlobals.verbosityLevel > 3: print( " OSISXMLBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -109,32 +109,32 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
     looksHopeful = False
     lastFilenameFound = None
     for thisFilename in sorted( foundFiles ):
-        if strictCheck or Globals.strictCheckingFlag:
-            firstLines = Globals.peekIntoFile( thisFilename, givenFolderName, numLines=3 )
+        if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
+            firstLines = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName, numLines=3 )
             if not firstLines or len(firstLines)<2: continue
             if not firstLines[0].startswith( '<?xml version="1.0"' ) \
             and not firstLines[0].startswith( '\ufeff<?xml version="1.0"' ): # same but with BOM
-                if Globals.verbosityLevel > 2: print( "OB (unexpected) first line was '{}' in {}".format( firstLines, thisFilename ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "OB (unexpected) first line was '{}' in {}".format( firstLines, thisFilename ) )
                 continue
             if not (firstLines[1].startswith( '<osis ' ) or firstLines[2].startswith( '<osis ' )):
                 continue
         lastFilenameFound = thisFilename
         numFound += 1
     if numFound:
-        if Globals.verbosityLevel > 2: print( "OSISXMLBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "OSISXMLBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             ub = OSISXMLBible( givenFolderName, lastFilenameFound )
             if autoLoadBooks: ub.load() # Load and process the file
             return ub
         return numFound
-    elif looksHopeful and Globals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
+    elif looksHopeful and BibleOrgSysGlobals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
 
     # Look one level down
     numFound = 0
     foundProjects = []
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
-        if Globals.verbosityLevel > 3: print( "    OSISXMLBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( "    OSISXMLBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
         for something in os.listdir( tryFolderName ):
             somepath = os.path.join( givenFolderName, thisFolderName, something )
@@ -152,12 +152,12 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
 
         # See if there's an OSIS project here in this folder
         for thisFilename in sorted( foundSubfiles ):
-            if strictCheck or Globals.strictCheckingFlag:
-                firstLines = Globals.peekIntoFile( thisFilename, tryFolderName, numLines=2 )
+            if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
+                firstLines = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName, numLines=2 )
                 if not firstLines or len(firstLines)<2: continue
                 if not firstLines[0].startswith( '<?xml version="1.0"' ) \
                 and not firstLines[0].startswith( '\ufeff<?xml version="1.0"' ): # same but with BOM
-                    if Globals.verbosityLevel > 2: print( "OB (unexpected) first line was '{}' in {}".format( firstLines, thisFilename ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "OB (unexpected) first line was '{}' in {}".format( firstLines, thisFilename ) )
                     continue
                 if not firstLines[1].startswith( '<osis ' ):
                     continue
@@ -165,9 +165,9 @@ def OSISXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
             lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
-        if Globals.verbosityLevel > 2: print( "OSISXMLBibleFileCheck foundProjects", numFound, foundProjects )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "OSISXMLBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
-            if Globals.debugFlag: assert( len(foundProjects) == 1 )
+            if BibleOrgSysGlobals.debugFlag: assert( len(foundProjects) == 1 )
             ub = OSISXMLBible( foundProjects[0][0], foundProjects[0][1] ) # Folder and filename
             if autoLoadBooks: ub.load() # Load and process the file
             return ub
@@ -232,7 +232,7 @@ class OSISXMLBible( Bible ):
             for filename in fileList:
                 if filename.lower().endswith('.xml'):
                     self.sourceFilepath = os.path.join( self.sourceFolder, filename )
-                    if Globals.debugFlag: print( "Trying {}...".format( self.sourceFilepath ) )
+                    if BibleOrgSysGlobals.debugFlag: print( "Trying {}...".format( self.sourceFilepath ) )
                     if os.access( self.sourceFilepath, os.R_OK ): # we can read that file
                         self.possibleFilenames.append( filename )
         else: # it's presumably a file name
@@ -261,7 +261,7 @@ class OSISXMLBible( Bible ):
             loadErrors.append( _("OSISXMLBible: Didn't find anything to load at {}").format( repr(self.sourceFilepath) ) )
         if loadErrors:
             self.errorDictionary['Load Errors'] = loadErrors
-            #if Globals.debugFlag: print( "loadErrors", len(loadErrors), loadErrors ); halt
+            #if BibleOrgSysGlobals.debugFlag: print( "loadErrors", len(loadErrors), loadErrors ); halt
         self.doPostLoadProcessing()
     # end of OSISXMLBible.load
 
@@ -271,15 +271,15 @@ class OSISXMLBible( Bible ):
         Load a single source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        if Globals.verbosityLevel > 1: print( _("Loading {}...").format( OSISFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Loading {}...").format( OSISFilepath ) )
         self.tree = ElementTree().parse( OSISFilepath )
-        if Globals.debugFlag: assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
+        if BibleOrgSysGlobals.debugFlag: assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
 
         # Find the main (osis) container
         if self.tree.tag == OSISXMLBible.treeTag:
             location = "OSIS file"
-            Globals.checkXMLNoText( self.tree, location, '4f6h', loadErrors )
-            Globals.checkXMLNoTail( self.tree, location, '1wk8', loadErrors )
+            BibleOrgSysGlobals.checkXMLNoText( self.tree, location, '4f6h', loadErrors )
+            BibleOrgSysGlobals.checkXMLNoTail( self.tree, location, '1wk8', loadErrors )
             # Process the attributes first
             self.schemaLocation = None
             for attrib,value in self.tree.items():
@@ -293,8 +293,8 @@ class OSISXMLBible( Bible ):
             if len(self.tree)==1 and self.tree[0].tag == OSISXMLBible.textTag:
                 sublocation = "osisText in " + location
                 textElement = self.tree[0]
-                Globals.checkXMLNoText( textElement, sublocation, '3b5g', loadErrors )
-                Globals.checkXMLNoTail( textElement, sublocation, '7h9k', loadErrors )
+                BibleOrgSysGlobals.checkXMLNoText( textElement, sublocation, '3b5g', loadErrors )
+                BibleOrgSysGlobals.checkXMLNoTail( textElement, sublocation, '7h9k', loadErrors )
                 # Process the attributes first
                 self.osisIDWork = self.osisRefWork = canonical = None
                 for attrib,value in textElement.items():
@@ -315,10 +315,10 @@ class OSISXMLBible( Bible ):
                         loadErrors.append( "New variety of osisRefWork: '{}'".format( self.osisRefWork ) )
                 if self.lang:
                     if self.lang in ('en','he',): # Only specifically recognise these ones so far (English, Hebrew)
-                        if Globals.verbosityLevel > 2: print( "    Language is '{}'".format( self.lang ) )
+                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "    Language is '{}'".format( self.lang ) )
                     else:
                         logging.info( "Discovered an unknown '{}' language".format( self.lang ) )
-                if Globals.verbosityLevel > 2: print( "  osisIDWork is '{}'".format( self.osisIDWork ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "  osisIDWork is '{}'".format( self.osisIDWork ) )
 
                 # Find (and move) the header container
                 if textElement[0].tag == OSISXMLBible.headerTag:
@@ -354,8 +354,8 @@ class OSISXMLBible( Bible ):
                 for element in textElement:
                     if element.tag == OSISXMLBible.divTag:
                         sub2location = "div in " + sublocation
-                        Globals.checkXMLNoText( element, sub2location, '3a2s', loadErrors )
-                        Globals.checkXMLNoTail( element, sub2location, '4k8a', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoText( element, sub2location, '3a2s', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoTail( element, sub2location, '4k8a', loadErrors )
                         divType = element.get( "type" )
                         if divType is None:
                             logging.error( "Missing div type in OSIS file" )
@@ -384,19 +384,19 @@ class OSISXMLBible( Bible ):
         """
         Check/validate the given OSIS header record.
         """
-        if Globals.verbosityLevel > 3: print( _("Loading OSIS header...") )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Loading OSIS header...") )
         headerlocation = "header"
-        Globals.checkXMLNoText( header, headerlocation, '2s90', loadErrors )
-        Globals.checkXMLNoTail( header, headerlocation, '0k6l', loadErrors )
-        Globals.checkXMLNoAttributes( header, headerlocation, '4f6h', loadErrors )
+        BibleOrgSysGlobals.checkXMLNoText( header, headerlocation, '2s90', loadErrors )
+        BibleOrgSysGlobals.checkXMLNoTail( header, headerlocation, '0k6l', loadErrors )
+        BibleOrgSysGlobals.checkXMLNoAttributes( header, headerlocation, '4f6h', loadErrors )
 
         numWorks = 0
         for element in header:
             if element.tag == OSISXMLBible.OSISNameSpace+"revisionDesc":
                 location = "revisionDesc of " + headerlocation
-                Globals.checkXMLNoText( header, location, '2t5y', loadErrors )
-                Globals.checkXMLNoTail( header, location, '3a1l', loadErrors )
-                Globals.checkXMLNoAttributes( header, location, '6hj8', loadErrors )
+                BibleOrgSysGlobals.checkXMLNoText( header, location, '2t5y', loadErrors )
+                BibleOrgSysGlobals.checkXMLNoTail( header, location, '3a1l', loadErrors )
+                BibleOrgSysGlobals.checkXMLNoAttributes( header, location, '6hj8', loadErrors )
                 # Process the attributes first
                 resp = None
                 for attrib,value in element.items():
@@ -407,36 +407,36 @@ class OSISXMLBible( Bible ):
 
                 # Now process the subelements
                 for subelement in element.getchildren():
-                    Globals.checkXMLNoSubelements( subelement, location, '4f3f', loadErrors )
+                    BibleOrgSysGlobals.checkXMLNoSubelements( subelement, location, '4f3f', loadErrors )
                     if len(subelement):
                         logging.error( "Unexpected {} subelements in subelement {} in {} revisionDesc".format( len(subelement), subelement.tag, osisWork ) )
                         loadErrors.append( "Unexpected {} subelements in subelement {} in {} revisionDesc".format( len(subelement), subelement.tag, osisWork ) )
                     if subelement.tag == OSISXMLBible.OSISNameSpace+"date":
                         sublocation = "date of " + location
-                        Globals.checkXMLNoTail( subelement, sublocation, '4sd2', loadErrors )
-                        Globals.checkXMLNoAttributes( subelement, sublocation, '9hj5', loadErrors )
-                        Globals.checkXMLNoSubelements( subelement, sublocation, '6g3s', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, '4sd2', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation, '9hj5', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, '6g3s', loadErrors )
                         date = subelement.text
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+"p":
                         sublocation = "p of " + location
-                        Globals.checkXMLNoTail( subelement, sublocation, '9k5a', loadErrors )
-                        Globals.checkXMLNoAttributes( subelement, sublocation, '4f4s', loadErrors )
-                        Globals.checkXMLNoSubelements( subelement, sublocation, '3c5g', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, '9k5a', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation, '4f4s', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, '3c5g', loadErrors )
                         p = element.text
                     else:
                         logging.error( "6g4g Unprocessed '{}' sub-element ({}) in revisionDesc element".format( subelement.tag, subelement.text ) )
                         loadErrors.append( "Unprocessed '{}' sub-element ({}) in revisionDesc element (6g4g)".format( subelement.tag, subelement.text ) )
             elif element.tag == OSISXMLBible.OSISNameSpace+"work":
                 location = "work of " + headerlocation
-                Globals.checkXMLNoText( header, location, '5h9k', loadErrors )
-                Globals.checkXMLNoTail( header, location, '1d4f', loadErrors )
-                Globals.checkXMLNoAttributes( header, location, '2s3d', loadErrors )
+                BibleOrgSysGlobals.checkXMLNoText( header, location, '5h9k', loadErrors )
+                BibleOrgSysGlobals.checkXMLNoTail( header, location, '1d4f', loadErrors )
+                BibleOrgSysGlobals.checkXMLNoAttributes( header, location, '2s3d', loadErrors )
                 # Process the attributes first
                 osisWork = lang = None
                 for attrib,value in element.items():
                     if attrib=="osisWork":
                         osisWork = value
-                        if Globals.verbosityLevel > 2: print( "  Have a '{}' work".format( osisWork ) )
+                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Have a '{}' work".format( osisWork ) )
                     elif attrib==OSISXMLBible.XMLNameSpace+"lang": lang = value
                     else:
                         logging.warning( "2k5s Unprocessed {} attribute ({}) in work element".format( attrib, value ) )
@@ -448,8 +448,8 @@ class OSISXMLBible( Bible ):
                         loadErrors.append( "Unexpected {} subelements in subelement {} in {} work (hf54)".format( len(subelement), subelement.tag, osisWork ) )
                     if subelement.tag == OSISXMLBible.OSISNameSpace+"title":
                         sublocation = "title of " + location
-                        Globals.checkXMLNoTail( subelement, sublocation, '8k0k', loadErrors )
-                        Globals.checkXMLNoSubelements( subelement, sublocation, '0k5f', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, '8k0k', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, '0k5f', loadErrors )
                         if not self.title: self.title = subelement.text # Take the first title
                         titleType = None
                         for attrib,value in subelement.items():
@@ -459,18 +459,18 @@ class OSISXMLBible( Bible ):
                                 loadErrors.append( "Unprocessed '{}' attribute ({}) in {} (8f83)".format( attrib, value, sublocation ) )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+"version":
                         sublocation = "version of " + location
-                        Globals.checkXMLNoText( subelement, sublocation, '3g1h', loadErrors )
-                        Globals.checkXMLNoTail( subelement, sublocation, '0k3d', loadErrors )
-                        Globals.checkXMLNoAttributes( subelement, sublocation, '7h4f', loadErrors )
-                        Globals.checkXMLNoSubelements( subelement, sublocation, '2j9z', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation, '3g1h', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, '0k3d', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation, '7h4f', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, '2j9z', loadErrors )
                         self.version = subelement.text
                         for attrib,value in subelement.items():
                             logging.warning( "93d2 Unprocessed '{}' attribute ({}) in {}".format( attrib, value, sublocation ) )
                             loadErrors.append( "Unprocessed '{}' attribute ({}) in {} (93d2)".format( attrib, value, sublocation ) )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+"date":
                         sublocation = "date of " + location
-                        Globals.checkXMLNoTail( subelement, sublocation, '3f9j', loadErrors )
-                        Globals.checkXMLNoSubelements( subelement, sublocation, '4x5h', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, '3f9j', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, '4x5h', loadErrors )
                         date = subelement.text
                         dateType = dateEvent = None
                         for attrib,value in subelement.items():
@@ -479,12 +479,12 @@ class OSISXMLBible( Bible ):
                             else:
                                 logging.warning( "2k4d Unprocessed '{}' attribute ({}) in {}".format( attrib, value, sublocation ) )
                                 loadErrors.append( "Unprocessed '{}' attribute ({}) in {} (2k4d)".format( attrib, value, sublocation ) )
-                        if Globals.debugFlag: assert( dateType in (None,'Gregorian',) )
-                        if Globals.debugFlag: assert( dateEvent in (None,'eversion',) )
+                        if BibleOrgSysGlobals.debugFlag: assert( dateType in (None,'Gregorian',) )
+                        if BibleOrgSysGlobals.debugFlag: assert( dateEvent in (None,'eversion',) )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+"creator":
                         sublocation = "creator of " + location
-                        Globals.checkXMLNoTail( subelement, sublocation, '3n5z', loadErrors )
-                        Globals.checkXMLNoSubelements( subelement, sublocation, '9n3z', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, '3n5z', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, '9n3z', loadErrors )
                         self.creator = subelement.text
                         creatorRole = creatorType = None
                         for attrib,value in subelement.items():
@@ -493,11 +493,11 @@ class OSISXMLBible( Bible ):
                             else:
                                 logging.warning( "9f2d Unprocessed '{}' attribute ({}) in {}".format( attrib, value, sublocation ) )
                                 loadErrors.append( "Unprocessed '{}' attribute ({}) in {} (9f2d)".format( attrib, value, sublocation ) )
-                        if Globals.verbosityLevel > 2: print( "    Creator (role='{}'{}) was '{}'".format( creatorRole, ", type='{}'".format(creatorType) if creatorType else '', self.creator ) )
+                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "    Creator (role='{}'{}) was '{}'".format( creatorRole, ", type='{}'".format(creatorType) if creatorType else '', self.creator ) )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+"contributor":
                         sublocation = "contributor of " + location
-                        Globals.checkXMLNoTail( subelement, sublocation, '3z4o', loadErrors )
-                        Globals.checkXMLNoSubelements( subelement, sublocation, '2u5z', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, '3z4o', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, '2u5z', loadErrors )
                         self.contributor = subelement.text
                         contributorRole = None
                         for attrib,value in subelement.items():
@@ -505,18 +505,18 @@ class OSISXMLBible( Bible ):
                             else:
                                 logging.warning( "1s5g Unprocessed '{}' attribute ({}) in {}".format( attrib, value, sublocation ) )
                                 loadErrors.append( "Unprocessed '{}' attribute ({}) in {} (1s5g)".format( attrib, value, sublocation ) )
-                        if Globals.verbosityLevel > 2: print( "    Contributor ({}) was '{}'".format( contributorRole, self.contributor ) )
+                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "    Contributor ({}) was '{}'".format( contributorRole, self.contributor ) )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+"subject":
                         sublocation = "subject of " + location
-                        Globals.checkXMLNoTail( subelement, sublocation, 'c35g', loadErrors )
-                        Globals.checkXMLNoAttributes( subelement, sublocation, 'frg3', loadErrors )
-                        Globals.checkXMLNoSubelements( subelement, sublocation, 'ft4g', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, 'c35g', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation, 'frg3', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, 'ft4g', loadErrors )
                         self.subject = subelement.text
-                        if Globals.verbosityLevel > 2: print( "    Subject was '{}'".format( self.subject ) )
+                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "    Subject was '{}'".format( self.subject ) )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+"description":
                         sublocation = "description of " + location
-                        Globals.checkXMLNoTail( subelement, sublocation, '1j6z', loadErrors )
-                        Globals.checkXMLNoSubelements( subelement, sublocation, '4a7s', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, '1j6z', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, '4a7s', loadErrors )
                         self.description = subelement.text
                         descriptionType = descriptionSubType = resp = None
                         for attrib,value in subelement.items():
@@ -527,11 +527,11 @@ class OSISXMLBible( Bible ):
                                 logging.warning( "6f3d Unprocessed '{}' attribute ({}) in {}".format( attrib, value, sublocation ) )
                                 loadErrors.append( "Unprocessed '{}' attribute ({}) in {} (6f3d)".format( attrib, value, sublocation ) )
                         if descriptionType: assert( descriptionType in ('usfm','x-english','x-lwc',) )
-                        if descriptionType or self.description and Globals.verbosityLevel > 2: print( "    Description{} is '{}'".format( " ({})".format(descriptionType) if descriptionType else '', self.description ) )
+                        if descriptionType or self.description and BibleOrgSysGlobals.verbosityLevel > 2: print( "    Description{} is '{}'".format( " ({})".format(descriptionType) if descriptionType else '', self.description ) )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+"format":
                         sublocation = "format of " + location
-                        Globals.checkXMLNoTail( subelement, sublocation, '5n3x', loadErrors )
-                        Globals.checkXMLNoSubelements( subelement, sublocation, '8v3x', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, '5n3x', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, '8v3x', loadErrors )
                         self.format = subelement.text
                         formatType = None
                         for attrib,value in subelement.items():
@@ -539,12 +539,12 @@ class OSISXMLBible( Bible ):
                             else:
                                 logging.warning( "2f5s Unprocessed '{}' attribute ({}) in {}".format( attrib, value, sublocation ) )
                                 loadErrors.append( "Unprocessed '{}' attribute ({}) in {} (2f5s)".format( attrib, value, sublocation ) )
-                        if Globals.debugFlag: assert( formatType == 'x-MIME' )
-                        if Globals.verbosityLevel > 2: print( "    Format ({}) is '{}'".format( formatType, self.format ) )
+                        if BibleOrgSysGlobals.debugFlag: assert( formatType == 'x-MIME' )
+                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "    Format ({}) is '{}'".format( formatType, self.format ) )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+"type":
                         sublocation = "type of " + location
-                        Globals.checkXMLNoTail( subelement, sublocation, '3b4z', loadErrors )
-                        Globals.checkXMLNoSubelements( subelement, sublocation, '8j8b', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, '3b4z', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, '8j8b', loadErrors )
                         self.type = subelement.text
                         typeType = None
                         for attrib,value in subelement.items():
@@ -552,12 +552,12 @@ class OSISXMLBible( Bible ):
                             else:
                                 logging.warning( "7j3f Unprocessed '{}' attribute ({}) in {}".format( attrib, value, sublocation ) )
                                 loadErrors.append( "Unprocessed '{}' attribute ({}) in {} (7j3f)".format( attrib, value, sublocation ) )
-                        if Globals.debugFlag: assert( typeType == 'OSIS' )
-                        if Globals.verbosityLevel > 2: print( "    Type ({}) is '{}'".format( typeType, self.type ) )
+                        if BibleOrgSysGlobals.debugFlag: assert( typeType == 'OSIS' )
+                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "    Type ({}) is '{}'".format( typeType, self.type ) )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+"identifier":
                         sublocation = "identifier of " + location
-                        Globals.checkXMLNoTail( subelement, sublocation, '5a2m', loadErrors )
-                        Globals.checkXMLNoSubelements( subelement, sublocation, '2x6e', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, '5a2m', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, '2x6e', loadErrors )
                         identifier = subelement.text
                         identifierType = None
                         for attrib,value in subelement.items():
@@ -566,8 +566,8 @@ class OSISXMLBible( Bible ):
                                 logging.warning( "2d5g Unprocessed '{}' attribute ({}) in {}".format( attrib, value, sublocation ) )
                                 loadErrors.append( "Unprocessed '{}' attribute ({}) in {} (2d5g)".format( attrib, value, sublocation ) )
                         #print( "id", repr(identifierType) )
-                        if Globals.debugFlag: assert( identifierType in ('OSIS','URL','x-ebible-id',) )
-                        if Globals.verbosityLevel > 2: print( "    Identifier ({}) is '{}'".format( identifierType, identifier ) )
+                        if BibleOrgSysGlobals.debugFlag: assert( identifierType in ('OSIS','URL','x-ebible-id',) )
+                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "    Identifier ({}) is '{}'".format( identifierType, identifier ) )
                         #print( "Here vds1", repr(self.name), repr(self.abbreviation) )
                         if identifierType=='OSIS':
                             if not self.name: self.name = identifier
@@ -577,9 +577,9 @@ class OSISXMLBible( Bible ):
                         #print( "Here vds2", repr(self.name), repr(self.abbreviation) )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+"source":
                         sublocation = "source of " + location
-                        Globals.checkXMLNoTail( subelement, sublocation, '1i8p', loadErrors )
-                        Globals.checkXMLNoAttributes( subelement, sublocation, '4gh7', loadErrors )
-                        Globals.checkXMLNoSubelements( subelement, sublocation, '6p3a', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, '1i8p', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation, '4gh7', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, '6p3a', loadErrors )
                         self.source = subelement.text
                         sourceRole = None
                         for attrib,value in subelement.items():
@@ -587,11 +587,11 @@ class OSISXMLBible( Bible ):
                             else:
                                 logging.warning( "6h7h Unprocessed '{}' attribute ({}) in {}".format( attrib, value, sublocation ) )
                                 loadErrors.append( "Unprocessed '{}' attribute ({}) in {} (6h7h)".format( attrib, value, sublocation ) )
-                        if Globals.verbosityLevel > 2: print( "    Source{} was '{}'".format( " ({})".format(sourceRole) if sourceRole else '', self.source ) )
+                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "    Source{} was '{}'".format( " ({})".format(sourceRole) if sourceRole else '', self.source ) )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+"publisher":
                         sublocation = "publisher of " + location
-                        Globals.checkXMLNoTail( subelement, sublocation, '3z7g', loadErrors )
-                        Globals.checkXMLNoSubelements( subelement, sublocation, '8n3x', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, '3z7g', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, '8n3x', loadErrors )
                         self.publisher = subelement.text.replace( '&amp;', '&' )
                         publisherType = None
                         for attrib,value in subelement.items():
@@ -599,36 +599,36 @@ class OSISXMLBible( Bible ):
                             else:
                                 logging.warning( "7g5g Unprocessed '{}' attribute ({}) in {}".format( attrib, value, sublocation ) )
                                 loadErrors.append( "Unprocessed '{}' attribute ({}) in {} (7g5g)".format( attrib, value, sublocation ) )
-                        if Globals.verbosityLevel > 2: print( "    Publisher {}is/was '{}'".format( '({}) '.format(publisherType) if publisherType else '', self.publisher ) )
+                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "    Publisher {}is/was '{}'".format( '({}) '.format(publisherType) if publisherType else '', self.publisher ) )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+"scope":
                         sublocation = "scope of " + location
-                        Globals.checkXMLNoTail( subelement, sublocation, '1z4i', loadErrors )
-                        Globals.checkXMLNoAttributes( subelement, sublocation, '3d4d', loadErrors )
-                        Globals.checkXMLNoSubelements( subelement, sublocation, '2g5z', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, '1z4i', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation, '3d4d', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, '2g5z', loadErrors )
                         self.scope = subelement.text
-                        if Globals.verbosityLevel > 2: print( "    Scope is '{}'".format( self.scope ) )
+                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "    Scope is '{}'".format( self.scope ) )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+"coverage":
                         sublocation = "coverage of " + location
-                        Globals.checkXMLNoTail( subelement, sublocation, '9l2p', loadErrors )
-                        Globals.checkXMLNoAttributes( subelement, sublocation, '3d6g', loadErrors )
-                        Globals.checkXMLNoSubelements( subelement, sublocation, '3a6p', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, '9l2p', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation, '3d6g', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, '3a6p', loadErrors )
                         self.coverage = subelement.text
-                        if Globals.verbosityLevel > 2: print( "    Coverage is '{}'".format( self.coverage ) )
+                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "    Coverage is '{}'".format( self.coverage ) )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+"refSystem":
                         sublocation = "refSystem of " + location
-                        Globals.checkXMLNoTail( subelement, sublocation, '3p65', loadErrors )
-                        Globals.checkXMLNoAttributes( subelement, sublocation, '2s4f', loadErrors )
-                        Globals.checkXMLNoSubelements( subelement, sublocation, '3mtp', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, '3p65', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation, '2s4f', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, '3mtp', loadErrors )
                         self.refSystem = subelement.text
                         if self.refSystem in ('Bible','Bible.KJV','Bible.NRSVA','Dict.Strongs','Dict.Robinsons','Dict.strongMorph',):
-                            if Globals.verbosityLevel > 2: print( "    Reference system is '{}'".format( self.refSystem ) )
+                            if BibleOrgSysGlobals.verbosityLevel > 2: print( "    Reference system is '{}'".format( self.refSystem ) )
                         else:
                             logging.info( "Discovered an unknown '{}' refSystem".format( self.refSystem ) )
                             loadErrors.append( "Discovered an unknown '{}' refSystem".format( self.refSystem ) )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+"language":
                         sublocation = "language of " + location
-                        Globals.checkXMLNoTail( subelement, sublocation, '4v2n', loadErrors )
-                        Globals.checkXMLNoSubelements( subelement, sublocation, '8n34', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, '4v2n', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, '8n34', loadErrors )
                         self.language = subelement.text
                         languageType = None
                         for attrib,value in subelement.items():
@@ -638,13 +638,13 @@ class OSISXMLBible( Bible ):
                                 loadErrors.append( "Unprocessed '{}' attribute ({}) in {} (6g4f)".format( attrib, value, sublocation ) )
                         if languageType in ('SIL','IETF','x-ethnologue','x-in-english','x-vernacular',):
                             if ISOLanguages.isValidLanguageCode( self.language ):
-                                if Globals.verbosityLevel > 2: print( "  Language is: {}".format( ISOLanguages.getLanguageName( self.language ) ) )
+                                if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Language is: {}".format( ISOLanguages.getLanguageName( self.language ) ) )
                             else: print( "Discovered an unknown '{}' language".format( self.language ) )
                         else: print( "Discovered an unknown '{}' languageType".format( languageType ) )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+"rights":
                         sublocation = "rights of " + location
-                        Globals.checkXMLNoTail( subelement, sublocation, '6v2x', loadErrors )
-                        Globals.checkXMLNoSubelements( subelement, sublocation, '9l5b', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, '6v2x', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, '9l5b', loadErrors )
                         self.rights = subelement.text
                         copyrightType = None
                         for attrib,value in subelement.items():
@@ -652,14 +652,14 @@ class OSISXMLBible( Bible ):
                             else:
                                 logging.warning( "1s3d Unprocessed '{}' attribute ({}) in {}".format( attrib, value, sublocation ) )
                                 loadErrors.append( "Unprocessed '{}' attribute ({}) in {} (1s3d)".format( attrib, value, sublocation ) )
-                        if Globals.debugFlag: assert( copyrightType in (None,'x-copyright','x-license','x-license-url',) )
-                        if Globals.verbosityLevel > 2: print( "    Rights{} are/were '{}'".format( " ({})".format(copyrightType) if copyrightType else '', self.rights ) )
+                        if BibleOrgSysGlobals.debugFlag: assert( copyrightType in (None,'x-copyright','x-license','x-license-url',) )
+                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "    Rights{} are/were '{}'".format( " ({})".format(copyrightType) if copyrightType else '', self.rights ) )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+"relation":
                         sublocation = "relation of " + location
-                        Globals.checkXMLNoText( subelement, sublocation, 'g4h2', loadErrors )
-                        Globals.checkXMLNoTail( subelement, sublocation, 'gh53', loadErrors )
-                        Globals.checkXMLNoAttributes( subelement, sublocation, 'd2fd', loadErrors )
-                        Globals.checkXMLNoSubelements( subelement, sublocation, 's2fy', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation, 'g4h2', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, 'gh53', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation, 'd2fd', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, 's2fy', loadErrors )
                     else:
                         logging.error( "7h5g Unprocessed '{}' sub-element ({}) in {}".format( subelement.tag, subelement.text, location) )
                         loadErrors.append( "Unprocessed '{}' sub-element ({}) in {} (7h5g)".format( subelement.tag, subelement.text, location) )
@@ -668,9 +668,9 @@ class OSISXMLBible( Bible ):
                 numWorks += 1
             elif element.tag == OSISXMLBible.OSISNameSpace+"workPrefix":
                 location = "workPrefix of " + headerlocation
-                Globals.checkXMLNoText( header, location, 'f5h8', loadErrors )
-                Globals.checkXMLNoTail( header, location, 'f2g7', loadErrors )
-                Globals.checkXMLNoAttributes( header, location, '6g4f', loadErrors )
+                BibleOrgSysGlobals.checkXMLNoText( header, location, 'f5h8', loadErrors )
+                BibleOrgSysGlobals.checkXMLNoTail( header, location, 'f2g7', loadErrors )
+                BibleOrgSysGlobals.checkXMLNoAttributes( header, location, '6g4f', loadErrors )
                 # Process the attributes first
                 workPrefixPath = workPrefixWork = None
                 for attrib,value in element.items():
@@ -683,10 +683,10 @@ class OSISXMLBible( Bible ):
                 for subelement in element.getchildren():
                     if subelement.tag == OSISXMLBible.OSISNameSpace+"revisionDesc":
                         sublocation = "revisionDesc of " + location
-                        Globals.checkXMLNoText( subelement, sublocation, 'c3t5', loadErrors )
-                        Globals.checkXMLNoTail( subelement, sublocation, 'z2f8', loadErrors )
-                        Globals.checkXMLNoAttributes( subelement, sublocation, '2w3e', loadErrors )
-                        Globals.checkXMLNoSubelements( subelement, sublocation, 'm5o0', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation, 'c3t5', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, 'z2f8', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation, '2w3e', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, 'm5o0', loadErrors )
                         #self.something = subelement.text
                         for attrib,value in subelement.items():
                             logging.warning( "3h6r Unprocessed '{}' attribute ({}) in {} subelement of workPrefix element".format( attrib, value, subelement.tag ) )
@@ -710,10 +710,10 @@ class OSISXMLBible( Bible ):
         """
         Check/validate the given OSIS front matter (div) record.
         """
-        if Globals.verbosityLevel > 3: print( _("Loading OSIS front matter...") )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Loading OSIS front matter...") )
         frontMatterLocation = "frontMatter"
-        Globals.checkXMLNoText( frontMatter, frontMatterLocation, 'c3a2', loadErrors )
-        Globals.checkXMLNoTail( frontMatter, frontMatterLocation, 'm7s9', loadErrors )
+        BibleOrgSysGlobals.checkXMLNoText( frontMatter, frontMatterLocation, 'c3a2', loadErrors )
+        BibleOrgSysGlobals.checkXMLNoTail( frontMatter, frontMatterLocation, 'm7s9', loadErrors )
         # Process the attributes first
         for attrib,value in frontMatter.items():
             if attrib=="type":
@@ -725,33 +725,33 @@ class OSISXMLBible( Bible ):
         for element in frontMatter:
             if element.tag == OSISXMLBible.OSISNameSpace+"titlePage":
                 location = "titlePage of " + frontMatterLocation
-                Globals.checkXMLNoText( element, location, 'k9l3', loadErrors )
-                Globals.checkXMLNoTail( element, location, 'a3s4', loadErrors )
-                Globals.checkXMLNoAttributes( element, location, '1w34', loadErrors )
+                BibleOrgSysGlobals.checkXMLNoText( element, location, 'k9l3', loadErrors )
+                BibleOrgSysGlobals.checkXMLNoTail( element, location, 'a3s4', loadErrors )
+                BibleOrgSysGlobals.checkXMLNoAttributes( element, location, '1w34', loadErrors )
                 # Process the attributes first
                 for attrib,value in element.items():
                     if attrib=="type":
-                        if Globals.debugFlag: assert( value == 'front' ) # We've already processed this in the calling routine
+                        if BibleOrgSysGlobals.debugFlag: assert( value == 'front' ) # We've already processed this in the calling routine
                     else:
                         logging.warning( "3f5d Unprocessed {} attribute ({}) in {}".format( attrib, value, location ) )
                         loadErrors.append( "Unprocessed {} attribute ({}) in {} (3f5d)".format( attrib, value, location ) )
 
                 # Now process the subelements
                 for subelement in element.getchildren():
-                    Globals.checkXMLNoSubelements( subelement, location, 'dv61', loadErrors )
+                    BibleOrgSysGlobals.checkXMLNoSubelements( subelement, location, 'dv61', loadErrors )
                     if subelement.tag == OSISXMLBible.OSISNameSpace+"p":
                         sublocation = "p of " + location
-                        Globals.checkXMLNoTail( subelement, sublocation, 'h3x5', loadErrors )
-                        Globals.checkXMLNoAttributes( subelement, sublocation, '5ygg', loadErrors )
-                        Globals.checkXMLNoSubelements( subelement, sublocation, '8j54', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, 'h3x5', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation, '5ygg', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, '8j54', loadErrors )
                         p = element.text
                     else:
                         logging.error( "1dc5 Unprocessed '{}' sub-element ({}) in {}".format( subelement.tag, subelement.text, location ) )
                         loadErrors.append( "Unprocessed '{}' sub-element ({}) in {} (1dc5)".format( subelement.tag, subelement.text, location ) )
             elif element.tag == OSISXMLBible.OSISNameSpace+"div":
                 location = "div of " + frontMatterLocation
-                Globals.checkXMLNoText( element, location, 'b3f4', loadErrors )
-                Globals.checkXMLNoTail( element, location, 'd3s2', loadErrors )
+                BibleOrgSysGlobals.checkXMLNoText( element, location, 'b3f4', loadErrors )
+                BibleOrgSysGlobals.checkXMLNoTail( element, location, 'd3s2', loadErrors )
                 # Process the attributes first
                 divType = None
                 for attrib,value in element.items():
@@ -759,29 +759,29 @@ class OSISXMLBible( Bible ):
                     else:
                         logging.warning( "7h4g Unprocessed {} attribute ({}) in {}".format( attrib, value, location ) )
                         loadErrors.append( "Unprocessed {} attribute ({}) in {} (7h4g)".format( attrib, value, location ) )
-                if Globals.debugFlag: assert( divType == 'x-license' )
+                if BibleOrgSysGlobals.debugFlag: assert( divType == 'x-license' )
 
                 # Now process the subelements
                 for subelement in element.getchildren():
                     if subelement.tag == OSISXMLBible.OSISNameSpace+"title":
                         sublocation = "title of " + location
-                        Globals.checkXMLNoTail( subelement, sublocation, 'k8j8', loadErrors )
-                        Globals.checkXMLNoAttributes( subelement, sublocation, '48j6', loadErrors )
-                        Globals.checkXMLNoSubelements( subelement, sublocation, 'l0l0', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, 'k8j8', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation, '48j6', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, 'l0l0', loadErrors )
                         date = subelement.text
                         logging.warning( "sdh3 Not handled yet", subelement.text )
                         loadErrors.append( "sdh3 Not handled yet", subelement.text )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+"p":
                         sublocation = "p of " + location
-                        Globals.checkXMLNoTail( subelement, sublocation, 'd4d4', loadErrors )
-                        Globals.checkXMLNoAttributes( subelement, sublocation, '2de5', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, 'd4d4', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation, '2de5', loadErrors )
                         p = element.text
                         # Now process the subelements
                         for sub2element in subelement.getchildren():
-                            Globals.checkXMLNoSubelements( sub2element, sublocation, 's3s3', loadErrors )
+                            BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sublocation, 's3s3', loadErrors )
                             if sub2element.tag == OSISXMLBible.OSISNameSpace+"a":
                                 sub2location = "a of " + sublocation
-                                Globals.checkXMLNoSubelements( sub2element, sub2location, 'j4h3', loadErrors )
+                                BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2location, 'j4h3', loadErrors )
                                 aText, aTail = element.text, element.tail
                                 # Process the attributes
                                 href = None
@@ -811,7 +811,7 @@ class OSISXMLBible( Bible ):
             This may be a book group, or directly into a book
         """
 
-        if Globals.verbosityLevel > 3: print( _("Loading OSIS main div...") )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Loading OSIS main div...") )
         haveEIDs = False
         self.haveBook = False
 
@@ -821,7 +821,7 @@ class OSISXMLBible( Bible ):
             Check/validate and process a OSIS Bible paragraph, including all subfields.
             """
             location = "validateGroupTitle: " + locationDescription
-            Globals.checkXMLNoTail( element, location, 'c4vd', loadErrors )
+            BibleOrgSysGlobals.checkXMLNoTail( element, location, 'c4vd', loadErrors )
             titleText = element.text
             titleType = titleSubType = titleShort = titleLevel = None
             for attrib,value in element.items():
@@ -837,10 +837,10 @@ class OSISXMLBible( Bible ):
                     logging.warning( "vdv3 Unprocessed '{}' attribute ({}) in {} at {}".format( attrib, value, location, verseMilestone ) )
                     loadErrors.append( "Unprocessed '{}' attribute ({}) in {} at {} (vdv3)".format( attrib, value, location, verseMilestone ) )
             #if titleSubType: assert( titleSubType == 'x-preverse' )
-            Globals.checkXMLNoSubelements( element, location+" at book group", 'js21', loadErrors )
-            if Globals.debugFlag: assert( titleText )
+            BibleOrgSysGlobals.checkXMLNoSubelements( element, location+" at book group", 'js21', loadErrors )
+            if BibleOrgSysGlobals.debugFlag: assert( titleText )
             if titleText:
-                if Globals.verbosityLevel > 2: print( "    Got book group title", repr(titleText) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "    Got book group title", repr(titleText) )
                 self.divisions[titleText] = []
         # end of OSISXMLBible.validateGroupTitle
 
@@ -851,10 +851,10 @@ class OSISXMLBible( Bible ):
         for attrib,value in div.items():
             if attrib=="type":
                 mainDivType = value
-                if mainDivOsisID and Globals.verbosityLevel > 2: print( _("Loading {} {}...").format( mainDivOsisID, mainDivType ) )
+                if mainDivOsisID and BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {} {}...").format( mainDivOsisID, mainDivType ) )
             elif attrib=="osisID":
                 mainDivOsisID = value
-                if mainDivType and Globals.verbosityLevel > 2: print( _("Loading {} {}...").format( mainDivOsisID, mainDivType ) )
+                if mainDivType and BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {} {}...").format( mainDivOsisID, mainDivType ) )
             elif attrib=="canonical":
                 mainDivCanonical = value
             else:
@@ -865,9 +865,9 @@ class OSISXMLBible( Bible ):
             loadErrors.append( "Incomplete mainDivType '{}' and mainDivOsisID '{}' attributes in main div element".format( mainDivType, mainDivOsisID ) )
 
         if mainDivType == 'bookGroup': # this is all the books lumped in together into one big div
-            if Globals.debugFlag: assert( mainDivCanonical == "true" )
+            if BibleOrgSysGlobals.debugFlag: assert( mainDivCanonical == "true" )
             # We have to set BBB when we get a chapter reference
-            if Globals.verbosityLevel > 2: print( _("  Loading a book group...") )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Loading a book group...") )
             self.haveBook = False
             for element in div:
                 if element.tag == OSISXMLBible.OSISNameSpace+"title":
@@ -883,7 +883,7 @@ class OSISXMLBible( Bible ):
         else:
             logging.critical( "What kind of OSIS book div is this? {} {} {}".format( repr(mainDivType), repr(mainDivOsisID), repr(mainDivCanonical) ) )
             loadErrors.append( "What kind of OSIS book div is this? {} {} {}".format( repr(mainDivType), repr(mainDivOsisID), repr(mainDivCanonical) ) )
-            if Globals.debugFlag:  halt
+            if BibleOrgSysGlobals.debugFlag:  halt
     # end of OSISXMLBible.validateAndExtractMainDiv
 
 
@@ -905,8 +905,8 @@ class OSISXMLBible( Bible ):
             nonlocal BBB, USFMAbbreviation, USFMNumber #, bookResults, USFMResults
             #print( "validateChapterElement at {} with {} and {}".format( locationDescription, chapterMilestone, verseMilestone ) )
             location = "validateChapterElement: " + locationDescription
-            Globals.checkXMLNoText( element, location+" at "+verseMilestone, 's2a8', loadErrors )
-            Globals.checkXMLNoTail( element, location+" at "+verseMilestone, 'j9k7', loadErrors )
+            BibleOrgSysGlobals.checkXMLNoText( element, location+" at "+verseMilestone, 's2a8', loadErrors )
+            BibleOrgSysGlobals.checkXMLNoTail( element, location+" at "+verseMilestone, 'j9k7', loadErrors )
             OSISChapterID = sID = eID = chapterN = canonical = chapterTitle = None
             for attrib,value in element.items():
                 if attrib=="osisID": OSISChapterID = value
@@ -939,7 +939,7 @@ class OSISXMLBible( Bible ):
                         logging.error( _("Chapter milestone {} end didn't match {} at {}").format( eID, chapterMilestone, location ) )
                         loadErrors.append( _("Chapter milestone {} end didn't match {} at {}").format( eID, chapterMilestone, location ) )
                 elif OSISChapterID and not (sID or eID): # some OSIS formats use this
-                    if Globals.debugFlag: assert( canonical == "true" )
+                    if BibleOrgSysGlobals.debugFlag: assert( canonical == "true" )
                     chapterMilestone = OSISChapterID
                 else:
                     print( repr(OSISChapterID), repr(sID), repr(eID) )
@@ -955,10 +955,10 @@ class OSISXMLBible( Bible ):
                             logging.error( "{} chapter ID seems wrong format for {} at {}".format( OSISChapterID, chapterMilestone, location ) )
                             loadErrors.append( "{} chapter ID seems wrong format for {} at {}".format( OSISChapterID, chapterMilestone, location ) )
                         bits = OSISChapterID.split( '.' )
-                        if Globals.debugFlag: assert( len(bits) == 2 )
+                        if BibleOrgSysGlobals.debugFlag: assert( len(bits) == 2 )
                         cmBBB = None
                         try:
-                            cmBBB = Globals.BibleBooksCodes.getBBBFromOSIS( bits[0] )
+                            cmBBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSIS( bits[0] )
                         except:
                             logging.critical( _("'{}' is not a valid OSIS book identifier").format( bits[0] ) )
                             loadErrors.append( _("'{}' is not a valid OSIS book identifier").format( bits[0] ) )
@@ -966,7 +966,7 @@ class OSISXMLBible( Bible ):
                             #if BBB and ( len(bookResults)>20 or len(USFMResults)>20 ): # Save the previous book
                             if BBB and len(self.thisBook._rawLines) > 5: # Save the previous book
                                 #print( verseMilestone )
-                                if Globals.verbosityLevel > 2: print( "Saving previous {} book into results...".format( BBB ) )
+                                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Saving previous {} book into results...".format( BBB ) )
                                 #print( mainDivOsisID, "results", BBB, bookResults[:10], "..." )
                                 # Remove the last titles
                                 #lastBookResult = bookResults.pop()
@@ -976,7 +976,7 @@ class OSISXMLBible( Bible ):
                                 #if lastUSFMResult[0]!='s':
                                     #lastUSFMResult = None
                                 lastLineTuple = self.thisBook._rawLines.pop()
-                                if Globals.debugFlag: assert( len(lastLineTuple) == 2 )
+                                if BibleOrgSysGlobals.debugFlag: assert( len(lastLineTuple) == 2 )
                                 if lastLineTuple[0] != 's':
                                     self.thisBook._rawLines.append( lastLineTuple ) # No good -- put it back
                                     lastLineTuple = None
@@ -1002,9 +1002,9 @@ class OSISXMLBible( Bible ):
                                 foundH = False
                             BBB = cmBBB[0] if isinstance( cmBBB, list) else cmBBB # It can be a list like: ['EZR', 'EZN']
                             #print( "23f4 BBB is", BBB )
-                            USFMAbbreviation = Globals.BibleBooksCodes.getUSFMAbbreviation( BBB )
-                            USFMNumber = Globals.BibleBooksCodes.getUSFMNumber( BBB )
-                            if Globals.verbosityLevel > 2: print( _("  It seems we have {}...").format( BBB ) )
+                            USFMAbbreviation = BibleOrgSysGlobals.BibleBooksCodes.getUSFMAbbreviation( BBB )
+                            USFMNumber = BibleOrgSysGlobals.BibleBooksCodes.getUSFMNumber( BBB )
+                            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  It seems we have {}...").format( BBB ) )
                             self.thisBook = BibleBook( self, BBB )
                             self.thisBook.objectNameString = "OSIS XML Bible Book object"
                             self.thisBook.objectTypeString = "OSIS"
@@ -1016,7 +1016,7 @@ class OSISXMLBible( Bible ):
 
             else: # not a milestone -- it's a chapter container
                 bits = OSISChapterID.split('.')
-                if Globals.debugFlag: assert( len(bits)==2 and bits[1].isdigit() )
+                if BibleOrgSysGlobals.debugFlag: assert( len(bits)==2 and bits[1].isdigit() )
                 #print( "validateChapterElement returning data:", 'chapterContainer.' + OSISChapterID )
                 return 'chapterContainer.' + OSISChapterID
         # end of OSISXMLBible.validateChapterElement
@@ -1053,7 +1053,7 @@ class OSISXMLBible( Bible ):
                     displayTag = element.tag[len(self.OSISNameSpace):] if element.tag.startswith(self.OSISNameSpace) else element.tag
                     logging.warning( "8jh6 Unprocessed '{}' attribute ({}) in {} subelement of {}".format( attrib, value, displayTag, location ) )
                     loadErrors.append( "Unprocessed '{}' attribute ({}) in {} subelement of {} (8jh6)".format( attrib, value, displayTag, location ) )
-            if Globals.debugFlag and debuggingThisModule:
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                 print( " validateVerseElement attributes: OSISVerseID = '{}' sID = '{}' eID = '{}' n = '{}'".format( OSISVerseID, sID, eID, n ) )
             if sID and eID:
                 logging.critical( _("Invalid combined sID and eID verse attributes in {}: {}").format( location, element.items() ) )
@@ -1063,7 +1063,7 @@ class OSISXMLBible( Bible ):
 
             # See if this is a milestone or a verse container
             if len(element)==0 and ( sID or eID ): # it's a milestone (no sub-elements)
-                if Globals.debugFlag: assert( not verseText )
+                if BibleOrgSysGlobals.debugFlag: assert( not verseText )
                 if sID and OSISVerseID and not eID: # we have a start milestone
                     if verseMilestone: # but we already have an open milestone
                         if haveEIDs:
@@ -1073,7 +1073,7 @@ class OSISXMLBible( Bible ):
                     #for char in (' ','-',):
                     #    if char in verseMilestone: # it contains a range like 'Mark.6.17 Mark.6.18' or 'Mark.6.17-Mark.6.18'
                     #        chunks = verseMilestone.split( char )
-                    #        if Globals.debugFlag: assert( len(chunks) == 2 )
+                    #        if BibleOrgSysGlobals.debugFlag: assert( len(chunks) == 2 )
                     #        verseMilestone = chunks[0] # Take the start of the range
                     #if not verseMilestone.count('.')==2: logging.error( "validateVerseElement: {} verse milestone seems wrong format for {}".format( verseMilestone, OSISVerseID ) )
                     vmBits, cmBits = verseMilestone.split( '.' ), chapterMilestone.split( '.' )
@@ -1104,7 +1104,7 @@ class OSISXMLBible( Bible ):
 
                 if verseMilestone: # have an open milestone
                     #print( "'"+verseMilestone+"'" )
-                    if Globals.debugFlag: assert( ' ' not in verseMilestone )
+                    if BibleOrgSysGlobals.debugFlag: assert( ' ' not in verseMilestone )
                     if '-' in verseMilestone: # Something like Jas.1.7-Jas.1.8
                         chunks = verseMilestone.split( '-' )
                         if len(chunks) != 2:
@@ -1123,7 +1123,7 @@ class OSISXMLBible( Bible ):
                     else: # no hyphen
                         bits = verseMilestone.split( '.' )
                         #print( "sdfssf", verseMilestone, bits )
-                        if Globals.debugFlag: assert( len(bits) >= 3 )
+                        if BibleOrgSysGlobals.debugFlag: assert( len(bits) >= 3 )
                         self.thisBook.appendLine( 'v', bits[2]+' ' )
                     vTail = clean(element.tail) # Newlines and leading spaces are irrelevant to USFM formatting
                     if vTail: # This is the main text of the verse (follows the verse milestone)
@@ -1132,10 +1132,10 @@ class OSISXMLBible( Bible ):
                 halt # Should not happen
 
             else: # not a milestone -- it's verse container
-                Globals.checkXMLNoTail( element, location+" at "+verseMilestone, 's2d4', loadErrors )
+                BibleOrgSysGlobals.checkXMLNoTail( element, location+" at "+verseMilestone, 's2d4', loadErrors )
                 bits = OSISVerseID.split('.')
                 #print( "OSISXMLBible.validateVerseElement verse container bits", bits, 'vT', verseText )
-                if Globals.debugFlag: assert( len(bits)==3 and bits[1].isdigit() and bits[2].isdigit() )
+                if BibleOrgSysGlobals.debugFlag: assert( len(bits)==3 and bits[1].isdigit() and bits[2].isdigit() )
                 #print( "validateVerseElement: Have a verse container at", verseMilestone )
                 if verseText.strip():
                     if self.source == "ftp://unboundftp.biola.edu/pub/albanian_utf8.zip": # Do some special handling
@@ -1154,8 +1154,8 @@ class OSISXMLBible( Bible ):
             """
             """
             location = "validateDivineName: " + locationDescription
-            Globals.checkXMLNoAttributes( element, location+" at "+verseMilestone, '3f7h', loadErrors )
-            Globals.checkXMLNoSubelements( element, location+" at "+verseMilestone, 'v4g7', loadErrors )
+            BibleOrgSysGlobals.checkXMLNoAttributes( element, location+" at "+verseMilestone, '3f7h', loadErrors )
+            BibleOrgSysGlobals.checkXMLNoSubelements( element, location+" at "+verseMilestone, 'v4g7', loadErrors )
             divineName, trailingText = element.text, element.tail
             self.thisBook.appendToLastLine( '\\nd {}\\nd*'.format( clean(divineName) ) )
             if trailingText and trailingText.strip(): self.thisBook.appendToLastLine( clean(trailingText) )
@@ -1166,11 +1166,11 @@ class OSISXMLBible( Bible ):
             """
             """
             location = "validateSigned: " + locationDescription
-            Globals.checkXMLNoTail( element, location+" at "+verseMilestone, 'fc3v3', loadErrors )
-            Globals.checkXMLNoAttributes( element, location+" at "+verseMilestone, '9i6h', loadErrors )
-            Globals.checkXMLNoSubelements( element, location+" at "+verseMilestone, 'vd62', loadErrors )
+            BibleOrgSysGlobals.checkXMLNoTail( element, location+" at "+verseMilestone, 'fc3v3', loadErrors )
+            BibleOrgSysGlobals.checkXMLNoAttributes( element, location+" at "+verseMilestone, '9i6h', loadErrors )
+            BibleOrgSysGlobals.checkXMLNoSubelements( element, location+" at "+verseMilestone, 'vd62', loadErrors )
             signedName = subelement.text
-            if Globals.debugFlag and subelement.tail: halt
+            if BibleOrgSysGlobals.debugFlag and subelement.tail: halt
             self.thisBook.appendToLastLine( '\\sg {}\\sg*'.format( clean(signedName) ) )
         # end of validateSigned
 
@@ -1187,7 +1187,7 @@ class OSISXMLBible( Bible ):
             #Globals.checkXMLNoSubelements( element, location+" at "+verseMilestone, 'gb5g', loadErrors )
             highlightedText, highlightedTail = element.text, element.tail
             #if not highlightedText: print( "validateHighlight", repr(highlightedText), repr(highlightedTail), repr(location), repr(verseMilestone) )
-            #if Globals.debugFlag: assert( highlightedText ) # No text if nested!
+            #if BibleOrgSysGlobals.debugFlag: assert( highlightedText ) # No text if nested!
             highlightType = None
             for attrib,value in element.items():
                 if attrib=="type":
@@ -1198,7 +1198,7 @@ class OSISXMLBible( Bible ):
             if highlightType == 'italic': marker = 'it'
             elif highlightType == 'bold': marker = 'bd'
             elif highlightType == 'small-caps': marker = 'sc'
-            elif Globals.debugFlag: print( highlightType ); halt
+            elif BibleOrgSysGlobals.debugFlag: print( highlightType ); halt
             self.thisBook.appendToLastLine( '\\{} {}\\{}*'.format( marker, clean(highlightedText), marker ) )
             for subelement in element.getchildren():
                 if subelement.tag == OSISXMLBible.OSISNameSpace+"hi":
@@ -1215,10 +1215,10 @@ class OSISXMLBible( Bible ):
             """
             """
             location = "validateLB: " + locationDescription
-            Globals.checkXMLNoText( element, location+" at "+verseMilestone, 'cf4g', loadErrors )
-            Globals.checkXMLNoTail( element, location+" at "+verseMilestone, '3c5f', loadErrors )
-            Globals.checkXMLNoAttributes( element, location+" at "+verseMilestone, '5t3x', loadErrors )
-            Globals.checkXMLNoSubelements( element, location+" at "+verseMilestone, 'sn52', loadErrors )
+            BibleOrgSysGlobals.checkXMLNoText( element, location+" at "+verseMilestone, 'cf4g', loadErrors )
+            BibleOrgSysGlobals.checkXMLNoTail( element, location+" at "+verseMilestone, '3c5f', loadErrors )
+            BibleOrgSysGlobals.checkXMLNoAttributes( element, location+" at "+verseMilestone, '5t3x', loadErrors )
+            BibleOrgSysGlobals.checkXMLNoSubelements( element, location+" at "+verseMilestone, 'sn52', loadErrors )
             self.thisBook.appendLine( 'm', '' )
         # end of OSISXMLBible.validateLB
 
@@ -1245,8 +1245,8 @@ class OSISXMLBible( Bible ):
                     logging.warning( "2s4d Unprocessed '{}' attribute ({}) in {} sub-element of {} at {}".format( attrib, value, element.tag, location, verseMilestone ) )
                     loadErrors.append( "Unprocessed '{}' attribute ({}) in {} sub-element of {} at {} (2s4d)".format( attrib, value, element.tag, location, verseMilestone ) )
             #print( notePlacement )
-            if notePlacement and Globals.debugFlag: assert( notePlacement in ('foot','inline',) )
-            if Globals.debugFlag and debuggingThisModule:
+            if notePlacement and BibleOrgSysGlobals.debugFlag: assert( notePlacement in ('foot','inline',) )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                 print( "  note attributes: noteType = '{}' noteN = '{}' noteOsisRef = '{}' noteOsisID = '{}' at {}".format( noteType, noteN, noteOsisRef, noteOsisID, verseMilestone ) )
             guessed = False
             if not noteType: # easier to handle later if we decide what it is now
@@ -1258,27 +1258,27 @@ class OSISXMLBible( Bible ):
             #assert( noteType and noteN )
             if noteType == 'crossReference':
                 #print( "  noteType =", noteType, "noteN =", noteN, "notePlacement =", notePlacement )
-                if Globals.debugFlag:
+                if BibleOrgSysGlobals.debugFlag:
                     if notePlacement: assert( notePlacement == 'inline' )
                 if not noteN: noteN = '-'
                 self.thisBook.appendToLastLine( '\\x {}'.format( noteN ) )
                 openFieldname = 'x'
             elif noteType == 'footnote':
                 #print( "  noteType =", noteType, "noteN =", noteN )
-                if Globals.debugFlag: assert( not notePlacement )
+                if BibleOrgSysGlobals.debugFlag: assert( not notePlacement )
                 if not noteN: noteN = '+'
                 self.thisBook.appendToLastLine( '\\f {} '.format( noteN ) )
                 openFieldname = 'f'
             elif noteType == 'study':
                 #print( "  noteType =", noteType, "noteN =", noteN )
-                if Globals.debugFlag: assert( not notePlacement )
+                if BibleOrgSysGlobals.debugFlag: assert( not notePlacement )
                 if not noteN: noteN = '+'
                 self.thisBook.appendToLastLine( '\\f {} '.format( noteN ) )
                 openFieldname = 'f'
                 #print( "study note1", location, "Type =", noteType, "N =", noteN, "Ref =", noteOsisRef, "ID =", noteOsisID, "p =", notePlacement ); halt
             elif noteType == 'translation':
                 #print( "  noteType =", noteType, "noteN =", noteN, "notePlacement =", notePlacement )
-                if Globals.debugFlag:
+                if BibleOrgSysGlobals.debugFlag:
                     if notePlacement: assert( notePlacement == 'foot' )
                 if not noteN: noteN = '+'
                 self.thisBook.appendToLastLine( '\\f {} '.format( noteN ) )
@@ -1286,24 +1286,24 @@ class OSISXMLBible( Bible ):
                 #print( "study note1", location, "Type =", noteType, "N =", noteN, "Ref =", noteOsisRef, "ID =", noteOsisID, "p =", notePlacement ); halt
             elif noteType == 'variant':
                 #print( "  noteType =", noteType, "noteN =", noteN )
-                if Globals.debugFlag: assert( not notePlacement )
+                if BibleOrgSysGlobals.debugFlag: assert( not notePlacement )
                 # What do we do here ???? XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
                 #if not noteN: noteN = '+'
                 self.thisBook.appendLine( 'var', noteN )
             elif noteType == 'x-index':
                 #print( "  noteType =", noteType, "noteN =", noteN )
-                if Globals.debugFlag: assert( notePlacement in ('inline',) )
+                if BibleOrgSysGlobals.debugFlag: assert( notePlacement in ('inline',) )
                 if not noteN: noteN = '~'
                 self.thisBook.appendLine( 'ix', noteN )
             elif noteType == 'x-strongsMarkup':
                 #print( "  noteType =", noteType, "noteN =", noteN, repr(notePlacement) )
-                if Globals.debugFlag: assert( notePlacement is None )
+                if BibleOrgSysGlobals.debugFlag: assert( notePlacement is None )
                 if not noteN: noteN = '+ '
                 self.thisBook.appendToLastLine( '\\f {} '.format( noteN ) )
                 openFieldname = 'f'
             else:
                 print( "note1", noteType )
-                if Globals.debugFlag: halt
+                if BibleOrgSysGlobals.debugFlag: halt
             noteText = element.text
             #if not noteText or noteText.isspace(): # Maybe we can infer the anchor reference
             #    if verseMilestone and verseMilestone.count('.')==2: # Something like Gen.1.3
@@ -1317,12 +1317,12 @@ class OSISXMLBible( Bible ):
                     self.thisBook.appendToLastLine( '\\xt {}'.format( clean(noteText) ) )
                 elif noteType == 'footnote': # This could be something like '4:3 In Greek: some note.' or it could just be random text
                     #print( "  noteType =", noteType, "noteText =", noteText )
-                    if Globals.debugFlag: assert( noteText )
+                    if BibleOrgSysGlobals.debugFlag: assert( noteText )
                     if ':' in noteText and noteText[0].isdigit(): # Let's roughly assume that it starts with a chapter:verse reference
                         bits = noteText.split( None, 1 )
-                        if Globals.debugFlag: assert( len(bits) == 2 )
+                        if BibleOrgSysGlobals.debugFlag: assert( len(bits) == 2 )
                         sourceText, footnoteText = bits
-                        if Globals.debugFlag: assert( sourceText and footnoteText )
+                        if BibleOrgSysGlobals.debugFlag: assert( sourceText and footnoteText )
                         #print( "  footnoteSource = '{}', sourceText = '{}'".format( footnoteSource, sourceText ) )
                         if not sourceText[-1] == ' ': sourceText += ' '
                         self.thisBook.appendToLastLine( '\\fr {}'.format( sourceText ) )
@@ -1344,7 +1344,7 @@ class OSISXMLBible( Bible ):
                     self.thisBook.appendToLastLine( '\\ft {}'.format( noteText ) )
                 else:
                     print( "note2", noteType )
-                    if Globals.debugFlag: halt
+                    if BibleOrgSysGlobals.debugFlag: halt
             for subelement in element.getchildren():
                 if subelement.tag == OSISXMLBible.OSISNameSpace+"reference": # cross-references
                     sublocation = "validateCrossReferenceOrFootnote: reference of " + locationDescription
@@ -1380,7 +1380,7 @@ class OSISXMLBible( Bible ):
                                 halt
                     if noteType=='crossReference' and referenceType=='source':
                         #assert( not noteText and not referenceTail )
-                        if Globals.debugFlag: assert( not noteText or noteText.isspace() )
+                        if BibleOrgSysGlobals.debugFlag: assert( not noteText or noteText.isspace() )
                         self.thisBook.appendToLastLine( '\\xt {}'.format( referenceText ) )
                     elif noteType=='crossReference' and not referenceType and referenceOsisRef is not None:
                         if 0 and USFMResults and USFMResults[-1][0]=='xt': # Combine multiple cross-references into one xt field
@@ -1388,24 +1388,24 @@ class OSISXMLBible( Bible ):
                         else:
                             self.thisBook.appendToLastLine( '\\xt {}'.format( clean(referenceText+referenceTail) ) )
                     elif noteType=='footnote' and referenceType=='source':
-                        if Globals.debugFlag: assert( referenceText and not noteText )
+                        if BibleOrgSysGlobals.debugFlag: assert( referenceText and not noteText )
                         if not referenceText[-1] == ' ': referenceText += ' '
                         self.thisBook.appendToLastLine( '\\fr {}'.format( clean(referenceText) ) )
-                        if Globals.debugFlag: assert( referenceTail )
+                        if BibleOrgSysGlobals.debugFlag: assert( referenceTail )
                         self.thisBook.appendToLastLine( '\\ft {}'.format( clean(referenceTail) ) )
                     elif noteType=='study' and referenceType=='source': # This bit needs fixing up properly ................................xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
                         #print( "rT='{}' nT='{}' rTail='{}'".format( referenceText, noteText, referenceTail ) )
-                        if Globals.debugFlag: assert( referenceText and not noteText.strip() )
+                        if BibleOrgSysGlobals.debugFlag: assert( referenceText and not noteText.strip() )
                         if not referenceText[-1] == ' ': referenceText += ' '
                         if referenceTail: self.thisBook.appendLine( 'st', referenceTail )
                         #else: logging.warning( "How come there's no tail? rT='{}' nT='{}' rTail='{}'".format( referenceText, noteText, referenceTail ) )
                         #print( "study note3", location, "Type =", noteType, "N =", noteN, "Ref =", noteOsisRef, "ID =", noteOsisID, "p =", notePlacement ); halt
                     elif noteType=='translation' and referenceType=='source': # This bit needs fixing up properly ................................xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
                         #print( "rT='{}' nT='{}' rTail='{}'".format( referenceText, noteText, referenceTail ) )
-                        if Globals.debugFlag: assert( referenceText and not noteText )
+                        if BibleOrgSysGlobals.debugFlag: assert( referenceText and not noteText )
                         if not referenceText[-1] == ' ': referenceText += ' '
                         self.thisBook.appendToLastLine( '\\fr {}'.format( referenceText ) )
-                        #if Globals.debugFlag: assert( referenceTail )
+                        #if BibleOrgSysGlobals.debugFlag: assert( referenceTail )
                         if referenceTail: self.thisBook.appendToLastLine( '\\ft {}'.format( referenceTail ) )
                     else:
                         logging.critical( "Don't know how to handle notetype='{}' and referenceType='{}' yet".format( noteType, referenceType ) )
@@ -1414,19 +1414,19 @@ class OSISXMLBible( Bible ):
                         if sub2element.tag == OSISXMLBible.OSISNameSpace+"reference": # cross-references
                             sub2location = "validateCrossReferenceOrFootnote: reference of reference of " + locationDescription
                             #print( "  Have", sub2location, "w3r5" )
-                            Globals.checkXMLNoTail( sub2element, sub2location+" at "+verseMilestone, 'x3b7', loadErrors )
-                            Globals.checkXMLNoAttributes( sub2element, sub2location+" at "+verseMilestone, '67t4', loadErrors )
-                            Globals.checkXMLNoSubelements( sub2element, sub2location+" at "+verseMilestone, '6hnm', loadErrors )
+                            BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location+" at "+verseMilestone, 'x3b7', loadErrors )
+                            BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub2location+" at "+verseMilestone, '67t4', loadErrors )
+                            BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2location+" at "+verseMilestone, '6hnm', loadErrors )
                             subreferenceText = sub2element.text
-                            if Globals.debugFlag: assert( noteType == 'crossReference' )
+                            if BibleOrgSysGlobals.debugFlag: assert( noteType == 'crossReference' )
                             self.thisBook.appendToLastLine( '\\xo {}'.format( subreferenceText ) )
                         else:
                             logging.error( "7h45 Unprocessed '{}' sub2element ({}) in {} at {}".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
                             loadErrors.append( "Unprocessed '{}' sub2element ({}) in {} at {} (7h45)".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
-                            if Globals.debugFlag: halt
+                            if BibleOrgSysGlobals.debugFlag: halt
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"q":
                     sublocation = "validateCrossReferenceOrFootnote: q of " + locationDescription
-                    Globals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'n56d', loadErrors )
+                    BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'n56d', loadErrors )
                     qWho = qReferenceType = None
                     for attrib,value in subelement.items():
                         if attrib=="who": qWho = value
@@ -1436,17 +1436,17 @@ class OSISXMLBible( Bible ):
                             loadErrors.append( "Unprocessed '{}' attribute ({}) in {} sub-element of {} at {} (3d4r)".format( attrib, value, subelement.tag, sublocation, verseMilestone ) )
                         if qReferenceType: assert( qReferenceType in ('x-footnote',) )
                     #print( "noteType", repr(noteType) )
-                    if Globals.debugFlag: assert( noteType in ('footnote','translation',) )
+                    if BibleOrgSysGlobals.debugFlag: assert( noteType in ('footnote','translation',) )
                     qText, qTail = subelement.text.strip(), subelement.tail
-                    if Globals.debugFlag: assert( qText )
+                    if BibleOrgSysGlobals.debugFlag: assert( qText )
                     self.thisBook.appendToLastLine( '\\fq {}'.format( qText ) )
                     if qTail and qTail.strip():
                         #print( 'qTail', repr(qTail) )
                         self.thisBook.appendToLastLine( '\\ft {}'.format( clean(qTail) ) )
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"catchWord":
                     sublocation = "validateCrossReferenceOrFootnote: catchWord of " + locationDescription
-                    Globals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, 'c48n', loadErrors )
-                    Globals.checkXMLNoAttributes( subelement, sublocation+" at "+verseMilestone, '2w43', loadErrors )
+                    BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, 'c48n', loadErrors )
+                    BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation+" at "+verseMilestone, '2w43', loadErrors )
                     catchWordText = subelement.text
                     if noteType == 'footnote':
                         self.thisBook.appendToLastLine( '\\fq {}'.format( clean(catchWordText) ) )
@@ -1454,40 +1454,40 @@ class OSISXMLBible( Bible ):
                             if sub2element.tag == OSISXMLBible.OSISNameSpace+"catchWord": #
                                 sub2location = "validateCrossReferenceOrFootnote: catchWord of catchWord of " + locationDescription
                                 #print( "  Have", sub2location, "j2f6" )
-                                Globals.checkXMLNoTail( sub2element, sub2location+" at "+verseMilestone, 'c456n', loadErrors )
-                                Globals.checkXMLNoAttributes( sub2element, sub2location+" at "+verseMilestone, '2d4r', loadErrors )
-                                Globals.checkXMLNoSubelements( sub2element, sub2location+" at "+verseMilestone, '23c6', loadErrors )
+                                BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location+" at "+verseMilestone, 'c456n', loadErrors )
+                                BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub2location+" at "+verseMilestone, '2d4r', loadErrors )
+                                BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2location+" at "+verseMilestone, '23c6', loadErrors )
                                 subCatchWordText = sub2element.text
-                                if Globals.debugFlag: assert( noteType == 'footnote' )
+                                if BibleOrgSysGlobals.debugFlag: assert( noteType == 'footnote' )
                                 self.thisBook.appendToLastLine( '\\fq {}'.format( subCatchWordText ) )
                             else:
                                 logging.error( "8j6g Unprocessed '{}' sub2element ({}) in {} at {}".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
                                 loadErrors.append( "Unprocessed '{}' sub2element ({}) in {} at {} (8j6g)".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
-                                if Globals.debugFlag: halt
+                                if BibleOrgSysGlobals.debugFlag: halt
                     elif noteType == 'translation':
                         self.thisBook.appendToLastLine( '\\fq {}'.format( clean(catchWordText) ) )
-                        Globals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'fh36', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'fh36', loadErrors )
                     elif noteType == 'variant':
                         self.thisBook.appendToLastLine( '\\fq {}'.format( clean(catchWordText) ) )
-                        Globals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'fh36', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'fh36', loadErrors )
                     else:
                         print( noteType, "not handled" )
-                        if Globals.debugFlag: halt
+                        if BibleOrgSysGlobals.debugFlag: halt
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"hi":
                     sublocation = "validateCrossReferenceOrFootnote: hi of " + locationDescription
                     validateHighlight( subelement, sublocation, verseMilestone ) # Also handles the tail
                     justFinishedLG = False
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"rdg":
                     sublocation = "validateCrossReferenceOrFootnote: rdg of " + locationDescription
-                    Globals.checkXMLNoText( subelement, sublocation+" at "+verseMilestone, '2s5h', loadErrors )
-                    Globals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, 'c54b', loadErrors )
+                    BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation+" at "+verseMilestone, '2s5h', loadErrors )
+                    BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, 'c54b', loadErrors )
                     # Process the attributes first
                     readingType = None
                     for attrib,value in subelement.items():
                         if attrib=="type":
                             readingType = value
                             #print( readingType )
-                            if Globals.debugFlag: assert( readingType == 'x-qere' )
+                            if BibleOrgSysGlobals.debugFlag: assert( readingType == 'x-qere' )
                         else:
                             logging.warning( "2s3d Unprocessed '{}' attribute ({}) in {} sub2-element of {} at {}".format( attrib, value, subelement.tag, sublocation, verseMilestone ) )
                             loadErrors.append( "Unprocessed '{}' attribute ({}) in {} sub2-element of {} at {} (2s3d)".format( attrib, value, subelement.tag, sublocation, verseMilestone ) )
@@ -1496,8 +1496,8 @@ class OSISXMLBible( Bible ):
                             sub2location = "validateCrossReferenceOrFootnote: w of rdg of " + locationDescription
                             #print( "  Have", sub2location, "6n83" )
                             rdgW = sub2element.text
-                            Globals.checkXMLNoTail( sub2element, sub2location+" at "+verseMilestone, '5b3f', loadErrors )
-                            Globals.checkXMLNoSubelements( sub2element, sub2location+" at "+verseMilestone, 's2vb', loadErrors )
+                            BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location+" at "+verseMilestone, '5b3f', loadErrors )
+                            BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2location+" at "+verseMilestone, 's2vb', loadErrors )
                             # Process the attributes
                             lemma = None
                             for attrib,value in sub2element.items():
@@ -1510,8 +1510,8 @@ class OSISXMLBible( Bible ):
                             sub2location = "validateCrossReferenceOrFootnote: seg of rdg of " + locationDescription
                             #print( "  Have", sub2location, "6n83" )
                             rdgSeg = sub2element.text
-                            Globals.checkXMLNoTail( sub2element, sub2location+" at "+verseMilestone, 'fyg5', loadErrors )
-                            Globals.checkXMLNoSubelements( sub2element, sub2location+" at "+verseMilestone, 's2db', loadErrors )
+                            BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location+" at "+verseMilestone, 'fyg5', loadErrors )
+                            BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2location+" at "+verseMilestone, 's2db', loadErrors )
                             # Process the attributes
                             theType = None
                             for attrib,value in sub2element.items():
@@ -1531,8 +1531,8 @@ class OSISXMLBible( Bible ):
                     sublocation = "validateCrossReferenceOrFootnote: seg of " + locationDescription
                     rdgSeg = subelement.text
                     #Globals.checkXMLNoText( subelement, sublocation+" at "+verseMilestone, 'kcd5', loadErrors )
-                    Globals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, 'jnh5', loadErrors )
-                    Globals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'mjd4', loadErrors )
+                    BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, 'jnh5', loadErrors )
+                    BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'mjd4', loadErrors )
                     # Process the attributes
                     theType = None
                     for attrib,value in subelement.items():
@@ -1543,13 +1543,13 @@ class OSISXMLBible( Bible ):
                     #print( "khf8", "Have", sublocation, repr(element.text), repr(theType) )
                     if theType == 'verseNumber': marker = 'fv'
                     elif theType == 'keyword': marker = 'fk'
-                    elif Globals.debugFlag: print(  theType ); halt
+                    elif BibleOrgSysGlobals.debugFlag: print(  theType ); halt
                     self.thisBook.appendToLastLine( '\\fv {}'.format( clean(rdgSeg) ) )
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"note":
                     sublocation = "validateCrossReferenceOrFootnote: note of " + locationDescription
                     noteText = subelement.text
-                    Globals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, 'plq2', loadErrors )
-                    Globals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'vw24', loadErrors )
+                    BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, 'plq2', loadErrors )
+                    BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'vw24', loadErrors )
                     # Process the attributes
                     notePlacement = noteOsisRef = noteOsisID = noteType = None
                     for attrib,value in subelement.items():
@@ -1562,12 +1562,12 @@ class OSISXMLBible( Bible ):
                             loadErrors.append( "Unprocessed '{}' attribute ({}) in {} sub-element of {} at {} (f5j3)".format( attrib, value, subelement.tag, sublocation, verseMilestone ) )
                     logging.error( "odf3 Unprocessed note: {} {} {} {} {}".format( repr(noteText), repr(noteType), repr(notePlacement), repr(noteOsisRef), repr(noteOsisID) ) )
                     loadErrors.append( "Unprocessed note: {} {} {} {} {} (odf3)".format( repr(noteText), repr(noteType), repr(notePlacement), repr(noteOsisRef), repr(noteOsisID) ) )
-                    if Globals.debugFlag: halt
+                    if BibleOrgSysGlobals.debugFlag: halt
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"transChange":
                     sublocation = "validateCrossReferenceOrFootnote: transChange of " + locationDescription
                     tcText = subelement.text
-                    if Globals.debugFlag: assert( tcText )
-                    Globals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'fvd8', loadErrors )
+                    if BibleOrgSysGlobals.debugFlag: assert( tcText )
+                    BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'fvd8', loadErrors )
                     # Process the attributes
                     tcType = None
                     for attrib,value in subelement.items():
@@ -1575,13 +1575,13 @@ class OSISXMLBible( Bible ):
                         else:
                             logging.warning( "f0j3 Unprocessed '{}' attribute ({}) in {} sub-element of {} at {}".format( attrib, value, subelement.tag, sublocation, verseMilestone ) )
                             loadErrors.append( "Unprocessed '{}' attribute ({}) in {} sub-element of {} at {} (f0j3)".format( attrib, value, subelement.tag, sublocation, verseMilestone ) )
-                    if Globals.debugFlag: assert( tcType == "added" )
+                    if BibleOrgSysGlobals.debugFlag: assert( tcType == "added" )
                     tcTail = subelement.tail if subelement.tail else ''
                     self.thisBook.appendToLastLine( '\\add {}\\add*{}'.format( tcText, tcTail ) )
                 else:
                     logging.error( "1d54 Unprocessed '{}' sub-element ({}) in {} at {}".format( subelement.tag, subelement.text, location, verseMilestone ) )
                     loadErrors.append( "Unprocessed '{}' sub-element ({}) in {} at {} (1d54)".format( subelement.tag, subelement.text, location, verseMilestone ) )
-                    if Globals.debugFlag: halt
+                    if BibleOrgSysGlobals.debugFlag: halt
             if openFieldname: self.thisBook.appendToLastLine( '\\{}*'.format( openFieldname ) )
             #print( "  Note tail = '{}' (will be used later)".format( element.tail ) )
         # end of OSISXMLBible.validateCrossReferenceOrFootnote
@@ -1595,12 +1595,12 @@ class OSISXMLBible( Bible ):
             """
             #print( "validateLG at {} at {}".format( location, verseMilestone ) )
             location = "validateLG: " + locationDescription
-            Globals.checkXMLNoText( element, location+" at "+verseMilestone, '3f6v', loadErrors )
-            Globals.checkXMLNoAttributes( element, location+" at "+verseMilestone, 'vdj4', loadErrors )
+            BibleOrgSysGlobals.checkXMLNoText( element, location+" at "+verseMilestone, '3f6v', loadErrors )
+            BibleOrgSysGlobals.checkXMLNoAttributes( element, location+" at "+verseMilestone, 'vdj4', loadErrors )
             for subelement in element.getchildren():
                 if subelement.tag == OSISXMLBible.OSISNameSpace+"l":
                     sublocation = "validateLG l of " + locationDescription
-                    Globals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, '3d56g', loadErrors )
+                    BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, '3d56g', loadErrors )
                     level3 = None
                     for attrib,value in subelement.items():
                         if attrib=="level":
@@ -1613,7 +1613,7 @@ class OSISXMLBible( Bible ):
                         logging.warning( "No level attribute specified in {} at {}".format( sublocation, verseMilestone ) )
                         loadErrors.append( "No level attribute specified in {} at {}".format( sublocation, verseMilestone ) )
                         level3 = '1' # Dunno what we have here ???
-                    if Globals.debugFlag: assert( level3 in ('1','2','3',) )
+                    if BibleOrgSysGlobals.debugFlag: assert( level3 in ('1','2','3',) )
                     self.thisBook.appendLine( 'q'+level3, '' if subelement.text is None else subelement.text.strip() )
                     for sub2element in subelement.getchildren():
                         if sub2element.tag == OSISXMLBible.OSISNameSpace+"verse":
@@ -1640,7 +1640,7 @@ class OSISXMLBible( Bible ):
                 else:
                     logging.error( "q2b6 Unprocessed '{}' sub-element ({}) in {} at {}".format( subelement.tag, subelement.text, location, verseMilestone ) )
                     loadErrors.append( "Unprocessed '{}' sub-element ({}) in {} at {} (q2b6)".format( subelement.tag, subelement.text, location, verseMilestone ) )
-                    if Globals.debugFlag: halt
+                    if BibleOrgSysGlobals.debugFlag: halt
             if element.tail: # and lgTail!='\n': # This is the main text of the verse (outside of the quotation indents)
                 self.thisBook.appendLine( 'm', clean(element.tail) )
             return verseMilestone
@@ -1657,8 +1657,8 @@ class OSISXMLBible( Bible ):
             if level is None: level = 1
             location = "validateList: " + locationDescription
 
-            Globals.checkXMLNoText( element, location+" at "+verseMilestone, '2dx3', loadErrors )
-            Globals.checkXMLNoTail( element, location+" at "+verseMilestone, '2c5b', loadErrors )
+            BibleOrgSysGlobals.checkXMLNoText( element, location+" at "+verseMilestone, '2dx3', loadErrors )
+            BibleOrgSysGlobals.checkXMLNoTail( element, location+" at "+verseMilestone, '2c5b', loadErrors )
             canonical = None
             for attrib,value in element.items():
                 if attrib== 'canonical':
@@ -1675,8 +1675,8 @@ class OSISXMLBible( Bible ):
                     if chapterMilestone: marker = 'li' + str(level)
                     else: marker = 'io' + str(level) # No chapter so we're in the introduction
                     if itemText and itemText.strip(): self.thisBook.appendLine( marker, clean(itemText) )
-                    Globals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, 'ad36', loadErrors )
-                    Globals.checkXMLNoAttributes( subelement, sublocation+" at "+verseMilestone, 'xf52', loadErrors )
+                    BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, 'ad36', loadErrors )
+                    BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation+" at "+verseMilestone, 'xf52', loadErrors )
                     for sub2element in subelement.getchildren():
                         if sub2element.tag == OSISXMLBible.OSISNameSpace+"verse":
                             sub2location = "verse of " + sublocation
@@ -1718,7 +1718,7 @@ class OSISXMLBible( Bible ):
                 else:
                     logging.error( "s154 Unprocessed '{}' subelement ({}) in {} at {}".format( subelement.tag, subelement.text, location, verseMilestone ) )
                     loadErrors.append( "Unprocessed '{}' subelement ({}) in {} at {} (s154)".format( subelement.tag, subelement.text, location, verseMilestone ) )
-                    if Globals.debugFlag: halt
+                    if BibleOrgSysGlobals.debugFlag: halt
             return verseMilestone
 
             ##print( "list", divType, subDivType )
@@ -1737,7 +1737,7 @@ class OSISXMLBible( Bible ):
                             #self.thisBook.appendLine( 'io1', item.strip() )
                         #elif subDivType == 'section':
                             #self.thisBook.appendLine( 'io1', item.strip() )
-                        #elif Globals.debugFlag: halt
+                        #elif BibleOrgSysGlobals.debugFlag: halt
                     #for sub4element in sub3element.getchildren():
                         #if sub4element.tag == OSISXMLBible.OSISNameSpace+"list":
                             #sub4location = "list of " + sub3location
@@ -1756,7 +1756,7 @@ class OSISXMLBible( Bible ):
                                             #self.thisBook.appendLine( 'io2', clean(subItem) )
                                         #elif subDivType == 'section':
                                             #self.thisBook.appendLine( 'io2', clean(subItem) )
-                                        #elif Globals.debugFlag: print( subDivType ); halt
+                                        #elif BibleOrgSysGlobals.debugFlag: print( subDivType ); halt
                                 #else: logging.error( "3kt6 Unprocessed '{}' sub5element ({}) in {} at {}".format( sub5element.tag, sub5element.text, sub4location, verseMilestone ) )
                         #elif sub4element.tag == OSISXMLBible.OSISNameSpace+"verse":
                             #sub4location = "list of " + sub3location
@@ -1771,7 +1771,7 @@ class OSISXMLBible( Bible ):
             Check/validate and process a OSIS Bible paragraph, including all subfields.
             """
             location = "validateTitle: " + locationDescription
-            Globals.checkXMLNoTail( element, location+" at "+verseMilestone, 'c4vd', loadErrors )
+            BibleOrgSysGlobals.checkXMLNoTail( element, location+" at "+verseMilestone, 'c4vd', loadErrors )
             titleText = element.text
             titleType = titleSubType = titleShort = titleLevel = titleCanonical = None
             for attrib,value in element.items():
@@ -1790,8 +1790,8 @@ class OSISXMLBible( Bible ):
                     logging.warning( "4b8e Unprocessed '{}' attribute ({}) in {} at {}".format( attrib, value, location, verseMilestone ) )
                     loadErrors.append( "Unprocessed '{}' attribute ({}) in {} at {} (4b8e)".format( attrib, value, location, verseMilestone ) )
             #print( 'vdq2', repr(titleType), repr(titleSubType), repr(titleText), titleLevel, titleCanonical )
-            if Globals.debugFlag and titleType: assert( titleType in ('main','chapter','psalm','scope','sub','parallel','acrostic',) )
-            if Globals.debugFlag and titleSubType: assert( titleSubType == 'x-preverse' )
+            if BibleOrgSysGlobals.debugFlag and titleType: assert( titleType in ('main','chapter','psalm','scope','sub','parallel','acrostic',) )
+            if BibleOrgSysGlobals.debugFlag and titleSubType: assert( titleSubType == 'x-preverse' )
             if chapterMilestone:
                 #print( "title", repr(titleText), repr(titleType), repr(titleSubType), repr(titleShort), repr(titleLevel) )
                 if titleText and titleText.strip():
@@ -1814,15 +1814,15 @@ class OSISXMLBible( Bible ):
                     self.thisBook.appendLine( 'imt', titleText.strip() ) # Could it also be 'is'?
             #else: # Must be a book group title
                 #Globals.checkXMLNoSubelements( element, location+" at book group", 'vcw5', loadErrors )
-                #if Globals.debugFlag: assert( titleText )
+                #if BibleOrgSysGlobals.debugFlag: assert( titleText )
                 #if titleText:
-                    #if Globals.verbosityLevel > 2: print( "    Got book group title", repr(titleText) )
+                    #if BibleOrgSysGlobals.verbosityLevel > 2: print( "    Got book group title", repr(titleText) )
                     #self.divisions[titleText] = []
                     ##self.thisBook.appendLine( 'bgt', titleText ) # Could it also be 'is'?
             for subelement in element.getchildren():
                 if subelement.tag == OSISXMLBible.OSISNameSpace+"title": # section reference(s)
                     sublocation = "validateTitle: title of " + locationDescription
-                    Globals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, '21d5', loadErrors )
+                    BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, '21d5', loadErrors )
                     titleText = subelement.text
                     # Handle attributes
                     titleType = titleLevel = None
@@ -1840,7 +1840,7 @@ class OSISXMLBible( Bible ):
                     for sub2element in subelement.getchildren():
                         if sub2element.tag == OSISXMLBible.OSISNameSpace+"reference":
                             sub2location = "reference of " + sublocation
-                            Globals.checkXMLNoSubelements( sub2element, sub2location+" at "+verseMilestone, 'f5g2', loadErrors )
+                            BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2location+" at "+verseMilestone, 'f5g2', loadErrors )
                             referenceText = sub2element.text
                             referenceTail = sub2element.tail
                             referenceOsisRef = None
@@ -1850,7 +1850,7 @@ class OSISXMLBible( Bible ):
                                 else:
                                     logging.warning( "89n5 Unprocessed '{}' attribute ({}) in {} sub3element of {} at {}".format( attrib, value, sub2element.tag, sublocation, verseMilestone ) )
                                     loadErrors.append( "Unprocessed '{}' attribute ({}) in {} sub3element of {} at {} (89n5)".format( attrib, value, sub2element.tag, sublocation, verseMilestone ) )
-                            if Globals.debugFlag:
+                            if BibleOrgSysGlobals.debugFlag:
                                 print( 'here bd02', repr(referenceText), repr(referenceOsisRef), repr(referenceTail) )
                             self.thisBook.appendLine( 'r', referenceText+referenceTail )
                         else:
@@ -1880,14 +1880,14 @@ class OSISXMLBible( Bible ):
                         word += "\\str {}\\str*".format( lemma[7:] )
                         lemma = None # we've used it
                     if lemma or morph:
-                        if Globals.debugFlag: logging.info( "Losing lemma or morph here at {}".format( verseMilestone ) )
+                        if BibleOrgSysGlobals.debugFlag: logging.info( "Losing lemma or morph here at {}".format( verseMilestone ) )
                         loadErrors.append( "Losing lemma or morph here at {}".format( verseMilestone ) )
                     # Handle sub-elements
                     for sub2element in subelement.getchildren():
                         sub2location = "divineName of " + sublocation
-                        Globals.checkXMLNoAttributes( sub2element, sub2location+" at "+verseMilestone, 'fbf3', loadErrors )
-                        Globals.checkXMLNoSubelements( sub2element, sub2location+" at "+verseMilestone, 'kje3', loadErrors )
-                        if Globals.debugFlag: assert( sub2element.text )
+                        BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub2location+" at "+verseMilestone, 'fbf3', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2location+" at "+verseMilestone, 'kje3', loadErrors )
+                        if BibleOrgSysGlobals.debugFlag: assert( sub2element.text )
                         #print( "Here scw2", repr(sub2element.text) )
                         word += "\\nd {}\\nd*".format( sub2element.text )
                         if sub2element.tail: word += sub2element.tail
@@ -1897,7 +1897,7 @@ class OSISXMLBible( Bible ):
                     sublocation = "validateTitle: abbr of " + locationDescription
                     abbrText = subelement.text
                     abbrTail = subelement.tail
-                    Globals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'gd56', loadErrors )
+                    BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'gd56', loadErrors )
                     # Handle attributes
                     abbrExpansion = None
                     for attrib,value in subelement.items():
@@ -1912,8 +1912,8 @@ class OSISXMLBible( Bible ):
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"transChange":
                     sublocation = "validateTitle: transChange of " + locationDescription
                     tcText = subelement.text
-                    if Globals.debugFlag: assert( tcText )
-                    Globals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'gvd8', loadErrors )
+                    if BibleOrgSysGlobals.debugFlag: assert( tcText )
+                    BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'gvd8', loadErrors )
                     # Process the attributes
                     tcType = None
                     for attrib,value in subelement.items():
@@ -1921,14 +1921,14 @@ class OSISXMLBible( Bible ):
                         else:
                             logging.warning( "g0j3 Unprocessed '{}' attribute ({}) in {} sub-element of {} at {}".format( attrib, value, subelement.tag, sublocation, verseMilestone ) )
                             loadErrors.append( "Unprocessed '{}' attribute ({}) in {} sub-element of {} at {} (g0j3)".format( attrib, value, subelement.tag, sublocation, verseMilestone ) )
-                    if Globals.debugFlag: assert( tcType == "added" )
+                    if BibleOrgSysGlobals.debugFlag: assert( tcType == "added" )
                     tcTail = subelement.tail if subelement.tail else ''
                     self.thisBook.appendToLastLine( '\\add {}\\add*{}'.format( tcText, tcTail ) )
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"foreign":
                     sublocation = "validateTitle: foreign of " + locationDescription
                     fText = subelement.text
-                    Globals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, 'cbf4', loadErrors )
-                    Globals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'cbf6', loadErrors )
+                    BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, 'cbf4', loadErrors )
+                    BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'cbf6', loadErrors )
                     # Process the attributes
                     fN = None
                     for attrib,value in subelement.items():
@@ -1941,7 +1941,7 @@ class OSISXMLBible( Bible ):
                 else:
                     logging.error( "jkd7 Unprocessed '{}' subelement ({}) in {} at {}".format( subelement.tag, subelement.text, locationDescription, verseMilestone ) )
                     loadErrors.append( "Unprocessed '{}' subelement ({}) in {} at {} (jkd7)".format( subelement.tag, subelement.text, locationDescription, verseMilestone ) )
-                    if Globals.debugFlag: halt
+                    if BibleOrgSysGlobals.debugFlag: halt
         # end of OSISXMLBible.validateTitle
 
 
@@ -1964,7 +1964,7 @@ class OSISXMLBible( Bible ):
                 else:
                     logging.warning( "6g3f Unprocessed '{}' attribute ({}) in {} element of {} at {}".format( attrib, value, element.tag, location, verseMilestone ) )
                     loadErrors.append( "Unprocessed '{}' attribute ({}) in {} element of {} at {} (6g3f)".format( attrib, value, element.tag, location, verseMilestone ) )
-            if paragraphType and Globals.debugFlag:
+            if paragraphType and BibleOrgSysGlobals.debugFlag:
                 if paragraphType not in ('x-center','x-iex','x-mi','x-pc','x-ph','x-pm','x-qc','x-qm','x-qr','x-sr',): print( paragraphType )
                 assert( paragraphType in ('x-center','x-iex','x-mi','x-pc','x-ph','x-pm','x-qc','x-qm','x-qr','x-sr',) )
             justFinishedLG = False
@@ -2003,7 +2003,7 @@ class OSISXMLBible( Bible ):
                     sublocation = "validateParagraph: lg of " + locationDescription
                     verseMilestone = validateLG( subelement, sublocation, verseMilestone )
                     if 0:
-                        Globals.checkXMLNoText( subelement, sublocation+" at "+verseMilestone, '3ch6', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation+" at "+verseMilestone, '3ch6', loadErrors )
                         #lgText = subelement.text
                         lgTail = subelement.tail
                         for attrib,value in subelement.items():
@@ -2021,7 +2021,7 @@ class OSISXMLBible( Bible ):
                         for sub2element in subelement.getchildren():
                             if sub2element.tag == OSISXMLBible.OSISNameSpace+"l":
                                 sub2location = "l of " + sublocation
-                                Globals.checkXMLNoTail( sub2element, sub2location+" at "+verseMilestone, '4vw3', loadErrors )
+                                BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location+" at "+verseMilestone, '4vw3', loadErrors )
                                 lText = sub2element.text
                                 level3 = None
                                 for attrib,value in sub2element.items():
@@ -2035,7 +2035,7 @@ class OSISXMLBible( Bible ):
                                     logging.warning( "validateParagraph: No level attribute specified in {} at {}".format( sub2location, verseMilestone ) )
                                     loadErrors.append( "validateParagraph: No level attribute specified in {} at {}".format( sub2location, verseMilestone ) )
                                     level3 = '1' # Dunno what we have here ???
-                                if Globals.debugFlag: assert( level3 in ('1','2','3',) )
+                                if BibleOrgSysGlobals.debugFlag: assert( level3 in ('1','2','3',) )
                                 self.thisBook.appendLine( 'q'+level3, lText )
                                 for sub3element in sub2element.getchildren():
                                     if sub3element.tag == OSISXMLBible.OSISNameSpace+"verse":
@@ -2060,7 +2060,7 @@ class OSISXMLBible( Bible ):
                     justFinishedLG = True
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"reference":
                     sublocation = "validateParagraph: reference of " + locationDescription
-                    Globals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'vbs4', loadErrors )
+                    BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'vbs4', loadErrors )
                     reference = subelement.text
                     theType = None
                     for attrib,value in subelement.items():
@@ -2072,7 +2072,7 @@ class OSISXMLBible( Bible ):
                     if theType:
                         if theType == 'x-bookName':
                             self.thisBook.appendToLastLine( '\\bk {}\\bk*'.format( clean(reference) ) )
-                        elif Globals.debugFlag: print( theType ); halt
+                        elif BibleOrgSysGlobals.debugFlag: print( theType ); halt
                     pTail = subelement.tail
                     if pTail and pTail.strip(): # Just ignore XML spacing characters
                         self.thisBook.appendToLastLine( clean(pTail) )
@@ -2087,8 +2087,8 @@ class OSISXMLBible( Bible ):
                     justFinishedLG = False
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"w":
                     sublocation = "validateParagraph: w of " + locationDescription
-                    Globals.checkXMLNoAttributes( subelement, sublocation+" at "+verseMilestone, '3s5f', loadErrors )
-                    Globals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'f3v5', loadErrors )
+                    BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation+" at "+verseMilestone, '3s5f', loadErrors )
+                    BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'f3v5', loadErrors )
                     word, trailingPunctuation = subelement.text, subelement.tail
                     if trailingPunctuation is None: trailingPunctuation = ''
                     combined = word + trailingPunctuation
@@ -2101,7 +2101,7 @@ class OSISXMLBible( Bible ):
                     validateDivineName( subelement, sublocation, verseMilestone )
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"seg":
                     sublocation = "validateParagraph: seg of " + locationDescription
-                    Globals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'kd52', loadErrors )
+                    BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'kd52', loadErrors )
                     segText, segTail = subelement.text, subelement.tail
                     segType = None
                     for attrib,value in subelement.items():
@@ -2114,7 +2114,7 @@ class OSISXMLBible( Bible ):
                         self.thisBook.appendToLastLine( '\\qt {}\\qt*'.format( clean(segText) ) )
                     elif segType == 'keyword':
                         self.thisBook.appendToLastLine( '\\k {}\\k*'.format( clean(segText) ) )
-                    elif Globals.debugFlag: print( segType ); halt
+                    elif BibleOrgSysGlobals.debugFlag: print( segType ); halt
                     if segTail and segTail.strip():
                         self.thisBook.appendToLastLine( clean(segTail) )
                 else:
@@ -2126,7 +2126,7 @@ class OSISXMLBible( Bible ):
         # end of OSISXMLBible.validateParagraph
 
 
-        if Globals.verbosityLevel > 3: print( _("Loading OSIS book div...") )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Loading OSIS book div...") )
         haveEIDs = False
         self.haveBook = False
 
@@ -2136,10 +2136,10 @@ class OSISXMLBible( Bible ):
         for attrib,value in div.items():
             if attrib=="type":
                 mainDivType = value
-                if mainDivOsisID and Globals.verbosityLevel > 2: print( _("Loading {} {}...").format( mainDivOsisID, mainDivType ) )
+                if mainDivOsisID and BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {} {}...").format( mainDivOsisID, mainDivType ) )
             elif attrib=="osisID":
                 mainDivOsisID = value
-                if mainDivType and Globals.verbosityLevel > 2: print( _("Loading {} {}...").format( mainDivOsisID, mainDivType ) )
+                if mainDivType and BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {} {}...").format( mainDivOsisID, mainDivType ) )
             elif attrib=="canonical":
                 mainDivCanonical = value
             else:
@@ -2154,16 +2154,16 @@ class OSISXMLBible( Bible ):
                 logging.critical( "Fixing bug in OSIS '{}' book ID".format( mainDivOsisID ) )
                 mainDivOsisID = mainDivOsisID[:-2] # Change 1Kgs.1 to 1Kgs
             try:
-                BBB = Globals.BibleBooksCodes.getBBBFromOSIS( mainDivOsisID )
+                BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSIS( mainDivOsisID )
             except:
                 logging.critical( _("'{}' is not a valid OSIS book identifier").format( mainDivOsisID ) )
             if BBB:
                 if isinstance( BBB, list ): # There must be multiple alternatives for BBB from the OSIS one
-                    if Globals.verbosityLevel > 2: print( "Multiple alternatives for OSIS '{}': {} (Choosing the first one)".format( mainDivOsisID, BBB ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "Multiple alternatives for OSIS '{}': {} (Choosing the first one)".format( mainDivOsisID, BBB ) )
                     BBB = BBB[0]
-                if Globals.verbosityLevel > 2: print( _("  Loading {}...").format( BBB ) )
-                USFMAbbreviation = Globals.BibleBooksCodes.getUSFMAbbreviation( BBB )
-                USFMNumber = Globals.BibleBooksCodes.getUSFMNumber( BBB )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Loading {}...").format( BBB ) )
+                USFMAbbreviation = BibleOrgSysGlobals.BibleBooksCodes.getUSFMAbbreviation( BBB )
+                USFMNumber = BibleOrgSysGlobals.BibleBooksCodes.getUSFMNumber( BBB )
                 self.thisBook = BibleBook( self, BBB )
                 self.thisBook.objectNameString = "OSIS XML Bible Book object"
                 self.thisBook.objectTypeString = "OSIS"
@@ -2172,14 +2172,14 @@ class OSISXMLBible( Bible ):
             self.thisBook.appendLine( 'h', USFMAbbreviation if USFMAbbreviation else mainDivOsisID )
         #elif mainDivType=='bookGroup':
             ## This is all the books lumped in together into one big div
-            #if Globals.debugFlag: assert( mainDivCanonical == "true" )
+            #if BibleOrgSysGlobals.debugFlag: assert( mainDivCanonical == "true" )
             ## We have to set BBB when we get a chapter reference
-            #if Globals.verbosityLevel > 2: print( _("  Loading a book group...") )
+            #if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Loading a book group...") )
             #self.haveBook = False
         else:
             logging.critical( "What kind of OSIS book div is this? {} {} {}".format( repr(mainDivType), repr(mainDivOsisID), repr(mainDivCanonical) ) )
             loadErrors.append( "What kind of OSIS book div is this? {} {} {}".format( repr(mainDivType), repr(mainDivOsisID), repr(mainDivCanonical) ) )
-            if Globals.debugFlag:  halt
+            if BibleOrgSysGlobals.debugFlag:  halt
 
         chapterMilestone = verseMilestone = ''
         foundH = False
@@ -2193,8 +2193,8 @@ class OSISXMLBible( Bible ):
             elif element.tag == OSISXMLBible.OSISNameSpace+"div":
                 location = "div of {} div".format( mainDivType )
                 #if verseMilestone is None: print( location, chapterMilestone ); halt
-                Globals.checkXMLNoText( element, location+" at "+verseMilestone, '3f6h', loadErrors )
-                Globals.checkXMLNoTail( element, location+" at "+verseMilestone, '0j6h', loadErrors )
+                BibleOrgSysGlobals.checkXMLNoText( element, location+" at "+verseMilestone, '3f6h', loadErrors )
+                BibleOrgSysGlobals.checkXMLNoTail( element, location+" at "+verseMilestone, '0j6h', loadErrors )
                 # Process the attributes
                 divType = divCanonical = divScope = None
                 for attrib,value in element.items():
@@ -2226,7 +2226,7 @@ class OSISXMLBible( Bible ):
                         sublocation = "title of " + location
                         validateTitle( subelement, sublocation, verseMilestone )
                         if 0:
-                            Globals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, '3d4f', loadErrors )
+                            BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, '3d4f', loadErrors )
                             sectionHeading = subelement.text
                             titleType = None
                             for attrib,value in subelement.items():
@@ -2244,7 +2244,7 @@ class OSISXMLBible( Bible ):
                             for sub2element in subelement.getchildren():
                                 if sub2element.tag == OSISXMLBible.OSISNameSpace+"title": # section reference(s)
                                     sub2location = "title of " + sublocation
-                                    Globals.checkXMLNoTail( sub2element, sub2location+" at "+verseMilestone, '3d5g', loadErrors )
+                                    BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location+" at "+verseMilestone, '3d5g', loadErrors )
                                     sectionReference = sub2element.text
                                     sectionReferenceType = None
                                     for attrib,value in sub2element.items():
@@ -2256,12 +2256,12 @@ class OSISXMLBible( Bible ):
                                     if sectionReference:
                                         #print( divType, self.subDivType, sectionReferenceType ); halt
                                         #assert( divType=='section' and self.subDivType in ('outline',) and sectionReferenceType=='parallel' )
-                                        if Globals.debugFlag: assert( divType=='section' and sectionReferenceType=='parallel' )
+                                        if BibleOrgSysGlobals.debugFlag: assert( divType=='section' and sectionReferenceType=='parallel' )
                                         self.thisBook.appendLine( 'sr', clean(sectionReference) )
                                     for sub3element in sub2element.getchildren():
                                         if sub3element.tag == OSISXMLBible.OSISNameSpace+"reference":
                                             sub3location = "reference of " + sub2location
-                                            Globals.checkXMLNoSubelements( sub3element, sub3location+" at "+verseMilestone, '3d3d', loadErrors )
+                                            BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3location+" at "+verseMilestone, '3d3d', loadErrors )
                                             referenceText = sub3element.text
                                             referenceTail = sub3element.tail
                                             referenceOsisRef = None
@@ -2292,7 +2292,7 @@ class OSISXMLBible( Bible ):
 ###                 ### div in div
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+"div":
                         sublocation = "div of " + location
-                        Globals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, '2c5bv', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, '2c5bv', loadErrors )
                         subDivType = subDivScope = subDivSpace = canonical = None
                         for attrib,value in subelement.items():
                             if attrib=="type":
@@ -2305,7 +2305,7 @@ class OSISXMLBible( Bible ):
                                 assert( canonical in ('true','false',) )
                             elif attrib==self.XMLNameSpace+"space":
                                 subDivSpace = value
-                                if Globals.debugFlag: assert( subDivSpace == 'preserve' )
+                                if BibleOrgSysGlobals.debugFlag: assert( subDivSpace == 'preserve' )
                             else:
                                 logging.warning( "84kf Unprocessed '{}' attribute ({}) in {} at {}".format( attrib, value, sublocation, verseMilestone ) )
                                 loadErrors.append( "Unprocessed '{}' attribute ({}) in {} at {} (84kf)".format( attrib, value, sublocation, verseMilestone ) )
@@ -2316,7 +2316,7 @@ class OSISXMLBible( Bible ):
                             for sub2element in subelement.getchildren():
                                 if sub2element.tag == OSISXMLBible.OSISNameSpace+"title":
                                     sub2location = "title of " + sublocation
-                                    Globals.checkXMLNoTail( sub2element, sub2location+" at "+verseMilestone, '4v5g', loadErrors )
+                                    BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location+" at "+verseMilestone, '4v5g', loadErrors )
                                     titleText = sub2element.text
                                     titleType = titleSubType = titleCanonical = None
                                     for attrib,value in sub2element.items():
@@ -2347,7 +2347,7 @@ class OSISXMLBible( Bible ):
                                     for sub3element in sub2element.getchildren():
                                         if sub3element.tag == OSISXMLBible.OSISNameSpace+"reference":
                                             sub3location = "reference of " + sub2location
-                                            Globals.checkXMLNoSubelements( sub3element, sub3location+" at "+verseMilestone, 'k6l3', loadErrors )
+                                            BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3location+" at "+verseMilestone, 'k6l3', loadErrors )
                                             referenceText = sub3element.text
                                             referenceTail = sub3element.tail
                                             referenceOsisRef = None
@@ -2357,7 +2357,7 @@ class OSISXMLBible( Bible ):
                                                 else:
                                                     logging.warning( "nm46 Unprocessed '{}' attribute ({}) in {} sub3element of {} at {}".format( attrib, value, sub3element.tag, sub2location, verseMilestone ) )
                                                     loadErrors.append( "Unprocessed '{}' attribute ({}) in {} sub3element of {} at {} (nm46)".format( attrib, value, sub3element.tag, sub2location, verseMilestone ) )
-                                            if Globals.debugFlag:
+                                            if BibleOrgSysGlobals.debugFlag:
                                                 print( referenceText, referenceOsisRef, referenceTail )
                                                 halt
                                             self.thisBook.appendLine( 'r~', referenceText+referenceTail )
@@ -2421,7 +2421,7 @@ class OSISXMLBible( Bible ):
                     elif attrib=="level": level = value
                     elif attrib=="marker":
                         marker = value
-                        if Globals.debugFlag: assert( len(marker) == 1 )
+                        if BibleOrgSysGlobals.debugFlag: assert( len(marker) == 1 )
                     else: logging.warning( "6j33 Unprocessed '{}' attribute ({}) in {} at {}".format( attrib, value, location, verseMilestone ) )
                 # Now process the subelements
                 for subelement in element.getchildren():
@@ -2431,7 +2431,7 @@ class OSISXMLBible( Bible ):
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+"transChange":
                         sublocation = "transChange of " + location
                         text = subelement.text
-                        if Globals.debugFlag: assert( text )
+                        if BibleOrgSysGlobals.debugFlag: assert( text )
                         tCTail = subelement.tail
                         # Process the attributes
                         transchangeType = None
@@ -2441,7 +2441,7 @@ class OSISXMLBible( Bible ):
                             else:
                                 logging.warning( "821k Unprocessed '{}' attribute ({}) in {} at {}".format( attrib, value, sublocation, verseMilestone ) )
                                 loadErrors.append( "Unprocessed '{}' attribute ({}) in {} at {} (821k)".format( attrib, value, sublocation, verseMilestone ) )
-                        if Globals.debugFlag: assert( transchangeType in ('added',) )
+                        if BibleOrgSysGlobals.debugFlag: assert( transchangeType in ('added',) )
                         # Now process the subelements
                         for sub2element in subelement.getchildren():
                             if sub2element.tag == OSISXMLBible.OSISNameSpace+"note":
@@ -2468,9 +2468,9 @@ class OSISXMLBible( Bible ):
                             adjNoteTail = noteTail.replace('\n','') # XML line formatting is irrelevant to USFM
                             if adjNoteTail: USFMResults.append( ('q+',adjNoteTail,) )
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+"p":
-                        Globals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, '2s7z', loadErrors )
-                        Globals.checkXMLNoAttributes( subelement, sublocation+" at "+verseMilestone, '8h4g', loadErrors )
-                        Globals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, '2k3m', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, '2s7z', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation+" at "+verseMilestone, '8h4g', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, '2k3m', loadErrors )
                         p = element.text
                         if p == '¶':
                             bookResults.append( ('paragraph', None,) )
@@ -2491,19 +2491,19 @@ class OSISXMLBible( Bible ):
                     #print( "cm", chapterMilestone )
                     OSISBookID = chapterMilestone.split('.')[0]
                     try:
-                        newBBB = Globals.BibleBooksCodes.getBBBFromOSIS( OSISBookID )
+                        newBBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSIS( OSISBookID )
                     except:
                         logging.critical( _("'{}' is not a valid OSIS book identifier").format( OSISBookID ) )
                     if newBBB != BBB:
                         BBB = newBBB
-                        USFMAbbreviation = Globals.BibleBooksCodes.getUSFMAbbreviation( BBB )
-                        USFMNumber = Globals.BibleBooksCodes.getUSFMNumber( BBB )
-                        if Globals.verbosityLevel > 1: print( _("  Loading {}...").format( BBB ) )
+                        USFMAbbreviation = BibleOrgSysGlobals.BibleBooksCodes.getUSFMAbbreviation( BBB )
+                        USFMNumber = BibleOrgSysGlobals.BibleBooksCodes.getUSFMNumber( BBB )
+                        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("  Loading {}...").format( BBB ) )
                 if chapterMilestone.startswith('chapterContainer.'): # it must have been a container -- process the subelements
                     OSISChapterID = chapterMilestone[17:] # Remove the 'chapterContainer.' prefix
                     chapterBits = OSISChapterID.split( '.' )
-                    if Globals.debugFlag: assert( len(chapterBits) == 2 )
-                    if Globals.debugFlag: assert( chapterBits[1].isdigit() )
+                    if BibleOrgSysGlobals.debugFlag: assert( len(chapterBits) == 2 )
+                    if BibleOrgSysGlobals.debugFlag: assert( chapterBits[1].isdigit() )
                     self.thisBook.appendLine( 'c', chapterBits[1] )
 
                     def handleWord( subelement, location, verseMilestone ):
@@ -2518,12 +2518,12 @@ class OSISXMLBible( Bible ):
                             else:
                                 logging.warning( "2h6k Unprocessed '{}' attribute ({}) in {} at {}".format( attrib, value, sublocation, verseMilestone ) )
                                 loadErrors.append( "Unprocessed '{}' attribute ({}) in {} at {} (2h6k)".format( attrib, value, sublocation, verseMilestone ) )
-                        if wType and Globals.debugFlag: assert( wType.startswith( 'x-split-' ) ) # Followed by a number 1-10 or more
+                        if wType and BibleOrgSysGlobals.debugFlag: assert( wType.startswith( 'x-split-' ) ) # Followed by a number 1-10 or more
                         if lemma and lemma.startswith('strong:'):
                             word += "\\str {}\\str*".format( lemma[7:] )
                             lemma = None # we've used it
                         if lemma or morph or wType or src:
-                            if 0 and Globals.debugFlag: logging.info( "Losing lemma or morph or wType or src here at {}".format( verseMilestone ) )
+                            if 0 and BibleOrgSysGlobals.debugFlag: logging.info( "Losing lemma or morph or wType or src here at {}".format( verseMilestone ) )
                             loadErrors.append( "Losing lemma or morph or wType or src here at {}".format( verseMilestone ) )
                         assert( len(subelement) <= 1 )
                         for sub2element in subelement.getchildren():
@@ -2532,7 +2532,7 @@ class OSISXMLBible( Bible ):
                             else:
                                 logging.error( "8k3s Unprocessed '{}' sub-element ({}) in {} at {}".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
                                 loadErrors.append( "Unprocessed '{}' sub-element ({}) in {} at {} (8k3s)".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
-                                if Globals.debugFlag: halt
+                                if BibleOrgSysGlobals.debugFlag: halt
                         trailingPunctuation = subelement.tail if subelement.tail else ''
                         combinedWord = word + trailingPunctuation
                         return combinedWord
@@ -2549,7 +2549,7 @@ class OSISXMLBible( Bible ):
                             else:
                                 logging.warning( "8q1k Unprocessed '{}' attribute ({}) in {} at {}".format( attrib, value, sublocation, verseMilestone ) )
                                 loadErrors.append( "Unprocessed '{}' attribute ({}) in {} at {} (8q1k)".format( attrib, value, sublocation, verseMilestone ) )
-                        if Globals.debugFlag: assert( transchangeType in ('added',) )
+                        if BibleOrgSysGlobals.debugFlag: assert( transchangeType in ('added',) )
                         for sub2element in subelement.getchildren():
                             if sub2element.tag == OSISXMLBible.OSISNameSpace+"w":
                                 words += handleWord( sub2element, sublocation, verseMilestone )
@@ -2558,14 +2558,14 @@ class OSISXMLBible( Bible ):
                             else:
                                 logging.error( "dfv3 Unprocessed '{}' sub-element ({}) in {} at {}".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
                                 loadErrors.append( "Unprocessed '{}' sub-element ({}) in {} at {} (dfv3)".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
-                                if Globals.debugFlag: halt
+                                if BibleOrgSysGlobals.debugFlag: halt
                         return "\\add {}\\add*{}".format( words, trailingPunctuation )
                     # end of handleTransChange
 
                     def handleMilestone( subelement, location, verseMilestone ):
                         sublocation = "milestone of " + location
-                        Globals.checkXMLNoText( subelement, sublocation+" at "+verseMilestone, 'f9s5', loadErrors )
-                        Globals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'q9v5', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation+" at "+verseMilestone, 'f9s5', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'q9v5', loadErrors )
                         milestoneType = milestoneMarker = milestoneSubtype = milestoneResp = None
                         for attrib,value in subelement.items():
                             if attrib=="type": milestoneType = value
@@ -2576,7 +2576,7 @@ class OSISXMLBible( Bible ):
                                 logging.warning( "8h6k Unprocessed '{}' attribute ({}) in {} at {}".format( attrib, value, sublocation, verseMilestone ) )
                                 loadErrors.append( "Unprocessed '{}' attribute ({}) in {} at {} (8h6k)".format( attrib, value, sublocation, verseMilestone ) )
                         #print( "here bd63", repr(milestoneType) )
-                        if Globals.debugFlag:
+                        if BibleOrgSysGlobals.debugFlag:
                             assert( milestoneType in ('x-p','x-extra-p','x-strongsMarkup',) )
                             assert( milestoneMarker in (None,'¶',) ) # What are these?
                             assert( milestoneSubtype in (None,'x-added',) ) # What are these?
@@ -2586,9 +2586,9 @@ class OSISXMLBible( Bible ):
 
                     def handleDivineName( subelement, location, verseMilestone ):
                         sublocation = "divineName of " + location
-                        Globals.checkXMLNoAttributes( subelement, sublocation+" at "+verseMilestone, '783c', loadErrors )
-                        Globals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, '7f3c', loadErrors )
-                        if Globals.debugFlag: assert( subelement.text )
+                        BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation+" at "+verseMilestone, '783c', loadErrors )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, '7f3c', loadErrors )
+                        if BibleOrgSysGlobals.debugFlag: assert( subelement.text )
                         #print( "Here hrt5", repr(subelement.text) )
                         word = "\\nd {}\\nd*".format( subelement.text )
                         if subelement.tail: word += subelement.tail
@@ -2653,7 +2653,7 @@ class OSISXMLBible( Bible ):
                                 else:
                                     logging.error( "d33s Unprocessed '{}' sub-element ({}) in {} at {}".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
                                     loadErrors.append( "Unprocessed '{}' sub-element ({}) in {} at {} (d33s)".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
-                                    if Globals.debugFlag: halt
+                                    if BibleOrgSysGlobals.debugFlag: halt
                             if qWho=="Jesus": sentence += "\\wj {}\\wj*{}".format( words, trailingPunctuation )
                             else:
                                 logging.info( "qWho of {} unused".format( repr(qWho) ) )
@@ -2671,15 +2671,15 @@ class OSISXMLBible( Bible ):
                         elif subelement.tag == OSISXMLBible.OSISNameSpace+"inscription":
                             inscription = ""
                             sublocation = "inscription of " + location
-                            Globals.checkXMLNoText( subelement, sublocation+" at "+verseMilestone, 'r9s5', loadErrors )
-                            Globals.checkXMLNoAttributes( subelement, sublocation+" at "+verseMilestone, 'r9v5', loadErrors )
+                            BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation+" at "+verseMilestone, 'r9s5', loadErrors )
+                            BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation+" at "+verseMilestone, 'r9v5', loadErrors )
                             for sub2element in subelement.getchildren():
                                 if sub2element.tag == OSISXMLBible.OSISNameSpace+"w":
                                     inscription += handleWord( sub2element, sublocation, verseMilestone )
                                 else:
                                     logging.error( "4k3s Unprocessed '{}' sub-element ({}) in {} at {}".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
                                     loadErrors.append( "Unprocessed '{}' sub-element ({}) in {} at {} (4k3s)".format( sub2element.tag, sub2element.text, sublocation, verseMilestone ) )
-                                    if Globals.debugFlag: halt
+                                    if BibleOrgSysGlobals.debugFlag: halt
                             sentence += "\\sc {}\\sc*{}".format( inscription, subelement.tail )
                             #print( "Here 3c52", repr(sentence) )
                         elif subelement.tag == OSISXMLBible.OSISNameSpace+"verse":
@@ -2694,9 +2694,9 @@ class OSISXMLBible( Bible ):
                                 for sub2element in subelement.getchildren():
                                     if sub2element.tag == OSISXMLBible.OSISNameSpace+"w":
                                         sub2location = "w of " + sublocation
-                                        Globals.checkXMLNoTail( sub2element, sub2location+" at "+verseMilestone, '2k3c', loadErrors )
+                                        BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location+" at "+verseMilestone, '2k3c', loadErrors )
                                         word = sub2element.text
-                                        if Globals.debugFlag: assert( word ) # That should be the actual word
+                                        if BibleOrgSysGlobals.debugFlag: assert( word ) # That should be the actual word
                                         # Process the attributes
                                         lemma = morph = None
                                         for attrib,value in sub2element.items():
@@ -2710,7 +2710,7 @@ class OSISXMLBible( Bible ):
                                         for sub3element in sub2element.getchildren():
                                             if sub3element.tag == OSISXMLBible.OSISNameSpace+"seg":
                                                 sub3location = "seg of " + sub2location
-                                                Globals.checkXMLNoSubelements( sub3element, sub3location+" at "+verseMilestone, '43gx', loadErrors )
+                                                BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3location+" at "+verseMilestone, '43gx', loadErrors )
                                                 segText, segTail = sub3element.text, sub3element.tail # XXX unused .............................................
                                                 # Process the attributes
                                                 for attrib,value in sub3element.items():
@@ -2721,10 +2721,10 @@ class OSISXMLBible( Bible ):
                                         self.thisBook.appendLine( 'vw', "{} [{}]".format( word,lemma) )
                                     elif sub2element.tag == OSISXMLBible.OSISNameSpace+"seg":
                                         sub2location = "seg of " + sublocation
-                                        Globals.checkXMLNoTail( sub2element, sub2location+" at "+verseMilestone, '9s8v', loadErrors )
-                                        Globals.checkXMLNoSubelements( sub2element, sub2location+" at "+verseMilestone, '93dr', loadErrors )
+                                        BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location+" at "+verseMilestone, '9s8v', loadErrors )
+                                        BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2location+" at "+verseMilestone, '93dr', loadErrors )
                                         seg = sub2element.text
-                                        if Globals.debugFlag: assert( seg ) # That should be the actual segment character
+                                        if BibleOrgSysGlobals.debugFlag: assert( seg ) # That should be the actual segment character
                                         # Process the attributes first
                                         for attrib,value in sub2element.items():
                                             if attrib=="type":
@@ -2743,13 +2743,13 @@ class OSISXMLBible( Bible ):
                                         for sub3element in sub2element.getchildren():
                                             if sub3element.tag == OSISXMLBible.OSISNameSpace+"catchWord":
                                                 sub3location = "catchword of " + sub2location
-                                                Globals.checkXMLNoTail( sub3element, sub3location+" at "+verseMilestone, '9k8j', loadErrors )
-                                                Globals.checkXMLNoAttributes( sub3element, sub3location+" at "+verseMilestone, '3d2a', loadErrors )
-                                                Globals.checkXMLNoSubelements( sub3element, sub3location+" at "+verseMilestone, '0o9i', loadErrors )
+                                                BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3location+" at "+verseMilestone, '9k8j', loadErrors )
+                                                BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, sub3location+" at "+verseMilestone, '3d2a', loadErrors )
+                                                BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3location+" at "+verseMilestone, '0o9i', loadErrors )
                                                 catchWord = sub3element.text
                                             elif sub3element.tag == OSISXMLBible.OSISNameSpace+"rdg":
                                                 sub3location = "rdg of " + sub2location
-                                                Globals.checkXMLNoTail( sub3element, sub3location+" at "+verseMilestone, '8h7g', loadErrors )
+                                                BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3location+" at "+verseMilestone, '8h7g', loadErrors )
                                                 rdg = sub3element.text
                                                 # Process the attributes
                                                 rdgType = None
@@ -2762,8 +2762,8 @@ class OSISXMLBible( Bible ):
                                                 for sub4element in sub3element.getchildren():
                                                     if sub4element.tag == OSISXMLBible.OSISNameSpace+"w":
                                                         sub4location = "w of " + sub3location
-                                                        Globals.checkXMLNoTail( sub4element, sub4location+" at "+verseMilestone, '6g5d', loadErrors )
-                                                        Globals.checkXMLNoSubelements( sub4element, sub4location+" at "+verseMilestone, '5r4d', loadErrors )
+                                                        BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4location+" at "+verseMilestone, '6g5d', loadErrors )
+                                                        BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4location+" at "+verseMilestone, '5r4d', loadErrors )
                                                         word = sub4element.text
                                                         # Process the attributes
                                                         lemma = None
@@ -2774,8 +2774,8 @@ class OSISXMLBible( Bible ):
                                                                 loadErrors.append( "Unprocessed '{}' attribute ({}) in {} at {} (85kd)".format( attrib, value, sub4location, verseMilestone ) )
                                                     elif sub4element.tag == OSISXMLBible.OSISNameSpace+"seg":
                                                         sub4location = "seg of " + sub3location
-                                                        Globals.checkXMLNoTail( sub4element, sub4location+" at "+verseMilestone, '5r4q', loadErrors )
-                                                        Globals.checkXMLNoSubelements( sub4element, sub4location+" at "+verseMilestone, '4s3a', loadErrors )
+                                                        BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4location+" at "+verseMilestone, '5r4q', loadErrors )
+                                                        BibleOrgSysGlobals.checkXMLNoSubelements( sub4element, sub4location+" at "+verseMilestone, '4s3a', loadErrors )
                                                         word = sub4element.text
                                                         # Process the attributes
                                                         segType = None
@@ -2787,22 +2787,22 @@ class OSISXMLBible( Bible ):
                                                     else:
                                                         logging.error( "7k3s Unprocessed '{}' sub-element ({}) in {} at {}".format( sub4element.tag, sub4element.text, sub3location, verseMilestone ) )
                                                         loadErrors.append( "Unprocessed '{}' sub-element ({}) in {} at {} (7k3s)".format( sub4element.tag, sub4element.text, sub3location, verseMilestone ) )
-                                                        if Globals.debugFlag: halt
+                                                        if BibleOrgSysGlobals.debugFlag: halt
                                             else:
                                                 logging.error( "9y5g Unprocessed '{}' sub-element ({}) in {} at {}".format( sub3element.tag, sub3element.text, sub2location, verseMilestone ) )
                                                 loadErrors.append( "Unprocessed '{}' sub-element ({}) in {} at {} (9y5g)".format( sub3element.tag, sub3element.text, sub2location, verseMilestone ) )
-                                                if Globals.debugFlag: halt
+                                                if BibleOrgSysGlobals.debugFlag: halt
                                     else:
                                         logging.error( "05kq Unprocessed '{}' sub-element {} in {} at {}".format( sub2element.tag, repr(sub2element.text), sublocation, verseMilestone ) )
                                         loadErrors.append( "Unprocessed '{}' sub-element {} in {} at {} (05kq)".format( sub2element.tag, repr(sub2element.text), sublocation, verseMilestone ) )
-                                        if Globals.debugFlag: halt
+                                        if BibleOrgSysGlobals.debugFlag: halt
                             elif verseMilestone and verseMilestone.startswith('verseContents#'): # it must have been a container -- process the string
                                 print( "verseContents", verseMilestone )
                                 bits = verseMilestone.split( '#', 2 )
-                                if Globals.debugFlag: assert( len(bits) == 3 )
-                                if Globals.debugFlag: assert( bits[0] == 'verseContents' )
-                                if Globals.debugFlag: assert( bits[1].isdigit() )
-                                if Globals.debugFlag: assert( bits[2] )
+                                if BibleOrgSysGlobals.debugFlag: assert( len(bits) == 3 )
+                                if BibleOrgSysGlobals.debugFlag: assert( bits[0] == 'verseContents' )
+                                if BibleOrgSysGlobals.debugFlag: assert( bits[1].isdigit() )
+                                if BibleOrgSysGlobals.debugFlag: assert( bits[2] )
                                 thisData = bits[1]
                                 if bits[2].strip(): thisData += ' ' + bits[2].replace('\n','')
                                 #assert( bits[2].strip() )
@@ -2812,7 +2812,7 @@ class OSISXMLBible( Bible ):
                         else:
                             logging.error( "4s9j Unprocessed '{}' sub-element {} in {} at {}".format( subelement.tag, repr(subelement.text), location, verseMilestone ) )
                             loadErrors.append( "Unprocessed '{}' sub-element {} in {} at {} (4s9j)".format( subelement.tag, repr(subelement.text), location, verseMilestone ) )
-                            if Globals.debugFlag: halt
+                            if BibleOrgSysGlobals.debugFlag: halt
 ########### Verse
             elif element.tag == OSISXMLBible.OSISNameSpace+"verse": # Some OSIS Bibles have verse milestones directly in a bookgroup div
                 location = "verse of {} div".format( mainDivType )
@@ -2825,7 +2825,7 @@ class OSISXMLBible( Bible ):
             elif element.tag == OSISXMLBible.OSISNameSpace+"transChange":
                 location = "transChange of {} div".format( mainDivType )
                 text = element.text
-                if Globals.debugFlag: assert( text )
+                if BibleOrgSysGlobals.debugFlag: assert( text )
                 tCTail = element.tail
                 # Process the attributes
                 transchangeType = None
@@ -2835,7 +2835,7 @@ class OSISXMLBible( Bible ):
                     else:
                         logging.warning( "8k2j Unprocessed '{}' attribute ({}) in {} at {}".format( attrib, value, location, verseMilestone ) )
                         loadErrors.append( "Unprocessed '{}' attribute ({}) in {} at {} (8k2j)".format( attrib, value, location, verseMilestone ) )
-                if Globals.debugFlag: assert( transchangeType in ('added',) )
+                if BibleOrgSysGlobals.debugFlag: assert( transchangeType in ('added',) )
                 # Now process the subelements
                 for subelement in element.getchildren():
                     if subelement.tag == OSISXMLBible.OSISNameSpace+"note":
@@ -2847,7 +2847,7 @@ class OSISXMLBible( Bible ):
                     else:
                         logging.error( "2f5z Unprocessed '{}' sub-element ({}) in {} at {}".format( subelement.tag, subelement.text, location, verseMilestone ) )
                         loadErrors.append( "Unprocessed '{}' sub-element ({}) in {} at {} (2f5z)".format( subelement.tag, subelement.text, location, verseMilestone ) )
-                        if Globals.debugFlag: halt
+                        if BibleOrgSysGlobals.debugFlag: halt
                 if tCTail: # This is the main text of the verse (follows the inserted transChange)
                     bookResults.append( ('tCverse+', tCTail,) )
                     adjTCTail = tCTail.replace('\n','') # XML line formatting is irrelevant to USFM
@@ -2867,13 +2867,13 @@ class OSISXMLBible( Bible ):
             else:
                 logging.error( "5ks1 Unprocessed '{}' sub-element ({}) in {} div at {}".format( element.tag, element.text, mainDivType, verseMilestone ) )
                 loadErrors.append( "Unprocessed '{}' sub-element ({}) in {} div at {} (5ks1)".format( element.tag, element.text, mainDivType, verseMilestone ) )
-                if Globals.debugFlag: halt
+                if BibleOrgSysGlobals.debugFlag: halt
             #if element.tail is not None and element.tail.strip(): logging.error( "Unexpected left-over '{}' tail data after {} element in {} div at {}".format( element.tail, element.tag, mainDivType, verseMilestone ) )
 
         #print( "Done Validating", BBB, mainDivOsisID, mainDivType )
         #print( "bookResults", bookResults )
         if BBB:
-            if Globals.verbosityLevel > 2: print( "  Saving {} into results...".format( BBB ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Saving {} into results...".format( BBB ) )
             #print( mainDivOsisID, "results", BBB, bookResults[:10], "..." )
             #if bookResults: self.bkData[BBB] = bookResults
             #if USFMResults: self.USFMBooks[BBB] = USFMResults
@@ -2886,7 +2886,7 @@ class OSISXMLBible( Bible ):
         #assert( len(reference) == 3 ) # BBB,C,V
         #BBB, chapterString, verseString = reference
         #assert( isinstance(BBB,str) and len(BBB)==3 )
-        #assert( BBB in Globals.BibleBooksCodes )
+        #assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
         #assert( isinstance( chapterString, str ) )
         #assert( isinstance( verseString, str ) )
         #if BBB in self.books:
@@ -2922,7 +2922,7 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
 
     if 1: # Test OSISXMLBible object
@@ -2943,11 +2943,11 @@ def demo():
         # Demonstrate the OSIS Bible class
         #for j, testFilepath in enumerate( justOne ): # Choose testFilepaths or justOne
         for j, testFilepath in enumerate( testFilepaths ): # Choose testFilepaths or justOne
-            if Globals.verbosityLevel > 1: print( "\nOSIS {}/ Demonstrating the OSIS Bible class...".format( j+1 ) )
-            if Globals.verbosityLevel > 0: print( "  Test filepath is '{}'".format( testFilepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nOSIS {}/ Demonstrating the OSIS Bible class...".format( j+1 ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test filepath is '{}'".format( testFilepath ) )
             oB = OSISXMLBible( testFilepath ) # Load and process the XML
             oB.load()
-            if Globals.verbosityLevel > 0: print( oB ) # Just print a summary
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( oB ) # Just print a summary
 
             if 1: # Test verse lookup
                 import VerseReferences
@@ -2969,19 +2969,19 @@ def demo():
                     except KeyError:
                         print( "OSISXMLBible.demo: {} {}:{} can't be found!".format( b, c, v ) )
 
-            if Globals.strictCheckingFlag or Globals.debugFlag:
+            if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag:
                 oB.check()
-            if Globals.commandLineOptions.export:
+            if BibleOrgSysGlobals.commandLineOptions.export:
                 #oB.toODF(); halt
                 oB.doAllExports( wantPhotoBible=True, wantODFs=True, wantPDFs=True )
 # end of demo
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser, exportAvailable=True )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of OSISXMLBible.py

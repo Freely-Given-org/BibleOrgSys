@@ -44,7 +44,7 @@ ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 import os, logging
 from gettext import gettext as _
 
-import Globals
+import BibleOrgSysGlobals
 
 
 allowedOutputTypes = 'XML','HTML'
@@ -258,7 +258,7 @@ class MLWriter:
         if lineEndings == 'l': self._nl = '\n'
         elif lineEndings == 'w': self._nl = '\r\n'
         else: logging.error( "MLWriter: Unknown '{}' lineEndings flag".format( lineEndings ) )
-        if Globals.verbosityLevel>2: print( _("Writing {}...").format(self._outputFilePath) )
+        if BibleOrgSysGlobals.verbosityLevel>2: print( _("Writing {}...").format(self._outputFilePath) )
         self.__outputFile = open( self._outputFilePath, 'wt' ) # Just create the empty file
         self.__outputFile.close()
         if writeBOM:
@@ -435,7 +435,7 @@ class MLWriter:
         """ Close all open tags and finish everything up and close the file. """
         assert( self.__outputFile is not None )
         assert( self._status == 'Open' )
-        if Globals.debugFlag: print( "autoClose stack: {}", self._openStack )
+        if BibleOrgSysGlobals.debugFlag: print( "autoClose stack: {}", self._openStack )
         for index in range( len(self._openStack)-1, -1, -1 ): # Have to step through this backwards
             self.writeLineClose( self._openStack[index] )
         self._sectionName = 'None'
@@ -468,8 +468,8 @@ class MLWriter:
                     checkProgramErrorOutputString = '{}:\n{}'.format( self._filename, tempString )
             xmllintError = ("No error", "Unclassified", "Error in DTD", "Validation error", "Validation error", "Error in schema compilation", "Error writing output", "Error in pattern", "Error in reader registration", "Out of memory")
             if returnCode != 0:
-                if Globals.verbosityLevel > 2: print( "  WARNING: xmllint gave an error on the created {} file: {} = {}".format( self._filename, returnCode, xmllintError[returnCode] ) )
-            elif Globals.verbosityLevel > 3: print( "  xmllint validated the xml file {}.".format( self._filename ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "  WARNING: xmllint gave an error on the created {} file: {} = {}".format( self._filename, returnCode, xmllintError[returnCode] ) )
+            elif BibleOrgSysGlobals.verbosityLevel > 3: print( "  xmllint validated the xml file {}.".format( self._filename ) )
             return returnCode, checkProgramOutputString, checkProgramErrorOutputString,
     # end of MLWriter.validate
 # end of MLWriter class
@@ -480,7 +480,7 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel>0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel>0: print( ProgNameVersion )
 
     if 1: # Demo the writer object with XML
         outputFolder = "OutputFiles"
@@ -559,10 +559,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of MLWriter.py

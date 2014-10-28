@@ -38,7 +38,7 @@ import os, logging
 from gettext import gettext as _
 
 
-import Globals
+import BibleOrgSysGlobals
 
 
 def t( messageString ):
@@ -49,7 +49,7 @@ def t( messageString ):
     """
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
-    if Globals.debugFlag or debuggingThisModule:
+    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         nameBit = '{}{}{}: '.format( __name__, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit, _(errorBit) )
 
@@ -115,10 +115,10 @@ class USFMFilenames:
             return
 
         # Get the data tables that we need for proper checking
-        self._USFMBooksCodes = Globals.BibleBooksCodes.getAllUSFMBooksCodes()
+        self._USFMBooksCodes = BibleOrgSysGlobals.BibleBooksCodes.getAllUSFMBooksCodes()
         self._USFMBooksCodesUpper = [x.upper() for x in self._USFMBooksCodes]
-        self._USFMBooksCodeNumberTriples = Globals.BibleBooksCodes.getAllUSFMBooksCodeNumberTriples()
-        self._BibleditBooksCodeNumberTriples = Globals.BibleBooksCodes.getAllBibleditBooksCodeNumberTriples()
+        self._USFMBooksCodeNumberTriples = BibleOrgSysGlobals.BibleBooksCodes.getAllUSFMBooksCodeNumberTriples()
+        self._BibleditBooksCodeNumberTriples = BibleOrgSysGlobals.BibleBooksCodes.getAllBibleditBooksCodeNumberTriples()
 
         # Find how many files are in our folder
         self.lastTupleList = None
@@ -210,7 +210,7 @@ class USFMFilenames:
                             fillerSize = self.pattern.count( '*' )
                             fillerIndex = self.pattern.find( '*' )
                             if fillerIndex!=-1 and fillerSize==1: self.pattern = self.pattern[:fillerIndex] + foundFilename[fillerIndex] + self.pattern[fillerIndex+1:]
-                            if Globals.verbosityLevel > 2: print( "Pattern is '{}'".format( self.pattern ) )
+                            if BibleOrgSysGlobals.verbosityLevel > 2: print( "Pattern is '{}'".format( self.pattern ) )
                             if '*' not in self.pattern: matched = True
                             else: # we'll try to be even more generic
                                 self.languageIndex = self.digitsIndex = None
@@ -218,7 +218,7 @@ class USFMFilenames:
                                 self.USFMBookCodeIndex = USFMBookCodeIndex
                                 self.pattern = '*' * foundLength
                                 self.pattern = self.pattern[:USFMBookCodeIndex] + 'bbb' + self.pattern[USFMBookCodeIndex+3:]
-                                if Globals.verbosityLevel > 2: print( "More generic pattern is '{}'".format( self.pattern ) )
+                                if BibleOrgSysGlobals.verbosityLevel > 2: print( "More generic pattern is '{}'".format( self.pattern ) )
                                 matched = True
                         if matched:
                             if self.languageCode and self.languageCode.isupper(): self.pattern = self.pattern.replace( 'l', 'L' )
@@ -248,7 +248,7 @@ class USFMFilenames:
         if self.givenFolderName: result += ('\n' if result else '') + ' '*indent + _("Folder: {}").format( self.givenFolderName )
         if self.pattern: result += ('\n' if result else '') + ' '*indent + _("Filename pattern: {}").format( self.pattern )
         if self.fileExtension: result += ('\n' if result else '') + ' '*indent + _("File extension: {}").format( self.fileExtension )
-        if self.fileList and Globals.verbosityLevel > 2: result += ('\n' if result else '') + ' '*indent + _("File list: {}").format( self.fileList )
+        if self.fileList and BibleOrgSysGlobals.verbosityLevel > 2: result += ('\n' if result else '') + ' '*indent + _("File list: {}").format( self.fileList )
         return result
     # end of __str___
 
@@ -313,7 +313,7 @@ class USFMFilenames:
                 Populates the two dictionaries.
                 Returns the number of files found. """
         # Empty the two dictionaries
-        if Globals.debugFlag and debuggingThisModule: print( t("getUSFMIDsFromFiles( {} )").format( repr(givenFolder) ) )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( t("getUSFMIDsFromFiles( {} )").format( repr(givenFolder) ) )
         self._fileDictionary = {} # The keys are 2-tuples of folder, filename, the values are all valid BBB values
         self._BBBDictionary = {} # The keys are valid BBB values, the values are all 2-tuples of folder, filename
         folderFilenames = os.listdir( givenFolder )
@@ -331,9 +331,9 @@ class USFMFilenames:
                     USFMId = self.getUSFMIDFromFile( givenFolder, possibleFilename, filepath )
                     if USFMId:
                         assert( filepath not in self._fileDictionary )
-                        BBB = Globals.BibleBooksCodes.getBBBFromUSFM( USFMId )
+                        BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USFMId )
                         self._fileDictionary[(givenFolder,possibleFilename,)] = BBB
-                        if BBB in self._BBBDictionary: logging.error( "{}Oops, already found '{}' in {}, now we have a duplicate in {}".format( 'getUSFMIDsFromFiles: ' if Globals.debugFlag else '', BBB, self._BBBDictionary[BBB], possibleFilename ) )
+                        if BBB in self._BBBDictionary: logging.error( "{}Oops, already found '{}' in {}, now we have a duplicate in {}".format( 'getUSFMIDsFromFiles: ' if BibleOrgSysGlobals.debugFlag else '', BBB, self._BBBDictionary[BBB], possibleFilename ) )
                         self._BBBDictionary[BBB] = (givenFolder,possibleFilename,)
         if len(self._fileDictionary) != len(self._BBBDictionary):
             logging.warning( "getUSFMIDsFromFiles: Oops, something went wrong because dictionaries have {} and {} entries".format( len(self._fileDictionary), len(self._BBBDictionary) ) )
@@ -369,10 +369,10 @@ class USFMFilenames:
         removeBBB = removeFilename = None
         for existingBBB, existingFilename in givenList:
             if existingBBB == BBB:
-                if Globals.verbosityLevel > 2: logging.warning( "{} tried to add duplicate {} {} when already had {} (removed both)".format( caller, BBB, filename, existingFilename ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: logging.warning( "{} tried to add duplicate {} {} when already had {} (removed both)".format( caller, BBB, filename, existingFilename ) )
                 removeBBB, removeFilename = existingBBB, existingFilename
             if existingFilename == filename:
-                if Globals.verbosityLevel > 2: logging.warning( "{} tried to add duplicate {} {} when already had {} (removed both)".format( caller, filename, BBB, existingBBB ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: logging.warning( "{} tried to add duplicate {} {} when already had {} (removed both)".format( caller, filename, BBB, existingBBB ) )
                 removeBBB, removeFilename = existingBBB, existingFilename
         if removeFilename:givenList.remove( (removeBBB,removeFilename,) )
         else: givenList.append( (BBB,filename,) )
@@ -395,7 +395,7 @@ class USFMFilenames:
                             break
             elif self.pattern == "dd-OEBName":
                 for AltFilename in AlternateFilenames:
-                    BBB = Globals.BibleBooksCodes.getBBBFromReferenceNumber( AltFilename[0:2] )
+                    BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( AltFilename[0:2] )
                     resultList.append( (BBB,AltFilename+'.'+self.fileExtension,) )
             else: # they are Paratext style
                 for USFMBookCode,USFMDigits,BBB in self._USFMBooksCodeNumberTriples:
@@ -408,7 +408,7 @@ class USFMFilenames:
                         if filename[ix]=='*' and self.pattern[ix]!='*':
                             filename = filename[:ix] + self.pattern[ix] + filename[ix+1:]
                     self.doListAppend( BBB, filename, resultList, "getDerivedFilenameTuples" )
-        return Globals.BibleBooksCodes.getSequenceList( resultList )
+        return BibleOrgSysGlobals.BibleBooksCodes.getSequenceList( resultList )
     # end of getDerivedFilenameTuples
 
 
@@ -423,16 +423,16 @@ class USFMFilenames:
         resultList = []
         for BBB,derivedFilename in self.getDerivedFilenameTuples():
             derivedFilepath = os.path.join( self.givenFolderName, derivedFilename )
-            if Globals.debugFlag and debuggingThisModule: print( '  getConfirmedFilenameTuples: Checking for existence of: ' + derivedFilename )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( '  getConfirmedFilenameTuples: Checking for existence of: ' + derivedFilename )
             if os.access( derivedFilepath, os.R_OK ):
                 if doubleCheck:
                     USFMId = self.getUSFMIDFromFile( self.givenFolderName, derivedFilename, derivedFilepath )
                     if USFMId is None:
-                        logging.error( "{}internal USFM Id missing for {} in {}".format( 'getConfirmedFilenameTuples: ' if Globals.debugFlag else '', BBB, derivedFilename ) )
+                        logging.error( "{}internal USFM Id missing for {} in {}".format( 'getConfirmedFilenameTuples: ' if BibleOrgSysGlobals.debugFlag else '', BBB, derivedFilename ) )
                         continue # so it doesn't get added
-                    BBB = Globals.BibleBooksCodes.getBBBFromUSFM( USFMId )
+                    BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USFMId )
                     if BBB != BBB:
-                        logging.error( "{}Internal USFM Id ({}{}) doesn't match {} for {}".format( 'getConfirmedFilenameTuples: ' if Globals.debugFlag else '', USFMId, '' if BBB==USFMId else " -> {}".format(BBB), BBB, derivedFilename ) )
+                        logging.error( "{}Internal USFM Id ({}{}) doesn't match {} for {}".format( 'getConfirmedFilenameTuples: ' if BibleOrgSysGlobals.debugFlag else '', USFMId, '' if BBB==USFMId else " -> {}".format(BBB), BBB, derivedFilename ) )
                         continue # so it doesn't get added
                 self.doListAppend( BBB, derivedFilename, resultList, "getConfirmedFilenameTuples" )
         self.lastTupleList = resultList
@@ -458,9 +458,9 @@ class USFMFilenames:
                 if ignore: continue
                 if USFMBookCode.upper() in pFUpperProper:
                     if pFUpper[-1]!='~' and not pFUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
-                        self.doListAppend( Globals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
+                        self.doListAppend( BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USFMBookCode ), possibleFilename, resultList, "getPossibleFilenameTuplesExt" )
         self.lastTupleList = resultList
-        return Globals.BibleBooksCodes.getSequenceList( resultList )
+        return BibleOrgSysGlobals.BibleBooksCodes.getSequenceList( resultList )
     # end of USFMFilenames.getPossibleFilenameTuplesExt
 
 
@@ -479,7 +479,7 @@ class USFMFilenames:
                 #print( "getPossibleFilenameTuplesInt", folder, filename, self._fileDictionary )
                 self.doListAppend( self._fileDictionary[(folder,filename,)], filename, resultList, "getPossibleFilenameTuplesInt2" )
         self.lastTupleList = resultList
-        return Globals.BibleBooksCodes.getSequenceList( resultList )
+        return BibleOrgSysGlobals.BibleBooksCodes.getSequenceList( resultList )
     # end of USFMFilenames.getPossibleFilenameTuplesInt
 
 
@@ -495,7 +495,7 @@ class USFMFilenames:
         resultListInt = self.getPossibleFilenameTuplesInt()
         if len(resultListInt)>len(resultList):
             resultString, resultList = "Internal", resultListInt
-        if Globals.verbosityLevel > 2: print( "getMaximumPossibleFilenameTuples: using {}".format( resultString ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "getMaximumPossibleFilenameTuples: using {}".format( resultString ) )
         self.lastTupleList = resultList
         #print( "getMaximumPossibleFilenameTuples is returning", resultList )
         return resultList # No need to sort these, coz all the above calls produce sorted results
@@ -554,7 +554,7 @@ class USFMFilenames:
 
 def demo():
     """ Demonstrate finding files in some USFM Bible folders. """
-    if Globals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
     # These are relative paths -- you can replace these with your test folder(s)
     testFolders = ("Tests/DataFilesForTests/USFMTest1/", "Tests/DataFilesForTests/USFMTest2/",
@@ -585,10 +585,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of USFMFilenames.py

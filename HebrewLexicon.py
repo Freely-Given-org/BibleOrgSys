@@ -46,7 +46,7 @@ from gettext import gettext as _
 from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree
 
-import Globals
+import BibleOrgSysGlobals
 
 
 
@@ -59,7 +59,7 @@ def t( messageString ):
     """
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
-    if Globals.debugFlag or debuggingThisModule:
+    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit, _(errorBit) )
 
@@ -92,7 +92,7 @@ class AugmentedStrongsIndexFileConverter:
         """
         Constructor: just sets up the Hebrew Index file converter object.
         """
-        if Globals.debugFlag and debuggingThisModule:
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( t("AugmentedStrongsIndexFileConverter.__init__()") )
         self.title = self.version = self.date = None
         self.tree = self.header = self.entries1 = self.entries2 = None
@@ -110,7 +110,7 @@ class AugmentedStrongsIndexFileConverter:
         if self.title: result += ('\n' if result else '') + "  " + self.title
         if self.version: result += ('\n' if result else '') + "  " + _("Version: {} ").format( self.version )
         if self.date: result += ('\n' if result else '') + "  " + _("Date: {}").format( self.date )
-        if Globals.debugFlag: assert( len(self.entries1) == len(self.entries2) )
+        if BibleOrgSysGlobals.debugFlag: assert( len(self.entries1) == len(self.entries2) )
         result += ('\n' if result else '') + "  " + _("Number of entries = {}").format( len(self.entries1) )
         #result += ('\n' if result else '') + "  " + _("Number of entries = {}").format( len(self.entries2) )
         return result
@@ -122,11 +122,11 @@ class AugmentedStrongsIndexFileConverter:
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        if Globals.verbosityLevel > 2: print( _("Loading from {}...").format( XMLFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading from {}...").format( XMLFolder ) )
         self.XMLFolder = XMLFolder
         XMLFilepath = os.path.join( XMLFolder, AugmentedStrongsIndexFileConverter.indexFilename )
         self.tree = ElementTree().parse( XMLFilepath )
-        if Globals.debugFlag: assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
+        if BibleOrgSysGlobals.debugFlag: assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
 
         self.entries1, self.entries2 = {}, {}
         if self.tree.tag == AugmentedStrongsIndexFileConverter.treeTag:
@@ -141,11 +141,11 @@ class AugmentedStrongsIndexFileConverter:
         """
         Check/validate the given OSIS div record.
         """
-        if Globals.debugFlag:
+        if BibleOrgSysGlobals.debugFlag:
             assert( entry.tag == AugmentedStrongsIndexFileConverter.HebLexNameSpace+"w" )
             assert( entry.text )
-        Globals.checkXMLNoTail( entry, entry.tag, "hjg8" )
-        Globals.checkXMLNoSubelements( entry, entry.tag, "jk95" )
+        BibleOrgSysGlobals.checkXMLNoTail( entry, entry.tag, "hjg8" )
+        BibleOrgSysGlobals.checkXMLNoSubelements( entry, entry.tag, "jk95" )
 
         # Process the entry attributes first
         aug = None
@@ -153,7 +153,7 @@ class AugmentedStrongsIndexFileConverter:
             if attrib=="aug":
                 aug = value
             else: logging.warning( "Unprocessed '{}' attribute ({}) in index entry element".format( attrib, value ) )
-        if Globals.debugFlag: assert( aug is not None )
+        if BibleOrgSysGlobals.debugFlag: assert( aug is not None )
 
         self.entries1[aug] = entry.text
         self.entries2[entry.text] = aug
@@ -165,7 +165,7 @@ class AugmentedStrongsIndexFileConverter:
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
         (Of course, you can just use the elementTree in self.tree if you prefer.)
         """
-        if Globals.debugFlag:
+        if BibleOrgSysGlobals.debugFlag:
             assert( len ( self.tree ) )
             assert( self.entries1 and self.entries2 )
         return self.entries1, self.entries2 # temp................................XXXXXXXXXXXXXXXXXXXXXXXXXXXXX......................
@@ -209,7 +209,7 @@ class LexicalIndexFileConverter:
         """
         Constructor: just sets up the Hebrew Index file converter object.
         """
-        if Globals.debugFlag and debuggingThisModule:
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( t("LexicalIndexFileConverter.__init__()") )
         self.title = self.version = self.date = None
         self.tree = self.header = self.entries = None
@@ -227,7 +227,7 @@ class LexicalIndexFileConverter:
         if self.title: result += ('\n' if result else '') + "  " + self.title
         if self.version: result += ('\n' if result else '') + "  " + _("Version: {} ").format( self.version )
         if self.date: result += ('\n' if result else '') + "  " + _("Date: {}").format( self.date )
-        if Globals.debugFlag: assert( len(self.entries) ==  2 )
+        if BibleOrgSysGlobals.debugFlag: assert( len(self.entries) ==  2 )
         result += ('\n' if result else '') + "  " + _("Number of Hebrew entries = {}").format( len(self.entries['heb']) )
         result += ('\n' if result else '') + "  " + _("Number of Aramaic entries = {}").format( len(self.entries['arc']) )
         return result
@@ -239,11 +239,11 @@ class LexicalIndexFileConverter:
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        if Globals.verbosityLevel > 2: print( _("Loading from {}...").format( XMLFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading from {}...").format( XMLFolder ) )
         self.XMLFolder = XMLFolder
         XMLFilepath = os.path.join( XMLFolder, LexicalIndexFileConverter.indexFilename )
         self.tree = ElementTree().parse( XMLFilepath )
-        if Globals.debugFlag: assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
+        if BibleOrgSysGlobals.debugFlag: assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
 
         self.entries = {}
         if self.tree.tag == LexicalIndexFileConverter.treeTag:
@@ -258,9 +258,9 @@ class LexicalIndexFileConverter:
         """
         Check/validate the given lexical index part.
         """
-        if Globals.debugFlag: assert( part.tag == LexicalIndexFileConverter.HebLexNameSpace+"part" )
-        Globals.checkXMLNoText( part, part.tag, "hjg8" )
-        Globals.checkXMLNoTail( part, part.tag, "jk95" )
+        if BibleOrgSysGlobals.debugFlag: assert( part.tag == LexicalIndexFileConverter.HebLexNameSpace+"part" )
+        BibleOrgSysGlobals.checkXMLNoText( part, part.tag, "hjg8" )
+        BibleOrgSysGlobals.checkXMLNoTail( part, part.tag, "jk95" )
 
         # Process the part's attributes first
         lang = None
@@ -268,7 +268,7 @@ class LexicalIndexFileConverter:
             if attrib==LexicalIndexFileConverter.XMLNameSpace+"lang":
                 lang = value
             else: logging.warning( "Unprocessed '{}' attribute ({}) in index part element".format( attrib, value ) )
-        if Globals.debugFlag: assert( lang in ('heb','arc',) )
+        if BibleOrgSysGlobals.debugFlag: assert( lang in ('heb','arc',) )
         self.entries[lang] = {}
         for entry in part:
             self.validateEntry( entry, lang )
@@ -279,9 +279,9 @@ class LexicalIndexFileConverter:
         """
         Check/validate the given lexical index record.
         """
-        if Globals.debugFlag: assert( entry.tag == LexicalIndexFileConverter.HebLexNameSpace+"entry" )
-        Globals.checkXMLNoText( entry, entry.tag, "hjg8" )
-        Globals.checkXMLNoTail( entry, entry.tag, "hjg8" )
+        if BibleOrgSysGlobals.debugFlag: assert( entry.tag == LexicalIndexFileConverter.HebLexNameSpace+"entry" )
+        BibleOrgSysGlobals.checkXMLNoText( entry, entry.tag, "hjg8" )
+        BibleOrgSysGlobals.checkXMLNoTail( entry, entry.tag, "hjg8" )
 
         ID = xlit = None
         pos = definition = etym = None
@@ -293,40 +293,40 @@ class LexicalIndexFileConverter:
             if attrib=="id":
                 ID = value
             else: logging.warning( "Unprocessed '{}' attribute ({}) in index entry element".format( attrib, value ) )
-        if Globals.debugFlag: assert( ID is not None )
+        if BibleOrgSysGlobals.debugFlag: assert( ID is not None )
 
         # Now process the subelements
         for element in entry:
-            Globals.checkXMLNoTail( element, element.tag, "ksw1" )
-            Globals.checkXMLNoSubelements( element, element.tag, "d52d" )
+            BibleOrgSysGlobals.checkXMLNoTail( element, element.tag, "ksw1" )
+            BibleOrgSysGlobals.checkXMLNoSubelements( element, element.tag, "d52d" )
             if element.tag == LexicalIndexFileConverter.HebLexNameSpace+"w":
                 location = "w of " + ID
-                if Globals.debugFlag: assert( element.text )
+                if BibleOrgSysGlobals.debugFlag: assert( element.text )
                 word = element.text
-                Globals.checkXMLNoTail( element, element.tag, "fca4" )
-                Globals.checkXMLNoSubelements( element, element.tag, "ghb2" )
+                BibleOrgSysGlobals.checkXMLNoTail( element, element.tag, "fca4" )
+                BibleOrgSysGlobals.checkXMLNoSubelements( element, element.tag, "ghb2" )
                 # Process the attributes
                 xlit = None
                 for attrib,value in element.items():
                     if attrib=="xlit": xlit = value
                     else: logging.warning( "svd6 Unprocessed '{}' attribute ({}) in {}".format( attrib, value, location ) )
             elif element.tag == LexicalIndexFileConverter.HebLexNameSpace+"pos":
-                if Globals.debugFlag: assert( element.text )
+                if BibleOrgSysGlobals.debugFlag: assert( element.text )
                 pos = element.text
-                Globals.checkXMLNoTail( element, element.tag, "dcs2" )
-                Globals.checkXMLNoAttributes( element, element.tag, "d4hg" )
-                Globals.checkXMLNoSubelements( element, element.tag, "d4hg" )
+                BibleOrgSysGlobals.checkXMLNoTail( element, element.tag, "dcs2" )
+                BibleOrgSysGlobals.checkXMLNoAttributes( element, element.tag, "d4hg" )
+                BibleOrgSysGlobals.checkXMLNoSubelements( element, element.tag, "d4hg" )
             elif element.tag == LexicalIndexFileConverter.HebLexNameSpace+"def":
-                if Globals.debugFlag: assert( element.text )
+                if BibleOrgSysGlobals.debugFlag: assert( element.text )
                 definition = element.text
-                Globals.checkXMLNoTail( element, element.tag, "dcf2" )
-                Globals.checkXMLNoAttributes( element, element.tag, "d4hg" )
-                Globals.checkXMLNoSubelements( element, element.tag, "d4hg" )
+                BibleOrgSysGlobals.checkXMLNoTail( element, element.tag, "dcf2" )
+                BibleOrgSysGlobals.checkXMLNoAttributes( element, element.tag, "d4hg" )
+                BibleOrgSysGlobals.checkXMLNoSubelements( element, element.tag, "d4hg" )
             elif element.tag == LexicalIndexFileConverter.HebLexNameSpace+"xref":
                 location = "xref of " + ID
-                Globals.checkXMLNoText( element, element.tag, "jd52" )
-                Globals.checkXMLNoTail( element, element.tag, "dvj3" )
-                Globals.checkXMLNoSubelements( element, element.tag, "d4hg" )
+                BibleOrgSysGlobals.checkXMLNoText( element, element.tag, "jd52" )
+                BibleOrgSysGlobals.checkXMLNoTail( element, element.tag, "dvj3" )
+                BibleOrgSysGlobals.checkXMLNoSubelements( element, element.tag, "d4hg" )
                 # Process the attributes
                 for attrib,value in element.items():
                     if attrib=="bdb": bdbXref = value
@@ -338,8 +338,8 @@ class LexicalIndexFileConverter:
                 location = "etym of " + ID
                 #assert( element.text )
                 etym = element.text
-                Globals.checkXMLNoTail( element, element.tag, "caw2" )
-                Globals.checkXMLNoSubelements( element, element.tag, "d4hg" )
+                BibleOrgSysGlobals.checkXMLNoTail( element, element.tag, "caw2" )
+                BibleOrgSysGlobals.checkXMLNoSubelements( element, element.tag, "d4hg" )
                 # Process the attributes
                 for attrib,value in element.items():
                     if attrib=="type": etymType = value
@@ -357,7 +357,7 @@ class LexicalIndexFileConverter:
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
         (Of course, you can just use the elementTree in self.tree if you prefer.)
         """
-        if Globals.debugFlag:
+        if BibleOrgSysGlobals.debugFlag:
             assert( len ( self.tree ) )
             assert( self.entries )
         return self.entries # temp................................XXXXXXXXXXXXXXXXXXXXXXXXXXXXX......................
@@ -407,7 +407,7 @@ class HebrewStrongsFileConverter:
         """
         Constructor: just sets up the file converter object.
         """
-        if Globals.debugFlag and debuggingThisModule:
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( t("HebrewStrongsFileConverter.__init__()") )
         self.title = self.version = self.date = None
         self.tree = self.header = self.entries = None
@@ -435,11 +435,11 @@ class HebrewStrongsFileConverter:
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        if Globals.verbosityLevel > 2: print( _("Loading from {}...").format( XMLFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading from {}...").format( XMLFolder ) )
         self.XMLFolder = XMLFolder
         XMLFilepath = os.path.join( XMLFolder, HebrewStrongsFileConverter.databaseFilename )
         self.tree = ElementTree().parse( XMLFilepath )
-        if Globals.debugFlag: assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
+        if BibleOrgSysGlobals.debugFlag: assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
 
         self.entries = {}
         if self.tree.tag == HebrewStrongsFileConverter.treeTag:
@@ -454,24 +454,24 @@ class HebrewStrongsFileConverter:
         """
         Check/validate the given OSIS div record.
         """
-        if Globals.debugFlag: assert( entry.tag == HebrewStrongsFileConverter.HebLexNameSpace+"entry" )
-        Globals.checkXMLNoText( entry, entry.tag, "na19" )
-        Globals.checkXMLNoTail( entry, entry.tag, "kaq9" )
+        if BibleOrgSysGlobals.debugFlag: assert( entry.tag == HebrewStrongsFileConverter.HebLexNameSpace+"entry" )
+        BibleOrgSysGlobals.checkXMLNoText( entry, entry.tag, "na19" )
+        BibleOrgSysGlobals.checkXMLNoTail( entry, entry.tag, "kaq9" )
 
         # Process the entry attributes first
         entryID = None
         for attrib,value in entry.items():
             if attrib=="id":
                 entryID = value
-                if Globals.verbosityLevel > 2: print( "Validating {} entry...".format( entryID ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Validating {} entry...".format( entryID ) )
             else: logging.warning( "Unprocessed '{}' attribute ({}) in main entry element".format( attrib, value ) )
 
         entryResults = {}
         for element in entry:
             if element.tag == HebrewStrongsFileConverter.HebLexNameSpace+"w":
-                if Globals.debugFlag: assert( element.text )
+                if BibleOrgSysGlobals.debugFlag: assert( element.text )
                 word = element.text
-                Globals.checkXMLNoTail( element, element.tag, "d4hg" )
+                BibleOrgSysGlobals.checkXMLNoTail( element, element.tag, "d4hg" )
                 # Process the attributes
                 pos = pron = xlit = src = lang = None
                 for attrib,value in element.items():
@@ -489,7 +489,7 @@ class HebrewStrongsFileConverter:
                         location = "w of w"
                         self.w = subelement.text
                         tail = subelement.tail
-                        Globals.checkXMLNoSubelements( subelement, location )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( subelement, location )
                         src = None
                         for attrib,value in subelement.items():
                             if attrib=="src": src = value
@@ -498,29 +498,29 @@ class HebrewStrongsFileConverter:
                             else: logging.warning( "Unprocessed '{}' attribute ({}) in {}".format( attrib, value, location ) )
                     else: logging.warning( "Unprocessed '{}' sub-element ({}) in {}".format( subelement.tag, subelement.text, element.tag ) )
             elif element.tag == HebrewStrongsFileConverter.HebLexNameSpace+"source":
-                source = Globals.getFlattenedXML( element, entryID ) \
+                source = BibleOrgSysGlobals.getFlattenedXML( element, entryID ) \
                             .replace( HebrewStrongsFileConverter.HebLexNameSpace, '' )
                 #print( entryID, "source", repr(source) )
-                if Globals.debugFlag and entryID!='H5223': assert( source and '\t' not in source and '\n' not in source )
+                if BibleOrgSysGlobals.debugFlag and entryID!='H5223': assert( source and '\t' not in source and '\n' not in source )
                 entryResults['source'] = source
             elif element.tag == HebrewStrongsFileConverter.HebLexNameSpace+"meaning":
-                meaning = Globals.getFlattenedXML( element, entryID ) \
+                meaning = BibleOrgSysGlobals.getFlattenedXML( element, entryID ) \
                             .replace( HebrewStrongsFileConverter.HebLexNameSpace, '' )
                 #print( entryID, "meaning", repr(meaning) )
-                if Globals.debugFlag: assert( meaning and '\t' not in meaning and '\n' not in meaning )
+                if BibleOrgSysGlobals.debugFlag: assert( meaning and '\t' not in meaning and '\n' not in meaning )
                 entryResults['meaning'] = meaning
             elif element.tag == HebrewStrongsFileConverter.HebLexNameSpace+"usage":
-                usage = Globals.getFlattenedXML( element, entryID ) \
+                usage = BibleOrgSysGlobals.getFlattenedXML( element, entryID ) \
                             .replace( HebrewStrongsFileConverter.HebLexNameSpace, '' )
                 #print( "usage", repr(usage) )
-                if Globals.debugFlag: assert( usage and '\t' not in usage and '\n' not in usage )
+                if BibleOrgSysGlobals.debugFlag: assert( usage and '\t' not in usage and '\n' not in usage )
                 entryResults['usage'] = usage
             elif element.tag == HebrewStrongsFileConverter.HebLexNameSpace+"note":
-                if Globals.debugFlag: assert( element.text )
+                if BibleOrgSysGlobals.debugFlag: assert( element.text )
                 note = element.text
-                Globals.checkXMLNoTail( element, element.tag, "f3g7" )
-                Globals.checkXMLNoSubelements( element, element.tag, "m56g" )
-                Globals.checkXMLNoAttributes( element, element.tag, "md3d" )
+                BibleOrgSysGlobals.checkXMLNoTail( element, element.tag, "f3g7" )
+                BibleOrgSysGlobals.checkXMLNoSubelements( element, element.tag, "m56g" )
+                BibleOrgSysGlobals.checkXMLNoAttributes( element, element.tag, "md3d" )
                 entryResults['note'] = note
             else: logging.error( "2d4f Unprocessed '{}' element ({}) in entry".format( element.tag, element.text ) ); halt
             if element.tail is not None and element.tail.strip(): logging.error( "Unexpected '{}' tail data after {} element in entry".format( element.tail, element.tag ) )
@@ -536,7 +536,7 @@ class HebrewStrongsFileConverter:
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
         (Of course, you can just use the elementTree in self.tree if you prefer.)
         """
-        if Globals.debugFlag:
+        if BibleOrgSysGlobals.debugFlag:
             assert( len ( self.tree ) )
             assert( self.entries )
         return self.entries # temp................................XXXXXXXXXXXXXXXXXXXXXXXXXXXXX......................
@@ -583,7 +583,7 @@ class BrownDriverBriggsFileConverter:
         """
         Constructor: just sets up the file converter object.
         """
-        if Globals.debugFlag and debuggingThisModule:
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( t("BrownDriverBriggsFileConverter.__init__()") )
         self.title = self.version = self.date = None
         self.tree = self.header = self.entries = None
@@ -601,7 +601,7 @@ class BrownDriverBriggsFileConverter:
         if self.title: result += ('\n' if result else '') + "  " + self.title
         if self.version: result += ('\n' if result else '') + "  " + _("Version: {} ").format( self.version )
         if self.date: result += ('\n' if result else '') + "  " + _("Date: {}").format( self.date )
-        if Globals.debugFlag: assert( len(self.entries) ==  2 )
+        if BibleOrgSysGlobals.debugFlag: assert( len(self.entries) ==  2 )
         result += ('\n' if result else '') + "  " + _("Number of Hebrew entries = {}").format( len(self.entries['heb']) )
         result += ('\n' if result else '') + "  " + _("Number of Aramaic entries = {}").format( len(self.entries['arc']) )
         return result
@@ -613,11 +613,11 @@ class BrownDriverBriggsFileConverter:
         Load the source XML file and remove the header from the tree.
         Also, extracts some useful elements from the header element.
         """
-        if Globals.verbosityLevel > 2: print( _("Loading from {}...").format( XMLFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading from {}...").format( XMLFolder ) )
         self.XMLFolder = XMLFolder
         XMLFilepath = os.path.join( XMLFolder, BrownDriverBriggsFileConverter.databaseFilename )
         self.tree = ElementTree().parse( XMLFilepath )
-        if Globals.debugFlag: assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
+        if BibleOrgSysGlobals.debugFlag: assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
 
         self.entries = {}
         if self.tree.tag == BrownDriverBriggsFileConverter.treeTag:
@@ -632,22 +632,22 @@ class BrownDriverBriggsFileConverter:
         """
         Check/validate the given lexical index part.
         """
-        if Globals.debugFlag: assert( part.tag == BrownDriverBriggsFileConverter.HebLexNameSpace+"part" )
-        Globals.checkXMLNoText( part, part.tag, "vgb4" )
-        Globals.checkXMLNoTail( part, part.tag, "scd1" )
+        if BibleOrgSysGlobals.debugFlag: assert( part.tag == BrownDriverBriggsFileConverter.HebLexNameSpace+"part" )
+        BibleOrgSysGlobals.checkXMLNoText( part, part.tag, "vgb4" )
+        BibleOrgSysGlobals.checkXMLNoTail( part, part.tag, "scd1" )
 
         # Process the part's attributes first
         partID = title = lang = None
         for attrib,value in part.items():
             if attrib == "id":
                 partID = value
-                if Globals.verbosityLevel > 2: print( "Validating {} part...".format( repr(partID) ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Validating {} part...".format( repr(partID) ) )
             elif attrib == "title":
                 title = value
             elif attrib == LexicalIndexFileConverter.XMLNameSpace+"lang":
                 lang = value
             else: logging.warning( "scd2 Unprocessed '{}' attribute ({}) in index part element".format( attrib, value ) )
-        if Globals.debugFlag: assert( lang in ('heb','arc',) )
+        if BibleOrgSysGlobals.debugFlag: assert( lang in ('heb','arc',) )
         if lang not in self.entries: self.entries[lang] = {}
 
         for section in part:
@@ -659,23 +659,23 @@ class BrownDriverBriggsFileConverter:
         """
         Check/validate the given lexical index section.
         """
-        if Globals.debugFlag: assert( section.tag == BrownDriverBriggsFileConverter.HebLexNameSpace+"section" )
-        Globals.checkXMLNoText( section, section.tag, "na19" )
-        Globals.checkXMLNoTail( section, section.tag, "kaq9" )
+        if BibleOrgSysGlobals.debugFlag: assert( section.tag == BrownDriverBriggsFileConverter.HebLexNameSpace+"section" )
+        BibleOrgSysGlobals.checkXMLNoText( section, section.tag, "na19" )
+        BibleOrgSysGlobals.checkXMLNoTail( section, section.tag, "kaq9" )
 
         # Process the section's attributes first
         sectionID = None
         for attrib,value in section.items():
             if attrib == "id":
                 sectionID = value
-                if Globals.verbosityLevel > 2: print( "Validating {} section...".format( repr(sectionID) ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Validating {} section...".format( repr(sectionID) ) )
             else: logging.warning( "js19 Unprocessed '{}' attribute ({}) in index section element".format( attrib, value ) )
         for entry in section:
             if entry.tag == BrownDriverBriggsFileConverter.HebLexNameSpace+"page":
                 # We don't care about the book pages (page elements only have a 'p' attribute)
-                Globals.checkXMLNoText( entry, entry.tag, "dv20" )
-                Globals.checkXMLNoTail( entry, entry.tag, "jsq2" )
-                Globals.checkXMLNoSubelements( entry, entry.tag, "kdd0" )
+                BibleOrgSysGlobals.checkXMLNoText( entry, entry.tag, "dv20" )
+                BibleOrgSysGlobals.checkXMLNoTail( entry, entry.tag, "jsq2" )
+                BibleOrgSysGlobals.checkXMLNoSubelements( entry, entry.tag, "kdd0" )
             else: self.validateEntry( entry, partID, sectionID, title, lang )
     # end of BrownDriverBriggsFileConverter.validateSection
 
@@ -684,23 +684,23 @@ class BrownDriverBriggsFileConverter:
         """
         Check/validate the given OSIS div record.
         """
-        if Globals.debugFlag: assert( entry.tag == BrownDriverBriggsFileConverter.HebLexNameSpace+"entry" )
+        if BibleOrgSysGlobals.debugFlag: assert( entry.tag == BrownDriverBriggsFileConverter.HebLexNameSpace+"entry" )
         #Globals.checkXMLNoText( entry, entry.tag, "na19" )
-        Globals.checkXMLNoTail( entry, entry.tag, "kaq9" )
+        BibleOrgSysGlobals.checkXMLNoTail( entry, entry.tag, "kaq9" )
 
         # Process the entry attributes first
         entryID = entryType = entryMod = entryCite = entryForm = None
         for attrib,value in entry.items():
             if attrib == "id":
                 entryID = value
-                if Globals.verbosityLevel > 2: print( "Validating {} entry...".format( repr(entryID) ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Validating {} entry...".format( repr(entryID) ) )
             elif attrib == "type": entryType = value
             elif attrib == "mod": entryMod = value
             elif attrib == "cite": entryCite = value
             elif attrib == "form": entryForm = value
             else: logging.warning( "ngs9 Unprocessed '{}' attribute ({}) in main entry element".format( attrib, value ) )
 
-        flattenedXML = Globals.getFlattenedXML( entry, entryID ) \
+        flattenedXML = BibleOrgSysGlobals.getFlattenedXML( entry, entryID ) \
                             .replace( BrownDriverBriggsFileConverter.HebLexNameSpace, '' ) \
                             .replace( '\t', '' ).replace( '\n', '' )
         if entryID == "m.ba.ab": flattenedXML = flattenedXML.rstrip() # Seems to have a space at the start of the XML line
@@ -712,7 +712,7 @@ class BrownDriverBriggsFileConverter:
             resultXML = flattenedXML[:match.start()] + flattenedXML[match.end():]
             statusP, status = match.group(1), match.group(2)
             #print( "statusP", repr(statusP), "st", repr(status) )
-            if Globals.debugFlag: assert( status in ('new','made','base','ref','added','done',) )
+            if BibleOrgSysGlobals.debugFlag: assert( status in ('new','made','base','ref','added','done',) )
         else:
             logging.warning( "Missing status in {} BDB entry: {}".format( entryID, repr(flattenedXML) ) )
             resultXML = flattenedXML
@@ -728,7 +728,7 @@ class BrownDriverBriggsFileConverter:
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
         (Of course, you can just use the elementTree in self.tree if you prefer.)
         """
-        if Globals.debugFlag:
+        if BibleOrgSysGlobals.debugFlag:
             assert( len ( self.tree ) )
             assert( self.entries )
         return self.entries # temp................................XXXXXXXXXXXXXXXXXXXXXXXXXXXXX......................
@@ -749,16 +749,16 @@ class HebrewLexiconIndex:
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.
         """
-        if Globals.debugFlag and debuggingThisModule:
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( t("HebrewLexiconIndex.__init__( {} )").format( XMLFolder ) )
         hASIndex = AugmentedStrongsIndexFileConverter() # Create the empty object
         hASIndex.loadAndValidate( XMLFolder ) # Load the XML
         self.IndexEntries1, self.IndexEntries2 = hASIndex.importDataToPython()
-        if Globals.debugFlag: assert( len(self.IndexEntries1) == len(self.IndexEntries2) )
+        if BibleOrgSysGlobals.debugFlag: assert( len(self.IndexEntries1) == len(self.IndexEntries2) )
         hLexIndex = LexicalIndexFileConverter() # Create the empty object
         hLexIndex.loadAndValidate( XMLFolder ) # Load the XML
         self.IndexEntries = hLexIndex.importDataToPython()
-        if Globals.debugFlag: assert( len(self.IndexEntries) == 2 )
+        if BibleOrgSysGlobals.debugFlag: assert( len(self.IndexEntries) == 2 )
     # end of HebrewLexiconIndex.__init__
 
 
@@ -821,7 +821,7 @@ class HebrewLexiconIndex:
         Returns a Hebrew Strong's number (but only the digits -- no preceding H)
         """
         keyDigits = key[1:]
-        if Globals.debugFlag:
+        if BibleOrgSysGlobals.debugFlag:
             result1 = self._getStrongsNumberFromLexiconCode1( key )
             result2 = self._getStrongsNumberFromLexiconCode2( key )
             assert( result1 == result2 )
@@ -884,7 +884,7 @@ class HebrewLexiconSimple:
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.
         """
-        if Globals.debugFlag and debuggingThisModule:
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( t("HebrewLexiconSimple.__init__( {} )").format( XMLFolder ) )
         hStr = HebrewStrongsFileConverter() # Create the empty object
         hStr.loadAndValidate( XMLFolder ) # Load the XML
@@ -922,7 +922,7 @@ class HebrewLexiconSimple:
 
         Returns None if the key is not found.
         """
-        if Globals.debugFlag: assert( key and key[0]=='H' and key[1:].isdigit() )
+        if BibleOrgSysGlobals.debugFlag: assert( key and key[0]=='H' and key[1:].isdigit() )
         keyDigits = key[1:]
         if keyDigits in self.StrongsEntries: return self.StrongsEntries[keyDigits]
     # end of HebrewLexiconSimple.getStrongsEntryData
@@ -936,7 +936,7 @@ class HebrewLexiconSimple:
         Returns a string for the given key and fieldName names.
         Returns None if the key or fieldName is not found.
         """
-        if Globals.debugFlag: assert( key and key[0]=='H' and key[1:].isdigit() )
+        if BibleOrgSysGlobals.debugFlag: assert( key and key[0]=='H' and key[1:].isdigit() )
         keyDigits = key[1:]
         if keyDigits in self.StrongsEntries:
             #for f,d in self.StrongsEntries[keyDigits]:
@@ -963,7 +963,7 @@ class HebrewLexiconSimple:
                 the same Hebrew form from <a href="#ot:1961"><i title="{haw-yaw}" xml:lang="hbo">הָיָה</i></a>).</li>
 
         """
-        if Globals.debugFlag: assert( key and key[0]=='H' and key[1:].isdigit() )
+        if BibleOrgSysGlobals.debugFlag: assert( key and key[0]=='H' and key[1:].isdigit() )
         keyDigits = key[1:]
         #if key == 'H1':
             #print( "Should be:" )
@@ -986,13 +986,13 @@ class HebrewLexiconSimple:
     def getBDBEntryData( self, key ):
         """
         The key is a BDB number (string) like 'a.ca.ab'.
-            
+
         Returns an entry for the given key.
             This is a dictionary containing fields, e.g.,
 
         Returns None if the key is not found.
         """
-        if Globals.debugFlag: assert( key and key.count('.')==2 )
+        if BibleOrgSysGlobals.debugFlag: assert( key and key.count('.')==2 )
         if key in self.BrownDriverBriggsEntries['heb']: return self.BrownDriverBriggsEntries['heb'][key]
         if key in self.BrownDriverBriggsEntries['arc']: return self.BrownDriverBriggsEntries['arc'][key]
     # end of HebrewLexiconSimple.getBDBEntryData
@@ -1006,7 +1006,7 @@ class HebrewLexiconSimple:
         Returns a string for the given key and fieldName names.
         Returns None if the key or fieldName is not found.
         """
-        if Globals.debugFlag: assert( key and key.count('.')==2 )
+        if BibleOrgSysGlobals.debugFlag: assert( key and key.count('.')==2 )
         entry =  self.getBDBEntryData( key )
         if entry:
             if fieldName == 'status': return entry[2]
@@ -1020,7 +1020,7 @@ class HebrewLexiconSimple:
         Returns an HTML entry for the given key.
         Returns None if the key is not found.
         """
-        if Globals.debugFlag: assert( key and key.count('.')==2 )
+        if BibleOrgSysGlobals.debugFlag: assert( key and key.count('.')==2 )
         entry =  self.getBDBEntryData( key )
         if entry:
             mainEntry = entry[0] \
@@ -1049,7 +1049,7 @@ class HebrewLexicon( HebrewLexiconSimple ):
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.
         """
-        if Globals.debugFlag and debuggingThisModule:
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( t("HebrewLexicon.__init__( {} )").format( XMLFolder ) )
         HebrewLexiconSimple.__init__( self, XMLFolder )
         self.hix = HebrewLexiconIndex( XMLFolder ) # Load and process the XML
@@ -1087,7 +1087,7 @@ class HebrewLexicon( HebrewLexiconSimple ):
 
         Returns None if the key is not found.
         """
-        if Globals.debugFlag: assert( key and key[0]=='H' and key[1:].isdigit() )
+        if BibleOrgSysGlobals.debugFlag: assert( key and key[0]=='H' and key[1:].isdigit() )
         keyDigits = key[1:]
         if keyDigits in self.StrongsEntries: return self.StrongsEntries[keyDigits]
     # end of HebrewLexicon.getStrongsEntryData
@@ -1101,7 +1101,7 @@ class HebrewLexicon( HebrewLexiconSimple ):
         Returns a string for the given key and fieldName names.
         Returns None if the key or fieldName is not found.
         """
-        if Globals.debugFlag: assert( key and key[0]=='H' and key[1:].isdigit() )
+        if BibleOrgSysGlobals.debugFlag: assert( key and key[0]=='H' and key[1:].isdigit() )
         keyDigits = key[1:]
         if keyDigits in self.StrongsEntries:
             #for f,d in self.StrongsEntries[keyDigits]:
@@ -1128,7 +1128,7 @@ class HebrewLexicon( HebrewLexiconSimple ):
                 the same Hebrew form from <a href="#ot:1961"><i title="{haw-yaw}" xml:lang="hbo">הָיָה</i></a>).</li>
 
         """
-        if Globals.debugFlag: assert( key and key[0]=='H' and key[1:].isdigit() )
+        if BibleOrgSysGlobals.debugFlag: assert( key and key[0]=='H' and key[1:].isdigit() )
         keyDigits = key[1:]
         #if key == 'H1':
             #print( "Should be:" )
@@ -1152,7 +1152,7 @@ class HebrewLexicon( HebrewLexiconSimple ):
         """
         The key is a BDB number (string) like 'a.ca.ab'.
             but can also be a Strong's number (with or without the leading H)
-            
+
         Returns an entry for the given key.
             This is a dictionary containing fields, e.g.,
 
@@ -1199,13 +1199,13 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
     testFolder = "../HebrewLexicon/" # Hebrew lexicon folder
 
 
     if 1: # demonstrate the Hebrew Lexicon converter classes
-        if Globals.verbosityLevel > 1: print( "\nDemonstrating the converter classes..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDemonstrating the converter classes..." )
 
         print()
         hix = AugmentedStrongsIndexFileConverter()
@@ -1227,7 +1227,7 @@ def demo():
         bdb.loadAndValidate( testFolder ) # Load the XML
         print( bdb ) # Just print a summary
 
-        if Globals.commandLineOptions.export:
+        if BibleOrgSysGlobals.commandLineOptions.export:
             print( "Exports aren't written yet!" )
             #hlc.exportDataToPython() # Produce the .py tables
             #hlc.exportDataToC() # Produce the .h tables
@@ -1235,7 +1235,7 @@ def demo():
 
 
     if 1: # demonstrate the Hebrew Lexicon Index class
-        if Globals.verbosityLevel > 1: print( "\nDemonstrating the Hebrew Lexicon Index class..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDemonstrating the Hebrew Lexicon Index class..." )
         hix = HebrewLexiconIndex( testFolder ) # Load and process the XML
         print( hix ) # Just print a summary
         print()
@@ -1249,7 +1249,7 @@ def demo():
 
 
     if 1: # demonstrate the simple Hebrew Lexicon class
-        if Globals.verbosityLevel > 1: print( "\nDemonstrating the simple Hebrew Lexicon class..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDemonstrating the simple Hebrew Lexicon class..." )
         hl = HebrewLexiconSimple( testFolder ) # Load and process the XML
         print( hl ) # Just print a summary
         print()
@@ -1265,7 +1265,7 @@ def demo():
             print( " HTML:", hl.getBDBEntryHTML( BDBKey ) )
 
     if 1: # demonstrate the Hebrew Lexicon class
-        if Globals.verbosityLevel > 1: print( "\nDemonstrating the Hebrew Lexicon class..." )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDemonstrating the Hebrew Lexicon class..." )
         hl = HebrewLexicon( testFolder ) # Load and process the XML
         print( hl ) # Just print a summary
         print()
@@ -1286,10 +1286,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser, exportAvailable=True )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of HebrewLexicon.py

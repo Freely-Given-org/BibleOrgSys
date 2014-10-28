@@ -38,7 +38,7 @@ from datetime import datetime
 from xml.etree.ElementTree import ElementTree
 
 from singleton import singleton
-import Globals
+import BibleOrgSysGlobals
 from ISO_639_3_Languages import ISO_639_3_Languages
 from BibleBookOrders import BibleBookOrderSystems, BibleBookOrderSystem
 from BiblePunctuationSystems import BiblePunctuationSystems, BiblePunctuationSystem
@@ -121,7 +121,7 @@ class BibleOrganizationalSystemsConverter:
                 XMLFilepath = os.path.join( os.path.dirname(__file__), "DataFiles", self._filenameBase + ".xml" ) # Relative to module, not cwd
 
             self._load( XMLFilepath )
-            if Globals.strictCheckingFlag:
+            if BibleOrgSysGlobals.strictCheckingFlag:
                 self._validate()
         return self
     # end of BibleOrganizationalSystemsConverter.loadAndValidate
@@ -135,7 +135,7 @@ class BibleOrganizationalSystemsConverter:
         self.__XMLFilepath = XMLFilepath
         assert( self._XMLtree is None or len(self._XMLtree)==0 ) # Make sure we're not doing this twice
 
-        if Globals.verbosityLevel > 2: print( _("Loading BibleOrganisationalSystems XML file from '{}'...").format( self.__XMLFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading BibleOrganisationalSystems XML file from '{}'...").format( self.__XMLFilepath ) )
         self._XMLtree = ElementTree().parse( self.__XMLFilepath )
         assert( self._XMLtree ) # Fail here if we didn't load anything at all
 
@@ -236,7 +236,7 @@ class BibleOrganizationalSystemsConverter:
                 if element.find("includesBooks") is not None:
                     bookList = element.find("includesBooks").text.split()
                     for BBB in bookList:
-                        if not Globals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ):
+                        if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ):
                             logging.critical( _("Unrecognized '{}' Bible book code found in 'includesBooks' in record with ID '{}' (record {})").format( BBB, ID, j) )
                         if bookList.count( BBB ) > 1:
                             logging.error( _("Multiple '{}' Bible book codes found in 'includesBooks' in record with ID '{}' (record {})").format( BBB, ID, j) )
@@ -281,7 +281,7 @@ class BibleOrganizationalSystemsConverter:
                         if name=="includesBooks": # special handling
                             bits["includesBooks"] = nameData.text.split()
                             for BBB in bits["includesBooks"]:
-                                if not Globals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ):
+                                if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ):
                                     logging.error( _("Unrecognized '{}' Bible book code found in 'includesBooks' in {} {}").format( BBB, referenceAbbreviation, myType) )
                         else: bits[name] = nameData.text # normal handling
 
@@ -299,7 +299,7 @@ class BibleOrganizationalSystemsConverter:
         assert( len(indexDict) <= len(dataDict) )
         assert( len(combinedIndexDict) >= len(indexDict) )
 
-        if Globals.strictCheckingFlag: # We'll do quite a bit more cross-checking now
+        if BibleOrgSysGlobals.strictCheckingFlag: # We'll do quite a bit more cross-checking now
             for extendedReferenceAbbreviation,data in dataDict.items():
                 #print( extendedReferenceAbbreviation, data )
                 systemType = data['type']
@@ -318,7 +318,7 @@ class BibleOrganizationalSystemsConverter:
                                         found += 1
                                 assert( found > 0 )
                                 if found==1: # ah, it's not actually ambiguous
-                                    if Globals.verbosityLevel > 2: print( _("Adjusted text used for {} from the ambiguous '{}' to the extended name '{}'").format( extendedReferenceAbbreviation, textAbbrev, foundOne ) )
+                                    if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Adjusted text used for {} from the ambiguous '{}' to the extended name '{}'").format( extendedReferenceAbbreviation, textAbbrev, foundOne ) )
                                     data['usesText'].remove( textAbbrev)
                                     data['usesText'].append( foundOne )
                                 else: logging.warning( _("{} specifies ambiguous '{}' (could be {}) texts in 'usesText' field").format(extendedReferenceAbbreviation,textAbbrev,indexDict[textAbbrev]) )
@@ -338,11 +338,11 @@ class BibleOrganizationalSystemsConverter:
                     if 'derivedFrom' in data: logging.error( _("{} shouldn't use 'derivedFrom' '{}'").format( extendedReferenceAbbreviation, data['derivedFrom'] ) )
                 if 'versificationSystem' in data and data['versificationSystem'] not in ('None', 'Unknown'):
                     if not self._BibleVersificationSystems.isValidVersificationSystemName( data['versificationSystem'] ):
-                        extra = "\n  Available systems are {}".format( self._BibleVersificationSystems.getAvailableVersificationSystemNames()) if Globals.verbosityLevel > 2 else ''
+                        extra = "\n  Available systems are {}".format( self._BibleVersificationSystems.getAvailableVersificationSystemNames()) if BibleOrgSysGlobals.verbosityLevel > 2 else ''
                         logging.error( _("Unknown '{}' versification system name in {}{}").format(data['versificationSystem'],extendedReferenceAbbreviation,extra) )
                 if 'punctuationSystem' in data and data['punctuationSystem'] not in ('None', 'Unknown'):
                     if not self._BiblePunctuationSystems.isValidPunctuationSystemName( data['punctuationSystem'] ):
-                        extra = "\n  Available systems are {}".format( self._BiblePunctuationSystems.getAvailablePunctuationSystemNames()) if Globals.verbosityLevel > 2 else ''
+                        extra = "\n  Available systems are {}".format( self._BiblePunctuationSystems.getAvailablePunctuationSystemNames()) if BibleOrgSysGlobals.verbosityLevel > 2 else ''
                         logging.error( _("Unknown '{}' punctuation system name in {}{}").format(data['punctuationSystem'],extendedReferenceAbbreviation,extra) )
 
         self.__dataDicts = dataDict, indexDict, combinedIndexDict
@@ -363,7 +363,7 @@ class BibleOrganizationalSystemsConverter:
             folder = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles/" )
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + "_Tables.pickle" )
-        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.__dataDicts, myFile )
     # end of pickle
@@ -386,7 +386,7 @@ class BibleOrganizationalSystemsConverter:
         assert( self.__dataDicts )
 
         if not filepath: filepath = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles", self._filenameBase + "_Tables.py" )
-        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
 
         dataDict, indexDict, combinedIndexDict = self.importDataToPython()
         with open( filepath, 'wt' ) as myFile:
@@ -415,7 +415,7 @@ class BibleOrganizationalSystemsConverter:
         assert( self.__dataDicts )
 
         if not filepath: filepath = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles", self._filenameBase + "_Tables.json" )
-        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
         with open( filepath, 'wt' ) as myFile:
             #myFile.write( "# {}\n#\n".format( filepath ) ) # Not sure yet if these comment fields are allowed in JSON
             #myFile.write( "# This UTF-8 file was automatically generated by BibleBooksCodes.py V{} on {}\n#\n".format( ProgVersion, datetime.now() ) )
@@ -462,7 +462,7 @@ class BibleOrganizationalSystemsConverter:
         assert( self.__dataDicts )
 
         if not filepath: filepath = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles", self._filenameBase + "_Tables.h" )
-        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
 
         IDDict, RADict, SBLDict, OADict, PADict, PNDict = self.importDataToPython()
         ifdefName = self._filenameBase.upper() + "_Tables_h"
@@ -490,9 +490,9 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
 
-    if Globals.commandLineOptions.export:
+    if BibleOrgSysGlobals.commandLineOptions.export:
         bosc = BibleOrganizationalSystemsConverter().loadAndValidate()
         bosc.pickle() # Produce a pickle output file
         bosc.exportDataToPython() # Produce the .py tables
@@ -507,10 +507,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser, exportAvailable=True )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of BibleOrganizationalSystemsConverter.py

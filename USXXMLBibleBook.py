@@ -38,11 +38,11 @@ import logging, os
 from gettext import gettext as _
 from xml.etree.ElementTree import ElementTree
 
-import Globals
+import BibleOrgSysGlobals
 from Bible import BibleBook
 
 
-sortedNLMarkers = sorted( Globals.USFMMarkers.getNewlineMarkersList('Combined'), key=len, reverse=True )
+sortedNLMarkers = sorted( BibleOrgSysGlobals.USFMMarkers.getNewlineMarkersList('Combined'), key=len, reverse=True )
 
 
 
@@ -88,8 +88,8 @@ class USXXMLBibleBook( BibleBook ):
                 location = element.tag + ' ' + paragraphlocation
                 #print( "USXXMLBibleBook.load", c, v, element.tag, location )
                 if element.tag == 'verse': # milestone (not a container)
-                    Globals.checkXMLNoText( element, location )
-                    Globals.checkXMLNoSubelements( element, location )
+                    BibleOrgSysGlobals.checkXMLNoText( element, location )
+                    BibleOrgSysGlobals.checkXMLNoSubelements( element, location )
                     # Process the attributes first
                     verseStyle = None
                     for attrib,value in element.items():
@@ -109,14 +109,14 @@ class USXXMLBibleBook( BibleBook ):
                             #print( repr(vText) )
                             self.appendToLastLine( vText )
                 elif element.tag == 'char':
-                    Globals.checkXMLNoSubelements( element, location )
+                    BibleOrgSysGlobals.checkXMLNoSubelements( element, location )
                     # Process the attributes first
                     charStyle = None
                     for attrib,value in element.items():
                         if attrib=='style':
                             charStyle = value # This is basically the USFM character marker name
                             #print( "  charStyle", charStyle )
-                            assert( not Globals.USFMMarkers.isNewlineMarker( charStyle ) )
+                            assert( not BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( charStyle ) )
                         else:
                             logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
                     # A character field must be added to the previous field
@@ -125,7 +125,7 @@ class USXXMLBibleBook( BibleBook ):
                     print( "USX.loadParagraph:", c, v, paragraphStyle, charStyle, repr(additionalText) )
                     self.appendToLastLine( additionalText )
                 elif element.tag == 'note':
-                    Globals.checkXMLNoText( element, location )
+                    BibleOrgSysGlobals.checkXMLNoText( element, location )
                     # Process the attributes first
                     noteStyle = noteCaller = None
                     for attrib,value in element.items():
@@ -143,8 +143,8 @@ class USXXMLBibleBook( BibleBook ):
                         sublocation = subelement.tag + ' ' + location
                         #print( c, v, element.tag )
                         if subelement.tag == 'char': # milestone (not a container)
-                            Globals.checkXMLNoTail( subelement, sublocation )
-                            Globals.checkXMLNoSubelements( subelement, sublocation )
+                            BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation )
+                            BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
                             # Process the attributes first
                             charStyle, charClosed = None, True
                             for attrib,value in subelement.items():
@@ -168,19 +168,19 @@ class USXXMLBibleBook( BibleBook ):
                         noteLine += noteText
                     self.appendToLastLine( noteLine )
                 elif element.tag == 'unmatched': # Used to denote errors in the source text
-                    Globals.checkXMLNoText( element, location )
-                    Globals.checkXMLNoTail( element, location )
-                    Globals.checkXMLNoAttributes( element, location )
-                    Globals.checkXMLNoSubelements( element, location )
+                    BibleOrgSysGlobals.checkXMLNoText( element, location )
+                    BibleOrgSysGlobals.checkXMLNoTail( element, location )
+                    BibleOrgSysGlobals.checkXMLNoAttributes( element, location )
+                    BibleOrgSysGlobals.checkXMLNoSubelements( element, location )
                 else:
                     logging.warning( _("Unprocessed {} element after {} {}:{} in {}").format( element.tag, self.BBB, c, v, location ) )
                     self.addPriorityError( 1, c, v, _("Unprocessed {} element").format( element.tag ) )
                     for x in range(max(0,len(self)-10),len(self)): print( x, self._rawLines[x] )
-                    if Globals.debugFlag: halt
+                    if BibleOrgSysGlobals.debugFlag: halt
         # end of loadParagraph
 
-        if Globals.verbosityLevel > 2: print( "  " + _("Loading {}...").format( filename ) )
-        self.isOneChapterBook = self.BBB in Globals.BibleBooksCodes.getSingleChapterBooksList()
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Loading {}...").format( filename ) )
+        self.isOneChapterBook = self.BBB in BibleOrgSysGlobals.BibleBooksCodes.getSingleChapterBooksList()
         self.sourceFilename = filename
         self.sourceFolder = folder
         self.sourceFilepath = os.path.join( folder, filename ) if folder else filename
@@ -193,8 +193,8 @@ class USXXMLBibleBook( BibleBook ):
         # Find the main container
         if self.tree.tag=='usx' or self.tree.tag=='usfm': # Not sure why both are allowable
             location = "USX ({}) file".format( self.tree.tag )
-            Globals.checkXMLNoText( self.tree, location )
-            Globals.checkXMLNoTail( self.tree, location )
+            BibleOrgSysGlobals.checkXMLNoText( self.tree, location )
+            BibleOrgSysGlobals.checkXMLNoTail( self.tree, location )
 
             # Process the attributes first
             self.schemaLocation = ''
@@ -209,8 +209,8 @@ class USXXMLBibleBook( BibleBook ):
             for element in self.tree:
                 sublocation = element.tag + " " + location
                 if element.tag == 'book': # milestone (not a container)
-                    Globals.checkXMLNoSubelements( element, sublocation )
-                    Globals.checkXMLNoTail( element, sublocation )
+                    BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation )
+                    BibleOrgSysGlobals.checkXMLNoTail( element, sublocation )
                     # Process the attributes
                     idField = bookStyle = None
                     for attrib,value in element.items():
@@ -229,9 +229,9 @@ class USXXMLBibleBook( BibleBook ):
                     self.appendLine( 'id', idLine )
                 elif element.tag == 'chapter': # milestone (not a container)
                     v = '0'
-                    Globals.checkXMLNoText( element, sublocation )
-                    Globals.checkXMLNoTail( element, sublocation )
-                    Globals.checkXMLNoSubelements( element, sublocation )
+                    BibleOrgSysGlobals.checkXMLNoText( element, sublocation )
+                    BibleOrgSysGlobals.checkXMLNoTail( element, sublocation )
+                    BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation )
                     # Process the attributes
                     chapterStyle = None
                     for attrib,value in element.items():
@@ -245,16 +245,16 @@ class USXXMLBibleBook( BibleBook ):
                         logging.warning( _("Unexpected style attribute ({}) in {}").format( chapterStyle, sublocation ) )
                     self.appendLine( 'c', c )
                 elif element.tag == 'para':
-                    Globals.checkXMLNoTail( element, sublocation )
+                    BibleOrgSysGlobals.checkXMLNoTail( element, sublocation )
                     USFMMarker = element.attrib['style'] # Get the USFM code for the paragraph style
-                    if Globals.USFMMarkers.isNewlineMarker( USFMMarker ):
+                    if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( USFMMarker ):
                         #if lastMarker: self.appendLine( lastMarker, lastText )
                         #lastMarker, lastText = USFMMarker, text
                         loadParagraph( element, sublocation )
-                    elif Globals.USFMMarkers.isInternalMarker( USFMMarker ): # the line begins with an internal USFM Marker -- append it to the previous line
+                    elif BibleOrgSysGlobals.USFMMarkers.isInternalMarker( USFMMarker ): # the line begins with an internal USFM Marker -- append it to the previous line
                         text = element.text
                         if text is None: text = ''
-                        if Globals.debugFlag:
+                        if BibleOrgSysGlobals.debugFlag:
                             print( _("{} {}:{} Found '\\{}' internal USFM marker at beginning of line with text: {}").format( self.BBB, c, v, USFMMarker, text ) )
                             #halt # Not checked yet
                         if text:
@@ -298,7 +298,7 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
     def getShortVersion( someString ):
         maxLen = 140
@@ -310,8 +310,8 @@ def demo():
     name, testFolder = "Matigsalug", "../../../../../Data/Work/VirtualBox_Shared_Folder/PT7.4 Exports/USX Exports/MBTV/" # You can put your USX test folder here
     name2, testFolder2 = "Matigsalug", "../../../../../Data/Work/Matigsalug/Bible/MBTV/" # You can put your USFM test folder here (for comparing the USX with)
     if os.access( testFolder, os.R_OK ):
-        if Globals.verbosityLevel > 1: print( _("Scanning {} from {}...").format( name, testFolder ) )
-        if Globals.verbosityLevel > 1: print( _("Scanning {} from {}...").format( name, testFolder2 ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Scanning {} from {}...").format( name, testFolder ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Scanning {} from {}...").format( name, testFolder2 ) )
         fileList = USXFilenames.USXFilenames( testFolder ).getConfirmedFilenames()
         for BBB,filename in fileList:
             if BBB in (
@@ -322,21 +322,21 @@ def demo():
                     'ROM','CO1','CO2','GAL','EPH','PHP','COL','TH1','TH2','TI1','TI2','TIT','PHM',
                     'HEB','JAM','PE1','PE2','JN1','JN2','JN3','JDE','REV'
                     ):
-                if Globals.verbosityLevel > 1: print( _("Loading {} from {}...").format( BBB, filename ) )
+                if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Loading {} from {}...").format( BBB, filename ) )
                 UxBB = USXXMLBibleBook( name, BBB )
                 UxBB.load( filename, testFolder )
-                if Globals.verbosityLevel > 2: print( "  ID is '{}'".format( UxBB.getField( 'id' ) ) )
-                if Globals.verbosityLevel > 2: print( "  Header is '{}'".format( UxBB.getField( 'h' ) ) )
-                if Globals.verbosityLevel > 2: print( "  Main titles are '{}' and '{}'".format( UxBB.getField( 'mt1' ), UxBB.getField( 'mt2' ) ) )
-                if Globals.verbosityLevel > 2: print( UxBB )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "  ID is '{}'".format( UxBB.getField( 'id' ) ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Header is '{}'".format( UxBB.getField( 'h' ) ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Main titles are '{}' and '{}'".format( UxBB.getField( 'mt1' ), UxBB.getField( 'mt2' ) ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( UxBB )
                 UxBB.validateMarkers()
                 UxBBVersification = UxBB.getVersification ()
-                if Globals.verbosityLevel > 2: print( UxBBVersification )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( UxBBVersification )
                 UxBBAddedUnits = UxBB.getAddedUnits ()
-                if Globals.verbosityLevel > 2: print( UxBBAddedUnits )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( UxBBAddedUnits )
                 UxBB.check()
                 UxBBErrors = UxBB.getErrors()
-                if Globals.verbosityLevel > 2: print( UxBBErrors )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( UxBBErrors )
 
                 # Test our USX code by comparing with the original USFM books
                 if os.access( testFolder2, os.R_OK ):
@@ -346,13 +346,13 @@ def demo():
                         if BBB2 == BBB:
                             found2 = True; break
                     if found2:
-                        if Globals.verbosityLevel > 2: print( _("Loading {} from {}...").format( BBB2, filename2 ) )
+                        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {} from {}...").format( BBB2, filename2 ) )
                         UBB = USFMBibleBook.USFMBibleBook( name, BBB )
                         UBB.load( filename2, testFolder2 )
                         #print( "  ID is '{}'".format( UBB.getField( 'id' ) ) )
                         #print( "  Header is '{}'".format( UBB.getField( 'h' ) ) )
                         #print( "  Main titles are '{}' and '{}'".format( UBB.getField( 'mt1' ), UBB.getField( 'mt2' ) ) )
-                        if Globals.verbosityLevel > 2: print( UBB )
+                        if BibleOrgSysGlobals.verbosityLevel > 2: print( UBB )
                         UBB.validateMarkers()
 
                         # Now compare the USX and USFM projects
@@ -390,19 +390,19 @@ def demo():
                                 mismatchCount += 1
                                 break
                             if mismatchCount > 5: print( "..." ); break
-                        if mismatchCount == 0 and Globals.verbosityLevel > 2: print( "All {} processedLines matched!".format( UxL ) )
+                        if mismatchCount == 0 and BibleOrgSysGlobals.verbosityLevel > 2: print( "All {} processedLines matched!".format( UxL ) )
                     else: print( "Sorry, USFM test folder doesn't contain the {} book.".format( BBB ) )
                 else: print( "Sorry, USFM test folder '{}' doesn't exist on this computer.".format( testFolder2 ) )
-            elif Globals.verbosityLevel > 2: print( "*** Skipped USX/USFM compare on {}", BBB )
+            elif BibleOrgSysGlobals.verbosityLevel > 2: print( "*** Skipped USX/USFM compare on {}", BBB )
     else: print( "Sorry, USX test folder '{}' doesn't exist on this computer.".format( testFolder ) )
 # end of demo
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of USXXMLBibleBook.py

@@ -39,7 +39,7 @@ from xml.etree.ElementTree import ElementTree
 
 from singleton import singleton
 
-import Globals
+import BibleOrgSysGlobals
 
 
 @singleton # Can only ever have one instance
@@ -81,12 +81,12 @@ class BibleBooksNamesConverter:
         if not self.__XMLSystems: # Only ever do this once
             if folder==None: folder = os.path.join( os.path.dirname(__file__), "DataFiles", "BookNames" ) # Relative to module, not cwd
             self.__XMLFolder = folder
-            if Globals.verbosityLevel > 2: print( _("Loading book names systems from {}...").format( folder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading book names systems from {}...").format( folder ) )
             for filename in os.listdir( folder ):
                 filepart, extension = os.path.splitext( filename )
                 if extension.upper() == '.XML' and filepart.upper().startswith(self.__filenameBase.upper()+"_"):
                     booksNamesSystemCode = filepart[len(self.__filenameBase)+1:]
-                    if Globals.verbosityLevel > 3: print( _("Loading {} books names system from {}...").format( booksNamesSystemCode, filename ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Loading {} books names system from {}...").format( booksNamesSystemCode, filename ) )
                     self.__XMLSystems[booksNamesSystemCode] = {}
                     self.__XMLSystems[booksNamesSystemCode]["languageCode"] = booksNamesSystemCode.split('_',1)[0]
                     self.__XMLSystems[booksNamesSystemCode]["tree"] = ElementTree().parse( os.path.join( folder, filename ) )
@@ -98,18 +98,18 @@ class BibleBooksNamesConverter:
                         if header.tag == self.headerTag:
                             self.__XMLSystems[booksNamesSystemCode]["header"] = header
                             self.__XMLSystems[booksNamesSystemCode]["tree"].remove( header )
-                            Globals.checkXMLNoText( header, "header" )
-                            Globals.checkXMLNoTail( header, "header" )
-                            Globals.checkXMLNoAttributes( header, "header" )
+                            BibleOrgSysGlobals.checkXMLNoText( header, "header" )
+                            BibleOrgSysGlobals.checkXMLNoTail( header, "header" )
+                            BibleOrgSysGlobals.checkXMLNoAttributes( header, "header" )
                             if len(header)>1:
                                 logging.info( _("Unexpected elements in header") )
                             elif len(header)==0:
                                 logging.info( _("Missing work element in header") )
                             else:
                                 work = header[0]
-                                Globals.checkXMLNoText( work, "work in header" )
-                                Globals.checkXMLNoTail( work, "work in header" )
-                                Globals.checkXMLNoAttributes( work, "work in header" )
+                                BibleOrgSysGlobals.checkXMLNoText( work, "work in header" )
+                                BibleOrgSysGlobals.checkXMLNoTail( work, "work in header" )
+                                BibleOrgSysGlobals.checkXMLNoAttributes( work, "work in header" )
                                 if work.tag == "work":
                                     self.__XMLSystems[booksNamesSystemCode]["version"] = work.find("version").text
                                     self.__XMLSystems[booksNamesSystemCode]["date"] = work.find("date").text
@@ -125,7 +125,7 @@ class BibleBooksNamesConverter:
                         bookCount += 1
                     logging.info( _("    Loaded {} books").format( bookCount ) )
 
-                    if Globals.strictCheckingFlag:
+                    if BibleOrgSysGlobals.strictCheckingFlag:
                         self.__validateSystem( booksNamesSystemCode )
         return self
     # end of loadSystems
@@ -150,10 +150,10 @@ class BibleBooksNamesConverter:
         expectedID = 1
         for k,element in enumerate(self.__XMLSystems[systemName]["tree"]):
             if element.tag in self.mainElementTags:
-                Globals.checkXMLNoText( element, element.tag )
-                Globals.checkXMLNoTail( element, element.tag )
-                if not self.compulsoryAttributes and not self.optionalAttributes: Globals.checkXMLNoAttributes( element, element.tag )
-                if not self.compulsoryElements and not self.optionalElements: Globals.checkXMLNoSubelements( element, element.tag )
+                BibleOrgSysGlobals.checkXMLNoText( element, element.tag )
+                BibleOrgSysGlobals.checkXMLNoTail( element, element.tag )
+                if not self.compulsoryAttributes and not self.optionalAttributes: BibleOrgSysGlobals.checkXMLNoAttributes( element, element.tag )
+                if not self.compulsoryElements and not self.optionalElements: BibleOrgSysGlobals.checkXMLNoSubelements( element, element.tag )
 
                 index = self.mainElementTags.index( element.tag )
 
@@ -225,7 +225,7 @@ class BibleBooksNamesConverter:
         """
         result = "BibleBooksNamesConverter object"
         result += ('\n' if result else '') + "  Number of bookname systems loaded = {}".format( len(self.__XMLSystems) )
-        if Globals.verbosityLevel > 2: # Make it verbose
+        if BibleOrgSysGlobals.verbosityLevel > 2: # Make it verbose
             for x in self.__XMLSystems:
                 result += ('\n' if result else '') + "  {}".format( x )
                 if self.__ISOLanguages and self.__XMLSystems[x]["languageCode"] and self.__ISOLanguages.isValidLanguageCode( self.__XMLSystems[x]["languageCode"] ):
@@ -274,11 +274,11 @@ class BibleBooksNamesConverter:
 
         if bookList is not None:
             for BBB in bookList: # Just check this list is valid
-                if not Globals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): logging.error( _("Invalid '{}' in booklist requested for expansion").format(BBB) )
+                if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): logging.error( _("Invalid '{}' in booklist requested for expansion").format(BBB) )
 
-        if Globals.verbosityLevel > 1: print( _("Expanding input abbreviations...") )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Expanding input abbreviations...") )
         for systemName in self.__BookNamesSystemsDict:
-            if Globals.verbosityLevel > 2: print( _("  Expanding {}...").format( systemName ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Expanding {}...").format( systemName ) )
             divisionsNamesDict, booknameLeadersDict, bookNamesDict = self.__BookNamesSystemsDict[systemName]
             self.__expandedInputSystems[systemName] = expandBibleNamesInputs( systemName, divisionsNamesDict, booknameLeadersDict, bookNamesDict, bookList )
     # end of expandInputs
@@ -296,7 +296,7 @@ class BibleBooksNamesConverter:
             return self.__BookNamesSystemsDict, self.__expandedInputSystems
 
         # We'll create a number of dictionaries
-        if Globals.verbosityLevel > 3: print( _("Importing data into Python dictionary...") )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Importing data into Python dictionary...") )
         self.__BookNamesSystemsDict = {}
         for booksNamesSystemCode in self.__XMLSystems.keys():
             #print( booksNamesSystemCode )
@@ -317,7 +317,7 @@ class BibleBooksNamesConverter:
                     includedBooks = []
                     for subelement in element.findall("includesBook"):
                         BBB = subelement.text
-                        if not Globals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ):
+                        if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ):
                             logging.error( _("Unrecognized '{}' book abbreviation in BibleDivisionNames in '{}' booksNames system").format( BBB, booksNamesSystemCode ) )
                         if BBB in includedBooks:
                             logging.error( _("Duplicate '{}' entry in includesBook field for '{}' division in '{}' booksNames system").format( subelement.text, defaultName, booksNamesSystemCode ) )
@@ -334,7 +334,7 @@ class BibleBooksNamesConverter:
                     myBooknameLeadersDict[standardLeader+' '] = inputFields
                 elif element.tag == "BibleBookNames":
                     referenceAbbreviation = element.get("referenceAbbreviation")
-                    if not Globals.BibleBooksCodes.isValidReferenceAbbreviation( referenceAbbreviation ):
+                    if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( referenceAbbreviation ):
                         logging.error( _("Unrecognized '{}' book abbreviation in BibleBookNames in '{}' booksNames system").format( referenceAbbreviation, booksNamesSystemCode ) )
                     defaultName = element.find("defaultName").text
                     defaultAbbreviation = element.find("defaultAbbreviation").text
@@ -346,7 +346,7 @@ class BibleBooksNamesConverter:
                         else: inputFields.append( subelement.text )
                     myBookNamesDict[referenceAbbreviation] = { "defaultName":defaultName, "defaultAbbreviation":defaultAbbreviation, "inputFields":inputFields }
 
-            if Globals.strictCheckingFlag: # check for duplicates
+            if BibleOrgSysGlobals.strictCheckingFlag: # check for duplicates
                 for checkSystemCode in self.__BookNamesSystemsDict:
                     checkDivisionsNamesList, checkBooknameLeadersDict, checkBookNamesDict = self.__BookNamesSystemsDict[checkSystemCode]
                     if checkDivisionsNamesList==myDivisionsNamesDict and checkBookNamesDict==myBookNamesDict:
@@ -374,7 +374,7 @@ class BibleBooksNamesConverter:
             folder = os.path.join( self.__XMLFolder, "../", "DerivedFiles/" )
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + "_Tables.pickle" )
-        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.__BookNamesSystemsDict, myFile )
             #pickle.dump( self.__expandedInputSystems, myFile )
@@ -426,7 +426,7 @@ class BibleBooksNamesConverter:
 
         raise Exception( "Python export not working properly yet" )
         if not filepath: filepath = os.path.join( self.__XMLFolder, "../", "DerivedFiles", self.__filenameBase + "_Tables.py" )
-        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
         # Split into three lists/dictionaries
         with open( filepath, 'wt' ) as myFile:
             myFile.write( "# {}\n#\n".format( filepath ) )
@@ -481,7 +481,7 @@ class BibleBooksNamesConverter:
             folder = os.path.join( self.__XMLFolder, "../", "DerivedFiles/" )
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self.__filenameBase + "_Tables.pickle" )
-        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.__BookNamesSystemsDict, myFile )
     # end of pickle
@@ -500,7 +500,7 @@ class BibleBooksNamesConverter:
         assert( self.__BookNamesSystemsDict )
 
         if not filepath: filepath = os.path.join( self.__XMLFolder, "../", "DerivedFiles", self.__filenameBase + "_Tables.json" )
-        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
         with open( filepath, 'wt' ) as myFile:
             #myFile.write( "# {}\n#\n".format( filepath ) ) # Not sure yet if these comment fields are allowed in JSON
             #myFile.write( "# This UTF-8 file was automatically generated by BibleBooksCodes.py V{} on {}\n#\n".format( ProgVersion, datetime.now() ) )
@@ -547,7 +547,7 @@ class BibleBooksNamesConverter:
         assert( self.__BookNamesSystemsDict )
 
         if not filepath: filepath = os.path.join( "DerivedFiles", self.__filenameBase + "_Tables.h" )
-        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
         raise Exception( "C export not written yet -- sorry." )
 
         ifdefName = self.__filenameBase.upper() + "_Tables_h"
@@ -569,14 +569,14 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
 
     sampleBookList = ['GEN','JDG','SA1','SA2','KI1','KI2','MA4','MAT','MRK','LUK','JHN','ACT','ROM','CO1','CO2','PE1','PE2','JDE','REV']
     #sampleBookList = ['GEN','JDG','SA1','SA2','KI1','KI2','MA1','MA2']
     #sampleBookList = ['MAT','MRK','LUK','JHN','ACT','ROM','CO1','CO2','GAL','EPH','PHP','COL','PE1','PE2','JDE','REV']
-    if Globals.commandLineOptions.export:
+    if BibleOrgSysGlobals.commandLineOptions.export:
         bbnsc = BibleBooksNamesConverter().loadSystems() # Load the XML
-        #if Globals.commandLineOptions.expandDemo: # Expand the inputAbbreviations to find all shorter unambiguous possibilities
+        #if BibleOrgSysGlobals.commandLineOptions.expandDemo: # Expand the inputAbbreviations to find all shorter unambiguous possibilities
         #    bbnsc.expandInputs( sampleBookList )
         bbnsc.pickle() # Produce the .pickle file
         bbnsc.exportDataToPython() # Produce the .py tables
@@ -587,18 +587,18 @@ def demo():
         # Demo the converter object
         bbnsc = BibleBooksNamesConverter().loadSystems() # Load the XML
         print( bbnsc ) # Just print a summary
-        #if Globals.commandLineOptions.expandDemo: # Expand the inputAbbreviations to find all shorter unambiguous possibilities
+        #if BibleOrgSysGlobals.commandLineOptions.expandDemo: # Expand the inputAbbreviations to find all shorter unambiguous possibilities
         #    bbnsc.expandInputs( sampleBookList )
         #    print( bbnsc ) # Just print a summary
 # end of demo
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     #parser.add_option("-p", "--expandDemo", action="store_true", dest="expandDemo", default=False, help="expand the input abbreviations to include all unambiguous shorter forms")
-    Globals.addStandardOptionsAndProcess( parser, exportAvailable=True )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of BibleBooksNamesConverter.py

@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 #
-# Globals.py
-#   Last modified: 2014-09-28 by RJH (also update ProgVersion below)
+# BibleOrgSysGlobals.py
+#   Last modified: 2014-10-28 by RJH (also update ProgVersion below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -70,7 +70,8 @@ Contains functions:
     demo()
 """
 
-ProgName = "Globals"
+ShortProgName = "Globals"
+ProgName = "BibleOrgSys Globals"
 ProgVersion = "0.52"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
@@ -140,7 +141,7 @@ def setupLoggingToFile( ProgName, ProgVersion, folder=None ):
     Gets called from our demo() function when program starts up.
     """
     if debuggingThisModule:
-        print( "Globals.setupLoggingToFile( {}, {}, {} )".format( repr(ProgName), repr(ProgVersion), repr(folder) ) )
+        print( "BibleOrgSysGlobals.setupLoggingToFile( {}, {}, {} )".format( repr(ProgName), repr(ProgVersion), repr(folder) ) )
     filename = ProgName.replace('/','-').replace(':','_').replace('\\','_') + '_log.txt'
     if folder is None: folder = defaultLogFolder # relative path
     filepath = os.path.join( folder, filename )
@@ -161,11 +162,11 @@ def setupLoggingToFile( ProgName, ProgVersion, folder=None ):
     # In Windows, doesn't seem to create the log file, even if given a filename rather than a filepath
     setLevel = logging.DEBUG if debugFlag else logging.INFO
     if debuggingThisModule:
-        print( "Globals.setBasicConfig( {}, {}={}, {}, {} )".format( repr(filepath), setLevel, loggingNameDict[setLevel], repr(loggingLongFormat), repr(loggingDateFormat) ) )
+        print( "BibleOrgSysGlobals.setBasicConfig( {}, {}={}, {}, {} )".format( repr(filepath), setLevel, loggingNameDict[setLevel], repr(loggingLongFormat), repr(loggingDateFormat) ) )
     logging.basicConfig( filename=filepath, level=setLevel, format=loggingLongFormat, datefmt=loggingDateFormat )
 
     #return filepath
-# end of Globals.setupLoggingToFile
+# end of BibleOrgSysGlobals.setupLoggingToFile
 
 
 def addConsoleLogging( consoleLoggingLevel=None ):
@@ -173,7 +174,7 @@ def addConsoleLogging( consoleLoggingLevel=None ):
     Adds a handler to also send ERROR and higher to console (depending on verbosity)
     """
     if debuggingThisModule:
-        print( "Globals.addConsoleLogging( {}={} )".format( consoleLoggingLevel, loggingNameDict[consoleLoggingLevel] ) )
+        print( "BibleOrgSysGlobals.addConsoleLogging( {}={} )".format( consoleLoggingLevel, loggingNameDict[consoleLoggingLevel] ) )
     stderrHandler = logging.StreamHandler() # StreamHandler with no parameters defaults to sys.stderr
     stderrHandler.setFormatter( logging.Formatter( loggingConsoleFormat, None ) )
     if consoleLoggingLevel is not None:
@@ -187,14 +188,14 @@ def addConsoleLogging( consoleLoggingLevel=None ):
             stderrHandler.setLevel( logging.ERROR )
     root = logging.getLogger()  # No param means get the root logger
     root.addHandler(stderrHandler)
-# end of Globals.addConsoleLogging
+# end of BibleOrgSysGlobals.addConsoleLogging
 
 
 def addLogfile( projectName, folder=None ):
     """
     Adds an extra project specific log file to the logger.
     """
-    if debuggingThisModule: print( "Globals.addLogfile( {}, {} )".format( projectName, folder ) )
+    if debuggingThisModule: print( "BibleOrgSysGlobals.addLogfile( {}, {} )".format( projectName, folder ) )
     filename = projectName + '_log.txt'
     if folder is None: folder = defaultLogFolder # relative path
     filepath = os.path.join( folder, filename )
@@ -217,17 +218,17 @@ def addLogfile( projectName, folder=None ):
     root = logging.getLogger()
     root.addHandler( projectHandler )
     return filepath, projectHandler
-# end of Globals.addLogfile
+# end of BibleOrgSysGlobals.addLogfile
 
 
 def removeLogfile( projectHandler ):
     """
     Removes the project specific logger.
     """
-    if debuggingThisModule: print( "Globals.removeLogfile( {} )".format( projectHandler ) )
+    if debuggingThisModule: print( "BibleOrgSysGlobals.removeLogfile( {} )".format( projectHandler ) )
     root = logging.getLogger()  # No param means get the root logger
     root.removeHandler( projectHandler )
-# end of Globals.removeLogfile
+# end of BibleOrgSysGlobals.removeLogfile
 
 
 ##########################################################################################################
@@ -259,7 +260,7 @@ def makeSafeFilename( someName ):
         .replace('\\','_BACKSLASH_').replace(':','_COLON_').replace(';','_SEMICOLON_') \
         .replace('#','_HASH_').replace('?','_QUESTIONMARK_').replace('*','_ASTERISK_') \
         .replace('<','_LT_').replace('>','_GT_')
-# end of Globals.makeSafeFilename
+# end of BibleOrgSysGlobals.makeSafeFilename
 
 
 ##########################################################################################################
@@ -272,7 +273,7 @@ def makeSafeXML( someString ):
     Replaces special characters in a string to make it for XML.
     """
     return someString.replace('&','&amp;').replace('"','&quot;').replace('<','&lt;').replace('>','&gt;')
-# end of Globals.makeSafeXML
+# end of BibleOrgSysGlobals.makeSafeXML
 
 
 ##########################################################################################################
@@ -288,7 +289,7 @@ def makeSafeString( someString ):
     """
     #return someString.replace('&','&amp;').replace('<','&lt;').replace('>','&gt;')
     return someString.replace('<','_LT_').replace('>','_GT_')
-# end of Globals.makeSafeString
+# end of BibleOrgSysGlobals.makeSafeString
 
 
 ##########################################################################################################
@@ -317,8 +318,8 @@ def peekIntoFile( filenameOrFilepath, folder=None, numLines=1, encoding=None ):
                 if lineNumber >= numLines: return lines
     except UnicodeDecodeError:
         #if not filepath.lower().endswith( 'usfm-color.sty' ): # Seems this file isn't UTF-8, but we don't need it here anyway so ignore it
-        logging.warning( "{}Seems we couldn't decode Unicode in '{}'".format( 'Globals.peekIntoFile: ' if debugFlag else '', filepath ) ) # Could be binary or a different encoding
-# end of Globals.peekIntoFile
+        logging.warning( "{}Seems we couldn't decode Unicode in '{}'".format( 'BibleOrgSysGlobals.peekIntoFile: ' if debugFlag else '', filepath ) ) # Could be binary or a different encoding
+# end of BibleOrgSysGlobals.peekIntoFile
 
 
 ##########################################################################################################
@@ -365,7 +366,7 @@ def totalSize( o, handlers={} ):
         return s
 
     return sizeof(o)
-# end of Globals.totalSize
+# end of BibleOrgSysGlobals.totalSize
 
 
 ##########################################################################################################
@@ -438,7 +439,7 @@ def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=Tru
                 break
 
     return equalFlag
-# end of Globals.fileCompare
+# end of BibleOrgSysGlobals.fileCompare
 
 
 def fileCompareUSFM( filename1, filename2, folder1=None, folder2=None, printFlag=True, exitCount=10 ):
@@ -521,7 +522,7 @@ def fileCompareUSFM( filename1, filename2, folder1=None, folder2=None, printFlag
                 break
 
     return equalFlag
-# end of Globals.fileCompareUSFM
+# end of BibleOrgSysGlobals.fileCompareUSFM
 
 
 def fileCompareXML( filename1, filename2, folder1=None, folder2=None, printFlag=True, exitCount=10, ignoreWhitespace=True ):
@@ -630,7 +631,7 @@ def fileCompareXML( filename1, filename2, folder1=None, folder2=None, printFlag=
     compareElements( tree1, tree2 )
     if diffCount and verbosityLevel > 1: print( "{} differences discovered.".format( diffCount if diffCount<=exitCount else 'Many' ) )
     return diffCount==0
-# end of Globals.fileCompareXML
+# end of BibleOrgSysGlobals.fileCompareXML
 
 
 ##########################################################################################################
@@ -689,7 +690,7 @@ def checkXMLNoSubelementsWithText( element, locationString, idString=None, loadE
             logging.warning( warningString )
             if loadErrorsDict is not None: loadErrorsDict.append( warningString )
             if debugFlag and haltOnXMLWarning: halt
-# end of Globals.checkXMLNoSubelementsWithText
+# end of BibleOrgSysGlobals.checkXMLNoSubelementsWithText
 
 
 def getFlattenedXML( element, locationString, idString=None, level=0 ):
@@ -720,7 +721,7 @@ def getFlattenedXML( element, locationString, idString=None, level=0 ):
     if element.tail and element.tail.strip(): result += ' ' + element.tail.strip()
     #else: print( "getFlattenedXML: Result is '{}'".format( result ) )
     return result
-# end of Globals.getFlattenedXML
+# end of BibleOrgSysGlobals.getFlattenedXML
 
 
 ##########################################################################################################
@@ -756,7 +757,7 @@ def applyStringAdjustments( originalText, adjustmentList ):
         #print( " after", repr(text) )
         offset += lenRS - lenFS
     return text
-# end of Globals.applyStringAdjustments
+# end of BibleOrgSysGlobals.applyStringAdjustments
 
 
 ##########################################################################################################
@@ -805,7 +806,7 @@ def pickleObject( theObject, filename, folder=None, disassembleObjectFlag=False 
 
     with open( filepath, 'wb' ) as pickleOutputFile:
         pickle.dump( theObject, pickleOutputFile, pickle.HIGHEST_PROTOCOL )
-# end of Globals.pickleObject
+# end of BibleOrgSysGlobals.pickleObject
 
 
 def unpickleObject( filename, folder=None ):
@@ -820,7 +821,7 @@ def unpickleObject( filename, folder=None ):
     if verbosityLevel > 2: print( _("Loading object from pickle file {}...").format( filepath ) )
     with open( filepath, 'rb') as pickleInputFile:
         return pickle.load( pickleInputFile ) # The protocol version used is detected automatically, so we do not have to specify it
-# end of Globals.unpickleObject
+# end of BibleOrgSysGlobals.unpickleObject
 
 
 ##########################################################################################################
@@ -848,7 +849,7 @@ def setup( ProgName, ProgVersion, loggingFolder=None ):
     # Handle command line parameters
     parser = OptionParser( version="v{}".format( ProgVersion ) )
     return parser
-# end of Globals.setup
+# end of BibleOrgSysGlobals.setup
 
 
 ##########################################################################################################
@@ -898,7 +899,7 @@ def setVerbosity( verbosityLevelParameter ):
     if debugFlag:
         print( '  Verbosity =', verbosityString )
         print( '  VerbosityLevel =', verbosityLevel )
-# end of Globals.setVerbosity
+# end of BibleOrgSysGlobals.setVerbosity
 
 
 def setDebugFlag( newValue=True ):
@@ -907,7 +908,7 @@ def setDebugFlag( newValue=True ):
     debugFlag = newValue
     if (debugFlag and verbosityLevel> 2) or verbosityLevel>3:
         print( '  debugFlag =', debugFlag )
-# end of Globals.setDebugFlag
+# end of BibleOrgSysGlobals.setDebugFlag
 
 
 def setStrictCheckingFlag( newValue=True ):
@@ -916,7 +917,7 @@ def setStrictCheckingFlag( newValue=True ):
     strictCheckingFlag = newValue
     if (strictCheckingFlag and verbosityLevel> 2) or verbosityLevel>3:
         print( '  strictCheckingFlag =', strictCheckingFlag )
-# end of Globals.setStrictCheckingFlag
+# end of BibleOrgSysGlobals.setStrictCheckingFlag
 
 
 def addStandardOptionsAndProcess( parserObject, exportAvailable=False ):
@@ -925,7 +926,7 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ):
     """
     global commandLineOptions, commandLineArguments, maxProcesses
     if debuggingThisModule:
-        print( "Globals.addStandardOptionsAndProcess( ..., {} )".format( exportAvailable ) )
+        print( "BibleOrgSysGlobals.addStandardOptionsAndProcess( ..., {} )".format( exportAvailable ) )
 
     parserObject.add_option( "-s", "--silent", action="store_const", dest="verbose", const=0, help="output no information to the console" )
     parserObject.add_option( "-q", "--quiet", action="store_const", dest="verbose", const=1, help="output less information to the console" )
@@ -959,7 +960,7 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ):
         maxProcesses = 1 # Limit to one process
         print( "  commandLineOptions: {}".format( commandLineOptions ) )
         print( "  commandLineArguments: {}".format( commandLineArguments ) )
-# end of Globals.addStandardOptionsAndProcess
+# end of BibleOrgSysGlobals.addStandardOptionsAndProcess
 
 
 def printAllGlobals( indent=None ):
@@ -972,7 +973,7 @@ def printAllGlobals( indent=None ):
     print( "{}verbosityString: {}".format( ' '*indent, verbosityString ) )
     print( "{}verbosityLevel: {}".format( ' '*indent, verbosityLevel ) )
     print( "{}strictCheckingFlag: {}".format( ' '*indent, strictCheckingFlag ) )
-# end of Globals.printAllGlobals
+# end of BibleOrgSysGlobals.printAllGlobals
 
 
 def closedown( ProgName, ProgVersion ):
@@ -980,7 +981,7 @@ def closedown( ProgName, ProgVersion ):
     Does all the finishing off for the program.
     """
     logging.info( "{} v{} finished.".format( ProgName, ProgVersion ) )
-# end of Globals.closedown
+# end of BibleOrgSysGlobals.closedown
 
 
 
@@ -1010,7 +1011,7 @@ def demo():
     print( "\n{}->{}".format( repr(text), repr( applyStringAdjustments( text, adjustments ) ) ) )
 
     print( "\ncpu_count", os.cpu_count() )
-# end of Globals.demo
+# end of BibleOrgSysGlobals.demo
 
 
 setVerbosity( verbosityString )
@@ -1044,4 +1045,4 @@ if __name__ == '__main__':
     demo()
 
     closedown( ProgName, ProgVersion )
-# end of Globals.py
+# end of BibleOrgSysGlobals.py

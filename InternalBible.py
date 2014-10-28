@@ -55,7 +55,7 @@ import os, logging
 from gettext import gettext as _
 from collections import OrderedDict
 
-import Globals
+import BibleOrgSysGlobals
 from InternalBibleInternals import InternalBibleEntryList
 
 
@@ -67,7 +67,7 @@ def t( messageString ):
     """
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
-    if Globals.debugFlag or debuggingThisModule:
+    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit, _(errorBit) )
 
@@ -184,12 +184,12 @@ class InternalBible:
                     if ucKey == ucFieldName:
                         logging.warning("About to add {} from metadata file even though already have {}".format( repr(fieldName), repr(key) ) )
                         break
-            self.settingsDict[fieldName] = Globals.makeSafeString( contents )
+            self.settingsDict[fieldName] = BibleOrgSysGlobals.makeSafeString( contents )
         # end of loadMetadataFile.saveMD
 
         logging.info( "Loading supplied project metadata..." )
-        if Globals.verbosityLevel > 1: print( "Loading supplied project metadata..." )
-        if Globals.verbosityLevel > 2: print( "Old metadata settings", len(self.settingsDict), self.settingsDict )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Loading supplied project metadata..." )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "Old metadata settings", len(self.settingsDict), self.settingsDict )
         lineCount, continuedFlag = 0, False
         with open( mdFilepath, 'rt' ) as mdFile:
             for line in mdFile:
@@ -220,8 +220,8 @@ class InternalBible:
                     if not continuedFlag:
                         logging.warning( t("loadMetadataFile: Metadata lines result in a blank entry for {}").format( repr(fieldName) ) )
                         saveMD( fieldName, fieldContents )
-            if Globals.verbosityLevel > 1: print( "  {} non-blank lines read from uploaded metadata file".format( lineCount ) )
-        if Globals.verbosityLevel > 2: print( "New metadata settings", len(self.settingsDict), self.settingsDict )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "  {} non-blank lines read from uploaded metadata file".format( lineCount ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "New metadata settings", len(self.settingsDict), self.settingsDict )
 
         # Try to improve our names (also called earlier from doPostLoadProcessing)
         self.__getNames()
@@ -237,7 +237,7 @@ class InternalBible:
         """
         result = self.objectNameString
         indent = 2
-        if Globals.debugFlag or Globals.verbosityLevel>2: result += ' v' + ProgVersion
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: result += ' v' + ProgVersion
         if self.name: result += ('\n' if result else '') + ' '*indent + _("Name: {}").format( self.name )
         if self.sourceFolder: result += ('\n' if result else '') + ' '*indent + _("Source folder: {}").format( self.sourceFolder )
         elif self.sourceFilepath: result += ('\n' if result else '') + ' '*indent + _("Source: {}").format( self.sourceFilepath )
@@ -263,7 +263,7 @@ class InternalBible:
         This method checks whether the Bible contains the BBB book.
         Returns True or False.
         """
-        if Globals.debugFlag: assert( isinstance(BBB,str) and len(BBB)==3 )
+        if BibleOrgSysGlobals.debugFlag: assert( isinstance(BBB,str) and len(BBB)==3 )
         return BBB in self.books
     # end of InternalBible.__contains__
 
@@ -297,7 +297,7 @@ class InternalBible:
     def pickle( self, filename=None, folder=None ):
         """
         Writes the object to a .pickle file that can be easily loaded into a Python3 program.
-            If folder is None (or missing), defaults to the default cache folder specified in Globals.
+            If folder is None (or missing), defaults to the default cache folder specified in BibleOrgSysGlobals.
             Created the folder(s) if necessary.
         """
         #print( "pickle( *, {}, {} )".format( repr(filename), repr(folder ) ) )
@@ -305,18 +305,18 @@ class InternalBible:
         #print( (self.abbreviation), repr(self.name) )
         if filename is None:
             filename = self.abbreviation if self.abbreviation else self.name
-        if Globals.debugFlag: assert( filename )
-        filename = Globals.makeSafeFilename( filename ) + '.pickle'
-        if Globals.verbosityLevel > 2:
+        if BibleOrgSysGlobals.debugFlag: assert( filename )
+        filename = BibleOrgSysGlobals.makeSafeFilename( filename ) + '.pickle'
+        if BibleOrgSysGlobals.verbosityLevel > 2:
             print( t("pickle: Saving {} to {}...") \
                 .format( self.objectNameString, filename if folder is None else os.path.join( folder, filename ) ) )
-        Globals.pickleObject( self, filename, folder )
+        BibleOrgSysGlobals.pickleObject( self, filename, folder )
     # end of InternalBible.pickle
 
 
     def getAssumedBookName( self, BBB ):
         """Gets the book name for the given book reference code."""
-        if Globals.debugFlag: assert( BBB in Globals.BibleBooksCodes)
+        if BibleOrgSysGlobals.debugFlag: assert( BBB in BibleOrgSysGlobals.BibleBooksCodes)
         #if BBB in self.BBBToNameDict: return self.BBBToNameDict[BBB] # What was this ???
         try: return self.books[BBB].assumedBookName
         except: return None
@@ -325,7 +325,7 @@ class InternalBible:
 
     def getLongTOCName( self, BBB ):
         """Gets the long table of contents book name for the given book reference code."""
-        if Globals.debugFlag: assert( BBB in Globals.BibleBooksCodes)
+        if BibleOrgSysGlobals.debugFlag: assert( BBB in BibleOrgSysGlobals.BibleBooksCodes)
         try: return self.books[BBB].longTOCName
         except: return None
     # end of InternalBible.getLongTOCName
@@ -333,7 +333,7 @@ class InternalBible:
 
     def getShortTOCName( self, BBB ):
         """Gets the short table of contents book name for the given book reference code."""
-        if Globals.debugFlag: assert( BBB in Globals.BibleBooksCodes)
+        if BibleOrgSysGlobals.debugFlag: assert( BBB in BibleOrgSysGlobals.BibleBooksCodes)
         try: return self.books[BBB].shortTOCName
         except: return None
     # end of InternalBible.getShortTOCName
@@ -341,7 +341,7 @@ class InternalBible:
 
     def getBooknameAbbreviation( self, BBB ):
         """Gets the book abbreviation for the given book reference code."""
-        if Globals.debugFlag: assert( BBB in Globals.BibleBooksCodes)
+        if BibleOrgSysGlobals.debugFlag: assert( BBB in BibleOrgSysGlobals.BibleBooksCodes)
         try: return self.books[BBB].booknameAbbreviation
         except: return None
     # end of InternalBible.getBooknameAbbreviation
@@ -374,8 +374,8 @@ class InternalBible:
                 a book name (e.g., Proverbs) or abbreviation (e.g., Prv).
             Uses self.combinedBookNameDict and makes and uses self.bookAbbrevDict.
             Return None if unsuccessful."""
-        if Globals.debugFlag: assert( referenceString and isinstance( referenceString, str ) )
-        result = Globals.BibleBooksCodes.getBBB( referenceString )
+        if BibleOrgSysGlobals.debugFlag: assert( referenceString and isinstance( referenceString, str ) )
+        result = BibleOrgSysGlobals.BibleBooksCodes.getBBB( referenceString )
         if result is not None: return result # It's already a valid BBB
 
         adjRefString = referenceString.lower()
@@ -395,7 +395,7 @@ class InternalBible:
         for BBB in self.reverseDict: assert( self.reverseDict[BBB] != referenceString )
 
         # See if a book name starts with this string
-        if Globals.debugFlag and debuggingThisModule: print( "  getXRefBBB using startswith1..." )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "  getXRefBBB using startswith1..." )
         count = 0
         for bookName in self.bookNameDict:
             if bookName.startswith( adjRefString ):
@@ -417,10 +417,10 @@ class InternalBible:
                 self.guesses += ('\n' if self.guesses else '') + "Guessed '{}' to be {} (startswith1SECOND)".format( referenceString, BBB )
                 self.reverseDict[BBB] = referenceString
                 return BBB
-        if Globals.debugFlag and debuggingThisModule and count > 1:
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule and count > 1:
             print( t("  guessXRefBBB has multiple startswith matches for '{}' in {}").format( adjRefString, self.combinedBookNameDict ) )
         if count == 0:
-            if Globals.debugFlag and debuggingThisModule: print( "  getXRefBBB using startswith2..." )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "  getXRefBBB using startswith2..." )
             for bookName in self.combinedBookNameDict:
                 if bookName.startswith( adjRefString ):
                     BBB = self.combinedBookNameDict[bookName]
@@ -444,7 +444,7 @@ class InternalBible:
 
         # See if a book name contains a word that starts with this string
         if count == 0:
-            if Globals.debugFlag and debuggingThisModule: print( "  getXRefBBB using word startswith..." )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "  getXRefBBB using word startswith..." )
             for bookName in self.bookNameDict:
                 if ' ' in bookName:
                     for bit in bookName.split():
@@ -456,12 +456,12 @@ class InternalBible:
                 self.guesses += ('\n' if self.guesses else '') + "Guessed '{}' to be {} (word startswith)".format( referenceString, BBB )
                 self.reverseDict[BBB] = referenceString
                 return BBB
-            if Globals.debugFlag and debuggingThisModule and count > 1:
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule and count > 1:
                 print( t("  guessXRefBBB has multiple startswith matches for '{}' in {}").format( adjRefString, self.bookNameDict ) )
 
         # See if a book name starts with the same letter plus contains the letters in this string (slow)
         if count == 0:
-            if Globals.debugFlag and debuggingThisModule: print( t("  guessXRefBBB using first plus other characters...") )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( t("  guessXRefBBB using first plus other characters...") )
             for bookName in self.bookNameDict:
                 if not bookName: print( self.bookNameDict ); halt # temp...
                 #print( "aRS='{}', bN='{}'".format( adjRefString, bookName ) )
@@ -479,13 +479,13 @@ class InternalBible:
                 self.bookAbbrevDict[adjRefString] = BBB # Save to make it faster next time
                 self.guesses += ('\n' if self.guesses else '') + "Guessed '{}' to be {} (firstletter+)".format( referenceString, BBB )
                 return BBB
-            if Globals.debugFlag and debuggingThisModule and count > 1:
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule and count > 1:
                 print( t("  guessXRefBBB has first and other character multiple matches for '{}' in {}").format( adjRefString, self.bookNameDict ) )
 
         if 0: # Too error prone!!!
             # See if a book name contains the letters in this string (slow)
             if count == 0:
-                if Globals.debugFlag and debuggingThisModule: print ("  getXRefBBB using characters..." )
+                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print ("  getXRefBBB using characters..." )
                 for bookName in self.bookNameDict:
                     found = True
                     for char in adjRefString:
@@ -500,10 +500,10 @@ class InternalBible:
                     self.bookAbbrevDict[adjRefString] = BBB # Save to make it faster next time
                     self.guesses += ('\n' if self.guesses else '') + "Guessed '{}' to be {} (letters)".format( referenceString, BBB )
                     return BBB
-                if Globals.debugFlag and debuggingThisModule and count > 1:
+                if BibleOrgSysGlobals.debugFlag and debuggingThisModule and count > 1:
                     print( t("  guessXRefBBB has character multiple matches for '{}' in {}").format( adjRefString, self.bookNameDict ) )
 
-        if Globals.debugFlag and debuggingThisModule or Globals.verbosityLevel>2:
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule or BibleOrgSysGlobals.verbosityLevel>2:
             print( t("  guessXRefBBB failed for '{}' with {} and {}").format( referenceString, self.bookNameDict, self.bookAbbrevDict ) )
         string = "Couldn't guess '{}'".format( referenceString[:5] )
         if string not in self.guesses: self.guesses += ('\n' if self.guesses else '') + string
@@ -519,7 +519,7 @@ class InternalBible:
             The third list contains an entry for combined verses in the book.
             The fourth list contains an entry for reordered verses in the book.
         """
-        if Globals.debugFlag: assert( self.books )
+        if BibleOrgSysGlobals.debugFlag: assert( self.books )
         totalVersification, totalOmittedVerses, totalCombinedVerses, totalReorderedVerses = OrderedDict(), OrderedDict(), OrderedDict(), OrderedDict()
         for BBB in self.books.keys():
             versification, omittedVerses, combinedVerses, reorderedVerses = self.books[BBB].getVersification()
@@ -535,7 +535,7 @@ class InternalBible:
         """
         Get the added units in the Bible text, such as section headings, paragraph breaks, and section references.
         """
-        if Globals.debugFlag: assert( self.books )
+        if BibleOrgSysGlobals.debugFlag: assert( self.books )
         haveParagraphs = haveQParagraphs = haveSectionHeadings = haveSectionReferences = haveWordsOfJesus = False
         AllParagraphs, AllQParagraphs, AllSectionHeadings, AllSectionReferences, AllWordsOfJesus = OrderedDict(), OrderedDict(), OrderedDict(), OrderedDict(), OrderedDict()
         for BBB in self.books:
@@ -558,8 +558,8 @@ class InternalBible:
     def discover( self ):
         """Runs a series of checks and count on each book of the Bible
             in order to try to determine what are the normal standards."""
-        if Globals.verbosityLevel > 0: print( "InternalBible:discover()" )
-        if Globals.debugFlag and  'discoveryResults' in dir(self): halt # We've already called this once
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( "InternalBible:discover()" )
+        if BibleOrgSysGlobals.debugFlag and  'discoveryResults' in dir(self): halt # We've already called this once
 
         self.discoveryResults = OrderedDict()
 
@@ -567,30 +567,30 @@ class InternalBible:
         #import pickle
         #folder = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/" ) # Relative to module, not cwd
         #filepath = os.path.join( folder, "AddedUnitData.pickle" )
-        #if Globals.verbosityLevel > 3: print( t("Importing from {}...").format( filepath ) )
+        #if BibleOrgSysGlobals.verbosityLevel > 3: print( t("Importing from {}...").format( filepath ) )
         #with open( filepath, 'rb' ) as pickleFile:
         #    typicalAddedUnits = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
 
-        if Globals.verbosityLevel > 2: print( t("Running discover on {}...").format( self.name ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( t("Running discover on {}...").format( self.name ) )
         for BBB in self.books: # Do individual book prechecks
-            if Globals.verbosityLevel > 3: print( "  " + t("Prechecking {}...").format( BBB ) )
+            if BibleOrgSysGlobals.verbosityLevel > 3: print( "  " + t("Prechecking {}...").format( BBB ) )
             self.books[BBB]._discover( self.discoveryResults )
 
         # Now get the aggregate results for the entire Bible
         aggregateResults = {}
-        if Globals.debugFlag: assert( 'ALL' not in self.discoveryResults )
+        if BibleOrgSysGlobals.debugFlag: assert( 'ALL' not in self.discoveryResults )
         for BBB in self.discoveryResults:
             #print( "discoveryResults for", BBB, len(self.discoveryResults[BBB]), self.discoveryResults[BBB] )
             isOT = isNT = isDC = False
-            if Globals.BibleBooksCodes.isOldTestament_NR( BBB ):
+            if BibleOrgSysGlobals.BibleBooksCodes.isOldTestament_NR( BBB ):
                 isOT = True
                 if 'OTBookCount' not in aggregateResults: aggregateResults['OTBookCount'], aggregateResults['OTBookCodes'] = 1, [BBB]
                 else: aggregateResults['OTBookCount'] += 1; aggregateResults['OTBookCodes'].append( BBB )
-            elif Globals.BibleBooksCodes.isNewTestament_NR( BBB ):
+            elif BibleOrgSysGlobals.BibleBooksCodes.isNewTestament_NR( BBB ):
                 isNT = True
                 if 'NTBookCount' not in aggregateResults: aggregateResults['NTBookCount'], aggregateResults['NTBookCodes'] = 1, [BBB]
                 else: aggregateResults['NTBookCount'] += 1; aggregateResults['NTBookCodes'].append( BBB )
-            elif Globals.BibleBooksCodes.isDeuterocanon_NR( BBB ):
+            elif BibleOrgSysGlobals.BibleBooksCodes.isDeuterocanon_NR( BBB ):
                 isDC = True
                 if 'DCBookCount' not in aggregateResults: aggregateResults['DCBookCount'], aggregateResults['DCBookCodes'] = 1, [BBB]
                 else: aggregateResults['DCBookCount'] += 1; aggregateResults['DCBookCodes'].append( BBB )
@@ -707,7 +707,7 @@ class InternalBible:
             # Create summaries of lists with entries for various books
             #print( "check", arKey, aggregateResults[arKey] )
             if isinstance( aggregateResults[arKey], list ) and isinstance( aggregateResults[arKey][0], float ):
-                if Globals.debugFlag: assert( arKey.endswith( 'Ratio' ) )
+                if BibleOrgSysGlobals.debugFlag: assert( arKey.endswith( 'Ratio' ) )
                 #print( "this", arKey, aggregateResults[arKey] )
                 aggregateRatio = round( sum( aggregateResults[arKey] ) / len( aggregateResults[arKey] ), 2 )
                 aggregateFlag = None
@@ -742,9 +742,9 @@ class InternalBible:
             #if key.endswith( 'ordCount' ): print( key, value )
         self.discoveryResults['ALL'] = aggregateResults
 
-        if Globals.verbosityLevel > 2: # or self.name=="Matigsalug": # Display some of these results
+        if BibleOrgSysGlobals.verbosityLevel > 2: # or self.name=="Matigsalug": # Display some of these results
             print( "Discovered Bible parameters:" )
-            if Globals.verbosityLevel > 2: # or self.name=="Matigsalug": # Print completion level for each book
+            if BibleOrgSysGlobals.verbosityLevel > 2: # or self.name=="Matigsalug": # Print completion level for each book
                 for BBB in self.discoveryResults:
                     if BBB != 'ALL':
                         if 'seemsFinished' in self.discoveryResults[BBB] and self.discoveryResults[BBB]['seemsFinished']:
@@ -766,18 +766,18 @@ class InternalBible:
         """Runs a series of individual checks (and counts) on each book of the Bible
             and then a number of overall checks on the entire Bible."""
         # Get our recommendations for added units -- only load this once per Bible
-        if Globals.verbosityLevel > 1: print( t("Checking {} Bible...").format( self.name ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( t("Checking {} Bible...").format( self.name ) )
         import pickle
         pickleFolder = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/" ) # Relative to module, not cwd
         pickleFilepath = os.path.join( pickleFolder, "AddedUnitData.pickle" )
-        if Globals.verbosityLevel > 3: print( t("Importing from {}...").format( pickleFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( t("Importing from {}...").format( pickleFilepath ) )
         with open( pickleFilepath, 'rb' ) as pickleFile:
             typicalAddedUnitData = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
 
         #self.discover() # Try to automatically determine our norms
-        if Globals.verbosityLevel > 2: print( t("Running checks on {}...").format( self.name ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( t("Running checks on {}...").format( self.name ) )
         for BBB in self.books: # Do individual book checks
-            if Globals.verbosityLevel > 3: print( "  " + t("Checking {}...").format( BBB ) )
+            if BibleOrgSysGlobals.verbosityLevel > 3: print( "  " + t("Checking {}...").format( BBB ) )
             self.books[BBB].check( self.discoveryResults['ALL'], typicalAddedUnitData )
 
         # Do overall Bible checks here
@@ -817,12 +817,12 @@ class InternalBible:
             """Appends a list to the ALL BOOKS errors."""
             #print( "  appendList", BBB, firstKey, secondKey )
             if secondKey is None:
-                if Globals.debugFlag: assert( isinstance (errorDict[BBB][firstKey], list ) )
+                if BibleOrgSysGlobals.debugFlag: assert( isinstance (errorDict[BBB][firstKey], list ) )
                 if firstKey not in errorDict['All Books']: errorDict['All Books'][firstKey] = []
                 errorDict['All Books'][firstKey].extend( errorDict[BBB][firstKey] )
             else: # We have an extra level
-                if Globals.debugFlag: assert( isinstance (errorDict[BBB][firstKey], dict ) )
-                if Globals.debugFlag: assert( isinstance (errorDict[BBB][firstKey][secondKey], list ) )
+                if BibleOrgSysGlobals.debugFlag: assert( isinstance (errorDict[BBB][firstKey], dict ) )
+                if BibleOrgSysGlobals.debugFlag: assert( isinstance (errorDict[BBB][firstKey][secondKey], list ) )
                 if firstKey not in errorDict['All Books']: errorDict['All Books'][firstKey] = OrderedDict()
                 if secondKey not in errorDict['All Books'][firstKey]: errorDict['All Books'][firstKey][secondKey] = []
                 errorDict['All Books'][firstKey][secondKey].extend( errorDict[BBB][firstKey][secondKey] )
@@ -832,13 +832,13 @@ class InternalBible:
             """Merges the counts together."""
             #print( "  mergeCount", BBB, firstKey, secondKey )
             if secondKey is None:
-                if Globals.debugFlag: assert( isinstance (errorDict[BBB][firstKey], dict ) )
+                if BibleOrgSysGlobals.debugFlag: assert( isinstance (errorDict[BBB][firstKey], dict ) )
                 if firstKey not in errorDict['All Books']: errorDict['All Books'][firstKey] = {}
                 for something in errorDict[BBB][firstKey]:
                     errorDict['All Books'][firstKey][something] = 1 if something not in errorDict['All Books'][firstKey] else errorDict[BBB][firstKey][something] + 1
             else:
-                if Globals.debugFlag: assert( isinstance (errorDict[BBB][firstKey], (dict, OrderedDict,) ) )
-                if Globals.debugFlag: assert( isinstance (errorDict[BBB][firstKey][secondKey], dict ) )
+                if BibleOrgSysGlobals.debugFlag: assert( isinstance (errorDict[BBB][firstKey], (dict, OrderedDict,) ) )
+                if BibleOrgSysGlobals.debugFlag: assert( isinstance (errorDict[BBB][firstKey][secondKey], dict ) )
                 if firstKey not in errorDict['All Books']: errorDict['All Books'][firstKey] = OrderedDict()
                 if secondKey not in errorDict['All Books'][firstKey]: errorDict['All Books'][firstKey][secondKey] = {}
                 for something in errorDict[BBB][firstKey][secondKey]:
@@ -858,7 +858,7 @@ class InternalBible:
 
             if total < lcTotal:
                 tcWord = lcWord.title() # NOTE: This can make in-enew into In-Enew
-                if Globals.debugFlag: assert( tcWord != lcWord )
+                if BibleOrgSysGlobals.debugFlag: assert( tcWord != lcWord )
                 tcCount = wordDict[tcWord] if tcWord in wordDict else 0
                 if tcCount: tempResult.append( (tcCount,tcWord,) ); total += tcCount
             if total < lcTotal:
@@ -875,7 +875,7 @@ class InternalBible:
                     if tCCount: tempResult.append( (tCCount,tCWord,) ); total += tCCount
             if total < lcTotal:
                 UCWord = lcWord.upper()
-                if Globals.debugFlag: assert( UCWord!=lcWord )
+                if BibleOrgSysGlobals.debugFlag: assert( UCWord!=lcWord )
                 if UCWord != TcWord:
                     UCCount = wordDict[UCWord] if UCWord in wordDict else 0
                     if UCCount: tempResult.append( (UCCount,UCWord,) ); total += UCCount
@@ -929,7 +929,7 @@ class InternalBible:
             for thisKey in errors['ByBook'][BBB]:
                 #print( "thisKey", BBB, thisKey )
                 if thisKey.endswith('Errors') or thisKey.endswith('List') or thisKey.endswith('Lines'):
-                    if Globals.debugFlag: assert( isinstance( errors['ByBook'][BBB][thisKey], list ) )
+                    if BibleOrgSysGlobals.debugFlag: assert( isinstance( errors['ByBook'][BBB][thisKey], list ) )
                     appendList( BBB, errors['ByBook'], thisKey )
                     errors['ByCategory'][thisKey].extend( errors['ByBook'][BBB][thisKey] )
                 elif thisKey.endswith('Counts'):
@@ -939,7 +939,7 @@ class InternalBible:
                     for anotherKey in errors['ByBook'][BBB][thisKey]:
                         #print( " anotherKey", BBB, anotherKey )
                         if anotherKey.endswith('Errors') or anotherKey.endswith('List') or anotherKey.endswith('Lines'):
-                            if Globals.debugFlag: assert( isinstance( errors['ByBook'][BBB][thisKey][anotherKey], list ) )
+                            if BibleOrgSysGlobals.debugFlag: assert( isinstance( errors['ByBook'][BBB][thisKey][anotherKey], list ) )
                             appendList( BBB, errors['ByBook'], thisKey, anotherKey )
                             if thisKey not in errors['ByCategory']: errors['ByCategory'][thisKey] = OrderedDict() #; print( "Added", thisKey )
                             if anotherKey not in errors['ByCategory'][thisKey]: errors['ByCategory'][thisKey][anotherKey] = []
@@ -994,9 +994,9 @@ class InternalBible:
         Returns the number of chapters (int) in the given book.
         Returns None if we don't have that book.
         """
-        if Globals.debugFlag and debuggingThisModule: print( t("getNumChapters( {} )").format( BBB ) )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( t("getNumChapters( {} )").format( BBB ) )
         assert( len(BBB) == 3 )
-        if not Globals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): raise KeyError
+        if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): raise KeyError
         self.loadBookIfNecessary( BBB )
         if BBB in self:
             return self.books[BBB].getNumChapters()
@@ -1009,9 +1009,9 @@ class InternalBible:
         Returns the number of verses (int) in the given book and chapter.
         Returns None if we don't have that book.
         """
-        if Globals.debugFlag and debuggingThisModule: print( t("getNumVerses( {}, {} )").format( BBB, repr(C) ) )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( t("getNumVerses( {}, {} )").format( BBB, repr(C) ) )
         assert( len(BBB) == 3 )
-        if not Globals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): raise KeyError
+        if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): raise KeyError
         self.loadBookIfNecessary( BBB )
         if BBB in self:
             if isinstance( C, int ): # Just double-check the parameter
@@ -1053,12 +1053,12 @@ class InternalBible:
         result = self.getBCVRef( key )
         #print( "  gVD", self.name, key, verseData )
         if result is None:
-            if Globals.debugFlag or Globals.verbosityLevel>2: print( "InternalBible.getVerseData: no VD", self.name, key, result )
-            if Globals.debugFlag: assert( key.getChapterNumberStr()=='0' or key.getVerseNumberStr()=='0' ) # Why did we get nothing???
+            if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: print( "InternalBible.getVerseData: no VD", self.name, key, result )
+            if BibleOrgSysGlobals.debugFlag: assert( key.getChapterNumberStr()=='0' or key.getVerseNumberStr()=='0' ) # Why did we get nothing???
         else:
             verseData, context = result
-            if Globals.debugFlag: assert( isinstance( verseData, InternalBibleEntryList ) )
-            if Globals.debugFlag:
+            if BibleOrgSysGlobals.debugFlag: assert( isinstance( verseData, InternalBibleEntryList ) )
+            if BibleOrgSysGlobals.debugFlag:
                 #if 2 > len(verseData) > 20: print( "len", len(verseData) )
                 assert( 1 <= len(verseData) <= 20 ) # Smallest is just a chapter number line
             return verseData
@@ -1078,7 +1078,7 @@ class InternalBible:
             verseData, context = result
             #print( "gVT", self.name, key, verseData )
             assert( isinstance( verseData, InternalBibleEntryList ) )
-            #if Globals.debugFlag: assert( 1 <= len(verseData) <= 5 )
+            #if BibleOrgSysGlobals.debugFlag: assert( 1 <= len(verseData) <= 5 )
             verseText, firstWord = '', False
             for entry in verseData:
                 marker, cleanText = entry.getMarker(), entry.getCleanText()
@@ -1110,21 +1110,21 @@ def demo():
     """
     A very basic test/demo of the InternalBible class.
     """
-    if Globals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
     # Since this is only designed to be a base class, it can't actually do much at all
     IB = InternalBible()
     IB.objectNameString = "Dummy test Internal Bible object"
-    if Globals.verbosityLevel > 0: print( IB )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( IB )
 # end of demo
 
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of InternalBible.py

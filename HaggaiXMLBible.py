@@ -68,7 +68,7 @@ from gettext import gettext as _
 from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree
 
-import Globals
+import BibleOrgSysGlobals
 from BibleOrganizationalSystems import BibleOrganizationalSystem
 #from InternalBible import InternalBible
 #from InternalBibleBook import InternalBibleBook
@@ -95,9 +95,9 @@ def HaggaiXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False )
     if autoLoad is true and exactly one Haggai Bible is found,
         returns the loaded HaggaiXMLBible object.
     """
-    if Globals.verbosityLevel > 2: print( "HaggaiXMLBibleFileCheck( {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad ) )
-    if Globals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
-    if Globals.debugFlag: assert( autoLoad in (True,False,) )
+    if BibleOrgSysGlobals.verbosityLevel > 2: print( "HaggaiXMLBibleFileCheck( {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad ) )
+    if BibleOrgSysGlobals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
+    if BibleOrgSysGlobals.debugFlag: assert( autoLoad in (True,False,) )
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
@@ -108,7 +108,7 @@ def HaggaiXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False )
         return False
 
     # Find all the files and folders in this folder
-    if Globals.verbosityLevel > 3: print( " HaggaiXMLBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    if BibleOrgSysGlobals.verbosityLevel > 3: print( " HaggaiXMLBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -131,31 +131,31 @@ def HaggaiXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False )
     looksHopeful = False
     lastFilenameFound = None
     for thisFilename in sorted( foundFiles ):
-        if strictCheck or Globals.strictCheckingFlag:
-            firstLines = Globals.peekIntoFile( thisFilename, givenFolderName, numLines=2 )
+        if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
+            firstLines = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName, numLines=2 )
             if not firstLines or len(firstLines)<2: continue
             if not firstLines[0].startswith( '<?xml version="1.0"' ) \
             and not firstLines[0].startswith( '\ufeff<?xml version="1.0"' ): # same but with BOM
-                if Globals.verbosityLevel > 2: print( "HB (unexpected) first line was '{}' in {}".format( firstLines, thisFilename ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "HB (unexpected) first line was '{}' in {}".format( firstLines, thisFilename ) )
                 continue
             if 'haggai_' not in firstLines[1]: continue
         lastFilenameFound = thisFilename
         numFound += 1
     if numFound:
-        if Globals.verbosityLevel > 2: print( "HaggaiXMLBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "HaggaiXMLBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and autoLoad:
             ub = HaggaiXMLBible( givenFolderName, lastFilenameFound )
             ub.load() # Load and process the file
             return ub
         return numFound
-    elif looksHopeful and Globals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
+    elif looksHopeful and BibleOrgSysGlobals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
 
     # Look one level down
     numFound = 0
     foundProjects = []
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
-        if Globals.verbosityLevel > 3: print( "    HaggaiXMLBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( "    HaggaiXMLBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
         for something in os.listdir( tryFolderName ):
             somepath = os.path.join( givenFolderName, thisFolderName, something )
@@ -173,21 +173,21 @@ def HaggaiXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False )
 
         # See if there's an OS project here in this folder
         for thisFilename in sorted( foundSubfiles ):
-            if strictCheck or Globals.strictCheckingFlag:
-                firstLines = Globals.peekIntoFile( thisFilename, tryFolderName, numLines=2 )
+            if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
+                firstLines = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName, numLines=2 )
                 if not firstLines or len(firstLines)<2: continue
                 if not firstLines[0].startswith( '<?xml version="1.0"' ) \
                 and not firstLines[0].startswith( '\ufeff<?xml version="1.0"' ): # same but with BOM
-                    if Globals.verbosityLevel > 2: print( "ZB (unexpected) first line was '{}' in {}".format( firstLines, thisFilename ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "ZB (unexpected) first line was '{}' in {}".format( firstLines, thisFilename ) )
                     continue
                 if 'haggai_' not in firstLines[1]: continue
             foundProjects.append( (tryFolderName, thisFilename,) )
             lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
-        if Globals.verbosityLevel > 2: print( "HaggaiXMLBibleFileCheck foundProjects", numFound, foundProjects )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "HaggaiXMLBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and autoLoad:
-            if Globals.debugFlag: assert( len(foundProjects) == 1 )
+            if BibleOrgSysGlobals.debugFlag: assert( len(foundProjects) == 1 )
             ub = HaggaiXMLBible( foundProjects[0][0], foundProjects[0][1] ) # Folder and filename
             ub.load() # Load and process the file
             return ub
@@ -246,15 +246,15 @@ class HaggaiXMLBible( Bible ):
         """
         Load a single source XML file and load book elements.
         """
-        if Globals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
         self.tree = ElementTree().parse( self.sourceFilepath )
-        if Globals.debugFlag: assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
+        if BibleOrgSysGlobals.debugFlag: assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
 
         # Find the main (bible) container
         if self.tree.tag == HaggaiXMLBible.treeTag:
             location = "Haggai XML file"
-            Globals.checkXMLNoText( self.tree, location, '4f6h' )
-            Globals.checkXMLNoTail( self.tree, location, '1wk8' )
+            BibleOrgSysGlobals.checkXMLNoText( self.tree, location, '4f6h' )
+            BibleOrgSysGlobals.checkXMLNoTail( self.tree, location, '1wk8' )
 
             schema = None
             name = status = BibleType = revision = lgid = None
@@ -294,8 +294,8 @@ class HaggaiXMLBible( Bible ):
             for element in self.tree:
                 if element.tag == HaggaiXMLBible.bookTag:
                     sublocation = "book in " + location
-                    Globals.checkXMLNoText( element, sublocation, 'g3g5' )
-                    Globals.checkXMLNoTail( element, sublocation, 'd3f6' )
+                    BibleOrgSysGlobals.checkXMLNoText( element, sublocation, 'g3g5' )
+                    BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'd3f6' )
                     self.__validateAndExtractBook( element )
                 else: logging.error( "Expected to find '{}' but got '{}'".format( HaggaiXMLBible.bookTag, element.tag ) )
         else: logging.error( "Expected to load '{}' but got '{}'".format( HaggaiXMLBible.treeTag, self.tree.tag ) )
@@ -323,113 +323,113 @@ class HaggaiXMLBible( Bible ):
             <rights>We believe that this Bible is found in the Public Domain.</rights>
         </INFORMATION>
         """
-        if Globals.debugFlag: assert( self.header )
+        if BibleOrgSysGlobals.debugFlag: assert( self.header )
         location = 'Header'
-        Globals.checkXMLNoAttributes( self.header, location, 'j4j6' )
-        Globals.checkXMLNoText( self.header, location, 'sk4l' )
-        Globals.checkXMLNoTail( self.header, location, 'a2d4' )
+        BibleOrgSysGlobals.checkXMLNoAttributes( self.header, location, 'j4j6' )
+        BibleOrgSysGlobals.checkXMLNoText( self.header, location, 'sk4l' )
+        BibleOrgSysGlobals.checkXMLNoTail( self.header, location, 'a2d4' )
 
         # TODO: We probably need to rationalise some of the self.xxx stores
         for element in self.header:
             #print( "header", element.tag )
             if element.tag == 'title':
                 sublocation = "title in {}".format( location )
-                Globals.checkXMLNoTail( element, sublocation, 'al1d' )
-                Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
-                Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
-                if Globals.debugFlag: assert( element.text )
+                BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
+                BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
+                BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
+                if BibleOrgSysGlobals.debugFlag: assert( element.text )
                 self.title = element.text
             elif element.tag == 'creator':
                 sublocation = "creator in {}".format( location )
-                Globals.checkXMLNoTail( element, sublocation, 'al1d' )
-                Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
-                Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
+                BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
+                BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
+                BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if element.text: self.creator = element.text
             elif element.tag == 'subject':
                 sublocation = "subject in {}".format( location )
-                Globals.checkXMLNoTail( element, sublocation, 'al1d' )
-                Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
-                Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
+                BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
+                BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
+                BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if element.text: self.subject = element.text
             elif element.tag == 'description':
                 sublocation = "description in {}".format( location )
-                Globals.checkXMLNoTail( element, sublocation, 'al1d' )
-                Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
-                Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
-                if Globals.debugFlag: assert( element.text )
+                BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
+                BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
+                BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
+                if BibleOrgSysGlobals.debugFlag: assert( element.text )
                 self.description = element.text
             elif element.tag == 'publisher':
                 sublocation = "publisher in {}".format( location )
-                Globals.checkXMLNoTail( element, sublocation, 'al1d' )
-                Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
-                Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
+                BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
+                BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
+                BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if element.text: self.publisher = element.text
             elif element.tag == 'contributor':
                 sublocation = "contributor in {}".format( location )
-                Globals.checkXMLNoTail( element, sublocation, 'alj1d' )
-                Globals.checkXMLNoAttributes( element, sublocation, 'j3jjd' )
-                Globals.checkXMLNoSubelements( element, sublocation, '5gk78' )
+                BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'alj1d' )
+                BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jjd' )
+                BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5gk78' )
                 if element.text:
                     try: self.contributor = [ self.contributor, element.text ] # Put multiples into a list
                     except AttributeError: self.contributor = element.text # Must be the first (and possibly only) one
             elif element.tag == 'contributors':
                 sublocation = "contributors in {}".format( location )
-                Globals.checkXMLNoTail( element, sublocation, 'al1d' )
-                Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
-                Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
+                BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
+                BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
+                BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if element.text: self.contributors = element.text
             elif element.tag == 'date':
                 sublocation = "date in {}".format( location )
-                Globals.checkXMLNoTail( element, sublocation, 'al1d' )
-                Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
-                Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
-                if Globals.debugFlag: assert( element.text )
+                BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
+                BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
+                BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
+                if BibleOrgSysGlobals.debugFlag: assert( element.text )
                 self.date = element.text
             elif element.tag == 'type':
                 sublocation = "type in {}".format( location )
-                Globals.checkXMLNoTail( element, sublocation, 'al1d' )
-                Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
-                Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
+                BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
+                BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
+                BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if element.text: self.documentType = element.text
             elif element.tag == 'format':
                 sublocation = "format in {}".format( location )
-                Globals.checkXMLNoTail( element, sublocation, 'al1d' )
-                Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
-                Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
-                if Globals.debugFlag: assert( element.text )
-                if Globals.debugFlag: assert( element.text == 'Haggai XML Bible Markup Language' )
+                BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
+                BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
+                BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
+                if BibleOrgSysGlobals.debugFlag: assert( element.text )
+                if BibleOrgSysGlobals.debugFlag: assert( element.text == 'Haggai XML Bible Markup Language' )
             elif element.tag == 'identifier':
                 sublocation = "identifier in {}".format( location )
-                Globals.checkXMLNoTail( element, sublocation, 'al1d' )
-                Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
-                Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
-                if Globals.debugFlag: assert( element.text )
+                BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
+                BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
+                BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
+                if BibleOrgSysGlobals.debugFlag: assert( element.text )
                 self.identifier = element.text
             elif element.tag == 'source':
                 sublocation = "source in {}".format( location )
-                Globals.checkXMLNoTail( element, sublocation, 'al1d' )
-                Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
-                Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
-                if Globals.debugFlag: assert( element.text )
+                BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
+                BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
+                BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
+                if BibleOrgSysGlobals.debugFlag: assert( element.text )
                 self.source = element.text
             elif element.tag == 'language':
                 sublocation = "language in {}".format( location )
-                Globals.checkXMLNoTail( element, sublocation, 'al1d' )
-                Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
-                Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
-                if Globals.debugFlag: assert( element.text )
+                BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
+                BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
+                BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
+                if BibleOrgSysGlobals.debugFlag: assert( element.text )
                 self.language = element.text
             elif element.tag == 'coverage':
                 sublocation = "coverage in {}".format( location )
-                Globals.checkXMLNoTail( element, sublocation, 'al1d' )
-                Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
-                Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
+                BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
+                BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
+                BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if element.text: self.coverage = element.text
             elif element.tag == 'rights':
                 sublocation = "rights in {}".format( location )
-                Globals.checkXMLNoTail( element, sublocation, 'al1d' )
-                Globals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
-                Globals.checkXMLNoSubelements( element, sublocation, '5g78' )
+                BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
+                BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
+                BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if element.text: self.rights = element.text
             else: logging.error( "Found unexpected '{}' tag in {}".format( element.tag, location ) )
     # end of HaggaiXMLBible.__validateAndExtractHeader
@@ -441,7 +441,7 @@ class HaggaiXMLBible( Bible ):
             finding chapter subelements.
         """
 
-        if Globals.verbosityLevel > 3: print( _("Validating XML book...") )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Validating XML book...") )
 
         # Process the div attributes first
         BBB = bookName = bookShortName = bookNumber = None
@@ -454,7 +454,7 @@ class HaggaiXMLBible( Bible ):
                 bookShortName = value
             else: logging.warning( "Unprocessed '{}' attribute ({}) in book element".format( attrib, value ) )
         if bookNumber:
-            try: BBB = Globals.BibleBooksCodes.getBBBFromReferenceNumber( bookNumber )
+            try: BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( bookNumber )
             except KeyError:
                 logging.warning( "Unable to deduce which book is number={}, name={}, shortName={} -- ignoring it" \
                                                                         .format( bookNumber, bookName, bookShortName ) )
@@ -462,7 +462,7 @@ class HaggaiXMLBible( Bible ):
             BBB = self.genericBOS.getBBB( bookName )
 
         if BBB:
-            if Globals.verbosityLevel > 2: print( _("Validating {} {}...").format( BBB, bookName ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Validating {} {}...").format( BBB, bookName ) )
             thisBook = BibleBook( self, BBB )
             thisBook.objectNameString = "Haggai XML Bible Book object"
             thisBook.objectTypeString = "Haggai"
@@ -470,17 +470,17 @@ class HaggaiXMLBible( Bible ):
             for element in book:
                 if element.tag == HaggaiXMLBible.captionTag:
                     sublocation = "caption in {}".format( BBB )
-                    Globals.checkXMLNoAttributes( element, sublocation, 'jhl6' )
-                    Globals.checkXMLNoSubelements( element, sublocation, 'jk21' )
-                    Globals.checkXMLNoTail( element, sublocation, 'kjh6' )
+                    BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'jhl6' )
+                    BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, 'jk21' )
+                    BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'kjh6' )
                     thisBook.appendLine( 'mt', element.text )
                 elif element.tag == HaggaiXMLBible.chapterTag:
                     sublocation = "chapter in {}".format( BBB )
-                    Globals.checkXMLNoText( element, sublocation, 'j3jd' )
-                    Globals.checkXMLNoTail( element, sublocation, 'al1d' )
+                    BibleOrgSysGlobals.checkXMLNoText( element, sublocation, 'j3jd' )
+                    BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                     self.__validateAndExtractChapter( BBB, thisBook, element )
                 else: logging.error( "Expected to find '{}' but got '{}'".format( HaggaiXMLBible.chapterTag, element.tag ) )
-            if Globals.verbosityLevel > 2: print( "  Saving {} into results...".format( BBB ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Saving {} into results...".format( BBB ) )
             self.saveBook( thisBook )
     # end of HaggaiXMLBible.__validateAndExtractBook
 
@@ -492,7 +492,7 @@ class HaggaiXMLBible( Bible ):
             finding and saving verse elements.
         """
 
-        if Globals.verbosityLevel > 3: print( _("Validating XML chapter...") )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Validating XML chapter...") )
 
         # Process the chapter attributes first
         chapterNumber = numVerses = None
@@ -514,16 +514,16 @@ class HaggaiXMLBible( Bible ):
                 self.__validateAndExtractVerse( BBB, chapterNumber, thisBook, element )
             elif element.tag == HaggaiXMLBible.captionTag+'disabled': # Used in Psalms
                 location = "caption in {} {}".format( BBB, chapterNumber )
-                Globals.checkXMLNoTail( element, location, 'k5k8' )
-                Globals.checkXMLNoSubelements( element, location, 'd3f5' )
+                BibleOrgSysGlobals.checkXMLNoTail( element, location, 'k5k8' )
+                BibleOrgSysGlobals.checkXMLNoSubelements( element, location, 'd3f5' )
                 # Handle caption attributes
                 vRef = None
                 for attrib,value in element.items():
                     if attrib=="vref":
                         vRef = value
-                        if Globals.debugFlag: assert( vRef == '1' )
+                        if BibleOrgSysGlobals.debugFlag: assert( vRef == '1' )
                     else: logging.warning( "Unprocessed '{}' attribute ({}) in caption element".format( attrib, value ) )
-                if Globals.debugFlag: assert( vRef )
+                if BibleOrgSysGlobals.debugFlag: assert( vRef )
                 vText = element.text
                 if not vText:
                     logging.warning( "{} {}:{} has no text".format( BBB, chapterNumber, vRef ) )
@@ -541,12 +541,12 @@ class HaggaiXMLBible( Bible ):
             finding and saving verse elements.
         """
 
-        if Globals.verbosityLevel > 3: print( _("Validating XML paragraph...") )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Validating XML paragraph...") )
 
         location = "paragraph in {} {}".format( BBB, chapterNumber )
-        Globals.checkXMLNoAttributes( paragraph, location, 'brgw3' )
-        Globals.checkXMLNoText( paragraph, location, 'brgw3' )
-        Globals.checkXMLNoTail( paragraph, location, 'brgw3' )
+        BibleOrgSysGlobals.checkXMLNoAttributes( paragraph, location, 'brgw3' )
+        BibleOrgSysGlobals.checkXMLNoText( paragraph, location, 'brgw3' )
+        BibleOrgSysGlobals.checkXMLNoTail( paragraph, location, 'brgw3' )
         thisBook.appendLine( 'p', '' )
 
         # Handle verse subelements (verses)
@@ -556,16 +556,16 @@ class HaggaiXMLBible( Bible ):
                 self.__validateAndExtractVerse( BBB, chapterNumber, thisBook, element )
             elif element.tag == HaggaiXMLBible.captionTag+'disabled': # Used in Psalms
                 location = "caption in {} {}".format( BBB, chapterNumber )
-                Globals.checkXMLNoTail( element, location, 'k5k8' )
-                Globals.checkXMLNoSubelements( element, location, 'd3f5' )
+                BibleOrgSysGlobals.checkXMLNoTail( element, location, 'k5k8' )
+                BibleOrgSysGlobals.checkXMLNoSubelements( element, location, 'd3f5' )
                 # Handle caption attributes
                 vRef = None
                 for attrib,value in element.items():
                     if attrib=="vref":
                         vRef = value
-                        if Globals.debugFlag: assert( vRef == '1' )
+                        if BibleOrgSysGlobals.debugFlag: assert( vRef == '1' )
                     else: logging.warning( "Unprocessed '{}' attribute ({}) in caption element".format( attrib, value ) )
-                if Globals.debugFlag: assert( vRef )
+                if BibleOrgSysGlobals.debugFlag: assert( vRef )
                 vText = element.text
                 if not vText:
                     logging.warning( "{} {}:{} has no text".format( BBB, chapterNumber, vRef ) )
@@ -582,10 +582,10 @@ class HaggaiXMLBible( Bible ):
             finding and saving verse elements.
         """
 
-        if Globals.verbosityLevel > 3: print( _("Validating XML verse...") )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Validating XML verse...") )
 
         location = "verse in {} {}".format( BBB, chapterNumber )
-        Globals.checkXMLNoTail( verse, location, 'l5ks' )
+        BibleOrgSysGlobals.checkXMLNoTail( verse, location, 'l5ks' )
 
         # Handle verse attributes
         verseNumber = toVerseNumber = None
@@ -593,7 +593,7 @@ class HaggaiXMLBible( Bible ):
             if attrib=="vnumber":
                 verseNumber = value
             else: logging.warning( "Unprocessed '{}' attribute ({}) in verse element".format( attrib, value ) )
-        if Globals.debugFlag: assert( verseNumber )
+        if BibleOrgSysGlobals.debugFlag: assert( verseNumber )
         location = "{}:{}".format( location, verseNumber ) # Get a better location description
         #thisBook.appendLine( 'v', verseNumber )
         vText = '' if verse.text is None else verse.text
@@ -622,14 +622,14 @@ class HaggaiXMLBible( Bible ):
                 for subsubelement in subelement:
                     if subsubelement.tag == HaggaiXMLBible.styleTag:
                         subsublocation = "style in " + sublocation
-                        Globals.checkXMLNoSubelements( subsubelement, subsublocation, 'fyt4' )
+                        BibleOrgSysGlobals.checkXMLNoSubelements( subsubelement, subsublocation, 'fyt4' )
                         fs = css = idStyle = None
                         for attrib,value in subsubelement.items():
                             if attrib=='fs': fs = value
                             #elif attrib=="css": css = value
                             #elif attrib=="id": idStyle = value
                             else: logging.warning( "Unprocessed '{}' attribute ({}) in style subsubelement".format( attrib, value ) )
-                        if Globals.debugFlag: assert( fs or css or idStyle )
+                        if BibleOrgSysGlobals.debugFlag: assert( fs or css or idStyle )
                         SFM = None
                         if fs == 'italic': SFM = '\\it'
                         elif fs == 'super': SFM = '\\bdit'
@@ -642,7 +642,7 @@ class HaggaiXMLBible( Bible ):
                         #elif css is None and idStyle=='cl:divineName': SFM = '\\nd'
                         #else: print( "css is", css, "idStyle is", idStyle ); halt
                         sText, sTail = subsubelement.text.strip(), subsubelement.tail
-                        if Globals.debugFlag: assert( sText )
+                        if BibleOrgSysGlobals.debugFlag: assert( sText )
                         if SFM: vText += SFM+' ' + sText + SFM+'*'
                         else: vText += '\\sc ' + '['+css+']' + sText + '\\sc* ' # Use sc for unknown styles
                         if sTail: vText += sTail.strip()
@@ -650,14 +650,14 @@ class HaggaiXMLBible( Bible ):
 
             elif subelement.tag == HaggaiXMLBible.styleTag:
                 sublocation = "style in " + location
-                Globals.checkXMLNoSubelements( subelement, sublocation, 'f5gh' )
+                BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, 'f5gh' )
                 fs = css = idStyle = None
                 for attrib,value in subelement.items():
                     if attrib=="fs": fs = value
                     #elif attrib=="css": css = value
                     #elif attrib=="id": idStyle = value
                     else: logging.warning( "Unprocessed '{}' attribute ({}) in style subelement".format( attrib, value ) )
-                if Globals.debugFlag: assert( fs )
+                if BibleOrgSysGlobals.debugFlag: assert( fs )
                 SFM = None
                 if fs == 'super': SFM = '\\bdit'
                 elif fs == 'emphasis': SFM = '\\em'
@@ -669,7 +669,7 @@ class HaggaiXMLBible( Bible ):
                 #elif css is None and idStyle=='cl:divineName': SFM = '\\nd'
                 #else: print( "css is", css, "idStyle is", idStyle ); halt
                 sText, sTail = subelement.text.strip(), subelement.tail
-                if Globals.debugFlag: assert( sText )
+                if BibleOrgSysGlobals.debugFlag: assert( sText )
                 #print( BBB, chapterNumber, sublocation )
                 if SFM: vText += SFM+' ' + sText + SFM+'*'
                 else: vText += '\\sc ' + '['+css+']' + sText + '\\sc* ' # Use sc for unknown styles
@@ -677,14 +677,14 @@ class HaggaiXMLBible( Bible ):
 
             elif subelement.tag == HaggaiXMLBible.breakTag:
                 sublocation = "line break in " + location
-                Globals.checkXMLNoText( subelement, sublocation, 'c1d4' )
-                Globals.checkXMLNoSubelements( subelement, sublocation, 'g4g8' )
+                BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation, 'c1d4' )
+                BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, 'g4g8' )
                 art = None
                 for attrib,value in subelement.items():
                     if attrib=="art":
                         art = value
                     else: logging.warning( "Unprocessed '{}' attribute ({}) in style subelement".format( attrib, value ) )
-                if Globals.debugFlag: assert( art == 'x-nl' )
+                if BibleOrgSysGlobals.debugFlag: assert( art == 'x-nl' )
                 #print( BBB, chapterNumber, verseNumber )
                 #assert( vText )
                 if vText:
@@ -708,7 +708,7 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         testFolder = "../../../../../Data/Work/Bibles/Formats/Haggai XML/"
@@ -727,11 +727,11 @@ def demo():
                 somepath = os.path.join( testFolder, something )
                 if os.path.isfile( somepath ) and something.endswith( '.xml' ):
                     count += 1
-                    if Globals.verbosityLevel > 0: print( "\nH B{}/ {}".format( count, something ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 0: print( "\nH B{}/ {}".format( count, something ) )
                     zb = HaggaiXMLBible( testFolder, something )
                     zb.load()
-                    if Globals.verbosityLevel > 0: print( zb )
-                    if Globals.strictCheckingFlag:
+                    if BibleOrgSysGlobals.verbosityLevel > 0: print( zb )
+                    if BibleOrgSysGlobals.strictCheckingFlag:
                         zb.check()
                         #UBErrors = UB.getErrors()
                         # print( UBErrors )
@@ -754,7 +754,7 @@ def demo():
                             #print( svk, ob.getVerseDataList( reference ) )
                             try: print( reference, svk.getShortText(), zb.getVerseText( svk ) )
                             except KeyError: print( something, reference, "doesn't exist" )
-                    if Globals.commandLineOptions.export:
+                    if BibleOrgSysGlobals.commandLineOptions.export:
                         zb.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                     else:
                         zb.toHaggaiXML()
@@ -777,8 +777,8 @@ def demo():
             #testFilepath = os.path.join( testFolder, testFilename )
 
             ## Demonstrate the XML Bible class
-            #if Globals.verbosityLevel > 1: print( "\nHZ C{}/ Demonstrating the Haggai Bible class...".format( j+1 ) )
-            #if Globals.verbosityLevel > 0: print( "  Test filepath is '{}'".format( testFilepath ) )
+            #if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nHZ C{}/ Demonstrating the Haggai Bible class...".format( j+1 ) )
+            #if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test filepath is '{}'".format( testFilepath ) )
             #zb = HaggaiXMLBible( testFolder, testFilename )
             #zb.load() # Load and process the XML
             #print( zb ) # Just print a summary
@@ -801,10 +801,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser, exportAvailable=True )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of HaggaiXMLBible.py

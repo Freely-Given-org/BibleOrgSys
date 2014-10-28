@@ -33,7 +33,7 @@ ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
 import os, logging
-import Globals
+import BibleOrgSysGlobals
 
 
 def readListFile( folder, filename, outputList, debug=False ):
@@ -135,15 +135,15 @@ def demo():
     """
     Demo program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel>0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel>0: print( ProgNameVersion )
 # end of demo
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of ControlFiles.py

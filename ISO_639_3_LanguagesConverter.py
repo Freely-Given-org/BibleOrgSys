@@ -39,7 +39,7 @@ from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree
 
 from singleton import singleton
-import Globals
+import BibleOrgSysGlobals
 
 
 
@@ -84,7 +84,7 @@ class ISO_639_3_LanguagesConverter:
                 XMLFilepath = os.path.join( os.path.dirname(__file__), "DataFiles", self._filenameBase + ".xml" ) # Relative to module, not cwd
 
             self._load( XMLFilepath )
-            if Globals.strictCheckingFlag:
+            if BibleOrgSysGlobals.strictCheckingFlag:
                 self._validate()
         else: # The data must have been already loaded
             if XMLFilepath is not None and XMLFilepath!=self.__XMLFilepath: logging.error( _("ISO 639-3 language codes are already loaded -- your different filepath of '{}' was ignored").format( XMLFilepath ) )
@@ -100,7 +100,7 @@ class ISO_639_3_LanguagesConverter:
         self.__XMLFilepath = XMLFilepath
         assert( self._XMLtree is None or len(self._XMLtree)==0 ) # Make sure we're not doing this twice
 
-        if Globals.verbosityLevel > 2: print( "Loading ISO 639-3 languages XML file from '{}'...".format( XMLFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading ISO 639-3 languages XML file from '{}'...".format( XMLFilepath ) )
         self._XMLtree = ElementTree().parse( XMLFilepath )
         assert( self._XMLtree ) # Fail here if we didn't load anything at all
 
@@ -120,9 +120,9 @@ class ISO_639_3_LanguagesConverter:
 
         for j,element in enumerate(self._XMLtree):
             if element.tag == self._mainElementTag:
-                Globals.checkXMLNoText( element, element.tag )
-                Globals.checkXMLNoTail( element, element.tag )
-                Globals.checkXMLNoSubelements( element, element.tag )
+                BibleOrgSysGlobals.checkXMLNoText( element, element.tag )
+                BibleOrgSysGlobals.checkXMLNoTail( element, element.tag )
+                BibleOrgSysGlobals.checkXMLNoSubelements( element, element.tag )
 
                 # Check compulsory attributes on this main element
                 for attributeName in self._compulsoryAttributes:
@@ -223,7 +223,7 @@ class ISO_639_3_LanguagesConverter:
             folder = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles/" )
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + "_Languages_Tables.pickle" )
-        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.__DataDicts, myFile )
     # end of pickle
@@ -249,7 +249,7 @@ class ISO_639_3_LanguagesConverter:
             folder = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles/" )
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + "_Languages_Tables.py" )
-        if Globals.verbosityLevel > 1: print( "Exporting to {}...".format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Exporting to {}...".format( filepath ) )
 
         IDDict, NameDict = self.__DataDicts
         with open( filepath, 'wt' ) as myFile:
@@ -278,7 +278,7 @@ class ISO_639_3_LanguagesConverter:
             folder = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles/" )
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self._filenameBase + "_Languages_Tables.json" )
-        if Globals.verbosityLevel > 1: print( "Exporting to {}...".format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Exporting to {}...".format( filepath ) )
         with open( filepath, 'wt' ) as myFile:
             json.dump( self.__DataDicts, myFile, indent=2 )
     # end of exportDataToJSON
@@ -342,7 +342,7 @@ class ISO_639_3_LanguagesConverter:
             filepath = os.path.join( folder, self._filenameBase + "_Languages_Tables" )
         hFilepath = filepath + '.h'
         cFilepath = filepath + '.c'
-        if Globals.verbosityLevel > 1: print( "Exporting to {}...".format( cFilepath ) ) # Don't bother telling them about the .h file
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Exporting to {}...".format( cFilepath ) ) # Don't bother telling them about the .h file
         ifdefName = self._filenameBase.upper() + "_Tables_h"
 
         IDDict, NameDict = self.__DataDicts
@@ -372,9 +372,9 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
 
-    if Globals.commandLineOptions.export:
+    if BibleOrgSysGlobals.commandLineOptions.export:
         lgC = ISO_639_3_LanguagesConverter().loadAndValidate() # Load the XML
         lgC.pickle() # Produce a pickle output file
         lgC.exportDataToPython() # Produce the .py tables
@@ -389,10 +389,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser, exportAvailable=True )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of ISO_639_3_LanguagesConverter.py

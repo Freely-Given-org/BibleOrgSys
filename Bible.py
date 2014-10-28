@@ -40,7 +40,7 @@ import logging, os.path
 from gettext import gettext as _
 from xml.etree.ElementTree import ElementTree
 
-import Globals
+import BibleOrgSysGlobals
 from InternalBibleBook import InternalBibleBook
 from BibleWriter import BibleWriter
 
@@ -147,8 +147,8 @@ class BibleBook ( InternalBibleBook ):
         #"""
         #Append the stuff tuple to a Bible book.
         #"""
-        #if Globals.debugFlag: assert( len(stuff) == 2 )
-        #if Globals.debugFlag: assert( stuff[0] in self.textCodes )
+        #if BibleOrgSysGlobals.debugFlag: assert( len(stuff) == 2 )
+        #if BibleOrgSysGlobals.debugFlag: assert( stuff[0] in self.textCodes )
         #self.text.append( stuff )
     ## end of append
 
@@ -194,7 +194,7 @@ class Bible( BibleWriter ):
         #self.backMatter = []
 
         # Get the data tables that we need for proper checking
-        #self.ISOLanguages = ISO_639_3_Languages().loadData() if Globals.strictCheckingFlag else None
+        #self.ISOLanguages = ISO_639_3_Languages().loadData() if BibleOrgSysGlobals.strictCheckingFlag else None
     # end of __init__
 
     #def x__str__( self ):
@@ -295,7 +295,7 @@ class Bible( BibleWriter ):
         ##B = Bible.Bible()
         #unhandledMarkers = set()
         #for BBB,bookData in self.books.items():
-            #if Globals.verbosityLevel > 2: print( bookData )
+            #if BibleOrgSysGlobals.verbosityLevel > 2: print( bookData )
             #bk = B.addBook( BBB )
             #for marker,text,extras in bookData.lines:
                 ##print( marker, text )
@@ -336,7 +336,7 @@ class Bible( BibleWriter ):
             ##print( bk)
         #print( B )
         #if outputFilepath: B.write( outputFilepath )
-        #if unhandledMarkers and Globals.verbosityLevel>0: print( "  " + _("WARNING: Unhandled USFM markers were {}").format(unhandledMarkers) )
+        #if unhandledMarkers and BibleOrgSysGlobals.verbosityLevel>0: print( "  " + _("WARNING: Unhandled USFM markers were {}").format(unhandledMarkers) )
     ## end of toBible
 # end of class Bible
 
@@ -346,11 +346,11 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 0: print( "{} V{}".format(ProgName, ProgVersion ) )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( "{} V{}".format(ProgName, ProgVersion ) )
 
     # Since this is only designed to be a base class, it can't actually do much at all
     B = Bible()
-    if Globals.verbosityLevel > 0: print( B )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( B )
 
     if 1: # Test a single folder containing a USFM Bible
         from USFMBible import USFMBible
@@ -358,8 +358,8 @@ def demo():
         if os.access( testFolder, os.R_OK ):
             UB = USFMBible( testFolder, name, encoding )
             UB.load()
-            if Globals.verbosityLevel > 0: print( UB )
-            if Globals.strictCheckingFlag:
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( UB )
+            if BibleOrgSysGlobals.strictCheckingFlag:
                 UB.check()
             UB.doAllExports( "OutputFiles", wantPhotoBible=False, wantODFs=False, wantPDFs=False )
         else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
@@ -367,10 +367,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser, exportAvailable=True )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of Bible.py

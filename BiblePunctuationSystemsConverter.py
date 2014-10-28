@@ -39,7 +39,7 @@ from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree
 
 from singleton import singleton
-import Globals
+import BibleOrgSysGlobals
 
 
 
@@ -85,14 +85,14 @@ class BiblePunctuationSystemsConverter:
         if not self._XMLSystems: # Only ever do this once
             if XMLFolder==None: XMLFolder = os.path.join( os.path.dirname(__file__), "DataFiles", "PunctuationSystems" ) # Relative to module, not cwd
             self.__XMLFolder = XMLFolder
-            if Globals.verbosityLevel > 2: print( _("Loading punctuations systems from {}...").format( self.__XMLFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading punctuations systems from {}...").format( self.__XMLFolder ) )
             filenamePrefix = "BIBLEPUNCTUATIONSYSTEM_"
             for filename in os.listdir( self.__XMLFolder ):
                 filepart, extension = os.path.splitext( filename )
 
                 if extension.upper() == '.XML' and filepart.upper().startswith(filenamePrefix):
                     punctuationSystemCode = filepart[len(filenamePrefix):]
-                    if Globals.verbosityLevel > 3: print( _("Loading {} punctuation system from {}...").format( punctuationSystemCode, filename ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Loading {} punctuation system from {}...").format( punctuationSystemCode, filename ) )
                     self._XMLSystems[punctuationSystemCode] = {}
                     self._XMLSystems[punctuationSystemCode]["tree"] = ElementTree().parse( os.path.join( self.__XMLFolder, filename ) )
                     assert( self._XMLSystems[punctuationSystemCode]["tree"] ) # Fail here if we didn't load anything at all
@@ -103,18 +103,18 @@ class BiblePunctuationSystemsConverter:
                         if header.tag == self.headerTag:
                             self._XMLSystems[punctuationSystemCode]["header"] = header
                             self._XMLSystems[punctuationSystemCode]["tree"].remove( header )
-                            Globals.checkXMLNoText( header, "header" )
-                            Globals.checkXMLNoTail( header, "header" )
-                            Globals.checkXMLNoAttributes( header, "header" )
+                            BibleOrgSysGlobals.checkXMLNoText( header, "header" )
+                            BibleOrgSysGlobals.checkXMLNoTail( header, "header" )
+                            BibleOrgSysGlobals.checkXMLNoAttributes( header, "header" )
                             if len(header)>1:
                                 logging.info( _("Unexpected elements in header") )
                             elif len(header)==0:
                                 logging.info( _("Missing work element in header") )
                             else:
                                 work = header[0]
-                                Globals.checkXMLNoText( work, "work in header" )
-                                Globals.checkXMLNoTail( work, "work in header" )
-                                Globals.checkXMLNoAttributes( work, "work in header" )
+                                BibleOrgSysGlobals.checkXMLNoText( work, "work in header" )
+                                BibleOrgSysGlobals.checkXMLNoTail( work, "work in header" )
+                                BibleOrgSysGlobals.checkXMLNoAttributes( work, "work in header" )
                                 if work.tag == "work":
                                     self._XMLSystems[punctuationSystemCode]["version"] = work.find("version").text
                                     self._XMLSystems[punctuationSystemCode]["date"] = work.find("date").text
@@ -130,7 +130,7 @@ class BiblePunctuationSystemsConverter:
                         bookCount += 1
                     logging.info( _("    Loaded {} books").format( bookCount ) )
 
-                    if Globals.strictCheckingFlag:
+                    if BibleOrgSysGlobals.strictCheckingFlag:
                         self._validateSystem( self._XMLSystems[punctuationSystemCode]["tree"], punctuationSystemCode )
         return self
     # end of loadSystems
@@ -146,9 +146,9 @@ class BiblePunctuationSystemsConverter:
 
         for k,element in enumerate(punctuationTree):
             if element.tag in self.mainElementTags:
-                Globals.checkXMLNoTail( element, element.tag )
-                if not self.compulsoryAttributes and not self.optionalAttributes: Globals.checkXMLNoAttributes( element, element.tag )
-                if not self.compulsoryElements and not self.optionalElements: Globals.checkXMLNoSubelements( element, element.tag )
+                BibleOrgSysGlobals.checkXMLNoTail( element, element.tag )
+                if not self.compulsoryAttributes and not self.optionalAttributes: BibleOrgSysGlobals.checkXMLNoAttributes( element, element.tag )
+                if not self.compulsoryElements and not self.optionalElements: BibleOrgSysGlobals.checkXMLNoSubelements( element, element.tag )
 
                 # Check compulsory attributes on this main element
                 for attributeName in self.compulsoryAttributes:
@@ -217,7 +217,7 @@ class BiblePunctuationSystemsConverter:
         """
         result = "BiblePunctuationSystemsConverter object"
         result += ('\n' if result else '') + "  Number of punctuation systems loaded = {}".format( len(self._XMLSystems) )
-        if Globals.verbosityLevel > 2: # Make it verbose
+        if BibleOrgSysGlobals.verbosityLevel > 2: # Make it verbose
             for x in self._XMLSystems:
                 result += ('\n' if result else '') + "  {}".format( x )
                 title = self._XMLSystems[x]["title"]
@@ -254,11 +254,11 @@ class BiblePunctuationSystemsConverter:
                 if tag in punctuationDict: logging.error( _("Multiple {} entries in {} punctuation system").format( tag, punctuationSystemCode ) )
                 punctuationDict[tag] = text
 
-            if Globals.strictCheckingFlag: # check for duplicates
+            if BibleOrgSysGlobals.strictCheckingFlag: # check for duplicates
                 for checkSystemCode,checkSystemDataDict in self._DataDict.items():
                     if checkSystemDataDict == punctuationDict:
                         logging.error( _("{} and {} punctuation systems are identical").format( punctuationSystemCode, checkSystemCode ) )
-                    elif Globals.verbosityLevel>2: # check for very similar systems
+                    elif BibleOrgSysGlobals.verbosityLevel>2: # check for very similar systems
                         differenceCount, firstTag, description = 0, '', ''
                         for tag in punctuationDict:
                             if tag not in checkSystemDataDict:
@@ -292,7 +292,7 @@ class BiblePunctuationSystemsConverter:
             folder = os.path.join( self.__XMLFolder, "../", "DerivedFiles/" )
             if not os.path.exists( folder ): os.mkdir( folder )
             filepath = os.path.join( folder, self.__filenameBase + "_Tables.pickle" )
-        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self._DataDict, myFile )
     # end of pickle
@@ -315,7 +315,7 @@ class BiblePunctuationSystemsConverter:
         assert( self._DataDict )
 
         if not filepath: filepath = os.path.join( self.__XMLFolder, "../", "DerivedFiles", self.__filenameBase + "_Tables.py" )
-        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
 
         with open( filepath, 'wt' ) as myFile:
             myFile.write( "# {}\n#\n".format( filepath ) )
@@ -346,7 +346,7 @@ class BiblePunctuationSystemsConverter:
         assert( self._DataDict )
 
         if not filepath: filepath = os.path.join( self.__XMLFolder, "../", "DerivedFiles", self.__filenameBase + "_Tables.json" )
-        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
         with open( filepath, 'wt' ) as myFile:
             json.dump( self._DataDict, myFile, indent=2 )
     # end of exportDataToJSON
@@ -405,7 +405,7 @@ class BiblePunctuationSystemsConverter:
         if not filepath: filepath = os.path.join( self.__XMLFolder, "../", "DerivedFiles", self.__filenameBase + "_Tables" )
         hFilepath = filepath + '.h'
         cFilepath = filepath + '.c'
-        if Globals.verbosityLevel > 1: print( _("Exporting to {}...").format( cFilepath ) ) # Don't bother telling them about the .h file
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( cFilepath ) ) # Don't bother telling them about the .h file
         ifdefName = self.__filenameBase.upper() + "_Tables_h"
 
         with open( hFilepath, 'wt' ) as myHFile, open( cFilepath, 'wt' ) as myCFile:
@@ -485,7 +485,7 @@ class BiblePunctuationSystemsConverter:
 
         if exportFlag and not systemMatchCount: # Write a new file
             outputFilepath = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/", "BiblePunctuation_"+systemName + ".xml" )
-            if Globals.verbosityLevel > 1: print( _("Writing {} books to {}...").format( len(punctuationSchemeToCheck), outputFilepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Writing {} books to {}...").format( len(punctuationSchemeToCheck), outputFilepath ) )
             with open( outputFilepath, 'wt' ) as myFile:
                 for n,BBB in enumerate(punctuationSchemeToCheck):
                     myFile.write( '  <book id="{}">{}</book>\n'.format( n+1,BBB ) )
@@ -499,9 +499,9 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
-    if Globals.commandLineOptions.export:
+    if BibleOrgSysGlobals.commandLineOptions.export:
         bpsc = BiblePunctuationSystemsConverter().loadSystems() # Load the XML
         bpsc.pickle() # Produce the .pickle file
         bpsc.exportDataToPython() # Produce the .py tables
@@ -516,10 +516,10 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser, exportAvailable=True )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of BiblePunctuationSystemsConverter.py

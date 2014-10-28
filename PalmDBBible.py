@@ -73,7 +73,7 @@ from gettext import gettext as _
 import multiprocessing
 from collections import OrderedDict
 
-import Globals
+import BibleOrgSysGlobals
 from Bible import Bible, BibleBook
 
 
@@ -93,9 +93,9 @@ def PalmDBBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
     if autoLoad is true and exactly one PDB Bible is found,
         returns the loaded PalmDBBible object.
     """
-    if Globals.verbosityLevel > 2: print( "PalmDBBibleFileCheck( {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad ) )
-    if Globals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
-    if Globals.debugFlag: assert( autoLoad in (True,False,) )
+    if BibleOrgSysGlobals.verbosityLevel > 2: print( "PalmDBBibleFileCheck( {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad ) )
+    if BibleOrgSysGlobals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
+    if BibleOrgSysGlobals.debugFlag: assert( autoLoad in (True,False,) )
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
@@ -106,7 +106,7 @@ def PalmDBBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
         return False
 
     # Find all the files and folders in this folder
-    if Globals.verbosityLevel > 3: print( " PalmDBBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    if BibleOrgSysGlobals.verbosityLevel > 3: print( " PalmDBBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -124,15 +124,15 @@ def PalmDBBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
     lastFilenameFound = None
     for thisFilename in sorted( foundFiles ):
         if thisFilename.endswith( '.PDB' ):
-            #if strictCheck or Globals.strictCheckingFlag:
-                #firstLine = Globals.peekIntoFile( thisFilename, givenFolderName )
+            #if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
+                #firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName )
                 #if not firstLine.startswith( "info\t"):
-                    #if Globals.verbosityLevel > 2: print( "PalmDBBible (unexpected) first line was '{}' in {}".format( firstLine, thisFilename ) )
+                    #if BibleOrgSysGlobals.verbosityLevel > 2: print( "PalmDBBible (unexpected) first line was '{}' in {}".format( firstLine, thisFilename ) )
                     #continue
             lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
-        if Globals.verbosityLevel > 2: print( "PalmDBBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PalmDBBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             uB = PalmDBBible( givenFolderName, lastFilenameFound[:-4] ) # Remove the end of the actual filename ".PDB"
             if autoLoadBooks: uB.load() # Load and process the file
@@ -147,7 +147,7 @@ def PalmDBBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
             logging.warning( _("PalmDBBibleFileCheck: '{}' subfolder is unreadable").format( tryFolderName ) )
             continue
-        if Globals.verbosityLevel > 3: print( "    PalmDBBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( "    PalmDBBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
         for something in os.listdir( tryFolderName ):
             somepath = os.path.join( givenFolderName, thisFolderName, something )
@@ -161,18 +161,18 @@ def PalmDBBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
         # See if there's an PalmDBBible project here in this folder
         for thisFilename in sorted( foundSubfiles ):
             if thisFilename.endswith( '.PDB' ):
-                #if strictCheck or Globals.strictCheckingFlag:
-                    #firstLine = Globals.peekIntoFile( thisFilename, tryFolderName )
+                #if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
+                    #firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName )
                     #if not firstLine.startswith( "info\t"):
-                        #if Globals.verbosityLevel > 2: print( "PalmDBBible (unexpected) first line was '{}' in {}".format( firstLine, thisFilname ) ); halt
+                        #if BibleOrgSysGlobals.verbosityLevel > 2: print( "PalmDBBible (unexpected) first line was '{}' in {}".format( firstLine, thisFilname ) ); halt
                         #continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
                 lastFilenameFound = thisFilename
                 numFound += 1
     if numFound:
-        if Globals.verbosityLevel > 2: print( "PalmDBBibleFileCheck foundProjects", numFound, foundProjects )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "PalmDBBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
-            if Globals.debugFlag: assert( len(foundProjects) == 1 )
+            if BibleOrgSysGlobals.debugFlag: assert( len(foundProjects) == 1 )
             uB = PalmDBBible( foundProjects[0][0], foundProjects[0][1][:-9] ) # Remove the end of the actual filename "_utf8.txt"
             if autoLoadBooks: uB.load() # Load and process the file
             return uB
@@ -212,7 +212,7 @@ class PalmDBBible( Bible ):
         """
         Load a single source file and load book elements.
         """
-        if Globals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
         mainIndex = []
 
         def readRecord( recordNumber, thisFile ):
@@ -380,7 +380,7 @@ class PalmDBBible( Bible ):
                     print( ix, word )
                     if ix>expectedWords: print( "Too big" ); halt
                 #print( words[:2000] )
-                if Globals.debugFlag: halt
+                if BibleOrgSysGlobals.debugFlag: halt
 
                 #print( binary[byteOffset-10:byteOffset+1] )
                 #print( binary[byteOffset:byteOffset+20] )
@@ -412,11 +412,11 @@ def testPB( TUBfilename ):
     import VerseReferences
     TUBfolder = "../../../../../Data/Work/Bibles/PalmBiblePlus/" # Must be the same as below
 
-    if Globals.verbosityLevel > 1: print( _("Demonstrating the PDB Bible class...") )
-    if Globals.verbosityLevel > 0: print( "  Test folder is '{}' '{}'".format( TUBfolder, TUBfilename ) )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the PDB Bible class...") )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is '{}' '{}'".format( TUBfolder, TUBfilename ) )
     ub = PalmDBBible( TUBfolder, TUBfilename )
     ub.load() # Load and process the file
-    if Globals.verbosityLevel > 1: print( ub ) # Just print a summary
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( ub ) # Just print a summary
     for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
                         ('OT','DAN','1','21'),
                         ('NT','MAT','3','5'), ('NT','JDE','1','4'), ('NT','REV','22','21'), \
@@ -432,7 +432,7 @@ def testPB( TUBfilename ):
             verseText = ub.getVerseText( svk )
         except KeyError:
             verseText = "Verse not available!"
-        if Globals.verbosityLevel > 1: print( reference, shortText, verseText )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( reference, shortText, verseText )
 # end of testPB
 
 
@@ -440,7 +440,7 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
 
     testFolder = "../../../../../Data/Work/Bibles/PalmBiblePlus/"
@@ -448,14 +448,14 @@ def demo():
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         result1 = PalmDBBibleFileCheck( testFolder )
-        if Globals.verbosityLevel > 1: print( "PDB TestA1", result1 )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "PDB TestA1", result1 )
         result2 = PalmDBBibleFileCheck( testFolder, autoLoad=True )
-        if Globals.verbosityLevel > 1: print( "PDB TestA2", result2 )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "PDB TestA2", result2 )
         #testSubfolder = os.path.join( testFolder, 'kjv/' )
         #result3 = PalmDBBibleFileCheck( testSubfolder )
-        #if Globals.verbosityLevel > 1: print( "PDB TestB1", result3 )
+        #if BibleOrgSysGlobals.verbosityLevel > 1: print( "PDB TestB1", result3 )
         #result4 = PalmDBBibleFileCheck( testSubfolder, autoLoad=True )
-        #if Globals.verbosityLevel > 1: print( "PDB TestB2", result4 )
+        #if BibleOrgSysGlobals.verbosityLevel > 1: print( "PDB TestB2", result4 )
 
 
     if 1: # specified modules
@@ -464,7 +464,7 @@ def demo():
         nonEnglish = (  )
         bad = ( )
         for j, testFilename in enumerate( good ): # Choose one of the above: single, good, nonEnglish, bad
-            if Globals.verbosityLevel > 1: print( "\nPDB C{}/ Trying {}".format( j+1, testFilename ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPDB C{}/ Trying {}".format( j+1, testFilename ) )
             #myTestFolder = os.path.join( testFolder, testFilename+'/' )
             #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
             testPB( testFilename )
@@ -477,15 +477,15 @@ def demo():
             if os.path.isdir( somepath ): foundFolders.append( something )
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
-        if Globals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            if Globals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
+        if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
             parameters = [folderName for folderName in sorted(foundFolders)]
             with multiprocessing.Pool( processes=Globals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( testPB, parameters ) # have the pool do our loads
                 assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                if Globals.verbosityLevel > 1: print( "\nPDB D{}/ Trying {}".format( j+1, someFolder ) )
+                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPDB D{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testPB( someFolder )
 # end of demo
@@ -493,12 +493,12 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of PalmDBBible.py

@@ -96,7 +96,7 @@ import logging, os
 from gettext import gettext as _
 import multiprocessing
 
-import Globals
+import BibleOrgSysGlobals
 from Bible import Bible, BibleBook
 
 
@@ -117,9 +117,9 @@ def UnboundBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
     if autoLoad is true and exactly one Unbound Bible is found,
         returns the loaded UnboundBible object.
     """
-    if Globals.verbosityLevel > 2: print( "UnboundBibleFileCheck( {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad ) )
-    if Globals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
-    if Globals.debugFlag: assert( autoLoad in (True,False,) )
+    if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnboundBibleFileCheck( {}, {}, {} )".format( givenFolderName, strictCheck, autoLoad ) )
+    if BibleOrgSysGlobals.debugFlag: assert( givenFolderName and isinstance( givenFolderName, str ) )
+    if BibleOrgSysGlobals.debugFlag: assert( autoLoad in (True,False,) )
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
@@ -130,7 +130,7 @@ def UnboundBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
         return False
 
     # Find all the files and folders in this folder
-    if Globals.verbosityLevel > 3: print( " UnboundBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
+    if BibleOrgSysGlobals.verbosityLevel > 3: print( " UnboundBibleFileCheck: Looking for files in given {}".format( givenFolderName ) )
     foundFolders, foundFiles = [], []
     for something in os.listdir( givenFolderName ):
         somepath = os.path.join( givenFolderName, something )
@@ -154,21 +154,21 @@ def UnboundBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
     for thisFilename in sorted( foundFiles ):
         if thisFilename in ('book_names.txt','Readme.txt' ): looksHopeful = True
         elif thisFilename.endswith( '_utf8.txt' ):
-            if strictCheck or Globals.strictCheckingFlag:
-                firstLine = Globals.peekIntoFile( thisFilename, givenFolderName )
+            if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
+                firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName )
                 if firstLine != "#THE UNBOUND BIBLE (www.unboundbible.org)":
-                    if Globals.verbosityLevel > 2: print( "UB (unexpected) first line was '{}' in {}".format( firstLine, thisFilename ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "UB (unexpected) first line was '{}' in {}".format( firstLine, thisFilename ) )
                     continue
             lastFilenameFound = thisFilename
             numFound += 1
     if numFound:
-        if Globals.verbosityLevel > 2: print( "UnboundBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnboundBibleFileCheck got", numFound, givenFolderName, lastFilenameFound )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             uB = UnboundBible( givenFolderName, lastFilenameFound[:-9] ) # Remove the end of the actual filename "_utf8.txt"
             if autoLoadBooks: uB.load() # Load and process the file
             return uB
         return numFound
-    elif looksHopeful and Globals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
+    elif looksHopeful and BibleOrgSysGlobals.verbosityLevel > 2: print( "    Looked hopeful but no actual files found" )
 
     # Look one level down
     numFound = 0
@@ -178,7 +178,7 @@ def UnboundBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
             logging.warning( _("UnboundBibleFileCheck: '{}' subfolder is unreadable").format( tryFolderName ) )
             continue
-        if Globals.verbosityLevel > 3: print( "    UnboundBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
+        if BibleOrgSysGlobals.verbosityLevel > 3: print( "    UnboundBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
         for something in os.listdir( tryFolderName ):
             somepath = os.path.join( givenFolderName, thisFolderName, something )
@@ -196,18 +196,18 @@ def UnboundBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
         # See if there's an UB project here in this folder
         for thisFilename in sorted( foundSubfiles ):
             if thisFilename.endswith( '_utf8.txt' ):
-                if strictCheck or Globals.strictCheckingFlag:
-                    firstLine = Globals.peekIntoFile( thisFilename, tryFolderName )
+                if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
+                    firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName )
                     if firstLine != "#THE UNBOUND BIBLE (www.unboundbible.org)":
-                        if Globals.verbosityLevel > 2: print( "UB (unexpected) first line was '{}' in {}".format( firstLine, thisFilname ) ); halt
+                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "UB (unexpected) first line was '{}' in {}".format( firstLine, thisFilname ) ); halt
                         continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
                 lastFilenameFound = thisFilename
                 numFound += 1
     if numFound:
-        if Globals.verbosityLevel > 2: print( "UnboundBibleFileCheck foundProjects", numFound, foundProjects )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnboundBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
-            if Globals.debugFlag: assert( len(foundProjects) == 1 )
+            if BibleOrgSysGlobals.debugFlag: assert( len(foundProjects) == 1 )
             uB = UnboundBible( foundProjects[0][0], foundProjects[0][1][:-9] ) # Remove the end of the actual filename "_utf8.txt"
             if autoLoadBooks: uB.load() # Load and process the file
             return uB
@@ -247,7 +247,7 @@ class UnboundBible( Bible ):
         """
         Load a single source file and load book elements.
         """
-        if Globals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
 
         lastLine, lineCount = '', 0
         BBB = None
@@ -299,9 +299,9 @@ class UnboundBible( Bible ):
                 if not bookCode and not chapterNumberString and not verseNumberString:
                     print( "Skipping empty line in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                     continue
-                if Globals.debugFlag: assert( len(bookCode) == 3 )
-                if Globals.debugFlag: assert( chapterNumberString.isdigit() )
-                if Globals.debugFlag: assert( verseNumberString.isdigit() )
+                if BibleOrgSysGlobals.debugFlag: assert( len(bookCode) == 3 )
+                if BibleOrgSysGlobals.debugFlag: assert( chapterNumberString.isdigit() )
+                if BibleOrgSysGlobals.debugFlag: assert( verseNumberString.isdigit() )
 
                 if subverseNumberString:
                     logging.warning( _("subverseNumberString '{}' in {} {} {}:{}").format( subverseNumberString, BBB, bookCode, chapterNumberString, verseNumberString ) )
@@ -313,16 +313,16 @@ class UnboundBible( Bible ):
                 chapterNumber = int( chapterNumberString )
                 verseNumber = int( verseNumberString )
                 if sequenceNumberString:
-                    if Globals.debugFlag: assert( sequenceNumberString.isdigit() )
+                    if BibleOrgSysGlobals.debugFlag: assert( sequenceNumberString.isdigit() )
                     sequenceNumber = int( sequenceNumberString )
-                    if Globals.debugFlag: assert( sequenceNumber > lastSequence or \
+                    if BibleOrgSysGlobals.debugFlag: assert( sequenceNumber > lastSequence or \
                         self.givenName in ('gothic_latin', 'hebrew_bhs_consonants', 'hebrew_bhs_vowels', 'latvian_nt', 'ukrainian_1871',) ) # Why???
                     lastSequence = sequenceNumber
 
                 if bookCode != lastBookCode: # We've started a new book
                     if lastBookCode != -1: # Better save the last book
                         self.saveBook( thisBook )
-                    BBB = Globals.BibleBooksCodes.getBBBFromUnboundBibleCode( bookCode )
+                    BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUnboundBibleCode( bookCode )
                     thisBook = BibleBook( self, BBB )
                     thisBook.objectNameString = "Unbound Bible Book object"
                     thisBook.objectTypeString = "Unbound"
@@ -330,7 +330,7 @@ class UnboundBible( Bible ):
                     lastChapterNumber = lastVerseNumber = -1
 
                 if chapterNumber != lastChapterNumber: # We've started a new chapter
-                    if Globals.debugFlag: assert( chapterNumber > lastChapterNumber or BBB=='ESG' ) # Esther Greek might be an exception
+                    if BibleOrgSysGlobals.debugFlag: assert( chapterNumber > lastChapterNumber or BBB=='ESG' ) # Esther Greek might be an exception
                     if chapterNumber == 0:
                         logging.info( "Have chapter zero in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                     thisBook.appendLine( 'c', chapterNumberString )
@@ -369,17 +369,17 @@ def testUB( TUBfilename ):
     testFolder = "../../../../../Data/Work/Bibles/Biola Unbound modules/" # Must be the same as below
 
     TUBfolder = os.path.join( testFolder, TUBfilename+'/' )
-    if Globals.verbosityLevel > 1: print( _("Demonstrating the Unbound Bible class...") )
-    if Globals.verbosityLevel > 0: print( "  Test folder is '{}' '{}'".format( TUBfolder, TUBfilename ) )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the Unbound Bible class...") )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is '{}' '{}'".format( TUBfolder, TUBfilename ) )
     ub = UnboundBible( TUBfolder, TUBfilename )
     ub.load() # Load and process the file
-    if Globals.verbosityLevel > 1: print( ub ) # Just print a summary
-    if Globals.strictCheckingFlag:
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( ub ) # Just print a summary
+    if BibleOrgSysGlobals.strictCheckingFlag:
         ub.check()
         #print( UsfmB.books['GEN']._processedLines[0:40] )
         uBErrors = ub.getErrors()
         # print( uBErrors )
-    if Globals.commandLineOptions.export:
+    if BibleOrgSysGlobals.commandLineOptions.export:
         ##ub.toDrupalBible()
         ub.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
     for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
@@ -397,7 +397,7 @@ def testUB( TUBfilename ):
             verseText = ub.getVerseText( svk )
         except KeyError:
             verseText = "Verse not available!"
-        if Globals.verbosityLevel > 1: print( reference, shortText, verseText )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( reference, shortText, verseText )
 # end of testUB
 
 
@@ -405,7 +405,7 @@ def demo():
     """
     Main program to handle command line parameters and then run what they want.
     """
-    if Globals.verbosityLevel > 0: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
 
     testFolder = "../../../../../Data/Work/Bibles/Biola Unbound modules/"
@@ -413,14 +413,14 @@ def demo():
 
     if 1: # demo the file checking code -- first with the whole folder and then with only one folder
         result1 = UnboundBibleFileCheck( testFolder )
-        if Globals.verbosityLevel > 1: print( "Unbound TestA1", result1 )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Unbound TestA1", result1 )
         result2 = UnboundBibleFileCheck( testFolder, autoLoad=True )
-        if Globals.verbosityLevel > 1: print( "Unbound TestA2", result2 )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Unbound TestA2", result2 )
         testSubfolder = os.path.join( testFolder, 'asv/' )
         result3 = UnboundBibleFileCheck( testSubfolder )
-        if Globals.verbosityLevel > 1: print( "Unbound TestB1", result3 )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Unbound TestB1", result3 )
         result4 = UnboundBibleFileCheck( testSubfolder, autoLoad=True )
-        if Globals.verbosityLevel > 1: print( "Unbound TestB2", result4 )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Unbound TestB2", result4 )
 
 
     if 1: # specified modules
@@ -432,7 +432,7 @@ def demo():
         nonEnglish = (  )
         bad = ( )
         for j, testFilename in enumerate( single ): # Choose one of the above: single, good, nonEnglish, bad
-            if Globals.verbosityLevel > 1: print( "\nUnbound C{}/ Trying {}".format( j+1, testFilename ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nUnbound C{}/ Trying {}".format( j+1, testFilename ) )
             #myTestFolder = os.path.join( testFolder, testFilename+'/' )
             #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
             testUB( testFilename )
@@ -445,15 +445,15 @@ def demo():
             if os.path.isdir( somepath ): foundFolders.append( something )
             elif os.path.isfile( somepath ): foundFiles.append( something )
 
-        if Globals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
-            if Globals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
+        if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
             parameters = [folderName for folderName in sorted(foundFolders)]
             with multiprocessing.Pool( processes=Globals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( testUB, parameters ) # have the pool do our loads
                 assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                if Globals.verbosityLevel > 1: print( "\nUnbound D{}/ Trying {}".format( j+1, someFolder ) )
+                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nUnbound D{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testUB( someFolder )
 # end of demo
@@ -461,12 +461,12 @@ def demo():
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser, exportAvailable=True )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
     multiprocessing.freeze_support() # Multiprocessing support for frozen Windows executables
 
     demo()
 
-    Globals.closedown( ProgName, ProgVersion )
+    BibleOrgSysGlobals.closedown( ProgName, ProgVersion )
 # end of UnboundBible.py
