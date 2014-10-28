@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleVersificationSystems.py
-#   Last modified: 2014-10-11 (also update ProgVersion below)
+#   Last modified: 2014-10-27 (also update ProgVersion below)
 #
 # Module handling BibleVersificationSystems
 #
@@ -33,7 +33,7 @@ NOTE: We still lack a REFERENCE Bible versification system
 """
 
 ProgName = "Bible Chapter-Verse Systems handler"
-ProgVersion = "0.52"
+ProgVersion = "0.53"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -798,6 +798,32 @@ class BibleVersificationSystem:
         if Globals.debugFlag and debuggingThisModule: print( startRef, endRef, resultList, haveErrors, haveWarnings )
         return resultList #, haveErrors, haveWarnings
     # end of BibleVersificationSystem.expandCVRange
+
+
+    def convertToReferenceVersification( self, BBB, C, V, S=None ):
+        """
+        Convert the given reference (in this versification system)
+            to the reference versification.
+
+        Returns a new BBB, C, V, S.
+        """
+        logging.debug( "convertToReferenceVersification does nothing yet!" )
+        refBBB, refC, refV, refS = BBB, C, V, S
+        return refBBB, refC, refV, refS
+    # end of BibleVersificationSystem.convertToReferenceVersification
+
+
+    def convertFromReferenceVersification( self, refBBB, refC, refV, refS=None ):
+        """
+        Convert the given reference in the reference versification system
+            to this versification.
+
+        Returns a new BBB, C, V, S.
+        """
+        logging.debug( "convertFromReferenceVersification does nothing yet!" )
+        BBB, C, V, S = refBBB, refC, refV, refS
+        return BBB, C, V, S
+    # end of BibleVersificationSystem.convertFromReferenceVersification
 # end of BibleVersificationSystem class
 
 
