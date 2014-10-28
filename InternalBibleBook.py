@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2014-10-11 by RJH (also update ProgVersion below)
+#   Last modified: 2014-10-28 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -42,7 +42,7 @@ Required improvements:
 
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.88"
+ProgVersion = "0.89"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -2925,7 +2925,9 @@ class InternalBibleBook:
                     try: unicodeCharName = unicodedata.name( char )
                     except ValueError: unicodeCharName = simpleCharName
                     try: unicodeLCCharName = unicodedata.name( lcChar )
-                    except ValueError: unicodeLCCharName = simpleLCCharName
+                    except ValueError,TypeError:
+                        logging.error( t("InternalBibleBook.countCharacters has error getting Unicode name of {} (from {})").format( repr(lcChar), repr(char) ) )
+                        unicodeLCCharName = simpleLCCharName
 
                     charNum = ord(char)
                     if charNum > 255 and char not in ALL_WORD_PUNCT_CHARS: # Have special characters
