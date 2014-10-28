@@ -2925,7 +2925,7 @@ class InternalBibleBook:
                     try: unicodeCharName = unicodedata.name( char )
                     except ValueError: unicodeCharName = simpleCharName
                     try: unicodeLCCharName = unicodedata.name( lcChar )
-                    except ValueError,TypeError:
+                    except (ValueError,TypeError):
                         logging.error( t("InternalBibleBook.countCharacters has error getting Unicode name of {} (from {})").format( repr(lcChar), repr(char) ) )
                         unicodeLCCharName = simpleLCCharName
 
