@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2014-10-28 by RJH (also update ProgVersion below)
+#   Last modified: 2014-10-29 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -42,7 +42,7 @@ Required improvements:
 
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.89"
+ProgVersion = "0.90"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -3047,9 +3047,9 @@ class InternalBibleBook:
         closeQuotesAtParagraphEnd = False # Closing quotes are used at the end of a paragraph even if the speech is continuing into the next paragraph
         closeQuotesAtSectionEnd = False # Closing quotes are used at the end of a section even if the speech is continuing into the next section
 
-        openingSpeechChars = '“«‘‹' # The length and order of these two strings must match
-        closingSpeechChars = '”»’›'
-        if BibleOrgSysGlobals.debugFlag: assert( len(openingSpeechChars) == len(closingSpeechChars) )
+        #OPENING_SPEECH_CHARACTERS = '“«‘‹' # The length and order of these two strings must match
+        #CLOSING_SPEECH_CHARACTERS = '”»’›'
+        #if BibleOrgSysGlobals.debugFlag: assert( len(OPENING_SPEECH_CHARACTERS) == len(CLOSING_SPEECH_CHARACTERS) )
 
         speechMarkErrors, openChars = [], []
         newSection = newParagraph = newBit = False
@@ -3079,12 +3079,12 @@ class InternalBibleBook:
 
             # From here on, we have relevant markers and something in cleanText
             startsWithOpen = False
-            if cleanText[0] in openingSpeechChars:
+            if cleanText[0] in BibleOrgSysGlobals.OPENING_SPEECH_CHARACTERS:
                 startsWithOpen = True
-                openQuoteIndex = openingSpeechChars.index( cleanText[0] )
-            elif len(cleanText)>1 and cleanText[0]==' ' and cleanText[1] in openingSpeechChars: # This can occur after a leading xref with an extra space after it
+                openQuoteIndex = BibleOrgSysGlobals.OPENING_SPEECH_CHARACTERS.index( cleanText[0] )
+            elif len(cleanText)>1 and cleanText[0]==' ' and cleanText[1] in BibleOrgSysGlobals.OPENING_SPEECH_CHARACTERS: # This can occur after a leading xref with an extra space after it
                 startsWithOpen = True
-                openQuoteIndex = openingSpeechChars.index( cleanText[1] )
+                openQuoteIndex = BibleOrgSysGlobals.OPENING_SPEECH_CHARACTERS.index( cleanText[1] )
 
             #print( C, V, "nS =",newSection, "nP =",newParagraph, "nB =",newBit, "sWO =",startsWithOpen, "eWC = ",endedWithClose, openChars, marker, "'"+cleanText+"'" )
             if openChars:
@@ -3113,7 +3113,7 @@ class InternalBibleBook:
 
             #print( C, V, openChars, newParagraph, marker, '<' + cleanText + '>' )
             for j,char in enumerate(cleanText): # Go through each character handling speech marks
-                if char in openingSpeechChars:
+                if char in BibleOrgSysGlobals.OPENING_SPEECH_CHARACTERS:
                     if reopenQuotesAtParagraph and newParagraph and (j==0 or (j==1 and cleanText[0]==' ')) and openChars and char==openChars[-1]:
                         # This above also handles cross-references with an extra space at the beginning of a verse causing the opening quote(s) to be the second character
                         #print( C, V, "Ignored (restarting new paragraph quotation)", char, "with", openChars )
@@ -3143,14 +3143,14 @@ class InternalBibleBook:
                         speechMarkErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Lots of nested speech marks {}").format( openChars ) )
                         logging.warning( _("Lots of nested speech marks {} at").format( openChars ) + " {} {}:{}".format( self.BBB, C, V ) )
                         self.addPriorityError( 40, C, V, _("Lots of nested speech marks {}").format( openChars ) )
-                elif char in closingSpeechChars:
-                    closeIndex = closingSpeechChars.index( char )
+                elif char in BibleOrgSysGlobals.CLOSING_SPEECH_CHARACTERS:
+                    closeIndex = BibleOrgSysGlobals.CLOSING_SPEECH_CHARACTERS.index( char )
                     if not openChars:
                         #print( "here1 with ", char, C, V, openChars )
                         speechMarkErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unexpected '{}' speech closing character").format( char ) )
                         logging.error( _("Unexpected '{}' speech closing character at").format( char ) + " {} {}:{}".format( self.BBB, C, V ) )
                         self.addPriorityError( 52, C, V, _("Unexpected '{}' speech closing character").format( char ) )
-                    elif closeIndex==openingSpeechChars.index(openChars[-1]): # A good closing match
+                    elif closeIndex==BibleOrgSysGlobals.OPENING_SPEECH_CHARACTERS.index(openChars[-1]): # A good closing match
                         #print( "here2 with ", char, C, V )
                         openChars.pop()
                     else: # We have closing marker that doesn't match
@@ -3160,8 +3160,8 @@ class InternalBibleBook:
                         self.addPriorityError( 51, C, V, _("Mismatched '{}' speech closing character after {}").format( char, openChars ) )
 
             # End of processing clean-up
-            endedWithClose = cleanText[-1] in closingSpeechChars
-            if endedWithClose: closeQuoteIndex = closingSpeechChars.index( cleanText[-1] )
+            endedWithClose = cleanText[-1] in BibleOrgSysGlobals.CLOSING_SPEECH_CHARACTERS
+            if endedWithClose: closeQuoteIndex = BibleOrgSysGlobals.CLOSING_SPEECH_CHARACTERS.index( cleanText[-1] )
             newSection = newParagraph = newBit = False
             bitMarker = ''
 
@@ -3180,21 +3180,21 @@ class InternalBibleBook:
                         assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
                     extraOpenChars = []
                     for char in extraText:
-                        if char in openingSpeechChars:
+                        if char in BibleOrgSysGlobals.OPENING_SPEECH_CHARACTERS:
                             if extraOpenChars and char==extraOpenChars[-1]:
                                 speechMarkErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Improperly nested speech marks {} after {} in note").format( char, extraOpenChars ) )
                                 logging.error( _("Improperly nested speech marks {} after {} in note in").format( char, extraOpenChars ) \
                                                                         + " {} {}:{}".format( self.BBB, C, V ) )
                                 self.addPriorityError( 45, C, V, _("Improperly nested speech marks {} after {} in note").format( char, extraOpenChars ) )
                             extraOpenChars.append( char )
-                        elif char in closingSpeechChars:
-                            closeIndex = closingSpeechChars.index( char )
+                        elif char in BibleOrgSysGlobals.CLOSING_SPEECH_CHARACTERS:
+                            closeIndex = BibleOrgSysGlobals.CLOSING_SPEECH_CHARACTERS.index( char )
                             if not extraOpenChars:
                                 #print( "here1 with ", char, C, V, extraOpenChars )
                                 speechMarkErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unexpected '{}' speech closing character in note").format( char ) )
                                 logging.error( _("Unexpected '{}' speech closing character in note in").format( char ) + " {} {}:{}".format( self.BBB, C, V ) )
                                 self.addPriorityError( 43, C, V, _("Unexpected '{}' speech closing character in note").format( char ) )
-                            elif closeIndex==openingSpeechChars.index(extraOpenChars[-1]): # A good closing match
+                            elif closeIndex==BibleOrgSysGlobals.OPENING_SPEECH_CHARACTERS.index(extraOpenChars[-1]): # A good closing match
                                 #print( "here2 with ", char, C, V )
                                 extraOpenChars.pop()
                             else: # We have closing marker that doesn't match

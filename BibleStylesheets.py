@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleStylesheets.py
-#   Last modified: 2014-10-07 (also update ProgVersion below)
+#   Last modified: 2014-10-30 (also update ProgVersion below)
 #
 # Module handling Bible (including Paratext) stylesheets
 #
@@ -28,7 +28,7 @@
 
 ShortProgName = "BibleStylesheets"
 ProgName = "Bible stylesheet handler"
-ProgVersion = "0.06"
+ProgVersion = "0.07"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -85,7 +85,7 @@ SECTION_REFERENCE_COLOUR = 'green'
 SUPERSCRIPT_OFFSET = '4'
 
 # Asterisk in front of a tag name indicates the currently selected verse
-defaultDict = { \
+DEFAULT_STYLE_DICT = { # earliest entries have the highest priority
     'id': {},
     'h': {},
     's1': { 'font':'{} {} bold'.format( DEFAULT_FONTNAME, HEADING_FONTSIZE ), 'foreground':HEADING_COLOUR, 'justify':'center' },
@@ -121,7 +121,7 @@ class BibleStylesheet():
 
 
     def loadDefault( self ):
-        self.dataDict = defaultDict
+        self.dataDict = DEFAULT_STYLE_DICT
         self.name = 'Default'
         self.validate()
         return self  # So this command can be chained after the object creation

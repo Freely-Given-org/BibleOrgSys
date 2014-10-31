@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleOrgSysGlobals.py
-#   Last modified: 2014-10-28 by RJH (also update ProgVersion below)
+#   Last modified: 2014-10-29 by RJH (also update ProgVersion below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -72,7 +72,7 @@ Contains functions:
 
 ShortProgName = "Globals"
 ProgName = "BibleOrgSys Globals"
-ProgVersion = "0.52"
+ProgVersion = "0.53"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -95,17 +95,18 @@ verbosityLevel = None
 verbosityString = 'Normal'
 
 
-defaultLogFolder = 'Logs/' # Relative path
-defaultcacheFolder = 'ObjectCache/' # Relative path
+DEFAULT_LOG_FOLDER = 'Logs/' # Relative path
+DEFAULT_CACHE_FOLDER = 'ObjectCache/' # Relative path
 if debuggingThisModule:
-    loggingNameDict = {logging.DEBUG:'DEBUG', logging.INFO:'INFO', logging.WARNING:'WARNING', logging.ERROR:'ERROR', logging.CRITICAL:'CRITICAL'}
+    LOGGING_NAME_DICT = {logging.DEBUG:'DEBUG', logging.INFO:'INFO', logging.WARNING:'WARNING', logging.ERROR:'ERROR', logging.CRITICAL:'CRITICAL'}
 
 
 # Some language independant punctuation help
-openingSpeechChars = """“«"‘‹¿¡"""
-closingSpeechChars = """”»"’›?!"""
-matchingOpeningCharacters = {'(':')', '[':']', '{':'}', '<':'>', '<<':'>>', '“':'”', '‘':'‘', '«':'»', '‹':'›', '¿':'?', '¡':'!', }
-matchingCharacters = {'(':')',')':'(', '[':']',']':'[', '{':'}','}':'{', '<':'>','>':'<', '<<':'>>','>>':'<<',
+OPENING_SPEECH_CHARACTERS = """“«"‘‹¿¡""" # The length and order of these two strings must match
+CLOSING_SPEECH_CHARACTERS = """”»"’›?!"""
+assert( len(OPENING_SPEECH_CHARACTERS) == len(CLOSING_SPEECH_CHARACTERS) )
+MATCHING_OPENING_CHARACTERS = {'(':')', '[':']', '{':'}', '<':'>', '<<':'>>', '“':'”', '‘':'‘', '«':'»', '‹':'›', '¿':'?', '¡':'!', }
+MATCHING_CHARACTERS = {'(':')',')':'(', '[':']',']':'[', '{':'}','}':'{', '<':'>','>':'<', '<<':'>>','>>':'<<',
                       '“':'”','”':'“', '‘':'’','’':'‘', '«':'»','»':'«', '‹':'›','›':'‹', '¿':'?','?':'¿', '¡':'!','!':'¡', }
 
 
@@ -143,7 +144,7 @@ def setupLoggingToFile( ProgName, ProgVersion, folder=None ):
     if debuggingThisModule:
         print( "BibleOrgSysGlobals.setupLoggingToFile( {}, {}, {} )".format( repr(ProgName), repr(ProgVersion), repr(folder) ) )
     filename = ProgName.replace('/','-').replace(':','_').replace('\\','_') + '_log.txt'
-    if folder is None: folder = defaultLogFolder # relative path
+    if folder is None: folder = DEFAULT_LOG_FOLDER # relative path
     filepath = os.path.join( folder, filename )
 
     # Create the folder if necessary
@@ -162,7 +163,7 @@ def setupLoggingToFile( ProgName, ProgVersion, folder=None ):
     # In Windows, doesn't seem to create the log file, even if given a filename rather than a filepath
     setLevel = logging.DEBUG if debugFlag else logging.INFO
     if debuggingThisModule:
-        print( "BibleOrgSysGlobals.setBasicConfig( {}, {}={}, {}, {} )".format( repr(filepath), setLevel, loggingNameDict[setLevel], repr(loggingLongFormat), repr(loggingDateFormat) ) )
+        print( "BibleOrgSysGlobals.setBasicConfig( {}, {}={}, {}, {} )".format( repr(filepath), setLevel, LOGGING_NAME_DICT[setLevel], repr(loggingLongFormat), repr(loggingDateFormat) ) )
     logging.basicConfig( filename=filepath, level=setLevel, format=loggingLongFormat, datefmt=loggingDateFormat )
 
     #return filepath
@@ -174,7 +175,7 @@ def addConsoleLogging( consoleLoggingLevel=None ):
     Adds a handler to also send ERROR and higher to console (depending on verbosity)
     """
     if debuggingThisModule:
-        print( "BibleOrgSysGlobals.addConsoleLogging( {}={} )".format( consoleLoggingLevel, loggingNameDict[consoleLoggingLevel] ) )
+        print( "BibleOrgSysGlobals.addConsoleLogging( {}={} )".format( consoleLoggingLevel, LOGGING_NAME_DICT[consoleLoggingLevel] ) )
     stderrHandler = logging.StreamHandler() # StreamHandler with no parameters defaults to sys.stderr
     stderrHandler.setFormatter( logging.Formatter( loggingConsoleFormat, None ) )
     if consoleLoggingLevel is not None:
@@ -197,7 +198,7 @@ def addLogfile( projectName, folder=None ):
     """
     if debuggingThisModule: print( "BibleOrgSysGlobals.addLogfile( {}, {} )".format( projectName, folder ) )
     filename = projectName + '_log.txt'
-    if folder is None: folder = defaultLogFolder # relative path
+    if folder is None: folder = DEFAULT_LOG_FOLDER # relative path
     filepath = os.path.join( folder, filename )
 
     # Create the folder if necessary
@@ -775,7 +776,7 @@ def pickleObject( theObject, filename, folder=None, disassembleObjectFlag=False 
     """
     assert( theObject )
     assert( filename )
-    if folder is None: folder = defaultcacheFolder
+    if folder is None: folder = DEFAULT_CACHE_FOLDER
     filepath = filename # default
     if folder:
         if not os.access( folder, os.R_OK ): # Make the folder hierarchy if necessary
@@ -816,7 +817,7 @@ def unpickleObject( filename, folder=None ):
     NOTE: The class for the object must, of course, be loaded already (at the module level).
     """
     assert( filename )
-    if folder is None: folder = defaultcacheFolder
+    if folder is None: folder = DEFAULT_CACHE_FOLDER
     filepath = os.path.join( folder, filename )
     if verbosityLevel > 2: print( _("Loading object from pickle file {}...").format( filepath ) )
     with open( filepath, 'rb') as pickleInputFile:

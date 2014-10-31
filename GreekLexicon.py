@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # GreekLexicon.py
-#   Last modified: 2014-10-14 (also update ProgVersion below)
+#   Last modified: 2014-10-31 (also update ProgVersion below)
 #
 # Module handling the Greek lexicon
 #
@@ -35,7 +35,7 @@ Module handling the morphgnt Greek lexicon.
 
 ShortProgName = "GreekLexicon"
 ProgName = "Greek Lexicon format handler"
-ProgVersion = "0.12"
+ProgVersion = "0.14"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = True
@@ -335,17 +335,27 @@ class GreekLexicon:
 
     This class doesn't deal at all with XML, only with Python dictionaries, etc.
     """
-    def __init__( self, XMLFolder ):
+    def __init__( self, XMLFolder, preload=False ):
         """
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( t("GreekLexicon.__init__( {} )").format( XMLFolder ) )
-        gStr = GreekStrongsFileConverter() # Create the empty object
-        gStr.loadAndValidate( XMLFolder ) # Load the XML
-        self.StrongsEntries = gStr.importDataToPython()
+        self.XMLFolder = XMLFolder
+        self.StrongsEntries = None
+        if preload: self.load()
     # end of GreekLexicon.__init__
+
+
+    def load( self ):
+        """
+        """
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( t("GreekLexicon.load()") )
+        gStr = GreekStrongsFileConverter() # Create the empty object
+        gStr.loadAndValidate( self.XMLFolder ) # Load the XML
+        self.StrongsEntries = gStr.importDataToPython()
+    # end of GreekLexicon.load
 
 
     def __str__( self ):
@@ -359,7 +369,8 @@ class GreekLexicon:
         #if self.title: result += ('\n' if result else '') + self.title
         #if self.version: result += ('\n' if result else '') + "Version: {} ".format( self.version )
         #if self.date: result += ('\n' if result else '') + "Date: {}".format( self.date )
-        result += ('\n' if result else '') + "  " + _("Number of Strong's Greek entries = {}").format( len(self.StrongsEntries) )
+        if self.StrongsEntries:
+            result += ('\n' if result else '') + "  " + _("Number of Strong's Greek entries = {}").format( len(self.StrongsEntries) )
         return result
     # end of GreekLexicon.__str__
 
@@ -375,6 +386,7 @@ class GreekLexicon:
         """
         if BibleOrgSysGlobals.debugFlag: assert( key and key[0]=='G' and key[1:].isdigit() )
         keyDigits = key[1:]
+        if self.StrongsEntries is None: self.load()
         if keyDigits in self.StrongsEntries: return self.StrongsEntries[keyDigits]
     # end of GreekLexicon.getStrongsEntryData
 
@@ -389,6 +401,7 @@ class GreekLexicon:
         """
         if BibleOrgSysGlobals.debugFlag: assert( key and key[0]=='G' and key[1:].isdigit() )
         keyDigits = key[1:]
+        if self.StrongsEntries is None: self.load()
         if keyDigits in self.StrongsEntries:
             #for f,d in self.StrongsEntries[keyDigits]:
                 #if f==fieldName: return d
@@ -415,11 +428,12 @@ class GreekLexicon:
         """
         if BibleOrgSysGlobals.debugFlag: assert( key and key[0]=='G' and key[1:].isdigit() )
         keyDigits = key[1:]
+        if self.StrongsEntries is None: self.load()
         if keyDigits in self.StrongsEntries:
             entry = self.StrongsEntries[keyDigits]
             wordEntry = '{}'.format( entry['Entry'].replace('<StrongsRef>','<span class="StrongsRef">').replace('</StrongsRef>','</span>').replace('<def>','<span class="def">').replace('</def>','</span>') ) \
                         if 'Entry' in entry else ''
-            html = '<li value="{}" id="nt:{}"><span class="originalWord" title="{{{}}}" xml:lang="grk">{}</span> {}</li>' \
+            html = '<span class="GreekWord" title="{{{}}}" xml:lang="grk">{}</span> {}' \
                 .format( keyDigits, keyDigits, entry['word'][1], entry['word'][0], wordEntry )
             return html
     # end of GreekLexicon.getStrongsEntryHTML
