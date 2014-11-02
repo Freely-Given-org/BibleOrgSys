@@ -980,8 +980,8 @@ class HebrewLexiconSimple:
             entry = self.StrongsEntries[keyDigits]
             #for j, subentry in enumerate(entry):
                 #print( "  {} {}={}".format( j, subentry, repr(entry[subentry]) ) )
-            for subentry in entry:
-                print( "  ", subentry, repr(entry[subentry]) )
+            #for subentry in entry:
+                #print( "  ", subentry, repr(entry[subentry]) )
             wordEntry = entry['word']
             wordHTML = '<span class="HebrewWord" xml:lang="hbo">{}</span> ({}) {} ({})'.format( wordEntry[0], wordEntry[3], wordEntry[1], wordEntry[2] )
             sourceHTML = '<span class="Source"><b>Source:</b> {}</span>'.format( entry['source'].replace('<w>','<span class="Word">').replace('</w>','</span>') \

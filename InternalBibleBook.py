@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2014-10-29 by RJH (also update ProgVersion below)
+#   Last modified: 2014-11-02 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -3823,6 +3823,8 @@ class InternalBibleBook:
         Returns the number of verses (int) in the given chapter.
 
         Also works for chapter zero (the book introduction).
+
+        Returns None if there is no such chapter.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( t("getNumVerses( {} )").format( repr(C) ) )
         if isinstance( C, int ): # Just double-check the parameter

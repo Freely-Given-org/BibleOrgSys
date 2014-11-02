@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2014-10-11 by RJH (also update ProgVersion below)
+#   Last modified: 2014-11-02 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -45,7 +45,7 @@ and then fills
 
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
-ProgVersion = "0.52"
+ProgVersion = "0.53"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -1054,7 +1054,7 @@ class InternalBible:
         #print( "  gVD", self.name, key, verseData )
         if result is None:
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: print( "InternalBible.getVerseData: no VD", self.name, key, result )
-            if BibleOrgSysGlobals.debugFlag: assert( key.getChapterNumberStr()=='0' or key.getVerseNumberStr()=='0' ) # Why did we get nothing???
+            #if BibleOrgSysGlobals.debugFlag: assert( key.getChapterNumberStr()=='0' or key.getVerseNumberStr()=='0' ) # Why did we get nothing???
         else:
             verseData, context = result
             if BibleOrgSysGlobals.debugFlag: assert( isinstance( verseData, InternalBibleEntryList ) )
