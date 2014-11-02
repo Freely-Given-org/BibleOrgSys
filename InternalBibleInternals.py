@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleInternals.py
-#   Last modified: 2014-09-30 by RJH (also update ProgVersion below)
+#   Last modified: 2014-11-03 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Bible internals handler"
-ProgVersion = "0.49"
+ProgVersion = "0.50"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -773,16 +773,16 @@ class InternalBibleIndex:
 
             indexEntry = self.indexData[key]
             entries, context = self.getEntries( key )
-            markers = []
+            foundMarkers = []
             anyText = anyExtras = False
             for entry in entries:
                 marker = entry.getMarker()
-                markers.append( marker )
+                foundMarkers.append( marker )
                 if marker not in ('c','v'): # These always have to have text
                     if entry.getCleanText(): anyText = True
                     if entry.getExtras(): anyExtras = True
 
-            #print( "InternalBibleIndex.checkIndex line", self.BBB, key, indexEntry, entries, markers )
+            #print( "InternalBibleIndex.checkIndex line", self.BBB, key, indexEntry, entries, foundMarkers )
             #if self.BBB!='FRT': halt
 
             # Check the order of the markers
@@ -790,21 +790,25 @@ class InternalBibleIndex:
                 pass
             else: # not the book introduction
                 if V == '0':
-                    if 'c' not in markers:
+                    if 'c' not in foundMarkers:
                         logging.critical( "InternalBibleIndex.checkIndex: Probable v0 encoding error (no chapter?) in {} {} {}:{} {}".format( self.name, self.BBB, C, V, entries ) )
-                    if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert( 'c' in markers )
-                else: assert( 'v' in markers )
-                if 'p' in markers: assert( 'p~' in markers or 'v' in markers )
-                if 'q1' in markers or 'q2' in markers: assert( 'v' in markers or 'p~' in markers )
+                    if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert( 'c' in foundMarkers )
+                else: assert( 'v' in foundMarkers )
+                if 'p' in foundMarkers:
+                    if 'p~' not in foundMarkers and 'v' not in foundMarkers:
+                        logging.critical( "InternalBibleIndex.checkIndex: Probable (early in chapter) p encoding error in {} {} {}:{} {}".format( self.name, self.BBB, C, V, entries ) )
+                if 'q1' in foundMarkers or 'q2' in foundMarkers:
+                    if 'v' not in foundMarkers or 'p~' not in foundMarkers:
+                        logging.critical( "InternalBibleIndex.checkIndex: Probable q1/q2 encoding error in {} {} {}:{} {}".format( self.name, self.BBB, C, V, entries ) )
 
                 previousMarker = nextMarker = None # But these skip over rem (remark markers)
-                for j, marker in enumerate( markers ):
+                for j, marker in enumerate( foundMarkers ):
                     #print( self.BBB, C, V, j, marker, previousMarker, nextMarker )
 
                     # Work out the next marker (skipping over rem markers)
                     offset = 1
                     while True:
-                        try: nextMarker = markers[j+offset]
+                        try: nextMarker = foundMarkers[j+offset]
                         except: nextMarker = None
                         if nextMarker != 'rem': break
                         offset += 1
@@ -813,7 +817,7 @@ class InternalBibleIndex:
                     if marker == 'cp': assert( previousMarker in ('c','c~',None) ) # WEB Ps 151 gives None -- not totally sure why yet?
                     elif marker == 'c#': assert( nextMarker in ( 'v', 'vp~', ) )
                     elif marker == 'v':
-                        if markers[-1] != 'v' and nextMarker not in ('v~','¬v',): # end marker if verse is blank
+                        if foundMarkers[-1] != 'v' and nextMarker not in ('v~','¬v',): # end marker if verse is blank
                             logging.critical( "InternalBibleIndex.checkIndex: Probable v encoding error in {} {} {}:{} {}".format( self.name, self.BBB, C, V, entries ) )
                             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                     elif marker == 'vp~': assert( nextMarker == 'v' )
@@ -853,7 +857,7 @@ class InternalBibleIndex:
                 pass
             else: # not the book introduction
                 if  V=='0': # chapter introduction
-                    #print( self.BBB, C, V, markers, entries )
+                    #print( self.BBB, C, V, foundMarkers, entries )
                     #newKey = (C, '1')
                     #try:
                         #iE = self.indexData[newKey]
@@ -862,12 +866,12 @@ class InternalBibleIndex:
                     #print( self
                     #print( " ", newKey, iD, ct )
                     if self.BBB=='ACT' and C=='8':
-                        if 'p' in markers:
+                        if 'p' in foundMarkers:
                             logging.critical( "InternalBibleIndex.checkIndex: Check that text in {} Acts 8:0 gets processed correctly!".format( self.name ) )
                         else:
-                            if 's1'  in markers or 'r' in markers or 'p' in markers or 'q1' in markers:
+                            if 's1'  in foundMarkers or 'r' in foundMarkers or 'p' in foundMarkers or 'q1' in foundMarkers:
                                 print( "xyz", key, entries )
-                            assert( 's1' not in markers and 'r' not in markers and 'p' not in markers and 'q1' not in markers )
+                            assert( 's1' not in foundMarkers and 'r' not in foundMarkers and 'p' not in foundMarkers and 'q1' not in foundMarkers )
 
             # Check that C,V entries match
             for entry in entries:

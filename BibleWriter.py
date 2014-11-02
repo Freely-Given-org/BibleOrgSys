@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-10-28 by RJH (also update ProgVersion below)
+#   Last modified: 2014-11-03 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -67,7 +67,7 @@ Note that not all exports export all books.
 """
 
 ProgName = "Bible writer"
-ProgVersion = "0.86"
+ProgVersion = "0.87"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -812,7 +812,9 @@ class BibleWriter( InternalBible ):
                         ix = result.find( bridgeChar )
                         if ix != -1: result = result[:ix] # Remove verse bridges
                     #print( " returns", result )
-                    if BibleOrgSysGlobals.debugFlag and (result.count('C')>1 or result.count('V')>1): halt
+                    if result.count('C')>1 or result.count('V')>1:
+                        logging.critical( "toMarkdown.liveCV created a bad link: {} at {} {}:{}".format( repr(result), BBB, C, V ) )
+                        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
                     return '#' + result
                 # end of liveCV
 
