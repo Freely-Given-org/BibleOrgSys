@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # BibleOrganizationalSystemsConverter.py
-#   Last modified: 2013-08-28 by RJH (also update ProgVersion below)
+#   Last modified: 2014-11-03 by RJH (also update ProgVersion below)
 #
 # Module handling BibleOrganizationalSystems.xml to produce C and Python data tables
 #
-# Copyright (C) 2010-2013 Robert Hunt
+# Copyright (C) 2010-2014 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -27,8 +27,9 @@
 Module handling BibleOrganizationalSystems.xml to produce C and Python data tables.
 """
 
+ShortProgName = "BibleOrganizationalSystemsConverter"
 ProgName = "Bible Organization Systems converter"
-ProgVersion = "0.24"
+ProgVersion = "0.25"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -91,6 +92,7 @@ class BibleOrganizationalSystemsConverter:
         self._BibleBooksNamesSystems = BibleBooksNamesSystems().loadData()
     # end of BibleOrganizationalSystemsConverter.__init__
 
+
     def __str__( self ):
         """
         This method returns the string representation of a Bible book code.
@@ -106,10 +108,12 @@ class BibleOrganizationalSystemsConverter:
         return result
     # end of BibleOrganizationalSystemsConverter.__str__
 
+
     def __len__( self ):
         """ Returns the number of items loaded. """
         return len( self._XMLtree )
     # end of BibleOrganizationalSystemsConverter.__len__
+
 
     def loadAndValidate( self, XMLFilepath=None ):
         """
@@ -125,6 +129,7 @@ class BibleOrganizationalSystemsConverter:
                 self._validate()
         return self
     # end of BibleOrganizationalSystemsConverter.loadAndValidate
+
 
     def _load( self, XMLFilepath ):
         """
@@ -161,6 +166,7 @@ class BibleOrganizationalSystemsConverter:
         else:
             logging.error( _("Expected to load '{}' but got '{}'").format( self._treeTag, self._XMLtree.tag ) )
     # end of BibleOrganizationalSystemsConverter._load
+
 
     def _validate( self ):
         """
@@ -245,6 +251,7 @@ class BibleOrganizationalSystemsConverter:
                 logging.warning( _("Unexpected element: {} in record {}").format( element.tag, j ) )
     # end of BibleOrganizationalSystemsConverter._validate
 
+
     def importDataToPython( self ):
         """
         Loads (and pivots) the data (not including the header) into suitable Python containers to use in a Python program.
@@ -260,27 +267,28 @@ class BibleOrganizationalSystemsConverter:
             bits = {}
             # Get the required information out of the tree for this element
             # Start with the compulsory elements and type attribute
-            referenceAbbreviation = element.find("referenceAbbreviation").text
-            bits["referenceAbbreviation"] = referenceAbbreviation
-            myType = element.get( "type" )
-            bits["type"] = myType
+            referenceAbbreviation = element.find('referenceAbbreviation').text
+            bits['referenceAbbreviation'] = referenceAbbreviation
+            myType = element.get( 'type' )
+            bits['type'] = myType
             if myType not in allowedTypes: logging.error( _("Unrecognized '{}' type for '{}' (expected one of {})").format(myType,referenceAbbreviation,allowedTypes) )
-            languageCode = element.find("languageCode").text
+            languageCode = element.find('languageCode').text
             if self._ISOLanguages and not self._ISOLanguages.isValidLanguageCode( languageCode ): # Check that we have a valid language code
-                logging.error( "Unrecognized '{}' ISO-639-3 language code in '{}' organisational system".format( languageCode, referenceAbbreviation ) )
-            bits["languageCode"] = languageCode
+                if languageCode != '???':
+                    logging.error( "Unrecognized '{}' ISO-639-3 language code in '{}' organisational system".format( languageCode, referenceAbbreviation ) )
+            bits['languageCode'] = languageCode
 
             # Now work on the optional elements
-            for name in ( "name", "publicationDate", "versificationSystem", "punctuationSystem", "bookOrderSystem", "booksNamesSystem", "derivedFrom", "usesText", "includesBooks" ):
+            for name in ( 'name', 'publicationDate', 'versificationSystem', 'punctuationSystem', 'bookOrderSystem', 'booksNamesSystem', 'derivedFrom', 'usesText', 'includesBooks' ):
                 for nameData in element.findall(name):
                     if name in self._allowedMultiple: # Put multiple entries into a list
                         if name not in bits: bits[name] = [nameData.text]
                         else: bits[name].append( nameData.text )
                     else: # Not allowed multiples
                         if name in bits: logging.error( _("Unexpected multiple {} elements found in {} {}").format(name, referenceAbbreviation, myType) )
-                        if name=="includesBooks": # special handling
-                            bits["includesBooks"] = nameData.text.split()
-                            for BBB in bits["includesBooks"]:
+                        if name=='includesBooks': # special handling
+                            bits['includesBooks'] = nameData.text.split()
+                            for BBB in bits['includesBooks']:
                                 if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ):
                                     logging.error( _("Unrecognized '{}' Bible book code found in 'includesBooks' in {} {}").format( BBB, referenceAbbreviation, myType) )
                         else: bits[name] = nameData.text # normal handling
@@ -349,6 +357,7 @@ class BibleOrganizationalSystemsConverter:
         return self.__dataDicts
     # end of importDataToPython
 
+
     def pickle( self, filepath=None ):
         """
         Writes the information tables to a .pickle file that can be easily loaded into a Python3 program.
@@ -367,6 +376,7 @@ class BibleOrganizationalSystemsConverter:
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.__dataDicts, myFile )
     # end of pickle
+
 
     def exportDataToPython( self, filepath=None ):
         """
@@ -402,6 +412,7 @@ class BibleOrganizationalSystemsConverter:
             exportPythonDict( myFile, combinedIndexDict, "combinedIndexDict", "referenceAbbreviation", "id, SBLAbbreviation, OSISAbbreviation, ParatextAbbreviation, ParatextNumberString, nameEnglish (comment only)" )
     # end of exportDataToPython
 
+
     def exportDataToJSON( self, filepath=None ):
         """
         Writes the information tables to a .json file that can be easily loaded into a Java program.
@@ -426,6 +437,7 @@ class BibleOrganizationalSystemsConverter:
             json.dump( self.__dataDicts, myFile, indent=2 )
             #myFile.write( "\n\n# end of {}".format( os.path.basename(filepath) ) )
     # end of exportDataToJSON
+
 
     def exportDataToC( self, filepath=None ):
         """

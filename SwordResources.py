@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # SwordResources.py
-#   Last modified: 2014-10-14 (also update ProgVersion below)
+#   Last modified: 2014-11-03 (also update ProgVersion below)
 #
 # Module handling Sword resources using the Sword engine
 #
@@ -31,7 +31,7 @@ This module uses the Sword engine (libsword) via the Python SWIG bindings.
 
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
-ProgVersion = "0.08"
+ProgVersion = "0.09"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = True
@@ -47,18 +47,21 @@ from VerseReferences import SimpleVerseKey
 from InternalBibleInternals import InternalBibleEntryList
 
 
+SwordType = None
 try:
     import Swordx
     SwordType = "CrosswireLibrary"
 except: # Sword library (dll and python bindings) seem to be not available
-    SwordType = None
     if 0: # Warn the user that this won't work
         logging.critical( _("You need to install the Sword library on your computer in order to use this module.") )
         logging.info( _("Alternatively, you can try the all-Python SwordModules module.") )
         #sys.exit( 1 )
     else: # Use our own Python3 code instead
-        import SwordModules
-        SwordType = "OurCode"
+        try:
+            import SwordModules
+            SwordType = "OurCode"
+        except:
+            logging.critical( _("You don't appear to have any way installed to read Sword modules.") )
 
 
 
