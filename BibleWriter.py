@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-11-03 by RJH (also update ProgVersion below)
+#   Last modified: 2014-11-04 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -9241,7 +9241,7 @@ class BibleWriter( InternalBible ):
                 print( "BibleWriter.doAllExports: Running {} exports on {} CPUs".format( len(self.__outputProcesses), BibleOrgSysGlobals.maxProcesses ) )
                 if BibleOrgSysGlobals.verbosityLevel > 1:
                     print( "  NOTE: Outputs (including error and warning messages) from various exports may be interspersed." )
-            with multiprocessing.Pool( processes=Globals.maxProcesses ) as pool: # start worker processes
+            with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( self.doExportHelper, zip(self.__outputProcesses,self.__outputFolders) ) # have the pool do our loads
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( "BibleWriter.doAllExports: Got {} results".format( len(results) ) )
                 assert( len(results) == len(self.__outputFolders) )

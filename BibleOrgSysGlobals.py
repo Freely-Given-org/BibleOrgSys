@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleOrgSysGlobals.py
-#   Last modified: 2014-10-29 by RJH (also update ProgVersion below)
+#   Last modified: 2014-11-05 by RJH (also update ProgVersion below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -28,15 +28,15 @@ Module handling global variables
     and some useful general functions.
 
 Contains functions:
-    setupLoggingToFile( ProgName, ProgVersion, folder=None )
+    setupLoggingToFile( ProgName, ProgVersion, loggingFolderPath=None )
     addConsoleLogging()
-    addLogfile( projectName, folder=None )
+    addLogfile( projectName, folderName=None )
     removeLogfile( projectHandler )
 
     makeSafeFilename( someName )
     makeSafeXML( someString )
     makeSafeString( someString )
-    peekIntoFile( filenameOrFilepath, folder=None, numLines=1 )
+    peekIntoFile( filenameOrFilepath, folderName=None, numLines=1 )
 
     totalSize( o, handlers={} )
 
@@ -53,8 +53,8 @@ Contains functions:
 
     applyStringAdjustments( originalText, adjustmentList )
 
-    pickleObject( theObject, filename, folder=None )
-    unpickleObject( filename, folder=None )
+    pickleObject( theObject, filename, folderName=None )
+    unpickleObject( filename, folderName=None )
 
     setup( ProgName, ProgVersion, loggingFolder=None )
 
@@ -72,7 +72,7 @@ Contains functions:
 
 ShortProgName = "Globals"
 ProgName = "BibleOrgSys Globals"
-ProgVersion = "0.53"
+ProgVersion = "0.54"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -135,21 +135,21 @@ loggingConsoleFormat = '%(levelname)s: %(message)s'
 loggingShortFormat = '%(levelname)8s: %(message)s'
 loggingLongFormat = '%(asctime)s %(levelname)8s: %(message)s'
 
-def setupLoggingToFile( ProgName, ProgVersion, folder=None ):
+def setupLoggingToFile( ProgName, ProgVersion, folderPath=None ):
     """
     Sets up the main logfile for the program and returns the full pathname.
 
     Gets called from our demo() function when program starts up.
     """
     if debuggingThisModule:
-        print( "BibleOrgSysGlobals.setupLoggingToFile( {}, {}, {} )".format( repr(ProgName), repr(ProgVersion), repr(folder) ) )
+        print( "BibleOrgSysGlobals.setupLoggingToFile( {}, {}, {} )".format( repr(ProgName), repr(ProgVersion), repr(folderPath) ) )
     filename = ProgName.replace('/','-').replace(':','_').replace('\\','_') + '_log.txt'
-    if folder is None: folder = DEFAULT_LOG_FOLDER # relative path
-    filepath = os.path.join( folder, filename )
+    if folderPath is None: folderPath = DEFAULT_LOG_FOLDER # relative path
+    filepath = os.path.join( folderPath, filename )
 
-    # Create the folder if necessary
-    if not os.access( folder, os.W_OK ):
-        os.makedirs( folder ) # Works for an absolute or a relative pathname
+    # Create the folderPath if necessary
+    if not os.access( folderPath, os.W_OK ):
+        os.makedirs( folderPath ) # Works for an absolute or a relative pathname
 
     # Rename the existing file to a backup copy if it already exists
     if os.access( filepath, os.F_OK ):
@@ -192,18 +192,18 @@ def addConsoleLogging( consoleLoggingLevel=None ):
 # end of BibleOrgSysGlobals.addConsoleLogging
 
 
-def addLogfile( projectName, folder=None ):
+def addLogfile( projectName, folderName=None ):
     """
     Adds an extra project specific log file to the logger.
     """
-    if debuggingThisModule: print( "BibleOrgSysGlobals.addLogfile( {}, {} )".format( projectName, folder ) )
+    if debuggingThisModule: print( "BibleOrgSysGlobals.addLogfile( {}, {} )".format( projectName, folderName ) )
     filename = projectName + '_log.txt'
-    if folder is None: folder = DEFAULT_LOG_FOLDER # relative path
-    filepath = os.path.join( folder, filename )
+    if folderName is None: folderName = DEFAULT_LOG_FOLDER # relative path
+    filepath = os.path.join( folderName, filename )
 
-    # Create the folder if necessary
-    if not os.access( folder, os.W_OK ):
-        os.makedirs( folder ) # Works for an absolute or a relative pathname
+    # Create the folderName if necessary
+    if not os.access( folderName, os.W_OK ):
+        os.makedirs( folderName ) # Works for an absolute or a relative pathname
 
     # Rename the existing file to a backup copy if it already exists
     if os.access( filepath, os.F_OK ):
@@ -297,7 +297,7 @@ def makeSafeString( someString ):
 #
 # Peek at the first line(s) of a file
 
-def peekIntoFile( filenameOrFilepath, folder=None, numLines=1, encoding=None ):
+def peekIntoFile( filenameOrFilepath, folderName=None, numLines=1, encoding=None ):
     """
     Reads and returns the first line of a text file as a string
         unless more than one line is requested
@@ -305,7 +305,7 @@ def peekIntoFile( filenameOrFilepath, folder=None, numLines=1, encoding=None ):
     """
     if debugFlag: assert( 1 <= numLines < 5 )
     if encoding is None: encoding = 'utf-8'
-    filepath = os.path.join( folder, filenameOrFilepath ) if folder else filenameOrFilepath
+    filepath = os.path.join( folderName, filenameOrFilepath ) if folderName else filenameOrFilepath
     lines = []
     try:
         with open( filepath, 'rt', encoding=encoding ) as possibleUSFMFile: # Automatically closes the file when done
@@ -766,22 +766,22 @@ def applyStringAdjustments( originalText, adjustmentList ):
 # Reloading a saved Python object from the cache
 #
 
-def pickleObject( theObject, filename, folder=None, disassembleObjectFlag=False ):
+def pickleObject( theObject, filename, folderName=None, disassembleObjectFlag=False ):
     """
     Writes the object to a .pickle file that can be easily loaded into a Python3 program.
-        If folder is None (or missing), defaults to the default cache folder specified above.
-        Creates the folder(s) if necessary.
+        If folderName is None (or missing), defaults to the default cache folderName specified above.
+        Creates the folderName(s) if necessary.
 
     disassembleObjectFlag is used to find segfaults by pickling the object piece by piece.
     """
     assert( theObject )
     assert( filename )
-    if folder is None: folder = DEFAULT_CACHE_FOLDER
+    if folderName is None: folderName = DEFAULT_CACHE_FOLDER
     filepath = filename # default
-    if folder:
-        if not os.access( folder, os.R_OK ): # Make the folder hierarchy if necessary
-            os.makedirs( folder )
-        filepath = os.path.join( folder, filename )
+    if folderName:
+        if not os.access( folderName, os.R_OK ): # Make the folderName hierarchy if necessary
+            os.makedirs( folderName )
+        filepath = os.path.join( folderName, filename )
     if verbosityLevel > 2: print( _("Saving object to {}...").format( filepath ) )
 
     if disassembleObjectFlag: # Pickles an object attribute by attribute (to help narrow down segfault)
@@ -800,9 +800,9 @@ def pickleObject( theObject, filename, folder=None, disassembleObjectFlag=False 
                         print( '     ', bn )
                         b = a[bn]
                         print( b.BBB )
-                        pickleObject( b, f, folder )
+                        pickleObject( b, f, folderName )
                 else:
-                    pickleObject( a, f, folder, disassembleObjectFlag=True )
+                    pickleObject( a, f, folderName, disassembleObjectFlag=True )
             else: print( '  skip' )
 
     with open( filepath, 'wb' ) as pickleOutputFile:
@@ -810,15 +810,15 @@ def pickleObject( theObject, filename, folder=None, disassembleObjectFlag=False 
 # end of BibleOrgSysGlobals.pickleObject
 
 
-def unpickleObject( filename, folder=None ):
+def unpickleObject( filename, folderName=None ):
     """
     Reads the object from the file and returns it.
 
     NOTE: The class for the object must, of course, be loaded already (at the module level).
     """
     assert( filename )
-    if folder is None: folder = DEFAULT_CACHE_FOLDER
-    filepath = os.path.join( folder, filename )
+    if folderName is None: folderName = DEFAULT_CACHE_FOLDER
+    filepath = os.path.join( folderName, filename )
     if verbosityLevel > 2: print( _("Loading object from pickle file {}...").format( filepath ) )
     with open( filepath, 'rb') as pickleInputFile:
         return pickle.load( pickleInputFile ) # The protocol version used is detected automatically, so we do not have to specify it
@@ -829,17 +829,17 @@ def unpickleObject( filename, folder=None ):
 #
 # Default program setup routine
 
-def setup( ProgName, ProgVersion, loggingFolder=None ):
+def setup( ProgName, ProgVersion, loggingFolderPath=None ):
     """
     Does the initial set-up for our scripts / programs.
 
-    Sets up logging to a file in the default logging folder.
+    Sets up logging to a file in the default logging folderName.
 
     Returns the parser object
         so that custom command line parameters can be added
         then addStandardOptionsAndProcess must be called on it.
     """
-    setupLoggingToFile( ProgName, ProgVersion, loggingFolder )
+    setupLoggingToFile( ProgName, ProgVersion, folderPath=loggingFolderPath )
     logging.info( "{} v{} started".format( ProgName, ProgVersion ) )
 
     if verbosityLevel > 2:
@@ -997,7 +997,7 @@ def demo():
     # Demonstrate peekAtFirstLine function
     line1a = peekIntoFile( "Bible.py", numLines=2 ) # Simple filename
     print( "Bible.py starts with {}".format( repr(line1a) ) )
-    line1b = peekIntoFile( "ReadMe.txt", "Tests/", 3 ) # Filename and folder
+    line1b = peekIntoFile( "ReadMe.txt", "Tests/", 3 ) # Filename and folderName
     print( "ReadMe.txt starts with {}".format( repr(line1b) ) )
     line1c = peekIntoFile( "DataFiles/BibleBooksCodes.xml" ) # Filepath
     print( "BibleBooksCodes.xml starts with {}".format( repr(line1c) ) )

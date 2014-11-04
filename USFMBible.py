@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2014-10-16 by RJH (also update ProgVersion below)
+#   Last modified: 2014-11-04 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -411,7 +411,7 @@ class USFMBible( Bible ):
                 if BibleOrgSysGlobals.verbosityLevel > 1:
                     print( t("Loading {} books using {} CPUs...").format( len(self.maximumPossibleFilenameTuples), BibleOrgSysGlobals.maxProcesses ) )
                     print( "  NOTE: Outputs (including error and warning messages) from loading various books may be interspersed." )
-                with multiprocessing.Pool( processes=Globals.maxProcesses ) as pool: # start worker processes
+                with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                     results = pool.map( self._loadBookMP, self.maximumPossibleFilenameTuples ) # have the pool do our loads
                     assert( len(results) == len(self.maximumPossibleFilenameTuples) )
                     for bBook in results: self.saveBook( bBook ) # Saves them in the correct order

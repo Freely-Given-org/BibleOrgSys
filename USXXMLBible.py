@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USXXMLBible.py
-#   Last modified: 2014-10-03 by RJH (also update ProgVersion below)
+#   Last modified: 2014-11-04 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USX Bible books
 #
@@ -287,7 +287,7 @@ class USXXMLBible( Bible ):
             for BBB,filename in self.USXFilenamesObject.getConfirmedFilenames():
                 parameters.append( BBB )
             #print( "parameters", parameters )
-            with multiprocessing.Pool( processes=Globals.maxProcesses ) as pool: # start worker processes
+            with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( self.loadBook, parameters ) # have the pool do our loads
                 print( "results", results )
                 assert( len(results) == len(parameters) )

@@ -687,7 +687,7 @@ class BrownDriverBriggsFileConverter:
         Check/validate the given OSIS div record.
         """
         if BibleOrgSysGlobals.debugFlag: assert( entry.tag == BrownDriverBriggsFileConverter.HebLexNameSpace+"entry" )
-        #Globals.checkXMLNoText( entry, entry.tag, "na19" )
+        #BibleOrgSysGlobals.checkXMLNoText( entry, entry.tag, "na19" )
         BibleOrgSysGlobals.checkXMLNoTail( entry, entry.tag, "kaq9" )
 
         # Process the entry attributes first

@@ -290,8 +290,8 @@ class USFXXMLBible( Bible ):
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, 'dwf2' )
                 elif element.tag == 'book':
                     self.loadBook( element )
-                    ##Globals.checkXMLNoSubelements( element, sublocation, '54f2' )
-                    #Globals.checkXMLNoTail( element, sublocation, 'hd35' )
+                    ##BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '54f2' )
+                    #BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'hd35' )
                     ## Process the attributes
                     #idField = bookStyle = None
                     #for attrib,value in element.items():

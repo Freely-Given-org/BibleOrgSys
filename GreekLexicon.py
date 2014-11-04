@@ -198,7 +198,7 @@ class GreekStrongsFileConverter:
             elif element.tag == "greek":
                 location = "greek in Strongs " + strongs5
                 BibleOrgSysGlobals.checkXMLNoText( element, location, "jke0" )
-                #Globals.checkXMLNoTail( element, location, "ks24" )
+                #BibleOrgSysGlobals.checkXMLNoTail( element, location, "ks24" )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, location, "df35" )
                 # Process the attributes
                 translit = greek = beta = None
@@ -227,7 +227,7 @@ class GreekStrongsFileConverter:
                     if attrib=="strongs": pronunciation = value
                     else: logging.warning( "scs4 Unprocessed '{}' attribute ({}) in {}".format( attrib, value, location ) )
                 if gettingEssentials:
-                    #Globals.checkXMLNoTail( element, location, "kd02" )
+                    #BibleOrgSysGlobals.checkXMLNoTail( element, location, "kd02" )
                     if BibleOrgSysGlobals.debugFlag:
                         assert( j == 2 )
                         assert( pronunciation )
@@ -257,8 +257,8 @@ class GreekStrongsFileConverter:
             elif element.tag == "kjv_def":
                 location = "kjv_def in Strongs " + strongs5
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, location, "jke0" )
-                #Globals.checkXMLNoTail( element, location, "8s2s" )
-                #Globals.checkXMLNoSubelements( element, location, "dvb2" )
+                #BibleOrgSysGlobals.checkXMLNoTail( element, location, "8s2s" )
+                #BibleOrgSysGlobals.checkXMLNoSubelements( element, location, "dvb2" )
                 KJVdefinition = BibleOrgSysGlobals.getFlattenedXML( element, strongs5 ).replace( '\n', '' )
                 #print( strongs5, "KJVdefinition", repr(KJVdefinition), repr(entryString) )
                 if BibleOrgSysGlobals.debugFlag: assert( KJVdefinition and '\t' not in KJVdefinition and '\n' not in KJVdefinition )

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # MySwordBible.py
-#   Last modified: 2014-10-03 by RJH (also update ProgVersion below)
+#   Last modified: 2014-11-04 by RJH (also update ProgVersion below)
 #
 # Module handling "MySword" Bible module files
 #
@@ -413,7 +413,7 @@ def demo():
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
             parameters = [filename for filename in sorted(foundFiles)]
-            with multiprocessing.Pool( processes=Globals.maxProcesses ) as pool: # start worker processes
+            with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( testMySwB, parameters ) # have the pool do our loads
                 assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
@@ -434,7 +434,7 @@ def demo():
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
             parameters = [filename for filename in sorted(foundFiles)]
-            with multiprocessing.Pool( processes=Globals.maxProcesses ) as pool: # start worker processes
+            with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
                 results = pool.map( testMySwB, parameters ) # have the pool do our loads
                 assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded

@@ -1042,7 +1042,7 @@ class OSISXMLBible( Bible ):
             location = "validateVerseElement: " + locationDescription
             verseText = element.text
             #print( "vT", verseText )
-            #Globals.checkXMLNoText( element, location+" at "+verseMilestone, 'x2f5', loadErrors )
+            #BibleOrgSysGlobals.checkXMLNoText( element, location+" at "+verseMilestone, 'x2f5', loadErrors )
             OSISVerseID = sID = eID = n = None
             for attrib,value in element.items():
                 if attrib=="osisID": OSISVerseID = value
@@ -1184,7 +1184,7 @@ class OSISXMLBible( Bible ):
             Nesting doesn't currently work here.
             """
             location = "validateHighlight: " + locationDescription
-            #Globals.checkXMLNoSubelements( element, location+" at "+verseMilestone, 'gb5g', loadErrors )
+            #BibleOrgSysGlobals.checkXMLNoSubelements( element, location+" at "+verseMilestone, 'gb5g', loadErrors )
             highlightedText, highlightedTail = element.text, element.tail
             #if not highlightedText: print( "validateHighlight", repr(highlightedText), repr(highlightedTail), repr(location), repr(verseMilestone) )
             #if BibleOrgSysGlobals.debugFlag: assert( highlightedText ) # No text if nested!
@@ -1530,7 +1530,7 @@ class OSISXMLBible( Bible ):
                 elif subelement.tag == OSISXMLBible.OSISNameSpace+"seg": # cross-references
                     sublocation = "validateCrossReferenceOrFootnote: seg of " + locationDescription
                     rdgSeg = subelement.text
-                    #Globals.checkXMLNoText( subelement, sublocation+" at "+verseMilestone, 'kcd5', loadErrors )
+                    #BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation+" at "+verseMilestone, 'kcd5', loadErrors )
                     BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation+" at "+verseMilestone, 'jnh5', loadErrors )
                     BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation+" at "+verseMilestone, 'mjd4', loadErrors )
                     # Process the attributes
@@ -1683,8 +1683,8 @@ class OSISXMLBible( Bible ):
                             verseMilestone = validateVerseElement( sub2element, verseMilestone, chapterMilestone, sub2location )
                             #verseTail = sub3element.tail
                             #print( "verseTail", repr(verseTail) )
-                            #Globals.checkXMLNoText( sub3element, sub3location+" at "+verseMilestone, 'cvf4', loadErrors )
-                            #Globals.checkXMLNoSubelements( sub3element, sub3location+" at "+verseMilestone, 'sdyg', loadErrors )
+                            #BibleOrgSysGlobals.checkXMLNoText( sub3element, sub3location+" at "+verseMilestone, 'cvf4', loadErrors )
+                            #BibleOrgSysGlobals.checkXMLNoSubelements( sub3element, sub3location+" at "+verseMilestone, 'sdyg', loadErrors )
                             #osisID = verseSID = verseEID = verseN = None
                             #for attrib,value in sub3element.items():
                                 #if attrib=='osisID':
@@ -1722,14 +1722,14 @@ class OSISXMLBible( Bible ):
             return verseMilestone
 
             ##print( "list", divType, subDivType )
-            #Globals.checkXMLNoText( sub2element, sub2location+" at "+verseMilestone, '3x6g', loadErrors )
-            #Globals.checkXMLNoTail( sub2element, sub2location+" at "+verseMilestone, '8j4g' )
-            #Globals.checkXMLNoAttributes( sub2element, sub2location+" at "+verseMilestone, '7tgf' )
+            #BibleOrgSysGlobals.checkXMLNoText( sub2element, sub2location+" at "+verseMilestone, '3x6g', loadErrors )
+            #BibleOrgSysGlobals.checkXMLNoTail( sub2element, sub2location+" at "+verseMilestone, '8j4g' )
+            #BibleOrgSysGlobals.checkXMLNoAttributes( sub2element, sub2location+" at "+verseMilestone, '7tgf' )
             #for sub3element in sub2element.getchildren():
                 #if sub3element.tag == OSISXMLBible.OSISNameSpace+"item":
                     #sub3location = "item of " + sub2location
-                    #Globals.checkXMLNoTail( sub3element, sub3location+" at "+verseMilestone, '3d8n' )
-                    #Globals.checkXMLNoAttributes( sub3element, sub3location+" at "+verseMilestone, '4g7g' )
+                    #BibleOrgSysGlobals.checkXMLNoTail( sub3element, sub3location+" at "+verseMilestone, '3d8n' )
+                    #BibleOrgSysGlobals.checkXMLNoAttributes( sub3element, sub3location+" at "+verseMilestone, '4g7g' )
                     #item = sub3element.text
                     #if item and item.strip():
                         ##print( subDivType )
@@ -1741,15 +1741,15 @@ class OSISXMLBible( Bible ):
                     #for sub4element in sub3element.getchildren():
                         #if sub4element.tag == OSISXMLBible.OSISNameSpace+"list":
                             #sub4location = "list of " + sub3location
-                            #Globals.checkXMLNoText( sub4element, sub4location+" at "+verseMilestone, '5g3d' )
-                            #Globals.checkXMLNoTail( sub4element, sub4location+" at "+verseMilestone, '4w5x' )
-                            #Globals.checkXMLNoAttributes( sub4element, sub4location+" at "+verseMilestone, '3d45' )
+                            #BibleOrgSysGlobals.checkXMLNoText( sub4element, sub4location+" at "+verseMilestone, '5g3d' )
+                            #BibleOrgSysGlobals.checkXMLNoTail( sub4element, sub4location+" at "+verseMilestone, '4w5x' )
+                            #BibleOrgSysGlobals.checkXMLNoAttributes( sub4element, sub4location+" at "+verseMilestone, '3d45' )
                             #for sub5element in sub4element.getchildren():
                                 #if sub5element.tag == OSISXMLBible.OSISNameSpace+"item":
                                     #sub5location = "item of " + sub4location
-                                    #Globals.checkXMLNoTail( sub5element, sub5location+" at "+verseMilestone, '4c5t' )
-                                    #Globals.checkXMLNoAttributes( sub5element, sub5location+" at "+verseMilestone, '2sd1' )
-                                    #Globals.checkXMLNoSubelements( sub5element, sub5location+" at "+verseMilestone, '8j7n' )
+                                    #BibleOrgSysGlobals.checkXMLNoTail( sub5element, sub5location+" at "+verseMilestone, '4c5t' )
+                                    #BibleOrgSysGlobals.checkXMLNoAttributes( sub5element, sub5location+" at "+verseMilestone, '2sd1' )
+                                    #BibleOrgSysGlobals.checkXMLNoSubelements( sub5element, sub5location+" at "+verseMilestone, '8j7n' )
                                     #subItem = sub5element.text
                                     #if subItem:
                                         #if subDivType == 'outline':
@@ -1813,7 +1813,7 @@ class OSISXMLBible( Bible ):
                     #print( "title", repr(titleText) )
                     self.thisBook.appendLine( 'imt', titleText.strip() ) # Could it also be 'is'?
             #else: # Must be a book group title
-                #Globals.checkXMLNoSubelements( element, location+" at book group", 'vcw5', loadErrors )
+                #BibleOrgSysGlobals.checkXMLNoSubelements( element, location+" at book group", 'vcw5', loadErrors )
                 #if BibleOrgSysGlobals.debugFlag: assert( titleText )
                 #if titleText:
                     #if BibleOrgSysGlobals.verbosityLevel > 2: print( "    Got book group title", repr(titleText) )
