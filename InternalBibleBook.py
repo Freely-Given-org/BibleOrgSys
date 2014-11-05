@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2014-11-02 by RJH (also update ProgVersion below)
+#   Last modified: 2014-11-06 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -3811,9 +3811,9 @@ class InternalBibleBook:
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( t("getNumChapters()") )
         self.getVersificationIfNecessary()
-        print( self.getVersification() )
+        #print( self.getVersification() )
         lastChapterNumberString =  self.versificationList[-1][0] # The last chapter number
-        print( "NumChapters", lastChapterNumberString )
+        #print( "NumChapters", lastChapterNumberString )
         return int( lastChapterNumberString )
     # end of InternalBibleBook.getNumChapters
 

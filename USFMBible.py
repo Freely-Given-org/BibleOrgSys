@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2014-11-04 by RJH (also update ProgVersion below)
+#   Last modified: 2014-11-06 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -29,7 +29,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
-ProgVersion = "0.60"
+ProgVersion = "0.61"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -202,6 +202,8 @@ class USFMBible( Bible ):
     def __init__( self, sourceFolder, givenName=None, givenAbbreviation=None, encoding=None ):
         """
         Create the internal USFM Bible object.
+
+        Note that sourceFolder can be None if we don't know that yet.
         """
          # Setup and initialise the base class first
         Bible.__init__( self )
@@ -219,6 +221,8 @@ class USFMBible( Bible ):
 
     def preload( self, sourceFolder, givenName=None, givenAbbreviation=None, encoding=None ):
         """
+        Loads the SSF file if it can be found.
+        Tries to determine USFM filename pattern.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             print( t("preload( {} {} {} {} )").format( sourceFolder, givenName, givenAbbreviation, encoding ) )
@@ -275,8 +279,11 @@ class USFMBible( Bible ):
 
 
     def loadSSFData( self, ssfFilepath, encoding=None ):
-        """Process the SSF data from the given filepath.
-            Returns a dictionary."""
+        """
+        Process the SSF data from the given filepath.
+
+        Returns a dictionary.
+        """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
             print( t("Loading SSF data from '{}' ({})").format( ssfFilepath, encoding ) )
         if encoding is None: encoding = 'utf-8'
@@ -358,7 +365,7 @@ class USFMBible( Bible ):
 
     def loadBook( self, BBB, filename=None ):
         """
-        Load the requested book if it's not already loaded.
+        Load the requested book into self.books if it's not already loaded.
         """
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "USFMBible.loadBook( {}, {} )".format( BBB, filename ) )
         if BBB in self.books: return # Already loaded

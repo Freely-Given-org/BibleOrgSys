@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2014-11-02 by RJH (also update ProgVersion below)
+#   Last modified: 2014-11-06 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -45,7 +45,7 @@ and then fills
 
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
-ProgVersion = "0.53"
+ProgVersion = "0.54"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -105,17 +105,89 @@ class InternalBible:
         self.ssfFilepath, self.ssfDict, self.settingsDict = '', {}, {}
         self.BBBToNameDict, self.bookNameDict, self.combinedBookNameDict, self.bookAbbrevDict = {}, {}, {}, {} # Used to store book name and abbreviations (pointing to the BBB codes)
         self.reverseDict, self.guesses = {}, '' # A program history
-        self.triedLoadingBook = {}
+        self.loadedAllBooks, self.triedLoadingBook = False, {}
         self.divisions = OrderedDict()
         self.errorDictionary = OrderedDict()
         self.errorDictionary['Priority Errors'] = [] # Put this one first in the ordered dictionary
     # end of InternalBible.__init_
 
 
+    def __str__( self ):
+        """
+        This method returns the string representation of a Bible.
+
+        @return: the name of a Bible object formatted as a string
+        @rtype: string
+        """
+        result = self.objectNameString
+        indent = 2
+        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: result += ' v' + ProgVersion
+        if self.name: result += ('\n' if result else '') + ' '*indent + _("Name: {}").format( self.name )
+        if self.abbreviation: result += ('\n' if result else '') + ' '*indent + _("Abbreviation: {}").format( self.abbreviation )
+        if self.sourceFolder: result += ('\n' if result else '') + ' '*indent + _("Source folder: {}").format( self.sourceFolder )
+        elif self.sourceFilepath: result += ('\n' if result else '') + ' '*indent + _("Source: {}").format( self.sourceFilepath )
+        if self.status: result += ('\n' if result else '') + ' '*indent + _("Status: {}").format( self.status )
+        if self.revision: result += ('\n' if result else '') + ' '*indent + _("Revision: {}").format( self.revision )
+        if self.version: result += ('\n' if result else '') + ' '*indent + _("Version: {}").format( self.version )
+        result += ('\n' if result else '') + ' '*indent + _("Number of{} books: {}{}") \
+                                        .format( '' if self.loadedAllBooks else ' loaded', len(self.books), ' {}'.format( self.getBookList() ) if 0<len(self.books)<5 else '' )
+        return result
+    # end of InternalBible.__str__
+
+
+    def __len__( self ):
+        """
+        This method returns the number of loaded books in the Bible.
+        """
+        if BibleOrgSysGlobals.debugFlag and not self.loadedAllBooks:
+            logging.critical( t("__len__ result is unreliable because all books not loaded!") )
+        return len( self.books )
+    # end of InternalBible.__len__
+
+
+    def __contains__( self, BBB ):
+        """
+        This method checks whether the Bible (as loaded so far) contains the BBB book.
+
+        Returns True or False.
+        """
+        if BibleOrgSysGlobals.debugFlag: assert( isinstance(BBB,str) and len(BBB)==3 )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule and not self.loadedAllBooks:
+            logging.critical( t("__contains__ result is unreliable because all books not loaded!") )
+        return BBB in self.books
+    # end of InternalBible.__contains__
+
+
+    def __getitem__( self, keyIndex ):
+        """
+        Given an index integer, return the book object (or raise an IndexError)
+
+        This function also accepts a BBB so you can use it to get a book from the Bible by BBB.
+        """
+        #print( t("__getitem__( {} )").format( keyIndex ) )
+        #print( list(self.books.items()) )
+        if isinstance( keyIndex, int ):
+            return list(self.books.items())[keyIndex][1] # element 0 is BBB, element 1 is the book object
+        if isinstance( keyIndex, str ) and len(keyIndex)==3: # assume it's a BBB
+            return self.books[keyIndex]
+    # end of InternalBible.__getitem__
+
+
+    def __iter__( self ):
+        """ Yields the next book object. """
+        if BibleOrgSysGlobals.debugFlag and not self.loadedAllBooks:
+            logging.critical( t("__iter__ result is unreliable because all books not loaded!") )
+        for BBB in self.books:
+            yield self.books[BBB]
+    # end of InternalBible.__iter__
+
+
     def containsAnyOT39Books( self ):
         """
         Returns True if any of the 39 common OT books are present.
         """
+        if BibleOrgSysGlobals.debugFlag and not self.loadedAllBooks:
+            logging.critical( t("containsAnyOT39Books result is unreliable because all books not loaded!") )
         for BBB in OT39BookList:
             if BBB in self: return True
         return False
@@ -126,6 +198,8 @@ class InternalBible:
         """
         Returns True if any of the 27 common NT books are present.
         """
+        if BibleOrgSysGlobals.debugFlag and not self.loadedAllBooks:
+            logging.critical( t("containsAnyNT27Books result is unreliable because all books not loaded!") )
         for BBB in NT27BookList:
             if BBB in self: return True
         return False
@@ -158,6 +232,8 @@ class InternalBible:
         """
         This method should be called once all books are loaded.
         """
+        self.loadedAllBooks = True
+
         # Try to improve our names (may also be called from loadMetadataFile)
         self.__getNames()
 
@@ -228,69 +304,12 @@ class InternalBible:
     # end of InternalBible.loadMetadataFile
 
 
-    def __str__( self ):
-        """
-        This method returns the string representation of a Bible.
-
-        @return: the name of a Bible object formatted as a string
-        @rtype: string
-        """
-        result = self.objectNameString
-        indent = 2
-        if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: result += ' v' + ProgVersion
-        if self.name: result += ('\n' if result else '') + ' '*indent + _("Name: {}").format( self.name )
-        if self.sourceFolder: result += ('\n' if result else '') + ' '*indent + _("Source folder: {}").format( self.sourceFolder )
-        elif self.sourceFilepath: result += ('\n' if result else '') + ' '*indent + _("Source: {}").format( self.sourceFilepath )
-        if self.status: result += ('\n' if result else '') + ' '*indent + _("Status: {}").format( self.status )
-        if self.revision: result += ('\n' if result else '') + ' '*indent + _("Revision: {}").format( self.revision )
-        if self.version: result += ('\n' if result else '') + ' '*indent + _("Version: {}").format( self.version )
-        result += ('\n' if result else '') + ' '*indent + _("Number of books: {}{}") \
-                                        .format( len(self.books), " {}".format( self.getBookList() ) if 0<len(self.books)<5 else '' )
-        return result
-    # end of InternalBible.__str__
-
-
-    def __len__( self ):
-        """
-        This method returns the number of books in the Bible.
-        """
-        return len( self.books )
-    # end of InternalBible.__len__
-
-
-    def __contains__( self, BBB ):
-        """
-        This method checks whether the Bible contains the BBB book.
-        Returns True or False.
-        """
-        if BibleOrgSysGlobals.debugFlag: assert( isinstance(BBB,str) and len(BBB)==3 )
-        return BBB in self.books
-    # end of InternalBible.__contains__
-
-
-    def __getitem__( self, keyIndex ):
-        """
-        Given an index integer, return the book object (or raise an IndexError)
-
-        This function also accepts a BBB so you can use it to get a book from the Bible by BBB.
-        """
-        #print( t("__getitem__( {} )").format( keyIndex ) )
-        #print( list(self.books.items()) )
-        if isinstance( keyIndex, int ):
-            return list(self.books.items())[keyIndex][1] # element 0 is BBB, element 1 is the book object
-        if isinstance( keyIndex, str ) and len(keyIndex)==3: # assume it's a BBB
-            return self.books[keyIndex]
-    # end of InternalBible.__getitem__
-
-
-    def __iter__( self ):
-        """ Yields the next book object. """
-        for BBB in self.books:
-            yield self.books[BBB]
-    # end of InternalBible.__iter__
-
-
     def getBookList( self ):
+        """
+        Returns a list of loaded book codes.
+        """
+        if BibleOrgSysGlobals.debugFlag and not self.loadedAllBooks:
+            logging.critical( t("getBookList result is unreliable because all books not loaded!") )
         return [BBB for BBB in self.books]
 
 
