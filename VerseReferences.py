@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # VerseReferences.py
-#   Last modified: 2014-10-11 (also update ProgVersion below)
+#   Last modified: 2014-11-10 (also update ProgVersion below)
 #
 # Module handling Bible verse references
 #
@@ -68,7 +68,7 @@ OXES is different again and tends to remove the second (redundant) book identifi
 
 ShortProgName = "VerseReferences"
 ProgName = "Bible verse reference handler"
-ProgVersion = "0.11"
+ProgVersion = "0.12"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -131,8 +131,10 @@ class SimpleVerseKey():
         return False
     def __ne__(self, other): return not self.__eq__(other)
 
-    def getShortText( self ): return "{} {}:{}{}".format( self.BBB, self.C, self.V, self.S )
     def __str__( self ): return "SimpleVerseKey object: {}".format( self.getShortText() )
+    def getShortText( self ): return "{} {}:{}{}".format( self.BBB, self.C, self.V, self.S )
+    def makeHash( self ): # return a short, unambiguous string suitable for use as a key in a dictionary
+        return "{}{}:{}{}".format( self.BBB, self.C, self.V, self.S )
 
     def __len__( self ): return 4
     def __getitem__( self, keyIndex ):
@@ -151,6 +153,8 @@ class SimpleVerseKey():
 
     def getBCV( self ): return self.BBB, self.C, self.V
     def getBCVS( self ): return self.BBB, self.C, self.V, self.S
+    def getCV( self ): return self.C, self.V
+    def getCVS( self ): return self.C, self.V, self.S
 
     def getChapterNumberInt( self ):
         try: return( int( self.C ) )
