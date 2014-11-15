@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2014-11-06 by RJH (also update ProgVersion below)
+#   Last modified: 2014-11-15 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -45,7 +45,7 @@ and then fills
 
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
-ProgVersion = "0.54"
+ProgVersion = "0.55"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -578,7 +578,8 @@ class InternalBible:
         """Runs a series of checks and count on each book of the Bible
             in order to try to determine what are the normal standards."""
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "InternalBible:discover()" )
-        if BibleOrgSysGlobals.debugFlag and  'discoveryResults' in dir(self): halt # We've already called this once
+        if BibleOrgSysGlobals.debugFlag and  'discoveryResults' in dir(self):
+            logging.warning( t("discover: We had done this already!") ) # We've already called this once
 
         self.discoveryResults = OrderedDict()
 

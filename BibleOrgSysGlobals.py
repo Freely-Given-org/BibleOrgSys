@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleOrgSysGlobals.py
-#   Last modified: 2014-11-05 by RJH (also update ProgVersion below)
+#   Last modified: 2014-11-14 by RJH (also update ProgVersion below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -72,10 +72,10 @@ Contains functions:
 
 ShortProgName = "Globals"
 ProgName = "BibleOrgSys Globals"
-ProgVersion = "0.54"
+ProgVersion = "0.55"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
-debuggingThisModule = False
+debuggingThisModule = True
 
 
 import logging, os.path, pickle
@@ -163,7 +163,7 @@ def setupLoggingToFile( ProgName, ProgVersion, folderPath=None ):
     # In Windows, doesn't seem to create the log file, even if given a filename rather than a filepath
     setLevel = logging.DEBUG if debugFlag else logging.INFO
     if debuggingThisModule:
-        print( "BibleOrgSysGlobals.setBasicConfig( {}, {}={}, {}, {} )".format( repr(filepath), setLevel, LOGGING_NAME_DICT[setLevel], repr(loggingLongFormat), repr(loggingDateFormat) ) )
+        print( "BibleOrgSysGlobals.setBasicConfig to( {}, {}={}, {}, {} )".format( repr(filepath), setLevel, LOGGING_NAME_DICT[setLevel], repr(loggingLongFormat), repr(loggingDateFormat) ) )
     logging.basicConfig( filename=filepath, level=setLevel, format=loggingLongFormat, datefmt=loggingDateFormat )
 
     #return filepath
@@ -839,6 +839,8 @@ def setup( ProgName, ProgVersion, loggingFolderPath=None ):
         so that custom command line parameters can be added
         then addStandardOptionsAndProcess must be called on it.
     """
+    if debuggingThisModule:
+        print( "BibleOrgSysGlobals.setup( {}, {}, {} )".format( repr(ProgName), repr(ProgVersion), repr(loggingFolderPath) ) )
     setupLoggingToFile( ProgName, ProgVersion, folderPath=loggingFolderPath )
     logging.info( "{} v{} started".format( ProgName, ProgVersion ) )
 

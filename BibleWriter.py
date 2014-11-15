@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-11-04 by RJH (also update ProgVersion below)
+#   Last modified: 2014-11-15 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -66,8 +66,9 @@ Note that not all exports export all books.
     Some formats only handle subsets, e.g. may not handle front or back matter, glossaries, or deuterocanonical books.
 """
 
+ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
-ProgVersion = "0.87"
+ProgVersion = "0.88"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -96,6 +97,20 @@ from MLWriter import MLWriter
 
 ALL_CHAR_MARKERS = BibleOrgSysGlobals.USFMMarkers.getCharacterMarkersList( expandNumberableMarkers=True )
 #print( ALL_CHAR_MARKERS ); halt
+
+
+def t( messageString ):
+    """
+    Prepends the module name to a error or warning message string
+        if we are in debug mode.
+    Returns the new string.
+    """
+    try: nameBit, errorBit = messageString.split( ': ', 1 )
+    except ValueError: nameBit, errorBit = '', messageString
+    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+        nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
+    return '{}{}'.format( nameBit, _(errorBit) )
+
 
 
 defaultControlFolder = "ControlFiles/" # Relative to the current working directory
@@ -171,7 +186,8 @@ class BibleWriter( InternalBible ):
         """
         Do some global name replacements in the given control dictionary.
         """
-        if BibleOrgSysGlobals.debugFlag: assert( existingControlDict and isinstance( existingControlDict, dict ) )
+        if BibleOrgSysGlobals.debugFlag: assert( isinstance( existingControlDict, dict ) )
+        if not existingControlDict: logging.warning( t("adjustControlDict: The control dictionary is empty!") )
         for entry in existingControlDict:
             existingControlDict[entry] = existingControlDict[entry].replace( '__PROJECT_NAME__', self.projectName )
                 #.replace( '__PROJECT_NAME__', BibleOrgSysGlobals.makeSafeFilename( self.projectName.replace( ' ', '_' ) ) )
@@ -1419,7 +1435,7 @@ class BibleWriter( InternalBible ):
         # end of toDoor43.writeD43Book
 
         # Set-up our Bible reference system
-        if controlDict['PublicationCode'] == "GENERIC":
+        if 'PublicationCode' not in controlDict or controlDict['PublicationCode'] == "GENERIC":
             BOS = self.genericBOS
             BRL = self.genericBRL
         else:
@@ -1427,7 +1443,8 @@ class BibleWriter( InternalBible ):
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to Door43 format...") )
-        filename = BibleOrgSysGlobals.makeSafeFilename( controlDict["Door43OutputFilename"] )
+        try: filename = BibleOrgSysGlobals.makeSafeFilename( controlDict["Door43OutputFilename"] )
+        except KeyError: filename = 'Bible.d43'
         xw = MLWriter( filename, outputFolder )
         xw.setHumanReadable()
         xw.start()
@@ -2220,7 +2237,7 @@ class BibleWriter( InternalBible ):
 
 
         # Set-up our Bible reference system
-        if controlDict['PublicationCode'] == "GENERIC":
+        if 'PublicationCode' not in controlDict or controlDict['PublicationCode'] == "GENERIC":
             BOS = self.genericBOS
             BRL = self.genericBRL
         else:
@@ -2231,11 +2248,12 @@ class BibleWriter( InternalBible ):
         suffix = controlDict['HTML5Suffix'] if 'HTML5Suffix' in controlDict else 'html'
         filenameDict = {}
         for BBB in self.books: # Make a list of filenames
-            filename = controlDict['HTML5OutputFilenameTemplate'].replace('__BOOKCODE__',BBB ).replace('__SUFFIX__',suffix)
+            try: filename = controlDict['HTML5OutputFilenameTemplate'].replace('__BOOKCODE__',BBB ).replace('__SUFFIX__',suffix)
+            except KeyError: filename = BBB + '.html'
             filenameDict[BBB] = BibleOrgSysGlobals.makeSafeFilename( filename.replace( ' ', '_' ) )
 
         html5Globals = {}
-        if controlDict["HTML5Files"]=="byBook":
+        if 'HTML5Files' not in controlDict or controlDict['HTML5Files']=='byBook':
             for BBB,bookData in self.books.items(): # Now export the books
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( _("    Exporting {} to HTML5 format...").format( BBB ) )
                 xw = MLWriter( filenameDict[BBB], WEBoutputFolder, 'HTML' )
@@ -3396,7 +3414,7 @@ class BibleWriter( InternalBible ):
         # end of toUSXXML.writeUSXBook
 
         # Set-up our Bible reference system
-        if controlDict['PublicationCode'] == "GENERIC":
+        if 'PublicationCode' not in controlDict or controlDict['PublicationCode'] == "GENERIC":
             BOS = self.genericBOS
             BRL = self.genericBRL
         else:
@@ -3841,7 +3859,7 @@ class BibleWriter( InternalBible ):
         # end of toUSFXXML.writeUSFXBook
 
         # Set-up our Bible reference system
-        if controlDict['PublicationCode'] == "GENERIC":
+        if 'PublicationCode' not in controlDict or controlDict['PublicationCode'] == "GENERIC":
             BOS = self.genericBOS
             BRL = self.genericBRL
         else:
@@ -3852,7 +3870,8 @@ class BibleWriter( InternalBible ):
         #USFXOutputFolder = os.path.join( "OutputFiles/", "USFX output/" )
         #if not os.access( USFXOutputFolder, os.F_OK ): os.mkdir( USFXOutputFolder ) # Make the empty folder if there wasn't already one there
 
-        filename = BibleOrgSysGlobals.makeSafeFilename( controlDict["usfxOutputFilename"] )
+        try: filename = BibleOrgSysGlobals.makeSafeFilename( controlDict["usfxOutputFilename"] )
+        except KeyError: filename = 'Bible.usfx'
         xw = MLWriter( filename, outputFolder )
         #xw = MLWriter( BibleOrgSysGlobals.makeSafeFilename( USFXNumber+USFXAbbrev+"_usfx.xml" ), outputFolder )
         xw.setHumanReadable( 'All' ) # Can be set to 'All', 'Header', or 'None' -- one output file went from None/Header=4.7MB to All=5.7MB
@@ -4009,7 +4028,7 @@ class BibleWriter( InternalBible ):
 
         # Set-up our Bible reference system
         #if BibleOrgSysGlobals.debugFlag: print( "BibleWriter:toOSISXML publicationCode =", controlDict["PublicationCode"] )
-        if controlDict['PublicationCode'] == "GENERIC":
+        if 'PublicationCode' not in controlDict or controlDict['PublicationCode'] == "GENERIC":
             BOS = self.genericBOS
             BRL = self.genericBRL
         else:
@@ -4027,7 +4046,11 @@ class BibleWriter( InternalBible ):
         ignoredMarkers, unhandledMarkers, unhandledBooks = set(), set(), []
 
         # Let's write a Sword locale while we're at it -- might be useful if we make a Sword module from this OSIS file
-        self._writeSwordLocale( controlDict["xmlLanguage"], controlDict["LanguageName"], BOS, getBookNameFunction, os.path.join( outputFolder, "SwLocale-utf8.conf" ) )
+        try: xlg = controlDict['xmlLanguage']
+        except KeyError: xlg = 'eng'
+        try: ln = controlDict["LanguageName"]
+        except KeyError: ln = 'eng'
+        self._writeSwordLocale( xlg, ln, BOS, getBookNameFunction, os.path.join( outputFolder, "SwLocale-utf8.conf" ) )
         #if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Writing Sword locale file {}...").format(SwLocFilepath) )
         #with open( SwLocFilepath, 'wt' ) as SwLocFile:
             #SwLocFile.write( '[Meta]\nName={}\n'.format(controlDict["xmlLanguage"]) )
@@ -4044,11 +4067,17 @@ class BibleWriter( InternalBible ):
         def writeHeader( writerObject ):
             """Writes the OSIS header to the OSIS XML writerObject."""
             writerObject.writeLineOpen( 'header' )
-            writerObject.writeLineOpen( 'work', ('osisWork', controlDict["osisWork"]) )
-            writerObject.writeLineOpenClose( 'title', controlDict["Title"] )
+            try: ow = controlDict["osisWork"]
+            except KeyError: ow = 'Bible'
+            writerObject.writeLineOpen( 'work', ('osisWork', ow) )
+            try: tit = controlDict["Title"]
+            except KeyError: tit = 'Bible'
+            writerObject.writeLineOpenClose( 'title', tit )
             writerObject.writeLineOpenClose( 'creator', "BibleWriter.py", ('role',"encoder") )
             writerObject.writeLineOpenClose( 'type',  "Bible", ('type',"OSIS") )
-            writerObject.writeLineOpenClose( 'identifier', controlDict["Identifier"], ('type',"OSIS") )
+            try: idr = controlDict["Identifier"]
+            except KeyError: idr = 'XXX'
+            writerObject.writeLineOpenClose( 'identifier', idr, ('type',"OSIS") )
             writerObject.writeLineOpenClose( 'scope', "dunno" )
             writerObject.writeLineOpenClose( 'refSystem', "Bible" )
             writerObject.writeLineClose( 'work' )
@@ -4619,15 +4648,21 @@ class BibleWriter( InternalBible ):
 
 
         # Start of main toOSIS code
-        if controlDict["osisFiles"]=="byBook": # Write an individual XML file for each book
+        if 'osisFiles' not in controlDict or controlDict['osisFiles']=='byBook': # Write an individual XML file for each book
             if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting individually to OSIS XML format...") )
             validationResults = ( 0, '', '', ) # xmllint result code, program output, error output
             for BBB,bookData in self.books.items(): # Process each Bible book
-                xw = MLWriter( BibleOrgSysGlobals.makeSafeFilename( controlDict["osisOutputFilename"].replace('_Bible',"_Book-{}".format(BBB)) ), outputFolder )
+                try: fn = controlDict["osisOutputFilename"].replace( '_Bible', "_Book-{}".format(BBB) )
+                except KeyError: fn = 'Book-{}.osis'.format( BBB )
+                xw = MLWriter( BibleOrgSysGlobals.makeSafeFilename( fn ), outputFolder )
                 xw.setHumanReadable( 'All' ) # Can be set to 'All', 'Header', or 'None' -- one output file went from None/Header=4.7MB to All=5.7MB
                 xw.start()
                 xw.writeLineOpen( 'osis', [('xmlns',OSISNameSpace), ('xmlns:xsi',"http://www.w3.org/2001/XMLSchema-instance"), ('xsi:schemaLocation',OSISNameSpace+' '+OSISSchemaLocation)] )
-                xw.writeLineOpen( 'osisText', [('osisRefWork',"Bible" ), ('xml:lang',controlDict["xmlLanguage"]), ('osisIDWork',controlDict["osisIDWork"])] )
+                try: xlg = controlDict["xmlLanguage"]
+                except KeyError: xlg = 'eng'
+                try: oIDw = controlDict["osisIDWork"]
+                except KeyError: oIDw = 'Bible'
+                xw.writeLineOpen( 'osisText', [('osisRefWork',"Bible" ), ('xml:lang',xlg), ('osisIDWork',oIDw)] )
                 xw.setSectionName( 'Header' )
                 writeHeader( xw )
                 xw.setSectionName( 'Main' )
@@ -4640,7 +4675,7 @@ class BibleWriter( InternalBible ):
                     if bookResults[0] > validationResults[0]: validationResults = ( bookResults[0], validationResults[1], validationResults[2], )
                     if bookResults[1]: validationResults = ( validationResults[0], validationResults[1] + bookResults[1], validationResults[2], )
                     if bookResults[2]: validationResults = ( validationResults[0], validationResults[1], validationResults[2] + bookResults[2], )
-        elif controlDict["osisFiles"]=="byBible": # write all the books into a single file
+        elif controlDict['osisFiles']=='byBible': # write all the books into a single file
             if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to OSIS XML format...") )
             filename = BibleOrgSysGlobals.makeSafeFilename( controlDict["osisOutputFilename"] )
             xw = MLWriter( filename, outputFolder )
@@ -4664,7 +4699,7 @@ class BibleWriter( InternalBible ):
             zf.close()
             if validationSchema: validationResults = xw.validate( validationSchema )
         else:
-            logging.critical( "Unrecognized toOSIS control \"osisFiles\" = '{}'".format( controlDict["osisFiles"] ) )
+            logging.critical( "Unrecognized toOSIS control \"osisFiles\" = '{}'".format( controlDict['osisFiles'] ) )
 
         if ignoredMarkers:
             logging.info( "toOSISXML: Ignored markers were {}".format( ignoredMarkers ) )
@@ -4808,7 +4843,7 @@ class BibleWriter( InternalBible ):
         # end of toZefaniaXML.writeZefBook
 
         # Set-up our Bible reference system
-        if controlDict['PublicationCode'] == "GENERIC":
+        if 'PublicationCode' not in controlDict or controlDict['PublicationCode'] == "GENERIC":
             BOS = self.genericBOS
             BRL = self.genericBRL
         else:
@@ -4816,12 +4851,16 @@ class BibleWriter( InternalBible ):
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to Zefania format...") )
-        filename = BibleOrgSysGlobals.makeSafeFilename( controlDict["ZefaniaOutputFilename"] )
+        try: zOFn = controlDict['ZefaniaOutputFilename']
+        except KeyError: zOFn = 'Bible.zef'
+        filename = BibleOrgSysGlobals.makeSafeFilename( zOFn )
         xw = MLWriter( filename, outputFolder )
         xw.setHumanReadable()
         xw.start()
 # TODO: Some modules have <XMLBIBLE xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="zef2005.xsd" version="2.0.1.18" status='v' revision="1" type="x-bible" biblename="KJV+">
-        xw.writeLineOpen( 'XMLBible', [('xmlns:xsi',"http://www.w3.org/2001/XMLSchema-instance"), ('type',"x-bible" ), ('biblename',controlDict["ZefaniaBibleName"]) ] )
+        try: zBN = controlDict['ZefaniaBibleName']
+        except KeyError: zBN = 'ExportedBible'
+        xw.writeLineOpen( 'XMLBible', [('xmlns:xsi',"http://www.w3.org/2001/XMLSchema-instance"), ('type',"x-bible" ), ('biblename',zBN) ] )
         if True: #if controlDict["ZefaniaFiles"]=="byBible":
             writeHeader( xw )
             for BBB,bookData in self.books.items():
@@ -4987,7 +5026,7 @@ class BibleWriter( InternalBible ):
         # end of toHaggaiXML.writeHagBook
 
         # Set-up our Bible reference system
-        if controlDict['PublicationCode'] == "GENERIC":
+        if 'PublicationCode' not in controlDict or controlDict['PublicationCode'] == "GENERIC":
             BOS = self.genericBOS
             BRL = self.genericBRL
         else:
@@ -4995,12 +5034,16 @@ class BibleWriter( InternalBible ):
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to Haggai format...") )
-        filename = BibleOrgSysGlobals.makeSafeFilename( controlDict["HaggaiOutputFilename"] )
+        try: hOFn = controlDict['HaggaiOutputFilename']
+        except KeyError: hOFn = 'Bible.hag'
+        filename = BibleOrgSysGlobals.makeSafeFilename( hOFn )
         xw = MLWriter( filename, outputFolder )
         xw.setHumanReadable()
         xw.start()
 # TODO: Some modules have <XMLBIBLE xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="zef2005.xsd" version="2.0.1.18" status='v' revision="1" type="x-bible" biblename="KJV+">
-        xw.writeLineOpen( 'XMLBible', [('xmlns:xsi',"http://www.w3.org/2001/XMLSchema-instance"), ('type',"x-bible" ), ('biblename',controlDict["HaggaiBibleName"]) ] )
+        try: hBN = controlDict['HaggaiBibleName']
+        except KeyError: hBN = 'ExportedBible'
+        xw.writeLineOpen( 'XMLBible', [('xmlns:xsi',"http://www.w3.org/2001/XMLSchema-instance"), ('type',"x-bible" ), ('biblename',hBN) ] )
         if True: #if controlDict["HaggaiFiles"]=="byBible":
             writeHeader( xw )
             for BBB,bookData in self.books.items():
@@ -5138,7 +5181,7 @@ class BibleWriter( InternalBible ):
         # end of toOpenSongXML.writeOpenSongBook
 
         # Set-up our Bible reference system
-        if controlDict['PublicationCode'] == "GENERIC":
+        if 'PublicationCode' not in controlDict or controlDict['PublicationCode'] == "GENERIC":
             BOS = self.genericBOS
             BRL = self.genericBRL
         else:
@@ -5146,7 +5189,9 @@ class BibleWriter( InternalBible ):
             BRL = BibleReferenceList( BOS, BibleObject=None )
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to OpenSong format...") )
-        filename = BibleOrgSysGlobals.makeSafeFilename( controlDict["OpenSongOutputFilename"] )
+        try: osOFn = controlDict['OpenSongOutputFilename']
+        except KeyError: osOFn = 'Bible.osong'
+        filename = BibleOrgSysGlobals.makeSafeFilename( osOFn )
         xw = MLWriter( filename, outputFolder )
         xw.setHumanReadable()
         xw.start()
@@ -5207,7 +5252,7 @@ class BibleWriter( InternalBible ):
         if BibleOrgSysGlobals.debugFlag: assert( struct.calcsize("IH") == 6 ) # Six-byte format
 
         # Set-up our Bible reference system
-        if controlDict['PublicationCode'] == "GENERIC":
+        if 'PublicationCode' not in controlDict or controlDict['PublicationCode'] == "GENERIC":
             BOS = self.genericBOS
             BRL = self.genericBRL
         else:
@@ -5238,7 +5283,11 @@ class BibleWriter( InternalBible ):
 
 
         # Let's write a Sword locale while we're at it
-        self._writeSwordLocale( controlDict["xmlLanguage"], controlDict["LanguageName"], BOS, getBookNameFunction, os.path.join( outputFolder, "SwLocale-utf8.conf" ) )
+        try: xL = controlDict['xmlLanguage']
+        except KeyError: xL = 'eng'
+        try: lN = controlDict['LanguageName']
+        except KeyError: lN = 'eng'
+        self._writeSwordLocale( xL, lN, BOS, getBookNameFunction, os.path.join( outputFolder, "SwLocale-utf8.conf" ) )
         #SwLocFilepath = os.path.join( outputFolder, "SwLocale-utf8.conf" )
         #if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Writing Sword locale file {}...").format(SwLocFilepath) )
         #with open( SwLocFilepath, 'wt' ) as SwLocFile:
@@ -5262,7 +5311,9 @@ class BibleWriter( InternalBible ):
         if not os.access( textsFolder, os.F_OK ): os.mkdir( textsFolder ) # Make the empty folder if there wasn't already one there
         rawTextFolder = os.path.join( textsFolder, "rawtext" )
         if not os.access( rawTextFolder, os.F_OK ): os.mkdir( rawTextFolder ) # Make the empty folder if there wasn't already one there
-        lgFolder = os.path.join( rawTextFolder, BibleOrgSysGlobals.makeSafeFilename( controlDict["osisWork"].lower() ) )
+        try: oW = controlDict['osisWork'].lower()
+        except KeyError: oW = 'Bible'
+        lgFolder = os.path.join( rawTextFolder, BibleOrgSysGlobals.makeSafeFilename( oW ) )
         if not os.access( lgFolder, os.F_OK ): os.mkdir( lgFolder ) # Make the empty folder if there wasn't already one there
 
         toSwordGlobals = { 'currentID':0, "idStack":[], "verseRef":'', "XRefNum":0, "FootnoteNum":0, "lastRef":'', 'offset':0, 'length':0, "OneChapterOSISBookCodes":BibleOrgSysGlobals.BibleBooksCodes.getOSISSingleChapterBooksList() } # These are our global variables
@@ -5274,8 +5325,12 @@ class BibleWriter( InternalBible ):
             adjustedProjectName = self.projectName.lower().replace( ' ', '_' )
 
             # Read the default conf file
-            with open( os.path.join( defaultControlFolder, 'SwordProject.conf' ) ) as myFile: confText = myFile.read()
-
+            try:
+                with open( os.path.join( defaultControlFolder, 'SwordProject.conf' ) ) as myFile: confText = myFile.read()
+            except FileNotFoundError:
+                print( "dCF", defaultControlFolder )
+                logging.critical( t("toSwordModule: Unable to read sample conf file SwordProject.conf") )
+                confText = ''
             # Do common text replacements
             # Unfortunately, we can only really make wild guesses without more detailed metadata
             # Of course, version should be the TEXT version not the PROGRAM version
@@ -6005,7 +6060,9 @@ class BibleWriter( InternalBible ):
         filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
         with open( filepath, 'wt' ) as myFile:
-            myFile.write('\ufeff') # theWord needs the BOM
+            try: myFile.write('\ufeff') # theWord needs the BOM
+            except UnicodeEncodeError: # why does this fail on Windows???
+                logging.critical( t("toTheWord: Unable to write BOM to file") )
             BBB, bookCount, lineCount, checkCount = startBBB, 0, 0, 0
             while True: # Write each Bible book in the KJV order
                 writeTWBook( myFile, BBB, mySettings )
@@ -7101,7 +7158,10 @@ class BibleWriter( InternalBible ):
         maxLineCharacters, maxLines = 26, 12
         maxDown = pixelHeight-1 - defaultLineSize - 3 # Be sure to leave one blank line at the bottom
         # Use "identify -list font" or "convert -list font" to see all fonts on the system (use the Font field, not the family field)
-        defaultTextFontname, defaultHeadingFontname = "Times-Roman", "FreeSans-Bold"
+        if sys.platform.startswith( 'win' ):
+            defaultTextFontname, defaultHeadingFontname = "Times-New-Roman", "Liberation-Sans-Bold"
+        else:
+            defaultTextFontname, defaultHeadingFontname = "Times-Roman", "FreeSans-Bold"
         topLineColor = "opaque"
         defaultMainHeadingFontcolor, defaultSectionHeadingFontcolor, defaultSectionCrossReferenceFontcolor = "indigo", "red1", "royalBlue"
         defaultVerseNumberFontcolor = "DarkOrange1"
@@ -7121,7 +7181,8 @@ class BibleWriter( InternalBible ):
             #print( "render: {} on {}".format( commandList, jpegFilepath ) )
 
             # Run the script on our data
-            parameters = ['/usr/bin/timeout', '10s', '/usr/bin/convert' ]
+            if sys.platform.startswith( 'win' ): parameters = [ 'imconvert.exe' ]
+            else: parameters = ['/usr/bin/timeout', '10s', '/usr/bin/convert' ]
             parameters.extend( commandList )
             parameters.append( jpegFilepath ) # input file
             parameters.append( jpegFilepath ) # output file
