@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # SwordResources.py
-#   Last modified: 2014-11-14 (also update ProgVersion below)
+#   Last modified: 2014-11-17 (also update ProgVersion below)
 #
 # Module handling Sword resources using the Sword engine
 #
@@ -167,7 +167,7 @@ class SwordInterface():
             stuff = module.getBCVRef( key )
             #print( t("gVD={} key={}, st={}").format( module.getName(), key, stuff ) )
             if stuff is None:
-                print( "SI.gVD no VD", module.getName(), key, stuff )
+                print( t("SwordInterface.getVerseData no VD"), module.getName(), key, stuff )
                 assert( key.getChapter()==0 or key.getVerse()==0 )
             else:
                 verseData, context = stuff
