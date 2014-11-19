@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleLexicon.py
-#   Last modified: 2014-10-29 (also update ProgVersion below)
+#   Last modified: 2014-11-20 (also update ProgVersion below)
 #
 # Module handling the combined Hebrew and Greek lexicons
 #
@@ -35,7 +35,7 @@ ProgName = "Bible Lexicon format handler"
 ProgVersion = "0.22"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
-debuggingThisModule = True
+debuggingThisModule = False
 
 
 import logging, os.path

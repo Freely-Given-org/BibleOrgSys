@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2014-11-06 by RJH (also update ProgVersion below)
+#   Last modified: 2014-11-19 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -42,7 +42,7 @@ Required improvements:
 
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.90"
+ProgVersion = "0.91"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -3838,26 +3838,26 @@ class InternalBibleBook:
     # end of InternalBibleBook.getNumVerses
 
 
-    def getCVRef( self, ref ):
+    def getContextVerseData( self, ref ):
         """
         Returns a list of processed lines for the given Bible reference.
 
         Raises a KeyError if the C:V reference is not found
         """
-        #print( "InternalBibleBook.getCVRef( {} ) for {}".format( ref, self.BBB ) )
+        #print( "InternalBibleBook.getContextVerseData( {} ) for {}".format( ref, self.BBB ) )
         if isinstance( ref, tuple ): assert( ref[0] == self.BBB )
         else: assert( ref.getBBB() == self.BBB )
         if not self._processedFlag:
-            print( "InternalBibleBook: processing lines from 'getCVRef'" )
+            print( "InternalBibleBook: processing lines from 'getContextVerseData'" )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag:
             assert( self._processedLines )
             assert( self._indexedFlag )
         if isinstance( ref, tuple ): C, V = ref[1], ref[2]
         else: # assume it's a SimpleVerseKey or similar
-            C,V = ref.getChapterNumberStr(), ref.getVerseNumberStr()
+            C,V = ref.getCV()
         return self._CVIndex.getEntries( (C,V,) ) # Gives a KeyError if not found
-    # end of InternalBibleBook.getCVRef
+    # end of InternalBibleBook.getContextVerseData
 # end of class InternalBibleBook
 
 

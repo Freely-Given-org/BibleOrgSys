@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # DigitalBiblePlatform.py
-#   Last modified: 2014-10-14 (also update ProgVersion below)
+#   Last modified: 2014-11-19 (also update ProgVersion below)
 #
 # Module handling online DBP resources
 #
@@ -65,7 +65,7 @@ More details are available from http://www.DigitalBiblePlatform.com.
 
 ShortProgName = "DigitalBiblePlatform"
 ProgName = "Digital Bible Platform handler"
-ProgVersion = "0.12"
+ProgVersion = "0.13"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -617,6 +617,14 @@ class DBPBible:
                     self.cache.popitem( last=False )
             return resultList
     # end of DBPBible.getVerseData
+
+
+    def getContextVerseData( self, key ):
+        """
+        """
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( t("DBPBible.getContextVerseData( {} ) for {})").format( repr(key), repr(self.damRoot) ) )
+        return self.getVerseData( key ), [] # No context
+    # end of DBPBible.getContextVerseData
 # end of class DBPBible
 
 

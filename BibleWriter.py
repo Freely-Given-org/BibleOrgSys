@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-11-15 by RJH (also update ProgVersion below)
+#   Last modified: 2014-11-20 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -68,7 +68,7 @@ Note that not all exports export all books.
 
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
-ProgVersion = "0.88"
+ProgVersion = "0.89"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -97,6 +97,7 @@ from MLWriter import MLWriter
 
 ALL_CHAR_MARKERS = BibleOrgSysGlobals.USFMMarkers.getCharacterMarkersList( expandNumberableMarkers=True )
 #print( ALL_CHAR_MARKERS ); halt
+
 
 
 def t( messageString ):
@@ -5989,7 +5990,7 @@ class BibleWriter( InternalBible ):
                 verseData, composedLine = None, ''
                 if bkData:
                     try:
-                        result = bkData.getCVRef( (BBB,str(C),str(V),) )
+                        result = bkData.getContextVerseData( (BBB,str(C),str(V),) )
                         verseData, context = result
                     except KeyError:
                         logging.warning( "BibleWriter.toTheWord: missing source verse at {} {}:{}".format( BBB, C, V ) )
@@ -5997,13 +5998,13 @@ class BibleWriter( InternalBible ):
                     # Handle some common versification anomalies
                     if (BBB,C,V) == ('JN3',1,14): # Add text for v15 if it exists
                         try:
-                            result15 = bkData.getCVRef( ('JN3','1','15',) )
+                            result15 = bkData.getContextVerseData( ('JN3','1','15',) )
                             verseData15, context15 = result15
                             verseData.extend( verseData15 )
                         except KeyError: pass #  just ignore it
                     elif (BBB,C,V) == ('REV',12,17): # Add text for v15 if it exists
                         try:
-                            result18 = bkData.getCVRef( ('REV','12','18',) )
+                            result18 = bkData.getContextVerseData( ('REV','12','18',) )
                             verseData18, context18 = result18
                             verseData.extend( verseData18 )
                         except KeyError: pass #  just ignore it
@@ -6178,20 +6179,20 @@ class BibleWriter( InternalBible ):
                     verseData = None
                     if bkData:
                         try:
-                            result = bkData.getCVRef( (BBB,str(C),str(V),) )
+                            result = bkData.getContextVerseData( (BBB,str(C),str(V),) )
                             verseData, context = result
                         except KeyError: # Missing verses
                             logging.warning( "BibleWriter.toMySword: missing source verse at {} {}:{}".format( BBB, C, V ) )
                         # Handle some common versification anomalies
                         if (BBB,C,V) == ('JN3',1,14): # Add text for v15 if it exists
                             try:
-                                result15 = bkData.getCVRef( ('JN3','1','15',) )
+                                result15 = bkData.getContextVerseData( ('JN3','1','15',) )
                                 verseData15, context15 = result15
                                 verseData.extend( verseData15 )
                             except KeyError: pass #  just ignore it
                         elif (BBB,C,V) == ('REV',12,17): # Add text for v15 if it exists
                             try:
-                                result18 = bkData.getCVRef( ('REV','12','18',) )
+                                result18 = bkData.getContextVerseData( ('REV','12','18',) )
                                 verseData18, context18 = result18
                                 verseData.extend( verseData18 )
                             except KeyError: pass #  just ignore it
@@ -6454,7 +6455,7 @@ class BibleWriter( InternalBible ):
             composedLine = ''
             while True:
                 #print( "toESword.handleIntroduction", BBB, C, V )
-                try: result = bookData.getCVRef( (BBB,'0',str(V),) ) # Currently this only gets one line
+                try: result = bookData.getContextVerseData( (BBB,'0',str(V),) ) # Currently this only gets one line
                 except KeyError: break # Reached the end of the introduction
                 verseData, context = result
                 assert( len(verseData ) == 1 ) # in the introductory section
@@ -6666,20 +6667,20 @@ class BibleWriter( InternalBible ):
                     verseData = None
                     if bkData:
                         try:
-                            result = bkData.getCVRef( (BBB,str(C),str(V),) )
+                            result = bkData.getContextVerseData( (BBB,str(C),str(V),) )
                             verseData, context = result
                         except KeyError: # Just ignore missing verses
                             logging.warning( "BibleWriter.toESword: missing source verse at {} {}:{}".format( BBB, C, V ) )
                         # Handle some common versification anomalies
                         if (BBB,C,V) == ('JN3',1,14): # Add text for v15 if it exists
                             try:
-                                result15 = bkData.getCVRef( ('JN3','1','15',) )
+                                result15 = bkData.getContextVerseData( ('JN3','1','15',) )
                                 verseData15, context15 = result15
                                 verseData.extend( verseData15 )
                             except KeyError: pass #  just ignore it
                         elif (BBB,C,V) == ('REV',12,17): # Add text for v15 if it exists
                             try:
-                                result18 = bkData.getCVRef( ('REV','12','18',) )
+                                result18 = bkData.getContextVerseData( ('REV','12','18',) )
                                 verseData18, context18 = result18
                                 verseData.extend( verseData18 )
                             except KeyError: pass #  just ignore it

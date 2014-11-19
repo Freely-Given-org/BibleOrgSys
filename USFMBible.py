@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBible.py
-#   Last modified: 2014-11-06 by RJH (also update ProgVersion below)
+#   Last modified: 2014-11-19 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USFM Bible books
 #
@@ -29,7 +29,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
-ProgVersion = "0.61"
+ProgVersion = "0.62"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -337,7 +337,7 @@ class USFMBible( Bible ):
                             if line[ix2+2:-1]==fieldname:
                                 settingsDict[fieldname] = (contents, attributes)
                                 processed = True
-                if not processed: print( t("ERROR: Unexpected '{}' line in SSF file").format( line ) )
+                if not processed: print( t("ERROR: Unexpected {} line in SSF file").format( repr(line) ) )
         if BibleOrgSysGlobals.verbosityLevel > 2:
             print( "  " + t("Got {} SSF entries:").format( len(settingsDict) ) )
             if BibleOrgSysGlobals.verbosityLevel > 3:

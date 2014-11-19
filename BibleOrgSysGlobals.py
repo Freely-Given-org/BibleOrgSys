@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleOrgSysGlobals.py
-#   Last modified: 2014-11-14 by RJH (also update ProgVersion below)
+#   Last modified: 2014-11-20 by RJH (also update ProgVersion below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -75,7 +75,7 @@ ProgName = "BibleOrgSys Globals"
 ProgVersion = "0.55"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
-debuggingThisModule = True
+debuggingThisModule = False
 
 
 import logging, os.path, pickle

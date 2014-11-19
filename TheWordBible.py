@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # TheWordBible.py
-#   Last modified: 2014-11-04 by RJH (also update ProgVersion below)
+#   Last modified: 2014-11-20 by RJH (also update ProgVersion below)
 #
 # Module handling "theWord" Bible module files
 #
@@ -50,8 +50,9 @@ e.g.,
     And God calleth to the expanse `Heavens;' and there is an evening, and there is a morning--day second.<CM>
 """
 
+ShortProgName = "theWordBibleHandler"
 ProgName = "theWord Bible format handler"
-ProgVersion = "0.36"
+ProgVersion = "0.37"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -345,7 +346,7 @@ def theWordHandleIntroduction( BBB, bookData, ourGlobals ):
     composedLine = ''
     while True:
         #print( "theWordHandleIntroduction", BBB, intC, intV )
-        try: result = bookData.getCVRef( (BBB,'0',str(intV),) ) # Currently this only gets one line
+        try: result = bookData.getContextVerseData( (BBB,'0',str(intV),) ) # Currently this only gets one line
         except KeyError: break # Reached the end of the introduction
         verseData, context = result
         assert( len(verseData ) == 1 ) # in the introductory section

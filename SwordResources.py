@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # SwordResources.py
-#   Last modified: 2014-11-17 (also update ProgVersion below)
+#   Last modified: 2014-11-20 (also update ProgVersion below)
 #
 # Module handling Sword resources using the Sword engine
 #
@@ -31,10 +31,10 @@ This module uses the Sword engine (libsword) via the Python SWIG bindings.
 
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
-ProgVersion = "0.10"
+ProgVersion = "0.11"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
-debuggingThisModule = True
+debuggingThisModule = False
 
 
 #from singleton import singleton
@@ -140,6 +140,48 @@ class SwordInterface():
     # end of SwordInterface.makeKey
 
 
+    def getContextVerseData( self, module, key ):
+        """
+        Returns a list of 5-tuples, e.g.,
+            [
+            ('c', 'c', '1', '1', []),
+            ('c#', 'c', '1', '1', []),
+            ('v', 'v', '1', '1', []),
+            ('v~', 'v~', 'In the beginning God created the heavens and the earth.',
+                                    'In the beginning God created the heavens and the earth.', [])
+            ]
+        """
+        if SwordType == "CrosswireLibrary":
+            try: verseText = module.stripText( key )
+            except UnicodeDecodeError:
+                print( "Can't decode utf-8 text of {} {}".format( module.getName(), key.getShortText() ) )
+                return
+            verseData = []
+            c, v = str(key.getChapter()), str(key.getVerse())
+            # Prepend the verse number since Sword modules don't contain that info in the data
+            if v=='1': verseData.append( ('c#','c', c, c, [],) )
+            verseData.append( ('v','v', v, v, [],) )
+            verseData.append( ('v~','v~', verseText, verseText, [],) )
+            contextVerseData = verseData, [] # No context
+        else:
+            #print( t("module"), module )
+            contextVerseData = module.getContextVerseData( key )
+            #print( t("gVD={} key={}, st={}").format( module.getName(), key, contextVerseData ) )
+            if contextVerseData is None:
+                print( t("SwordInterface.getVerseData no VD"), module.getName(), key, contextVerseData )
+                assert( key.getChapter()==0 or key.getVerse()==0 )
+            else:
+                verseData, context = contextVerseData
+                #print( "vD", verseData )
+                #assert( isinstance( verseData, InternalBibleEntryList ) or isinstance( verseData, list ) )
+                assert( isinstance( verseData, InternalBibleEntryList ) )
+                #assert( isinstance( verseData, list ) )
+                assert( 1 <= len(verseData) <= 6 )
+        #print( verseData ); halt
+        return contextVerseData
+    # end of SwordInterface.getContextVerseData
+
+
     def getVerseData( self, module, key ):
         """
         Returns a list of 5-tuples, e.g.,
@@ -164,7 +206,7 @@ class SwordInterface():
             verseData.append( ('v~','v~', verseText, verseText, [],) )
         else:
             #print( t("module"), module )
-            stuff = module.getBCVRef( key )
+            stuff = module.getContextVerseData( key )
             #print( t("gVD={} key={}, st={}").format( module.getName(), key, stuff ) )
             if stuff is None:
                 print( t("SwordInterface.getVerseData no VD"), module.getName(), key, stuff )
@@ -193,7 +235,7 @@ class SwordInterface():
                 print( "Can't decode utf-8 text of {} {}".format( module.getName(), key.getShortText() ) )
                 return ''
         else:
-            verseData = module.getBCVRef( key )
+            verseData = module.getContextVerseData( key )
             #print( "gVT", module.getName(), key, verseData )
             assert( isinstance( verseData, list ) )
             assert( 2 <= len(verseData) <= 5 )

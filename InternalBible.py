@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2014-11-17 by RJH (also update ProgVersion below)
+#   Last modified: 2014-11-19 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -45,7 +45,7 @@ and then fills
 
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
-ProgVersion = "0.56"
+ProgVersion = "0.57"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -1042,10 +1042,12 @@ class InternalBible:
     # end of InternalBible.getNumVerses
 
 
-    def getBCVRef( self, ref ):
+    def getContextVerseData( self, BCVReference ):
         """
         Search for a Bible reference
-            and return the Bible text (in a list) along with the context.
+            and return a 2-tuple containing
+                the Bible text (in a InternalBibleEntryList)
+                along with the context.
 
         Expects a SimpleVerseKey for the parameter
             but also copes with a (B,C,V,S) tuple.
@@ -1053,51 +1055,51 @@ class InternalBible:
         Returns None if there is no information for this book.
         Raises a KeyError if there is no such CV reference.
         """
-        #print( "InternalBible.getBCVRef( {} )".format( ref ) )
-        if isinstance( ref, tuple ): BBB = ref[0]
-        else: BBB = ref.getBBB() # Assume it's a SimpleVerseKeyObject
+        #print( "InternalBible.getContextVerseData( {} )".format( ref ) )
+        if isinstance( BCVReference, tuple ): BBB = BCVReference[0]
+        else: BBB = BCVReference.getBBB() # Assume it's a SimpleVerseKeyObject
         #print( " ", BBB in self.books )
         self.loadBookIfNecessary( BBB )
-        if BBB in self.books: return self.books[BBB].getCVRef( ref )
+        if BBB in self.books: return self.books[BBB].getContextVerseData( BCVReference )
         #else: print( "InternalBible {} doesn't have {}".format( self.name, BBB ) ); halt
-    # end of InternalBible.getBCVRef
+    # end of InternalBible.getContextVerseData
 
 
-    def getVerseData( self, key ):
+    def getVerseData( self, BCVReference ):
         """
-        Return (USFM-like) verseData (a list).
+        Return (USFM-like) verseData (InternalBibleEntryList -- a specialised list).
 
         Returns None if there is no information for this book.
         Raises a KeyError if there is no CV reference.
         """
-        #print( "InternalBible.getVerseData( {} )".format( key ) )
-        result = self.getBCVRef( key )
+        #print( "InternalBible.getVerseData( {} )".format( BCVReference ) )
+        result = self.getContextVerseData( BCVReference )
         #print( "  gVD", self.name, key, verseData )
         if result is None:
             if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel>2: print( "InternalBible.getVerseData: no VD", self.name, key, result )
-            #if BibleOrgSysGlobals.debugFlag: assert( key.getChapterNumberStr()=='0' or key.getVerseNumberStr()=='0' ) # Why did we get nothing???
+            #if BibleOrgSysGlobals.debugFlag: assert( BCVReference.getChapterNumberStr()=='0' or BCVReference.getVerseNumberStr()=='0' ) # Why did we get nothing???
         else:
             verseData, context = result
-            if BibleOrgSysGlobals.debugFlag: assert( isinstance( verseData, InternalBibleEntryList ) )
             if BibleOrgSysGlobals.debugFlag:
+                assert( isinstance( verseData, InternalBibleEntryList ) )
                 #if 2 > len(verseData) > 20: print( "len", len(verseData) )
                 assert( 1 <= len(verseData) <= 20 ) # Smallest is just a chapter number line
             return verseData
     # end of InternalBible.getVerseData
 
 
-    def getVerseText( self, key ):
+    def getVerseText( self, BCVReference ):
         """
         First miserable attempt at converting (USFM-like) verseData into a string.
 
         Uses uncommon Unicode symbols to represent various formatted styles
 
-        Raises a key error if the key isn't found/valid.
+        Raises a KeyError if the key isn't found/valid.
         """
-        result = self.getBCVRef( key )
+        result = self.getContextVerseData( BCVReference )
         if result is not None:
             verseData, context = result
-            #print( "gVT", self.name, key, verseData )
+            #print( "gVT", self.name, BCVReference, verseData )
             assert( isinstance( verseData, InternalBibleEntryList ) )
             #if BibleOrgSysGlobals.debugFlag: assert( 1 <= len(verseData) <= 5 )
             verseText, firstWord = '', False

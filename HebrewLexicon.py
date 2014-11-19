@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # HebrewLexicon.py
-#   Last modified: 2014-10-31 (also update ProgVersion below)
+#   Last modified: 2014-11-20 (also update ProgVersion below)
 #
 # Module handling the Hebrew lexicon
 #
@@ -38,7 +38,7 @@ ProgName = "Hebrew Lexicon format handler"
 ProgVersion = "0.16"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
-debuggingThisModule = True
+debuggingThisModule = False
 
 
 import logging, os.path, re
@@ -47,7 +47,6 @@ from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree
 
 import BibleOrgSysGlobals
-
 
 
 

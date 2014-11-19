@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleInternals.py
-#   Last modified: 2014-11-03 by RJH (also update ProgVersion below)
+#   Last modified: 2014-11-20 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for Bible books
 #
@@ -38,7 +38,7 @@ and then calls
 """
 
 ProgName = "Bible internals handler"
-ProgVersion = "0.50"
+ProgVersion = "0.51"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -481,12 +481,14 @@ class InternalBibleEntryList:
 
 class InternalBibleIndexEntry:
     """
-    Holds a 3-tuple that gives:
+    Holds the following information:
         1/ index: the index into the BibleEntryList
+            indexNext: the index of the next BibleEntry (do we really need this????)
         2/ entryCount: the number of BibleEntries
         3/ context: a list containing contextual markers which still apply to this entry.
     """
     def __init__( self, entryIndex, entryCount, context=None ):
+        #if context: print( "XXXXXXXX", entryIndex, entryCount, context )
         if context is None: context = []
         self.entryIndex, self.entryCount, self.context = entryIndex, entryCount, context
         self.indexNext = self.entryIndex + entryCount
@@ -497,7 +499,8 @@ class InternalBibleIndexEntry:
         Just display a simplified view of the index entry.
         """
         result = "InternalBibleIndexEntry object: ix={} cnt={} ixE={}{}" \
-            .format( self.entryIndex, self.entryCount, self.indexNext, " ctxt={}".format(self.context) if self.context else '' )
+            .format( self.entryIndex, self.entryCount, self.indexNext,
+                    " ctxt={}".format(self.context) if self.context else '' )
         return result
     # end of InternalBibleIndexEntry.__str__
 
@@ -588,6 +591,14 @@ class InternalBibleIndex:
         self.indexData = {}
 
 
+        def printIndexEntry( ie ):
+            result = str( ie )
+            for j in range( ie.getEntryIndex(), ie.getNextEntryIndex() ):
+                result += "\n  {}".format( givenBibleEntries[j] )
+            return result
+        # end of printIndexEntry
+
+
         def saveAnythingOutstanding():
             """
             Save the outstanding index entry if any.
@@ -617,7 +628,8 @@ class InternalBibleIndex:
                         for ixx in range( saveJ, saveJ+lineCount ):
                             logging.error( "   mI:sAO {} {}".format( self.givenBibleEntries[ixx], context ) )
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt # This is a serious error that is losing Biblical text
-                self.indexData[saveCV] = InternalBibleIndexEntry( saveJ, lineCount, context )
+                self.indexData[saveCV] = InternalBibleIndexEntry( saveJ, lineCount, context[:] )
+                #print( 'sAO', printIndexEntry( self.indexData[saveCV] ) )
                 saveCV = saveJ = None
                 lineCount = 0
         # end of saveAnythingOutstanding
@@ -628,13 +640,14 @@ class InternalBibleIndex:
                                                 'XXA','XXB','XXC','XXD','XXE','XXF','XXG',):
             # Assume it's a C/V book
             saveCV = saveJ = None
-            lineCount, context = 0, None # lineCount is the number of datalines pointed to by this index entry
+            lineCount, context = 0, [] # lineCount is the number of datalines pointed to by this index entry
             strC, strV = '0', '0'
             for j, entry in enumerate( self.givenBibleEntries):
                 #print( "  makeIndex1", j, "saveCV =", saveCV, "saveJ =", saveJ, "this =", entry.getMarker(), entry.getCleanText()[:20] + ('' if len(entry.getCleanText())<20 else '...') )
                 marker = entry.getMarker()
                 if BibleOrgSysGlobals.debugFlag and marker in BibleOrgSysGlobals.USFMParagraphMarkers:
                     assert( not entry.getText() and not entry.getCleanText() and not entry.getExtras() )
+                if marker[0]=='¬' and context and context[-1]==marker[1:]: context.pop()
                 if marker == 'c': # A new chapter always means that it's a clean new index entry
                     saveAnythingOutstanding()
                     # Save anything before the first verse number as verse "zero"
@@ -672,7 +685,8 @@ class InternalBibleIndex:
                 elif strC == '0': # Still in the introduction
                     # Each line is considered a new "verse" entry in chapter "zero"
                     assert( saveCV is None and saveJ is None )
-                    self.indexData[(strC,strV)] = InternalBibleIndexEntry( j, 1, context )
+                    self.indexData[(strC,strV)] = InternalBibleIndexEntry( j, 1, context[:] )
+                    #print( "makeIndex", printIndexEntry( self.indexData[(strC,strV)] ) )
                     Vi = int( strV )
                     assert( Vi == j )
                     strV = str( Vi + 1 ) # Increment the verse number
@@ -680,6 +694,7 @@ class InternalBibleIndex:
                     assert( lineCount == 0 )
                 else: # All the other lines don't cause a new index entry to be made
                     lineCount += 1
+                if marker in BOS_NESTING_MARKERS and marker!='v': context.append( marker )
                 #if j > 10: break
             saveAnythingOutstanding()
 
@@ -692,6 +707,7 @@ class InternalBibleIndex:
                 marker = entry.getMarker()
                 if BibleOrgSysGlobals.debugFlag and marker in BibleOrgSysGlobals.USFMParagraphMarkers:
                     assert( not entry.getText() and not entry.getCleanText() and not entry.getExtras() )
+                if marker[0]=='¬' and context and context[-1]==marker[1:]: context.pop()
                 if marker == 'c': # A new chapter always means that it's a clean new index entry
                     saveAnythingOutstanding()
                     # Save anything before the first verse number as verse "zero"
@@ -718,7 +734,8 @@ class InternalBibleIndex:
                 elif strC == '0': # Still in the introduction
                     # Each line is considered a new "verse" entry in chapter "zero"
                     assert( saveCV is None and saveJ is None )
-                    self.indexData[(strC,strV)] = InternalBibleIndexEntry( j, 1, context )
+                    self.indexData[(strC,strV)] = InternalBibleIndexEntry( j, 1, context[:] )
+                    #print( "makeIndexIntro", printIndexEntry( self.indexData[(strC,strV)] ) )
                     Vi = int( strV )
                     assert( Vi == j )
                     strV = str( Vi + 1 ) # Increment the verse number
@@ -726,6 +743,7 @@ class InternalBibleIndex:
                     assert( lineCount == 0 )
                 else: # All the other lines don't cause a new index entry to be made
                     lineCount += 1
+                if marker in BOS_NESTING_MARKERS and marker!='v': context.append( marker )
             saveAnythingOutstanding()
 
         self._indexedFlag = True

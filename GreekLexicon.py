@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # GreekLexicon.py
-#   Last modified: 2014-10-31 (also update ProgVersion below)
+#   Last modified: 2014-11-20 (also update ProgVersion below)
 #
 # Module handling the Greek lexicon
 #
@@ -38,7 +38,7 @@ ProgName = "Greek Lexicon format handler"
 ProgVersion = "0.14"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
-debuggingThisModule = True
+debuggingThisModule = False
 
 
 import logging, os.path, re
@@ -47,7 +47,6 @@ from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree
 
 import BibleOrgSysGlobals
-
 
 
 
@@ -62,6 +61,7 @@ def t( messageString ):
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit, _(errorBit) )
+
 
 
 class GreekStrongsFileConverter:
