@@ -700,7 +700,7 @@ class InternalBibleIndex:
 
         else: # it's a front or back book (which may or may not have a c=1 and possibly a v=1 line in it)
             saveCV = saveJ = None
-            lineCount, context = 0, None # lineCount is the number of datalines pointed to by this index entry
+            lineCount, context = 0, [] # lineCount is the number of datalines pointed to by this index entry
             strC, strV = '0', '0'
             for j, entry in enumerate( self.givenBibleEntries):
                 #print( "  makeIndex2", j, "saveCV =", saveCV, "saveJ =", saveJ, "this =", entry.getMarker(), entry.getCleanText()[:20] + ('' if len(entry.getCleanText())<20 else '...') )
