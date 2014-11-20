@@ -31,10 +31,10 @@ This module uses the Sword engine (libsword) via the Python SWIG bindings.
 
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
-ProgVersion = "0.11"
+ProgVersion = "0.12"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
-debuggingThisModule = False
+debuggingThisModule = True
 
 
 #from singleton import singleton
@@ -44,7 +44,7 @@ from gettext import gettext as _
 
 import BibleOrgSysGlobals
 from VerseReferences import SimpleVerseKey
-from InternalBibleInternals import InternalBibleEntryList
+from InternalBibleInternals import InternalBibleEntryList, InternalBibleEntry
 
 
 SwordType = None
@@ -99,6 +99,8 @@ class SwordInterface():
         and the code reading the actual installed Sword modules.
     """
     def __init__( self ):
+        """
+        """
         if SwordType == "CrosswireLibrary":
             self.library = Sword.SWMgr()
             #self.keyCache = {}
@@ -107,8 +109,34 @@ class SwordInterface():
             self.library = SwordModules.SwordModules() # Loads all of conf files that it can find
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                 print( "Sword library", self.library )
+    # end of SwordInterface.__init__
+
+
+    def getAvailableModuleCodes( self ):
+        """
+        Returns a list of available Sword module codes.
+        """
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( t("SwordResources.getAvailableModuleCodes()") )
+        if SwordType == "CrosswireLibrary":
+            availableModuleCodes = []
+            for j,moduleBuffer in enumerate(self.library.getModules()):
+                moduleID = moduleBuffer.getRawData()
+                #module = library.getModule( moduleID )
+                #if 0:
+                    #print( "{} {} ({}) {} '{}'".format( j, module.getName(), module.getType(), module.getLanguage(), module.getEncoding() ) )
+                    #try: print( "    {} '{}' {} {}".format( module.getDescription(), module.getMarkup(), module.getDirection(), "" ) )
+                    #except UnicodeDecodeError: print( "   Description is not Unicode!" )
+                print( "moduleID", repr(moduleID) )
+                availableModuleCodes.append( moduleID )
+            return availableModuleCodes
+        elif SwordType == "OurCode":
+            return self.library.getAvailableModuleCodes()
+    # end of SwordInterface.getAvailableModuleCodes
+
 
     def getModule( self, moduleAbbreviation='KJV' ):
+        """
+        """
         if BibleOrgSysGlobals.debugFlag: print( "SwordResources.getModule({})".format( moduleAbbreviation ) )
         if SwordType == "CrosswireLibrary":
             #print( "gM", module.getName() )
@@ -135,14 +163,14 @@ class SwordInterface():
             verseKey = Sword.VerseKey( refString )
             #self.keyCache[BCV] = verseKey
             return verseKey
-        else:
+        elif SwordType == "OurCode":
             return SwordKey( BBB, C, V )
     # end of SwordInterface.makeKey
 
 
     def getContextVerseData( self, module, key ):
         """
-        Returns a list of 5-tuples, e.g.,
+        Returns a InternalBibleEntryList of 5-tuples, e.g.,
             [
             ('c', 'c', '1', '1', []),
             ('c#', 'c', '1', '1', []),
@@ -156,20 +184,32 @@ class SwordInterface():
             except UnicodeDecodeError:
                 print( "Can't decode utf-8 text of {} {}".format( module.getName(), key.getShortText() ) )
                 return
-            verseData = []
-            c, v = str(key.getChapter()), str(key.getVerse())
+            if BibleOrgSysGlobals.debugFlag:
+                if '\n' in verseText or '\r' in verseText:
+                    print( t("getVerseData: Why does it have CR or LF in {} {} {}") \
+                            .format( module.getName(), key.getShortText(), repr(verseText) ) )
+            verseText = verseText.rstrip()
+            verseData = InternalBibleEntryList()
+            c, v = key.getChapterNumberStr(), key.getVerseNumberStr()
             # Prepend the verse number since Sword modules don't contain that info in the data
-            if v=='1': verseData.append( ('c#','c', c, c, [],) )
-            verseData.append( ('v','v', v, v, [],) )
-            verseData.append( ('v~','v~', verseText, verseText, [],) )
+            if v=='1': verseData.append( InternalBibleEntry( 'c#','c', c, c, None, c ) )
+            verseData.append( InternalBibleEntry( 'v','v', v, v, None, v ) )
+            verseData.append( InternalBibleEntry( 'v~','v~', verseText, verseText, None, verseText ) )
             contextVerseData = verseData, [] # No context
-        else:
+        elif SwordType == "OurCode":
             #print( t("module"), module )
-            contextVerseData = module.getContextVerseData( key )
+            try: contextVerseData = module.getContextVerseData( key )
+            except KeyError: # Just create a blank verse entry
+                verseData = InternalBibleEntryList()
+                c, v = key.getChapterNumberStr(), key.getVerseNumberStr()
+                if v=='1': verseData.append( InternalBibleEntry( 'c#','c', c, c, None, c ) )
+                verseData.append( InternalBibleEntry( 'v','v', v, v, None, v ) )
+                contextVerseData = verseData, [] # No context
             #print( t("gVD={} key={}, st={}").format( module.getName(), key, contextVerseData ) )
             if contextVerseData is None:
-                print( t("SwordInterface.getVerseData no VD"), module.getName(), key, contextVerseData )
-                assert( key.getChapter()==0 or key.getVerse()==0 )
+                if key.getChapter()!=0 or key.getVerse()!=0: # We're not surprised if there's no chapter or verse zero
+                    print( t("SwordInterface.getVerseData no VD"), module.getName(), key, contextVerseData )
+                contextVerseData = [], None
             else:
                 verseData, context = contextVerseData
                 #print( "vD", verseData )
@@ -198,13 +238,16 @@ class SwordInterface():
             except UnicodeDecodeError:
                 print( "Can't decode utf-8 text of {} {}".format( module.getName(), key.getShortText() ) )
                 return
+            if BibleOrgSysGlobals.debugFlag:
+                if '\n' in verseText or '\r' in verseText:
+                    print( t("getVerseData: Why does it have CR or LF in {} {}").format( module.getName(), repr(verseText) ) )
             verseData = []
             c, v = str(key.getChapter()), str(key.getVerse())
             # Prepend the verse number since Sword modules don't contain that info in the data
             if v=='1': verseData.append( ('c#','c', c, c, [],) )
             verseData.append( ('v','v', v, v, [],) )
             verseData.append( ('v~','v~', verseText, verseText, [],) )
-        else:
+        elif SwordType == "OurCode":
             #print( t("module"), module )
             stuff = module.getContextVerseData( key )
             #print( t("gVD={} key={}, st={}").format( module.getName(), key, stuff ) )
@@ -234,7 +277,7 @@ class SwordInterface():
             except UnicodeDecodeError:
                 print( "Can't decode utf-8 text of {} {}".format( module.getName(), key.getShortText() ) )
                 return ''
-        else:
+        elif SwordType == "OurCode":
             verseData = module.getContextVerseData( key )
             #print( "gVT", module.getName(), key, verseData )
             assert( isinstance( verseData, list ) )
