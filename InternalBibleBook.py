@@ -3150,9 +3150,10 @@ class InternalBibleBook:
                     closeIndex = BibleOrgSysGlobals.CLOSING_SPEECH_CHARACTERS.index( char )
                     if not openChars:
                         #print( "here1 with ", char, C, V, openChars )
-                        speechMarkErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unexpected '{}' speech closing character").format( char ) )
-                        logging.error( _("Unexpected '{}' speech closing character at").format( char ) + " {} {}:{}".format( self.BBB, C, V ) )
-                        self.addPriorityError( 52, C, V, _("Unexpected '{}' speech closing character").format( char ) )
+                        if char not in '?!': # Ignore the dual purpose punctuation characters
+                            speechMarkErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unexpected '{}' speech closing character").format( char ) )
+                            logging.error( _("Unexpected '{}' speech closing character at").format( char ) + " {} {}:{}".format( self.BBB, C, V ) )
+                            self.addPriorityError( 52, C, V, _("Unexpected '{}' speech closing character").format( char ) )
                     elif closeIndex==BibleOrgSysGlobals.OPENING_SPEECH_CHARACTERS.index(openChars[-1]): # A good closing match
                         #print( "here2 with ", char, C, V )
                         openChars.pop()
