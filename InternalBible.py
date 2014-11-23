@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBible.py
-#   Last modified: 2014-11-19 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -43,16 +42,19 @@ and then fills
         self.BBBToNameDict, self.bookNameDict, self.combinedBookNameDict
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = "2014-11-24"
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
-ProgVersion = "0.57"
+ProgVersion = "0.58"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgNameVersionDate = "{} {} {}".format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
 import os, logging
-from gettext import gettext as _
 from collections import OrderedDict
 
 import BibleOrgSysGlobals
@@ -226,6 +228,17 @@ class InternalBible:
                         self.books[BBB].getAssumedBookNames() # don't need the returned result
                         break
     # end of InternalBible.__getNames
+
+
+    def loadBookIfNecessary( self, BBB ):
+        """
+        """
+        if BBB not in self.books and BBB not in self.triedLoadingBook:
+            try: self.loadBook( BBB ) # Some types of Bibles have this function (so an entire Bible doesn't have to be loaded at startup)
+            except AttributeError: logging.info( "No function to load individual Bible book: {}".format( BBB ) ) # Ignore errors
+            except FileNotFoundError: logging.info( "Unable to find and load individual Bible book: {}".format( BBB ) ) # Ignore errors
+            self.triedLoadingBook[BBB] = True
+    # end of InternalBible.loadBookIfNecessary
 
 
     def doPostLoadProcessing( self ):
@@ -783,8 +796,12 @@ class InternalBible:
 
 
     def check( self ):
-        """Runs a series of individual checks (and counts) on each book of the Bible
-            and then a number of overall checks on the entire Bible."""
+        """
+        Runs a series of individual checks (and counts) on each book of the Bible
+            and then a number of overall checks on the entire Bible.
+
+        getErrors() must be called to request the results.
+        """
         # Get our recommendations for added units -- only load this once per Bible
         if BibleOrgSysGlobals.verbosityLevel > 1: print( t("Checking {} Bible...").format( self.name ) )
         import pickle
@@ -999,15 +1016,428 @@ class InternalBible:
     # end of InternalBible.getErrors
 
 
-    def loadBookIfNecessary( self, BBB ):
+    def makeErrorHTML( self, givenOutputFolder, titlePrefix=None, webPageTemplate=None ):
         """
+        Gets the error dictionaries that were the result of the check
+            and produce linked HTML pages in the given output folder.
+
+        All pages are built with relative links.
+
+        Returns the path to the index.html file
+            or None if there was a problem.
         """
-        if BBB not in self.books and BBB not in self.triedLoadingBook:
-            try: self.loadBook( BBB ) # Some types of Bibles have this function (so an entire Bible doesn't have to be loaded at startup)
-            except AttributeError: logging.info( "No function to load individual Bible book: {}".format( BBB ) ) # Ignore errors
-            except FileNotFoundError: logging.info( "Unable to find and load individual Bible book: {}".format( BBB ) ) # Ignore errors
-            self.triedLoadingBook[BBB] = True
-    # end of InternalBible.loadBookIfNecessary
+        from datetime import datetime
+        if BibleOrgSysGlobals.debugFlag:
+            print( "doChecks( {}, {}, {} )" \
+                .format( repr(givenOutputFolder), repr(titlePrefix), repr(webPageTemplate) ) )
+        #logging.info( "Doing Bible checks..." )
+        #if BibleOrgSysGlobals.verbosityLevel > 2: print( "Doing Bible checks..." )
+
+        errorDictionary = self.getErrors()
+
+        if webPageTemplate is None:
+            webPageTemplate = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
+<link rel="stylesheet" href="__TOP_PATH__Overall.css" type="text/css"/>
+    <title>__TITLE__</title>
+</head>
+
+<body class="HTMLBody">
+<div id="TopBar"><a href="__TOP_PATH__"><img class="Banner" height="120" src="__TOP_PATH__Logo/FG-Banner.jpg" alt="Top logo banner graphic"/></a>
+    <h1 class="PageHeading">__HEADING__</h1></div>
+<div id="MainContent">
+<div id="LeftSidebar">
+    <p>
+    <br /><a href="__TOP_PATH__index.html">Checks</a>
+    </p></div>
+
+<div id="MainSection">
+    __MAIN_PART__
+    </div>
+</div>
+
+<div id="Footer">
+    <p class="GeneratedNotice">This page automatically generated __DATE__ from a template created 2014-11-23</p>
+    </p></div>
+</body></html>
+"""
+        webPageTemplate = webPageTemplate.replace( '__DATE__', datetime.now().strftime('%Y-%m-%d') )
+
+        # Make our own output folder
+        outputFolder = os.path.join( givenOutputFolder, 'BOS_Check_Results/' )
+        try: os.mkdir( outputFolder, 0o755 )
+        except FileExistsError: pass # Must be redoing it
+        pagesFolder = os.path.join( outputFolder, 'Pages/' )
+        try: os.mkdir( pagesFolder, 0o755 )
+        except FileExistsError: pass # Must be redoing it
+
+        ourTitle = _("Bible Checks")
+        if titlePrefix is None: titlePrefix = self.abbreviation
+        if titlePrefix: ourTitle = titlePrefix + ' ' + ourTitle
+
+        if not errorDictionary: indexPart = "<p>No Bible errors found.</p>"
+        else:
+            BBBIndexPart, categoryIndexPart = "", ""
+            BBBIndexPart += '<table>'
+            if len(errorDictionary['ByBook']) < 3: # Assume there's only one BBB book, plus 'All Books'
+                del errorDictionary['ByBook']['All Books']
+            for BBB in errorDictionary['ByBook']: # Create an error page for each book (and for all books if there's more than one book)
+                #print( "Have errors for", BBB )
+                if not errorDictionary['ByBook'][BBB]: print( "HEY 0—Should not have had", BBB )
+                BBBPart = ""
+                for thisKey in errorDictionary['ByBook'][BBB]:
+                    if BibleOrgSysGlobals.debugFlag: assert( isinstance( thisKey, str ) )
+                    if not errorDictionary['ByBook'][BBB][thisKey]: print( "HEY 1—Should not have had", BBB, thisKey )
+                    #print( 'ByBook', BBB, thisKey )
+                    if errorDictionary['ByBook'][BBB][thisKey]:
+                        BBBPart += "<h1>{}</h1>".format( thisKey )
+                        if thisKey == 'Priority Errors': # it should be a list
+                            if BibleOrgSysGlobals.debugFlag: assert( isinstance( errorDictionary['ByBook'][BBB][thisKey], list ) )
+                            count, lastError, lastBk, lastCh, lastVs = 0, '', '', '', ''
+                            #for priority,errorText,ref in sorted( errorDictionary['ByBook'][BBB][thisKey], reverse=True ): # Sorts by the first tuple value which is priority
+                            for priority,errorText,ref in sorted( errorDictionary['ByBook'][BBB][thisKey], key=lambda theTuple: theTuple[0], reverse=True ): # Sorts by the first tuple value which is priority
+                            #for priority,errorText,ref in errorDictionary['ByBook'][BBB][thisKey]: # Sorts by the first tuple value which is priority
+                                #print( 'BBB', priority,errorText,ref )
+                                if BibleOrgSysGlobals.debugFlag: assert( isinstance( priority, int ) and 0 <= priority <= 100 )
+                                if BibleOrgSysGlobals.debugFlag: assert( isinstance( errorText, str ) and errorText )
+                                if BibleOrgSysGlobals.debugFlag: assert( isinstance( ref, tuple ) and len(ref)==3 )
+                                bk, ch, vs = ref
+                                if errorText != lastError:
+                                    if count: BBBPart += '</p>'
+                                    BBBPart += "<p>{} in {} {}:{}".format( errorText, bk, ch, vs )
+                                    count += 1
+                                elif bk and bk!=lastBk: BBBPart += "; {} {}:{}".format( bk, ch, vs )
+                                elif ch and ch!=lastCh: BBBPart += "; {}:{}".format( ch, vs )
+                                elif vs and vs!=lastVs: BBBPart += ",{}".format( vs )
+                                if count>=20 or priority<30:
+                                    BBBPart += "</p><p><small>Showing {} out of {} priority errors</small></p>".format( count, len(errorDictionary['ByBook'][BBB][thisKey]) )
+                                    break
+                                if bk: lastBk = bk
+                                if ch: lastCh = ch
+                                if vs: lastVs = vs
+                                lastError = errorText
+                        elif thisKey.endswith('Errors'): # it should be a list
+                            if BibleOrgSysGlobals.debugFlag: assert( isinstance( errorDictionary['ByBook'][BBB][thisKey], list ) )
+                            for error in errorDictionary['ByBook'][BBB][thisKey]:
+                                #print( "nice1", 'ByBook', BBB, thisKey, error )
+                                if BibleOrgSysGlobals.debugFlag: assert( isinstance( error, str ) )
+                                BBBPart += "<p>{}</p>".format( error )
+                        elif thisKey.endswith('List'): # it should be a list
+                            NEVER_HAPPENS
+                            if BibleOrgSysGlobals.debugFlag: assert( isinstance( errorDictionary['ByBook'][BBB][thisKey], list ) )
+                            BBBPart += "<h1>{}</h1>".format( thisKey )
+                            for error in errorDictionary['ByBook'][BBB][thisKey]:
+                                if BibleOrgSysGlobals.debugFlag: assert( isinstance( error, str ) )
+                                BBBPart += "<p>{}</p>".format( error )
+                        elif thisKey.endswith('Lines'): # it should be a list
+                            NEVER_HAPPENS
+                            if BibleOrgSysGlobals.debugFlag: assert( isinstance( errorDictionary['ByBook'][BBB][thisKey], list ) )
+                        elif thisKey.endswith('Counts'): # it should be an ordered dict
+                            NEVER_HAPPENS
+                            if BibleOrgSysGlobals.debugFlag: assert( isinstance( errorDictionary['ByBook'][BBB][thisKey], (dict, OrderedDict,) ) )
+                            for subCategory in errorDictionary['ByBook'][BBB][thisKey]:
+                                #print( "subCategory1", subCategory )
+                                if subCategory.endswith('Errors'):
+                                    BBBPart += "<h2>{}</h2>".format( subCategory )
+                                    for error in errorDictionary['ByBook'][BBB][thisKey][subCategory]:
+                                        BBBPart += "<p>{}</p>".format( error )
+                                elif subCategory.endswith('Counts'):
+                                    BBBPart += "<h2>{}</h2>".format( subCategory ) + "<p>"
+                                    for something in sorted(errorDictionary['ByBook'][BBB][thisKey][subCategory]):
+                                        BBBPart += "&nbsp;<b>{}</b>:&nbsp;{}&nbsp;&nbsp; ".format( something, errorDictionary['ByBook'][BBB][thisKey][subCategory][something] )
+                                    BBBPart += "</p>"
+                                else: print( "A weird 1" ); halt
+                        else: # Have a category with subcategories
+                            for secondKey in errorDictionary['ByBook'][BBB][thisKey]:
+                                if not errorDictionary['ByBook'][BBB][thisKey][secondKey]: print( "HEY 3—Should not have had", BBB, thisKey, secondKey )
+                                if errorDictionary['ByBook'][BBB][thisKey][secondKey]:
+                                    if secondKey.endswith('Errors'): # it should be a list
+                                        #print( "BBB Have ..Errors", BBB, thisKey, secondKey )
+                                        if BibleOrgSysGlobals.debugFlag: assert( isinstance( errorDictionary['ByBook'][BBB][thisKey][secondKey], list ) )
+                                        BBBPart += "<h2>{}</h2>".format( secondKey )
+                                        for error in errorDictionary['ByBook'][BBB][thisKey][secondKey]:
+                                            if BibleOrgSysGlobals.debugFlag: assert( isinstance( error, str ) )
+                                            BBBPart += "<p>{}</p>".format( error )
+                                    elif secondKey.endswith('List'): # it should be a list
+                                        #print( "BBB Have ..List", BBB, thisKey, secondKey, len(errorDictionary['ByBook'][BBB][thisKey][secondKey]), len(errorDictionary['ByBook'][BBB][thisKey][secondKey][0]) )
+                                        if BibleOrgSysGlobals.debugFlag: assert( isinstance( errorDictionary['ByBook'][BBB][thisKey][secondKey], list ) )
+                                        if secondKey == "Modified Marker List" and len(errorDictionary['ByBook'][BBB][thisKey][secondKey])>60: # Put onto a separate page
+                                            ListPart = '<p>'
+                                            for jj,entry in enumerate( errorDictionary['ByBook'][BBB][thisKey][secondKey] ):
+                                                if BibleOrgSysGlobals.debugFlag: assert( isinstance( entry, str ) )
+                                                if thisKey=='USFMs' and secondKey=='Modified Marker List' and entry[0]=='[' and entry[-1]==']':
+                                                    if BBB!='All Books': continue # Don't display the BBB book reference code
+                                                    if BBB=='All Books' and jj: ListPart += "</p>\n<p>" # Start each new book on a new line
+                                                ListPart += "{} ".format( entry )
+                                            ListPart += '</p>'
+                                            webPage = webPageTemplate.replace( "__TITLE__", ourTitle+" USFM {}".format(secondKey) ).replace( "__HEADING__", ourTitle+" USFM Bible {}".format(secondKey) ) \
+                                                        .replace( "__MAIN_PART__", ListPart ).replace( "__EXTRAS__", '' ) \
+                                                        .replace( "__TOP_PATH__", "/" ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
+                                                        #.replace( "__TOP_PATH__", "../"*6 ).replace( "__SUB_PATH__", "../"*5 ).replace( "__SUB_SUB_PATH__", "../"*4 )
+                                            webPageFilename = "{}_{}.html".format( BBB, secondKey.replace(' ','') )
+                                            with open( os.path.join(pagesFolder, webPageFilename), 'wt' ) as myFile: # Automatically closes the file when done
+                                                myFile.write( webPage )
+                                            BBBPart += '<p><a href="{}">{}</a></p>'.format( webPageFilename, secondKey )
+                                        else: # Just show it inline
+                                            BBBPart += "<h2>{}</h2><p>".format( secondKey )
+                                            for jj,entry in enumerate( errorDictionary['ByBook'][BBB][thisKey][secondKey] ):
+                                                if BibleOrgSysGlobals.debugFlag: assert( isinstance( entry, str ) )
+                                                if thisKey=='USFMs' and secondKey=='Modified Marker List' and entry[0]=='[' and entry[-1]==']':
+                                                    if BBB!='All Books': continue # Don't display the BBB book reference code
+                                                    if BBB=='All Books' and jj: BBBPart += "</p>\n<p>" # Start each new book on a new line
+                                                BBBPart += "{} ".format( entry )
+                                            BBBPart += '</p>'
+                                    elif secondKey.endswith('Lines'): # it should be a list
+                                        #print( "BBB Have ..Lines", BBB, thisKey, secondKey )
+                                        if BibleOrgSysGlobals.debugFlag: assert( isinstance( errorDictionary['ByBook'][BBB][thisKey][secondKey], list ) )
+                                        BBBPart += "<h2>{}</h2><table>".format( secondKey )
+                                        for line in errorDictionary['ByBook'][BBB][thisKey][secondKey]: # Line them up nicely in a table
+                                            #print( "line {} \"{}\"".format( len(line), line ) )
+                                            if BibleOrgSysGlobals.debugFlag: assert( isinstance( line, str ) and line[-1]=="'" )
+                                            #if line[-1] != "'": print( BBB, thisKey, secondKey, line )
+                                            bits = line[:-1].split( " '", 1 ); assert( len(bits) == 2 ) # Remove the final quote and split at the first quote
+                                            if "Main Title 1" in bits[0]: bits[1] = "<b>" + bits[1] + "</b>"
+                                            BBBPart += "<tr><td>{}</td><td>{}</td></tr>".format( bits[0], bits[1] ) # Put in a table row
+                                        BBBPart += '</table>'
+                                    elif secondKey.endswith('Counts'): # it should be an ordered dict
+                                        #print( "BBB Have ..Counts", BBB, thisKey, secondKey )
+                                        if BibleOrgSysGlobals.debugFlag: assert( isinstance( errorDictionary['ByBook'][BBB][thisKey][secondKey], (dict, OrderedDict,) ) )
+                                        if len(errorDictionary['ByBook'][BBB][thisKey][secondKey]) < 50: # Small list -- just include it in this page
+                                            BBBPart += "<h2>{}</h2>".format( secondKey ) + "<p>"
+                                            for something, count in sorted( errorDictionary['ByBook'][BBB][thisKey][secondKey].items(), key=lambda theTuple: theTuple[0].lower() ): # Sort by lower-case values
+                                                BBBPart += "&nbsp;<b>{}</b>:&nbsp;{}&nbsp;&nbsp; ".format( something, count )
+                                            BBBPart += "</p>"
+                                            BBBPart += "<h2>{} (sorted by count)</h2>".format( secondKey ) + "<p>"
+                                            for something, count in sorted( errorDictionary['ByBook'][BBB][thisKey][secondKey].items(), key=lambda theTuple: theTuple[1] ): # Sort by count
+                                                BBBPart += "&nbsp;<b>{}</b>:&nbsp;{}&nbsp;&nbsp; ".format( something, count )
+                                            BBBPart += "</p>"
+                                        else: # Large list of counts -- put it on a separate page
+                                            CountPart = ''
+                                            for something,count in sorted( errorDictionary['ByBook'][BBB][thisKey][secondKey].items(), key=lambda theTuple: theTuple[0].lower() ): # Sort by lower-case values
+                                                CountPart += "&nbsp;<b>{}</b>:&nbsp;{}&nbsp;&nbsp; ".format( something, count )
+                                            webPage = webPageTemplate.replace( "__TITLE__", ourTitle+" USFM {}".format(secondKey) ).replace( "__HEADING__", ourTitle+" USFM Bible {}".format(secondKey) ) \
+                                                        .replace( "__MAIN_PART__", CountPart ).replace( "__EXTRAS__", '' ) \
+                                                        .replace( "__TOP_PATH__", "/" ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
+                                                        #.replace( "__TOP_PATH__", "../"*6 ).replace( "__SUB_PATH__", "../"*5 ).replace( "__SUB_SUB_PATH__", "../"*4 )
+                                            webPageFilename = "{}_{}.html".format( BBB, secondKey.replace(' ','') )
+                                            with open( os.path.join(pagesFolder, webPageFilename), 'wt' ) as myFile: # Automatically closes the file when done
+                                                myFile.write( webPage )
+                                            BBBPart += '<p><a href="{}">{}</a></p>'.format( webPageFilename, secondKey )
+                                            CountPart = ''
+                                            for something,count in sorted( errorDictionary['ByBook'][BBB][thisKey][secondKey].items(), key=lambda theTuple: theTuple[1] ): # Sort by count
+                                                CountPart += "&nbsp;<b>{}</b>:&nbsp;{}&nbsp;&nbsp; ".format( something, count )
+                                            webPage = webPageTemplate.replace( "__TITLE__", ourTitle+" USFM {}".format(secondKey) ).replace( "__HEADING__", ourTitle+" USFM Bible {}".format(secondKey) ) \
+                                                        .replace( "__MAIN_PART__", CountPart ).replace( "__EXTRAS__", '' ) \
+                                                        .replace( "__TOP_PATH__", "/" ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
+                                                        #.replace( "__TOP_PATH__", "../"*6 ).replace( "__SUB_PATH__", "../"*5 ).replace( "__SUB_SUB_PATH__", "../"*4 )
+                                            webPageFilename = "{}_{}_byCount.html".format( BBB, secondKey.replace(' ','') )
+                                            with open( os.path.join(pagesFolder, webPageFilename), 'wt' ) as myFile: # Automatically closes the file when done
+                                                myFile.write( webPage )
+                                            BBBPart += '<p><a href="{}">{} (sorted by count)</a></p>'.format( webPageFilename, secondKey )
+                                    else: raise KeyError
+                if BBBPart: # Create the error page for this book
+                    webPage = webPageTemplate.replace( "__TITLE__", ourTitle ).replace( "__HEADING__", ourTitle+" USFM Bible {} Checks".format(BBB) ) \
+                                .replace( "__MAIN_PART__", BBBPart ).replace( "__EXTRAS__", '' ) \
+                                .replace( "__TOP_PATH__", "/" ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
+                                #.replace( "__TOP_PATH__", "../"*6 ).replace( "__SUB_PATH__", "../"*5 ).replace( "__SUB_SUB_PATH__", "../"*4 )
+                    webPageFilename = "{}.html".format( BBB )
+                    with open( os.path.join(pagesFolder, webPageFilename), 'wt' ) as myFile: # Automatically closes the file when done
+                        myFile.write( webPage )
+                    #BBBIndexPart += '<p>Errors for book <a href="{}">{}</a></p>'.format( webPageFilename, BBB )
+                    if BBB == 'All Books': BBBIndexPart += '<tr><td><a href="{}">ALL</a></td><td>All Books</td></tr>'.format( webPageFilename )
+                    else: BBBIndexPart += '<tr><td><a href="{}">{}</a></td><td>{}</td></tr>'.format( webPageFilename, BBB, self.getAssumedBookName(BBB) )
+            BBBIndexPart += '</table>'
+            categoryIndexPart += '<table>'
+            for category in errorDictionary['ByCategory']: # Create an error page for each book (and for all books)
+                if not errorDictionary['ByCategory'][category]: print( "HEY 2—Should not have had", category )
+                #print( "ProcessUSFMUploads.doChecks: Processing category", category, "..." )
+                categoryPart = ""
+                categoryPart += "<h1>{}</h1>".format( category )
+                if category == 'Priority Errors': # it should be a list
+                    if BibleOrgSysGlobals.debugFlag: assert( isinstance( errorDictionary['ByCategory'][category], list ) )
+                    count, lastError, lastBk, lastCh, lastVs = 0, '', '', '', ''
+                    #for priority,errorText,ref in sorted( errorDictionary['ByCategory'][category], reverse=True ): # Sorts by the first tuple value which is priority
+                    for priority,errorText,ref in sorted( errorDictionary['ByCategory'][category], key=lambda theTuple: theTuple[0], reverse=True ): # Sorts by the first tuple value which is priority
+                    #for priority,errorText,ref in errorDictionary['ByCategory'][category]: # Sorts by the first tuple value which is priority
+                        #print( 'cat', priority,errorText,ref )
+                        if BibleOrgSysGlobals.debugFlag: assert( isinstance( priority, int ) and 0 <= priority <= 100 )
+                        if BibleOrgSysGlobals.debugFlag: assert( isinstance( errorText, str ) and errorText )
+                        if BibleOrgSysGlobals.debugFlag: assert( isinstance( ref, tuple ) and len(ref)==3 )
+                        bk, ch, vs = ref
+                        if errorText != lastError:
+                            if count: categoryPart += '</p>'
+                            categoryPart += "<p>{} in {} {}:{}".format( errorText, bk, ch, vs )
+                            count += 1
+                        elif bk and bk!=lastBk: categoryPart += "; {} {}:{}".format( bk, ch, vs )
+                        elif ch and ch!=lastCh: categoryPart += "; {}:{}".format( ch, vs )
+                        elif vs and vs!=lastVs: categoryPart += ",{}".format( vs )
+                        if count>=50:
+                            categoryPart += "</p><p><small>Showing {} out of {} priority errors</small></p>".format( count, len(errorDictionary['ByCategory'][category]) )
+                            break
+                        if bk: lastBk = bk
+                        if ch: lastCh = ch
+                        if vs: lastVs = vs
+                        lastError = errorText
+                elif category.endswith('Errors'): # it should be a list
+                    if BibleOrgSysGlobals.debugFlag: assert( isinstance( errorDictionary['ByCategory'][category], list ) )
+                    for error in errorDictionary['ByCategory'][category]:
+                        if BibleOrgSysGlobals.debugFlag: assert( isinstance( error, str ) )
+                        categoryPart += "<p>{}</p>".format( error )
+                elif category.endswith('Counts'): # it should be an ordered dict
+                    NEVER_HAPPENS
+                    for thisKey in errorDictionary['ByCategory'][category]:
+                        if thisKey.endswith('Errors'): # it should be a list
+                            if BibleOrgSysGlobals.debugFlag: assert( isinstance( errorDictionary['ByCategory'][category][thisKey], list ) )
+                            categoryPart += "<h1>{}</h1>".format( thisKey )
+                            for error in errorDictionary['ByCategory'][category][thisKey]:
+                                if BibleOrgSysGlobals.debugFlag: assert( isinstance( error, str ) )
+                                categoryPart += "<p>{}</p>".format( error )
+                        elif thisKey.endswith('Counts'): # it should be a list
+                            print( "Counts key", thisKey )
+                            categoryPart += "<h1>{}</h1>".format( thisKey )
+                            if isinstance( errorDictionary['ByCategory'][category][thisKey], list ): # always true
+                            #    for error in errorDictionary['ByCategory'][category][thisKey]:
+                            #        if BibleOrgSysGlobals.debugFlag: assert( isinstance( error, str ) )
+                            #        categoryPart += "<p>{}</p>".format( error )
+                            #elif isinstance( errorDictionary['ByCategory'][category][thisKey], (dict, OrderedDict,) ):
+                                for subCategory in errorDictionary['ByCategory'][category][thisKey]:
+                                    #print( subCategory )
+                                    if subCategory.endswith('Errors'):
+                                        categoryPart += "<h2>{}</h2>".format( subCategory )
+                                        for error in errorDictionary['ByCategory'][category][BBB][subCategory]:
+                                            categoryPart += "<p>{}</p>".format( error )
+                                    elif subCategory.endswith('Counts'):
+                                        categoryPart += "<h2>{}</h2>".format( subCategory ) + "<p>"
+                                        for something in sorted(errorDictionary['ByCategory'][category][BBB][subCategory]):
+                                            categoryPart += "{}:{} ".format( something, errorDictionary['ByCategory'][category][BBB][subCategory][something] )
+                                        categoryPart += "</p>"
+                                    else: print( "A weird 2" ); halt
+                        else:
+                            print( "Have left-over thisKey", thisKey )
+                            continue # ignore for now temp ....................................................................
+                            raise KeyError# it wasn't a list or a dictionary
+                else: # it's a subcategory
+                    for thisKey in errorDictionary['ByCategory'][category]:
+                        if thisKey.endswith('Errors'): # it should be a list
+                            if BibleOrgSysGlobals.debugFlag: assert( isinstance( errorDictionary['ByCategory'][category][thisKey], list ) )
+                            categoryPart += "<h1>{}</h1>".format( thisKey )
+                            for error in errorDictionary['ByCategory'][category][thisKey]:
+                                if BibleOrgSysGlobals.debugFlag: assert( isinstance( error, str ) )
+                                categoryPart += "<p>{}</p>".format( error )
+                        elif thisKey.endswith('List'): # it should be a list
+                            if BibleOrgSysGlobals.debugFlag: assert( isinstance( errorDictionary['ByCategory'][category][thisKey], list ) )
+                            categoryPart += "<h2>{}</h2><p>".format( thisKey )
+                            for jj,entry in enumerate( errorDictionary['ByCategory'][category][thisKey] ):
+                                if BibleOrgSysGlobals.debugFlag: assert( isinstance( entry, str ) )
+                                if thisKey=='Modified Marker List' and entry[0]=='[' and entry[-1]==']' and jj:
+                                    categoryPart += "</p>\n<p>" # Start each new book on a new line
+                                categoryPart += "{} ".format( entry )
+                            categoryPart += '</p>'
+                        elif thisKey.endswith('Lines'): # it should be a list
+                            if BibleOrgSysGlobals.debugFlag: assert( isinstance( errorDictionary['ByCategory'][category][thisKey], list ) )
+                            categoryPart += "<h2>{}</h2><table>".format( thisKey )
+                            for line in errorDictionary['ByCategory'][category][thisKey]: # Line them up nicely in a table
+                                if BibleOrgSysGlobals.debugFlag: assert( isinstance( line, str ) and line[-1]=="'" )
+                                bits = line[:-1].split( " '", 1 ); assert( len(bits) == 2 ) # Remove the final quote and split at the first quote
+                                if "Main Title 1" in bits[0]: bits[1] = "<b>" + bits[1] + "</b>"
+                                categoryPart += "<tr><td>{}</td><td>{}</td></tr>".format( bits[0], bits[1] ) # Put in a table row
+                            categoryPart += '</table>'
+                        elif thisKey.endswith('Counts'): # it should be a list
+                            print( "Counts key", thisKey )
+                            categoryPart += "<h1>{}</h1>".format( thisKey )
+                            if isinstance( errorDictionary['ByCategory'][category][thisKey], list ): # always true
+                            #    for error in errorDictionary['ByCategory'][category][thisKey]:
+                            #        if BibleOrgSysGlobals.debugFlag: assert( isinstance( error, str ) )
+                            #        categoryPart += "<p>{}</p>".format( error )
+                            #elif isinstance( errorDictionary['ByCategory'][category][thisKey], (dict, OrderedDict,) ):
+                                for subCategory in errorDictionary['ByCategory'][category][thisKey]:
+                                    #print( subCategory )
+                                    if subCategory.endswith('Errors'):
+                                        categoryPart += "<h2>{}</h2>".format( subCategory )
+                                        for error in errorDictionary['ByCategory'][category][BBB][subCategory]:
+                                            categoryPart += "<p>{}</p>".format( error )
+                                    elif subCategory.endswith('Counts'):
+                                        categoryPart += "<h2>{}</h2>".format( subCategory ) + "<p>"
+                                        for something in sorted(errorDictionary['ByCategory'][category][BBB][subCategory]):
+                                            categoryPart += "{}:{} ".format( something, errorDictionary['ByCategory'][category][BBB][subCategory][something] )
+                                        categoryPart += "</p>"
+                                    else: print( "A weird 2" ); halt
+                        else:
+                            print( "Have left-over thisKey", thisKey )
+                            continue # ignore for now temp ....................................................................
+                            raise KeyError# it wasn't a list or a dictionary
+                if categoryPart: # Create the error page for this catebory
+                    webPage = webPageTemplate.replace( "__TITLE__", ourTitle ).replace( "__HEADING__", ourTitle+" USFM Bible {} Checks".format(BBB) ) \
+                                .replace( "__MAIN_PART__", categoryPart ).replace( "__EXTRAS__", '' ) \
+                                .replace( "__TOP_PATH__", "/" ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
+                                #.replace( "__TOP_PATH__", "../"*6 ).replace( "__SUB_PATH__", "../"*5 ).replace( "__SUB_SUB_PATH__", "../"*4 )
+                    webPageFilename = "{}.html".format( category )
+                    with open( os.path.join(pagesFolder, webPageFilename), 'wt' ) as myFile: # Automatically closes the file when done
+                        myFile.write( webPage )
+                    categoryCommentDict = { 'Priority Errors': 'Errors that the program thinks are most important',
+                                            'Load Errors': 'Errors discovered when loading the USFM files',
+                                            'Fix Text Errors': 'Errors found in the actual text',
+                                            'Versification Errors': 'Errors with the chapter and verse numbers',
+                                            'USFMs': 'Errors to do with the Unified Standard Format Markers',
+                                            'Validation Errors': 'Errors found on detailed checking of the USFMs',
+                                            'Words': 'Possible spelling and other word errors and counts',
+                                            'Characters': 'Possible punctuation and other character errors and counts',
+                                            'Notes': 'Footnote and cross-reference errors and counts',
+                                            'Headings': 'Titles, section headers and section cross-references',
+                                            'Introduction': 'Errors in the introductory section',
+                                            'Added Formatting': 'Placement of section headings and paragraph breaks, etc.',
+                                            'Speech Marks': 'Possible errors to do with placement of quote marks',
+                                        }
+                    categoryIndexPart += '<tr><td><a href="{}">{}</a></td><td>{}</td></tr>'.format( webPageFilename, category, categoryCommentDict[category] if category in categoryCommentDict else '' )
+            categoryIndexPart += '</table>'
+        indexPart = ""
+        help1Part = '<p>Note that the checking program does make some changes to some USFM markers internally, e.g., <b>\\s</b> will be converted internally to <b>\\s1</b>, and <b>\\q</b> to <b>\\q1</b>. ' + \
+                        'You may need to be aware of this when comparing these messages with the actual codes present in your files.</p>'
+        help2Part = '<p><b>Errors</b> entries give lists of possible errors and warnings. <b>Priority Errors</b> is our attempt for the program to pick out the more serious errors in your work—the same information is also available in the other lists of Errors.</p>' + \
+                    '<p><b>Lines</b> entries list all lines in certain categories (such as titles or headings) so that you can visually check through the lists in order to see how consistent you have been throughout your work.</p>' + \
+                    '<p><b>List</b> entries also list similar items for you to scan through. The <b>Modified Marker List</b> gives you a quick way to scan through all of the main USFM markers used in your file—if a marker occurs several times in a row, it only lists it once.</p>' + \
+                    '<p><b>Counts</b> entries list counts of characters and words, etc. and are usually provided sorted in different ways. It’s often helpful to look at items that only occur one or two times in your work as they might indicate possible mistakes.<p>' + \
+                    '<p>We are still working on improving error detection, removing false alarms, and better prioritising the errors and warnings. If you have any suggestions, use the <a href="__TOP_PATH__Contact.html">Contact Page</a> to let us know. Thanks.</p>'
+        if BBBIndexPart: # Create the by book index page
+            BBBIndexPart += '<small>{}</small>'.format( help1Part )
+            webPage = webPageTemplate.replace( "__TITLE__", ourTitle ).replace( "__HEADING__", ourTitle + " by Book" ) \
+                        .replace( "__MAIN_PART__", BBBIndexPart ).replace( "__EXTRAS__", '' ) \
+                        .replace( "__TOP_PATH__", "/" ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
+                        #.replace( "__TOP_PATH__", "../"*6 ).replace( "__SUB_PATH__", "../"*5 ).replace( "__SUB_SUB_PATH__", "../"*4 )
+            webPageFilename = "BBBIndex.html"
+            with open( os.path.join(pagesFolder, webPageFilename), 'wt' ) as myFile: # Automatically closes the file when done
+                myFile.write( webPage )
+            indexPart += '<p><a href="{}">All books</a></p>'.format( "All Books.html" )
+            indexPart += '<p><a href="{}">By Bible book</a></p>'.format( webPageFilename )
+        if categoryIndexPart: # Create the by category index page
+            webPage = webPageTemplate.replace( "__TITLE__", ourTitle ).replace( "__HEADING__", ourTitle + " by Category" ) \
+                        .replace( "__MAIN_PART__", categoryIndexPart ).replace( "__EXTRAS__", '' ) \
+                        .replace( "__TOP_PATH__", "/" ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
+                        #.replace( "__TOP_PATH__", "../"*6 ).replace( "__SUB_PATH__", "../"*5 ).replace( "__SUB_SUB_PATH__", "../"*4 )
+            webPageFilename = "categoryIndex.html"
+            with open( os.path.join(pagesFolder, webPageFilename), 'wt' ) as myFile: # Automatically closes the file when done
+                myFile.write( webPage )
+            indexPart += '<p><a href="{}">By error category</a></p>'.format( webPageFilename )
+        if indexPart:
+            # Create the main index page
+            if BBBIndexPart.count('<tr>') + categoryIndexPart.count('<tr>') < 10: # Let's just combine them (ignoring the two files already written above)
+                indexPart = "<h1>By Bible book</h1>" + BBBIndexPart + "<h1>By error category</h1>" + categoryIndexPart
+            indexPart += '<small>{}</small>'.format( help2Part )
+            webPage = webPageTemplate.replace( "__TITLE__", ourTitle ).replace( "__HEADING__", ourTitle ) \
+                        .replace( "__MAIN_PART__", indexPart ).replace( "__EXTRAS__", '' ) \
+                        .replace( "__TOP_PATH__", "/" ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
+                        #.replace( "__TOP_PATH__", "../"*6 ).replace( "__SUB_PATH__", "../"*5 ).replace( "__SUB_SUB_PATH__", "../"*4 )
+            webPageFilename = "index.html"
+            webPagePath = os.path.join( pagesFolder, webPageFilename )
+            if BibleOrgSysGlobals.verbosityLevel>3: print( "Writing error checks web index page at {}".format( webPagePath ) )
+            with open( webPagePath, 'wt' ) as myFile: # Automatically closes the file when done
+                myFile.write( webPage )
+            #print( "Test web page at {}".format( webPageURL ) )
+
+        return webPagePath if len(indexPart) > 0 else None
+    # end of InternalBible.makeErrorHTML
 
 
     def getNumChapters( self, BBB ):

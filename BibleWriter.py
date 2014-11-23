@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 #
 # BibleWriter.py
-#   Last modified: 2014-11-20 by RJH (also update ProgVersion below)
 #
 # Module writing out InternalBibles in various formats.
 #
@@ -66,10 +65,14 @@ Note that not all exports export all books.
     Some formats only handle subsets, e.g. may not handle front or back matter, glossaries, or deuterocanonical books.
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = "2014-11-24"
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = "0.89"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgNameVersionDate = "{} {} {}".format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
@@ -84,7 +87,6 @@ from collections import OrderedDict
 import re, sqlite3, json
 import zipfile, tarfile
 import subprocess, multiprocessing
-from gettext import gettext as _
 
 import BibleOrgSysGlobals, ControlFiles
 from InternalBibleInternals import BOS_ADDED_NESTING_MARKERS, BOS_ALL_ADDED_NESTING_MARKERS, BOS_NESTING_MARKERS

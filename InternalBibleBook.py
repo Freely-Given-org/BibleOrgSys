@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 #
 # InternalBibleBook.py
-#   Last modified: 2014-11-19 by RJH (also update ProgVersion below)
 #
 # Module handling the internal markers for individual Bible books
 #
@@ -40,10 +39,14 @@ Required improvements:
     Need to be able to accept encoded cross references as well as text (YET modules).
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = "2014-11-24"
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = "0.91"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgNameVersionDate = "{} {} {}".format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
@@ -3153,7 +3156,8 @@ class InternalBibleBook:
                     elif closeIndex==BibleOrgSysGlobals.OPENING_SPEECH_CHARACTERS.index(openChars[-1]): # A good closing match
                         #print( "here2 with ", char, C, V )
                         openChars.pop()
-                    else: # We have closing marker that doesn't match
+                    elif char not in '?!': # Ignore the dual purpose punctuation characters
+                        # We have closing marker that doesn't match
                         #print( "here3 with ", char, C, V, openChars )
                         speechMarkErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Mismatched '{}' speech closing character after {}").format( char, openChars ) )
                         logging.error( _("Mismatched '{}' speech closing character after {} at").format( char, openChars ) + " {} {}:{}".format( self.BBB, C, V ) )
