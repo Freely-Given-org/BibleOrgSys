@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodesConverter.py
-#   Last modified: 2014-10-18 by RJH (also update ProgVersion below)
 #
 # Module handling BibleBooksCodes.xml to produce C and Python data tables
 #
@@ -27,22 +26,29 @@
 Module handling BibleBooksCodes.xml and to export to JSON, C, and Python data tables.
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = "2014-11-27"
 ShortProgName = "BibleBooksCodesConverter"
 ProgName = "Bible Books Codes converter"
-ProgVersion = "0.73"
+ProgVersion = "0.74"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgNameVersionDate = "{} {} {}".format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
 import logging, os.path
-from gettext import gettext as _
 from datetime import datetime
 from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree
 
 from singleton import singleton
 import BibleOrgSysGlobals
+
+
+
+SPECIAL_CODES = 'ALL', 'UNK' # We check these aren't used for other things
 
 
 
@@ -316,7 +322,8 @@ class BibleBooksCodesConverter:
             if element.find("typicalSection") is None: typicalSection = None
             else:
                 typicalSection = element.find("typicalSection").text
-                if BibleOrgSysGlobals.debugFlag: assert( typicalSection in ('OT','OT+','NT','NT+','DC','PS','FRT','BAK',) )
+                #print( "typicalSection", repr(typicalSection) )
+                if BibleOrgSysGlobals.debugFlag: assert( typicalSection in ('OT','OT+','NT','NT+','DC','PS','FRT','BAK','???') )
 
             # Now put it into my dictionaries for easy access
             # This part should be customized or added to for however you need to process the data
@@ -397,7 +404,8 @@ class BibleBooksCodesConverter:
             if "USXNumberString" in self._compulsoryElements or USXNumberString:
                 if "USXNumberString" in self._uniqueElements: assert( USXNumberString not in myUSXNDict ) # Shouldn't be any duplicates
                 UCNumberString = USXNumberString.upper()
-                if UCNumberString in myUSXNDict: halt
+                if UCNumberString in myUSXNDict:
+                    if BibleOrgSysGlobals.debugFlag: halt
                 else: myUSXNDict[UCNumberString] = ( intID, referenceAbbreviation, USFMAbbreviation, )
             if "UnboundCodeString" in self._compulsoryElements or UnboundCodeString:
                 if "UnboundCodeString" in self._uniqueElements: assert( UnboundCodeString not in myUCDict ) # Shouldn't be any duplicates
@@ -431,7 +439,8 @@ class BibleBooksCodesConverter:
             if "ByzantineAbbreviation" in self._compulsoryElements or ByzantineAbbreviation:
                 if "ByzantineAbbreviation" in self._uniqueElements: assert( ByzantineAbbreviation not in myBzDict ) # Shouldn't be any duplicates
                 UCAbbreviation = ByzantineAbbreviation.upper()
-                if UCAbbreviation in myBzDict: halt
+                if UCAbbreviation in myBzDict:
+                    if BibleOrgSysGlobals.debugFlag: halt
                 else: myBzDict[UCAbbreviation] = ( intID, referenceAbbreviation, )
                 if UCAbbreviation in allAbbreviationsDict and allAbbreviationsDict[UCAbbreviation] != referenceAbbreviation:
                     logging.info( _("This Byzantine '{}' abbreviation ({}) already assigned to '{}'").format( UCAbbreviation, referenceAbbreviation, allAbbreviationsDict[UCAbbreviation] ) )
@@ -440,17 +449,26 @@ class BibleBooksCodesConverter:
             if "nameEnglish" in self._compulsoryElements or USFMNumberString:
                 if "nameEnglish" in self._uniqueElements: assert( nameEnglish not in myENDict ) # Shouldn't be any duplicates
                 UCName = nameEnglish.upper()
-                if UCName in myENDict: halt
+                if UCName in myENDict:
+                    if BibleOrgSysGlobals.debugFlag: halt
                 else: myENDict[UCName] = ( intID, referenceAbbreviation )
         for BBB in myRefAbbrDict: # Do some cross-checking
             if myRefAbbrDict[BBB]["possibleAlternativeBooks"]:
                 for possibility in myRefAbbrDict[BBB]["possibleAlternativeBooks"]:
                     if possibility not in myRefAbbrDict:
-                        logging.error( _("Possible alternative books for '{}' contains invalid '{}' entry").format( BBB, possibility ) )
+                        logging.error( _("Possible alternative books for {} contains invalid {} entry").format( repr(BBB), repr(possibility) ) )
         adjAllAbbreviationsDict = {}
         for abbreviation, value in allAbbreviationsDict.items(): # Remove useless entries
             if value != "MultipleValues": adjAllAbbreviationsDict[abbreviation] = value
+
         sequenceList = [BBB for seqNum,BBB in sorted(sequenceTupleList)] # Get the book reference codes in order but discard the sequence numbers which have no absolute meaning
+
+        # Check our special codes haven't been used
+        for specialCode in SPECIAL_CODES:
+            if specialCode in allAbbreviationsDict:
+                logging.critical( _("Special code {} has been used!").format( repr(specialCode) ) )
+                if BibleOrgSysGlobals.debugFlag: halt
+
         self.__DataDicts = { "referenceNumberDict":myIDDict, "referenceAbbreviationDict":myRefAbbrDict, "sequenceList":sequenceList,
                         "SBLAbbreviationDict":mySBLDict, "OSISAbbreviationDict":myOADict, "SwordAbbreviationDict":mySwDict,
                         "CCELDict":myCCELDict, "USFMAbbreviationDict":myUSFMAbbrDict, "USFMNumberDict":myUSFMNDict,

@@ -41,7 +41,7 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = "2014-11-24"
+LastModifiedDate = "2014-11-27"
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = "0.91"
@@ -2063,7 +2063,9 @@ class InternalBibleBook:
                 if word and not word[0].isalnum():
                     #print( word, stripWordPunctuation( word ) )
                     if len(word) > 1:
-                        if BibleOrgSysGlobals.debugFlag: print( "InternalBibleBook.discover: {} {}:{} ".format( self.BBB, C, V ) + _("Have unexpected character starting word '{}'").format( word ) )
+                        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                            print( "InternalBibleBook.discover: {} {}:{} ".format( self.BBB, C, V ) \
+                                                + _("Have unexpected character starting word '{}'").format( word ) )
                         word = word[1:]
                 if word: # There's still some characters remaining after all that stripping
                     if BibleOrgSysGlobals.verbosityLevel > 3: # why???

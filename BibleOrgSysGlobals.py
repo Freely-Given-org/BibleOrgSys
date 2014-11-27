@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 #
 # BibleOrgSysGlobals.py
-#   Last modified: 2014-11-20 by RJH (also update ProgVersion below)
 #
 # Module handling Global variables for our Bible Organisational System
 #
@@ -70,17 +69,20 @@ Contains functions:
     demo()
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = "2014-11-27"
 ShortProgName = "Globals"
 ProgName = "BibleOrgSys Globals"
 ProgVersion = "0.55"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgNameVersionDate = "{} {} {}".format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
 import logging, os.path, pickle
 from optparse import OptionParser
-from gettext import gettext as _
 
 
 # Global variables

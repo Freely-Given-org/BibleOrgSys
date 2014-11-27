@@ -44,10 +44,10 @@ and then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = "2014-11-24"
+LastModifiedDate = "2014-11-27"
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
-ProgVersion = "0.58"
+ProgVersion = "0.59"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 ProgNameVersionDate = "{} {} {}".format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -812,6 +812,7 @@ class InternalBible:
             typicalAddedUnitData = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
 
         #self.discover() # Try to automatically determine our norms
+        if BibleOrgSysGlobals.debugFlag: assert( self.discoveryResults )
         if BibleOrgSysGlobals.verbosityLevel > 2: print( t("Running checks on {}...").format( self.name ) )
         for BBB in self.books: # Do individual book checks
             if BibleOrgSysGlobals.verbosityLevel > 3: print( "  " + t("Checking {}...").format( BBB ) )
@@ -1028,7 +1029,7 @@ class InternalBible:
         """
         from datetime import datetime
         if BibleOrgSysGlobals.debugFlag:
-            print( "doChecks( {}, {}, {} )" \
+            print( "makeErrorHTML( {}, {}, {} )" \
                 .format( repr(givenOutputFolder), repr(titlePrefix), repr(webPageTemplate) ) )
         #logging.info( "Doing Bible checks..." )
         #if BibleOrgSysGlobals.verbosityLevel > 2: print( "Doing Bible checks..." )
@@ -1064,6 +1065,8 @@ class InternalBible:
 </body></html>
 """
         webPageTemplate = webPageTemplate.replace( '__DATE__', datetime.now().strftime('%Y-%m-%d') )
+
+        defaultTopPath = ""
 
         # Make our own output folder
         outputFolder = os.path.join( givenOutputFolder, 'BOS_Check_Results/' )
@@ -1174,7 +1177,7 @@ class InternalBible:
                                             ListPart += '</p>'
                                             webPage = webPageTemplate.replace( "__TITLE__", ourTitle+" USFM {}".format(secondKey) ).replace( "__HEADING__", ourTitle+" USFM Bible {}".format(secondKey) ) \
                                                         .replace( "__MAIN_PART__", ListPart ).replace( "__EXTRAS__", '' ) \
-                                                        .replace( "__TOP_PATH__", "/" ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
+                                                        .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
                                                         #.replace( "__TOP_PATH__", "../"*6 ).replace( "__SUB_PATH__", "../"*5 ).replace( "__SUB_SUB_PATH__", "../"*4 )
                                             webPageFilename = "{}_{}.html".format( BBB, secondKey.replace(' ','') )
                                             with open( os.path.join(pagesFolder, webPageFilename), 'wt' ) as myFile: # Automatically closes the file when done
@@ -1219,7 +1222,7 @@ class InternalBible:
                                                 CountPart += "&nbsp;<b>{}</b>:&nbsp;{}&nbsp;&nbsp; ".format( something, count )
                                             webPage = webPageTemplate.replace( "__TITLE__", ourTitle+" USFM {}".format(secondKey) ).replace( "__HEADING__", ourTitle+" USFM Bible {}".format(secondKey) ) \
                                                         .replace( "__MAIN_PART__", CountPart ).replace( "__EXTRAS__", '' ) \
-                                                        .replace( "__TOP_PATH__", "/" ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
+                                                        .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
                                                         #.replace( "__TOP_PATH__", "../"*6 ).replace( "__SUB_PATH__", "../"*5 ).replace( "__SUB_SUB_PATH__", "../"*4 )
                                             webPageFilename = "{}_{}.html".format( BBB, secondKey.replace(' ','') )
                                             with open( os.path.join(pagesFolder, webPageFilename), 'wt' ) as myFile: # Automatically closes the file when done
@@ -1230,7 +1233,7 @@ class InternalBible:
                                                 CountPart += "&nbsp;<b>{}</b>:&nbsp;{}&nbsp;&nbsp; ".format( something, count )
                                             webPage = webPageTemplate.replace( "__TITLE__", ourTitle+" USFM {}".format(secondKey) ).replace( "__HEADING__", ourTitle+" USFM Bible {}".format(secondKey) ) \
                                                         .replace( "__MAIN_PART__", CountPart ).replace( "__EXTRAS__", '' ) \
-                                                        .replace( "__TOP_PATH__", "/" ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
+                                                        .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
                                                         #.replace( "__TOP_PATH__", "../"*6 ).replace( "__SUB_PATH__", "../"*5 ).replace( "__SUB_SUB_PATH__", "../"*4 )
                                             webPageFilename = "{}_{}_byCount.html".format( BBB, secondKey.replace(' ','') )
                                             with open( os.path.join(pagesFolder, webPageFilename), 'wt' ) as myFile: # Automatically closes the file when done
@@ -1240,7 +1243,7 @@ class InternalBible:
                 if BBBPart: # Create the error page for this book
                     webPage = webPageTemplate.replace( "__TITLE__", ourTitle ).replace( "__HEADING__", ourTitle+" USFM Bible {} Checks".format(BBB) ) \
                                 .replace( "__MAIN_PART__", BBBPart ).replace( "__EXTRAS__", '' ) \
-                                .replace( "__TOP_PATH__", "/" ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
+                                .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
                                 #.replace( "__TOP_PATH__", "../"*6 ).replace( "__SUB_PATH__", "../"*5 ).replace( "__SUB_SUB_PATH__", "../"*4 )
                     webPageFilename = "{}.html".format( BBB )
                     with open( os.path.join(pagesFolder, webPageFilename), 'wt' ) as myFile: # Automatically closes the file when done
@@ -1252,7 +1255,7 @@ class InternalBible:
             categoryIndexPart += '<table>'
             for category in errorDictionary['ByCategory']: # Create an error page for each book (and for all books)
                 if not errorDictionary['ByCategory'][category]: print( "HEY 2—Should not have had", category )
-                #print( "ProcessUSFMUploads.doChecks: Processing category", category, "..." )
+                #print( "ProcessUSFMUploads.makeErrorHTML: Processing category", category, "..." )
                 categoryPart = ""
                 categoryPart += "<h1>{}</h1>".format( category )
                 if category == 'Priority Errors': # it should be a list
@@ -1371,7 +1374,7 @@ class InternalBible:
                 if categoryPart: # Create the error page for this catebory
                     webPage = webPageTemplate.replace( "__TITLE__", ourTitle ).replace( "__HEADING__", ourTitle+" USFM Bible {} Checks".format(BBB) ) \
                                 .replace( "__MAIN_PART__", categoryPart ).replace( "__EXTRAS__", '' ) \
-                                .replace( "__TOP_PATH__", "/" ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
+                                .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
                                 #.replace( "__TOP_PATH__", "../"*6 ).replace( "__SUB_PATH__", "../"*5 ).replace( "__SUB_SUB_PATH__", "../"*4 )
                     webPageFilename = "{}.html".format( category )
                     with open( os.path.join(pagesFolder, webPageFilename), 'wt' ) as myFile: # Automatically closes the file when done
@@ -1404,7 +1407,7 @@ class InternalBible:
             BBBIndexPart += '<small>{}</small>'.format( help1Part )
             webPage = webPageTemplate.replace( "__TITLE__", ourTitle ).replace( "__HEADING__", ourTitle + " by Book" ) \
                         .replace( "__MAIN_PART__", BBBIndexPart ).replace( "__EXTRAS__", '' ) \
-                        .replace( "__TOP_PATH__", "/" ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
+                        .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
                         #.replace( "__TOP_PATH__", "../"*6 ).replace( "__SUB_PATH__", "../"*5 ).replace( "__SUB_SUB_PATH__", "../"*4 )
             webPageFilename = "BBBIndex.html"
             with open( os.path.join(pagesFolder, webPageFilename), 'wt' ) as myFile: # Automatically closes the file when done
@@ -1414,7 +1417,7 @@ class InternalBible:
         if categoryIndexPart: # Create the by category index page
             webPage = webPageTemplate.replace( "__TITLE__", ourTitle ).replace( "__HEADING__", ourTitle + " by Category" ) \
                         .replace( "__MAIN_PART__", categoryIndexPart ).replace( "__EXTRAS__", '' ) \
-                        .replace( "__TOP_PATH__", "/" ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
+                        .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
                         #.replace( "__TOP_PATH__", "../"*6 ).replace( "__SUB_PATH__", "../"*5 ).replace( "__SUB_SUB_PATH__", "../"*4 )
             webPageFilename = "categoryIndex.html"
             with open( os.path.join(pagesFolder, webPageFilename), 'wt' ) as myFile: # Automatically closes the file when done
@@ -1427,7 +1430,7 @@ class InternalBible:
             indexPart += '<small>{}</small>'.format( help2Part )
             webPage = webPageTemplate.replace( "__TITLE__", ourTitle ).replace( "__HEADING__", ourTitle ) \
                         .replace( "__MAIN_PART__", indexPart ).replace( "__EXTRAS__", '' ) \
-                        .replace( "__TOP_PATH__", "/" ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
+                        .replace( "__TOP_PATH__", defaultTopPath ).replace( "__SUB_PATH__", "/Software/" ).replace( "__SUB_SUB_PATH__", "/Software/BibleDropBox/" )
                         #.replace( "__TOP_PATH__", "../"*6 ).replace( "__SUB_PATH__", "../"*5 ).replace( "__SUB_SUB_PATH__", "../"*4 )
             webPageFilename = "index.html"
             webPagePath = os.path.join( pagesFolder, webPageFilename )
