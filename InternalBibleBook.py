@@ -41,7 +41,7 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = "2014-11-27"
+LastModifiedDate = "2014-12-02"
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = "0.91"
@@ -2491,6 +2491,18 @@ class InternalBibleBook:
         allAvailableNewlineMarkers = BibleOrgSysGlobals.USFMMarkers.getNewlineMarkersList( 'Numbered' )
         allAvailableCharacterMarkers = BibleOrgSysGlobals.USFMMarkers.getCharacterMarkersList( includeEndMarkers=True )
 
+        logger = None
+        MEDIUM_EMPTY_FIELD_PRIORITY, HIGH_EMPTY_FIELD_PRIORITY = 87, 97
+        emptyFieldPriority = 17 # e.g., if book is not started
+        if discoveryDict:
+            if 'partlyDone' in discoveryDict and discoveryDict['partlyDone']: emptyFieldPriority = 47
+            if 'percentageProgress' in discoveryDict and discoveryDict['percentageProgress']>95:
+                emptyFieldPriority = MEDIUM_EMPTY_FIELD_PRIORITY
+                logger = logging.warning
+            if 'seemsFinished' in discoveryDict and discoveryDict['seemsFinished']:
+                emptyFieldPriority = HIGH_EMPTY_FIELD_PRIORITY
+                logger = logging.error
+
         newlineMarkerCounts, internalMarkerCounts, noteMarkerCounts = OrderedDict(), OrderedDict(), OrderedDict()
         #newlineMarkerCounts['Total'], internalMarkerCounts['Total'], noteMarkerCounts['Total'] = 0, 0, 0 # Put these first in the ordered dict
         newlineMarkerErrors, internalMarkerErrors, noteMarkerErrors = [], [], []
@@ -2530,14 +2542,11 @@ class InternalBibleBook:
                         #else: # we've reached our limit
                             #logging.warning( _('doCheckSFMs: Additional "Marker should always have text" messages suppressed...') )
                             #sahtCount = -1 # So we don't do this again (for this book)
-                priority = 96
-                if discoveryDict:
-                    if 'partlyDone' in discoveryDict and discoveryDict['partlyDone']>0: priority = 47
-                    if 'notStarted' in discoveryDict and discoveryDict['notStarted']>0: priority = 17
-                self.addPriorityError( priority, C, V, _("Marker \\{} should always have text").format( originalMarker ) )
-                    #newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Marker '{}' has no content").format( marker ) )
-                    #logging.warning( _("Marker '{}' has no content after").format( marker ) + " {} {}:{}".format( self.BBB, C, V ) )
-                    #self.addPriorityError( 47, C, V, _("Marker {} should have content").format( marker ) )
+                self.addPriorityError( emptyFieldPriority, C, V, _("Marker \\{} should always have text").format( originalMarker ) )
+                if emptyFieldPriority >= HIGH_EMPTY_FIELD_PRIORITY:
+                    newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Marker '{}' has no content").format( marker ) )
+                if logger is not None:
+                    logger( _("Marker '{}' has no content after").format( marker ) + " {} {}:{}".format( self.BBB, C, V ) )
 
             if marker[0] == '¬' or marker in BOS_ADDED_NESTING_MARKERS: # Just ignore these added markers
                 continue
@@ -3775,7 +3784,9 @@ class InternalBibleBook:
 
 
     def check( self, discoveryDict=None, typicalAddedUnitData=None ):
-        """Runs a number of checks on the book and returns the error dictionary."""
+        """
+        Runs a number of checks on the book and returns the error dictionary.
+        """
         if not self._processedFlag:
             print( "InternalBibleBook: processing lines from 'check'" )
             self.processLines()
