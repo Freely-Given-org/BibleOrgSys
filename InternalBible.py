@@ -44,12 +44,12 @@ and then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = "2014-11-27"
+LastModifiedDate = '2014-12-03'
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
-ProgVersion = "0.59"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
-ProgNameVersionDate = "{} {} {}".format( ProgNameVersion, _("last modified"), LastModifiedDate )
+ProgVersion = '0.60'
+ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
@@ -176,7 +176,11 @@ class InternalBible:
 
 
     def __iter__( self ):
-        """ Yields the next book object. """
+        """
+        Yields the next book object.
+
+        NOTE: Most other functions return the BBB -- this returns the actual book object!
+        """
         if BibleOrgSysGlobals.debugFlag and not self.loadedAllBooks:
             logging.critical( t("__iter__ result is unreliable because all books not loaded!") )
         for BBB in self.books:
@@ -241,9 +245,31 @@ class InternalBible:
     # end of InternalBible.loadBookIfNecessary
 
 
+    def reloadBook( self, BBB ):
+        """
+        Tries to load or reload a book.
+        """
+        if BibleOrgSysGlobals.debugFlag: print( t("reloadBook( {} )...").format( BBB ) )
+        #if BBB not in self.books and BBB not in self.triedLoadingBook:
+        try: self.loadBook( BBB ) # Some types of Bibles have this function (so an entire Bible doesn't have to be loaded at startup)
+        except AttributeError: logging.info( "No function to load individual Bible book: {}".format( BBB ) ) # Ignore errors
+        except FileNotFoundError: logging.info( "Unable to find and load individual Bible book: {}".format( BBB ) ) # Ignore errors
+        self.triedLoadingBook[BBB] = True
+        #try: del self.discoveryResults # These are now out-of-date
+        #except KeyError:
+            #if BibleOrgSysGlobals.debugFlag: print( t("reloadBook has no discoveryResults to delete") )
+        if 'discoveryResults' in dir(self): # need to update them
+            # Need to double-check that this doesn't cause any double-ups .....................XXXXXXXXXXXXXXXXXXXXXX
+            self.books[BBB]._discover( self.discoveryResults )
+            self._aggregateDiscoveryResults()
+    # end of InternalBible.loadBookIfNecessary
+
+
     def doPostLoadProcessing( self ):
         """
-        This method should be called once all books are loaded.
+        This method should be called once all books are loaded to do critical book-keeping.
+
+        Doesn't do a "discover" yet, coz this is quite time-consuming.
         """
         self.loadedAllBooks = True
 
@@ -251,8 +277,27 @@ class InternalBible:
         self.__getNames()
 
         # Discover what we've got loaded so we don't have to worry about doing it later
-        self.discover()
+        #self.discover()
     # end of InternalBible.doPostLoadProcessing
+
+
+    def xxxunloadBooks( self ):
+        """
+        Called to unload books, usually coz one or more of them has been edited.
+        """
+        if BibleOrgSysGlobals.debugFlag: print( t("unloadBooks()...") )
+        self.books = OrderedDict()
+        self.BBBToNameDict, self.bookNameDict, self.combinedBookNameDict, self.bookAbbrevDict = {}, {}, {}, {} # Used to store book name and abbreviations (pointing to the BBB codes)
+        self.reverseDict, self.guesses = {}, '' # A program history
+        self.loadedAllBooks, self.triedLoadingBook = False, {}
+        self.divisions = OrderedDict()
+        self.errorDictionary = OrderedDict()
+        self.errorDictionary['Priority Errors'] = [] # Put this one first in the ordered dictionary
+
+        try: del self.discoveryResults # These are now irrelevant
+        except KeyError:
+            if BibleOrgSysGlobals.debugFlag: print( t("unloadBooks has no discoveryResults to delete") )
+    # end of InternalBible.unloadBooks
 
 
     def loadMetadataFile( self, mdFilepath ):
@@ -588,11 +633,14 @@ class InternalBible:
 
 
     def discover( self ):
-        """Runs a series of checks and count on each book of the Bible
-            in order to try to determine what are the normal standards."""
+        """
+        Runs a series of checks and count on each book of the Bible
+            in order to try to determine what are the normal standards.
+        """
         if BibleOrgSysGlobals.verbosityLevel > 0: print( "InternalBible:discover()" )
-        if BibleOrgSysGlobals.debugFlag and  'discoveryResults' in dir(self):
+        if BibleOrgSysGlobals.debugFlag and 'discoveryResults' in dir(self):
             logging.warning( t("discover: We had done this already!") ) # We've already called this once
+            halt
 
         self.discoveryResults = OrderedDict()
 
@@ -609,7 +657,16 @@ class InternalBible:
             if BibleOrgSysGlobals.verbosityLevel > 3: print( "  " + t("Prechecking {}...").format( BBB ) )
             self.books[BBB]._discover( self.discoveryResults )
 
-        # Now get the aggregate results for the entire Bible
+        self._aggregateDiscoveryResults()
+    # end of InternalBible.discover
+
+
+    def _aggregateDiscoveryResults( self ):
+        """
+        Assuming that the individual discoveryResults have been collected for each book,
+            puts them all together.
+        """
+        if BibleOrgSysGlobals.verbosityLevel > 0: print( "InternalBible:_aggregateDiscoveryResults()" )
         aggregateResults = {}
         if BibleOrgSysGlobals.debugFlag: assert( 'ALL' not in self.discoveryResults )
         for BBB in self.discoveryResults:
@@ -792,18 +849,26 @@ class InternalBible:
                 else:
                     #print( "key", repr(key), "value", repr(value) )
                     print( " ", key, "in", value if value<len(self) else "all", "books" )
-    # end of InternalBible.discover
+    # end of InternalBible._aggregateDiscoveryResults
 
 
-    def check( self ):
+    def check( self, givenBookList=None ):
         """
-        Runs a series of individual checks (and counts) on each book of the Bible
+        Runs self.discover() first if necessary.
+
+        By default, runs a series of individual checks (and counts) on each book of the Bible
             and then a number of overall checks on the entire Bible.
+
+        If a book list is given, only checks those books.
 
         getErrors() must be called to request the results.
         """
         # Get our recommendations for added units -- only load this once per Bible
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( t("Checking {} Bible...").format( self.name ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1:
+            if givenBookList is None: print( t("Checking {} Bible...").format( self.name ) )
+            else: print( t("Checking {} Bible books {}...").format( self.name, givenBookList ) )
+        if 'discoveryResults' not in dir(self): self.discover()
+
         import pickle
         pickleFolder = os.path.join( os.path.dirname(__file__), "DataFiles/", "ScrapedFiles/" ) # Relative to module, not cwd
         pickleFilepath = os.path.join( pickleFolder, "AddedUnitData.pickle" )
@@ -811,11 +876,12 @@ class InternalBible:
         with open( pickleFilepath, 'rb' ) as pickleFile:
             typicalAddedUnitData = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
 
-        #self.discover() # Try to automatically determine our norms
         if BibleOrgSysGlobals.debugFlag: assert( self.discoveryResults )
         if BibleOrgSysGlobals.verbosityLevel > 2: print( t("Running checks on {}...").format( self.name ) )
-        for BBB in self.books: # Do individual book checks
-            if BibleOrgSysGlobals.verbosityLevel > 3: print( "  " + t("Checking {}...").format( BBB ) )
+        if givenBookList is None:
+            givenBookList = self.books # this is an OrderedDict
+        for BBB in givenBookList: # Do individual book checks
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + t("Checking {}...").format( BBB ) )
             self.books[BBB].check( self.discoveryResults['ALL'], typicalAddedUnitData )
 
         # Do overall Bible checks here
@@ -823,8 +889,9 @@ class InternalBible:
     # end of InternalBible.check
 
 
-    def getErrors( self ):
-        """Returns the error dictionary.
+    def getErrors( self, givenBookList=None ):
+        """
+        Returns the error dictionary.
             All keys ending in 'Errors' give lists of strings.
             All keys ending in 'Counts' give OrderedDicts with [value]:count entries
             All other keys give subkeys
@@ -851,6 +918,8 @@ class InternalBible:
                             ['Headings']: OrderedDict
                     ['ByCategory']: OrderedDict
         """
+        if givenBookList is None: givenBookList = self.books # this is an OrderedDict
+
         def appendList( BBB, errorDict, firstKey, secondKey=None ):
             """Appends a list to the ALL BOOKS errors."""
             #print( "  appendList", BBB, firstKey, secondKey )
@@ -864,7 +933,7 @@ class InternalBible:
                 if firstKey not in errorDict['All Books']: errorDict['All Books'][firstKey] = OrderedDict()
                 if secondKey not in errorDict['All Books'][firstKey]: errorDict['All Books'][firstKey][secondKey] = []
                 errorDict['All Books'][firstKey][secondKey].extend( errorDict[BBB][firstKey][secondKey] )
-        # end of appendList
+        # end of getErrors.appendList
 
         def mergeCount( BBB, errorDict, firstKey, secondKey=None ):
             """Merges the counts together."""
@@ -882,7 +951,7 @@ class InternalBible:
                 for something in errorDict[BBB][firstKey][secondKey]:
                     errorDict['All Books'][firstKey][secondKey][something] = errorDict[BBB][firstKey][secondKey][something] if something not in errorDict['All Books'][firstKey][secondKey] \
                                                                                 else errorDict['All Books'][firstKey][secondKey][something] + errorDict[BBB][firstKey][secondKey][something]
-        # end of mergeCount
+        # end of getErrors.mergeCount
 
         def getCapsList( lcWord, lcTotal, wordDict ):
             """ Given that a lower case word has a lowercase count of lcTotal,
@@ -933,7 +1002,7 @@ class InternalBible:
             result = [w for c,w in sorted(tempResult)]
             #if len(tempResult)>2: print( lcWord, lcTotal, total, tempResult, result )
             return result
-        # end of getCapsList
+        # end of getErrors.getCapsList
 
         # Set up
         errors = OrderedDict(); errors['ByBook'] = OrderedDict(); errors['ByCategory'] = OrderedDict()
@@ -945,49 +1014,51 @@ class InternalBible:
 
         # Make sure that the error lists come first in the All Books ordered dictionaries (even if there's no errors for the first book)
         for BBB in self.books.keys():
-            errors['ByBook'][BBB] = self.books[BBB].getErrors()
-            for thisKey in errors['ByBook'][BBB]:
-                if thisKey.endswith('Errors'):
-                    errors['ByBook']['All Books'][thisKey] = []
-                    errors['ByCategory'][thisKey] = []
-                elif not thisKey.endswith('List') and not thisKey.endswith('Lines'):
-                    for anotherKey in errors['ByBook'][BBB][thisKey]:
-                        if anotherKey.endswith('Errors'):
-                            if thisKey not in errors['ByBook']['All Books']: errors['ByBook']['All Books'][thisKey] = OrderedDict()
-                            errors['ByBook']['All Books'][thisKey][anotherKey] = []
-                            if thisKey not in errors['ByCategory']: errors['ByCategory'][thisKey] = OrderedDict()
-                            errors['ByCategory'][thisKey][anotherKey] = []
+            if BBB in givenBookList:
+                errors['ByBook'][BBB] = self.books[BBB].getErrors()
+                for thisKey in errors['ByBook'][BBB]:
+                    if thisKey.endswith('Errors'):
+                        errors['ByBook']['All Books'][thisKey] = []
+                        errors['ByCategory'][thisKey] = []
+                    elif not thisKey.endswith('List') and not thisKey.endswith('Lines'):
+                        for anotherKey in errors['ByBook'][BBB][thisKey]:
+                            if anotherKey.endswith('Errors'):
+                                if thisKey not in errors['ByBook']['All Books']: errors['ByBook']['All Books'][thisKey] = OrderedDict()
+                                errors['ByBook']['All Books'][thisKey][anotherKey] = []
+                                if thisKey not in errors['ByCategory']: errors['ByCategory'][thisKey] = OrderedDict()
+                                errors['ByCategory'][thisKey][anotherKey] = []
 
         # Combine book errors into Bible totals plus into categories
         for BBB in self.books.keys():
-            #errors['ByBook'][BBB] = self.books[BBB].getErrors()
+            if BBB in givenBookList:
+                #errors['ByBook'][BBB] = self.books[BBB].getErrors()
 
-            # Correlate some of the totals (i.e., combine book totals into Bible totals)
-            # Also, create a dictionary of errors by category (as well as the main one by book reference code BBB)
-            for thisKey in errors['ByBook'][BBB]:
-                #print( "thisKey", BBB, thisKey )
-                if thisKey.endswith('Errors') or thisKey.endswith('List') or thisKey.endswith('Lines'):
-                    if BibleOrgSysGlobals.debugFlag: assert( isinstance( errors['ByBook'][BBB][thisKey], list ) )
-                    appendList( BBB, errors['ByBook'], thisKey )
-                    errors['ByCategory'][thisKey].extend( errors['ByBook'][BBB][thisKey] )
-                elif thisKey.endswith('Counts'):
-                    NEVER_HAPPENS # does this happen?
-                    mergeCount( BBB, errors['ByBook'], thisKey )
-                else: # it's things like SFMs, Characters, Words, Headings, Notes
-                    for anotherKey in errors['ByBook'][BBB][thisKey]:
-                        #print( " anotherKey", BBB, anotherKey )
-                        if anotherKey.endswith('Errors') or anotherKey.endswith('List') or anotherKey.endswith('Lines'):
-                            if BibleOrgSysGlobals.debugFlag: assert( isinstance( errors['ByBook'][BBB][thisKey][anotherKey], list ) )
-                            appendList( BBB, errors['ByBook'], thisKey, anotherKey )
-                            if thisKey not in errors['ByCategory']: errors['ByCategory'][thisKey] = OrderedDict() #; print( "Added", thisKey )
-                            if anotherKey not in errors['ByCategory'][thisKey]: errors['ByCategory'][thisKey][anotherKey] = []
-                            errors['ByCategory'][thisKey][anotherKey].extend( errors['ByBook'][BBB][thisKey][anotherKey] )
-                        elif anotherKey.endswith('Counts'):
-                            mergeCount( BBB, errors['ByBook'], thisKey, anotherKey )
-                            # Haven't put counts into category array yet
-                        else:
-                            print( anotherKey, "not done yet" )
-                            #halt # Not done yet
+                # Correlate some of the totals (i.e., combine book totals into Bible totals)
+                # Also, create a dictionary of errors by category (as well as the main one by book reference code BBB)
+                for thisKey in errors['ByBook'][BBB]:
+                    #print( "thisKey", BBB, thisKey )
+                    if thisKey.endswith('Errors') or thisKey.endswith('List') or thisKey.endswith('Lines'):
+                        if BibleOrgSysGlobals.debugFlag: assert( isinstance( errors['ByBook'][BBB][thisKey], list ) )
+                        appendList( BBB, errors['ByBook'], thisKey )
+                        errors['ByCategory'][thisKey].extend( errors['ByBook'][BBB][thisKey] )
+                    elif thisKey.endswith('Counts'):
+                        NEVER_HAPPENS # does this happen?
+                        mergeCount( BBB, errors['ByBook'], thisKey )
+                    else: # it's things like SFMs, Characters, Words, Headings, Notes
+                        for anotherKey in errors['ByBook'][BBB][thisKey]:
+                            #print( " anotherKey", BBB, anotherKey )
+                            if anotherKey.endswith('Errors') or anotherKey.endswith('List') or anotherKey.endswith('Lines'):
+                                if BibleOrgSysGlobals.debugFlag: assert( isinstance( errors['ByBook'][BBB][thisKey][anotherKey], list ) )
+                                appendList( BBB, errors['ByBook'], thisKey, anotherKey )
+                                if thisKey not in errors['ByCategory']: errors['ByCategory'][thisKey] = OrderedDict() #; print( "Added", thisKey )
+                                if anotherKey not in errors['ByCategory'][thisKey]: errors['ByCategory'][thisKey][anotherKey] = []
+                                errors['ByCategory'][thisKey][anotherKey].extend( errors['ByBook'][BBB][thisKey][anotherKey] )
+                            elif anotherKey.endswith('Counts'):
+                                mergeCount( BBB, errors['ByBook'], thisKey, anotherKey )
+                                # Haven't put counts into category array yet
+                            else:
+                                print( anotherKey, "not done yet" )
+                                #halt # Not done yet
 
         # Taking those word lists, find uncommon words
         threshold = 4 # i.e., find words used less often that this many times as possible candidates for spelling errors
@@ -1017,7 +1088,7 @@ class InternalBible:
     # end of InternalBible.getErrors
 
 
-    def makeErrorHTML( self, givenOutputFolder, titlePrefix=None, webPageTemplate=None ):
+    def makeErrorHTML( self, givenOutputFolder, givenBookList=None, titlePrefix=None, webPageTemplate=None ):
         """
         Gets the error dictionaries that were the result of the check
             and produce linked HTML pages in the given output folder.
@@ -1034,7 +1105,8 @@ class InternalBible:
         #logging.info( "Doing Bible checks..." )
         #if BibleOrgSysGlobals.verbosityLevel > 2: print( "Doing Bible checks..." )
 
-        errorDictionary = self.getErrors()
+        errorDictionary = self.getErrors( givenBookList )
+        if givenBookList is None: givenBookList = self.books # this is an OrderedDict
 
         if webPageTemplate is None:
             webPageTemplate = """<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -1088,7 +1160,8 @@ class InternalBible:
                 del errorDictionary['ByBook']['All Books']
             for BBB in errorDictionary['ByBook']: # Create an error page for each book (and for all books if there's more than one book)
                 #print( "Have errors for", BBB )
-                if not errorDictionary['ByBook'][BBB]: print( "HEY 0—Should not have had", BBB )
+                if not errorDictionary['ByBook'][BBB]: # Then it's blank
+                    print( "HEY 0—Should not have had blank entry for", BBB )
                 BBBPart = ""
                 for thisKey in errorDictionary['ByBook'][BBB]:
                     if BibleOrgSysGlobals.debugFlag: assert( isinstance( thisKey, str ) )
@@ -1412,8 +1485,12 @@ class InternalBible:
             webPageFilename = "BBBIndex.html"
             with open( os.path.join(pagesFolder, webPageFilename), 'wt' ) as myFile: # Automatically closes the file when done
                 myFile.write( webPage )
-            indexPart += '<p><a href="{}">All books</a></p>'.format( "All Books.html" )
-            indexPart += '<p><a href="{}">By Bible book</a></p>'.format( webPageFilename )
+            if len(givenBookList) == 1:
+                #indexPart += '<p><a href="{}">All books</a></p>'.format( "All Books.html" )
+                pass
+            else:
+                indexPart += '<p><a href="{}">All books</a></p>'.format( "All Books.html" )
+                indexPart += '<p><a href="{}">By Bible book</a></p>'.format( webPageFilename )
         if categoryIndexPart: # Create the by category index page
             webPage = webPageTemplate.replace( "__TITLE__", ourTitle ).replace( "__HEADING__", ourTitle + " by Category" ) \
                         .replace( "__MAIN_PART__", categoryIndexPart ).replace( "__EXTRAS__", '' ) \

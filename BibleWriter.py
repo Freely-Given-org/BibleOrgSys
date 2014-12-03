@@ -67,12 +67,12 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = "2014-11-24"
+LastModifiedDate = '2014-12-03'
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
-ProgVersion = "0.89"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
-ProgNameVersionDate = "{} {} {}".format( ProgNameVersion, _("last modified"), LastModifiedDate )
+ProgVersion = '0.89'
+ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
@@ -177,6 +177,7 @@ class BibleWriter( InternalBible ):
             coz it uses self (which isn't actualised yet in init).
         """
         if BibleOrgSysGlobals.debugFlag: assert( not self.doneSetupGeneric )
+        #if 'discoveryResults' not in dir(self): self.discover()
         if not self.doneSetupGeneric:
             self.genericBOS = BibleOrganizationalSystem( "GENERIC-KJV-81" )
             self.genericBRL = BibleReferenceList( self.genericBOS, BibleObject=self ) # this prevents pickling!
@@ -210,6 +211,7 @@ class BibleWriter( InternalBible ):
         if BibleOrgSysGlobals.debugFlag: assert( self.books )
 
         if not self.doneSetupGeneric: self.__setupWriter()
+        if 'discoveryResults' not in dir(self): self.discover()
         if not outputFolder: outputFolder = "OutputFiles/BOS_Lists/"
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
 
@@ -2310,6 +2312,7 @@ class BibleWriter( InternalBible ):
         if BibleOrgSysGlobals.debugFlag: assert( self.books )
 
         if not self.doneSetupGeneric: self.__setupWriter()
+        if 'discoveryResults' not in dir(self): self.discover()
         if not outputFolder: outputFolder = "OutputFiles/BOS_CustomBible_" + ("Reexport/" if self.objectTypeString=="CustomBible" else "Export/")
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         #if not controlDict: controlDict = {}; ControlFiles.readControlFile( 'ControlFiles', "To_XXX_controls.txt", controlDict )

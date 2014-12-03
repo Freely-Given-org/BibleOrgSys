@@ -41,12 +41,12 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = "2014-12-02"
+LastModifiedDate = '2014-12-03'
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
-ProgVersion = "0.91"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
-ProgNameVersionDate = "{} {} {}".format( ProgNameVersion, _("last modified"), LastModifiedDate )
+ProgVersion = '0.91'
+ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
@@ -3207,13 +3207,14 @@ class InternalBibleBook:
                             closeIndex = BibleOrgSysGlobals.CLOSING_SPEECH_CHARACTERS.index( char )
                             if not extraOpenChars:
                                 #print( "here1 with ", char, C, V, extraOpenChars )
-                                speechMarkErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unexpected '{}' speech closing character in note").format( char ) )
-                                logging.error( _("Unexpected '{}' speech closing character in note in").format( char ) + " {} {}:{}".format( self.BBB, C, V ) )
-                                self.addPriorityError( 43, C, V, _("Unexpected '{}' speech closing character in note").format( char ) )
+                                if char not in '?!': # Ignore the dual purpose punctuation characters
+                                    speechMarkErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unexpected '{}' speech closing character in note").format( char ) )
+                                    logging.error( _("Unexpected '{}' speech closing character in note in").format( char ) + " {} {}:{}".format( self.BBB, C, V ) )
+                                    self.addPriorityError( 43, C, V, _("Unexpected '{}' speech closing character in note").format( char ) )
                             elif closeIndex==BibleOrgSysGlobals.OPENING_SPEECH_CHARACTERS.index(extraOpenChars[-1]): # A good closing match
                                 #print( "here2 with ", char, C, V )
                                 extraOpenChars.pop()
-                            else: # We have closing marker that doesn't match
+                            elif char not in '?!': # Ignore the dual purpose punctuation characters
                                 #print( "here3 with ", char, C, V, extraOpenChars )
                                 speechMarkErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Mismatched '{}' speech closing character after {} in note").format( char, extraOpenChars ) )
                                 logging.error( _("Mismatched '{}' speech closing character after {} in note in").format( char, extraOpenChars ) \
