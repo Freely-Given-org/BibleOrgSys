@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 #
 # USXXMLBible.py
-#   Last modified: 2014-11-04 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of USX Bible books
 #
@@ -27,15 +26,19 @@
 Module for defining and manipulating complete or partial USX Bibles.
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2014-12-03'
+ShortProgName = "USXXMLBibleHandler"
 ProgName = "USX XML Bible handler"
-ProgVersion = "0.18"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.19'
+ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
 import os, logging
-from gettext import gettext as _
 import multiprocessing
 
 import BibleOrgSysGlobals

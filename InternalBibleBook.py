@@ -1591,7 +1591,7 @@ class InternalBibleBook:
             if openMarkers: # Close any left-over open markers
                 if 'list' in openMarkers or 'ilist' in openMarkers or 'iot' in openMarkers:
                     print( "InternalBibleBook.processLines.addNestingMarkers: stillOpen", self.BBB, openMarkers )
-                    if BibleOrgSysGlobals.debugFlag: halt
+                    if BibleOrgSysGlobals.debugFlag and self.BBB not in ('BAK',): halt
                 for lMarker in openMarkers[::-1]: # Get a reversed copy (coz we are deleting members)
                     if lMarker == 'v': closeLastOpenMarker( V )
                     elif lMarker == 'c': closeLastOpenMarker( C )

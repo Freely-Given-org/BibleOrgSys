@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 # USXXMLBibleBook.py
-#   Last modified: 2013-07-30 by RJH (also update ProgVersion below)
 #
 # Module handling USX Bible Book xml
 #
-# Copyright (C) 2012-2013 Robert Hunt
+# Copyright (C) 2012-2014 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -24,18 +23,22 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module handling USX Bible book xml to produce C and Python data tables.
+Module handling USX Bible book xml to parse and load as an internal Bible book.
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2014-12-03'
+ShortProgName = "USXXMLBibleBookHandler"
 ProgName = "USX XML Bible book handler"
-ProgVersion = "0.10"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.11'
+ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
 import logging, os
-from gettext import gettext as _
 from xml.etree.ElementTree import ElementTree
 
 import BibleOrgSysGlobals
@@ -109,7 +112,6 @@ class USXXMLBibleBook( BibleBook ):
                             #print( repr(vText) )
                             self.appendToLastLine( vText )
                 elif element.tag == 'char':
-                    BibleOrgSysGlobals.checkXMLNoSubelements( element, location )
                     # Process the attributes first
                     charStyle = None
                     for attrib,value in element.items():
@@ -119,11 +121,32 @@ class USXXMLBibleBook( BibleBook ):
                             assert( not BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( charStyle ) )
                         else:
                             logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+                    charLine = "\\{} {} ".format( charStyle, element.text )
+                    # Now process the subelements -- chars are one of the few multiply embedded fields in USX
+                    for subelement in element:
+                        sublocation = subelement.tag + ' ' + location
+                        #print( c, v, element.tag )
+                        if subelement.tag == 'char': # milestone (not a container)
+                            BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
+                            # Process the attributes first
+                            subCharStyle, charClosed = None, True
+                            for attrib,value in subelement.items():
+                                if attrib=='style': subCharStyle = value
+                                elif attrib=='closed':
+                                    assert( value=='false' )
+                                    charClosed = False
+                                else:
+                                    logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
+                            charLine += "\\{} {}".format( subCharStyle, subelement.text )
+                            if charClosed: charLine += "\\{}*".format( subCharStyle )
+                            charLine += '' if subelement.tail is None else subelement.tail.strip()
+                        else:
+                            logging.warning( _("Unprocessed {} subelement after {} {}:{} in {}").format( subelement.tag, self.BBB, c, v, sublocation ) )
+                            self.addPriorityError( 1, c, v, _("Unprocessed {} subelement").format( subelement.tag ) )
                     # A character field must be added to the previous field
-                    tail = '' if element.tail is None else element.tail.strip()
-                    additionalText = "\\{} {}\\{}*{}".format( charStyle, element.text, charStyle, tail )
-                    print( "USX.loadParagraph:", c, v, paragraphStyle, charStyle, repr(additionalText) )
-                    self.appendToLastLine( additionalText )
+                    charLine += "\\{}*{}".format( charStyle, '' if element.tail is None else element.tail.strip() )
+                    print( "USX.loadParagraph:", c, v, paragraphStyle, charStyle, repr(charLine) )
+                    self.appendToLastLine( charLine )
                 elif element.tag == 'note':
                     BibleOrgSysGlobals.checkXMLNoText( element, location )
                     # Process the attributes first
@@ -143,7 +166,6 @@ class USXXMLBibleBook( BibleBook ):
                         sublocation = subelement.tag + ' ' + location
                         #print( c, v, element.tag )
                         if subelement.tag == 'char': # milestone (not a container)
-                            BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation )
                             BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
                             # Process the attributes first
                             charStyle, charClosed = None, True
@@ -157,6 +179,18 @@ class USXXMLBibleBook( BibleBook ):
                                     logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
                             noteLine += "\\{} {}".format( charStyle, subelement.text )
                             if charClosed: noteLine += "\\{}*".format( charStyle )
+                            noteLine += '' if subelement.tail is None else subelement.tail.strip()
+                        elif subelement.tag == 'unmatched': # Used to denote errors in the source text
+                            BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation )
+                            BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation )
+                            # Process the attributes first
+                            unmmatchedMarker = None
+                            for attrib,value in subelement.items():
+                                if attrib=='marker':
+                                    unmmatchedMarker = value
+                                else:
+                                    logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
+                            self.addPriorityError( 2, c, v, _("Unmatched subelement for {} in {}").format( repr(unmmatchedMarker), sublocation) if unmmatchedMarker else _("Unmatched subelement in {}").format( sublocation) )
                         else:
                             logging.warning( _("Unprocessed {} subelement after {} {}:{} in {}").format( subelement.tag, self.BBB, c, v, sublocation ) )
                             self.addPriorityError( 1, c, v, _("Unprocessed {} subelement").format( subelement.tag ) )
@@ -167,11 +201,29 @@ class USXXMLBibleBook( BibleBook ):
                         noteText = element.tail.strip()
                         noteLine += noteText
                     self.appendToLastLine( noteLine )
+                elif element.tag == 'link': # Used to include extra resources
+                    BibleOrgSysGlobals.checkXMLNoText( element, location )
+                    BibleOrgSysGlobals.checkXMLNoTail( element, location )
+                    BibleOrgSysGlobals.checkXMLNoSubelements( element, location )
+                    # Process the attributes first
+                    linkStyle = linkDisplay = linkTarget = None
+                    for attrib,value in element.items():
+                        if attrib=='style':
+                            linkStyle = value
+                            assert( linkStyle in ('jmp',) )
+                        elif attrib=='display':
+                            linkDisplay = value # e.g., "click here"
+                        elif attrib=='target':
+                            linkTarget = value # e.g., some reference
+                        else:
+                            logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+                    self.addPriorityError( 3, c, v, _("Unprocessed {} link to {} in {}").format( repr(linkDisplay), repr(linkTarget), location) )
                 elif element.tag == 'unmatched': # Used to denote errors in the source text
                     BibleOrgSysGlobals.checkXMLNoText( element, location )
                     BibleOrgSysGlobals.checkXMLNoTail( element, location )
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, location )
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, location )
+                    self.addPriorityError( 2, c, v, _("Unmatched element in {}").format( location) )
                 else:
                     logging.warning( _("Unprocessed {} element after {} {}:{} in {}").format( element.tag, self.BBB, c, v, location ) )
                     self.addPriorityError( 1, c, v, _("Unprocessed {} element").format( element.tag ) )

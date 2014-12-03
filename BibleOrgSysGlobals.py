@@ -71,12 +71,12 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = "2014-11-27"
+LastModifiedDate = '2014-12-03'
 ShortProgName = "Globals"
 ProgName = "BibleOrgSys Globals"
-ProgVersion = "0.55"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
-ProgNameVersionDate = "{} {} {}".format( ProgNameVersion, _("last modified"), LastModifiedDate )
+ProgVersion = '0.55'
+ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
@@ -91,7 +91,7 @@ from optparse import OptionParser
 commandLineOptions, commandLineArguments = None, None
 
 strictCheckingFlag = debugFlag = False
-haltOnXMLWarning = True # Used for XML debugging
+haltOnXMLWarning = False # Used for XML debugging
 maxProcesses = 1
 verbosityLevel = None
 verbosityString = 'Normal'
