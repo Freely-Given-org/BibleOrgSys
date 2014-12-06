@@ -41,7 +41,7 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-03'
+LastModifiedDate = '2014-12-05'
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.91'
@@ -3875,7 +3875,7 @@ class InternalBibleBook:
         if isinstance( ref, tuple ): C, V = ref[1], ref[2]
         else: # assume it's a SimpleVerseKey or similar
             C,V = ref.getCV()
-        return self._CVIndex.getEntries( (C,V,) ) # Gives a KeyError if not found
+        return self._CVIndex.getEntriesWithContext( (C,V,) ) # Gives a KeyError if not found
     # end of InternalBibleBook.getContextVerseData
 # end of class InternalBibleBook
 

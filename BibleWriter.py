@@ -67,10 +67,10 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-03'
+LastModifiedDate = '2014-12-06'
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
-ProgVersion = '0.89'
+ProgVersion = '0.90'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -362,6 +362,91 @@ class BibleWriter( InternalBible ):
             print( "  BibleWriter.makeLists finished successfully." )
         return True
     # end of BibleWriter.makeLists
+
+
+    def toBOSBCV( self, outputFolder=None ):
+        """
+        Write the internal pseudoUSFM out directly with one file per verse.
+        """
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toBOSBCV..." )
+        if BibleOrgSysGlobals.debugFlag: assert( self.books )
+
+        if not self.doneSetupGeneric: self.__setupWriter()
+        if not outputFolder: outputFolder = "OutputFiles/BOS_BCV_Export/"
+        if os.access( outputFolder, os.F_OK ): # We need to delete it
+            shutil.rmtree( outputFolder, ignore_errors=True )
+        os.makedirs( outputFolder ) # Make the empty folder
+
+        # Write the data out with the introduction in one file, and then each verse in a separate file
+        BBBList = []
+        for j, (BBB,bookObject) in enumerate( self.books.items() ):
+            BBBList.append( BBB )
+            pseudoUSFMData = bookObject._processedLines
+
+            bookFolderPath = os.path.join( outputFolder, BBB + '/' )
+            os.mkdir( bookFolderPath )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing '{}' as BCV...").format( BBB ) )
+
+            introLines = verseLines = ""
+            CVList = []
+            for CVKey in bookObject._CVIndex:
+                C, V = CVKey
+                #print( BBB, C, V )
+                for entry in bookObject._CVIndex.getEntries( CVKey ):
+                    #print( entry )
+                    marker, originalMarker = entry.getMarker(), entry.getOriginalMarker()
+                    line1 = '\\'+marker+'<'+originalMarker if originalMarker and originalMarker!=marker else '\\'+marker
+                    line2 = entry.getOriginalText()
+                    lines = line1 + '\n' + line2 + '\n' if line2 else line1 + '\n'
+                    if C == '0': introLines += lines # collect all of the intro parts
+                    else: verseLines += lines
+                if C != '0':
+                    if introLines:
+                        with open( os.path.join( bookFolderPath, 'C0.txt' ), 'wt' ) as myFile:
+                            myFile.write( introLines )
+                        introLines = None # Gives an error now if we try to do more introduction bits
+                    else:
+                        with open( os.path.join( bookFolderPath, 'C'+C+'V'+V+'.txt' ), 'wt' ) as myFile:
+                            myFile.write( verseLines )
+                        verseLines = ""
+                        CVList.append( CVKey )
+            if introLines: # handle left-overs for books without chapters
+                with open( os.path.join( bookFolderPath, 'C0.txt' ), 'wt' ) as myFile:
+                    myFile.write( introLines )
+            assert( not verseLines )
+
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing CV book metadata...") )
+            metadataLines = 'v1.0\n'
+            if bookObject.workName: metadataLines += 'WorkName = {}\n'.format( bookObject.workName )
+            metadataLines += 'CVList = {}\n'.format( CVList )
+            with open( os.path.join( bookFolderPath, 'BookMetadata.txt' ), 'wt' ) as myFile:
+                myFile.write( metadataLines )
+
+        # Write the metadata
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing BCV metadata...") )
+        metadataLines = 'v1.0\n'
+        if self.projectName: metadataLines += 'ProjectName = {}\n'.format( self.projectName )
+        if self.name: metadataLines += 'Name = {}\n'.format( self.name )
+        if self.abbreviation: metadataLines += 'Abbreviation = {}\n'.format( self.abbreviation )
+        metadataLines += 'Books = {}\n'.format( BBBList )
+        with open( os.path.join( outputFolder, 'Metadata.txt' ), 'wt' ) as myFile:
+            myFile.write( metadataLines )
+
+
+        # Now create a zipped collection
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping BCV files..." )
+        zf = zipfile.ZipFile( os.path.join( outputFolder, 'AllFiles.zip' ), 'w', compression=zipfile.ZIP_DEFLATED )
+        for filename in os.listdir( outputFolder ):
+            if not filename.endswith( '.zip' ):
+                filepath = os.path.join( outputFolder, filename )
+                zf.write( filepath, filename ) # Save in the archive without the path
+        zf.close()
+
+        if BibleOrgSysGlobals.verbosityLevel > 0 and BibleOrgSysGlobals.maxProcesses > 1:
+            print( "  BibleWriter.toBOSBCV finished successfully." )
+        return True
+    # end of BibleWriter.toBOSBCV
+
 
 
     def toPseudoUSFM( self, outputFolder=None ):
@@ -9212,6 +9297,7 @@ class BibleWriter( InternalBible ):
         # Define our various output folders
         pickleOutputFolder = os.path.join( givenOutputFolderName, "BOS_Bible_Object_Pickle/" )
         listOutputFolder = os.path.join( givenOutputFolderName, "BOS_Lists/" )
+        BCVOutputFolder = os.path.join( givenOutputFolderName, "BOS_BCV_Export/" )
         pseudoUSFMOutputFolder = os.path.join( givenOutputFolderName, "BOS_PseudoUSFM_Export/" )
         USFMOutputFolder = os.path.join( givenOutputFolderName, "BOS_USFM_" + ("Reexport/" if self.objectTypeString=='USFM' else "Export/" ) )
         ESFMOutputFolder = os.path.join( givenOutputFolderName, "BOS_ESFM_" + ("Reexport/" if self.objectTypeString=='ESFM' else "Export/" ) )
@@ -9256,9 +9342,11 @@ class BibleWriter( InternalBible ):
                 pickleResult = False
                 print( "BibleWriter.doAllExports: pickle( {} ) failed.".format( pickleOutputFolder ) )
         if not self.doneSetupGeneric: self.__setupWriter()
+        if 'discoveryResults' not in dir(self): self.discover()
 
         if BibleOrgSysGlobals.debugFlag: # no try/except calls so it halts on errors rather than continuing
             listOutputResult = self.makeLists( listOutputFolder )
+            BCVExportResult = self.toBOSBCV( BCVOutputFolder )
             pseudoUSFMExportResult = self.toPseudoUSFM( pseudoUSFMOutputFolder )
             USFMExportResult = self.toUSFM( USFMOutputFolder )
             ESFMExportResult = self.toESFM( ESFMOutputFolder )
@@ -9289,14 +9377,16 @@ class BibleWriter( InternalBible ):
             self.__outputProcesses = [self.toPhotoBible if wantPhotoBible else None,
                                     self.toODF if wantODFs else None,
                                     self.toTeX if wantPDFs else None,
-                                    self.makeLists, self.toPseudoUSFM, self.toUSFM, self.toESFM, self.toText,
+                                    self.makeLists, self.toBOSBCV, self.toPseudoUSFM,
+                                    self.toUSFM, self.toESFM, self.toText,
                                     self.toMarkdown, self.toDoor43, self.toHTML5, self.toCustomBible,
                                     self.toUSXXML, self.toUSFXXML, self.toOSISXML,
                                     self.toZefaniaXML, self.toHaggaiXML, self.toOpenSongXML,
                                     self.toSwordModule, self.totheWord, self.toMySword, self.toESword,
                                     self.toSwordSearcher, self.toDrupalBible, ]
             self.__outputFolders = [photoOutputFolder, ODFOutputFolder, TeXOutputFolder,
-                                    listOutputFolder, pseudoUSFMOutputFolder, USFMOutputFolder, ESFMOutputFolder,
+                                    listOutputFolder, BCVOutputFolder, pseudoUSFMOutputFolder,
+                                    USFMOutputFolder, ESFMOutputFolder,
                                     textOutputFolder, markdownOutputFolder, D43OutputFolder,
                                     htmlOutputFolder, CBOutputFolder,
                                     USXOutputFolder, USFXOutputFolder, OSISOutputFolder,
@@ -9313,7 +9403,8 @@ class BibleWriter( InternalBible ):
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( "BibleWriter.doAllExports: Got {} results".format( len(results) ) )
                 assert( len(results) == len(self.__outputFolders) )
                 PhotoBibleExportResult, ODFExportResult, TeXExportResult, \
-                    listOutputResult, pseudoUSFMExportResult, USFMExportResult, ESFMExportResult, textExportResult, \
+                    listOutputResult, BCVExportResult, pseudoUSFMExportResult, \
+                    USFMExportResult, ESFMExportResult, textExportResult, \
                     markdownExportResult, D43ExportResult, htmlExportResult, CBExportResult, \
                     USXExportResult, USFXExportResult, OSISExportResult, ZefExportResult, HagExportResult, OSExportResult, \
                     swExportResult, TWExportResult, MySwExportResult, ESwExportResult, SwSExportResult, DrExportResult, \
@@ -9325,6 +9416,11 @@ class BibleWriter( InternalBible ):
                 listOutputResult = False
                 print("BibleWriter.doAllExports.makeLists Unexpected error:", sys.exc_info()[0], err)
                 logging.error( "BibleWriter.doAllExports.makeLists: Oops, failed!" )
+            try: BCVExportResult = self.toBOSBCV( BCVOutputFolder )
+            except Exception as err:
+                BCVExportResult = False
+                print("BibleWriter.doAllExports.toBOSBCV Unexpected error:", sys.exc_info()[0], err)
+                logging.error( "BibleWriter.doAllExports.toBOSBCV: Oops, failed!" )
             try: pseudoUSFMExportResult = self.toPseudoUSFM( pseudoUSFMOutputFolder )
             except Exception as err:
                 pseudoUSFMExportResult = False
@@ -9445,7 +9541,8 @@ class BibleWriter( InternalBible ):
                     logging.error( "BibleWriter.doAllExports.toTeX: Oops, failed!" )
 
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            if pickleResult and listOutputResult and pseudoUSFMExportResult and USFMExportResult and ESFMExportResult \
+            if pickleResult and listOutputResult and BCVExportResult \
+            and pseudoUSFMExportResult and USFMExportResult and ESFMExportResult \
             and textExportResult and markdownExportResult and D43ExportResult and htmlExportResult and CBExportResult \
             and USXExportResult and USFXExportResult and OSISExportResult \
             and ZefExportResult and HagExportResult and OSExportResult \
@@ -9453,17 +9550,18 @@ class BibleWriter( InternalBible ):
             and SwSExportResult and DrExportResult \
             and (PhotoBibleExportResult or not wantPhotoBible) and (ODFExportResult or not wantODFs) and (TeXExportResult or not wantPDFs):
                 print( "BibleWriter.doAllExports finished them all successfully!" )
-            else: print( "BibleWriter.doAllExports finished:  Pck={}  Lst={}  PsUSFM={} USFM={} ESFM={} Tx={}  md={} D43={}  "
+            else: print( "BibleWriter.doAllExports finished:  Pck={}  Lst={}  BCV={} PsUSFM={} USFM={} ESFM={} Tx={}  md={} D43={}  "
                     "HTML={} CB={}  USX={} USFX={} OSIS={}  Zef={} Hag={} OS={}  Sw={}  "
                     "TW={} MySw={} eSw={}  SwS={} Dr={}  PB={} ODF={} TeX={}" \
-                    .format( pickleResult, listOutputResult, pseudoUSFMExportResult, USFMExportResult, ESFMExportResult,
+                    .format( pickleResult, listOutputResult, BCVExportResult,
+                            pseudoUSFMExportResult, USFMExportResult, ESFMExportResult,
                             textExportResult, markdownExportResult, D43ExportResult, htmlExportResult, CBExportResult,
                             USXExportResult, USFXExportResult, OSISExportResult,
                             ZefExportResult, HagExportResult, OSExportResult,
                             swExportResult, TWExportResult, MySwExportResult, ESwExportResult,
                             SwSExportResult, DrExportResult,
                             PhotoBibleExportResult, ODFExportResult, TeXExportResult ) )
-        return { 'Pickle':pickleResult, 'listOutput':listOutputResult,
+        return { 'Pickle':pickleResult, 'listOutput':listOutputResult, 'BCVOutput':BCVExportResult,
                 'pseudoUSFMExport':pseudoUSFMExportResult, 'USFMExport':USFMExportResult, 'ESFMExport':ESFMExportResult,
                 'textExport':textExportResult, 'markdownExport':markdownExportResult, 'D43Export':D43ExportResult,
                 'htmlExport':htmlExportResult, 'CustomBibleExport':CBExportResult,
@@ -9494,15 +9592,15 @@ def demo():
         from USFMBible import USFMBible
         from USFMFilenames import USFMFilenames
         testData = ( # name, abbreviation, folder for USFM files
-                #("USFM-AllMarkers", "USFM-All", "Tests/DataFilesForTests/USFMAllMarkersProject/",),
+                ("USFM-AllMarkers", "USFM-All", "Tests/DataFilesForTests/USFMAllMarkersProject/",),
                 #("CustomTest", "Custom", ".../",),
-                #("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
-                #("USFMTest2", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
-                #("ESFMTest1", "ESFM1", "Tests/DataFilesForTests/ESFMTest1/",),
-                #("ESFMTest2", "ESFM2", "Tests/DataFilesForTests/ESFMTest2/",),
-                #("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
-                #("OEB", "OEB", "Tests/DataFilesForTests/USFM-OEB/",),
-                ("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
+                ("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
+                ("USFMTest2", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
+                ("ESFMTest1", "ESFM1", "Tests/DataFilesForTests/ESFMTest1/",),
+                ("ESFMTest2", "ESFM2", "Tests/DataFilesForTests/ESFMTest2/",),
+                ("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
+                ("OEB", "OEB", "Tests/DataFilesForTests/USFM-OEB/",),
+                #("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
                 #("MS-BT", "MBTBT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
                 #("MS-Notes", "MBTBC", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/",),
                 #("MS-ABT", "MBTABT", "../../../../../Data/Work/Matigsalug/Bible/MBTABT/",),
