@@ -38,10 +38,10 @@ and then calls
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-05'
+LastModifiedDate = '2014-12-06'
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
-ProgVersion = '0.52'
+ProgVersion = '0.53'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -841,7 +841,7 @@ class InternalBibleIndex:
                     if 'p~' not in foundMarkers and 'v' not in foundMarkers:
                         logging.critical( "InternalBibleIndex.checkIndex: Probable (early in chapter) p encoding error in {} {} {}:{} {}".format( self.name, self.BBB, C, V, entries ) )
                 if 'q1' in foundMarkers or 'q2' in foundMarkers:
-                    if 'v' not in foundMarkers or 'p~' not in foundMarkers:
+                    if 'v' not in foundMarkers and 'p~' not in foundMarkers:
                         logging.critical( "InternalBibleIndex.checkIndex: Probable q1/q2 encoding error in {} {} {}:{} {}".format( self.name, self.BBB, C, V, entries ) )
 
                 previousMarker = nextMarker = None # But these skip over rem (remark markers)
@@ -870,7 +870,7 @@ class InternalBibleIndex:
                             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
 
                     if anyText or anyExtras: # Mustn't be a blank (unfinished) verse
-                        if marker=='p' and nextMarker not in ('v','p~','c#','¬p'):
+                        if marker=='p' and nextMarker not in ('v','p~','vp~','c#','¬p'):
                             if lastKey: print( "InternalBibleIndex.checkIndex: lastKey1", self.BBB, lastKey, self.getEntries( lastKey ) )
                             logging.critical( "InternalBibleIndex.checkIndex: Probable p encoding error in {} {} {}:{} {}".format( self.name, self.BBB, C, V, entries ) )
                             if nextKey: print( "  InternalBibleIndex.checkIndex: nextKey1", self.BBB, nextKey, self.getEntries( nextKey ) )

@@ -41,7 +41,7 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-05'
+LastModifiedDate = '2014-12-06'
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.91'
@@ -1431,14 +1431,14 @@ class InternalBibleBook:
                 if BibleOrgSysGlobals.debugFlag: assert( newMarker not in openMarkers )
                 newLines.append( InternalBibleEntry(newMarker, None, None, '', None, None) )
                 openMarkers.append( newMarker )
-            # end of openMarker
+            # end of addNestingMarkers.openMarker
 
             def closeLastOpenMarker( withText='' ):
                 """ Close the last marker (with the "not" sign) and pop it off our list """
                 #print( "InternalBibleBook.processLines.closeLastOpenMarker( {} ) for {} from {}".format( repr(withText), openMarkers[-1], openMarkers ) )
                 #print( "  add", '¬'+openMarkers[-1], withText, "in closeLastOpenMarker" )
                 newLines.append( InternalBibleEntry('¬'+openMarkers.pop(), None, None, withText, None, None) )
-            # end of closeLastOpenMarker
+            # end of addNestingMarkers.closeLastOpenMarker
 
             def closeOpenMarker( eMarker, withText='' ):
                 """ Close the given marker (with the "not" sign) and delete it out of our list """
@@ -1446,7 +1446,7 @@ class InternalBibleBook:
                 ie = openMarkers.index( eMarker ) # Must be there
                 #print( "  add", '¬'+openMarkers[ie], withText, "in closeOpenMarker" )
                 newLines.append( InternalBibleEntry('¬'+openMarkers.pop( ie ), None, None, withText, None, None) )
-            # end of closeOpenMarker
+            # end of addNestingMarkers.closeOpenMarker
 
             ourHeadingMarkers = ( 's','s1','s2','s3','s4', 'is','is1','is2','is3','is4', )
             ourIntroOutlineMarkers = ( 'io','io1','io2','io3','io4', )
@@ -1469,7 +1469,7 @@ class InternalBibleBook:
                             return False
                     #print( "  vE = True2" )
                     return True
-                # end of verseEnded
+                # end of addNestingMarkers.verseEnded
 
                 def findNextRelevantMarker( currentIndex ):
                     for k in range( currentIndex+1, len(self._processedLines) ):
@@ -1480,7 +1480,7 @@ class InternalBibleBook:
                             #print( "  nRM =", nextRelevantMarker )
                             return nextRelevantMarker # Found one
                     return None
-                # end of findNextRelevantMarker
+                # end of addNestingMarkers.findNextRelevantMarker
 
                 def findNextRelevantListMarker( currentIndex ):
                     for k in range( currentIndex+1, len(self._processedLines) ):
@@ -1489,7 +1489,7 @@ class InternalBibleBook:
                             #print( "  nRLM1 =", nextRelevantListMarker )
                             return nextRelevantListMarker # Found one
                     return None
-                # end of findNextRelevantListMarker
+                # end of addNestingMarkers.findNextRelevantListMarker
 
                 marker, text = dataLine.getMarker(), dataLine.getCleanText()
                 nextDataLine = self._processedLines[j+1] if j<lastJ else None
@@ -3429,7 +3429,9 @@ class InternalBibleBook:
 
 
     def doCheckIntroduction( self ):
-        """Runs a number of checks on introductory parts."""
+        """
+        Runs a number of checks on introductory parts.
+        """
         if not self._processedFlag:
             print( "InternalBibleBook: processing lines from 'doCheckIntroduction'" )
             self.processLines()
@@ -3483,7 +3485,7 @@ class InternalBibleBook:
                 if not cleanText:
                     introductionErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing introduction text for marker {}").format( marker ) )
                     self.addPriorityError( 36, C, V, _("Missing introduction text") )
-                elif cleanText[-1] not in '.።' and not cleanText.endswith('.)') and not cleanText.endswith('.]') \
+                elif cleanText[-1] not in '.።:' and not cleanText.endswith('.)') and not cleanText.endswith('.]') \
                 and not cleanText.endswith('."') and not cleanText.endswith(".'") \
                 and not cleanText.endswith('.”') and not cleanText.endswith('.’') \
                 and not cleanText.endswith('.»') and not cleanText.endswith('.›'): # \
