@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # USFMFilenamesTests.py
-#   Last modified: 2013-06-24 by RJH (also update ProgVersion below)
+#   Last modified: 2014-12-15 by RJH (also update ProgVersion below)
 #
 # Module testing USFMFilenames.py
 #
-# Copyright (C) 2011-2013 Robert Hunt
+# Copyright (C) 2011-2014 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module testing USFMFilenames.py.
 """
 
 ProgName = "USFM Filenames tests"
-ProgVersion = "0.55"
+ProgVersion = '0.56'
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -36,7 +36,7 @@ import sys, os, unittest
 
 sourceFolder = "."
 sys.path.append( sourceFolder )
-import Globals, USFMFilenames
+import BibleOrgSysGlobals, USFMFilenames
 
 
 class USFMFilenamesTests1( unittest.TestCase ):
@@ -395,10 +395,10 @@ class USFMFilenamesTests2( unittest.TestCase ):
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
-    if Globals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
 
     # Make sure you set the testFolder in setUp above
     unittest.main() # Automatically runs all of the above tests

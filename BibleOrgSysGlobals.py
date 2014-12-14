@@ -71,10 +71,10 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-03'
+LastModifiedDate = '2014-12-14' # by RJH
 ShortProgName = "Globals"
 ProgName = "BibleOrgSys Globals"
-ProgVersion = '0.55'
+ProgVersion = '0.56'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -776,7 +776,7 @@ def pickleObject( theObject, filename, folderName=None, disassembleObjectFlag=Fa
 
     disassembleObjectFlag is used to find segfaults by pickling the object piece by piece.
     """
-    assert( theObject )
+    assert( theObject is not None )
     assert( filename )
     if folderName is None: folderName = DEFAULT_CACHE_FOLDER
     filepath = filename # default

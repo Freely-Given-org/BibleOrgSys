@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodes.py
-#   Last modified: 2014-07-15 by RJH (also update ProgVersion below)
+#   Last modified: 2014-12-14 by RJH (also update ProgVersion below)
 #
 # Module handling BibleBooksCodes functions
 #
@@ -309,7 +309,7 @@ class BibleBooksCodes:
         maxChapters = -1
         for numChapters in self.getExpectedChaptersList( BBB ):
             try: intNC = int( numChapters )
-            except: intNC = -1
+            except ValueError: intNC = -1
             if intNC > maxChapters: maxChapters = intNC
         return maxChapters
     # end of getMaxChapters

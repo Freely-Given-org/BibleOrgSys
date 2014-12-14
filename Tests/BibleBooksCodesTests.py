@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodesTests.py
-#   Last modified: 2014-01-10 by RJH (also update ProgVersion below)
+#   Last modified: 2014-12-15 by RJH (also update ProgVersion below)
 #
 # Module testing BibleBooksCodes.py
 #
@@ -28,7 +28,7 @@ Module testing BibleBooksCodesConverter.py and BibleBooksCodes.py.
 """
 
 ProgName = "Bible Books Codes tests"
-ProgVersion = "0.70"
+ProgVersion = '0.71'
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -36,7 +36,7 @@ import sys, unittest
 
 sourceFolder = "."
 sys.path.append( sourceFolder )
-import Globals, BibleBooksCodesConverter, BibleBooksCodes
+import BibleOrgSysGlobals, BibleBooksCodesConverter, BibleBooksCodes
 
 
 class BibleBooksCodesConverterTests( unittest.TestCase ):
@@ -654,10 +654,10 @@ class BibleBooksCodesTests( unittest.TestCase ):
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
-    if Globals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
 
     unittest.main() # Automatically runs all of the above tests
 # end of BibleBooksCodesTests.py

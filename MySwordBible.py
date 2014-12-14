@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # MySwordBible.py
-#   Last modified: 2014-11-04 by RJH (also update ProgVersion below)
+#   Last modified: 2014-12-15 by RJH (also update ProgVersion below)
 #
 # Module handling "MySword" Bible module files
 #
@@ -51,7 +51,7 @@ e.g.,
 """
 
 ProgName = "MySword Bible format handler"
-ProgVersion = "0.13"
+ProgVersion = "0.14"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -262,7 +262,7 @@ class MySwordBible( Bible ):
             try:
                 row = cursor.fetchone()
                 line = row[0]
-            except: # This reference is missing
+            except KeyError: # This reference is missing
                 #print( "something wrong at", BBB, C, V )
                 #if BibleOrgSysGlobals.debugFlag: halt
                 #print( row )

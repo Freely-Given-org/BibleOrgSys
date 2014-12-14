@@ -41,18 +41,19 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-06'
+LastModifiedDate = '2014-12-15' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.91'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
+BCV_VERSION = '1.0'
+
 debuggingThisModule = False
 
 
 import os, logging
-from gettext import gettext as _
 from collections import OrderedDict
 import unicodedata
 
@@ -69,6 +70,9 @@ INTERNAL_SFMS_TO_REMOVE = BibleOrgSysGlobals.USFMMarkers.getCharacterMarkersList
 INTERNAL_SFMS_TO_REMOVE = sorted( INTERNAL_SFMS_TO_REMOVE, key=len, reverse=True ) # List longest first
 
 MAX_NONCRITICAL_ERRORS_PER_BOOK = 5
+
+nfvnCount = owfvnCount = rtsCount = sahtCount = 0
+
 
 
 def t( messageString ):
@@ -264,113 +268,234 @@ class InternalBibleBook:
     # end of InternalBibleBook.appendToLastLine
 
 
-    def processLines( self ):
-        """ Move notes out of the text into a separate area.
-            Also, splits lines if a paragraph marker appears within a line.
-
-            Uses self._rawLines and fills self._processedLines.
+    def processLineFix( self, C, V, originalMarker, text, fixErrors ):
         """
-        #if self._processedFlag: return # Can only do it once
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Processing {} ({} {}) {} lines...").format( self.objectNameString, self.objectTypeString, self.workName, self.BBB ) )
-        if BibleOrgSysGlobals.debugFlag: assert( not self._processedFlag ) # Can only do it once
-        if BibleOrgSysGlobals.debugFlag: assert( self._rawLines ) # or else the book was totally blank
-        #print( self._rawLines[:20] ); halt # for debugging
+        Does character fixes on a specific line and moves the following out of the main text:
+            footnotes, cross-references, and figures, Strongs numbers.
+        Returns:
+            adjText: Text without notes and leading/trailing spaces
+            cleanText: adjText without character formatting as well
+            extras: a special list containing
+                extraType: 'fn' or 'xr' or 'fig'
+                extraIndex: the index into adjText above
+                extraText: the text of the note
+                cleanExtraText: extraText without character formatting as well
 
+        NOTE: You must NOT strip the text any more AFTER calling this (or the note insert indices will be incorrect!
+        """
+        global rtsCount
+        #print( "InternalBibleBook.processLineFix( {}, '{}' ) for {} ({})".format( originalMarker, text, self.BBB, self.objectTypeString ) )
+        if BibleOrgSysGlobals.debugFlag:
+            assert( originalMarker and isinstance( originalMarker, str ) )
+            assert( isinstance( text, str ) )
+        adjText = text
+        cleanText = text.replace( ' ', ' ' ) # Replace non-break spaces for this
+        if self.objectTypeString == 'ESFM': cleanText = cleanText.replace( '_', ' ' ) # Replace underlines/underscores for this
 
-        def processLineFix( originalMarker, text ):
-            """
-            Does character fixes on a specific line and moves the following out of the main text:
-                footnotes, cross-references, and figures, Strongs numbers.
-            Returns:
-                adjText: Text without notes and leading/trailing spaces
-                cleanText: adjText without character formatting as well
-                extras: a special list containing
-                    extraType: 'fn' or 'xr' or 'fig'
-                    extraIndex: the index into adjText above
-                    extraText: the text of the note
-                    cleanExtraText: extraText without character formatting as well
+        # Remove trailing spaces
+        if adjText and adjText[-1].isspace():
+            #print( 10, self.BBB, C, V, _("Trailing space at end of line") )
+            fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Removed trailing space in {}: {}").format( originalMarker, text ) )
+            if rtsCount != -1:
+                rtsCount += 1
+                if rtsCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
+                    logging.warning( _("processLineFix: Removed trailing space after {} {}:{} in \\{}: '{}'").format( self.BBB, C, V, originalMarker, text ) )
+                else: # we've reached our limit
+                    logging.error( _('processLineFix: Additional "Removed trailing space" messages suppressed...') )
+                    rtsCount = -1 # So we don't do this again (for this book)
+            self.addPriorityError( 10, C, V, _("Trailing space at end of line") )
+            adjText = adjText.rstrip()
+            #print( "QQQ1: rstrip ok" )
+            #print( originalMarker, "'"+text+"'", "'"+adjText+"'" )
 
-            NOTE: You must NOT strip the text any more AFTER calling this (or the note insert indices will be incorrect!
-            """
-            nonlocal rtsCount
-            #print( "InternalBibleBook.processLineFix( {}, '{}' ) for {} ({})".format( originalMarker, text, self.BBB, self.objectTypeString ) )
-            if BibleOrgSysGlobals.debugFlag:
-                assert( originalMarker and isinstance( originalMarker, str ) )
-                assert( isinstance( text, str ) )
-            adjText = text
-            cleanText = text.replace( ' ', ' ' ) # Replace non-break spaces for this
-            if self.objectTypeString == 'ESFM': cleanText = cleanText.replace( '_', ' ' ) # Replace underlines/underscores for this
-
-            # Remove trailing spaces
-            if adjText and adjText[-1].isspace():
-                #print( 10, self.BBB, C, V, _("Trailing space at end of line") )
-                fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Removed trailing space in {}: {}").format( originalMarker, text ) )
-                if rtsCount != -1:
-                    rtsCount += 1
-                    if rtsCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
-                        logging.warning( _("processLineFix: Removed trailing space after {} {}:{} in \\{}: '{}'").format( self.BBB, C, V, originalMarker, text ) )
-                    else: # we've reached our limit
-                        logging.error( _('processLineFix: Additional "Removed trailing space" messages suppressed...') )
-                        rtsCount = -1 # So we don't do this again (for this book)
-                self.addPriorityError( 10, C, V, _("Trailing space at end of line") )
-                adjText = adjText.rstrip()
-                #print( "QQQ1: rstrip ok" )
-                #print( originalMarker, "'"+text+"'", "'"+adjText+"'" )
-
-            if self.objectTypeString in ('USFM','USX',):
-                # Fix up quote marks
-                if '<' in adjText or '>' in adjText:
-                    if not self.givenAngleBracketWarning: # Just give the warning once (per book)
-                        if self.replaceAngleBracketsFlag:
-                            fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Replaced angle bracket(s) in {}: {}").format( originalMarker, text ) )
-                            logging.info( _("processLineFix: Replaced angle bracket(s) after {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, text ) )
-                            self.addPriorityError( 3, '', '', _("Book contains angle brackets (which we attempted to replace)") )
-                        else:
-                            fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found (first) angle bracket in {}: {}").format( originalMarker, text ) )
-                            logging.info( _("processLineFix: Found (first) angle bracket after {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, text ) )
-                            self.addPriorityError( 3, '', '', _("Book contains angle bracket(s)") )
-                        self.givenAngleBracketWarning = True
+        if self.objectTypeString in ('USFM','USX',):
+            # Fix up quote marks
+            if '<' in adjText or '>' in adjText:
+                if not self.givenAngleBracketWarning: # Just give the warning once (per book)
                     if self.replaceAngleBracketsFlag:
-                        adjText = adjText.replace('<<','“').replace('>>','”').replace('<','‘').replace('>','’') # Replace angle brackets with the proper opening and close quote marks
-                if '"' in adjText:
-                    if not self.givenDoubleQuoteWarning: # Just give the warning once (per book)
-                        if self.replaceStraightDoubleQuotesFlag:
-                            fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Replaced straight quote sign(s) (\") in \\{}: {}").format( originalMarker, adjText ) )
-                            logging.info( _("processLineFix: Replaced straight quote sign(s) (\") after {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
-                            self.addPriorityError( 8, '', '', _("Book contains straight quote signs (which we attempted to replace)") )
-                        else: # we're not attempting to replace them
-                            fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found (first) straight quote sign (\") in \\{}: {}").format( originalMarker, adjText ) )
-                            logging.info( _("processLineFix: Found (first) straight quote sign (\") after {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
-                            self.addPriorityError( 58, '', '', _("Book contains straight quote sign(s)") )
-                        self.givenDoubleQuoteWarning = True
+                        fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Replaced angle bracket(s) in {}: {}").format( originalMarker, text ) )
+                        logging.info( _("processLineFix: Replaced angle bracket(s) after {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, text ) )
+                        self.addPriorityError( 3, '', '', _("Book contains angle brackets (which we attempted to replace)") )
+                    else:
+                        fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found (first) angle bracket in {}: {}").format( originalMarker, text ) )
+                        logging.info( _("processLineFix: Found (first) angle bracket after {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, text ) )
+                        self.addPriorityError( 3, '', '', _("Book contains angle bracket(s)") )
+                    self.givenAngleBracketWarning = True
+                if self.replaceAngleBracketsFlag:
+                    adjText = adjText.replace('<<','“').replace('>>','”').replace('<','‘').replace('>','’') # Replace angle brackets with the proper opening and close quote marks
+            if '"' in adjText:
+                if not self.givenDoubleQuoteWarning: # Just give the warning once (per book)
                     if self.replaceStraightDoubleQuotesFlag:
-                        if adjText[0]=='"': adjText = adjText.replace('"','“',1) # Replace initial double-quote mark with a proper open quote mark
-                        adjText = adjText.replace(' "',' “').replace(';"',';“').replace('("','(“').replace('["','[“') # Try to replace double-quote marks with the proper opening and closing quote marks
-                        adjText = adjText.replace('."','.”').replace(',"',',”').replace('?"','?”').replace('!"','!”').replace(')"',')”').replace(']"',']”').replace('*"','*”')
-                        adjText = adjText.replace('";','”;').replace('"(','”(').replace('"[','”[') # Including the questionable ones
-                        adjText = adjText.replace('" ','” ').replace('",','”,').replace('".','”.').replace('"?','”?').replace('"!','”!') # Even the bad ones!
-                        if '"' in adjText:
-                            logging.warning( "processLineFix: {} {}:{} still has straight quotes in {}:'{}'".format( originalMarker, adjText ) )
+                        fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Replaced straight quote sign(s) (\") in \\{}: {}").format( originalMarker, adjText ) )
+                        logging.info( _("processLineFix: Replaced straight quote sign(s) (\") after {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
+                        self.addPriorityError( 8, '', '', _("Book contains straight quote signs (which we attempted to replace)") )
+                    else: # we're not attempting to replace them
+                        fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found (first) straight quote sign (\") in \\{}: {}").format( originalMarker, adjText ) )
+                        logging.info( _("processLineFix: Found (first) straight quote sign (\") after {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
+                        self.addPriorityError( 58, '', '', _("Book contains straight quote sign(s)") )
+                    self.givenDoubleQuoteWarning = True
+                if self.replaceStraightDoubleQuotesFlag:
+                    if adjText[0]=='"': adjText = adjText.replace('"','“',1) # Replace initial double-quote mark with a proper open quote mark
+                    adjText = adjText.replace(' "',' “').replace(';"',';“').replace('("','(“').replace('["','[“') # Try to replace double-quote marks with the proper opening and closing quote marks
+                    adjText = adjText.replace('."','.”').replace(',"',',”').replace('?"','?”').replace('!"','!”').replace(')"',')”').replace(']"',']”').replace('*"','*”')
+                    adjText = adjText.replace('";','”;').replace('"(','”(').replace('"[','”[') # Including the questionable ones
+                    adjText = adjText.replace('" ','” ').replace('",','”,').replace('".','”.').replace('"?','”?').replace('"!','”!') # Even the bad ones!
+                    if '"' in adjText:
+                        logging.warning( "processLineFix: {} {}:{} still has straight quotes in {}:'{}'".format( originalMarker, adjText ) )
 
-                # Do XML/HTML common character replacements
-                adjText = adjText.replace( '&', '&amp;' )
-                #adjText = adjText.replace( "'", '&#39;' ) # XML does contain &apos; for optional use, but not recognised in all versions of HTML
-                if '<' in adjText or '>' in adjText:
-                    logging.error( "processLineFix: {} {}:{} still has angle-brackets in {}:'{}'".format( self.BBB, C, V, originalMarker, adjText ) )
-                    self.addPriorityError( 12, C, V, _("Contains angle-bracket(s)") )
-                    adjText = adjText.replace( '<', '&lt;' ).replace( '>', '&gt;' )
-                if '"' in adjText:
-                    logging.warning( "processLineFix: {} {}:{} straight-quotes in {}:'{}'".format( self.BBB, C, V, originalMarker, adjText ) )
-                    self.addPriorityError( 11, C, V, _("Contains straight-quote(s)") )
-                    adjText = adjText.replace( '"', '&quot;' )
+            # Do XML/HTML common character replacements
+            adjText = adjText.replace( '&', '&amp;' )
+            #adjText = adjText.replace( "'", '&#39;' ) # XML does contain &apos; for optional use, but not recognised in all versions of HTML
+            if '<' in adjText or '>' in adjText:
+                logging.error( "processLineFix: {} {}:{} still has angle-brackets in {}:'{}'".format( self.BBB, C, V, originalMarker, adjText ) )
+                self.addPriorityError( 12, C, V, _("Contains angle-bracket(s)") )
+                adjText = adjText.replace( '<', '&lt;' ).replace( '>', '&gt;' )
+            if '"' in adjText:
+                logging.warning( "processLineFix: {} {}:{} straight-quotes in {}:'{}'".format( self.BBB, C, V, originalMarker, adjText ) )
+                self.addPriorityError( 11, C, V, _("Contains straight-quote(s)") )
+                adjText = adjText.replace( '"', '&quot;' )
 
 
-            # Move all footnotes and cross-references, etc. from the main text out to extras
-            extras = InternalBibleExtraList() # Prepare for extras
+        # Move all footnotes and cross-references, etc. from the main text out to extras
+        extras = InternalBibleExtraList() # Prepare for extras
 
-            #print( "QQQ MOVE OUT NOTES" )
-            # This particular little piece of code can also mostly handle it if the markers are UPPER CASE
-            dummyValue = 99999
+        #print( "QQQ MOVE OUT NOTES" )
+        # This particular little piece of code can also mostly handle it if the markers are UPPER CASE
+        dummyValue = 99999
+        ixFN = adjText.find( '\\f ' )
+        if ixFN == -1: ixFN = adjText.find( '\\F ' )
+        if ixFN == -1: ixFN = dummyValue
+        ixEN = adjText.find( '\\fe ' )
+        if ixEN == -1: ixEN = adjText.find( '\\FE ' )
+        if ixEN == -1: ixEN = dummyValue
+        ixXR = adjText.find( '\\x ' )
+        if ixXR == -1: ixXR = adjText.find( '\\X ' )
+        if ixXR == -1: ixXR = dummyValue
+        ixFIG = adjText.find( '\\fig ' )
+        if ixFIG == -1: ixFIG = adjText.find( '\\FIG ' )
+        if ixFIG == -1: ixFIG = dummyValue
+        ixSTR = adjText.find( '\\str ' )
+        if ixSTR == -1: ixSTR = adjText.find( '\\STR ' )
+        if ixSTR == -1: ixSTR = dummyValue
+        ixSEM = adjText.find( '\\sem ' )
+        if ixSEM == -1: ixSEM = adjText.find( '\\SEM ' )
+        if ixSEM == -1: ixSEM = dummyValue
+        ixVP = adjText.find( '\\vp ' )
+        if ixVP == -1: ixVP = adjText.find( '\\VP ' )
+        if ixVP == -1: ixVP = dummyValue
+        #print( 'ixFN =',ixFN, ixEN, 'ixXR = ',ixXR, ixFIG, ixSTR )
+        ix1 = min( ixFN, ixEN, ixXR, ixFIG, ixSTR, ixSEM, ixVP )
+        while ix1 < dummyValue: # We have one or the other
+            if ix1 == ixFN:
+                ix2 = adjText.find( '\\f*' )
+                if ix2 == -1: ix2 = adjText.find( '\\F*' )
+                #print( 'A', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
+                noteSFM, lenSFM, thisOne, this1 = 'f', 1, 'footnote', 'fn'
+                if ixFN and adjText[ixFN-1]==' ':
+                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found footnote preceded by a space in \\{}: {}").format( originalMarker, adjText ) )
+                    logging.warning( _("processLineFix: Found footnote preceded by a space after {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
+                    self.addPriorityError( 52, C, V, _("Footnote is preceded by a space") )
+            elif ix1 == ixEN:
+                ix2 = adjText.find( '\\fe*' )
+                if ix2 == -1: ix2 = adjText.find( '\\FE*' )
+                #print( 'A', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
+                noteSFM, lenSFM, thisOne, this1 = 'fe', 2, 'endnote', 'en'
+                if ixEN and adjText[ixEN-1]==' ':
+                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found endnote preceded by a space in \\{}: {}").format( originalMarker, adjText ) )
+                    logging.warning( _("processLineFix: Found endnote preceded by a space after {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
+                    self.addPriorityError( 52, C, V, _("Endnote is preceded by a space") )
+            elif ix1 == ixXR:
+                ix2 = adjText.find( '\\x*' )
+                if ix2 == -1: ix2 = adjText.find( '\\X*' )
+                #print( 'B', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
+                noteSFM, lenSFM, thisOne, this1 = 'x', 1, 'cross-reference', 'xr'
+            elif ix1 == ixFIG:
+                ix2 = adjText.find( '\\fig*' )
+                if ix2 == -1: ix2 = adjText.find( '\\FIG*' )
+                #print( 'C', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
+                noteSFM, lenSFM, thisOne, this1 = 'fig', 3, 'figure', 'fig'
+            elif ix1 == ixSTR:
+                ix2 = adjText.find( '\\str*' )
+                if ix2 == -1: ix2 = adjText.find( '\\STR*' )
+                #print( 'C', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
+                noteSFM, lenSFM, thisOne, this1 = 'str', 3, 'Strongs-number', 'str'
+            elif ix1 == ixSEM:
+                ix2 = adjText.find( '\\sem*' )
+                if ix2 == -1: ix2 = adjText.find( '\\SEM*' )
+                #print( 'C', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
+                noteSFM, lenSFM, thisOne, this1 = 'sem', 3, 'Semantic info', 'sem'
+            elif ix1 == ixVP:
+                if originalMarker != 'v~': # We only expect vp fields in v (now converted to v~) lines
+                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found unexpected 'vp' field in \\{} line: {}").format( originalMarker, adjText ) )
+                    logging.error( _("processLineFix: Found unexpected 'vp' fieldafter {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
+                    self.addPriorityError( 95, C, V, _("Misplaced 'vp' field") )
+                ix2 = adjText.find( '\\vp*' )
+                if ix2 == -1: ix2 = adjText.find( '\\VP*' )
+                #print( 'C', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
+                noteSFM, lenSFM, thisOne, this1 = 'vp', 2, 'verse-character', 'vp'
+            elif BibleOrgSysGlobals.debugFlag: halt # programming error
+            if ix2 == -1: # no closing marker
+                fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found unmatched {} open in \\{}: {}").format( thisOne, originalMarker, adjText ) )
+                logging.error( _("processLineFix: Found unmatched {} open after {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
+                self.addPriorityError( 84, C, V, _("Marker {} is unmatched").format( thisOne ) )
+                ix2 = 99999 # Go to the end
+            elif ix2 < ix1: # closing marker is before opening marker
+                fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found unmatched {} in \\{}: {}").format( thisOne, originalMarker, adjText ) )
+                logging.error( _("processLineFix: Found unmatched {} after {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, thisOne, originalMarker, adjText ) )
+                self.addPriorityError( 84, C, V, _("Marker {} is unmatched").format( thisOne ) )
+                ix1, ix2 = ix2, ix1 # swap them then
+            # Remove the footnote or endnote or xref or figure
+            #print( "\nFound {} at {} {} in '{}'".format( repr(thisOne), ix1, ix2, repr(adjText) ) )
+            #print( '\nB', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
+            note = adjText[ix1+lenSFM+2:ix2] # Get the note text (without the beginning and end markers)
+            #print( "\nNote is", repr(note) )
+            if not note:
+                fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found empty {} in \\{}: {}").format( thisOne, originalMarker, adjText ) )
+                logging.error( _("processLineFix: Found empty {} after {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
+                self.addPriorityError( 53, C, V, _("Empty {}").format( thisOne ) )
+            else: # there is a note
+                if note[0].isspace():
+                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found {} starting with space in \\{}: {}").format( thisOne, originalMarker, adjText ) )
+                    logging.warning( _("processLineFix: Found {} starting with space after {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
+                    self.addPriorityError( 12, C, V, _("{} starts with space").format( thisOne.title() ) )
+                    note = note.lstrip()
+                    #print( "QQQ2: lstrip in note" ); halt
+                if note and note[-1].isspace():
+                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found {} ending with space in \\{}: {}").format( thisOne, originalMarker, adjText ) )
+                    logging.warning( _("processLineFix: Found {} ending with space after {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
+                    self.addPriorityError( 11, C, V, _("{} ends with space").format( thisOne.title() ) )
+                    note = note.rstrip()
+                    #print( "QQQ3: rstrip in note" )
+                if '\\f ' in note or '\\f*' in note or '\\x ' in note or '\\x*' in note: # Only the contents of these fields should be here now
+                    print( "processLineFix: {} {}:{} What went wrong here: '{}' from \\{} '{}' (Is it an embedded note?)".format( self.BBB, C, V, note, originalMarker, text ) )
+                    print( "processLineFix: Have an embedded note perhaps! Not handled correctly yet" )
+                    note = note.replace( '\\f ', ' ' ).replace( '\\f*','').replace( '\\x ', ' ').replace('\\x*','') # Temporary fix ..................
+            adjText = adjText[:ix1] + adjText[ix2+lenSFM+2:] # Remove the note completely from the text
+            # Now prepare a cleaned version
+            cleanedNote = note.replace( '&amp;', '&' ).replace( '&#39;', "'" ).replace( '&lt;', '<' ).replace( '&gt;', '>' ).replace( '&quot;', '"' ) # Undo any replacements above
+            for sign in ('- ', '+ '): # Remove common leader characters (and the following space)
+                cleanedNote = cleanedNote.replace( sign, '' )
+            for marker in ['\\xo*','\\xo ', '\\xt*','\\xt ', '\\xk*','\\xk ', '\\xq*','\\xq ',
+                            '\\xot*','\\xot ', '\\xnt*','\\xnt ', '\\xdc*','\\xdc ',
+                            '\\fr*','\\fr ','\\ft*','\\ft ','\\fqa*','\\fqa ','\\fq*','\\fq ',
+                            '\\fv*','\\fv ','\\fk*','\\fk ','\\fl*','\\fl ','\\fdc*','\\fdc ',] \
+                                + INTERNAL_SFMS_TO_REMOVE:
+                cleanedNote = cleanedNote.replace( marker, '' )
+            if '\\' in cleanedNote:
+                fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found unexpected backslash in {}: {}").format( thisOne, cleanedNote ) )
+                logging.error( _("processLineFix: Found unexpected backslash after {} {}:{} in {}: {}").format( self.BBB, C, V, thisOne, cleanedNote ) )
+                self.addPriorityError( 81, C, V, _("{} contains unexpected backslash").format( thisOne.title() ) )
+                cleanedNote = cleanedNote.replace( '\\', '' )
+
+            # Save it all and finish off
+            extras.append( InternalBibleExtra(this1,ix1,note,cleanedNote) ) # Saves a 4-tuple: type ('fn' or 'xr', etc.), index into the main text line, the actual fn or xref contents, then a cleaned version
+            if this1 == 'vp': # Insert a new pseudo vp~ newline entry BEFORE the v field that it presumably came from
+                #print( "InternalBibleBook.processLineFix insertVP~ (before)", self.BBB, C, V, repr(originalMarker), repr(cleanedNote) )
+                if BibleOrgSysGlobals.debugFlag: assert( originalMarker == 'v~' ) # Shouldn't occur in other fields
+                vEntry = self._processedLines.pop() # because the v field has already been written
+                self._processedLines.append( InternalBibleEntry('vp~', 'vp', cleanedNote, cleanedNote, None, cleanedNote) )
+                self._processedLines.append( vEntry ) # Put the original v entry back afterwards
+            # Get ready for the next loop
             ixFN = adjText.find( '\\f ' )
             if ixFN == -1: ixFN = adjText.find( '\\F ' )
             if ixFN == -1: ixFN = dummyValue
@@ -392,384 +517,611 @@ class InternalBibleBook:
             ixVP = adjText.find( '\\vp ' )
             if ixVP == -1: ixVP = adjText.find( '\\VP ' )
             if ixVP == -1: ixVP = dummyValue
-            #print( 'ixFN =',ixFN, ixEN, 'ixXR = ',ixXR, ixFIG, ixSTR )
             ix1 = min( ixFN, ixEN, ixXR, ixFIG, ixSTR, ixSEM, ixVP )
-            while ix1 < dummyValue: # We have one or the other
-                if ix1 == ixFN:
-                    ix2 = adjText.find( '\\f*' )
-                    if ix2 == -1: ix2 = adjText.find( '\\F*' )
-                    #print( 'A', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
-                    noteSFM, lenSFM, thisOne, this1 = 'f', 1, 'footnote', 'fn'
-                    if ixFN and adjText[ixFN-1]==' ':
-                        fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found footnote preceded by a space in \\{}: {}").format( originalMarker, adjText ) )
-                        logging.warning( _("processLineFix: Found footnote preceded by a space after {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
-                        self.addPriorityError( 52, C, V, _("Footnote is preceded by a space") )
-                elif ix1 == ixEN:
-                    ix2 = adjText.find( '\\fe*' )
-                    if ix2 == -1: ix2 = adjText.find( '\\FE*' )
-                    #print( 'A', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
-                    noteSFM, lenSFM, thisOne, this1 = 'fe', 2, 'endnote', 'en'
-                    if ixEN and adjText[ixEN-1]==' ':
-                        fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found endnote preceded by a space in \\{}: {}").format( originalMarker, adjText ) )
-                        logging.warning( _("processLineFix: Found endnote preceded by a space after {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
-                        self.addPriorityError( 52, C, V, _("Endnote is preceded by a space") )
-                elif ix1 == ixXR:
-                    ix2 = adjText.find( '\\x*' )
-                    if ix2 == -1: ix2 = adjText.find( '\\X*' )
-                    #print( 'B', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
-                    noteSFM, lenSFM, thisOne, this1 = 'x', 1, 'cross-reference', 'xr'
-                elif ix1 == ixFIG:
-                    ix2 = adjText.find( '\\fig*' )
-                    if ix2 == -1: ix2 = adjText.find( '\\FIG*' )
-                    #print( 'C', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
-                    noteSFM, lenSFM, thisOne, this1 = 'fig', 3, 'figure', 'fig'
-                elif ix1 == ixSTR:
-                    ix2 = adjText.find( '\\str*' )
-                    if ix2 == -1: ix2 = adjText.find( '\\STR*' )
-                    #print( 'C', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
-                    noteSFM, lenSFM, thisOne, this1 = 'str', 3, 'Strongs-number', 'str'
-                elif ix1 == ixSEM:
-                    ix2 = adjText.find( '\\sem*' )
-                    if ix2 == -1: ix2 = adjText.find( '\\SEM*' )
-                    #print( 'C', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
-                    noteSFM, lenSFM, thisOne, this1 = 'sem', 3, 'Semantic info', 'sem'
-                elif ix1 == ixVP:
-                    if originalMarker != 'v~': # We only expect vp fields in v (now converted to v~) lines
-                        fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found unexpected 'vp' field in \\{} line: {}").format( originalMarker, adjText ) )
-                        logging.error( _("processLineFix: Found unexpected 'vp' fieldafter {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
-                        self.addPriorityError( 95, C, V, _("Misplaced 'vp' field") )
-                    ix2 = adjText.find( '\\vp*' )
-                    if ix2 == -1: ix2 = adjText.find( '\\VP*' )
-                    #print( 'C', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
-                    noteSFM, lenSFM, thisOne, this1 = 'vp', 2, 'verse-character', 'vp'
-                elif BibleOrgSysGlobals.debugFlag: halt # programming error
-                if ix2 == -1: # no closing marker
-                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found unmatched {} open in \\{}: {}").format( thisOne, originalMarker, adjText ) )
-                    logging.error( _("processLineFix: Found unmatched {} open after {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
-                    self.addPriorityError( 84, C, V, _("Marker {} is unmatched").format( thisOne ) )
-                    ix2 = 99999 # Go to the end
-                elif ix2 < ix1: # closing marker is before opening marker
-                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found unmatched {} in \\{}: {}").format( thisOne, originalMarker, adjText ) )
-                    logging.error( _("processLineFix: Found unmatched {} after {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, thisOne, originalMarker, adjText ) )
-                    self.addPriorityError( 84, C, V, _("Marker {} is unmatched").format( thisOne ) )
-                    ix1, ix2 = ix2, ix1 # swap them then
-                # Remove the footnote or endnote or xref or figure
-                #print( "\nFound {} at {} {} in '{}'".format( repr(thisOne), ix1, ix2, repr(adjText) ) )
-                #print( '\nB', 'ix1 =',ix1,repr(adjText[ix1]), 'ix2 = ',ix2,repr(adjText[ix2]) )
-                note = adjText[ix1+lenSFM+2:ix2] # Get the note text (without the beginning and end markers)
-                #print( "\nNote is", repr(note) )
-                if not note:
-                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found empty {} in \\{}: {}").format( thisOne, originalMarker, adjText ) )
-                    logging.error( _("processLineFix: Found empty {} after {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
-                    self.addPriorityError( 53, C, V, _("Empty {}").format( thisOne ) )
-                else: # there is a note
-                    if note[0].isspace():
-                        fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found {} starting with space in \\{}: {}").format( thisOne, originalMarker, adjText ) )
-                        logging.warning( _("processLineFix: Found {} starting with space after {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
-                        self.addPriorityError( 12, C, V, _("{} starts with space").format( thisOne.title() ) )
-                        note = note.lstrip()
-                        #print( "QQQ2: lstrip in note" ); halt
-                    if note and note[-1].isspace():
-                        fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found {} ending with space in \\{}: {}").format( thisOne, originalMarker, adjText ) )
-                        logging.warning( _("processLineFix: Found {} ending with space after {} {}:{} in \\{}: {}").format( thisOne, self.BBB, C, V, originalMarker, adjText ) )
-                        self.addPriorityError( 11, C, V, _("{} ends with space").format( thisOne.title() ) )
-                        note = note.rstrip()
-                        #print( "QQQ3: rstrip in note" )
-                    if '\\f ' in note or '\\f*' in note or '\\x ' in note or '\\x*' in note: # Only the contents of these fields should be here now
-                        print( "processLineFix: {} {}:{} What went wrong here: '{}' from \\{} '{}' (Is it an embedded note?)".format( self.BBB, C, V, note, originalMarker, text ) )
-                        print( "processLineFix: Have an embedded note perhaps! Not handled correctly yet" )
-                        note = note.replace( '\\f ', ' ' ).replace( '\\f*','').replace( '\\x ', ' ').replace('\\x*','') # Temporary fix ..................
-                adjText = adjText[:ix1] + adjText[ix2+lenSFM+2:] # Remove the note completely from the text
-                # Now prepare a cleaned version
-                cleanedNote = note.replace( '&amp;', '&' ).replace( '&#39;', "'" ).replace( '&lt;', '<' ).replace( '&gt;', '>' ).replace( '&quot;', '"' ) # Undo any replacements above
-                for sign in ('- ', '+ '): # Remove common leader characters (and the following space)
-                    cleanedNote = cleanedNote.replace( sign, '' )
-                for marker in ['\\xo*','\\xo ', '\\xt*','\\xt ', '\\xk*','\\xk ', '\\xq*','\\xq ',
-                                '\\xot*','\\xot ', '\\xnt*','\\xnt ', '\\xdc*','\\xdc ',
-                                '\\fr*','\\fr ','\\ft*','\\ft ','\\fqa*','\\fqa ','\\fq*','\\fq ',
-                                '\\fv*','\\fv ','\\fk*','\\fk ','\\fl*','\\fl ','\\fdc*','\\fdc ',] \
-                                    + INTERNAL_SFMS_TO_REMOVE:
-                    cleanedNote = cleanedNote.replace( marker, '' )
-                if '\\' in cleanedNote:
-                    fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Found unexpected backslash in {}: {}").format( thisOne, cleanedNote ) )
-                    logging.error( _("processLineFix: Found unexpected backslash after {} {}:{} in {}: {}").format( self.BBB, C, V, thisOne, cleanedNote ) )
-                    self.addPriorityError( 81, C, V, _("{} contains unexpected backslash").format( thisOne.title() ) )
-                    cleanedNote = cleanedNote.replace( '\\', '' )
+        #if extras: print( "Fix gave '{}' and '{}'".format( adjText, extras ) )
+        #if len(extras)>1: print( "Mutiple fix gave '{}' and '{}'".format( adjText, extras ) )
 
-                # Save it all and finish off
-                extras.append( InternalBibleExtra(this1,ix1,note,cleanedNote) ) # Saves a 4-tuple: type ('fn' or 'xr', etc.), index into the main text line, the actual fn or xref contents, then a cleaned version
-                if this1 == 'vp': # Insert a new pseudo vp~ newline entry BEFORE the v field that it presumably came from
-                    #print( "InternalBibleBook.processLineFix insertVP~ (before)", self.BBB, C, V, repr(originalMarker), repr(cleanedNote) )
-                    if BibleOrgSysGlobals.debugFlag: assert( originalMarker == 'v~' ) # Shouldn't occur in other fields
-                    vEntry = self._processedLines.pop() # because the v field has already been written
-                    self._processedLines.append( InternalBibleEntry('vp~', 'vp', cleanedNote, cleanedNote, None, cleanedNote) )
-                    self._processedLines.append( vEntry ) # Put the original v entry back afterwards
-                # Get ready for the next loop
-                ixFN = adjText.find( '\\f ' )
-                if ixFN == -1: ixFN = adjText.find( '\\F ' )
-                if ixFN == -1: ixFN = dummyValue
-                ixEN = adjText.find( '\\fe ' )
-                if ixEN == -1: ixEN = adjText.find( '\\FE ' )
-                if ixEN == -1: ixEN = dummyValue
-                ixXR = adjText.find( '\\x ' )
-                if ixXR == -1: ixXR = adjText.find( '\\X ' )
-                if ixXR == -1: ixXR = dummyValue
-                ixFIG = adjText.find( '\\fig ' )
-                if ixFIG == -1: ixFIG = adjText.find( '\\FIG ' )
-                if ixFIG == -1: ixFIG = dummyValue
-                ixSTR = adjText.find( '\\str ' )
-                if ixSTR == -1: ixSTR = adjText.find( '\\STR ' )
-                if ixSTR == -1: ixSTR = dummyValue
-                ixSEM = adjText.find( '\\sem ' )
-                if ixSEM == -1: ixSEM = adjText.find( '\\SEM ' )
-                if ixSEM == -1: ixSEM = dummyValue
-                ixVP = adjText.find( '\\vp ' )
-                if ixVP == -1: ixVP = adjText.find( '\\VP ' )
-                if ixVP == -1: ixVP = dummyValue
-                ix1 = min( ixFN, ixEN, ixXR, ixFIG, ixSTR, ixSEM, ixVP )
-            #if extras: print( "Fix gave '{}' and '{}'".format( adjText, extras ) )
-            #if len(extras)>1: print( "Mutiple fix gave '{}' and '{}'".format( adjText, extras ) )
-
-            # Check for anything left over
-            if '\\f' in adjText or '\\x' in adjText:
-                fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unable to properly process footnotes and cross-references in \\{}: {}").format( originalMarker, adjText ) )
-                logging.error( _("processLineFix: Unable to properly process footnotes and cross-references {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
-                self.addPriorityError( 82, C, V, _("Invalid footnotes or cross-references") )
+        # Check for anything left over
+        if '\\f' in adjText or '\\x' in adjText:
+            fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unable to properly process footnotes and cross-references in \\{}: {}").format( originalMarker, adjText ) )
+            logging.error( _("processLineFix: Unable to properly process footnotes and cross-references {} {}:{} in \\{}: {}").format( self.BBB, C, V, originalMarker, adjText ) )
+            self.addPriorityError( 82, C, V, _("Invalid footnotes or cross-references") )
 
 
-            if self.objectTypeString == 'SwordBibleModule': # Move Sword notes out to extras
-                #print( "\nhere", adjText )
-                ixStart = 0 # Start searching from here
-                indexDigits = [] # For Sword <RF>n<Rf> note markers
-                while '<' in adjText:
-                    ixStart = adjText.find( '<', ixStart )
-                    if ixStart==-1: break
-                    remainingText = adjText[ixStart:]
-                    if remainingText.startswith( '<w ' ):
-                        ixClose = adjText.find( '>', ixStart+1 )
-                        ixEnd = adjText.find( '</w>', ixClose+1 )
-                        #if ixEnd != -1: ixEnd += 3
-                        #print( adjText, 'w s c e', ixStart, ixClose, ixEnd )
-                        if BibleOrgSysGlobals.debugFlag:
-                            assert( ixStart!=-1 and ixClose!=-1 and ixEnd!=-1 )
-                            assert( ixStart < ixClose < ixEnd )
-                        stuff = adjText[ixStart+3:ixClose]
-                        adjText = adjText[:ixStart] + adjText[ixClose+1:ixEnd] + adjText[ixEnd+4:]
-                        #print( "st", "'"+stuff+"'", )
-                        extras.append( InternalBibleExtra('sr',ixStart+ixEnd-ixClose,stuff,stuff) )
-                        ixStart += ixEnd-ixClose-1
-                    elif remainingText.startswith( '<note ' ):
-                        ixClose = adjText.find( '>', ixStart+1 )
-                        ixEnd = adjText.find( '</note>' )
-                        #if ixEnd != -1: ixEnd += 3
-                        #print( adjText, 'n s c e', ixStart, ixClose, ixEnd )
-                        if BibleOrgSysGlobals.debugFlag:
-                            assert( ixStart!=-1 and ixClose!=-1 and ixEnd!=-1 )
-                            assert( ixStart < ixClose < ixEnd )
-                        stuff = adjText[ixStart+6:ixClose]
-                        adjText = adjText[:ixStart] + adjText[ixEnd+7:]
-                        noteContents = adjText[ixClose+1:ixEnd]
-                        #print( "now" "'"+adjText+"'" )
-                        #print( "st", "'"+stuff+"'", )
-                        if stuff == 'type="study"': code = 'sn'
-                        else: halt # programming error
-                        extras.append( InternalBibleExtra(code,ixStart+ixEnd-ixClose,stuff,stuff) )
-                        #ixStart += 0
-                    elif remainingText.startswith('<RF>1<Rf>') or remainingText.startswith('<RF>2<Rf>') \
-                    or remainingText.startswith('<RF>3<Rf>') or remainingText.startswith('<RF>4<Rf>'):
-                        indexDigit = remainingText[4]
-                        if BibleOrgSysGlobals.debugFlag: assert( indexDigit.isdigit() )
-                        adjText = adjText[:ixStart] + adjText[ixStart+9:]
-                        indexDigits.append( (indexDigit,ixStart,) )
-                        #ixStart += 0
-                    elif remainingText.startswith( '<RF>1) ' ):
-                        #print( "iT", C, V, indexDigits, remainingText )
-                        if BibleOrgSysGlobals.debugFlag: assert( indexDigits )
-                        ixEnd = adjText.find( '<Rf>' )
-                        if BibleOrgSysGlobals.debugFlag: assert( ixStart!=-1 and ixEnd!=-1 )
-                        if BibleOrgSysGlobals.debugFlag: assert( ixStart < ixEnd )
-                        notes = adjText[ixStart+4:ixEnd]
-                        adjText = adjText[:ixStart] # Remove these notes from the end
-                        newList = []
-                        for indexDigit, stringIndex in reversed( indexDigits ):
-                            ixN = notes.find( indexDigit+') ' )
-                            noteContents = notes[ixN+3:].strip()
-                            #print( "QQQ4: strip" ); halt
-                            if not noteContents: noteContents = lastNoteContents # Might have same note twice
-                            cleanNoteContents = noteContents.replace( '\\add ', '' ).replace( '\\add*', '').strip()
-                            #print( (indexDigit, stringIndex, noteContents, cleanNoteContents) )
-                            newList.append( ('fn',stringIndex,noteContents,cleanNoteContents) )
-                            notes = notes[:ixN] # Remove this last note from the end
-                            lastNoteContents = noteContents
-                        extras.extend( reversed( newList ) )
-                        #print( extras )
-                        #ixStart += 0
-                    elif remainingText.startswith( '<RF>' ):
-                        print( "Something is wrong here:", C, V, text )
-                        print( "iT", C, V, indexDigits, remainingText )
-                        if BibleOrgSysGlobals.debugFlag: assert( indexDigits )
-                        ixEnd = adjText.find( '<Rf>' )
-                        if BibleOrgSysGlobals.debugFlag:
-                            assert( ixStart!=-1 and ixEnd!=-1 )
-                            assert( ixStart < ixEnd )
-                        notes = adjText[ixStart+4:ixEnd]
-                        adjText = adjText[:ixStart] # Remove these notes from the end
-                        newList = []
-                        for indexDigit, stringIndex in reversed( indexDigits ):
-                            #ixN = notes.find( indexDigit+') ' )
-                            noteContents = notes.strip()
-                            #print( "QQQ5: strip" ); halt
-                            if not noteContents: noteContents = lastNoteContents # Might have same note twice
-                            cleanNoteContents = noteContents.replace( '\\add ', '' ).replace( '\\add*', '').strip()
-                            print( (indexDigit, stringIndex, noteContents, cleanNoteContents) )
-                            newList.append( ('fn',stringIndex,noteContents,cleanNoteContents) )
-                            #notes = notes[:ixN] # Remove this last note from the end
-                            lastNoteContents = noteContents
-                        extras.extend( reversed( newList ) )
-                        #print( extras )
-                        #ixStart += 0
-                    #elif adjText[ixStart:].startswith( '<transChange ' ):
-                        #ixEnd = adjText.find( '</transChange>' )
-                        ##if ixEnd != -1: ixEnd += 3
-                        #print( adjText, 'ts s c e', ixStart, ixClose, ixEnd )
-                        #assert( ixStart!=-1 and ixClose!=-1 and ixEnd!=-1 )
-                        #assert( ixStart < ixClose < ixEnd )
-                        #stuff = adjText[ixStart+13:ixClose]
-                        #adjText = adjText[:ixStart] + adjText[ixClose+1:ixEnd] + adjText[ixEnd+14:]
-                        ##print( "st", "'"+stuff+"'", )
-                        #extras.append( ('tc',ixStart+ixEnd-ixClose,stuff,stuff) )
-                    #elif adjText[ixStart:].startswith( '<seg>' ):
-                        #ixEnd = adjText.find( '</seg>' )
-                        ##if ixEnd != -1: ixEnd += 3
-                        #print( adjText, 'sg s c e', ixStart, ixClose, ixEnd )
-                        #assert( ixStart!=-1 and ixClose!=-1 and ixEnd!=-1 )
-                        #assert( ixStart < ixClose < ixEnd )
-                        #stuff = adjText[ixStart+5:ixClose]
-                        #adjText = adjText[:ixStart] + adjText[ixClose+1:ixEnd] + adjText[ixEnd+6:]
-                        ##print( "st", "'"+stuff+"'", )
-                        #extras.append( ('tc',ixStart+ixEnd-ixClose,stuff,stuff) )
-                    #elif adjText[ixStart:].startswith( '<divineName>' ):
-                        #ixEnd = adjText.find( '</divineName>' )
-                        ##if ixEnd != -1: ixEnd += 3
-                        #print( adjText, 'sg s c e', ixStart, ixClose, ixEnd )
-                        #assert( ixStart!=-1 and ixClose!=-1 and ixEnd!=-1 )
-                        #assert( ixStart < ixClose < ixEnd )
-                        #stuff = adjText[ixStart+12:ixClose]
-                        #adjText = adjText[:ixStart] + adjText[ixClose+1:ixEnd] + adjText[ixEnd+13:]
-                        ##print( "st", "'"+stuff+"'", )
-                        #extras.append( ('tc',ixStart+ixEnd-ixClose,stuff,stuff) )
-                    #elif adjText[ixStart:].startswith( '<milestone ' ):
-                        #ixEnd = adjText.find( '/>' )
-                        ##if ixEnd != -1: ixEnd += 3
-                        #print( adjText, 'ms s e', ixStart, ixEnd )
-                        #assert( ixStart!=-1 and ixEnd!=-1 )
-                        #assert( ixStart < ixEnd )
-                        #stuff = adjText[ixStart+11:ixEnd]
-                        #adjText = adjText[:ixStart] + adjText[ixEnd+2:]
-                        #print( "st", "'"+stuff+"'", )
-                        #extras.append( ('ms',ixStart,stuff,stuff) )
-                    #elif adjText[ixStart:].startswith( '<title ' ):
-                        #ixEnd = adjText.find( '</title>' )
-                        ##if ixEnd != -1: ixEnd += 3
-                        #print( adjText, 't s c e', ixStart, ixClose, ixEnd )
-                        #assert( ixStart!=-1 and ixClose!=-1 and ixEnd!=-1 )
-                        #assert( ixStart < ixClose < ixEnd )
-                        #stuff = adjText[ixStart+7:ixClose]
-                        #adjText = adjText[:ixStart] + adjText[ixClose+1:ixEnd] + adjText[ixEnd+8:]
-                        ##print( "st", "'"+stuff+"'", )
-                        #extras.append( ('ti',ixStart+ixEnd-ixClose,stuff,stuff) )
-                    else:
-                        #print( "Ok. Still have < in:", adjText )
-                        ixStart += 1 # So it steps past fields that we don't remove, e.g., <divineName>xx</divineName>
-                #print( "aT", adjText )
-                #print( "ex", extras )
-                #adjText = adjText.replace( '<transChange type="added">', '<it>' ).replace( '</transChange>', '</it>' )
+        if self.objectTypeString == 'SwordBibleModule': # Move Sword notes out to extras
+            #print( "\nhere", adjText )
+            ixStart = 0 # Start searching from here
+            indexDigits = [] # For Sword <RF>n<Rf> note markers
+            while '<' in adjText:
+                ixStart = adjText.find( '<', ixStart )
+                if ixStart==-1: break
+                remainingText = adjText[ixStart:]
+                if remainingText.startswith( '<w ' ):
+                    ixClose = adjText.find( '>', ixStart+1 )
+                    ixEnd = adjText.find( '</w>', ixClose+1 )
+                    #if ixEnd != -1: ixEnd += 3
+                    #print( adjText, 'w s c e', ixStart, ixClose, ixEnd )
+                    if BibleOrgSysGlobals.debugFlag:
+                        assert( ixStart!=-1 and ixClose!=-1 and ixEnd!=-1 )
+                        assert( ixStart < ixClose < ixEnd )
+                    stuff = adjText[ixStart+3:ixClose]
+                    adjText = adjText[:ixStart] + adjText[ixClose+1:ixEnd] + adjText[ixEnd+4:]
+                    #print( "st", "'"+stuff+"'", )
+                    extras.append( InternalBibleExtra('sr',ixStart+ixEnd-ixClose,stuff,stuff) )
+                    ixStart += ixEnd-ixClose-1
+                elif remainingText.startswith( '<note ' ):
+                    ixClose = adjText.find( '>', ixStart+1 )
+                    ixEnd = adjText.find( '</note>' )
+                    #if ixEnd != -1: ixEnd += 3
+                    #print( adjText, 'n s c e', ixStart, ixClose, ixEnd )
+                    if BibleOrgSysGlobals.debugFlag:
+                        assert( ixStart!=-1 and ixClose!=-1 and ixEnd!=-1 )
+                        assert( ixStart < ixClose < ixEnd )
+                    stuff = adjText[ixStart+6:ixClose]
+                    adjText = adjText[:ixStart] + adjText[ixEnd+7:]
+                    noteContents = adjText[ixClose+1:ixEnd]
+                    #print( "now" "'"+adjText+"'" )
+                    #print( "st", "'"+stuff+"'", )
+                    if stuff == 'type="study"': code = 'sn'
+                    else: halt # programming error
+                    extras.append( InternalBibleExtra(code,ixStart+ixEnd-ixClose,stuff,stuff) )
+                    #ixStart += 0
+                elif remainingText.startswith('<RF>1<Rf>') or remainingText.startswith('<RF>2<Rf>') \
+                or remainingText.startswith('<RF>3<Rf>') or remainingText.startswith('<RF>4<Rf>'):
+                    indexDigit = remainingText[4]
+                    if BibleOrgSysGlobals.debugFlag: assert( indexDigit.isdigit() )
+                    adjText = adjText[:ixStart] + adjText[ixStart+9:]
+                    indexDigits.append( (indexDigit,ixStart,) )
+                    #ixStart += 0
+                elif remainingText.startswith( '<RF>1) ' ):
+                    #print( "iT", C, V, indexDigits, remainingText )
+                    if BibleOrgSysGlobals.debugFlag: assert( indexDigits )
+                    ixEnd = adjText.find( '<Rf>' )
+                    if BibleOrgSysGlobals.debugFlag: assert( ixStart!=-1 and ixEnd!=-1 )
+                    if BibleOrgSysGlobals.debugFlag: assert( ixStart < ixEnd )
+                    notes = adjText[ixStart+4:ixEnd]
+                    adjText = adjText[:ixStart] # Remove these notes from the end
+                    newList = []
+                    for indexDigit, stringIndex in reversed( indexDigits ):
+                        ixN = notes.find( indexDigit+') ' )
+                        noteContents = notes[ixN+3:].strip()
+                        #print( "QQQ4: strip" ); halt
+                        if not noteContents: noteContents = lastNoteContents # Might have same note twice
+                        cleanNoteContents = noteContents.replace( '\\add ', '' ).replace( '\\add*', '').strip()
+                        #print( (indexDigit, stringIndex, noteContents, cleanNoteContents) )
+                        newList.append( ('fn',stringIndex,noteContents,cleanNoteContents) )
+                        notes = notes[:ixN] # Remove this last note from the end
+                        lastNoteContents = noteContents
+                    extras.extend( reversed( newList ) )
+                    #print( extras )
+                    #ixStart += 0
+                elif remainingText.startswith( '<RF>' ):
+                    print( "Something is wrong here:", C, V, text )
+                    print( "iT", C, V, indexDigits, remainingText )
+                    if BibleOrgSysGlobals.debugFlag: assert( indexDigits )
+                    ixEnd = adjText.find( '<Rf>' )
+                    if BibleOrgSysGlobals.debugFlag:
+                        assert( ixStart!=-1 and ixEnd!=-1 )
+                        assert( ixStart < ixEnd )
+                    notes = adjText[ixStart+4:ixEnd]
+                    adjText = adjText[:ixStart] # Remove these notes from the end
+                    newList = []
+                    for indexDigit, stringIndex in reversed( indexDigits ):
+                        #ixN = notes.find( indexDigit+') ' )
+                        noteContents = notes.strip()
+                        #print( "QQQ5: strip" ); halt
+                        if not noteContents: noteContents = lastNoteContents # Might have same note twice
+                        cleanNoteContents = noteContents.replace( '\\add ', '' ).replace( '\\add*', '').strip()
+                        print( (indexDigit, stringIndex, noteContents, cleanNoteContents) )
+                        newList.append( ('fn',stringIndex,noteContents,cleanNoteContents) )
+                        #notes = notes[:ixN] # Remove this last note from the end
+                        lastNoteContents = noteContents
+                    extras.extend( reversed( newList ) )
+                    #print( extras )
+                    #ixStart += 0
+                #elif adjText[ixStart:].startswith( '<transChange ' ):
+                    #ixEnd = adjText.find( '</transChange>' )
+                    ##if ixEnd != -1: ixEnd += 3
+                    #print( adjText, 'ts s c e', ixStart, ixClose, ixEnd )
+                    #assert( ixStart!=-1 and ixClose!=-1 and ixEnd!=-1 )
+                    #assert( ixStart < ixClose < ixEnd )
+                    #stuff = adjText[ixStart+13:ixClose]
+                    #adjText = adjText[:ixStart] + adjText[ixClose+1:ixEnd] + adjText[ixEnd+14:]
+                    ##print( "st", "'"+stuff+"'", )
+                    #extras.append( ('tc',ixStart+ixEnd-ixClose,stuff,stuff) )
+                #elif adjText[ixStart:].startswith( '<seg>' ):
+                    #ixEnd = adjText.find( '</seg>' )
+                    ##if ixEnd != -1: ixEnd += 3
+                    #print( adjText, 'sg s c e', ixStart, ixClose, ixEnd )
+                    #assert( ixStart!=-1 and ixClose!=-1 and ixEnd!=-1 )
+                    #assert( ixStart < ixClose < ixEnd )
+                    #stuff = adjText[ixStart+5:ixClose]
+                    #adjText = adjText[:ixStart] + adjText[ixClose+1:ixEnd] + adjText[ixEnd+6:]
+                    ##print( "st", "'"+stuff+"'", )
+                    #extras.append( ('tc',ixStart+ixEnd-ixClose,stuff,stuff) )
+                #elif adjText[ixStart:].startswith( '<divineName>' ):
+                    #ixEnd = adjText.find( '</divineName>' )
+                    ##if ixEnd != -1: ixEnd += 3
+                    #print( adjText, 'sg s c e', ixStart, ixClose, ixEnd )
+                    #assert( ixStart!=-1 and ixClose!=-1 and ixEnd!=-1 )
+                    #assert( ixStart < ixClose < ixEnd )
+                    #stuff = adjText[ixStart+12:ixClose]
+                    #adjText = adjText[:ixStart] + adjText[ixClose+1:ixEnd] + adjText[ixEnd+13:]
+                    ##print( "st", "'"+stuff+"'", )
+                    #extras.append( ('tc',ixStart+ixEnd-ixClose,stuff,stuff) )
+                #elif adjText[ixStart:].startswith( '<milestone ' ):
+                    #ixEnd = adjText.find( '/>' )
+                    ##if ixEnd != -1: ixEnd += 3
+                    #print( adjText, 'ms s e', ixStart, ixEnd )
+                    #assert( ixStart!=-1 and ixEnd!=-1 )
+                    #assert( ixStart < ixEnd )
+                    #stuff = adjText[ixStart+11:ixEnd]
+                    #adjText = adjText[:ixStart] + adjText[ixEnd+2:]
+                    #print( "st", "'"+stuff+"'", )
+                    #extras.append( ('ms',ixStart,stuff,stuff) )
+                #elif adjText[ixStart:].startswith( '<title ' ):
+                    #ixEnd = adjText.find( '</title>' )
+                    ##if ixEnd != -1: ixEnd += 3
+                    #print( adjText, 't s c e', ixStart, ixClose, ixEnd )
+                    #assert( ixStart!=-1 and ixClose!=-1 and ixEnd!=-1 )
+                    #assert( ixStart < ixClose < ixEnd )
+                    #stuff = adjText[ixStart+7:ixClose]
+                    #adjText = adjText[:ixStart] + adjText[ixClose+1:ixEnd] + adjText[ixEnd+8:]
+                    ##print( "st", "'"+stuff+"'", )
+                    #extras.append( ('ti',ixStart+ixEnd-ixClose,stuff,stuff) )
+                else:
+                    #print( "Ok. Still have < in:", adjText )
+                    ixStart += 1 # So it steps past fields that we don't remove, e.g., <divineName>xx</divineName>
+            #print( "aT", adjText )
+            #print( "ex", extras )
+            #adjText = adjText.replace( '<transChange type="added">', '<it>' ).replace( '</transChange>', '</it>' )
 
-            # Check trailing spaces again now
-            if adjText and adjText[-1].isspace():
-                #print( 10, self.BBB, C, V, _("Trailing space before note at end of line") )
-                fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Removed trailing space before note in \\{}: '{}'").format( originalMarker, text ) )
-                logging.warning( _("processLineFix: Removed trailing space before note after {} {}:{} in \\{}: '{}'").format( self.BBB, C, V, originalMarker, text ) )
-                self.addPriorityError( 10, C, V, _("Trailing space before note at end of line") )
-                adjText = adjText.rstrip()
-                #print( "QQQ6: rstrip" ); halt
-                #print( originalMarker, "'"+text+"'", "'"+adjText+"'" )
+        # Check trailing spaces again now
+        if adjText and adjText[-1].isspace():
+            #print( 10, self.BBB, C, V, _("Trailing space before note at end of line") )
+            fixErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Removed trailing space before note in \\{}: '{}'").format( originalMarker, text ) )
+            logging.warning( _("processLineFix: Removed trailing space before note after {} {}:{} in \\{}: '{}'").format( self.BBB, C, V, originalMarker, text ) )
+            self.addPriorityError( 10, C, V, _("Trailing space before note at end of line") )
+            adjText = adjText.rstrip()
+            #print( "QQQ6: rstrip" ); halt
+            #print( originalMarker, "'"+text+"'", "'"+adjText+"'" )
 
-            # Now remove all character formatting from the cleanText string (to make it suitable for indexing and search routines
-            #   This includes markers like \em, \bd, \wj, etc.
-            #if "Cook" in adjText:
-                #print( "\nhere", self.objectTypeString )
-                #print( "adjT", repr(adjText) )
-            if self.objectTypeString == 'SwordBibleModule': # remove character formatting
-                cleanText = adjText
-                cleanText = cleanText.replace( '<title type="chapter">', '' ).replace( '</title>', '' )
-                cleanText = cleanText.replace( '<transChange type="added">', '' ).replace( '</transChange>', '' )
-                #cleanText = cleanText.replace( '<milestone marker="Â¶" subType="x-added" type="x-p"/>', '' )
-                #cleanText = cleanText.replace( '<milestone marker="Â¶" type="x-p"/>', '' )
-                #cleanText = cleanText.replace( '<milestone type="x-extra-p"/>', '' )
-                cleanText = cleanText.replace( '<seg><divineName>', '' ).replace( '</divineName></seg>', '' )
-                if '<' in cleanText or '>' in cleanText:
-                    print( "\nFrom:", C, V, text )
-                    print( " Still have angle brackets left in:", cleanText )
-            else: # not Sword
-                #print( BibleOrgSysGlobals.USFMMarkers.getCharacterMarkersList() )
-                cleanText = adjText.replace( '&amp;', '&' ).replace( '&#39;', "'" ).replace( '&lt;', '<' ).replace( '&gt;', '>' ).replace( '&quot;', '"' ) # Undo any replacements above
-                if '\\' in cleanText: # we will first remove known USFM character formatting markers
-                    for possibleCharacterMarker in BibleOrgSysGlobals.USFMMarkers.getCharacterMarkersList():
-                        tryMarkers = []
-                        if BibleOrgSysGlobals.USFMMarkers.isNumberableMarker( possibleCharacterMarker ):
-                            for d in ('1','2','3','4','5'):
-                                tryMarkers.append( '\\'+possibleCharacterMarker+d+' ' )
-                        tryMarkers.append( '\\'+possibleCharacterMarker+' ' )
-                        #print( "tryMarkers", tryMarkers )
-                        for tryMarker in tryMarkers:
-                            while tryMarker in cleanText:
-                                #print( "Removing '{}' from '{}'".format( tryMarker, cleanText ) )
-                                cleanText = cleanText.replace( tryMarker, '', 1 ) # Remove it
-                                tryCloseMarker = '\\'+possibleCharacterMarker+'*'
-                                shouldBeClosed = BibleOrgSysGlobals.USFMMarkers.markerShouldBeClosed( possibleCharacterMarker )
-                                if shouldBeClosed == 'A' \
-                                or shouldBeClosed == 'S' and tryCloseMarker in cleanText:
-                                    #print( "Removing '{}' from '{}'".format( tryCloseMarker, cleanText ) )
-                                    cleanText = cleanText.replace( tryCloseMarker, '', 1 ) # Remove it
-                        if not '\\' in cleanText: break # no point in looping further
-                    while '\\' in cleanText: # we will now try to remove any bad markers
-                        ixBS = cleanText.index( '\\' )
-                        ixSP = cleanText.find( ' ', ixBS )
-                        ixAS = cleanText.find( '*', ixBS )
-                        if ixSP == -1: ixSP=99999
-                        if ixAS == -1: ixAS=99999
-                        ixEND = min( ixSP, ixAS )
-                        if ixEND != 99999: # remove the marker and the following space or asterisk
-                            #print( "Removing unknown marker '{}' from '{}'".format( cleanText[ixBS:ixEND+1], cleanText ) )
-                            cleanText = cleanText[:ixBS] + cleanText[ixEND+1:]
-                        else: # we didn't find a space or asterisk so it's at the end of the line
-                            #print( "text: '{}'".format( text ) )
-                            #print( "adjText: '{}'".format( adjText ) )
-                            #print( "cleanText: '{}'".format( cleanText ) )
-                            #print( ixBS, ixSP, ixAS, ixEND )
-                            if BibleOrgSysGlobals.debugFlag: assert( ixSP==99999 and ixAS==99999 and ixEND==99999 )
-                            cleanText = cleanText[:ixBS].rstrip()
-                            #print( "QQQ7: rstrip" ); halt
-                            #print( "cleanText: '{}'".format( cleanText ) )
-                    if '\\' in cleanText:
-                        logging.critical( "processLineFix: Why do we still have a backslash in '{}' from '{}'?".format( cleanText, adjText ) )
-                        if BibleOrgSysGlobals.debugFlag: halt
+        # Now remove all character formatting from the cleanText string (to make it suitable for indexing and search routines
+        #   This includes markers like \em, \bd, \wj, etc.
+        #if "Cook" in adjText:
+            #print( "\nhere", self.objectTypeString )
+            #print( "adjT", repr(adjText) )
+        if self.objectTypeString == 'SwordBibleModule': # remove character formatting
+            cleanText = adjText
+            cleanText = cleanText.replace( '<title type="chapter">', '' ).replace( '</title>', '' )
+            cleanText = cleanText.replace( '<transChange type="added">', '' ).replace( '</transChange>', '' )
+            #cleanText = cleanText.replace( '<milestone marker="Â¶" subType="x-added" type="x-p"/>', '' )
+            #cleanText = cleanText.replace( '<milestone marker="Â¶" type="x-p"/>', '' )
+            #cleanText = cleanText.replace( '<milestone type="x-extra-p"/>', '' )
+            cleanText = cleanText.replace( '<seg><divineName>', '' ).replace( '</divineName></seg>', '' )
+            if '<' in cleanText or '>' in cleanText:
+                print( "\nFrom:", C, V, text )
+                print( " Still have angle brackets left in:", cleanText )
+        else: # not Sword
+            #print( BibleOrgSysGlobals.USFMMarkers.getCharacterMarkersList() )
+            cleanText = adjText.replace( '&amp;', '&' ).replace( '&#39;', "'" ).replace( '&lt;', '<' ).replace( '&gt;', '>' ).replace( '&quot;', '"' ) # Undo any replacements above
+            if '\\' in cleanText: # we will first remove known USFM character formatting markers
+                for possibleCharacterMarker in BibleOrgSysGlobals.USFMMarkers.getCharacterMarkersList():
+                    tryMarkers = []
+                    if BibleOrgSysGlobals.USFMMarkers.isNumberableMarker( possibleCharacterMarker ):
+                        for d in ('1','2','3','4','5'):
+                            tryMarkers.append( '\\'+possibleCharacterMarker+d+' ' )
+                    tryMarkers.append( '\\'+possibleCharacterMarker+' ' )
+                    #print( "tryMarkers", tryMarkers )
+                    for tryMarker in tryMarkers:
+                        while tryMarker in cleanText:
+                            #print( "Removing '{}' from '{}'".format( tryMarker, cleanText ) )
+                            cleanText = cleanText.replace( tryMarker, '', 1 ) # Remove it
+                            tryCloseMarker = '\\'+possibleCharacterMarker+'*'
+                            shouldBeClosed = BibleOrgSysGlobals.USFMMarkers.markerShouldBeClosed( possibleCharacterMarker )
+                            if shouldBeClosed == 'A' \
+                            or shouldBeClosed == 'S' and tryCloseMarker in cleanText:
+                                #print( "Removing '{}' from '{}'".format( tryCloseMarker, cleanText ) )
+                                cleanText = cleanText.replace( tryCloseMarker, '', 1 ) # Remove it
+                    if not '\\' in cleanText: break # no point in looping further
+                while '\\' in cleanText: # we will now try to remove any bad markers
+                    ixBS = cleanText.index( '\\' )
+                    ixSP = cleanText.find( ' ', ixBS )
+                    ixAS = cleanText.find( '*', ixBS )
+                    if ixSP == -1: ixSP=99999
+                    if ixAS == -1: ixAS=99999
+                    ixEND = min( ixSP, ixAS )
+                    if ixEND != 99999: # remove the marker and the following space or asterisk
+                        #print( "Removing unknown marker '{}' from '{}'".format( cleanText[ixBS:ixEND+1], cleanText ) )
+                        cleanText = cleanText[:ixBS] + cleanText[ixEND+1:]
+                    else: # we didn't find a space or asterisk so it's at the end of the line
+                        #print( "text: '{}'".format( text ) )
+                        #print( "adjText: '{}'".format( adjText ) )
+                        #print( "cleanText: '{}'".format( cleanText ) )
+                        #print( ixBS, ixSP, ixAS, ixEND )
+                        if BibleOrgSysGlobals.debugFlag: assert( ixSP==99999 and ixAS==99999 and ixEND==99999 )
+                        cleanText = cleanText[:ixBS].rstrip()
+                        #print( "QQQ7: rstrip" ); halt
+                        #print( "cleanText: '{}'".format( cleanText ) )
+                if '\\' in cleanText:
+                    logging.critical( "processLineFix: Why do we still have a backslash in '{}' from '{}'?".format( cleanText, adjText ) )
+                    if BibleOrgSysGlobals.debugFlag: halt
 
-            if BibleOrgSysGlobals.debugFlag: # Now do a final check that we did everything right
-                for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
-                    assert( extraText ) # Shouldn't be blank
-                    #if self.objectTypeString == 'USFM': assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
-                    assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
-                    #print( extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
-                    assert( extraIndex >= 0 )
-                    # This can happen with multiple notes at the end separated by spaces
-                    #if extraIndex > len(adjText)+1: print( "Programming Note: extraIndex {} is way more than text length of {} with '{}'".format( extraIndex, len(adjText), text ) )
-                    assert( extraType in BOS_EXTRA_TYPES )
-                    assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
+        if BibleOrgSysGlobals.debugFlag: # Now do a final check that we did everything right
+            for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
+                assert( extraText ) # Shouldn't be blank
+                #if self.objectTypeString == 'USFM': assert( extraText[0] != '\\' ) # Shouldn't start with backslash code
+                assert( extraText[-1] != '\\' ) # Shouldn't end with backslash code
+                #print( extraType, extraIndex, len(text), "'"+extraText+"'", "'"+cleanExtraText+"'" )
+                assert( extraIndex >= 0 )
+                # This can happen with multiple notes at the end separated by spaces
+                #if extraIndex > len(adjText)+1: print( "Programming Note: extraIndex {} is way more than text length of {} with '{}'".format( extraIndex, len(adjText), text ) )
+                assert( extraType in BOS_EXTRA_TYPES )
+                assert( '\\f ' not in extraText and '\\f*' not in extraText and '\\x ' not in extraText and '\\x*' not in extraText ) # Only the contents of these fields should be in extras
 
-            return adjText, cleanText, extras
-        # end of InternalBibleBook.processLines.processLineFix
+        return adjText, cleanText, extras
+    # end of InternalBibleBook.processLines.processLineFix
+
+
+    def addNestingMarkers( self ):
+        """
+        Go through self._processedLines and add entries
+            for the end of verses, chapters, etc.
+        End markers start with not sign ¬.
+
+        We put matching end markers on c and v markers,
+            paragraph markers, e.g., p, q,
+            section headings, e.g., s1
+            iot section (enclosing io fields), and
+            lists (and intro lists).
+
+        Example:
+            p
+            v       7
+            v~      Verse seven text
+            ¬v      7
+            ¬p
+            ¬c      4
+            c       5
+            s       Section heading
+            p
+            c#      5
+            v       1
+            v~      Verse one text
+            q1
+            p~      More verse one text
+            ¬v      1
+            v       2
+
+        Note: the six parameters for InternalBibleEntry are
+            marker, originalMarker, adjustedText, cleanText, extras, originalText
+        """
+        newLines = InternalBibleEntryList()
+        openMarkers = []
+
+        def openMarker( newMarker ):
+            """ Insert a new open marker into the book. """
+            if BibleOrgSysGlobals.debugFlag: assert( newMarker not in openMarkers )
+            newLines.append( InternalBibleEntry(newMarker, None, None, '', None, None) )
+            openMarkers.append( newMarker )
+        # end of addNestingMarkers.openMarker
+
+        def closeLastOpenMarker( withText='' ):
+            """ Close the last marker (with the "not" sign) and pop it off our list """
+            #print( "InternalBibleBook.processLines.closeLastOpenMarker( {} ) for {} from {}".format( repr(withText), openMarkers[-1], openMarkers ) )
+            #print( "  add", '¬'+openMarkers[-1], withText, "in closeLastOpenMarker" )
+            newLines.append( InternalBibleEntry('¬'+openMarkers.pop(), None, None, withText, None, None) )
+        # end of addNestingMarkers.closeLastOpenMarker
+
+        def closeOpenMarker( eMarker, withText='' ):
+            """ Close the given marker (with the "not" sign) and delete it out of our list """
+            #print( "InternalBibleBook.processLines.closeOpenMarker( {}, {} ) rather than {} from {}".format( eMarker, repr(withText), openMarkers[-1], openMarkers ) )
+            ie = openMarkers.index( eMarker ) # Must be there
+            #print( "  add", '¬'+openMarkers[ie], withText, "in closeOpenMarker" )
+            newLines.append( InternalBibleEntry('¬'+openMarkers.pop( ie ), None, None, withText, None, None) )
+        # end of addNestingMarkers.closeOpenMarker
+
+        ourHeadingMarkers = ( 's','s1','s2','s3','s4', 'is','is1','is2','is3','is4', )
+        ourIntroOutlineMarkers = ( 'io','io1','io2','io3','io4', )
+        ourIntroListMarkers = ( 'ili','ili1','ili2','ili3','ili4', )
+        ourMainListMarkers = ( 'li','li1','li2','li3','li4', )
+        haveIntro = False
+        C = V = '0'
+        lastJ = len(self._processedLines) - 1
+        lastMarker = lastPMarker = lastSMarker = None
+        for j,dataLine in enumerate( self._processedLines ):
+
+            def verseEnded( currentIndex ):
+                for k in range( currentIndex+1, len(self._processedLines) ):
+                    nextRelevantMarker = self._processedLines[k].getMarker()
+                    if nextRelevantMarker == 'v':
+                        #print( "  vE = True1", nextRelevantMarker )
+                        return True
+                    if nextRelevantMarker in ( 'v~','p~', ):
+                        #print( "  vE = False", nextRelevantMarker )
+                        return False
+                #print( "  vE = True2" )
+                return True
+            # end of addNestingMarkers.verseEnded
+
+            def findNextRelevantMarker( currentIndex ):
+                for k in range( currentIndex+1, len(self._processedLines) ):
+                    nextRelevantMarker = self._processedLines[k].getMarker()
+                    if nextRelevantMarker in ( 'v', 'v~','p~', ) \
+                    or nextRelevantMarker in ourHeadingMarkers \
+                    or nextRelevantMarker in USFM_BIBLE_PARAGRAPH_MARKERS:
+                        #print( "  nRM =", nextRelevantMarker )
+                        return nextRelevantMarker # Found one
+                return None
+            # end of addNestingMarkers.findNextRelevantMarker
+
+            def findNextRelevantListMarker( currentIndex ):
+                for k in range( currentIndex+1, len(self._processedLines) ):
+                    nextRelevantListMarker = self._processedLines[k].getMarker()
+                    if nextRelevantListMarker not in ( 'c', 'v', 'v~','p~', ):
+                        #print( "  nRLM1 =", nextRelevantListMarker )
+                        return nextRelevantListMarker # Found one
+                return None
+            # end of addNestingMarkers.findNextRelevantListMarker
+
+            marker, text = dataLine.getMarker(), dataLine.getCleanText()
+            nextDataLine = self._processedLines[j+1] if j<lastJ else None
+            nextMarker = nextDataLine.getMarker() if nextDataLine is not None else None
+            #print( "InternalBibleBook.processLines.addNestingMarkers: {} {} {}:{} {}={} then {} now have {}".format( j, self.BBB, C, V, marker, repr(text), nextMarker, openMarkers ) )
+
+            if marker in USFM_INTRODUCTION_MARKERS and not haveIntro:
+                openMarker( 'intro' )
+                haveIntro = True
+
+            if marker not in ourIntroOutlineMarkers and 'iot' in openMarkers: closeOpenMarker( 'iot' )
+            if marker not in ourIntroListMarkers and 'ilist' in openMarkers: closeOpenMarker( 'ilist' )
+            if marker not in ourMainListMarkers and marker not in ('v~','p~',) and 'list' in openMarkers:
+                # This is more complex coz can cross v and c boundaries
+                #print( "Shall we close", marker, findNextRelevantListMarker(j), findNextRelevantMarker(j) )
+                if findNextRelevantListMarker(j) not in ourMainListMarkers:
+                    closeOpenMarker( 'list' )
+
+            if marker == 'c':
+                if haveIntro:
+                    for lMarker in openMarkers[::-1]: # Get a reversed copy (coz we are deleting members)
+                        closeLastOpenMarker()
+                    haveIntro = False # Just so we don't repeat this
+                if openMarkers and openMarkers[-1]=='v': closeLastOpenMarker( V )
+                elif 'v' in openMarkers: closeOpenMarker( 'v', V )
+                if 'c' not in openMarkers: # we're just starting chapter one
+                    openMarker( 'chapters' )
+                else: # we're not just starting chapter one
+                    nextRelevantMarker = findNextRelevantMarker( j )
+                    if openMarkers[-1] in USFM_BIBLE_PARAGRAPH_MARKERS \
+                    and (nextRelevantMarker in USFM_BIBLE_PARAGRAPH_MARKERS or nextRelevantMarker in ourHeadingMarkers):
+                        # New paragraph starts immediately in next chapter, so close this paragraph now
+                        closeLastOpenMarker() # Close whatever paragraph marker that was
+                    if openMarkers[-1] in ourHeadingMarkers and nextRelevantMarker in ourHeadingMarkers:
+                        closeLastOpenMarker() # Close whatever heading marker that was
+                if openMarkers and openMarkers[-1]=='c': closeLastOpenMarker( C )
+                elif 'c' in openMarkers: closeOpenMarker( 'c', C )
+                C, V = text, '0'
+                if BibleOrgSysGlobals.debugFlag: assert( marker not in openMarkers )
+                openMarkers.append( marker )
+            elif marker == 'vp~':
+                if BibleOrgSysGlobals.debugFlag: assert( nextMarker == 'v' )
+                if 'v' in openMarkers: # we're not starting the first verse
+                    closeOpenMarker( 'v', V )
+            elif marker == 'v':
+                if 'v' in openMarkers: # we're not starting the first verse
+                    closeOpenMarker( 'v', V )
+                V = text
+                if BibleOrgSysGlobals.debugFlag: assert( marker not in openMarkers )
+                openMarkers.append( marker )
+            elif marker == 'iot':
+                if BibleOrgSysGlobals.debugFlag: assert( 'iot' not in openMarkers )
+                openMarkers.append( 'iot' ) # to ensure that we add an iot closing marker later
+            elif marker in ourIntroOutlineMarkers:
+                if lastMarker not in ourIntroOutlineMarkers:
+                    if lastMarker != 'iot': # Seems we didn't have an iot in the file :-(
+                        #print( "InternalBibleBook.processLines.addNestingMarkers: {} {}:{} Adding iot marker before {}".format( self.BBB, C, V, marker ) )
+                        openMarker( 'iot' )
+                haveIntro = True
+            elif marker in ourIntroListMarkers:
+                if lastMarker not in ourIntroListMarkers:
+                    #print( "InternalBibleBook.processLines.addNestingMarkers: {} {}:{} Adding ilist marker before {} after {}".format( self.BBB, C, V, marker, lastMarker ) )
+                    openMarker( 'ilist' )
+                haveIntro = True
+            elif marker in ourHeadingMarkers: # must be checked BEFORE USFM_INTRODUCTION_MARKERS because they overlap
+                if 'v' in openMarkers and verseEnded( j ): closeOpenMarker( 'v', V )
+                if lastPMarker in openMarkers: closeOpenMarker( lastPMarker ); lastPMarker = None
+                if lastSMarker in openMarkers: closeOpenMarker( lastSMarker ); lastSMarker = None
+                if BibleOrgSysGlobals.debugFlag: assert( marker not in openMarkers )
+                openMarkers.append( marker )
+                lastSMarker = marker
+            elif marker in USFM_INTRODUCTION_MARKERS:
+                haveIntro = True
+            elif marker in ourMainListMarkers:
+                assert( not text )
+                if 'v' in openMarkers and verseEnded( j ): closeOpenMarker( 'v', V )
+                if lastPMarker in openMarkers: closeOpenMarker( lastPMarker ); lastPMarker = None
+                if 'list' not in openMarkers:
+                    #print( "InternalBibleBook.processLines.addNestingMarkers: {} {}:{} Adding list marker before {}".format( self.BBB, C, V, marker ) )
+                    openMarker( 'list' )
+                if BibleOrgSysGlobals.debugFlag: assert( marker not in openMarkers )
+                openMarkers.append( marker )
+                lastPMarker = marker
+            elif marker in USFM_BIBLE_PARAGRAPH_MARKERS:
+                assert( not text )
+                if 'v' in openMarkers and verseEnded( j ): closeOpenMarker( 'v', V )
+                if lastPMarker in openMarkers: closeOpenMarker( lastPMarker ); lastPMarker = None
+                if BibleOrgSysGlobals.debugFlag: assert( marker not in openMarkers )
+                openMarkers.append( marker )
+                lastPMarker = marker
+            #else: print( "  Ignore {}={}".format( marker, repr(text) ) )
+
+            newLines.append( dataLine )
+            if BibleOrgSysGlobals.debugFlag and len(openMarkers) > 7: # Should only be 7: e.g., chapters c s1 p v list li1
+                print( newLines[-20:] )
+                print(openMarkers); halt
+            lastMarker = marker
+
+        if openMarkers: # Close any left-over open markers
+            if 'list' in openMarkers or 'ilist' in openMarkers or 'iot' in openMarkers:
+                print( "InternalBibleBook.processLines.addNestingMarkers: stillOpen", self.BBB, openMarkers )
+                if BibleOrgSysGlobals.debugFlag and self.BBB not in ('BAK',): halt
+            for lMarker in openMarkers[::-1]: # Get a reversed copy (coz we are deleting members)
+                if lMarker == 'v': closeLastOpenMarker( V )
+                elif lMarker == 'c': closeLastOpenMarker( C )
+                else: closeLastOpenMarker()
+        assert( not openMarkers )
+        self._processedLines = newLines # replace the old set
+    # end of InternalBibleBook.processLines.addNestingMarkers
+
+
+    def reorderRawLines( self ):
+        """
+        Using self._rawLines from OSIS input, reorder them before further processing.
+        This is because processing the XML provides the markers in a different order from USFM
+            and our internal format is more aligned to the USFM way of doing things.
+
+        Footnotes etc have not yet been extracted from any of the lines
+            but there are already v~ (and a few p~) lines created as the XML was extracted.
+        """
+        assert( self.objectTypeString == 'OSIS' )
+
+        # For OSIS, change lines like:
+        #    1/ p = ''
+        #    2/ v = 17
+        #    3/ p = ''
+        #    4/ q1 = Text of verse 17.
+        # to
+        #    1/ p = ''
+        #    2/ v = 17
+        #    3/ q1 = Text of verse 17.
+        newLines = []
+        lastMarker = lastText = None
+        C = V = '0'
+        for j,(marker,text) in enumerate( self._rawLines ):
+            # Keep track of where we are
+            #if marker == 'c': C, V = text, '0'
+            #elif marker == 'v': V = text
+
+            if lastMarker in USFM_BIBLE_PARAGRAPH_MARKERS and not lastText and marker in USFM_BIBLE_PARAGRAPH_MARKERS:
+                #if self.BBB=='JHN':
+                    #print( "zap: {} {}:{} lines: {}={} {}={}".format( self.BBB, C, V, lastMarker, lastText, marker, text ) )
+                lastMarker = None
+
+            # Always save one line behind
+            if lastMarker is not None: newLines.append( (lastMarker,lastText) )
+            lastMarker, lastText = marker, text
+
+        if lastMarker is not None: newLines.append( (lastMarker,lastText) ) # Save the very last line
+        self._rawLines = newLines # replace the old set
+        #print( 'RO-1', len(self._rawLines) )
+
+        # For OSIS, change lines like:
+        #    1/ v = 2 Text of verse 2.
+        #    2/ v = 3
+        #    3/ p = Text of verse 3.
+        # to
+        #    1/ v = 2 Text of verse 2.
+        #    2/ p = ''
+        #    2/ v = 3
+        #    3/ v~ = Text of verse 3.
+        newLines = []
+        #lastJ = len(self._rawLines) - 1
+        lastMarker = lastText = None
+        #skip = False
+        C = V = '0'
+        #for j,(marker,text) in enumerate( self._rawLines ):
+        for marker,text in self._rawLines:
+            # Keep track of where we are
+            #if marker == 'c': C, V = text, '0'
+            #elif marker == 'v': V = text
+
+            #if skip:
+                #assert( not text )
+                #skip = False
+                #continue # skip this empty p or q marker completely now
+
+            #nextMarker, nextText = self._rawLines[j+1] if j<lastJ else (None,None,)
+
+            if lastMarker=='v' and marker in USFM_BIBLE_PARAGRAPH_MARKERS and text:
+                #print( "increase: {} {}:{} lines: {}={} {}={}".format( self.BBB, C, V, lastMarker, lastText, marker, text ) )
+                newLines.append( (marker,'') ) # Put the new blank paragraph marker before the v
+                marker = 'v~' # Change the p marker to v~
+
+            # Always save one line behind
+            if lastMarker is not None: newLines.append( (lastMarker,lastText) )
+            lastMarker, lastText = marker, text
+
+        if lastMarker is not None: newLines.append( (lastMarker,lastText) ) # Save the very last line
+        self._rawLines = newLines # replace the old set
+        #print( 'RO-2', len(self._rawLines) )
+        #print( self.BBB, "RL" )
+        #for j in range( 0, 50 ): print( "", j, self._rawLines[j] )
+
+        # For OSIS, change lines like:
+        #    1/ p = ''
+        #    2/ q1 = ''
+        #    3/ v = 3 Text of verse 3.
+        # to
+        #    1/ q1 = ''
+        #    2/ v = 3 Text of verse 3.
+        # Seems to only occur in the NT of the KJV
+        # Also change
+        #    1/ v = 25
+        #    2/ v~ = Some text
+        #    3/ p = '' (last line in file)
+        # to remove that last line.
+        newLines = []
+        #lastJ = len(self._rawLines) - 1
+        lastMarker = lastText = None
+        #skip = False
+        C = V = '0'
+        #for j,(marker,text) in enumerate( self._rawLines ):
+        for marker,text in self._rawLines:
+            # Keep track of where we are
+            #if marker == 'c': C, V = text, '0'
+            #elif marker == 'v': V = text[:3]
+
+            #if skip:
+                #assert( not text )
+                #skip = False
+                #continue # skip this empty p or q marker completely now
+
+            #nextMarker, nextText = self._rawLines[j+1] if j<lastJ else (None,None,)
+
+            if lastMarker in USFM_BIBLE_PARAGRAPH_MARKERS and not lastText:
+                if marker in USFM_BIBLE_PARAGRAPH_MARKERS and not text:
+                    #print( "reduce: {} {}:{} lines: {}={} {}={}".format( self.BBB, C, V, lastMarker, lastText, marker, text ) )
+                    lastMarker = None
+                if marker=='c':
+                    #print( "remove: {} {}:{} lines: {}={} {}={}".format( self.BBB, C, V, lastMarker, lastText, marker, text ) )
+                    lastMarker = None
+
+            # Always save one line behind
+            if lastMarker is not None: newLines.append( (lastMarker,lastText) )
+            lastMarker, lastText = marker, text
+
+        if lastMarker is not None \
+        and (lastText or lastMarker not in USFM_BIBLE_PARAGRAPH_MARKERS): # Don't write a blank p type marker at the end of the book
+            newLines.append( (lastMarker,lastText) )
+        self._rawLines = newLines # replace the old set
+        #print( 'RO-3', len(self._rawLines) )
+        #print( self.BBB, "RL" )
+        #for j in range( 0, 50 ): print( "", j, self._rawLines[j] )
+    # end of InternalBibleBook.processLines.reorderRawLines
+
+
+    def processLines( self ):
+        """
+        Move notes out of the text into a separate area.
+            Also, splits lines if a paragraph marker appears within a line.
+
+            Uses self._rawLines and fills self._processedLines.
+        """
+        #if self._processedFlag: return # Can only do it once
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Processing {} ({} {}) {} lines...").format( self.objectNameString, self.objectTypeString, self.workName, self.BBB ) )
+        if BibleOrgSysGlobals.debugFlag: assert( not self._processedFlag ) # Can only do it once
+        if BibleOrgSysGlobals.debugFlag: assert( self._rawLines ) # or else the book was totally blank
+        #print( self._rawLines[:20] ); halt # for debugging
 
 
         def __doAppendEntry( adjMarker, originalMarker, text, originalText ):
@@ -794,7 +1146,7 @@ class InternalBibleBook:
                     return # nothing more to do here
 
             # Separate out the notes (footnotes and cross-references)
-            adjText, cleanText, extras = processLineFix( adjMarker, text )
+            adjText, cleanText, extras = self.processLineFix( C, V, adjMarker, text, fixErrors )
             #if adjMarker=='v~' and not cleanText:
                 #if text or adjText:
                     #print( "Suppressed blank v~ for", self.BBB, C, V, "'"+text+"'", "'"+adjText+"'" ); halt
@@ -931,7 +1283,7 @@ class InternalBibleBook:
                         self.addPriorityError( 30 if '\f ' in cBits[1] else 98, C, V, _("Extra '{}' material after chapter marker").format( cBits[1] ) )
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                             print( "InternalBibleBook.processLine: Something on c line", self.BBB, C, V, repr(text), repr(cBits[1]) )
-                        adjText, cleanText, extras = processLineFix( originalMarker, cBits[1] )
+                        adjText, cleanText, extras = self.processLineFix( C, V, originalMarker, cBits[1], fixErrors )
                         if (adjText or cleanText or extras) and BibleOrgSysGlobals.debugFlag:
                             print( "InternalBibleBook.processLine: Something on c line", self.BBB, C, V, repr(text), repr(cBits[1]) )
                             if adjText: print( " adjText:", repr(adjText) )
@@ -946,7 +1298,7 @@ class InternalBibleBook:
             elif originalMarker=='cl' and text:
                 if BibleOrgSysGlobals.debugFlag: assert( V == '0' ) # coz this should precede the first c, or follow the c and precede the v
                 if C == '0': # it's before the first c
-                    adjustedMarker = 'cl=' # to distinguish it from the ones after the c's
+                    adjustedMarker = 'cl¤' # to distinguish it from the ones after the c's
             elif originalMarker=='v' and text:
                 vBits = splitVNumber( text )
                 V = vBits[0] # Get the actual verse number
@@ -1023,12 +1375,14 @@ class InternalBibleBook:
                     #adjustedMarker, text = 'v~', ''
                 else: # there is something following the verse number digits (starting with space or backslash)
                     verseNumberBit, verseNumberRest = text[:ix], text[ix:]
-                    #print( "verseNumberBit is '{}', verseNumberRest is '{}'".format( verseNumberBit, verseNumberRest ) )
+                    # Set flag to True if there's exactly one space between the verse number and the rest
+                    goodStart =  len(verseNumberRest)>1 and verseNumberRest[0]==' ' and verseNumberRest[1]!=' '
+                    #print( "verseNumberBit is {!r}, verseNumberRest is {!r}".format( verseNumberBit, verseNumberRest ) )
                     if BibleOrgSysGlobals.debugFlag:
                         assert( verseNumberBit and verseNumberRest )
                         assert( '\\' not in verseNumberBit )
-                    if len(vBits)>2: # rarely happens
-                        adjText, cleanText, extras = processLineFix( originalMarker, vBits[1] )
+                    if len(vBits)>2: # rarely happens (e.g., footnote on verse number)
+                        adjText, cleanText, extras = self.processLineFix( C, V, originalMarker, vBits[1], fixErrors )
                         if (adjText or cleanText or extras) and BibleOrgSysGlobals.debugFlag:
                             print( "InternalBibleBook.processLine: Something on v line", self.BBB, C, V, repr(text), repr(vBits[1]) )
                             if adjText: print( " adjText:", repr(adjText) )
@@ -1037,6 +1391,7 @@ class InternalBibleBook:
                         self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, verseNumberBit, verseNumberBit, extras, verseNumberBit) ) # Write the verse number (or range) as a separate line
                     else:
                         self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, verseNumberBit, verseNumberBit, None, verseNumberBit) ) # Write the verse number (or range) as a separate line
+
                     strippedVerseText = verseNumberRest.lstrip()
                     #print( "QQQ9: lstrip" )
                     if not strippedVerseText:
@@ -1051,9 +1406,10 @@ class InternalBibleBook:
                         # (and especially coz we don't know yet if this is a finished translation)
                         #self.addPriorityError( 91, C, V, _("Only whitespace following verse number in '{}'").format( originalText ) )
                         return # Don't write a blank v~ field
-                    #print( "Ouch", self.BBB, C, V )
-                    #assert( strippedVerseText )
-                    adjustedMarker, text = 'v~', strippedVerseText
+                    # Set flag to True if there's exactly one space between the verse number and the rest
+                    goodStart =  len(verseNumberRest)>1 and verseNumberRest[0]==' ' and verseNumberRest[1]!=' '
+                    #print( 'Gs', goodStart, repr(verseNumberRest[1:] if goodStart else strippedVerseText) )
+                    adjustedMarker, text = 'v~', verseNumberRest[1:] if goodStart else strippedVerseText
 
             if 1 or text: # check markers inside the lines and separate them if they're paragraph markers
                 if self.objectTypeString == 'USFM':
@@ -1067,7 +1423,7 @@ class InternalBibleBook:
                                 self.addPriorityError( 96, C, V, _("Marker \\{} shouldn't be inside a line").format( insideMarker ) )
                             thisText = text[ix:iMIndex].rstrip()
                             #print( "QQQ10: rstrip" ); halt
-                            adjText, cleanText, extras = processLineFix( originalMarker, thisText )
+                            adjText, cleanText, extras = self.processLineFix( C, V, originalMarker, thisText, fixErrors )
                             self._processedLines.append( InternalBibleEntry(adjustedMarker, originalMarker, adjText, cleanText, extras, originalText) )
                             ix = iMIndex + 1 + len(insideMarker) + len(nextSignificantChar) # Get the start of the next text -- the 1 is for the backslash
                             adjMarker = BibleOrgSysGlobals.USFMMarkers.toStandardMarker( insideMarker ) # setup for the next line
@@ -1084,7 +1440,7 @@ class InternalBibleBook:
                                 afterText = text[ixLT+len(pText):]
                                 #print( "\n", C, V, "'"+text+"'" )
                                 #print( "'"+beforeText+"'", pText, "'"+afterText+"'" )
-                                adjText, cleanText, extras = processLineFix( originalMarker, beforeText )
+                                adjText, cleanText, extras = self.processLineFix( C, V, originalMarker, beforeText, fixErrors )
                                 lastAM, lastOM, lastAT, lastCT, lastX, lastOT = self._processedLines.pop() # Get the previous line
                                 if adjText or lastAM != 'v': # Just return it again
                                     self._processedLines.append( InternalBibleEntry(lastAM, lastOM, lastAT, lastCT, lastX, lastOT) )
@@ -1157,452 +1513,16 @@ class InternalBibleBook:
 
             #print( "__doAppendEntry", adjustedMarker, originalMarker, repr(text), repr(originalText) )
             #print( " ", verseNumberRest if originalMarker=='v' and adjustedMarker=='v~' else originalText )
-            __doAppendEntry( adjustedMarker, originalMarker, text, verseNumberRest if originalMarker=='v' and adjustedMarker=='v~' else originalText )
+            # Set flag to True if there's exactly one space between the verse number and the rest
+            #goodStart =  len(originalText)>1 and originalText[0]==' ' and originalText[1]!=' '
+            #print( 'Gs', goodStart, repr(verseNumberRest[1:] if goodStart else originalText) )
+            #__doAppendEntry( adjustedMarker, originalMarker, text, verseNumberRest if originalMarker=='v' and adjustedMarker=='v~' else originalText )
+            __doAppendEntry( adjustedMarker, originalMarker, text, text if originalMarker=='v' and adjustedMarker=='v~' else originalText )
         # end of InternalBibleBook.processLines.processLine
 
 
-        def reorderRawLines():
-            """
-            Using self._rawLines from OSIS input, reorder them before further processing.
-            This is because processing the XML provides the markers in a different order from USFM
-                and our internal format is more aligned to the USFM way of doing things.
-
-            Footnotes etc have not yet been extracted from any of the lines
-                but there are already v~ (and a few p~) lines created as the XML was extracted.
-            """
-            assert( self.objectTypeString == 'OSIS' )
-            #print( "\n", self.BBB )
-            #print( 'RO-0', len(self._rawLines) )
-
-            #if self.BBB=='JHN':
-                #print( self.BBB, "RL" )
-                #for j in range( 1960, len(self._rawLines) ):
-                    #marker, text = self._rawLines[j]
-                    #print( "", j, marker, repr(text) )
-                    #if marker=='c' and text=='22': halt
-
-            """
-            For OSIS, change lines like:
-                1/ p = ''
-                2/ v = 17
-                3/ p = ''
-                4/ q1 = Text of verse 17.
-            to
-                1/ p = ''
-                2/ v = 17
-                3/ q1 = Text of verse 17.
-            """
-            newLines = []
-            lastMarker = lastText = None
-            C = V = '0'
-            for j,(marker,text) in enumerate( self._rawLines ):
-                # Keep track of where we are
-                #if marker == 'c': C, V = text, '0'
-                #elif marker == 'v': V = text
-
-                if lastMarker in USFM_BIBLE_PARAGRAPH_MARKERS and not lastText and marker in USFM_BIBLE_PARAGRAPH_MARKERS:
-                    #if self.BBB=='JHN':
-                        #print( "zap: {} {}:{} lines: {}={} {}={}".format( self.BBB, C, V, lastMarker, lastText, marker, text ) )
-                    lastMarker = None
-
-                # Always save one line behind
-                if lastMarker is not None: newLines.append( (lastMarker,lastText) )
-                lastMarker, lastText = marker, text
-
-            if lastMarker is not None: newLines.append( (lastMarker,lastText) ) # Save the very last line
-            self._rawLines = newLines # replace the old set
-            #print( 'RO-1', len(self._rawLines) )
-
-            """
-            For OSIS, change lines like:
-                1/ v = 2 Text of verse 2.
-                2/ v = 3
-                3/ p = Text of verse 3.
-            to
-                1/ v = 2 Text of verse 2.
-                2/ p = ''
-                2/ v = 3
-                3/ v~ = Text of verse 3.
-            """
-            newLines = []
-            #lastJ = len(self._rawLines) - 1
-            lastMarker = lastText = None
-            #skip = False
-            C = V = '0'
-            for j,(marker,text) in enumerate( self._rawLines ):
-                # Keep track of where we are
-                #if marker == 'c': C, V = text, '0'
-                #elif marker == 'v': V = text
-
-                #if skip:
-                    #assert( not text )
-                    #skip = False
-                    #continue # skip this empty p or q marker completely now
-
-                #nextMarker, nextText = self._rawLines[j+1] if j<lastJ else (None,None,)
-
-                if lastMarker=='v' and marker in USFM_BIBLE_PARAGRAPH_MARKERS and text:
-                    #print( "increase: {} {}:{} lines: {}={} {}={}".format( self.BBB, C, V, lastMarker, lastText, marker, text ) )
-                    newLines.append( (marker,'') ) # Put the new blank paragraph marker before the v
-                    marker = 'v~' # Change the p marker to v~
-
-                # Always save one line behind
-                if lastMarker is not None: newLines.append( (lastMarker,lastText) )
-                lastMarker, lastText = marker, text
-
-            if lastMarker is not None: newLines.append( (lastMarker,lastText) ) # Save the very last line
-            self._rawLines = newLines # replace the old set
-            #print( 'RO-2', len(self._rawLines) )
-            #print( self.BBB, "RL" )
-            #for j in range( 0, 50 ): print( "", j, self._rawLines[j] )
-
-            """
-            For OSIS, change lines like:
-                1/ p = ''
-                2/ q1 = ''
-                3/ v = 3 Text of verse 3.
-            to
-                1/ q1 = ''
-                2/ v = 3 Text of verse 3.
-            Seems to only occur in the NT of the KJV
-            Also change
-                1/ v = 25
-                2/ v~ = Some text
-                3/ p = '' (last line in file)
-            to remove that last line.
-            """
-            newLines = []
-            #lastJ = len(self._rawLines) - 1
-            lastMarker = lastText = None
-            #skip = False
-            C = V = '0'
-            for j,(marker,text) in enumerate( self._rawLines ):
-                # Keep track of where we are
-                #if marker == 'c': C, V = text, '0'
-                #elif marker == 'v': V = text[:3]
-
-                #if skip:
-                    #assert( not text )
-                    #skip = False
-                    #continue # skip this empty p or q marker completely now
-
-                #nextMarker, nextText = self._rawLines[j+1] if j<lastJ else (None,None,)
-
-                if lastMarker in USFM_BIBLE_PARAGRAPH_MARKERS and not lastText:
-                    if marker in USFM_BIBLE_PARAGRAPH_MARKERS and not text:
-                        #print( "reduce: {} {}:{} lines: {}={} {}={}".format( self.BBB, C, V, lastMarker, lastText, marker, text ) )
-                        lastMarker = None
-                    if marker=='c':
-                        #print( "remove: {} {}:{} lines: {}={} {}={}".format( self.BBB, C, V, lastMarker, lastText, marker, text ) )
-                        lastMarker = None
-
-                # Always save one line behind
-                if lastMarker is not None: newLines.append( (lastMarker,lastText) )
-                lastMarker, lastText = marker, text
-
-            if lastMarker is not None \
-            and (lastText or lastMarker not in USFM_BIBLE_PARAGRAPH_MARKERS): # Don't write a blank p type marker at the end of the book
-                newLines.append( (lastMarker,lastText) )
-            self._rawLines = newLines # replace the old set
-            #print( 'RO-3', len(self._rawLines) )
-            #print( self.BBB, "RL" )
-            #for j in range( 0, 50 ): print( "", j, self._rawLines[j] )
-
-            #if 0: # No longer needed
-                ## In the first pass, just remove empty p markers followed by c or by other empty paragraph markers
-                ## Also combine consecutive v~/p~ markers
-                #newLines = []
-                #lastMarker = lastText = None
-                #for j,(marker,text) in enumerate( self._rawLines ):
-                    #if lastMarker in USFM_BIBLE_PARAGRAPH_MARKERS and not lastText: # empty p type marker
-                        #if marker=='c' or (marker in USFM_BIBLE_PARAGRAPH_MARKERS and not text):
-                            #lastMarker = None # just drop out the first empty p type field
-                            #halt
-                    #elif lastMarker in ('v~','p~') and marker in ('v~','p~'):
-                        #print( "reorder: {} bad v~/p~ lines: {}={} {}={}".format( self.BBB, lastMarker, lastText, marker, text ) )
-                        #halt
-
-                    ## Always save one line behind
-                    #if lastMarker is not None: newLines.append( (lastMarker,lastText) )
-                    #lastMarker, lastText = marker, text
-
-                #if lastMarker is not None \
-                #and (lastText or lastMarker not in USFM_BIBLE_PARAGRAPH_MARKERS): # Don't write a blank p type marker at the end of the book
-                    #newLines.append( (lastMarker,lastText) ) # Save the very last line
-                #self._rawLines = newLines # replace the old set
-                ##print( 'RO-1', len(self._rawLines) )
-                #halt
-
-            #if 0: # NO LONGER NEEDED # Now do the next passes
-                #neededAgain = True
-                #while neededAgain:
-                    #neededAgain = False
-                    #newLines = []
-                    #lastJ = len(self._rawLines) - 1
-                    #lastMarker = lastText = None
-                    #skip = False
-                    #C = V = '0'
-                    #for j,(marker,text) in enumerate( self._rawLines ):
-                        ## Keep track of where we are
-                        ##if marker == 'c': C, V = text, '0'
-                        ##elif marker == 'v': V = text
-
-                        #if skip:
-                            #assert( not text )
-                            #skip = False
-                            #continue # skip this empty p or q marker completely now
-
-                        #nextMarker, nextText = self._rawLines[j+1] if j<lastJ else (None,None,)
-
-                        ## This code fails to help if there is nextText but it's only a footnote and nothing else
-                        #if lastMarker in USFM_BIBLE_PARAGRAPH_MARKERS and not lastText: # empty p type marker
-                            #if marker=='v' and text and nextMarker in USFM_BIBLE_PARAGRAPH_MARKERS and not nextText:
-                                ##print( "s->s", self.BBB, C, V, lastMarker, repr(lastText), marker, repr(text), nextMarker, repr(nextText) )
-                                #lastMarker, lastText = nextMarker, ''
-                                #skip = True
-                                ##print( " ", j, "swapped and skipped" )
-                                #neededAgain = True
-                                #halt
-                            #elif marker=='c':
-                                ##print( "p->c", self.BBB, C, V, lastMarker, repr(lastText), marker, repr(text), nextMarker, repr(nextText) )
-                                #lastMarker = None # just drop out the p field
-                                #neededAgain = True
-                                #halt
-                        #elif lastMarker=='v' and marker in USFM_BIBLE_PARAGRAPH_MARKERS and text=='' and nextMarker=='v~':
-                            ##print( "swp", self.BBB, C, V, lastMarker, repr(lastText), marker, repr(text), nextMarker, repr(nextText) )
-                            ## Swap this empty p type line with the last one
-                            #lastMarker, lastText, marker, text = marker, text, lastMarker, lastText
-                            ##print( " ", j, "swapped" )
-                            #neededAgain = True
-                            #halt
-
-                        ## Always save one line behind
-                        #if lastMarker is not None: newLines.append( (lastMarker,lastText) )
-                        #lastMarker, lastText = marker, text
-
-                    #if lastMarker is not None: newLines.append( (lastMarker,lastText) ) # Save the very last line
-                    #self._rawLines = newLines # replace the old set
-                    ##print( 'RO-n', len(self._rawLines) )
-                ##if self.BBB == 'MAT':
-                    ##print( self.BBB, "RL" )
-                    ##for j in range( 600, 800 ): print( "", j, self._rawLines[j] )
-                #halt
-        # end of InternalBibleBook.processLines.reorderRawLines
-
-
-        def addNestingMarkers():
-            """
-            Go through self._processedLines and add entries
-                for the end of verses, chapters, etc.
-            End markers start with not sign ¬.
-
-            We put matching end markers on c and v markers,
-                paragraph markers, e.g., p, q,
-                section headings, e.g., s1
-                iot section (enclosing io fields), and
-                lists (and intro lists).
-
-            Example:
-                p
-                v       7
-                v~      Verse seven text
-                ¬v      7
-                ¬p
-                ¬c      4
-                c       5
-                s       Section heading
-                p
-                c#      5
-                v       1
-                v~      Verse one text
-                q1
-                p~      More verse one text
-                ¬v      1
-                v       2
-
-            Note: the six parameters for InternalBibleEntry are
-                marker, originalMarker, adjustedText, cleanText, extras, originalText
-            """
-            newLines = InternalBibleEntryList()
-            openMarkers = []
-
-            def openMarker( newMarker ):
-                """ Insert a new open marker into the book. """
-                if BibleOrgSysGlobals.debugFlag: assert( newMarker not in openMarkers )
-                newLines.append( InternalBibleEntry(newMarker, None, None, '', None, None) )
-                openMarkers.append( newMarker )
-            # end of addNestingMarkers.openMarker
-
-            def closeLastOpenMarker( withText='' ):
-                """ Close the last marker (with the "not" sign) and pop it off our list """
-                #print( "InternalBibleBook.processLines.closeLastOpenMarker( {} ) for {} from {}".format( repr(withText), openMarkers[-1], openMarkers ) )
-                #print( "  add", '¬'+openMarkers[-1], withText, "in closeLastOpenMarker" )
-                newLines.append( InternalBibleEntry('¬'+openMarkers.pop(), None, None, withText, None, None) )
-            # end of addNestingMarkers.closeLastOpenMarker
-
-            def closeOpenMarker( eMarker, withText='' ):
-                """ Close the given marker (with the "not" sign) and delete it out of our list """
-                #print( "InternalBibleBook.processLines.closeOpenMarker( {}, {} ) rather than {} from {}".format( eMarker, repr(withText), openMarkers[-1], openMarkers ) )
-                ie = openMarkers.index( eMarker ) # Must be there
-                #print( "  add", '¬'+openMarkers[ie], withText, "in closeOpenMarker" )
-                newLines.append( InternalBibleEntry('¬'+openMarkers.pop( ie ), None, None, withText, None, None) )
-            # end of addNestingMarkers.closeOpenMarker
-
-            ourHeadingMarkers = ( 's','s1','s2','s3','s4', 'is','is1','is2','is3','is4', )
-            ourIntroOutlineMarkers = ( 'io','io1','io2','io3','io4', )
-            ourIntroListMarkers = ( 'ili','ili1','ili2','ili3','ili4', )
-            ourMainListMarkers = ( 'li','li1','li2','li3','li4', )
-            haveIntro = False
-            C = V = '0'
-            lastJ = len(self._processedLines) - 1
-            lastMarker = lastPMarker = lastSMarker = None
-            for j,dataLine in enumerate( self._processedLines ):
-
-                def verseEnded( currentIndex ):
-                    for k in range( currentIndex+1, len(self._processedLines) ):
-                        nextRelevantMarker = self._processedLines[k].getMarker()
-                        if nextRelevantMarker == 'v':
-                            #print( "  vE = True1", nextRelevantMarker )
-                            return True
-                        if nextRelevantMarker in ( 'v~','p~', ):
-                            #print( "  vE = False", nextRelevantMarker )
-                            return False
-                    #print( "  vE = True2" )
-                    return True
-                # end of addNestingMarkers.verseEnded
-
-                def findNextRelevantMarker( currentIndex ):
-                    for k in range( currentIndex+1, len(self._processedLines) ):
-                        nextRelevantMarker = self._processedLines[k].getMarker()
-                        if nextRelevantMarker in ( 'v', 'v~','p~', ) \
-                        or nextRelevantMarker in ourHeadingMarkers \
-                        or nextRelevantMarker in USFM_BIBLE_PARAGRAPH_MARKERS:
-                            #print( "  nRM =", nextRelevantMarker )
-                            return nextRelevantMarker # Found one
-                    return None
-                # end of addNestingMarkers.findNextRelevantMarker
-
-                def findNextRelevantListMarker( currentIndex ):
-                    for k in range( currentIndex+1, len(self._processedLines) ):
-                        nextRelevantListMarker = self._processedLines[k].getMarker()
-                        if nextRelevantListMarker not in ( 'c', 'v', 'v~','p~', ):
-                            #print( "  nRLM1 =", nextRelevantListMarker )
-                            return nextRelevantListMarker # Found one
-                    return None
-                # end of addNestingMarkers.findNextRelevantListMarker
-
-                marker, text = dataLine.getMarker(), dataLine.getCleanText()
-                nextDataLine = self._processedLines[j+1] if j<lastJ else None
-                nextMarker = nextDataLine.getMarker() if nextDataLine is not None else None
-                #print( "InternalBibleBook.processLines.addNestingMarkers: {} {} {}:{} {}={} then {} now have {}".format( j, self.BBB, C, V, marker, repr(text), nextMarker, openMarkers ) )
-
-                if marker in USFM_INTRODUCTION_MARKERS and not haveIntro:
-                    openMarker( 'intro' )
-                    haveIntro = True
-
-                if marker not in ourIntroOutlineMarkers and 'iot' in openMarkers: closeOpenMarker( 'iot' )
-                if marker not in ourIntroListMarkers and 'ilist' in openMarkers: closeOpenMarker( 'ilist' )
-                if marker not in ourMainListMarkers and marker not in ('v~','p~',) and 'list' in openMarkers:
-                    # This is more complex coz can cross v and c boundaries
-                    #print( "Shall we close", marker, findNextRelevantListMarker(j), findNextRelevantMarker(j) )
-                    if findNextRelevantListMarker(j) not in ourMainListMarkers:
-                        closeOpenMarker( 'list' )
-
-                if marker == 'c':
-                    if haveIntro:
-                        for lMarker in openMarkers[::-1]: # Get a reversed copy (coz we are deleting members)
-                            closeLastOpenMarker()
-                        haveIntro = False # Just so we don't repeat this
-                    if openMarkers and openMarkers[-1]=='v': closeLastOpenMarker( V )
-                    elif 'v' in openMarkers: closeOpenMarker( 'v', V )
-                    if 'c' not in openMarkers: # we're just starting chapter one
-                        openMarker( 'chapters' )
-                    else: # we're not just starting chapter one
-                        nextRelevantMarker = findNextRelevantMarker( j )
-                        if openMarkers[-1] in USFM_BIBLE_PARAGRAPH_MARKERS \
-                        and (nextRelevantMarker in USFM_BIBLE_PARAGRAPH_MARKERS or nextRelevantMarker in ourHeadingMarkers):
-                            # New paragraph starts immediately in next chapter, so close this paragraph now
-                            closeLastOpenMarker() # Close whatever paragraph marker that was
-                        if openMarkers[-1] in ourHeadingMarkers and nextRelevantMarker in ourHeadingMarkers:
-                            closeLastOpenMarker() # Close whatever heading marker that was
-                    if openMarkers and openMarkers[-1]=='c': closeLastOpenMarker( C )
-                    elif 'c' in openMarkers: closeOpenMarker( 'c', C )
-                    C, V = text, '0'
-                    if BibleOrgSysGlobals.debugFlag: assert( marker not in openMarkers )
-                    openMarkers.append( marker )
-                elif marker == 'vp~':
-                    if BibleOrgSysGlobals.debugFlag: assert( nextMarker == 'v' )
-                    if 'v' in openMarkers: # we're not starting the first verse
-                        closeOpenMarker( 'v', V )
-                elif marker == 'v':
-                    if 'v' in openMarkers: # we're not starting the first verse
-                        closeOpenMarker( 'v', V )
-                    V = text
-                    if BibleOrgSysGlobals.debugFlag: assert( marker not in openMarkers )
-                    openMarkers.append( marker )
-                elif marker == 'iot':
-                    if BibleOrgSysGlobals.debugFlag: assert( 'iot' not in openMarkers )
-                    openMarkers.append( 'iot' ) # to ensure that we add an iot closing marker later
-                elif marker in ourIntroOutlineMarkers:
-                    if lastMarker not in ourIntroOutlineMarkers:
-                        if lastMarker != 'iot': # Seems we didn't have an iot in the file :-(
-                            #print( "InternalBibleBook.processLines.addNestingMarkers: {} {}:{} Adding iot marker before {}".format( self.BBB, C, V, marker ) )
-                            openMarker( 'iot' )
-                    haveIntro = True
-                elif marker in ourIntroListMarkers:
-                    if lastMarker not in ourIntroListMarkers:
-                        #print( "InternalBibleBook.processLines.addNestingMarkers: {} {}:{} Adding ilist marker before {} after {}".format( self.BBB, C, V, marker, lastMarker ) )
-                        openMarker( 'ilist' )
-                    haveIntro = True
-                elif marker in ourHeadingMarkers: # must be checked BEFORE USFM_INTRODUCTION_MARKERS because they overlap
-                    if 'v' in openMarkers and verseEnded( j ): closeOpenMarker( 'v', V )
-                    if lastPMarker in openMarkers: closeOpenMarker( lastPMarker ); lastPMarker = None
-                    if lastSMarker in openMarkers: closeOpenMarker( lastSMarker ); lastSMarker = None
-                    if BibleOrgSysGlobals.debugFlag: assert( marker not in openMarkers )
-                    openMarkers.append( marker )
-                    lastSMarker = marker
-                elif marker in USFM_INTRODUCTION_MARKERS:
-                    haveIntro = True
-                elif marker in ourMainListMarkers:
-                    assert( not text )
-                    if 'v' in openMarkers and verseEnded( j ): closeOpenMarker( 'v', V )
-                    if lastPMarker in openMarkers: closeOpenMarker( lastPMarker ); lastPMarker = None
-                    if 'list' not in openMarkers:
-                        #print( "InternalBibleBook.processLines.addNestingMarkers: {} {}:{} Adding list marker before {}".format( self.BBB, C, V, marker ) )
-                        openMarker( 'list' )
-                    if BibleOrgSysGlobals.debugFlag: assert( marker not in openMarkers )
-                    openMarkers.append( marker )
-                    lastPMarker = marker
-                elif marker in USFM_BIBLE_PARAGRAPH_MARKERS:
-                    assert( not text )
-                    if 'v' in openMarkers and verseEnded( j ): closeOpenMarker( 'v', V )
-                    if lastPMarker in openMarkers: closeOpenMarker( lastPMarker ); lastPMarker = None
-                    if BibleOrgSysGlobals.debugFlag: assert( marker not in openMarkers )
-                    openMarkers.append( marker )
-                    lastPMarker = marker
-                #else: print( "  Ignore {}={}".format( marker, repr(text) ) )
-
-                newLines.append( dataLine )
-                if BibleOrgSysGlobals.debugFlag and len(openMarkers) > 7: # Should only be 7: e.g., chapters c s1 p v list li1
-                    print( newLines[-20:] )
-                    print(openMarkers); halt
-                lastMarker = marker
-
-            if openMarkers: # Close any left-over open markers
-                if 'list' in openMarkers or 'ilist' in openMarkers or 'iot' in openMarkers:
-                    print( "InternalBibleBook.processLines.addNestingMarkers: stillOpen", self.BBB, openMarkers )
-                    if BibleOrgSysGlobals.debugFlag and self.BBB not in ('BAK',): halt
-                for lMarker in openMarkers[::-1]: # Get a reversed copy (coz we are deleting members)
-                    if lMarker == 'v': closeLastOpenMarker( V )
-                    elif lMarker == 'c': closeLastOpenMarker( C )
-                    else: closeLastOpenMarker()
-            assert( not openMarkers )
-            self._processedLines = newLines # replace the old set
-        # end of InternalBibleBook.processLines.addNestingMarkers
-
-
         # This is the main processLines code
-        if self.objectTypeString == 'OSIS': reorderRawLines()
+        if self.objectTypeString == 'OSIS': self.reorderRawLines()
         nfvnCount = owfvnCount = rtsCount = sahtCount = 0
         fixErrors = []
         self._processedLines = InternalBibleEntryList() # Contains more-processed tuples which contain the actual Bible text -- see below
@@ -1612,7 +1532,9 @@ class InternalBibleBook:
             #print( "\nQQQ" )
             if self.objectTypeString=='USX' and text and text[-1]==' ': text = text[:-1] # Removing extra trailing space from USX files
             processLine( marker, text ) # Saves its results in self._processedLines
-        addNestingMarkers()
+
+        # Go through the lines and add nesting markers like 'intro', 'chapter', etc.
+        self.addNestingMarkers()
 
         # Get rid of data that we don't need
         #if not BibleOrgSysGlobals.debugFlag:
@@ -1752,7 +1674,7 @@ class InternalBibleBook:
         if BibleOrgSysGlobals.debugFlag:
             assert( self._processedLines )
             assert( fieldName and isinstance( fieldName, str ) )
-        adjFieldName = fieldName if fieldName in ('cl=',) else BibleOrgSysGlobals.USFMMarkers.toStandardMarker( fieldName )
+        adjFieldName = fieldName if fieldName in ('cl¤',) else BibleOrgSysGlobals.USFMMarkers.toStandardMarker( fieldName )
 
         for entry in self._processedLines:
             if entry.getMarker() == adjFieldName:
@@ -1786,7 +1708,7 @@ class InternalBibleBook:
             #if toc1Field.isupper(): field = toc1Field.title()
             results.append( toc1Field )
             self.longTOCName = toc1Field
-        elif self.containerBibleObject and self.BBB+'LongName' in self.containerBibleObject.settingsDict:
+        elif self.containerBibleObject is not None and self.BBB+'LongName' in self.containerBibleObject.settingsDict:
             self.longTOCName = self.containerBibleObject.settingsDict[self.BBB+'LongName']
             results.append( self.longTOCName )
 
@@ -1809,7 +1731,7 @@ class InternalBibleBook:
             #if toc2Field.isupper(): field = toc2Field.title()
             results.append( toc2Field )
             self.shortTOCName = toc2Field
-        elif self.containerBibleObject and self.BBB+'ShortName' in self.containerBibleObject.settingsDict:
+        elif self.containerBibleObject is not None and self.BBB+'ShortName' in self.containerBibleObject.settingsDict:
             self.shortTOCName = self.containerBibleObject.settingsDict[self.BBB+'ShortName']
             results.append( self.shortTOCName )
 
@@ -1819,11 +1741,11 @@ class InternalBibleBook:
             #if toc3Field.isupper(): toc3Field = toc3Field.title()
             results.append( toc3Field )
             self.booknameAbbreviation = toc3Field
-        elif self.containerBibleObject and self.BBB+'Abbreviation' in self.containerBibleObject.settingsDict:
+        elif self.containerBibleObject is not None and self.BBB+'Abbreviation' in self.containerBibleObject.settingsDict:
             self.booknameAbbreviation = self.containerBibleObject.settingsDict[self.BBB+'Abbreviation']
             results.append( self.booknameAbbreviation )
 
-        clField = self.getField( 'cl=' ) # Chapter label for whole book (cl before ch.1 -> cl= in processLine)
+        clField = self.getField( 'cl¤' ) # Chapter label for whole book (cl before ch.1 -> cl¤ in processLine)
         if clField:
             #print( "Got cl of", repr(clField) )
             self.chapterLabel = clField
@@ -1911,12 +1833,12 @@ class InternalBibleBook:
                     endVerseNumberString, endVerseNumber = bits[1], 0
                     try:
                         verseNumber = int( verseNumberString )
-                    except:
+                    except ValueError:
                         versificationErrors.append( _("{} {} Invalid USFM verse range start '{}' in '{}' in Bible book").format( self.BBB, chapterText, verseNumberString, verseText ) )
                         logging.error( _("Invalid USFM verse range start '{}' in '{}' in Bible book {} {}").format( verseNumberString, verseText, self.BBB, chapterText ) )
                     try:
                         endVerseNumber = int( endVerseNumberString )
-                    except:
+                    except ValueError:
                         versificationErrors.append( _("{} {} Invalid USFM verse range end '{}' in '{}' in Bible book").format( self.BBB, chapterText, endVerseNumberString, verseText ) )
                         logging.error( _("Invalid USFM verse range end '{}' in '{}' in Bible book {} {}").format( endVerseNumberString, verseText, self.BBB, chapterText ) )
                     if verseNumber >= endVerseNumber:
@@ -1932,12 +1854,12 @@ class InternalBibleBook:
                     endVerseNumberString, endVerseNumber = bits[1], 0
                     try:
                         verseNumber = int( verseNumberString )
-                    except:
+                    except ValueError:
                         versificationErrors.append( _("{} {} Invalid USFM verse list start '{}' in '{}' in Bible book").format( self.BBB, chapterText, verseNumberString, verseText ) )
                         logging.error( _("Invalid USFM verse list start '{}' in '{}' in Bible book {} {}").format( verseNumberString, verseText, self.BBB, chapterText ) )
                     try:
                         endVerseNumber = int( endVerseNumberString )
-                    except:
+                    except ValueError:
                         versificationErrors.append( _("{} {} Invalid USFM verse list end '{}' in '{}' in Bible book").format( self.BBB, chapterText, endVerseNumberString, verseText ) )
                         logging.error( _("Invalid USFM verse list end '{}' in '{}' in Bible book {} {}").format( endVerseNumberString, verseText, self.BBB, chapterText ) )
                     if verseNumber >= endVerseNumber:
@@ -1950,7 +1872,7 @@ class InternalBibleBook:
                     endVerseNumberString = verseNumberString
                 try:
                     verseNumber = int( verseNumberString )
-                except:
+                except ValueError:
                     versificationErrors.append( _("{} {} {} Invalid verse number digits in Bible book").format( self.BBB, chapterText, verseNumberString ) )
                     logging.error( _("Invalid verse number digits in Bible book {} {} {}").format( self.BBB, chapterText, verseNumberString ) )
                     newString = ''
@@ -1960,7 +1882,7 @@ class InternalBibleBook:
                     verseNumber = int(newString) if newString else 999
                 try:
                     lastVerseNumber = int( lastVerseNumberString )
-                except:
+                except ValueError:
                     newString = ''
                     for char in lastVerseNumberString:
                         if char.isdigit(): newString += char
@@ -2559,6 +2481,9 @@ class InternalBibleBook:
             elif marker == 'c~':
                 lastMarker, lastMarkerEmpty = 'c', markerEmpty
                 continue
+            elif marker == 'cl¤':
+                lastMarker, lastMarkerEmpty = 'c', markerEmpty
+                continue
             elif marker == 'c#':
                 lastMarker, lastMarkerEmpty = 'c', markerEmpty
                 continue
@@ -2572,7 +2497,7 @@ class InternalBibleBook:
 
             # Check the progression through the various sections
             try: newSection = BibleOrgSysGlobals.USFMMarkers.markerOccursIn( marker if marker!='v~' else 'v' )
-            except: logging.error( "IBB:doCheckSFMs: markerOccursIn failed for '{}'".format( marker ) )
+            except KeyError: logging.error( "IBB:doCheckSFMs: markerOccursIn failed for '{}'".format( marker ) )
             if newSection != section: # Check changes into new sections
                 #print( section, marker, newSection )
                 if section=='' and newSection!='Header':
@@ -3879,6 +3804,55 @@ class InternalBibleBook:
             C,V = ref.getCV()
         return self._CVIndex.getEntriesWithContext( (C,V,) ) # Gives a KeyError if not found
     # end of InternalBibleBook.getContextVerseData
+
+
+    def writeBOSBCVFiles( self, bookFolderPath ):
+        """
+        Write the internal pseudoUSFM out directly with one file per verse.
+        """
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing '{}' as BCV...").format( self.BBB ) )
+
+        # Write the data out with the introduction in one file, and then each verse in a separate file
+        introLines = verseLines = ""
+        CVList = []
+        for CVKey in self._CVIndex:
+            C, V = CVKey
+            #print( self.BBB, C, V )
+
+            for entry in self._CVIndex.getEntries( CVKey ):
+                #print( entry )
+                marker, originalMarker = entry.getMarker(), entry.getOriginalMarker()
+                line = '\\'+marker
+                if originalMarker and originalMarker!=marker and (marker,originalMarker) not in (('c#','c'),('v~','v'),):
+                    line += '<<'+originalMarker
+                content = entry.getOriginalText()
+                if content: line += '='+content
+                line += '\n'
+                if C == '0': introLines += line # collect all of the intro parts
+                else: verseLines += line
+
+            if C != '0':
+                if introLines:
+                    with open( os.path.join( bookFolderPath, self.BBB+'_C0.txt' ), 'wt' ) as myFile:
+                        myFile.write( introLines )
+                    introLines = None # Will now cause an error if we try to do more introduction bits
+                else:
+                    with open( os.path.join( bookFolderPath, self.BBB+'_C'+C+'V'+V+'.txt' ), 'wt' ) as myFile:
+                        myFile.write( verseLines )
+                    verseLines = ""
+                    CVList.append( CVKey )
+        if introLines: # handle left-overs for books without chapters
+            with open( os.path.join( bookFolderPath, self.BBB+'_C0.txt' ), 'wt' ) as myFile:
+                myFile.write( introLines )
+        assert( not verseLines )
+
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing BCV book metadata...") )
+        metadataLines = 'BCVVersion = {}\n'.format( BCV_VERSION )
+        if self.workName: metadataLines += 'WorkName = {}\n'.format( self.workName )
+        metadataLines += 'CVList = {}\n'.format( CVList )
+        with open( os.path.join( bookFolderPath, self.BBB+'_BookMetadata.txt' ), 'wt' ) as metadataFile:
+            metadataFile.write( metadataLines )
+    # end of InternalBibleBook.writeBOSBCVFiles
 # end of class InternalBibleBook
 
 

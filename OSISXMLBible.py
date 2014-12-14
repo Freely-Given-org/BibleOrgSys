@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # OSISXMLBible.py
-#   Last modified: 2014-10-03 by RJH (also update ProgVersion below)
+#   Last modified: 2014-12-15 by RJH (also update ProgVersion below)
 #
 # Module handling OSIS XML Bibles
 #
@@ -36,7 +36,7 @@ Updated Sept 2013 to also handle Kahunapule's "modified OSIS".
 """
 
 ProgName = "OSIS XML Bible format handler"
-ProgVersion = "0.41"
+ProgVersion = "0.42"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -959,7 +959,7 @@ class OSISXMLBible( Bible ):
                         cmBBB = None
                         try:
                             cmBBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSIS( bits[0] )
-                        except:
+                        except KeyError:
                             logging.critical( _("'{}' is not a valid OSIS book identifier").format( bits[0] ) )
                             loadErrors.append( _("'{}' is not a valid OSIS book identifier").format( bits[0] ) )
                         if cmBBB and cmBBB != BBB: # We've started on a new book
@@ -2155,7 +2155,7 @@ class OSISXMLBible( Bible ):
                 mainDivOsisID = mainDivOsisID[:-2] # Change 1Kgs.1 to 1Kgs
             try:
                 BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSIS( mainDivOsisID )
-            except:
+            except KeyError:
                 logging.critical( _("'{}' is not a valid OSIS book identifier").format( mainDivOsisID ) )
             if BBB:
                 if isinstance( BBB, list ): # There must be multiple alternatives for BBB from the OSIS one
@@ -2492,7 +2492,7 @@ class OSISXMLBible( Bible ):
                     OSISBookID = chapterMilestone.split('.')[0]
                     try:
                         newBBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromOSIS( OSISBookID )
-                    except:
+                    except KeyError:
                         logging.critical( _("'{}' is not a valid OSIS book identifier").format( OSISBookID ) )
                     if newBBB != BBB:
                         BBB = newBBB

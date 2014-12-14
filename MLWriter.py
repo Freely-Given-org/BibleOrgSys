@@ -509,7 +509,7 @@ def demo():
         try:
             xf.validateByLoading()
             xf.validateWithLint()
-        except:
+        except FileNotFoundError:
             logging.warning( "Unable to try validating XML file for some reason" )
         #print( xf.validateAll() )
         print( xf )

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ESwordBible.py
-#   Last modified: 2014-11-04 by RJH (also update ProgVersion below)
+#   Last modified: 2014-12-14 by RJH (also update ProgVersion below)
 #
 # Module handling "e-Sword" Bible module files
 #
@@ -517,7 +517,7 @@ class ESwordBible( Bible ):
             try:
                 row = cursor.fetchone()
                 line = row[0]
-            except: # This reference is missing
+            except FileNotFoundError: # This reference is missing
                 #print( "something wrong at", BBB, C, V )
                 #if BibleOrgSysGlobals.debugFlag: halt
                 #print( row )

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # GreekNT.py
-#   Last modified: 2014-07-16 (also update ProgVersion below)
+#   Last modified: 2014-12-14 (also update ProgVersion below)
 #
 # Module handling GreekNT.xml
 #
@@ -222,10 +222,10 @@ class GreekNT( Bible ):
                     #reference = BBB,bits[0][1],bits[0][2], # Put the BBB into the reference
                     #lineTuples.append( (reference,bits[1],bits[2],) )
                     #print( reference,bits[1],bits[2] ); halt
-            if 0: #except:
-                logging.critical( "Invalid line in " + filepath + " -- line ignored at " + str(lineCount) )
-                if lineCount > 1: print( 'Previous line was: ', lastLine )
-                else: print( 'Possible encoding error -- expected', encoding )
+            #if 0: #except:
+                #logging.critical( "Invalid line in " + filepath + " -- line ignored at " + str(lineCount) )
+                #if lineCount > 1: print( 'Previous line was: ', lastLine )
+                #else: print( 'Possible encoding error -- expected', encoding )
         if self.thisBook:
             if BibleOrgSysGlobals.verbosityLevel > 3: print( "    {} words loaded from {}".format( len(self.thisBook), filename ) )
             self.saveBook( self.thisBook )

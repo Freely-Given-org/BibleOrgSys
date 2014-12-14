@@ -44,7 +44,7 @@ and then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-03'
+LastModifiedDate = '2014-12-14' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.60'
@@ -59,6 +59,7 @@ from collections import OrderedDict
 
 import BibleOrgSysGlobals
 from InternalBibleInternals import InternalBibleEntryList
+from InternalBibleBook import BCV_VERSION
 
 
 def t( messageString ):
@@ -396,7 +397,7 @@ class InternalBible:
         if BibleOrgSysGlobals.debugFlag: assert( BBB in BibleOrgSysGlobals.BibleBooksCodes)
         #if BBB in self.BBBToNameDict: return self.BBBToNameDict[BBB] # What was this ???
         try: return self.books[BBB].assumedBookName
-        except: return None
+        except (KeyError, AttributeError): return None
     # end of InternalBible.getAssumedBookName
 
 
@@ -404,7 +405,7 @@ class InternalBible:
         """Gets the long table of contents book name for the given book reference code."""
         if BibleOrgSysGlobals.debugFlag: assert( BBB in BibleOrgSysGlobals.BibleBooksCodes)
         try: return self.books[BBB].longTOCName
-        except: return None
+        except (KeyError, AttributeError): return None
     # end of InternalBible.getLongTOCName
 
 
@@ -412,7 +413,7 @@ class InternalBible:
         """Gets the short table of contents book name for the given book reference code."""
         if BibleOrgSysGlobals.debugFlag: assert( BBB in BibleOrgSysGlobals.BibleBooksCodes)
         try: return self.books[BBB].shortTOCName
-        except: return None
+        except (KeyError, AttributeError): return None
     # end of InternalBible.getShortTOCName
 
 
@@ -420,7 +421,7 @@ class InternalBible:
         """Gets the book abbreviation for the given book reference code."""
         if BibleOrgSysGlobals.debugFlag: assert( BBB in BibleOrgSysGlobals.BibleBooksCodes)
         try: return self.books[BBB].booknameAbbreviation
-        except: return None
+        except (KeyError, AttributeError): return None
     # end of InternalBible.getBooknameAbbreviation
 
 
@@ -1474,7 +1475,7 @@ class InternalBible:
         help2Part = '<p><b>Errors</b> entries give lists of possible errors and warnings. <b>Priority Errors</b> is our attempt for the program to pick out the more serious errors in your work—the same information is also available in the other lists of Errors.</p>' + \
                     '<p><b>Lines</b> entries list all lines in certain categories (such as titles or headings) so that you can visually check through the lists in order to see how consistent you have been throughout your work.</p>' + \
                     '<p><b>List</b> entries also list similar items for you to scan through. The <b>Modified Marker List</b> gives you a quick way to scan through all of the main USFM markers used in your file—if a marker occurs several times in a row, it only lists it once.</p>' + \
-                    '<p><b>Counts</b> entries list counts of characters and words, etc. and are usually provided sorted in different ways. It’s often helpful to look at items that only occur one or two times in your work as they might indicate possible mistakes.<p>' + \
+                    '<p><b>Counts</b> entries list counts of characters and words, etc. and are usually provided sorted in different ways. It’s often helpful to look at items that only occur one or two times in your work as they might indicate possible mistakes.</p>' + \
                     '<p>We are still working on improving error detection, removing false alarms, and better prioritising the errors and warnings. If you have any suggestions, use the <a href="__TOP_PATH__Contact.html">Contact Page</a> to let us know. Thanks.</p>'
         if BBBIndexPart: # Create the by book index page
             BBBIndexPart += '<small>{}</small>'.format( help1Part )
@@ -1635,6 +1636,29 @@ class InternalBible:
                 else: logging.warning( "InternalBible.getVerseText Unknown marker {}={}".format( marker, repr(cleanText) ) )
             return verseText
     # end of InternalBible.getVerseText
+
+
+    def writeBOSBCVFiles( self, outputFolderPath ):
+        """
+        Write the internal pseudoUSFM out directly with one file per verse.
+        """
+        BBBList = []
+        for BBB,bookObject in self.books.items():
+            BBBList.append( BBB )
+            bookFolderPath = os.path.join( outputFolderPath, BBB + '/' )
+            os.mkdir( bookFolderPath )
+            bookObject.writeBOSBCVFiles( bookFolderPath )
+
+        # Write the Bible metadata
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing BCV metadata...") )
+        metadataLines = 'BCVVersion = {}\n'.format( BCV_VERSION )
+        if self.projectName: metadataLines += 'ProjectName = {}\n'.format( self.projectName )
+        if self.name: metadataLines += 'Name = {}\n'.format( self.name )
+        if self.abbreviation: metadataLines += 'Abbreviation = {}\n'.format( self.abbreviation )
+        metadataLines += 'BookList = {}\n'.format( BBBList )
+        with open( os.path.join( outputFolderPath, 'Metadata.txt' ), 'wt' ) as metadataFile:
+            metadataFile.write( metadataLines )
+    # end of InternalBible.writeBOSBCVFiles
 # end of class InternalBible
 
 

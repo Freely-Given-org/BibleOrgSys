@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # ISO_639_3_LanguagesTests.py
-#   Last modified: 2013-06-24 by RJH (also update ProgVersion below)
+#   Last modified: 2014-12-15 by RJH (also update ProgVersion below)
 #
 # Module testing ISO_639_3_Languages.py
 #
-# Copyright (C) 2011-2013 Robert Hunt
+# Copyright (C) 2011-2014 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module testing ISO_639_3_Languages.py.
 """
 
 ProgName = "ISO-639-3 language code tests"
-ProgVersion = "0.84"
+ProgVersion = '0.85'
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -36,7 +36,7 @@ import sys, unittest
 
 sourceFolder = "."
 sys.path.append( sourceFolder )
-import Globals, ISO_639_3_LanguagesConverter, ISO_639_3_Languages
+import BibleOrgSysGlobals, ISO_639_3_LanguagesConverter, ISO_639_3_Languages
 
 
 class ISO_639_3_LanguagesConverterTests( unittest.TestCase ):
@@ -221,10 +221,10 @@ class ISO_639_3_LanguagesTests( unittest.TestCase ):
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
-    if Globals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
 
     unittest.main() # Automatically runs all of the above tests
 # end of ISO_639_3_LanguagesTests.py

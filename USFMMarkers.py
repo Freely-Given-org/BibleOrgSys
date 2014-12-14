@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkers.py
-#   Last modified: 2014-08-11 (also update ProgVersion below)
 #
 # Module handling USFMMarkers
 #
@@ -33,22 +32,26 @@ Contains functions:
 Contains the singleton class: USFMMarkers
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2014-12-12' # by RJH
+ShortProgName = "USFMMarkers"
 ProgName = "USFM Markers handler"
-ProgVersion = "0.67"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.68'
+ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
 import os, logging
-from gettext import gettext as _
 from collections import OrderedDict
 
 from singleton import singleton
 import BibleOrgSysGlobals
 
 
-OFTEN_IGNORED_USFM_HEADER_MARKERS = ( 'id','ide', 'sts','rem','h', 'toc1','toc2','toc3', 'cl=', )
+OFTEN_IGNORED_USFM_HEADER_MARKERS = ( 'id','ide', 'sts','rem','h', 'toc1','toc2','toc3', 'cl¤', )
 # NOTE: the following sets include unnumbered markers, e.g., q, as well as q1
 USFM_TITLE_MARKERS = ( 'mt','mt1','mt2','mt3','mt4', 'mte','mte1','mte2','mte3','mte4',
                       'imt','imt1','imt2','imt3','imt4', 'imte','imte1','imte2','imte3','imte4', )

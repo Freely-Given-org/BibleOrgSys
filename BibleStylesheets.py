@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleStylesheets.py
-#   Last modified: 2014-10-30 (also update ProgVersion below)
+#   Last modified: 2014-12-14 (also update ProgVersion below)
 #
 # Module handling Bible (including Paratext) stylesheets
 #
@@ -167,7 +167,7 @@ class BibleStylesheet():
         for marker in BibleOrgSysGlobals.USFMMarkers:
             #print( marker )
             try: PTFormatting = PTSS.getDict( marker )
-            except: PTFormatting = None # Just ignore the error
+            except KeyError: PTFormatting = None # Just ignore the error
             if PTFormatting:
                 formatSpecification = ''
                 for field, value in PTFormatting.items():
@@ -356,9 +356,9 @@ def demo():
         print( ss.getTKStyleDict( 'h' ) )
         #print( ss.getValue( 'h', 'FontSize' ) )
         try: print( ss.getTKStyleDict( 'hijkl' ) )
-        except: print( "No hijkl in stylesheet!" )
+        except KeyError: print( "No hijkl in stylesheet!" )
         try: print( ss.getValue( 'h', 'FontSizeImaginary' ) )
-        except: print( "No h or FontSizeImaginary in stylesheet!" )
+        except KeyError: print( "No h or FontSizeImaginary in stylesheet!" )
 
     if 1: # Try a small one
         print( "\nTrying small PT stylesheet..." )
@@ -369,9 +369,9 @@ def demo():
         print( 'h', ss.getDict( 'h' ) )
         print( ss.getValue( 'h', 'FontSize' ) )
         try: print( ss.getDict( 'hijkl' ) )
-        except: print( "No hijkl in stylesheet!" )
+        except KeyError: print( "No hijkl in stylesheet!" )
         try: print( ss.getValue( 'h', 'FontSizeImaginary' ) )
-        except: print( "No h or FontSizeImaginary in stylesheet!" )
+        except KeyError: print( "No h or FontSizeImaginary in stylesheet!" )
 
     if 1: # Try a full one
         print( "\nTrying full PT stylesheet..." )
@@ -383,9 +383,9 @@ def demo():
         print( ss.getDict( 'h' ) )
         print( ss.getValue( 'h', 'FontSize' ) )
         try: print( ss.getDict( 'hijkl' ) )
-        except: print( "No hijkl in stylesheet!" )
+        except KeyError: print( "No hijkl in stylesheet!" )
         try: print( ss.getValue( 'h', 'FontSizeImaginary' ) )
-        except: print( "No h or FontSizeImaginary in stylesheet!" )
+        except KeyError: print( "No h or FontSizeImaginary in stylesheet!" )
 # end of demo
 
 if __name__ == '__main__':

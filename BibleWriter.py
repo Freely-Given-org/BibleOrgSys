@@ -35,6 +35,7 @@ This is intended to be a virtual class, i.e., to be extended further
 Contains functions:
     toPickle( self, outputFolder=None )
     makeLists( outputFolder=None )
+    toBOSBCV( self, outputFolder=None ) -- one file per verse using our internal Bible format
     toPseudoUSFM( outputFolder=None ) -- this is our internal Bible format -- exportable for debugging purposes
             For more details see InternalBible.py, InternalBibleBook.py, InternalBibleInternals.py
     toUSFM( outputFolder=None. removeVerseBridges=False )
@@ -67,7 +68,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-06'
+LastModifiedDate = '2014-12-14' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.90'
@@ -377,61 +378,7 @@ class BibleWriter( InternalBible ):
             shutil.rmtree( outputFolder, ignore_errors=True )
         os.makedirs( outputFolder ) # Make the empty folder
 
-        # Write the data out with the introduction in one file, and then each verse in a separate file
-        BBBList = []
-        for j, (BBB,bookObject) in enumerate( self.books.items() ):
-            BBBList.append( BBB )
-            pseudoUSFMData = bookObject._processedLines
-
-            bookFolderPath = os.path.join( outputFolder, BBB + '/' )
-            os.mkdir( bookFolderPath )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing '{}' as BCV...").format( BBB ) )
-
-            introLines = verseLines = ""
-            CVList = []
-            for CVKey in bookObject._CVIndex:
-                C, V = CVKey
-                #print( BBB, C, V )
-                for entry in bookObject._CVIndex.getEntries( CVKey ):
-                    #print( entry )
-                    marker, originalMarker = entry.getMarker(), entry.getOriginalMarker()
-                    line1 = '\\'+marker+'<'+originalMarker if originalMarker and originalMarker!=marker else '\\'+marker
-                    line2 = entry.getOriginalText()
-                    lines = line1 + '\n' + line2 + '\n' if line2 else line1 + '\n'
-                    if C == '0': introLines += lines # collect all of the intro parts
-                    else: verseLines += lines
-                if C != '0':
-                    if introLines:
-                        with open( os.path.join( bookFolderPath, 'C0.txt' ), 'wt' ) as myFile:
-                            myFile.write( introLines )
-                        introLines = None # Gives an error now if we try to do more introduction bits
-                    else:
-                        with open( os.path.join( bookFolderPath, 'C'+C+'V'+V+'.txt' ), 'wt' ) as myFile:
-                            myFile.write( verseLines )
-                        verseLines = ""
-                        CVList.append( CVKey )
-            if introLines: # handle left-overs for books without chapters
-                with open( os.path.join( bookFolderPath, 'C0.txt' ), 'wt' ) as myFile:
-                    myFile.write( introLines )
-            assert( not verseLines )
-
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing CV book metadata...") )
-            metadataLines = 'v1.0\n'
-            if bookObject.workName: metadataLines += 'WorkName = {}\n'.format( bookObject.workName )
-            metadataLines += 'CVList = {}\n'.format( CVList )
-            with open( os.path.join( bookFolderPath, 'BookMetadata.txt' ), 'wt' ) as myFile:
-                myFile.write( metadataLines )
-
-        # Write the metadata
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing BCV metadata...") )
-        metadataLines = 'v1.0\n'
-        if self.projectName: metadataLines += 'ProjectName = {}\n'.format( self.projectName )
-        if self.name: metadataLines += 'Name = {}\n'.format( self.name )
-        if self.abbreviation: metadataLines += 'Abbreviation = {}\n'.format( self.abbreviation )
-        metadataLines += 'Books = {}\n'.format( BBBList )
-        with open( os.path.join( outputFolder, 'Metadata.txt' ), 'wt' ) as myFile:
-            myFile.write( metadataLines )
-
+        self.writeBOSBCVFiles( outputFolder )
 
         # Now create a zipped collection
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Zipping BCV files..." )
@@ -465,7 +412,7 @@ class BibleWriter( InternalBible ):
         # Write the raw and pseudo-USFM files
         for j, (BBB,bookObject) in enumerate( self.books.items() ):
             try: rawUSFMData = bookObject._rawLines
-            except: rawUSFMData = None # it's been deleted  :-(
+            except AttributeError: rawUSFMData = None # it's been deleted  :-(
             if rawUSFMData:
                 #print( "\pseudoUSFMData", pseudoUSFMData[:50] ); halt
                 #USFMAbbreviation = BibleOrgSysGlobals.BibleBooksCodes.getUSFMAbbreviation( BBB )
@@ -1278,7 +1225,7 @@ class BibleWriter( InternalBible ):
         if not controlDict:
             controlDict, defaultControlFilename = {}, "To_Door43_controls.txt"
             try: ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
-            except:
+            except FileNotFoundError:
                 logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
         self.__adjustControlDict( controlDict )
 
@@ -1906,7 +1853,7 @@ class BibleWriter( InternalBible ):
         if not controlDict:
             controlDict, defaultControlFilename = {}, "To_HTML5_controls.txt"
             try: ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
-            except:
+            except FileNotFoundError:
                 logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
         self.__adjustControlDict( controlDict )
 
@@ -2620,14 +2567,14 @@ class BibleWriter( InternalBible ):
                 abbreviation = self.getBooknameAbbreviation( BBB )
                 shortName = self.getShortTOCName( BBB )
                 longName = self.getAssumedBookName( BBB )
-                try: divisionNumber = divisionData.index( getDivisionName( BBB, doneAny, doneBooks ) )
-                except: divisionNumber = -1
+                divisionNumber = divisionData.index( getDivisionName( BBB, doneAny, doneBooks ) )
+                #except: divisionNumber = -1
                 numChapters = ""
                 for dataLine in bookObject._processedLines:
                     if dataLine.getMarker() == 'c':
                         numChapters = dataLine.getCleanText()
                 try: intNumChapters = int( numChapters )
-                except:
+                except ValueError:
                     logging.error( "toCustomBible: no chapters in {}".format( BBB ) )
                     intNumChapters = 0
                 bkData.append( (BBB,abbreviation,shortName,longName,intNumChapters,numSectionsDict[BBB],divisionNumber) )
@@ -2733,7 +2680,7 @@ class BibleWriter( InternalBible ):
             # end of writeCBBookAsHTML.handleSection
 
             try: haveSectionHeadings = self.discoveryResults[BBB]['haveSectionHeadings']
-            except: haveSectionHeadings = False
+            except AttributeError: haveSectionHeadings = False
             #print( haveSectionHeadings, BBB ) #, self.discoveryResults[BBB] )
 
             htmlFile = open( destinationHTMLFilepathTemplate.format( BBB ), 'wb' ) # Note: binary not text
@@ -3043,7 +2990,7 @@ class BibleWriter( InternalBible ):
 
             def toInt( CVstring ):
                 try: return int( CVstring )
-                except:
+                except ValueError:
                     #if BibleOrgSysGlobals.debugFlag: assert( CVstring )
                     newCV = '0'
                     for char in CVstring:
@@ -3119,9 +3066,8 @@ class BibleWriter( InternalBible ):
         if not os.access( filesFolder, os.F_OK ): os.makedirs( filesFolder ) # Make the empty folder if there wasn't already one there
         if not controlDict:
             controlDict, defaultControlFilename = {}, "To_USX_controls.txt"
-            try:
-                ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
-            except:
+            try: ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
+            except FileNotFoundError:
                 logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
         self.__adjustControlDict( controlDict )
 
@@ -3576,9 +3522,8 @@ class BibleWriter( InternalBible ):
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         if not controlDict:
             controlDict, defaultControlFilename = {}, "To_USFX_controls.txt"
-            try:
-                ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
-            except:
+            try: ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
+            except FileNotFoundError:
                 logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
         self.__adjustControlDict( controlDict )
 
@@ -4111,9 +4056,8 @@ class BibleWriter( InternalBible ):
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         if not controlDict:
             controlDict, defaultControlFilename = {}, "To_OSIS_controls.txt"
-            try:
-                ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
-            except:
+            try: ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
+            except FileNotFoundError:
                 logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
         self.__adjustControlDict( controlDict )
 
@@ -4830,9 +4774,8 @@ class BibleWriter( InternalBible ):
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         if not controlDict:
             controlDict, defaultControlFilename = {}, "To_Zefania_controls.txt"
-            try:
-                ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
-            except:
+            try: ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
+            except FileNotFoundError:
                 logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
         self.__adjustControlDict( controlDict )
 
@@ -5003,9 +4946,8 @@ class BibleWriter( InternalBible ):
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         if not controlDict:
             controlDict, defaultControlFilename = {}, "To_Haggai_controls.txt"
-            try:
-                ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
-            except:
+            try: ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
+            except FileNotFoundError:
                 logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
         self.__adjustControlDict( controlDict )
 
@@ -5186,9 +5128,8 @@ class BibleWriter( InternalBible ):
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         if not controlDict:
             controlDict, defaultControlFilename = {}, "To_OpenSong_controls.txt"
-            try:
-                ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
-            except:
+            try: ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
+            except FileNotFoundError:
                 logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
         self.__adjustControlDict( controlDict )
 
@@ -5333,9 +5274,8 @@ class BibleWriter( InternalBible ):
         if not os.access( outputFolder, os.F_OK ): os.makedirs( outputFolder ) # Make the empty folder if there wasn't already one there
         if not controlDict:
             controlDict, defaultControlFilename = {}, "To_OSIS_controls.txt"
-            try:
-                ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
-            except:
+            try: ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
+            except FileNotFoundError:
                 logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
         self.__adjustControlDict( controlDict )
 
@@ -6051,9 +5991,8 @@ class BibleWriter( InternalBible ):
         # ControlDict is not used (yet)
         if not controlDict:
             controlDict, defaultControlFilename = {}, "To_TheWord_controls.txt"
-            try:
-                ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
-            except:
+            try: ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
+            except FileNotFoundError:
                 pass
                 #logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
         #self.__adjustControlDict( controlDict )
@@ -6237,9 +6176,8 @@ class BibleWriter( InternalBible ):
         # ControlDict is not used (yet)
         if not controlDict:
             controlDict, defaultControlFilename = {}, "To_MySword_controls.txt"
-            try:
-                ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
-            except:
+            try: ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
+            except FileNotFoundError:
                 pass
                 #logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
         #self.__adjustControlDict( controlDict )
@@ -6439,9 +6377,8 @@ class BibleWriter( InternalBible ):
         # ControlDict is not used (yet)
         if not controlDict:
             controlDict, defaultControlFilename = {}, "To_e-Sword_controls.txt"
-            try:
-                ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
-            except:
+            try: ControlFiles.readControlFile( defaultControlFolder, defaultControlFilename, controlDict )
+            except FileNotFoundError:
                 pass
                 #logging.critical( "Unable to read control dict {} from {}".format( defaultControlFilename, defaultControlFolder ) )
         #self.__adjustControlDict( controlDict )
@@ -6956,7 +6893,7 @@ class BibleWriter( InternalBible ):
             Convert the internal Bible data to SwordSearcher pre-Forge output.
             """
             try: bookCode = ssBookAbbrevDict[BBB]
-            except:
+            except KeyError:
                 logging.warning( "toSwordSearcher: don't know how to encode book: {}".format( BBB ) )
                 unhandledBooks.append( BBB )
                 return
@@ -7016,7 +6953,7 @@ class BibleWriter( InternalBible ):
                 if BibleOrgSysGlobals.debugFlag: writeSSBook( myFile, BBB, bookObject ) # Halts on errors
                 else:
                     try: writeSSBook( myFile, BBB, bookObject )
-                    except: logging.critical( "BibleWriter.toSwordSearcher: Unable to output {}".format( BBB ) )
+                    except IOError: logging.critical( "BibleWriter.toSwordSearcher: Unable to output {}".format( BBB ) )
 
         if ignoredMarkers:
             logging.info( "toSwordSearcher: Ignored markers were {}".format( ignoredMarkers ) )
@@ -7085,7 +7022,7 @@ class BibleWriter( InternalBible ):
             for BBB,bookObject in self.books.items():
                 numChapters = None
                 try: bookCode = BibleOrgSysGlobals.BibleBooksCodes.getDrupalBibleAbbreviation( BBB ).upper()
-                except: # Don't know how to encode this book
+                except AttributeError: # Don't know how to encode this book
                     logging.warning( "toDrupalBible: ignoring book: {}".format( BBB ) )
                     continue
                 for entry in bookObject._processedLines:
@@ -7123,7 +7060,7 @@ class BibleWriter( InternalBible ):
             Convert the internal Bible data to DrupalBible output.
             """
             try: bookCode = BibleOrgSysGlobals.BibleBooksCodes.getDrupalBibleAbbreviation( BBB ).upper()
-            except:
+            except AttributeError:
                 logging.error( "writeDrupalBibleBook: don't know how to encode {}".format( BBB ) )
                 unhandledBooks.append( BBB )
                 return
@@ -7194,8 +7131,8 @@ class BibleWriter( InternalBible ):
             for BBB,bookObject in self.books.items():
                 if BibleOrgSysGlobals.debugFlag: writeDrupalBibleBook( myFile, BBB, bookObject ) # halts on errors
                 else:
-                    try: writeDrupalBibleBook( myFile, BBB, bookObject )
-                    except: logging.critical( "BibleWriter.toDrupalBible: Unable to output {}".format( BBB ) )
+                    writeDrupalBibleBook( myFile, BBB, bookObject )
+                    #except: logging.critical( "BibleWriter.toDrupalBible: Unable to output {}".format( BBB ) )
 
         if ignoredMarkers:
             logging.info( "toDrupalBible: Ignored markers were {}".format( ignoredMarkers ) )
@@ -7614,7 +7551,7 @@ class BibleWriter( InternalBible ):
                     C, V = cleanText, '0'
                     if marker == 'c':
                         try: intC = int( C ) # But cp text might not be an integer
-                        except: logging.critical( "toPhotoBible: will overwrite chapter {} of {} (couldn't process {})".format( intC, BBB, repr(C) ) )
+                        except ValueError: logging.critical( "toPhotoBible: will overwrite chapter {} of {} (couldn't process {})".format( intC, BBB, repr(C) ) )
                     numVerses = 0
                 elif marker == 'cl': # specific chapter label
                     textBuffer += '\n' + cleanText
@@ -8770,7 +8707,7 @@ class BibleWriter( InternalBible ):
 
 
             try: headerField = bookObject.longTOCName
-            except: headerField = bookObject.assumedBookName
+            except AttributeError: headerField = bookObject.assumedBookName
             startingNewParagraphFlag = True
             inTextParagraph = False
             lastMarker = gotVP = None
@@ -9338,7 +9275,7 @@ class BibleWriter( InternalBible ):
         if BibleOrgSysGlobals.debugFlag: pickleResult = self.toPickle( pickleOutputFolder ) # halts if fails
         else:
             try: pickleResult = self.toPickle( pickleOutputFolder )
-            except:
+            except IOError:
                 pickleResult = False
                 print( "BibleWriter.doAllExports: pickle( {} ) failed.".format( pickleOutputFolder ) )
         if not self.doneSetupGeneric: self.__setupWriter()
@@ -9592,15 +9529,15 @@ def demo():
         from USFMBible import USFMBible
         from USFMFilenames import USFMFilenames
         testData = ( # name, abbreviation, folder for USFM files
-                ("USFM-AllMarkers", "USFM-All", "Tests/DataFilesForTests/USFMAllMarkersProject/",),
+                #("USFM-AllMarkers", "USFM-All", "Tests/DataFilesForTests/USFMAllMarkersProject/",),
                 #("CustomTest", "Custom", ".../",),
-                ("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
-                ("USFMTest2", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
-                ("ESFMTest1", "ESFM1", "Tests/DataFilesForTests/ESFMTest1/",),
-                ("ESFMTest2", "ESFM2", "Tests/DataFilesForTests/ESFMTest2/",),
-                ("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
-                ("OEB", "OEB", "Tests/DataFilesForTests/USFM-OEB/",),
-                #("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
+                #("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
+                #("USFMTest2", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
+                #("ESFMTest1", "ESFM1", "Tests/DataFilesForTests/ESFMTest1/",),
+                #("ESFMTest2", "ESFM2", "Tests/DataFilesForTests/ESFMTest2/",),
+                #("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
+                #("OEB", "OEB", "Tests/DataFilesForTests/USFM-OEB/",),
+                ("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
                 #("MS-BT", "MBTBT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
                 #("MS-Notes", "MBTBC", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/",),
                 #("MS-ABT", "MBTABT", "../../../../../Data/Work/Matigsalug/Bible/MBTABT/",),

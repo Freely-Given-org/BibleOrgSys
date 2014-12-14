@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBookOrders.py
-#   Last modified: 2014-10-19 (also update ProgVersion below)
+#   Last modified: 2014-12-14 (also update ProgVersion below)
 #
 # Module handling BibleBookOrderSystems
 #
@@ -292,7 +292,7 @@ class BibleBookOrderSystem:
     def __len__( self ):
         """ Returns the number of books in this system. """
         try: return len( self.__BookOrderList )
-        except: return None
+        except AttributeError: return None
     # end of BibleBookOrderSystem.__len__
 
 

@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # BibleVersificationSystemsTests.py
-#   Last modified: 2013-08-28 (also update ProgVersion below)
+#   Last modified: 2014-12-15 (also update ProgVersion below)
 #
 # Module testing BibleVersificationSystems.py
 #
-# Copyright (C) 2011-2013 Robert Hunt
+# Copyright (C) 2011-2014 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module testing BibleVersificationSystemsConverter.py and BibleVersificationSyste
 """
 
 ProgName = "Bible Versification Systems tests"
-ProgVersion = "0.47"
+ProgVersion = '0.48'
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -39,7 +39,7 @@ from collections import OrderedDict
 
 sourceFolder = "."
 sys.path.append( sourceFolder )
-import Globals, BibleVersificationSystemsConverter, BibleVersificationSystems
+import BibleOrgSysGlobals, BibleVersificationSystemsConverter, BibleVersificationSystems
 
 
 class BibleVersificationSystemsConverterTests(unittest.TestCase):
@@ -225,10 +225,10 @@ class BibleVersificationSystemTests(unittest.TestCase):
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser, exportAvailable=True )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser, exportAvailable=True )
 
-    if Globals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
 
     unittest.main() # Automatically runs all of the above tests
 # end of BibleVersificationSystemsTests.py

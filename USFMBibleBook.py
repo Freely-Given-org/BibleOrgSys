@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 #
 # USFMBibleBook.py
-#   Last modified: 2014-09-15 by RJH (also update ProgVersion below)
 #
 # Module handling the USFM markers for Bible books
 #
@@ -27,15 +26,19 @@
 Module for defining and manipulating USFM Bible books.
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2014-12-11' # by RJH
+ShortProgName = "USFMBibleBook"
 ProgName = "USFM Bible book handler"
-ProgVersion = "0.43"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.43'
+ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
 import os, logging
-from gettext import gettext as _
 
 import BibleOrgSysGlobals
 from USFMFile import USFMFile
@@ -58,7 +61,7 @@ class USFMBibleBook( BibleBook ):
         BibleBook.__init__( self, containerBibleObject, BBB ) # Initialise the base class
         self.objectNameString = "USFM Bible Book object"
         self.objectTypeString = "USFM"
-    # end of __init__
+    # end of USFMBibleBook.__init__
 
 
     def load( self, filename, folder=None, encoding=None ):
@@ -183,7 +186,7 @@ class USFMBibleBook( BibleBook ):
 
         if loadErrors: self.errorDictionary['Load Errors'] = loadErrors
         #if debugging: print( self._rawLines ); halt
-    # end of load
+    # end of USFMBibleBook.load
 # end of class USFMBibleBook
 
 

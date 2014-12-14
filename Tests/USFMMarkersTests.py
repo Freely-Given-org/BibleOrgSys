@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # USFMMarkersTests.py
-#   Last modified: 2014-03-04 (also update ProgVersion below)
+#   Last modified: 2014-12-15 (also update ProgVersion below)
 #
 # Module testing USFMMarkers.py
 #
@@ -28,7 +28,7 @@ Module testing USFMMarkers.py.
 """
 
 ProgName = "USFM Markers tests"
-ProgVersion = "0.59"
+ProgVersion = '0.60'
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -36,7 +36,7 @@ import sys, unittest
 
 sourceFolder = "."
 sys.path.append( sourceFolder )
-import Globals, USFMMarkersConverter, USFMMarkers
+import BibleOrgSysGlobals, USFMMarkersConverter, USFMMarkers
 
 
 class USFMMarkersConverterTests( unittest.TestCase ):
@@ -546,10 +546,10 @@ class USFMMarkersTests( unittest.TestCase ):
 
 if __name__ == '__main__':
     # Configure basic set-up
-    parser = Globals.setup( ProgName, ProgVersion )
-    Globals.addStandardOptionsAndProcess( parser )
+    parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
+    BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
-    if Globals.verbosityLevel > 1: print( ProgNameVersion )
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
 
     unittest.main() # Automatically runs all of the above tests
 # end of USFMMarkersTests.py

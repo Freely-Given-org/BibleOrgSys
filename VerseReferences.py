@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # VerseReferences.py
-#   Last modified: 2014-11-10 (also update ProgVersion below)
+#   Last modified: 2014-12-15 (also update ProgVersion below)
 #
 # Module handling Bible verse references
 #
@@ -68,7 +68,7 @@ OXES is different again and tends to remove the second (redundant) book identifi
 
 ShortProgName = "VerseReferences"
 ProgName = "Bible verse reference handler"
-ProgVersion = "0.12"
+ProgVersion = "0.13"
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -158,7 +158,7 @@ class SimpleVerseKey():
 
     def getChapterNumberInt( self ):
         try: return( int( self.C ) )
-        except:
+        except ValueError:
             logging.warning( t("getChapterNumberInt: Unusual C value: {}").format( repr(self.C) ) )
             if self.C and self.C[0].isdigit():
                 digitCount = 0
@@ -170,7 +170,7 @@ class SimpleVerseKey():
 
     def getVerseNumberInt( self ):
         try: return( int( self.V ) )
-        except:
+        except ValueError:
             logging.warning( t("getVerseNumberInt: Unusual V value: {}").format( repr(self.V) ) )
             if self.V and self.V[0].isdigit():
                 digitCount = 0

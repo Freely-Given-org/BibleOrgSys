@@ -38,10 +38,10 @@ and then calls
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-06'
+LastModifiedDate = '2014-12-15' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
-ProgVersion = '0.53'
+ProgVersion = '0.55'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -67,7 +67,7 @@ TRAILING_WORD_PUNCT_CHARS = """,.”»"’›'?)!;:]}>"""
 ALL_WORD_PUNCT_CHARS = LEADING_WORD_PUNCT_CHARS + MEDIAL_WORD_PUNCT_CHARS + DASH_CHARS + TRAILING_WORD_PUNCT_CHARS
 
 
-BOS_ADDED_CONTENT_MARKERS = ( 'c~', 'c#', 'v~', 'p~', 'cl=', 'vp~', )
+BOS_ADDED_CONTENT_MARKERS = ( 'c~', 'c#', 'v~', 'p~', 'cl¤', 'vp~', )
 """
     c~  anything after the chapter number on a \c line
     c#  the chapter number in the correct position to be printed
@@ -75,9 +75,11 @@ BOS_ADDED_CONTENT_MARKERS = ( 'c~', 'c#', 'v~', 'p~', 'cl=', 'vp~', )
             Usually only one of c or c# is used for exports
     v~  verse text -- anything after the verse number on a \v line
     p~  verse text -- anything that was on a paragraph line (e.g., \p, \q, \q2, etc.)
-    cl= used for cl markers BEFORE the '\c 1' marker -- represents the text for "chapter" to be used throughout the book
+    cl¤ used for cl markers BEFORE the '\c 1' marker -- represents the text for "chapter" to be used throughout the book
     vp~ used for the vp (character field) when it is converted to a separate (newline) field
             This is inserted BEFORE the v (and v~) marker(s)
+
+    NOTE: Don't use any of the following symbols here: = ¬ or slashes.
 """
 BOS_PRINTABLE_MARKERS = USFM_TITLE_MARKERS + USFM_INTRODUCTION_MARKERS + USFM_SECTION_HEADING_MARKERS + ('v~', 'p~', ) # Should c~ and c# be in here???
 
@@ -257,7 +259,7 @@ class InternalBibleExtraList:
 
     def pop( self ): # Doesn't allow a parameter
         try: return self.data.pop()
-        except: return None
+        except IndexError: return None
     # end of InternalBibleExtraList.append
 
     def extend( self, newExtraList ):
@@ -472,7 +474,7 @@ class InternalBibleEntryList:
 
     def pop( self ): # Doesn't allow a parameter
         try: return self.data.pop()
-        except: return None
+        except IndexError: return None
     # end of InternalBibleEntryList.append
 
     def extend( self, newList ):
@@ -536,12 +538,12 @@ class InternalBibleIndex:
         """
         result = "InternalBibleIndex object for {}:".format( self.BBB )
         try: result += "\n  {} index entries".format( len( self.indexData ) )
-        except: result += "\n  Index is empty"
+        except AttributeError: result += "\n  Index is empty"
         try: result += " created from {} data entries".format( len( self.givenBibleEntries ) )
-        except: pass # ignore it
+        except AttributeError: pass # ignore it
         if BibleOrgSysGlobals.verbosityLevel > 2:
             try: result += "\n  {} average data entries per index entry".format( round( len(self.givenBibleEntries)/len(self.indexData), 1 ) )
-            except: pass # ignore it
+            except AttributeError: pass # ignore it
         #try:
             #for j, key in enumerate( sorted( self.indexData, key=lambda s: int(s[0])*1000+int(s[1]) ) ):
                 #C, V = key
@@ -643,7 +645,7 @@ class InternalBibleIndex:
                             ix,lc,ct = iep.getEntryIndex(), iep.getEntryCount(), iep.getContext()
                             for ixx in range( ix, ix+lc ):
                                 logging.error( "   mI:sAO prev {} {}".format( self.givenBibleEntries[ixx], ct ) )
-                        except: pass
+                        except KeyError: pass
                         logging.error( "  mI:sAO was {}".format( self.indexData[saveCV] ) )
                         ie = self.indexData[saveCV]
                         ix,lc,ct = ie.getEntryIndex(), ie.getEntryCount(), ie.getContext()
@@ -852,7 +854,7 @@ class InternalBibleIndex:
                     offset = 1
                     while True:
                         try: nextMarker = foundMarkers[j+offset]
-                        except: nextMarker = None
+                        except IndexError: nextMarker = None
                         if nextMarker != 'rem': break
                         offset += 1
 

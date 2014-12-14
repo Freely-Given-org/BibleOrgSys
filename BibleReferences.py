@@ -79,15 +79,19 @@ Technical note: Our Bible reference parsers use state machines rather than regul
     If I'm wrong, please show me.
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2014-12-14' # by RJH
+ShortProgName = "BibleReferences"
 ProgName = "Bible References handler"
-ProgVersion = "0.30"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.31'
+ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
 import os, logging
-from gettext import gettext as _
 
 import BibleOrgSysGlobals
 from BibleOrganizationalSystems import BibleOrganizationalSystem
@@ -95,6 +99,7 @@ from BibleOrganizationalSystems import BibleOrganizationalSystem
 
 # This is a hack because it's language dependant :(
 ignoredSuffixes = (' (LXX)',) # A hack to cope with these suffixes in cross-references and footnotes :(
+
 
 
 class BibleReferenceBase:
@@ -122,7 +127,7 @@ class BibleReferenceBase:
             self.punctuationDict = self._BibleOrganizationalSystem.getPunctuationDict()
             if BibleOrgSysGlobals.debugFlag: print( "BibleReferenceBase: punct={}".format( BOSObject.getPunctuationSystemName() ) )
         else: # else use a very generic punctuation system
-            assert( BibleObject )
+            assert( BibleObject is not None )
             self.punctuationDict = { 'spaceAllowedAfterBCS': 'E',
                                     'booknameCase': 'ME',
                                     'booknameLength': '3',
@@ -139,18 +144,19 @@ class BibleReferenceBase:
         booksNamesSystemName = BOSObject.getOrganizationalSystemValue( 'booksNamesSystem' )
         #print( 'bNSN', booksNamesSystemName )
         if booksNamesSystemName and booksNamesSystemName!='None' and booksNamesSystemName!='Unknown': # default (if we know the book names system)
-            assert( BibleObject is None )
+            assert( BibleObject is not None )
             self.getBookNameFunction = self._BibleOrganizationalSystem.getBookName
             getBookAbbreviationFunction = self._BibleOrganizationalSystem.getBookAbbreviation
             self.getBBB = self._BibleOrganizationalSystem.getBBB # This is the function that finds a book code from the vernacular name or abbreviation
             if BibleOrgSysGlobals.debugFlag: print( "BibleReferenceBase: bns={}".format( BOSObject.getBookNamesSystemName() ) )
         else: # else use our local functions from our deduced book names
-            assert( BibleObject )
+            assert( BibleObject is not None )
             self.getBookNameFunction = BibleObject.getAssumedBookName # from InternalBible (which gets it from InternalBibleBook)
             getBookAbbreviationFunction = None
             self.getBBB = BibleObject.guessXRefBBB
     # end of BibleReferenceBase:__init__
 # end of class BibleReferenceBase
+
 
 
 class BibleSingleReference( BibleReferenceBase ):
@@ -342,6 +348,7 @@ class BibleSingleReference( BibleReferenceBase ):
         return status==9 and not haveErrors, haveWarnings, BBB, C, V, S
     # end of BibleSingleReference:parseReferenceString
 # end of class BibleSingleReference
+
 
 
 class BibleSingleReferences( BibleReferenceBase ):
@@ -605,6 +612,7 @@ class BibleSingleReferences( BibleReferenceBase ):
         return status==9 and not haveErrors, haveWarnings, self.referenceList
     # end of BibleSingleReferences:parseReferenceString
 # end of class BibleSingleReferences
+
 
 
 class BibleReferenceList( BibleReferenceBase ):
