@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 #
 # BibleLexicon.py
-#   Last modified: 2014-11-20 (also update ProgVersion below)
 #
 # Module handling the combined Hebrew and Greek lexicons
 #
@@ -30,16 +29,19 @@ Module handling the OpenScriptures Hebrew and morphgnt Greek lexicons.
     Greek has Strongs only.
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2014-12-16' # by RJH
 ShortProgName = "BibleLexicon"
 ProgName = "Bible Lexicon format handler"
-ProgVersion = "0.22"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.23'
+ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
 import logging, os.path
-from gettext import gettext as _
 
 import BibleOrgSysGlobals
 import HebrewLexicon, GreekLexicon
@@ -95,7 +97,7 @@ class BibleLexiconIndex:
         #if self.title: result += ('\n' if result else '') + self.title
         #if self.version: result += ('\n' if result else '') + "Version: {} ".format( self.version )
         #if self.date: result += ('\n' if result else '') + "Date: {}".format( self.date )
-        if self.hIndex:
+        if self.hIndex is not None:
             result += ('\n' if result else '') + "  " + _("Number of augmented Hebrew Strong's index entries = {}").format( len(self.hIndex.IndexEntries1) )
             result += ('\n' if result else '') + "  " + _("Number of Hebrew lexical index entries = {}").format( len(self.hIndex.IndexEntries['heb']) )
             result += ('\n' if result else '') + "  " + _("Number of Aramaic lexical index entries = {}").format( len(self.hIndex.IndexEntries['arc']) )
@@ -180,7 +182,8 @@ class BibleLexicon:
     def __init__( self, HebrewXMLFolder, GreekXMLFolder, preload=False ):
         """
         Constructor: expects the filepath of the source XML file.
-        Loads (and crudely validates the XML file) into an element tree.
+
+        Does not actually cause the XML to be loaded (very slow).
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( t("BibleLexicon.__init__( {}, {}, {} )").format( HebrewXMLFolder, GreekXMLFolder, preload ) )
@@ -202,7 +205,7 @@ class BibleLexicon:
 
     def __str__( self ):
         """
-        This method returns the string representation of a Bible book code.
+        This method returns the string representation of the Bible lexicon.
 
         @return: the name of a Bible object formatted as a string
         @rtype: string
@@ -211,10 +214,14 @@ class BibleLexicon:
         #if self.title: result += ('\n' if result else '') + self.title
         #if self.version: result += ('\n' if result else '') + "Version: {} ".format( self.version )
         #if self.date: result += ('\n' if result else '') + "Date: {}".format( self.date )
-        result += ('\n' if result else '') + "  " + _("Number of Strong's Hebrew entries = {}").format( len(self.hLexicon.StrongsEntries) )
-        result += ('\n' if result else '') + "  " + _("Number of BDB Hebrew entries = {}").format( len(self.hLexicon.BrownDriverBriggsEntries['heb']) )
-        result += ('\n' if result else '') + "  " + _("Number of BDB Aramaic entries = {}").format( len(self.hLexicon.BrownDriverBriggsEntries['arc']) )
-        result += ('\n' if result else '') + "  " + _("Number of Strong's Greek entries = {}").format( len(self.gLexicon.StrongsEntries) )
+        if self.hLexicon is not None:
+            if self.hLexicon.StrongsEntries is not None:
+                result += ('\n' if result else '') + "  " + _("Number of Strong's Hebrew entries = {}").format( len(self.hLexicon.StrongsEntries) )
+            if self.hLexicon.BrownDriverBriggsEntries is not None:
+                result += ('\n' if result else '') + "  " + _("Number of BDB Hebrew entries = {}").format( len(self.hLexicon.BrownDriverBriggsEntries['heb']) )
+                result += ('\n' if result else '') + "  " + _("Number of BDB Aramaic entries = {}").format( len(self.hLexicon.BrownDriverBriggsEntries['arc']) )
+            if self.gLexicon.StrongsEntries is not None:
+                result += ('\n' if result else '') + "  " + _("Number of Strong's Greek entries = {}").format( len(self.gLexicon.StrongsEntries) )
         return result
     # end of BibleLexicon.__str__
 
@@ -391,7 +398,7 @@ def demo():
     GreekLexiconFolder = "../../../ExternalPrograms/morphgnt/strongs-dictionary-xml/" # morphgnt Greek lexicon folder
 
 
-    if 1: # demonstrate the Bible Lexicon Index class
+    if 0: # demonstrate the Bible Lexicon Index class
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nDemonstrating the Bible Lexicon Index class..." )
         blix = BibleLexiconIndex( HebrewLexiconFolder, GreekLexiconFolder ) # Load and process the XML
         print( blix ) # Just print a summary

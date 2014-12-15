@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 #
 # GreekLexicon.py
-#   Last modified: 2014-11-20 (also update ProgVersion below)
 #
 # Module handling the Greek lexicon
 #
@@ -33,16 +32,19 @@ Module handling the morphgnt Greek lexicon.
         via various keys and in various formats.
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2014-12-16' # by RJH
 ShortProgName = "GreekLexicon"
 ProgName = "Greek Lexicon format handler"
-ProgVersion = "0.14"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.15'
+ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
 import logging, os.path, re
-from gettext import gettext as _
 from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree
 
@@ -101,7 +103,7 @@ class GreekStrongsFileConverter:
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( t("GreekStrongsFileConverter.__init__()") )
         self.title = self.version = self.date = None
-        self.tree = self.header = self.entries = None
+        self.tree = self.header = self.StrongsEntries = None
     # end of GreekStrongsFileConverter.__init__
 
 
@@ -116,7 +118,7 @@ class GreekStrongsFileConverter:
         if self.title: result += ('\n' if result else '') + "  " + self.title
         if self.version: result += ('\n' if result else '') + "  " + _("Version: {} ").format( self.version )
         if self.date: result += ('\n' if result else '') + "  " + _("Date: {}").format( self.date )
-        result += ('\n' if result else '') + "  " + _("Number of entries = {}").format( len(self.entries) )
+        result += ('\n' if result else '') + "  " + _("Number of entries = {}").format( len(self.StrongsEntries) )
         return result
     # end of GreekStrongsFileConverter.__str__
 
@@ -157,7 +159,7 @@ class GreekStrongsFileConverter:
         BibleOrgSysGlobals.checkXMLNoTail( segment, segment.tag, "ls90" )
         BibleOrgSysGlobals.checkXMLNoAttributes( segment, segment.tag, "hsj2" )
 
-        self.entries = {}
+        self.StrongsEntries = {}
         for element in segment:
             if element.tag == "entry":
                 self.validateEntry( element )
@@ -310,7 +312,7 @@ class GreekStrongsFileConverter:
                 assert( 'strongsref' not in entryString )
             entryResults['Entry'] = entryString
         #print( "entryResults", entryResults )
-        self.entries[strongs] = entryResults
+        self.StrongsEntries[strongs] = entryResults
     # end of GreekStrongsFileConverter.validateEntry
 
 
@@ -321,8 +323,8 @@ class GreekStrongsFileConverter:
         """
         if BibleOrgSysGlobals.debugFlag:
             assert( len ( self.tree ) )
-            assert( self.entries )
-        return self.entries # temp................................XXXXXXXXXXXXXXXXXXXXXXXXXXXXX......................
+            assert( self.StrongsEntries )
+        return self.StrongsEntries # temp................................XXXXXXXXXXXXXXXXXXXXXXXXXXXXX......................
     # end of GreekStrongsFileConverter.importDataToPython
 # end of GreekStrongsFileConverter class
 
@@ -352,6 +354,7 @@ class GreekLexicon:
         """
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( t("GreekLexicon.load()") )
+        assert( self.StrongsEntries is None )
         gStr = GreekStrongsFileConverter() # Create the empty object
         gStr.loadAndValidate( self.XMLFolder ) # Load the XML
         self.StrongsEntries = gStr.importDataToPython()
@@ -369,7 +372,7 @@ class GreekLexicon:
         #if self.title: result += ('\n' if result else '') + self.title
         #if self.version: result += ('\n' if result else '') + "Version: {} ".format( self.version )
         #if self.date: result += ('\n' if result else '') + "Date: {}".format( self.date )
-        if self.StrongsEntries:
+        if self.StrongsEntries is not None:
             result += ('\n' if result else '') + "  " + _("Number of Strong's Greek entries = {}").format( len(self.StrongsEntries) )
         return result
     # end of GreekLexicon.__str__

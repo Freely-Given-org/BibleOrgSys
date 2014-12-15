@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 #
 # HebrewLexicon.py
-#   Last modified: 2014-11-20 (also update ProgVersion below)
 #
 # Module handling the Hebrew lexicon
 #
@@ -33,16 +32,19 @@ Module handling the OpenScriptures Hebrew lexicon.
         via various keys and in various formats.
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2014-12-16' # by RJH
 ShortProgName = "HebrewLexicon"
 ProgName = "Hebrew Lexicon format handler"
 ProgVersion = "0.16"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
 import logging, os.path, re
-from gettext import gettext as _
 from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree
 
@@ -880,20 +882,31 @@ class HebrewLexiconSimple:
 
     This class doesn't deal at all with XML, only with Python dictionaries, etc.
     """
-    def __init__( self, XMLFolder ):
+    def __init__( self, XMLFolder, preload=False ):
         """
         Constructor: expects the filepath of the source XML file.
         Loads (and crudely validates the XML file) into an element tree.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( t("HebrewLexiconSimple.__init__( {} )").format( XMLFolder ) )
-        hStr = HebrewStrongsFileConverter() # Create the empty object
-        hStr.loadAndValidate( XMLFolder ) # Load the XML
-        self.StrongsEntries = hStr.importDataToPython()
-        hBDB = BrownDriverBriggsFileConverter() # Create the empty object
-        hBDB.loadAndValidate( XMLFolder ) # Load the XML
-        self.BrownDriverBriggsEntries = hBDB.importDataToPython()
+        self.XMLFolder = XMLFolder
+        self.StrongsEntries = self.BrownDriverBriggsEntries = None
+        if preload: self.load()
     # end of HebrewLexiconSimple.__init__
+
+
+    def load( self ):
+        """
+        Load the actual lexicon (slow).
+        """
+        hStr = HebrewStrongsFileConverter() # Create the empty object
+        hStr.loadAndValidate( self.XMLFolder ) # Load the XML
+        self.StrongsEntries = hStr.importDataToPython()
+
+        hBDB = BrownDriverBriggsFileConverter() # Create the empty object
+        hBDB.loadAndValidate( self.XMLFolder ) # Load the XML
+        self.BrownDriverBriggsEntries = hBDB.importDataToPython()
+    # end of HebrewLexiconSimple.load
 
 
     def __str__( self ):
@@ -907,9 +920,11 @@ class HebrewLexiconSimple:
         #if self.title: result += ('\n' if result else '') + self.title
         #if self.version: result += ('\n' if result else '') + "Version: {} ".format( self.version )
         #if self.date: result += ('\n' if result else '') + "Date: {}".format( self.date )
-        result += ('\n' if result else '') + "  " + _("Number of Strong's Hebrew entries = {}").format( len(self.StrongsEntries) )
-        result += ('\n' if result else '') + "  " + _("Number of BDB Hebrew entries = {}").format( len(self.BrownDriverBriggsEntries['heb']) )
-        result += ('\n' if result else '') + "  " + _("Number of BDB Aramaic entries = {}").format( len(self.BrownDriverBriggsEntries['arc']) )
+        if self.StrongsEntries:
+            result += ('\n' if result else '') + "  " + _("Number of Strong's Hebrew entries = {}").format( len(self.StrongsEntries) )
+        if self.BrownDriverBriggsEntries:
+            result += ('\n' if result else '') + "  " + _("Number of BDB Hebrew entries = {}").format( len(self.BrownDriverBriggsEntries['heb']) )
+            result += ('\n' if result else '') + "  " + _("Number of BDB Aramaic entries = {}").format( len(self.BrownDriverBriggsEntries['arc']) )
         return result
     # end of HebrewLexiconSimple.__str__
 
@@ -926,6 +941,8 @@ class HebrewLexiconSimple:
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( t("HebrewLexiconSimple.getStrongsEntryData( {} )").format( repr(key) ) )
         if BibleOrgSysGlobals.debugFlag: assert( key and key[0]=='H' and key[1:].isdigit() )
+        if self.StrongsEntries is None: self.load()
+
         keyDigits = key[1:]
         if keyDigits in self.StrongsEntries: return self.StrongsEntries[keyDigits]
     # end of HebrewLexiconSimple.getStrongsEntryData
@@ -942,6 +959,8 @@ class HebrewLexiconSimple:
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( t("HebrewLexiconSimple.getStrongsEntryField( {}, {} )").format( repr(key), repr(fieldName) ) )
         if BibleOrgSysGlobals.debugFlag: assert( key and key[0]=='H' and key[1:].isdigit() )
+        if self.StrongsEntries is None: self.load()
+
         keyDigits = key[1:]
         if keyDigits in self.StrongsEntries:
             #for f,d in self.StrongsEntries[keyDigits]:
@@ -971,6 +990,8 @@ class HebrewLexiconSimple:
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( t("HebrewLexiconSimple.getStrongsEntryHTML( {} )").format( repr(key) ) )
         if BibleOrgSysGlobals.debugFlag: assert( key and key[0]=='H' and key[1:].isdigit() )
+        if self.StrongsEntries is None: self.load()
+
         keyDigits = key[1:]
         #if key == 'H1':
             #print( "Should be:" )
@@ -1023,6 +1044,8 @@ class HebrewLexiconSimple:
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( t("HebrewLexiconSimple.getBDBEntryData( {} )").format( repr(key) ) )
         if BibleOrgSysGlobals.debugFlag: assert( key and key.count('.')==2 )
+        if self.BrownDriverBriggsEntries is None: self.load()
+
         if key in self.BrownDriverBriggsEntries['heb']: return self.BrownDriverBriggsEntries['heb'][key]
         if key in self.BrownDriverBriggsEntries['arc']: return self.BrownDriverBriggsEntries['arc'][key]
     # end of HebrewLexiconSimple.getBDBEntryData
@@ -1039,6 +1062,8 @@ class HebrewLexiconSimple:
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( t("HebrewLexiconSimple.getBDBEntryField( {}, {} )").format( repr(key), repr(fieldName) ) )
         if BibleOrgSysGlobals.debugFlag: assert( key and key.count('.')==2 )
+        if self.BrownDriverBriggsEntries is None: self.load()
+
         entry =  self.getBDBEntryData( key )
         if entry:
             if fieldName == 'status': return entry[2]
@@ -1055,6 +1080,8 @@ class HebrewLexiconSimple:
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( t("HebrewLexiconSimple.getBDBEntryHTML( {} )").format( repr(key) ) )
         if BibleOrgSysGlobals.debugFlag: assert( key and key.count('.')==2 )
+        if self.BrownDriverBriggsEntries is None: self.load()
+
         entry =  self.getBDBEntryData( key )
         if entry:
             mainEntry = entry[0] \
@@ -1104,13 +1131,17 @@ class HebrewLexicon( HebrewLexiconSimple ):
         HebrewLexiconSimple.__init__( self, XMLFolder )
         self.XMLFolder = XMLFolder
         self.hix = None
+        if preload: self.load()
     # end of HebrewLexicon.__init__
 
 
     def load( self ):
         """
+        Load the actual lexicon (slow).
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( t("HebrewLexicon.load()") )
+        HebrewLexiconSimple.load( self )
+        assert( self.hix is None )
         self.hix = HebrewLexiconIndex( self.XMLFolder ) # Load and process the XML
     # end of HebrewLexicon.load
 
@@ -1126,14 +1157,15 @@ class HebrewLexicon( HebrewLexiconSimple ):
         #if self.title: result += ('\n' if result else '') + self.title
         #if self.version: result += ('\n' if result else '') + "Version: {} ".format( self.version )
         #if self.date: result += ('\n' if result else '') + "Date: {}".format( self.date )
-        if self.hix:
+        if self.hix is not None:
             result += ('\n' if result else '') + "  " + _("Number of augmented Strong's index entries = {}").format( len(self.hix.IndexEntries1) )
             result += ('\n' if result else '') + "  " + _("Number of Hebrew lexical index entries = {}").format( len(self.hix.IndexEntries['heb']) )
             result += ('\n' if result else '') + "  " + _("Number of Aramaic lexical index entries = {}").format( len(self.hix.IndexEntries['arc']) )
-
-        result += ('\n' if result else '') + "  " + _("Number of Strong's Hebrew entries = {}").format( len(self.StrongsEntries) )
-        result += ('\n' if result else '') + "  " + _("Number of BDB Hebrew entries = {}").format( len(self.BrownDriverBriggsEntries['heb']) )
-        result += ('\n' if result else '') + "  " + _("Number of BDB Aramaic entries = {}").format( len(self.BrownDriverBriggsEntries['arc']) )
+        if self.StrongsEntries is not None:
+            result += ('\n' if result else '') + "  " + _("Number of Strong's Hebrew entries = {}").format( len(self.StrongsEntries) )
+        if self.BrownDriverBriggsEntries is not None:
+            result += ('\n' if result else '') + "  " + _("Number of BDB Hebrew entries = {}").format( len(self.BrownDriverBriggsEntries['heb']) )
+            result += ('\n' if result else '') + "  " + _("Number of BDB Aramaic entries = {}").format( len(self.BrownDriverBriggsEntries['arc']) )
         return result
     # end of HebrewLexicon.__str__
 
