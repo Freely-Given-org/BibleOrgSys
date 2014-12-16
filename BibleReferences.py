@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 #
 # BibleReferences.py
-#   Last modified: 2014-09-20 by RJH (also update ProgVersion below)
 #
 # Module for handling Bible references including ranges
 #
@@ -81,7 +80,7 @@ Technical note: Our Bible reference parsers use state machines rather than regul
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-14' # by RJH
+LastModifiedDate = '2014-12-16' # by RJH
 ShortProgName = "BibleReferences"
 ProgName = "Bible References handler"
 ProgVersion = '0.31'
@@ -106,14 +105,15 @@ class BibleReferenceBase:
     """ Base class which provides some common functions for the others. """
 
     def __init__( self, BOSObject, BibleObject ): # The BibleObject passed by the superclass may be None
-        """ Initialize the object with necessary sub-systems.
-                A Bible organization system, e.g., BibleOrganizationalSystem( "RSV" )
-                    gives various things including:
-                        a book order (useful for determining ranges that cross books)
-                        a punctuation system
-                        book names and deduced abbreviations
-                Optional Bible object is a loaded Bible (based on InternalBible).
-                    We can use this to guess book names.
+        """
+        Initialize the object with necessary sub-systems.
+            A Bible organization system, e.g., BibleOrganizationalSystem( "RSV" )
+                gives various things including:
+                    a book order (useful for determining ranges that cross books)
+                    a punctuation system
+                    book names and deduced abbreviations
+            Optional Bible object is a loaded Bible (based on InternalBible).
+                We can use this to guess book names.
         """
         assert( BOSObject )
         self._BibleOrganizationalSystem = BOSObject
@@ -144,11 +144,11 @@ class BibleReferenceBase:
         booksNamesSystemName = BOSObject.getOrganizationalSystemValue( 'booksNamesSystem' )
         #print( 'bNSN', booksNamesSystemName )
         if booksNamesSystemName and booksNamesSystemName!='None' and booksNamesSystemName!='Unknown': # default (if we know the book names system)
-            assert( BibleObject is not None )
+            #assert( BibleObject is not None )
             self.getBookNameFunction = self._BibleOrganizationalSystem.getBookName
             getBookAbbreviationFunction = self._BibleOrganizationalSystem.getBookAbbreviation
             self.getBBB = self._BibleOrganizationalSystem.getBBB # This is the function that finds a book code from the vernacular name or abbreviation
-            if BibleOrgSysGlobals.debugFlag: print( "BibleReferenceBase: bns={}".format( BOSObject.getBookNamesSystemName() ) )
+            if BibleOrgSysGlobals.debugFlag: print( "BibleReferenceBase: bns={}".format( BOSObject.getBooksNamesSystemName() ) )
         else: # else use our local functions from our deduced book names
             assert( BibleObject is not None )
             self.getBookNameFunction = BibleObject.getAssumedBookName # from InternalBible (which gets it from InternalBibleBook)

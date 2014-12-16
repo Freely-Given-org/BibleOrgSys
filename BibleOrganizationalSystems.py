@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 #
 # BibleOrganizationalSystems.py
-#   Last modified: 2014-10-22 by RJH (also update ProgVersion below)
 #
 # Module handling BibleOrganizationalSystems
 #
@@ -27,16 +26,19 @@
 Module handling BibleOrganizationalSystems.
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2014-12-16' # by RJH
 ShortProgName = "BibleOrganizationalSystems"
 ProgName = "Bible Organization Systems handler"
-ProgVersion = "0.29"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.29'
+ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
 import logging, os
-from gettext import gettext as _
 #from singleton import singleton
 
 import BibleOrgSysGlobals
@@ -45,6 +47,7 @@ from BibleBookOrders import BibleBookOrderSystem
 from BiblePunctuationSystems import BiblePunctuationSystem
 from BibleVersificationSystems import BibleVersificationSystem
 from BibleBooksNames import BibleBooksNamesSystem
+
 
 
 def t( messageString ):
