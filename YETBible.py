@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # YETBible.py
-#   Last modified: 2014-11-04 by RJH (also update ProgVersion below)
+#   Last modified: 2014-12-17 by RJH (also update ProgVersion below)
 #
 # Module handling YET Bible files
 #
@@ -367,7 +367,7 @@ class YETBible( Bible ):
                     #if BibleOrgSysGlobals.debugFlag: assert( chapterNumber > lastChapterNumber or BBB=='ESG' ) # Esther Greek might be an exception
                     #if chapterNumber == 0:
                         #logging.info( "Have chapter zero in {} {} {} {}:{}".format( self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
-                    #thisBook.appendLine( 'c', chapterNumberString )
+                    #thisBook.addLine( 'c', chapterNumberString )
                     #lastChapterNumber = chapterNumber
                     #lastVerseNumber = -1
 
@@ -385,7 +385,7 @@ class YETBible( Bible ):
                         #logging.warning( _("Ignored duplicated {} verse in {} {} {} {}:{}").format( verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                     #else:
                         #logging.warning( _("Ignored duplicated {} verse number in {} {} {} {}:{}").format( verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
-                #thisBook.appendLine( 'v', verseNumberString + ' ' + vText )
+                #thisBook.addLine( 'v', verseNumberString + ' ' + vText )
                 #lastVText = vText
                 #lastVerseNumber = verseNumber
 
@@ -401,14 +401,14 @@ class YETBible( Bible ):
                 if (BBB,chapterNumberString,verseNumberString) in headingDict:
                     heading, refList = headingDict[(BBB,chapterNumberString,verseNumberString)]
                     #print( 's', BBB, chapterNumberString, verseNumberString, repr(heading), refList )
-                    thisBook.appendLine( 's', heading )
+                    thisBook.addLine( 's', heading )
                     if refList:
                         refString = ""
                         #print( 's', BBB, chapterNumberString, verseNumberString, repr(heading), refList )
                         for ref in refList:
                             refString += ('; ' if refString else '') + ref
                         #print( 's', BBB, chapterNumberString, verseNumberString, repr(heading), refList, repr(refString) )
-                        thisBook.appendLine( 'r', '('+refString+')' )
+                        thisBook.addLine( 'r', '('+refString+')' )
                 # Insert footnotes and cross-references
                 while( '\\ff' in verseString ):
                     #print( "footnote", repr(verseString) )
@@ -432,7 +432,7 @@ class YETBible( Bible ):
                     #print( "xvS", repr(verseString) )
                 # Save the Bible data fields
                 if chapterNumberString != lastChapterNumberString:
-                    thisBook.appendLine( 'c', chapterNumberString )
+                    thisBook.addLine( 'c', chapterNumberString )
                     lastChapterNumberString = chapterNumberString
                 #print( BBB, chapterNumberString, verseNumberString, repr(verseString) )
                 if verseString.startswith( '\\\\' ):  # It's an initial paragraph marker
@@ -440,18 +440,18 @@ class YETBible( Bible ):
                     elif verseString[4]==' ': marker, verseString = verseString[2:4], verseString[5:]
                     else: halt
                     #print( '', '\\'+marker )
-                    thisBook.appendLine( marker, '' )
+                    thisBook.addLine( marker, '' )
                 assert( not verseString.startswith( '\\\\' ) )
                 bits = verseString.split( '\\\\' ) # Split on paragraph markers (but not character markers)
                 for j,bit in enumerate(bits):
                     #print( "loop", j, repr(bit), repr(verseString) )
-                    if j==0: thisBook.appendLine( 'v', verseNumberString + ' ' + verseString.rstrip() )
+                    if j==0: thisBook.addLine( 'v', verseNumberString + ' ' + verseString.rstrip() )
                     else:
                         if bit[1]==' ': marker, bit = bit[0], bit[2:]
                         elif bit[2]==' ': marker, bit = bit[0:2], bit[3:]
                         else: halt
                         #print( "mV", marker, repr(bit), repr(verseString) )
-                        thisBook.appendLine( marker, bit.rstrip() )
+                        thisBook.addLine( marker, bit.rstrip() )
             self.saveBook( thisBook )
         self.doPostLoadProcessing()
     # end of YETBible.load

@@ -48,7 +48,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-16' # by RJH
+LastModifiedDate = '2014-12-17' # by RJH
 ShortProgName = "e-SwordBible"
 ProgName = "e-Sword Bible format handler"
 ProgVersion = '0.12'
@@ -230,7 +230,7 @@ class ESwordBible( Bible ):
 
         writtenV = False
         if V==1: appendedCFlag = False
-        if C!=1 and V==1: bookObject.appendLine( 'c', str(C) ); appendedCFlag = True
+        if C!=1 and V==1: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
 
         if line is None: # We don't have an entry for this C:V
             return
@@ -356,8 +356,8 @@ class ESwordBible( Bible ):
                     if len(bits) == 1:
                         #if bits[0] in ('\\p','\\b'):
                         if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
-                            if C==1 and V==1 and not appendedCFlag: bookObject.appendLine( 'c', str(C) ); appendedCFlag = True
-                            bookObject.appendLine( marker, '' )
+                            if C==1 and V==1 and not appendedCFlag: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
+                            bookObject.addLine( marker, '' )
                         else:
                             logging.error( "It seems that we had a blank '{}' field in '{}'".format( bits[0], originalLine ) )
                             #halt
@@ -373,29 +373,29 @@ class ESwordBible( Bible ):
                             print( "leftovers", repr(leftovers) )
                             assert( marker in ('mt1','mt2','mt3', 's1','s2','s3', 'q1','q2','q3', 'r') )
                         if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
-                            bookObject.appendLine( marker, bits[1] )
+                            bookObject.addLine( marker, bits[1] )
                         elif not writtenV:
-                            bookObject.appendLine( 'v', '{} {}'.format( V, segment ) )
+                            bookObject.addLine( 'v', '{} {}'.format( V, segment ) )
                             writtenV = True
                         else: leftovers += segment
                 else: # What is segment is blank (\\NL* at end of line)???
-                    if C==1 and V==1 and not appendedCFlag: bookObject.appendLine( 'c', str(C) ); appendedCFlag = True
+                    if C==1 and V==1 and not appendedCFlag: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
                     if not writtenV:
-                        bookObject.appendLine( 'v', '{} {}'.format( V, leftovers+segment ) )
+                        bookObject.addLine( 'v', '{} {}'.format( V, leftovers+segment ) )
                         writtenV = True
                     else:
-                        bookObject.appendLine( 'v~', leftovers+segment )
+                        bookObject.addLine( 'v~', leftovers+segment )
                     leftovers = ''
                     #if myGlobals['haveParagraph']:
-                        #bookObject.appendLine( 'p', '' )
+                        #bookObject.addLine( 'p', '' )
                         #myGlobals['haveParagraph'] = False
             if leftovers: logging.critical( "Had leftovers {}".format( repr(leftovers) ) )
             if BibleOrgSysGlobals.debugFlag: assert( not leftovers )
             #halt
         else: # no newlines in the middle
-            if C==1 and V==1 and not appendedCFlag: bookObject.appendLine( 'c', str(C) ); appendedCFlag = True
+            if C==1 and V==1 and not appendedCFlag: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
             #print( BBB, C, V, repr(line) )
-            bookObject.appendLine( 'v', '{} {}'.format( V, line ) )
+            bookObject.addLine( 'v', '{} {}'.format( V, line ) )
     # end of ESwordBible.handleLine
 
 
@@ -571,14 +571,14 @@ class ESwordBible( Bible ):
                     numC, numV = len(verseList), verseList[0]
                     nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
                     C = V = 1
-                    #thisBook.appendLine( 'c', str(C) )
+                    #thisBook.addLine( 'c', str(C) )
                 else: # next chapter only
-                    #thisBook.appendLine( 'c', str(C) )
+                    #thisBook.addLine( 'c', str(C) )
                     numV = verseList[C-1]
                     V = 1
 
             if ourGlobals['haveParagraph']:
-                thisBook.appendLine( 'p', '' )
+                thisBook.addLine( 'p', '' )
                 ourGlobals['haveParagraph'] = False
 
         if BibleOrgSysGlobals.strictCheckingFlag or BibleOrgSysGlobals.debugFlag: self.checkForExtraMaterial( cursor, BOS )

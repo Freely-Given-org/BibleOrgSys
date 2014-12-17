@@ -313,14 +313,14 @@ class MySwordBible( Bible ):
                     numC, numV = len(verseList), verseList[0]
                     nBBB = BibleOrgSysGlobals.BibleBooksCodes.getReferenceNumber( BBB )
                     C = V = 1
-                    #thisBook.appendLine( 'c', str(C) )
+                    #thisBook.addLine( 'c', str(C) )
                 else: # next chapter only
-                    #thisBook.appendLine( 'c', str(C) )
+                    #thisBook.addLine( 'c', str(C) )
                     numV = verseList[C-1]
                     V = 1
 
             if ourGlobals['haveParagraph']:
-                thisBook.appendLine( 'p', '' )
+                thisBook.addLine( 'p', '' )
                 ourGlobals['haveParagraph'] = False
         cursor.close()
         self.doPostLoadProcessing()

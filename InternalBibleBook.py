@@ -33,15 +33,16 @@ It also needs to provide a "load" routine that sets one or more of:
     self.sourceFilename
     self.sourceFilepath = os.path.join( sourceFolder, sourceFilename )
 and then calls
-    self.appendLine (in order to fill self._rawLines)
+    self.addLine (in order to fill self._rawLines)
+    self.appendToLastLine (where something has to be appended to the previous line)
 
 Required improvements:
-    Need to be able to accept encoded cross references as well as text (YET modules).
+    Need to be able to accept encoded cross references as well as text (USFX and YET modules).
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-16' # by RJH
+LastModifiedDate = '2014-12-17' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.91'
@@ -92,7 +93,7 @@ def t( messageString ):
 class InternalBibleBook:
     """
     Class to create and manipulate a single internal Bible file / book.
-    The load routine (which populates self._rawLines) by calling appendLine must be provided.
+    The load routine (which populates self._rawLines) by calling addLine must be provided by the superclass.
     """
 
     def __init__( self, parameter1, BBB ):
@@ -118,7 +119,7 @@ class InternalBibleBook:
 
         self.isSingleChapterBook = BibleOrgSysGlobals.BibleBooksCodes.isSingleChapterBook( self.BBB )
 
-        self._rawLines = [] # Contains 2-tuples which contain the actual Bible text -- see appendLine below
+        self._rawLines = [] # Contains 2-tuples which contain the actual Bible text -- see addLine below
         self._processedFlag = self._indexedFlag = False
         self.errorDictionary = OrderedDict()
         self.errorDictionary['Priority Errors'] = [] # Put this one first in the ordered dictionary
@@ -183,7 +184,7 @@ class InternalBibleBook:
     # end of InternalBibleBook.addPriorityError
 
 
-    def appendLine( self, marker, text ):
+    def addLine( self, marker, text ):
         """
         Append a (USFM-based) 2-tuple to self._rawLines.
             This is a very simple function,
@@ -191,11 +192,11 @@ class InternalBibleBook:
         """
         forceDebugHere = False
         if forceDebugHere or BibleOrgSysGlobals.debugFlag:
-            if forceDebugHere or debuggingThisModule: print( "InternalBibleBook.appendLine( {}, {} ) for {} {} {}".format( repr(marker), repr(text), self.objectTypeString, self.workName, self.BBB ) )
+            if forceDebugHere or debuggingThisModule: print( "InternalBibleBook.addLine( {!r}, {!r} ) for {} {} {}".format( marker, text, self.objectTypeString, self.workName, self.BBB ) )
             #if len(self._rawLines ) > 200: halt
             #if 'xyz' in text: halt
         if text and ( '\n' in text or '\r' in text ):
-            logging.critical( "InternalBibleBook.appendLine found newLine in {} text: {}={}".format( self.objectTypeString, marker, repr(text) ) )
+            logging.critical( "InternalBibleBook.addLine found newLine in {} text: {}={!r}".format( self.objectTypeString, marker, text ) )
         if BibleOrgSysGlobals.debugFlag:
             assert( not self._processedFlag )
             assert( marker and isinstance( marker, str ) )
@@ -204,7 +205,7 @@ class InternalBibleBook:
                 assert( '\n' not in text and '\r' not in text )
 
         if not ( marker in BibleOrgSysGlobals.USFMMarkers or marker in BOS_ADDED_CONTENT_MARKERS ):
-            logging.critical( "InternalBibleBook.appendLine marker for {} not in lists: {}={}".format( self.objectTypeString, marker, repr(text) ) )
+            logging.critical( "InternalBibleBook.addLine marker for {} not in lists: {}={!r}".format( self.objectTypeString, marker, text ) )
             if marker in self.badMarkers:
                 ix = self.badMarkers.index( marker )
                 assert( 0 <= ix < len(self.badMarkers) )
@@ -215,11 +216,11 @@ class InternalBibleBook:
         if BibleOrgSysGlobals.debugFlag: assert( marker in BibleOrgSysGlobals.USFMMarkers or marker in BOS_ADDED_CONTENT_MARKERS )
 
         if marker not in BOS_ADDED_CONTENT_MARKERS and not BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
-            logging.critical( "IBB.appendLine: Not a NL marker: {}='{}'".format( marker, text ) )
+            logging.critical( "IBB.addLine: Not a NL marker: {}='{}'".format( marker, text ) )
             if BibleOrgSysGlobals.debugFlag: print( self, repr(marker), repr(text) ); halt # How did this happen?
 
         if text is None:
-            logging.critical( "InternalBibleBook.appendLine: Received {} {} {}={}".format( self.objectTypeString, self.BBB, marker, repr(text) ) )
+            logging.critical( "InternalBibleBook.addLine: Received {} {} {}={!r}".format( self.objectTypeString, self.BBB, marker, text ) )
             if BibleOrgSysGlobals.debugFlag: halt # Programming error in the calling routine, sorry
             text = '' # Try to recover
 
@@ -229,14 +230,14 @@ class InternalBibleBook:
                 if self.pntsCount != -1:
                     self.pntsCount += 1
                     if self.pntsCount <= MAX_NONCRITICAL_ERRORS_PER_BOOK:
-                        logging.warning( "InternalBibleBook.appendLine: Possibly needed to strip {} {} {}={}".format( self.objectTypeString, self.BBB, marker, repr(text) ) )
+                        logging.warning( "InternalBibleBook.addLine: Possibly needed to strip {} {} {}={!r}".format( self.objectTypeString, self.BBB, marker, text ) )
                     else: # we've reached our limit
                         logging.warning( _('Additional "Possibly needed to strip" messages suppressed...') )
                         self.pntsCount = -1 # So we don't do this again (for this book)
 
         rawLineTuple = ( marker, text )
         self._rawLines.append( rawLineTuple )
-    # end of InternalBibleBook.appendLine
+    # end of InternalBibleBook.addLine
 
 
     def appendToLastLine( self, additionalText, expectedLastMarker=None ):
@@ -245,11 +246,11 @@ class InternalBibleBook:
             (Used by USXXMLBibleBook.py) """
         forceDebugHere = False
         if forceDebugHere or ( BibleOrgSysGlobals.debugFlag and debuggingThisModule ):
-            print( " InternalBibleBook.appendToLastLine( {}, {} )".format( repr(additionalText), repr(expectedLastMarker) ) )
+            print( " InternalBibleBook.appendToLastLine( {!r}, {!r} )".format( additionalText, expectedLastMarker ) )
             assert( not self._processedFlag )
             assert( self._rawLines )
         if additionalText and ( '\n' in additionalText or '\r' in additionalText ):
-            logging.critical( "InternalBibleBook.appendToLastLine found newLine in {} additionalText: {}={}".format( self.objectTypeString, expectedLastMarker, repr(additionalText) ) )
+            logging.critical( "InternalBibleBook.appendToLastLine found newLine in {} additionalText: {}={!r}".format( self.objectTypeString, expectedLastMarker, additionalText ) )
         if BibleOrgSysGlobals.debugFlag:
             assert( not self._processedFlag )
             assert( additionalText and isinstance( additionalText, str ) )

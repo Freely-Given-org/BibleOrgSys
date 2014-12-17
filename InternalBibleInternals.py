@@ -33,12 +33,12 @@ It also needs to provide a "load" routine that sets one or more of:
     self.sourceFilename
     self.sourceFilepath = os.path.join( sourceFolder, sourceFilename )
 and then calls
-    self.appendLine (in order to fill self._rawLines)
+    self.addLine (in order to fill self._rawLines)
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-16' # by RJH
+LastModifiedDate = '2014-12-17' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
 ProgVersion = '0.56'
@@ -307,6 +307,8 @@ class InternalBibleEntry:
                 assert( '\\' not in originalMarker and ' ' not in originalMarker and '*' not in originalMarker )
                 assert( isinstance( adjustedText, str ) )
                 assert( '\n' not in adjustedText and '\r' not in adjustedText )
+                if '\\' in cleanText:
+                    logging.critical( "Clean text {!r} at {} from {!r}".format( cleanText, marker, originalText ) )
                 assert( '\\' not in cleanText )
                 assert( extras is None or isinstance( extras, InternalBibleExtraList ) )
                 assert( isinstance( originalText, str ) )

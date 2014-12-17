@@ -84,7 +84,7 @@ class USXXMLBibleBook( BibleBook ):
                     logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
 
             # Now process the paragraph text (or write a paragraph marker anyway)
-            self.appendLine( paragraphStyle, paragraphXML.text if paragraphXML.text and paragraphXML.text.strip() else '' )
+            self.addLine( paragraphStyle, paragraphXML.text if paragraphXML.text and paragraphXML.text.strip() else '' )
 
             # Now process the paragraph subelements
             for element in paragraphXML:
@@ -104,7 +104,7 @@ class USXXMLBibleBook( BibleBook ):
                             logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
                     if verseStyle != 'v':
                         logging.warning( _("Unexpected style attribute ({}) in {}").format( verseStyle, location ) )
-                    self.appendLine( verseStyle, v + ' ' )
+                    self.addLine( verseStyle, v + ' ' )
                     # Now process the tail (if there's one) which is the verse text
                     if element.tail:
                         vText = element.tail.strip()
@@ -279,7 +279,7 @@ class USXXMLBibleBook( BibleBook ):
                         logging.warning( _("Unexpected style attribute ({}) in {}").format( bookStyle, sublocation ) )
                     idLine = idField
                     if element.text and element.text.strip(): idLine += ' ' + element.text
-                    self.appendLine( 'id', idLine )
+                    self.addLine( 'id', idLine )
                 elif element.tag == 'chapter': # milestone (not a container)
                     v = '0'
                     BibleOrgSysGlobals.checkXMLNoText( element, sublocation )
@@ -296,12 +296,12 @@ class USXXMLBibleBook( BibleBook ):
                             logging.warning( _("Unprocessed {} attribute ({}) in {}").format( attrib, value, sublocation ) )
                     if chapterStyle != 'c':
                         logging.warning( _("Unexpected style attribute ({}) in {}").format( chapterStyle, sublocation ) )
-                    self.appendLine( 'c', c )
+                    self.addLine( 'c', c )
                 elif element.tag == 'para':
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation )
                     USFMMarker = element.attrib['style'] # Get the USFM code for the paragraph style
                     if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( USFMMarker ):
-                        #if lastMarker: self.appendLine( lastMarker, lastText )
+                        #if lastMarker: self.addLine( lastMarker, lastText )
                         #lastMarker, lastText = USFMMarker, text
                         loadParagraph( element, sublocation )
                     elif BibleOrgSysGlobals.USFMMarkers.isInternalMarker( USFMMarker ): # the line begins with an internal USFM Marker -- append it to the previous line
@@ -331,7 +331,7 @@ class USXXMLBibleBook( BibleBook ):
                         self.addPriorityError( 100, c, v, _("Found \\{} unknown USFM Marker on new line in file").format( USFMMarker ) )
                         for tryMarker in sortedNLMarkers: # Try to do something intelligent here -- it might be just a missing space
                             if USFMMarker.startswith( tryMarker ): # Let's try changing it
-                                if lastMarker: self.appendLine( lastMarker, lastText )
+                                if lastMarker: self.addLine( lastMarker, lastText )
                                 lastMarker, lastText = tryMarker, USFMMarker[len(tryMarker):] + ' ' + text
                                 loadErrors.append( _("{} {}:{} Changed '\\{}' unknown USFM Marker to '{}' at beginning of line: {}").format( self.BBB, c, v, USFMMarker, tryMarker, text ) )
                                 logging.warning( _("Changed '\\{}' unknown USFM Marker to '{}' after {} {}:{} at beginning of line: {}").format( USFMMarker, tryMarker, self.BBB, c, v, text ) )

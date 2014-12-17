@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # DrupalBible.py
-#   Last modified: 2014-11-04 by RJH (also update ProgVersion below)
+#   Last modified: 2014-12-17 by RJH (also update ProgVersion below)
 #
 # Module handling DrupalBible Bible files
 #
@@ -279,10 +279,10 @@ class DrupalBible( Bible ):
                         lastChapterNumberString = None
                         lastBBB = BBB
                     if chapterNumberString != lastChapterNumberString:
-                        thisBook.appendLine( 'c', chapterNumberString )
+                        thisBook.addLine( 'c', chapterNumberString )
                         lastChapterNumberString = chapterNumberString
                     verseText = verseText.replace( '<', '\\it ' ).replace( '>', '\\it*' )
-                    thisBook.appendLine( 'v', verseNumberString + ' ' + verseText )
+                    thisBook.addLine( 'v', verseNumberString + ' ' + verseText )
 
                 else: halt
 

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # HaggaiXMLBible.py
-#   Last modified: 2014-07-16 by RJH (also update ProgVersion below)
+#   Last modified: 2014-12-17 by RJH (also update ProgVersion below)
 #
 # Module handling Haggai XML Bibles
 #
@@ -473,7 +473,7 @@ class HaggaiXMLBible( Bible ):
                     BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'jhl6' )
                     BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, 'jk21' )
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'kjh6' )
-                    thisBook.appendLine( 'mt', element.text )
+                    thisBook.addLine( 'mt', element.text )
                 elif element.tag == HaggaiXMLBible.chapterTag:
                     sublocation = "chapter in {}".format( BBB )
                     BibleOrgSysGlobals.checkXMLNoText( element, sublocation, 'j3jd' )
@@ -502,7 +502,7 @@ class HaggaiXMLBible( Bible ):
             else: logging.warning( "Unprocessed '{}' attribute ({}) in chapter element".format( attrib, value ) )
         if chapterNumber:
             #print( BBB, 'c', chapterNumber )
-            thisBook.appendLine( 'c', chapterNumber )
+            thisBook.addLine( 'c', chapterNumber )
         else: logging.error( "Missing 'n' attribute in chapter element for BBB".format( BBB ) )
 
         for element in chapter:
@@ -529,7 +529,7 @@ class HaggaiXMLBible( Bible ):
                     logging.warning( "{} {}:{} has no text".format( BBB, chapterNumber, vRef ) )
                 if vText: # This is the main text of the caption
                     #print( "{} {}:{} '{}'".format( BBB, chapterNumber, verseNumber, vText ) )
-                    thisBook.appendLine( 'v', '0' + ' ' + vText ) # We save it as verse zero
+                    thisBook.addLine( 'v', '0' + ' ' + vText ) # We save it as verse zero
             else: logging.error( "Expected to find '{}' but got '{}'".format( HaggaiXMLBible.verseTag, element.tag ) )
     # end of HaggaiXMLBible.__validateAndExtractChapter
 
@@ -547,7 +547,7 @@ class HaggaiXMLBible( Bible ):
         BibleOrgSysGlobals.checkXMLNoAttributes( paragraph, location, 'brgw3' )
         BibleOrgSysGlobals.checkXMLNoText( paragraph, location, 'brgw3' )
         BibleOrgSysGlobals.checkXMLNoTail( paragraph, location, 'brgw3' )
-        thisBook.appendLine( 'p', '' )
+        thisBook.addLine( 'p', '' )
 
         # Handle verse subelements (verses)
         for element in paragraph:
@@ -571,7 +571,7 @@ class HaggaiXMLBible( Bible ):
                     logging.warning( "{} {}:{} has no text".format( BBB, chapterNumber, vRef ) )
                 if vText: # This is the main text of the caption
                     #print( "{} {}:{} '{}'".format( BBB, chapterNumber, verseNumber, vText ) )
-                    thisBook.appendLine( 'v', '0' + ' ' + vText ) # We save it as verse zero
+                    thisBook.addLine( 'v', '0' + ' ' + vText ) # We save it as verse zero
             else: logging.error( "Expected to find '{}' but got '{}'".format( HaggaiXMLBible.verseTag, element.tag ) )
     # end of HaggaiXMLBible.__validateAndExtractParagraph
 
@@ -595,7 +595,7 @@ class HaggaiXMLBible( Bible ):
             else: logging.warning( "Unprocessed '{}' attribute ({}) in verse element".format( attrib, value ) )
         if BibleOrgSysGlobals.debugFlag: assert( verseNumber )
         location = "{}:{}".format( location, verseNumber ) # Get a better location description
-        #thisBook.appendLine( 'v', verseNumber )
+        #thisBook.addLine( 'v', verseNumber )
         vText = '' if verse.text is None else verse.text
         if vText: vText = vText.strip()
         #if not vText: # This happens if a verse starts immediately with a style or note
@@ -688,9 +688,9 @@ class HaggaiXMLBible( Bible ):
                 #print( BBB, chapterNumber, verseNumber )
                 #assert( vText )
                 if vText:
-                    thisBook.appendLine( 'v', verseNumber + ' ' + vText ); verseNumber = None
+                    thisBook.addLine( 'v', verseNumber + ' ' + vText ); verseNumber = None
                     vText = ''
-                thisBook.appendLine( 'm', subelement.tail.strip() if subelement.tail else '' )
+                thisBook.addLine( 'm', subelement.tail.strip() if subelement.tail else '' )
                 #bTail = subelement.tail
                 #if bTail: vText = bTail.strip()
             else: logging.error( "Expected to find NOTE or STYLE but got '{}' in {}".format( subelement.tag, location ) )
@@ -699,7 +699,7 @@ class HaggaiXMLBible( Bible ):
             if '\n' in vText:
                 print( "HaggaiXMLBible.__validateAndExtractVerse: vText {} {}:{} '{}'".format( BBB, chapterNumber, verseNumber, vText ) )
                 vText = vText.replace( '\n', ' ' )
-            thisBook.appendLine( 'v', verseNumber + ' ' + vText ); verseNumber = None
+            thisBook.addLine( 'v', verseNumber + ' ' + vText ); verseNumber = None
     # end of HaggaiXMLBible.__validateAndExtractVerse
 # end of HaggaiXMLBible class
 

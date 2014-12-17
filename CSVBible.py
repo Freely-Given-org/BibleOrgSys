@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # CSVBible.py
-#   Last modified: 2014-11-04 by RJH (also update ProgVersion below)
+#   Last modified: 2014-12-17 by RJH (also update ProgVersion below)
 #
 # Module handling comma-separated-values text Bible files
 #
@@ -269,7 +269,7 @@ class CSVBible( Bible ):
                     if BibleOrgSysGlobals.debugFlag: assert( chapterNumber > lastChapterNumber or BBB=='ESG' ) # Esther Greek might be an exception
                     if chapterNumber == 0:
                         logging.info( "Have chapter zero in {} {} {} {}:{}".format( self.givenName, BBB, bookNumber, chapterNumberString, verseNumberString ) )
-                    thisBook.appendLine( 'c', chapterNumberString )
+                    thisBook.addLine( 'c', chapterNumberString )
                     lastChapterNumber = chapterNumber
                     lastVerseNumber = -1
 
@@ -301,7 +301,7 @@ class CSVBible( Bible ):
                     #assert( BBB=='PSA' and verseNumberString=='1' )
                     #vBits = vText[1:].split( '»' )
                     ##print( "vBits", vBits )
-                    #thisBook.appendLine( 'd', vBits[0] ) # Psalm title
+                    #thisBook.addLine( 'd', vBits[0] ) # Psalm title
                     #vText = vBits[1].lstrip()
 
                 # Handle the verse info
@@ -318,7 +318,7 @@ class CSVBible( Bible ):
                         logging.warning( _("Ignored duplicated {} verse in {} {} {} {}:{}").format( verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                     else:
                         logging.warning( _("Ignored duplicated {} verse number in {} {} {} {}:{}").format( verseNumber, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
-                thisBook.appendLine( 'v', verseNumberString + ' ' + vText )
+                thisBook.addLine( 'v', verseNumberString + ' ' + vText )
                 lastVText = vText
                 lastVerseNumber = verseNumber
 

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ZefaniaXMLBible.py
-#   Last modified: 2014-10-03 by RJH (also update ProgVersion below)
+#   Last modified: 2014-12-17 by RJH (also update ProgVersion below)
 #
 # Module handling Zefania XML Bibles
 #
@@ -502,7 +502,7 @@ class ZefaniaXMLBible( Bible ):
             else: logging.warning( "Unprocessed '{}' attribute ({}) in chapter element".format( attrib, value ) )
         if chapterNumber:
             #print( BBB, 'c', chapterNumber )
-            thisBook.appendLine( 'c', chapterNumber )
+            thisBook.addLine( 'c', chapterNumber )
         else: logging.error( "Missing 'n' attribute in chapter element for BBB".format( BBB ) )
 
         for element in chapter:
@@ -526,7 +526,7 @@ class ZefaniaXMLBible( Bible ):
                     logging.warning( "{} {}:{} has no text".format( BBB, chapterNumber, vRef ) )
                 if vText: # This is the main text of the caption
                     #print( "{} {}:{} '{}'".format( BBB, chapterNumber, verseNumber, vText ) )
-                    thisBook.appendLine( 'v', '0' + ' ' + vText ) # We save it as verse zero
+                    thisBook.addLine( 'v', '0' + ' ' + vText ) # We save it as verse zero
             else: logging.error( "Expected to find '{}' but got '{}'".format( ZefaniaXMLBible.verseTag, element.tag ) )
     # end of ZefaniaXMLBible.__validateAndExtractChapter
 
@@ -551,7 +551,7 @@ class ZefaniaXMLBible( Bible ):
             else: logging.warning( "Unprocessed '{}' attribute ({}) in verse element".format( attrib, value ) )
         if BibleOrgSysGlobals.debugFlag: assert( verseNumber )
         location = "{}:{}".format( location, verseNumber ) # Get a better location description
-        #thisBook.appendLine( 'v', verseNumber )
+        #thisBook.addLine( 'v', verseNumber )
         vText = verse.text
         if vText: vText = vText.strip()
         #if not vText: # This happens if a verse starts immediately with a style or note
@@ -571,13 +571,13 @@ class ZefaniaXMLBible( Bible ):
                 if BibleOrgSysGlobals.debugFlag: assert( noteType )
                 nText, nTail = subelement.text, subelement.tail
                 #print( "note", BBB, chapterNumber, verseNumber, noteType, repr(nText), repr(nTail) )
-                #thisBook.appendLine( 'ST', css ) # XXXXXXXXXXXXXXXXXXXXXXXXXX Losing data here (for now)
-                #thisBook.appendLine( 'ST=', nText )
+                #thisBook.addLine( 'ST', css ) # XXXXXXXXXXXXXXXXXXXXXXXXXX Losing data here (for now)
+                #thisBook.addLine( 'ST=', nText )
                 if nTail:
                     if '\n' in nTail:
                         print( "ZefaniaXMLBible.__validateAndExtractVerse: nTail {} {}:{} '{}'".format( BBB, chapterNumber, verseNumber, nTail ) )
                         nTail = nTail.replace( '\n', ' ' )
-                    thisBook.appendLine( 'v~', nTail )
+                    thisBook.addLine( 'v~', nTail )
                 for subsubelement in subelement:
                     if subsubelement.tag == ZefaniaXMLBible.styleTag:
                         subsublocation = "style in " + sublocation
@@ -641,9 +641,9 @@ class ZefaniaXMLBible( Bible ):
                 #print( BBB, chapterNumber, verseNumber )
                 #assert( vText )
                 if vText:
-                    thisBook.appendLine( 'v', verseNumber + ' ' + vText )
+                    thisBook.addLine( 'v', verseNumber + ' ' + vText )
                     vText = ''
-                thisBook.appendLine( 'm', subelement.tail.strip() if subelement.tail else '' )
+                thisBook.addLine( 'm', subelement.tail.strip() if subelement.tail else '' )
                 #bTail = subelement.tail
                 #if bTail: vText = bTail.strip()
             else: logging.error( "Expected to find NOTE or STYLE but got '{}' in {}".format( subelement.tag, location ) )
@@ -652,7 +652,7 @@ class ZefaniaXMLBible( Bible ):
             if '\n' in vText:
                 print( "ZefaniaXMLBible.__validateAndExtractVerse: vText {} {}:{} '{}'".format( BBB, chapterNumber, verseNumber, vText ) )
                 vText = vText.replace( '\n', ' ' )
-            thisBook.appendLine( 'v', verseNumber + ' ' + vText )
+            thisBook.addLine( 'v', verseNumber + ' ' + vText )
     # end of ZefaniaXMLBible.__validateAndExtractVerse
 # end of ZefaniaXMLBible class
 

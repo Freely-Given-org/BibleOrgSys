@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # GreekNT.py
-#   Last modified: 2014-12-14 (also update ProgVersion below)
+#   Last modified: 2014-12-17 (also update ProgVersion below)
 #
 # Module handling GreekNT.xml
 #
@@ -212,13 +212,13 @@ class GreekNT( Bible ):
                     POSCode, parsingCode = grammar
                     word1, word2, word3, word4 = words
                     if cn != lastC:
-                        self.thisBook.appendLine( 'c', cn )
+                        self.thisBook.addLine( 'c', cn )
                         lastC, lastV = cn, None
                     if vn != lastV:
-                        self.thisBook.appendLine( 'v', vn )
+                        self.thisBook.addLine( 'v', vn )
                         lastV = vn
-                    self.thisBook.appendLine( 'vw', "{}/{}/{}/{}".format( word1, word2, word3, word4 ) )
-                    self.thisBook.appendLine( 'g', "{}/{}".format( POSCode, parsingCode ) )
+                    self.thisBook.addLine( 'vw', "{}/{}/{}/{}".format( word1, word2, word3, word4 ) )
+                    self.thisBook.addLine( 'g', "{}/{}".format( POSCode, parsingCode ) )
                     #reference = BBB,bits[0][1],bits[0][2], # Put the BBB into the reference
                     #lineTuples.append( (reference,bits[1],bits[2],) )
                     #print( reference,bits[1],bits[2] ); halt

@@ -54,7 +54,7 @@ from gettext import gettext as _
 LastModifiedDate = '2014-12-17' # by RJH
 ShortProgName = "theWordBible"
 ProgName = "theWord Bible format handler"
-ProgVersion = '0.38'
+ProgVersion = '0.39'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -683,7 +683,7 @@ def handleLine( myName, BBB, C, V, originalLine, bookObject, myGlobals ):
 
     writtenV = False
     if V==1: appendedCFlag = False
-    if C!=1 and V==1: bookObject.appendLine( 'c', str(C) ); appendedCFlag = True
+    if C!=1 and V==1: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
 
     if line is None: # We don't have an entry for this C:V
         return
@@ -831,7 +831,7 @@ def handleLine( myName, BBB, C, V, originalLine, bookObject, myGlobals ):
 
     # Handle the paragraph at the end of the previous line
     if myGlobals['haveParagraph']: # from the end of the previous line
-        bookObject.appendLine( 'p', '' )
+        bookObject.addLine( 'p', '' )
         myGlobals['haveParagraph'] = False
 
     # Adjust paragraph formatting at the end of lines
@@ -917,8 +917,8 @@ def handleLine( myName, BBB, C, V, originalLine, bookObject, myGlobals ):
                 if len(bits) == 1:
                     #if bits[0] in ('\\p','\\b'):
                     if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
-                        if C==1 and V==1 and not appendedCFlag: bookObject.appendLine( 'c', str(C) ); appendedCFlag = True
-                        bookObject.appendLine( marker, '' )
+                        if C==1 and V==1 and not appendedCFlag: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
+                        bookObject.addLine( marker, '' )
                     else:
                         logging.error( "It seems that we had a blank '{}' field in '{}'".format( bits[0], originalLine ) )
                         #halt
@@ -934,30 +934,30 @@ def handleLine( myName, BBB, C, V, originalLine, bookObject, myGlobals ):
                         print( "leftovers", repr(leftovers) )
                         assert( marker in ('mt1','mt2','mt3', 's1','s2','s3', 'q1','q2','q3', 'r') )
                     if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
-                        bookObject.appendLine( marker, bits[1] )
+                        bookObject.addLine( marker, bits[1] )
                     elif not writtenV:
-                        bookObject.appendLine( 'v', '{} {}'.format( V, segment ) )
+                        bookObject.addLine( 'v', '{} {}'.format( V, segment ) )
                         writtenV = True
                     else: leftovers += segment
             else: # What is segment is blank (\\NL* at end of line)???
-                if C==1 and V==1 and not appendedCFlag: bookObject.appendLine( 'c', str(C) ); appendedCFlag = True
+                if C==1 and V==1 and not appendedCFlag: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
                 if not writtenV:
-                    bookObject.appendLine( 'v', '{} {}'.format( V, leftovers+segment ) )
+                    bookObject.addLine( 'v', '{} {}'.format( V, leftovers+segment ) )
                     writtenV = True
                 else:
-                    bookObject.appendLine( 'v~', leftovers+segment )
+                    bookObject.addLine( 'v~', leftovers+segment )
                 leftovers = ''
                 #if myGlobals['haveParagraph']:
-                    #bookObject.appendLine( 'p', '' )
+                    #bookObject.addLine( 'p', '' )
                     #myGlobals['haveParagraph'] = False
         if leftovers: logging.critical( "Had leftovers {}".format( repr(leftovers) ) )
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert( not leftovers )
         #halt
     else: # no newlines in the middle
-        if C==1 and V==1 and not appendedCFlag: bookObject.appendLine( 'c', str(C) ); appendedCFlag = True
-        bookObject.appendLine( 'v', '{} {}'.format( V, line ) )
+        if C==1 and V==1 and not appendedCFlag: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
+        bookObject.addLine( 'v', '{} {}'.format( V, line ) )
         #if myGlobals['haveParagraph']:
-            #bookObject.appendLine( 'p', '' )
+            #bookObject.addLine( 'p', '' )
             #myGlobals['haveParagraph'] = False
 # end of TheWordBible.handleLine
 
@@ -1072,13 +1072,13 @@ class TheWordBible( Bible ):
                                     C = V = 1
                                     # Don't append c 1 yet, because there might be a book heading to precede it
                                 else: # next chapter only
-                                    #thisBook.appendLine( 'c', str(C) )
+                                    #thisBook.addLine( 'c', str(C) )
                                     numV = verseList[C-1]
                                     V = 1
-                                #thisBook.appendLine( 'cc', str(C) ) # All chapter numbers except the first
+                                #thisBook.addLine( 'cc', str(C) ) # All chapter numbers except the first
 
                             #if ourGlobals['haveParagraph']:
-                                #thisBook.appendLine( 'p', '' )
+                                #thisBook.addLine( 'p', '' )
                                 #ourGlobals['haveParagraph'] = False
 
                         else: # Should be module info at end of file (after all of the verse lines)
@@ -1194,9 +1194,9 @@ def demo():
 
             if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
-                parameters = [filename for filename in sorted(foundFiles)]
+                parameters = [(testFolder,filename) for filename in sorted(foundFiles)]
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
-                    results = pool.map( testTWB, parameters ) # have the pool do our loads
+                    results = pool.starmap( testTWB, parameters ) # have the pool do our loads
                     assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
             else: # Just single threaded
                 for j, someFile in enumerate( sorted( foundFiles ) ):
@@ -1217,9 +1217,9 @@ def demo():
 
             if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
-                parameters = [filename for filename in sorted(foundFiles)]
+                parameters = [(testFolder,filename) for filename in sorted(foundFiles)]
                 with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
-                    results = pool.map( testTWB, parameters ) # have the pool do our loads
+                    results = pool.starmap( testTWB, parameters ) # have the pool do our loads
                     assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
             else: # Just single threaded
                 for j, someFile in enumerate( sorted( foundFiles ) ):

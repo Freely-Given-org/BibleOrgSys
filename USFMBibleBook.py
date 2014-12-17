@@ -28,7 +28,7 @@ Module for defining and manipulating USFM Bible books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-11' # by RJH
+LastModifiedDate = '2014-12-17' # by RJH
 ShortProgName = "USFMBibleBook"
 ProgName = "USFM Bible book handler"
 ProgVersion = '0.43'
@@ -71,19 +71,19 @@ class USFMBibleBook( BibleBook ):
         Tries to combine physical lines into logical lines,
             i.e., so that all lines begin with a USFM paragraph marker.
 
-        Uses the appendLine function of the base class to save the lines.
+        Uses the addLine function of the base class to save the lines.
 
         Note: the base class later on will try to break apart lines with a paragraph marker in the middle --
                 we don't need to worry about that here.
         """
 
-        def doAppendLine( originalMarker, originalText ):
+        def doaddLine( originalMarker, originalText ):
             """
             Check for newLine markers within the line (if so, break the line) and save the information in our database.
 
             Also convert ~ to a proper non-break space.
             """
-            #print( "doAppendLine( {}, {} )".format( repr(originalMarker), repr(originalText) ) )
+            #print( "doaddLine( {}, {} )".format( repr(originalMarker), repr(originalText) ) )
             marker, text = originalMarker, originalText.replace( '~', ' ' )
             if '\\' in text: # Check markers inside the lines
                 markerList = BibleOrgSysGlobals.USFMMarkers.getMarkerListFromText( text )
@@ -99,14 +99,14 @@ class USFMBibleBook( BibleBook ):
                             logging.error( _("NewLine marker '{}' shouldn't appear within line after {} {}:{} in \\{}: '{}'").format( insideMarker, self.BBB, C, V, marker, text ) ) # Only log the first error in the line
                             self.addPriorityError( 96, C, V, _("NewLine marker \\{} shouldn't be inside a line").format( insideMarker ) )
                         thisText = text[ix:iMIndex].rstrip()
-                        self.appendLine( marker, thisText )
+                        self.addLine( marker, thisText )
                         ix = iMIndex + 1 + len(insideMarker) + len(nextSignificantChar) # Get the start of the next text -- the 1 is for the backslash
                         #print( "Did a split from {}:'{}' to {}:'{}' leaving {}:'{}'".format( originalMarker, originalText, marker, thisText, insideMarker, text[ix:] ) )
                         marker = insideMarker # setup for the next line
                 if ix != 0: # We must have separated multiple lines
                     text = text[ix:] # Get the final bit of the line
-            self.appendLine( marker, text ) # Call the function in the base class to save the line (or the remainder of the line if we split it above)
-        # end of doAppendLine
+            self.addLine( marker, text ) # Call the function in the base class to save the line (or the remainder of the line if we split it above)
+        # end of doaddLine
 
 
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Loading {}...").format( filename ) )
@@ -135,7 +135,7 @@ class USFMBibleBook( BibleBook ):
 
             # Now load the actual Bible book data
             if BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ):
-                if lastMarker: doAppendLine( lastMarker, lastText )
+                if lastMarker: doaddLine( lastMarker, lastText )
                 lastMarker, lastText = marker, text
             elif BibleOrgSysGlobals.USFMMarkers.isInternalMarker( marker ) \
             or marker.endswith('*') and BibleOrgSysGlobals.USFMMarkers.isInternalMarker( marker[:-1] ): # the line begins with an internal marker -- append it to the previous line
@@ -171,13 +171,13 @@ class USFMBibleBook( BibleBook ):
                 self.addPriorityError( 100, C, V, _("Found \\{} unknown marker on new line in file").format( marker ) )
                 for tryMarker in sortedNLMarkers: # Try to do something intelligent here -- it might be just a missing space
                     if marker.startswith( tryMarker ): # Let's try changing it
-                        if lastMarker: doAppendLine( lastMarker, lastText )
+                        if lastMarker: doaddLine( lastMarker, lastText )
                         lastMarker, lastText = tryMarker, marker[len(tryMarker):] + ' ' + text
                         loadErrors.append( _("{} {}:{} Changed '\\{}' unknown marker to '{}' at beginning of line: {}").format( self.BBB, C, V, marker, tryMarker, text ) )
                         logging.warning( _("Changed '\\{}' unknown marker to '{}' after {} {}:{} at beginning of line: {}").format( marker, tryMarker, self.BBB, C, V, text ) )
                         break
                 # Otherwise, don't bother processing this line -- it'll just cause more problems later on
-        if lastMarker: doAppendLine( lastMarker, lastText ) # Process the final line
+        if lastMarker: doaddLine( lastMarker, lastText ) # Process the final line
 
         if not originalBook.lines: # There were no lines!!!
             loadErrors.append( _("{} This USFM file was totally empty: {}").format( self.BBB, self.sourceFilename ) )

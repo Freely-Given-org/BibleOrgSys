@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # OpenSongXMLBible.py
-#   Last modified: 2014-09-03 by RJH (also update ProgVersion below)
+#   Last modified: 2014-12-17 by RJH (also update ProgVersion below)
 #
 # Module handling OpenSong XML Bibles
 #
@@ -274,9 +274,9 @@ class OpenSongXMLBible( Bible ):
                 thisBook.objectTypeString = "OpenSong"
                 #thisBook.sourceFilepath = self.sourceFilepath
                 USFMAbbreviation = BibleOrgSysGlobals.BibleBooksCodes.getUSFMAbbreviation( BBB )
-                thisBook.appendLine( 'id', '{} imported by {}'.format( USFMAbbreviation.upper(), ProgNameVersion ) )
-                thisBook.appendLine( 'h', bookName )
-                thisBook.appendLine( 'mt1', bookName )
+                thisBook.addLine( 'id', '{} imported by {}'.format( USFMAbbreviation.upper(), ProgNameVersion ) )
+                thisBook.addLine( 'h', bookName )
+                thisBook.addLine( 'mt1', bookName )
                 for element in book:
                     if element.tag == OpenSongXMLBible.chapterTag:
                         sublocation = "chapter in {}".format( BBB )
@@ -311,7 +311,7 @@ class OpenSongXMLBible( Bible ):
         if chapterNumber:
             #print( BBB, 'c', chapterNumber )
             chapterNumber = chapterNumber.replace( 'of Solomon ', '' ) # Fix a mistake in the Chinese_SU module
-            thisBook.appendLine( 'c', chapterNumber )
+            thisBook.addLine( 'c', chapterNumber )
         else: logging.error( "Missing 'n' attribute in chapter element for BBB".format( BBB ) )
 
         for element in chapter:
@@ -327,7 +327,7 @@ class OpenSongXMLBible( Bible ):
                         toVerseNumber = value
                     else: logging.warning( "Unprocessed '{}' attribute ({}) in verse element".format( attrib, value ) )
                 if BibleOrgSysGlobals.debugFlag: assert( verseNumber )
-                #thisBook.appendLine( 'v', verseNumber )
+                #thisBook.addLine( 'v', verseNumber )
                 vText = element.text
                 if not vText:
                     logging.warning( "{} {}:{} has no text".format( BBB, chapterNumber, verseNumber ) )
@@ -337,11 +337,11 @@ class OpenSongXMLBible( Bible ):
                         #print( "vText", repr(vText), repr(element.text) )
                         for j, textBit in enumerate( vText.split( '\n' ) ):
                             if j==0:
-                                thisBook.appendLine( 'q1', '' )
-                                thisBook.appendLine( 'v', verseNumber + ' ' + textBit )
-                            else: thisBook.appendLine( 'q1', textBit )
+                                thisBook.addLine( 'q1', '' )
+                                thisBook.addLine( 'v', verseNumber + ' ' + textBit )
+                            else: thisBook.addLine( 'q1', textBit )
                     else: # Just one verse line
-                        thisBook.appendLine( 'v', verseNumber + ' ' + vText )
+                        thisBook.addLine( 'v', verseNumber + ' ' + vText )
             else: logging.error( "Expected to find '{}' but got '{}'".format( OpenSongXMLBible.verseTag, element.tag ) )
     # end of OpenSongXMLBible.__validateAndExtractChapter
 # end of OpenSongXMLBible class

@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 #
 # USFXXMLBible.py
-#   Last modified: 2014-10-03 by RJH (also update ProgVersion below)
 #
 # Module handling USFX XML Bibles
 #
@@ -27,15 +26,19 @@
 Module for defining and manipulating complete or partial USFX Bibles.
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2014-12-17' # by RJH
+ShortProgName = "USFXBible"
 ProgName = "USFX XML Bible handler"
-ProgVersion = "0.10"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.20'
+ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
 import os, sys, logging, multiprocessing
-from gettext import gettext as _
 from xml.etree.ElementTree import ElementTree, ParseError
 
 import BibleOrgSysGlobals
@@ -383,7 +386,7 @@ class USFXXMLBible( Bible ):
                         assert( value == bookCode )
                     else:
                         logging.warning( _("vsg4 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
-                self.thisBook.appendLine( 'id', bookCode + ((' '+idText) if idText else '') )
+                self.thisBook.addLine( 'id', bookCode + ((' '+idText) if idText else '') )
             elif element.tag == 'ide':
                 ideText = clean( element.text )
                 BibleOrgSysGlobals.checkXMLNoTail( element, location, 'jsa0' )
@@ -393,13 +396,13 @@ class USFXXMLBible( Bible ):
                     if attrib == 'charset': charset = value
                     else:
                         logging.warning( _("jx53 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
-                self.thisBook.appendLine( 'ide', charset + ((' '+ideText) if ideText else '') )
+                self.thisBook.addLine( 'ide', charset + ((' '+ideText) if ideText else '') )
             elif element.tag == 'h':
                 hText = element.text
                 BibleOrgSysGlobals.checkXMLNoTail( element, location, 'dj35' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, location, 'hs35' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, location, 'hs32' )
-                self.thisBook.appendLine( 'h', clean(hText) )
+                self.thisBook.addLine( 'h', clean(hText) )
             elif element.tag == 'toc':
                 tocText = element.text
                 BibleOrgSysGlobals.checkXMLNoTail( element, location, 'ss13' )
@@ -410,7 +413,7 @@ class USFXXMLBible( Bible ):
                         level = value
                     else:
                         logging.warning( _("dg36 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
-                self.thisBook.appendLine( 'toc'+level, clean(tocText) )
+                self.thisBook.addLine( 'toc'+level, clean(tocText) )
             elif element.tag == 'c':
                 BibleOrgSysGlobals.checkXMLNoText( element, location, 'ks35' )
                 BibleOrgSysGlobals.checkXMLNoTail( element, location, 'gs35' )
@@ -420,7 +423,7 @@ class USFXXMLBible( Bible ):
                         C, V = value, '0'
                     else:
                         logging.warning( _("hj52 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
-                self.thisBook.appendLine( 'c', C )
+                self.thisBook.addLine( 'c', C )
             elif element.tag == 's':
                 sText = clean( element.text )
                 BibleOrgSysGlobals.checkXMLNoTail( element, location, 'wxg0' )
@@ -432,7 +435,7 @@ class USFXXMLBible( Bible ):
                         logging.warning( _("bdy6 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
                 marker = 's'
                 if level: marker += level
-                self.thisBook.appendLine( marker, sText )
+                self.thisBook.addLine( marker, sText )
                 for subelement in element:
                     #print( "subelement", repr(subelement.tag) )
                     sublocation = subelement.tag + " of " + location
@@ -457,19 +460,37 @@ class USFXXMLBible( Bible ):
                 BibleOrgSysGlobals.checkXMLNoTail( element, location, 'gs35' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, location, 'nd04' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, location, 'kdr3' )
-                self.thisBook.appendLine( 'b', '' )
+                self.thisBook.addLine( 'b', '' )
             elif element.tag in ('cl','cp'): # Simple single-line paragraph-level markers
                 marker, text = element.tag, clean(element.text)
                 BibleOrgSysGlobals.checkXMLNoTail( element, location, 'od01' )
-                BibleOrgSysGlobals.checkXMLNoAttributes( element, location, 'us91' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, location, 'gd92' )
-                self.thisBook.appendLine( marker, text )
+                idField = None
+                for attrib,value in element.items():
+                    if attrib == 'id': idField = value
+                    else:
+                        logging.warning( _("dv35 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+                if idField and text is None:
+                    text = idField
+                else:
+                    logging.warning( _("dve4 Unprocessed idField ({}) in {}").format( idField, location ) )
+                if text is None:
+                    logging.critical( "Why is {} empty at {}".format( marker, location ) )
+                assert( text is not None )
+                self.thisBook.addLine( marker, text )
             elif element.tag == 'table':
                 self.loadTable( element, location )
+            elif element.tag == 've': # What's this in Psalms: <c id="4" /><ve /><d>For the Chief Musician; on stringed instruments. A Psalm of David.</d>
+                BibleOrgSysGlobals.checkXMLNoText( element, location, 'kds3' )
+                BibleOrgSysGlobals.checkXMLNoTail( element, location, 'ks29' )
+                BibleOrgSysGlobals.checkXMLNoAttributes( element, location, 'kj24' )
+                BibleOrgSysGlobals.checkXMLNoSubelements( element, location, 'js91' )
+                #self.thisBook.addLine( 'b', '' )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "Ignoring 've' field", BBB, C, V )
             else:
                 logging.critical( _("caf2 Unprocessed {} element after {} {}:{} in {}").format( element.tag, BBB, C, V, location ) )
                 #self.addPriorityError( 1, c, v, _("Unprocessed {} element").format( element.tag ) )
-                if BibleOrgSysGlobals.debugFlag: halt
+                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
         self.saveBook( self.thisBook )
     # end of USFXXMLBible.loadBook
 
@@ -482,20 +503,29 @@ class USFXXMLBible( Bible ):
             #print( _("USFXXMLBible.loadParagraph: Loading {} from {}...").format( self.name, self.sourceFolder ) )
 
         V = None
-        pText = paragraphElement.text
+        pTag, pText = paragraphElement.tag, clean(paragraphElement.text)
         BibleOrgSysGlobals.checkXMLNoTail( paragraphElement, paragraphLocation, 'vsg7' )
 
         # Process the attributes first
         sfm = level = style = None
         for attrib,value in paragraphElement.items():
-            if attrib == 'sfm':
-                sfm = value
-            elif attrib == 'level':
-                level = value
-            elif attrib == 'style':
-                style = value
+            if attrib == 'sfm': sfm = value
+            elif attrib == 'level': level = value
+            elif attrib == 'style': style = value
             else:
                 logging.warning( "vfh4 Unprocessed {} attribute ({}) in {}".format( attrib, value, paragraphLocation ) )
+
+        if sfm:
+            assert( pTag == 'p' )
+            pTag = sfm
+        if level:
+            #assert( pTag == 'q' ) # Could also be mt, etc.
+            pTag += level
+        if style:
+            #print( repr(pTag), repr(pText), repr(style) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "Ignoring {!r} style".format( style ) )
+
+        self.thisBook.addLine( pTag, '' if pText is None else pText )
 
         for element in paragraphElement:
             location = element.tag + " of " + paragraphLocation
@@ -512,7 +542,7 @@ class USFXXMLBible( Bible ):
                         logging.warning( _("cbs2 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
                 assert( V is not None )
                 assert( V )
-                self.thisBook.appendLine( 'v', V + ((' '+vTail) if vTail else '' ) )
+                self.thisBook.addLine( 'v', V + ((' '+vTail) if vTail else '' ) )
             elif element.tag == 've': # verse end milestone -- we can just ignore this
                 BibleOrgSysGlobals.checkXMLNoText( element, location, 'lsc3' )
                 BibleOrgSysGlobals.checkXMLNoTail( element, location, 'mfy4' )
@@ -529,7 +559,7 @@ class USFXXMLBible( Bible ):
                 #print( "USFX.loadParagraph Found xref at", paragraphLocation, C, V, repr(element.text) )
                 self.loadCrossreference( element, location )
             elif element.tag in ('add','nd','wj','rq','sig','sls','bk','k','tl','vp','pn','qs','qt','em','it','bd','bdit','sc','no',): # character formatting
-                self.loadCharacterFormatting( element, location )
+                self.loadCharacterFormatting( element, location, C, V )
             elif element.tag == 'cs': # character style -- seems like a USFX hack
                 text, tail = clean(element.text), clean(element.tail)
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, location, 'kf92' )
@@ -545,7 +575,7 @@ class USFXXMLBible( Bible ):
                 BibleOrgSysGlobals.checkXMLNoTail( element, location, 'kdf0' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, location, 'lkj1' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, location, 'da13' )
-                self.thisBook.appendLine( marker, text )
+                self.thisBook.addLine( marker, text )
             elif element.tag == 'ref': # encoded reference -- seems like a USFX hack
                 text, tail = clean(element.text), clean(element.tail)
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, location, 'bd83' )
@@ -560,16 +590,24 @@ class USFXXMLBible( Bible ):
             elif element.tag == 'optionalLineBreak':
                 print( "What is loadParagraph optionalLineBreak?" )
                 if BibleOrgSysGlobals.debugFlag: halt
-            elif element.tag == 'milestone':
-                print( "What is loadParagraph milestone?" )
-                if BibleOrgSysGlobals.debugFlag: halt
+            elif element.tag == 'milestone': # e.g., <milestone sfm="pb" attribute=""/> (pb = explicit page break)
+                BibleOrgSysGlobals.checkXMLNoText( element, location, 'jzx2' )
+                BibleOrgSysGlobals.checkXMLNoTail( element, location, 'ms23' )
+                BibleOrgSysGlobals.checkXMLNoSubelements( element, location, 'dw24' )
+                sfm = None
+                for attrib,value in element.items():
+                    if attrib == 'sfm': sfm = value
+                    else:
+                        logging.warning( _("mcd2 Unprocessed {} attribute ({}) in {}").format( attrib, value, location ) )
+                if sfm not in ('pb',): print( "milestone sfm got", repr(sfm) )
+                self.thisBook.addLine( sfm, '' )
             else:
                 logging.warning( _("df45 Unprocessed {} element after {} {}:{} in {}").format( repr(element.tag), self.thisBook.BBB, C, V, location ) )
         return V
     # end of USFXXMLBible.loadParagraph
 
 
-    def loadCharacterFormatting( self, element, location ):
+    def loadCharacterFormatting( self, element, location, C, V ):
         """
         """
         marker, text, tail = element.tag, clean(element.text), clean(element.tail)
@@ -583,7 +621,7 @@ class USFXXMLBible( Bible ):
                 self.loadFootnote( subelement, sublocation )
             else:
                 logging.warning( _("sf31 Unprocessed {} element after {} {}:{} in {}").format( repr(subelement.tag), self.thisBook.BBB, C, V, location ) )
-                halt
+                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
         self.thisBook.appendToLastLine( '\\{}*{}'.format( marker, (' '+tail) if tail else '' ) )
     # end of USFXXMLBible.loadCharacterFormatting
 
@@ -620,7 +658,7 @@ class USFXXMLBible( Bible ):
             sublocation = subelement.tag + " of " + location
             if subelement.tag == 'tr':
                 #print( "table", sublocation )
-                self.thisBook.appendLine( 'tr', '' )
+                self.thisBook.addLine( 'tr', '' )
                 BibleOrgSysGlobals.checkXMLNoText( subelement, sublocation, 'sg32' )
                 BibleOrgSysGlobals.checkXMLNoTail( subelement, sublocation, 'dh82' )
                 BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation, 'mniq' )
@@ -680,17 +718,21 @@ class USFXXMLBible( Bible ):
                         marker2, fText2, fTail2 = sub2element.tag, clean(sub2element.text), clean(sub2element.tail)
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2location, 'js72' )
                         if marker2=='ref':
-                            print( sub2location )
-                            assert( not fText2 )
+                            #print( sub2location )
+                            if fText2:
+                                #print( 'ft2', marker2, repr(fText2), repr(fTail2), sub2location )
+                                self.thisBook.appendToLastLine( fText2 )
                             target = None
                             for attrib,value in sub2element.items():
-                                if attrib == 'tgt': target = value
+                                if attrib == 'tgt': target = value # OSIS style reference, e.g., '1SA.27.8'
                                 else:
                                     logging.warning( _("hd52 Unprocessed {} attribute ({}) in {}").format( attrib, value, sub2location ) )
                             if target:
+                                #print( 'tg', marker2, repr(target) )
                                 self.thisBook.appendToLastLine( ' \\{} {}'.format( marker2, target ) )
                             else: halt
                         else: halt
+                        if fTail2: self.thisBook.appendToLastLine( fTail2 )
                 else: halt
             if fTail:
                 self.thisBook.appendToLastLine( '\\{}*{}'.format( marker, fTail ) )
@@ -737,16 +779,18 @@ class USFXXMLBible( Bible ):
                         marker2, xText2, xTail2 = sub2element.tag, clean(sub2element.text), clean(sub2element.tail)
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2location, 'fs63' )
                         if marker2=='ref':
-                            assert( not xText2 )
+                            if xText2:
+                                #print( 'xt2', marker2, repr(xText2), repr(xTail2), sub2location )
+                                self.thisBook.appendToLastLine( xText2 )
                             target = None
                             for attrib,value in sub2element.items():
                                 if attrib == 'tgt': target = value
                                 else:
                                     logging.warning( _("gs34 Unprocessed {} attribute ({}) in {}").format( attrib, value, sub2location ) )
-                            if target:
-                                self.thisBook.appendToLastLine( ' \\{} {}'.format( marker2, target ) )
+                            if target: self.thisBook.appendToLastLine( ' \\{} {}'.format( marker2, target ) )
                             else: halt
                         else: halt
+                        if xTail2: self.thisBook.appendToLastLine( xTail2 )
                 else: halt
             if xTail:
                 self.thisBook.appendToLastLine( '\\{}*{}'.format( marker, xTail ) )
@@ -763,8 +807,11 @@ def demo():
     if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
     testData = (
+                ('ASV', "Tests/DataFilesForTests/USFXTest1/"),
                 ("Tst", "../../../../../Data/Work/Bibles/Formats/USFX/",),
                 ("AGM", "../../../../../Data/Work/Bibles/USFX Bibles/Haiola USFX test versions/agm_usfx/",),
+                ("HBO", "../../../../../Data/Work/Bibles/USFX Bibles/Haiola USFX test versions/hbo_usfx/",),
+                ("ZIA", "../../../../../Data/Work/Bibles/USFX Bibles/Haiola USFX test versions/zia_usfx/",),
                 ) # You can put your USFX test folder here
 
     for name, testFolder in testData:
