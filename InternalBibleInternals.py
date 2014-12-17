@@ -38,10 +38,10 @@ and then calls
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-15' # by RJH
+LastModifiedDate = '2014-12-16' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
-ProgVersion = '0.55'
+ProgVersion = '0.56'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -50,7 +50,6 @@ MAX_NONCRITICAL_ERRORS_PER_BOOK = 5
 
 
 import os, logging
-from gettext import gettext as _
 from collections import OrderedDict
 
 import BibleOrgSysGlobals
@@ -105,7 +104,9 @@ BOS_ALL_ADDED_NESTING_MARKERS = BOS_ADDED_NESTING_MARKERS + ('iot',)
 
 BOS_NESTING_MARKERS = BOS_REGULAR_NESTING_MARKERS + BOS_ALL_ADDED_NESTING_MARKERS + USFM_BIBLE_PARAGRAPH_MARKERS
 
-BOS_END_MARKERS = ('¬intro', '¬iot', '¬ilist', '¬chapters', '¬c', '¬v', '¬list', )
+BOS_END_MARKERS = ['¬intro', '¬iot', '¬ilist', '¬chapters', '¬c', '¬v', '¬list', ]
+for marker in USFM_BIBLE_PARAGRAPH_MARKERS: BOS_END_MARKERS.append( '¬'+marker )
+#print( BOS_END_MARKERS );halt
 
 #BOS_MARKERS = BOS_ADDED_CONTENT_MARKERS + BOS_ALL_ADDED_NESTING_MARKERS + BOS_END_MARKERS
 
@@ -823,6 +824,7 @@ class InternalBibleIndex:
             for entry in entries:
                 marker = entry.getMarker()
                 foundMarkers.append( marker )
+                if marker[0]=='¬': assert( marker in BOS_END_MARKERS )
                 if marker not in ('c','v'): # These always have to have text
                     if entry.getCleanText(): anyText = True
                     if entry.getExtras(): anyExtras = True

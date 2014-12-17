@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 #
 # MySwordBible.py
-#   Last modified: 2014-12-15 by RJH (also update ProgVersion below)
 #
 # Module handling "MySword" Bible module files
 #
@@ -50,15 +49,19 @@ e.g.,
     And God calleth to the expanse `Heavens;' and there is an evening, and there is a morning--day second.<CM>
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2014-12-17' # by RJH
+ShortProgName = "MySwordBible"
 ProgName = "MySword Bible format handler"
-ProgVersion = "0.14"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.15'
+ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
 import logging, os, re
-from gettext import gettext as _
 import sqlite3
 import multiprocessing
 
@@ -262,7 +265,7 @@ class MySwordBible( Bible ):
             try:
                 row = cursor.fetchone()
                 line = row[0]
-            except KeyError: # This reference is missing
+            except TypeError: # This reference is missing (row is None)
                 #print( "something wrong at", BBB, C, V )
                 #if BibleOrgSysGlobals.debugFlag: halt
                 #print( row )
@@ -282,9 +285,9 @@ class MySwordBible( Bible ):
 
                     # Some modules end lines with \r\n or have it in the middle!
                     #   (We just ignore these for now)
-                    if '\r' in line or '\n' in line:
-                        logging.warning( "MySwordBible.load: Found CR or LF characters in verse line at {} {}:{}".format( BBB, C, V ) )
                     while line and line[-1] in '\r\n': line = line[:-1]
+                    if '\r' in line or '\n' in line: # (in the middle)
+                        logging.warning( "MySwordBible.load: Found CR or LF characters in verse line at {} {}:{}".format( BBB, C, V ) )
                     line = line.replace( '\r\n', ' ' ).replace( '\r', ' ' ).replace( '\n', ' ' )
 
             #print( "MySword.load", BBB, C, V, repr(line) )
@@ -328,6 +331,7 @@ class MySwordBible( Bible ):
 
 def testMySwB( MySwBfolder, MySwBfilename ):
     # Crudely demonstrate the MySword Bible class
+    #print( "tMSB", MySwBfolder )
     import VerseReferences
     #testFolder = "../../../../../Data/Work/Bibles/MySword modules/" # Must be the same as below
 
@@ -412,9 +416,9 @@ def demo():
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
-            parameters = [filename for filename in sorted(foundFiles)]
+            parameters = [(testFolder,filename) for filename in sorted(foundFiles)]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
-                results = pool.map( testMySwB, parameters ) # have the pool do our loads
+                results = pool.starmap( testMySwB, parameters ) # have the pool do our loads
                 assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFile in enumerate( sorted( foundFiles ) ):
@@ -433,9 +437,9 @@ def demo():
 
         if BibleOrgSysGlobals.maxProcesses > 1: # Get our subprocesses ready and waiting for work
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nTrying all {} discovered modules...".format( len(foundFolders) ) )
-            parameters = [filename for filename in sorted(foundFiles)]
+            parameters = [(testFolder,filename) for filename in sorted(foundFiles)]
             with multiprocessing.Pool( processes=BibleOrgSysGlobals.maxProcesses ) as pool: # start worker processes
-                results = pool.map( testMySwB, parameters ) # have the pool do our loads
+                results = pool.starmap( testMySwB, parameters ) # have the pool do our loads
                 assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFile in enumerate( sorted( foundFiles ) ):

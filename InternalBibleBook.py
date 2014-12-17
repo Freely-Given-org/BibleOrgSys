@@ -41,7 +41,7 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-15' # by RJH
+LastModifiedDate = '2014-12-16' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.91'
@@ -488,7 +488,7 @@ class InternalBibleBook:
                 cleanedNote = cleanedNote.replace( '\\', '' )
 
             # Save it all and finish off
-            extras.append( InternalBibleExtra(this1,ix1,note,cleanedNote) ) # Saves a 4-tuple: type ('fn' or 'xr', etc.), index into the main text line, the actual fn or xref contents, then a cleaned version
+            if note: extras.append( InternalBibleExtra(this1,ix1,note,cleanedNote) ) # Saves a 4-tuple: type ('fn' or 'xr', etc.), index into the main text line, the actual fn or xref contents, then a cleaned version
             if this1 == 'vp': # Insert a new pseudo vp~ newline entry BEFORE the v field that it presumably came from
                 #print( "InternalBibleBook.processLineFix insertVP~ (before)", self.BBB, C, V, repr(originalMarker), repr(cleanedNote) )
                 if BibleOrgSysGlobals.debugFlag: assert( originalMarker == 'v~' ) # Shouldn't occur in other fields
@@ -765,13 +765,14 @@ class InternalBibleBook:
 
     def addNestingMarkers( self ):
         """
+        Or 'addEndMarkers'. End markers start with not sign ¬.
+
         Go through self._processedLines and add entries
             for the end of verses, chapters, etc.
-        End markers start with not sign ¬.
 
         We put matching end markers on c and v markers,
             paragraph markers, e.g., p, q,
-            section headings, e.g., s1
+            XXXX NO XXXX section headings, e.g., s1
             iot section (enclosing io fields), and
             lists (and intro lists).
 
@@ -783,7 +784,7 @@ class InternalBibleBook:
             ¬p
             ¬c      4
             c       5
-            s       Section heading
+            s       Section heading (could also be s1)
             p
             c#      5
             v       1
@@ -930,10 +931,10 @@ class InternalBibleBook:
             elif marker in ourHeadingMarkers: # must be checked BEFORE USFM_INTRODUCTION_MARKERS because they overlap
                 if 'v' in openMarkers and verseEnded( j ): closeOpenMarker( 'v', V )
                 if lastPMarker in openMarkers: closeOpenMarker( lastPMarker ); lastPMarker = None
-                if lastSMarker in openMarkers: closeOpenMarker( lastSMarker ); lastSMarker = None
+                #if lastSMarker in openMarkers: closeOpenMarker( lastSMarker ); lastSMarker = None
                 if BibleOrgSysGlobals.debugFlag: assert( marker not in openMarkers )
-                openMarkers.append( marker )
-                lastSMarker = marker
+                #openMarkers.append( marker )
+                #lastSMarker = marker
             elif marker in USFM_INTRODUCTION_MARKERS:
                 haveIntro = True
             elif marker in ourMainListMarkers:
@@ -1637,7 +1638,8 @@ class InternalBibleBook:
                 validationErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Marker 'id' should only appear as the first marker in a book but found on line {} in {}: {}").format( j+1, marker, text ) )
                 logging.error( _("Marker 'id' should only appear as the first marker in a book but found on line {} after {} {}:{} in {}: {}").format( j+1, self.BBB, C, V, marker, text ) )
                 self.addPriorityError( 99, C, V, _("'id' marker should only be in first line of file") )
-            if ( marker[0]=='¬' and marker not in BOS_END_MARKERS and not BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker[1:] ) ) \
+            #if ( marker[0]=='¬' and marker not in BOS_END_MARKERS and not BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker[1:] ) ) \
+            if ( marker[0]=='¬' and marker not in BOS_END_MARKERS ) \
             or ( marker[0]!='¬' and marker not in ('c#','vp~',) and marker not in BOS_ADDED_NESTING_MARKERS and not BibleOrgSysGlobals.USFMMarkers.isNewlineMarker( marker ) ):
                 validationErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Unexpected '{}' newline marker in Bible book (Text is '{}')").format( marker, text ) )
                 logging.warning( _("Unexpected '{}' newline marker in Bible book after {} {}:{} (Text is '{}')").format( marker, self.BBB, C, V, text ) )
@@ -1669,7 +1671,7 @@ class InternalBibleBook:
         Extract a SFM field from the loaded book.
         """
         if not self._processedFlag:
-            print( "InternalBibleBook: processing lines from 'getField'" )
+            if debuggingThisModule: print( "InternalBibleBook: calling processLines from 'getField'" )
             self.processLines()
         if BibleOrgSysGlobals.debugFlag:
             assert( self._processedLines )
@@ -1678,7 +1680,7 @@ class InternalBibleBook:
 
         for entry in self._processedLines:
             if entry.getMarker() == adjFieldName:
-                if BibleOrgSysGlobals.debugFlag: assert( not entry.getExtras() )
+                if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert( not entry.getExtras() ) # We're maybe losing some info here
                 return entry.getText()
     # end of InternalBibleBook.getField
 

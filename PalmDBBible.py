@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 #
 # PalmDBBible.py
-#   Last modified: 2014-11-04 by RJH (also update ProgVersion below)
 #
 # Module handling PDB Bible files
 #
@@ -61,15 +60,19 @@ Limitations:
     Currently ignores encoded verse references in cross-references
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2014-12-17' # by RJH
+ShortProgName = "PDBBible"
 ProgName = "PDB Bible format handler"
-ProgVersion = "0.06" # STILL UNFINISHED!!!
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.07' # STILL UNFINISHED!!!
+ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
 import logging, os, struct
-from gettext import gettext as _
 import multiprocessing
 from collections import OrderedDict
 
@@ -173,7 +176,7 @@ def PalmDBBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "PalmDBBibleFileCheck foundProjects", numFound, foundProjects )
         if numFound == 1 and (autoLoad or autoLoadBooks):
             if BibleOrgSysGlobals.debugFlag: assert( len(foundProjects) == 1 )
-            uB = PalmDBBible( foundProjects[0][0], foundProjects[0][1][:-9] ) # Remove the end of the actual filename "_utf8.txt"
+            uB = PalmDBBible( foundProjects[0][0], foundProjects[0][1][:-4] ) # Remove the end of the actual filename ".PDB"
             if autoLoadBooks: uB.load() # Load and process the file
             return uB
         return numFound

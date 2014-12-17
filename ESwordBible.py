@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 #
 # ESwordBible.py
-#   Last modified: 2014-12-14 by RJH (also update ProgVersion below)
 #
 # Module handling "e-Sword" Bible module files
 #
@@ -47,15 +46,19 @@ e.g.,
     And God calleth to the expanse `Heavens;' and there is an evening, and there is a morning--day second.<CM>
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2014-12-16' # by RJH
+ShortProgName = "e-SwordBible"
 ProgName = "e-Sword Bible format handler"
-ProgVersion = "0.11"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.12'
+ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
 import logging, os, re
-from gettext import gettext as _
 import sqlite3
 import multiprocessing
 
@@ -517,7 +520,7 @@ class ESwordBible( Bible ):
             try:
                 row = cursor.fetchone()
                 line = row[0]
-            except FileNotFoundError: # This reference is missing
+            except TypeError: # This reference is missing (row is None)
                 #print( "something wrong at", BBB, C, V )
                 #if BibleOrgSysGlobals.debugFlag: halt
                 #print( row )

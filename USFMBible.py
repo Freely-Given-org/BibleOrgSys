@@ -472,6 +472,7 @@ def demo():
                     UsfmBErrors = UsfmB.getErrors()
                     # print( UBErrors )
                 if BibleOrgSysGlobals.commandLineOptions.export:
+                    UsfmB.pickle()
                     ##UsfmB.toDrupalBible()
                     UsfmB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                     newObj = BibleOrgSysGlobals.unpickleObject( BibleOrgSysGlobals.makeSafeFilename(name) + '.pickle', os.path.join( "OutputFiles/", "BOS_Bible_Object_Pickle/" ) )

@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 #
 # TheWordBible.py
-#   Last modified: 2014-11-20 by RJH (also update ProgVersion below)
 #
 # Module handling "theWord" Bible module files
 #
@@ -50,16 +49,19 @@ e.g.,
     And God calleth to the expanse `Heavens;' and there is an evening, and there is a morning--day second.<CM>
 """
 
-ShortProgName = "theWordBibleHandler"
+from gettext import gettext as _
+
+LastModifiedDate = '2014-12-17' # by RJH
+ShortProgName = "theWordBible"
 ProgName = "theWord Bible format handler"
-ProgVersion = "0.37"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.38'
+ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
 import logging, os, re
-from gettext import gettext as _
 import multiprocessing
 
 import BibleOrgSysGlobals
@@ -676,7 +678,7 @@ def handleLine( myName, BBB, C, V, originalLine, bookObject, myGlobals ):
     if BibleOrgSysGlobals.debugFlag:
         if debuggingThisModule:
             print( "TheWordBible.handleLine( {} {} {}:{} {} ... {}".format( myName, BBB, C, V, repr(originalLine), myGlobals ) )
-        assert( '\n' not in originalLine and '\r' not in originalLine )
+        if originalLine: assert( '\n' not in originalLine and '\r' not in originalLine )
     line = originalLine
 
     writtenV = False
@@ -890,7 +892,7 @@ def handleLine( myName, BBB, C, V, originalLine, bookObject, myGlobals ):
             logging.error( "TheWordBible.load: Doesn't handle {} {}:{} formatted line yet: {}".format( BBB, C, V, repr(line) ) )
             if 1: # Unhandled stuff -- not done properly yet...............................................
                 line = re.sub( '<(.+?)>', '', line ) # Remove all remaining sets of angle brackets
-            if BibleOrgSysGlobals.debugFlag: halt
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
 
 
     line = line.replace( '\\NL*\\NL*', '\\NL*' ) # Don't need double-ups
@@ -949,7 +951,7 @@ def handleLine( myName, BBB, C, V, originalLine, bookObject, myGlobals ):
                     #bookObject.appendLine( 'p', '' )
                     #myGlobals['haveParagraph'] = False
         if leftovers: logging.critical( "Had leftovers {}".format( repr(leftovers) ) )
-        if BibleOrgSysGlobals.debugFlag: assert( not leftovers )
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert( not leftovers )
         #halt
     else: # no newlines in the middle
         if C==1 and V==1 and not appendedCFlag: bookObject.appendLine( 'c', str(C) ); appendedCFlag = True

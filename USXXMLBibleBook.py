@@ -28,10 +28,10 @@ Module handling USX Bible book xml to parse and load as an internal Bible book.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-03'
+LastModifiedDate = '2014-12-17'
 ShortProgName = "USXXMLBibleBookHandler"
 ProgName = "USX XML Bible book handler"
-ProgVersion = '0.11'
+ProgVersion = '0.12'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -241,6 +241,7 @@ class USXXMLBibleBook( BibleBook ):
 
         c = v = '0'
         loadErrors = []
+        lastMarker = None
 
         # Find the main container
         if self.tree.tag=='usx' or self.tree.tag=='usfm': # Not sure why both are allowable
