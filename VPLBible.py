@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 #
 # VPLBible.py
-#   Last modified: 2014-12-17 by RJH (also update ProgVersion below)
 #
 # Module handling verse-per-line text Bible files
 #
@@ -36,15 +35,19 @@ e.g.,
     Re 22:21 La gracia de nuestro Señor Jesucristo [sea] con todos vosotros. Amén.
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2014-12-19'
+ShortProgName = "VPLBible"
 ProgName = "VPL Bible format handler"
-ProgVersion = "0.24"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.25'
+ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
 import logging, os
-from gettext import gettext as _
 import multiprocessing
 
 import BibleOrgSysGlobals
@@ -152,7 +155,8 @@ def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
                     firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName )
                     if firstLine is None: continue # seems we couldn't decode the file
                     if not firstLine.startswith( "Ge 1:1 " ):
-                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "VPLBibleFileCheck: (unexpected) first line was '{}' in {}".format( firstLine, thisFilname ) ); halt
+                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "VPLBibleFileCheck: (unexpected) first line was '{}' in {}".format( firstLine, thisFilename ) )
+                        if debuggingThisModule: halt
                         continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
                 lastFilenameFound = thisFilename

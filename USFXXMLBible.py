@@ -28,10 +28,10 @@ Module for defining and manipulating complete or partial USFX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-17' # by RJH
+LastModifiedDate = '2014-12-18' # by RJH
 ShortProgName = "USFXBible"
 ProgName = "USFX XML Bible handler"
-ProgVersion = '0.20'
+ProgVersion = '0.21'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -376,7 +376,7 @@ class USFXXMLBible( Bible ):
         C = V = '0'
         for element in bookElement:
             #print( "element", repr(element.tag) )
-            location = "{} of {} {}:{}".format( element.tag, mainLocation, C, V )
+            location = "{} of {} {}:{}".format( element.tag, mainLocation, BBB, C, V )
             if element.tag == 'id':
                 idText = clean( element.text )
                 BibleOrgSysGlobals.checkXMLNoTail( element, location, 'vsg3' )
@@ -440,7 +440,7 @@ class USFXXMLBible( Bible ):
                     #print( "subelement", repr(subelement.tag) )
                     sublocation = subelement.tag + " of " + location
                     if subelement.tag == 'f':
-                        self.loadFootnote( subelement, sublocation )
+                        self.loadFootnote( subelement, sublocation, BBB, C, V )
                     elif subelement.tag == 'x':
                         self.loadCrossreference( subelement, sublocation )
                     elif subelement.tag == 'fig':
@@ -448,13 +448,13 @@ class USFXXMLBible( Bible ):
                     elif subelement.tag == 'table':
                         self.loadTable( subelement, sublocation )
                     elif subelement.tag in ('add','it','bd','bdit','sc',):
-                        self.loadCharacterFormatting( subelement, sublocation )
+                        self.loadCharacterFormatting( subelement, sublocation, BBB, C, V )
                     elif subelement.tag == 'optionalLineBreak':
                         print( "What is loadBook optionalLineBreak?" )
                     else:
                         logging.warning( _("jx9q Unprocessed {} element after {} {}:{} in {}").format( subelement.tag, BBB, C, V, sublocation ) )
             elif element.tag in ('p','q','d',):
-                V = self.loadParagraph( element, location, C )
+                V = self.loadParagraph( element, location, BBB, C )
             elif element.tag == 'b':
                 BibleOrgSysGlobals.checkXMLNoText( element, location, 'ks35' )
                 BibleOrgSysGlobals.checkXMLNoTail( element, location, 'gs35' )
@@ -495,7 +495,7 @@ class USFXXMLBible( Bible ):
     # end of USFXXMLBible.loadBook
 
 
-    def loadParagraph( self, paragraphElement, paragraphLocation, C ):
+    def loadParagraph( self, paragraphElement, paragraphLocation, BBB, C ):
         """
         Load the paragraph (p or q) container from the XML data file.
         """
@@ -554,12 +554,12 @@ class USFXXMLBible( Bible ):
                 self.loadTable( element, location )
             elif element.tag == 'f':
                 #print( "USFX.loadParagraph Found footnote at", paragraphLocation, C, V, repr(element.text) )
-                self.loadFootnote( element, location )
+                self.loadFootnote( element, location, BBB, C, V )
             elif element.tag == 'x':
                 #print( "USFX.loadParagraph Found xref at", paragraphLocation, C, V, repr(element.text) )
                 self.loadCrossreference( element, location )
             elif element.tag in ('add','nd','wj','rq','sig','sls','bk','k','tl','vp','pn','qs','qt','em','it','bd','bdit','sc','no',): # character formatting
-                self.loadCharacterFormatting( element, location, C, V )
+                self.loadCharacterFormatting( element, location, BBB, C, V )
             elif element.tag == 'cs': # character style -- seems like a USFX hack
                 text, tail = clean(element.text), clean(element.tail)
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, location, 'kf92' )
@@ -607,7 +607,7 @@ class USFXXMLBible( Bible ):
     # end of USFXXMLBible.loadParagraph
 
 
-    def loadCharacterFormatting( self, element, location, C, V ):
+    def loadCharacterFormatting( self, element, location, BBB, C, V ):
         """
         """
         marker, text, tail = element.tag, clean(element.text), clean(element.tail)
@@ -618,7 +618,7 @@ class USFXXMLBible( Bible ):
             #print( "element", repr(element.tag) )
             if subelement.tag == 'f':
                 #print( "USFX.loadParagraph Found footnote at", sublocation, C, V, repr(subelement.text) )
-                self.loadFootnote( subelement, sublocation )
+                self.loadFootnote( subelement, sublocation, BBB, C, V )
             else:
                 logging.warning( _("sf31 Unprocessed {} element after {} {}:{} in {}").format( repr(subelement.tag), self.thisBook.BBB, C, V, location ) )
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
@@ -680,8 +680,9 @@ class USFXXMLBible( Bible ):
     # end of USFXXMLBible.loadTable
 
 
-    def loadFootnote( self, element, location ):
+    def loadFootnote( self, element, location, BBB, C, V ):
         """
+        Handles footnote fields, including xt field.
         """
         text, tail = clean(element.text), clean(element.tail)
         caller = None
@@ -697,7 +698,7 @@ class USFXXMLBible( Bible ):
             #print( "USFX.loadFootnote", repr(caller), repr(text), repr(tail), repr(marker), repr(fText), repr(fTail) )
             #if BibleOrgSysGlobals.verbosityLevel > 0 and marker not in ('ref','fr','ft','fq','fv','fk','fqa','it','bd','rq',):
                 #print( "USFX.loadFootnote found", repr(caller), repr(marker), repr(fText), repr(fTail) )
-            if BibleOrgSysGlobals.debugFlag: assert( marker in ('ref','fr','ft','fq','fv','fk','fqa','it','bd','rq',) )
+            if BibleOrgSysGlobals.debugFlag: assert( marker in ('ref','fr','ft','fq','fv','fk','fqa','it','bd','rq','xt',) )
             if marker=='ref':
                 assert( fText )
                 BibleOrgSysGlobals.checkXMLNoSubelements( subelement, sublocation, 'ls13' )
@@ -712,12 +713,12 @@ class USFXXMLBible( Bible ):
             else:
                 BibleOrgSysGlobals.checkXMLNoAttributes( subelement, sublocation, 'dq54' )
                 self.thisBook.appendToLastLine( ' \\{} {}'.format( marker, fText ) )
-                if marker[0] == 'f': # Starts with f, e.g., fr, ft
+                if marker=='xt' or marker[0]=='f': # Starts with f, e.g., fr, ft
                     for sub2element in subelement:
                         sub2location = sub2element.tag + " of " + sublocation
                         marker2, fText2, fTail2 = sub2element.tag, clean(sub2element.text), clean(sub2element.tail)
                         BibleOrgSysGlobals.checkXMLNoSubelements( sub2element, sub2location, 'js72' )
-                        if marker2=='ref':
+                        if marker2 == 'ref':
                             #print( sub2location )
                             if fText2:
                                 #print( 'ft2', marker2, repr(fText2), repr(fTail2), sub2location )
@@ -730,10 +731,19 @@ class USFXXMLBible( Bible ):
                             if target:
                                 #print( 'tg', marker2, repr(target) )
                                 self.thisBook.appendToLastLine( ' \\{} {}'.format( marker2, target ) )
-                            else: halt
-                        else: halt
+                            else:
+                                if debuggingThisModule: halt
+                        elif marker2 in ('add','nd','wj','rq','sig','sls','bk','k','tl','vp','pn','qs','qt','em','it','bd','bdit','sc','no',): # character formatting
+                            self.loadCharacterFormatting( sub2element, sub2location, BBB, C, V )
+                        else:
+                            print( 'Ignored marker2', repr(marker2), BBB, C, V )
+                            if debuggingThisModule: halt
                         if fTail2: self.thisBook.appendToLastLine( fTail2 )
-                else: halt
+                elif marker in ('add','nd','wj','rq','sig','sls','bk','k','tl','vp','pn','qs','qt','em','it','bd','bdit','sc','no',): # character formatting
+                    self.loadCharacterFormatting( subelement, sublocation, BBB, C, V )
+                else:
+                    print( 'Ignored marker', repr(marker), BBB, C, V )
+                    halt
             if fTail:
                 self.thisBook.appendToLastLine( '\\{}*{}'.format( marker, fTail ) )
         self.thisBook.appendToLastLine( '\\f*{}'.format( (' '+tail) if tail else '' ) )

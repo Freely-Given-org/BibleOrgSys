@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 #
 # SwordResources.py
-#   Last modified: 2014-11-20 (also update ProgVersion below)
 #
 # Module handling Sword resources using the Sword engine
 #
@@ -29,17 +28,20 @@ This module uses the Sword engine (libsword) via the Python SWIG bindings.
 (If you don't want to install that, consider our SwordModules module.)
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2014-12-18' # by RJH
 ShortProgName = "SwordResources"
 ProgName = "Sword resource handler"
 ProgVersion = "0.12"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = True
 
 
 #from singleton import singleton
 import os, logging
-from gettext import gettext as _
 #from collections import OrderedDict
 
 import BibleOrgSysGlobals

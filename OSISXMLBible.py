@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 #
 # OSISXMLBible.py
-#   Last modified: 2014-12-17 by RJH (also update ProgVersion below)
 #
 # Module handling OSIS XML Bibles
 #
@@ -35,15 +34,19 @@ This is a quickly updated version of an early module,
 Updated Sept 2013 to also handle Kahunapule's "modified OSIS".
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2014-12-18' # by RJH
+ShortProgName = "OSISBible"
 ProgName = "OSIS XML Bible format handler"
 ProgVersion = "0.42"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
 import logging, os
-from gettext import gettext as _
 from xml.etree.ElementTree import ElementTree
 
 import BibleOrgSysGlobals

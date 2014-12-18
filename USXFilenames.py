@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 # USXFilenames.py
-#   Last modified: 2013-06-24 (also update ProgVersion below)
 #
 # Module handling USX Bible filenames
 #
-# Copyright (C) 2012-2013 Robert Hunt
+# Copyright (C) 2012-2014 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -27,13 +26,17 @@
 Module for creating and manipulating USX filenames.
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2014-12-18' # by RJH
+ShortProgName = "USXBible"
 ProgName = "USX Bible filenames handler"
 ProgVersion = "0.50"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 
 import os, logging
-from gettext import gettext as _
 
 
 import BibleOrgSysGlobals

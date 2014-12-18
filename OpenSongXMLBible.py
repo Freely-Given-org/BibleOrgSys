@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 #
 # OpenSongXMLBible.py
-#   Last modified: 2014-12-17 by RJH (also update ProgVersion below)
 #
 # Module handling OpenSong XML Bibles
 #
@@ -33,15 +32,19 @@ Module reading and loading OpenSong XML Bibles:
     <v n="2">And the earth was without form, and void; and darkness was upon the face of the deep. And the Spirit of God moved upon the face of the waters.</v>
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2014-12-18' # by RJH
+ShortProgName = "OpenSongBible"
 ProgName = "OpenSong XML Bible format handler"
 ProgVersion = "0.30"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
 import logging, os
-from gettext import gettext as _
 from collections import OrderedDict
 from xml.etree.ElementTree import ElementTree
 

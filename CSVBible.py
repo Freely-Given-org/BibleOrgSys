@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 #
 # CSVBible.py
-#   Last modified: 2014-12-17 by RJH (also update ProgVersion below)
 #
 # Module handling comma-separated-values text Bible files
 #
@@ -37,15 +36,19 @@ e.g.,
     "66","22","21","Que la gracia de Jesús, el Señor, esté con todos. Amén."
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2014-12-19'
+ShortProgName = "CSVBible"
 ProgName = "CSV Bible format handler"
-ProgVersion = "0.25"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.26'
+ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
 import logging, os, re
-from gettext import gettext as _
 import multiprocessing
 
 import BibleOrgSysGlobals
@@ -154,7 +157,8 @@ def CSVBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
                     firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName )
                     if firstLine is None: continue # seems we couldn't decode the file
                     if not firstLine.startswith( "Ge 1:1 " ):
-                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "CSVBibleFileCheck: (unexpected) first line was '{}' in {}".format( firstLine, thisFilname ) ); halt
+                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "CSVBibleFileCheck: (unexpected) first line was '{}' in {}".format( firstLine, thisFilename ) )
+                        if debuggingThisModule: halt
                         continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
                 lastFilenameFound = thisFilename
