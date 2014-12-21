@@ -211,6 +211,13 @@
         </element>
       </optional>
       <optional>
+        <element name="BibleWorksAbbreviation">
+          <data type="string">
+            <param name="length">3</param>
+          </data>
+        </element>
+      </optional>
+      <optional>
         <element name="ByzantineAbbreviation">
           <data type="string">
             <param name="minLength">2</param>
@@ -222,7 +229,7 @@
         <element name="possibleAlternativeAbbreviations">
           <data type="string">
             <param name="minLength">1</param>
-            <param name="maxLength">19</param>
+            <param name="maxLength">25</param>
           </data>
         </element>
       </optional>

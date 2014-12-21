@@ -59,8 +59,9 @@ BibleBookCodes = element BibleBookCodes
     element BibleditNumber { xsd:positiveInteger { totalDigits="2" minInclusive="1" maxExclusive="89" } }?,
     element NETBibleAbbreviation { xsd:string { length="3" } }?,
     element DrupalBibleAbbreviation { xsd:string { minLength="2" maxLength="3" } }?,
+    element BibleWorksAbbreviation { xsd:string { length="3" } }?,
     element ByzantineAbbreviation { xsd:string { minLength="2" maxLength="4" } }?,
-    element possibleAlternativeAbbreviations { xsd:string { minLength="1" maxLength="19" } }?,
+    element possibleAlternativeAbbreviations { xsd:string { minLength="1" maxLength="25" } }?,
     element possibleAlternativeBooks { xsd:string { minLength="3" maxLength="19" } }?,
     element typicalSection { "OT" | "OT+" | "NT" | "NT+" | "DC" | "PS" | "FRT" | "BAK" | "???" }?
 }

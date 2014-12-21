@@ -234,7 +234,9 @@ class VPLBible( Bible ):
                     continue
                 if BibleOrgSysGlobals.debugFlag: assert( 2  <= len(bookCode) <= 4 )
                 if BibleOrgSysGlobals.debugFlag: assert( chapterNumberString.isdigit() )
-                if BibleOrgSysGlobals.debugFlag: assert( verseNumberString.isdigit() )
+                if BibleOrgSysGlobals.debugFlag:
+                    if not verseNumberString.isdigit(): print( bookCode, BBB, chapterNumberString, 'verseNumberString', repr(verseNumberString) )
+                    assert( verseNumberString.isdigit() )
                 chapterNumber = int( chapterNumberString )
                 verseNumber = int( verseNumberString )
 
