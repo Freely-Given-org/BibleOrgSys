@@ -1,13 +1,13 @@
 # BibleBooksCodes.rnc           Relax NG Compact Syntax schema file
-#   Version 0.72
-#   Last modified: 2013-12-26 by RJH
+#   Last modified: 2014-12-21 by RJH
+#   Version 0.75
 #
 # On Linux, to convert to RNG, use
-#       trang BibleBooksCodes.rnc DataFiles/DerivedFiles/BibleBooksCodes.rng
+#       trang BibleBooksCodes.rnc DerivedFiles/BibleBooksCodes.rng
 # On Linux, to validate against the .rng file, use
-#       xmllint --noout --relaxng DataFiles/DerivedFiles/BibleBooksCodes.rng BibleBooksCodes.xml
+#       xmllint --noout --relaxng DerivedFiles/BibleBooksCodes.rng BibleBooksCodes.xml
 # or to validate against both this and the internal DTD, use
-#       xmllint --noout --relaxng DataFiles/DerivedFiles/BibleBooksCodes.rng --valid BibleBooksCodes.xml
+#       xmllint --noout --relaxng DerivedFiles/BibleBooksCodes.rng --valid BibleBooksCodes.xml
 #
 # See the supplied ReadMe.txt file for more information.
 #
@@ -45,20 +45,22 @@ work = element work
 BibleBookCodes = element BibleBookCodes
 {   element nameEnglish { xsd:string { minLength="3" maxLength="140" } },
     element referenceAbbreviation { xsd:string { length="3" } },
-    element referenceNumber { xsd:positiveInteger { totalDigits="3" minInclusive="1" maxExclusive="245" } },
-    element sequenceNumber { xsd:positiveInteger { totalDigits="3" minInclusive="1" maxExclusive="999" } },
+    element referenceNumber { xsd:positiveInteger { totalDigits="3" minInclusive="1" maxInclusive="999" } },
+    element sequenceNumber { xsd:positiveInteger { totalDigits="3" minInclusive="1" maxInclusive="999" } },
     element expectedChapters { xsd:string { minLength="1" maxLength="7" } }?,
     element SBLAbbreviation { xsd:string { minLength="2" maxLength="8" } }?,
     element OSISAbbreviation { xsd:string { minLength="2" maxLength="7" } }?,
-    element SwordAbbreviation { xsd:string { minLength="2" maxLength="7" } }?,
+    element SwordAbbreviation { xsd:string { minLength="2" maxLength="13" } }?,
     element CCELNumber { xsd:positiveInteger { totalDigits="2" minInclusive="1" maxInclusive="95" } }?,
     element USFMAbbreviation { xsd:string { length="3" } }?,
     element USFMNumber { xsd:string { length="2" } }?,
-    element USXNumber { xsd:positiveInteger { totalDigits="3" minInclusive="1" maxExclusive="115" } }?,
+    element USXNumber { xsd:positiveInteger { totalDigits="3" minInclusive="1" maxInclusive="123" } }?,
     element UnboundCode { xsd:string { length="3" } }?,
     element BibleditNumber { xsd:positiveInteger { totalDigits="2" minInclusive="1" maxExclusive="89" } }?,
     element NETBibleAbbreviation { xsd:string { length="3" } }?,
-    element DrupalBibleAbbreviation { xsd:string { length="3" } }?,
+    element DrupalBibleAbbreviation { xsd:string { minLength="2" maxLength="3" } }?,
     element ByzantineAbbreviation { xsd:string { minLength="2" maxLength="4" } }?,
-    element possibleAlternativeBooks { xsd:string { minLength="3" maxLength="19" } }?
+    element possibleAlternativeAbbreviations { xsd:string { minLength="1" maxLength="19" } }?,
+    element possibleAlternativeBooks { xsd:string { minLength="3" maxLength="19" } }?,
+    element typicalSection { "OT" | "OT+" | "NT" | "NT+" | "DC" | "PS" | "FRT" | "BAK" | "???" }?
 }

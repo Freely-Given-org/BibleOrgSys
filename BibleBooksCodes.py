@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBooksCodes.py
-#   Last modified: 2014-12-14 by RJH (also update ProgVersion below)
 #
 # Module handling BibleBooksCodes functions
 #
@@ -27,15 +26,19 @@
 Module handling BibleBooksCodes functions.
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2014-12-21' # by RJH
+ShortProgName = "BibleBooksCodes"
 ProgName = "Bible Books Codes handler"
-ProgVersion = "0.75"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.76'
+ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
 import os, logging
-from gettext import gettext as _
 from collections import OrderedDict
 
 from singleton import singleton
@@ -78,7 +81,7 @@ class BibleBooksCodes:
                     self.__DataDicts = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
             else: # We have to load the XML (much slower)
                 from BibleBooksCodesConverter import BibleBooksCodesConverter
-                if XMLFilepath is not None: logging.warning( _("Bible books codes are already loaded -- your given filepath of '{}' was ignored").format(XMLFilepath) )
+                if XMLFilepath is not None: logging.warning( _("Bible books codes are already loaded -- your given filepath of {!r} was ignored").format(XMLFilepath) )
                 bbcc = BibleBooksCodesConverter()
                 bbcc.loadAndValidate( XMLFilepath ) # Load the XML (if not done already)
                 self.__DataDicts = bbcc.importDataToPython() # Get the various dictionaries organised for quick lookup
@@ -241,7 +244,7 @@ class BibleBooksCodes:
         #print( USFMAbbreviation, self.__DataDicts["USFMAbbreviationDict"][USFMAbbreviation.upper()] )
         result = self.__DataDicts["USFMAbbreviationDict"][USFMAbbreviation.upper()][1] # Can be a string or a list
         if isinstance( result, str ): return result
-        if strict: logging.warning( "getBBBFromUSFM is assuming that the best fit for USFM ID '{}' is the first entry in {}".format( USFMAbbreviation, result ) )
+        if strict: logging.warning( "getBBBFromUSFM is assuming that the best fit for USFM ID {!r} is the first entry in {}".format( USFMAbbreviation, result ) )
         return result[0] # Assume that the first entry is the best pick
 
 
@@ -258,27 +261,33 @@ class BibleBooksCodes:
 
 
     def getBBB( self, someText ):
-        """ Attempt to return the BBB reference abbreviation string for the given book information (text).
-            Returns BBB or None. """
+        """
+        Attempt to return the BBB reference abbreviation string for the given book information (text).
+
+        Returns BBB or None.
+        """
         if BibleOrgSysGlobals.debugFlag: assert( someText and isinstance( someText, str ) )
-        UCSomeText = someText.upper()
-        if UCSomeText in self.__DataDicts["referenceAbbreviationDict"]:
-            return UCSomeText # it's already a BBB code
+        SomeUppercaseText = someText.upper()
+        #print( '\nrAD', len(self.__DataDicts['referenceAbbreviationDict']), [BBB for BBB in self.__DataDicts['referenceAbbreviationDict']] )
+        if SomeUppercaseText in self.__DataDicts['referenceAbbreviationDict']:
+            return SomeUppercaseText # it's already a BBB code
         #if someText.isdigit() and 1 <= int(someText) <= 255:
-            #return self.__DataDicts["referenceNumberDict"][int(someText)]["referenceAbbreviation"]
-        if UCSomeText in self.__DataDicts["allAbbreviationsDict"]:
-            return self.__DataDicts["allAbbreviationsDict"][UCSomeText]
+            #return self.__DataDicts['referenceNumberDict'][int(someText)]['referenceAbbreviation']
+        #print( '\naAD1', len(self.__DataDicts['allAbbreviationsDict']), sorted([BBB for BBB in self.__DataDicts['allAbbreviationsDict']]) )
+        #print( '\naAD2', len(self.__DataDicts['allAbbreviationsDict']), self.__DataDicts['allAbbreviationsDict'] )
+        if SomeUppercaseText in self.__DataDicts['allAbbreviationsDict']:
+            return self.__DataDicts['allAbbreviationsDict'][SomeUppercaseText]
 
         # Ok, let's try guessing
         matchCount, foundBBB = 0, None
-        for BBB in self.__DataDicts["referenceAbbreviationDict"]:
-            if BBB.startswith( UCSomeText ):
+        for BBB in self.__DataDicts['referenceAbbreviationDict']:
+            if BBB.startswith( SomeUppercaseText ):
                 #print( BBB, UCSomeText )
                 matchCount += 1
                 foundBBB = BBB
         #print( matchCount, foundBBB )
         if matchCount == 1: return foundBBB # it's non-ambiguous
-        #print( sorted(self.__DataDicts["allAbbreviationsDict"]) )
+        #print( sorted(self.__DataDicts['allAbbreviationsDict']) )
     # end of BibleBooksCodes.getBBB
 
 

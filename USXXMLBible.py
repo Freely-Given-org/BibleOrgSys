@@ -28,10 +28,10 @@ Module for defining and manipulating complete or partial USX Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-03'
+LastModifiedDate = '2014-12-21'
 ShortProgName = "USXXMLBibleHandler"
 ProgName = "USX XML Bible handler"
-ProgVersion = '0.19'
+ProgVersion = '0.20'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -236,8 +236,8 @@ class USXXMLBible( Bible ):
                             settingsDict[fieldname] = (contents, attributes)
                             processed = True
                     elif status==1 and line[0]=='<' and line[-1]=='>':
-                        ix1 = line.index('>')
-                        ix2 = line.index('</')
+                        ix1 = line.find('>')
+                        ix2 = line.find('</')
                         if ix1!=-1 and ix2!=-1 and ix2>ix1:
                             fieldname = line[1:ix1]
                             contents = line[ix1+1:ix2]

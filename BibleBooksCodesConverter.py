@@ -28,12 +28,12 @@ Module handling BibleBooksCodes.xml and to export to JSON, C, and Python data ta
 
 from gettext import gettext as _
 
-LastModifiedDate = "2014-11-27"
+LastModifiedDate = '2014-12-21'
 ShortProgName = "BibleBooksCodesConverter"
 ProgName = "Bible Books Codes converter"
-ProgVersion = "0.74"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
-ProgNameVersionDate = "{} {} {}".format( ProgNameVersion, _("last modified"), LastModifiedDate )
+ProgVersion = '0.76'
+ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
@@ -81,7 +81,7 @@ class BibleBooksCodesConverter:
         self._optionalElements = ( "expectedChapters", "SBLAbbreviation", "OSISAbbreviation", "SwordAbbreviation",
                                     "CCELNumber", "USFMAbbreviation", "USFMNumber", "USXNumber", "UnboundCode",
                                     "BibleditNumber", "NETBibleAbbreviation", "DrupalBibleAbbreviation", "ByzantineAbbreviation",
-                                    "possibleAlternativeBooks" )
+                                    "possibleAlternativeAbbreviations", "possibleAlternativeBooks" )
         self._uniqueElements = ( "nameEnglish", "referenceAbbreviation", "referenceNumber", "sequenceNumber" ) + \
                     ( "USXNumber", "UnboundCode", "BibleditNumber", "NETBibleAbbreviation", "DrupalBibleAbbreviation", "ByzantineAbbreviation" )
 
@@ -104,7 +104,7 @@ class BibleBooksCodesConverter:
             if BibleOrgSysGlobals.strictCheckingFlag:
                 self.__validate()
         else: # The data must have been already loaded
-            if XMLFilepath is not None and XMLFilepath!=self.__XMLFilepath: logging.error( _("Bible books codes are already loaded -- your different filepath of '{}' was ignored").format( XMLFilepath ) )
+            if XMLFilepath is not None and XMLFilepath!=self.__XMLFilepath: logging.error( _("Bible books codes are already loaded -- your different filepath of {!r} was ignored").format( XMLFilepath ) )
         return self
     # end of BibleBooksCodesConverter.loadAndValidate
 
@@ -118,7 +118,7 @@ class BibleBooksCodesConverter:
         self.__XMLFilepath = XMLFilepath
         assert( self._XMLtree is None or len(self._XMLtree)==0 ) # Make sure we're not doing this twice
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading BibleBooksCodes XML file from '{}'...").format( self.__XMLFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading BibleBooksCodes XML file from {!r}...").format( self.__XMLFilepath ) )
         self._XMLtree = ElementTree().parse( self.__XMLFilepath )
         assert( self._XMLtree ) # Fail here if we didn't load anything at all
 
@@ -146,10 +146,10 @@ class BibleBooksCodesConverter:
                     else:
                         logging.warning( _("Missing work element in header") )
             else:
-                logging.warning( _("Missing header element (looking for '{}' tag)".format( self._headerTag ) ) )
-            if header.tail is not None and header.tail.strip(): logging.error( _("Unexpected '{}' tail data after header").format( element.tail ) )
+                logging.warning( _("Missing header element (looking for {!r} tag)".format( self._headerTag ) ) )
+            if header.tail is not None and header.tail.strip(): logging.error( _("Unexpected {!r} tail data after header").format( element.tail ) )
         else:
-            logging.error( _("Expected to load '{}' but got '{}'").format( self._treeTag, self._XMLtree.tag ) )
+            logging.error( _("Expected to load {!r} but got {!r}").format( self._treeTag, self._XMLtree.tag ) )
     # end of BibleBooksCodesConverter.__load
 
 
@@ -175,29 +175,29 @@ class BibleBooksCodesConverter:
                 for attributeName in self._compulsoryAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is None:
-                        logging.error( _("Compulsory '{}' attribute is missing from {} element in record {}").format( attributeName, element.tag, j ) )
+                        logging.error( _("Compulsory {!r} attribute is missing from {} element in record {}").format( attributeName, element.tag, j ) )
                     if not attributeValue:
-                        logging.warning( _("Compulsory '{}' attribute is blank on {} element in record {}").format( attributeName, element.tag, j ) )
+                        logging.warning( _("Compulsory {!r} attribute is blank on {} element in record {}").format( attributeName, element.tag, j ) )
 
                 # Check optional attributes on this main element
                 for attributeName in self._optionalAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if not attributeValue:
-                            logging.warning( _("Optional '{}' attribute is blank on {} element in record {}").format( attributeName, element.tag, j ) )
+                            logging.warning( _("Optional {!r} attribute is blank on {} element in record {}").format( attributeName, element.tag, j ) )
 
                 # Check for unexpected additional attributes on this main element
                 for attributeName in element.keys():
                     attributeValue = element.get( attributeName )
                     if attributeName not in self._compulsoryAttributes and attributeName not in self._optionalAttributes:
-                        logging.warning( _("Additional '{}' attribute ('{}') found on {} element in record {}").format( attributeName, attributeValue, element.tag, j ) )
+                        logging.warning( _("Additional {!r} attribute ({!r}) found on {} element in record {}").format( attributeName, attributeValue, element.tag, j ) )
 
                 # Check the attributes that must contain unique information (in that particular field -- doesn't check across different attributes)
                 for attributeName in self._uniqueAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if attributeValue in uniqueDict["Attribute_"+attributeName]:
-                            logging.error( _("Found '{}' data repeated in '{}' field on {} element in record {}").format( attributeValue, attributeName, element.tag, j ) )
+                            logging.error( _("Found {!r} data repeated in {!r} field on {} element in record {}").format( attributeValue, attributeName, element.tag, j ) )
                         uniqueDict["Attribute_"+attributeName].append( attributeValue )
 
                 # Get the referenceAbbreviation to use as a record ID
@@ -207,13 +207,13 @@ class BibleBooksCodesConverter:
                 for elementName in self._compulsoryElements:
                     foundElement = element.find( elementName )
                     if foundElement is None:
-                        logging.error( _("Compulsory '{}' element is missing in record with ID '{}' (record {})").format( elementName, ID, j ) )
+                        logging.error( _("Compulsory {!r} element is missing in record with ID {!r} (record {})").format( elementName, ID, j ) )
                     else:
                         BibleOrgSysGlobals.checkXMLNoTail( foundElement, foundElement.tag + " in " + element.tag )
                         BibleOrgSysGlobals.checkXMLNoAttributes( foundElement, foundElement.tag + " in " + element.tag )
                         BibleOrgSysGlobals.checkXMLNoSubelements( foundElement, foundElement.tag + " in " + element.tag )
                         if not foundElement.text:
-                            logging.warning( _("Compulsory '{}' element is blank in record with ID '{}' (record {})").format( elementName, ID, j ) )
+                            logging.warning( _("Compulsory {!r} element is blank in record with ID {!r} (record {})").format( elementName, ID, j ) )
 
                 # Check optional elements
                 for elementName in self._optionalElements:
@@ -223,24 +223,24 @@ class BibleBooksCodesConverter:
                         BibleOrgSysGlobals.checkXMLNoAttributes( foundElement, foundElement.tag + " in " + element.tag )
                         BibleOrgSysGlobals.checkXMLNoSubelements( foundElement, foundElement.tag + " in " + element.tag )
                         if not foundElement.text:
-                            logging.warning( _("Optional '{}' element is blank in record with ID '{}' (record {})").format( elementName, ID, j ) )
+                            logging.warning( _("Optional {!r} element is blank in record with ID {!r} (record {})").format( elementName, ID, j ) )
 
                 # Check for unexpected additional elements
                 for subelement in element:
                     if subelement.tag not in self._compulsoryElements and subelement.tag not in self._optionalElements:
-                        logging.warning( _("Additional '{}' element ('{}') found in record with ID '{}' (record {})").format( subelement.tag, subelement.text, ID, j ) )
+                        logging.warning( _("Additional {!r} element ({!r}) found in record with ID {!r} (record {})").format( subelement.tag, subelement.text, ID, j ) )
 
                 # Check the elements that must contain unique information (in that particular element -- doesn't check across different elements)
                 for elementName in self._uniqueElements:
                     if element.find( elementName ) is not None:
                         text = element.find( elementName ).text
                         if text in uniqueDict["Element_"+elementName]:
-                            logging.error( _("Found '{}' data repeated in '{}' element in record with ID '{}' (record {})").format( text, elementName, ID, j ) )
+                            logging.error( _("Found {!r} data repeated in {!r} element in record with ID {!r} (record {})").format( text, elementName, ID, j ) )
                         uniqueDict["Element_"+elementName].append( text )
             else:
                 logging.warning( _("Unexpected element: {} in record {}").format( element.tag, j ) )
-            if element.tail is not None and element.tail.strip(): logging.error( _("Unexpected '{}' tail data after {} element in record {}").format( element.tail, element.tag, j ) )
-        if self._XMLtree.tail is not None and self._XMLtree.tail.strip(): logging.error( _("Unexpected '{}' tail data after {} element").format( self._XMLtree.tail, self._XMLtree.tag ) )
+            if element.tail is not None and element.tail.strip(): logging.error( _("Unexpected {!r} tail data after {} element in record {}").format( element.tail, element.tag, j ) )
+        if self._XMLtree.tail is not None and self._XMLtree.tail.strip(): logging.error( _("Unexpected {!r} tail data after {} element").format( self._XMLtree.tail, self._XMLtree.tag ) )
     # end of BibleBooksCodesConverter.__validate
 
 
@@ -273,7 +273,9 @@ class BibleBooksCodesConverter:
         (Of course, you can just use the elementTree in self._XMLtree if you prefer.)
         """
         def makeList( parameter1, parameter2 ):
-            """ Returns a list containing all parameters. Parameter1 may already be a list. """
+            """
+            Returns a list containing all parameters. Parameter1 may already be a list.
+            """
             if isinstance( parameter1, list ):
                 #assert( parameter2 not in parameter1 )
                 parameter1.append( parameter2 )
@@ -283,13 +285,23 @@ class BibleBooksCodesConverter:
         # end of makeList
 
 
+        def addToAllCodesDict( givenUCAbbreviation, abbrevType, initialAllAbbreviationsDict ):
+            """
+            """
+            if givenUCAbbreviation in initialAllAbbreviationsDict and initialAllAbbreviationsDict[givenUCAbbreviation] != referenceAbbreviation:
+                logging.warning( _("This {} {!r} abbreviation ({}) already assigned to {!r}").format( abbrevType, givenUCAbbreviation, referenceAbbreviation, initialAllAbbreviationsDict[givenUCAbbreviation] ) )
+                initialAllAbbreviationsDict[givenUCAbbreviation] = 'MultipleValues'
+            else: initialAllAbbreviationsDict[givenUCAbbreviation] = referenceAbbreviation
+        # end of addToAllCodesDict
+
+
         assert( self._XMLtree )
         if self.__DataDicts: # We've already done an import/restructuring -- no need to repeat it
             return self.__DataDicts
 
         # We'll create a number of dictionaries with different elements as the key
         myIDDict, myRefAbbrDict = OrderedDict(), OrderedDict()
-        mySBLDict,myOADict,mySwDict,myCCELDict,myUSFMAbbrDict,myUSFMNDict,myUSXNDict,myUCDict,myBENDict,myNETDict,myDrBibDict,myBzDict, myENDict, allAbbreviationsDict = {},{},{},{},{},{},{},{},{},{},{},{}, {}, {}
+        mySBLDict,myOADict,mySwDict,myCCELDict,myUSFMAbbrDict,myUSFMNDict,myUSXNDict,myUCDict,myBENDict,myNETDict,myDrBibDict,myBzDict,myPossAltBooksDict, myENDict, initialAllAbbreviationsDict = {},{},{},{},{},{},{},{},{},{},{},{},{}, {}, {}
         sequenceNumberList, sequenceTupleList = [], [] # Both have the integer form (not the string form) of the sequenceNumber
         for element in self._XMLtree:
             # Get the required information out of the tree for this element
@@ -297,7 +309,7 @@ class BibleBooksCodesConverter:
             nameEnglish = element.find("nameEnglish").text # This name is really just a comment element
             referenceAbbreviation = element.find("referenceAbbreviation").text
             if referenceAbbreviation.upper() != referenceAbbreviation:
-                logging.error( _("Reference abbreviation '{}' should be UPPER CASE").format( referenceAbbreviation ) )
+                logging.error( _("Reference abbreviation {!r} should be UPPER CASE").format( referenceAbbreviation ) )
             ID = element.find("referenceNumber").text
             intID = int( ID )
             sequenceNumber = element.find("sequenceNumber").text
@@ -318,6 +330,7 @@ class BibleBooksCodesConverter:
             NETBibleAbbreviation = None if element.find("NETBibleAbbreviation") is None else element.find("NETBibleAbbreviation").text
             DrupalBibleAbbreviation = None if element.find("DrupalBibleAbbreviation") is None else element.find("DrupalBibleAbbreviation").text
             ByzantineAbbreviation = None if element.find("ByzantineAbbreviation") is None else element.find("ByzantineAbbreviation").text
+            possibleAlternativeAbbreviations = None if element.find("possibleAlternativeAbbreviations") is None else element.find("possibleAlternativeAbbreviations").text.split(',')
             possibleAlternativeBooks = None if element.find("possibleAlternativeBooks") is None else element.find("possibleAlternativeBooks").text.split(',')
             if element.find("typicalSection") is None: typicalSection = None
             else:
@@ -356,32 +369,35 @@ class BibleBooksCodesConverter:
                     sequenceNumberList.append( intSequenceNumber ) # Only used for checking duplicates
                     sequenceTupleList.append( (intSequenceNumber,referenceAbbreviation,) ) # We'll sort this later
             if "SBLAbbreviation" in self._compulsoryElements or SBLAbbreviation:
-                if "SBLAbbreviation" in self._uniqueElements: assert( SBLAbbreviation not in myOADict ) # Shouldn't be any duplicates
+                if "SBLAbbreviation" in self._uniqueElements: assert( SBLAbbreviation not in mySBLDict ) # Shouldn't be any duplicates
                 UCAbbreviation = SBLAbbreviation.upper()
                 if UCAbbreviation in mySBLDict: mySBLDict[UCAbbreviation] = ( intID, makeList(mySBLDict[UCAbbreviation][1],referenceAbbreviation), )
                 else: mySBLDict[UCAbbreviation] = ( intID, referenceAbbreviation, )
-                if UCAbbreviation in allAbbreviationsDict and allAbbreviationsDict[UCAbbreviation] != referenceAbbreviation:
-                    logging.info( _("This SBL '{}' abbreviation ({}) already assigned to '{}'").format( UCAbbreviation, referenceAbbreviation, allAbbreviationsDict[UCAbbreviation] ) )
-                    allAbbreviationsDict[UCAbbreviation] = "MultipleValues"
-                else: allAbbreviationsDict[UCAbbreviation] = referenceAbbreviation
+                addToAllCodesDict( UCAbbreviation, 'SBL', initialAllAbbreviationsDict )
+                #if UCAbbreviation in initialAllAbbreviationsDict and initialAllAbbreviationsDict[UCAbbreviation] != referenceAbbreviation:
+                    #logging.info( _("This SBL {!r} abbreviation ({}) already assigned to {!r}").format( UCAbbreviation, referenceAbbreviation, initialAllAbbreviationsDict[UCAbbreviation] ) )
+                    #initialAllAbbreviationsDict[UCAbbreviation] = 'MultipleValues'
+                #else: initialAllAbbreviationsDict[UCAbbreviation] = referenceAbbreviation
             if "OSISAbbreviation" in self._compulsoryElements or OSISAbbreviation:
                 if "OSISAbbreviation" in self._uniqueElements: assert( OSISAbbreviation not in myOADict ) # Shouldn't be any duplicates
                 UCAbbreviation = OSISAbbreviation.upper()
                 if UCAbbreviation in myOADict: myOADict[UCAbbreviation] = ( intID, makeList(myOADict[UCAbbreviation][1],referenceAbbreviation), )
                 else: myOADict[UCAbbreviation] = ( intID, referenceAbbreviation, )
-                if UCAbbreviation in allAbbreviationsDict and allAbbreviationsDict[UCAbbreviation] != referenceAbbreviation:
-                    logging.info( _("This OSIS '{}' abbreviation ({}) already assigned to '{}'").format( UCAbbreviation, referenceAbbreviation, allAbbreviationsDict[UCAbbreviation] ) )
-                    allAbbreviationsDict[UCAbbreviation] = "MultipleValues"
-                else: allAbbreviationsDict[UCAbbreviation] = referenceAbbreviation
+                addToAllCodesDict( UCAbbreviation, 'OSIS', initialAllAbbreviationsDict )
+                #if UCAbbreviation in initialAllAbbreviationsDict and initialAllAbbreviationsDict[UCAbbreviation] != referenceAbbreviation:
+                    #logging.info( _("This OSIS {!r} abbreviation ({}) already assigned to {!r}").format( UCAbbreviation, referenceAbbreviation, initialAllAbbreviationsDict[UCAbbreviation] ) )
+                    #initialAllAbbreviationsDict[UCAbbreviation] = 'MultipleValues'
+                #else: initialAllAbbreviationsDict[UCAbbreviation] = referenceAbbreviation
             if "SwordAbbreviation" in self._compulsoryElements or SwordAbbreviation:
                 if "SwordAbbreviation" in self._uniqueElements: assert( SwordAbbreviation not in mySwDict ) # Shouldn't be any duplicates
                 UCAbbreviation = SwordAbbreviation.upper()
                 if UCAbbreviation in mySwDict: mySwDict[UCAbbreviation] = ( intID, makeList(mySwDict[UCAbbreviation][1],referenceAbbreviation), )
                 else: mySwDict[UCAbbreviation] = ( intID, referenceAbbreviation, )
-                if UCAbbreviation in allAbbreviationsDict and allAbbreviationsDict[UCAbbreviation] != referenceAbbreviation:
-                    logging.info( _("This Sword '{}' abbreviation ({}) already assigned to '{}'").format( UCAbbreviation, referenceAbbreviation, allAbbreviationsDict[UCAbbreviation] ) )
-                    allAbbreviationsDict[UCAbbreviation] = "MultipleValues"
-                else: allAbbreviationsDict[UCAbbreviation] = referenceAbbreviation
+                addToAllCodesDict( UCAbbreviation, 'Sword', initialAllAbbreviationsDict )
+                #if UCAbbreviation in initialAllAbbreviationsDict and initialAllAbbreviationsDict[UCAbbreviation] != referenceAbbreviation:
+                    #logging.info( _("This Sword {!r} abbreviation ({}) already assigned to {!r}").format( UCAbbreviation, referenceAbbreviation, initialAllAbbreviationsDict[UCAbbreviation] ) )
+                    #initialAllAbbreviationsDict[UCAbbreviation] = 'MultipleValues'
+                #else: initialAllAbbreviationsDict[UCAbbreviation] = referenceAbbreviation
             if "CCELNumberString" in self._compulsoryElements or CCELNumberString:
                 if "CCELNumberString" in self._uniqueElements: assert( CCELNumberString not in myCCELDict ) # Shouldn't be any duplicates
                 UCNumberString = CCELNumberString.upper()
@@ -392,10 +408,11 @@ class BibleBooksCodesConverter:
                 UCAbbreviation = USFMAbbreviation.upper()
                 if UCAbbreviation in myUSFMAbbrDict: myUSFMAbbrDict[UCAbbreviation] = ( intID, makeList(myUSFMAbbrDict[UCAbbreviation][1],referenceAbbreviation), makeList(myUSFMAbbrDict[UCAbbreviation][2],USFMNumberString), )
                 else: myUSFMAbbrDict[UCAbbreviation] = ( intID, referenceAbbreviation, USFMNumberString, )
-                if UCAbbreviation in allAbbreviationsDict and allAbbreviationsDict[UCAbbreviation] != referenceAbbreviation:
-                    logging.info( _("This USFM '{}' abbreviation ({}) already assigned to '{}'").format( UCAbbreviation, referenceAbbreviation, allAbbreviationsDict[UCAbbreviation] ) )
-                    allAbbreviationsDict[UCAbbreviation] = "MultipleValues"
-                else: allAbbreviationsDict[UCAbbreviation] = referenceAbbreviation
+                addToAllCodesDict( UCAbbreviation, 'USFM', initialAllAbbreviationsDict )
+                #if UCAbbreviation in initialAllAbbreviationsDict and initialAllAbbreviationsDict[UCAbbreviation] != referenceAbbreviation:
+                    #logging.info( _("This USFM {!r} abbreviation ({}) already assigned to {!r}").format( UCAbbreviation, referenceAbbreviation, initialAllAbbreviationsDict[UCAbbreviation] ) )
+                    #initialAllAbbreviationsDict[UCAbbreviation] = 'MultipleValues'
+                #else: initialAllAbbreviationsDict[UCAbbreviation] = referenceAbbreviation
             if "USFMNumberString" in self._compulsoryElements or USFMNumberString:
                 if "USFMNumberString" in self._uniqueElements: assert( USFMNumberString not in myUSFMNDict ) # Shouldn't be any duplicates
                 UCNumberString = USFMNumberString.upper()
@@ -423,49 +440,103 @@ class BibleBooksCodesConverter:
                 UCAbbreviation = NETBibleAbbreviation.upper()
                 if UCAbbreviation in myNETDict: myNETDict[UCAbbreviation] = ( intID, makeList(myNETDict[UCAbbreviation][1],referenceAbbreviation), )
                 else: myNETDict[UCAbbreviation] = ( intID, referenceAbbreviation, )
-                if UCAbbreviation in allAbbreviationsDict and allAbbreviationsDict[UCAbbreviation] != referenceAbbreviation:
-                    logging.info( _("This NET Bible '{}' abbreviation ({}) already assigned to '{}'").format( UCAbbreviation, referenceAbbreviation, allAbbreviationsDict[UCAbbreviation] ) )
-                    allAbbreviationsDict[UCAbbreviation] = "MultipleValues"
-                else: allAbbreviationsDict[UCAbbreviation] = referenceAbbreviation
+                addToAllCodesDict( UCAbbreviation, 'NET', initialAllAbbreviationsDict )
+                #if UCAbbreviation in initialAllAbbreviationsDict and initialAllAbbreviationsDict[UCAbbreviation] != referenceAbbreviation:
+                    #logging.info( _("This NET Bible {!r} abbreviation ({}) already assigned to {!r}").format( UCAbbreviation, referenceAbbreviation, initialAllAbbreviationsDict[UCAbbreviation] ) )
+                    #initialAllAbbreviationsDict[UCAbbreviation] = 'MultipleValues'
+                #else: initialAllAbbreviationsDict[UCAbbreviation] = referenceAbbreviation
             if "DrupalBibleAbbreviation" in self._compulsoryElements or DrupalBibleAbbreviation:
                 if "DrupalBibleAbbreviation" in self._uniqueElements: assert( DrupalBibleAbbreviation not in myDrBibDict ) # Shouldn't be any duplicates
                 UCAbbreviation = DrupalBibleAbbreviation.upper()
                 if UCAbbreviation in myDrBibDict: myDrBibDict[UCAbbreviation] = ( intID, makeList(myDrBibDict[UCAbbreviation][1],referenceAbbreviation), )
                 else: myDrBibDict[UCAbbreviation] = ( intID, referenceAbbreviation, )
-                if UCAbbreviation in allAbbreviationsDict and allAbbreviationsDict[UCAbbreviation] != referenceAbbreviation:
-                    logging.info( _("This DrupalBible '{}' abbreviation ({}) already assigned to '{}'").format( UCAbbreviation, referenceAbbreviation, allAbbreviationsDict[UCAbbreviation] ) )
-                    allAbbreviationsDict[UCAbbreviation] = "MultipleValues"
-                else: allAbbreviationsDict[UCAbbreviation] = referenceAbbreviation
+                addToAllCodesDict( UCAbbreviation, 'DrupalBible', initialAllAbbreviationsDict )
+                #if UCAbbreviation in initialAllAbbreviationsDict and initialAllAbbreviationsDict[UCAbbreviation] != referenceAbbreviation:
+                    #logging.info( _("This DrupalBible {!r} abbreviation ({}) already assigned to {!r}").format( UCAbbreviation, referenceAbbreviation, initialAllAbbreviationsDict[UCAbbreviation] ) )
+                    #initialAllAbbreviationsDict[UCAbbreviation] = 'MultipleValues'
+                #else: initialAllAbbreviationsDict[UCAbbreviation] = referenceAbbreviation
             if "ByzantineAbbreviation" in self._compulsoryElements or ByzantineAbbreviation:
                 if "ByzantineAbbreviation" in self._uniqueElements: assert( ByzantineAbbreviation not in myBzDict ) # Shouldn't be any duplicates
                 UCAbbreviation = ByzantineAbbreviation.upper()
                 if UCAbbreviation in myBzDict:
                     if BibleOrgSysGlobals.debugFlag: halt
                 else: myBzDict[UCAbbreviation] = ( intID, referenceAbbreviation, )
-                if UCAbbreviation in allAbbreviationsDict and allAbbreviationsDict[UCAbbreviation] != referenceAbbreviation:
-                    logging.info( _("This Byzantine '{}' abbreviation ({}) already assigned to '{}'").format( UCAbbreviation, referenceAbbreviation, allAbbreviationsDict[UCAbbreviation] ) )
-                    allAbbreviationsDict[UCAbbreviation] = "MultipleValues"
-                else: allAbbreviationsDict[UCAbbreviation] = referenceAbbreviation
+                addToAllCodesDict( UCAbbreviation, 'Byzantine', initialAllAbbreviationsDict )
+                #if UCAbbreviation in initialAllAbbreviationsDict and initialAllAbbreviationsDict[UCAbbreviation] != referenceAbbreviation:
+                    #logging.info( _("This Byzantine {!r} abbreviation ({}) already assigned to {!r}").format( UCAbbreviation, referenceAbbreviation, initialAllAbbreviationsDict[UCAbbreviation] ) )
+                    #initialAllAbbreviationsDict[UCAbbreviation] = 'MultipleValues'
+                #else: initialAllAbbreviationsDict[UCAbbreviation] = referenceAbbreviation
             if "nameEnglish" in self._compulsoryElements or USFMNumberString:
                 if "nameEnglish" in self._uniqueElements: assert( nameEnglish not in myENDict ) # Shouldn't be any duplicates
                 UCName = nameEnglish.upper()
                 if UCName in myENDict:
                     if BibleOrgSysGlobals.debugFlag: halt
                 else: myENDict[UCName] = ( intID, referenceAbbreviation )
+            if "possibleAlternativeAbbreviations" in self._compulsoryElements or possibleAlternativeAbbreviations:
+                for possibleAlternativeAbbreviation in possibleAlternativeAbbreviations:
+                    #print( "here", possibleAlternativeAbbreviation, referenceAbbreviation )
+                    assert( possibleAlternativeAbbreviation.upper() == possibleAlternativeAbbreviation )
+                    assert( possibleAlternativeAbbreviation not in myPossAltBooksDict )
+                    myPossAltBooksDict[possibleAlternativeAbbreviation] = referenceAbbreviation
         for BBB in myRefAbbrDict: # Do some cross-checking
             if myRefAbbrDict[BBB]["possibleAlternativeBooks"]:
                 for possibility in myRefAbbrDict[BBB]["possibleAlternativeBooks"]:
                     if possibility not in myRefAbbrDict:
                         logging.error( _("Possible alternative books for {} contains invalid {} entry").format( repr(BBB), repr(possibility) ) )
+
+        ## NOT RELIABLE PLUS TOO MUCH FUDGING
+        ## Add shortened abbreviations to the all abbreviations dict and then remove bad entries
+        #for abbreviation,value in (('SOL','SNG'),): # Manually add these entries (esp. for VPL Bibles)
+            #if abbreviation not in initialAllAbbreviationsDict:
+                #initialAllAbbreviationsDict[abbreviation] = value
+        #dictCopy = {}
+        #for abbreviation, value in initialAllAbbreviationsDict.items(): # add shortened entries
+            #if value != 'MultipleValues': # already
+                #dictCopy[abbreviation] = value
+        #for abbreviation, value in dictCopy.items(): # add shortened entries
+            #shortenedUCAbbreviation = abbreviation
+            #while True: # Add shorter and shorter forms by dropping off the last letter
+                #shortenedUCAbbreviation = shortenedUCAbbreviation[:-1]
+                #if not shortenedUCAbbreviation: break # nothing left to do
+                #if shortenedUCAbbreviation in ('JOS','DAN','MAR','JUD','JUDG','BAR','BEL','SIR','SUS','TOB',): continue # We don't want to remove these ones
+                #if shortenedUCAbbreviation in initialAllAbbreviationsDict and initialAllAbbreviationsDict[shortenedUCAbbreviation] != value:
+                    #logging.warning( _("This shortened {!r} abbreviation ({}) already assigned to {!r}").format( shortenedUCAbbreviation, value, initialAllAbbreviationsDict[shortenedUCAbbreviation] ) )
+                    #initialAllAbbreviationsDict[shortenedUCAbbreviation] = 'MultipleShortenedValues'
+                #else: initialAllAbbreviationsDict[shortenedUCAbbreviation] = value
+            #shortenedUCAbbreviation = abbreviation
+            #while True: # Add shorter and shorter forms by removing vowels
+                #if len(shortenedUCAbbreviation)>3 and shortenedUCAbbreviation[2] in 'AEIOU':
+                    #shortenedUCAbbreviation = shortenedUCAbbreviation[:2] + shortenedUCAbbreviation[3:]
+                #elif len(shortenedUCAbbreviation)>2 and shortenedUCAbbreviation[1] in 'AEIOU':
+                    #shortenedUCAbbreviation = shortenedUCAbbreviation[0] + shortenedUCAbbreviation[2:]
+                #elif len(shortenedUCAbbreviation)>2 and shortenedUCAbbreviation[-1] in 'AEIOU':
+                    #shortenedUCAbbreviation = shortenedUCAbbreviation[:-1]
+                #else: break # nothing left to do
+                #if shortenedUCAbbreviation in initialAllAbbreviationsDict and initialAllAbbreviationsDict[shortenedUCAbbreviation] != value:
+                    #logging.warning( _("This vowel shortened {!r} abbreviation ({}) already assigned to {!r}").format( shortenedUCAbbreviation, value, initialAllAbbreviationsDict[shortenedUCAbbreviation] ) )
+                    #initialAllAbbreviationsDict[shortenedUCAbbreviation] = 'MultipleShortenedValues'
+                #else: initialAllAbbreviationsDict[shortenedUCAbbreviation] = value
+
+        # Add possible alternative (shortened) abbreviations to the all abbreviations dict and then remove bad entries
+        for abbreviation,BBB in myPossAltBooksDict.items(): # Add these entries (esp. for VPL Bibles)
+            #print( "ohoh", abbreviation, BBB )
+            assert( abbreviation not in initialAllAbbreviationsDict )
+            initialAllAbbreviationsDict[abbreviation] = BBB
+
         adjAllAbbreviationsDict = {}
-        for abbreviation, value in allAbbreviationsDict.items(): # Remove useless entries
-            if value != "MultipleValues": adjAllAbbreviationsDict[abbreviation] = value
+        for abbreviation, value in initialAllAbbreviationsDict.items(): # Remove useless entries
+            if value == 'MultipleValues': # don't add it to this adjusted dictionary
+                logging.critical( "BibleBooksCodesConverter: Removing {!r} which has multiple values from adjAllAbbreviationsDict".format( abbreviation ) )
+            #elif value == 'MultipleShortenedValues': # don't add it to this adjusted dictionary
+                ##logging.critical( "BibleBooksCodesConverter: Removing {!r} which has multiple shortened values from adjAllAbbreviationsDict".format( abbreviation ) )
+                #pass
+            else: adjAllAbbreviationsDict[abbreviation] = value
 
         sequenceList = [BBB for seqNum,BBB in sorted(sequenceTupleList)] # Get the book reference codes in order but discard the sequence numbers which have no absolute meaning
 
         # Check our special codes haven't been used
         for specialCode in SPECIAL_CODES:
-            if specialCode in allAbbreviationsDict:
+            if specialCode in initialAllAbbreviationsDict:
                 logging.critical( _("Special code {} has been used!").format( repr(specialCode) ) )
                 if BibleOrgSysGlobals.debugFlag: halt
 
@@ -508,7 +579,7 @@ class BibleBooksCodesConverter:
             #print( "SwordAbbreviationDict", len(mySwDict) ) #mySwDict )
             #for num, entry in myIDDict.items():
                 #if entry['SwordAbbreviation']!=entry['OSISAbbreviation']:
-                    #print( "{} {} OSIS='{}' Sword='{}'".format( num, entry['referenceAbbreviation'], entry['OSISAbbreviation'], entry['SwordAbbreviation'] ) )
+                    #print( "{} {} OSIS={!r} Sword={!r}".format( num, entry['referenceAbbreviation'], entry['OSISAbbreviation'], entry['SwordAbbreviation'] ) )
 
         return self.__DataDicts # Just delete any of the dictionaries that you don't need
     # end of BibleBooksCodesConverter.importDataToPython
@@ -578,7 +649,7 @@ class BibleBooksCodesConverter:
                             "UnboundCodeDict":("UnboundCodeString", "0=referenceNumber (integer 1..88), 1=referenceAbbreviation/BBB (3-uppercase characters), 2=USFMAbbreviationString (3-characters)"),
                             "BibleditNumberDict":("BibleditNumberString", "0=referenceNumber (integer 1..88), 1=referenceAbbreviation/BBB (3-uppercase characters), 2=USFMAbbreviationString (3-characters)"),
                             "NETBibleAbbreviationDict":("NETBibleAbbreviation", mostEntries), "DrupalBibleAbbreviationDict":("DrupalBibleAbbreviation", mostEntries), "ByzantineAbbreviationDict":("ByzantineAbbreviation", mostEntries),
-                            "EnglishNameDict":("nameEnglish", mostEntries), "allAbbreviationsDict":("allAbbreviations", mostEntries) }
+                            "EnglishNameDict":("nameEnglish", mostEntries), "initialAllAbbreviationsDict":("allAbbreviations", mostEntries) }
             for dictName,dictData in self.__DataDicts.items():
                 exportPythonDictOrList( myFile, dictData, dictName, dictInfo[dictName][0], dictInfo[dictName][1] )
             myFile.write( "# end of {}".format( os.path.basename(filepath) ) )
@@ -627,7 +698,7 @@ class BibleBooksCodesConverter:
                         elif isinstance( field, str): result += '"' + str(field).replace('"','\\"') + '"'
                         elif isinstance( field, int): result += str(field)
                         elif isinstance( field, list): raise Exception( "Not written yet (list1)" )
-                        else: logging.error( _("Cannot convert unknown field type '{}' in tuple entry '{}'").format( field, entry ) )
+                        else: logging.error( _("Cannot convert unknown field type {!r} in tuple entry {!r}").format( field, entry ) )
                 elif isinstance( entry, dict ):
                     for key in sorted(entry.keys()):
                         field = entry[key]
@@ -636,7 +707,7 @@ class BibleBooksCodesConverter:
                         elif isinstance( field, str): result += '"' + str(field).replace('"','\\"') + '"'
                         elif isinstance( field, int): result += str(field)
                         elif isinstance( field, list): raise Exception( "Not written yet (list2)" )
-                        else: logging.error( _("Cannot convert unknown field type '{}' in dict entry '{}'").format( field, entry ) )
+                        else: logging.error( _("Cannot convert unknown field type {!r} in dict entry {!r}").format( field, entry ) )
                 else:
                     logging.error( _("Can't handle this type of entry yet: {}").format( repr(entry) ) )
                 return result
@@ -719,7 +790,7 @@ class BibleBooksCodesConverter:
                 "DrupalBibleAbbreviationDict":("DrupalBibleAbbreviation", "{}* DrupalBibleAbbreviation; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
                 "ByzantineAbbreviationDict":("ByzantineAbbreviation", "{}* ByzantineAbbreviation; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
                 "EnglishNameDict":("nameEnglish", "{}* nameEnglish; {} referenceNumber; {} referenceAbbreviation[3+1];".format(CHAR,BYTE,CHAR) ),
-                "allAbbreviationsDict":("abbreviation", "{}* abbreviation; {} referenceAbbreviation[3+1];".format(CHAR,CHAR) ) }
+                "initialAllAbbreviationsDict":("abbreviation", "{}* abbreviation; {} referenceAbbreviation[3+1];".format(CHAR,CHAR) ) }
 
             for dictName,dictData in self.__DataDicts.items():
                 exportPythonDict( myHFile, myCFile, dictData, dictName, dictInfo[dictName][0], dictInfo[dictName][1] )

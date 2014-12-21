@@ -2,15 +2,19 @@
 <grammar xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
   <!--
     BibleBooksCodes.rnc           Relax NG Compact Syntax schema file
-      Version 0.50
-      Last modified: 2011-02-15
+      Last modified: 2014-12-21 by RJH
+      Version 0.75
     
     On Linux, to convert to RNG, use
-          trang BibleBooksCodes.rnc ../DerivedFiles/BibleBooksCodes.rng
+          trang BibleBooksCodes.rnc DerivedFiles/BibleBooksCodes.rng
     On Linux, to validate against the .rng file, use
-          xmllint - -noout - -relaxng ../DerivedFiles/BibleBooksCodes.rng BibleBooksCodes.xml
+          xmllint - -noout - -relaxng DerivedFiles/BibleBooksCodes.rng BibleBooksCodes.xml
     or to validate against both this and the internal DTD, use
-          xmllint - -noout - -relaxng ../DerivedFiles/BibleBooksCodes.rng - -valid BibleBooksCodes.xml
+          xmllint - -noout - -relaxng DerivedFiles/BibleBooksCodes.rng - -valid BibleBooksCodes.xml
+    
+    See the supplied ReadMe.txt file for more information.
+    
+    Note: ? = optional (zero or one), * = zero or more, + = one or more
     
   -->
   <!-- The root element -->
@@ -101,7 +105,14 @@
         <data type="positiveInteger">
           <param name="totalDigits">3</param>
           <param name="minInclusive">1</param>
-          <param name="maxExclusive">245</param>
+          <param name="maxInclusive">999</param>
+        </data>
+      </element>
+      <element name="sequenceNumber">
+        <data type="positiveInteger">
+          <param name="totalDigits">3</param>
+          <param name="minInclusive">1</param>
+          <param name="maxInclusive">999</param>
         </data>
       </element>
       <optional>
@@ -132,7 +143,7 @@
         <element name="SwordAbbreviation">
           <data type="string">
             <param name="minLength">2</param>
-            <param name="maxLength">7</param>
+            <param name="maxLength">13</param>
           </data>
         </element>
       </optional>
@@ -146,16 +157,41 @@
         </element>
       </optional>
       <optional>
-        <element name="ParatextAbbreviation">
+        <element name="USFMAbbreviation">
           <data type="string">
             <param name="length">3</param>
           </data>
         </element>
       </optional>
       <optional>
-        <element name="ParatextNumber">
+        <element name="USFMNumber">
           <data type="string">
             <param name="length">2</param>
+          </data>
+        </element>
+      </optional>
+      <optional>
+        <element name="USXNumber">
+          <data type="positiveInteger">
+            <param name="totalDigits">3</param>
+            <param name="minInclusive">1</param>
+            <param name="maxInclusive">123</param>
+          </data>
+        </element>
+      </optional>
+      <optional>
+        <element name="UnboundCode">
+          <data type="string">
+            <param name="length">3</param>
+          </data>
+        </element>
+      </optional>
+      <optional>
+        <element name="BibleditNumber">
+          <data type="positiveInteger">
+            <param name="totalDigits">2</param>
+            <param name="minInclusive">1</param>
+            <param name="maxExclusive">89</param>
           </data>
         </element>
       </optional>
@@ -163,6 +199,14 @@
         <element name="NETBibleAbbreviation">
           <data type="string">
             <param name="length">3</param>
+          </data>
+        </element>
+      </optional>
+      <optional>
+        <element name="DrupalBibleAbbreviation">
+          <data type="string">
+            <param name="minLength">2</param>
+            <param name="maxLength">3</param>
           </data>
         </element>
       </optional>
@@ -175,11 +219,34 @@
         </element>
       </optional>
       <optional>
+        <element name="possibleAlternativeAbbreviations">
+          <data type="string">
+            <param name="minLength">1</param>
+            <param name="maxLength">19</param>
+          </data>
+        </element>
+      </optional>
+      <optional>
         <element name="possibleAlternativeBooks">
           <data type="string">
             <param name="minLength">3</param>
             <param name="maxLength">19</param>
           </data>
+        </element>
+      </optional>
+      <optional>
+        <element name="typicalSection">
+          <choice>
+            <value>OT</value>
+            <value>OT+</value>
+            <value>NT</value>
+            <value>NT+</value>
+            <value>DC</value>
+            <value>PS</value>
+            <value>FRT</value>
+            <value>BAK</value>
+            <value>???</value>
+          </choice>
         </element>
       </optional>
     </element>

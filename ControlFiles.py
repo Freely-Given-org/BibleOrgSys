@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # ControlFiles.py
-#   Last modified: 2013-06-24 (also update ProgVersion below)
+#   Last modified: 2014-12-21 (also update ProgVersion below)
 #
 # Control file module
 #
-# Copyright (C) 2008-2013 Robert Hunt
+# Copyright (C) 2008-2014 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module for reading and parsing simple text control files.
 """
 
 ProgName = "ControlFiles"
-ProgVersion = "0.05"
+ProgVersion = '0.06'
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 
@@ -76,7 +76,7 @@ def readControlFile( folder, filename, controls, haveLog=True, debug=False ):
                 if haveLog: logging.error( 'LINE IGNORED: Unknown format for control line: ' + line )
                 else: print( 'LINE IGNORED: Unknown format for control line: ' + line )
                 continue
-            si = line.index('=')
+            si = line.index( '=' )
             name = line[:si].strip() #Marker is from after backslash and before the equals sign
             value = line[si+1:].strip() # All the rest is the text field
             if not name:

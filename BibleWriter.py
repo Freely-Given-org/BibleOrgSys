@@ -68,7 +68,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-14' # by RJH
+LastModifiedDate = '2014-12-21' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.90'
@@ -1903,7 +1903,7 @@ class BibleWriter( InternalBible ):
             writerObject.writeLineOpenClose( 'h1', self.name, ('class','mainHeader') )
             bkList = self.getBookList()
             if myBBB  in bkList:
-                ix = bkList.index( myBBB )
+                ix = bkList.find( myBBB )
                 if ix > 0:
                     writerObject.writeLineOpenClose( 'a', 'Previous book', [('href',filenameDict[bkList[ix-1]]),('class','bookNav')] )
                 writerObject.writeLineOpenClose( 'a', 'Book start', [('href','#C1V1'),('class','bookNav')] )

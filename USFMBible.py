@@ -28,10 +28,10 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-06' # by RJH
+LastModifiedDate = '2014-12-21' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
-ProgVersion = '0.63'
+ProgVersion = '0.64'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -322,8 +322,8 @@ class USFMBible( Bible ):
                         settingsDict[fieldname] = (contents, attributes)
                         processed = True
                 elif status==1 and line[0]=='<' and line[-1]=='>':
-                    ix1 = line.index('>')
-                    ix2 = line.index('</')
+                    ix1 = line.find('>')
+                    ix2 = line.find('</')
                     if ix1!=-1 and ix2!=-1 and ix2>ix1:
                         fieldname = line[1:ix1]
                         contents = line[ix1+1:ix2]

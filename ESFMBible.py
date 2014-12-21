@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # ESFMBible.py
-#   Last modified: 2014-11-04 by RJH (also update ProgVersion below)
+#   Last modified: 2014-12-21 by RJH (also update ProgVersion below)
 #
 # Module handling compilations of ESFM Bible books
 #
@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial ESFM Bibles.
 """
 
 ProgName = "ESFM Bible handler"
-ProgVersion = "0.57"
+ProgVersion = '0.58'
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -296,8 +296,8 @@ class ESFMBible( Bible ):
                         settingsDict[fieldname] = (contents, attributes)
                         processed = True
                 elif status==1 and line[0]=='<' and line[-1]=='>':
-                    ix1 = line.index('>')
-                    ix2 = line.index('</')
+                    ix1 = line.find('>')
+                    ix2 = line.find('</')
                     if ix1!=-1 and ix2!=-1 and ix2>ix1:
                         fieldname = line[1:ix1]
                         contents = line[ix1+1:ix2]

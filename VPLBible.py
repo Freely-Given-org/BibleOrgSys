@@ -37,10 +37,10 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-19'
+LastModifiedDate = '2014-12-20'
 ShortProgName = "VPLBible"
 ProgName = "VPL Bible format handler"
-ProgVersion = '0.25'
+ProgVersion = '0.26'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -213,9 +213,9 @@ class VPLBible( Bible ):
         with open( self.sourceFilepath, encoding=self.encoding ) as myFile: # Automatically closes the file when done
             for line in myFile:
                 lineCount += 1
-                #if lineCount==1 and self.encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF
-                    #logging.info( "      VPLBible.load: Detected UTF-16 Byte Order Marker" )
-                    #line = line[1:] # Remove the UTF-8 Byte Order Marker
+                if lineCount==1 and self.encoding.lower()=='utf-8' and line[0]==chr(65279): #U+FEFF
+                    logging.info( "      VPLBible.load: Detected UTF-16 Byte Order Marker" )
+                    line = line[1:] # Remove the UTF-8 Byte Order Marker
                 if line[-1]=='\n': line=line[:-1] # Removing trailing newline character
                 if not line: continue # Just discard blank lines
                 lastLine = line
@@ -241,21 +241,24 @@ class VPLBible( Bible ):
                 if bookCode != lastBookCode: # We've started a new book
                     if lastBookCode != -1: # Better save the last book
                         self.saveBook( thisBook )
-                    if bookCode == 'Ge': BBB = 'GEN'
-                    elif bookCode == 'Le': BBB = 'LEV'
-                    elif bookCode == 'Jud': BBB = 'JDG'
-                    elif bookCode == 'Es': BBB = 'EST'
-                    elif bookCode == 'Pr': BBB = 'PRO'
-                    elif bookCode == 'So': BBB = 'SNG'
-                    elif bookCode == 'La': BBB = 'LAM'
-                    elif bookCode == 'Jude': BBB = 'JDE'
-                    else: BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBB( bookCode )  # Try to guess
-                    assert( BBB )
-                    thisBook = BibleBook( self, BBB )
-                    thisBook.objectNameString = "VPL Bible Book object"
-                    thisBook.objectTypeString = "VPL"
-                    lastBookCode = bookCode
-                    lastChapterNumber = lastVerseNumber = -1
+                    #if bookCode in ('Ge',): BBB = 'GEN'
+                    #elif bookCode in ('Le',): BBB = 'LEV'
+                    ##elif bookCode in ('Jud',): BBB = 'JDG'
+                    #elif bookCode in ('Es',): BBB = 'EST'
+                    #elif bookCode in ('Pr',): BBB = 'PRO'
+                    #elif bookCode in ('So',): BBB = 'SNG'
+                    #elif bookCode in ('La',): BBB = 'LAM'
+                    #elif bookCode in ('Jude',): BBB = 'JDE'
+                    BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBB( bookCode )  # Try to guess
+                    if BBB:
+                        thisBook = BibleBook( self, BBB )
+                        thisBook.objectNameString = "VPL Bible Book object"
+                        thisBook.objectTypeString = "VPL"
+                        lastBookCode = bookCode
+                        lastChapterNumber = lastVerseNumber = -1
+                    else:
+                        logging.critical( "VPLBible could not figure out {!r} book code".format( bookCode ) )
+                        if BibleOrgSysGlobals.debugFlag: halt
 
                 if chapterNumber != lastChapterNumber: # We've started a new chapter
                     if BibleOrgSysGlobals.debugFlag: assert( chapterNumber > lastChapterNumber or BBB=='ESG' ) # Esther Greek might be an exception
@@ -272,11 +275,12 @@ class VPLBible( Bible ):
                 vText = vText.replace( '[', '\\add ' ).replace( ']', '\\add*' ) \
                     .replace( '<', '\\wj ' ).replace( '>', '\\wj*' )
                 if vText and vText[0]=='«':
-                    assert( BBB=='PSA' and verseNumberString=='1' )
-                    vBits = vText[1:].split( '»' )
-                    #print( "vBits", vBits )
-                    thisBook.addLine( 'd', vBits[0] ) # Psalm title
-                    vText = vBits[1].lstrip()
+                    #print( "Oh!", BBB, chapterNumberString, verseNumberString, repr(vText) )
+                    if BBB=='PSA' and verseNumberString=='1': # Psalm title
+                        vBits = vText[1:].split( '»' )
+                        #print( "vBits", vBits )
+                        thisBook.addLine( 'd', vBits[0] ) # Psalm title
+                        vText = vBits[1].lstrip()
 
                 # Handle the verse info
                 if verseNumber==lastVerseNumber and vText==lastVText:
