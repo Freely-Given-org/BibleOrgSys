@@ -28,7 +28,7 @@ Module handling BibleBooksCodes.xml and to export to JSON, C, and Python data ta
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-21'
+LastModifiedDate = '2014-12-22'
 ShortProgName = "BibleBooksCodesConverter"
 ProgName = "Bible Books Codes converter"
 ProgVersion = '0.76'
@@ -657,16 +657,24 @@ class BibleBooksCodesConverter:
             if self.dateString: myFile.write( "#  Date: {}\n#\n".format( self.dateString ) )
             myFile.write( "#   {} {} loaded from the original XML file.\n#\n\n".format( len(self._XMLtree), self._treeTag ) )
             mostEntries = "0=referenceNumber (integer 1..255), 1=referenceAbbreviation/BBB (3-uppercase characters)"
-            dictInfo = { "referenceNumberDict":("referenceNumber (integer 1..255)","specified"), "referenceAbbreviationDict":("referenceAbbreviation","specified"),
-                            "sequenceList":("referenceAbbreviation/BBB (3-uppercase characters)",""),
-                            "CCELDict":("CCELNumberString", mostEntries), "SBLAbbreviationDict":("SBLAbbreviation", mostEntries), "OSISAbbreviationDict":("OSISAbbreviation", mostEntries), "SwordAbbreviationDict":("SwordAbbreviation", mostEntries),
-                            "USFMAbbreviationDict":("USFMAbbreviation", "0=referenceNumber (integer 1..255), 1=referenceAbbreviation/BBB (3-uppercase characters), 2=USFMNumberString (2-characters)"),
-                            "USFMNumberDict":("USFMNumberString", "0=referenceNumber (integer 1..255), 1=referenceAbbreviation/BBB (3-uppercase characters), 2=USFMAbbreviationString (3-characters)"),
-                            "USXNumberDict":("USXNumberString", "0=referenceNumber (integer 1..255), 1=referenceAbbreviation/BBB (3-uppercase characters), 2=USFMAbbreviationString (3-characters)"),
-                            "UnboundCodeDict":("UnboundCodeString", "0=referenceNumber (integer 1..88), 1=referenceAbbreviation/BBB (3-uppercase characters), 2=USFMAbbreviationString (3-characters)"),
-                            "BibleditNumberDict":("BibleditNumberString", "0=referenceNumber (integer 1..88), 1=referenceAbbreviation/BBB (3-uppercase characters), 2=USFMAbbreviationString (3-characters)"),
-                            "NETBibleAbbreviationDict":("NETBibleAbbreviation", mostEntries), "DrupalBibleAbbreviationDict":("DrupalBibleAbbreviation", mostEntries), "ByzantineAbbreviationDict":("ByzantineAbbreviation", mostEntries),
-                            "EnglishNameDict":("nameEnglish", mostEntries), "initialAllAbbreviationsDict":("allAbbreviations", mostEntries) }
+            dictInfo = { "referenceNumberDict":("referenceNumber (integer 1..255)","specified"),
+                    "referenceAbbreviationDict":("referenceAbbreviation","specified"),
+                    "sequenceList":("referenceAbbreviation/BBB (3-uppercase characters)",""),
+                    "CCELDict":("CCELNumberString", mostEntries),
+                    "SBLAbbreviationDict":("SBLAbbreviation", mostEntries),
+                    "OSISAbbreviationDict":("OSISAbbreviation", mostEntries),
+                    "SwordAbbreviationDict":("SwordAbbreviation", mostEntries),
+                    "USFMAbbreviationDict":("USFMAbbreviation", "0=referenceNumber (integer 1..255), 1=referenceAbbreviation/BBB (3-uppercase characters), 2=USFMNumberString (2-characters)"),
+                    "USFMNumberDict":("USFMNumberString", "0=referenceNumber (integer 1..255), 1=referenceAbbreviation/BBB (3-uppercase characters), 2=USFMAbbreviationString (3-characters)"),
+                    "USXNumberDict":("USXNumberString", "0=referenceNumber (integer 1..255), 1=referenceAbbreviation/BBB (3-uppercase characters), 2=USFMAbbreviationString (3-characters)"),
+                    "UnboundCodeDict":("UnboundCodeString", "0=referenceNumber (integer 1..88), 1=referenceAbbreviation/BBB (3-uppercase characters), 2=USFMAbbreviationString (3-characters)"),
+                    "BibleditNumberDict":("BibleditNumberString", "0=referenceNumber (integer 1..88), 1=referenceAbbreviation/BBB (3-uppercase characters), 2=USFMAbbreviationString (3-characters)"),
+                    "NETBibleAbbreviationDict":("NETBibleAbbreviation", mostEntries),
+                    "DrupalBibleAbbreviationDict":("DrupalBibleAbbreviation", mostEntries),
+                    "BibleWorksAbbreviationDict":("BibleWorksAbbreviation", mostEntries),
+                    "ByzantineAbbreviationDict":("ByzantineAbbreviation", mostEntries),
+                    "EnglishNameDict":("nameEnglish", mostEntries),
+                    "initialAllAbbreviationsDict":("allAbbreviations", mostEntries) }
             for dictName,dictData in self.__DataDicts.items():
                 exportPythonDictOrList( myFile, dictData, dictName, dictInfo[dictName][0], dictInfo[dictName][1] )
             myFile.write( "# end of {}".format( os.path.basename(filepath) ) )

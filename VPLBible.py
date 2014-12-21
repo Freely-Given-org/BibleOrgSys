@@ -37,7 +37,7 @@ e.g.,
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-20'
+LastModifiedDate = '2014-12-22'
 ShortProgName = "VPLBible"
 ProgName = "VPL Bible format handler"
 ProgVersion = '0.26'
@@ -234,9 +234,10 @@ class VPLBible( Bible ):
                     continue
                 if BibleOrgSysGlobals.debugFlag: assert( 2  <= len(bookCode) <= 4 )
                 if BibleOrgSysGlobals.debugFlag: assert( chapterNumberString.isdigit() )
-                if BibleOrgSysGlobals.debugFlag:
-                    if not verseNumberString.isdigit(): print( bookCode, BBB, chapterNumberString, 'verseNumberString', repr(verseNumberString) )
-                    assert( verseNumberString.isdigit() )
+                if not verseNumberString.isdigit():
+                    logging.error( "Invalid verse number field at {}/{} {}:{!r}".format( bookCode, BBB, chapterNumberString, verseNumberString ) )
+                    if BibleOrgSysGlobals.debugFlag and debuggingThisModule: assert( verseNumberString.isdigit() )
+                    continue
                 chapterNumber = int( chapterNumberString )
                 verseNumber = int( verseNumberString )
 
