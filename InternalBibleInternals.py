@@ -38,7 +38,7 @@ and then calls
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-17' # by RJH
+LastModifiedDate = '2014-12-23' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
 ProgVersion = '0.56'
@@ -120,6 +120,19 @@ BOS_EXTRA_TYPES = ( 'fn', 'en', 'xr', 'fig', 'str', 'sem', 'vp', )
     sem semantic and other translation-related markers
     vp  published verse number
 """
+
+
+def t( messageString ):
+    """
+    Prepends the module name to a error or warning message string if we are in debug mode.
+    Returns the new string.
+    """
+    try: nameBit, errorBit = messageString.split( ': ', 1 )
+    except ValueError: nameBit, errorBit = '', messageString
+    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+        nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
+    return '{}: {}'.format( nameBit, _(errorBit) )
+# end of t
 
 
 

@@ -28,7 +28,7 @@ Module handling BibleBooksCodes functions.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-21' # by RJH
+LastModifiedDate = '2014-12-23' # by RJH
 ShortProgName = "BibleBooksCodes"
 ProgName = "Bible Books Codes handler"
 ProgVersion = '0.76'
@@ -43,6 +43,19 @@ from collections import OrderedDict
 
 from singleton import singleton
 import BibleOrgSysGlobals
+
+
+def t( messageString ):
+    """
+    Prepends the module name to a error or warning message string if we are in debug mode.
+    Returns the new string.
+    """
+    try: nameBit, errorBit = messageString.split( ': ', 1 )
+    except ValueError: nameBit, errorBit = '', messageString
+    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+        nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
+    return '{}: {}'.format( nameBit, _(errorBit) )
+# end of t
 
 
 

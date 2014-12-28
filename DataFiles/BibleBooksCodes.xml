@@ -122,7 +122,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
   <header>
     <work>
       <version>0.75</version>
-      <date>2014-12-22</date>
+      <date>2014-12-28</date>
       <title>Bible books codes list</title>
       <contributor role="com">Robert Hunt</contributor>
       <identifier type="URL">http://www.sbl-site.org/publications/publishingwithsbl.aspx</identifier>
@@ -1560,7 +1560,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <sequenceNumber>204</sequenceNumber>
     <expectedChapters>10</expectedChapters>
     <SBLAbbreviation>Add Esth</SBLAbbreviation>
-    <OSISAbbreviation>AddEsth</OSISAbbreviation>
+    <OSISAbbreviation>EsthGr</OSISAbbreviation>
     <SwordAbbreviation>EsthGr</SwordAbbreviation>
     <CCELNumber>95</CCELNumber>
     <USFMAbbreviation>EsG</USFMAbbreviation>
@@ -1897,10 +1897,22 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
   </BibleBookCodes>
   <BibleBookCodes>
     <!-- Pseudepigrapha -->
-    <nameEnglish>Revelation of Ezra / Vison of Ezra</nameEnglish>
+    <nameEnglish>Revelation of Ezra</nameEnglish>
     <referenceAbbreviation>RVE</referenceAbbreviation>
     <referenceNumber>95</referenceNumber>
     <sequenceNumber>292</sequenceNumber>
+    <OSISAbbreviation>RevEzra</OSISAbbreviation>
+    <SwordAbbreviation>RevEzra</SwordAbbreviation>
+    <typicalSection>PS</typicalSection>
+  </BibleBookCodes>
+  <BibleBookCodes>
+    <!-- Pseudepigrapha -->
+    <nameEnglish>Vison of Ezra</nameEnglish>
+    <referenceAbbreviation>VSE</referenceAbbreviation>
+    <referenceNumber>96</referenceNumber>
+    <sequenceNumber>293</sequenceNumber>
+    <OSISAbbreviation>VisEzra</OSISAbbreviation>
+    <SwordAbbreviation>VisEzra</SwordAbbreviation>
     <typicalSection>PS</typicalSection>
   </BibleBookCodes>
 
@@ -2001,6 +2013,8 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <!-- Greek -->
     <referenceAbbreviation>BA3</referenceAbbreviation>
     <referenceNumber>106</referenceNumber>
+    <OSISAbbreviation>3Bar</OSISAbbreviation>
+    <SwordAbbreviation>3Bar</SwordAbbreviation>
     <sequenceNumber>230</sequenceNumber>
     <typicalSection>???</typicalSection>
   </BibleBookCodes>
@@ -2123,6 +2137,8 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <referenceAbbreviation>MA5</referenceAbbreviation>
     <referenceNumber>115</referenceNumber>
     <sequenceNumber>280</sequenceNumber>
+    <OSISAbbreviation>5Macc</OSISAbbreviation>
+    <SwordAbbreviation>5Macc</SwordAbbreviation>
     <typicalSection>???</typicalSection>
   </BibleBookCodes>
 
@@ -2228,7 +2244,7 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <referenceNumber>126</referenceNumber>
     <sequenceNumber>107</sequenceNumber>
     <expectedChapters>1</expectedChapters>
-    <OSISAbbreviation>Ps151</OSISAbbreviation>
+    <OSISAbbreviation>AddPs</OSISAbbreviation>
     <!--<SwordAbbreviation>Ps151</SwordAbbreviation>-->
     <SwordAbbreviation>AddPs</SwordAbbreviation>
     <CCELNumber>86</CCELNumber>
@@ -2398,6 +2414,8 @@ See the supplied BibleBooksCodes.ReadMe.txt for more details.
     <referenceAbbreviation>EN2</referenceAbbreviation>
     <referenceNumber>142</referenceNumber>
     <sequenceNumber>344</sequenceNumber>
+    <OSISAbbreviation>2En</OSISAbbreviation>
+    <SwordAbbreviation>2En</SwordAbbreviation>
     <typicalSection>???</typicalSection>
   </BibleBookCodes>
   <BibleBookCodes>

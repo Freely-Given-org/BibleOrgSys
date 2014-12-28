@@ -42,10 +42,10 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-17' # by RJH
+LastModifiedDate = '2014-12-24' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
-ProgVersion = '0.91'
+ProgVersion = '0.92'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -78,15 +78,15 @@ nfvnCount = owfvnCount = rtsCount = sahtCount = 0
 
 def t( messageString ):
     """
-    Prepends the module name to a error or warning message string
-        if we are in debug mode.
+    Prepends the module name to a error or warning message string if we are in debug mode.
     Returns the new string.
     """
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit, _(errorBit) )
+        nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
+    return '{}: {}'.format( nameBit, _(errorBit) )
+# end of t
 
 
 
@@ -164,6 +164,19 @@ class InternalBibleBook:
     def __len__( self ):
         """ This method returns the number of lines in the internal Bible book object. """
         return len( self._processedLines if self._processedFlag else self._rawLines )
+    # end of InternalBibleBook.__len__
+
+
+    def __iter__( self ):
+        """
+        Yields the next processed line.
+
+        Returns an InternalBibleEntry object.
+        """
+        assert( self._processedFlag )
+        for line in self._processedLines:
+            yield line
+    # end of InternalBibleBook.__iter__
 
 
     def addPriorityError( self, priority, C, V, string ):
@@ -964,7 +977,7 @@ class InternalBibleBook:
             lastMarker = marker
 
         if openMarkers: # Close any left-over open markers
-            if 'list' in openMarkers or 'ilist' in openMarkers or 'iot' in openMarkers:
+            if 'ilist' in openMarkers or 'iot' in openMarkers:
                 print( "InternalBibleBook.processLines.addNestingMarkers: stillOpen", self.BBB, openMarkers )
                 if BibleOrgSysGlobals.debugFlag and self.BBB not in ('BAK',): halt
             for lMarker in openMarkers[::-1]: # Get a reversed copy (coz we are deleting members)
@@ -3789,7 +3802,7 @@ class InternalBibleBook:
 
     def getContextVerseData( self, ref ):
         """
-        Returns a list of processed lines for the given Bible reference.
+        Returns an InternalBibleEntryListObject plus a list containing the context of the verse.
 
         Raises a KeyError if the C:V reference is not found
         """

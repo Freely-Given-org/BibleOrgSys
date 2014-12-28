@@ -44,7 +44,7 @@ and then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-14' # by RJH
+LastModifiedDate = '2014-12-23' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.60'
@@ -62,19 +62,6 @@ from InternalBibleInternals import InternalBibleEntryList
 from InternalBibleBook import BCV_VERSION
 
 
-def t( messageString ):
-    """
-    Prepends the module name to a error or warning message string
-        if we are in debug mode.
-    Returns the new string.
-    """
-    try: nameBit, errorBit = messageString.split( ': ', 1 )
-    except ValueError: nameBit, errorBit = '', messageString
-    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit, _(errorBit) )
-
-
 OT39BookList = ( 'GEN', 'EXO', 'LEV', 'NUM', 'DEU', 'JOS', 'JDG', 'RUT', 'SA1', 'SA2', 'KI1', 'KI2', 'CH1', 'CH2', \
         'EZR', 'NEH', 'EST', 'JOB', 'PSA', 'PRO', 'ECC', 'SNG', 'ISA', 'JER', 'LAM', 'EZK', 'DAN', \
         'HOS', 'JOL', 'AMO', 'OBA', 'JNA', 'MIC', 'NAH', 'HAB', 'ZEP', 'HAG', 'ZEC', 'MAL' )
@@ -82,6 +69,19 @@ assert( len(OT39BookList) == 39 )
 NT27BookList = ( 'MAT', 'MRK', 'LUK', 'JHN', 'ACT', 'ROM', 'CO1', 'CO2', 'GAL', 'EPH', 'PHP', 'COL', \
         'TH1', 'TH2', 'TI1', 'TI2', 'TIT', 'PHM', 'HEB', 'JAM', 'PE1', 'PE2', 'JN1', 'JN2', 'JN3', 'JDE', 'REV' )
 assert( len(NT27BookList) == 27 )
+
+
+def t( messageString ):
+    """
+    Prepends the module name to a error or warning message string if we are in debug mode.
+    Returns the new string.
+    """
+    try: nameBit, errorBit = messageString.split( ': ', 1 )
+    except ValueError: nameBit, errorBit = '', messageString
+    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+        nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
+    return '{}: {}'.format( nameBit, _(errorBit) )
+# end of t
 
 
 
@@ -433,6 +433,8 @@ class InternalBible:
         #print( "saveBook( {} )".format( bookData ) )
         BBB = bookData.BBB
         if BBB in self.books: # already
+            if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
+                print( t("saveBook: Already have"), self.getBookList() )
             logging.critical( t("saveBook: overwriting already existing {} book!").format( BBB ) )
         self.books[BBB] = bookData
         # Make up our book name dictionaries while we're at it

@@ -71,10 +71,10 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-14' # by RJH
-ShortProgName = "Globals"
+LastModifiedDate = '2014-12-26' # by RJH
+ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
-ProgVersion = '0.56'
+ProgVersion = '0.57'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -642,47 +642,81 @@ def fileCompareXML( filename1, filename2, folder1=None, folder2=None, printFlag=
 # Validating XML fields (from element tree)
 #
 
+def elementStr( element ):
+    """
+    Return a string representation of an element (from element tree).
+    """
+    resultStr = 'Element: '
+    printed = False
+    for attrib,value in element.items():
+        if printed: resultStr += ','
+        else: resultStr += 'Attribs:'; printed = True
+        resultStr += '{}={!r}'.format( attrib, value )
+    if element.text is not None: resultStr += 'Text={!r}'.format( element.text )
+    printed = False
+    for subelement in element:
+        if printed: resultStr += ','
+        else: resultStr += 'Children:'; printed = True
+        resultStr += elementStr( subelement ) # recursive call
+    if element.tail is not None: resultStr += 'Tail={!r}'.format( element.tail )
+    return resultStr
+# end of BibleOrgSysGlobals.elementStr
+
+
 def checkXMLNoText( element, locationString, idString=None, loadErrorsDict=None ):
-    """ Give an error if the element text contains anything other than whitespace. """
+    """
+    Give an error if the element text contains anything other than whitespace.
+    """
     if element.text and element.text.strip():
         errorString = "{}Unexpected {} element text in {}" \
                         .format( (idString+' ') if idString else '', repr(element.text), locationString )
         logging.error( errorString )
         if loadErrorsDict is not None: loadErrorsDict.append( errorString )
         if debugFlag and haltOnXMLWarning: halt
+# end of BibleOrgSysGlobals.checkXMLNoText
 
 def checkXMLNoTail( element, locationString, idString=None, loadErrorsDict=None ):
-    """ Give a warning if the element tail contains anything other than whitespace. """
+    """
+    Give a warning if the element tail contains anything other than whitespace.
+    """
     if element.tail and element.tail.strip():
         warningString = "{}Unexpected {} element tail in {}" \
                         .format( (idString+' ') if idString else '', repr(element.tail), locationString )
         logging.warning( warningString )
         if loadErrorsDict is not None: loadErrorsDict.append( warningString )
         if debugFlag and haltOnXMLWarning: halt
+# end of BibleOrgSysGlobals.checkXMLNoTail
 
 
 def checkXMLNoAttributes( element, locationString, idString=None, loadErrorsDict=None ):
-    """ Give a warning if the element contains any attributes. """
+    """
+    Give a warning if the element contains any attributes.
+    """
     for attrib,value in element.items():
         warningString = "{}Unexpected {} attribute ({}) in {}" \
                         .format( (idString+' ') if idString else '', repr(attrib), value, locationString )
         logging.warning( warningString )
         if loadErrorsDict is not None: loadErrorsDict.append( warningString )
         if debugFlag and haltOnXMLWarning: halt
+# end of BibleOrgSysGlobals.checkXMLNoAttributes
 
 
 def checkXMLNoSubelements( element, locationString, idString=None, loadErrorsDict=None ):
-    """ Give an error if the element contains any sub-elements. """
-    for subelement in element.getchildren():
+    """
+    Give an error if the element contains any sub-elements.
+    """
+    for subelement in element:
         errorString = "{}Unexpected {} sub-element ({}) in {}" \
                         .format( (idString+' ') if idString else '', repr(subelement.tag), subelement.text, locationString )
         logging.error( errorString )
         if loadErrorsDict is not None: loadErrorsDict.append( errorString )
         if debugFlag and haltOnXMLWarning: halt
-
+# end of BibleOrgSysGlobals.checkXMLNoSubelements
 
 def checkXMLNoSubelementsWithText( element, locationString, idString=None, loadErrorsDict=None ):
-    """ Checks that the element doesn't have text AND subelements """
+    """
+    Checks that the element doesn't have text AND subelements
+    """
     if ( element.text and element.text.strip() ) \
     or ( element.tail and element.tail.strip() ):
         for subelement in element.getchildren():

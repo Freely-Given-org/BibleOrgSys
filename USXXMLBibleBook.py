@@ -28,10 +28,10 @@ Module handling USX Bible book xml to parse and load as an internal Bible book.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-17'
+LastModifiedDate = '2014-12-24'
 ShortProgName = "USXXMLBibleBookHandler"
 ProgName = "USX XML Bible book handler"
-ProgVersion = '0.12'
+ProgVersion = '0.13'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -46,6 +46,20 @@ from Bible import BibleBook
 
 
 sortedNLMarkers = sorted( BibleOrgSysGlobals.USFMMarkers.getNewlineMarkersList('Combined'), key=len, reverse=True )
+
+
+
+def t( messageString ):
+    """
+    Prepends the module name to a error or warning message string if we are in debug mode.
+    Returns the new string.
+    """
+    try: nameBit, errorBit = messageString.split( ': ', 1 )
+    except ValueError: nameBit, errorBit = '', messageString
+    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+        nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
+    return '{}: {}'.format( nameBit, _(errorBit) )
+# end of t
 
 
 
@@ -145,7 +159,7 @@ class USXXMLBibleBook( BibleBook ):
                             self.addPriorityError( 1, c, v, _("Unprocessed {} subelement").format( subelement.tag ) )
                     # A character field must be added to the previous field
                     charLine += "\\{}*{}".format( charStyle, '' if element.tail is None else element.tail.strip() )
-                    print( "USX.loadParagraph:", c, v, paragraphStyle, charStyle, repr(charLine) )
+                    if debuggingThisModule: print( "USX.loadParagraph:", c, v, paragraphStyle, charStyle, repr(charLine) )
                     self.appendToLastLine( charLine )
                 elif element.tag == 'note':
                     BibleOrgSysGlobals.checkXMLNoText( element, location )

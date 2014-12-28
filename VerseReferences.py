@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # VerseReferences.py
-#   Last modified: 2014-12-15 (also update ProgVersion below)
+#   Last modified: 2014-12-24 (also update ProgVersion below)
 #
 # Module handling Bible verse references
 #
@@ -68,7 +68,7 @@ OXES is different again and tends to remove the second (redundant) book identifi
 
 ShortProgName = "VerseReferences"
 ProgName = "Bible verse reference handler"
-ProgVersion = "0.13"
+ProgVersion = '0.14'
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False
@@ -83,15 +83,15 @@ import BibleOrgSysGlobals
 
 def t( messageString ):
     """
-    Prepends the module name to a error or warning message string
-        if we are in debug mode.
+    Prepends the module name to a error or warning message string if we are in debug mode.
     Returns the new string.
     """
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
-    return '{}{}'.format( nameBit, _(errorBit) )
+        nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
+    return '{}: {}'.format( nameBit, _(errorBit) )
+# end of t
 
 
 
