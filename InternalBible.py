@@ -44,7 +44,7 @@ and then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-23' # by RJH
+LastModifiedDate = '2014-12-31' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.60'
@@ -1595,8 +1595,11 @@ class InternalBible:
             verseData, context = result
             if BibleOrgSysGlobals.debugFlag:
                 assert( isinstance( verseData, InternalBibleEntryList ) )
-                #if 2 > len(verseData) > 20: print( "len", len(verseData) )
-                assert( 1 <= len(verseData) <= 20 ) # Smallest is just a chapter number line
+                # The following numbers include end markers, i.e., \q1 xyz becomes q1,p~ xyz,¬q1
+                if len(verseData)<1 or len(verseData)>30: print( "IB:vdLen", len(verseData), self.abbreviation, BCVReference )
+                if len(verseData)>35: print( verseData )
+                if self.abbreviation not in ('mhl','sua',): # This version has Matt 1:1-11 combined! 57 entries
+                    assert( 1 <= len(verseData) <= 35 ) # Smallest is just a chapter number line
             return verseData
     # end of InternalBible.getVerseData
 

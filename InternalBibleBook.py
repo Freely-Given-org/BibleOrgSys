@@ -42,7 +42,7 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-24' # by RJH
+LastModifiedDate = '2014-12-29' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.92'
@@ -213,6 +213,7 @@ class InternalBibleBook:
         if BibleOrgSysGlobals.debugFlag:
             assert( not self._processedFlag )
             assert( marker and isinstance( marker, str ) )
+            assert( marker[0] != '\\' )
             if text:
                 assert( isinstance( text, str ) )
                 assert( '\n' not in text and '\r' not in text )

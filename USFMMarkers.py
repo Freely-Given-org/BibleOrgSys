@@ -693,6 +693,7 @@ def demo():
     # Demo the USFMMarkers object
     um = USFMMarkers().loadData() # Doesn't reload the XML unnecessarily :)
     print( um ) # Just print a summary
+    print( 'c' in um, 'p' in um, 'tr' in um )
     print( "\nMarkers can occur in", um.getOccursInList() )
     pm = um.getNewlineMarkersList( 'Raw' )
     print( "\nRaw New line markers are", len(pm), pm )
