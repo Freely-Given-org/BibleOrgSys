@@ -5,7 +5,7 @@
 #
 # Module handling the USFM markers for Bible books
 #
-# Copyright (C) 2010-2014 Robert Hunt
+# Copyright (C) 2010-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -44,7 +44,7 @@ and then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-31' # by RJH
+LastModifiedDate = '2015-01-06' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.60'
@@ -1621,7 +1621,8 @@ class InternalBible:
             verseText, firstWord = '', False
             for entry in verseData:
                 marker, cleanText = entry.getMarker(), entry.getCleanText()
-                if marker == 'c': pass # Ignore
+                if marker[0] == '¬': pass # Ignore end markers
+                elif marker == 'c': pass # Ignore
                 elif marker == 'c~': pass # Ignore text after chapter marker
                 elif marker == 'c#': pass # Ignore print chapter number
                 elif marker == 's1': verseText += '¥' + cleanText + '¥'

@@ -5,7 +5,7 @@
 #
 # Module handling OSIS XML Bibles
 #
-# Copyright (C) 2010-2014 Robert Hunt
+# Copyright (C) 2010-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -36,7 +36,7 @@ Updated Sept 2013 to also handle Kahunapule's "modified OSIS".
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-31' # by RJH
+LastModifiedDate = '2015-01-05' # by RJH
 ShortProgName = "OSISBible"
 ProgName = "OSIS XML Bible format handler"
 ProgVersion = '0.46'
@@ -280,7 +280,7 @@ class OSISXMLBible( Bible ):
         else: # it's presumably a file name
             self.sourceFolder = os.path.dirname( self.sourceFilepath )
             if not os.access( self.sourceFilepath, os.R_OK ):
-                logging.critical( "OSISXMLBible: File {} is unreadable".format( repr(self.sourceFilepath) ) )
+                logging.critical( "OSISXMLBible: File {!r} is unreadable".format( self.sourceFilepath ) )
                 return # No use continuing
 
         self.name, self.abbreviation = self.givenName, self.givenAbbreviation
@@ -299,8 +299,8 @@ class OSISXMLBible( Bible ):
         elif os.path.isfile( self.sourceFilepath ): # most often we have all the Bible books in one file
             self.__loadFile( self.sourceFilepath, loadErrors )
         else:
-            logging.critical( "OSISXMLBible: Didn't find anything to load at {}".format( repr(self.sourceFilepath) ) )
-            loadErrors.append( _("OSISXMLBible: Didn't find anything to load at {}").format( repr(self.sourceFilepath) ) )
+            logging.critical( "OSISXMLBible: Didn't find anything to load at {!r}".format( self.sourceFilepath ) )
+            loadErrors.append( _("OSISXMLBible: Didn't find anything to load at {!r}").format( self.sourceFilepath ) )
         if loadErrors:
             self.errorDictionary['Load Errors'] = loadErrors
             #if BibleOrgSysGlobals.debugFlag: print( "loadErrors", len(loadErrors), loadErrors ); halt
@@ -2419,6 +2419,27 @@ class OSISXMLBible( Bible ):
         # end of OSISXMLBible.validateParagraph
 
 
+        def validateTable( element, locationDescription, verseMilestone ):
+            """
+            Check/validate and process a OSIS Bible table, including all subfields.
+
+            Returns a possibly updated verseMilestone.
+            """
+            location = "validateTable: " + locationDescription
+            self.thisBook.addLine( 'tr', ' ' )
+            BibleOrgSysGlobals.checkXMLNoText( element, location+" at "+verseMilestone, 'kd20', loadErrors )
+            BibleOrgSysGlobals.checkXMLNoAttributes( element, location+" at "+verseMilestone, 'kd21', loadErrors )
+            BibleOrgSysGlobals.checkXMLNoSubelements( element, location+" at "+verseMilestone, 'ks20', loadErrors )
+            BibleOrgSysGlobals.checkXMLNoTail( element, location+" at "+verseMilestone, 'so20', loadErrors )
+            tableTail = clean(element.tail, loadErrors, location, verseMilestone )
+            if tableTail: self.thisBook.appendToLastLine( tableTail )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
+            return verseMilestone
+        # end of OSISXMLBible.validateTable
+
+
+
+        # Main code for validateAndExtractBookDiv
         if BibleOrgSysGlobals.verbosityLevel > 3: print( _("Loading {}OSIS book div...").format( self.abbreviation+' ' if self.abbreviation else '' ) )
         haveEIDs = False
         self.haveBook = False
@@ -2705,14 +2726,7 @@ class OSISXMLBible( Bible ):
 ###                 ### table in div
                     elif subelement.tag == OSISXMLBible.OSISNameSpace+'table': # not actually written yet! XXXXXXX ...............
                         sublocation = "table of " + location
-                        self.thisBook.addLine( 'tr', ' ' )
-                        tableTail = clean(subelement.tail, loadErrors, sublocation, verseMilestone )
-                        BibleOrgSysGlobals.checkXMLNoText( element, location+" at "+verseMilestone, 'kd20', loadErrors )
-                        BibleOrgSysGlobals.checkXMLNoAttributes( element, location+" at "+verseMilestone, 'kd21', loadErrors )
-                        BibleOrgSysGlobals.checkXMLNoSubelements( element, location+" at "+verseMilestone, 'ks20', loadErrors )
-                        BibleOrgSysGlobals.checkXMLNoTail( element, location+" at "+verseMilestone, 'so20', loadErrors )
-                        if tableTail: self.thisBook.appendToLastLine( tableTail )
-                        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
+                        verseMilestone = validateTable( subelement, sublocation, verseMilestone )
                     else:
                         logging.error( "3f67 Unprocessed {!r} sub-element ({}) in {} at {}".format( subelement.tag, subelement.text, location, verseMilestone ) )
                         loadErrors.append( "Unprocessed {!r} sub-element ({}) in {} at {} (3f67)".format( subelement.tag, subelement.text, location, verseMilestone ) )
@@ -3124,10 +3138,14 @@ class OSISXMLBible( Bible ):
             elif element.tag == OSISXMLBible.OSISNameSpace+'lb':
                 location = "lb of {} div".format( mainDivType )
                 validateLB( element, location, verseMilestone )
-########### LB
+########### List
             elif element.tag == OSISXMLBible.OSISNameSpace+'list':
                 location = "list of {} div".format( mainDivType )
                 verseMilestone = validateList( element, location, verseMilestone )
+########### Table
+            elif element.tag == OSISXMLBible.OSISNameSpace+'table':
+                location = "table of {} div".format( mainDivType )
+                verseMilestone = validateTable( element, location, verseMilestone )
 ########### Left-overs!
             else:
                 logging.error( "5ks1 Unprocessed {!r} sub-element ({}) in {} div at {}".format( element.tag, element.text, mainDivType, verseMilestone ) )
@@ -3238,7 +3256,7 @@ def demo():
                 oB.check()
             if BibleOrgSysGlobals.commandLineOptions.export:
                 #oB.toODF(); halt
-                oB.doAllExports( wantPhotoBible=True, wantODFs=True, wantPDFs=True )
+                oB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
 # end of demo
 
 if __name__ == '__main__':
