@@ -82,7 +82,7 @@ class UnknownBible:
 
         # Check that the given folder is readable
         if not os.access( givenFolderName, os.R_OK ):
-            logging.critical( _("UnknownBible: Given '{}' folder is unreadable").format( self.givenFolderName ) )
+            logging.critical( _("UnknownBible: Given {!r} folder is unreadable").format( self.givenFolderName ) )
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
             self.folderReadable = False
         else: self.folderReadable = True

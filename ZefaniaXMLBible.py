@@ -106,10 +106,10 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False,
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
-        logging.critical( _("ZefaniaXMLBibleFileCheck: Given '{}' folder is unreadable").format( givenFolderName ) )
+        logging.critical( _("ZefaniaXMLBibleFileCheck: Given {!r} folder is unreadable").format( givenFolderName ) )
         return False
     if not os.path.isdir( givenFolderName ):
-        logging.critical( _("ZefaniaXMLBibleFileCheck: Given '{}' path is not a folder").format( givenFolderName ) )
+        logging.critical( _("ZefaniaXMLBibleFileCheck: Given {!r} path is not a folder").format( givenFolderName ) )
         return False
 
     # Find all the files and folders in this folder
@@ -141,7 +141,7 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False,
             if not firstLines or len(firstLines)<2: continue
             if not firstLines[0].startswith( '<?xml version="1.0"' ) \
             and not firstLines[0].startswith( '\ufeff<?xml version="1.0"' ): # same but with BOM
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "ZB (unexpected) first line was '{}' in {}".format( firstLines, thisFilename ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "ZB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                 continue
             if not firstLines[1].startswith( '<XMLBIBLE' ) \
             and not firstLines[1].startswith( '<!--Nice Viewer' ) \
@@ -188,7 +188,7 @@ def ZefaniaXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False,
                 if not firstLines or len(firstLines)<2: continue
                 if not firstLines[0].startswith( '<?xml version="1.0"' ) \
                 and not firstLines[0].startswith( '\ufeff<?xml version="1.0"' ): # same but with BOM
-                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "ZB (unexpected) first line was '{}' in {}".format( firstLines, thisFilename ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "ZB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                     continue
                 if not firstLines[1].startswith( '<XMLBIBLE' ) \
                 and not firstLines[1].startswith( '<!--Nice Viewer' ) \
@@ -248,7 +248,7 @@ class ZefaniaXMLBible( Bible ):
 
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):
-            print( "ZefaniaXMLBible: File '{}' is unreadable".format( self.sourceFilepath ) )
+            print( "ZefaniaXMLBible: File {!r} is unreadable".format( self.sourceFilepath ) )
 
         self.name = self.givenName
         #if self.name is None:
@@ -287,7 +287,7 @@ class ZefaniaXMLBible( Bible ):
                     revision = value
                 elif attrib == "version":
                     version = value
-                else: logging.warning( "Unprocessed '{}' attribute ({}) in main element".format( attrib, value ) )
+                else: logging.warning( "Unprocessed {!r} attribute ({}) in main element".format( attrib, value ) )
             if name: self.name = name
             if status: self.status = status
             if revision: self.revision = revision
@@ -311,8 +311,8 @@ class ZefaniaXMLBible( Bible ):
                     BibleOrgSysGlobals.checkXMLNoText( element, sublocation, 'g3g5' )
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'd3f6' )
                     self.__validateAndExtractBook( element )
-                else: logging.error( "Expected to find '{}' but got '{}'".format( ZefaniaXMLBible.bookTag, element.tag ) )
-        else: logging.error( "Expected to load '{}' but got '{}'".format( ZefaniaXMLBible.treeTag, self.tree.tag ) )
+                else: logging.error( "Expected to find {!r} but got {!r}".format( ZefaniaXMLBible.bookTag, element.tag ) )
+        else: logging.error( "Expected to load {!r} but got {!r}".format( ZefaniaXMLBible.treeTag, self.tree.tag ) )
         self.doPostLoadProcessing()
     # end of ZefaniaXMLBible.load
 
@@ -437,7 +437,7 @@ class ZefaniaXMLBible( Bible ):
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, sublocation, 'j3jd' )
                 BibleOrgSysGlobals.checkXMLNoSubelements( element, sublocation, '5g78' )
                 if element.text: self.rights = element.text
-            else: logging.error( "Found unexpected '{}' tag in {}".format( element.tag, location ) )
+            else: logging.error( "Found unexpected {!r} tag in {}".format( element.tag, location ) )
     # end of ZefaniaXMLBible.__validateAndExtractHeader
 
 
@@ -458,7 +458,7 @@ class ZefaniaXMLBible( Bible ):
                 bookName = value
             elif attrib=="bsname":
                 bookShortName = value
-            else: logging.warning( "Unprocessed '{}' attribute ({}) in book element".format( attrib, value ) )
+            else: logging.warning( "Unprocessed {!r} attribute ({}) in book element".format( attrib, value ) )
         if bookNumber:
             try: BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( bookNumber )
             except KeyError:
@@ -479,7 +479,7 @@ class ZefaniaXMLBible( Bible ):
                     BibleOrgSysGlobals.checkXMLNoText( element, sublocation, 'j3jd' )
                     BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                     self.__validateAndExtractChapter( BBB, thisBook, element )
-                else: logging.error( "Expected to find '{}' but got '{}'".format( ZefaniaXMLBible.chapterTag, element.tag ) )
+                else: logging.error( "Expected to find {!r} but got {!r}".format( ZefaniaXMLBible.chapterTag, element.tag ) )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Saving {} into results...".format( BBB ) )
             self.saveBook( thisBook )
     # end of ZefaniaXMLBible.__validateAndExtractBook
@@ -499,7 +499,7 @@ class ZefaniaXMLBible( Bible ):
         for attrib,value in chapter.items():
             if attrib=="cnumber":
                 chapterNumber = value
-            else: logging.warning( "Unprocessed '{}' attribute ({}) in chapter element".format( attrib, value ) )
+            else: logging.warning( "Unprocessed {!r} attribute ({}) in chapter element".format( attrib, value ) )
         if chapterNumber:
             #print( BBB, 'c', chapterNumber )
             thisBook.addLine( 'c', chapterNumber )
@@ -519,15 +519,15 @@ class ZefaniaXMLBible( Bible ):
                     if attrib=="vref":
                         vRef = value
                         if BibleOrgSysGlobals.debugFlag: assert( vRef == '1' )
-                    else: logging.warning( "Unprocessed '{}' attribute ({}) in caption element".format( attrib, value ) )
+                    else: logging.warning( "Unprocessed {!r} attribute ({}) in caption element".format( attrib, value ) )
                 if BibleOrgSysGlobals.debugFlag: assert( vRef )
                 vText = element.text
                 if not vText:
                     logging.warning( "{} {}:{} has no text".format( BBB, chapterNumber, vRef ) )
                 if vText: # This is the main text of the caption
-                    #print( "{} {}:{} '{}'".format( BBB, chapterNumber, verseNumber, vText ) )
+                    #print( "{} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, vText ) )
                     thisBook.addLine( 'v', '0' + ' ' + vText ) # We save it as verse zero
-            else: logging.error( "Expected to find '{}' but got '{}'".format( ZefaniaXMLBible.verseTag, element.tag ) )
+            else: logging.error( "Expected to find {!r} but got {!r}".format( ZefaniaXMLBible.verseTag, element.tag ) )
     # end of ZefaniaXMLBible.__validateAndExtractChapter
 
 
@@ -548,7 +548,7 @@ class ZefaniaXMLBible( Bible ):
         for attrib,value in verse.items():
             if attrib=="vnumber":
                 verseNumber = value
-            else: logging.warning( "Unprocessed '{}' attribute ({}) in verse element".format( attrib, value ) )
+            else: logging.warning( "Unprocessed {!r} attribute ({}) in verse element".format( attrib, value ) )
         if BibleOrgSysGlobals.debugFlag: assert( verseNumber )
         location = "{}:{}".format( location, verseNumber ) # Get a better location description
         #thisBook.addLine( 'v', verseNumber )
@@ -565,7 +565,7 @@ class ZefaniaXMLBible( Bible ):
                 for attrib,value in subelement.items():
                     if attrib=="type":
                         noteType = value
-                    else: logging.warning( "Unprocessed '{}' attribute ({}) in style subelement".format( attrib, value ) )
+                    else: logging.warning( "Unprocessed {!r} attribute ({}) in style subelement".format( attrib, value ) )
                 if noteType not in ('n-studynote','x-studynote',):
                     logging.warning( "Unexpected {} note type in {}".format( noteType, BBB ) )
                 if BibleOrgSysGlobals.debugFlag: assert( noteType )
@@ -575,7 +575,7 @@ class ZefaniaXMLBible( Bible ):
                 #thisBook.addLine( 'ST=', nText )
                 if nTail:
                     if '\n' in nTail:
-                        print( "ZefaniaXMLBible.__validateAndExtractVerse: nTail {} {}:{} '{}'".format( BBB, chapterNumber, verseNumber, nTail ) )
+                        print( "ZefaniaXMLBible.__validateAndExtractVerse: nTail {} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, nTail ) )
                         nTail = nTail.replace( '\n', ' ' )
                     thisBook.addLine( 'v~', nTail )
                 for subsubelement in subelement:
@@ -588,7 +588,7 @@ class ZefaniaXMLBible( Bible ):
                                 css = value
                             elif attrib=="id":
                                 idStyle = value
-                            else: logging.warning( "Unprocessed '{}' attribute ({}) in style subsubelement".format( attrib, value ) )
+                            else: logging.warning( "Unprocessed {!r} attribute ({}) in style subsubelement".format( attrib, value ) )
                         if BibleOrgSysGlobals.debugFlag: assert( css or idStyle )
                         SFM = None
                         if css == "font-style:italic": SFM = '\\it'
@@ -602,7 +602,7 @@ class ZefaniaXMLBible( Bible ):
                         if SFM: vText += SFM+' ' + sText + SFM+'*'
                         else: vText += '\\sc ' + '['+css+']' + sText + '\\sc* ' # Use sc for unknown styles
                         if sTail: vText += sTail.strip()
-                    else: logging.error( "Expected to find {} but got '{}' in {}".format( ZefaniaXMLBible.styleTag, subsubelement.tag, sublocation ) )
+                    else: logging.error( "Expected to find {} but got {!r} in {}".format( ZefaniaXMLBible.styleTag, subsubelement.tag, sublocation ) )
 
             elif subelement.tag == ZefaniaXMLBible.styleTag:
                 sublocation = "style in " + location
@@ -613,7 +613,7 @@ class ZefaniaXMLBible( Bible ):
                         css = value
                     elif attrib=="id":
                         idStyle = value
-                    else: logging.warning( "Unprocessed '{}' attribute ({}) in style subelement".format( attrib, value ) )
+                    else: logging.warning( "Unprocessed {!r} attribute ({}) in style subelement".format( attrib, value ) )
                 if BibleOrgSysGlobals.debugFlag: assert( css or idStyle )
                 SFM = None
                 if css == "font-style:italic": SFM = '\\it'
@@ -636,7 +636,7 @@ class ZefaniaXMLBible( Bible ):
                 for attrib,value in subelement.items():
                     if attrib=="art":
                         art = value
-                    else: logging.warning( "Unprocessed '{}' attribute ({}) in style subelement".format( attrib, value ) )
+                    else: logging.warning( "Unprocessed {!r} attribute ({}) in style subelement".format( attrib, value ) )
                 if BibleOrgSysGlobals.debugFlag: assert( art == 'x-nl' )
                 #print( BBB, chapterNumber, verseNumber )
                 #assert( vText )
@@ -646,11 +646,11 @@ class ZefaniaXMLBible( Bible ):
                 thisBook.addLine( 'm', subelement.tail.strip() if subelement.tail else '' )
                 #bTail = subelement.tail
                 #if bTail: vText = bTail.strip()
-            else: logging.error( "Expected to find NOTE or STYLE but got '{}' in {}".format( subelement.tag, location ) )
+            else: logging.error( "Expected to find NOTE or STYLE but got {!r} in {}".format( subelement.tag, location ) )
 
         if vText: # This is the main text of the verse (follows the verse milestone)
             if '\n' in vText:
-                print( "ZefaniaXMLBible.__validateAndExtractVerse: vText {} {}:{} '{}'".format( BBB, chapterNumber, verseNumber, vText ) )
+                print( "ZefaniaXMLBible.__validateAndExtractVerse: vText {} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, vText ) )
                 vText = vText.replace( '\n', ' ' )
             thisBook.addLine( 'v', verseNumber + ' ' + vText )
     # end of ZefaniaXMLBible.__validateAndExtractVerse
@@ -687,7 +687,7 @@ def demo():
 
             # Demonstrate the XML Bible class
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nZ B{}/ Demonstrating the Zefania Bible class...".format( j+1 ) )
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test filepath is '{}'".format( testFilepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test filepath is {!r}".format( testFilepath ) )
             zb = ZefaniaXMLBible( testFolder, testFilename )
             zb.load() # Load and process the XML
             print( zb ) # Just print a summary
@@ -728,7 +728,7 @@ def demo():
                     ##print( UB.getAddedUnits () )
                     ##for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
                         ###print( "Looking for", ref )
-                        ##print( "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )
+                        ##print( "Tried finding {!r} in {!r}: got {!r}".format( ref, name, UB.getXRefBBB( ref ) ) )
                     #if 1: # Test verse lookup
                         #import VerseReferences
                         #for reference in ( ('OT','GEN','1','1'), ('OT','GEN','1','3'), ('OT','PSA','3','0'), ('OT','PSA','3','1'), \
@@ -747,7 +747,7 @@ def demo():
                         #zb.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                 #else: print( "Sorry, skipping {}.".format( something ) )
             #if count: print( "\n{} total Zefania Bibles processed.".format( count ) )
-        #else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testBaseFolder ) )
+        #else: print( "Sorry, test folder {!r} is not readable on this computer.".format( testBaseFolder ) )
 # end of demo
 
 

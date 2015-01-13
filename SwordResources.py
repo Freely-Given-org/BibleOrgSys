@@ -125,8 +125,8 @@ class SwordInterface():
                 moduleID = moduleBuffer.getRawData()
                 #module = library.getModule( moduleID )
                 #if 0:
-                    #print( "{} {} ({}) {} '{}'".format( j, module.getName(), module.getType(), module.getLanguage(), module.getEncoding() ) )
-                    #try: print( "    {} '{}' {} {}".format( module.getDescription(), module.getMarkup(), module.getDirection(), "" ) )
+                    #print( "{} {} ({}) {} {!r}".format( j, module.getName(), module.getType(), module.getLanguage(), module.getEncoding() ) )
+                    #try: print( "    {} {!r} {} {}".format( module.getDescription(), module.getMarkup(), module.getDirection(), "" ) )
                     #except UnicodeDecodeError: print( "   Description is not Unicode!" )
                 print( "moduleID", repr(moduleID) )
                 availableModuleCodes.append( moduleID )
@@ -330,7 +330,7 @@ def demo():
 
     def Find( attribute ):
         """ Search for methods and attributes """
-        print( "\nSearching for attribute '{}'...".format( attribute ) )
+        print( "\nSearching for attribute {!r}...".format( attribute ) )
         found = False
         AA = attribute.upper()
         for thing in dir(Sword):
@@ -361,7 +361,7 @@ def demo():
         for thing in dir(Sword.SWFilterMgr()):
             BB = thing.upper()
             if BB.startswith(AA): print( "  Have {} in SWFilterMgr".format( thing ) ); found = True
-        if not found: print( " Sorry, '{}' not found.".format( attribute ) )
+        if not found: print( " Sorry, {!r} not found.".format( attribute ) )
     # end of Find
 
     if 0: # Install manager
@@ -389,22 +389,22 @@ def demo():
             moduleID = moduleBuffer.getRawData()
             module = library.getModule( moduleID )
             if 0:
-                print( "{} {} ({}) {} '{}'".format( j, module.getName(), module.getType(), module.getLanguage(), module.getEncoding() ) )
-                try: print( "    {} '{}' {} {}".format( module.getDescription(), module.getMarkup(), module.getDirection(), "" ) )
+                print( "{} {} ({}) {} {!r}".format( j, module.getName(), module.getType(), module.getLanguage(), module.getEncoding() ) )
+                try: print( "    {} {!r} {} {}".format( module.getDescription(), module.getMarkup(), module.getDirection(), "" ) )
                 except UnicodeDecodeError: print( "   Description is not Unicode!" )
         #print( "\n", j, "dir module", dir(module) )
 
         # Try some modules
         mod1 = library.getModule( "KJV" )
-        print( "\nmod1 {} ({}) '{}'".format( mod1.getName(), mod1.getType(), mod1.getDescription() ) )
+        print( "\nmod1 {} ({}) {!r}".format( mod1.getName(), mod1.getType(), mod1.getDescription() ) )
         mod2 = library.getModule( "ASV" )
-        print( "\nmod2 {} ({}) '{}'".format( mod2.getName(), mod2.getType(), mod2.getDescription() ) )
+        print( "\nmod2 {} ({}) {!r}".format( mod2.getName(), mod2.getType(), mod2.getDescription() ) )
         mod3 = library.getModule( "WEB" )
-        print( "\nmod3 {} ({}) '{}'".format( mod3.getName(), mod3.getType(), mod3.getDescription() ) )
+        print( "\nmod3 {} ({}) {!r}".format( mod3.getName(), mod3.getType(), mod3.getDescription() ) )
         strongsGreek = library.getModule( "StrongsGreek" )
-        print( "\nSG {} ({}) '{}'\n".format( strongsGreek.getName(), strongsGreek.getType(), strongsGreek.getDescription() ) )
+        print( "\nSG {} ({}) {!r}\n".format( strongsGreek.getName(), strongsGreek.getType(), strongsGreek.getDescription() ) )
         strongsHebrew = library.getModule( "StrongsHebrew" )
-        print( "\nSH {} ({}) '{}'\n".format( strongsHebrew.getName(), strongsHebrew.getType(), strongsHebrew.getDescription() ) )
+        print( "\nSH {} ({}) {!r}\n".format( strongsHebrew.getName(), strongsHebrew.getType(), strongsHebrew.getDescription() ) )
         print()
 
         # Try a sword key
@@ -416,8 +416,8 @@ def demo():
         #print( "\ndir vk", dir(vk) )
         #print( "val", vk.validateCurrentLocale() ) # gives None
         print( "getInfo", vk.getLocale(), vk.getBookCount(), vk.getBookMax(), vk.getIndex(), vk.getVersificationSystem() )
-        print( "getBCV {}({}/{}) {}/{}:{} in '{}'({})/{}".format( vk.getBookName(), vk.getBookAbbrev(), vk.getOSISBookName(), vk.getChapter(), vk.getChapterMax(), vk.getVerse(), repr(vk.getTestament()), vk.getTestamentIndex(), vk.getTestamentMax() ) )
-        print( "getText {} {} {} {} '{}'".format( vk.getOSISRef(), vk.getText(), vk.getRangeText(), vk.getShortText(), vk.getSuffix() ) )
+        print( "getBCV {}({}/{}) {}/{}:{} in {!r}({})/{}".format( vk.getBookName(), vk.getBookAbbrev(), vk.getOSISBookName(), vk.getChapter(), vk.getChapterMax(), vk.getVerse(), repr(vk.getTestament()), vk.getTestamentIndex(), vk.getTestamentMax() ) )
+        print( "getText {} {} {} {} {!r}".format( vk.getOSISRef(), vk.getText(), vk.getRangeText(), vk.getShortText(), vk.getSuffix() ) )
         #print( "bounds {} {}".format( vk.getLowerBound(), vk.getUpperBound() ) )
 
         if 0: # Set a filter HOW DO WE DO THIS???
@@ -455,7 +455,7 @@ def demo():
 
         # Try a tree key on a GenBook
         module = library.getModule( "Westminster" )
-        print( "\nmodule {} ({}) '{}'".format( module.getName(), module.getType(), module.getDescription() ) )
+        print( "\nmodule {} ({}) {!r}".format( module.getName(), module.getType(), module.getDescription() ) )
         def getGenBookTOC( tk, parent ):
             if tk is None: # obtain one from the module
                 tk = Sword.TreeKey_castTo( module.getKey() ) # Only works for gen books

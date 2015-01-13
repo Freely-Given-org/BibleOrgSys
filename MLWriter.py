@@ -158,7 +158,7 @@ class MLWriter:
                 self._writeToFile( self._buffer )
                 self._buffer = ''
             elif len(self._buffer) > self._bufferSaveSize: # Write most of it (in case we need to retrack)
-                #print( "From '{}' writing '{}' leaving '{}'".format( self._buffer, self._buffer[:-self._bufferSaveSize], self._buffer[-self._bufferSaveSize:] ) )
+                #print( "From {!r} writing {!r} leaving {!r}".format( self._buffer, self._buffer[:-self._bufferSaveSize], self._buffer[-self._bufferSaveSize:] ) )
                 self._writeToFile( self._buffer[:-self._bufferSaveSize] )
                 self._buffer = self._buffer[-self._bufferSaveSize:]
             #else: pass # Write none
@@ -257,7 +257,7 @@ class MLWriter:
         assert( self._status == 'Idle' )
         if lineEndings == 'l': self._nl = '\n'
         elif lineEndings == 'w': self._nl = '\r\n'
-        else: logging.error( "MLWriter: Unknown '{}' lineEndings flag".format( lineEndings ) )
+        else: logging.error( "MLWriter: Unknown {!r} lineEndings flag".format( lineEndings ) )
         if BibleOrgSysGlobals.verbosityLevel>2: print( _("Writing {}...").format(self._outputFilePath) )
         self.__outputFile = open( self._outputFilePath, 'wt' ) # Just create the empty file
         self.__outputFile.close()
@@ -279,7 +279,7 @@ class MLWriter:
 
     def checkTag( self, tagString ):
         """ Returns a checked string containing the tag name. Note that special characters should have already been handled before calling this routine. """
-        #print( "tagString: '{}'", tagString )
+        #print( "tagString: {!r}", tagString )
         assert( tagString ) # It can't be blank
         assert( '<' not in tagString and '>' not in tagString and '"' not in tagString )
         return tagString
@@ -289,7 +289,7 @@ class MLWriter:
     def checkText( self, textString ):
         """ Returns a checked string containing the tag name. Note that special characters should have already been handled before calling this routine. """
         assert( textString ) # It can't be blank
-        if ('<' in textString or '>' in textString or '"' in textString): logging.error( _("MLWriter:checkText: unexpected characters found in '{}'").format( textString ) )
+        if ('<' in textString or '>' in textString or '"' in textString): logging.error( _("MLWriter:checkText: unexpected characters found in {!r}").format( textString ) )
         return textString
     # end of MLWriter.checkText
 
@@ -373,7 +373,7 @@ class MLWriter:
     def writeLineOpenText( self, openTag, text, attribInfo=None, noTextCheck=False ):
         """ Writes an opening tag on a line.
         Note: We don't want to check the text if we know it already contains valid XML (e.g., character formatting)."""
-        #print( "text: '{}'".format(text )
+        #print( "text: {!r}".format(text )
         if noTextCheck == False: text = self.checkText( text )
         if attribInfo is None:
             self._autoWrite( '<{}>{}'.format( self.checkTag(openTag), text ) )
@@ -387,11 +387,11 @@ class MLWriter:
         """ Writes a closing tag on a line. """
         #print( 'writeLineClose', self._openStack )
         if not self._openStack:
-             logging.error( _("MLWriter:writeLineClose: closed '{}' tag even though no tags open").format( closeTag ) )
+             logging.error( _("MLWriter:writeLineClose: closed {!r} tag even though no tags open").format( closeTag ) )
         else:
             expectedTag = self._openStack.pop()
             if expectedTag != closeTag:
-                logging.error( _("MLWriter:writeLineClose: closed '{}' tag but should have closed '{}'").format( closeTag, expectedTag ) )
+                logging.error( _("MLWriter:writeLineClose: closed {!r} tag but should have closed {!r}").format( closeTag, expectedTag ) )
         noNL = self._outputType=='HTML' and closeTag in HTMLInsideTags
         self._autoWrite( '</{}>'.format(self.checkTag(closeTag)), noNL=noNL )
     # end of MLWriter.writeLineOpen
@@ -458,7 +458,7 @@ class MLWriter:
                 checkProgramOutputBytes, checkProgramErrorOutputBytes = checkProcess.communicate()
                 returnCode = checkProcess.returncode
             except FileNotFoundError:
-                logging.error( "MLWriter.validate is unable to open '{}'".format( parameters[0] ) )
+                logging.error( "MLWriter.validate is unable to open {!r}".format( parameters[0] ) )
                 return None
             checkProgramOutputString = checkProgramErrorOutputString = ''
             if checkProgramOutputBytes: checkProgramOutputString = '{}:\n{}'.format( self._filename, checkProgramOutputBytes.decode( encoding="utf-8", errors="replace" ) )

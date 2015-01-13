@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 # DigitalBiblePlatform.py
-#   Last modified: 2014-11-19 (also update ProgVersion below)
 #
 # Module handling online DBP resources
 #
-# Copyright (C) 2013-2014 Robert Hunt
+# Copyright (C) 2013-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -63,17 +62,20 @@ We currently use version 2 of the DBP.
 More details are available from http://www.DigitalBiblePlatform.com.
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2015-01-08' # by RJH
 ShortProgName = "DigitalBiblePlatform"
 ProgName = "Digital Bible Platform handler"
-ProgVersion = "0.13"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.14'
+ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
 from singleton import singleton
 import os, logging, multiprocessing
-from gettext import gettext as _
 import urllib.request, json
 from collections import OrderedDict
 
@@ -84,7 +86,7 @@ from VerseReferences import SimpleVerseKey
 URL_BASE = "http://dbt.io/"
 DPB_VERSION = '2'
 KEY_FILENAME = "DBPKey.txt"
-KEY_SEARCH_PATHS = ( KEY_FILENAME, os.path.join( "../BibleOrgSys/", KEY_FILENAME ) )
+KEY_SEARCH_PATHS = ( KEY_FILENAME, os.path.join( "../BibleOrgSys/DataFiles", KEY_FILENAME ) )
 MAX_CACHED_VERSES = 100 # Per Bible version in use
 
 

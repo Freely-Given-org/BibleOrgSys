@@ -95,10 +95,10 @@ def MySwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
-        logging.critical( _("MySwordBibleFileCheck: Given '{}' folder is unreadable").format( givenFolderName ) )
+        logging.critical( _("MySwordBibleFileCheck: Given {!r} folder is unreadable").format( givenFolderName ) )
         return False
     if not os.path.isdir( givenFolderName ):
-        logging.critical( _("MySwordBibleFileCheck: Given '{}' path is not a folder").format( givenFolderName ) )
+        logging.critical( _("MySwordBibleFileCheck: Given {!r} path is not a folder").format( givenFolderName ) )
         return False
 
     # Find all the files and folders in this folder
@@ -142,7 +142,7 @@ def MySwordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
-            logging.warning( _("MySwordBibleFileCheck: '{}' subfolder is unreadable").format( tryFolderName ) )
+            logging.warning( _("MySwordBibleFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
             continue
         if BibleOrgSysGlobals.verbosityLevel > 3: print( "    MySwordBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
@@ -196,14 +196,14 @@ class MySwordBible( Bible ):
 
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):
-            logging.critical( _("MySwordBible: File '{}' is unreadable").format( self.sourceFilepath ) )
+            logging.critical( _("MySwordBible: File {!r} is unreadable").format( self.sourceFilepath ) )
 
         filenameBits = os.path.splitext( self.sourceFilename )
         self.name = filenameBits[0]
         self.fileExtension = filenameBits[1]
 
         #if self.fileExtension.upper().endswith('X'):
-            #logging.warning( _("MySwordBible: File '{}' is encrypted").format( self.sourceFilepath ) )
+            #logging.warning( _("MySwordBible: File {!r} is encrypted").format( self.sourceFilepath ) )
     # end of MySwordBible.__init__
 
 
@@ -337,7 +337,7 @@ def testMySwB( MySwBfolder, MySwBfilename ):
 
     #TUBfolder = os.path.join( MySwBfolder, MySwBfilename )
     if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the MySword Bible class...") )
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is '{}' '{}'".format( MySwBfolder, MySwBfilename ) )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is {!r} {!r}".format( MySwBfolder, MySwBfilename ) )
     MySwB = MySwordBible( MySwBfolder, MySwBfilename )
     MySwB.load() # Load and process the file
     if BibleOrgSysGlobals.verbosityLevel > 1: print( MySwB ) # Just print a summary

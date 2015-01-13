@@ -255,39 +255,39 @@ class Bible( BibleWriter ):
             ##    if eix == -1:
             ##        endString = endString[:-1] # without the final space
             ##        eix = adjText.find( endString )
-            ##    if eix == -1: logging.error( "Can't find end of cross-reference in '{}'".format( text ) )
+            ##    if eix == -1: logging.error( "Can't find end of cross-reference in {!r}".format( text ) )
             ##    else: # found the beginning and the end
             ##        xref = adjText[len(startString):eix]
             ##        adjText = adjText[eix+len(endString):]
-            ##        #print( "'{}' '{}'".format( xref, adjText ) )
+            ##        #print( "{!r} {!r}".format( xref, adjText ) )
             ##        store.append( ('XRf', xref,) )
 
             ## WRONG: We still have embedded footnotes and some cross-references (just not verse-initial), etc.
-            #if adjText.endswith( '\\' ): logging.error( "Unexpected field ending with backslash: '{}'".format( text ) )
+            #if adjText.endswith( '\\' ): logging.error( "Unexpected field ending with backslash: {!r}".format( text ) )
             #while '\\' in adjText:
                 #ix = adjText.find( '\\' )
                 #assert( ix != -1 )
                 #ch1 = adjText[ix+1] if ix+1<len(adjText) else ''
                 #ch2 = adjText[ix+2] if ix+2<len(adjText) else ''
-                #if ch2 != ' ': logging.error( "Unexpected characters after backslash: '{}'".format( text ) )
+                #if ch2 != ' ': logging.error( "Unexpected characters after backslash: {!r}".format( text ) )
                 ##elif ch1 == 'f':
                 ##    field = 'FNt'
                 ##elif ch1 == 'x':
                 ##    field = 'XRf'
-                #else: logging.error( "Unexpected '{}' character after backslash: '{}'".format( ch1, text ) )
+                #else: logging.error( "Unexpected {!r} character after backslash: {!r}".format( ch1, text ) )
                 #endString = '\\' + ch1 + '* '
                 #eix = adjText.find( endString )
                 #if eix == -1:
                     #endString = endString[:-1] # without the final space
                     #eix = adjText.find( endString )
-                #if eix == -1: logging.error( "Can't find end of backslash field in '{}'".format( text ) )
+                #if eix == -1: logging.error( "Can't find end of backslash field in {!r}".format( text ) )
                 #part1 = adjText[:ix]; assert( part1 )
                 #part2 = adjText[ix+3:eix]; assert( part2 )
                 #adjText = adjText[eix+len(endString):]
-                ##print( "\n'{}'  '{}'  '{}'".format( part1, part2, adjText ) )
+                ##print( "\n{!r}  {!r}  {!r}".format( part1, part2, adjText ) )
                 #store.append( ('Txt', part1,) )
                 #store.append( (field, part2,) )
-            #if '\\' in adjText: print( "Still have '{}'".format( adjText ) )
+            #if '\\' in adjText: print( "Still have {!r}".format( adjText ) )
             #if adjText: store.append( ('Txt', adjText,) )
         ## end of verseToBible
 
@@ -362,7 +362,7 @@ def demo():
             if BibleOrgSysGlobals.strictCheckingFlag:
                 UB.check()
             UB.doAllExports( "OutputFiles", wantPhotoBible=False, wantODFs=False, wantPDFs=False )
-        else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
+        else: print( "Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
 # end of demo
 
 if __name__ == '__main__':

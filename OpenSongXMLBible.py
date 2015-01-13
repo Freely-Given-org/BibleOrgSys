@@ -78,10 +78,10 @@ def OpenSongXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
-        logging.critical( _("OpenSongXMLBibleFileCheck: Given '{}' folder is unreadable").format( givenFolderName ) )
+        logging.critical( _("OpenSongXMLBibleFileCheck: Given {!r} folder is unreadable").format( givenFolderName ) )
         return False
     if not os.path.isdir( givenFolderName ):
-        logging.critical( _("OpenSongXMLBibleFileCheck: Given '{}' path is not a folder").format( givenFolderName ) )
+        logging.critical( _("OpenSongXMLBibleFileCheck: Given {!r} path is not a folder").format( givenFolderName ) )
         return False
 
     # Find all the files and folders in this folder
@@ -113,7 +113,7 @@ def OpenSongXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False
             if not firstLines or len(firstLines)<2: continue
             if not firstLines[0].startswith( '<?xml version="1.0"' ) \
             and not firstLines[0].startswith( '\ufeff<?xml version="1.0"' ): # same but with BOM
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "OSB (unexpected) first line was '{}' in {}".format( firstLines, thisFilename ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "OSB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                 continue
             if not firstLines[1].startswith( '<bible>' ):
                 continue
@@ -156,7 +156,7 @@ def OpenSongXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False
                 if not firstLines or len(firstLines)<2: continue
                 if not firstLines[0].startswith( '<?xml version="1.0"' ) \
                 and not firstLines[0].startswith( '\ufeff<?xml version="1.0"' ): # same but with BOM
-                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "OSB (unexpected) first line was '{}' in {}".format( firstLines, thisFilename ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "OSB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                     continue
                 if not firstLines[1].startswith( '<bible>' ):
                     continue
@@ -207,7 +207,7 @@ class OpenSongXMLBible( Bible ):
 
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):
-            print( "OpenSongXMLBible: File '{}' is unreadable".format( self.sourceFilepath ) )
+            print( "OpenSongXMLBible: File {!r} is unreadable".format( self.sourceFilepath ) )
 
         self.name = self.givenName
         #if self.name is None:
@@ -235,7 +235,7 @@ class OpenSongXMLBible( Bible ):
                     name = value
                 elif attrib=="sn":
                     shortName = value
-                else: logging.warning( "Unprocessed '{}' attribute ({}) in main element".format( attrib, value ) )
+                else: logging.warning( "Unprocessed {!r} attribute ({}) in main element".format( attrib, value ) )
 
             # Find the submain (book) containers
             for element in self.tree:
@@ -248,8 +248,8 @@ class OpenSongXMLBible( Bible ):
                     pass
                 elif element.tag == 'NT':
                     pass
-                else: logging.error( "Expected to find '{}' but got '{}'".format( OpenSongXMLBible.bookTag, element.tag ) )
-        else: logging.error( "Expected to load '{}' but got '{}'".format( OpenSongXMLBible.treeTag, self.tree.tag ) )
+                else: logging.error( "Expected to find {!r} but got {!r}".format( OpenSongXMLBible.bookTag, element.tag ) )
+        else: logging.error( "Expected to load {!r} but got {!r}".format( OpenSongXMLBible.treeTag, self.tree.tag ) )
         self.doPostLoadProcessing()
     # end of OpenSongXMLBible.load
 
@@ -267,7 +267,7 @@ class OpenSongXMLBible( Bible ):
         for attrib,value in book.items():
             if attrib=="n":
                 bookName = value
-            else: logging.warning( "Unprocessed '{}' attribute ({}) in book element".format( attrib, value ) )
+            else: logging.warning( "Unprocessed {!r} attribute ({}) in book element".format( attrib, value ) )
         if bookName:
             BBB = self.genericBOS.getBBB( bookName )
             if BBB:
@@ -286,10 +286,10 @@ class OpenSongXMLBible( Bible ):
                         BibleOrgSysGlobals.checkXMLNoText( element, sublocation, 'j3jd' )
                         BibleOrgSysGlobals.checkXMLNoTail( element, sublocation, 'al1d' )
                         self.__validateAndExtractChapter( BBB, thisBook, element )
-                    else: logging.error( "Expected to find '{}' but got '{}'".format( OpenSongXMLBible.chapterTag, element.tag ) )
+                    else: logging.error( "Expected to find {!r} but got {!r}".format( OpenSongXMLBible.chapterTag, element.tag ) )
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Saving {} into results...".format( BBB ) )
                 self.saveBook( thisBook )
-            else: logging.error( _("OpenSong load doesn't recognize book name: '{}'").format( bookName ) ) # no BBB
+            else: logging.error( _("OpenSong load doesn't recognize book name: {!r}").format( bookName ) ) # no BBB
         else: logging.error( _("OpenSong load can't find a book name") ) # no bookName
     # end of OpenSongXMLBible.__validateAndExtractBook
 
@@ -310,7 +310,7 @@ class OpenSongXMLBible( Bible ):
                 chapterNumber = value
             elif attrib=="VERSES":
                 numVerses = value
-            else: logging.warning( "Unprocessed '{}' attribute ({}) in chapter element".format( attrib, value ) )
+            else: logging.warning( "Unprocessed {!r} attribute ({}) in chapter element".format( attrib, value ) )
         if chapterNumber:
             #print( BBB, 'c', chapterNumber )
             chapterNumber = chapterNumber.replace( 'of Solomon ', '' ) # Fix a mistake in the Chinese_SU module
@@ -328,14 +328,14 @@ class OpenSongXMLBible( Bible ):
                         verseNumber = value
                     elif attrib=="t":
                         toVerseNumber = value
-                    else: logging.warning( "Unprocessed '{}' attribute ({}) in verse element".format( attrib, value ) )
+                    else: logging.warning( "Unprocessed {!r} attribute ({}) in verse element".format( attrib, value ) )
                 if BibleOrgSysGlobals.debugFlag: assert( verseNumber )
                 #thisBook.addLine( 'v', verseNumber )
                 vText = element.text
                 if not vText:
                     logging.warning( "{} {}:{} has no text".format( BBB, chapterNumber, verseNumber ) )
                 if vText: # This is the main text of the verse (follows the verse milestone)
-                    #print( "{} {}:{} '{}'".format( BBB, chapterNumber, verseNumber, vText ) )
+                    #print( "{} {}:{} {!r}".format( BBB, chapterNumber, verseNumber, vText ) )
                     if '\n' in vText: # This is how they represent poety
                         #print( "vText", repr(vText), repr(element.text) )
                         for j, textBit in enumerate( vText.split( '\n' ) ):
@@ -345,7 +345,7 @@ class OpenSongXMLBible( Bible ):
                             else: thisBook.addLine( 'q1', textBit )
                     else: # Just one verse line
                         thisBook.addLine( 'v', verseNumber + ' ' + vText )
-            else: logging.error( "Expected to find '{}' but got '{}'".format( OpenSongXMLBible.verseTag, element.tag ) )
+            else: logging.error( "Expected to find {!r} but got {!r}".format( OpenSongXMLBible.verseTag, element.tag ) )
     # end of OpenSongXMLBible.__validateAndExtractChapter
 # end of OpenSongXMLBible class
 
@@ -387,7 +387,7 @@ def demo():
 
             # Demonstrate the OpenSong XML Bible class
             if BibleOrgSysGlobals.verbosityLevel > 1: print( "Demonstrating the OpenSong XML Bible class..." )
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test filepath is '{}'".format( testFilepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test filepath is {!r}".format( testFilepath ) )
             xb = OpenSongXMLBible( testFolder, testFilename )
             xb.load() # Load and process the XML
             if BibleOrgSysGlobals.verbosityLevel > 0: print( xb ) # Just print a summary

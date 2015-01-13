@@ -313,8 +313,8 @@ class ESFMBibleBook( BibleBook ):
             marker, text = originalMarker, originalText.replace( '~', ' ' )
             marker = BibleOrgSysGlobals.USFMMarkers.toStandardMarker( originalMarker )
             if marker != originalMarker:
-                loadErrors.append( _("{} {}:{} ESFM doesn't allow unnumbered marker \\{}: '{}'").format( self.BBB, C, V, originalMarker, originalText ) )
-                logging.error( _("ESFM doesn't allow the unnumbered marker after {} {}:{} in \\{}: '{}'").format( self.BBB, C, V, originalMarker, originalText ) )
+                loadErrors.append( _("{} {}:{} ESFM doesn't allow unnumbered marker \\{}: {!r}").format( self.BBB, C, V, originalMarker, originalText ) )
+                logging.error( _("ESFM doesn't allow the unnumbered marker after {} {}:{} in \\{}: {!r}").format( self.BBB, C, V, originalMarker, originalText ) )
                 self.addPriorityError( 90, C, V, _("ESFM doesn't allow unnumbered markers") )
 
             if '\\' in text: # Check markers inside the lines
@@ -322,22 +322,22 @@ class ESFMBibleBook( BibleBook ):
                 ix = 0
                 for insideMarker, iMIndex, nextSignificantChar, fullMarker, characterContext, endIndex, markerField in markerList: # check paragraph markers
                     if insideMarker == '\\': # it's a free-standing backspace
-                        loadErrors.append( _("{} {}:{} Improper free-standing backspace character within line in \\{}: '{}'").format( self.BBB, C, V, marker, text ) )
-                        logging.error( _("Improper free-standing backspace character within line after {} {}:{} in \\{}: '{}'").format( self.BBB, C, V, marker, text ) ) # Only log the first error in the line
+                        loadErrors.append( _("{} {}:{} Improper free-standing backspace character within line in \\{}: {!r}").format( self.BBB, C, V, marker, text ) )
+                        logging.error( _("Improper free-standing backspace character within line after {} {}:{} in \\{}: {!r}").format( self.BBB, C, V, marker, text ) ) # Only log the first error in the line
                         self.addPriorityError( 100, C, V, _("Improper free-standing backspace character inside a line") )
                     elif BibleOrgSysGlobals.USFMMarkers.isNewlineMarker(insideMarker): # Need to split the line for everything else to work properly
                         if ix==0:
-                            loadErrors.append( _("{} {}:{} NewLine marker '{}' shouldn't appear within line in \\{}: '{}'").format( self.BBB, C, V, insideMarker, marker, text ) )
-                            logging.error( _("NewLine marker '{}' shouldn't appear within line after {} {}:{} in \\{}: '{}'").format( insideMarker, self.BBB, C, V, marker, text ) ) # Only log the first error in the line
+                            loadErrors.append( _("{} {}:{} NewLine marker {!r} shouldn't appear within line in \\{}: {!r}").format( self.BBB, C, V, insideMarker, marker, text ) )
+                            logging.error( _("NewLine marker {!r} shouldn't appear within line after {} {}:{} in \\{}: {!r}").format( insideMarker, self.BBB, C, V, marker, text ) ) # Only log the first error in the line
                             self.addPriorityError( 96, C, V, _("NewLine marker \\{} shouldn't be inside a line").format( insideMarker ) )
                         thisText = text[ix:iMIndex].rstrip()
                         self.addLine( marker, thisText )
                         ix = iMIndex + 1 + len(insideMarker) + len(nextSignificantChar) # Get the start of the next text -- the 1 is for the backslash
-                        #print( "Did a split from {}:'{}' to {}:'{}' leaving {}:'{}'".format( originalMarker, originalText, marker, thisText, insideMarker, text[ix:] ) )
+                        #print( "Did a split from {}:{!r} to {}:{!r} leaving {}:{!r}".format( originalMarker, originalText, marker, thisText, insideMarker, text[ix:] ) )
                         marker = BibleOrgSysGlobals.USFMMarkers.toStandardMarker( insideMarker ) # setup for the next line
                         if marker != insideMarker:
-                            loadErrors.append( _("{} {}:{} ESFM doesn't allow unnumbered marker within line \\{}: '{}'").format( self.BBB, C, V, insideMarker, originalText ) )
-                            logging.error( _("ESFM doesn't allow the unnumbered marker within line after {} {}:{} in \\{}: '{}'").format( self.BBB, C, V, insideMarker, originalText ) )
+                            loadErrors.append( _("{} {}:{} ESFM doesn't allow unnumbered marker within line \\{}: {!r}").format( self.BBB, C, V, insideMarker, originalText ) )
+                            logging.error( _("ESFM doesn't allow the unnumbered marker within line after {} {}:{} in \\{}: {!r}").format( self.BBB, C, V, insideMarker, originalText ) )
                             self.addPriorityError( 90, C, V, _("ESFM doesn't allow unnumbered markers") )
 
                 if ix != 0: # We must have separated multiple lines
@@ -361,7 +361,7 @@ class ESFMBibleBook( BibleBook ):
         lastMarker = lastText = ''
         loadErrors = []
         for marker,originalText in originalBook.lines: # Always process a line behind in case we have to combine lines
-            #print( "After {} {}:{} \\{} '{}'".format( self.BBB, C, V, marker, originalText ) )
+            #print( "After {} {}:{} \\{} {!r}".format( self.BBB, C, V, marker, originalText ) )
 
             # Keep track of where we are for more helpful error messages
             if marker=='c' and originalText: C, V = originalText.split()[0], '0'
@@ -387,7 +387,7 @@ class ESFMBibleBook( BibleBook ):
                 self.addPriorityError( 27, C, V, _("Found \\{} internal marker on new line in file").format( marker ) )
                 if not lastText.endswith(' '): lastText += ' ' # Not always good to add a space, but it's their fault!
                 lastText +=  '\\' + marker + ' ' + text
-                if BibleOrgSysGlobals.verbosityLevel > 3: print( "{} {} {} Appended {}:'{}' to get combined line {}:'{}'".format( self.BBB, C, V, marker, text, lastMarker, lastText ) )
+                if BibleOrgSysGlobals.verbosityLevel > 3: print( "{} {} {} Appended {}:{!r} to get combined line {}:{!r}".format( self.BBB, C, V, marker, text, lastMarker, lastText ) )
             elif BibleOrgSysGlobals.USFMMarkers.isNoteMarker( marker ) \
             or marker.endswith('*') and BibleOrgSysGlobals.USFMMarkers.isNoteMarker( marker[:-1] ): # the line begins with a note marker -- append it to the previous line
                 if text:
@@ -399,7 +399,7 @@ class ESFMBibleBook( BibleBook ):
                 self.addPriorityError( 26, C, V, _("Found \\{} note marker on new line in file").format( marker ) )
                 if not lastText.endswith(' ') and marker!='f': lastText += ' ' # Not always good to add a space, but it's their fault! Don't do it for footnotes, though.
                 lastText +=  '\\' + marker + ' ' + text
-                if BibleOrgSysGlobals.verbosityLevel > 3: print( "{} {} {} Appended {}:'{}' to get combined line {}:'{}'".format( self.BBB, C, V, marker, text, lastMarker, lastText ) )
+                if BibleOrgSysGlobals.verbosityLevel > 3: print( "{} {} {} Appended {}:{!r} to get combined line {}:{!r}".format( self.BBB, C, V, marker, text, lastMarker, lastText ) )
             else: # the line begins with an unknown marker
                 if text:
                     loadErrors.append( _("{} {}:{} Found '\\{}' unknown marker at beginning of line with text: {}").format( self.BBB, C, V, marker, text ) )
@@ -412,8 +412,8 @@ class ESFMBibleBook( BibleBook ):
                     if marker.startswith( tryMarker ): # Let's try changing it
                         if lastMarker: doaddLine( lastMarker, lastText )
                         lastMarker, lastText = tryMarker, marker[len(tryMarker):] + ' ' + text
-                        loadErrors.append( _("{} {}:{} Changed '\\{}' unknown marker to '{}' at beginning of line: {}").format( self.BBB, C, V, marker, tryMarker, text ) )
-                        logging.warning( _("Changed '\\{}' unknown marker to '{}' after {} {}:{} at beginning of line: {}").format( marker, tryMarker, self.BBB, C, V, text ) )
+                        loadErrors.append( _("{} {}:{} Changed '\\{}' unknown marker to {!r} at beginning of line: {}").format( self.BBB, C, V, marker, tryMarker, text ) )
+                        logging.warning( _("Changed '\\{}' unknown marker to {!r} after {} {}:{} at beginning of line: {}").format( marker, tryMarker, self.BBB, C, V, text ) )
                         break
                 # Otherwise, don't bother processing this line -- it'll just cause more problems later on
         if lastMarker: doaddLine( lastMarker, lastText ) # Process the final line
@@ -457,9 +457,9 @@ def demo():
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Loading {} from {}...").format( BBB, filename ) )
         EBB = ESFMBibleBook( name, BBB )
         EBB.load( filename, folder )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "  ID is '{}'".format( EBB.getField( 'id' ) ) )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "  Header is '{}'".format( EBB.getField( 'h' ) ) )
-        if BibleOrgSysGlobals.verbosityLevel > 1: print( "  Main titles are '{}' and '{}'".format( EBB.getField( 'mt1' ), EBB.getField( 'mt2' ) ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "  ID is {!r}".format( EBB.getField( 'id' ) ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "  Header is {!r}".format( EBB.getField( 'h' ) ) )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( "  Main titles are {!r} and {!r}".format( EBB.getField( 'mt1' ), EBB.getField( 'mt2' ) ) )
         #if BibleOrgSysGlobals.verbosityLevel > 0: print( EBB )
         EBB.validateMarkers()
         EBBVersification = EBB.getVersification ()
@@ -486,7 +486,7 @@ def demo():
         #name, testFolder, filename, BBB = "Matigsalug", "../../../../../Data/Work/Matigsalug/Bible/MBTV/", "MBT67REV.SCP", "REV" # You can put your test file here
         if os.access( testFolder, os.R_OK ):
             demoFile( name, filename, testFolder, BBB )
-        else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
+        else: print( "Sorry, test folder {!r} doesn't exist on this computer.".format( testFolder ) )
 
     if 1: # Test a whole folder full of files
         name, testFolder = "Matigsalug", "../../../../../Data/Work/Matigsalug/Bible/MBTV/" # You can put your test folder here
@@ -496,7 +496,7 @@ def demo():
             fileList = USFMFilenames.USFMFilenames( testFolder ).getMaximumPossibleFilenameTuples()
             for BBB,filename in fileList:
                 demoFile( name, filename, testFolder, BBB )
-        else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
+        else: print( "Sorry, test folder {!r} doesn't exist on this computer.".format( testFolder ) )
 # end of demo
 
 if __name__ == '__main__':

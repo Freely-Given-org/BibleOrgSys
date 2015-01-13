@@ -87,7 +87,7 @@ class ISO_639_3_LanguagesConverter:
             if BibleOrgSysGlobals.strictCheckingFlag:
                 self._validate()
         else: # The data must have been already loaded
-            if XMLFilepath is not None and XMLFilepath!=self.__XMLFilepath: logging.error( _("ISO 639-3 language codes are already loaded -- your different filepath of '{}' was ignored").format( XMLFilepath ) )
+            if XMLFilepath is not None and XMLFilepath!=self.__XMLFilepath: logging.error( _("ISO 639-3 language codes are already loaded -- your different filepath of {!r} was ignored").format( XMLFilepath ) )
         return self
     # end of loadAndValidate
 
@@ -100,12 +100,12 @@ class ISO_639_3_LanguagesConverter:
         self.__XMLFilepath = XMLFilepath
         assert( self._XMLtree is None or len(self._XMLtree)==0 ) # Make sure we're not doing this twice
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading ISO 639-3 languages XML file from '{}'...".format( XMLFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading ISO 639-3 languages XML file from {!r}...".format( XMLFilepath ) )
         self._XMLtree = ElementTree().parse( XMLFilepath )
         assert( self._XMLtree ) # Fail here if we didn't load anything at all
 
         if self._XMLtree.tag  != self._treeTag:
-            logging.error( "Expected to load '{}' but got '{}'".format( self._treeTag, self._XMLtree.tag ) )
+            logging.error( "Expected to load {!r} but got {!r}".format( self._treeTag, self._XMLtree.tag ) )
     # end of _load
 
     def _validate( self ):
@@ -128,29 +128,29 @@ class ISO_639_3_LanguagesConverter:
                 for attributeName in self._compulsoryAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is None:
-                        logging.error( "Compulsory '{}' attribute is missing from {} element in record {}".format( attributeName, element.tag, j ) )
+                        logging.error( "Compulsory {!r} attribute is missing from {} element in record {}".format( attributeName, element.tag, j ) )
                     if not attributeValue and attributeName!="type":
-                        logging.warning( "Compulsory '{}' attribute is blank on {} element in record {}".format( attributeName, element.tag, j ) )
+                        logging.warning( "Compulsory {!r} attribute is blank on {} element in record {}".format( attributeName, element.tag, j ) )
 
                 # Check optional attributes on this main element
                 for attributeName in self._optionalAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if not attributeValue:
-                            logging.warning( "Optional '{}' attribute is blank on {} element in record {}".format( attributeName, element.tag, j ) )
+                            logging.warning( "Optional {!r} attribute is blank on {} element in record {}".format( attributeName, element.tag, j ) )
 
                 # Check for unexpected additional attributes on this main element
                 for attributeName in element.keys():
                     attributeValue = element.get( attributeName )
                     if attributeName not in self._compulsoryAttributes and attributeName not in self._optionalAttributes:
-                        logging.warning( "Additional '{}' attribute ('{}') found on {} element in record {}".format( attributeName, attributeValue, element.tag, j ) )
+                        logging.warning( "Additional {!r} attribute ({!r}) found on {} element in record {}".format( attributeName, attributeValue, element.tag, j ) )
 
                 # Check the attributes that must contain unique information (in that particular field -- doesn't check across different attributes)
                 for attributeName in self._uniqueAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None and attributeName!="reference_name":
                         if attributeValue in uniqueDict["Attribute_"+attributeName]:
-                            logging.error( "Found '{}' data repeated in '{}' field on {} element in record {}".format( attributeValue, attributeName, element.tag, j ) )
+                            logging.error( "Found {!r} data repeated in {!r} field on {} element in record {}".format( attributeValue, attributeName, element.tag, j ) )
                         uniqueDict["Attribute_"+attributeName].append( attributeValue )
             else:
                 logging.warning( "Unexpected element: {} in record {}".format( element.tag, j ) )
@@ -301,7 +301,7 @@ class ISO_639_3_LanguagesConverter:
                         elif isinstance( field, str):
                             if j>0 and len(field)==1: result += "'" + field + "'" # Catch the character fields
                             else: result += '"' + str(field).replace('"','\\"') + '"' # String fields
-                        else: logging.error( "Cannot convert unknown field type '{}' in entry '{}'".format( field, entry ) )
+                        else: logging.error( "Cannot convert unknown field type {!r} in entry {!r}".format( field, entry ) )
                 elif isinstance( entry, str):
                     result += '"' + str(entry).replace('"','\\"') + '"' # String fields
                 else:

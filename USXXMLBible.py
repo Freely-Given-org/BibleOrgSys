@@ -80,10 +80,10 @@ def USXXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
-        logging.critical( _("USXXMLBibleFileCheck: Given '{}' folder is unreadable").format( givenFolderName ) )
+        logging.critical( _("USXXMLBibleFileCheck: Given {!r} folder is unreadable").format( givenFolderName ) )
         return False
     if not os.path.isdir( givenFolderName ):
-        logging.critical( _("USXXMLBibleFileCheck: Given '{}' path is not a folder").format( givenFolderName ) )
+        logging.critical( _("USXXMLBibleFileCheck: Given {!r} path is not a folder").format( givenFolderName ) )
         return False
 
     # Find all the files and folders in this folder
@@ -119,7 +119,7 @@ def USXXMLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
-            logging.warning( _("USXXMLBibleFileCheck: '{}' subfolder is unreadable").format( tryFolderName ) )
+            logging.warning( _("USXXMLBibleFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
             continue
         if BibleOrgSysGlobals.verbosityLevel > 3: print( "    USXXMLBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
@@ -173,7 +173,7 @@ class USXXMLBible( Bible ):
 
         # Do a preliminary check on the readability of our folder
         if not os.access( self.givenFolderName, os.R_OK ):
-            logging.error( "USXXMLBible: File '{}' is unreadable".format( self.givenFolderName ) )
+            logging.error( "USXXMLBible: File {!r} is unreadable".format( self.givenFolderName ) )
 
         # Find the filenames of all our books
         self.USXFilenamesObject = USXFilenames( self.givenFolderName )
@@ -217,7 +217,7 @@ class USXXMLBible( Bible ):
         def loadSSFData( ssfFilepath, encoding='utf-8' ):
             """Process the SSF data from the given filepath.
                 Returns a dictionary."""
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading SSF data from '{}'").format( ssfFilepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading SSF data from {!r}").format( ssfFilepath ) )
             lastLine, lineCount, status, settingsDict = '', 0, 0, {}
             with open( ssfFilepath, encoding=encoding ) as myFile: # Automatically closes the file when done
                 for line in myFile:
@@ -246,7 +246,7 @@ class USXXMLBible( Bible ):
                             assert( len(bits)==2 )
                             fieldname = bits[0]
                             attributes = bits[1]
-                            #print( "attributes = '{}'".format( attributes) )
+                            #print( "attributes = {!r}".format( attributes) )
                             settingsDict[fieldname] = (contents, attributes)
                             processed = True
                     elif status==1 and line[0]=='<' and line[-1]=='>':
@@ -263,11 +263,11 @@ class USXXMLBible( Bible ):
                                 assert( len(bits)==2 )
                                 fieldname = bits[0]
                                 attributes = bits[1]
-                                #print( "attributes = '{}'".format( attributes) )
+                                #print( "attributes = {!r}".format( attributes) )
                                 if line[ix2+2:-1]==fieldname:
                                     settingsDict[fieldname] = (contents, attributes)
                                     processed = True
-                    if not processed: logging.error( "Unexpected '{}' line in SSF file".format( line ) )
+                    if not processed: logging.error( "Unexpected {!r} line in SSF file".format( line ) )
             if BibleOrgSysGlobals.verbosityLevel > 2:
                 print( "  " + _("Got {} SSF entries:").format( len(settingsDict) ) )
                 if BibleOrgSysGlobals.verbosityLevel > 3:
@@ -285,10 +285,10 @@ class USXXMLBible( Bible ):
             somepath = os.path.join( self.givenFolderName, something )
             if os.path.isdir( somepath ): foundFolders.append( something )
             elif os.path.isfile( somepath ): foundFiles.append( something )
-            else: logging.error( "Not sure what '{}' is in {}!".format( somepath, self.givenFolderName ) )
-        if foundFolders: logging.info( "USXXMLBible.load: Surprised to see subfolders in '{}': {}".format( self.givenFolderName, foundFolders ) )
+            else: logging.error( "Not sure what {!r} is in {}!".format( somepath, self.givenFolderName ) )
+        if foundFolders: logging.info( "USXXMLBible.load: Surprised to see subfolders in {!r}: {}".format( self.givenFolderName, foundFolders ) )
         if not foundFiles:
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( "USXXMLBible.load: Couldn't find any files in '{}'".format( self.givenFolderName ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( "USXXMLBible.load: Couldn't find any files in {!r}".format( self.givenFolderName ) )
             return # No use continuing
 
         if 0: # We don't have a getSSFFilenames function
@@ -338,7 +338,7 @@ class USXXMLBible( Bible ):
 
         if not self.books: # Didn't successfully load any regularly named books -- maybe the files have weird names??? -- try to be intelligent here
             if BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "USXXMLBible.load: Didn't find any regularly named USX files in '{}'".format( self.givenFolderName ) )
+                print( "USXXMLBible.load: Didn't find any regularly named USX files in {!r}".format( self.givenFolderName ) )
             for thisFilename in foundFiles:
                 # Look for BBB in the ID line (which should be the first line in a USX file)
                 isUSX = False
@@ -347,9 +347,9 @@ class USXXMLBible( Bible ):
                     for line in possibleUSXFile:
                         if line.startswith( '\\id ' ):
                             USXId = line[4:].strip()[:3] # Take the first three non-blank characters after the space after id
-                            if BibleOrgSysGlobals.verbosityLevel > 2: print( "Have possible USX ID '{}'".format( USXId ) )
+                            if BibleOrgSysGlobals.verbosityLevel > 2: print( "Have possible USX ID {!r}".format( USXId ) )
                             BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USXId )
-                            if BibleOrgSysGlobals.verbosityLevel > 2: print( "BBB is '{}'".format( BBB ) )
+                            if BibleOrgSysGlobals.verbosityLevel > 2: print( "BBB is {!r}".format( BBB ) )
                             isUSX = True
                         break # We only look at the first line
                 if isUSX:
@@ -397,8 +397,8 @@ def demo():
             #print( UB.getAddedUnits () )
             #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
                 ##print( "Looking for", ref )
-                #print( "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )
-        else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
+                #print( "Tried finding {!r} in {!r}: got {!r}".format( ref, name, UB.getXRefBBB( ref ) ) )
+        else: print( "Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
 
     #if BibleOrgSysGlobals.commandLineOptions.export:
     #    if BibleOrgSysGlobals.verbosityLevel > 0: print( "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( ProgName, ProgVersion ) )

@@ -114,7 +114,7 @@ def CSVBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
                 if firstLine is None: continue # seems we couldn't decode the file
                 if not firstLine.startswith( '"Book","Chapter","Verse",' ) and not firstLine.startswith( '"1","1","1",') \
                 and not firstLine.startswith( 'Book,Chapter,Verse,' ) and not firstLine.startswith( '1,1,1,'):
-                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "CSVBibleFileCheck: (unexpected) first line was '{}' in {}".format( firstLine, thisFilename ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "CSVBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
                     continue
             lastFilenameFound = thisFilename
             numFound += 1
@@ -133,7 +133,7 @@ def CSVBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
-            logging.warning( _("CSVBibleFileCheck: '{}' subfolder is unreadable").format( tryFolderName ) )
+            logging.warning( _("CSVBibleFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
             continue
         if BibleOrgSysGlobals.verbosityLevel > 3: print( "    CSVBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
@@ -157,7 +157,7 @@ def CSVBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
                     firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName )
                     if firstLine is None: continue # seems we couldn't decode the file
                     if not firstLine.startswith( "Ge 1:1 " ):
-                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "CSVBibleFileCheck: (unexpected) first line was '{}' in {}".format( firstLine, thisFilename ) )
+                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "CSVBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
                         if debuggingThisModule: halt
                         continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
@@ -194,7 +194,7 @@ class CSVBible( Bible ):
 
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):
-            logging.critical( _("CSVBible: File '{}' is unreadable").format( self.sourceFilepath ) )
+            logging.critical( _("CSVBible: File {!r} is unreadable").format( self.sourceFilepath ) )
 
         self.name = self.givenName
         #if self.name is None:
@@ -339,7 +339,7 @@ def testCSV( CSVfolder ):
     import VerseReferences
 
     if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the CSV Bible class...") )
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is '{}'".format( CSVfolder ) )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is {!r}".format( CSVfolder ) )
     vb = CSVBible( CSVfolder, "demo" )
     vb.load() # Load and process the file
     if BibleOrgSysGlobals.verbosityLevel > 1: print( vb ) # Just print a summary

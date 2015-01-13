@@ -117,9 +117,9 @@ class BibleBooksNamesConverter:
                                 else:
                                     logging.warning( _("Missing work element in header") )
                         else:
-                            logging.warning( _("Missing header element (looking for '{}' tag)").format( headerTag ) )
+                            logging.warning( _("Missing header element (looking for {!r} tag)").format( headerTag ) )
                     else:
-                        logging.error( _("Expected to load '{}' but got '{}'").format( self.treeTag, self.__XMLSystems[booksNamesSystemCode]["tree"].tag ) )
+                        logging.error( _("Expected to load {!r} but got {!r}").format( self.treeTag, self.__XMLSystems[booksNamesSystemCode]["tree"].tag ) )
                     bookCount = 0 # There must be an easier way to do this
                     for subelement in self.__XMLSystems[booksNamesSystemCode]["tree"]:
                         bookCount += 1
@@ -138,9 +138,9 @@ class BibleBooksNamesConverter:
         assert( self.__XMLSystems[systemName]["tree"] )
 
         if len(self.__XMLSystems[systemName]["languageCode"]) != 3:
-            logging.error( _("Couldn't find 3-letter language code in '{}' book names system").format( systemName ) )
+            logging.error( _("Couldn't find 3-letter language code in {!r} book names system").format( systemName ) )
         if self.__ISOLanguages and not self.__ISOLanguages.isValidLanguageCode( self.__XMLSystems[systemName]["languageCode"] ): # Check that we have a valid language code
-            logging.error( _("Unrecognized '{}' ISO-639-3 language code in '{}' book names system").format( self.__XMLSystems[systemName]["languageCode"], systemName ) )
+            logging.error( _("Unrecognized {!r} ISO-639-3 language code in {!r} book names system").format( self.__XMLSystems[systemName]["languageCode"], systemName ) )
 
         uniqueDict = {}
         for index in range( 0, len(self.mainElementTags) ):
@@ -161,48 +161,48 @@ class BibleBooksNamesConverter:
                 for attributeName in self.compulsoryAttributes[index]:
                     attributeValue = element.get( attributeName )
                     if attributeValue is None:
-                        logging.error( _("Compulsory '{}' attribute is missing from {} element in record {} in {}").format( attributeName, element.tag, k, systemName ) )
+                        logging.error( _("Compulsory {!r} attribute is missing from {} element in record {} in {}").format( attributeName, element.tag, k, systemName ) )
                     if not attributeValue:
-                        logging.warning( _("Compulsory '{}' attribute is blank on {} element in record {} in {}").format( attributeName, element.tag, k, systemName ) )
+                        logging.warning( _("Compulsory {!r} attribute is blank on {} element in record {} in {}").format( attributeName, element.tag, k, systemName ) )
 
                 # Check optional attributes on this main element
                 for attributeName in self.optionalAttributes[index]:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if not attributeValue:
-                            logging.warning( _("Optional '{}' attribute is blank on {} element in record {} in {}").format( attributeName, element.tag, k, systemName ) )
+                            logging.warning( _("Optional {!r} attribute is blank on {} element in record {} in {}").format( attributeName, element.tag, k, systemName ) )
 
                 # Check for unexpected additional attributes on this main element
                 for attributeName in element.keys():
                     attributeValue = element.get( attributeName )
                     if attributeName not in self.compulsoryAttributes[index] and attributeName not in self.optionalAttributes[index]:
-                        logging.warning( _("Additional '{}' attribute ('{}') found on {} element in record {} in {}").format( attributeName, attributeValue, element.tag, k, systemName ) )
+                        logging.warning( _("Additional {!r} attribute ({!r}) found on {} element in record {} in {}").format( attributeName, attributeValue, element.tag, k, systemName ) )
 
                 # Check the attributes that must contain unique information (in that particular field -- doesn't check across different attributes)
                 for attributeName in self.uniqueAttributes[index]:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if attributeValue in uniqueDict["Attribute_"+str(index)+"_"+attributeName]:
-                            logging.error( _("Found '{}' data repeated in '{}' field on {} element in record {} in {}").format( attributeValue, attributeName, element.tag, k, systemName ) )
+                            logging.error( _("Found {!r} data repeated in {!r} field on {} element in record {} in {}").format( attributeValue, attributeName, element.tag, k, systemName ) )
                         uniqueDict["Attribute_"+str(index)+"_"+attributeName].append( attributeValue )
 
                 # Check compulsory elements
                 for elementName in self.compulsoryElements[index]:
                     if element.find( elementName ) is None:
-                        logging.error( _("Compulsory '{}' element is missing (record {}) in {}").format( elementName, k, systemName ) )
+                        logging.error( _("Compulsory {!r} element is missing (record {}) in {}").format( elementName, k, systemName ) )
                     if not element.find( elementName ).text:
-                        logging.warning( _("Compulsory '{}' element is blank (record {}) in {}").format( elementName, k, systemName ) )
+                        logging.warning( _("Compulsory {!r} element is blank (record {}) in {}").format( elementName, k, systemName ) )
 
                 # Check optional elements
                 for elementName in self.optionalElements[index]:
                     if element.find( elementName ) is not None:
                         if not element.find( elementName ).text:
-                            logging.warning( _("Optional '{}' element is blank (record {}) in {}").format( elementName, k, systemName ) )
+                            logging.warning( _("Optional {!r} element is blank (record {}) in {}").format( elementName, k, systemName ) )
 
                 # Check for unexpected additional elements
                 for subelement in element:
                     if subelement.tag not in self.compulsoryElements[index] and subelement.tag not in self.optionalElements[index]:
-                        logging.warning( _("Additional '{}' element ('{}') found (record {}) in {} {}").format( subelement.tag, subelement.text, k, systemName, element.tag ) )
+                        logging.warning( _("Additional {!r} element ({!r}) found (record {}) in {} {}").format( subelement.tag, subelement.text, k, systemName, element.tag ) )
 
                 # Check the elements that must contain unique information (in that particular element -- doesn't check across different elements)
                 for elementName in self.uniqueElements[index]:
@@ -210,7 +210,7 @@ class BibleBooksNamesConverter:
                         text = element.find( elementName ).text
                         if text in uniqueDict["Element_"+str(index)+"_"+elementName]:
                             myLogging = logging.info if element.tag == 'BibleDivisionNames' else logging.error
-                            myLogging( _("Found '{}' data repeated in '{}' element (record {}) in {}").format( text, elementName, k, systemName ) )
+                            myLogging( _("Found {!r} data repeated in {!r} element (record {}) in {}").format( text, elementName, k, systemName ) )
                         uniqueDict["Element_"+str(index)+"_"+elementName].append( text )
             else:
                 logging.warning( _("Unexpected element: {} in record {} in {}").format( element.tag, k, systemName ) )
@@ -274,7 +274,7 @@ class BibleBooksNamesConverter:
 
         if bookList is not None:
             for BBB in bookList: # Just check this list is valid
-                if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): logging.error( _("Invalid '{}' in booklist requested for expansion").format(BBB) )
+                if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): logging.error( _("Invalid {!r} in booklist requested for expansion").format(BBB) )
 
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Expanding input abbreviations...") )
         for systemName in self.__BookNamesSystemsDict:
@@ -312,15 +312,15 @@ class BibleBooksNamesConverter:
                         inputFields.append( defaultAbbreviation )
                     for subelement in element.findall("inputAbbreviation"):
                         if subelement.text in inputFields:
-                            logging.warning( _("Superfluous '{}' entry in inputAbbreviation field for {} division in '{}' booksNames system").format( subelement.text, defaultName, booksNamesSystemCode ) )
+                            logging.warning( _("Superfluous {!r} entry in inputAbbreviation field for {} division in {!r} booksNames system").format( subelement.text, defaultName, booksNamesSystemCode ) )
                         else: inputFields.append( subelement.text )
                     includedBooks = []
                     for subelement in element.findall("includesBook"):
                         BBB = subelement.text
                         if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ):
-                            logging.error( _("Unrecognized '{}' book abbreviation in BibleDivisionNames in '{}' booksNames system").format( BBB, booksNamesSystemCode ) )
+                            logging.error( _("Unrecognized {!r} book abbreviation in BibleDivisionNames in {!r} booksNames system").format( BBB, booksNamesSystemCode ) )
                         if BBB in includedBooks:
-                            logging.error( _("Duplicate '{}' entry in includesBook field for '{}' division in '{}' booksNames system").format( subelement.text, defaultName, booksNamesSystemCode ) )
+                            logging.error( _("Duplicate {!r} entry in includesBook field for {!r} division in {!r} booksNames system").format( subelement.text, defaultName, booksNamesSystemCode ) )
                         else: includedBooks.append( BBB )
                     myDivisionsNamesDict[standardAbbreviation] = {"includedBooks":includedBooks, "defaultName":defaultName, "defaultAbbreviation":defaultAbbreviation, "inputFields":inputFields }
                 elif element.tag == "BibleBooknameLeaders":
@@ -329,20 +329,20 @@ class BibleBooksNamesConverter:
                     for subelement in element.findall("inputAbbreviation"):
                         adjField = subelement.text + ' '
                         if adjField in inputFields:
-                            logging.error( _("Duplicate '{}' entry in inputAbbreviation field for '{}' bookname leaders in '{}' booksNames system").format( subelement.text, standardLeader, booksNamesSystemCode ) )
+                            logging.error( _("Duplicate {!r} entry in inputAbbreviation field for {!r} bookname leaders in {!r} booksNames system").format( subelement.text, standardLeader, booksNamesSystemCode ) )
                         else: inputFields.append( adjField )
                     myBooknameLeadersDict[standardLeader+' '] = inputFields
                 elif element.tag == "BibleBookNames":
                     referenceAbbreviation = element.get("referenceAbbreviation")
                     if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( referenceAbbreviation ):
-                        logging.error( _("Unrecognized '{}' book abbreviation in BibleBookNames in '{}' booksNames system").format( referenceAbbreviation, booksNamesSystemCode ) )
+                        logging.error( _("Unrecognized {!r} book abbreviation in BibleBookNames in {!r} booksNames system").format( referenceAbbreviation, booksNamesSystemCode ) )
                     defaultName = element.find("defaultName").text
                     defaultAbbreviation = element.find("defaultAbbreviation").text
                     inputFields = [ defaultName ] # Add the default name to the allowed input fields
                     if defaultAbbreviation != defaultName: inputFields.append( defaultAbbreviation ) # Automatically add the default abbreviation if it's different
                     for subelement in element.findall("inputAbbreviation"):
                         if subelement.text in inputFields:
-                            logging.info( _("Superfluous '{}' entry in inputAbbreviation field for {} book in '{}' booksNames system").format( subelement.text, defaultName, booksNamesSystemCode ) )
+                            logging.info( _("Superfluous {!r} entry in inputAbbreviation field for {} book in {!r} booksNames system").format( subelement.text, defaultName, booksNamesSystemCode ) )
                         else: inputFields.append( subelement.text )
                     myBookNamesDict[referenceAbbreviation] = { "defaultName":defaultName, "defaultAbbreviation":defaultAbbreviation, "inputFields":inputFields }
 
@@ -526,7 +526,7 @@ class BibleBooksNamesConverter:
                     if field is None: result += '""'
                     elif isinstance( field, str): result += '"' + str(field).replace('"','\\"') + '"'
                     elif isinstance( field, int): result += str(field)
-                    else: logging.error( _("Cannot convert unknown field type '{}' in entry '{}'").format( field, entry ) )
+                    else: logging.error( _("Cannot convert unknown field type {!r} in entry {!r}").format( field, entry ) )
                 return result
 
             theFile.write( "static struct {} {}[] = {\n  // Fields are {}\n".format( structName, dictName, fieldsComment ) )

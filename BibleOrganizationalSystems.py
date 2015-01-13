@@ -97,7 +97,7 @@ class BibleOrganizationalSystems:
                     result = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
             else: # We have to load the XML (much slower)
                 from BibleOrganizationalSystemsConverter import BibleOrganizationalSystemsConverter
-                if XMLFilepath is not None: logging.warning( _("Bible organisational systems are already loaded -- your given filepath of '{}' was ignored").format(XMLFilepath) )
+                if XMLFilepath is not None: logging.warning( _("Bible organisational systems are already loaded -- your given filepath of {!r} was ignored").format(XMLFilepath) )
                 bosc = BibleOrganizationalSystemsConverter()
                 bosc.loadAndValidate( XMLFilepath ) # Load the XML (if not done already)
                 result = bosc.importDataToPython() # Get the various dictionaries organised for quick lookup
@@ -170,7 +170,7 @@ class BibleOrganizationalSystems:
                 x = systemName + '_' + possibleType
                 if x in self.__dataDict: return self.__dataDict[x]
         # else
-        logging.error( _("No '{}' system in Bible Organisational Systems").format( systemName ) )
+        logging.error( _("No {!r} system in Bible Organisational Systems").format( systemName ) )
         if BibleOrgSysGlobals.verbosityLevel>2: logging.error( _("Available systems are {}").format( self.getAvailableOrganizationalSystemNames( extended=True ) ) )
     # end of BibleOrganizationalSystems.getOrganizationalSystem
 
@@ -240,9 +240,9 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
                 if 'derivedFrom' in self.__dataDict:
                     trySystemName = self.__dataDict['derivedFrom']
                     if isinstance( trySystemName, str ):
-                        if BibleOrgSysGlobals.debugFlag: print( "trySystemName for 'derivedFrom' is a string: '{}'".format( trySystemName ) )
+                        if BibleOrgSysGlobals.debugFlag: print( "trySystemName for 'derivedFrom' is a string: {!r}".format( trySystemName ) )
                     elif isinstance( trySystemName, list ):
-                        #print( "trySystemName for 'derivedFrom' is a list: '{}'".format( trySystemName ) )
+                        #print( "trySystemName for 'derivedFrom' is a list: {!r}".format( trySystemName ) )
                         trySystemName = trySystemName[0] # Take the first string from the list
                     #print( "q3", "{} is trying derivedFrom of {}".format(self.__systemName,trySystemName) )
                     result = self.__boss.getOrganizationalSystemValue( trySystemName, valueName )
@@ -281,7 +281,7 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         if myBooks is not None:
             for BBB in myBooks:
                 if not BibleBookOrderSystem.containsBook( self, BBB ):
-                    logging.error( _("Book '{}' is included in {} system but missing from {} book order system").format( BBB, self.__systemName, BibleBookOrderSystem.getBookOrderSystemName( self ) ) )
+                    logging.error( _("Book {!r} is included in {} system but missing from {} book order system").format( BBB, self.__systemName, BibleBookOrderSystem.getBookOrderSystemName( self ) ) )
     # end of BibleOrganizationalSystem.__init__
 
 
@@ -337,9 +337,9 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
             if 'usesText' in self.__dataDict:
                 for trySystemName in self.__dataDict['usesText']:
                     if isinstance( trySystemName, str ):
-                        if BibleOrgSysGlobals.debugFlag: print( "trySystemName for 'usesText' is a string: '{}'".format( trySystemName ) )
+                        if BibleOrgSysGlobals.debugFlag: print( "trySystemName for 'usesText' is a string: {!r}".format( trySystemName ) )
                     elif isinstance( trySystemName, list ):
-                        #print( "trySystemName for 'usesText' is a list: '{}'".format( trySystemName ) )
+                        #print( "trySystemName for 'usesText' is a list: {!r}".format( trySystemName ) )
                         trySystemName = trySystemName[0] # Take the first string from the list
                     #print( "q1", "{} is trying usesText of {}".format(self.__systemName,trySystemName) )
                     result = self.__boss.getOrganizationalSystemValue( trySystemName, valueName )
@@ -347,9 +347,9 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
             if 'derivedFrom' in self.__dataDict:
                 trySystemName = self.__dataDict['derivedFrom']
                 if isinstance( trySystemName, str ):
-                    if BibleOrgSysGlobals.debugFlag: print( "trySystemName for 'derivedFrom' is a string: '{}'".format( trySystemName ) )
+                    if BibleOrgSysGlobals.debugFlag: print( "trySystemName for 'derivedFrom' is a string: {!r}".format( trySystemName ) )
                 elif isinstance( trySystemName, list ):
-                    #print( "trySystemName for 'derivedFrom' is a list: '{}'".format( trySystemName ) )
+                    #print( "trySystemName for 'derivedFrom' is a list: {!r}".format( trySystemName ) )
                     trySystemName = trySystemName[0] # Take the first string from the list
                 #print( "q2", "{} is trying derivedFrom of {}".format(self.__systemName,trySystemName) )
                 result = self.__boss.getOrganizationalSystemValue( trySystemName, valueName )
@@ -426,7 +426,7 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         assert( not S or len(S)==1 and S.isalpha() ) # Suffix should be only one lower-case letter if anything
         if BBB and BibleBookOrderSystem.containsBook( self, BBB ):
             return BibleVersificationSystem.isValidBCVRef( self, referenceTuple, referenceString, extended=extended )
-        logging.error( _("{} {}:{} is invalid book for reference '{}' in {} versification system for {}").format(BBB,C,V,referenceString, self.getBookOrderSystemName(),self.getOrganizationalSystemName()) )
+        logging.error( _("{} {}:{} is invalid book for reference {!r} in {} versification system for {}").format(BBB,C,V,referenceString, self.getBookOrderSystemName(),self.getOrganizationalSystemName()) )
         return False
     # end of BibleOrganizationalSystem.isValidBCVRef
 # end of BibleOrganizationalSystem class
@@ -447,7 +447,7 @@ def demo():
 
     if 1: # Demo a BibleOrganizationalSystem object -- this is the one most likely to be wanted by a user
         for testString in ( 'NIV', 'KJV-1611_edition', 'KJV-1638', ):
-            print( "\nTrying: '{}'".format( testString ) )
+            print( "\nTrying: {!r}".format( testString ) )
             bos = BibleOrganizationalSystem( testString )
             print( 'bos', bos ) # Just print a summary
             print( "First book", bos.getFirstBookCode() )
@@ -455,9 +455,9 @@ def demo():
             #print( "Book list ({} entries) is {}".format( len(bos.getBookList()), bos.getBookList() ) )
             print( "This type is {}. More basic types are: {}".format(bos.getOrganizationalSystemType(),bos.getMoreBasicTypes()) )
             #for test in ('GEN','Gen','MAT','Mat','Mt1','JUD','Jud','JDE', 'TOB', ):
-            #    print( "Contains '{}': {}".format(test, bos.containsBook(test) ) )
+            #    print( "Contains {!r}: {}".format(test, bos.containsBook(test) ) )
             #for test in ('GEN','Gen','MAT','Mat','Mt1','JUD','Jud','Jde', 'Ma1', ):
-            #    print( "'{}' gives {}".format(test,bos.getBBB(test) ) )
+            #    print( "{!r} gives {}".format(test,bos.getBBB(test) ) )
 # end of demo
 
 if __name__ == '__main__':

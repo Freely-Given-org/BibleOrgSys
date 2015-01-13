@@ -99,10 +99,10 @@ def YETBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
-        logging.critical( _("YETBibleFileCheck: Given '{}' folder is unreadable").format( givenFolderName ) )
+        logging.critical( _("YETBibleFileCheck: Given {!r} folder is unreadable").format( givenFolderName ) )
         return False
     if not os.path.isdir( givenFolderName ):
-        logging.critical( _("YETBibleFileCheck: Given '{}' path is not a folder").format( givenFolderName ) )
+        logging.critical( _("YETBibleFileCheck: Given {!r} path is not a folder").format( givenFolderName ) )
         return False
 
     # Find all the files and folders in this folder
@@ -127,7 +127,7 @@ def YETBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
             if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                 firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName )
                 if not firstLine.startswith( "info\t"):
-                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "YETBible (unexpected) first line was '{}' in {}".format( firstLine, thisFilename ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "YETBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
                     continue
             lastFilenameFound = thisFilename
             numFound += 1
@@ -145,7 +145,7 @@ def YETBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
-            logging.warning( _("YETBibleFileCheck: '{}' subfolder is unreadable").format( tryFolderName ) )
+            logging.warning( _("YETBibleFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
             continue
         if BibleOrgSysGlobals.verbosityLevel > 3: print( "    YETBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
@@ -164,7 +164,7 @@ def YETBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
                 if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                     firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName )
                     if not firstLine.startswith( "info\t"):
-                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "YETBible (unexpected) first line was '{}' in {}".format( firstLine, thisFilname ) ); halt
+                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "YETBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilname ) ); halt
                         continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
                 lastFilenameFound = thisFilename
@@ -200,7 +200,7 @@ class YETBible( Bible ):
 
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):
-            logging.critical( _("YETBible: File '{}' is unreadable").format( self.sourceFilepath ) )
+            logging.critical( _("YETBible: File {!r} is unreadable").format( self.sourceFilepath ) )
 
         self.name = self.givenName
         #if self.name is None:
@@ -465,7 +465,7 @@ def testYB( TUBfilename ):
     TUBfolder = "../../../../../Data/Work/Bibles/YET modules/" # Must be the same as below
 
     if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the YET Bible class...") )
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is '{}' '{}'".format( TUBfolder, TUBfilename ) )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is {!r} {!r}".format( TUBfolder, TUBfilename ) )
     yb = YETBible( TUBfolder, TUBfilename )
     yb.load() # Load and process the file
     if BibleOrgSysGlobals.verbosityLevel > 1: print( yb ) # Just print a summary

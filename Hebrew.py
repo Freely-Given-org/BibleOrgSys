@@ -187,9 +187,9 @@ class Hebrew():
         @rtype: string
         """
         result = "Hebrew object"
-        result += ('\n' if result else '') + "  " + _("Original = '{}'").format( self.originalText )
+        result += ('\n' if result else '') + "  " + _("Original = {!r}").format( self.originalText )
         if self.currentText != self.originalText:
-            result += ('\n' if result else '') + "  " + _("Current  = '{}'").format( self.currentText )
+            result += ('\n' if result else '') + "  " + _("Current  = {!r}").format( self.currentText )
         return result
     # end of Hebrew.__str__
 
@@ -200,7 +200,7 @@ class Hebrew():
         def printUnicodeInfo( text, description ):
             print( "{}:".format( description ) )
             for j,char in enumerate(text):
-                print( "{:2} {:04x} {} '{}'   (cat={} bid={} comb={} mirr={})" \
+                print( "{:2} {:04x} {} {!r}   (cat={} bid={} comb={} mirr={})" \
                     .format(j, ord(char), unicodedata.name(char), char, unicodedata.category(char), unicodedata.bidirectional(char), unicodedata.combining(char), unicodedata.mirrored(char) ) )
     # end of Hebrew.printUnicodeData
 
@@ -213,12 +213,12 @@ class Hebrew():
         this = ( ' ', '־', )
         for j,letter in enumerate(text):
             if letter not in consonants and letter not in this:
-                print( "Found unexpected '{}' ({}) non-consonant at index {} in '{}'".format( letter, unicodedata.name(letter), j, text ) )
+                print( "Found unexpected {!r} ({}) non-consonant at index {} in {!r}".format( letter, unicodedata.name(letter), j, text ) )
                 haveError = True
             if letter in finalConsonants and j<textLength-1:
                 nextLetter = text[j+1]
                 if nextLetter not in this:
-                    print( "Found unexpected '{}' ({}) final consonant before '{}' ({}) at index {} in '{}'".format( letter, unicodedata.name(letter), nextLetter, unicodedata.name(nextLetter), j, text ) )
+                    print( "Found unexpected {!r} ({}) final consonant before {!r} ({}) at index {} in {!r}".format( letter, unicodedata.name(letter), nextLetter, unicodedata.name(nextLetter), j, text ) )
                     haveError = True
         return haveError
     # end of Hebrew.verifyConsonantsOnly
@@ -245,18 +245,18 @@ class Hebrew():
                 nextMark = text[j+1] if j<textLength-1 else ''
                 if previousMark in ( patah, segol ) or nextMark in (): # Assume it's a vowel point meteg
                     if asVowel:
-                        print( "Deleting (vowel point) meteg after '{}' ({}) and before '{}' ({})".format( previousMark, unicodedata.name(previousMark), nextMark, unicodedata.name(nextMark) ) )
+                        print( "Deleting (vowel point) meteg after {!r} ({}) and before {!r} ({})".format( previousMark, unicodedata.name(previousMark), nextMark, unicodedata.name(nextMark) ) )
                         text = text[:j] + text[j+1:]
                         madeChanges = True
                         break
-                    else: print( "Ignoring (vowel point) meteg/siluq after '{}' ({}) and before '{}' ({})".format( previousMark, unicodedata.name(previousMark), nextMark, unicodedata.name(nextMark) ) )
+                    else: print( "Ignoring (vowel point) meteg/siluq after {!r} ({}) and before {!r} ({})".format( previousMark, unicodedata.name(previousMark), nextMark, unicodedata.name(nextMark) ) )
                 else: # it doesn't appear to be a vowel point meteg
                     if not asVowel:
-                        print( "Deleting (cantillation mark) siluq after '{}' ({}) and before '{}' ({})".format( previousMark, unicodedata.name(previousMark), nextMark, unicodedata.name(nextMark) ) )
+                        print( "Deleting (cantillation mark) siluq after {!r} ({}) and before {!r} ({})".format( previousMark, unicodedata.name(previousMark), nextMark, unicodedata.name(nextMark) ) )
                         text = text[:j] + text[j+1:]
                         madeChanges = True
                         break
-                    else: print( "Ignoring (cantillation mark) meteg/siluq after '{}' ({}) and before '{}' ({})".format( previousMark, unicodedata.name(previousMark), nextMark, unicodedata.name(nextMark) ) )
+                    else: print( "Ignoring (cantillation mark) meteg/siluq after {!r} ({}) and before {!r} ({})".format( previousMark, unicodedata.name(previousMark), nextMark, unicodedata.name(nextMark) ) )
             if not madeChanges: break # Check for another meteg if we made any changes
         return text
     # end of Hebrew._removeMetegOrSiluq

@@ -111,10 +111,10 @@ def DrupalBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
-        logging.critical( _("DrupalBibleFileCheck: Given '{}' folder is unreadable").format( givenFolderName ) )
+        logging.critical( _("DrupalBibleFileCheck: Given {!r} folder is unreadable").format( givenFolderName ) )
         return False
     if not os.path.isdir( givenFolderName ):
-        logging.critical( _("DrupalBibleFileCheck: Given '{}' path is not a folder").format( givenFolderName ) )
+        logging.critical( _("DrupalBibleFileCheck: Given {!r} path is not a folder").format( givenFolderName ) )
         return False
 
     # Find all the files and folders in this folder
@@ -139,7 +139,7 @@ def DrupalBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
             if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                 firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName )
                 if ( not firstLine.startswith( '\ufeff*Bible' ) ) and ( not firstLine.startswith( "*Bible" ) ):
-                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "DrupalBible (unexpected) first line was '{}' in {}".format( firstLine, thisFilename ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "DrupalBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
                     continue
             lastFilenameFound = thisFilename
             numFound += 1
@@ -157,7 +157,7 @@ def DrupalBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
-            logging.warning( _("DrupalBibleFileCheck: '{}' subfolder is unreadable").format( tryFolderName ) )
+            logging.warning( _("DrupalBibleFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
             continue
         if BibleOrgSysGlobals.verbosityLevel > 3: print( "    DrupalBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
@@ -176,7 +176,7 @@ def DrupalBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, aut
                 if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                     firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName )
                     if ( not firstLine.startswith( '\ufeff*Bible' ) ) and ( not firstLine.startswith( "*Bible" ) ):
-                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "DrupalBible (unexpected) first line was '{}' in {}".format( firstLine, thisFilname ) ); halt
+                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "DrupalBible (unexpected) first line was {!r} in {}".format( firstLine, thisFilname ) ); halt
                         continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
                 lastFilenameFound = thisFilename
@@ -212,7 +212,7 @@ class DrupalBible( Bible ):
 
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):
-            logging.critical( _("DrupalBible: File '{}' is unreadable").format( self.sourceFilepath ) )
+            logging.critical( _("DrupalBible: File {!r} is unreadable").format( self.sourceFilepath ) )
 
         self.name = self.givenName
         #if self.name is None:
@@ -300,7 +300,7 @@ def testDB( TUBfilename ):
     TUBfolder = "Tests/DataFilesForTests/DrupalTest/" # Must be the same as below
 
     if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the DrupalBible Bible class...") )
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is '{}' '{}'".format( TUBfolder, TUBfilename ) )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is {!r} {!r}".format( TUBfolder, TUBfilename ) )
     db = DrupalBible( TUBfolder, TUBfilename )
     db.load() # Load and process the file
     if BibleOrgSysGlobals.verbosityLevel > 1: print( db ) # Just print a summary

@@ -95,7 +95,7 @@ class GreekNT( Bible ):
                     if os.access( thisFilepath, os.R_OK ): # we can read that file
                         self.possibleFilenames.append( filename )
         elif not os.access( self.sourceFilepath, os.R_OK ):
-            logging.critical( "GreekNT: File '{}' is unreadable".format( self.sourceFilepath ) )
+            logging.critical( "GreekNT: File {!r} is unreadable".format( self.sourceFilepath ) )
             return # No use continuing
         #print( self.possibleFilenames ); halt
 

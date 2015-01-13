@@ -103,7 +103,7 @@ class BibleBookOrderSystems:
                     self.__DataLists = pickle.load( pickleFile )
             else: # We have to load the XML (much slower)
                 from BibleBookOrdersConverter import BibleBookOrdersConverter
-                if XMLFolder is not None: logging.warning( _("Bible book orders are already loaded -- your given folder of '{}' was ignored").format(XMLFolder) )
+                if XMLFolder is not None: logging.warning( _("Bible book orders are already loaded -- your given folder of {!r} was ignored").format(XMLFolder) )
                 bboc = BibleBookOrdersConverter()
                 bboc.loadSystems( XMLFolder ) # Load the XML (if not done already)
                 self.__DataDicts, self.__DataLists = bboc.importDataToPython() # Get the various dictionaries organised for quick lookup
@@ -151,7 +151,7 @@ class BibleBookOrderSystems:
         if systemName in self.__DataDicts:
             return self.__DataDicts[systemName][0], self.__DataDicts[systemName][1], self.__DataLists[systemName]
         # else
-        logging.error( _("No '{}' system in Bible Book Orders").format( systemName ) )
+        logging.error( _("No {!r} system in Bible Book Orders").format( systemName ) )
         if BibleOrgSysGlobals.verbosityLevel > 2: logging.error( _("Available systems are {}").format( self.getAvailableBookOrderSystemNames() ) )
     # end of BibleBookOrderSystems.getBookOrderSystem
 
@@ -185,13 +185,13 @@ class BibleBookOrderSystems:
         assert( self.__DataLists )
         #print( thisSystemName, bookOrderSchemeToCheck )
         for BBB in bookOrderSchemeToCheck:
-            if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): logging.error( "Invalid '{}' book code".format( BBB ) )
+            if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ): logging.error( "Invalid {!r} book code".format( BBB ) )
 
         matchedBookOrderSystemCodes = []
         exactMatchCount, subsetMatchCount, systemMismatchCount, allErrors, errorSummary = 0, 0, 0, '', ''
         for bookOrderSystemCode in self.__DataLists: # Step through the various reference schemes
             if self.__DataLists[bookOrderSystemCode] == bookOrderSchemeToCheck:
-                #print( "  {} exactly matches '{}' book order system".format( thisSystemName, bookOrderSystemCode ) )
+                #print( "  {} exactly matches {!r} book order system".format( thisSystemName, bookOrderSystemCode ) )
                 exactMatchCount += 1
                 matchedBookOrderSystemCodes.append( bookOrderSystemCode )
             else: # it's not an exact match
@@ -221,7 +221,7 @@ class BibleBookOrderSystems:
                         break
                     lastIndex = index
                 if isSubset:
-                    #print( "  {} is a subset of '{}' book order system".format( thisSystemName, bookOrderSystemCode ) )
+                    #print( "  {} is a subset of {!r} book order system".format( thisSystemName, bookOrderSystemCode ) )
                     subsetMatchCount += 1
                     matchedBookOrderSystemCodes.append( bookOrderSystemCode )
 

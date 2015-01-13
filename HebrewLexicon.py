@@ -133,8 +133,8 @@ class AugmentedStrongsIndexFileConverter:
         if self.tree.tag == AugmentedStrongsIndexFileConverter.treeTag:
             for entry in self.tree:
                 self.validateEntry( entry )
-        else: logging.error( "Expected to load '{}' but got '{}'".format( AugmentedStrongsIndexFileConverter.treeTag, self.tree.tag ) )
-        if self.tree.tail is not None and self.tree.tail.strip(): logging.error( "Unexpected '{}' tail data after {} element".format( self.tree.tail, self.tree.tag ) )
+        else: logging.error( "Expected to load {!r} but got {!r}".format( AugmentedStrongsIndexFileConverter.treeTag, self.tree.tag ) )
+        if self.tree.tail is not None and self.tree.tail.strip(): logging.error( "Unexpected {!r} tail data after {} element".format( self.tree.tail, self.tree.tag ) )
     # end of AugmentedStrongsIndexFileConverter.loadAndValidate
 
 
@@ -153,7 +153,7 @@ class AugmentedStrongsIndexFileConverter:
         for attrib,value in entry.items():
             if attrib=="aug":
                 aug = value
-            else: logging.warning( "Unprocessed '{}' attribute ({}) in index entry element".format( attrib, value ) )
+            else: logging.warning( "Unprocessed {!r} attribute ({}) in index entry element".format( attrib, value ) )
         if BibleOrgSysGlobals.debugFlag: assert( aug is not None )
 
         self.entries1[aug] = entry.text
@@ -250,8 +250,8 @@ class LexicalIndexFileConverter:
         if self.tree.tag == LexicalIndexFileConverter.treeTag:
             for part in self.tree:
                 self.validatePart( part )
-        else: logging.error( "Expected to load '{}' but got '{}'".format( LexicalIndexFileConverter.treeTag, self.tree.tag ) )
-        if self.tree.tail is not None and self.tree.tail.strip(): logging.error( "Unexpected '{}' tail data after {} element".format( self.tree.tail, self.tree.tag ) )
+        else: logging.error( "Expected to load {!r} but got {!r}".format( LexicalIndexFileConverter.treeTag, self.tree.tag ) )
+        if self.tree.tail is not None and self.tree.tail.strip(): logging.error( "Unexpected {!r} tail data after {} element".format( self.tree.tail, self.tree.tag ) )
     # end of LexicalIndexFileConverter.loadAndValidate
 
 
@@ -268,7 +268,7 @@ class LexicalIndexFileConverter:
         for attrib,value in part.items():
             if attrib==LexicalIndexFileConverter.XMLNameSpace+"lang":
                 lang = value
-            else: logging.warning( "Unprocessed '{}' attribute ({}) in index part element".format( attrib, value ) )
+            else: logging.warning( "Unprocessed {!r} attribute ({}) in index part element".format( attrib, value ) )
         if BibleOrgSysGlobals.debugFlag: assert( lang in ('heb','arc',) )
         self.entries[lang] = {}
         for entry in part:
@@ -293,7 +293,7 @@ class LexicalIndexFileConverter:
         for attrib,value in entry.items():
             if attrib=="id":
                 ID = value
-            else: logging.warning( "Unprocessed '{}' attribute ({}) in index entry element".format( attrib, value ) )
+            else: logging.warning( "Unprocessed {!r} attribute ({}) in index entry element".format( attrib, value ) )
         if BibleOrgSysGlobals.debugFlag: assert( ID is not None )
 
         # Now process the subelements
@@ -310,7 +310,7 @@ class LexicalIndexFileConverter:
                 xlit = None
                 for attrib,value in element.items():
                     if attrib=="xlit": xlit = value
-                    else: logging.warning( "svd6 Unprocessed '{}' attribute ({}) in {}".format( attrib, value, location ) )
+                    else: logging.warning( "svd6 Unprocessed {!r} attribute ({}) in {}".format( attrib, value, location ) )
             elif element.tag == LexicalIndexFileConverter.HebLexNameSpace+"pos":
                 if BibleOrgSysGlobals.debugFlag: assert( element.text )
                 pos = element.text
@@ -334,7 +334,7 @@ class LexicalIndexFileConverter:
                     elif attrib=="strong": strongsXref = value
                     elif attrib=="aug": strongsAugXref = value
                     elif attrib=="twot": twotXref = value
-                    else: logging.warning( "scs4 Unprocessed '{}' attribute ({}) in {}".format( attrib, value, location ) )
+                    else: logging.warning( "scs4 Unprocessed {!r} attribute ({}) in {}".format( attrib, value, location ) )
             elif element.tag == LexicalIndexFileConverter.HebLexNameSpace+"etym":
                 location = "etym of " + ID
                 #assert( element.text )
@@ -345,9 +345,9 @@ class LexicalIndexFileConverter:
                 for attrib,value in element.items():
                     if attrib=="type": etymType = value
                     elif attrib=="root": etymRoot = value
-                    else: logging.warning( "dsv2 Unprocessed '{}' attribute ({}) in {}".format( attrib, value, location ) )
-            else: logging.warning( "sdv1 Unprocessed '{}' sub-element ({}) in entry".format( element.tag, element.text ) )
-            if element.tail is not None and element.tail.strip(): logging.error( "Unexpected '{}' tail data after {} element in entry".format( element.tail, element.tag ) )
+                    else: logging.warning( "dsv2 Unprocessed {!r} attribute ({}) in {}".format( attrib, value, location ) )
+            else: logging.warning( "sdv1 Unprocessed {!r} sub-element ({}) in entry".format( element.tag, element.text ) )
+            if element.tail is not None and element.tail.strip(): logging.error( "Unexpected {!r} tail data after {} element in entry".format( element.tail, element.tag ) )
 
         self.entries[lang][ID] = (xlit, pos, definition, bdbXref,strongsXref,strongsAugXref,twotXref, etym,etymRoot,etymType)
     # end of LexicalIndexFileConverter.validateEntry
@@ -446,8 +446,8 @@ class HebrewStrongsFileConverter:
         if self.tree.tag == HebrewStrongsFileConverter.treeTag:
             for entry in self.tree:
                 self.validateEntry( entry )
-        else: logging.error( "Expected to load '{}' but got '{}'".format( HebrewStrongsFileConverter.treeTag, self.tree.tag ) )
-        if self.tree.tail is not None and self.tree.tail.strip(): logging.error( "Unexpected '{}' tail data after {} element".format( self.tree.tail, self.tree.tag ) )
+        else: logging.error( "Expected to load {!r} but got {!r}".format( HebrewStrongsFileConverter.treeTag, self.tree.tag ) )
+        if self.tree.tail is not None and self.tree.tail.strip(): logging.error( "Unexpected {!r} tail data after {} element".format( self.tree.tail, self.tree.tag ) )
     # end of HebrewStrongsFileConverter.loadAndValidate
 
 
@@ -465,7 +465,7 @@ class HebrewStrongsFileConverter:
             if attrib=="id":
                 entryID = value
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "Validating {} entry...".format( entryID ) )
-            else: logging.warning( "Unprocessed '{}' attribute ({}) in main entry element".format( attrib, value ) )
+            else: logging.warning( "Unprocessed {!r} attribute ({}) in main entry element".format( attrib, value ) )
 
         entryResults = {}
         for element in entry:
@@ -482,7 +482,7 @@ class HebrewStrongsFileConverter:
                     elif attrib=="src": src = value
                     elif attrib==HebrewStrongsFileConverter.XMLNameSpace+"lang":
                         lang = value
-                    else: logging.warning( "Unprocessed '{}' attribute ({}) in {}".format( attrib, value, element.tag ) )
+                    else: logging.warning( "Unprocessed {!r} attribute ({}) in {}".format( attrib, value, element.tag ) )
                 if word: entryResults['word'] = (word,pos,pron,xlit,src,)
                 # Now process the subelements
                 for subelement in element.getchildren():
@@ -496,8 +496,8 @@ class HebrewStrongsFileConverter:
                             if attrib=="src": src = value
                             #elif attrib=="pron": pron = value
                             #elif attrib=="xlit": xlit = value
-                            else: logging.warning( "Unprocessed '{}' attribute ({}) in {}".format( attrib, value, location ) )
-                    else: logging.warning( "Unprocessed '{}' sub-element ({}) in {}".format( subelement.tag, subelement.text, element.tag ) )
+                            else: logging.warning( "Unprocessed {!r} attribute ({}) in {}".format( attrib, value, location ) )
+                    else: logging.warning( "Unprocessed {!r} sub-element ({}) in {}".format( subelement.tag, subelement.text, element.tag ) )
             elif element.tag == HebrewStrongsFileConverter.HebLexNameSpace+"source":
                 source = BibleOrgSysGlobals.getFlattenedXML( element, entryID ) \
                             .replace( HebrewStrongsFileConverter.HebLexNameSpace, '' )
@@ -524,9 +524,9 @@ class HebrewStrongsFileConverter:
                 BibleOrgSysGlobals.checkXMLNoAttributes( element, element.tag, "md3d" )
                 entryResults['note'] = note
             else:
-                logging.error( "2d4f Unprocessed '{}' element ({}) in entry".format( element.tag, element.text ) )
+                logging.error( "2d4f Unprocessed {!r} element ({}) in entry".format( element.tag, element.text ) )
                 if BibleOrgSysGlobals.debugFlag: halt
-            if element.tail is not None and element.tail.strip(): logging.error( "Unexpected '{}' tail data after {} element in entry".format( element.tail, element.tag ) )
+            if element.tail is not None and element.tail.strip(): logging.error( "Unexpected {!r} tail data after {} element in entry".format( element.tail, element.tag ) )
 
         #print( entryID, entryResults )
         assert( entryID and entryID[0]=='H' and entryID[1:].isdigit() )
@@ -626,8 +626,8 @@ class BrownDriverBriggsFileConverter:
         if self.tree.tag == BrownDriverBriggsFileConverter.treeTag:
             for entry in self.tree:
                 self.validatePart( entry )
-        else: logging.error( "Expected to load '{}' but got '{}'".format( BrownDriverBriggsFileConverter.treeTag, self.tree.tag ) )
-        if self.tree.tail is not None and self.tree.tail.strip(): logging.error( "Unexpected '{}' tail data after {} element".format( self.tree.tail, self.tree.tag ) )
+        else: logging.error( "Expected to load {!r} but got {!r}".format( BrownDriverBriggsFileConverter.treeTag, self.tree.tag ) )
+        if self.tree.tail is not None and self.tree.tail.strip(): logging.error( "Unexpected {!r} tail data after {} element".format( self.tree.tail, self.tree.tag ) )
     # end of BrownDriverBriggsFileConverter.loadAndValidate
 
 
@@ -649,7 +649,7 @@ class BrownDriverBriggsFileConverter:
                 title = value
             elif attrib == LexicalIndexFileConverter.XMLNameSpace+"lang":
                 lang = value
-            else: logging.warning( "scd2 Unprocessed '{}' attribute ({}) in index part element".format( attrib, value ) )
+            else: logging.warning( "scd2 Unprocessed {!r} attribute ({}) in index part element".format( attrib, value ) )
         if BibleOrgSysGlobals.debugFlag: assert( lang in ('heb','arc',) )
         if lang not in self.entries: self.entries[lang] = {}
 
@@ -672,7 +672,7 @@ class BrownDriverBriggsFileConverter:
             if attrib == "id":
                 sectionID = value
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "Validating {} section...".format( repr(sectionID) ) )
-            else: logging.warning( "js19 Unprocessed '{}' attribute ({}) in index section element".format( attrib, value ) )
+            else: logging.warning( "js19 Unprocessed {!r} attribute ({}) in index section element".format( attrib, value ) )
         for entry in section:
             if entry.tag == BrownDriverBriggsFileConverter.HebLexNameSpace+"page":
                 # We don't care about the book pages (page elements only have a 'p' attribute)
@@ -701,7 +701,7 @@ class BrownDriverBriggsFileConverter:
             elif attrib == "mod": entryMod = value
             elif attrib == "cite": entryCite = value
             elif attrib == "form": entryForm = value
-            else: logging.warning( "ngs9 Unprocessed '{}' attribute ({}) in main entry element".format( attrib, value ) )
+            else: logging.warning( "ngs9 Unprocessed {!r} attribute ({}) in main entry element".format( attrib, value ) )
 
         flattenedXML = BibleOrgSysGlobals.getFlattenedXML( entry, entryID ) \
                             .replace( BrownDriverBriggsFileConverter.HebLexNameSpace, '' ) \

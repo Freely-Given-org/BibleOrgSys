@@ -68,15 +68,15 @@ def expandBibleNamesInputs ( systemName, divisionsNamesDict, booknameLeadersDict
                 if tempString in originalDict:
                     if originalDict[tempString] == value:
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                            logging.debug( "'{}' is superfluous: won't add to tempDict".format(tempString) )
+                            logging.debug( "{!r} is superfluous: won't add to tempDict".format(tempString) )
                         theAmbigSet.add( tempString )
                     else: # it's a different value
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                            logging.debug( "'{}' is ambiguous: won't add to tempDict".format(tempString) )
+                            logging.debug( "{!r} is ambiguous: won't add to tempDict".format(tempString) )
                         theAmbigSet.add( tempString )
                 elif tempString in tempDict and tempDict[tempString]!=value:
                     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                        logging.info( "'{}' is ambiguous: will remove from tempDict".format(tempString) )
+                        logging.info( "{!r} is ambiguous: will remove from tempDict".format(tempString) )
                     theAmbigSet.add( tempString )
                 else:
                     tempDict[tempString] = value
@@ -86,15 +86,15 @@ def expandBibleNamesInputs ( systemName, divisionsNamesDict, booknameLeadersDict
                     if tempTempString in originalDict:
                         if originalDict[tempTempString] == value:
                             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                                logging.debug( "'{}' (spaces removed) is superfluous: won't add to tempDict".format(tempTempString) )
+                                logging.debug( "{!r} (spaces removed) is superfluous: won't add to tempDict".format(tempTempString) )
                             theAmbigSet.add( tempTempString )
                         else: # it's a different value
                             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                                logging.debug( "'{}' (spaces removed) is ambiguous: won't add to tempDict".format(tempTempString) )
+                                logging.debug( "{!r} (spaces removed) is ambiguous: won't add to tempDict".format(tempTempString) )
                             theAmbigSet.add( tempTempString )
                     elif tempTempString in tempDict and tempDict[tempTempString]!=value:
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                            logging.info( "'{}' (spaces removed) is ambiguous: will remove from tempDict".format(tempTempString) )
+                            logging.info( "{!r} (spaces removed) is ambiguous: will remove from tempDict".format(tempTempString) )
                         theAmbigSet.add( tempTempString )
                     else:
                         tempDict[tempTempString] = value
@@ -123,7 +123,7 @@ def expandBibleNamesInputs ( systemName, divisionsNamesDict, booknameLeadersDict
         for field in divisionsNamesDict[divAbbrev]["inputFields"]:
             UCField = field.upper()
             if UCField in divNameInputDict or UCField in bkNameInputDict:
-                logging.warning( _("Have duplicate entries of '{}' in divisionsNames for {}").format( UCField, systemName ) )
+                logging.warning( _("Have duplicate entries of {!r} in divisionsNames for {}").format( UCField, systemName ) )
                 ambigSet.add( UCField )
             divNameInputDict[UCField] = divAbbrev # Store the index into divisionsNamesDict
     for refAbbrev in bookNamesDict.keys():
@@ -131,7 +131,7 @@ def expandBibleNamesInputs ( systemName, divisionsNamesDict, booknameLeadersDict
             for field in bookNamesDict[refAbbrev]["inputFields"]: # inputFields include the defaultName, defaultAbbreviation, and inputAbbreviations
                 UCField = field.upper()
                 if UCField in divNameInputDict or UCField in bkNameInputDict:
-                    logging.warning( _("Have duplicate entries of '{}' in divisions and book names for {}").format( UCField, systemName ) )
+                    logging.warning( _("Have duplicate entries of {!r} in divisions and book names for {}").format( UCField, systemName ) )
                     ambigSet.add( UCField )
                 bkNameInputDict[UCField] = refAbbrev # Store the index to the book
     #print( 'amb', len(ambigSet), ambigSet )
@@ -183,7 +183,7 @@ def expandBibleNamesInputs ( systemName, divisionsNamesDict, booknameLeadersDict
         if field not in ambigSet:
             assert( field not in bkNameInputDict )
             bkNameInputDict[field] = tempBNDict[field]
-        #else: print( "Didn't add '{}'", field )
+        #else: print( "Didn't add {!r}", field )
     #print( "\nbkNameInputDict--final", len(bkNameInputDict) )
 
     # Now sort both dictionaries to be longest string first
@@ -240,7 +240,7 @@ class BibleBooksNamesSystems:
             else: # We have to load the XML (much slower)
                 from BibleBooksNamesConverter import BibleBooksNamesConverter
                 if XMLFolder is not None:
-                    logging.warning( _("Bible books names are already loaded -- your given folder of '{}' was ignored").format(XMLFolder) )
+                    logging.warning( _("Bible books names are already loaded -- your given folder of {!r} was ignored").format(XMLFolder) )
                 bbnsc = BibleBooksNamesConverter()
                 bbnsc.loadSystems( XMLFolder ) # Load the XML (if not done already)
                 self.__DataDicts, self.__ExpandedDicts = bbnsc.importDataToPython() # Get the various dictionaries organised for quick lookup
@@ -299,7 +299,7 @@ class BibleBooksNamesSystems:
         if bookList is not None:
             for BBB in bookList: # Just check this list is valid
                 if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ):
-                    logging.error( _("Invalid '{}' in booklist requested for {} books names system").format(BBB,systemName) )
+                    logging.error( _("Invalid {!r} in booklist requested for {} books names system").format(BBB,systemName) )
 
         if systemName in self.__DataDicts:
             assert( len(self.__DataDicts[systemName]) == 3 )
@@ -342,7 +342,7 @@ class BibleBooksNamesSystems:
             return divisionsNamesDictCopy, booknameLeadersDict, bookNamesDictCopy, sortedDNDict, sortedBNDict
 
         # else we couldn't find the requested system name
-        logging.error( _("No '{}' system in Bible Books Names Systems").format(systemName) )
+        logging.error( _("No {!r} system in Bible Books Names Systems").format(systemName) )
         if BibleOrgSysGlobals.verbosityLevel > 2:
             logging.error( _("Available systems are {}").format(self.getAvailableBooksNamesSystemNames()) )
     # end of getBooksNamesSystem
@@ -499,13 +499,13 @@ def demo():
     print( "Checking book name inputs..." )
     for bookAbbrevInput in ('Gen', 'GEN', 'Gn', 'Exo', 'Judges','1 Samuel', '1Samuel', '1Sam', '1 Sam', '1 Sml', '1Sml', '1 S', '1S','II Sa','IIS','1Kgs', '1 Kgs', '1K', '1 K', 'IK', 'I K', '1M', 'IV Mac', 'Mt', 'Jude', 'Rvl' ):
         # NOTE: '1S' is ambiguous with '1st' :(
-        print( "  Searching for '{}' got {}".format(bookAbbrevInput, bbns2.getBBB(bookAbbrevInput)) )
+        print( "  Searching for {!r} got {}".format(bookAbbrevInput, bbns2.getBBB(bookAbbrevInput)) )
     print( "Checking division name inputs..." )
     for divisionAbbrevInput in ('OT','NewTest', 'Paul', 'Deutero', 'Gn', 'Exo' ): # Last two should always fail
-        print( "  Searching for '{}' got {}".format(divisionAbbrevInput, bbns2.getDivisionAbbreviation(divisionAbbrevInput)) )
+        print( "  Searching for {!r} got {}".format(divisionAbbrevInput, bbns2.getDivisionAbbreviation(divisionAbbrevInput)) )
     print( "Getting division booklists..." )
     for divisionAbbrevInput in ('OT','NT', 'NewTest', 'Paul', 'Deutero', 'Gn', 'Exo', '1 Samuel' ):
-        print( "  Searching for '{}' got {}".format(divisionAbbrevInput, bbns2.getDivisionBooklist(divisionAbbrevInput)) )
+        print( "  Searching for {!r} got {}".format(divisionAbbrevInput, bbns2.getDivisionBooklist(divisionAbbrevInput)) )
 # end of demo
 
 if __name__ == '__main__':

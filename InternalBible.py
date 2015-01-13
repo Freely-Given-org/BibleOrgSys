@@ -329,7 +329,7 @@ class InternalBible:
         with open( mdFilepath, 'rt' ) as mdFile:
             for line in mdFile:
                 while line and line[-1] in '\n\r': line=line[:-1] # Remove trailing newline characters (Linux or Windows)
-                #print( "MD line: '{}'".format( line ) )
+                #print( "MD line: {!r}".format( line ) )
                 if not line: continue # Just discard additional blank lines
                 lineCount += 1
                 if line[0] == '#': continue # Just discard comment lines
@@ -483,7 +483,7 @@ class InternalBible:
                 count += 1
         if count == 1: # Found exactly one
             self.bookAbbrevDict[adjRefString] = BBB # Save to make it faster next time
-            self.guesses += ('\n' if self.guesses else '') + "Guessed '{}' to be {} (startswith1)".format( referenceString, BBB )
+            self.guesses += ('\n' if self.guesses else '') + "Guessed {!r} to be {} (startswith1)".format( referenceString, BBB )
             self.reverseDict[BBB] = referenceString
             return BBB
         elif count == 2: # Found exactly two but one of them might have a different abbreviation that we already know
@@ -494,11 +494,11 @@ class InternalBible:
                     if BBBx not in self.reverseDict: BBB = BBBx; secondCount += 1
             if secondCount == 1: # Found exactly one
                 self.bookAbbrevDict[adjRefString] = BBB # Save to make it faster next time
-                self.guesses += ('\n' if self.guesses else '') + "Guessed '{}' to be {} (startswith1SECOND)".format( referenceString, BBB )
+                self.guesses += ('\n' if self.guesses else '') + "Guessed {!r} to be {} (startswith1SECOND)".format( referenceString, BBB )
                 self.reverseDict[BBB] = referenceString
                 return BBB
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule and count > 1:
-            print( t("  guessXRefBBB has multiple startswith matches for '{}' in {}").format( adjRefString, self.combinedBookNameDict ) )
+            print( t("  guessXRefBBB has multiple startswith matches for {!r} in {}").format( adjRefString, self.combinedBookNameDict ) )
         if count == 0:
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "  getXRefBBB using startswith2..." )
             for bookName in self.combinedBookNameDict:
@@ -507,7 +507,7 @@ class InternalBible:
                     count += 1
             if count == 1: # Found exactly one now
                 self.bookAbbrevDict[adjRefString] = BBB # Save to make it faster next time
-                self.guesses += ('\n' if self.guesses else '') + "Guessed '{}' to be {} (startswith2)".format( referenceString, BBB )
+                self.guesses += ('\n' if self.guesses else '') + "Guessed {!r} to be {} (startswith2)".format( referenceString, BBB )
                 self.reverseDict[BBB] = referenceString
                 return BBB
         elif count == 2: # Found exactly two but one of them might have a different abbreviation that we already know
@@ -518,7 +518,7 @@ class InternalBible:
                     if BBBx not in self.reverseDict: BBB = BBBx; secondCount += 1
             if secondCount == 1: # Found exactly one now
                 self.bookAbbrevDict[adjRefString] = BBB # Save to make it faster next time
-                self.guesses += ('\n' if self.guesses else '') + "Guessed '{}' to be {} (startswith2SECOND)".format( referenceString, BBB )
+                self.guesses += ('\n' if self.guesses else '') + "Guessed {!r} to be {} (startswith2SECOND)".format( referenceString, BBB )
                 self.reverseDict[BBB] = referenceString
                 return BBB
 
@@ -533,18 +533,18 @@ class InternalBible:
                             count += 1
             if count == 1: # Found exactly one
                 self.bookAbbrevDict[adjRefString] = BBB # Save to make it faster next time
-                self.guesses += ('\n' if self.guesses else '') + "Guessed '{}' to be {} (word startswith)".format( referenceString, BBB )
+                self.guesses += ('\n' if self.guesses else '') + "Guessed {!r} to be {} (word startswith)".format( referenceString, BBB )
                 self.reverseDict[BBB] = referenceString
                 return BBB
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule and count > 1:
-                print( t("  guessXRefBBB has multiple startswith matches for '{}' in {}").format( adjRefString, self.bookNameDict ) )
+                print( t("  guessXRefBBB has multiple startswith matches for {!r} in {}").format( adjRefString, self.bookNameDict ) )
 
         # See if a book name starts with the same letter plus contains the letters in this string (slow)
         if count == 0:
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( t("  guessXRefBBB using first plus other characters...") )
             for bookName in self.bookNameDict:
                 if not bookName: print( self.bookNameDict ); halt # temp...
-                #print( "aRS='{}', bN='{}'".format( adjRefString, bookName ) )
+                #print( "aRS={!r}, bN={!r}".format( adjRefString, bookName ) )
                 if adjRefString[0] != bookName[0]: continue # The first letters don't match
                 found = True
                 for char in adjRefString[1:]:
@@ -557,10 +557,10 @@ class InternalBible:
                 count += 1
             if count == 1: # Found exactly one
                 self.bookAbbrevDict[adjRefString] = BBB # Save to make it faster next time
-                self.guesses += ('\n' if self.guesses else '') + "Guessed '{}' to be {} (firstletter+)".format( referenceString, BBB )
+                self.guesses += ('\n' if self.guesses else '') + "Guessed {!r} to be {} (firstletter+)".format( referenceString, BBB )
                 return BBB
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule and count > 1:
-                print( t("  guessXRefBBB has first and other character multiple matches for '{}' in {}").format( adjRefString, self.bookNameDict ) )
+                print( t("  guessXRefBBB has first and other character multiple matches for {!r} in {}").format( adjRefString, self.bookNameDict ) )
 
         if 0: # Too error prone!!!
             # See if a book name contains the letters in this string (slow)
@@ -578,14 +578,14 @@ class InternalBible:
                     count += 1
                 if count == 1: # Found exactly one
                     self.bookAbbrevDict[adjRefString] = BBB # Save to make it faster next time
-                    self.guesses += ('\n' if self.guesses else '') + "Guessed '{}' to be {} (letters)".format( referenceString, BBB )
+                    self.guesses += ('\n' if self.guesses else '') + "Guessed {!r} to be {} (letters)".format( referenceString, BBB )
                     return BBB
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule and count > 1:
-                    print( t("  guessXRefBBB has character multiple matches for '{}' in {}").format( adjRefString, self.bookNameDict ) )
+                    print( t("  guessXRefBBB has character multiple matches for {!r} in {}").format( adjRefString, self.bookNameDict ) )
 
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule or BibleOrgSysGlobals.verbosityLevel>2:
-            print( t("  guessXRefBBB failed for '{}' with {} and {}").format( referenceString, self.bookNameDict, self.bookAbbrevDict ) )
-        string = "Couldn't guess '{}'".format( referenceString[:5] )
+            print( t("  guessXRefBBB failed for {!r} with {} and {}").format( referenceString, self.bookNameDict, self.bookAbbrevDict ) )
+        string = "Couldn't guess {!r}".format( referenceString[:5] )
         if string not in self.guesses: self.guesses += ('\n' if self.guesses else '') + string
     # end of InternalBible.guessXRefBBB
 
@@ -995,7 +995,7 @@ class InternalBible:
                         tempResult.append( (wordDict[word],word,) ); total += wordDict[word]
                         # Seems we don't know the BCV reference here unfortunately
                         if 'Possible Word Errors' not in errors['ByBook']['All Books']['Words']: errors['ByBook']['All Books']['Words']['Possible Word Errors'] = []
-                        errors['ByBook']['All Books']['Words']['Possible Word Errors'].append( _("Word '{}' appears to have unusual capitalization").format( word ) )
+                        errors['ByBook']['All Books']['Words']['Possible Word Errors'].append( _("Word {!r} appears to have unusual capitalization").format( word ) )
                         if total == lcTotal: break # no more to find
 
             if total < lcTotal:

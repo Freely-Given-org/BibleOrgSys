@@ -111,7 +111,7 @@ class USFMFilenames:
 
         # Check that the given folder is readable
         if not os.access( self.givenFolderName, os.R_OK ):
-            logging.critical( _("USFMFilenames: Given '{}' folder is unreadable").format( self.givenFolderName ) )
+            logging.critical( _("USFMFilenames: Given {!r} folder is unreadable").format( self.givenFolderName ) )
             return
 
         # Get the data tables that we need for proper checking
@@ -135,7 +135,7 @@ class USFMFilenames:
                 if os.path.isfile( filepath ): # It's a file not a folder
                         self.fileList.append( possibleFilename )
         #print( "fL", self.fileList )
-        #if not self.fileList: logging.error( _("No files at all in given folder: '{}'").format( self.givenFolderName) ); return
+        #if not self.fileList: logging.error( _("No files at all in given folder: {!r}").format( self.givenFolderName) ); return
 
         # See if we can find a pattern for these filenames
         matched = False
@@ -210,7 +210,7 @@ class USFMFilenames:
                             fillerSize = self.pattern.count( '*' )
                             fillerIndex = self.pattern.find( '*' )
                             if fillerIndex!=-1 and fillerSize==1: self.pattern = self.pattern[:fillerIndex] + foundFilename[fillerIndex] + self.pattern[fillerIndex+1:]
-                            if BibleOrgSysGlobals.verbosityLevel > 2: print( "Pattern is '{}'".format( self.pattern ) )
+                            if BibleOrgSysGlobals.verbosityLevel > 2: print( "Pattern is {!r}".format( self.pattern ) )
                             if '*' not in self.pattern: matched = True
                             else: # we'll try to be even more generic
                                 self.languageIndex = self.digitsIndex = None
@@ -218,7 +218,7 @@ class USFMFilenames:
                                 self.USFMBookCodeIndex = USFMBookCodeIndex
                                 self.pattern = '*' * foundLength
                                 self.pattern = self.pattern[:USFMBookCodeIndex] + 'bbb' + self.pattern[USFMBookCodeIndex+3:]
-                                if BibleOrgSysGlobals.verbosityLevel > 2: print( "More generic pattern is '{}'".format( self.pattern ) )
+                                if BibleOrgSysGlobals.verbosityLevel > 2: print( "More generic pattern is {!r}".format( self.pattern ) )
                                 matched = True
                         if matched:
                             if self.languageCode and self.languageCode.isupper(): self.pattern = self.pattern.replace( 'l', 'L' )
@@ -228,7 +228,7 @@ class USFMFilenames:
                 if matched: break
             if matched: break
         #if not matched: logging.info( _("Unable to recognize pattern of valid USFM files in ") + self.givenFolderName )
-        #print( "USFMFilenames: pattern='{}' fileExtension='{}'".format( self.pattern, self.fileExtension ) )
+        #print( "USFMFilenames: pattern={!r} fileExtension={!r}".format( self.pattern, self.fileExtension ) )
 
         # Also, try looking inside the files
         self.getUSFMIDsFromFiles( self.givenFolderName ) # Fill the above dictionaries
@@ -278,7 +278,7 @@ class USFMFilenames:
                     if line[-1]=='\n': line = line[:-1] # Removing trailing newline character
                     #print( thisFilename, lineNumber, line )
                     if line.startswith( '\\id ' ):
-                        if len(line)<5: logging.warning( "id line '{}' in {} is too short".format( line, filepath ) )
+                        if len(line)<5: logging.warning( "id line {!r} in {} is too short".format( line, filepath ) )
                         idContent = line[4:]
                         tokens = idContent.split()
                         #print( "Have id tokens: {}".format( tokens ) )
@@ -293,17 +293,17 @@ class USFMFilenames:
                         if len(UCToken0)>2 and UCToken0[1] in ('_','-'): UCToken0 = UCToken0[0] + UCToken0[2:] # Change something like 1_SA to 1SA
                         if UCToken0 in self._USFMBooksCodesUpper: return UCToken0 # it's a valid one -- we have the most confidence in this one
                         elif UCToken0[:3] in self._USFMBooksCodesUpper: return UCToken0[:3] # perhaps an abbreviated version is valid (but could think Judges is JUD=Jude)
-                        else: print( "But '{}' wasn't a valid USFM ID in {}!!!".format( UCToken0, thisFilename ) )
+                        else: print( "But {!r} wasn't a valid USFM ID in {}!!!".format( UCToken0, thisFilename ) )
                         break
                     elif lineNumber == 1:
                         if line.startswith ( '\\' ):
-                            logging.warning( "First line in {} in {} starts with a backslash but not an id line '{}'".format( thisFilename, folder, line ) )
+                            logging.warning( "First line in {} in {} starts with a backslash but not an id line {!r}".format( thisFilename, folder, line ) )
                         elif not line:
                             logging.info( "First line in {} in {} appears to be blank".format( thisFilename, folder ) )
                     if lineNumber >= 2: break # We only look at the first one or two lines
         except UnicodeDecodeError:
             if thisFilename != 'usfm-color.sty': # Seems this file isn't UTF-8, but we don't need it here anyway so ignore it
-                logging.warning( t("getUSFMIDFromFile: Seems we couldn't decode Unicode in '{}'").format( filepath ) ) # Could be binary or a different encoding
+                logging.warning( t("getUSFMIDFromFile: Seems we couldn't decode Unicode in {!r}").format( filepath ) ) # Could be binary or a different encoding
         return None
     # end of getUSFMIDFromFile
 
@@ -333,7 +333,7 @@ class USFMFilenames:
                         assert( filepath not in self._fileDictionary )
                         BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USFMId )
                         self._fileDictionary[(givenFolder,possibleFilename,)] = BBB
-                        if BBB in self._BBBDictionary: logging.error( "{}Oops, already found '{}' in {}, now we have a duplicate in {}".format( 'getUSFMIDsFromFiles: ' if BibleOrgSysGlobals.debugFlag else '', BBB, self._BBBDictionary[BBB], possibleFilename ) )
+                        if BBB in self._BBBDictionary: logging.error( "{}Oops, already found {!r} in {}, now we have a duplicate in {}".format( 'getUSFMIDsFromFiles: ' if BibleOrgSysGlobals.debugFlag else '', BBB, self._BBBDictionary[BBB], possibleFilename ) )
                         self._BBBDictionary[BBB] = (givenFolder,possibleFilename,)
         if len(self._fileDictionary) != len(self._BBBDictionary):
             logging.warning( "getUSFMIDsFromFiles: Oops, something went wrong because dictionaries have {} and {} entries".format( len(self._fileDictionary), len(self._BBBDictionary) ) )
@@ -581,7 +581,7 @@ def demo():
             result = UFns.getMaximumPossibleFilenameTuples(); print( "\nMaxPoss:", len(result), result )
             result = UFns.getUnusedFilenames(); print( "Unused:", len(result), result )
             result = UFns.getSSFFilenames(); print( "\nSSF:", len(result), result )
-        else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
+        else: print( "Sorry, test folder {!r} doesn't exist on this computer.".format( testFolder ) )
 
 if __name__ == '__main__':
     # Configure basic set-up

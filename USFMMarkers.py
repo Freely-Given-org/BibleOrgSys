@@ -97,7 +97,7 @@ def removeUSFMCharacterField( marker, originalText, closedFlag ):
         elif closedFlag == True:
             ixEnd = text.find( '\\'+marker+'*', ix+mLen+2 )
             if ixEnd == -1:
-                logging.error( "removeUSFMCharacterField: no end marker for '{}' in '{}'".format( marker, originalText ) )
+                logging.error( "removeUSFMCharacterField: no end marker for {!r} in {!r}".format( marker, originalText ) )
                 break
             text = text[:ix] + text[ixEnd+mLen+2:]
         elif closedFlag == False:
@@ -105,7 +105,7 @@ def removeUSFMCharacterField( marker, originalText, closedFlag ):
             if ixEnd == -1: # remove until end of line
                 text = text[:ix]
             elif ixEnd<tLen-1 and text[ixEnd+1]=='+': # We've hit an embedded marker
-                logging.critical( "removeUSFMCharacterField: doesn't handle embedded markers yet with '{}' in '{}'".format( marker, originalText ) )
+                logging.critical( "removeUSFMCharacterField: doesn't handle embedded markers yet with {!r} in {!r}".format( marker, originalText ) )
                 if debugFlag: halt
             else:
                 text = text[:ix] + text[ixEnd:]
@@ -141,18 +141,18 @@ def replaceUSFMCharacterFields( replacements, originalText ):
             openMarker, closeMarker = '\\'+marker+' ', '\\'+marker+'*'
             openCount, closedCount = originalText.count( openMarker ), originalText.count( closeMarker )
             if openCount > closedCount:
-                logging.warning( "replaceUSFMCharacterFields: missing close marker for '{}' in '{}'".format( openMarker, originalText ) )
+                logging.warning( "replaceUSFMCharacterFields: missing close marker for {!r} in {!r}".format( openMarker, originalText ) )
             elif openCount < closedCount:
-                logging.warning( "replaceUSFMCharacterFields: superfluous '{}' close marker in '{}'".format( closeMarker, originalText ) )
+                logging.warning( "replaceUSFMCharacterFields: superfluous {!r} close marker in {!r}".format( closeMarker, originalText ) )
             text = text.replace( openMarker, openReplacment ).replace( closeMarker, closeReplacement )
 
             # Handle the new v2.4 nested markers
             openMarker, closeMarker = '\\+'+marker+' ', '\\+'+marker+'*'
             openCount, closedCount = originalText.count( openMarker ), originalText.count( closeMarker )
             if openCount > closedCount:
-                logging.warning( "replaceUSFMCharacterFields: missing nested close marker for '{}' in '{}'".format( openMarker, originalText ) )
+                logging.warning( "replaceUSFMCharacterFields: missing nested close marker for {!r} in {!r}".format( openMarker, originalText ) )
             elif openCount < closedCount:
-                logging.warning( "replaceUSFMCharacterFields: superfluous '{}' nested close marker in '{}'".format( closeMarker, originalText ) )
+                logging.warning( "replaceUSFMCharacterFields: superfluous {!r} nested close marker in {!r}".format( closeMarker, originalText ) )
             text = text.replace( openMarker, openReplacment ).replace( closeMarker, closeReplacement )
     return text
 # end of replaceUSFMCharacterFields
@@ -292,7 +292,7 @@ class USFMMarkers:
                     self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
             else: # We have to load the XML (much slower)
                 from USFMMarkersConverter import USFMMarkersConverter
-                if XMLFilepath is not None: logging.warning( _("USFM markers are already loaded -- your given filepath of '{}' was ignored").format(XMLFilepath) )
+                if XMLFilepath is not None: logging.warning( _("USFM markers are already loaded -- your given filepath of {!r} was ignored").format(XMLFilepath) )
                 umc = USFMMarkersConverter()
                 umc.loadAndValidate( XMLFilepath ) # Load the XML (if not done already)
                 self.__DataDict = umc.importDataToPython() # Get the various dictionaries organised for quick lookup
@@ -549,15 +549,15 @@ class USFMMarkers:
             iy = ixBS + 1
             if iy<textLength:
                 c1 = text[iy]
-                if c1==' ': logging.error( _("USFMMarkers.getMarkerListFromText found invalid '\\' in '{}'").format( text ) )
-                elif c1=='*': logging.error( _("USFMMarkers.getMarkerListFromText found invalid '\\*' in '{}'").format( text ) )
+                if c1==' ': logging.error( _("USFMMarkers.getMarkerListFromText found invalid '\\' in {!r}").format( text ) )
+                elif c1=='*': logging.error( _("USFMMarkers.getMarkerListFromText found invalid '\\*' in {!r}").format( text ) )
                 elif c1=='+': # it's a nested USFM 2.4 marker
                     iy += 1 # skip past the +
                     if iy<textLength:
                         c1 = text[iy]
-                        if c1==' ': logging.error( _("USFMMarkers.getMarkerListFromText found invalid '\\+' in '{}'").format( text ) )
-                        elif c1=='*': logging.error( _("USFMMarkers.getMarkerListFromText found invalid '\\+*' in '{}'").format( text ) )
-                        elif c1=='+': logging.error( _("USFMMarkers.getMarkerListFromText found invalid '\\++' in '{}'").format( text ) )
+                        if c1==' ': logging.error( _("USFMMarkers.getMarkerListFromText found invalid '\\+' in {!r}").format( text ) )
+                        elif c1=='*': logging.error( _("USFMMarkers.getMarkerListFromText found invalid '\\+*' in {!r}").format( text ) )
+                        elif c1=='+': logging.error( _("USFMMarkers.getMarkerListFromText found invalid '\\++' in {!r}").format( text ) )
                         else: # it's probably a letter which is part of the actual marker
                             marker += c1
                             iy += 1
@@ -571,7 +571,7 @@ class USFMMarkers:
                             else: firstResult.append( (marker,ixBS,'+','\\+'+marker) ) # How do we indicate the end of line here?
                     else: # it was a backslash then plus at the end of the line
                         firstResult.append( ('\\',ixBS,'+','\\+') )
-                        logging.error( _("USFMMarkers.getMarkerListFromText found invalid '\\+' at end of '{}'").format( text ) )
+                        logging.error( _("USFMMarkers.getMarkerListFromText found invalid '\\+' at end of {!r}").format( text ) )
                 else: # it's probably a letter which is part of the actual marker
                     marker += c1
                     iy += 1
@@ -585,7 +585,7 @@ class USFMMarkers:
                     else: firstResult.append( (marker,ixBS,'','\\'+marker) )
             else: # it was a backslash at the end of the line
                 firstResult.append( ('\\',ixBS,'','\\') )
-                logging.error( _("USFMMarkers.getMarkerListFromText found invalid '\\' at end of '{}'").format( text ) )
+                logging.error( _("USFMMarkers.getMarkerListFromText found invalid '\\' at end of {!r}").format( text ) )
             ixBS = text.find( '\\', ixBS+1 )
 
         # Now that we have found all the markers and where they are, get the text fields between them
@@ -641,8 +641,8 @@ class USFMMarkers:
                     assert( j==0 and ix==0 and x is None )
                 else:
                     if j == 0:
-                        if not self.isNewlineMarker( m ): logging.error( _("USFMMarkers.getMarkerListFromText found possible invalid first marker '{}' in '{}'").format( m, text ) )
-                    elif not self.isInternalMarker( m ): logging.error( _("USFMMarkers.getMarkerListFromText found possible invalid marker '{}' at position {} in '{}'").format( m, j+1, text ) )
+                        if not self.isNewlineMarker( m ): logging.error( _("USFMMarkers.getMarkerListFromText found possible invalid first marker {!r} in {!r}").format( m, text ) )
+                    elif not self.isInternalMarker( m ): logging.error( _("USFMMarkers.getMarkerListFromText found possible invalid marker {!r} at position {} in {!r}").format( m, j+1, text ) )
 
         return finalResult
     # end of USFMMarkers.getMarkerListFromText
@@ -728,7 +728,7 @@ def demo():
                  '\\v 6 This \\add contains \\+it embedded codes with all closures missing.',
                  '- \\xo 1:3: \\xt 2Kur 4:6.', # A cross-reference
                  ):
-        print( "\nFor text '{}' got markers:".format( text ) )
+        print( "\nFor text {!r} got markers:".format( text ) )
         print( "         A-L {}".format( um.getMarkerListFromText( text, verifyMarkers=True ) ) )
         print( "         B-L {}".format( um.getMarkerListFromText( text, includeInitialText=True ) ) )
         print( "         C-L {}".format( um.getMarkerListFromText( text, includeInitialText=True, verifyMarkers=True ) ) )
@@ -738,18 +738,18 @@ def demo():
 
 
     text = "\\v~ \\x - \\xo 12:13 \\xt Cross \wj \wj*reference text.\\x*Main \\add actual\\add* verse text.\\f + \\fr 12:13\\fr* \\ft with footnote.\\f*"
-    print( "\nFor text: '{}'".format( text ) )
-    print( "  remove whole xref = '{}'".format( removeUSFMCharacterField( 'x', text, closedFlag=True ) ) )
-    print( "  remove xo = '{}'".format( removeUSFMCharacterField( 'xo', text, closedFlag=False ) ) )
-    print( "  remove xref part = '{}'".format( removeUSFMCharacterField( 'x', text, closedFlag=None ) ) )
-    print( "  remove fr = '{}'".format( removeUSFMCharacterField( 'fr', text, closedFlag=None ) ) )
-    print( "  remove ft = '{}'".format( removeUSFMCharacterField( 'ft', text, closedFlag=None ) ) )
-    print( "  remove ft = '{}'".format( removeUSFMCharacterField( 'ft', text, closedFlag=False ) ) )
-    print( "  remove wj = '{}'".format( removeUSFMCharacterField( 'wj', text, closedFlag=True ) ) )
+    print( "\nFor text: {!r}".format( text ) )
+    print( "  remove whole xref = {!r}".format( removeUSFMCharacterField( 'x', text, closedFlag=True ) ) )
+    print( "  remove xo = {!r}".format( removeUSFMCharacterField( 'xo', text, closedFlag=False ) ) )
+    print( "  remove xref part = {!r}".format( removeUSFMCharacterField( 'x', text, closedFlag=None ) ) )
+    print( "  remove fr = {!r}".format( removeUSFMCharacterField( 'fr', text, closedFlag=None ) ) )
+    print( "  remove ft = {!r}".format( removeUSFMCharacterField( 'ft', text, closedFlag=None ) ) )
+    print( "  remove ft = {!r}".format( removeUSFMCharacterField( 'ft', text, closedFlag=False ) ) )
+    print( "  remove wj = {!r}".format( removeUSFMCharacterField( 'wj', text, closedFlag=True ) ) )
 
-    print( "\nFor text: '{}'".format( text ) )
+    print( "\nFor text: {!r}".format( text ) )
     replacements = ( (('add',),'<span>','</span>'), (('wj',),'<i>','</i>'), )
-    print( "  replace = '{}'".format( replaceUSFMCharacterFields( replacements, text ) ) )
+    print( "  replace = {!r}".format( replaceUSFMCharacterFields( replacements, text ) ) )
 # end of demo
 
 if __name__ == '__main__':

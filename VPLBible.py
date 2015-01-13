@@ -125,7 +125,7 @@ def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
                 firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName )
                 if firstLine is None: continue # seems we couldn't decode the file
                 if not firstLine.startswith( "Ge 1:1 " ):
-                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "VPLBibleFileCheck: (unexpected) first line was '{}' in {}".format( firstLine, thisFilename ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "VPLBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
                     continue
             lastFilenameFound = thisFilename
             numFound += 1
@@ -144,7 +144,7 @@ def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
-            logging.warning( _("VPLBibleFileCheck: '{}' subfolder is unreadable").format( tryFolderName ) )
+            logging.warning( _("VPLBibleFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
             continue
         if BibleOrgSysGlobals.verbosityLevel > 3: print( "    VPLBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
@@ -168,7 +168,7 @@ def VPLBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoLo
                     firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName )
                     if firstLine is None: continue # seems we couldn't decode the file
                     if not firstLine.startswith( "Ge 1:1 " ):
-                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "VPLBibleFileCheck: (unexpected) first line was '{}' in {}".format( firstLine, thisFilename ) )
+                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "VPLBibleFileCheck: (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
                         if debuggingThisModule: halt
                         continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
@@ -205,7 +205,7 @@ class VPLBible( Bible ):
 
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):
-            logging.critical( _("VPLBible: File '{}' is unreadable").format( self.sourceFilepath ) )
+            logging.critical( _("VPLBible: File {!r} is unreadable").format( self.sourceFilepath ) )
 
         self.name = self.givenName
         #if self.name is None:
@@ -329,7 +329,7 @@ def testVPL( VPLfolder ):
     import VerseReferences
 
     if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the VPL Bible class...") )
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is '{}'".format( VPLfolder ) )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is {!r}".format( VPLfolder ) )
     vb = VPLBible( VPLfolder, "demo" )
     vb.load() # Load and process the file
     if BibleOrgSysGlobals.verbosityLevel > 1: print( vb ) # Just print a summary

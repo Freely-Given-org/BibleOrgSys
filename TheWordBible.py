@@ -128,10 +128,10 @@ def TheWordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
-        logging.critical( _("TheWordBibleFileCheck: Given '{}' folder is unreadable").format( givenFolderName ) )
+        logging.critical( _("TheWordBibleFileCheck: Given {!r} folder is unreadable").format( givenFolderName ) )
         return False
     if not os.path.isdir( givenFolderName ):
-        logging.critical( _("TheWordBibleFileCheck: Given '{}' path is not a folder").format( givenFolderName ) )
+        logging.critical( _("TheWordBibleFileCheck: Given {!r} path is not a folder").format( givenFolderName ) )
         return False
 
     # Find all the files and folders in this folder
@@ -175,7 +175,7 @@ def TheWordBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
-            logging.warning( _("TheWordBibleFileCheck: '{}' subfolder is unreadable").format( tryFolderName ) )
+            logging.warning( _("TheWordBibleFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
             continue
         if BibleOrgSysGlobals.verbosityLevel > 3: print( "    TheWordBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
@@ -264,10 +264,10 @@ def theWordFileCompare( filename1, filename2, folder1=None, folder2=None, printF
 
     # Do a preliminary check on the readability of our files
     if not os.access( filepath1, os.R_OK ):
-        logging.error( "theWordFileCompare: File1 '{}' is unreadable".format( filepath1 ) )
+        logging.error( "theWordFileCompare: File1 {!r} is unreadable".format( filepath1 ) )
         return None
     if not os.access( filepath2, os.R_OK ):
-        logging.error( "theWordFileCompare: File2 '{}' is unreadable".format( filepath2 ) )
+        logging.error( "theWordFileCompare: File2 {!r} is unreadable".format( filepath2 ) )
         return None
 
     # Read the files
@@ -315,7 +315,7 @@ def theWordFileCompare( filename1, filename2, folder1=None, folder2=None, printF
             if printFlag and BibleOrgSysGlobals.verbosityLevel > 2:
                 for x in range( 0, min( len(lines1[k]), len(lines2[k]) ) ):
                     if lines1[k][x] != lines2[k][x]:
-                        print( "      Differ at position {} '{}' vs '{}'".format( x+1, lines1[k][x], lines2[k][x] ) )
+                        print( "      Differ at position {} {!r} vs {!r}".format( x+1, lines1[k][x], lines2[k][x] ) )
                         break
             equalFlag = False
             diffCount += 1
@@ -362,18 +362,18 @@ def theWordHandleIntroduction( BBB, bookData, ourGlobals ):
             elif marker in ('ms2','ms3','ms4'): composedLine += '<TS3>'+theWordAdjustLine(BBB,intC,intV,text)+'<Ts>'
             elif marker=='mr': composedLine += '<TS3>'+theWordAdjustLine(BBB,intC,intV,text)+'<Ts>'
             else:
-                logging.warning( "theWordHandleIntroduction: doesn't handle {} '{}' yet".format( BBB, marker ) )
+                logging.warning( "theWordHandleIntroduction: doesn't handle {} {!r} yet".format( BBB, marker ) )
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                    print( "theWordHandleIntroduction: doesn't handle {} '{}' yet".format( BBB, marker ) )
+                    print( "theWordHandleIntroduction: doesn't handle {} {!r} yet".format( BBB, marker ) )
                     halt
                 ourGlobals['unhandledMarkers'].add( marker + ' (in intro)' )
         intV += 1 # Step to the next introductory section "verse"
 
     # Check what's left at the end
     if '\\' in composedLine:
-        logging.warning( "theWordHandleIntroduction: Doesn't handle formatted line yet: {} '{}'".format( BBB, composedLine ) )
+        logging.warning( "theWordHandleIntroduction: Doesn't handle formatted line yet: {} {!r}".format( BBB, composedLine ) )
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( "theWordHandleIntroduction: Doesn't handle formatted line yet: {} '{}'".format( BBB, composedLine ) )
+            print( "theWordHandleIntroduction: Doesn't handle formatted line yet: {} {!r}".format( BBB, composedLine ) )
             halt
     return composedLine
 # end of theWordHandleIntroduction
@@ -455,9 +455,9 @@ def theWordAdjustLine( BBB, C, V, originalLine ):
 
     # Check what's left at the end
     if '\\' in line:
-        logging.warning( "theWordAdjustLine: Doesn't handle formatted line yet: {} {}:{} '{}'".format( BBB, C, V, line ) )
+        logging.warning( "theWordAdjustLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, line ) )
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( "theWordAdjustLine: Doesn't handle formatted line yet: {} {}:{} '{}'".format( BBB, C, V, line ) )
+            print( "theWordAdjustLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, line ) )
             halt
     return line
 # end of theWordAdjustLine
@@ -639,9 +639,9 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
         elif marker in ('nb',): # Just ignore these ones
             pass
         else:
-            logging.warning( "theWordComposeVerseLine: doesn't handle '{}' yet".format( marker ) )
+            logging.warning( "theWordComposeVerseLine: doesn't handle {!r} yet".format( marker ) )
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                print( "theWordComposeVerseLine: doesn't handle '{}' yet".format( marker ) ); halt
+                print( "theWordComposeVerseLine: doesn't handle {!r} yet".format( marker ) ); halt
             ourGlobals['unhandledMarkers'].add( marker )
         lastMarker = marker
 
@@ -652,9 +652,9 @@ def theWordComposeVerseLine( BBB, C, V, verseData, ourGlobals ):
 
     # Check what's left at the end
     if '\\' in composedLine:
-        logging.warning( "theWordComposeVerseLine: Doesn't handle formatted line yet: {} {}:{} '{}'".format( BBB, C, V, composedLine ) )
+        logging.warning( "theWordComposeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( "theWordComposeVerseLine: Doesn't handle formatted line yet: {} {}:{} '{}'".format( BBB, C, V, composedLine ) )
+            print( "theWordComposeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
             halt
     return composedLine.rstrip()
 # end of theWordComposeVerseLine
@@ -904,7 +904,7 @@ def handleLine( myName, BBB, C, V, originalLine, bookObject, myGlobals ):
     if line.endswith( '\\q4 \\NL*'): line = line[:-5] # Don't need nl and then space at end of line
     if line.endswith( '\\NL*' ): line = line[:-4] # Don't need nl at end of line
     if '\\NL*' in line: # We need to break the original line into different USFM markers
-        #print( "\nMessing with segments: {} {}:{} '{}'".format( BBB, C, V, line ) )
+        #print( "\nMessing with segments: {} {}:{} {!r}".format( BBB, C, V, line ) )
         segments = line.split( '\\NL*' )
         assert( len(segments) >= 2 )
         #print( " segments (split by backslash):", segments )
@@ -920,12 +920,12 @@ def handleLine( myName, BBB, C, V, originalLine, bookObject, myGlobals ):
                         if C==1 and V==1 and not appendedCFlag: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
                         bookObject.addLine( marker, '' )
                     else:
-                        logging.error( "It seems that we had a blank '{}' field in '{}'".format( bits[0], originalLine ) )
+                        logging.error( "It seems that we had a blank {!r} field in {!r}".format( bits[0], originalLine ) )
                         #halt
                 else:
                     assert( len(bits) == 2 )
                     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                        print( "\n{} {}:{} '{}'".format( BBB, C, V, originalLine ) )
+                        print( "\n{} {}:{} {!r}".format( BBB, C, V, originalLine ) )
                         print( "line", repr(line) )
                         print( "seg", repr(segment) )
                         print( "segments:", segments )
@@ -984,14 +984,14 @@ class TheWordBible( Bible ):
 
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):
-            logging.critical( _("TheWordBible: File '{}' is unreadable").format( self.sourceFilepath ) )
+            logging.critical( _("TheWordBible: File {!r} is unreadable").format( self.sourceFilepath ) )
 
         filenameBits = os.path.splitext( self.sourceFilename )
         self.name = filenameBits[0]
         self.fileExtension = filenameBits[1]
 
         if self.fileExtension.upper().endswith('X'):
-            logging.warning( _("TheWordBible: File '{}' is encrypted").format( self.sourceFilepath ) )
+            logging.warning( _("TheWordBible: File {!r} is encrypted").format( self.sourceFilepath ) )
     # end of TheWordBible.__init__
 
 
@@ -1007,7 +1007,7 @@ class TheWordBible( Bible ):
         fileExtensionUpper = self.fileExtension.upper()
         assert( fileExtensionUpper in filenameEndingsToAccept )
         if fileExtensionUpper.endswith('X'):
-            logging.error( _("TheWordBible: File '{}' is encrypted").format( self.sourceFilepath ) )
+            logging.error( _("TheWordBible: File {!r} is encrypted").format( self.sourceFilepath ) )
             return
 
         if fileExtensionUpper in ('.ONT','.ONTX',):
@@ -1087,7 +1087,7 @@ class TheWordBible( Bible ):
                             if line[0] == '#': continue # Just discard comment lines
                             if not continued:
                                 if '=' not in line:
-                                    logging.warning( "Missing equals sign from info line (ignored): {} '{}'".format( lineCount, line ) )
+                                    logging.warning( "Missing equals sign from info line (ignored): {} {!r}".format( lineCount, line ) )
                                 else: # Seems like a field=something type line
                                     bits = line.split( '=', 1 )
                                     assert( len(bits) == 2 )
@@ -1126,7 +1126,7 @@ def testTWB( TWBfolder, TWBfilename ):
 
     #TUBfolder = os.path.join( TWBfolder, TWBfilename )
     if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the theWord Bible class...") )
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is '{}' '{}'".format( TWBfolder, TWBfilename ) )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is {!r} {!r}".format( TWBfolder, TWBfilename ) )
     tWb = TheWordBible( TWBfolder, TWBfilename )
     tWb.load() # Load and process the file
     if BibleOrgSysGlobals.verbosityLevel > 1: print( tWb ) # Just print a summary
@@ -1204,7 +1204,7 @@ def demo():
                     #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                     testTWB( testFolder, someFile )
                     #break # only do the first one.........temp
-        else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
+        else: print( "Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
 
     if 1: # all discovered modules in the test folder
         testFolder = "../../../../../Data/Work/Bibles/theWord modules/"
@@ -1228,7 +1228,7 @@ def demo():
                     #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                     testTWB( testFolder, someFile )
                     #break # only do the first one.........temp
-        else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
+        else: print( "Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
 # end of demo
 
 if __name__ == '__main__':

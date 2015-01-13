@@ -113,9 +113,9 @@ class BibleVersificationSystemsConverter:
                                 else:
                                     logging.warning( _("Missing work element in header") )
                         else:
-                            logging.warning( _("Missing header element (looking for '{}' tag)").format( headerTag ) )
+                            logging.warning( _("Missing header element (looking for {!r} tag)").format( headerTag ) )
                     else:
-                        logging.error( _("Expected to load '{}' but got '{}'").format( self.__treeTag, self.__XMLSystems[versificationSystemCode]["tree"].tag ) )
+                        logging.error( _("Expected to load {!r} but got {!r}").format( self.__treeTag, self.__XMLSystems[versificationSystemCode]["tree"].tag ) )
                     bookCount = 0 # There must be an easier way to do this
                     for subelement in self.__XMLSystems[versificationSystemCode]["tree"]:
                         bookCount += 1
@@ -124,7 +124,7 @@ class BibleVersificationSystemsConverter:
                     if BibleOrgSysGlobals.strictCheckingFlag:
                         self._validateSystem( self.__XMLSystems[versificationSystemCode]["tree"] )
         else: # The data must have been already loaded
-            if XMLFolder is not None and XMLFolder!=self.__XMLFolder: logging.error( _("Bible versification systems are already loaded -- your different folder of '{}' was ignored").format( XMLFolder ) )
+            if XMLFolder is not None and XMLFolder!=self.__XMLFolder: logging.error( _("Bible versification systems are already loaded -- your different folder of {!r} was ignored").format( XMLFolder ) )
         return self
     # end of BibleVersificationSystemsConverter.loadSystems
 
@@ -145,56 +145,56 @@ class BibleVersificationSystemsConverter:
                 for attributeName in self.__compulsoryAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is None:
-                        logging.error( _("Compulsory '{}' attribute is missing from {} element in record {}").format( attributeName, element.tag, k ) )
+                        logging.error( _("Compulsory {!r} attribute is missing from {} element in record {}").format( attributeName, element.tag, k ) )
                     if not attributeValue:
-                        logging.warning( _("Compulsory '{}' attribute is blank on {} element in record {}").format( attributeName, element.tag, k ) )
+                        logging.warning( _("Compulsory {!r} attribute is blank on {} element in record {}").format( attributeName, element.tag, k ) )
 
                 # Check optional attributes on this main element
                 for attributeName in self.__optionalAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if not attributeValue:
-                            logging.warning( _("Optional '{}' attribute is blank on {} element in record {}").format( attributeName, element.tag, k ) )
+                            logging.warning( _("Optional {!r} attribute is blank on {} element in record {}").format( attributeName, element.tag, k ) )
 
                 # Check for unexpected additional attributes on this main element
                 for attributeName in element.keys():
                     attributeValue = element.get( attributeName )
                     if attributeName not in self.__compulsoryAttributes and attributeName not in self.__optionalAttributes:
-                        logging.warning( _("Additional '{}' attribute ('{}') found on {} element in record {}").format( attributeName, attributeValue, element.tag, k ) )
+                        logging.warning( _("Additional {!r} attribute ({!r}) found on {} element in record {}").format( attributeName, attributeValue, element.tag, k ) )
 
                 # Check the attributes that must contain unique information (in that particular field -- doesn't check across different attributes)
                 for attributeName in self.__uniqueAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if attributeValue in uniqueDict["Attribute_"+attributeName]:
-                            logging.error( _("Found '{}' data repeated in '{}' field on {} element in record {}").format( attributeValue, attributeName, element.tag, k ) )
+                            logging.error( _("Found {!r} data repeated in {!r} field on {} element in record {}").format( attributeValue, attributeName, element.tag, k ) )
                         uniqueDict["Attribute_"+attributeName].append( attributeValue )
 
                 # Check compulsory elements
                 ID = element.find("referenceAbbreviation").text
                 for elementName in self.__compulsoryElements:
                     if element.find( elementName ) is None:
-                        logging.error( _("Compulsory '{}' element is missing in record with ID '{}' (record {})").format( elementName, ID, k ) )
+                        logging.error( _("Compulsory {!r} element is missing in record with ID {!r} (record {})").format( elementName, ID, k ) )
                     if not element.find( elementName ).text:
-                        logging.warning( _("Compulsory '{}' element is blank in record with ID '{}' (record {})").format( elementName, ID, k ) )
+                        logging.warning( _("Compulsory {!r} element is blank in record with ID {!r} (record {})").format( elementName, ID, k ) )
 
                 # Check optional elements
                 for elementName in self.__optionalElements:
                     if element.find( elementName ) is not None:
                         if not element.find( elementName ).text:
-                            logging.warning( _("Optional '{}' element is blank in record with ID '{}' (record {})").format( elementName, ID, k ) )
+                            logging.warning( _("Optional {!r} element is blank in record with ID {!r} (record {})").format( elementName, ID, k ) )
 
                 # Check for unexpected additional elements
                 for subelement in element:
                     if subelement.tag not in self.__compulsoryElements and subelement.tag not in self.__optionalElements:
-                        logging.warning( _("Additional '{}' element ('{}') found in record with ID '{}' (record {})").format( subelement.tag, subelement.text, ID, k ) )
+                        logging.warning( _("Additional {!r} element ({!r}) found in record with ID {!r} (record {})").format( subelement.tag, subelement.text, ID, k ) )
 
                 # Check the elements that must contain unique information (in that particular element -- doesn't check across different elements)
                 for elementName in self.__uniqueElements:
                     if element.find( elementName ) is not None:
                         text = element.find( elementName ).text
                         if text in uniqueDict["Element_"+elementName]:
-                            logging.error( _("Found '{}' data repeated in '{}' element in record with ID '{}' (record {})").format( text, elementName, ID, k ) )
+                            logging.error( _("Found {!r} data repeated in {!r} element in record with ID {!r} (record {})").format( text, elementName, ID, k ) )
                         uniqueDict["Element_"+elementName].append( text )
             else:
                 logging.warning( _("Unexpected element: {} in record {}").format( element.tag, k ) )
@@ -267,12 +267,12 @@ class BibleVersificationSystemsConverter:
                 BBB = bookElement.find("referenceAbbreviation").text
                 #print( BBB )
                 if not BibleOrgSysGlobals.BibleBooksCodes.isValidReferenceAbbreviation( BBB ):
-                    logging.error( _("Unrecognized '{}' book abbreviation in '{}' versification system").format( BBB, versificationSystemCode ) )
+                    logging.error( _("Unrecognized {!r} book abbreviation in {!r} versification system").format( BBB, versificationSystemCode ) )
                 numChapters = bookElement.find("numChapters").text # This is a string
 
                 # Check the chapter data against the expected chapters in the BibleBooksCodes data
                 if numChapters not in BibleOrgSysGlobals.BibleBooksCodes.getExpectedChaptersList(BBB):
-                    logging.info( _("Expected number of chapters for {} is {} but we got '{}' for {}").format(BBB, BibleOrgSysGlobals.BibleBooksCodes.getExpectedChaptersList(BBB), numChapters, versificationSystemCode ) )
+                    logging.info( _("Expected number of chapters for {} is {} but we got {!r} for {}").format(BBB, BibleOrgSysGlobals.BibleBooksCodes.getExpectedChaptersList(BBB), numChapters, versificationSystemCode ) )
 
                 chapterData, omittedVersesData, combinedVersesData, reorderedVersesData = OrderedDict(), [], [], []
                 chapterData['numChapters'] = numChapters
@@ -513,7 +513,7 @@ class BibleVersificationSystemsConverter:
                                 if tupleResult: tupleResult += "," # Separate the fields (without a space)
                                 tupleResult += convertEntry( value ) # recursive call
                             result += "{{} }".format( tupleResult )
-                        else: logging.error( _("Cannot convert unknown field type '{}' in entry '{}'").format( field, entry ) )
+                        else: logging.error( _("Cannot convert unknown field type {!r} in entry {!r}").format( field, entry ) )
                 return result
             # end of convertEntry
 
@@ -552,9 +552,9 @@ class BibleVersificationSystemsConverter:
                             if tupleField is None: tupleResult += '""'
                             elif isinstance( tupleField, str): tupleResult += '"' + str(tupleField).replace('"','\\"') + '"'
                             elif isinstance( tupleField, int): tupleResult += str(tupleField)
-                            else: logging.error( _("Cannot convert unknown tuplefield type '{}' in entry '{}' for {}").format( tupleField, entry, field ) )
+                            else: logging.error( _("Cannot convert unknown tuplefield type {!r} in entry {!r} for {}").format( tupleField, entry, field ) )
                         result += tupleResult
-                    else: logging.error( _("Cannot convert unknown field type '{}' in entry '{}'").format( field, entry ) )
+                    else: logging.error( _("Cannot convert unknown field type {!r} in entry {!r}").format( field, entry ) )
                 return result
 
             theFile.write( "static struct{}{}[{}] = {\n  // Fields are{}\n".format( structName, dictName, len(theDict), fieldsComment ) )

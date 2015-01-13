@@ -343,7 +343,7 @@ class ESwordBible( Bible ):
 
 
         if '#$#' in line: # We need to break the original line into different USFM markers
-            #print( "\nMessing with segments: {} {}:{} '{}'".format( BBB, C, V, line ) )
+            #print( "\nMessing with segments: {} {}:{} {!r}".format( BBB, C, V, line ) )
             segments = line.split( '#$#' )
             assert( len(segments) >= 2 )
             #print( " segments (split by backslash):", segments )
@@ -359,12 +359,12 @@ class ESwordBible( Bible ):
                             if C==1 and V==1 and not appendedCFlag: bookObject.addLine( 'c', str(C) ); appendedCFlag = True
                             bookObject.addLine( marker, '' )
                         else:
-                            logging.error( "It seems that we had a blank '{}' field in '{}'".format( bits[0], originalLine ) )
+                            logging.error( "It seems that we had a blank {!r} field in {!r}".format( bits[0], originalLine ) )
                             #halt
                     else:
                         assert( len(bits) == 2 )
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                            print( "\n{} {}:{} '{}'".format( BBB, C, V, originalLine ) )
+                            print( "\n{} {}:{} {!r}".format( BBB, C, V, originalLine ) )
                             print( "line", repr(line) )
                             print( "seg", repr(segment) )
                             print( "segments:", segments )

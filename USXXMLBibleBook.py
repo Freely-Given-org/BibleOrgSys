@@ -333,7 +333,7 @@ class USXXMLBibleBook( BibleBook ):
                         self.addPriorityError( 97, c, v, _("Found \\{} internal USFM Marker on new line in file").format( USFMMarker ) )
                         #lastText += '' if lastText.endswith(' ') else ' ' # Not always good to add a space, but it's their fault!
                         lastText =  '\\' + USFMMarker + ' ' + text
-                        #print( "{} {} {} Now have {}:'{}'".format( self.BBB, c, v, lastMarker, lastText ) )
+                        #print( "{} {} {} Now have {}:{!r}".format( self.BBB, c, v, lastMarker, lastText ) )
                     else: # the line begins with an unknown USFM Marker
                         text = element.text
                         if text:
@@ -347,8 +347,8 @@ class USXXMLBibleBook( BibleBook ):
                             if USFMMarker.startswith( tryMarker ): # Let's try changing it
                                 if lastMarker: self.addLine( lastMarker, lastText )
                                 lastMarker, lastText = tryMarker, USFMMarker[len(tryMarker):] + ' ' + text
-                                loadErrors.append( _("{} {}:{} Changed '\\{}' unknown USFM Marker to '{}' at beginning of line: {}").format( self.BBB, c, v, USFMMarker, tryMarker, text ) )
-                                logging.warning( _("Changed '\\{}' unknown USFM Marker to '{}' after {} {}:{} at beginning of line: {}").format( USFMMarker, tryMarker, self.BBB, c, v, text ) )
+                                loadErrors.append( _("{} {}:{} Changed '\\{}' unknown USFM Marker to {!r} at beginning of line: {}").format( self.BBB, c, v, USFMMarker, tryMarker, text ) )
+                                logging.warning( _("Changed '\\{}' unknown USFM Marker to {!r} after {} {}:{} at beginning of line: {}").format( USFMMarker, tryMarker, self.BBB, c, v, text ) )
                                 break
                         # Otherwise, don't bother processing this line -- it'll just cause more problems later on
                 else:
@@ -392,9 +392,9 @@ def demo():
                 if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Loading {} from {}...").format( BBB, filename ) )
                 UxBB = USXXMLBibleBook( name, BBB )
                 UxBB.load( filename, testFolder )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "  ID is '{}'".format( UxBB.getField( 'id' ) ) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Header is '{}'".format( UxBB.getField( 'h' ) ) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Main titles are '{}' and '{}'".format( UxBB.getField( 'mt1' ), UxBB.getField( 'mt2' ) ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "  ID is {!r}".format( UxBB.getField( 'id' ) ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Header is {!r}".format( UxBB.getField( 'h' ) ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Main titles are {!r} and {!r}".format( UxBB.getField( 'mt1' ), UxBB.getField( 'mt2' ) ) )
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( UxBB )
                 UxBB.validateMarkers()
                 UxBBVersification = UxBB.getVersification ()
@@ -416,9 +416,9 @@ def demo():
                         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {} from {}...").format( BBB2, filename2 ) )
                         UBB = USFMBibleBook.USFMBibleBook( name, BBB )
                         UBB.load( filename2, testFolder2 )
-                        #print( "  ID is '{}'".format( UBB.getField( 'id' ) ) )
-                        #print( "  Header is '{}'".format( UBB.getField( 'h' ) ) )
-                        #print( "  Main titles are '{}' and '{}'".format( UBB.getField( 'mt1' ), UBB.getField( 'mt2' ) ) )
+                        #print( "  ID is {!r}".format( UBB.getField( 'id' ) ) )
+                        #print( "  Header is {!r}".format( UBB.getField( 'h' ) ) )
+                        #print( "  Main titles are {!r} and {!r}".format( UBB.getField( 'mt1' ), UBB.getField( 'mt2' ) ) )
                         if BibleOrgSysGlobals.verbosityLevel > 2: print( UBB )
                         UBB.validateMarkers()
 
@@ -446,11 +446,11 @@ def demo():
                                     #print( "usfm", i, len(UBB._processedLines[i]), UBB._processedLines[i][0]) #[:2] )
                                     print( "\n{} line {} not equal: {}({}) from {}({})".format( BBB, i, UxBB._processedLines[i][0], UxBB._processedLines[i][1], UBB._processedLines[i][0], UBB._processedLines[i][1] ) )
                                     if UxBB._processedLines[i][2] != UBB._processedLines[i][2]:
-                                        print( "   UsxBB[2]: '{}'".format( getShortVersion( UxBB._processedLines[i][2] ) ) )
-                                        print( "   UsfBB[2]: '{}'".format( getShortVersion( UBB._processedLines[i][2] ) ) )
+                                        print( "   UsxBB[2]: {!r}".format( getShortVersion( UxBB._processedLines[i][2] ) ) )
+                                        print( "   UsfBB[2]: {!r}".format( getShortVersion( UBB._processedLines[i][2] ) ) )
                                     if (UxBB._processedLines[i][3] or UBB._processedLines[i][3]) and UxBB._processedLines[i][3]!=UBB._processedLines[i][3]:
-                                        print( "   UdsBB[3]: '{}'".format( getShortVersion( UxBB._processedLines[i][3] ) ) )
-                                        print( "   UsfBB[3]: '{}'".format( getShortVersion( UBB._processedLines[i][3] ) ) )
+                                        print( "   UdsBB[3]: {!r}".format( getShortVersion( UxBB._processedLines[i][3] ) ) )
+                                        print( "   UsfBB[3]: {!r}".format( getShortVersion( UBB._processedLines[i][3] ) ) )
                                     mismatchCount += 1
                             else: # one has more lines
                                 print( "Linecount not equal: {} from {}".format( i, UxL, UL ) )
@@ -459,9 +459,9 @@ def demo():
                             if mismatchCount > 5: print( "..." ); break
                         if mismatchCount == 0 and BibleOrgSysGlobals.verbosityLevel > 2: print( "All {} processedLines matched!".format( UxL ) )
                     else: print( "Sorry, USFM test folder doesn't contain the {} book.".format( BBB ) )
-                else: print( "Sorry, USFM test folder '{}' doesn't exist on this computer.".format( testFolder2 ) )
+                else: print( "Sorry, USFM test folder {!r} doesn't exist on this computer.".format( testFolder2 ) )
             elif BibleOrgSysGlobals.verbosityLevel > 2: print( "*** Skipped USX/USFM compare on {}", BBB )
-    else: print( "Sorry, USX test folder '{}' doesn't exist on this computer.".format( testFolder ) )
+    else: print( "Sorry, USX test folder {!r} doesn't exist on this computer.".format( testFolder ) )
 # end of demo
 
 if __name__ == '__main__':

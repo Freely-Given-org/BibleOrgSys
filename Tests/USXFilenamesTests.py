@@ -46,7 +46,7 @@ class USXFilenamesTests1( unittest.TestCase ):
         testFolder = 'Tests/DataFilesForTests/USXTest1/' # This is a RELATIVE path
         if os.access( testFolder, os.R_OK ): # Create the USXFilenames object
             self.UFns = USXFilenames.USXFilenames( testFolder )
-        else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
+        else: print( "Sorry, test folder {!r} doesn't exist on this computer.".format( testFolder ) )
 
     def test_010_str( self ):
         """ Test the __str__ function. """
@@ -133,7 +133,7 @@ class USXFilenamesTests2( unittest.TestCase ):
         testFolder = 'Tests/DataFilesForTests/USXTest2/' # This is a RELATIVE path
         if os.access( testFolder, os.R_OK ): # Create the USXFilenames object
             self.UFns = USXFilenames.USXFilenames( testFolder )
-        else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
+        else: print( "Sorry, test folder {!r} doesn't exist on this computer.".format( testFolder ) )
 
     def test_010_str( self ):
         """ Test the __str__ function. """

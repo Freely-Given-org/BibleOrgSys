@@ -90,7 +90,7 @@ class USFMMarkersConverter:
             if BibleOrgSysGlobals.strictCheckingFlag:
                 self.__validate()
         else: # The data must have been already loaded
-            if XMLFilepath is not None and XMLFilepath!=self.__XMLFilepath: logging.error( _("Bible books codes are already loaded -- your different filepath of '{}' was ignored").format( XMLFilepath ) )
+            if XMLFilepath is not None and XMLFilepath!=self.__XMLFilepath: logging.error( _("Bible books codes are already loaded -- your different filepath of {!r} was ignored").format( XMLFilepath ) )
         return self
     # end of loadAndValidate
 
@@ -103,7 +103,7 @@ class USFMMarkersConverter:
         self.__XMLFilepath = XMLFilepath
         assert( self._XMLtree is None or len(self._XMLtree)==0 ) # Make sure we're not doing this twice
 
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading USFMMarkers XML file from '{}'...").format( self.__XMLFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading USFMMarkers XML file from {!r}...").format( self.__XMLFilepath ) )
         self._XMLtree = ElementTree().parse( self.__XMLFilepath )
         assert( self._XMLtree ) # Fail here if we didn't load anything at all
 
@@ -131,10 +131,10 @@ class USFMMarkersConverter:
                     else:
                         logging.warning( _("Missing work element in header") )
             else:
-                logging.warning( _("Missing header element (looking for '{}' tag)".format( self._headerTag ) ) )
-            if header.tail is not None and header.tail.strip(): logging.error( _("Unexpected '{}' tail data after header").format( element.tail ) )
+                logging.warning( _("Missing header element (looking for {!r} tag)".format( self._headerTag ) ) )
+            if header.tail is not None and header.tail.strip(): logging.error( _("Unexpected {!r} tail data after header").format( element.tail ) )
         else:
-            logging.error( _("Expected to load '{}' but got '{}'").format( self._treeTag, self._XMLtree.tag ) )
+            logging.error( _("Expected to load {!r} but got {!r}").format( self._treeTag, self._XMLtree.tag ) )
     # end of __load
 
     def __validate( self ):
@@ -159,29 +159,29 @@ class USFMMarkersConverter:
                 for attributeName in self._compulsoryAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is None:
-                        logging.error( _("Compulsory '{}' attribute is missing from {} element in record {}").format( attributeName, element.tag, j ) )
+                        logging.error( _("Compulsory {!r} attribute is missing from {} element in record {}").format( attributeName, element.tag, j ) )
                     if not attributeValue:
-                        logging.warning( _("Compulsory '{}' attribute is blank on {} element in record {}").format( attributeName, element.tag, j ) )
+                        logging.warning( _("Compulsory {!r} attribute is blank on {} element in record {}").format( attributeName, element.tag, j ) )
 
                 # Check optional attributes on this main element
                 for attributeName in self._optionalAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if not attributeValue:
-                            logging.warning( _("Optional '{}' attribute is blank on {} element in record {}").format( attributeName, element.tag, j ) )
+                            logging.warning( _("Optional {!r} attribute is blank on {} element in record {}").format( attributeName, element.tag, j ) )
 
                 # Check for unexpected additional attributes on this main element
                 for attributeName in element.keys():
                     attributeValue = element.get( attributeName )
                     if attributeName not in self._compulsoryAttributes and attributeName not in self._optionalAttributes:
-                        logging.warning( _("Additional '{}' attribute ('{}') found on {} element in record {}").format( attributeName, attributeValue, element.tag, j ) )
+                        logging.warning( _("Additional {!r} attribute ({!r}) found on {} element in record {}").format( attributeName, attributeValue, element.tag, j ) )
 
                 # Check the attributes that must contain unique information (in that particular field -- doesn't check across different attributes)
                 for attributeName in self._uniqueAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if attributeValue in uniqueDict["Attribute_"+attributeName]:
-                            logging.error( _("Found '{}' data repeated in '{}' field on {} element in record {}").format( attributeValue, attributeName, element.tag, j ) )
+                            logging.error( _("Found {!r} data repeated in {!r} field on {} element in record {}").format( attributeValue, attributeName, element.tag, j ) )
                         uniqueDict["Attribute_"+attributeName].append( attributeValue )
 
                 # Get the marker to use as a record ID
@@ -190,32 +190,32 @@ class USFMMarkersConverter:
                 # Check compulsory elements
                 for elementName in self._compulsoryElements:
                     if element.find( elementName ) is None:
-                        logging.error( _("Compulsory '{}' element is missing in record with marker '{}' (record {})").format( elementName, marker, j ) )
+                        logging.error( _("Compulsory {!r} element is missing in record with marker {!r} (record {})").format( elementName, marker, j ) )
                     elif not element.find( elementName ).text:
-                        logging.warning( _("Compulsory '{}' element is blank in record with marker '{}' (record {})").format( elementName, marker, j ) )
+                        logging.warning( _("Compulsory {!r} element is blank in record with marker {!r} (record {})").format( elementName, marker, j ) )
 
                 # Check optional elements
                 for elementName in self._optionalElements:
                     if element.find( elementName ) is not None:
                         if not element.find( elementName ).text:
-                            logging.warning( _("Optional '{}' element is blank in record with marker '{}' (record {})").format( elementName, marker, j ) )
+                            logging.warning( _("Optional {!r} element is blank in record with marker {!r} (record {})").format( elementName, marker, j ) )
 
                 # Check for unexpected additional elements
                 for subelement in element:
                     if subelement.tag not in self._compulsoryElements and subelement.tag not in self._optionalElements:
-                        logging.warning( _("Additional '{}' element ('{}') found in record with marker '{}' (record {})").format( subelement.tag, subelement.text, marker, j ) )
+                        logging.warning( _("Additional {!r} element ({!r}) found in record with marker {!r} (record {})").format( subelement.tag, subelement.text, marker, j ) )
 
                 # Check the elements that must contain unique information (in that particular element -- doesn't check across different elements)
                 for elementName in self._uniqueElements:
                     if element.find( elementName ) is not None:
                         text = element.find( elementName ).text
                         if text in uniqueDict["Element_"+elementName]:
-                            logging.error( _("Found '{}' data repeated in '{}' element in record with marker '{}' (record {})").format( text, elementName, marker, j ) )
+                            logging.error( _("Found {!r} data repeated in {!r} element in record with marker {!r} (record {})").format( text, elementName, marker, j ) )
                         uniqueDict["Element_"+elementName].append( text )
             else:
                 logging.warning( _("Unexpected element: {} in record {}").format( element.tag, j ) )
-            if element.tail is not None and element.tail.strip(): logging.error( _("Unexpected '{}' tail data after {} element in record {}").format( element.tail, element.tag, j ) )
-        if self._XMLtree.tail is not None and self._XMLtree.tail.strip(): logging.error( _("Unexpected '{}' tail data after {} element").format( self._XMLtree.tail, self._XMLtree.tag ) )
+            if element.tail is not None and element.tail.strip(): logging.error( _("Unexpected {!r} tail data after {} element in record {}").format( element.tail, element.tag, j ) )
+        if self._XMLtree.tail is not None and self._XMLtree.tail.strip(): logging.error( _("Unexpected {!r} tail data after {} element").format( self._XMLtree.tail, self._XMLtree.tag ) )
     # end of __validate
 
     def __str__( self ):
@@ -261,40 +261,40 @@ class USFMMarkersConverter:
             nameEnglish = element.find("nameEnglish").text # This name is really just a comment element
             marker = element.find("marker").text
             if marker.lower() != marker:
-                logging.error( _("Marker '{}' should be lower case").format( marker ) )
+                logging.error( _("Marker {!r} should be lower case").format( marker ) )
             compulsory = element.find("compulsory").text
-            if  compulsory not in ( "Yes", "No" ): logging.error( _("Unexpected '{}' compulsory field for marker '{}'").format( compulsory, marker ) )
+            if  compulsory not in ( "Yes", "No" ): logging.error( _("Unexpected {!r} compulsory field for marker {!r}").format( compulsory, marker ) )
             level = element.find("level").text
             compulsoryFlag = compulsory == "Yes"
             if  level == "Newline": newlineMarkersList.append( marker ); combinedNewlineMarkersList.append( marker )
             elif level == "Internal": internalMarkersList.append( marker )
             elif level == "Note": noteMarkersList.append( marker )
-            else: logging.error( _("Unexpected '{}' level field for marker '{}'").format( level, marker ) )
+            else: logging.error( _("Unexpected {!r} level field for marker {!r}").format( level, marker ) )
             numberable = element.find("numberable").text
-            if  numberable not in ( "Yes", "No" ): logging.error( _("Unexpected '{}' numberable field for marker '{}'").format( numberable, marker ) )
+            if  numberable not in ( "Yes", "No" ): logging.error( _("Unexpected {!r} numberable field for marker {!r}").format( numberable, marker ) )
             numberableFlag = numberable == "Yes"
-            if numberableFlag and level == "Character": logging.error( _("Unexpected '{}' numberable field for character marker '{}'").format( numberable, marker ) )
+            if numberableFlag and level == "Character": logging.error( _("Unexpected {!r} numberable field for character marker {!r}").format( numberable, marker ) )
             nests = element.find("nests").text
-            if  nests not in ( "Yes", "No" ): logging.error( _("Unexpected '{}' nests field for marker '{}'").format( nests, marker ) )
+            if  nests not in ( "Yes", "No" ): logging.error( _("Unexpected {!r} nests field for marker {!r}").format( nests, marker ) )
             nestsFlag = nests == "Yes"
             hasContent = element.find("hasContent").text
-            if  hasContent not in ( "Always", "Never", "Sometimes" ): logging.error( _("Unexpected '{}' hasContent field for marker '{}'").format( hasContent, marker ) )
+            if  hasContent not in ( "Always", "Never", "Sometimes" ): logging.error( _("Unexpected {!r} hasContent field for marker {!r}").format( hasContent, marker ) )
             printed = element.find("printed").text
-            if  printed not in ( "Yes", "No" ): logging.error( _("Unexpected '{}' printed field for marker '{}'").format( printed, marker ) )
+            if  printed not in ( "Yes", "No" ): logging.error( _("Unexpected {!r} printed field for marker {!r}").format( printed, marker ) )
             printedFlag = printed == "Yes"
             closed = element.find("closed").text
-            if  closed not in ( "No", "Always", "Optional" ): logging.error( _("Unexpected '{}' closed field for marker '{}'").format( closed, marker ) )
+            if  closed not in ( "No", "Always", "Optional" ): logging.error( _("Unexpected {!r} closed field for marker {!r}").format( closed, marker ) )
             occursIn = element.find("occursIn").text
             if  occursIn not in ( "Header", "Introduction", "Numbering", "Text", "Canonical Text", "Poetry", "Text, Poetry", "Acrostic verse", "Table row", "Footnote", "Cross-reference", "Front and back matter" ):
-                logging.error( _("Unexpected '{}' occursIn field for marker '{}'").format( occursIn, marker ) )
+                logging.error( _("Unexpected {!r} occursIn field for marker {!r}").format( occursIn, marker ) )
             deprecated = element.find("deprecated").text
-            if  deprecated not in ( "Yes", "No" ): logging.error( _("Unexpected '{}' deprecated field for marker '{}'").format( deprecated, marker ) )
+            if  deprecated not in ( "Yes", "No" ): logging.error( _("Unexpected {!r} deprecated field for marker {!r}").format( deprecated, marker ) )
             deprecatedFlag = deprecated == "Yes"
 
             # The optional elements are set to None if they don't exist
             #closed = None if element.find("closed") is None else element.find("closed").text
-            #if closed is not None and closed not in ( "No", "Always", "Optional" ): logging.error( _("Unexpected '{}' closed field for marker '{}'").format( closed, marker ) )
-            #if level=="Character" and closed is None: logging.error( _("Entry for character marker '{}' doesn't have a \"closed\" field").format( marker ) )
+            #if closed is not None and closed not in ( "No", "Always", "Optional" ): logging.error( _("Unexpected {!r} closed field for marker {!r}").format( closed, marker ) )
+            #if level=="Character" and closed is None: logging.error( _("Entry for character marker {!r} doesn't have a \"closed\" field").format( marker ) )
             description = None if element.find("description") is None else element.find("description").text
             if description is not None: assert( description )
 
@@ -460,7 +460,7 @@ class USFMMarkersConverter:
                         if field is None: result += '""'
                         elif isinstance( field, str): result += '"' + str(field).replace('"','\\"') + '"'
                         elif isinstance( field, int): result += str(field)
-                        else: logging.error( _("Cannot convert unknown field type '{}' in entry '{}'").format( field, entry ) )
+                        else: logging.error( _("Cannot convert unknown field type {!r} in entry {!r}").format( field, entry ) )
                 elif isinstance( entry, dict ):
                     for key in sorted(entry.keys()):
                         field = entry[key]
@@ -468,7 +468,7 @@ class USFMMarkersConverter:
                         if field is None: result += '""'
                         elif isinstance( field, str): result += '"' + str(field).replace('"','\\"') + '"'
                         elif isinstance( field, int): result += str(field)
-                        else: logging.error( _("Cannot convert unknown field type '{}' in entry '{}'").format( field, entry ) )
+                        else: logging.error( _("Cannot convert unknown field type {!r} in entry {!r}").format( field, entry ) )
                 else:
                     logging.error( _("Can't handle this type of entry yet: {}").format( repr(entry) ) )
                 return result

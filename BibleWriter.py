@@ -249,13 +249,13 @@ class BibleWriter( InternalBible ):
                 #if word and not word[0].isalnum():
                     ##print( word, stripWordPunctuation( word ) )
                     #if len(word) > 1:
-                        #if BibleOrgSysGlobals.debugFlag: print( "BibleWriter.makeLists: {} {}:{} ".format( BBB, C, V ) + _("Have unexpected character starting word '{}'").format( word ) )
+                        #if BibleOrgSysGlobals.debugFlag: print( "BibleWriter.makeLists: {} {}:{} ".format( BBB, C, V ) + _("Have unexpected character starting word {!r}").format( word ) )
                         #word = word[1:]
                 #if word: # There's still some characters remaining after all that stripping
                     #if BibleOrgSysGlobals.verbosityLevel > 3: # why???
                         #for k,char in enumerate(word):
                             #if not char.isalnum() and (k==0 or k==len(word)-1 or char not in InternalBibleBook.MEDIAL_WORD_PUNCT_CHARS):
-                                #if BibleOrgSysGlobals.debugFlag: print( "BibleWriter.makeLists: {} {}:{} ".format( BBB, C, V ) + _("Have unexpected '{}' in word '{}'").format( char, word ) )
+                                #if BibleOrgSysGlobals.debugFlag: print( "BibleWriter.makeLists: {} {}:{} ".format( BBB, C, V ) + _("Have unexpected {!r} in word {!r}").format( char, word ) )
                     #lcWord = word.lower()
                     #isAReferenceOrNumber = True
                     #for char in word:
@@ -420,10 +420,10 @@ class BibleWriter( InternalBible ):
 
                 filename = "{:02}_{}_BibleWriter.rSFM".format( j, BBB )
                 filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}...").format( filepath ) )
                 with open( filepath, 'wt' ) as myFile:
                     for marker,text in rawUSFMData:
-                        myFile.write( "{}: '{}'\n".format( marker, text ) )
+                        myFile.write( "{}: {!r}\n".format( marker, text ) )
 
             pseudoUSFMData = bookObject._processedLines
             #print( "\pseudoUSFMData", pseudoUSFMData[:50] ); halt
@@ -433,7 +433,7 @@ class BibleWriter( InternalBible ):
             indent = 3
             filename = "{:02}_{}_BibleWriter.pSFM".format( j, BBB )
             filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}...").format( filepath ) )
             indentLevel = 0
             C = V = '0'
             with open( filepath, 'wt' ) as myFile:
@@ -506,7 +506,7 @@ class BibleWriter( InternalBible ):
                     ignoredMarkers.add( pseudoMarker )
                     continue
                 #value = cleanText # (temp)
-                #if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "toUSFM: pseudoMarker = '{}' value = '{}'".format( pseudoMarker, value ) )
+                #if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "toUSFM: pseudoMarker = {!r} value = {!r}".format( pseudoMarker, value ) )
                 if removeVerseBridges and pseudoMarker in ('v','c',):
                     if value1 and value2:
                         for vNum in range( value1+1, value2+1 ): # Fill in missing verse numbers
@@ -537,7 +537,7 @@ class BibleWriter( InternalBible ):
                         inField = None
 
                 if pseudoMarker[-1] == '~':
-                    #print( "psMarker ends with squiggle: '{}'='{}'".format( pseudoMarker, value ) )
+                    #print( "psMarker ends with squiggle: {!r}={!r}".format( pseudoMarker, value ) )
                     if BibleOrgSysGlobals.debugFlag: assert( pseudoMarker[:-1] in ('v','p','c') )
                     USFM += (' ' if USFM and USFM[-1]!=' ' else '') + value
                 else: # not a continuation marker
@@ -547,7 +547,7 @@ class BibleWriter( InternalBible ):
                         #if (USFM[-2]=='\\' or USFM[-3]=='\\') and USFM[-1]!=' ':
                         if USFM[-1] != ' ':
                             USFM += ' ' # Separate markers by a space e.g., \p\bk Revelation
-                            if BibleOrgSysGlobals.debugFlag: print( "toUSFM: Added space to '{}' before '{}'".format( USFM[-2], pseudoMarker ) )
+                            if BibleOrgSysGlobals.debugFlag: print( "toUSFM: Added space to {!r} before {!r}".format( USFM[-2], pseudoMarker ) )
                         adjValue += '\\{}*'.format( pseudoMarker ) # Do a close marker
                     elif pseudoMarker in ('f','x',): inField = pseudoMarker # Remember these so we can close them later
                     elif pseudoMarker in ('fr','fq','ft','xo',): USFM += ' ' # These go on the same line just separated by spaces and don't get closed
@@ -561,7 +561,7 @@ class BibleWriter( InternalBible ):
             filename = "{}{}BibleWriter.SFM".format( USFMNumber, USFMAbbreviation.upper() ) # This seems to be the undocumented standard filename format even though it's so ugly with digits running into each other, e.g., 102SA...
             #if not os.path.exists( USFMOutputFolder ): os.makedirs( USFMOutputFolder )
             filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}...").format( filepath ) )
             with open( filepath, 'wt' ) as myFile: myFile.write( USFM )
 
         if ignoredMarkers:
@@ -610,7 +610,7 @@ class BibleWriter( InternalBible ):
             filename = "{}{}BibleWriter.ESFM".format( USFMNumber, USFMAbbreviation.upper() )
             #if not os.path.exists( ESFMOutputFolder ): os.makedirs( ESFMOutputFolder )
             filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}...").format( filepath ) )
             indentLevel, indentSize =  0, 2
             inField = None
             value1 = value2 = None # For printing missing (bridged) verse numbers
@@ -656,7 +656,7 @@ class BibleWriter( InternalBible ):
                             continue
 
                         #value = cleanText # (temp)
-                        #if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "toESFM: pseudoMarker = '{}' value = '{}'".format( pseudoMarker, value ) )
+                        #if BibleOrgSysGlobals.debugFlag and debuggingThisModule: print( "toESFM: pseudoMarker = {!r} value = {!r}".format( pseudoMarker, value ) )
                         if 0 and removeVerseBridges and pseudoMarker in ('v','c',):
                             if value1 and value2:
                                 for vNum in range( value1+1, value2+1 ): # Fill in missing verse numbers
@@ -687,7 +687,7 @@ class BibleWriter( InternalBible ):
                                 inField = None
 
                         if pseudoMarker[-1] == '~':
-                            #print( "psMarker ends with squiggle: '{}'='{}'".format( pseudoMarker, value ) )
+                            #print( "psMarker ends with squiggle: {!r}={!r}".format( pseudoMarker, value ) )
                             if BibleOrgSysGlobals.debugFlag: assert( pseudoMarker[:-1] in ('v','p','c') )
                             ESFMLine += (' ' if ESFMLine and ESFMLine[-1]!=' ' else '') + value
                         else: # not a continuation marker
@@ -697,7 +697,7 @@ class BibleWriter( InternalBible ):
                                 #if (ESFMLine[-2]=='\\' or ESFMLine[-3]=='\\') and ESFMLine[-1]!=' ':
                                 if ESFMLine[-1] != ' ':
                                     ESFMLine += ' ' # Separate markers by a space e.g., \p\bk Revelation
-                                    if BibleOrgSysGlobals.debugFlag: print( "toESFM: Added space to '{}' before '{}'".format( ESFMLine[-2], pseudoMarker ) )
+                                    if BibleOrgSysGlobals.debugFlag: print( "toESFM: Added space to {!r} before {!r}".format( ESFMLine[-2], pseudoMarker ) )
                                 adjValue += '\\{}*'.format( pseudoMarker ) # Do a close marker
                             elif pseudoMarker in ('f','x',): inField = pseudoMarker # Remember these so we can close them later
                             elif pseudoMarker in ('fr','fq','ft','xo',): ESFMLine += ' ' # These go on the same line just separated by spaces and don't get closed
@@ -760,7 +760,7 @@ class BibleWriter( InternalBible ):
 
             filename = "BOS-BibleWriter-{}.txt".format( BBB )
             filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}...").format( filepath ) )
             textBuffer = ""
             with open( filepath, 'wt' ) as myFile:
                 gotVP = None
@@ -799,7 +799,7 @@ class BibleWriter( InternalBible ):
                 if textBuffer: myFile.write( "{}\n".format( textBuffer ) ) # Write the last bit
 
                     #if verseByVerse:
-                        #myFile.write( "{} ({}): '{}' '{}' {}\n" \
+                        #myFile.write( "{} ({}): {!r} {!r} {}\n" \
                             #.format( entry.getMarker(), entry.getOriginalMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras() ) )
 
         if ignoredMarkers:
@@ -1055,7 +1055,7 @@ class BibleWriter( InternalBible ):
                     offset = 0
                     for extra in extras: # do any footnotes and cross-references
                         extraType, extraIndex, extraText, cleanExtraText = extra
-                        #print( "{} {}:{} Text='{}' eT={}, eI={}, eText='{}'".format( BBB, C, V, text, extraType, extraIndex, extraText ) )
+                        #print( "{} {}:{} Text={!r} eT={}, eI={}, eText={!r}".format( BBB, C, V, text, extraType, extraIndex, extraText ) )
                         adjIndex = extraIndex - offset
                         lenT = len( adjText )
                         if adjIndex > lenT: # This can happen if we have verse/space/notes at end (and the space was deleted after the note was separated off)
@@ -1063,11 +1063,11 @@ class BibleWriter( InternalBible ):
                             # No need to adjust adjIndex because the code below still works
                         elif adjIndex<0 or adjIndex>lenT: # The extras don't appear to fit correctly inside the text
                             print( "formatMarkdownVerseText: Extras don't fit inside verse at {} {}:{}: eI={} o={} len={} aI={}".format( BBB, C, V, extraIndex, offset, len(text), adjIndex ) )
-                            print( "  Verse='{}'".format( text ) )
-                            print( "  Extras='{}'".format( extras ) )
+                            print( "  Verse={!r}".format( text ) )
+                            print( "  Extras={!r}".format( extras ) )
                         #assert( 0 <= adjIndex <= len(verse) )
                         #adjText = checkText( extraText, checkLeftovers=False ) # do any general character formatting
-                        #if adjText!=extraText: print( "processXRefsAndFootnotes: {}@{}-{}={} '{}' now '{}'".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
+                        #if adjText!=extraText: print( "processXRefsAndFootnotes: {}@{}-{}={} {!r} now {!r}".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
                         if extraType == 'fn':
                             extra = processNote( extraText, 'footnote' )
                             #print( "fn got", extra )
@@ -1142,7 +1142,7 @@ class BibleWriter( InternalBible ):
 
             filename = "BOS-BibleWriter-{}.md".format( BBB )
             filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}...").format( filepath ) )
             ourGlobals = {}
             ourGlobals['nextFootnoteIndex'] = ourGlobals['nextEndnoteIndex'] = ourGlobals['nextXRefIndex'] = 0
             ourGlobals['footnoteMD'], ourGlobals['endnoteMD'], ourGlobals['xrefMD'] = [], [], []
@@ -1186,7 +1186,7 @@ class BibleWriter( InternalBible ):
                 if textBuffer: myFile.write( "{}\n".format( textBuffer ) ) # Write the last bit
 
                     #if verseByVerse:
-                        #myFile.write( "{} ({}): '{}' '{}' {}\n" \
+                        #myFile.write( "{} ({}): {!r} {!r} {}\n" \
                             #.format( entry.getMarker(), entry.getOriginalMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras() ) )
 
         if ignoredMarkers:
@@ -1235,7 +1235,7 @@ class BibleWriter( InternalBible ):
         for BBB in BibleOrgSysGlobals.BibleBooksCodes.getAllReferenceAbbreviations(): # Pre-process the language booknames
             if BBB in controlDict and controlDict[BBB]:
                 bits = controlDict[BBB].split(',')
-                if len(bits)!=2: logging.error( _("toDoor43: Unrecognized language book abbreviation and name for {}: '{}'").format( BBB, controlDict[BBB] ) )
+                if len(bits)!=2: logging.error( _("toDoor43: Unrecognized language book abbreviation and name for {}: {!r}").format( BBB, controlDict[BBB] ) )
                 bookAbbrev = bits[0].strip().replace('"','') # Remove outside whitespace then the double quote marks
                 bookName = bits[1].strip().replace('"','') # Remove outside whitespace then the double quote marks
                 bookAbbrevDict[bookAbbrev], bookNameDict[bookName], bookAbbrevNameDict[BBB] = BBB, BBB, (bookAbbrev,bookName,)
@@ -1270,7 +1270,7 @@ class BibleWriter( InternalBible ):
                         #print( "processXRef", j, "'"+token+"'", "from", '"'+USFMxref+'"' )
                         if j==0: # The first token (but the x has already been removed)
                             rest = token.strip()
-                            if rest != '-': logging.warning( _("toDoor43: We got something else here other than hyphen (probably need to do something with it): {} '{}' from '{}'").format( chapterRef, token, text ) )
+                            if rest != '-': logging.warning( _("toDoor43: We got something else here other than hyphen (probably need to do something with it): {} {!r} from {!r}").format( chapterRef, token, text ) )
                         elif token.startswith('xo '): # xref reference follows
                             adjToken = token[3:].strip()
                             if adjToken.endswith(' a'): adjToken = adjToken[:-2] # Remove any 'a' suffix (occurs when a cross-reference has multiple (a and b) parts
@@ -1280,7 +1280,7 @@ class BibleWriter( InternalBible ):
                             if osisRef is not None:
                                 OSISxref += '<reference type="source" osisRef="{}">{}</reference>'.format( osisRef,token[3:] )
                                 if not BRL.containsReference( BBB, currentChapterNumberString, verseNumberString ):
-                                    logging.error( _("toDoor43: Cross-reference at {} {}:{} seems to contain the wrong self-reference '{}'").format( BBB, currentChapterNumberString, verseNumberString, token ) )
+                                    logging.error( _("toDoor43: Cross-reference at {} {}:{} seems to contain the wrong self-reference {!r}").format( BBB, currentChapterNumberString, verseNumberString, token ) )
                         elif token.startswith('xt '): # xref text follows
                             xrefText = token[3:]
                             finalPunct = ''
@@ -1291,11 +1291,11 @@ class BibleWriter( InternalBible ):
                                 OSISxref += '<reference type="source" osisRef="{}">{}</reference>'.format( osisRef, xrefText+finalPunct )
                         elif token.startswith('x '): # another whole xref entry follows
                             rest = token[2:].strip()
-                            if rest != '-': logging.warning( _("toDoor43: We got something else here other than hyphen (probably need to do something with it): {} '{}' from '{}'").format( chapterRef, token, text ) )
+                            if rest != '-': logging.warning( _("toDoor43: We got something else here other than hyphen (probably need to do something with it): {} {!r} from {!r}").format( chapterRef, token, text ) )
                         elif token in ('xt*', 'x*'):
                             pass # We're being lazy here and not checking closing markers properly
                         else:
-                            logging.warning( _("toDoor43: Unprocessed '{}' token in {} xref '{}'").format( token, toWikiMediaGlobals["verseRef"], USFMxref ) )
+                            logging.warning( _("toDoor43: Unprocessed {!r} token in {} xref {!r}").format( token, toWikiMediaGlobals["verseRef"], USFMxref ) )
                     OSISxref += '</note>'
                     return OSISxref
                 # end of toDoor43.processXRef
@@ -1324,7 +1324,7 @@ class BibleWriter( InternalBible ):
                             if osisRef is not None:
                                 OSISfootnote += '<reference osisRef="{}" type="source">{}</reference>'.format( osisRef, token[3:] )
                                 if not BRL.containsReference( BBB, currentChapterNumberString, verseNumberString ):
-                                    logging.error( _("toDoor43: Footnote at {} {}:{} seems to contain the wrong self-reference '{}'").format( BBB, currentChapterNumberString, verseNumberString, token ) )
+                                    logging.error( _("toDoor43: Footnote at {} {}:{} seems to contain the wrong self-reference {!r}").format( BBB, currentChapterNumberString, verseNumberString, token ) )
                         elif token.startswith('ft '): # footnote text follows
                             OSISfootnote += token[3:]
                         elif token.startswith('fq ') or token.startswith('fqa '): # footnote quote follows -- NOTE: We also assume here that the next marker closes the fq field
@@ -1332,7 +1332,7 @@ class BibleWriter( InternalBible ):
                         elif token in ('ft*','ft* ','fq*','fq* ','fqa*','fqa* '):
                             pass # We're being lazy here and not checking closing markers properly
                         else:
-                            logging.warning( _("toDoor43: Unprocessed '{}' token in {} footnote '{}'").format( token, toWikiMediaGlobals["verseRef"], USFMfootnote ) )
+                            logging.warning( _("toDoor43: Unprocessed {!r} token in {} footnote {!r}").format( token, toWikiMediaGlobals["verseRef"], USFMfootnote ) )
                     OSISfootnote += '</note>'
                     #print( '', OSISfootnote )
                     return OSISfootnote
@@ -1369,7 +1369,7 @@ class BibleWriter( InternalBible ):
 
             bookRef = BibleOrgSysGlobals.BibleBooksCodes.getOSISAbbreviation( BBB ) # OSIS book name
             if bookRef is None:
-                logging.warning( "toDoor43: Doesn't know how to encode '{}' book yet".format( BBB ) )
+                logging.warning( "toDoor43: Doesn't know how to encode {!r} book yet".format( BBB ) )
                 unhandledBooks.append( BBB )
                 return
             bookName = gotVP = None
@@ -1756,7 +1756,7 @@ class BibleWriter( InternalBible ):
             adjText = text
             offset = 0
             for extraType, extraIndex, extraText, cleanExtraText in extras: # do any footnotes and cross-references
-                #print( "{} {}:{} Text='{}' eT={}, eI={}, eText='{}'".format( BBB, C, V, text, extraType, extraIndex, extraText ) )
+                #print( "{} {}:{} Text={!r} eT={}, eI={}, eText={!r}".format( BBB, C, V, text, extraType, extraIndex, extraText ) )
                 adjIndex = extraIndex - offset
                 lenT = len( adjText )
                 if adjIndex > lenT: # This can happen if we have verse/space/notes at end (and the space was deleted after the note was separated off)
@@ -1764,11 +1764,11 @@ class BibleWriter( InternalBible ):
                     # No need to adjust adjIndex because the code below still works
                 elif adjIndex<0 or adjIndex>lenT: # The extras don't appear to fit correctly inside the text
                     print( "formatHTMLVerseText: Extras don't fit inside verse at {} {}:{}: eI={} o={} len={} aI={}".format( BBB, C, V, extraIndex, offset, len(text), adjIndex ) )
-                    print( "  Verse='{}'".format( text ) )
-                    print( "  Extras='{}'".format( extras ) )
+                    print( "  Verse={!r}".format( text ) )
+                    print( "  Extras={!r}".format( extras ) )
                 #assert( 0 <= adjIndex <= len(verse) )
                 #adjText = checkText( extraText, checkLeftovers=False ) # do any general character formatting
-                #if adjText!=extraText: print( "processXRefsAndFootnotes: {}@{}-{}={} '{}' now '{}'".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
+                #if adjText!=extraText: print( "processXRefsAndFootnotes: {}@{}-{}={} {!r} now {!r}".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
                 if extraType == 'fn':
                     extra = processNote( extraText, ourGlobals, 'footnote' )
                     #print( "fn got", extra )
@@ -2008,7 +2008,7 @@ class BibleWriter( InternalBible ):
                 (Luk. 16:13; 12:22-31)
                 (1 Kru. 11:1-9; 14:1-7)
             """
-            #print( "toHTML5.createSectionCrossReference: '{}'".format( givenRef ) )
+            #print( "toHTML5.createSectionCrossReference: {!r}".format( givenRef ) )
             adjRef = givenRef
             result = bracket = ''
             for bracketLeft,bracketRight in (('(',')'),('[',']'),):
@@ -2027,11 +2027,11 @@ class BibleWriter( InternalBible ):
                             if char.isalpha(): letterCount += 1
                         if letterCount < 2: # Allows for something like 16:13a but assumes no single letter book abbrevs
                             ref = ((analysis[0]+' ') if analysis else '' ) + ref # Prepend the last BBB if there was one
-                    analysis = BRL.getFirstReference( ref, "section cross-reference '{}' from '{}'".format( ref, givenRef ) )
+                    analysis = BRL.getFirstReference( ref, "section cross-reference {!r} from {!r}".format( ref, givenRef ) )
                     #print( "a", analysis )
                     link = convertToPageReference(analysis) if analysis else None
                     result += '<a class="sectionCrossReferenceLink" href="{}">{}</a>'.format( link, originalRef ) if link else originalRef
-            #print( "  Returning '{}'".format( result + bracket ) )
+            #print( "  Returning {!r}".format( result + bracket ) )
             return result + bracket
         # end of toHTML5.createSectionCrossReference
 
@@ -2367,8 +2367,8 @@ class BibleWriter( InternalBible ):
         bookNamesFilepath = os.path.join( outputFolder, 'CBBookNames.{}.json'.format( CBDataFormatVersion ) )
         compressionDictFilepath = os.path.join( outputFolder, "CBCmprnDict.{}.json".format( CBDataFormatVersion ) )
         destinationIndexFilepath = os.path.join( outputFolder, "CB-BCV-index.{}.json".format( CBDataFormatVersion ) )
-        destinationHTMLFilepathTemplate = os.path.join( bookOutputFolderHTML, "CBBook.{}.{}.html".format( '{}', CBDataFormatVersion ) ) # Missing the BBB
-        debugDestinationHTMLFilepathTemplate = os.path.join( debugBookOutputFolderHTML, "CBBook.{}C{}V{}.{}.html".format( '{}', '{}', '{}', CBDataFormatVersion ) ) # Missing the BBB, C, V
+        destinationHTMLFilepathTemplate = os.path.join( bookOutputFolderHTML, "CBBook.{}.{}.html".format( {!r}, CBDataFormatVersion ) ) # Missing the BBB
+        debugDestinationHTMLFilepathTemplate = os.path.join( debugBookOutputFolderHTML, "CBBook.{}C{}V{}.{}.html".format( {!r}, {!r}, {!r}, CBDataFormatVersion ) ) # Missing the BBB, C, V
 
         ignoredMarkers, unhandledMarkers = set(), set()
 
@@ -3099,13 +3099,13 @@ class BibleWriter( InternalBible ):
                     if fullCharMarker in adjText:
                         if haveOpenChar:
                             adjText = adjText.replace( 'CLOSED_BIT', ' closed="false"' ) # Fix up closed bit since it wasn't closed
-                            logging.info( "toUSXXML: USX export had to close automatically in {} {}:{} {}:'{}' now '{}'".format( BBB, C, V, marker, originalText, adjText ) ) # The last marker presumably only had optional closing (or else we just messed up nesting markers)
+                            logging.info( "toUSXXML: USX export had to close automatically in {} {}:{} {}:{!r} now {!r}".format( BBB, C, V, marker, originalText, adjText ) ) # The last marker presumably only had optional closing (or else we just messed up nesting markers)
                         adjText = adjText.replace( fullCharMarker, '{}<char style="{}"CLOSED_BIT>'.format( '</char>' if haveOpenChar else '', charMarker ) )
                         haveOpenChar = True
                     endCharMarker = '\\' + charMarker + '*'
                     if endCharMarker in adjText:
                         if not haveOpenChar: # Then we must have a missing open marker (or extra closing marker)
-                            logging.error( "toUSXXML: Ignored extra '{}' closing marker in {} {}:{} {}:'{}' now '{}'".format( charMarker, BBB, C, V, marker, originalText, adjText ) )
+                            logging.error( "toUSXXML: Ignored extra {!r} closing marker in {} {}:{} {}:{!r} now {!r}".format( charMarker, BBB, C, V, marker, originalText, adjText ) )
                             adjText = adjText.replace( endCharMarker, '' ) # Remove the unused marker
                         else: # looks good
                             adjText = adjText.replace( 'CLOSED_BIT', '' ) # Fix up closed bit since it was specifically closed
@@ -3114,8 +3114,8 @@ class BibleWriter( InternalBible ):
                 if haveOpenChar:
                     adjText = adjText.replace( 'CLOSED_BIT', ' closed="false"' ) # Fix up closed bit since it wasn't closed
                     adjText += '{}</char>'.format( '' if adjText[-1]==' ' else ' ')
-                    logging.info( "toUSXXML: Had to close automatically in {} {}:{} {}:'{}' now '{}'".format( BBB, C, V, marker, originalText, adjText ) )
-                if '\\' in adjText: logging.critical( "toUSXXML: Didn't handle a backslash in {} {}:{} {}:'{}' now '{}'".format( BBB, C, V, marker, originalText, adjText ) )
+                    logging.info( "toUSXXML: Had to close automatically in {} {}:{} {}:{!r} now {!r}".format( BBB, C, V, marker, originalText, adjText ) )
+                if '\\' in adjText: logging.critical( "toUSXXML: Didn't handle a backslash in {} {}:{} {}:{!r} now {!r}".format( BBB, C, V, marker, originalText, adjText ) )
                 return adjText
             # end of toUSXXML.handleInternalTextMarkersForUSX
 
@@ -3172,7 +3172,7 @@ class BibleWriter( InternalBible ):
                         #elif lcToken in ('xo*','xt*','x*',):
                         #    pass # We're being lazy here and not checking closing markers properly
                         else:
-                            logging.warning( _("toUSXXML: Unprocessed '{}' token in {} {}:{} xref '{}'").format( token, BBB, C, V, USXxref ) )
+                            logging.warning( _("toUSXXML: Unprocessed {!r} token in {} {}:{} xref {!r}").format( token, BBB, C, V, USXxref ) )
                     if xoOpen:
                         if BibleOrgSysGlobals.debugFlag: assert( not xtOpen )
                         USXxrefXML += ' closed="false">' + adjToken + '</char>'
@@ -3203,7 +3203,7 @@ class BibleWriter( InternalBible ):
                         elif lcToken.startswith('fr '): # footnote reference follows
                             if frOpen:
                                 if BibleOrgSysGlobals.debugFlag: assert( not fTextOpen )
-                                logging.error( _("toUSXXML: Two consecutive fr fields in {} {}:{} footnote '{}'").format( token, BBB, C, V, USXfootnote ) )
+                                logging.error( _("toUSXXML: Two consecutive fr fields in {} {}:{} footnote {!r}").format( token, BBB, C, V, USXfootnote ) )
                             if fTextOpen:
                                 if BibleOrgSysGlobals.debugFlag: assert( not frOpen )
                                 USXfootnoteXML += ' closed="false">' + adjToken + '</char>'
@@ -3231,7 +3231,7 @@ class BibleWriter( InternalBible ):
                             fMarker = lcToken.split()[0] # Get the bit before the space
                             USXfootnoteXML += '<char style="{}"'.format( fMarker )
                             adjToken = token[len(fMarker)+1:] # Get the bit after the space
-                            #print( "'{}' '{}'".format( fMarker, adjToken ) )
+                            #print( "{!r} {!r}".format( fMarker, adjToken ) )
                             fTextOpen = True
                         elif lcToken.startswith('ft*') or lcToken.startswith('fq*') or lcToken.startswith('fqa*') or lcToken.startswith('fv*') or lcToken.startswith('fk*'):
                             if BibleOrgSysGlobals.debugFlag: assert( fTextOpen and not frOpen and not fCharOpen )
@@ -3258,10 +3258,10 @@ class BibleWriter( InternalBible ):
                                     if fCharOpen:
                                         if BibleOrgSysGlobals.debugFlag: assert( not frOpen )
                                         if not firstToken.startswith( fCharOpen+'*' ): # It's not a matching tag
-                                            logging.warning( _("toUSXXML: '{}' closing tag doesn't match '{}' in {} {}:{} footnote '{}'").format( firstToken, fCharOpen, BBB, C, V, USXfootnote ) )
+                                            logging.warning( _("toUSXXML: {!r} closing tag doesn't match {!r} in {} {}:{} footnote {!r}").format( firstToken, fCharOpen, BBB, C, V, USXfootnote ) )
                                         USXfootnoteXML += '>' + adjToken + '</char>'
                                         fCharOpen = False
-                                    logging.warning( _("toUSXXML: '{}' closing tag doesn't match in {} {}:{} footnote '{}'").format( firstToken, BBB, C, V, USXfootnote ) )
+                                    logging.warning( _("toUSXXML: {!r} closing tag doesn't match in {} {}:{} footnote {!r}").format( firstToken, BBB, C, V, USXfootnote ) )
                                 else:
                                     ixAS = firstToken.find( '*' )
                                     #print( firstToken, ixAS, firstToken[:ixAS] if ixAS!=-1 else '' )
@@ -3269,20 +3269,20 @@ class BibleWriter( InternalBible ):
                                         if fCharOpen:
                                             if BibleOrgSysGlobals.debugFlag: assert( not frOpen )
                                             if not firstToken.startswith( fCharOpen+'*' ): # It's not a matching tag
-                                                logging.warning( _("toUSXXML: '{}' closing tag doesn't match '{}' in {} {}:{} footnote '{}'").format( firstToken, fCharOpen, BBB, C, V, USXfootnote ) )
+                                                logging.warning( _("toUSXXML: {!r} closing tag doesn't match {!r} in {} {}:{} footnote {!r}").format( firstToken, fCharOpen, BBB, C, V, USXfootnote ) )
                                             USXfootnoteXML += '>' + adjToken + '</char>'
                                             fCharOpen = False
-                                        logging.warning( _("toUSXXML: '{}' closing tag doesn't match in {} {}:{} footnote '{}'").format( firstToken, BBB, C, V, USXfootnote ) )
+                                        logging.warning( _("toUSXXML: {!r} closing tag doesn't match in {} {}:{} footnote {!r}").format( firstToken, BBB, C, V, USXfootnote ) )
                                     else:
-                                        logging.warning( _("toUSXXML: Unprocessed '{}' token in {} {}:{} footnote '{}'").format( firstToken, BBB, C, V, USXfootnote ) )
+                                        logging.warning( _("toUSXXML: Unprocessed {!r} token in {} {}:{} footnote {!r}").format( firstToken, BBB, C, V, USXfootnote ) )
                                         #print( ALL_CHAR_MARKERS )
                                         #halt
                     #print( "  ", frOpen, fCharOpen, fTextOpen )
                     if frOpen:
-                        logging.warning( _("toUSXXML: Unclosed 'fr' token in {} {}:{} footnote '{}'").format( BBB, C, V, USXfootnote) )
+                        logging.warning( _("toUSXXML: Unclosed 'fr' token in {} {}:{} footnote {!r}").format( BBB, C, V, USXfootnote) )
                         if BibleOrgSysGlobals.debugFlag: assert( not fCharOpen and not fTextOpen )
                         USXfootnoteXML += ' closed="false">' + adjToken + '</char>'
-                    if fCharOpen: logging.warning( _("toUSXXML: Unclosed '{}' token in {} {}:{} footnote '{}'").format( fCharOpen, BBB, C, V, USXfootnote) )
+                    if fCharOpen: logging.warning( _("toUSXXML: Unclosed {!r} token in {} {}:{} footnote {!r}").format( fCharOpen, BBB, C, V, USXfootnote) )
                     if fTextOpen: USXfootnoteXML += ' closed="false">' + adjToken + '</char>'
                     USXfootnoteXML += '</note>'
                     #print( '', USXfootnote, USXfootnoteXML )
@@ -3296,7 +3296,7 @@ class BibleWriter( InternalBible ):
                     offset = 0
                     for extra in extras: # do any footnotes and cross-references
                         extraType, extraIndex, extraText, cleanExtraText = extra
-                        #print( "{} {}:{} Text='{}' eT={}, eI={}, eText='{}'".format( BBB, C, V, text, extraType, extraIndex, extraText ) )
+                        #print( "{} {}:{} Text={!r} eT={}, eI={}, eText={!r}".format( BBB, C, V, text, extraType, extraIndex, extraText ) )
                         adjIndex = extraIndex - offset
                         lenT = len( adjText )
                         if adjIndex > lenT: # This can happen if we have verse/space/notes at end (and the space was deleted after the note was separated off)
@@ -3304,11 +3304,11 @@ class BibleWriter( InternalBible ):
                             # No need to adjust adjIndex because the code below still works
                         elif adjIndex<0 or adjIndex>lenT: # The extras don't appear to fit correctly inside the text
                             print( "toUSXXML: Extras don't fit inside verse at {} {}:{}: eI={} o={} len={} aI={}".format( BBB, C, V, extraIndex, offset, len(text), adjIndex ) )
-                            print( "  Verse='{}'".format( text ) )
-                            print( "  Extras='{}'".format( extras ) )
+                            print( "  Verse={!r}".format( text ) )
+                            print( "  Extras={!r}".format( extras ) )
                         #assert( 0 <= adjIndex <= len(verse) )
                         #adjText = checkText( extraText, checkLeftovers=False ) # do any general character formatting
-                        #if adjText!=extraText: print( "processXRefsAndFootnotes: {}@{}-{}={} '{}' now '{}'".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
+                        #if adjText!=extraText: print( "processXRefsAndFootnotes: {}@{}-{}={} {!r} now {!r}".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
                         if extraType == 'fn':
                             extra = processFootnote( extraText )
                             #print( "fn got", extra )
@@ -3363,15 +3363,15 @@ class BibleWriter( InternalBible ):
                 adjText = handleNotes( text, extras )
                 if marker == 'id':
                     if haveOpenPara: # This should never happen coz the ID line should have been the first line in the file
-                        logging.error( "toUSXXML: Book {}{} has a id line inside an open paragraph: '{}'".format( BBB, " ({})".format(USXAbbrev) if USXAbbrev!=BBB else '', adjText ) )
+                        logging.error( "toUSXXML: Book {}{} has a id line inside an open paragraph: {!r}".format( BBB, " ({})".format(USXAbbrev) if USXAbbrev!=BBB else '', adjText ) )
                         xw.removeFinalNewline( True )
                         xw.writeLineClose( 'para' )
                         haveOpenPara = False
                     adjTxLen = len( adjText )
                     if adjTxLen<3 or (adjTxLen>3 and adjText[3]!=' '): # Doesn't seem to have a standard BBB at the beginning of the ID line
-                        logging.warning( "toUSXXML: Book {}{} has a non-standard id line: '{}'".format( BBB, " ({})".format(USXAbbrev) if USXAbbrev!=BBB else '', adjText ) )
+                        logging.warning( "toUSXXML: Book {}{} has a non-standard id line: {!r}".format( BBB, " ({})".format(USXAbbrev) if USXAbbrev!=BBB else '', adjText ) )
                     if adjText[0:3] != USXAbbrev:
-                        logging.error( "toUSXXML: Book {}{} might have incorrect code on id line -- we got: '{}'".format( BBB, " ({})".format(USXAbbrev) if USXAbbrev!=BBB else '', adjText[0:3] ) )
+                        logging.error( "toUSXXML: Book {}{} might have incorrect code on id line -- we got: {!r}".format( BBB, " ({})".format(USXAbbrev) if USXAbbrev!=BBB else '', adjText[0:3] ) )
                     adjText = adjText[4:] # Remove the book code from the ID line because it's put in as an attribute
                     if adjText: xw.writeLineOpenClose( 'book', handleInternalTextMarkersForUSX(adjText)+xtra, [('code',USXAbbrev),('style',marker)] )
                     elif not text: logging.error( "toUSXXML: {} {}:{} has a blank id line that was ignored".format( BBB, C, V ) )
@@ -3419,7 +3419,7 @@ class BibleWriter( InternalBible ):
                         xw.writeLineClose( 'para' )
                         haveOpenPara = False
                     if adjText:
-                        logging.error( "toUSXXML: {} {}:{} has a {} line containing text ('{}') that was ignored".format( BBB, C, V, originalMarker, adjText ) )
+                        logging.error( "toUSXXML: {} {}:{} has a {} line containing text ({!r}) that was ignored".format( BBB, C, V, originalMarker, adjText ) )
                     xw.writeLineOpenSelfclose ( 'para', ('style',marker) )
                 elif markerShouldHaveContent == 'S': # S = sometimes, e.g., p,pi,q,q1,q2,q3,q4,m
                     if haveOpenPara:
@@ -3433,7 +3433,7 @@ class BibleWriter( InternalBible ):
                 else:
                     #assert( markerShouldHaveContent == 'A' ) # A = always, e.g.,  ide, mt, h, s, ip, etc.
                     if markerShouldHaveContent != 'A':
-                        logging.error( "BibleWriter.toUSXXML: ToProgrammer -- should be 'A': '{}' is '{}' Why?".format( marker, markerShouldHaveContent ) )
+                        logging.error( "BibleWriter.toUSXXML: ToProgrammer -- should be 'A': {!r} is {!r} Why?".format( marker, markerShouldHaveContent ) )
                     if haveOpenPara:
                         xw.removeFinalNewline( True )
                         xw.writeLineClose( 'para' )
@@ -3555,13 +3555,13 @@ class BibleWriter( InternalBible ):
                     if fullCharMarker in adjText:
                         if haveOpenChar:
                             adjText = adjText.replace( 'CLOSED_BIT', ' closed="false"' ) # Fix up closed bit since it wasn't closed
-                            logging.info( "toUSFXXML: USFX export had to close automatically in {} {}:{} {}:'{}' now '{}'".format( BBB, C, V, marker, originalText, adjText ) ) # The last marker presumably only had optional closing (or else we just messed up nesting markers)
+                            logging.info( "toUSFXXML: USFX export had to close automatically in {} {}:{} {}:{!r} now {!r}".format( BBB, C, V, marker, originalText, adjText ) ) # The last marker presumably only had optional closing (or else we just messed up nesting markers)
                         adjText = adjText.replace( fullCharMarker, '{}<char style="{}"CLOSED_BIT>'.format( '</char>' if haveOpenChar else '', charMarker ) )
                         haveOpenChar = True
                     endCharMarker = '\\' + charMarker + '*'
                     if endCharMarker in adjText:
                         if not haveOpenChar: # Then we must have a missing open marker (or extra closing marker)
-                            logging.error( "toUSFXXML: Ignored extra '{}' closing marker in {} {}:{} {}:'{}' now '{}'".format( charMarker, BBB, C, V, marker, originalText, adjText ) )
+                            logging.error( "toUSFXXML: Ignored extra {!r} closing marker in {} {}:{} {}:{!r} now {!r}".format( charMarker, BBB, C, V, marker, originalText, adjText ) )
                             adjText = adjText.replace( endCharMarker, '' ) # Remove the unused marker
                         else: # looks good
                             adjText = adjText.replace( 'CLOSED_BIT', '' ) # Fix up closed bit since it was specifically closed
@@ -3570,8 +3570,8 @@ class BibleWriter( InternalBible ):
                 if haveOpenChar:
                     adjText = adjText.replace( 'CLOSED_BIT', ' closed="false"' ) # Fix up closed bit since it wasn't closed
                     adjText += '{}</char>'.format( '' if adjText[-1]==' ' else ' ')
-                    logging.info( "toUSFXXML: Had to close automatically in {} {}:{} {}:'{}' now '{}'".format( BBB, C, V, marker, originalText, adjText ) )
-                if '\\' in adjText: logging.critical( "toUSFXXML: Didn't handle a backslash in {} {}:{} {}:'{}' now '{}'".format( BBB, C, V, marker, originalText, adjText ) )
+                    logging.info( "toUSFXXML: Had to close automatically in {} {}:{} {}:{!r} now {!r}".format( BBB, C, V, marker, originalText, adjText ) )
+                if '\\' in adjText: logging.critical( "toUSFXXML: Didn't handle a backslash in {} {}:{} {}:{!r} now {!r}".format( BBB, C, V, marker, originalText, adjText ) )
                 return adjText
             # end of toUSFXXML.handleInternalTextMarkersForUSFX
 
@@ -3628,7 +3628,7 @@ class BibleWriter( InternalBible ):
                         #elif lcToken in ('xo*','xt*','x*',):
                         #    pass # We're being lazy here and not checking closing markers properly
                         else:
-                            logging.warning( _("toUSFXXML: Unprocessed '{}' token in {} {}:{} xref '{}'").format( token, BBB, C, V, USFXxref ) )
+                            logging.warning( _("toUSFXXML: Unprocessed {!r} token in {} {}:{} xref {!r}").format( token, BBB, C, V, USFXxref ) )
                     if xoOpen:
                         if BibleOrgSysGlobals.debugFlag: assert( not xtOpen )
                         USFXxrefXML += ' closed="false">' + adjToken + '</char>'
@@ -3659,7 +3659,7 @@ class BibleWriter( InternalBible ):
                         elif lcToken.startswith('fr '): # footnote reference follows
                             if frOpen:
                                 if BibleOrgSysGlobals.debugFlag: assert( not fTextOpen )
-                                logging.error( _("toUSFXXML: Two consecutive fr fields in {} {}:{} footnote '{}'").format( token, BBB, C, V, USFXfootnote ) )
+                                logging.error( _("toUSFXXML: Two consecutive fr fields in {} {}:{} footnote {!r}").format( token, BBB, C, V, USFXfootnote ) )
                             if fTextOpen:
                                 if BibleOrgSysGlobals.debugFlag: assert( not frOpen )
                                 USFXfootnoteXML += ' closed="false">' + adjToken + '</char>'
@@ -3687,7 +3687,7 @@ class BibleWriter( InternalBible ):
                             fMarker = lcToken.split()[0] # Get the bit before the space
                             USFXfootnoteXML += '<char style="{}"'.format( fMarker )
                             adjToken = token[len(fMarker)+1:] # Get the bit after the space
-                            #print( "'{}' '{}'".format( fMarker, adjToken ) )
+                            #print( "{!r} {!r}".format( fMarker, adjToken ) )
                             fTextOpen = True
                         elif lcToken.startswith('ft*') or lcToken.startswith('fq*') or lcToken.startswith('fqa*') or lcToken.startswith('fv*') or lcToken.startswith('fk*'):
                             if BibleOrgSysGlobals.debugFlag: assert( fTextOpen and not frOpen and not fCharOpen )
@@ -3714,10 +3714,10 @@ class BibleWriter( InternalBible ):
                                     if fCharOpen:
                                         if BibleOrgSysGlobals.debugFlag: assert( not frOpen )
                                         if not firstToken.startswith( fCharOpen+'*' ): # It's not a matching tag
-                                            logging.warning( _("toUSFXXML: '{}' closing tag doesn't match '{}' in {} {}:{} footnote '{}'").format( firstToken, fCharOpen, BBB, C, V, USFXfootnote ) )
+                                            logging.warning( _("toUSFXXML: {!r} closing tag doesn't match {!r} in {} {}:{} footnote {!r}").format( firstToken, fCharOpen, BBB, C, V, USFXfootnote ) )
                                         USFXfootnoteXML += '>' + adjToken + '</char>'
                                         fCharOpen = False
-                                    logging.warning( _("toUSFXXML: '{}' closing tag doesn't match in {} {}:{} footnote '{}'").format( firstToken, BBB, C, V, USFXfootnote ) )
+                                    logging.warning( _("toUSFXXML: {!r} closing tag doesn't match in {} {}:{} footnote {!r}").format( firstToken, BBB, C, V, USFXfootnote ) )
                                 else:
                                     ixAS = firstToken.find( '*' )
                                     #print( firstToken, ixAS, firstToken[:ixAS] if ixAS!=-1 else '' )
@@ -3725,20 +3725,20 @@ class BibleWriter( InternalBible ):
                                         if fCharOpen:
                                             if BibleOrgSysGlobals.debugFlag: assert( not frOpen )
                                             if not firstToken.startswith( fCharOpen+'*' ): # It's not a matching tag
-                                                logging.warning( _("toUSFXXML: '{}' closing tag doesn't match '{}' in {} {}:{} footnote '{}'").format( firstToken, fCharOpen, BBB, C, V, USFXfootnote ) )
+                                                logging.warning( _("toUSFXXML: {!r} closing tag doesn't match {!r} in {} {}:{} footnote {!r}").format( firstToken, fCharOpen, BBB, C, V, USFXfootnote ) )
                                             USFXfootnoteXML += '>' + adjToken + '</char>'
                                             fCharOpen = False
-                                        logging.warning( _("toUSFXXML: '{}' closing tag doesn't match in {} {}:{} footnote '{}'").format( firstToken, BBB, C, V, USFXfootnote ) )
+                                        logging.warning( _("toUSFXXML: {!r} closing tag doesn't match in {} {}:{} footnote {!r}").format( firstToken, BBB, C, V, USFXfootnote ) )
                                     else:
-                                        logging.warning( _("toUSFXXML: Unprocessed '{}' token in {} {}:{} footnote '{}'").format( firstToken, BBB, C, V, USFXfootnote ) )
+                                        logging.warning( _("toUSFXXML: Unprocessed {!r} token in {} {}:{} footnote {!r}").format( firstToken, BBB, C, V, USFXfootnote ) )
                                         #print( ALL_CHAR_MARKERS )
                                         #halt
                     #print( "  ", frOpen, fCharOpen, fTextOpen )
                     if frOpen:
-                        logging.warning( _("toUSFXXML: Unclosed 'fr' token in {} {}:{} footnote '{}'").format( BBB, C, V, USFXfootnote) )
+                        logging.warning( _("toUSFXXML: Unclosed 'fr' token in {} {}:{} footnote {!r}").format( BBB, C, V, USFXfootnote) )
                         if BibleOrgSysGlobals.debugFlag: assert( not fCharOpen and not fTextOpen )
                         USFXfootnoteXML += ' closed="false">' + adjToken + '</char>'
-                    if fCharOpen: logging.warning( _("toUSFXXML: Unclosed '{}' token in {} {}:{} footnote '{}'").format( fCharOpen, BBB, C, V, USFXfootnote) )
+                    if fCharOpen: logging.warning( _("toUSFXXML: Unclosed {!r} token in {} {}:{} footnote {!r}").format( fCharOpen, BBB, C, V, USFXfootnote) )
                     if fTextOpen: USFXfootnoteXML += ' closed="false">' + adjToken + '</char>'
                     USFXfootnoteXML += '</f>'
                     #print( '', USFXfootnote, USFXfootnoteXML )
@@ -3752,7 +3752,7 @@ class BibleWriter( InternalBible ):
                     offset = 0
                     for extra in extras: # do any footnotes and cross-references
                         extraType, extraIndex, extraText, cleanExtraText = extra
-                        #print( "{} {}:{} Text='{}' eT={}, eI={}, eText='{}'".format( BBB, C, V, text, extraType, extraIndex, extraText ) )
+                        #print( "{} {}:{} Text={!r} eT={}, eI={}, eText={!r}".format( BBB, C, V, text, extraType, extraIndex, extraText ) )
                         adjIndex = extraIndex - offset
                         lenT = len( adjText )
                         if adjIndex > lenT: # This can happen if we have verse/space/notes at end (and the space was deleted after the note was separated off)
@@ -3760,11 +3760,11 @@ class BibleWriter( InternalBible ):
                             # No need to adjust adjIndex because the code below still works
                         elif adjIndex<0 or adjIndex>lenT: # The extras don't appear to fit correctly inside the text
                             print( "toUSFXXML: Extras don't fit inside verse at {} {}:{}: eI={} o={} len={} aI={}".format( BBB, C, V, extraIndex, offset, len(text), adjIndex ) )
-                            print( "  Verse='{}'".format( text ) )
-                            print( "  Extras='{}'".format( extras ) )
+                            print( "  Verse={!r}".format( text ) )
+                            print( "  Extras={!r}".format( extras ) )
                         #assert( 0 <= adjIndex <= len(verse) )
                         #adjText = checkText( extraText, checkLeftovers=False ) # do any general character formatting
-                        #if adjText!=extraText: print( "processXRefsAndFootnotes: {}@{}-{}={} '{}' now '{}'".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
+                        #if adjText!=extraText: print( "processXRefsAndFootnotes: {}@{}-{}={} {!r} now {!r}".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
                         if extraType == 'fn':
                             extra = processFootnote( extraText )
                             #print( "fn got", extra )
@@ -3810,15 +3810,15 @@ class BibleWriter( InternalBible ):
                 adjText = handleNotes( text, extras )
                 if marker == 'id':
                     if haveOpenPara: # This should never happen coz the ID line should have been the first line in the file
-                        logging.error( "toUSFXXML: Book {}{} has a id line inside an open paragraph: '{}'".format( BBB, " ({})".format(USFXAbbrev) if USFXAbbrev!=BBB else '', adjText ) )
+                        logging.error( "toUSFXXML: Book {}{} has a id line inside an open paragraph: {!r}".format( BBB, " ({})".format(USFXAbbrev) if USFXAbbrev!=BBB else '', adjText ) )
                         xw.removeFinalNewline( True )
                         xw.writeLineClose( 'p' )
                         haveOpenPara = False
                     adjTxLen = len( adjText )
                     if adjTxLen<3 or (adjTxLen>3 and adjText[3]!=' '): # Doesn't seem to have a standard BBB at the beginning of the ID line
-                        logging.warning( "toUSFXXML: Book {}{} has a non-standard id line: '{}'".format( BBB, " ({})".format(USFXAbbrev) if USFXAbbrev!=BBB else '', adjText ) )
+                        logging.warning( "toUSFXXML: Book {}{} has a non-standard id line: {!r}".format( BBB, " ({})".format(USFXAbbrev) if USFXAbbrev!=BBB else '', adjText ) )
                     if adjText[0:3] != USFXAbbrev:
-                        logging.error( "toUSFXXML: Book {}{} might be incorrect -- we got: '{}'".format( BBB, " ({})".format(USFXAbbrev) if USFXAbbrev!=BBB else '', adjText[0:3] ) )
+                        logging.error( "toUSFXXML: Book {}{} might be incorrect -- we got: {!r}".format( BBB, " ({})".format(USFXAbbrev) if USFXAbbrev!=BBB else '', adjText[0:3] ) )
                     adjText = adjText[4:] # Remove the book code from the ID line because it's put in as an attribute
                     if adjText: xw.writeLineOpenClose( 'id', handleInternalTextMarkersForUSFX(adjText)+xtra, ('code',USFXAbbrev) )
                     elif not text: logging.error( "toUSFXXML: {} {}:{} has a blank id line that was ignored".format( BBB, C, V ) )
@@ -3865,7 +3865,7 @@ class BibleWriter( InternalBible ):
                         xw.writeLineClose( 'p' )
                         haveOpenPara = False
                     if adjText:
-                        logging.error( "toUSFXXML: {} {}:{} has a {} line containing text ('{}') that was ignored".format( BBB, C, V, originalMarker, adjText ) )
+                        logging.error( "toUSFXXML: {} {}:{} has a {} line containing text ({!r}) that was ignored".format( BBB, C, V, originalMarker, adjText ) )
                     xw.writeLineOpenSelfclose ( marker )
                 elif markerShouldHaveContent == 'S': # S = sometimes, e.g., p,pi,q,q1,q2,q3,q4,m
                     if haveOpenPara:
@@ -3879,7 +3879,7 @@ class BibleWriter( InternalBible ):
                 else:
                     #assert( markerShouldHaveContent == 'A' ) # A = always, e.g.,  ide, mt, h, s, ip, etc.
                     if markerShouldHaveContent != 'A':
-                        logging.debug( "BibleWriter.toUSFXXML: ToProgrammer -- should be 'A': '{}' is '{}' Why?".format( marker, markerShouldHaveContent ) )
+                        logging.debug( "BibleWriter.toUSFXXML: ToProgrammer -- should be 'A': {!r} is {!r} Why?".format( marker, markerShouldHaveContent ) )
                     if haveOpenPara:
                         xw.removeFinalNewline( True )
                         xw.writeLineClose( 'p' )
@@ -3985,8 +3985,8 @@ class BibleWriter( InternalBible ):
                     #assert( vernacularName not in abbreviationList )
                     if vernacularName in abbreviationList:
                         if BibleOrgSysGlobals.debugFlag:
-                            print( "BibleWriter._writeSwordLocale: ToProgrammer -- vernacular name IS in abbreviationList -- what does this mean? Why? '{}' {}".format( vernacularName, abbreviationList ) )
-                        logging.debug( "BibleWriter._writeSwordLocale: ToProgrammer -- vernacular name IS in abbreviationList -- what does this mean? Why? '{}' {}".format( vernacularName, abbreviationList ) )
+                            print( "BibleWriter._writeSwordLocale: ToProgrammer -- vernacular name IS in abbreviationList -- what does this mean? Why? {!r} {}".format( vernacularName, abbreviationList ) )
+                        logging.debug( "BibleWriter._writeSwordLocale: ToProgrammer -- vernacular name IS in abbreviationList -- what does this mean? Why? {!r} {}".format( vernacularName, abbreviationList ) )
                     SwLocFile.write( '{}={}\n'.format( vernacularName, swordAbbrev ) ) # Write the UPPER CASE language book name and the Sword abbreviation
                     abbreviationList.append( vernacularName )
                     if ' ' in vernacularName:
@@ -4150,7 +4150,7 @@ class BibleWriter( InternalBible ):
 
                 adjText = textToCheck
                 if '<<' in adjText or '>>' in adjText:
-                    logging.warning( _("toOSIS: Unexpected double angle brackets in {}: '{}' field is '{}'").format( toOSISGlobals["verseRef"], marker, textToCheck ) )
+                    logging.warning( _("toOSIS: Unexpected double angle brackets in {}: {!r} field is {!r}").format( toOSISGlobals["verseRef"], marker, textToCheck ) )
                     adjText = adjText.replace('<<','“' ).replace('>>','”' )
                 if '\\bk ' in adjText: adjText = checkTextHelper('bk',adjText).replace('\\bk ','<reference type="x-bookName">').replace('\\bk*','</reference>')
                 if '\\ior ' in adjText: adjText = checkTextHelper('ior',adjText).replace('\\ior ','<reference>').replace('\\ior*','</reference>')
@@ -4165,16 +4165,16 @@ class BibleWriter( InternalBible ):
                 if '\\fig ' in adjText: # Figure is not used in Sword modules so we'll remove it from the OSIS (for now at least)
                     ix1 = adjText.find( '\\fig ' )
                     ix2 = adjText.find( '\\fig*' )
-                    if ix2 == -1: logging.error( _("toOSIS: Missing fig end marker for OSIS in {}: '{}' field is '{}'").format( toOSISGlobals["verseRef"], marker, textToCheck ) )
+                    if ix2 == -1: logging.error( _("toOSIS: Missing fig end marker for OSIS in {}: {!r} field is {!r}").format( toOSISGlobals["verseRef"], marker, textToCheck ) )
                     else:
                         if BibleOrgSysGlobals.debugFlag: assert( ix2 > ix1 )
-                        #print( "was '{}'".format( adjText ) )
+                        #print( "was {!r}".format( adjText ) )
                         adjText = adjText[:ix1] + adjText[ix2+5:] # Remove the \\fig..\\fig* field
-                        #print( "now '{}'".format( adjText ) )
-                        logging.warning( _("toOSIS: Figure reference removed for OSIS generation in {}: '{}' field").format( toOSISGlobals["verseRef"], marker ) )
+                        #print( "now {!r}".format( adjText ) )
+                        logging.warning( _("toOSIS: Figure reference removed for OSIS generation in {}: {!r} field").format( toOSISGlobals["verseRef"], marker ) )
                 if checkLeftovers and '\\' in adjText:
-                    logging.error( _("toOSIS: We still have some unprocessed backslashes for OSIS in {}: '{}' field is '{}'").format( toOSISGlobals["verseRef"], marker, textToCheck ) )
-                    #print( _("toOSIS: We still have some unprocessed backslashes for OSIS in {}: '{}' field is '{}'").format( toOSISGlobals["verseRef"], marker, textToCheck ) )
+                    logging.error( _("toOSIS: We still have some unprocessed backslashes for OSIS in {}: {!r} field is {!r}").format( toOSISGlobals["verseRef"], marker, textToCheck ) )
+                    #print( _("toOSIS: We still have some unprocessed backslashes for OSIS in {}: {!r} field is {!r}").format( toOSISGlobals["verseRef"], marker, textToCheck ) )
                     adjText = adjText.replace('\\','ENCODING ERROR HERE ' )
                 return adjText
             # end of toOSISXML.checkText
@@ -4202,7 +4202,7 @@ class BibleWriter( InternalBible ):
                         lcToken = token.lower()
                         if j==0: # The first token (but the x has already been removed)
                             rest = token.strip()
-                            if rest != '-': logging.warning( _("toOSIS: We got something else here other than hyphen (probably need to do something with it): {} '{}' from '{}'").format(chapterRef, token, text) )
+                            if rest != '-': logging.warning( _("toOSIS: We got something else here other than hyphen (probably need to do something with it): {} {!r} from {!r}").format(chapterRef, token, text) )
                         elif lcToken.startswith('xo '): # xref reference follows
                             adjToken = token[3:].strip()
                             #print( "toOSIS:processXRef(xo)", j, "'"+token+"'", "'"+adjToken+"'", "from", '"'+USFMxref+'"' )
@@ -4217,7 +4217,7 @@ class BibleWriter( InternalBible ):
                                 if len(adjToken)==1 and adjToken in ('b','c','d','e','f','g','h',):
                                     adjToken = selfReference
                                 else: # Could be another complete reference
-                                    #print( "<<< Programming error here in toOSIS:processXRef for '{}' at {} {}:{}".format( USFMxref, BBB, currentChapterNumberString, verseNumberString )  )
+                                    #print( "<<< Programming error here in toOSIS:processXRef for {!r} at {} {}:{}".format( USFMxref, BBB, currentChapterNumberString, verseNumberString )  )
                                     #print( "  '"+lcToken+"'", len(adjToken), "'"+adjToken+"'" )
                                     if len(adjToken)>2 and adjToken[-2]==' ' and adjToken[-1]=='a':
                                         suffixLetter = adjToken[-1]
@@ -4230,7 +4230,7 @@ class BibleWriter( InternalBible ):
                                 #print( "  osisRef = {}".format( osisRef ) )
                                 OSISxref += '<reference type="source" osisRef="{}">{}</reference>'.format(osisRef,token[3:])
                                 if not BRL.containsReference( BBB, currentChapterNumberString, verseNumberString ):
-                                    logging.error( _("toOSIS: Cross-reference at {} {}:{} seems to contain the wrong self-reference anchor '{}'").format(BBB,currentChapterNumberString,verseNumberString, token[3:].rstrip()) )
+                                    logging.error( _("toOSIS: Cross-reference at {} {}:{} seems to contain the wrong self-reference anchor {!r}").format(BBB,currentChapterNumberString,verseNumberString, token[3:].rstrip()) )
                         elif lcToken.startswith('xt '): # xref text follows
                             xrefText = token[3:]
                             finalPunct = ''
@@ -4241,11 +4241,11 @@ class BibleWriter( InternalBible ):
                                 OSISxref += '<reference type="source" osisRef="{}">{}</reference>'.format(osisRef,xrefText+finalPunct)
                         elif lcToken.startswith('x '): # another whole xref entry follows
                             rest = token[2:].strip()
-                            if rest != '-': logging.warning( _("toOSIS: We got something else here other than hyphen (probably need to do something with it): {} '{}' from '{}'").format(chapterRef, token, text) )
+                            if rest != '-': logging.warning( _("toOSIS: We got something else here other than hyphen (probably need to do something with it): {} {!r} from {!r}").format(chapterRef, token, text) )
                         elif lcToken in ('xo*','xt*','x*',):
                             pass # We're being lazy here and not checking closing markers properly
                         else:
-                            logging.warning( _("toOSIS: Unprocessed '{}' token in {} xref '{}'").format( token, toOSISGlobals["verseRef"], USFMxref ) )
+                            logging.warning( _("toOSIS: Unprocessed {!r} token in {} xref {!r}").format( token, toOSISGlobals["verseRef"], USFMxref ) )
                     OSISxref += '</note>'
                     return OSISxref
                 # end of toOSISXML.processXRef
@@ -4275,7 +4275,7 @@ class BibleWriter( InternalBible ):
                             if osisRef is not None:
                                 OSISfootnote += '<reference type="source" osisRef="{}">{}</reference>'.format(osisRef,token[3:])
                                 if not BRL.containsReference( BBB, currentChapterNumberString, verseNumberString ):
-                                    logging.error( _("toOSIS: Footnote at {} {}:{} seems to contain the wrong self-reference anchor '{}'").format(BBB,currentChapterNumberString,verseNumberString, token[3:].rstrip()) )
+                                    logging.error( _("toOSIS: Footnote at {} {}:{} seems to contain the wrong self-reference anchor {!r}").format(BBB,currentChapterNumberString,verseNumberString, token[3:].rstrip()) )
                         elif lcToken.startswith('ft ') or lcToken.startswith('fr* '): # footnote text follows
                             OSISfootnote += token[3:]
                         elif lcToken.startswith('fq ') or token.startswith('fqa '): # footnote quote follows -- NOTE: We also assume here that the next marker closes the fq field
@@ -4283,7 +4283,7 @@ class BibleWriter( InternalBible ):
                         elif lcToken in ('fr*','fr* ','ft*','ft* ','fq*','fq* ','fqa*','fqa* ',):
                             pass # We're being lazy here and not checking closing markers properly
                         else:
-                            logging.warning( _("toOSIS: Unprocessed '{}' token in {} footnote '{}'").format(token, toOSISGlobals["verseRef"], USFMfootnote) )
+                            logging.warning( _("toOSIS: Unprocessed {!r} token in {} footnote {!r}").format(token, toOSISGlobals["verseRef"], USFMfootnote) )
                     OSISfootnote += '</note>'
                     #print( '', OSISfootnote )
                     #if currentChapterNumberString=='5' and verseNumberString=='29': halt
@@ -4302,11 +4302,11 @@ class BibleWriter( InternalBible ):
                             # No need to adjust adjIndex because the code below still works
                         elif adjIndex<0 or adjIndex>lenV: # The extras don't appear to fit correctly inside the verse
                             print( "toOSIS: Extras don't fit inside verse at {}: eI={} o={} len={} aI={}".format( toOSISGlobals["verseRef"], extraIndex, offset, len(verse), adjIndex ) )
-                            print( "  Verse='{}'".format( verse ) )
-                            print( "  Extras='{}'".format( extras ) )
+                            print( "  Verse={!r}".format( verse ) )
+                            print( "  Extras={!r}".format( extras ) )
                         #assert( 0 <= adjIndex <= len(verse) )
                         adjText = checkText( extraText, checkLeftovers=False ) # do any general character formatting on the notes
-                        #if adjText!=extraText: print( "processXRefsAndFootnotes: {}@{}-{}={} '{}' now '{}'".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
+                        #if adjText!=extraText: print( "processXRefsAndFootnotes: {}@{}-{}={} {!r} now {!r}".format( extraType, extraIndex, offset, adjIndex, extraText, adjText ) )
                         if extraType == 'fn':
                             extra = processFootnote( adjText )
                             #print( "fn got", extra )
@@ -4354,27 +4354,27 @@ class BibleWriter( InternalBible ):
                 #verseText = text[offset:] # Get the rest of the string which is the verse text
                 if '-' in verseNumberString:
                     bits = verseNumberString.split('-')
-                    if len(bits)!=2 or not bits[0].isdigit() or not bits[1].isdigit(): logging.critical( _("toOSIS: Doesn't handle verse number of form '{}' yet for {}").format(verseNumberString,chapterRef) )
+                    if len(bits)!=2 or not bits[0].isdigit() or not bits[1].isdigit(): logging.critical( _("toOSIS: Doesn't handle verse number of form {!r} yet for {}").format(verseNumberString,chapterRef) )
                     toOSISGlobals["verseRef"]  = chapterRef + '.' + bits[0]
                     verseRef2 = chapterRef + '.' + bits[1]
                     sID    = toOSISGlobals["verseRef"] + '-' + verseRef2
                     osisID = toOSISGlobals["verseRef"] + ' ' + verseRef2
                 elif ',' in verseNumberString:
                     bits = verseNumberString.split(',')
-                    if len(bits)<2 or not bits[0].isdigit() or not bits[1].isdigit(): logging.critical( _("toOSIS: Doesn't handle verse number of form '{}' yet for {}").format(verseNumberString,chapterRef) )
+                    if len(bits)<2 or not bits[0].isdigit() or not bits[1].isdigit(): logging.critical( _("toOSIS: Doesn't handle verse number of form {!r} yet for {}").format(verseNumberString,chapterRef) )
                     sID = toOSISGlobals["verseRef"] = chapterRef + '.' + bits[0]
                     osisID = ''
                     for bit in bits: # Separate the OSIS ids by spaces
                         osisID += ' ' if osisID else ''
                         osisID += chapterRef + '.' + bit
-                    #print( "Hey comma verses '{}' '{}'".format( sID, osisID ) )
+                    #print( "Hey comma verses {!r} {!r}".format( sID, osisID ) )
                 elif verseNumberString.isdigit():
                     sID = osisID = toOSISGlobals["verseRef"] = chapterRef + '.' + verseNumberString
                 else:
-                    logging.critical( _("toOSIS: Doesn't handle verse number of form '{}' yet for {}").format(verseNumberString,chapterRef) )
+                    logging.critical( _("toOSIS: Doesn't handle verse number of form {!r} yet for {}").format(verseNumberString,chapterRef) )
                     tempID = toOSISGlobals["verseRef"] = chapterRef + '.' + verseNumberString # Try it anyway
                     sID = osisID = tempID.replace('<','').replace('>','').replace('"','') # But remove anything that'll cause a big XML problem later
-                #print( "here SID='{}' osisID='{}'".format( sID, osisID ) )
+                #print( "here SID={!r} osisID={!r}".format( sID, osisID ) )
                 writerObject.writeLineOpenSelfclose( 'verse', [('sID',sID), ('osisID',osisID)] ); haveOpenVsID = sID
                 #adjText = processXRefsAndFootnotes( verseText, extras, offset )
                 #writerObject.writeLineText( checkText(adjText), noTextCheck=True )
@@ -4518,12 +4518,12 @@ class BibleWriter( InternalBible ):
                         writerObject.writeLineOpenSelfclose( 'verse', ('eID',haveOpenVsID) )
                         haveOpenVsID = False
                     if haveOpenOutline:
-                        if text!='1' and not text.startswith('1 '): logging.error( _("toOSIS: {} This should normally be chapter 1 to close the introduction (got '{}')").format( toOSISGlobals["verseRef"], text ) )
+                        if text!='1' and not text.startswith('1 '): logging.error( _("toOSIS: {} This should normally be chapter 1 to close the introduction (got {!r})").format( toOSISGlobals["verseRef"], text ) )
                         writerObject.writeLineClose( 'list' )
                         writerObject.writeLineClose( 'div' )
                         haveOpenOutline = False
                     if haveOpenIntro:
-                        if text!='1' and not text.startswith('1 '): logging.error( _("toOSIS: {} This should normally be chapter 1 to close the introduction (got '{}')").format( toOSISGlobals["verseRef"], text ) )
+                        if text!='1' and not text.startswith('1 '): logging.error( _("toOSIS: {} This should normally be chapter 1 to close the introduction (got {!r})").format( toOSISGlobals["verseRef"], text ) )
                         closeAnyOpenParagraph()
                         writerObject.writeLineClose( 'div' )
                         haveOpenIntro = False
@@ -4532,7 +4532,7 @@ class BibleWriter( InternalBible ):
                         writerObject.writeLineOpenSelfclose( 'chapter', ('eID',chapterRef) ) # This is an end milestone marker
                     C, V = text, '0'
                     currentChapterNumberString, verseNumberString = text, '0'
-                    if not currentChapterNumberString.isdigit(): logging.critical( _("toOSIS: Can't handle non-digit '{}' chapter number yet").format(text) )
+                    if not currentChapterNumberString.isdigit(): logging.critical( _("toOSIS: Can't handle non-digit {!r} chapter number yet").format(text) )
                     chapterRef = bookRef + '.' + checkText(currentChapterNumberString)
                     writerObject.writeLineOpenSelfclose( 'chapter', [('sID',chapterRef), ('osisID',chapterRef)] ) # This is a milestone marker
                     needChapterEID = True
@@ -4587,7 +4587,7 @@ class BibleWriter( InternalBible ):
                     writerObject.writeLineOpen( 'div', ('type', "section") )
                     haveOpenSection = True
                     #print( "{} {}:{}".format( BBB, currentChapterNumberString, verseNumberString ) )
-                    #print( "{} = '{}'".format( marker, text ) )
+                    #print( "{} = {!r}".format( marker, text ) )
                     flag = '\\' in text or extras # Set this flag if the text already contains XML formatting
                     adjustedText = processXRefsAndFootnotes( text, extras )
                     if adjustedText:
@@ -4657,7 +4657,7 @@ class BibleWriter( InternalBible ):
                         #if BibleOrgSysGlobals.debugFlag: halt
                     unhandledMarkers.add( marker )
                 if marker not in ('v','v~','p','p~','q1','q2','q3','q4','s1','s2','s3','s4','d',) and extras:
-                    logging.critical( "toOSIS: Programming note: Didn't handle '{}' extras: {}".format( marker, extras ) )
+                    logging.critical( "toOSIS: Programming note: Didn't handle {!r} extras: {}".format( marker, extras ) )
                 lastMarker = marker
 
             # At the end of everything
@@ -4668,7 +4668,7 @@ class BibleWriter( InternalBible ):
             if haveOpenIntro or haveOpenOutline or haveOpenLG or haveOpenL or unprocessedMarker:
                 logging.error( "toOSIS: a {} {} {} {} {}".format( haveOpenIntro, haveOpenOutline, haveOpenLG, haveOpenL, unprocessedMarker ) )
                 logging.error( "toOSIS: b {} {}:{}".format( BBB, currentChapterNumberString, verseNumberString ) )
-                logging.error( "toOSIS: c {} = '{}'".format( marker, text ) )
+                logging.error( "toOSIS: c {} = {!r}".format( marker, text ) )
                 logging.error( "toOSIS: d These shouldn't be open here" )
             if needChapterEID:
                 writerObject.writeLineOpenSelfclose( 'chapter', ('eID',chapterRef) ) # This is an end milestone marker
@@ -4734,7 +4734,7 @@ class BibleWriter( InternalBible ):
             zf.close()
             if validationSchema: validationResults = xw.validate( validationSchema )
         else:
-            logging.critical( "Unrecognized toOSIS control \"osisFiles\" = '{}'".format( controlDict['osisFiles'] ) )
+            logging.critical( "Unrecognized toOSIS control \"osisFiles\" = {!r}".format( controlDict['osisFiles'] ) )
 
         if ignoredMarkers:
             logging.info( "toOSISXML: Ignored markers were {}".format( ignoredMarkers ) )
@@ -4834,7 +4834,7 @@ class BibleWriter( InternalBible ):
                     if gotVP: # this is the verse number to be published
                         text = gotVP
                         gotVP = None
-                    #print( "Text '{}'".format( text ) )
+                    #print( "Text {!r}".format( text ) )
                     if not text: logging.warning( "toZefaniaXML: Missing text for v" ); continue
                     verseNumberString = text.replace('<','').replace('>','').replace('"','') # Used below but remove anything that'll cause a big XML problem later
                     #writerObject.writeLineOpenClose ( 'VERS', verseText, ('vnumber',verseNumberString) )
@@ -4851,7 +4851,7 @@ class BibleWriter( InternalBible ):
                     ignoredMarkers.add( marker )
                 elif marker == 'v~':
                     if BibleOrgSysGlobals.debugFlag: assert( text or extras )
-                    #print( "Text '{}'".format( text ) )
+                    #print( "Text {!r}".format( text ) )
                     if not text: logging.warning( "toZefaniaXML: Missing text for v~" ); continue
                     # TODO: We haven't stripped out character fields from within the verse -- not sure how Zefania handles them yet
                     if not text: # this is an empty (untranslated) verse
@@ -5009,7 +5009,7 @@ class BibleWriter( InternalBible ):
                     if gotVP: # this is the verse number to be published
                         text = gotVP
                         gotVP = None
-                    #print( "Text '{}'".format( text ) )
+                    #print( "Text {!r}".format( text ) )
                     if not text: logging.warning( "toHaggaiXML: Missing text for v" ); continue
                     verseNumberString = text.replace('<','').replace('>','').replace('"','') # Used below but remove anything that'll cause a big XML problem later
                     #writerObject.writeLineOpenClose ( 'VERS', verseText, ('vnumber',verseNumberString) )
@@ -5031,7 +5031,7 @@ class BibleWriter( InternalBible ):
                     ignoredMarkers.add( marker )
                 elif marker == 'v~':
                     if BibleOrgSysGlobals.debugFlag: assert( text or extras )
-                    #print( "Text '{}'".format( text ) )
+                    #print( "Text {!r}".format( text ) )
                     if not text: logging.warning( "toHaggaiXML: Missing text for v~" ); continue
                     # TODO: We haven't stripped out character fields from within the verse -- not sure how Haggai handles them yet
                     if not text: # this is an empty (untranslated) verse
@@ -5176,7 +5176,7 @@ class BibleWriter( InternalBible ):
                     if accumulator:
                         writerObject.writeLineOpenClose ( 'v', accumulator, ('n',verseNumberString) )
                         accumulator = ""
-                    #print( "Text '{}'".format( text ) )
+                    #print( "Text {!r}".format( text ) )
                     if not text: logging.warning( "toOpenSongXML: Missing text for v" ); continue
                     verseNumberString = text.replace('<','').replace('>','').replace('"','') # Used below but remove anything that'll cause a big XML problem later
 
@@ -5303,7 +5303,7 @@ class BibleWriter( InternalBible ):
             for BBB in BibleOrgSysGlobals.BibleBooksCodes.getAllReferenceAbbreviations(): # Pre-process the language booknames
                 if BBB in controlDict and controlDict[BBB]:
                     bits = controlDict[BBB].split(',')
-                    if len(bits)!=2: logging.error( _("toSwordModule: Unrecognized language book abbreviation and name for {}: '{}'").format( BBB, controlDict[BBB] ) )
+                    if len(bits)!=2: logging.error( _("toSwordModule: Unrecognized language book abbreviation and name for {}: {!r}").format( BBB, controlDict[BBB] ) )
                     bookAbbrev = bits[0].strip().replace('"','') # Remove outside whitespace then the double quote marks
                     bookName = bits[1].strip().replace('"','') # Remove outside whitespace then the double quote marks
                     bookAbbrevDict[bookAbbrev], bookNameDict[bookName], bookAbbrevNameDict[BBB] = BBB, BBB, (bookAbbrev,bookName,)
@@ -5435,7 +5435,7 @@ class BibleWriter( InternalBible ):
 
                 adjText = textToCheck
                 if '<<' in adjText or '>>' in adjText:
-                    logging.warning( _("toSwordModule: Unexpected double angle brackets in {}: '{}' field is '{}'").format(toSwordGlobals["verseRef"],marker,textToCheck) )
+                    logging.warning( _("toSwordModule: Unexpected double angle brackets in {}: {!r} field is {!r}").format(toSwordGlobals["verseRef"],marker,textToCheck) )
                     adjText = adjText.replace('<<','“' ).replace('>>','”' )
                 if '\\bk ' in adjText: adjText = checkTextHelper('bk',adjText).replace('\\bk ','<reference type="x-bookName">').replace('\\bk*','</reference>')
                 if '\\ior ' in adjText: adjText = checkTextHelper('ior',adjText).replace('\\ior ','<reference>').replace('\\ior*','</reference>')
@@ -5448,7 +5448,7 @@ class BibleWriter( InternalBible ):
                 if '\\em ' in adjText: adjText = checkTextHelper('em',adjText).replace('\\em ','<hi type="bold">').replace('\\em*','</hi>')
                 if '\\sc ' in adjText: adjText = checkTextHelper('sc',adjText).replace('\\sc ','<hi type="SMALLCAPS">').replace('\\sc*','</hi>') # XXXXXX temp ....
                 if '\\' in adjText:
-                    logging.error( _("toSwordModule: We still have some unprocessed backslashes for Sword in {}: '{}' field is '{}'").format(toSwordGlobals["verseRef"],marker,textToCheck) )
+                    logging.error( _("toSwordModule: We still have some unprocessed backslashes for Sword in {}: {!r} field is {!r}").format(toSwordGlobals["verseRef"],marker,textToCheck) )
                     adjText = adjText.replace('\\','ENCODING ERROR HERE ' )
                 return adjText
             # end of toSwordModule.checkText
@@ -5476,7 +5476,7 @@ class BibleWriter( InternalBible ):
                         if j==0: # The first token (but the x has already been removed)
                             rest = token.strip()
                             if rest != '-':
-                                logging.warning( _("toSwordModule: We got something else here other than hyphen (probably need to do something with it): {} '{}' from '{}'").format(chapterRef, token, text) )
+                                logging.warning( _("toSwordModule: We got something else here other than hyphen (probably need to do something with it): {} {!r} from {!r}").format(chapterRef, token, text) )
                         elif token.startswith('xo '): # xref reference follows
                             adjToken = token[3:].strip()
                             if adjToken.endswith(' a'): adjToken = adjToken[:-2] # Remove any 'a' suffix (occurs when a cross-reference has multiple (a and b) parts
@@ -5486,7 +5486,7 @@ class BibleWriter( InternalBible ):
                             if osisRef is not None:
                                 OSISxref += '<reference type="source" osisRef="{}">{}</reference>'.format(osisRef,token[3:])
                                 if not BRL.containsReference( BBB, currentChapterNumberString, verseNumberString ):
-                                    logging.error( _("toSwordModule: Cross-reference at {} {}:{} seems to contain the wrong self-reference '{}'").format(BBB,currentChapterNumberString,verseNumberString, token) )
+                                    logging.error( _("toSwordModule: Cross-reference at {} {}:{} seems to contain the wrong self-reference {!r}").format(BBB,currentChapterNumberString,verseNumberString, token) )
                         elif token.startswith('xt '): # xref text follows
                             xrefText = token[3:]
                             finalPunct = ''
@@ -5498,11 +5498,11 @@ class BibleWriter( InternalBible ):
                         elif token.startswith('x '): # another whole xref entry follows
                             rest = token[2:].strip()
                             if rest != '-':
-                                logging.warning( _("toSwordModule: We got something else here other than hyphen (probably need to do something with it): {} '{}' from '{}'").format(chapterRef, token, text) )
+                                logging.warning( _("toSwordModule: We got something else here other than hyphen (probably need to do something with it): {} {!r} from {!r}").format(chapterRef, token, text) )
                         elif token in ('xt*', 'x*'):
                             pass # We're being lazy here and not checking closing markers properly
                         else:
-                            logging.warning( _("toSwordModule: Unprocessed '{}' token in {} xref '{}'").format(token, toSwordGlobals["verseRef"], USFMxref) )
+                            logging.warning( _("toSwordModule: Unprocessed {!r} token in {} xref {!r}").format(token, toSwordGlobals["verseRef"], USFMxref) )
                     OSISxref += '</note>'
                     return OSISxref
                 # end of toSwordModule.processXRef
@@ -5531,7 +5531,7 @@ class BibleWriter( InternalBible ):
                             if osisRef is not None:
                                 OSISfootnote += '<reference osisRef="{}" type="source">{}</reference>'.format(osisRef,token[3:])
                                 if not BRL.containsReference( BBB, currentChapterNumberString, verseNumberString ):
-                                    logging.error( _("toSwordModule: Footnote at {} {}:{} seems to contain the wrong self-reference '{}'").format(BBB,currentChapterNumberString,verseNumberString, token) )
+                                    logging.error( _("toSwordModule: Footnote at {} {}:{} seems to contain the wrong self-reference {!r}").format(BBB,currentChapterNumberString,verseNumberString, token) )
                         elif token.startswith('ft '): # footnote text follows
                             OSISfootnote += token[3:]
                         elif token.startswith('fq ') or token.startswith('fqa '): # footnote quote follows -- NOTE: We also assume here that the next marker closes the fq field
@@ -5539,7 +5539,7 @@ class BibleWriter( InternalBible ):
                         elif token in ('ft*','ft* ','fq*','fq* ','fqa*','fqa* '):
                             pass # We're being lazy here and not checking closing markers properly
                         else:
-                            logging.warning( _("toSwordModule: Unprocessed '{}' token in {} footnote '{}'").format(token, toSwordGlobals["verseRef"], USFMfootnote) )
+                            logging.warning( _("toSwordModule: Unprocessed {!r} token in {} footnote {!r}").format(token, toSwordGlobals["verseRef"], USFMfootnote) )
                     OSISfootnote += '</note>'
                     #print( '', OSISfootnote )
                     return OSISfootnote
@@ -5594,7 +5594,7 @@ class BibleWriter( InternalBible ):
                 if '-' in verseNumberString:
                     bits = verseNumberString.split('-')
                     if (len(bits)!=2 or not bits[0].isdigit() or not bits[1].isdigit()):
-                        logging.critical( _("toSwordModule: Doesn't handle verse number of form '{}' yet for {}").format(verseNumberString,chapterRef) )
+                        logging.critical( _("toSwordModule: Doesn't handle verse number of form {!r} yet for {}").format(verseNumberString,chapterRef) )
                     toSwordGlobals["verseRef"]  = chapterRef + '.' + bits[0]
                     verseRef2 = chapterRef + '.' + bits[1]
                     sID    = toSwordGlobals["verseRef"] + '-' + verseRef2
@@ -5602,17 +5602,17 @@ class BibleWriter( InternalBible ):
                 elif ',' in verseNumberString:
                     bits = verseNumberString.split(',')
                     if (len(bits)<2 or not bits[0].isdigit() or not bits[1].isdigit()):
-                        logging.critical( _("toSwordModule: Doesn't handle verse number of form '{}' yet for {}").format(verseNumberString,chapterRef) )
+                        logging.critical( _("toSwordModule: Doesn't handle verse number of form {!r} yet for {}").format(verseNumberString,chapterRef) )
                     sID = toSwordGlobals["verseRef"] = chapterRef + '.' + bits[0]
                     osisID = ''
                     for bit in bits: # Separate the OSIS ids by spaces
                         osisID += ' ' if osisID else ''
                         osisID += chapterRef + '.' + bit
-                    #print( "Hey comma verses '{}' '{}'".format( sID, osisID ) )
+                    #print( "Hey comma verses {!r} {!r}".format( sID, osisID ) )
                 elif verseNumberString.isdigit():
                     sID = osisID = toSwordGlobals["verseRef"] = chapterRef + '.' + verseNumberString
                 else:
-                    logging.critical( _("toSwordModule: Doesn't handle verse number of form '{}' yet for {}").format(verseNumberString,chapterRef) )
+                    logging.critical( _("toSwordModule: Doesn't handle verse number of form {!r} yet for {}").format(verseNumberString,chapterRef) )
                 writerObject.writeLineOpenSelfclose( 'verse', [('sID',sID), ('osisID',osisID)] ); haveOpenVsID = sID
                 #adjText = processXRefsAndFootnotes( verseText, extras )
                 #writerObject.writeLineText( checkText(adjText), noTextCheck=True )
@@ -5760,13 +5760,13 @@ class BibleWriter( InternalBible ):
                 elif marker=='c':
                     if haveOpenOutline:
                         if text!='1' and not text.startswith('1 '):
-                            logging.error( _("toSwordModule: {} This should normally be chapter 1 to close the introduction (got '{}')").format( toSwordGlobals["verseRef"], text ) )
+                            logging.error( _("toSwordModule: {} This should normally be chapter 1 to close the introduction (got {!r})").format( toSwordGlobals["verseRef"], text ) )
                         writerObject.writeLineClose( 'list' )
                         writerObject.writeLineOpenSelfclose( 'div', [('eID',toSwordGlobals['idStack'].pop()), ('type',"outline")] )
                         haveOpenOutline = False
                     if haveOpenIntro:
                         if text!='1' and not text.startswith('1 '):
-                            logging.error( _("toSwordModule: {} This should normally be chapter 1 to close the introduction (got '{}')").format( toSwordGlobals["verseRef"], text ) )
+                            logging.error( _("toSwordModule: {} This should normally be chapter 1 to close the introduction (got {!r})").format( toSwordGlobals["verseRef"], text ) )
                         closeAnyOpenParagraph()
                         writerObject.writeLineOpenSelfclose( 'div', [('eID',toSwordGlobals['idStack'].pop()), ('type',"introduction")] )
                         haveOpenIntro = False
@@ -5777,7 +5777,7 @@ class BibleWriter( InternalBible ):
                     C, V = text, '0'
                     currentChapterNumberString, verseNumberString = text, '0'
                     if not currentChapterNumberString.isdigit():
-                        logging.critical( _("toSwordModule: Can't handle non-digit '{}' chapter number yet").format(text) )
+                        logging.critical( _("toSwordModule: Can't handle non-digit {!r} chapter number yet").format(text) )
                     chapterRef = bookRef + '.' + checkText(currentChapterNumberString)
                     writerObject.writeLineOpenSelfclose( 'chapter', [('osisID',chapterRef), ('sID',chapterRef)] ) # This is a milestone marker
                     needChapterEID = True
@@ -5909,7 +5909,7 @@ class BibleWriter( InternalBible ):
             if (haveOpenIntro or haveOpenOutline or haveOpenLG or haveOpenL or unprocessedMarker):
                 logging.error( "toSwordModule: a {} {} {} {} {}".format( haveOpenIntro, haveOpenOutline, haveOpenLG, haveOpenL, unprocessedMarker ) )
                 logging.error( "toSwordModule: b {} {}:{}".format( BBB, currentChapterNumberString, verseNumberString ) )
-                logging.error( "toSwordModule: c {} = '{}'".format( marker, text ) )
+                logging.error( "toSwordModule: c {} = {!r}".format( marker, text ) )
                 logging.error( "toSwordModule: d These shouldn't be open here" )
             if needChapterEID:
                 writerObject.writeLineOpenSelfclose( 'chapter', ('eID',chapterRef) ) # This is an end milestone marker
@@ -6088,7 +6088,7 @@ class BibleWriter( InternalBible ):
         else: filename = "export"
         if not filename.endswith( extension ): filename += extension # Make sure that we have the right file extension
         filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}...").format( filepath ) )
         with open( filepath, 'wt' ) as myFile:
             try: myFile.write('\ufeff') # theWord needs the BOM
             except UnicodeEncodeError: # why does this fail on Windows???
@@ -6115,7 +6115,7 @@ class BibleWriter( InternalBible ):
                 and self.settingsDict[key]: # Copy non-blank exact matches
                     myFile.write( "{}={}\n".format( key.lower(), self.settingsDict[key] ) )
                     written.append( key.lower() )
-                elif BibleOrgSysGlobals.verbosityLevel > 2: print( "BibleWriter.totheWord: ignored '{}' setting ({})".format( key, self.settingsDict[key] ) )
+                elif BibleOrgSysGlobals.verbosityLevel > 2: print( "BibleWriter.totheWord: ignored {!r} setting ({})".format( key, self.settingsDict[key] ) )
             # Now do some adaptions
             key = 'short.title'
             if self.abbreviation and key not in written:
@@ -6282,7 +6282,7 @@ class BibleWriter( InternalBible ):
         if not filename.endswith( extension ): filename += extension # Make sure that we have the right file extension
         filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
         if os.path.exists( filepath ): os.remove( filepath )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}...").format( filepath ) )
         conn = sqlite3.connect( filepath )
         cursor = conn.cursor()
 
@@ -6460,9 +6460,9 @@ class BibleWriter( InternalBible ):
 
             # Check what's left at the end
             if '\\' in line:
-                logging.warning( "toESword.adjustLine: Doesn't handle formatted line yet: {} {}:{} '{}'".format( BBB, C, V, line ) )
+                logging.warning( "toESword.adjustLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, line ) )
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                    print( "toESword.adjustLine: Doesn't handle formatted line yet: {} {}:{} '{}'".format( BBB, C, V, line ) )
+                    print( "toESword.adjustLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, line ) )
                     halt
             return line
         # end of toESword.adjustLine
@@ -6496,18 +6496,18 @@ class BibleWriter( InternalBible ):
                     elif marker in ('ms2','ms3','ms4'): composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
                     elif marker=='mr': composedLine += '<TS3>'+adjustLine(BBB,C,V,text)+'<Ts>~^~line '
                     else:
-                        logging.warning( "toESword.handleIntroduction: doesn't handle {} '{}' yet".format( BBB, marker ) )
+                        logging.warning( "toESword.handleIntroduction: doesn't handle {} {!r} yet".format( BBB, marker ) )
                         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                            print( "toESword.handleIntroduction: doesn't handle {} '{}' yet".format( BBB, marker ) )
+                            print( "toESword.handleIntroduction: doesn't handle {} {!r} yet".format( BBB, marker ) )
                             halt
                         ourGlobals['unhandledMarkers'].add( marker + ' (in intro)' )
                 V += 1 # Step to the next introductory section "verse"
 
             # Check what's left at the end
             if '\\' in composedLine:
-                logging.warning( "toESword.handleIntroduction: Doesn't handle formatted line yet: {} '{}'".format( BBB, composedLine ) )
+                logging.warning( "toESword.handleIntroduction: Doesn't handle formatted line yet: {} {!r}".format( BBB, composedLine ) )
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                    print( "toESword.handleIntroduction: Doesn't handle formatted line yet: {} '{}'".format( BBB, composedLine ) )
+                    print( "toESword.handleIntroduction: Doesn't handle formatted line yet: {} {!r}".format( BBB, composedLine ) )
                     halt
             return composedLine.replace( '~^~', '\\' )
         # end of toESword.handleIntroduction
@@ -6650,9 +6650,9 @@ class BibleWriter( InternalBible ):
                     #elif ourGlobals['pi7']: composedLine += '<PI7>'
                     composedLine += adjustLine(BBB,C,V, text )
                 else:
-                    logging.warning( "toESword.composeVerseLine: doesn't handle '{}' yet".format( marker ) )
+                    logging.warning( "toESword.composeVerseLine: doesn't handle {!r} yet".format( marker ) )
                     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                        print( "toESword.composeVerseLine: doesn't handle '{}' yet".format( marker ) )
+                        print( "toESword.composeVerseLine: doesn't handle {!r} yet".format( marker ) )
                         halt
                     ourGlobals['unhandledMarkers'].add( marker )
                 lastMarker = marker
@@ -6663,9 +6663,9 @@ class BibleWriter( InternalBible ):
 
             # Check what's left at the end (but hide e-Sword \line markers first)
             if '\\' in composedLine.replace( '\\line ', '' ):
-                logging.warning( "toESword.composeVerseLine: Doesn't handle formatted line yet: {} {}:{} '{}'".format( BBB, C, V, composedLine ) )
+                logging.warning( "toESword.composeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                    print( "toESword.composeVerseLine: Doesn't handle formatted line yet: {} {}:{} '{}'".format( BBB, C, V, composedLine ) )
+                    print( "toESword.composeVerseLine: Doesn't handle formatted line yet: {} {}:{} {!r}".format( BBB, C, V, composedLine ) )
                     halt
             return composedLine.replace( '~^~', '\\' ).rstrip()
         # end of toESword.composeVerseLine
@@ -6773,7 +6773,7 @@ class BibleWriter( InternalBible ):
         if not filename.endswith( extension ): filename += extension # Make sure that we have the right file extension
         filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
         if os.path.exists( filepath ): os.remove( filepath )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}...").format( filepath ) )
         conn = sqlite3.connect( filepath )
         cursor = conn.cursor()
 
@@ -6946,7 +6946,7 @@ class BibleWriter( InternalBible ):
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to SwordSearcher format...") )
         filename = "Bible.txt"
         filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}...").format( filepath ) )
         with open( filepath, 'wt' ) as myFile:
             writeSSHeader( myFile )
             for BBB,bookObject in self.books.items():
@@ -7124,7 +7124,7 @@ class BibleWriter( InternalBible ):
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("  Exporting to DrupalBible format...") )
         filename = "Bible.txt"
         filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}...").format( filepath ) )
         with open( filepath, 'wt' ) as myFile:
             writeDrupalBibleHeader( myFile )
             writeDrupalBibleChapters( myFile )
@@ -7612,7 +7612,7 @@ class BibleWriter( InternalBible ):
             if textBuffer: renderText( BBB, BBBnum, bookName, bookAbbrev, C, intC, maxChapters, numVerses, textBuffer, bookFolderPath ) # Write the last bit
 
                     #if verseByVerse:
-                        #myFile.write( "{} ({}): '{}' '{}' {}\n" \
+                        #myFile.write( "{} ({}): {!r} {!r} {}\n" \
                             #.format( entry.getMarker(), entry.getOriginalMarker(), entry.getAdjustedText(), entry.getCleanText(), entry.getExtras() ) )
 
         if ignoredMarkers:
@@ -8668,7 +8668,7 @@ class BibleWriter( InternalBible ):
             # Create the blank document
             filename = "{:02}-{}_BOS-BibleWriter.odt".format( j, BBB )
             filepath = os.path.join( os.getcwd(), outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Creating '{}'...").format( filename ) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Creating {!r}...").format( filename ) )
             document = frameDesktop.loadComponentFromURL( sourceURL, "_blank", 0, () )
             documentText = document.Text
             initialTextCursor = documentText.createTextCursor()
@@ -9000,7 +9000,7 @@ class BibleWriter( InternalBible ):
                         text = text.replace( fullCharMarker, '~^~BibleCharacterStyle'+cMarkerTranslate[charMarker]+'{' ) \
                                 .replace( endCharMarker, '}' )
                     else:
-                        logging.warning( "toTeX: Don't know how to encode '{}' marker".format( charMarker ) )
+                        logging.warning( "toTeX: Don't know how to encode {!r} marker".format( charMarker ) )
                         text = text.replace( fullCharMarker, '' ).replace( endCharMarker, '' )
 
             if '\\' in text: # Catch any left-overs
@@ -9058,14 +9058,14 @@ class BibleWriter( InternalBible ):
         cwdSave = os.getcwd() # Save the current working directory before changing (below) to the output directory
         allFilename = "All-BOS-BibleWriter.tex"
         allFilepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( allFilename ) )
-        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( allFilepath ) )
+        if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}...").format( allFilepath ) )
         with open( allFilepath, 'wt' ) as allFile:
             writeTeXHeader( allFile )
             for j, (BBB,bookObject) in enumerate( self.books.items() ):
                 haveTitle = haveIntro = False
                 filename = "{:02}-{}_BOS-BibleWriter.tex".format( j, BBB )
                 filepath = os.path.join( outputFolder, BibleOrgSysGlobals.makeSafeFilename( filename ) )
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing '{}'...").format( filepath ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "  " + _("Writing {!r}...").format( filepath ) )
                 with open( filepath, 'wt' ) as bookFile:
                     writeTeXHeader( bookFile )
                     allFile.write( "\n\\BibleBook{{{}}}\n".format( bookObject.getAssumedBookNames()[0] ) )
@@ -9224,11 +9224,11 @@ class BibleWriter( InternalBible ):
         if givenOutputFolderName == None:
             givenOutputFolderName = "OutputFiles/"
             if not os.access( givenOutputFolderName, os.F_OK ):
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "BibleWriter.doAllExports: " + _("creating '{}' output folder").format( givenOutputFolderName ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "BibleWriter.doAllExports: " + _("creating {!r} output folder").format( givenOutputFolderName ) )
                 os.makedirs( givenOutputFolderName ) # Make the empty folder if there wasn't already one there
         if BibleOrgSysGlobals.debugFlag: assert( givenOutputFolderName and isinstance( givenOutputFolderName, str ) )
         if not os.access( givenOutputFolderName, os.W_OK ): # Then our output folder is not writeable!
-            logging.critical( "BibleWriter.doAllExports: " + _("Given '{}' folder is unwritable" ).format( givenOutputFolderName ) )
+            logging.critical( "BibleWriter.doAllExports: " + _("Given {!r} folder is unwritable" ).format( givenOutputFolderName ) )
             return False
 
         # Define our various output folders
@@ -9581,7 +9581,7 @@ def demo():
                         else:
                             if filename1 not in folderContents1: logging.warning( "  1/Couldn't find {} ({}) in {}".format( filename1, BBB, folderContents1 ) )
                             if filename2 not in folderContents2: logging.warning( "  2/Couldn't find {} ({}) in {}".format( filename2, UUU, folderContents2 ) )
-            else: logging.error( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
+            else: logging.error( "Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
 
 
     if 0: # Test reading and writing a USX Bible
@@ -9611,7 +9611,7 @@ def demo():
                             result = BibleOrgSysGlobals.fileCompareXML( filename, filename, testFolder, outputFolder )
                             if BibleOrgSysGlobals.debugFlag:
                                 if not result: halt
-            else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
+            else: print( "Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
 
 
     if 0: # Test reading USFM Bibles and exporting to theWord and MySword
@@ -9656,7 +9656,7 @@ def demo():
                     if not result:
                         print( "theWord modules did NOT match" )
                         #if BibleOrgSysGlobals.debugFlag: halt
-            else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
+            else: print( "Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
 # end of demo
 
 

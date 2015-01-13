@@ -122,9 +122,9 @@ class BiblePunctuationSystemsConverter:
                                 else:
                                     logging.warning( _("Missing work element in header") )
                         else:
-                            logging.warning( _("Missing header element (looking for '{}' tag)").format( headerTag ) )
+                            logging.warning( _("Missing header element (looking for {!r} tag)").format( headerTag ) )
                     else:
-                        logging.error( _("Expected to load '{}' but got '{}'").format( treeTag, self._XMLSystems[punctuationSystemCode]["tree"].tag ) )
+                        logging.error( _("Expected to load {!r} but got {!r}").format( treeTag, self._XMLSystems[punctuationSystemCode]["tree"].tag ) )
                     bookCount = 0 # There must be an easier way to do this
                     for subelement in self._XMLSystems[punctuationSystemCode]["tree"]:
                         bookCount += 1
@@ -154,55 +154,55 @@ class BiblePunctuationSystemsConverter:
                 for attributeName in self.compulsoryAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is None:
-                        logging.error( _("Compulsory '{}' attribute is missing from {} element in record {}").format( attributeName, element.tag, k ) )
+                        logging.error( _("Compulsory {!r} attribute is missing from {} element in record {}").format( attributeName, element.tag, k ) )
                     if not attributeValue:
-                        logging.warning( _("Compulsory '{}' attribute is blank on {} element in record {}").format( attributeName, element.tag, k ) )
+                        logging.warning( _("Compulsory {!r} attribute is blank on {} element in record {}").format( attributeName, element.tag, k ) )
 
                 # Check optional attributes on this main element
                 for attributeName in self.optionalAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if not attributeValue:
-                            logging.warning( _("Optional '{}' attribute is blank on {} element in record {}").format( attributeName, element.tag, k ) )
+                            logging.warning( _("Optional {!r} attribute is blank on {} element in record {}").format( attributeName, element.tag, k ) )
 
                 # Check for unexpected additional attributes on this main element
                 for attributeName in element.keys():
                     attributeValue = element.get( attributeName )
                     if attributeName not in self.compulsoryAttributes and attributeName not in self.optionalAttributes:
-                        logging.warning( _("Additional '{}' attribute ('{}') found on {} element in record {}").format( attributeName, attributeValue, element.tag, k ) )
+                        logging.warning( _("Additional {!r} attribute ({!r}) found on {} element in record {}").format( attributeName, attributeValue, element.tag, k ) )
 
                 # Check the attributes that must contain unique information (in that particular field -- doesn't check across different attributes)
                 for attributeName in self.uniqueAttributes:
                     attributeValue = element.get( attributeName )
                     if attributeValue is not None:
                         if attributeValue in uniqueDict["Attribute_"+attributeName]:
-                            logging.error( _("Found '{}' data repeated in '{}' field on {} element in record {}").format( attributeValue, attributeName, element.tag, k ) )
+                            logging.error( _("Found {!r} data repeated in {!r} field on {} element in record {}").format( attributeValue, attributeName, element.tag, k ) )
                         uniqueDict["Attribute_"+attributeName].append( attributeValue )
 
                 # Check compulsory elements
                 for elementName in self.compulsoryElements:
                     if element.find( elementName ) is None:
-                        logging.error( _("Compulsory '{}' element is missing in record with ID '{}' (record {})").format( elementName, ID, k ) )
+                        logging.error( _("Compulsory {!r} element is missing in record with ID {!r} (record {})").format( elementName, ID, k ) )
                     if not element.find( elementName ).text:
-                        logging.warning( _("Compulsory '{}' element is blank in record with ID '{}' (record {})").format( elementName, ID, k ) )
+                        logging.warning( _("Compulsory {!r} element is blank in record with ID {!r} (record {})").format( elementName, ID, k ) )
 
                 # Check optional elements
                 for elementName in self.optionalElements:
                     if element.find( elementName ) is not None:
                         if not element.find( elementName ).text:
-                            logging.warning( _("Optional '{}' element is blank in record with ID '{}' (record {})").format( elementName, ID, k ) )
+                            logging.warning( _("Optional {!r} element is blank in record with ID {!r} (record {})").format( elementName, ID, k ) )
 
                 # Check for unexpected additional elements
                 for subelement in element:
                     if subelement.tag not in self.compulsoryElements and subelement.tag not in self.optionalElements:
-                        logging.warning( _("Additional '{}' element ('{}') found in record with ID '{}' (record {})").format( subelement.tag, subelement.text, ID, k ) )
+                        logging.warning( _("Additional {!r} element ({!r}) found in record with ID {!r} (record {})").format( subelement.tag, subelement.text, ID, k ) )
 
                 # Check the elements that must contain unique information (in that particular element -- doesn't check across different elements)
                 for elementName in self.uniqueElements:
                     if element.find( elementName ) is not None:
                         text = element.find( elementName ).text
                         if text in uniqueDict["Element_"+elementName]:
-                            logging.error( _("Found '{}' data repeated in '{}' element in record with ID '{}' (record {})").format( text, elementName, ID, k ) )
+                            logging.error( _("Found {!r} data repeated in {!r} element in record with ID {!r} (record {})").format( text, elementName, ID, k ) )
                         uniqueDict["Element_"+elementName].append( text )
             else:
                 logging.warning( _("Unexpected element: {} in record {}").format( element.tag, k ) )
@@ -377,7 +377,7 @@ class BiblePunctuationSystemsConverter:
                         if field is None: result += '""'
                         elif isinstance( field, str): result += '"' + str(field).replace('"','\\"') + '"'
                         elif isinstance( field, int): result += str(field)
-                        else: logging.error( _("Cannot convert unknown field type '{}' in entry '{}'").format( field, entry ) )
+                        else: logging.error( _("Cannot convert unknown field type {!r} in entry {!r}").format( field, entry ) )
                 return result
             # end of convertEntry
 
@@ -457,16 +457,16 @@ class BiblePunctuationSystemsConverter:
         for punctuationSystemCode in self.Lists: # Step through the various reference schemes
             theseErrors = ''
             if self.Lists[punctuationSystemCode] == punctuationSchemeToCheck:
-                #print( "  Matches '{}' punctuation system".format( punctuationSystemCode ) )
+                #print( "  Matches {!r} punctuation system".format( punctuationSystemCode ) )
                 systemMatchCount += 1
                 matchedPunctuationSystemCodes.append( punctuationSystemCode )
             else:
                 if len(self.Lists[punctuationSystemCode]) == len(punctuationSchemeToCheck):
                     for BBB1,BBB2 in zip(self.Lists[punctuationSystemCode],punctuationSchemeToCheck):
                         if BBB1 != BBB2: break
-                    thisError = "    Doesn't match '{}' system (Both have {} books, but {} instead of {})".format( punctuationSystemCode, len(punctuationSchemeToCheck), BBB1, BBB2 )
+                    thisError = "    Doesn't match {!r} system (Both have {} books, but {} instead of {})".format( punctuationSystemCode, len(punctuationSchemeToCheck), BBB1, BBB2 )
                 else:
-                    thisError = "    Doesn't match '{}' system ({} books instead of {})".format( punctuationSystemCode, len(punctuationSchemeToCheck), len(self.Lists[punctuationSystemCode]) )
+                    thisError = "    Doesn't match {!r} system ({} books instead of {})".format( punctuationSystemCode, len(punctuationSchemeToCheck), len(self.Lists[punctuationSystemCode]) )
                 theseErrors += ("\n" if theseErrors else "") + thisError
                 errorSummary += ("\n" if errorSummary else "") + thisError
                 systemMismatchCount += 1

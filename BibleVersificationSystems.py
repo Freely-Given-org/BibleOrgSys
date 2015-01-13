@@ -90,7 +90,7 @@ class BibleVersificationSystems:
                     self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
             else: # We have to load the XML (much slower)
                 from BibleVersificationSystemsConverter import BibleVersificationSystemsConverter
-                if XMLFolder is not None: logging.warning( _("Bible versification systems are already loaded -- your given folder of '{}' was ignored").format(XMLFolder) )
+                if XMLFolder is not None: logging.warning( _("Bible versification systems are already loaded -- your given folder of {!r} was ignored").format(XMLFolder) )
                 bvsc = BibleVersificationSystemsConverter()
                 bvsc.loadSystems( XMLFolder ) # Load the XML (if not done already)
                 self.__DataDict = bvsc.importDataToPython() # Get the various dictionaries organised for quick lookup
@@ -158,7 +158,7 @@ class BibleVersificationSystems:
         if systemName in self.__DataDict:
             return self.__DataDict[systemName]
         # else
-        logging.error( _("No '{}' system in Bible Versification Systems").format( systemName ) )
+        logging.error( _("No {!r} system in Bible Versification Systems").format( systemName ) )
         if BibleOrgSysGlobals.verbosityLevel > 2: logging.error( _("Available systems are {}").format( self.getAvailableVersificationSystemNames() ) )
     # end of BibleVersificationSystems.getVersificationSystem
 
@@ -332,12 +332,12 @@ class BibleVersificationSystems:
                         if not isinstance(numVersesToCheck,str): raise Exception( "Verse programming error" )
                         if chapterToCheck in CVData[BBB]: # That chapter number is in our scheme
                             if CVData[BBB][chapterToCheck] != numVersesToCheck:
-                                theseErrors += ("\n" if theseErrors else "") + "    " + _("Doesn't match '{}' system at {} {} verse {}").format( versificationSystemCode, BBB, chapterToCheck, numVersesToCheck )
+                                theseErrors += ("\n" if theseErrors else "") + "    " + _("Doesn't match {!r} system at {} {} verse {}").format( versificationSystemCode, BBB, chapterToCheck, numVersesToCheck )
                                 if bookMismatchCount==0 and chapterMismatchCount==0 and verseMismatchCount==0:
                                     rememberedBBB, rememberedChapter, rememberedVerses1, rememberedVerses2 = BBB, chapterToCheck, CVData[BBB][chapterToCheck], numVersesToCheck
                                 verseMismatchCount += 1
                         else: # Our scheme doesn't have that chapter number
-                            theseErrors += ("\n" if theseErrors else "") + "    " + _("Doesn't match '{}' system at {} chapter {} ({} verses)").format( versificationSystemCode, BBB, chapterToCheck, numVersesToCheck )
+                            theseErrors += ("\n" if theseErrors else "") + "    " + _("Doesn't match {!r} system at {} chapter {} ({} verses)").format( versificationSystemCode, BBB, chapterToCheck, numVersesToCheck )
                             chapterMismatchCount += 1
                 else:
                     theseErrors += ("\n" if theseErrors else "") + "    " + _("Can't find {} bookcode in {}").format( BBB, versificationSystemCode )
@@ -416,24 +416,24 @@ class BibleVersificationSystems:
 
             if bookMismatchCount or chapterMismatchCount or verseMismatchCount or omittedVerseMismatchCount or combinedVerseMismatchCount or reorderedVerseMismatchCount:
                 if omittedVersesToCheck:
-                    thisError = "    " + _("Doesn't match '{}' system ({} book mismatches, {} chapter mismatches, {} verse mismatches, {} omitted-verse mismatches)").format( versificationSystemCode, bookMismatchCount, chapterMismatchCount, verseMismatchCount,omittedVerseMismatchCount )
+                    thisError = "    " + _("Doesn't match {!r} system ({} book mismatches, {} chapter mismatches, {} verse mismatches, {} omitted-verse mismatches)").format( versificationSystemCode, bookMismatchCount, chapterMismatchCount, verseMismatchCount,omittedVerseMismatchCount )
                     if omittedVerseMismatchCount == 1:
                         thisError += "\n      " + _("Omitted verse mismatch was {} {}:{} omitted in {} but present in {}").format(rememberedOmission[0],rememberedOmission[1],rememberedOmission[2],rememberedOmission[3],rememberedOmission[4])
                     elif BibleOrgSysGlobals.verbosityLevel>2 and bookMismatchCount==0 and chapterMismatchCount==0 and omittedVerseMismatchCount>0:
                         thisError += "\n      " + _("First omitted verse mismatch was {} {}:{} omitted in {} but present in {}").format(rememberedOmission[0],rememberedOmission[1],rememberedOmission[2],rememberedOmission[3],rememberedOmission[4])
                 elif combinedVersesToCheck: # only display one of these systems
-                    thisError = "    " + _("Doesn't match '{}' system ({} book mismatches, {} chapter mismatches, {} verse mismatches, {} combined-verse mismatches)").format( versificationSystemCode, bookMismatchCount, chapterMismatchCount, verseMismatchCount,omittedVerseMismatchCount )
+                    thisError = "    " + _("Doesn't match {!r} system ({} book mismatches, {} chapter mismatches, {} verse mismatches, {} combined-verse mismatches)").format( versificationSystemCode, bookMismatchCount, chapterMismatchCount, verseMismatchCount,omittedVerseMismatchCount )
                     if combinedVerseMismatchCount == 1:
                         thisError += "\n      " + _("Combined verse mismatch was {} {}:{} between {} and {}").format(rememberedCombination[0],rememberedCombination[1],rememberedCombination[2],rememberedCombination[3],rememberedCombination[4])
                     elif BibleOrgSysGlobals.verbosityLevel>2 and bookMismatchCount==0 and chapterMismatchCount==0 and combinedVerseMismatchCount>0:
                         thisError += "\n      " + _("First combined verse mismatch was {} {}:{} omitted in {} but present in {}").format(rememberedCombination[0],rememberedCombination[1],rememberedCombination[2],rememberedCombination[3],rememberedCombination[4])
                 elif reorderedVersesToCheck:
-                    thisError = "    " + _("Doesn't match '{}' system ({} book mismatches, {} chapter mismatches, {} verse mismatches, {} reordered-verse mismatches)").format( versificationSystemCode, bookMismatchCount, chapterMismatchCount, verseMismatchCount,omittedVerseMismatchCount )
+                    thisError = "    " + _("Doesn't match {!r} system ({} book mismatches, {} chapter mismatches, {} verse mismatches, {} reordered-verse mismatches)").format( versificationSystemCode, bookMismatchCount, chapterMismatchCount, verseMismatchCount,omittedVerseMismatchCount )
                     if reorderedVerseMismatchCount == 1:
                         thisError += "\n      " + _("Reordered verse mismatch was {} {}:{} between {} and {}").format(rememberedReordering[0],rememberedReordering[1],rememberedReordering[2],rememberedReordering[3],rememberedReordering[4])
                     elif BibleOrgSysGlobals.verbosityLevel>2 and bookMismatchCount==0 and chapterMismatchCount==0 and reorderedVerseMismatchCount>0: thisError += "\n      " + _("First reordered verse mismatch was {} {}:{} omitted in {} but present in {}").format(rememberedReordering[0],rememberedReordering[1],rememberedReordering[2],rememberedReordering[3],rememberedReordering[4])
                 else:
-                    thisError = "    " + _("Doesn't match '{}' system ({} book mismatches, {} chapter mismatches, {} verse mismatches)").format( versificationSystemCode, bookMismatchCount, chapterMismatchCount, verseMismatchCount )
+                    thisError = "    " + _("Doesn't match {!r} system ({} book mismatches, {} chapter mismatches, {} verse mismatches)").format( versificationSystemCode, bookMismatchCount, chapterMismatchCount, verseMismatchCount )
                 if bookMismatchCount==0 and chapterMismatchCount==0 and verseMismatchCount==1:
                     thisError += "\n      " + _("{} {} chapter {} had {} verses but {} had {}").format(thisSystemName, rememberedBBB, rememberedChapter, rememberedVerses2, versificationSystemCode, rememberedVerses1)
                 theseErrors += ("\n" if theseErrors else "") + thisError
@@ -441,7 +441,7 @@ class BibleVersificationSystems:
                     errorSummary += ("\n" if errorSummary else "") + thisError
                 systemMismatchCount += 1
             else:
-                #print( "  Matches '{}' system".format( versificationSystemCode ) )
+                #print( "  Matches {!r} system".format( versificationSystemCode ) )
                 systemMatchCount += 1
                 matchedVersificationSystemCodes.append( versificationSystemCode )
             if BibleOrgSysGlobals.commandLineOptions.debug and chapterMismatchCount==0 and 0<verseMismatchCount<8 and omittedVerseMismatchCount<10: print( theseErrors )
@@ -678,7 +678,7 @@ class BibleVersificationSystem:
             print( "BibleVersificationSystem.isValidBCVRef( {}, {}, {} ) expected C to be digits".format( referenceTuple, referenceString, extended ) )
         assert( not V or V.isdigit() ) # Should be no suffix on V (although it can be blank if the reference is for a whole chapter)
         assert( not S or len(S)==1 and S.isalpha() ) # Suffix should be only one lower-case letter if anything
-        myReferenceString = " (from '{}')".format(referenceString) if referenceString is not None else ''
+        myReferenceString = " (from {!r})".format(referenceString) if referenceString is not None else ''
 
         if BBB in self.__chapterDataDict:
             if extended and C=='0': return 0 <= int(V) <= 199 # Don't check the verse number range accurately
@@ -704,7 +704,7 @@ class BibleVersificationSystem:
         assert( endRef and len(endRef)==4 )
 
         haveErrors, haveWarnings = False, False
-        myReferenceString = " (from '{}')".format(referenceString) if referenceString is not None else ''
+        myReferenceString = " (from {!r})".format(referenceString) if referenceString is not None else ''
         if not self.isValidBCVRef( startRef, referenceString ):
             haveErrors = True
         if not self.isValidBCVRef( endRef, referenceString ):

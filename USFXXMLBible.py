@@ -71,10 +71,10 @@ def USFXXMLBibleFileCheck( sourceFolder, strictCheck=True, autoLoad=False, autoL
 
     # Check that the given folder is readable
     if not os.access( sourceFolder, os.R_OK ):
-        logging.critical( _("USFXXMLBibleFileCheck: Given '{}' folder is unreadable").format( sourceFolder ) )
+        logging.critical( _("USFXXMLBibleFileCheck: Given {!r} folder is unreadable").format( sourceFolder ) )
         return False
     if not os.path.isdir( sourceFolder ):
-        logging.critical( _("USFXXMLBibleFileCheck: Given '{}' path is not a folder").format( sourceFolder ) )
+        logging.critical( _("USFXXMLBibleFileCheck: Given {!r} path is not a folder").format( sourceFolder ) )
         return False
 
     # Find all the files and folders in this folder
@@ -106,7 +106,7 @@ def USFXXMLBibleFileCheck( sourceFolder, strictCheck=True, autoLoad=False, autoL
             if not firstLines or len(firstLines)<2: continue
             if not firstLines[0].startswith( '<?xml version="1.0"' ) \
             and not firstLines[0].startswith( '\ufeff<?xml version="1.0"' ): # same but with BOM
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "USFXB (unexpected) first line was '{}' in {}".format( firstLines, thisFilename ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "USFXB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                 continue
             if "<usfx " not in firstLines[0]:
                 continue
@@ -149,7 +149,7 @@ def USFXXMLBibleFileCheck( sourceFolder, strictCheck=True, autoLoad=False, autoL
                 if not firstLines or len(firstLines)<2: continue
                 if not firstLines[0].startswith( '<?xml version="1.0"' ) \
                 and not firstLines[0].startswith( '\ufeff<?xml version="1.0"' ): # same but with BOM
-                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "USFXB (unexpected) first line was '{}' in {}".format( firstLines, thisFilename ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "USFXB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                     continue
                 if "<usfx " not in firstLines[0]:
                     continue
@@ -204,7 +204,7 @@ class USFXXMLBible( Bible ):
 
         # Do a preliminary check on the readability of our folder
         if not os.access( self.sourceFolder, os.R_OK ):
-            logging.error( "USFXXMLBible: Folder '{}' is unreadable".format( self.sourceFolder ) )
+            logging.error( "USFXXMLBible: Folder {!r} is unreadable".format( self.sourceFolder ) )
 
         # Do a preliminary check on the contents of our folder
         self.sourceFilename = self.sourceFilepath = None
@@ -221,10 +221,10 @@ class USFXXMLBible( Bible ):
                 if ignore: continue
                 if not somethingUpperExt[1:] in extensionsToIgnore: # Compare without the first dot
                     foundFiles.append( something )
-            else: logging.error( "Not sure what '{}' is in {}!".format( somepath, self.sourceFolder ) )
-        if foundFolders: logging.info( "USFXXMLBible: Surprised to see subfolders in '{}': {}".format( self.sourceFolder, foundFolders ) )
+            else: logging.error( "Not sure what {!r} is in {}!".format( somepath, self.sourceFolder ) )
+        if foundFolders: logging.info( "USFXXMLBible: Surprised to see subfolders in {!r}: {}".format( self.sourceFolder, foundFolders ) )
         if not foundFiles:
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( "USFXXMLBible: Couldn't find any files in '{}'".format( self.sourceFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( "USFXXMLBible: Couldn't find any files in {!r}".format( self.sourceFolder ) )
             return # No use continuing
 
         #print( self.sourceFolder, foundFolders, len(foundFiles), foundFiles )
@@ -234,7 +234,7 @@ class USFXXMLBible( Bible ):
             if not firstLines or len(firstLines)<2: continue
             if not firstLines[0].startswith( '<?xml version="1.0"' ) \
             and not firstLines[0].startswith( '\ufeff<?xml version="1.0"' ): # same but with BOM
-                if BibleOrgSysGlobals.verbosityLevel > 2: print( "USFXB (unexpected) first line was '{}' in {}".format( firstLines, thisFilename ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2: print( "USFXB (unexpected) first line was {!r} in {}".format( firstLines, thisFilename ) )
                 continue
             if "<usfx " not in firstLines[0]:
                 continue
@@ -265,7 +265,7 @@ class USFXXMLBible( Bible ):
         try: self.tree = ElementTree().parse( self.sourceFilepath )
         except ParseError:
             errorString = sys.exc_info()[1]
-            logging.critical( "USFXXMLBible.load: failed loading the xml file {}: '{}'.".format( self.sourceFilepath, errorString ) )
+            logging.critical( "USFXXMLBible.load: failed loading the xml file {}: {!r}.".format( self.sourceFilepath, errorString ) )
             return
         if BibleOrgSysGlobals.debugFlag: assert( len ( self.tree ) ) # Fail here if we didn't load anything at all
 
@@ -312,7 +312,7 @@ class USFXXMLBible( Bible ):
 
         if not self.books: # Didn't successfully load any regularly named books -- maybe the files have weird names??? -- try to be intelligent here
             if BibleOrgSysGlobals.verbosityLevel > 2:
-                print( "USFXXMLBible.load: Didn't find any regularly named USFX files in '{}'".format( self.sourceFolder ) )
+                print( "USFXXMLBible.load: Didn't find any regularly named USFX files in {!r}".format( self.sourceFolder ) )
             for thisFilename in foundFiles:
                 # Look for BBB in the ID line (which should be the first line in a USFX file)
                 isUSFX = False
@@ -321,9 +321,9 @@ class USFXXMLBible( Bible ):
                     for line in possibleUSXFile:
                         if line.startswith( '\\id ' ):
                             USXId = line[4:].strip()[:3] # Take the first three non-blank characters after the space after id
-                            if BibleOrgSysGlobals.verbosityLevel > 2: print( "Have possible USFX ID '{}'".format( USXId ) )
+                            if BibleOrgSysGlobals.verbosityLevel > 2: print( "Have possible USFX ID {!r}".format( USXId ) )
                             BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUSFM( USXId )
-                            if BibleOrgSysGlobals.verbosityLevel > 2: print( "BBB is '{}'".format( BBB ) )
+                            if BibleOrgSysGlobals.verbosityLevel > 2: print( "BBB is {!r}".format( BBB ) )
                             isUSFX = True
                         break # We only look at the first line
                 if isUSFX:
@@ -837,8 +837,8 @@ def demo():
             #print( UB.getAddedUnits () )
             #for ref in ('GEN','Genesis','GeNeSiS','Gen','MrK','mt','Prv','Xyz',):
                 ##print( "Looking for", ref )
-                #print( "Tried finding '{}' in '{}': got '{}'".format( ref, name, UB.getXRefBBB( ref ) ) )
-        else: print( "Sorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
+                #print( "Tried finding {!r} in {!r}: got {!r}".format( ref, name, UB.getXRefBBB( ref ) ) )
+        else: print( "Sorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
 
     #if BibleOrgSysGlobals.commandLineOptions.export:
     #    if BibleOrgSysGlobals.verbosityLevel > 0: print( "NOTE: This is {} V{} -- i.e., not even alpha quality software!".format( ProgName, ProgVersion ) )

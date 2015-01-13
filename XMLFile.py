@@ -70,14 +70,14 @@ class XMLFile():
 
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):
-            print( "XMLFile: File '{}' is unreadable".format( self.sourceFilepath ) )
+            print( "XMLFile: File {!r} is unreadable".format( self.sourceFilepath ) )
         if self.schemaFilepath and not os.access( self.schemaFilepath, os.R_OK ):
-            print( "XMLFile: Schema file '{}' is unreadable".format( self.schemaFilepath ) )
+            print( "XMLFile: Schema file {!r} is unreadable".format( self.schemaFilepath ) )
         if self.schemaURL:
             try:
                 resp = urllib.request.urlopen( self.schemaURL )
             except urllib.error.URLError:
-                logging.error( "XMLFile: Schema file '{}' is not downloadable".format( self.schemaURL ) )
+                logging.error( "XMLFile: Schema file {!r} is not downloadable".format( self.schemaURL ) )
                 resp = None
             if resp is not None:
                 data = resp.read() # a bytes object
@@ -123,7 +123,7 @@ class XMLFile():
             self.validatedByLoading = False
         except ParseError:
             errorString = sys.exc_info()[1]
-            logging.error( "  ElementTree failed loading the xml file {}: '{}'.".format( self.sourceFilepath, errorString ) )
+            logging.error( "  ElementTree failed loading the xml file {}: {!r}.".format( self.sourceFilepath, errorString ) )
             self.validatedByLoading = False
 
         return self.validatedByLoading, errorString
@@ -155,8 +155,8 @@ class XMLFile():
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "  xmllint validated the xml file {}.".format( self.sourceFilepath ) )
             self.validatedWithLint = True
 
-        if BibleOrgSysGlobals.debugFlag: print( "cPOS  = '{}'".format( checkProgramOutputString ) )
-        if BibleOrgSysGlobals.debugFlag: print( "cPEOS = '{}'".format( checkProgramErrorOutputString ) )
+        if BibleOrgSysGlobals.debugFlag: print( "cPOS  = {!r}".format( checkProgramOutputString ) )
+        if BibleOrgSysGlobals.debugFlag: print( "cPEOS = {!r}".format( checkProgramErrorOutputString ) )
         return self.validatedWithLint, checkProgramOutputString, checkProgramErrorOutputString
     # end of XMLFile.validateWithLint
 
@@ -181,7 +181,7 @@ def demo():
     def doTest( folder, filenameList, schema=None ):
         for testFilename in filenameList:
             #testFilepath = os.path.join( folder, testFilename )
-            #if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n  Test filepath is '{}'".format( testFilepath ) )
+            #if BibleOrgSysGlobals.verbosityLevel > 0: print( "\n  Test filepath is {!r}".format( testFilepath ) )
 
             # Demonstrate the XML file class
             #xf = XMLFile( testFilepath, schema=schema )

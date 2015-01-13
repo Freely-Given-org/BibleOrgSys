@@ -123,10 +123,10 @@ def UnboundBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
-        logging.critical( _("UnboundBibleFileCheck: Given '{}' folder is unreadable").format( givenFolderName ) )
+        logging.critical( _("UnboundBibleFileCheck: Given {!r} folder is unreadable").format( givenFolderName ) )
         return False
     if not os.path.isdir( givenFolderName ):
-        logging.critical( _("UnboundBibleFileCheck: Given '{}' path is not a folder").format( givenFolderName ) )
+        logging.critical( _("UnboundBibleFileCheck: Given {!r} path is not a folder").format( givenFolderName ) )
         return False
 
     # Find all the files and folders in this folder
@@ -157,7 +157,7 @@ def UnboundBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
             if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                 firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, givenFolderName )
                 if firstLine != "#THE UNBOUND BIBLE (www.unboundbible.org)":
-                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "UB (unexpected) first line was '{}' in {}".format( firstLine, thisFilename ) )
+                    if BibleOrgSysGlobals.verbosityLevel > 2: print( "UB (unexpected) first line was {!r} in {}".format( firstLine, thisFilename ) )
                     continue
             lastFilenameFound = thisFilename
             numFound += 1
@@ -176,7 +176,7 @@ def UnboundBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
-            logging.warning( _("UnboundBibleFileCheck: '{}' subfolder is unreadable").format( tryFolderName ) )
+            logging.warning( _("UnboundBibleFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
             continue
         if BibleOrgSysGlobals.verbosityLevel > 3: print( "    UnboundBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
@@ -199,7 +199,7 @@ def UnboundBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, au
                 if strictCheck or BibleOrgSysGlobals.strictCheckingFlag:
                     firstLine = BibleOrgSysGlobals.peekIntoFile( thisFilename, tryFolderName )
                     if firstLine != "#THE UNBOUND BIBLE (www.unboundbible.org)":
-                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "UB (unexpected) first line was '{}' in {}".format( firstLine, thisFilname ) ); halt
+                        if BibleOrgSysGlobals.verbosityLevel > 2: print( "UB (unexpected) first line was {!r} in {}".format( firstLine, thisFilname ) ); halt
                         continue
                 foundProjects.append( (tryFolderName, thisFilename,) )
                 lastFilenameFound = thisFilename
@@ -235,7 +235,7 @@ class UnboundBible( Bible ):
 
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):
-            logging.critical( _("UnboundBible: File '{}' is unreadable").format( self.sourceFilepath ) )
+            logging.critical( _("UnboundBible: File {!r} is unreadable").format( self.sourceFilepath ) )
 
         self.name = self.givenName
         #if self.name is None:
@@ -276,7 +276,7 @@ class UnboundBible( Bible ):
                         elif hashBits[0] == 'note': self.note = hashBits[1]
                         elif hashBits[0] == 'columns': self.columns = hashBits[1]
 # Should some of these be placed into self.settingsDict???
-                        logging.warning( "Unknown UnboundBible meta-data field '{}' = '{}'".format( hashBits[0], hashBits[1] ) )
+                        logging.warning( "Unknown UnboundBible meta-data field {!r} = {!r}".format( hashBits[0], hashBits[1] ) )
                     continue # Just discard comment lines
 
                 bits = line.split( '\t' )
@@ -288,7 +288,7 @@ class UnboundBible( Bible ):
                 elif len(bits) == 9:
                     NRSVA_bookCode, NRSVA_chapterNumberString, NRSVA_verseNumberString, bookCode, chapterNumberString, verseNumberString, subverseNumberString, sequenceNumberString, vText = bits
                 elif len(bits) == 1 and self.givenName.startswith( 'lxx_a_parsing_' ):
-                    logging.warning( _("Skipping bad '{}' line in {} {} {} {}:{}").format( line, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                    logging.warning( _("Skipping bad {!r} line in {} {} {} {}:{}").format( line, self.givenName, BBB, bookCode, chapterNumberString, verseNumberString ) )
                     continue
                 else: print( "Unexpected number of bits", self.givenName, BBB, bookCode, chapterNumberString, verseNumberString, len(bits), bits ); halt
 
@@ -304,7 +304,7 @@ class UnboundBible( Bible ):
                 if BibleOrgSysGlobals.debugFlag: assert( verseNumberString.isdigit() )
 
                 if subverseNumberString:
-                    logging.warning( _("subverseNumberString '{}' in {} {} {}:{}").format( subverseNumberString, BBB, bookCode, chapterNumberString, verseNumberString ) )
+                    logging.warning( _("subverseNumberString {!r} in {} {} {}:{}").format( subverseNumberString, BBB, bookCode, chapterNumberString, verseNumberString ) )
 
                 vText = vText.strip() # Remove leading and trailing spaces
                 if not vText: continue # Just ignore blank verses I think
@@ -370,7 +370,7 @@ def testUB( TUBfilename ):
 
     TUBfolder = os.path.join( testFolder, TUBfilename+'/' )
     if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the Unbound Bible class...") )
-    if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is '{}' '{}'".format( TUBfolder, TUBfilename ) )
+    if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is {!r} {!r}".format( TUBfolder, TUBfilename ) )
     ub = UnboundBible( TUBfolder, TUBfilename )
     ub.load() # Load and process the file
     if BibleOrgSysGlobals.verbosityLevel > 1: print( ub ) # Just print a summary

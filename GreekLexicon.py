@@ -144,9 +144,9 @@ class GreekStrongsFileConverter:
                     pass
                 elif segment.tag == "entries":
                     self.validateEntries( segment )
-                else: logging.error( "ks24 Unprocessed '{}' element ({}) in entry".format( segment.tag, segment.text ) )
-        else: logging.error( "Expected to load '{}' but got '{}'".format( GreekStrongsFileConverter.treeTag, self.tree.tag ) )
-        if self.tree.tail is not None and self.tree.tail.strip(): logging.error( "vs42 Unexpected '{}' tail data after {} element".format( self.tree.tail, self.tree.tag ) )
+                else: logging.error( "ks24 Unprocessed {!r} element ({}) in entry".format( segment.tag, segment.text ) )
+        else: logging.error( "Expected to load {!r} but got {!r}".format( GreekStrongsFileConverter.treeTag, self.tree.tag ) )
+        if self.tree.tail is not None and self.tree.tail.strip(): logging.error( "vs42 Unexpected {!r} tail data after {} element".format( self.tree.tail, self.tree.tag ) )
     # end of GreekStrongsFileConverter.loadAndValidate
 
 
@@ -180,7 +180,7 @@ class GreekStrongsFileConverter:
             if attrib ==  "strongs":
                 strongs5 = value
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "Validating {} entry...".format( strongs5 ) )
-            else: logging.warning( "Unprocessed '{}' attribute ({}) in main entry element".format( attrib, value ) )
+            else: logging.warning( "Unprocessed {!r} attribute ({}) in main entry element".format( attrib, value ) )
         if BibleOrgSysGlobals.debugFlag: assert( len(strongs5)==5 and strongs5.isdigit() )
 
         entryResults = {}
@@ -208,7 +208,7 @@ class GreekStrongsFileConverter:
                     if attrib=="translit": translit = value
                     elif attrib=="unicode": greek = value
                     elif attrib=="BETA": beta = value
-                    else: logging.warning( "scs4 Unprocessed '{}' attribute ({}) in {}".format( attrib, value, location ) )
+                    else: logging.warning( "scs4 Unprocessed {!r} attribute ({}) in {}".format( attrib, value, location ) )
                 if BibleOrgSysGlobals.debugFlag: assert( greek and translit and beta )
                 if 'word' not in entryResults: # This is the first/main entry
                     if BibleOrgSysGlobals.debugFlag: assert( gettingEssentials and j==1 )
@@ -227,7 +227,7 @@ class GreekStrongsFileConverter:
                 pronunciation = None
                 for attrib,value in element.items():
                     if attrib=="strongs": pronunciation = value
-                    else: logging.warning( "scs4 Unprocessed '{}' attribute ({}) in {}".format( attrib, value, location ) )
+                    else: logging.warning( "scs4 Unprocessed {!r} attribute ({}) in {}".format( attrib, value, location ) )
                 if gettingEssentials:
                     #BibleOrgSysGlobals.checkXMLNoTail( element, location, "kd02" )
                     if BibleOrgSysGlobals.debugFlag:
@@ -288,13 +288,13 @@ class GreekStrongsFileConverter:
                 for attrib,value in element.items():
                     if attrib == "language": seeLanguage = value
                     elif attrib == "strongs": seeStrongsNumber = value # Note: No leading zeroes here
-                    else: logging.warning( "scs4 Unprocessed '{}' attribute ({}) in {}".format( attrib, value, location ) )
+                    else: logging.warning( "scs4 Unprocessed {!r} attribute ({}) in {}".format( attrib, value, location ) )
                 if BibleOrgSysGlobals.debugFlag:
                     assert( seeLanguage and seeStrongsNumber and seeStrongsNumber.isdigit() )
                     assert( seeLanguage in ('GREEK','HEBREW',) )
                 if 'see' not in entryResults: entryResults['see'] = []
                 entryResults['see'].append( ('G' if seeLanguage=='GREEK' else 'H') + seeStrongsNumber )
-            else: logging.error( "2d4f Unprocessed '{}' element ({}) in entry".format( element.tag, element.text ) )
+            else: logging.error( "2d4f Unprocessed {!r} element ({}) in entry".format( element.tag, element.text ) )
 
         if entryString:
             #print( strongs5, "entryString", repr(entryString) )
@@ -434,7 +434,7 @@ class GreekLexicon:
         if self.StrongsEntries is None: self.load()
         if keyDigits in self.StrongsEntries:
             entry = self.StrongsEntries[keyDigits]
-            wordEntry = '{}'.format( entry['Entry'].replace('<StrongsRef>','<span class="StrongsRef">').replace('</StrongsRef>','</span>').replace('<def>','<span class="def">').replace('</def>','</span>') ) \
+            wordEntry = {!r}.format( entry['Entry'].replace('<StrongsRef>','<span class="StrongsRef">').replace('</StrongsRef>','</span>').replace('<def>','<span class="def">').replace('</def>','</span>') ) \
                         if 'Entry' in entry else ''
             html = '<span class="GreekWord" title="{{{}}}" xml:lang="grk">{}</span> {}' \
                 .format( keyDigits, keyDigits, entry['word'][1], entry['word'][0], wordEntry )

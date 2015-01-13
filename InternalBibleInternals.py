@@ -303,7 +303,7 @@ class InternalBibleEntry:
             #print( "InternalBibleEntry constructor had problem with it* (probably in a footnote) in {} {} {}".format( marker, repr(originalText), repr(adjustedText) ) )
             #halt
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.strictCheckingFlag:
-            #print( "InternalBibleEntry.__init__( {}, {}, '{}', '{}', {}, '{}' )" \
+            #print( "InternalBibleEntry.__init__( {}, {}, {!r}, {!r}, {}, {!r} )" \
                     #.format( marker, originalMarker, adjustedText[:35]+('...' if len(adjustedText)>35 else ''), \
                         #cleanText[:35]+('...' if len(cleanText)>35 else ''), extras, \
                         #originalText[:35]+('...' if len(originalText)>35 else '') ) )
@@ -328,7 +328,7 @@ class InternalBibleEntry:
                 assert( '\n' not in originalText and '\r' not in originalText )
                 #assert( marker in BibleOrgSysGlobals.USFMMarkers or marker in BOS_ADDED_CONTENT_MARKERS )
                 if marker not in BibleOrgSysGlobals.USFMMarkers and marker not in BOS_ADDED_CONTENT_MARKERS:
-                    logging.warning( "InternalBibleEntry doesn't handle '{}' marker yet.".format( marker ) )
+                    logging.warning( "InternalBibleEntry doesn't handle {!r} marker yet.".format( marker ) )
         self.marker, self.originalMarker, self.adjustedText, self.cleanText, self.extras, self.originalText = marker, originalMarker, adjustedText, cleanText, extras, originalText
 
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule \
@@ -387,8 +387,8 @@ class InternalBibleEntry:
         offset = 0
         if self.extras:
             for extraType, extraIndex, extraText, cleanExtraText in self.extras: # do any footnotes and cross-references
-                #print( "getFullText: {} at {} = '{}' ({})".format( extraType, extraIndex, extraText, cleanExtraText ) )
-                #print( "getFullText:  was '{}'".format( result ) )
+                #print( "getFullText: {} at {} = {!r} ({})".format( extraType, extraIndex, extraText, cleanExtraText ) )
+                #print( "getFullText:  was {!r}".format( result ) )
                 ix = extraIndex + offset
                 if extraType == 'fn': USFM, lenUSFM = 'f', 1
                 elif extraType == 'en': USFM, lenUSFM = 'fe', 2
@@ -400,20 +400,20 @@ class InternalBibleEntry:
                 elif BibleOrgSysGlobals.debugFlag: halt
                 if USFM:
                     result = '{}\\{} {}\\{}*{}'.format( result[:ix], USFM, extraText, USFM, result[ix:] )
-                #print( "getFullText:  now '{}'".format( result ) )
+                #print( "getFullText:  now {!r}".format( result ) )
                 offset += len(extraText ) + 2*lenUSFM + 4
 
         #if result != self.adjustedText:
             #if len(self.extras) > 1:
-                #print( "\nWas '{}'".format( self.cleanText ) )
-                #print( "And '{}'".format( self.adjustedText ) )
-                #print( "Orig'{}'".format( self.originalText ) )
-                #print( "Now '{}'".format( result ) )
+                #print( "\nWas {!r}".format( self.cleanText ) )
+                #print( "And {!r}".format( self.adjustedText ) )
+                #print( "Orig{!r}".format( self.originalText ) )
+                #print( "Now {!r}".format( result ) )
                 #print( "Extras are {}".format( self.extras ) )
         #if result != self.originalText.strip():
-            #print( "\nWe're giving '{}'".format( result ) )
-            #print( "   Should be '{}'".format( self.originalText.strip() ) )
-            #print( "        From '{}'".format( self.originalText ) )
+            #print( "\nWe're giving {!r}".format( result ) )
+            #print( "   Should be {!r}".format( self.originalText.strip() ) )
+            #print( "        From {!r}".format( self.originalText ) )
         #if BibleOrgSysGlobals.debugFlag: assert( result == self.originalText.strip() )
         return result
     # end of InternalBibleEntry.getFullText
@@ -940,12 +940,12 @@ class InternalBibleIndex:
                 marker, cleanText = entry.getMarker(), entry.getCleanText()
                 if marker in ( 'c','c#' ):
                     if cleanText != C:
-                        logging.critical( "InternalBibleIndex.checkIndex: wrong {} {} chapter number '{}' expected '{}'".format( self.name, self.BBB, cleanText, C ) )
+                        logging.critical( "InternalBibleIndex.checkIndex: wrong {} {} chapter number {!r} expected {!r}".format( self.name, self.BBB, cleanText, C ) )
                         #if BibleOrgSysGlobals.debugFlag: halt
                 elif marker == 'v':
                     if cleanText != V:
                         if '-' not in cleanText and ',' not in cleanText: # Handle verse ranges
-                            logging.critical( "InternalBibleIndex.checkIndex: wrong {} {} {} verse number '{}' expected '{}'".format( self.name, self.BBB, C, cleanText, V ) )
+                            logging.critical( "InternalBibleIndex.checkIndex: wrong {} {} {} verse number {!r} expected {!r}".format( self.name, self.BBB, C, cleanText, V ) )
                             #if BibleOrgSysGlobals.debugFlag: halt
             lastKey = key
         #if self.BBB=='FRT': halt

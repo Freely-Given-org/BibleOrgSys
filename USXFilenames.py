@@ -53,7 +53,7 @@ class USXFilenames:
         self.pattern, self.fileExtension = '', 'usx' # Pattern should end up as 'dddBBB'
         self.digitsIndex, self.USXBookCodeIndex = 0, 3
         files = os.listdir( self.folder )
-        if not files: logging.error( _("No files at all in given folder: '{}'").format( self.folder) ); return
+        if not files: logging.error( _("No files at all in given folder: {!r}").format( self.folder) ); return
         for foundFilename in files:
             if not foundFilename.endswith('~'): # Ignore backup files
                 foundFileBit, foundExtBit = os.path.splitext( foundFilename )
@@ -81,7 +81,7 @@ class USXFilenames:
                             break
                 if matched: break
         if BibleOrgSysGlobals.verbosityLevel>2 and not matched: logging.info( _("Unable to recognize valid USX files in ") + folder )
-        #print( "USXFilenames: pattern='{}' fileExtension='{}'".format( self.pattern, self.fileExtension ) )
+        #print( "USXFilenames: pattern={!r} fileExtension={!r}".format( self.pattern, self.fileExtension ) )
     # end of __init__
 
 
@@ -121,7 +121,7 @@ class USXFilenames:
                 filename = filename[:self.digitsIndex] + USXDigits + filename[self.digitsIndex+len(USXDigits):]
                 filename = filename[:self.USXBookCodeIndex] + ( USFMBookCode.upper() if 'BBB' in self.pattern else USFMBookCode ) + filename[self.USXBookCodeIndex+len(USFMBookCode):]
                 filename += '.' + self.fileExtension
-                #print( "getPossibleFilenames: Filename is '{}'".format( filename ) )
+                #print( "getPossibleFilenames: Filename is {!r}".format( filename ) )
                 resultList.append( (BBB,filename,) )
         return BibleOrgSysGlobals.BibleBooksCodes.getSequenceList( resultList )
     # end of getPossibleFilenames
@@ -206,7 +206,7 @@ def demo():
             result = UFns.getPossibleFilenames(); print( "\nPossible:", len(result), result )
             result = UFns.getConfirmedFilenames(); print( "\nConfirmed:", len(result), result )
             result = UFns.getUnusedFilenames(); print( "\nOther:", len(result), result )
-        else: print( "Sorry, test folder '{}' doesn't exist on this computer.".format( testFolder ) )
+        else: print( "Sorry, test folder {!r} doesn't exist on this computer.".format( testFolder ) )
 # end of demo
 
 if __name__ == '__main__':

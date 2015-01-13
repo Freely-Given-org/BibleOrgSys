@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 # VerseReferences.py
-#   Last modified: 2014-12-24 (also update ProgVersion below)
 #
-# Module handling Bible verse references
+# Class handling Bible verse references
 #
-# Copyright (C) 2013-2014 Robert Hunt
+# Copyright (C) 2013-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -24,7 +23,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module for creating and manipulating our internal Bible verse references.
+Class for creating and manipulating our internal Bible verse references.
 
 This module recognises and handles only our internal Bible references.
 
@@ -66,16 +65,19 @@ OXES is different again and tends to remove the second (redundant) book identifi
     e.g., Gen.1.1-1.2 (if I remember correctly)
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2015-01-13' # by RJH
 ShortProgName = "VerseReferences"
 ProgName = "Bible verse reference handler"
-ProgVersion = '0.14'
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.17'
+ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
 import os, logging
-from gettext import gettext as _
 
 import BibleOrgSysGlobals
 
@@ -131,10 +133,12 @@ class SimpleVerseKey():
         return False
     def __ne__(self, other): return not self.__eq__(other)
 
-    def __str__( self ): return "SimpleVerseKey object: {}".format( self.getShortText() )
-    def getShortText( self ): return "{} {}:{}{}".format( self.BBB, self.C, self.V, self.S )
     def makeHash( self ): # return a short, unambiguous string suitable for use as a key in a dictionary
         return "{}{}:{}{}".format( self.BBB, self.C, self.V, self.S )
+    def __hash__( self ): return hash( self.makeHash() )
+
+    def __str__( self ): return "SimpleVerseKey object: {}".format( self.getShortText() )
+    def getShortText( self ): return "{} {}:{}{}".format( self.BBB, self.C, self.V, self.S )
 
     def __len__( self ): return 4
     def __getitem__( self, keyIndex ):

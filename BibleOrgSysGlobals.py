@@ -5,7 +5,7 @@
 #
 # Module handling Global variables for our Bible Organisational System
 #
-# Copyright (C) 2010-2014 Robert Hunt
+# Copyright (C) 2010-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -43,6 +43,7 @@ Contains functions:
     fileCompareUSFM( filename1, filename2, folder1=None, folder2=None, printFlag=True, exitCount=10 )
     fileCompareXML( filename1, filename2, folder1=None, folder2=None, printFlag=True, exitCount=10, ignoreWhitespace=True )
 
+    elementStr( element )
     checkXMLNoText( element, locationString, idString=None )
     checkXMLNoTail( element, locationString, idString=None )
     checkXMLNoAttributes( element, locationString, idString=None )
@@ -71,7 +72,7 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-26' # by RJH
+LastModifiedDate = '2015-01-11' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
 ProgVersion = '0.57'
@@ -243,7 +244,7 @@ def printUnicodeInfo( text, description ):
     import unicodedata
     print( "{}:".format( description ) )
     for j,char in enumerate(text):
-        print( "{:2} {:04x} {} '{}'   (cat={} bid={} comb={} mirr={})" \
+        print( "{:2} {:04x} {} {!r}   (cat={} bid={} comb={} mirr={})" \
             .format(j, ord(char), unicodedata.name(char), char, unicodedata.category(char), unicodedata.bidirectional(char), unicodedata.combining(char), unicodedata.mirrored(char) ) )
 
 ##########################################################################################################
@@ -321,7 +322,7 @@ def peekIntoFile( filenameOrFilepath, folderName=None, numLines=1, encoding=None
                 if lineNumber >= numLines: return lines
     except UnicodeDecodeError:
         #if not filepath.lower().endswith( 'usfm-color.sty' ): # Seems this file isn't UTF-8, but we don't need it here anyway so ignore it
-        logging.warning( "{}Seems we couldn't decode Unicode in '{}'".format( 'BibleOrgSysGlobals.peekIntoFile: ' if debugFlag else '', filepath ) ) # Could be binary or a different encoding
+        logging.warning( "{}Seems we couldn't decode Unicode in {!r}".format( 'BibleOrgSysGlobals.peekIntoFile: ' if debugFlag else '', filepath ) ) # Could be binary or a different encoding
 # end of BibleOrgSysGlobals.peekIntoFile
 
 
@@ -390,10 +391,10 @@ def fileCompare( filename1, filename2, folder1=None, folder2=None, printFlag=Tru
 
     # Do a preliminary check on the readability of our files
     if not os.access( filepath1, os.R_OK ):
-        logging.error( "fileCompare: File1 '{}' is unreadable".format( filepath1 ) )
+        logging.error( "fileCompare: File1 {!r} is unreadable".format( filepath1 ) )
         return None
     if not os.access( filepath2, os.R_OK ):
-        logging.error( "fileCompare: File2 '{}' is unreadable".format( filepath2 ) )
+        logging.error( "fileCompare: File2 {!r} is unreadable".format( filepath2 ) )
         return None
 
     # Read the files into lists
@@ -459,10 +460,10 @@ def fileCompareUSFM( filename1, filename2, folder1=None, folder2=None, printFlag
 
     # Do a preliminary check on the readability of our files
     if not os.access( filepath1, os.R_OK ):
-        logging.error( "fileCompare: File1 '{}' is unreadable".format( filepath1 ) )
+        logging.error( "fileCompare: File1 {!r} is unreadable".format( filepath1 ) )
         return None
     if not os.access( filepath2, os.R_OK ):
-        logging.error( "fileCompare: File2 '{}' is unreadable".format( filepath2 ) )
+        logging.error( "fileCompare: File2 {!r} is unreadable".format( filepath2 ) )
         return None
 
     # Read the files into lists
@@ -540,10 +541,10 @@ def fileCompareXML( filename1, filename2, folder1=None, folder2=None, printFlag=
 
     # Do a preliminary check on the readability of our files
     if not os.access( filepath1, os.R_OK ):
-        logging.error( "fileCompareXML: File1 '{}' is unreadable".format( filepath1 ) )
+        logging.error( "fileCompareXML: File1 {!r} is unreadable".format( filepath1 ) )
         return None
     if not os.access( filepath2, os.R_OK ):
-        logging.error( "fileCompareXML: File2 '{}' is unreadable".format( filepath2 ) )
+        logging.error( "fileCompareXML: File2 {!r} is unreadable".format( filepath2 ) )
         return None
 
     # Load the files
@@ -646,7 +647,7 @@ def elementStr( element ):
     """
     Return a string representation of an element (from element tree).
     """
-    resultStr = 'Element: '
+    resultStr = 'Element {!r}: '.format( element.tag )
     printed = False
     for attrib,value in element.items():
         if printed: resultStr += ','
@@ -756,7 +757,7 @@ def getFlattenedXML( element, locationString, idString=None, level=0 ):
     if level:
         result += '</' + element.tag + '>'
     if element.tail and element.tail.strip(): result += ' ' + element.tail.strip()
-    #else: print( "getFlattenedXML: Result is '{}'".format( result ) )
+    #else: print( "getFlattenedXML: Result is {!r}".format( result ) )
     return result
 # end of BibleOrgSysGlobals.getFlattenedXML
 
@@ -788,7 +789,7 @@ def applyStringAdjustments( originalText, adjustmentList ):
         lenFS, lenRS = len(findStr), len(replaceStr)
         if debugFlag: assert( text[ix+offset:ix+offset+lenFS] == findStr ) # Our find string must be there
         elif text[ix+offset:ix+offset+lenFS] != findStr:
-            logging.error( "applyStringAdjustments programming error -- given bad data for '{}': {}".format( originalText, adjustmentList ) )
+            logging.error( "applyStringAdjustments programming error -- given bad data for {!r}: {}".format( originalText, adjustmentList ) )
         #print( "before", repr(text) )
         text = text[:ix+offset] + replaceStr + text[ix+offset+lenFS:]
         #print( " after", repr(text) )

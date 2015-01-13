@@ -100,10 +100,10 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
 
     # Check that the given folder is readable
     if not os.access( givenFolderName, os.R_OK ):
-        logging.critical( t("USFMBibleFileCheck: Given '{}' folder is unreadable").format( givenFolderName ) )
+        logging.critical( t("USFMBibleFileCheck: Given {!r} folder is unreadable").format( givenFolderName ) )
         return False
     if not os.path.isdir( givenFolderName ):
-        logging.critical( t("USFMBibleFileCheck: Given '{}' path is not a folder").format( givenFolderName ) )
+        logging.critical( t("USFMBibleFileCheck: Given {!r} path is not a folder").format( givenFolderName ) )
         return False
 
     # Find all the files and folders in this folder
@@ -152,7 +152,7 @@ def USFMBibleFileCheck( givenFolderName, strictCheck=True, autoLoad=False, autoL
     for thisFolderName in sorted( foundFolders ):
         tryFolderName = os.path.join( givenFolderName, thisFolderName+'/' )
         if not os.access( tryFolderName, os.R_OK ): # The subfolder is not readable
-            logging.warning( _("USFMBibleFileCheck: '{}' subfolder is unreadable").format( tryFolderName ) )
+            logging.warning( _("USFMBibleFileCheck: {!r} subfolder is unreadable").format( tryFolderName ) )
             continue
         if BibleOrgSysGlobals.verbosityLevel > 3: print( "    USFMBibleFileCheck: Looking for files in {}".format( tryFolderName ) )
         foundSubfolders, foundSubfiles = [], []
@@ -240,7 +240,7 @@ class USFMBible( Bible ):
             somepath = os.path.join( self.sourceFolder, something )
             if os.path.isdir( somepath ): foundFolders.append( something )
             elif os.path.isfile( somepath ): foundFiles.append( something )
-            else: logging.error( t("__init__: Not sure what '{}' is in {}!").format( somepath, self.sourceFolder ) )
+            else: logging.error( t("__init__: Not sure what {!r} is in {}!").format( somepath, self.sourceFolder ) )
         if foundFolders:
             unexpectedFolders = []
             for folderName in foundFolders:
@@ -248,9 +248,9 @@ class USFMBible( Bible ):
                 if folderName in ('__MACOSX'): continue
                 unexpectedFolders.append( folderName )
             if unexpectedFolders:
-                logging.info( t("__init__: Surprised to see subfolders in '{}': {}").format( self.sourceFolder, unexpectedFolders ) )
+                logging.info( t("__init__: Surprised to see subfolders in {!r}: {}").format( self.sourceFolder, unexpectedFolders ) )
         if not foundFiles:
-            if BibleOrgSysGlobals.verbosityLevel > 0: print( t("__init__: Couldn't find any files in '{}'").format( self.sourceFolder ) )
+            if BibleOrgSysGlobals.verbosityLevel > 0: print( t("__init__: Couldn't find any files in {!r}").format( self.sourceFolder ) )
             raise FileNotFoundError # No use continuing
 
         self.USFMFilenamesObject = USFMFilenames( self.sourceFolder )
@@ -287,7 +287,7 @@ class USFMBible( Bible ):
         Returns a dictionary.
         """
         if BibleOrgSysGlobals.debugFlag or BibleOrgSysGlobals.verbosityLevel > 2:
-            print( t("Loading SSF data from '{}' ({})").format( ssfFilepath, encoding ) )
+            print( t("Loading SSF data from {!r} ({})").format( ssfFilepath, encoding ) )
         if encoding is None: encoding = 'utf-8'
         self.ssfFilepath = ssfFilepath
         lastLine, lineCount, status, settingsDict = '', 0, 0, {}
@@ -318,7 +318,7 @@ class USFMBible( Bible ):
                         if BibleOrgSysGlobals.debugFlag: assert( len(bits)==2 )
                         fieldname = bits[0]
                         attributes = bits[1]
-                        #print( "attributes = '{}'".format( attributes) )
+                        #print( "attributes = {!r}".format( attributes) )
                         settingsDict[fieldname] = (contents, attributes)
                         processed = True
                 elif status==1 and line[0]=='<' and line[-1]=='>':
@@ -335,7 +335,7 @@ class USFMBible( Bible ):
                             if BibleOrgSysGlobals.debugFlag: assert( len(bits)==2 )
                             fieldname = bits[0]
                             attributes = bits[1]
-                            #print( "attributes = '{}'".format( attributes) )
+                            #print( "attributes = {!r}".format( attributes) )
                             if line[ix2+2:-1]==fieldname:
                                 settingsDict[fieldname] = (contents, attributes)
                                 processed = True
@@ -355,13 +355,13 @@ class USFMBible( Bible ):
             if ssfEncoding == '65001': self.encoding = 'utf-8'
             else:
                 if BibleOrgSysGlobals.verbosityLevel > 0:
-                    print( t("__init__: File encoding in SSF is set to '{}'").format( ssfEncoding ) )
+                    print( t("__init__: File encoding in SSF is set to {!r}").format( ssfEncoding ) )
                 if ssfEncoding.isdigit():
                     self.encoding = 'cp' + ssfEncoding
                     if BibleOrgSysGlobals.verbosityLevel > 0:
-                        print( t("__init__: Switched to '{}' file encoding").format( self.encoding ) )
+                        print( t("__init__: Switched to {!r} file encoding").format( self.encoding ) )
                 else:
-                    logging.critical( t("__init__: Unsure how to handle '{}' file encoding").format( ssfEncoding ) )
+                    logging.critical( t("__init__: Unsure how to handle {!r} file encoding").format( ssfEncoding ) )
     # end of USFMBible.loadSSFData
 
 
@@ -477,7 +477,7 @@ def demo():
                     UsfmB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
                     newObj = BibleOrgSysGlobals.unpickleObject( BibleOrgSysGlobals.makeSafeFilename(name) + '.pickle', os.path.join( "OutputFiles/", "BOS_Bible_Object_Pickle/" ) )
                     if BibleOrgSysGlobals.verbosityLevel > 0: print( "newObj is", newObj )
-            else: print( "\nSorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
+            else: print( "\nSorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
 
 
     if 0: # Test a whole folder full of folders of USFM Bibles
@@ -513,7 +513,7 @@ def demo():
         if os.access( testBaseFolder, os.R_OK ): # check that we can read the test data
             for something in sorted( os.listdir( testBaseFolder ) ):
                 somepath = os.path.join( testBaseFolder, something )
-                if os.path.isfile( somepath ): print( "Ignoring file '{}' in '{}'".format( something, testBaseFolder ) )
+                if os.path.isfile( somepath ): print( "Ignoring file {!r} in {!r}".format( something, testBaseFolder ) )
                 elif os.path.isdir( somepath ): # Let's assume that it's a folder containing a USFM (partial) Bible
                     #if not something.startswith( 'ssx' ): continue # This line is used for debugging only specific modules
                     count += 1
@@ -533,10 +533,10 @@ def demo():
                             #print( UsfmBErrors )
                         if BibleOrgSysGlobals.commandLineOptions.export:
                             UsfmB.doAllExports( wantPhotoBible=False, wantODFs=False, wantPDFs=False )
-                    else: print( "\nSorry, test folder '{}' is not readable on this computer.".format( testFolder ) )
+                    else: print( "\nSorry, test folder {!r} is not readable on this computer.".format( testFolder ) )
             if count: print( "\n{} total USFM (partial) Bibles processed.".format( count ) )
             if totalBooks: print( "{} total books ({} average per folder)".format( totalBooks, round(totalBooks/count) ) )
-        else: print( "\nSorry, test folder '{}' is not readable on this computer.".format( testBaseFolder ) )
+        else: print( "\nSorry, test folder {!r} is not readable on this computer.".format( testBaseFolder ) )
 #end of demo
 
 if __name__ == '__main__':

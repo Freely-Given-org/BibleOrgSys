@@ -80,7 +80,7 @@ class BiblePunctuationSystems:
                     self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
             else: # We have to load the XML (much slower)
                 from BiblePunctuationSystemsConverter import BiblePunctuationSystemsConverter
-                if XMLFolder is not None: logging.warning( _("Bible punctuation systems are already loaded -- your given folder of '{}' was ignored").format(XMLFolder) )
+                if XMLFolder is not None: logging.warning( _("Bible punctuation systems are already loaded -- your given folder of {!r} was ignored").format(XMLFolder) )
                 bpsc = BiblePunctuationSystemsConverter()
                 bpsc.loadSystems( XMLFolder ) # Load the XML (if not done already)
                 self.__DataDict = bpsc.importDataToPython() # Get the various dictionaries organised for quick lookup
@@ -130,7 +130,7 @@ class BiblePunctuationSystems:
         if systemName in self.__DataDict:
             return self.__DataDict[systemName]
         # else
-        logging.error( _("No '{}' system in Bible Punctuation Systems").format(systemName) )
+        logging.error( _("No {!r} system in Bible Punctuation Systems").format(systemName) )
         if BibleOrgSysGlobals.verbosityLevel>2: logging.error( "  " + _("Available systems are {}").format(self.getAvailablePunctuationSystemNames()) )
     # end of getPunctuationSystem
 
@@ -149,16 +149,16 @@ class BiblePunctuationSystems:
         for punctuationSystemCode in self.Lists: # Step through the various reference schemes
             theseErrors = ''
             if self.Lists[punctuationSystemCode] == punctuationSchemeToCheck:
-                #print( "  Matches '{}' punctuation system".format( punctuationSystemCode ) )
+                #print( "  Matches {!r} punctuation system".format( punctuationSystemCode ) )
                 systemMatchCount += 1
                 matchedPunctuationSystemCodes.append( punctuationSystemCode )
             else:
                 if len(self.Lists[punctuationSystemCode]) == len(punctuationSchemeToCheck):
                     for BBB1,BBB2 in zip(self.Lists[punctuationSystemCode],punctuationSchemeToCheck):
                         if BBB1 != BBB2: break
-                    thisError = "    Doesn't match '{}' system (Both have {} books, but {} instead of {})".format( punctuationSystemCode, len(punctuationSchemeToCheck), BBB1, BBB2 )
+                    thisError = "    Doesn't match {!r} system (Both have {} books, but {} instead of {})".format( punctuationSystemCode, len(punctuationSchemeToCheck), BBB1, BBB2 )
                 else:
-                    thisError = "    Doesn't match '{}' system ({} books instead of {})".format( punctuationSystemCode, len(punctuationSchemeToCheck), len(self.Lists[punctuationSystemCode]) )
+                    thisError = "    Doesn't match {!r} system ({} books instead of {})".format( punctuationSystemCode, len(punctuationSchemeToCheck), len(self.Lists[punctuationSystemCode]) )
                 theseErrors += ("\n" if theseErrors else "") + thisError
                 errorSummary += ("\n" if errorSummary else "") + thisError
                 systemMismatchCount += 1
@@ -216,7 +216,7 @@ class BiblePunctuationSystem:
         result += ('\n' if result else '') + "  " + _("Number of values = {}").format( len(self.__punctuationDict) )
         if BibleOrgSysGlobals.verbosityLevel > 2:
             for key in self.__punctuationDict.keys(): # List the contents of the dictionary
-                result += ('\n' if result else '') + "    " + _("{} is '{}'").format( key, self.__punctuationDict[key] )
+                result += ('\n' if result else '') + "    " + _("{} is {!r}").format( key, self.__punctuationDict[key] )
         return result
     # end of __str__
 
@@ -252,7 +252,7 @@ class BiblePunctuationSystem:
         return self.__punctuationDict[name]
         ##print( "yyy", self.__punctuationDict )
         #if name in self.__punctuationDict: return self.__punctuationDict[name]
-        #logging.error( _("No '{}' value in {} punctuation system").format(name,self.__systemName) )
+        #logging.error( _("No {!r} value in {} punctuation system").format(name,self.__systemName) )
         #if BibleOrgSysGlobals.verbosityLevel > 3: logging.error( "  " + _("Available values are: {}").format(self.getAvailablePunctuationValueNames()) )
     # end of getPunctuationValue
 # end of BiblePunctuationSystem class
@@ -274,7 +274,7 @@ def demo():
     print( bps ) # Just print a summary
     print( "Variables are: {}".format(bps.getAvailablePunctuationValueNames()) )
     name = 'chapterVerseSeparator'
-    print( "{} for {} is '{}'".format( name, bps.getPunctuationSystemName(), bps.getPunctuationValue(name) ) )
+    print( "{} for {} is {!r}".format( name, bps.getPunctuationSystemName(), bps.getPunctuationValue(name) ) )
 # end of demo
 
 if __name__ == '__main__':

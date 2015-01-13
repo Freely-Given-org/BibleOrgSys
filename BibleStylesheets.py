@@ -279,7 +279,7 @@ class ParatextStylesheet():
         for USFMMarker in self.dataDict:
             #print( USFMMarker )
             if USFMMarker not in BibleOrgSysGlobals.USFMMarkers:
-                logging.warning( t("ParatextStylesheet validate: found unexpected '{}' marker").format( USFMMarker ) )
+                logging.warning( t("ParatextStylesheet validate: found unexpected {!r} marker").format( USFMMarker ) )
     # end of ParatextStylesheet.load
 
 

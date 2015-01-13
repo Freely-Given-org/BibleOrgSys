@@ -163,9 +163,9 @@ class Greek():
         @rtype: string
         """
         result = "Greek object"
-        result += ('\n' if result else '') + "  " + _("Original = '{}'").format( self.originalText )
+        result += ('\n' if result else '') + "  " + _("Original = {!r}").format( self.originalText )
         if self.currentText != self.originalText:
-            result += ('\n' if result else '') + "  " + _("Current  = '{}'").format( self.currentText )
+            result += ('\n' if result else '') + "  " + _("Current  = {!r}").format( self.currentText )
         return result
     # end of __str__
 
@@ -175,7 +175,7 @@ class Greek():
         #def printUnicodeInfo( text, description ):
             #print( "{}:".format( description ) )
             #for j,char in enumerate(text):
-                #print( "{:2} {:04x} {} '{}'   (cat={} bid={} comb={} mirr={})" \
+                #print( "{:2} {:04x} {} {!r}   (cat={} bid={} comb={} mirr={})" \
                     #.format(j, ord(char), unicodedata.name(char), char, unicodedata.category(char), unicodedata.bidirectional(char), unicodedata.combining(char), unicodedata.mirrored(char) ) )
     # end of printUnicodeData
 
