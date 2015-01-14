@@ -5,7 +5,7 @@
 #
 # Module writing out InternalBibles in various formats.
 #
-# Copyright (C) 2010-2014 Robert Hunt
+# Copyright (C) 2010-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -68,7 +68,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-21' # by RJH
+LastModifiedDate = '2015-01-15' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.90'
@@ -2367,8 +2367,8 @@ class BibleWriter( InternalBible ):
         bookNamesFilepath = os.path.join( outputFolder, 'CBBookNames.{}.json'.format( CBDataFormatVersion ) )
         compressionDictFilepath = os.path.join( outputFolder, "CBCmprnDict.{}.json".format( CBDataFormatVersion ) )
         destinationIndexFilepath = os.path.join( outputFolder, "CB-BCV-index.{}.json".format( CBDataFormatVersion ) )
-        destinationHTMLFilepathTemplate = os.path.join( bookOutputFolderHTML, "CBBook.{}.{}.html".format( {!r}, CBDataFormatVersion ) ) # Missing the BBB
-        debugDestinationHTMLFilepathTemplate = os.path.join( debugBookOutputFolderHTML, "CBBook.{}C{}V{}.{}.html".format( {!r}, {!r}, {!r}, CBDataFormatVersion ) ) # Missing the BBB, C, V
+        destinationHTMLFilepathTemplate = os.path.join( bookOutputFolderHTML, "CBBook.{}.{}.html".format( '{}', CBDataFormatVersion ) ) # Missing the BBB
+        debugDestinationHTMLFilepathTemplate = os.path.join( debugBookOutputFolderHTML, "CBBook.{}C{}V{}.{}.html".format( '{}', '{}', '{}', CBDataFormatVersion ) ) # Missing the BBB, C, V
 
         ignoredMarkers, unhandledMarkers = set(), set()
 

@@ -1,0 +1,55 @@
+# BibleReferencesLinks.rnc           Relax NG Compact Syntax schema file
+#   Last modified: 2015-01-11 by RJH
+#   Version 0.20
+#
+# On Linux, to convert to RNG, use
+#       trang BibleReferencesLinks.rnc DerivedFiles/BibleReferencesLinks.rng
+# On Linux, to validate against the .rng file, use
+#       xmllint --noout --relaxng DerivedFiles/BibleReferencesLinks.rng BibleReferencesLinks.xml
+# or to validate against both this and the internal DTD, use
+#       xmllint --noout --relaxng DerivedFiles/BibleReferencesLinks.rng --valid BibleReferencesLinks.xml
+#
+# See the supplied ReadMe.txt file for more information.
+#
+# Note: ? = optional (zero or one), * = zero or more, + = one or more
+#
+
+# The root element
+start = BibleReferencesLinks
+
+# A single header, then multiple BibleReferenceLinks entries
+BibleReferencesLinks = element BibleReferencesLinks
+{   header,
+    BibleReferenceLinks+
+}
+
+header  = element header
+{   revisionDesc*,
+    work
+}
+
+revisionDesc = element revisionDesc
+{   element date { xsd:date },
+    element p { xsd:string }+
+}
+
+work = element work
+{   element version { xsd:decimal { fractionDigits="2" totalDigits="2" } },
+    element date { xsd:date },
+    element title { xsd:string },
+    element contributor { attribute role {"com"|"edt"}, xsd:string }+,
+    element identifier { attribute type {"URL"}, xsd:anyURI }+,
+    element rights { xsd:string }
+}
+
+BibleReferenceLinks = element BibleReferenceLinks
+{   element sourceReference { xsd:string { minLength="7" maxLength="15" } },
+    element sourceComponent { "Section" | "Verses" | "Verse" },
+    BibleReferenceLink+
+}
+
+BibleReferenceLink = element BibleReferenceLink
+{   element targetReference { xsd:string { minLength="6" maxLength="15" } },
+    element targetComponent { "Section" | "Verses" | "Verse" },
+    element linkType { "QuotedOTReference" | "AlludedOTReference" }
+}
