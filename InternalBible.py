@@ -44,7 +44,7 @@ and then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-01-06' # by RJH
+LastModifiedDate = '2015-01-15' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.60'
@@ -1273,7 +1273,7 @@ class InternalBible:
                                         if BibleOrgSysGlobals.debugFlag: assert( isinstance( errorDictionary['ByBook'][BBB][thisKey][secondKey], list ) )
                                         BBBPart += "<h2>{}</h2><table>".format( secondKey )
                                         for line in errorDictionary['ByBook'][BBB][thisKey][secondKey]: # Line them up nicely in a table
-                                            #print( "line {} \"{}\"".format( len(line), line ) )
+                                            #print( "line {} {!r}".format( len(line), line ) )
                                             if BibleOrgSysGlobals.debugFlag: assert( isinstance( line, str ) and line[-1]=="'" )
                                             #if line[-1] != "'": print( BBB, thisKey, secondKey, line )
                                             bits = line[:-1].split( " '", 1 ); assert( len(bits) == 2 ) # Remove the final quote and split at the first quote

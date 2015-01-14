@@ -3557,7 +3557,7 @@ class InternalBibleBook:
                         # List all of the similar types of notes
                         #   plus check which ones end with a period
                         extract = (extraText[:70] + '...' + extraText[-5:]) if len(extraText)>80 else extraText
-                        line = "{} {}:{} {!r}".format( self.BBB, C, V, extract )
+                        line = "{} {}:{} '{}'".format( self.BBB, C, V, extract )
                         if extraType == 'fn':
                             haveFinalPeriod = True
                             footnoteList.append( line )
