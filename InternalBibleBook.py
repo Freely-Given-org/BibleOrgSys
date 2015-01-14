@@ -5,7 +5,7 @@
 #
 # Module handling the internal markers for individual Bible books
 #
-# Copyright (C) 2010-2014 Robert Hunt
+# Copyright (C) 2010-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -42,7 +42,7 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-29' # by RJH
+LastModifiedDate = '2015-01-15' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.92'
@@ -841,7 +841,7 @@ class InternalBibleBook:
         ourIntroOutlineMarkers = ( 'io','io1','io2','io3','io4', )
         ourIntroListMarkers = ( 'ili','ili1','ili2','ili3','ili4', )
         ourMainListMarkers = ( 'li','li1','li2','li3','li4', )
-        haveIntro = False
+        haveIntro = 0 # Count them to detect errors
         C = V = '0'
         lastJ = len(self._processedLines) - 1
         lastMarker = lastPMarker = lastSMarker = None
@@ -885,9 +885,12 @@ class InternalBibleBook:
             nextMarker = nextDataLine.getMarker() if nextDataLine is not None else None
             #print( "InternalBibleBook.processLines.addNestingMarkers: {} {} {}:{} {}={} then {} now have {}".format( j, self.BBB, C, V, marker, repr(text), nextMarker, openMarkers ) )
 
-            if marker in USFM_INTRODUCTION_MARKERS and not haveIntro:
+            if marker in USFM_INTRODUCTION_MARKERS and 'intro' not in openMarkers:
                 openMarker( 'intro' )
-                haveIntro = True
+                haveIntro += 1 # now 'true' but counted to detect errors
+                if haveIntro > 1:
+                    print( "Multiple introduction sections!!! " )
+                    if BibleOrgSysGlobals.debugFlag: halt
 
             if marker not in ourIntroOutlineMarkers and 'iot' in openMarkers: closeOpenMarker( 'iot' )
             if marker not in ourIntroListMarkers and 'ilist' in openMarkers: closeOpenMarker( 'ilist' )
@@ -898,15 +901,15 @@ class InternalBibleBook:
                     closeOpenMarker( 'list' )
 
             if marker == 'c':
-                if haveIntro:
+                if 'intro' in openMarkers:
                     for lMarker in openMarkers[::-1]: # Get a reversed copy (coz we are deleting members)
                         closeLastOpenMarker()
-                    haveIntro = False # Just so we don't repeat this
+                    #haveIntro = False # Just so we don't repeat this
                 if openMarkers and openMarkers[-1]=='v': closeLastOpenMarker( V )
                 elif 'v' in openMarkers: closeOpenMarker( 'v', V )
                 if 'c' not in openMarkers: # we're just starting chapter one
                     openMarker( 'chapters' )
-                else: # we're not just starting chapter one
+                else: # 'c' is in openMarkers so we're not just starting chapter one -- we're already in a chapter
                     nextRelevantMarker = findNextRelevantMarker( j )
                     if openMarkers[-1] in USFM_BIBLE_PARAGRAPH_MARKERS \
                     and (nextRelevantMarker in USFM_BIBLE_PARAGRAPH_MARKERS or nextRelevantMarker in ourHeadingMarkers):
@@ -937,21 +940,23 @@ class InternalBibleBook:
                     if lastMarker != 'iot': # Seems we didn't have an iot in the file :-(
                         #print( "InternalBibleBook.processLines.addNestingMarkers: {} {}:{} Adding iot marker before {}".format( self.BBB, C, V, marker ) )
                         openMarker( 'iot' )
-                haveIntro = True
+                #haveIntro = True
             elif marker in ourIntroListMarkers:
                 if lastMarker not in ourIntroListMarkers:
                     #print( "InternalBibleBook.processLines.addNestingMarkers: {} {}:{} Adding ilist marker before {} after {}".format( self.BBB, C, V, marker, lastMarker ) )
                     openMarker( 'ilist' )
-                haveIntro = True
+                #haveIntro = True
             elif marker in ourHeadingMarkers: # must be checked BEFORE USFM_INTRODUCTION_MARKERS because they overlap
+                #if marker=='is' or marker=='is1': print( "XX", marker, openMarkers, lastPMarker )
                 if 'v' in openMarkers and verseEnded( j ): closeOpenMarker( 'v', V )
                 if lastPMarker in openMarkers: closeOpenMarker( lastPMarker ); lastPMarker = None
-                #if lastSMarker in openMarkers: closeOpenMarker( lastSMarker ); lastSMarker = None
+                if lastSMarker in openMarkers: closeOpenMarker( lastSMarker ); lastSMarker = None
                 if BibleOrgSysGlobals.debugFlag: assert( marker not in openMarkers )
-                #openMarkers.append( marker )
-                #lastSMarker = marker
-            elif marker in USFM_INTRODUCTION_MARKERS:
-                haveIntro = True
+                openMarkers.append( marker )
+                lastSMarker = marker
+                #if marker=='is' or marker=='is1': print( "YY", marker, openMarkers, lastPMarker )
+            #elif marker in USFM_INTRODUCTION_MARKERS:
+                #haveIntro = True
             elif marker in ourMainListMarkers:
                 assert( not text )
                 if 'v' in openMarkers and verseEnded( j ): closeOpenMarker( 'v', V )
@@ -2010,7 +2015,8 @@ class InternalBibleBook:
                     if BibleOrgSysGlobals.verbosityLevel > 3: # why???
                         for k,char in enumerate(word):
                             if not char.isalnum() and (k==0 or k==len(word)-1 or char not in MEDIAL_WORD_PUNCT_CHARS):
-                                if BibleOrgSysGlobals.debugFlag: print( "InternalBibleBook.discover: {} {}:{} ".format( self.BBB, C, V ) + _("Have unexpected {!r} in word {!r}").format( char, word ) )
+                                if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                                    print( "InternalBibleBook.discover: {} {}:{} ".format( self.BBB, C, V ) + _("Have unexpected {!r} in word {!r}").format( char, word ) )
                     lcWord = word.lower()
                     isAReferenceOrNumber = True
                     for char in word:

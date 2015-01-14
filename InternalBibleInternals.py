@@ -5,7 +5,7 @@
 #
 # Module handling the internal markers for Bible books
 #
-# Copyright (C) 2010-2014 Robert Hunt
+# Copyright (C) 2010-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -38,10 +38,10 @@ and then calls
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-23' # by RJH
+LastModifiedDate = '2015-01-15' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
-ProgVersion = '0.56'
+ProgVersion = '0.57'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -104,9 +104,11 @@ BOS_ALL_ADDED_NESTING_MARKERS = BOS_ADDED_NESTING_MARKERS + ('iot',)
 
 BOS_NESTING_MARKERS = BOS_REGULAR_NESTING_MARKERS + BOS_ALL_ADDED_NESTING_MARKERS + USFM_BIBLE_PARAGRAPH_MARKERS
 
-BOS_END_MARKERS = ['¬intro', '¬iot', '¬ilist', '¬chapters', '¬c', '¬v', '¬list', ]
-for marker in USFM_BIBLE_PARAGRAPH_MARKERS: BOS_END_MARKERS.append( '¬'+marker )
-#print( BOS_END_MARKERS );halt
+#BOS_END_MARKERS = ['¬intro', '¬iot', '¬ilist', '¬chapters', '¬c', '¬v', '¬list', ]
+#for marker in USFM_BIBLE_PARAGRAPH_MARKERS: BOS_END_MARKERS.append( '¬'+marker )
+#print( len(BOS_END_MARKERS), BOS_END_MARKERS )
+BOS_END_MARKERS = [ '¬'+marker for marker in BOS_NESTING_MARKERS]
+#print( len(BOS_END_MARKERS), BOS_END_MARKERS );halt
 
 #BOS_MARKERS = BOS_ADDED_CONTENT_MARKERS + BOS_ALL_ADDED_NESTING_MARKERS + BOS_END_MARKERS
 
