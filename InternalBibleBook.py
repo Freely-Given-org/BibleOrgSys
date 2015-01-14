@@ -3308,8 +3308,8 @@ class InternalBibleBook:
             if marker=='c' and text: C, V = text.split()[0], '0'
             elif marker=='v' and text: V = text.split()[0]
 
-            elif marker == 'id': IDList.append( "{} {!r}".format( self.BBB, text ) )
-            elif marker == 'ide': encodingList.append( "{} {!r}".format( self.BBB, text ) )
+            elif marker == 'id': IDList.append( "{} '{}'".format( self.BBB, text ) )
+            elif marker == 'ide': encodingList.append( "{} '{}'".format( self.BBB, text ) )
 
         if (IDList or encodingList) and 'Controls' not in self.errorDictionary: self.errorDictionary['Controls'] = OrderedDict() # So we hopefully get the errors first
         if IDList: self.errorDictionary['Controls']['ID Lines'] = IDList
@@ -3333,7 +3333,7 @@ class InternalBibleBook:
             elif marker=='v' and text: V = text.split()[0]
 
             if marker.startswith('mt'):
-                titleList.append( "{} {}:{} Main Title {}: {!r}".format( self.BBB, C, V, marker[2:], text ) )
+                titleList.append( "{} {}:{} Main Title {}: '{}'".format( self.BBB, C, V, marker[2:], text ) )
                 if not text:
                     headingErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing title text for marker {}").format( marker ) )
                     self.addPriorityError( 59, C, V, _("Missing title text") )
@@ -3341,8 +3341,8 @@ class InternalBibleBook:
                     headingErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("{} title ends with a period: {}").format( marker, text ) )
                     self.addPriorityError( 69, C, V, _("Title ends with a period") )
             elif marker in ('s1','s2','s3','s4',):
-                if marker=='s1': headingList.append( "{} {}:{} {!r}".format( self.BBB, C, V, text ) )
-                else: headingList.append( "{} {}:{} ({}) {!r}".format( self.BBB, C, V, marker, text ) )
+                if marker=='s1': headingList.append( "{} {}:{} '{}'".format( self.BBB, C, V, text ) )
+                else: headingList.append( "{} {}:{} ({}) '{}'".format( self.BBB, C, V, marker, text ) )
                 if not text:
                     headingErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing heading text for marker {}").format( marker ) )
                     priority = 58
@@ -3354,7 +3354,7 @@ class InternalBibleBook:
                     headingErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("{} heading ends with a period: {}").format( marker, text ) )
                     self.addPriorityError( 68, C, V, _("Heading ends with a period") )
             elif marker=='r':
-                sectionReferenceList.append( "{} {}:{} {!r}".format( self.BBB, C, V, text ) )
+                sectionReferenceList.append( "{} {}:{} '{}'".format( self.BBB, C, V, text ) )
                 if not text:
                     headingErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing section cross-reference text for marker {}").format( marker ) )
                     self.addPriorityError( 57, C, V, _("Missing section cross-reference text") )
@@ -3395,8 +3395,8 @@ class InternalBibleBook:
             elif marker=='v' and text: V = text.split()[0]
 
             elif marker in ('imt1','imt2','imt3','imt4',):
-                if marker=='imt1': mainTitleList.append( "{} {}:{} {!r}".format( self.BBB, C, V, text ) )
-                else: mainTitleList.append( "{} {}:{} ({}) {!r}".format( self.BBB, C, V, marker, text ) )
+                if marker=='imt1': mainTitleList.append( "{} {}:{} '{}'".format( self.BBB, C, V, text ) )
+                else: mainTitleList.append( "{} {}:{} ({}) '{}'".format( self.BBB, C, V, marker, text ) )
                 if not cleanText:
                     introductionErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing heading text for marker {}").format( marker ) )
                     self.addPriorityError( 39, C, V, _("Missing heading text") )
@@ -3404,8 +3404,8 @@ class InternalBibleBook:
                     introductionErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("{} heading ends with a period: {}").format( marker, text ) )
                     self.addPriorityError( 49, C, V, _("Heading ends with a period") )
             elif marker in ('is1','is2','is3','is4',):
-                if marker=='is1': headingList.append( "{} {}:{} {!r}".format( self.BBB, C, V, text ) )
-                else: headingList.append( "{} {}:{} ({}) {!r}".format( self.BBB, C, V, marker, text ) )
+                if marker=='is1': headingList.append( "{} {}:{} '{}'".format( self.BBB, C, V, text ) )
+                else: headingList.append( "{} {}:{} ({}) '{}'".format( self.BBB, C, V, marker, text ) )
                 if not cleanText:
                     introductionErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing heading text for marker {}").format( marker ) )
                     self.addPriorityError( 39, C, V, _("Missing heading text") )
@@ -3413,7 +3413,7 @@ class InternalBibleBook:
                     introductionErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("{} heading ends with a period: {}").format( marker, text ) )
                     self.addPriorityError( 49, C, V, _("Heading ends with a period") )
             elif marker=='iot':
-                titleList.append( "{} {}:{} {!r}".format( self.BBB, C, V, text ) )
+                titleList.append( "{} {}:{} '{}'".format( self.BBB, C, V, text ) )
                 if not cleanText:
                     introductionErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing outline title text for marker {}").format( marker ) )
                     self.addPriorityError( 38, C, V, _("Missing outline title text") )
@@ -3421,8 +3421,8 @@ class InternalBibleBook:
                     introductionErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("{} heading ends with a period: {}").format( marker, text ) )
                     self.addPriorityError( 48, C, V, _("Heading ends with a period") )
             elif marker in ('io1','io2','io3','io4',):
-                if marker=='io1': outlineList.append( "{} {}:{} {!r}".format( self.BBB, C, V, text ) )
-                else: outlineList.append( "{} {}:{} ({}) {!r}".format( self.BBB, C, V, marker, text ) )
+                if marker=='io1': outlineList.append( "{} {}:{} '{}'".format( self.BBB, C, V, text ) )
+                else: outlineList.append( "{} {}:{} ({}) '{}'".format( self.BBB, C, V, marker, text ) )
                 if not cleanText:
                     introductionErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing outline text for marker {}").format( marker ) )
                     self.addPriorityError( 37, C, V, _("Missing outline text") )
