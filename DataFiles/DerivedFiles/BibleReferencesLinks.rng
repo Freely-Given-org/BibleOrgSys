@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+  <!--
+    BibleReferencesLinks.rnc           Relax NG Compact Syntax schema file
+      Last modified: 2015-01-11 by RJH
+      Version 0.20
+    
+    On Linux, to convert to RNG, use
+          trang BibleReferencesLinks.rnc DerivedFiles/BibleReferencesLinks.rng
+    On Linux, to validate against the .rng file, use
+          xmllint - -noout - -relaxng DerivedFiles/BibleReferencesLinks.rng BibleReferencesLinks.xml
+    or to validate against both this and the internal DTD, use
+          xmllint - -noout - -relaxng DerivedFiles/BibleReferencesLinks.rng - -valid BibleReferencesLinks.xml
+    
+    See the supplied ReadMe.txt file for more information.
+    
+    Note: ? = optional (zero or one), * = zero or more, + = one or more
+    
+  -->
+  <!-- The root element -->
+  <start>
+    <ref name="BibleReferencesLinks"/>
+  </start>
+  <!-- A single header, then multiple BibleReferenceLinks entries -->
+  <define name="BibleReferencesLinks">
+    <element name="BibleReferencesLinks">
+      <ref name="header"/>
+      <oneOrMore>
+        <ref name="BibleReferenceLinks"/>
+      </oneOrMore>
+    </element>
+  </define>
+  <define name="header">
+    <element name="header">
+      <zeroOrMore>
+        <ref name="revisionDesc"/>
+      </zeroOrMore>
+      <ref name="work"/>
+    </element>
+  </define>
+  <define name="revisionDesc">
+    <element name="revisionDesc">
+      <element name="date">
+        <data type="date"/>
+      </element>
+      <oneOrMore>
+        <element name="p">
+          <data type="string"/>
+        </element>
+      </oneOrMore>
+    </element>
+  </define>
+  <define name="work">
+    <element name="work">
+      <element name="version">
+        <data type="decimal">
+          <param name="fractionDigits">2</param>
+          <param name="totalDigits">2</param>
+        </data>
+      </element>
+      <element name="date">
+        <data type="date"/>
+      </element>
+      <element name="title">
+        <data type="string"/>
+      </element>
+      <oneOrMore>
+        <element name="contributor">
+          <attribute name="role">
+            <choice>
+              <value>com</value>
+              <value>edt</value>
+            </choice>
+          </attribute>
+          <data type="string"/>
+        </element>
+      </oneOrMore>
+      <oneOrMore>
+        <element name="identifier">
+          <attribute name="type">
+            <value>URL</value>
+          </attribute>
+          <data type="anyURI"/>
+        </element>
+      </oneOrMore>
+      <element name="rights">
+        <data type="string"/>
+      </element>
+    </element>
+  </define>
+  <define name="BibleReferenceLinks">
+    <element name="BibleReferenceLinks">
+      <element name="sourceReference">
+        <data type="string">
+          <param name="minLength">7</param>
+          <param name="maxLength">15</param>
+        </data>
+      </element>
+      <element name="sourceComponent">
+        <choice>
+          <value>Section</value>
+          <value>Verses</value>
+          <value>Verse</value>
+        </choice>
+      </element>
+      <oneOrMore>
+        <ref name="BibleReferenceLink"/>
+      </oneOrMore>
+    </element>
+  </define>
+  <define name="BibleReferenceLink">
+    <element name="BibleReferenceLink">
+      <element name="targetReference">
+        <data type="string">
+          <param name="minLength">6</param>
+          <param name="maxLength">15</param>
+        </data>
+      </element>
+      <element name="targetComponent">
+        <choice>
+          <value>Section</value>
+          <value>Verses</value>
+          <value>Verse</value>
+        </choice>
+      </element>
+      <element name="linkType">
+        <choice>
+          <value>QuotedOTReference</value>
+          <value>AlludedOTReference</value>
+        </choice>
+      </element>
+    </element>
+  </define>
+</grammar>

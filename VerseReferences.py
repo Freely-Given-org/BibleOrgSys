@@ -67,17 +67,18 @@ OXES is different again and tends to remove the second (redundant) book identifi
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-01-13' # by RJH
+LastModifiedDate = '2015-01-14' # by RJH
 ShortProgName = "VerseReferences"
 ProgName = "Bible verse reference handler"
-ProgVersion = '0.17'
+ProgVersion = '0.18'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
-debuggingThisModule = False
+debuggingThisModule = True
 
 
 import os, logging
+import re
 
 import BibleOrgSysGlobals
 
@@ -105,27 +106,35 @@ class SimpleVerseKey():
                 V is the verse number string
                 S is the optional suffix string
     The name or organisational system of the work is not specified
-        so we can only check that BBB is a valid abbreviation
+        so we can only check that BBB is a valid book code
         and no checking is done on the validity of the CV values.
+
+    A string to be parsed can also be passed as the first (and only) parameter.
+        e.g. "SA2_12:9b"
     """
-    def __init__( self, BBB, C, V, S=None ):
+    def __init__( self, BBB, C=None, V=None, S=None ):
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( t("__init__( {} {} {} {} )").format( BBB, repr(C), repr(V), repr(S) ) )
-        if S is None: S = ''
-        if isinstance( C, int ): C = str( C ) # Make sure we have strings
-        if isinstance( V, int ): V = str( V )
-        if BibleOrgSysGlobals.debugFlag:
-            assert( isinstance( BBB, str ) and len(BBB) == 3 )
-            assert( isinstance( C, str ) and 1<=len(C)<=3 )
-            assert( isinstance( V, str ) and 1<=len(V)<=3 )
-            assert( isinstance( S, str ) and len(S)<3 )
-            assert( BBB in BibleOrgSysGlobals.BibleBooksCodes or BBB=='   ' )
-            for checkChar in ( ' -,.:' ):
-                assert( checkChar not in BBB )
-                assert( checkChar not in C )
-                assert( checkChar not in V or ( C=='0' and V=='-1' ) ) # 0:-1 means the last bit of the book intro
-                assert( checkChar not in S )
-        self.BBB, self.C, self.V, self.S = BBB, C, V, S
+            print( t("__init__( {!r}, {!r}, {!r}, {!r} )").format( BBB, C, V, S ) )
+        if C is None and V is None and S is None: # assume it's a string to be parsed
+            if BibleOrgSysGlobals.debugFlag:
+                assert( isinstance( BBB, str ) and 7<=len(BBB)<=16 )
+            self.parseReferenceString( BBB )
+        else: # assume it's a BBB/C/V/(S) call
+            if S is None: S = ''
+            if isinstance( C, int ): C = str( C ) # Make sure we have strings
+            if isinstance( V, int ): V = str( V )
+            if BibleOrgSysGlobals.debugFlag:
+                assert( isinstance( BBB, str ) and len(BBB) == 3 )
+                assert( isinstance( C, str ) and 1<=len(C)<=3 )
+                assert( isinstance( V, str ) and 1<=len(V)<=3 )
+                assert( isinstance( S, str ) and len(S)<3 )
+                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes or BBB=='   ' )
+                for checkChar in ( ' -,.:' ):
+                    assert( checkChar not in BBB )
+                    assert( checkChar not in C )
+                    assert( checkChar not in V or ( C=='0' and V=='-1' ) ) # 0:-1 means the last bit of the book intro
+                    assert( checkChar not in S )
+            self.BBB, self.C, self.V, self.S = BBB, C, V, S
     # end of SimpleVerseKey.__init__
 
     def __eq__( self, other ):
@@ -188,6 +197,26 @@ class SimpleVerseKey():
         return BibleOrgSysGlobals.BibleBooksCodes.getOSISAbbreviation( self.BBB )
     def getOSISReference( self ):
         return "{}.{}.{}".format( self.getOSISBookAbbreviation(), self.C, self.V )
+
+    def parseReferenceString( self, referenceString ):
+        """
+        Parses a string, expecting something like "SA2_19:5b"
+
+        Returns True or False on success
+        """
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( t("parseReferenceString( {!r} )").format( referenceString ) )
+        match = re.search( '([A-Z][A-Z][A-Z,1-6])_([1-9][0-9]{0,2}):([1-9][0-9]{0,2})([a-f]?)', referenceString )
+        if match:
+            #print( "Matched", match.start(), match.end() )
+            #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
+            self.BBB, self.C, self.V, self.S = match.group(1), match.group(2), match.group(3), match.group(4)
+            return True
+        else:
+            #print( "Didn't match" )
+            logging.error( "SimpleVerseKey was unable to parse {!r}".format( referenceString ) )
+            return False
+    # end of SimpleVerseKey.parseReferenceString
 # end of class SimpleVerseKey
 
 
@@ -201,6 +230,8 @@ def demo():
     vK = SimpleVerseKey( 'GEN', '1', '1' )
     print( vK, "and", vK.getOSISReference() )
     print( vK == SimpleVerseKey( 'GEN', '1', '1' ), "then", vK == SimpleVerseKey( 'EXO', '1', '1' ) )
+
+    print( SimpleVerseKey( "SA2_19:12" ) )
 # end of demo
 
 if __name__ == '__main__':
