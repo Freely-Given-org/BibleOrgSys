@@ -1903,7 +1903,7 @@ class BibleWriter( InternalBible ):
             writerObject.writeLineOpenClose( 'h1', self.name, ('class','mainHeader') )
             bkList = self.getBookList()
             if myBBB  in bkList:
-                ix = bkList.find( myBBB )
+                ix = bkList.index( myBBB )
                 if ix > 0:
                     writerObject.writeLineOpenClose( 'a', 'Previous book', [('href',filenameDict[bkList[ix-1]]),('class','bookNav')] )
                 writerObject.writeLineOpenClose( 'a', 'Book start', [('href','#C1V1'),('class','bookNav')] )
@@ -9531,15 +9531,15 @@ def demo():
         testData = ( # name, abbreviation, folder for USFM files
                 #("USFM-AllMarkers", "USFM-All", "Tests/DataFilesForTests/USFMAllMarkersProject/",),
                 #("CustomTest", "Custom", ".../",),
-                #("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
-                #("USFMTest2", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
-                #("ESFMTest1", "ESFM1", "Tests/DataFilesForTests/ESFMTest1/",),
-                #("ESFMTest2", "ESFM2", "Tests/DataFilesForTests/ESFMTest2/",),
-                #("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
-                #("OEB", "OEB", "Tests/DataFilesForTests/USFM-OEB/",),
+                ("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
+                ("USFMTest2", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
+                ("ESFMTest1", "ESFM1", "Tests/DataFilesForTests/ESFMTest1/",),
+                ("ESFMTest2", "ESFM2", "Tests/DataFilesForTests/ESFMTest2/",),
+                ("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
+                ("OEB", "OEB", "Tests/DataFilesForTests/USFM-OEB/",),
                 ("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
-                #("MS-BT", "MBTBT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
-                #("MS-Notes", "MBTBC", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/",),
+                ("MS-BT", "MBTBT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
+                ("MS-Notes", "MBTBC", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/",),
                 #("MS-ABT", "MBTABT", "../../../../../Data/Work/Matigsalug/Bible/MBTABT/",),
                 #("WEB", "WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/",),
                 #("WEB", "WEB", "../../../../../Data/Work/Bibles/From eBible/WEB/eng-web_usfm 2013-07-18/",),
