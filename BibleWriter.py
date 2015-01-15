@@ -6861,7 +6861,7 @@ class BibleWriter( InternalBible ):
         ssBookAbbrevDict = { 'GEN':'Ge', 'EXO':'Ex', 'LEV':'Le', 'NUM':'Nu', 'DEU':'De', 'JOS':'Jos', 'JDG':'Jg',
                             'RUT':'Ru', 'SA1':'1Sa', 'SA2':'2Sa', 'KI1':'1Ki', 'KI2':'2Ki', 'CH1':'1Ch', 'CH2':'2Ch',
                             'EZR':'Ezr', 'NEH':'Ne', 'EST':'Es', 'JOB':'Job', 'PSA':'Ps', 'PRO':'Pr', 'ECC':'Ec',
-                            'SNG':'Song', 'ISA':'Isa', 'JER':'Jer', 'LAM':'La', 'EZK':'Eze', 'DAN':'Da', 'HOS':'Ho',
+                            'SNG':'Song', 'ISA':'Isa', 'JER':'Jer', 'LAM':'La', 'EZE':'Eze', 'DAN':'Da', 'HOS':'Ho',
                             'JOL':'Joe', 'AMO':'Am', 'OBA':'Ob', 'JNA':'Jon', 'MIC':'Mic', 'NAH':'Na', 'HAB':'Hab',
                             'ZEP':'Zep', 'HAG':'Hag', 'ZEC':'Zec', 'MAL':'Mal',
                             'MAT':'Mt', 'MRK':'Mr', 'LUK':'Lu', 'JHN':'Joh', 'ACT':'Ac', 'ROM':'Ro',

@@ -47,7 +47,7 @@ from singleton import singleton
 import BibleOrgSysGlobals
 from BibleOrganizationalSystems import BibleOrganizationalSystem
 from BibleReferences import BibleSingleReference, BibleReferenceList
-from VerseReferences import SimpleVerseKey
+from VerseReferences import SimpleVerseKey, SimpleVersesKey
 
 
 
@@ -352,24 +352,20 @@ class BibleReferencesLinksConverter:
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                     print( j, sourceComponent, sourceReference, parsedSourceReference )
             else:
-                BRL = BibleReferenceList( BOS )
-                BRL.parseReferenceString( sourceReference )
-                parsedSourceReference = BRL.referenceList
+                parsedSourceReference = SimpleVersesKey( sourceReference )
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                    print( j, sourceComponent, sourceReference, BRL )
+                    print( j, sourceComponent, sourceReference, parsedSourceReference )
 
             actualLinksList = []
             for k,(targetReference,targetComponent,linkType) in enumerate( actualRawLinksList ):
                 if targetComponent == 'Verse':
                     parsedTargetReference = SimpleVerseKey( targetReference )
                     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                        print( ' ', k, targetComponent, parsedTargetReference, BSR )
+                        print( ' ', k, targetComponent, parsedTargetReference )
                 else:
-                    BRL = BibleReferenceList( BOS )
-                    BRL.parseReferenceString( targetReference )
-                    parsedTargetReference = BRL.referenceList
+                    parsedTargetReference = SimpleVersesKey( targetReference )
                     if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                        print( ' ', k, targetComponent, targetReference, BRL )
+                        print( ' ', k, targetComponent, targetReference, parsedTargetReference )
 
                 actualLinksList.append( (parsedTargetReference,targetComponent,linkType,) )
                 actualLinkCount += 1
