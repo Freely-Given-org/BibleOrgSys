@@ -67,14 +67,14 @@ OXES is different again and tends to remove the second (redundant) book identifi
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-01-14' # by RJH
+LastModifiedDate = '2015-01-15' # by RJH
 ShortProgName = "VerseReferences"
 ProgName = "Bible verse reference handler"
 ProgVersion = '0.18'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
-debuggingThisModule = True
+debuggingThisModule = False
 
 
 import os, logging
@@ -118,7 +118,8 @@ class SimpleVerseKey():
         if C is None and V is None and S is None: # assume it's a string to be parsed
             if BibleOrgSysGlobals.debugFlag:
                 assert( isinstance( BBB, str ) and 7<=len(BBB)<=16 )
-            self.parseReferenceString( BBB )
+            if not self.parseReferenceString( BBB ):
+                raise TypeError
         else: # assume it's a BBB/C/V/(S) call
             if S is None: S = ''
             if isinstance( C, int ): C = str( C ) # Make sure we have strings
@@ -147,7 +148,9 @@ class SimpleVerseKey():
     def __hash__( self ): return hash( self.makeHash() )
 
     def __str__( self ): return "SimpleVerseKey object: {}".format( self.getShortText() )
-    def getShortText( self ): return "{} {}:{}{}".format( self.BBB, self.C, self.V, self.S )
+    def getShortText( self ):
+        try: return "{} {}:{}{}".format( self.BBB, self.C, self.V, self.S )
+        except AttributeError: return 'Invalid'
 
     def __len__( self ): return 4
     def __getitem__( self, keyIndex ):
@@ -206,11 +209,15 @@ class SimpleVerseKey():
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
             print( t("parseReferenceString( {!r} )").format( referenceString ) )
-        match = re.search( '([A-Z][A-Z][A-Z,1-6])_([1-9][0-9]{0,2}):([1-9][0-9]{0,2})([a-f]?)', referenceString )
+        match = re.search( '^([A-Z][A-Z][A-Z,1-6])_([1-9][0-9]{0,2}):([1-9][0-9]{0,2})([a-f]?)$', referenceString )
         if match:
             #print( "Matched", match.start(), match.end() )
             #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
             self.BBB, self.C, self.V, self.S = match.group(1), match.group(2), match.group(3), match.group(4)
+            if self.BBB not in BibleOrgSysGlobals.BibleBooksCodes:
+                logging.error( "SimpleVerseKey: Invalid {!r} book code".format( self.BBB ) )
+            if BibleOrgSysGlobals.strictCheckingFlag:
+                assert( self.BBB in BibleOrgSysGlobals.BibleBooksCodes )
             return True
         else:
             #print( "Didn't match" )
@@ -218,6 +225,132 @@ class SimpleVerseKey():
             return False
     # end of SimpleVerseKey.parseReferenceString
 # end of class SimpleVerseKey
+
+
+
+class VerseRangeKey():
+    """
+    Handles verse ranges in the BCVS form
+        where   B is the BBB reference code
+                C is the chapter number string
+                V is the verse number string
+                S is the optional suffix string
+    The name or organisational system of the work is not specified
+        so we can only check that BBB is a valid book code
+        and no checking is done on the validity of the CV values.
+
+    A string to be parsed can also be passed as the first (and only) parameter.
+        e.g. "SA2_12:2-3"
+            "SA2_12:22–13:2" (with em-dash)
+            "GEN 18"
+    """
+    def __init__( self, BBB, C=None, V=None, S=None ):
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( t("__init__( {!r}, {!r}, {!r}, {!r} )").format( BBB, C, V, S ) )
+        if C is None and V is None and S is None: # assume it's a string to be parsed
+            if BibleOrgSysGlobals.debugFlag:
+                assert( isinstance( BBB, str ) and 7<=len(BBB)<=16 )
+            self.parseReferenceString( BBB )
+        else: # assume it's a BBB/C/V/(S) call
+            if S is None: S = ''
+            if isinstance( C, int ): C = str( C ) # Make sure we have strings
+            if isinstance( V, int ): V = str( V )
+            if BibleOrgSysGlobals.debugFlag:
+                assert( isinstance( BBB, str ) and len(BBB) == 3 )
+                assert( isinstance( C, str ) and 1<=len(C)<=3 )
+                assert( isinstance( V, str ) and 1<=len(V)<=3 )
+                assert( isinstance( S, str ) and len(S)<3 )
+                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes or BBB=='   ' )
+                for checkChar in ( ' -,.:' ):
+                    assert( checkChar not in BBB )
+                    assert( checkChar not in C )
+                    assert( checkChar not in V or ( C=='0' and V=='-1' ) ) # 0:-1 means the last bit of the book intro
+                    assert( checkChar not in S )
+            self.BBB, self.C, self.V, self.S = BBB, C, V, S
+    # end of VerseRangeKey.__init__
+
+    def __eq__( self, other ):
+        if type( other ) is type( self ): return self.__dict__ == other.__dict__
+        return False
+    def __ne__(self, other): return not self.__eq__(other)
+
+    def makeHash( self ): # return a short, unambiguous string suitable for use as a key in a dictionary
+        return "{}{}:{}{}".format( self.BBB, self.C, self.V, self.S )
+    def __hash__( self ): return hash( self.makeHash() )
+
+    def __str__( self ): return "VerseRangeKey object: {}".format( self.getShortText() )
+    def getShortText( self ):
+        try: return "{} {}:{}{}".format( self.BBB, self.C, self.V, self.S )
+        except AttributeError: return 'Invalid'
+
+    def __len__( self ): return 4
+    def __getitem__( self, keyIndex ):
+        if keyIndex==0: return self.BBB
+        elif keyIndex==1: return self.C
+        elif keyIndex==2: return self.V
+        elif keyIndex==3: return self.S
+        else: raise IndexError
+
+    def getBBB( self ): return self.BBB
+    def getChapterNumber( self ): return self.C
+    def getChapterNumberStr( self ): return self.C
+    def getVerseNumber( self ): return self.V
+    def getVerseNumberStr( self ): return self.V
+    def getVerseSuffix( self ): return self.S
+
+    def getBCV( self ): return self.BBB, self.C, self.V
+    def getBCVS( self ): return self.BBB, self.C, self.V, self.S
+    def getCV( self ): return self.C, self.V
+    def getCVS( self ): return self.C, self.V, self.S
+
+    def getChapterNumberInt( self ):
+        try: return( int( self.C ) )
+        except ValueError:
+            logging.warning( t("getChapterNumberInt: Unusual C value: {}").format( repr(self.C) ) )
+            if self.C and self.C[0].isdigit():
+                digitCount = 0
+                for char in self.C:
+                    if char.isdigit(): digitCount += 1
+                return( int( self.C[:digitCount] ) )
+            return None
+    # end of VerseRangeKey.getChapterNumberInt
+
+    def getVerseNumberInt( self ):
+        try: return( int( self.V ) )
+        except ValueError:
+            logging.warning( t("getVerseNumberInt: Unusual V value: {}").format( repr(self.V) ) )
+            if self.V and self.V[0].isdigit():
+                digitCount = 0
+                for char in self.V:
+                    if char.isdigit(): digitCount += 1
+                return( int( self.V[:digitCount] ) )
+            return None
+    # end of VerseRangeKey.getVerseNumberInt
+
+    def parseReferenceString( self, referenceString ):
+        """
+        Parses a string, expecting something like "SA2_19:5b"
+
+        Returns True or False on success
+        """
+        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+            print( t("parseReferenceString( {!r} )").format( referenceString ) )
+        match = re.search( '^([A-Z][A-Z][A-Z,1-6])_([1-9][0-9]{0,2}):([1-9][0-9]{0,2})([a-f]?)$', referenceString )
+        if match:
+            #print( "Matched", match.start(), match.end() )
+            #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)) )
+            self.BBB, self.C, self.V, self.S = match.group(1), match.group(2), match.group(3), match.group(4)
+            if self.BBB not in BibleOrgSysGlobals.BibleBooksCodes:
+                logging.error( "VerseRangeKey: Invalid {!r} book code".format( self.BBB ) )
+            if BibleOrgSysGlobals.strictCheckingFlag:
+                assert( self.BBB in BibleOrgSysGlobals.BibleBooksCodes )
+            return True
+        else:
+            #print( "Didn't match" )
+            logging.error( "VerseRangeKey was unable to parse {!r}".format( referenceString ) )
+            return False
+    # end of VerseRangeKey.parseReferenceString
+# end of class VerseRangeKey
 
 
 
