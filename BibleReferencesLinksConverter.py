@@ -382,7 +382,7 @@ class BibleReferencesLinksConverter:
             #print( myRefLinkDict ); halt
         #print( myRefLinkDict ); halt
         self.__DataDict = myRefLinkDict
-        
+
         return self.__DataList, self.__DataDict
     # end of BibleReferencesLinksConverter.importDataToPython
 

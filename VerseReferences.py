@@ -59,7 +59,7 @@ from gettext import gettext as _
 LastModifiedDate = '2015-01-19' # by RJH
 ShortProgName = "VerseReferences"
 ProgName = "Bible verse reference handler"
-ProgVersion = '0.18'
+ProgVersion = '0.19'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -88,6 +88,7 @@ CHAPTER_RANGE_RE = '^{}_{}:{}{}–{}:{}{}$'.format( BBB_RE, C_RE, V_RE, S_RE, C_
 # Special cases
 VERSE_RANGE_PLUS_RE = '^{}_{}:{}{}-{}{},{}{}$'.format( BBB_RE, C_RE, V_RE, S_RE, V_RE, S_RE, V_RE, S_RE )
 VERSE_PLUS_RANGE_RE = '^{}_{}:{}{},{}{}-{}{}$'.format( BBB_RE, C_RE, V_RE, S_RE, V_RE, S_RE, V_RE, S_RE )
+VERSE_PLUS_RANGE_PLUS_RE = '^{}_{}:{}{},{}{}-{}{},{}{}$'.format( BBB_RE, C_RE, V_RE, S_RE, V_RE, S_RE, V_RE, S_RE, V_RE, S_RE )
 
 
 def t( messageString ):
@@ -284,10 +285,16 @@ class SimpleVersesKey():
         for svk in self.verseKeysList:
             if resultStr: resultStr += ', '
             resultStr += svk.getShortText()
-        return resultStr    
+        return resultStr
         #if self.keyType=='2V': return "{} {}:{}{},{}{}".format( self.BBB, self.C, self.V1, self.S1, self.V2, self.S2 )
         #if self.keyType=='2CV': return "{} {}:{}{};{}:{}{}".format( self.BBB, self.C1, self.V1, self.S1, self.C2, self.V2, self.S2 )
         #print( self.keyType ); halt
+    def getVerseKeyText( self ):
+        resultStr = ''
+        for svk in self.verseKeysList:
+            if resultStr: resultStr += ', '
+            resultStr += svk.getVerseKeyText()
+        return resultStr
 
     """
     def makeHash( self ): # return a short, unambiguous string suitable for use as a key in a dictionary
@@ -343,7 +350,7 @@ class SimpleVersesKey():
     def getOSISReference( self ):
         return "{}.{}.{}".format( self.getOSISBookAbbreviation(), self.C, self.V )
     """
-    
+
     def parseReferenceString( self, referenceString ):
         """
         Parses a string, expecting something like "SA2_19:5b"
@@ -463,6 +470,8 @@ class VerseRangeKey():
         #if self.keyType=='CV-CV': return "{} {}:{}{}-{}:{}{}".format( self.BBB, self.C, self.V1, self.S1, self.C2, self.V2, self.S2 )
         #if self.keyType=='C': return "{} {}".format( self.BBB, self.C )
         #print( self.keyType ); halt
+    def getVerseKeyText( self ):
+        return '{}-{}'.format( self.rangeStart.getVerseKeyText(), self.rangeEnd.getVerseKeyText() )
 
     """
     def makeHash( self ): # return a short, unambiguous string suitable for use as a key in a dictionary
@@ -513,7 +522,7 @@ class VerseRangeKey():
             return None
     # end of VerseRangeKey.getVerseNumberInt
     """
-    
+
     def parseReferenceString( self, referenceString ):
         """
         Parses a string, expecting something like "SA2_19:5b"
@@ -632,12 +641,19 @@ class FlexibleVersesKey():
     def getShortText( self ):
         resultText = ''
         for verseKeyObject in self.verseKeyObjectList:
+            if resultText: resultText += ', '
             resultText += verseKeyObject.getShortText()
         return resultText
         #if self.keyType=='RESULT': return self.result.getShortText()
         #if self.keyType=='V-V,V': return '{} {}:{}{}-{}{},{}{}'.format( self.BBB, self.C, self.V1, self.S1, self.V2, self.S2, self.V3, self.S3 )
         #if self.keyType=='V,V-V': return '{} {}:{}{},{}{}-{}{}'.format( self.BBB, self.C, self.V1, self.S1, self.V2, self.S2, self.V3, self.S3 )
         #halt
+    def getVerseKeyText( self ):
+        resultText = ''
+        for verseKeyObject in self.verseKeyObjectList:
+            if resultText: resultText += ', '
+            resultText += verseKeyObject.getVerseKeyText()
+        return resultText
 
     """
     def makeHash( self ): # return a short, unambiguous string suitable for use as a key in a dictionary
@@ -688,7 +704,7 @@ class FlexibleVersesKey():
             return None
     # end of VerseRangeKey.getVerseNumberInt
     """
-    
+
     def parseReferenceString( self, referenceString ):
         """
         Parses a string, expecting something like "SA2_19:5b"
@@ -710,7 +726,7 @@ class FlexibleVersesKey():
             return True
         except TypeError: pass
         try:
-            self.resultKey = VerseRangeKey( referenceString, ignoreParseErrors=True )
+            resultKey = VerseRangeKey( referenceString, ignoreParseErrors=True )
             self.verseKeyObjectList.append( resultKey )
             #self.keyType = 'RESULT'
             return True
@@ -728,10 +744,9 @@ class FlexibleVersesKey():
                 logging.error( "VerseRangeKey: Invalid {!r} book code".format( BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
                 assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
-            self.resultKey = VerseRangeKey( '{}_{}:{}{}-{}{}'.format( BBB, C, V1, S1, V2, S2 ), ignoreParseErrors=True )
+            resultKey = VerseRangeKey( '{}_{}:{}{}-{}{}'.format( BBB, C, V1, S1, V2, S2 ), ignoreParseErrors=True )
             self.verseKeyObjectList.append( resultKey )
-            resultKey = SimpleVerseKey( '{}_{}:{}{}'.format( BBB, C, V3, S3 ), ignoreParseErrors=True )
-            self.verseKeyObjectList.append( resultKey )
+            self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V3, S3 ) )
             self.keyType = 'V-V,V'
             return True
         match = re.search( VERSE_PLUS_RANGE_RE, referenceString )
@@ -746,11 +761,29 @@ class FlexibleVersesKey():
                 logging.error( "VerseRangeKey: Invalid {!r} book code".format( BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
                 assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
-            resultKey = SimpleVerseKey( '{}_{}:{}{}'.format( BBB, C, V1, S1 ), ignoreParseErrors=True )
-            self.verseKeyObjectList.append( resultKey )
-            self.resultKey = VerseRangeKey( '{}_{}:{}{}-{}{}'.format( BBB, C, V2, S2, V3, S3 ), ignoreParseErrors=True )
+            self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V1, S1 ) )
+            resultKey = VerseRangeKey( '{}_{}:{}{}-{}{}'.format( BBB, C, V2, S2, V3, S3 ), ignoreParseErrors=True )
             self.verseKeyObjectList.append( resultKey )
             self.keyType = 'V,V-V'
+            return True
+        match = re.search( VERSE_PLUS_RANGE_PLUS_RE, referenceString )
+        if match:
+            #print( "Matched", match.start(), match.end() )
+            #print( repr(match.group(0)), repr(match.group(1)), repr(match.group(2)), repr(match.group(3)), repr(match.group(4)), repr(match.group(5)), repr(match.group(6)) )
+            BBB, C = match.group(1), match.group(2)
+            V1, S1 = match.group(3), match.group(4)
+            V2, S2 = match.group(5), match.group(6)
+            V3, S3 = match.group(7), match.group(8)
+            V4, S4 = match.group(9), match.group(10)
+            if BBB not in BibleOrgSysGlobals.BibleBooksCodes:
+                logging.error( "VerseRangeKey: Invalid {!r} book code".format( BBB ) )
+            if BibleOrgSysGlobals.strictCheckingFlag:
+                assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
+            self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V1, S1 ) )
+            resultKey = VerseRangeKey( '{}_{}:{}{}-{}{}'.format( BBB, C, V2, S2, V3, S3 ), ignoreParseErrors=True )
+            self.verseKeyObjectList.append( resultKey )
+            self.verseKeyObjectList.append( SimpleVerseKey( BBB, C, V4, S4 ) )
+            self.keyType = 'V,V-V,V'
             return True
 
         logging.error( "FlexibleVersesKey was unable to parse {!r}".format( referenceString ) )
@@ -759,10 +792,10 @@ class FlexibleVersesKey():
 
 
     def getIncludedVerses( self ):
-        #print( self.keyType )
-        if self.keyType=='RESULT':
-            #print( self.result )
-            return self.result.getIncludedVerses()
+        resultList = []
+        for verseKeyObject in self.verseKeyObjectList:
+            resultList.extend( verseKeyObject.getIncludedVerses() )
+        return resultList
     # end of FlexibleVersesKey.getIncludedVerses
 # end of class FlexibleVersesKey
 
@@ -775,7 +808,7 @@ def demo():
     if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
     badStrings = ( 'Gn_1:1', '2KI_3:17', 'MAL_1234:1', 'MAT_1:1234', )
-    
+
     goodVerseStrings = ( 'SA2_19:12', 'REV_11:12b', )
     badVerseStrings = badStrings + ( 'GEN.1.1', 'EXO 2:2', 'LEV 3', '2SA_19:12', 'REV_11:12z', )
     if 1: # test SimpleVerseKey
@@ -814,7 +847,7 @@ def demo():
         for someGoodString in goodRangeStrings:
             vK = VerseRangeKey( someGoodString )
             print( '  ', repr(someGoodString), vK )
-            assert( vK.getShortText().replace(' ','_',1) == someGoodString )
+            #assert( vK.getVerseKeyText() == someGoodString )
         print( '  BAD STUFF...' )
         for someBadString in badRangeStrings:
             try: print( '  ', repr(someBadString), VerseRangeKey( someBadString ) )
@@ -828,7 +861,7 @@ def demo():
         for someGoodString in goodFlexibleStrings:
             vK = FlexibleVersesKey( someGoodString )
             print( '  ', repr(someGoodString), vK )
-            assert( vK.getShortText().replace(' ','_',1) == someGoodString )
+            #assert( vK.getVerseKeyText() == someGoodString )
         print( '  BAD STUFF...' )
         for someBadString in badFlexibleStrings:
             try: print( '  ', repr(someBadString), FlexibleVersesKey( someBadString ) )
