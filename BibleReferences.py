@@ -52,6 +52,7 @@ We can see that
             b = second half of a verse
             c = final third of a verse
             d = final quarter of a verse
+    6/ No spaces are ever allowed.
 
 Internally, we represent it as a Bible reference tuple (BBB,C,V,S,) where
     BBB is the three-character UPPERCASE reference abbreviation
@@ -80,7 +81,7 @@ Technical note: Our Bible reference parsers use state machines rather than regul
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-01-13' # by RJH
+LastModifiedDate = '2015-01-17' # by RJH
 ShortProgName = "BibleReferences"
 ProgName = "Bible References handler"
 ProgVersion = '0.32'

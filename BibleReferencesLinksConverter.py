@@ -28,7 +28,7 @@ Module handling BibleReferencesLinks.xml and to export to JSON, C, and Python da
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-01-13' # by RJH
+LastModifiedDate = '2015-01-19' # by RJH
 ShortProgName = "BibleReferencesLinksConverter"
 ProgName = "Bible References Links converter"
 ProgVersion = '0.20'
@@ -47,7 +47,7 @@ from singleton import singleton
 import BibleOrgSysGlobals
 from BibleOrganizationalSystems import BibleOrganizationalSystem
 from BibleReferences import BibleSingleReference, BibleReferenceList
-from VerseReferences import SimpleVerseKey, SimpleVersesKey
+from VerseReferences import SimpleVerseKey, FlexibleVersesKey
 
 
 
@@ -297,7 +297,7 @@ class BibleReferencesLinksConverter:
 
         assert( self._XMLtree )
         if self.__DataList: # We've already done an import/restructuring -- no need to repeat it
-            return self.__DataList
+            return self.__DataList, self.__DataDict
 
         # We'll create a number of dictionaries with different elements as the key
         rawRefLinkList = []
@@ -347,39 +347,43 @@ class BibleReferencesLinksConverter:
         BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
 
         for j,(sourceReference,sourceComponent,actualRawLinksList) in enumerate( rawRefLinkList ):
-            if sourceComponent == 'Verse':
-                parsedSourceReference = SimpleVerseKey( sourceReference )
-                if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                    print( j, sourceComponent, sourceReference, parsedSourceReference )
-            else:
-                parsedSourceReference = SimpleVersesKey( sourceReference )
-                if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                    print( j, sourceComponent, sourceReference, parsedSourceReference )
-
+            parsedSourceReference = FlexibleVersesKey( sourceReference )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                print( j, sourceComponent, sourceReference, parsedSourceReference )
+                #assert( parsedSourceReference.getShortText().replace(' ','_') == sourceReference )
             actualLinksList = []
             for k,(targetReference,targetComponent,linkType) in enumerate( actualRawLinksList ):
-                if targetComponent == 'Verse':
-                    parsedTargetReference = SimpleVerseKey( targetReference )
-                    if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                        print( ' ', k, targetComponent, parsedTargetReference )
-                else:
-                    parsedTargetReference = SimpleVersesKey( targetReference )
-                    if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-                        print( ' ', k, targetComponent, targetReference, parsedTargetReference )
+                parsedTargetReference = FlexibleVersesKey( targetReference )
+                if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                    print( ' ', targetComponent, targetReference, parsedTargetReference )
+                    #assert( parsedTargetReference.getShortText().replace(' ','_',1) == targetReference )
 
-                actualLinksList.append( (parsedTargetReference,targetComponent,linkType,) )
+                actualLinksList.append( (targetReference,targetComponent,parsedTargetReference,linkType,) )
                 actualLinkCount += 1
 
-            myRefLinkList.append( (parsedSourceReference,sourceComponent,actualLinksList,) )
+            myRefLinkList.append( (sourceReference,sourceComponent,parsedSourceReference,actualLinksList,) )
 
         if BibleOrgSysGlobals.verbosityLevel > 1:
             print( "  {} links loaded (with {} actual link entries)".format( len(rawRefLinkList), actualLinkCount ) )
         #print( myRefLinkList ); halt
+        self.__DataList = myRefLinkList
 
         # Now put it into my dictionaries for easy access
         # This part should be customized or added to for however you need to process the data
-        self.__DataList = myRefLinkList
-        return self.__DataList
+        myRefLinkDict = {}
+        for sourceReference,sourceComponent,parsedSourceReference,actualLinksList in myRefLinkList:
+            #print( sourceReference, sourceComponent, parsedSourceReference )
+            #print( sourceReference, sourceComponent, parsedSourceReference, actualLinksList )
+            for verseRef in parsedSourceReference.getIncludedVerses():
+                #print( verseRef )
+                assert( isinstance( verseRef, SimpleVerseKey ) )
+                if verseRef not in myRefLinkDict: myRefLinkDict[verseRef] = []
+                myRefLinkDict[verseRef].append( (sourceReference,sourceComponent,parsedSourceReference,actualLinksList,) )
+            #print( myRefLinkDict ); halt
+        #print( myRefLinkDict ); halt
+        self.__DataDict = myRefLinkDict
+        
+        return self.__DataList, self.__DataDict
     # end of BibleReferencesLinksConverter.importDataToPython
 
 
@@ -392,6 +396,7 @@ class BibleReferencesLinksConverter:
         assert( self._XMLtree )
         self.importDataToPython()
         assert( self.__DataList )
+        assert( self.__DataDict )
 
         if not filepath:
             folder = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles/" )
@@ -400,6 +405,7 @@ class BibleReferencesLinksConverter:
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
         with open( filepath, 'wb' ) as myFile:
             pickle.dump( self.__DataList, myFile )
+            pickle.dump( self.__DataDict, myFile )
     # end of BibleReferencesLinksConverter.pickle
 
 
@@ -424,6 +430,7 @@ class BibleReferencesLinksConverter:
         assert( self._XMLtree )
         self.importDataToPython()
         assert( self.__DataList )
+        assert( self.__DataDict )
 
         print( "Export to Python not written yet!" )
         halt
@@ -476,6 +483,7 @@ class BibleReferencesLinksConverter:
         assert( self._XMLtree )
         self.importDataToPython()
         assert( self.__DataList )
+        assert( self.__DataDict )
 
         if not filepath:
             folder = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles/" )
@@ -484,6 +492,7 @@ class BibleReferencesLinksConverter:
         if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( filepath ) )
         with open( filepath, 'wt' ) as myFile:
             json.dump( self.__DataList, myFile, indent=2 )
+            json.dump( self.__DataDict, myFile, indent=2 )
     # end of BibleReferencesLinksConverter.exportDataToJSON
 
 
@@ -622,16 +631,16 @@ def demo():
     if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
 
     if BibleOrgSysGlobals.commandLineOptions.export:
-        bbcc = BibleReferencesLinksConverter().loadAndValidate() # Load the XML
-        bbcc.pickle() # Produce a pickle output file
-        bbcc.exportDataToJSON() # Produce a json output file
-        bbcc.exportDataToPython() # Produce the .py tables
-        bbcc.exportDataToC() # Produce the .h and .c tables
+        brlc = BibleReferencesLinksConverter().loadAndValidate() # Load the XML
+        brlc.pickle() # Produce a pickle output file
+        brlc.exportDataToJSON() # Produce a json output file
+        brlc.exportDataToPython() # Produce the .py tables
+        brlc.exportDataToC() # Produce the .h and .c tables
 
     else: # Must be demo mode
         # Demo the converter object
-        bbcc = BibleReferencesLinksConverter().loadAndValidate() # Load the XML
-        print( bbcc ) # Just print a summary
+        brlc = BibleReferencesLinksConverter().loadAndValidate() # Load the XML
+        print( brlc ) # Just print a summary
 # end of demo
 
 if __name__ == '__main__':
