@@ -84,11 +84,11 @@ class BibleReferencesLinks:
             dataFilepath = os.path.join( os.path.dirname(__file__), "DataFiles" )
             standardXMLFilepath = os.path.join( dataFilepath, "BibleReferencesLinks.xml" )
             standardPickleFilepath = os.path.join( dataFilepath, "DerivedFiles", "BibleReferencesLinks_Tables.pickle" )
-            print( os.access( standardPickleFilepath, os.R_OK ) )
-            print( os.stat(standardPickleFilepath)[8] > os.stat(standardXMLFilepath)[8] )
-            print( os.stat(standardPickleFilepath)[9] )
-            print( os.stat(standardXMLFilepath)[9] )
-            print( os.stat(standardPickleFilepath)[9] > os.stat(standardXMLFilepath)[9] )
+            #print( os.access( standardPickleFilepath, os.R_OK ) )
+            #print( os.stat(standardPickleFilepath)[8] > os.stat(standardXMLFilepath)[8] )
+            #print( os.stat(standardPickleFilepath)[9] )
+            #print( os.stat(standardXMLFilepath)[9] )
+            #print( os.stat(standardPickleFilepath)[9] > os.stat(standardXMLFilepath)[9] )
             if XMLFilepath is None \
             and os.access( standardPickleFilepath, os.R_OK ) \
             and os.stat(standardPickleFilepath)[8] > os.stat(standardXMLFilepath)[8] \
@@ -96,7 +96,8 @@ class BibleReferencesLinks:
                 import pickle
                 if BibleOrgSysGlobals.verbosityLevel > 2: print( "Loading pickle file {}...".format( standardPickleFilepath ) )
                 with open( standardPickleFilepath, 'rb') as pickleFile:
-                    self.__DataList, self._DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
+                    self.__DataList = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
+                    self.__DataDict = pickle.load( pickleFile ) # The protocol version used is detected automatically, so we do not have to specify it
             else: # We have to load the XML (much slower)
                 from BibleReferencesLinksConverter import BibleReferencesLinksConverter
                 if XMLFilepath is not None: logging.warning( _("Bible books codes are already loaded -- your given filepath of {!r} was ignored").format(XMLFilepath) )
@@ -169,7 +170,7 @@ def demo():
     Main program to handle command line parameters and then run what they want.
     """
     from VerseReferences import SimpleVerseKey
-    
+
     if BibleOrgSysGlobals.verbosityLevel > 1: print( ProgNameVersion )
 
     # Demo the BibleReferencesLinks object
