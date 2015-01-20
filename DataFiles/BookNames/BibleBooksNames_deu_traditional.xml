@@ -110,7 +110,7 @@ See the supplied ReadMe.txt for more details.
     <includesBook>ISA</includesBook>
     <includesBook>JER</includesBook>
     <includesBook>LAM</includesBook>
-    <includesBook>EZK</includesBook>
+    <includesBook>EZE</includesBook>
     <includesBook>DAN</includesBook>
     <includesBook>HOS</includesBook>
     <includesBook>JOL</includesBook>
@@ -183,7 +183,7 @@ See the supplied ReadMe.txt for more details.
     <includesBook>ISA</includesBook>
     <includesBook>JER</includesBook>
     <includesBook>LAM</includesBook>
-    <includesBook>EZK</includesBook>
+    <includesBook>EZE</includesBook>
     <includesBook>DAN</includesBook>
     <includesBook>HOS</includesBook>
     <includesBook>JOL</includesBook>
@@ -205,7 +205,7 @@ See the supplied ReadMe.txt for more details.
     <includesBook>ISA</includesBook>
     <includesBook>JER</includesBook>
     <includesBook>LAM</includesBook>
-    <includesBook>EZK</includesBook>
+    <includesBook>EZE</includesBook>
     <includesBook>DAN</includesBook>
     <includesBook>BAR</includesBook>
   </BibleDivisionNames>
@@ -523,7 +523,7 @@ See the supplied ReadMe.txt for more details.
     <defaultAbbreviation>Klag</defaultAbbreviation>
     <inputAbbreviation>Klgldr</inputAbbreviation>
   </BibleBookNames>
-  <BibleBookNames referenceAbbreviation="EZK">
+  <BibleBookNames referenceAbbreviation="EZE">
     <defaultName>Hesekiel</defaultName>
     <defaultAbbreviation>Hes</defaultAbbreviation>
     <inputAbbreviation>Hskl</inputAbbreviation>
