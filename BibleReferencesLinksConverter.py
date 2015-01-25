@@ -28,10 +28,10 @@ Module handling BibleReferencesLinks.xml and to export to JSON, C, and Python da
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-01-19' # by RJH
+LastModifiedDate = '2015-01-24' # by RJH
 ShortProgName = "BibleReferencesLinksConverter"
 ProgName = "Bible References Links converter"
-ProgVersion = '0.20'
+ProgVersion = '0.22'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -89,7 +89,7 @@ class BibleReferencesLinksConverter:
         self._compulsoryAttributes = ()
         self._optionalAttributes = ()
         self._uniqueAttributes = self._compulsoryAttributes + self._optionalAttributes
-        self._compulsoryElements = ( 'sourceReference', 'sourceComponent' )
+        self._compulsoryElements = ( 'sourceReference', 'sourceComponent', 'BibleReferenceLink', )
         self._optionalElements = (  )
         self._uniqueElements = ( 'sourceReference' )
 
@@ -219,7 +219,7 @@ class BibleReferencesLinksConverter:
                     else:
                         BibleOrgSysGlobals.checkXMLNoTail( foundElement, foundElement.tag + " in " + element.tag )
                         BibleOrgSysGlobals.checkXMLNoAttributes( foundElement, foundElement.tag + " in " + element.tag )
-                        BibleOrgSysGlobals.checkXMLNoSubelements( foundElement, foundElement.tag + " in " + element.tag )
+                        #BibleOrgSysGlobals.checkXMLNoSubelements( foundElement, foundElement.tag + " in " + element.tag )
                         if not foundElement.text:
                             logging.warning( _("Compulsory {!r} element is blank in record with ID {!r} (record {})").format( elementName, ID, j ) )
 
@@ -331,7 +331,7 @@ class BibleReferencesLinksConverter:
                     targetComponent = subelement.find('targetComponent').text
                     assert( targetComponent in ('Section','Verses','Verse',) )
                     linkType = subelement.find('linkType').text
-                    assert( linkType in ('QuotedOTReference','AlludedOTReference',) )
+                    assert( linkType in ('QuotedOTReference','AlludedOTReference','PossibleOTReference',) )
 
                     actualRawLinksList.append( (targetReference,targetComponent,linkType,) )
                     actualLinkCount += 1
@@ -347,12 +347,38 @@ class BibleReferencesLinksConverter:
         BOS = BibleOrganizationalSystem( "GENERIC-KJV-66-ENG" )
 
         for j,(sourceReference,sourceComponent,actualRawLinksList) in enumerate( rawRefLinkList ):
+            # Just do some testing first
+            if sourceComponent == 'Verse':
+                x = SimpleVerseKey( sourceReference )
+            else:
+                flag = False
+                try:
+                    x = SimpleVerseKey( sourceReference, ignoreParseErrors=True )
+                    flag = True
+                except TypeError: pass # This should happen coz it should fail the SVK
+                if flag:
+                    logging.error( "{} {!r} failed!".format( sourceComponent, sourceReference ) )
+                    raise TypeError
+            # Now do the actual parsing
             parsedSourceReference = FlexibleVersesKey( sourceReference )
             if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                 print( j, sourceComponent, sourceReference, parsedSourceReference )
                 #assert( parsedSourceReference.getShortText().replace(' ','_') == sourceReference )
             actualLinksList = []
             for k,(targetReference,targetComponent,linkType) in enumerate( actualRawLinksList ):
+                # Just do some testing first
+                if targetComponent == 'Verse':
+                    x = SimpleVerseKey( targetReference )
+                else:
+                    flag = False
+                    try:
+                        x = SimpleVerseKey( targetReference, ignoreParseErrors=True )
+                        flag = True
+                    except TypeError: pass # This should happen coz it should fail the SVK
+                    if flag:
+                        logging.error( "{} {!r} failed!".format( targetComponent, targetReference ) )
+                        raise TypeError
+                # Now do the actual parsing
                 parsedTargetReference = FlexibleVersesKey( targetReference )
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                     print( ' ', targetComponent, targetReference, parsedTargetReference )
@@ -364,7 +390,7 @@ class BibleReferencesLinksConverter:
             myRefLinkList.append( (sourceReference,sourceComponent,parsedSourceReference,actualLinksList,) )
 
         if BibleOrgSysGlobals.verbosityLevel > 1:
-            print( "  {} links loaded (with {} actual link entries)".format( len(rawRefLinkList), actualLinkCount ) )
+            print( "  {} links processed (with {} actual link entries)".format( len(rawRefLinkList), actualLinkCount ) )
         #print( myRefLinkList ); halt
         self.__DataList = myRefLinkList
 
@@ -451,20 +477,6 @@ class BibleReferencesLinksConverter:
             dictInfo = { "referenceNumberDict":("referenceNumber (integer 1..255)","specified"),
                     "sourceComponentDict":("sourceComponent","specified"),
                     "sequenceList":("sourceComponent/BBB (3-uppercase characters)",""),
-                    "CCELDict":("CCELNumberString", mostEntries),
-                    "SBLAbbreviationDict":("SBLAbbreviation", mostEntries),
-                    "OSISAbbreviationDict":("OSISAbbreviation", mostEntries),
-                    "SwordAbbreviationDict":("SwordAbbreviation", mostEntries),
-                    "USFMAbbreviationDict":("USFMAbbreviation", "0=referenceNumber (integer 1..255), 1=sourceComponent/BBB (3-uppercase characters), 2=USFMNumberString (2-characters)"),
-                    "USFMNumberDict":("USFMNumberString", "0=referenceNumber (integer 1..255), 1=sourceComponent/BBB (3-uppercase characters), 2=USFMAbbreviationString (3-characters)"),
-                    "USXNumberDict":("USXNumberString", "0=referenceNumber (integer 1..255), 1=sourceComponent/BBB (3-uppercase characters), 2=USFMAbbreviationString (3-characters)"),
-                    "UnboundCodeDict":("UnboundCodeString", "0=referenceNumber (integer 1..88), 1=sourceComponent/BBB (3-uppercase characters), 2=USFMAbbreviationString (3-characters)"),
-                    "BibleditNumberDict":("BibleditNumberString", "0=referenceNumber (integer 1..88), 1=sourceComponent/BBB (3-uppercase characters), 2=USFMAbbreviationString (3-characters)"),
-                    "NETBibleAbbreviationDict":("NETBibleAbbreviation", mostEntries),
-                    "DrupalBibleAbbreviationDict":("DrupalBibleAbbreviation", mostEntries),
-                    "BibleWorksAbbreviationDict":("BibleWorksAbbreviation", mostEntries),
-                    "ByzantineAbbreviationDict":("ByzantineAbbreviation", mostEntries),
-                    "EnglishNameDict":("sourceReference", mostEntries),
                     "initialAllAbbreviationsDict":("allAbbreviations", mostEntries) }
             for dictName,dictData in self.__DataList.items():
                 exportPythonDictOrList( myFile, dictData, dictName, dictInfo[dictName][0], dictInfo[dictName][1] )
@@ -599,18 +611,6 @@ class BibleReferencesLinksConverter:
                    .format(CHAR, CHAR, CHAR, BYTE, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR, CHAR ) ),
                 "sequenceList":("sequenceList",),
                 "CCELDict":("CCELNumberString", "{}* CCELNumberString; {} referenceNumber; {} sourceComponent[3+1];".format(CHAR,BYTE,CHAR) ),
-                "SBLAbbreviationDict":("SBLAbbreviation", "{}* SBLAbbreviation; {} referenceNumber; {} sourceComponent[3+1];".format(CHAR,BYTE,CHAR) ),
-                "OSISAbbreviationDict":("OSISAbbreviation", "{}* OSISAbbreviation; {} referenceNumber; {} sourceComponent[3+1];".format(CHAR,BYTE,CHAR) ),
-                "SwordAbbreviationDict":("SwordAbbreviation", "{}* SwordAbbreviation; {} referenceNumber; {} sourceComponent[3+1];".format(CHAR,BYTE,CHAR) ),
-                "USFMAbbreviationDict":("USFMAbbreviation", "{} USFMAbbreviation[3+1]; {} referenceNumber; {} sourceComponent[3+1]; {} USFMNumberString[2+1];".format(CHAR,BYTE,CHAR,CHAR) ),
-                "USFMNumberDict":("USFMNumberString", "{} USFMNumberString[2+1]; {} referenceNumber; {} sourceComponent[3+1]; {} USFMAbbreviation[3+1];".format(CHAR,BYTE,CHAR,CHAR) ),
-                "USXNumberDict":("USXNumberString", "{} USXNumberString[3+1]; {} referenceNumber; {} sourceComponent[3+1]; {} USFMAbbreviation[3+1];".format(CHAR,BYTE,CHAR,CHAR) ),
-                "UnboundCodeDict":("UnboundCodeString", "{} UnboundCodeString[3+1]; {} referenceNumber; {} sourceComponent[3+1]; {} USFMAbbreviation[3+1];".format(CHAR,BYTE,CHAR,CHAR) ),
-                "BibleditNumberDict":("BibleditNumberString", "{} BibleditNumberString[2+1]; {} referenceNumber; {} sourceComponent[3+1]; {} USFMAbbreviation[3+1];".format(CHAR,BYTE,CHAR,CHAR) ),
-                "NETBibleAbbreviationDict":("NETBibleAbbreviation", "{}* NETBibleAbbreviation; {} referenceNumber; {} sourceComponent[3+1];".format(CHAR,BYTE,CHAR) ),
-                "DrupalBibleAbbreviationDict":("DrupalBibleAbbreviation", "{}* DrupalBibleAbbreviation; {} referenceNumber; {} sourceComponent[3+1];".format(CHAR,BYTE,CHAR) ),
-                "ByzantineAbbreviationDict":("ByzantineAbbreviation", "{}* ByzantineAbbreviation; {} referenceNumber; {} sourceComponent[3+1];".format(CHAR,BYTE,CHAR) ),
-                "EnglishNameDict":("sourceReference", "{}* sourceReference; {} referenceNumber; {} sourceComponent[3+1];".format(CHAR,BYTE,CHAR) ),
                 "initialAllAbbreviationsDict":("abbreviation", "{}* abbreviation; {} sourceComponent[3+1];".format(CHAR,CHAR) ) }
 
             for dictName,dictData in self.__DataList.items():

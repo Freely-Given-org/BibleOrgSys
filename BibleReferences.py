@@ -39,20 +39,21 @@ This module recognises and handles OSIS Bible references.
         and that the same separator is repeated.
 
 However, the native Bible reference string format in this system is more tightly defined
-    e.g., GEN_1:1 or EXO_20:10 or CH2_7:6 or JDE_1:2b
+    e.g., GEN_1:1 or EXO_20:10 or CH2_7:6 or JDE_1:2!b
 We can see that
     1/ The Bible book code is always 3-characters, starting with a letter
         All letters are UPPERCASE
     2/ We use an underline character as the book / chapter separator
     3/ We use a colon as the chapter / verse separator
     4/ We treat all chapter and verse "number" fields as strings
-    5/ Verse numbers can include a lowercase letter suffix a..d
+    5/ Verse numbers can include a lowercase letter suffix a..d preceded by !
         representing very approximate portions of a verse
             a = first half of a verse
             b = second half of a verse
             c = final third of a verse
             d = final quarter of a verse
     6/ No spaces are ever allowed.
+These are parsed in the VerseReferences module.
 
 Internally, we represent it as a Bible reference tuple (BBB,C,V,S,) where
     BBB is the three-character UPPERCASE reference abbreviation
@@ -81,7 +82,7 @@ Technical note: Our Bible reference parsers use state machines rather than regul
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-01-19' # by RJH
+LastModifiedDate = '2015-01-24' # by RJH
 ShortProgName = "BibleReferences"
 ProgName = "Bible References handler"
 ProgVersion = '0.32'

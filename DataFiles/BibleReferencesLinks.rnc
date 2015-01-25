@@ -1,6 +1,6 @@
 # BibleReferencesLinks.rnc           Relax NG Compact Syntax schema file
-#   Last modified: 2015-01-11 by RJH
-#   Version 0.20
+#   Last modified: 2015-01-24 by RJH
+#   Version 0.21
 #
 # On Linux, to convert to RNG, use
 #       trang BibleReferencesLinks.rnc DerivedFiles/BibleReferencesLinks.rng
@@ -51,5 +51,5 @@ BibleReferenceLinks = element BibleReferenceLinks
 BibleReferenceLink = element BibleReferenceLink
 {   element targetReference { xsd:string { minLength="6" maxLength="15" } },
     element targetComponent { "Section" | "Verses" | "Verse" },
-    element linkType { "QuotedOTReference" | "AlludedOTReference" }
+    element linkType { "QuotedOTReference" | "AlludedOTReference" | "PossibleOTReference" }
 }
