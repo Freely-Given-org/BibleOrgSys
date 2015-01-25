@@ -31,8 +31,9 @@ from gettext import gettext as _
 LastModifiedDate = '2015-01-25' # by RJH
 ShortProgName = "TestBooksCodesRE"
 ProgName = "TestBooksCodes Regular Expressions"
-ProgVersion = "0.01"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.10'
+ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
@@ -44,6 +45,19 @@ sys.path.append( '..' )
 import BibleOrgSysGlobals
 
 
+# Regular expressions to be searched for
+#       \d      Matches any decimal digit; this is equivalent to the class [0-9].
+#       \D      Matches any non-digit character; this is equivalent to the class [^0-9].
+#       \s      Matches any whitespace character; this is equivalent to the class [ \t\n\r\f\v].
+#       \S      Matches any non-whitespace character; this is equivalent to the class [^ \t\n\r\f\v].
+#       \w      Matches any alphanumeric character; this is equivalent to the class [a-zA-Z0-9_].
+#       \W      Matches any non-alphanumeric character; this is equivalent to the class [^a-zA-Z0-9_].
+#
+#       ?       Matches sequence zero or once (i.e., for something that's optional) -- same as {0,1}
+#       *       Matches sequence zero or more times (greedy) -- same as {0,}
+#       +       Matches sequence one or more times -- same as {1,}
+#       {m,n}   Matches at least m repetitions, and at most n
+#
 BBB_RE = '([A-PR-XZ][A-EG-VX-Z1][A-WYZ1-6])' # Copy into VerseReferences.py
 
 def main():

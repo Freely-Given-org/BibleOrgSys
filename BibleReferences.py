@@ -55,7 +55,7 @@ We can see that
     6/ No spaces are ever allowed.
 These are parsed in the VerseReferences module.
 
-Internally, we represent it as a Bible reference tuple (BBB,C,V,S,) where
+Internally, we represent it as a Bible reference tuple (BBB,C,V,S,) also called BCVS where
     BBB is the three-character UPPERCASE reference abbreviation
     C is the chapter number string (There are some examples of letters being used for chapter "numbers")
     V is the verse number string
@@ -82,7 +82,7 @@ Technical note: Our Bible reference parsers use state machines rather than regul
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-01-24' # by RJH
+LastModifiedDate = '2015-01-25' # by RJH
 ShortProgName = "BibleReferences"
 ProgName = "Bible References handler"
 ProgVersion = '0.32'
