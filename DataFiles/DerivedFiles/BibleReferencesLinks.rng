@@ -2,8 +2,8 @@
 <grammar xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
   <!--
     BibleReferencesLinks.rnc           Relax NG Compact Syntax schema file
-      Last modified: 2015-01-11 by RJH
-      Version 0.20
+      Last modified: 2015-01-24 by RJH
+      Version 0.21
     
     On Linux, to convert to RNG, use
           trang BibleReferencesLinks.rnc DerivedFiles/BibleReferencesLinks.rng
@@ -127,6 +127,7 @@
         <choice>
           <value>QuotedOTReference</value>
           <value>AlludedOTReference</value>
+          <value>PossibleOTReference</value>
         </choice>
       </element>
     </element>
