@@ -31,7 +31,7 @@ from gettext import gettext as _
 LastModifiedDate = '2015-01-25' # by RJH
 ShortProgName = "TestBooksCodesRE"
 ProgName = "TestBooksCodes Regular Expressions"
-ProgVersion = '0.10'
+ProgVersion = '0.20'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -40,6 +40,7 @@ debuggingThisModule = False
 
 import sys, re
 
+# Allow the app to run from either the BOS folder or in this Apps subfolder
 sys.path.append( '.' )
 sys.path.append( '..' )
 import BibleOrgSysGlobals
@@ -59,8 +60,11 @@ import BibleOrgSysGlobals
 #       {m,n}   Matches at least m repetitions, and at most n
 #
 BBB_RE = '([A-PR-XZ][A-EG-VX-Z1][A-WYZ1-6])' # Copy into VerseReferences.py
+OSIS_BOOK_RE = '([1-5A-EG-JL-PRSTVWZ][BCEJKMPSTa-ehimoprsuxz](?:[AJMa-eghik-pr-v](?:[DEPacdeghklmnrstuvz](?:[Gachnrsz](?:[nrst][ah]?)?)?)?)?)' # Copy into VerseReferences.py
 
-def main():
+
+def doBBB():
+    print( "\ndoBBB" )
     L0, L1, L2 = {}, {}, {}
     for BBB in BibleOrgSysGlobals.BibleBooksCodes:
         #print( BBB )
@@ -70,9 +74,9 @@ def main():
         else: L1[BBB[1]] = 1
         if BBB[2] in L2: L2[BBB[2]] += 1
         else: L2[BBB[2]] = 1
-    print( sorted(L0) )
-    print( sorted(L1) )
-    print( sorted(L2) )
+    print( ' ', sorted(L0) )
+    print( ' ', sorted(L1) )
+    print( ' ', sorted(L2) )
 
     # Now test the RE on the books codes
     for BBB in BibleOrgSysGlobals.BibleBooksCodes:
@@ -81,12 +85,49 @@ def main():
         if not match:
             print( BBB )
             halt # Got a BBB that can't be found by the RE
+# end of doBBB
+
+
+def doOSIS():
+    print( "\ndoOSIS" )
+    minL, maxL = 999, 0
+    L = {}
+    for BBB in BibleOrgSysGlobals.BibleBooksCodes:
+        #print( BBB )
+        OB = BibleOrgSysGlobals.BibleBooksCodes.getOSISAbbreviation( BBB )
+        if not OB: continue
+        #print( OB )
+        lOB = len( OB )
+        if lOB < minL: minL = lOB
+        if lOB > maxL: maxL = lOB
+        for j,obChar in enumerate( OB ):
+            if j not in L: L[j] = {}
+            if OB[j] in L[j]: L[j][OB[j]] += 1
+            else: L[j][OB[j]] = 1
+    for k in range( 0, maxL ):
+        print( ' ', k, sorted(L[k]) )
+    print( ' ', minL, maxL )
+
+    # Now test the RE on the books codes
+    for BBB in BibleOrgSysGlobals.BibleBooksCodes:
+        #print( BBB )
+        OB = BibleOrgSysGlobals.BibleBooksCodes.getOSISAbbreviation( BBB )
+        if not OB: continue
+        match = re.search( OSIS_BOOK_RE, OB )
+        if not match:
+            print( OB )
+            halt # Got a OB that can't be found by the RE
+# end of doOSIS
+
+
+def main():
+    doBBB()
+    doOSIS()
 # end of main
 
 if __name__ == '__main__':
     # Configure basic set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
-    #parser.add_option("-r", "--runScrape", action="store_true", dest="scrape", default=False, help="scrape other versification systems (requires other software installed -- the paths are built into this program)")
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
     main()
