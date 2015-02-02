@@ -28,10 +28,10 @@ Module handling BibleReferencesLinks.xml and to export to JSON, C, and Python da
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-01-24' # by RJH
+LastModifiedDate = '2015-01-31' # by RJH
 ShortProgName = "BibleReferencesLinksConverter"
 ProgName = "Bible References Links converter"
-ProgVersion = '0.22'
+ProgVersion = '0.31'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -331,7 +331,7 @@ class BibleReferencesLinksConverter:
                     targetComponent = subelement.find('targetComponent').text
                     assert( targetComponent in ('Section','Verses','Verse',) )
                     linkType = subelement.find('linkType').text
-                    assert( linkType in ('QuotedOTReference','AlludedOTReference','PossibleOTReference',) )
+                    assert( linkType in ('TSK','QuotedOTReference','AlludedOTReference','PossibleOTReference',) )
 
                     actualRawLinksList.append( (targetReference,targetComponent,linkType,) )
                     actualLinkCount += 1
@@ -396,6 +396,8 @@ class BibleReferencesLinksConverter:
 
         # Now put it into my dictionaries for easy access
         # This part should be customized or added to for however you need to process the data
+
+        # Create a link dictionary (by verse key)
         myRefLinkDict = {}
         for sourceReference,sourceComponent,parsedSourceReference,actualLinksList in myRefLinkList:
             #print( sourceReference, sourceComponent, parsedSourceReference )
@@ -406,8 +408,40 @@ class BibleReferencesLinksConverter:
                 if verseRef not in myRefLinkDict: myRefLinkDict[verseRef] = []
                 myRefLinkDict[verseRef].append( (sourceReference,sourceComponent,parsedSourceReference,actualLinksList,) )
             #print( myRefLinkDict ); halt
+        originalLinks = len( myRefLinkDict )
+        print( "  {} verse links added to dictionary (includes filling out spans)".format( originalLinks ) )
         #print( myRefLinkDict ); halt
+
+        # Create a reversed link dictionary (by verse key)
+        for sourceReference,sourceComponent,parsedSourceReference,actualLinksList in myRefLinkList:
+            #print( sourceReference, sourceComponent, parsedSourceReference )
+            #print( sourceReference, sourceComponent, parsedSourceReference, actualLinksList )
+            for targetReference,targetComponent,parsedTargetReference,linkType in actualLinksList:
+                for verseRef in parsedTargetReference.getIncludedVerses():
+                    #print( verseRef )
+                    assert( isinstance( verseRef, SimpleVerseKey ) )
+                    if linkType == 'QuotedOTReference': reverseLinkType = 'OTReferenceQuoted'
+                    elif linkType == 'AlludedOTReference': reverseLinkType = 'OTReferenceAlluded'
+                    elif linkType == 'PossibleOTReference': reverseLinkType = 'OTReferencePossible'
+                    else: halt # Have a new linkType!
+                    if verseRef not in myRefLinkDict: myRefLinkDict[verseRef] = []
+                    myRefLinkDict[verseRef].append( (targetReference,targetComponent,parsedTargetReference,[(sourceReference,sourceComponent,parsedSourceReference,reverseLinkType)]) )
+            #print( myRefLinkDict ); halt
+        totalLinks = len( myRefLinkDict )
+        reverseLinks = totalLinks - originalLinks
+        print( "  {} reverse links added to dictionary to give {} total".format( reverseLinks, totalLinks ) )
+        #print( myRefLinkDict ); halt
+
         self.__DataDict = myRefLinkDict
+
+        # Let's find the most number of references for a verse
+        mostReferences = totalReferences = 0
+        for verseRef, entryList in self.__DataDict.items():
+            numRefs = len( entryList )
+            if numRefs > mostReferences: mostReferences, mostVerseRef = numRefs, verseRef
+            totalReferences += numRefs
+        print( "  {} maximum links for any one reference ({})".format( mostReferences, mostVerseRef.getShortText() ) )
+        print( "  {} total links for all references".format( totalReferences ) )
 
         return self.__DataList, self.__DataDict
     # end of BibleReferencesLinksConverter.importDataToPython

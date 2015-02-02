@@ -28,10 +28,10 @@ Module handling BibleReferencesLinks functions.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-01-19' # by RJH
+LastModifiedDate = '2015-01-31' # by RJH
 ShortProgName = "BibleReferencesLinks"
 ProgName = "Bible References Links handler"
-ProgVersion = '0.20'
+ProgVersion = '0.21'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -117,35 +117,52 @@ class BibleReferencesLinks:
         """
         indent = 2
         result = "BibleReferencesLinks object"
-        result += ('\n' if result else '') + ' '*indent + _("Number of entries = {}").format( len(self.__DataList) )
+        result += ('\n' if result else '') + ' '*indent + _("Number of list entries = {:,}").format( len(self.__DataList) )
+        result += ('\n' if result else '') + ' '*indent + _("Number of dict entries = {:,}").format( len(self.__DataDict) )
         return result
     # end of BibleReferencesLinks.__str__
 
 
-    def __len__( self ):
-        """
-        Return the number of available codes.
-        """
-        assert( len(self.__DataList["referenceAbbreviationDict"]) == len(self.__DataList["referenceNumberDict"]) )
-        return len(self.__DataList["referenceAbbreviationDict"])
+    #def __len__( self ):
+        #"""
+        #Return the number of available codes.
+        #"""
+        #assert( len(self.__DataList["referenceAbbreviationDict"]) == len(self.__DataList["referenceNumberDict"]) )
+        #return len(self.__DataList["referenceAbbreviationDict"])
 
 
-    def __contains__( self, BBB ):
-        """ Returns True or False. """
-        return BBB in self.__DataList["referenceAbbreviationDict"]
+    #def __contains__( self, BBB ):
+        #""" Returns True or False. """
+        #return BBB in self.__DataList["referenceAbbreviationDict"]
 
 
-    def __iter__( self ):
-        """ Yields the next BBB. """
-        for BBB in self.__DataList["referenceAbbreviationDict"]:
-            yield BBB
+    #def __iter__( self ):
+        #""" Yields the next BBB. """
+        #for BBB in self.__DataList["referenceAbbreviationDict"]:
+            #yield BBB
 
     def getFullRelatedPassagesList( self, verseKey ):
+        """
+        Given a verse key, return a list containing 4-tuples:
+            0: Verse key string (same as given parameter)
+            1: Key type ('Verse' or 'Verses')
+            2: FlexibleVersesKey object
+            3: List of links containing 4-tuples:
+                0: Link verse key string
+                1: Link key type ('Verse' or 'Verses')
+                2: Link FlexibleVersesKey object
+                3: Link type ('QuotedOTReference','AlludedOTReference','PossibleOTReference')
+        """
         if verseKey in self.__DataDict:
             return self.__DataDict[verseKey]
     # end of BibleReferencesLinks.getFullRelatedPassagesList
 
     def getRelatedPassagesList( self, verseKey ):
+        """
+        Given a verse key, return a list containing 2-tuples:
+            0: Link type ('QuotedOTReference','AlludedOTReference','PossibleOTReference')
+            1: Link FlexibleVersesKey object
+        """
         if verseKey in self.__DataDict:
             relatedPassageList = self.getFullRelatedPassagesList( verseKey )
             if relatedPassageList:
@@ -175,9 +192,9 @@ def demo():
 
     # Demo the BibleReferencesLinks object
     brl = BibleReferencesLinks().loadData() # Doesn't reload the XML unnecessarily :)
-    #print( brl ) # Just print a summary
+    print( brl ) # Just print a summary
 
-    testKeys = ( 'MAT_1:23', 'MAT_3:12', 'MRK_7:7', 'ACT_7:8', )
+    testKeys = ( 'MAT_1:23', 'MAT_3:12', 'MRK_7:7', 'ACT_7:8', 'ISA_7:14', )
 
     print( "\nTest full passage list..." )
     for verseReferenceString in testKeys:

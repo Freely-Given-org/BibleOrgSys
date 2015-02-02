@@ -5,7 +5,7 @@
 #
 # Module handling the Greek lexicon
 #
-# Copyright (C) 2014 Robert Hunt
+# Copyright (C) 2014-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -34,10 +34,10 @@ Module handling the morphgnt Greek lexicon.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-16' # by RJH
+LastModifiedDate = '2015-01-31' # by RJH
 ShortProgName = "GreekLexicon"
 ProgName = "Greek Lexicon format handler"
-ProgVersion = '0.15'
+ProgVersion = '0.16'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -434,7 +434,7 @@ class GreekLexicon:
         if self.StrongsEntries is None: self.load()
         if keyDigits in self.StrongsEntries:
             entry = self.StrongsEntries[keyDigits]
-            wordEntry = {!r}.format( entry['Entry'].replace('<StrongsRef>','<span class="StrongsRef">').replace('</StrongsRef>','</span>').replace('<def>','<span class="def">').replace('</def>','</span>') ) \
+            wordEntry = '{}'.format( entry['Entry'].replace('<StrongsRef>','<span class="StrongsRef">').replace('</StrongsRef>','</span>').replace('<def>','<span class="def">').replace('</def>','</span>') ) \
                         if 'Entry' in entry else ''
             html = '<span class="GreekWord" title="{{{}}}" xml:lang="grk">{}</span> {}' \
                 .format( keyDigits, keyDigits, entry['word'][1], entry['word'][0], wordEntry )
