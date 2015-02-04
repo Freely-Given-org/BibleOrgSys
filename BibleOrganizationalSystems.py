@@ -5,7 +5,7 @@
 #
 # Module handling BibleOrganizationalSystems
 #
-# Copyright (C) 2010-2014 Robert Hunt
+# Copyright (C) 2010-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@ Module handling BibleOrganizationalSystems.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-16' # by RJH
+LastModifiedDate = '2015-02-03' # by RJH
 ShortProgName = "BibleOrganizationalSystems"
 ProgName = "Bible Organization Systems handler"
 ProgVersion = '0.29'
@@ -61,6 +61,7 @@ def t( messageString ):
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit, _(errorBit) )
+# end of t
 
 
 

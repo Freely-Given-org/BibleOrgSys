@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 #
 # BibleStylesheets.py
-#   Last modified: 2014-12-14 (also update ProgVersion below)
+#   Last modified: 2015-02-03 (also update ProgVersion below)
 #
 # Module handling Bible (including Paratext) stylesheets
 #
-# Copyright (C) 2013-2014 Robert Hunt
+# Copyright (C) 2013-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -28,7 +28,7 @@
 
 ShortProgName = "BibleStylesheets"
 ProgName = "Bible stylesheet handler"
-ProgVersion = "0.07"
+ProgVersion = '0.07'
 ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
 
 debuggingThisModule = False

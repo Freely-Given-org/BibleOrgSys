@@ -28,7 +28,7 @@ Module handling BibleReferencesLinks functions.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-01-31' # by RJH
+LastModifiedDate = '2015-02-03' # by RJH
 ShortProgName = "BibleReferencesLinks"
 ProgName = "Bible References Links handler"
 ProgVersion = '0.21'
@@ -53,8 +53,8 @@ def t( messageString ):
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
-    return '{}: {}'.format( nameBit, _(errorBit) )
+        nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
+    return '{}{}'.format( nameBit, _(errorBit) )
 # end of t
 
 

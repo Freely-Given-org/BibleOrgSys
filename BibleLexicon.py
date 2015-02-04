@@ -5,7 +5,7 @@
 #
 # Module handling the combined Hebrew and Greek lexicons
 #
-# Copyright (C) 2014 Robert Hunt
+# Copyright (C) 2014-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -31,7 +31,7 @@ Module handling the OpenScriptures Hebrew and morphgnt Greek lexicons.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-23' # by RJH
+LastModifiedDate = '2015-02-03' # by RJH
 ShortProgName = "BibleLexicon"
 ProgName = "Bible Lexicon format handler"
 ProgVersion = '0.23'
@@ -55,8 +55,8 @@ def t( messageString ):
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
-    return '{}: {}'.format( nameBit, _(errorBit) )
+        nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
+    return '{}{}'.format( nameBit, _(errorBit) )
 # end of t
 
 

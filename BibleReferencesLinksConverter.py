@@ -28,7 +28,7 @@ Module handling BibleReferencesLinks.xml and to export to JSON, C, and Python da
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-01-31' # by RJH
+LastModifiedDate = '2015-02-03' # by RJH
 ShortProgName = "BibleReferencesLinksConverter"
 ProgName = "Bible References Links converter"
 ProgVersion = '0.31'
@@ -59,8 +59,8 @@ def t( messageString ):
     try: nameBit, errorBit = messageString.split( ': ', 1 )
     except ValueError: nameBit, errorBit = '', messageString
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
-        nameBit = '{}{}{}'.format( ShortProgName, '.' if nameBit else '', nameBit )
-    return '{}: {}'.format( nameBit, _(errorBit) )
+        nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
+    return '{}{}'.format( nameBit, _(errorBit) )
 # end of t
 
 
