@@ -68,7 +68,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-01-15' # by RJH
+LastModifiedDate = '2015-02-03' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.90'
@@ -99,7 +99,6 @@ from MLWriter import MLWriter
 
 
 ALL_CHAR_MARKERS = BibleOrgSysGlobals.USFMMarkers.getCharacterMarkersList( expandNumberableMarkers=True )
-#print( ALL_CHAR_MARKERS ); halt
 
 
 
@@ -114,6 +113,7 @@ def t( messageString ):
     if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
         nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
     return '{}{}'.format( nameBit, _(errorBit) )
+# end of t
 
 
 
@@ -7443,7 +7443,6 @@ class BibleWriter( InternalBible ):
 
 
             #print( "leftoverText was", repr(leftoverText) )
-            #if 'Impanalanginan te Manama si Nuwi' in text: halt
             return indenter+leftoverText if leftoverText else ''
         # end of renderPage
 
