@@ -366,6 +366,7 @@ def demo():
 
     # Now demo the class
     testFolders = ( "/home/robert/Logs", # Shouldn't have any Bibles here
+                   "/mnt/Data/Websites/Freely-Given.org/Software/BibleDropBox/PrivatePage/Dutch_HSV.2015-02-05_07.27_0.04264300_1423074451/YourSourceFiles/Unzipped/"
                     #"../../../../../Data/Work/Bibles/theWord modules/",
                     #"../../../../../Data/Work/Bibles/Biola Unbound modules/",
                     #"../../../../../Data/Work/Bibles/OpenSong Bibles/",
@@ -373,21 +374,21 @@ def demo():
                     #"../../../../../Data/Work/Bibles/YET modules/",
                     #"../../../../../Data/Work/Matigsalug/Bible/MBTV/",
                     #"../../../../AutoProcesses/Processed/",
-                    "Tests/DataFilesForTests/USFMTest1/", "Tests/DataFilesForTests/USFMTest2/",
-                    "Tests/DataFilesForTests/USFM-OEB/", "Tests/DataFilesForTests/USFM-WEB/",
-                    "Tests/DataFilesForTests/ESFMTest1/", "Tests/DataFilesForTests/ESFMTest2/",
-                    "Tests/DataFilesForTests/USXTest1/", "Tests/DataFilesForTests/USXTest2/",
-                    "Tests/DataFilesForTests/USFXTest1/", "Tests/DataFilesForTests/USFXTest2/",
-                    "Tests/DataFilesForTests/USFX-ASV/", "Tests/DataFilesForTests/USFX-WEB/",
-                    "Tests/DataFilesForTests/OSISTest1/", "Tests/DataFilesForTests/OSISTest2/",
-                    "Tests/DataFilesForTests/ZefaniaTest/", "Tests/DataFilesForTests/HaggaiTest/",
-                    "Tests/DataFilesForTests/e-SwordTest/",
-                    "Tests/DataFilesForTests/theWordTest/", "Tests/DataFilesForTests/MySwordTest/",
-                    "Tests/DataFilesForTests/YETTest/", "Tests/DataFilesForTests/PDBTest/",
-                    "Tests/DataFilesForTests/DrupalTest/",
-                    "Tests/DataFilesForTests/CSVTest1/", "Tests/DataFilesForTests/CSVTest2/",
-                    "Tests/DataFilesForTests/VPLTest1/", "Tests/DataFilesForTests/VPLTest2/",
-                    "Tests/DataFilesForTests/", # Up a level
+                    #"Tests/DataFilesForTests/USFMTest1/", "Tests/DataFilesForTests/USFMTest2/",
+                    #"Tests/DataFilesForTests/USFM-OEB/", "Tests/DataFilesForTests/USFM-WEB/",
+                    #"Tests/DataFilesForTests/ESFMTest1/", "Tests/DataFilesForTests/ESFMTest2/",
+                    #"Tests/DataFilesForTests/USXTest1/", "Tests/DataFilesForTests/USXTest2/",
+                    #"Tests/DataFilesForTests/USFXTest1/", "Tests/DataFilesForTests/USFXTest2/",
+                    #"Tests/DataFilesForTests/USFX-ASV/", "Tests/DataFilesForTests/USFX-WEB/",
+                    #"Tests/DataFilesForTests/OSISTest1/", "Tests/DataFilesForTests/OSISTest2/",
+                    #"Tests/DataFilesForTests/ZefaniaTest/", "Tests/DataFilesForTests/HaggaiTest/",
+                    #"Tests/DataFilesForTests/e-SwordTest/",
+                    #"Tests/DataFilesForTests/theWordTest/", "Tests/DataFilesForTests/MySwordTest/",
+                    #"Tests/DataFilesForTests/YETTest/", "Tests/DataFilesForTests/PDBTest/",
+                    #"Tests/DataFilesForTests/DrupalTest/",
+                    #"Tests/DataFilesForTests/CSVTest1/", "Tests/DataFilesForTests/CSVTest2/",
+                    #"Tests/DataFilesForTests/VPLTest1/", "Tests/DataFilesForTests/VPLTest2/",
+                    #"Tests/DataFilesForTests/", # Up a level
                     )
     if 1: # Just find the files
         for j, testFolder in enumerate( testFolders ):

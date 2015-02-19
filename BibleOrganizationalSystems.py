@@ -28,10 +28,10 @@ Module handling BibleOrganizationalSystems.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-02-03' # by RJH
+LastModifiedDate = '2015-02-04' # by RJH
 ShortProgName = "BibleOrganizationalSystems"
 ProgName = "Bible Organization Systems handler"
-ProgVersion = '0.29'
+ProgVersion = '0.30'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -47,6 +47,7 @@ from BibleBookOrders import BibleBookOrderSystem
 from BiblePunctuationSystems import BiblePunctuationSystem
 from BibleVersificationSystems import BibleVersificationSystem
 from BibleBooksNames import BibleBooksNamesSystem
+from VerseReferences import SimpleVerseKey
 
 
 
@@ -417,7 +418,10 @@ class BibleOrganizationalSystem( BibleBookOrderSystem, BibleVersificationSystem,
         Extended flag allows chapter and verse numbers of zero.
         """
         if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
-            print( t("isValidBCVRef( {}, {}, {}, {} )").format( referenceTuple, referenceString, extended ) )
+            print( t("isValidBCVRef( {}, {}, {} )").format( referenceTuple, referenceString, extended ) )
+            assert( isinstance( referenceTuple, str ) or isinstance( referenceTuple, SimpleVerseKey ) )
+        if isinstance( referenceTuple, SimpleVerseKey ): referenceTuple = referenceTuple.getBCVS()
+
         BBB, C, V, S = referenceTuple
         if BBB is None or not BBB: return False
         assert( len(BBB) == 3 )

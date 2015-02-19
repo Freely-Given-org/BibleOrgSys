@@ -66,10 +66,10 @@ Each class can return
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-02-03' # by RJH
+LastModifiedDate = '2015-02-11' # by RJH
 ShortProgName = "VerseReferences"
 ProgName = "Bible verse reference handler"
-ProgVersion = '0.33'
+ProgVersion = '0.34'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -237,7 +237,7 @@ class SimpleVerseKey():
         return "{}_{}:{}{}{}".format( self.BBB, self.C, self.V, '!' if self.S else '', self.S )
 
     def makeHash( self ): # return a short, unambiguous string suitable for use as a key in a dictionary
-        return "{}:{}".format( self.BBB, self.C, self.V, self.S )
+        return "{}_{}:{}!{}".format( self.BBB, self.C, self.V, self.S )
     def __hash__( self ): return hash( self.makeHash() )
 
     def __len__( self ): return 4
@@ -288,6 +288,21 @@ class SimpleVerseKey():
         return BibleOrgSysGlobals.BibleBooksCodes.getOSISAbbreviation( self.BBB )
     def getOSISReference( self ):
         return "{}.{}.{}".format( self.getOSISBookAbbreviation(), self.C, self.V )
+
+    def __iter__( self ):
+        """
+        Yields self (for compatibility with the more complex classes.
+        """
+        yield self
+    # end of SimpleVerseKey.__iter__
+
+    def getIncludedVerses( self ):
+        """
+        Yields self (for compatibility with the more complex classes.
+        """
+        yield self
+    # end of SimpleVerseKey.getIncludedVerses
+
 
     def parseReferenceString( self, referenceString ):
         """
@@ -343,10 +358,6 @@ class SimpleVerseKey():
             logging.error( "SimpleVerseKey was unable to parse OSIS {!r}".format( referenceString ) )
         return False
     # end of SimpleVerseKey.parseOSISString
-
-    def getIncludedVerses( self ):
-        yield self
-    # end of SimpleVerseKey.getIncludedVerses
 # end of class SimpleVerseKey
 
 
@@ -371,7 +382,7 @@ class SimpleVersesKey():
         self.ignoreParseErrors = ignoreParseErrors
         #if BibleOrgSysGlobals.debugFlag:
         #    assert( isinstance( referenceString, str ) and 7<=len(referenceString)<=16 )
-        self.verseKeysList = []
+        self.keyType, self.verseKeysList = None, []
         parseFunction = self.parseOSISString if OSIS else self.parseReferenceString
         if not parseFunction( referenceString ):
             raise TypeError
@@ -410,60 +421,20 @@ class SimpleVersesKey():
         return resultStr
     # end of SimpleVersesKey.getVerseKeyText
 
-    """
-    def makeHash( self ): # return a short, unambiguous string suitable for use as a key in a dictionary
-        return "{}(?:!{})?:{}(?:!{})?".format( self.BBB, self.C, self.V, self.S )
-    def __hash__( self ): return hash( self.makeHash() )
+    def __iter__( self ):
+        """
+        Yields the verse keys one by one.
+        """
+        for verseKey in self.verseKeysList:
+            yield verseKey
+    # end of SimpleVersesKey.__iter__
 
-    def __len__( self ): return 4
-    def __getitem__( self, keyIndex ):
-        if keyIndex==0: return self.BBB
-        elif keyIndex==1: return self.C
-        elif keyIndex==2: return self.V
-        elif keyIndex==3: return self.S
-        else: raise IndexError
 
-    def getBBB( self ): return self.BBB
-    def getChapterNumber( self ): return self.C
-    def getChapterNumberStr( self ): return self.C
-    def getVerseNumber( self ): return self.V
-    def getVerseNumberStr( self ): return self.V
-    def getVerseSuffix( self ): return self.S
+    def getIncludedVerses( self ):
+        for iv in self.verseKeysList:
+            yield iv
+    # end of SimpleVersesKey.getIncludedVerses
 
-    def getBCV( self ): return self.BBB, self.C, self.V
-    def getBCVS( self ): return self.BBB, self.C, self.V, self.S
-    def getCV( self ): return self.C, self.V
-    def getCVS( self ): return self.C, self.V, self.S
-
-    def getChapterNumberInt( self ):
-        try: return( int( self.C ) )
-        except ValueError:
-            logging.warning( t("getChapterNumberInt: Unusual C value: {}").format( repr(self.C) ) )
-            if self.C and self.C[0].isdigit():
-                digitCount = 0
-                for char in self.C:
-                    if char.isdigit(): digitCount += 1
-                return( int( self.C[:digitCount] ) )
-            return None
-    # end of SimpleVerseKey.getChapterNumberInt
-
-    def getVerseNumberInt( self ):
-        try: return( int( self.V ) )
-        except ValueError:
-            logging.warning( t("getVerseNumberInt: Unusual V value: {}").format( repr(self.V) ) )
-            if self.V and self.V[0].isdigit():
-                digitCount = 0
-                for char in self.V:
-                    if char.isdigit(): digitCount += 1
-                return( int( self.V[:digitCount] ) )
-            return None
-    # end of SimplesVerseKey.getVerseNumberInt
-
-    def getOSISBookAbbreviation( self ):
-        return BibleOrgSysGlobals.BibleBooksCodes.getOSISAbbreviation( self.BBB )
-    def getOSISReference( self ):
-        return "{}.{}.{}".format( self.getOSISBookAbbreviation(), self.C, self.V )
-    """
 
     def parseReferenceString( self, referenceString ):
         """
@@ -484,6 +455,7 @@ class SimpleVersesKey():
                 logging.error( "SimpleVersesKey: Invalid {!r} book code".format( BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
                 assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
+                print( "QWEQW", referenceString )
                 assert( int(V2)>int(V1)+1 or S2!=S1 )
             self.verseKeysList = [SimpleVerseKey(BBB,C,V1,S1), SimpleVerseKey(BBB,C,V2,S2)]
             self.keyType = '2V'
@@ -514,6 +486,7 @@ class SimpleVersesKey():
                 logging.error( "SimpleVersesKey: Invalid {!r} book code".format( self.BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
                 assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
+                print( "SDADQ", referenceString )
                 assert( int(V2)>int(V1)+1 or S2!=S1 )
                 assert( int(V3)>int(V2)+1 or S3!=S2 )
             self.verseKeysList = [SimpleVerseKey(BBB,C,V1,S1), SimpleVerseKey(BBB,C,V2,S2), SimpleVerseKey(BBB,C,V3,S3)]
@@ -547,6 +520,7 @@ class SimpleVersesKey():
                 logging.error( "SimpleVersesKey: Invalid {!r} book code".format( self.BBB ) )
             if BibleOrgSysGlobals.strictCheckingFlag:
                 assert( BBB in BibleOrgSysGlobals.BibleBooksCodes )
+                print( "CCVSD", referenceString )
                 assert( int(V2)>int(V1)+1 or S2!=S1 )
                 assert( int(V3)>int(V2)+1 or S3!=S2 )
                 assert( int(V4)>int(V3)+1 or S4!=S3 )
@@ -767,11 +741,6 @@ class SimpleVersesKey():
             logging.error( "SimpleVerseKey was unable to parse {!r}".format( referenceString ) )
         return False
     # end of SimpleVersesKey.parseOSISString
-
-    def getIncludedVerses( self ):
-        for iv in self.verseKeysList:
-            yield iv
-    # end of SimpleVerseKey.getIncludedVerses
 # end of class SimpleVersesKey
 
 
@@ -798,7 +767,7 @@ class VerseRangeKey():
         self.ignoreParseErrors = ignoreParseErrors
         #if BibleOrgSysGlobals.debugFlag:
         #    assert( isinstance( referenceString, str ) and 7<=len(referenceString)<=16 )
-        #self.verseKeysList = []
+        self.keyType = None
         parseFunction = self.parseOSISString if OSIS else self.parseReferenceString
         if not parseFunction( referenceString ):
             raise TypeError
@@ -826,57 +795,22 @@ class VerseRangeKey():
             else: resultStr += '–{}:{}{}{}'.format( C,V, '!' if S else '', S )
         else: resultStr += '–{}_{}:{}{}{}'.format( BBB, C,V, '!' if S else '', S )
         return resultStr
-    # end of SimpleVersesKey.getVerseKeyText
+    # end of VerseRangeKey.getVerseKeyText
 
-    """
-    def makeHash( self ): # return a short, unambiguous string suitable for use as a key in a dictionary
-        return "{}(?:!{})?:{}(?:!{})?".format( self.BBB, self.C, self.V, self.S )
-    def __hash__( self ): return hash( self.makeHash() )
+    def __iter__( self ):
+        """
+        Yields the verse keys one by one.
+        """
+        for verseKey in self.verseKeysList:
+            yield verseKey
+    # end of VerseRangeKey.__iter__
 
-    def __len__( self ): return 4
-    def __getitem__( self, keyIndex ):
-        if keyIndex==0: return self.BBB
-        elif keyIndex==1: return self.C
-        elif keyIndex==2: return self.V1
-        elif keyIndex==3: return self.S1
-        else: raise IndexError
 
-    def getBBB( self ): return self.BBB
-    def getChapterNumber( self ): return self.C
-    def getChapterNumberStr( self ): return self.C
-    def getVerseNumber( self ): return self.V
-    def getVerseNumberStr( self ): return self.V
-    def getVerseSuffix( self ): return self.S
+    def getIncludedVerses( self ):
+        for iv in self.verseKeysList:
+            yield iv
+    # end of SimpleVerseKey.getIncludedVerses
 
-    def getBCV( self ): return self.BBB, self.C, self.V
-    def getBCVS( self ): return self.BBB, self.C, self.V, self.S
-    def getCV( self ): return self.C, self.V
-    def getCVS( self ): return self.C, self.V, self.S
-
-    def getChapterNumberInt( self ):
-        try: return( int( self.C ) )
-        except ValueError:
-            logging.warning( t("getChapterNumberInt: Unusual C value: {}").format( repr(self.C) ) )
-            if self.C and self.C[0].isdigit():
-                digitCount = 0
-                for char in self.C:
-                    if char.isdigit(): digitCount += 1
-                return( int( self.C[:digitCount] ) )
-            return None
-    # end of VerseRangeKey.getChapterNumberInt
-
-    def getVerseNumberInt( self ):
-        try: return( int( self.V ) )
-        except ValueError:
-            logging.warning( t("getVerseNumberInt: Unusual V value: {}").format( repr(self.V) ) )
-            if self.V and self.V[0].isdigit():
-                digitCount = 0
-                for char in self.V:
-                    if char.isdigit(): digitCount += 1
-                return( int( self.V[:digitCount] ) )
-            return None
-    # end of VerseRangeKey.getVerseNumberInt
-    """
 
     def parseReferenceString( self, referenceString ):
         """
@@ -959,6 +893,7 @@ class VerseRangeKey():
         return False
     # end of VerseRangeKey.parseReferenceString
 
+
     def parseOSISString( self, referenceString ):
         """
         Parses a string, expecting something like "SA2_19:5b"
@@ -1034,11 +969,6 @@ class VerseRangeKey():
             logging.error( "VerseRangeKey was unable to parse {!r}".format( referenceString ) )
         return False
     # end of VerseRangeKey.parseOSISString
-
-    def getIncludedVerses( self ):
-        for iv in self.verseKeysList:
-            yield iv
-    # end of SimpleVerseKey.getIncludedVerses
 # end of class VerseRangeKey
 
 
@@ -1064,7 +994,7 @@ class FlexibleVersesKey():
             print( t("__init__( {!r} )").format( referenceString ) )
         if BibleOrgSysGlobals.debugFlag:
             assert( isinstance( referenceString, str ) and 5<=len(referenceString)<=20 )
-        self.verseKeyObjectList = []
+        self.keyType, self.verseKeyObjectList = None, []
         parseFunction = self.parseOSISString if OSIS else self.parseReferenceString
         if not parseFunction( referenceString ):
             raise TypeError
@@ -1088,61 +1018,35 @@ class FlexibleVersesKey():
         #if self.keyType=='V,V-V': return '{} {}:{}(?:!{})?,{}(?:!{})?-{}(?:!{})?'.format( self.BBB, self.C, self.V1, self.S1, self.V2, self.S2, self.V3, self.S3 )
         #halt
     def getVerseKeyText( self ):
+        if self.keyType=='V-V,V':
+            vRange, vSingle = self.verseKeyObjectList[0], self.verseKeyObjectList[1]
+            #print( "here", vRange, vSingle, "'{},{}'".format( vRange.getVerseKeyText(), vSingle.getVerseNumber() ) )
+            S = vSingle.getVerseSuffix()
+            return '{},{}{}{}'.format( vRange.getVerseKeyText(), vSingle.getVerseNumber(), '!' if S else '', S )
         resultText = ''
         for verseKeyObject in self.verseKeyObjectList:
             if resultText: resultText += ', '
             resultText += verseKeyObject.getVerseKeyText()
         return resultText
 
-    """
-    def makeHash( self ): # return a short, unambiguous string suitable for use as a key in a dictionary
-        return "{}(?:!{})?:{}(?:!{})?".format( self.BBB, self.C, self.V, self.S )
-    def __hash__( self ): return hash( self.makeHash() )
+    def __iter__( self ):
+        """
+        Yields the next verses object.
+        """
+        for someVerseObject in self.verseKeyObjectList:
+            yield someVerseObject
+    # end of FlexibleVersesKey.__iter__
 
-    def __len__( self ): return len(self.result)
-    def __getitem__( self, keyIndex ):
-        if keyIndex==0: return self.BBB
-        elif keyIndex==1: return self.C
-        elif keyIndex==2: return self.V
-        elif keyIndex==3: return self.S
-        else: raise IndexError
 
-    def getBBB( self ): return self.result.getBBB()
-    def getChapterNumber( self ): return self.result.getChapterNumber()
-    def getChapterNumberStr( self ): return self.C
-    def getVerseNumber( self ): return self.V
-    def getVerseNumberStr( self ): return self.V
-    def getVerseSuffix( self ): return self.S
+    def getIncludedVerses( self ):
+        """
+        """
+        resultList = []
+        for verseKeyObject in self.verseKeyObjectList:
+            resultList.extend( verseKeyObject.getIncludedVerses() )
+        return resultList
+    # end of FlexibleVersesKey.getIncludedVerses
 
-    def getBCV( self ): return self.BBB, self.C, self.V
-    def getBCVS( self ): return self.BBB, self.C, self.V, self.S
-    def getCV( self ): return self.C, self.V
-    def getCVS( self ): return self.C, self.V, self.S
-
-    def getChapterNumberInt( self ):
-        try: return( int( self.C ) )
-        except ValueError:
-            logging.warning( t("getChapterNumberInt: Unusual C value: {}").format( repr(self.C) ) )
-            if self.C and self.C[0].isdigit():
-                digitCount = 0
-                for char in self.C:
-                    if char.isdigit(): digitCount += 1
-                return( int( self.C[:digitCount] ) )
-            return None
-    # end of FlexibleVersesKey.getChapterNumberInt
-
-    def getVerseNumberInt( self ):
-        try: return( int( self.V ) )
-        except ValueError:
-            logging.warning( t("getVerseNumberInt: Unusual V value: {}").format( repr(self.V) ) )
-            if self.V and self.V[0].isdigit():
-                digitCount = 0
-                for char in self.V:
-                    if char.isdigit(): digitCount += 1
-                return( int( self.V[:digitCount] ) )
-            return None
-    # end of FlexibleVersesKey.getVerseNumberInt
-    """
 
     def parseReferenceString( self, referenceString ):
         """
@@ -1747,14 +1651,6 @@ class FlexibleVersesKey():
         logging.error( "FlexibleVersesKey was unable to parse {!r}".format( referenceString ) )
         return False
     # end of FlexibleVersesKey.parseOSISString
-
-
-    def getIncludedVerses( self ):
-        resultList = []
-        for verseKeyObject in self.verseKeyObjectList:
-            resultList.extend( verseKeyObject.getIncludedVerses() )
-        return resultList
-    # end of FlexibleVersesKey.getIncludedVerses
 # end of class FlexibleVersesKey
 
 

@@ -28,10 +28,10 @@ Module handling BibleReferencesLinks.xml and to export to JSON, C, and Python da
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-02-03' # by RJH
+LastModifiedDate = '2015-02-16' # by RJH
 ShortProgName = "BibleReferencesLinksConverter"
 ProgName = "Bible References Links converter"
-ProgVersion = '0.31'
+ProgVersion = '0.40'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -379,7 +379,10 @@ class BibleReferencesLinksConverter:
                         logging.error( "{} {!r} failed!".format( targetComponent, targetReference ) )
                         raise TypeError
                 # Now do the actual parsing
-                parsedTargetReference = FlexibleVersesKey( targetReference )
+                try: parsedTargetReference = FlexibleVersesKey( targetReference )
+                except TypeError:
+                    print( "  Temporarily ignored {!r} (TypeError from FlexibleVersesKey)".format( targetReference ) )
+                    parsedTargetReference = None
                 if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
                     print( ' ', targetComponent, targetReference, parsedTargetReference )
                     #assert( parsedTargetReference.getShortText().replace(' ','_',1) == targetReference )
@@ -417,15 +420,17 @@ class BibleReferencesLinksConverter:
             #print( sourceReference, sourceComponent, parsedSourceReference )
             #print( sourceReference, sourceComponent, parsedSourceReference, actualLinksList )
             for targetReference,targetComponent,parsedTargetReference,linkType in actualLinksList:
-                for verseRef in parsedTargetReference.getIncludedVerses():
-                    #print( verseRef )
-                    assert( isinstance( verseRef, SimpleVerseKey ) )
-                    if linkType == 'QuotedOTReference': reverseLinkType = 'OTReferenceQuoted'
-                    elif linkType == 'AlludedOTReference': reverseLinkType = 'OTReferenceAlluded'
-                    elif linkType == 'PossibleOTReference': reverseLinkType = 'OTReferencePossible'
-                    else: halt # Have a new linkType!
-                    if verseRef not in myRefLinkDict: myRefLinkDict[verseRef] = []
-                    myRefLinkDict[verseRef].append( (targetReference,targetComponent,parsedTargetReference,[(sourceReference,sourceComponent,parsedSourceReference,reverseLinkType)]) )
+                if parsedTargetReference is not None:
+                    for verseRef in parsedTargetReference.getIncludedVerses():
+                        #print( verseRef )
+                        assert( isinstance( verseRef, SimpleVerseKey ) )
+                        if linkType == 'TSK': reverseLinkType = 'TSKQuoted'
+                        elif linkType == 'QuotedOTReference': reverseLinkType = 'OTReferenceQuoted'
+                        elif linkType == 'AlludedOTReference': reverseLinkType = 'OTReferenceAlluded'
+                        elif linkType == 'PossibleOTReference': reverseLinkType = 'OTReferencePossible'
+                        else: halt # Have a new linkType!
+                        if verseRef not in myRefLinkDict: myRefLinkDict[verseRef] = []
+                        myRefLinkDict[verseRef].append( (targetReference,targetComponent,parsedTargetReference,[(sourceReference,sourceComponent,parsedSourceReference,reverseLinkType)]) )
             #print( myRefLinkDict ); halt
         totalLinks = len( myRefLinkDict )
         reverseLinks = totalLinks - originalLinks
@@ -467,6 +472,41 @@ class BibleReferencesLinksConverter:
             pickle.dump( self.__DataList, myFile )
             pickle.dump( self.__DataDict, myFile )
     # end of BibleReferencesLinksConverter.pickle
+
+
+    def exportDataWithIndex( self, filepath=None ):
+        """
+        Writes the information tables to a .pickle index file and .json file that can be easily loaded into a Java program.
+
+        See http://en.wikipedia.org/wiki/JSON.
+        """
+        import pickle
+
+        assert( self._XMLtree )
+        self.importDataToPython()
+        assert( self.__DataList )
+        assert( self.__DataDict )
+
+        if not filepath:
+            folder = os.path.join( os.path.split(self.__XMLFilepath)[0], "DerivedFiles/" )
+            if not os.path.exists( folder ): os.mkdir( folder )
+            indexFilepath = os.path.join( folder, self._filenameBase + "_Tables.index.pickle" )
+            dataFilepath = os.path.join( folder, self._filenameBase + "_Tables.data.pickle" )
+        if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Exporting to {}...").format( dataFilepath ) )
+        index = {}
+        filePosition = 0
+        with open( dataFilepath, 'wb' ) as myFile:
+            for vKey,refList in self.__DataDict.items():
+                #print( "vKey", vKey, vKey.getVerseKeyText() )
+                #print( " ", refList )
+                length = myFile.write( pickle.dumps( refList ) )
+                #print( " ", filePosition, length )
+                assert( vKey not in index )
+                index[vKey] = (filePosition, length )
+                filePosition += length
+        with open( indexFilepath, 'wb' ) as myFile:
+            pickle.dump( index, myFile )
+    # end of BibleReferencesLinksConverter.exportDataWithIndex
 
 
     def exportDataToPython( self, filepath=None ):
@@ -666,6 +706,7 @@ def demo():
 
     if BibleOrgSysGlobals.commandLineOptions.export:
         brlc = BibleReferencesLinksConverter().loadAndValidate() # Load the XML
+        brlc.exportDataWithIndex() # Produce a data file and an index file
         brlc.pickle() # Produce a pickle output file
         brlc.exportDataToJSON() # Produce a json output file
         brlc.exportDataToPython() # Produce the .py tables
