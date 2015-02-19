@@ -124,6 +124,7 @@ class BibleReferencesLinks:
         #for BBB in self.__DataList["referenceAbbreviationDict"]:
             #yield BBB
 
+
     def __getEntry( self, verseKey ):
         """
         """
