@@ -42,7 +42,7 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-02-03' # by RJH
+LastModifiedDate = '2015-03-01' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.92'
@@ -3324,7 +3324,7 @@ class InternalBibleBook:
             self.processLines()
         if BibleOrgSysGlobals.debugFlag: assert( self._processedLines )
 
-        titleList, headingList, sectionReferenceList, headingErrors = [], [], [], []
+        titleList, sectionHeadingList, sectionReferenceList, descriptiveTitleList, headingErrors = [], [], [], [], []
         C = V = '0'
         for entry in self._processedLines:
             marker, text = entry.getMarker(), entry.getText()
@@ -3341,8 +3341,8 @@ class InternalBibleBook:
                     headingErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("{} title ends with a period: {}").format( marker, text ) )
                     self.addPriorityError( 69, C, V, _("Title ends with a period") )
             elif marker in ('s1','s2','s3','s4',):
-                if marker=='s1': headingList.append( "{} {}:{} '{}'".format( self.BBB, C, V, text ) )
-                else: headingList.append( "{} {}:{} ({}) '{}'".format( self.BBB, C, V, marker, text ) )
+                if marker=='s1': sectionHeadingList.append( "{} {}:{} '{}'".format( self.BBB, C, V, text ) )
+                else: sectionHeadingList.append( "{} {}:{} ({}) '{}'".format( self.BBB, C, V, marker, text ) )
                 if not text:
                     headingErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing heading text for marker {}").format( marker ) )
                     priority = 58
@@ -3367,11 +3367,25 @@ class InternalBibleBook:
                         if text[0]!='(' or text[-1]!=')':
                             headingErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Section cross-reference not in parenthesis: {}").format( text ) )
                             self.addPriorityError( 67, C, V, _("Section cross-reference not in parenthesis") )
+            elif marker=='d':
+                descriptiveTitleList.append( "{} {}:{} '{}'".format( self.BBB, C, V, text ) )
+                if not text:
+                    headingErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("Missing heading text for marker {}").format( marker ) )
+                    priority = 57
+                    if discoveryDict:
+                        if 'partlyDone' in discoveryDict and discoveryDict['partlyDone']>0: priority = 27
+                        if 'notStarted' in discoveryDict and discoveryDict['notStarted']>0: priority = 17
+                    self.addPriorityError( priority, C, V, _("Missing heading text") )
+                elif text[-1] not in '.።':
+                    headingErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("{} heading should end with a period: {}").format( marker, text ) )
+                    self.addPriorityError( 67, C, V, _("Heading should end with a period") )
 
-        if (headingErrors or titleList or headingList or sectionReferenceList) and 'Headings' not in self.errorDictionary: self.errorDictionary['Headings'] = OrderedDict() # So we hopefully get the errors first
+        if (headingErrors or titleList or sectionHeadingList or sectionReferenceList or descriptiveTitleList) and 'Headings' not in self.errorDictionary:
+            self.errorDictionary['Headings'] = OrderedDict() # So we hopefully get the errors first
         if headingErrors: self.errorDictionary['Headings']['Possible Heading Errors'] = headingErrors
         if titleList: self.errorDictionary['Headings']['Title Lines'] = titleList
-        if headingList: self.errorDictionary['Headings']['Section Heading Lines'] = headingList
+        if sectionHeadingList: self.errorDictionary['Headings']['Section Heading Lines'] = sectionHeadingList
+        if descriptiveTitleList: self.errorDictionary['Headings']['Descriptive Heading Lines'] = descriptiveTitleList
         if sectionReferenceList: self.errorDictionary['Headings']['Section Cross-reference Lines'] = sectionReferenceList
     # end of InternalBibleBook.doCheckHeadings
 

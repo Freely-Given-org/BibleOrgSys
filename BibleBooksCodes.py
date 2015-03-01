@@ -28,10 +28,10 @@ Module handling BibleBooksCodes functions.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-02-03' # by RJH
+LastModifiedDate = '2015-02-27' # by RJH
 ShortProgName = "BibleBooksCodes"
 ProgName = "Bible Books Codes handler"
-ProgVersion = '0.76'
+ProgVersion = '0.77'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -338,7 +338,9 @@ class BibleBooksCodes:
 
 
     def getSingleChapterBooksList( self ):
-        """ Gets a list of single chapter book codes. """
+        """
+        Makes up and returns a list of single chapter book codes.
+        """
         results = []
         for BBB in self.__DataDicts["referenceAbbreviationDict"]:
             if self.__DataDicts["referenceAbbreviationDict"][BBB]["numExpectedChapters"] is not None \
@@ -474,6 +476,18 @@ class BibleBooksCodes:
         """
         return self.__DataDicts["referenceAbbreviationDict"][BBB]['typicalSection']
     # end of BibleBooksCodes.getPossibleAlternativeBooksCodes
+
+
+    def continuesThroughChapters( self, BBB ):
+        """
+        Returns True if the storyline of the book continues through chapters,
+            i.e., the chapter divisions are artificial.
+
+        Returns False for books like Psalms where chapters are actual units.
+        """
+        if BBB in ('PSA','LAM',): return False
+        return True
+    # end of BibleBooksCodes.continuesThroughChapters
 
 
 
