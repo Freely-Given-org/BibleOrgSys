@@ -42,7 +42,7 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-03-01' # by RJH
+LastModifiedDate = '2015-03-03' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.92'
@@ -2454,7 +2454,7 @@ class InternalBibleBook:
         functionalCounts = {}
         modifiedMarkerList = []
         C = V = '0'
-        section, lastMarker = '', ''
+        section, lastMarker, lastModifiedMarker = '', '', None
         lastMarkerEmpty = True
         for entry in self._processedLines:
             marker, originalMarker, text, extras = entry.getMarker(), entry.getOriginalMarker(), entry.getText(), entry.getExtras()
@@ -2543,8 +2543,14 @@ class InternalBibleBook:
                 #print( "section", newSection )
                 section = newSection
 
-            # Note the newline SFM order -- create a list of markers in order (with duplicates combined, e.g., \v \v -> \v)
-            if not modifiedMarkerList or modifiedMarkerList[-1] != marker: modifiedMarkerList.append( marker )
+            # Note the newline SFM order -- create a list of markers in order (with duplicates combined, e.g., \v \v -> \v+)
+            if marker != lastModifiedMarker: modifiedMarkerList.append( marker )
+            else: # same marker in a row -- we append a plus sign to the saved marker
+                oldMarker = modifiedMarkerList.pop()
+                assert( oldMarker == marker or oldMarker == marker+'+' )
+                modifiedMarkerList.append( marker+'+' )
+            lastModifiedMarker = marker
+
             # Check for known bad combinations
             if marker=='nb' and lastMarker in ('s','s1','s2','s3','s4','s5'):
                 newlineMarkerErrors.append( "{} {}:{} ".format( self.BBB, C, V ) + _("'nb' not allowed immediately after {!r} section heading").format( marker ) )

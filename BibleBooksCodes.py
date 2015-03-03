@@ -28,7 +28,7 @@ Module handling BibleBooksCodes functions.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-02-27' # by RJH
+LastModifiedDate = '2015-03-01' # by RJH
 ShortProgName = "BibleBooksCodes"
 ProgName = "Bible Books Codes handler"
 ProgVersion = '0.77'
@@ -484,6 +484,9 @@ class BibleBooksCodes:
             i.e., the chapter divisions are artificial.
 
         Returns False for books like Psalms where chapters are actual units.
+
+        Note that this is a bit of a hack,
+            because ideally this information should be encoded in the XML file, not here in the code.
         """
         if BBB in ('PSA','LAM',): return False
         return True
