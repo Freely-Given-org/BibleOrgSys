@@ -42,7 +42,7 @@ Required improvements:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-03-03' # by RJH
+LastModifiedDate = '2015-03-04' # by RJH
 ShortProgName = "InternalBibleBook"
 ProgName = "Internal Bible book handler"
 ProgVersion = '0.92'
@@ -2545,10 +2545,10 @@ class InternalBibleBook:
 
             # Note the newline SFM order -- create a list of markers in order (with duplicates combined, e.g., \v \v -> \v+)
             if marker != lastModifiedMarker: modifiedMarkerList.append( marker )
-            else: # same marker in a row -- we append a plus sign to the saved marker
+            else: # same marker in a row -- we append a sign to the saved marker to indicate multiple occurences
                 oldMarker = modifiedMarkerList.pop()
-                assert( oldMarker == marker or oldMarker == marker+'+' )
-                modifiedMarkerList.append( marker+'+' )
+                assert( oldMarker == marker or oldMarker == marker+'*' )
+                modifiedMarkerList.append( marker+'*' ) # Save the marker with the sign
             lastModifiedMarker = marker
 
             # Check for known bad combinations
@@ -3918,7 +3918,7 @@ def demo():
 
 
 if __name__ == '__main__':
-    # Configure basic set-up
+    # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 

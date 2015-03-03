@@ -72,10 +72,10 @@ Contains functions:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-01-11' # by RJH
+LastModifiedDate = '2015-03-04' # by RJH
 ShortProgName = "BOSGlobals"
 ProgName = "BibleOrgSys Globals"
-ProgVersion = '0.57'
+ProgVersion = '0.58'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -975,7 +975,7 @@ def addStandardOptionsAndProcess( parserObject, exportAvailable=False ):
     parserObject.add_option( "-e", "--errors", action="store_true", dest="errors", default=False, help="log errors to console" )
     parserObject.add_option( "-w", "--warnings", action="store_true", dest="warnings", default=False, help="log warnings and errors to console" )
     parserObject.add_option( "-d", "--debug", action="store_true", dest="debug", default=False, help="output even more information for the programmer/debugger" )
-    parserObject.add_option( "-1", "--single", action="store_true", dest="single", default=False, help="don't use multiprocessing" )
+    parserObject.add_option( "-1", "--single", action="store_true", dest="single", default=False, help="don't use multiprocessing (that's the digit one)" )
     parserObject.add_option( "-c", "--strict", action="store_true", dest="strict", default=False, help="perform very strict checking of all input" )
     if exportAvailable:
         parserObject.add_option("-x", "--export", action="store_true", dest="export", default=False, help="export the data file(s)")
@@ -1076,7 +1076,7 @@ if __name__ != '__main__': # Load global Bible data sets
 if __name__ == '__main__':
     import multiprocessing
 
-    # Configure basic set-up
+    # Configure basic Bible Organisational System (BOS) set-up
     parser = setup( ProgName, ProgVersion )
     addStandardOptionsAndProcess( parser )
 

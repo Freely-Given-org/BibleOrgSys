@@ -1683,7 +1683,7 @@ def demo():
 
 
 if __name__ == '__main__':
-    # Configure basic set-up
+    # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 

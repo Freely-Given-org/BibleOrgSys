@@ -23,61 +23,93 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-A short demo app which inputs any known type of Bible files
-    and then exports a PhotoBible in the (default) OutputFiles folder.
+A short app as part of BOS (Bible Organisational System) demos.
+This app inputs any known type of Bible file(s) [set inputFolder below]
+    and then exports a PhotoBible in the (default) OutputFiles folder
+        (inside the folder where you installed the BOS).
+
+Of course, you must already have Python3 installed on your system.
+    (Probably installed by default on most modern Linux systems.)
+For the PhotoBible export, you also need ImageMagick installed.
+
+Note that this app MUST BE RUN FROM YOUR BOS folder,
+    e.g., using the command:
+        Apps/MakePhotoBible.py
+
+You can discover the version with
+        Apps/MakePhotoBible.py --version
+
+You can discover the available command line parameters with
+        Apps/MakePhotoBible.py --help
+
+    e.g., for verbose mode
+        Apps/MakePhotoBible.py --verbose
+    or
+        Apps/MakePhotoBible.py -v
+
+This app also demonstrates how little code is required to use the BOS
+    to load a Bible (in any of a large range of formats -- see UnknownBible.py)
+    and then to export it in your desired format (see options in BibleWriter.py).
+
+The (Python3) BOS is developed and well-tested on Linux (Ubuntu)
+    but also runs on Windows (although not so well tested).
+(The PhotoBible export is unlikely to work straight away on Windows,
+    but most other Bible exports should.)
+
+Because it uses external programs (ImageMagick), the PhotoBible export
+    runs several orders of magnitude slower than most other Bible exports.
 """
+
+# You must specify where to find a Bible to read
+#   (This can be either an absolute path or a relative path)
+inputFolder = "../../../../../Data/Work/Matigsalug/Bible/MBTV/"
+
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-02-03' # by RJH
+LastModifiedDate = '2015-03-04' # by RJH
 ShortProgName = "MakePhotoBible"
 ProgName = "Make PhotoBible"
-ProgVersion = '0.10'
+ProgVersion = '0.20'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
-debuggingThisModule = False
-
-
-# Allow the app to run from either the BOS folder or in this Apps subfolder
+# Allow the system to find the BOS even when the app is in its own folder
 import sys
-sys.path.append( '.' )
-sys.path.append( '..' )
+sys.path.append( '.' ) # Append the containing folder to the path to search for the BOS
 import BibleOrgSysGlobals
 from UnknownBible import UnknownBible
 
-
-# Specify where to find a Bible to read
-#   (This can be either an absolute path or a relative path)
-inputFolder = "../../../../../Data/Work/Matigsalug/Bible/MBTV/"
 
 
 def main():
     """
     This is the main program
         which just tries to open and load some kind of Bible file(s)
-        and then export a PhotoBible (in the OutputFiles folder).
+            from the inputFolder that you specified
+        and then export a PhotoBible (in the default OutputFiles folder).
     """
     if BibleOrgSysGlobals.verbosityLevel > 0:
-        print( "\nMakePhotoBible: processing {}...".format( inputFolder ) )
+        print( ProgNameVersion )
+        print( "\n{}: processing input folder {!r} ...".format( ShortProgName, inputFolder ) )
 
-    # Try to detect and read the Bible files
+    # Try to detect and read/load the Bible file(s)
     unknownBible = UnknownBible( inputFolder ) # Tell it the folder to start looking in
     loadedBible = unknownBible.search( autoLoadBooks=True ) # Load all the books if we find any
     if BibleOrgSysGlobals.verbosityLevel > 2: print( unknownBible )
     if BibleOrgSysGlobals.verbosityLevel > 1: print( loadedBible )
 
     # If we were successful, do the export
-    if loadedBible:
-        if BibleOrgSysGlobals.verbosityLevel > 0:
-            print( "\nMakePhotoBible: starting export (may take up to 30 minutes)..." )
+    if loadedBible is not None:
         if BibleOrgSysGlobals.strictCheckingFlag: loadedBible.check()
+        if BibleOrgSysGlobals.verbosityLevel > 0:
+            print( "\n{}: starting export (may take up to 60 minutes)...".format( ShortProgName ) )
         result = loadedBible.toPhotoBible()
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Result was: {}".format( result ) )
 # end of main
 
 if __name__ == '__main__':
-    # Configure basic set-up
+    # Configure basic Bible Organisational System (BOS) set-up
     parser = BibleOrgSysGlobals.setup( ProgName, ProgVersion )
     BibleOrgSysGlobals.addStandardOptionsAndProcess( parser )
 
