@@ -9215,7 +9215,7 @@ class BibleWriter( InternalBible ):
 
     def doExportHelper( self, ff ):
         """
-        Only used for multiprocessing.
+        Only used in doAllExports for multiprocessing.
 
         Parameter ff is a 2-tuple containing the function to run, and the folder parameter to pass
         """
@@ -9236,7 +9236,9 @@ class BibleWriter( InternalBible ):
         If the output folder is specified, it is expected that it's already created.
         Otherwise a new subfolder is created in the current folder.
 
-        The two very processor intensive exports require explicit inclusion.
+        The three very processor intensive exports require explicit inclusion.
+
+        Returns a dictionary of result flags.
         """
         allWord = "all" if wantPhotoBible and wantODFs and wantPDFs else "most"
         if BibleOrgSysGlobals.verbosityLevel > 1:

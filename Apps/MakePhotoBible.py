@@ -53,15 +53,18 @@ This app also demonstrates how little code is required to use the BOS
 
 The (Python3) BOS is developed and well-tested on Linux (Ubuntu)
     but also runs on Windows (although not so well tested).
-(The PhotoBible export is unlikely to work straight away on Windows,
-    but most other Bible exports should.)
+(The PhotoBible export is unlikely to work straight away on Windows
+    because it calls external programs outside of Python to make the JPEG files,
+    but most other Bible exports should work fine.)
 
-Because it uses external programs (ImageMagick), the PhotoBible export
+Because it repeatedly runs external programs (ImageMagick), the PhotoBible export
     runs several orders of magnitude slower than most other Bible exports.
 """
 
-# You must specify where to find a Bible to read
-#   (This can be either an absolute path or a relative path)
+# You must specify where to find a Bible to read --
+#   this can be either a relative path (like my example where ../ means go to the folder above)
+#   or an absolute path (which would start with / or maybe ~/ in Linux).
+# Normally this is the only line in the program that you would need to change.
 inputFolder = "../../../../../Data/Work/Matigsalug/Bible/MBTV/"
 
 
@@ -70,7 +73,7 @@ from gettext import gettext as _
 LastModifiedDate = '2015-03-04' # by RJH
 ShortProgName = "MakePhotoBible"
 ProgName = "Make PhotoBible"
-ProgVersion = '0.20'
+ProgVersion = '0.21'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -104,7 +107,13 @@ def main():
         if BibleOrgSysGlobals.strictCheckingFlag: loadedBible.check()
         if BibleOrgSysGlobals.verbosityLevel > 0:
             print( "\n{}: starting export (may take up to 60 minutes)...".format( ShortProgName ) )
+
+        # We only can to do the PhotoBible export (from the BibleWriter.py module)
         result = loadedBible.toPhotoBible()
+        # However, you could easily change this to do all exports
+        #result = loadedBible.doAllExports( wantPhotoBible=True, wantODFs=True, wantPDFs=True )
+        # Or you could choose a different export, for example:
+        #result = loadedBible.toOSISXML()
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "  Result was: {}".format( result ) )
 # end of main
 
