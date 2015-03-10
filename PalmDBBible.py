@@ -5,7 +5,7 @@
 #
 # Module handling PDB Bible files
 #
-# Copyright (C) 2013-2014 Robert Hunt
+# Copyright (C) 2013-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -62,7 +62,7 @@ Limitations:
 
 from gettext import gettext as _
 
-LastModifiedDate = '2014-12-17' # by RJH
+LastModifiedDate = '2015-03-10' # by RJH
 ShortProgName = "PDBBible"
 ProgName = "PDB Bible format handler"
 ProgVersion = '0.07' # STILL UNFINISHED!!!
@@ -222,7 +222,7 @@ class PalmDBBible( Bible ):
             """
             Uses mainIndex to read in the specified PalmDB record.
             """
-            assert( recordNumber < len(mainIndex) )
+            if BibleOrgSysGlobals.debugFlag: assert( recordNumber < len(mainIndex) )
             dataOffset = mainIndex[recordNumber] # Offset from the beginning of the file
             thisFile.seek( dataOffset )
             recordLength = 99999 if recordNumber==len(mainIndex)-1 else (mainIndex[recordNumber+1] - dataOffset)
