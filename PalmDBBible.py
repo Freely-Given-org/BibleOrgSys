@@ -40,7 +40,7 @@ from gettext import gettext as _
 LastModifiedDate = '2015-03-18' # by RJH
 ShortProgName = "PDBBible"
 ProgName = "PDB Bible format handler"
-ProgVersion = '0.50'
+ProgVersion = '0.51'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -370,7 +370,7 @@ class PalmDBBible( Bible ):
         # main code for load()
         with open( self.sourceFilepath, 'rb' ) as myFile: # Automatically closes the file when done
             # Read the PalmDB header info
-            print( "\nLoading PalmDB header info..." )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "\nLoading PalmDB header info..." )
             name = getFileString( myFile, 32 )
             binary4 = myFile.read( 4 )
             attributes, version = struct.unpack( ">hh", binary4 )
@@ -380,16 +380,18 @@ class PalmDBBible( Bible ):
             modificationNumber, appInfoID, sortInfoID = struct.unpack( ">III", binary12 )
             appType = getFileString( myFile, 4 )
             creator = getFileString( myFile, 4 )
-            print( "  name = {!r} appType = {!r} creator = {!r}".format( name, appType, creator ) )
-            print( "  attributes={} version={}".format( attributes, version ) )
-            print( "  creationDate={} lastModificationDate={} lastBackupDate={}".format( creationDate, lastModificationDate, lastBackupDate ) )
-            print( "  modificationNumber={} appInfoID={} sortInfoID={}".format( modificationNumber, appInfoID, sortInfoID ) )
+            if BibleOrgSysGlobals.verbosityLevel > 3:
+                print( "  name = {!r} appType = {!r} creator = {!r}".format( name, appType, creator ) )
+                print( "  attributes={} version={}".format( attributes, version ) )
+                print( "  creationDate={} lastModificationDate={} lastBackupDate={}".format( creationDate, lastModificationDate, lastBackupDate ) )
+                print( "  modificationNumber={} appInfoID={} sortInfoID={}".format( modificationNumber, appInfoID, sortInfoID ) )
             binary4 = myFile.read( 4 )
             uniqueIDseed = struct.unpack( ">I", binary4 )
             binary6 = myFile.read( 6 )
             nextRecordListID, numDBRecords = struct.unpack( ">IH", binary6 )
-            print( "  uniqueIDseed={} nextRecordListID={} numDBRecords={}".format( uniqueIDseed, nextRecordListID, numDBRecords ) )
-            print( "  numDBRecords =", numDBRecords )
+            if BibleOrgSysGlobals.verbosityLevel > 3:
+                print( "  uniqueIDseed={} nextRecordListID={} numDBRecords={}".format( uniqueIDseed, nextRecordListID, numDBRecords ) )
+                print( "  numDBRecords =", numDBRecords )
             tmpIndex = []
             for n in range( 0, numDBRecords ):
                 binary8 = myFile.read( 8 )
@@ -401,7 +403,7 @@ class PalmDBBible( Bible ):
                 dataOffset, recordAttributes, id0, id1, id2 = tmpIndex[recordNumber]
                 recordLength = 4096 if recordNumber==len(tmpIndex)-1 else (tmpIndex[recordNumber+1][0] - dataOffset)
                 mainDBIndex.append( (dataOffset, recordLength, recordAttributes, id0, id1, id2) )
-            if 1:
+            if 0:
                 print( "  {} DB header bytes read".format( myFile.tell() ) )
                 print()
                 for recordNumber in range( 0, len(mainDBIndex) ):
@@ -417,16 +419,17 @@ class PalmDBBible( Bible ):
                 #halt
 
             # Now read the first record of actual Bible data which is the Bible header info
-            print( "\nLoading Bible header info..." )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "\nLoading Bible header info..." )
             binary = readRecord( 0, myFile )
             byteOffset = 0
             versionName = getBinaryString( binary, 16 ); byteOffset += 16
             versionInfo = getBinaryString( binary[byteOffset:], 128 ); byteOffset += 128
             separatorCharacter = getBinaryString( binary[byteOffset:], 1 ); byteOffset += 1
-            print( repr(versionName), repr(versionInfo), repr(separatorCharacter) )
+            if BibleOrgSysGlobals.verbosityLevel > 2:
+                print( repr(versionName), repr(versionInfo), repr(separatorCharacter) )
             assert( separatorCharacter == ' ' )
             versionAttribute, wordIndexIndex, numWordListRecords, numBooks = struct.unpack( ">BHHH",  binary[byteOffset:byteOffset+7] ); byteOffset += 7
-            print( "  versionAttribute =",versionAttribute )
+            #print( "  versionAttribute =",versionAttribute )
             copyProtectedFlag = versionAttribute & 1
             if copyProtectedFlag: print( " Copy protected!" ); halt
             else: print( " Not copy protected." )
@@ -436,13 +439,15 @@ class PalmDBBible( Bible ):
             RTLFlag = versionAttribute & 4
             if RTLFlag: print( " Right-aligned (RTL languages)!" ); halt
             else: print( " Left-aligned (LTR languages)." )
-            print( "  wordIndexIndex={} numWordListRecords={} numBooks={}".format( wordIndexIndex, numWordListRecords, numBooks ) )
+            if BibleOrgSysGlobals.verbosityLevel > 3:
+                print( "  wordIndexIndex={} numWordListRecords={} numBooks={}".format( wordIndexIndex, numWordListRecords, numBooks ) )
             bookIndexMetadata = []
             for n in range(  0, numBooks ):
                 bookNumber, bookRecordLocation, numBookRecords = struct.unpack( ">HHH",  binary[byteOffset:byteOffset+6] ); byteOffset += 6
                 shortName = getBinaryString( binary[byteOffset:], 8 ); byteOffset += 8
                 longName = getBinaryString( binary[byteOffset:], 32 ); byteOffset += 32
-                print( '    Book {:2}: {!r} {!r} bkNum={} loc={} numBookRecords={}'.format( n+1, shortName, longName, bookNumber, bookRecordLocation, numBookRecords ) )
+                if BibleOrgSysGlobals.verbosityLevel > 3:
+                    print( '    Book {:2}: {!r} {!r} bkNum={} loc={} numBookRecords={}'.format( n+1, shortName, longName, bookNumber, bookRecordLocation, numBookRecords ) )
                 bookIndexMetadata.append( (shortName, longName, bookNumber, bookRecordLocation, numBookRecords) )
             assert( byteOffset == len(binary) )
             #if BibleOrgSysGlobals.debugFlag:
@@ -450,25 +455,26 @@ class PalmDBBible( Bible ):
                 #halt
 
             # Now read the word index info
-            print( "\nLoading word index info..." )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "\nLoading word index info..." )
             binary = readRecord( wordIndexIndex, myFile )
             byteOffset = 0
             totalIndicesCount, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
-            print( " totalIndicesCount =",totalIndicesCount )
+            #print( " totalIndicesCount =",totalIndicesCount )
             wordIndexMetadata = []
             expectedWords = 0
             for n in range( 0, totalIndicesCount ):
                 wordLength, numFixedLengthWords, compressedFlag, ignored = struct.unpack( ">HHBB",  binary[byteOffset:byteOffset+6] ); byteOffset += 6
-                print( "   {:2}: wordLength={} numFixedLengthWords={} compressedFlag={}".format( n, wordLength, numFixedLengthWords, compressedFlag ) )
+                if BibleOrgSysGlobals.verbosityLevel > 3:
+                    print( "   {:2}: wordLength={} numFixedLengthWords={} compressedFlag={}".format( n, wordLength, numFixedLengthWords, compressedFlag ) )
                 wordIndexMetadata.append( (wordLength, numFixedLengthWords, compressedFlag) )
                 expectedWords += numFixedLengthWords
             assert( byteOffset == len(binary) )
-            print( " expectedWords =", expectedWords )
+            #print( " expectedWords =", expectedWords )
             #if BibleOrgSysGlobals.debugFlag:
                 #halt
 
             # Now read in the word lists
-            print( "\nLoading word lists..." )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "\nLoading word lists..." )
             #binary = readRecord( wordIndexIndex+1, myFile )
             recordOffset = byteOffset = 0
             words = []
@@ -477,7 +483,8 @@ class PalmDBBible( Bible ):
             wordCountIndexes = {}
             for wordLength, numFixedLengthWords, compressedFlag in wordIndexMetadata:
                 #print( "   Got {} {:04x}".format( len(words), len(words) ) )
-                print( "    Loading wordLength={} numFixedLengthWords={} compressedFlag={}...".format( wordLength, numFixedLengthWords, compressedFlag ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2:
+                    print( "    Loading wordLength={} numFixedLengthWords={} compressedFlag={}...".format( wordLength, numFixedLengthWords, compressedFlag ) )
                 wordStart = wordCountIndexes[wordLength] = len(words) # Remember where certain lengths of words start
                 #else: print( wordCountIndexes )
                 for n in range( 0, numFixedLengthWords ):
@@ -493,7 +500,7 @@ class PalmDBBible( Bible ):
                             #binary += myFile.read( 256 )
                         word = getBinaryString( binary[byteOffset:], wordLength ); byteOffset += wordLength
                         #print( wordLength, repr(word) )
-                        if 1 and word in ( ',','and', 'Genesis', 'Leviticus', 'In','the','beginning','God','created', "made", "mark", "Mark", "what", "gain", "long", "Antioch", ):
+                        if 0 and word in ( ',','and', 'Genesis', 'Leviticus', 'In','the','beginning','God','created', "made", "mark", "Mark", "what", "gain", "long", "Antioch", ):
                             print( "      Found {!r} @ {} {:04x}".format( word, len(words), len(words) ) )
                         words.append( word )
                     else: # it's a compressed word
@@ -520,37 +527,38 @@ class PalmDBBible( Bible ):
                             print( "Assembled word={!r}".format( word ) )
                         words.append( word )
                         #dictCount += 1
-                if 1:
+                if debuggingThisModule:
                     numLoaded = len(words) - wordStart
                     wordDisplay = words[wordStart:] if numLoaded < 10 else repr(words[wordStart])+'..'+repr(words[-1])
                     print( "      Loaded {} {}-char words (now have {}={:04x} total): {}".format( numLoaded, wordLength, len(words), len(words), wordDisplay ) )
             #print( 'xyz', byteOffset, len(binary) )
             assert( byteOffset == len(binary) )
             numWords = len(words)
-            print( "numWords =", numWords )
+            #print( "numWords =", numWords )
             #if BibleOrgSysGlobals.debugFlag:
                 #print( "words", numWords, words[:200], words[-80:] )
                 #halt
 
             # Now read in the Bible book chapter/verse data
-            print( "\nLoading Bible book chapter/verse lists..." )
-            # There seems to be no absolute standard for these :-(
-            convertSNtoBBB = {'GE':'GEN', 'EX':'EXO', 'DTN':'DEU', '1SAM':'SA1', '2SAM':'SA2', '1SA':'SA1', '2SA':'SA2', '1KI':'KI1', '2KI':'KI2',
-                            '1CHR':'CH1', '2CHR':'CH2', '1CH':'CH1', '2CH':'CH2', 'PS':'PSA', 'PRV':'PRO', 'SONG':'SNG', 'EZK':'EZE', 'JOEL':'JOL',
-                            'AM':'AMO', 'NAM':'NAH', 'OBD':'OBA', 'JON':'JNA', 'MI':'MIC',
-                            'MT':'MAT', 'MK':'MRK', 'LK':'LUK', 'JOHN':'JHN', '1COR':'CO1', '2COR':'CO2', '1CO':'CO1', '2CO':'CO2',
-                            'PHIL':'PHP', '1THESS':'TH1', '2THESS':'TH2', '1TH':'TH1', '2TH':'TH2', '1TIM':'TI1', '2TIM':'TI2', '1TI':'TI1', '2TI':'TI2',
-                            'JAS':'JAM', 'PHLM':'PHM', '1PET':'PE1', '2PET':'PE2', '1PE':'PE1', '2PE':'PE2', '1JO':'JN1', '2JO':'JN2', '3JO':'JN3', '1JN':'JN1', '2JN':'JN2', '3JN':'JN3',
-                            'JUDE':'JDE', 'JUD':'JDE', }
-            convertBNtoBBB = {10:'GEN', 20:'EXO', 30:'LEV', 40:'NUM', 50:'DEU', '1SAM':'SA1', '2SAM':'SA2', '1SA':'SA1', '2SA':'SA2', '1KI':'KI1', '2KI':'KI2',
-                            '1CHR':'CH1', '2CHR':'CH2', '1CH':'CH1', '2CH':'CH2', 'PS':'PSA', 'PRV':'PRO', 'SONG':'SNG', 'EZK':'EZE', 'JOEL':'JOL',
-                            'AM':'AMO', 'NAM':'NAH', 'OBD':'OBA', 'JON':'JNA', 'MI':'MIC',
-                            'MT':'MAT', 'MK':'MRK', 'LK':'LUK', 'JOHN':'JHN', '1COR':'CO1', '2COR':'CO2', '1CO':'CO1', '2CO':'CO2',
-                            'PHIL':'PHP', '1THESS':'TH1', '2THESS':'TH2', '1TH':'TH1', '2TH':'TH2', '1TIM':'TI1', '2TIM':'TI2', '1TI':'TI1', '2TI':'TI2',
-                            'JAS':'JAM', 'PHLM':'PHM', '1PET':'PE1', '2PET':'PE2', '1PE':'PE1', '2PE':'PE2', '1JO':'JN1', '2JO':'JN2', '3JO':'JN3', '1JN':'JN1', '2JN':'JN2', '3JN':'JN3',
-                            'JUDE':'JDE', 'JUD':'JDE', }
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "\nLoading Bible book chapter/verse lists..." )
+            ## There seems to be no absolute standard for these :-(
+            #convertSNtoBBB = {'GE':'GEN', 'EX':'EXO', 'DTN':'DEU', '1SAM':'SA1', '2SAM':'SA2', '1SA':'SA1', '2SA':'SA2', '1KI':'KI1', '2KI':'KI2',
+                            #'1CHR':'CH1', '2CHR':'CH2', '1CH':'CH1', '2CH':'CH2', 'PS':'PSA', 'PRV':'PRO', 'SONG':'SNG', 'EZK':'EZE', 'JOEL':'JOL',
+                            #'AM':'AMO', 'NAM':'NAH', 'OBD':'OBA', 'JON':'JNA', 'MI':'MIC',
+                            #'MT':'MAT', 'MK':'MRK', 'LK':'LUK', 'JOHN':'JHN', '1COR':'CO1', '2COR':'CO2', '1CO':'CO1', '2CO':'CO2',
+                            #'PHIL':'PHP', '1THESS':'TH1', '2THESS':'TH2', '1TH':'TH1', '2TH':'TH2', '1TIM':'TI1', '2TIM':'TI2', '1TI':'TI1', '2TI':'TI2',
+                            #'JAS':'JAM', 'PHLM':'PHM', '1PET':'PE1', '2PET':'PE2', '1PE':'PE1', '2PE':'PE2', '1JO':'JN1', '2JO':'JN2', '3JO':'JN3', '1JN':'JN1', '2JN':'JN2', '3JN':'JN3',
+                            #'JUDE':'JDE', 'JUD':'JDE', }
+            #convertBNtoBBB = {10:'GEN', 20:'EXO', 30:'LEV', 40:'NUM', 50:'DEU', '1SAM':'SA1', '2SAM':'SA2', '1SA':'SA1', '2SA':'SA2', '1KI':'KI1', '2KI':'KI2',
+                            #'1CHR':'CH1', '2CHR':'CH2', '1CH':'CH1', '2CH':'CH2', 'PS':'PSA', 'PRV':'PRO', 'SONG':'SNG', 'EZK':'EZE', 'JOEL':'JOL',
+                            #'AM':'AMO', 'NAM':'NAH', 'OBD':'OBA', 'JON':'JNA', 'MI':'MIC',
+                            #'MT':'MAT', 'MK':'MRK', 'LK':'LUK', 'JOHN':'JHN', '1COR':'CO1', '2COR':'CO2', '1CO':'CO1', '2CO':'CO2',
+                            #'PHIL':'PHP', '1THESS':'TH1', '2THESS':'TH2', '1TH':'TH1', '2TH':'TH2', '1TIM':'TI1', '2TIM':'TI2', '1TI':'TI1', '2TI':'TI2',
+                            #'JAS':'JAM', 'PHLM':'PHM', '1PET':'PE1', '2PET':'PE2', '1PE':'PE1', '2PE':'PE2', '1JO':'JN1', '2JO':'JN2', '3JO':'JN3', '1JN':'JN1', '2JN':'JN2', '3JN':'JN3',
+                            #'JUDE':'JDE', 'JUD':'JDE', }
             for shortName, longName, bookNumber, bookRecordLocation, numBookRecords in bookIndexMetadata:
-                print( "\n{!r} {!r} bookNumber={} bookRecordLocation={} numBookRecords={}".format( shortName, longName, bookNumber, bookRecordLocation, numBookRecords ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2:
+                    print( "\n{!r} {!r} bookNumber={} bookRecordLocation={} numBookRecords={}".format( shortName, longName, bookNumber, bookRecordLocation, numBookRecords ) )
                 #myFile.seek( mainDBIndex[bookRecordLocation] )
                 #binary = myFile.read( 102400 )
                 # Read the header record
@@ -581,7 +589,7 @@ class PalmDBBible( Bible ):
                     print( "accumulatedTokensPerChapter", len(accumulatedTokensPerChapterList), accumulatedTokensPerChapterList )
                     print( "accumulatedTokensPerVerse", len(accumulatedTokensPerVerseList), accumulatedTokensPerVerseList )
                 assert( len(accumulatedTokensPerVerseList) == accumulatedVerses )
-                print( totalAccumulatedVerses, accumulatedTokensPerChapter )
+                #print( "Acc V & T", totalAccumulatedVerses, accumulatedTokensPerChapter )
                 assert( byteOffset == len(binary) )
 
                 # Find total characters
@@ -592,7 +600,8 @@ class PalmDBBible( Bible ):
                 #print( "totalCharacters", totalCharacters )
 
                 # Read the Bible word data records
-                print( "\nReading {}{} Bible words for {} {}/{}...".format( totalCharacters, ' byte-shifted' if byteShiftedFlag else '', name, shortName, longName ) )
+                if BibleOrgSysGlobals.verbosityLevel > 2:
+                    print( "\nReading {}{} Bible words for {} {}/{}...".format( totalCharacters, ' byte-shifted' if byteShiftedFlag else '', name, shortName, longName ) )
                 BBB = None
                 if bookNumber % 10 == 0:
                     if bookNumber <= 160:
@@ -611,7 +620,8 @@ class PalmDBBible( Bible ):
                 #BBB = convertBNtoBBB[bookNumber]
                 #shortNameUpper = shortName.upper()
                 #BBB = convertSNtoBBB[shortNameUpper] if shortNameUpper in convertSNtoBBB else shortNameUpper
-                print( BBB )
+                if BibleOrgSysGlobals.verbosityLevel > 1:
+                    print( " Loading {} {}...".format( name, BBB ) )
                 #if self.name == 'kjv' and BBB=='GAL': continue
                 thisBook = BibleBook( self, BBB )
                 thisBook.objectNameString = 'Palm Bible Book object'
@@ -659,7 +669,8 @@ class PalmDBBible( Bible ):
                         elif ix == 0xFFFD: word = '<DESC>'
                         elif ix == 0xFFFC: word = '<VERSE>'
                         else:
-                            print( "\n\n\nGot HUGE ix {:04x} {}/{} @ {}/{}".format( ix, ix, len(words), byteOffset, len(binary) ) )
+                            if debuggingThisModule:
+                                print( "\n\n\nGot HUGE ix {:04x} {}/{} @ {}/{}".format( ix, ix, len(words), byteOffset, len(binary) ) )
                             word = '<UNKNOWN>'
                             #if C==0: C = 1
                         #print( "{} {}:{} tC={} vC={} acc={} {!r}".format( BBB, C, V, j, verseCount, accumulatedTokensPerVerseList[verseCount], verse ) )
@@ -719,44 +730,6 @@ class PalmDBBible( Bible ):
             #if BibleOrgSysGlobals.debugFlag:
                 #halt
 
-            ## Now read in the Bible word data
-            #print( "\nReading Bible books..." )
-            #for shortName, longName, bookNumber, bookRecordLocation, numBookRecords in bookIndexMetadata:
-                #print( shortName, longName, "bookNumber =",bookNumber, "bookRecordLocation =",bookRecordLocation, "numBookRecords =",numBookRecords )
-                ##myFile.seek( mainDBIndex[bookRecordLocation] )
-                ##binary = myFile.read( 102400 )
-                #binary = readRecord( 435, myFile )
-                #byteOffset = 0
-                #print( len(binary), binary[:32] )
-                #for n in range( 0, 20 ):
-                    ##print( binary[n], words[binary[n]] )
-                    #ix, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
-                    ##ix += 1
-                    #word = words[ix] if ix<len(words) else str(ix)+'/'+str(numWords)
-                    #print( ix, word )
-                    #if ix>expectedWords: print( "Too big" ); halt
-                #if BibleOrgSysGlobals.debugFlag:
-                    #halt
-
-                #print( binary[byteOffset-10:byteOffset+1] )
-                #print( binary[byteOffset:byteOffset+20] )
-                #display = 0
-                #for n in range( 0, 5000 ):
-                    ##ix, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
-                    #b1, b2, b3, = struct.unpack( ">BBB",  binary[byteOffset:byteOffset+3] ); byteOffset += 3
-                    #ix = b1 * 65536 + b2 * 256 + b3
-                    #word = str(ix)
-                    #if ix<len(words): word = words[ix]
-                    #if display or word=='In':
-                        #print( ix, word )
-                        #display += 1
-                        #if display > 5: display = 0
-
-                #halt
-
-            #halt
-            #if j>30: halt
-        #halt
         self.doPostLoadProcessing()
     # end of PalmDBBible.load
 # end of PalmDBBible class
