@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 # UnknownBible.py
-#   Last modified: 2014-10-03 (also update ProgVersion below)
 #
 # Module handling a unknown Bible object
 #
-# Copyright (C) 2013-2014 Robert Hunt
+# Copyright (C) 2013-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -36,15 +35,19 @@ Currently aware of the following Bible types:
     Sword modules (binary).
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2015-03-11' # by RJH
+ShortProgName = "UnknownBible"
 ProgName = "Unknown Bible object handler"
-ProgVersion = "0.18"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.18'
+ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
 import logging, os.path
-from gettext import gettext as _
 
 import BibleOrgSysGlobals
 from ESFMBible import ESFMBibleFileCheck, ESFMBible
@@ -62,6 +65,7 @@ from TheWordBible import TheWordBibleFileCheck, TheWordBible
 from MySwordBible import MySwordBibleFileCheck, MySwordBible
 from ESwordBible import ESwordBibleFileCheck, ESwordBible
 from PalmDBBible import PalmDBBibleFileCheck, PalmDBBible
+from OnlineBible import OnlineBibleFileCheck, OnlineBible
 from CSVBible import CSVBibleFileCheck, CSVBible
 from VPLBible import VPLBibleFileCheck, VPLBible
 #from SwordResources import SwordInterface # What about these?
@@ -158,6 +162,14 @@ class UnknownBible:
             totalBibleTypes += 1
             typesFound.append( 'PalmDB:' + str(PDBBibleCount) )
             if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: PDBBibleCount", PDBBibleCount )
+
+        # Search for Online Bibles
+        OnlineBibleCount = OnlineBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
+        if OnlineBibleCount:
+            totalBibleCount += OnlineBibleCount
+            totalBibleTypes += 1
+            typesFound.append( 'Online:' + str(OnlineBibleCount) )
+            if BibleOrgSysGlobals.verbosityLevel > 2: print( "UnknownBible.search: OnlineBibleCount", OnlineBibleCount )
 
         # Search for Unbound Bibles
         UnboundBibleCount = UnboundBibleFileCheck( self.givenFolderName, strictCheck=strictCheck )
@@ -298,6 +310,10 @@ class UnknownBible:
                 self.foundType = "PalmDB Bible"
                 if autoLoad: return PalmDBBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
                 else: return self.foundType
+            elif OnlineBibleCount == 1:
+                self.foundType = "Online Bible"
+                if autoLoad: return OnlineBibleFileCheck( self.givenFolderName, strictCheck=strictCheck, autoLoad=autoLoad, autoLoadBooks=autoLoadBooks )
+                else: return self.foundType
             # And now plain text formats
             elif UnboundBibleCount == 1:
                 self.foundType = "Unbound Bible"
@@ -366,7 +382,6 @@ def demo():
 
     # Now demo the class
     testFolders = ( "/home/robert/Logs", # Shouldn't have any Bibles here
-                   "/mnt/Data/Websites/Freely-Given.org/Software/BibleDropBox/PrivatePage/Dutch_HSV.2015-02-05_07.27_0.04264300_1423074451/YourSourceFiles/Unzipped/"
                     #"../../../../../Data/Work/Bibles/theWord modules/",
                     #"../../../../../Data/Work/Bibles/Biola Unbound modules/",
                     #"../../../../../Data/Work/Bibles/OpenSong Bibles/",
@@ -385,6 +400,7 @@ def demo():
                     #"Tests/DataFilesForTests/e-SwordTest/",
                     #"Tests/DataFilesForTests/theWordTest/", "Tests/DataFilesForTests/MySwordTest/",
                     #"Tests/DataFilesForTests/YETTest/", "Tests/DataFilesForTests/PDBTest/",
+                    "Tests/DataFilesForTests/OnlineBible/",
                     #"Tests/DataFilesForTests/DrupalTest/",
                     #"Tests/DataFilesForTests/CSVTest1/", "Tests/DataFilesForTests/CSVTest2/",
                     #"Tests/DataFilesForTests/VPLTest1/", "Tests/DataFilesForTests/VPLTest2/",

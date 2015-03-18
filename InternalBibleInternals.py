@@ -38,10 +38,10 @@ and then calls
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-02-03' # by RJH
+LastModifiedDate = '2015-03-18' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
-ProgVersion = '0.57'
+ProgVersion = '0.58'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -672,7 +672,10 @@ class InternalBibleIndex:
                         logging.error( "  mI:sAO now {}".format( (saveJ,lineCount,context) ) )
                         for ixx in range( saveJ, saveJ+lineCount ):
                             logging.error( "   mI:sAO {} {}".format( self.givenBibleEntries[ixx], context ) )
-                        if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt # This is a serious error that is losing Biblical text
+                        if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                            C, V = saveCV
+                            if C != '0' and V != '0': # intros aren't so important
+                                halt # This is a serious error that is losing Biblical text
                 self.indexData[saveCV] = InternalBibleIndexEntry( saveJ, lineCount, context[:] )
                 #print( 'sAO', printIndexEntry( self.indexData[saveCV] ) )
                 saveCV = saveJ = None
@@ -935,7 +938,8 @@ class InternalBibleIndex:
                         else:
                             if 's1'  in foundMarkers or 'r' in foundMarkers or 'p' in foundMarkers or 'q1' in foundMarkers:
                                 print( "xyz", key, entries )
-                            assert( 's1' not in foundMarkers and 'r' not in foundMarkers and 'p' not in foundMarkers and 'q1' not in foundMarkers )
+                            if self.name != '1974_TB':
+                                assert( 's1' not in foundMarkers and 'r' not in foundMarkers and 'p' not in foundMarkers and 'q1' not in foundMarkers )
 
             # Check that C,V entries match
             for entry in entries:

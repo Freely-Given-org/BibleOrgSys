@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 # UnboundBible.py
-#   Last modified: 2014-12-17 by RJH (also update ProgVersion below)
 #
 # Module handling Biola University "unbound" Bible files
 #
-# Copyright (C) 2013-2014 Robert Hunt
+# Copyright (C) 2013-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -85,15 +84,19 @@ and
     01O     1       2       Toka ishte pa trajtë, e zbrazët dhe errësira mbulonte sipërfaqen e humnerës; dhe Fryma e Perëndisë fluturonte mbi sipërfaqen e ujërave.
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2015-03-18' # by RJH
+ShortProgName = "UnboundBible"
 ProgName = "Unbound Bible format handler"
-ProgVersion = "0.22"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.22'
+ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
 import logging, os
-from gettext import gettext as _
 import multiprocessing
 
 import BibleOrgSysGlobals
@@ -324,8 +327,8 @@ class UnboundBible( Bible ):
                         self.saveBook( thisBook )
                     BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromUnboundBibleCode( bookCode )
                     thisBook = BibleBook( self, BBB )
-                    thisBook.objectNameString = "Unbound Bible Book object"
-                    thisBook.objectTypeString = "Unbound"
+                    thisBook.objectNameString = 'Unbound Bible Book object'
+                    thisBook.objectTypeString = 'Unbound'
                     lastBookCode = bookCode
                     lastChapterNumber = lastVerseNumber = -1
 

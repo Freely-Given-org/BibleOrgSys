@@ -28,7 +28,7 @@ Module for defining and manipulating complete or partial USFM Bibles.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-02-03' # by RJH
+LastModifiedDate = '2015-03-18' # by RJH
 ShortProgName = "USFMBible"
 ProgName = "USFM Bible handler"
 ProgVersion = '0.64'
@@ -306,7 +306,7 @@ class USFMBible( Bible ):
                     status = 1
                     processed = True
                 elif status==1 and line=="</ScriptureText>":
-                    status = 2
+                    status = 9
                     processed = True
                 elif status==1 and line[0]=='<' and line.endswith('/>'): # Handle a self-closing (empty) field
                     fieldname = line[1:-3] if line.endswith(' />') else line[1:-2] # Handle it with or without a space
@@ -339,7 +339,13 @@ class USFMBible( Bible ):
                             if line[ix2+2:-1]==fieldname:
                                 settingsDict[fieldname] = (contents, attributes)
                                 processed = True
-                if not processed: print( t("ERROR: Unexpected {} line in SSF file").format( repr(line) ) )
+                elif status==1 and line[0]=='<ValidCharacters>' and line[-1]=='>':
+                    fieldname = 'ValidCharacters'
+                if not processed: print( _("ERROR: Unexpected {} line in SSF file").format( repr(line) ) )
+        if status == 0:
+            logging.error( "SSF file was empty: {}".format( self.ssfFilepath ) )
+            status = 9
+        if BibleOrgSysGlobals.debugFlag: assert( status == 9 )
         if BibleOrgSysGlobals.verbosityLevel > 2:
             print( "  " + t("Got {} SSF entries:").format( len(settingsDict) ) )
             if BibleOrgSysGlobals.verbosityLevel > 3:

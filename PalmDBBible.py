@@ -25,47 +25,22 @@
 """
 Module reading and loading PalmDB Bible files.
 
+See documentation of the format here:
+    http://yohan.es/bible-pdb/bible-plus-pdb-format/
 e.g.,
-    info    shortName       KJV
-    info    longName        King James Version
-    info    description     King James Version (1611 Authorized Version)
-    info    locale  en
-    book_name       1       Genesis
-    book_name       2       Exodus
-    ...
-    verse   1       1       1       In the beginning God created the heaven and the earth.
-    verse   1       1       2       @@And the earth was without form, and void; and darkness @9was@7 upon the face of the deep. And the Spirit of God moved upon the face of the waters.
-    verse   1       1       3       And God said, Let there be light: and there was light.
-    verse   1       1       4       @@And God saw the light, that @9it was@7 good: and God divided the light from the darkness.
-    verse   1       1       5       And God called the light Day, and the darkness he called Night. And the evening and the morning were the first day.
-    verse   1       1       6       @@@^And God said, Let there be a firmament in the midst of the waters, and let it divide the waters from the waters.
-    ...
-Plus optional
-    xref    40      1       23      1       @<ta:1443598@>Mrk. 7:14@/
-    xref    40      2       6       1       @<ta:2098435@>Act. 5:2@/
-    ...
-    footnote        40      1       11      1       1:11 @9word @7Some note about word in Mat 1:11.
-    footnote        40      1       16      1       1:16 @9Christ @7Not in all versions.
-    ...
-Plus optional
-    pericope        40      1       1       Heading to precede Mat 1:1 here
-    parallel        Luk. 3:23-38
-    pericope        40      1       18      Heading2 here
-    parallel        Luk. 2:1-7
-    parallel        Jhn. 3:2-7
+
     ...
 
 Limitations:
-    Unsure whether italic codes in verse text could just be \it instead of \add
-    Currently ignores encoded verse references in cross-references
+    ...
 """
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-03-10' # by RJH
+LastModifiedDate = '2015-03-18' # by RJH
 ShortProgName = "PDBBible"
 ProgName = "PDB Bible format handler"
-ProgVersion = '0.07' # STILL UNFINISHED!!!
+ProgVersion = '0.50'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
@@ -75,12 +50,28 @@ debuggingThisModule = False
 import logging, os, struct
 import multiprocessing
 from collections import OrderedDict
+from binascii import hexlify
+
 
 import BibleOrgSysGlobals
 from Bible import Bible, BibleBook
 
 
 filenameEndingsToAccept = ('.PDB',) # Must be UPPERCASE
+
+
+
+def t( messageString ):
+    """
+    Prepends the module name to a error or warning message string if we are in debug mode.
+    Returns the new string.
+    """
+    try: nameBit, errorBit = messageString.split( ': ', 1 )
+    except ValueError: nameBit, errorBit = '', messageString
+    if BibleOrgSysGlobals.debugFlag or debuggingThisModule:
+        nameBit = '{}{}{}: '.format( ShortProgName, '.' if nameBit else '', nameBit )
+    return '{}{}'.format( nameBit, _(errorBit) )
+# end of t
 
 
 
@@ -200,6 +191,8 @@ class PalmDBBible( Bible ):
         # Now we can set our object variables
         self.sourceFolder, self.givenName, self.encoding = sourceFolder, givenName, encoding
         self.sourceFilepath =  os.path.join( self.sourceFolder, self.givenName+'.PDB' )
+        if not os.access( self.sourceFilepath, os.R_OK ):
+            self.sourceFilepath =  os.path.join( self.sourceFolder, self.givenName+'.pdb' )
 
         # Do a preliminary check on the readability of our file
         if not os.access( self.sourceFilepath, os.R_OK ):
@@ -216,25 +209,39 @@ class PalmDBBible( Bible ):
         Load a single source file and load book elements.
         """
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
-        mainIndex = []
+        mainDBIndex = []
+
 
         def readRecord( recordNumber, thisFile ):
             """
-            Uses mainIndex to read in the specified PalmDB record.
+            Uses mainDBIndex to read in the specified PalmDB record.
+                dataOffset gives the file offset from the beginning of the file.
             """
-            if BibleOrgSysGlobals.debugFlag: assert( recordNumber < len(mainIndex) )
-            dataOffset = mainIndex[recordNumber] # Offset from the beginning of the file
+            if BibleOrgSysGlobals.debugFlag:
+                if debuggingThisModule:
+                    print( t("readRecord( {}, {} )").format( recordNumber, thisFile ) )
+                assert( recordNumber < len(mainDBIndex) )
+            dataOffset, recordLength, recordAttributes, id0, id1, id2 = mainDBIndex[recordNumber]
+            #recordLength = 99999 if recordNumber==len(mainDBIndex)-1 else (mainDBIndex[recordNumber+1][0] - dataOffset)
+            #print( " dataOffset={} recordLength={}".format( dataOffset, recordLength ) )
+            #print( " recordAttributes={} id0={} id1={} id2={}".format( recordAttributes, id0, id1, id2 ) )
             thisFile.seek( dataOffset )
-            recordLength = 99999 if recordNumber==len(mainIndex)-1 else (mainIndex[recordNumber+1] - dataOffset)
-            print( "Reading {} bytes from record {} at offset {}".format( recordLength, recordNumber, dataOffset ) )
+            #print( "Reading {} bytes from record {} at offset {}".format( recordLength, recordNumber, dataOffset ) )
             binaryInfo = thisFile.read( recordLength )
-            if recordNumber < len(mainIndex)-1: assert( len(binaryInfo) == recordLength )
+            if recordNumber < len(mainDBIndex)-1: assert( len(binaryInfo) == recordLength )
             return binaryInfo
         # end of readRecord
 
+
         def getBinaryString( binary, numBytes ):
             """
+            Gets bytes out of the binary and converts them to characters.
+            Stops when numBytes is reached, or a NULL is encountered.
+
+            Returns the string.
             """
+            #if BibleOrgSysGlobals.debugFlag:
+                #print( t("getBinaryString( {}, {} )").format( binary, numBytes ) )
             if len(binary) < numBytes: halt # Too few bytes provided
             result = ''
             for j, value in enumerate( binary ):
@@ -243,15 +250,127 @@ class PalmDBBible( Bible ):
             return result
         # end of getBinaryString
 
+
         def getFileString( thisFile, numBytes ):
             """
             Used for reading the PalmDB header information from the file.
             """
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule:
+                print( t("getFileString( {}, {} )").format( thisFile, numBytes ) )
             return getBinaryString( thisFile.read( numBytes ), numBytes )
         # end of getFileString
 
+
+        remainder14count = remainder14bits = 0
+        def get14( binary16 ):
+            """
+            Get the next 14-bits from the 16 binary bits supplied
+                plus any remainder from the last call.
+            """
+            nonlocal remainder14count, remainder14bits
+            #if BibleOrgSysGlobals.debugFlag:
+                #print( t("get14( {} ) {} {:04x}").format( hexlify(binary16), remainder14count, remainder14bits ) )
+            next16, = struct.unpack( ">H", binary16 )
+            #print( "next16 {:04x} {}".format( next16, next16 ) )
+            if remainder14count == 0:
+                result = next16 >> 2
+                remainder14count = 2
+                remainder14bits = (next16 & 0x0003) << 12
+                bytesUsed = 2
+            elif remainder14count == 2:
+                result = (next16 >> 4) | remainder14bits
+                remainder14count = 4
+                remainder14bits = (next16 & 0x000F) << 10
+                bytesUsed = 2
+            elif remainder14count == 4:
+                result = (next16 >> 6) | remainder14bits
+                remainder14count = 6
+                remainder14bits = (next16 & 0x003F) << 8
+                bytesUsed = 2
+            elif remainder14count == 6:
+                result = (next16 >> 8) | remainder14bits
+                remainder14count = 8
+                remainder14bits = (next16 & 0x00FF) << 6
+                bytesUsed = 2
+            elif remainder14count == 8:
+                result = (next16 >> 10) | remainder14bits
+                remainder14count = 10
+                remainder14bits = (next16 & 0x03FF) << 4
+                bytesUsed = 2
+            elif remainder14count == 10:
+                result = (next16 >> 12) | remainder14bits
+                remainder14count = 12
+                remainder14bits = (next16 & 0x0FFF) << 2
+                bytesUsed = 2
+            elif remainder14count == 12:
+                result = (next16 >> 14) | remainder14bits
+                remainder14count = 14
+                remainder14bits = next16 & 0x03FFF
+                bytesUsed = 2
+            elif remainder14count == 14:
+                result = remainder14bits
+                remainder14count = 0
+                bytesUsed = 0
+            #print( " returning {:04x}, {}, {}".format( result, result, bytesUsed ) )
+            return result, bytesUsed
+        # end of get14
+
+
+        def saveSegment( BBB, C, V, verseText ):
+            """
+            Used to save the verse data into the global thisBook.
+            """
+            if BibleOrgSysGlobals.debugFlag:
+                if debuggingThisModule:
+                    print( t("saveSegment( {} {}:{}, {!r} )").format( BBB, C, V, verseText ) )
+                assert( verseText )
+                #if 'DESC' in verseText: halt
+
+            adjText = verseText.strip().replace( ' .', '.' ).replace( ' ,', ',' ) \
+                                       .replace( ' :', ':' ).replace( ' ;', ';' ).replace( ' ?', '?' ) \
+                                       .replace( '[ ', '[' ).replace( ' ]', ']' )
+            for fChar, fSFM in ( ('i','add'), ('r','wj'), ('b','b'), ('n','i'), ):
+                inside = False
+                while '\x0e'+fChar+'\x0e' in adjText:
+                    adjText = adjText.replace( '\x0e'+fChar+'\x0e', '\\'+fSFM+'*' if inside else '\\'+fSFM, 1 )
+                    inside = not inside
+                if '\x0en\x0e' not in verseText: # WHY ???
+                    assert( not inside ) # Would be uneven number of matches
+                adjText = adjText.replace( ' \\'+fSFM+'*', '\\'+fSFM+'*' ) # Remove unwanted spaces before closing field
+                #print( "  adjText1={!r}".format( adjText ) )
+            if '\x0en\x0e' not in adjText: # WHY ???
+                assert( '\x0e' not in adjText )
+            adjText1 = adjText
+            #print( "  adjText2={!r}".format( adjText1 ) )
+
+            if adjText.startswith( '<BOOK>' ):
+                assert( C == 0 )
+                adjText = adjText[6:].lstrip()
+                if debuggingThisModule: print( "  adjText BOOK={!r}".format( adjText ) )
+                thisBook.addLine( 'mt', adjText ); adjText = ''
+            elif adjText.startswith( '<CHAPTER>' ):
+                assert( C > 0 )
+                adjText = adjText[9:].lstrip()
+                thisBook.addLine( 'c', str(C) )
+                thisBook.addLine( 's', adjText ); adjText = ''
+            elif adjText.startswith( '<VERSE>' ):
+                assert( C > 0 )
+                adjText = adjText[7:].lstrip()
+            elif adjText.startswith( '<DESC>' ):
+                adjText = adjText[6:].lstrip()
+                if debuggingThisModule: print( "  adjText DESC={!r}".format( adjText ) )
+                marker = 'ip' if C==0 else 's'
+                thisBook.addLine( marker, adjText ); adjText = ''
+            if adjText:
+                #if adjText != adjText1: print( "  adjText3={!r}".format( adjText ) )
+                thisBook.addLine( 'v', '{} {}'.format( V, adjText ) )
+        # end of saveSegment
+
+
+        # main code for load()
         with open( self.sourceFilepath, 'rb' ) as myFile: # Automatically closes the file when done
             # Read the PalmDB header info
+            print( "\nLoading PalmDB header info..." )
             name = getFileString( myFile, 32 )
             binary4 = myFile.read( 4 )
             attributes, version = struct.unpack( ">hh", binary4 )
@@ -261,129 +380,363 @@ class PalmDBBible( Bible ):
             modificationNumber, appInfoID, sortInfoID = struct.unpack( ">III", binary12 )
             appType = getFileString( myFile, 4 )
             creator = getFileString( myFile, 4 )
-            print( name, appType, creator )
+            print( "  name = {!r} appType = {!r} creator = {!r}".format( name, appType, creator ) )
+            print( "  attributes={} version={}".format( attributes, version ) )
+            print( "  creationDate={} lastModificationDate={} lastBackupDate={}".format( creationDate, lastModificationDate, lastBackupDate ) )
+            print( "  modificationNumber={} appInfoID={} sortInfoID={}".format( modificationNumber, appInfoID, sortInfoID ) )
             binary4 = myFile.read( 4 )
             uniqueIDseed = struct.unpack( ">I", binary4 )
             binary6 = myFile.read( 6 )
-            nextRecordListID, numRecords = struct.unpack( ">IH", binary6 )
-            print( "numRecords =", numRecords )
-            for n in range( 0, numRecords ):
+            nextRecordListID, numDBRecords = struct.unpack( ">IH", binary6 )
+            print( "  uniqueIDseed={} nextRecordListID={} numDBRecords={}".format( uniqueIDseed, nextRecordListID, numDBRecords ) )
+            print( "  numDBRecords =", numDBRecords )
+            tmpIndex = []
+            for n in range( 0, numDBRecords ):
                 binary8 = myFile.read( 8 )
                 dataOffset, recordAttributes, id0, id1, id2 = struct.unpack( ">IBBBB", binary8 )
                 #print( '', dataOffset, recordAttributes, id0, id1, id2 )
-                mainIndex.append( dataOffset )
+                assert( recordAttributes + id0 + id1 + id2 == 0 )
+                tmpIndex.append( (dataOffset, recordAttributes, id0, id1, id2) )
+            for recordNumber in range( 0, len(tmpIndex) ):
+                dataOffset, recordAttributes, id0, id1, id2 = tmpIndex[recordNumber]
+                recordLength = 4096 if recordNumber==len(tmpIndex)-1 else (tmpIndex[recordNumber+1][0] - dataOffset)
+                mainDBIndex.append( (dataOffset, recordLength, recordAttributes, id0, id1, id2) )
+            if 1:
+                print( "  {} DB header bytes read".format( myFile.tell() ) )
+                print()
+                for recordNumber in range( 0, len(mainDBIndex) ):
+                    dataOffset, recordLength, recordAttributes, id0, id1, id2 = mainDBIndex[recordNumber]
+                    print( "Record {} @ {} len={} attribs={} {} {} {}".format( recordNumber, dataOffset, recordLength, recordAttributes, id0, id1, id2 ) )
+                    #assert( recordLength <= 4096 )
+                    if 0:
+                        recordBytes = readRecord( recordNumber, myFile )
+                        if recordNumber < 8 or recordLength < 200:
+                            print( "    {}\n    {}".format( hexlify(recordBytes), recordBytes ) )
+                        else: print( "    {}".format( hexlify(recordBytes) ) )
+            #if BibleOrgSysGlobals.debugFlag:
+                #halt
 
             # Now read the first record of actual Bible data which is the Bible header info
+            print( "\nLoading Bible header info..." )
             binary = readRecord( 0, myFile )
             byteOffset = 0
             versionName = getBinaryString( binary, 16 ); byteOffset += 16
             versionInfo = getBinaryString( binary[byteOffset:], 128 ); byteOffset += 128
             separatorCharacter = getBinaryString( binary[byteOffset:], 1 ); byteOffset += 1
             print( repr(versionName), repr(versionInfo), repr(separatorCharacter) )
+            assert( separatorCharacter == ' ' )
             versionAttribute, wordIndexIndex, numWordListRecords, numBooks = struct.unpack( ">BHHH",  binary[byteOffset:byteOffset+7] ); byteOffset += 7
-            print( "versionAttribute =",versionAttribute )
-            if versionAttribute & 1: print( " Copy protected!" ); halt
-            if versionAttribute & 2: print( " Not byte shifted." )
-            else: halt # What does byte shifted mean???
-            if versionAttribute & 4: print( " Right-aligned!" ); halt
-            print( "wordIndexIndex = ",wordIndexIndex, "numWordListRecords =",numWordListRecords, "numBooks =",numBooks )
+            print( "  versionAttribute =",versionAttribute )
+            copyProtectedFlag = versionAttribute & 1
+            if copyProtectedFlag: print( " Copy protected!" ); halt
+            else: print( " Not copy protected." )
+            byteShiftedFlag = not (versionAttribute & 2)
+            if byteShiftedFlag: print( "  BYTE SHIFTED! # See http://en.wikipedia.org/wiki/Shift_JIS for Japanese" )
+            else: print( " Not byte shifted." )
+            RTLFlag = versionAttribute & 4
+            if RTLFlag: print( " Right-aligned (RTL languages)!" ); halt
+            else: print( " Left-aligned (LTR languages)." )
+            print( "  wordIndexIndex={} numWordListRecords={} numBooks={}".format( wordIndexIndex, numWordListRecords, numBooks ) )
             bookIndexMetadata = []
             for n in range(  0, numBooks ):
                 bookNumber, bookRecordLocation, numBookRecords = struct.unpack( ">HHH",  binary[byteOffset:byteOffset+6] ); byteOffset += 6
                 shortName = getBinaryString( binary[byteOffset:], 8 ); byteOffset += 8
                 longName = getBinaryString( binary[byteOffset:], 32 ); byteOffset += 32
-                print( '  BOOK:', n+1, shortName, longName, bookNumber, bookRecordLocation, numBookRecords )
+                print( '    Book {:2}: {!r} {!r} bkNum={} loc={} numBookRecords={}'.format( n+1, shortName, longName, bookNumber, bookRecordLocation, numBookRecords ) )
                 bookIndexMetadata.append( (shortName, longName, bookNumber, bookRecordLocation, numBookRecords) )
             assert( byteOffset == len(binary) )
+            #if BibleOrgSysGlobals.debugFlag:
+                #print( "bookIndexMetadata", len(bookIndexMetadata), bookIndexMetadata )
+                #halt
 
             # Now read the word index info
+            print( "\nLoading word index info..." )
             binary = readRecord( wordIndexIndex, myFile )
             byteOffset = 0
             totalIndicesCount, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
-            print( "totalIndicesCount =",totalIndicesCount )
+            print( " totalIndicesCount =",totalIndicesCount )
             wordIndexMetadata = []
             expectedWords = 0
             for n in range( 0, totalIndicesCount ):
                 wordLength, numFixedLengthWords, compressedFlag, ignored = struct.unpack( ">HHBB",  binary[byteOffset:byteOffset+6] ); byteOffset += 6
-                print( "wordLength =",wordLength, "numFixedLengthWords =",numFixedLengthWords, "compressedFlag =",compressedFlag )
+                print( "   {:2}: wordLength={} numFixedLengthWords={} compressedFlag={}".format( n, wordLength, numFixedLengthWords, compressedFlag ) )
                 wordIndexMetadata.append( (wordLength, numFixedLengthWords, compressedFlag) )
                 expectedWords += numFixedLengthWords
             assert( byteOffset == len(binary) )
-            print( "expectedWords =", expectedWords )
+            print( " expectedWords =", expectedWords )
+            #if BibleOrgSysGlobals.debugFlag:
+                #halt
 
             # Now read in the word lists
-            binary = readRecord( wordIndexIndex+1, myFile )
-            byteOffset = 0
+            print( "\nLoading word lists..." )
+            #binary = readRecord( wordIndexIndex+1, myFile )
+            recordOffset = byteOffset = 0
             words = []
+            binary = b''
+            #dictCount = 0
+            wordCountIndexes = {}
             for wordLength, numFixedLengthWords, compressedFlag in wordIndexMetadata:
+                #print( "   Got {} {:04x}".format( len(words), len(words) ) )
+                print( "    Loading wordLength={} numFixedLengthWords={} compressedFlag={}...".format( wordLength, numFixedLengthWords, compressedFlag ) )
+                wordStart = wordCountIndexes[wordLength] = len(words) # Remember where certain lengths of words start
+                #else: print( wordCountIndexes )
                 for n in range( 0, numFixedLengthWords ):
+                    numRemainingBufferBytes = len(binary) - byteOffset
+                    #print( "Got {} bytes available in buffer".format(  numRemainingBufferBytes ) )
+                    if numRemainingBufferBytes < wordLength: # Need to continue to the next record
+                        #binary += myFile.read( 256 ) # These records are assumed here to be contiguous
+                        binary += readRecord( wordIndexIndex+recordOffset+1, myFile )
+                        recordOffset += 1
                     if not compressedFlag:
-                        if len(binary)-byteOffset < wordLength: # Need to continue to the next record
-                            binary += myFile.read( 256 )
+                        # We have a pointer to an array of characters
+                        #if len(binary)-byteOffset < wordLength: # Need to continue to the next record
+                            #binary += myFile.read( 256 )
                         word = getBinaryString( binary[byteOffset:], wordLength ); byteOffset += wordLength
                         #print( wordLength, repr(word) )
-                        if word in ( "In", "the", "beginning", "God", "created" ):
-                            print( word, len(words) )
+                        if 1 and word in ( ',','and', 'Genesis', 'Leviticus', 'In','the','beginning','God','created', "made", "mark", "Mark", "what", "gain", "long", "Antioch", ):
+                            print( "      Found {!r} @ {} {:04x}".format( word, len(words), len(words) ) )
                         words.append( word )
                     else: # it's a compressed word
-                        #print( binary[byteOffset:byteOffset+32] )
-                        #print( "Can't understand compressed words yet" )
-                        #print( "NumWords", len(words) )
-                        #print( words[:256] )
-                        #print( wordLength, numFixedLengthWords, compressedFlag )
-                        continue
-                        word = ''
-                        for m in range( 0, wordLength ):
-                            print( binary[byteOffset:byteOffset+3] )
-                            ix, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
-                            print( ix )
-                            print( ' ', ix, words[ix] )
-                            word += words[ix]
-                        print( word )
+                        # We have pointers to smaller words
+                        assert( wordLength == 4 ) # But this is the number of bytes, not the number of word characters!
+                        #print( "compressed", byteOffset, hexlify(binary[byteOffset:byteOffset+50]) )
+                        ix1,ix2 = struct.unpack( ">HH",  binary[byteOffset:byteOffset+4] ); byteOffset += 4
+                        if   ix1 == 0xFFFF: word1 = '<BOOK>'
+                        elif ix1 == 0xFFFE: word1 = '<CHAPTER>'
+                        elif ix1 == 0xFFFD: word1 = '<DESC>'
+                        elif ix1 == 0xFFFC: word1 = '<VERSE>'
+                        else: word1 = words[ix1-1]
+                        if   ix2 == 0xFFFF: word2 = '<BOOK>'
+                        elif ix2 == 0xFFFE: word2 = '<CHAPTER>'
+                        elif ix2 == 0xFFFD: word2 = '<DESC>'
+                        elif ix2 == 0xFFFC: word2 = '<VERSE>'
+                        else: word2 = words[ix2-1]
+                        word = word1 + separatorCharacter + word2
+                        if 0:
+                            print( ' ix1={:04x}={}'.format( ix1, ix1 ) )
+                            print( '   word1={!r}'.format( word1 ) )
+                            print( ' ix2={:04x}={}'.format( ix2, ix2 ) )
+                            print( '   word2={!r}'.format( word2 ) )
+                            print( "Assembled word={!r}".format( word ) )
+                        words.append( word )
+                        #dictCount += 1
+                if 1:
+                    numLoaded = len(words) - wordStart
+                    wordDisplay = words[wordStart:] if numLoaded < 10 else repr(words[wordStart])+'..'+repr(words[-1])
+                    print( "      Loaded {} {}-char words (now have {}={:04x} total): {}".format( numLoaded, wordLength, len(words), len(words), wordDisplay ) )
             #print( 'xyz', byteOffset, len(binary) )
-            #assert( byteOffset == len(binary) )
+            assert( byteOffset == len(binary) )
             numWords = len(words)
             print( "numWords =", numWords )
+            #if BibleOrgSysGlobals.debugFlag:
+                #print( "words", numWords, words[:200], words[-80:] )
+                #halt
 
             # Now read in the Bible book chapter/verse data
-            #print( bookIndexMetadata )
+            print( "\nLoading Bible book chapter/verse lists..." )
+            # There seems to be no absolute standard for these :-(
+            convertSNtoBBB = {'GE':'GEN', 'EX':'EXO', 'DTN':'DEU', '1SAM':'SA1', '2SAM':'SA2', '1SA':'SA1', '2SA':'SA2', '1KI':'KI1', '2KI':'KI2',
+                            '1CHR':'CH1', '2CHR':'CH2', '1CH':'CH1', '2CH':'CH2', 'PS':'PSA', 'PRV':'PRO', 'SONG':'SNG', 'EZK':'EZE', 'JOEL':'JOL',
+                            'AM':'AMO', 'NAM':'NAH', 'OBD':'OBA', 'JON':'JNA', 'MI':'MIC',
+                            'MT':'MAT', 'MK':'MRK', 'LK':'LUK', 'JOHN':'JHN', '1COR':'CO1', '2COR':'CO2', '1CO':'CO1', '2CO':'CO2',
+                            'PHIL':'PHP', '1THESS':'TH1', '2THESS':'TH2', '1TH':'TH1', '2TH':'TH2', '1TIM':'TI1', '2TIM':'TI2', '1TI':'TI1', '2TI':'TI2',
+                            'JAS':'JAM', 'PHLM':'PHM', '1PET':'PE1', '2PET':'PE2', '1PE':'PE1', '2PE':'PE2', '1JO':'JN1', '2JO':'JN2', '3JO':'JN3', '1JN':'JN1', '2JN':'JN2', '3JN':'JN3',
+                            'JUDE':'JDE', 'JUD':'JDE', }
+            convertBNtoBBB = {10:'GEN', 20:'EXO', 30:'LEV', 40:'NUM', 50:'DEU', '1SAM':'SA1', '2SAM':'SA2', '1SA':'SA1', '2SA':'SA2', '1KI':'KI1', '2KI':'KI2',
+                            '1CHR':'CH1', '2CHR':'CH2', '1CH':'CH1', '2CH':'CH2', 'PS':'PSA', 'PRV':'PRO', 'SONG':'SNG', 'EZK':'EZE', 'JOEL':'JOL',
+                            'AM':'AMO', 'NAM':'NAH', 'OBD':'OBA', 'JON':'JNA', 'MI':'MIC',
+                            'MT':'MAT', 'MK':'MRK', 'LK':'LUK', 'JOHN':'JHN', '1COR':'CO1', '2COR':'CO2', '1CO':'CO1', '2CO':'CO2',
+                            'PHIL':'PHP', '1THESS':'TH1', '2THESS':'TH2', '1TH':'TH1', '2TH':'TH2', '1TIM':'TI1', '2TIM':'TI2', '1TI':'TI1', '2TI':'TI2',
+                            'JAS':'JAM', 'PHLM':'PHM', '1PET':'PE1', '2PET':'PE2', '1PE':'PE1', '2PE':'PE2', '1JO':'JN1', '2JO':'JN2', '3JO':'JN3', '1JN':'JN1', '2JN':'JN2', '3JN':'JN3',
+                            'JUDE':'JDE', 'JUD':'JDE', }
             for shortName, longName, bookNumber, bookRecordLocation, numBookRecords in bookIndexMetadata:
-                print( shortName, longName, "bookNumber =",bookNumber, "bookRecordLocation =",bookRecordLocation, "numBookRecords =",numBookRecords )
-                #myFile.seek( mainIndex[bookRecordLocation] )
+                print( "\n{!r} {!r} bookNumber={} bookRecordLocation={} numBookRecords={}".format( shortName, longName, bookNumber, bookRecordLocation, numBookRecords ) )
+                #myFile.seek( mainDBIndex[bookRecordLocation] )
                 #binary = myFile.read( 102400 )
+                # Read the header record
                 binary = readRecord( bookRecordLocation, myFile )
-                byteOffset = 0
                 #print( binary )
+                byteOffset = 0
                 numChapters, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
-                #print( numChapters )
+                #print( longName, "numChapters", numChapters )
+                accumulatedVersesList = []
                 for c in range( 0, numChapters ):
                     accumulatedVerses, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
+                    accumulatedVersesList.append( accumulatedVerses )
                     #print( c+1, accumulatedVerses, "accumulatedVerses" )
+                accumulatedTokensPerChapterList = []
                 for c in range( 0, numChapters ):
-                    accumulatedCharsPerChapter, = struct.unpack( ">I",  binary[byteOffset:byteOffset+4] ); byteOffset += 4
-                    #print( c+1, accumulatedCharsPerChapter, "accumulatedCharsPerChapter" )
+                    accumulatedTokensPerChapter, = struct.unpack( ">I",  binary[byteOffset:byteOffset+4] ); byteOffset += 4
+                    #print( c+1, accumulatedTokensPerChapter, "accumulatedTokensPerChapter" )
+                    accumulatedTokensPerChapterList.append( accumulatedTokensPerChapter )
+                accumulatedTokensPerVerseList = []
+                totalAccumulatedVerses = 0
                 for n in range( 0, accumulatedVerses ):
-                    accumulatedCharsPerVerse, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
-                    #print( n+1, accumulatedCharsPerVerse, "accumulatedCharsPerVerse" )
+                    accumulatedTokensPerVerse, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
+                    #print( n+1, accumulatedTokensPerVerse, "accumulatedTokensPerVerse" )
+                    accumulatedTokensPerVerseList.append( accumulatedTokensPerVerse )
+                    totalAccumulatedVerses += accumulatedTokensPerVerse
+                if debuggingThisModule:
+                    print( "accumulatedVerses", len(accumulatedVersesList), accumulatedVersesList )
+                    print( "accumulatedTokensPerChapter", len(accumulatedTokensPerChapterList), accumulatedTokensPerChapterList )
+                    print( "accumulatedTokensPerVerse", len(accumulatedTokensPerVerseList), accumulatedTokensPerVerseList )
+                assert( len(accumulatedTokensPerVerseList) == accumulatedVerses )
+                print( totalAccumulatedVerses, accumulatedTokensPerChapter )
                 assert( byteOffset == len(binary) )
 
-            # Now read in the Bible word data
-            for shortName, longName, bookNumber, bookRecordLocation, numBookRecords in bookIndexMetadata:
-                print( shortName, longName, "bookNumber =",bookNumber, "bookRecordLocation =",bookRecordLocation, "numBookRecords =",numBookRecords )
-                #myFile.seek( mainIndex[bookRecordLocation] )
-                #binary = myFile.read( 102400 )
-                binary = readRecord( 435, myFile )
+                # Find total characters
+                #totalCharacters = 0
+                #for accumulatedVerses in accumulatedVersesList:
+                    #totalCharacters += accumulatedTokensPerVerseList[accumulatedVerses]
+                totalCharacters = accumulatedTokensPerChapterList[-1] + accumulatedTokensPerVerseList[-1]
+                #print( "totalCharacters", totalCharacters )
+
+                # Read the Bible word data records
+                print( "\nReading {}{} Bible words for {} {}/{}...".format( totalCharacters, ' byte-shifted' if byteShiftedFlag else '', name, shortName, longName ) )
+                BBB = None
+                if bookNumber % 10 == 0:
+                    if bookNumber <= 160:
+                        BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( bookNumber / 10 )
+                    elif bookNumber == 170: BBB = 'TOB'
+                    elif bookNumber == 180: BBB = 'JDT'
+                    elif bookNumber == 190: BBB = 'EST'
+                    elif 220 <= bookNumber <= 260:
+                        BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( (bookNumber-40) / 10 )
+                    elif 290 <= bookNumber <= 310:
+                        BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( (bookNumber-60) / 10 )
+                    elif bookNumber == 320: BBB = 'BAR'
+                    elif 330 <= bookNumber <= 730:
+                        BBB = BibleOrgSysGlobals.BibleBooksCodes.getBBBFromReferenceNumber( (bookNumber-70) / 10 )
+                elif bookNumber == 315: BBB = 'LJE'
+                #BBB = convertBNtoBBB[bookNumber]
+                #shortNameUpper = shortName.upper()
+                #BBB = convertSNtoBBB[shortNameUpper] if shortNameUpper in convertSNtoBBB else shortNameUpper
+                print( BBB )
+                #if self.name == 'kjv' and BBB=='GAL': continue
+                thisBook = BibleBook( self, BBB )
+                thisBook.objectNameString = 'Palm Bible Book object'
+                thisBook.objectTypeString = 'Palm'
+                thisBook.addLine( 'id', BBB )
+                thisBook.addLine( 'h', longName )
+                thisBook.addLine( 'toc1', longName )
+                thisBook.addLine( 'toc1', longName )
+                thisBook.addLine( 'toc3', shortName )
+
+                C = V = 0
+                nextRecordNumber = bookRecordLocation+1
+                accumulatedVerseCount = verseCount = recordCount = 0
                 byteOffset = 0
-                print( len(binary), binary[:32] )
-                for n in range( 0, 20 ):
-                    #print( binary[n], words[binary[n]] )
-                    ix, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
-                    #ix += 1
-                    word = words[ix] if ix<len(words) else str(ix)+'/'+str(numWords)
-                    print( ix, word )
-                    if ix>expectedWords: print( "Too big" ); halt
-                #print( words[:2000] )
-                if BibleOrgSysGlobals.debugFlag: halt
+                binary = b''
+                verse = ''
+                for j in range( 0, totalCharacters ):
+                    #print( self.name )
+                    if name == 'kjv' and BBB=='GAL' and V>5: break # WHY does it fail???
+                    if name == 'kjv' and BBB=='TI2' and V>24: break # WHY does it fail???
+                    if name in ('hcsb','i_tb','AYT',) and BBB=='GAL' and V>24: break # WHY does it fail???
+                    if byteOffset+1 >= len(binary): # Need to continue to the next record
+                        #binary += myFile.read( 256 ) # These records are assumed here to be contiguous
+                        binary += readRecord( bookRecordLocation+recordCount+1, myFile )
+                        recordCount += 1
+                        if debuggingThisModule:
+                            print( "Record {}/{}".format( recordCount, numBookRecords ) )
+                            print( "BibleWords {}/{}={}...".format( byteOffset, len(binary), hexlify(binary[byteOffset:byteOffset+32]) ) )
+                        #byteOffset = 0
+                        #if j==0:
+                            #assert( binary[byteOffset:byteOffset+2] == b'\xFF\xFF' )
+                            #byteOffset = 2
+                    if byteShiftedFlag:
+                        #print( "offset", byteOffset, hexlify(binary[byteOffset:byteOffset+4]) )
+                        ix, bytesUsed = get14( binary[byteOffset:byteOffset+2] )
+                        byteOffset += bytesUsed
+                    else:
+                        ix, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
+                    if ix >= len(words):
+                        #print( "Got HUGE ix {:04x} {}/{}".format( ix, ix, len(words) ) )
+                        ix = ix | 0xC000 # To get it into the original range
+                        #assert( 0xFFFC <= ix <= 0xFFFF )
+                        if   ix == 0xFFFF: word = '<BOOK>'
+                        elif ix == 0xFFFE: word = '<CHAPTER>'
+                        elif ix == 0xFFFD: word = '<DESC>'
+                        elif ix == 0xFFFC: word = '<VERSE>'
+                        else:
+                            print( "\n\n\nGot HUGE ix {:04x} {}/{} @ {}/{}".format( ix, ix, len(words), byteOffset, len(binary) ) )
+                            word = '<UNKNOWN>'
+                            #if C==0: C = 1
+                        #print( "{} {}:{} tC={} vC={} acc={} {!r}".format( BBB, C, V, j, verseCount, accumulatedTokensPerVerseList[verseCount], verse ) )
+                    else: word = words[ix-1]
+                    #print( "  {} {}:{} word={!r}".format( BBB, C, V, word ) )
+                    if word == '<CHAPTER> Galatians': # what's going on here???
+                        word = ''
+                    for wordBit in word.split(): # Handle each part of combined words separately to ensure correct handling of each part
+                        if wordBit.startswith( '<BOOK>' ):
+                            #print( "\n<BOOK>" )
+                            #if not word.startswith( '<BOOK>' ): print( repr(verse), '+', repr(word) ); halt
+                            if verse: saveSegment( BBB, C, V, verse ); verse = ''
+                            C = V = 0
+                        elif wordBit.startswith( '<CHAPTER>' ):
+                            #print( "\n<CHAPTER>" )
+                            #if not word.startswith( '<CHAPTER>' ): print( repr(verse), '+', repr(word) ); halt
+                            if verse: saveSegment( BBB, C, V, verse ); verse = ''
+                            accumulatedVerseCount += verseCount
+                            verseCount = 0
+                            C += 1; V = 0
+                        elif wordBit.startswith( '<DESC>' ):
+                            if debuggingThisModule: print( "\n<DESC>" )
+                            #if not word.startswith( '<DESC>' ): print( repr(verse), '+', repr(word) ); halt
+                            if verse: saveSegment( BBB, C, V, verse ); verse = ''
+                        elif wordBit.startswith( '<VERSE>' ):
+                            #print( "\n<VERSE>" )
+                            #if not word.startswith( '<VERSE>' ): print( repr(verse), '+', repr(word) ); halt
+                            if C==0: C = 1; print( "Correct C to one!" )
+                            if verse: saveSegment( BBB, C, V, verse ); verse = ''
+                            if V==0: V = 1
+                        elif wordBit.startswith( '<UNKNOWN>' ):
+                            if debuggingThisModule: print( "\n<UNKNOWN>" )
+                            if verse: saveSegment( BBB, C, V, verse ); verse = ''
+                        verse += wordBit + separatorCharacter
+                    #print( repr(word), repr(verse) )
+                    #print( "{} {}:{} tC={} vC={} acc={} {!r}".format( BBB, C, V, j, verseCount, accumulatedTokensPerVerseList[verseCount], word ) )
+                    maxCount = accumulatedTokensPerVerseList[verseCount+accumulatedVerseCount]
+                    if C > 1: maxCount += accumulatedTokensPerChapterList[C-1]
+                    #print( "cC={} vC={} mC={}".format( accumulatedVerseCount, verseCount, maxCount ) )
+                    if j+1 >= maxCount:
+                        if verse: saveSegment( BBB, C, V, verse ); verse = ''
+                        verseCount += 1
+                        V += 1
+                    if 'throne of God and of the Lamb . In the midst of the street' in verse:
+                        print( "Handle Rev 22:1-2 special case in KJV", repr(verse) )
+                        bits = verse.split( '.', 1 )
+                        saveSegment( BBB, C, V, bits[0]+'.' )
+                        verse = bits[1]
+                        #verseCount += 1
+                        V += 1
+                    #tokenCount += 1
+                    #if len(verse)>200: print( repr(verse) ); halt
+                #print( "verse", repr(verse[:100]) )
+                #print( "Done", byteOffset, len(binary) )
+                #assert( byteOffset == len(binary) )
+                self.saveBook( thisBook )
+            #if BibleOrgSysGlobals.debugFlag:
+                #halt
+
+            ## Now read in the Bible word data
+            #print( "\nReading Bible books..." )
+            #for shortName, longName, bookNumber, bookRecordLocation, numBookRecords in bookIndexMetadata:
+                #print( shortName, longName, "bookNumber =",bookNumber, "bookRecordLocation =",bookRecordLocation, "numBookRecords =",numBookRecords )
+                ##myFile.seek( mainDBIndex[bookRecordLocation] )
+                ##binary = myFile.read( 102400 )
+                #binary = readRecord( 435, myFile )
+                #byteOffset = 0
+                #print( len(binary), binary[:32] )
+                #for n in range( 0, 20 ):
+                    ##print( binary[n], words[binary[n]] )
+                    #ix, = struct.unpack( ">H",  binary[byteOffset:byteOffset+2] ); byteOffset += 2
+                    ##ix += 1
+                    #word = words[ix] if ix<len(words) else str(ix)+'/'+str(numWords)
+                    #print( ix, word )
+                    #if ix>expectedWords: print( "Too big" ); halt
+                #if BibleOrgSysGlobals.debugFlag:
+                    #halt
 
                 #print( binary[byteOffset-10:byteOffset+1] )
                 #print( binary[byteOffset:byteOffset+20] )
@@ -413,7 +766,8 @@ class PalmDBBible( Bible ):
 def testPB( TUBfilename ):
     # Crudely demonstrate the PDB Bible class
     import VerseReferences
-    TUBfolder = "../../../../../Data/Work/Bibles/PalmBiblePlus/" # Must be the same as below
+    #TUBfolder = "../../../../../Data/Work/Bibles/PalmBiblePlus/" # Must be the same as below
+    TUBfolder = "Tests/DataFilesForTests/PDBTest/"
 
     if BibleOrgSysGlobals.verbosityLevel > 1: print( _("Demonstrating the PDB Bible class...") )
     if BibleOrgSysGlobals.verbosityLevel > 0: print( "  Test folder is {!r} {!r}".format( TUBfolder, TUBfilename ) )
@@ -446,13 +800,13 @@ def demo():
     if BibleOrgSysGlobals.verbosityLevel > 0: print( ProgNameVersion )
 
 
-    testFolder = "../../../../../Data/Work/Bibles/PalmBiblePlus/"
+    #testFolder = "../../../../../Data/Work/Bibles/PalmBiblePlus/"
+    testFolder = "Tests/DataFilesForTests/PDBTest/"
 
-
-    if 1: # demo the file checking code -- first with the whole folder and then with only one folder
+    if 0: # demo the file checking code -- first with the whole folder and then with only one folder
         result1 = PalmDBBibleFileCheck( testFolder )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "PDB TestA1", result1 )
-        result2 = PalmDBBibleFileCheck( testFolder, autoLoad=True )
+        result2 = PalmDBBibleFileCheck( testFolder, autoLoad=True, autoLoadBooks=True )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "PDB TestA2", result2 )
         #testSubfolder = os.path.join( testFolder, 'kjv/' )
         #result3 = PalmDBBibleFileCheck( testSubfolder )
@@ -462,18 +816,18 @@ def demo():
 
 
     if 1: # specified modules
-        single = ( "kjv", )
-        good = ( "kjv", "kjv-red", "in-tsi", )
+        single = ( 'HCSB', )
+        good = ( 'kjv', 'HCSB', 'test', '1974_TB', '2013_AYT', 'web', )
         nonEnglish = (  )
         bad = ( )
         for j, testFilename in enumerate( good ): # Choose one of the above: single, good, nonEnglish, bad
-            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPDB C{}/ Trying {}".format( j+1, testFilename ) )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPDB B{}/ Trying {}".format( j+1, testFilename ) )
             #myTestFolder = os.path.join( testFolder, testFilename+'/' )
             #testFilepath = os.path.join( testFolder, testFilename+'/', testFilename+'_utf8.txt' )
             testPB( testFilename )
 
 
-    if 1: # all discovered modules in the test folder
+    if 0: # all discovered modules in the test folder
         foundFolders, foundFiles = [], []
         for something in os.listdir( testFolder ):
             somepath = os.path.join( testFolder, something )
@@ -488,7 +842,7 @@ def demo():
                 assert( len(results) == len(parameters) ) # Results (all None) are actually irrelevant to us here
         else: # Just single threaded
             for j, someFolder in enumerate( sorted( foundFolders ) ):
-                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPDB D{}/ Trying {}".format( j+1, someFolder ) )
+                if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nPDB C{}/ Trying {}".format( j+1, someFolder ) )
                 #myTestFolder = os.path.join( testFolder, someFolder+'/' )
                 testPB( someFolder )
 # end of demo
