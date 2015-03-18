@@ -209,6 +209,7 @@ class PalmDBBible( Bible ):
         Load a single source file and load book elements.
         """
         if BibleOrgSysGlobals.verbosityLevel > 2: print( _("Loading {}...").format( self.sourceFilepath ) )
+        loadErrors = []
         mainDBIndex = []
 
 
@@ -370,7 +371,7 @@ class PalmDBBible( Bible ):
         # main code for load()
         with open( self.sourceFilepath, 'rb' ) as myFile: # Automatically closes the file when done
             # Read the PalmDB header info
-            if BibleOrgSysGlobals.verbosityLevel > 2: print( "\nLoading PalmDB header info..." )
+            if BibleOrgSysGlobals.verbosityLevel > 1: print( "\nLoading PalmDB header info..." )
             name = getFileString( myFile, 32 )
             binary4 = myFile.read( 4 )
             attributes, version = struct.unpack( ">hh", binary4 )
@@ -380,8 +381,9 @@ class PalmDBBible( Bible ):
             modificationNumber, appInfoID, sortInfoID = struct.unpack( ">III", binary12 )
             appType = getFileString( myFile, 4 )
             creator = getFileString( myFile, 4 )
-            if BibleOrgSysGlobals.verbosityLevel > 3:
+            if BibleOrgSysGlobals.verbosityLevel > 1:
                 print( "  name = {!r} appType = {!r} creator = {!r}".format( name, appType, creator ) )
+            if BibleOrgSysGlobals.verbosityLevel > 3:
                 print( "  attributes={} version={}".format( attributes, version ) )
                 print( "  creationDate={} lastModificationDate={} lastBackupDate={}".format( creationDate, lastModificationDate, lastBackupDate ) )
                 print( "  modificationNumber={} appInfoID={} sortInfoID={}".format( modificationNumber, appInfoID, sortInfoID ) )
@@ -626,7 +628,7 @@ class PalmDBBible( Bible ):
                 thisBook = BibleBook( self, BBB )
                 thisBook.objectNameString = 'Palm Bible Book object'
                 thisBook.objectTypeString = 'Palm'
-                thisBook.addLine( 'id', BBB )
+                #thisBook.addLine( 'id', BBB ) # Would need to be USFM code not BBB!
                 thisBook.addLine( 'h', longName )
                 thisBook.addLine( 'toc1', longName )
                 thisBook.addLine( 'toc1', longName )
@@ -640,9 +642,13 @@ class PalmDBBible( Bible ):
                 verse = ''
                 for j in range( 0, totalCharacters ):
                     #print( self.name )
-                    if name == 'kjv' and BBB=='GAL' and V>5: break # WHY does it fail???
-                    if name == 'kjv' and BBB=='TI2' and V>24: break # WHY does it fail???
-                    if name in ('hcsb','i_tb','AYT',) and BBB=='GAL' and V>24: break # WHY does it fail???
+                    if (name == 'kjv' and BBB=='GAL' and V>5) \
+                    or (name == 'kjv' and BBB=='TI2' and V>24) \
+                    or (name in ('hcsb','i_tb','AYT',) and BBB=='GAL' and V>24):
+                        logging.error( "PalmDBBible: Aborted book {} at {}:{} because of formatting issue".format( BBB, C, V ) )
+                        loadErrors.append( _("PalmDBBible: Aborted book {} at {}:{} because of formatting issue").format( BBB, C, V ) )
+                        thisBook.addPriorityError( 50, C, V, _("Aborted load because of decoding issue") )
+                        break # WHY does it fail???
                     if byteOffset+1 >= len(binary): # Need to continue to the next record
                         #binary += myFile.read( 256 ) # These records are assumed here to be contiguous
                         binary += readRecord( bookRecordLocation+recordCount+1, myFile )
@@ -716,6 +722,9 @@ class PalmDBBible( Bible ):
                         V += 1
                     if 'throne of God and of the Lamb . In the midst of the street' in verse:
                         print( "Handle Rev 22:1-2 special case in KJV", repr(verse) )
+                        logging.warning( "PalmDBBible: Handled special verse-split case for Rev 22:1-2" )
+                        loadErrors.append( _("PalmDBBible: Handled special verse-split case for Rev 22:1-2") )
+                        thisBook.addPriorityError( 10, C, V, _("Handled special verse-split case for Rev 22:1-2") )
                         bits = verse.split( '.', 1 )
                         saveSegment( BBB, C, V, bits[0]+'.' )
                         verse = bits[1]
@@ -729,6 +738,9 @@ class PalmDBBible( Bible ):
                 self.saveBook( thisBook )
             #if BibleOrgSysGlobals.debugFlag:
                 #halt
+
+        if loadErrors:
+            self.errorDictionary['Load Errors'] = loadErrors
 
         self.doPostLoadProcessing()
     # end of PalmDBBible.load
