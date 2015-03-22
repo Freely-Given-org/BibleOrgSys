@@ -65,19 +65,19 @@ Because it repeatedly runs external programs (ImageMagick), the PhotoBible expor
 #   this can be either a relative path (like my example where ../ means go to the folder above)
 #   or an absolute path (which would start with / or maybe ~/ in Linux).
 # Normally this is the only line in the program that you would need to change.
-inputFolder = "../../../../../Data/Work/Matigsalug/Bible/MBTV/"
+inputFolder = "../../../../../Data/Work/Matigsalug/Bible/MBTV/" # Set your own here
 
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-03-04' # by RJH
+LastModifiedDate = '2015-03-21' # by RJH
 ShortProgName = "MakePhotoBible"
 ProgName = "Make PhotoBible"
-ProgVersion = '0.21'
+ProgVersion = '0.22'
 ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
 ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
-# Allow the system to find the BOS even when the app is in its own folder
+# Allow the system to find the BOS even when the app is down in its own folder
 import sys
 sys.path.append( '.' ) # Append the containing folder to the path to search for the BOS
 import BibleOrgSysGlobals
@@ -87,10 +87,16 @@ from UnknownBible import UnknownBible
 
 def main():
     """
-    This is the main program
+    This is the main program for the app
         which just tries to open and load some kind of Bible file(s)
             from the inputFolder that you specified
         and then export a PhotoBible (in the default OutputFiles folder).
+
+    Note that the standard verbosityLevel is 2:
+        -s (silent) is 0
+        -q (quiet) is 1
+        -i (information) is 3
+        -v (verbose) is 4.
     """
     if BibleOrgSysGlobals.verbosityLevel > 0:
         print( ProgNameVersion )
@@ -99,8 +105,8 @@ def main():
     # Try to detect and read/load the Bible file(s)
     unknownBible = UnknownBible( inputFolder ) # Tell it the folder to start looking in
     loadedBible = unknownBible.search( autoLoadBooks=True ) # Load all the books if we find any
-    if BibleOrgSysGlobals.verbosityLevel > 2: print( unknownBible )
-    if BibleOrgSysGlobals.verbosityLevel > 1: print( loadedBible )
+    if BibleOrgSysGlobals.verbosityLevel > 2: print( unknownBible ) # Display what Bible typed we found
+    if BibleOrgSysGlobals.verbosityLevel > 1: print( loadedBible ) # Show how many books we loaded
 
     # If we were successful, do the export
     if loadedBible is not None:
@@ -108,8 +114,8 @@ def main():
         if BibleOrgSysGlobals.verbosityLevel > 0:
             print( "\n{}: starting export (may take up to 60 minutes)...".format( ShortProgName ) )
 
-        # We only can to do the PhotoBible export (from the BibleWriter.py module)
-        result = loadedBible.toPhotoBible()
+        # We only want to do the PhotoBible export (from the BibleWriter.py module)
+        result = loadedBible.toPhotoBible() # Export as a series of small JPEG files (for cheap non-Java camera phones)
         # However, you could easily change this to do all exports
         #result = loadedBible.doAllExports( wantPhotoBible=True, wantODFs=True, wantPDFs=True )
         # Or you could choose a different export, for example:
