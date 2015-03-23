@@ -68,7 +68,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-03-04' # by RJH
+LastModifiedDate = '2015-03-23' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.90'
@@ -7186,13 +7186,15 @@ class BibleWriter( InternalBible ):
         leftPadding = 1
         defaultFontSize, defaultLeadingRatio = 20, 1.2
         defaultLineSize = int( defaultLeadingRatio * defaultFontSize )
-        maxLineCharacters, maxLines = 26, 12
+        maxLineCharacters, maxLines = 24, 12 # Reduced from 26 to 24 for SIL fonts
         maxDown = pixelHeight-1 - defaultLineSize - 3 # Be sure to leave one blank line at the bottom
         # Use "identify -list font" or "convert -list font" to see all fonts on the system (use the Font field, not the family field)
-        if sys.platform.startswith( 'win' ):
-            defaultTextFontname, defaultHeadingFontname = "Times-New-Roman", "Liberation-Sans-Bold"
-        else:
-            defaultTextFontname, defaultHeadingFontname = "Times-Roman", "FreeSans-Bold"
+        # We need to choose fonts that can handle special characters well
+        #if sys.platform.startswith( 'win' ):
+            #defaultTextFontname, defaultHeadingFontname = "Times-New-Roman", "Liberation-Sans-Bold"
+        #else:
+            #defaultTextFontname, defaultHeadingFontname = "Times-New-Roman-Regular", "FreeSans-Bold"
+        defaultTextFontname, defaultHeadingFontname = "Charis-SIL-Regular", "Andika-Regular"
         topLineColor = "opaque"
         defaultMainHeadingFontcolor, defaultSectionHeadingFontcolor, defaultSectionCrossReferenceFontcolor = "indigo", "red1", "royalBlue"
         defaultVerseNumberFontcolor = "DarkOrange1"
@@ -9554,15 +9556,15 @@ def demo():
         testData = ( # name, abbreviation, folder for USFM files
                 #("USFM-AllMarkers", "USFM-All", "Tests/DataFilesForTests/USFMAllMarkersProject/",),
                 #("CustomTest", "Custom", ".../",),
-                ("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
-                ("USFMTest2", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
-                ("ESFMTest1", "ESFM1", "Tests/DataFilesForTests/ESFMTest1/",),
-                ("ESFMTest2", "ESFM2", "Tests/DataFilesForTests/ESFMTest2/",),
+                #("USFMTest1", "USFM1", "Tests/DataFilesForTests/USFMTest1/",),
+                #("USFMTest2", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
+                #("ESFMTest1", "ESFM1", "Tests/DataFilesForTests/ESFMTest1/",),
+                #("ESFMTest2", "ESFM2", "Tests/DataFilesForTests/ESFMTest2/",),
                 ("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
-                ("OEB", "OEB", "Tests/DataFilesForTests/USFM-OEB/",),
-                ("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
-                ("MS-BT", "MBTBT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
-                ("MS-Notes", "MBTBC", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/",),
+                #("OEB", "OEB", "Tests/DataFilesForTests/USFM-OEB/",),
+                #("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
+                #("MS-BT", "MBTBT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
+                #("MS-Notes", "MBTBC", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/",),
                 #("MS-ABT", "MBTABT", "../../../../../Data/Work/Matigsalug/Bible/MBTABT/",),
                 #("WEB", "WEB", "../../../../../Data/Work/Bibles/English translations/WEB (World English Bible)/2012-06-23 eng-web_usfm/",),
                 #("WEB", "WEB", "../../../../../Data/Work/Bibles/From eBible/WEB/eng-web_usfm 2013-07-18/",),
