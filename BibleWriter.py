@@ -68,7 +68,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-03-23' # by RJH
+LastModifiedDate = '2015-03-24' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.90'
@@ -7172,6 +7172,7 @@ class BibleWriter( InternalBible ):
         Although this code could be made to handle different fonts,
             ImageMagick convert is unable to handle complex scripts.  :(
         """
+        import unicodedata
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Running BibleWriter:toPhotoBible..." )
         if BibleOrgSysGlobals.debugFlag: assert( self.books )
 
@@ -7181,13 +7182,33 @@ class BibleWriter( InternalBible ):
 
         ignoredMarkers, unhandledMarkers = set(), set()
 
-        # First determine our format
+        # First determine our frame and line sizes
         pixelWidth, pixelHeight = 240, 320
+        if 'pixelWidth' in self.settingsDict: pixelWidth = int( self.settingsDict['pixelWidth'] )
+        if 'pixelHeight' in self.settingsDict: pixelHeight = int( self.settingsDict['pixelHeight'] )
+        assert( 240 <= pixelWidth <= 1080 )
+        assert( 320 <= pixelHeight <= 1920 )
+        #blankFilepath = os.path.join( defaultControlFolder, "blank-240x320.jpg" )
+        # Used: convert -fill khaki1 -draw 'rectangle 0,0 240,24' blank-240x320.jpg.jpg yblank-240x320.jpg
+        #       Available colors are at http://www.imagemagick.org/script/color.php
+        if (pixelWidth, pixelHeight) == (240, 320):
+            blankFilepath = os.path.join( defaultControlFolder, "yblank-240x320.jpg" )
+        else:
+            logging.critical( "toPhotoBible needs a blank jpg file for {}x{} image".format( pixelWidth, pixelHeight ) )
+            if BibleOrgSysGlobals.debugFlag and debuggingThisModule: halt
+            return False
         leftPadding = 1
         defaultFontSize, defaultLeadingRatio = 20, 1.2
         defaultLineSize = int( defaultLeadingRatio * defaultFontSize )
         maxLineCharacters, maxLines = 24, 12 # Reduced from 26 to 24 for SIL fonts
+        maxBooknameLetters = 12 # For the header line -- the chapter number is appended to this
         maxDown = pixelHeight-1 - defaultLineSize - 3 # Be sure to leave one blank line at the bottom
+        if BibleOrgSysGlobals.verbosityLevel > 2:
+            print( "toPhotoBible -> {}x{} pixels".format( pixelWidth, pixelHeight ) )
+            print( "  {} lines with {} leading -> {} pixels".format( maxLines, defaultLeadingRatio, defaultLineSize ) )
+            print( "  {} chars per line with {} fontsize and {} pixels left padding".format( maxLineCharacters, defaultFontSize, leftPadding ) )
+
+        # Now determine our fonts
         # Use "identify -list font" or "convert -list font" to see all fonts on the system (use the Font field, not the family field)
         # We need to choose fonts that can handle special characters well
         #if sys.platform.startswith( 'win' ):
@@ -7197,16 +7218,11 @@ class BibleWriter( InternalBible ):
         defaultTextFontname, defaultHeadingFontname = "Charis-SIL-Regular", "Andika-Regular"
         topLineColor = "opaque"
         defaultMainHeadingFontcolor, defaultSectionHeadingFontcolor, defaultSectionCrossReferenceFontcolor = "indigo", "red1", "royalBlue"
-        defaultVerseNumberFontcolor = "DarkOrange1"
-        maxBooknameLetters = 12 # For the header line -- the chapter number is appended to this
+        #defaultVerseNumberFontcolor = "DarkOrange1"
         namingFormat = "Short" # "Short" or "Long" -- affects folder and filenames
         colorVerseNumbersFlag = False
         #digitSpace = chr(8199) # '\u2007'
-
-        #blankFilepath = os.path.join( defaultControlFolder, "blank-240x320.jpg" )
-        # Used: convert -fill khaki1 -draw 'rectangle 0,0 240,24' blank-240x320.jpg.jpg yblank-240x320.jpg
-        #       Available colors are at http://www.imagemagick.org/script/color.php
-        blankFilepath = os.path.join( defaultControlFolder, "yblank-240x320.jpg" )
+        verseDigitSubstitutions = { '0':'⁰', '1':'¹', '2':'²', '3':'³', '4':'⁴', '5':'⁵', '6':'⁶', '7':'⁷', '8':'⁸', '9':'⁹', }
 
 
         def renderCommands( commandList, jpegFilepath ):
@@ -7342,7 +7358,7 @@ class BibleWriter( InternalBible ):
                 if BibleOrgSysGlobals.debugFlag: # Should only be one
                     assert( '_I1_' not in line and '_I2_' not in line and '_I3_' not in line and '_I4_' not in line )
 
-                verseNumberList = [] # Contains a list of 2-tuples indicating where verse numbers should go
+                #verseNumberList = [] # Contains a list of 2-tuples indicating where verse numbers should go
 
                 if down >= maxDown - leading \
                 or outputLineCount == maxLines - 1:
@@ -7376,18 +7392,22 @@ class BibleWriter( InternalBible ):
                 textLineCount += 1
                 textWordCount = 0
                 lineBuffer = ' ' * extraLineIndent # Handle indented paragraphs
+                #isVerseNumber = False
                 words = [] # Just in case the line is blank
                 if line:
                     verseNumberLast = False
                     words = line.split(' ')
                     #print( textWordCount, "words", words )
                     for w,originalWord in enumerate( words ):
-                        word = originalWord.replace( ' ', ' ' ) # Put back normal spaces
+                        word = originalWord.replace( ' ', ' ' ) # Put back normal spaces (now that the split has been done)
+
                         isVerseNumber = False
                         vix = word.find( 'VvV' )
                         if vix != -1: # This must be a verse number (perhaps preceded by some spaces)
+                            isVerseNumber = True # this word is the verse number
                             word = word[:vix]+word[vix+3:]
-                            isVerseNumber = True
+                            for digit,newDigit in verseDigitSubstitutions.items():
+                                word = word.replace( digit, newDigit )
                         #assert( 'VvV' not in word )
 
                         if down >= maxDown - leading \
@@ -7402,11 +7422,15 @@ class BibleWriter( InternalBible ):
                         offset = 1
                         potentialString = lineBuffer + word
                         potentialStringLower =  potentialString.lower()
-                        capsCount = 0
+                        capsCount = combiningCount = 0
                         for letter in potentialString:
-                            if letter.isupper(): capsCount += 1
-                        offset += (potentialStringLower.count('m')+potentialStringLower.count('w')+potentialStringLower.count('—')+capsCount)/3
-                        offset -= (potentialStringLower.count(' ')+potentialStringLower.count('i')+potentialString.count('l')+potentialString.count('t'))/4
+                            if unicodedata.combining(letter): combiningCount += 1
+                            elif letter.isupper(): capsCount += 1
+
+                        offset += (potentialStringLower.count('m') + potentialStringLower.count('w') \
+                                    + potentialStringLower.count('—') + capsCount ) / 3
+                        offset -= (potentialStringLower.count(' ') + potentialStringLower.count('i') \
+                                    + potentialString.count('l') + potentialString.count('t') ) / 4 + combiningCount
                         #if offset != 1:
                             #print( "Adjusted offset to", offset, "from", repr(potentialString) )
 
@@ -7414,35 +7438,41 @@ class BibleWriter( InternalBible ):
                         if lastLine and isVerseNumber: # We would have to include the next word also
                             if BibleOrgSysGlobals.debugFlag: assert( w < len(words)-1 )
                             potentialLength += len(words[w+1]) + 1
+                            for letter in words[w+1]:
+                                if unicodedata.combining(letter): potentialLength -= 1
                             #print( "Adjusted pL for", BBB, C, repr(word), repr(words[w+1]) )
                         if potentialLength  >= maxLineCharacters:
                             # Print this line as we've already got it coz it would be too long if we added the word
                             totalCommands.extend( renderLine( across, down, lineBuffer, fontsize, defaultTextFontname, fontcolor ) )
-                            if verseNumberList:
-                                print( repr(lineBuffer) )
-                                totalCommands.extend( renderVerseNumbers( across, down, verseNumberList, fontsize, defaultTextFontname, defaultVerseNumberFontcolor ) )
-                                verseNumberList = []
+                            #if verseNumberList:
+                                #print( repr(lineBuffer) )
+                                #totalCommands.extend( renderVerseNumbers( across, down, verseNumberList, fontsize, defaultTextFontname, defaultVerseNumberFontcolor ) )
+                                #verseNumberList = []
                             down += leading
                             outputLineCount += 1
                             lineBuffer = ' ' * extraLineIndent # Handle indented paragraphs
                             #print( outputLineCount, maxLines, outputLineCount>=maxLines )
                             if outputLineCount >= maxLines: break
                             if down >= maxDown: break # We're finished
-                        # Add the word (without the verse number markers)
-                        lineBuffer += (' ' if lineBuffer.lstrip() else '')
-                        if isVerseNumber and colorVerseNumbersFlag:
-                            verseNumberList.append( (len(lineBuffer),word,) )
-                            lineBuffer += ' ' * int( 1.6 * len(word) ) # Just put spaces in for place holders for the present
-                        else: lineBuffer += word
+
+                        # Add the word to the line (with preceding space as necessary)
+                        space = '' if verseNumberLast else ' ' # Use a narrow space after verse numbers (didn't work so use nothing)
+                        lineBuffer += (space if lineBuffer.lstrip() else '')
+                        #if isVerseNumber and colorVerseNumbersFlag:
+                            #verseNumberList.append( (len(lineBuffer),word,) )
+                            #lineBuffer += ' ' * int( 1.6 * len(word) ) # Just put spaces in for place holders for the present
+                        #else: lineBuffer += word
+                        lineBuffer += word
                         textWordCount += 1
+                        verseNumberLast = isVerseNumber
 
                     # Words in this source text line are all processed
                     if lineBuffer.lstrip(): # do the last line
                         totalCommands.extend( renderLine( across, down, lineBuffer, fontsize, defaultTextFontname, fontcolor ) )
-                        if verseNumberList:
-                            print( repr(lineBuffer) )
-                            totalCommands.extend( renderVerseNumbers( across, down, verseNumberList, fontsize, defaultTextFontname, defaultVerseNumberFontcolor ) )
-                            verseNumberList = []
+                        #if verseNumberList:
+                            #print( repr(lineBuffer) )
+                            #totalCommands.extend( renderVerseNumbers( across, down, verseNumberList, fontsize, defaultTextFontname, defaultVerseNumberFontcolor ) )
+                            #verseNumberList = []
                         down += leading
                         outputLineCount += 1
                 elif textLineCount!=1: # it's a blank line (but not the first line on the page)
@@ -9560,9 +9590,10 @@ def demo():
                 #("USFMTest2", "MBTV", "Tests/DataFilesForTests/USFMTest2/",),
                 #("ESFMTest1", "ESFM1", "Tests/DataFilesForTests/ESFMTest1/",),
                 #("ESFMTest2", "ESFM2", "Tests/DataFilesForTests/ESFMTest2/",),
-                ("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
+                #("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
                 #("OEB", "OEB", "Tests/DataFilesForTests/USFM-OEB/",),
-                #("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
+                ("X","X","/mnt/Data/Websites/Freely-Given.org/Software/BibleDropBox/PrivatePage/Tem_Language.2015-03-21_23.30_0.86603600_1426933816/YourSourceFiles/Unzipped",),
+                ("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
                 #("MS-BT", "MBTBT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
                 #("MS-Notes", "MBTBC", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/",),
                 #("MS-ABT", "MBTABT", "../../../../../Data/Work/Matigsalug/Bible/MBTABT/",),
@@ -9579,7 +9610,7 @@ def demo():
                 UB.load()
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( '\nBibleWriter A'+str(j+1)+'/', UB )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
-                #UB.toMySword(); halt
+                UB.toPhotoBible(); halt
                 myFlag = BibleOrgSysGlobals.verbosityLevel > 3
                 doaResults = UB.doAllExports( wantPhotoBible=myFlag, wantODFs=myFlag, wantPDFs=myFlag )
                 if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the exported USFM files
