@@ -44,7 +44,7 @@ and then fills
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-02-03' # by RJH
+LastModifiedDate = '2015-03-24' # by RJH
 ShortProgName = "InternalBible"
 ProgName = "Internal Bible handler"
 ProgVersion = '0.60'
@@ -303,7 +303,7 @@ class InternalBible:
 
     def loadMetadataFile( self, mdFilepath ):
         """
-        Load the fields from the given metadata text file.
+        Load the fields from the given metadata text file into self.settingsDict.
         """
         def saveMD( fieldName, contents ):
             """
@@ -322,6 +322,7 @@ class InternalBible:
             self.settingsDict[fieldName] = BibleOrgSysGlobals.makeSafeString( contents )
         # end of loadMetadataFile.saveMD
 
+        # main code for loadMetadataFile()
         logging.info( "Loading supplied project metadata..." )
         if BibleOrgSysGlobals.verbosityLevel > 1: print( "Loading supplied project metadata..." )
         if BibleOrgSysGlobals.verbosityLevel > 2: print( "Old metadata settings", len(self.settingsDict), self.settingsDict )

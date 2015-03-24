@@ -7204,9 +7204,9 @@ class BibleWriter( InternalBible ):
         maxBooknameLetters = 12 # For the header line -- the chapter number is appended to this
         maxDown = pixelHeight-1 - defaultLineSize - 3 # Be sure to leave one blank line at the bottom
         if BibleOrgSysGlobals.verbosityLevel > 2:
-            print( "toPhotoBible -> {}x{} pixels".format( pixelWidth, pixelHeight ) )
+            print( "toPhotoBible -> {}x{} pixel JPEG frames".format( pixelWidth, pixelHeight ) )
             print( "  {} lines with {} leading -> {} pixels".format( maxLines, defaultLeadingRatio, defaultLineSize ) )
-            print( "  {} chars per line with {} fontsize and {} pixels left padding".format( maxLineCharacters, defaultFontSize, leftPadding ) )
+            print( "  {} chars per line with {} fontsize and {} pixel(s) left padding".format( maxLineCharacters, defaultFontSize, leftPadding ) )
 
         # Now determine our fonts
         # Use "identify -list font" or "convert -list font" to see all fonts on the system (use the Font field, not the family field)
@@ -9592,7 +9592,6 @@ def demo():
                 #("ESFMTest2", "ESFM2", "Tests/DataFilesForTests/ESFMTest2/",),
                 #("WEB", "WEB", "Tests/DataFilesForTests/USFM-WEB/",),
                 #("OEB", "OEB", "Tests/DataFilesForTests/USFM-OEB/",),
-                ("X","X","/mnt/Data/Websites/Freely-Given.org/Software/BibleDropBox/PrivatePage/Tem_Language.2015-03-21_23.30_0.86603600_1426933816/YourSourceFiles/Unzipped",),
                 ("Matigsalug", "MBTV", "../../../../../Data/Work/Matigsalug/Bible/MBTV/",),
                 #("MS-BT", "MBTBT", "../../../../../Data/Work/Matigsalug/Bible/MBTBT/",),
                 #("MS-Notes", "MBTBC", "../../../../../Data/Work/Matigsalug/Bible/MBTBC/",),
@@ -9610,7 +9609,7 @@ def demo():
                 UB.load()
                 if BibleOrgSysGlobals.verbosityLevel > 0: print( '\nBibleWriter A'+str(j+1)+'/', UB )
                 if BibleOrgSysGlobals.strictCheckingFlag: UB.check()
-                UB.toPhotoBible(); halt
+                #UB.toPhotoBible(); halt
                 myFlag = BibleOrgSysGlobals.verbosityLevel > 3
                 doaResults = UB.doAllExports( wantPhotoBible=myFlag, wantODFs=myFlag, wantPDFs=myFlag )
                 if BibleOrgSysGlobals.strictCheckingFlag: # Now compare the original and the exported USFM files
