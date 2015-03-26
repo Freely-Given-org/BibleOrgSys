@@ -68,7 +68,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-03-24' # by RJH
+LastModifiedDate = '2015-03-26' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.90'
@@ -7184,8 +7184,8 @@ class BibleWriter( InternalBible ):
 
         # First determine our frame and line sizes
         pixelWidth, pixelHeight = 240, 320
-        if 'pixelWidth' in self.settingsDict: pixelWidth = int( self.settingsDict['pixelWidth'] )
-        if 'pixelHeight' in self.settingsDict: pixelHeight = int( self.settingsDict['pixelHeight'] )
+        if 'PBPixelWidth' in self.settingsDict: pixelWidth = int( self.settingsDict['PBPixelWidth'] )
+        if 'PBPixelHeight' in self.settingsDict: pixelHeight = int( self.settingsDict['PBPixelHeight'] )
         assert( 240 <= pixelWidth <= 1080 )
         assert( 320 <= pixelHeight <= 1920 )
         #blankFilepath = os.path.join( defaultControlFolder, "blank-240x320.jpg" )
@@ -7200,7 +7200,11 @@ class BibleWriter( InternalBible ):
         leftPadding = 1
         defaultFontSize, defaultLeadingRatio = 20, 1.2
         defaultLineSize = int( defaultLeadingRatio * defaultFontSize )
-        maxLineCharacters, maxLines = 24, 12 # Reduced from 26 to 24 for SIL fonts
+        maxLineCharacters, maxLines = 23, 12 # Reduced from 26 to 23 for SIL fonts
+        if 'BPMaxChars' in self.settingsDict: maxLineCharacters = int( self.settingsDict['BPMaxChars'] )
+        if 'BPMaxLines' in self.settingsDict: maxLines = int( self.settingsDict['BPMaxLines'] )
+        assert( 20 <= maxLineCharacters <= 40 )
+        assert( 10 <= maxLines <= 20 )
         maxBooknameLetters = 12 # For the header line -- the chapter number is appended to this
         maxDown = pixelHeight-1 - defaultLineSize - 3 # Be sure to leave one blank line at the bottom
         if BibleOrgSysGlobals.verbosityLevel > 2:
@@ -7428,7 +7432,7 @@ class BibleWriter( InternalBible ):
                             elif letter.isupper(): capsCount += 1
 
                         offset += (potentialStringLower.count('m') + potentialStringLower.count('w') \
-                                    + potentialStringLower.count('—') + capsCount ) / 3
+                                    + potentialStringLower.count('ɖ') + potentialStringLower.count('—') + capsCount ) / 3
                         offset -= (potentialStringLower.count(' ') + potentialStringLower.count('i') \
                                     + potentialString.count('l') + potentialString.count('t') ) / 4 + combiningCount
                         #if offset != 1:
