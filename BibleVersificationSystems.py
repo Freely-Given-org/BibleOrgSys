@@ -2,11 +2,10 @@
 # -*- coding: utf-8 -*-
 #
 # BibleVersificationSystems.py
-#   Last modified: 2014-10-27 (also update ProgVersion below)
 #
 # Module handling BibleVersificationSystems
 #
-# Copyright (C) 2010-2014 Robert Hunt
+# Copyright (C) 2010-2015 Robert Hunt
 # Author: Robert Hunt <Freely.Given.org@gmail.com>
 # License: See gpl-3.0.txt
 #
@@ -32,22 +31,26 @@ NOTE: We still lack a REFERENCE Bible versification system
         with back-and-forth mappings. This is a MAJOR outstanding deficiency.
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2015-04-08' # by RJH
+ShortProgName = "ChapterVerseSystems"
 ProgName = "Bible Chapter-Verse Systems handler"
-ProgVersion = "0.53"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.54'
+ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
 
 import os, logging
-from gettext import gettext as _
 #from singleton import singleton
 
 import BibleOrgSysGlobals
 
 
 
-#@singleton # Can only ever have one instance (but doesn't work for multiprocessing
+#@singleton # Can only ever have one instance (but doesn't work for multiprocessing)
 class BibleVersificationSystems:
     """
     Class for handling BibleVersificationSystems.
@@ -637,7 +640,8 @@ class BibleVersificationSystem:
         if fullRefs:
             return [(BBB,C,V) for (C,V) in self.__omittedVersesDict[BBB]]
         # else
-        return self.__omittedVersesDict[BBB]
+        try: return self.__omittedVersesDict[BBB]
+        except KeyError: return None
     # end of BibleVersificationSystem.getOmittedVerseList
 
 
@@ -854,7 +858,7 @@ def demo():
     #bvss.compareVersificationSystems( "NRSV" )
 
     # Demo a BibleVersificationSystem object -- this is the one most likely to be wanted by a user
-    bvs = BibleVersificationSystem( "NLT96" )
+    bvs = BibleVersificationSystem( 'KJV' )
     if bvs is not None:
         print( bvs ) # Just print a summary
         print( "Number of available books for {} is {}".format(bvs.getVersificationSystemName(),bvs.numAvailableBooks()) )

@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 #
 # BibleBookOrders.py
-#   Last modified: 2015-02-03 (also update ProgVersion below)
 #
 # Module handling BibleBookOrderSystems
 #
@@ -27,10 +26,14 @@
 Module handling BibleBookOrder systems.
 """
 
+from gettext import gettext as _
+
+LastModifiedDate = '2015-04-08' # by RJH
 ShortProgName = "BibleBookOrders"
 ProgName = "Bible Book Order Systems handler"
-ProgVersion = "0.88"
-ProgNameVersion = "{} v{}".format( ProgName, ProgVersion )
+ProgVersion = '0.89'
+ProgNameVersion = '{} v{}'.format( ProgName, ProgVersion )
+ProgNameVersionDate = '{} {} {}'.format( ProgNameVersion, _("last modified"), LastModifiedDate )
 
 debuggingThisModule = False
 
@@ -59,7 +62,7 @@ def t( messageString ):
 
 
 
-#@singleton # Can only ever have one instance (but doesn't work for multiprocessing
+#@singleton # Can only ever have one instance (but doesn't work for multiprocessing)
 class BibleBookOrderSystems:
     """
     Class for handling Bible book order systems.

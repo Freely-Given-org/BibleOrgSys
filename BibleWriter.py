@@ -68,7 +68,7 @@ Note that not all exports export all books.
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-03-26' # by RJH
+LastModifiedDate = '2015-04-01' # by RJH
 ShortProgName = "BibleWriter"
 ProgName = "Bible writer"
 ProgVersion = '0.90'
@@ -7209,8 +7209,8 @@ class BibleWriter( InternalBible ):
         maxDown = pixelHeight-1 - defaultLineSize - 3 # Be sure to leave one blank line at the bottom
         if BibleOrgSysGlobals.verbosityLevel > 2:
             print( "toPhotoBible -> {}x{} pixel JPEG frames".format( pixelWidth, pixelHeight ) )
-            print( "  {} lines with {} leading -> {} pixels".format( maxLines, defaultLeadingRatio, defaultLineSize ) )
             print( "  {} chars per line with {} fontsize and {} pixel(s) left padding".format( maxLineCharacters, defaultFontSize, leftPadding ) )
+            print( "  {} lines with {} leading -> {} pixels".format( maxLines, defaultLeadingRatio, defaultLineSize ) )
 
         # Now determine our fonts
         # Use "identify -list font" or "convert -list font" to see all fonts on the system (use the Font field, not the family field)

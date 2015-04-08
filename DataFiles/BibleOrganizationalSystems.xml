@@ -63,7 +63,7 @@ See the supplied ReadMe.txt for more details.
   <header>
     <work>
       <version>0.24</version>
-      <date>2015-01-20</date>
+      <date>2015-04-08</date>
       <title>Bible organizational systems list</title>
       <contributor role="com">Robert Hunt</contributor>
       <rights>Public Domain</rights>
@@ -2272,6 +2272,7 @@ See the supplied ReadMe.txt for more details.
     <name>Also known as "The Murderers Bible"</name>
     <comment>Mark 7:27 Let the children first be killed (filled)</comment>
     <publicationDate>1795</publicationDate>
+    <usesText>KJV-1795</usesText>
   </BibleOrganizationalSystem>
 
   <BibleOrganizationalSystem type="edition">

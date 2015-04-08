@@ -38,7 +38,7 @@ and then calls
 
 from gettext import gettext as _
 
-LastModifiedDate = '2015-03-18' # by RJH
+LastModifiedDate = '2015-04-01' # by RJH
 ShortProgName = "BibleInternals"
 ProgName = "Bible internals handler"
 ProgVersion = '0.58'
@@ -561,7 +561,7 @@ class InternalBibleIndex:
         except AttributeError: pass # ignore it
         if BibleOrgSysGlobals.verbosityLevel > 2:
             try: result += "\n  {} average data entries per index entry".format( round( len(self.givenBibleEntries)/len(self.indexData), 1 ) )
-            except AttributeError: pass # ignore it
+            except ( AttributeError, ZeroDivisionError ): pass # ignore it
         #try:
             #for j, key in enumerate( sorted( self.indexData, key=lambda s: int(s[0])*1000+int(s[1]) ) ):
                 #C, V = key
